@@ -1,0 +1,23 @@
+# The knowledge index is local, rebuilt, never merged (R14)
+graphify-out/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+
+# Generated study artifacts (per-corpus; also ignored inside their own dirs)
+*.unit.html
+*.section.html
+*.audio/
+site.json
+
+# Editors / OS
+.idea/
+.vscode/
+.DS_Store

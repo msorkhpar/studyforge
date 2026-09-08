@@ -1,0 +1,209 @@
+# E09 — Delivery
+
+Making the Java corpus a thing somebody can actually open, and proving the
+promises the rest of the plan made.
+
+**Shared context for this epic.** Delivery is where the abstractions meet a
+person on a machine, and it is where R3 (non-destructive), R8 (`file://` floor)
+and R15 (containers) are either true or merely claimed. OPS-05 exists precisely
+to convert a promise into a test.
+
+**The consuming side of two shared components.** The toolchain image (E12) and
+the narration service (E13) are shared and pinned as submodules; the compose
+file, the mount list and the deployment choices are **this corpus's**, and they
+stay here. See §8.1's seam table before writing OPS-01 or OPS-03.
+
+---
+
+### OPS-01 — Java toolchain image
+**Milestone** M5 · **Depends on** TC-03, TC-06 · **Team** solo
+**Owns** `JS/docker/toolchain/`
+**Context** ~30k — TC-02, TC-03, TC-05 outputs
+
+**Definition.** This corpus's build of the shared toolchain image: **JDK 21 and
+Maven**, and none of the Kotlin, Node or Python the CodeSignal build carries —
+the selection TC-02 made possible, and the reason a smaller image is the normal
+case rather than an optimisation.
+
+Supplies the corpus's **prime project** (TC-03): a trivial project against the
+repository's parent POM that resolves the plugin and dependency set into a
+local repository the image ships, so the reader's first offline build needs no
+download. ⚠️ Its sources must be real — an empty prime primes nothing while
+appearing to succeed.
+
+Pins a published image tag (TC-06); it does not fork the Dockerfile (R18).
+
+**Acceptance.** `mvn -o test` runs offline in the container against the real
+repository. The editor opens on a practice workspace. The image is measurably
+smaller than the full CodeSignal build. The pinned tag is recorded.
+
+---
+
+### OPS-02 — Narration deployment
+**Milestone** M4 · **Depends on** NS-03 · **Team** solo
+**Owns** the corpus's narration deployment configuration
+**Context** ~20k — NS-03, NS-04 outputs
+
+**Definition.** How this corpus reaches the narration service: which profile
+(**CPU by default**, GPU opt-in — R15), which voice, and the fact that the
+service is needed only at generation time. A reader who never regenerates
+narration never needs it running (R8), and the site must make that obvious
+rather than leaving somebody to discover it.
+
+**Acceptance.** Narration generates on a machine with no GPU. The site plays
+existing audio with the service stopped. The voice selection is recorded in the
+corpus, so a change to it correctly invalidates only this corpus's audio.
+
+---
+
+### OPS-03 — Compose and study server
+**Milestone** M5 · **Depends on** OPS-01, OPS-02, SF-19b · **Team** solo
+**Owns** `JS/docker-compose.yml`
+**Context** ~30k — `CSD/docker-compose.yml`, TC-05 consuming document, SF-19b output
+
+**Definition.** The corpus's compose file — the per-project half of §8.1's
+seam. One documented command brings the study site up.
+
+The four inherited rulings, each with its failure mode, all of which TC-05
+documents and this file must honour:
+
+- **Loopback-only port binding, never `0.0.0.0`** — the editor is an
+  unencrypted IDE with a shell.
+- **Mount only the sources** — not the repository, not `$HOME`.
+- **Run as the repository owner's uid:gid**, or the container leaves root-owned
+  files on the host.
+- **A bind source must exist before its container starts**, or docker creates
+  it root-owned and the writer can never write it. Ordering is enforced by a
+  health check, not by hope.
+
+Two service policies carried deliberately: the **reading server restarts unless
+stopped**, so it survives a reboot and the reader starts it once and forgets
+it; the **editor container does not auto-start**, because starting a shell
+because somebody opened a reading page is not a decision this file gets to make.
+
+**Acceptance.** One command serves the site. The server returns after a host
+restart. The editor container does not start unless asked. The port binds to
+loopback only — asserted. Files created in the container are owned by the host
+user.
+
+---
+
+### OPS-04 — Build pipeline
+**Milestone** M7 · **Depends on** SF-28, JS-06, SF-14, EX-04 · **Team** pair
+**Owns** `JS/ingest/pipeline.py` — corpus configuration over SF-28, not orchestration
+**Context** ~40k — every prior stage's entry point
+
+**Definition.** One command from source material to finished site: ingest →
+validate → unit documents → pages → narration → exercises → contents → index.
+
+**Incremental and reproducible.** An unchanged lesson is not re-rendered; an
+unchanged speech segment is not re-synthesised (E13's content addressing). The
+alternative — rebuilding 166 units and their narration to fix one sentence — is
+the difference between a tool somebody uses and one they avoid.
+
+⚠️ **The entry points this task wires are the same ones E11's skills invoke.**
+Keep them clean and named; a skill that has to reach past a public entry point
+into internals is a sign this task drew its surface wrong.
+
+**Acceptance.** A clean run produces all 166 unit pages, the root index, the
+assets, the narration and the coverage report. A second run with no changes
+rewrites nothing. The result opens over `file://`. Each stage can be run
+independently.
+
+---
+
+### OPS-05 — Non-destructive guarantee
+**Milestone** M7 · **Depends on** OPS-04 · **Team** solo
+**Owns** `JS/ingest/guarantee.py` or its test equivalent
+**Context** ~15k — R3, OPS-04 output
+
+**Definition.** R3 as a **test rather than a promise**. After a full build, no
+pre-existing file in the Java repository is modified, moved or deleted — with
+exactly one permitted exception, the single `<module>practice</module>` line in
+the root `pom.xml` (EX-03).
+
+This matters more than it looks. The entire argument for the `sibling`
+placement profile, and for the LMS "enhancing rather than restructuring", rests
+on this being true. Untested, it is an intention that erodes the first time a
+generator finds it convenient to rewrite a README.
+
+**Acceptance.** Passes on a correct build. **Fails, naming the file**, when a
+generator is deliberately made to touch an existing README. The permitted
+exception is expressed as exactly that one line, not as a whole-file allowance.
+
+---
+
+### OPS-06 — Reader documentation
+**Milestone** M7 · **Depends on** OPS-04 · **Team** solo
+**Owns** `JS/README` study section
+**Context** ~20k — `CSD/README.md` opening sections as the model
+
+**Definition.** How to open and use the site, written for the **reader**, not
+the builder. CodeSignal's README is the model: it leads with the one address
+that matters, states plainly that Claude does not need to be running to read
+your courses, and gives an "if something looks wrong" section covering the
+failure modes that actually happen.
+
+Must cover: first-run on a fresh clone — **including the recursive clone**, the
+single most common way somebody concludes the project is broken (FND-05); what
+needs a container and what does not; and the real failure modes — no narration
+generated yet, editor container down, styles missing.
+
+**States coverage honestly**: how many units have exercises and how many are
+reading-only, from EX-05's numbers, without softening them.
+
+**Acceptance.** A reader following it from a fresh clone on another machine
+reaches a working site. Every stated command works as written. Coverage
+numbers match EX-05 exactly. No personal data anywhere in it (R7).
+
+---
+
+### SF-28 — Framework build and serve CLI
+**Milestone** M3 · **Depends on** SF-10, SF-13, SF-14 · **Team** pair
+**Owns** `studyforge/cli/` — the framework's own entry point
+**Context** ~40k — spec §3.2, §9; OPS-04's stage list
+
+**Definition.** The framework's orchestration surface, living **in the
+framework**: build a corpus from its archive, and serve it. Ingest is the
+adapter's; everything after is this.
+
+⛔ **This task exists because the plan had a hole that would have surfaced in
+v2, too late.** `OPS-04` owned `JS/ingest/pipeline.py` — a file in the *consumer
+repository* — which made the orchestration Java-specific. `SK-03`, the
+source-agnostic build-and-serve skill, would then have been a wrapper around a
+Java script, and the second adapter would have rewritten the pipeline. That
+breaks R1, R2 and R16 simultaneously.
+
+After this task, `OPS-04` is **corpus configuration over this CLI**, not the
+orchestration itself, and `SK-03` is genuinely thin — which is the test E11
+already states: *a skill that has to reach past a public entry point into
+internals is a sign the surface was drawn wrong.*
+
+Each stage is independently invocable, because a reader regenerating one
+lesson's narration should not rebuild 166 pages.
+
+**Acceptance.** Builds and serves both FND-04 fixtures with no corpus-specific
+code. Every stage runs independently. `OPS-04` is expressible as configuration
+over it — demonstrated, not asserted. No module in `cli/` names a source.
+
+---
+
+### OPS-07 — Stale artifact reconciliation
+**Milestone** M7 · **Depends on** OPS-04 · **Team** solo
+**Owns** `studyforge/cli/reconcile.py`
+**Context** ~25k — SF-04 output, OPS-04 output
+
+**Definition.** Discovery is scan-based (R4): the site is whatever artifacts
+exist. So a lesson deleted or renamed upstream leaves its generated page,
+audio and practice material behind, and **discovery faithfully reports a unit
+that no longer exists** — a phantom in the contents that no rebuild removes,
+because OPS-04 is incremental in the *add* direction only.
+
+Names every generated artifact whose source is gone, and removes it on request.
+⚠️ **Names first, removes second, and never removes anything it did not
+generate** — it is deleting files inside somebody's material repository, which
+is exactly where R3's caution applies most.
+
+**Acceptance.** A deleted lesson's artifacts are named. Removal takes them and
+nothing else. A hand-written file inside a generated directory is never
+removed. Reports and removes nothing on a clean corpus.
