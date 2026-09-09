@@ -145,7 +145,7 @@ which would make the extensibility exercise largely a test of typing speed.
 
 1. `corpus.json` — promoted from SK-01's draft, including `permitted_edits` (R3).
 2. The adapter package, its test tree and its audit command — SK-02's scaffold, wired in.
-3. **Ignore rules** — new ignore files written *inside* generated directories. ⛔ Never an edit to the repository's root one (R3, and E07 already rules this for Java).
+3. **Ignore rules** — new ignore files written *inside* generated directories. ⛔ Never an edit to the repository's root one (R3, and E07 already rules this for Java). ⭐ **What they ignore is `SF-32`'s verdict, not this skill's opinion**: generated media is committed by default, so the ignore rules must *not* exclude it — and when a corpus crosses the footprint ceiling, this skill is what tells the reader, in the onboarding report, that their media no longer fits in git and what the two ways forward are. ⛔ It never silently flips the policy; the manifest says what happens and a person changes the manifest.
 4. **The compose file** — rendered from `TC/consuming.json` and the narration service's equivalent. ⛔ Never from reading a Dockerfile.
 5. **The toolchain selection and the prime project** — which languages, which pinned tag, one *real* minimal source and test per language. ⚠️ An empty prime primes nothing while appearing to succeed.
 6. **The build entry point** — corpus configuration over SF-28's CLI.

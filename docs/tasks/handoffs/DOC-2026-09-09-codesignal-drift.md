@@ -35,6 +35,7 @@ test that this is a framework (spec §12).
 - `SF-31` (M2) — `studyforge plan`, the placement dry-run.
 - `SF-30` (M2) — reader state on the `file://` floor.
 - `SK-07` (M2) — corpus onboarding. The second source's whole experience.
+- `SF-32` (M4) — media footprint policy.
 - `QA-04` / **M8** — the second source; the deliverable is the findings log.
 - `SK-01`, `SK-02`, `SK-05` moved **M7 → M1/M2**.
 - `OPS-05` moved out of the Java corpus into the framework.
@@ -62,6 +63,29 @@ ruling that lets "everything is generated" and "every corpus is different" both
 be true. One declared escape hatch exists — hand-authored files the generator
 never touches, *named in the manifest* so what is hand-held is visible rather
 than discovered when a regeneration destroys it.
+
+**Generated media is committed by default — reversing this review's own first
+answer.** The reader ruled it: ⭐ *regenerable is not the same as available*, and
+a clone that carries its own audio speaks with no service, no GPU and no network,
+which is what R8 exists for. The earlier draft had audio git-ignored, which made
+a fresh clone silent and made SF-17 self-contradictory in the other direction.
+
+⚠️ **The interesting half is the ceiling, and it is why this is a task and not a
+one-line default.** Narration is the largest thing the framework generates, and
+CodeSignal proved a corpus can outgrow a git remote — 11.42 GiB of pack, one
+file at 150.9 MiB — and that you find out *at the push*, after the history holds
+the blob. So `SF-32` measures the footprint and ⛔ **refuses loudly at the
+limit, never silently switching policy in either direction**: silently ignoring
+media gives you clones that are quiet with no error; silently committing gives
+you CodeSignal's push. The limits are manifest data because they are hosting
+facts, not taste.
+
+⛔ **Extraction itself is deliberately not built** (`v2-backlog.md`, V2-14). No
+source in scope needs it, and building a delivery mechanism for a problem nobody
+has is how a framework acquires machinery it cannot justify. §5's
+delivery-orthogonal-to-placement ruling is what makes that safe to defer: when
+extraction is built it moves the same bytes to the same paths, so not one page
+changes.
 
 ---
 
@@ -131,6 +155,13 @@ blocked.
 `SK-02` and `SK-07`, not hand-written work. Anything you find yourself typing
 that a second source would also have to type is a **finding against a skill**
 (R19) — record it, do not absorb it.
+
+**Whoever picks up SF-17 or E07:** the Java corpus's narration is estimated at
+**~0.9 GiB** — scaled from CodeSignal's measured 57,427 clips at a ~125 KiB mean
+— which is comfortably inside SF-32's default limits. ⭐ **That is an estimate
+and must be measured at M4, not inherited.** Java lessons may be longer or
+shorter than CodeSignal's; if the real number lands somewhere else, SF-32 is
+what says so and the manifest's `media` block is where the answer changes.
 
 **Whoever picks up SF-25:** the completeness check is the highest-value single
 thing in this revision. `validate` is the only signal an integrator has (R2), and

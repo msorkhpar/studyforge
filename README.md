@@ -25,7 +25,7 @@ its destination.
 | Read | For |
 |---|---|
 | [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R19** that every task cites |
-| [`docs/tasks/README.md`](docs/tasks/README.md) | **80 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
+| [`docs/tasks/README.md`](docs/tasks/README.md) | **81 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
 | [`docs/conventions/`](docs/conventions/) | Module structure, graphify usage, the agent working agreement |
 | [`docs/tasks/v2-backlog.md`](docs/tasks/v2-backlog.md) | Deliberately unplanned future work |
 
@@ -70,7 +70,7 @@ only become a product at the end.
 | **M1** | One page renders | 18 |
 | **M2** | **All 166 Java units readable offline** — first genuinely useful state | 19 |
 | **M3** | Served, with an API and a pass record | 5 |
-| **M4** | Narrated | 10 |
+| **M4** | Narrated; media footprint known | 11 |
 | **M5** | Runs code | 6 |
 | **M6** | Real practices with proven graders | 5 |
 | **M7** | Built by the skills; accepted | 8 |

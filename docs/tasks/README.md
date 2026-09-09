@@ -1,16 +1,20 @@
 # studyforge — task index
 
-**80 tasks · 13 epics · 9 milestones.** Companion to
+**81 tasks · 13 epics · 9 milestones.** Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R19** every
 task cites.
 
-⚠️ **Revised 2026-09-09.** Four tasks added — `TC-00` (a pinned build image, so
+⚠️ **Revised 2026-09-09.** Five tasks added — `TC-00` (a pinned build image, so
 EX-00 can run at all), `SF-31` (the placement dry-run), `SF-30` (reader state on
-the `file://` floor), `SK-07` (corpus onboarding) — one milestone added (**M8**,
-the second source), and the skills resequenced: **SK-01, SK-02, SK-05 and SK-07
-move from M7 to M1–M2**, because a skill written after the thing it produces is
-a retrospective (spec §9). `OPS-05` moved out of the Java corpus into the
-framework. See `handoffs/DOC-2026-09-09-codesignal-drift.md` for the reasoning.
+the `file://` floor), `SK-07` (corpus onboarding), `SF-32` (the media footprint
+policy) — one milestone added (**M8**, the second source), and the skills
+resequenced: **SK-01, SK-02, SK-05 and SK-07 move from M7 to M1–M2**, because a
+skill written after the thing it produces is a retrospective (spec §9).
+`OPS-05` moved out of the Java corpus into the framework; `E12` moved to M0–M2,
+because SK-07 cannot render a compose file without TC-05's consuming contract.
+⭐ **Generated media is now committed by default** (SF-17), with SF-32 measuring
+the footprint and refusing loudly at the ceiling. See
+`handoffs/DOC-2026-09-09-codesignal-drift.md` for the reasoning.
 
 ## Ordering principle
 
@@ -30,7 +34,7 @@ is the kind that reorders plans.
 | **M1** | **One page renders** | A unit page from a fixture opens in a browser | 18 |
 | **M2** | **The Java material is readable** | All 166 units, offline, with contents, navigation and read marks | 19 |
 | **M3** | It is served | The site has an origin, an API, and records passes | 5 |
-| **M4** | It speaks | Narration with highlight sync | 10 |
+| **M4** | It speaks | Narration with highlight sync, and an honest media footprint | 11 |
 | **M5** | It runs code | Run and Submit against a dockerised toolchain | 6 |
 | **M6** | It has practices | Real exercises with proven graders | 5 |
 | **M7** | It is a product | Built by skills, documented, accepted | 8 |
@@ -125,7 +129,7 @@ critical path queues behind a TTS job.
 - **4.2** — NS-02, NS-03
 - **4.3** — NS-04, NS-05, NS-06
 - **4.4** — SF-17, OPS-02
-- **4.5** — SF-18
+- **4.5** — SF-18, **SF-32**
 
 ### M5 — It runs code
 > **Done when:** a reader edits a workspace and gets real output from Run and a
@@ -183,7 +187,7 @@ SF-12 → SF-04 → SF-13 → SF-19a → SF-19b → SF-22 → EX-04 → OPS-04 �
 | E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31 | address, manifest, placement, dry-run, discovery, container map |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27 | assets, page, contents, index, navigation |
-| E04 | [Narration](E04-narration.md) | SF-16…18 | speakable, synthesis, player sync |
+| E04 | [Narration](E04-narration.md) | SF-16…18, SF-32 | speakable, synthesis, player sync, media footprint |
 | E05 | [Serving & execution](E05-serving-execution.md) | SF-19a/b, SF-20…22, SF-29, SF-30 | API, runner, progress, reader state, Run/Submit |
 | E06 | [Exercise contract](E06-exercise-contract.md) | SF-23…24 | workspace, trust, practice panel |
 | E07 | [Java adapter](E07-java-adapter.md) | JS-01…06 | curriculum, lessons, pairing, emission, audit |

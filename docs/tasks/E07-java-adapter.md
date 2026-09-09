@@ -78,6 +78,13 @@ themselves*, which are new files and therefore R3-clean. ⭐ This ruling has sin
 been generalised: it is R3's second forbidden category, and SK-07 applies it to
 every corpus rather than this one remembering it.
 
+⚠️ **What those files ignore is the discovery cache, not the narration.**
+Generated audio is **committed** for this corpus (SF-17, SF-32) — estimated at
+roughly 0.9 GiB, comfortably inside the default limits, ⭐ **and to be measured
+at M4 rather than inherited from this estimate.** If the measurement says
+otherwise, SF-32 says so loudly and the manifest's `media` block is where the
+answer changes.
+
 This is a small thing that matters: `OPS-05` is the one task whose entire value
 is that it cannot be relaxed, and this is exactly the pressure that would relax
 it.

@@ -35,8 +35,18 @@ is at speech-unit granularity rather than word level, that difference never has
 to be reconciled word by word — which is the design decision that makes the
 whole feature tractable.
 
+**Media is committed by default, and the default has a ceiling.** A clone that
+carries its own audio speaks with nothing running, which is what R8 is for. But
+narration is the largest thing this framework generates, and a corpus can
+outgrow what a git remote will take — CodeSignal did, at **11.42 GiB of pack and
+one file at 150.9 MiB**, and discovered it when the push became *impossible*
+rather than merely large. So the policy is manifest data (SF-02), the footprint
+is **measured and reported** (SF-32), and crossing the ceiling is a loud,
+early, explained event rather than a failed push.
+
 **Rulings that bite here:** R7 (the gate applies again here, regardless of what
-ran upstream), R8 (`file://`), R10 (reproducible), R12 (tests).
+ran upstream), R8 (`file://`), R10 (reproducible), R12 (tests), R19 (the
+consuming half — including ignore rules — is generated from the policy).
 
 ---
 
@@ -82,21 +92,30 @@ through the placement policy — for the Java corpus, beside the page that plays
 them (§5), so that once a unit's audio exists its directory is self-contained
 and plays with no synthesis service running.
 
-Audio is **generated, not committed**, and git-ignored: one corpus's narration
-is gigabytes and it is reproducible from the archive. Regeneration is
-incremental — an unchanged speech unit is not re-synthesised, because the
-alternative is re-rendering an entire corpus to fix one sentence.
+Audio is **generated, and by default committed.** ⭐ *Regenerable is not the same
+as available*: a clone that has the clips speaks with no synthesis service, no
+GPU and no network, which is the whole point of R8. A corpus that ignores its
+audio is asking every reader to stand up a TTS service before they can hear
+anything, and most of them will not.
 
-⚠️ **A fresh clone is therefore silent until narration is generated, and that is
-the honest statement.** An earlier draft of this task claimed both that audio is
-git-ignored *and* that "a clone speaks with no synthesis service running". Both
-cannot be true. What survives is the placement claim — a unit's directory is
-self-contained once the audio exists — and the degradation is already designed
-for: SF-18 presents a unit with no audio as a stated state rather than a dead
-control, and SK-03 treats an absent narration service as a known partial state.
-⭐ Getting generated media *to* a clone is a delivery question, and spec §5 rules
-that delivery never changes an href, so a mechanism can be added later without
-touching a single page (`v2-backlog.md`).
+⚠️ **This reverses an earlier draft of this task, which said audio is
+git-ignored — and which also claimed a clone would speak. Both could not be
+true.** Committing resolves it in the direction that serves the reader. It has a
+ceiling, and the ceiling is the whole of `SF-32`.
+
+⛔ **Whether media is committed is a manifest policy, not a property of this
+module** (`media` in `corpus.json`, SF-02). This module writes clips to the path
+the placement policy gives it and has no opinion about git. ⭐ That separation is
+what makes the switch cheap when a corpus outgrows the default: spec §5 rules
+delivery orthogonal to placement, so an href never encodes how a file arrived,
+and moving media out of git later moves the same bytes to the same paths.
+
+Regeneration is incremental — an unchanged speech unit is not re-synthesised,
+because the alternative is re-rendering an entire corpus to fix one sentence.
+⚠️ SF-18 still presents a unit with no audio as a stated state rather than a
+dead control, and SK-03 still treats an absent narration service as a known
+partial state; committing the clips makes those the exception rather than every
+fresh clone's first experience.
 
 **Acceptance.** A unit's clips are produced, named `<speech-id>-<digest>` by
 SF-16's minter, and play from the page over `file://`. **Re-running with no
@@ -105,8 +124,72 @@ change synthesises exactly the changed segments** — asserted by comparing the
 set of files written, never by trusting the run's own report, which is precisely
 what reported "0 synthesised" over 619 stale clips. **Every `<audio>` source on
 a generated page resolves to a file on disk, and every file on disk is named by
-a page — asserted in both directions.** Generated audio is git-ignored.
-Synthesis failure for one unit does not corrupt another's clips.
+a page — asserted in both directions.** A clone with the clips present plays
+them with no synthesis service running. **This module contains no reference to
+git or to any ignore file** — asserted. Synthesis failure for one unit does not
+corrupt another's clips.
+
+---
+
+### SF-32 — Media footprint policy ⭐ THE SKILL KNOWS WHEN TO STOP COMMITTING
+**Milestone** **M4** · **Depends on** SF-02, SF-17 · **Team** solo
+**Owns** `corpus/media.py`
+**Context** ~20k — spec §5, SF-02's manifest, SK-07's ignore-rule generation
+
+**Definition.** Generated media is **committed by default** (SF-17), because a
+clone that carries its own audio speaks with nothing running. That default holds
+until a corpus is too big for it, and this module is what knows the difference.
+
+It answers one question — *should this corpus's media be in git?* — from the
+manifest's `media` policy and a **measurement** of what was actually generated:
+
+```json
+"media": { "commit": "auto",
+           "max_total_bytes": 2147483648,
+           "max_file_bytes": 94371840,
+           "max_files": 20000 }
+```
+
+- `commit: always` — commit it, whatever the size. The corpus owner's call.
+- `commit: never` — ignore it; the corpus supplies its own delivery.
+- `commit: auto` *(default)* — commit while under the limits, and ⛔ **refuse and
+  report the moment any limit is crossed.**
+
+⛔ **`auto` never silently switches.** A generator that quietly started ignoring
+media would produce a corpus whose clones are silent, with no error and no
+symptom until a reader complains. And one that quietly kept committing produces
+the CodeSignal outcome: **11.42 GiB of pack against a ~5 GB soft limit, one file
+at 150.9 MiB against a hard 100 MiB per-file limit, and a push that was
+impossible rather than merely large** — discovered at the remote, after the
+history already contained the blob. ⭐ **Crossing the ceiling is a decision, and
+this module's job is to put it in front of a person early**, naming the number,
+the limit it crossed, and the two ways forward.
+
+⚠️ **The defaults are hosting facts, not taste.** The per-file default sits under
+GitHub's hard 100 MiB block; the total sits well under the pack pressure that
+made CodeSignal's push impossible. They are defaults precisely because another
+host has different ones — which is why they are manifest data.
+
+**What it is not.** ⛔ **It does not implement extraction.** Packing media into
+release assets and restoring it is real work with real traps and it is
+**deliberately not in v1** (`v2-backlog.md`, V2-14) — no corpus in scope needs
+it. This task builds the **awareness**: measure, compare, report, and generate
+the right ignore rules for whichever answer applies. ⭐ When extraction is built,
+it plugs in behind this decision without touching a page, because spec §5 rules
+delivery orthogonal to placement.
+
+**Consumers.** `SK-07` generates ignore rules from its verdict. `SF-31`'s
+dry-run reports the *projected* footprint before anything is generated, so the
+question is asked before the gigabytes exist. The coverage tracker reports the
+actual one.
+
+**Acceptance.** A corpus under the limits commits its media and a clone plays it.
+A corpus over any one limit **fails, naming the limit, the measured value and
+the file or count responsible** — never silently switching policy. `always` and
+`never` are honoured without measurement. The verdict is derived from the files
+actually on disk, not from a prediction. **The module names no host and no
+forge** — the limits are data (R1). Changing a limit in the manifest changes the
+verdict and nothing else.
 
 ---
 

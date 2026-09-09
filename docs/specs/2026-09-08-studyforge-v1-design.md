@@ -463,6 +463,30 @@ layout on disk did not move and every page still addressed a clip as plain
 `audio/<clip>.mp3`** — which is the only reason that change was a script rather
 than a re-render of 1,290 pages.
 
+**Generated media is committed by default.** ⭐ *Regenerable is not the same as
+available*: a clone that carries its own audio speaks with no synthesis service,
+no GPU and no network, and that is what R8 is for. A corpus that ignores its
+media asks every reader to stand up a service before they can hear anything.
+
+⛔ **The default has a ceiling, and crossing it is a decision, not an accident.**
+Narration is the largest thing this framework generates, and a corpus can
+outgrow what a git remote will take: CodeSignal reached **11.42 GiB of pack
+against a ~5 GB soft limit, with one file at 150.9 MiB against a hard 100 MiB
+per-file block** — and found out when the push became *impossible*, after the
+history already held the blob. So the policy is manifest data, the footprint is
+**measured**, and a corpus that crosses its limits **stops and says so**, naming
+the number and the limit. ⛔ It never silently switches to ignoring media, which
+would produce clones that are silent with no error, and it never silently keeps
+committing.
+
+⚠️ **Extraction — packing media out of git and restoring it — is deliberately
+not built in v1.** No source in scope needs it, and building a delivery
+mechanism for a problem nobody has is how a framework acquires machinery it
+cannot justify. What v1 builds is the **awareness**: the policy, the
+measurement, and the honest refusal. Because delivery is orthogonal to
+placement, the mechanism plugs in later behind the same decision without
+touching a single page.
+
 ### The placement dry-run
 
 A consumer cannot write its ignore rules, declare its `permitted_edits` (R3) or
@@ -936,9 +960,9 @@ else. Re-deriving them would be waste.
   deliberately unhashed names, browser-side Prism highlighting (never
   build-time), light/dark palette with every token defined in both themes.
 - **Narration** — positional (never content-derived) speech **ids**, display text
-  and spoken text as two renderings of one list, clip-level highlight sync,
-  audio generated and git-ignored. The clip **filename** adds a content digest,
-  for the reason ruled in §8.2.
+  and spoken text as two renderings of one list, clip-level highlight sync. The
+  clip **filename** adds a content digest, for the reason ruled in §8.2; whether
+  the clips are committed is a manifest policy, ruled in §5.
 - **Video** — vendored Plyr with `loadSprite:false`; nothing may reach the
   network. Unused by the Java source, kept because the contract is generic.
 - **Table of contents** — `toc.json` (stable, reproducible) and `status.json`

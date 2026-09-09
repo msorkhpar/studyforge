@@ -11,10 +11,12 @@ venv/
 build/
 dist/
 
-# Generated study artifacts (per-corpus; also ignored inside their own dirs)
+# Generated study artifacts (per-corpus; also ignored inside their own dirs).
+# NOT audio: generated media is committed by default (SF-17), and whether a
+# corpus commits its own is that corpus's `media` policy (SF-02, SF-32), not a
+# rule this repository gets to make on its behalf.
 *.unit.html
 *.section.html
-*.audio/
 site.json
 
 # Editors / OS

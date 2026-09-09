@@ -104,9 +104,12 @@ either because they are that source's operational detail, or because the
 condition that forced them does not reach this framework yet. They are recorded
 so nobody re-derives them at full cost when it does.
 
-**V2-14 — Heavy generated media as release assets.** Narration and video are
-git-ignored (SF-17), so a fresh clone is silent until it regenerates. CodeSignal
-solved this the hard way when it met GitHub: **11.42 GiB of pack against a 5 GB
+**V2-14 — Heavy generated media as release assets.** ⭐ **v1 commits generated
+media** (SF-17) and **v1 knows when it must stop** (SF-32, which measures the
+footprint and refuses loudly at the ceiling). What v1 deliberately does *not*
+build is the way out: packing media out of git and restoring it. This entry is
+that mechanism, and it becomes necessary the first time SF-32 refuses.
+CodeSignal solved it the hard way when it met GitHub: **11.42 GiB of pack against a 5 GB
 soft limit and one video at 150.9 MiB against a hard 100 MiB per-file limit**,
 so the push was impossible rather than merely large. Its answer: gitignore the
 media, publish it as release assets in 999 MB volumes, and ship a restore script
@@ -116,8 +119,9 @@ is the only reason it was a script rather than a re-render of 1,290 pages, and
 it is why spec §5 now rules delivery orthogonal to placement.
 
 Scale is why this is not v1: the Java corpus is ~0.9 GiB of audio and no video,
-so neither blocker reproduces. The threshold sits somewhere between that and
-CodeSignal's 11.7 GiB. ⚠️ **A private repository's `releases/download/…` URL is
+so neither blocker reproduces and committing is comfortable. The threshold sits
+somewhere between that and CodeSignal's 11.7 GiB — which is exactly what SF-32's
+default limits encode, and why they are manifest data rather than constants. ⚠️ **A private repository's `releases/download/…` URL is
 public-only and 404s with any credential** — private assets come back through
 the API by asset id, which is why a restore needs a token route as well as a
 `gh` route. That fact costs an afternoon to rediscover.
