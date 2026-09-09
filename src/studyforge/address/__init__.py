@@ -12,6 +12,15 @@ assemble one of those strings by hand elsewhere — the joined key exists
 precisely so that two segments cannot be passed in the wrong order without a
 type saying so, and that guarantee is void the moment a caller re-derives it.
 
+    from studyforge.address import Address, parse_key, slugify
+
+    address = Address.of("basics", "01-getting-started")
+    address.key                     # 'basics/01-getting-started'
+    address.depth                   # 2
+    address.identifiers             # ('basics', '_01_getting_started')
+    address.unit_key(7)             # 'basics/01-getting-started/unit-07'
+    parse_key(address.key, depth=2) # the same address back
+
 **Depends on.** Nothing. This is the bottom of the framework, and every other
 package depends on it rather than the reverse.
 
@@ -21,5 +30,47 @@ still correctly identified and still resolves as the unit it is — while
 rendering unstyled and silent, because assets resolve relative to the page.
 Both are true and neither is a defect.
 
-**Skeleton at FND-01.** Filled by SF-01 (E01).
+## What is in the package
+
+| Module | Owns |
+|---|---|
+| `address` | `Address`, `parse_key`, `parse_unit_key` — the identity and its two inverses |
+| `slug` | what a slug **is**, and `slugify` for adapters that must make one |
+| `identifier` | one segment as a code identifier, injectively |
+| `ordinal` | a unit's ordinal, and `unit-NN` |
+| `errors` | `AddressError`, the only exception any of it raises |
+
+⛔ **Depth 1 is the common case, not the degenerate one.** Two of the four
+designed source shapes have a single container level — SPARQL's `["course"]`
+and ISO-8583's `["group"]` — so nothing here is written for two levels and then
+checked against one. Every function takes the depth as data and the tests run
+each of them at depths 1 through 4.
 """
+
+from __future__ import annotations
+
+from studyforge.address.address import SEPARATOR, Address, parse_key, parse_unit_key
+from studyforge.address.errors import AddressError
+from studyforge.address.identifier import DIGIT_PREFIX, identifier
+from studyforge.address.ordinal import FIRST_ORDINAL, require_ordinal, unit_name
+from studyforge.address.slug import is_slug, require_slug, slugify
+
+#: ⛔ The package's whole public surface. A consumer that has to import
+#: `studyforge.address.address` directly is a consumer this contract failed —
+#: `docs/conventions/module-structure.md` calls `__init__.py` the contract, and
+#: this is what it says.
+__all__ = [
+    "DIGIT_PREFIX",
+    "FIRST_ORDINAL",
+    "SEPARATOR",
+    "Address",
+    "AddressError",
+    "identifier",
+    "is_slug",
+    "parse_key",
+    "parse_unit_key",
+    "require_ordinal",
+    "require_slug",
+    "slugify",
+    "unit_name",
+]
