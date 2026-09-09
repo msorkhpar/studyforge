@@ -26,5 +26,8 @@ parser that raises on anything it does not recognise stops an ingest dead (C3).
 Attachments — a dataset a lesson loads, a notebook — are a class of their own,
 neither block nor rendered media (C4).
 
-**Skeleton at FND-01.** Filled by SF-06, SF-07, SF-08 (E02).
+**Landed so far.** `markdown` — the strict reader (SF-07): `parse(text)` turns
+authored Markdown into this vocabulary and refuses, loudly, anything it cannot
+represent without loss. `document`, `blocks` and the personal-data gate remain
+SF-06's and SF-08's.
 """
