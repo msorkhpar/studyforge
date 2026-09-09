@@ -11,6 +11,12 @@
   ],
   "exercises": true,
   "placement": "sibling",
+  "content": {
+    "include": [
+      "*/*/README*.md"
+    ],
+    "exclude": []
+  },
   "media": {
     "commit": "auto",
     "max_total_bytes": 5000000000,
