@@ -1,0 +1,182 @@
+/* The reading column: one rule for every block type the archive vocabulary
+   names, and nothing about page chrome.
+
+   ⭐ THE SCOPE IS THE BLOCK VOCABULARY, not one renderer's page. Eleven block
+   types reach a page — heading, para, code, list, table, image, video, rule,
+   quote, html and disclosure — and every one of them is styled here, so a
+   renderer that emits a type nobody thought about renders as prose rather
+   than as nothing. ⛔ Masthead, navigation rail, narration player, progress
+   controls and practice panels are NOT here: they belong to the tasks that
+   render them, and each adds its own part beside this one.
+
+   ⚠️ Every selector here names a class this package publishes in
+   `pageassets.surface`. A renderer that invents its own class names gets an
+   unstyled page and no error, so the two are checked against each other. */
+
+body {
+  margin: 0;
+  padding: 0 var(--gutter);
+  background: var(--bg);
+  color: var(--fg);
+  font: 1.1875rem/1.72 var(--font-prose);
+  text-rendering: optimizeLegibility;
+}
+
+/* --- prose ------------------------------------------------------------- */
+
+h1 { font-family: var(--font-ui); font-size: 1.9rem; line-height: 1.22; margin: 0 0 .75rem; }
+h2, h3, h4, h5, h6 {
+  font-family: var(--font-ui);
+  line-height: 1.28;
+  margin: 2rem 0 .6rem;
+}
+h2 { font-size: 1.4rem; }
+h3 { font-size: 1.12rem; }
+h4, h5, h6 { font-size: 1rem; }
+
+p { margin: 0 0 1.15rem; }
+
+/* Running text alone keeps a measure the eye can track back from. A figure,
+   a table or a code block is scanned rather than read and takes the full
+   column. */
+main p, main li { max-width: var(--measure); }
+
+a { color: var(--accent); text-underline-offset: .18em; }
+
+ul.items, ol.items { margin: 0 0 1.15rem; padding-left: 1.5rem; }
+ul.items li, ol.items li { margin: .35rem 0; padding-left: .2rem; }
+
+code {
+  font-family: var(--font-mono);
+  font-size: .88em;
+  background: var(--code-bg);
+  border-radius: 4px;
+  padding: .1em .32em;
+}
+
+/* A thematic break, which the Java corpus uses ten times. Thin, and it takes
+   the rule colour rather than the browser's bevelled default. */
+hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 2rem 0;
+  max-width: var(--measure);
+}
+
+/* A quote holds arbitrary blocks, so it is a container and not a paragraph
+   with italics: a list or a code block inside one must still read as itself. */
+blockquote {
+  margin: 1.6rem 0;
+  padding: .1rem 0 .1rem 1.15rem;
+  border-left: 3px solid var(--rule-strong);
+  color: var(--fg-soft);
+  max-width: var(--measure);
+}
+blockquote > :last-child { margin-bottom: 0; }
+
+/* --- present but withheld ---------------------------------------------- */
+
+/* ⭐ A real `<details>`, which opens, closes and takes keyboard focus with
+   scripting off entirely. The third state between shown and absent: the body
+   is on the page and is not shown, and nothing here may make it visible by
+   default — `open` is the author's, delivered from the archive. */
+details.disclosure {
+  margin: 1.6rem 0;
+  padding: .1rem .95rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  max-width: var(--measure);
+}
+details.disclosure > summary {
+  font-family: var(--font-ui);
+  font-size: .95rem;
+  cursor: pointer;
+  padding: .7rem 0;
+  color: var(--fg-soft);
+}
+details.disclosure[open] > summary { color: var(--fg); border-bottom: 1px solid var(--rule); }
+details.disclosure > :last-child { margin-bottom: .8rem; }
+
+/* --- figures ----------------------------------------------------------- */
+
+figure { margin: 1.6rem 0; }
+
+figure.code {
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+}
+figure.code figcaption {
+  display: flex;
+  gap: .75rem;
+  align-items: center;
+  font-family: var(--font-ui);
+  font-size: .78rem;
+  color: var(--muted);
+  padding: .5rem .9rem;
+  border-bottom: 1px solid var(--rule);
+}
+figure.code figcaption .what { flex: 1 1 auto; }
+figure.code pre { margin: 0; padding: 1rem 1.1rem; overflow-x: auto; }
+figure.code code {
+  background: none;
+  padding: 0;
+  font-size: .84rem;
+  line-height: 1.62;
+  color: var(--code-fg);
+}
+
+button.copy {
+  font: inherit;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--rule-strong);
+  border-radius: 5px;
+  padding: .15rem .5rem;
+  cursor: pointer;
+}
+button.copy:hover { color: var(--fg); border-color: var(--fg-soft); }
+
+figure.image img { display: block; max-width: 100%; height: auto; border-radius: 10px; }
+figure.image figcaption {
+  font-family: var(--font-ui);
+  font-size: .82rem;
+  color: var(--muted);
+  margin-top: .5rem;
+}
+
+figure.video { margin: 1.6rem 0; border-radius: 10px; }
+/* ⛔ Capped so a video cannot dominate the reading column — and `70vh` is why
+   `video-player.css` has to undo it in fullscreen, where `vh` resolves against
+   the whole screen and would leave a black band across the bottom third. */
+figure.video video {
+  width: 100%;
+  height: auto;
+  max-height: 70vh;
+  display: block;
+  border-radius: 10px;
+}
+
+/* --- tables ------------------------------------------------------------ */
+
+/* ⛔ The wrapper is not decoration. A table wider than the column must scroll
+   inside its own box; without this the page itself scrolls sideways and every
+   paragraph goes with it. */
+.scroll { overflow-x: auto; margin: 0 0 1.6rem; }
+table { border-collapse: collapse; width: 100%; font-size: .9rem; }
+th, td {
+  border: 1px solid var(--rule);
+  padding: .45rem .6rem;
+  text-align: left;
+  vertical-align: top;
+}
+th { background: var(--surface); font-family: var(--font-ui); font-size: .82rem; }
+
+/* --- what the reader asked for ----------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
+}
