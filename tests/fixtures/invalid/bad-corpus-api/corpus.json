@@ -10,5 +10,11 @@
   ],
   "exercises": false,
   "placement": "tree",
+  "content": {
+    "include": [
+      "*.md"
+    ],
+    "exclude": []
+  },
   "permitted_edits": []
 }
