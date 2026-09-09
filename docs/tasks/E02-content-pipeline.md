@@ -92,9 +92,23 @@ is exactly the loss it exists to prevent.
 This is the single most important dependency of the Java adapter (E07): it is
 why ingestion there is wiring rather than parser work.
 
+⭐ **Port from HEAD, not from the snapshot this project was planned against**
+(spec §8). A dozen parser defects were fixed upstream after the freeze —
+indented fences, lazy continuations, nested list items, borderless tables, `1)`
+as an ordered marker, display maths as a block — and they are free if you port
+current source, re-derived at full cost if you port the version quoted here.
+⚠️ One of them discharges part of C3: `<details>`/`<summary>` is handled as a
+**named shape, never a general HTML stripper** — the tags are markup and are
+dropped, the summary text is content the reader clicks and is kept as a
+paragraph, and an unknown tag on its own line stays prose, because a lesson
+teaching HTML must keep it.
+
 **Acceptance.** CodeSignal's existing Markdown tests pass unchanged. Parses all
 166 Java sub-READMEs with zero errors — **or** names every file and construct
-that fails, which becomes JS-03's input rather than a silent loss (R6).
+that fails, which becomes JS-03's input rather than a silent loss (R6). **And no
+unit yields fewer blocks than the source's independently-counted structure
+implies** — a raise is not the only way this parser can lose material, and SF-25
+turns that count into a gate.
 
 ---
 
@@ -112,13 +126,33 @@ first, then assert, **at more than one layer**. The inner gate is not
 redundancy — a match there means an upstream stage failed, and that is
 information worth surfacing rather than quietly absorbing.
 
+⛔ **But both layers ride the same walker and read the same decoded strings.** A
+gate that reads a *serialised* form is not a second check on the first — it is a
+check on a different document, and it invents matches the escaping created.
+CodeSignal scrubbed decoded strings and then gated the rendered JSON, where a
+newline is the two characters `\` and `n`, so a Python decorator on its own line
+serialised as `...\n@router.get(...)` — and `n@router.get` is email-shaped.
+**Three clean lessons were refused.** ⚠️ Teaching the scrubber that shape would
+be far worse: scrubbing a rendered payload rewrites the material's own source
+into a placeholder.
+
+⚠️ **A false positive is a failure of the same class as a leak.** The gate
+refuses rather than rewrites (R7), so a shape it wrongly matches does not
+degrade the output — it stops the corpus, and the diagnosis is expensive because
+the refused string looks exactly like a leak. For an unknown second source, whose
+material may legitimately contain anything, this is the more likely direction of
+failure.
+
 Build output is a live hazard: paths contain home directories, so every line a
 process emits passes the gate before it reaches a stream (E05).
 
 **Acceptance.** An absolute home path is refused at the archive boundary.
 Build output containing one is scrubbed before it reaches a stream. No
 generated file, log or report in the entire v1 output contains personal data —
-asserted by a repository-wide check, not by inspection.
+asserted by a repository-wide check, not by inspection. **Real material
+containing a construct that only resembles personal data after escaping is not
+refused** — with the measured case as a fixture. **Every gate in the framework
+reads the decoded strings, never a rendered form** — asserted.
 
 ---
 

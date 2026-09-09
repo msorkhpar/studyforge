@@ -25,6 +25,18 @@ it.
 speech model may not emit identical bytes for identical input. Audio is instead
 **content-addressed and cached**. R10 still applies in full to everything else.
 
+⭐ **This epic depends on nothing in the framework and can start at M0**, like
+E12. It was scheduled behind milestones it does not need.
+
+⭐ **This service publishes a machine-readable consuming contract too** —
+`consuming.json`, the same obligation TC-05 carries and for the same reason
+(R19): image tag, ports, GPU-profile requirements and their opt-in flag,
+environment, healthcheck, and the voices available. `SK-07` renders a corpus's
+narration deployment from it, and ⛔ **a consumer never reads this repository's
+Dockerfile or compose file** to work out how to run it. It belongs to whichever
+task lands the profiles (NS-03) and the voice catalogue (NS-04); both must
+contribute their half.
+
 ---
 
 ### NS-01 — Extract the service into its own repository

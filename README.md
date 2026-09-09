@@ -24,18 +24,21 @@ its destination.
 
 | Read | For |
 |---|---|
-| [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R18** that every task cites |
-| [`docs/tasks/README.md`](docs/tasks/README.md) | **75 tasks, 13 epics, 8 milestones** — the index, ordering and critical path |
+| [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R19** that every task cites |
+| [`docs/tasks/README.md`](docs/tasks/README.md) | **80 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
 | [`docs/conventions/`](docs/conventions/) | Module structure, graphify usage, the agent working agreement |
 | [`docs/tasks/v2-backlog.md`](docs/tasks/v2-backlog.md) | Deliberately unplanned future work |
 
-**Nothing has been implemented.** The first work is milestone **M0** — six
-parallel tasks (`FND-01`…`FND-05`, `EX-00`). Everything else depends on it.
+**Nothing has been implemented.** The first work is milestone **M0** —
+`FND-01`…`FND-05`, `TC-00` and `TC-01` in parallel, then `EX-00`. Everything
+else depends on it.
 
 ⛔ **`EX-00` is a spike that gates an entire epic.** It measures whether the
 Java exercise strategy yields anything usable, for the cost of one agent-day,
 before E08 is built. If it comes back negative, that is a successful spike and
-E08 changes shape. Run it early.
+E08 changes shape. Run it early. ⚠️ **It needs `TC-00`'s pinned image** — its
+deliverable is a wall-clock measurement that decides the shape of E08, and one
+taken on whatever JDK the host happens to have is not reproducible (R15).
 
 ## The workspace
 
@@ -63,14 +66,18 @@ only become a product at the end.
 
 | | | Tasks |
 |---|---|---|
-| **M0** | Foundations; exercise feasibility known | 6 |
-| **M1** | One page renders | 14 |
-| **M2** | **All 166 Java units readable offline** — first genuinely useful state | 12 |
-| **M3** | Served, with an API and progress | 4 |
+| **M0** | Foundations; exercise feasibility known | 8 |
+| **M1** | One page renders | 18 |
+| **M2** | **All 166 Java units readable offline** — first genuinely useful state | 19 |
+| **M3** | Served, with an API and a pass record | 5 |
 | **M4** | Narrated | 10 |
-| **M5** | Runs code | 12 |
+| **M5** | Runs code | 6 |
 | **M6** | Real practices with proven graders | 5 |
-| **M7** | Built by the skills; accepted | 12 |
+| **M7** | Built by the skills; accepted | 8 |
+| **M8** | **A second, unnamed source converted by the skills alone** | 1 |
+
+⭐ **M8 is the only milestone that tests the claim this project makes.**
+Everything before it is satisfied by a framework with exactly one consumer.
 
 ## Two open items carried into implementation
 

@@ -22,16 +22,46 @@ unfamiliar material (SK-01). Every other skill is source-agnostic and operates
 on contracts. If a second skill starts needing to understand a source, the seam
 has been drawn wrong.
 
-**Why these come late but are not an afterthought.** They are thin wrappers
-over entry points that already work — which is only possible because the
-pipeline was built with those entry points in mind. Building them earlier would
-mean wrapping things that do not exist; building them without this constraint
-in mind from wave one would mean discovering the entry points are unusable.
+**⚠️ These do not all come late, and the original plan was wrong to say so.**
+Every skill was scheduled at M7 — after the Java corpus had been built by hand
+across M2–M6 — which made acceptance item 11 (*"the corpus was produced by the
+skills"*) not merely unsatisfiable but **unfalsifiable**: a claim about history
+that nothing recorded, about a corpus built before any skill existed.
+
+⛔ **A skill precedes the artifact it produces, or it is a retrospective**
+(spec §9). A skill written afterwards has been validated against exactly one
+source — the one it was reverse-engineered from — and its first genuine test is
+the second source, which is precisely where it must not fail.
+
+So the epic splits in two:
+
+| | Skills | Milestone | Why |
+|---|---|---|---|
+| **Producing** | SK-01, SK-02, SK-07, SK-05 | **M1–M2** | E07 and E09 are their **first output**, not their input |
+| **Wrapping** | SK-03, SK-04, SK-06 | M7 | genuinely thin wrappers over entry points that must exist first |
+
+⚠️ **The cost of the front half is real and is accepted.** SK-02 at M2 is
+written before anybody knows what a second adapter looks like. The answer is
+that it starts deliberately minimal and grows — scaffolding a package layout, a
+test tree and an audit command, leaving the source-specific reading to be filled
+in, is buildable at M2 and is already exactly what its definition asks for. The
+alternative is worse: a corpus built by hand and skills written afterwards to
+claim they produced it.
+
+⚠️ **The back half's original reasoning still stands** for SK-03, SK-04 and
+SK-06: they are thin wrappers over entry points that already work, which is only
+possible because the pipeline was built with those entry points in mind.
 
 ---
 
 ### SK-01 — Source reconnaissance
-**Milestone** M7 · **Depends on** SF-25, JS-02 · **Team** pair
+**Milestone** **M1** · **Depends on** SF-02 · **Team** pair
+
+⚠️ **Was M7, depending on JS-02 — that dependency was the circularity.** This
+skill's job is to propose a manifest for material nobody has read; taking the
+Java curriculum parser as an input meant it could only ever propose the answer
+somebody had already written. It now needs the manifest contract and nothing
+else.
 **Owns** the reconnaissance skill
 **Context** ~45k — spec §4, §9; SF-25 output; E07 as the worked example
 
@@ -67,7 +97,11 @@ uncertainty appears in the report rather than as a silent guess.
 ---
 
 ### SK-02 — Adapter authoring
-**Milestone** M7 · **Depends on** SK-01, JS-05 · **Team** pair
+**Milestone** **M2** · **Depends on** SK-01, SF-25 · **Team** pair
+
+⚠️ **Was M7, depending on JS-05.** Reversed: **E07's adapter is this skill's
+first output.** Its dependency is `validate` — the definition of done it
+scaffolds against — not the adapter it was previously copied from.
 **Owns** the adapter-authoring skill
 **Context** ~40k — spec §6; E07 as the reference adapter; SF-25 output
 
@@ -82,8 +116,75 @@ part is genuinely material-specific and pretending otherwise would produce
 plausible code that reads the wrong thing.
 
 **Acceptance.** A scaffolded adapter's tests run and fail informatively before
-any source reading is written. Following the skill on a new source reaches a
+any source reading is written. **E07's adapter package was produced by this
+skill** — the scaffolding commit precedes the source-reading commits, which git
+can check. Following the skill on a source it has never seen reaches a
 `validate`-clean archive. The generated structure honours R11's size ceiling.
+
+---
+
+### SK-07 — Corpus onboarding ⛔ THE SECOND SOURCE'S WHOLE EXPERIENCE
+**Milestone** **M2** · **Depends on** SK-02, SF-03, TC-05, SF-02 · **Team** team
+**Owns** the onboarding skill
+**Context** ~55k — spec R19, §5's placement dry-run, §9; TC-05 and NS consuming contracts
+
+**Definition.** R19's realisation, and the reader-facing answer to *"what does it
+cost to point this at a new repository?"* It takes a repository from nothing to
+a serving study site, and ⭐ **the one manual step is: add the framework as a
+submodule, run this skill.**
+
+⛔ **This task exists because the plan had the same hole `SF-28` already found
+once and did not finish closing.** SF-28's own note says orchestration living in
+the consumer repository *"breaks R1, R2 and R16 simultaneously"* — and then
+`OPS-01` (the toolchain build), `OPS-03` (the compose file), `OPS-05` (the
+guarantee test) and `OPS-06` (the reader documentation) were all left
+hand-authored, per corpus. For a second source, every one of them is retyped,
+which would make the extensibility exercise largely a test of typing speed.
+
+**What it generates in a target repository.**
+
+1. `corpus.json` — promoted from SK-01's draft, including `permitted_edits` (R3).
+2. The adapter package, its test tree and its audit command — SK-02's scaffold, wired in.
+3. **Ignore rules** — new ignore files written *inside* generated directories. ⛔ Never an edit to the repository's root one (R3, and E07 already rules this for Java).
+4. **The compose file** — rendered from `TC/consuming.json` and the narration service's equivalent. ⛔ Never from reading a Dockerfile.
+5. **The toolchain selection and the prime project** — which languages, which pinned tag, one *real* minimal source and test per language. ⚠️ An empty prime primes nothing while appearing to succeed.
+6. **The build entry point** — corpus configuration over SF-28's CLI.
+7. **The non-destructive assertion** — generated with the corpus's declared `permitted_edits` baked in, so it is not a hand-written per-corpus test.
+8. **Reader documentation** — from the corpus's *actual* state: how many units have narration, how many have exercises, what needs a container and what does not.
+9. **The framework pin and the skill stubs** (spec §9) — thin pointers carrying the pinned version, with a check that fails when a stub drifts from its pin.
+10. **An uninstall** — the reverse of every edit it made.
+
+### Customisation is declared, never hand-edited
+
+⚠️ **This is the ruling that decides whether the framework is usable by many
+repositories or merely survivable by one.** "Everything is generated" and
+"every corpus is different" have to both be true, and there is exactly one way
+to get both:
+
+- ⛔ **A hand-edit to a generated artifact is a finding against this skill**, not
+  a fix. It is silently reverted by the next run, and a tool that eats your
+  changes is a tool nobody runs twice.
+- ⭐ **Customisation enters as data in the manifest** — placement profile, level
+  labels, variants, voice, toolchains, permitted edits, which units are in and
+  out. If a corpus needs something the manifest cannot say, **the manifest is
+  missing a field** and that is the finding.
+- ⭐ **And there is one declared escape hatch, because there always has to be
+  one:** a corpus may keep hand-authored files that this skill **never
+  generates and never overwrites**, composed with the generated ones rather than
+  replacing them — the compose-override shape. They are named in the manifest,
+  so what is hand-held is *visible* rather than discovered when a regeneration
+  destroys it. ⛔ An override that shadows a generated file entirely is a
+  finding: it means the generator could not express something, and hiding that
+  behind an override is how a framework acquires a consumer it cannot serve.
+
+**Acceptance.** A repository goes from nothing to a serving site with the
+submodule added and one command run. Afterwards `git status` shows only
+additions plus the declared `permitted_edits`. **Re-running changes nothing.**
+The uninstall returns the repository to its prior state, asserted by diff.
+`OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are **produced by this
+skill** for the Java corpus, not hand-written — asserted by regenerating them
+and diffing. Every artifact it produces is regenerable, and a hand-edit to one
+is reported as a finding rather than silently kept or silently lost.
 
 ---
 
@@ -131,7 +232,10 @@ bypassed by configuration.
 ---
 
 ### SK-05 — Authoring reference
-**Milestone** M7 · **Depends on** SK-02 · **Team** solo
+**Milestone** **M2** · **Depends on** SK-02 · **Team** solo
+
+⚠️ **Was M7.** Moved with the skills that point at it: writing the reference
+last means writing it *from* the code rather than the code from it.
 **Owns** `docs/authoring/`
 **Context** ~35k — spec §4–§7, E07 as the worked example
 

@@ -47,8 +47,22 @@ repository, not assumed:
 
 ---
 
+⚠️ **This epic is SK-02's and SK-07's first output, not their input** (spec §9,
+E11). The adapter package, its test tree and its audit command are **scaffolded
+by the skills** before any source reading is written here — reversing the
+original plan, where these tasks came first and the skills were reverse-
+engineered from them at M7. What remains genuinely this epic's own work is the
+part that is irreducibly source-specific: reading Java's curriculum, its lessons
+and its class pairings.
+
+⭐ **Anything in this epic that a second source would also have to write is a
+finding against a skill** (R19), not work to be repeated. Record it; do not
+absorb it.
+
+---
+
 ### JS-01 — Corpus manifest and placement
-**Milestone** M2 · **Depends on** SF-02, SF-03 · **Team** solo
+**Milestone** M2 · **Depends on** SF-02, SF-03, SK-07 · **Team** solo
 **Owns** `JS/ingest/corpus.py`, `JS/corpus.json`
 **Context** ~25k — spec §4–§5, `JS/README.md` curriculum section
 
@@ -57,11 +71,12 @@ repository, not assumed:
 placement. Fixes the artifact naming scheme for this corpus.
 
 ⛔ **Ignore rules must NOT edit the repository's existing root `.gitignore`.**
-It is a pre-existing 110-line file, and R3 permits exactly one change to one
-pre-existing file — the `pom.xml` module line (EX-03). `OPS-05` would fail on
-an otherwise-correct build. Generated audio and discovery caches are ignored by
-**new** `.gitignore` files written *inside the generated directories
-themselves*, which are new files and therefore R3-clean.
+It is a pre-existing 110-line file, and R3 forbids editing a root ignore file
+outright — no declaration permits it. Generated audio and discovery caches are
+ignored by **new** `.gitignore` files written *inside the generated directories
+themselves*, which are new files and therefore R3-clean. ⭐ This ruling has since
+been generalised: it is R3's second forbidden category, and SK-07 applies it to
+every corpus rather than this one remembering it.
 
 This is a small thing that matters: `OPS-05` is the one task whose entire value
 is that it cannot be relaxed, and this is exactly the pressure that would relax
@@ -181,10 +196,25 @@ method-selection signal is exposed for EX-01.
 **Definition.** Writes the manifest, 45 container maps and 166 archive
 documents. **This is the whole of the adapter's obligation** (R2).
 
+⭐ **Records `origin` for every container and every unit** (spec §6): the
+relative path of the README the material was read from. Verbatim, never derived
+from a title. For this corpus R3 guarantees that file is never touched, so the
+recorded path is a permanent working link from every generated page back into
+the reader's own material — and it is the same field a source fetched from
+somewhere else would use for its upstream address.
+
+⚠️ **Stage, validate, then move** (spec §6). A container map that fails its own
+validation is never left at the path `validate` and SF-10 will read: one
+unreadable map halts every consumer that walks the tree, and the failure is then
+reported at the reader rather than at the writer.
+
 **Acceptance.** `studyforge validate` passes on the emitted archive. Re-running
-produces identical bytes (R10). **No pre-existing file is modified** (R3).
-Declared practice counts in container maps match what E08 will later emit, or
-are recorded as zero until it does.
+produces identical bytes apart from `ingested` (R10). **No pre-existing file is
+modified** beyond the manifest's declared `permitted_edits` (R3). Every unit
+carries an `origin` that resolves to a file that exists. **A deliberately
+corrupted emission leaves no file at the target path.** Declared practice counts
+in container maps match what E08 will later emit, or are recorded as zero until
+it does.
 
 ---
 

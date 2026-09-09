@@ -13,6 +13,22 @@ about the last one.
 here fails loudly and names what failed (R6); none of them may be taught to
 ignore a case in order to pass.
 
+**A gate and a tracker are two commands, and neither replaces the other.** A
+**gate** exits non-zero while anything is wrong, and its denominator is what was
+built. A **tracker** always exits 0, and its denominator is the whole corpus —
+it answers *"how much of this material exists at all?"*, which is a different
+question and a useful one. ⛔ A tracker never restates a gate's verdicts, and ⛔
+a scoped tracker prints but does not overwrite the full report, because a
+filtered view written over a complete one lies about everything it did not look
+at. CodeSignal needed both and confused them first.
+
+⚠️ **Narration counts in the tracker.** A build that reports success while units
+have pages and no audio is a build reporting on half its own output — CodeSignal
+finished a wave with 80 silent units and called it complete. This is *not* the
+same as making narration mandatory: an absent narration service stays a known
+partial state (R8, SK-03). It is only that the partial state must be **named**,
+never merely permitted.
+
 ---
 
 ### SF-25 — `studyforge validate`
@@ -34,10 +50,43 @@ This is the single most leverage-per-line task in the project. It is what lets
 an adapter be assigned to an agent working alone with no reviewer: the agent
 does not need to know whether its output is right, because the tool says so.
 
+### ⛔ A completeness check counts something the parser did not produce
+
+⚠️ **The checks above cannot answer the question that matters most for a source
+nobody has read before.** A digest computed from the blocks and compared against
+the blocks answers *"was this corrupted after we wrote it?"* It cannot answer
+*"did the adapter read everything the source contained?"* — the two readings
+come from the same place, so a construct the parser never recognised is absent
+from both, the counts agree, and nothing raises.
+
+CodeSignal met exactly this shape: a guard compared section containers against
+regex-derived pairs from the same regex family, a section written in a shape
+neither recognised was missing from both, `5 == 5`, and five lessons lost a
+section in one wave with nothing failing.
+
+⚠️ **`studyforge` is more exposed than CodeSignal was, not less.** CodeSignal has
+two independent readings of every lesson and refuses a disagreement between
+them. An adapter reading Markdown files directly has **one**. And C3 already
+establishes the realistic failure: raw HTML in real Markdown yields a **short,
+well-formed, entirely plausible unit** rather than an error.
+
+So: **for each unit, count a structural feature directly in the raw source — for
+Markdown, heading lines — and compare it against the archive's heading blocks.**
+⛔ Two readings from the same parser are not two readings. A check that can only
+fail when the parser already failed loudly is not a check.
+
+⭐ **This is what makes the second source safe.** `validate` is the only signal
+an integrator has (R2); if it cannot catch a short read, they ship silently
+lossy ingestion, it passes green, and the exercise reports success having lost
+material. That is the worst outcome available to this project.
+
 **Acceptance.** Passes on both FND-04 valid fixtures. Fails, with the specific
 message, on each invalid fixture: unknown version, address mismatch, digest
-mismatch, personal data present, ordinal gap, count mismatch. Exit codes are
-usable from a script. Output names every failure, not just the first.
+mismatch, personal data present, ordinal gap, count mismatch. **Fails on a
+fixture whose source contains a construct the parser silently skipped, where
+every other check passes** — this fixture is built deliberately and is the one
+that proves the completeness check works. Exit codes are usable from a script.
+Output names every failure, not just the first.
 
 ---
 
@@ -64,10 +113,23 @@ decay silently:
 
 Byte-for-byte comparison is what makes R10 enforceable instead of aspirational.
 
+⚠️ **But reproducibility is not correctness, and a golden file pins a bug as
+firmly as a feature.** CodeSignal wrote control bytes into a generated
+stylesheet — a CSS escape in a non-raw Python string, read as an octal escape —
+and the generated page reproduced byte-for-byte every time, because the
+corruption was carried faithfully. Every disclosure widget drew a tofu box for
+days; the suite was green and only a reader saw it. Byte-for-byte equality is a
+statement about **stability**, not about being right, which is why QA-03 exists
+and why this task must not be mistaken for it.
+
+One cheap check that would have caught that class outright: ⛔ **no control byte
+but tab, newline and carriage return appears in any generated asset or page.**
+
 **Acceptance.** Golden output compares byte-for-byte for both fixtures. Each
 isolation assertion **fails when deliberately violated** — verified, not
-assumed. The suite runs with no network and no Docker. A failure names the
-module, not the subsystem (R12).
+assumed. No generated byte stream contains a control character outside tab,
+newline and carriage return. The suite runs with no network and no Docker. A
+failure names the module, not the subsystem (R12).
 
 ---
 
@@ -115,6 +177,49 @@ visual, and this task should say so rather than pretending automation covers it.
 keyboard traversal of a unit page, including the practice panel. The index
 works with JavaScript disabled. Visual checks are recorded as visual checks,
 with what was looked at.
+
+---
+
+### QA-04 — The second source ⭐ THE ONLY TEST OF THE CLAIM
+**Milestone** **M8** · **Depends on** QA-01, SK-07 · **Team** team
+**Owns** the findings log
+**Context** ~40k — spec §12, R19
+
+**Definition.** Everything in spec §11 is satisfied by a framework with exactly
+one consumer. This task is the only one that tests the claim the project
+actually makes.
+
+A second repository — **real, chosen at the time, and deliberately not named in
+these documents** — is converted into a study site by the skills alone:
+reconnaissance, adapter authoring, corpus onboarding. ⚠️ The anonymity is the
+control: a named target invites the framework to be shaped around it, which is
+R1's entire subject.
+
+⛔ **Whoever runs it does not modify `studyforge`.** Anything the framework
+cannot do is a **finding**, not a patch. The framework's submodule pin does not
+move; where it must, every commit it moves across is listed against the finding
+that forced it. ⭐ A test of extensibility run by somebody who can edit the thing
+being tested measures nothing.
+
+⚠️ **What it must not be judged against.** The Java corpus ships 168 test classes
+paired 1:1 with implementations — an extraordinary property, and the reason §7
+says that repo *inverts* CodeSignal's problem. An arbitrary source ships no
+graders. ⛔ **A source that yields zero exercises is a pass**, not a shortfall
+(§7's three states, C5). This is written down here so it is not re-litigated
+under deadline.
+
+**Acceptance.** The corpus reaches the Java corpus's floor — readable over
+`file://`, narrated, navigable, read marks recorded — minus what the source
+genuinely lacks. The framework pin did not move, or every commit is accounted
+for. **Everything done by hand is named as a defect in the skill that should
+have done it.**
+
+⭐ **The deliverable is the findings log, not the site.** An exercise that
+produces a working site and reports no findings has not been conducted honestly:
+these skills will have seen exactly one source, and the odds an unknown
+repository fits it perfectly are not good. The finding count is the **yield**,
+in the same sense EX-00 already uses correctly — a negative result is a
+successful experiment.
 
 ---
 

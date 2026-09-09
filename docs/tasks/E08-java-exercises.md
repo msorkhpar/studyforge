@@ -60,9 +60,18 @@ this design exists to prevent.
 ---
 
 ### EX-00 — Exercise feasibility spike ⛔ BLOCKS ALL OF E08
-**Milestone** **M0** · **Depends on** — · **Team** pair
+**Milestone** **M0** · **Depends on** TC-00 · **Team** pair
 **Owns** a findings report; **no shipped code**
 **Context** ~40k — spec §7, a hand-picked sample of `JS` classes
+
+⚠️ **This task could not run as originally scheduled, and the fix is TC-00.**
+It was written with no dependencies at M0, while the toolchain image is M5 — so
+it would have run Maven on whatever JDK the host happened to have, which R15
+exists to forbid. That is not a scheduling detail: this task's headline number
+is **wall-clock per gate run**, and the whole shape of E08 is decided from it. A
+timing measured on an unpinned host toolchain is not reproducible and cannot
+carry that weight. TC-00 supplies a minimal pinned JDK + Maven image at M0 for
+exactly this; the full toolchain image (TC-01…TC-06) still lands at M5.
 
 **Definition.** This epic's entire value rests on an unmeasured assumption, and
 until EX-00 runs, nobody knows whether E08 yields a study product or a pile of
@@ -72,11 +81,13 @@ is explicitly throwaway.**
 
 Three parts:
 
-**(a) Establish the baseline.** Run `mvn test` on the untouched repository and
-record which of the 168 test classes are green **today**. Gate 2 is "the test
-passes on the original" — if a class is already red on this JDK, its pairs
-silently yield nothing and it will read as a blanking bug for days. This is
-step zero and nothing in E08 is meaningful without it.
+**(a) Establish the baseline.** Run `mvn test` on the untouched repository
+**inside TC-00's image** and record which of the 168 test classes are green
+**today**. Gate 2 is "the test passes on the original" — if a class is already
+red on the pinned JDK, its pairs silently yield nothing and it will read as a
+blanking bug for days. This is step zero and nothing in E08 is meaningful
+without it. ⛔ **Record the image tag in the report**: a baseline that does not
+say which toolchain produced it cannot be compared against anything later.
 
 **(b) Hand-blank and hand-gate ten pairs** across the shape spectrum, chosen
 deliberately, not conveniently: a clean pure-function class
@@ -98,10 +109,10 @@ teaching content *is* the declaration — a record's accessors, `equals` and
 `28-enhanced-enums` are expected to yield nothing. That is honest (spec §7),
 but it must be predicted here, not mistaken for a defect in M6.
 
-**Acceptance.** A green/red baseline for all 168 test classes is recorded. Ten
-pairs are hand-gated with results. The report states an expected yield range
-with its reasoning, per-run cost, and whether the per-method gate is
-affordable. **If yield is implausibly low, this task's output is a
+**Acceptance.** A green/red baseline for all 168 test classes is recorded,
+against a **named pinned image tag**. Ten pairs are hand-gated with results. The
+report states an expected yield range with its reasoning, per-run cost, and
+whether the per-method gate is affordable. **If yield is implausibly low, this task's output is a
 recommendation to change or drop the approach — and that is a successful
 spike, not a failed one.**
 

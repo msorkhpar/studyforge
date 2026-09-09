@@ -53,9 +53,22 @@ for a declared depth is rejected. No filesystem import in the package.
 
 **Definition.** `corpus.json` — the file that makes a directory a source.
 Owns `corpus_api`, `source`, `title`, `levels`, `variants`, `exercises`,
-`placement`. Refuses an unknown version rather than migrating it at read time
-(R9): a migration that runs when something merely wanted to render a page
-rewrites the record of what was ingested.
+`placement`, `permitted_edits`. Refuses an unknown version rather than migrating
+it at read time (R9): a migration that runs when something merely wanted to
+render a page rewrites the record of what was ingested.
+
+⭐ **This file is where a corpus's customisation lives** (SK-07). Everything that
+differs between two sources and is not the source's own content is a field here
+— which is what makes "every artifact is generated" and "every corpus is
+different" both true at once. ⛔ If a corpus needs something this file cannot
+express, **the manifest is missing a field**, and that is the finding; it is
+never a hand-edit to generated output.
+
+`permitted_edits` is R3's declaration: the enumerated set of existing files this
+corpus may add to, each with `path`, `kind`, `anchor`, `content` and `why`. ⚠️
+**An empty list is the normal case** and the one a purely additive source keeps.
+The framework's non-destructive check (`OPS-05`) reads this; it never names a
+corpus's exception itself.
 
 `levels` fixes two things at once — the address depth, and the **display
 labels** breadcrumbs and the index use, so the Java site reads
@@ -64,10 +77,18 @@ data alone. `variants` replaces CodeSignal's closed `LANGUAGES` tuple, which is
 the change that severs the framework's last dependency on `tools/catalog/`
 (R1).
 
+⚠️ **`variants` is a filing and presentation key and nothing more** (spec §4). It
+says how the archive is partitioned and what a variant selector offers. ⛔ It
+never implies anything is buildable, runnable or gradable — that is per exercise
+— and it is not a code fence's language, which is a block attribute. CodeSignal
+blocked eight courses because one list answered both questions at once.
+
 **Acceptance.** Accepts manifests for all four shapes in spec §1, including
 1-level SPARQL. Rejects empty `levels`, empty `variants`, unknown `corpus_api`,
-unknown `placement`. No framework module imports anything source-specific —
-asserted, not assumed.
+unknown `placement`, and a `permitted_edits` entry that names a forbidden target
+(R3). Accepts an absent or empty `permitted_edits`. **No framework module
+derives runnability from a variant name** — asserted. No framework module
+imports anything source-specific — asserted, not assumed.
 
 ---
 
@@ -105,6 +126,43 @@ produce the same artifact name. A third profile can be added without changing
 any consumer.
 
 **Out of scope.** Reading or scanning files — that is SF-04.
+
+---
+
+### SF-31 — Placement dry-run
+**Milestone** **M2** · **Depends on** SF-03, SF-02 · **Team** solo
+**Owns** `studyforge/cli/plan.py`
+**Context** ~20k — spec §5, SF-03 output
+
+**Definition.** `studyforge plan <repo>` — what *will* happen to a repository,
+emitted from the manifest alone, before anything is generated: every path that
+will be created, every existing file that will be edited, and the declared
+reason for each.
+
+⛔ **This task exists because one of the three seams between the framework and a
+consumer had no contract at all.** The archive seam has `validate`; the runtime
+seam has the components' consuming contracts; **placement had nothing** — a
+consumer had to write ignore rules, declare `permitted_edits` (R3) and reason
+about what would land in their repository, with no way to ask. SF-03 already
+computes every bit of it and nothing exposed it.
+
+Three consumers, all of which need it before a build runs:
+
+- `SK-07` renders the ignore rules and the `permitted_edits` declaration from it.
+- `OPS-05` asserts against it — what was planned is what happened.
+- **A person** reads it before letting a tool loose in a repository they care
+  about. ⭐ That is not a secondary use: an onboarding somebody cannot preview is
+  one they are right not to run.
+
+⚠️ **It reads the manifest, never the filesystem.** A dry-run that scans first
+is reporting what is there, not what is coming, and the two differ precisely in
+the case that matters — the first run.
+
+**Acceptance.** Output for both FND-04 fixtures matches what a real build then
+creates, path for path — asserted by running both and diffing. Names the
+declared edits with their reasons. Runs on a repository with no generated output
+present. Adding a `permitted_edits` entry changes the plan and nothing else.
+Reads no file inside the source material.
 
 ---
 

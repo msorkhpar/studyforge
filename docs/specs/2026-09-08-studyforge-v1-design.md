@@ -1,9 +1,21 @@
 # studyforge v1 — design
 
-**Date:** 2026-09-08
+**Date:** 2026-09-08 · **revised 2026-09-09**
 **Status:** approved for planning
 **Scope:** the source-agnostic LMS framework, plus its first consumer — the
 `Claude-senior-java-engineer` tutorial repository.
+
+⚠️ **The 2026-09-09 revision** re-read this design against 32 hours of further
+CodeSignal work, and against a decision taken since: after v1 is accepted, a
+second, unnamed repository is converted by the skills alone, as the test that
+this is a framework rather than one pipeline with a good vocabulary (§12).
+That lens changed the priorities. What it added: R3 generalised from one
+hardcoded exception to a declared set (§4, R3); R19 and the corpus-onboarding
+skill (§9); the placement dry-run (§5); provenance in the archive (§6); progress
+as two records (§8.5); clip filenames carrying a digest (§8.2); and the ruling
+that a skill precedes the artifact it produces (§9). Findings that were
+CodeSignal's operational detail rather than this framework's concern were
+deliberately **not** carried; they are in `docs/tasks/v2-backlog.md`.
 
 ---
 
@@ -98,11 +110,26 @@ obligation is to write a valid archive. It gets no callbacks and no framework
 API. This is what lets adapters be built in any language, tested in isolation,
 and assigned to different agents in parallel.
 
-**R3 — Generation is non-destructive.** No existing file in a source repository
-is moved, renamed, or rewritten. The LMS *adds* artifacts alongside the
-material. The single stated exception for the Java repo is one additive
-`<module>practice</module>` line in the root `pom.xml`; `OPS-05` asserts
-nothing else changed.
+**R3 — Generation is non-destructive, and every exception is declared,
+additive and asserted.** No existing file in a source repository is moved,
+renamed or deleted. The framework *adds* artifacts alongside the material.
+
+⛔ **An edit to an existing file is permitted only where the corpus manifest
+declares it** — `permitted_edits`, naming the file, the exact insertion and why
+(§4). An undeclared edit is a build failure. A declared edit that proves not to
+be additive — it removes or rewrites an existing line — is **also** a build
+failure, so a declaration cannot be used to smuggle a rewrite past the rule.
+⛔ **The check reads the declaration**; it never hardcodes one corpus's
+exception. The Java repo's additive `<module>practice</module>` line in the
+root `pom.xml` is one entry in that list, not a special case in the framework.
+
+⛔ **Three edits are never permitted, however declared:** the repository's root
+ignore file — write new ignore files *inside* generated directories instead;
+any version-control configuration; and any file the material's own reader
+depends on as content.
+
+⭐ **The reverse of every declared edit is recorded.** An onboarding that cannot
+be undone is one nobody will run against a repository they care about.
 
 **R4 — Location is data; identity is embedded.** The framework never infers
 what a file *is* from where it sits. Every generated artifact carries its own
@@ -141,15 +168,28 @@ never a prerequisite for reading.
 migrated in place at read time.
 
 **R10 — Generated output is byte-for-byte reproducible.** No clocks, no
-content hashes in filenames, no dependence on filesystem enumeration order.
-The same inputs produce the same bytes on any machine.
+dependence on filesystem enumeration order. The same inputs produce the same
+bytes on any machine.
+
+⚠️ **A content digest in a filename is not a violation of this rule** — it is
+deterministic, and therefore reproducible by construction. The rule that bans
+digests is narrower, and it is about *churn*: ⛔ **a shared asset linked by
+every page carries a plain name**, because a digest there renames a file and
+rewrites every page that links it whenever a colour changes, buying nothing a
+local reader wanted. An artifact linked by **one** page, regenerated in the same
+run as that page, is not in that class; §8.2 rules on it.
 
 **R11 — No file grows past the size a person can hold in their head.** Soft
 ceiling **400 lines** for a module, **600** for a test module. A unit
 approaching it becomes a **package** of focused modules with one clear purpose
-each. This is inherited debt to be paid *during* extraction, not after:
-CodeSignal's `backend.py` (2,743 lines) and `scaffold.py` (1,793) are ported as
-packages, never as files. The test is not line count but the isolation
+each. This is inherited debt to be paid *during* extraction, not after: the
+largest modules in the port surface are several times the ceiling, and they
+arrive as **packages or not at all**. ⚠️ **Every measurement of a source
+repository in this document is a dated snapshot** (§8) — a task counts its own
+port surface at start rather than inheriting a number, and *how much* of a
+source module is ported at all is its own question: the Java repo ships its
+graders (§7), so CodeSignal's grader-guessing scaffolder is largely **not**
+ported rather than ported large. The test is not line count but the isolation
 question — *can someone understand what this unit does without reading its
 internals, and can its internals change without breaking consumers?* If not,
 the boundary is wrong. Smaller units are also what makes agent work reliable:
@@ -207,6 +247,21 @@ configuration used, which is what makes R9's per-contract versioning
 reproducible *across* repositories rather than only inside them. A component is
 never vendored, copied or forked into another; it is pinned.
 
+**R19 — The consuming half of a corpus is generated, not hand-authored.** A
+source repository's obligation is the archive (R2) and the source-specific
+reading behind it. Everything else a working corpus needs — the manifest, the
+ignore rules, the compose file, the toolchain selection, the build entry point,
+the non-destructive assertion, the reader's own documentation — is produced by a
+skill, from the manifest and from the components' published consuming contracts
+(§9). ⛔ **Anything a second source would have to retype is a hole in the
+skills**, and a hand-edit to a generated artifact is a **finding against the
+skill that should have produced it**, never a fix.
+
+This is the argument `SF-28` already won for the build pipeline, applied to the
+rest of the seam: an orchestration or a deployment that lives inside one
+consumer is a framework with one consumer. ⭐ **The measure is what a second
+source costs**, not what the first one looks like when finished.
+
 ---
 
 ## 3. Architecture
@@ -260,6 +315,7 @@ studyforge/
     progress/    the reader's local record
     exercise/    workspace and trust contract
     validate/    the CLI that defines "a valid archive"
+    cli/         build, serve, plan, reconcile — the framework's entry points
     skills/      the authoring and conversion skills (§9)
   tests/         mirrors src/ package for package (R12)
   docker/        dev, test and serve images (R15)
@@ -303,13 +359,33 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
   "levels": ["section", "module"],
   "variants": ["java"],
   "exercises": true,
-  "placement": "sibling" }
+  "placement": "sibling",
+  "permitted_edits": [
+    { "path": "pom.xml",
+      "kind": "insert-line",
+      "anchor": "<modules>",
+      "content": "  <module>practice</module>",
+      "why": "Maven compiles only what sits on a source root (§7)" } ] }
 ```
 
 `levels` names the **container** levels and fixes the depth. A unit is an
 ordinal inside the deepest container. `variants` replaces CodeSignal's closed
 `LANGUAGES` tuple, removing the framework's last dependency on
 `tools/catalog/`.
+
+⚠️ **`variants` is a filing and presentation key, and nothing more.** It says
+how the archive is partitioned and what a variant selector offers the reader.
+⛔ It never implies that anything is buildable, runnable or gradable — that is
+declared per exercise (§7) — and it is **not** a code fence's language, which is
+a block's own attribute from the archive. CodeSignal blocked eight SQL courses
+for exactly this reason: one list answered both *"can this be filed here?"* and
+*"can we generate a test for it?"*, so a language with no grader could not be
+filed at all. Three questions, three answers, none of them derived from another.
+
+`permitted_edits` is R3's declaration: the complete, enumerated set of existing
+files this corpus may have added to, each with its insertion and its reason. An
+empty list is the normal case, and it is the one a purely additive source should
+be able to keep.
 
 | Source | `levels` | example address |
 |---|---|---|
@@ -377,6 +453,33 @@ Assets and audio resolve **relative to the page that references them**, so a
 unit page opened directly from `file://` works with no server and no rewriting
 (R8).
 
+⛔ **Delivery is orthogonal to placement, and an href never encodes how a file
+arrived.** A generated artifact is addressed relative to the page that
+references it, and that address is the same whether the file was generated
+locally, committed, or restored from somewhere else. Any future delivery
+mechanism moves the same bytes to the same paths. ⚠️ CodeSignal proved this in
+reverse, expensively: when 11.7 GiB of media left git for release assets, **the
+layout on disk did not move and every page still addressed a clip as plain
+`audio/<clip>.mp3`** — which is the only reason that change was a script rather
+than a re-render of 1,290 pages.
+
+### The placement dry-run
+
+A consumer cannot write its ignore rules, declare its `permitted_edits` (R3) or
+review an onboarding without knowing every path the framework will create. So
+placement is **askable before it is exercised**:
+
+```
+studyforge plan <repo>
+```
+
+emits, from the manifest alone and before anything is generated, the complete
+set of paths that will be created, the set of existing files that will be
+edited, and the declared reason for each. It is what the onboarding skill
+renders ignore rules from, what the non-destructive check asserts against, and
+what lets a person read what is about to happen to their repository before it
+happens. The placement policy already computes all of it; nothing exposed it.
+
 ---
 
 ## 6. The ingestion contract
@@ -398,10 +501,16 @@ corpus.json                                   the manifest (§4)
   "titles":  ["Concurrency", "Executors and Thread Pools"],
   "variant": "java",
   "ingested": "2026-09-08",
+  "origin": "23-executors/README.md",
   "note": "…",
   "units": [ { "n": 1, "title": "Thread pools and the Executor framework",
-               "practices": 1, "note": "…" } ] }
+               "practices": 1, "origin": "23-executors/README_5.1.md",
+               "note": "…" } ] }
 ```
+
+⭐ **`origin` is called `origin` and not `source`** because `source` is already
+the corpus's own identifier in the manifest, and two fields one word apart
+meaning different things is a defect waiting for a tired reader.
 
 One variant per container, preserving CodeSignal's invariant that removed the
 "the map promised Java and the archive has none" failure class entirely.
@@ -428,6 +537,28 @@ are archived alongside the unit and placed by the placement policy, and the
 page links them for download rather than rendering them. Distinct from media,
 which the page displays.
 
+**Provenance.** A unit may record where it came from. `origin` is written by the
+adapter, carried into the unit document **verbatim**, and rendered by the page
+and the index. It is optional, because a corpus may be its owner's own material;
+it is **not optional chrome** where it exists, because material that came from
+somebody else is credited on the page that shows it.
+
+⛔ **An address is recorded, never derived.** Composing an address from a title
+is the tempting shortcut and it is measured wrong: on CodeSignal's catalog,
+**157 of 1,290 units (12.2%) are served at a slug their title does not
+produce**, so a derivation sends one link in eight to a page that is not there —
+and a link that fails is worse than no link, because it asserts an address the
+reader then cannot find. Where two records name an address for the same unit — a
+container map and an archive document — a disagreement is a **refusal** (R6),
+never a preference: one would be linked from the page and the other from the
+index, and the reader would be sent to two different places with nothing
+failing.
+
+⭐ **For a repository-shaped source this is a feature, not a formality.** R3
+guarantees the original file is never touched, so an `origin` pointing at it is
+a permanent, working link from every generated page back into the reader's own
+material.
+
 **Re-ingest semantics.** `content_sha256` covers a unit's blocks and answers one
 question: *did the source change since we read it?* On re-ingest, a digest that
 disagrees with the source means the material has been edited upstream. The
@@ -436,6 +567,15 @@ silently overwritten, and never silently kept. Anything derived from that unit
 (pages, narration, exercises) is invalidated by the same signal. Without this,
 a corpus drifts out of date with no symptom, which is the failure `layout.py`'s
 docstring describes in a different guise.
+
+⛔ **A generator stages beside its target, validates, then moves into place.** A
+document that fails its own validation is **never** left at the path something
+else will read. Keeping a bad file "so the reading is not lost" was measured to
+cost a whole phase of CodeSignal's capture: one unreadable container map halts
+every consumer that walks the tree, and the failure is then reported at the
+reader rather than at the writer that caused it — **116 archives, 0 pages, 0
+narration**, and a broken test suite. A reading that can be taken again is not
+worth a file nothing can load.
 
 **`studyforge validate <repo>` is the definition of done** for any adapter:
 manifest parses and `corpus_api` is known; every `container.json` address
@@ -578,6 +718,16 @@ recorded here because **every one of them was measured, and none is obvious
 from the outside.** Re-deriving any of them is waste; changing one without
 knowing why it is that way is a regression.
 
+⚠️ **CodeSignal is a live repository, and every measurement of it in these
+documents is a snapshot with a date.** In the 32 hours after this spec was
+frozen it took ~55 commits and 12,568 insertions across 108 files, and three of
+the modules this project ports grew by up to 21%. Treat every line count, file
+count and percentage here as **as of 2026-09-08** and as an estimate by the time
+you read it. ⭐ **A task re-measures its own port surface at start rather than
+inheriting a number, and ports from HEAD** — fixes that landed after the freeze
+are free if you port current source and are re-derived at full cost if you port
+the snapshot.
+
 ### 8.1 The code-server toolchain image — its own repository
 
 The embedded IDE is the single most reusable asset in the project and becomes
@@ -656,13 +806,15 @@ API over HTTP**, containerised, with the engine behind an adapter.
 
 Four decisions, three of them corrections to what exists today:
 
-- **The unit of work is a batch of keyed segments, not one blob.** Today's
-  client sends one request per unit and gets one mp3 back. But narration ids
-  are positional and per-speech-unit (§8.3), and the page's highlight sync
-  needs **one clip per speech unit** — so the API takes a list of
-  `{id, text}` and returns one artifact per id plus a manifest. A batch rather
-  than a request per segment because a corpus is thousands of segments, and
-  per-request overhead is the difference between minutes and hours.
+- **The unit of work is a batch of keyed segments, not one blob.** ⚠️ An earlier
+  draft of this section said today's client sends one request per unit and gets
+  one mp3 back. **That was wrong** — it has always looped one HTTP request per
+  *speech unit*, which is why the conclusion still holds and the premise needed
+  correcting. The page's highlight sync needs **one clip per speech unit**
+  (§8.4), so the API takes a list of `{id, text}` and returns one artifact per
+  id plus a manifest. A batch rather than a request per segment because a corpus
+  is thousands of segments, and per-request overhead is the difference between
+  minutes and hours.
 - **The service never writes into a corpus.** It returns artifacts for the
   caller to fetch and place through the placement policy. A synthesis service
   that knew where a study site keeps its audio would be a second authority on
@@ -684,12 +836,56 @@ very long input and splits internally, so no client keeps stitching logic — an
 **writes are atomic**, landing in a temporary sibling and being renamed, so an
 interrupted run never leaves a truncated file that looks finished.
 
-⚠️ **Synthesised audio is the one carve-out from R10.** A speech model is not
-guaranteed to emit identical bytes for identical input, so audio is not
-byte-for-byte reproducible the way generated HTML is. It is instead
+⚠️ **Synthesised audio is the one carve-out from R10's byte-for-byte clause.** A
+speech model is not guaranteed to emit identical bytes for identical input, so
+audio is not byte-for-byte reproducible the way generated HTML is. It is instead
 **content-addressed and cached**: a segment whose text and voice parameters are
 unchanged is never re-synthesised, and the manifest records the address. R10
 continues to apply in full to every other generated artifact.
+
+### A clip's filename carries a digest of the words it says
+
+⛔ **A narration clip is named `<speech-id>-<8 hex of sha256(spoken text)>`.** It
+is minted by **one** function — the speakable contract, which already owns both
+what is said and what it is called — and both the renderer that links the clip
+and the client that places it go through it. A second minter is a page asking
+for a file the placer never wrote, with no symptom but silence.
+
+The obvious alternative was to keep a plain positional name and decide currency
+with a *check* — a sidecar manifest of content addresses, or a re-submission to
+the service, whose cache is content-addressed anyway and would decline the work.
+Both were rejected, and the reason is the failure they permit: ⛔ **a check can
+be skipped, and the skip is silent.** CodeSignal's synthesis runner decided a
+clip was current by whether the file existed. When its catalog was re-captured,
+**619 clips went on speaking the previous wording** and 442 more were orphaned
+by documents that had changed shape — the run reported *"0 synthesised"* and
+every gate was green. Nothing distinguishes a correct incremental run from that
+one by inspection.
+
+⭐ **The digest makes it structural rather than checked.** Change the spoken text
+and the name changes; the page then links a clip that is not on disk, and the
+client synthesises it. **A stale clip cannot be addressed.** It needs no
+discipline, survives a stage being run on its own, and survives a
+re-implementation.
+
+⚠️ **The speech id stays positional, and this is not a reversal of that.** The id
+is what a *structure* edit must not renumber, so that retitling a section does
+not orphan a unit's audio. The digest is what a *text* edit must change. They
+answer different questions and the filename carries both.
+
+⚠️ **This is not the shared-asset case** R10 rules hash-free. That objection is
+about a stylesheet linked by every page, where a digest means rewriting the
+whole corpus for a colour change. Here the page is already rewritten whenever
+the text changes — in the same generator run.
+
+⚠️ **The old clip stays on disk under its old digest, playable by nothing.**
+Reconciliation deletes what a unit's document no longer names, and ⛔ **only for
+the units the run actually read** — never on behalf of one it skipped.
+
+**What it costs:** a prose edit renames a file, so an incremental build writes an
+audio file it would otherwise have kept. That is one synthesis of one segment —
+the segment the author just changed — and the service's content-addressed cache
+means an unchanged segment is still never re-synthesised.
 
 ### 8.3 Where execution runs — the resolved question
 
@@ -739,9 +935,10 @@ else. Re-deriving them would be waste.
 - **Reading page** — serif reading column, shared `unit.css`/`unit.js` with
   deliberately unhashed names, browser-side Prism highlighting (never
   build-time), light/dark palette with every token defined in both themes.
-- **Narration** — positional (never content-derived) speech ids, display text
+- **Narration** — positional (never content-derived) speech **ids**, display text
   and spoken text as two renderings of one list, clip-level highlight sync,
-  audio generated and git-ignored.
+  audio generated and git-ignored. The clip **filename** adds a content digest,
+  for the reason ruled in §8.2.
 - **Video** — vendored Plyr with `loadSprite:false`; nothing may reach the
   network. Unused by the Java source, kept because the contract is generic.
 - **Table of contents** — `toc.json` (stable, reproducible) and `status.json`
@@ -752,8 +949,64 @@ else. Re-deriving them would be waste.
   cross-site requests refused.
 - **Runner** — `docker exec` into the toolchain container when up, host `bash`
   otherwise; line-by-line streaming; one exit line; every line scrubbed.
-- **Progress** — one git-ignored JSON file, read-validate-modify-write under a
-  lock, atomic replace; `first_passed_at` set once and never moved.
+- **Progress** — see below: it is two records, not one.
+
+### 8.5 Progress is two records
+
+**Two different things are being recorded, and they are established by different
+means.**
+
+A **read mark** is the reader's own assertion that they have read a unit. It
+needs no server, no grader and no origin, so under R8 it must exist without one:
+it lives in the browser's local storage, and the site says plainly that it is
+**one browser, one machine, not in the repository, and gone with site data.**
+
+A **practice pass** is a fact established by a grader run. A grader run required
+the runner, which required the server, so the record is written where the fact
+was established: the git-ignored JSON file, read-validate-modify-write under a
+lock, atomic replace, `first_passed_at` set once and never moved.
+
+⛔ **The obvious alternative — one store — fails in both directions.** Put
+everything in local storage and a pass becomes a claim by a client that the
+server cannot check, lost with site data and not worth restoring. Put everything
+server-side and R8's floor means a reader who only ever double-clicks a page has
+no record at all.
+
+⚠️ **The motivation was CodeSignal's and is temporary; the requirement is ours
+and is structural.** CodeSignal reached this because it happens to have no
+practices to submit — a state of one corpus that could change tomorrow.
+`studyforge` reaches it because **§7 admits three exercise states and two of
+them can never complete anything**, and R8 says a server is never a prerequisite
+for reading. ⭐ **It binds hardest on exactly the sources this framework exists
+to serve.** The Java repo, with 168 graders paired 1:1, is the exception; an
+arbitrary repository ships no graders at all, so every unit in it is `none` or
+`ungraded` — and a server-side-only store would record *nothing whatever* for
+the entire corpus.
+
+⛔ **A read mark is an explicit act.** Never inferred from scrolling, from the
+narration reaching the end, or from a page having been opened. Inference marks a
+unit read when somebody skims, and a record the reader cannot trust is worse
+than none.
+
+⛔ **The two are joined by the address (§4) and by nothing else.** A key shape
+that disagrees is a mark written under one name and read back under another,
+with no symptom but a badge that never lights. The state route may *report* a
+client's read mark; it may **never** treat one as a pass.
+
+⛔ **The mark carries no clock.** A timestamp is a second fact nobody asked for,
+and it turns the personal-archive merge into an ordering problem rather than a
+set union.
+
+⛔ **Local storage is touched in exactly one source file**, which defines the
+store and is shared by the unit page, the container page and the index. Two
+implementations are the key-disagreement failure above, reached by another road.
+
+⚠️ **A shared script is concatenated ahead of every file that uses it, and the
+order is asserted against the real composed bundle** — never against a test
+harness's own concatenation. CodeSignal placed its store *after* the page script
+that read it at startup; the guard skipped, the setting silently never came
+back, **the suite stayed green**, and it was found only by loading a page in a
+browser. A harness that arranges the world conveniently proves nothing.
 
 ---
 
@@ -765,8 +1018,8 @@ book, a paper collection, a repository of exercises, their own notes — and get
 this format back, then keeps it as a durable personal record they can review,
 re-run and extend.
 
-Four skills, and the division between them is the same seam as everywhere else
-(R2): one understands *a source*, the rest are source-agnostic.
+The division between them is the same seam as everywhere else (R2): one
+understands *a source*, the rest are source-agnostic.
 
 - **Reconnaissance.** Given arbitrary material, work out its shape: how deep
   the hierarchy is, what the units are, whether there are variants, whether
@@ -776,6 +1029,14 @@ Four skills, and the division between them is the same seam as everywhere else
 - **Adapter authoring.** Scaffold an adapter for that shape, against
   `studyforge validate` as the definition of done — so the skill's output is
   checkable by machine rather than by opinion.
+- **Corpus onboarding.** R19's realisation: take a repository from nothing to a
+  serving study site. It writes the manifest, the adapter package and its tests,
+  the ignore rules, the compose file, the toolchain selection and its prime
+  project, the build entry point, the non-destructive assertion and the reader's
+  documentation — and it writes an **uninstall** that reverses every edit it
+  made. ⭐ **The one manual step is: add the framework, run this skill.**
+  Everything after that is generated, and anything a second source has to type
+  by hand is a defect in this skill.
 - **Build and serve.** One invocation from raw material to a running site:
   ingest, validate, unit documents, pages, narration, contents, exercises.
 - **Personal archive.** Export and re-import a corpus *with its progress* —
@@ -786,6 +1047,46 @@ Four skills, and the division between them is the same seam as everywhere else
 **What this buys the Java repo:** it is built by the same skills anyone else
 would use, so if the skills are awkward there, they are awkward everywhere.
 The Java corpus is the proving ground, not a special case.
+
+### A skill precedes the artifact it produces
+
+⛔ **A skill written after the thing it "produces" is a retrospective, not a
+tool.** It has been validated against exactly one source — the one it was
+reverse-engineered from — which is no validation at all, and the first genuine
+test of it is the second source, which is precisely where it must not fail.
+
+So the skills divide by what they actually are:
+
+- **Skills that are how an artifact comes to exist** — reconnaissance, adapter
+  authoring, corpus onboarding, and the authoring reference they point at.
+  These land **before** the first corpus is built, and the Java corpus is their
+  **first output** rather than their input.
+- **Wrappers over entry points that already work** — build-and-serve, exercise
+  derivation, personal archive. These genuinely cannot precede what they wrap,
+  and they land last.
+
+⚠️ **The cost is real and is accepted:** the first three are written before
+anybody knows what a second adapter looks like. The answer is that they start
+deliberately minimal and grow — a skill that scaffolds a package layout, a test
+tree and an audit command, and leaves the source-specific reading to be filled
+in, is buildable early and is already what its definition asks for. The
+alternative is worse: a corpus built by hand, and skills written afterwards to
+claim they produced it.
+
+### How a consumer obtains the skills
+
+R18 settles the distribution: the framework is **pinned as a submodule**, never
+copied, because a copied skill is a fork that a framework fix never reaches.
+But there is a real tension worth naming, because it is where copying starts:
+**a pin is a commit, while skill discovery is path-based** — a skill has to be
+findable at a path inside the repository the agent is working in.
+
+⭐ **The pin is the authority; the discoverable path is a generated pointer.**
+Onboarding writes thin **skill stubs** into the target repository that name the
+pinned framework's skill and delegate to it, carrying the pinned version and
+nothing else. ⛔ **A stub that has drifted from its pin is a build failure** —
+that is what stops a stub becoming a fork by accretion. It is the same shape as
+pinning a published image tag rather than forking a Dockerfile.
 
 ---
 
@@ -808,21 +1109,75 @@ Named explicitly so no agent builds them.
 
 1. `studyforge validate` passes on the Java repo's archive.
 2. All **166** units are readable offline over `file://` — no network, no
-   server — with narration, syntax highlighting, and working navigation.
+   server — with narration, syntax highlighting, working navigation, and the
+   reader's own read marks recorded and surviving a reload (§8.5).
 3. The root index renders the full 10 → 45 → 166 hierarchy with working deep
-   links, from `toc.json` alone.
+   links. Its **only inputs** are the two contents documents — asserted, not
+   assumed; and ⛔ **it fetches nothing at runtime**, because `fetch` of a
+   sibling file is refused over `file://`, there being no origin to ask, so
+   contents data is delivered into the page at generation time.
 4. Every exercise that ships has cleared both gates; the coverage report names
    every pair that did not.
 5. Run and Submit work from the page against the dockerised Maven toolchain;
    only a passing Submit completes a practice.
 6. `git status` in the Java repo shows **no modification to any pre-existing
-   file** except the one `pom.xml` module line.
+   file** except the entries its manifest declares in `permitted_edits`, and the
+   check that asserts it reads the declaration rather than naming the file (R3).
 7. `ingest-audit` exits 0, or exits 1 naming exactly the known outliers.
 8. No source module exceeds 400 lines and no test module exceeds 600, or the
    exception is stated and justified in the module's own docstring (R11).
 9. Every package has tests, and the test tree mirrors the source tree (R12).
 10. Tests, generation and serving all run in a container from a clean
     checkout, with Docker as the only prerequisite (R15).
-11. The Java corpus was produced **by the skills** of §9, not by bespoke
-    one-off scripts (R16).
+11. The Java corpus was produced **by the skills** of §9, and git can say so:
+    the adapter was scaffolded and the deployment artifacts generated **before**
+    any of their contents was hand-written, so the scaffolding commits precede
+    the source-reading commits. Every subsequent hand-edit to a generated
+    artifact is recorded as a finding against the skill that should have
+    produced it (R19).
 12. Both repositories carry a current graphify index (R14).
+
+---
+
+## 12. Validating that the framework is a framework
+
+Everything in §11 is satisfied by a framework with exactly one consumer. The
+claim this project actually makes is larger, and it is only testable against a
+source nobody designed for.
+
+**A second source is onboarded after v1 is otherwise accepted.** It is a real
+repository, chosen then, and ⛔ **it is deliberately not named in these
+documents** — a named target invites the framework to be shaped around it, which
+is R1's whole subject. The anonymity is the control.
+
+**How it is conducted.**
+
+- ⛔ **Whoever integrates the second source does not modify `studyforge`.**
+  Anything the framework cannot do is filed as a **finding**, not patched. The
+  framework's submodule pin does not move during the exercise; where it must,
+  every commit it moves across is listed against the finding that forced it. ⭐ A
+  test of extensibility run by somebody who can edit the thing being tested
+  measures nothing.
+- The route is reconnaissance → adapter authoring → corpus onboarding, with no
+  hand-authored framework code.
+
+**What it must assert.**
+
+1. The corpus reaches the Java corpus's floor — readable over `file://`,
+   narrated, navigable, read marks recorded — **minus what the source genuinely
+   lacks.**
+2. ⚠️ **A source with no graders yielding zero exercises is a pass**, not a
+   shortfall (§7, C5). This is written down here so the exercise is not judged
+   against a corpus that happens to ship 168 test classes.
+3. The framework pin did not move, or every commit it moved across is accounted
+   for.
+4. ⛔ **Everything the integrator did by hand is a defect in the onboarding
+   skill, named.** That list is what turns "extensible" into something with
+   edges.
+
+⭐ **The deliverable is the findings log, not the site.** An exercise that
+produces a working study site and reports no findings has not been conducted
+honestly — these skills will have seen exactly one source, and the odds that an
+unknown repository fits it perfectly are not good. The finding count is the
+**yield**, not the failure, in the same sense the exercise-feasibility spike
+already uses correctly: a negative result is a successful experiment.

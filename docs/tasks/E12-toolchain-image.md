@@ -25,10 +25,48 @@ original failure has introduced a regression that will surface as a silent
 misbehaviour — an extension that never loads, a tool that is missing only in
 the terminal, a volume the server cannot write. Read §8.1 first.
 
+⭐ **This epic depends on nothing in the framework and now starts at M0.** It was
+scheduled entirely at M5, behind milestones it does not need. Two things forced
+the move, and the second is the hard one:
+
+- Under a two-agent split, this and E13 are the only parts of the framework
+  agent's work that can run while the framework's own critical path is blocked.
+- ⛔ **`SK-07` is M2 and cannot render a corpus's compose file without `TC-05`'s
+  consuming contract.** A skill that generates the consuming half of a corpus
+  (R19) needs the shared components to have *published* their half first. TC-05
+  at M5 would have left onboarding unable to produce the one artifact every
+  consumer needs.
+
+---
+
+### TC-00 — Minimal pinned build image ⛔ UNBLOCKS EX-00
+**Milestone** **M0** · **Depends on** — · **Team** solo
+**Owns** `TC/docker/minimal/`
+**Context** ~15k — spec R15, EX-00
+
+**Definition.** A deliberately small image containing **only a pinned JDK and
+Maven**, with no IDE, no extensions and no other toolchain. It exists because
+`EX-00` is an M0 gate that must run builds, and R15 says a step whose result
+depends on installed tooling runs in a container — while the real image is M5.
+
+⚠️ **This is not an early draft of TC-01 and must not grow into one.** Its only
+consumers are EX-00 and EX-02's gate runs. When TC-02 lands the pinned selection
+for real, this image either becomes a profile of it or is deleted; what it must
+never do is become a second place where a JDK version is chosen.
+
+⭐ **The reason it earns its keep at M0** is that EX-00 decides the shape of all
+of E08 from a wall-clock measurement, and a number measured on somebody's host
+JDK cannot carry that decision.
+
+**Acceptance.** `mvn -o test` runs against the Java repository inside it. The
+JDK and Maven versions are pinned by digest, not by tag. The image tag is
+recorded where EX-00's report can name it. It contains no toolchain EX-00 does
+not use.
+
 ---
 
 ### TC-01 — Extract the image into its own repository
-**Milestone** M5 · **Depends on** — · **Team** pair
+**Milestone** **M0** · **Depends on** — · **Team** pair
 **Owns** `TC/` — the repository, `Dockerfile`, `entrypoint.sh`, `seed/`
 **Context** ~45k — spec §8.1, `CSD/docker/code-server/` (all of it)
 
@@ -54,7 +92,7 @@ fails the build when an id is removed. CodeSignal is not modified.
 ---
 
 ### TC-02 — Toolchain selection and pinning
-**Milestone** M5 · **Depends on** TC-01 · **Team** pair
+**Milestone** **M1** · **Depends on** TC-01 · **Team** pair
 **Owns** the image's build-argument surface
 **Context** ~35k — TC-01 output
 
@@ -80,7 +118,7 @@ toolchain reports its version at build time.
 ---
 
 ### TC-03 — Cache-priming contract
-**Milestone** M5 · **Depends on** TC-01 · **Team** pair
+**Milestone** **M1** · **Depends on** TC-01 · **Team** pair
 **Owns** `TC/prime/` — the contract, and the Gradle and Maven warmers
 **Context** ~40k — spec §8.1, `CSD/docker/code-server/prime/`
 
@@ -123,7 +161,7 @@ the stated reason.
 ---
 
 ### TC-04 — Workbench lockdown extension
-**Milestone** M5 · **Depends on** TC-01 · **Team** solo
+**Milestone** **M1** · **Depends on** TC-01 · **Team** solo
 **Owns** `TC/lockdown/`
 **Context** ~30k — `CSD/docker/code-server/lockdown/`, `CSD/docker-compose.yml` workbench settings
 
@@ -147,15 +185,27 @@ does in CodeSignal today.
 ---
 
 ### TC-05 — Compose and mount contract
-**Milestone** M5 · **Depends on** TC-02, TC-03 · **Team** solo
-**Owns** `TC/docs/consuming.md` and a reference compose fragment
+**Milestone** **M2** · **Depends on** TC-02, TC-03 · **Team** solo
+**Owns** `TC/docs/consuming.md`, `TC/consuming.json`, and a reference compose fragment
 **Context** ~35k — `CSD/docker-compose.yml` code-server service, spec §8.1
 
-**Definition.** The consumer-side half of the seam, documented rather than
-shipped: what a project must provide, and the rulings it must not break. A
-reference fragment shows the shape; it is a template to copy and adapt, never
-an included file, because the mount list is exactly the part that must differ
-per project.
+**Definition.** The consumer-side half of the seam: what a project must provide,
+and the rulings it must not break. A reference fragment shows the shape; it is a
+template to copy and adapt, never an included file, because the mount list is
+exactly the part that must differ per project.
+
+⭐ **The prose is for a person; a machine-readable twin is for the onboarding
+skill.** R19 says the consuming half of a corpus is *generated*, and `SK-07`
+cannot render a compose file from prose. So this task also publishes
+`consuming.json`: the image tag, the ports, the required mounts and their
+read-only flags, the uid/gid expectation, the environment variables and which
+have no default, the healthcheck, and the toolchains present. ⛔ **A consumer
+never reads the Dockerfile** — R18's "pinned, never vendored" is only true if
+the pin carries enough to consume it, and reading the Dockerfile is the first
+step toward forking it.
+
+⚠️ **The two must not drift.** The document quotes the JSON rather than
+restating it, and a test asserts every key the document mentions exists.
 
 The four rulings a consumer inherits, each with its failure recorded:
 
@@ -171,11 +221,13 @@ The four rulings a consumer inherits, each with its failure recorded:
 **Acceptance.** A consumer following the document reaches a working container
 with only its own compose file. Each of the four rulings is stated with its
 failure mode. The reference fragment is marked as a template, not an include.
+**`consuming.json` is sufficient to generate a working compose file with no
+other input** — demonstrated by SK-07 doing exactly that, not asserted.
 
 ---
 
 ### TC-06 — Versioning and consumer pinning
-**Milestone** M5 · **Depends on** TC-02 · **Team** solo
+**Milestone** **M2** · **Depends on** TC-02 · **Team** solo
 **Owns** the image's release and tagging scheme
 **Context** ~20k — TC-01…TC-03 outputs
 

@@ -20,14 +20,22 @@ floor), R11 (the largest port in the project becomes a package), R12 (tests).
 
 ---
 
-⚠️ **Concentration risk — read before scheduling this epic.** Of roughly
-**10,500 lines** of real port surface across the whole framework, **three tasks
-carry 51%**: SF-19 (2,743), SF-12 (1,407) and SF-14 (1,179) total 5,329 lines,
-while the other ~23 framework tasks average ~220 lines each. "Most tasks are
-solo" is therefore false comfort — the solo tasks are not where this project
-lives. SF-19 is split below for exactly that reason. Note also that R12 implies
-roughly **18,000 lines of new test code** across the framework, which no task
-budget currently names.
+⚠️ **Concentration risk — read before scheduling this epic.** Three tasks carry
+**more than half** the framework's real port surface: SF-19, SF-12 and SF-14.
+The other ~23 framework tasks are an order of magnitude smaller each. "Most
+tasks are solo" is therefore false comfort — the solo tasks are not where this
+project lives. SF-19 is split below for exactly that reason. Note also that R12
+implies roughly **18,000 lines of new test code** across the framework, which no
+task budget currently names.
+
+⚠️ **M3 is a serial bottleneck wearing a milestone's name**, and the plan should
+say so rather than let somebody discover it. Two agents does not help here:
+SF-19a is one task, it belongs to whoever owns the framework, and nothing splits
+it further. Schedule around that rather than around the task count.
+
+⭐ **Deliberately not restating line counts.** An earlier draft quoted three
+exact figures; two of them were 9–21% stale within 32 hours (spec §8). A task
+measures its own port surface at start and ports from HEAD.
 
 ---
 
@@ -139,12 +147,19 @@ against a real container, not a mock.**
 **Owns** `progress/`
 **Context** ~40k — `CS/tools/study/progress.py`
 
-**Definition.** The reader's local run record: **one git-ignored JSON file**,
-never a database, never inside served content — it is what *this machine* has
-done, not what a unit *is*. Keyed by the same address the run route uses, so a
-run and its record cannot name different things; a key shape that disagrees
-with the page's is a pass recorded under one name and read back under another,
-**with no symptom at all**.
+**Definition.** The record of **practice passes** — facts established by a
+grader run: **one git-ignored JSON file**, never a database, never inside served
+content. It is what *this machine* has done, not what a unit *is*. Keyed by the
+same address the run route uses, so a run and its record cannot name different
+things; a key shape that disagrees with the page's is a pass recorded under one
+name and read back under another, **with no symptom at all**.
+
+⚠️ **This is half of the record, and the other half is SF-30** (spec §8.5). A
+pass is established by a grader run, which required the runner, which required
+the server — so it is written where the fact was established. A **read mark** is
+the reader's own assertion, needs no server at all, and lives in the browser
+(SF-30). ⛔ The state route may *report* a client's read mark; it may **never**
+treat one as a pass.
 
 **Only a test run can complete a practice.** A program that ran and printed
 successfully has demonstrated nothing about its tests, and the page's Run
@@ -166,6 +181,63 @@ stable under regeneration and a diff says what actually changed.
 **Acceptance.** A run never sets passed. A crash mid-write leaves valid JSON. A
 malformed file raises rather than being silently repaired. Keys sort stably.
 The file is git-ignored.
+
+---
+
+### SF-30 — Reader state on the `file://` floor
+**Milestone** **M2** · **Depends on** SF-11, SF-12 · **Team** solo
+**Owns** `render/assets/study-progress.js`, the mark control in `render/page/`
+**Context** ~30k — spec §8.5, SF-01's address
+
+**Definition.** The reader's own record of what they have read, with no server
+and no origin: an explicit **mark-as-read** control on the unit page, a store in
+the browser, and the marks surfaced on the index and container pages.
+
+⛔ **This task exists because R8, §7 and SF-21 were jointly inconsistent and
+nobody owned the gap.** SF-21 is server-side; R8 says a served origin is never a
+prerequisite for reading; §7 admits units with **no exercise** or an **ungraded**
+one — which can never complete anything. So a reader who never starts the server
+had no record of anything at all, and no task in the plan was going to notice.
+
+⭐ **It binds hardest on exactly the sources this framework exists to serve.**
+The Java corpus, with 168 graders paired 1:1, is the exception. An arbitrary
+repository ships no graders, so every unit in it is `none` or `ungraded`, and a
+server-side-only store would record **nothing whatever** for the entire corpus.
+
+The rulings, each with the failure it prevents:
+
+- ⛔ **An explicit act, never inferred** — not from scrolling, not from the
+  narration reaching the end, not from the page having been opened. Inference
+  marks a unit read when somebody skims, and a record the reader cannot trust is
+  worse than none.
+- ⛔ **The site says what the store is:** one browser, one machine, not in the
+  repository, gone with site data. A reader who is not told this will assume
+  otherwise and be wrong at the worst moment.
+- ⛔ **Two versioned keys, never one record** — the marks and the reader's
+  display preferences have different shapes and different lifetimes, and losing
+  every mark because a preference failed to parse would be absurd.
+- ⛔ **No clock.** A timestamp is a second fact nobody asked for, and it turns
+  SK-06's merge into an ordering problem rather than a set union.
+- ⛔ **One source file touches the store**, shared by the unit page, the
+  container page (SF-27) and the index. Two implementations are a mark written
+  under one name and read back under another, with no symptom but a badge that
+  never lights.
+- ⛔ **Joined to everything else by the address (SF-01) and nothing else.**
+- ⚠️ **A stored value the control cannot display is discarded, not applied.**
+
+⚠️ **The shared script is concatenated ahead of every file that uses it, and the
+order is asserted against the real composed bundle** — never against a test
+harness's own concatenation. CodeSignal placed its store *after* the page script
+that read it at startup: the guard skipped, the setting silently never came
+back, **the suite stayed green**, and it was found only by loading a page in a
+browser. A harness that arranges the world conveniently proves nothing.
+
+**Acceptance.** A unit is marked read over `file://` and the mark survives a
+reload. The index and container pages show it. **The composed bundle defines the
+store before its first use — asserted against the real composition, and the
+assertion fails when the order is deliberately reversed.** Nothing writes a
+clock. Clearing site data clears the marks and the page says that is what
+happened. A server run never treats a read mark as a pass.
 
 ---
 

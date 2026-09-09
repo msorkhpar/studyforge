@@ -94,3 +94,69 @@ because the graders are real and the gates are mechanical; without a grader
 there is nothing to verify against, and the honest v1 answer — zero exercises —
 remains the honest answer until somebody has a genuinely better idea than
 "generate an assertion and hope".
+
+---
+
+## Added by the 2026-09-09 review
+
+These are CodeSignal rulings that were **deliberately not** carried into v1 —
+either because they are that source's operational detail, or because the
+condition that forced them does not reach this framework yet. They are recorded
+so nobody re-derives them at full cost when it does.
+
+**V2-14 — Heavy generated media as release assets.** Narration and video are
+git-ignored (SF-17), so a fresh clone is silent until it regenerates. CodeSignal
+solved this the hard way when it met GitHub: **11.42 GiB of pack against a 5 GB
+soft limit and one video at 150.9 MiB against a hard 100 MiB per-file limit**,
+so the push was impossible rather than merely large. Its answer: gitignore the
+media, publish it as release assets in 999 MB volumes, and ship a restore script
+in both `sh` and PowerShell. ⭐ **The files stayed exactly where they were on
+disk and every page still addressed a clip as plain `audio/<clip>.mp3`** — which
+is the only reason it was a script rather than a re-render of 1,290 pages, and
+it is why spec §5 now rules delivery orthogonal to placement.
+
+Scale is why this is not v1: the Java corpus is ~0.9 GiB of audio and no video,
+so neither blocker reproduces. The threshold sits somewhere between that and
+CodeSignal's 11.7 GiB. ⚠️ **A private repository's `releases/download/…` URL is
+public-only and 404s with any credential** — private assets come back through
+the API by asset id, which is why a restore needs a token route as well as a
+`gh` route. That fact costs an afternoon to rediscover.
+
+**V2-15 — Fetching from a live third party.** No v1 task goes near a network:
+every source in scope is a local repository. When one is a website, the design
+is already measured and must not be re-derived:
+
+- **One policy, shared by every transport.** Not a throttle per call site.
+- **Two clocks, honouring the later** — an in-process timestamp and a
+  wall-clock file. ⚠️ Not optional: every real caller is a **fresh process**, so
+  a per-process throttle resets on every command and paces nothing. ⭐ The file
+  can only ever make a process wait *longer* — missing, stale or from a jumped
+  clock all cost at most one extra interval and never a request too soon.
+- **A halt exit code distinct from skip** — *1 means skip this one, 4 means send
+  nothing more.* A rate-limit refusal halts the whole run, not just the worker
+  that met it, and resuming is a human decision.
+- **The refusal exception is deliberately not a subclass of any error the
+  transport already raises**, so it punches through every `except` between the
+  socket and `main`. Otherwise a stop becomes a retry with a different guess.
+- ⛔ **A rate limit does not have to arrive as a status code.** A WAF answers
+  with a challenge page and a **200** of well-formed HTML that passes every
+  status and truncation check, so the run reports "did not parse", exits, and
+  goes straight on to the next request — at exactly the permitted pace, into a
+  wall. The defence is a positive test that the *site* answered. ⛔ **Never a
+  scan of the body for words like "rate limit" or "captcha"**: a catalog that
+  teaches API rate limiting would refuse its own lessons.
+- ⛔ **No identifying contact of any kind**, in a header or anywhere else (R7).
+  A third party's documented requirement for one is not permission.
+
+**V2-16 — A whole-catalog navigation rail.** CodeSignal put its entire catalog
+on every unit page as one shared generated script assigning a global — ⛔ not
+`fetch`ed, which is refused over `file://`, and ⛔ not inlined, because 0.28 MB
+across 1,290 pages is 360 MB. Not v1: `studyforge` has a route CodeSignal never
+had — the container page (SF-27), giving unit → module → section → index — and
+CodeSignal deleted its own per-page drill-down precisely *because* the rail
+superseded it. Revisit when a corpus is large enough that the container page is
+not enough. ⚠️ The delivery mechanism is the part worth keeping: **a shared
+generated script assigning a global is the only way to put the same data on
+every page** under R8, and it is written by whichever stage holds the whole
+hierarchy — so a page-generation stage must sweep only its own outputs or it
+will delete it.

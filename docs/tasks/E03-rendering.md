@@ -10,6 +10,17 @@ in at generation time (a sibling JSON cannot be loaded over `file://` at all),
 and anything requiring a server is progressive enhancement gated on protocol,
 never a dependency.
 
+⛔ **Say it as a prohibition, because the spec's own wording was a trap.**
+Acceptance item 3 used to read *"from `toc.json` alone"*, which invites
+`fetch('toc.json')` — code that passes every served test and then dies silently
+over `file://`, showing an empty index and no error. ⛔ **A renderer fetches
+nothing at runtime.** The two contents documents are its *build-time* inputs;
+whatever a page needs at runtime is delivered into it at generation time.
+
+⭐ **The reader's own state is part of this surface too** — SF-30 owns the
+mark-as-read control and the browser-side store, for the same reason everything
+else here exists: the floor is a double-clicked file.
+
 The second constraint is R10 — pages are compared **byte-for-byte**, which is
 what makes reproducibility enforceable rather than aspirational. It is also
 why R13's template rules are strict: a template is used exactly, minus one
@@ -169,7 +180,8 @@ corpus equally well.
 
 **Acceptance.** Renders 166 units with working deep links into collapsed
 sections. Works with JavaScript disabled. **Reads no file other than the two
-contents documents — asserted, not assumed.** Renders the depth-1 fixture.
+contents documents — asserted, not assumed.** **Issues no runtime fetch —
+asserted.** Renders the depth-1 fixture.
 
 ---
 
