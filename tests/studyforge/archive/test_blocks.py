@@ -1,10 +1,15 @@
 """The block vocabulary and a practice's layout (SF-06).
 
-⭐ **This module is the one place outside `archive/blocks.py` allowed to spell
-the block types out**, and `test_there_is_exactly_one_block_type_list` exempts
-it by name. A contract's assertion is not a second definition: nobody imports
-their vocabulary from a test, and a test that derived its expectation from the
-thing under test would assert nothing at all.
+⭐ **This module spells the block types out, and is cleared by the same rule
+that clears every other module: it imports the vocabulary from the module that
+owns it.** A contract's assertion is not a second definition — a test that
+derived its expectation from the thing under test would assert nothing — and
+the check does not need to know that, because the rule is about *deriving from
+one source of truth*, not about *not spelling*.
+
+⚠️ **The allow-list is empty and should stay that way.** It would have grown
+by one entry the day SF-11 landed a class-name table and by three more later,
+and a path allow-list is a list of files nobody re-examines.
 """
 
 import ast
@@ -127,9 +132,14 @@ def test_the_video_block_and_the_video_record_are_different_things():
 
 
 OWNER = "src/studyforge/archive/blocks.py"
-#: ⭐ The vocabulary's own test may spell it out; nothing else may. See this
-#: module's docstring for why that is not the second copy in disguise.
-SPELLERS = (OWNER, "tests/studyforge/archive/test_blocks.py")
+VOCABULARY_MODULE = "studyforge.archive.blocks"
+
+#: ⭐ **Empty, and that is the result.** The rule is about *importing*, not
+#: about being on a list: a module that takes the vocabulary from its owner may
+#: spell as much of it as it likes, because what it spells is checked against
+#: the source of truth. A path allow-list would have grown by one entry the day
+#: SF-11 landed and by three more later — see this module's docstring.
+SPELLERS: tuple[str, ...] = ()
 
 
 def literal_collections(path: Path):
@@ -144,6 +154,43 @@ def literal_collections(path: Path):
             yield {k.value for k in value.keys if isinstance(k, ast.Constant)}
 
 
+def imports_the_vocabulary(path: Path) -> bool:
+    """Does `path` take the block vocabulary from the module that owns it?
+
+    ⛔ Equality, not a prefix, and not a re-export chain. A module deriving
+    from the one source of truth says where it got it.
+    """
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+        if isinstance(node, ast.ImportFrom) and node.module == VOCABULARY_MODULE:
+            return True
+        if isinstance(node, ast.Import) and any(
+            alias.name == VOCABULARY_MODULE for alias in node.names
+        ):
+            return True
+    return False
+
+
+def copies(root: Path) -> list[str]:
+    """Modules carrying a literal block-type list they did not get from its owner.
+
+    ⛔ **The rule is not "no module may spell four vocabulary names".** That
+    would have been narrowed to definitions to let `surface.py` through, and a
+    genuine fifth copy that happened to be a mapping would have stopped being
+    caught. The rule is the one SF-33's guard already uses: *a literal
+    collection of four or more vocabulary names in a module that does not
+    import the vocabulary.*
+    """
+    vocabulary = set(BLOCK_TYPES) | set(COUNT_KEYS)
+    found = []
+    for path in sorted((root / "src").rglob("*.py")) + sorted((root / "tests").rglob("*.py")):
+        relative = str(path.relative_to(root))
+        if relative == OWNER or relative in SPELLERS or imports_the_vocabulary(path):
+            continue
+        if any(len(names & vocabulary) >= 4 for names in literal_collections(path)):
+            found.append(relative)
+    return sorted(set(found))
+
+
 def test_there_is_exactly_one_block_type_list():
     # ⛔ SF-06's acceptance, and it is a test rather than a comment asking
     # people not to write one. Four copies existed: the reader's tuple, the
@@ -151,30 +198,50 @@ def test_there_is_exactly_one_block_type_list():
     # Two copies of a contract is the defect this project has diagnosed four
     # times, and a vocabulary that disagrees with its own checker means the
     # gate and the parser have different ideas of what a document may hold.
-    root = repository_root()
-    vocabulary = set(BLOCK_TYPES) | set(COUNT_KEYS)
-    offenders = []
-    for path in sorted((root / "src").rglob("*.py")) + sorted((root / "tests").rglob("*.py")):
-        if str(path.relative_to(root)) in SPELLERS:
-            continue
-        for names in literal_collections(path):
-            if len(names & vocabulary) >= 4:
-                offenders.append(str(path.relative_to(root)))
-    assert sorted(set(offenders)) == []
+    assert copies(repository_root()) == []
 
 
-def test_that_check_would_have_caught_the_copies_it_was_written_for(tmp_path):
-    # ⭐ Both directions. The scanner is asserted against a module shaped like
-    # the ones this task consolidated, so "no offenders" is a result and not
-    # an artefact of the scanner seeing nothing.
-    copy = tmp_path / "vocabulary.py"
-    copy.write_text(
-        'COUNT_KEYS = {"headings": "heading", "paras": "para", '
-        '"code": "code", "tables": "table"}\n',
-        encoding="utf-8",
+def written(tmp_path: Path, name: str, body: str) -> Path:
+    (tmp_path / "src").mkdir(exist_ok=True)
+    (tmp_path / "tests").mkdir(exist_ok=True)
+    path = tmp_path / "src" / name
+    path.write_text(body, encoding="utf-8")
+    return path
+
+
+#: A module shaped like the four this task consolidated.
+COPY = 'BLOCK_TYPES = ("heading", "para", "code", "table")\n'
+
+
+def test_that_check_catches_a_copy_that_did_not_come_from_the_owner(tmp_path):
+    # ⭐ The scanner is asserted against a module shaped like the ones this task
+    # consolidated, so "no offenders" is a result and not an artefact of the
+    # scanner seeing nothing.
+    written(tmp_path, "vocabulary.py", COPY)
+    assert copies(tmp_path) == ["src/vocabulary.py"]
+
+
+def test_and_clears_the_same_module_once_it_derives_from_the_owner(tmp_path):
+    # ⭐ The other direction, and the one the rule turns on: identical literal,
+    # cleared — because now it is checked against the source of truth rather
+    # than competing with it. ⛔ This is what makes the rule about *deriving*
+    # rather than about *not spelling*, which is the distinction a narrowing to
+    # definitions would have lost.
+    written(tmp_path, "vocabulary.py", f"from {VOCABULARY_MODULE} import BLOCK_TYPES\n\n{COPY}")
+    assert copies(tmp_path) == []
+
+
+def test_a_re_export_does_not_count_as_deriving(tmp_path):
+    # ⚠️ Stated so it is a decision rather than an oversight: importing the
+    # vocabulary from something that re-exports it does not clear a module.
+    # The point is to say where the names came from.
+    written(
+        tmp_path,
+        "vocabulary.py",
+        f"from tests.fixture_checks.vocabulary import BLOCK_TYPES  # not {VOCABULARY_MODULE}\n\n"
+        + COPY,
     )
-    vocabulary = set(BLOCK_TYPES) | set(COUNT_KEYS)
-    assert any(len(names & vocabulary) >= 4 for names in literal_collections(copy))
+    assert copies(tmp_path) == ["src/vocabulary.py"]
 
 
 def test_the_reader_and_the_fixture_checker_both_import_the_one_list():

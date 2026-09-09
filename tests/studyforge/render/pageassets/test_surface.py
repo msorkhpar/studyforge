@@ -6,12 +6,19 @@ import re
 
 import pytest
 
+from studyforge.archive.blocks import BLOCK_TYPES
 from studyforge.render.pageassets import (
     SURFACE_CLASSES,
     SURFACE_HOOKS,
     class_for,
     text,
 )
+from studyforge.render.pageassets.surface import _CLASS_OF
+
+#: ⛔ Derived, not retyped. The unstyled types are whatever the vocabulary has
+#: that the surface gives no hook to, so a block type added tomorrow is
+#: covered by this test on the day it appears.
+UNSTYLED = tuple(name for name in BLOCK_TYPES if name not in SURFACE_CLASSES)
 
 #: The parts whose class names a RENDERER must emit. ⛔ Vendored CSS names its
 #: own classes and is not ours to keep in step with anything, and
@@ -63,11 +70,27 @@ def test_a_class_name_is_a_hook_and_never_a_block_type_read_back():
     assert SURFACE_CLASSES["list"] == "items"
 
 
-@pytest.mark.parametrize("block_type", ["heading", "para", "rule", "quote", "table", "html"])
+@pytest.mark.parametrize("block_type", UNSTYLED)
 def test_a_block_styled_as_the_element_it_is_carries_no_class(block_type):
     # ⭐ A class that adds nothing is a class that has to be kept in step for
     # nothing. These are styled as `h2`, `p`, `hr`, `blockquote` and `table`.
     assert class_for(block_type) is None
+
+
+def test_every_block_type_is_answered_for_either_way():
+    # ⛔ The half a `KeyError` at import cannot state: a type *removed* from the
+    # vocabulary leaves an answer here for something that no longer exists, and
+    # nothing would fail. Both directions, so the mapping is exactly the
+    # vocabulary and not merely a superset of it.
+    assert tuple(_CLASS_OF) == BLOCK_TYPES
+
+
+def test_the_keys_come_from_the_vocabulary_and_the_values_do_not():
+    # ⭐ The seam, asserted. Keys are the archive's; values are this file's, and
+    # `list -> items` is the non-identity entry that stops anything inverting
+    # the mapping and reading a class name back as a block type.
+    assert set(SURFACE_CLASSES) < set(BLOCK_TYPES)
+    assert SURFACE_CLASSES["list"] == "items"
 
 
 @pytest.mark.parametrize("block_type", sorted(SURFACE_CLASSES))
