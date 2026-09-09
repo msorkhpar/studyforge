@@ -117,6 +117,16 @@ with working styles, highlighting and navigation, and issues no network
 request. An unfilled placeholder raises. The identity block is present and
 correct on every page. Both FND-04 fixtures render against golden files.
 
+⛔ **And: a `para` whose text is tag-shaped renders as visible text, not as an
+element.** ⭐ **This clause exists because `SF-07` declined CommonMark's type-7
+raw-HTML rule on the promise that such a line stays prose** — an unknown tag on
+its own line is kept as a paragraph rather than swallowed as markup, because a
+lesson *teaching* HTML must keep it. ⚠️ **`SF-12` is the half that keeps that
+promise**: the reader can only preserve the text, and whether the reader's
+restraint survives to the page is decided here. ⛔ Without this clause the promise
+has an author and no enforcer, and the failure is silent — the text does not
+vanish from the archive, it vanishes from the page.
+
 ---
 
 ### SF-13 — Table of contents

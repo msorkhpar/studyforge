@@ -48,6 +48,27 @@ Also owns the block-layout reader that distinguishes a lesson from a practice
 and exposes a practice's parts — statement, embedded lesson, starting code —
 without re-parsing anything.
 
+⭐ **And it owns the block-type vocabulary as a single list, which is a ruling
+added mid-M1 rather than a discovery deferred to M2.** Today the same contract is
+written twice: `BLOCK_TYPES`/`CONTAINER_TYPES` in `archive/markdown/`, and
+`COUNT_KEYS`/`CONTAINER_BLOCKS` in the fixture checker. ⚠️ **`FND-04` wrote its
+copy expecting exactly this** — it needed the list before the reader existed and
+said so.
+
+⛔ **Two copies of a contract is the defect this project has now diagnosed three
+times** — the review base defined in five places, the size ceiling nearly defined
+twice, `is_ignored` duplicated across two test modules. Each time the answer was
+the same: **one definition, imported.** ⭐ A block type is a *contract*, not a
+convenience: adding one is a `raw_api` change, and a vocabulary that disagrees
+with its own checker means the gate and the parser have different ideas of what a
+document may contain — ⛔ which is precisely the failure `SF-25`'s block-count
+gate exists to catch, so it cannot be the thing that is wrong.
+
+⚠️ **Decided now rather than at M2 for a specific reason:** every task that adds
+a block type between here and then adds it twice, and the second copy is the one
+people forget. The consolidation is cheap while two copies exist and compounding
+after a third appears.
+
 ⚠️ **Round-tripping a real document means handling its optional keys**, none
 of which the summary above names: the asset manifest digest, recorded starting
 code, the skipped-media marker, the video record's fields and the block counts.
@@ -60,7 +81,10 @@ the page links rather than renders.
 **Acceptance.** Round-trips a real CodeSignal archive document byte-for-byte
 after field renaming, **including every optional key**. A document containing a personal-data-shaped string is
 refused, not cleaned. Editing one block changes the digest; changing the
-ingestion date does not. An unknown version raises.
+ingestion date does not. An unknown version raises. ⭐ **There is exactly one
+block-type list in the repository** — the reader, the counter and the fixture
+checker all import it, ⛔ **asserted by a test that fails if a second list
+appears**, not by a comment asking people not to write one.
 
 ---
 

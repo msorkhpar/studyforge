@@ -1,6 +1,6 @@
 # studyforge — task index
 
-**84 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
+**85 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
 `BOARD.md`**, not this file: this one orders the work, that one says where it is.
 Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R21** every
@@ -46,7 +46,7 @@ is the kind that reorders plans.
 | | Milestone | What works when it lands | Tasks |
 |---|---|---|---|
 | **M0** | Foundations | An agent can start work without inventing anything | 6 |
-| **M1** | One page renders | A unit page from a fixture opens in a browser | 15 |
+| **M1** | One page renders | A unit page from a fixture opens in a browser | 16 |
 | **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** | 12 |
 | **M3** | It speaks | Narration with highlight sync, and an honest media footprint | 10 |
 | **M4** | It is served | An origin, an API, and a record of practice passes | 7 |
@@ -117,15 +117,15 @@ entering the *repository*.
 > **Done when:** a unit page from the depth-1 fixture opens in a browser, with
 > styles and highlighting, over `file://`.
 
-- **1.1** — SF-01, SF-02, SF-07, SF-08, SF-11 · ⚠️ **plus `FND-04`'s follow-up,
-  which gates SF-07** (`BOARD.md`)
+- **1.1** — SF-01, SF-02, SF-07, SF-08, SF-11, **SF-33** · ⚠️ **plus `FND-04`'s
+  follow-up, which gates SF-07** (`BOARD.md`)
 
 ⭐ **Ordering inside this step matters, and `BOARD.md` carries it.** `SF-01` is
 the **exemplar** — the first framework contract, whose conventions the next
 fourteen tasks copy — so it merges before anything else in M1. `SF-07` is gated
-by the fixture follow-up twice over: the `disclosure` fixture is its acceptance
-input, and its own new count key pushes `test_fixture_consistency.py` past the
-ceiling that follow-up exists to fix.
+by `FND-04`'s follow-up steps 1–4: the `disclosure` fixture is its acceptance
+input, and a task cannot demonstrate a ruling against a fixture that does not
+carry it.
 - **1.2** — SF-03, SF-05, SF-06
 - **1.3** — SF-09, SF-23, SF-25, SK-01
 - **1.4** — SF-10
@@ -258,7 +258,7 @@ OPS-04 → QA-01 → QA-04.
 | Epic | Document | Tasks | Owns |
 |---|---|---|---|
 | E00 | [Foundations](E00-foundations.md) |  FND-01…04, 05a, 06 | scaffolding, graphify, dev container, fixtures, the workspace pin file, the R7 check |
-| E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31 | address, manifest, placement, dry-run, discovery, container map |
+| E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31, SF-33 | address, manifest, placement, dry-run, discovery, container map, version guard |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27 | assets, page, contents, index, navigation |
 | E04 | [Narration](E04-narration.md) | SF-16…18, SF-32 | speakable, synthesis, player sync, media footprint |

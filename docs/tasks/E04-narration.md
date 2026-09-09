@@ -162,6 +162,13 @@ corrupt another's clips.
 **Owns** `corpus/media.py`
 **Context** ~20k — spec §5, SF-02's manifest, SK-07's ignore-rule generation
 
+⭐ **`SF-32` owns these two field names, and renaming them is free exactly
+until M2.** `max_total_bytes` and `max_file_bytes` are illustrative here and have
+never been written by an adapter — ⛔ **the moment one does, at M2, the names are
+a `corpus_api` field and changing them is an R9 migration.** ⚠️ So if better names
+exist, they are chosen now and by this task; *"we can rename it later"* is false
+about anything a manifest declares.
+
 **Definition.** Generated media is **committed by default** (SF-17), because a
 clone that carries its own audio speaks with nothing running. That default holds
 until a corpus is too big for it, and this module is what knows the difference.

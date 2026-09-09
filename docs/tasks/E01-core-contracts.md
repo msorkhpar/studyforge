@@ -126,6 +126,39 @@ imports anything source-specific — asserted, not assumed.
 
 ---
 
+### SF-33 — Contract version guard
+**Milestone** M1 · **Depends on** — · **Team** solo
+**Owns** `version.py`
+**Context** ~10k — R9, `SF-02`'s merged version check
+
+**Definition.** One place that answers *"is this a version I accept?"*, for every
+contract R9 versions. ⭐ **Promoted out of `SF-02` rather than invented**: the
+check exists, it is correct for one contract, and R9 names **six** — `corpus_api`,
+`container_api`, `raw_api`, `unit.json`'s `api`, the TOC schema version, and
+`consuming_api`. ⛔ **Five of the six are unwritten**, which is exactly why this is
+cheap now: it is one extraction today and six divergent re-implementations later.
+
+⛔ **The naive membership test is porous, and that is the bug this closes.**
+`value in SUPPORTED` accepts a JSON `true` where `1` is supported, because Python
+compares them equal — so a malformed document passes the gate that exists to
+refuse malformed documents. ⚠️ **The failure is silent and it is on the read
+path**: nothing raises, and the document is processed as though it declared a
+version it never declared. The guard checks the **type** before the value.
+
+⚠️ **Sequenced into step 1.1, before `SF-06`.** `SF-06` is the second contract to
+refuse a version (`raw_api`), and it is where a second copy would be born.
+
+**Acceptance.** A supported version is accepted; an unsupported one is refused
+naming the contract and both versions. ⛔ **A JSON `true` is refused where `1` is
+supported** — asserted, with the same for `1.0` and `"1"`. Refusal is a raise,
+never a migration (R9). `SF-02` imports it rather than keeping its own copy, and
+⛔ **a test fails if a second version check appears in the tree.**
+
+**Out of scope.** Deciding any contract's supported set — each contract's own
+task owns its numbers.
+
+---
+
 ### SF-03 — Placement policy
 **Milestone** M1 · **Depends on** SF-01, SF-02 · **Team** pair
 **Owns** `corpus/placement/`

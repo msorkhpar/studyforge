@@ -25,6 +25,7 @@ is recorded on the board. Silently expanding one is not (`agent-protocol.md`).
 | Release | `release/<milestone>` — e.g. `release/m0-foundations` | `main` | `main`, when the milestone closes |
 | Task | `feat/<TASK-ID>-<short-slug>` — e.g. `feat/FND-01-scaffolding` | the release branch | the release branch, **after review** |
 | Non-code | `chore/<slug>` — e.g. `chore/po-board` | `main` | `main` |
+| Fix | `fix/<slug>` — a correction to merged work, not a new task | the release branch | the release branch, **after review** |
 | Integration | `release/studyforge-integration`, in the corpus repository | that repository's default | that repository only. **Never into `studyforge`** |
 
 ⛔ **Nothing is ever pushed to any remote. Everything stays in local
@@ -206,6 +207,34 @@ integrator has to, the missing `consuming.json` is the finding.
 **Durable findings are distilled into the integration catalogue** in this
 repository, so the next integration starts further along than the last. A finding
 that stays in the corpus repository has taught nobody.
+
+## Two kinds of document, and only one of them gets edited
+
+⭐ **A handoff is a record. A plan document is a claim about now.** They are
+maintained in opposite ways and conflating them produces both of the available
+mistakes.
+
+- ⛔ **A handoff is never rewritten.** It says what was true when its author
+  finished, including what they got wrong. Editing it destroys the only evidence
+  of how a decision was reached, and a corrected record is worth less than an
+  honest one.
+- ⛔ **A plan document — the spec, an epic, `README.md`, this board — asserts
+  something about the present, so a statement in it that has stopped being true
+  is a **defect**, not history. It is edited.
+
+⚠️ **The failure this prevents:** a forecast that was correct when written
+survives as a forecast after it has become history — *"SF-07's count key pushes
+the module past the ceiling"* was true as a prediction, stale as a claim, and
+sitting in `README.md` where the next reader would act on it. ⭐ **True-as-history
+is not a defence for a plan document**, and the fix is one edit rather than a
+footnote explaining when it was written.
+
+⛔ **And before reporting a defect found in a handoff, check the file it is
+about.** A handoff quotes the documents as they were; a quotation going stale is
+the record working correctly. ⚠️ This project re-reported one already-fixed defect
+**three times** from quotations inside old handoffs — three rounds of attention
+spent on a document that had been correct since the first. **The check is one
+`grep` and it goes before the report, not after.**
 
 ## Who decides
 

@@ -153,6 +153,19 @@ non-zero on a deliberate violation. The same commands run on the host for anyone
 who prefers it, degrading to the standard-library checks where ruff is absent. No
 network access is required to run tests.
 
+⛔ **Follow-up: the three skips that appear in every container run.** They skip
+because the sibling repositories are absent from the image, and ⚠️ **a skip that
+every run reports is not a skip — it is an untested claim wearing a skip's
+clothes.** ⭐ A skip is meant to say *"not applicable here, covered there"*; one
+that is never applicable anywhere says nothing and is read as reassurance. **The
+container is authoritative by three less than it claims to be.**
+
+**Two acceptable resolutions, and "leave them skipping" is not one:** detect the
+workspace and set `STUDYFORGE_WORKSPACE` so the image can see the siblings and
+the three run — or ⭐ **name those three explicitly as covered elsewhere**, in the
+skip message itself, so the reason is legible at the point of the skip rather
+than in somebody's memory.
+
 ---
 
 ### FND-04 — Shared contract fixtures
@@ -415,6 +428,28 @@ against `tests/support.py`'s own stated rule. `FND-02` created the duplicate
 deliberately rather than edit a file outside its task, and said so. ⛔ Three
 lines, into `tests/support.py`, and both call sites import it — this task is the
 next one whose scope legitimately spans both.
+
+⛔ **Follow-up: the sweep is not clean over `docs/`, and the hit is a documented
+false positive.** The email shape matches `E02-content-pipeline.md`, which quotes
+`n@router` + `.get` — ⚠️ **E02's own worked example of the escaping artefact that
+refused three clean lessons.** ⛔ The sweep does **not** stop reading `docs/`:
+that is where R7 was violated once already (`CLAUDE.md`), and excluding the
+directory would remove the check from the place with the worst record. ⛔ Nor is
+this a §1e sanctioned fixture — it is prose, not a named directory with a
+`VIOLATION.md`. ⭐ **The resolution is a narrow allow-list of documented false
+positives, each carrying its reason inline, asserted to stay short** — the same
+shape as the formatter exclusion held at one entry and the sanctioned-directory
+registry asserted by a test. ⚠️ A gate that must be silenced somewhere is safer
+with a short list that fails when it grows than with a directory quietly
+excluded: **the list gets read, the exclusion does not.**
+
+⛔ **Follow-up: the exception text is itself a rule and needs enforcing.** The
+`Size exception:` opt-out states *why splitting would be worse* — ⚠️ but nothing
+checks that the line says anything at all, so `Size exception: needed` passes the
+same gate as a real justification. ⭐ **An opt-out nobody has to justify is a
+ceiling with a documented bypass**, which is the erosion `FND-01` exists to
+prevent, arriving through the door it left open. A minimum-substance check
+belongs beside the other floor rules.
 
 **Out of scope.** Rewriting history when a hit is found — that is the author's,
 under the rubric. Scanning commit messages of merged history; this gates what is

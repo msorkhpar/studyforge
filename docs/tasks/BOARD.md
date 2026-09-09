@@ -48,7 +48,7 @@ milestone closes rather than waits.
 | FND-03 | Development and test container | Developer 2 | *merged* | ✅ `done` | — *(**C4** closed)* | **Closed 2026-09-09**, APPROVE. ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs inside the image and the two tests run rather than skip. Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
 | FND-04 | Shared contract fixtures | Developer 2 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE on every rubric check. 7 corpora, 43 files, 22 tests, re-run green post-merge |
 | FND-05a | Workspace, workflow and **the pin file** | *unassigned* — M0 residue | `feat/FND-05a-workspace` | `todo` | — *(unblocked: **B2** ruled)* | A tracked pin file records every component, `studyforge` included; verification **exits 0** when correct and **exits 1 naming the component** both when a recorded commit is absent locally and when a component's `HEAD` moved unrecorded — asserted, not described; the workflow document covers record, verify, advance, the two-commit rule; ⛔ no `.gitmodules` anywhere, and no absolute path in any tracked file |
-| FND-06 | Repository personal-data check | *unassigned* — ⭐ **M0 residue, and time-critical: see the sequencing call** | `feat/FND-06-r7-check` | `todo` | — | A fifth entry in `tools/quality`'s `CHECKS`: exits non-zero on a purpose-built violating file, zero on the tree; the sanctioned-directory registry is asserted by a test; ⛔ writes no derived identifier anywhere, proved by a test on the refusal message |
+| FND-06 | Repository personal-data check | Developer 1 | *merged* | ✅ `done` — ⚠️ one follow-up: the **exception text** is unenforced | — | A fifth entry in `tools/quality`'s `CHECKS`: exits non-zero on a purpose-built violating file, zero on the tree; the sanctioned-directory registry is asserted by a test; ⛔ writes no derived identifier anywhere, proved by a test on the refusal message |
 | — | Review rubric + M0 readiness audit | CTO | *merged* | ✅ `done` | — | **Closed 2026-09-09.** `../conventions/review-rubric.md` plus four rulings |
 | — | Board, delivery flow, rulings carried | PO-Framework | *merged* | ✅ `done` | — | Three rounds; the conflict on FND-05a resolved with both authors' contributions recorded |
 
@@ -320,6 +320,42 @@ on both sides:
 ⭐ **`grep -rn '\[structural\]' docs/tasks/handoffs/` is the triage list before a
 wave**, and running it is now part of opening one. **This PO owns that sweep.**
 
+### The back-triage — ✅ complete, and what it found
+
+⛔ **The first sweep came back empty, and that was a hole rather than a clean
+bill.** The marker landed after 23 findings had already been filed — ⚠️ including
+`FND-04`'s finding 10, *the one that cost this project two round trips.* ⭐ The
+mechanism built to stop unacted-on findings would have missed the finding that
+motivated it.
+
+✅ **All 23 are now marked and dispositioned** — ruled, applied, scheduled, or
+explicitly accepted with the cost named. ⛔ **"Noted" appears nowhere**, which is
+the whole point of the exercise.
+
+⚠️ **Three remain open, and two of them were not on this board.** That is the
+argument for the sweep in one line: ⭐ **both untracked ones concern tasks that
+have not run yet**, so they were still cheap when found.
+
+1. **The authored overlay's version** — already tracked; R21 register row 1, owed
+   before `SF-09` at step 1.3.
+2. ⛔ **Port-size debt** (`FND-04` #7). CodeSignal's `markdown.py` is 678 lines
+   and `unitdoc.py` 827, against R11's 400. ⭐ `SF-07` handled it correctly and
+   shipped a package — but `SF-12` and `SF-19a` have not run, and R11 is explicit
+   that the large modules arrive **as packages or not at all**. Routed to both
+   tasks rather than left as a general warning.
+3. ⛔ **The repository-wide R7 sweep is not clean today** (`FND-04` #8), and the
+   hit is `docs/tasks/E02-content-pipeline.md` quoting `n@router` + `.get` —
+   ⚠️ **E02's own worked example of the false positive that refused three clean
+   lessons.** ⭐ **Decided:** the sweep does ⛔ **not** stop reading `docs/`, which
+   is where R7 was violated once already (`CLAUDE.md`). Nor is this a §1e
+   sanctioned fixture — it is prose, not a named directory with a `VIOLATION.md`.
+   **So `FND-06` gains a narrow allow-list of documented false positives, each
+   carrying its reason inline and asserted to stay short** — ⭐ the same shape as
+   the formatter exclusion held at exactly one entry and the sanctioned-directory
+   registry asserted by a test. ⚠️ **A gate that must be silenced somewhere is
+   safer with a short list that fails when it grows than with a directory quietly
+   excluded**, because the list is read and the exclusion is not.
+
 ---
 
 ## M1 step 1.1 — the assignment
@@ -329,13 +365,15 @@ wave**, and running it is now part of opening one. **This PO owns that sweep.**
 
 | Task | Title | Owner | Branch | Status | Blocked on | Closes when |
 |---|---|---|---|---|---|---|
-| FND-04-fu 1–4 | The `disclosure` fixture, in the ruled shape | Developer 2 | `feat/FND-04-disclosure` | `todo` | — | A fixture carries a `disclosure` container block; one block replaced, one added, two dictionaries extended, one digest recomputed. ⛔ **On SF-07's critical path** |
-| FND-04-fu 5 | Split `test_fixture_consistency.py` at its five seams | Developer 2 | `feat/FND-04-split` | `todo` | — | The module is split along shape · digests · addresses · media · personal data and is under the ceiling **unformatted**; ⛔ `[tool.ruff.format].exclude` **and** its one-entry assertion deleted in the **same commit**, or the guard outlives what it guarded. Lands before M1 closes |
-| SF-01 | Logical address model | Developer 1 | `feat/SF-01-address` | `todo` | — | Round-trips every §4 address at depths 1–4; a title where a slug is required raises; two slugs differing only by a leading digit yield different identifiers; wrong arity for a declared depth rejected; ⛔ no filesystem import in the package |
-| SF-02 | Corpus manifest | Developer 1 | `feat/SF-02-manifest` | `todo` | — | Accepts all four §1 shapes incl. two depth-1; refuses unknown `corpus_api`/`placement`/`media.commit`, empty `levels`/`variants`, a forbidden `permitted_edits` target, an `exclude` with no `why`; ⛔ a file matching neither list is **named and refused**; absent `media` asserted as committed-with-defaults; no module derives runnability from a variant name |
-| SF-07 | Block vocabulary and Markdown reader | Developer 2 | `feat/SF-07-markdown` | `todo` | FND-04-fu 1–4 | CodeSignal's Markdown tests pass unchanged; `disclosure` is a **container block holding blocks**; fence-awareness proved on `depth1` u3 `lesson-2`; parses all 166 Java sub-READMEs **or names every file and construct that fails**; ⛔ no unit yields fewer blocks than its independently-counted structure implies |
-| SF-08 | Personal-data gate | Developer 2 | `feat/SF-08-scrub` | `todo` | — | Home path refused at the archive boundary; build output scrubbed before a stream; ⛔ **three patterns, no content shape, no username pattern**; a document of 16-digit card-shaped strings **passes**; material that only resembles personal data after escaping is **not** refused; every gate reads decoded strings — asserted |
-| SF-11 | Page assets | first free slot | `feat/SF-11-assets` | `todo` | — | Highlight tests pass incl. no token combination taking the comment colour without being a comment; a page opens with only local requests; every palette token defined in **both** themes and clearing contrast; vendored bundles carry licences, unedited |
+| FND-04-fu 1–4 | The `disclosure` fixture, in the ruled shape | Developer 2 | *merged* | ✅ `done` | — | A fixture carries a `disclosure` container block; one block replaced, one added, two dictionaries extended, one digest recomputed. ⛔ **On SF-07's critical path** |
+| FND-04-fu 5 | Split `test_fixture_consistency.py` at its five seams | Developer 2 | *merged* | ✅ `done` — ⭐ the formatter interim is **over**: exclusion and its assertion deleted together | — | The module is split along shape · digests · addresses · media · personal data and is under the ceiling **unformatted**; ⛔ `[tool.ruff.format].exclude` **and** its one-entry assertion deleted in the **same commit**, or the guard outlives what it guarded. Lands before M1 closes |
+| SF-01 | Logical address model | Developer 2 | *merged* | ✅ `done` | — | Round-trips every §4 address at depths 1–4; a title where a slug is required raises; two slugs differing only by a leading digit yield different identifiers; wrong arity for a declared depth rejected; ⛔ no filesystem import in the package |
+| SF-02 | Corpus manifest | Developer 2 | *merged* | ✅ `done` | — | Accepts all four §1 shapes incl. two depth-1; refuses unknown `corpus_api`/`placement`/`media.commit`, empty `levels`/`variants`, a forbidden `permitted_edits` target, an `exclude` with no `why`; ⛔ a file matching neither list is **named and refused**; absent `media` asserted as committed-with-defaults; no module derives runnability from a variant name |
+| SF-07 | Block vocabulary and Markdown reader | Developer 1 | *merged* | ✅ `done` | — | CodeSignal's Markdown tests pass unchanged; `disclosure` is a **container block holding blocks**; fence-awareness proved on `depth1` u3 `lesson-2`; parses all 166 Java sub-READMEs **or names every file and construct that fails**; ⛔ no unit yields fewer blocks than its independently-counted structure implies |
+| SF-08 | Personal-data gate | Developer 1 | `feat/SF-08-scrub` | `in-progress` | — | Home path refused at the archive boundary; build output scrubbed before a stream; ⛔ **three patterns, no content shape, no username pattern**; a document of 16-digit card-shaped strings **passes**; material that only resembles personal data after escaping is **not** refused; every gate reads decoded strings — asserted |
+| SF-11 | Page assets | Developer 2 | `feat/SF-11-assets` | `in-progress` | — | Highlight tests pass incl. no token combination taking the comment colour without being a comment; a page opens with only local requests; every palette token defined in **both** themes and clearing contrast; vendored bundles carry licences, unedited |
+
+| SF-33 | Contract version guard | *first free slot* | `feat/SF-33-version` | `todo` | — | ⛔ A JSON `true` is **refused** where `1` is supported — asserted, with `1.0` and `"1"`; refusal is a raise, never a migration; `SF-02` imports it; ⛔ a test fails if a second version check appears. **Before SF-06** |
 
 ### The lanes
 
@@ -343,6 +381,18 @@ wave**, and running it is now part of opening one. **This PO owns that sweep.**
 split across two.** Two pairs in these five share a surface, and M0's evidence
 is that a shared surface split across agents is where the cost lands — not in
 the code, in the reconciliation.
+
+✅ **It held. Four-fifths of the step is merged with no reconciliation cost and no
+collision.**
+
+⭐ **And the lanes were swapped between developers, which is evidence *for* the
+rule rather than against it.** Lane A went to Developer 2 and lane B to Developer
+1, because Developer 1 was mid-`FND-06` and `SF-01` is the exemplar. ⚠️ **The
+pairs stayed intact, which is the only thing the rule protects** — *which*
+developer owns a pair is a scheduling question and belongs to whoever is
+dispatching. ⛔ A rule that also fixed the assignee would have blocked a sensible
+swap for no benefit, and the table below records the swap rather than pretending
+the original allocation happened.
 
 | Lane | Developer | Order | Reasoning |
 |---|---|---|---|
@@ -579,6 +629,22 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 
 | Date | Change |
 |---|---|
+| 2026-09-09 | ✅ **Back-triage of the 23 pre-marker findings complete** — all marked and dispositioned, ⛔ **"noted" appears nowhere.** Three remain open and ⭐ **two were not on this board**: the port-size debt (`markdown.py` 678, `unitdoc.py` 827 against R11's 400 — routed to SF-12 and SF-19a, the two port tasks that have not run) and a repository-wide R7 sweep that is **not clean today**. ⚠️ Both untracked ones concern tasks that have not run yet, so both were still cheap when found. |
+| 2026-09-09 | ⭐ **Decided: FND-06 gains a narrow allow-list of documented false positives**, not a `docs/` exclusion. The sweep's one hit is E02's own worked example of the escaping artefact that refused three clean lessons. ⛔ Excluding `docs/` would remove the check from the place with the worst record (`CLAUDE.md` records R7 violated there once). ⚠️ **A gate that must be silenced somewhere is safer with a short list that fails when it grows: the list gets read, the exclusion does not.** |
+| 2026-09-09 | ✅ **M1 step 1.1 is four-fifths done** — SF-01, SF-02, SF-07 merged on APPROVE, FND-06 and all five follow-up steps complete, **the formatter interim over** (exclusion and assertion deleted together). 755 passed, 8 skipped, ruff clean both ways. SF-08 and SF-11 in progress. |
+| 2026-09-09 | ⭐ **The lane rule held — and the lanes were swapped between developers, which is evidence for it.** The *pairs* stayed intact, which is the only thing the rule protects; ⚠️ **which** developer owns a pair is a scheduling question and belongs to whoever dispatches. A rule that also fixed the assignee would have blocked a sensible swap for nothing. |
+| 2026-09-09 | ⛔ **`README.md:127` corrected: a forecast that had become history.** "SF-07's count key pushes the module past the ceiling" was ⭐ **true as history, stale as a claim** — and it sat in a plan document, where the next reader would act on it. ⭐ **New convention:** a handoff is a **record** and is never rewritten; a plan document is a **claim about now**, so a statement that has stopped being true is a defect and is edited. |
+| 2026-09-09 | ⛔ **Retired: the "README/CLAUDE.md say R1–R19" finding.** Both live documents were corrected rounds ago; it has been re-reported **three times from quotations inside old handoffs**. ⭐ A quotation going stale is the record working correctly. **New rule: before reporting a defect found in a handoff, check the file it is about** — one `grep`, before the report. |
+| 2026-09-09 | ⭐ **SF-06 gains the single block-type list**, decided now rather than at M2. `BLOCK_TYPES`/`CONTAINER_TYPES` and `COUNT_KEYS`/`CONTAINER_BLOCKS` are the same contract written twice, and **FND-04 wrote its copy expecting exactly this**. ⛔ Two copies of a contract is the defect diagnosed three times now — the review base in five places, the size ceiling nearly twice, `is_ignored` across two modules. Every task that adds a block type before M2 would add it twice. |
+| 2026-09-09 | **SF-12 gains an acceptance clause** — *a `para` of tag-shaped text renders as visible text, not an element.* ⭐ SF-07 declined CommonMark type 7 on the promise that such a line stays prose; **SF-12 is the half that keeps it**. ⛔ Without the clause the promise had an author and no enforcer, and the failure is silent: the text does not vanish from the archive, it vanishes from the page. |
+| 2026-09-09 | ⛔ **FND-03 follow-up: three skips in *every* container run.** ⭐ The CTO's framing, adopted: **a skip that every run reports is not a skip; it is an untested claim wearing a skip's clothes.** The container is authoritative by three less than it says. Resolve by detecting the workspace, or by naming those three as covered elsewhere **in the skip message** — ⛔ "leave them skipping" is not an option. |
+| 2026-09-09 | **`math` refused as a block type, and written down instead.** ⛔ Inventing a type against **zero sources** is R1's error from the other direction. ⭐ The output is an **integration catalogue** entry: *"never silently drop" is about structure the vocabulary knows; a construct outside it degrades to prose, visibly, text intact* — a scoping fact for whoever plans, not a bug to file. ⚠️ A refused proposal that leaves no trace gets re-proposed. |
+| 2026-09-09 | ⭐ **SF-33 created** — the contract version guard, step 1.1, **before SF-06**. R9 names six versioned contracts and **five are unwritten**: one extraction now against six divergent re-implementations later. ⛔ It closes a real hole — `value in SUPPORTED` accepts a JSON `true` where `1` is supported, so a malformed document passes the gate that exists to refuse it, silently, on the read path. **85 tasks; M1 is 16.** |
+| 2026-09-09 | **SF-32 owns the media limit names.** ⚠️ `max_total_bytes`/`max_file_bytes` are free to rename **exactly until M2** — the moment an adapter writes one they are a `corpus_api` field and changing them is an R9 migration. ⛔ *"We can rename it later"* is false about anything a manifest declares. |
+| 2026-09-09 | **FND-06 follow-up: the exception text is itself unenforced.** `Size exception: needed` passes the same gate as a real justification. ⭐ An opt-out nobody has to justify is a ceiling with a documented bypass — the erosion FND-01 exists to prevent, arriving through the door it left open. |
+| 2026-09-09 | ⭐ **Finding closed by exercise — "nobody said of what."** SF-07 reported `rule` in *10 of 166 lesson files* and *15 of 218 markdown files*: same corpus, two denominators, both correct. ⚠️ **A missing denominator is exactly how "18 ISO files carry raw HTML" survived three documents and two review rounds.** A count without its denominator is not a measurement. |
+| 2026-09-09 | **ruff formats Python inside Markdown fences**, so every handoff with a ```python block is format-checked. Convention is now `text`. ⭐ It moved from `module-structure.md` to `agent-protocol.md` because **a handoff author has no reason to re-read the module conventions** — ⚠️ placement, not strength, was what the rule lacked. |
+| 2026-09-09 | ⛔ **A trial merge tells you the merge is good and nothing about the base.** A green merge over a red base is a normal result — and a release branch was declared healthy from a measurement of a merge. Rubric §0a-i now requires **both** numbers, and ⭐ **a red base is an urgent finding against the release branch**, not against the change under review. |
 | 2026-09-09 | Board opened. M0 in flight: FND-01 and FND-04 assigned, FND-02/03 sequenced, FND-05 blocked. |
 | 2026-09-09 | **First review round closed.** Board, delivery flow, the CTO's rubric and readiness audit, and **FND-04 (APPROVE)** merged to `release/m0-foundations`; fixture suite re-run green post-merge, 22 passed. |
 | 2026-09-09 | **FND-04 → done.** 7 corpora, 43 files, 22 tests. |
