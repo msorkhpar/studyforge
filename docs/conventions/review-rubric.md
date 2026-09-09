@@ -52,10 +52,17 @@ a commit survives a follow-up commit that removes it.
 
 ```bash
 git diff -U0 "$BASE"...HEAD \
-  | grep -E '^\+' | grep -vE '^\+\+\+' \
+  | grep -E '^\+' | grep -vE '^\+\+\+' | sed 's/^+//' \
   | grep -EIn "(/home/|/Users/|/root/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|[\$]HOME|~/[A-Za-z0-9._-]+|\b[A-Za-z0-9-]+\.local\b" \
   | grep -vEi '@(example[.](com|org|net|invalid)|localhost|anthropic[.]com)'
 ```
+
+⚠️ **The `sed 's/^+//'` is load-bearing, and leaving it out was a real defect in
+the first version of this rubric.** The diff's own `+` marker satisfies the
+email pattern's local part, so `@pytest.mark.parametrize` — and every other
+decorator on an added line — matched as an address. A check that cries wolf on
+every Python test file is a check reviewers learn to wave through, which is the
+one failure mode R7 cannot afford. Strip the marker before matching.
 
 **Pass = no output.** The allow-list is deliberately tiny: the documented
 placeholders (`contact@example.com`, `Example/0.1 (+https://example.invalid)`,
@@ -89,7 +96,7 @@ rm -f /tmp/rev.$$
 ### 1c. The commit messages, which the diff does not cover
 
 ```bash
-git log --format='%s%n%b%n%an%n%ae' "$BASE"..HEAD \
+git log --format='%s%n%b' "$BASE"..HEAD \
   | grep -EIn "(/home/|/Users/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}" \
   | grep -vEi '@(example[.](com|org|net|invalid)|anthropic[.]com)'
 ```
@@ -97,6 +104,45 @@ git log --format='%s%n%b%n%an%n%ae' "$BASE"..HEAD \
 **Pass = no output.** ⚠️ The commit *author* fields are git's own metadata and
 are out of scope here; what this checks is the *message body*, which is a file
 this project writes.
+
+### 1e. ⭐ Sanctioned negative fixtures — the one case where a hit is required
+
+⚠️ **Some tasks must ship personal-data-shaped content**, because a gate that
+refuses it needs an input to refuse (`FND-04` for `SF-25` and `SF-08`). ⛔ The
+existence of that exception is exactly how a real leak gets waved through, so
+the exception is **bounded by tests, not by a reviewer's memory**.
+
+A hit is a sanctioned fixture, and not a leak, only when **all five** hold:
+
+1. ⛔ **The value is fabricated and unreachable.** An email under an RFC 2606
+   reserved TLD (`.invalid`, `.test`, `.example`) or an `example.*` domain; a
+   home path under an obviously fictional user. ⛔ A real-looking address at a
+   real domain is a leak even if the author believes nobody owns it.
+2. ⛔ **It is traceable to nobody.** Check 1b must be clean — no session
+   identifier, on any machine.
+3. **It lives in one named directory** whose purpose is to be refused, and that
+   directory says so in a file beside the data (`VIOLATION.md` or equivalent),
+   naming the rule and what the gate is expected to say.
+4. ⭐ **The boundary is asserted in both directions, by a test in the diff:**
+   - *nothing else* in the fixture tree carries the shape — so the exception
+     cannot quietly spread;
+   - the sanctioned fixture *really does* trip the gate — so a later edit
+     cannot neuter it into an input that silently passes, which would leave
+     `SF-08` and `SF-25` both green against nothing.
+   ⭐ Those two tests together are **sufficient evidence**, and they are better
+   than a reviewer's grep: they run on every future change, and a reviewer runs
+   once.
+5. **The registry of such directories is itself asserted**, so a sixth negative
+   fixture cannot be added without appearing in a test.
+
+⛔ **The matched text is never echoed by the code that refuses it.** A refusal
+that quotes the leak has relocated it into a log. The reviewer checks the
+message names the *shape*, not the value.
+
+⚠️ **Downstream consequence the reviewer records:** every repository-wide R7
+sweep this project later builds must exclude that directory **and only that
+one**, by name. A sweep that excludes `tests/` wholesale has stopped checking
+the tree where fixtures live.
 
 ### 1d. Where the rule is upheld in code, not just in review
 
@@ -509,6 +555,28 @@ If the change adds, removes or renames a package or module, the graph is stale
 (R14) — but ⛔ **it is not rebuilt by the agent doing the work**, and a diff
 containing `graphify-out/` is a fail: it is git-ignored, local, rebuilt, never
 merged.
+
+### 10a. Build configuration is behaviour, not style
+
+⚠️ **A diff touching `pyproject.toml`'s `addopts`, `testpaths`, `pythonpath` or
+`[tool.setuptools]`, or `.gitignore`, changes what the build *does*.** Two of
+these have already been proved to be load-bearing rather than cosmetic:
+
+```bash
+python3 -m pytest --collect-only -q | tail -3     # collection still works
+git check-ignore -v <a path the change should NOT ignore> ; echo "exit=$?"
+```
+
+- ⛔ **`--import-mode=importlib` is required, not decoration.** R12's mirror
+  puts a `test_init.py` in every package directory; under pytest's default
+  `prepend` mode those collide on module name and the suite **fails to collect
+  before it runs a single test**. Removing it breaks collection, not formatting.
+  A diff that drops it is CHANGES REQUESTED with this as the reason.
+- ⛔ **An ignore rule is checked against paths that must stay tracked**, not
+  only against paths that must not. A pattern that swallows a fixture produces a
+  suite that passes locally and fails on a fresh clone — the failure `git status`
+  will not show you, because the file is simply absent. ⭐ Test the shapes the
+  repository does not have **yet**: exit 1 from `git check-ignore` is the pass.
 
 ---
 
