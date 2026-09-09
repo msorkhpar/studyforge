@@ -402,10 +402,32 @@ python3 -m tools.quality      # the floor: size, mirror, contracts, style
 reviewer did not see is not evidence, and a green suite on the *branch* is not
 the evidence this gate asks for.
 
-⭐ **The container is authoritative** (R15). Where the change touches anything
-the image builds or installs, the run that counts is the in-container one; ⚠️ a
-result that differs between host and container is a **finding**, and the
-container's answer is the one recorded.
+⛔ **The container is authoritative, always — not "where the change touches the
+image"** (R15). ⚠️ A result that differs between host and container is a
+**finding**, and the container's answer is the one recorded.
+
+### ⛔ 4b-i. Every skip is named, or the run did not happen
+
+```bash
+python3 -m pytest -q -rs | grep '^SKIPPED'      # read every line
+```
+
+⭐ **A skipped test is not a passing test, and the summary line hides that.**
+`122 passed, 10 skipped` reads as success; what it may mean is *the linter never
+ran*. The reviewer accounts for **each** skip in one line — why it skipped, and
+whether the thing it covers was checked another way.
+
+⛔ **This clause exists because I walked into it.** `SF-01` was approved on a host
+run whose two `ruff not installed` skips I never read. ⭐ **The branch was red on
+its own tip under the pinned linter** — nothing had moved, nothing was a merge
+collision, and the trial merge could not have caught it because the check simply
+did not execute. ⚠️ **A green result from a check that did not run is
+indistinguishable from one that ran and found nothing** — the same rule this
+document already states for a new check's empty output (§8a), arriving one round
+later at the reviewer instead of the author.
+
+⭐ **So the host run is a convenience and never the verdict.** If the container
+cannot be run, the review is **Blocked**, not APPROVE.
 
 ### 4c. The tests test the change
 
@@ -687,6 +709,40 @@ git check-ignore -v <a path the change should NOT ignore> ; echo "exit=$?"
   suite that passes locally and fails on a fresh clone — the failure `git status`
   will not show you, because the file is simply absent. ⭐ Test the shapes the
   repository does not have **yet**: exit 1 from `git check-ignore` is the pass.
+
+---
+
+## The verdict is recorded in the merge, not remembered
+
+⛔ **A merge to a release branch names the verdict it was merged on**, in the
+merge commit's own message:
+
+```
+Merge <branch>: <one line> (CTO: APPROVE)
+```
+
+```bash
+git log --merges --format='%s' "$REVIEW_BASE" | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)'
+```
+
+**Pass = no output** *for merges made after this clause landed.*
+
+⚠️ **The migration, named rather than left to be discovered** (`agent-protocol.md`,
+*the tightening owns the migration*). Every merge on `release/m0-foundations`
+before this clause predates it and none carries a verdict. ⛔ **They are not
+back-filled**: rewriting merge messages on a branch other agents have already
+built on costs more than the record is worth, and the verdicts themselves are on
+record in `docs/tasks/handoffs/CTO-*.md`. ⭐ The rule binds from here, and the
+check above is scoped to merges after this commit.
+
+⭐ **This is a mechanism because a promise is not one.** Two branches were merged
+ahead of their verdict in a single round, both in good faith and both to unblock
+a critical path — which is exactly the pressure under which "we will not do it
+again" fails. ⚠️ The point is not to prevent an urgent merge: it is that an
+un-reviewed merge should be **visible in the log afterwards** rather than
+remembered by whoever did it. ⭐ A gate that leaves no trace when it is skipped is
+a gate that will be skipped again, and this project has already ruled the same
+way twice — once for the module ceiling, once for the R7 sweep.
 
 ---
 
