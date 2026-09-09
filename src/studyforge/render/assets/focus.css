@@ -1,0 +1,9 @@
+/* The focus ring, defined once, in the accent colour of whichever theme is
+   showing.
+
+   ⛔ `:focus-visible`, never `:focus`: the ring must follow the keyboard and
+   stay out of the way of the mouse. And it is never removed — the reading
+   floor is a page navigated by keyboard as readily as by pointer, and an
+   invisible focus ring is the fastest way to make that impossible. */
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 3px; }

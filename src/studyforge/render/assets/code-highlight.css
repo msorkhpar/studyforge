@@ -1,0 +1,78 @@
+/* Syntax highlighting for the lesson's code blocks.
+
+   Prism (vendored, `prism.js`) tokenises in the browser and writes
+   `<span class="token …">` inside the `<code>` the page already shipped, so
+   NO generated page changes and the archive stays clean text. With JS off,
+   every block falls back to the single `--code-fg` it had before.
+
+   ⛔ A LANGUAGE WITH NO PRISM GRAMMAR IS LEFT ALONE, and so is `text`, whose
+   grammar is empty by design. A corpus in a language nobody vendored a
+   grammar for must render, not fail — and colouring a `text` block would
+   dress prose up as code. ⚠️ The framework knows no list of languages (R1):
+   what is highlightable is whatever grammars the vendored bundle carries,
+   and a code block's `lang` is the block's own attribute from the archive.
+
+   ⛔ ONE ELEMENT OFTEN CARRIES SEVERAL TOKEN CLASSES, and they can want
+   different colours: Java's `@Override` is `annotation punctuation`,
+   JavaScript's backtick is `template-punctuation string`, Kotlin's `"…"` is
+   `string-literal singleline`. Every selector here has the same specificity,
+   so **the last group to match wins** -- which makes the ORDER OF THE GROUPS
+   BELOW the actual mapping, not decoration. It runs from weakest to
+   strongest: container, punctuation, type, function, number, string,
+   keyword, comment, and finally interpolation in the body colour. Moving a
+   group changes what colour a combined token takes;
+   `tests/studyforge/render/pageassets/test_highlight.py` runs the real
+   grammars and checks the winner for every combination they emit.
+
+   ⚠️ Kotlin's `singleline` and `multiline` are STRING-LITERAL variants, not
+   comment variants. Filing them under comment italicised every string in one
+   language and the tests still passed; only a screenshot caught it, which is
+   how this rule came to be written down. */
+
+/* Containers Prism nests other tokens inside. They must not paint, or they
+   would override the child that carries the meaning. Weakest, deliberately. */
+figure.code .token.expression,
+figure.code .token.parameter,
+figure.code .token.decorator,
+figure.code .token.language-regex { color: inherit; }
+
+figure.code .token.punctuation,
+figure.code .token.operator,
+figure.code .token.template-punctuation,
+figure.code .token.interpolation-punctuation,
+figure.code .token.regex-delimiter,
+figure.code .token.regex-flags { color: var(--tok-punct); }
+
+figure.code .token.class-name,
+figure.code .token.builtin,
+figure.code .token.annotation,
+figure.code .token.generics,
+figure.code .token.namespace { color: var(--tok-type); }
+
+figure.code .token.function,
+figure.code .token.function-variable { color: var(--tok-function); }
+
+figure.code .token.number { color: var(--tok-number); }
+
+figure.code .token.string,
+figure.code .token.string-literal,
+figure.code .token.string-interpolation,
+figure.code .token.triple-quoted-string,
+figure.code .token.template-string,
+figure.code .token.singleline,
+figure.code .token.multiline,
+figure.code .token.char,
+figure.code .token.regex,
+figure.code .token.regex-source { color: var(--tok-string); }
+
+figure.code .token.keyword,
+figure.code .token.boolean,
+figure.code .token.import { color: var(--tok-keyword); font-weight: 600; }
+
+figure.code .token.comment { color: var(--tok-comment); font-style: italic; }
+
+/* An interpolated expression is code, not string: `"Hi $n"` reads with `$n`
+   in the body colour, the way an IDE shows it, so the reader can see what is
+   substituted. It is a CHILD of the string element, so it wins on being the
+   inner element rather than on order. */
+figure.code .token.interpolation { color: var(--code-fg); font-style: normal; }

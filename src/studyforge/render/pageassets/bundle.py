@@ -1,0 +1,124 @@
+"""What goes into a page's stylesheet and script, in what order, under what name.
+
+**What it does.** Composes the parts into the two files every page links, and
+fixes the order — which for CSS is meaning, not tidiness.
+
+**How you use it.** `stylesheet()` and `script()` return text;
+`STYLESHEET_NAME` and `SCRIPT_NAME` are what to write it as.
+
+**Depends on.** `source`. Nothing here touches a page or a corpus.
+
+## Why the order is stated and not sorted
+
+⛔ **Two rules of equal specificity: the last one wins.** So the sequence below
+*is* part of the design, and `source.names()` — which sorts — must never be
+used to build a bundle. Reset before palette before anything that paints;
+`code-highlight` after `reading`, because it refines what `reading` sets on the
+same elements.
+
+⛔ **And it must not depend on directory order** (R10): two machines
+enumerating `assets/` can disagree, and a page that differs between them is a
+page that cannot be compared byte for byte.
+
+## The name carries no digest
+
+⛔ **`page.css`, not `page.8f3a21.css`.** A content digest in the name means a
+new filename, and a rewrite of *every page that links it*, every time a colour
+changes — at a thousand units that is a thousand-file diff for one hex value.
+The cost of the plain name is a browser holding a stale copy until reload,
+which on a local study site is free (§8.2). ⚠️ This is the opposite of the rule
+for a **narration clip**, whose filename carries a digest precisely because a
+stale clip is a wrong voice reading current text; the difference is that
+nothing links a clip by a name a thousand pages repeat.
+
+⭐ **The sprite has exactly one source on disk.** `video-player.js` carries a
+placeholder that is filled from the vendored `plyr.svg` when the script is
+composed, so no derived copy of the sprite is committed beside it.
+"""
+
+from __future__ import annotations
+
+from studyforge.render.pageassets.source import text
+
+#: The stylesheet, weakest first. ⚠️ Vendored `plyr.css` comes after the
+#: authored parts so a player control takes its own look rather than the
+#: reading column's, and `video-player.css` comes after *it* — that is the
+#: standing rule for a view that needs something different: theme the vendored
+#: stylesheet from outside, never fork it, so re-vendoring does not strand the
+#: change.
+STYLE_PARTS = (
+    "reset.css",
+    "palette.css",
+    "focus.css",
+    "reading.css",
+    "code-highlight.css",
+    "plyr.css",
+    "video-player.css",
+)
+
+#: The script. ⛔ A library before the code that calls it: `video-player.js`
+#: returns immediately when `Plyr` is undefined, so the order is what makes it
+#: run at all.
+SCRIPT_PARTS = (
+    "prism.js",
+    "plyr.js",
+    "copy-code.js",
+    "video-player.js",
+)
+
+#: ⛔ Plain names, no content digest. See this module's docstring.
+STYLESHEET_NAME = "page.css"
+SCRIPT_NAME = "page.js"
+
+#: The placeholder `video-player.js` carries, and the part that fills it.
+SPRITE_PLACEHOLDER = "__PLYR_SPRITE__"
+SPRITE_PART = "plyr.svg"
+
+#: What separates two parts in a bundle. A newline, so a part ending in a
+#: line comment cannot swallow the first line of the next one.
+JOIN = "\n"
+
+
+def stylesheet() -> str:
+    """Return the whole page stylesheet, composed in `STYLE_PARTS` order."""
+    return compose(STYLE_PARTS)
+
+
+def script() -> str:
+    """Return the whole page script, with the icon sprite substituted in.
+
+    ⛔ Substituted here rather than fetched: Plyr would otherwise pull its
+    sprite from a CDN on every init, and the floor is a page opened from a
+    file with no network at all (R8).
+    """
+    sprite = text(SPRITE_PART).strip().replace("\n", "")
+    composed = compose(SCRIPT_PARTS)
+    if SPRITE_PLACEHOLDER not in composed:
+        return composed
+    return composed.replace(f"'{SPRITE_PLACEHOLDER}'", sprite_literal(sprite))
+
+
+def compose(parts: tuple[str, ...]) -> str:
+    """Join the named parts in the given order, exactly as they are on disk."""
+    return JOIN.join(text(name) for name in parts)
+
+
+def sprite_literal(sprite: str) -> str:
+    r"""Return the sprite as a single-quoted JavaScript string literal.
+
+    ⚠️ Backslashes first, then quotes. The other order escapes the backslash
+    this function just added, turning one escaped quote into a literal
+    backslash followed by an unescaped one — which ends the string early and
+    leaves the rest of the sprite as broken syntax on every page.
+    """
+    escaped = sprite.replace("\\", "\\\\").replace("'", "\\'")
+    return f"'{escaped}'"
+
+
+def written_files() -> dict[str, str]:
+    """`filename -> content` for everything a build writes beside a page.
+
+    ⭐ One function, so a renderer never assembles the pair itself and the two
+    names can never drift apart from the two bodies.
+    """
+    return {STYLESHEET_NAME: stylesheet(), SCRIPT_NAME: script()}
