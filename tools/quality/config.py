@@ -13,6 +13,8 @@ about a path.
 
 from __future__ import annotations
 
+import shutil
+import subprocess
 from pathlib import Path
 
 # --- R11: the size ceiling -------------------------------------------------
@@ -173,27 +175,78 @@ def relative(path: Path, root: Path) -> str:
     return path.relative_to(root).as_posix()
 
 
+def ignored_paths(root: Path, candidates: list[Path]) -> set[Path]:
+    """Return which of `candidates` git would ignore, in one call.
+
+    ⛔ One subprocess for the whole tree, never one per file: `git check-ignore
+    --stdin` takes the list and answers it in a batch, and the alternative is
+    a hundred process launches on every run of the floor.
+
+    Returns an **empty set** whenever git cannot answer — not installed, or
+    `root` is not a repository, which is the normal case for a test's
+    temporary tree. ⚠️ That fails *open*: an unanswerable question means
+    everything is swept, which reports too much rather than too little. The
+    other direction would silently stop checking.
+    """
+    git = shutil.which("git")
+    if git is None or not candidates:
+        return set()
+    payload = "\0".join(relative(path, root) for path in candidates)
+    try:
+        result = subprocess.run(  # noqa: S603 - fixed argv, no shell
+            [git, "check-ignore", "--stdin", "-z"],
+            input=payload,
+            capture_output=True,
+            text=True,
+            cwd=root,
+            check=False,
+            timeout=30,
+        )
+    except OSError, subprocess.SubprocessError:
+        return set()
+    if result.returncode not in (0, 1):  # 128: not a repository, or worse
+        return set()
+    return {root / name for name in result.stdout.split("\0") if name}
+
+
 def text_files(root: Path) -> list[Path]:
-    """Every readable text file in the tree, sorted — not just the Python ones.
+    """Every readable text file the repository is responsible for, sorted.
 
     ⚠️ Wider than `python_files` on purpose. A home directory reaching disk
     does not care what extension the file has: R7 has been violated in this
-    repository once already and it was in a **document**. So this walks the
-    whole tree from the root, skipping only tool output, and skipping any file
-    that will not decode as UTF-8 — a PNG has no strings to sweep and reading
-    one as text is meaningless rather than merely useless.
+    repository once already and it was in a **document**, so this walks the
+    whole tree rather than three roots of `.py`. Anything that will not decode
+    as UTF-8 is skipped — a PNG has no strings to sweep.
+
+    ⛔ **But a git-ignored path is not the repository's, and is not read.**
+    `.idea/workspace.xml` legitimately carries the paths of whoever has the
+    project open; it is ignored, it has not entered the repository and it
+    never will. Gating on it makes the floor unconditionally red for anyone
+    with an IDE running — and a floor that is red for a reason nobody can fix
+    is one people learn to run through a filter, after which it is not read at
+    all.
+
+    ⭐ **Ignored, not untracked, and the difference is the whole point.** A
+    file you have just written and not yet added is exactly what a gate on
+    "personal data entering the repository" must catch — *before* it enters,
+    not in the commit that carries it. `git ls-files` would miss it. So the
+    rule is: everything except what git has been told to ignore.
 
     Sorted, for the same reason as `python_files`: two machines must produce
     the same findings in the same order.
     """
-    found: list[Path] = []
+    candidates: list[Path] = []
     for path in root.rglob("*"):
         if not path.is_file() or path.is_symlink():
             continue
+        # ⛔ `.git` itself is NOT "ignored" as far as git is concerned — it is
+        # simply not part of the worktree — so this pre-filter is doing real
+        # work rather than duplicating the call below.
         if is_tool_output(relative(path, root)):
             continue
-        found.append(path)
-    return sorted(found)
+        candidates.append(path)
+    ignored = ignored_paths(root, candidates)
+    return sorted(path for path in candidates if path not in ignored)
 
 
 def read_text(path: Path) -> str | None:

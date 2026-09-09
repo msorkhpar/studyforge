@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 
-from tests.support import repository_root
+from tests.support import init_repository, repository_root
 from tools.quality import config
 from tools.quality.personal_data.shapes import (
     ALLOWED_ADDRESS,
@@ -132,6 +132,25 @@ def test_a_finding_names_the_shape_and_never_the_value(tmp_path):
     assert "home path" in findings[0].message
     assert HOME_SHAPE not in findings[0].message
     assert "somebody" not in findings[0].message
+
+
+def test_an_ignored_file_is_not_gated_even_when_it_carries_a_shape(tmp_path):
+    # ⛔ The merge-gate defect, end to end. An IDE's workspace file carries the
+    # paths of whoever has the project open, and it is git-ignored precisely
+    # because it is theirs and not the repository's. Reporting it made the
+    # floor unconditionally red for anyone with an editor running — and a
+    # floor that is red for a reason nobody can fix is one people learn to run
+    # through a filter, after which it is not read at all.
+    init_repository(tmp_path)
+    write(tmp_path, ".gitignore", ".idea/\n")
+    write(tmp_path, ".idea/workspace.xml", '<option value="' + HOME_SHAPE + '" />\n')
+    assert check_shapes(tmp_path) == []
+
+    # ⭐ ...and the same shape one directory over, where it IS the
+    # repository's, is still a finding. Both directions, or this passes on a
+    # sweep that reads nothing at all.
+    write(tmp_path, "docs/notes.md", HOME_SHAPE + "\n")
+    assert [finding.path for finding in check_shapes(tmp_path)] == ["docs/notes.md"]
 
 
 def test_tool_output_is_never_swept(tmp_path):

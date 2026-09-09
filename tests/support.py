@@ -77,6 +77,21 @@ def git() -> str:
     return tool
 
 
+def init_repository(path: Path) -> Path:
+    """`git init` a throwaway repository at `path` and return it.
+
+    For tests that need git to answer a question about a tree — which ignore
+    rules apply, what is ignored — rather than about this repository.
+
+    ⛔ No commit is made and no identity is configured. Nothing here needs an
+    author, and configuring one would mean writing a name into a test.
+    """
+    path.mkdir(parents=True, exist_ok=True)
+    result = run([git(), "init", "-q"], cwd=path)
+    assert result.returncode == 0, result.stdout + result.stderr
+    return path
+
+
 def is_ignored(path: str, cwd: Path | None = None) -> bool:
     """Whether git, run in `cwd`, would ignore `path`. The path need not exist.
 

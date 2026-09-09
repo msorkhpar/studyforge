@@ -9,7 +9,7 @@ which is the thing under test.
 
 from __future__ import annotations
 
-from tests.support import repository_root
+from tests.support import init_repository, repository_root
 from tools.quality.personal_data.identity import (
     GENERIC_IDENTIFIERS,
     check_identifiers,
@@ -57,6 +57,22 @@ def test_a_fabricated_identifier_is_found(tmp_path):
     assert findings[0].line == 1
     assert "account name" in findings[0].message
     assert "zaphodbeeblebrox" not in findings[0].message
+
+
+def test_an_ignored_file_is_not_gated_for_an_identifier_either(tmp_path):
+    # The merge gate reported this half too: an IDE workspace file names the
+    # account whose IDE it is. Same ruling, same fix, asserted separately
+    # because the two halves enumerate the tree through the same helper and a
+    # future edit could give one of them its own.
+    init_repository(tmp_path)
+    write(tmp_path, ".gitignore", ".idea/\n")
+    write(tmp_path, ".idea/workspace.xml", "opened by zaphodbeeblebrox\n")
+    fabricated = {"account name": "zaphodbeeblebrox"}
+    assert check_identifiers(tmp_path, fabricated) == []
+
+    write(tmp_path, "docs/notes.md", "written by zaphodbeeblebrox\n")
+    reported = [finding.path for finding in check_identifiers(tmp_path, fabricated)]
+    assert reported == ["docs/notes.md"]
 
 
 def test_an_identifier_inside_a_longer_word_is_not_a_match(tmp_path):

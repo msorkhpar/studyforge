@@ -1,7 +1,9 @@
 # FND-06 — handoff
 
-**Status:** done. The fifth check is in `tools.quality.CHECKS`, the sanctioned
-directory is bounded in both directions, and `is_ignored` is consolidated.
+**Status:** done, after one defect found at the merge gate and fixed —
+⛔ **the sweep's *scope* was wrong: it read git-ignored paths.** See *Decisions*
+3a. The fifth check is in `tools.quality.CHECKS`, the sanctioned directory is
+bounded in both directions, and `is_ignored` is consolidated.
 ⭐ **The full-tree sweep is clean** — 142 files, including all 33 documents and
 all 41 fixture files. See *Findings* 1 for what a sweep with the rubric's raw
 patterns would have said instead, which is the more interesting number.
@@ -55,6 +57,40 @@ never persisted, never cached between runs, never put in a message. An email
 stays a pattern because an email needs no stored value to recognise.
 `test_identifiers_are_derived_and_never_written_down` reads the package's own
 source and asserts none of this machine's six derivable values appears in it.
+
+**3a. ⛔ A git-ignored path is not the repository's, and is not read. This was
+a defect, found at the merge gate.** The first version walked the tree and
+skipped only tool output, so it reported `.idea/workspace.xml` — an IDE file
+that legitimately carries the paths and account of whoever has the project
+open, that is git-ignored, and that has not entered the repository and never
+will. ⚠️ The consequence was worse than a wrong finding: **the floor was
+unconditionally red for anyone with an IDE running**, and a floor that is red
+for a reason nobody can fix is one people learn to run through a filter, after
+which it is not read at all.
+
+⭐ **Ignored, not untracked — and the difference is the whole ruling.** The
+tempting fix is `git ls-files`, which would also have silenced it. It is the
+wrong one: a file you have just written and not yet added is *exactly* what a
+gate on personal data **entering** the repository must catch, before it enters
+rather than in the commit that carries it. So the rule is everything except
+what git has been told to ignore, via one batched `git check-ignore --stdin`
+call rather than one process per file.
+
+⚠️ It **fails open**: when git cannot answer — not installed, or the tree is
+not a repository, which is every test's `tmp_path` — the whole tree is swept.
+An unanswerable question reports too much rather than too little; the other
+direction stops checking silently.
+
+⛔ `.git` is still filtered separately, because git does not consider it
+*ignored* — it is simply not part of the worktree — so the tool-output
+pre-filter is doing real work rather than duplicating the call.
+
+⚠️ **This is the second time a gate's scope rather than its patterns has been
+the defect**, so the scope is now pinned by six tests in
+`tools/tests/quality/test_config.py`, including the separating case (an
+untracked new file *is* swept) and a fixture-shaped one (this repository's
+`!tests/fixtures/**` re-inclusion is honoured, so the golden tree the registry
+is about does not fall out of the sweep).
 
 **3. The sweep reads the whole tree, not the Python files.** `python_files()`
 is `.py` under three roots; `text_files()` is everything, minus tool output,
@@ -147,7 +183,9 @@ with no allow-list, correctly. Pinned by
 `test_this_gate_and_the_archive_gate_disagree_about_the_fixture_s_address` so
 nobody later "fixes" the disagreement.
 
-**The check caught its own author twice in one sitting** — a 107-character line
+**The check caught its own author twice in one sitting, and then a third
+time.** The first two were R11 and R12 findings from checks that already
+existed — a 107-character line
 in the contract it was being wired into, then its own 406-line module. Both
 were R11 and R12 findings from the four checks that already existed, which is
 the best evidence I have that the floor works on new code rather than only on
@@ -159,7 +197,22 @@ why this is ~950 lines including tests instead of a rewrite.
 
 ## Findings
 
-**1. ⭐ The full-tree sweep found nothing, and the negative result is the
+**0. ⭐⭐ The check found a real R7 violation on its first run against the full
+tree, and it was in a file the coordinator had written into this repository.**
+An account name had reached a tracked file. It has been fixed. ⭐ **That is the
+argument for FND-06, and no test in this diff is a better one:** the rule was
+already written down, already agreed, already in `CLAUDE.md` — and it was
+violated anyway, by the person routing the work, in the same milestone that
+accepted the task to automate it. A grep that nobody runs catches nothing. This
+is also the second recorded instance in this repository, which is the number
+that turns a lapse into a pattern.
+
+⚠️ Recorded here as a **shape**, deliberately: the file and the value are not
+named, because a handoff that quoted either would have relocated the leak into
+a document that *is* tracked. The fix is in the coordinator's hands and the
+sweep now returns clean.
+
+**1. ⭐ The full-tree sweep found nothing else, and the negative result is the
 evidence.** 142 files, 33 of them documents, 41 of them fixtures. Zero shape
 findings, zero identifier findings, zero registry findings — and the identifier
 half was not idle: **six** identifier kinds were derivable on the machine that
@@ -219,7 +272,9 @@ spec has R20.** Reported in FND-01 and FND-03; still open.
 
 **1. Run `pytest`, or `docker/dev/check`. Nothing new to remember.** The sweep
 is the fifth entry in `tools.quality.CHECKS`, so it runs wherever the floor
-runs.
+runs. ⭐ **It will not go red because of your editor.** Anything git ignores is
+not read — but a file you have written and not yet added *is*, which is the
+point at which a leak is still cheap to fix.
 
 **2. If it fires on you, the fix is a placeholder — never an exemption.**
 
