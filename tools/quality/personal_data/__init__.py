@@ -1,7 +1,7 @@
 """R7 at the repository boundary: no personal data reaches a tracked file.
 
 **What it does.** Sweeps every text file in the tree for personal-data
-**shapes** — an absolute home path, an email address, an mDNS hostname, a
+**shapes** — an absolute home path, an email address, an local hostname, a
 bearer token — and, separately, for **this machine's own identifiers**, derived
 at run time. One registered directory is permitted to carry the shapes, because
 the gates that refuse such data need an input to refuse.

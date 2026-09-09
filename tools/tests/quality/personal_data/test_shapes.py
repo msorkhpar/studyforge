@@ -46,7 +46,7 @@ def test_each_shape_is_recognised():
         (HOME_SHAPE, "home path"),
         (MAC_SHAPE, "home path"),
         (ADDRESS, "email address"),
-        (HOSTNAME, "mDNS hostname"),
+        (HOSTNAME, "local hostname"),
         (TOKEN, "bearer token"),
     ):
         assert shape_matches(text) == [(1, expected)], text
@@ -190,7 +190,7 @@ def test_the_documents_that_quote_the_shapes_are_swept_and_clean():
 def test_a_finding_reads_as_a_sentence():
     assert article("email address") == "an"
     assert article("home path") == "a"
-    assert article("mDNS hostname") == "a"
+    assert article("local hostname") == "a"
 
 
 def test_every_shape_is_a_pattern_holding_no_value():

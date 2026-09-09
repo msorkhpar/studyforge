@@ -1,7 +1,7 @@
 """The shape half of R7: patterns that hold no value.
 
 **What it does.** Recognises the four personal-data shapes a tracked file must
-not carry — an absolute home path, an email address, an mDNS hostname, a bearer
+not carry — an absolute home path, an email address, an local hostname, a bearer
 token — and sweeps the tree for them, skipping the registered negative-fixture
 directories.
 
@@ -77,7 +77,7 @@ SHAPES = (
         re.compile(r"\b[A-Za-z0-9._%+\-]{2,}@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"),
     ),
     (
-        "mDNS hostname",
+        "local hostname",
         # A machine name. The trailing guard keeps `settings.local.json` — a
         # filename, not a host — out of it.
         re.compile(r"(?<![\w.])[A-Za-z0-9-]+\.local(?![\w.])"),
