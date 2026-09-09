@@ -102,7 +102,7 @@ a commit survives a follow-up commit that removes it.
 ```bash
 git diff -U0 "$BASE"...HEAD \
   | grep -E '^\+' | grep -vE '^\+\+\+' | sed 's/^+//' \
-  | grep -EIn "(/home/|/Users/|/root/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|[\$]HOME|~/[A-Za-z0-9._-]+|\b[A-Za-z0-9-]+\.local\b" \
+  | grep -EIn "(/home/|/Users/|/root/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]{2,}@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\b[A-Za-z0-9-]+\.local($|[^.[:alnum:]_])" \
   | grep -vEi '@(example[.](com|org|net|invalid)|localhost|anthropic[.]com)'
 ```
 
@@ -120,11 +120,29 @@ placeholders (`contact@example.com`, `Example/0.1 (+https://example.invalid)`,
 proves it is a false positive **in the review**, quoting the line. Dismissing a
 hit is an explicit, recorded act — never a silent one.
 
-⭐ **Worked example, and it is this file.** Run 1a over `review-rubric.md` and it
-returns two hits: a prose line noting that `\n@router.get` is address-shaped, and
-the `"$HOME"` inside 1b's own command. Both are the *patterns*, not values. That
-is what a recorded dismissal looks like, and it is the only kind that counts —
-⛔ a hit nobody wrote down is a hit nobody checked.
+⚠️ **Three refinements, each measured rather than argued** (`FND-06`, which ran
+the raw patterns over the whole tree and got **34 hits, every one a false
+positive** — ten of them inside its own diff):
+
+- ⭐ **The local part needs two characters.** A one-character one is almost
+  always an escaping artefact: a serialised newline before a decorator makes
+  `\n@router.get`, and `n@router.get` is address-shaped. ⚠️ **Stated cost:** a
+  genuine one-character address like `a@b.example` is not caught. Accepted,
+  because check **1b** matches the user's *actual* address exactly regardless of
+  length, and a third party's one-character address is not R7's subject.
+- ⭐ **`.local` needs a trailing guard.** Without one, a settings *filename*
+  ending in that suffix — `settings.local.json` — matches the hostname rule. A
+  third false-positive class nobody had noticed.
+- ⭐ **`$HOME` and `~/` are dropped from this sweep**, because the risk is the
+  **expansion**, not the variable name, and the expansion is already caught by
+  the `/home/` rule. Keeping them meant dismissing the rubric's own commands on
+  every run. ⚠️ A literal `$HOME` inside `src/` or a generated artifact is still
+  a defect — it is just not this check's business.
+
+⭐ **A check that cries wolf is a check reviewers learn to wave through**, which
+is the one failure R7 cannot afford. That is why these are corrections and not
+loosening: each removes a class that is *provably* not a leak, and none removes a
+class that could be one.
 
 ### 1b. This machine's own identifiers, without writing them down
 
@@ -146,7 +164,7 @@ rm -f /tmp/rev.$$
 
 ```bash
 git log --format='%s%n%b' "$BASE"..HEAD \
-  | grep -EIn "(/home/|/Users/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}" \
+  | grep -EIn "(/home/|/Users/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]{2,}@[A-Za-z0-9.-]+\.[A-Za-z]{2,}" \
   | grep -vEi '@(example[.](com|org|net|invalid)|anthropic[.]com)'
 ```
 
