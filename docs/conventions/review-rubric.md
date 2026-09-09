@@ -89,6 +89,31 @@ parallel tasks are each correct alone.
 introduced on one branch is invisible to every branch cut before it. The trial
 merge is the only check that sees rules nobody thought to look for.
 
+### ⛔ 0a-i. Measure the base too, and report both numbers
+
+```bash
+# same commands, in a worktree of $REVIEW_BASE with nothing merged
+```
+
+⛔ **A trial merge tells you the merge is good. It tells you nothing about the
+base**, and a green merge over a **red base** is a normal, expected result — the
+branch may simply contain the fix.
+
+⚠️ **I got this wrong and it is the cheapest possible correction.** In round 8 I
+measured a trial merge, got a clean linter, and wrote that the release branch's
+outstanding item *"is closed"*. The merge really was clean — the branch under
+review happened to carry the fix — but ⛔ **the release branch was still red, and
+I had reported on it from a measurement of something else.** A red release branch
+blocks every other trial merge, so that claim was load-bearing for four other
+people.
+
+⭐ **So: two numbers, always, and they answer different questions.**
+
+| | Question | If red |
+|---|---|---|
+| **base** | is the branch everyone merges into healthy? | ⛔ a **finding against the release branch**, not against this change — and it is urgent, because it blocks every other review |
+| **merge** | is the result of this change good? | CHANGES REQUESTED against this change |
+
 ---
 
 ## 1. R7 — no personal data · ⛔ HARD FAIL
