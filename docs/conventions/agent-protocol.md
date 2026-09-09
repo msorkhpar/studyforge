@@ -6,7 +6,7 @@ How a task is picked up, worked, and handed on. Applies to every task in
 ## Picking up a task
 
 1. Read `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4 and every
-   ruling **R1–R20**. This is the authority you appeal to when the task is
+   ruling **R1–R21**. This is the authority you appeal to when the task is
    ambiguous. Do not invent a rule; if one is genuinely missing, say so in your
    handoff and proceed under a stated assumption.
 2. Read your **epic document** — it carries the shared context for your task's

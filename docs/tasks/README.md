@@ -3,7 +3,7 @@
 **85 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
 `BOARD.md`**, not this file: this one orders the work, that one says where it is.
 Companion to
-`../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R20** every
+`../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R21** every
 task cites.
 
 ⚠️ **Revised 2026-09-09.** Two revisions the same day; the second is the one that

@@ -55,8 +55,13 @@ needs that is neither prose nor inline media. Its fences use 8 languages plus
 prefixes rather than directories** (C1). No build file; `TestCases.md` is prose
 scenarios. Two things make it the harder adapter and the better test: it
 carries the same material twice, per-unit *and* as whole-series aggregates
-(C2), so a naive glob double-ingests; and **18 of its files contain raw HTML**,
-which SF-07 must already handle (C3) or the ingest stops dead.
+(C2), so a naive glob double-ingests — now declarable, and refused when
+undeclared, via `corpus.json`'s `content` (spec §4); and **26 of its 41 files
+carry XML inside fenced code blocks**, so SF-07 must be fence-aware (C3) or the
+ingest stops dead. ⚠️ **Recounted 2026-09-09:** an earlier draft said "18 of its
+files contain raw HTML". With fences stripped ISO has **none** — the requirement
+is fence-awareness, not an HTML vocabulary, and the raw-HTML constituency is
+SPARQL (6 of 19).
 
 **V2-07 — Ragged-depth hierarchies.** Only if a real source demands what spec
 §4's YAGNI currently refuses. The cost is high — every flat contract downstream

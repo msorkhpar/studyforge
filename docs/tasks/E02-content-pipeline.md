@@ -70,16 +70,54 @@ ingestion date does not. An unknown version raises.
 **Context** ~35k — `CS/tools/study/markdown.py`, `CS/tests/test_markdown.py`
 
 **Definition.** The block vocabulary — `heading`, `para`, `code`, `list`,
-`table`, `image`, plus **`rule`** (thematic break), **`quote`** (blockquote) and
-**`html`** (raw block-level HTML) — and the strict reader that produces it.
+`table`, `image`, `video`, plus **`rule`** (thematic break), **`quote`**
+(blockquote), **`html`** (raw block-level HTML) and **`disclosure`** (a
+`<details>`/`<summary>` withheld section) — and the strict reader that produces
+it.
 
-⚠️ **The last three are additions, and they are not speculative.** Counted in
-real material: 10 Java lessons use `---` thematic breaks and one uses a
-blockquote; **18 ISO files contain raw HTML**. A parser whose rule is *raise,
-never drop* stops dead on all of them. Adding these now costs little; meeting
-them during an ingest costs a stalled milestone. Raw HTML is stored verbatim
-and rendered as-is — it is not parsed, and it is gated for personal data like
-any other string.
+⚠️ **The additions are measured, not speculative — but recount before you quote
+a number.** As of 2026-09-09: **10 of 166** Java lessons use `---` and **1** uses
+a blockquote; **6 of 19** SPARQL lessons use `<details>`/`<summary>`; and ISO
+carries raw HTML in **0 of 38** files, its 26 `<tag>`-shaped files being XML
+*inside fenced blocks*. An earlier draft of this task said "18 ISO files contain
+raw HTML" and that was a count of angle brackets (spec §1 C3, corrected).
+
+⛔ **So the ISO constraint is fence-awareness, and it is the one that actually
+bites.** A `<`-scanning parser passes every other fixture in the set and fails
+here. `FND-04`'s `depth1` unit 3 `lesson-2` is built for exactly this: three
+fenced blocks of XML and HTML beside a raw block using the same tags.
+
+⛔ **`disclosure` is a container block, and this is a ruling — the two obvious
+readings both fail** (CTO, `handoffs/CTO-2026-09-09-rulings-q1-q3.md`).
+
+```json
+{ "type": "disclosure", "summary": "Show the answer", "open": false,
+  "blocks": [ { "type": "para", "text": "…" },
+              { "type": "code", "lang": "sparql", "text": "…" } ] }
+```
+
+- ⛔ **Do not flatten it** — dropping the tags and keeping the summary as a
+  paragraph is what CodeSignal's `markdown.py` does, and it is right for a DOM
+  reader and wrong here: all six SPARQL uses hide an **exercise answer**, and
+  flattening shows it outright.
+- ⛔ **Do not store it as one raw `html` block** — that keeps the hiding and makes
+  the body opaque. A fenced query inside the answer would not be a `code` block:
+  uncounted, unhighlighted, invisible to SF-25's block-count gate.
+- ⭐ **It is the same shape `quote` already has**, for the same reason FND-04
+  ruled `quote` holds blocks rather than text: a withheld section can hold a
+  list, a fence or a table, and a `text`-only container loses exactly what
+  *never silently drop* exists to keep. Two container blocks, one shape, no new
+  concept.
+- ⭐ **The archive records the semantics; the renderer owns the markup.** The
+  document says *this content is disclosed on demand and here is its label*;
+  `<details><summary>` is SF-12's template decision (R13). `summary` is content
+  and is gated, translated and counted like any other text. `open` is the
+  author's default and is honoured, not overridden.
+- **`html` survives for genuinely unstructured markup** — an unknown tag on its
+  own line stays prose, because a lesson teaching HTML must keep it. Raw HTML is
+  stored verbatim, rendered as-is, not parsed, and gated like any other string.
+- ⚠️ `counts` gains one key per new type, so a disclosure is countable without
+  being opened.
 
 **This module already exists and is proven; port it with its governing rule
 intact: *never silently drop a line*.** An unrecognised construct raises rather
@@ -97,11 +135,18 @@ why ingestion there is wiring rather than parser work.
 indented fences, lazy continuations, nested list items, borderless tables, `1)`
 as an ordered marker, display maths as a block — and they are free if you port
 current source, re-derived at full cost if you port the version quoted here.
-⚠️ One of them discharges part of C3: `<details>`/`<summary>` is handled as a
-**named shape, never a general HTML stripper** — the tags are markup and are
-dropped, the summary text is content the reader clicks and is kept as a
-paragraph, and an unknown tag on its own line stays prose, because a lesson
-teaching HTML must keep it.
+
+⚠️ **Two places where CodeSignal deliberately does the opposite, and you are
+diverging on purpose — record it rather than rediscover it.** Its `_quote`
+returns the quote's *inner* blocks transparently and its parser emits **no
+block at all** for a thematic break, both to agree with `lesson_html.BLOCK_TAGS`,
+its DOM reader, for which `<blockquote>` and `<hr>` are not block tags. ⭐ A
+repository-shaped source has no DOM reader to agree with, so studyforge makes
+them block types. Its `disclosure` handling — tags dropped, `summary` kept as a
+paragraph — is the same reasoning reaching the same wrong answer for us, and is
+overruled above. A task told to "port `markdown.py` with its governing rule
+intact" will find the current source doing three things differently and should
+know all three are intended.
 
 **Acceptance.** CodeSignal's existing Markdown tests pass unchanged. Parses all
 166 Java sub-READMEs with zero errors — **or** names every file and construct
@@ -120,6 +165,48 @@ turns that count into a gate.
 **Definition.** R7's enforcement: `scrub` on the way in, `assert_clean` as the
 refusing gate at every disk and wire boundary. Home paths, account
 identifiers, names, email addresses.
+
+⛔ **What belongs in the pattern set is ruled, because the obvious answer is
+wrong** (CTO on X2, `handoffs/CTO-2026-09-09-rulings-q1-q3.md`).
+
+⭐ **R7 governs identifiers that arrive from the environment the build runs in —
+not identifiers that are the material's subject matter.** A home path, an account
+id, a name, an email, a bearer token: every one of these reaches a document
+because of *whose machine and whose account* ran the build. That is the leak R7
+exists to stop, and it is why the rule's own history is about a value taken from
+session context. ⛔ **The gate is not a content classifier**, and a pattern that
+cannot have come from the build environment does not belong in it.
+
+⚠️ **The case that forced this** (`X2`): ISO-8583 teaches card messaging and its
+material carries **96 card-shaped digit strings** — a 16-digit test PAN is the
+subject of the lesson. A gate that refuses rather than rewrites (R7) and matched
+that shape would refuse the entire corpus, with no escape hatch and a diagnosis
+that looks exactly like a leak. ⭐ **Under the ruling the question dissolves: the
+framework ships no payment-card pattern**, because a PAN in an ISO lesson came
+from the material, which its owner already wrote and published. Verified: the
+inherited gate has exactly three patterns — a profile URL, an email address and a
+bearer token — and none of them is a content shape. ⛔ **Do not add one.**
+
+⚠️ **The residual class is real and the answer to it is specified, not built.**
+A second source could legitimately carry a shape the gate *does* own — a lesson
+about HTTP quoting a real support address, say. When that happens the exemption
+is **manifest data read by the gate**, never a pattern hardcoded for one corpus,
+because a gate that names a corpus is the framework learning about a source (R1).
+Three conditions on any such field, so it cannot become an off switch:
+
+1. ⛔ **A floor the manifest can never lift.** The declarable shapes are a closed
+   list the framework publishes; a corpus cannot invent one. Home paths, account
+   identifiers and credentials are **not** declarable at any time.
+2. ⛔ **Scoped and reported, never globally silent.** Every string that passes
+   only because of a declaration is counted and named in the build report — *fail
+   loud* has a sibling, and it is *pass loud* (R6).
+3. ⭐ **The gate still refuses; it refuses less.** A declaration narrows the
+   pattern set for one corpus. It never rewrites, and it never skips silently.
+
+⛔ **v1 builds none of it.** No source in scope needs it, and this is the same
+move §5 makes for media extraction — build the awareness, record the shape, and
+let the mechanism plug in behind a decision that has already been taken. What
+this task must not do is invent a *different* shape later under deadline.
 
 The belt-and-braces discipline is deliberate and must survive the port: scrub
 first, then assert, **at more than one layer**. The inner gate is not
@@ -152,7 +239,9 @@ generated file, log or report in the entire v1 output contains personal data —
 asserted by a repository-wide check, not by inspection. **Real material
 containing a construct that only resembles personal data after escaping is not
 refused** — with the measured case as a fixture. **Every gate in the framework
-reads the decoded strings, never a rendered form** — asserted.
+reads the decoded strings, never a rendered form** — asserted. **A document
+carrying 16-digit card-shaped strings passes** — asserted, because that is the
+ISO corpus's subject matter and the gate is not a content classifier.
 
 ---
 

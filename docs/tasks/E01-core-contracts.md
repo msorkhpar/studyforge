@@ -53,9 +53,31 @@ for a declared depth is rejected. No filesystem import in the package.
 
 **Definition.** `corpus.json` — the file that makes a directory a source.
 Owns `corpus_api`, `source`, `title`, `levels`, `variants`, `exercises`,
-`placement`, `permitted_edits`, `media`. Refuses an unknown version rather than migrating
+`placement`, `content`, `permitted_edits`, `media`. Refuses an unknown version rather than migrating
 it at read time (R9): a migration that runs when something merely wanted to
 render a page rewrites the record of what was ingested.
+
+⭐ **`content` is new, and it is here rather than in a later task on purpose**
+(CTO on X1, `handoffs/CTO-2026-09-09-rulings-q1-q3.md`; spec §4). `corpus_api: 1`
+has never been consumed, so adding a field now costs nothing and adding it after
+SF-02 ships costs a migration R9 makes deliberately expensive.
+
+```json
+"content": {
+  "include": ["src/*.md"],
+  "exclude": [
+    { "path": "src/ISO.md",
+      "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" } ] }
+```
+
+⛔ **This is C2's countermeasure and C2 is a schema problem.** ISO ships both
+per-unit files *and* whole-series aggregates of them, so a `src/*.md` glob
+ingests every unit twice and nothing complains — and nothing in the manifest
+could say otherwise. ⭐ **The asymmetry is deliberate:** an inclusion needs no
+justification, an exclusion is material withheld from the reader and carries its
+`why`, exactly as `permitted_edits` does for an edit. ⛔ A file under the source
+root matching neither list is **unclassified** and is named and refused (R6) —
+silence is the failure C2 describes, so silence is what this removes.
 
 ⭐ **This file is where a corpus's customisation lives** (SK-07). Everything that
 differs between two sources and is not the source's own content is a field here
@@ -90,10 +112,14 @@ is for. The limits exist so that a corpus which outgrows the default finds out
 early and loudly rather than at a rejected push.
 
 **Acceptance.** Accepts manifests for all four shapes in spec §1, including
-1-level SPARQL. Rejects empty `levels`, empty `variants`, unknown `corpus_api`,
+**1-level SPARQL and 1-level ISO** (`levels: ["group"]` — spec §1's table is the
+correct one; §4's row has been corrected). Rejects empty `levels`, empty
+`variants`, unknown `corpus_api`,
 unknown `placement`, an unknown `media.commit` mode, and a `permitted_edits`
 entry that names a forbidden target (R3). Accepts an absent or empty
-`permitted_edits`. An absent `media` block means committed-with-default-limits,
+`permitted_edits`. **An `exclude` entry with no `why` is refused**, and a file
+matching neither `include` nor `exclude` is reported unclassified by name —
+asserted against an ISO-shaped fixture carrying an aggregate. An absent `media` block means committed-with-default-limits,
 and that is asserted rather than assumed. **No framework module
 derives runnability from a variant name** — asserted. No framework module
 imports anything source-specific — asserted, not assumed.
@@ -218,10 +244,27 @@ identity block is **reported by name**, never skipped silently (R6).
 **Definition.** `container.json` — the deepest container's declaration of what
 its units are: address, per-level titles, variant, ingestion date, note, and
 the unit list with declared practice counts. Generalises CodeSignal's
-`course-map.json`. **Hand-authorable, and never written by the render
-pipeline** — it is the one place human judgement about a source is recorded, so
-a generator that overwrote it would erase the only thing it could not
-reproduce.
+`course-map.json`.
+
+⚠️ **"Hand-authorable" is about two fields, not about the document, and the two
+readings only look contradictory** (CTO ruling on Q3,
+`handoffs/CTO-2026-09-09-rulings-q1-q3.md`). ⛔ `container.json` is **generated**
+by the adapter on ingest (spec §6, `JS-05`) and amended only by `EX-04`'s
+declared practice counts; ⛔ the render pipeline never writes it, and neither
+does a person write it from nothing. What a person may amend are the
+**editorial** fields the generator round-trips rather than overwrites — a
+corrected `title`, a `note` — and a generator that would discard one **stops**
+(§6, R6).
+
+⭐ **That is not a hole in a skill.** R19 forbids a second source having to
+*retype* what a skill could have produced; a corrected title or an explanatory
+note is not retyping, it is a judgement about one's own material, which is the
+one thing no skill can produce. ⛔ Anything that *is* derivable — the address,
+the titles from the source, the variant, the unit list — is generated, and
+hand-writing it is a finding against the adapter-authoring skill.
+
+**This task builds the reader and the round-trip guarantee. It builds no
+writer.**
 
 One variant per container. This preserves the invariant that removed an entire
 failure class: a map promising a variant the archive does not hold used to be
@@ -237,3 +280,5 @@ migration that cannot pass. Carry them, or record explicitly where they went.
 field renaming **with no field lost**. Rejects an address whose arity disagrees with `levels`, a
 variant absent from `variants`, and non-contiguous unit ordinals. Declared
 practice counts are preserved verbatim for SF-25 to check against reality.
+**An edited `note` and `title` survive a re-read unchanged** — asserted, because
+that round-trip is the entire content of "hand-authorable".
