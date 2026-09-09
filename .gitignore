@@ -19,6 +19,22 @@ dist/
 *.section.html
 site.json
 
+# Generated audio and discovery caches produced by THIS repository's own runs.
+# ⚠️ Scope, because the rule above and this one look contradictory and are not:
+# a *corpus* commits its media by default (SF-17) under its own `media` policy
+# (SF-02, SF-32), and that policy is written in the corpus's ignore file, not
+# here. `studyforge`'s own tree never legitimately holds a clip or a scan
+# cache — anything matching below came out of a local build or a test run.
+*.audio/
+.studyforge/
+.discovery-cache/
+
+# ⛔ ...except the golden fixtures, which are the expected output and are the
+# whole point of FND-04. Without this, a fixture corpus's `site.json` and its
+# `*.unit.html` goldens are silently untracked and the next agent's suite
+# passes locally and fails everywhere else.
+!tests/fixtures/**
+
 # Editors / OS
 .idea/
 .vscode/

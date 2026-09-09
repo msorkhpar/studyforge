@@ -1,0 +1,98 @@
+# studyforge — packaging, test runner, and lint configuration.
+#
+# ⛔ `dependencies` is empty and stays empty. Standard library only in framework
+# source (R11's neighbour in `docs/conventions/module-structure.md`, and the
+# reason R15 exempts the serving process from containerisation: a process with
+# no dependencies gains no reproducibility from an image). A runtime dependency
+# added here is a design change, not a convenience — `tests/test_repository.py`
+# fails the build if this list grows.
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "studyforge"
+version = "0.1.0"
+description = "Turns any body of teaching material into a local, offline study site."
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = []
+
+# Test-only and tooling-only. Never imported by anything under `src/`.
+[project.optional-dependencies]
+test = ["pytest>=8.0"]
+lint = ["ruff>=0.6"]
+
+# ⚠️ No `[project.scripts]` yet. The console entry point belongs to SF-28,
+# which owns `studyforge/cli/`. Declaring `studyforge = "studyforge.cli:main"`
+# against a `main` that does not exist yet makes an installed package that
+# fails on first invocation, which is a worse state than no entry point.
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+# ⛔ `src` only. This is what keeps `tools/` — the quality floor — out of the
+# distribution: it is developer tooling, not shipped API, and an installed
+# `studyforge` must contain no `tools` package.
+[tool.setuptools.packages.find]
+where = ["src"]
+
+# R13: templates and assets are source files, shipped with the package.
+# Declared here so SF-11/SF-12 add files rather than build configuration.
+[tool.setuptools.package-data]
+studyforge = ["**/templates/*.html", "**/assets/*"]
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+# Two roots, by ruling: the framework's tests mirror `src/` into `tests/`, and
+# the quality tooling's tests sit beside the tooling at `tools/tests/`.
+testpaths = ["tests", "tools/tests"]
+# `src` puts the package on the path without an install step, so the suite runs
+# from a clean checkout with no network. `.` makes `tests.support` and
+# `tools.quality` importable the way CodeSignal's suite imports `tests.support`.
+pythonpath = ["src", "."]
+# ⚠️ `importlib` is not decoration. R12's mirror puts a `test_init.py` in every
+# package directory, and under pytest's default `prepend` import mode two files
+# with the same basename in directories that are not packages collide on the
+# module name — the suite fails to collect before it runs a single test. The
+# alternatives were an `__init__.py` in every test directory, or renaming the
+# mirrors so they no longer mirror. This is the one that leaves R12 intact.
+addopts = "--strict-markers --strict-config --import-mode=importlib"
+consider_namespace_packages = true
+
+# ---------------------------------------------------------------------------
+# Lint and format — ruff, optional and absent here.
+#
+# ⚠️ Ruff is NOT installed in this environment and no network install is
+# assumed. ⛔ The lint clause of FND-01's acceptance is therefore **blocked on
+# FND-03**, which builds the image ruff is installed into; it is not claimed as
+# passing. Ruff is configured here, declared as the `lint` extra above, and
+# skipped with an explicit message when missing — see `tests/test_repository.py`.
+# On the host the floor degrades to the standard-library size and style check,
+# which always runs.
+# The rules this project actually cares about (R11 size, R12 mirroring, R17
+# contracts) are enforced by `tools/quality/`, which is standard library only
+# and therefore always runs. Ruff covers the ordinary style layer on top,
+# wherever it happens to be available (FND-03's image is the obvious place).
+#
+# ⛔ `line-length` here and `tools.quality.config.LINE_LENGTH` must agree, or
+# the always-on checker and the optional one disagree about the same file.
+# `tools/tests/quality/test_config.py` asserts they do.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+src = ["src", "tools", "tests"]
+extend-exclude = ["tests/fixtures"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "D"]
+# D203/D213 conflict with D211/D212; the docstring shape this project wants is
+# a summary line on the opening quotes, no blank line before the class body.
+ignore = ["D203", "D213"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "pep257"
+
+[tool.ruff.format]
+docstring-code-format = true

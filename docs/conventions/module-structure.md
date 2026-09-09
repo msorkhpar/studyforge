@@ -22,6 +22,43 @@ module docstring, in one sentence, saying why splitting would be worse.
 (2,743 lines) and `scaffold.py` (1,793) are ported as packages. A task that
 ports one of them whole has not done the task.
 
+### The ceiling is enforced, and the exception is declared
+
+`python3 -m tools.quality` fails on a module over its ceiling, and
+`tests/test_quality_floor.py` is a thin wrapper that runs it, so `pytest`
+alone catches it. Lines are **physical lines** — `len(text.splitlines())`,
+what `wc -l` reports — so the tool's arithmetic is checkable from a shell.
+
+The opt-out is a line in the module's **first docstring**:
+
+```python
+"""Renders a page from a template.
+
+Size exception: the substitution table is one literal mapping, and splitting
+it would hide half the placeholders from the reader of the other half.
+"""
+```
+
+Four things about it, each deliberate:
+
+- ⛔ **The marker is the literal string `Size exception:`, case included.** The
+  review rubric greps for exactly that token. A variant that the checker
+  accepted and the rubric missed would be the worst available outcome, so the
+  checker is case-sensitive too.
+- ⛔ **In the docstring, parsed with `ast` — not anywhere in the file.** A
+  comment beside the offending code is not a contract; the exception is
+  recorded where the next reader of the module meets it, which is the top.
+- **A real reason is required.** Under 20 characters after the marker is
+  reported as "no reason given", so `Size exception: yes` is not a way through.
+- ⭐ **The exception is legitimate and meant to be used.** What automation
+  changes is not whether you may exceed the ceiling — it is that doing so
+  appears in the diff, in front of the reviewer, with the reason attached.
+
+The same command enforces the mirror below (R12) and the presence of a package
+contract (R17), and it checks itself. Its own contract is in
+`tools/quality/__init__.py`, including why it lives in `tools/` rather than in
+`src/studyforge/`.
+
 ## Package shape
 
 ```
@@ -49,7 +86,18 @@ tests/studyforge/serve/routes/test_content.py
 ```
 
 A failing test then names a module rather than a subsystem. A package's tests
-split the same way the package split.
+split the same way the package split. `__init__.py` is tested at
+`test_init.py`; the underscores are dropped so the filename stays readable.
+
+**Locality is the requirement, not one global tree.** Developer tooling lives
+outside `src/` and mirrors itself beside itself:
+
+```
+tools/quality/size.py
+tools/tests/quality/test_size.py
+```
+
+Both pairs are declared in `tools/quality/config.py`; neither is an exemption.
 
 **Every task's acceptance includes its tests.** "Implemented, tests to follow"
 is not a state this project has.
