@@ -16,8 +16,9 @@ existing files it may add to.
     manifest.media.commits               # True — 'auto' commits
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
-**Depends on.** `studyforge.address` and the standard library. ⛔ Nothing
-source-specific (R1), asserted over the whole of `src/` rather than promised.
+**Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,
+and the standard library. ⛔ Nothing source-specific (R1), asserted over the
+whole of `src/` rather than promised.
 
 ⭐ **This file is where a corpus's customisation lives** (SK-07). Everything
 that differs between two sources and is not the source's own content is a
@@ -36,7 +37,9 @@ finding; it is never a hand-edit to generated output.
 | `media` | the commit mode and its limits; an absent key is a **stated** default |
 | `errors` | `ManifestError`, the only exception any of it raises |
 
-⛔ **An unknown `corpus_api` is refused, never migrated at read time** (R9).
+⛔ **An unknown `corpus_api` is refused, never migrated at read time** (R9),
+and the test itself is `studyforge.version`'s — this package owns the *set* of
+versions it speaks, not the check (SF-33).
 ⛔ **A file matching neither `include` nor `exclude` is unclassified**, and
 that is a refusal at validate time, not a shrug — silence is the failure C2
 describes.
