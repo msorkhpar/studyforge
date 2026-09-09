@@ -1,0 +1,112 @@
+/* Every colour, measure and font the reading surface uses, defined once.
+
+   ⭐ THIS FILE IS THE SHARED VOCABULARY. Every other stylesheet in this
+   repository paints with `var(--token)` and defines no colour of its own, so
+   changing the page's look is editing this file and nothing else — which is
+   the whole of what R13 bought. `test_palette` asserts the second half of
+   that: no other asset may contain a raw colour.
+
+   ⛔ EVERY COLOUR TOKEN IS DEFINED IN BOTH THEMES. The page declares
+   `color-scheme: light dark`, so a token defined once is a token that is
+   wrong in one of them — invisible to whoever authored it, because they only
+   ever looked at the theme they use.
+
+   ⚠️ The syntax colours are tuned against `--code-bg`, not lifted from a
+   generic theme. Measured rather than asserted: in light every one clears
+   5.02:1 and in dark 5.10:1, both against the code background they actually
+   sit on, and `test_palette` recomputes the numbers rather than trusting this
+   comment. */
+
+:root {
+  color-scheme: light dark;
+
+  /* ⛔ System stacks only. A web font is a network fetch, and the floor is a
+     page opened from a file with no network at all (R8). */
+  --font-prose: "Iowan Old Style", "Palatino Linotype", Palatino, Charter,
+                "Bitstream Charter", Georgia, Cambria, "Times New Roman", serif;
+  --font-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+             "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+               "DejaVu Sans Mono", "Liberation Mono", monospace;
+
+  --measure: 80ch;
+  --rail: 17rem;
+  --page-max: 96rem;
+  --gutter: 1.25rem;
+  --player-height: 8.75rem;
+
+  --bg: #f6f3ee;
+  --surface: #fffdf9;
+  --surface-2: #efe9df;
+  --fg: #1b1a17;
+  --fg-soft: #3d3a35;
+  --muted: #6d675d;
+  --rule: #e2dbcf;
+  --rule-strong: #cbc2b1;
+
+  --accent: #8f3f16;
+  --accent-soft: #f2e2d5;
+  --practice: #1c5f6b;
+  --practice-soft: #dceaed;
+
+  --code-bg: #f3eee5;
+  --code-fg: #23211d;
+
+  /* Syntax highlighting. Prism's token classes map onto these in
+     code-highlight.css, and the ORDER of the groups there is the mapping. */
+  --tok-comment: #6b6555;
+  --tok-string: #2f6b3a;
+  --tok-keyword: #9a2f6f;
+  --tok-number: #8f4f0e;
+  --tok-type: #1f5f8b;
+  --tok-function: #5b3fa8;
+  --tok-punct: #6b6357;
+
+  --hl-bg: #fbeeca;
+  --hl-bar: #c8912a;
+  --hl-fg: #13120f;
+  --hl-code: rgba(19, 18, 15, .10);
+
+  --panel: #fffdf9;
+  --shadow: 0 -1px 0 rgba(27, 26, 23, .07), 0 -12px 32px rgba(27, 26, 23, .10);
+  --focus: #8f3f16;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141519;
+    --surface: #1b1d22;
+    --surface-2: #23262d;
+    --fg: #e9e5dc;
+    --fg-soft: #cfcbc2;
+    --muted: #9b958b;
+    --rule: #2c3038;
+    --rule-strong: #3d434e;
+
+    --accent: #e79a63;
+    --accent-soft: #33261c;
+    --practice: #78c8d3;
+    --practice-soft: #16272c;
+
+    --code-bg: #101218;
+    --code-fg: #dfe3ea;
+
+    /* The same seven, re-tuned for #101218. */
+    --tok-comment: #7c8698;
+    --tok-string: #8fd48a;
+    --tok-keyword: #ff7ab2;
+    --tok-number: #f2ae5c;
+    --tok-type: #6cc6e8;
+    --tok-function: #c4a5ff;
+    --tok-punct: #98a0b3;
+
+    --hl-bg: #3a3220;
+    --hl-bar: #dfa945;
+    --hl-fg: #fcf7ec;
+    --hl-code: rgba(252, 247, 236, .13);
+
+    --panel: #1b1d22;
+    --shadow: 0 -1px 0 rgba(0, 0, 0, .55), 0 -12px 32px rgba(0, 0, 0, .45);
+    --focus: #e79a63;
+  }
+}

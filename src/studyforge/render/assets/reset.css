@@ -1,0 +1,9 @@
+/* The whole reset. Three declarations, and each earns its place.
+
+   ⛔ Not a normalising library. A study page is prose, a few figures and a
+   table; the browser's own defaults are already right for almost all of it,
+   and a 10 KB reset shipped to every page would be nine of those kilobytes
+   undoing things this page never does. */
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }

@@ -393,9 +393,29 @@ python3 -m tools.quality      # the floor: size, mirror, contracts, style
 reviewer did not see is not evidence, and a green suite on the *branch* is not
 the evidence this gate asks for.
 
-⛔ **The container is authoritative, always — not "where the change touches the
-image"** (R15). ⚠️ A result that differs between host and container is a
-**finding**, and the container's answer is the one recorded.
+⛔ **The container is authoritative for what it runs** (R15) — ⚠️ **because it is
+pinned, not because it is better.** A result that differs between host and
+container is a **finding**, and where both ran, the container's answer is the one
+recorded.
+
+⭐ **Three states, not two, and collapsing the last two is a defect I shipped.**
+
+| State | What it means | Counts? |
+|---|---|---|
+| **pinned green** | ran in the image, at a pinned toolchain | ⭐ yes — this is the verdict |
+| **unpinned green** | ran and passed, but in an environment nobody pinned | ⚠️ **real evidence, named in the review** — and the image gap is a finding with an owner |
+| **did not run** | skipped, absent tool, unreachable | ⛔ **not evidence at all** |
+
+⛔ **`Blocked` is for an acceptance condition that could not be executed** — not
+for one that executed, passed, and happened to do so outside the image. ⚠️ My
+round-7 wording said *"if the container cannot run it, the verdict is Blocked"*,
+which was written for the **did not run** case and, read literally, discards
+passing evidence in the **unpinned green** case. ⭐ The purpose was always *a
+check that did not run is not evidence* — never *the container is more capable*.
+
+⭐ **And the repair for unpinned evidence is to pin it, not to argue about it.**
+A check the image cannot run is a gap in the image; name it, route it to the task
+that owns the image, and record the evidence as unpinned in the meantime.
 
 ### ⛔ 4b-i. Every skip is named, or the run did not happen
 
