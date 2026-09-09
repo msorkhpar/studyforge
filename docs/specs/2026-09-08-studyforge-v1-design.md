@@ -417,9 +417,23 @@ on the builder.
 | discovery cache | `.studyforge/site.json` | ⛔ **open** | `SF-04` |
 | narration manifest | ⛔ **open** | ⛔ **open** | `NS-02` / `SF-17` |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
-| component consuming contract | `consuming.json` | ⛔ **open** | each component (`TC-05`, E13) |
+| component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
 
-⛔ **Five open rows are five instances waiting to happen**, and each is owed by
+⭐ **`consuming.json` carries two versions, and conflating them is the defect it
+exists to prevent** (ruled 2026-09-09, round 4). The pin file (R18) records
+**which build** a component was at; `provides` records **which promise** it is
+making. ⛔ They change at different rates and neither substitutes for the other:
+a component rebuilds constantly without changing its promise, and can change its
+promise without a new build. `consuming_api` versions the file's own schema, and
+a consumer records the `provides` it was built against; a mismatch is refused,
+never migrated (R9). ⚠️ **Everything else about the file belongs to the component
+that ships it** — E12 for the toolchain, E13 for narration — because it describes
+a runtime nobody has built yet, and designing it now would be designing against
+zero sources. ⭐ What is ruled here is only what stops **two components inventing
+two shapes**, which is the failure this seam is actually exposed to: it is the
+one seam neither side can inspect from its own repository.
+
+⛔ **Four open rows are four instances waiting to happen**, and each is owed by
 the task named beside it *before* that task builds. ⚠️ The overlay's row is the
 sharpest: it is the one document a **person** edits, which makes it the most
 likely to drift, and R9 does not list it. Either R9 gains it or R9 says in words
