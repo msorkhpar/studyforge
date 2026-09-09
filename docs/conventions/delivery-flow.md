@@ -42,6 +42,13 @@ pasted command output in a review.
 approver. This is not a formality: M0 is where every later task's assumptions get
 fixed, and a defect here is discovered simultaneously by five agents in M1.
 
+⭐ **The rubric is `review-rubric.md` and it is the gate, not a guide.** It
+carries one runnable command per ruling and the three verdicts. Read its §9
+before you finish a task: your Acceptance bullets get pasted into the review with
+the command and its output beneath each one, and ⛔ **restating a condition is not
+meeting it**. What follows here is the process around that document, not a second
+copy of it.
+
 **What a developer presents for review — all of it, or the review does not
 start:**
 
@@ -63,6 +70,14 @@ start:**
 `changes requested` (named, each tied to a ruling or an acceptance condition), or
 `rejected — re-plan` (the task as written cannot be met; it returns to the PO as a
 planning defect, which is a legitimate and cheap outcome).
+
+⭐ **A fourth outcome exists per condition, and it is not a verdict: `Blocked`.**
+An acceptance condition that cannot be *run* — because the tool it needs is not
+installed, or the task it depends on has not landed — is Blocked, and the review
+records which condition, why, and what will unblock it. ⛔ **Blocked is not
+passed, and it is never a reason to delete the condition.** An unenforced rule
+erodes exactly like an unenforced ceiling; the point of writing it down is that
+somebody has to come back to it.
 
 ⚠️ **A reviewer who cannot run the acceptance commands has not reviewed
 anything.** If a condition has no runnable form, that is the finding.
@@ -121,6 +136,23 @@ against rather than for who found it:
 ⭐ **The finding count is the yield, not the failure.** An integration that
 reports none has not been conducted honestly.
 
+**A question is the other half of the channel, and it is not a lesser finding.**
+⭐ A **question** is what you send when the framework has not been built yet and
+you can see that what is planned will not fit; a **finding** is what you send when
+it has been built and fell short. ⛔ **A question is never answered in the corpus
+repository.** It is recorded on the board with an owner and a **deadline task** —
+the framework task that must answer it, not a date — and the answer is carried
+into that task's definition by the PO before it is assigned.
+
+⚠️ **A question that arrives after its deadline task has shipped has become a
+finding**, and the cost is a schema change under R9 rather than a schema
+decision. That is the whole reason questions get deadlines: the cheapest moment
+to hear that a contract does not fit a real corpus is before the contract exists.
+
+⛔ **Where a source's needs become an exemption, the exemption is manifest data,
+never a pattern hardcoded for one corpus** (R1). An exemption that names a corpus
+is the framework learning about a source, which is the one thing it may not do.
+
 **What flows the other way** — framework → integration — is contracts, never
 instructions to go and look: the archive contract (`studyforge validate`, SF-25),
 the placement contract (`studyforge plan`, SF-31), and each shared component's
@@ -140,4 +172,11 @@ that stays in the corpus repository has taught nobody.
   negotiation between developers is how two contracts quietly diverge.
 - **The PO escalates a technical disagreement to the CTO**, and records the
   ruling on the board's Log. ⛔ **A ruling that is not written down did not
-  happen** — that is the whole reason R1–R20 exist as a numbered list.
+  happen** — that is the whole reason R1–R20 exist as a numbered list. A ruling
+  lands in a handoff under `../tasks/handoffs/`, is logged on the board, and is
+  **carried into the affected task's definition by the PO** — a ruling that lives
+  only in a handoff will be re-derived by whoever picks the task up.
+- ⭐ **Where two documents disagree, the measured one wins over the illustrative
+  one**, and the disagreement is settled by counting rather than by which section
+  is later in the file. This project's documents have twice been corrected that
+  way; ⛔ do not inherit a number you can check.
