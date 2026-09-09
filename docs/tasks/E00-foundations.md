@@ -13,8 +13,23 @@ source), R14 (graphify), R15 (containers), R17 (docstrings as contract).
 ⚠️ **Revised 2026-09-09**, after the CTO's M0 readiness audit
 (`handoffs/CTO-2026-09-09-m0-readiness.md`). `FND-03` gained a dependency it
 always had, `FND-05` split into `FND-05a`/`FND-05b` because as written it made
-M0 unachievable, `FND-06` was added, and two Definitions were corrected. The
-epic is now six tasks and M0 has two steps, not one.
+M0 unachievable, `FND-06` was added, and two Definitions were corrected. M0 has
+two steps, not one.
+
+⚠️ **Revised again the same day** (`handoffs/CTO-2026-09-09-round3.md`), after
+the standing decision that **nothing is ever pushed to any remote**. `FND-05a`
+becomes a pin file rather than a submodule composition; **`FND-05b` is cancelled
+outright**. The epic is **five live tasks**.
+
+⭐ **Two authors edited `FND-05a` in the same round, and neither contribution is
+dropped silently.** The PO marked it blocked with a stop sign reading *do not
+start this task*; the CTO then made the ruling that unblocked it. ⛔ **The stop
+sign is superseded and deliberately removed** — a blocked notice on a task that
+is now startable is worse than none, because it stops the wrong person. ⭐ **The
+argument behind it survives and is why this note exists:** an agent reads the
+epic document and not always the board, so a status the board carries must reach
+the epic too. `FND-05b`'s row records the same thing for the gap the PO raised
+there.
 
 ---
 
@@ -200,6 +215,16 @@ fixtures that depend on 166 real files are fixtures nobody can debug.
 **Owns** the parent workspace repository
 **Context** ~25k — spec §3.1 and R18, `handoffs/CTO-2026-09-09-m0-readiness.md` ruling 2
 
+⛔ **STOP — blocked on a CTO ruling, and its acceptance below is under
+re-ruling. Do not start this task.** A standing user decision, taken
+2026-09-09, is that **nothing is ever pushed to any remote**; everything stays in
+local repositories, permanently. An absolute local submodule URL writes a home
+directory into a tracked `.gitmodules` (R7) and a relative one resolves against a
+remote that will never exist — ⛔ **so the submodule composition has no legal
+form**, not merely an inconvenient one. ⭐ The workflow-document half needs no URL
+and is expected to survive; the CTO is ruling on what the rest becomes. See
+`BOARD.md`, **B2** and **G1**.
+
 ⚠️ **`FND-05` split on 2026-09-09.** As written it made M0 permanently
 unachievable, and M0 gates every other task in the plan. Measured that day: ⛔
 **`studyforge` itself has no git remote** — R18's "every component has its own
@@ -291,6 +316,15 @@ the task that creates it (E12, E13). **No task is needed to do this.**
 ⚠️ **Both of its original blockers are gone rather than solved.** A remote for
 `studyforge` is no longer wanted; `TC/` and `NS/` not existing yet is now just a
 pin file with fewer rows, which is a correct state rather than an incomplete one.
+
+⚠️ **What the PO's superseded version of this row asked, and where it was
+answered.** It recorded R18's lost guarantee as an open gap — *"the parent's
+recorded submodule commits are the version pin"* is the sentence R9's
+cross-repository reproducibility rests on, and it assumed fetchable remotes.
+⭐ **That question is closed, not dropped:** R18's amendment and `FND-05a`'s pin
+file are the answer, and the honest reduction — reproducible **across time on
+this machine**, ⛔ **not across machines** — is stated there rather than left to
+be inferred.
 
 ---
 

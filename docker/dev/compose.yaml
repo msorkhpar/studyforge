@@ -1,0 +1,60 @@
+# The framework's build environment, as a service (R15, FND-03).
+#
+#     docker/dev/check                      the whole suite, in the container
+#     docker/dev/check python3 -m tools.quality      anything else, in it
+#
+# or directly, from anywhere:
+#
+#     docker compose -f docker/dev/compose.yaml run --rm --build dev
+#
+# ⭐ The command inside is the same command a contributor runs on the host:
+# `python3 -m pytest`. That is the point of the image rather than a detail of
+# it — a build environment whose invocation differs from the host's teaches
+# people two things instead of one, and hides the divergence it was built to
+# eliminate.
+#
+# ⛔ No Docker socket is mounted, here or anywhere (spec §8.3). Not behind a
+# flag, not "only locally". Carried from the extraction source's own compose
+# file, which states the same rule for the same reason.
+#
+# ⛔ No port is published and no network is joined. This image builds and
+# tests; it serves nothing. `studyforge serve` is a host process by ruling
+# (§8.3) and has no service here.
+
+name: studyforge-dev
+
+services:
+  dev:
+    build:
+      # Relative to this file, so the same command works from any directory
+      # and no absolute path is written down (R7).
+      context: .
+      dockerfile: Dockerfile
+    image: studyforge/dev:local
+
+    # ⛔ The acceptance condition, enforced rather than asserted: **no network
+    # access is required to run tests**. `none` means the container has no
+    # interface at all, so a test that quietly reached for a package index or
+    # an API would fail here rather than pass on the machine that had one.
+    #
+    # ⚠️ This is the run half of the tension. The build half — `pip install` in
+    # the Dockerfile — does need the network, and gets it, because a build and
+    # a test run are different moments. Everything the tests need is already in
+    # the image by the time this applies.
+    network_mode: "none"
+
+    # The checkout, mounted where the image expects it. `../..` is this file's
+    # own repository root, resolved by Compose relative to the file.
+    volumes:
+      - ../..:/workspace
+    working_dir: /workspace
+
+    # ⛔ Never root, and never a uid written into a file. `check` derives the
+    # invoking user's uid and gid at run time and passes them in; without that
+    # the container writes into the bind mount as root and leaves a
+    # contributor with files they cannot delete.
+    # ⚠️ The default is the base image's `nobody`, chosen so that forgetting to
+    # set it degrades to "cannot write" rather than to "writes as root".
+    user: "${STUDYFORGE_UID:-65534}:${STUDYFORGE_GID:-65534}"
+
+    init: true

@@ -1,0 +1,58 @@
+#!/bin/sh
+# Run the framework's checks in the framework's build environment (R15).
+#
+#     docker/dev/check                            the whole suite
+#     docker/dev/check python3 -m tools.quality   the quality floor alone
+#     docker/dev/check python3 -m pytest -k ruff  anything else
+#
+# ⭐ On the host, the same work is the same command with the wrapper removed:
+#
+#     python3 -m pytest
+#
+# That is the design, not a coincidence. A build environment invoked
+# differently from the host is one whose divergence you find out about late.
+#
+# ⛔ POSIX sh, and it uses only `docker`, `id` and shell builtins. The whole
+# claim of this task is that a contributor needs Docker and nothing else — a
+# wrapper that reached for Python would have quietly refuted it.
+#
+# ⛔ No path from this machine is written into any file. `ROOT` is derived from
+# where this script sits and the uid/gid are read at run time (R7).
+set -eu
+
+# The repository root: this file is at <root>/docker/dev/check.
+ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
+
+# Run as the invoking user so that anything the container writes into the
+# bind-mounted checkout belongs to the person who ran it. ⛔ Without this the
+# container writes as root and leaves files a contributor cannot delete.
+#
+# ⚠️ An already-set value wins, so a caller can ask for a different uid without
+# editing anything — which is how `tests/docker/test_dev_image.py` exercises
+# the unprivileged case, and how a rootless or CI runner would override it.
+STUDYFORGE_UID=${STUDYFORGE_UID:-$(id -u)}
+STUDYFORGE_GID=${STUDYFORGE_GID:-$(id -g)}
+export STUDYFORGE_UID STUDYFORGE_GID
+
+# ⚠️ A linked git worktree keeps its real git directory OUTSIDE the checkout —
+# `.git` is a file naming it, not a directory. Mounting only the checkout
+# would leave git unable to answer anything inside the container, and
+# `tests/test_repository.py` asks it whether the ignore rules still keep
+# FND-04's golden fixtures trackable. A plain clone needs none of this and
+# gets none of it; if git is not installed on the host, nothing is added and
+# the affected tests skip rather than lie.
+GIT_MOUNT=""
+if [ -f "$ROOT/.git" ] && command -v git >/dev/null 2>&1; then
+    common=$(cd "$ROOT" && git rev-parse --git-common-dir 2>/dev/null || true)
+    case "$common" in
+        /*) GIT_MOUNT="--volume $common:$common:ro" ;;
+    esac
+fi
+
+# ⚠️ `--build` on every run: the image is a declaration in `Dockerfile` and
+# `requirements.txt`, and a stale image is a result attributed to a version of
+# the environment nobody can name. The layers are cached, so the cost of being
+# honest here is a second or two.
+# shellcheck disable=SC2086  # GIT_MOUNT is deliberately word-split, or empty
+exec docker compose --file "$ROOT/docker/dev/compose.yaml" \
+    run --rm --build $GIT_MOUNT dev "$@"

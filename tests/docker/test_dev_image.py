@@ -1,0 +1,332 @@
+"""The framework's build environment, asserted rather than described (FND-03, R15).
+
+Two kinds of test live here and the split is deliberate.
+
+**Static checks — always run, need no daemon and no network.** They read the
+files under `docker/dev/` and assert the properties that make the image a
+reproducible build environment rather than a convenience: a pinned base, exact
+tool versions, no network at run time, no Docker socket, no path from anybody's
+machine. These are the checks that would otherwise be a reviewer's memory.
+
+**Integration checks — opt-in.** They build the image and run the suite inside
+it. ⛔ They are gated on `STUDYFORGE_DOCKER_TESTS=1` and not on "is Docker
+reachable", because `docker build` needs the **network** and FND-03's own
+acceptance is that *running* the tests needs none. A suite that silently
+reached for a package index whenever a daemon happened to be up would refute
+the thing this task exists to establish.
+
+⛔ And they are gated a second time on not already being inside the image.
+Without that, the suite would build a container, run the suite, which would
+build a container, forever.
+
+⚠️ No YAML parser is used, and not for want of one: framework source is
+standard library only, so a test that needed PyYAML would be the first
+dependency in the repository. The compose file is asserted as text, which is
+also closer to what a reviewer reads.
+"""
+
+from __future__ import annotations
+
+import os
+import tomllib
+
+import pytest
+
+from tests.support import repository_root, run, tool_on_path
+
+DEV = "docker/dev"
+
+#: Set to "1" to build the image and run the suite inside it. Off by default —
+#: see the module docstring.
+OPT_IN = "STUDYFORGE_DOCKER_TESTS"
+
+#: Set inside the image itself, by the Dockerfile. Its only job is to stop the
+#: integration tests recursing.
+MARKER = "STUDYFORGE_DEV_CONTAINER"
+
+
+def read(name: str) -> str:
+    """The text of a file under `docker/dev/`."""
+    return (repository_root() / DEV / name).read_text(encoding="utf-8")
+
+
+def instructions(name: str) -> str:
+    """`read(name)` with comment lines removed.
+
+    ⚠️ Load-bearing rather than tidy. These files explain themselves at
+    length, so a check for "does this file install packages at run time" that
+    matched the raw text would fire on the comment that says it must not —
+    and the fix a reader would reach for is deleting the explanation.
+    """
+    return "\n".join(line for line in read(name).splitlines() if not line.lstrip().startswith("#"))
+
+
+def pyproject() -> dict:
+    """`pyproject.toml`, parsed."""
+    return tomllib.loads((repository_root() / "pyproject.toml").read_text("utf-8"))
+
+
+def requirement_names() -> set[str]:
+    """Every distribution pinned in `docker/dev/requirements.txt`, lowercased."""
+    names = set()
+    for line in read("requirements.txt").splitlines():
+        stripped = line.strip()
+        if stripped and not stripped.startswith("#"):
+            names.add(stripped.split("==")[0].strip().lower())
+    return names
+
+
+# --- the files exist and say what they must --------------------------------
+
+
+def test_the_three_files_exist_and_the_runner_is_executable():
+    root = repository_root()
+    for name in ("Dockerfile", "compose.yaml", "requirements.txt", "check"):
+        assert (root / DEV / name).is_file(), f"{DEV}/{name} is missing"
+    assert os.access(root / DEV / "check", os.X_OK), f"{DEV}/check is not executable"
+
+
+def test_the_base_image_is_pinned_by_digest():
+    # ⛔ A tag is a moving pointer. `python:3.14-slim` will mean different
+    # bytes next month, and an image whose contents depend on the day it was
+    # built is not the reproducible environment R15 asks for.
+    from_lines = [line for line in read("Dockerfile").splitlines() if line.startswith("FROM ")]
+    assert len(from_lines) == 1, f"expected one FROM, found {from_lines}"
+    assert "@sha256:" in from_lines[0], f"base image is not pinned by digest: {from_lines[0]}"
+
+
+def test_the_base_image_is_python_314():
+    # FND-01 declared `requires-python = ">=3.14"`; an image below that runs a
+    # different language from the one the project says it needs.
+    from_line = next(line for line in read("Dockerfile").splitlines() if line.startswith("FROM "))
+    assert "python:3.14" in from_line, from_line
+    assert pyproject()["project"]["requires-python"] == ">=3.14"
+
+
+def test_every_tool_version_is_pinned_exactly():
+    # ⛔ `>=` here would make the image's contents depend on the day it was
+    # built. Transitive dependencies included: a pin that stops at the direct
+    # ones is not a pin.
+    for line in read("requirements.txt").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        assert "==" in stripped, f"unpinned requirement: {stripped!r}"
+        assert not stripped.startswith("-"), f"pip option in a pin file: {stripped!r}"
+
+
+def test_the_image_carries_everything_the_declared_extras_name():
+    # ⭐ This is the join that stops the declaration and the image drifting.
+    # `pyproject.toml` says what the tests need; `requirements.txt` says what
+    # the image has. A tool added to one and not the other is a suite that
+    # passes in one place and errors in the other — which is the exact failure
+    # R15 exists to prevent.
+    extras = pyproject()["project"]["optional-dependencies"]
+    declared = {
+        requirement.split(">")[0].split("=")[0].split("<")[0].strip().lower()
+        for group in ("test", "lint")
+        for requirement in extras[group]
+    }
+    missing = declared - requirement_names()
+    assert not missing, f"declared in pyproject but not pinned in the image: {sorted(missing)}"
+
+
+def test_ruff_is_in_the_image_because_that_is_what_unblocks_fnd_01():
+    # ⭐ FND-01 recorded its lint clause as Blocked-on-FND-03: no linter was
+    # installed and no network install could be assumed. This line is where
+    # that closes. If ruff ever leaves this file, the clause silently reopens
+    # and two tests go back to skipping — which looks green.
+    assert "ruff" in requirement_names()
+
+
+# --- the properties that make it a build environment -----------------------
+
+
+def test_the_run_has_no_network():
+    # ⛔ FND-03's acceptance, enforced rather than asserted in prose: no
+    # network access is required to run tests. `none` means no interface at
+    # all, so a test that quietly reached for a package index fails here
+    # rather than passing on whichever machine had one.
+    assert 'network_mode: "none"' in read("compose.yaml")
+
+
+def test_the_network_is_needed_only_at_build_time():
+    # ⚠️ The tension worth stating: `pip install` DOES need the network, and
+    # gets it, because a build and a test run are different moments. The
+    # install must therefore be in the Dockerfile and nowhere else.
+    assert "pip install" in instructions("Dockerfile")
+    for name in ("compose.yaml", "check"):
+        assert "pip install" not in instructions(name), (
+            f"{name} installs at run time; the run has no network"
+        )
+
+
+def test_no_docker_socket_is_mounted_anywhere():
+    # ⛔ Spec §8.3, the one non-negotiable: the Docker socket is never mounted
+    # into a serving process. Not behind a flag, not "only locally". This is a
+    # build image and it should never arise — which is exactly why the check
+    # is cheap and permanent. The extraction source's own compose file states
+    # the same rule for the same reason.
+    for name in ("Dockerfile", "compose.yaml", "check"):
+        text = instructions(name)
+        assert "docker.sock" not in text, f"{name} mounts the Docker socket (§8.3)"
+        assert "/var/run/docker" not in text, f"{name} reaches for the Docker socket (§8.3)"
+
+
+def test_the_source_is_mounted_not_copied():
+    # ⛔ "From a clean checkout" means the checkout on disk, not a snapshot
+    # baked into a layer at some earlier commit. A copied source goes stale
+    # silently, and the container then reports on code the contributor is not
+    # editing.
+    copies = [line for line in instructions("Dockerfile").splitlines() if line.startswith("COPY ")]
+    assert copies == ["COPY requirements.txt /opt/studyforge/requirements.txt"], copies
+    assert "../..:/workspace" in instructions("compose.yaml")
+
+
+def test_studyforge_is_not_installed_into_the_image():
+    # ⛔ Installing it would put a second copy in site-packages that can shadow
+    # the bind mount, so the container and the host would run different code
+    # while reporting the same result.
+    installs = [line for line in instructions("Dockerfile").splitlines() if "pip install" in line]
+    assert len(installs) == 1, installs
+    for forbidden in (" -e ", "--editable", "'.'", '".."'):
+        assert forbidden not in instructions("Dockerfile"), forbidden
+    # The one install reads its packages from the pin file and nowhere else.
+    assert "--requirement /opt/studyforge/requirements.txt" in instructions("Dockerfile")
+
+
+def test_the_container_never_runs_as_root():
+    # ⛔ Root plus a bind mount leaves a contributor with files in their own
+    # checkout that they cannot delete.
+    compose = instructions("compose.yaml")
+    assert "user:" in compose
+    assert "${STUDYFORGE_UID" in compose, "the uid must be supplied at run time, not written down"
+
+
+def test_no_path_from_anybody_s_machine_is_written_down():
+    # R7. A bind mount is written relative or parameterised, never with a
+    # literal home path baked in. ⚠️ `HOME=/tmp` is deliberate and generic —
+    # the container runs as a numeric uid with no /etc/passwd entry, so tools
+    # that want a home need one that belongs to nobody.
+    for name in ("Dockerfile", "compose.yaml", "check", "requirements.txt"):
+        text = read(name)  # the raw text: a home path in a comment is still a leak
+        for shape in ("/home/", "/Users/", "/root/"):
+            assert shape not in text, f"{name} names a home directory: {shape}"
+
+
+# --- the formatter exclusion, so it cannot quietly grow ---------------------
+
+
+def test_the_formatter_exclusion_is_exactly_one_named_file():
+    # ⚠️ `tests/test_fixture_consistency.py` is excluded from the FORMATTER
+    # only, because formatting it takes it over R11's 600-line test ceiling —
+    # a real conflict between two of this project's rules, recorded in
+    # `docs/tasks/handoffs/FND-03.md` and routed rather than resolved here.
+    # ⛔ This assertion is what stops that exclusion becoming the place
+    # difficult files go.
+    excluded = pyproject()["tool"]["ruff"]["format"]["exclude"]
+    assert excluded == ["tests/test_fixture_consistency.py"], excluded
+
+
+# --- integration: it builds, and the suite passes inside it ----------------
+
+
+def require_docker_run() -> str:
+    """Skip unless this run is allowed to build and start containers."""
+    if os.environ.get(MARKER) == "1":
+        pytest.skip("already inside the dev image; building it again would recurse")
+    if os.environ.get(OPT_IN) != "1":
+        pytest.skip(
+            f"set {OPT_IN}=1 to build the dev image and run the suite inside it "
+            f"(the build needs network; a test run must not)"
+        )
+    docker = tool_on_path("docker")
+    if docker is None:
+        pytest.skip("docker is not installed")
+    return docker
+
+
+@pytest.fixture(scope="session")
+def dev_image() -> str:
+    """Build the image once for the whole session, and return its tag."""
+    docker = require_docker_run()
+    result = run(
+        [docker, "compose", "--file", f"{DEV}/compose.yaml", "build", "dev"],
+        cwd=repository_root(),
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    return "studyforge/dev:local"
+
+
+def test_the_image_builds(dev_image):
+    docker = tool_on_path("docker")
+    result = run([docker, "image", "inspect", dev_image], cwd=repository_root())
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_the_image_runs_python_314(dev_image):
+    docker = tool_on_path("docker")
+    result = run(
+        [
+            docker,
+            "run",
+            "--rm",
+            "--network",
+            "none",
+            dev_image,
+            "python3",
+            "-c",
+            "import sys; print(sys.version_info[:2])",
+        ],
+        cwd=repository_root(),
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert result.stdout.strip() == "(3, 14)", result.stdout
+
+
+def test_the_suite_passes_inside_the_image_with_no_network(dev_image):
+    # ⭐ The acceptance, executed. `--network none` is on the service, so this
+    # is the suite proving it needs nothing from outside the image.
+    require_docker_run()
+    result = run([f"./{DEV}/check"], cwd=repository_root())
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "failed" not in result.stdout.splitlines()[-1], result.stdout
+
+
+def test_the_suite_passes_for_a_uid_that_owns_nothing(dev_image):
+    # ⚠️ `docker/dev/check` passes the invoking user's uid, so the everyday path
+    # runs as the owner of the checkout. This runs Compose directly, which
+    # falls back to `nobody` — a uid that owns none of the mounted files. It is
+    # the case that found two real defects: git refused the tree as "dubious
+    # ownership" and returned 128 instead of a verdict, and ruff tried to write
+    # its cache into the bind mount. Both are fixed in the image, and this is
+    # what stops them coming back.
+    require_docker_run()
+    # 65534 is `nobody`: it owns none of the mounted files. Passed through
+    # `check` rather than raw Compose so that a linked worktree still gets its
+    # git directory — this test is about the uid, not about the mount.
+    result = run(
+        ["env", "STUDYFORGE_UID=65534", "STUDYFORGE_GID=65534", f"./{DEV}/check"],
+        cwd=repository_root(),
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_lint_actually_runs_in_there_rather_than_skipping(dev_image):
+    # ⭐ FND-01's blocked clause, closed and asserted. On the host these two
+    # tests skip because ruff is not installed; in the image they must RUN.
+    # ⛔ A skip that nobody notices is how a blocked clause stays blocked while
+    # looking green.
+    require_docker_run()
+    # ⛔ Named node ids, not `-k ruff`: a keyword filter also catches the tests
+    # in THIS module that have "ruff" in their names, and the count it then
+    # asserts on stops meaning what it says.
+    lint = "tests/test_repository.py::test_ruff_lint_is_clean_where_ruff_exists"
+    fmt = "tests/test_repository.py::test_ruff_format_is_clean_where_ruff_exists"
+    result = run(
+        [f"./{DEV}/check", "python3", "-m", "pytest", "-rs", "-q", lint, fmt],
+        cwd=repository_root(),
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "2 passed" in result.stdout, result.stdout
+    assert "skipped" not in result.stdout, "ruff is missing from the image: " + result.stdout

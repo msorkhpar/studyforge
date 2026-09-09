@@ -20,7 +20,7 @@ code — because there is no code.
 1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R21**,
    and **§12** (what the second source is for).
    The rulings are the authority you appeal to when a task is ambiguous.
-2. `docs/tasks/README.md` — 83 tasks, 13 epics, 9 milestones; ordering and the
+2. `docs/tasks/README.md` — 85 tasks, 13 epics, 9 milestones; ordering and the
    critical path.
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
    it carries shared context so neighbouring tasks do not re-derive it.
