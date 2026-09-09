@@ -73,6 +73,10 @@ runtime dependencies.
 **Milestone** M0 · **Depends on** — · **Team** solo
 **Owns** `graphify-out/` in all three repositories
 **Context** ~20k — `../conventions/graphify.md`, `CSD/graphify-out/GRAPH_REPORT.md` (skim only)
+**Effort** ⚠️ **Large, and measured after the fact: roughly an order of magnitude
+over the reading budget.** A 12-chunk parallel extraction over 217 documents plus
+a bridging pass, then the same again for this repository. ⭐ Recorded because it
+is the evidence that produced the `Effort` field at all.
 
 **Definition.** R14's enablement. Builds and verifies a graph for `studyforge`
 and for `Claude-senior-java-engineer` (CodeSignal already has one at
@@ -332,6 +336,16 @@ be inferred.
 **Milestone** M0 · **Depends on** FND-01 · **Team** solo
 **Owns** `tools/quality/personal_data.py` and its mirrored test
 **Context** ~20k — R7, `../conventions/review-rubric.md` §1a, §1b, §1e, `handoffs/FND-01.md`
+
+⭐ **Re-sequenced 2026-09-09: this is now the first task to land under whatever
+C5 rule the CTO makes, and it should land before M1 step 1.2.** ⛔ It is a task
+that **adds a rule to the floor**, and adding a rule is exactly what has now
+broken three in-flight branches in one milestone (`BOARD.md`, **C5**). So it is
+the proving instance rather than another victim: ⭐ **if option 1 is ruled, this
+task carries the mechanism** — the rule and a tree-wide pass that makes the rule
+true arrive in the same commit — and it does so while **two** branches are in
+flight rather than fifteen. ⚠️ Every week it waits, the blast radius of the next
+rule grows.
 
 ⭐ **This is `FND-01`'s own finding 5, promoted to a task.** `FND-01` established
 the quality floor and named this as the one rule it could not carry: the seam is

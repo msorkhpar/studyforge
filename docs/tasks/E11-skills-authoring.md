@@ -130,8 +130,15 @@ can check. Following the skill on a source it has never seen reaches a
 
 **Definition.** R19's realisation, and the reader-facing answer to *"what does it
 cost to point this at a new repository?"* It takes a repository from nothing to
-a serving study site, and ⭐ **the one manual step is: add the framework as a
-submodule, run this skill.**
+a serving study site, and ⭐ **the one manual step is: check the framework out
+beside the corpus, run this skill.**
+
+⛔ **Not a submodule — R18 was amended and this task must not be written against
+`git submodule add`.** Nothing in this project is pushed to any remote, so a
+submodule URL has no legal form (spec R18, `handoffs/CTO-2026-09-09-round3.md`).
+⭐ **The framework is a sibling checkout at a recorded commit**, and the commit is
+recorded in the workspace pin file (`FND-05a`). *Never vendored, never copied,
+never forked* is unchanged — what changes is only how the pin is written down.
 
 ⛔ **This task exists because the plan had the same hole `SF-28` already found
 once and did not finish closing.** SF-28's own note says orchestration living in
@@ -151,6 +158,23 @@ which would make the extensibility exercise largely a test of typing speed.
 6. **Reader documentation** — from the corpus's *actual* state: how many units have narration, how many are reading-only, what needs a container and what does not.
 7. **The framework pin and the skill stubs** (spec §9) — thin pointers carrying the pinned version, with a check that fails when a stub drifts from its pin.
 8. **An uninstall** — the reverse of every edit it made.
+9. ⭐ **The knowledge graph, built and bridged, with its R3-safe ignore file.**
+   `FND-02` proved every part of this and it is three commands; ⛔ **without it a
+   newly onboarded corpus has no index at all**, and R14 then binds on a
+   repository nothing built one for. The ignore file is `graphify-out/.gitignore`
+   containing a single `*`, written *inside* the generated directory — ⛔ never a
+   line in the repository's root ignore file, which R3 forbids **however
+   declared**.
+
+   ⚠️ **Building it is not enough, and this is the part that would be missed.**
+   A graph built by running the tool alone has **zero doc↔code edges** — measured
+   on the Java corpus at 13,583 code↔code, 767 doc↔doc, **0 doc↔code** — because
+   code is extracted by AST and prose by LLM, and no extractor ever sees a lesson
+   and its class together. ⭐ **The budget saving R14 promises is a property of a
+   graph somebody bridged, not of the tool**, so this step bridges the layers and
+   runs the census `graphify.md` documents. A skill that emits an unbridged graph
+   has emitted an index that answers the one question the corpus exists for with
+   silence.
 
 ⭐ **This is the reading floor's onboarding, and for most corpora it is the whole
 of it** (spec §11.0). A source with runnable material also needs a compose file
@@ -182,7 +206,11 @@ to get both:
   behind an override is how a framework acquires a consumer it cannot serve.
 
 **Acceptance.** A repository goes from nothing to a serving site with the
-submodule added and one command run. Afterwards `git status` shows only
+framework checked out beside it and one command run. ⛔ **No `.gitmodules` and no
+`git submodule add` anywhere in what this skill emits** — asserted. **The corpus
+carries a built, bridged graph and an R3-safe ignore file**, with the doc↔code
+edge census non-zero and the repository's root ignore file byte-identical to
+before — both asserted, not described. Afterwards `git status` shows only
 additions plus the declared `permitted_edits`. **Re-running changes nothing.**
 The uninstall returns the repository to its prior state, asserted by diff.
 `OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are **produced by this

@@ -117,7 +117,15 @@ entering the *repository*.
 > **Done when:** a unit page from the depth-1 fixture opens in a browser, with
 > styles and highlighting, over `file://`.
 
-- **1.1** — SF-01, SF-02, SF-07, SF-08, SF-11
+- **1.1** — SF-01, SF-02, SF-07, SF-08, SF-11 · ⚠️ **plus `FND-04`'s follow-up,
+  which gates SF-07** (`BOARD.md`)
+
+⭐ **Ordering inside this step matters, and `BOARD.md` carries it.** `SF-01` is
+the **exemplar** — the first framework contract, whose conventions the next
+fourteen tasks copy — so it merges before anything else in M1. `SF-07` is gated
+by the fixture follow-up twice over: the `disclosure` fixture is its acceptance
+input, and its own new count key pushes `test_fixture_consistency.py` past the
+ceiling that follow-up exists to fix.
 - **1.2** — SF-03, SF-05, SF-06
 - **1.3** — SF-09, SF-23, SF-25, SK-01
 - **1.4** — SF-10
@@ -325,10 +333,20 @@ not patches. See spec §12.
 | **Milestone** | Which milestone it belongs to; the step is in this document. |
 | **Depends on** | Hard dependencies. Nothing else blocks it. |
 | **Team** | `solo` · `pair` (two rounds or a reviewer) · `team` (dispatch a small team; subtasks listed). |
-| **Context** | The files to read, and a rough budget. Stay under ~200k per session; a task that cannot is already split. |
+| **Context** | The files to read, and the budget for **reading them**. Stay under ~200k per session; a task that cannot is already split. ⛔ **It does not price the work.** |
+| **Effort** | Present only where the deliverable is a **computation** rather than a change — a graph build, a synthesis run, a spike, a bulk emission. Its absence means the work is proportionate to the reading. |
 | **Owns** | The package this task creates. One task, one surface. |
 | **Definition** | What the deliverable *is*. Design-level, not implementation. |
 | **Acceptance** | Verifiable conditions. Green/red, no judgement calls. |
+
+⛔ **`Context` prices reading and nothing else, and conflating the two was a real
+defect.** `FND-02`'s read list was small and correct; the task still ran roughly
+an order of magnitude over its ~20k, because building a graph is a 12-chunk
+parallel extraction over 217 documents — **work, not reading**. ⭐ Any task whose
+deliverable is a computation is mispriced by construction under a single number,
+so those tasks carry an **Effort** line and the rest do not. Adding a field is
+cheaper than re-estimating eighty-four tasks, and it puts the estimate where the
+person who can make it is standing.
 
 ## Standing rules for every task
 

@@ -187,6 +187,23 @@ integrator has to, the missing `consuming.json` is the finding.
 repository, so the next integration starts further along than the last. A finding
 that stays in the corpus repository has taught nobody.
 
+## Who decides
+
+⭐ **Implementation decisions belong to the PO and the CTO.** Priority,
+sequencing, scope and task modification are theirs to take, and the user reviews
+the end result rather than adjudicating between options.
+
+⛔ **Escalate to the user only for impact that is large or that could not be
+undone later.** A choice between two workable orderings is not that; a decision
+that discards work, changes what the product is, or cannot be reversed by a later
+commit is. ⚠️ **The failure mode this replaces is a round trip per decision**,
+which costs more than a wrong ordering does — an ordering can be changed, a
+stalled milestone cannot be un-stalled.
+
+⭐ **The consequence for the board is small and worth stating:** a decision taken
+is a Log entry, not a proposal awaiting one. Record *what was decided and why*,
+so a later reader can tell a judgement from an accident.
+
 ## Escalation
 
 `agent-protocol.md` lists when an agent stops and asks. Two additions here:
