@@ -200,6 +200,16 @@ fixtures that depend on 166 real files are fixtures nobody can debug.
 **Owns** the parent workspace repository
 **Context** ~25k — spec §3.1 and R18, `handoffs/CTO-2026-09-09-m0-readiness.md` ruling 2
 
+⛔ **STOP — blocked on a CTO ruling, and its acceptance below is under
+re-ruling. Do not start this task.** A standing user decision, taken
+2026-09-09, is that **nothing is ever pushed to any remote**; everything stays in
+local repositories, permanently. An absolute local submodule URL writes a home
+directory into a tracked `.gitmodules` (R7) and a relative one resolves against a
+remote that will never exist — ⛔ **so the submodule composition has no legal
+form**, not merely an inconvenient one. ⭐ The workflow-document half needs no URL
+and is expected to survive; the CTO is ruling on what the rest becomes. See
+`BOARD.md`, **B2** and **G1**.
+
 ⚠️ **`FND-05` split on 2026-09-09.** As written it made M0 permanently
 unachievable, and M0 gates every other task in the plan. Measured that day: ⛔
 **`studyforge` itself has no git remote** — R18's "every component has its own
@@ -269,15 +279,23 @@ Composing `studyforge`, `TC/` and `NS/` — that is `FND-05b`.
 itself, `code-server-toolchain` and `narrate-service`. No new mechanism — the
 workflow, the guard and the two-commit rule already exist; this is the pinning.
 
-⛔ **Blocked on two things, and one of them is not an agent's to do.**
+⛔ **Blocked, and the blocker is no longer "wait for infrastructure".** ⚠️ An
+earlier version of this task said it waited on an owner creating a remote for
+`studyforge`. ⭐ **That will never happen** — nothing is ever pushed to any
+remote, by standing decision — so the condition as written is a task that waits
+forever, which is exactly the failure the `FND-05` split was made to avoid.
 
-1. **A remote for `studyforge`** — an empty repository created by the owner
-   under the same account as the siblings, then a local `git remote add`. ⚠️
-   **This is an account action.** The URL lives in `.git/config`, which is
-   untracked; ⛔ no agent writes it into a document (R7).
+1. ⛔ **There is no legal submodule URL.** Absolute writes a home path into a
+   tracked file (R7); relative resolves against a remote that will not exist.
+   This is with the CTO, together with `FND-05a`.
 2. **`TC/` and `NS/` existing at all** — gated on E12 and E13 creating them.
    `NS/` arrives at M3, `TC/` at M5, which is why this sits at M5 and not
    earlier.
+
+⚠️ **And R18's guarantee is now a gap, not a formality.** *"The parent's
+recorded submodule commits are the version pin"* is the sentence R9's
+cross-repository reproducibility rests on, and it assumed fetchable remotes.
+Whatever replaces it is owed by the same ruling.
 
 **Acceptance.** A recursive clone on a clean machine yields **every** component
 at its pinned commit. Advancing one component is one reviewed parent commit.
