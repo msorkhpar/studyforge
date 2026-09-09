@@ -99,8 +99,7 @@ def is_ignored(path: str, cwd: Path) -> bool:
     """
     result = run([git(), "check-ignore", "-q", "--no-index", path], cwd=cwd)
     assert result.returncode in (0, 1), (
-        f"git check-ignore failed on {path!r} in {cwd.name}: "
-        f"{result.stdout + result.stderr}"
+        f"git check-ignore failed on {path!r} in {cwd.name}: {result.stdout + result.stderr}"
     )
     return result.returncode == 0
 
