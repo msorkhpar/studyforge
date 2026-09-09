@@ -37,12 +37,12 @@ one named file) and 5 integration checks that build the image and run the suite
 inside it, gated on `STUDYFORGE_DOCKER_TESTS=1`.
 
 **`pyproject.toml`** — three corrections to the ruff configuration FND-01 wrote
-blind, plus the one formatter exclusion. See *Decisions* 8–10.
+blind, plus the one formatter exclusion. See *Decisions* 8-10.
 
 **Twelve lines of lint fixes** across files FND-01 and FND-04 already merged.
 ⚠️ This is diff outside `docker/dev`, and it is here because FND-03's acceptance
 is that the suite passes in the container and the suite runs ruff. It is named
-in full in *Decisions* 11 so a reviewer does not have to discover it.
+in full in *Decisions* 12 so a reviewer does not have to discover it.
 
 ## Decisions
 
