@@ -265,3 +265,30 @@ paid for that one.
 ⭐ **The target is the accidental second implementation, not an adversary.**
 Nobody routes a field name through a variable to evade a check they have not
 heard of; they write it the obvious way, which is the way that is caught.
+
+
+## ⛔ Assert the order, not just the membership
+
+⚠️ **A constant nobody asserts about is a constant that drifts, and *order* is the
+property most often left unasserted because it looks like formatting.**
+
+It measured out exactly that way here: the block-vocabulary tuple carried three
+assertions and all three were **membership or length**, so the copy whose order
+disagreed with what reaches disk survived every review. ⛔ Under R10 an order that
+reaches a file **is the format** — bytes, not taste — so a constant that
+determines one is asserted element-for-element, in order, against the artifact.
+
+⭐ **And when two orders disagree, the one that reaches disk wins.** An internal
+tuple used only for membership can be reordered freely; a serialised key order
+cannot, because changing it rewrites every document that was already correct.
+
+## ⛔ A sweep states what it is sweeping
+
+⭐ *"Every fixture document"* includes the ones that exist **to be invalid**. A
+first sweep that does not say so is a sweep that quietly promotes the negative
+corpora into the contract — and the honest symptom is the one that showed up
+here: the digest-mismatch fixture failed, correctly, and the sweep was wrong.
+
+⛔ Name the set in the test's own words — *every **valid** fixture document* — so
+the exclusion is a stated scope rather than a filter somebody later mistakes for
+a bug.
