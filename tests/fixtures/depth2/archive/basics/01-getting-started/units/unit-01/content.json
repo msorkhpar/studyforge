@@ -79,6 +79,17 @@
           "text": "Make `Greeter.greet` return `Hello, <who>` for any non-empty name."
         },
         {
+          "type": "disclosure",
+          "summary": "Show a hint",
+          "open": false,
+          "blocks": [
+            {
+              "type": "para",
+              "text": "Concatenation is enough. The grader shipped with the material checks the exact string."
+            }
+          ]
+        },
+        {
           "type": "heading",
           "level": 2,
           "text": "Lesson: Your first class"

@@ -54,7 +54,8 @@
     "videos": 0,
     "rules": 0,
     "quotes": 0,
-    "html": 0
+    "html": 0,
+    "disclosures": 0
   },
   "content_sha256": "63926676ef2d034a648e1b684b01732b59f62431cf9158c0d4ad8a3555f16f9f",
   "starting_code": "public final class Loud {\n    private final Greeter inner;\n    Loud(Greeter inner) { this.inner = inner; }\n\n    public String greet(String who) {\n        // your code here\n    }\n}\n"

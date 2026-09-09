@@ -32,7 +32,7 @@ digests.
 | `permitted_edits` | `[]` — the normal case | one `pom.xml` insert (R3) |
 | `media` in the manifest | **absent** — the default case | declared, `auto` + limits |
 | Authored overlay | none | `basics/01-getting-started` unit 1 only |
-| Block types exercised | 9 of 10 (no `video`) | **10 of 10** |
+| Block types exercised | 10 of 11 (no `video`) | **11 of 11** |
 
 `depth1` exists to keep the 1-level and no-exercise paths first-class from
 wave 0 rather than discovered late. ⛔ **A corpus with no graders is complete,
@@ -50,8 +50,8 @@ not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 |---|---|---|
 | 1 | `heading`, `para`, `code`, `list` | the plainest possible unit |
 | 2 | `table`, `image`, `quote`, an asset manifest, `assets_sha256`, an **attachment** | C4 — a file the page links rather than renders |
-| 3 · `lesson-1` | `rule`, `html` (a `<details>` disclosure) | SF-07's additions, and raw HTML stored verbatim |
-| 3 · `lesson-2` | three fences full of XML/HTML, beside a raw-HTML block with **the same tags** | fence awareness — see below. Also: a unit with two archive documents |
+| 3 · `lesson-1` | `rule`, and a **`disclosure`** withholding why the unit sets no work | the third state: present but withheld (C5, Q1) |
+| 3 · `lesson-2` | three fences full of XML/HTML, a **`disclosure`**, and a raw-HTML block with **the same tags** | fence awareness — see below. Also: a unit with two archive documents |
 
 `depth2`
 
@@ -72,17 +72,23 @@ code fences stripped found **0 of 38**: all 26 `<tag>`-shaped matches were XML
 was counting angle brackets.
 
 So `depth1` unit 3 `lesson-2.json` carries three fenced blocks of XML and HTML
-**and** a raw `html` block using the same `<details>`/`<summary>` tags, in one
+— one of them a fence *about* a `<details>` — **and** a raw `html` block, in one
 document. Coverage of each block type separately cannot prove a parser tells
 them apart; only material where the two are the same text can.
 `test_the_same_tags_appear_fenced_and_raw_in_one_corpus` asserts that overlap
 still exists, so it cannot be edited away by accident.
 
+⚠️ **The overlap is now exactly `<p>` and `</p>`, and that is load-bearing.**
+Once real disclosures became `disclosure` blocks, the only raw `html` left in
+`depth1` is the callout — so the callout **must** contain a `<p>`, or the test
+goes red for a reason that has nothing to do with fences. It is the one thing
+in this change that bites if forgotten.
+
 ⚠️ **The recount does not weaken the vocabulary requirement — it relocates
-it.** `rule`, `quote` and `html` are all needed at **M1**: raw HTML is a
-*SPARQL* requirement (6 of 19 lessons use `<details>`/`<summary>`), and
-thematic breaks (10 lessons) and blockquotes (1) are the *Java corpus's*. All
-three appear in both corpora here.
+it.** `rule`, `quote`, `html` and `disclosure` are all needed at **M1**: the
+disclosure is a *SPARQL* requirement (6 of 19 lessons, every one of them hiding
+an exercise answer), and thematic breaks (10 lessons) and blockquotes (1) are
+the *Java corpus's*. All four appear in both corpora here.
 
 ## The invalid corpora
 
@@ -141,11 +147,22 @@ then, only when they have something to say and always **after** the digest:
 {"type": "rule"}                                        # thematic break
 {"type": "quote",   "blocks": [block]}                  # blockquotes nest
 {"type": "html",    "text": str}                        # verbatim, never parsed
+{"type": "disclosure", "summary": str, "open": bool, "blocks": [block]}
 ```
 
-`rule`, `quote` and `html` are SF-07's additions and are not speculative: 10
+⭐ **Two container blocks, one shape.** `quote` and `disclosure` both hold
+blocks rather than text, because both can wrap a list, a fence or a table.
+⛔ **A disclosure is never an `html` block and is never flattened** — flattening
+destroys the hiding and shows an answer its author withheld; storing it raw
+makes its body invisible to the block-count gate. *Present but withheld* is a
+third state, which is C5's lesson landing in the vocabulary. The archive records
+the semantics and the label; that the markup is `<details><summary>` is the
+renderer's decision (R13), and narration speaks the `summary` and stops.
+
+`rule`, `quote`, `html` and `disclosure` are SF-07's additions and are not
+speculative: 10
 Java lessons use `---` and one uses a blockquote, and 6 of 19 SPARQL lessons
-carry a raw `<details>` disclosure. ⚠️ Spec §1's "18 ISO files contain raw
+end in a `<details>` disclosure. ⚠️ Spec §1's "18 ISO files contain raw
 HTML" does **not** survive a recount and is not the reason — see *Fence
 awareness*. `video` is in the archive vocabulary but is not something the
 Markdown reader produces.

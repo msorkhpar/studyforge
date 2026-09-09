@@ -36,12 +36,28 @@
       "text": "<details>\n  <summary>Not a disclosure — a fence about one</summary>\n  <p>A lesson teaching HTML must keep its HTML.</p>\n</details>\n"
     },
     {
+      "type": "disclosure",
+      "summary": "This one IS a disclosure",
+      "open": false,
+      "blocks": [
+        {
+          "type": "para",
+          "text": "Same tags as the fence above, different block type. The archive says this is disclosed on demand; that it renders as `<details>` is the renderer's decision, not this document's (R13)."
+        },
+        {
+          "type": "code",
+          "lang": "sparql",
+          "text": "SELECT ?s WHERE { ?s ?p ?o } LIMIT 1\n"
+        }
+      ]
+    },
+    {
       "type": "html",
-      "text": "<details>\n<summary>This one IS raw HTML</summary>\n<p>Same tags, different block type. Only fence tracking tells them apart.</p>\n</details>"
+      "text": "<div class=\"callout\">\n<p>Raw block-level HTML that is not a disclosure: stored verbatim, rendered as-is, never parsed.</p>\n</div>"
     },
     {
       "type": "para",
-      "text": "Three fenced blocks and one raw-HTML block, with the same tags in both. A naive scan for `<` cannot tell them apart."
+      "text": "Three fenced blocks, one disclosure and one raw-HTML block — the same tags across all three. A naive scan for `<` cannot tell them apart, and a reader that flattens the disclosure shows an answer its author withheld."
     }
   ],
   "video": null,
@@ -57,7 +73,8 @@
     "videos": 0,
     "rules": 0,
     "quotes": 0,
-    "html": 1
+    "html": 1,
+    "disclosures": 1
   },
-  "content_sha256": "710026ac052cb11c2899063445ae81340702105bc6744ce387063fa36c84cf19"
+  "content_sha256": "0ad47bf04b4f0f00f0ad706adf4bf86c68359169cdc3464108f70318a97da5f9"
 }

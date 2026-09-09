@@ -24,8 +24,15 @@
       "type": "rule"
     },
     {
-      "type": "html",
-      "text": "<details>\n<summary>Why there is no exercise here</summary>\n<p>Zero exercises is a first-class outcome, not a gap.</p>\n</details>"
+      "type": "disclosure",
+      "summary": "Why there is no exercise here",
+      "open": false,
+      "blocks": [
+        {
+          "type": "para",
+          "text": "Zero exercises is a first-class outcome, not a gap (spec §7, C5)."
+        }
+      ]
     },
     {
       "type": "para",
@@ -45,7 +52,8 @@
     "videos": 0,
     "rules": 1,
     "quotes": 0,
-    "html": 1
+    "html": 0,
+    "disclosures": 1
   },
-  "content_sha256": "b4dd66ad17bf02154e3aa0a95a02bf44558394a49d1bdb45336c315cff2f0de2"
+  "content_sha256": "684e3faed3d40cfd09811a91a7522ad5c5fe1c53ab3533d666e3acf872c333c1"
 }
