@@ -62,11 +62,15 @@ no linter existed on the machines available, and two tests **skipped with a
 message naming the extra** rather than passing quietly. ⛔ Deleting it would have
 been the easy move and would have left formatting unenforced permanently.
 
-**C4 — FND-03, one formatting fix outstanding, and it is not mine.** The tree is
-green on the host — **125 passed, 7 skipped**, floor clean — and **red in the
-container** on a formatting check against a file authored before the floor
-existed. Routed to Developer 2. ⚠️ **It does not reopen FND-03**, which was
-approved; it is the second instance of **C5**.
+**C4 — CLOSED.** The container-only formatting failure was `FND-02`'s test
+module, authored before the formatter existed. Fixed through `FND-03`'s own
+wrapper rather than by hand — ⭐ **and the `Permission denied` seen at the merge
+gate was `FND-03`'s hardening working as designed**, the unprivileged-uid test
+owning nothing; ⛔ nothing about the container was loosened to get past it, which
+is exactly the right instinct. Formatting only, checked rather than asserted: the
+parsed AST is identical before and after. Container **124 passed, 8 skipped**,
+both ruff gates passing by name. ⚠️ It never reopened `FND-03`, which was
+approved — but it **is** the third instance of **C5**.
 
 **B2 — RULED AND CLOSED.** `FND-05a` is unblocked and reshaped; `FND-05b` is
 cancelled. ⭐ **All three submodule forms were closed, and the third is the one
@@ -219,7 +223,7 @@ which is the one seam neither can inspect from their own side.
 |---|---|---|---|
 | C2 | **The rubric's review base resolved against a stale `main`** — ~100 changed files instead of ~14, three tasks' work attributed to one author. | CTO | ✅ **fixed** |
 | C3 | **`ruff format` vs R11 on one file** — see resolved **Q6**. | CTO | ✅ **ruled**; the split is Developer 2's |
-| C5 | ⚠️ **Parallel-authoring defect, now recurred** — a quality rule merges, and a file authored *before* it lands fails it. Twice: first the line-length check, now the formatter. | PO | open — see below |
+| C5 | ⛔ **Parallel-authoring defect — three instances, one milestone.** A quality rule merges; a file authored *before* it lands fails it. FND-04/line-length, FND-03's container/formatter, FND-02/formatter. | CTO to rule | ⛔ **open, and no longer a judgement call** |
 
 ⛔ **C2 silently corrupted every review it touched**, which is the worst property
 a gate can have: it did not fail, it **passed the wrong thing**. Two details from
@@ -238,32 +242,48 @@ the fix are worth keeping, because both generalise:
 Any review run before the fix is re-run against the corrected base, not assumed
 sound.
 
-### C5 — the parallel-authoring defect, and it has now happened twice
+### C5 — the parallel-authoring defect: three instances, and it stopped being an anecdote
 
 ⚠️ **The pattern:** a quality rule merges, and a file authored **before** it
-landed fails it — through no fault of either author. **First** the line-length
-check (`FND-04`, caught at the merge gate). **Now** the formatter (`C4`, red in
-the container, green on the host). ⭐ **Two data points is the threshold I said
-would decide this**, and it has been reached in a single milestone with four
-agents. It will recur every time the floor gains a rule, and M0 is *the milestone
-that exists to gain rules*.
+landed fails it — through no fault of either author, on a branch that was green
+when it was written.
 
-**The three options are unchanged; the cheapest now has evidence behind it.**
+| # | Where | Rule it was authored before |
+|---|---|---|
+| 1 | `FND-04`'s fixture module, caught at the merge gate | the line-length check |
+| 2 | `FND-03`'s container run — green on the host, red in the image | the formatter |
+| 3 | `FND-02`'s test module — 89 characters, one hunk | the formatter |
 
-1. ⭐ **Run the floor across the whole tree when a rule lands, in the same
-   commit** — the rule and the tree it makes true arrive together, so no branch in
-   flight can be stale against it. **This is the one I recommend**, and both
-   incidents would have been prevented by it at the cost of a wider diff on the
-   commit that adds a rule.
+⛔ **Three in one milestone, with four agents, on the milestone whose entire
+purpose is to gain rules.** ⭐ The threshold I named for deciding this was two
+data points. It is three, and the third arrived *while this board entry was being
+written* — which is itself the argument: the rate is not falling.
+
+⚠️ **`FND-04`'s own handoff, finding 10, predicted this and named the fix.** ⛔
+**A prediction that was recorded, not acted on, and then came true twice more is
+the most expensive kind of finding this project produces** — the knowledge was
+already here, in the place the protocol says to put it, and the cost was paid
+anyway. Two round trips have now cost more than the fix would have.
+
+**The three options, with the evidence they now carry.**
+
+1. ⭐ **Land the floor's configuration as a wave-0 prerequisite, and run it
+   across the tree in the same commit that adds a rule.** The rule and the tree it
+   makes true arrive together, so no branch in flight can be stale against it.
+   ⭐ **This is my recommendation, it is `FND-04`'s, and all three incidents would
+   have been prevented by it** — at the cost of a wider diff on the commit that
+   adds a rule.
 2. **Re-run the floor at the merge gate rather than at authoring time** — catches
-   it, but late, and it charges the cost to whoever merges second, which is
+   it, but late, and charges the cost to whoever merges second, which is
    arbitrary.
-3. **Accept it and fix forward** — what has happened twice. ⛔ It is only free
-   while the tree is small, and it teaches agents that a red floor is somebody
-   else's problem.
+3. ⛔ **Accept it and fix forward** — what has happened three times. It is free
+   only while the tree is small, and it teaches agents that a red floor is
+   somebody else's problem.
 
-⚠️ **Recorded rather than decided: this is the CTO's to rule**, and it is the
-kind of thing that is cheap now and expensive at fifty modules.
+⚠️ **This is the CTO's to rule and I am asking for it now rather than at the next
+recurrence.** It is cheap at five modules and expensive at fifty, and ⛔ **M1 adds
+fifteen tasks** — the next rule the floor gains will meet fifteen branches, not
+four.
 
 ---
 
@@ -464,5 +484,6 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 | 2026-09-09 | **FND-02 → done** (APPROVE): 11,107 nodes, 217 of 217 documents. **FND-03 → done** (APPROVE). ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs in the image and the two tests run rather than skip. **No per-condition `Blocked` outcome remains on this board.** |
 | 2026-09-09 | ⭐ **Q4 resolved, E07 unblocked — on the ground that the pattern cannot be built.** To match "this is the user's username" the gate must hold the username, the exact datum R7 forbids it to hold. Sharper than X2: X2 turned on what R7 *governs*, Q4 on what a gate can physically *be*. |
 | 2026-09-09 | **Q6 and Q7 ruled.** ⭐ **The open-question list is empty for the first time** — Q1–Q7, X1, X2 all closed. ⚠️ Not evidence that no contract is unlocated: R21's register still carries five open rows, and those were found by surveying rather than by tripping over them. |
-| 2026-09-09 | ⚠️ **C5 recorded — the parallel-authoring defect has recurred.** A rule merges; a file authored before it fails it. Line-length, then the formatter. ⭐ Two data points in one milestone with four agents, and M0 is the milestone that exists to gain rules. Recommendation: run the floor across the tree in the same commit that adds a rule. **The CTO's to decide.** |
+| 2026-09-09 | ⛔ **C5 — the parallel-authoring defect, now THREE instances in one milestone**: FND-04/line-length, FND-03's container/formatter, FND-02/formatter. ⚠️ The third arrived while this entry was being written. ⭐ `FND-04`'s handoff finding 10 predicted it and named the fix — **a recorded prediction that was not acted on and then came true twice more is the most expensive kind of finding this project produces.** Recommendation: land the floor's configuration as a wave-0 prerequisite and run it across the tree in the same commit that adds a rule. ⛔ **Asking the CTO to rule now, not at the next recurrence — M1 adds fifteen tasks, so the next rule meets fifteen branches, not four.** |
+| 2026-09-09 | **C4 closed.** Fixed through FND-03's own wrapper; ⭐ the `Permission denied` at the gate was FND-03's unprivileged-uid hardening working as designed, and **nothing about the container was loosened to get past it**. |
 | 2026-09-09 | **C2 fixed, and two details kept:** the bug was in **five** places — the shell preamble and all four Python checkers, each re-deriving the base — and ⛔ **the failure mode flatters**, showing more work rather than less, so nobody questions it. ⭐ A check that cries wolf gets waved through; one that under-reports gets believed. |
