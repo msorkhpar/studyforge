@@ -68,6 +68,30 @@ is the specific way CodeSignal broke this: the runner was handed a bare speech
 id while the page asked for the digest form, so every clip was missing and every
 run re-synthesised the lot.
 
+⛔ **Narration speaks a disclosure's summary and stops. It never walks the
+body** (CTO ruling, `handoffs/CTO-2026-09-09-rulings-q1-q3.md`).
+
+A `disclosure` block (SF-07) is content the author decided the reader should
+**choose** to see. Reading it aloud overrides that decision silently, on a
+surface the reader cannot see — the page still shows the section collapsed while
+the audio gives away what is inside it. ⭐ **The decisive argument is §8.5's,
+about read marks: a record the reader cannot trust is worse than none.**
+Narration that *sometimes* reads out the answer is narration nobody can leave
+playing, and that loses the feature for the whole corpus rather than for one
+lesson. The constituency is real: all six SPARQL uses hide an exercise answer.
+
+⚠️ **Withheld is not dropped, and R6 applies.** The summary gets a speech id; the
+body gets **none**, so a clip for it cannot be minted or addressed. The unit's
+speakable record states how many blocks it withheld, and the narration coverage
+report names units with unspoken content — so the omission reads as a decision
+rather than as a bug in the walker. ⛔ Do not invent a spoken sentence announcing
+the hidden section: that is narration writing prose the author did not.
+
+⚠️ **No manifest knob, deliberately.** The rule is uniform, so R1 holds with no
+per-corpus data at all, and a knob nobody has asked for is the flexibility §4's
+YAGNI refuses. If a real source wants its disclosures spoken, that is a v2
+finding with a source behind it.
+
 **Every speakable string re-enters the personal-data gate here**, regardless of
 what ran upstream (R7). The speech path is gated independently because it
 produces files under names derived from content structure, and a leak there
@@ -78,7 +102,9 @@ structure. **The filename changes under exactly that same edit** — asserted, a
 it is the inverse of the line above rather than a restatement of it. Every id in
 a rendered page has a corresponding clip and every clip has an id in the page —
 asserted in both directions. A code block produces a caption, not a reading of
-the code. The gate refuses a leaking string.
+the code. **A disclosure's summary is spoken and no block inside it has an id** —
+asserted against `depth1` unit 3, and the withheld count appears in the coverage
+report. The gate refuses a leaking string.
 
 ---
 

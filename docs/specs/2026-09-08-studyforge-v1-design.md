@@ -86,10 +86,41 @@ ingests everything twice and nothing complains. The manifest must be able to
 declare what is in and what is out, and reconnaissance (§9) must detect the
 overlap rather than leaving it to be noticed.
 
-**C3 — Raw HTML appears in real Markdown.** 18 of ISO's files contain it; the
-Java corpus has none. SF-07's parser raises on anything it does not recognise —
-correct behaviour that would stop an ISO ingest dead. The vocabulary needs raw
-HTML, thematic breaks and blockquotes before any second source is attempted.
+**C3 — Real Markdown carries constructs a strict parser must already know.**
+SF-07's parser raises on anything it does not recognise — correct behaviour, and
+the reason the vocabulary has to be right before a second source is attempted
+rather than after.
+
+⚠️ **Recounted 2026-09-09; the first draft of this constraint attributed it to
+the wrong repository.** It said "18 of ISO's files contain raw HTML". With code
+fences stripped, ISO has **0 of 38**: the 26 files carrying `<tag>`-shaped text
+are all XML *inside fenced blocks* — Maven POM, Spring beans, jPOS channel
+configuration. The requirement survives; its constituency moved, and moved
+**earlier**:
+
+| Construct | Where it is actually measured | Consequence |
+|---|---|---|
+| raw HTML | **SPARQL, 6 of 19** — `<details>`/`<summary>` | a v2 source, but see below |
+| thematic break | **Java, 10 of 166** | consumer 1, at M6 |
+| blockquote | **Java, 1 of 166** | consumer 1, at M6 |
+| **XML inside a fence** | **ISO, 26 of 41** | the real ISO constraint |
+
+⭐ **So the ISO constraint is fence-awareness, not tag counting.** A parser that
+scans for `<` without tracking fences reads a `pom.xml` sample as markup and
+either raises — stopping the ingest dead, which is the failure this constraint
+predicted by the wrong route — or renders it as HTML. That is a testable
+property and `FND-04` carries a fixture for it.
+
+⛔ **And a disclosure is a third state, not markup.** All six SPARQL uses hide an
+*exercise answer*. Flattening `<details>` into ordinary blocks keeps the text and
+destroys the hiding — the answer is then shown outright. Storing the tags as one
+opaque raw-HTML block keeps the hiding and makes the body invisible to
+everything else: uncounted, unhighlighted, unreachable by the block-count gate.
+⭐ **Both fail, oppositely, and the resolution is the one C5 already taught this
+project: "shown" and "absent" are not the only states.** *Present but withheld*
+is real content, and it gets a container block of its own — `disclosure`, holding
+blocks exactly as `quote` does. §7's speakable ruling then decides what narration
+does with it.
 
 **C4 — Material includes companion files that are neither blocks nor media.**
 SPARQL ships `.ttl` datasets its lessons load and two Jupyter notebooks. A
@@ -311,6 +342,51 @@ makes a ruling followable rather than arbitrary. What R20 forbids is a
 **dependency**: a consumer's task whose `Context` is a path in the extraction
 source, or an acceptance that can only be judged by comparing against it.
 
+**R21 — A contract is located before it is described.** Every document the
+framework reads or writes states three things *before* any task builds against
+it: **the file it lives in**, **the key that versions it** (R9), and **the one
+producer that writes it**.
+
+⛔ **A contract described but not located is a contract two tasks will locate
+differently**, and R9's versioning is exactly the thing that cannot repair it:
+by the time the disagreement surfaces, one invented location has shipped inside
+a version that refuses to migrate. ⭐ A task that meets an unlocated contract
+**stops and asks**. It does not choose, and choosing quietly is the specific
+failure this rule names.
+
+⚠️ **This was not a hypothetical when it was written.** Three had already
+happened in the first week: §7's exercise declaration named six fields and no
+document, so the fixture task could not fixture the thing R5 exists to enforce;
+`container.json` was described as generated in §6 and hand-authorable in its own
+task; and the block vocabulary described `html` without saying what a disclosure
+*is*, so two merged documents ruled it in opposite directions. ⭐ None was a
+mistake by the task that hit it — each was a **gap the task was obliged to fill
+and not equipped to fill**, which is why the rule binds on the spec rather than
+on the builder.
+
+**The register of located contracts, and what is still open:**
+
+| Contract | File | Versioned by | Written by |
+|---|---|---|---|
+| manifest | `corpus.json` | `corpus_api` | adapter (drafted by reconnaissance, §9) |
+| container map | `<address>/container.json` | `container_api` | adapter; `EX-04` amends counts (§6) |
+| archive document | `raw/<variant>/unit-NN/<kind>-M.json` | `raw_api` | adapter |
+| exercise declaration | the `exercise` key of a `practice-M.json` | that document's `raw_api` | adapter; `EX-04` for generated (§7) |
+| served unit | `unit.json` | `api` | `SF-10` |
+| table of contents | `toc.json` | TOC schema version | `SF-13` |
+| local status | `status.json` | TOC schema version | `SF-14` |
+| authored overlay | `<address>/units/unit-NN/content.json` | ⛔ **unversioned — open** | a person |
+| discovery cache | `.studyforge/site.json` | ⛔ **open** | `SF-04` |
+| narration manifest | ⛔ **open** | ⛔ **open** | `NS-02` / `SF-17` |
+| coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
+| component consuming contract | `consuming.json` | ⛔ **open** | each component (`TC-05`, E13) |
+
+⛔ **Five open rows are five instances waiting to happen**, and each is owed by
+the task named beside it *before* that task builds. ⚠️ The overlay's row is the
+sharpest: it is the one document a **person** edits, which makes it the most
+likely to drift, and R9 does not list it. Either R9 gains it or R9 says in words
+why a hand-edited document needs no version — but not silence.
+
 ---
 
 ## 3. Architecture
@@ -409,6 +485,9 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
   "variants": ["java"],
   "exercises": true,
   "placement": "sibling",
+  "content": {
+    "include": ["*/README_*.md"],
+    "exclude": [] },
   "permitted_edits": [
     { "path": "pom.xml",
       "kind": "insert-line",
@@ -416,6 +495,37 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
       "content": "  <module>practice</module>",
       "why": "Maven compiles only what sits on a source root (§7)" } ] }
 ```
+
+`content` is **C2's countermeasure, and it is a schema field because C2 is a
+schema problem.** ISO ships both per-unit files *and* whole-series aggregates
+that are concatenations of them, so a `src/*.md` glob ingests every unit twice
+and nothing complains. Nothing in the manifest could say otherwise.
+
+```json
+"content": {
+  "include": ["src/*.md"],
+  "exclude": [
+    { "path": "src/ISO.md",
+      "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" } ] }
+```
+
+⭐ **The asymmetry is deliberate: an inclusion needs no justification; an
+exclusion does.** An excluded file is material being withheld from the reader,
+and a withholding nobody has to explain is one nobody audits — the same argument
+`permitted_edits` already makes about an edit. So `include` is plain globs and
+every `exclude` entry carries its `why`.
+
+⛔ **Silence is the failure C2 describes, so silence is what this removes.** A
+file under the source root that matches neither list is **unclassified**, and
+`studyforge validate` names it and exits 1 (R6). A file that matches `include`
+and is then not ingested is also a failure. ⚠️ It follows that a corpus cannot
+grow a file without someone deciding what it is — which is the point, because the
+alternative is a second aggregate appearing and being read as thirty-eight more
+units.
+
+⭐ **The reconnaissance skill (§9) drafts this**, and detecting the overlap is
+exactly what C2 asks of it: two files whose digests say one contains the other is
+a finding it reports, not something left to be noticed after ingest.
 
 `levels` names the **container** levels and fixes the depth. A unit is an
 ordinal inside the deepest container. `variants` replaces CodeSignal's closed
@@ -441,7 +551,7 @@ be able to keep.
 | SPARQL | `["course"]` | `sparql-tutorial` + unit 07 |
 | Java-senior | `["section","module"]` | `concurrency/23-executors` + unit 02 |
 | CodeSignal | `["path","course"]` | `kotlin-programming-for-beginners/getting-started-with-kotlin` + unit 03 |
-| ISO-8583 | `["section","subsection"]` | `iso-fundamentals/data-elements` + unit 02 |
+| ISO-8583 | `["group"]` | `iso-fundamentals` + unit 02 |
 
 Depth is uniform **within** a source. A ragged source is normalised by its
 adapter. This is a deliberate YAGNI: a free node tree would turn every flat
@@ -688,6 +798,51 @@ Each exercise declares a workspace — `main_path`, `test_path`, `run_command`,
 `test_command` — plus `provenance` (`bundled` | `generated` | `user`) and
 `trust` (`authoritative` | `advisory`). The framework refuses to render a
 `generated` grader as authoritative (R5).
+
+### Where that declaration lives
+
+⛔ **It is an `exercise` object inside the practice archive document** —
+`<archive-root>/<address>/raw/<variant>/unit-NN/practice-M.json` — versioned by
+that document's existing `raw_api`, and written by the **adapter** (R2).
+
+```json
+{ "raw_api": 1, "kind": "practice", "ordinal": 1,
+  "blocks": [ … the prompt the reader works … ],
+  "exercise": {
+    "main_path": "practice/…/Executors.java",
+    "test_path":  "…/ExecutorsTest.java",
+    "run_command":  ["mvn", "-q", "-pl", "23-executors", "compile"],
+    "test_command": ["mvn", "-q", "-pl", "23-executors", "test"],
+    "provenance": "bundled",
+    "trust": "authoritative" } }
+```
+
+Four reasons, and the third is the one that decided it:
+
+- **No new document and no new version.** R9 enumerates the versioned contracts
+  and each one costs something forever. ⭐ A contract that rides a version it is
+  already inside is strictly cheaper than one that adds a sixth.
+- **The adapter is the only thing that knows.** `run_command` is a fact about the
+  source's build; `provenance` is a fact about where the grader came from. R2
+  says an adapter's whole obligation is to write a valid archive, and this is
+  archive content. ⛔ Putting it in the authored overlay would make a human type
+  it, which R19 forbids.
+- ⭐ **§7's three states fall out of the structure, with no flag to remember.**
+  **none** — there is no `practice-M.json`. **ungraded** — a `practice-M.json`
+  with blocks and **no `exercise` key**. **graded** — the key is present. So the
+  common case is a corpus that writes nothing: ISO is `none` for all 38 units and
+  writes no practice document at all; SPARQL is `ungraded` for all 19 and writes
+  a prompt with no workspace. ⛔ A design in which every corpus must declare its
+  emptiness is a design fitted to the Java repo, which is the exception (§11.0).
+- **R5 gets one place to enforce.** `provenance` and `trust` sit on the same
+  document, so `studyforge validate` refuses `trust: "authoritative"` alongside
+  `provenance: "generated"` — one rule, one file, exit 1.
+
+⛔ **`trust` is declared but never believed.** An adapter writes what it claims;
+the framework checks the claim against `provenance` and refuses the combination
+R5 exists to prevent. `EX-04` writes the same key for a generated grader that
+cleared both gates — the same document, because a generated grader is still
+archive content — and it may only ever write `advisory`.
 
 **Run and Submit are different acts.** Run executes the reader's program so
 they can see what it printed. Only a `test` run can complete a practice. This

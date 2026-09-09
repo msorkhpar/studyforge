@@ -17,7 +17,7 @@ code — because there is no code.
 
 ## Read before doing anything
 
-1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R20**,
+1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R21**,
    and **§12** (what the second source is for).
    The rulings are the authority you appeal to when a task is ambiguous.
 2. `docs/tasks/README.md` — 83 tasks, 13 epics, 9 milestones; ordering and the
@@ -30,7 +30,7 @@ code — because there is no code.
 ## Hard rules
 
 These are the ones most likely to be violated by someone moving fast. The full
-set is R1–R19 in the spec.
+set is R1–R21 in the spec.
 
 - ⛔ **Never write an absolute home path into any file.** It carries the user's
   home directory, which is personal data (R7). Paths in documents are relative

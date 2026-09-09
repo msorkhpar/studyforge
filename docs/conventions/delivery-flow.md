@@ -172,7 +172,7 @@ that stays in the corpus repository has taught nobody.
   negotiation between developers is how two contracts quietly diverge.
 - **The PO escalates a technical disagreement to the CTO**, and records the
   ruling on the board's Log. ⛔ **A ruling that is not written down did not
-  happen** — that is the whole reason R1–R20 exist as a numbered list. A ruling
+  happen** — that is the whole reason R1–R21 exist as a numbered list. A ruling
   lands in a handoff under `../tasks/handoffs/`, is logged on the board, and is
   **carried into the affected task's definition by the PO** — a ruling that lives
   only in a handoff will be re-derived by whoever picks the task up.

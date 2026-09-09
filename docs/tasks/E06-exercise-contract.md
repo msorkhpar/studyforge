@@ -37,6 +37,26 @@ express the difference rather than assuming one answer.
 lives, where the grader lives, the command that runs their program, and the
 command that runs the grader — plus its provenance and trust.
 
+⛔ **Where it lives is ruled** (CTO on Q2,
+`handoffs/CTO-2026-09-09-rulings-q1-q3.md`, carried into spec §7): an
+`exercise` object inside the **practice archive document**,
+`raw/<variant>/unit-NN/practice-M.json`, versioned by that document's existing
+`raw_api` and written by the **adapter** (R2). ⛔ Not a sixth versioned contract,
+not the authored overlay, not the manifest.
+
+⭐ **§7's three states are structural here, and that is what this task must
+encode** — there is no `state` field to set and none to forget:
+
+| State | How it appears | Common case |
+|---|---|---|
+| **none** | no `practice-M.json` at all | ISO: 38 units, no practice document written |
+| **ungraded** | a `practice-M.json` with blocks and **no `exercise` key** | SPARQL: 19 prompts, no workspace |
+| **graded** | the `exercise` key is present | the Java repo — the *exception* |
+
+⛔ **Read that table before designing anything.** A corpus that must declare its
+own emptiness is a contract fitted to the one source that ships 168 graders
+(§11.0). The reading floor is complete without any of this.
+
 Two commands rather than one, because Run and Submit are different acts
 (E05/SF-22) and the distinction has to exist in the data, not only in the UI:
 if a unit document carried one command, nothing downstream could stop a
@@ -53,7 +73,8 @@ in CodeSignal; the Java corpus's generation is E08 and works differently.
 
 **Acceptance.** A `bundled` + `authoritative` record is accepted; a
 `generated` + `authoritative` one is refused, in code. **All three states round-
-trip**, and an ungraded exercise cannot complete a practice — asserted. A unit
+trip** — a missing document, a document with no `exercise` key, and a full
+record — and an ungraded exercise cannot complete a practice, asserted. A unit
 with zero exercises is a valid, complete unit. A path outside the safe pattern is
 refused. The depth-1 fixture (zero exercises) validates.
 
