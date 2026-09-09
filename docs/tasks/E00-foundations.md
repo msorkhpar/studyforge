@@ -195,7 +195,7 @@ fixtures that depend on 166 real files are fixtures nobody can debug.
 
 ---
 
-### FND-05a — Workspace, workflow and the first submodule
+### FND-05a — Workspace, workflow and the pin file
 **Milestone** M0 · **Depends on** — · **Team** pair
 **Owns** the parent workspace repository
 **Context** ~25k — spec §3.1 and R18, `handoffs/CTO-2026-09-09-m0-readiness.md` ruling 2
@@ -215,73 +215,82 @@ parent's own remote, and the parent has none, so it resolves to nothing on any
 other machine. This task's acceptance says "on a clean machine" and "reproducible
 by another checkout" precisely because that is the point.
 
-⭐ **What survives the split is most of the value**, and it needs no network.
+⛔ **Superseded again, 2026-09-09: nothing is ever pushed to any remote.** That
+is a standing decision, so the "create a remote for `studyforge`" unblock is
+dead, and so is composition itself — a pin that names an unpushed commit resolves
+to nothing anywhere, **including here**. ⭐ **Git submodules are not used in this
+project.** See R18's amendment.
 
-**Definition.** R18's realisation: the parent repository that composes the
-framework, the toolchain image, the narration service and each corpus as
-submodules, so one checkout is a complete working system while each component
-keeps its own remote and cadence.
+⭐ **The workflow survives, the composition does not, and the pin was always the
+valuable half.** A submodule is exactly two things — a URL and a commit — and
+only the URL half needed pushing.
+
+**Definition.** R18's realisation without submodules: the parent repository that
+**records and verifies** which commit of each component a working configuration
+used, plus the compose files and scripts that run them together.
+
+⛔ **No `.gitmodules` and no `git submodule add`.** Instead:
+
+- **A tracked pin file** naming each component and the commit it was verified at.
+  That file *is* the artifact — it is what a submodule's gitlink was for.
+- **A verification command** that fails when a recorded commit is not present in
+  the corresponding local checkout, or when a component's `HEAD` has moved
+  without the parent recording it. ⭐ That is the two-commit rule, enforced
+  mechanically instead of documented as folklore — which is how this project
+  enforces everything else.
+- **The advance workflow**: pulling a component to a newer commit is a decision
+  recorded in the parent and reviewed like any other change, never an incidental
+  side effect of somebody's local state.
+
+⚠️ **State the claim honestly and do not inflate it.** This reproduces a working
+configuration **on this machine and across time**, which is what R9's
+cross-repository versioning needs. ⛔ It does **not** reproduce one across
+machines, and no document in the workspace may say it does. If pushing is ever
+adopted, the recorded commits are already exactly the data submodules would want.
 
 The parent holds almost no code. **What it holds is the combination** — which
 commit of each component works with which, plus the compose files and scripts
-that run them together. That recorded set of pins is the artifact, and it is
-what makes a working configuration reproducible across machines and across
-time.
+that run them together.
 
-Two workflows must be documented because both are silent first-run failures:
+⚠️ **The silent first-run failure is still real; it has just changed shape.** It
+is no longer "a plain clone yields empty submodule directories" — nobody clones
+this. It is now **a component sitting at a commit the parent never recorded**,
+which is the same surprise (your change is not part of the configuration) with no
+symptom at all. ⛔ That is why verification is a command and not a paragraph.
 
-- **A plain clone yields empty submodule directories.** The clone must recurse,
-  and the documented first-run command must say so. This is the single most
-  common way somebody concludes the project is broken.
-- **A change to a component is two commits** — one in the component, one in the
-  parent recording the new pin. A submodule tracks a *commit*, not a branch,
-  which is the feature (reproducibility) and the surprise (a forgotten parent
-  commit means nobody else sees your change). Detached-HEAD checkout is the
-  default; the branch-tracking configuration and the update command are part of
-  this task's deliverable, not folklore.
-
-Also establishes how a component is **advanced deliberately** — pulling a
-component to a newer commit is a decision recorded in the parent, reviewed like
-any other change, never an incidental side effect of someone's local state.
-
-**Acceptance.** A recursive clone yields **every component that exists and has a
-remote** at its pinned commit — in v1 that is `corpora/java-senior` (`JS/`), which
-is in scope and can be added, pinned and verified today. A component change plus
-a parent pin update is reproducible by another checkout. A plain non-recursive
-clone fails with a message pointing at the documented command rather than an
-empty directory, tested by cloning from a local path without
-`--recurse-submodules`. ⭐ **The workflow document covers clone, update, advance
-and the two-commit rule** — that clause is the task's stated reason for existing,
-it prevents both documented silent first-run failures, and it needs no network.
-⛔ No absolute path appears in `.gitmodules` or any tracked file (R7).
+**Acceptance.** The pin file records every component that exists, `studyforge`
+included — there is no longer a reason to exclude it, because nothing is being
+fetched. Verification **exits 0** on a correctly recorded workspace; it **exits
+1, naming the component**, when a recorded commit is absent from its local
+checkout and again when a component's `HEAD` has moved without the parent
+recording it — both asserted, not described. ⭐ **The workflow document covers
+record, verify, advance and the two-commit rule**, which is the task's stated
+reason for existing. ⛔ **No absolute path in any tracked file** (R7) — the pin
+file names components by their workspace-relative directory, never by where this
+machine happens to keep them. ⛔ **No `.gitmodules` anywhere**, asserted.
 
 **Out of scope.** Migrating CodeSignal into the workspace — that is v2.
-Composing `studyforge`, `TC/` and `NS/` — that is `FND-05b`.
 
 ---
 
-### FND-05b — Composing the framework and the shared components
-**Milestone** **M5** · **Depends on** FND-05a, TC-01, NS-01 · **Team** solo
-**Owns** the parent workspace's remaining submodule pins
-**Context** ~10k — `FND-05a`'s workflow document
+### FND-05b — ⛔ CANCELLED 2026-09-09
 
-**Definition.** Adds the three components `FND-05a` could not: `studyforge`
-itself, `code-server-toolchain` and `narrate-service`. No new mechanism — the
-workflow, the guard and the two-commit rule already exist; this is the pinning.
+**Milestone** — · **Depends on** — · **Team** —
 
-⛔ **Blocked on two things, and one of them is not an agent's to do.**
+⛔ **Cancelled outright, not deferred**, by the CTO ruling in
+`handoffs/CTO-2026-09-09-round3.md`. Its whole content was "add the three
+components `FND-05a` could not, as submodules", and **submodules are no longer
+used in this project** (R18, amended): nothing is ever pushed to any remote, so a
+submodule pin names a commit that resolves to nothing anywhere.
 
-1. **A remote for `studyforge`** — an empty repository created by the owner
-   under the same account as the siblings, then a local `git remote add`. ⚠️
-   **This is an account action.** The URL lives in `.git/config`, which is
-   untracked; ⛔ no agent writes it into a document (R7).
-2. **`TC/` and `NS/` existing at all** — gated on E12 and E13 creating them.
-   `NS/` arrives at M3, `TC/` at M5, which is why this sits at M5 and not
-   earlier.
+⭐ **Its residue costs nothing and has already moved.** `studyforge`, `TC/` and
+`NS/` are now recorded in `FND-05a`'s pin file like every other component — there
+is no reason to exclude them once nothing is being fetched — and each is added by
+the task that creates it (E12, E13). **No task is needed to do this.**
 
-**Acceptance.** A recursive clone on a clean machine yields **every** component
-at its pinned commit. Advancing one component is one reviewed parent commit.
-⛔ No absolute path and no account identity in any tracked file.
+⚠️ **Both of its original blockers are gone rather than solved.** A remote for
+`studyforge` is no longer wanted; `TC/` and `NS/` not existing yet is now just a
+pin file with fewer rows, which is a correct state rather than an incomplete one.
 
 ---
 

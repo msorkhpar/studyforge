@@ -187,6 +187,38 @@ from the material, which its owner already wrote and published. Verified: the
 inherited gate has exactly three patterns — a profile URL, an email address and a
 bearer token — and none of them is a content shape. ⛔ **Do not add one.**
 
+⛔ **And SF-08 never grows a username pattern — not because it would be
+inconvenient, but because it cannot be built without breaking the rule it
+enforces** (CTO, `handoffs/CTO-2026-09-09-round3.md`; raised by `FND-02` finding
+3, blocking E07).
+
+⚠️ **The case:** the Java corpus's package directory carries its owner's account
+name, so it is in **345 file paths, in every `import`, and in a code block on
+every generated page**. It is not the lesson's subject the way a test PAN is
+ISO's, so X2's *subject matter* wording does not reach it. The underlying test
+does:
+
+- ⭐ **The gate's question is not "is this string identifying?" but "did this
+  build put it there?"** That name reached the document because the corpus owner
+  chose it years ago and committed it; the build environment contributed nothing.
+  Rendering `import com.github.<account>.Foo;` on a local page discloses nothing
+  the source the reader already has did not.
+- ⛔ **Scrubbing it would be worse than useless.** It rewrites the material's own
+  source into a placeholder — the failure this task already names one paragraph
+  up — and it emits Java that does not compile, breaking Run and Submit for the
+  entire corpus.
+- ⛔ **The decisive argument is that the pattern cannot exist.** To match "this is
+  the user's username" the gate must **hold the username**, which means the
+  framework stores the exact personal datum R7 forbids it to hold. The
+  alternative — an unanchored identifier pattern — matches every symbol in every
+  codebase. ⭐ A gate that must contain the secret to detect the secret is
+  self-defeating, and that is a general result, not a judgement about this corpus.
+
+⚠️ **What this does *not* license.** An **email address** in a lesson comment is
+still refused, because an email is an environmental shape wherever it appears and
+the pattern needs no stored value to match it. The exemption is for shapes with
+**no structural anchor**, not for identifiers the gate can already recognise.
+
 ⚠️ **The residual class is real and the answer to it is specified, not built.**
 A second source could legitimately carry a shape the gate *does* own — a lesson
 about HTTP quoting a real support address, say. When that happens the exemption

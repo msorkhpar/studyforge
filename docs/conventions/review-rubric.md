@@ -23,20 +23,33 @@ review that matters most.
 
 ## 0. Set up the range
 
-Every command below assumes `$BASE`. Establish it once:
+⭐ **The review base is the branch the change will merge *into* — never `main` by
+reflex.** Establish it once:
 
 ```bash
-BASE=$(git merge-base HEAD main)
-git diff --name-only --diff-filter=ACMR "$BASE"...HEAD          # what changed
-git diff --stat "$BASE"...HEAD
-```
-
-Two conveniences the rest of the rubric uses:
-
-```bash
+REVIEW_BASE=${REVIEW_BASE:-release/m0-foundations}     # the integration branch
+BASE=$(git merge-base HEAD "$REVIEW_BASE")
 CHANGED=$(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD)
 PY=$(printf '%s\n' $CHANGED | grep -E '^src/.*\.py$' || true)
+
+echo "base:    $REVIEW_BASE @ $(git rev-parse --short "$BASE")"
+echo "changed: $(printf '%s\n' $CHANGED | grep -c . ) files"
+git diff --stat "$BASE"...HEAD | tail -1
 ```
+
+⛔ **Print the base and the file count, and read them, before running anything
+else.** The first version of this rubric said `merge-base HEAD main`, and once
+work started landing on a release branch that presented **106 changed files
+instead of 14** — three tasks' work, attributed to one author, with every
+downstream check then run over other people's code. ⚠️ The failure is silent and
+it flatters: the reviewer sees more, not less, and a rubric that appears to be
+working harder is not one anybody questions.
+
+⭐ **The count is the guard.** If it does not match the task's **Owns**, the base
+is wrong — stop and fix it rather than reviewing what comes out. Where a task
+targets something other than the current integration branch, set `REVIEW_BASE`
+explicitly and **name it in the review**, because a verdict is only meaningful
+against a stated range.
 
 If `$CHANGED` is empty the review is over: there is nothing to approve.
 
@@ -270,8 +283,9 @@ Four conditions, all mechanical except the last:
 
 ```bash
 python3 - "$@" <<'EOF'
-import ast, pathlib, subprocess, sys
-base = subprocess.run(["git","merge-base","HEAD","main"],capture_output=True,text=True).stdout.strip()
+import ast, os, pathlib, subprocess, sys
+ref = os.environ.get("REVIEW_BASE", "release/m0-foundations")   # never "main" by reflex — see §0
+base = subprocess.run(["git","merge-base","HEAD",ref],capture_output=True,text=True).stdout.strip()
 files = subprocess.run(["git","diff","--name-only","--diff-filter=ACMR",f"{base}...HEAD"],
                        capture_output=True,text=True).stdout.split()
 for f in files:
@@ -342,9 +356,10 @@ reverted. If there is none, the tests are decoration.
 
 ```bash
 python3 - <<'EOF'
-import ast, re, pathlib, subprocess
+import ast, os, re, pathlib, subprocess
 MARKUP = re.compile(r'</?[a-zA-Z][\w-]*[\s/>]|[{][^{}]*:[^{}]*;|\bfunction\s*\(|=>\s*[{(]|@media\b|\bdocument\.|\bwindow\.')
-base = subprocess.run(["git","merge-base","HEAD","main"],capture_output=True,text=True).stdout.strip()
+ref = os.environ.get("REVIEW_BASE", "release/m0-foundations")   # never "main" by reflex — see §0
+base = subprocess.run(["git","merge-base","HEAD",ref],capture_output=True,text=True).stdout.strip()
 files = subprocess.run(["git","diff","--name-only","--diff-filter=ACMR",f"{base}...HEAD"],
                        capture_output=True,text=True).stdout.split()
 for f in files:
@@ -386,8 +401,9 @@ Two carried rulings the reviewer also checks by reading:
 
 ```bash
 python3 - <<'EOF'
-import ast, pathlib, subprocess
-base = subprocess.run(["git","merge-base","HEAD","main"],capture_output=True,text=True).stdout.strip()
+import ast, os, pathlib, subprocess
+ref = os.environ.get("REVIEW_BASE", "release/m0-foundations")   # never "main" by reflex — see §0
+base = subprocess.run(["git","merge-base","HEAD",ref],capture_output=True,text=True).stdout.strip()
 files = subprocess.run(["git","diff","--name-only","--diff-filter=ACMR",f"{base}...HEAD"],
                        capture_output=True,text=True).stdout.split()
 for f in files:
@@ -444,9 +460,10 @@ passes for the author and errors for everyone else.
 
 ```bash
 python3 - <<'EOF'
-import ast, sys, pathlib, subprocess
+import ast, os, sys, pathlib, subprocess
 std = sys.stdlib_module_names
-base = subprocess.run(["git","merge-base","HEAD","main"],capture_output=True,text=True).stdout.strip()
+ref = os.environ.get("REVIEW_BASE", "release/m0-foundations")   # never "main" by reflex — see §0
+base = subprocess.run(["git","merge-base","HEAD",ref],capture_output=True,text=True).stdout.strip()
 files = subprocess.run(["git","diff","--name-only","--diff-filter=ACMR",f"{base}...HEAD"],
                        capture_output=True,text=True).stdout.split()
 for f in files:

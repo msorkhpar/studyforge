@@ -1,6 +1,6 @@
 # studyforge — task index
 
-**85 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
+**84 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
 `BOARD.md`**, not this file: this one orders the work, that one says where it is.
 Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R21** every
@@ -57,7 +57,7 @@ corpus with no graders that stops here is complete, not short.
 
 | | Milestone | What works when it lands | Tasks |
 |---|---|---|---|
-| **M5** | It runs code | Run and Submit against a pinned toolchain | 13 |
+| **M5** | It runs code | Run and Submit against a pinned toolchain | 12 |
 | **M6** | The Java corpus reads | 166 units, narrated and navigable | 9 |
 | **M7** | The Java corpus has practices | Real exercises with proven graders | 12 |
 | **M8** | **It is a framework** | A further, unnamed source converted by the skills alone | 1 |
@@ -97,12 +97,17 @@ fixtures — one depth-1, one depth-2 — and any corpus rides them.
 `FND-05a` is in 0.2 only because it is the least urgent — nothing in M1 imports
 the parent workspace.
 
-⚠️ **`FND-05` split on 2026-09-09** (CTO ruling 2). `FND-05a` — the parent, the
-workflow document, the non-recursive-clone guard and the one submodule that can
-be pinned today — stays here. **`FND-05b`** — composing `studyforge`, `TC/` and
-`NS/` — moves to **M5**: `studyforge` has no remote yet, and two of the
-components R18 names do not exist until E12 and E13 create them. ⛔ Left whole,
-the task made M0 permanently unachievable, and M0 gates the entire plan.
+⚠️ **`FND-05` split on 2026-09-09, then `FND-05b` cancelled the same day**
+(CTO rulings 2 and round 3). The split was right: left whole, the task made M0
+permanently unachievable, and M0 gates the entire plan. ⛔ **The cancellation
+followed from a standing decision that nothing is ever pushed to any remote**, so
+git submodules have no legal form here (R18, amended) — an absolute local path in
+`.gitmodules` is an R7 violation, a relative URL resolves against a parent remote
+that does not exist, and a real remote names a commit nobody pushed. ⭐ `FND-05a`
+keeps the parent, the workflow and **a tracked pin file that is verified against
+the local checkouts** — the pin was always the valuable half of a submodule, and
+only the fetch depended on pushing. Every component is recorded there, including
+`studyforge`, `TC/` and `NS/` as E12 and E13 create them.
 
 ⭐ **`FND-06` is new**: R7 enforced by the build instead of by a reviewer's grep.
 It is not `SF-08` — that gates strings entering the *archive*, this gates strings
@@ -182,7 +187,7 @@ that stops after M4 is **complete**, not short.
 - **5.2** — TC-02, TC-03, TC-04, SF-29
 - **5.3** — TC-05, TC-06
 - **5.4** — SK-09, SF-22
-- **5.5** — SF-24, FND-05b
+- **5.5** — SF-24
 
 ### M6 — The Java corpus reads
 > **Done when:** the 166-unit Java tutorial is a working, narrated study site.
@@ -244,7 +249,7 @@ OPS-04 → QA-01 → QA-04.
 
 | Epic | Document | Tasks | Owns |
 |---|---|---|---|
-| E00 | [Foundations](E00-foundations.md) | FND-01…04, 05a/05b, 06 | scaffolding, graphify, dev container, fixtures, submodules, the R7 check |
+| E00 | [Foundations](E00-foundations.md) |  FND-01…04, 05a, 06 | scaffolding, graphify, dev container, fixtures, the workspace pin file, the R7 check |
 | E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31 | address, manifest, placement, dry-run, discovery, container map |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27 | assets, page, contents, index, navigation |

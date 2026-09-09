@@ -248,11 +248,24 @@ changing a colour required editing Python. Loop bodies and inline wrappers stay
 in code — a template file for a closing tag removes no duplication.
 
 **R14 — Graphify is the project's knowledge index, and agents query it before
-exploring.** Every repository in this project carries a built graph. An agent
-answering a "where / what calls / how does X work" question **asks the graph
-first** and reads files second. The graph is rebuilt when structure changes.
-This is what keeps a task's context budget honest: the alternative is every
-agent grepping the whole tree to re-derive what the graph already knows.
+exploring.** Every repository **in this project's working set** carries a built
+graph — a repository enters that set when it is onboarded, not when it is first
+mentioned. An agent answering a "where / what calls / how does X work" question
+**asks the graph first** and reads files second. The graph is rebuilt when
+structure changes. This is what keeps a task's context budget honest: the
+alternative is every agent grepping the whole tree to re-derive what the graph
+already knows.
+
+⚠️ **Qualified 2026-09-09, by measurement, because the budgets depend on it.**
+`explain` and `path` hold unconditionally — sub-second, a few hundred tokens,
+against ~20k tokens of equivalent reading. `query` holds **only when phrased as
+distinctive nouns**; asked as an English sentence it returns confidently wrong
+material. ⛔ **That distinction belongs in the ruling and not only in the
+convention, because confidently wrong is not the same failure as slow.** A budget
+premised on a tool that answers slowly produces late work; one premised on a tool
+that answers wrongly produces wrong work, and the agent has no signal that it
+did. `docs/conventions/graphify.md` carries the *What it answers badly* section
+an agent reads before trusting an answer.
 
 **R15 — Every step whose result depends on installed tooling runs in a
 container.** A build, a test run, a grader verdict, a synthesis job: each is
@@ -278,15 +291,40 @@ the proving ground for that, not the destination (§9).
 how you use it, and what it depends on. A reader who has not seen the spec must
 be able to use a package correctly from that alone.
 
-**R18 — Components are separate repositories, composed as submodules of one
-workspace.** Each component — the framework, the toolchain image, the narration
-service, each corpus — has its own remote and its own release cadence, and is
-checked out under a single parent workspace so one directory holds a complete,
-working system. **The parent's recorded submodule commits are the version
-pin**: they capture exactly which combination of components a working
-configuration used, which is what makes R9's per-contract versioning
-reproducible *across* repositories rather than only inside them. A component is
-never vendored, copied or forked into another; it is pinned.
+**R18 — Components are separate repositories, pinned by one workspace.** Each
+component — the framework, the toolchain image, the narration service, each
+corpus — has its own release cadence and is checked out under a single parent
+workspace so one directory holds a complete, working system. **The parent's
+recorded component commits are the version pin**: they capture exactly which
+combination of components a working configuration used, which is what makes R9's
+per-contract versioning reproducible *across* repositories rather than only
+inside them. ⛔ A component is never vendored, copied or forked into another; it
+is pinned.
+
+⚠️ **Amended 2026-09-09: nothing in this project is pushed to any remote, ever.**
+That is a standing decision, not a temporary state, and it removes the mechanism
+this ruling originally named. **Git submodules have no legal form here** and are
+not used:
+
+- an **absolute** local path in `.gitmodules` writes a home directory into a
+  tracked file — ⛔ a direct R7 violation;
+- a **relative** URL is R7-clean but git resolves it against the parent's own
+  remote, which does not exist;
+- a **real remote** URL names a commit that was never pushed, so it resolves to
+  nothing anywhere, including here.
+
+⭐ **The pin survives; the fetch does not, and the pin was always the valuable
+half.** A submodule is exactly two things — a URL and a commit — and only the URL
+half depended on pushing. So the parent records each component's verified commit
+in a tracked file and **verifies it against the local checkout**, which is
+mechanically checkable in the way this project checks everything else.
+
+⚠️ **The honest claim shrinks, and it is stated rather than implied.** This
+reproduces a working configuration **on this machine and across time** — which is
+what R9's cross-repository versioning actually needs — and **not across
+machines**. ⛔ Any document claiming otherwise is wrong. If pushing is ever
+adopted, submodules become legal again and the recorded commits are already the
+data they would need.
 
 **R19 — The consuming half of a corpus is generated, not hand-authored.** A
 source repository's obligation is the archive (R2) and the source-specific
@@ -1328,8 +1366,13 @@ moving repository and the expertise lives nowhere.
 
 ### How a consumer obtains the skills
 
-R18 settles the distribution: the framework is **pinned as a submodule**, never
-copied, because a copied skill is a fork that a framework fix never reaches.
+R18 settles the distribution: the framework is **pinned**, never copied, because
+a copied skill is a fork that a framework fix never reaches. ⚠️ **Pinned, not
+submoduled** — R18's 2026-09-09 amendment removes submodules, so the framework is
+present as a **sibling checkout at a recorded commit** and the parent's pin file
+is what records which one. The load-bearing half is unchanged: ⛔ never vendored,
+never copied, never forked.
+
 But there is a real tension worth naming, because it is where copying starts:
 **a pin is a commit, while skill discovery is path-based** — a skill has to be
 findable at a path inside the repository the agent is working in.
