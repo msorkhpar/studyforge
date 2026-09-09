@@ -429,19 +429,40 @@ deliberately rather than edit a file outside its task, and said so. ⛔ Three
 lines, into `tests/support.py`, and both call sites import it — this task is the
 next one whose scope legitimately spans both.
 
-⛔ **Follow-up: the sweep is not clean over `docs/`, and the hit is a documented
-false positive.** The email shape matches `E02-content-pipeline.md`, which quotes
-`n@router` + `.get` — ⚠️ **E02's own worked example of the escaping artefact that
-refused three clean lessons.** ⛔ The sweep does **not** stop reading `docs/`:
-that is where R7 was violated once already (`CLAUDE.md`), and excluding the
-directory would remove the check from the place with the worst record. ⛔ Nor is
-this a §1e sanctioned fixture — it is prose, not a named directory with a
-`VIOLATION.md`. ⭐ **The resolution is a narrow allow-list of documented false
-positives, each carrying its reason inline, asserted to stay short** — the same
-shape as the formatter exclusion held at one entry and the sanctioned-directory
-registry asserted by a test. ⚠️ A gate that must be silenced somewhere is safer
-with a short list that fails when it grows than with a directory quietly
-excluded: **the list gets read, the exclusion does not.**
+⭐ **The false-positive allow-list is specified and deliberately not built —
+because the problem it was for does not exist.** Recorded rather than dropped, so
+it is not re-proposed.
+
+⚠️ **The claim it rested on was true when it was written and false when it was
+acted on.** `FND-04`'s finding 8 reported the repository-wide sweep as unclean,
+its only hit being `E02-content-pipeline.md` quoting `n@router` + `.get` — E02's
+own worked example of the escaping artefact that refused three clean lessons.
+⭐ **Re-measured on the merged tip, and both numbers are zero:**
+
+- `tools.quality`'s implemented check: **0 findings** over the whole tree;
+- the rubric's **current** §1a patterns: **0 hits** across `docs/` and
+  `CLAUDE.md`, and they do not fire on that line.
+
+The **superseded** §1a patterns produced **24 hits**, every one a false positive
+and E02's among them. ⛔ **The two-character minimum local part kills
+`n@router.get` exactly** — the local part is one character — and the `.local`
+trailing guard and the dropped `$HOME`/`~/` alternatives account for the rest.
+
+⭐ **The reasoning survives and is the part worth keeping, if a real hit ever
+arrives:** ⛔ the sweep does **not** stop reading `docs/` — that is where R7 was
+violated once already (`CLAUDE.md`), and excluding the directory would remove the
+check from the place with the worst record. ⛔ Nor would prose qualify as a §1e
+sanctioned fixture, which requires a named directory with a `VIOLATION.md`. So
+the shape, if it is ever needed, is **a narrow list of documented false
+positives, each carrying its reason inline and asserted to stay short** — because
+⭐ **a gate that must be silenced somewhere is safer with a short list that fails
+when it grows: the list gets read, the exclusion does not.**
+
+⚠️ **But the better answer is the one that was actually taken, and it is worth
+naming as the precedent:** ⭐ **the pattern was corrected, not exempted.** An
+allow-list would have recorded 24 instances of a defect in the pattern as 24
+facts about the tree. ⛔ **Fix the class; list the instance only when the class is
+right and the instance is genuinely exceptional.**
 
 ⛔ **Follow-up: the exception text is itself a rule and needs enforcing.** The
 `Size exception:` opt-out states *why splitting would be worse* — ⚠️ but nothing

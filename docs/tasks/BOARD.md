@@ -343,18 +343,30 @@ have not run yet**, so they were still cheap when found.
    shipped a package — but `SF-12` and `SF-19a` have not run, and R11 is explicit
    that the large modules arrive **as packages or not at all**. Routed to both
    tasks rather than left as a general warning.
-3. ⛔ **The repository-wide R7 sweep is not clean today** (`FND-04` #8), and the
-   hit is `docs/tasks/E02-content-pipeline.md` quoting `n@router` + `.get` —
-   ⚠️ **E02's own worked example of the false positive that refused three clean
-   lessons.** ⭐ **Decided:** the sweep does ⛔ **not** stop reading `docs/`, which
-   is where R7 was violated once already (`CLAUDE.md`). Nor is this a §1e
-   sanctioned fixture — it is prose, not a named directory with a `VIOLATION.md`.
-   **So `FND-06` gains a narrow allow-list of documented false positives, each
-   carrying its reason inline and asserted to stay short** — ⭐ the same shape as
-   the formatter exclusion held at exactly one entry and the sanctioned-directory
-   registry asserted by a test. ⚠️ **A gate that must be silenced somewhere is
-   safer with a short list that fails when it grows than with a directory quietly
-   excluded**, because the list is read and the exclusion is not.
+3. ⛔ **~~The repository-wide R7 sweep is not clean today~~ — WITHDRAWN.**
+   ⚠️ **I acted on this finding without re-running it, and it had stopped being
+   true.** Re-measured on the merged tip:
+
+   | What | Result |
+   |---|---|
+   | `tools.quality`'s implemented check, whole tree | ⭐ **0 findings** |
+   | Rubric's **current** §1a patterns, over `docs/` + `CLAUDE.md` | ⭐ **0 hits** |
+   | Rubric's **superseded** §1a patterns, same scope | ⛔ **24 hits — every one a false positive** |
+
+   ⭐ **The two-character minimum local part kills `n@router.get` exactly** — its
+   local part is one character — with the `.local` trailing guard and the dropped
+   `$HOME`/`~/` alternatives accounting for the rest. So **the allow-list is a
+   mechanism for a hit that no longer fires**, and it is **specified and
+   deliberately not built** — the same disposition X2 got, for the same reason,
+   and this project has now refused two mechanisms by checking whether the
+   problem was still there.
+
+   ⭐ **The correction is a better precedent than my decision was.** An allow-list
+   would have recorded **24 instances of a defect in the pattern as 24 facts about
+   the tree.** ⛔ **Fix the class; list the instance only when the class is right
+   and the instance is genuinely exceptional.** The reasoning that survives — no
+   `docs/` exclusion, prose is not a §1e fixture, a short failing list beats a
+   silent exclusion — is kept in `FND-06` against the day a real hit arrives.
 
 ---
 
@@ -629,6 +641,9 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 
 | Date | Change |
 |---|---|
+| 2026-09-09 | ⛔ **My allow-list decision is WITHDRAWN — I acted on a finding without re-running it.** Re-measured on the merged tip: the shipped check reports **0**, the rubric's **current** §1a patterns report **0** over `docs/` and `CLAUDE.md` and do not fire on the E02 line; the **superseded** patterns report **24, every one a false positive**. ⭐ The two-character minimum local part kills `n@router.get` exactly. **The allow-list is specified and deliberately not built** — X2's disposition, for X2's reason. |
+| 2026-09-09 | ⭐ **The correction is a better precedent than my decision was.** An allow-list would have recorded **24 instances of a defect in the pattern as 24 facts about the tree**. ⛔ **Fix the class; list the instance only when the class is right and the instance is genuinely exceptional.** The surviving reasoning — no `docs/` exclusion, prose is not a §1e fixture, a short failing list beats a silent exclusion — is kept in `FND-06` for a real hit. |
+| 2026-09-09 | ⚠️ **Third instance of one shape this milestone: a finding true when written and false when acted on.** ⭐ That is the record-versus-claim rule one level down — a finding is a **record**, but acting on it turns it into a **claim about now**. ⛔ **New rule: a finding is a measurement with an as-of and is re-run before it becomes a task**, and the finding template gains a required **`Measured`** field naming the command and its output. ⚠️ It has now bitten in both directions — a stale finding acted on, and a back-triage where most of the backlog *had already been ruled and could not be seen*. |
 | 2026-09-09 | ✅ **Back-triage of the 23 pre-marker findings complete** — all marked and dispositioned, ⛔ **"noted" appears nowhere.** Three remain open and ⭐ **two were not on this board**: the port-size debt (`markdown.py` 678, `unitdoc.py` 827 against R11's 400 — routed to SF-12 and SF-19a, the two port tasks that have not run) and a repository-wide R7 sweep that is **not clean today**. ⚠️ Both untracked ones concern tasks that have not run yet, so both were still cheap when found. |
 | 2026-09-09 | ⭐ **Decided: FND-06 gains a narrow allow-list of documented false positives**, not a `docs/` exclusion. The sweep's one hit is E02's own worked example of the escaping artefact that refused three clean lessons. ⛔ Excluding `docs/` would remove the check from the place with the worst record (`CLAUDE.md` records R7 violated there once). ⚠️ **A gate that must be silenced somewhere is safer with a short list that fails when it grows: the list gets read, the exclusion does not.** |
 | 2026-09-09 | ✅ **M1 step 1.1 is four-fifths done** — SF-01, SF-02, SF-07 merged on APPROVE, FND-06 and all five follow-up steps complete, **the formatter interim over** (exclusion and assertion deleted together). 755 passed, 8 skipped, ruff clean both ways. SF-08 and SF-11 in progress. |
