@@ -171,11 +171,29 @@ against rather than for who found it:
 # FINDING <date> — <one line>
 
 **Against:** the task, contract, ruling or skill that should have covered this.
+**Measured:** the command, its output, and the date. Not "I noticed".
 **What was needed:** the thing the corpus actually required.
 **What the framework offered:** and where it fell short.
 **Worked around by:** what was done instead, in the corpus repository only.
 **Cost:** what a second source would have to retype (R19).
 ```
+
+⛔ **A finding is a measurement with an as-of, and it is re-run before it becomes
+a task.** ⭐ This is the record-versus-claim rule applied one level down: a finding
+is a **record** — true when written, never rewritten — but *acting* on one turns
+it into a **claim about now**, and the two can differ by the time anybody gets to
+it.
+
+⚠️ **This has happened in both directions in one milestone.** A finding was acted
+on after the defect had been fixed, producing a decision to build a mechanism for
+a hit that no longer fired; and a back-triage found that most of a backlog *had
+already been ruled* and simply could not be seen. ⭐ **Both are the same error —
+reading a record as a status** — and both cost more than the re-run would have.
+
+⭐ **The re-run is usually one command, and it is the command the finding names.**
+That is why `Measured` is a required field: a finding that does not say how it
+was measured cannot be re-measured, and it will be either acted on stale or
+quietly dropped.
 
 ⭐ **The finding count is the yield, not the failure.** An integration that
 reports none has not been conducted honestly.
