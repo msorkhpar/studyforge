@@ -36,6 +36,8 @@ test that this is a framework (spec §12).
 - `SF-30` (M2) — reader state on the `file://` floor.
 - `SK-07` (M2) — corpus onboarding. The second source's whole experience.
 - `SF-32` (M4) — media footprint policy.
+- `SK-08` (M2) — delivery planning; the **product owner** for an integration.
+- **R20** — the extraction is one-way; a consumer never reads CodeSignal.
 - `QA-04` / **M8** — the second source; the deliverable is the findings log.
 - `SK-01`, `SK-02`, `SK-05` moved **M7 → M1/M2**.
 - `OPS-05` moved out of the Java corpus into the framework.
@@ -162,6 +164,21 @@ that a second source would also have to type is a **finding against a skill**
 and must be measured at M4, not inherited.** Java lessons may be longer or
 shorter than CodeSignal's; if the real number lands somewhere else, SF-32 is
 what says so and the manifest's `media` block is where the answer changes.
+
+**Whoever plans an integration:** `SK-08` is the product owner for it, and its
+only channel to the framework is **questions and findings** — it may not patch
+`studyforge` (§12) and it may not read the extraction source (R20). Two existing
+`Context` fields pointed at CodeSignal from consumer tasks (`OPS-03` at
+`CSD/docker-compose.yml`, `OPS-06` at `CSD/README.md`); both are now the
+generated artifacts they should always have been. Everything else naming
+CodeSignal in a consumer epic is prose explaining *why* a rule exists, which R20
+deliberately permits — it forbids a dependency, not a history.
+
+⭐ **The catalogue is the compounding part.** `SK-08` maintains
+`docs/integration-catalogue.md` **in this repository**, seeded from C1–C5, SF-25
+and SF-32, and grown from every integration's findings. Without it, each new
+consumer re-derives the same lessons from a repository that is moving, and the
+expertise lives nowhere.
 
 **Whoever picks up SF-25:** the completeness check is the highest-value single
 thing in this revision. `validate` is the only signal an integrator has (R2), and

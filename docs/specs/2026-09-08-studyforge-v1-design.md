@@ -262,6 +262,35 @@ rest of the seam: an orchestration or a deployment that lives inside one
 consumer is a framework with one consumer. ⭐ **The measure is what a second
 source costs**, not what the first one looks like when finished.
 
+**R20 — The extraction is one-way. A consumer never reads the repository the
+framework was extracted from.** CodeSignal is `studyforge`'s *source*. Everything
+a consumer needs from it is carried **in** `studyforge` — as a ruling, a
+contract, a skill, or the integration catalogue (§9) — never as a pointer into
+CodeSignal's tree. ⛔ **No task in a consumer repository cites a path inside the
+extraction source**, and no skill sends an integrator there to find out how
+something was done.
+
+Three reasons, and the third is the one that compounds:
+
+- **The source is moving.** §8 already warns that every measurement of it is a
+  dated snapshot; a consumer reading it directly inherits whatever it looks like
+  that week, with no record of what was actually relied on.
+- **It does not generalise.** The second consumer's material has nothing to do
+  with a course site's payload format, and a plan that sends its integrator to
+  read one is teaching them the wrong thing carefully.
+- ⭐ **Knowledge must accumulate in one place or it decays once per
+  integration.** If each new consumer re-derives from CodeSignal, the framework
+  is a library and the expertise lives nowhere. If each one distils what it
+  learned back into `studyforge`, the *next* integration starts further along.
+  That is what makes this a framework rather than a thing that has been used
+  twice.
+
+⚠️ **This constrains the plan, not the prose.** These documents explain *why* a
+rule exists by naming what it cost CodeSignal, and that history is exactly what
+makes a ruling followable rather than arbitrary. What R20 forbids is a
+**dependency**: a consumer's task whose `Context` is a path in the extraction
+source, or an acceptance that can only be judged by comparing against it.
+
 ---
 
 ## 3. Architecture
@@ -1063,6 +1092,13 @@ understands *a source*, the rest are source-agnostic.
   by hand is a defect in this skill.
 - **Build and serve.** One invocation from raw material to a running site:
   ingest, validate, unit documents, pages, narration, contents, exercises.
+- **Delivery planning.** The product owner for an integration: turns *"convert
+  this repository"* into an ordered backlog whose every task ends in something a
+  person can be shown, with acceptance the framework itself can evaluate. It
+  runs in the target repository, and ⛔ **its only channel is this framework** —
+  it may ask questions, and it may file findings, but it may not patch (§12) and
+  it may not read the extraction source (R20). It maintains the **integration
+  catalogue**, below.
 - **Personal archive.** Export and re-import a corpus *with its progress* —
   code, practices, examples and what the reader has completed — so the record
   survives a machine, and a corpus can be handed to somebody else without its
@@ -1096,6 +1132,24 @@ tree and an audit command, and leaves the source-specific reading to be filled
 in, is buildable early and is already what its definition asks for. The
 alternative is worse: a corpus built by hand, and skills written afterwards to
 claim they produced it.
+
+### The integration catalogue
+
+R20 says a consumer never reads the repository this framework was extracted
+from. That is only honest if what a consumer would have gone looking for is
+**here** — so the framework carries a catalogue of what goes wrong when material
+meets it, written for somebody planning work rather than somebody writing code:
+a plausible short parse that raises nothing; a corpus carrying the same material
+twice; a hierarchy encoded in filenames; an exercise with no grader, which is
+not "no exercise"; media that outgrows a git remote; an address derived from a
+title, which sends one link in eight nowhere.
+
+⭐ **It is a growing asset, not a founding document.** Each integration's
+findings (§12) are distilled back into it, so the next integration starts
+further along than the last. ⚠️ **This is the mechanism by which the framework
+gets better at being adopted**, as distinct from getting better at rendering
+pages — and without it, every new consumer re-derives the same lessons from a
+moving repository and the expertise lives nowhere.
 
 ### How a consumer obtains the skills
 
@@ -1184,6 +1238,12 @@ is R1's whole subject. The anonymity is the control.
   measures nothing.
 - The route is reconnaissance → adapter authoring → corpus onboarding, with no
   hand-authored framework code.
+- **The work is planned by the delivery-planning skill** (§9), acting as the
+  product owner for that repository: an ordered backlog whose every task ends in
+  something demonstrable, so the conversion is watchable step by step rather
+  than reported finished at the end. ⭐ Its findings are the deliverable below,
+  and it distils them into the integration catalogue so the *third* source
+  starts further along than the second.
 
 **What it must assert.**
 

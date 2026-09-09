@@ -17,10 +17,10 @@ code — because there is no code.
 
 ## Read before doing anything
 
-1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R19**,
+1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R20**,
    and **§12** (what the second source is for).
    The rulings are the authority you appeal to when a task is ambiguous.
-2. `docs/tasks/README.md` — 81 tasks, 13 epics, 9 milestones; ordering and the
+2. `docs/tasks/README.md` — 82 tasks, 13 epics, 9 milestones; ordering and the
    critical path.
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
    it carries shared context so neighbouring tasks do not re-derive it.
@@ -57,6 +57,11 @@ set is R1–R19 in the spec.
   enters as manifest data.
 - ⛔ **A skill precedes the artifact it produces** (§9). A skill written after
   the thing it "produces" has been validated against exactly one source.
+- ⛔ **The extraction is one-way** (R20). CodeSignal is *this framework's*
+  source. A consumer repository's task never cites a path inside it — what a
+  consumer needs is carried here, in a ruling, a contract, a skill, or the
+  integration catalogue. Otherwise every integration re-derives from a moving
+  repository and the expertise lives nowhere.
 - ⛔ **The Docker socket is never mounted into the serving process** (spec
   §8.3). Not behind a flag, not "only locally".
 - **Tests are part of every task** (R12), never a follow-up.

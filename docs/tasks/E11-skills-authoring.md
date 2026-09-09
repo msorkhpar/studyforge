@@ -188,6 +188,97 @@ is reported as a finding rather than silently kept or silently lost.
 
 ---
 
+### SK-08 — Delivery planning ⭐ THE PRODUCT OWNER FOR AN INTEGRATION
+**Milestone** **M2** · **Depends on** SK-01, SK-07, SF-31 · **Team** pair
+**Owns** the delivery-planning skill, and `docs/integration-catalogue.md` in this repo
+**Context** ~45k — spec §9, §12, R19, R20; this repository's own `docs/tasks/` as the worked example
+
+**Definition.** The role every integration needs and no other skill covers:
+somebody who turns *"convert this repository"* into **an ordered backlog of
+tasks that each end in something a person can be shown.** It is the product
+owner for an integration — it plans, it sequences, it writes acceptance
+somebody else can check, and it reports progress against a plan rather than
+against a feeling.
+
+It runs **in the target repository**, and its authority is `studyforge`.
+
+### What it produces
+
+1. **A backlog document in the target repo** — the durable artifact, in the same
+   shape this repository's own `docs/tasks/` uses: milestones, waves within a
+   milestone that run in parallel, a critical path, and per task an *owns*, a
+   *depends on*, a definition and an acceptance.
+2. **An export in the tracker's format.** ⭐ **Jira first, and the format is a
+   profile rather than a hard-coding** — the next repository may not use Jira,
+   and a planner that can only speak one tracker is a planner one team can use.
+   The backlog document is the source; the export is a rendering of it.
+3. **The findings** that the integration produces (§12, QA-04).
+
+### ⛔ Each task ends in something demonstrable, never in a layer
+
+This is inherited from this repository's own ordering principle and it has
+already been paid for once: *build every contract, then every renderer, then
+every service* hides all integration risk until the end, and integration risk is
+the kind that reorders plans. ⛔ **A task whose deliverable is "the parser is
+written" is not a task**; a task whose deliverable is "one unit of this
+repository's material opens in a browser" is. The reader must be able to *see*
+each step land.
+
+### ⛔ Acceptance the framework can check, never acceptance by opinion
+
+`studyforge validate`, `studyforge plan` and the non-destructive check exist so
+that an integrator's work has a green/red signal depending on nobody's judgement
+(R2). ⛔ **The planner never writes an acceptance criterion the framework cannot
+evaluate** — "the pages look right" is a task nobody can close and everybody can
+argue about. Where a genuinely visual judgement is needed, the task says who
+looks and at what, and that is stated rather than smuggled in.
+
+### The channel to the framework — this is the interesting part
+
+The planner is allowed to interrogate `studyforge`, and ⛔ **that channel is the
+only one it has**: R20 forbids it reading the extraction source, and §12 forbids
+it patching the framework. Three kinds of request, each with a defined answer:
+
+| It asks | Because | It gets |
+|---|---|---|
+| **A question** — *"what does the framework do about X?"* | it is planning around a capability | the rulings, the contracts, the authoring reference (SK-05), and the knowledge graph (R14) |
+| **An improvement** — *"the framework cannot do X"* | it hit a wall | a **finding**, which becomes a framework task. ⛔ Never a patch (§12) |
+| **Task-writing help** — *"how should this be cut?"* | somebody has been here before | the **integration catalogue**, below |
+
+⭐ **The finding is the lever, and that is deliberate.** An integrator who can
+edit the framework fixes their own problem and nobody learns anything; an
+integrator who can only file a finding produces a record of what the framework
+could not do. That record is the entire yield of §12.
+
+### The integration catalogue — how this repository stays the brain
+
+⛔ **The planner never reads CodeSignal** (R20). What it draws on instead is a
+document **in this repository**, which it also maintains: what has gone wrong
+when material meets this framework, in a form somebody planning work can use.
+Seeded from what has already been paid for — a plausible short parse that raises
+nothing (C3, SF-25); a corpus that carries the same material twice (C2); a
+hierarchy encoded in filenames rather than directories (C1); an exercise with no
+grader, which is not "no exercise" (C5); media that outgrows a git remote
+(SF-32); a derived address that sends one link in eight nowhere (§6).
+
+⭐ **And it grows.** Every integration's findings are distilled back into it, so
+the *next* integration starts further along. That is the difference between a
+framework and a thing that has been used twice — and it is why the catalogue
+lives here rather than in whichever repository happened to learn the lesson.
+
+**Acceptance.** Produces a milestone-ordered backlog for a repository it has not
+seen, in which **every task states a demonstrable outcome and an acceptance the
+framework can evaluate**. Exports to Jira, and to one other tracker profile
+without touching the planner. ⭐ **Pointed at the Java corpus, it produces a
+backlog recognisably equivalent to this repository's own E07–E09** — the test
+that it is not vacuous, and it costs nothing extra because the answer already
+exists to compare against. Flags concentration risk: a plan where a few tasks
+carry most of the work says so, because "most tasks are small" is false comfort.
+⛔ **Cites no path inside the extraction source** — asserted (R20). Files
+findings rather than framework edits, and the catalogue gains an entry for each.
+
+---
+
 ### SK-03 — Build and serve
 **Milestone** M7 · **Depends on** OPS-04 · **Team** solo
 **Owns** the build-and-serve skill

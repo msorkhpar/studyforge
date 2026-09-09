@@ -1,6 +1,6 @@
 # studyforge — task index
 
-**81 tasks · 13 epics · 9 milestones.** Companion to
+**82 tasks · 13 epics · 9 milestones.** Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R19** every
 task cites.
 
@@ -32,7 +32,7 @@ is the kind that reorders plans.
 |---|---|---|---|
 | **M0** | Foundations | An agent can start work without inventing anything; **exercise feasibility is known** | 8 |
 | **M1** | **One page renders** | A unit page from a fixture opens in a browser | 18 |
-| **M2** | **The Java material is readable** | All 166 units, offline, with contents, navigation and read marks | 19 |
+| **M2** | **The Java material is readable** | All 166 units, offline, with contents, navigation and read marks | 20 |
 | **M3** | It is served | The site has an origin, an API, and records passes | 5 |
 | **M4** | It speaks | Narration with highlight sync, and an honest media footprint | 11 |
 | **M5** | It runs code | Run and Submit against a dockerised toolchain | 6 |
@@ -93,7 +93,7 @@ rather than revisited. *Why SF-04 is not:* one page needs no discovery.
 > and prev/next. **This is the first genuinely useful state.**
 
 - **2.1** — SF-04, **SF-31**, **SK-02**, TC-05, TC-06
-- **2.2** — **SK-07**, **SK-05**, SF-13
+- **2.2** — **SK-07**, **SK-05**, **SK-08**, SF-13
 - **2.3** — JS-01, JS-02, SF-14
 - **2.4** — JS-03, JS-04, SF-15, SF-26, SF-27, **SF-30**
 - **2.5** — JS-05, JS-06
@@ -194,7 +194,7 @@ SF-12 → SF-04 → SF-13 → SF-19a → SF-19b → SF-22 → EX-04 → OPS-04 �
 | E08 | [Java exercises](E08-java-exercises.md) | **EX-00**, EX-01…05 | blanking, the two gates, emission, coverage |
 | E09 | [Delivery](E09-delivery.md) | OPS-01…07, SF-28 | compose, build pipeline, guarantees, docs — **mostly SK-07's output** |
 | E10 | [Validation & QA](E10-validation-qa.md) | SF-25, SF-26, QA-01…04 | validate CLI, harness, acceptance, **the second source** |
-| E11 | [Skills & authoring](E11-skills-authoring.md) | SK-01…07 | **the product** (R16, R19) |
+| E11 | [Skills & authoring](E11-skills-authoring.md) | SK-01…08 | **the product** (R16, R19) |
 | E12 | [Toolchain image](E12-toolchain-image.md) | TC-00…06 | shared code-server repo (§8.1) |
 | E13 | [Narration service](E13-narration-service.md) | NS-01…06 | shared synthesis repo (§8.2) |
 
@@ -217,6 +217,14 @@ judgement.
 ⭐ **The skills belong to the framework agent, not the integrator.** That is what
 makes the integrator's job small: supply the source-specific reading, and report
 what the skills could not do.
+
+**The integration agent plans with `SK-08`** — the delivery-planning skill,
+which acts as the **product owner** for that repository: it cuts the work into
+tasks that each end in something demonstrable, writes acceptance the framework
+can evaluate, and exports to the tracker. ⛔ **Its only channel to the framework
+is questions and findings.** It may not patch `studyforge` (§12) and it may not
+read the extraction source (R20) — what it would have gone looking for there
+lives in the **integration catalogue** in this repository, which it also grows.
 
 **Three seams cross between them, and all three now have a contract:**
 
@@ -273,6 +281,10 @@ not patches. See spec §12.
 directory holding every component as a sibling (R18, FND-05). Never write an
 absolute path into a file: it carries a home directory, which is personal data
 (R7).
+
+⚠️ **`CS/` and `CSD/` appear only in framework-side tasks (R20).** They are the
+extraction source, and a consumer repository's task never cites a path inside
+them — what a consumer needs is carried here.
 
 `SF/` = `studyforge/` (this repo) · `CS/` = `CodeSignal/.pipeline/` · `CSD/` =
 `CodeSignal/` (docker, compose) · `JS/` = `Claude-senior-java-engineer/` ·
