@@ -68,7 +68,11 @@ to buy nothing a build script wanted. Both mirror pairs are declared in
 `config.MIRRORS`; neither is an exemption. Packaging looks only in `src`, so an
 installed `studyforge` contains no `tools`, asserted in
 `tests/test_repository.py`. `tools/` is a scan root, so the checker is held to
-its own rules.
+its own rules. ⚠️ One consequence worth knowing: `tools/tests/` imports
+`tests.support` rather than keeping its own copy of `repository_root` and
+`run`. Locality of *tests* is what R12 asks for; duplicating two helpers to
+achieve locality of *helpers* is the thing `tests/support.py` exists to
+prevent.
 
 **2. Lint: ruff, configured and declared, not run.** No linter is installed and
 no network install was attempted. Ruff is configured in `pyproject.toml`
