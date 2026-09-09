@@ -60,7 +60,7 @@ refused. The depth-1 fixture (zero exercises) validates.
 ---
 
 ### SF-24 — Practice panel
-**Milestone** M5 · **Depends on** SF-22, SF-23 · **Team** pair
+**Milestone** **M5** · **Depends on** SF-22, SF-23 · **Team** pair
 **Owns** `render/page/practice.py`, `render/assets/practice.{js,css}`
 **Context** ~50k — SF-22 output, TC-05 consuming document
 

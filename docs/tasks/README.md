@@ -1,20 +1,33 @@
 # studyforge — task index
 
-**82 tasks · 13 epics · 9 milestones.** Companion to
-`../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R19** every
+**83 tasks · 13 epics · 9 milestones.** Companion to
+`../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R20** every
 task cites.
 
-⚠️ **Revised 2026-09-09.** Five tasks added — `TC-00` (a pinned build image, so
-EX-00 can run at all), `SF-31` (the placement dry-run), `SF-30` (reader state on
-the `file://` floor), `SK-07` (corpus onboarding), `SF-32` (the media footprint
-policy) — one milestone added (**M8**, the second source), and the skills
-resequenced: **SK-01, SK-02, SK-05 and SK-07 move from M7 to M1–M2**, because a
-skill written after the thing it produces is a retrospective (spec §9).
-`OPS-05` moved out of the Java corpus into the framework; `E12` moved to M0–M2,
-because SK-07 cannot render a compose file without TC-05's consuming contract.
-⭐ **Generated media is now committed by default** (SF-17), with SF-32 measuring
-the footprint and refusing loudly at the ceiling. See
-`handoffs/DOC-2026-09-09-codesignal-drift.md` for the reasoning.
+⚠️ **Revised 2026-09-09.** Two revisions the same day; the second is the one that
+moved the furniture.
+
+**The plan is no longer built around the Java corpus.** The first consumer is a
+**small** source, so the framework reaches a complete, useful state early and the
+166-unit Java tutorial becomes a consumer like any other. Concretely:
+**M0–M4 are the reading floor** — a narrated, navigable, offline site, which is
+the *whole product* for prose material — and **M5 onward is the execution
+track**, which a corpus enters only if its material is runnable (spec §11.0).
+Narration now comes **before** serving, because R8's floor is `file://` and a
+reader needs no server. `EX-00` and all of E12 left M0; no milestone is named
+after a corpus any more.
+
+**Seven tasks added** — `TC-00` (a pinned build image, so EX-00 can run at all),
+`SF-31` (the placement dry-run), `SF-30` (reader state on the `file://` floor),
+`SF-32` (the media footprint policy), `SK-07` (corpus onboarding), `SK-08`
+(delivery planning — the **product owner** for an integration), `SK-09`
+(execution onboarding). One milestone added (**M8**). The skills resequenced out
+of M7, because a skill written after the thing it produces is a retrospective
+(spec §9). `OPS-05` moved into the framework; `SK-03` now wraps the framework CLI
+rather than a consumer's pipeline. ⭐ **Generated media is committed by default**
+(SF-17), with SF-32 refusing loudly at the ceiling. **R20** makes the extraction
+one-way: this framework mines CodeSignal, and no client application sees it. See
+`handoffs/DOC-2026-09-09-codesignal-drift.md`.
 
 ## Ordering principle
 
@@ -30,20 +43,27 @@ is the kind that reorders plans.
 
 | | Milestone | What works when it lands | Tasks |
 |---|---|---|---|
-| **M0** | Foundations | An agent can start work without inventing anything; **exercise feasibility is known** | 8 |
-| **M1** | **One page renders** | A unit page from a fixture opens in a browser | 18 |
-| **M2** | **The Java material is readable** | All 166 units, offline, with contents, navigation and read marks | 20 |
-| **M3** | It is served | The site has an origin, an API, and records passes | 5 |
-| **M4** | It speaks | Narration with highlight sync, and an honest media footprint | 11 |
-| **M5** | It runs code | Run and Submit against a dockerised toolchain | 6 |
-| **M6** | It has practices | Real exercises with proven graders | 5 |
-| **M7** | It is a product | Built by skills, documented, accepted | 8 |
-| **M8** | **It is a framework** | A second, unnamed source converted by the skills alone | 1 |
+| **M0** | Foundations | An agent can start work without inventing anything | 5 |
+| **M1** | One page renders | A unit page from a fixture opens in a browser | 15 |
+| **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** | 12 |
+| **M3** | It speaks | Narration with highlight sync, and an honest media footprint | 10 |
+| **M4** | It is served | An origin, an API, and a record of practice passes | 7 |
+
+⭐ **A prose corpus is finished at M4.** Everything below is the **execution
+track**, entered only by material that is actually runnable (spec §11.0). A
+corpus with no graders that stops here is complete, not short.
+
+| | Milestone | What works when it lands | Tasks |
+|---|---|---|---|
+| **M5** | It runs code | Run and Submit against a pinned toolchain | 12 |
+| **M6** | The Java corpus reads | 166 units, narrated and navigable | 9 |
+| **M7** | The Java corpus has practices | Real exercises with proven graders | 12 |
+| **M8** | **It is a framework** | A further, unnamed source converted by the skills alone | 1 |
 
 **M2 is the biggest single jump in value** — it is the first state you would
-actually use. **M1 is the riskiest** — it is where every contract meets every
-other one for the first time, which is exactly why it comes first rather than
-last.
+actually use, and for a prose corpus it is most of the way to done. **M1 is the
+riskiest** — it is where every contract meets every other one for the first
+time, which is exactly why it comes first rather than last.
 
 ---
 
@@ -51,131 +71,152 @@ last.
 
 Within a milestone, each **step** runs in parallel; steps are sequential.
 
+⭐ **The spine is the reading floor** (spec §11.0). M0–M4 build a framework that
+turns material into a narrated, navigable, offline study site, and that is a
+**complete product** for any corpus whose material is prose. Everything from M5
+on is the **execution track** — workspaces, containers, graded practices — which
+a corpus earns by having runnable material, and which most corpora will not.
+
+⛔ **No milestone is named after a corpus.** An earlier plan called M2 *"the Java
+material is readable"*, which welded the framework's definition of done to one
+source's shape. The framework's milestones are proved against the `FND-04`
+fixtures — one depth-1, one depth-2 — and any corpus rides them.
+
 ### M0 — Foundations
 > **Done when:** an agent can pick up any task without inventing a layout,
 > hunting for a graph, or building its own fixtures.
 
-- **0.1** — FND-01, FND-02, FND-03, FND-04, FND-05, **TC-00**, TC-01 *(all parallel)*
-- **0.2** — **EX-00**  *(needs TC-00's image)*
-
-⛔ **EX-00 gates all of E08.** It is a spike: run `mvn test` for a baseline, then
-hand-gate ten pairs across the shape spectrum. If the exercise approach does not
-yield, we find out in week one rather than at M6.
-
-⚠️ **EX-00 was scheduled with no dependencies and could not have run.** It must
-build, the toolchain image was M5, and R15 forbids taking a JDK from whoever's
-host it lands on — while EX-00's headline output is a *wall-clock measurement*
-that decides the shape of all of E08. `TC-00` is a minimal pinned JDK+Maven
-image that exists only to unblock it.
-
-⭐ **E12 now starts here, and E13 can too.** Neither depends on anything in the
-framework, and both were scheduled at M4/M5 behind milestones they do not need.
-Under a two-agent split they are the only work available to the framework agent
-while its own critical path is blocked — and ⛔ **`SK-07` at M2 cannot render a
-compose file until `TC-05` has published its consuming contract**, which is what
-actually forced E12 earlier rather than merely permitted it.
+- **0.1** — FND-01, FND-02, FND-03, FND-04, FND-05 *(all parallel)*
 
 ### M1 — One page renders
 > **Done when:** a unit page from the depth-1 fixture opens in a browser, with
 > styles and highlighting, over `file://`.
 
 - **1.1** — SF-01, SF-02, SF-07, SF-08, SF-11
-- **1.2** — SF-03, SF-05, SF-06, TC-02, TC-03, TC-04
-- **1.3** — SF-09, SF-23, SF-25, **SK-01**
+- **1.2** — SF-03, SF-05, SF-06
+- **1.3** — SF-09, SF-23, SF-25, SK-01
 - **1.4** — SF-10
 - **1.5** — SF-12, QA-03
 
-*Why SF-23 is here:* SF-10 must know the workspace shape to be built once
-rather than revisited. *Why SF-04 is not:* one page needs no discovery.
+*Why SF-23 is here:* SF-10 must know the workspace shape to be built once rather
+than revisited — the contract is cheap and it keeps the archive right even for a
+corpus that will never have an exercise. *Why SF-04 is not:* one page needs no
+discovery.
 
-### M2 — The Java material is readable
-> **Done when:** all 166 units open offline with a working index, deep links
-> and prev/next. **This is the first genuinely useful state.**
+### M2 — A corpus is readable
+> **Done when:** a whole corpus opens offline with a working index, deep links,
+> prev/next and read marks — **and the skills that produced it exist.**
+> **This is the first genuinely useful state.**
 
-- **2.1** — SF-04, **SF-31**, **SK-02**, TC-05, TC-06
-- **2.2** — **SK-07**, **SK-05**, **SK-08**, SF-13
-- **2.3** — JS-01, JS-02, SF-14
-- **2.4** — JS-03, JS-04, SF-15, SF-26, SF-27, **SF-30**
-- **2.5** — JS-05, JS-06
+- **2.1** — SF-04, SF-31, SK-02
+- **2.2** — SK-07, SK-05, SK-08, SF-13
+- **2.3** — SF-14, SF-27
+- **2.4** — SF-15, SF-26, SF-30
 
-⚠️ **The adapter now comes after the skills that scaffold it**, which is the
-single largest reordering in this revision. `SK-02` produces E07's package
-structure and `SK-07` produces E09's deployment artifacts; E07 and E09 fill in
-what is genuinely source-specific. Reversing this is how the skills become a
-retrospective.
+⚠️ **The skills come with this milestone, not after it.** `SK-02` scaffolds an
+adapter and `SK-07` onboards a repository; a corpus built before they exist is a
+corpus they can only claim retrospectively (spec §9).
 
-### M3 — It is served
-> **Done when:** the site is served, the contents API answers, progress records.
+### M3 — It speaks
+> **Done when:** narration is generated and the highlight tracks playback.
 
-- **3.1** — SF-21, **OPS-05**
-- **3.2** — SF-19a
-- **3.3** — SF-19b, SF-28
+⭐ **Narration comes before serving, and the order matters.** R8 puts the floor at
+`file://` — a reader opens a page by double-clicking it. So a narrated, navigable
+corpus is a **finished product with no server at all**, and putting the API
+first would have delayed the last piece of the reading floor behind something no
+reader needs.
 
-⚠️ **M3 is a serial bottleneck wearing a milestone's name.** SF-19a is one task
+⭐ **The synthesis RUN is decoupled from the milestone gate.** A large corpus is
+plausibly a multi-day run on a CPU-default engine. Start it in the background
+once SF-16 lands and let the next milestone begin without waiting for it.
+
+- **3.1** — NS-01, SF-16
+- **3.2** — NS-02, NS-03
+- **3.3** — NS-04, NS-05, NS-06
+- **3.4** — SF-17, SF-32
+- **3.5** — SF-18
+
+### M4 — It is served
+> **Done when:** the site has an origin, an API, and records practice passes.
+
+- **4.1** — SF-21, OPS-05
+- **4.2** — SF-19a
+- **4.3** — SF-19b, SF-28
+- **4.4** — SK-03, SK-06
+
+⚠️ **M4 is a serial bottleneck wearing a milestone's name.** SF-19a is one task
 carrying a very large share of the port surface, it cannot be split further, and
 a second agent does not help. Plan around it rather than discovering it.
 
-### M4 — It speaks
-> **Done when:** the narration pipeline works end to end and the highlight
-> tracks playback on generated units.
+---
 
-⭐ **The synthesis RUN is decoupled from the milestone gate.** 365,158 words is
-roughly 40 hours of audio and ~20–25k clips on a CPU-default engine — plausibly
-a multi-day run. Start it in the background once SF-16 lands and **let M5 begin
-without waiting for it.** Narration arrives when it arrives; nothing on the
-critical path queues behind a TTS job.
-
-- **4.1** — NS-01, SF-16
-- **4.2** — NS-02, NS-03
-- **4.3** — NS-04, NS-05, NS-06
-- **4.4** — SF-17, OPS-02
-- **4.5** — SF-18, **SF-32**
+⛔ **Everything below is the execution track, and a corpus enters it only if its
+material is runnable** (spec §11.0, §7's three states). A corpus with no graders
+that stops after M4 is **complete**, not short.
 
 ### M5 — It runs code
 > **Done when:** a reader edits a workspace and gets real output from Run and a
 > real verdict from Submit.
 
-- **5.1** — SF-20
-- **5.1b** — SF-29
-- **5.4** — OPS-01  *(E12 landed at M0–M2)*
-- **5.5** — SF-22, OPS-03
-- **5.6** — SF-24
+- **5.1** — TC-00, TC-01, SF-20
+- **5.2** — TC-02, TC-03, TC-04, SF-29
+- **5.3** — TC-05, TC-06
+- **5.4** — SK-09, SF-22
+- **5.5** — SF-24
 
-### M6 — It has practices
+### M6 — The Java corpus reads
+> **Done when:** the 166-unit Java tutorial is a working, narrated study site.
+
+- **6.1** — JS-01, JS-02
+- **6.2** — JS-03, JS-04
+- **6.3** — JS-05, JS-06
+- **6.4** — OPS-01, OPS-02
+- **6.5** — OPS-03
+
+⚠️ **This is a consumer, not the framework.** It is the largest and most
+demanding source available, which makes it a good proving ground and a bad
+starting point — everything it needs, it needs *because of what it is*, and a
+framework shaped around it would be a Java tutorial generator.
+
+⭐ **By the time this milestone starts, the framework is finished and proven.**
+These tasks are the source-specific reading plus whatever `SK-07` could not
+generate — and every one of the latter is a **finding** (R19), not work to be
+quietly absorbed.
+
+### M7 — The Java corpus has practices
 > **Done when:** gate-clearing exercises ship with authoritative graders, and
 > the coverage report says honestly how many.
 
-- **6.1** — EX-01  *(EX-00 landed in M0)*
-- **6.2** — EX-02, EX-03
-- **6.3** — EX-04
-- **6.4** — EX-05
+- **7.1** — EX-00  *(needs TC-00's pinned image)*
+- **7.2** — EX-01
+- **7.3** — EX-02, EX-03
+- **7.4** — EX-04
+- **7.5** — EX-05, SK-04, OPS-04
+- **7.6** — OPS-06, OPS-07
+- **7.7** — QA-01, QA-02
 
-### M7 — It is a product
-> **Done when:** the Java corpus is rebuilt end to end **by the skills**, and
-> spec §11's acceptance passes.
+⛔ **EX-00 still gates all of E08**, and it is still a one-agent-day spike whose
+negative result is a success. It moved out of M0 because the exercise strategy is
+no longer on the first delivery's path — but it remains the **first thing** done
+whenever E08 starts, for the original reason: it moves the largest unknown to the
+front rather than discovering it at the end.
 
-- **7.1** — OPS-04
-- **7.2** — OPS-07
-- **7.3** — SK-03, SK-04, OPS-06
-- **7.4** — SK-06
-- **7.5** — QA-01, QA-02
+⚠️ **E08 is Java-specific and depends on the Java adapter** — `EX-01` on `JS-04`'s
+pairings, `EX-02` on `OPS-01`'s image. It cannot precede M6, which is why
+practices are a milestone of *this consumer* rather than of the framework.
 
 ### M8 — It is a framework
-> **Done when:** a second, unnamed repository has been converted **by the skills
+> **Done when:** a further, unnamed repository has been converted **by the skills
 > alone**, and the findings that produced are written down.
 
 - **8.1** — QA-04
 
-⭐ **The deliverable is the findings log, not the site** (spec §12). An exercise
-that produces a working study site and reports no findings has not been
-conducted honestly: these skills will have seen exactly one source. ⛔ **Whoever
-integrates the second source does not modify `studyforge`** — the framework pin
-does not move, and anything the framework cannot do is filed as a finding rather
-than patched. A test of extensibility run by somebody who can edit the thing
-being tested measures nothing.
+⭐ **The deliverable is the findings log, not the site** (spec §12). ⛔ Whoever
+integrates does not modify `studyforge` — findings, not patches.
 
 **Critical path.** FND-01 → SF-01 → SF-03 → SF-31 → SK-02 → SK-07 → SF-10 →
-SF-12 → SF-04 → SF-13 → SF-19a → SF-19b → SF-22 → EX-04 → OPS-04 → QA-01 → QA-04.
+SF-12 → SF-04 → SF-13 → SF-16 → SF-17 → SF-19a → SF-28 → SF-22 → EX-04 →
+OPS-04 → QA-01 → QA-04.
 
 ---
 
@@ -194,7 +235,7 @@ SF-12 → SF-04 → SF-13 → SF-19a → SF-19b → SF-22 → EX-04 → OPS-04 �
 | E08 | [Java exercises](E08-java-exercises.md) | **EX-00**, EX-01…05 | blanking, the two gates, emission, coverage |
 | E09 | [Delivery](E09-delivery.md) | OPS-01…07, SF-28 | compose, build pipeline, guarantees, docs — **mostly SK-07's output** |
 | E10 | [Validation & QA](E10-validation-qa.md) | SF-25, SF-26, QA-01…04 | validate CLI, harness, acceptance, **the second source** |
-| E11 | [Skills & authoring](E11-skills-authoring.md) | SK-01…08 | **the product** (R16, R19) |
+| E11 | [Skills & authoring](E11-skills-authoring.md) | SK-01…09 | **the product** (R16, R19) |
 | E12 | [Toolchain image](E12-toolchain-image.md) | TC-00…06 | shared code-server repo (§8.1) |
 | E13 | [Narration service](E13-narration-service.md) | NS-01…06 | shared synthesis repo (§8.2) |
 

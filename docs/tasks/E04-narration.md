@@ -51,7 +51,7 @@ consuming half — including ignore rules — is generated from the policy).
 ---
 
 ### SF-16 — Speakable contract
-**Milestone** M4 · **Depends on** SF-10 · **Team** pair
+**Milestone** **M3** · **Depends on** SF-10 · **Team** pair
 **Owns** `narrate/speakable.py`
 **Context** ~55k — `CS/tools/study/speakable.py`, `CS/tests/test_speakable.py`
 
@@ -83,7 +83,7 @@ the code. The gate refuses a leaking string.
 ---
 
 ### SF-17 — Narration synthesis
-**Milestone** M4 · **Depends on** SF-16, SF-03, NS-05 · **Team** solo
+**Milestone** **M3** · **Depends on** SF-16, SF-03, NS-05 · **Team** solo
 **Owns** `narrate/synth.py`
 **Context** ~35k — `CS/tools/tts/`, `CS/tools/run_unit_audio.py`, OPS-02 output
 
@@ -132,7 +132,7 @@ corrupt another's clips.
 ---
 
 ### SF-32 — Media footprint policy ⭐ THE SKILL KNOWS WHEN TO STOP COMMITTING
-**Milestone** **M4** · **Depends on** SF-02, SF-17 · **Team** solo
+**Milestone** **M3** · **Depends on** SF-02, SF-17 · **Team** solo
 **Owns** `corpus/media.py`
 **Context** ~20k — spec §5, SF-02's manifest, SK-07's ignore-rule generation
 
@@ -194,7 +194,7 @@ verdict and nothing else.
 ---
 
 ### SF-18 — Player and highlight sync
-**Milestone** M4 · **Depends on** SF-12, SF-16 · **Team** pair
+**Milestone** **M3** · **Depends on** SF-12, SF-16 · **Team** pair
 **Owns** `render/assets/narration.js`, `render/assets/narration.css`
 **Context** ~45k — `CS/tools/study/assets/*.js`, `CS` design note 02
 

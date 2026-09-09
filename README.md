@@ -25,20 +25,20 @@ its destination.
 | Read | For |
 |---|---|
 | [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R20** that every task cites |
-| [`docs/tasks/README.md`](docs/tasks/README.md) | **82 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
+| [`docs/tasks/README.md`](docs/tasks/README.md) | **83 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
 | [`docs/conventions/`](docs/conventions/) | Module structure, graphify usage, the agent working agreement |
 | [`docs/tasks/v2-backlog.md`](docs/tasks/v2-backlog.md) | Deliberately unplanned future work |
 
 **Nothing has been implemented.** The first work is milestone **M0** —
-`FND-01`…`FND-05`, `TC-00` and `TC-01` in parallel, then `EX-00`. Everything
-else depends on it.
+`FND-01`…`FND-05`, all parallel. Everything else depends on it.
 
-⛔ **`EX-00` is a spike that gates an entire epic.** It measures whether the
-Java exercise strategy yields anything usable, for the cost of one agent-day,
-before E08 is built. If it comes back negative, that is a successful spike and
-E08 changes shape. Run it early. ⚠️ **It needs `TC-00`'s pinned image** — its
-deliverable is a wall-clock measurement that decides the shape of E08, and one
-taken on whatever JDK the host happens to have is not reproducible (R15).
+⭐ **The first consumer is a small corpus, not the 166-unit Java tutorial.** A
+framework proven on a small source and then applied to a large one has been
+tested; one grown around a large source and later pointed at a small one has
+been fitted. So the plan's spine is the **reading floor** — narrated, navigable,
+offline, no server — which is a complete product for prose material and lands by
+M4. The execution track (containers, Run and Submit, graded practices) begins at
+M5, and a corpus enters it only if its material is actually runnable.
 
 ## The workspace
 
@@ -66,18 +66,22 @@ only become a product at the end.
 
 | | | Tasks |
 |---|---|---|
-| **M0** | Foundations; exercise feasibility known | 8 |
-| **M1** | One page renders | 18 |
-| **M2** | **All 166 Java units readable offline** — first genuinely useful state | 20 |
-| **M3** | Served, with an API and a pass record | 5 |
-| **M4** | Narrated; media footprint known | 11 |
-| **M5** | Runs code | 6 |
-| **M6** | Real practices with proven graders | 5 |
-| **M7** | Built by the skills; accepted | 8 |
-| **M8** | **A second, unnamed source converted by the skills alone** | 1 |
+| **M0** | Foundations | 5 |
+| **M1** | One page renders | 15 |
+| **M2** | **A corpus is readable** — first genuinely useful state | 12 |
+| **M3** | Narrated; media footprint known | 10 |
+| **M4** | Served, with an API and a pass record | 7 |
+| **M5** | Runs code — *execution track begins* | 12 |
+| **M6** | The Java corpus reads | 9 |
+| **M7** | The Java corpus has practices | 12 |
+| **M8** | **A further, unnamed source converted by the skills alone** | 1 |
+
+⭐ **A prose corpus is finished at M4** — the reading floor is a complete
+product, not a degraded one (spec §11.0).
 
 ⭐ **M8 is the only milestone that tests the claim this project makes.**
-Everything before it is satisfied by a framework with exactly one consumer.
+Everything before it is satisfied by a framework with two consumers it was
+designed against.
 
 ## Two open items carried into implementation
 

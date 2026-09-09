@@ -20,7 +20,7 @@ code — because there is no code.
 1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R20**,
    and **§12** (what the second source is for).
    The rulings are the authority you appeal to when a task is ambiguous.
-2. `docs/tasks/README.md` — 82 tasks, 13 epics, 9 milestones; ordering and the
+2. `docs/tasks/README.md` — 83 tasks, 13 epics, 9 milestones; ordering and the
    critical path.
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
    it carries shared context so neighbouring tasks do not re-derive it.
@@ -95,16 +95,21 @@ Components are separate repositories composed as submodules of one parent
 
 ## Where to start
 
-Milestone **M0** — `FND-01`…`FND-05` and `TC-00` in parallel, then `EX-00`.
-Everything else depends on them. `E12` and `E13` can start here too: neither
-depends on anything in the framework.
+Milestone **M0** — `FND-01`…`FND-05`, all parallel. Everything else depends on
+them.
 
-⛔ **`EX-00` gates the whole of E08.** It measures whether the Java exercise
-strategy yields anything usable, for one agent-day, before E08 is built. A
-negative result is a successful spike, not a failure — E08 then changes shape
-rather than being discovered unworkable at M6. ⚠️ **It needs `TC-00`'s pinned
-image**: its deliverable is a wall-clock measurement that decides the shape of
-E08, and one taken on a host JDK is not reproducible (R15).
+⭐ **The first consumer is a small corpus, not the Java tutorial.** The plan's
+spine is the **reading floor** (spec §11.0) — narrated, navigable, offline, no
+server — which is a *complete product* for prose material and lands by M4. The
+**execution track** (containers, Run and Submit, graded practices) starts at M5,
+and a corpus enters it only if its material is runnable. ⛔ **A corpus with no
+graders is complete at M4, not short** (§7's three states, C5).
+
+⛔ **`EX-00` still gates the whole of E08** and is still the first thing done
+whenever E08 starts — a one-agent-day spike whose negative result is a success.
+It left M0 because exercises are no longer on the first delivery's path. ⚠️ It
+needs `TC-00`'s pinned image: its deliverable is a wall-clock measurement that
+decides the shape of E08, and one taken on a host JDK is not reproducible (R15).
 
 ## Two agents
 

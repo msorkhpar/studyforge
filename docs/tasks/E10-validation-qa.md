@@ -134,7 +134,7 @@ failure names the module, not the subsystem (R12).
 ---
 
 ### QA-01 — End-to-end acceptance
-**Milestone** M7 · **Depends on** OPS-04 · **Team** pair
+**Milestone** **M7** · **Depends on** OPS-04 · **Team** pair
 **Owns** the acceptance record
 **Context** ~30k — spec §11
 
@@ -158,7 +158,7 @@ have been run.
 ---
 
 ### QA-02 — Accessibility and theme
-**Milestone** M7 · **Depends on** SF-14, SF-12 · **Team** solo
+**Milestone** **M7** · **Depends on** SF-14, SF-12 · **Team** solo
 **Owns** the accessibility record
 **Context** ~30k — SF-11 palette rules, SF-14 and SF-12 output
 

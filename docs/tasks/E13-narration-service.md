@@ -40,7 +40,7 @@ contribute their half.
 ---
 
 ### NS-01 — Extract the service into its own repository
-**Milestone** M4 · **Depends on** — · **Team** pair
+**Milestone** **M3** · **Depends on** — · **Team** pair
 **Owns** `narrate-service` — the repository, the HTTP surface, the Kokoro engine
 **Context** ~40k — spec §8.2, `CS/tools/tts/synth.py`, `CSD/docker-compose.yml` synthesis service
 
@@ -61,7 +61,7 @@ modified.
 ---
 
 ### NS-02 — Batch job API and content-addressed cache
-**Milestone** M4 · **Depends on** NS-01 · **Team** pair
+**Milestone** **M3** · **Depends on** NS-01 · **Team** pair
 **Owns** the job API and the artifact store
 **Context** ~35k — NS-01 output, spec §8.2
 
@@ -90,7 +90,7 @@ it does not discard successful work.
 ---
 
 ### NS-03 — Engine adapters and hardware independence
-**Milestone** M4 · **Depends on** NS-01 · **Team** pair
+**Milestone** **M3** · **Depends on** NS-01 · **Team** pair
 **Owns** the engine adapter interface, the CPU and GPU profiles
 **Context** ~30k — NS-01 output, current synthesis service definition
 
@@ -111,7 +111,7 @@ service so a caller can record which one produced an artifact.
 ---
 
 ### NS-04 — Voice catalogue and selection
-**Milestone** M4 · **Depends on** NS-02 · **Team** solo
+**Milestone** **M3** · **Depends on** NS-02 · **Team** solo
 **Owns** the voice catalogue
 **Context** ~20k — NS-02 output
 
@@ -127,7 +127,7 @@ voice is refused with a clear message rather than silently defaulted.
 ---
 
 ### NS-05 — Framework client
-**Milestone** M4 · **Depends on** NS-02, SF-08 · **Team** solo
+**Milestone** **M3** · **Depends on** NS-02, SF-08 · **Team** solo
 **Owns** `narrate/client.py` in `studyforge`
 **Context** ~30k — NS-02 output, SF-08 output, `CS/tools/tts/synth.py`
 
@@ -151,7 +151,7 @@ no partial state. Standard library only.
 ---
 
 ### NS-06 — Agent-callable adapter
-**Milestone** M4 · **Depends on** NS-02 · **Team** solo
+**Milestone** **M3** · **Depends on** NS-02 · **Team** solo
 **Owns** the service's agent-facing surface
 **Context** ~25k — `CS/tools/tts/server.py`, NS-02 output
 

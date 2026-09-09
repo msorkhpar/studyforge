@@ -37,7 +37,28 @@ test that this is a framework (spec §12).
 - `SK-07` (M2) — corpus onboarding. The second source's whole experience.
 - `SF-32` (M4) — media footprint policy.
 - `SK-08` (M2) — delivery planning; the **product owner** for an integration.
-- **R20** — the extraction is one-way; a consumer never reads CodeSignal.
+- `SK-09` (M5) — execution onboarding, split out of SK-07.
+- **R20** — this framework mines CodeSignal; no client application sees it.
+
+**And then the plan was re-cut around a smaller first consumer.** The reader
+will use this framework sooner, on a small project, before the Java tutorial.
+That turned a latent conflation into an urgent one: the milestones were *named*
+after the Java corpus and gated on its adapter, which welded the framework's
+definition of done to one source's shape.
+
+| | Before | After |
+|---|---|---|
+| M2 | "The Java material is readable" | "A corpus is readable" — proved on the fixtures |
+| Narration | M4, after serving | **M3, before serving** — R8's floor is `file://`, so a narrated corpus is finished with no server |
+| Serving | M3 | M4 |
+| E12, EX-00 | M0–M2 | **M5–M7**, the execution track |
+| Java corpus | the spine (M2) | **M6–M7**, a consumer |
+
+⭐ **The organising idea is spec §11.0: the reading floor versus the execution
+track.** Every corpus gets narrated, navigable, offline reading; only material
+that is actually runnable earns containers and graded practices. ⛔ A corpus with
+no graders that stops at M4 is **complete**, not short — which is the common
+case, not the exception.
 - `QA-04` / **M8** — the second source; the deliverable is the findings log.
 - `SK-01`, `SK-02`, `SK-05` moved **M7 → M1/M2**.
 - `OPS-05` moved out of the Java corpus into the framework.

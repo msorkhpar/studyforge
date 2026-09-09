@@ -25,22 +25,25 @@ original failure has introduced a regression that will surface as a silent
 misbehaviour — an extension that never loads, a tool that is missing only in
 the terminal, a volume the server cannot write. Read §8.1 first.
 
-⭐ **This epic depends on nothing in the framework and now starts at M0.** It was
-scheduled entirely at M5, behind milestones it does not need. Two things forced
-the move, and the second is the hard one:
+⭐ **This epic is the head of the execution track (M5), and nothing before M5
+needs it.** A corpus reaches the whole reading floor — narrated, navigable,
+offline — without a container ever starting (spec §11.0), so putting a Docker
+image in front of somebody converting a book was the wrong shape.
 
-- Under a two-agent split, this and E13 are the only parts of the framework
-  agent's work that can run while the framework's own critical path is blocked.
-- ⛔ **`SK-07` is M2 and cannot render a corpus's compose file without `TC-05`'s
-  consuming contract.** A skill that generates the consuming half of a corpus
-  (R19) needs the shared components to have *published* their half first. TC-05
-  at M5 would have left onboarding unable to produce the one artifact every
-  consumer needs.
+⚠️ **It briefly sat at M0–M2 on the theory that `SK-07` could not render a
+compose file without `TC-05`.** True, and resolved the other way: onboarding
+split, and `SK-09` — the execution half — lives here at M5 with the contract it
+needs. `SK-07` at M2 generates the reading floor's artifacts and asks for no
+container.
+
+⭐ **It still depends on nothing in the framework**, so under a two-agent split
+it remains work the framework agent can pull forward whenever its own critical
+path is blocked. What changed is that nothing *waits* for it.
 
 ---
 
 ### TC-00 — Minimal pinned build image ⛔ UNBLOCKS EX-00
-**Milestone** **M0** · **Depends on** — · **Team** solo
+**Milestone** **M5** · **Depends on** — · **Team** solo
 **Owns** `TC/docker/minimal/`
 **Context** ~15k — spec R15, EX-00
 
@@ -66,7 +69,7 @@ not use.
 ---
 
 ### TC-01 — Extract the image into its own repository
-**Milestone** **M0** · **Depends on** — · **Team** pair
+**Milestone** **M5** · **Depends on** — · **Team** pair
 **Owns** `TC/` — the repository, `Dockerfile`, `entrypoint.sh`, `seed/`
 **Context** ~45k — spec §8.1, `CSD/docker/code-server/` (all of it)
 
@@ -92,7 +95,7 @@ fails the build when an id is removed. CodeSignal is not modified.
 ---
 
 ### TC-02 — Toolchain selection and pinning
-**Milestone** **M1** · **Depends on** TC-01 · **Team** pair
+**Milestone** **M5** · **Depends on** TC-01 · **Team** pair
 **Owns** the image's build-argument surface
 **Context** ~35k — TC-01 output
 
@@ -118,7 +121,7 @@ toolchain reports its version at build time.
 ---
 
 ### TC-03 — Cache-priming contract
-**Milestone** **M1** · **Depends on** TC-01 · **Team** pair
+**Milestone** **M5** · **Depends on** TC-01 · **Team** pair
 **Owns** `TC/prime/` — the contract, and the Gradle and Maven warmers
 **Context** ~40k — spec §8.1, `CSD/docker/code-server/prime/`
 
@@ -161,7 +164,7 @@ the stated reason.
 ---
 
 ### TC-04 — Workbench lockdown extension
-**Milestone** **M1** · **Depends on** TC-01 · **Team** solo
+**Milestone** **M5** · **Depends on** TC-01 · **Team** solo
 **Owns** `TC/lockdown/`
 **Context** ~30k — `CSD/docker/code-server/lockdown/`, `CSD/docker-compose.yml` workbench settings
 
@@ -185,7 +188,7 @@ does in CodeSignal today.
 ---
 
 ### TC-05 — Compose and mount contract
-**Milestone** **M2** · **Depends on** TC-02, TC-03 · **Team** solo
+**Milestone** **M5** · **Depends on** TC-02, TC-03 · **Team** solo
 **Owns** `TC/docs/consuming.md`, `TC/consuming.json`, and a reference compose fragment
 **Context** ~35k — `CSD/docker-compose.yml` code-server service, spec §8.1
 
@@ -227,7 +230,7 @@ other input** — demonstrated by SK-07 doing exactly that, not asserted.
 ---
 
 ### TC-06 — Versioning and consumer pinning
-**Milestone** **M2** · **Depends on** TC-02 · **Team** solo
+**Milestone** **M5** · **Depends on** TC-02 · **Team** solo
 **Owns** the image's release and tagging scheme
 **Context** ~20k — TC-01…TC-03 outputs
 

@@ -123,8 +123,8 @@ can check. Following the skill on a source it has never seen reaches a
 
 ---
 
-### SK-07 — Corpus onboarding ⛔ THE SECOND SOURCE'S WHOLE EXPERIENCE
-**Milestone** **M2** · **Depends on** SK-02, SF-03, TC-05, SF-02 · **Team** team
+### SK-07 — Corpus onboarding ⛔ A NEW SOURCE'S WHOLE EXPERIENCE
+**Milestone** **M2** · **Depends on** SK-02, SF-03, SF-02, SF-31 · **Team** team
 **Owns** the onboarding skill
 **Context** ~55k — spec R19, §5's placement dry-run, §9; TC-05 and NS consuming contracts
 
@@ -146,13 +146,17 @@ which would make the extensibility exercise largely a test of typing speed.
 1. `corpus.json` — promoted from SK-01's draft, including `permitted_edits` (R3).
 2. The adapter package, its test tree and its audit command — SK-02's scaffold, wired in.
 3. **Ignore rules** — new ignore files written *inside* generated directories. ⛔ Never an edit to the repository's root one (R3, and E07 already rules this for Java). ⭐ **What they ignore is `SF-32`'s verdict, not this skill's opinion**: generated media is committed by default, so the ignore rules must *not* exclude it — and when a corpus crosses the footprint ceiling, this skill is what tells the reader, in the onboarding report, that their media no longer fits in git and what the two ways forward are. ⛔ It never silently flips the policy; the manifest says what happens and a person changes the manifest.
-4. **The compose file** — rendered from `TC/consuming.json` and the narration service's equivalent. ⛔ Never from reading a Dockerfile.
-5. **The toolchain selection and the prime project** — which languages, which pinned tag, one *real* minimal source and test per language. ⚠️ An empty prime primes nothing while appearing to succeed.
-6. **The build entry point** — corpus configuration over SF-28's CLI.
-7. **The non-destructive assertion** — generated with the corpus's declared `permitted_edits` baked in, so it is not a hand-written per-corpus test.
-8. **Reader documentation** — from the corpus's *actual* state: how many units have narration, how many have exercises, what needs a container and what does not.
-9. **The framework pin and the skill stubs** (spec §9) — thin pointers carrying the pinned version, with a check that fails when a stub drifts from its pin.
-10. **An uninstall** — the reverse of every edit it made.
+4. **The build entry point** — corpus configuration over SF-28's CLI.
+5. **The non-destructive assertion** — generated with the corpus's declared `permitted_edits` baked in, so it is not a hand-written per-corpus test.
+6. **Reader documentation** — from the corpus's *actual* state: how many units have narration, how many are reading-only, what needs a container and what does not.
+7. **The framework pin and the skill stubs** (spec §9) — thin pointers carrying the pinned version, with a check that fails when a stub drifts from its pin.
+8. **An uninstall** — the reverse of every edit it made.
+
+⭐ **This is the reading floor's onboarding, and for most corpora it is the whole
+of it** (spec §11.0). A source with runnable material also needs a compose file
+and a pinned toolchain; that is `SK-09`, and it lands with the execution track
+rather than making every prose corpus wait for a container it will never
+start.
 
 ### Customisation is declared, never hand-edited
 
@@ -279,15 +283,50 @@ findings rather than framework edits, and the catalogue gains an entry for each.
 
 ---
 
+### SK-09 — Execution onboarding
+**Milestone** **M5** · **Depends on** SK-07, TC-05 · **Team** solo
+**Owns** the execution half of onboarding
+**Context** ~30k — `TC/consuming.json`, the narration service's equivalent, SK-07's output
+
+**Definition.** What `SK-07` generates *additionally* for a corpus whose material
+is runnable: the compose file, the toolchain selection, and the prime project.
+
+⛔ **Separated because most corpora will never need it** (spec §11.0). The
+reading floor is what every corpus gets; a container is what a corpus with
+runnable code earns. Folding this into `SK-07` would put a Docker dependency in
+front of somebody converting a book.
+
+- **The compose file** — rendered from `TC/consuming.json` and the narration
+  service's equivalent. ⛔ Never from reading a Dockerfile (R18): a consumer that
+  reads one is a fork waiting to happen.
+- **The toolchain selection** — which languages, which pinned tag, from manifest
+  data.
+- **The prime project** — one *real* minimal source and test per language. ⚠️ An
+  empty prime primes nothing while appearing to succeed: a `NO-SOURCE` compile
+  task never resolves the compiler classpath.
+
+**Acceptance.** A runnable corpus gets a working compose file and a primed image
+from manifest data alone. ⛔ **A corpus whose manifest says it is not runnable
+gets nothing from this skill and no error** — asserted. Re-running changes
+nothing. The compose file honours §8.1's four rulings, each asserted rather than
+remembered.
+
+---
+
 ### SK-03 — Build and serve
-**Milestone** M7 · **Depends on** OPS-04 · **Team** solo
+**Milestone** **M4** · **Depends on** SF-28 · **Team** solo
 **Owns** the build-and-serve skill
-**Context** ~30k — OPS-04 entry points, OPS-03
+**Context** ~30k — SF-28's entry points
 
 **Definition.** One invocation from raw material to a running site: ingest,
 validate, unit documents, pages, narration, contents, index, serve. A thin
-wrapper over OPS-04's entry points — and if it cannot be thin, OPS-04 drew its
+wrapper over **SF-28's** entry points — and if it cannot be thin, SF-28 drew its
 surface wrong and that is the finding.
+
+⚠️ **It wraps the framework CLI, not a consumer's pipeline.** This task used to
+depend on `OPS-04` — a file in the Java repository — which is the exact hole
+`SF-28` was created to close: a source-agnostic skill wrapping one consumer's
+script means the second consumer rewrites the skill.
 
 Handles the honest partial states rather than failing on them: no narration
 service, no toolchain container, no exercises. Each is a **known state with a
@@ -300,7 +339,7 @@ state is reported with what is missing and what still works.
 ---
 
 ### SK-04 — Exercise derivation
-**Milestone** M7 · **Depends on** EX-04 · **Team** pair
+**Milestone** **M7** · **Depends on** EX-04 · **Team** pair
 **Owns** the exercise-derivation skill
 **Context** ~35k — spec §7, E08 in full
 
@@ -347,7 +386,7 @@ current. Every claim in it is true of the shipped code — checked, not assumed.
 ---
 
 ### SK-06 — Personal archive
-**Milestone** M7 · **Depends on** SK-03, SF-21 · **Team** pair
+**Milestone** **M4** · **Depends on** SK-03, SF-21 · **Team** pair
 **Owns** the export/import skill
 **Context** ~35k — SF-21 output, spec §9
 

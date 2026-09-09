@@ -60,18 +60,25 @@ this design exists to prevent.
 ---
 
 ### EX-00 — Exercise feasibility spike ⛔ BLOCKS ALL OF E08
-**Milestone** **M0** · **Depends on** TC-00 · **Team** pair
+**Milestone** **M7** · **Depends on** TC-00 · **Team** pair
 **Owns** a findings report; **no shipped code**
 **Context** ~40k — spec §7, a hand-picked sample of `JS` classes
 
 ⚠️ **This task could not run as originally scheduled, and the fix is TC-00.**
-It was written with no dependencies at M0, while the toolchain image is M5 — so
-it would have run Maven on whatever JDK the host happened to have, which R15
-exists to forbid. That is not a scheduling detail: this task's headline number
-is **wall-clock per gate run**, and the whole shape of E08 is decided from it. A
+It was written with no dependencies at M0, before any toolchain image existed —
+so it would have run Maven on whatever JDK the host happened to have, which R15
+exists to forbid. That is not a scheduling detail: this task's headline number is
+**wall-clock per gate run**, and the whole shape of E08 is decided from it. A
 timing measured on an unpinned host toolchain is not reproducible and cannot
-carry that weight. TC-00 supplies a minimal pinned JDK + Maven image at M0 for
-exactly this; the full toolchain image (TC-01…TC-06) still lands at M5.
+carry that weight. `TC-00` is a minimal pinned JDK + Maven image that exists for
+exactly this.
+
+⚠️ **It also left M0 entirely.** Exercises are not on the first consumer's path —
+the first corpus is small and its material may not be runnable at all (spec
+§11.0) — so spending week one on a Java exercise spike would have been attention
+spent on the last thing to be delivered. ⛔ **It remains the first thing done
+whenever E08 starts**, for its original reason: it moves the largest unknown to
+the front instead of discovering it at the end.
 
 **Definition.** This epic's entire value rests on an unmeasured assumption, and
 until EX-00 runs, nobody knows whether E08 yields a study product or a pile of
@@ -107,7 +114,7 @@ teaching content *is* the declaration — a record's accessors, `equals` and
 `hashCode` are implicit and unblankable — there is nothing to blank.
 `09-records`, `10-sealed` and much of `05-pattern-matching` and
 `28-enhanced-enums` are expected to yield nothing. That is honest (spec §7),
-but it must be predicted here, not mistaken for a defect in M6.
+but it must be predicted here, not mistaken for a defect once EX-01 runs.
 
 **Acceptance.** A green/red baseline for all 168 test classes is recorded,
 against a **named pinned image tag**. Ten pairs are hand-gated with results. The
@@ -119,7 +126,7 @@ spike, not a failed one.**
 ---
 
 ### EX-01 — Body-blanking transformer
-**Milestone** M6 · **Depends on** JS-04, **EX-00** · **Team** pair
+**Milestone** **M7** · **Depends on** JS-04, **EX-00** · **Team** pair
 **Owns** `JS/exercise/blank.py`
 **Context** ~40k — a sample of `JS` implementation and test classes
 
@@ -161,7 +168,7 @@ git for every emitted exercise.
 ---
 
 ### EX-02 — Gate runner
-**Milestone** M6 · **Depends on** EX-01, OPS-01 · **Team** pair
+**Milestone** **M7** · **Depends on** EX-01, OPS-01 · **Team** pair
 **Owns** `JS/exercise/gates.py`
 **Context** ~35k — spec §7, EX-01 and OPS-01 outputs
 
@@ -195,7 +202,7 @@ failure — they are different verdicts.
 ---
 
 ### EX-03 — Practice module and build wiring
-**Milestone** M6 · **Depends on** EX-01 · **Team** solo
+**Milestone** **M7** · **Depends on** EX-01 · **Team** solo
 **Owns** `JS/practice/` and its build file
 **Context** ~25k — `JS/pom.xml`, a module `pom.xml`
 
@@ -215,7 +222,7 @@ The module builds offline against the primed cache (TC-03).
 ---
 
 ### EX-04 — Exercise emission
-**Milestone** M6 · **Depends on** EX-02, EX-03, SF-23 · **Team** pair
+**Milestone** **M7** · **Depends on** EX-02, EX-03, SF-23 · **Team** pair
 **Owns** `JS/exercise/emit.py`
 **Context** ~40k — SF-23, EX-02, EX-03 outputs
 
@@ -242,7 +249,7 @@ present. A reading-only unit renders with no practice affordance (SF-24).
 ---
 
 ### EX-05 — Coverage report
-**Milestone** M6 · **Depends on** EX-04 · **Team** solo
+**Milestone** **M7** · **Depends on** EX-04 · **Team** solo
 **Owns** `JS/exercise/report.py`
 **Context** ~20k — EX-02 and EX-04 outputs
 

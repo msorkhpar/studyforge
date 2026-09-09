@@ -40,7 +40,7 @@ measures its own port surface at start and ports from HEAD.
 ---
 
 ### SF-19a — Serving API: content, assets, security
-**Milestone** M3 · **Depends on** SF-10 · **Team** team
+**Milestone** **M4** · **Depends on** SF-10 · **Team** team
 **Owns** `serve/` — app wiring, `routes/content.py`, `routes/assets.py`, `security.py`, `caching.py`
 **Context** ~90k — `CS/tools/study/backend.py` (**read by section, not whole**), `CS/tests/test_backend.py`
 
@@ -77,7 +77,7 @@ process-spawning library — asserted.** No module exceeds the size ceiling.
 ---
 
 ### SF-19b — Serving API: state, discovery, addressing
-**Milestone** M3 · **Depends on** SF-19a, SF-04, SF-13 · **Team** pair
+**Milestone** **M4** · **Depends on** SF-19a, SF-04, SF-13 · **Team** pair
 **Owns** `serve/routes/state.py`, `serve/addressing.py`, discovery wiring
 **Context** ~60k — SF-19a output, SF-04 and SF-13 outputs
 
@@ -102,7 +102,7 @@ one instance. A stale discovery cache is detected rather than trusted.
 ---
 
 ### SF-20 — Command runner
-**Milestone** M5 · **Depends on** SF-02 · **Team** pair
+**Milestone** **M5** · **Depends on** SF-02 · **Team** pair
 **Owns** `execute/`
 **Context** ~45k — `CS/tools/study/runner.py`, `CS/tests/test_runner.py`
 
@@ -143,7 +143,7 @@ against a real container, not a mock.**
 ---
 
 ### SF-21 — Progress store
-**Milestone** M3 · **Depends on** SF-01 · **Team** solo
+**Milestone** **M4** · **Depends on** SF-01 · **Team** solo
 **Owns** `progress/`
 **Context** ~40k — `CS/tools/study/progress.py`
 
@@ -242,7 +242,7 @@ happened. A server run never treats a read mark as a pass.
 ---
 
 ### SF-22 — Run and Submit
-**Milestone** M5 · **Depends on** SF-19a, SF-19b, SF-20, SF-21, SF-12 · **Team** team
+**Milestone** **M5** · **Depends on** SF-19a, SF-19b, SF-20, SF-21, SF-12 · **Team** team
 **Owns** `serve/routes/run.py` and the page's execution client
 **Context** ~70k — SF-19a/19b, SF-20, SF-21 outputs, `CS` design note 06 §2
 
@@ -269,7 +269,7 @@ follows the open practice.
 ---
 
 ### SF-29 — Run output filter
-**Milestone** M5 · **Depends on** SF-20 · **Team** solo
+**Milestone** **M5** · **Depends on** SF-20 · **Team** solo
 **Owns** `execute/quiet.py`
 **Context** ~30k — `CS/tools/study/quiet.py`, `CS/tests/test_quiet.py`
 

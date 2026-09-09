@@ -36,9 +36,19 @@ this; `backend.py` states it outright:
 > it. The endpoint shapes are the contract; the reading page is a consumer of
 > them."*
 
-v1 delivers the framework and **one** adapter. The framework is *designed*
+v1 delivers the framework and its **first consumer**. The framework is *designed*
 against four material shapes so the generalisation is real rather than
-retrofitted, but only the Java adapter is built.
+retrofitted.
+
+⚠️ **The first consumer is a small corpus, and it is deliberately not the
+largest one available.** An earlier plan made the 166-unit Java tutorial both
+the first adapter and the definition of done, which welded the framework's
+milestones to one source's shape — the exact conflation R1 exists to prevent.
+Building against something small first means the framework reaches a **complete,
+useful state** early, and the Java corpus becomes a consumer like any other
+rather than the reason the framework exists. ⭐ A framework proven on a small
+source and then applied to a large one has been tested; one grown around a large
+source and later pointed at a small one has been fitted.
 
 ### The four shapes the contracts must fit
 
@@ -262,13 +272,23 @@ rest of the seam: an orchestration or a deployment that lives inside one
 consumer is a framework with one consumer. ⭐ **The measure is what a second
 source costs**, not what the first one looks like when finished.
 
-**R20 — The extraction is one-way. A consumer never reads the repository the
-framework was extracted from.** CodeSignal is `studyforge`'s *source*. Everything
-a consumer needs from it is carried **in** `studyforge` — as a ruling, a
-contract, a skill, or the integration catalogue (§9) — never as a pointer into
-CodeSignal's tree. ⛔ **No task in a consumer repository cites a path inside the
-extraction source**, and no skill sends an integrator there to find out how
-something was done.
+**R20 — The extraction is one-way. This framework mines its source; a consumer
+never sees it.**
+
+⭐ **Affirmatively: `studyforge` may and should use CodeSignal freely.** It is the
+extraction source — read it, port from it, measure it, mine it for the rulings
+that were expensive to learn. That is the whole point of it, and a framework
+task's `Context` naming a path inside it is correct and expected.
+
+⛔ **And a client application never has access to it.** Everything a consumer
+needs from CodeSignal is carried **in** `studyforge` — as a ruling, a contract, a
+skill, or the integration catalogue (§9) — never as a pointer into CodeSignal's
+tree. ⛔ **No task in a consumer repository cites a path inside the extraction
+source**, and no skill sends an integrator there to find out how something was
+done.
+
+⭐ **This framework is the brain.** Knowledge flows *in* from the extraction
+source and *out* to consumers, and never sideways between them.
 
 Three reasons, and the third is the one that compounds:
 
@@ -735,7 +755,7 @@ So generation selects rather than blanks wholesale:
   accessors, `equals` and `hashCode` are implicit and unblankable. `09-records`,
   `10-sealed`, and much of `05-pattern-matching` and `28-enhanced-enums` are
   expected to yield zero. That is honest, and it is predicted here so it is not
-  mistaken for a defect in M6.
+  mistaken for a defect once generation runs.
 
 Expected yield is well below 100%, and that is the honest outcome, not a bug.
 Units with no gate-passing exercise ship as reading-only and are named in the
@@ -1183,37 +1203,88 @@ Named explicitly so no agent builds them.
 
 ---
 
-## 11. Acceptance for v1
+## 11. Acceptance
 
-1. `studyforge validate` passes on the Java repo's archive.
-2. All **166** units are readable offline over `file://` — no network, no
-   server — with narration, syntax highlighting, working navigation, and the
-   reader's own read marks recorded and surviving a reload (§8.5).
-3. The root index renders the full 10 → 45 → 166 hierarchy with working deep
-   links. Its **only inputs** are the two contents documents — asserted, not
-   assumed; and ⛔ **it fetches nothing at runtime**, because `fetch` of a
-   sibling file is refused over `file://`, there being no origin to ask, so
-   contents data is delivered into the page at generation time.
-4. Every exercise that ships has cleared both gates; the coverage report names
-   every pair that did not.
-5. Run and Submit work from the page against the dockerised Maven toolchain;
-   only a passing Submit completes a practice.
-6. `git status` in the Java repo shows **no modification to any pre-existing
-   file** except the entries its manifest declares in `permitted_edits`, and the
-   check that asserts it reads the declaration rather than naming the file (R3).
-7. `ingest-audit` exits 0, or exits 1 naming exactly the known outliers.
-8. No source module exceeds 400 lines and no test module exceeds 600, or the
+### 11.0 What a corpus is entitled to, and what it earns
+
+⛔ **A corpus is complete when it delivers everything its material supports —
+not when it delivers everything the framework can do.** Two tracks, and the
+manifest decides which apply:
+
+**The reading floor — every corpus, always.** Units readable offline over
+`file://` with no network and no server; narration; a table of contents and a
+root index with working deep links; navigation between units; the reader's own
+read marks. ⭐ **This is a complete product on its own.** A corpus that stops
+here is not a degraded one — for prose, a book, a paper collection or a set of
+notes, it is the whole thing, and R8's floor means it needs nothing running.
+
+**The execution track — only where the material is runnable.** A workspace, Run
+and Submit, a pinned toolchain container, graded practices. Gated on the
+manifest's `exercises` (§4) and on §7's three states. ⛔ **A corpus with no
+graders skipping this entire track is a pass**, not a shortfall (C5) — and it is
+the *common* case, not the exception. The Java tutorial, with 168 test classes
+paired 1:1, is extraordinary; most material is not like it.
+
+⚠️ **The order follows from that.** The reading floor comes first and completely,
+because it is what every consumer gets and the only thing some consumers want.
+The execution track is built when a corpus needs it — which is a real decision
+about a real source, not a milestone everyone waits behind.
+
+### 11.1 The framework
+
+1. `studyforge validate` passes on a valid archive and fails, naming the
+   specific failure, on each invalid fixture — **including a source whose
+   material the adapter silently failed to read in full** (SF-25).
+2. Both `FND-04` fixtures — one **depth-1**, one depth-2 — build, render, and
+   serve with **no corpus-specific code anywhere in the framework** (R1),
+   asserted rather than assumed.
+3. A corpus's units are readable offline over `file://` — no network, no server
+   — with narration, syntax highlighting, working navigation, and read marks
+   recorded and surviving a reload (§8.5).
+4. The root index renders a hierarchy of any declared depth with working deep
+   links. Its **only inputs** are the two contents documents — asserted; and ⛔
+   **it fetches nothing at runtime**, because `fetch` of a sibling file is
+   refused over `file://`, there being no origin to ask, so contents data is
+   delivered into the page at generation time.
+5. `studyforge plan` names every path a build will create and every declared
+   edit, before anything is generated, and what a build then does matches it.
+6. No source module exceeds 400 lines and no test module exceeds 600, or the
    exception is stated and justified in the module's own docstring (R11).
-9. Every package has tests, and the test tree mirrors the source tree (R12).
-10. Tests, generation and serving all run in a container from a clean
-    checkout, with Docker as the only prerequisite (R15).
-11. The Java corpus was produced **by the skills** of §9, and git can say so:
-    the adapter was scaffolded and the deployment artifacts generated **before**
-    any of their contents was hand-written, so the scaffolding commits precede
-    the source-reading commits. Every subsequent hand-edit to a generated
-    artifact is recorded as a finding against the skill that should have
-    produced it (R19).
-12. Both repositories carry a current graphify index (R14).
+7. Every package has tests, and the test tree mirrors the source tree (R12).
+8. Tests, generation and serving all run in a container from a clean checkout,
+   with Docker as the only prerequisite (R15).
+9. Every repository carries a current graphify index (R14).
+
+### 11.2 Any corpus the framework builds
+
+10. It was produced **by the skills** of §9, and git can say so: the adapter was
+    scaffolded and the deployment artifacts generated **before** any of their
+    contents was hand-written, so the scaffolding commits precede the
+    source-reading commits. Every subsequent hand-edit to a generated artifact
+    is recorded as a finding against the skill that should have produced it
+    (R19).
+11. `git status` shows **no modification to any pre-existing file** except the
+    entries its manifest declares in `permitted_edits`, and the check that
+    asserts it reads the declaration rather than naming the file (R3).
+12. Its ingest audit exits 0, or exits 1 naming exactly the known outliers.
+13. Its media footprint is measured and inside its declared limits, or the build
+    said so and stopped (SF-32).
+14. ⛔ **It reaches the reading floor in full**, and reaches whatever of the
+    execution track its material actually supports — with the coverage report
+    stating honestly which units are reading-only.
+
+### 11.3 The Java corpus, when it is built
+
+Consumer 1's numbers, kept because they are measured and because they are the
+worked example the catalogue draws on — **not because the framework's acceptance
+depends on them.**
+
+15. All **166** units reach the reading floor, and the root index renders the
+    full 10 → 45 → 166 hierarchy.
+16. Every exercise that ships has cleared both gates; the coverage report names
+    every pair that did not.
+17. Run and Submit work from the page against the dockerised Maven toolchain;
+    only a passing Submit completes a practice.
 
 ---
 
