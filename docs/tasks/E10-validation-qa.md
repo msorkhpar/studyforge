@@ -41,10 +41,21 @@ defines "done" for every adapter — the Java one now, CodeSignal's at
 convergence, and any future one somebody writes with the skills of E11.
 
 Checks: the manifest parses and its version is known; every container map's
-address matches the directory holding it; every archive document parses,
-carries a known version, and its digest matches its blocks; the personal-data
-gate passes on every string; unit ordinals are contiguous from 1; declared
-practice counts match what is present.
+address matches the directory holding it; **no two containers claim the same
+address**; every archive document parses, carries a known version, and its digest
+matches its blocks; the personal-data gate passes on every string; unit ordinals
+are contiguous from 1; declared practice counts match what is present.
+
+⭐ **The duplicate-address check is `slugify`'s collision, caught from the other
+end** (CTO round 6, from `SF-01`'s open finding). `slugify` is ASCII-lossy —
+`café` and `cafe` produce the same slug — so two distinct titles can claim one
+address. ⛔ The framework cannot check the *cause*: by the time it sees an
+archive the title is gone, and §6 rules an address **recorded, never derived**
+precisely so it never tries. ⚠️ But the *effect* is visible in the archive alone
+— two containers at one address, or one silently overwriting the other — and that
+needs no title at all. ⭐ Defence in depth: the adapter checks the cause
+(`SK-01`, `SK-02`), this catches what gets through, and neither substitutes for
+the other.
 
 This is the single most leverage-per-line task in the project. It is what lets
 an adapter be assigned to an agent working alone with no reviewer: the agent
