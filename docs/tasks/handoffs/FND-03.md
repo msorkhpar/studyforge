@@ -33,7 +33,7 @@ one whose divergence you find out about late.
 **`tests/docker/test_dev_image.py`** — 14 static checks that always run (pinned
 base, exact pins, no network at run time, no Docker socket, source mounted not
 copied, never root, no path from anybody's machine, the formatter exclusion is
-one named file) and 4 integration checks that build the image and run the suite
+one named file) and 5 integration checks that build the image and run the suite
 inside it, gated on `STUDYFORGE_DOCKER_TESTS=1`.
 
 **`pyproject.toml`** — three corrections to the ruff configuration FND-01 wrote
@@ -117,7 +117,20 @@ the auto-fix; the config was the defect.
 *Findings* 1 — it is a real conflict between the formatter and R11, not a
 preference, and resolving it is not this task's call.
 
-**11. The lint fixes outside `docker/dev`, named in full.** Twelve lines:
+**11. The image is uid-agnostic, and finding that out cost two real defects.**
+Running the service directly, without `check`, falls back to `nobody` — a uid
+that owns none of the mounted files. Two things then broke: git refused the
+tree as *"dubious ownership"* and returned 128 instead of a verdict, silently
+turning FND-01's ignore-rule regression test into a test with no answer; and
+ruff tried to write its cache into the bind mount. Fixed in the image with
+`git config --system --add safe.directory /workspace` (⛔ scoped to the one
+path this image ever holds, and ⛔ the same line on a host would be wrong) and
+`RUFF_CACHE_DIR=/tmp/ruff-cache`. `test_the_suite_passes_for_a_uid_that_owns_nothing`
+is what stops both coming back. `check` also now lets an already-set
+`STUDYFORGE_UID` win, so a CI or rootless runner can choose without editing
+anything.
+
+**12. The lint fixes outside `docker/dev`, named in full.** Twelve lines:
 
 - 5 × D401 non-imperative summary lines reworded — `tools/quality/config.py`
   (3), `tools/quality/size.py` (2). FND-01's own files.

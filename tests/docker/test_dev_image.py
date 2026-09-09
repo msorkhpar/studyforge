@@ -293,6 +293,25 @@ def test_the_suite_passes_inside_the_image_with_no_network(dev_image):
     assert "failed" not in result.stdout.splitlines()[-1], result.stdout
 
 
+def test_the_suite_passes_for_a_uid_that_owns_nothing(dev_image):
+    # ⚠️ `docker/dev/check` passes the invoking user's uid, so the everyday path
+    # runs as the owner of the checkout. This runs Compose directly, which
+    # falls back to `nobody` — a uid that owns none of the mounted files. It is
+    # the case that found two real defects: git refused the tree as "dubious
+    # ownership" and returned 128 instead of a verdict, and ruff tried to write
+    # its cache into the bind mount. Both are fixed in the image, and this is
+    # what stops them coming back.
+    require_docker_run()
+    # 65534 is `nobody`: it owns none of the mounted files. Passed through
+    # `check` rather than raw Compose so that a linked worktree still gets its
+    # git directory — this test is about the uid, not about the mount.
+    result = run(
+        ["env", "STUDYFORGE_UID=65534", "STUDYFORGE_GID=65534", f"./{DEV}/check"],
+        cwd=repository_root(),
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_lint_actually_runs_in_there_rather_than_skipping(dev_image):
     # ⭐ FND-01's blocked clause, closed and asserted. On the host these two
     # tests skip because ruff is not installed; in the image they must RUN.

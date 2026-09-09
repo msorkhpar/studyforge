@@ -35,6 +35,19 @@ RUN apt-get update \
  && apt-get install --no-install-recommends -y git \
  && rm -rf /var/lib/apt/lists/*
 
+# ⚠️ git refuses to operate on a repository owned by a different uid — "dubious
+# ownership" — and this container deliberately runs as whatever uid invoked it,
+# which is rarely the one that owns the image's own filesystem. Without this
+# line `git check-ignore` returns 128 instead of a verdict, and the ignore-rule
+# regression test loses its answer for a reason that has nothing to do with the
+# ignore rules.
+#
+# ⛔ Scoped to the one path this image ever holds. `safe.directory` exists to
+# stop git running hooks and config from a tree somebody else planted; inside a
+# throwaway container whose only mount IS the project under test, that is not a
+# threat that can arise. ⛔ The same line on a host would be wrong.
+RUN git config --system --add safe.directory /workspace
+
 # ⚠️ Network is required HERE and only here. This is the whole of the tension
 # in FND-03's acceptance, and it resolves cleanly because the two happen at
 # different times: `pip install` needs the network at IMAGE-BUILD time; the
@@ -61,11 +74,16 @@ RUN pip install --no-cache-dir --disable-pip-version-check \
 # ⛔ It is a fixed, generic path on purpose: no host home directory is ever
 # named in this file (R7).
 ENV HOME=/tmp \
+    RUFF_CACHE_DIR=/tmp/ruff-cache \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     STUDYFORGE_DEV_CONTAINER=1
 
+# ⚠️ `RUFF_CACHE_DIR` keeps ruff's cache out of the bind mount for the same
+# reason, and with a second benefit: a contributor's working tree never grows a
+# `.ruff_cache/` they then have to ignore.
+#
 # ⚠️ `PYTHONDONTWRITEBYTECODE` above is not a tidiness setting. The checkout is
 # bind-mounted, so a `__pycache__` written in here appears in the contributor's
 # working tree owned by whatever uid the container used.

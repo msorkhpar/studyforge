@@ -26,8 +26,12 @@ ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/../.." && pwd)
 # Run as the invoking user so that anything the container writes into the
 # bind-mounted checkout belongs to the person who ran it. ⛔ Without this the
 # container writes as root and leaves files a contributor cannot delete.
-STUDYFORGE_UID=$(id -u)
-STUDYFORGE_GID=$(id -g)
+#
+# ⚠️ An already-set value wins, so a caller can ask for a different uid without
+# editing anything — which is how `tests/docker/test_dev_image.py` exercises
+# the unprivileged case, and how a rootless or CI runner would override it.
+STUDYFORGE_UID=${STUDYFORGE_UID:-$(id -u)}
+STUDYFORGE_GID=${STUDYFORGE_GID:-$(id -g)}
 export STUDYFORGE_UID STUDYFORGE_GID
 
 # ⚠️ A linked git worktree keeps its real git directory OUTSIDE the checkout —
