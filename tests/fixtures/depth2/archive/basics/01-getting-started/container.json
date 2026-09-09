@@ -1,0 +1,36 @@
+{
+  "container_api": 1,
+  "address": [
+    "basics",
+    "01-getting-started"
+  ],
+  "titles": [
+    "Basics",
+    "Getting Started"
+  ],
+  "variant": "java",
+  "ingested": "2026-01-05",
+  "origin": "basics/01-getting-started/README.md",
+  "note": "Unit 1 carries the authored overlay; units 2 and 3 carry none.",
+  "units": [
+    {
+      "n": 1,
+      "title": "Your first class",
+      "practices": 1,
+      "origin": "basics/01-getting-started/README_1.1.md"
+    },
+    {
+      "n": 2,
+      "title": "Fields and constructors",
+      "practices": 0,
+      "origin": "basics/01-getting-started/README_1.2.md"
+    },
+    {
+      "n": 3,
+      "title": "Watching it run",
+      "practices": 0,
+      "origin": "basics/01-getting-started/README_1.3.md",
+      "note": "Names media it deliberately did not fetch."
+    }
+  ]
+}

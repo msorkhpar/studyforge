@@ -1,0 +1,14 @@
+{
+  "corpus_api": 99,
+  "source": "invalid-demo",
+  "title": "Invalid Demo",
+  "levels": [
+    "course"
+  ],
+  "variants": [
+    "prose"
+  ],
+  "exercises": false,
+  "placement": "tree",
+  "permitted_edits": []
+}

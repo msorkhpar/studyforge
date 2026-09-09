@@ -1,0 +1,94 @@
+{
+  "raw_api": 1,
+  "source": "depth1-demo",
+  "address": [
+    "depth-one"
+  ],
+  "variant": "prose",
+  "unit": 2,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Reading a small graph",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Reading a small graph"
+    },
+    {
+      "type": "para",
+      "text": "Four triples are enough to draw. Load the dataset beside this lesson and read it a row at a time."
+    },
+    {
+      "type": "table",
+      "headers": [
+        "Subject",
+        "Predicate",
+        "Object"
+      ],
+      "rows": [
+        [
+          "ex:ada",
+          "ex:wrote",
+          "ex:notes"
+        ],
+        [
+          "ex:notes",
+          "ex:about",
+          "ex:engines"
+        ]
+      ]
+    },
+    {
+      "type": "image",
+      "src": "media/diagram.svg",
+      "alt": "Two nodes joined by one arrow",
+      "width": 120
+    },
+    {
+      "type": "quote",
+      "blocks": [
+        {
+          "type": "para",
+          "text": "A graph is not a picture. The picture is one reading of it, and a different layout is the same graph."
+        }
+      ]
+    }
+  ],
+  "video": null,
+  "assets": [
+    {
+      "remote": null,
+      "local": "media/diagram.svg",
+      "sha256": "a2f8ea0f4acded8fdeb59998368f1efebc3d668c33ee55a6419d606eb718b61e",
+      "bytes": 343,
+      "content_type": "image/svg+xml",
+      "kind": "image"
+    }
+  ],
+  "attachments": [
+    {
+      "remote": null,
+      "local": "media/small-graph.ttl",
+      "sha256": "1b913eb93ff61fe705a3da8063b8d34150207994551abe8d7868e832d39a7544",
+      "bytes": 103,
+      "content_type": "text/turtle",
+      "kind": "dataset"
+    }
+  ],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 1,
+    "lists": 0,
+    "images": 1,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 1,
+    "html": 0
+  },
+  "content_sha256": "69ff0a7bc049f18714a582ae2e09a21b0fda68ecdd591ce9072ebe2a1fe76d0f",
+  "assets_sha256": "8d6155693b9726b09c7e855b661d8a7cac1189acc396cacf05710815976723e7"
+}

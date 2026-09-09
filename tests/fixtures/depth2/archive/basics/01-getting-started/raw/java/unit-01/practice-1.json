@@ -1,0 +1,61 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "basics",
+    "01-getting-started"
+  ],
+  "variant": "java",
+  "unit": 1,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Greeter",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Make `Greeter.greet` return `Hello, <who>` for any non-empty name."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: Your first class"
+    },
+    {
+      "type": "para",
+      "text": "The test class shipped with the material is the grader. It is authoritative because nobody here wrote it (R5)."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "java",
+      "text": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "850a78162e847fa55d403dbebd501fed939da3b047a89d56f952aee0226c025e",
+  "starting_code": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
+}

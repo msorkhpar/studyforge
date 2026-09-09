@@ -1,0 +1,28 @@
+{
+  "corpus_api": 1,
+  "source": "depth2-demo",
+  "title": "Depth Two Demo",
+  "levels": [
+    "section",
+    "module"
+  ],
+  "variants": [
+    "java"
+  ],
+  "exercises": true,
+  "placement": "sibling",
+  "media": {
+    "commit": "auto",
+    "max_total_bytes": 5000000000,
+    "max_file_bytes": 104857600
+  },
+  "permitted_edits": [
+    {
+      "path": "pom.xml",
+      "kind": "insert-line",
+      "anchor": "<modules>",
+      "content": "  <module>practice</module>",
+      "why": "Maven compiles only what sits on a source root (spec §7)."
+    }
+  ]
+}

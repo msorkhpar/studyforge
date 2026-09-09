@@ -1,0 +1,40 @@
+{
+  "raw_api": 1,
+  "source": "invalid-demo",
+  "address": [
+    "solo"
+  ],
+  "variant": "prose",
+  "unit": 3,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Unit 3",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "One block is enough"
+    },
+    {
+      "type": "para",
+      "text": "This corpus exists to be refused, so it holds the least material that can carry the defect."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "a7a405a6d0e5a70c22c84f3ce135e6059c9af9e9176f219f51ad95b5290ea5f2"
+}

@@ -1,0 +1,54 @@
+{
+  "raw_api": 1,
+  "source": "depth1-demo",
+  "address": [
+    "depth-one"
+  ],
+  "variant": "prose",
+  "unit": 1,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "What a triple is",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "What a triple is"
+    },
+    {
+      "type": "para",
+      "text": "A triple is three things said in one breath: a subject, a predicate and an object. Everything else in this corpus is built from that one shape."
+    },
+    {
+      "type": "code",
+      "lang": "turtle",
+      "text": "@prefix ex: <http://example.invalid/> .\nex:ada ex:wrote ex:notes .\n"
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "The **subject** is what is being talked about.",
+        "The **predicate** is what is being said about it.",
+        "The **object** is what it is being said about."
+      ]
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 1,
+    "tables": 0,
+    "lists": 1,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "4275189d821021977a1b674c9c46ea4f068ef5ebaee989453213bbcde926fa9b"
+}

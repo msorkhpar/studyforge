@@ -1,0 +1,63 @@
+{
+  "raw_api": 1,
+  "source": "depth1-demo",
+  "address": [
+    "depth-one"
+  ],
+  "variant": "prose",
+  "unit": 3,
+  "kind": "lesson",
+  "ordinal": 2,
+  "ingested": "2026-01-05",
+  "title": "Configuration you will meet",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Configuration you will meet"
+    },
+    {
+      "type": "para",
+      "text": "Material about configuration is full of angle brackets that are not markup. Every one below is inside a fence and is content."
+    },
+    {
+      "type": "code",
+      "lang": "xml",
+      "text": "<project>\n  <modules>\n    <module>practice</module>\n  </modules>\n</project>\n"
+    },
+    {
+      "type": "code",
+      "lang": "xml",
+      "text": "<beans>\n  <bean id=\"store\" class=\"example.Store\"/>\n</beans>\n"
+    },
+    {
+      "type": "code",
+      "lang": "html",
+      "text": "<details>\n  <summary>Not a disclosure — a fence about one</summary>\n  <p>A lesson teaching HTML must keep its HTML.</p>\n</details>\n"
+    },
+    {
+      "type": "html",
+      "text": "<details>\n<summary>This one IS raw HTML</summary>\n<p>Same tags, different block type. Only fence tracking tells them apart.</p>\n</details>"
+    },
+    {
+      "type": "para",
+      "text": "Three fenced blocks and one raw-HTML block, with the same tags in both. A naive scan for `<` cannot tell them apart."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 2,
+    "code": 3,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 1
+  },
+  "content_sha256": "710026ac052cb11c2899063445ae81340702105bc6744ce387063fa36c84cf19"
+}

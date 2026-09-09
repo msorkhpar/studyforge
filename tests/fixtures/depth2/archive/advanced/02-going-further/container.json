@@ -1,0 +1,31 @@
+{
+  "container_api": 1,
+  "address": [
+    "advanced",
+    "02-going-further"
+  ],
+  "titles": [
+    "Advanced",
+    "Going Further"
+  ],
+  "variant": "java",
+  "ingested": "2026-01-05",
+  "origin": "advanced/02-going-further/README.md",
+  "note": "Carries per-unit 'url_slug', SF-05's second carried field.",
+  "units": [
+    {
+      "n": 1,
+      "title": "Composition over inheritance",
+      "practices": 1,
+      "origin": "advanced/02-going-further/README_2.1.md",
+      "url_slug": "composition-over-inheritance"
+    },
+    {
+      "n": 2,
+      "title": "Where to go next",
+      "practices": 0,
+      "origin": "advanced/02-going-further/README_2.2.md",
+      "url_slug": "where-to-go-next"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "advanced",
+    "02-going-further"
+  ],
+  "variant": "java",
+  "unit": 1,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Loud",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Make `Loud.greet` delegate to the greeter it holds and upper-case the answer."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: Composition over inheritance"
+    },
+    {
+      "type": "para",
+      "text": "Delegation is one line and one decision."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "java",
+      "text": "public final class Loud {\n    private final Greeter inner;\n    Loud(Greeter inner) { this.inner = inner; }\n\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "63926676ef2d034a648e1b684b01732b59f62431cf9158c0d4ad8a3555f16f9f",
+  "starting_code": "public final class Loud {\n    private final Greeter inner;\n    Loud(Greeter inner) { this.inner = inner; }\n\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
+}
