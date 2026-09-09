@@ -91,8 +91,57 @@ select = ["E", "F", "W", "I", "UP", "B", "D"]
 # a summary line on the opening quotes, no blank line before the class body.
 ignore = ["D203", "D213"]
 
+# ⚠️ This block is FND-03's, and it exists because FND-01 chose this ruleset
+# without ever being able to run it — ruff was not installed and no network
+# install could be assumed, so the lint clause was recorded Blocked. The image
+# is where it first ran, and the first run reported 126 findings of which 95
+# were D103 on test functions. That is not 95 defects; it is one wrong rule
+# selection, and this is where it is corrected.
+[tool.ruff.lint.per-file-ignores]
+# ⛔ Docstring rules do not apply to test modules, and this defers to a ruling
+# this repository already made rather than inventing one: the project's own
+# contract check exempts them, in `tools/quality/docstrings.py`, because "a
+# test module's name and its assertions say what it covers. Demanding a
+# contract from it would be demanding a second description of the same thing,
+# which is a description that goes stale."
+#
+# ⚠️ Scoped to the two test trees by name, never turned off globally. D103 on
+# a public function in `src/` or `tools/quality/` is a real R17 failure and
+# still fails the build.
+"tests/**/*.py" = ["D"]
+"tools/tests/**/*.py" = ["D"]
+
+[tool.ruff.lint.isort]
+# ⛔ All three of this repository's import roots are first-party, and saying so
+# is not cosmetic. Left to inference, ruff reads `studyforge` as first-party
+# (it finds `src/studyforge`) and `tests` as third-party, and then sorts a
+# module's own package BELOW the test helper it imports — a diff that reverses
+# the reading order of every mirrored test for no reason a reader could name.
+known-first-party = ["studyforge", "tests", "tools"]
+
 [tool.ruff.lint.pydocstyle]
 convention = "pep257"
 
 [tool.ruff.format]
 docstring-code-format = true
+
+# ⛔ One file, one reason, and the reason is a real conflict between two of
+# this project's own rules — not a preference.
+#
+# `tests/test_fixture_consistency.py` is 554 lines. The formatter honours the
+# magic trailing comma, so it explodes that module's hand-packed key tuples
+# one entry per line and the file becomes **606 lines, over R11's 600-line
+# test ceiling**. Formatting it would mean either splitting somebody else's
+# merged test module or authoring a `Size exception:` for work this task did
+# not write, and neither is FND-03's call to make.
+#
+# ⚠️ Excluded from the FORMATTER only. `ruff check` still lints it, the quality
+# floor still measures it, and its own tests still run. Recorded as a finding
+# in `docs/tasks/handoffs/FND-03.md` and routed to FND-04 and the PO: format it
+# and split it, format it and justify it, or keep it hand-packed and keep this
+# line. Any of the three is a decision; this is the placeholder that stops it
+# being taken by accident.
+#
+# `tests/docker/test_dev_image.py` asserts this list has exactly one entry, so
+# it cannot quietly become the place difficult files go.
+exclude = ["tests/test_fixture_consistency.py"]

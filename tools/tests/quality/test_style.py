@@ -64,9 +64,7 @@ def test_line_length_uses_the_shared_limit():
 
 def test_the_line_number_is_reported():
     findings = check_file("a = 1\nb = 2" + SPACE + "\nc = 3\n", "src/studyforge/x.py")
-    assert [(finding.line, finding.rule) for finding in findings] == [
-        (2, "trailing-whitespace")
-    ]
+    assert [(finding.line, finding.rule) for finding in findings] == [(2, "trailing-whitespace")]
 
 
 def test_check_style_reads_the_tree(tmp_path):

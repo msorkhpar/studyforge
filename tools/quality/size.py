@@ -45,7 +45,7 @@ def count_lines(text: str) -> int:
 
 
 def module_docstring(text: str, path: Path) -> str | None:
-    """The module docstring, or None if there is none or the file will not parse.
+    """Return the module docstring, or None if absent or the file will not parse.
 
     A syntax error is not this check's business — pytest and ruff both report
     it far better — so an unparseable file is treated as having no docstring
@@ -59,7 +59,7 @@ def module_docstring(text: str, path: Path) -> str | None:
 
 
 def size_exception(docstring: str | None) -> str | None:
-    """The justification following `Size exception:`, or None if absent.
+    """Return the justification following `Size exception:`, or None if absent.
 
     ⛔ Case-sensitive, deliberately. See the module docstring: the marker is a
     fixed token that a review rubric greps for, so `size-exception:` must be

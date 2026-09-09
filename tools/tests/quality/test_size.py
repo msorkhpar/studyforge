@@ -52,9 +52,7 @@ def test_a_module_under_the_ceiling_passes(tmp_path):
 
 
 def test_oversized_source_module_fails(tmp_path):
-    write_module(
-        tmp_path, "src/studyforge/big.py", module_of(config.SOURCE_LINE_CEILING + 1)
-    )
+    write_module(tmp_path, "src/studyforge/big.py", module_of(config.SOURCE_LINE_CEILING + 1))
     findings = check_sizes(tmp_path)
     assert len(findings) == 1
     assert findings[0].rule == "size"
