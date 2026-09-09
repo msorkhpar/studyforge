@@ -19,7 +19,7 @@ from __future__ import annotations
 import hashlib
 import json
 
-from tests.fixture_checks.vocabulary import ARCHIVE_FILE, CONTAINER_BLOCKS, UNIT_DIR
+from tests.fixture_checks.vocabulary import ARCHIVE_FILE, CONTAINER_TYPES, UNIT_DIR
 
 
 def canonical(value):
@@ -87,13 +87,13 @@ def archive_files(container_dir, variant):
 def walk_blocks(blocks, visit):
     """Call `visit(block)` on every block in `blocks`, nested included.
 
-    ⭐ One recursion for the whole package, over `CONTAINER_BLOCKS`. There were
+    ⭐ One recursion for the whole package, over `CONTAINER_TYPES`. There were
     three copies of it before the split, and a third container type would have
     had to find all three.
     """
     for block in blocks:
         visit(block)
-        if block.get("type") in CONTAINER_BLOCKS:
+        if block.get("type") in CONTAINER_TYPES:
             walk_blocks(block.get("blocks") or [], visit)
 
 

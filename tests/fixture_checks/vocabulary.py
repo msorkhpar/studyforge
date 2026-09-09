@@ -8,17 +8,50 @@ one definition rather than restating it.
 **How you use it.** `from tests.fixture_checks import vocabulary`, or take the
 names re-exported from the package.
 
-**Depends on.** `re` and `pathlib`. ⛔ Nothing else, and deliberately no
-`studyforge` module: `src/studyforge/` was empty when these fixtures were
-written, and a fixture check that needed the framework could not run until the
-framework did. SF-06 owns the framework's canonicalisation; when it lands the
-duplication is resolved in its favour.
+**Depends on.** `re`, `pathlib`, and — since SF-06 landed — the framework's
+own vocabulary. ⭐ **The duplication is resolved in the framework's favour, as
+this file said it would be.** `src/studyforge/` was empty when these fixtures
+were written, so the contract was restated here on purpose and with a note
+saying who would come to collect it. What is left below is what the *fixtures*
+declare about themselves — which corpora are valid, what each must exercise,
+and the file-naming shapes — never a second answer to what a block is.
 """
 
 from __future__ import annotations
 
 import re
 from pathlib import Path
+
+from studyforge.archive.blocks import (
+    BLOCK_FIELDS,
+    BLOCK_TYPES,
+    CONTAINER_TYPES,
+    COUNT_KEYS,
+)
+from studyforge.archive.document import DOCUMENT_KEYS, OPTIONAL_KEYS, RAW_API
+
+#: ⭐ Declared because most of what this module offers is now **re-exported**
+#: rather than defined: the block vocabulary and the document's key order are
+#: the framework's, and this package hands them on so no check has to know
+#: which of the two places it came from.
+__all__ = [
+    "ARCHIVE_FILE",
+    "BLOCK_FIELDS",
+    "BLOCK_TYPES",
+    "CONTAINER_API",
+    "CONTAINER_TYPES",
+    "CORPUS_API",
+    "COUNT_KEYS",
+    "DOCUMENT_KEYS",
+    "FIXTURES",
+    "INVALID_CORPORA",
+    "MARKUP_SHAPED",
+    "OPTIONAL_KEYS",
+    "RAW_API",
+    "REQUIRED_TYPES",
+    "UNIT_DIR",
+    "VALID",
+]
 
 #: The fixture tree, found from this file rather than from the cwd.
 FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
@@ -27,75 +60,12 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 #: `depth2` — it is the reading floor (spec §11.0) in its complete form.
 VALID = ("depth1", "depth2")
 
-#: The archive document's key order, which is also what reaches disk: an
-#: unchanged document must re-render to identical bytes (R10), so the order is
-#: fixed rather than sorted.
-DOCUMENT_KEYS = (
-    "raw_api",
-    "source",
-    "address",
-    "variant",
-    "unit",
-    "kind",
-    "ordinal",
-    "ingested",
-    "title",
-    "blocks",
-    "video",
-    "assets",
-    "attachments",
-    "counts",
-    "content_sha256",
-)
-
-#: Written only when they have something to say, and always **after** the
-#: digest, so appending one cannot disturb it.
-OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped")
-
-#: `count key -> block type`. Always all of them, including the zeroes: a
-#: count that disappears when it is zero cannot be told from a count nobody
-#: wrote, and noticing a short ingest is the whole reason they are recorded.
-COUNT_KEYS = {
-    "headings": "heading",
-    "paras": "para",
-    "code": "code",
-    "tables": "table",
-    "lists": "list",
-    "images": "image",
-    "videos": "video",
-    "rules": "rule",
-    "quotes": "quote",
-    "html": "html",
-    "disclosures": "disclosure",
-}
-
-#: `block type -> its keys, in order`. The six CodeSignal proved, SF-07's
-#: additions (`rule`, `quote`, `html`), `video` — which the Markdown reader
-#: never produces but the archive vocabulary carries — and `disclosure`.
-BLOCK_FIELDS = {
-    "heading": ("type", "level", "text"),
-    "para": ("type", "text"),
-    "code": ("type", "lang", "text"),
-    "list": ("type", "ordered", "items"),
-    "table": ("type", "headers", "rows"),
-    "image": ("type", "src", "alt", "width"),
-    "video": ("type", "src", "title"),
-    "rule": ("type",),
-    "quote": ("type", "blocks"),
-    "html": ("type", "text"),
-    "disclosure": ("type", "summary", "open", "blocks"),
-}
-
-#: Block types that hold other blocks. ⭐ Two now, one shape: a quote and a
-#: disclosure both wrap arbitrary content, so every walker in this package
-#: recurses on this tuple rather than naming `quote` and then forgetting the
-#: next one. `disclosure` is *present but withheld* — the third state between
-#: shown and absent, which is C5's lesson landing in the block vocabulary.
-#: The archive records that it is disclosed on demand and what its label is;
-#: that the markup is `<details><summary>` is SF-12's decision, not this
-#: document's (R13).
-CONTAINER_BLOCKS = ("quote", "disclosure")
-
+#: ⛔ **Imported, never restated.** The archive document's key order, its
+#: optional keys, the eleven block types with their fields, the count keys and
+#: the container types are `studyforge.archive`'s — one definition, and a test
+#: in `tests/studyforge/archive/test_blocks.py` fails if a second list appears.
+#: ⚠️ `CONTAINER_TYPES` is the framework's spelling of what this package called
+#: `CONTAINER_BLOCKS`; the published name won.
 #: Every block type each corpus is required to exercise. `depth1` carries no
 #: video; every other type appears in both.
 #:
@@ -125,9 +95,11 @@ INVALID_CORPORA = {
     "personal-data": "personal-data",
 }
 
+#: ⚠️ Still declared here, and deliberately: `corpus_api` is SF-02's and
+#: `container_api` is SF-11's, which has not landed. SF-06 collected what SF-06
+#: owns. Routed as a finding rather than swept up in a diff about blocks.
 CORPUS_API = 1
 CONTAINER_API = 1
-RAW_API = 1
 
 UNIT_DIR = re.compile(r"^unit-(\d{2})$")
 ARCHIVE_FILE = re.compile(r"^(lesson|practice)-(\d+)\.json$")

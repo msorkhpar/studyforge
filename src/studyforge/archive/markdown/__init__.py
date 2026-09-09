@@ -57,7 +57,8 @@ lines against R11's 400, and because these are genuinely separate jobs:
 
 from __future__ import annotations
 
-from studyforge.archive.markdown.document import BLOCK_TYPES, CONTAINER_TYPES, parse
+from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
+from studyforge.archive.markdown.document import parse
 from studyforge.archive.markdown.errors import MarkdownError
 
 __all__ = ["BLOCK_TYPES", "CONTAINER_TYPES", "MarkdownError", "parse"]
