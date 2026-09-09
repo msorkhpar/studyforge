@@ -15,9 +15,7 @@ def write(root, relative, text):
 
 
 CONTRACT = (
-    '"""Does one thing.\n\n'
-    "How you use it: call `thing`.\n\n"
-    'Depends on: nothing at all.\n"""\n'
+    '"""Does one thing.\n\nHow you use it: call `thing`.\n\nDepends on: nothing at all.\n"""\n'
 )
 
 

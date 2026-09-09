@@ -101,23 +101,20 @@ TEST_SUPPORT_NAMES = ("conftest.py", "support.py")
 
 
 def is_excluded(relative_path: str) -> bool:
-    """True if `relative_path` (repo-relative, forward slashes) is not read."""
+    """Report whether `relative_path` (repo-relative, forward slashes) is read."""
     parts = relative_path.split("/")
     return any(
-        excluded in parts or relative_path.startswith(excluded + "/")
-        for excluded in EXCLUDED_DIRS
+        excluded in parts or relative_path.startswith(excluded + "/") for excluded in EXCLUDED_DIRS
     )
 
 
 def is_test_file(relative_path: str) -> bool:
-    """True if the file is held to `TEST_LINE_CEILING` rather than the source one."""
-    return any(
-        relative_path == root or relative_path.startswith(root + "/") for root in TEST_ROOTS
-    )
+    """Report whether the file is held to `TEST_LINE_CEILING`, not the source one."""
+    return any(relative_path == root or relative_path.startswith(root + "/") for root in TEST_ROOTS)
 
 
 def ceiling_for(relative_path: str) -> int:
-    """The line ceiling that applies to `relative_path`."""
+    """Return the line ceiling that applies to `relative_path`."""
     return TEST_LINE_CEILING if is_test_file(relative_path) else SOURCE_LINE_CEILING
 
 

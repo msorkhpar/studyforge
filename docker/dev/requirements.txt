@@ -1,0 +1,36 @@
+# The framework's build environment, pinned exactly (R15).
+#
+# ⛔ Every version is `==`, transitive dependencies included, because "pinned
+# in an image" is only true if resolving it twice gives the same answer. A
+# `>=` here would make the image's contents depend on the day it was built,
+# which is the thing R15 exists to prevent.
+#
+# ⚠️ These are TEST-ONLY tools. The framework itself declares no runtime
+# dependencies and never will (`pyproject.toml`); nothing in `src/` may import
+# anything installed from this file.
+#
+# `pyproject.toml`'s `test` and `lint` extras name what belongs here;
+# `tests/docker/test_dev_image.py` asserts every package named there appears
+# below, so the declaration and the image cannot drift apart.
+#
+# To refresh: run the resolver in the base image and paste the result —
+#
+#     docker run --rm python:3.14-slim \
+#       sh -c 'pip install -q "pytest>=8.0" "ruff>=0.6" && pip freeze'
+#
+# ⛔ Resolve it in the base image, never on a host: a host resolution picks up
+# whatever that machine already had.
+
+# --- the `test` extra ---
+pytest==9.1.1
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+
+# --- the `lint` extra ---
+# ⭐ This line is what closes FND-01's one open acceptance clause. Lint was
+# recorded Blocked-on-FND-03 because no linter was installed and no network
+# install could be assumed; the install happens here, at image-build time,
+# where network is available and a test run is not.
+ruff==0.16.6

@@ -242,10 +242,9 @@ def check_blocks(document, where):
             yield "vocabulary", (f"{where} block {index} ({kind}) has keys "
                                  f"{list(block)}, expected {list(fields)}")
         if kind == "quote":
-            for nested, message in check_blocks(
-                    {"blocks": block.get("blocks") or []},
-                    f"{where} block {index} (quote)"):
-                yield nested, message
+            yield from check_blocks(
+                {"blocks": block.get("blocks") or []},
+                f"{where} block {index} (quote)")
 
 
 def check_digests(document, where):

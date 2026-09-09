@@ -118,9 +118,7 @@ def test_golden_fixtures_are_not_ignored():
     # of these parents. Narrowing the pattern to `**/*.json`, or moving it
     # above the rules it negates, breaks it with nothing failing loudly.
     swallowed = [path for path in FIXTURE_SHAPES if is_ignored(path)]
-    assert swallowed == [], (
-        "golden fixtures would be silently untracked: " + ", ".join(swallowed)
-    )
+    assert swallowed == [], "golden fixtures would be silently untracked: " + ", ".join(swallowed)
 
 
 def test_the_same_shapes_outside_the_fixtures_are_still_ignored():
