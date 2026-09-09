@@ -699,6 +699,33 @@ If the change adds, removes or renames a package or module, the graph is stale
 containing `graphify-out/` is a fail: it is git-ignored, local, rebuilt, never
 merged.
 
+### ⛔ 10b. A change to an import is felt by tests in another package
+
+```bash
+grep -rn 'startswith(forbidden)\|forbidden = (\|imported_names\|imports_the_' tests/ tools/tests/
+```
+
+⛔ **Before ruling that a module should import something, find the tests that
+constrain imports** — because they live with the **other** package, and neither
+the author of the change nor the reviewer of the diff is looking at them.
+
+⚠️ **This is the third instance of one shape and it is worth stating as such:**
+the failure is visible only from a vantage point neither party occupies. The
+trial merge (§0a) exists because neither branch sees the merge; the base
+measurement (§0a-i) because the merge does not see the base; and this, because a
+package's own boundary test is invisible from the package being changed.
+
+⭐ **So a review's blast radius is not the diff.** An import, a shared constant, a
+version or a contract is felt somewhere else, and ⛔ **the trial merge is what
+makes that visible — which is why it is the gate rather than a courtesy.**
+
+⚠️ **And a ruling is a change.** ⛔ **Prototype a ruling in the trial-merge
+worktree and run the suite, not in isolation** — a hand-rolled probe of one
+module proves the module and nothing about the tree. I prototyped an `ast` change
+standalone, confirmed it, ruled it, and it still failed: another package's
+R1 boundary test forbade the import wholesale. ⭐ The prototype was right and the
+vantage point was wrong.
+
 ### 10a. Build configuration is behaviour, not style
 
 ⚠️ **A diff touching `pyproject.toml`'s `addopts`, `testpaths`, `pythonpath` or
