@@ -252,6 +252,33 @@ Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
    **600-line test ceiling**, which is inside it but no longer comfortably: a
    sixth invalid fixture would want the module split along the same seam the
    checks already have (shape · digests · addresses · media · personal data).
+10. ⛔ **The quality floor cannot be enforced on a branch authored in parallel
+    with the task that introduces it — and this is structural to M0's plan,
+    not incidental.** Finding 9 predicted the shape; the merge gate then
+    produced it. FND-04 was reviewed green and merged; FND-01's checker, seen
+    for the first time on the combined tree, found one line of
+    `test_fixture_consistency.py` at 110 characters against a 100 limit, and
+    the trial merge went red. ⚠️ **Neither branch could have seen it alone**:
+    FND-04 had no style checker and FND-01's checker had never seen FND-04's
+    module. Fixed on `fix/FND-04-line-length`, off `release/m0-foundations`.
+
+    ⭐ The general case: **any parallel task that authors Python before FND-01
+    merges will hit this**, and the cost lands at the gate rather than in the
+    task. M0 staffs FND-01…FND-05 as parallel, so E00 is where it is cheapest
+    and every later wave inherits a floor that already exists. Three options
+    for the PO, cheapest first: land FND-01's checker config *alone* as a
+    wave-0 prerequisite ahead of the parallel work; or have the gate run the
+    incoming checker over every branch before approving rather than after; or
+    accept a style-fix round trip per parallel Python-authoring task as a
+    known cost. FND-04's own experience says the first is nearly free — the
+    fix was one wrapped line, found in seconds once a checker existed.
+
+    ⚠️ **Scope note for whoever configures the checker.** It reported a
+    Python file. `tests/fixtures/README.md` and this handoff both carry
+    Markdown **table rows** well over 100 characters, which cannot be wrapped
+    without destroying the table. If the floor is ever extended to Markdown,
+    it needs a table-row exemption, or those two documents become
+    unmaintainable.
 
 ## For dependents
 
