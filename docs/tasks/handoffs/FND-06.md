@@ -2,7 +2,7 @@
 
 **Status:** done. The fifth check is in `tools.quality.CHECKS`, the sanctioned
 directory is bounded in both directions, and `is_ignored` is consolidated.
-⭐ **The full-tree sweep is clean** — 135 files, including all 32 documents and
+⭐ **The full-tree sweep is clean** — 142 files, including all 33 documents and
 all 41 fixture files. See *Findings* 1 for what a sweep with the rubric's raw
 patterns would have said instead, which is the more interesting number.
 
@@ -61,7 +61,7 @@ is `.py` under three roots; `text_files()` is everything, minus tool output,
 minus anything that will not decode as UTF-8. ⚠️ R7 has been violated in this
 repository once and `CLAUDE.md` records that it was in a **document** — a sweep
 confined to `.py` would have missed the only instance there has been.
-Measured cost: the whole floor takes 0.15 s over 135 files.
+Measured cost: the whole floor takes 0.15 s over 142 files.
 
 **4. ⛔ `.git` is never swept.** It holds every previous version of every file,
 so sweeping it would report a violation that was *already corrected* as if it
@@ -160,22 +160,27 @@ why this is ~950 lines including tests instead of a rewrite.
 ## Findings
 
 **1. ⭐ The full-tree sweep found nothing, and the negative result is the
-evidence.** 135 files, 32 of them documents, 41 of them fixtures. Zero shape
+evidence.** 142 files, 33 of them documents, 41 of them fixtures. Zero shape
 findings, zero identifier findings, zero registry findings — and the identifier
 half was not idle: **six** identifier kinds were derivable on the machine that
 ran it (account name, hostname, short hostname, home directory, git author name,
 git author email), so it had something to look for and found none of it.
 
-⚠️ The same tree, swept with the rubric's **raw §1a patterns**, reports **24
+⚠️ The same tree, swept with the rubric's **raw §1a patterns**, reports **34
 hits, every one a false positive**:
 
 | raw pattern | hits | what they actually are |
 |---|---|---|
 | `/home/`, `/Users/`, `/root/` | 1 | a comment in the checker describing the shape |
-| email, no minimum local part | 11 | `n@router.get` prose, and allow-listed test addresses |
-| `$HOME` | 8 | six documents explaining R7, two tests asserting it is not flagged |
-| `~/path` | 1 | a test asserting it is not flagged |
-| `*.local` | 3 | a settings **filename** ending in `.local`, not a host |
+| email, no minimum local part | 16 | `n@router.get` prose, and allow-listed test addresses |
+| `$HOME` | 12 | documents explaining R7, and tests asserting it is not flagged |
+| `~/path` | 2 | this handoff, and a test asserting it is not flagged |
+| `*.local` | 3 | a settings **filename** ending in that suffix, not a host |
+
+⚠️ Ten of those 34 are in this task's own diff — the checker, its tests and this
+handoff all discuss the shapes. That is the strongest form of the *Decisions* 7
+argument: a rule that made "documents about the pattern" an exemption would
+have exempted the checker itself.
 
 ⭐ **This confirms the rubric's own worked example and extends it.** The
 colleague who wrote §1a predicted `n@router.get` and `$HOME` would fire and
