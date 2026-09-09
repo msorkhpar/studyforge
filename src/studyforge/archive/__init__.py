@@ -26,8 +26,17 @@ parser that raises on anything it does not recognise stops an ingest dead (C3).
 Attachments — a dataset a lesson loads, a notebook — are a class of their own,
 neither block nor rendered media (C4).
 
-**Landed so far.** `markdown` — the strict reader (SF-07): `parse(text)` turns
-authored Markdown into this vocabulary and refuses, loudly, anything it cannot
-represent without loss. `document`, `blocks` and the personal-data gate remain
-SF-06's and SF-08's.
+**The modules.** `blocks` is the vocabulary — what a block may be, once.
+`document` is the format: `build` assembles and gates, `render` writes the
+exact bytes, `parse` and `load` read one back. `markdown` is the strict reader
+(SF-07), `scrub` is the gate (SF-08), and `errors` holds the one exception
+both halves of the format raise.
+
+⭐ **`blocks` is the single block-type list, and it is a contract rather than
+a convenience.** The reader, the counter and the fixture checker all import
+it; adding a type is a `raw_api` change; and
+`tests/studyforge/archive/test_blocks.py` fails if a second list appears
+anywhere in the tree, because a vocabulary that disagrees with its own checker
+means the gate and the parser have different ideas of what a document may
+contain.
 """

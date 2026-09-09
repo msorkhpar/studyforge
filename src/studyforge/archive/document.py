@@ -1,0 +1,274 @@
+r"""The archive document: what an ingested unit *is* on disk (spec §6).
+
+**What it does.** Owns the format and nothing else — builds one document,
+renders it to the exact bytes that reach disk, and reads one back. ⛔ Where
+the file goes is placement's decision (SF-03) and stays there.
+
+**How you use it.** `build(...)` for a document, `render(document)` for its
+bytes, `parse(text, where)` and `load(path)` to read one. Every entry point
+runs the personal-data gate; there is no unguarded way in.
+
+**Depends on.** `archive.blocks` for the vocabulary, `archive.errors`,
+`archive.scrub` for R7's gate, `studyforge.version` for R9's, and
+`studyforge.address`. ⛔ Not on `render` or `serve`: the archive is the input
+to a page.
+
+## The four properties that make it trustworthy
+
+- **Fixed key order, serialised unsorted** (R10). `DOCUMENT_KEYS` is what
+  reaches disk, `sort_keys=False`, so an unchanged document re-renders to
+  identical bytes. Sorting would make that true by accident until somebody
+  added a key.
+- **`content_sha256` covers `blocks` and nothing else.** It answers exactly
+  one question — did the source edit this since we read it? Folding in
+  `ingested` would make every re-ingest differ regardless of content; folding
+  in media would make re-downloading a 6 MB video look like a source edit.
+  Either would make the one signal it exists for worthless.
+- **An unknown `raw_api` is refused, never migrated in place** (R9). A
+  migration that runs because something merely wanted to render a page
+  rewrites the record of what was ingested. ⛔ The test is SF-33's; this
+  module owns only `KNOWN_RAW_API`, because which versions the archive speaks
+  is this contract's business and the check is nobody's twice.
+- **Every string is gated, and the gate refuses** (R7). Rewriting an archive
+  would corrupt the record of what the source said *and* break its own digest.
+
+## Two gates, one walker, decoded strings only
+
+⭐ `build` gates the title and the blocks, assembles, and then gates the
+**whole document** — so anything smuggled in through the metadata, a `source`
+or an asset's remote address, is caught before it reaches a filesystem. The
+inner gate is not redundancy: a match there means an upstream stage failed and
+that is worth surfacing (R6).
+
+⛔ **Never `render(document)`.** In JSON a newline is the two characters `\`
+and `n`, so a decorator on its own line serialises as `...\n@router.get(` and
+`n@router.get` is address-shaped; the extraction source gated its rendered
+bytes and refused three clean lessons. `archive.scrub` reads decoded strings
+through one walker, and both gates here ride it.
+
+⚠️ **`parse` does not gate the file's raw text when it is not JSON**, and that
+is a deliberate divergence from the extraction source. Text that failed to
+parse has no decoded strings, so a text-level gate would be reading escaping
+again — the exact shape of the defect above — and it would report a leak where
+the honest answer is *"this file is malformed"*. Nothing reaches the archive
+either way, and the refusal never echoes the text.
+
+## Optional keys are appended, never slotted in
+
+`OPTIONAL_KEYS` are written only when they have something to say and always
+**after** `content_sha256`, so adding one cannot disturb the digest and every
+document written before a key existed still re-renders byte for byte.
+⛔ `media_skipped` exists because its absence was a way to look finished while
+being short: an ingest that named media and deliberately did not fetch it was
+otherwise indistinguishable from a unit that simply has none.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+from pathlib import Path
+
+from studyforge.address import Address
+from studyforge.archive.blocks import counts_of
+from studyforge.archive.errors import ArchiveError
+from studyforge.archive.scrub import assert_clean
+from studyforge.version import check as check_version
+
+#: The document format version. ⚠️ Bumped when a reader of the old shape would
+#: be *wrong* rather than merely incomplete.
+RAW_API = 1
+
+#: The versions this build reads. ⛔ The membership test is `studyforge.
+#: version`'s, not this module's (SF-33); what lives here is the set.
+KNOWN_RAW_API = frozenset({RAW_API})
+
+#: The document's key order, which is the reading order and is also what
+#: reaches disk: what it is, where it came from, what it says, what it is made
+#: of. ⛔ Serialised `sort_keys=False`, so this tuple is the format (R10).
+DOCUMENT_KEYS = (
+    "raw_api",
+    "source",
+    "address",
+    "variant",
+    "unit",
+    "kind",
+    "ordinal",
+    "ingested",
+    "title",
+    "blocks",
+    "video",
+    "assets",
+    "attachments",
+    "counts",
+    "content_sha256",
+)
+
+#: Written only when they have something to say, and always after the digest.
+OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped")
+
+#: What a `video` **record** says, in the order it is written. ⚠️ Two halves
+#: that must not be confused: `src`, `poster` and `mime` are how the page plays
+#: it — plain relative paths beside the page — while `remote` and
+#: `poster_remote` are provenance, the addresses the source served, kept so a
+#: re-fetch is possible from the document alone and deliberately never
+#: rendered. ⛔ This is not the `video` **block**, which is content and carries
+#: `("type", "src", "title")` — see `archive.blocks`.
+VIDEO_KEYS = ("src", "poster", "mime", "remote", "poster_remote")
+
+#: What a unit's file may be. ⚠️ A practice is a lesson with a layout, not a
+#: different document.
+KINDS = ("lesson", "practice")
+
+#: `ingested` is an ISO calendar date and nothing else. ⭐ Shape only — a real
+#: calendar check would reject nothing this framework can produce and would
+#: make the rule harder to state than the format it enforces.
+ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}$")
+
+
+def content_sha256(blocks: list) -> str:
+    """Return the digest of `blocks`, and of nothing else.
+
+    Compact and `sort_keys=False`: the digest must be recomputable from the
+    file by anyone holding it, so it is taken over one canonical serialisation
+    of the same key order the file itself carries.
+    """
+    payload = json.dumps(blocks, separators=(",", ":"), ensure_ascii=False)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def build(
+    *,
+    source: str,
+    address: Address | list | tuple,
+    variant: str,
+    unit: int,
+    kind: str,
+    ordinal: int,
+    ingested: str,
+    title: str,
+    blocks: list,
+    video: dict | None = None,
+    assets: list | None = None,
+    attachments: list | None = None,
+    assets_sha256: str | None = None,
+    starting_code: str | None = None,
+    media_skipped: bool = False,
+) -> dict:
+    """Assemble one archive document — every gate run, nothing written.
+
+    ⚠️ `address` is the container's address as SF-01 defines it and reaches
+    the file as a JSON array of slugs. ⛔ It is not a path: where the document
+    lands is placement's decision (R2, SF-03), and an address that carried a
+    directory separator would have made the two the same thing.
+    """
+    if kind not in KINDS:
+        raise ArchiveError(f"kind must be one of {list(KINDS)}, got {kind!r}")
+    at = address if isinstance(address, Address) else Address(address)
+    where = f"{at.key}/unit-{unit}/{kind}-{ordinal}"
+    _require_iso_date(ingested, where)
+
+    blocks = list(blocks or [])
+    assert_clean(title or "", f"{where} title")
+    assert_clean(blocks, f"{where} blocks")
+
+    document = {
+        "raw_api": RAW_API,
+        "source": source,
+        "address": list(at.segments),
+        "variant": variant,
+        "unit": unit,
+        "kind": kind,
+        "ordinal": ordinal,
+        "ingested": ingested,
+        "title": title,
+        "blocks": blocks,
+        "video": video,
+        "assets": list(assets or []),
+        "attachments": list(attachments or []),
+        "counts": counts_of(blocks),
+        "content_sha256": content_sha256(blocks),
+    }
+    if tuple(document) != DOCUMENT_KEYS:  # pragma: no cover - built above
+        raise ArchiveError(
+            f"built the keys {list(document)}; the format is {list(DOCUMENT_KEYS)}. "
+            f"Raised rather than asserted: `python -O` elides an assert, and the "
+            f"key ORDER is what reaches disk."
+        )
+    # ⚠️ Appended in `OPTIONAL_KEYS` order, after the digest, so a document
+    # written before one of them existed still renders what it always did.
+    if assets_sha256:
+        document["assets_sha256"] = assets_sha256
+    if starting_code is not None:
+        document["starting_code"] = starting_code
+    if media_skipped:
+        document["media_skipped"] = True
+
+    # ⛔ The second gate, over every string in the WHOLE document. This is the
+    # one that reaches the metadata — a `source`, an asset's remote address —
+    # and it is the reason a test can prove the gate is invoked by hiding a
+    # leak where only this layer can see it.
+    assert_clean(document, where)
+    return document
+
+
+def render(document: dict) -> str:
+    """Serialise the document to the exact bytes that reach disk. One place, so builds match."""
+    return json.dumps(document, indent=2, ensure_ascii=False, sort_keys=False) + "\n"
+
+
+def parse(text: str, where: str) -> dict:
+    """Read one archive document from its text: valid JSON, a known version, clean.
+
+    ⛔ In that order. A document declaring a version this build cannot read is
+    refused for *that* reason before anything else is said about it — otherwise
+    a v2 archive is refused for a v1 reason and the integrator upgrades the
+    wrong thing.
+    """
+    try:
+        document = json.loads(text)
+    except json.JSONDecodeError as exc:
+        # ⛔ Names the fields, never the exception object and never the text:
+        # an exception's `str()` is written by whoever raised it, and the text
+        # is the thing that might be carrying the leak.
+        raise ArchiveError(
+            f"{where} is not valid JSON: {exc.msg} at line {exc.lineno} column {exc.colno}"
+        ) from None
+    if not isinstance(document, dict):
+        raise ArchiveError(f"{where} must be a JSON object, got a {type(document).__name__}")
+    check_version(
+        "raw_api",
+        document.get("raw_api"),
+        KNOWN_RAW_API,
+        where=where,
+        error=ArchiveError,
+    )
+    assert_clean(document, where)
+    return document
+
+
+def load(path: Path | str) -> dict:
+    """Read, version-check and gate one archive document from disk.
+
+    ⛔ `where` is the file's **name**, never the path it was read from: an
+    absolute path in a refusal is personal data in a log, which is the leak
+    this module's own gate exists to prevent (R7).
+    """
+    path = Path(path)
+    try:
+        text = path.read_text(encoding="utf-8")
+    except OSError as exc:
+        # ⛔ `exc.strerror`, never `exc`: `OSError` formats itself with the
+        # filename it was given, so `{exc}` here would produce a refusal
+        # carrying an absolute path.
+        raise ArchiveError(f"cannot read {path.name}: {exc.strerror}") from None
+    return parse(text, path.name)
+
+
+def _require_iso_date(value: object, where: str) -> None:
+    """Refuse an `ingested` that is not `YYYY-MM-DD`."""
+    if not isinstance(value, str) or not ISO_DATE.match(value):
+        raise ArchiveError(
+            f"{where} has an invalid 'ingested' value; it must be an ISO date, YYYY-MM-DD"
+        )

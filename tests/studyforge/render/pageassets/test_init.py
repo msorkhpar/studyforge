@@ -87,6 +87,18 @@ def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
     assert offenders == [], "unexpected import: " + ", ".join(offenders)
 
 
+#: ⭐ **The one exception, and it narrows the rule rather than widening it.**
+#: `archive.blocks` is the *block vocabulary* — not a corpus, not a document,
+#: not anything a source wrote. A class name exists to style a block type, so
+#: a surface that did not know the block types is precisely how the two came
+#: to disagree silently in the first place; `surface.py` takes its keys from
+#: there and answers for every type either way (CTO round 12).
+#: ⛔ Nothing else under `studyforge.archive` is allowed: `archive.document`
+#: **is** content-shaped, and an asset reaching for it would be the failure
+#: this test exists to catch.
+VOCABULARY = "studyforge.archive.blocks"
+
+
 def test_the_assets_know_nothing_about_a_corpus():
     # ⛔ R1 at this package's own boundary. A stylesheet that had to be told
     # which corpus it was for would be exactly the source knowledge the
@@ -96,9 +108,23 @@ def test_the_assets_know_nothing_about_a_corpus():
         f"{path.name}: {name}"
         for path in package_modules()
         for name in sorted(imported_names(path))
-        if name.startswith(forbidden)
+        if name.startswith(forbidden) and name != VOCABULARY
     ]
     assert offenders == [], "the page assets reached for content: " + ", ".join(offenders)
+
+
+def test_the_vocabulary_is_the_only_thing_the_assets_may_reach_for():
+    # ⚠️ Pins the exception so it cannot quietly become a doorway: the check
+    # above compares on equality, not on a prefix, so `archive.document` and
+    # `archive.markdown` are still refused.
+    assert VOCABULARY.startswith("studyforge.archive")
+    reached = {
+        name
+        for path in package_modules()
+        for name in imported_names(path)
+        if name.startswith("studyforge.archive")
+    }
+    assert reached == {VOCABULARY}
 
 
 def test_the_worked_example_in_the_contract_is_the_api_that_exists():

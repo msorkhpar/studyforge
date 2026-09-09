@@ -83,7 +83,8 @@ from tests.fixture_checks.personal_data import PERSONAL_DATA, check_personal_dat
 from tests.fixture_checks.shape import check_blocks, check_document_shape, check_manifest
 from tests.fixture_checks.vocabulary import (
     BLOCK_FIELDS,
-    CONTAINER_BLOCKS,
+    BLOCK_TYPES,
+    CONTAINER_TYPES,
     COUNT_KEYS,
     DOCUMENT_KEYS,
     FIXTURES,
@@ -96,7 +97,8 @@ from tests.fixture_checks.vocabulary import (
 
 __all__ = [
     "BLOCK_FIELDS",
-    "CONTAINER_BLOCKS",
+    "BLOCK_TYPES",
+    "CONTAINER_TYPES",
     "COUNT_KEYS",
     "DOCUMENT_KEYS",
     "FIXTURES",

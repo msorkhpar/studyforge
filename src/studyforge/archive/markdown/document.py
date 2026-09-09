@@ -93,27 +93,12 @@ def parse(text: str, *, lang_default: str = "") -> list[dict]:
     return blocks
 
 
-#: Every block type this reader can produce. ⚠️ Eleven, where the extraction
-#: source has six: `rule`, `quote`, `html` and `disclosure` are studyforge's
-#: additions, and `video` is the archive vocabulary's rather than the Markdown
-#: reader's. ⛔ `counts` in an archive document carries one key per type, so
-#: adding one here is a change to `SF-06`'s document shape as well.
-BLOCK_TYPES = (
-    "heading",
-    "para",
-    "code",
-    "list",
-    "table",
-    "image",
-    "video",
-    "rule",
-    "quote",
-    "html",
-    "disclosure",
-)
-
-#: The block types that hold other blocks. ⭐ Every walker over the vocabulary
-#: recurses on these, so the *next* container is not forgotten the way
-#: `disclosure` was: `counts` counts top-level blocks, and anything wanting the
-#: total recurses here deliberately.
-CONTAINER_TYPES = ("quote", "disclosure")
+# ⛔ `BLOCK_TYPES` and `CONTAINER_TYPES` live in `studyforge.archive.blocks`,
+# not here, and this package's `__init__` re-exports them from there. They were defined here first
+# and were right about the *set*; SF-06 consolidated the four copies of that
+# contract into one row per type, and the reader is now a consumer of it.
+#
+# ⚠️ One thing changed in the move: the order. This tuple had `list` before
+# `table`, and a document's `counts` object — which reaches disk — has
+# `tables` before `lists`. The serialised order wins (R10); nothing here ever
+# depended on the order, which is why the wrong one was the easy one to keep.

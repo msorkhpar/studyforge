@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
+from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
 from studyforge.archive.markdown import parse
-from studyforge.archive.markdown.document import BLOCK_TYPES, CONTAINER_TYPES
 
 
 def test_blank_input_is_no_blocks():

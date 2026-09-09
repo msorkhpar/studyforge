@@ -20,7 +20,7 @@ from __future__ import annotations
 from tests.fixture_checks.corpus import rendered
 from tests.fixture_checks.vocabulary import (
     BLOCK_FIELDS,
-    CONTAINER_BLOCKS,
+    CONTAINER_TYPES,
     CORPUS_API,
     DOCUMENT_KEYS,
     OPTIONAL_KEYS,
@@ -67,7 +67,7 @@ def check_blocks(document, where):
                 "vocabulary",
                 f"{where} block {index} ({kind}) has keys {list(block)}, expected {list(fields)}",
             )
-        if kind in CONTAINER_BLOCKS:
+        if kind in CONTAINER_TYPES:
             yield from check_blocks(
                 {"blocks": block.get("blocks") or []},
                 f"{where} block {index} ({kind})",
