@@ -13,6 +13,12 @@ back. Flow: `../conventions/delivery-flow.md`.
 *Editing rule:* a status change is one cell. Do not restructure rows; record
 events in the **Log**.
 
+⛔ **Standing user decision: nothing is ever pushed to any remote. Everything
+stays in local repositories.** Permanent, not a phase. ⚠️ It is on this board
+because it **changes the plan**, not merely the workflow — see **B2** and **G1**:
+`FND-05a` loses its composition half, and R18's version pin loses the mechanism
+R9's cross-repository reproducibility rested on.
+
 ---
 
 ## M0 — Foundations
@@ -28,16 +34,16 @@ remain in M0, none of them blocked, and none of them on M1's critical path.
 | Task | Title | Owner | Branch | Status | Blocked on | Closes when |
 |---|---|---|---|---|---|---|
 | FND-01 | Repository scaffolding and quality floor | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE after changes. `tools/quality/` (size, mirror, docstrings, style) + `tests/test_quality_floor.py`; `tools/` excluded from packaging; zero runtime dependencies. ⚠️ **One clause shipped `Blocked`, not passed:** lint — ruff is configured and declared as the `lint` extra, and `FND-03` is what runs it |
-| FND-02 | Knowledge index | *unassigned* | `feat/FND-02-knowledge-index` | `todo` | — | Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
-| FND-03 | Development and test container | *unassigned* | `feat/FND-03-dev-container` | `todo` | — | Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
+| FND-02 | Knowledge index | Developer 1 | `feat/FND-02-knowledge-index` | `in-review` | — | Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
+| FND-03 | Development and test container | Developer 2 | `feat/FND-03-dev-container` | `in-review` | — | Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
 | FND-04 | Shared contract fixtures | Developer 2 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE on every rubric check. 7 corpora, 43 files, 22 tests, re-run green post-merge |
-| FND-05a | Workspace, workflow and the first submodule | *unassigned* | `feat/FND-05a-workspace` | `todo` | — | Workflow document covers clone, update, advance and the two-commit rule; non-recursive clone fails pointing at the documented command; `corpora/java-senior` pinned and verified; no absolute path in any tracked file |
+| FND-05a | Workspace, workflow and the first submodule | *unassigned* | `feat/FND-05a-workspace` | `blocked` | **B2** — the no-push decision leaves the composition half with no legal form; with the CTO | ⚠️ **Acceptance is under re-ruling.** The workflow document half stands as written; the submodule-pinning half has no form that satisfies both the decision and R7 |
 | FND-06 | Repository personal-data check | *unassigned* | `feat/FND-06-r7-check` | `todo` | — | A fifth entry in `tools/quality`'s `CHECKS`: exits non-zero on a purpose-built violating file, zero on the tree; the sanctioned-directory registry is asserted by a test; ⛔ writes no derived identifier anywhere, proved by a test on the refusal message |
 | — | Review rubric + M0 readiness audit | CTO | *merged* | ✅ `done` | — | **Closed 2026-09-09.** `../conventions/review-rubric.md` plus four rulings |
 | — | Board + delivery flow | PO-Framework | `chore/po-board-m0-update` | `in-progress` | — | Board reflects the first review round; the ruled task edits are carried into `docs/tasks/` |
 
 **Out of M0:** `FND-05b` — composing `studyforge`, `TC/` and `NS/` — moved to
-**M5**, step 5.5. See **B1**.
+**M5**, step 5.5, and now **B2** applies to it too, more severely.
 
 ### Open items
 
@@ -51,28 +57,49 @@ rather than passing quietly. ⛔ **`FND-03` is the task that closes this**, and
 until it does, R13-adjacent formatting is unenforced. The clause is not dropped —
 an unenforced format erodes exactly like an unenforced ceiling.
 
-**B1 — FND-05b, blocked, and not an M0 problem.** ⚠️ **The earlier note on this
-board said no repository has a remote. That was wrong and the CTO caught it by
-counting.** Measured 2026-09-09: `JS/`, `CS/`/`CSD/`, `ISO/` and `SPARQL/` each
-have one. ⛔ **Only `studyforge` has none** — R18's "every component has its own
-remote" is currently false of the one component the parent exists to pin — and
-⛔ `TC/` and `NS/` **do not exist**, since E12 and E13 create them at M5 and M3.
+**B2 — FND-05a and FND-05b, blocked on a CTO ruling, not on infrastructure.**
+⛔ **Correct the unblocking condition this board previously recorded.** It named
+an account action — an owner creating a remote for `studyforge` — and ⭐ **that
+will now never happen**, so a condition phrased as "wait for a remote" is a task
+that waits forever.
 
-Two consequences. First, most of `FND-05` was always deliverable, which is why it
-split rather than sat red: `FND-05a` lands the parent, the whole workflow
-document, the clone guard and the one submodule that can be pinned today.
-Second, `FND-05b`'s unblocking condition is precise and **one half of it is not
-an agent's to take**: an empty remote repository created by the owner for
-`studyforge`, plus E12 and E13 existing. ⛔ The URL lives in untracked
-`.git/config` and no agent writes it into a document (R7).
+The bind is exact. The CTO's ruling that a local **absolute** submodule URL
+writes a home directory into a tracked `.gitmodules` and is therefore an R7
+violation still stands. A **relative** URL resolves against the parent's own
+remote, and there will be no remote. ⛔ **So the submodule composition has no
+legal form at all** — not "no convenient one".
 
-⚠️ Neither local-path workaround survives: an absolute path in `.gitmodules`
-writes a home directory into a tracked file, and a relative URL resolves against
-the parent's own remote, which does not exist.
+⭐ **What survives is the half that was always the point.** `FND-05a`'s workflow
+document — clone, update, advance, the two-commit rule — and the
+non-recursive-clone guard need no network and no URL, and they are what prevent
+the two documented silent first-run failures the task exists for.
+
+**Unblocking condition, precisely:** the CTO rules on what `FND-05a` becomes
+under a local-only workspace. The expected shape is that the workflow document
+stands and the composition is struck or deferred; ⛔ until that is written down,
+nobody should start it, because its acceptance currently asks for something
+impossible.
+
+**G1 — R18's version pin has lost its mechanism, and this is a gap, not a
+formality.** R18 says *"the parent's recorded submodule commits are the version
+pin"*, and that is the sentence R9's cross-repository reproducibility rests on:
+per-contract versioning is reproducible *between* repositories only because
+something records which commit of each component was used together. ⚠️ **That
+guarantee assumed fetchable remotes.** A recorded commit hash no other checkout
+can fetch pins nothing.
+
+⛔ **Do not let this close as "we work locally, it does not matter".** What is
+lost is specific and R9 named it: with no fetchable pin, a corpus built against
+one combination of `studyforge`, `TC/` and `NS/` has no record of *which*
+combination, and the failure surfaces as a contract-version mismatch nobody can
+reconstruct. ⭐ Whatever replaces it — a manifest of commit hashes, a vendored
+bundle, or R18 amended to say plainly what a local-only workspace guarantees
+instead — is a **decision owed by the CTO**, with the same deadline as `FND-05a`.
 
 ### Sequencing the unassigned tasks
 
-**Order: FND-02 → FND-03 → FND-06 → FND-05a.**
+**Order: FND-02 → FND-03 → FND-06 → FND-05a.** ✅ The first two are in review;
+FND-06 is the last unblocked M0 task.
 
 1. **FND-02 first, startable now.** `graphify` is on PATH and it depends on
    nothing. It is the only M0 task that *repays* the others — R14 is what keeps
@@ -91,28 +118,97 @@ the parent's own remote, which does not exist.
    release branch — `FND-04` shipped sanctioned personal-data fixtures, and until
    this lands the rubric's §1e boundary is upheld by a reviewer running greps by
    hand. ⛔ `CLAUDE.md` records that R7 has already been violated once here.
-4. **FND-05a last, and unblocked.** Nothing in M1 imports the parent workspace,
-   so it is the one M0 task that can slip without stopping anybody.
+4. ⛔ **FND-05a is blocked (B2) and must not be assigned.** Nothing in M1 imports
+   the parent workspace, so it can wait for its ruling without stopping anybody —
+   which is the one piece of good luck in **B2**.
 
 ---
 
 ## Open questions — owners and deadlines
 
-⚠️ **These block later epics, not M0.** Each is a decision nobody has taken, each
-has a task that cannot start without it, and the deadline is that task — not a
-date. ⛔ **A ruling that is not written down did not happen**: each is answered as
-a CTO ruling in a handoff, and the answer is carried into the task by the PO.
+⚠️ **Each is a decision nobody has taken, each has a task that cannot start
+without it, and the deadline is that task — not a date.** ⛔ **A ruling that is
+not written down did not happen**: each is answered as a CTO ruling in a handoff,
+carried into the affected task by the PO.
 
 | # | Question | Owner | Must be answered before |
 |---|---|---|---|
-| Q1 | **`<details>` is ruled in two opposite and both-wrong directions.** CodeSignal flattens a disclosure into ordinary blocks — text kept, hiding destroyed, so a SPARQL exercise answer is shown outright. `FND-04` chose a raw `html` block — hiding kept, but the speakable contract then reads the answer aloud while the page still shows it collapsed. **Both fail, oppositely.** | CTO | **SF-07 (M1 step 1.1)** — and E04. ⛔ **The most urgent of the three: SF-07 is starting now.** |
-| Q2 | **§7's exercise declaration has no home.** `main_path`, `test_path`, `run_command`, `test_command`, `provenance`, `trust` name no document, while every other contract in §4–§6 names its own. **R5 is what stops a generated grader being rendered as authoritative, and there is nowhere to write the field that turns it on.** | CTO | **SF-23 (M1 step 1.3)** — before E06 builds, not during |
-| Q3 | **`container.json` has two owners.** §6 says an adapter generates it; `SF-05` says it is hand-authorable and never written by the render pipeline. Reconcilable — one clarifying sentence in `SF-05` settles which producer owns which case. | CTO | **SF-05 (M1 step 1.2)** |
+| Q4 | ⛔ **The Java corpus carries its owner's account name in every package path** — `com/github/<account>/…`, so it is in 345 file paths, in every `import`, and in a code block on every generated page. If `SF-08` ever grows a username pattern it **refuses the entire corpus**, and SF-08 already warns that a false positive is a failure of the same class as a leak. | CTO | ⛔ **Before E07 starts** |
+| Q5 | **`FND-05a` under a local-only workspace**, and **R18's version pin without fetchable remotes**. See **B2** and **G1**. | CTO | **FND-05a** |
+| Q6 | **`ruff format` and R11 disagree on one file.** Formatting `FND-04`'s test module explodes its hand-packed tuples to 606 lines, over R11's 600-line test ceiling. `FND-03` excluded that one file from the **formatter only** — still linted, still floored — and asserted the exclusion list stays exactly one entry. Resolution is splitting the module or authoring a `Size exception:`. | CTO | Before a second file joins the exclusion list |
+| Q7 | **R14's own text in the spec still says "every repository"**, while the CTO ruled it binds when a repository **enters the working set**. `graphify.md` was narrowed; ⚠️ **the spec, which is the authority, was not.** A document and its authority now disagree in writing. | CTO | Before SK-07 (M2) — it is the task that would owe a new corpus its graph |
 
-⭐ Q1 and Q2 are the same shape and worth naming as one: **a contract that R5 or
-the reading floor depends on, which the spec describes but does not locate.** A
-task that discovers this while building will invent a location, and an invented
-location is the thing R9's versioning cannot fix later.
+⭐ **Q4 is X2's shape and probably not X2's answer, and the difference is the
+whole question.** X2 dissolved because 16-digit test PANs are the **material's
+subject matter** rather than identifiers arriving from the build environment. An
+account name is neither cleanly: it identifies a real person, *and* it is the
+material — it is what the corpus's own `import` statements say. ⚠️ Note the
+asymmetry that makes this urgent rather than academic: R7's gate **refuses rather
+than rewrites**, so the failure mode is not a leak but a corpus that cannot be
+built at all, discovered at E07 after the adapter is written.
+
+### Resolved — kept, not deleted, because the reasoning is what stops them being re-asked
+
+| # | Ruling | Landed in |
+|---|---|---|
+| Q1 | **A disclosure is a container block holding blocks**, exactly as a quote does. Flattening keeps the text and destroys the hiding; storing raw tags keeps the hiding and makes the body invisible to the block-count gate — ⭐ both fail oppositely, and C5's lesson is that *shown* and *absent* are not the only states. The archive records the semantics, the renderer owns the markup (R13). **Narration speaks the summary and stops**, and the withheld count is reported, so the omission reads as a decision rather than a bug in the walker. | spec, E02, E04 |
+| Q2 | The exercise declaration is **an object inside the practice archive document**, versioned by that document's `raw_api`. | spec §7, E06 |
+| Q3 | **Hand-authorable survives, narrowed to two editorial fields of a generated document.** ⭐ Not a hole in a skill: R19 forbids a second source *retyping* what a skill could produce, and a judgement about one's own material is the one thing no skill can produce. | E01 |
+| X1 | **`corpus.json` gains `content`** — include globs and exclude entries that each carry their reason. An inclusion needs no justification; **an exclusion is material withheld from the reader**. A file matching neither is unclassified and **refused**, because silence is the failure C2 describes. | spec §4, E01 |
+| X2 | ⭐ **Dissolved rather than exempted.** R7 governs identifiers arriving from **the environment the build runs in**, not identifiers that are the **material's subject matter** — so the gate is not a content classifier and ships no payment-card pattern. Checked before ruling: the inherited gate has three patterns and none is a content shape. The manifest-declared exemption is **specified and deliberately not built**. | spec, E02 |
+
+⭐ **X2 is the one to remember, and it is worth being precise about why.** The
+board's own constraint was that any exemption must be manifest data, never a
+pattern hardcoded for one corpus. That constraint is what made the dissolution
+findable: forced to write the exemption generally, the CTO had to say what class
+of thing R7 governs — and the answer showed no exemption was needed. ⛔ **No
+manifest knob, no card pattern, nothing built.** A rule stated generally
+eliminated the feature that a rule stated per-corpus would have required.
+
+---
+
+## R21 — the register of unlocated contracts
+
+⭐ **R21 was adopted by explicit user decision**, and it generalises Q1–Q3: *a
+contract is located before it is described* — the file it lives in, the key that
+versions it (R9), and the one producer that writes it, all stated **before** any
+task builds against it. ⛔ A task that meets an unlocated contract **stops and
+asks**; choosing quietly is the failure the rule names.
+
+⭐ **The rule earned its number by being surveyed rather than assumed.** Asking
+"where else is this true?" turned up **five more instances already sitting in the
+spec with no owner**. These are board items, not spec trivia: each is owed by the
+task named beside it, *before* that task builds.
+
+| Open row | Owed before | Owner | Why it bites |
+|---|---|---|---|
+| **authored overlay** `content.json` — unversioned | **SF-09** (M1 step 1.3) | CTO | ⭐ **Close this one next.** It is the only document a **person** edits, which makes it the likeliest to drift, and R9 does not list it. Either R9 gains it, or R9 says in words why a hand-edited document needs no version — ⛔ but not silence |
+| **discovery cache** `.studyforge/site.json` — no version key | **SF-04** (M2 step 2.1) | CTO | R9 refuses an unknown version rather than migrating; a cache with no version cannot be refused, only misread |
+| **narration manifest** — no file, no version | **NS-02 / SF-17** (M3) | CTO | Two producers named for one contract is Q3's shape exactly, and Q3 needed a ruling |
+| **coverage report** — no file | **EX-05** (M7) | CTO | Not read back, so the cheapest of the five — but R5 is what the report exists to make honest |
+| **component consuming contract** `consuming.json` — no version key | **TC-05** (M5), **E13** (M3) | CTO | ⛔ This is the *runtime seam between the two agents*. An unversioned cross-repository contract is precisely what R9 exists for, and **G1** has just removed the pin that would have recorded which version was used |
+
+⚠️ **`consuming.json` and G1 are the same wound.** The pin recorded which
+component versions worked together; the contract records what a component
+promises. With the pin gone and the contract unversioned, **nothing at all**
+records the combination a corpus was built against. Rule them together.
+
+---
+
+## Delivery-process defects
+
+| # | Defect | Owner | Status |
+|---|---|---|---|
+| C2 | **The review rubric's `$BASE` is wrong for any branch cut from a release branch.** It says `merge-base HEAD main`, and `main` is stale — so a review presents ~100 changed files instead of ~14 and attributes three tasks' work to one author. | CTO | fixing |
+| C3 | ⚠️ **`ruff format` vs R11 on one file** — see **Q6**. The interim is sound: formatter-excluded, still linted, still floored, exclusion list asserted at exactly one entry. | CTO | interim in place |
+
+⛔ **C2 is recorded because it silently corrupted every review it touched**, which
+is the worst property a gate can have: it did not fail, it passed the wrong thing.
+⭐ The rubric's own §1a check is what caught the *class* of this bug once already
+— a check that cries wolf is one reviewers learn to wave through. This is the
+inverse: a check that under-reports is one reviewers **cannot** learn to distrust,
+because nothing looks wrong. Any review run before the fix should be re-run
+against the corrected base rather than assumed sound.
 
 ---
 
@@ -125,9 +221,9 @@ location is the thing R9's versioning cannot fix later.
 | Task | Title | Prerequisite | Startable? |
 |---|---|---|---|
 | SF-01 | Logical address model | FND-01 ✅, FND-04 ✅ | ⭐ **now** — and it is on the critical path |
-| SF-02 | Corpus manifest | FND-01 ✅, FND-04 ✅ | **now**, but ⚠️ carries **X1**, the ISO include/exclude question |
-| SF-07 | Block vocabulary and Markdown reader | FND-01 ✅, FND-04 ✅ | ⛔ **not until Q1 is ruled** |
-| SF-08 | Personal-data gate | FND-01 ✅, FND-04 ✅ | **now**, but ⚠️ carries **X2**, the ISO `assert_clean` question |
+| SF-02 | Corpus manifest | FND-01 ✅, FND-04 ✅ | ⭐ **now** — X1 ruled: it gains a `content` block |
+| SF-07 | Block vocabulary and Markdown reader | FND-01 ✅, FND-04 ✅ | ⭐ **now** — Q1 ruled: a disclosure is a container block |
+| SF-08 | Personal-data gate | FND-01 ✅, FND-04 ✅ | ⭐ **now** — X2 ruled: ⛔ ships **no** content pattern. ⚠️ Q4 is not this task's blocker but E07's |
 | SF-11 | Page assets | FND-01 ✅ | ⭐ **now** — the cheapest to start |
 
 - ⭐ **Step 1.1 is already unblocked, and that is the most useful thing on this
@@ -141,11 +237,14 @@ location is the thing R9's versioning cannot fix later.
   contracts nobody had written — is retired**; see the Log.
 - ⭐ **SF-01 is on the project critical path** (FND-01 → SF-01 → SF-03 → SF-31 →
   SK-02 → …). Assign it the day M0 closes; do not let it queue behind SF-02.
-- ⛔ **Three of the five carry an unanswered question** (Q1, X1, X2), and with the
-  prerequisites already met **the questions are now the only thing holding step
-  1.1 back.** Getting them ruled is this PO's highest-value work — an answer
-  arriving mid-task is a re-plan, and one arriving after is a rework of a
-  versioned contract (R9).
+- ⭐ **All five questions that held step 1.1 are ruled and merged.** ⛔ **Step 1.1
+  has no open blocker of any kind** — prerequisites met, questions answered,
+  rulings carried into E01, E02, E04 and E06 rather than left in a handoff. This
+  is the moment to assign it; the constraint is now developers, not decisions.
+- ⚠️ **One M1 task acquired a debt rather than a blocker:** `SF-09` (step 1.3)
+  owes the authored overlay's version under R21 before it builds. It is the row
+  the CTO singled out to close next, and step 1.3 is two steps away — comfortable,
+  but not indefinite.
 - **`SF-31` gained an acceptance clause**: it commits `plan` output for both
   fixtures as the golden. That is the agreed close on the largest gap `FND-04`
   deliberately left open — `FND-04` could not write a golden for output nobody
@@ -181,19 +280,18 @@ the four designed sources, not the exotic path.
 is what the channel is for when the framework has not been built yet; a finding
 is what it is for when the framework has been built and fell short.
 
-| # | Question | Lands in | Deadline |
-|---|---|---|---|
-| X1 | **`corpus.json` has no include/exclude field**, so a corpus structurally cannot declare files out. ISO ships three whole-series aggregates that are digest-identical concatenations of the per-unit files, so a `src/*.md` glob ingests everything **twice**. C2 demands the countermeasure and §4's schema cannot express it. | **SF-02** | ⛔ **Before SF-02 is assigned** — M1 step 1.1. This is a schema change, and a schema is the one thing R9 makes expensive to change afterwards. |
-| X2 | **`assert_clean` will refuse the ISO corpus entirely.** 96 card-shaped digit strings such as a 16-digit test PAN are that corpus's **core teaching content**, and R7's gate refuses rather than rewrites, with no escape hatch. | **SF-06 / SF-08** | Before SF-06 ships |
+✅ **Both are ruled and merged** — see *Resolved* above. X1 becomes `corpus.json`'s
+`content` block, landing in SF-02 before it is assigned. ⭐ **X2 dissolved**: R7
+governs identifiers arriving from the build environment, not identifiers that are
+the material's subject matter, so the gate ships **no** payment-card pattern and
+ISO needs no exemption at all.
 
-⚠️ **X2 is the harder of the two and it is not a bug in the gate.** R7's refusal
-is deliberate and `FND-06` is about to enforce the same shape repository-wide. The
-question is whether "card-shaped digit string" is personal data at all when the
-values are published test numbers in a payments tutorial — and if the answer is a
-declared exemption, ⛔ it must be **manifest data read by the gate**, never a
-pattern hardcoded for one corpus (R1, and the same argument R3 already won for
-`permitted_edits`). ⭐ An exemption that names a corpus is the framework learning
-about a source.
+⭐ **Both were answered before the task they land in was assigned, which is the
+whole point of the deadline being a task rather than a date.** X1 in particular
+was a schema change, and a schema is the one thing R9 makes expensive to alter
+afterwards. ⚠️ The integration side got its answer at the cost of asking early —
+recording that, because the next integrator's incentive to ask early is entirely
+built out of whether this one's questions were worth asking.
 
 ### The channel — encoded in `../conventions/delivery-flow.md`, non-negotiable
 
@@ -214,6 +312,69 @@ about a source.
 
 ---
 
+## Context budgets and the knowledge index
+
+⚠️ **`FND-02`'s honest verdict changes a planning assumption, and it needs an
+answer rather than a status line.** R14's premise — *ask the graph before
+exploring* — holds unconditionally for `explain` and `path`. For `query` it holds
+**only when the question is phrased as distinctive nouns**; asked as an English
+sentence it returns unrelated material *with the same confidence as a right
+answer*. Every task's **Context** budget in this plan assumes the graph replaces
+exploration.
+
+**Do the budgets need revisiting? Yes — but not the ones you would expect, and
+not by re-pricing all 85.**
+
+⭐ **The phrasing defect is the smaller problem, and it is already mitigated.**
+`FND-02` wrote it up as *What it answers badly* in `graphify.md`, with the three
+commands and what each is good for. A documented failure mode that an agent reads
+before its first query costs a sentence, not a budget. ⛔ **The real exposure is
+two other findings in the same handoff**, and neither is about phrasing:
+
+1. ⛔ **A graph built by running graphify alone has *zero* doc↔code edges.** The
+   lesson→class link that makes `JS/`'s graph worth 212 documents of reading
+   exists **only because `FND-02` built it by hand** — measured before the fix:
+   13,583 code↔code, 767 doc↔doc, **0 doc↔code**. It is structural, not a slip:
+   code is extracted by AST, prose by LLM, and no extractor ever sees a lesson
+   and its class together. ⭐ So the budget saving R14 promises is **not a
+   property of the tool** — it is a property of a graph somebody bridged.
+2. **~4% of edges are dangling**, so *absence of a connection is not proof of
+   absence*. A task that concludes "nothing calls this" from a query has
+   concluded nothing.
+
+**Which tasks are most exposed, in order.**
+
+| Exposure | Tasks | Why |
+|---|---|---|
+| ⛔ **Highest** | **QA-04** (M8, the second source), and **SK-07** | A new corpus arrives with **no graph at all** — and `SK-07` does not generate one, which is `FND-02`'s finding 2 and a hole in the skill under R19. M8's whole measurement is what an integrator had to do by hand; ⚠️ "build and bridge a graph" would be a large, uncounted item on that list |
+| ⛔ **High** | **SF-19a** | Named on this board as *"a serial bottleneck wearing a milestone's name"* — one task carrying a very large share of the port surface, unsplittable. It is discovery-shaped: you do not know the name of the thing you are looking for, which is exactly `query`'s weak case |
+| ⚠️ **Medium** | **SK-01, SK-02, SK-05, SK-08** | Skills answer *"what does the framework do about X"* — questions, not lookups. Same weak case, smaller surface |
+| ⭐ **Reduced, not raised** | **JS-03, JS-04, E08** | The opposite direction: `FND-02` pre-built the lesson→class link these were going to re-derive. `path` returns it in one hop for **162 of 166** lessons, and the four exceptions are enumerated. These budgets are now *safer* than planned |
+
+**What I recommend, and it is three cheap things rather than a re-plan.**
+
+1. ⛔ **Do not re-price all 85 budgets.** Most tasks are lookup-shaped and
+   unaffected, and a plan-wide re-estimate would cost more than the error.
+2. ⭐ **Give `SK-07` the graph** — build it, bridge it, and write the R3-safe
+   ignore recipe `FND-02` already proved. That converts the highest exposure into
+   a generated artifact and closes an R19 hole in the same edit. This is the one I
+   would act on first.
+3. **Add explicit headroom to SF-19a and the four skills tasks**, and let the CTO
+   agree the number. They are five tasks, not eighty-five.
+
+⚠️ **And one plan-wide defect worth naming once.** `FND-02` reports its own
+~20k budget was optimistic *by roughly an order of magnitude* — ⭐ **not for
+reading, but for doing.** The read list was small and correct; the task was a
+12-chunk parallel extraction over 217 documents, twice. The **Context** field in
+`README.md` is defined as *"the files to read, and a rough budget"*, and those are
+two different quantities wearing one number. ⛔ **Any task whose deliverable is a
+*computation* rather than a *change* is mispriced by construction** — `FND-02`,
+`SF-17`'s synthesis run, `EX-00`'s spike, `EX-04`'s emission. Recommend the field
+say plainly that the number prices reading, and that work is estimated separately;
+that is a one-line fix to a definition rather than 85 re-estimates.
+
+---
+
 ## Log
 
 | Date | Change |
@@ -229,3 +390,15 @@ about a source.
 | 2026-09-09 | **Task edits carried:** FND-04's golden-files clause struck and re-homed in SF-31's acceptance; FND-01's ignore wording corrected so it cannot be read as ignoring a corpus's committed narration; FND-02's acceptance names the M0-close rebuild and the R3-safe ignore file; README task count 83 → 85, M0 5 → 6, M5 12 → 13, and its reading list corrected from R1–R19 to R1–R20. |
 | 2026-09-09 | **Three open questions given owners and deadlines** (Q1–Q3), and two ISO questions routed to the tasks that must answer them (X1 → SF-02, X2 → SF-06/SF-08). |
 | 2026-09-09 | **ISO confirmed complete at the reading floor** — no graders, no exercises, `permitted_edits` empty. It never enters the execution track and is a real empty-declaration case for OPS-05. |
+| 2026-09-09 | ⛔ **Standing user decision: nothing is ever pushed to any remote**, permanently. Recorded as a **plan change**, not a workflow note: `FND-05a`'s composition half loses its only legal form (**B2**) and R18's version pin loses its mechanism (**G1**). |
+| 2026-09-09 | **B1 replaced by B2.** The old unblocking condition named an account action — an owner creating a remote for `studyforge` — that will now never happen. ⛔ A condition phrased as "wait for a remote" is a task that waits forever. |
+| 2026-09-09 | **R21 adopted by explicit user decision** — *a contract is located before it is described*. ⭐ The CTO **surveyed rather than assumed** and found five more unlocated contracts already in the spec; they are now a §2 register and five board items with owners. The overlay's row closes next: it is the only document a person edits, and R9 does not list it. |
+| 2026-09-09 | **Q1, Q2, Q3, X1, X2 all ruled and merged**, and moved to *Resolved* rather than deleted. ⛔ **Step 1.1 now has no open blocker of any kind.** |
+| 2026-09-09 | ⭐ **X2 dissolved rather than exempted.** R7 governs identifiers arriving from the build environment, not identifiers that are the material's subject matter. No manifest knob, no card pattern, nothing built — the mechanism is specified and deliberately unbuilt. Recorded because the board's own constraint (*any exemption is manifest data, never a per-corpus pattern*) is what forced the general statement that showed no exemption was needed. |
+| 2026-09-09 | **FND-02 and FND-03 complete, in review with the CTO.** FND-03 closes FND-01's blocked lint clause for real — ruff runs inside the image and the two tests **run rather than skip**. |
+| 2026-09-09 | **Q4 opened and it blocks E07**: the Java corpus carries its owner's account name in 345 package paths. X2's shape, ⚠️ likely not X2's answer — an account name identifies a real person *and* is the material. |
+| 2026-09-09 | **Q6 opened** — `ruff format` explodes FND-04's test module past R11's 600-line ceiling. Interim: formatter-excluded, still linted, still floored, exclusion list asserted at exactly one entry. |
+| 2026-09-09 | **C2 recorded** — the rubric's `$BASE` resolved against a stale `main`, so reviews showed ~100 files instead of ~14 and misattributed three tasks to one author. ⛔ It did not fail; it passed the wrong thing. Reviews run before the fix should be re-run against the corrected base. |
+| 2026-09-09 | **Q7 opened** — R14's text in the spec still says "every repository" while `graphify.md` was narrowed to the working set. ⚠️ A document and its authority disagree in writing. |
+| 2026-09-09 | ⭐ **Context-budget judgement recorded** on FND-02's verdict. Short answer: the `query` phrasing defect is the smaller problem and is already documented; the real exposure is that a graph built by running graphify alone has **zero doc↔code edges**. Five tasks need headroom, not eighty-five. |
+| 2026-09-09 | `CLAUDE.md` task count corrected 83 → 85. |

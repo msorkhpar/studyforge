@@ -27,6 +27,21 @@ is recorded on the board. Silently expanding one is not (`agent-protocol.md`).
 | Non-code | `chore/<slug>` — e.g. `chore/po-board` | `main` | `main` |
 | Integration | `release/studyforge-integration`, in the corpus repository | that repository's default | that repository only. **Never into `studyforge`** |
 
+⛔ **Nothing is ever pushed to any remote. Everything stays in local
+repositories.** This is a standing user decision and it is permanent — ⛔ **no
+agent runs `git push`**, to any remote, on any branch, for any reason, and no
+agent creates a remote or asks for one to be created. Branches, merges and
+reviews all happen locally.
+
+⚠️ **It is written here so nobody re-derives it from an absent remote and
+concludes something is broken.** It also has consequences beyond workflow, and
+they are on the board rather than in this document: the submodule composition
+`FND-05a` was to build has no legal form under it, and R18's *"the parent's
+recorded submodule commits are the version pin"* — the sentence R9's
+cross-repository reproducibility rests on — has lost its mechanism. ⛔ **A working
+practice that quietly voids a ruling is a finding, not a preference**, and it is
+recorded as one.
+
 One task, one branch, one owner. ⛔ **No task branch merges into another task
 branch** — that is how two half-finished contracts become one unreviewable diff.
 If your task genuinely needs another's unmerged work, that is a dependency the
@@ -48,6 +63,14 @@ before you finish a task: your Acceptance bullets get pasted into the review wit
 the command and its output beneath each one, and ⛔ **restating a condition is not
 meeting it**. What follows here is the process around that document, not a second
 copy of it.
+
+⚠️ **Establish the review range before anything else, and do not take it on
+trust.** The range is the release branch the work was cut from — ⛔ **never
+`main`**, which goes stale the moment a milestone opens. A base resolved against a
+stale branch does not fail; it **passes the wrong thing**, presenting every commit
+since the milestone began as though one author wrote it. ⭐ That is the worst
+property a gate can have, because nothing looks wrong. A review whose range was
+wrong is re-run, not amended.
 
 **What a developer presents for review — all of it, or the review does not
 start:**
