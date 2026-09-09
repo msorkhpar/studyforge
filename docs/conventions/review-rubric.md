@@ -578,7 +578,17 @@ Two things the reviewer reads rather than greps:
 
 ```bash
 grep -n '\[structural\]' "docs/tasks/handoffs/$TASK.md"
+
+# ⛔ and the coverage, because an empty result has two causes
+awk '/^## Findings/,/^## For dependents/' "docs/tasks/handoffs/$TASK.md" \
+  | grep -cE '^[0-9]+\.'                       # findings filed
+grep -cE '^[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TASK.md"   # marked
 ```
+
+⛔ **The two numbers must agree.** A handoff with ten findings and two markers has
+not been triaged — it has been triaged twice and abandoned. ⭐ An empty
+`[structural]` list is only a clean bill when the counts match; otherwise it means
+*nobody marked anything*, which is the opposite conclusion.
 
 ⭐ **The reviewer is the last person who reads a handoff while anything can still
 be done about it**, so routing is part of the verdict, not a follow-up. For each

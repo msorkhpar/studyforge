@@ -158,7 +158,9 @@ rather than one, which reads like something much worse. See Decisions 3.
 
 Defects seen outside my scope, not fixed:
 
-1. **`.gitignore` would have silently swallowed FND-04's golden fixtures.**
+1. `[structural]` ✅ **RULED** — CTO round 3, rubric §10a: an ignore rule is checked against paths that must **stay tracked**, including shapes the repo does not carry yet. The regression test was the one CHANGES REQUESTED item on this task.
+
+    *Original finding:* **`.gitignore` would have silently swallowed FND-04's golden fixtures.**
    `site.json`, `*.unit.html` and `*.section.html` are ignored repository-wide,
    and those are exactly the filenames FND-04's golden files carry. Dev 2's
    fixtures would have been untracked, their suite passing locally and failing
@@ -175,17 +177,23 @@ Defects seen outside my scope, not fixed:
    ⚠️ **FND-04 should still confirm this covers the shapes it actually
    writes**, and add them to `FIXTURE_SHAPES` if not.
 
-2. **`docs/tasks/README.md:288` and `CLAUDE.md:33` say "R1–R19"; the spec has
+2. `[local]` ✅ **RULED and APPLIED** — the range is R1–R21 in `CLAUDE.md`, `README.md`, `agent-protocol.md` and `delivery-flow.md` (rounds 3 and Q1–Q3).
+
+    *Original finding:* **`docs/tasks/README.md:288` and `CLAUDE.md:33` say "R1–R19"; the spec has
    R20.** Reported by the CTO, confirmed, not fixed — outside this task.
 
-3. **Spec §3.2 lists `render/templates/` and `render/assets/` as part of the
+3. `[local]` ✅ **RULED** — confirmed at review: data directories are not packages, an empty one cannot be committed, and the `package-data` declaration does the real work. SF-11/SF-12 add files, not build configuration.
+
+    *Original finding:* **Spec §3.2 lists `render/templates/` and `render/assets/` as part of the
    tree, but they are data directories rather than packages.** Not created:
    an empty directory cannot be committed, and a `.gitkeep` would be a
    placeholder for something SF-11 and SF-12 own. Packaging for them **is**
    declared (`[tool.setuptools.package-data]`), so those tasks add files
    rather than build configuration.
 
-4. **`src/studyforge/skills/` is a Python package, and E11's skills may not be
+4. `[local]` ✅ **RULED with a condition** — the package stays; its docstring constrains what may enter it. ⛔ **If E11 concludes the skills are entirely documents, E11 deletes it** — an empty package that never fills is dead shipped surface.
+
+    *Original finding:* **`src/studyforge/skills/` is a Python package, and E11's skills may not be
    Python.** §3.2 puts `skills/` in the source tree; E11's tasks own "the
    reconnaissance skill", "the onboarding skill" and so on, which read like
    documents with procedures. The package is created with a contract saying
@@ -196,7 +204,9 @@ Defects seen outside my scope, not fixed:
    entirely documents, E11 deletes the package.** An empty package that never
    fills is dead shipped surface.
 
-5. **No repository-hygiene check for R7.** A cheap standard-library check for
+5. `[structural]` ✅ **SCHEDULED** — promoted to **`FND-06`**, specified, in M0 step 0.2.
+
+    *Original finding:* **No repository-hygiene check for R7.** A cheap standard-library check for
    an absolute home path in a tracked file would sit naturally beside the size
    check, and CLAUDE.md records that this rule has already been violated once
    in this repository's own documents. Deliberately not built — it is not in

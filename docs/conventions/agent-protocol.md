@@ -83,6 +83,46 @@ grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a w
 ⛔ **A wave that begins with an untriaged `[structural]` finding is a wave that
 has decided to pay for it twice.**
 
+## When a convention tightens, the tightening owns the migration
+
+⛔ **No work done under an older convention is at fault for failing a newer one,
+and the commit that tightens owns bringing the corpus into compliance.**
+
+⭐ **This is the C5 rule, applied to documents instead of code.** There it reads
+*no open branch is expected to fix a rule it never saw*; here it reads *no
+handoff filed before a marker existed is expected to carry it*. Same argument,
+same asymmetry of knowledge, same answer.
+
+⚠️ **One difference changes what "compliance" costs.** A style rule can be
+satisfied mechanically — run the formatter, commit. A *convention* usually
+cannot: deciding whether an existing finding is structural takes judgement, one
+at a time. So the obligation is to discharge it **before the next wave**, not
+necessarily inside the one commit. What the tightening commit must do is choose,
+out loud:
+
+1. **bring the corpus into compliance**, or
+2. **name the backlog and its deadline**, in the commit that tightens.
+
+⛔ **The forbidden third option is silence** — tighten, and let the gap be found
+by whoever runs the new check and reads an empty result as a clean bill.
+
+### ⛔ A new check reports its coverage, not just its hits
+
+⭐ **An empty result from a newly-introduced check is not evidence. It is an
+unanswered question**, and it has two indistinguishable causes: there is nothing
+to find, or nothing has been marked yet.
+
+So a check introduced over a corpus that predates it **says how much of that
+corpus it was able to judge** — "17 findings marked across 5 handoffs; 2 handoffs
+carry 13 unmarked findings" — never a bare count of hits.
+
+⚠️ **This project has already paid for this exact failure once, in a different
+guise.** CodeSignal's synthesis runner decided a clip was current by whether the
+file existed; on a re-capture **619 clips went on speaking the previous wording**
+and the run reported *"0 synthesised"* with every gate green (spec §8.2). ⭐ A
+green report meaning *"I did not look"* is indistinguishable from one meaning
+*"there was nothing to find"*, and only the check itself can tell them apart.
+
 ## Reporting
 
 Report outcomes faithfully. If tests fail, say so and include the output. If

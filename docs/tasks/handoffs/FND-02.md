@@ -136,7 +136,9 @@ as they came back — one `explain`, one `path`, one `query`, per the epic's
 
 Defects and gaps outside FND-02's scope. **Not fixed, not in the diff.**
 
-1. ⛔ **`graphify.md`'s reading of R14 is defective — as the CTO ruled, and
+1. `[structural]` ✅ **RULED and APPLIED** — R14 now reads *every repository **in this project's working set***, and says a repository enters that set when it is onboarded (CTO round 3). The spec was the authority and it has been edited.
+
+    *Original finding:* ⛔ **`graphify.md`'s reading of R14 is defective — as the CTO ruled, and
    this task carried it rather than fixing it.** R14 says *every* repository in
    this project carries a built graph; `ISO-8583-jPOS-tutorial` and
    `Claude-SPARQL-tutorial` have none and are not going to before v2. R14
@@ -145,13 +147,17 @@ Defects and gaps outside FND-02's scope. **Not fixed, not in the diff.**
    narrowest edit that stops the document asserting something false — ⚠️ **but
    R14's own text in the spec is unchanged and still says "every"**, and that
    is the authority. It needs the PO or the CTO, not me.
-2. **`SK-07` does not generate a graph, which is a hole in that skill under
+2. `[structural]` ✅ **SCHEDULED — already in the task, checked rather than assumed.** `SK-07` item 9 generates the graph, bridges the doc↔code layers and writes the R3-safe `graphify-out/.gitignore`. ⭐ It also carries this task's sharpest measurement — an unbridged graph has **0 doc↔code edges**, so *the budget saving R14 promises is a property of a graph somebody bridged, not of the tool*. Nothing further owed.
+
+    *Original finding:* **`SK-07` does not generate a graph, which is a hole in that skill under
    R19** (carried from the CTO's ruling, unexamined by me). Everything a
    working corpus needs is supposed to be produced by a skill; a corpus
    onboarded by `SK-07` today arrives with no index, and R14 then binds on a
    repository nothing built one for. The R3-safe recipe this task wrote down is
    what `SK-07` would need to emit.
-3. ⛔ **The Java corpus's every source file carries an owner-identifying
+3. `[structural]` ✅ **RULED — E07 unblocked** (CTO round 3, carried into `SF-08`). The gate's question is not *is this string identifying?* but *did this build put it there?* ⛔ And `SF-08` never grows a username pattern, because matching one requires **holding** the username — the exact datum R7 forbids the framework to hold.
+
+    *Original finding:* ⛔ **The Java corpus's every source file carries an owner-identifying
    segment in its package path, and E07 will feed those strings to `SF-08`.**
    The package directory is `com/github/<account>/…`, so the account name is in
    345 file paths, in every `import`, and in code blocks on every generated
@@ -164,18 +170,24 @@ Defects and gaps outside FND-02's scope. **Not fixed, not in the diff.**
    `graphify.md` by hand and said so in the document. **This needs a ruling
    before E07 starts**, because "personal data that is also the material" is
    not a case R7 currently distinguishes.
-4. **The graph carries 1,093 dangling-endpoint edges (~4% of extracted
+4. `[structural]` ◐ **ACCEPTED, with the cost named.** The dangling edges are graphify's, not ours, and the conventions document already carries the consequence an agent needs: **an absent connection is not proof of absence.** ⛔ Revisit only if a task is ever allowed to conclude something from a *missing* edge.
+
+    *Original finding:* **The graph carries 1,093 dangling-endpoint edges (~4% of extracted
    edges).** Semantic extraction emits edges naming node ids that the
    deterministic ID rule never produced — subagents inventing ids like
    `concept_lazy_evaluation` instead of the `{stem}_{entity}` form. Inert, but
    it means an absent connection is not proof of absence, which the conventions
    document now says. This repository's graph has the same defect at 41 edges.
-5. **An incremental update and a full build are not node-for-node identical.**
+5. `[structural]` ◐ **ACCEPTED.** A graph is an index, not a record — it is git-ignored and never an artifact, so R10 does not reach it. Recorded so nobody diffs two graphs and concludes the tree changed.
+
+    *Original finding:* **An incremental update and a full build are not node-for-node identical.**
    This repository's graph was 535 nodes after a full build and 556 after an
    add/remove probe plus a forced update, on the same tree. Both are usable
    indexes; neither is a record. Worth knowing before anyone diffs two graphs
    and concludes something changed.
-6. **`is_ignored()` is now duplicated** between `tests/test_repository.py`
+6. `[local]` ✅ **SCHEDULED** — `FND-06` carries the three-line consolidation into `tests/support.py`; it is the next task whose scope legitimately spans both call sites (CTO round 4).
+
+    *Original finding:* **`is_ignored()` is now duplicated** between `tests/test_repository.py`
    (FND-01's, which this task was told not to touch) and
    `tests/test_knowledge_index.py`. ⚠️ `tests/support.py`'s own docstring rules
    that a block repeated between test files is extracted and imported — so this
@@ -183,11 +195,15 @@ Defects and gaps outside FND-02's scope. **Not fixed, not in the diff.**
    alternative was editing a file outside my task. **The extraction belongs to
    whoever owns both files next**; it is three lines and it should move to
    `tests/support.py`.
-7. **33 files in this repository produce zero graph nodes**, all of them
+7. `[local]` ◐ **ACCEPTED.** The 33 are FND-04's `.json` fixtures; graphify classifies `.json` as code and finds no symbols. Cosmetic, and named here so the warning is not mistaken for a defect.
+
+    *Original finding:* **33 files in this repository produce zero graph nodes**, all of them
    FND-04's fixture `.json` documents: graphify classifies `.json` as code and
    its AST pass finds no symbols. Harmless — they are data, not code — but the
    warning prints on every build and will be mistaken for a defect.
-8. **`graphify-out/` is ~90 MB for the Java corpus.** Ignored and local, so it
+8. `[local]` ◐ **ACCEPTED.** Ignored and local, so it costs nothing in git; documented so a first build is not a surprise.
+
+    *Original finding:* **`graphify-out/` is ~90 MB for the Java corpus.** Ignored and local, so it
    costs nothing in git, but a person cloning and building should know it is
    not a small artifact.
 
