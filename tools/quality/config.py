@@ -79,20 +79,49 @@ MIRRORS = (
     ("tools", "tools/tests"),
 )
 
-#: Never read. `tests/fixtures/` is FND-04's, and a fixture is deliberately
-#: shaped wrong — an invalid corpus is its whole purpose — so holding it to the
-#: repository's style is a category error. The rest are build and tool output.
-EXCLUDED_DIRS = (
-    "tests/fixtures",
+#: Nothing a person wrote lives in these — they are build output, tool caches
+#: and version-control internals. ⛔ No check reads them, ever, including the
+#: personal-data sweep: `.git` holds every previous version of every file, so
+#: sweeping it would report a violation that was already corrected as if it
+#: were current.
+TOOL_OUTPUT_DIRS = (
     "__pycache__",
     ".git",
     ".venv",
     "venv",
     ".pytest_cache",
+    ".ruff_cache",
     "build",
     "dist",
     "graphify-out",
+    "node_modules",
 )
+
+#: Never read by the *style, size, mirror and contract* checks. `tests/fixtures/`
+#: is FND-04's, and a fixture is deliberately shaped wrong — an invalid corpus is
+#: its whole purpose — so holding it to the repository's style is a category
+#: error.
+#:
+#: ⚠️ The personal-data sweep does NOT use this list, and the difference is the
+#: point: a fixture may be badly formatted on purpose, but the one place this
+#: repository is allowed to hold a personal-data shape is a single named
+#: directory (`SANCTIONED_PERSONAL_DATA_DIRS`), not the whole fixture tree. A
+#: sweep that skipped `tests/` wholesale would have stopped checking exactly
+#: where such data lives.
+EXCLUDED_DIRS = ("tests/fixtures", *TOOL_OUTPUT_DIRS)
+
+#: ⛔ The complete list of directories permitted to contain personal-data
+#: **shapes**, and the rule each is the negative fixture for. Rubric §1e: the
+#: exception exists because a gate that refuses such data needs an input to
+#: refuse, and it is bounded by tests rather than by a reviewer's memory.
+#:
+#: Every value inside one of these is fabricated and unreachable — an RFC 2606
+#: reserved TLD, a documented placeholder home path — and each directory says
+#: so in a `VIOLATION.md` beside the data. Adding an entry here is how a sixth
+#: negative fixture becomes legal, and `tools/tests/quality/test_personal_data.py`
+#: fails if one appears without it.
+SANCTIONED_PERSONAL_DATA_DIRS = ("tests/fixtures/invalid/personal-data",)
+
 
 #: Test modules that are shared machinery rather than a mirror of a source
 #: module. They are still size- and style-checked; they are simply not
@@ -105,6 +134,23 @@ def is_excluded(relative_path: str) -> bool:
     parts = relative_path.split("/")
     return any(
         excluded in parts or relative_path.startswith(excluded + "/") for excluded in EXCLUDED_DIRS
+    )
+
+
+def is_sanctioned_personal_data(relative_path: str) -> bool:
+    """Report whether the path sits inside a registered negative-fixture directory."""
+    return any(
+        relative_path == directory or relative_path.startswith(directory + "/")
+        for directory in SANCTIONED_PERSONAL_DATA_DIRS
+    )
+
+
+def is_tool_output(relative_path: str) -> bool:
+    """Report whether the path is build output, a tool cache or `.git`."""
+    parts = relative_path.split("/")
+    return any(
+        directory in parts or relative_path.startswith(directory + "/")
+        for directory in TOOL_OUTPUT_DIRS
     )
 
 
@@ -125,6 +171,37 @@ def relative(path: Path, root: Path) -> str:
     user's home directory into a build log, which is personal data (R7).
     """
     return path.relative_to(root).as_posix()
+
+
+def text_files(root: Path) -> list[Path]:
+    """Every readable text file in the tree, sorted — not just the Python ones.
+
+    ⚠️ Wider than `python_files` on purpose. A home directory reaching disk
+    does not care what extension the file has: R7 has been violated in this
+    repository once already and it was in a **document**. So this walks the
+    whole tree from the root, skipping only tool output, and skipping any file
+    that will not decode as UTF-8 — a PNG has no strings to sweep and reading
+    one as text is meaningless rather than merely useless.
+
+    Sorted, for the same reason as `python_files`: two machines must produce
+    the same findings in the same order.
+    """
+    found: list[Path] = []
+    for path in root.rglob("*"):
+        if not path.is_file() or path.is_symlink():
+            continue
+        if is_tool_output(relative(path, root)):
+            continue
+        found.append(path)
+    return sorted(found)
+
+
+def read_text(path: Path) -> str | None:
+    """Return the file's text, or None when it is not text at all."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except UnicodeDecodeError, OSError:
+        return None
 
 
 def python_files(root: Path) -> list[Path]:
