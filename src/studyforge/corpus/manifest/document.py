@@ -53,6 +53,7 @@ from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
+from studyforge.version import check as check_version
 
 #: The manifest's filename. One spelling, because "what makes a directory a
 #: source" is a question every tool in this project asks.
@@ -188,17 +189,21 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
 
 
 def _check_version(document: dict, where: str) -> None:
-    """Refuse a `corpus_api` this build does not speak (R9)."""
-    api = document.get("corpus_api")
-    # ⚠️ `1.0 in {1}` and `True in {1}` are both true in Python, so membership
-    # alone would let a JSON `true` or `1.0` through the one gate R9 puts in
-    # front of everything else. The type is checked before the value.
-    if not isinstance(api, int) or isinstance(api, bool) or api not in KNOWN_CORPUS_API:
-        raise ManifestError(
-            f"{where} declares corpus_api {api!r}; this build speaks "
-            f"{sorted(KNOWN_CORPUS_API)}. A manifest is never migrated in place — "
-            f"a migration that runs at read time rewrites the record of what was ingested."
-        )
+    """Refuse a `corpus_api` this build does not speak (R9).
+
+    ⛔ The test itself is `studyforge.version`'s, not this module's. It was
+    written here first and was correct here; R9 versions **six** contracts,
+    and the second copy is the one people forget (SF-33). What stays here is
+    the set — `KNOWN_CORPUS_API` — because which versions a manifest may
+    declare is this contract's business and nobody else's.
+    """
+    check_version(
+        "corpus_api",
+        document.get("corpus_api"),
+        KNOWN_CORPUS_API,
+        where=where,
+        error=ManifestError,
+    )
 
 
 def _title_of(value: object, where: str) -> str:
