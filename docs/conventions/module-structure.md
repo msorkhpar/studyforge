@@ -216,3 +216,47 @@ so refusing to look at the environment would make **it** useless. ⛔ Neither ga
 is a model for the other, and *"align them"* is the wrong instinct — including
 where their patterns differ by a single character, which is deliberate and is
 pinned by tests on both sides.
+
+
+## ⭐ A test may assert the premise of the bug it prevents
+
+```python
+assert True in ONE                    # the porous test, stated so it cannot be argued with
+assert not is_supported(True, ONE)    # and the guard that closes it
+```
+
+⭐ **A reader who doubts the premise is answered by an execution rather than by a
+comment.** The first line is not a redundant assertion about Python; it is the
+defect, in the suite, where it cannot rot into folklore or be dismissed as
+over-caution by somebody simplifying the guard later.
+
+This is now a habit worth naming, because it has arrived three times
+independently:
+
+- a negative fixture asserted to **really be refused**, so it cannot be quietly
+  repaired into an input that passes;
+- an acceptance clause found **vacuous** and replaced by a *pair* — the document
+  is not refused, **and** a differently-serialised form of the same document
+  **is**;
+- the porous membership test asserted **before** the guard that fixes it.
+
+⚠️ **The shared property is that each test would still pass if the guard were
+deleted — and the paired assertion is what makes the pair meaningful.** ⛔ A test
+that only checks the fix is a test that stops meaning anything the moment
+somebody decides the fix looks unnecessary.
+
+## ⛔ A syntactic check aimed at the likely shape of a mistake is honest
+
+A tree scan that finds `doc["raw_api"]`, `doc.get(...)` and `doc.pop(...)` will
+**not** find a field name pulled through a variable or a loop. ⭐ Say so, and do
+not pretend otherwise — *a floor, not a proof* is the correct claim.
+
+⚠️ **Both ways of making it "stronger" are worse.** Tracking a value through
+assignments is a static-analysis project living inside a test; a grep for the
+field name fires on every docstring that correctly explains the rule, and ⛔ **a
+check that fires on correct code gets switched off** — this project has already
+paid for that one.
+
+⭐ **The target is the accidental second implementation, not an adversary.**
+Nobody routes a field name through a variable to evade a check they have not
+heard of; they write it the obvious way, which is the way that is caught.
