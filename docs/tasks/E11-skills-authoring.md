@@ -293,6 +293,23 @@ hierarchy encoded in filenames rather than directories (C1); an exercise with no
 grader, which is not "no exercise" (C5); media that outgrows a git remote
 (SF-32); a derived address that sends one link in eight nowhere (§6).
 
+**Seeded also with one entry that is a *limit* rather than a failure**, because
+the catalogue is where limits belong:
+
+> ⭐ **"Never silently drop" is a promise about structure the vocabulary knows.**
+> A construct outside it — display maths, a custom directive, an embed — ⛔ **is
+> not dropped and is not invented into a block type.** It degrades to prose:
+> **visibly, text intact.** ⚠️ The distinction matters when you are planning,
+> because a source full of such constructs will *read* correctly and *render*
+> plainly, and that is a scoping fact rather than a bug to file.
+
+⚠️ **This entry exists because `math` was proposed as a block type and refused.**
+⛔ Inventing a type against **zero sources** is R1's error arriving from the
+other direction — the framework learning about material nobody has met — and the
+correct output was a written-down limit, not a task. ⭐ **A refused proposal that
+leaves no trace gets re-proposed**, which is why the refusal is an entry rather
+than a decision somebody remembers.
+
 ⭐ **And it grows.** Every integration's findings are distilled back into it, so
 the *next* integration starts further along. That is the difference between a
 framework and a thing that has been used twice — and it is why the catalogue
