@@ -394,7 +394,9 @@ def check_overlays(root, manifest):
             seen.add(key)
         unit_dir = path.parent.name
         if f"unit-{overlay.get('unit'):02d}" != unit_dir:
-            yield "address-directory", f"{where} declares unit {overlay.get('unit')!r} and sits in {unit_dir}"
+            yield "address-directory", (f"{where} declares unit "
+                                       f"{overlay.get('unit')!r} and sits in "
+                                       f"{unit_dir}")
 
 
 def violations(root):
