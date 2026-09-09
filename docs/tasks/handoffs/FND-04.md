@@ -36,11 +36,22 @@ zeroes. ⛔ `content_sha256` was **not** recomputed for the fifteen — no block
 changed, and recomputing would have quietly repaired
 `invalid/digest-mismatch/`, which exists to be broken.
 
-⚠️ **Step 5 of the CTO's instruction — the module split — is NOT in this
-change.** It was re-routed to another agent so it does not sit on M1's critical
-path; nothing for it was started here. The formatter exclusion and its
-one-entry assertion are still in place and must be deleted in the same commit
-as that split.
+✅ **Step 5 of the CTO's instruction — the module split — is DONE**, on
+`fix/FND-04-split`, after the rest of FND-04 had merged. It was re-routed so it
+did not sit on M1's critical path. `tests/test_fixture_consistency.py` is now
+117 lines of assertions over `tests/fixture_checks/`, a package of eight
+modules along the five seams this handoff's finding 9 named — **shape ·
+digests · addresses · media · personal data**, plus the vocabulary they share
+and the reader they all use. ⛔ `[tool.ruff.format].exclude` and its one-entry
+assertion in `tests/docker/test_dev_image.py` were deleted **in the same
+commit**; the list is empty rather than shorter, and the assertion that
+replaces it says so (`test_the_formatter_excludes_nothing`).
+
+⭐ **The decisive argument was that the file went over 600 regardless.** The
+disclosure follow-up added to `BLOCK_FIELDS` and `COUNT_KEYS`, and SF-02 added
+a `content` block to all five invalid fixtures. Formatting was not what pushed
+it over the ceiling; it was what pushed it over first. A `Size exception:`
+would have had to claim splitting was *worse*, and the seams already existed.
 
 ---
 
@@ -48,10 +59,12 @@ as that split.
 
 `tests/fixtures/` — two valid synthetic corpora, five deliberately invalid
 ones, and a README that is the human-readable index of all seven.
-`tests/test_fixture_consistency.py` — 553 lines against R11's 600-line test
-ceiling, stdlib + `pytest`, imports no
-`studyforge` module (there is none yet, and a fixture check that needed the
-framework could not run until the framework did).
+`tests/test_fixture_consistency.py` — the assertions; `tests/fixture_checks/`
+— the checks, one module per seam (split by the step-5 follow-up above; the
+figure this paragraph used to quote, 553 lines in one module, is what the split
+resolved). Stdlib + `pytest`, imports no `studyforge` module (there is none
+yet, and a fixture check that needed the framework could not run until the
+framework did).
 
 ```
 tests/
@@ -60,6 +73,8 @@ tests/
   fixtures/depth2/     2 levels · 2 containers · 5 units · 2 practices
   fixtures/invalid/    bad-corpus-api · address-directory-mismatch
                        digest-mismatch · ordinal-gap · personal-data
+  fixture_checks/       vocabulary · corpus · shape · digests
+                        addresses · media · personal_data
   test_fixture_consistency.py
 ```
 
@@ -79,7 +94,7 @@ fences now fails against a fixture that names the defect rather than against
 real material — and it fails silently everywhere else, which is why this is
 worth a dedicated test rather than a comment.
 
-`violations(root)` in the test module is the reusable surface: it returns
+`violations(root)` in `tests/fixture_checks/` is the reusable surface: it returns
 `[(rule_id, message)]` for a corpus and is empty for a valid one. The invalid
 corpora are asserted to break **exactly one** rule each — that is what makes
 them usable as SF-25's acceptance inputs, because a fixture breaking two rules
@@ -89,9 +104,10 @@ cannot tell you which check you were exercising.
 
 - `22 passed`.
 - Block-type coverage, counted rather than believed: `depth1` 9 of 10 (no
-  `video`, which neither depth-1 shape has); `depth2` **10 of 10**. The module
-  prints the table when run directly:
-  `python3 tests/test_fixture_consistency.py`.
+  `video`, which neither depth-1 shape has); `depth2` **10 of 10**. ⚠️ Eleven
+  types now, not ten — `disclosure` joined them in the Q1 follow-up. The
+  package prints the table when run directly:
+  `python3 -m tests.fixture_checks`.
 - Fence awareness is **asserted, not documented**: one test requires each
   corpus to carry markup-shaped text inside a `code` block, and a second
   requires at least one tag to appear both fenced and raw *in the same
@@ -316,12 +332,16 @@ twice more because nothing obliged anyone to act on it.
    to say whether it sweeps `docs/` at all, and if so what it does with a
    document whose subject *is* the pattern. FND-04 left it alone (finding, not
    patch).
-9. `[structural]` ✅ **SCHEDULED** — the module split is routed to another agent and lands before M1 closes; it deletes the formatter exclusion in the same commit. The 400-line ceiling and the `graphify-out/` index are FND-01's and
+9. `[structural]` ✅ **DONE** — the split landed on `fix/FND-04-split` and deleted the formatter exclusion, and its one-entry assertion, in the same commit. ⭐ The seams this finding named are the eight modules that came out of it, unchanged: shape · digests · addresses · media · personal data, plus the vocabulary and the reader. The 400-line ceiling and the `graphify-out/` index are FND-01's and
    FND-02's**; neither exists on this branch, so nothing here was checked
-   against them. `test_fixture_consistency.py` is 553 lines against the
-   **600-line test ceiling**, which is inside it but no longer comfortably: a
+   against them. `test_fixture_consistency.py` was 553 lines against the
+   **600-line test ceiling**, which was inside it but no longer comfortably: a
    sixth invalid fixture would want the module split along the same seam the
    checks already have (shape · digests · addresses · media · personal data).
+   ⭐ **It did not take a sixth fixture.** Two later changes to the same
+   module — the disclosure follow-up and SF-02's `content` key — did it
+   instead, which is the general lesson: a module at 92% of its ceiling is
+   over it as soon as two neighbours are correct.
 10. `[structural]` ✅ **RULED — and it came true twice more before it was.** The CTO took both mitigations and refused the do-nothing option (*a cost paid fifteen times is not a known cost, it is a policy of paying it*), then found the deeper cause: the rubric diffed and tested each branch's own changes, answering *is this change good?* where a merge gate asks *is the result good?* — and those come apart precisely when two parallel tasks are each correct alone. A trial-merge step is now in the review procedure. ⛔ **The quality floor cannot be enforced on a branch authored in parallel
     with the task that introduces it — and this is structural to M0's plan,
     not incidental.** Finding 9 predicted the shape; the merge gate then

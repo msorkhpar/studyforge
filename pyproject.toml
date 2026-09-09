@@ -125,23 +125,12 @@ convention = "pep257"
 [tool.ruff.format]
 docstring-code-format = true
 
-# ⛔ One file, one reason, and the reason is a real conflict between two of
-# this project's own rules — not a preference.
-#
-# `tests/test_fixture_consistency.py` is 554 lines. The formatter honours the
-# magic trailing comma, so it explodes that module's hand-packed key tuples
-# one entry per line and the file becomes **606 lines, over R11's 600-line
-# test ceiling**. Formatting it would mean either splitting somebody else's
-# merged test module or authoring a `Size exception:` for work this task did
-# not write, and neither is FND-03's call to make.
-#
-# ⚠️ Excluded from the FORMATTER only. `ruff check` still lints it, the quality
-# floor still measures it, and its own tests still run. Recorded as a finding
-# in `docs/tasks/handoffs/FND-03.md` and routed to FND-04 and the PO: format it
-# and split it, format it and justify it, or keep it hand-packed and keep this
-# line. Any of the three is a decision; this is the placeholder that stops it
-# being taken by accident.
-#
-# `tests/docker/test_dev_image.py` asserts this list has exactly one entry, so
-# it cannot quietly become the place difficult files go.
-exclude = ["tests/test_fixture_consistency.py"]
+# ⛔ There is no `exclude` here, and there is not meant to be one. FND-03 added
+# a one-file exclusion because formatting `tests/test_fixture_consistency.py`
+# took it over R11's 600-line test ceiling, and recorded it as an interim with
+# three ways out. FND-04's follow-up took the one the CTO ruled for: the module
+# is split along the five seams its checks already had, into
+# `tests/fixture_checks/`, and every file is formatted and well under the
+# ceiling. ⚠️ The assertion that kept the list to one entry is gone with it —
+# a guard that outlives what it guarded is how a list becomes the place
+# difficult files go.

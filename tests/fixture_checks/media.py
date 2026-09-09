@@ -1,0 +1,41 @@
+"""Media: every declared local file is on disk, at the size and digest recorded.
+
+**What it does.** Walks a document's `assets` and `attachments` and checks each
+entry against the file it names.
+
+**How you use it.** `check_media(container_dir, document, where)` yields
+`(rule_id, message)`.
+
+**Depends on.** `digests` for the byte digest. Nothing else.
+
+⭐ **`media_skipped` is a third state, not a missing one.** The marker exists
+precisely so a capture that named its media and never fetched it can be told
+from one whose unit simply had none — the same distinction C5 taught this
+project about exercises, and the reason this check returns rather than
+reporting.
+"""
+
+from __future__ import annotations
+
+from tests.fixture_checks.digests import sha256_of_bytes
+
+
+def check_media(container_dir, document, where):
+    """Every declared local file is on disk with the digest recorded for it."""
+    if document.get("media_skipped"):
+        return
+    unit_root = container_dir / "units" / f"unit-{document['unit']:02d}"
+    for entry in list(document["assets"]) + list(document["attachments"]):
+        local = entry.get("local") or ""
+        if not local:
+            yield "media-present", f"{where} declares an entry naming no file"
+            continue
+        target = unit_root / local
+        if not target.is_file():
+            yield "media-present", f"{where} declares {local} and it is not on disk"
+            continue
+        data = target.read_bytes()
+        if entry.get("sha256") != sha256_of_bytes(data):
+            yield "digest", f"{where} recorded a sha256 that {local} does not match"
+        if entry.get("bytes") != len(data):
+            yield "digest", f"{where} recorded a byte count {local} does not match"

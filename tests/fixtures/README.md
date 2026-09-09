@@ -8,8 +8,12 @@ incompatible mental models.
 They are synthetic on purpose. A fixture that depends on 166 real files is a
 fixture nobody can debug.
 
-`tests/test_fixture_consistency.py` asserts every invariant below and is the
-authority on what these files claim. Read it before changing one of them.
+`tests/fixture_checks/` states every invariant below — one module per seam:
+`vocabulary`, `corpus`, `shape`, `digests`, `addresses`, `media`,
+`personal_data` — and `tests/test_fixture_consistency.py` asserts them. Those
+modules are the authority on what these files claim. Read them before changing
+one of these files, and run `python3 -m tests.fixture_checks` for the
+block-type coverage table.
 
 ## The two valid corpora
 
