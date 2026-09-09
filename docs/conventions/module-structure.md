@@ -189,3 +189,30 @@ untagged fence alone.
 ⚠️ Two tasks have now surrendered a hand-aligned example to the formatter. ⛔ If
 the block is *output*, a transcript, or an illustration rather than source,
 tag it `text`. If it really is source, let the formatter own its spacing.
+
+
+## ⛔ A gate that is part of a contract is a pure function of its input
+
+Two gates in this repository enforce **R7**, and they answer the runtime-identity
+question **oppositely**. Both are right, and the rule that separates them
+constrains every gate written after them.
+
+| | `tools/quality/personal_data/` | `archive/scrub.py` |
+|---|---|---|
+| Subject | **this repository's** tracked content | **material somebody else wrote** |
+| May derive machine identity at run time? | ⭐ **yes — that is its subject** | ⛔ **never** |
+| May sweep prose about its own patterns? | ⭐ yes, because the placeholder convention is **ours to control** | ⛔ no — telling a source to phrase its lessons around our regexes is not available |
+
+⭐ **The rule: a gate whose verdict is part of a published contract must be a pure
+function of its input.** `assert_clean` is half of what `studyforge validate`
+promises an adapter (R2, §6) — a green/red signal *that depends on nobody's
+judgement*. ⛔ **A verdict that differs by machine is not a contract**, so the
+archive gate imports `re` and nothing that could reach the environment, and an
+`ast` scan holds it to that.
+
+⚠️ **The mirror image is equally true**, which is why this is a rule and not a
+preference: the repository gate's whole subject *is* this machine's leak surface,
+so refusing to look at the environment would make **it** useless. ⛔ Neither gate
+is a model for the other, and *"align them"* is the wrong instinct — including
+where their patterns differ by a single character, which is deliberate and is
+pinned by tests on both sides.

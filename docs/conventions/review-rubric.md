@@ -122,68 +122,34 @@ people.
 REJECT until the author has rewritten history, because a personal identifier in
 a commit survives a follow-up commit that removes it.
 
-### 1a. Patterns, over the added lines only
+### 1a. ⭐ Run the shipped check — it is the authority
 
 ```bash
-git diff -U0 "$BASE"...HEAD \
-  | grep -E '^\+' | grep -vE '^\+\+\+' | sed 's/^+//' \
-  | grep -EIn "(/home/|/Users/|/root/)[A-Za-z0-9._-]+|[A-Za-z0-9._%+-]{2,}@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\b[A-Za-z0-9-]+\.local($|[^.[:alnum:]_])" \
-  | grep -vEi '@(example[.](com|org|net|invalid)|localhost|anthropic[.]com)'
+cd "$TRIAL" && python3 -m tools.quality          # includes FND-06's R7 sweep
 ```
 
-⚠️ **The `sed 's/^+//'` is load-bearing, and leaving it out was a real defect in
-the first version of this rubric.** The diff's own `+` marker satisfies the
-email pattern's local part, so `@pytest.mark.parametrize` — and every other
-decorator on an added line — matched as an address. A check that cries wolf on
-every Python test file is a check reviewers learn to wave through, which is the
-one failure mode R7 cannot afford. Strip the marker before matching.
+**Pass = exit 0.** ⛔ **Do not re-derive the patterns here.** `tools/quality/`
+owns them, it runs inside the trial merge with the rest of the floor, and it is
+the same implementation the build fails on.
 
-**Pass = no output.** The allow-list is deliberately tiny: the documented
-placeholders (`contact@example.com`, `Example/0.1 (+https://example.invalid)`,
-`Jane Doe`, `/path/to/project`) and the attribution trailer's
-`noreply@anthropic.com`. Anything else that matches is a fail until the author
-proves it is a false positive **in the review**, quoting the line. Dismissing a
-hit is an explicit, recorded act — never a silent one.
+⚠️ **This clause replaced a second copy of the patterns, and the second copy was
+worse.** Measured on the merged tip: the shipped check reports **0**; the
+rubric's own patterns reported **4**, and all four were false positives the
+shipped check correctly suppresses — a lookbehind explained in a comment, two
+reserved-TLD test fixtures, and the sanctioned personal-data fixture. ⭐ It also
+does at run time what §1b used to ask a reviewer to do by hand: derive this
+machine's identity and compare, **without writing any of it down**.
 
-⚠️ **Three refinements, each measured rather than argued** (`FND-06`, which ran
-the raw patterns over the whole tree and got **34 hits, every one a false
-positive** — ten of them inside its own diff):
+⛔ **Two implementations of one rule is the duplication this project has refused
+five times**, and this one had already caused a false finding: a report that the
+sweep *"is not clean today"* had measured the rubric's older patterns, not the
+check — and proposed an allow-list for a hit that no longer fires. §3a already
+defers to `FND-01`'s size checker for the same reason; this is that, for R7.
 
-- ⭐ **The local part needs two characters.** A one-character one is almost
-  always an escaping artefact: a serialised newline before a decorator makes
-  `\n@router.get`, and `n@router.get` is address-shaped. ⚠️ **Stated cost:** a
-  genuine one-character address like `a@b.example` is not caught. Accepted,
-  because check **1b** matches the user's *actual* address exactly regardless of
-  length, and a third party's one-character address is not R7's subject.
-- ⭐ **`.local` needs a trailing guard.** Without one, a settings *filename*
-  ending in that suffix — `settings.local.json` — matches the hostname rule. A
-  third false-positive class nobody had noticed.
-- ⭐ **`$HOME` and `~/` are dropped from this sweep**, because the risk is the
-  **expansion**, not the variable name, and the expansion is already caught by
-  the `/home/` rule. Keeping them meant dismissing the rubric's own commands on
-  every run. ⚠️ A literal `$HOME` inside `src/` or a generated artifact is still
-  a defect — it is just not this check's business.
+⭐ **What the reviewer still does by hand is the part no checker covers:** the
+commit messages (§1c), the sanctioned-fixture judgement (§1e), and the question
+in §1d.
 
-⭐ **A check that cries wolf is a check reviewers learn to wave through**, which
-is the one failure R7 cannot afford. That is why these are corrections and not
-loosening: each removes a class that is *provably* not a leak, and none removes a
-class that could be one.
-
-### 1b. This machine's own identifiers, without writing them down
-
-⭐ The values never enter a file — they are derived at review time and matched
-against the diff:
-
-```bash
-git diff -U0 "$BASE"...HEAD | grep -E '^\+' | grep -vE '^\+\+\+' > /tmp/rev.$$
-for v in "$(id -un)" "$(hostname)" "$(hostname -s)" "$(git config user.name)" \
-         "$(git config user.email)" "$HOME"; do
-  [ -n "$v" ] && grep -Fn -- "$v" /tmp/rev.$$ && echo "^^ R7 HIT for a session identifier"
-done
-rm -f /tmp/rev.$$
-```
-
-**Pass = no `R7 HIT` line.**
 
 ### 1c. The commit messages, which the diff does not cover
 
