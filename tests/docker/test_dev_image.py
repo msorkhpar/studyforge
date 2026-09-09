@@ -214,18 +214,17 @@ def test_no_path_from_anybody_s_machine_is_written_down():
             assert shape not in text, f"{name} names a home directory: {shape}"
 
 
-# --- the formatter exclusion, so it cannot quietly grow ---------------------
+# --- the formatter exclusion, which no longer exists ------------------------
 
 
-def test_the_formatter_exclusion_is_exactly_one_named_file():
-    # ⚠️ `tests/test_fixture_consistency.py` is excluded from the FORMATTER
-    # only, because formatting it takes it over R11's 600-line test ceiling —
-    # a real conflict between two of this project's rules, recorded in
-    # `docs/tasks/handoffs/FND-03.md` and routed rather than resolved here.
-    # ⛔ This assertion is what stops that exclusion becoming the place
-    # difficult files go.
-    excluded = pyproject()["tool"]["ruff"]["format"]["exclude"]
-    assert excluded == ["tests/test_fixture_consistency.py"], excluded
+def test_the_formatter_excludes_nothing():
+    # ⛔ Stronger than the assertion it replaces, and that is the point of
+    # replacing it. FND-03's one-file exclusion was an interim: formatting
+    # `tests/test_fixture_consistency.py` took it over R11's 600-line test
+    # ceiling. FND-04's follow-up split the module along its five seams, so the
+    # conflict is gone and the list is **empty rather than short**. An empty
+    # list cannot become the place difficult files go.
+    assert "exclude" not in pyproject()["tool"]["ruff"]["format"]
 
 
 # --- integration: it builds, and the suite passes inside it ----------------
