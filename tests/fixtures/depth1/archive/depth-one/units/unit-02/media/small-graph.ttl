@@ -1,0 +1,4 @@
+@prefix ex: <http://example.invalid/> .
+
+ex:ada   ex:wrote  ex:notes .
+ex:notes ex:about  ex:engines .

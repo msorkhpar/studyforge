@@ -1,0 +1,72 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "basics",
+    "01-getting-started"
+  ],
+  "variant": "java",
+  "unit": 1,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Your first class",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Your first class"
+    },
+    {
+      "type": "para",
+      "text": "A class is a name plus the state and behaviour filed under it. Start with the smallest one that compiles."
+    },
+    {
+      "type": "code",
+      "lang": "java",
+      "text": "public final class Greeter {\n    public String greet(String who) {\n        return \"Hello, \" + who;\n    }\n}\n"
+    },
+    {
+      "type": "list",
+      "ordered": true,
+      "items": [
+        "Declare the class.",
+        "Give it one method.",
+        "Write the test before the body."
+      ]
+    },
+    {
+      "type": "quote",
+      "blocks": [
+        {
+          "type": "para",
+          "text": "A method you cannot name is a method you do not yet understand."
+        },
+        {
+          "type": "list",
+          "ordered": false,
+          "items": [
+            "Name it.",
+            "Then write it."
+          ]
+        }
+      ]
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 1,
+    "tables": 0,
+    "lists": 1,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 1,
+    "html": 0
+  },
+  "content_sha256": "a13f67e8c17e9739851209f9ae09078a6702c1a9da76808d5f7dee348141811f"
+}

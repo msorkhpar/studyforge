@@ -1,0 +1,26 @@
+{
+  "container_api": 1,
+  "address": [
+    "solo"
+  ],
+  "titles": [
+    "Invalid Demo"
+  ],
+  "variant": "prose",
+  "ingested": "2026-01-05",
+  "origin": "solo/README.md",
+  "units": [
+    {
+      "n": 1,
+      "title": "Unit 1",
+      "practices": 0,
+      "origin": "solo/01.md"
+    },
+    {
+      "n": 3,
+      "title": "Unit 3",
+      "practices": 0,
+      "origin": "solo/03.md"
+    }
+  ]
+}

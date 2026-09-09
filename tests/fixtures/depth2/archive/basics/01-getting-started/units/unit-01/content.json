@@ -1,0 +1,103 @@
+{
+  "address": [
+    "basics",
+    "01-getting-started"
+  ],
+  "unit": 1,
+  "title": "Your first class",
+  "sections": [
+    {
+      "kind": "shared",
+      "heading": "Before you start",
+      "blocks": [
+        {
+          "type": "para",
+          "text": "Read the module README first. This section is the author's, not the archive's, and the builder uses this array verbatim (SF-10b)."
+        }
+      ]
+    },
+    {
+      "kind": "lang",
+      "lang": "java",
+      "heading": "Your first class",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Your first class"
+        },
+        {
+          "type": "para",
+          "text": "A class is a name plus the state and behaviour filed under it. Start with the smallest one that compiles."
+        },
+        {
+          "type": "code",
+          "lang": "java",
+          "text": "public final class Greeter {\n    public String greet(String who) {\n        return \"Hello, \" + who;\n    }\n}\n"
+        },
+        {
+          "type": "list",
+          "ordered": true,
+          "items": [
+            "Declare the class.",
+            "Give it one method.",
+            "Write the test before the body."
+          ]
+        },
+        {
+          "type": "quote",
+          "blocks": [
+            {
+              "type": "para",
+              "text": "A method you cannot name is a method you do not yet understand."
+            },
+            {
+              "type": "list",
+              "ordered": false,
+              "items": [
+                "Name it.",
+                "Then write it."
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "practice",
+      "lang": "java",
+      "key": "practice-java",
+      "heading": "Practice: Greeter",
+      "blocks": [
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Problem statement"
+        },
+        {
+          "type": "para",
+          "text": "Make `Greeter.greet` return `Hello, <who>` for any non-empty name."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Lesson: Your first class"
+        },
+        {
+          "type": "para",
+          "text": "The test class shipped with the material is the grader. It is authoritative because nobody here wrote it (R5)."
+        },
+        {
+          "type": "heading",
+          "level": 2,
+          "text": "Starting code"
+        },
+        {
+          "type": "code",
+          "lang": "java",
+          "text": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
+        }
+      ]
+    }
+  ]
+}

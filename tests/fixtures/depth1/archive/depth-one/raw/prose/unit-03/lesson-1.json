@@ -1,0 +1,51 @@
+{
+  "raw_api": 1,
+  "source": "depth1-demo",
+  "address": [
+    "depth-one"
+  ],
+  "variant": "prose",
+  "unit": 3,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Asking the first question",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Asking the first question"
+    },
+    {
+      "type": "para",
+      "text": "A query names the shape you want back and leaves the rest to the store. Nothing here runs; this corpus has no exercises."
+    },
+    {
+      "type": "rule"
+    },
+    {
+      "type": "html",
+      "text": "<details>\n<summary>Why there is no exercise here</summary>\n<p>Zero exercises is a first-class outcome, not a gap.</p>\n</details>"
+    },
+    {
+      "type": "para",
+      "text": "The next corpus in this fixture set does have exercises."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 2,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 1,
+    "quotes": 0,
+    "html": 1
+  },
+  "content_sha256": "b4dd66ad17bf02154e3aa0a95a02bf44558394a49d1bdb45336c315cff2f0de2"
+}

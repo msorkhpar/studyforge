@@ -1,0 +1,58 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "advanced",
+    "02-going-further"
+  ],
+  "variant": "java",
+  "unit": 2,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Where to go next",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Where to go next"
+    },
+    {
+      "type": "para",
+      "text": "This unit closes the corpus. It has no exercise, which the container map declares as zero."
+    },
+    {
+      "type": "list",
+      "ordered": false,
+      "items": [
+        "Read the archive.",
+        "Then read the container map."
+      ]
+    },
+    {
+      "type": "code",
+      "lang": "xml",
+      "text": "<project>\n  <modules>\n    <module>practice</module>\n  </modules>\n</project>\n"
+    },
+    {
+      "type": "para",
+      "text": "The `<module>` line above is the one existing-file edit this corpus's manifest declares (R3). Here it is content."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 1,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "f36c37335852bc08700fd283379ddb69e69a7e81ea0f453ddc33b4d9eb8b6333"
+}

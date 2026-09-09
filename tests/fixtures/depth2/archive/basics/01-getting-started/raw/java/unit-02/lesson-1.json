@@ -1,0 +1,69 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "basics",
+    "01-getting-started"
+  ],
+  "variant": "java",
+  "unit": 2,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Fields and constructors",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Fields and constructors"
+    },
+    {
+      "type": "para",
+      "text": "State arrives through a constructor and is read through a method. The table below is the whole vocabulary this unit uses."
+    },
+    {
+      "type": "table",
+      "headers": [
+        "Word",
+        "Means"
+      ],
+      "rows": [
+        [
+          "field",
+          "state filed under an instance"
+        ],
+        [
+          "constructor",
+          "the one way state gets in"
+        ],
+        [
+          "accessor",
+          "the one way state gets read"
+        ]
+      ]
+    },
+    {
+      "type": "rule"
+    },
+    {
+      "type": "para",
+      "text": "Nothing in this unit has an exercise, and the container map says so."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 2,
+    "code": 0,
+    "tables": 1,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 1,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "21701a285797d6ea1c01b58af667160930f8cb5708f377987859e2656a41ed38"
+}

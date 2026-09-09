@@ -1,0 +1,63 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "basics",
+    "01-getting-started"
+  ],
+  "variant": "java",
+  "unit": 3,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Watching it run",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Watching it run"
+    },
+    {
+      "type": "para",
+      "text": "This unit names a video and a diagram it never fetched, so it carries the skipped-media marker rather than an empty manifest nobody can interpret."
+    },
+    {
+      "type": "image",
+      "src": "media/lifecycle.png",
+      "alt": "The object lifecycle, drawn",
+      "width": null
+    },
+    {
+      "type": "video",
+      "src": "media/watching-it-run.mp4",
+      "title": "Watching it run"
+    },
+    {
+      "type": "html",
+      "text": "<aside class=\"note\">Media is declared, not shipped.</aside>"
+    }
+  ],
+  "video": {
+    "src": "media/watching-it-run.mp4",
+    "poster": "media/watching-it-run.png",
+    "mime": "video/mp4",
+    "remote": "https://media.example.invalid/watching-it-run.mp4",
+    "poster_remote": "https://media.example.invalid/watching-it-run.png"
+  },
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 1,
+    "videos": 1,
+    "rules": 0,
+    "quotes": 0,
+    "html": 1
+  },
+  "content_sha256": "a549e4538744232eca8eaecf3ca38ef9a4601f45e32c697dea7557dd8d66b954",
+  "media_skipped": true
+}

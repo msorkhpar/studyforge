@@ -1,0 +1,46 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "advanced",
+    "02-going-further"
+  ],
+  "variant": "java",
+  "unit": 1,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Composition over inheritance",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Composition over inheritance"
+    },
+    {
+      "type": "para",
+      "text": "Two classes that share behaviour do not have to share a hierarchy. Hold the other one instead."
+    },
+    {
+      "type": "code",
+      "lang": "java",
+      "text": "public final class Loud {\n    private final Greeter inner;\n    Loud(Greeter inner) { this.inner = inner; }\n}\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0
+  },
+  "content_sha256": "25eeb468db8179556b57cfb7a7948ca672e9f9c85516732f433bfc4aced8e46a"
+}

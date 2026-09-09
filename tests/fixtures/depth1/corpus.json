@@ -1,0 +1,14 @@
+{
+  "corpus_api": 1,
+  "source": "depth1-demo",
+  "title": "Depth One Demo",
+  "levels": [
+    "course"
+  ],
+  "variants": [
+    "prose"
+  ],
+  "exercises": false,
+  "placement": "tree",
+  "permitted_edits": []
+}

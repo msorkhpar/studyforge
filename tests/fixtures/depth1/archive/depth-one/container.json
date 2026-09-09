@@ -1,0 +1,35 @@
+{
+  "container_api": 1,
+  "address": [
+    "depth-one"
+  ],
+  "titles": [
+    "Depth One Demo"
+  ],
+  "variant": "prose",
+  "ingested": "2026-01-05",
+  "origin": "depth-one/README.md",
+  "note": "One container level, zero exercises. Two of the four designed source shapes are depth 1, so this is the common case.",
+  "units": [
+    {
+      "n": 1,
+      "title": "What a triple is",
+      "practices": 0,
+      "origin": "depth-one/01-what-a-triple-is.md"
+    },
+    {
+      "n": 2,
+      "title": "Reading a small graph",
+      "practices": 0,
+      "origin": "depth-one/02-reading-a-small-graph.md",
+      "note": "Carries this corpus's only asset and only attachment (C4)."
+    },
+    {
+      "n": 3,
+      "title": "Asking the first question",
+      "practices": 0,
+      "origin": "depth-one/03-asking-the-first-question.md",
+      "note": "Two lesson documents. The second is the fence-awareness fixture: markup-shaped text inside fences, beside a real raw-HTML block carrying the same tags."
+    }
+  ]
+}
