@@ -63,11 +63,12 @@ COUNT_KEYS = {
     "headings": "heading", "paras": "para", "code": "code",
     "tables": "table", "lists": "list", "images": "image",
     "videos": "video", "rules": "rule", "quotes": "quote", "html": "html",
+    "disclosures": "disclosure",
 }
 
-#: `block type -> its keys, in order`. The six CodeSignal proved plus SF-07's
-#: three additions (`rule`, `quote`, `html`) and `video`, which the Markdown
-#: reader never produces but the archive vocabulary carries.
+#: `block type -> its keys, in order`. The six CodeSignal proved, SF-07's
+#: additions (`rule`, `quote`, `html`), `video` — which the Markdown reader
+#: never produces but the archive vocabulary carries — and `disclosure`.
 BLOCK_FIELDS = {
     "heading": ("type", "level", "text"),
     "para": ("type", "text"),
@@ -79,17 +80,29 @@ BLOCK_FIELDS = {
     "rule": ("type",),
     "quote": ("type", "blocks"),
     "html": ("type", "text"),
+    "disclosure": ("type", "summary", "open", "blocks"),
 }
+
+#: Block types that hold other blocks. ⭐ Two now, one shape: a quote and a
+#: disclosure both wrap arbitrary content, so every walker in this module
+#: recurses on this tuple rather than naming `quote` and then forgetting the
+#: next one. `disclosure` is *present but withheld* — the third state between
+#: shown and absent, which is C5's lesson landing in the block vocabulary.
+#: The archive records that it is disclosed on demand and what its label is;
+#: that the markup is `<details><summary>` is SF-12's decision, not this
+#: document's (R13).
+CONTAINER_BLOCKS = ("quote", "disclosure")
 
 #: Every block type each corpus is required to exercise. `depth1` carries no
 #: video; every other type appears in both.
 #:
-#: ⚠️ `rule`, `quote` and `html` are required at **M1**, not deferred. The
-#: spec's C3 says 18 ISO files contain raw HTML; a recount with code fences
-#: stripped found **0 of 38** — the matches were XML inside fenced blocks.
-#: The real drivers are elsewhere and are no weaker: raw HTML is a SPARQL
-#: requirement (`<details>`/`<summary>`), thematic breaks and blockquotes are
-#: the Java corpus's. SF-07 needs all three either way.
+#: ⚠️ `rule`, `quote`, `html` and `disclosure` are required at **M1**, not
+#: deferred. The spec's C3 says 18 ISO files contain raw HTML; a recount with
+#: code fences stripped found **0 of 38** — the matches were XML inside fenced
+#: blocks. The real drivers are elsewhere and are no weaker: the disclosure is
+#: a SPARQL requirement (6 of 19 lessons, every one of them hiding an exercise
+#: answer), thematic breaks and blockquotes are the Java corpus's. SF-07 needs
+#: all of them either way.
 REQUIRED_TYPES = {
     "depth1": tuple(t for t in BLOCK_FIELDS if t != "video"),
     "depth2": tuple(BLOCK_FIELDS),
@@ -241,10 +254,10 @@ def check_blocks(document, where):
         if tuple(block) != fields:
             yield "vocabulary", (f"{where} block {index} ({kind}) has keys "
                                  f"{list(block)}, expected {list(fields)}")
-        if kind == "quote":
+        if kind in CONTAINER_BLOCKS:
             yield from check_blocks(
                 {"blocks": block.get("blocks") or []},
-                f"{where} block {index} (quote)")
+                f"{where} block {index} ({kind})")
 
 
 def check_digests(document, where):
@@ -426,7 +439,7 @@ def block_types(root):
         for block in blocks:
             kind = block.get("type")
             seen[kind] = seen.get(kind, 0) + 1
-            if kind == "quote":
+            if kind in CONTAINER_BLOCKS:
                 walk(block.get("blocks") or [])
 
     for container_dir, container in containers_in(root):
@@ -466,7 +479,7 @@ def blocks_of_type(root, kind):
         for block in blocks:
             if block.get("type") == kind:
                 found.append(block)
-            if block.get("type") == "quote":
+            if block.get("type") in CONTAINER_BLOCKS:
                 walk(block.get("blocks") or [])
 
     for container_dir, container in containers_in(root):

@@ -1,6 +1,48 @@
 # FND-04 — handoff
 
-**Status:** done
+**Status:** done · **follow-up landed 2026-09-09** — Q1's `disclosure` block
+(`CTO-2026-09-09-rulings-q1-q3.md`). Read *The Q1 follow-up* below before the
+sections it changed; the rest of this handoff is the original task.
+
+---
+
+## The Q1 follow-up — `disclosure` is a container block
+
+⭐ **The contract moved, and the fixtures moved with it.** FND-04 originally
+encoded a `<details>` as one opaque `html` block. The CTO ruled that reading
+out: a disclosure is a **container block**, `disclosure`, holding blocks
+exactly as `quote` does.
+
+```json
+{ "type": "disclosure", "summary": "Show the answer", "open": false,
+  "blocks": [ {"type": "para", "text": "…"},
+              {"type": "code", "lang": "sparql", "text": "…"} ] }
+```
+
+Both earlier readings fail, and they fail **oppositely** — flattening keeps the
+text and destroys the hiding (all six SPARQL uses hide an exercise answer);
+one opaque `html` block keeps the hiding and makes the body invisible to
+SF-25's block-count gate. ⭐ *Present but withheld* is a third state, which is
+**C5's lesson landing in the block vocabulary**. The archive records the
+semantics and the label; that the markup is `<details><summary>` is SF-12's
+decision (**R13**), and narration speaks the `summary` and stops.
+
+**What changed:** `disclosure` in `BLOCK_FIELDS` (`type`, `summary`, `open`,
+`blocks`) and `COUNT_KEYS` (`disclosures`); a new `CONTAINER_BLOCKS` tuple that
+every walker recurses on, so the *next* container is not forgotten the way this
+one was; three fixture documents; and `counts` rewritten on all 15 archive
+documents, because a count key that exists must exist everywhere including the
+zeroes. ⛔ `content_sha256` was **not** recomputed for the fifteen — no block
+changed, and recomputing would have quietly repaired
+`invalid/digest-mismatch/`, which exists to be broken.
+
+⚠️ **Step 5 of the CTO's instruction — the module split — is NOT in this
+change.** It was re-routed to another agent so it does not sit on M1's critical
+path; nothing for it was started here. The formatter exclusion and its
+one-entry assertion are still in place and must be deleted in the same commit
+as that split.
+
+---
 
 ## What landed
 
@@ -90,7 +132,9 @@ each is cheap to reverse — the fixtures are generated-shaped data, not code.
    with `remote: null`, so there is one entry vocabulary rather than two.
 5. **`counts` grew with the vocabulary** — ten keys now, one per block type,
    always all of them including the zeroes.
-6. **`quote` holds blocks, not text:** `{"type":"quote","blocks":[...]}`.
+6. **The container blocks hold blocks, not text** —
+   `{"type":"quote","blocks":[…]}`, and since the Q1 follow-up
+   `{"type":"disclosure","summary":…,"open":…,"blocks":[…]}`.
    CodeSignal's `_quote` parses a blockquote's content back through `parse`
    because a quote can hold a list, a fence or a table; a `text`-only quote
    would lose exactly what SF-07's *never silently drop* rule exists to keep.
@@ -134,6 +178,24 @@ each is cheap to reverse — the fixtures are generated-shaped data, not code.
     media-presence and media-digest paths are genuinely exercised.
     `depth2`'s video is declared and **not** fetched, carrying `media_skipped:
     true` with an empty manifest — which is what that marker is for.
+
+14. **`depth2` gained a disclosure too, which the instruction did not ask
+    for.** Step 4 said to add `disclosure` to `depth1`'s `REQUIRED_TYPES` —
+    but both corpora's required sets are *derived* from `BLOCK_FIELDS`
+    (`depth1` filters out `video`; `depth2` takes all of it), so adding the
+    type required one in **both**. The alternative was excluding `disclosure`
+    from `depth2`'s set, which is weakening a test to fit a change. It went
+    into `depth2`'s practice as a withheld **hint inside a Problem statement**
+    — the ruling's own use case, and it exercises a container block inside the
+    practice layout that `blocks.py` parses. The overlay quotes those blocks
+    verbatim, so it was updated in step.
+15. ⛔ **A second `<details>` was converted, beyond the four literal steps.**
+    `depth1` unit 3 `lesson-1.json` also stored a disclosure as a raw `html`
+    block. Leaving it would have shipped a corpus where two **adjacent
+    documents encode the same construct two different ways** — the exact
+    contradiction R21 exists to remove, in the one fixture set twelve epics
+    build against. ⚠️ It is flagged here rather than buried because it is
+    outside the instruction: overrule it and the change is a two-line revert.
 
 ## Surprises
 
@@ -187,7 +249,13 @@ and the placement contract stops being folklore.
 
 Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
 
-1. **`container.json` has two owners in two documents.** Spec §6 rules it is
+⭐ **Triaged, not merely filed** — each carries `[local]` or `[structural]`, and
+every `[structural]` one is ruled, scheduled, or explicitly open. The test is
+one question: *would this happen again to somebody else?* ⚠️ Finding 10 is why
+that rule exists: it was filed correctly, in the right place, and came true
+twice more because nothing obliged anyone to act on it.
+
+1. `[structural]` ✅ **RULED (Q3).** *Original finding:* `container.json` had two owners in two documents. Spec §6 rules it is
    *generator-owned with preserved judgement* — "an adapter **generates**
    `container.json` on ingest (JS-05)". `docs/tasks/E01-core-contracts.md`
    SF-05 says it is "**Hand-authorable, and never written by the render
@@ -195,19 +263,19 @@ Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
    pipeline never does) but they read as a contradiction to anyone picking up
    SF-05, and R19 leans hard on nothing being hand-authored. Worth one
    sentence in SF-05.
-2. **§7's exercise declaration has no file.** Every other contract in §4–§6
+2. `[structural]` ✅ **RULED (Q2)** — an `exercise` object inside `practice-M.json`, on the existing `raw_api`, written by the adapter. *Original finding:* §7's exercise declaration had no file. Every other contract in §4–§6
    names the document it lives in. `main_path`/`test_path`/`run_command`/
    `test_command`/`provenance`/`trust` name none, so FND-04 could not ship a
    fixture for the thing R5 exists to enforce. E06 will need one, and it will
    need an FND-04-style fixture the day it starts. Candidates: a `practice`
    section of the overlay, a per-practice key in the archive document, or a
    third document. This is a real hole on E06's critical path.
-3. **R9 enumerates the versioned contracts and the authored overlay is not
+3. `[structural]` ⚠️ **OPEN** — now row 1 of §2's register of located contracts, owed before the overlay is built. R9 enumerates the versioned contracts and the authored overlay is not
    among them** (`corpus_api`, `container_api`, `raw_api`, `unit.json` `api`,
    TOC schema). The overlay is hand-edited, which is the *most* likely thing to
    drift. The fixtures follow R9 literally and ship an unversioned overlay; if
    that is wrong, it is R9 that needs the edit, not SF-09.
-4. **Spec §1's C3 is wrong on its numbers, and §4's ISO row is stale.**
+4. `[structural]` ✅ **RULED and APPLIED** to the spec by the CTO. *Original finding:* spec §1's C3 was wrong on its numbers and §4's ISO row was stale.
    *(Both confirmed by the CTO's recount; recorded here because the fixtures
    are built on the corrected reading.)* C3 says "18 of ISO's files contain
    raw HTML"; with code fences stripped it is **0 of 38** — all 26
@@ -218,13 +286,15 @@ Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
    `rule` and `quote` are the **Java corpus's**, so SF-07 needs all three at
    M1 regardless. What changes is *which* constraint is real — fence
    awareness, not tag counting.
-5. **Nothing rules on whether the speakable contract walks an `html` block.**
+5. `[structural]` ✅ **RULED (Q1b) — narration speaks a disclosure's summary and stops.**
+   *Original finding:* nothing ruled on whether the speakable contract walks an
+   `html` block.
    ⛔ If it does, and the block is a `<details>` disclosure, **narration reads
    aloud an answer the page is deliberately hiding** — which is exactly what
    `depth1` unit 3 carries, in both fenced and raw form. Not FND-04's to
    decide and not attempted here; it lands on SF-17/SF-18 (E04) and the
    fixture is ready for whichever way it is ruled.
-6. **CodeSignal handles `rule` and `quote` in the opposite direction to
+6. `[local]` — carried into SF-07's own task text, and now **three** places, not two: `disclosure` joins them. CodeSignal handles `rule` and `quote` in the opposite direction to
    SF-07**, and the divergence should be recorded rather than discovered.
    CodeSignal HEAD emits **no block at all** for a thematic break and emits a
    quote's *inner* blocks transparently — both to agree with its DOM reader,
@@ -233,10 +303,10 @@ Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
    reader to agree with), but a task told to "port `markdown.py` with its
    governing rule intact" will find the current source doing the opposite and
    should know that is intended.
-7. **§8's snapshot warning is already live for E02.** CodeSignal's
+7. `[structural]` ⚠️ **OPEN** — every port task inherits it. §8's snapshot warning is already live for E02. CodeSignal's
    `markdown.py` is 678 lines against R11's 400 and `unitdoc.py` is 827 — both
    arrive as packages, and SF-07 owns one file today.
-8. **A repository-wide R7 sweep is not clean today, and one hit is a
+8. `[structural]` ◐ **PARTLY RULED (X2)** — R7 governs what the *build environment* leaks, not what the material is about; what is still open is whether the sweep reads `docs/` at all. A repository-wide R7 sweep is not clean today, and one hit is a
    *correct* refusal to teach a scrubber about.** Sweeping this repository with
    the email shape matches `docs/tasks/E02-content-pipeline.md`, which quotes
    `n@router` + `.get` as the escaping artefact that refused three clean OAuth
@@ -246,13 +316,13 @@ Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
    to say whether it sweeps `docs/` at all, and if so what it does with a
    document whose subject *is* the pattern. FND-04 left it alone (finding, not
    patch).
-9. **The 400-line ceiling and the `graphify-out/` index are FND-01's and
+9. `[structural]` ✅ **SCHEDULED** — the module split is routed to another agent and lands before M1 closes; it deletes the formatter exclusion in the same commit. The 400-line ceiling and the `graphify-out/` index are FND-01's and
    FND-02's**; neither exists on this branch, so nothing here was checked
    against them. `test_fixture_consistency.py` is 553 lines against the
    **600-line test ceiling**, which is inside it but no longer comfortably: a
    sixth invalid fixture would want the module split along the same seam the
    checks already have (shape · digests · addresses · media · personal data).
-10. ⛔ **The quality floor cannot be enforced on a branch authored in parallel
+10. `[structural]` ✅ **RULED — and it came true twice more before it was.** The CTO took both mitigations and refused the do-nothing option (*a cost paid fifteen times is not a known cost, it is a policy of paying it*), then found the deeper cause: the rubric diffed and tested each branch's own changes, answering *is this change good?* where a merge gate asks *is the result good?* — and those come apart precisely when two parallel tasks are each correct alone. A trial-merge step is now in the review procedure. ⛔ **The quality floor cannot be enforced on a branch authored in parallel
     with the task that introduces it — and this is structural to M0's plan,
     not incidental.** Finding 9 predicted the shape; the merge gate then
     produced it. FND-04 was reviewed green and merged; FND-01's checker, seen
@@ -298,7 +368,8 @@ stand-in for `<archive-root>`, which SF-03 owns.
 | SF-03 placement, SF-31 plan | both | Two profiles, two depths, two containers, media both present and skipped. ⚠️ You owe the golden nobody could write yet — see the deferred table. |
 | SF-05 container map | `depth2` | Two containers, `url_slug` on the second, per-unit `origin` and `note`, declared practice counts of 1 and 0. |
 | SF-06 archive document | both | Every optional key is exercised: `assets_sha256` (`depth1` u2), `starting_code` (both practices), `media_skipped` (`depth2` A/u3). Each file **is** its own canonical rendering — round-trip is a byte comparison. |
-| SF-07 Markdown reader | both | All nine reader types. ⛔ **Start with `depth1` u3 `lesson-2`** — fence awareness is the constraint that actually bites, and a `<`-scanning parser passes every other fixture here. `depth1` u2's `quote` nests a `para` **and** a `list`, which is the case a text-only quote loses. |
+| **SF-07** Markdown reader | both | ⭐ **`disclosure` is a container block** — do not flatten (it shows an answer the author withheld) and do not store raw (its body goes invisible to the block-count gate). `depth1` u3 carries two, one of them beside a fence *about* a `<details>`. |
+| SF-07 Markdown reader, cont. | both | All nine reader types. ⛔ **Start with `depth1` u3 `lesson-2`** — fence awareness is the constraint that actually bites, and a `<`-scanning parser passes every other fixture here. `depth1` u2's `quote` nests a `para` **and** a `list`, which is the case a text-only quote loses. |
 | SF-08 personal-data gate | `invalid/personal-data/` | Carries a home path **and** an email, both fabricated. ⛔ Your repo-wide sweep must exclude that directory **and only that one**. |
 | SF-09 overlay, SF-10 builder | `depth2` | One unit **with** an overlay and two **without** — the authored and derived shapes are different code paths. The overlay carries an explicit `key` on its practice section (SF-09's escape hatch) and writes neither `workspace` nor `video`. |
 | SF-25 `studyforge validate` | `invalid/*` | Five inputs, one rule each, the rule named in the fixture's own `VIOLATION.md` with the message you are expected to produce. Both valid corpora must exit 0. |
@@ -309,6 +380,16 @@ stand-in for `<archive-root>`, which SF-03 owns.
 in its complete form — narrated, navigable, offline, with no exercises and no
 server. ⛔ **A corpus with no graders is complete at M4, not short** (§7, C5).
 If your task makes `depth1` look degraded, the task is wrong, not the fixture.
+
+
+⭐ **New consumers of the Q1 follow-up.**
+
+| You are working on | What the fixtures now give you |
+|---|---|
+| **SF-07** | Two `disclosure` blocks in `depth1` and one in `depth2`, each holding real blocks — and, in `depth1` u3 `lesson-2`, a fenced code block whose text *is* a `<details>`, so a reader that cannot tell a fence from markup fails here rather than on real material. |
+| **SF-12** (render) | The archive gives you `summary`, `open` and `blocks`. The `<details><summary>` markup is **yours** to choose (R13) — the fixture deliberately does not prescribe it. `open` is the author's default and is honoured, not overridden. |
+| **SF-16 / E04** (narration) | ⛔ Speak the `summary`; **do not walk the body**. The body gets no speech ids, so a clip for it cannot be minted or addressed. The withheld count belongs in the coverage report. ⛔ Do not invent a spoken sentence announcing the hidden section. |
+| **SF-25** (validate) | `counts` now has eleven keys and `disclosures` is one of them. Nested blocks are **not** counted — same as a quote's — so your completeness gate counts top-level blocks and recurses separately if it wants the total. |
 
 **Changing a fixture.** Change it and run
 `python3 -m pytest tests/test_fixture_consistency.py`. Every digest, count and

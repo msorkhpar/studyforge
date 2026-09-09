@@ -40,7 +40,8 @@
     "videos": 0,
     "rules": 0,
     "quotes": 0,
-    "html": 0
+    "html": 0,
+    "disclosures": 0
   },
   "content_sha256": "25eeb468db8179556b57cfb7a7948ca672e9f9c85516732f433bfc4aced8e46a"
 }

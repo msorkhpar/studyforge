@@ -56,7 +56,8 @@
     "videos": 1,
     "rules": 0,
     "quotes": 0,
-    "html": 1
+    "html": 1,
+    "disclosures": 0
   },
   "content_sha256": "a549e4538744232eca8eaecf3ca38ef9a4601f45e32c697dea7557dd8d66b954",
   "media_skipped": true

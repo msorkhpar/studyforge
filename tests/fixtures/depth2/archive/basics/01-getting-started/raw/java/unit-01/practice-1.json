@@ -22,6 +22,17 @@
       "text": "Make `Greeter.greet` return `Hello, <who>` for any non-empty name."
     },
     {
+      "type": "disclosure",
+      "summary": "Show a hint",
+      "open": false,
+      "blocks": [
+        {
+          "type": "para",
+          "text": "Concatenation is enough. The grader shipped with the material checks the exact string."
+        }
+      ]
+    },
+    {
       "type": "heading",
       "level": 2,
       "text": "Lesson: Your first class"
@@ -54,8 +65,9 @@
     "videos": 0,
     "rules": 0,
     "quotes": 0,
-    "html": 0
+    "html": 0,
+    "disclosures": 1
   },
-  "content_sha256": "850a78162e847fa55d403dbebd501fed939da3b047a89d56f952aee0226c025e",
+  "content_sha256": "71eed6329bf706e99286122aa2f246c1109fa7d091e8f875adb00ba24b6daa18",
   "starting_code": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
 }

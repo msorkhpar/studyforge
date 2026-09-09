@@ -66,7 +66,8 @@
     "videos": 0,
     "rules": 0,
     "quotes": 1,
-    "html": 0
+    "html": 0,
+    "disclosures": 0
   },
   "content_sha256": "a13f67e8c17e9739851209f9ae09078a6702c1a9da76808d5f7dee348141811f"
 }
