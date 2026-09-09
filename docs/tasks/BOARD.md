@@ -14,10 +14,10 @@ back. Flow: `../conventions/delivery-flow.md`.
 events in the **Log**.
 
 ⛔ **Standing user decision: nothing is ever pushed to any remote. Everything
-stays in local repositories.** Permanent, not a phase. ⚠️ It is on this board
-because it **changes the plan**, not merely the workflow — see **B2** and **G1**:
-`FND-05a` loses its composition half, and R18's version pin loses the mechanism
-R9's cross-repository reproducibility rested on.
+stays in local repositories.** Permanent, not a phase. ⚠️ It changed the plan
+rather than the workflow: **R18 is amended**, git submodules are **not used in
+this project**, `FND-05b` is **cancelled**, and `FND-05a` becomes a tracked pin
+file verified against the local checkouts. See **B2** and **G1**, both closed.
 
 ---
 
@@ -33,73 +33,90 @@ remain in M0, none of them blocked, and none of them on M1's critical path.
 
 | Task | Title | Owner | Branch | Status | Blocked on | Closes when |
 |---|---|---|---|---|---|---|
-| FND-01 | Repository scaffolding and quality floor | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE after changes. `tools/quality/` (size, mirror, docstrings, style) + `tests/test_quality_floor.py`; `tools/` excluded from packaging; zero runtime dependencies. ⚠️ **One clause shipped `Blocked`, not passed:** lint — ruff is configured and declared as the `lint` extra, and `FND-03` is what runs it |
-| FND-02 | Knowledge index | Developer 1 | `feat/FND-02-knowledge-index` | `in-review` | — | Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
-| FND-03 | Development and test container | Developer 2 | `feat/FND-03-dev-container` | `in-review` | — | Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
+| FND-01 | Repository scaffolding and quality floor | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE after changes. `tools/quality/` (size, mirror, docstrings, style) + `tests/test_quality_floor.py`; `tools/` excluded from packaging; zero runtime dependencies. ✅ **Its one `Blocked` clause is now met** — `FND-03` runs ruff inside the image. ⭐ **No per-condition `Blocked` outcome remains anywhere on this board** |
+| FND-02 | Knowledge index | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09**, APPROVE. Corpus graph 11,107 nodes / 25,566 edges, 217 of 217 documents; framework graph rebuilt at the M0 close. Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
+| FND-03 | Development and test container | Developer 2 | *merged* | ✅ `done` | ⚠️ one formatting fix outstanding, Developer 2, **C4** | **Closed 2026-09-09**, APPROVE. ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs inside the image and the two tests run rather than skip. Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
 | FND-04 | Shared contract fixtures | Developer 2 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE on every rubric check. 7 corpora, 43 files, 22 tests, re-run green post-merge |
-| FND-05a | Workspace, workflow and the first submodule | *unassigned* | `feat/FND-05a-workspace` | `blocked` | **B2** — the no-push decision leaves the composition half with no legal form; with the CTO | ⚠️ **Acceptance is under re-ruling.** The workflow document half stands as written; the submodule-pinning half has no form that satisfies both the decision and R7 |
+| FND-05a | Workspace, workflow and **the pin file** | *unassigned* | `feat/FND-05a-workspace` | `todo` | — *(unblocked: **B2** ruled)* | A tracked pin file records every component, `studyforge` included; verification **exits 0** when correct and **exits 1 naming the component** both when a recorded commit is absent locally and when a component's `HEAD` moved unrecorded — asserted, not described; the workflow document covers record, verify, advance, the two-commit rule; ⛔ no `.gitmodules` anywhere, and no absolute path in any tracked file |
 | FND-06 | Repository personal-data check | *unassigned* | `feat/FND-06-r7-check` | `todo` | — | A fifth entry in `tools/quality`'s `CHECKS`: exits non-zero on a purpose-built violating file, zero on the tree; the sanctioned-directory registry is asserted by a test; ⛔ writes no derived identifier anywhere, proved by a test on the refusal message |
 | — | Review rubric + M0 readiness audit | CTO | *merged* | ✅ `done` | — | **Closed 2026-09-09.** `../conventions/review-rubric.md` plus four rulings |
 | — | Board + delivery flow | PO-Framework | `chore/po-board-m0-update` | `in-progress` | — | Board reflects the first review round; the ruled task edits are carried into `docs/tasks/` |
 
-**Out of M0:** `FND-05b` — composing `studyforge`, `TC/` and `NS/` — moved to
-**M5**, step 5.5, and now **B2** applies to it too, more severely.
+**Out of M0:** ⛔ **`FND-05b` is CANCELLED**, not deferred — its whole content was
+*add the three components `FND-05a` could not, as submodules*, and submodules are
+no longer used. Its residue costs nothing: those three are rows in `FND-05a`'s pin
+file, added by the tasks that create them. ⭐ **M0 is five live tasks and the plan
+is 84.**
 
 ### Open items
 
-**C1 — FND-01, closed.** The one change requested — a regression test for the
-`.gitignore` fixture negation, asserted in **both** directions — landed and the
-task merged. ⚠️ **One acceptance clause shipped `Blocked`, and that is not
-`done`:** no `ruff`, `black`, `uv` or `poetry` exists on the machines available,
-so "lint and format run clean" had nothing to run. Ruff is configured and
-declared as the `lint` extra, and two tests **skip with a message naming it**
-rather than passing quietly. ⛔ **`FND-03` is the task that closes this**, and
-until it does, R13-adjacent formatting is unenforced. The clause is not dropped —
-an unenforced format erodes exactly like an unenforced ceiling.
+**C1 — FND-01, closed, and its blocked clause is closed too.** ⭐ `FND-03` merged
+with ruff inside the image, so "lint and format run clean" is **met**, not
+deferred, and ⭐ **the board carries no per-condition `Blocked` outcome anywhere.**
+The value of having refused to delete the clause is now visible: it was carried
+for two rounds by a task that could not satisfy it and closed by the task that
+could.
 
-**B2 — FND-05a and FND-05b, blocked on a CTO ruling, not on infrastructure.**
-⛔ **Correct the unblocking condition this board previously recorded.** It named
-an account action — an owner creating a remote for `studyforge` — and ⭐ **that
-will now never happen**, so a condition phrased as "wait for a remote" is a task
-that waits forever.
+*History, kept because it is the argument:* the clause shipped `Blocked` because
+no linter existed on the machines available, and two tests **skipped with a
+message naming the extra** rather than passing quietly. ⛔ Deleting it would have
+been the easy move and would have left formatting unenforced permanently.
 
-The bind is exact. The CTO's ruling that a local **absolute** submodule URL
-writes a home directory into a tracked `.gitmodules` and is therefore an R7
-violation still stands. A **relative** URL resolves against the parent's own
-remote, and there will be no remote. ⛔ **So the submodule composition has no
-legal form at all** — not "no convenient one".
+**C4 — CLOSED.** The container-only formatting failure was `FND-02`'s test
+module, authored before the formatter existed. Fixed through `FND-03`'s own
+wrapper rather than by hand — ⭐ **and the `Permission denied` seen at the merge
+gate was `FND-03`'s hardening working as designed**, the unprivileged-uid test
+owning nothing; ⛔ nothing about the container was loosened to get past it, which
+is exactly the right instinct. Formatting only, checked rather than asserted: the
+parsed AST is identical before and after. Container **124 passed, 8 skipped**,
+both ruff gates passing by name. ⚠️ It never reopened `FND-03`, which was
+approved — but it **is** the third instance of **C5**.
 
-⭐ **What survives is the half that was always the point.** `FND-05a`'s workflow
-document — clone, update, advance, the two-commit rule — and the
-non-recursive-clone guard need no network and no URL, and they are what prevent
-the two documented silent first-run failures the task exists for.
+**B2 — RULED AND CLOSED.** `FND-05a` is unblocked and reshaped; `FND-05b` is
+cancelled. ⭐ **All three submodule forms were closed, and the third is the one
+that settles it**: absolute local path is an R7 violation in a tracked file;
+relative URL resolves against a parent remote that will not exist; and **a real
+remote names a commit nobody pushed, so it resolves to nothing *including
+here*.** That last one is why this could not be worked around locally rather than
+merely inconveniently.
 
-**Unblocking condition, precisely:** the CTO rules on what `FND-05a` becomes
-under a local-only workspace. The expected shape is that the workflow document
-stands and the composition is struck or deferred; ⛔ until that is written down,
-nobody should start it, because its acceptance currently asks for something
-impossible.
+⭐ **The insight that made the answer cheap:** a submodule is exactly two things,
+a URL and a commit, and **only the URL half needed pushing.** So the parent keeps
+a **tracked pin file verified against the local checkouts** — mechanically
+checkable, which is how this project enforces everything else. The two-commit
+rule stops being folklore and becomes a command that exits 1 naming the
+component.
 
-**G1 — R18's version pin has lost its mechanism, and this is a gap, not a
-formality.** R18 says *"the parent's recorded submodule commits are the version
-pin"*, and that is the sentence R9's cross-repository reproducibility rests on:
-per-contract versioning is reproducible *between* repositories only because
-something records which commit of each component was used together. ⚠️ **That
-guarantee assumed fetchable remotes.** A recorded commit hash no other checkout
-can fetch pins nothing.
+**G1 — CLOSED, and what was given up is recorded here rather than left in a
+merge.** R18 is **amended**, and its claim **shrunk to the true one**:
 
-⛔ **Do not let this close as "we work locally, it does not matter".** What is
-lost is specific and R9 named it: with no fetchable pin, a corpus built against
-one combination of `studyforge`, `TC/` and `NS/` has no record of *which*
-combination, and the failure surfaces as a contract-version mismatch nobody can
-reconstruct. ⭐ Whatever replaces it — a manifest of commit hashes, a vendored
-bundle, or R18 amended to say plainly what a local-only workspace guarantees
-instead — is a **decision owed by the CTO**, with the same deadline as `FND-05a`.
+- ⭐ **Kept:** reproducible **across time on this machine** — which is what R9's
+  cross-repository versioning actually needs, and it was the half doing the work.
+- ⛔ **Given up, explicitly:** reproducible **across machines**. ⚠️ **This is a
+  real reduction in what R18 promised**, not a restatement, and no document in
+  the workspace may claim otherwise. If pushing is ever adopted the recorded
+  commits are already exactly the data submodules would have wanted — so the
+  reduction is recoverable, but it is not currently held.
+- **`studyforge` is in the pin file too.** The only reason to exclude it was the
+  missing remote, and nothing is being fetched.
+
+⚠️ **Two consequences reach beyond the question that was asked**, which is why
+they are on the board and not only in a handoff:
+
+1. **§9's distribution story changes.** The framework is a **sibling checkout at
+   a recorded commit**, not a submodule — so ⛔ **`SK-07` must not be written
+   against `git submodule add`.** *Never vendored, never copied, never forked* is
+   unchanged. This must reach E11 before SK-07 is built.
+2. ⚠️ **The silent first-run failure changed shape rather than disappearing.** It
+   is no longer an empty submodule directory — nobody clones this. It is **a
+   component sitting at a commit the parent never recorded**, which is the same
+   surprise with **no symptom at all**. ⭐ That is precisely why verification is a
+   command and not a paragraph.
 
 ### Sequencing the unassigned tasks
 
-**Order: FND-02 → FND-03 → FND-06 → FND-05a.** ✅ The first two are in review;
-FND-06 is the last unblocked M0 task.
+**Order: FND-02 → FND-03 → FND-06 → FND-05a.** ✅ The first two are **done**.
+⭐ **Two tasks remain in M0**, neither blocked, neither gating M1.
 
 1. **FND-02 first, startable now.** `graphify` is on PATH and it depends on
    nothing. It is the only M0 task that *repays* the others — R14 is what keeps
@@ -118,39 +135,41 @@ FND-06 is the last unblocked M0 task.
    release branch — `FND-04` shipped sanctioned personal-data fixtures, and until
    this lands the rubric's §1e boundary is upheld by a reviewer running greps by
    hand. ⛔ `CLAUDE.md` records that R7 has already been violated once here.
-4. ⛔ **FND-05a is blocked (B2) and must not be assigned.** Nothing in M1 imports
-   the parent workspace, so it can wait for its ruling without stopping anybody —
-   which is the one piece of good luck in **B2**.
+4. **FND-05a last, and now unblocked** — it is a pin file and a verification
+   command, not a submodule composition. Nothing in M1 imports the parent
+   workspace, so it is still the one M0 task that can slip without stopping
+   anybody.
 
 ---
 
 ## Open questions — owners and deadlines
 
-⚠️ **Each is a decision nobody has taken, each has a task that cannot start
-without it, and the deadline is that task — not a date.** ⛔ **A ruling that is
-not written down did not happen**: each is answered as a CTO ruling in a handoff,
-carried into the affected task by the PO.
+⭐ **None. The list is empty for the first time.** Every question this board has
+raised — Q1 through Q7, X1 and X2 — is ruled, merged, and carried into the tasks
+it touches rather than left in a handoff.
 
-| # | Question | Owner | Must be answered before |
-|---|---|---|---|
-| Q4 | ⛔ **The Java corpus carries its owner's account name in every package path** — `com/github/<account>/…`, so it is in 345 file paths, in every `import`, and in a code block on every generated page. If `SF-08` ever grows a username pattern it **refuses the entire corpus**, and SF-08 already warns that a false positive is a failure of the same class as a leak. | CTO | ⛔ **Before E07 starts** |
-| Q5 | **`FND-05a` under a local-only workspace**, and **R18's version pin without fetchable remotes**. See **B2** and **G1**. | CTO | **FND-05a** |
-| Q6 | **`ruff format` and R11 disagree on one file.** Formatting `FND-04`'s test module explodes its hand-packed tuples to 606 lines, over R11's 600-line test ceiling. `FND-03` excluded that one file from the **formatter only** — still linted, still floored — and asserted the exclusion list stays exactly one entry. Resolution is splitting the module or authoring a `Size exception:`. | CTO | Before a second file joins the exclusion list |
-| Q7 | **R14's own text in the spec still says "every repository"**, while the CTO ruled it binds when a repository **enters the working set**. `graphify.md` was narrowed; ⚠️ **the spec, which is the authority, was not.** A document and its authority now disagree in writing. | CTO | Before SK-07 (M2) — it is the task that would owe a new corpus its graph |
+⚠️ **That is a state to notice, not to relax into.** ⛔ **An empty list is not
+evidence that no contract is unlocated** — R21 exists because five more were
+found by *surveying* rather than by waiting to trip over them, and the register
+below still has five open rows. The question list being empty means the known
+unknowns are answered; R21's register is where the unknown ones are tracked.
 
-⭐ **Q4 is X2's shape and probably not X2's answer, and the difference is the
-whole question.** X2 dissolved because 16-digit test PANs are the **material's
-subject matter** rather than identifiers arriving from the build environment. An
-account name is neither cleanly: it identifies a real person, *and* it is the
-material — it is what the corpus's own `import` statements say. ⚠️ Note the
-asymmetry that makes this urgent rather than academic: R7's gate **refuses rather
-than rewrites**, so the failure mode is not a leak but a corpus that cannot be
-built at all, discovered at E07 after the adapter is written.
+**Work items carried out of the rulings:**
+
+| Item | Owner | Closes when |
+|---|---|---|
+| **FND-04 follow-up, now five steps** — the `disclosure` fixture change, and **step 5: split `tests/test_fixture_consistency.py` along its five named seams** (shape · digests · addresses · media · personal data), then delete `[tool.ruff.format].exclude` **and its one-entry assertion in the same commit** | Developer 2 | The module is under the ceiling unformatted, and the exclusion list is gone rather than shorter |
+| **C4** — the container-only formatting failure on a pre-floor file | Developer 2 | Container and host agree |
+| **§9 / SK-07: the framework is a sibling checkout at a recorded commit, not a submodule** | PO → E11 | E11 says so before SK-07 is written |
 
 ### Resolved — kept, not deleted, because the reasoning is what stops them being re-asked
 
 | # | Ruling | Landed in |
 |---|---|---|
+| Q6 | ⭐ **The interim stands; the resolution is the split, and it belongs to FND-04's open follow-up.** ⛔ A `Size exception:` would be wrong on principle — the rubric says an exception states *why splitting would be worse*, and splitting is **not** worse here: the module has five natural seams its own handoff already named. ⛔ And a third party cannot author one anyway, because the exception turns on the isolation question, which only somebody who knows the internals can answer. ⭐ **The split is not optional regardless** — the follow-up *adds* to `BLOCK_FIELDS` and `COUNT_KEYS`, so the file goes over 600 with or without the formatter. Formatting is not what pushed it over; it is what pushed it over **first**. The one-entry assertion is kept until the split lands, because an exclusion list that cannot grow without a test failing is what stops it becoming where difficult files go. | E00 follow-up |
+| Q7 | **R14 amended in the spec**, so document and authority agree again. ⭐ It gained more than the narrowing: the **measured** qualification is now in the ruling itself — `explain` and `path` hold unconditionally, `query` **only when phrased as distinctive nouns**. ⛔ That belongs in the ruling and not only in the convention, because *confidently wrong is not the same failure as slow*: a budget premised on a slow tool produces late work, one premised on a wrong tool produces **wrong** work and the agent has no signal it did. | spec R14 |
+| Q4 | ⭐ **Resolved on the strongest possible ground: the pattern cannot be built.** `SF-08` will never grow a username pattern — to match *"this is the user's username"* the gate must **hold the username**, which is the exact datum R7 forbids it to hold. ⚠️ So this is not a judgement call that could have gone the other way, and it is a sharper answer than X2's: X2 turned on what R7 *governs*, Q4 turns on what a gate can *physically be*. **E07 is unblocked** — do not scrub the account name from package paths, do not refuse it, and do not trim it from generated code, or the Java stops compiling. An email in a lesson comment is still refused. | spec, E02, E07 |
+| Q5 | **B2 / G1** — see *Open items*. R18 amended, `FND-05b` cancelled, the pin file replaces the composition. | spec R18, E00 |
 | Q1 | **A disclosure is a container block holding blocks**, exactly as a quote does. Flattening keeps the text and destroys the hiding; storing raw tags keeps the hiding and makes the body invisible to the block-count gate — ⭐ both fail oppositely, and C5's lesson is that *shown* and *absent* are not the only states. The archive records the semantics, the renderer owns the markup (R13). **Narration speaks the summary and stops**, and the withheld count is reported, so the omission reads as a decision rather than a bug in the walker. | spec, E02, E04 |
 | Q2 | The exercise declaration is **an object inside the practice archive document**, versioned by that document's `raw_api`. | spec §7, E06 |
 | Q3 | **Hand-authorable survives, narrowed to two editorial fields of a generated document.** ⭐ Not a hole in a skill: R19 forbids a second source *retyping* what a skill could produce, and a judgement about one's own material is the one thing no skill can produce. | E01 |
@@ -186,12 +205,15 @@ task named beside it, *before* that task builds.
 | **discovery cache** `.studyforge/site.json` — no version key | **SF-04** (M2 step 2.1) | CTO | R9 refuses an unknown version rather than migrating; a cache with no version cannot be refused, only misread |
 | **narration manifest** — no file, no version | **NS-02 / SF-17** (M3) | CTO | Two producers named for one contract is Q3's shape exactly, and Q3 needed a ruling |
 | **coverage report** — no file | **EX-05** (M7) | CTO | Not read back, so the cheapest of the five — but R5 is what the report exists to make honest |
-| **component consuming contract** `consuming.json` — no version key | **TC-05** (M5), **E13** (M3) | CTO | ⛔ This is the *runtime seam between the two agents*. An unversioned cross-repository contract is precisely what R9 exists for, and **G1** has just removed the pin that would have recorded which version was used |
+| **component consuming contract** `consuming.json` — no version key | **TC-05** (M5), **E13** (M3) | CTO | ⛔ This is the *runtime seam between the two agents*. An unversioned cross-repository contract is precisely what R9 exists for, and **G1's answer only half covers it** — the pin file records *which commit*, and this contract still does not say *which version of the promise* |
 
-⚠️ **`consuming.json` and G1 are the same wound.** The pin recorded which
-component versions worked together; the contract records what a component
-promises. With the pin gone and the contract unversioned, **nothing at all**
-records the combination a corpus was built against. Rule them together.
+⚠️ **`consuming.json` is now the sharper half of what G1 covered.** ⭐ G1's answer
+restores *which commit of each component* — that is what `FND-05a`'s pin file
+records. It does **not** restore *which version of the promise* each component
+made, which is the contract's own job and is still unversioned. ⛔ So a corpus can
+now say which components it was built against and still not say what they
+guaranteed — and that gap sits on the **runtime seam between the two agents**,
+which is the one seam neither can inspect from their own side.
 
 ---
 
@@ -199,16 +221,69 @@ records the combination a corpus was built against. Rule them together.
 
 | # | Defect | Owner | Status |
 |---|---|---|---|
-| C2 | **The review rubric's `$BASE` is wrong for any branch cut from a release branch.** It says `merge-base HEAD main`, and `main` is stale — so a review presents ~100 changed files instead of ~14 and attributes three tasks' work to one author. | CTO | fixing |
-| C3 | ⚠️ **`ruff format` vs R11 on one file** — see **Q6**. The interim is sound: formatter-excluded, still linted, still floored, exclusion list asserted at exactly one entry. | CTO | interim in place |
+| C2 | **The rubric's review base resolved against a stale `main`** — ~100 changed files instead of ~14, three tasks' work attributed to one author. | CTO | ✅ **fixed** |
+| C3 | **`ruff format` vs R11 on one file** — see resolved **Q6**. | CTO | ✅ **ruled**; the split is Developer 2's |
+| C5 | ⛔ **Parallel-authoring defect — three instances, one milestone.** A quality rule merges; a file authored *before* it lands fails it. FND-04/line-length, FND-03's container/formatter, FND-02/formatter. | CTO to rule | ⛔ **open, and no longer a judgement call** |
 
-⛔ **C2 is recorded because it silently corrupted every review it touched**, which
-is the worst property a gate can have: it did not fail, it passed the wrong thing.
-⭐ The rubric's own §1a check is what caught the *class* of this bug once already
-— a check that cries wolf is one reviewers learn to wave through. This is the
-inverse: a check that under-reports is one reviewers **cannot** learn to distrust,
-because nothing looks wrong. Any review run before the fix should be re-run
-against the corrected base rather than assumed sound.
+⛔ **C2 silently corrupted every review it touched**, which is the worst property
+a gate can have: it did not fail, it **passed the wrong thing**. Two details from
+the fix are worth keeping, because both generalise:
+
+- ⚠️ **The bug was in five places, not one** — §0's shell preamble *and all four
+  Python checkers*, each re-deriving the base internally. ⭐ **A convention that
+  repeats its own definition is the defect it polices elsewhere**, which is the
+  same argument that put one implementation behind `tools.quality` and one
+  definition of the size ceiling behind `FND-01`'s checker.
+- ⛔ **The failure mode flatters.** The reviewer sees *more* work, not less — so
+  nobody questions it, and there is no moment at which the number looks wrong.
+  ⭐ A check that cries wolf gets waved through; a check that under-reports gets
+  **believed**. The second is worse and it is the one that had no advocate.
+
+Any review run before the fix is re-run against the corrected base, not assumed
+sound.
+
+### C5 — the parallel-authoring defect: three instances, and it stopped being an anecdote
+
+⚠️ **The pattern:** a quality rule merges, and a file authored **before** it
+landed fails it — through no fault of either author, on a branch that was green
+when it was written.
+
+| # | Where | Rule it was authored before |
+|---|---|---|
+| 1 | `FND-04`'s fixture module, caught at the merge gate | the line-length check |
+| 2 | `FND-03`'s container run — green on the host, red in the image | the formatter |
+| 3 | `FND-02`'s test module — 89 characters, one hunk | the formatter |
+
+⛔ **Three in one milestone, with four agents, on the milestone whose entire
+purpose is to gain rules.** ⭐ The threshold I named for deciding this was two
+data points. It is three, and the third arrived *while this board entry was being
+written* — which is itself the argument: the rate is not falling.
+
+⚠️ **`FND-04`'s own handoff, finding 10, predicted this and named the fix.** ⛔
+**A prediction that was recorded, not acted on, and then came true twice more is
+the most expensive kind of finding this project produces** — the knowledge was
+already here, in the place the protocol says to put it, and the cost was paid
+anyway. Two round trips have now cost more than the fix would have.
+
+**The three options, with the evidence they now carry.**
+
+1. ⭐ **Land the floor's configuration as a wave-0 prerequisite, and run it
+   across the tree in the same commit that adds a rule.** The rule and the tree it
+   makes true arrive together, so no branch in flight can be stale against it.
+   ⭐ **This is my recommendation, it is `FND-04`'s, and all three incidents would
+   have been prevented by it** — at the cost of a wider diff on the commit that
+   adds a rule.
+2. **Re-run the floor at the merge gate rather than at authoring time** — catches
+   it, but late, and charges the cost to whoever merges second, which is
+   arbitrary.
+3. ⛔ **Accept it and fix forward** — what has happened three times. It is free
+   only while the tree is small, and it teaches agents that a red floor is
+   somebody else's problem.
+
+⚠️ **This is the CTO's to rule and I am asking for it now rather than at the next
+recurrence.** It is cheap at five modules and expensive at fifty, and ⛔ **M1 adds
+fifteen tasks** — the next rule the floor gains will meet fifteen branches, not
+four.
 
 ---
 
@@ -402,3 +477,13 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 | 2026-09-09 | **Q7 opened** — R14's text in the spec still says "every repository" while `graphify.md` was narrowed to the working set. ⚠️ A document and its authority disagree in writing. |
 | 2026-09-09 | ⭐ **Context-budget judgement recorded** on FND-02's verdict. Short answer: the `query` phrasing defect is the smaller problem and is already documented; the real exposure is that a graph built by running graphify alone has **zero doc↔code edges**. Five tasks need headroom, not eighty-five. |
 | 2026-09-09 | `CLAUDE.md` task count corrected 83 → 85. |
+| 2026-09-09 | **Merge conflict on `FND-05a` resolved by the PO**, the CTO's ruling taken as substance. ⭐ **Neither author's contribution dropped silently**: the PO's stop sign is superseded and removed — a blocked notice on a startable task stops the wrong person — and the epic's revision note records why. The argument behind it survives: an agent reads the epic and not always the board. |
+| 2026-09-09 | ⭐ **B2 ruled and closed.** All three submodule forms are closed, and the third settles it — **a real remote names a commit nobody pushed, so it resolves to nothing including here.** `FND-05a` becomes a pin file plus a verification command; **`FND-05b` cancelled outright**, not deferred. Plan is **84 tasks**, M0 is **five**. |
+| 2026-09-09 | ⭐ **G1 closed, and the reduction recorded.** A submodule is a URL and a commit, and only the URL half needed pushing — so the pin survives as a tracked file verified locally. ⛔ **R18's claim shrinks to the true one:** reproducible **across time on this machine**, explicitly **not across machines**. That is a real loss, recoverable if pushing is ever adopted, not currently held. |
+| 2026-09-09 | **Two consequences beyond the question asked:** §9's distribution story changes — the framework is a **sibling checkout at a recorded commit**, so ⛔ SK-07 must not be written against `git submodule add` — and the silent first-run failure **changed shape rather than disappearing**: a component at a commit the parent never recorded, with **no symptom at all**. |
+| 2026-09-09 | **FND-02 → done** (APPROVE): 11,107 nodes, 217 of 217 documents. **FND-03 → done** (APPROVE). ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs in the image and the two tests run rather than skip. **No per-condition `Blocked` outcome remains on this board.** |
+| 2026-09-09 | ⭐ **Q4 resolved, E07 unblocked — on the ground that the pattern cannot be built.** To match "this is the user's username" the gate must hold the username, the exact datum R7 forbids it to hold. Sharper than X2: X2 turned on what R7 *governs*, Q4 on what a gate can physically *be*. |
+| 2026-09-09 | **Q6 and Q7 ruled.** ⭐ **The open-question list is empty for the first time** — Q1–Q7, X1, X2 all closed. ⚠️ Not evidence that no contract is unlocated: R21's register still carries five open rows, and those were found by surveying rather than by tripping over them. |
+| 2026-09-09 | ⛔ **C5 — the parallel-authoring defect, now THREE instances in one milestone**: FND-04/line-length, FND-03's container/formatter, FND-02/formatter. ⚠️ The third arrived while this entry was being written. ⭐ `FND-04`'s handoff finding 10 predicted it and named the fix — **a recorded prediction that was not acted on and then came true twice more is the most expensive kind of finding this project produces.** Recommendation: land the floor's configuration as a wave-0 prerequisite and run it across the tree in the same commit that adds a rule. ⛔ **Asking the CTO to rule now, not at the next recurrence — M1 adds fifteen tasks, so the next rule meets fifteen branches, not four.** |
+| 2026-09-09 | **C4 closed.** Fixed through FND-03's own wrapper; ⭐ the `Permission denied` at the gate was FND-03's unprivileged-uid hardening working as designed, and **nothing about the container was loosened to get past it**. |
+| 2026-09-09 | **C2 fixed, and two details kept:** the bug was in **five** places — the shell preamble and all four Python checkers, each re-deriving the base — and ⛔ **the failure mode flatters**, showing more work rather than less, so nobody questions it. ⭐ A check that cries wolf gets waved through; one that under-reports gets believed. |
