@@ -1,0 +1,278 @@
+r"""R7's enforcement: scrub what this build wrote, refuse what the source wrote.
+
+**What it does.** Recognises the personal-data shapes that reach a document
+*because of whose machine and whose account ran the build* — an absolute home
+path, an email address, a bearer token — and offers two responses to them:
+`scrub` rewrites, `assert_clean` refuses.
+
+**How you use it.** `assert_clean(value, where)` at every disk and wire
+boundary; it takes a decoded string or a whole decoded document and raises
+`PersonalDataLeak`. `scrub(text)` on a line this framework is about to emit.
+`leaks(value, where)` when a caller wants every finding rather than the first
+— `studyforge validate` reports, it does not raise.
+
+**Depends on.** `re`, and nothing else. ⛔ Deliberately not on `os`, `pwd`,
+`socket`, `getpass` or `subprocess`: this gate must hold no value and read no
+environment, and `test_scrub.py` asserts that of this module's imports.
+
+## Which of the two, and why it is not a contradiction
+
+⭐ **Scrub our words; refuse the source's.** A log line, a subprocess's output,
+a path in a progress report — this framework wrote those, so rewriting one
+loses nothing. An archive document is the verbatim record of what a source
+said (§6): rewriting it would corrupt the record *and* break the
+`content_sha256` that covers it, and it would leave nobody knowing personal
+data had ever been there. So the same module scrubs on the way in, upstream,
+and refuses at the boundary — belt and braces, and a match at the inner gate
+is not redundancy but the news that an upstream stage failed (R6).
+
+## The pattern set is ruled, and it is short
+
+⭐ **The gate's question is not "is this string identifying?" but "did this
+build put it there?"** (CTO on X2 and on FND-02 finding 3). Three shapes pass
+that test and they are all that ship:
+
+| shape | why it is environmental |
+|---|---|
+| home path | `/home/<name>` carries the account name of the machine that ran |
+| email address | an address in captured material came from a signed-in session |
+| bearer token | a credential minted for whoever authenticated |
+
+⛔ **No payment-card pattern.** ISO-8583's material carries 96 card-shaped
+digit strings because a test PAN is the *subject of the lesson*; a gate that
+refuses rather than rewrites would refuse the whole corpus with a diagnosis
+that looks exactly like a leak. The gate is not a content classifier.
+
+⛔ **No username pattern, ever.** To match "this is the user's account name"
+the gate must *hold* the account name, which is the exact datum R7 forbids it
+to hold; the unanchored alternative matches every symbol in every codebase. A
+gate that must contain the secret to detect the secret is self-defeating. The
+account name is caught where it has a structural anchor — the segment after
+`/home` — and nowhere else.
+
+⛔ **And the gate matches shape only, never a value derived at run time.**
+Deriving this machine's account name and comparing would be a gate whose
+verdict differs by machine, and `assert_clean` is half of what `studyforge
+validate` promises an adapter (R2). A contract that says "valid here, invalid
+there" is not a contract. ⚠️ This is where this gate and the repository
+hygiene check (`tools/quality/personal_data`) part company hardest: that one
+is a local development check, so a machine-specific verdict is exactly what it
+wants. **The two gates have different subjects and neither imports the
+other's patterns.**
+
+## The residual class is specified, not built
+
+A second source could legitimately carry a shape this gate owns — a lesson
+about HTTP quoting a real support address. When that happens the exemption is
+**manifest data read by the gate**, never a pattern hardcoded for one corpus
+(R1). Three conditions, so it cannot become an off switch: home paths and
+credentials are never declarable; every string that passes only because of a
+declaration is counted and named in the build report (*pass loud*); and the
+gate still refuses, it just refuses less. ⛔ v1 builds none of it.
+
+## Every gate reads decoded strings
+
+⛔ **`assert_clean` and `scrub_document` ride the same walker**, and the
+walker is handed values that have already been decoded. A gate reading a
+*serialised* form is not a second check on the first — it is a check on a
+different document, inventing the matches that escaping created. Measured: the
+extraction source gated rendered JSON, where a newline is the two characters
+`\` and `n`, so a decorator on its own line serialised as `...\n@router.get(`
+— and `n@router.get` is address-shaped. Three clean lessons were refused.
+⚠️ Teaching the pattern that shape would be far worse than the bug.
+"""
+
+from __future__ import annotations
+
+import re
+from collections.abc import Callable, Iterator
+
+#: What `scrub` writes in place of each shape. ⭐ Every one is a documented
+#: placeholder from `CLAUDE.md` or an obvious redaction, so a scrubbed line
+#: reads as *deliberately* anonymous rather than as a plausible other value.
+#:
+#: ⭐ **Two of the three are chosen not to match the shape they replace**, so
+#: they need no exemption and this module stays clean under the repository
+#: hygiene check that sweeps it. ⚠️ `Bearer <redacted>` diverges from the
+#: extraction source, which writes `Bearer` followed by the bare word
+#: `REDACTED`: eight characters of `[A-Za-z0-9]` after `Bearer` *is* the
+#: shape, so that placeholder trips its own pattern — measured, on this
+#: sentence, which had to be rewritten to say so. The email placeholder
+#: cannot be chosen that way — every well-formed placeholder address is
+#: address-shaped — and it is the one hole, documented below.
+HOME_PATH_PLACEHOLDER = "/path/to/project"
+EMAIL_PLACEHOLDER = "contact@example.com"
+TOKEN_PLACEHOLDER = "Bearer <redacted>"
+
+#: `(name, pattern, placeholder)`. ⛔ Every entry is a *shape*: this module
+#: contains no real identifier of any kind, which is the property that lets it
+#: be committed at all. Order matters — the home-path rule runs first, so
+#: `/home/<name>` is consumed before the email rule can see an address hiding
+#: further along the same path.
+#:
+#: ⚠️ **The email local part is one character or more**, unlike the repository
+#: hygiene check's, which requires two. That is not drift. This gate reads
+#: decoded strings, so `\n@router.get` never reaches it as `n@router.get`; the
+#: structural fix is available here and it is the better one. The other gate
+#: reads whole files with no decoding stage, has no decoded form to prefer,
+#: and had to harden the pattern instead. ⛔ Do not "align" them.
+SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
+    (
+        "home path",
+        # The segment after `/home` or `/Users` is an account name. The
+        # lookbehind stops the same letters mid-path — `/var/lib/home/cache`
+        # names nobody. ⭐ The prose above writes the shape as `/home/<name>`
+        # with angle brackets, which is outside the character class, so a
+        # document explaining this rule stays both swept and clean.
+        re.compile(r"(?<![\w.])/(?:home|Users)/[A-Za-z0-9._\-]+"),
+        HOME_PATH_PLACEHOLDER,
+    ),
+    (
+        "email address",
+        re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b"),
+        EMAIL_PLACEHOLDER,
+    ),
+    (
+        "bearer token",
+        re.compile(r"\bBearer\s+[A-Za-z0-9._\-]{8,}"),
+        TOKEN_PLACEHOLDER,
+    ),
+)
+
+# ⛔ There is no allow-list here, and its absence is the ruling. The
+# repository hygiene check exempts unreachable addresses — `example.com`,
+# RFC 2606's reserved TLDs — because `CLAUDE.md` positively instructs authors
+# to write them and a check that fired on the sanctioned placeholder would be
+# telling people not to use the safe form. **In an archive an address is wrong
+# content whether or not it is deliverable**: nothing in captured material
+# should carry one, and a corpus that legitimately does is the residual class
+# above, answered by a declaration rather than by a pattern.
+#
+# The single exemption is each shape's own placeholder, skipped by identity so
+# that `assert_clean(scrub(text))` can pass at all — and after the choice of
+# placeholders above only the email one is reachable. ⚠️ It is a real hole,
+# and it is why `tests/fixtures/invalid/personal-data/` uses a different
+# address: a fixture written with the scrubber's own replacement value would
+# not be refused, and the negative fixture would be protecting an empty box.
+
+
+class PersonalDataLeak(Exception):
+    """Personal data reached a boundary that refuses it (R7).
+
+    ⛔ The message names the *shape* and the *location*, never the matched
+    text. A refusal that quotes the leak has only relocated it into a
+    traceback, a CI log, or an issue somebody pasted it into.
+    """
+
+
+def _article(noun: str) -> str:
+    """Return `"a"` or `"an"`, so a refusal reads as a sentence."""
+    return "an" if noun[:1].lower() in "aeiou" else "a"
+
+
+def scrub(text: str) -> str:
+    """Replace every personal-data shape in one string with its placeholder.
+
+    For text **this framework wrote** — a log line, a subprocess's output, a
+    path in a report. ⛔ Not for archive content: see the module contract.
+    Idempotent, so a line may pass through more than one stage.
+    """
+    out = text or ""
+    for _name, pattern, placeholder in SHAPES:
+        out = pattern.sub(placeholder, out)
+    return out
+
+
+def shape_in(text: str) -> str | None:
+    """Name the first personal-data shape in `text`, or `None`.
+
+    ⛔ Returns the *name* of what matched and never the matched text, so the
+    value has nowhere to escape to. A match equal to that shape's own
+    placeholder is not a leak.
+    """
+    for name, pattern, placeholder in SHAPES:
+        for match in pattern.finditer(text or ""):
+            if match.group(0) == placeholder:
+                continue
+            return name
+    return None
+
+
+def _walk(value: object, visit: Callable[[str, str], str], where: str) -> object:
+    """Rebuild `value`, replacing every string it reaches with `visit(where, text)`.
+
+    ⛔ **The one walker.** `scrub_document` uses the rebuilt result and
+    `leaks` throws it away, so the two can never come to disagree about which
+    strings a document has — which is what "both layers ride the same walker"
+    means. Dict **keys** are visited too: an asset map keyed by a filesystem
+    path is as much a leak as one valued by it.
+    """
+    if isinstance(value, str):
+        return visit(where, value)
+    if isinstance(value, dict):
+        out: dict[object, object] = {}
+        for index, (key, item) in enumerate(value.items()):
+            # ⛔ The key's own location is positional, not `f"...{key}"`: a
+            # key that *is* the leak would otherwise be echoed by the message
+            # reporting it.
+            named = visit(f"{where} key {index}", key) if isinstance(key, str) else key
+            out[named] = _walk(item, visit, f"{where}.{named}")
+        return out
+    if isinstance(value, (list, tuple)):
+        items = [_walk(item, visit, f"{where}[{index}]") for index, item in enumerate(value)]
+        return items if isinstance(value, list) else tuple(items)
+    if value is None or isinstance(value, (bool, int, float)):
+        return value
+    # R6: a type the walker does not understand may be hiding strings, so it
+    # is refused rather than skipped. ⛔ Names the type and never `repr(value)`
+    # — the repr of an unknown object is exactly the thing this gate exists to
+    # keep out of a traceback.
+    raise TypeError(f"{where} is a {type(value).__name__}; the gate reads decoded JSON only")
+
+
+def scrub_document(value: object, where: str = "document") -> object:
+    """Return `value` with every string scrubbed, structure preserved.
+
+    For a document **this framework generated**. ⛔ Never for archive content,
+    which is refused rather than rewritten.
+    """
+    return _walk(value, lambda _at, text: scrub(text), where)
+
+
+def leaks(value: object, where: str) -> Iterator[tuple[str, str]]:
+    """`(location, shape name)` for every personal-data shape in `value`.
+
+    Non-raising, for callers that report rather than refuse — `studyforge
+    validate` lists findings. ⛔ Yields the shape's name, never the value.
+    """
+    found: list[tuple[str, str]] = []
+
+    def visit(at: str, text: str) -> str:
+        name = shape_in(text)
+        if name is not None:
+            found.append((at, name))
+        return text
+
+    _walk(value, visit, where)
+    yield from found
+
+
+def assert_clean(value: object, where: str) -> None:
+    """Raise `PersonalDataLeak` if `value` carries personal data (R7).
+
+    The gate. Takes a decoded string or a whole decoded document — one name,
+    so no call site can reach for the weaker of two. ⛔ `where` has no
+    default: the refusal is forbidden to carry the matched text, so its
+    location is the only actionable thing it may say, and a call site that
+    omitted it would leave a refusal nobody can act on.
+
+    ⭐ `where` is itself scrubbed before it is formatted in. A caller that
+    passes an absolute path would otherwise make this gate emit the leak it
+    exists to prevent — which is the general form of the rule that an
+    exception object is never formatted into a message.
+    """
+    for at, name in leaks(value, where):
+        raise PersonalDataLeak(
+            f"{scrub(at)} carries {_article(name)} {name} (R7); "
+            f"refusing to write it rather than rewriting the record"
+        )
