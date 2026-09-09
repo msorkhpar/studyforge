@@ -64,6 +64,60 @@ def tool_on_path(name: str) -> str | None:
     return shutil.which(name)
 
 
+def git() -> str:
+    """The absolute path to git, or a failed assertion saying why it matters.
+
+    ⛔ Asserted rather than skipped. The checks that use it — the ignore rules
+    that keep FND-04's golden fixtures trackable, and FND-02's index rules —
+    guard states whose failure is *silent* on a fresh clone. A skip there would
+    look green and guard nothing.
+    """
+    tool = shutil.which("git")
+    assert tool is not None, "git is not installed; this test cannot answer"
+    return tool
+
+
+def init_repository(path: Path) -> Path:
+    """`git init` a throwaway repository at `path` and return it.
+
+    For tests that need git to answer a question about a tree — which ignore
+    rules apply, what is ignored — rather than about this repository.
+
+    ⛔ No commit is made and no identity is configured. Nothing here needs an
+    author, and configuring one would mean writing a name into a test.
+    """
+    path.mkdir(parents=True, exist_ok=True)
+    result = run([git(), "init", "-q"], cwd=path)
+    assert result.returncode == 0, result.stdout + result.stderr
+    return path
+
+
+def is_ignored(path: str, cwd: Path | None = None) -> bool:
+    """Whether git, run in `cwd`, would ignore `path`. The path need not exist.
+
+    `git check-ignore -q` exits 0 when the path is ignored and 1 when it is
+    not; ⛔ anything else is git failing rather than answering, and is raised
+    rather than read as a verdict — "not ignored" and "git could not tell you"
+    must never arrive as the same answer.
+
+    ⭐ One definition, per this file's own rule. It was written twice —
+    `tests/test_repository.py` had it first and `tests/test_knowledge_index.py`
+    copied it, because FND-02 was told not to touch the file that already had
+    it and recorded the duplication as a finding rather than reaching outside
+    its task. Consolidated here by FND-06, which owns both callers.
+
+    ⚠️ `cwd` defaults to this repository and is a parameter because FND-02 asks
+    the same question of *sibling* repositories, where the answer is about
+    their ignore rules and not ours.
+    """
+    where = repository_root() if cwd is None else cwd
+    result = run([git(), "check-ignore", "-q", "--no-index", path], cwd=where)
+    assert result.returncode in (0, 1), (
+        f"git check-ignore failed on {path!r} in {where.name}: {result.stdout + result.stderr}"
+    )
+    return result.returncode == 0
+
+
 def run(command: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
     """Run `command` in `cwd` and capture both streams as text.
 

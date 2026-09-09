@@ -1,9 +1,10 @@
-"""The repository's quality floor: R11's size ceiling, R12's mirror, R17's contract, style.
+"""The repository's quality floor: size, mirrored tests, contracts, style, personal data.
 
 **What it does.** Reads the tree and reports every place it falls below the
-floor the conventions describe. Exit code, not advice — `python3 -m
-tools.quality` returns 1 when anything is found, so the rules hold without
-anybody policing them in review.
+floor the conventions describe — R11's size ceiling, R12's mirror, R17's
+contract, style, and R7's ban on personal data reaching a tracked file. Exit
+code, not advice — `python3 -m tools.quality` returns 1 when anything is found,
+so the rules hold without anybody policing them in review.
 
 **How you use it.**
 
@@ -59,13 +60,25 @@ from tools.quality.config import (
 )
 from tools.quality.docstrings import check_docstrings
 from tools.quality.mirror import check_mirrors
+from tools.quality.personal_data import check_personal_data
 from tools.quality.report import Finding, format_findings
 from tools.quality.size import check_sizes
 from tools.quality.style import check_style
 
 #: Every check, in the order their findings are reported. Adding a check means
 #: adding it here and nowhere else.
-CHECKS = (check_sizes, check_mirrors, check_docstrings, check_style)
+#:
+#: ⚠️ `check_personal_data` is the only one that reads the WHOLE tree rather
+#: than the Python files under `SCAN_ROOTS`. R7 has been violated in this
+#: repository once already and it was in a document, so a sweep confined to
+#: `.py` would have missed the only instance there has been.
+CHECKS = (
+    check_sizes,
+    check_mirrors,
+    check_docstrings,
+    check_style,
+    check_personal_data,
+)
 
 __all__ = [
     "CHECKS",

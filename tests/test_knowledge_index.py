@@ -30,7 +30,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.support import repository_root, run, tool_on_path
+from tests.support import git, is_ignored, repository_root, run
 
 #: The generated index directory, in every repository this project touches.
 INDEX_DIR = "graphify-out"
@@ -76,32 +76,6 @@ def workspace_root() -> Path:
     """Where sibling repositories live."""
     override = os.environ.get(WORKSPACE_ENV)
     return Path(override).expanduser() if override else repository_root().parent
-
-
-def git() -> str:
-    tool = tool_on_path("git")
-    assert tool is not None, "git is not installed; this test cannot answer"
-    return tool
-
-
-def is_ignored(path: str, cwd: Path) -> bool:
-    """Whether git, run in `cwd`, would ignore `path`. The path need not exist.
-
-    `git check-ignore -q` exits 0 when the path is ignored and 1 when it is
-    not; anything else is git failing rather than answering, and is raised
-    rather than read as a verdict.
-
-    ⚠️ Duplicated from `tests/test_repository.py`, which had it first and which
-    FND-02 was told not to touch. `tests/support.py`'s own rule says a block
-    repeated between test files is extracted and imported — see the finding in
-    `docs/tasks/handoffs/FND-02.md`; the extraction belongs to whoever owns
-    both files next, not to a task told to leave one of them alone.
-    """
-    result = run([git(), "check-ignore", "-q", "--no-index", path], cwd=cwd)
-    assert result.returncode in (0, 1), (
-        f"git check-ignore failed on {path!r} in {cwd.name}: {result.stdout + result.stderr}"
-    )
-    return result.returncode == 0
 
 
 def conventions() -> str:

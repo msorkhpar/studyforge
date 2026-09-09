@@ -15,7 +15,7 @@ import tomllib
 
 import pytest
 
-from tests.support import repository_root, run, tool_on_path
+from tests.support import is_ignored, repository_root, run, tool_on_path
 from tools.quality.config import python_files, relative
 
 
@@ -92,22 +92,6 @@ GENERATED_SHAPES = (
     "corpora/depth1/lesson-1.audio/s-1-abcd1234.mp3",
     "corpora/depth2/sib/page.unit.html",
 )
-
-
-def is_ignored(path: str) -> bool:
-    """Whether git would ignore `path`, which need not exist.
-
-    `git check-ignore -q` exits 0 when the path is ignored and 1 when it is
-    not; anything else is git failing rather than answering, and is raised
-    rather than read as a verdict.
-    """
-    git = tool_on_path("git")
-    assert git is not None, "git is not installed; this test cannot answer"
-    result = run([git, "check-ignore", "-q", "--no-index", path], cwd=repository_root())
-    assert result.returncode in (0, 1), (
-        f"git check-ignore failed on {path!r}: {result.stdout + result.stderr}"
-    )
-    return result.returncode == 0
 
 
 def test_golden_fixtures_are_not_ignored():
