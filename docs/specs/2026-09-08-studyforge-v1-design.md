@@ -477,6 +477,7 @@ draw, subject to the size ceiling.
 ```
 studyforge/
   src/studyforge/
+    version.py   the R9 gate: one implementation of "is this a version I speak"
     address/     logical N-segment address, keys, slugs, identifiers
     corpus/      manifest · container map · placement profiles · discovery
     archive/     the archive document · block vocabulary · Markdown reader

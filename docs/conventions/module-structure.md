@@ -139,3 +139,53 @@ file for a closing tag removes no duplication and adds a hop.
 Standard library only in framework source. Test-only dependencies are fine.
 Vendored third-party assets (Prism, Plyr) are committed with their licence
 beside them and are **never edited** — re-vendor instead.
+
+## Two failure classes with mechanical fixes
+
+Both were found by a task's own tests, both will be written again by somebody who
+has not met them, and both are cheaper as a rule than as a review comment.
+
+### ⛔ A version gate checks the type before the value (R9)
+
+```python
+if api not in KNOWN_API:            # ⛔ porous
+if not isinstance(api, int) or isinstance(api, bool) or api not in KNOWN_API:   # ⭐
+```
+
+⚠️ **`True in {1}` and `1.0 in {1}` are both true in Python.** A JSON `true` or
+`1.0` therefore passes the membership test that stands in front of everything
+else — the one check whose whole job is to refuse a document this build cannot
+read. Measured on a real manifest: the naive gate accepts `true` and `1.0`.
+
+⭐ **Use the shared helper rather than re-deriving this.** R9 names six versioned
+contracts — `corpus_api`, `container_api`, `raw_api`, `unit.json`'s `api`, the
+TOC schema version, `consuming_api` — and six independent membership tests is six
+chances to write the porous one. ⛔ `bool` is a subclass of `int`, so the
+`isinstance(x, bool)` clause is not redundant.
+
+### ⛔ Never format an exception object into a message (R7)
+
+```python
+except OSError as exc:
+    raise ManifestError(f"cannot read {where}: {exc}")            # ⛔ leaks a path
+    raise ManifestError(f"cannot read {where}: {exc.strerror}")   # ⭐ names the field
+```
+
+⚠️ **`OSError` formats itself with the filename it was given**, so a missing file
+produces a refusal carrying an **absolute path** — personal data, in a log, from
+the gate that exists to prevent exactly that (R7). ⭐ The rule generalises past
+`OSError`: an exception's `str()` is written by whoever raised it and is not
+yours to promise anything about. **Name the field you mean** — `strerror`,
+`errno`, `reason` — and say what *you* know from `where`.
+
+## Illustrative fences are `text`, not `python`
+
+⭐ A fence tagged `python` is a promise that the block **is** Python, and the
+formatter keeps that promise: it reformats fenced Python inside Markdown, so an
+interactive-style illustration with aligned trailing comments is silently
+re-spaced. Measured — ruff rewrites a ```python fence and leaves ```text and an
+untagged fence alone.
+
+⚠️ Two tasks have now surrendered a hand-aligned example to the formatter. ⛔ If
+the block is *output*, a transcript, or an illustration rather than source,
+tag it `text`. If it really is source, let the formatter own its spacing.
