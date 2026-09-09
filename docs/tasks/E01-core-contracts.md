@@ -169,7 +169,12 @@ is reporting what is there, not what is coming, and the two differ precisely in
 the case that matters — the first run.
 
 **Acceptance.** Output for both FND-04 fixtures matches what a real build then
-creates, path for path — asserted by running both and diffing. Names the
+creates, path for path — asserted by running both and diffing. ⭐ **That output
+is committed for both fixtures as the golden file**, and it is the first golden
+the fixture tree gets: `FND-04` could not write one, because §5 pins the *kinds*
+of path but not artifact naming, and `SF-03` owns the derivation. This is the
+cheapest close on the largest deferred gap, and it puts the golden beside the
+contract that produces it rather than three milestones upstream of it. Names the
 declared edits with their reasons. **Reports the projected media footprint and
 whether it fits the corpus's `media` limits** (SF-32). Runs on a repository with
 no generated output present. Adding a `permitted_edits` entry changes the plan

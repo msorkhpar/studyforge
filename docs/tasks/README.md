@@ -1,6 +1,8 @@
 # studyforge — task index
 
-**83 tasks · 13 epics · 9 milestones.** Companion to
+**85 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
+`BOARD.md`**, not this file: this one orders the work, that one says where it is.
+Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R20** every
 task cites.
 
@@ -43,7 +45,7 @@ is the kind that reorders plans.
 
 | | Milestone | What works when it lands | Tasks |
 |---|---|---|---|
-| **M0** | Foundations | An agent can start work without inventing anything | 5 |
+| **M0** | Foundations | An agent can start work without inventing anything | 6 |
 | **M1** | One page renders | A unit page from a fixture opens in a browser | 15 |
 | **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** | 12 |
 | **M3** | It speaks | Narration with highlight sync, and an honest media footprint | 10 |
@@ -55,7 +57,7 @@ corpus with no graders that stops here is complete, not short.
 
 | | Milestone | What works when it lands | Tasks |
 |---|---|---|---|
-| **M5** | It runs code | Run and Submit against a pinned toolchain | 12 |
+| **M5** | It runs code | Run and Submit against a pinned toolchain | 13 |
 | **M6** | The Java corpus reads | 166 units, narrated and navigable | 9 |
 | **M7** | The Java corpus has practices | Real exercises with proven graders | 12 |
 | **M8** | **It is a framework** | A further, unnamed source converted by the skills alone | 1 |
@@ -86,7 +88,25 @@ fixtures — one depth-1, one depth-2 — and any corpus rides them.
 > **Done when:** an agent can pick up any task without inventing a layout,
 > hunting for a graph, or building its own fixtures.
 
-- **0.1** — FND-01, FND-02, FND-03, FND-04, FND-05 *(all parallel)*
+- **0.1** — FND-01, FND-02, FND-04 *(parallel)*
+- **0.2** — FND-03, FND-06, FND-05a *(parallel)*
+
+⚠️ **M0 is two steps, not one, and the earlier "all parallel" was wrong.**
+`FND-03`'s acceptance is that the suite runs, and there is no suite until
+`FND-01` lands; `FND-06` extends the same quality floor `FND-01` establishes.
+`FND-05a` is in 0.2 only because it is the least urgent — nothing in M1 imports
+the parent workspace.
+
+⚠️ **`FND-05` split on 2026-09-09** (CTO ruling 2). `FND-05a` — the parent, the
+workflow document, the non-recursive-clone guard and the one submodule that can
+be pinned today — stays here. **`FND-05b`** — composing `studyforge`, `TC/` and
+`NS/` — moves to **M5**: `studyforge` has no remote yet, and two of the
+components R18 names do not exist until E12 and E13 create them. ⛔ Left whole,
+the task made M0 permanently unachievable, and M0 gates the entire plan.
+
+⭐ **`FND-06` is new**: R7 enforced by the build instead of by a reviewer's grep.
+It is not `SF-08` — that gates strings entering the *archive*, this gates strings
+entering the *repository*.
 
 ### M1 — One page renders
 > **Done when:** a unit page from the depth-1 fixture opens in a browser, with
@@ -162,7 +182,7 @@ that stops after M4 is **complete**, not short.
 - **5.2** — TC-02, TC-03, TC-04, SF-29
 - **5.3** — TC-05, TC-06
 - **5.4** — SK-09, SF-22
-- **5.5** — SF-24
+- **5.5** — SF-24, FND-05b
 
 ### M6 — The Java corpus reads
 > **Done when:** the 166-unit Java tutorial is a working, narrated study site.
@@ -224,7 +244,7 @@ OPS-04 → QA-01 → QA-04.
 
 | Epic | Document | Tasks | Owns |
 |---|---|---|---|
-| E00 | [Foundations](E00-foundations.md) | FND-01…05 | scaffolding, graphify, dev container, fixtures, submodules |
+| E00 | [Foundations](E00-foundations.md) | FND-01…04, 05a/05b, 06 | scaffolding, graphify, dev container, fixtures, submodules, the R7 check |
 | E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31 | address, manifest, placement, dry-run, discovery, container map |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27 | assets, page, contents, index, navigation |
@@ -285,12 +305,13 @@ not patches. See spec §12.
 
 ## Before picking up any task
 
-1. `../specs/2026-09-08-studyforge-v1-design.md` — §1–§4 and all of R1–R19.
+1. `../specs/2026-09-08-studyforge-v1-design.md` — §1–§4 and all of R1–**R20**.
 2. Your **epic document** — shared context for your task's neighbours.
 3. `../conventions/module-structure.md` — size, packages, tests, templates.
 4. `../conventions/graphify.md` — ask the graph before exploring (R14).
 5. `../conventions/agent-protocol.md` — how to work and how to hand off.
-6. `handoffs/` — notes from the tasks you depend on.
+6. `../conventions/review-rubric.md` — the merge gate your work is judged by.
+7. `handoffs/` — notes from the tasks you depend on.
 
 ## Task fields
 
@@ -319,7 +340,7 @@ not patches. See spec §12.
   only what is additional to them. `EX-00` blocks all of E08.
 
 **Repository shorthand**, all relative to the **workspace root** — the parent
-directory holding every component as a sibling (R18, FND-05). Never write an
+directory holding every component as a sibling (R18, FND-05a). Never write an
 absolute path into a file: it carries a home directory, which is personal data
 (R7).
 
