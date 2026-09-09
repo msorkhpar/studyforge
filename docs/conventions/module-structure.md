@@ -220,10 +220,15 @@ pinned by tests on both sides.
 
 ## ⭐ A test may assert the premise of the bug it prevents
 
-```python
+```text
 assert True in ONE                    # the porous test, stated so it cannot be argued with
 assert not is_supported(True, ONE)    # and the guard that closes it
 ```
+
+⚠️ **That fence is tagged `text`, and this paragraph is why.** Tagged `python` it
+is source the formatter owns, and it re-spaced the alignment in the very commit
+that added this section — the fourth time this trap has fired here, on the
+document that documents it.
 
 ⭐ **A reader who doubts the premise is answered by an execution rather than by a
 comment.** The first line is not a redundant assertion about Python; it is the
