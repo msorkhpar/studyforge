@@ -3,8 +3,8 @@
 Not a mirror of any source module — it is about the tree as a whole, which is
 why it sits at the top of `tests/` rather than under `tests/studyforge/`. The
 size, mirror, contract and style floor is next door in
-`tests/test_quality_floor.py`; what lives here is dependency policy and the
-optional tooling.
+`tests/test_quality_floor.py`; what lives here is dependency policy, the
+ignore rules, and the optional tooling.
 """
 
 from __future__ import annotations
@@ -69,6 +69,66 @@ def test_the_quality_tooling_is_excluded_from_packaging():
     # `src/studyforge/`.
     assert pyproject()["tool"]["setuptools"]["packages"]["find"]["where"] == ["src"]
     assert not (repository_root() / "src" / "tools").exists()
+
+
+# --- ignore rules ----------------------------------------------------------
+
+#: The shapes FND-04's golden fixtures will carry. ⚠️ None of them exists in
+#: the tree yet, and that is the point: the risk is in what is not here to be
+#: noticed. `site.json`, `*.unit.html` and `*.audio/` are all ignored
+#: repository-wide, so without the `!tests/fixtures/**` negation these files
+#: would be silently untracked — FND-04's suite passing on the machine that
+#: wrote them and failing on every other checkout.
+FIXTURE_SHAPES = (
+    "tests/fixtures/depth1/.studyforge/site.json",
+    "tests/fixtures/depth1/lesson-1.audio/s-1-abcd1234.mp3",
+    "tests/fixtures/depth2/sib/page.unit.html",
+)
+
+#: The same three shapes anywhere else, where they ARE generated output and
+#: must stay ignored.
+GENERATED_SHAPES = (
+    "corpora/depth1/.studyforge/site.json",
+    "corpora/depth1/lesson-1.audio/s-1-abcd1234.mp3",
+    "corpora/depth2/sib/page.unit.html",
+)
+
+
+def is_ignored(path: str) -> bool:
+    """Whether git would ignore `path`, which need not exist.
+
+    `git check-ignore -q` exits 0 when the path is ignored and 1 when it is
+    not; anything else is git failing rather than answering, and is raised
+    rather than read as a verdict.
+    """
+    git = tool_on_path("git")
+    assert git is not None, "git is not installed; this test cannot answer"
+    result = run([git, "check-ignore", "-q", "--no-index", path], cwd=repository_root())
+    assert result.returncode in (0, 1), (
+        f"git check-ignore failed on {path!r}: {result.stdout + result.stderr}"
+    )
+    return result.returncode == 0
+
+
+def test_golden_fixtures_are_not_ignored():
+    # ⛔ Load-bearing for another agent's committed work, and its failure is
+    # silent. The negation works only because `!tests/fixtures/**` also
+    # matches the intermediate directories — git normally cannot re-include a
+    # file whose parent directory is excluded, and `.studyforge/` excludes one
+    # of these parents. Narrowing the pattern to `**/*.json`, or moving it
+    # above the rules it negates, breaks it with nothing failing loudly.
+    swallowed = [path for path in FIXTURE_SHAPES if is_ignored(path)]
+    assert swallowed == [], (
+        "golden fixtures would be silently untracked: " + ", ".join(swallowed)
+    )
+
+
+def test_the_same_shapes_outside_the_fixtures_are_still_ignored():
+    # ⚠️ Both directions, or the test above passes on a `.gitignore` that
+    # ignores nothing at all — which is a worse state than the one it guards
+    # against, and would look green.
+    tracked = [path for path in GENERATED_SHAPES if not is_ignored(path)]
+    assert tracked == [], "generated output is no longer ignored: " + ", ".join(tracked)
 
 
 # --- optional tooling ------------------------------------------------------

@@ -22,7 +22,8 @@ contract. Plus:
 - `tests/test_quality_floor.py` — the thin wrapper that fails the suite when
   the floor does, and asserts the floor checks itself.
 - `tests/test_repository.py` — dependency policy (declared *and* actually
-  imported), packaging exclusion, and the optional-tooling checks.
+  imported), packaging exclusion, the **ignore-rule regression test**, and the
+  optional-tooling checks.
 
 **The quality floor**, `tools/quality/` — standard library only, mirrored at
 `tools/tests/quality/`:
@@ -53,7 +54,12 @@ it exists.
 
 **Ignore rules**, `.gitignore` — audio and discovery caches produced by this
 repository's own runs, with the scope stated so it does not read as a reversal
-of SF-17; and a negation that keeps `tests/fixtures/**` trackable.
+of SF-17; and a negation that keeps `tests/fixtures/**` trackable, **tested in
+both directions** by `test_golden_fixtures_are_not_ignored` and
+`test_the_same_shapes_outside_the_fixtures_are_still_ignored`. The shapes it
+asserts on do not exist in the tree yet, which is where the risk is — FND-04
+writes them. Both directions, because a one-directional test passes on a
+`.gitignore` that ignores nothing at all.
 
 ## Decisions
 
@@ -86,8 +92,12 @@ final newline, line length. ⛔ `[tool.ruff] line-length` and
 `tools.quality.config.LINE_LENGTH` are asserted equal, so the always-on checker
 and the optional one cannot come to disagree about the same file.
 
-**3. `--import-mode=importlib`.** R12's mirror puts a `test_init.py` in every
-package directory. Under pytest's default `prepend` mode, two files with the
+**3. `--import-mode=importlib`** — now a **recorded ruling** (rubric §10a),
+not folklore: it is required by R12's mirror, and a diff that drops it is
+CHANGES REQUESTED with that as the stated reason.
+
+R12's mirror puts a `test_init.py` in every package
+directory. Under pytest's default `prepend` mode, two files with the
 same basename in directories that are not packages collide on the module name
 and the suite fails to collect. The alternatives were an `__init__.py` in every
 test directory, or renaming the mirrors so they stop mirroring. ⚠️ **A task
@@ -128,8 +138,10 @@ change.** FND-01 says "git ignore rules for generated audio"; the existing
 Resolved by scope rather than by reversal: a *corpus* commits its media under
 its own `media` policy, written in the corpus's ignore file; `studyforge`'s own
 tree never legitimately holds a clip, so `*.audio/`, `.studyforge/` and
-`.discovery-cache/` are ignored **here** with the scope stated in the file. The
-E00 wording predates SF-17 and should be reconciled.
+`.discovery-cache/` are ignored **here** with the scope stated in the file.
+⭐ **Ruled: the scope resolution stands and E00's wording is the error.** It
+predates `af628a9` and should read "generated audio produced by this
+repository's own runs and test runs"; the PO carries the task edit.
 
 **The context budget was right, the file list was not.** `CS/tests/support.py`
 was worth reading for its "extract it and import it" ruling, which is why
@@ -153,7 +165,15 @@ Defects seen outside my scope, not fixed:
    on any other checkout. I added `!tests/fixtures/**` because `.gitignore` is
    my deliverable, and verified with `git add -n` that a fixture
    `.studyforge/archive.json`, `site.json` and `a.unit.html` are all trackable.
-   ⚠️ **FND-04 should confirm this covers the shapes it actually writes.**
+   ⛔ **Now tested**, in both directions, by `tests/test_repository.py` — see
+   *What landed*. The negation works only because `!tests/fixtures/**` also
+   matches the intermediate directories; git normally cannot re-include a file
+   whose parent directory is excluded, and `.studyforge/` excludes one of
+   these parents. Narrowing the pattern to `**/*.json` or moving it above the
+   rules it negates breaks it silently — both were run against the test and
+   both fail it, as does a `.gitignore` emptied entirely.
+   ⚠️ **FND-04 should still confirm this covers the shapes it actually
+   writes**, and add them to `FIXTURE_SHAPES` if not.
 
 2. **`docs/tasks/README.md:288` and `CLAUDE.md:33` say "R1–R19"; the spec has
    R20.** Reported by the CTO, confirmed, not fixed — outside this task.
@@ -172,14 +192,18 @@ Defects seen outside my scope, not fixed:
    anything in it exists to be *called by* a skill. If the skills turn out to
    be entirely documents, this package should be removed rather than left
    empty — an empty package with a contract is worse than no package.
+   ⛔ **Ruled: creating it was correct, and if E11 concludes the skills are
+   entirely documents, E11 deletes the package.** An empty package that never
+   fills is dead shipped surface.
 
 5. **No repository-hygiene check for R7.** A cheap standard-library check for
    an absolute home path in a tracked file would sit naturally beside the size
    check, and CLAUDE.md records that this rule has already been violated once
    in this repository's own documents. Deliberately not built — it is not in
    FND-01's scope and SF-08 owns the personal-data gate for archive content,
-   which is a different check with a different subject. Recommended as a
-   follow-up, in `tools/quality/`, cheap.
+   which is a different check with a different subject.
+   ⭐ **Accepted and scoped as a new task**, in `tools/quality/` beside the
+   size and mirror checks — deliberately not retrofitted into FND-01.
 
 ## For dependents
 
@@ -226,8 +250,11 @@ it with a label.
   you would like to use, say so, because Decision 7 above was not researched.
 - **FND-04 (fixtures).** `tests/fixtures/` is excluded from every quality
   check by `config.EXCLUDED_DIRS`, so a deliberately invalid fixture will not
-  be reported as a style defect. Please confirm Finding 1 covers the filenames
-  you actually write.
+  be reported as a style defect. Your golden files are kept trackable by a
+  `.gitignore` negation that is easy to break and fails silently — it now has
+  a regression test (`FIXTURE_SHAPES` in `tests/test_repository.py`). ⚠️ **Add
+  the shapes you actually write to that tuple** if they differ from the three
+  already there.
 - **FND-05 (workspace).** `studyforge` has no git remote yet, which is what a
   submodule pin needs.
 - **SF-28 (`cli/`).** `[project.scripts]` is deliberately absent; add it when
