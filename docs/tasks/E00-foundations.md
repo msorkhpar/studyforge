@@ -396,6 +396,26 @@ refusal names the **shape**, never the value, verified by a test that asserts th
 message does not contain the matched text. Standard library only. `tools/` stays
 excluded from the packaging config.
 
+⛔ **And it is the first task to obey the same-commit rule, on itself** (CTO,
+`handoffs/CTO-2026-09-09-round4.md`):
+
+> ⛔ **A commit that adds or tightens a check brings the whole tree into
+> compliance in the same commit**, and the check is never merged in a state where
+> any tracked file fails it. ⭐ **No open branch is expected to fix a rule it
+> never saw** — the rule-adding commit fixes the tree, and open branches inherit
+> compliance when they rebase.
+
+⚠️ This is C5's actual lesson, and `FND-06` is where it is first tested: it adds
+the fifth rule to a tree that fifteen M1 branches are open against. **If the
+sweep finds anything, `FND-06` fixes it** — it does not file fifteen findings.
+
+⭐ **It also carries one consolidation it did not create.** `is_ignored()` is
+duplicated between `tests/test_repository.py` and `tests/test_knowledge_index.py`,
+against `tests/support.py`'s own stated rule. `FND-02` created the duplicate
+deliberately rather than edit a file outside its task, and said so. ⛔ Three
+lines, into `tests/support.py`, and both call sites import it — this task is the
+next one whose scope legitimately spans both.
+
 **Out of scope.** Rewriting history when a hit is found — that is the author's,
 under the rubric. Scanning commit messages of merged history; this gates what is
 being added.

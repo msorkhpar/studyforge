@@ -53,6 +53,42 @@ against a stated range.
 
 If `$CHANGED` is empty the review is over: there is nothing to approve.
 
+### 0a. ⛔ Review the merge, not the branch
+
+⭐ **Every check that runs a tool — the suite, the quality floor, the linter —
+runs on the branch merged into `$REVIEW_BASE`, never on the branch as checked
+out.** Set the trial merge up once and run the rest of the rubric inside it:
+
+```bash
+REV=$(git rev-parse HEAD)                       # the branch under review
+TRIAL=$(mktemp -d)/trial
+git worktree add -q --detach "$TRIAL" "$REVIEW_BASE"
+git -C "$TRIAL" merge --no-edit --no-ff "$REV"; echo "merge exit=$?"
+( cd "$TRIAL" && python3 -m pytest -q && python3 -m tools.quality )
+git worktree remove --force "$TRIAL"            # always, even on a failure
+```
+
+⚠️ **A worktree needs a clean index**, so commit or stash before running it —
+`git worktree add` refuses nothing here, but a half-staged tree makes the result
+ambiguous about what was actually merged.
+
+⛔ **A merge conflict here is a review outcome, not a preliminary.** It is
+CHANGES REQUESTED against whoever rebases, and it is discovered by the reviewer
+rather than by the person merging at the end of the day.
+
+⚠️ **This clause exists because the rubric got it wrong and the project paid
+three times.** In M0, `FND-04` hit a line-length rule, `FND-03` hit the formatter
+and `FND-02` hit the formatter again — **each branch correctly green when
+reviewed**, because the tool that would fail it did not exist on that branch yet.
+⭐ **The diff is the branch's; the verdict must be the merge's.** Reviewing
+`$BASE...HEAD` answers *"is this change good?"* when the question a merge gate
+asks is *"is the result good?"* — and those come apart precisely when two
+parallel tasks are each correct alone.
+
+⚠️ **It generalises past style.** Any rule, fixture, contract or checker
+introduced on one branch is invisible to every branch cut before it. The trial
+merge is the only check that sees rules nobody thought to look for.
+
 ---
 
 ## 1. R7 — no personal data · ⛔ HARD FAIL
@@ -336,14 +372,22 @@ REQUESTED.
 
 ### 4b. The tests were actually run
 
+⛔ **In the trial merge of §0a, not on the branch:**
+
 ```bash
-python3 -m pytest -q
+cd "$TRIAL"
+python3 -m pytest -q          # the suite
+python3 -m tools.quality      # the floor: size, mirror, contracts, style
 ```
 
-**Pass = exit 0**, output pasted into the review. ⛔ A green suite the reviewer
-did not see is not evidence. If the change touches the container (FND-03), it
-runs there too — a result that depends on whose machine produced it is not a
-result (R15).
+**Pass = exit 0 from both**, output pasted into the review. ⛔ A green suite the
+reviewer did not see is not evidence, and a green suite on the *branch* is not
+the evidence this gate asks for.
+
+⭐ **The container is authoritative** (R15). Where the change touches anything
+the image builds or installs, the run that counts is the in-container one; ⚠️ a
+result that differs between host and container is a **finding**, and the
+container's answer is the one recorded.
 
 ### 4c. The tests test the change
 
@@ -529,6 +573,27 @@ Two things the reviewer reads rather than greps:
   Findings section with a large diff is a prompt to ask, not a pass.
 - **Surprises** should say what the task's own context budget got wrong. A wrong
   budget is a planning defect and recording it is how the plan improves.
+
+### 8a. ⛔ Structural findings are routed by the reviewer, in the review
+
+```bash
+grep -n '\[structural\]' "docs/tasks/handoffs/$TASK.md"
+```
+
+⭐ **The reviewer is the last person who reads a handoff while anything can still
+be done about it**, so routing is part of the verdict, not a follow-up. For each
+`[structural]` finding, the review states one of exactly three outcomes and
+nothing else: **ruled** (with the ruling, or the handoff it went to), **scheduled**
+(with the task), or **accepted** (with the cost being accepted, in words).
+
+⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
+— the author is describing their own scope and is the worst-placed person to see
+that something will recur elsewhere.
+
+⛔ **This exists because a correctly-filed prediction was read and not acted on,
+and the defect it named then happened twice more to two other agents in the same
+milestone** (`agent-protocol.md`, *Findings are triaged, not filed*). Approving a
+change while leaving a `[structural]` finding unrouted is how that repeats.
 
 ---
 

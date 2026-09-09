@@ -49,6 +49,40 @@ Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:
 This is the mechanism by which parallel agents share material rather than
 re-deriving it. A task with dependents and no handoff is not done.
 
+## Findings are triaged, not filed
+
+⛔ **Writing a finding down does not discharge it, and until 2026-09-09 nothing
+in this protocol said who had to act on one.** That gap has a measured price.
+`FND-04`'s finding 10 predicted the parallel-authoring defect exactly, named the
+three options and said which was cheapest. It was filed in the right place, in
+the right format, and read. **The same defect then happened twice more, to two
+other agents, in the same milestone.**
+
+⭐ **A finding filed correctly still cost two round trips, because nothing
+obliged anyone to rule on it.** That is the most expensive kind of finding this
+project produces: the knowledge was already where the protocol says to put it.
+
+So findings carry a marker, and the marker creates an obligation:
+
+- **`[local]`** — a defect in one place, fixed by whoever next touches it. Filing
+  it is enough.
+- ⛔ **`[structural]`** — a defect that **will recur**, or that describes a
+  mechanism rather than an instance. ⭐ **Every `[structural]` finding is ruled
+  on, scheduled, or explicitly accepted before the next wave begins** — by the
+  CTO for a technical rule, by the PO for sequencing. "Noted" is not one of the
+  three outcomes.
+
+⭐ **The test for `[structural]` is one question: *would this happen again to
+somebody else?*** If yes, mark it. ⚠️ Over-marking costs a sentence in a triage
+list; under-marking costs what C5 cost.
+
+```bash
+grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a wave
+```
+
+⛔ **A wave that begins with an untriaged `[structural]` finding is a wave that
+has decided to pay for it twice.**
+
 ## Reporting
 
 Report outcomes faithfully. If tests fail, say so and include the output. If
