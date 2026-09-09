@@ -68,6 +68,10 @@ ingestion date does not. An unknown version raises.
 **Milestone** M1 · **Depends on** — · **Team** solo
 **Owns** `archive/markdown.py`
 **Context** ~35k — `CS/tools/study/markdown.py`, `CS/tests/test_markdown.py`
+**Effort** ⚠️ **Reading is ~35k; the work is not.** The acceptance runs the parser
+over **166 real files** and, where it fails, names every file and construct —
+that triage is a computation with an unknown tail, not a read. Budget a second
+session for it and ⛔ do not let the 35k be read as the size of the task.
 
 **Definition.** The block vocabulary — `heading`, `para`, `code`, `list`,
 `table`, `image`, `video`, plus **`rule`** (thematic break), **`quote`**

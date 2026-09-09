@@ -4,10 +4,20 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-**Milestone in flight: M0 — Foundations.**
-**Release branch: `release/m0-foundations`.** Developers branch off it, the CTO
-reviews against `../conventions/review-rubric.md`, only reviewed work merges
-back. Flow: `../conventions/delivery-flow.md`.
+✅ **M0 is COMPLETE.** **Milestone in flight: M1 — One page renders.**
+**Release branch: `release/m1-one-page`**, cut from `release/m0-foundations`.
+Developers branch off it, the CTO reviews against
+`../conventions/review-rubric.md`, only reviewed work merges back. Flow:
+`../conventions/delivery-flow.md`.
+
+⚠️ **M1 is fifteen tasks and `README.md` calls it the riskiest milestone** —
+where every contract meets every other one for the first time. ⛔ **Two things
+follow, and they shape everything below.** Ordering *inside* a step now matters,
+because a contract that merges first becomes the shape the next fourteen copy.
+And ⭐ **the board must carry more reasoning at fifteen tasks, not less** — the
+entries that paid for themselves in M0 were the ones recording *why* (X2's
+dissolution, G1's recorded loss, the flattering review base), because a recorded
+*why* is what stops a question being re-asked by the next of fifteen agents.
 
 *Statuses:* `todo` · `in-progress` · `in-review` · `blocked` · `done`.
 *Editing rule:* a status change is one cell. Do not restructure rows; record
@@ -26,21 +36,21 @@ file verified against the local checkouts. See **B2** and **G1**, both closed.
 > **Milestone closes when:** an agent can pick up any M1 task without inventing
 > a layout, hunting for a graph, or building its own fixtures.
 
-**Step 0.1** — FND-01 ✅, FND-02, FND-04 ✅ · **Step 0.2** — FND-03, FND-06, FND-05a
-
-⭐ **Step 0.1 is done bar FND-02, and step 0.2 is fully unblocked.** Three tasks
-remain in M0, none of them blocked, and none of them on M1's critical path.
+✅ **CLOSED 2026-09-09.** Green in the container: **124 passed, 8 skipped**, floor
+clean. Four of six tasks done; **FND-05a** and **FND-06** carry into M1 as
+residue — see *M0 residue* below. ⭐ Neither gates any M1 task, which is why the
+milestone closes rather than waits.
 
 | Task | Title | Owner | Branch | Status | Blocked on | Closes when |
 |---|---|---|---|---|---|---|
 | FND-01 | Repository scaffolding and quality floor | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE after changes. `tools/quality/` (size, mirror, docstrings, style) + `tests/test_quality_floor.py`; `tools/` excluded from packaging; zero runtime dependencies. ✅ **Its one `Blocked` clause is now met** — `FND-03` runs ruff inside the image. ⭐ **No per-condition `Blocked` outcome remains anywhere on this board** |
 | FND-02 | Knowledge index | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09**, APPROVE. Corpus graph 11,107 nodes / 25,566 edges, 217 of 217 documents; framework graph rebuilt at the M0 close. Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
-| FND-03 | Development and test container | Developer 2 | *merged* | ✅ `done` | ⚠️ one formatting fix outstanding, Developer 2, **C4** | **Closed 2026-09-09**, APPROVE. ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs inside the image and the two tests run rather than skip. Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
+| FND-03 | Development and test container | Developer 2 | *merged* | ✅ `done` | — *(**C4** closed)* | **Closed 2026-09-09**, APPROVE. ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs inside the image and the two tests run rather than skip. Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
 | FND-04 | Shared contract fixtures | Developer 2 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE on every rubric check. 7 corpora, 43 files, 22 tests, re-run green post-merge |
-| FND-05a | Workspace, workflow and **the pin file** | *unassigned* | `feat/FND-05a-workspace` | `todo` | — *(unblocked: **B2** ruled)* | A tracked pin file records every component, `studyforge` included; verification **exits 0** when correct and **exits 1 naming the component** both when a recorded commit is absent locally and when a component's `HEAD` moved unrecorded — asserted, not described; the workflow document covers record, verify, advance, the two-commit rule; ⛔ no `.gitmodules` anywhere, and no absolute path in any tracked file |
-| FND-06 | Repository personal-data check | *unassigned* | `feat/FND-06-r7-check` | `todo` | — | A fifth entry in `tools/quality`'s `CHECKS`: exits non-zero on a purpose-built violating file, zero on the tree; the sanctioned-directory registry is asserted by a test; ⛔ writes no derived identifier anywhere, proved by a test on the refusal message |
+| FND-05a | Workspace, workflow and **the pin file** | *unassigned* — M0 residue | `feat/FND-05a-workspace` | `todo` | — *(unblocked: **B2** ruled)* | A tracked pin file records every component, `studyforge` included; verification **exits 0** when correct and **exits 1 naming the component** both when a recorded commit is absent locally and when a component's `HEAD` moved unrecorded — asserted, not described; the workflow document covers record, verify, advance, the two-commit rule; ⛔ no `.gitmodules` anywhere, and no absolute path in any tracked file |
+| FND-06 | Repository personal-data check | *unassigned* — ⭐ **M0 residue, and time-critical: see the sequencing call** | `feat/FND-06-r7-check` | `todo` | — | A fifth entry in `tools/quality`'s `CHECKS`: exits non-zero on a purpose-built violating file, zero on the tree; the sanctioned-directory registry is asserted by a test; ⛔ writes no derived identifier anywhere, proved by a test on the refusal message |
 | — | Review rubric + M0 readiness audit | CTO | *merged* | ✅ `done` | — | **Closed 2026-09-09.** `../conventions/review-rubric.md` plus four rulings |
-| — | Board + delivery flow | PO-Framework | `chore/po-board-m0-update` | `in-progress` | — | Board reflects the first review round; the ruled task edits are carried into `docs/tasks/` |
+| — | Board, delivery flow, rulings carried | PO-Framework | *merged* | ✅ `done` | — | Three rounds; the conflict on FND-05a resolved with both authors' contributions recorded |
 
 **Out of M0:** ⛔ **`FND-05b` is CANCELLED**, not deferred — its whole content was
 *add the three components `FND-05a` could not, as submodules*, and submodules are
@@ -151,7 +161,7 @@ it touches rather than left in a handoff.
 ⚠️ **That is a state to notice, not to relax into.** ⛔ **An empty list is not
 evidence that no contract is unlocated** — R21 exists because five more were
 found by *surveying* rather than by waiting to trip over them, and the register
-below still has five open rows. The question list being empty means the known
+below still has **four** open rows. The question list being empty means the known
 unknowns are answered; R21's register is where the unknown ones are tracked.
 
 **Work items carried out of the rulings:**
@@ -242,88 +252,203 @@ the fix are worth keeping, because both generalise:
 Any review run before the fix is re-run against the corrected base, not assumed
 sound.
 
-### C5 — the parallel-authoring defect: three instances, and it stopped being an anecdote
+### C5 — ✅ RULED: options 1 **and** 2. Option 3 refused.
 
-⚠️ **The pattern:** a quality rule merges, and a file authored **before** it
-landed fails it — through no fault of either author, on a branch that was green
-when it was written.
+⭐ **My recommendation of option 1 was right and was not enough, and the CTO's
+correction is the more interesting half.** They are not alternatives: **option 1
+prevents, option 2 detects, and only option 2 catches the rule nobody has thought
+of yet.**
 
-| # | Where | Rule it was authored before |
-|---|---|---|
-| 1 | `FND-04`'s fixture module, caught at the merge gate | the line-length check |
-| 2 | `FND-03`'s container run — green on the host, red in the image | the formatter |
-| 3 | `FND-02`'s test module — 89 characters, one hunk | the formatter |
+**The three instances**, kept because they are the evidence: `FND-04`'s fixture
+module against the line-length check; `FND-03`'s container run against the
+formatter; `FND-02`'s test module against the formatter. All three authored green
+on branches where the tool did not yet exist.
 
-⛔ **Three in one milestone, with four agents, on the milestone whose entire
-purpose is to gain rules.** ⭐ The threshold I named for deciding this was two
-data points. It is three, and the third arrived *while this board entry was being
-written* — which is itself the argument: the rate is not falling.
+**Option 1 — mostly already done.** Its schedulable half (*the floor exists
+before parallel authoring starts*) ⭐ **is already true**: M0 is complete, ruff is
+configured, `tools/quality` is present, the container builds. M0 was the one
+window where the floor was built alongside its first users and ⛔ **that window is
+closed — there is no wave-0 prerequisite left to schedule.** Its residue is a
+standing rule, now in `FND-06`:
 
-⚠️ **`FND-04`'s own handoff, finding 10, predicted this and named the fix.** ⛔
-**A prediction that was recorded, not acted on, and then came true twice more is
-the most expensive kind of finding this project produces** — the knowledge was
-already here, in the place the protocol says to put it, and the cost was paid
-anyway. Two round trips have now cost more than the fix would have.
+> ⛔ **A commit that adds or tightens a check brings the whole tree into
+> compliance in the same commit**, and the check is never merged in a state where
+> a tracked file fails it. ⭐ **No open branch is expected to fix a rule it never
+> saw.**
 
-**The three options, with the evidence they now carry.**
+**Option 2 — the real fix, and it was the rubric's defect.** ⛔ The gate reviewed
+`$BASE...HEAD` — *the branch's own changes* — so all three branches were
+correctly green and **the rubric was asking the wrong question.** ⭐ **The diff is
+the branch's; the verdict must be the merge's.** Reviewing the branch asks *is
+this change good?*; a merge gate asks *is the result good?* — and those come apart
+**precisely when two parallel tasks are each correct alone**, which is the only
+situation C5 occurs in. §0a now stands up a trial-merge worktree and §4b runs the
+suite and the floor inside it.
 
-1. ⭐ **Land the floor's configuration as a wave-0 prerequisite, and run it
-   across the tree in the same commit that adds a rule.** The rule and the tree it
-   makes true arrive together, so no branch in flight can be stale against it.
-   ⭐ **This is my recommendation, it is `FND-04`'s, and all three incidents would
-   have been prevented by it** — at the cost of a wider diff on the commit that
-   adds a rule.
-2. **Re-run the floor at the merge gate rather than at authoring time** — catches
-   it, but late, and charges the cost to whoever merges second, which is
-   arbitrary.
-3. ⛔ **Accept it and fix forward** — what has happened three times. It is free
-   only while the tree is small, and it teaches agents that a red floor is
-   somebody else's problem.
+⚠️ **And the reason this is the half that matters for M1:** option 1 protects
+against *style* rules, because style is what we happened to add. The trial merge
+sees **any** rule, fixture, contract or checker introduced on one branch and
+invisible to every branch cut before it. ⛔ **M1's fifteen tasks author contracts
+and fixtures — the next collision probably is not a line length.**
 
-⚠️ **This is the CTO's to rule and I am asking for it now rather than at the next
-recurrence.** It is cheap at five modules and expensive at fifty, and ⛔ **M1 adds
-fifteen tasks** — the next rule the floor gains will meet fifteen branches, not
-four.
+**Option 3 refused.** ⭐ A known cost paid fifteen times is not a known cost; it
+is a policy of paying it.
+
+### ⭐ The meta-finding, which the CTO ruled is worth more than C5
+
+My framing was adopted as the ruling rather than softened: **a recorded prediction
+that was not acted on and then came true twice more is the most expensive kind of
+finding this project produces.** `FND-04`'s finding 10 named the shape, the three
+options and the cheapest one. It was filed in the right place, in the right
+format, and read.
+
+⛔ **The protocol said to write findings down. It never said anyone had to rule on
+one.** ⚠️ That is a hole in the mechanism, not a failure of routing — and blaming
+the routing would have left the mechanism intact and guaranteed a repeat. Fixed
+on both sides:
+
+- **Author side** (`agent-protocol.md`): findings are marked **`[local]`** or
+  **`[structural]`**, and every `[structural]` one is **ruled, scheduled, or
+  explicitly accepted before the next wave begins.** ⛔ *"Noted"* is not one of the
+  three. The test is one question: *would this happen again to somebody else?*
+- **Reviewer side** (`review-rubric.md` §8a): ⭐ **the reviewer routes them, in
+  the review** — the reviewer is the last person who reads a handoff while
+  anything can still be done about it. ⚠️ And a reviewer who spots an *unmarked*
+  structural finding marks it: the author is describing their own scope and is the
+  worst-placed person to see that something recurs elsewhere.
+
+⭐ **`grep -rn '\[structural\]' docs/tasks/handoffs/` is the triage list before a
+wave**, and running it is now part of opening one. **This PO owns that sweep.**
 
 ---
 
-## Next up — M1 step 1.1
+## M1 step 1.1 — the assignment
 
 > M1 closes when a unit page from the `depth1` fixture opens in a browser with
-> styles and highlighting, over `file://`. **M1 is the riskiest milestone** —
-> every contract meets every other one for the first time.
+> styles and highlighting, over `file://`.
 
-| Task | Title | Prerequisite | Startable? |
+| Task | Title | Owner | Branch | Status | Blocked on | Closes when |
+|---|---|---|---|---|---|---|
+| FND-04-fu 1–4 | The `disclosure` fixture, in the ruled shape | Developer 2 | `feat/FND-04-disclosure` | `todo` | — | A fixture carries a `disclosure` container block; one block replaced, one added, two dictionaries extended, one digest recomputed. ⛔ **On SF-07's critical path** |
+| FND-04-fu 5 | Split `test_fixture_consistency.py` at its five seams | Developer 2 | `feat/FND-04-split` | `todo` | — | The module is split along shape · digests · addresses · media · personal data and is under the ceiling **unformatted**; ⛔ `[tool.ruff.format].exclude` **and** its one-entry assertion deleted in the **same commit**, or the guard outlives what it guarded. Lands before M1 closes |
+| SF-01 | Logical address model | Developer 1 | `feat/SF-01-address` | `todo` | — | Round-trips every §4 address at depths 1–4; a title where a slug is required raises; two slugs differing only by a leading digit yield different identifiers; wrong arity for a declared depth rejected; ⛔ no filesystem import in the package |
+| SF-02 | Corpus manifest | Developer 1 | `feat/SF-02-manifest` | `todo` | — | Accepts all four §1 shapes incl. two depth-1; refuses unknown `corpus_api`/`placement`/`media.commit`, empty `levels`/`variants`, a forbidden `permitted_edits` target, an `exclude` with no `why`; ⛔ a file matching neither list is **named and refused**; absent `media` asserted as committed-with-defaults; no module derives runnability from a variant name |
+| SF-07 | Block vocabulary and Markdown reader | Developer 2 | `feat/SF-07-markdown` | `todo` | FND-04-fu 1–4 | CodeSignal's Markdown tests pass unchanged; `disclosure` is a **container block holding blocks**; fence-awareness proved on `depth1` u3 `lesson-2`; parses all 166 Java sub-READMEs **or names every file and construct that fails**; ⛔ no unit yields fewer blocks than its independently-counted structure implies |
+| SF-08 | Personal-data gate | Developer 2 | `feat/SF-08-scrub` | `todo` | — | Home path refused at the archive boundary; build output scrubbed before a stream; ⛔ **three patterns, no content shape, no username pattern**; a document of 16-digit card-shaped strings **passes**; material that only resembles personal data after escaping is **not** refused; every gate reads decoded strings — asserted |
+| SF-11 | Page assets | first free slot | `feat/SF-11-assets` | `todo` | — | Highlight tests pass incl. no token combination taking the comment colour without being a comment; a page opens with only local requests; every palette token defined in **both** themes and clearing contrast; vendored bundles carry licences, unedited |
+
+### The lanes
+
+⭐ **The organising decision: a collision pair goes to one developer, never
+split across two.** Two pairs in these five share a surface, and M0's evidence
+is that a shared surface split across agents is where the cost lands — not in
+the code, in the reconciliation.
+
+| Lane | Developer | Order | Reasoning |
 |---|---|---|---|
-| SF-01 | Logical address model | FND-01 ✅, FND-04 ✅ | ⭐ **now** — and it is on the critical path |
-| SF-02 | Corpus manifest | FND-01 ✅, FND-04 ✅ | ⭐ **now** — X1 ruled: it gains a `content` block |
-| SF-07 | Block vocabulary and Markdown reader | FND-01 ✅, FND-04 ✅ | ⭐ **now** — Q1 ruled: a disclosure is a container block |
-| SF-08 | Personal-data gate | FND-01 ✅, FND-04 ✅ | ⭐ **now** — X2 ruled: ⛔ ships **no** content pattern. ⚠️ Q4 is not this task's blocker but E07's |
-| SF-11 | Page assets | FND-01 ✅ | ⭐ **now** — the cheapest to start |
+| **A — contracts** | Developer 1 | **SF-01** → **SF-02** | ⚠️ **They share the depth/`levels` concept.** SF-01 rejects *"a key of the wrong arity for a declared depth"*; SF-02 owns `levels`, which *is* the declaration. Split across agents, the two disagree about where arity is validated and the fixtures — which already encode an answer — arbitrate after the fact. One agent, and the question never arises |
+| **B — archive** | Developer 2 | **FND-04-fu steps 1–4** → **SF-07** → **SF-08** | ⚠️ **They share the walker.** SF-07 defines the block vocabulary; SF-08's gate walks it and its acceptance turns on *"every gate reads the decoded strings, never a rendered form"* — a statement about traversing SF-07's blocks. Both live in `archive/`. ⭐ **And the `disclosure` ruling lands in both**: SF-07 stores `summary` as content, SF-08 gates it. Two agents would rule it twice |
+| **residue** | first free slot | **FND-06** → **SF-11** | Both isolated, neither shares a file with anything above |
+| **slack** | Developer 2, alongside | **FND-04-fu step 5** — the module split | ⛔ **Decoupled from lane B on the CTO's ruling, and my earlier gate was wrong — see below.** Lands before M1 closes |
 
-- ⭐ **Step 1.1 is already unblocked, and that is the most useful thing on this
-  board.** Every task in it declares `Depends on —`; the standing rule is that
-  each implicitly depends on **FND-01's layout and FND-04's fixtures**, and both
-  are merged. ⛔ **M0's three remaining tasks gate nothing in M1** — FND-02 saves
-  context, FND-03 closes a blocked clause, FND-05a pins a workspace nothing
-  imports. Waiting for the milestone label rather than the prerequisite would
-  idle four developers against a formality.
-- ⭐ **The risk this board recorded on 2026-09-09 — the fixtures encoding
-  contracts nobody had written — is retired**; see the Log.
-- ⭐ **SF-01 is on the project critical path** (FND-01 → SF-01 → SF-03 → SF-31 →
-  SK-02 → …). Assign it the day M0 closes; do not let it queue behind SF-02.
-- ⭐ **All five questions that held step 1.1 are ruled and merged.** ⛔ **Step 1.1
-  has no open blocker of any kind** — prerequisites met, questions answered,
-  rulings carried into E01, E02, E04 and E06 rather than left in a handoff. This
-  is the moment to assign it; the constraint is now developers, not decisions.
-- ⚠️ **One M1 task acquired a debt rather than a blocker:** `SF-09` (step 1.3)
-  owes the authored overlay's version under R21 before it builds. It is the row
-  the CTO singled out to close next, and step 1.3 is two steps away — comfortable,
-  but not indefinite.
-- **`SF-31` gained an acceptance clause**: it commits `plan` output for both
-  fixtures as the golden. That is the agreed close on the largest gap `FND-04`
-  deliberately left open — `FND-04` could not write a golden for output nobody
-  has designed. `handoffs/FND-04.md` names the rest and who owes each.
+⛔ **SF-11 is deliberately last, not first, despite being the easiest.** It is a
+copy rather than a repair — R13 was already satisfied upstream — its consumer is
+`SF-12` at step 1.5, and nothing in steps 1.1–1.4 waits on it. ⭐ Easy work with
+no dependents is exactly what should absorb slack rather than consume a lane.
+
+### Why Developer 2 owns the FND-04 follow-up — and where I got it wrong
+
+⭐ **Developer 2 is the only correct owner, and that part stands.** The CTO's own
+argument against authoring a `Size exception:` was that the exception turns on the
+isolation question, which **only somebody who knows the module's internals can
+answer** — and Developer 2 authored it and named its five seams (shape · digests ·
+addresses · media · personal data) in their own handoff. ⛔ Handing the split to a
+third party asks someone to answer a question they cannot.
+
+**Steps 1–4 gate `SF-07`, and that part stands too.** ⛔ `SF-07` implements the
+`disclosure` block and **cannot demonstrate its own acceptance without a fixture
+carrying one**. It is small — one block replaced, one added, two dictionaries
+extended, one digest recomputed — and it is on a critical-path task's critical
+path, so it is neither optional nor later.
+
+⛔ **Where I was wrong: I gated `SF-07`'s commit on step 5, the module split.** My
+reasoning was that `SF-07` adds a count key to a file already at the ceiling. ⭐
+**It does not, and the error is worth naming precisely because it is the kind that
+sounds right:** I conflated *606 lines formatted* with *554 lines unformatted*.
+The formatted figure is what the exclusion already contains; the growth from the
+`disclosure` keys lands in **steps 1–4**, not in `SF-07`, and 554-plus-a-few is
+not 600. **The CTO overruled it and the correction improves the plan** — coupling
+them would have put a critical-path task behind a refactor for no benefit.
+
+⭐ **So the follow-up splits at the seam that matters:** steps 1–4 are on the
+critical path; step 5 rides alongside and lands before M1 closes. ⚠️ **Whoever
+takes steps 1–4 should not take step 5 in the same commit.** They are two
+different things with two different deadlines, and the interim is safe meanwhile
+— the module is not currently failing, and the exclusion list is held to exactly
+one named entry by an assertion.
+
+### What must merge before what
+
+| Gate | Rule |
+|---|---|
+| ⭐ **SF-01 merges first, before anything else in M1** | It is the **exemplar**, not merely first on the critical path (FND-01 → SF-01 → SF-03 → SF-31 → SK-02 → …). It is the first framework contract, and the docstring shape, the raise-vs-return convention and the package layout it establishes are what the next fourteen tasks copy. ⚠️ **Review it as a precedent** — a convention corrected in task 1 costs one diff; corrected in task 8 it costs eight |
+| **SF-02 may *start* when SF-01 is in review** | Same developer, same head, and the arity decision is settled by then. ⛔ It must not *merge* before SF-01 |
+| ⛔ **FND-04-fu steps 1–4 land before or with SF-07** | The fixture is SF-07's acceptance input; SF-07 cannot demonstrate the `disclosure` ruling without one |
+| **FND-04-fu step 5 rides alongside, before M1 closes** | ⛔ **No gate on SF-07** — my earlier one was wrong (see above). ⚠️ Delete the formatter exclusion and its one-entry assertion in the **same commit** as the split, or the guard outlives what it guarded |
+| **SF-08 may start when SF-07 is in review** | Its pattern set and its decoded-vs-rendered discipline are independent; only its archive-boundary acceptance needs SF-07's merged vocabulary |
+| **FND-06, SF-11** | No gate. Either can merge at any point |
+
+⚠️ **`SF-08` was deliberately *not* given a hard `Depends on SF-07`.** Only half
+of it depends on the vocabulary, and a hard dependency would wrongly forbid a
+third developer from taking it in parallel later. ⭐ The lane assignment achieves
+the ordering; the task definition stays honest about what actually blocks.
+
+### Team sizes, unchanged and worth noting
+
+`SF-11` is `pair` and `SF-01`, `SF-02`, `SF-07`, `SF-08` are `solo`. ⭐ **The lane
+assignment does not override that**: a lane is who *owns* the sequence, not who
+sits in the room. SF-11 still gets its second pair of eyes when it runs.
+
+---
+
+## M0 residue and the sequencing calls
+
+**FND-06 — first residue task, and it is time-critical.** ⛔ It is a task that
+**adds a rule to the floor**, and adding a rule is precisely what has broken
+three in-flight branches in one milestone (**C5**). ⭐ **So it should be the
+proving instance for whatever C5 rule the CTO makes**, and it should land while
+**two** branches are in flight rather than fifteen. If option 1 is ruled, FND-06
+carries the mechanism — the rule and the tree-wide pass that makes it true arrive
+in one commit. ⚠️ **The window closes as M1 fills**: this is cheap today and
+compounding every week it waits.
+
+⛔ **It does not go ahead of SF-01.** SF-01 is the critical path and the
+exemplar, and a half-day of R7-by-reviewer-grep is a smaller cost than delaying
+the shape fourteen tasks will copy. FND-06 goes to the first slot that frees, or
+to a third developer immediately if one appears.
+
+**FND-05a — last, and that is a deliberate ranking rather than neglect.** Nothing
+in M1 imports the parent workspace, it is now a pin file plus a verification
+command rather than a composition, and it is the one task that can slip without
+stopping anybody. ⚠️ It should not slip *indefinitely*: the failure it prevents —
+a component at a commit the parent never recorded — has **no symptom**, so it is
+discovered by being wrong rather than by failing.
+
+---
+
+## Scheduled — decided now, executed later
+
+⭐ **Recorded here so they are not rediscovered at M2.** Each has an owner and a
+trigger, and the trigger is an event rather than a date.
+
+| Item | Owner | Trigger | Decision |
+|---|---|---|---|
+| ⭐ **SK-07 generates the corpus graph** — built, **bridged**, with the R3-safe ignore file | framework agent | ✅ **done now** — carried into `E11` this round | The highest graphify exposure converted into a generated artifact, closing an R19 hole in the same edit. ⚠️ Bridging is the part that would have been missed: a graph built by running the tool alone has **zero** doc↔code edges |
+| **SK-07 must not say "submodule"** | PO | ✅ **done now** — `E11` corrected | R18's amendment reached the ruling but not the task that consumes it. The framework is a **sibling checkout at a recorded commit** |
+| **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | **M1 → M2 boundary** | Five tasks, not eighty-five. They are the discovery-shaped ones, where you do not know the name of the thing you are looking for — `query`'s weak case |
+| **`Effort` field applied beyond the four named tasks** | PO | as each computation-shaped task is assigned | ✅ The field exists now (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill eighty-four tasks; add it when a task is assigned and its shape is known |
+| ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | ⛔ **before M1's wave opens** | The `[structural]` sweep is blind to findings filed before the marker existed — ⚠️ **including the one that motivated the mechanism** |
+| **R21's four remaining open rows** *(was five)* | CTO | each before its named task builds | ✅ `consuming.json` filled. Overlay `content.json` is next, owed before **SF-09** at step 1.3 — ⚠️ **two steps away, so near-term rather than comfortable** |
 
 ---
 
@@ -486,4 +611,22 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 | 2026-09-09 | **Q6 and Q7 ruled.** ⭐ **The open-question list is empty for the first time** — Q1–Q7, X1, X2 all closed. ⚠️ Not evidence that no contract is unlocated: R21's register still carries five open rows, and those were found by surveying rather than by tripping over them. |
 | 2026-09-09 | ⛔ **C5 — the parallel-authoring defect, now THREE instances in one milestone**: FND-04/line-length, FND-03's container/formatter, FND-02/formatter. ⚠️ The third arrived while this entry was being written. ⭐ `FND-04`'s handoff finding 10 predicted it and named the fix — **a recorded prediction that was not acted on and then came true twice more is the most expensive kind of finding this project produces.** Recommendation: land the floor's configuration as a wave-0 prerequisite and run it across the tree in the same commit that adds a rule. ⛔ **Asking the CTO to rule now, not at the next recurrence — M1 adds fifteen tasks, so the next rule meets fifteen branches, not four.** |
 | 2026-09-09 | **C4 closed.** Fixed through FND-03's own wrapper; ⭐ the `Permission denied` at the gate was FND-03's unprivileged-uid hardening working as designed, and **nothing about the container was loosened to get past it**. |
+| 2026-09-09 | ✅ **M0 COMPLETE** — green in the container, 124 passed / 8 skipped, floor clean. `FND-05a` and `FND-06` carry into M1 as residue; neither gates an M1 task, which is why the milestone closes rather than waits. |
+| 2026-09-09 | ⭐ **Implementation decisions delegated to the PO and CTO.** Priority, sequencing, scope and task modification are ours; the user reviews the end result. Escalation is reserved for large or irreversible impact. ⚠️ Recorded because it changes what belongs in this Log: a decision taken is now an entry, not a proposal awaiting one. |
+| 2026-09-09 | **M1 step 1.1 assigned in two lanes**, on one rule: ⭐ **a collision pair goes to one developer, never split across two.** Lane A = SF-01 → SF-02 (they share the depth/`levels` concept). Lane B = FND-04 follow-up → SF-07 → SF-08 (they share the `archive/` walker and the `disclosure` ruling). FND-06 then SF-11 to the first free slot. |
+| 2026-09-09 | ⭐ **FND-04's follow-up promoted to a blocker of SF-07**, not a parallel chore. Steps 1–4 carry the `disclosure` fixture SF-07's acceptance is judged against; step 5's split must land before SF-07 commits, because **SF-07 adds a count key to a file already at the ceiling**. ⛔ Developer 2 is the only correct owner — the CTO's own argument was that the isolation question can only be answered by whoever knows the internals, and Developer 2 named the five seams. |
+| 2026-09-09 | ⭐ **SF-01 ruled the exemplar**, not merely first on the critical path: it is the first framework contract and the conventions it sets are copied by fourteen tasks. Reviewed as a precedent. ⚠️ A convention corrected in task 1 costs one diff; in task 8 it costs eight. |
+| 2026-09-09 | ⛔ **SF-08 deliberately given no hard `Depends on SF-07`.** Only its archive-boundary half depends on the vocabulary, and a hard dependency would wrongly forbid a third developer taking it in parallel. ⭐ The lane assignment achieves the ordering; the task definition stays honest about what actually blocks. |
+| 2026-09-09 | **`Context` field fixed in `README.md`** — it prices **reading**, and a new **`Effort`** field prices work where the deliverable is a computation. ⭐ Adding a field is cheaper than re-estimating eighty-four tasks and it puts the estimate where the person who can make it is standing. Applied to `SF-07` (166-file triage) and retrospectively to `FND-02`, which is the evidence that produced it. |
+| 2026-09-09 | ⭐ **Graphify recommendation decided, not proposed.** `SK-07` now generates the corpus graph, **bridged**, with the R3-safe ignore file — the highest exposure converted into a generated artifact, closing an R19 hole in the same edit. Headroom for SF-19a and the four skills tasks is scheduled for the M1→M2 boundary. |
+| 2026-09-09 | ⛔ **`SK-07` corrected: it said "add the framework as a submodule".** R18's amendment had reached the ruling but not the task that consumes it — ⚠️ exactly the drift R21 exists to prevent, one level down. The framework is a **sibling checkout at a recorded commit**. |
+| 2026-09-09 | **FND-06 re-sequenced** to be the first task landing under whatever C5 rule the CTO makes — ⭐ it *adds a rule*, so it is the proving instance rather than the next victim, and it should land while two branches are in flight rather than fifteen. ⛔ Still not ahead of SF-01. |
+| 2026-09-09 | ✅ **C5 ruled: options 1 AND 2, option 3 refused.** ⭐ My recommendation of option 1 was right and **not enough** — they are not alternatives: option 1 prevents, option 2 detects, and **only option 2 catches the rule nobody has thought of yet.** Option 1's schedulable half was already done when M0 closed; its residue is a standing rule now in `FND-06`. |
+| 2026-09-09 | ⛔ **C5's cause was the rubric, not the plan or the routing.** The gate reviewed `$BASE...HEAD` — the branch's own changes — so all three branches were **correctly green** and the rubric was asking the wrong question. ⭐ **The diff is the branch's; the verdict must be the merge's**, and those come apart precisely when two parallel tasks are each correct alone. §0a now reviews a trial merge. |
+| 2026-09-09 | ⭐ **The meta-finding was ruled worth more than C5 itself, and my framing was adopted rather than softened.** ⛔ The protocol said to write findings down and never said anyone had to rule on one. Fixed on both sides: authors mark `[local]`/`[structural]`, and ⛔ every `[structural]` finding is **ruled, scheduled or explicitly accepted** before the next wave — *"noted"* is not one of the three. **This PO owns the pre-wave triage sweep.** |
+| 2026-09-09 | ⛔ **My step-5 gate on SF-07 was wrong and the CTO overruled it.** I claimed SF-07's new count key pushed `test_fixture_consistency.py` over the ceiling; ⭐ **I had conflated 606 lines formatted with 554 unformatted** — the formatted figure is what the exclusion already contains, and the growth lands in steps 1–4 anyway. The correction improves the plan: coupling them would have put a critical-path task behind a refactor. **FND-04's follow-up splits at the seam — steps 1–4 gate SF-07, step 5 rides alongside.** |
+| 2026-09-09 | ⚠️ **My urgency argument for FND-06 is now half wrong, recorded rather than quietly aligned.** I argued it must land while two branches are open rather than fifteen; the C5 ruling removes that pressure at the source, because FND-06 now brings the tree into compliance **in its own commit** and the trial-merge gate catches the rest. ⭐ What survives is the plain reason: R7 is the rubric's one HARD FAIL and is still enforced by hand. |
+| 2026-09-09 | ✅ **R21 register: `consuming.json` filled, open rows 5 → 4.** ⭐ This board's correction — *G1 restored which commit; nothing said which version of the promise* — was adopted: the pin file records the **build**, `provides` records the **promise**, `consuming_api` versions the schema. ⚠️ Its *content* is deliberately not designed yet — that would be designing a runtime contract against zero implementations, R1's error from the other direction. |
+| 2026-09-09 | ⭐ **Step 1.1 dispatches now, SF-01 first.** The CTO ruled nothing blocks it, and named the reason I had given a round earlier: holding five tasks and two idle developers against work already finished is *waiting for the label rather than the prerequisite* — ⛔ doing that twice, having named it once, would be worse than never having named it. |
+| 2026-09-09 | ⛔ **First `[structural]` sweep run, and it is empty — which is a hole, not a clean bill.** The marker landed this round, so the triage list is blind to the **23 findings** filed before it existed (`FND-01` 5, `FND-02` 8, `FND-04` 10) — ⚠️ **including `FND-04`'s finding 10, the one that motivated the mechanism.** ⭐ The machinery built to stop unacted-on findings would have missed the finding that built it. **Back-triage scheduled, PO-owned, before M1's wave opens.** |
 | 2026-09-09 | **C2 fixed, and two details kept:** the bug was in **five** places — the shell preamble and all four Python checkers, each re-deriving the base — and ⛔ **the failure mode flatters**, showing more work rather than less, so nobody questions it. ⭐ A check that cries wolf gets waved through; one that under-reports gets believed. |

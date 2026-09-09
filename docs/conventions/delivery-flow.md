@@ -64,12 +64,19 @@ the command and its output beneath each one, and ⛔ **restating a condition is 
 meeting it**. What follows here is the process around that document, not a second
 copy of it.
 
-⚠️ **Establish the review range before anything else, and do not take it on
-trust.** The range is the release branch the work was cut from — ⛔ **never
-`main`**, which goes stale the moment a milestone opens. A base resolved against a
-stale branch does not fail; it **passes the wrong thing**, presenting every commit
-since the milestone began as though one author wrote it. ⭐ That is the worst
-property a gate can have, because nothing looks wrong. A review whose range was
+⛔ **The gate reviews the trial merge, not the branch** (`review-rubric.md` §0a,
+§4b). ⭐ **The diff is the branch's; the verdict is the merge's.** Reviewing the
+branch asks *is this change good?*; a merge gate asks *is the result good?* — and
+those come apart **precisely when two parallel tasks are each correct alone**,
+which is the only situation in which the interesting failures happen. A green
+branch is not the evidence this gate asks for.
+
+⚠️ **Establish the range before anything else and do not take it on trust.** The
+base is the release branch the work was cut from — ⛔ **never `main`**, which goes
+stale the moment a milestone opens. A base resolved against a stale branch does
+not fail; it **passes the wrong thing**. ⭐ That is the worst property a gate can
+have, because nothing looks wrong, and the failure *flatters*: the reviewer sees
+more work, not less, so nobody questions the number. A review whose range was
 wrong is re-run, not amended.
 
 **What a developer presents for review — all of it, or the review does not
@@ -88,6 +95,19 @@ start:**
    a **finding** in the handoff, not a line in the diff.
 4. **A named self-check against the rulings the task touches** — at minimum R7
    (personal data), R11 (size), R12 (tests mirror source).
+5. ⭐ **Findings marked `[local]` or `[structural]`.** The test is one question:
+   *would this happen again to somebody else?* ⛔ **Every `[structural]` finding is
+   ruled, scheduled, or explicitly accepted before the next wave opens** —
+   *"noted"* is not one of the three. The reviewer routes them **in the review**,
+   being the last person to read a handoff while anything can still be done about
+   it, and marks an unmarked one: an author describing their own scope is the
+   worst-placed person to see that something recurs elsewhere.
+
+⚠️ **This exists because the protocol said to write findings down and never said
+anyone had to rule on one.** A prediction was filed in the right place, in the
+right format, read — and came true twice more. ⭐ `grep -rn '[structural]'
+docs/tasks/handoffs/` is the triage list, and running it is part of opening a
+wave. The PO owns that sweep.
 
 **The CTO's verdict is one of three:** `approved` (PO merges, or the CTO does),
 `changes requested` (named, each tied to a ruling or an acceptance condition), or
@@ -186,6 +206,23 @@ integrator has to, the missing `consuming.json` is the finding.
 **Durable findings are distilled into the integration catalogue** in this
 repository, so the next integration starts further along than the last. A finding
 that stays in the corpus repository has taught nobody.
+
+## Who decides
+
+⭐ **Implementation decisions belong to the PO and the CTO.** Priority,
+sequencing, scope and task modification are theirs to take, and the user reviews
+the end result rather than adjudicating between options.
+
+⛔ **Escalate to the user only for impact that is large or that could not be
+undone later.** A choice between two workable orderings is not that; a decision
+that discards work, changes what the product is, or cannot be reversed by a later
+commit is. ⚠️ **The failure mode this replaces is a round trip per decision**,
+which costs more than a wrong ordering does — an ordering can be changed, a
+stalled milestone cannot be un-stalled.
+
+⭐ **The consequence for the board is small and worth stating:** a decision taken
+is a Log entry, not a proposal awaiting one. Record *what was decided and why*,
+so a later reader can tell a judgement from an accident.
 
 ## Escalation
 
