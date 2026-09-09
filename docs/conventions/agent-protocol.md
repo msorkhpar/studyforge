@@ -49,6 +49,14 @@ Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:
 This is the mechanism by which parallel agents share material rather than
 re-deriving it. A task with dependents and no handoff is not done.
 
+⛔ **Tag an illustrative fence `text`, not `python`.** The formatter reads
+Markdown: `ruff format` discovers `.md`, formats the Python inside a ```` ```python ````
+fence, and leaves ```` ```text ```` and untagged fences alone — measured, and it
+has now caught three tasks. ⚠️ A tag of `python` is a **promise that the block is
+Python**, so a hand-aligned usage example or a transcript is silently re-spaced
+and your branch goes red at the gate. If it is output, a transcript or an
+illustration, it is `text`.
+
 ## Findings are triaged, not filed
 
 ⛔ **Writing a finding down does not discharge it, and until 2026-09-09 nothing
