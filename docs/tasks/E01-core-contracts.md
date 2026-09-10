@@ -232,11 +232,18 @@ branch was correct alone, which is the only situation that defect occurs in.
 source-shaped fact by name instead of asking for a capability — so `Profile`
 **gains the capability** rather than the caller gaining a special case.
 
-⚠️ **It was grown inside `SF-25`'s branch, by the only caller**, on the rule that
-a capability designed by somebody with no caller is a guess about what the caller
-needs. ⛔ **It is reviewed as a change to *this* contract, not as a `validate`
-internal** — a contract that grows inside a consumer's branch is exactly where a
-contract grows badly, and naming the vantage point is the guard.
+⛔ **And then it did not grow, which is the part worth keeping.** ⭐ **`Profile`
+gained nothing.** SF-25's author measured that the collision check needs **no new
+capability** — `test_nothing_downstream_branches_on_a_profile_name` went **1
+failed → 1 passed**, with **zero** profile names in `validate/` and **zero**
+profiles skipped — and declined to add one, on the same rule that had been used
+to schedule it: ⛔ **a capability designed by somebody with no caller is a guess**,
+and here it would have had **no caller at all.**
+
+⚠️ **So this contract is unchanged, and the record exists to stop somebody adding
+the capability later on the strength of a ruling that was withdrawn.** ⭐ The
+defect was real and is fixed **in the caller**, where it was: `validate` no longer
+knows any profile by name.
 
 **Out of scope.** Reading or scanning files — that is SF-04.
 

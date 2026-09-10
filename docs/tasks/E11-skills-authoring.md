@@ -89,6 +89,42 @@ two traps real material actually set (C1, C2):
   ingests everything twice with nothing complaining. Detect the overlap and
   propose which set is canonical.
 
+⛔ **Two more traps, measured in a real repository 2026-09-09 and carried here
+while this task is still unassigned.** ⭐ They are worth more than the first two,
+because **neither raises anything and both flatter the person checking.**
+
+- ⛔ **Trap 3 — a filename sort silently reverses the curriculum.** `sorted()`
+  puts **35 of 38 units at the wrong index**. ⚠️ The count is right, every page
+  renders, every link resolves, **nothing raises** — and ⛔ **it flatters: unit 1
+  of each group stays first, so the page anybody spot-checks is correct.** ⭐ It
+  is C3's failure class arriving through **ordering** rather than **count**, and
+  a count assertion is all the framework has. ⚠️ **The trap inside the trap:**
+  the only machine-checkable order oracle is the three aggregate documents —
+  **precisely the files a `content.exclude` deletes** — so excluding the
+  duplicate destroys the evidence for the ordering. ⛔ **Report both, and never
+  propose the exclusion without saying what it costs.**
+
+- ⛔ **Trap 4 — heading level does not identify role.** In the same corpus,
+  `README.md` is 675 lines and lines 313–675 carry **361 headings
+  digest-identical to the whole heading tree of `TestCases.md`** — **53.7% of the
+  curriculum document is a copy of another document's structure**, invisible to
+  any whole-file digest. ⛔ **And the file can never be excluded**: it is the only
+  record of the corpus's addresses, titles, ordinals and grouping. Consequence:
+  `#` means *container* **3** times and *chapter of another document* **17**
+  times, so ⚠️ **a parser keyed on heading level emits 21 containers for a
+  3-container corpus and raises nothing.**
+
+  ⭐ **This is the sharpest argument in this task's file for R6.** A skill that
+  reads structure confidently here is confidently wrong, and the corpus offers no
+  signal that it was. ⛔ **The duplicate is a *region*, not a file** — and
+  `content.exclude` names files, so ⚠️ **detect and report; do not remedy.** The
+  manifest is not going to grow sub-file exclusion and should not.
+
+⛔ **What a *re-run* of this skill is, is undefined and this task does not close
+it.** The last reconnaissance of a moving framework happened because a person
+asked. ⭐ Recorded as owed to the integration catalogue rather than silently
+inherited here.
+
 ### ⛔ Carried ruling — the **title-collision** check is this skill's, and only this side can do it
 
 ⚠️ **Carried by the PO 2026-09-09 from `handoffs/SF-01.md`'s open `[structural]`
@@ -96,11 +132,20 @@ finding, via CTO round 6 and `SF-25`'s definition.** The finding was routed to
 "SK-01/SK-02" by its author and ⛔ **had no clause on either side** — the
 validate-side half is written into `E10 SF-25` and this half was not.
 
-⛔ **`slugify` is ASCII-lossy and silent about it.** Verified: `Ströme →
-str-me`, `Потоки → ''`, `日本語 → ''`. So two distinct titles can produce one
-address — `café` and `cafe` — and a title with no ASCII letters produces none at
-all. ⭐ **A Russian title is not a corpus defect**: R1 says the framework knows
-nothing about a source, *including its alphabet*.
+⛔ **`slugify` is ASCII-lossy and silent about it.** **Measured 2026-09-09:**
+`Ströme → 'str-me'`, `Потоки → ''`, `日本語 → ''` — a title with no ASCII letters
+produces no address at all. ⭐ **A Russian title is not a corpus defect**: R1 says
+the framework knows nothing about a source, *including its alphabet*.
+
+⛔ **And the collision case is punctuation, not alphabet — corrected here the
+same day it was written** (round 17, finding 13). ⚠️ **My first draft of this
+clause used `café`/`cafe` as the colliding pair. That is wrong**:
+`slugify('Café') == 'caf'` and `slugify('Cafe') == 'cafe'` **do not collide**,
+because an accent collapses to a separator rather than vanishing. ⭐ **The true
+class is wider and far more likely:** `'Streams: an API'` and `'Streams, an API'`
+**both** give `streams-an-api`. ⛔ **A skill built to catch the accent case would
+miss the case that actually occurs** — ordinary punctuation in ordinary English
+titles, which any real corpus has and no reviewer would look twice at.
 
 ⭐ **Defence in depth, and the two halves are not substitutes.** `SF-25` sees the
 **effect** — two containers at one address — from the archive alone, because by

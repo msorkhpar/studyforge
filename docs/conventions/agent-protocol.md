@@ -146,6 +146,35 @@ grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a w
 ⛔ **A wave that begins with an untriaged `[structural]` finding is a wave that
 has decided to pay for it twice.**
 
+### ⛔ Ruling is not carrying, and a carried ruling is **quoted**
+
+⚠️ **Two holes were found in this mechanism, one round apart, and both were in
+the mechanism rather than in anybody's diligence.**
+
+**1. Ruled is not a destination.** ⭐ Of the three outcomes above, **only two name
+one.** *Scheduled* names a task and *accepted* names a cost; ⛔ **"ruled" named a
+decision and no home** — so a finding could be correctly ruled by the CTO, marked
+correctly in the review, and still reach nobody. **Measured 2026-09-09: 30 of 32
+findings ruled, and 8 of those had no board row, no epic clause and no trigger.**
+
+⛔ **So a finding is dispositioned when its outcome has an artifact**: a task's
+**Acceptance**, an **epic clause**, a **spec ruling**, or a **convention
+document**. ⭐ **Never a handoff** — a handoff is a record, records are not
+rewritten, and a ruling filed into one has been filed into the past. **A CTO
+ruling is the decision; carrying it is the PO's, and it is wave-open check 3.**
+
+**2. A carried ruling is quoted, not summarised.** ⚠️ **The round this mechanism
+was built, a clause carried into a task reached its developer only as a
+coordinator's paraphrase.** ⭐ The developer wrote nothing to a guess and reported
+the gap, which is the right behaviour — but the ruling never arrived.
+
+⛔ **A ruling relayed as somebody's summary has been through a lossy channel, and
+the relayer is the lossy part.** ⭐ **The developer must be able to read the
+clause itself**, in the words it was ruled in, in the task document — not a
+description of it in a briefing. ⚠️ A paraphrase is how a ruling arrives *nearly*
+right, which is worse than not arriving: ⛔ **an absent ruling gets asked about; a
+nearly-right one gets implemented.**
+
 ## When a convention tightens, the tightening owns the migration
 
 ⛔ **No work done under an older convention is at fault for failing a newer one,

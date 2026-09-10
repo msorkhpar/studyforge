@@ -691,8 +691,38 @@ not been triaged — it has been triaged twice and abandoned. ⭐ An empty
 ⭐ **The reviewer is the last person who reads a handoff while anything can still
 be done about it**, so routing is part of the verdict, not a follow-up. For each
 `[structural]` finding, the review states one of exactly three outcomes and
-nothing else: **ruled** (with the ruling, or the handoff it went to), **scheduled**
-(with the task), or **accepted** (with the cost being accepted, in words).
+nothing else: **ruled** (⛔ **naming the artifact the ruling changes** — see
+below), **scheduled** (with the task), or **accepted** (with the cost being
+accepted, in words).
+
+#### ⛔ C6 — `ruled` names the artifact, **never a handoff**
+
+⚠️ **This clause used to read *"ruled (with the ruling, or the handoff it went
+to)"*.** ⛔ **A handoff is never where a ruling lands** — it is a record, and this
+project's standing rule is that a record is not rewritten — so that clause
+**contradicted the standing rule inside the section written to enforce it.** The
+hole was in the instrument, not in anybody's diligence.
+
+⭐ **C6, named by the CTO: *a ruling is made, is correct, and never reaches the
+artifact it governs.*** ⛔ **It is C5 one level up.** C5 was *the gate asked the
+wrong question*; C6 is *the answer was right and was never delivered*. ⚠️ **Same
+tell as every expensive defect this project has found: nothing looks wrong.** The
+handoff says ruled, the review says ruled, and the task that must act never hears.
+
+**Five instances, four of them found in one round:** round 15's keep-both comment;
+C5's table row; R21's register; §1a's un-swept third copy; and ⛔ **8 of 30 ruled
+findings with no destination**, which is the PO's own.
+
+⛔ **So `ruled` is written as the artifact it changed**, and it is one of exactly
+these: **a task's Acceptance**, **an epic clause**, **a spec ruling**, or **a
+convention document**. ⭐ *"Ruled — carried into `E06` SF-23's Acceptance"* is a
+disposition. *"Ruled — see `handoffs/SF-11.md`"* is not, and no longer passes.
+
+⚠️ **What is deliberately NOT added here, and the reasoning matters more than the
+rule:** the reviewer is **not** asked to verify the destination was reached.
+⛔ **The carry happens *after* the review, so that gate cannot fire — and a gate
+that cannot fire is worse than none, because it reads as coverage.** ⭐ It belongs
+on the **wave-open checklist**, run by the person who does the carrying: the PO.
 
 ⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
 — the author is describing their own scope and is the worst-placed person to see

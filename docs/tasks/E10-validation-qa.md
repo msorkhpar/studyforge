@@ -47,9 +47,19 @@ matches its blocks; the personal-data gate passes on every string; unit ordinals
 are contiguous from 1; declared practice counts match what is present.
 
 ⭐ **The duplicate-address check is `slugify`'s collision, caught from the other
-end** (CTO round 6, from `SF-01`'s open finding). `slugify` is ASCII-lossy —
-`café` and `cafe` produce the same slug — so two distinct titles can claim one
-address. ⛔ The framework cannot check the *cause*: by the time it sees an
+end** (CTO round 6, from `SF-01`'s open finding). `slugify` is ASCII-lossy, so
+two distinct titles can claim one address.
+
+> ⛔ **Corrected 2026-09-09 (round 17, finding 13). This document previously said
+> `café` and `cafe` produce the same slug. They do not.** **Measured:**
+> `slugify('Café') == 'caf'`, `slugify('Cafe') == 'cafe'` — an accent collapses
+> to a **separator**, it is not deleted. ⭐ **The conclusion survives and gets
+> stronger, which is the only reason this is a correction rather than a
+> deletion:** the real collision class is **wider** than the accent case —
+> `'Streams: an API'` and `'Streams, an API'` **both** give `streams-an-api`.
+> ⚠️ **Punctuation, not alphabet, is the common case**, and it needs no exotic
+> input at all. ⛔ `Café`/`Cafe` are pinned as **clean** in the tests so nobody
+> "fixes" the check to match the wrong example. ⛔ The framework cannot check the *cause*: by the time it sees an
 archive the title is gone, and §6 rules an address **recorded, never derived**
 precisely so it never tries. ⚠️ But the *effect* is visible in the archive alone
 — two containers at one address, or one silently overwriting the other — and that
@@ -130,10 +140,28 @@ the first thing that notices is an adapter shipping a home path. Round 10 ruled
 one acceptance clause into each of the tasks that must call it; ⚠️ **only
 `SF-06`'s landed.** This is `SF-25`'s.
 
-⭐ **Acceptance gains a clause:** *a test asserts that `validate` calls the
-`SF-08` gate on every string it reads from an archive* — the call is asserted,
-not described, ⛔ **and the assertion is not satisfied by the gate's own tests.**
-The check under test here is *"is it wired in"*, and only a caller can answer it.
+### ✅ Closed 2026-09-09 — satisfied in substance, ⛔ and **my wording was wrong**
+
+⚠️ **I wrote this clause as:** *"a test asserts that `validate` calls the `SF-08`
+gate on every string it reads from an archive."* ⛔ **That is the wrong ask, and
+it is wrong in the way this project keeps naming: it tells one component to
+re-ask a question another component owns.** Ruling 17 had already put the
+boundary **upstream** — `validate` forwards refusals and does not scrub — and
+finding 20 names the same error as *"two readings from one parser."* ⚠️ **I
+recorded ruling 17 in the same edit session in which I wrote this clause and did
+not reconcile the two.**
+
+⭐ **The concern behind it was real and is met.** Round 10's worry was that
+`SF-08`'s gate had **no callers**, and a gate nobody calls is green forever.
+**Verified on `feat/SF-25-validate` @ `e6c318c`:** `archive.document.parse` is
+the caller, `validate/corpus.py` handles `PersonalDataLeak` at **three** sites,
+and `test_a_document_the_personal_data_gate_refuses_is_recorded_too` asserts the
+refusal reaches the report end-to-end.
+
+⛔ **The clause in its corrected form, which is what the acceptance carries:**
+*a document carrying personal data is refused **through** `validate`, end-to-end,
+and the refusal appears in the report* — ⭐ **the wiring is asserted at the
+boundary, never re-implemented behind it.**
 
 ⚠️ **And the escalation raised by SF-25's own author, which this clause must not
 paper over:** `validate` forwards `str(error)` from `SF-01`'s exceptions straight
@@ -151,8 +179,27 @@ mismatch, personal data present, ordinal gap, count mismatch. **Fails on a
 fixture whose source contains a construct the parser silently skipped, where
 every other check passes** — this fixture is built deliberately and is the one
 that proves the completeness check works. Exit codes are usable from a script.
-Output names every failure, not just the first. ⛔ **A test asserts `validate`
-calls the personal-data gate**, per the carried ruling above.
+Output names every failure, not just the first. ⛔ **A personal-data document is
+refused end-to-end and the refusal reaches the report**, per the corrected clause
+above.
+
+> ⛔ **Corrected 2026-09-09 (round 17, finding 19): this clause named *six*
+> invalid fixtures and FND-04 ships *five*.** **Measured:**
+> `tests/fixtures/invalid/` holds `address-directory-mismatch`, `bad-corpus-api`,
+> `digest-mismatch`, `ordinal-gap`, `personal-data` — ⛔ **there is no
+> count-mismatch fixture, so that clause has never been exercised.**
+>
+> ⭐ **Ruled: the fixture is built; the clause stays.** ⚠️ Dropping it would
+> delete the only statement that the count check is exercised at all — and the
+> count check is the one guarding **silently lossy ingestion**, which this task's
+> own definition calls *the worst outcome available to this project*. ⛔ **An
+> acceptance clause naming a fixture that does not exist is unfalsifiable**, and
+> that is the same class as an acceptance satisfied by an untracked artifact —
+> the defect `FND-07` exists for, arriving in an acceptance condition instead of
+> a build product.
+>
+> **Routed as `W14` to `SF-23`** — the next task to open a practice document, and
+> the same developer who wrote the check.
 
 ---
 
