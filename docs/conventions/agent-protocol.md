@@ -174,6 +174,41 @@ preserved a **wrong** check behind a cleaner branch.
 arriving in a contract rather than in a validator** — and the cheapest form of it
 is the one where nothing gets built at all.
 
+### ⛔ Hold it, or point at where it is held — never point at a document that points back
+
+⭐ **Rated the best finding of its round, and it is the pointer rule's own failure
+mode.** ⚠️ **Measured instance:** `graphify.md` said the census command was in
+`FND-02`'s handoff; that handoff said it was in `graphify.md`. ⛔ **Neither had
+it.** Two documents pointed at each other and the thing they pointed at did not
+exist anywhere.
+
+⛔ **A document may *hold* a thing, or *point at where it is held*. It may never
+point at a document that points back.**
+
+⚠️ **This is the sharp edge of *a summary points, it never restates*** — that rule
+is right and it created this one, because ⭐ **a pointer is cheap to write and
+nobody checks that the far end holds anything.** A stale copy is at least a copy:
+you can read it and see it is wrong. ⛔ **A cycle of pointers reads as
+well-organised and contains nothing** — every hop looks like diligence.
+
+⭐ **So the obligation lands on the pointer's author: follow it once, and confirm
+the far end *holds* rather than *forwards*.**
+
+### ⛔ A citation is not an edge until both ends exist in one index
+
+⚠️ **Quoted into the record because a census depends on it.** A prose-to-code
+count moves when a branch merges — not because anything drifted, but because ⭐ **a
+citation only becomes an edge once both of its ends are in the same index.**
+⛔ **Without this sentence beside it, somebody reads the movement as drift** and
+investigates a number that is behaving correctly.
+
+⚠️ **And its companion, which cost real work: state the ratio, the denominator,
+and the set it is over — or it will be quoted wrongly.** A bare *"7.9%"* was
+carried as a citation defect when it was a **design input**: a developer *"built
+a 969-edge bridge on it before measuring."* ⭐ **It belongs beside the number it
+governs, not in a ruling nobody rebuilding a census would read** — placement, not
+strength, is what that rule lacked.
+
 ### ⛔ Ruling is not carrying, and a carried ruling is **quoted**
 
 ⚠️ **Two holes were found in this mechanism, one round apart, and both were in

@@ -389,6 +389,22 @@ determines one is asserted element-for-element, in order, against the artifact.
 tuple used only for membership can be reordered freely; a serialised key order
 cannot, because changing it rewrites every document that was already correct.
 
+## ⛔ Present is not correct — assert the form, not the presence
+
+⚠️ **A runbook entry, a docstring or a config key can be **present and wrong**, and
+a test that checks only presence passes on both.** ⭐ **Measured instance:** four
+existing assertions checked that runbook entries **existed**; ⛔ **not one could
+have caught an entry that existed and named the wrong thing** — which is the
+defect that actually shipped.
+
+⛔ **So assert the *form* of the thing: that the argument is shaped the way a
+working invocation is shaped, not merely that a line is there.**
+
+⭐ **It is *hold-it-or-point-at-it* one level down** — presence is a pointer,
+form is holding the thing — and it is the same asymmetry as *enumerate the legal*:
+⛔ **a presence check fails toward acceptance**, silently, on the case that looks
+right and is not.
+
 ## ⛔ A sweep states what it is sweeping
 
 ⭐ *"Every fixture document"* includes the ones that exist **to be invalid**. A

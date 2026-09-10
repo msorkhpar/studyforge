@@ -464,6 +464,36 @@ check that did not run is not evidence* — never *the container is more capable
 A check the image cannot run is a gap in the image; name it, route it to the task
 that owns the image, and record the evidence as unpinned in the meantime.
 
+#### ⛔ Amendment — unpinned green is evidence about the **code**, never about the **toolchain**
+
+⚠️ **Carried by the PO 2026-09-09 with the measurement, after a THIRD
+pinned-vs-host divergence in one session.** ⭐ **The three-state ruling above is
+right and is not being blunted** — the *did not run* / *unpinned green*
+distinction it drew is real and was worth drawing. ⛔ **This narrows exactly one
+row of it, on evidence.**
+
+**The three instances, all one shape:** `ruff format` caught a line the host could
+not see; before that, **four lint errors and three unformatted files stood green
+on a host suite.** ⚠️ Every one was a check whose verdict is **a property of the
+toolchain**, not of the code — a linter version, a formatter's defaults, a
+config the host resolves differently.
+
+⛔ **So: for any check whose verdict depends on the toolchain — lint, format, and
+anything version-sensitive — unpinned green is a *hint*, not evidence, and the
+only evidence is pinned.** ⭐ For checks whose verdict depends on the **code** —
+the test suite proper — the row above stands unchanged: unpinned green is real
+evidence, named in the review.
+
+⚠️ **Why this is worth a rule rather than a third correction:** ⛔ **a known cost
+paid three times is not a known cost, it is a policy of paying it** — this
+board's own words when it refused option 3 of C5, and the count is the same. ⭐
+**And the failure flatters in the direction that gets believed:** the host says
+green, nobody investigates a pass, and the divergence is found by the next person
+to run the image.
+
+⚠️ **The rubric is the CTO's document; this amendment is a PO finding carried
+with its measurement, and the CTO owns whether to keep, widen or narrow it.**
+
 ### ⛔ 4b-i. Every skip is named, or the run did not happen
 
 ```bash
