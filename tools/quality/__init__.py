@@ -51,6 +51,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from tools.quality.board import board_state, check_board
 from tools.quality.config import (
     LINE_LENGTH,
     MIN_JUSTIFICATION_CHARS,
@@ -98,6 +99,7 @@ from tools.quality.style import check_style
 #: excused by saying what it means rather than by being named somewhere.
 CHECKS = (
     check_sizes,
+    check_board,
     check_mirrors,
     check_docstrings,
     check_style,
@@ -137,7 +139,7 @@ CHECKS = (
 #:
 #: ⚠️ **It is deliberately last**, so it prints immediately above `quality
 #: floor:` — the line it exists to qualify.
-NOTICES = (notices, pointer_coverage, lint_notice)
+NOTICES = (notices, pointer_coverage, board_state, lint_notice)
 
 __all__ = [
     "CHECKS",

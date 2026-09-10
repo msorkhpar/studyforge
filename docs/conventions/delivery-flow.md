@@ -165,6 +165,11 @@ anything.** If a condition has no runnable form, that is the finding.
 `../tasks/BOARD.md` is the **single source of truth** for status. Nowhere else —
 not a handoff, not a commit message, not a chat line — makes a task done.
 
+⛔ **Its SHAPE is governed by [`board.md`](board.md), and that document carries
+the instrument.** ⚠️ **The rule below — *a status change is one cell* — was
+written here, was right, and was enforced by nothing; the board reached 8,133
+lines under it.** ⭐ **`board.md` is that sentence with a check behind it.**
+
 - **The PO writes the board.** Developers do not edit it; they report, and the PO
   records. This keeps status one voice rather than five.
 - **A status change is one cell.** Do not restructure the tables to record an

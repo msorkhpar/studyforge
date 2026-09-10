@@ -5,6 +5,7 @@ from __future__ import annotations
 import tools.quality as quality
 from tests.support import assert_package_contract, repository_root
 from tools.quality import run_all
+from tools.quality.board import board_state, check_board
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.knowledge_index import check_knowledge_index, notices
@@ -26,6 +27,7 @@ def test_every_check_is_registered():
     # nowhere else, which is the most expensive kind of passing test.
     assert set(quality.CHECKS) == {
         check_sizes,
+        check_board,
         check_mirrors,
         check_docstrings,
         check_style,
@@ -43,7 +45,7 @@ def test_every_notice_is_registered():
     # sharper reason: a notice that is not registered prints nowhere, and
     # "nothing was printed" is indistinguishable from "there was nothing to
     # say" (FND-07, and `agent-protocol.md`'s coverage rule).
-    assert set(quality.NOTICES) == {notices, pointer_coverage, lint_notice}
+    assert set(quality.NOTICES) == {notices, pointer_coverage, board_state, lint_notice}
 
 
 def test_the_lint_notice_prints_last():
