@@ -9,7 +9,10 @@ module each one belongs to.
 
 from __future__ import annotations
 
+import ast
 import re
+from importlib import import_module
+from types import ModuleType
 
 import pytest
 
@@ -24,7 +27,7 @@ from studyforge.corpus.placement import (
 from studyforge.render import index
 from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME, written_files
 from tests.studyforge.render.index.indexes import cases, planted, rows
-from tests.support import assert_package_contract
+from tests.support import assert_package_contract, repository_root
 
 #: What a page may never do on open. ⛔ A forbidden list is the wrong instrument
 #: for *deciding* and the right one for testing: these are the ways a page has
@@ -61,6 +64,67 @@ def case(request):
 
 def test_the_package_states_its_contract():
     assert_package_contract(index, "studyforge.render.index")
+
+
+def test_every_name_on_the_public_surface_resolves():
+    # ⛔ **Added because the sweep found it missing.** A misspelling in `__all__`
+    # was killed by ruff alone and by no test at all (`SF-14/2`), and a row
+    # killed only by tidiness is a row killed by nothing when the tidiness moves.
+    missing = [name for name in index.__all__ if not hasattr(index, name)]
+    assert missing == [], missing
+
+
+def test_the_public_surface_is_exactly_the_package_s_public_names():
+    # ⭐ Derived on both sides rather than typed on one: a name re-exported and
+    # forgotten on `__all__` fails here instead of being discovered by the next
+    # consumer — `SF-27/1`'s shape, which `W76` closed one package along.
+    # ⚠️ Submodules and `from __future__` flags are what a package's namespace
+    # carries besides its own surface; neither is one.
+    public = {
+        name
+        for name, value in vars(index).items()
+        if not name.startswith("_") and not isinstance(value, ModuleType) and name != "annotations"
+    }
+    assert public, "the sweep found no public name at all in the package"
+    assert set(index.__all__) == public, sorted(set(index.__all__) ^ public)
+
+
+def test_the_surface_states_each_name_once():
+    assert len(set(index.__all__)) == len(index.__all__), sorted(index.__all__)
+
+
+def test_every_exported_name_is_its_owning_module_s_own_object():
+    # ⛔ Identity, not spelling. A re-export re-bound on the way would compare
+    # equal by name and be a different object — and `render` is the row that
+    # makes this worth writing: `disclosure` has a function of that name too,
+    # so a check that searched the package for "some module holding `render`"
+    # would have compared the wrong pair.
+    where = _declared_owners()
+    for name in index.__all__:
+        owner = where.get(name)
+        if owner is None:
+            # Defined in the contract itself rather than re-exported.
+            assert getattr(index, name).__module__ == index.__name__, name
+            continue
+        assert getattr(import_module(owner), name) is getattr(index, name), name
+
+
+def _declared_owners() -> dict[str, str]:
+    """`name -> the module `__init__.py` imports it from`, read from its own source.
+
+    ⛔ Derived from the contract's source rather than from `sys.modules`: which
+    module a name comes from is what the `__init__` *says*, and a search over
+    everything imported would find a namesake in a sibling.
+    """
+    source = (
+        repository_root() / "src" / "studyforge" / "render" / "index" / "__init__.py"
+    ).read_text(encoding="utf-8")
+    found: dict[str, str] = {}
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            for alias in node.names:
+                found[alias.asname or alias.name] = node.module
+    return found
 
 
 def test_render_returns_bytes():
