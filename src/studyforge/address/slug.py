@@ -35,9 +35,25 @@ that says too much, and this module must commit neither.
 source had the same property and used it the same way.
 
 ⚠️ **`slugify` is lossy, and the design tolerates that because nothing depends
-on it being reversible.** It is ASCII-only: every character outside `[a-z0-9]`
-becomes a separator, so `café` and `cafe` both produce `cafe`-ish output and two
-distinct titles *can* collide. That is survivable only because §6 rules an
+on it being reversible.** Every character outside `[a-z0-9]` becomes a
+separator, so two distinct titles *can* collide.
+
+⛔ **The collision class is punctuation, not accents, and this paragraph used to
+say the opposite.** Measured 2026-09-09, on this module:
+
+```text
+'Streams: an API'  ->  'streams-an-api'      ⛔ collides
+'Streams, an API'  ->  'streams-an-api'      ⛔ with the line above
+'Café'             ->  'caf'                 ⭐ does NOT collide with
+'Cafe'             ->  'cafe'                ⭐ the line above
+```
+
+⚠️ An accented character collapses to a **separator** and is then stripped or
+kept as a hyphen — it is not *deleted*, so `Café` and `Cafe` produce different
+slugs. ⭐ The example that was here claimed they collide; it was wrong, and the
+real class is both wider and more likely, because every English title with a
+colon, a comma or a dash in the same place is in it. That is survivable only
+because §6 rules an
 address is **recorded, never derived** — measured on the extraction source's
 catalogue, **157 of 1,290 units (12.2%) are served at a slug their title does
 not produce**, so deriving one would send one link in eight to a page that is
