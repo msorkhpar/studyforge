@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.corpus.manifest import content
+from studyforge.corpus.manifest import content, errors
 from studyforge.corpus.manifest.content import parse, policy
 
 PACKAGE = Path(content.__file__).parent
@@ -108,16 +108,49 @@ def test_every_public_name_in_the_package_is_reachable_through_it():
     assert public == set(content.__all__), sorted(public ^ set(content.__all__))
 
 
-def test_the_one_private_name_edits_already_takes_is_still_reachable():
-    # ⛔ `W40/1`. `manifest.edits` imports `_escape` from this package and has
-    # since W19 unified the two refusals; the split moved it into `parse`, so
-    # the package re-exports it. ⭐ Pinned here rather than left to be found
-    # by an ImportError in a module this task does not own.
-    from studyforge.corpus.manifest.content import _escape
+def routes_to_the_escaping_phrase() -> list[str]:
+    """Every name on this package through which `errors._escape` is reachable.
 
-    assert _escape("/etc/passwd") == "begins with a slash"
-    assert _escape is parse._escape
+    ⛔ Identity, not spelling. The bridge this row deleted was spelled
+    `_escape`; the next one would not have to be.
+    """
+    return sorted(name for name, value in vars(content).items() if value is errors._escape)
+
+
+def test_the_package_neither_defines_nor_routes_to_the_escaping_phrase():
+    # ⛔ Ruling 135, and it replaces `W40`'s
+    # `test_the_one_private_name_edits_already_takes_is_still_reachable`.
+    # That test pinned a bridge; the bridge is gone, so a test asserting it
+    # still stands would be asserting the defect. ⭐ What is worth pinning is
+    # the other half of the same fact — `edits` no longer reaches past this
+    # package's `__all__`, because there is nothing here to reach.
+    defined = [
+        name
+        for name in MODULES
+        for node in ast.parse((PACKAGE / name).read_text(encoding="utf-8")).body
+        if isinstance(node, ast.FunctionDef) and node.name == "_escape"
+    ]
+    assert defined == [], defined
+    assert routes_to_the_escaping_phrase() == []
     assert "_escape" not in content.__all__
+
+    # ⭐ And it did not move by being copied: `parse` still calls the one
+    # function W19 unified both refusals onto, from its new home.
+    assert parse._escape is errors._escape
+
+
+def test_the_route_check_above_would_notice(monkeypatch):
+    # ⛔ Ruling 123, three readings, and Ruling 140 on the plant's shape: the
+    # clause pictured a name `_escape`, so the plant is the SAME function
+    # bound under a different one — the redundant-alias bridge, renamed.
+    monkeypatch.setattr(content, "_e", errors._escape, raising=False)
+    assert routes_to_the_escaping_phrase() == ["_e"]
+
+    # ⭐ The impossible subject: a decoy that carries the forbidden *name* and
+    # is not the function reads clean, which is how this differs from a grep.
+    monkeypatch.delattr(content, "_e")
+    monkeypatch.setattr(content, "_escape", len, raising=False)
+    assert routes_to_the_escaping_phrase() == []
 
 
 @pytest.mark.parametrize(

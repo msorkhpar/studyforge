@@ -9,8 +9,10 @@ escapes the source root.
 **How you use it.** `parse_content(document["content"])`, and every refusal is
 a `ManifestError`.
 
-**Depends on.** `policy` for the objects it builds, `errors`, and
-`studyforge.describe` for the shape it reports back. ⛔ **Nothing here is
+**Depends on.** `policy` for the objects it builds, `errors` for the exception
+**and** for `_escape` — the one phrase R7 lets a refusal say about a path
+(Ruling 135) — and `studyforge.describe` for the shape it reports back.
+⛔ **Nothing here is
 imported by `policy`**, which is the package's seam.
 
 ## ⭐ Why the reasons are mandatory, and only on one side
@@ -48,7 +50,7 @@ from __future__ import annotations
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest.content.policy import ContentPolicy, Exclusion, NotMaterial
-from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.corpus.manifest.errors import ManifestError, _escape
 from studyforge.describe import describe, describe_keys
 
 #: Minimum characters of reason on an exclusion, and on a `not_material`
@@ -245,18 +247,3 @@ def _reject_absolute(pattern: str, where: str) -> None:
             f"it {_escape(pattern)}, and it is not reproduced here because that "
             f"shape is where a home directory lives"
         )
-
-
-def _escape(pattern: str) -> str:
-    """Name *how* a path leaves the source root, without reproducing it.
-
-    ⛔ Three faults, named separately, because they are three different
-    mistakes: an absolute path, a home-relative one, and one that climbs out
-    with `..`. ⚠️ Reported in the order they are tested, so the sentence
-    matches the branch a reader would go and look at.
-    """
-    if pattern.startswith("/"):
-        return "begins with a slash"
-    if pattern.startswith("~"):
-        return "begins with a tilde"
-    return "climbs above the root with '..'"

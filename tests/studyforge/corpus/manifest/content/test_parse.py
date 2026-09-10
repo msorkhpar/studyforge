@@ -57,6 +57,32 @@ def test_a_path_that_escapes_the_source_root_is_refused(pattern):
         policy(include=[pattern])
 
 
+#: The three faults, and the phrase each one is named by. ⚠️ Pinned because
+#: a refusal is a **format**: `W59` moved the function that produces the
+#: middle clause, and `match="stay inside it"` above would have read green
+#: through a transposition of the three phrases.
+ESCAPE_PHRASES = [
+    ("/etc/passwd", "begins with a slash"),
+    ("~/notes.md", "begins with a tilde"),
+    ("../outside/x.md", "climbs above the root with '..'"),
+    ("src/../../escape.md", "climbs above the root with '..'"),
+]
+
+
+@pytest.mark.parametrize("pattern,phrase", ESCAPE_PHRASES)
+def test_the_refusal_says_which_way_the_path_left_and_says_it_the_same_way(pattern, phrase):
+    # ⛔ The whole sentence, byte for byte, at the site that emits it — not
+    # the substring that survives any rewording of it.
+    with pytest.raises(ManifestError) as raised:
+        policy(include=[pattern])
+    assert str(raised.value) == (
+        f"content.include[0] must be relative to the source root and stay inside "
+        f"it; it {phrase}, and it is not reproduced here because that shape is "
+        f"where a home directory lives"
+    )
+    assert pattern not in str(raised.value)
+
+
 def test_an_unknown_key_in_content_is_refused():
     with pytest.raises(ManifestError, match="unknown key"):
         parse_content({"include": ["*.md"], "exclude": [], "ignore": ["x"]})

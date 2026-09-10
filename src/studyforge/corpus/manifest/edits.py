@@ -57,9 +57,8 @@ from studyforge.corpus.manifest.content import (
     MIN_WHY_CHARS,
     Classification,
     ContentPolicy,
-    _escape,
 )
-from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.corpus.manifest.errors import ManifestError, _escape
 from studyforge.describe import describe, describe_keys
 
 #: The kinds of edit that can be declared. ⚠️ One, because one is what any
