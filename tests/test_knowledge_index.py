@@ -26,6 +26,7 @@ carries the recipe; this module checks a real repository against it.
 from __future__ import annotations
 
 import os
+import re
 from pathlib import Path
 
 import pytest
@@ -229,6 +230,16 @@ def test_the_conventions_document_corrects_the_gitkeep_claim():
     )
 
 
+#: ⛔ Every `graphify` invocation in the document that carries `--graph` — the
+#: copy-paste block FND-07 added. A reader pastes these, so they have to run.
+WORKTREE_INVOCATIONS = re.compile(r"^graphify (explain|path) (.+?) --graph", re.M)
+
+#: What an unambiguous argument looks like: a node id, which is lowercase,
+#: alphanumeric and underscored. ⛔ A **label** is what does not work, and the
+#: two commands fail differently — `explain` refuses, `path` guesses.
+NODE_ID = re.compile(r'^"[a-z0-9_]+"$')
+
+
 def test_the_conventions_document_carries_the_worktree_invocation():
     # ⭐ FND-07 item 3. Measured 2026-09-09: **33 worktrees, 2 with a graph** —
     # the per-worktree rebuild was never payable, and an unaffordable rule is
@@ -238,6 +249,41 @@ def test_the_conventions_document_carries_the_worktree_invocation():
     assert "query" in text and "does not" in text, (
         "the document must say which command still needs a local index"
     )
+
+
+def test_every_worktree_invocation_is_given_a_node_id_and_not_a_label():
+    # ⛔ **The first version of this block did not run.** It passed labels, and
+    # `R7 — No personal data…` matches two nodes: `explain` refused and `path`
+    # picked the higher-scoring one — the fixture, which has no bridge edges —
+    # then printed `No directed path found`, which reads as a fact and is not.
+    # ⚠️ The warning prints *above* the answer, so a reader who scrolls to the
+    # result never sees it.
+    #
+    # ⭐ A runbook entry nobody has run is a runbook entry that fails for the
+    # first person who copies it, and this document already says so about
+    # `graphify extract`. This is that rule, asserted.
+    found = WORKTREE_INVOCATIONS.findall(conventions())
+    assert found, "the worktree invocation block is gone"
+    labelled = [
+        f"{command} {argument}"
+        for command, arguments in found
+        for argument in arguments.split(" ")
+        if argument.startswith('"') and not NODE_ID.match(argument)
+    ]
+    assert labelled == [], (
+        f"these pass a label where a node id is needed, and a label can be ambiguous: {labelled}"
+    )
+
+
+def test_the_document_says_how_path_fails_on_an_ambiguous_label():
+    # ⚠️ Naming `explain`'s behaviour is not enough, and that is the whole of
+    # the correction: `path` does not behave like `explain`. It warns and then
+    # answers anyway, so the caveat has to name the command that is dangerous.
+    text = conventions()
+    ambiguity = text[text.index("Ambiguity:") :]
+    assert "`explain` refuses" in ambiguity
+    assert "`path` resolves it silently" in ambiguity
+    assert "warning is *above* the answer" in ambiguity
 
 
 def test_the_conventions_document_carries_the_census_command_itself():

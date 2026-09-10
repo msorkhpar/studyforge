@@ -208,12 +208,17 @@ stale or wrong — rebuild it, and say so.
 all.** This is the clause that makes R14 affordable:
 
 ```bash
-graphify explain "require_slug()" --graph <repository>/graphify-out/graph.json
-graphify path "R7 — No personal data…" "assert_clean()" --graph <path>/graph.json
+graphify explain "src_studyforge_address_slug_require_slug" --graph <repo>/graphify-out/graph.json
+graphify path "docs_specs_2026_09_08_studyforge_v1_design_r7" "assert_clean()" \
+        --graph <repo>/graphify-out/graph.json
 ```
 
-⚠️ **`query` does not.** It reads `./graphify-out/graph.json` and nothing else,
-so it is the one command that needs a build where you are standing.
+⛔ **Both take a node id, and that is not fussiness — see the ambiguity rule
+below.** These two ran, as written, on 2026-09-09.
+
+⚠️ **`query` does not take `--graph`.** It reads `./graphify-out/graph.json` and
+nothing else, so it is the one command that needs a build where you are
+standing.
 
 ⭐ **That maps exactly onto R14's own qualification.** The two commands the
 ruling holds for *unconditionally* are the two that need no local build; the
@@ -222,9 +227,72 @@ is built once per repository, not once per worktree** — measured 2026-09-09,
 **33 worktrees and 2 with a graph**, because the per-worktree cost was never
 payable and an unaffordable rule is one that gets skipped.
 
-⚠️ **A label can be ambiguous, and `explain` says so rather than guessing.**
-`R7 — No personal data…` matches both the spec and a fixture's `VIOLATION.md`;
-pass the node id it prints.
+## ⛔ Ambiguity: `explain` refuses, `path` does not — and that difference bites
+
+⚠️ **Labels repeat.** `R7 — No personal data reaches disk or the wire` is the
+label of *two* nodes — the spec's ruling and a fixture's `VIOLATION.md` — and
+`require_slug()` is the label of two more, the function and a handoff naming it
+in prose. ⛔ **The two commands do not handle that the same way, and only one of
+them is safe.**
+
+⭐ **`explain` refuses, and hands you the ids:**
+
+```text
+$ graphify explain "R7 — No personal data reaches disk or the wire" --graph <repo>/…/graph.json
+Ambiguous: 'R7 — No personal data reaches disk or the wire' matches 2 nodes in different files.
+  docs/specs/2026-09-08-studyforge-v1-design.md
+    id: docs_specs_2026_09_08_studyforge_v1_design_r7
+  tests/fixtures/invalid/personal-data/VIOLATION.md
+    id: tests_fixtures_invalid_personal_data_violation_r7
+Retry with the repo-relative path or the full node id.
+```
+
+⛔ **`path` resolves it silently, by score, and then answers — from whichever
+node won:**
+
+```text
+$ graphify path "R7 — No personal data reaches disk or the wire" "assert_clean()" --graph …
+warning: source match was ambiguous (top score 62411.2, runner-up 62407.8)
+No directed path found between 'R7 — …' and 'assert_clean()'. Re-run with --undirected…
+```
+
+⚠️ **Read that second line on its own and it is a fact about the graph.** It is
+not: the path exists, and it is one hop. The warning is *above* the answer, a
+reader who scrolls to the result never sees it, and the two scores differ by
+four parts in sixty thousand — so which node wins is not something anybody can
+predict or reproduce across a rebuild.
+
+⭐ **So: give `path` a node id, always.** `explain` is where you get one, and it
+is the command that will not let you skip the step.
+
+⛔ **This is the same defect the index tripwire exists to catch, arriving
+through the runbook instead of through the graph** — a green light and a silent
+answer. The census reported *"bridged, 222 edges"* while the invocation printed
+in this very document returned a confident negative.
+
+## ⚠️ A ruling is filed as `rationale`, not as a document
+
+All twenty-one of this project's rulings are nodes, and `graphify` gives them
+`file_type: "rationale"` — the same type as a docstring. ⛔ **Any tool that
+separates prose from docstrings by node type will silently drop the rulings**,
+and one did: FND-07's first census filtered on document types, found no ruling,
+and concluded in a handoff that the nodes did not exist.
+
+⭐ **The remedy is structural rather than a longer type list**: ask whether an
+edge **crosses a file boundary**, not what its endpoints are called.
+`graphify`'s taxonomy is `graphify`'s and will change; whether two nodes come
+from the same file will not.
+
+## ⛔ A document may hold a thing, or point at where it is held — never both ways
+
+This document told readers to check the doc↔code census in
+`handoffs/FND-02.md`. That handoff told them the census was in this document.
+⛔ **Neither one had it**, and `studyforge`'s own graph went unbridged for a
+milestone while both documents said to check.
+
+⚠️ **Neither author could have caught it**, because each saw a pointer to a
+place they believed held the thing. ⭐ **So: hold it, or point at a holder — a
+pointer to a pointer is a command nobody has ever run.**
 
 ## Rebuilding
 

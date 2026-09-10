@@ -162,13 +162,13 @@ direction.
 ```text
 $ docker/dev/check python3 -m pytest -q -rs
 base   release/m0-foundations @ dc4686c : 2124 passed, 8 skipped
-branch feat/FND-07-index-tripwire       : 2169 passed, 8 skipped
+branch feat/FND-07-index-tripwire       : 2171 passed, 8 skipped
 
 $ docker/dev/check python3 -m tools.quality
 base   : quality floor: clean
 branch : quality floor: clean          (plus the index notice, which is not a finding)
 
-$ docker/dev/check ruff format --check .   ->  276 files already formatted
+$ docker/dev/check ruff format --check .   ->  277 files already formatted
 $ docker/dev/check ruff check .            ->  All checks passed!
 ```
 
@@ -202,6 +202,51 @@ passes, which is what keeps the C5 gate working.
 
 ---
 
+## ⛔ CHANGES REQUESTED, addressed: the invocation this task added did not run
+
+**The condition was right, and it was worse than reported: *both* lines of the
+copy-paste block failed, not only `path`.** Measured 2026-09-09:
+
+```text
+$ graphify explain "require_slug()" --graph …
+Ambiguous: 'require_slug()' matches 2 nodes in different files.   ⭐ refuses, lists ids
+
+$ graphify path "R7 — No personal data reaches disk or the wire" "assert_clean()" --graph …
+warning: source match was ambiguous (top score 62411.2, runner-up 62407.8)
+No directed path found between 'R7 — …' and 'assert_clean()'.     ⛔ a confident lie
+```
+
+⚠️ **`path` does not behave like `explain`, and that is the whole correction.**
+It resolves the ambiguity **by score**, silently, then answers from whichever
+node won — here the fixture's `VIOLATION.md`, which has no bridge edges. The
+warning prints *above* the result, so a reader who scrolls to the answer sees a
+fact. ⛔ And the scores differed by **four parts in sixty thousand**, so which
+node wins is neither predictable nor stable across a rebuild.
+
+⭐ **The CTO's framing is the one worth keeping: this is the defect the tripwire
+exists to catch, arriving through the runbook instead of through the graph.**
+The census said *"bridged, 222 edges"* while the command printed in the same
+document returned silence — a green light and a silent answer.
+
+**Both edits, plus a guard the condition did not ask for:**
+
+1. The block passes **node ids**, and both lines were run as written.
+2. The caveat is now its own section naming `path`'s behaviour, with the
+   measured transcript of both commands.
+3. ⭐ **`test_every_worktree_invocation_is_given_a_node_id_and_not_a_label`** —
+   it parses every `--graph` invocation out of the document and fails on any
+   quoted argument that is not a node id. ⛔ Watched failing on the old text
+   before it was watched passing on the new: *"Left contains one more item:
+   `explain "require_slug()"`"*.
+
+⚠️ **The four existing assertions would not have caught this.** They check that
+substrings are present; a runbook entry can be present and wrong. This one
+checks the **form** of the argument, which is the property that was broken.
+
+**Re-measured, pinned:** 2171 passed, 8 skipped, floor clean, ruff clean.
+
+---
+
 ## Findings
 
 ### 1. `[structural]` The census command was a circular reference, and that is why nobody ran it
@@ -219,8 +264,10 @@ is more general than the index: a cross-reference between two documents is a
 command nobody has ever run, and neither author can tell, because each sees a
 pointer to a place they believe has it.
 
-**Fixed** in `graphify.md`, which now carries the command. ⚠️ `FND-02.md`'s
-half is a handoff and handoffs are records — not edited here.
+**Fixed** in `graphify.md`, which now carries the command **and the general
+rule** the CTO drew from it: ⛔ *a document may hold a thing, or point at where
+it is held — never point at a document that points back.* ⚠️ `FND-02.md`'s half
+is a handoff and handoffs are records — not edited here.
 
 ### 2. `[structural]` `graphify` files a ruling as `rationale`, and nothing says so
 
@@ -233,6 +280,9 @@ and it produced a confident wrong conclusion in a handoff.
 a file?* — rather than by classifying node types. **That is the transferable
 part**: `graphify`'s type taxonomy is `graphify`'s and will change; whether two
 nodes come from the same file will not.
+
+**Recorded in `graphify.md`** as a stated property of the tool, with the
+structural remedy rather than the implementation.
 
 ### 3. `[local]` 33 source files produce zero nodes and are absent from the graph
 
