@@ -172,7 +172,8 @@ which is the one seam neither can inspect from their own side.
 | **W18** — Ruling 35, `authoritative ⟹ bundled` | Developer 1 | ✅ `done` | — |
 | **W23** — the live R7 hole (tilde, `/export/home/`) | Developer 2 | ⏳ `in-progress` | ⛔ **before W20** |
 | **W20** — repo-wide §7c check **and its migration** | Developer 2 | `todo` | ⛔ **before SF-10 lands** |
-| **SF-10 survey** — port inventory + R11 package shape (**W5**) | **Developer 1, now** | ⏳ `in-progress` | ⛔ **design only, no builder code** |
+| **Ruling 46's helper** — `asserting=` rule-id set + the misattribution message | **Developer 1, now** | ⏳ `in-progress` | ⛔ **stop at the helper; the general seam is scoped once, here** |
+| **SF-10 survey** — port inventory + R11 package shape (**W5**) | **Developer 1, next** | `todo` | ⛔ **design only, no builder code** |
 | **SF-10** — Unit document builder | **both, as a team** | `todo` | when the survey and W20 land |
 
 ### ⭐ Developer 1's slot: the survey, not the build
@@ -211,25 +212,60 @@ owes **corpus names**, **dangling pointers** (Finding 50 / `W21`), and **Ruling
 45's sweep** — ⚠️ **and the board split just added a fourth consumer**, since
 every `BOARD.md` pointer into the archive wants the same walk.
 
-⛔ **Ruling 45 states the rule the seam has to implement:** *a sweep asserting
-property P excludes exactly the fixtures **declared** to violate P — read from the
-declaration, never from the directory name.*
+> ⛔ **CORRECTED — I scoped this against Ruling 45, which Ruling 46 superseded,
+> and building it as written would have produced the defect the supersession
+> exists to prevent.** ⚠️ **I named `VIOLATION.md` as the declaration and did not
+> open it.** ⭐ **The CTO's new clause on themselves is mine identically: a ruling
+> that names an artifact opens it first.**
+>
+> ⛔ **Measured by me on the tip `ac4ed55`, not inherited:** `INVALID_CORPORA`
+> maps a directory to the **checker's** rule id — `"count-mismatch": "counts"`,
+> `"user-authoritative": "exercise-trust"`, seven entries — while every
+> `VIOLATION.md` names the **spec** rule in prose: `spec §6`, `R9`, `R7`.
+> ⛔ **Not one of the seven names the id the sweeps use.**
+>
+> ⚠️ **They are not two copies of one fact — they are two different
+> vocabularies.** So a seam reading `VIOLATION.md` needs **a prose parser *and* a
+> `spec §6 → counts` translation table**, to reach a dict that already exists, is
+> already exported, and is already pinned to the directory by
+> `test_the_invalid_set_is_exactly_what_is_on_disk`. ⛔ **That is a second copy of
+> one declaration — the defect diagnosed five times — arriving inside the scope
+> written to fix it.**
 
-⭐ **The machinery already exists and is unused.** Every invalid fixture carries a
-**`VIOLATION.md` naming its rule**, and `test_invalid_corpus_violates_exactly_
-its_one_rule` **already proves that declaration true and singular.** ⚠️ So the
-declaration is trustworthy today and nobody is reading it.
+⛔ **Ruling 46 — the rule the seam implements:** ⭐ ***a sweep names, as a set of
+rule ids, every property it asserts***, and the helper excludes exactly
+`{d for d, rule in INVALID_CORPORA.items() if rule in asserting}`.
+
+⛔ **A set, not a string, and the block-vocabulary sweep is why:** it asserts
+membership **and** counts, so ⚠️ **a single id excludes too little and the
+directory excludes too much.**
+
+⛔ **And the half that closes finding 47, which this scope must carry:** a set
+still permits **under**-declaration, ⚠️ **and that red reads as the fixture's
+fault.** So the failure message names the declaration:
+
+> *"`user-authoritative` declares rule `exercise-trust`; if this sweep asserts
+> that rule, name it in `asserting=` — **do not change the fixture**."*
+
+⭐ **The problem was never the red; it was the misattribution.** ⛔ **Without that
+sentence the next author neuters a negative control** to make a suite green — and
+a neutered control is the one failure this project cannot detect from outside.
+
+⭐ **`VIOLATION.md` keeps its §1e job and nothing parses it:** a file beside the
+data telling **a person** what the gate should say. ⚠️ **Documentation, not an
+interface.**
+
+⭐ **My instinct — *read from the declaration, never the directory name* — was
+right; I pointed it at the wrong artifact.** ⛔ **The declaration is
+`INVALID_CORPORA`.** And it is still *enumerate the legal*: a directory name is an
+open set somebody keeps extending; **the dict is a closed declaration that already
+has an enforcer.**
 
 ⚠️ **Measured, and it is why the seam is not a nicety:** all **7** invalid
 fixtures agree with the block vocabulary, so `including_invalid=False` drops **9
 documents that should be swept** — ⛔ **each invalid in one named way and correct
 in every other.** ⭐ Developer 1's fix **stands until this task**: it is correct,
 it stops the false red, and it is honest about what it does.
-
-⭐ **And it is *enumerate the legal* again:** a directory name is an open set
-somebody keeps extending; ⛔ **`VIOLATION.md` is a closed declaration that already
-has an enforcer.** The seam answers one question — *which fixtures should be
-swept for property P?* — and four walks stop each inventing an answer.
 
 ### ⛔ W20 before SF-10, and it is the third instance of one sequencing shape
 
