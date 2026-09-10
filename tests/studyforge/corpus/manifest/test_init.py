@@ -37,6 +37,7 @@ PUBLIC_SURFACE = frozenset(
         "Manifest",
         "ManifestError",
         "MediaPolicy",
+        "NotMaterial",
         "PermittedEdit",
         "Reversal",
         "from_document",

@@ -13,6 +13,7 @@ exists.
 """
 
 import ast
+import json
 
 import pytest
 
@@ -20,7 +21,13 @@ from studyforge.corpus.container import ContainerError
 from studyforge.validate import source as source_module
 from studyforge.validate import validate
 from studyforge.validate.corpus import ARCHIVE_DIR
-from studyforge.validate.source import SKIP_DIRS, count_headings, source_files
+from studyforge.validate.source import (
+    RULE_CONTESTED,
+    RULE_UNCLASSIFIED,
+    SKIP_DIRS,
+    count_headings,
+    source_files,
+)
 from tests.studyforge.validate import corpora
 from tests.support import git, init_repository, repository_root, run
 
@@ -183,6 +190,83 @@ def test_a_file_the_manifest_classifies_as_neither_is_refused(tmp_path):
     report = validate(root)
     assert "unclassified" in report.rules
     assert "src/strays.txt" in report.findings[0].where
+
+
+# --------------------------------------------------------------------------
+# ⛔ the third state — never material, rather than withheld
+# --------------------------------------------------------------------------
+
+#: A reason long enough to be one, written where a corpus would write it.
+WHY = "the repository's own scaffolding, never read aloud"
+
+
+def redeclare(root, content, corpus_api=2):
+    """Rewrite this corpus's `corpus.json` with `content` and a version."""
+    declared = {**corpora.MANIFEST, "corpus_api": corpus_api, "content": content}
+    (root / "corpus.json").write_text(json.dumps(declared, indent=2) + "\n", encoding="utf-8")
+    return root
+
+
+def test_a_file_the_manifest_calls_never_material_is_not_a_finding(tmp_path):
+    # ⛔ **The hole this closes.** Measured against a real corpus: 100 of its
+    # files were reported unclassified and only 3 were material withheld from
+    # anybody — the rest a licence, ignore files, an editor's workspace. There
+    # was no honest state for them and `exclude` made every `why` a small lie.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    (root / "LICENSE").write_text("A licence.\n", encoding="utf-8")
+    redeclare(root, {"include": ["src/*.md"], "not_material": [{"glob": "LICENSE", "why": WHY}]})
+    report = validate(root)
+    assert report.findings == ()
+    assert report.exit_code == 0
+
+
+def test_the_third_state_does_not_silence_the_unclassified_catch(tmp_path):
+    # ⛔ Rule 4 is not weakened by one line: a file the third state does not
+    # name is still unaccounted for, and still exits 1.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    (root / "LICENSE").write_text("A licence.\n", encoding="utf-8")
+    (root / "notes.txt").write_text("unaccounted for\n", encoding="utf-8")
+    redeclare(root, {"include": ["src/*.md"], "not_material": [{"glob": "LICENSE", "why": WHY}]})
+    report = validate(root)
+    assert report.rules == ("unclassified",)
+    assert [finding.where for finding in report.findings] == ["notes.txt"]
+    assert report.exit_code == 1
+
+
+def test_a_file_matched_by_include_and_not_material_is_a_finding_of_its_own(tmp_path):
+    # ⛔ **Never a precedence, and its own rule id.** This is what stops the
+    # third state becoming a drain: a glob that sweeps up material says so
+    # loudly, per file, against a real tree.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    redeclare(root, {"include": ["src/*.md"], "not_material": [{"glob": "src/*", "why": WHY}]})
+    report = validate(root)
+    assert report.rules == ("contested",)
+    assert report.findings[0].where == "src/one.md"
+    assert report.exit_code == 1
+
+
+def test_the_contested_finding_is_not_filed_under_the_unclassified_rule(tmp_path):
+    # ⚠️ A different fact: the manifest classified this file twice and
+    # disagreed with itself, which is not the same as never classifying it —
+    # and a script filters on the two separately.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    redeclare(root, {"include": ["src/*.md"], "not_material": [{"glob": "src/*", "why": WHY}]})
+    assert "unclassified" not in validate(root).rules
+    assert RULE_CONTESTED != RULE_UNCLASSIFIED
+
+
+def test_a_manifest_using_the_third_state_at_the_older_version_is_refused(tmp_path):
+    # ⛔ R9: the version is the corpus's statement of which contract it was
+    # written to, and it is refused rather than upgraded on its behalf.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    redeclare(
+        root,
+        {"include": ["src/*.md"], "not_material": [{"glob": "LICENSE", "why": WHY}]},
+        corpus_api=1,
+    )
+    report = validate(root)
+    assert "manifest" in report.rules
+    assert "not_material" in report.findings[0].message
 
 
 def test_a_corpus_with_no_material_beside_the_archive_says_so(tmp_path):

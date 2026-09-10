@@ -192,7 +192,12 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
             f"permitted_edits may never name version-control configuration; this one "
             f"names {sorted(VCS_NAMES | VCS_DIRECTORIES & set(path.parts))}"
         )
-    if content.classify(edit.path) is Classification.INCLUDED:
+    # ⛔ `CONTESTED` counts, and it is not a courtesy. It means `include` and
+    # `not_material` both match this path and the manifest has not said which
+    # holds; refusing the edit is the direction that cannot destroy material,
+    # and reading it as "not included" would be this check going quiet on
+    # exactly the file nobody has decided about.
+    if content.classify(edit.path) in (Classification.INCLUDED, Classification.CONTESTED):
         raise ManifestError(
             "permitted_edits may never name a file the material's own reader depends on "
             "as content, and this corpus's 'content' includes it"

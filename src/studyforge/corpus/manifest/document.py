@@ -61,11 +61,29 @@ from studyforge.version import check as check_version
 #: source" is a question every tool in this project asks.
 MANIFEST_FILENAME = "corpus.json"
 
-#: Versions this build can read. ⛔ An unknown one is refused and never
-#: migrated in place (R9): a migration that runs because something merely
-#: wanted to render a page rewrites the record of what was ingested.
-CORPUS_API = 1
-KNOWN_CORPUS_API = frozenset({CORPUS_API})
+#: The version this build writes, and every version it can read. ⛔ An unknown
+#: one is refused and never migrated in place (R9): a migration that runs
+#: because something merely wanted to render a page rewrites the record of
+#: what was ingested.
+#:
+#: ⭐ **`2` added `content.not_material`** (Ruling 90), and the bump is not
+#: about old manifests — the key is optional and an absent one means an empty
+#: tuple, so every `1` still parses. ⛔ **It is about a manifest that *uses*
+#: the key being unreadable to an older build**, which reports an unknown key
+#: and blames the corpus for the framework's age. That is exactly what R9
+#: versions, and the field and the bump therefore landed in one commit.
+#:
+#: ⚠️ **The accepted set is spelled out rather than derived from
+#: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
+#: `2` on the day somebody writes `3`, and the refusal for an unknown version
+#: has to stay exactly as sharp as it is for `3` today.
+CORPUS_API = 2
+KNOWN_CORPUS_API = frozenset({1, 2})
+
+#: The `corpus_api` each `content` key added after version 1 requires.
+#: ⚠️ **A map rather than a branch**, because the second entry is the one that
+#: gets written as a branch beside the first and then disagrees with it.
+CONTENT_KEY_VERSIONS = {"not_material": 2}
 
 #: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
 #: this is only the set a manifest may name**, and the two must not drift.
@@ -181,7 +199,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     fields, exactly as `unit.content` does.
     """
     _gate(document, where)
-    _check_version(document, where)
+    corpus_api = _check_version(document, where)
     unknown = sorted(set(document) - set(MANIFEST_KEYS))
     if unknown:
         raise ManifestError(
@@ -192,6 +210,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     if missing:
         raise ManifestError(f"{where} is missing required key(s) {missing}")
 
+    _check_content_version(document, corpus_api, where)
     content = parse_content(document["content"])
     return Manifest(
         source=_slug_of(document["source"], f"{where} 'source'"),
@@ -203,6 +222,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         content=content,
         media=parse_media(document.get("media")),
         permitted_edits=parse_edits(document.get("permitted_edits"), content),
+        corpus_api=corpus_api,
     )
 
 
@@ -226,22 +246,50 @@ def _gate(document: dict, where: str) -> None:
     assert_clean(document, where)
 
 
-def _check_version(document: dict, where: str) -> None:
-    """Refuse a `corpus_api` this build does not speak (R9).
+def _check_version(document: dict, where: str) -> int:
+    """Return the `corpus_api` declared, refusing one this build cannot speak (R9).
 
     ⛔ The test itself is `studyforge.version`'s, not this module's. It was
     written here first and was correct here; R9 versions **six** contracts,
     and the second copy is the one people forget (SF-33). What stays here is
     the set — `KNOWN_CORPUS_API` — because which versions a manifest may
     declare is this contract's business and nobody else's.
+
+    ⚠️ **The checked version is returned rather than discarded**, and that
+    only became visible when the set grew: while `KNOWN_CORPUS_API` held one
+    number, a `Manifest` that always reported the default reported the truth
+    by coincidence. ⛔ A manifest declaring `1` must say `1`, because the
+    field records what the corpus declared and not what this build writes.
     """
-    check_version(
+    return check_version(
         "corpus_api",
         document.get("corpus_api"),
         KNOWN_CORPUS_API,
         where=where,
         error=ManifestError,
     )
+
+
+def _check_content_version(document: dict, corpus_api: int, where: str) -> None:
+    """Refuse a `content` key from a version this manifest does not declare (R9).
+
+    ⛔ **The version is the corpus's statement of which contract it was written
+    to, and it is never inferred from the keys present.** A manifest using
+    `not_material` under a `1` is unreadable to exactly the build it claims to
+    be readable by, which is the whole thing R9 versions — and the refusal is
+    a raise naming both numbers, never a quiet upgrade of the declaration.
+    """
+    content = document.get("content")
+    if not isinstance(content, dict):
+        return
+    for key, needed in CONTENT_KEY_VERSIONS.items():
+        if key in content and corpus_api < needed:
+            raise ManifestError(
+                f"{where} declares corpus_api {corpus_api} and uses 'content.{key}', "
+                f"which corpus_api {needed} added; declare corpus_api {needed}. The "
+                f"version is what tells an older build it cannot read this manifest, "
+                f"and it is not inferred from the keys present (R9)."
+            )
 
 
 def _title_of(value: object, where: str) -> str:
