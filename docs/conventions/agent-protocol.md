@@ -53,6 +53,27 @@ goes stale in the copy nobody re-measures.**
 > under the agent's own worktree (`<worktree>/.scratch/`), never the shared
 > scratchpad root.** ⚠️ A sweep is the one artifact that cannot be re-derived
 > cheaply: 39 container runs, ~13 minutes.
+>
+> ⛔ **AMENDED, Ruling 153 (CTO round 40): `<worktree>/.scratch/` holds what a
+> sweep WRITES, and it NEVER holds a CHECKOUT.** ⭐ **A trial merge, a second
+> clone or any linked worktree is created OUTSIDE every checkout of this
+> repository** — `review-rubric.md` §0a's `TRIAL=$(mktemp -d)/trial` was already
+> right, and this clause never contradicted it.
+
+⛔ **Why the amendment, and it is not hypothetical.** ⭐ **A second checkout of
+this repository is not an artifact; it is another repository's tree, and putting
+one inside the first makes every tree-walking instrument in the suite read two
+repositories as one.** ⚠️ **Measured at one ref, in the pinned image, the only
+difference being where the trial worktree lived:** a linked worktree under
+`.scratch/` gave **`2 failed, 31 passed`** (`assert 44 == 88`, naming 44 files
+belonging to the nested checkout); moved to a sibling with `.scratch/` empty,
+**`33 passed`**.
+
+⛔ **AND THE PART THAT MAKES IT A TRAP RATHER THAN A MISTAKE:
+`git status --porcelain` PRINTED NOTHING IN BOTH CASES.** ⚠️ **`.scratch/` is
+ignored, so Ruling 131's clean-tree instrument certifies a tree carrying 723
+files of a second repository.** ⭐ **Do not expect the tree to warn you; put the
+second checkout in `mktemp -d` and there is nothing to warn about.**
 
 ⚠️ **Why:** `W40/5` and `SK-05/6` are the same defect reported from opposite
 sides in one round. Both sweeps wrote `sweep.log` into the shared session
@@ -389,6 +410,39 @@ finding's own first words rather than in a fourth word of vocabulary:
   whatever is true about how it was originally filed** — ⚠️ **a finding that was
   NARROWED is still a finding, and that is the failure the fourth marker actually
   produced in one of its three uses.**
+
+#### ⛔ Ruling 155 (CTO round 40) — the two markers, in a FENCE, because the prose above was not enough
+
+⚠️ **Everything Ruling 155 says is already stated in the prose above, and it was
+misused anyway — by two different offices, in consecutive rounds, one round
+after the CTO wrote that it was wrong.** ⛔ **`PO-31/9` and `PO-32/7` both put
+the none-marker on a **recorded negative** standing beside eight or nine real
+findings.** ⭐ **Two rounds, two offices, the same misuse means the vocabulary
+was missing a word rather than a scolding, so here it is in the form Ruling 73
+says a rule this cheap to break must take:**
+
+```text
+[none]   — there was nothing outside this task's scope to report. A claim about
+           the EMPTINESS of the findings list; it may not stand beside a member
+           of it.
+[local]  — a finding, INCLUDING a recorded negative: "checked, not assumed; the
+           thing I expected to find is not there." CTO-39/5, CTO-39/6, CTO-39/7
+           and SK-08/4 already spell it this way.
+```
+
+⛔ **The fence is load-bearing rather than decorative:** §8a's counter reads a
+marker that OPENS a line as a finding, ⚠️ **and Ruling 148 proved the checker
+cannot fire on a `ruling record` at all** — which is the one document class both
+offences were committed in. ⭐ **Ruling 73's answer to a check that cannot see a
+shape is the fence, not a weaker check**, and that is why this is written here
+and not routed to `check_markers`.
+
+⛔ **This is a CORRECTION, not new scope.** ⭐ **`W63` and `W64` remain the
+mechanism and their ruled order is unchanged** — and `PO-32/3` sharpens the case
+for them past what Ruling 148 said: **76 finding lines across 12 documents**, and
+`_FINDING_LEAD` refuses a backticked ID **even inside a task handoff**.
+⚠️ **So the contract is not merely *unenforced on ruling records*; it is
+*unreadable* wherever the offices' actual format is used.**
 
 ⭐ **The test for `[structural]` is one question: *would this happen again to
 somebody else?*** If yes, mark it. ⚠️ Over-marking costs a sentence in a triage

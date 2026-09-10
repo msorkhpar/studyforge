@@ -20,9 +20,15 @@ code — because there is no code.
 1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R21**,
    and **§12** (what the second source is for).
    The rulings are the authority you appeal to when a task is ambiguous.
-2. `docs/tasks/README.md` — **87** tasks, 13 epics, 9 milestones; ordering and the
-   critical path. ⚠️ **`FND-08` and `FND-09` were added 2026-09-10** (Ruling 43's
-   two walks), so a count of 85 quoted anywhere else is stale.
+2. `docs/tasks/README.md` — ordering and the critical path. ⛔ **THIS LINE
+   CARRIES NO COUNT, and its removal is Ruling 150 (CTO round 40).** ⚠️ **It
+   claimed **87** while citing a document that claimed **89**, and the measured
+   answer was **91** live capabilities and **92** rows across **14** epics —
+   ⭐ **a reader who followed the citation was corrected by two and a reader who
+   did not was wrong by four.** ⛔ **The authority is the generated derivation:
+   `docs/capability-index.md`.** ⭐ **This file's own *Where to start* already
+   rules that a fact written in two places goes stale in the copy nobody
+   re-measures — and a count is a fact.**
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
    it carries shared context so neighbouring tasks do not re-derive it.
 4. `docs/conventions/` — module structure, graphify, the agent working
@@ -101,16 +107,32 @@ form needs a URL that resolves. The components are:
 
 ✅ **M0 and M1 are both CLOSED.** **M1 closed 2026-09-10 at `2fe56a4`**, all nine
 of its close conditions true at that one ref. ✅ **M2 step 2.1 closed 2026-09-10
-at `a00337b`**, all five of its rows re-taken at that one ref. ⏳ **Open: M2 — a
-corpus is readable. In flight: M2 step 2.2.** ⛔ **Do not start on M0 or M1.**
+at `a00337b`**, all five of its rows re-taken at that one ref. ✅ **M2 step 2.2
+closed 2026-09-10 at `ce80120`**, all four of its rows re-taken at that one ref.
+⏳ **Open: M2 — a corpus is readable. In flight: M2 step 2.3.** ⛔ **Do not start
+on M0 or M1.**
+
+⚠️ **CORRECTED 2026-09-10 (PO round 33, check 5), and it is the SECOND time this
+section has been wrong about which step is live.** ⛔ **It said *"In flight: M2
+step 2.2"*, and that became false at `176621c` — the merge of `SK-08`, step
+2.2's last row — three merges before this correction was written.** ⭐ **Check 5
+predicted this exact liability IN ADVANCE, by name, in round 32, and named it
+the next round's first job** — ⚠️ **which is check 5 earning its place on the
+wave-open checklist rather than being justified by it.**
 
 ⚠️ **CORRECTED 2026-09-10 (PO round 28, check 5). This section said *"In flight:
 M2 step 2.1"*, which was true when it was written and false the moment that step
 closed** — ⛔ **and the round that closed the step is the round that made this
-file wrong, which is exactly why `CLAUDE.md` is on the wave-open checklist by
-name.** ⭐ **The sentence was REPLACED, not annotated below (Ruling 106 governs
-merged handoffs; a correction to a live instruction replaces it, because a reader
-stops at the first sentence that answers their question).**
+file wrong.** ⭐ **The sentence was REPLACED, not annotated below (Ruling 106
+governs merged handoffs; a correction to a live instruction replaces it, because
+a reader stops at the first sentence that answers their question).**
+
+⛔ **TWICE IS A MECHANISM, NOT AN ACCIDENT: the round that closes a step is
+always the round that makes this file wrong**, because the close is what changes
+the answer and this file is the copy nobody re-measures while the close is being
+written. ⭐ **The remedy is the one already in force — the board is the
+instrument, this file says only which milestone is open, and check 5 runs at
+every wave-open.**
 
 ⛔ **THE TASK LIST THAT USED TO STAND HERE HAS BEEN REMOVED, and its removal is
 the point.** ⚠️ **This line named five step-2.1 tasks; two of them — `SF-31` and
