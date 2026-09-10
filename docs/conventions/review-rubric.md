@@ -602,6 +602,95 @@ cannot be run, the review is **Blocked**, not APPROVE.
 The reviewer names, in one line, which new test would fail if the change were
 reverted. If there is none, the tests are decoration.
 
+⭐ **Better than naming one: revert the implementation, keep the tests, and
+paste the count.** Measured on `W28`: implementation reverted → **14 failed**;
+restored → **31 passed**. That is two commands, it needs no judgement, and it
+answers the question the sentence only asserts.
+
+#### ⛔ Ruling 70 — a mutant sweep is evidence only from a **bytecode-cold** run, and it says so
+
+⛔ **A sweep that does not state its cache-purge step is not evidence, and the
+reviewer may not accept it as any.** This is not a caution; it is the same
+class as §4b-i's unread skips — ⭐ **a check that could not fail, reporting
+success.**
+
+⚠️ **The mechanism, measured 2026-09-10 rather than reasoned about.** CPython
+validates a `.pyc` against the source's mtime **in whole seconds** *and* the
+source's **size in bytes**. ⛔ **A mutation that changes a constant without
+changing the byte length, written inside the same second as the cached
+compile, is never compiled at all** — the previous bytecode runs. Same-size
+mutations are precisely the class a sweep is built out of, and the inner loop
+here is **0.30 s**, so three mutants fit inside one second: the window is the
+normal case in this repository, not an edge.
+
+⛔ **It fails in both directions and one of them flatters.** Both were built and
+observed, host, Python 3.14.4:
+
+| the cache was warmed from | what the sweep reports | truth |
+|---|---|---|
+| the **original** | every same-size mutant **SURVIVED** | pessimistic — reads as a weak suite |
+| a **failing mutant** | every same-size mutant **KILLED** | ⛔ **flattering — a "killed" mutant that never ran** |
+
+⭐ **So the sweep gets a free negative control it was missing: re-run the
+unmutated baseline and require it to SURVIVE.** In the tainted run the restored
+original reports `KILLED`, which is impossible and is the tell. ⛔ A sweep that
+reports its own baseline as killed is discarded, not explained.
+
+⚠️ **Ruling 40 is necessary here and *not* sufficient, which is the part worth
+carrying.** The pinned image sets `PYTHONDONTWRITEBYTECODE=1` (`docker/dev/Dockerfile`),
+so it **writes no `.pyc` and cannot generate the taint** — measured: four
+same-second same-size mutations, all observed correctly, `__pycache__` dirs
+created: **NONE**. ⛔ **But that variable disables *writing*, not *reading*.**
+The checkout is bind-mounted, so a `__pycache__` a **host** run left in the tree
+is still read inside the container — measured: source on disk `58`, container
+observed `62`. ⭐ **The container cannot create this taint; it can inherit one.**
+
+**Three remedies, each proved and each proved negatively:**
+
+| remedy | result | its own control |
+|---|---|---|
+| purge `__pycache__` between mutants | correct | ⛔ re-created staleness → wrong again, twice |
+| `PYTHONPYCACHEPREFIX` outside the tree | correct | ⛔ same command without it → wrong |
+| `PYTHONDONTWRITEBYTECODE=1` **and a cold tree** | correct | ⛔ warm tree → wrong |
+
+⛔ **What a sweep must therefore state:** the environment, the purge, and the
+baseline's survival. ⚠️ **`W25` and `W26` were merged on sweeps that stated
+none of the three** — see Ruling 71 for why that did not become a revert.
+
+#### ⭐ Ruling 71 — suspect evidence is **re-measured**, not scheduled, when measuring is cheaper than filing
+
+⛔ **`W25` and `W26` are not re-run as a task, because they were re-measured in
+this review.** A finding against merged work is a finding and not a reason to
+revert; ⭐ **but the reflex after "not a revert" is "a task with an owner", and
+that was the wrong call here — the whole re-measurement cost four pytest
+invocations inside one container run.**
+
+The two same-size mutations named as at-risk, plus two more of the same shape,
+re-run in the pinned image with caches accounted for and **a baseline row per
+file**:
+
+```
+BASELINE unmutated                                       exit=0  ok      | 40 passed
+W25      LEGACY_GLOBAL_MAX 62 -> 58                      exit=1  KILLED  | 1 failed, 39 passed
+W25      LEGACY_GLOBAL_MAX 62 -> 99                      exit=1  KILLED  | 1 failed, 39 passed
+BASELINE unmutated                                       exit=0  ok      | 24 passed
+W26      DECODERS json.loads -> json.loadx               exit=1  KILLED  | 7 failed, 17 passed
+W26      DECODERS json.load  -> json.lead                exit=1  KILLED  | 7 failed, 17 passed
+```
+
+⭐ **`W25`'s kill comes from `test_contract.py:212`**, `assert max(numbers) ==
+LEGACY_GLOBAL_MAX`, which pins the constant against **the tree** — so it
+survives the mutation of the constant it imports. ⚠️ Two other tests in that
+file use `LEGACY_GLOBAL_MAX` symbolically and would follow a mutant anywhere;
+⛔ **the sweep is only meaningful because one test refused to.**
+
+⚠️ **The first version of this very re-measurement pointed at a test path that
+does not exist, and printed `KILLED` twice for `no tests ran in 0.00s`.** ⭐ The
+per-file **BASELINE row** is what caught it — `exit=4` where `exit=0` was
+required. ⛔ **That would have been the seventh instance of a check that could
+not fail reporting success, inside the ruling written to stop the sixth.** The
+baseline row is therefore mandatory above, not advisory.
+
 ---
 
 ## 5. R13 — no markup, CSS or JS in Python strings
@@ -931,6 +1020,33 @@ on the **wave-open checklist**, run by the person who does the carrying: the PO.
 — the author is describing their own scope and is the worst-placed person to see
 that something will recur elsewhere.
 
+#### ⭐ Ruling 73 — §8a **can** be documented in the directory it polices, and here are the three ways
+
+⚠️ **`PO-19/7` reported that this clause cannot be written about inside a
+handoff, and that the workaround does not scale.** ⛔ **Measured against the
+shipped reader (`marker_lines`) rather than the grep above, the report is too
+broad: three of the four ways to mention a marker already do not count.**
+
+| the line | counted as a finding? |
+|---|---|
+| inside a ```` ``` ```` fence | ⭐ **not seen at all** |
+| a table cell — `` \| re-spelled to `[structural]` \| `` | ⭐ **no** |
+| prose with a word first — ``The `[structural]` marker…`` | ⭐ **no** |
+| ⛔ **prose *beginning* with the marker** — ``` `[structural]` markers are counted…``` | ⛔ **YES — the one real hole** |
+
+⭐ **So the residual is exactly one shape: a line that opens with the marker and
+continues as prose**, which is genuinely indistinguishable from a finding line
+and should stay that way. ⛔ **The remedy is not a weaker check** — it is a
+fence, a lead word, or a table cell, all three of which work today.
+
+⚠️ **The grep in the box above does not know any of this**, which is why it is
+labelled the hand-runnable form: it counts raw occurrences, the floor counts
+finding *lines*, and ⛔ **a reviewer who reports the grep's number as the
+finding count will over-count exactly the documents that discuss this section.**
+⭐ **`F27`'s use-versus-mention, arriving a fourth time — and the fourth time it
+arrived, the instrument had already handled three quarters of it and nobody had
+measured which.**
+
 ### ⛔ 8a-i. A ruling that changes a shared name names its blast radius **across branches**
 
 ```bash
@@ -983,6 +1099,37 @@ non-zero exit in the transcript — not by the author's assurance that it would.
 dependency has not landed, a remote does not exist — that is a **blocked**
 review, not a passed one. Record which condition and why, and the verdict is
 CHANGES REQUESTED against the plan rather than the author.
+
+### ⛔ Ruling 72 — an acceptance condition is a **decomposition**, never a total
+
+⛔ **A criterion stated as one number is false the next time anything moves, and
+the reviewer who inherits it cannot tell staleness from failure.** State the
+parts and the identity that must hold between them.
+
+⚠️ **`W28`'s founding case, and it is worse than staleness.** The row said
+*"117 findings → **12**"*. Measured, the residual was **17**, and ⛔ **the only
+arithmetic that reaches 12 widens `include` over five root files, which ingests
+`README.md` — `F18`'s exact trap, and the thing the row's own *Not in scope*
+line forbids.** ⭐ **A stale total did not merely misinform; it instructed a
+developer to do the one thing the same row prohibited.**
+
+⭐ **What it should have said, and what `W28` reported instead:**
+
+```
+scanned = declared-output + kept      159 = 100 + 59
+tracked-but-not-scanned = 0
+residual = docs/studyforge/* + five root files
+```
+
+⚠️ **Read why that form is stronger, because it is not obvious.** Across the
+task's life **every total moved** — scanned 159→162, ignored 100→103, findings
+100→112→117 — ⛔ **and no component claim moved at all.** A set and an identity
+are re-runnable; ⭐ *"12"* was a photograph of a repository that documents
+itself, and it grew by one each time it did.
+
+⛔ **So a number that counts a corpus's files, findings or artifacts may not
+stand alone as Acceptance.** Where a count is genuinely the point, it is
+written with the identity that generates it, and the reviewer pastes both.
 
 ---
 
