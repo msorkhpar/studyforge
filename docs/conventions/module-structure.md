@@ -188,6 +188,48 @@ filename. ⛔ A reviewer who accepts "this one is safe" has replaced a rule that
 holds by inspection with one that holds by argument, and the argument has to be
 re-made by every reader.
 
+### ⛔ A filename component is validated by what is permitted, not by what is forbidden
+
+⚠️ **Measured on the merged tree, round 15.** Two modules each held a
+hand-written list of characters a `label` may not contain. They disagreed about
+`\r`; that was the reported defect. ⛔ **They also agreed, wrongly, about six
+more.** A vertical tab, a form feed, a non-breaking space, a Unicode line
+separator, a double quote, a colon and an asterisk pass **both** gates into a
+filename — and one of them breaks the `file://` floor (R8) on a platform this
+project promises to run on.
+
+⛔ **A forbidden list is an open set and cannot be finished.** Every character
+nobody thought of is permitted by default, so the list is wrong the moment it is
+written and stays wrong silently. ⭐ **State the permitted class instead** — one
+predicate, closed, and a character nobody thought of is refused by default.
+
+⚠️ **This project already knows this shape and applies it everywhere else:** an
+unknown contract version is refused rather than migrated (R9); an unknown
+profile name is refused **listing the ones there are**; an unknown key in a
+document is refused rather than ignored. ⛔ **Those are all closed sets. A
+character blacklist is the one open set left**, and it survived because it was
+about a filename rather than about a contract.
+
+⭐ **The rule generalises past filenames:** whenever a check answers *"may this
+value be used as X?"*, enumerate what X accepts. If you find yourself adding a
+character to a list because somebody hit it, the list is the defect.
+
+### ⛔ A negative test is run once with the mechanism removed
+
+⚠️ **Three times now a test of a gate would have passed with no gate.** The
+latest used `contact@example.com` — the documented placeholder the personal-data
+gate deliberately allows — so it asserted a refusal the gate was never going to
+make. Caught by its author; the two before it were not.
+
+⛔ **An assertion that a mechanism refuses something is worthless until you have
+seen it pass without the mechanism.** ⭐ **Delete the call, run the test, watch
+it fail, put the call back** — thirty seconds, and it is the only thing that
+distinguishes a test of a gate from a test of a fixture.
+
+⚠️ **The tell is a negative fixture built from a documented placeholder or a
+sanctioned exception.** Those are precisely the values the mechanism is written
+to let through.
+
 ## Illustrative fences are `text`, not `python`
 
 ⭐ A fence tagged `python` is a promise that the block **is** Python, and the
