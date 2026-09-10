@@ -142,8 +142,17 @@ def test_the_reader_scan_catches_a_reader_that_gates_nothing(tmp_path):
 def test_the_manifest_front_door_refuses_a_leak_end_to_end():
     # ⭐ W7's own defect, driven the way `studyforge validate` meets it: a
     # decoded `corpus.json` whose free authored `title` carries a home path.
-    # ⛔ Refused as a `ManifestError`, because this package promises that type
-    # and nothing else — and the refusal names the shape, never the value.
+    #
+    # ⛔ **Ruling 58, W27: refused as a `PersonalDataLeak` and NOT as a
+    # `ManifestError`.** This test asserted the opposite until W27, and the
+    # assertion it made was the fail-open: `ManifestError` exists so a caller
+    # walking a corpus catches one type per file and continues, so an R7
+    # refusal inside that family is logged as one more manifest that would not
+    # read and the walk finishes green. ⭐ `not isinstance` is the load-bearing
+    # line: without it this passes on the translating code, because
+    # `PersonalDataLeak` and `ManifestError` would both satisfy a bare
+    # `pytest.raises(Exception)`.
+    from studyforge.archive.scrub import PersonalDataLeak
     from studyforge.corpus.manifest import ManifestError
     from studyforge.corpus.manifest.document import from_document
 
@@ -151,9 +160,9 @@ def test_the_manifest_front_door_refuses_a_leak_end_to_end():
         (repository_root() / "tests/fixtures/depth1/corpus.json").read_text(encoding="utf-8")
     )
     document = dict(manifest, title=f"Notes from {HOME}/corpus")
-    with pytest.raises(ManifestError) as raised:
+    with pytest.raises(PersonalDataLeak) as raised:
         from_document(document, "corpus.json")
-    assert "personal data" in str(raised.value)
+    assert not isinstance(raised.value, ManifestError)
     assert "home path" in str(raised.value)
     assert "jane" not in str(raised.value)
 

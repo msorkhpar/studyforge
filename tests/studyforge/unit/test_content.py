@@ -7,6 +7,7 @@ import json
 import pytest
 
 from studyforge.address import AddressError
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.unit import (
     CONTENT_API,
     CONTENT_FILENAME,
@@ -49,6 +50,20 @@ def overlay(**overrides) -> Overlay:
 def refusal(**overrides) -> str:
     with pytest.raises(ContentError) as raised:
         overlay(**overrides)
+    return str(raised.value)
+
+
+def leak(**overrides) -> str:
+    """The message of an R7 refusal, which is **not** a `ContentError`.
+
+    ⛔ Ruling 58: `PersonalDataLeak` travels through this package as itself, so
+    a test that wanted `refusal(...)` here would be asserting the defect. ⭐ The
+    two helpers exist side by side precisely so the distinction is visible in
+    every test that uses one of them.
+    """
+    with pytest.raises(PersonalDataLeak) as raised:
+        overlay(**overrides)
+    assert not isinstance(raised.value, ContentError)
     return str(raised.value)
 
 
@@ -294,10 +309,16 @@ def test_no_refusal_reproduces_a_value_from_the_authored_file(overrides):
     # any string in it can be an absolute path — and each of these is a branch
     # that fires on a value the author supplied.
     #
-    # ⚠️ The gate runs first and refuses two of these for carrying a home path,
+    # ⚠️ The gate runs first and refuses four of these for carrying a home path,
     # which is the right answer; what this asserts is that the message never
     # carries the value, whichever branch produced it.
-    with pytest.raises(ContentError) as raised:
+    #
+    # ⛔ **Two types, named** (Ruling 58). The gate's refusals are
+    # `PersonalDataLeak` and travel through this package rather than joining
+    # its family; `{"title": 4}` is the one case here that is genuinely a
+    # `ContentError`. ⚠️ A bare `Exception` would have covered both and said
+    # nothing — the point of the ruling is that the two are distinguishable.
+    with pytest.raises((ContentError, PersonalDataLeak)) as raised:
         overlay(**overrides)
     assert "somebody" not in str(raised.value)
 
@@ -318,10 +339,14 @@ def test_the_personal_data_gate_is_invoked_over_the_whole_document():
     # a field this module validates only for non-emptiness, so no per-field
     # check here can see it. Only a whole-document sweep can, and if the sweep
     # were removed this test would go green with the leak still on the page.
-    leak = "/" + "home/somebody/notes"
-    sections = [{**BASE["sections"][0], "heading": f"See {leak} for context"}]
-    message = refusal(sections=sections)
-    assert "personal data" in message
+    #
+    # ⛔ **Ruling 58: the refusal is a `PersonalDataLeak`, not a
+    # `ContentError`.** `leak()` asserts that, and it is the assertion that
+    # matters: a caller walking a corpus catches `ContentError` per unit and
+    # continues, so an R7 refusal in that family finishes the walk green.
+    found = "/" + "home/somebody/notes"
+    sections = [{**BASE["sections"][0], "heading": f"See {found} for context"}]
+    message = leak(sections=sections)
     # ⛔ The SHAPE is named — "a home path" — and the value never is.
     assert "home path" in message
     assert "somebody" not in message
@@ -333,17 +358,17 @@ def test_the_gate_sees_a_leak_inside_a_block_that_nothing_else_reads():
     # ⚠️ Not `contact@example.com`: that is the documented PLACEHOLDER the
     # gate deliberately allows, so using it would have made this test pass
     # with no gate at all.
-    leak = "j.doe" + "@corp.invalid"
+    found = "j.doe" + "@corp.invalid"
     sections = [
-        {"kind": "shared", "heading": "S", "blocks": [{"type": "para", "text": f"mail {leak}"}]}
+        {"kind": "shared", "heading": "S", "blocks": [{"type": "para", "text": f"mail {found}"}]}
     ]
-    message = refusal(sections=sections)
-    assert "personal data" in message
+    message = leak(sections=sections)
+    assert "email address" in message
     assert "j.doe" not in message
 
 
 def test_the_refusal_names_the_shape_and_never_the_value():
-    leak = "/" + "home/somebody/notes"
-    message = refusal(title=f"Notes at {leak}")
+    found = "/" + "home/somebody/notes"
+    message = leak(title=f"Notes at {found}")
     assert "home path" in message
     assert "somebody" not in message
