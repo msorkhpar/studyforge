@@ -5,8 +5,9 @@ text, optional text, an optional source path, an optional slug — and refuses
 each of them in a message that names the field and the fault.
 
 **How you use it.** `required_text`, `optional_text`, `optional_path`,
-`optional_slug`, and `said(value)` when you need to describe something you will
-not print.
+`optional_slug`, `optional_label`, `is_filename_component` for the one
+permitted-set rule a filename component obeys, and `said(value)` when you
+need to describe something you will not print.
 
 **Depends on.** `studyforge.address` for what a slug is, and this package's
 `errors`.
@@ -29,19 +30,74 @@ from pathlib import Path
 from studyforge.address import is_slug
 from studyforge.corpus.container.errors import ContainerError
 
-#: Characters a `label` may not carry. ⛔ **The constraint lives here, at the
-#: point of entry**, and not only where the label is used.
+#: The characters a generated filename component may carry — **a permitted
+#: set, and deliberately not a forbidden one (Ruling 8)**.
 #:
-#: ⚠️ A label becomes part of a generated filename (SF-03's `label_of`), which
-#: refuses these characters too. A map that accepted `a/b` would produce a
-#: corpus that **validates and then fails at render** — a milestone later, in
-#: another package, with nothing between the two saying why. ⭐ Refusing it
-#: where it enters means the failure arrives next to the file that caused it.
+#: ⛔ A forbidden list is an **open set and cannot be finished**: every
+#: character nobody thought of is permitted by default, so it is wrong the
+#: moment it is written and stays wrong silently. This module carried one
+#: (`"/\\ \t\n\r"`), re-typed by hand in `placement.names`, and it was wrong
+#: in duplicate past two reviews and a gate. Measured 2026-09-09 on the merged
+#: tree, **seven shapes passed both copies into a filename**: a vertical tab, a
+#: form feed, a non-breaking space, U+2028, `"`, `:` and `*`. Two of those —
+#: `:` and `"` — break the `file://` floor (R8), so the open set was not a
+#: tidiness question.
 #:
-#: ⭐ Defence in depth, and neither substitutes for the other: `label_of` also
-#: takes labels from callers that never came through a map. What must not
-#: happen is the two disagreeing — see `docs/tasks/handoffs/SF-05.md`.
-LABEL_FORBIDDEN = "/\\ \t\n\r"
+#: ⭐ **Derived from `is_slug`, never re-typed.** The permitted class is *what a
+#: slug accepts*, plus `.` so `4.4.1` passes — and it is computed by asking, so
+#: a second spelling of the slug rule cannot exist here to drift from the
+#: first. ⛔ A constant exported and then re-typed is what this replaces; a
+#: constant *derived* cannot be re-typed at all. `tests/.../test_fields.py`
+#: pins the resulting set literally, so a change to `is_slug` is a decision
+#: somebody makes rather than one that arrives.
+#:
+#: ⚠️ **Lowercase, and that is the point, not an oversight.** `A` and `a` are
+#: one filename on a case-insensitive filesystem, and `sibling` places twenty
+#: units in a single directory — so an uppercase label is a collision this
+#: framework would generate and never detect on the machine that generated it.
+FILENAME_PERMITTED = frozenset(
+    character for character in map(chr, range(128)) if is_slug(f"a{character}a")
+) | {"."}
+
+#: ⛔ A filename component must *begin* with one of these. A leading `.` is a
+#: hidden file, and a leading `-` is read as an option by half the tools that
+#: will ever list the directory; both are inside `FILENAME_PERMITTED` because
+#: they are wanted in the middle (`4.4.1`, `part-two`), and neither is wanted
+#: first. ⚠️ This is also what refuses a label of `.` or `..` — **a path
+#: traversal every character of which is permitted**, and the thing a permitted
+#: set alone does not give you.
+FILENAME_MUST_START_WITH = frozenset(
+    character for character in FILENAME_PERMITTED if is_slug(character)
+)
+
+#: How a refusal says the rule. ⛔ Stated once, so the two callers cannot
+#: describe one class two ways — which is the failure this constant replaces.
+FILENAME_PERMITTED_DESCRIBED = (
+    "lowercase ASCII letters, digits, and . or -, beginning with a letter or digit"
+)
+
+
+def is_filename_component(value: object) -> bool:
+    """Return whether `value` may be used, unchanged, as one component of a filename.
+
+    ⭐ **The one predicate, and it lives here** — the container map refuses a
+    label where it enters, and `placement.names.label_of` refuses one where a
+    filename is minted, and both ask *this*. Two spellings of one rule is the
+    defect; the missing character was only how it showed.
+
+    ⚠️ ASCII and lowercase by construction, not by oversight. A label reaches a
+    `file://` URL, a directory listing, a shell completion, a case-insensitive
+    filesystem and a discovery scan, and the set that survives all five
+    unchanged is small. A corpus whose display numbering is not in it records a
+    label that is, and keeps the original in its **title**, which is under no
+    filename constraint at all.
+    """
+    return (
+        isinstance(value, str)
+        and value != ""
+        and value[0] in FILENAME_MUST_START_WITH
+        and set(value) <= FILENAME_PERMITTED
+    )
 
 
 def required_text(value: object, what: str, where: str) -> str:
@@ -110,20 +166,26 @@ def optional_slug(value: object, what: str, where: str) -> str | None:
 def optional_label(value: object, what: str, where: str) -> str | None:
     """Read a unit's own display numbering, or absent.
 
-    ⛔ Refused if it carries a path separator or whitespace, because it becomes
-    part of a filename downstream (SF-03's `label_of`). ⛔ The refusal names the
-    character class and never reproduces the value: a label is read straight
-    out of a file somebody else wrote, and describing rather than echoing is
-    this module's whole job.
+    ⛔ Refused unless it is a usable filename component, because it becomes
+    one downstream (SF-03's `label_of`). ⛔ The refusal names the **permitted**
+    class and never reproduces the value: a label is read straight out of a
+    file somebody else wrote, and describing rather than echoing is this
+    module's whole job.
+
+    ⭐ A map that accepted `a/b` would produce a corpus that **validates and
+    then fails at render** — a milestone later, in another package, with
+    nothing between the two saying why. Refusing it where it enters means the
+    failure arrives next to the file that caused it.
     """
     text = optional_text(value, what, where)
     if text is None:
         return None
-    if any(character in text for character in LABEL_FORBIDDEN):
+    if not is_filename_component(text):
         raise ContainerError(
-            f"{where} declares {what} carrying a path separator or whitespace. "
-            f"A label becomes part of a generated filename, so a corpus that "
-            f"accepted one here would validate and then fail at render."
+            f"{where} declares {what} as text that cannot become part of a filename. "
+            f"A label may carry only {FILENAME_PERMITTED_DESCRIBED}. Accepted here, "
+            f"it would validate and then fail at render. It is not reproduced, "
+            f"because a declared field is read out of a file somebody else wrote (R7)."
         )
     return text
 

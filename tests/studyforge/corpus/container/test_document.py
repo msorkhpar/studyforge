@@ -403,17 +403,24 @@ def test_a_label_that_is_present_but_not_text_is_refused(label):
     assert "label" in refusal(units=[{"n": 1, "title": "a", "practices": 0, "label": label}])
 
 
-@pytest.mark.parametrize("label", ["a/b", "a\\b", "4 4 1", "a\tb", "a\nb", "a\rb"])
+@pytest.mark.parametrize(
+    "label",
+    ["a/b", "a\\b", "4 4 1", "a\tb", "a\nb", "a\rb", "a\vb", "a\xa0b", 'a"b', "a:b", ".."],
+)
 def test_a_label_that_could_not_become_a_filename_is_refused_at_entry(label):
-    # ⛔ **The seam taking `label` now opened, closed where it opens.** A label
-    # becomes part of a generated filename (SF-03's `label_of`), which refuses
-    # exactly these. A map that accepted `a/b` would produce a corpus that
-    # **validates and then fails at render** — a milestone later, in another
-    # package, with nothing between the two saying why.
+    # ⛔ **The seam taking `label`, closed where it opens.** A label becomes
+    # part of a generated filename (SF-03's `label_of`), which refuses exactly
+    # these. A map that accepted `a/b` would produce a corpus that **validates
+    # and then fails at render** — a milestone later, in another package, with
+    # nothing between the two saying why.
+    # ⛔ **Ruling 8:** the last five of these passed both guards while the rule
+    # was a forbidden list, and `"` and `:` break the `file://` floor. The rule
+    # is now a permitted set, so the list below is a regression suite rather
+    # than the definition.
     # ⭐ The negative control is in `test_fields.py`, where `4.4.1`, `vii` and
-    # `§4` are all accepted: the constraint is a character class, not a slug.
+    # `01` are all accepted: the constraint is a character class, not a slug.
     message = refusal(units=[{"n": 1, "title": "a", "practices": 0, "label": label}])
-    assert "path separator or whitespace" in message
+    assert "may carry only" in message
     assert "fail at render" in message
     assert label not in message
 
