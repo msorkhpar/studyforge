@@ -11,18 +11,17 @@ answers the filename question on its own.
 
 ## ⛔ A prefix partition is a cross-check, never the source
 
-⚠️ **This is the correction the ISO integration paid for, and it is the part
-that generalises.** A flat directory whose names carry a prefix — `1.md`,
-`s1.md`, `c1.md` — does encode a grouping. ⛔ But reading the names is
-**derivation**, and §6 prices derivation at one link in eight going nowhere.
-The grouping is almost always *also written down* somewhere a human reads, and
-⭐ **reading that document is a record**.
+⚠️ **This is the correction one integration paid for, and it is the part that
+generalises.** A flat directory whose names carry a prefix — `1.md`, `s1.md`,
+`c1.md` — does encode a grouping. ⛔ But reading the names is **derivation**,
+and §6 prices derivation at one link in eight going nowhere. The grouping is
+almost always *also written down* somewhere a human reads, and ⭐ **reading
+that document is a record**.
 
-**Measured, 2026-09-09:** ISO's `src/` holds 41 files and **zero**
-directories, three groups distinguished only by prefix — **and** its
-`README.md` records the same three groups in the author's own words. The two
-partitions agree exactly. ⛔ So `record.py` looks for the document first, and
-what this module produces is the thing that must **agree** with it.
+⛔ So `record.py` looks for the document first, and what this module produces
+is the thing that must **agree** with it. ⚠️ On the corpus that taught this,
+the two partitions agree exactly — see `SKILL.md`, appendix **A1**, which is
+the only copy of that measurement.
 
 ⚠️ A skill that proposes the regex has produced a plausible manifest for that
 corpus and an unjustifiable one for the next.
@@ -67,7 +66,7 @@ NOT_MATERIAL = (
 )
 
 #: A leading ordinal, with or without an alphabetic series prefix: `1.md`,
-#: `s1.md`, `c11.md`, `01-java-basics`. ⭐ The series letter is captured
+#: `s1.md`, `c11.md`, `01-basics`. ⭐ The series letter is captured
 #: separately from the number because they answer different questions — which
 #: group, and which position in it.
 NAMED_ORDINAL = re.compile(r"^(?P<series>[A-Za-z]*)(?P<ordinal>\d+)(?P<rest>[-_. ].*|$)")
@@ -89,7 +88,7 @@ class Inventory:
 
     @property
     def flat(self) -> bool:
-        """Is every material file in one directory? ⚠️ ISO's shape, and SPARQL's."""
+        """Is every material file in one directory? ⚠️ Two of four designed shapes."""
         return self.depth <= 1
 
     def named(self) -> list[str]:

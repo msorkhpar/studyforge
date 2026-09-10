@@ -62,7 +62,8 @@ def _unlabelled(found) -> list[Observation]:
 
     ⚠️ **Reported rather than absorbed.** `record` allows a small number of
     entries above the first group label so that one link in a blockquote cannot
-    cost a corpus its hierarchy — measured, 1 of 212 in the Java corpus. ⛔ The
+    cost a corpus its hierarchy — measured at one entry in two hundred in real
+    material (`SKILL.md`, appendix **A3**). ⛔ The
     allowance is not silence: whatever it covered is named here, because an
     entry with no container is an entry somebody has to place.
     """

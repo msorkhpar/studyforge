@@ -12,12 +12,12 @@ tree of another.
 
 ## ⛔ Whole-file duplication is the easy half
 
-⚠️ **Measured (ISO-8583):** the corpus ships per-unit files *and* three
-whole-series aggregates that are **exact ordered concatenations** of their
-groups — `9,181 of 18,304 lines, 50.2%`, digest-identical. A glob over `*.md`
-ingests everything twice, **nothing fails**, narration synthesises the whole
-corpus twice, and the reader gets three table-of-contents entries that are each
-a whole series.
+⚠️ **Measured:** a real corpus ships per-unit files *and* whole-series
+aggregates that are **exact ordered concatenations** of their groups,
+digest-identical, and half the corpus by line. A glob over `*.md` ingests
+everything twice, **nothing fails**, narration synthesises the whole corpus
+twice, and the reader gets table-of-contents entries that are each a whole
+series. `SKILL.md` step 5 holds the numbers.
 
 ⭐ Because the duplication is *total* rather than approximate, the detector can
 assert digest equality rather than similarity — which is what makes this
@@ -25,12 +25,12 @@ checkable instead of a judgement call.
 
 ## ⛔ And the hard half is a region, not a file
 
-⚠️ **Measured (ISO-8583):** `README.md` is 674 lines; lines 313–674 carry **361
-of its 367 headings, digest-identical to the whole heading tree of
-`TestCases.md`** — **53.7% of the curriculum document's lines**. ⛔ No file
-duplicates a file, so the whole-file test finds nothing.
+⚠️ **Measured:** in one corpus, over half the curriculum document's lines are
+a run of headings digest-identical to the whole heading tree of another
+document. ⛔ No file duplicates a file, so the whole-file test finds nothing.
+`SKILL.md` step 3 holds the line range and the counts.
 
-⛔ **And the file cannot be excluded**, because it is the only record of the
+⛔ **And the file cannot be excluded**, because it is the only record of that
 corpus's addresses, titles, ordinals and grouping. `content.exclude` names
 files; this is not a file.
 
@@ -42,10 +42,11 @@ count, or a narration estimate, and every one of them is nearly double.
 ## ⚠️ A limit worth knowing before excluding anything
 
 Excluding a file discards the copy **and the attestation the copy constituted**.
-ISO's three aggregates are pure duplication *and* a second, independent,
-machine-checkable recording of the reading order — the one property of that
-corpus nothing else can verify. ⛔ There is nothing to fix; a planner should
-extract what an excluded file attests **before** excluding it.
+A whole-series aggregate is pure duplication *and* a second, independent,
+machine-checkable recording of the reading order — which, where it occurs, is
+the one property of that corpus nothing else can verify. ⛔ There is nothing to
+fix; a planner should extract what an excluded file attests **before**
+excluding it.
 """
 
 from __future__ import annotations

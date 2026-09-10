@@ -118,8 +118,8 @@ constituted**.
 
 | | groups | ordinals | container levels |
 |---|---|---|---|
-| ISO-8583 | 3 | `1.` … `16.`, restarting per group | **1** (`group`) |
-| Java-senior | 10 | `1.1.` and `1.1.1.` | **2** (`section`, `module`) |
+| ISO-8583 | 3, as `#` headings | `1.` … `16.`, restarting per group | **1** (`group`) |
+| Java-senior | 10, as bare numbered lines | `1.1.` and `1.1.1.` | **2** (`section`, `module`) |
 
 ⚠️ Java's group is *already inside* its ordinals — every entry under "Java
 Fundamentals" begins `1.` — so counting the group again gives three levels for
@@ -162,3 +162,70 @@ case would miss the case that happens.**
 collide under a corpus-wide title-derived slug in one corpus — 14 of them
 because two of its series deliberately mirror each other — *Basic Setup*, *Error Handling*, *Testing*, once for the server
 and once for the client. It is the **good** material that does this.
+
+---
+
+## Appendix — the measurements the code points at
+
+⛔ **This appendix is the only copy.** The modules in this directory state the
+*rule* and point here; they do not restate the numbers, and — R1 — they do not
+name a corpus at all. ⭐ A pointer is only better than a restatement if the far
+end holds, so anything a docstring stops saying is written down here first.
+
+### A1 — no measured corpus can be read from its tree
+
+| | the directories say | the record says |
+|---|---|---|
+| ISO-8583 | one flat `src/`, 41 files, **0** directories | three groups, named by the author, 16 + 11 + 11 |
+| Java-senior | 45 flat module directories | **10 sections**, each grouping several modules |
+| SPARQL | one flat `src/`, 19 files | one ungrouped course |
+
+⭐ That is not a quirk of three repositories; it is what hand-written curricula
+do. ⚠️ ISO's prefix partition and its `README.md` agree **exactly**, which is
+what makes the prefix rule usable as a cross-check and unusable as a source.
+
+### A2 — entries arrive in more than one shape, and the odd ones are silent
+
+| corpus | majority form | minority form |
+|---|---|---|
+| ISO-8583 | 36 of 38 as list items | **2 as headings** |
+| Java-senior | 205 as `- [1.1. Title](x)` | **6 as `- 1.5. [Title](x)`**, ordinal outside the link |
+| all three | `N. [Title](x)`, the ordinal **as** the list marker | — |
+
+⛔ A parser written for the majority form reads the wrong number and **raises
+nothing**. ⭐ So every form is read, and the *disagreement between forms* is
+itself reported: it is the tell that a hand-maintained document has drifted.
+
+⚠️ **22 of ISO's 38 recorded titles are written** `**Like This**` — emphasis is
+presentation, not name, and a manifest that kept the marks shows them to a
+reader.
+
+### A3 — why a "densest run of entries" threshold cannot work
+
+| corpus | largest gap *inside* the curriculum | nearest stray entry outside it |
+|---|---|---|
+| Java-senior | 8 lines | 22 lines away |
+| ISO-8583 | **34** lines (its outline runs to three levels of unlinked text) | — |
+
+⛔ **Any threshold that keeps ISO whole swallows Java's stray**, and any
+threshold that excludes Java's stray cuts ISO's curriculum in half. ⭐ So the
+region is the **whole span** from first entry to last, the entries above the
+first label are *reported* rather than trimmed, and the only constant left is
+how much may sit above the first label — not where the curriculum ends.
+
+⚠️ **And the first label can sit above the first entry.** ISO records its first
+container two lines above its first entry, because a document's own opening is
+a label for everything below it.
+
+### A4 — "no runnable code, no graders" is a measured verdict
+
+| corpus | build files | files that look like graders |
+|---|---|---|
+| ISO-8583 | **0 of any kind** | 0 |
+| SPARQL | **0 of any kind** | 0 |
+| Java-senior | 47 | 168, of 792 non-prose files |
+
+⭐ ISO's whole vocabulary is five block types. ⛔ **It is finished at M4, not
+short** (§11.0, C5). ⚠️ Java's 168 are what a closed set of test markers
+matched; whether they grade the *teaching material* is a question this skill
+asks and cannot answer.

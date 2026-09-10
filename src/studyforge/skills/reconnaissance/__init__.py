@@ -30,22 +30,20 @@ needing to understand a source, the seam has been drawn wrong.
 please confirm"* costs a question. So an `Uncertainty` is the deliverable, not
 a weaker `Observation`, and every one carries **what would settle it**.
 
-## The four traps real material sets, all measured rather than imagined
+## The four traps real material sets
 
-**1 — the hierarchy is in filenames, not directories, and is usually *also*
-written down.** ISO: 41 files, 0 directories, 3 prefix groups — and `README.md`
-records the same three in the author's words. The two partitions agree exactly.
+⛔ **`SKILL.md` holds them, with their measurements, and is the only copy.** It
+sits in this directory; this list points at it and deliberately does not
+restate it, because two copies of one table drift — and R1 rules that no module
+here names a corpus at all.
 
-**2 — the same material twice.** ISO ships per-unit files *and* whole-series
-aggregates, exact ordered concatenations, **50.2%** of `src/`.
-
-**3 — a filename sort silently reverses the curriculum.** ISO: `sorted()` puts
-**37 of 38** units at the wrong index. ⚠️ And it flatters — unit 1 of each group
-stays first, so the page anybody spot-checks is correct.
-
-**4 — in a curriculum document, heading level does not identify role.** ISO:
-**21** top-level headings for a 3-container corpus. Java-senior: **0** headings
-for a 10-section one.
+1. **The hierarchy is in filenames, not directories** — and is usually *also*
+   written down somewhere a person reads.
+2. **The same material twice**, as whole files and as a region of one.
+3. **A filename sort silently reverses the curriculum**, and flatters, so the
+   page anybody opens to spot-check is correct.
+4. **Heading level does not identify role** in a curriculum document. Role is
+   positional.
 
 ⛔ **The countermeasure for trap 1 is *"find the document that records the
 grouping"*, not *"learn to read prefixes"*.** Reading the names is derivation;

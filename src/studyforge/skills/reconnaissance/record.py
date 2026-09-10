@@ -12,31 +12,24 @@ and recovers the grouping it expresses.
 ## ⭐ Why this module exists at all
 
 ⛔ **Reading filenames is derivation; reading this document is a record** (§6:
-an address is *recorded, never derived*). Two corpora, measured, both put their
-hierarchy here and neither puts it in the filesystem:
+an address is *recorded, never derived*). Every measured corpus puts its
+hierarchy in a document and none of them puts it in the filesystem — a flat
+directory says nothing about groups, and a directory per module says nothing
+about the sections that group them.
 
-| | directories say | the record says |
-|---|---|---|
-| ISO-8583 | one flat `src/`, 41 files | three groups, named by the author, 16 + 11 + 11 |
-| Java-senior | 45 flat module directories | **10 sections**, each grouping several modules |
-
-⭐ **Neither corpus can be read correctly from its tree.** That is not a quirk
-of two repositories; it is what hand-written curricula do.
+⭐ **None of them can be read correctly from its tree.** That is not a quirk of
+a few repositories; it is what hand-written curricula do. ⛔ `SKILL.md`,
+appendix **A1**, holds the corpora and the counts, and is the only copy.
 
 ## ⛔ Role is positional, not syntactic
 
-⚠️ **This is the trap both corpora set, in opposite directions**, and it is why
+⚠️ **Two measured corpora set this trap in opposite directions**, which is why
 this module keys on *position in a run of entries* rather than on Markdown
-syntax:
-
-- **ISO** records its 3 containers as `#` headings — and its `README.md` carries
-  **21** top-level headings, because `#` also means *a link to other material*
-  once and *a chapter of a different document* seventeen times. A parser keyed
-  on `#` emits **21 containers for a 3-container corpus and raises nothing.**
-- **Java-senior** records its 10 sections as **bare numbered paragraph lines**
-  (`1. Java Fundamentals`) with **zero headings anywhere in the curriculum
-  region**. A parser keyed on headings emits **0 sections for a 10-section
-  corpus** — the same failure, arriving from the other side.
+syntax. One writes its containers as headings, in a document whose headings
+are mostly not containers — a heading-keyed parser emits several times too
+many. The other writes its sections as bare numbered lines, with no heading
+anywhere in the region — the same parser emits none. ⛔ **Neither raises.**
+`SKILL.md` step 3 holds both, with their counts.
 
 ⭐ So a group label is *"a line inside the curriculum region that introduces a
 run of entries and is not itself an entry"*. Both corpora fall out of that one
@@ -44,20 +37,22 @@ rule, and neither falls out of a syntax rule.
 
 ## ⛔ The region, not the file
 
-⚠️ ISO's `README.md` is 674 lines and **53.7% of it is a structural copy of
-another document** — 361 headings digest-identical to the whole heading tree of
-`TestCases.md`. ⛔ And the file cannot be excluded, because it is the only
-record of the corpus's addresses, titles, ordinals and grouping.
+⚠️ In one measured corpus, over half of the curriculum document is a structural
+copy of another document — a run of headings digest-identical to that
+document's whole heading tree (`SKILL.md` step 3). ⛔ And the file cannot be
+excluded, because it is the only record of that corpus's addresses, titles,
+ordinals and grouping.
 
 So the curriculum is a **region**: it starts at the first entry and ends where
 the entries stop. Everything outside it is somebody else's document.
 
 ## ⚠️ Entries arrive in more than one shape, and the odd ones are silent
 
-**Measured:** ISO records 36 of 38 entries as list items and **2 as headings**.
-Java-senior records 205 as `- [1.1. Title](x)` and **6 as `- 1.5. [Title](x)`**,
-with the ordinal outside the link. ⛔ In both, a parser written for the majority
-form reads the wrong number and **raises nothing**. So every form is read, and
+**Measured:** every corpus writes a handful of its entries in a form other than
+its own majority form — a heading where the rest are list items, an ordinal
+outside the link where the rest carry it inside. ⛔ A parser written for the
+majority form reads the wrong number and **raises nothing**. `SKILL.md`,
+appendix **A2**, holds the forms and their counts. So every form is read, and
 ⭐ the *disagreement between forms is itself reported*, because it is the tell
 that a hand-maintained document has drifted.
 """
@@ -92,9 +87,10 @@ LIST_MARKER = re.compile(r"^\s*(?:[-*+]|\d+[.)])\s+")
 #: the list marker — is the majority form in all three measured corpora.
 BULLET_MARKER = re.compile(r"^\s*[-*+]\s+")
 
-#: Markdown emphasis wrapped around a whole title: `**Basic Setup**`. ⚠️ It is
-#: presentation, not name — measured, 22 of ISO's 38 recorded titles carry it —
-#: and a manifest that kept it would show a reader `**Basic Setup**`.
+#: Markdown emphasis wrapped around a whole title: `**A Title**`. ⚠️ It is
+#: presentation, not name — measured, well over half the recorded titles of one
+#: corpus carry it (`SKILL.md`, appendix **A2**) — and a manifest that kept it
+#: would show a reader the asterisks.
 EMPHASIS = re.compile(r"^(?P<marks>\*{1,3}|_{1,3})(?P<text>.+?)(?P=marks)$")
 FENCE = re.compile(r"^\s{0,3}(?:`{3,}|~{3,})")
 
@@ -223,9 +219,9 @@ def _split(line: str, title: str) -> tuple[str | None, str]:
     ⚠️ **Three places.** `- [1.1. Title](x)` carries it inside the link text;
     `- 1.5. [Title](x)` carries it outside, after a bullet; and `1. [Title](x)`
     carries it *as* the list marker. A reader written for one form silently
-    drops the entries written in the others, and ⛔ **all three occur** —
-    measured, 6 of 211 in the Java corpus take the second form, and the third
-    is the form every top-level entry of all three measured corpora uses.
+    drops the entries written in the others, and ⛔ **all three occur in real
+    material** — the third in every measured corpus. `SKILL.md`, appendix
+    **A2**, holds the counts.
     """
     inside = ORDINAL.match(title.strip())
     if inside is not None:

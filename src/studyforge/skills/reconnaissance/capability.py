@@ -16,8 +16,8 @@ have no build file of any kind.
 
 ⚠️ **So this module's job is to say "none" clearly**, with the evidence, rather
 than to leave a section blank that a reader will mistake for "not looked at".
-⛔ Measured (ISO-8583): **0 build files of any kind**, and its whole vocabulary
-is five block types. That corpus is finished at M4.
+⛔ Two of the designed corpora have **no build file of any kind**; they are
+finished at M4. `SKILL.md`, appendix **A4**, holds the counts.
 
 ## ⛔ Enumerate the legal, never the illegal
 

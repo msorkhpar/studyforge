@@ -14,16 +14,12 @@ the concern rather than the file.
 
 ## ⛔ Role is positional, not syntactic
 
-⚠️ **Both measured corpora set this trap, in opposite directions:**
-
-- **ISO-8583** records its 3 containers as `#` headings — in a file carrying
-  **21** top-level headings, because `#` also means *a link to other material*
-  once and *a chapter of a different document* seventeen times. A parser keyed
-  on `#` emits **21 containers for a 3-container corpus and raises nothing.**
-- **Java-senior** records its 10 sections as **bare numbered paragraph lines**
-  with **zero headings anywhere in the curriculum region**. A parser keyed on
-  headings emits **0 sections for a 10-section corpus** — the same failure from
-  the other side.
+⚠️ **Two measured corpora set this trap in opposite directions:** one writes
+its containers as headings in a document full of headings that are not
+containers, and a heading-keyed parser emits far too many; the other writes its
+sections as bare numbered lines with no heading anywhere in the region, and the
+same parser emits none. ⛔ **Both raise nothing.** `SKILL.md` step 3 holds the
+corpora and the counts.
 
 ⭐ So a group label is *"a line that introduces a run of entries and is not
 itself an entry"*, and the labels of one grouping all share one **shape**. Both
@@ -47,13 +43,12 @@ from studyforge.skills.reconnaissance.record import (
 #: cost a corpus its hierarchy.
 #:
 #: ⛔ Measured, and this is why the obvious heuristic was abandoned: the
-#: "densest run of entries" rule **cannot be tuned to work on both corpora.**
-#: Java-senior's largest gap *inside* its curriculum is 8 lines and its one
-#: stray link sits 22 lines away — so a threshold of 12 separates them. ISO's
-#: largest gap inside its curriculum is **34**, because its outline runs to
-#: three levels of unlinked text. Any threshold that keeps ISO whole swallows
-#: Java's stray. ⭐ So the region is the whole span, and the leftovers are named
-#: rather than cut off by a constant nobody can justify.
+#: "densest run of entries" rule **cannot be tuned to work on both measured
+#: corpora at once** — one's largest gap *inside* its curriculum is wider than
+#: the other's distance to a stray entry *outside* it, so every threshold gets
+#: one of them wrong. ⭐ So the region is the whole span, and the leftovers are
+#: named rather than cut off by a constant nobody can justify. `SKILL.md`,
+#: appendix **A3**, holds the two gaps that rule it out.
 UNLABELLED_ALLOWANCE = 0.1
 
 
@@ -87,9 +82,9 @@ def grouping(lines, entries: list[Entry]) -> tuple[list[str], list[Entry]]:
     question, because a grouping guessed here is a container tree in the built
     site and the reader would never know.
 
-    ⭐ Both measured corpora fall out of this one rule and neither falls out of
-    a syntax rule: ISO's labels are `h1`, Java's are bare numbered lines with
-    **no heading anywhere in the region**.
+    ⭐ Both measured corpora fall out of this one rule and neither falls out
+    of a syntax rule — one labels with headings, the other with bare numbered
+    lines and no heading anywhere in the region (`SKILL.md` step 3).
     """
     carrying = {entry.line for entry in entries}
     candidates: dict[str, list[tuple[int, str]]] = {}
@@ -101,8 +96,8 @@ def grouping(lines, entries: list[Entry]) -> tuple[list[str], list[Entry]]:
             candidates.setdefault(shape(lines[number - 1]), []).append((number, text))
     # ⚠️ Labels above the first entry are kept only as far back as the one that
     # opens it: a document's own title is a label for everything below it, and
-    # ISO records its first container exactly there, two lines above its first
-    # entry.
+    # a measured corpus records its first container exactly there — see
+    # `SKILL.md`, appendix **A3**.
     candidates = {shape: _from_opening(found, entries) for shape, found in candidates.items()}
     qualified = {shape: found for shape, found in candidates.items() if _partitions(found, entries)}
     if len(qualified) != 1:
@@ -116,11 +111,12 @@ def _drop_stray_opening(
 ) -> list[tuple[int, str]]:
     """Drop a leading label that opens too few entries to be a group.
 
-    ⚠️ **Measured, and it is the difference between 10 groups and 11.** The
-    Java corpus links to its contributor guide from a blockquote 22 lines above
-    the curriculum, and the nearest line of the winning shape above that link
-    is a bullet in the overview prose. Kept, it becomes an eleventh "section"
-    holding one entry that is not a unit.
+    ⚠️ **Measured, and it is the difference between the right number of groups
+    and one too many.** A corpus links to its contributor guide from a
+    blockquote above the curriculum, and the nearest line of the winning shape
+    above that link is a bullet in the overview prose. Kept, it becomes an
+    extra "section" holding one entry that is not a unit (`SKILL.md`, appendix
+    **A3**).
 
     ⭐ A run smaller than the allowance is not a group; it is the stray the
     allowance exists for, and `observe` names it. ⛔ Applied only at the front:
@@ -144,9 +140,9 @@ def _partitions(found: list[tuple[int, str]], entries: list[Entry]) -> bool:
     """Judge whether these labels cut the entries into runs, leaving few above the first.
 
     ⛔ Every label must open at least one entry. That is the test that refuses
-    ISO's twenty-one `#` headings for a three-container corpus: seventeen of
-    them head a chapter of an entirely different document and no unit sits
-    beneath any of them.
+    a document's many top-level headings when only a few of them are
+    containers: the rest head a chapter of an entirely different document, and
+    no unit sits beneath any of them (`SKILL.md` step 3).
 
     ⚠️ And almost every entry must be under a label. `UNLABELLED_ALLOWANCE`
     says how much slack that "almost" is worth, and `observe` reports whatever

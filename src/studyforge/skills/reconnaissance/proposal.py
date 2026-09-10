@@ -48,8 +48,8 @@ from studyforge.skills.reconnaissance.report import Uncertainty
 
 #: What this skill calls the levels it found, pending a person naming them.
 #: ⚠️ **Measured conventions rather than invented placeholders**: of the four
-#: designed source shapes, the two flat ones name their single level `course`
-#: and `group`, and the two-level one names its levels `section` and `module`.
+#: designed source shapes, the flat ones name their single level `course` and
+#: `group`, and the two-level one names its levels `section` and `module`.
 #: ⛔ Still proposed and still asked about — §4 rules the vocabulary is the
 #: corpus's own — but a proposal that matches what real corpora chose is a
 #: proposal a person more often just accepts.
@@ -99,18 +99,14 @@ def _levels(record: Record | None, open_questions: list[Uncertainty]) -> list[st
     **one** container level; a record whose units sit inside modules which sit
     inside sections has **two**. Both look like "it has groups".
 
-    ⭐ The signal that separates them is **ordinal depth**, and it is written
-    down by the author in both measured corpora:
+    ⭐ The signal that separates them is **ordinal depth**, and the author
+    writes it down in both measured corpora. ⛔ `SKILL.md` step 6 holds that
+    table and is the only copy of it.
 
-    | | groups | ordinals | container levels |
-    |---|---|---|---|
-    | ISO-8583 | 3, as headings | `1.` … `16.`, restarting per group | **1** (`group`) |
-    | Java-senior | 10, as bare lines | `1.1.` and `1.1.1.` | **2** (`section`, `module`) |
-
-    ⚠️ Java's group is *already inside* its ordinals — every entry under "Java
-    Fundamentals" begins `1.` — so counting the group again would produce three
-    levels for a two-level corpus. ISO's groups are **not** in its ordinals, so
-    there the group is the level.
+    ⚠️ Where every entry of a group shares one leading ordinal component, the
+    group is *already inside* the numbering, and counting it again produces
+    three levels for a two-level corpus. Where the ordinals restart per group
+    without naming it, the group **is** the level.
     """
     if record is None:
         open_questions.append(

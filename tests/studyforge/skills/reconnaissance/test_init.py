@@ -32,3 +32,27 @@ def test_the_skill_document_carries_the_measurements_rather_than_asserting_shape
         "39.5%",
     ):
         assert measured in text, f"the skill no longer carries the measurement {measured!r}"
+
+
+def test_no_module_here_names_a_corpus_even_in_a_docstring():
+    # ⛔ §7c, and R1 behind it: the framework knows nothing about any source.
+    # ⚠️ **"Even in a comment" is what makes this check work** — the first
+    # version of this package put 21 corpus names in docstrings, zero in live
+    # code, and a second copy of one measurement table had already drifted from
+    # `SKILL.md` inside a single commit.
+    #
+    # ⭐ The skill document is exempt **because it is the far end of the
+    # pointer**: a skill names the material it was measured on, and that is the
+    # one place a name belongs. Modules point at it and hold nothing.
+    #
+    # ⚠️ Scoped to this package deliberately. A repository-wide version of this
+    # check is the CTO's to rule on, not a test to add on the way past.
+    corpora = ("ISO-8583", "jPOS", "SPARQL", "Java-senior", "CodeSignal", "Claude-senior")
+    where = repository_root() / "src/studyforge/skills/reconnaissance"
+    for module in sorted(where.glob("*.py")):
+        text = module.read_text(encoding="utf-8")
+        for name in corpora:
+            assert name not in text, (
+                f"{module.name} names {name!r}. ⛔ The measurement belongs in "
+                f"SKILL.md; the module points at it."
+            )
