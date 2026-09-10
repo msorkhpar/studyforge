@@ -244,6 +244,17 @@ which would make the extensibility exercise largely a test of typing speed.
    everybody**, and it does so silently, from the one place nobody re-reads. ⚠️ It
    is the failure mode this skill is most exposed to in general: **what a
    generator emits by default becomes the convention.**
+   ⛔ **CARRIED BY THE PO 2026-09-10 (round 28), from `SK-02/1`: this skill WRITES
+   the `content.not_material` globs into `corpus.json`.** ⭐ **`SF-35` minted the
+   vocabulary and `SK-02` GENERATES the globs — `Scaffold.not_material`, two
+   entries for eight files — ⚠️ but nothing puts them in the manifest, so today a
+   person copies two lines out of a report.** ⛔ **That is R19's *anything a
+   second source would have to retype*, which makes it this task's and not a
+   board row's.** ⚠️ **Measured by `SK-02` at `corpus_api: 1`: scaffolding into a
+   clean corpus and running `studyforge validate` gave `NOT valid: 8 finding(s),
+   1 unchecked claim(s)` — one `unclassified` per generated file.** ⭐ **`content.exclude`
+   CANNOT say it: it matches by exact path equality, and *exclude* means material
+   withheld, which code is not.**
 2. The adapter package, its test tree and its audit command — SK-02's scaffold, wired in.
 3. **Ignore rules** — new ignore files written *inside* generated directories. ⛔ Never an edit to the repository's root one (R3, and E07 already rules this for Java). ⭐ **What they ignore is `SF-32`'s verdict, not this skill's opinion**: generated media is committed by default, so the ignore rules must *not* exclude it — and when a corpus crosses the footprint ceiling, this skill is what tells the reader, in the onboarding report, that their media no longer fits in git and what the two ways forward are. ⛔ It never silently flips the policy; the manifest says what happens and a person changes the manifest.
 4. **The build entry point** — corpus configuration over SF-28's CLI.
