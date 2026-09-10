@@ -131,33 +131,18 @@ repository** — which is why the answer is a check every checkout runs, and nev
 a rebuild somebody reports.
 
 ⚠️ **An absent index is not a failure and the check says so**, printing the two
-commands that build one. ⛔ A *stale* one is, and so is a *current but unbridged*
-one — see `graphify.md`.
+commands that build one. ⛔ A *stale* one is not a failure either, since Ruling
+96 — it is a **notice**, and the review rubric requires it to be quoted (4b-ii).
+⛔ A *current but unbridged* one is still a finding — see `graphify.md`.
 
-### ⛔ INTERIM — after a merge to a release branch, rebuild the index before quoting the tip
-
-⚠️ **This step is INTERIM and `W39` deletes it. It is written down because it has
-been running on one agent's memory, and that is what this project has ruled
-against six times.**
-
-```bash
-graphify update . && python3 -m tools.knowledge bridge   # then measure the tip
-```
-
-⛔ **Whoever merges to a release branch runs this before quoting any number from
-the tip.** ⭐ **Measured by the CTO at round 25: after merging a one-file,
-docs-only addendum, `f97e215` read `2 failed, 3088 passed — graphify-out/graph.json
-stale`; after the rebuild, the same ref read `3090 passed, floor clean.`**
-⛔ **The tripwire fires on any change under `src`, `tools` or `docs`, so the
-release tip is red immediately after **every** merge on a machine that carries an
-index — and green in every worktree, because `graphify-out/` is git-ignored.**
-
-⚠️ **This is a stopgap, not the answer.** ⛔ **`W39` decides whether the tripwire
-becomes a notice (Ruling 78's shape), whether staleness is scoped to what the
-index actually describes, or whether this step is the answer and gains a test.**
-⭐ **When `W39` lands, this section is deleted or loses the word INTERIM. Either
-way somebody has to come back to it, which a remembered step does not require of
-anyone.**
+⭐ **The INTERIM rebuild step that stood here is DELETED by `W39`, and its expiry
+was met rather than lapsed.** ⚠️ **It read *"whoever merges to a release branch
+rebuilds the index before quoting the tip"*, because `freshness()` fired on any
+change under `docs/` and every merge writes a handoff and a board row.** ⛔ **The
+CTO ruled (96) that the rebuild is not the answer**: staleness is now scoped to
+what the index actually describes, and a stale index cannot redden a tip. ⭐ **The
+rebuild survives in the rubric as a courtesy to the next agent's queries, with no
+pass condition and no power to invalidate a number.**
 
 **The CTO's verdict is one of three:** `approved` (PO merges, or the CTO does),
 `changes requested` (named, each tied to a ruling or an acceptance condition), or

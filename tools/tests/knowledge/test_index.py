@@ -13,15 +13,37 @@ import os
 
 from tools.knowledge.index import (
     COMMIT_KEY,
+    DESCRIBED_TREES,
+    EXCLUDE,
     FRESH,
     STALE,
+    UNDESCRIBED_PATHS,
     UNVERIFIABLE,
     built_at_commit,
+    described_pathspecs,
     freshness,
     index_path,
     read_graph,
 )
 from tools.tests.knowledge.support import commit_all, make_repository
+
+
+def with_a_board_and_handoffs(tmp_path):
+    """A repository whose `docs/` already carries the paths the index excludes.
+
+    ⛔ They exist in the base commit on purpose. A path added between the two
+    commits would be excluded too, so creating it later would prove the
+    exclusion for the easy case and leave modification — the case every merge
+    actually produces — untested.
+    """
+    root, _first = make_repository(tmp_path)
+    tasks = root / "docs" / "tasks"
+    (tasks / "handoffs").mkdir(parents=True)
+    (tasks / "handoffs" / "W1.md").write_text("# W1 — handoff\n", encoding="utf-8")
+    (tasks / "BOARD.md").write_text("# board\n", encoding="utf-8")
+    (tasks / "BOARD-ARCHIVE.md").write_text("# archive\n", encoding="utf-8")
+    (tasks / "README.md").write_text("# tasks\n", encoding="utf-8")
+    return root, commit_all(root, "the board, its archive and a handoff exist")
 
 
 def test_the_graph_path_is_where_graphify_writes_it(tmp_path):
@@ -89,6 +111,93 @@ def test_a_commit_this_checkout_does_not_have_is_unverifiable_not_stale(tmp_path
 def test_a_tree_that_is_not_a_repository_is_unverifiable(tmp_path):
     assert freshness(tmp_path, "0" * 40) == UNVERIFIABLE
     assert freshness(tmp_path, None) == UNVERIFIABLE
+
+
+# --- Ruling 96 part 1: the described trees, minus what they do not describe ---
+
+
+def test_a_handoff_does_not_make_the_index_stale(tmp_path):
+    # ⛔ The defect this row exists for. Every merge in this project writes a
+    # handoff, so before the exclusion every merge reddened the tip by
+    # construction — including a one-file docs-only one.
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "tasks" / "handoffs" / "W1.md").write_text("# W1 — edited\n", "utf-8")
+    commit_all(root, "a handoff is written")
+    assert freshness(root, head) == FRESH
+
+
+def test_a_NEW_handoff_does_not_make_the_index_stale_either(tmp_path):
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "tasks" / "handoffs" / "W2.md").write_text("# W2\n", encoding="utf-8")
+    commit_all(root, "a handoff is added")
+    assert freshness(root, head) == FRESH
+
+
+def test_a_board_row_does_not_make_the_index_stale(tmp_path):
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "tasks" / "BOARD.md").write_text("# board\n\n| W39 | done |\n", "utf-8")
+    commit_all(root, "a board row moves")
+    assert freshness(root, head) == FRESH
+
+
+def test_the_board_archive_does_not_make_the_index_stale(tmp_path):
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "tasks" / "BOARD-ARCHIVE.md").write_text("# archive\n\n| W1 |\n", "utf-8")
+    commit_all(root, "the board is archived")
+    assert freshness(root, head) == FRESH
+
+
+def test_all_three_moving_at_once_still_leaves_the_index_fresh(tmp_path):
+    # ⭐ The shape of a real merge: a handoff, a board row and the archive, in
+    # one commit, and nothing the index describes.
+    root, head = with_a_board_and_handoffs(tmp_path)
+    tasks = root / "docs" / "tasks"
+    (tasks / "handoffs" / "W1.md").write_text("# W1 — edited\n", encoding="utf-8")
+    (tasks / "BOARD.md").write_text("# board — edited\n", encoding="utf-8")
+    (tasks / "BOARD-ARCHIVE.md").write_text("# archive — edited\n", encoding="utf-8")
+    commit_all(root, "a round closes")
+    assert freshness(root, head) == FRESH
+
+
+def test_a_DOCUMENT_THAT_IS_NOT_ONE_OF_THE_THREE_still_makes_it_stale(tmp_path):
+    # ⛔ The negative control, run negatively. An exclusion that swallowed
+    # `docs/` would be indistinguishable from these tests passing, and it would
+    # be the same defect in the opposite direction: a check that never fires.
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "note.md").write_text("# a convention changes\n", encoding="utf-8")
+    commit_all(root, "a described document moves")
+    assert freshness(root, head) == STALE
+
+
+def test_a_SIBLING_of_the_board_inside_docs_tasks_still_makes_it_stale(tmp_path):
+    # ⚠️ The exclusion is three named paths, not the directory that holds them.
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "tasks" / "README.md").write_text("# tasks — edited\n", encoding="utf-8")
+    commit_all(root, "an epic document moves")
+    assert freshness(root, head) == STALE
+
+
+def test_an_excluded_path_beside_a_described_one_does_not_mask_it(tmp_path):
+    # ⛔ Exclusion removes paths from the diff; it must not remove commits.
+    root, head = with_a_board_and_handoffs(tmp_path)
+    (root / "docs" / "tasks" / "BOARD.md").write_text("# board — edited\n", encoding="utf-8")
+    (root / "src" / "thing.py").write_text("VALUE = 3\n", encoding="utf-8")
+    commit_all(root, "a board row and a module, together")
+    assert freshness(root, head) == STALE
+
+
+def test_the_pathspecs_are_the_trees_plus_one_exclusion_each(tmp_path):
+    spelled = described_pathspecs()
+    assert spelled[: len(DESCRIBED_TREES)] == list(DESCRIBED_TREES)
+    assert spelled[len(DESCRIBED_TREES) :] == [f"{EXCLUDE}{path}" for path in UNDESCRIBED_PATHS]
+
+
+def test_gitignore_gets_no_entry_because_it_is_already_outside_the_trees(tmp_path):
+    # ⚠️ The comment's third example, and the one a reader is most likely to
+    # "fix" by adding a fourth entry. It is not under any described tree, so an
+    # entry for it would be dead configuration that looks load-bearing.
+    assert not any(path.endswith(".gitignore") for path in UNDESCRIBED_PATHS)
+    assert all(path.split("/")[0] in DESCRIBED_TREES for path in UNDESCRIBED_PATHS)
 
 
 def test_the_graph_round_trips_through_the_reader(tmp_path):

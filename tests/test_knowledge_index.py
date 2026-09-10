@@ -81,7 +81,12 @@ def workspace_root() -> Path:
 
 def conventions() -> str:
     """`docs/conventions/graphify.md`, which is FND-02's other deliverable."""
-    return (repository_root() / "docs" / "conventions" / "graphify.md").read_text("utf-8")
+    return convention("graphify.md")
+
+
+def convention(name: str) -> str:
+    """Any document in `docs/conventions/`, read as text."""
+    return (repository_root() / "docs" / "conventions" / name).read_text("utf-8")
 
 
 # --- this repository's index ----------------------------------------------
@@ -304,3 +309,72 @@ def test_the_conventions_document_says_a_rebuild_without_a_bridge_is_incomplete(
     text = conventions()
     assert "unbridged" in text
     assert "one operation with two commands" in text
+
+
+# --- Ruling 96: the index line, and what the rebuild step became ------------
+
+
+def test_the_rubric_requires_an_index_line_in_every_review():
+    # ⛔ Ruling 96's whole mechanism. The exit code went; what replaces it is a
+    # line the reviewer must quote, and a requirement that lives only in a
+    # round's handoff is one that binds whoever read that round.
+    text = convention("review-rubric.md")
+    assert "INDEX LINE" in text
+    assert "python3 -m tools.quality | grep '^knowledge index: '" in text
+
+
+def test_the_rubric_names_all_four_states_of_the_index_line():
+    # ⚠️ A vocabulary with a silent member is one a reader fills in from
+    # memory, which is why the floor prints `fresh` too.
+    text = convention("review-rubric.md")
+    for state in (
+        "knowledge index: fresh",
+        "knowledge index: stale",
+        "knowledge index: unverifiable",
+        "knowledge index: none",
+    ):
+        assert state in text, f"the rubric's index line does not show `{state}`"
+
+
+def test_the_rubric_says_stale_does_not_block_approve_and_is_not_a_licence():
+    # ⛔ Both halves, because either alone is the wrong document. Ruling 80
+    # forbids the exit code; the sentence it replaced must still be readable.
+    text = convention("review-rubric.md")
+    assert "does not block APPROVE" in text
+    assert "not a licence" in text
+
+
+def test_ruling_89_is_narrowed_to_a_courtesy_and_keeps_no_pass_condition():
+    # ⛔ `W39` narrows rather than deletes: the next agent still inherits the
+    # index, and the step loses only the power to invalidate a number.
+    text = convention("review-rubric.md")
+    assert "Ruling 89, NARROWED by `W39`" in text
+    assert "Pass condition: none" in text
+    assert "graphify update . && python3 -m tools.knowledge bridge" in text
+
+
+def test_the_interim_rebuild_step_is_gone_from_the_delivery_flow():
+    # ⛔ The expiry was met rather than lapsed, so the word that named it must
+    # not survive: an INTERIM step nobody deletes is the mechanism it refused
+    # to be.
+    text = convention("delivery-flow.md")
+    assert "### ⛔ INTERIM" not in text
+    assert "Whoever merges to a release branch runs this" not in text
+    assert "is DELETED by `W39`" in text
+
+
+def test_the_delivery_flow_no_longer_calls_a_stale_index_a_failure():
+    # ⚠️ The document listed staleness beside unbridged as a floor failure.
+    # After Ruling 96 only one of the two still is.
+    text = convention("delivery-flow.md")
+    assert "it is a **notice**" in text
+    assert "current but unbridged* one is still a finding" in text
+
+
+def test_the_rubrics_grep_matches_what_the_floor_actually_prints():
+    # ⛔ The loop closed between the document and the tool. A rubric that tells
+    # a reviewer to grep for a string the floor no longer prints produces an
+    # empty index line, and an empty line reads exactly like a clean one.
+    from tools.quality.knowledge_index import PREFIX
+
+    assert f"grep '^{PREFIX}'" in convention("review-rubric.md")
