@@ -280,6 +280,44 @@ the same session. ⭐ **Neither needed new information — only somebody asking
 whose constraint this lands on.** ⛔ **The question is the mechanism; the answer
 is usually one name and often none.**
 
+#### ⛔ A check covers what is there; a broadcast covers what is coming
+
+⚠️ **Corrected by Ruling 39, on a measurement, and the correction is the useful
+part.** The PO proposed that this belonged *closer to the code* than to the wave,
+on the evidence that an author caught a collision the wave-open check did not.
+⛔ **Measured: at the time, a sweep of the release tip would have found three
+files and none of them was the colliding guard — it lived only on an unmerged
+branch.**
+
+⭐ **So distance was never the problem. The code was not in the tree the sweep
+reads.** ⚠️ That is the vantage-point argument for the fourth time: ⛔ **a sweep
+sees the tree and cannot see the branches.**
+
+⛔ **And "move it rather than grow it" was the wrong dichotomy — the answer is
+neither.** The wave-open check is the backstop for rulings whose subject is
+**already merged**, which is a real, non-empty, otherwise-unwatched set. ⭐ **The
+two instruments cover different sets, and moving one to do the other's job leaves
+both holes open.**
+
+**So the obligation sits on the ruling's author, and it is one command:**
+
+```bash
+# ⛔ a ruling that changes a shared name names its blast radius across BRANCHES
+git grep -l "<the name>" $(git branch --format='%(refname:short)' | grep -E 'feat/|fix/')
+```
+
+⚠️ **Run it while writing the ruling, not after.** ⭐ It finds the collision
+directly — in the instance that produced this clause it named the exact test file
+a ruling would have broken. ⛔ **Asking *"whose constraint does this land on?"*
+depends on already knowing who; this does not.**
+
+⭐ **And the sentence worth keeping, which the CTO wrote about themselves:** *"I
+didn't run it, and the author covered for me. **A reviewer covered for by an
+author has found a hole in their own procedure, not good luck.**"* ⚠️ **A
+broadcast that works because somebody happened to tell the right person is not a
+mechanism** — it is a mechanism's outcome, arriving by luck, and it will not
+arrive next time.
+
 ### ⚠️ C5's shape in prose, and there is no trial merge for documents
 
 ⛔ **Two correct things authored hours apart can contradict each other with
