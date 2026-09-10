@@ -68,16 +68,35 @@ COMMIT_KEY = "built_at_commit"
 #: without reading.
 DESCRIBED_TREES = ("src", "tools", "docs")
 
-#: ⛔ The paths **inside** those trees that an index does not describe, and they
-#: are the comment above made executable (Ruling 96, part 1). A board row and a
-#: handoff are the comment's own first two examples and both live under `docs/`.
+#: ⛔ **THE PRINCIPLE: THE BOARD AND ITS CARRIERS.** The paths **inside** those
+#: trees whose content is this project's record of its own work — the board,
+#: whatever files the board is currently spelled across, and the handoffs. It is
+#: the comment above made executable (Ruling 96, part 1): a board row and a
+#: handoff are that comment's own first two examples and both live under `docs/`.
+#:
+#: ⭐ **Ruling 175 (CTO round 45) — a NEW CARRIER IS ADMITTED BY THIS PRINCIPLE,
+#: never by a fresh literal argued for on its own.** ⛔ A tuple that grows one
+#: entry per restructure is a list of accepted shapes, which is the form this
+#: project has refused; this one is a principle with its current spellings
+#: beneath it. ⚠️ **Ask of any candidate: *is this a WIDENING, or the same
+#: subject under a new carrier?*** — only the second is admissible here.
+#:
+#: ⚠️ **`docs/tasks/rows` is the second reading of that question and it is the
+#: same subject.** Every byte in it was inside `docs/tasks/BOARD.md` the day
+#: before, where it was already excluded; the board was decomposed into one file
+#: per live row. **Measured by the Board Architect, 2026-09-10: the exclusion
+#: saves a rebuild on 21 of 40 recent commits.** ⛔ Refusing it would make this
+#: check fire on material it has always excluded, purely because the material
+#: moved file — which is `CTO-25/9` returning, the stale-index defect `W39` was
+#: minted to kill.
 #:
 #: ⚠️ `.gitignore`, the comment's third example, is already outside
-#: `DESCRIBED_TREES` and needs no entry here — ⛔ **do not add a fourth for it.**
+#: `DESCRIBED_TREES` and is not a carrier — ⛔ **it gets no entry here.**
 UNDESCRIBED_PATHS = (
     "docs/tasks/handoffs",
     "docs/tasks/BOARD.md",
     "docs/tasks/BOARD-ARCHIVE.md",
+    "docs/tasks/rows",
 )
 
 #: Git's pathspec magic for *remove this from a diff already scoped to

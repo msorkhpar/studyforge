@@ -1984,6 +1984,14 @@ Two carried rulings the reviewer also checks by reading:
   as a literal. If the change adds a placeholder, there is a test for the
   failure.
 
+⛔ **This is an `ast` sweep, so Ruling 178's general form applies to it and to
+every sweep in this document: *the thing reached is not the string `ast` hands
+you.*** ⭐ Here the trap is the docstring exclusion — a node is excluded by
+`id(...)` identity, and a constant that is not the FIRST statement of its scope
+is not a docstring however it is written. ⚠️ **The clause is at
+[§7b-i](#7b-i-ruling-178-an-import-shaped-sweep-resolves-the-relative-form-or-it-quantifies-over-half-its-population)
+and the obliged reading — plant it, do not read it — is the same.**
+
 ---
 
 ## 6. R17 — every package states its contract
@@ -2075,6 +2083,47 @@ EOF
 **Pass = no output.** ⛔ Vendored third-party assets (Prism, Plyr) are committed
 with their licence beside them and are **never edited** — re-vendor instead; a
 diff that modifies one is CHANGES REQUESTED regardless of how small it is.
+
+### ⛔ 7b-i. Ruling 178 — an import-shaped sweep resolves the RELATIVE form, or it quantifies over HALF its population
+
+⛔ **`ast.ImportFrom.module` is the name with the leading dots REMOVED, and
+`level` is where they went.** ⭐ **The module reached is not the string `ast`
+hands you** — the dots are one way that goes wrong (`from . import container`)
+and the imported NAMES are another (`from studyforge.corpus import container`
+reaches `studyforge.corpus.container`, and `.module` says only
+`studyforge.corpus`). ⚠️ **A relative import is the SHORTER spelling, so it is
+the one a hurried author reaches for.**
+
+```bash
+# ⛔ THE OBLIGED READING, and it is ONE ROW: plant the forbidden import in its
+#    RELATIVE form and record that the sweep catches it. Then again ABSOLUTE,
+#    reaching the same module through `from <parent> import <name>`.
+#    Ruling 123's three readings, with the real shape planted.
+git stash list >/dev/null                      # plant, run the sweep, revert
+# row 1  live tree                                  -> PASS
+# row 2  `from . import <forbidden>`   PLANTED      -> CAUGHT   (the dots)
+# row 2b `from <parent> import <forbidden>` PLANTED -> CAUGHT   (the names)
+# row 3  a subject that CANNOT match                -> DIFFERENT from row 1
+```
+
+⛔ **Pass condition: rows 2 and 2b are recorded separately.** ⚠️ **A control
+whose assertion is a disjunction (`A or B`) discharges NOTHING about `A`** — ⭐
+that is the second half of this ruling, and it is how the plant in `SF-14`'s
+first pass went green while testing the wrong half. ⛔ **A remedy OFFERED as a
+disjunction is the same defect one level up, and `CTO-46/6` is the reviewer
+recording it against their own office.**
+
+⚠️ **`level == 0` in §7b's sweep above is SOUND and is not this defect — stated
+here so the next author does not copy the filter without the reason.** A
+relative import can only reach *inside* the package, and §7b's question is
+*"does this reach a non-stdlib third party?"*, which a relative import cannot. ⛔
+**Any sweep whose question is *"does this reach module X?"* — R1, package
+isolation, a forbidden seam — must resolve the level and append the imported
+names, because both doors reach X.**
+
+⚠️ **This is Ruling 140's `W40`-seam instance recurring in a different package
+five rounds later**, which is the evidence that the general form was never
+written down.
 
 ### 7c. R1, on the same pass
 
@@ -2171,6 +2220,36 @@ Two things the reviewer reads rather than greps:
   Findings section with a large diff is a prompt to ask, not a pass.
 - **Surprises** should say what the task's own context budget got wrong. A wrong
   budget is a planning defect and recording it is how the plan improves.
+
+### ⛔ 8b. Ruling 181 — a document that GOVERNS a shape may not carry a TYPED MEASUREMENT of that shape
+
+⭐ **A convention document states a BOUND — `600 bytes`, `8192 bytes`, `400
+lines`. That is a DECISION and it belongs in prose.** ⛔ **A READING — `245
+lines`, `24 KB`, `~77 tokens` — is a measurement with an as-of (`PO-30/2`), and
+it belongs either in the instrument's own PRINTED line or beside a NAMED REF
+(Ruling 169). It never belongs typed into the document that governs the shape.**
+
+```bash
+# ⛔ Run over every convention document the diff touches. Numbers OUTSIDE a
+#    fence, in a file under docs/conventions/, that read as a MEASUREMENT of
+#    this repository rather than as a bound.
+for f in $(git diff --name-only "$BASE"...HEAD -- 'docs/conventions/*.md'); do
+  awk '/^```/{inside=!inside; next} !inside' "$f" \
+    | grep -nE '[0-9][0-9,]*[[:space:]]*(lines|rows|files|KB|MB|bytes|tokens|tasks|ids)\b' \
+    | sed "s|^|$f:|"
+done
+```
+
+⛔ **Pass = every printed row is a BOUND, and the reviewer says which, per row.**
+⚠️ **This is a READ clause with a printed population, not a grep whose emptiness
+is the answer** — a convention document with no numbers at all prints zero and
+that is a skip, not a pass.
+
+⚠️ **`CTO-46/2` is the second instance in two rounds and the first was the
+document this one replaced.** ⛔ **`ARCH/2` measured a board's self-description
+stale by **13×**; the contract written to stop that recurring typed **five**
+numbers, and all five were wrong on the day it merged.** ⭐ **The remedy is the
+one already accepted: the number is PRINTED by the instrument, not typed.**
 
 ### 8a. ⛔ Structural findings are routed by the reviewer, in the review
 
@@ -2551,6 +2630,65 @@ expensive is not unmeetable**, and step 2 is what separates them: it returns a
 command's output or the split is refused. ⭐ **And the residue's row is minted in
 the SAME round** — a split whose second half reaches nobody is C6 with a
 verdict attached.
+
+### ⛔ Rulings 177 + 180 — a MIGRATION is validated over CONTENT, at a REF
+
+⛔ **One clause, two halves, and neither is sufficient alone.** A change that
+moves material between documents — a board decomposed into row files, an archive
+split, a document renamed — makes the claim *this content went there*. ⭐ **That
+claim is true or false of two REFS, over FIELDS, and a line partition that sums
+proves neither half.**
+
+```bash
+# ⛔ 177 — over CONTENT. Run BEFORE any claim that the migration is a partition.
+#    A line partition proves every LINE went somewhere. It proves NOTHING about
+#    a line that was SPLIT, and a table row is exactly such a line.
+#    Print the count of old FIELDS whose text is absent from EVERY destination.
+BEFORE=<ref before the migration>;  AFTER=<ref after it>
+python3 - "$BEFORE" "$AFTER" <<'EOF'
+import subprocess, sys
+before, after = sys.argv[1], sys.argv[2]
+show = lambda ref, p: subprocess.run(["git","show",f"{ref}:{p}"],
+                                     capture_output=True,text=True).stdout
+SOURCE = "docs/tasks/BOARD.md"            # the document that was decomposed
+DESTS  = subprocess.run(["git","ls-tree","-r","--name-only",after,"docs/tasks/"],
+                        capture_output=True,text=True).stdout.split()
+haystack = "\n".join(show(after, p) for p in DESTS)
+fields = [c.strip() for line in show(before, SOURCE).splitlines()
+          if line.lstrip().startswith("|") for c in line.strip().strip("|").split("|")
+          if c.strip() and set(c.strip()) != {"-"}]
+missing = [f for f in fields if f not in haystack]
+print(f"population: {len(fields)} fields over {len(DESTS)} destinations")
+print(f"FIELDS PRESENT IN NO DESTINATION: {len(missing)}")
+for f in missing[:20]: print("  MISSING:", f[:100])
+EOF
+```
+
+⛔ **Pass = `0`, with the population printed above it** (Ruling 128, Ruling 146).
+⚠️ **`CTO-45/1` is the founding instance:** the author's partition summed to
+`8,546` and was honest, **25,161 bytes still went nowhere and three live files
+shipped corrupt** — ⭐ because `78` counted the register's LINES and each of those
+lines carried five FIELDS.
+
+```bash
+# ⛔ 180 — at a REF. A migration test reads BOTH sides with `git show <ref>:<path>`.
+git grep -nE 'read_text|open\(|Path\(' -- '*test*migration*' '*test*board*'
+```
+
+⛔ **Pass condition, read rather than counted: no migration test opens a
+destination from the WORKING TREE.** ⭐ A migration is an **event**; a test that
+reads the destination live has silently changed the claim from *this content went
+there* to *this content is STILL there, unedited* — ⚠️ **which is a freeze, and a
+freeze is the opposite of what a live half is for.** ⭐ **The unreachable-ref
+reading SKIPs** (a shallow clone, a ref not yet fetched); it does not pass.
+
+⛔ **THE COROLLARY, and it is the half that gets skipped: a test that forbids an
+action the branch's own contract PRESCRIBES is a finding against the TEST, every
+time.** ⭐ **The obliged reading — an artifact the reviewer produces:** take the
+four actions the shipped contract documents, plant each against the branch's own
+instrument, and record the row. ⚠️ **`CTO-46/1` is the instance: the contract told
+the reader to edit the very files its test pinned, so the branch's first ordinary
+use would have turned the suite RED.**
 
 ---
 

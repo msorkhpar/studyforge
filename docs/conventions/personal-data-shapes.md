@@ -93,6 +93,47 @@ nobody, and `example.invalid` is an RFC 2606 reserved domain.
 ]
 ```
 
+## ⛔ Ruling 179 — a gate's FALSE POSITIVE on ordinary source is a defect IN THE GATE
+
+> ⛔ **R7 is the one rule with no *minor* verdict, so its gate is the one that
+> can least afford to be routed around.** ⭐ **An author who renames a field to
+> get past it has paid a real cost and left no trace** — ⚠️ **and the next
+> author pays it again, without knowing anybody paid it before.**
+
+⛔ **One shape is currently known to be over-broad and it is RECORDED here rather
+than fixed by the people it inconveniences: `local hostname`.** ⚠️ **Its trailing
+guard covers a `.` after the word — which is why `settings.local.json` survives —
+but it does not cover a Python attribute access at the END of an expression, and
+that is the natural shape for every consumer of the local contents document.**
+
+⚠️ **The probes are written with placeholders, exactly as the finding that raised
+them was written: a document that spelled the real shape would be a finding
+against itself — which is this defect, twice.**
+
+| probe | ⛔ **the gate says** | ⭐ **the truth** |
+|---|---|---|
+| `<object>.<the word>)` | reports | ⛔ **ordinary Python** |
+| `<object>.<the word>,` | reports | ⛔ **ordinary Python** |
+| `x = <object>.<the word>` | reports | ⛔ **ordinary Python** |
+| `settings.<the word>.json` | ignores | ✅ a filename |
+| `self.<the word>_status` | ignores | ✅ ordinary Python |
+| `<host>.<the word>` | reports | ✅ **a machine name — the shape must be KEPT** |
+
+⭐ **Measured 2026-09-10 by `SF-14/4`, and the floor reported 3 such findings in
+that author's own test tree before they renamed the field.**
+
+⛔ **What the remedy owes, so that it is not re-derived:** narrow the one
+lookahead **while keeping the hostname shape** — ⛔ **it does not weaken R7** —
+and discharge Ruling 123's three readings with the real shape planted. ⚠️ **And
+because Ruling 47 says the two gates share this vocabulary, narrowing one side
+alone is not a developer's call: the row is against `tools/quality/personal_data`
+and this table is checked with it.**
+
+⛔ **The rename that landed in `SF-14` is a WORKAROUND, not the fix**, and it is
+named here for the reason the ruling gives: a rename leaves no trace. ⭐ ***A
+checker people rename fields around is a checker on its way to being switched
+off.***
+
 ## ⚠️ What this table is not
 
 ⛔ **It is not the definition of either gate**, and closing a `why` by editing
