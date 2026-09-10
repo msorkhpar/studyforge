@@ -35,7 +35,7 @@ from studyforge.archive.blocks import (
 )
 from studyforge.archive.document import VIDEO_KEYS
 from studyforge.archive.errors import ArchiveError
-from tests.support import repository_root
+from tests.support import imports_module, repository_root
 
 #: The vocabulary, written out. ⛔ In `counts` order, which is the order that
 #: reaches disk — see `test_the_fixtures_counts_are_in_this_order`.
@@ -160,14 +160,7 @@ def imports_the_vocabulary(path: Path) -> bool:
     ⛔ Equality, not a prefix, and not a re-export chain. A module deriving
     from the one source of truth says where it got it.
     """
-    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
-        if isinstance(node, ast.ImportFrom) and node.module == VOCABULARY_MODULE:
-            return True
-        if isinstance(node, ast.Import) and any(
-            alias.name == VOCABULARY_MODULE for alias in node.names
-        ):
-            return True
-    return False
+    return imports_module(path, VOCABULARY_MODULE)
 
 
 def copies(root: Path) -> list[str]:

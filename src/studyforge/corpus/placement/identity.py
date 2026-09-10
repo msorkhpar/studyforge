@@ -46,6 +46,7 @@ import re
 from dataclasses import dataclass
 
 from studyforge.address import Address, AddressError, is_slug, require_ordinal, require_slug
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.placement.errors import PlacementError
 from studyforge.describe import describe
 from studyforge.version import check
@@ -145,9 +146,23 @@ def parse(html: str, depth: int, where: str = "artifact") -> Identity:
 
 
 def from_document(document: object, depth: int, where: str = "artifact") -> Identity:
-    """Build an `Identity` from an already-parsed block."""
+    """Build an `Identity` from an already-parsed block.
+
+    ⛔ **Gated like every other document reader** (W7). ⚠️ It is tempting to
+    argue this one is exempt because the framework wrote the block it reads —
+    but `parse`'s own contract says it reads *"files this build may not have
+    written"*, which is the whole reason `IDENTITY_PATTERN` tolerates
+    attribute order. ⭐ A reader whose exemption rests on an assumption its
+    neighbour explicitly refuses is not exempt.
+    """
     if not isinstance(document, dict):
         raise PlacementError(f"{where}'s identity block is not an object")
+    try:
+        assert_clean(document, where)
+    except PersonalDataLeak as leak:
+        raise PlacementError(
+            f"{where}'s identity block carries personal data and is refused (R7): {leak}"
+        ) from None
     check(
         "identity_api",
         document.get("identity_api"),

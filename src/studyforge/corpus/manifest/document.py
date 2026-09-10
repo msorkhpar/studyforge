@@ -49,6 +49,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from studyforge.address import Address, AddressError, parse_key, require_slug
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
@@ -163,7 +164,22 @@ def load(path: str | Path) -> Manifest:
 
 
 def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
-    """Build a `Manifest` from an already-parsed object."""
+    """Build a `Manifest` from an already-parsed object.
+
+    ⛔ **The personal-data gate runs over the whole decoded document** (R7,
+    SF-08), before any field is read. ⚠️ **It was missing entirely until W7**,
+    and the shape of that miss is worth keeping: `studyforge validate` was
+    already wired to report a leak here, the archive and the container map and
+    the overlay all gated, and `corpus.json` — **the corpus's front door** —
+    gated nothing. A home path in `title` validated green. The catch was
+    correct; the raise never came, so nothing looked wrong from either side.
+
+    ⭐ The fields this module validates are not the fields a leak turns up in:
+    `title` is free authored text and `content.exclude[].why` is a sentence
+    somebody wrote. That is why the gate reads the document rather than the
+    fields, exactly as `unit.content` does.
+    """
+    _gate(document, where)
     _check_version(document, where)
     unknown = sorted(set(document) - set(MANIFEST_KEYS))
     if unknown:
@@ -186,6 +202,19 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         media=parse_media(document.get("media")),
         permitted_edits=parse_edits(document.get("permitted_edits"), content),
     )
+
+
+def _gate(document: dict, where: str) -> None:
+    """Refuse a manifest carrying personal data, naming the shape and not the value.
+
+    ⛔ Converted to `ManifestError`, following `unit.content._gate` exactly:
+    this package promises that reading a manifest raises `ManifestError` **and
+    nothing else**, and a promise with one exception is not one.
+    """
+    try:
+        assert_clean(document, where)
+    except PersonalDataLeak as leak:
+        raise ManifestError(f"{where} carries personal data and is refused (R7): {leak}") from None
 
 
 def _check_version(document: dict, where: str) -> None:
