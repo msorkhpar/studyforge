@@ -560,6 +560,43 @@ EOF
 *during* extraction. A change that lands a large module because the source
 module was large has not done the task.
 
+#### ⛔ Ruling 113 — condition 3 has a SECOND admissible form: a deferral naming a live id
+
+⛔ **A breach created by a MERGE of two individually-legal branches cannot
+satisfy condition 3 as written**, because splitting is not worse — it is right,
+and merely belongs to somebody else. ⭐ **So condition 3 is satisfied by
+EITHER form, and by no third:**
+
+| form | reason says | retired by |
+|---|---|---|
+| **design claim** | why splitting would be **worse** | ⛔ never — it is permanent |
+| ⭐ **deferral** | ⛔ **`<TASK-ID>` splits this module**, and why not in this task | ⛔ **that task, which DELETES the line** |
+
+⛔ **The marker stays `Size exception:` — `config.SIZE_EXCEPTION_MARKER` is
+fixed and case-sensitive by ruling, and a second spelling would pass the
+checker and fail here.** ⭐ **A deferral is told from a design claim by its
+reason carrying a task id, which is greppable:**
+
+```bash
+# Every deferral in the tree, and the id that owes its removal.
+grep -rn 'Size exception:' src/ tools/ tests/ \
+  | grep -oE '[A-Z]{2,3}-[0-9]+|W[0-9]+' | sort -u
+# Then, for each id printed: it MUST be a live row in docs/tasks/BOARD.md.
+grep -n "$id" docs/tasks/BOARD.md | grep -E 'todo|in-flight|in-review'
+# And the reverse: an exception with NO id is a DESIGN CLAIM and is read as
+# permanent — condition 4 still applies to it, and a reviewer still refuses it
+# if the isolation answer is no. A justification is not a licence.
+```
+
+⛔ **Pass condition: every id printed is a live row.** ⚠️ **An id that has
+landed, or that never existed, is a deferral nobody owns — the finding is
+against the RELEASE BRANCH, and the line is removed or reissued against a real
+row.** ⭐ **Run it at every wave open, beside §8a's `[structural]` sweep.**
+
+⛔ **Measured 2026-09-10 at `3f5d984`: the command prints NOTHING — zero
+deferrals and zero size exceptions in the tree.** ⭐ **So the first use of this
+form is `W44`'s, and it starts from a clean instrument.**
+
 ---
 
 ## 4. R12 — tests exist, and the tree mirrors
