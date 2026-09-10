@@ -54,6 +54,13 @@ question, so a failing check names a concern rather than a file.
 | `addresses` | does what a thing says about where it is match where it sits |
 | `media` | is every declared file on disk, at the size and digest recorded |
 | `personal_data` | does anything carry an R7 shape (R7) |
+| `sweeps` | which of these files a given sweep is entitled to read (Ruling 46) |
+
+⭐ **`sweeps` is the sixth, and it arrived from outside.** It was written
+against `tests/studyforge/archive/test_blocks.py` and moved here by `FND-09`,
+because a helper that reads `INVALID_CORPORA` belongs beside the declaration:
+anywhere else and the next person needing one reads the directory name instead.
+⛔ **Two modules must never consume it** — see `sweeps.ENFORCERS`.
 
 Run `python3 -m tests.fixture_checks` for the block-type coverage table.
 """
@@ -82,6 +89,17 @@ from tests.fixture_checks.exercise import check_exercise
 from tests.fixture_checks.media import check_media
 from tests.fixture_checks.personal_data import check_personal_data, shape_in
 from tests.fixture_checks.shape import check_blocks, check_document_shape, check_manifest
+from tests.fixture_checks.sweeps import (
+    ENFORCERS,
+    RAW,
+    Coverage,
+    archive_documents,
+    coverage,
+    declaring,
+    excluded_by,
+    fixture_paths,
+    sweeping,
+)
 from tests.fixture_checks.vocabulary import (
     BLOCK_FIELDS,
     BLOCK_TYPES,
@@ -102,23 +120,32 @@ __all__ = [
     "CONTAINER_TYPES",
     "COUNT_KEYS",
     "DOCUMENT_KEYS",
+    "ENFORCERS",
     "FIXTURES",
     "INVALID_CORPORA",
     "MARKUP_SHAPED",
     "OPTIONAL_KEYS",
+    "RAW",
     "REQUIRED_TYPES",
     "VALID",
+    "Coverage",
     "all_blocks",
+    "archive_documents",
     "archive_files",
     "block_types",
     "blocks_of_type",
     "canonical",
     "containers_in",
+    "coverage",
+    "declaring",
+    "excluded_by",
+    "fixture_paths",
     "read_json",
     "rendered",
     "sha256_of",
     "shape_in",
     "strings_in",
+    "sweeping",
     "violations",
 ]
 

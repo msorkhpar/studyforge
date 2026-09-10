@@ -15,6 +15,7 @@ import pytest
 
 from studyforge.archive import markdown
 from studyforge.archive.markdown import BLOCK_TYPES, CONTAINER_TYPES, MarkdownError, parse
+from tests.fixture_checks import coverage, fixture_paths
 from tests.support import assert_package_contract, repository_root
 
 FIXTURES = repository_root() / "tests" / "fixtures"
@@ -25,9 +26,18 @@ def fixture_blocks(relative: str) -> list[dict]:
     return json.loads((FIXTURES / relative).read_text(encoding="utf-8"))["blocks"]
 
 
+#: ⛔ **What the sweep below asserts, as a rule id** (Ruling 46). Both of its
+#: consumers assert the block *vocabulary* — the type names and which of them
+#: hold blocks — so a fixture declared to break `vocabulary` is one this module
+#: is not entitled to read. ⚠️ No fixture declares it today and the exclusion is
+#: empty; naming it costs nothing and is what makes the day one arrives a
+#: decision rather than a surprise. ⛔ It used to name nothing at all.
+ASSERTED = {"vocabulary"}
+
+
 def every_fixture_block():
     """Every block in every committed archive document, containers recursed into."""
-    for path in sorted(FIXTURES.rglob("*.json")):
+    for _where, path in fixture_paths(asserting=ASSERTED, within=None):
         document = json.loads(path.read_text(encoding="utf-8"))
         if not isinstance(document, dict):
             continue
@@ -73,8 +83,14 @@ def test_every_block_type_the_fixtures_carry_is_in_the_vocabulary():
     # ⛔ The fixtures are twelve epics' shared definition of a valid archive.
     # A type they carry and this vocabulary does not name is a document this
     # reader could never have produced.
+    documents = {path for path, _block in every_fixture_block()}
     seen = {block["type"] for _path, block in every_fixture_block()}
     assert seen <= set(BLOCK_TYPES), sorted(seen - set(BLOCK_TYPES))
+    # ⛔ Ruling 48: a sweep that matched nothing satisfies the subset assertion
+    # above against an empty set, so the denominator is asserted beside it.
+    # ⚠️ Fewer than the coverage figure, deliberately: `corpus.json` and
+    # `container.json` are read and carry no blocks.
+    assert 0 < len(documents) <= coverage(asserting=ASSERTED, within=None).swept
 
 
 def test_the_container_types_agree_with_the_fixtures():

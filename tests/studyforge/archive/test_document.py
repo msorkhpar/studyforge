@@ -26,6 +26,7 @@ from studyforge.archive.document import (
 )
 from studyforge.archive.errors import ArchiveError
 from studyforge.archive.scrub import PersonalDataLeak, shape_in
+from tests.fixture_checks import coverage, fixture_paths
 from tests.support import repository_root
 
 HOME = "/" + "home/jane"
@@ -72,20 +73,20 @@ BASE = {
 }
 
 
-def archive_paths():
-    """Every archive document in the two **valid** fixture corpora.
+#: ⛔ **What this module's sweeps assert, as rule ids** (Ruling 46). `build`
+#: recomputes `counts` and `content_sha256`, and both `parse` and `build`
+#: refuse an R7 leak and a user-authoritative exercise — so a fixture declared
+#: to break any of the four is a fixture this module is not entitled to read.
+#:
+#: ⚠️ **Naming them gained five documents.** This used to say `depth1, depth2`,
+#: which dropped every invalid corpus including the four that break nothing
+#: this module asserts. ⛔ `by directory name` is not a reason (`FND-09`).
+ASSERTED = {"counts", "digest", "personal-data", "exercise-trust"}
 
-    ⛔ Not `invalid/`: those corpora each violate exactly one rule on purpose —
-    one of them carries a deliberately wrong `content_sha256` — so sweeping
-    them here would assert that a negative fixture is positive.
-    """
-    root = repository_root() / FIXTURES
-    return [
-        path
-        for corpus in ("depth1", "depth2")
-        for path in sorted((root / corpus).rglob("*.json"))
-        if "/raw/" in path.as_posix()
-    ]
+
+def archive_paths():
+    """Every archive document a sweep asserting `ASSERTED` is entitled to read."""
+    return [path for _where, path in fixture_paths(asserting=ASSERTED, within="/raw/")]
 
 
 def parts_of(document):
@@ -108,7 +109,9 @@ def test_every_committed_document_round_trips_byte_for_byte():
     # an unchanged document re-renders differently and every digest downstream
     # becomes noise.
     paths = archive_paths()
-    assert paths
+    # ⛔ Ruling 48: the denominator, not `assert paths`. An exclusion widened by
+    # mistake leaves a non-empty list and a sweep that reads half the tree.
+    assert len(paths) == coverage(asserting=ASSERTED).swept
     for path in paths:
         text = path.read_text(encoding="utf-8")
         assert render(parse(text, path.name)) == text, path.name

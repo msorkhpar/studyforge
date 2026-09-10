@@ -35,6 +35,7 @@ from studyforge.archive.scrub import (
     scrub_document,
     shape_in,
 )
+from tests.fixture_checks import coverage, fixture_paths
 from tests.support import repository_root
 
 HOME = "/" + "home/jane"
@@ -522,16 +523,15 @@ def test_every_other_fixture_document_passes_the_gate():
     # the gate refuses rather than rewrites and the refused string looks
     # exactly like one. This sweeps every committed JSON document except the
     # one directory that is *meant* to fail.
-    root = repository_root()
-    sanctioned = root / FIXTURE
+    # ⭐ Ruling 46: `personal-data` is the rule this sweep asserts, named as a
+    # rule id rather than as the directory it happens to live in — so the day a
+    # second corpus declares R7 it is excluded without anybody editing this.
     swept = 0
-    for path in sorted((root / "tests" / "fixtures").rglob("*.json")):
-        if path.is_relative_to(sanctioned):
-            continue
-        where = str(path.relative_to(root))
+    for where, path in fixture_paths(asserting={"personal-data"}, within=None):
         assert_clean(json.loads(path.read_text(encoding="utf-8")), where)
         swept += 1
-    assert swept > 0
+    # ⛔ Ruling 48: `swept > 0` passes on a sweep that read one file of forty.
+    assert swept == coverage(asserting={"personal-data"}, within=None).swept
 
 
 # --------------------------------------------------------------------------

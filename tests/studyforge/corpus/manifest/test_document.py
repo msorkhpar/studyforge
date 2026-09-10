@@ -28,6 +28,7 @@ from studyforge.corpus.manifest import (
     load,
     parse,
 )
+from tests.fixture_checks import INVALID_CORPORA
 from tests.support import repository_root
 
 #: A manifest with every required key, in §4's order. Each test changes one
@@ -353,14 +354,36 @@ def test_the_depth1_fixture_declares_the_aggregate_it_withholds():
     assert "twice" in built.content.why_excluded("depth-one/ALL.md")
 
 
-#: FND-04's invalid fixtures, each violating **exactly one** rule. Only one of
-#: them violates a rule this module owns.
-FIXTURES_WITH_A_VALID_MANIFEST = [
-    "address-directory-mismatch",
-    "digest-mismatch",
-    "ordinal-gap",
-    "personal-data",
-]
+#: ⛔ **The declared divergence, with its `why`** — the `personal-data-shapes.md`
+#: precedent, not a fresh mechanism. Exactly one invalid corpus does *not* have
+#: a readable manifest, and it says so here rather than by being absent from a
+#: hand-written list.
+WITHOUT_A_VALID_MANIFEST = {
+    "bad-corpus-api": (
+        "its corpus.json declares corpus_api 99, so `load` refuses it before "
+        "depth or content can be read — which is the rule it exists to break"
+    ),
+}
+
+#: FND-04's invalid fixtures whose fault is elsewhere, **derived** from the
+#: declaration rather than listed.
+#:
+#: ⚠️ **This was a hand-written four and the tree had grown to seven.**
+#: `count-mismatch` and `user-authoritative` both carry a perfectly readable
+#: manifest and both landed in `INVALID_CORPORA` without reaching this list —
+#: silently, exactly as `FND-09` predicted, in the second of the two places the
+#: scope was not looking. ⛔ Deriving it is what makes an eighth impossible.
+FIXTURES_WITH_A_VALID_MANIFEST = sorted(set(INVALID_CORPORA) - set(WITHOUT_A_VALID_MANIFEST))
+
+
+def test_the_divergence_from_the_declaration_is_declared():
+    # ⛔ `FND-09` acceptance 5: a deliberate divergence is legal and states its
+    # `why`. ⚠️ Ruling 48's denominator too — a subtraction that removed
+    # everything would parametrize nothing and look identical to a clean pass.
+    assert set(WITHOUT_A_VALID_MANIFEST) < set(INVALID_CORPORA)
+    assert len(FIXTURES_WITH_A_VALID_MANIFEST) == len(INVALID_CORPORA) - 1
+    for name, why in WITHOUT_A_VALID_MANIFEST.items():
+        assert len(why) > 60, name
 
 
 @pytest.mark.parametrize("fixture", FIXTURES_WITH_A_VALID_MANIFEST)
