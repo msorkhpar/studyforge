@@ -4,7 +4,7 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-## ✅ **M0 CLOSED. M1 CLOSED at `2fe56a4`. M2 STEP 2.1 CLOSED 2026-09-10 at `a00337b`. M2 STEP 2.2 IS OPEN.**
+## ✅ **M0 CLOSED. M1 CLOSED at `2fe56a4`. M2 STEP 2.1 CLOSED at `a00337b`. M2 STEP 2.2 CLOSED 2026-09-10 at `ce80120`. M2 STEP 2.3 IS OPEN.**
 
 ⭐ **M1's close ref is `2fe56a4`** — all nine close conditions true at that one
 ref, rows 1–8 **re-taken there** rather than inherited, row 9 taken there by the
@@ -20,32 +20,45 @@ proves the rule twice over: the round opened against `253cdd3`, the five rows we
 taken there, the tip then moved to `1aa6319` and `a00337b`, and ALL FIVE WERE
 TAKEN AGAIN.** ⭐ **[The close run, row by row](#m2-step-21s-close-run-at-a00337b-all-five-re-taken-and-the-ref-moved-twice-underneath-it).**
 
-⏳ **OPEN: M2 step 2.2 — `SK-07` ✅, `SF-13` ✅, `SK-05` ✅, `SK-08` ⏳ — ONE ROW
-LEFT, and it is in flight.** ⭐ **`SK-05` merged `83f767e` (CTO round 38,
-APPROVE); when `SK-08` lands the step CLOSES and Ruling 97's five-row re-take at
-one named ref is owed.** ✅ **`PO-30/5`'s GATE IS DISCHARGED: `W57` MERGED at
-`63eb00d` (CTO round 39, APPROVE), so *`W57` lands before step 2.3 opens* is
-SATISFIED** — ⛔ **step 2.3 now opens on step 2.2's close alone, and `SK-08` is
-the only thing in front of it.**
-⛔ **Membership is `README.md`'s, state is this file's, and neither copies the
-other.** ⭐ **`SK-08`'s in-step edge is DISCHARGED: it *Depends on* `SK-07`, which
-merged `2e42c5b`** — ⚠️ **so the step's declared parallelism is true for the
-first time, and it became true by the dependency landing rather than by
-renumbering the plan into a 2.3.** ⭐ **[the ordering inside 2.2 is
-below](#m2-step-22-open-and-its-declared-parallelism-is-false-by-its-own-dependency-graph).**
+✅ **M2 STEP 2.2 IS CLOSED. The close ref is `ce80120`, and every one of its four
+rows was RE-TAKEN there.** ⛔ **Ruling 97: a close is a set of measurements at ONE
+named ref and no row is inherited across a ref change** — ⚠️ **and NOTHING was
+inherited from CTO round 40, which named `176621c` as the earliest ref at which
+all four are simultaneously true and `8b639b1` as the ref it would close at. Both
+were overtaken by `ce80120` before this run started.** ⭐ **[The close run, row by
+row](#m2-step-22s-close-run-at-ce80120-all-four-re-taken-and-the-four-merges-derived-rather-than-received).**
 
-⏳ **IN FLIGHT at `f898dbb`, MEASURED not received, in `wt/po32`:** ⭐ **`SK-08`
-on `feat/SK-08-delivery` (`wt/dev2n`, **4 commits**, head `23a4df1`) and `W59`
-on `refactor/W59-escape-move` (`wt/dev1l`, **1 commit**, head `a413107`).**
-⛔ **REPLACED, not appended beneath** — the cell here named `W57` (**merged
-`63eb00d`**) and did not name `W59` (**dispatched since**), and it read `SK-08`
-at **1 commit / `ebf6a65`** where the tree says **4 / `23a4df1`**. ⚠️ **One cell,
-stale on three independent counts — `PO-32/2`.**
+⏳ **OPEN: M2 step 2.3 — `SF-14`, `SF-27`. BOTH FREE, and the step's declared
+parallelism is TRUE for the first time in M2** — ⛔ **asserted from the EPIC and
+not inferred from step membership:** `SF-14` *Depends on* `SF-13` ✅, `SF-11` ✅;
+`SF-27` *Depends on* `SF-12` ✅, `SF-13` ✅ — ⭐ **all four dependencies are
+outside the step, so step 2.3 has NO in-step edge.** ⚠️ **What it has instead is
+a LOAD asymmetry, named here rather than discovered: `SF-14` is `team` (~80k) and
+`SF-27` is `solo` (~35k), against two developers.** ⛔ **Membership is
+`README.md`'s, state is this file's, and neither copies the other.** ⭐ **[step
+2.3, opened](#m2-step-23-open-both-rows-free-no-in-step-edge-and-a-load-asymmetry-named-at-open).**
+
+⏳ **IN FLIGHT at `ce80120`, MEASURED not received, in `wt/po33`:** ⭐ **`W61`
+alone, on `fix/W61-skill-fences` (`wt/dev2o`), at **ZERO commits** — dispatched,
+nothing authored yet (Ruling 130's construction).** ⛔ **REPLACED, not appended
+beneath** — the cell here named `SK-08` and `W59` as in flight and **both have
+merged** (`176621c`, `a37f827`), and it did not name `W61`, which the coordinator
+released the moment `SK-08` landed exactly as `PO-31`'s hold predicted.
+⚠️ **`PO-30/2` still applies: a commit count is a reading with an as-of, not a
+state.**
 
 ⛔ **INSTRUMENT (Ruling 130): `git worktree list` plus `git log --oneline
 release/m0-foundations..<branch>` over ALL 105 non-release branches, run in this
-worktree; 105 rows asserted against a population of 105 (Ruling 146).** ⭐ **Every
-other branch reads 0 ahead**, so the in-flight set is exactly these two.
+worktree; 105 rows asserted against a population of 105 (Ruling 146).** ⭐ **EVERY
+branch reads 0 ahead — including `fix/W61-skill-fences` itself** — ⚠️ **so
+`git log` alone would report an EMPTY in-flight set, and the only reason `W61` is
+known to be live is `git worktree list` plus this board.** ⛔ **That is exactly
+`CTO-38/2`'s amendment to Ruling 130 arriving as a live reading rather than as a
+caution: neither instrument is a superset of the other, the union is a LOWER
+BOUND, and this board is the only total instrument.**
+
+✅ **`PO-30/5`'s GATE IS DISCHARGED and stays discharged: `W57` merged `63eb00d`,
+so *`W57` lands before step 2.3 opens* was SATISFIED before the step opened.**
 
 ⚠️ **~~IN FLIGHT at `8146bdb`: `SK-05` (`wt/dev2m`, 4 commits) and `W40`
 (`wt/dev3c`, 4 commits)~~** — ✅ **BOTH MERGED, both APPROVED at CTO round 38:
@@ -73,21 +86,33 @@ clause it replaced would have printed nothing and exited **1**.** ⚠️ **`W45`
 (`1aa6319`) landed first, so its fix was proved against the live deferral before
 `W44` deleted it, which is the whole reason for that merge order.**
 
-⭐ **NEXT TWO DEVELOPER ROWS (round 32): `W63` then `W64` — the two marker rows,
-and the ORDER IS THE RULING.** ⛔ **`W63` teaches `marker_lines` the bulleted
-finding form; `W64` binds the marker contract to the kinds that carry findings,
-and `W64` DEPENDS ON `W63`** — ⚠️ **bind the kind first and 11 ruling records and
-1 survey go red in one commit, 76 lines of them.** ⭐ **[The placement, the
-dependency as an acceptance condition, and the instrument beside
-it](#round-32-the-two-marker-rows-in-the-ruled-order-with-the-dependency-as-an-acceptance-condition).**
+⭐ **NEXT TWO DEVELOPER ROWS (round 33): `W68` then `SF-27`.** ⛔ **`W68` is
+Ruling 153's gate walk and it is FIRST on a measured argument, not a preference:
+`tests/gate_coverage/`'s two repository-scoped tests walk the DISK, so their
+verdict depends on untracked, git-ignored state — §2e wearing a test — and EVERY
+AGENT NOW HAS A `.scratch/`.** ⚠️ **A nested checkout under it turns the suite
+red (`2 failed`, `assert 44 == 88`) while `git status --porcelain` prints
+NOTHING.** ⭐ **`SF-27` is step 2.3's `solo` product row and the one that fits a
+single slot; `SF-14` is `team` and must not be planned as a second solo slot.**
+⭐ **[The placement, `Owns` in Ruling 136's module form, and the R11 pre-dispatch
+sum](#round-33-the-next-two-rows-owns-in-ruling-136s-form-verified-at-ce80120-and-the-r11-pre-dispatch-sum).**
 
-⚠️ **~~NEXT TWO DEVELOPER ROWS (round 31): `W61` then `W59`~~** — ⛔ **SPENT AND
-RE-PLACED.** ⭐ **`W59` was DISPATCHED and is in flight (1 commit, `a413107`);
-`W61` is HELD by the coordinator until `SK-08` merges — its population is 3
-`SKILL.md` today and 4 predicted, and the CTO agreed the row should not ship
-knowing it is incomplete.** ⛔ **So one slot was taken and the other was
-withdrawn, and neither is available this round.** ⚠️ **The reasoning below is
-kept because it was right; only its two names are spent.**
+⚠️ **~~NEXT TWO DEVELOPER ROWS (round 32): `W63` then `W64`~~** — ⛔ **NEITHER WAS
+TAKEN, and both stay placed.** ⭐ **The coordinator spent the freed slot on `W61`
+instead, which had been HELD for `SK-08`'s merge and was released by it** —
+⚠️ **so round 32's pair is UNSPENT, not stale, and `W63` → `W64` keep their ruled
+order behind this round's pair.** ⛔ **The reasoning below is kept because it is
+still live.**
+
+⚠️ **~~NEXT TWO DEVELOPER ROWS (round 31): `W61` then `W59`~~** — ✅ **BOTH SPENT,
+AND THE HOLD PAID OFF.** ⭐ **`W59` merged `a37f827` (CTO round 40, APPROVE).
+`W61` was HELD until `SK-08` merged and went out the moment it did; it is in
+flight now at ZERO commits.** ⛔ **The hold's whole argument was that `W61`'s
+population was 3 `SKILL.md` and 4 predicted** — ⭐ **and the prediction was EXACT:
+`src/studyforge/skills/*/SKILL.md` reads **4** at `ce80120` (`adapter`,
+`delivery`, `onboarding`, `reconnaissance`).** ⚠️ **Dispatching it a round early
+would have shipped a fix that misses the newest instance and passes its own
+acceptance doing it — Ruling 138's argument, and it held.**
 
 ⚠️ **~~NEXT TWO DEVELOPER ROWS (round 31), the argument~~:** ⛔ **`W57` and
 `SK-08` are IN FLIGHT, so round 30's pair is SPENT; and step 2.2 has NO free
@@ -2802,6 +2827,411 @@ costumes — a check that conflates *"no"* with *"not asked"*.**
 | `W28` | not ignored | git could not be consulted | ⭐ **fixed** — `RULE_IGNORE_DECLARATION` |
 | `F18` | withheld from the reader | never was material | ⛔ **`SF-35`** |
 | `F25` | no origin declared | an origin was refused under R7 | ⛔ **`W41`** |
+
+---
+
+## ⛔ ROUND 33 — **M2 step 2.2 CLOSED at `ce80120`**, check 5 failed exactly where it predicted it would, and check 6's new instrument cannot run in the pinned image
+
+⭐ **Base, RE-DERIVED and never received, and per Ruling 147 EVERY count names its
+checkout BY ROLE — never by path (`CTO-40/10`).** ⛔ **Both readings are at the
+same ref, `ce80120`:**
+
+| reading | `wt/po33` (clean) | MAIN (`?? ONBOARDING.md`) |
+|---|---|---|
+| pinned suite | **3997 passed, 63 skipped**, exit 0 | — |
+| quality floor | **clean**, exit 0 | **clean**, exit 0 |
+| `ruff format --check` | **588** | ⛔ **589** |
+| document pointers | **191 in 208 md**, 0 unresolved | ⛔ **191 in 209 md**, 0 unresolved |
+| knowledge index | `none` (Ruling 108) | ✅ **`fresh — built at ce801208`** |
+
+⛔ **The lint denominator is DERIVED, never quoted (Ruling 81):** `py 427 +
+md 208 − 47 under tests/fixtures/ = 588`, and `ruff format --check`
+independently reports 588. **+1** for the user's untracked `ONBOARDING.md` in
+MAIN = **589**.
+
+⭐ **The suite number was predicted from the MECHANISM before it was run:**
+`git diff --stat 8b639b1 ce80120` is **one file, 750 insertions**, and that file
+is a handoff — ⛔ **no `.py`, no `src/`, no `tools/`, so the suite COULD NOT have
+moved off `3997 / 63`.** ⚠️ **A prediction from the previous reading would have
+given the same answer and would have been a forecast; this one is structural.**
+
+⭐ **All 63 skips named, with Ruling 142's instrument — the multiplicity is
+PARSED, not counted:** 55 `tests/visual/` (contrast **31**, capture **7**,
+offline **7**, no_script **5**, keyboard **5**), 5 `tests/docker/
+test_dev_image.py`, 3 `tests/test_knowledge_index.py`. ⚠️ **`grep -c '^SKIPPED'`
+reads **29** at this ref** — the trap Ruling 142 exists for, reproduced.
+
+### ⛔ ROUND 33 — the six wave-open checks, instrument, expectation written FIRST, reading
+
+⭐ **Ruling 128: where a reading is a COUNT the POPULATION is printed beside it.**
+⛔ **Ruling 146: every sweep below asserts its row count against a population
+declared before its loop.**
+
+| # | ⛔ **Instrument** | ⭐ **Expected, written first, from the MECHANISM** | ⭐ **Reading @ `ce80120`** |
+|---|---|---|---|
+| **1** | `docker/dev/check python3 -m tools.quality`, the `knowledge index:` line, **per checkout** | MAIN `fresh` (the coordinator rebuilds after a merge, Ruling 89); `wt/po33` `none` (Ruling 108) | ✅ **PASSES.** MAIN **`fresh — built at ce801208`**; `wt/po33` **`none`**. ⭐ **Expectation written before the run this time — `PO-32/8` not repeated** |
+| **2** | ``git grep -EIc '`\[(local\|structural\|none)\]`' ce80120 -- docs``, `wc -l` for files, `awk -F: '{s+=$NF}'` for lines | **~110 files**, from the mechanism: exactly **4** documents entered `docs/` since `f898dbb` (`SK-08`, `W59`, `PO-32`, `CTO-40` handoffs) and all four carry findings | ⭐ **110 files / 748 lines**, up **+4 / +46**. ⛔ **Files EXACT.** ⛔ **`[structural]` alone: 437 lines in 109 files.** ⚠️ **The delta list was re-taken under `LC_ALL=C` — `PO-33/6`** |
+| **3** | `git grep -In "Ruling <n>\b" ce80120 -- docs \| cut -d: -f1 \| sort -u` — ⛔ **FILES, not a count**, for each of **150–155** | ⛔ **0 of 6**, derived from the MECHANISM: `git show --stat 44783c7` shows the minting commit touched **ONE file, 750 insertions**, so no ruling *could* have reached a second artifact | ⛔ **0 OF 6, AS PREDICTED.** ⭐ **All six resolve to `CTO-2026-09-10-round40.md` and nothing else.** ✅ **All six carried in this commit → 6 of 6.** [The table](#round-33-all-six-rulings-carried-and-where) |
+| **4** | `git log --oneline --merges f898dbb..ce80120`, then every row whose fact that touches, **plus the head's own summary paragraphs** (`PO-29/6`) | **4 merges**; **4 stale rows**, and I can name three in advance — step 2.2's status, the in-flight cell, and `W61`'s hold | ⛔ **4 merges (16 commits) and FOUR stale rows**, all four in the head. ⭐ **The prediction was right in kind and in count** — [enumerated below](#round-33-check-4s-four-stale-rows) |
+| **5** | `grep -n 'Where to start' -A16 CLAUDE.md`, read against this board's head | ⛔ **FAILS.** Round 32 wrote down *"still the next round's first liability the moment `SK-08` merges"* — and `SK-08` merged at `176621c`, three merges ago | ⛔ **FAILS, EXACTLY AS PREDICTED.** It read *"In flight: M2 step 2.2"* while **no step-2.2 row was in flight and all four had landed**. ✅ **REPLACED this round.** ⚠️ **And a second, worse reading — `PO-33/9`** |
+| **6** | `git -C ../<repo> rev-parse --short HEAD` ×4; `grep -c '^### ' docs/integration-catalogue.md`; **AND `python3 -m tools.workspace verify`** | 4 unchanged refs; catalogue **20** (`SK-08` shipped entry 20); `workspace verify` **exit 1** on ISO, which Ruling 154 now says is a claim we should not be making | ⚠️ **HALF PASSES, and for a NEW reason.** Refs unchanged — ISO `6c8dc85` (**twelfth** run), Java `c9cf522`, SPARQL `b9aa89b`, CodeSignal `49c11d5e`; catalogue **20**. ⛔ **`workspace verify` exit **1** on the host — and it CANNOT RUN IN THE PINNED IMAGE AT ALL. `PO-33/1`** |
+
+### ⭐ And the seventh, standing from Ruling 113
+
+⛔ **EXPECTED, WRITTEN BEFORE THE RUN: `A_ROWS = 0`, `B_ROWS = 0`.** ⭐ Derived,
+not inherited from round 32's zero: `SK-08` added 23 files whose largest is
+`capability.py` at **310/400**, and `W59` moved one function between two modules
+in `corpus/manifest` — ⛔ **no branch since `f898dbb` has touched either nearest
+miss.**
+
+```text
+population declared before the loop:  427 .py files under src/ tools/ tests/
+ROWS=427 asserted against 427                                   [Ruling 146]
+rows at or over the ceiling (400 src / 600 tests)   ->  A_ROWS = 0   [as expected]
+declared size exceptions under src/ (Ruling 113 ast) ->  B_ROWS = 0   [as expected]
+A - B = 0        <- the THIRD consecutive zero
+
+   nearest miss:  tests/studyforge/corpus/container/test_document.py  598/600  headroom 2
+   nearest miss:  tests/docker/test_dev_image.py                      583/600  headroom 17
+   nearest miss:  src/studyforge/archive/scrub.py                     384/400  headroom 16
+   nearest miss:  tests/studyforge/corpus/manifest/test_document.py   562/600  headroom 38
+
+the population the `| wc -l` conceals, printed once:
+git grep -l 'Size exception:' -- src/ tools/ tests/   ->  4 files, all under tools/quality
+```
+
+⛔ **The two nearest misses are still `W67`, still unstarted, and `SK-08` landed
+23 new test files WITHOUT touching either** — ⭐ **which is luck, not a system,
+and is the reason `W67` keeps its place ahead of any row that adds a test to
+those two modules.**
+
+### ⛔ ROUND 33 — check 4's four stale rows
+
+⭐ **All four are in the head, which is `PO-29/6`'s population working as
+intended, and all four are REPLACED rather than annotated beneath.**
+
+| # | Where | ⛔ **What it said at open** | ⭐ **Corrected to** |
+|---|---|---|---|
+| 1 | head — the `##` status line | *"M2 STEP 2.2 IS OPEN"* | ✅ **CLOSED at `ce80120`**, four rows re-taken there. ⭐ **Step 2.3 is open** |
+| 2 | head — step 2.2's row cell | *"`SK-08` ⏳ — ONE ROW LEFT, and it is in flight"* | ✅ **`SK-08` merged `176621c`.** ⭐ **Replaced by the close run and by step 2.3's opening** |
+| 3 | head — ⏳ IN FLIGHT | *"`SK-08` (4 commits, `23a4df1`) and `W59` (1 commit, `a413107`) at `f898dbb`"* | ⛔ **BOTH MERGED** (`176621c`, `a37f827`). ⭐ **In flight is `W61` ALONE, at ZERO commits** — ⚠️ **and `git log` alone reports the set EMPTY. `PO-33/5`** |
+| 4 | head — next two rows / `W61`'s hold | *"`W63` then `W64`"* beside *"`W61` is HELD until `SK-08` merges"* | ⛔ **`W61` RELEASED and dispatched; round 32's pair NEITHER TAKEN.** ⭐ **`W63`/`W64` are UNSPENT, not stale — they keep their ruled order behind this round's pair.** ⚠️ **`W61`'s held population predicted **4** and measured **4*** |
+
+### ✅ M2 STEP 2.2'S CLOSE RUN AT `ce80120` — all four RE-TAKEN, and the four merges DERIVED rather than received
+
+⛔ **THE CLOSE REF IS `ce80120`.** ⭐ **Membership is `README.md`'s — line 168,
+*2.2 — SK-07, SK-05, SK-08, SF-13* — and this table is STATE, taken here,
+inheriting nothing.** ⚠️ **The instrument is one command per row and it is
+written down:** `git merge-base --is-ancestor <merge> ce80120`, **exit 0 = YES**.
+
+⛔ **NOTHING IS INHERITED FROM CTO ROUND 40, and the brief said so explicitly.**
+⭐ **That round named `176621c` as the earliest ref at which all four are
+simultaneously true, and `8b639b1` as the ref it would close at.** ⚠️ **Both were
+overtaken by `ce80120` before this run started** — ⛔ **which is Ruling 97's
+*chase-the-tip has no fixed point during a write-up* arriving for the third
+consecutive close, and the answer is the same each time: name the ref, take the
+rows there.**
+
+⭐ **AND THE FOUR MERGE COMMITS WERE DERIVED, not copied from the brief.**
+⚠️ **My first instrument was wrong and I am recording it: `git log --merges
+--grep=<task-id>` matches any merge that MENTIONS the id, so it returned
+`63eb00d` for `SF-13`, `9225d76` for `SK-05` and `a37f827` for `SK-08` — three
+PO/CTO round merges that merely name the task.** ⛔ **Anchored on the BRANCH
+instead — `--grep="^Merge [a-z]*/<id>-" -E` — each row returns exactly one
+merge.**
+
+| # | Row | merge (derived) | ⛔ **`--is-ancestor <merge> ce80120`** |
+|---|---|---|---|
+| 1 | `SF-13` — the site's contents as data | `abe7d1c` | ✅ **YES, exit 0** |
+| 2 | `SK-07` — corpus onboarding | `2e42c5b` | ✅ **YES, exit 0** |
+| 3 | `SK-05` — the authoring reference | `83f767e` | ✅ **YES, exit 0** |
+| 4 | `SK-08` — delivery planning | `176621c` | ✅ **YES, exit 0** |
+
+```text
+population declared before the loop: 4 rows, membership from README.md:168
+ROWS=4 asserted against 4                                       [Ruling 146]
+```
+
+⛔ **AND THE INSTRUMENT'S NEGATIVE CONTROL, because a check that answers YES to
+everything has checked nothing.** ⚠️ **My first control was VACUOUS and it is
+disclosed rather than dropped: I tested `chore/po-round33`, a branch cut FROM the
+close ref with zero commits, so the answer was trivially YES (`PO-33/8`).**
+⭐ **Re-taken as a DIRECTIONAL pair, which the relation must satisfy:**
+
+```text
+is-ancestor 176621c ce80120  ->  YES exit=0     <- the close direction
+is-ancestor ce80120 176621c  ->  NO  exit=1     <- inverted: must be NO
+is-ancestor 8b639b1 176621c  ->  NO  exit=1     <- a later ref is not an earlier one's ancestor
+```
+
+⭐ **AND THE STEP'S OWN CONDITION, which is not any row's:** ⛔ **the tree is
+green at the close ref, in the pinned image, in ONE CHECKOUT I NAME —
+`wt/po33`, clean** — **3997 passed, 63 skipped, exit 0; `quality floor: clean`,
+exit 0; `ruff check .` clean and `ruff format --check .` clean at 588.**
+
+⛔ **`SK-08/2` IS SPLIT AND DOES NOT BLOCK THIS CLOSE, and it is the SECOND
+consecutive close to carry one of these.** ⭐ **Ruling 151: E11's clause
+*"pointed at the Java corpus, it produces a backlog recognisably equivalent to
+this repository's own E07–E09"* is a reading taken inside a CONSUMER repository,
+and R20 keeps it out of a framework close.** ⚠️ **`SK-02/4` was handled the same
+way at step 2.1's close.** ⛔ **It is not silently dropped: the clause is removed
+from `E11` with its full text preserved beside the removal, and it is re-homed
+as `W73` on the integration side.**
+
+### ⏳ M2 STEP 2.3 — OPEN: both rows FREE, no in-step edge, and a load asymmetry named at open
+
+⛔ **MEMBERSHIP, from `README.md`:168 and not restated from memory: 2.3 —
+`SF-14`, `SF-27`.**
+
+⭐ **AND THE STEP'S PARALLELISM IS TRUE, asserted from the EPIC rather than
+inferred from step membership** — which is the rule `README.md` was corrected to
+at round 29, applied here for the first time to a step that actually satisfies
+it:
+
+| Row | Team | ⛔ **Depends on** (from `E03-rendering.md`) | ⭐ **In-step edge?** | **State @ `ce80120`** |
+|---|---|---|---|---|
+| `SF-14` — root index renderer | ⚠️ **`team`**, ~80k | `SF-13` ✅ (`abe7d1c`), `SF-11` ✅ (M1) | ⭐ **NONE** — both outside the step | `todo`, **FREE** |
+| `SF-27` — container page renderer | **`solo`**, ~35k | `SF-12` ✅ (M1), `SF-13` ✅ (`abe7d1c`) | ⭐ **NONE** — both outside the step | `todo`, **FREE** |
+
+⭐ **Two free product rows, zero in-step edges — the first M2 step where the
+plan's *"runs in parallel"* is literally true.** ⚠️ **What is NOT true is that it
+can be run two abreast by two developers: `SF-14` is `team` (~80k) against
+`SF-27`'s `solo` (~35k).** ⛔ **`team` means *dispatch a small team; subtasks
+listed*, so `SF-14` is not a second solo slot** — ⭐ **and that is the same
+sequencing fact `SK-07` carried in step 2.2, named at open rather than
+discovered by whoever is handed it.**
+
+⛔ **`SF-27` is greenfield, measured, not assumed:** `src/studyforge/render/`
+holds `assets`, `page`, `pageassets`, `templates` — ⭐ **no `container`** — and
+`tests/studyforge/render/` mirrors it. **`git ls-files` over `SF-27`'s declared
+surface returns ZERO tracked files.**
+
+### ⛔ ROUND 33 — all six rulings carried, and where
+
+⛔ **A ruling recorded only in a handoff has not landed, and
+`agent-protocol.md:598` says the carrying is MINE.** ⚠️ **Named with the literal
+string `Ruling <n>` in every cell, because check 3's instrument greps exactly
+that and `PO-32/9` was my own carry table being invisible to it.**
+
+| ruling | ⭐ **artifact it reached** | note |
+|---|---|---|
+| **Ruling 150** — three published counts disagree; none is authoritative | ⛔ **`docs/tasks/README.md` (header AND the per-milestone column) + `CLAUDE.md` item 2 + `W69`** | ⭐ **The count is struck in BOTH documents and neither replaces it with `91`.** ⚠️ **And the column was struck on a MEASUREMENT: it disagreed with README's own step lists in 2 of 9 rows — `PO-33/2`** |
+| **Ruling 151** — a framework Acceptance may not depend on a reading inside a consumer repository | `docs/conventions/review-rubric.md` ⛔ **+ `E11`'s Acceptance SPLIT + `W70` + `W73`** | ⭐ **The removed clause is quoted where it was removed**, with the two commands that refute it. ⛔ **Two rows, per the ruling: the sweep and the re-homed comparison** |
+| **Ruling 152** — one helper naming N faults, callers guarding fewer | `docs/conventions/review-rubric.md` ⛔ **+ `W71`** | ⭐ **Carried with the DETECTION recorded**, because an 8-versus-7 arithmetic mismatch in a written-first expectation was the entire signal and nothing was red |
+| **Ruling 153** — `.scratch/` holds artifacts, never a checkout | `docs/conventions/agent-protocol.md` (the Ruling 139 clause) **+ `docs/conventions/review-rubric.md`** ⛔ **+ `W68`** | ⛔ **BOTH calls carried, and the second is the one a reviewer will get wrong: the gate walk is NOT widened to skip nested checkouts.** ⭐ The `.gitignore` comment amendment rides with `W68` |
+| **Ruling 154** — `pinned` vs `tracked`; the pin means *a reading here depends on this* | ⛔ **`W72`**, and check 6's row above | ⭐ **NEITHER remedy taken**: no sibling is touched and no pin is advanced. ⚠️ **`self`'s `commit` is struck rather than checked** |
+| **Ruling 155** — a recorded negative takes `[local]`; `[none]` is a claim about emptiness | `docs/conventions/agent-protocol.md`, **in a FENCE** | ⭐ **A CORRECTION, not a row** — `W63` before `W64` unchanged. ⛔ **The fence is Ruling 73's remedy, and it is used because §8a's counter cannot fire on a `ruling record` at all (Ruling 148)** |
+
+### ⛔ ROUND 33 — the next two rows, `Owns` in Ruling 136's form, verified at `ce80120`, and the R11 pre-dispatch sum
+
+⛔ **PLACED, NOT DISPATCHED.** ⚠️ **`W61` is IN FLIGHT at zero commits, so one
+slot is already spoken for; these two are what the developers take as they come
+free.**
+
+| | ⭐ **Row** | ⛔ **Why it, and why in this order** |
+|---|---|---|
+| **NEXT 1** | ⛔ **`W68`** — the gate walk derives its repository-scoped population from `git ls-files` | ⛔ **THE CTO PUT IT FIRST AND THE ARGUMENT IS MEASURED, not deferential.** ⭐ **`tests/gate_coverage/`'s two repository-scoped tests walk the DISK from `repository_root()`, so their verdict depends on untracked, git-ignored state — §2e (Ruling 80) wearing a test.** ⚠️ **EVERY AGENT NOW HAS A `.scratch/`, and a nested checkout under it turns the suite red (`2 failed`, `assert 44 == 88`) while `git status --porcelain` prints NOTHING.** ⛔ **The next developer to follow Ruling 147's *measure in a clean checkout* hits this, and the one who already did lost a sweep to it** |
+| **NEXT 2** | ⭐ **`SF-27`** — the container page renderer | ⭐ **Step 2.3's product path, and the row that FITS a single slot.** ⛔ **`SF-14` is `team` (~80k) and must not be planned as a second solo slot** — ⚠️ **the load asymmetry is named at open, above, rather than discovered by whoever is handed `SF-14` alone.** ⭐ **Greenfield, both dependencies merged, and no in-step edge** |
+
+#### ⛔ `W65` DOES NOT GATE STEP 2.3 — measured, and it is my own row failing `PO-29/2`'s test
+
+⚠️ **Round 32 wrote `W65`'s `When` cell as *"AHEAD of `SF-15`, `SF-27` and
+`SF-14`* — the three rows that first render a full page, and therefore the first
+that could ship the shape".** ⛔ **Both halves fail a measurement:**
+
+```text
+git grep -c 'W65' -- docs/      ->  BOARD.md 5,  PO-2026-09-10-round32.md 1   (6 total)
+SF-14 / SF-27 definitions in E03-rendering.md, lines 230-300  ->  NO `W` row named
+src/studyforge/render/page/  ->  __init__ assets blocks document errors navigation section text
+```
+
+⭐ **First: `W65` reaches NEITHER definition.** A brief is built from the EPIC
+(`CTO-31/5`), so a start condition living only in a `When` cell on this board
+blocks nothing — ⛔ **which is `PO-29/2` exactly** (*"the gate never reached this
+board, and it blocked `W40` only in the CTO's own record"*), ⚠️ **this time with
+me as the office that wrote the unreachable gate.**
+
+⭐ **Second, and worse for the cell: the premise is FALSE.**
+`studyforge.render.page` already ships a complete unit-page renderer — merged in
+**M1**, by `SF-12`. ⛔ **So the first row that could ship a home path into a
+rendered page is not `SF-14`; it shipped a milestone ago.**
+
+⛔ **The consequence is NOT that `W65` is dropped — it is that `W65` gets MORE
+urgent and LESS blocking.** ⭐ **R7's third subject is already live in shipped
+code, so the sweep is overdue rather than premature; and `SF-27` is not held
+behind it.** ⚠️ **`W65`'s `When` cell is corrected below rather than left to be
+re-derived.**
+
+#### ⛔ `Owns` verified against the TREE in `wt/po33` @ `ce80120`, in Ruling 136's MODULE form
+
+⭐ **A module in Python's sense — no extension, not a directory.**
+
+| | `W68` | `SF-27` | ⏳ `W61` (in flight) | ⛔ **shared** |
+|---|---|---|---|---|
+| `src/` | ⭐ **none** | `studyforge.render.container` — ⭐ **greenfield, 0 tracked files** | `studyforge.skills` (**32**/400) + the 4 shipped `SKILL.md` — ⭐ **no `.py` under the skill packages** | ⭐ **none** |
+| `tools/` | ⭐ **none** | ⭐ **none** | ⭐ **none** | ⭐ **none** |
+| tests | `tests.gate_coverage.test_coverage` **202**/600 | `tests.studyforge.render.container` — greenfield | `tests.studyforge.skills.test_init` **10**/600 | ⭐ **none** |
+| other | `.gitignore` (Ruling 153's comment) | ⭐ **none** | ⭐ **none** | ⭐ **none** |
+| **Intersection** | | | | ⭐ **∅, all three pairwise** |
+
+⚠️ **`tests.gate_coverage.tell` (136) and `tests.gate_coverage` (94) are
+READ-ONLY for `W68`** — ⛔ **Ruling 153's first constraint is that the fix is at
+the CALL SITE and NEVER inside `document_readers`, which lives in `tell`.**
+⭐ **A change to either is a finding, not a diff.**
+
+⭐ **The R11 pre-dispatch sum (`PO-26/1`), run here and printed rather than read
+off a cell — and run under `LC_ALL=C` with both inputs sorted from the start
+(`PO-32/5`, which I repeated once this round anyway: `PO-33/6`):**
+
+```text
+population declared before the loop:  3 rows -> W68, SF-27, W61 (in flight);  3 pairs
+  surface W68 : 2 tracked  (.gitignore, tests/gate_coverage/test_coverage.py)
+  surface SF-27: 0 tracked  (greenfield)
+  surface W61 : 6 tracked  (skills/__init__.py, 4x SKILL.md, skills/test_init.py)
+
+  w68 x sf27 : 0 shared path(s)      no `comm` warning on stderr
+  w68 x w61  : 0 shared path(s)      no `comm` warning on stderr
+  sf27 x w61 : 0 shared path(s)      no `comm` warning on stderr
+PAIRS=3 asserted against 3                                      [Ruling 146]
+
+A_ROWS = 0   B_ROWS = 0   A - B = 0
+```
+
+#### ⛔ Ruling 75 — what `W68` and `SF-27` jump, named
+
+⭐ **FIFTEEN older unstarted rows: `W32`, `W34`, `W35`, `W36`, `W37`, `W38`,
+`W41`, `W42`, `W48`, `W50`, `W51`, `W53`, `W60`, `W63`, `W64`.** ⛔ **The licence
+is the one this board accepts — a MEASURED cost in shipped code.** ⚠️ **`W63` and
+`W64` were last round's placed pair and neither was taken; they are jumped by
+`W68` on the same argument that placed them — the instrument that would find a
+class of defect is the one currently broken — ⭐ except that `W68`'s instrument
+is broken in a way that produces a RED SUITE in somebody else's branch, which
+`W63`'s does not.**
+
+### ⛔ ROUND 33 — SIX ROWS MINTED: `W68`, `W69`, `W70`, `W71`, `W72`, `W73`
+
+⛔ **High-water mark moves `W67` → `W73`**, measured across every branch and both
+offices: `git grep -Iho '`W[0-9]\+`' ce80120 -- docs` tops out at **`W67`**
+(`W99` is the reserved sentinel). ⭐ **Every one of the six is a CTO ruling from
+round 40 that had reached no artifact: check 3 came back 0 of 6 at open.**
+
+#### ⛔ `W68` — the gate walk derives from the TREE, not the disk (Ruling 153)
+
+| | ⛔ **`W68`** |
+|---|---|
+| **What** | ⛔ **`test_no_fourth_tree_of_readers_exists_unnamed` and `test_every_named_tree_is_populated_so_the_bound_is_not_vacuous` derive their population from `git ls-files` instead of walking the disk.** ⭐ **Plus the `.gitignore` comment amendment that rides with it** |
+| **Why** | ⛔ **Their verdict depends on untracked, git-ignored state — §2e (Ruling 80) wearing a test rather than a floor check.** ⚠️ **Ruling 86a already made this call for ruff's denominator: derived from the TREE, never from the disk** |
+| ⛔ **Constraint 1 — the call site** | ⛔ **The fix is at the CALL SITE, NEVER inside `document_readers`.** ⭐ **`test_a_fourth_tree_is_caught_rather_than_scanned_past` plants a reader in a `tmp_path` OUTSIDE git and MUST keep passing**, so the walk stays disk-based and only the two repository-scoped tests change |
+| ⛔ **Constraint 2 — reading 2 is a TRACKED plant** | ⛔ **Ruling 140: adversarial to the search term.** A reader **committed** into a tree no `GATED_TREES` row names must still be **CAUGHT**. ⚠️ **If the tracked plant is not caught, the change has DELETED the gate while claiming to de-bias it — and it reads GREEN, because the untracked plant it was written against is now correctly invisible** |
+| ⛔ **The `.gitignore` amendment** | ⭐ **Ruling 139's comment predicts the QUALITY FLOOR failing (*"108 findings, every one inside `.scratch/`"*).** ⚠️ **What actually fired for `SK-08` was RUFF, via `tests/test_repository.py`, on a single scratch `.py`, one commit earlier in the run** — ⛔ **and it presents as a lint failure IN THE BRANCH, which cost that author a 15-row sweep whose baseline read `3 failed`.** ⭐ **Two mechanisms, one line fixes both, and only one was written down** |
+| **Owns** | `tests.gate_coverage.test_coverage`, and `.gitignore` |
+| **When** | ⛔ **NEXT 1 this round.** ⚠️ **Every agent now has a `.scratch/` and `git status --porcelain` will not warn them** |
+
+#### ⛔ `W69` — a closed check refusing a bare task-count literal (Ruling 150)
+
+| | ⛔ **`W69`** |
+|---|---|
+| **What** | ⭐ **A check that refuses the shape `**<n>** tasks` in `CLAUDE.md` and `docs/tasks/README.md`** — the enumerate-the-legal form, closed and cheap |
+| **Why** | ⛔ **Points 3 and 4 of Ruling 150 are promises otherwise.** ⚠️ **Three published counts disagreed — `87`, `89`, and a measured `91 live / 92 rows across 14 epics` — and the sharpest form is that `CLAUDE.md` line 23 was a CITATION of `README.md` quoting a different number than the document it cited** |
+| ⛔ **Ruling 123's three readings** | ⭐ **Reading 2 is planted as *the shape the clause forbids*: a count RE-SPELLED WITHOUT THE BOLD**, which is how the next one will be written. ⚠️ **A check that only catches the exact spelling it was written against catches nothing twice** |
+| ⭐ **The authority it defends** | `docs/capability-index.md` — **generated**, and `test_the_shipped_index_is_exactly_what_the_generator_produces_today` fails on a hand-edit. ⛔ **A ninety-second capability moves the document and the test together** |
+| ⚠️ **A HAZARD FOUND WHILE CARRYING RULING 150, and it is this row's hardest part** | ⛔ **My own correction reproduced the forbidden shape while striking it.** ⭐ **Measured in this commit before it was fixed: the corrections in `CLAUDE.md` and `README.md` each QUOTED the struck literal, and both matched the shape `W69` will refuse.** ⚠️ **This is Ruling 73's own distinction — a marker in prose is not a finding — arriving for a task count.** ⛔ **So `W69` must separate a LIVE CLAIM from a QUOTATION OF A STRUCK ONE, or it fires on the very paragraph that fixed the defect.** ⭐ **Both documents were re-worded so the shape is absent today and the check defends a genuinely green state** — ⛔ **but a re-wording is not a rule, and the rule is this row's** |
+| **Owns** | the new check's home under `tools.quality`, and its test mirror |
+| **When** | ⭐ **Behind `W68`.** ⛔ **Both documents are already corrected in this commit, so the check defends a green state rather than announcing a red one** |
+
+#### ⛔ `W70` — every Acceptance clause expressible as an `Acceptance` (Ruling 151)
+
+| | ⛔ **`W70`** |
+|---|---|
+| **What** | ⭐ **A sweep asserting that every Acceptance clause in `docs/tasks/E*.md` is expressible as a `studyforge.skills.delivery.Acceptance`** — which refuses a clause naming neither a command nor a named reviewer |
+| **Why** | ⛔ **THE CLASS HAS BEEN SPLIT THREE TIMES AND NEVER CHECKED ONCE** — `SK-02/4` (round 36), `SK-07` (Ruling 129, round 39), `SK-08/2` (round 40). ⚠️ **The third was sitting in `E11` while the second was being ruled on**, so a per-clause split is the symptom, not the remedy |
+| ⭐ **The first with an instrument** | `Acceptance` shipped with `SK-08` and **would have refused *"recognisably equivalent"*** on its own terms. ⛔ **This is the first time the class can be swept rather than noticed** |
+| ⛔ **Ruling 81 — no number is quoted here** | ⚠️ **Reading 1 is the LIVE POPULATION and it has NOT been taken.** ⛔ **The row's FIRST job is to take it; a count guessed in this cell would be the thing Ruling 81 forbids.** ⭐ Reading 2 is a planted opinion-clause that must be **REFUSED**; reading 3 a subject that cannot match |
+| **Owns** | the sweep's test module, and nothing under `src/` |
+| **When** | ⭐ **Behind `W68`.** ⚠️ **Not urgent — but it is the only row in the queue that turns a three-time recurrence into a build failure** |
+
+#### ⛔ `W71` — the tilde arm, and BOTH callers over all THREE shapes (Ruling 152)
+
+| | ⛔ **`W71`** |
+|---|---|
+| **What** | ⛔ **The missing tilde arm in `edits._reject_forbidden_target`**, plus a test that runs **both** callers of `_escape` over all **three** shapes, so the pair cannot diverge silently again |
+| **Why** | ⛔ **`~/notes.md` is ACCEPTED as a `permitted_edits` target today.** ⭐ `_escape` names three faults; `content._reject_absolute` refuses all three; `edits._reject_forbidden_target` guards only the leading `/` and `..` — ⚠️ **so *"begins with a tilde"* is unreachable from that call site, and a phrase no branch can reach is a missing guard** |
+| ⭐ **Why it was not fixed where it was found** | `W59`'s acceptance is **byte identity over 16 `str(ManifestError)` rows**; adding an arm changes behaviour inside a refactor, which is exactly what the byte proof exists to rule out. ⛔ **Reported, not smoothed, and the CTO ratified that call** |
+| ⚠️ **What its acceptance re-takes** | `W59`'s 16-row byte table, **which will legitimately move on ONE row** — ⛔ and the row that moves must be named in advance, not discovered |
+| **Owns** | `studyforge.corpus.manifest.edits` (**203**/400), and its test mirror |
+| **When** | ⭐ **Behind `W68`.** ⛔ **Must not run beside anything else owning `corpus.manifest`** — the same scheduling constraint `W59` carried |
+
+#### ⛔ `W72` — `pinned` vs `tracked`, and `self`'s commit STRUCK (Ruling 154)
+
+| | ⛔ **`W72`** |
+|---|---|
+| **What** | ⭐ **`workspace.json`'s `commit` field gains a meaning: A READING IN THIS REPOSITORY DEPENDS ON THIS EXACT COMMIT.** A component declares **`pinned`** — a disagreement is a real failure, remedied by *re-take the reading, then advance the pin, naming what was re-taken* — or **`tracked`**: present, last-seen recorded, moves without ceremony, reddens nothing |
+| ⛔ **NEITHER remedy from `PO-32/1` is taken** | ⭐ **Advancing the pin = this office asserting a commit inside a repository R20 forbids it to read.** ⭐ **Checking the component out = rewinding another owner's repository to satisfy a file in ours.** ⛔ **Nobody touches a sibling repository** |
+| ⭐ **The measurement that decides it — RE-TAKEN here, 6 rows asserted against 6, not received** | `CodeSignal` → **7** files under `tests/`, `tools/`, `src/`; `Claude-senior-java-engineer` → **2**; ⛔ **`ISO-8583-jPOS-tutorial`, `Claude-SPARQL-tutorial`, `code-server-toolchain` and `narrate-service` → **0** each, named by NO CHECK AT ALL.** ⭐ **So the ISO pin was never load-bearing, and the red goes away because the CLAIM was wrong — not because the number was updated.** ⚠️ **They become `pinned` on the day a reading here first depends on them, which is the day R20's argument starts running in our favour rather than against us** |
+| ⛔ **The `self` row is OUT OF SCOPE for this row, and it is ROUTED BACK** | ⚠️ **Ruling 154 strikes `self`'s `commit` on the ground that *"`tools.workspace verify` does not read it"*.** ⛔ **MEASURED HERE, THAT IS NOT TRUE.** ⭐ **`verify` reads it twice — `holds(directory, commit)` and `is_ancestor(commit, HEAD)` — and `tools/workspace/__init__.py:49-54` DOCUMENTS why equality is not used:** *"A file inside this repository cannot contain the hash of the commit that contains it… so the `self` row is verified as present locally and an ancestor of `HEAD`, which is the strongest true statement available, and equality is **unrepresentable** rather than merely unchecked."* ⛔ **So striking the field deletes a live check** — that the repository still HOLDS the recorded commit and that it is on `HEAD`'s history, which is what a rewind or a rewritten history would break. ⭐ **`W72` does the `pinned`/`tracked` split, which the measurement supports, and does NOT touch `self`.** ⛔ **`PO-33/7` routes the `self` question back to the CTO** |
+| ⚠️ **And a constraint this row must satisfy** | ⛔ **`tools.workspace verify` CANNOT RUN IN THE PINNED IMAGE** (`PO-33/1`). ⭐ **Whatever this row changes, it stays runnable on the host and says so in its own output** — the existing host-verified message is the model |
+| **Owns** | `workspace.json`, `tools.workspace` (**339** + **127**/400), `docs/conventions/workspace.md` |
+| **When** | ⭐ **Behind `W68`.** ⛔ **It is the row that makes check 6 honest, and check 6 runs at every wave-open** |
+
+#### ⛔ `W73` — the re-homed comparison, and it is the INTEGRATION side's (Ruling 151)
+
+| | ⛔ **`W73`** |
+|---|---|
+| **What** | ⭐ **The clause removed from `SK-08`'s Acceptance, re-homed:** *point the delivery skill at the Java corpus and compare the backlog it produces against `E07`–`E09`* — **as an integration-side reading, filed as findings** |
+| ⛔ **Why it is not a framework row** | ⭐ **Its subject is a reading taken INSIDE a consumer repository**, and R20 puts that outside a framework task's reach. ⚠️ **Two commands say so rather than an argument: the sibling is absent from a framework checkout (`exit=2`), and the package touches no filesystem at all — asserted by two shipped tests, `2 passed, 4043 deselected`** |
+| ⛔ **What it must NOT be** | ⚠️ **"Recognisably equivalent" names no instrument** — ⭐ **`Acceptance`, shipped by `SK-08`, would refuse the clause for naming neither a command nor a reviewer.** ⛔ **Whoever takes this row states the comparison as a command or names the reviewer, before running anything** |
+| ⭐ **Owner** | **PO-Integration / the integration agent.** ⛔ **It gates NO framework close, it did not gate step 2.2, and it is routed rather than assigned from here** |
+| **When** | ⚠️ **Not before `SK-08`'s skill has been run once in anger.** ⭐ **Recorded now so the clause is re-homed rather than deleted** — `SK-02/4`'s precedent |
+
+#### ⭐ `W65`'s `When` cell — CORRECTED, on the measurement above
+
+⛔ **`W65`'s *"AHEAD of `SF-15`, `SF-27` and `SF-14`"* is STRUCK.** ⭐ **It named
+no artifact either row's brief is built from, and its premise — that those are
+the first rows that could render a full page — is false: `SF-12` shipped
+`studyforge.render.page` in M1.** ⚠️ **`W65` is therefore OVERDUE rather than
+premature: R7's third subject is already live in shipped code.** ⛔ **It does not
+gate `SF-27` and it does not gate step 2.3.** ⭐ **`PO-33/4`.**
+
+### ⚠️ ROUND 33 — Ruling 149's governor DECLINED, and I am reporting it against myself
+
+⛔ **The rubric's fenced ratio moved `.150` → `.145` in this commit, and it is
+the first decline since Ruling 149 replaced the line count with the ratio.**
+⭐ **Measured with round 32's own method — lines INSIDE fences over total lines —
+so the two rounds are comparable:**
+
+```text
+round 32 base    344 / 2293  = .150
+round 32 result  362 / 2411  = .150
+round 33 base    362 / 2411  = .150
+round 33 result  367 / 2536  = .145      <- DOWN
+```
+
+⚠️ **Why: I added **125** lines to `review-rubric.md` and only **5** of them are
+fenced.** ⛔ **Ruling 151 and Ruling 152 are ARGUMENTS — a class closed after
+three instances, and a helper disagreeing with its callers — and neither reduces
+to a command a reviewer runs.** ⭐ **Ruling 153 is the exception and it carries
+its measurement in a fence, which is why the number moved at all.**
+
+⛔ **I am not smoothing this and I am not claiming the ratio is fine because the
+content is good** — ⚠️ **that is exactly the argument Ruling 149 was minted to
+stop being made about the line count.** ⭐ **It is reported at the point of
+change, with its cause, so the CTO can rule on whether a carry of
+argument-shaped rulings is a legitimate exception or whether those two rulings
+owe a pass condition each.**
+
+### Findings
+
+| id | kind | ⛔ **the finding** |
+|---|---|---|
+| **`PO-33/1`** | `[structural]` | ⛔ **Check 6's new instrument CANNOT RUN IN THE PINNED IMAGE, and Ruling 40 says the pinned image is where readings are taken.** **Measured** in `wt/po33` @ `ce80120`, 2026-09-10, both ways — **[measured]**: `docker/dev/check python3 -m tools.workspace verify` → *"this is the pinned image, which mounts one directory, so the sibling components cannot be seen from in here. This check is host-verified"*; the same command on the host → **exit 1**, ISO's HEAD `6c8dc851` against the pin `a94151747cb0`. ⭐ **So round 32's red reading was necessarily taken OUTSIDE the pinned image, and neither its board section nor its handoff says so.** ⚠️ **This is Ruling 147's subject one level up: a reading is a property of the ENVIRONMENT it was taken in, and `wt/po33` names the checkout but not the image.** ⛔ **`W72` inherits the constraint** |
+| **`PO-33/2`** | `[structural]` | ⛔ **`docs/tasks/README.md` disagreed with ITSELF about task counts, in 2 of 9 milestone rows.** **Measured** at `ce80120` by summing the document's own step lists — **[measured]**: **M1's table said 17, its steps enumerate 19; M2's table said 14, its steps enumerate 15.** ⭐ **In both, `docs/capability-index.md` sides with the step lists.** ⛔ **Ruling 150 named the header literal; this is the same mechanism one table down, and it had been wrong for at least two rounds in a document whose whole job is to order the work.** ⭐ **Both struck this round — the header cites the generated derivation and the column is gone** |
+| **`PO-33/3`** | `[local]` | ⛔ **My own summing instrument flagged a THIRD disagreement that does not exist.** **Measured** — my regex read `TC-00` out of M7's *"7.1 — EX-00 *(needs TC-00's pinned image)*"* and counted a parenthetical MENTION as a member, giving M7 **13** against a correct **12** — **[measured]**. ⭐ **Caught by reading the source line before the number reached a row.** ⚠️ **The two real disagreements were found by the same instrument in the same run**, so a clean instrument would have found them too — ⛔ **but a round that filed three and was right about two would have spent the CTO's time refuting my own regex** |
+| **`PO-33/4`** | `[structural]` | ⛔ **`W65`'s `When` cell gates nothing, and its premise is false — and it is MY row.** **Measured** at `ce80120` — **[measured]**: `git grep -c 'W65' -- docs/` resolves to **`BOARD.md` 5 and one PO handoff, 6 total**; ⭐ **it reaches NEITHER `SF-14`'s nor `SF-27`'s definition in `E03-rendering.md`**, and a brief is built from the EPIC (`CTO-31/5`). ⛔ **And `src/studyforge/render/page/` already ships `document`, `navigation`, `section`, `text` and `blocks` — a complete unit-page renderer, merged in M1 by `SF-12`** — ⚠️ **so *"the first rows that could ship the shape"* shipped a milestone ago.** ⭐ **`PO-29/2`'s class, with this office as the one that wrote the unreachable gate.** ⛔ **The consequence is that `W65` is MORE urgent and LESS blocking, which is the opposite of what a cell nobody re-measures usually costs** |
+| **`PO-33/5`** | `[local]` | ⛔ **A NEGATIVE result, recorded because I expected the in-flight sweep to find a commit and it found none.** **Measured** with Ruling 130's instrument over all **105** non-release branches, rows asserted 105-of-105, at `ce80120` — **[measured]**: **EVERY branch reads 0 ahead, including `fix/W61-skill-fences`, which is the one row actually in flight.** ⭐ **So `git log` alone reports the in-flight set as EMPTY while a developer is holding a worktree.** ⚠️ **`CTO-38/2`'s amendment to Ruling 130 said neither instrument is a superset of the other; this is that observed live rather than reasoned about** — ⛔ **and it is why the head's in-flight cell names `git worktree list` PLUS this board, and why a zero from `git log` is not evidence of an idle team** |
+| **`PO-33/6`** | `[local]` | ⛔ **I repeated `PO-32/5` — my own finding from one round ago — on the same tool.** **Measured** — check 2's first delta run piped unsorted `git grep -l` output into `comm`, which printed *"input is not in sorted order"* three times beside its answer — **[measured]**. ⭐ **Re-run under `LC_ALL=C` with both inputs sorted; the four-document answer was identical, and the R11 pre-dispatch sum was run correctly from the start.** ⚠️ **That the answer agreed is again LUCK, not corroboration.** ⛔ **A finding filed against oneself does not vaccinate the next round against the same reflex, and the honest conclusion is that the remedy has to live in the command, not in the memory** |
+| **`PO-33/7`** | `[structural]` | ⛔ **RULING 154'S SECOND CALL RESTS ON A CLAIM THAT IS FALSE, and the module refutes it in its own docstring.** ⭐ **Ruling 154 strikes `workspace.json`'s `self` commit because *"`tools.workspace verify` DOES NOT READ IT"*.** ⛔ **Measured** at `ce80120` — **[measured]**: `verify` reads it **twice**, `holds(directory, component.commit)` at `tools/workspace/__init__.py:293` and `is_ancestor(component.commit, head)` at `:302`; ⭐ **and `:49-54` states the design deliberately** — *"A file inside this repository cannot contain the hash of the commit that contains it… equality is **unrepresentable** rather than merely unchecked."* ⚠️ **What is true is the OBSERVATION underneath it: `6738559a` is 23 rounds stale and has never gone red — because an ancestor predicate cannot go red for a stale-but-ancestral commit, which is every commit on this branch.** ⛔ **So the field is WEAKLY checked, not unchecked, and striking it DELETES a real check** — the one that fires if history is rewound or rewritten. ⭐ **I have NOT rowed the strike; `W72` does the `pinned`/`tracked` split only, and the `self` question goes back to the CTO with this measurement.** ⚠️ **`received:` the `6738559a` reading and the *"no instrument reads it"* claim, both from `CTO-2026-09-10-round40.md` — ⛔ the first re-derived and confirmed, the second re-derived and REFUTED** |
+| **`PO-33/8`** | `[local]` | ⛔ **My first negative control on the close instrument was VACUOUS, and I ran it believing it was a control.** **Measured** — `git merge-base --is-ancestor chore/po-round33 ce80120` returned **YES**, and it had to: that branch was cut FROM `ce80120` and carries zero commits — **[measured]**. ⭐ **Re-taken as a DIRECTIONAL pair, which is a control the relation can actually fail: `176621c → ce80120` YES, `ce80120 → 176621c` NO, `8b639b1 → 176621c` NO.** ⚠️ **Disclosed rather than quietly replaced.** ⛔ **A control that cannot fail is not a control, and mine agreed with the four rows it was supposed to be independent of** |
+| **`PO-33/9`** | `[structural]` | ⛔ **THE `CLAUDE.md` AN AGENT IS HANDED IS NOT THE `CLAUDE.md` IN THE TREE, and check 5 only reads the tree.** **Measured** — **[measured]**: this session's own instructions quote *Where to start* as *"In flight: M2 step 2.1"*, while `git log -L 100,106:CLAUDE.md` shows the tree has said **step 2.2** since `ce3afcd` (PO round 28) — ⚠️ **a copy at least five rounds stale, delivered into the session as authoritative context.** ⭐ **Check 5's pass condition is therefore NECESSARY AND NOT SUFFICIENT: the file being right does not make what an agent receives right.** ⛔ **The remedy is not in this repository and I am not inventing one** — ⭐ **but the consequence is: `CLAUDE.md` already rules that live state belongs to `BOARD.md`, and this finding is the strongest argument yet for that rule, because the board is read from the tree at the moment of reading and this file is not** |
 
 ---
 

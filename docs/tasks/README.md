@@ -1,7 +1,22 @@
 # studyforge — task index
 
-**89 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
-`BOARD.md`**, not this file: this one orders the work, that one says where it is.
+⛔ **HOW MANY TASKS THERE ARE IS NOT WRITTEN HERE, and that is Ruling 150
+(CTO round 40).** ⭐ **The authority is the DERIVATION, and it is generated:
+[`../capability-index.md`](../capability-index.md) prints the live count, the
+per-milestone decomposition and every row, and a hand-edit to it fails
+`test_the_shipped_index_is_exactly_what_the_generator_produces_today`.**
+
+⚠️ **This line used to open with a bare count — **89** — while `CLAUDE.md` cited
+this document and quoted **87**.** ⛔ **The measured answer at `ce80120` was
+neither: **91** live capabilities, **1** cancelled row, **92** rows across
+**14** epic documents.** ⭐ **A reader who followed the citation was
+corrected by two and a reader who did not was wrong by four** — ⚠️ **and
+correcting `87` and `89` to `91` was REFUSED, because it buys exactly one round.
+This is the class `W38`'s literal `8` was struck for: a number that counts a
+growing population, written in prose, in two documents.**
+
+⭐ **Live status is `BOARD.md`**, not this file: this one orders the work, that
+one says where it is.
 Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R21** every
 task cites.
@@ -43,24 +58,33 @@ one page. The alternative — build every contract, then every renderer, then
 every service — hides all integration risk until the end, and integration risk
 is the kind that reorders plans.
 
-| | Milestone | What works when it lands | Tasks |
-|---|---|---|---|
-| **M0** | Foundations | An agent can start work without inventing anything | 6 |
-| **M1** | One page renders | A unit page from a fixture opens in a browser | 17 |
-| **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** | 14 |
-| **M3** | It speaks | Narration with highlight sync, and an honest media footprint | 10 |
-| **M4** | It is served | An origin, an API, and a record of practice passes | 7 |
+⛔ **THE PER-MILESTONE COUNT COLUMN IS STRUCK TOO (Ruling 150, PO round 33), and
+it is struck on a MEASUREMENT rather than on the principle.** ⭐ **The column
+disagreed with THIS DOCUMENT'S OWN STEP LISTS, three screens below it, in two of
+nine rows** — measured at `ce80120` by summing the step lines: ⚠️ **M1 said
+**17** and its own steps enumerate **19**; M2 said **14** and its own steps
+enumerate **15**.** ⭐ **In both, [`../capability-index.md`](../capability-index.md)
+sides with the step lists.** ⛔ **A document that disagrees with itself about a
+number it wrote twice is Ruling 150's mechanism one table down.**
+
+| | Milestone | What works when it lands |
+|---|---|---|
+| **M0** | Foundations | An agent can start work without inventing anything |
+| **M1** | One page renders | A unit page from a fixture opens in a browser |
+| **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** |
+| **M3** | It speaks | Narration with highlight sync, and an honest media footprint |
+| **M4** | It is served | An origin, an API, and a record of practice passes |
 
 ⭐ **A prose corpus is finished at M4.** Everything below is the **execution
 track**, entered only by material that is actually runnable (spec §11.0). A
 corpus with no graders that stops here is complete, not short.
 
-| | Milestone | What works when it lands | Tasks |
-|---|---|---|---|
-| **M5** | It runs code | Run and Submit against a pinned toolchain | 12 |
-| **M6** | The Java corpus reads | 166 units, narrated and navigable | 9 |
-| **M7** | The Java corpus has practices | Real exercises with proven graders | 12 |
-| **M8** | **It is a framework** | A further, unnamed source converted by the skills alone | 1 |
+| | Milestone | What works when it lands |
+|---|---|---|
+| **M5** | It runs code | Run and Submit against a pinned toolchain |
+| **M6** | The Java corpus reads | 166 units, narrated and navigable |
+| **M7** | The Java corpus has practices | Real exercises with proven graders |
+| **M8** | **It is a framework** | A further, unnamed source converted by the skills alone |
 
 **M2 is the biggest single jump in value** — it is the first state you would
 actually use, and for a prose corpus it is most of the way to done. **M1 is the
