@@ -47,7 +47,7 @@ depth 1.
     "exclude": [
       {
         "path": "depth-one/ALL.md",
-        "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, digest-identical to them joined. Ingesting it would read every unit twice."
+        "why": "whole-series aggregate: an ordered concatenation of 01, 02 and 03, digest-identical to them joined (C2). Ingesting it would read every unit twice."
       }
     ]
   },
