@@ -355,6 +355,39 @@ diff -r /tmp/a /tmp/b
 **Pass = identical**, or identical apart from `ingested` and stated as such
 (§6 requires the exception to be named, never silent).
 
+### ⛔ 2e — Ruling 80: a floor check's verdict may not depend on untracked state
+
+⚠️ **Found in `FND-08` review, latent, zero exposure on the day it was found** —
+which is the only reason it is a clause here rather than a fix in that diff.
+
+⛔ **A check that reads the filesystem answers about *this* checkout.** If its
+verdict can differ between a fresh clone and a working machine, it is not a
+check — it is a report on the reviewer's disk, and R10 is the rule it breaks.
+
+⭐ **The measured instance.** `tools/quality/pointers.py` resolves a link by
+asking whether the target **exists**. A generated or git-ignored artifact
+(`graphify-out/graph.json`, a built index) exists on a machine that built it and
+not in a fresh clone, so a document pointing at one is:
+
+| | fresh clone | machine that ran `graphify update .` |
+|---|---|---|
+| `[the index](../../graphify-out/graph.json)` | ⛔ **1 finding, exit 1** | ⭐ **clean, exit 0** |
+
+⛔ **Both runs are green-or-red for a reason that has nothing to do with the
+commit under review.** ⚠️ Today no document in the tree carries such a link, so
+the exposure is `0` — ⭐ **and a latent hole measured before it is written is the
+cheapest one this project ever closes.**
+
+⭐ **The rule.** A walk that honours `.gitignore` when choosing **what to read**
+honours it when deciding **what resolves**. The asymmetry is the defect.
+`config.ignored_paths()` already exists; a pointer at an ignored target is a
+finding **always**, never conditionally — ⛔ **failing in the safe direction, on
+every machine, for the same reason.**
+
+⚠️ **Generalised, because `pointers.py` will not be the last walk:** any check
+whose subject is *"does this path exist"* states, in its own contract, whether
+an untracked path counts — and answers the same way on both machines.
+
 ---
 
 ## 3. R11 — the size ceiling
@@ -620,6 +653,74 @@ later at the reviewer instead of the author.
 
 ⭐ **So the host run is a convenience and never the verdict.** If the container
 cannot be run, the review is **Blocked**, not APPROVE.
+
+#### ⛔ Ruling 77 — Ruling 31 does **not** reach ruff, and `tools/quality` keeps its independence
+
+⚠️ **`FND-08/4` asked whether `style.py`'s refusal to depend on ruff is Ruling
+31's shape. It is not, and the difference decides the fix.**
+
+⭐ **Ruling 31 is about *circularity*:** `tools/quality` may not import
+`studyforge` because the framework is its **subject**, and a checker that
+imports its subject dies when its subject breaks. ⛔ **Ruff is not this
+package's subject.** `tools/quality` does not check ruff, and ruff does not
+check `tools/quality`'s subject on its behalf. **There is no cycle, so Ruling 31
+is silent here.**
+
+⭐ **`style.py`'s independence rests on a different and still-sound argument,
+stated in its own docstring: *availability*.** The floor must hold on a clean
+checkout with no network — *"a check that can be skipped is a check that will
+be."* ⛔ **So the floor does not gain ruff.** Shelling out to an optional tool
+inside `check_style` would make the floor's exit code depend on whether
+somebody ran `pip install`, which is precisely what that docstring refuses.
+
+#### ⛔ Ruling 78 — the floor prints the **lint state**, including its absence
+
+⭐ **The defect `FND-08/4` actually found is not the split; it is the
+silence.** `python3 -m tools.quality` says `quality floor: clean` and means
+*the standard-library floor passed*. It has never meant *lint-clean*, and
+nothing in its output says so.
+
+⛔ **The floor gains a `lint` NOTICE — never a check** (`NOTICES`, beside
+`knowledge_index.notices`, which is the exact precedent: it prints *"none in
+this checkout … this is not a failure"*). It reports whether a linter was
+found, its version, and what it said. ⭐ **A notice that reports a tool's
+absence does not depend on that tool**, so Ruling 77 is untouched and the floor
+stays standard-library-only.
+
+⚠️ **Enforcement stays where it already is** — `tests/test_repository.py` fails
+the build where ruff exists. ⭐ **The notice supplies visibility of absence; the
+test supplies enforcement of presence.** Together they close the hole; neither
+does alone.
+
+#### ⛔ Ruling 79 — a review states its **lint line**, and `floor clean` never covers lint
+
+⚠️ **This is the third clause in this section written against the same
+mistake, and the first two were prose.** The amendment above was written after
+`SF-01` was approved over two unread `ruff not installed` skips. ⛔ **It did not
+hold.** Measured in one wave, by three agents, in three instruments:
+
+| Reported | Actually |
+|---|---|
+| `FND-08` — *"run the floor, then commit"* | ⛔ **4 `ruff` D401 errors passed the floor**, caught only by a test that skips when ruff is absent |
+| `SF-12` — host run green | ⛔ **15 ruff findings and 9 unformatted files** the image caught and the host did not |
+| round-22 review | ⛔ **2 of 3 tests missing from the host run were `ruff not installed`** — verbatim, four rounds after §4b was written |
+
+⛔ **So the pairing `"N passed, M skipped, floor clean"` is banned as a summary
+of a branch.** Both halves are true and neither covers lint; read together they
+assert a signal that did not exist.
+
+⭐ **A review states lint on its own line**, in §4b's existing four-state
+vocabulary and with the version that produced it:
+
+```
+Lint: pinned green — ruff 0.16.6 in the dev image, `check` + `format --check` both exit 0
+Lint: unpinned green — ruff 0.16.6 (the pinned version) outside the image; runtime unpinned
+Lint: did not run — ruff absent, both gates skipped        ⛔ NOT EVIDENCE (§4b)
+```
+
+⛔ **`did not run` is not evidence, so it cannot support APPROVE** — it is the
+row this table already calls *not evidence at all*, and a review that omits the
+lint line entirely is making that claim silently.
 
 ### 4c. The tests test the change
 
