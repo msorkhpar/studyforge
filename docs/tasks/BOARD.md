@@ -12,8 +12,8 @@ APPROVED and merged at `966ab30`.** ⏳ **Step 1.5 is OPEN: `SF-12`, then `QA-03
 `in-review` after it had merged.** ⛔ **Both errors are one cause: a status
 measured once and quoted later.**
 
-📏 **Base: 2570 passed / 8 skipped in the pinned container at `1b2d993`**, the
-release tip, quality floor clean. ⚠️ **`2568 / 8 @ `40731e4`` was written earlier
+📏 **Base: 2649 passed / 8 skipped in the pinned container at `c84ca2e`**, the
+release tip, quality floor clean. ⚠️ **Third base in one round** — `2568 @ 40731e4`, `2570 @ 1b2d993`, now this. ⚠️ **`2568 / 8 @ `40731e4`` was written earlier
 in this same round and was superseded before it was committed — see the close
 run's second pass.** ⚠️ **SUPERSEDES *"2490 / 8 at `a7c114b`"*,
 which was two merges behind when it was written and is now four.** ⭐ **The
@@ -780,8 +780,46 @@ ignore rule is exactly the half-present source that docstring refuses.**
 | **Owner** | ⛔ **Developer 1.** ⚠️ **`W25`, `W26`, `W27` and `FND-08` are all Developer 2's, on one surface** |
 | **Size** | ⭐ **Small.** One predicate, one fallback, `SKIP_DIRS` reduced to three |
 | **When** | ⛔ **before `SF-31` (M2).** ⚠️ **`F19` also lands before `SF-31`, on the same function's blind spot** — ⭐ **and a `sibling` build's 79 generated paths are git-ignorable, so this ruling is `F19`'s cheapest half too |
-| **Acceptance** | ⛔ **Re-run against the ISO corpus @ `08e6290`: `112` findings → **12**, and the 12 are `F18`'s 17 minus the 5 the `include` glob covers.** ⭐ **A number, not a green light** · a corpus root with no `.git` reports `Unchecked`, counted, not silently scanned · ⛔ **`node_modules` and `__pycache__` are GONE from `SKIP_DIRS`**, and a test asserts a corpus using neither ecosystem is unaffected |
+| **Acceptance** | ⛔ **AMENDED 2026-09-10 — see below. Name the SET, never the COUNT** |
 | **⛔ Not in scope** | ⛔ **`F18`'s 17 tracked-but-unclassified files.** ⭐ **That is the third state and it is the CTO's.** ⚠️ **A developer who "fixes" those too has answered a schema question in a bugfix** |
+
+#### ⛔ `W28`'s Acceptance, AMENDED — ⭐ **`W22` applied to an acceptance criterion**
+
+⛔ **The number I first wrote — *112 findings → 12* — was UNREACHABLE, and it
+pointed at the trap the task's own scope note ring-fences.** ⚠️ **Measured by
+PO-Integration after I scoped it, and reproduced here at `1e49225`: the include
+globs (`src/*.md`, `TestCases.md`) cover ZERO of the tracked-unclassified files,
+so the residual is 17, not 12.**
+
+⛔ **The only route to 12 is widening `include` over the five root files — which
+puts `README.md` in, and `README.md` becoming a unit is `F18`'s exact trap.**
+⭐ **So the number asked a developer to answer the schema question the scope note
+forbids them to answer.** ⚠️ **The scope note was right; the number contradicted
+it, in the same table.**
+
+⛔ **And a total could not have survived anyway.** ⭐ **`graphify-out/` has gone
+79 → 91 → 96 → 99 across this wave; the corpus total 100 → 112 → 117.**
+⚠️ ***"No fixed point"* is now five measurements** — ⛔ **so nothing in this
+acceptance may hard-code a total.**
+
+⭐ **Restated as a set, which is re-runnable where a total is a snapshot:**
+
+| # | ⛔ **The criterion** | Reference reading @ `1e49225` |
+|---|---|---|
+| 1 | ⭐ **Every path `git check-ignore` accepts contributes ZERO findings** — the whole of `graphify-out/`, `.claude/`, `.idea/` | **103**, and ⛔ **the number is illustrative, not the criterion** |
+| 2 | ⛔ **The residual is EXACTLY the tracked-but-unclassified set: `docs/studyforge/*` plus the five root files** `.gitattributes`, `.gitignore`, `CLAUDE.md`, `LICENSE`, `README.md` | **17** = 12 + 5. ⚠️ **12 today, 13 the next time that branch files a finding** |
+| 3 | ⛔ **`W28` MUST NOT SHRINK the residual.** ⭐ **It is `F18`'s third state, and shrinking it is answering `F18`** | — |
+| 4 | a corpus root with no `.git` reports `Unchecked`, counted, ⛔ **never silently scanned** | ⭐ **Ruling 69's one gap; already closed by this clause** |
+| 5 | ⛔ **`node_modules` and `__pycache__` are GONE from `SKIP_DIRS`**, and a test asserts a corpus using neither ecosystem is unaffected | — |
+
+⭐ **The decomposition is the assertion.** ⛔ **`117 = 103 ignored + 17 residual −
+3 excluded` reconciles; a bare `117` does not, and cannot be re-run tomorrow.**
+⚠️ **Their `verify.py` asserts the decomposition at `1e49225`** — ⭐ **so the
+framework side and the corpus side are checking the same shape from both ends,
+which is the first time that has been true.**
+
+⛔ **Relayed to Developer 1 by the coordinator mid-task, and this row is the
+version that agrees with them.**
 
 ⛔ **This does not touch spec §11.2.** ⭐ **The finding was filed as a spec/code
 disagreement and the re-run dissolved the spec half** — ⚠️ **which is why a
@@ -973,12 +1011,12 @@ because none of it existed when the wave opened.**
 |---|---|---|---|
 | **`SF-10`** | `done`, merged | ✅ **correct** | `966ab30` |
 | **`SF-10` survey** | `done` | ✅ **correct** | `13b2857` |
-| **`W25`** | ⛔ *"`todo` — NEVER STARTED. The branch is byte-identical to `HEAD`"* | ⛔ **FALSE — `in-review`, and APPROVED at second pass (unmerged; its migration set grew by two on the merges above).** Three commits: `tools/quality/handoffs.py` **split into a package** (`__init__.py` 259 + `contract.py` 229), four test modules, **72 migrations** across `handoffs/`, plus `agent-protocol.md` and `review-rubric.md` | `feat/W25-handoff-check` @ **`f77bb7d`** — 2629 / 8 |
+| **`W25`** | ⛔ *"`todo` — NEVER STARTED. The branch is byte-identical to `HEAD`"* | ⛔ **FALSE — `in-review` → APPROVED → ✅ `done`, MERGED at third pass.** Three commits: `tools/quality/handoffs.py` **split into a package** (`__init__.py` 259 + `contract.py` 229), four test modules, **72 migrations** across `handoffs/`, plus `agent-protocol.md` and `review-rubric.md` | `feat/W25-handoff-check` @ **`f77bb7d`** — 2629 / 8 |
 | **`SF-12` survey** | `in-progress` — *dispatched* | ⛔ **`in-review` at first pass → ✅ `done`, APPROVED and merged** | `1b2d993`; four escalations ruled, notably **one variant per page** |
-| **`W26`** | ⛔ **TWO ROWS, TWO MEANINGS** | ⛔ **see the disambiguation below.** ⚠️ **First pass: NOT STARTED, byte-identical to `40731e4`. Second pass: `in-review`** — ⭐ **22 mutants, 2 real survivors found and closed** | `fix/W26-gate-tell` @ **`283ae90`** — 2586 / 8 on its own base |
+| **`W26`** | ⛔ **TWO ROWS, TWO MEANINGS** | ⛔ **see the disambiguation below.** ⚠️ **First pass NOT STARTED → second pass `in-review` → ✅ `done`, MERGED at third pass** — ⭐ **22 mutants, 2 real survivors found and closed** | merged in `c84ca2e` |
 | **`W27`** | `urgent`, no status | ⛔ **`in-review` at first pass → ✅ `done`, APPROVED and merged** — three translation sites plus two `errors.py` contracts. ⭐ **`validate/corpus.py:157`'s dead `PersonalDataLeak` arm is reachable again, reproduced independently** | merged **`5c6c883`** |
 | **check 5 — `CLAUDE.md`** | ✅ at open | ⛔ **FAILS** — see below | `CLAUDE.md:102` |
-| **base measurement** | `2490 / 8 @ `a7c114b`` | ⛔ **four merges stale → `2568 / 8 @ `40731e4`` → ⛔ **stale again mid-round** → `2570 / 8 @ `1b2d993`` | tip |
+| **base measurement** | `2490 / 8 @ `a7c114b`` | ⛔ **`2568 @ 40731e4` → `2570 @ 1b2d993` → `2649 @ c84ca2e`.** ⚠️ **THREE times in one round** | tip |
 
 ### ⛔ `W25` is the mirror of `W25`, and that is not a typo
 
@@ -1011,6 +1049,44 @@ reason — and it will still be checkable next round.**
 | **63** | ⛔ **`F27`** — a ruling needs a carrier | ⭐ **pairs with wave check 6**; 63 is the mechanism, check 6 is the carrier |
 | **64** | ⛔ **`F26`** — rule-id stability | ⛔ **relay: `W27` merged, so `[manifest]` → `[personal-data]` for a home path in `corpus.json` has ALREADY happened** |
 | **65** | §8a's marker spelling | ⭐ **It caught its own author first — the CTO's handoff measured 17 findings against 8 real ones.** ⚠️ **Third instance this wave of a check finding its author** |
+
+### ⭐ Rulings 66–69 — two ratify mine, one narrows it, one is placed here
+
+| # | | ⛔ **What it changes** |
+|---|---|---|
+| **68** | ⭐ **RATIFIES *one minter per id space*, NARROWED** | ⛔ **Minting is about the ID, never the authority to decide.** ⭐ **C6 locates a ruling by its ARTIFACT, so an UNNUMBERED RULING STILL BINDS** — ⚠️ **without that clause every routing would wait on a CTO round, which is the opposite of what the rule is for.** ⛔ **My W26 ruling above must be read with it: the CTO was never asked to stop routing, only to stop numbering** |
+| **69** | ⭐ **needs no amendment** | the one gap the CTO checked — a corpus root with no `.git` — ⭐ **is already closed by `W28`'s criterion 4** |
+| **66** | ⛔ **`W25/8`'s remedy REFUSED as a no-op** | ⭐ **The shipped message already interpolates the marker, the 10-line window and the closed set.** ⚠️ **The survey's author simply wrote before the check existed.** ⛔ **Recorded so nobody spends a commit on an approved surface for a gap that is not there** |
+| **67** | ⛔ **`W26/1`: the root is correct — ASSERT THE BOUND, DO NOT EXTEND IT** | ⭐ **Three trees under three gates, not one hole.** ⛔ **Extending is refused by Ruling 31, and `tests/fixture_checks/corpus.py` stays ungated under Ruling 60's oracle-independence.** ⛔ **The defect is a bound asserted nowhere — and placing it is mine: see `W29`** |
+
+### ⭐ `W29` — Ruling 67's bound, placed
+
+| | |
+|---|---|
+| **What** | ⛔ **One constant naming the three gated trees, plus the docstring sentence that says why the fourth is ungated.** ⭐ **Not an extension — an assertion that the existing bound is the intended one** |
+| **Owner** | **Developer 2** — `tests/test_gate_coverage.py` is the surface they just finished in `W26` |
+| **Size** | ⭐ **Smallest on the board.** One constant, one sentence, one test |
+| **When** | ⛔ **with or immediately after `FND-08`**, same author, same wave |
+| **Acceptance** | the constant names the three trees · ⛔ **the docstring states why `tests/fixture_checks/corpus.py` is ungated, citing Ruling 60's oracle-independence** · a test fails if a fourth tree appears unnamed |
+| **⛔ Not in scope** | ⛔ **extending the gate to a fourth tree.** ⚠️ **Ruling 31 refuses it, and `W26/1` reads as if it were the fix** |
+
+### ⛔ Three findings from CTO round 20, carried
+
+- ⛔ **`CTO-20-2` — `W26/1`'s *"three"* is a count over an UNSTATED SET.** ⚠️ **The
+  raw tell finds 20 outside `src/`.** ⭐ **A recurrence of `CTO-19-8`, and the
+  second time this wave that a bare count turned out to be a fact about its
+  instrument** — ⛔ **which is `W29`'s whole reason for existing: name the set.**
+- **`CTO-20-3`** — `W26`'s handoff says 471 lines; measured **478**.
+- ⛔ **`CTO-20-5` — `po-round19` moved twice mid-review, THIRD ROUND RUNNING.**
+  ⚠️ **Accepted as a real cost, not deflected.** ⭐ **The mitigation is the one
+  already in force — every cell names its ref, so a moved branch is *visibly*
+  superseded rather than silently wrong** — ⛔ **but it does not make the reviewer's
+  re-read free, and this row exists so the next PO does not treat it as solved.**
+
+⛔ **MERGE ORDER, proved with a negative control: `po-round19` BEFORE
+`cto-round19`, always.** ⚠️ **Withholding this branch gives 3 failed, floor 1
+finding, merge exit 0, no conflict** — ⭐ **the fifth instance of the trial-merge
+clause, and the second caught before the merge.**
 
 ⛔ **Also approved as written: `FND-08` and `FND-09`, with all five prices
 reproduced, and walk 4's refusal STANDS.** ⭐ **A refusal surviving an
