@@ -8,11 +8,12 @@ modules that then drift apart.
 `is_test_file()` and `ceiling_for()` answer the questions every check asks
 about a path.
 
-**Depends on.** `pathlib` only.
+**Depends on.** `pathlib` and `re` only.
 """
 
 from __future__ import annotations
 
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -40,7 +41,27 @@ SIZE_EXCEPTION_MARKER = "Size exception:"
 
 #: Minimum characters of justification after the marker. Not a quality bar —
 #: it only stops `Size exception: yes` from being a way through the gate.
+#:
+#: ⚠️ Measured against the WHOLE justification, not the marker line. Measuring
+#: one line refused a long, correct, multi-line reason for being short
+#: (Ruling 114).
 MIN_JUSTIFICATION_CHARS = 20
+
+#: How a deferral is told apart from a design claim: its reason names a board
+#: row (review rubric 3c, Ruling 113). Two id shapes are in use — `SF-35`,
+#: `FND-01`, `OPS-05` (an epic prefix, a number, an optional letter suffix)
+#: and `W44` (the wave rows, which carry no hyphen).
+#:
+#: ⛔ Deliberately narrow, and the narrowness is the point. `R11` is a rule,
+#: `M2` a milestone, `C5` a constraint and `E08` an epic — none of them a row
+#: anybody can close, and a design claim has to stay free to cite them without
+#: being read as a deferral. Only `W` takes the hyphenless form.
+#:
+#: ⚠️ It answers *"is a row named here"*, never *"is that row live"*. Whether
+#: the id is a row still open is the wave-open sweep's question and a
+#: reviewer's, because this package may not read the board (it would be
+#: checking a document that changes hourly against a tree that does not).
+ROW_ID = re.compile(r"\b(?:[A-Z]{2,4}-[0-9]{1,3}[a-z]?|W[0-9]{1,3})\b")
 
 # --- R17: contracts --------------------------------------------------------
 

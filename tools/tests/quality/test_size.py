@@ -3,6 +3,11 @@
 The two acceptance cases for FND-01 are `test_oversized_source_module_fails`
 and `test_justified_oversized_module_passes`: the ceiling must actually stop a
 file, and the documented opt-out must actually let one through.
+
+Ruling 114's cases are the `--- a deferral ---` block. ⚠️ Its fixtures are
+pairs that differ ONLY in where a line breaks, because that is the whole
+defect: the reader made the visible reason a function of the author's return
+key. A fixture that changed the wording too would have proved nothing.
 """
 
 from __future__ import annotations
@@ -10,7 +15,15 @@ from __future__ import annotations
 from pathlib import Path
 
 from tools.quality import config
-from tools.quality.size import check_sizes, count_lines, module_docstring, size_exception
+from tools.quality.size import (
+    BOTH_FORMS,
+    check_sizes,
+    count_lines,
+    module_docstring,
+    row_ids,
+    size_exception,
+    size_exception_marker_line,
+)
 
 
 def write_module(root: Path, relative: str, text: str) -> Path:
@@ -142,3 +155,180 @@ def test_an_unparseable_module_is_measured_anyway(tmp_path):
     path = write_module(tmp_path, "src/studyforge/broken.py", body)
     assert module_docstring(path.read_text("utf-8"), path) is None
     assert [finding.rule for finding in check_sizes(tmp_path)] == ["size"]
+
+
+# --- a deferral (Ruling 114) ------------------------------------------------
+
+# ⚠️ The tree's one real deferral, copied here as a literal rather than read
+# off `src/studyforge/validate/source.py`. That file is `W44`'s and `W44`
+# deletes this paragraph, so a test that read it would fail the moment the row
+# it names does its job — and a fixture that expires when the defect is fixed
+# elsewhere is not a fixture.
+LIVE_DEFERRAL = (
+    "The two checks that read the material.\n"
+    "\n"
+    "Size exception: W44 splits this module into a package, and it is deferred to\n"
+    "that row rather than done here because this file crossed the ceiling only when\n"
+    "SF-35 and SF-36 merged — each is under it alone, and neither task may\n"
+    "restructure a file the other is concurrently editing.\n"
+)
+
+# The SAME deferral, same English, one word past the wrap.
+WRAPPED_DEFERRAL = (
+    "The two checks that read the material.\n"
+    "\n"
+    "Size exception: this module is split into a package by the row that owns\n"
+    "it, W44, and it is deferred there rather than done here because the file\n"
+    "crossed the ceiling only when two individually-legal branches merged.\n"
+)
+
+
+def test_the_justification_is_the_whole_paragraph_not_the_marker_line():
+    # ⛔ The defect Ruling 114 names: the reader stopped at the line break, so
+    # the reason a sweep printed was whatever fitted on one line.
+    reason = size_exception(LIVE_DEFERRAL)
+    assert reason.startswith("W44 splits this module into a package")
+    assert reason.endswith("the other is concurrently editing.")
+    assert "\n" not in reason  # joined, so a sweep can print it on one line
+    assert size_exception_marker_line(LIVE_DEFERRAL) == (
+        "W44 splits this module into a package, and it is deferred to"
+    )
+
+
+def test_the_justification_stops_at_the_next_blank_line():
+    docstring = (
+        "Thing.\n\nSize exception: one table, and splitting it would hide half\n"
+        "the placeholders from the reader of the other half.\n"
+        "\nDepends on. Nothing, and this paragraph is not the reason.\n"
+    )
+    reason = size_exception(docstring)
+    assert reason.endswith("the reader of the other half.")
+    assert "Depends on" not in reason
+
+
+def test_row_ids_finds_both_shapes_and_nothing_else():
+    assert row_ids("W44 splits this module") == ["W44"]
+    assert row_ids("SF-35 and SF-36 merged") == ["SF-35", "SF-36"]
+    assert row_ids("FND-05a is the row") == ["FND-05a"]
+    assert row_ids("W44, and again W44") == ["W44"]  # deduplicated, order kept
+    # ⛔ A rule, a milestone, a constraint and an epic are not rows anybody can
+    # close. A design claim must stay free to cite them.
+    assert row_ids("R11 is the ceiling, M2 the milestone, C5 a state, E08 an epic") == []
+    assert row_ids("") == []
+    assert row_ids(None) == []
+
+
+def test_a_deferral_with_its_id_on_the_marker_line_passes(tmp_path):
+    write_module(
+        tmp_path,
+        "src/studyforge/deferred.py",
+        module_of(config.SOURCE_LINE_CEILING + 25, LIVE_DEFERRAL.strip("\n")),
+    )
+    assert check_sizes(tmp_path) == []
+
+
+def test_a_deferral_whose_id_wrapped_is_refused(tmp_path):
+    # ⭐ The negative control for the test above: same English, same length,
+    # the id one word past the line break.
+    write_module(
+        tmp_path,
+        "src/studyforge/wrapped.py",
+        module_of(config.SOURCE_LINE_CEILING + 25, WRAPPED_DEFERRAL.strip("\n")),
+    )
+    findings = check_sizes(tmp_path)
+    assert len(findings) == 1
+    assert findings[0].rule == "size-exception-id"
+    assert "W44" in findings[0].message
+    assert "not on the marker line" in findings[0].message
+
+
+def test_a_long_justification_with_a_short_first_line_is_not_refused_for_length(tmp_path):
+    # ⛔ The false positive in the same function: `MIN_JUSTIFICATION_CHARS` was
+    # measured against the marker line, so a correct multi-line reason whose
+    # first line was short was refused for being short.
+    docstring = (
+        "Thing.\n\nSize exception: W44 splits it.\n"
+        "The reason it is not done here is that the file crossed the ceiling\n"
+        "only when two individually-legal branches merged, and neither task\n"
+        "may restructure a file the other is concurrently editing."
+    )
+    assert len(size_exception_marker_line(docstring)) < config.MIN_JUSTIFICATION_CHARS
+    write_module(
+        tmp_path,
+        "src/studyforge/short_first_line.py",
+        module_of(config.SOURCE_LINE_CEILING + 25, docstring),
+    )
+    assert check_sizes(tmp_path) == []
+
+
+def test_a_design_claim_naming_no_row_is_still_a_design_claim(tmp_path):
+    # ⭐ The id requirement binds deferrals only. A permanent design claim that
+    # happens to wrap must not acquire one.
+    docstring = (
+        "A template renderer.\n\nSize exception: the substitution table is one\n"
+        "literal mapping and splitting it across modules would hide half the\n"
+        "placeholders from the reader of the other half. R11 permits this."
+    )
+    assert row_ids(size_exception(docstring)) == []
+    write_module(
+        tmp_path,
+        "src/studyforge/claimed.py",
+        module_of(config.SOURCE_LINE_CEILING + 25, docstring),
+    )
+    assert check_sizes(tmp_path) == []
+
+
+# --- the remedy names both forms (Ruling 114, half two) ---------------------
+
+
+def test_both_forms_names_the_deferral_and_the_design_claim():
+    assert "<why splitting would be worse>" in BOTH_FORMS
+    assert "<TASK-ID> splits this module" in BOTH_FORMS
+    assert "goes on the marker line" in BOTH_FORMS
+
+
+def test_every_size_remedy_offers_both_forms(tmp_path):
+    # ⛔ The shipped messages named only the design claim — the ONE form the
+    # rubric had just excused — so the tool instructed the reader to write the
+    # inadmissible thing. Each of the three refusals must offer both.
+    write_module(tmp_path, "src/studyforge/none.py", module_of(config.SOURCE_LINE_CEILING + 1))
+    write_module(
+        tmp_path,
+        "src/studyforge/hollow.py",
+        module_of(config.SOURCE_LINE_CEILING + 1, "Thing.\n\nSize exception: yes"),
+    )
+    write_module(
+        tmp_path,
+        "src/studyforge/wrapped.py",
+        module_of(config.SOURCE_LINE_CEILING + 25, WRAPPED_DEFERRAL.strip("\n")),
+    )
+    findings = check_sizes(tmp_path)
+    assert sorted(finding.rule for finding in findings) == [
+        "size",
+        "size-exception-id",
+        "size-justification",
+    ]
+    for finding in findings:
+        assert BOTH_FORMS in finding.message
+
+
+# --- the tree itself --------------------------------------------------------
+
+
+def test_no_deferral_in_this_repository_hides_its_row_id():
+    # ⭐ The in-the-wild check, and it is written to outlive its one subject:
+    # it asserts the invariant over whatever exceptions the tree holds, so it
+    # stays true (vacuously) once `W44` deletes the only one there is.
+    root = Path(__file__).resolve().parents[3]
+    for path in config.python_files(root):
+        text = path.read_text(encoding="utf-8")
+        if count_lines(text) <= config.ceiling_for(config.relative(path, root)):
+            continue
+        docstring = module_docstring(text, path)
+        if size_exception(docstring) is None:
+            continue
+        if row_ids(size_exception(docstring)):
+            assert row_ids(size_exception_marker_line(docstring)), (
+                f"{config.relative(path, root)} defers to a row whose id is not on the "
+                f"marker line, so the wave-open sweep prints it without an id"
+            )
