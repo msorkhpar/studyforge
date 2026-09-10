@@ -178,7 +178,14 @@ and unaddressable titles are named in the report**, per the carried ruling above
 ⚠️ **Was M7, depending on JS-05.** Reversed: **E07's adapter is this skill's
 first output.** Its dependency is `validate` — the definition of done it
 scaffolds against — not the adapter it was previously copied from.
-**Owns** the adapter-authoring skill
+**Owns** `src/studyforge/skills/adapter/` and its mirror
+`tests/studyforge/skills/adapter/` — ⛔ **CORRECTED 2026-09-10 (PO round 26):
+this cell read *"the adapter-authoring skill"*, a prose label no command can be
+run against.** ⭐ **Verified at `d77cb85`: `skills/adapter/` has **0** files (it
+is a CREATE); `skills/reconnaissance/` has **10** — `SKILL.md`, eight modules and
+`__init__.py` — and its test mirror has **10**, which is the shape R12 requires.**
+⚠️ **The mirror is named because an `Owns` that names no test module is what a
+brief is built from** (`W39/3`).
 **Context** ~40k — spec §6; E07 as the reference adapter; SF-25 output
 
 **Definition.** Scaffolds an adapter for a shape SK-01 identified, **against
