@@ -41,8 +41,9 @@ Both are true and neither is a defect.
 | `errors` | `AddressError`, the only exception any of it raises |
 
 ⛔ **Depth 1 is the common case, not the degenerate one.** Two of the four
-designed source shapes have a single container level — SPARQL's `["course"]`
-and ISO-8583's `["group"]` — so nothing here is written for two levels and then
+designed source shapes have a single container level — one declares
+`["course"]` and another `["group"]`; **spec §4's table is where they are named**
+— so nothing here is written for two levels and then
 checked against one. Every function takes the depth as data and the tests run
 each of them at depths 1 through 4.
 """

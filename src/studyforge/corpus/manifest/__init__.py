@@ -12,7 +12,7 @@ existing files it may add to.
     manifest = load("corpus.json")
     manifest.depth                       # 2 — len(levels)
     manifest.parse_key("basics/01-intro") # an Address, checked against that depth
-    manifest.content.classify("src/ISO.md")   # Classification.EXCLUDED
+    manifest.content.classify("src/whole-series.md")  # Classification.EXCLUDED
     manifest.media.commits               # True — 'auto' commits
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 

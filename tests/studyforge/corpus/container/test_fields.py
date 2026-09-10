@@ -68,7 +68,7 @@ NOT_A_SOURCE_PATH = [
     ("../outside/x.md", "a path leaving the source root"),
     ("a/../../b", "a path leaving the source root"),
     ("~/corpus", "a path rooted at a home directory"),
-    ("~jane/corpus", "a path rooted at a home directory"),
+    ("~" + "jane/corpus", "a path rooted at a home directory"),
     ("/export" + HOME + "/x.md", "an absolute path"),
     ("C:" + USERS + "/x.md", "a path carrying a drive letter or scheme"),
     (r"\\host\home\jane\x.md", "a path written with Windows separators"),

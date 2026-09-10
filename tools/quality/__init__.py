@@ -64,6 +64,7 @@ from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.report import Finding, format_findings
 from tools.quality.size import check_sizes
+from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
 
 #: Every check, in the order their findings are reported. Adding a check means
@@ -73,12 +74,19 @@ from tools.quality.style import check_style
 #: than the Python files under `SCAN_ROOTS`. R7 has been violated in this
 #: repository once already and it was in a document, so a sweep confined to
 #: `.py` would have missed the only instance there has been.
+#:
+#: ⚠️ `check_source_names` is its mirror image: the only one that reads
+#: **less** than `SCAN_ROOTS`, because R1 binds framework source and a
+#: document must be able to name a corpus or the measurements it holds become
+#: unattributable. ⛔ That narrowing is the whole exemption mechanism — a
+#: module cannot be excused, and nothing is scanned that would need excusing.
 CHECKS = (
     check_sizes,
     check_mirrors,
     check_docstrings,
     check_style,
     check_personal_data,
+    check_source_names,
     check_knowledge_index,
 )
 

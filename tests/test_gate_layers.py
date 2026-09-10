@@ -52,7 +52,7 @@ MATRIX = (
     ("POSIX home path", f"{HOME}/material/README.md", (REFUSES, REFUSES, REWRITES)),
     ("macOS home path", f"{USERS}/material/README.md", (REFUSES, REFUSES, REWRITES)),
     ("tilde-rooted path", "~/material/README.md", (REFUSES, PASSES, REWRITES)),
-    ("tilde-username path", "~jane/material/README.md", (REFUSES, REFUSES, REWRITES)),
+    ("tilde-username path", "~" + "jane/material/README.md", (REFUSES, REFUSES, REWRITES)),
     ("home under a longer prefix", "/export" + HOME + "/x.md", (REFUSES, PASSES, REWRITES)),
     ("Windows drive home path", "C:" + USERS + "/x.md", (REFUSES, REFUSES, REWRITES)),
     ("UNC share home path", r"\\host\home\jane\README.md", (REFUSES, PASSES, REWRITES)),

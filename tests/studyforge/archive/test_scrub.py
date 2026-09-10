@@ -38,6 +38,7 @@ from studyforge.archive.scrub import (
 from tests.support import repository_root
 
 HOME = "/" + "home/jane"
+TILDE_USER = "~" + "jane"
 USERS_HOME = "/" + "Users/jane"
 BEARER = "Bearer " + "eyJhbGciOiJIUzI1NiJ9"
 EMAIL = "jane.doe@example.invalid"
@@ -332,23 +333,32 @@ def test_and_the_serialised_form_would_have_matched():
 # --------------------------------------------------------------------------
 
 
-def test_the_pattern_set_is_exactly_the_three_environmental_shapes():
+def test_the_pattern_set_is_exactly_the_four_environmental_shapes():
     # ⛔ Every one reaches a document because of *whose machine and whose
-    # account ran the build*. A fourth entry needs that argument made for it.
+    # account ran the build*. ⚠️ This test said **three** and its comment said
+    # "a fourth entry needs that argument made for it" — and the argument was
+    # made by Ruling 47, from the other side: the repository hygiene check had
+    # swept `<host>.local` since FND-01 and this gate never did. ⛔ A machine
+    # name is personal data in an archive document exactly as much as in a
+    # source file, so the omission was drift rather than a decision. A fifth
+    # entry still needs the argument made for it.
     assert [name for name, _pattern, _placeholder in SHAPES] == [
         "home path",
+        "local hostname",
         "email address",
         "bearer token",
     ]
 
 
 def test_a_tilde_username_is_the_same_shape_as_a_slash_home_path():
-    # ⭐ **Two spellings of one shape, not a fourth entry.** `~jane/notes` and
+    # ⭐ **Two spellings of one shape, not a new entry.** `~<name>/notes` and
     # `/home/<name>/notes` name the same account by the same structural
     # anchor, so the ruling above — three environmental shapes — is untouched
     # covering it. ⛔ Ruling 44 reported this one as passing clean.
-    assert shape_in("built from ~jane/material") == "home path"
-    assert scrub("built from ~jane/material") == f"built from {HOME_PATH_PLACEHOLDER}/material"
+    assert shape_in(f"built from {TILDE_USER}/material") == "home path"
+    assert scrub(f"built from {TILDE_USER}/material") == (
+        f"built from {HOME_PATH_PLACEHOLDER}/material"
+    )
 
 
 @pytest.mark.parametrize("text", ["about ~5/6 of it", "~50 lines/file", "see foo~bar/baz"])

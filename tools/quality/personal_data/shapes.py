@@ -57,7 +57,16 @@ SHAPES = (
         # which is how a document about this rule stays swept AND clean. A
         # comment that spelled out a plausible account name instead would be a
         # finding against this very file — correctly.
-        re.compile(r"(?<![\w.])/(?:home|Users)/[A-Za-z0-9._\-]+"),
+        # ⭐ The tilde branch arrived by Ruling 47: `~<name>/notes` names an
+        # account by the same anchor as `/home/<name>/notes`, and this check
+        # swept only the second while `archive.scrub` swept both. ⚠️ The
+        # branch below `~/` is deliberately NOT covered — see the note above,
+        # which still holds: a bare tilde is a reference, not a value. A
+        # leading letter and a following slash keep `~5/6` out.
+        re.compile(
+            r"(?<![\w.~])(?:/(?:home|Users)/[A-Za-z0-9._\-]+"
+            r"|~[A-Za-z][A-Za-z0-9._\-]*(?=/))"
+        ),
     ),
     (
         "email address",

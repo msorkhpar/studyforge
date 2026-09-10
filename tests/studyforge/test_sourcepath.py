@@ -25,7 +25,7 @@ NOT_A_SOURCE_PATH = [
     (f"{HOME}/material/README.md", "an absolute path"),
     ("/export" + HOME + "/material/README.md", "an absolute path"),
     ("~/material/README.md", "a path rooted at a home directory"),
-    ("~jane/material/README.md", "a path rooted at a home directory"),
+    ("~" + "jane/material/README.md", "a path rooted at a home directory"),
     ("../outside/x.md", "a path leaving the source root"),
     ("a/../../b.md", "a path leaving the source root"),
     ("C:" + USERS + "/material/README.md", "a path carrying a drive letter or scheme"),

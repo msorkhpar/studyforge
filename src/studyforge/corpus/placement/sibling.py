@@ -10,7 +10,7 @@ directory holding that unit's `origin`, named from the unit's own stem.
 ## Why this profile exists
 
 ⭐ **It is what lets the framework enhance a repository instead of restructuring
-it** (R3). The Java corpus's reader already knows their way around
+it** (R3). A consuming corpus's reader already knows their way around
 `16-streams-api/`; a generated site that moved their material somewhere else
 would be a site they had to learn twice. So the page appears beside the
 `README` it was made from, and the `README` is untouched.

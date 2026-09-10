@@ -7,8 +7,8 @@ make legal.
 
 **How you use it.** `parse_edits(value, content)` while parsing a manifest;
 `edit.reversal` to describe the undo. ⛔ **`OPS-05` reads the declaration**; it
-never hardcodes a corpus's exception. The Java repo's additive
-`<module>practice</module>` line in the root `pom.xml` is one entry in this
+never hardcodes a corpus's exception. The first consuming corpus's additive
+`<module>practice</module>` line in its root build file is one entry in this
 list, not a special case in the framework.
 
 **Depends on.** `content` (for the third prohibition — see below) and
@@ -32,7 +32,7 @@ R3 names them, and this module refuses each **however declared**:
    is the one that used to be unenforceable prose. It is checkable now,
    because `content` exists: **a file that the corpus's own `content` policy
    classifies as INCLUDED is content**, and editing it is refused. That is why
-   X1 and R3 belong in one release. ⚠️ The ISO corpus is the live case: its
+   X1 and R3 belong in one release. ⚠️ One designed shape is the live case: its
    `permitted_edits` is `[]` and its `README.md` is material, so the check
    holds it there structurally rather than by anyone remembering.
 

@@ -29,16 +29,25 @@ is not redundancy but the news that an upstream stage failed (R6).
 ## The pattern set is ruled, and it is short
 
 ⭐ **The gate's question is not "is this string identifying?" but "did this
-build put it there?"** (CTO on X2 and on FND-02 finding 3). Three shapes pass
+build put it there?"** (CTO on X2 and on FND-02 finding 3). Four shapes pass
 that test and they are all that ship:
 
 | shape | why it is environmental |
 |---|---|
 | home path | `/home/<name>` carries the account name of the machine that ran |
+| local hostname | `<host>.local` **is** the name of the machine that ran |
 | email address | an address in captured material came from a signed-in session |
 | bearer token | a credential minted for whoever authenticated |
 
-⛔ **No payment-card pattern.** ISO-8583's material carries 96 card-shaped
+⚠️ **The fourth arrived by Ruling 47 and it was drift, not a new idea.** The
+repository hygiene check has swept `<host>.local` since FND-01 and this gate
+never did — ⛔ and a machine name is personal data in an archive document
+exactly as much as in a source file. ⭐ *One shape vocabulary, two policies*:
+the two checks may differ in what they **do** and may not differ in what they
+**recognise** without saying why. `docs/conventions/personal-data-shapes.md`
+is that table, and every divergence left in it carries a reason.
+
+⛔ **No payment-card pattern.** One designed shape's material carries 96 card-shaped
 digit strings because a test PAN is the *subject of the lesson*; a gate that
 refuses rather than rewrites would refuse the whole corpus with a diagnosis
 that looks exactly like a leak. The gate is not a content classifier.
@@ -132,6 +141,7 @@ from collections.abc import Callable, Iterator
 HOME_PATH_PLACEHOLDER = "/path/to/project"
 EMAIL_PLACEHOLDER = "contact@example.com"
 TOKEN_PLACEHOLDER = "Bearer <redacted>"
+HOSTNAME_PLACEHOLDER = "host.invalid"
 
 #: `(name, pattern, placeholder)`. ⛔ Every entry is a *shape*: this module
 #: contains no real identifier of any kind, which is the property that lets it
@@ -161,6 +171,15 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
             r"(?<![\w.~])(?:/(?:home|Users)/[A-Za-z0-9._\-]+|~[A-Za-z][A-Za-z0-9._\-]*(?=/))"
         ),
         HOME_PATH_PLACEHOLDER,
+    ),
+    (
+        "local hostname",
+        # ⛔ The mDNS suffix, and the trailing guard keeps `settings.local.json`
+        # — a filename, not a host — out of it. Word for word the repository
+        # hygiene check's pattern, because Ruling 47 is that the two gates
+        # share a vocabulary; the placeholder is this module's own.
+        re.compile(r"(?<![\w.])[A-Za-z0-9-]+\.local(?![\w.])"),
+        HOSTNAME_PLACEHOLDER,
     ),
     (
         "email address",
