@@ -1,0 +1,20 @@
+<footer id="player">
+<div id="track" role="progressbar" aria-label="Progress through this unit" aria-valuemin="0"><div id="fill"></div></div>
+<div>
+<button id="previous" type="button" aria-label="Previous passage">&#8592; Prev</button>
+<button id="play" type="button" aria-label="Play narration">Play</button>
+<button id="next" type="button" aria-label="Next passage">Next &#8594;</button>
+<select id="speed" aria-label="Playback speed">
+<option value="0.75">0.75&#215;</option>
+<option value="1" selected>1&#215;</option>
+<option value="1.25">1.25&#215;</option>
+<option value="1.5">1.5&#215;</option>
+<option value="1.75">1.75&#215;</option>
+<option value="2">2&#215;</option>
+</select>
+<span><span id="where"></span><span id="counter"></span></span>
+<span id="status" role="status" aria-live="polite"></span>
+<p>Space plays and pauses. Left and right arrows move to the next passage and scroll it into view. Click any paragraph to start reading from there.</p>
+</div>
+</footer>
+<audio id="narrator" preload="none"></audio>
