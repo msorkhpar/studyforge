@@ -36,6 +36,36 @@ needs replacing.** ⚠️ **And the tell that you are writing the wrong one** is
 you can always think of one more entry — ⭐ **an open set is one you can extend
 without deciding anything, which is exactly why it never gets finished.**
 
+### ⛔ The domain limit — and read this before applying the rule above
+
+⚠️ **This rule is not universal, and without the boundary the next author will try
+to invert a set nobody can write down.** Carried from Ruling 44.
+
+> ⛔ **Where the legal set is *enumerable* — keys, versions, profiles, skip
+> causes, contract fields — enumerate it.**
+> ⛔ **Where it is *free text*, the forbidden list is forced and
+> known-incomplete *by construction*, and the answer is never a longer list: it
+> is defence in depth, every layer asserted, because no layer is sufficient.**
+
+⭐ **The personal-data gate is the worked example, and it is why the boundary had
+to be written down.** *"You cannot enumerate the legal here: the permitted set is
+**all text that is not personal data**, which nobody can write down."*
+
+⚠️ **So a forbidden list is not automatically a defect — sometimes it is the only
+representable thing.** ⛔ **What changes is what you owe when you write one:**
+
+- **Never** treat its length as progress. A longer list is not a stronger claim.
+- **Assert every layer independently**, because the argument for depth is
+  precisely that no single layer is sufficient — ⚠️ **an unasserted layer is an
+  assumption wearing a defence's clothes.**
+- **Say in the docstring that the list is known-incomplete**, so the next reader
+  does not mistake it for a closed set and stop adding layers.
+
+⭐ **The distinction to carry: enumerability is a property of the domain, not a
+choice the author makes.** Ask whether the permitted set can be written down. If
+it can, the forbidden list is a defect. **If it cannot, the forbidden list is
+forced — and depth, not length, is the remedy.**
+
 ## Size
 
 | Unit | Soft ceiling | On exceeding |

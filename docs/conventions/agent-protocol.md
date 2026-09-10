@@ -174,6 +174,29 @@ preserved a **wrong** check behind a cleaner branch.
 arriving in a contract rather than in a validator** — and the cheapest form of it
 is the one where nothing gets built at all.
 
+### ⛔ Every negative control is itself run negatively
+
+⭐ **Show the probe failing on the defect before trusting it to pass.**
+
+⚠️ **Four instances in one session, and the pattern is what makes it a rule:** an
+`mv` that reported 38 passed; a rubric edit whose comment swallowed a colon and
+broke collection; a formatter; and ⛔ **a probe that reported all four gate shapes
+REFUSED because `leaks()` returns a generator and the prober tested
+truthiness.**
+
+⛔ **The last one is the dangerous shape, and it was a *verification of somebody
+else's finding*.** ⚠️ **Had the finding been false, a real R7 hole would have been
+closed on the strength of a probe that could not fail.** A green probe and a
+correct system are indistinguishable from the outside — ⭐ **which is the whole
+reason a control has to be shown failing first.**
+
+⚠️ **All four were probes** — a reviewer's or a coordinator's — ⛔ **never a
+task's own tests, where *watch it fail first* already applies.** ⭐ **That is the
+gap: the discipline existed for code under test and not for the instruments used
+to decide whether code needs testing.** A probe is how a finding gets verified
+before it becomes a task, so an unfalsifiable probe corrupts the input to
+everything downstream.
+
 ### ⛔ Hold it, or point at where it is held — never point at a document that points back
 
 ⭐ **Rated the best finding of its round, and it is the pointer rule's own failure
