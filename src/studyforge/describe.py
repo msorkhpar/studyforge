@@ -76,6 +76,17 @@ def describe_keys(keys: object) -> str:
     refused. This asks what a string *can hold*, which does not depend on
     anybody keeping a list current.
 
+    ⚠️ **What a plain key can still be, said plainly: a bare lowercase word —
+    and a person's given name, surname or username is one.** `jane` is a valid
+    lowercase identifier, so this function names it. ⛔ The guarantee is
+    *categorical, not total*: it rules out the composite forms — a path, an
+    address, a URL, a token, a hostname — because each needs a character the
+    pattern forbids, and it does not rule out a word. ⭐ What makes that the
+    right trade is that a key is a **field name reported apart from its
+    value**: naming an unrecognised key says which slot was misspelled and
+    reproduces nothing anybody wrote *into* it. ⛔ So pass keys here, never
+    values — `describe` is the function for a value, and it refuses them all.
+
     ⚠️ Anything else is counted rather than shown, so a caller always learns how
     many keys it did not recognise even when none of them can be quoted.
     """
