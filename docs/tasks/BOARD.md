@@ -4,8 +4,9 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-✅ **M0 COMPLETE. M1 steps 1.1 and 1.2 COMPLETE.** **In flight: M1 step 1.3.**
-Release tip pinned at **1512 passed / 46 skipped**, floor clean.
+✅ **M0 COMPLETE. M1 steps 1.1 and 1.2 COMPLETE.** **In flight: M1 step 1.3** —
+**SF-09 merged**, `fix/SF-03-label-seam` merged, SF-25 part-written, SF-23 and
+SK-01 not started, **FND-07** new and unassigned. ⚠️ **No branch is unmerged.**
 **Release branch: `release/m1-one-page`**, cut from `release/m0-foundations`.
 Developers branch off it, the CTO reviews against
 `../conventions/review-rubric.md`, only reviewed work merges back. Flow:
@@ -728,6 +729,7 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 
 | Date | Change |
 |---|---|
+| 2026-09-09 | **`fix/SF-03-label-seam` and `feat/SF-09-unit-document` both merged on APPROVE** — ⭐ **no branch is unmerged.** Step 1.3 is SF-25 (part-written), SF-23, SK-01, and the new **FND-07**. 1797 passed on the host. |
 | 2026-09-09 | ⛔ **The framework's own graph is unbridged — 232 doc↔code edges of 6,081, 3.8% — and `path "R7 …" "assert_clean()"` returns nothing, even undirected.** ⚠️ **That is the question this repository most needs answered.** ⭐ **And we wrote this rule for somebody else:** SK-07 item 9 says a tool-built graph has no doc↔code edges and that bridging is the part that gets missed; FND-02 built the pass and ran it on the **corpus** (806 edges, 162/166) — nobody ran it here. ⛔ **A rule written for the consumer and not applied to the framework is R19's shape from the inside.** `FND-07` gains it, and the tripwire fails on a census below a floor: ⛔ **present, current and unbridged is a worse lie than absent**, because every green light is on and the one question that matters returns silence. |
 | 2026-09-09 | ✅ **M1 steps 1.1 and 1.2 complete** — SF-01, SF-02, SF-07, SF-08, SF-11, SF-33, SF-03, SF-05, SF-06 all APPROVEd. Step 1.3 in progress: SF-09 awaiting review, SF-25 part-written, SF-23 and SK-01 not started. |
 | 2026-09-09 | ⭐ **Ruling 8 retires a class: a filename component is validated by what is *permitted*, not by what is *forbidden*.** The blacklist let **seven** shapes through — vertical tab, form feed, non-breaking space, U+2028, `"`, `:`, `*` — two of which break the `file://` floor, making it an **R8** defect. ⛔ **A forbidden list is an open set and cannot be finished.** ⚠️ This project already refuses unknown contract versions, unknown profile names, unknown document keys — **the character blacklist was the one open set left, and it survived because it looked like a filename question rather than a contract question.** |
