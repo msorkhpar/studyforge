@@ -1,7 +1,23 @@
-# Ruling 44 — the gate's open set, and the three layers that answer it
+# R44-gate-shapes — handoff
 
-**Status:** done — one commit. One new framework module, two readers rewired,
-one pattern set split in two, four test modules touched and two added.
+*Ruling 44 — the gate's open set, and the three layers that answer it.*
+
+**Status:** done — one commit.
+
+**What landed:**
+
+- **`src/studyforge/sourcepath.py`** — new. `source_path_fault(value)` and
+  `is_source_path(value)`: one predicate, one permitted set, for every field a
+  reader types as a path. This is the import a consumer wants.
+- **`corpus.container.fields.optional_path`** and
+  **`corpus.placement.profile.origin_directory`** now ask it. Same verdict,
+  always; each keeps its own error type and its own sentence.
+- **`archive.scrub`** — the home-path shape gained its second spelling
+  (`~<name>/`), and the pattern set split: `SHAPES` (refuse) and
+  `SCRUBBED = SHAPES + ALSO_SCRUBBED` (rewrite).
+- **`tests/test_gate_layers.py`** — the matrix: nine shapes, three layers, two
+  control rows, and `RESIDUAL` declaring what the gate cannot see.
+- **`tests/studyforge/test_sourcepath.py`** — the permitted set exercised.
 
 ⛔ **Not fixed by adding two regexes.** The ruling said an open set answers to
 defence in depth with every layer asserted, and that is what landed.
@@ -172,6 +188,54 @@ directory out of it is `source_path_fault` at two call sites instead of one.
 
 ---
 
+## Decisions
+
+1. ⭐ **The rule is "enumerate the legal where the legal set has an end".**
+   Ruling 44 asked which of two overlapping refusal sets is the rule. Neither:
+   both were forbidden lists, both open, and the gap between them was
+   reachable. The permitted set replaced them.
+2. ⛔ **A tilde is *not* added to the free-text gate, and a tilde-username is.**
+   `~/src` names *a* home and never *whose*, so by this gate's own ruled
+   criterion — *"did this build put it there?"* — refusing a lesson that says
+   `cd ~/src` is the no-card-pattern failure. `~<name>/` names an account by
+   the same anchor as `/home/<name>/`, so it is the same shape written twice
+   and not a fourth entry. ⚠️ This is the one place I did **not** do what the
+   ruling's table asked, and it is deliberate.
+3. ⛔ **`/export/home/<name>` is not closed at the gate, because it cannot be.**
+   It is the same shape as `/var/lib/home/cache`. It is closed for every path
+   field and rewritten in our own output; the residual is declared.
+4. ⭐ **The pattern set split by *consequence*, not by taste.** A false positive
+   in `scrub` costs one over-redacted log line; a false positive in
+   `assert_clean` costs the corpus. That asymmetry is this module's oldest
+   ruling and had never been applied to the patterns themselves.
+5. ⚠️ **The permitted set is narrower than POSIX**: no `:` and no `\` in a
+   segment, so `notes:draft.md` is unplaceable. Named in the module, because
+   the alternative is `C:/Users/<name>` and `\\host\home\<name>` reaching
+   disk, and the cost of *this* choice is visible to the adapter author who
+   hits it.
+6. ⭐ **The W19 pin was rewritten, not deleted**, exactly as its own comment
+   instructed — and a third test was added so the pair cannot pass vacuously.
+
+## Surprises
+
+- ⛔ **The ruling's table had two shapes; the tree had four.** The two
+  additions are where the interesting information was: `C:/Users/<name>/x` is
+  caught **only by the gate** and `\\host\home\<name>` was caught by
+  **nothing**. ⭐ The first is the reverse of Ruling 42's dependence, which
+  means the two layers each cover a hole the other has — measured, on this
+  tree, which is what turns defence-in-depth from a slogan into a fact.
+- ⚠️ **Half of the reported hole turned out to be unclosable at the layer the
+  ruling named it against**, and finding that out cost more than the fix. The
+  budget assumed "widen the gate"; the work was "prove the gate cannot be
+  widened here, then find the layer that can".
+- ⭐ **The W19 pin fired on its own author.** I wrote the instruction *"if this
+  half ever fails, somebody added a guard downstream — rewrite this pair
+  against it"* eight days of work ago and then triggered it myself.
+- ⚠️ **Four of my own new tables tripped the repository's R7 sweep** on a
+  literal `C:/Users/<name>`. The check I was extending caught me writing its
+  own poison — which is the sweep working, and a reminder that a poison table
+  is built by concatenation like every other one in this suite.
+
 ## Measurement
 
 Pinned image, `docker/dev/check`:
@@ -188,19 +252,79 @@ File sizes against R11: `scrub.py` 365/400, `sourcepath.py` 97/400,
 
 ---
 
-## Findings (not in the diff)
+## Findings
 
-1. ⛔ **The residual is real and it is stated, not closed.** A *title* or a
-   *block of prose* a source authored, carrying `/export/home/<name>/x`,
-   still reaches disk. It is refused for every path field and rewritten in our
-   own output, but free text has one layer and that layer cannot see it. If
-   this is to close, it closes with the declaration-based residual class
-   already specified in `scrub`'s contract — ⛔ not a fourth regex.
-2. ⚠️ **`tools/quality/personal_data` and `archive.scrub` now differ by more
-   than they used to** — the repository sweep has no tilde rule and no
-   Windows-separator rule. Deliberately not aligned (the two gates are ruled
-   to have different subjects), but the gap is wider than when that ruling was
-   written and somebody should decide whether it should be.
-3. ⭐ **`scrub` and `scrub_document` have no production caller yet.** The wide
-   set is therefore correct-and-unused until a build report exists. Named here
-   so the first caller does not re-derive whether it may rely on it: it may.
+⛔ **Filed unmarked in the first version of this handoff, and that was C6.**
+This branch is cut from `8e8a2c5`, after the marker convention merged, so C5
+does not cover it. Three findings, three markers.
+
+### 1. `[local]` The residual is real, and it is stated rather than closed
+
+A **title** or a **block of prose** a source authored, carrying
+`/export/home/<name>/x`, still reaches disk. It is refused for every path
+field and rewritten in anything this framework writes, but free text has one
+layer and that layer cannot see it — `/export/home/<name>/x` and
+`/var/lib/home/cache/x` are the same shape.
+
+⭐ **Cost named:** if this is ever to close, it closes with the
+declaration-based residual class already specified in `scrub`'s contract — a
+corpus declaring the exemption, counted and named in the build report — ⛔ not
+a fourth regex. `RESIDUAL` in `tests/test_gate_layers.py` names the three
+shapes, so a fourth appearing is a build failure rather than a discovery.
+⚠️ Marked local rather than structural because the *mechanism* is now written
+down in `scrub`'s contract and asserted, so the next author meets it rather
+than re-deriving it.
+
+### 2. `[structural]` The two personal-data gates have drifted apart in their shapes
+
+`tools/quality/personal_data` and `archive.scrub` are ruled to have **different
+subjects** — one is a local development check that may know this machine, the
+other gates untrusted corpus content and may know nothing. ⛔ **That ruling
+justifies two policies; it never justified two vocabularies**, and the two have
+drifted:
+
+```text
+in tools/quality, absent from scrub   .local hostname
+in scrub, absent from tools/quality   bare-home `~/`, `\home\<name>`, tilde-username
+```
+
+A `.local` hostname is personal data in an archive document exactly as much as
+in a source file. ⚠️ **This would happen again to anybody who touches either
+gate**, because nothing compares them and no reviewer has caught it — twice
+now. ⭐ Ruling 31 forbids the import, so the answer is to **share the evidence,
+not the code**: one committed table of poison shapes with, per layer, whether
+it must refuse / scrub / report, and a test on each side that reads it. A
+divergence then has to be declared with a reason instead of discovered.
+
+⭐ **Answered by Ruling 47 and scheduled to me with W20.** Recorded here so the
+route is in the handoff and not only in a message.
+
+### 3. `[local]` `scrub` and `scrub_document` have no production caller yet
+
+The wide set is therefore correct-and-unused until a build report exists.
+⭐ **Cost named:** none today, and the reason it is filed is so the first caller
+does not re-derive whether it may rely on the wide set. It may — that is what
+`SCRUBBED` is for, and `tests/test_gate_layers.py` asserts it on every shape.
+
+## For dependents
+
+- ⭐ **Import `studyforge.sourcepath` rather than writing a path check.** Any new
+  reader with a path-shaped field asks `source_path_fault(value)` and raises its
+  own package's error with its own sentence. ⛔ A third spelling of this rule is
+  the defect this commit removed; `tests/test_gate_layers.py::_path_field`
+  asserts the existing two never disagree, and a third belongs in that assertion
+  on the day it exists.
+- ⚠️ **`assert_clean` is not a path check and must not be used as one.** It is
+  narrow on purpose and there are three shapes it cannot see. A field that is a
+  path is protected by the layer above it.
+- ⭐ **`scrub` is now wider than the gate.** Text this framework emits may be
+  scrubbed more eagerly than a corpus is refused — including `/var/lib/home/…`,
+  which is a deliberate over-redaction. Anything asserting `scrub(x) == x` on a
+  path containing a `home` segment will need `shape_in(x) is None` instead.
+- ⛔ **`SF-10` and anything adding a new document reader:** the gate is one
+  layer of three and the matrix in `tests/test_gate_layers.py` is where a new
+  layer registers. Adding a reader without a path rule is how the next
+  `\\host\home\<name>` gets in.
+- ⚠️ **W20 carries Ruling 47** (finding 2's shared evidence table), so anybody
+  planning to touch either gate before W20 lands should expect the table to
+  arrive and to be the place a divergence is declared.
