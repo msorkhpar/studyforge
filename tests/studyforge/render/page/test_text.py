@@ -153,6 +153,15 @@ def test_a_bare_same_directory_href_is_permitted_and_that_is_this_row():
     )
 
 
+def test_an_href_is_trimmed_before_it_is_judged_and_returned_trimmed():
+    # ⛔ Load-bearing, and only just: the spelling gate refuses whitespace
+    # ANYWHERE, so without this row a `safe_href` that never trimmed would still
+    # refuse `"   "` and pass every other assertion in this file. ⭐ The sweep
+    # found that: dropping `.strip()` was a mutant nothing killed until here.
+    assert text.safe_href("  ./a  ") == "./a"
+    assert text.safe_href("\thttps://host/x\n") == "https://host/x"
+
+
 def test_the_scheme_set_holds_schemes_and_not_prefixes():
     # ⛔ The regression this row exists to prevent from coming back: a `#`, `/`
     # or `./` in this tuple is a relative *form* wearing a scheme's name, and it
