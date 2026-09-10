@@ -760,6 +760,33 @@ later at the reviewer instead of the author.
 ⭐ **So the host run is a convenience and never the verdict.** If the container
 cannot be run, the review is **Blocked**, not APPROVE.
 
+#### ⛔ Ruling 108 — a skip SET is a property of the checkout, so name the checkout
+
+```bash
+python3 -m pytest -q -rs | grep '^SKIPPED' | sed 's/^SKIPPED \[[0-9]*\] //' \
+  | cut -d: -f1,2 | sort -u                     # rows, not the summary's count
+git rev-parse --git-dir | grep -q '/worktrees/' && echo "LINKED WORKTREE — no siblings"
+```
+
+⛔ **Pass condition: every skip-set number a review quotes names the checkout it
+was taken in, and a set taken in a linked worktree is never compared with one
+taken in the main checkout.**
+
+**Measured 2026-09-10 at `6850c3c`, same commit, same image, two checkouts:**
+
+```
+main checkout   host rows 10   ∩ container 5   siblings on disk
+linked worktree host rows 13   ∩ container 7   ⛔ two numbers moved
+  the difference, both rows:   tests/test_knowledge_index.py:125
+                               tests/test_knowledge_index.py:160
+```
+
+⚠️ **`test_knowledge_index.py`'s subject is the workspace** — Ruling 53's first
+`host-verified` shape — ⛔ **and `git worktree add` does not carry the sibling
+checkouts**, so the check that is *right* to be host-verified is the one whose
+answer moves. ⭐ **Every reviewer measures in a trial worktree**, which is
+precisely the checkout that gets the other number.
+
 #### ⛔ Ruling 87 — a skip class that can hide a SUBSYSTEM announces itself at the end of the run
 
 ⛔ **Pass condition:** when a precondition switches off more than a handful of
