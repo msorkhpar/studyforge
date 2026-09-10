@@ -24,6 +24,14 @@ from tests.support import repository_root
 #: added to it is swept without anybody remembering to add it here.
 PACKAGE = "src/studyforge/render/index"
 
+#: The same package as Python names it. ⛔ **Relative imports are resolved
+#: against this** — `ast.ImportFrom.module` is the name with the leading dots
+#: REMOVED and `level` is where they went, so a sweep matching `node.module`
+#: against absolute dotted names has silently excluded every relative import in
+#: its subject (**Ruling 178**, `CTO-45/6`). ⚠️ A relative import is also the
+#: *shorter* spelling, which is the one a hurried author reaches for.
+PACKAGE_NAME = "studyforge.render.index"
+
 #: What a renderer whose only corpus input is two documents may not reach for.
 #: ⚠️ Modules, not prefixes: `studyforge.corpus.placement` IS permitted — it
 #: answers "where would this go" and touches no disk — and a prefix check would
@@ -42,7 +50,11 @@ FORBIDDEN_MODULES = (
     "subprocess",
 )
 
-#: Ways a module opens a file without importing anything at all.
+#: Ways a module opens a file without importing anything at all. ⚠️ **Widened
+#: after `CTO-45/6` observed that door 2 did not save the sweep either**: a
+#: corpus reader is reached through *its own* verb — `parse`, `read`, `load`,
+#: `scan` — long before anybody calls `open`. ⛔ Known-incomplete by
+#: construction, which is why it is the second layer and not the claim.
 FORBIDDEN_CALLS = (
     "open",
     "read_text",
@@ -51,7 +63,15 @@ FORBIDDEN_CALLS = (
     "write_bytes",
     "iterdir",
     "rglob",
+    "glob",
+    "walk",
+    "listdir",
+    "mkdir",
     "exists",
+    "parse",
+    "read",
+    "load",
+    "scan",
 )
 
 #: The one name this package may take from `pathlib`. ⛔ `Path` opens files and
@@ -64,12 +84,43 @@ def modules() -> tuple[Path, ...]:
     return tuple(sorted((repository_root() / PACKAGE).glob("*.py")))
 
 
-def imported(text: str) -> list[str]:
-    """Every module name `text` imports, in source order."""
+def resolve(module: str | None, level: int, package: str = PACKAGE_NAME) -> str | None:
+    """Return the ABSOLUTE module a `from … import` names, relative form included.
+
+    ⛔ The arithmetic is `importlib`'s own: level 1 is the package itself and
+    each further dot strips one trailing component. ⚠️ A level that walks past
+    the top of the tree names no module at all and comes back as `None` rather
+    than as a plausible string, because a sweep that answered
+    `"studyforge.corpus"` to an import nobody can make would be reporting a
+    defect that cannot exist.
+    """
+    if not level:
+        return module
+    bits = package.rsplit(".", level - 1)
+    if len(bits) < level:
+        return None
+    return f"{bits[0]}.{module}" if module else bits[0]
+
+
+def imported(text: str, package: str = PACKAGE_NAME) -> list[str]:
+    """Every absolute module name `text` reaches, in source order.
+
+    ⛔ **Both halves of a `from X import Y`, and this is the second hole.**
+    `from studyforge.corpus import container` reaches
+    `studyforge.corpus.container` while `node.module` says only
+    `studyforge.corpus`, so each imported NAME is appended to the resolved
+    module too. ⚠️ It is the same defect as the relative form by a different
+    door — the module reached is not the string `ast` hands you — and it was
+    found while fixing that one (`SF-14/7`).
+    """
     found: list[str] = []
     for node in ast.walk(ast.parse(text)):
-        if isinstance(node, ast.ImportFrom) and node.module:
-            found.append(node.module)
+        if isinstance(node, ast.ImportFrom):
+            base = resolve(node.module, node.level, package)
+            if base is None:
+                continue
+            found.append(base)
+            found.extend(f"{base}.{alias.name}" for alias in node.names)
         elif isinstance(node, ast.Import):
             found.extend(alias.name for alias in node.names)
     return found
@@ -128,31 +179,151 @@ def test_only_the_pure_path_type_is_taken_from_pathlib():
                 )
 
 
-def test_the_sweep_above_would_notice():
-    # ⭐ Reading 2, PLANTED, in a spelling the clause did not picture: a relative
-    # import, and a call made through an attribute rather than a bare name.
-    planted = "from ..corpus import container\nimport os\n"
-    assert imported(planted) == ["..corpus", "os"] or "os" in imported(planted)
-    assert [name for name in imported("import os\n") if _forbidden(name)] == ["os"]
-    assert [
-        name
-        for name in imported("from studyforge.corpus.discovery import scan\n")
-        if _forbidden(name)
-    ] == ["studyforge.corpus.discovery"]
+@pytest.mark.parametrize(
+    "source,expected",
+    [
+        ("from . import policy\n", "studyforge.render.index"),
+        ("from .entries import Item\n", "studyforge.render.index.entries"),
+        ("from ..markup import escape\n", "studyforge.render.markup"),
+        ("from ..pageassets import SCRIPT_NAME\n", "studyforge.render.pageassets"),
+        ("from ...corpus.container import Container\n", "studyforge.corpus.container"),
+        ("from ...contents import join\n", "studyforge.contents"),
+        ("from studyforge.contents import join\n", "studyforge.contents"),
+    ],
+)
+def test_a_relative_import_resolves_to_the_module_it_actually_reaches(source, expected):
+    # ⛔ **Ruling 178's arithmetic, asserted directly.** `ast` hands back
+    # `"corpus.container"` and `level=3` for the fifth row; the module reached is
+    # `studyforge.corpus.container`, and a sweep matching the first string
+    # against absolute names sees nothing at all.
+    node = next(found for found in ast.walk(ast.parse(source)) if isinstance(found, ast.ImportFrom))
+    assert resolve(node.module, node.level) == expected
+
+
+def test_a_level_that_walks_past_the_top_names_no_module():
+    # ⚠️ `studyforge.render.index` has three components, so four dots reach
+    # nothing. ⛔ `None`, never a plausible string.
+    assert resolve("corpus", 4) is None
+    assert resolve("corpus", 3) == "studyforge.corpus"
+
+
+#: ⛔ **Reading 2, PLANTED — one row per SPELLING, and never a disjunction.**
+#: Ruling 178's second half: *a control whose assertion is `A or B` discharges
+#: nothing about `A`*. ⚠️ The relative rows are the ones the first version of
+#: this sweep could not see at all, and the `package named` rows are the second
+#: hole found while fixing that one.
+FORBIDDEN_SPELLINGS = (
+    (
+        "absolute, submodule named",
+        "from studyforge.corpus.discovery import scan\n",
+        ["studyforge.corpus.discovery", "studyforge.corpus.discovery.scan"],
+    ),
+    (
+        "absolute, package named and the module taken as a NAME",
+        "from studyforge.corpus import container\n",
+        ["studyforge.corpus.container"],
+    ),
+    (
+        "relative, submodule named",
+        "from ...corpus.container import Container\n",
+        ["studyforge.corpus.container", "studyforge.corpus.container.Container"],
+    ),
+    (
+        "relative, package named and the module taken as a NAME",
+        "from ...corpus import container\n",
+        ["studyforge.corpus.container"],
+    ),
+    (
+        "relative, the archive",
+        "from ...archive import scrub\n",
+        ["studyforge.archive", "studyforge.archive.scrub"],
+    ),
+    (
+        "relative, aliased so the local name says nothing",
+        "from ...corpus.manifest import document as _quiet\n",
+        ["studyforge.corpus.manifest", "studyforge.corpus.manifest.document"],
+    ),
+    ("plain import", "import os\n", ["os"]),
+    ("dotted plain import", "import os.path\n", ["os.path"]),
+    ("from-import of a stdlib package", "from os import path\n", ["os", "os.path"]),
+)
+
+
+@pytest.mark.parametrize(
+    "source,expected",
+    [(source, expected) for _, source, expected in FORBIDDEN_SPELLINGS],
+    ids=[spelling for spelling, _, _ in FORBIDDEN_SPELLINGS],
+)
+def test_the_sweep_notices_this_forbidden_spelling(source, expected):
+    # ⛔ Each arm asserted ALONE, against the exact list it must produce.
+    assert [name for name in imported(source) if _forbidden(name)] == expected
+
+
+@pytest.mark.parametrize(
+    "source",
+    [
+        "from ..markup import escape\n",
+        "from ..pageassets import SCRIPT_NAME\n",
+        "from . import policy\n",
+        "from .entries import Item\n",
+        "from studyforge.render.index import policy\n",
+        "from studyforge.corpus.placement import relative_href\n",
+        "from studyforge.contents import join\n",
+        "from pathlib import PurePosixPath\n",
+        '"""Not on studyforge.corpus.discovery, and never os.walk."""\n',
+        "# from ...corpus.container import Container\n",
+    ],
+    ids=[
+        "a sibling package, relatively",
+        "the other sibling package, relatively",
+        "this package's own submodule, relatively",
+        "this package's own submodule, relatively and named",
+        "this package's own submodule, absolutely",
+        "placement, which answers where and touches no disk",
+        "the contents contract itself",
+        "the pure path type",
+        "a docstring that only NAMES a forbidden module",
+        "a comment carrying the exact forbidden line",
+    ],
+)
+def test_the_sweep_does_not_answer_yes_to_this_permitted_spelling(source):
+    # ⭐ Reading 3, IMPOSSIBLE, one row per spelling: a sweep that reported
+    # everything would pass every row above and fail every row here. ⛔ Two of
+    # these are the shapes a *relative* resolver most easily gets wrong — a
+    # sibling package and the package's own submodule both begin with dots.
+    assert [name for name in imported(source) if _forbidden(name)] == []
+
+
+def test_the_second_door_notices_a_call_made_through_an_attribute():
     assert [name for name in called("Path(x).read_text()\n") if name in FORBIDDEN_CALLS] == [
         "read_text"
     ]
+    assert [
+        name
+        for name in called("container.parse(text, where, manifest)\n")
+        if name in FORBIDDEN_CALLS
+    ] == ["parse"]
+    assert [name for name in called("escape(title)\n") if name in FORBIDDEN_CALLS] == []
 
 
-def test_the_sweep_above_does_not_answer_yes_to_everything():
-    # ⭐ Reading 3, IMPOSSIBLE: a module that only NAMES a forbidden import in
-    # its prose is not one that makes it, and `corpus.placement` — which this
-    # package really does use — is permitted rather than swept up with it.
-    documented = '"""Not on studyforge.corpus.discovery, and never os.walk."""\n'
-    assert [name for name in imported(documented) if _forbidden(name)] == []
-    assert not _forbidden("studyforge.corpus.placement")
-    assert not _forbidden("studyforge.contents")
-    assert not _forbidden("studyforge.render.markup")
+def test_this_package_makes_no_relative_import_at_all_and_that_is_why_the_hole_was_invisible():
+    # ⭐ **The population, printed rather than counted** (Ruling 128), and it is
+    # EMPTY — which is precisely why a sweep that could not resolve a relative
+    # import still looked like it was working for a whole round.
+    #
+    # ⛔ **The second layer, and it is deliberate.** `CTO-45/6` offered two
+    # remedies: resolve the level, or refuse a relative import outright. Both
+    # are here, because neither is sufficient on its own — resolution alone
+    # leaves the isolation claim unreadable from the import line, and refusal
+    # alone says nothing about `from studyforge.corpus import container`, which
+    # is absolute and was admitted too.
+    relative = [
+        (path.name, node.level, node.module)
+        for path in modules()
+        for node in ast.walk(ast.parse(path.read_text(encoding="utf-8")))
+        if isinstance(node, ast.ImportFrom) and node.level
+    ]
+    assert relative == [], relative
 
 
 def test_the_pair_is_joined_and_never_zipped():
