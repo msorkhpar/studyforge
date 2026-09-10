@@ -69,6 +69,47 @@ its address is two levels, so the directory comes from `origin` and the
 address is *only* identity — a profile using the address for both would create
 new directories beside the material, which is what R3 forbids.
 
+## ⭐ An `origin` may name a **region** of a file — `container_api: 2`
+
+⛔ **Ruled: Ruling 92, on a real corpus.** A fourth container holds **17** units
+that are regions of one file. `origin` named a whole file, so all seventeen
+declared the same one and `check_completeness` compared each of them against
+that file's **361** headings — ⚠️ *sixteen false short reads, or a check
+somebody switches off.*
+
+```json
+{
+  "n": 3,
+  "title": "Card issuance",
+  "origin": { "path": "TestCases.md", "section": "3. Card issuance" }
+}
+```
+
+- `origin` stays a **string** for a whole file. ⛔ Unchanged; every v1 map
+  parses exactly as it did.
+- It **may be an object** — `path` + `section`, both required. `section` is the
+  **exact text** of the ATX heading the region opens with.
+- The region **ends** at the next heading of the **same or shallower** depth.
+  ⛔ Not at the next heading of any depth: a unit's own subsections are its.
+- `section` must occur **exactly once** in the file. ⚠️ Enforced where the file
+  is read — `validate.source`, under two rule ids of its own.
+- ⛔ **`TestCases.md#…` stops being accepted.** ⭐ It validated and meant
+  nothing; `studyforge.sourcepath` refuses a fragment now.
+
+⛔ **A heading, and not a line range or an anchor — the reason is the only
+thing that makes the check possible.** `check_completeness` exists to
+**disagree** with the Markdown reader, so the region's bound may not come from
+it: an anchor is a renderer's slug rule and would. ⭐ `validate.headings`'
+own regex already knows a heading's depth, so it finds the opening heading and
+the next at that depth or shallower with no parser at all. ⚠️ A line range is
+parser-independent too, and was refused for a different reason: it is brittle
+against an upstream file that grows a paragraph, and these corpora are living
+repositories.
+
+⚠️ **The reader hands back a path and a section separately** — `Unit.origin` is
+still a plain path in both shapes, so `origin_directory`'s `.parent` and every
+other consumer that wants a location are untouched.
+
 ## `label` is presentation carried as data
 
 ⚠️ **Optional, per unit, and never identity.** Real material carries its own
@@ -97,6 +138,7 @@ from studyforge.corpus.container.document import (
     CONTAINER_KEYS,
     EDITORIAL_KEYS,
     KNOWN_CONTAINER_API,
+    REGION_ORIGIN_API,
     UNIT_KEYS,
     Container,
     Unit,
@@ -107,7 +149,7 @@ from studyforge.corpus.container.document import (
     to_document,
 )
 from studyforge.corpus.container.errors import ContainerError
-from studyforge.corpus.container.fields import is_filename_component
+from studyforge.corpus.container.fields import ORIGIN_KEYS, is_filename_component
 
 __all__ = [
     "CONTAINER_API",
@@ -115,6 +157,8 @@ __all__ = [
     "CONTAINER_KEYS",
     "EDITORIAL_KEYS",
     "KNOWN_CONTAINER_API",
+    "ORIGIN_KEYS",
+    "REGION_ORIGIN_API",
     "UNIT_KEYS",
     "Container",
     "ContainerError",
