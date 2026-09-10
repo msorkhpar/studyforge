@@ -158,6 +158,19 @@ def test_the_document_is_written_in_a_stated_key_order():
     assert tuple(document["units"][0]) == UNIT_STATUS_KEYS
 
 
+def test_the_stated_order_survives_into_the_BYTES():
+    # ⛔ The object's order is not the document's order; a `sort_keys=True` on
+    # the way out would leave the assertion above passing (R10).
+    text = render_status(status(fixture_contents("depth1"), present=()))
+    assert [text.index(f'"{key}"') for key in STATUS_KEYS] == sorted(
+        text.index(f'"{key}"') for key in STATUS_KEYS
+    )
+    inner = text[text.index('"units"') :]
+    assert [inner.index(f'"{key}"') for key in UNIT_STATUS_KEYS] == sorted(
+        inner.index(f'"{key}"') for key in UNIT_STATUS_KEYS
+    )
+
+
 def test_the_local_document_carries_no_structure_of_its_own():
     # ⚠️ It annotates by id; a second copy of the hierarchy would be a second
     # thing to disagree with the first.

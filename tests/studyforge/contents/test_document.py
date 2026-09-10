@@ -12,6 +12,7 @@ from studyforge.contents import (
     KNOWN_TOC_API,
     TOC_API,
     TOC_FILENAME,
+    ENTRY_KEYS,
     TOC_KEYS,
     ContentsError,
     digest,
@@ -37,6 +38,26 @@ def a_document(**overrides) -> dict:
 
 def test_the_document_is_written_in_a_stated_key_order():
     assert tuple(to_document(fixture_contents("depth2"))) == TOC_KEYS
+
+
+def test_the_stated_order_survives_into_the_BYTES():
+    # ⛔ **The object's order is not the document's order**, and only one of
+    # them is what a consumer reads. `json.dumps(sort_keys=True)` would re-sort
+    # every key on the way out and leave the assertion above passing — measured
+    # as a surviving mutant, and this is the row that kills it (R10).
+    text = render(fixture_contents("depth2"))
+    assert [key for key in TOC_KEYS if f'"{key}"' in text] == list(TOC_KEYS)
+    assert [text.index(f'"{key}"') for key in TOC_KEYS] == sorted(
+        text.index(f'"{key}"') for key in TOC_KEYS
+    )
+
+
+def test_a_groups_and_a_units_keys_keep_their_order_in_the_bytes_too():
+    text = render(fixture_contents("depth2"))
+    inner = text[text.index('"units"') :]
+    assert [inner.index(f'"{key}"') for key in ENTRY_KEYS] == sorted(
+        inner.index(f'"{key}"') for key in ENTRY_KEYS
+    )
 
 
 def test_toc_api_is_registered_where_the_shared_guard_can_see_it():
