@@ -35,11 +35,16 @@ site.json
 # passes locally and fails everywhere else.
 !tests/fixtures/**
 
-# An agent's own scratch: sweep logs, mutant backups, harnesses (Ruling 139).
-# ⛔ Not ignoring it is not a tidiness problem. The quality floor walks the
-# repository, so an unignored `.scratch/` makes the floor read a mutant backup
-# and a poisoned probe as this repository's own source — measured once as
-# `exit 1, 108 findings` against a tree with nothing wrong in it.
+# ⛔ An agent's own scratch directory (Ruling 139): a sweep's log, table,
+# harness and mutant backups live under the worktree that produced them, never
+# in the shared session scratchpad where two developers' `sweep.log` truncate
+# each other (`W40/5`, `SK-05/6` — the same defect reported from both sides in
+# one round). ⚠️ This line is what makes that clause safe rather than a trap:
+# `tools.quality.config.text_files` reads everything git has NOT been told to
+# ignore, on purpose — a file you have just written and not yet added is
+# exactly what an R7 gate must catch — so without this entry the first agent
+# to follow Ruling 139 reds the floor with its own pytest logs. ⛔ Measured at
+# `8c8a434`: floor exit **1**, 108 findings, every one inside `.scratch/`.
 .scratch/
 
 # Editors / OS
