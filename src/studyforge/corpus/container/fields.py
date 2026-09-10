@@ -12,7 +12,8 @@ module had that the extraction had lost — **an empty string is named as
 one** (W17).
 
 **Depends on.** `studyforge.address` for what a slug is,
-`studyforge.describe` for how a value is named, and this package's `errors`.
+`studyforge.sourcepath` for what a source path is, `studyforge.describe` for
+how a value is named, and this package's `errors`.
 
 ⛔ **A refusal never quotes the value.** This is not general caution: the field
 this module refuses most often is `origin`, and **the one shape being refused
@@ -23,16 +24,22 @@ catch it* (R7). SF-03 measured that on its own first attempt.
 ⭐ **The rule has one home and this module no longer keeps a copy.** It kept
 the third one, and the three disagreed about integers, booleans and the empty
 string — none of it decided by anybody, all of it what a third copy does.
+
+⚠️ **Twice over, now.** `optional_path` also kept its own spelling of what a
+source path may be, and `placement.profile.origin_directory` kept another; the
+two forbidden lists disagreed and the gap between them was reachable (Ruling
+44). Both now ask `studyforge.sourcepath`, which states the permitted set
+instead. ⭐ Each package keeps its own error type and its own sentence — the
+rule is `sourcepath`'s, the document is this contract's.
 """
 
 from __future__ import annotations
-
-from pathlib import Path
 
 from studyforge.address import is_slug
 from studyforge.address.slug import SLUG_PERMITTED
 from studyforge.corpus.container.errors import ContainerError
 from studyforge.describe import describe as said
+from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 
 #: The characters a generated filename component may carry — **a permitted
 #: set, and deliberately not a forbidden one (Ruling 8)**.
@@ -143,11 +150,12 @@ def optional_path(value: object, what: str, where: str) -> str | None:
         raise ContainerError(
             f"{where} declares {what} as {said(value)}; it must be a path, or absent"
         )
-    if value.startswith("/") or value.startswith("~") or ".." in Path(value).parts:
+    fault = source_path_fault(value)
+    if fault is not None:
         raise ContainerError(
-            f"{where} declares {what} as an absolute or escaping path. It is a "
-            f"location inside the source, relative to the corpus root, and it is "
-            f"not quoted here because that shape is where a home directory lives."
+            f"{where} declares {what} as {fault}. It must be {SOURCE_PATH_DESCRIBED}, "
+            f"and it is not quoted here because that shape is where a home directory "
+            f"lives."
         )
     return value
 

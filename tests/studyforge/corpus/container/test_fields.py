@@ -25,6 +25,7 @@ from studyforge.corpus.container.fields import (
 )
 
 HOME = "/" + "home/jane"
+USERS = "/" + "Users/jane"
 WHERE = "container.json"
 
 
@@ -56,13 +57,35 @@ def test_optional_path_accepts_a_location_inside_the_source():
     assert optional_path(None, "origin", WHERE) is None
 
 
-@pytest.mark.parametrize("value", ["/etc/passwd", "~/corpus", "../outside/x.md", "a/../../b"])
-def test_optional_path_refuses_an_absolute_or_escaping_path(value):
-    with pytest.raises(ContainerError, match="absolute or escaping path"):
+#: Every spelling of "not a location inside the source", with the fault the
+#: reader names it by. ⭐ The last three are Ruling 44's, and **none of them
+#: was refused by the forbidden list this reader used to keep** — no leading
+#: slash, no tilde, no `..`, and `PurePosixPath.is_absolute()` is `False` for
+#: both of the last two. That is what an open set does, and it is why the rule
+#: moved to `studyforge.sourcepath` and became a permitted set.
+NOT_A_SOURCE_PATH = [
+    ("/etc/passwd", "an absolute path"),
+    ("../outside/x.md", "a path leaving the source root"),
+    ("a/../../b", "a path leaving the source root"),
+    ("~/corpus", "a path rooted at a home directory"),
+    ("~jane/corpus", "a path rooted at a home directory"),
+    ("/export" + HOME + "/x.md", "an absolute path"),
+    ("C:" + USERS + "/x.md", "a path carrying a drive letter or scheme"),
+    (r"\\host\home\jane\x.md", "a path written with Windows separators"),
+]
+
+
+@pytest.mark.parametrize(("value", "fault"), NOT_A_SOURCE_PATH)
+def test_optional_path_refuses_everything_that_is_not_a_source_path(value, fault):
+    # ⚠️ The message used to be "an absolute or escaping path" for every one
+    # of these — a forbidden list read aloud, and three of these eight rows
+    # were not on it. It now names the fault, which is what an adapter author
+    # can act on without being told the value back.
+    with pytest.raises(ContainerError, match=fault):
         optional_path(value, "origin", WHERE)
 
 
-@pytest.mark.parametrize("value", ["/etc/passwd", "~/corpus", "../outside/x.md"])
+@pytest.mark.parametrize("value", [value for value, _fault in NOT_A_SOURCE_PATH])
 def test_and_never_quotes_it(value):
     # ⛔ **The one shape being refused here is precisely the shape that carries
     # a home directory**, so a refusal quoting it would copy personal data into

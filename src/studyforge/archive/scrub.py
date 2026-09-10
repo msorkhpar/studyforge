@@ -60,6 +60,35 @@ is a local development check, so a machine-specific verdict is exactly what it
 wants. **The two gates have different subjects and neither imports the
 other's patterns.**
 
+## ⛔ This gate is an open set and cannot be closed, so it is never the only layer
+
+⭐ **Where a legal set can be written down, write it down.** Keys, versions,
+profiles, contract fields, slugs, **and a path inside the source** all have an
+end, and each of those is enforced by enumerating what is permitted. ⛔ **This
+gate has no such set.** Its permitted set is *"all text that is not personal
+data"*, which nobody can write down, so its forbidden list is forced and is
+**known-incomplete by construction**. Ruling 44 found two unforeseen entries
+in it, which is simply what an open set does — and the answer to that is never
+a longer list.
+
+The answer is that three layers stand between a home directory and disk, and
+**each is asserted on its own** (`tests/test_gate_layers.py`), because no one
+of them is sufficient:
+
+| layer | subject | its set | on a doubtful value |
+|---|---|---|---|
+| `studyforge.sourcepath` | every field a reader **types as a path** | enumerable | refuse |
+| `assert_clean` (`SHAPES`) | the **source's** free text | open, narrow | let through |
+| `scrub` (`SCRUBBED`) | text **this framework wrote** | open, wide | rewrite |
+
+⚠️ **Read the third column before adding anything to the second.** Measured
+2026-09-09: of seven home-path spellings, the path rule refuses all seven, this
+gate names three, and `scrub` rewrites six. ⛔ The seventh — a `home` segment
+under a longer prefix, inside free text a source wrote — is **not closable
+here**, because `/export/home/<name>/x` and `/var/lib/home/cache/x` are the
+same shape. It is closed for every path field and for our own output, and the
+residual is this sentence rather than a discovery somebody makes later.
+
 ## The residual class is specified, not built
 
 A second source could legitimately carry a shape this gate owns — a lesson
@@ -119,12 +148,18 @@ TOKEN_PLACEHOLDER = "Bearer <redacted>"
 SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
     (
         "home path",
-        # The segment after `/home` or `/Users` is an account name. The
-        # lookbehind stops the same letters mid-path — `/var/lib/home/cache`
-        # names nobody. ⭐ The prose above writes the shape as `/home/<name>`
-        # with angle brackets, which is outside the character class, so a
-        # document explaining this rule stays both swept and clean.
-        re.compile(r"(?<![\w.])/(?:home|Users)/[A-Za-z0-9._\-]+"),
+        # The segment after `/home` or `/Users` is an account name, and so is
+        # the one a bare `~` is followed by — ⭐ **two spellings of one shape,
+        # not two shapes.** The tilde branch requires a following `/` and a
+        # leading letter so that `~5/6` and `~50 lines` are not account names,
+        # and both branches share the lookbehind, which stops the same letters
+        # mid-path: `/var/lib/home/cache` and `foo~bar/` name nobody. ⭐ The
+        # prose above writes the shape as `/home/<name>` with angle brackets,
+        # outside the character class, so a document explaining this rule
+        # stays both swept and clean.
+        re.compile(
+            r"(?<![\w.~])(?:/(?:home|Users)/[A-Za-z0-9._\-]+|~[A-Za-z][A-Za-z0-9._\-]*(?=/))"
+        ),
         HOME_PATH_PLACEHOLDER,
     ),
     (
@@ -138,6 +173,58 @@ SHAPES: tuple[tuple[str, re.Pattern[str], str], ...] = (
         TOKEN_PLACEHOLDER,
     ),
 )
+
+#: Shapes a line **this framework wrote** is rewritten for and a corpus is
+#: **not refused** for — `scrub` reads these, `assert_clean` never does.
+#:
+#: ⭐ **The asymmetry is this module's oldest ruling, applied to the pattern
+#: set for the first time.** "Scrub our words; refuse the source's" was about
+#: which *response* each subject gets; it decides the *width* too, because the
+#: two responses have opposite costs. A false positive in `scrub` rewrites one
+#: of our own log lines slightly too eagerly and loses nothing. A false
+#: positive in `assert_clean` refuses a legitimate corpus with a diagnosis
+#: that looks exactly like a leak — the same argument that keeps a card
+#: pattern out of the gate entirely.
+#:
+#: ⛔ **Every entry here is a shape that cannot be told from a benign one.**
+#: `/export/home/<name>/x` is a home directory and `/var/lib/home/cache/x` is
+#: not, and **nothing about their shape separates them** — which is why the
+#: gate must not be the layer that protects a path. Ruling 44 ruled the first
+#: of those a live hole; it is closed for every field a reader types as a path
+#: (`studyforge.sourcepath`), and it is closed for text this framework emits
+#: (here). It stays open for free text a source authored, and that residual is
+#: stated rather than left to be discovered.
+ALSO_SCRUBBED: tuple[tuple[str, re.Pattern[str], str], ...] = (
+    (
+        "home path under a longer prefix",
+        # ⚠️ No lookbehind, and that is the whole difference from the gate's
+        # entry: `/export/home/<name>` matches, and so does the benign
+        # `/var/lib/home/cache`. Acceptable here, not acceptable there.
+        re.compile(r"/(?:home|Users)/[A-Za-z0-9._\-]+"),
+        HOME_PATH_PLACEHOLDER,
+    ),
+    (
+        "home path with Windows separators",
+        # ⛔ `\\host\home\<name>` is a home directory that no POSIX
+        # predicate calls absolute and no `/`-anchored pattern sees. Measured
+        # 2026-09-09: it passed both the gate and both path readers.
+        re.compile(r"\\(?:home|Users)\\[A-Za-z0-9._\-]+"),
+        HOME_PATH_PLACEHOLDER,
+    ),
+    (
+        "a home directory the shell would expand",
+        # A bare `~/` names *a* home, never *whose*, so it carries no identity
+        # and the gate has no business refusing a lesson that says `cd ~/src`.
+        # In our own output it is still a build-machine path and is rewritten.
+        re.compile(r"(?<![\w.~])~(?=/)"),
+        HOME_PATH_PLACEHOLDER,
+    ),
+)
+
+#: What `scrub` reads: the gate's shapes first, then the ambiguous ones. ⭐ A
+#: superset by construction rather than by assertion, so the two sets can
+#: never drift into disagreeing about a shape they share.
+SCRUBBED: tuple[tuple[str, re.Pattern[str], str], ...] = SHAPES + ALSO_SCRUBBED
 
 # ⛔ There is no allow-list here, and its absence is the ruling. The
 # repository hygiene check exempts unreachable addresses — `example.com`,
@@ -178,7 +265,7 @@ def scrub(text: str) -> str:
     Idempotent, so a line may pass through more than one stage.
     """
     out = text or ""
-    for _name, pattern, placeholder in SHAPES:
+    for _name, pattern, placeholder in SCRUBBED:
         out = pattern.sub(placeholder, out)
     return out
 
