@@ -1,4 +1,6 @@
-# Ruling 46 — a sweep declares what it asserts
+# ruling-46 — handoff
+
+**Ruling 46 — a sweep declares what it asserts.**
 
 **Status:** done. `fix/ruling-46-sweep-declaration`, branched from
 `release/m0-foundations` @ `ac4ed55`.
@@ -87,15 +89,72 @@ and already pinned to the directory by
 
 ## Findings
 
-**50 — `test_a_sweep_excludes_exactly_…` was born vacuous.** See above. ⚠️ The
-general shape: *a test that asserts two derived sets are equal passes when both
+### 50 `[structural]` — the test I had just written to enforce one rule broke the other
+
+`test_a_sweep_excludes_exactly_…` was born vacuous. ⚠️ The general shape: *a test that asserts two derived sets are equal passes when both
 are empty*, and the emptiness is exactly the bug it guards. ⭐ The fix is one
 line asserting the sets are inhabited, and it is cheap enough to be routine.
 
-**51 — no rule id names a practice's three-section layout.** `read_layout`
+### 51 `[structural]` — no rule id names a practice's three-section layout
+
+`read_layout`
 refuses a malformed practice with an `ArchiveError`, and nothing in
 `tests/fixture_checks/` yields a rule for it — so no invalid fixture can
 declare it, and that sweep asserts a property the declaration vocabulary cannot
 express. ⚠️ Not fixed here: adding a checker rule id is a fixture-surface
 change and belongs with whoever scopes that seam. ⛔ Until then the sweep's
 `asserting=()` is honest rather than complete, and its comment says so.
+
+## Decisions
+
+**The declaration is `INVALID_CORPORA`, not `VIOLATION.md`.** ⛔ They are two
+vocabularies, not two copies of one fact — the prose names the **spec** rule
+(`spec §6`, `R9`, `R7`, `R5`) and the dict names the id a sweep uses. Parsing
+the prose would have meant a prose parser **and** a `spec §6 → counts`
+translation table to reach a dict that is already exported. Asserted, not
+asserted-in-a-comment.
+
+**`asserting` takes a set and has no default.** A default is what let the
+previous two versions of this helper be wrong without anybody choosing
+anything, and a single id under-excludes at exactly the grain the directory
+over-excludes.
+
+**The sweeps yield `(where, document)` rather than `(path, document)`.** ⭐ The
+stronger form of the ruling's second half: rather than a message a call site
+must remember to attach, there is **no unattributed name left to reach for**.
+`path` was only ever used for `path.name`.
+
+**`asserting=()` on the practice-layout sweep, said rather than implied.** ⛔ No
+rule id names that property, so inventing one would have been a second
+vocabulary. Honest rather than complete, with a comment saying which — see
+finding 51.
+
+**No fixture-access seam.** Ruling 43's task owes several tree-walks and the PO
+is scoping that seam once; this branch changed one file.
+
+## Surprises
+
+⚠️ **The context budget was right about the code and wrong about the mechanism.**
+The exclusion was ten minutes; the *attribution* took the rest, because the
+obvious designs do not work: a generator cannot see the exception its `for` body
+raised (the loop closes it with `GeneratorExit`, and `except AssertionError` at
+the `yield` never fires), and a context manager at each call site reintroduces
+the forgetting the ruling is about. ⭐ Yielding the message-string instead is
+what made the problem disappear rather than be handled.
+
+⚠️ **And the second surprise is finding 50** — a vacuous assertion written *one
+paragraph after* implementing the guard against exactly that class. That is the
+useful part of it: knowing the pattern by name did not stop me writing it, so
+the mechanical tell is worth more than the description.
+
+## For dependents
+
+- ⛔ **A new sweep over the fixture tree must name its rule ids.** There is no
+  default; `archive_documents()` with no argument is a `TypeError`, asserted.
+- ⭐ **If your sweep reds on a fixture under `tests/fixtures/invalid/`, read the
+  first line of the failure before touching anything.** It names the corpus,
+  the rule that corpus declares, and what to do — which is to add that rule to
+  `asserting=`, never to edit the fixture.
+- ⚠️ **Whoever takes Ruling 43's task** inherits finding 51 and the general
+  shape of this helper; the exclusion logic is four lines and is meant to move
+  into that seam unchanged.
