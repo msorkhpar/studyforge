@@ -297,6 +297,26 @@ saying so is an assertion and the table is its evidence. ⚠️ It is also the o
 way the framework learns **which of its consumers exercises none of that
 surface**.
 
+> ⭐ **SHARPENED 2026-09-10 by `SK-08`, and the sharpening is the half this entry
+> was missing.** ⛔ **A table that is written is not a table that is checked.**
+> ⚠️ **The trap is that a *partial* never-used table is worse than none, because
+> it looks exactly like a complete one and therefore looks like the check was
+> done** — and the capability a planner forgets is, by construction, the one
+> they also forget to list.
+>
+> ⭐ **So the check is COVERAGE against an enumeration of the framework's
+> capabilities, never SUBSET.** ⛔ Naming ten capabilities that exist proves
+> nothing: **the claim this table makes is about the ones that were not named**,
+> and only an enumeration can see those. ⚠️ Run the other direction too — a
+> capability listed as unused that the corpus's own terminal milestone
+> *delivers* is a row saying nothing about this corpus, and it inflates the
+> table that is meant to be the evidence.
+>
+> ⭐ **What makes it runnable rather than aspirational is that the enumeration
+> now exists**: `docs/capability-index.md`, generated. ⛔ Before it, the only
+> enumeration was thirteen epic documents, which is why this entry could ask for
+> the table and not for the check.
+
 ### 17. Neither the verb nor the pronoun decides runnability — entry 8's counter-example
 
 **Measured (ISO):** the imperative scan (`implement | write a | your task |
@@ -369,6 +389,43 @@ question: *would this pattern still be right if somebody added a file tomorrow?*
 ⚠️ **And this is where a generator earns its place (R19):** a skill that drafts a
 manifest must draft **exact paths and directory-scoped globs**, because a
 generator fitted to today's tree is the same defect with nobody to notice it.
+
+### 20. A refusal that quotes the value it refused is where personal data leaves a repository
+
+⛔ **Adopted 2026-09-10, from `SK-08`, and measured on the framework side rather
+than a corpus's.** ⚠️ **Seventeen refusals in ONE new package reproduced the
+value they were refusing** — `f"{task_id}: ..."`, `f"{value!r} is not a
+marker"` — written by somebody who had read R7 that morning and believed they
+were following it.
+
+⭐ **What an integrator needs to know, and it generalises past this project:**
+⛔ **the branch that fires *because* a value is not a slug, not an ordinal, not
+a member of a closed set, is exactly the branch an absolute path arrives at.**
+So quoting the offender takes the one input **guaranteed** to carry somebody's
+home directory and puts it in a log, a CI transcript, or a pasted bug report —
+and the first thing anybody does with a refusal is paste it somewhere.
+
+⚠️ **The reason this is a trap and not a slip is that the wrong phrasing is the
+helpful one.** *"`/home/…/private` is not a marker"* is a better error message
+by every ordinary standard, and every reviewer who has ever asked for a clearer
+error has asked for exactly this.
+
+> ⭐ **A refusal names the FIELD, never the value.** *"a finding's `marker` is
+> not a marker; the vocabulary is closed at local, structural, none."*
+> ⛔ Counting is safe where quoting is not: *"2 capabilities are named twice"*
+> tells the caller what to look for without reproducing anything.
+
+⭐ **And where a value genuinely must be quoted, constrain its shape BEFORE
+quoting it, never after.** A document cited by name in six refusals is first
+refused unless it is a **bare filename** — after which quoting it cannot carry
+a path, by construction rather than by care. ⚠️ **That is the same move as
+passing `path.name` instead of `path`**, arriving at a plain string parameter
+where nobody thinks to look for it.
+
+⛔ **Do not rely on noticing this in review.** It was found by a probe that
+calls every public callable with a poisoned home path and fails the build on
+any refusal that echoes it — and it found all seventeen at once, in a package
+whose author had just written the rule down in its own docstring.
 
 ---
 
