@@ -24,5 +24,80 @@ thing it marked.
 none is complete, not deficient — the fixtures carry both from wave 0 so the
 no-overlay path is never the one discovered late.
 
-**Skeleton at FND-01.** Filled by SF-09 and SF-10 (E02).
+## What SF-09 landed
+
+| Module | Owns |
+|---|---|
+| `content` | `content.json` — the authored overlay, and the only file a person edits |
+| `sections` | the section-key vocabulary: `shared`, `<variant>`, `practice-<variant>` |
+| `trust` | where a grader came from and what it may claim (R5) |
+| `errors` | `ContentError`, the only exception any of it raises |
+
+⛔ **`content_api` is minted here** (R21): the overlay lives at
+`units/unit-NN/content.json`, is versioned by `content_api`, and is written by
+**a person** and nothing else. R9's enumeration was written from the generating
+side and did not list the one document this framework only ever reads.
+
+**Skeleton at FND-01.** `builder` is SF-10's.
 """
+
+from __future__ import annotations
+
+from studyforge.unit.content import (
+    CONTENT_API,
+    CONTENT_FILENAME,
+    DERIVED_FIELDS,
+    KNOWN_CONTENT_API,
+    OVERLAY_KEYS,
+    SECTION_FIELDS,
+    Overlay,
+    Section,
+    from_document,
+    load,
+    parse,
+)
+from studyforge.unit.errors import ContentError
+from studyforge.unit.sections import (
+    KIND_OF,
+    KINDS_WITH_A_LANG,
+    PRACTICE_PREFIX,
+    SECTION_KINDS,
+    SHARED_KEY,
+    derived_section_key,
+    section_key,
+)
+from studyforge.unit.trust import (
+    DEFAULT_TRUST,
+    FORBIDDEN,
+    PROVENANCE,
+    TRUST,
+    check_test_record,
+)
+
+#: ⛔ The package's whole public surface.
+__all__ = [
+    "CONTENT_API",
+    "CONTENT_FILENAME",
+    "DEFAULT_TRUST",
+    "DERIVED_FIELDS",
+    "FORBIDDEN",
+    "KINDS_WITH_A_LANG",
+    "KIND_OF",
+    "KNOWN_CONTENT_API",
+    "OVERLAY_KEYS",
+    "PRACTICE_PREFIX",
+    "PROVENANCE",
+    "SECTION_FIELDS",
+    "SECTION_KINDS",
+    "SHARED_KEY",
+    "TRUST",
+    "ContentError",
+    "Overlay",
+    "Section",
+    "check_test_record",
+    "derived_section_key",
+    "from_document",
+    "load",
+    "parse",
+    "section_key",
+]
