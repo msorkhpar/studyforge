@@ -148,33 +148,38 @@ POISON_SHAPES = {
     "tmp path": "/tmp/build-janedoe-1000/corpus",
 }
 
-#: ⚠️ **The six that leak today, and they leak through one echo.** Measured
-#: 2026-09-09 in the pinned image: each arrives as `{value!r}` from
-#: `address.require_slug`, which W1 (`fix/W1-W2-address-echo`) removes — the
-#: CTO measured 10 of 10 clean with that change and **no change to `validate`**.
+#: ⭐ **Empty, and it stayed empty by announcing its own obsolescence.** Six of
+#: these ten shapes leaked when this test was written — all through one
+#: `{value!r}` in `address.require_slug` — and each was marked
+#: `xfail(strict=True)` against W1, the branch that owed the fix.
 #:
-#: ⛔ `strict=True` is the enforcement and it is deliberate: the day W1 merges
-#: these XPASS, the suite goes red, and this table must be emptied **in that
-#: merge** rather than outliving the defect it describes. An xfail that can
-#: quietly survive its own fix is how a floor rots.
-OWED_TO_W1 = (
-    "windows home",
-    "relative path",
-    "hostname",
-    "unc share",
-    "plain title",
-    "tmp path",
-)
+#: ⛔ `strict` is what made the emptying compulsory rather than optional.
+#: Measured on this branch's rebase onto merged W1: **6 failed, 1930 passed** —
+#: six strict XPASSes and nothing else, which is the table saying it is no
+#: longer describing anything. ⚠️ A non-strict xfail would have gone quietly
+#: green and outlived the defect it described.
+#:
+#: ⭐ And it proved something W2 could not: W1's fix is per-function, and these
+#: six passing is the fix holding **through a composed pipeline** — a bad file
+#: on disk, through the walk, the reader and the report (§10b's vantage-point
+#: argument). Keep the table; a new shape that leaks goes in it the same way.
+OWED_TO_W1: tuple[str, ...] = ()
 
 
 def poisoned(shape):
+    """One parametrised shape, marked `xfail(strict=True)` while it is owed.
+
+    ⛔ The mark is driven from `OWED_TO_W1` rather than written per test, so
+    emptying the table is the whole edit — there is no second place a stale
+    marker can survive.
+    """
     marks = (
         [
             pytest.mark.xfail(
                 strict=True,
                 reason=(
-                    f"{shape}: R7 echo owed to W1 (fix/W1-W2-address-echo), Ruling 17. "
-                    f"Delete this entry from OWED_TO_W1 when W1 merges."
+                    f"{shape}: R7 echo owed to a named branch. Delete this entry from "
+                    f"OWED_TO_W1 when that branch merges; strict makes that compulsory."
                 ),
             )
         ]
