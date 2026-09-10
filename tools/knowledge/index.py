@@ -31,6 +31,19 @@ changed**, never by asking the filesystem what time it is.
 commit comparison fails after *every* commit, including one that touched only
 a handoff; the diff fails only when something the index describes has actually
 moved.
+
+## ⛔ Ruling 96, part 1 — the trees are scoped, because the sentence above was not executable
+
+⚠️ **Measured by `PO-23/3` and it is this module contradicting itself.** The
+comment on `DESCRIBED_TREES` named *"a board row, a handoff, a `.gitignore`"* as
+changes that do **not** make an index wrong — and ⛔ **two of those three live
+under `docs/`, which the same line then described.** ⭐ **So every merge in this
+project reddened the tip by construction**: each one writes a handoff and a
+board row, and nothing else needed to change.
+
+⭐ **The fix is the comment made executable**, as `:(exclude)` pathspecs passed
+to the same diff. ⛔ **It is a scoping change, not a change of intent** — the
+intent was already written down, three lines above the code that ignored it.
 """
 
 from __future__ import annotations
@@ -54,6 +67,23 @@ COMMIT_KEY = "built_at_commit"
 #: freshness rule that fired on one would be a rule people rebuild past
 #: without reading.
 DESCRIBED_TREES = ("src", "tools", "docs")
+
+#: ⛔ The paths **inside** those trees that an index does not describe, and they
+#: are the comment above made executable (Ruling 96, part 1). A board row and a
+#: handoff are the comment's own first two examples and both live under `docs/`.
+#:
+#: ⚠️ `.gitignore`, the comment's third example, is already outside
+#: `DESCRIBED_TREES` and needs no entry here — ⛔ **do not add a fourth for it.**
+UNDESCRIBED_PATHS = (
+    "docs/tasks/handoffs",
+    "docs/tasks/BOARD.md",
+    "docs/tasks/BOARD-ARCHIVE.md",
+)
+
+#: Git's pathspec magic for *remove this from a diff already scoped to
+#: something wider*. ⚠️ The long form rather than `:!`, because a reader can
+#: look it up in `git help glossary` and a reader cannot look up punctuation.
+EXCLUDE = ":(exclude)"
 
 #: The three verdicts, and they are three rather than two on purpose.
 FRESH = "fresh"
@@ -103,13 +133,26 @@ def _run(git: str, arguments: list[str], root: Path) -> subprocess.CompletedProc
     )
 
 
+def described_pathspecs() -> list[str]:
+    """Return the trees an index describes, minus the paths inside them it does not.
+
+    ⭐ One list rather than two arguments, so the diff and every test that
+    reasons about the scope read the same thing.
+    """
+    return [*DESCRIBED_TREES, *(f"{EXCLUDE}{path}" for path in UNDESCRIBED_PATHS)]
+
+
 def freshness(root: Path, commit: str | None) -> str:
     """`FRESH`, `STALE` or `UNVERIFIABLE` for an index built at `commit`.
 
-    ⛔ **The comparison is a diff over `DESCRIBED_TREES`, not `commit != HEAD`.**
-    Every commit changes `HEAD`; only some of them change what the index
-    describes, and a check that fired on the rest would be rebuilt past
-    reflexively — which is how a check stops being read.
+    ⛔ **The comparison is a diff over `described_pathspecs()`, not
+    `commit != HEAD`.** Every commit changes `HEAD`; only some of them change
+    what the index describes, and a check that fired on the rest would be
+    rebuilt past reflexively — which is how a check stops being read.
+
+    ⚠️ **And *some of them* is narrower than *anything under `docs/`*.** A
+    handoff and a board row are excluded by name (Ruling 96, part 1), because a
+    rule that fires on every merge is the same rule people rebuild past.
     """
     if commit is None:
         return UNVERIFIABLE
@@ -123,7 +166,7 @@ def freshness(root: Path, commit: str | None) -> str:
         # of a branch that never had it. Saying "stale" would be a verdict the
         # evidence does not support.
         return UNVERIFIABLE
-    changed = _run(git, ["diff", "--quiet", commit, "HEAD", "--", *DESCRIBED_TREES], root)
+    changed = _run(git, ["diff", "--quiet", commit, "HEAD", "--", *described_pathspecs()], root)
     if changed.returncode == 0:
         return FRESH
     if changed.returncode == 1:

@@ -886,6 +886,33 @@ Lint: did not run — ruff absent, both gates skipped        ⛔ NOT EVIDENCE (�
 row this table already calls *not evidence at all*, and a review that omits the
 lint line entirely is making that claim silently.
 
+##### ⛔ 4b-ii — Ruling 96: a review states its **INDEX LINE**, beside its lint line
+
+⛔ **The floor prints one, always, in all four states. Quote it verbatim:**
+
+```bash
+python3 -m tools.quality | grep '^knowledge index: '
+```
+
+```
+knowledge index: fresh — built at 6850c3c9, and nothing it describes has moved since.
+knowledge index: stale — built at 6850c3c9, and src/, tools/ or docs/ has changed since …
+knowledge index: unverifiable — present, and its freshness could not be checked …
+knowledge index: none — none in this checkout. R14's budgets assume one …
+```
+
+⛔ **`stale` does not block APPROVE and never did after Ruling 96** — ⚠️ **it is
+not a licence either: a reviewer who quotes `stale` has said, in their own
+review, that their queries answered from yesterday's tree.** ⭐ **That is
+falsifiable, which no exit code here could be:** `graphify-out/` is git-ignored,
+so a verdict built on it reads clean on a fresh clone and red on a working
+machine, **on the same commit** — the untracked-state dependency §2e forbids.
+
+⚠️ **`none` is the honest and usual answer in a trial-merge worktree**, because
+`git worktree add` does not carry a git-ignored directory. ⛔ **Quote it rather
+than omitting the line**: the omission and the absence look identical in a
+review, and only one of them is a measurement.
+
 #### ⛔ Ruling 86 — a **documentation-only** branch needs a lint line too
 
 ⚠️ **`W33/4`, and it lands on the reviewer's instrument rather than on any
@@ -1845,39 +1872,38 @@ remembered by whoever did it. ⭐ A gate that leaves no trace when it is skipped
 a gate that will be skipped again, and this project has already ruled the same
 way twice — once for the module ceiling, once for the R7 sweep.
 
-#### ⛔ Ruling 89 — the merger rebuilds the index, because a merge is what makes it stale
+#### ⛔ Ruling 89, NARROWED by `W39` — the merger rebuilds as a **courtesy**, never as a precondition
 
-⚠️ **`CTO-25/9`, and round 26 confirms it from the outside: the coordinator had
-run the rebuild by hand after every merge — roughly fifteen times in one
-night.** ⛔ **A step that survives only because one agent remembers it is what
-this project has ruled against six times.** ⭐ **So it joins the two-line habit
-above and makes it three.** ⛔ **After merging, in the checkout you merged into,
-never in a worktree:**
+⛔ **After merging, in the checkout you merged into — a worktree has no index to
+rebuild:**
 
 ```bash
 graphify update . && python3 -m tools.knowledge bridge
 python3 -m tools.knowledge census        # edges, prose-to-code, floor
-python3 -m tools.quality | grep -i '^knowledge index'   # no `stale`, no `unbridged`
 ```
 
-⛔ **Pass condition: the census prints a prose-to-code count at or above the
-floor, and the floor's `knowledge index` line is not a finding.** ⭐ **State the
-census row in the merge message beside the tip confirmation.**
+⭐ **Pass condition: none. This step can no longer invalidate anybody's
+number.** ⚠️ **It stays because R14's context budgets assume an index and the
+next agent inherits yours** — ⛔ **and it is skipped without comment where
+`graphify` is not installed.**
 
-⚠️ **Why it is the merger's and not the author's.** ⛔ `freshness()` diffs
-`DESCRIBED_TREES = ("src", "tools", "docs")` between the commit the index names
-and `HEAD` — ⭐ **and every merge in this project writes a handoff and a board
-row under `docs/`, so every merge reddens the tip by construction, including a
-one-file docs-only one.** ⚠️ **§10 below is unchanged and still right: the
-author does not rebuild, and `graphify-out/` in a diff is still a fail.** ⛔ **The
-hole was that the step was then assigned to nobody.**
+⚠️ **What was narrowed, and why the other half had to go.** ⛔ **Ruling 89
+bundled two reasons: *the next agent needs an index* (kept) and *the tip is red
+until you rebuild, so rebuild before quoting it* (deleted).** ⭐ **`W39` removed
+the second's cause on both sides** — `freshness()` no longer fires on a handoff
+or a board row, and a stale index is a **notice** rather than a finding (4b-ii),
+so **a stale index cannot redden a tip.**
 
-⛔ **And the reason nobody noticed for a fortnight: `FND-07`'s three states are
-correct and their blind spot is the reviewer's own seat.** ⭐ **A trial-merge
-worktree has no `graphify-out/`, reports *absent*, and exits 0 — by design, so a
-fresh clone is not hostile.** ⚠️ **So the gate keeps passing in the only checkout
-a reviewer measures, while the main checkout goes red — and the person who finds
-out is whoever measures the tip next, not whoever caused it.**
+⛔ **And the deleted half was never runnable everywhere, which is the sharper
+reason.** ⚠️ **`git worktree add` does not carry a git-ignored directory, so
+`graphify-out/` is absent in every linked worktree, the floor reads `none`, and
+there is nothing to rebuild** — ⭐ **measured twice, by two agents, in two
+checkouts (`CTO-27/6`).** ⛔ **An obligation that silently evaporates depending
+on which checkout you stand in is the untracked-state dependency §2e forbids,
+wearing a procedure instead of an exit code.**
+
+⚠️ **§10 below is unchanged and still right:** the author does not rebuild, and
+`graphify-out/` in a diff is still a fail.
 
 ---
 
