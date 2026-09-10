@@ -25,7 +25,18 @@ def test_the_pin_records_a_commit_and_a_sibling():
 
 @pytest.mark.parametrize(
     "value",
-    ["../studyforge", "/somewhere/studyforge", "HEAD", "a" * 39, "A" * 40, None, 40],
+    [
+        "../studyforge",
+        "/somewhere/studyforge",
+        "HEAD",
+        "a" * 39,
+        "A" * 40,
+        # ⚠️ The one that separates `fullmatch` from `match`: forty legal
+        # characters followed by a path. A prefix test would accept it.
+        "a" * 40 + "/../etc",
+        None,
+        40,
+    ],
 )
 def test_anything_that_is_not_a_commit_is_refused(value):
     # ⛔ The check that keeps a path out of the pin. A relative sibling path is
