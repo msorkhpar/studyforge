@@ -9,10 +9,10 @@ import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.contents import (
+    ENTRY_KEYS,
     KNOWN_TOC_API,
     TOC_API,
     TOC_FILENAME,
-    ENTRY_KEYS,
     TOC_KEYS,
     ContentsError,
     digest,
