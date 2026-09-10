@@ -1,0 +1,45 @@
+{
+  "workspace_api": 1,
+  "components": [
+    {
+      "name": "studyforge",
+      "where": "self",
+      "status": "present",
+      "commit": "6738559ad95c85582db6a2b97ecd2f752cb553a4"
+    },
+    {
+      "name": "CodeSignal",
+      "where": "sibling",
+      "status": "present",
+      "commit": "49c11d5e155b6fe6ded22034b93cd47222ba56b4"
+    },
+    {
+      "name": "Claude-senior-java-engineer",
+      "where": "sibling",
+      "status": "present",
+      "commit": "c9cf522ab223030f269a9bebefc537d71532871c"
+    },
+    {
+      "name": "ISO-8583-jPOS-tutorial",
+      "where": "sibling",
+      "status": "present",
+      "commit": "a94151747cb0ed78025e82ae6575027c321f285c"
+    },
+    {
+      "name": "Claude-SPARQL-tutorial",
+      "where": "sibling",
+      "status": "present",
+      "commit": "b9aa89b2305f21063c43c8d00fc704b7a6a5b906"
+    },
+    {
+      "name": "code-server-toolchain",
+      "where": "sibling",
+      "status": "not-yet-created"
+    },
+    {
+      "name": "narrate-service",
+      "where": "sibling",
+      "status": "not-yet-created"
+    }
+  ]
+}

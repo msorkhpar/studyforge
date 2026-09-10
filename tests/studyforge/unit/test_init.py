@@ -16,7 +16,7 @@ PUBLIC_SURFACE = frozenset(
         "CONTENT_FILENAME",
         "DEFAULT_TRUST",
         "DERIVED_FIELDS",
-        "FORBIDDEN",
+        "MAY_BE_AUTHORITATIVE",
         "KINDS_WITH_A_LANG",
         "KIND_OF",
         "KNOWN_CONTENT_API",

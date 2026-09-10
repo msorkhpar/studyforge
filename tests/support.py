@@ -12,6 +12,9 @@ Imported as `from tests.support import ...` — `pythonpath = ["src", "."]` in
 
 from __future__ import annotations
 
+import ast
+import json
+import re
 import shutil
 import subprocess
 from pathlib import Path
@@ -132,3 +135,61 @@ def run(command: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
     )
+
+
+def imports_module(path: Path, module: str) -> bool:
+    """Does the Python file at `path` take something from `module` by name?
+
+    ⛔ **The one spelling of "does this module go to the owner?"**, and it was
+    written by hand twice before it was extracted (W13): `test_version.py`'s
+    `imports_the_guard` and `test_blocks.py`'s `imports_the_vocabulary` are the
+    same eleven lines with a different constant, and the fixture checker was
+    about to be the third. ⚠️ This file's own contract says a block repeated
+    between test files is extracted and imported; two copies is where that
+    starts, not where it becomes urgent.
+
+    ⭐ **Equality, not a prefix, and not a re-export chain.** A module deriving
+    from the one source of truth says where it got it — `studyforge.version`
+    matches, `studyforge` does not, and neither does a name re-exported through
+    a package `__init__`.
+    """
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == module:
+            return True
+        if isinstance(node, ast.Import) and any(alias.name == module for alias in node.names):
+            return True
+    return False
+
+
+#: Ruling 47's shared evidence: the one table both personal-data gates are
+#: measured against. ⛔ Shared as **data**, never as code — `tools/quality` may
+#: not import the framework (Ruling 31), so the two sides read this file and
+#: each asserts only its own column.
+SHAPE_VOCABULARY = "docs/conventions/personal-data-shapes.md"
+
+
+def personal_data_shapes() -> list[dict]:
+    """Every row of the shared shape vocabulary, with `spelling` joined.
+
+    ⚠️ `spelling` is stored as fragments and joined here: a real personal-data
+    shape written whole into that document would be a finding against it, by
+    the sweep its own last column describes.
+    """
+    text = (repository_root() / SHAPE_VOCABULARY).read_text(encoding="utf-8")
+    match = re.search(r"```json\n(.*?)\n```", text, re.S)
+    if match is None:  # pragma: no cover - the document without its table
+        raise AssertionError(f"{SHAPE_VOCABULARY} carries no ```json table")
+    rows = json.loads(match.group(1))
+    for row in rows:
+        row["example"] = "".join(row["spelling"])
+    return rows
+
+
+def shapes_agree(row: dict) -> bool:
+    """Do all three columns of `row` say the same thing?
+
+    ⭐ The rule the table enforces: a row whose columns disagree must carry a
+    `why`, so a divergence is declared with a reason rather than discovered.
+    """
+    return (row["gate"] == "refuse") == (row["scrub"] == "rewrite") == (row["quality"] == "report")

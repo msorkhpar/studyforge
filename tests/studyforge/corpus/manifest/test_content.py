@@ -99,7 +99,7 @@ def test_an_exclusion_names_one_file_and_never_a_pattern():
 
 def test_the_same_file_cannot_be_excluded_twice():
     entry = {"path": "src/ISO.md", "why": "whole-series aggregate, declared once too often"}
-    with pytest.raises(ManifestError, match="excluded twice"):
+    with pytest.raises(ManifestError, match=r"already excluded by content\.exclude\[0\]"):
         policy(exclude=[entry, entry])
 
 

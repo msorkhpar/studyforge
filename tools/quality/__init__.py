@@ -59,10 +59,12 @@ from tools.quality.config import (
     TEST_LINE_CEILING,
 )
 from tools.quality.docstrings import check_docstrings
+from tools.quality.knowledge_index import check_knowledge_index, notices
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.report import Finding, format_findings
 from tools.quality.size import check_sizes
+from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
 
 #: Every check, in the order their findings are reported. Adding a check means
@@ -72,16 +74,35 @@ from tools.quality.style import check_style
 #: than the Python files under `SCAN_ROOTS`. R7 has been violated in this
 #: repository once already and it was in a document, so a sweep confined to
 #: `.py` would have missed the only instance there has been.
+#:
+#: ⚠️ `check_source_names` is its mirror image: the only one that reads
+#: **less** than `SCAN_ROOTS`, because R1 binds framework source and a
+#: document must be able to name a corpus or the measurements it holds become
+#: unattributable. ⛔ That narrowing is the whole exemption mechanism — a
+#: module cannot be excused, and nothing is scanned that would need excusing.
 CHECKS = (
     check_sizes,
     check_mirrors,
     check_docstrings,
     check_style,
     check_personal_data,
+    check_source_names,
+    check_knowledge_index,
 )
+
+#: ⛔ **The second channel, and it exists because one of the floor's answers is
+#: not a failure.** `check_knowledge_index` must be able to say *"there is no
+#: knowledge index here, and this is how you build one"* **without failing**: a
+#: fresh clone legitimately has none, and a red suite on clone is hostile and
+#: gets muted — which is how a check stops being read (FND-07).
+#:
+#: ⚠️ A notice never affects the exit code. Anything that should fail a build
+#: is a `Finding`, and nothing here is a quieter way to report one.
+NOTICES = (notices,)
 
 __all__ = [
     "CHECKS",
+    "NOTICES",
     "LINE_LENGTH",
     "MIN_JUSTIFICATION_CHARS",
     "SIZE_EXCEPTION_MARKER",
@@ -90,6 +111,7 @@ __all__ = [
     "Finding",
     "format_findings",
     "run_all",
+    "run_notices",
 ]
 
 
@@ -103,3 +125,16 @@ def run_all(root: Path) -> list[Finding]:
     for check in CHECKS:
         findings.extend(check(root))
     return sorted(findings)
+
+
+def run_notices(root: Path) -> list[str]:
+    """Every non-failing line the floor wants to print, in order.
+
+    ⛔ Separate from `run_all` because the two answer different questions.
+    `run_all` answers *"is this tree below the floor?"*; this answers *"is
+    there something you are missing that nobody can fail you for?"*
+    """
+    lines: list[str] = []
+    for notice in NOTICES:
+        lines.extend(notice(root))
+    return lines

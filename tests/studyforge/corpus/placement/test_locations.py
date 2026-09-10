@@ -63,7 +63,7 @@ def test_every_kind_of_media_has_a_directory_and_an_href(profile, kind):
 
 @pytest.mark.parametrize("kind", ["sound", "", None, "AUDIO"])
 def test_an_unknown_kind_of_media_is_refused_naming_the_ones_there_are(kind):
-    with pytest.raises(PlacementError, match="kind of unit media"):
+    with pytest.raises(PlacementError, match="media kind must be one of"):
         unit("tree").media_dir(kind)
 
 

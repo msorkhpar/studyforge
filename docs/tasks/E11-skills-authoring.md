@@ -89,10 +89,86 @@ two traps real material actually set (C1, C2):
   ingests everything twice with nothing complaining. Detect the overlap and
   propose which set is canonical.
 
+⛔ **Two more traps, measured in a real repository 2026-09-09 and carried here
+while this task is still unassigned.** ⭐ They are worth more than the first two,
+because **neither raises anything and both flatter the person checking.**
+
+- ⛔ **Trap 3 — a filename sort silently reverses the curriculum.** `sorted()`
+  puts **35 of 38 units at the wrong index**. ⚠️ The count is right, every page
+  renders, every link resolves, **nothing raises** — and ⛔ **it flatters: unit 1
+  of each group stays first, so the page anybody spot-checks is correct.** ⭐ It
+  is C3's failure class arriving through **ordering** rather than **count**, and
+  a count assertion is all the framework has. ⚠️ **The trap inside the trap:**
+  the only machine-checkable order oracle is the three aggregate documents —
+  **precisely the files a `content.exclude` deletes** — so excluding the
+  duplicate destroys the evidence for the ordering. ⛔ **Report both, and never
+  propose the exclusion without saying what it costs.**
+
+- ⛔ **Trap 4 — heading level does not identify role.** In the same corpus,
+  `README.md` is 675 lines and lines 313–675 carry **361 headings
+  digest-identical to the whole heading tree of `TestCases.md`** — **53.7% of the
+  curriculum document is a copy of another document's structure**, invisible to
+  any whole-file digest. ⛔ **And the file can never be excluded**: it is the only
+  record of the corpus's addresses, titles, ordinals and grouping. Consequence:
+  `#` means *container* **3** times and *chapter of another document* **17**
+  times, so ⚠️ **a parser keyed on heading level emits 21 containers for a
+  3-container corpus and raises nothing.**
+
+  ⭐ **This is the sharpest argument in this task's file for R6.** A skill that
+  reads structure confidently here is confidently wrong, and the corpus offers no
+  signal that it was. ⛔ **The duplicate is a *region*, not a file** — and
+  `content.exclude` names files, so ⚠️ **detect and report; do not remedy.** The
+  manifest is not going to grow sub-file exclusion and should not.
+
+⛔ **What a *re-run* of this skill is, is undefined and this task does not close
+it.** The last reconnaissance of a moving framework happened because a person
+asked. ⭐ Recorded as owed to the integration catalogue rather than silently
+inherited here.
+
+### ⛔ Carried ruling — the **title-collision** check is this skill's, and only this side can do it
+
+⚠️ **Carried by the PO 2026-09-09 from `handoffs/SF-01.md`'s open `[structural]`
+finding, via CTO round 6 and `SF-25`'s definition.** The finding was routed to
+"SK-01/SK-02" by its author and ⛔ **had no clause on either side** — the
+validate-side half is written into `E10 SF-25` and this half was not.
+
+⛔ **`slugify` is ASCII-lossy and silent about it.** **Measured 2026-09-09:**
+`Ströme → 'str-me'`, `Потоки → ''`, `日本語 → ''` — a title with no ASCII letters
+produces no address at all. ⭐ **A Russian title is not a corpus defect**: R1 says
+the framework knows nothing about a source, *including its alphabet*.
+
+⛔ **And the collision case is punctuation, not alphabet — corrected here the
+same day it was written** (round 17, finding 13). ⚠️ **My first draft of this
+clause used `café`/`cafe` as the colliding pair. That is wrong**:
+`slugify('Café') == 'caf'` and `slugify('Cafe') == 'cafe'` **do not collide**,
+because an accent collapses to a separator rather than vanishing. ⭐ **The true
+class is wider and far more likely:** `'Streams: an API'` and `'Streams, an API'`
+**both** give `streams-an-api`. ⛔ **A skill built to catch the accent case would
+miss the case that actually occurs** — ordinary punctuation in ordinary English
+titles, which any real corpus has and no reviewer would look twice at.
+
+⭐ **Defence in depth, and the two halves are not substitutes.** `SF-25` sees the
+**effect** — two containers at one address — from the archive alone, because by
+then the titles are gone and §6 rules an address *recorded, never derived*.
+⛔ **Only reconnaissance sees the cause**, because this is the one step that still
+holds the titles. So:
+
+- **Acceptance gains a clause:** ⛔ *given material whose titles collide under
+  `slugify` — including a title with no ASCII letters — the report names the
+  colliding titles and refuses to propose an address for them*, rather than
+  proposing a manifest that validates and loses a unit.
+- ⚠️ **It is reported, never silently disambiguated.** Appending `-2` would make
+  the collision validate and hide it; R6 says uncertainty is reported. ⭐ This is
+  the same corpus-scale trap as the duplicate-material one above: the failure is
+  **silent** and the archive looks complete.
+- ⚠️ **Transliteration is a declared v1 limitation**, not this skill's to solve.
+  What is owed here is that a title it cannot address is **named**.
+
 **Acceptance.** Proposes a correct manifest for the Java corpus without being
 told the answer. Proposes a correct 1-level manifest for a flat source.
 Correctly reports "no runnable code, no graders" for a prose-only source. Every
-uncertainty appears in the report rather than as a silent guess.
+uncertainty appears in the report rather than as a silent guess. ⛔ **Colliding
+and unaddressable titles are named in the report**, per the carried ruling above.
 
 ---
 
@@ -151,6 +227,16 @@ which would make the extensibility exercise largely a test of typing speed.
 **What it generates in a target repository.**
 
 1. `corpus.json` — promoted from SK-01's draft, including `permitted_edits` (R3).
+   ⛔ **It emits only the keys the corpus needs, and never a key merely because
+   the contract has one.** ⚠️ **Carried by the PO 2026-09-09, Q16:** the media
+   footprint limits are free to rename **until the first manifest declares
+   them** — and the moment an adapter writes one it is a `corpus_api` field whose
+   rename is an R9 migration. ⭐ **`SF-02` already asserts that an absent `media`
+   block is committed-with-defaults**, so omission is the declared path, not a
+   workaround. ⛔ **A generator that emits an unneeded key freezes that key on
+   everybody**, and it does so silently, from the one place nobody re-reads. ⚠️ It
+   is the failure mode this skill is most exposed to in general: **what a
+   generator emits by default becomes the convention.**
 2. The adapter package, its test tree and its audit command — SK-02's scaffold, wired in.
 3. **Ignore rules** — new ignore files written *inside* generated directories. ⛔ Never an edit to the repository's root one (R3, and E07 already rules this for Java). ⭐ **What they ignore is `SF-32`'s verdict, not this skill's opinion**: generated media is committed by default, so the ignore rules must *not* exclude it — and when a corpus crosses the footprint ceiling, this skill is what tells the reader, in the onboarding report, that their media no longer fits in git and what the two ways forward are. ⛔ It never silently flips the policy; the manifest says what happens and a person changes the manifest.
 4. **The build entry point** — corpus configuration over SF-28's CLI.

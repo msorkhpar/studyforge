@@ -71,12 +71,48 @@ CodeSignal-specific *generation* — the part this task must not inherit. Read
 only the contract surface. Everything about guessing at a hidden grader stays
 in CodeSignal; the Java corpus's generation is E08 and works differently.
 
+### ⛔ Carried ruling — **`exercise` must become a known key, not a tolerated one**
+
+⚠️ **Carried by the PO from CTO round 17, finding 20 `[structural]`, measured
+before this task starts. Quoted rather than summarised, because a ruling relayed
+as somebody's paraphrase has been through a lossy channel.** The measurement:
+
+> ⛔ An archive document carrying an unknown top-level `"exercise"` object
+> **validates green — 0 findings, 0 unchecked claims** — because the digest is
+> taken over `blocks`. Owner is `archive.document.parse` (SF-02), **not**
+> `validate`; re-asking in `validate` would be the "two readings from one parser"
+> mistake E10 warns about. ⚠️ **What SF-23 must inherit: adding `exercise` has to
+> change the known-key set, not be silently tolerated — otherwise a typo in the
+> key is tolerated too and the graders are invisible.**
+
+⭐ **This is the failure the board predicted when it put `SF-23` behind `SF-25`
+with the same developer — *a corpus validates green with its graders invisible* —
+and it is now measured rather than predicted.** ⛔ **A typo in `"exercise"` must
+be a refusal, not a silently ungraded unit**, because §7's three states are
+**structural**: there is no `state` field to set, so *absent* and *misspelled*
+are indistinguishable to every reader downstream. ⚠️ **The change lands in
+`archive.document`'s known-key set** (SF-02's surface), not in `validate`.
+
 **Acceptance.** A `bundled` + `authoritative` record is accepted; a
 `generated` + `authoritative` one is refused, in code. **All three states round-
 trip** — a missing document, a document with no `exercise` key, and a full
 record — and an ungraded exercise cannot complete a practice, asserted. A unit
 with zero exercises is a valid, complete unit. A path outside the safe pattern is
-refused. The depth-1 fixture (zero exercises) validates.
+refused. The depth-1 fixture (zero exercises) validates. ⛔ **A document with a
+misspelled `exercise` key is refused, not silently treated as ungraded** — per
+the carried ruling above.
+
+⛔ **Two fixtures this task ships, both additively (R3), because neither exists:**
+
+1. **The `graded` fixture.** **Measured 2026-09-09:**
+   `grep -rln '"exercise"' tests/fixtures/` returns **nothing**, while two
+   `practice-1.json` exist. ⚠️ Of §7's three states the fixtures carry **none**
+   and **ungraded** — ⛔ **`graded`, the state this task is about, has none.**
+2. **`W14` — the count-mismatch invalid fixture.** `E10`'s acceptance names
+   **six** invalid fixtures and FND-04 ships **five**; ⛔ **the count-mismatch
+   clause has never been exercised.** It is a practice-count mismatch, so it
+   belongs to the task already opening practice documents. Digest recomputation
+   is part of the work, not a follow-up.
 
 ---
 

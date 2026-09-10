@@ -50,6 +50,8 @@ from studyforge.corpus.placement.names import (
     ROOT_INDEX_FILENAME,
     SITE_CACHE_FILENAME,
 )
+from studyforge.describe import describe
+from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 
 #: Where everything a reader does not browse lives. ⚠️ Dot-prefixed so it sorts
 #: out of the way in a repository whose directories are the material — which is
@@ -128,7 +130,8 @@ def profile_for(name: object) -> Profile:
     if name in _PROFILES:
         return _PROFILES[str(name)]
     raise PlacementError(
-        f"no placement profile named {name!r}; this build registers {registered()}"
+        f"no placement profile by that name; this build registers {registered()}, "
+        f"and was given {describe(name)}"
     )
 
 
@@ -157,17 +160,20 @@ def origin_directory(origin: object, address: Address, what: str = "artifact") -
             f"{what} at {address.key!r} records no usable 'origin' — the container map "
             f"must carry one for every {what} placed under this profile"
         )
-    path = PurePosixPath(origin)
-    if path.is_absolute() or ".." in path.parts:
-        # ⛔ The offending origin is DESCRIBED, never echoed (R7). It is corpus
-        # data, and the one shape being refused here is exactly the shape that
-        # carries a home directory — so a refusal that quoted it would copy
-        # personal data into a build log, from the check that exists to catch
-        # it. Following `version._said`: name the fault and the unit, and let
-        # the integrator look at the one record named.
-        fault = "an absolute path" if path.is_absolute() else "a path leaving the source root"
+    # ⛔ The offending origin is DESCRIBED, never echoed (R7). It is corpus
+    # data, and the shapes being refused here are exactly the shapes that
+    # carry a home directory — so a refusal that quoted it would copy personal
+    # data into a build log, from the check that exists to catch it. Name the
+    # fault and the record, and let the integrator look at the one named.
+    #
+    # ⚠️ The predicate is `sourcepath`'s and not this module's. It used to be
+    # `is_absolute() or ".." in parts` here and a different forbidden list in
+    # `container.fields.optional_path`, and the gap between the two lists was
+    # reachable by `C:/Users/<name>/x`, which neither refused (Ruling 44).
+    fault = source_path_fault(origin)
+    if fault is not None:
         raise PlacementError(
             f"the 'origin' recorded for the {what} at {address.key!r} is {fault}; an "
-            f"origin is relative to the source root and stays inside it"
+            f"origin is {SOURCE_PATH_DESCRIBED} and stays inside it"
         )
-    return path.parent
+    return PurePosixPath(origin).parent

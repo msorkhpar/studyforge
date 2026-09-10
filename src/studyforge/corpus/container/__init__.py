@@ -64,7 +64,7 @@ page's name may not be taken from a source filename. So `folder` has a home
 here, and the field it needed already existed.
 
 ⛔ **A placement profile that needs it must say so and fail loudly when it is
-absent** (SF-03). `sibling` does: the Java corpus's directories are flat while
+absent** (SF-03). `sibling` does: one designed shape's directories are flat while
 its address is two levels, so the directory comes from `origin` and the
 address is *only* identity — a profile using the address for both would create
 new directories beside the material, which is what R3 forbids.

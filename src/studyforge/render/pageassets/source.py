@@ -25,6 +25,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from studyforge.describe import describe
 from studyforge.render.pageassets.errors import AssetError
 
 #: Where the parts live: beside the code that composes them, so an editor
@@ -51,7 +52,9 @@ def text(name: str) -> str:
     """
     path = ASSET_DIR / name
     if "/" in name or "\\" in name or name in ("", ".", ".."):
-        raise AssetError(f"asset name must be one filename in the asset directory, got {name!r}")
+        raise AssetError(
+            f"asset name must be one filename in the asset directory, got {describe(name)}"
+        )
     try:
         return path.read_bytes().decode("utf-8")
     except OSError as error:

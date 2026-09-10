@@ -2,6 +2,93 @@
 
 Enforces **R11**, **R12**, **R13**, **R17**. Read once; it applies to every task.
 
+## ⛔ Enumerate the legal, never the illegal
+
+⭐ **The CTO's own words: the one ruling they would keep if they could keep only
+one.** It is placed first because it is the general form of five separate rulings
+that each arrived at it independently, and because ⛔ **every list of wrong things
+this project has written has been incomplete, and stayed incomplete silently.**
+
+> ⛔ **A list of forbidden things is an *open* set — the unforeseen case is
+> admitted silently. A list of permitted things is a *closed* set — the
+> unforeseen case is refused, and somebody has to decide.**
+> ⭐ **Same shape, opposite failure mode.**
+
+⚠️ **The asymmetry is the whole argument, and it is worth stating plainly:** both
+lists are incomplete, always. What differs is **what incompleteness does**. An
+open set fails toward *acceptance* — nothing raises, nothing logs, and the defect
+is discovered by its consequences. A closed set fails toward *refusal* — loudly,
+at the boundary, naming the thing it did not expect. ⭐ **A refusal costs a
+question; a silent admission costs whatever the unforeseen case does.**
+
+**Five convergences, kept because the convergence is the evidence:**
+
+| Ruling | The open set that failed | The closed set that replaced it |
+|---|---|---|
+| **8** | a character blacklist for filenames — ⛔ **seven shapes got through**, two breaking the `file://` floor | the label class **derived from `is_slug`**, plus a first-character rule |
+| **20** | two personal-data gate copies, one skipping dict keys | ⛔ one implementation, **the duplicate deleted** |
+| **35** | `FORBIDDEN` pairs, restated per package | ⭐ **`authoritative ⟹ bundled`, stated positively** |
+| **38** | *"expect 8 skips"* — ⛔ **a count no test holds** | **every skip declares a cause from a closed, named set** |
+| **D2's reader set** | a hand-maintained list of gate callers — ⛔ **how `corpus.json` went ungated** | the reader set **derived**, so omission is unrepresentable |
+
+⛔ **So: a list of accepted shapes needs justifying; a list of rejected shapes
+needs replacing.** ⚠️ **And the tell that you are writing the wrong one** is that
+you can always think of one more entry — ⭐ **an open set is one you can extend
+without deciding anything, which is exactly why it never gets finished.**
+
+### ⛔ A guarantee does not extend to what sits beside it
+
+⭐ **When you assert a guarantee, name what is adjacent that you have *not*
+asserted.**
+
+⚠️ **The tell, and it catches the author as readily as the reader: when one half
+of a pair is constrained and the other is not, the constrained half is the one
+everybody reads — including the person who wrote both.**
+
+⛔ **Neither measured instance was an open set nobody noticed. Both were a
+*demonstrated* guarantee lending its credibility to an *undemonstrated*
+neighbour:** `where` closed against a fixed set while `name` stayed free; the pin
+file's **bytes** asserted while its **reader** was asserted nowhere.
+
+⭐ **The sentence to keep, adopted verbatim from the developer who found it:**
+
+> ⛔ **A file being clean is not a property of the file.**
+
+⚠️ **It bounds the rule below rather than contradicting it.** *Enumerate the
+legal* tells you to close the set you are defining; ⛔ **this tells you that
+closing one set says nothing about the set next to it** — and that the closed one
+will be mistaken for both.
+
+### ⛔ The domain limit — and read this before applying the rule above
+
+⚠️ **This rule is not universal, and without the boundary the next author will try
+to invert a set nobody can write down.** Carried from Ruling 44.
+
+> ⛔ **Where the legal set is *enumerable* — keys, versions, profiles, skip
+> causes, contract fields — enumerate it.**
+> ⛔ **Where it is *free text*, the forbidden list is forced and
+> known-incomplete *by construction*, and the answer is never a longer list: it
+> is defence in depth, every layer asserted, because no layer is sufficient.**
+
+⭐ **The personal-data gate is the worked example, and it is why the boundary had
+to be written down.** *"You cannot enumerate the legal here: the permitted set is
+**all text that is not personal data**, which nobody can write down."*
+
+⚠️ **So a forbidden list is not automatically a defect — sometimes it is the only
+representable thing.** ⛔ **What changes is what you owe when you write one:**
+
+- **Never** treat its length as progress. A longer list is not a stronger claim.
+- **Assert every layer independently**, because the argument for depth is
+  precisely that no single layer is sufficient — ⚠️ **an unasserted layer is an
+  assumption wearing a defence's clothes.**
+- **Say in the docstring that the list is known-incomplete**, so the next reader
+  does not mistake it for a closed set and stop adding layers.
+
+⭐ **The distinction to carry: enumerability is a property of the domain, not a
+choice the author makes.** Ask whether the permitted set can be written down. If
+it can, the forbidden list is a defect. **If it cannot, the forbidden list is
+forced — and depth, not length, is the remedy.**
+
 ## Size
 
 | Unit | Soft ceiling | On exceeding |
@@ -354,6 +441,44 @@ determines one is asserted element-for-element, in order, against the artifact.
 ⭐ **And when two orders disagree, the one that reaches disk wins.** An internal
 tuple used only for membership can be reordered freely; a serialised key order
 cannot, because changing it rewrites every document that was already correct.
+
+## ⛔ A derived-set assertion asserts **inhabitation**, in the same test
+
+⛔ **`assert a == b` where *both* sides are computed is satisfied by
+`set() == set()` — and empty is usually the bug it guards.** ⭐ **So assert the
+collections are inhabited, in the same test.**
+
+⚠️ **Measured instance:** `test_a_sweep_excludes_exactly_…` was **born vacuous** —
+it compared `swept({rule})` against `swept(()) - declaring_it`, and **under a
+directory exclusion both sides are empty and it passes.**
+
+⭐ **Fifth instance of *a check that cannot fail*, and the first with a
+*mechanical* tell.** The four before it needed judgement to spot — a silent `mv`,
+a truthy generator, a comment that swallowed a colon, a formatter nobody ran.
+⛔ **This one has a shape a rule can name**, which is why it is written here
+rather than left as vigilance.
+
+⚠️ **It is *`0 = 0` is not a pass* in a different instrument** — that was ruled
+for a counter over a document; this is the same failure over a derived set. ⛔ **A
+rule ruled in one instrument does not transfer itself to another**, and this pair
+is the evidence: the same person ruled both, weeks apart in argument and minutes
+apart in time, without seeing the second while writing the first.
+
+## ⛔ Present is not correct — assert the form, not the presence
+
+⚠️ **A runbook entry, a docstring or a config key can be **present and wrong**, and
+a test that checks only presence passes on both.** ⭐ **Measured instance:** four
+existing assertions checked that runbook entries **existed**; ⛔ **not one could
+have caught an entry that existed and named the wrong thing** — which is the
+defect that actually shipped.
+
+⛔ **So assert the *form* of the thing: that the argument is shaped the way a
+working invocation is shaped, not merely that a line is there.**
+
+⭐ **It is *hold-it-or-point-at-it* one level down** — presence is a pointer,
+form is holding the thing — and it is the same asymmetry as *enumerate the legal*:
+⛔ **a presence check fails toward acceptance**, silently, on the case that looks
+right and is not.
 
 ## ⛔ A sweep states what it is sweeping
 

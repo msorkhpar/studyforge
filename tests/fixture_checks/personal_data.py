@@ -1,47 +1,63 @@
-"""R7's shapes, matched on shape and never on a literal value.
+"""R7's gate, asked of a fixture — the framework's gate, never a second copy.
 
-**What it does.** Walks every string reachable from a document and reports the
-first personal-data shape it finds.
+**What it does.** Reports the first personal-data shape reachable from a
+document, and names the shape rather than the text.
 
 **How you use it.** `check_personal_data(value, where)` yields
-`(rule_id, message)`.
+`(rule_id, message)`. `shape_in(text)` for one string — re-exported from the
+framework so a caller never needs a pattern.
 
-**Depends on.** `corpus.strings_in` and `re`.
+**Depends on.** `studyforge.archive.scrub`, and nothing else.
 
-⛔ **This module holds no real identifier.** Holding one to match against would
-be the leak it exists to prevent, so every pattern describes a *shape*.
+## ⛔ This module holds no patterns, and that is the whole of it (W13)
 
-⛔ **The matched text is never echoed.** A refusal that quotes the leak has
-only relocated it into a log — and a build log is read by more people than the
-file was.
+⚠️ **It used to hold three, and they were the weaker of two copies — in the one
+place where personal-data-shaped content is *permitted*.** Measured against
+`studyforge.archive.scrub`, which the archive itself uses:
 
-⚠️ **This gate is the archive, and it is stricter than the repository's own
-hygiene sweep.** `tools/quality/personal_data/` allows a reserved-TLD address
-because such a placeholder identifies nobody and `CLAUDE.md` positively asks
-for one. Here, any address is wrong *content* whether or not it is
-deliverable, so there is no allow-list at all.
+| shape | the copy that was here | `scrub.leaks` |
+|---|---|---|
+| a bare home directory | ⛔ **missed** — its pattern required a trailing `/` | caught |
+| a home directory with a file beneath | caught | caught |
+| the macOS spelling, bare | ⛔ **missed** | caught |
+| one inside a shell command | ⛔ **missed** | caught |
+| a leak in a **dict key** | ⛔ **missed** — `strings_in` walks `values()` | caught |
+
+⛔ **Three of four, plus the keys.** And rubric §1a had already ruled this shape
+— *"do not re-derive the patterns; `tools/quality/` owns them"*, a duplication
+this project has refused five times — but nobody had swept for a **third** copy.
+There was one, it was already weaker, and it was guarding rubric §1e's fixture
+exception.
+
+⭐ **Deleted rather than reconciled.** Reconciling two lists produces a third
+list. `tests/test_fixture_consistency.py` asserts this module defines no pattern
+of its own, which is what makes a **fourth** copy unrepresentable rather than
+merely discouraged.
+
+⚠️ **One behaviour changed with the deletion, and it is a correction.** This
+module claimed *"any address is wrong content whether or not it is
+deliverable, so there is no allow-list at all"* — but the gate it is supposed to
+mirror skips each shape's **own placeholder** by identity, so the claim was
+already untrue of the thing being checked. A fixture checker that is stricter
+than the gate reports failures the build will not have.
 """
 
 from __future__ import annotations
 
-import re
+from studyforge.archive.scrub import leaks, shape_in
 
-from tests.fixture_checks.corpus import strings_in
-
-#: The home-path rule is SF-08's addition: spec §6 requires `assert_clean` to
-#: refuse an absolute home path, and CodeSignal's gate — which only ever saw
-#: web pages — has no pattern for one.
-PERSONAL_DATA = (
-    ("home path", re.compile(r"(?<![\w.])/(?:home|Users)/[A-Za-z0-9._\-]+/")),
-    ("email address", re.compile(r"\b[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}\b")),
-    ("bearer token", re.compile(r"\bBearer\s+[A-Za-z0-9._\-]{8,}")),
-)
+__all__ = ["check_personal_data", "shape_in"]
 
 
 def check_personal_data(value, where):
-    """The first personal-data shape reachable from `value`, named but not quoted."""
-    for text in strings_in(value):
-        for label, pattern in PERSONAL_DATA:
-            if pattern.search(text):
-                yield "personal-data", f"{where} carries a {label}"
-                return
+    """The first personal-data shape reachable from `value`, named but not quoted.
+
+    ⛔ The location comes from the framework's walker, so it names the field —
+    `content.json.sections[0].heading` — rather than only the file. ⚠️ The
+    matched text is never echoed: a refusal that quotes the leak has relocated
+    it into a build log, which is read by more people than the file was.
+    """
+    for at, name in leaks(value, where):
+        article = "an" if name[:1].lower() in "aeiou" else "a"
+        yield "personal-data", f"{at} carries {article} {name}"
+        return

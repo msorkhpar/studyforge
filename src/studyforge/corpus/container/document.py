@@ -22,6 +22,7 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.container import fields
 from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.manifest import Manifest
+from studyforge.describe import describe, describe_keys
 from studyforge.version import check as check_version
 
 #: The document format version. ⚠️ Bumped when a reader of the old shape would
@@ -138,7 +139,8 @@ def from_document(document: dict, where: str, manifest: Manifest) -> Container:
     unknown = sorted(set(document) - set(CONTAINER_KEYS))
     if unknown:
         raise ContainerError(
-            f"{where} carries unknown key(s) {unknown}; a container map is {list(CONTAINER_KEYS)}"
+            f"{where} carries unknown key(s), {describe_keys(unknown)}; "
+            f"a container map is {list(CONTAINER_KEYS)}"
         )
 
     address = Address(document.get("address", ())).require_depth(manifest.depth)
@@ -146,7 +148,8 @@ def from_document(document: dict, where: str, manifest: Manifest) -> Container:
     variant = document.get("variant")
     if variant not in manifest.variants:
         raise ContainerError(
-            f"{where} declares variant {variant!r}; {manifest.source} declares "
+            f"{where} declares a variant this corpus does not have, {describe(variant)}; "
+            f"{manifest.source} declares "
             f"{list(manifest.variants)}"
         )
     return Container(
@@ -254,7 +257,8 @@ def _unit(entry: object, where: str) -> Unit:
     unknown = sorted(set(entry) - set(UNIT_KEYS))
     if unknown:
         raise ContainerError(
-            f"{where} has a unit carrying unknown key(s) {unknown}; a unit is {list(UNIT_KEYS)}"
+            f"{where} has a unit carrying unknown key(s), {describe_keys(unknown)}; "
+            f"a unit is {list(UNIT_KEYS)}"
         )
     try:
         n = require_ordinal(entry.get("n"), f"{where} unit ordinal")

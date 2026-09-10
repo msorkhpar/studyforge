@@ -1,0 +1,78 @@
+{
+  "raw_api": 1,
+  "source": "invalid-demo",
+  "address": [
+    "solo"
+  ],
+  "variant": "prose",
+  "unit": 1,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Unit 1 practice",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Make `greet` return `Hello, <who>` for any non-empty name."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: the grader is the reader's own"
+    },
+    {
+      "type": "para",
+      "text": "This check was written here, against a grader nobody can see. It is advisory, and the record claims otherwise, which is the defect (R5)."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "text": "def greet(who):\n    ...\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "b8fd3d03e77465d3a56bba8469fe6d8f17871fdd4734ecfa4ca2ac5fc5a1961e",
+  "starting_code": "def greet(who):\n    ...\n",
+  "exercise": {
+    "main_path": "practice/solo-01/greeter.py",
+    "test_path": "practice/solo-01/test_greeter.py",
+    "run_command": [
+      "python3",
+      "-m",
+      "greeter"
+    ],
+    "test_command": [
+      "python3",
+      "-m",
+      "pytest",
+      "-q"
+    ],
+    "provenance": "user",
+    "trust": "authoritative"
+  }
+}

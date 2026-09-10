@@ -62,11 +62,25 @@ def test_a_bool_is_not_an_ordinal_even_though_python_says_it_is_an_int(value):
         require_ordinal(value)
 
 
-def test_the_message_names_the_field_it_was_given():
+def test_the_message_names_the_field_and_the_type_but_not_the_value():
+    # ⛔ Ruling 14, and this assertion is the inversion of the one it
+    # replaces: the type branch fires on whatever a caller passed where an
+    # ordinal was wanted — including a path — so it names the field and the
+    # TYPE, never the payload.
     with pytest.raises(AddressError) as raised:
         require_ordinal("3", "declared practice count")
     assert "declared practice count" in str(raised.value)
-    assert "'3'" in str(raised.value)
+    assert "a str" in str(raised.value)
+    assert "'3'" not in str(raised.value)
+
+
+def test_an_out_of_range_ordinal_is_still_quoted():
+    # ⭐ Not an inconsistency. By this branch the value is an `int`, which is
+    # the one shape that cannot carry an identifier, and a refusal that will
+    # not say `got 0` is a refusal nobody can act on.
+    with pytest.raises(AddressError) as raised:
+        require_ordinal(0)
+    assert "got 0" in str(raised.value)
 
 
 def test_unit_name_refuses_what_require_ordinal_refuses():
