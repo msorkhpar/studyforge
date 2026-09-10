@@ -17,9 +17,34 @@ import pytest
 from studyforge.address import Address
 from studyforge.corpus.manifest import load
 from studyforge.corpus.placement import identity, profile_for, registered
+from tests.fixture_checks import FIXTURES as FIXTURE_ROOT
+from tests.fixture_checks import fixture_paths
 from tests.support import repository_root
 
-FIXTURES = ("depth1", "depth2")
+#: ⛔ **What this module's sweeps assert, as a rule id** (Ruling 46). Placing a
+#: corpus reads its manifest first, and `corpus-api` is the one rule that
+#: refuses before any unit can be placed. ⚠️ Nothing else here is a property an
+#: invalid fixture declares: an address that disagrees with its directory still
+#: places, and so does a container with a gap in its ordinals — which is the
+#: whole reason Ruling 46 excludes by declaration and not by directory.
+ASSERTED = {"corpus-api"}
+
+#: Every fixture corpus this module is entitled to place. ⛔ It used to read
+#: `("depth1", "depth2")`, which dropped five corpora that place perfectly and
+#: break something this module never asserts (`FND-09`).
+FIXTURES = tuple(
+    path.parent.relative_to(FIXTURE_ROOT).as_posix()
+    for _where, path in fixture_paths(asserting=ASSERTED, glob="corpus.json", within=None)
+)
+
+
+def test_the_fixture_set_is_read_from_the_declaration():
+    # ⛔ Ruling 48: a walk that matched nothing would parametrize zero tests
+    # and every sweep below would pass by never running.
+    assert len(FIXTURES) >= 7, FIXTURES
+    assert "depth1" in FIXTURES and "depth2" in FIXTURES
+    assert "invalid/bad-corpus-api" not in FIXTURES
+
 
 #: Where sibling repositories live, as `tests/test_knowledge_index.py` finds
 #: them. ⚠️ A worktree is not beside them, hence the override.

@@ -9,6 +9,7 @@ import pytest
 import studyforge.unit.builder as builder
 from studyforge.unit.builder import NoMaterial, build_unit, render
 from studyforge.unit.content import from_document
+from tests.fixture_checks import coverage, fixture_paths
 from tests.studyforge.unit.builder import support
 from tests.support import assert_package_contract, repository_root
 
@@ -66,26 +67,38 @@ def test_regenerating_from_disk_produces_identical_bytes(tmp_path):
 # --------------------------------------------------------------------------
 
 
+#: ⛔ **What this sweep asserts, as rule ids** (Ruling 46). `build_unit` reads
+#: every archive document in a unit, so it refuses an R7 leak and a
+#: source-authoritative exercise before it can produce a section — and those
+#: are the only two properties a fixture here is declared to break.
+#:
+#: ⚠️ **Naming them gained five unit directories.** This used to say
+#: `depth1, depth2`, which dropped five corpora that build perfectly and break
+#: something else entirely. ⛔ `by directory name` is not a reason (`FND-09`).
+ASSERTED = {"personal-data", "exercise-trust"}
+
+
 def fixture_units():
-    """Every unit directory in the two valid corpora, with its declared count."""
+    """Every unit directory this sweep is entitled to build, with its declared count."""
     found = []
-    for corpus in ("depth1", "depth2"):
-        root = repository_root() / "tests/fixtures" / corpus
-        for container in sorted(root.glob("archive/**/container.json")):
-            declared = {
-                unit["n"]: unit.get("practices")
-                for unit in json.loads(container.read_text(encoding="utf-8"))["units"]
-            }
-            for unit_dir in sorted(container.parent.glob("raw/*/unit-*")):
-                found.append((unit_dir, declared.get(int(unit_dir.name.split("-")[1]))))
+    for _where, container in fixture_paths(asserting=ASSERTED, glob="container.json", within=None):
+        declared = {
+            unit["n"]: unit.get("practices")
+            for unit in json.loads(container.read_text(encoding="utf-8"))["units"]
+        }
+        for unit_dir in sorted(container.parent.glob("raw/*/unit-*")):
+            found.append((unit_dir, declared.get(int(unit_dir.name.split("-")[1]))))
     return found
 
 
-def test_every_unit_in_both_valid_fixtures_builds():
-    # ⚠️ Ruling 48: the list is asserted to be inhabited, because a glob that
-    # matched nothing would satisfy every assertion in the loop.
+def test_every_unit_in_every_entitled_fixture_builds():
+    # ⛔ Ruling 48: a glob that matched nothing would satisfy every assertion in
+    # the loop, so the containers are counted against the declaration and the
+    # units against a pinned floor.
     units = fixture_units()
-    assert len(units) >= 4, "the fixture sweep found no units"
+    containers = coverage(asserting=ASSERTED, glob="container.json", within=None)
+    assert containers.swept >= 7, containers
+    assert len(units) >= containers.swept, (len(units), containers)
     for directory, declared in units:
         document = build_unit(directory, declared_practices=declared)
         assert document["sections"], directory.name

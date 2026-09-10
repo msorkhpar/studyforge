@@ -7,22 +7,41 @@ import pytest
 
 from studyforge.validate import validate
 from studyforge.validate.run import CHECKS
+from tests.fixture_checks import INVALID_CORPORA
 from tests.studyforge.validate import corpora
 from tests.support import repository_root
 
 FIXTURES = Path("tests/fixtures")
 
-#: FND-04's five, and the one rule each is expected to break. ⛔ Written out
-#: rather than derived from `tests/fixture_checks`: that package's rule ids are
-#: its own checker's, and two checkers with different subjects must be allowed
-#: to disagree. What is asserted here is that **this** tool reports exactly one.
+#: FND-04's invalid corpora, and the one rule **this tool** reports for each.
+#:
+#: ⛔ **The values are written out and the keys are not.** That package's rule
+#: ids are its own checker's — `ordinal-gap` is this tool's `container`, and
+#: `corpus-api` is its `manifest` — and two checkers with different subjects
+#: must be allowed to disagree about the *name* of a rule. ⚠️ They may not
+#: disagree about **which fixtures exist**, and this used to: it carried five
+#: of the seven, and `count-mismatch` and `user-authoritative` had landed in
+#: `INVALID_CORPORA` without ever reaching here. ⛔ That is the defect Ruling 46
+#: exists to prevent, and `test_every_declared_corpus_is_exercised` closes it.
 INVALID = {
     "bad-corpus-api": "manifest",
     "address-directory-mismatch": "address-directory",
+    "count-mismatch": "counts",
     "digest-mismatch": "digest",
     "ordinal-gap": "container",
     "personal-data": "personal-data",
+    "user-authoritative": "document",
 }
+
+
+def test_every_declared_corpus_is_exercised():
+    # ⛔ **The pin `FND-09` acceptance 5 asks for.** An eighth fixture added to
+    # `INVALID_CORPORA` reds here rather than landing silently in a subset
+    # nobody re-reads. ⚠️ It is the *keys* that are pinned; the values stay
+    # this tool's own vocabulary, and the second assertion says so by
+    # measuring that the two vocabularies really do differ.
+    assert set(INVALID) == set(INVALID_CORPORA)
+    assert INVALID != INVALID_CORPORA
 
 
 def fixture(name):
