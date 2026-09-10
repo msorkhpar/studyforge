@@ -4,25 +4,47 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-⭐ **M0 is CLOSED — `FND-05a` merged and the last M0 task is done.** ✅ **M1 steps
-1.1, 1.2 and 1.3 COMPLETE.** ✅ **M1 step 1.4 is CLOSED — `SF-10`
-APPROVED and merged at `966ab30`.** ⏳ **Step 1.5: ✅ `SF-12` merged at `f4aa603`
-— M1's LAST BUILD TASK IS DONE.**
+## ✅ **M0 CLOSED. M1 CLOSED 2026-09-10 at `2fe56a4`. M2 IS OPEN.**
 
-⭐ **RULED 2026-09-10 (PO round 22): M1's ROW 8 PASSES.** ⛔ **`SF-34` is NOT
-pulled into M1 and the chrome ruling STANDS — now on evidence rather than on
-argument.** ⏳ **`QA-03` is `in-review` on `feat/QA-03-visual` @ `d2dc2c4`, and
-M1's close is now MECHANICAL: it waits on that branch's verdict and its merge to
-`release/m0-foundations`, and on nothing else.** ⛔ **M1 is CLOSED at that merge
-commit the moment row 9 is re-taken there and green — no further PO decision is
-required.** ⭐ **The reasoning, symptom by symptom, is
-[in row 8's ruling below](#ruled-2026-09-10-m1s-row-8-passes-and-one-third-of-the-bar-was-unfalsifiable).**
+⭐ **M1's close ref is `2fe56a4`** — all nine close conditions true at that one
+ref, rows 1–8 **re-taken there** rather than inherited, row 9 taken there by the
+coordinator: **3090 passed, 63 skipped, all 63 named; quality floor clean; lint
+`ruff 0.16.6` `check` exit 0 and `format --check` exit 0.** ⛔ **The row-by-row
+re-take, and why the close ref is `2fe56a4` and NOT `a03aeef`, are
+[in the close run below](#m1s-close-run-at-2fe56a4-all-nine-true-at-one-ref-and-rows-18-were-re-taken-not-inherited).**
+
+⏳ **OPEN: M2 — *a corpus is readable*. Step 2.1 = `SF-31`, `SF-04`, `SK-02`.**
+⭐ **The assignment, the two split points and the one hard blocker are
+[in M2 step 2.1 below](#m2-step-21-open-and-it-is-a-different-kind-of-milestone).**
+⛔ **`SF-04` is BLOCKED on R21's discovery-cache row and may not start until the
+CTO closes it** — a task that meets an unlocated contract **stops and asks**.
+
+⚠️ **`W39` is the first row of this wave and it is not a feature:** ⛔ **the
+release tip goes RED after every merge**, and the rebuild that fixes it is in no
+procedure and no test. ⭐ **[Its row is below](#w39-minted-the-index-rebuild-that-exists-only-in-one-agents-memory).**
 
 ⚠️ **This board twice mis-stated `SF-10`'s state in one round — first as
 *"unblocked, waiting on nothing"* while it sat built on a branch, then as
 `in-review` after it had merged.** ⛔ **Both errors are one cause: a status
 measured once and quoted later.**
 
+📏 **BASE: 3090 passed / 63 skipped in the pinned container at `2fe56a4`**, the
+release tip, quality floor clean — ⛔ **and this is M1's close ref, so it is the
+milestone's closing measurement and M2's opening one at the same time.**
+⭐ **All 63 skips are named: 55 are `QA-03`'s visual set (no browser in the
+pinned image — `W36` removes them) and 8 are the container's pre-existing set,
+which did not move.** ⛔ **Lint at `2fe56a4`: `ruff` PINNED-GREEN — `ruff 0.16.6`
+in the dev image, `check` exit 0 (*All checks passed!*), `format --check` exit 0.**
+⚠️ **Denominator, per Ruling 86a: `git ls-files '*.py' '*.md'` = 429 tracked, and
+`ruff`'s own walk reports 421 because `pyproject.toml`'s `extend-exclude` drops
+the 8 tracked files under `tests/fixtures/` — see `PO-23/5`, which is why
+labelling that number `disk` would also be wrong.**
+⚠️ **SUPERSEDES `3026 / 8 @ `ee50f77``, the round-22 base**, which `W30`+`W31`,
+`W33` and `QA-03` moved by +64 and +55 skips. ⭐ **Sixth base; the five earlier
+ones are kept below.**
+
+⚠️ **The round-22 base's paragraph is kept whole, because a base is *what was
+measured, where, and at which commit* and none of them is deleted:**
 📏 **Base: 3026 passed / 8 skipped in the pinned container at `ee50f77`**, the
 release tip, quality floor clean — ⭐ **the CTO's round-24 tip measurement, and
 `release/m0-foundations` now carries it** (`FND-09` +56, `po-round21` docs-only).
@@ -246,7 +268,7 @@ task named beside it, *before* that task builds.
 | Open row | Owed before | Owner | Why it bites |
 |---|---|---|---|
 | ~~**authored overlay** `content.json` — unversioned~~ | ~~SF-09~~ | CTO | ✅ **CLOSED by SF-09 — three open rows, not four.** ⭐ **Verified in the tree rather than inherited from the handoff:** `content_api` is minted in `src/studyforge/version.py`, sits in `CONTRACT_FIELDS`, and `test_the_overlay_is_versioned_and_the_key_is_content_api` asserts it — 23 occurrences across `src/` and `tests/`. R9 **gained** the contract rather than excusing it, and the spec now points at the constant instead of re-listing five names, which is why *"R9 lists five and there are seven"* cannot recur |
-| **discovery cache** `.studyforge/site.json` — no version key | **SF-04** (M2 step 2.1) | CTO | R9 refuses an unknown version rather than migrating; a cache with no version cannot be refused, only misread |
+| ⛔ **discovery cache** `.studyforge/site.json` — no version key | ⛔ **`SF-04`, and M2 step 2.1 IS OPEN** | CTO | ⛔ **BLOCKING AS OF ROUND 23, and no longer "the near one".** ⭐ R9 refuses an unknown version rather than migrating; a cache with no version cannot be refused, only misread. ⚠️ **R21 says a task meeting an unlocated contract STOPS AND ASKS, so `SF-04` does not start until this closes** — ⭐ **`SF-09` is the worked example: mint the key in `src/studyforge/version.py`, add it to `CONTRACT_FIELDS`, assert it in one test** |
 | **narration manifest** — no file, no version | **NS-02 / SF-17** (M3) | CTO | Two producers named for one contract is Q3's shape exactly, and Q3 needed a ruling |
 | **coverage report** — no file | **EX-05** (M7) | CTO | Not read back, so the cheapest of the five — but R5 is what the report exists to make honest |
 | ~~**component consuming contract** `consuming.json` — no version key~~ | ~~TC-05, E13~~ | CTO | ✅ **CLOSED — and this board was stale by two rows, not one** (CTO round 17, ruling 16). `consuming_api` is in spec §R9. ⭐ The reasoning survives and is worth keeping: the pin file records **which commit**, `provides` records **the promise**, `consuming_api` versions **the schema** — three different questions that G1's answer only looked like it had all covered |
@@ -257,9 +279,11 @@ the same direction — closed in the spec, open here — which is precisely how 
 duplicated status behaves. ⭐ **The open set is whatever §R9 marks `open`**; the
 rows below are kept only for the *reasoning*, which §R9 does not carry.
 
-**Genuinely open: three, and ⭐ none is due in M1** — discovery cache
-(`SF-04`, M2), narration manifest (`NS-02`/`SF-17`, M3), coverage report
-(`EX-05`, M7).
+**Genuinely open: three.** ⛔ **AS OF ROUND 23 ONE OF THEM IS DUE NOW** — the
+discovery cache, owed before `SF-04`, and M2 step 2.1 is open. ⚠️ **This line
+read *"none is due in M1"* for four rounds, which was true and is no longer**;
+the other two are not due yet — narration manifest (`NS-02`/`SF-17`, M3),
+coverage report (`EX-05`, M7).
 
 ⚠️ **`consuming.json` is now the sharper half of what G1 covered.** ⭐ G1's answer
 restores *which commit of each component* — that is what `FND-05a`'s pin file
@@ -1841,9 +1865,410 @@ artifact found a defect in the DECOMPOSITION, not in the renderer** — ⭐ **wh
 the second time in two rounds that the nine rows have been more informative about
 themselves than about `SF-12`.**
 
+### ✅ M1's CLOSE RUN AT `2fe56a4` — **all nine true at one ref, and rows 1–8 were RE-TAKEN, not inherited**
+
+⛔ **M1 IS CLOSED. The close ref is `2fe56a4`.**
+
+⚠️ **The pre-authorisation named a different ref, and I am recording the
+difference rather than papering over it.** ⭐ Round 22 wrote: *"M1 is CLOSED at
+the commit that merges `feat/QA-03-visual` into `release/m0-foundations`, the
+moment row 9 is re-taken there and green."* ⛔ **That commit is `a03aeef`, and row
+9 was never taken there.** It was taken three merges later, at `2fe56a4`.
+
+⭐ **So the close ref is `2fe56a4`, and the rule that decides it is this board's
+oldest: a measurement is quoted with the ref it was taken on.** ⛔ **Closing at
+`a03aeef` would assert a measurement nobody holds** — the exact defect this board
+has catalogued six times, committed in the act of closing a milestone against an
+instrument built to prevent it. ⚠️ **The pre-authorisation is honoured in
+substance: no PO decision was required and none of rows 1–8 was re-opened. What
+it could not do was name, in advance, the ref a later measurement would land on.**
+
+#### ⛔ The coordinator asked whether rows 1–8 must be RE-TAKEN at `2fe56a4`. **Yes, and here they are.**
+
+⭐ **The decomposition says *every row true at ONE named ref*, and "true at
+`ee50f77`, merges unchanged" is an argument, not a reading.** ⚠️ **This project's
+catalogued defect is *a status measured once and quoted later*; a close run that
+inherits eight of its nine rows is that defect with a milestone attached.**
+⛔ **But the re-take is CHEAP, and that is the finding worth more than the
+verdict:** ⭐ **rows 2–7 name their own instruments, and row 9 IS those
+instruments running at `2fe56a4`.** So the re-take is three mechanical questions,
+not eight judgements.
+
+| # | Condition | ⛔ **Re-taken @ `2fe56a4`** | ⭐ **The instrument, run in the tree at that ref** |
+|---|---|---|---|
+| **1** | The document exists | ✅ **MET** | `git merge-base --is-ancestor 966ab30 2fe56a4` → **YES** |
+| **2** | Renderer is a PACKAGE, no file over R11's 400 | ✅ **MET** | ⭐ **19 modules under `src/studyforge/render/`, 2366 lines total; largest is `render/page/document.py` at 234, then `page/navigation.py` at 220.** ⛔ **No size exception requested, and `FND-01` makes an over-long file a build failure inside row 9's own suite** |
+| **3** | `render(document, placement) -> bytes` | ✅ **MET** | all three named tests present in `tests/studyforge/render/page/test_init.py` |
+| **4** | Every reference relative, nothing reaching a network | ✅ **MET** | all four named tests present in `tests/studyforge/render/page/test_init.py`, including the negative control |
+| **5** | Highlighting VISIBLE and BOUNDED | ✅ **MET** | `test_a_code_block_with_no_language_carries_no_class_and_a_plain_caption`, `tests/studyforge/render/page/blocks/test_figure.py` |
+| **6** | Verbatim bounded — `html` and nothing else | ✅ **MET** | all three named tests present in `tests/studyforge/render/page/blocks/test_verbatim.py` |
+| **7** | R7 holds on the OUTPUT | ✅ **MET** | `test_a_page_carries_no_absolute_path_from_this_machine`, `tests/studyforge/render/page/test_init.py` |
+| **8** | A human-visible check RAN and was RECORDED | ✅ **MET** | ⭐ **`git merge-base --is-ancestor a03aeef 2fe56a4` → YES**, and the recorded artifacts are in the tree: `tests/visual/` (17 files) and `docs/tasks/handoffs/QA-03.md`. ⛔ **Round 22's judgement is not re-opened; what is re-taken is that the evidence it judged is present at the close ref** |
+| **9** | Suite and floor green in the pinned container, with the ref | ✅ **MET** | ⛔ **`3090 passed, 63 skipped` — all 63 named — quality floor clean, `ruff 0.16.6` `check` exit 0 and `format --check` exit 0. Taken by the coordinator at `2fe56a4`, in the pinned container** |
+
+⛔ **The one gap in the re-take, stated because a check that hides its own hole is
+worse than no check:** ⭐ **rows 3–7 are re-taken as *the named test exists at the
+close ref and is not skippable* — `grep -n skip` over all three files returns
+nothing, so none of the twelve is among row 9's 63 skips — ⚠️ but "it ran and
+passed individually" is carried by row 9's aggregate, not by a per-test
+transcript.** ⛔ **That is a property of the decomposition, not of this run: rows
+3–7 were always going to be discharged by the suite, and row 9 is the suite.**
+
+⭐ **What this makes true, and it is the reason to have run it at all:** ⛔ **the
+close ref moved by three commits between the pre-authorisation and the
+measurement, and the re-take cost about ninety seconds of `git` and `grep`.**
+⚠️ **The version of this run that inherited rows 1–8 would have produced the same
+verdict and would not have noticed that it was closing on the wrong ref.**
+
+---
+
+## ⛔ `W39` — MINTED. **The index rebuild that exists only in one agent's memory**
+
+⛔ **High-water mark moves `W38` → `W39`.** ⭐ **`CTO-25/9`, the CTO's own and the
+sharpest open item on the board, now has a row.** ⚠️ **It was asked as *"give it a
+row, or say why the rebuild belongs somewhere other than the board"*, and the
+answer is: a row, plus an interim step in `../conventions/delivery-flow.md`,
+because the row cannot land tonight and the defect fires tonight.**
+
+| | ⛔ **`W39`** |
+|---|---|
+| **What** | ⭐ **The knowledge index goes stale on every merge, so the release tip is RED immediately after each one** — and the rebuild that fixes it is in no close procedure, no rubric clause, and no test |
+| **From** | `CTO-25/9`, sharpened by the CTO at round 25 |
+| **Owner** | framework agent. ⛔ **The MECHANISM is the CTO's to rule — the three options are theirs and I am not choosing between them.** ⭐ **What is mine is that the work is scheduled, and it is scheduled FIRST** |
+| **Owns** | `tools/knowledge/index.py`, `tools/quality/` where the floor consumes it, and whichever of `../conventions/delivery-flow.md` / `review-rubric.md` the chosen mechanism lands in |
+| ⛔ **The measured cost, which is what licenses everything below** | ⭐ **The CTO's round-25 measurement, quoted with its ref:** after merging a **one-file, docs-only** addendum, `f97e215` read `2 failed, 3088 passed, 63 skipped — graphify-out/graph.json stale`; after `graphify update . ; python3 -m tools.knowledge bridge`, the same ref read `3090 passed, 63 skipped, floor clean`. ⛔ **And the coordinator ran that rebuild BY HAND after every merge tonight — on the order of fifteen times.** ⚠️ **Invisible from every worktree, because `graphify-out/` is git-ignored** |
+| ⭐ **`PO-23/3` — the measurement I am adding, and it NARROWS the three options without choosing between them** | ⛔ **`tools/knowledge/index.py:56` sets `DESCRIBED_TREES = ("src", "tools", "docs")`. Its own docstring, three lines above, says: *"A change anywhere else — a board row, a handoff, a `.gitignore` — does not make the index wrong."*** ⚠️ **`BOARD.md` is `docs/tasks/BOARD.md` and a handoff is `docs/tasks/handoffs/*.md`. Both named examples are INSIDE the described trees.** ⭐ **So the module already intends the CTO's option 2 and does not implement it, and "scoping staleness is a change of intent" is off the table.** ⛔ **That is not a ruling that option 2 wins** — option 1 (`FND-07`'s tripwire becomes a NOTICE, per Ruling 78) still satisfies Ruling 80 in a way option 2 does not, and the CTO owns that trade |
+| ⛔ **Ruling 75 — what it jumps, named** | ⭐ **`W39` goes to the FRONT and jumps FIVE older unstarted rows: `W37`, `W36`, `W38`, `W32`, `W35`.** ⚠️ **The licence is the only one this board accepts: a MEASURED cost — and `W39`'s is the largest ever recorded for a `W` row.** ⛔ **`W37` jumps on one survived mutant; `W36` on 55 skips; `W39` makes every tip measurement in the project wrong until somebody knows an undocumented trick, and it has already produced two false failures on a ref the CTO was in the act of certifying** |
+| ⛔ **Why it is not merely urgent but FIRST** | ⭐ **It is the only row on the board whose defect corrupts the instrument every other row is judged with.** ⚠️ **M2 opens with a base measurement and closes with one; a milestone opened on a red tip nobody can explain is how a wave starts by debugging its own scoreboard** |
+
+### ⭐ THE INTERIM STEP — ⛔ **and it names its own deletion, which is what stops it becoming the mechanism**
+
+⛔ **A step that works only because one agent remembers it is what this project
+has ruled against six times, and it has been running on exactly that all night.**
+⭐ **So it is written down NOW, in `../conventions/delivery-flow.md`'s review-gate
+section, where the merge actually happens:** *after any merge to a release
+branch, whoever merged rebuilds and bridges the index before quoting the tip.*
+
+⚠️ **It is marked INTERIM and it names `W39` as what deletes it.** ⛔ **This is
+not the CTO's option 3 arriving by the back door.** ⭐ **Option 3 is *the rebuild
+is the answer*; this is *the rebuild is what we are doing until there is an
+answer*, and the difference is that one of them has an expiry written into it.**
+⚠️ **If `W39` rules option 3, the interim step loses the word INTERIM and gains a
+test. If it rules 1 or 2, the step is deleted. Either way somebody has to come
+back to it, which is the property a remembered step does not have.**
+
+---
+
+## ⏳ M2 STEP 2.1 — OPEN, and it is a different kind of milestone
+
+⛔ **M2 step 2.1 = `SF-31` (solo), `SF-04` (pair), `SK-02` (pair).** ⭐ **M2's Done
+is *a whole corpus opens offline with a working index, deep links, prev/next and
+read marks — **and the skills that produced it exist***.**
+
+⚠️ **The sentence in `README.md` that makes M2 a different shape from M1, and it
+is not decoration:** ⛔ ***"The skills come with this milestone, not after it."***
+⭐ **`SK-02` is in step 2.1 rather than at the end because spec §9 says a skill
+precedes the artifact it produces — a skill written afterwards has been validated
+against exactly one source, which is the whole failure §12 exists to detect.**
+⚠️ **M1 was five build tasks in a row; M2's first step is a contract, a scan and
+a skill, and only one of the three is ordinary framework code.**
+
+### ⛔ THE BLOCKER, and it is hard: **`SF-04` may not start**
+
+⛔ **R21's discovery-cache row is OPEN and it is owed BEFORE `SF-04` builds.**
+⭐ **The register has said so since M1 opened, describing it as *"the near one"* —
+[the R21 section](#r21-the-register-of-unlocated-contracts) — ⚠️ and this is the
+step where "near" becomes "now".**
+
+| | |
+|---|---|
+| **The unlocated contract** | `.studyforge/site.json` — the discovery cache — ⛔ **has no version key** |
+| **Owed by** | ⛔ **the CTO**, before `SF-04` builds |
+| **Why it bites, in the register's own words** | ⭐ **R9 refuses an unknown version rather than migrating; a cache with no version cannot be refused, only misread** |
+| ⛔ **What R21 requires of the task** | ⭐ **A task that meets an unlocated contract STOPS AND ASKS. Choosing quietly is the failure the rule names.** ⛔ **So `SF-04` does not start "and we will sort the key out in review"** |
+| ⭐ **The precedent that says this is cheap** | ⛔ **`SF-09` closed the overlay row the same way: `content_api` minted in `src/studyforge/version.py`, added to `CONTRACT_FIELDS`, asserted by one test.** ⚠️ **R9 GAINED the contract rather than excusing it, and the same shape closes this one** |
+
+⛔ **ESCALATED TO THE CTO AS THE FIRST ITEM OF THIS ROUND**, ahead of `F18` and
+alongside `W39`. ⭐ **It is one decision — does `.studyforge/site.json` carry a
+version key, and what is it called — and `SF-09` is the worked example.**
+⚠️ **Until it is closed, step 2.1 has two startable tasks and not three.**
+
+### ⭐ THE ASSIGNMENT — both developers free, and the split points are named IN ADVANCE
+
+⛔ **My round-21 rule stands and it is why the split columns exist: a split point
+is NAMED in advance and measured, never discovered mid-flight.**
+
+| Developer | ⭐ **Now** | ⛔ **Then** |
+|---|---|---|
+| **Developer 1** | ⭐ **`SF-31` — `studyforge plan`** (`solo`, ~20k) | ⛔ **`SF-04`, the moment R21's row closes** |
+| **Developer 2** | ⛔ **`W39` first** — smallest row on the board with the largest measured cost, and it fixes the instrument the wave is measured with — ⭐ **then `SK-02`** | `W37`, then the queue below |
+
+⭐ **Why `SF-31` goes first and to the developer who is free first:** ⛔ **it is one
+of the TWO contracts the integration track is blocked on** (the archive seam has
+`validate`; the runtime seam has the consuming contracts; ⚠️ **placement had
+nothing**). ⭐ **Three named consumers are waiting on it — `SK-07` renders the
+ignore rules and `permitted_edits` from it, `OPS-05` asserts against it, and a
+person reads it before letting a tool loose in a repository they care about.**
+⛔ **It is also the FIRST real subcommand module under `src/studyforge/cli/`,
+which today holds one 29-line `__init__.py` and nothing else** — ⚠️ **so like
+`SF-01` before it, `SF-31` is an exemplar whose conventions the next subcommands
+copy, and that is an argument for one careful author rather than two fast ones.**
+
+#### ⛔ `SF-04`'s split point — **and the honest answer is that it probably does not split**
+
+| Half | Surface | ⛔ **Why the seam is here** |
+|---|---|---|
+| ⛔ **First, and NOT splittable** | **the scan** — identity-from-content, the walk, and the reported-by-name path for an artifact with no identity block (R6) | ⭐ **R4's mechanism itself. Everything else in the task consumes it** |
+| ⭐ **Second, and joinable** | **the cache** — `site.json`'s read, its write, and its staleness detection | ⭐ **It reaches the scan only through the scan's return type, so a second author lands here without touching the first half's file** |
+
+⛔ **The trigger, so this is a plan and not a hope:** ⭐ **a second author joins
+ONLY once (a) the scan is committed on `feat/SF-04-discovery`, (b) R21's row has
+closed so the cache's version key exists, and (c) `corpus/discovery.py` has been
+promoted to `corpus/discovery/` — because until it is a package there is one file
+and two authors in it is the collision-pair rule's exact failure.**
+
+⚠️ **And the measurement that says to expect NO split:** ⛔ **`SF-04` is `pair`
+and ~30k context; `SF-12` was `Team` and a ~1420-line port across 10 modules, and
+one developer took it whole to an approved survey.** ⭐ **`SF-10` is the same
+precedent one task earlier.** ⛔ **So the default is one author, the seam above is
+a MITIGATION, and the signal to use it is `corpus/discovery.py` passing R11's 400
+before the cache is written — not a feeling that the task is large.**
+
+#### ⛔ `SK-02`'s split point — **measured from `SK-01`'s shape, which is in the tree**
+
+⭐ **A skill in this repository is not a document. `SK-01` shipped
+`src/studyforge/skills/reconnaissance/` — one `SKILL.md` plus EIGHT python
+modules** (`survey`, `report`, `record`, `proposal`, `inventory`, `grouping`,
+`duplication`, `capability`). ⛔ **`SK-02` is the same shape at
+`src/studyforge/skills/adapter/`, and that is where its seam is:**
+
+| Half | Surface | ⛔ **Why the seam is here** |
+|---|---|---|
+| ⛔ **First, and NOT splittable** | `SKILL.md` — **the procedure**, written against `studyforge validate` as the definition of done | ⭐ **The scaffold is what the procedure SPECIFIES. Authoring the modules first means writing the thing and then writing down what it was** |
+| ⭐ **Second, and joinable** | the scaffold's generated structure, its test tree, and the audit command (the `JS-06` equivalent) | ⭐ **Each is named by a step of the committed procedure, so two authors take different steps without meeting** |
+
+⛔ **The trigger:** ⭐ **a second author joins only once `SKILL.md`'s procedure is
+committed on `feat/SK-02-adapter-authoring`.** ⚠️ **Until then there is no list of
+steps to divide, and dividing by guess is how two authors produce a scaffold the
+skill does not describe** — ⛔ **which is R19's hole reappearing inside the task
+that exists to close it.**
+
+#### ⛔ `SK-02` carries a question I cannot answer from this side — **routed to PO-Integration, deadline: before `SK-02`'s review**
+
+⭐ **`SK-02`'s acceptance says: *"E07's adapter package was produced by this skill
+— the scaffolding commit precedes the source-reading commits, which git can
+check."*** ⛔ **That is a §9 precedence claim about a repository I do not own, and
+it is checkable by exactly one instrument: `git log` in `ISO/`.**
+
+⚠️ **PO-Integration round 4 ran `studyforge validate` and got `NOT valid: 100
+findings`, which means an ARCHIVE exists — and an archive implies an adapter.**
+⛔ **If ISO's adapter is already committed, `SK-02`'s acceptance names a state
+that can no longer be entered, and §9's own warning applies to the skill built to
+satisfy it: *a skill written after the thing it "produces" has been validated
+against exactly one source.***
+
+⭐ **THE QUESTION, and it is one command:** ⛔ **does `ISO/` already carry an
+adapter package, and at which commits?** ⚠️ **`SK-02` is startable either way —
+the skill is worth building regardless — but its acceptance's second bullet is
+either checkable or `Blocked`-with-a-named-finding, and which one it is must be
+known before its review, not discovered in it** (`../conventions/delivery-flow.md`,
+the fourth outcome). ⛔ **This is `Q18`'s shape again: an acceptance condition
+naming a state nothing can enter reads as a plan.**
+
+### ⛔ The queue behind step 2.1 — RE-CUT at round 23
+
+⚠️ **Measured from the tree at `2fe56a4`, not inherited: `git branch --no-merged
+release/m0-foundations` returned exactly ONE branch, `chore/po-round22`.**
+⭐ **Everything else in the round-22 queue's "in flight" and "awaiting release"
+rows has landed** — `W30`, `W31`, `W33` and `QA-03` are all ancestors of the tip.
+
+| Order | Row | ⛔ **When, and what it jumps** |
+|---|---|---|
+| **1** | ⛔ **`W39`** — the index rebuild | ⭐ **Developer 2 takes it first.** ⛔ **JUMPS `W37`, `W36`, `W38`, `W32`, `W35`** — five older unstarted rows, on the largest measured cost any `W` row has carried. ⚠️ **Ruling 75 discharged in the row above** |
+| **2** | ⛔ **`W40`** — the two test modules at R11's ceiling | ⭐ **Filler-sized, and it must land BEFORE `W37`, `W38` and `W39` touch the gate-coverage surface.** ⛔ **JUMPS the same five rows as `W39`, on a build failure three queued rows will each trigger** — ⚠️ **[measured below](#w40-minted-teststestgatecoveragepy-is-at-600-of-600-and-three-queued-rows-all-write-tests)** |
+| **3** | ⭐ **`SK-02`** | Developer 2, after `W39` and `W40`. ⛔ **A step-2.1 task outranks every `W` row below it** |
+| **4** | `W37` — the checks-that-cannot-fail sweep | ⭐ **Unchanged from round 22, two places lower.** ⛔ **Still jumps `W32` and `W35` on a SURVIVED mutant.** ⚠️ **Now sequenced AFTER `W40`, because its remedy adds tests** |
+| **5** | ⭐ **`W36`** — the browser in the image | ⛔ **UNBLOCKED. Its gate was *"until `QA-03` merges"*, and `QA-03` merged at `a03aeef`** — ⚠️ **measured, not assumed: `git merge-base --is-ancestor a03aeef 2fe56a4` → YES.** ⭐ **Still jumps `W32` and `W35` on `QA-03/9`'s 55 skips** |
+| **6** | `W38` | ⭐ **Small, and it jumps NOTHING.** ⚠️ **After `W40`: it owns "one test module", and that surface has zero headroom today** |
+| **7** | `W32` | the mixed-form contents fixture — gate cleared, `FND-09` merged at `dfccda1` |
+| **8** | `W35` | ⛔ **exposure `0`. Genuinely last, and named so it is not read as forgotten** |
+| ⛔ **QUEUED AT LAST** | ⭐ **`W34`** — the rubric's operational checklist | ⚠️ **CHANGED THIS ROUND. It was `not queued` for two rounds.** ⛔ **The rubric measured 1611 → 1783 lines this round, +172, the largest single jump it has taken, and the CTO says that growth is the argument for queueing it now.** ⭐ **It still wants a wave with no build task in flight, so it is queued rather than scheduled** — the row is *"the next such wave"*, not *"whenever"* |
+| ⛔ **not queued** | `SF-34` | ⭐ **M2 step 2.4.** ⛔ **Its M1 route closed when row 8 passed; it enters at its own step and not before** |
+
+⚠️ **`PO-21/5` bites for the THIRD consecutive round and I am naming it rather
+than pretending otherwise:** ⛔ **the row that jumps this round jumps on a cost
+somebody happened to instrument, and `W32` and `W35` lose again — not because
+they are less important, but because nobody has measured them.** ⭐ **Three rounds
+is where a pattern stops being a coincidence.** ⛔ **`PO-20/2`'s ranked queue is
+still owed, and it now has a three-round record instead of a two-round one.**
+
+### ⛔ `W40` — MINTED. **`tests/test_gate_coverage.py` is at 600 of 600, and three queued rows all write tests**
+
+⛔ **High-water mark moves `W39` → `W40`.** ⭐ **The "two test modules at R11's
+ceiling" were handed to me as *queued and yours to order*. ⚠️ I nearly ordered
+them last for want of a number — which is `PO-21/5` exactly, three paragraphs
+after I named it for the third time — so I MEASURED them instead, and the
+measurement moves them from last to second.**
+
+**Measured in the tree at `2fe56a4`, `wc -l`, against R11's 600-line test
+ceiling:**
+
+| Module | Lines | ⛔ **Headroom** |
+|---|---|---|
+| ⛔ **`tests/test_gate_coverage.py`** | **600** | ⛔ **ZERO. It is AT the ceiling** |
+| **`tests/studyforge/corpus/container/test_document.py`** | **598** | ⚠️ **two lines** |
+| `tests/docker/test_dev_image.py` | 583 | 17 lines |
+
+⛔ **`FND-01` makes an over-length module a BUILD FAILURE, so the next test added
+to `test_gate_coverage.py` reds the suite.** ⭐ **That is not a tidiness item, it
+is a tripwire lying directly across this wave's path**, and here is why:
+
+- ⛔ **`W38` owns *"`tools/quality/config.py` + one test module"*.**
+- ⛔ **`W39` changes what the quality floor does with a stale index** — the floor
+  is `tools/quality/`, and `test_gate_coverage.py` is the module that asserts the
+  gates are covered.
+- ⛔ **`W37` is a sweep whose remedy is *"a property with a bound the module does
+  NOT own"* — i.e. it ADDS tests.**
+
+⭐ **So three queued rows write tests onto a surface with zero and two lines of
+headroom between them.** ⚠️ **`W40` is the split — both modules become packages,
+the way `SF-12`'s renderer did and the way R11 says CodeSignal's largest modules
+are ported.** ⛔ **It is done BEFORE those three rows, not after**, because the
+alternative is that whichever of them lands first spends its review arguing about
+a size failure it did not cause.
+
+⛔ **Ruling 75 — what `W40` jumps:** ⭐ **`W37`, `W36`, `W38`, `W32`, `W35` — five
+older unstarted rows, the same five `W39` jumps.** ⚠️ **The licence is a measured
+cost and it is the sharpest kind: not a cost already paid, but ⛔ a build failure
+that three separately-queued rows will each trigger independently.** ⭐ **`W40`
+takes its place at **2** in the queue above, and `SK-02` moves to 3 with the rest
+shifting down** — ⛔ **and `W40` is a filler-sized row, so it rides in front of
+`SK-02` without costing the step a developer.**
+
+---
+
+## ⛔ CHECK 4 — THE FIFTH CLOSE RUN, and `PO-20/3` gets its fifth data point
+
+⭐ **Run at `2fe56a4`, which is M1's close ref and M2's open ref — the first time
+one run has served as both.** ⛔ **Instrument, the cheap one the ruling promised:
+`git branch --no-merged release/m0-foundations` plus one
+`git merge-base --is-ancestor` per row whose trigger had passed.**
+
+### ⛔ `PO-20/3` — FIFTH DATA POINT, and it CONFIRMS the rule the fourth contradicted
+
+⭐ **The rule, as promoted at round 20: *check 4's close run drifts when the
+review queue is not empty, and does not when it is*.**
+
+| Run | Queue at start | Did the run drift? |
+|---|---|---|
+| 2nd (round 20) | ⭐ **empty** | ⭐ **no** |
+| 3rd (round 21) | ⭐ **empty** | ⭐ **no** |
+| 4th (round 22) | ⛔ **NOT empty** | ⛔ **YES — three places.** The first NEGATIVE point |
+| ⭐ **5th (round 23)** | ⛔ **NOT empty — ONE branch, `chore/po-round22`** | ⭐ **NO** |
+
+⛔ **So the fifth point does NOT confirm the rule. It BREAKS it, and the break is
+more useful than a fourth confirmation would have been.** ⚠️ **A non-empty queue
+did not produce drift this time** — ⭐ **and the difference between run 4 and run 5
+is not the queue's SIZE but who was holding it: at round 22 the queue held
+branches awaiting a REVIEWER'S VERDICT, and a verdict can land mid-run. This
+round it held one branch awaiting a MERGE, by me, and I merged it myself as my
+first act.**
+
+⭐ **`PO-23/2` — the rule, restated at its real width:** ⛔ **the close run drifts
+when something in the queue can change WITHOUT THE RUNNER DOING IT.** ⚠️ **"Queue
+empty" was a proxy for that and it is a leaky one — it is right in four cases out
+of five and wrong in the fifth, which is exactly how a proxy behaves.** ⭐ **The
+scheduling rule for check 4 is therefore not *"run it when the queue is empty"*
+but ⛔ ***"run it when nothing in the queue is waiting on somebody else"*** — a
+condition the runner can actually establish, rather than one they can only hope
+holds for the duration.
+
+### ⛔ THE READING THAT CHANGED THE PLAN — **the pre-authorisation was on an unmerged branch**
+
+⛔ **`PO-23/1`. `git branch --no-merged release/m0-foundations` @ `2fe56a4`
+returned exactly one branch: `chore/po-round22`** — ⭐ **my predecessor's, carrying
+382 lines of board, `W36`–`W38`, and the M1 close pre-authorisation this round
+exists to execute.**
+
+⚠️ **The CTO's round-25 close ran the same check and recorded *"check B —
+`git branch --no-merged` — empty: everything landed."*** ⛔ **That was true when
+taken and false by the time this round opened**, which is the third consecutive
+round in which a branch-versus-tip reading has aged out inside a single round
+(`PO-22/4`, `PO-23/4`, and this).
+
+⭐ **What it would have cost to skip the check:** ⛔ **this round's board edits were
+about to be written against a `BOARD.md` that did not contain them, and the merge
+that reconciled the two would have taken whichever side git preferred.**
+⚠️ **Nothing would have looked wrong.** ⭐ **The predecessor's branch was merged
+into `chore/po-round23` as this round's FIRST commit, before a single edit.**
+
+### The six at open, run at `2fe56a4`
+
+| # | Check | ⛔ **Reading @ `2fe56a4`** |
+|---|---|---|
+| **1** | index present and current | ⚠️ **`none in this checkout` — NOT a failure, and it is `W39`'s whole subject.** ⛔ **A worktree never has one, `graphify-out/` being git-ignored, which is precisely why the tip's redness is invisible from here** |
+| **2** | `[structural]` triage | ⭐ **224 marker lines across 61 files** — ⚠️ **up from 131 across 32 at round 19: the sweep's surface has nearly doubled in four rounds** |
+| **3** | C6 — every ruling reached its artifact | ⛔ **NOT RUN THIS ROUND, and I am naming the omission rather than leaving a blank cell.** ⭐ **Rulings 84–87 and 86a landed on `chore/cto-round25` and are carried on the tip; the audit that would confirm each reached its artifact is `W34`'s surface, and `W34` is queued this round for the first time** |
+| **4** | re-measure every row whose trigger has passed | ⛔ **FOUR rows wrong, all in one direction** — `W30`, `W31`, `W33` `todo`/`awaiting release` for work that had landed, and `W36` `blocked` on a gate that had cleared. ⭐ **Corrected in [the `W` table](#w28w40-the-live-w-rows-and-this-is-a-pointer)** |
+| **5** | `CLAUDE.md`'s *Where to start* | ⛔ **FAILED at open — it named M1 step 1.5 as in flight while M1 was closing.** ✅ **FIXED BY REPLACEMENT, not by appending**, which is check 5's own founding rule |
+| **6** | catalogue contributions | ⛔ **NOT RUN — the sibling checkouts are not present in this worktree.** ⚠️ **Owed at this wave's close, and named so it is not read as clean** |
+
+### ⛔ THE LINT LINE (Ruling 79), and it produced a finding about its own denominator
+
+⛔ **`chore/po-round23`, pinned container, `docker/dev/check`, `ruff 0.16.6`:**
+
+```
+ruff check .            All checks passed!            exit 0
+ruff format --check .   422 files already formatted   exit 0
+quality floor           clean                         exit 0
+```
+
+⭐ **Quality floor: `clean`, exit 0** — ⚠️ **and it did NOT start clean.** ⛔ **The
+first run returned `5 findings`, every one a dead `[anchor]` in `BOARD.md`, every
+one hand-typed by me.** ⭐ **My predecessor's warning, one round old, was that a
+hand-typed slug is not what `pointers.slug()` produces — so I asked the checker
+for the four real slugs instead of guessing again**, and the differences were
+invisible by eye: a double hyphen where the em-dash had been, and `test_gate_coverage.py`
+slugging to `testgatecoveragepy` rather than `test_gate_coveragepy`.
+
+#### ⭐ `PO-23/5` — **Ruling 86a's denominator has TWO sources of divergence, not one, and `CTO-25/10` found only the first**
+
+⛔ **`CTO-25/10` measured the floor's notice at **421** against a tracked walk of
+**420** and diagnosed the difference as one untracked `ONBOARDING.md` — *the
+notice quotes the disk denominator*.** ⚠️ **Measured here, that diagnosis is
+incomplete:**
+
+| | ⛔ **Count @ `2fe56a4`** | |
+|---|---|---|
+| ⭐ **Untracked files in this worktree** | **0** | ⛔ **so disk and tree are the SAME set here** |
+| `git ls-files '*.py' '*.md'` — the tracked denominator Ruling 86a asks for | **429** | ⭐ **exit 0, all formatted, run explicitly through `xargs`** |
+| `ruff format --check .` — what the notice quotes | **421** | ⛔ **EIGHT FEWER, in a checkout with nothing untracked** |
+| ⭐ **The reconciliation, exact** | **429 − 8 = 421** | ⛔ **`pyproject.toml:86`, `extend-exclude = ["tests/fixtures"]`, and `git ls-files 'tests/fixtures/**' \| grep -E '\.(py\|md)$'` returns exactly 8** |
+
+⛔ **So the number is neither the disk nor the tree: it is `ruff`'s CONFIGURED
+WALK, and it diverges from the tracked set in two independent directions at
+once** — ⭐ **plus one for anything untracked, minus one for anything excluded.**
+⚠️ **In the user's own checkout those two were +1 and −0; here they are +0 and −8.
+A checkout with one untracked file and one excluded file would show ZERO
+divergence and the defect would be invisible.**
+
+⭐ **This sharpens the routing rather than changing it.** ⛔ **`CTO-25/10` proposed
+the notice *"either label its number `disk` or derive it from the tree"*.**
+⚠️ **Labelling it `disk` is now known to be WRONG — it is not the disk either.**
+⭐ **Deriving it from the tree remains right, and the row that does it must
+subtract the configured exclusions or it will report 429 for a run that checked
+421.** ⛔ **Routed to `W38`, which already owns `pyproject.toml`'s lint
+configuration and the floor/`ruff` divergence, rather than to `W34`'s wave.**
+
 ---
 
 ## ⭐ THE ROSTER — Developer 1 takes `SF-12` whole, CONFIRMED, and the split point is named IN ADVANCE
+
+⛔ **SUPERSEDED at round 23 by [M2 step 2.1's assignment](#m2-step-21-open-and-it-is-a-different-kind-of-milestone).**
+⭐ **Kept whole and unedited, because the reasoning is what this board keeps:**
+this is where the one-author-for-a-`Team`-task precedent was argued, and `SF-04`
+and `SK-02` both inherit it. ⚠️ **`SF-12`, `QA-03`, `W30`, `W31` and `W33` are all
+DONE and merged; the round-21 and round-22 queues inside this section are spent.**
 
 ⛔ **Confirmed, not merely accepted.** ⚠️ **`SF-12` is `Team`-sized and my own rule
 is that a `Team` task is scheduled by the LAST developer to become free — which was
@@ -2547,25 +2972,33 @@ arm in `validate`.**
 | W26 | ⛔ **Ruling 57 — W7's reader tell resolves the *name's origin*, not its spelling.** `SF-10` narrowed `DECODES` from `("loads", "load")` to `("loads", "json.load")` to stop flagging `unit/builder/material.py`, which delegates to `archive.document.load` and decodes nothing. ⭐ **The direction is ratified; the spelling is not.** Replace the token match in `tests/test_gate_coverage.py` with an `ast` walk that maps each module's own imports to an origin and asks whether the call resolves to `json.load`/`json.loads` | **Developer 2** | ⛔ **`todo` — NOT STARTED.** `fix/W26-gate-tell` is **byte-identical to `40731e4`**, measured 2026-09-10. ⛔ **next**, ahead of any further gate work | ⚠️ **Measured 2026-09-10, with a control: the shipped narrowing misses two genuine ungated readers** — `from json import load` + bare `load(h)`, and `import json as j` + `j.load(h)` — **both of which the old spelling caught.** ⭐ **The tree is not yet inhabited by either** (`import json`, unaliased, is the only spelling in `src/`), which is why this is next rather than urgent. ⛔ **A false negative in an R7 *coverage* check is worse than a false positive**: the false positive is what produced this ruling; the false negative is silent. ⭐ **Prototyped in the trial merge: the import-resolving tell gets all eight probe shapes right — A–E and H readers, F and G delegation — and finds the same six readers in the tree, so there is no migration** |
 | W27 | ⛔ **Ruling 58 — an R7 refusal is never translated into a package's error family.** Three sites translate: `unit/content.py` → `ContentError`, `corpus/placement/identity.py` → `PlacementError`, `corpus/manifest/document.py` → `ManifestError`. Re-raise `PersonalDataLeak` as itself at all three, and **state the exception in each package's `errors.py` contract**, exactly as `archive/errors.py` and `corpus/container/errors.py` already do (*"two exceptions travel through, deliberately"*) | **Developer 2** | ⛔ **`in-review` — `fix/W27-r7-no-translation` @ `655b527`, 2570 / 8** — 12 files, 501 insertions, all three translation sites plus two `errors.py` contracts. ⛔ **urgent — before M1 step 1.5** | ⚠️ **R7 is a HARD FAIL rule failing open**: a family exists so a caller catches one type per item and continues, so a translated leak is logged as *"that unit did not build"* and the walk finishes green. ⛔ **Already load-bearing, measured with a control 2026-09-10:** because the manifest translates, `validate/corpus.py:157`'s `except PersonalDataLeak` arm for the manifest **is unreachable**, and a home path in `corpus.json` is filed under `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA` — *"the catch was correct and the raise never came"*, which is W7's own sentence one layer up. ⭐ **The migration is cheap: zero tests assert the translated message** (`grep -rn 'carries personal data and is refused' tests/` → 0). ⚠️ **`corpus/manifest/document.py`'s docstring says it follows `unit.content._gate` *"exactly"*** — that sentence is how one site became three, and it goes with the fix |
 
-### ⭐ W28–W38 — the live `W` rows, and this is a pointer
+### ⭐ W28–W40 — the live `W` rows, and this is a pointer
 
-⛔ **Statuses RE-MEASURED FROM THE TREE at `ee50f77`, 2026-09-10 (check 4's fourth
-close run).** ⚠️ **THREE of these six rows were wrong** — ⭐ **and none of the three
-could have been caught by an open run, because none of it existed at wave-open.**
+⛔ **Statuses RE-MEASURED FROM THE TREE at `2fe56a4`, 2026-09-10 (check 4's FIFTH
+close run).** ⭐ **Instrument: `git merge-base --is-ancestor <merge> 2fe56a4` per
+row, plus `git branch --no-merged release/m0-foundations`** — ⚠️ **which returned
+exactly ONE branch, `chore/po-round22`.** ⛔ **FOUR of these rows were wrong, all
+in the same direction: the board said `todo` or `awaiting release` for work that
+had landed.**
+
+⚠️ **The round-22 reading at `ee50f77` is kept in the table's own cells where it
+still explains something, and every status cell now carries `2fe56a4`.**
 
 | # | Item | Owner | ⛔ **Status @ `ee50f77`** | Where it is argued |
 |---|---|---|---|---|
 | W28 | `source_files()` respects the repository's own ignore declaration | Developer 1 | ✅ **`done`, merged `6d65902`** | the §11.2 ruling above |
 | W29 | Ruling 67's bound — one constant naming the three gated trees | Developer 2 | ✅ **`done`, merged `4f2fbf8`** | round 19's `W29` block |
-| W30 | ⛔ **`PYTHONPYCACHEPREFIX` in the dev image** — isolation that is structural rather than procedural | framework agent | ⏳ **`in-progress` — board said `todo`.** `fix/W30-W31` @ **`a67f3cd`**, one commit, 5 files, 208 insertions | rulings 70–73, carried |
-| W31 | `DOCUMENT_KINDS` names two roles where three produce these documents | framework agent | ⏳ **`in-progress` — board said `todo`.** ⭐ **Same branch as `W30`**, `fix/W30-W31` @ `a67f3cd` | rulings 70–73, carried |
-| W32 | ⭐ **The mixed-form contents fixture** — a plausible short parse taken from real material | framework agent | `todo` — ⭐ **its gate cleared: `FND-09` merged at `dfccda1`** | check 6's second run |
-| ⛔ **W33** | ⛔ **The floor prints its lint state, absence included, as a NOTICE** (Ruling 78) | framework agent | ⛔ **`done` AND APPROVED — but NOT ON RELEASE.** ⭐ **`feat/ruling-78-lint-notice` @ `5938d48`, merged with an APPROVE into `chore/cto-round25` @ `85f0990`; `release/m0-foundations` HAS NOT MOVED** (`PO-22/4`) | rulings 77–80, carried |
-| W34 | `review-rubric.md`'s operational checklist — ⛔ **1511 lines, 263 executable** (`CTO-23/3`) | framework agent | `todo`, ⭐ **shape already ruled.** ⛔ **NOT QUEUED — not a filler** | rulings 77–80, carried |
-| W35 | `pointers.py` honours the ignore declaration (Ruling 80) | framework agent | `todo`, ⛔ **exposure `0`, LOW** | rulings 77–80, carried |
-| ⛔ **W36** | ⭐ **A browser in the pinned dev image**, checksum-pinned, plus `check`'s environment pass-through | framework agent | `todo` — ⛔ **after `QA-03` merges.** ⭐ **Removes 55 skips and converts five clauses to `pinned green`** | round 22's mint block above |
-| **W37** | ⭐ **The repo-wide sweep for checks that cannot fail BY CONSTRUCTION** | framework agent | `todo` — ⭐ **any time; seventh instance, first found by a sweep** | round 22's mint block above |
-| **W38** | ⭐ **The floor and `ruff` disagree by RULE; pin the divergence with a test** | framework agent | `todo` — ⭐ **small; jumps nothing** | round 22's mint block above |
+| W30 | ⛔ **`PYTHONPYCACHEPREFIX` in the dev image** — isolation that is structural rather than procedural | framework agent | ✅ **`done` @ `2fe56a4`, merged `3d0eb34`** — ⚠️ **board said `in-progress`** | rulings 70–73, carried |
+| W31 | `DOCUMENT_KINDS` names two roles where three produce these documents | framework agent | ✅ **`done` @ `2fe56a4`, merged `3d0eb34`** — ⭐ **same merge as `W30`** | rulings 70–73, carried |
+| W32 | ⭐ **The mixed-form contents fixture** — a plausible short parse taken from real material | framework agent | `todo` @ `2fe56a4` — ⭐ **gate cleared; queued 7th** | check 6's second run |
+| ⛔ **W33** | ⛔ **The floor prints its lint state, absence included, as a NOTICE** (Ruling 78) | framework agent | ✅ **`done` @ `2fe56a4`, on release via `3a45d4c`** — ⚠️ **board said *awaiting release*, and `PO-22/4` was true when taken and false minutes later.** ⭐ **`PO-23/4`: this is the second consecutive round in which a PO's branch-versus-tip reading aged out inside one round** | rulings 77–80, carried |
+| W34 | `review-rubric.md`'s operational checklist — ⛔ **was 1511 lines, now 1783** (`CTO-23/3`) | framework agent | ⭐ **`todo` @ `2fe56a4`, and QUEUED AT LAST this round** — ⛔ **+172 lines in one round is the largest jump it has taken, and the CTO says that growth is the argument** | round 23's queue |
+| W35 | `pointers.py` honours the ignore declaration (Ruling 80) | framework agent | `todo` @ `2fe56a4`, ⛔ **exposure `0`, LOW; queued 8th** | rulings 77–80, carried |
+| ⛔ **W36** | ⭐ **A browser in the pinned dev image**, checksum-pinned, plus `check`'s environment pass-through | framework agent | ⭐ **`todo` @ `2fe56a4` and UNBLOCKED** — ⚠️ **board said *blocked until `QA-03` merges*; `QA-03` is an ancestor of the tip.** ⛔ **Removes 55 skips and converts five clauses to `pinned green`** | round 22's mint block above |
+| **W37** | ⭐ **The repo-wide sweep for checks that cannot fail BY CONSTRUCTION** | framework agent | `todo` @ `2fe56a4` — ⛔ **now sequenced AFTER `W40`, because its remedy adds tests to a surface with no headroom** | round 22's mint block above |
+| **W38** | ⭐ **The floor and `ruff` disagree by RULE; pin the divergence with a test** | framework agent | `todo` @ `2fe56a4` — ⭐ **small; jumps nothing.** ⛔ **After `W40`** | round 22's mint block above |
+| ⛔ **W39** | ⛔ **The index goes stale on every merge, so the release tip is RED after each one** (`CTO-25/9`) | framework agent | ⭐ **`todo` @ `2fe56a4`, MINTED this round and queued FIRST** | round 23's `W39` block |
+| ⛔ **W40** | ⛔ **`tests/test_gate_coverage.py` is at 600 of 600 against R11's test ceiling** | framework agent | ⭐ **`todo` @ `2fe56a4`, MINTED this round, queued 2nd** | round 23's `W40` block |
 
 ---
 
@@ -2583,7 +3016,7 @@ trigger, and the trigger is an event rather than a date.
 | **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | **M1 → M2 boundary** | Five tasks, not eighty-five. They are the discovery-shaped ones, where you do not know the name of the thing you are looking for — `query`'s weak case |
 | **`Effort` field applied beyond the four named tasks** | PO | as each computation-shaped task is assigned | ✅ The field exists now (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill eighty-four tasks; add it when a task is assigned and its shape is known |
 | ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | ⛔ **before M1's wave opens** | The `[structural]` sweep is blind to findings filed before the marker existed — ⚠️ **including the one that motivated the mechanism** |
-| **R21's three remaining open rows** *(was five, then four)* | CTO | each before its named task builds | ✅ `consuming.json` filled; ✅ **overlay `content.json` closed by SF-09** — `content_api` minted and asserted. ⚠️ **The next one is the discovery cache, owed before `SF-04` at M2 step 2.1** — no longer "two steps away", so it is the near one now |
+| **R21's three remaining open rows** *(was five, then four)* | CTO | each before its named task builds | ✅ `consuming.json` filled; ✅ **overlay `content.json` closed by SF-09** — `content_api` minted and asserted. ⛔ **ROUND 23: the discovery cache is no longer "the near one" — M2 step 2.1 IS OPEN and `SF-04` is BLOCKED on it.** ⭐ **Escalated to the CTO as this round's first item, alongside `W39`** |
 
 ---
 

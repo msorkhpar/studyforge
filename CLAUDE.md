@@ -99,9 +99,16 @@ form needs a URL that resolves. The components are:
 
 ## Where to start
 
-✅ **M0 is CLOSED**, and so are **M1 steps 1.1–1.4**. ⏳ **In flight: M1 step
-1.5.** ⛔ **Do not start on M0.** ⭐ **`docs/tasks/BOARD.md` says what is open in
-it; this line says only which step.**
+✅ **M0 and M1 are both CLOSED.** **M1 closed 2026-09-10 at `2fe56a4`**, all nine
+of its close conditions true at that one ref. ⏳ **Open: M2 — a corpus is
+readable. In flight: M2 step 2.1 — `SF-31`, `SF-04`, `SK-02`.** ⛔ **Do not start
+on M0 or M1.** ⭐ **`docs/tasks/BOARD.md` says what is open in the step and who
+has it; this line says only which milestone.**
+
+⚠️ **M2 is not M1 with different task ids: the skills come with it, not after
+it** (`docs/tasks/README.md`, M2). ⛔ **`SK-02` is in step 2.1 for that reason,
+and a corpus built before its skill exists is one the skill can only claim
+retrospectively** (spec §9).
 
 ⚠️ **CORRECTED 2026-09-10 (PO round 19, check 5). This section said *"In flight:
 M1 step 1.4 — `SF-10`"* directly above a paragraph saying `SF-10` was done and
