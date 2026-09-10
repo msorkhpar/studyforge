@@ -34,7 +34,7 @@ here**, and that is the first thing to check if the totals ever stop reconciling
 
 ⛔ **CHECK 4 RAN AT WAVE-CLOSE for the first time (round 19) and it found four
 stale rows, a failed check 5, and a duplicated `W`-id.** ⭐ **The readings are in
-[the wave-checks section](#the-wave-checks--five-at-open-and-check-4-again-at-close);
+[the wave-checks section](#the-wave-checks-six-at-open-and-check-4-again-at-close);
 this line points at them and does not restate them.**
 
 ⛔ **Release branch: `release/m0-foundations`, and M1 continues on it.** ⚠️ **Its
