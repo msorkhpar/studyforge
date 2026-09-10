@@ -93,6 +93,13 @@ RULE_UNCLASSIFIED = "unclassified"
 RULE_SHORT_READ = "short-read"
 RULE_ORIGIN_MISSING = "origin-missing"
 
+#: ⛔ A file matched by **both** `include` and `content.not_material`, under
+#: its own rule id rather than `unclassified`'s. ⭐ **Never a precedence**: the
+#: manifest classified this file twice and disagreed with itself, which is a
+#: different fact from never having classified it, and refusing it is what
+#: stops the third state becoming somewhere to sweep material into.
+RULE_CONTESTED = "contested"
+
 #: ⛔ Its own rule id rather than `unclassified`'s. The classification check did
 #: run; what could not be read is the repository's declaration of what is
 #: output — a different fact, and one a script filters on separately.
@@ -129,12 +136,15 @@ IGNORE_TIMEOUT = 30
 def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
     """Refuse a source file the manifest classifies as neither in nor out.
 
-    ⛔ **Silence is the double ingest.** The manifest's `content` block makes
-    a file matching neither `include` nor `exclude` *unclassified*, and an
-    unclassified file is refused rather than guessed at — one corpus ships
-    per-unit files beside whole-series aggregates that are digest-identical
-    concatenations of them, so a glob that swept both would read every unit
-    twice and nothing would complain.
+    ⛔ **Silence is the double ingest.** A file matching none of `content`'s
+    three states is *unclassified*, and an unclassified file is refused rather
+    than guessed at — one corpus ships per-unit files beside whole-series
+    aggregates that are digest-identical concatenations of them, so a glob
+    that swept both would read every unit twice and nothing would complain.
+
+    ⚠️ **A file matched by both `include` and `not_material` is refused under
+    its own rule id** — that is two glob authors contradicting each other, and
+    picking a winner would decide by precedence what nobody declared.
 
     ⭐ `ContentPolicy.classify` does no I/O by design. Enumerating the root is
     this function's half of that split.
@@ -162,14 +172,25 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
         )
     for path in scan.files:
         where = walk.relative(path)
-        if walk.manifest.content.classify(where) is Classification.UNCLASSIFIED:
+        classification = walk.manifest.content.classify(where)
+        if classification is Classification.UNCLASSIFIED:
             yield Finding(
                 RULE_UNCLASSIFIED,
                 where,
-                "matches neither an 'include' pattern nor an 'exclude' entry. A file "
-                "the manifest does not classify is not ingested and not refused — it "
-                "is simply unaccounted for, which is how a corpus is read twice or "
-                "not at all.",
+                "matches no 'include' pattern, no 'exclude' entry and no "
+                "'not_material' glob. A file the manifest does not classify is not "
+                "ingested and not refused — it is simply unaccounted for, which is "
+                "how a corpus is read twice or not at all.",
+            )
+        elif classification is Classification.CONTESTED:
+            yield Finding(
+                RULE_CONTESTED,
+                where,
+                "matches an 'include' pattern and a 'not_material' glob at once, and "
+                "the manifest does not say which holds. Neither answer is guessed: "
+                "one would drop material the reader was promised, the other would "
+                "read the repository's own scaffolding aloud. Narrow one of the two "
+                "patterns, or move this file to 'exclude' with its reason.",
             )
 
 

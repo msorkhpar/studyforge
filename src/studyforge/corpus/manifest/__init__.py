@@ -32,7 +32,7 @@ finding; it is never a hand-edit to generated output.
 | Module | Owns |
 |---|---|
 | `document` | `Manifest`, `parse`, `load` — the document and its version (R9) |
-| `content` | `include` / `exclude`, and the three-way `classify` (C2) |
+| `content` | `include` / `exclude` / `not_material`, and `classify` (C2) |
 | `edits` | `permitted_edits`, the three targets R3 never permits, and the undo |
 | `media` | the commit mode and its limits; an absent key is a **stated** default |
 | `errors` | `ManifestError`, the only exception any of it raises |
@@ -40,9 +40,11 @@ finding; it is never a hand-edit to generated output.
 ⛔ **An unknown `corpus_api` is refused, never migrated at read time** (R9),
 and the test itself is `studyforge.version`'s — this package owns the *set* of
 versions it speaks, not the check (SF-33).
-⛔ **A file matching neither `include` nor `exclude` is unclassified**, and
-that is a refusal at validate time, not a shrug — silence is the failure C2
-describes.
+⛔ **A file matching none of `include`, `exclude` and `not_material` is
+unclassified**, and that is a refusal at validate time, not a shrug — silence
+is the failure C2 describes. ⚠️ **A file matching `include` *and*
+`not_material` is refused too**, under its own rule, because a precedence
+between them would decide by rule order what nobody declared.
 """
 
 from __future__ import annotations
@@ -52,6 +54,7 @@ from studyforge.corpus.manifest.content import (
     Classification,
     ContentPolicy,
     Exclusion,
+    NotMaterial,
     parse_content,
 )
 from studyforge.corpus.manifest.document import (
@@ -100,6 +103,7 @@ __all__ = [
     "Manifest",
     "ManifestError",
     "MediaPolicy",
+    "NotMaterial",
     "PermittedEdit",
     "Reversal",
     "from_document",

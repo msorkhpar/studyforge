@@ -262,4 +262,7 @@ def test_sf_02_imports_the_guard_rather_than_keeping_its_own_copy():
     assert imports_the_guard(root / "src/studyforge/corpus/manifest/document.py")
     assert "KNOWN_CORPUS_API" in source
     assert "isinstance(api, bool)" not in source
-    assert CORPUS_API in {1}
+    # ⭐ A literal, not a read of `KNOWN_CORPUS_API`: the number this build
+    # writes moved from 1 to 2 when `content.not_material` landed, and an
+    # assertion built from the set it is pinning would have moved with it.
+    assert CORPUS_API == 2

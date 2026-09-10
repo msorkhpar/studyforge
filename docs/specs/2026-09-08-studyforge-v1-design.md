@@ -434,7 +434,7 @@ on the builder.
 
 | Contract | File | Versioned by | Written by |
 |---|---|---|---|
-| manifest | `corpus.json` | `corpus_api` | adapter (drafted by reconnaissance, §9) |
+| manifest | `corpus.json` | `corpus_api` — ⭐ **`2`, which added `content.not_material`** (ruling 90) | adapter (drafted by reconnaissance, §9) |
 | container map | `<address>/container.json` | `container_api` | adapter; `EX-04` amends counts (§6) |
 | archive document | `raw/<variant>/unit-NN/<kind>-M.json` | `raw_api` | adapter |
 | exercise declaration | the `exercise` key of a `practice-M.json` | that document's `raw_api` | adapter; `EX-04` for generated (§7) |
@@ -567,7 +567,7 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
 
 ```json
 // corpus.json — what makes a directory a source
-{ "corpus_api": 1,
+{ "corpus_api": 2,
   "source": "java-senior",
   "title": "Senior Java Engineer",
   "levels": ["section", "module"],
@@ -576,7 +576,10 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
   "placement": "sibling",
   "content": {
     "include": ["*/README_*.md"],
-    "exclude": [] },
+    "exclude": [],
+    "not_material": [
+      { "glob": "README.md",
+        "why": "the repository's own navigation; the site carries its own contents" } ] },
   "permitted_edits": [
     { "path": "pom.xml",
       "kind": "insert-line",
@@ -596,14 +599,14 @@ for the vocabulary found only one corpus's choices.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90); this build reads `1` and `2` |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
 | `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
 | `exercises` | **required** | §7's gate onto the execution track |
 | `placement` | **required** | |
-| `content` | **required** | `include` is plain globs; every `exclude` carries its `why` |
+| `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
 | `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |
 | `permitted_edits` | *optional* | Defaults to `[]`. ⭐ ISO's is structurally empty and that is a pass |
 
@@ -651,7 +654,12 @@ and nothing complains. Nothing in the manifest could say otherwise.
   "include": ["src/*.md"],
   "exclude": [
     { "path": "src/ISO.md",
-      "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" } ] }
+      "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" } ],
+  "not_material": [
+    { "glob": "docs/studyforge/*",
+      "why": "this integration's own working notes about the corpus, not the corpus" },
+    { "glob": "LICENSE",
+      "why": "the repository's licence; it teaches nothing and is not withheld from anyone" } ] }
 ```
 
 ⭐ **The asymmetry is deliberate: an inclusion needs no justification; an
@@ -660,13 +668,70 @@ and a withholding nobody has to explain is one nobody audits — the same argume
 `permitted_edits` already makes about an edit. So `include` is plain globs and
 every `exclude` entry carries its `why`.
 
+### ⛔ `content` has **three** states, and the third is `not_material` (ruling 90)
+
+⛔ **Two states were not enough, because a real repository is mostly a third.**
+Measured against one, 2026-09-10: of 141 files, **38 included, 3 excluded, 100
+unclassified — and only 3 of that hundred were material withheld from anybody.**
+The rest were a licence, ignore files, an IDE workspace, a graph cache. Filing
+those under `exclude` makes every `why` a small lie and produces an audit nobody
+reads.
+
+⭐ **The three states are about whether a file's prose is read into the archive**,
+never about materiality in the abstract:
+
+- `include` — **read in.**
+- `exclude` — **prose that *would* be read, deliberately not read**, per file,
+  with its `why`. ⭐ *Withheld* is the honest word here because it is true here.
+- `not_material` — ⛔ **not prose to read at all**: the repository's own
+  scaffolding, content *about* the material rather than the material.
+
+⭐ **A source `README.md` is `not_material`, and it is not a special case** — it
+is the corpus's own navigation, and navigation is scaffolding. ⚠️ **The reader
+loses nothing**: the generated site carries its own contents from the manifest's
+container maps, so every address, title and ordinal the README records is already
+declared. ⛔ **`X1` is not weakened; its domain is now stated** — *an inclusion
+needs no justification; **every declaration that the framework will not read a
+file** needs one.*
+
+⚠️ **`not_material` takes globs where `exclude` takes one named path**, and the
+two audits differ because the harms differ. A new member of an exclusion's set is
+a new withholding and needs its own reason; a new member of a `not_material`
+glob's set is not a harm **unless it is actually material** — which is caught per
+file, against a real tree, by the rule below. ⛔ **The category also cannot be
+enumerated**: writing the finding that produced this field took the count from
+100 to 101, because the new entry was the file containing it.
+
+⛔ **A file matched by BOTH `include` and `not_material` is a finding of its own**
+(`contested`), and it exits 1. ⭐ **Never a precedence** — one order would drop
+material the reader was promised and the other would read the scaffolding aloud.
+⚠️ **This is what stops the third state becoming a drain.**
+
+> ⛔ **Rule 1a — a `not_material` entry is either an EXACT PATH, or a glob whose
+> wildcard lies inside a directory prefix that is itself entirely not-material.**
+> ⛔ **A pattern whose correctness depends on which files happen NOT to exist is
+> refused, however exactly it matches today.**
+
+⭐ **The check is one sentence and it is mechanical: reject an entry containing a
+wildcard whose fixed prefix is not a directory.** ⚠️ **It is not redundant with
+`contested`**, which catches a loose glob only when the swept file is *also* in
+`include`; the hole is the file that does not exist yet, classified by a `why`
+that was never about it — ⛔ **and the `unclassified` catch that would have
+surfaced it goes quiet precisely because the file is now classified.** ⭐ Ruling
+90's own examples pass unchanged: `docs/studyforge/*` is a wildcard under a
+directory, `LICENSE` and `.gitignore` are exact paths; `[CLR]*` is refused,
+because it covers three root files only by the accident of which fourth file
+exists, and a `why` cannot be true of a `CHANGELOG.md` nobody has written yet.
+⚠️ **Five honest globs, not three clever ones** — and `SK-07` must **generate**
+entries that satisfy this rule.
+
 ⛔ **Silence is the failure C2 describes, so silence is what this removes.** A
-file under the source root that matches neither list is **unclassified**, and
-`studyforge validate` names it and exits 1 (R6). A file that matches `include`
-and is then not ingested is also a failure. ⚠️ It follows that a corpus cannot
-grow a file without someone deciding what it is — which is the point, because the
-alternative is a second aggregate appearing and being read as thirty-eight more
-units.
+file under the source root that matches none of the three is **unclassified**,
+and `studyforge validate` names it and exits 1 (R6). A file that matches
+`include` and is then not ingested is also a failure. ⚠️ It follows that a corpus
+cannot grow a file without someone deciding what it is — which is the point,
+because the alternative is a second aggregate appearing and being read as
+thirty-eight more units.
 
 ⭐ **The reconnaissance skill (§9) drafts this**, and detecting the overlap is
 exactly what C2 asks of it: two files whose digests say one contains the other is

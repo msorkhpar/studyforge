@@ -130,9 +130,62 @@ def test_the_same_key_is_right_at_one_depth_and_wrong_at_another():
 # --- R9: an unknown version is refused, never migrated ----------------------
 
 
-@pytest.mark.parametrize("api", [0, 2, 99, "1", 1.0, None, True])
+@pytest.mark.parametrize("api", [0, 3, 99, "1", 1.0, None, True])
 def test_an_unknown_corpus_api_is_refused(api):
+    # ⚠️ `3` is where `2` used to sit. ⛔ Widening the known set to `{1, 2}`
+    # may not blunt the refusal by one degree, so the case immediately above
+    # the top of the range is asserted rather than dropped.
     assert "corpus_api" in refusal(corpus_api=api)
+
+
+@pytest.mark.parametrize("api", [1, 2])
+def test_both_versions_this_build_speaks_are_accepted(api):
+    # ⭐ Literal numbers, never `KNOWN_CORPUS_API`: an assertion that reads the
+    # set it is meant to pin passes whatever the set becomes.
+    assert manifest(corpus_api=api).corpus_api == api
+
+
+def test_a_manifest_reports_the_version_it_declared_and_not_this_build_s():
+    # ⛔ The field records what the corpus declared. While the known set held
+    # one number this was true by coincidence, because the default and the
+    # only legal value were the same number.
+    assert manifest(corpus_api=1).corpus_api == 1
+    assert CORPUS_API == 2
+
+
+#: A `content` block using the key that `corpus_api` 2 added.
+WITH_NOT_MATERIAL = {
+    "include": ["*/*/README*.md"],
+    "exclude": [],
+    "not_material": [
+        {"glob": "LICENSE", "why": "the repository's licence; it teaches nobody anything"}
+    ],
+}
+
+
+def test_the_key_the_second_version_added_is_accepted_at_the_second_version():
+    built = manifest(corpus_api=2, content=WITH_NOT_MATERIAL)
+    assert built.content.classify("LICENSE") is Classification.NOT_MATERIAL
+
+
+def test_the_key_the_second_version_added_is_refused_under_the_first():
+    # ⛔ The version is the corpus's statement of which contract it was written
+    # to, and a manifest using v2's vocabulary under a `1` is unreadable to
+    # exactly the build it claims to be readable by. ⚠️ Refused, never
+    # upgraded on the corpus's behalf (R9).
+    message = refusal(corpus_api=1, content=WITH_NOT_MATERIAL)
+    assert "not_material" in message
+    assert "corpus_api 1" in message
+    assert "corpus_api 2" in message
+
+
+def test_a_manifest_that_declares_no_third_state_still_parses_at_the_first_version():
+    # ⭐ The compatibility claim, asserted rather than assumed: the key is
+    # optional, an absent one is an empty tuple, and nothing about an existing
+    # manifest changed.
+    built = manifest(corpus_api=1)
+    assert built.content.not_material == ()
+    assert built.content.classify("LICENSE") is Classification.UNCLASSIFIED
 
 
 def test_the_version_refusal_says_why_it_is_not_migrated():
