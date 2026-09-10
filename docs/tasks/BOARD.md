@@ -63,8 +63,16 @@ a LOAD asymmetry, named here rather than discovered: `SF-14` is `team` (~80k) an
 `README.md`'s, state is this file's, and neither copies the other.** ⭐ **[step
 2.3, opened](#m2-step-23-open-both-rows-free-no-in-step-edge-and-a-load-asymmetry-named-at-open).**
 
-⏳ **IN FLIGHT at `911c56f` (round 35): `W76` ALONE, `wt/dev1n`,
-`chore/W76-page-surface`, ZERO commits.** ⭐ **REPLACED, not appended beneath.**
+⏳ **IN FLIGHT at close of round 35: `W76` ALONE, `wt/dev1n`,
+`chore/W76-page-surface`, ⛔ `a65b476`, **+3 commits**.** ⭐ **REPLACED, not
+appended beneath.** ⛔ **THIS CELL SAID *ZERO COMMITS* NINETY MINUTES AGO AND THE
+CLOSE-TIME RE-READ IS WHAT CAUGHT IT** — ⭐ **`CTO-42/6`'s clause, carried into
+`agent-protocol.md` in this very commit, firing on its FIRST application, against
+the office that carried it.** ⚠️ **`PO-35/8`, and it is the fifth consecutive
+round of `PO-30/2`: a commit count is a reading with an as-of, not a state.**
+
+⭐ **The wave-open reading is kept below rather than deleted, because the whole
+value of the clause is that BOTH readings are recorded.**
 ⛔ **Both of Ruling 130's instruments run, and the population is printed before
 the scalar (Ruling 128):**
 
@@ -3009,6 +3017,38 @@ round has quoted — and reads **0** under plain `pytest -q`, which is the spell
 a reader is most likely to run.** ⛔ **`0` reads as *"no skips at all"*, which is
 a COMPLETE fabrication where `29` is merely an undercount.** ⭐ **`PO-35/6`.**
 
+### ⛔ ROUND 35 — ANNOTATION BENEATH (Ruling 106): the close-time re-read FIRED, on its first application, against this office
+
+⛔ **The wave-open reading above says `W76` is at ZERO commits. It was true when
+taken and it is now false.** ⭐ **Both readings, recorded — which is the entire
+point of the clause and the reason it is not merely a better single reading:**
+
+```text
+reading 1, wave-open   wt/dev1n  chore/W76-page-surface  +0    git log ahead: NONE
+reading 2, close       wt/dev1n  chore/W76-page-surface  +3    a65b476
+                       (and chore/po-round35 +1, this branch)
+release/m0-foundations tip UNCHANGED at 911c56f across both readings
+```
+
+⭐ **`CTO-42/6` was carried into `agent-protocol.md` in this same commit and
+caught its own carrier ninety minutes later.** ⛔ **That is a stronger result than
+a clean reading: `CTO-41/6` and `CTO-42/6` were both filed by an office that
+PREDICTED the recurrence and could not prevent it — ⭐ this is the first instance
+where the two-reading handshake actually converts the prediction into a catch.**
+
+⚠️ **AND IT CHANGES A PLACEMENT ARGUMENT, which is why it is not bookkeeping:**
+⛔ **`W76` is no longer *dispatched and nothing authored*; it is three commits
+into rewriting `render.page.__all__`.** ⭐ **The hold on `SF-14` is therefore
+tighter than the wave-open reading suggested, not looser** — the contract
+`SF-14` must import against is actively moving. ⚠️ **`PO-35/8`.**
+
+⭐ **Ruling 130's two instruments now AGREE**, for the first time in four rounds:
+`git log` finds `chore/W76-page-surface +3` and `git worktree list` finds the
+same checkout. ⛔ **That does not retire `PO-35/2`** — the disagreement is
+structural and appears whenever a row is dispatched before its first commit;
+⚠️ **it means only that `W76` has passed through the window in which `git log` is
+blind, which is the window a dispatch always opens.**
+
 ### ⛔ ROUND 35 — the six wave-open checks, instrument, expectation written FIRST, reading
 
 ⭐ **Ruling 128: where a reading is a COUNT the POPULATION is printed beside it.**
@@ -3249,6 +3289,7 @@ seven refs, exit codes read with no pipeline, six real → `0`, `e6e4d51` → `1
 | **`PO-35/4`** | `[local]` | ⛔ **MY OWN SWEEP FOR RULING 163'S CLASS MISSED THE INSTANCE THE RULING WAS MINTED FROM.** ⚠️ **An extension-list regex (`\.(py\|md\|toml\|…)\b:[0-9]+`) read **104** and could not match `.gitignore:48`, because `.gitignore` has no extension.** ⭐ **Re-spelled with `gitignore` in the alternation: **105**, and the founding case appears.** ⛔ **A sweep whose pattern is derived from the examples it happens to remember will always miss the shape that motivated it — and it reads as a COMPLETE population, because 104 is a big believable number** |
 | **`PO-35/5`** | `[local]` | ⛔ **CHECK 6'S ADOPTION HALF READ A FALSE EMPTY IN MY HAND.** ⚠️ **`grep -c '^### '` — the *catalogue's* delimiter — against the *contributions* file returns **0**, exit 1; the file's own delimiter is `^## ` and the true count is **16**.** ⭐ **`0` is precisely what *"no entries adopted"* looks like, so the failure direction is the dangerous one.** ⛔ **Ruling 155's subject — an emptiness claim discharged by an instrument that cannot distinguish *empty* from *wrong delimiter*** — ⚠️ **arriving inside the check that exists to enforce it. Command now fenced** |
 | **`PO-35/6`** | `[local]` | ⛔ **RULING 142'S DECOY IS VERBOSITY-DEPENDENT and its worse reading is the one nobody has quoted.** ⭐ **Measured both ways at `911c56f`, pinned image: `grep -c '^SKIPPED'` reads **29** under `pytest -q -rs` and **0** under plain `pytest -q`.** ⚠️ **Every round has quoted 29.** ⛔ **`0` reads as *no skips at all* — a complete fabrication where 29 is an undercount — and `-q` is the spelling a reader reaches for.** ⭐ **The multiplicity parse reads 63 under both** |
+| **`PO-35/8`** | `[structural]` | ⛔ **`CTO-42/6`'S CLOSE-TIME RE-READ FIRED ON ITS FIRST APPLICATION, AGAINST THE OFFICE THAT CARRIED IT.** ⭐ **Both readings recorded: `chore/W76-page-surface` at **+0** at wave-open and **+3** (`a65b476`) at close, release tip unchanged at `911c56f` across both.** ⚠️ **`CTO-41/6` and `CTO-42/6` were filed by an office that predicted the recurrence and could not prevent it; this is the first instance where the two-reading handshake converts the prediction into a CATCH.** ⛔ **And it is not bookkeeping: it tightens the hold on `SF-14`, because the contract `SF-14` must import against is actively moving rather than merely assigned** |
 | **`PO-35/7`** | `[local]` | ⭐ **A RECORDED NEGATIVE (Ruling 155's `[local]`), and it CORRECTS ME rather than the CTO.** ⛔ **I re-spelled Ruling 84's verdictless-merge predicate as `grep -v 'CTO: '` and read **23** where the rubric's own FENCED command reads **24**, at all three refs (`cab8a04`, `6177738`, `911c56f`).** ⚠️ **The row my looser spelling swallowed is `7a82249`, carrying `(CTO: self-reversal)` — a verdict that is NOT an approval, which is exactly the row the clause exists to surface.** ⛔ **A check re-spelled from memory read ONE LOW, and low is the direction that misses violations.** ⭐ **`CTO-41/5` fenced that command for this reason and I walked past the fence** |
 
 ⭐ **Ruling 84, re-derived at the fenced spelling: 148 first-parent merges on
@@ -8134,7 +8175,7 @@ complete rather than nearly complete.**
 | **W73** | The re-homed `E11` comparison | ⛔ **INTEGRATION side** | `todo` — ⛔ **not a framework row (R20)** |
 | **W74** | The sibling runnable-module check widens (Ruling 156) | framework agent | ⭐ **`todo`, MINTED ROUND 34 — SECOND of this round's pair** |
 | **W75** | ⛔ **No document says how `studyforge` gets on the path — WIDENED from the skills to EVERY documented `python3 -m` command** (`CTO-41/1`, widened by `SF-27/4`) | framework agent | ⭐ **`todo`, MINTED ROUND 34.** ⛔ **A SECOND, INDEPENDENT instance measured by `SF-27`: a golden-regenerator command does not run, because `python3 -m` never reads pytest's `pythonpath`** |
-| ⭐ **W76** | `render.page`'s five cross-package helpers are PRIVATE and every renderer imports them anyway (`SF-27/1`) | framework agent | ⏳ **IN FLIGHT at `911c56f` — `wt/dev1n`, `chore/W76-page-surface`, ZERO commits.** ⛔ **It GATES `SF-14`, the third consumer, and that hold is live** |
+| ⭐ **W76** | `render.page`'s five cross-package helpers are PRIVATE and every renderer imports them anyway (`SF-27/1`) | framework agent | ⏳ **IN FLIGHT — `wt/dev1n`, `chore/W76-page-surface`, `a65b476`, +3 commits at round 35's close (0 at its open — `PO-35/8`).** ⛔ **It GATES `SF-14`, the third consumer, and that hold is live** |
 | ⛔ **W77** | The re-homed corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` (Ruling 151) | ⛔ **INTEGRATION side** | ⭐ **`todo`, MINTED ROUND 34.** ⛔ **Not a framework row and not a gate on any framework close — `W73`'s shape** |
 | ⛔ **W78** | **Line-number citations into files a LIVE document does not own — 105 of them, in 7 documents** (Ruling 163) | framework agent | ⭐ **`todo`, MINTED ROUND 35.** ⛔ **The ruling named ONE instance; the swept live population is 105** |
 | **W79** | The two small carries: each golden regenerator names the other, and the census comment cites its command | framework agent | ⭐ **`todo`, MINTED ROUND 35** (`CTO-42/5`, `CTO-42/2`). ⚠️ **Low urgency, both one-line, and the first is a scheduled collision rather than a present one** |
