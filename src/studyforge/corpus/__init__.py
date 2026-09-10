@@ -25,5 +25,17 @@ rewrite a line is a build failure too, so a declaration cannot smuggle a
 rewrite past the rule. The check reads the declaration and never hardcodes any
 one corpus's exception.
 
-**Skeleton at FND-01.** Filled by SF-02, SF-03, SF-04, SF-05 (E01) and SF-32 (E04).
+**The modules.** `manifest` reads `corpus.json`, the declaration that starts
+everything; `container` reads a `container.json` — the deepest container's
+declaration of what its units are — and re-renders it, which is what makes
+amending an editorial field a round trip rather than a rewrite.
+
+⭐ **`origin` lives in the container map and not in the archive document**
+(SF-05, closing FND-04's open condition): the archive carries what it needs to
+stand alone, which is its *identity* (R4), and provenance is the container's to
+declare. A placement profile that needs it says so and fails loudly when it is
+absent.
+
+**Skeleton at FND-01.** Filled by SF-02, SF-03, SF-04, SF-05 (E01) and SF-32
+(E04).
 """
