@@ -45,13 +45,6 @@ from studyforge.corpus.manifest.content.parse import (
     WILDCARDS,
     parse_content,
 )
-
-# ⛔ **Not on `__all__`, and imported here only because `edits.py` already
-# takes it** — the twin refusal in `permitted_edits` names *how* a path leaves
-# the root with this exact sentence, and W19 made that one function rather than
-# two copies. ⭐ The redundant alias is what tells the linter this is a
-# deliberate re-export; the finding that it wants a public home is `W40/1`.
-from studyforge.corpus.manifest.content.parse import _escape as _escape
 from studyforge.corpus.manifest.content.policy import (
     Classification,
     ContentPolicy,

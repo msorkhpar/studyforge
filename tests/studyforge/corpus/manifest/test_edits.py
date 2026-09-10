@@ -128,6 +128,30 @@ def test_an_edit_may_not_reach_outside_the_source_root(path):
         edits({**POM_EDIT, "path": path})
 
 
+@pytest.mark.parametrize(
+    "path,phrase",
+    [
+        ("/etc/passwd", "begins with a slash"),
+        ("../outside/pom.xml", "climbs above the root with '..'"),
+        ("src/../../pom.xml", "climbs above the root with '..'"),
+    ],
+)
+def test_the_twin_refusal_says_it_in_the_same_words_as_the_content_one(path, phrase):
+    # ⛔ W19 unified the middle clause onto one function and `W59` moved that
+    # function out of `content`; this is the byte-level pin at the second
+    # site, so a move that quietly changed what either caller emits fails
+    # here. ⭐ It is the same sentence as `content/test_parse.py`'s with a
+    # different field name in front of it.
+    with pytest.raises(ManifestError) as raised:
+        edits({**POM_EDIT, "path": path})
+    assert str(raised.value) == (
+        f"permitted_edits path must be relative to the source root and stay "
+        f"inside it; it {phrase}, and it is not reproduced here because that "
+        f"shape is where a home directory lives"
+    )
+    assert path not in str(raised.value)
+
+
 @pytest.mark.parametrize("value", ["pom.xml", 7, {"path": "pom.xml"}])
 def test_permitted_edits_must_be_a_list(value):
     with pytest.raises(ManifestError, match="must be a list"):

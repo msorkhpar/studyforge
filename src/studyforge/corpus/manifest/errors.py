@@ -1,14 +1,29 @@
-"""The one exception the manifest package raises.
+"""The one exception the manifest package raises, and R7's one phrase about a path.
 
 **What it does.** Names every way `corpus.json` can be unacceptable, so a
-caller catches one type rather than six.
+caller catches one type rather than six — and carries `_escape`, the sanctioned
+way to say *how* a path left the source root without repeating the path.
 
 **How you use it.** Catch `ManifestError`. Every rule this package applies
 raises it — including where the rule is SF-01's, as a `source` or a `variants`
 entry that is not a slug is — and none of them repairs a value quietly (R6).
+
 ⛔ In particular, an unknown `corpus_api` raises rather than being migrated: a
 migration that runs because something merely wanted to render a page rewrites
 the record of what was ingested (R9).
+
+⭐ **Why `_escape` lives here** (Ruling 135, `W40/1`). Two refusals need it and
+they are in different packages: `content.parse._reject_absolute` and
+`edits._reject_forbidden_target`, which W19 unified onto one function rather
+than two copies. It was `content`'s, and `edits` reached past that package's
+`__all__` for a private name — the surface Ruling 101's table calls wrong. ⛔ It
+did **not** become public to fix that: it answers *"how does this path leave the
+root"*, which is neither package's subject, and exporting a private name to
+satisfy a table is how a surface grows by accident. ⭐ Its subject is this
+module's own — `ManifestError` already states the rule that the value is never
+echoed (R7, Ruling 14), and `_escape` is what a refusal says instead. The
+underscore is accurate at the scope that matters: nothing outside
+`studyforge.corpus.manifest` names it, and nothing may.
 
 ⚠️ **Two exceptions travel through, deliberately**, and this docstring used to
 name only one.
@@ -64,3 +79,18 @@ class ManifestError(ValueError):
     absolute path. ⭐ What the reader needs is the field and the permitted
     class; the value is in front of them already, in the file they just wrote.
     """
+
+
+def _escape(pattern: str) -> str:
+    """Name *how* a path leaves the source root, without reproducing it.
+
+    ⛔ Three faults, named separately, because they are three different
+    mistakes: an absolute path, a home-relative one, and one that climbs out
+    with `..`. ⚠️ Reported in the order they are tested, so the sentence
+    matches the branch a reader would go and look at.
+    """
+    if pattern.startswith("/"):
+        return "begins with a slash"
+    if pattern.startswith("~"):
+        return "begins with a tilde"
+    return "climbs above the root with '..'"

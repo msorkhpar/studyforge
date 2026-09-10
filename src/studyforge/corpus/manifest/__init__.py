@@ -35,7 +35,7 @@ finding; it is never a hand-edit to generated output.
 | `content` | `include` / `exclude` / `not_material`, and `classify` (C2) |
 | `edits` | `permitted_edits`, the three targets R3 never permits, and the undo |
 | `media` | the commit mode and its limits; an absent key is a **stated** default |
-| `errors` | `ManifestError`, the only exception any of it raises |
+| `errors` | `ManifestError`, the only exception it raises, and R7's one phrase about a path |
 
 ⛔ **An unknown `corpus_api` is refused, never migrated at read time** (R9),
 and the test itself is `studyforge.version`'s — this package owns the *set* of
