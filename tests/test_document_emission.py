@@ -18,6 +18,7 @@ from pathlib import Path
 
 import pytest
 
+from studyforge import contents as toc
 from studyforge.address import Address
 from studyforge.archive import document as archive_document
 from studyforge.archive.scrub import PersonalDataLeak
@@ -55,6 +56,9 @@ def readers() -> list[Reader]:
     manifest = manifest_document.from_document(load(FIXTURES / "depth1/corpus.json"))
     depth1 = FIXTURES / "depth1/archive/depth-one"
     depth2 = FIXTURES / "depth2/archive/basics/01-getting-started"
+    # ⭐ `SF-13`'s pair, built from the same fixture the container reader uses,
+    # so the poisoned document is one this build would really have written.
+    built = toc.build(manifest, [container_document.load(depth1 / "container.json", manifest)])
     identity = placement_identity.Identity(
         corpus="depth-one",
         address=Address(("depth-one",)),
@@ -99,6 +103,21 @@ def readers() -> list[Reader]:
         # ⭐ Added because the derived guard below found it, exactly as it
         # found `exercise/record.py`: `unit/served.py` reads the one document
         # every consumer reads, and it is the last boundary before a browser.
+        # ⭐ Added by `SF-13` in the commit that mints `toc_api`. Two documents
+        # share that version key, and both are readers — ⚠️ the derived guard
+        # below found only the first of them, because it looks for
+        # `from_document` by name and the local half's reader is
+        # `from_status_document` (`SF-13/3`).
+        Reader(
+            "toc.json",
+            lambda d: toc.from_document(d, "toc.json"),
+            toc.to_document(built),
+        ),
+        Reader(
+            "status.json",
+            lambda d: toc.from_status_document(d, "status.json"),
+            toc.status_document(toc.status(built, present=[e.key for e in toc.order(built)])),
+        ),
         Reader(
             "unit.json",
             lambda d: unit_served.parse(json.dumps(d), "unit.json"),
@@ -169,6 +188,10 @@ def test_every_module_that_reads_a_document_is_probed(readers):
         # at a time, and `archive/markdown/document.py:parse` takes text. It is
         # covered by `tests/test_emission.py`'s per-callable probe instead.
         "archive/markdown/document.py",
+        "contents/document.py",
+        # ⚠️ Covered by a `Reader` above but NOT reported by the guard, which
+        # looks for `from_document`; recorded here so the pair is visible.
+        "contents/status.py",
     }
     readable = modules_with_a_reader(repository_root() / "src" / "studyforge")
     missing = sorted(readable - covered)
