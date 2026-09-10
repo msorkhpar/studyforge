@@ -244,6 +244,19 @@ exists.
 emission that has not happened yet is fixed by an amendment, so it is CHANGES
 REQUESTED, and it is never a nit.
 
+⛔ **And check the rule's second spelling.** §1f was added in round 14 and
+missed, in round 15, a refusal two lines from the defect it did catch — because
+the reviewer read the *function under discussion* rather than the *module*.
+⭐ **When one branch of a diff is corrected for echoing a value, read every other
+raise in the same file before moving on.** A rule applied at one site and not its
+neighbour is the shape both of this clause's misses have had.
+
+⚠️ **Related, and cheaper than either:** when two modules enforce one rule, diff
+the two enforcements. Round 15 found a character list re-spelled by hand in a
+second package, disagreeing about one character and wrong about six more in both
+copies. ⛔ **A constant that is exported and then re-typed is a finding on
+sight**, before you check whether the copies agree.
+
 ---
 
 ## 2. R10 — byte-for-byte reproducible

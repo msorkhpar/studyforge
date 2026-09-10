@@ -204,9 +204,21 @@ report.
 asset is local. A served origin adds the API, progress and Run/Submit; it is
 never a prerequisite for reading.
 
-**R9 — Contracts are versioned.** `corpus_api`, `container_api`, `raw_api`,
-`unit.json` `api`, TOC schema version. An unknown version is refused, never
-migrated in place at read time.
+**R9 — Contracts are versioned.** An unknown version is refused, never migrated
+in place at read time.
+
+⛔ **The list of versioned fields lives in `studyforge.version.CONTRACT_FIELDS`,
+not here** (ruled round 15). This sentence used to enumerate five and the code
+now holds seven; a list written twice is a list that disagrees with itself, and
+this one already did. ⚠️ The register below says *which contract*; the constant
+says *which field name*; a task that versions a new contract adds it to the
+constant **in the same commit**, or the guard cannot see it.
+
+⭐ **Why this drifted is worth keeping.** The five originally listed are every
+document the framework **writes**. The authored overlay is the one it only ever
+**reads** — so it fell out of an enumeration built, without anyone deciding it,
+around authorship. ⛔ **A contract is versioned because somebody reads it, not
+because we wrote it** (SF-09's diagnosis, and the reason R21 exists).
 
 **R10 — Generated output is byte-for-byte reproducible.** No clocks, no
 dependence on filesystem enumeration order. The same inputs produce the same
@@ -413,7 +425,7 @@ on the builder.
 | served unit | `unit.json` | `api` | `SF-10` |
 | table of contents | `toc.json` | TOC schema version | `SF-13` |
 | local status | `status.json` | TOC schema version | `SF-14` |
-| authored overlay | `<address>/units/unit-NN/content.json` | ⛔ **unversioned — open** | a person |
+| authored overlay | `<address>/units/unit-NN/content.json` | `content_api` (`SF-09`) | a person |
 | discovery cache | `.studyforge/site.json` | ⛔ **open** | `SF-04` |
 | narration manifest | ⛔ **open** | ⛔ **open** | `NS-02` / `SF-17` |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
