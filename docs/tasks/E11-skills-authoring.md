@@ -312,15 +312,31 @@ to get both:
 **Acceptance.** A repository goes from nothing to a serving site with the
 framework checked out beside it and one command run. ⛔ **No `.gitmodules` and no
 `git submodule add` anywhere in what this skill emits** — asserted. **The corpus
-carries a built, bridged graph and an R3-safe ignore file**, with the doc↔code
-edge census non-zero and the repository's root ignore file byte-identical to
-before — both asserted, not described. Afterwards `git status` shows only
-additions plus the declared `permitted_edits`. **Re-running changes nothing.**
-The uninstall returns the repository to its prior state, asserted by diff.
-`OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are **produced by this
-skill** for the Java corpus, not hand-written — asserted by regenerating them
-and diffing. Every artifact it produces is regenerable, and a hand-edit to one
-is reported as a finding rather than silently kept or silently lost.
+carries an R3-safe ignore file for its graph directory** — `graphify-out/.gitignore`
+containing a single `*`, written *inside* the generated directory, with the
+repository's root ignore file byte-identical to before — asserted, not described.
+Afterwards `git status` shows only additions plus the declared
+`permitted_edits`. **Re-running changes nothing.** The uninstall returns the
+repository to its prior state, asserted by diff. Every artifact it produces is
+regenerable, and a hand-edit to one is reported as a finding rather than
+silently kept or silently lost.
+
+#### ⛔ RULING 129 (CTO round 37) — this Acceptance was SPLIT, and two halves were RE-HOMED rather than waived
+
+⚠️ **An unmeetable acceptance clause is SPLIT: the met part stays, the residue is
+shown unmeetable by a COMMAND, and it is routed to a row the same round.**
+⛔ **CHANGES REQUESTED lands on the PLAN, not on the branch — this task's branch
+was APPROVED.** ⭐ **Carried here by the PO, round 30. Neither half is deleted.**
+
+| ⛔ **The clause that stood here** | ⭐ **Where it went, and the command that shows it was unmeetable** |
+|---|---|
+| ⛔ *"`OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are **produced by this skill** for the Java corpus, not hand-written — asserted by regenerating them and diffing."* | ⭐ **RE-HOMED to `SF-28` in `E09`.** ⛔ **`ls src/studyforge/cli/` → `__init__.py`, `plan/` — ONE command, and none of the five `OPS-*` artifacts exists to regenerate.** ⚠️ **It also asserts a diff taken inside a CONSUMER repository, which R20 forbids a framework task to depend on — the second instance after `SK-02/4`.** ⭐ **`artifacts.paths()` and `NOT_MATERIAL` are the two registration points this task already left for it, and `SK-07/1` is the finding** |
+| ⛔ *"…a built, bridged graph… with the doc↔code edge census non-zero"* | ⭐ **RE-HOMED to `W54` on the board.** ⛔ **`graphify` is an external binary that is measurably not in the pinned image, and `src/` may not import `tools/` — the same rule that made `SK-02` re-declare `SOURCE_LINE_CEILING`.** ⚠️ **So no framework task could ever close it as written; `W54` places it OUTSIDE `src/`.** ⭐ **The ignore-file half above is MET today and stays here. `SK-07/2` is the finding** |
+
+⛔ **Item 4 above — *the build entry point, corpus configuration over `SF-28`'s
+CLI* — is a DEFINITION line, not an acceptance clause, and it stands.** ⚠️ **It
+simply cannot be exercised until `SF-28` lands, which is what the re-homing says
+out loud.**
 
 ---
 
