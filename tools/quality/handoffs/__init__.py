@@ -110,7 +110,7 @@ KIND_MARKER = "**Kind:**"
 TASK_HANDOFF = "task handoff"
 DOCUMENT_KINDS: dict[str, str] = {
     TASK_HANDOFF: "one task's handoff; owes the title, the six sections and the markers",
-    "ruling record": "a CTO round or a single ruling written up; a record, owes nothing further",
+    "ruling record": "a CTO or PO round, or one ruling written up; a record, owes nothing further",
     "session log": "a coordinator's record of one session; owes nothing further",
     "survey": "a read-only investigation or review; nothing landed, so nothing to hand over",
     "index": "the directory's own README, which describes the others and is not one of them",

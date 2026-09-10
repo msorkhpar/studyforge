@@ -8,6 +8,7 @@ from tools.quality import run_all
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.knowledge_index import check_knowledge_index, notices
+from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
@@ -42,7 +43,24 @@ def test_every_notice_is_registered():
     # sharper reason: a notice that is not registered prints nowhere, and
     # "nothing was printed" is indistinguishable from "there was nothing to
     # say" (FND-07, and `agent-protocol.md`'s coverage rule).
-    assert set(quality.NOTICES) == {notices, pointer_coverage}
+    assert set(quality.NOTICES) == {notices, pointer_coverage, lint_notice}
+
+
+def test_the_lint_notice_prints_last():
+    # ⛔ Order, not just membership. Ruling 78's notice qualifies exactly one
+    # line — `quality floor:` — and a reader who finds it three lines above
+    # that, under a pointer census, has to be told the two are related.
+    assert quality.NOTICES[-1] is lint_notice
+
+
+def test_the_lint_notice_cannot_change_the_exit_code(tmp_path):
+    # ⛔ Ruling 78's hard half: a NOTICE, never a check. `run_all` is what
+    # `__main__` turns into an exit code, and nothing registered in `NOTICES`
+    # may appear in it — otherwise the floor's verdict would start depending on
+    # whether somebody ran `pip install`, which Ruling 77 forbids.
+    assert lint_notice not in quality.CHECKS
+    assert run_all(tmp_path) == []
+    assert [line for line in quality.run_notices(tmp_path) if line.startswith("lint:")]
 
 
 def test_the_public_surface_is_what_consumers_import():

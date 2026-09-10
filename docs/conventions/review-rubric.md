@@ -19,6 +19,26 @@ failures that are mechanical. Whether the boundary is in the right place —
 R11's real test, the isolation question — is a judgement, and it is the part of
 review that matters most.
 
+## ⛔ The growth governor, until `W34` lands
+
+⚠️ **This document is measured every round and it is losing.** `1410` when
+`CTO-23/3` filed it → `1511` → `1611` → **`1783` (round 25: Rulings 84, 85, 86,
+86a, 87 and this governor, +172 across three items)**. ⛔ **Three consecutive
+reviewers each added ~100 lines to the document
+they had just called too long**, and one of them refused to write a five-line
+correctness clause because of the size — ⭐ **which is the real cost, and it is
+the wrong trade every time.**
+
+⛔ **A rubric too long to add a correctness check to is not too long; it is
+failing.** So the size never blocks a clause. ⭐ **Instead, until `W34` lands,
+every ruling added here is: the command, the pass condition, and the measured
+row — and the reasoning goes in the round's handoff behind a pointer.** ⚠️ **The
+prose is the 798 lines; the executable surface is the 263. Grow the second.**
+
+⛔ **And say what you added.** A round that touches this file states, in its
+merge message and its handoff, which sections it added and the new line count.
+The number is the check.
+
 ---
 
 ## 0. Set up the range
@@ -294,6 +314,26 @@ the two enforcements. Round 15 found a character list re-spelled by hand in a
 second package, disagreeing about one character and wrong about six more in both
 copies. ⛔ **A constant that is exported and then re-typed is a finding on
 sight**, before you check whether the copies agree.
+
+#### ⛔ Ruling 85 — a "why it failed" field carries a code, never a captured stream
+
+⭐ **Ratifying what `W33` implemented and generalising it past that module.**
+When our code shells out to anything, the reflex on the error path is to print
+what the other process said. ⛔ **A captured stream is the single richest source
+of absolute paths we have** — ruff's `--output-format=json` carries an absolute
+`filename` per finding, and its config errors print the path on stderr.
+
+⭐ **So a reason field may hold exactly three things:** an **exit code**, a
+**timeout with its bound**, or a **failure class** (an exception's type name).
+⛔ **Never `stdout`, never `stderr`, never a filename, never an argv element.**
+
+⚠️ **And the counts are the useful half anyway.** *"15 finding(s) in 7 file(s)
+(D401, F401)"* tells a reader which class of defect is loose and where to go
+look; the paths add nothing a reader could not get by running the command
+themselves, which the line also prints.
+
+⭐ **This binds every check and every notice, not the one it was found in** —
+the reflex is what recurs, not the module.
 
 ---
 
@@ -654,6 +694,37 @@ later at the reviewer instead of the author.
 ⭐ **So the host run is a convenience and never the verdict.** If the container
 cannot be run, the review is **Blocked**, not APPROVE.
 
+#### ⛔ Ruling 87 — a skip class that can hide a SUBSYSTEM announces itself at the end of the run
+
+⛔ **Pass condition:** when a precondition switches off more than a handful of
+tests, the run's last lines say **how many did not run, why, and both remedies** —
+without `-rs`, and without the reader having asked.
+
+```bash
+python3 -m pytest -q            # the banner is in this output, or the rule is not met
+```
+
+⭐ **Measured, `QA-03`, pinned image** — 55 of 86 visual checks skip because the
+image has no browser, and the run prints:
+
+```
+visual harness: NO BROWSER — 55 visual check(s) DID NOT RUN. searched PATH for
+google-chrome, … and read $STUDYFORGE_VISUAL_BROWSER. … ⛔ The pinned dev image
+has none either — QA-03/1. Set $STUDYFORGE_VISUAL=required to fail instead of
+skipping.
+3090 passed, 63 skipped
+```
+
+⚠️ **This is `FND-07`'s rule and Ruling 78's, arriving for skips:** *"nothing was
+printed"* and *"there was nothing to say"* are indistinguishable. ⛔ **§4b-i asks
+the reviewer to name every skip; this asks the suite to name them first** — and
+the pairing `"N passed, M skipped"` is exactly where 55 absent checks hide.
+
+⭐ **And it carries an escape hatch, tested in both directions:** an environment
+variable that makes the absence **fatal** rather than silent
+(`STUDYFORGE_VISUAL=required` → errors; `=0` → still skips). ⛔ **A banner with no
+way to promote it to a failure is advice, and advice is what gets muted.**
+
 #### ⛔ Ruling 77 — Ruling 31 does **not** reach ruff, and `tools/quality` keeps its independence
 
 ⚠️ **`FND-08/4` asked whether `style.py`'s refusal to depend on ruff is Ruling
@@ -721,6 +792,69 @@ Lint: did not run — ruff absent, both gates skipped        ⛔ NOT EVIDENCE (�
 ⛔ **`did not run` is not evidence, so it cannot support APPROVE** — it is the
 row this table already calls *not evidence at all*, and a review that omits the
 lint line entirely is making that claim silently.
+
+#### ⛔ Ruling 86 — a **documentation-only** branch needs a lint line too
+
+⚠️ **`W33/4`, and it lands on the reviewer's instrument rather than on any
+author's branch.** ⛔ **`ruff format --check` covers Markdown in 0.16.6.**
+Measured on `ee50f77` in the pinned image, not reasoned about:
+
+```
+ruff format --no-cache --check .        -> 397 files already formatted
+  294 tracked .py  +  103 .md           ( 111 .md tracked, 8 under tests/fixtures, which is extend-excluded )
+ruff format --no-cache --check README.md -> 1 file already formatted
+ruff check --no-cache --show-files . | wc -l -> 295   ⚠️ 294 .py + pyproject.toml, NOT 295 Python files
+```
+
+⛔ **So 26 % of the format denominator is documentation, and a docs-only branch
+can move the lint result.** ⚠️ **Every documentation branch this session was
+measured without a lint line** — reviewers' rounds included — on the assumption
+that "no Python changed" makes lint irrelevant. ⭐ **That exemption is void.**
+Ruling 79's line is stated on **every** branch.
+
+⭐ **And the line names the composition, because the bare number misleads.**
+*"397 files"* reads as Python and is not.
+
+##### ⛔ Ruling 86a — the denominator is derived from the TREE, never from the disk
+
+⚠️ **Corrected within the round that wrote Ruling 86, by `W30/2`, and it is the
+ruling's own shape turned back on it.** ⛔ **`ruff format --check .` walks the
+disk.** An untracked file in the checkout inflates it — and because ruff formats
+**Markdown** (Ruling 86, immediately above), ⛔ **the stray file is usually an
+agent's own draft handoff.** Measured, same commit, same image:
+
+```
+ruff format --no-cache --check .                     -> 401     ⛔ disk
+  … with one untracked .md present                   -> 402     ⛔ moved
+git ls-files -z '*.py' '*.md' \
+  | xargs -0 ruff format --no-cache --force-exclude --check
+                                                     -> 401     ⭐ tree
+  … with the same untracked .md present              -> 401     ⭐ held
+```
+
+⛔ **So a file count is not a property of the commit and may not be compared
+across worktrees.** ⚠️ **Two reviewers once agreed on `398` for different
+reasons** — one had an untracked file, the other had their own handoff's
+Markdown in its place. ⭐ **That is Ruling 81 (*a number can be stable while its
+set is not*) arriving inside the instrument Ruling 79 made mandatory.**
+
+⭐ **The rule, in two parts:**
+
+1. ⛔ **The verdict is the EXIT CODE.** That is what `--check` is for and it is
+   reproducible on any checkout.
+2. ⛔ **A denominator, if quoted, is computed over `git ls-files` with
+   `--force-exclude`**, and is labelled `tracked`. ⚠️ A number taken from the
+   disk walk is quoted only as `disk (not reproducible)`, or not at all.
+
+```
+Lint: pinned green — ruff 0.16.6 in the dev image
+      check exit 0        · 296 .py + pyproject.toml   (tracked)
+      format --check exit 0 · 296 .py + 105 .md = 401  (tracked)
+```
+
+⚠️ **Version-bound, and say so.** This is 0.16.6's behaviour; the denominator's
+shape is a property of the pinned toolchain, which is exactly why Ruling 79 makes
+a review state the version that produced its line.
 
 ### 4c. The tests test the change
 
@@ -1529,6 +1663,45 @@ back-filled**: rewriting merge messages on a branch other agents have already
 built on costs more than the record is worth, and the verdicts themselves are on
 record in `docs/tasks/handoffs/CTO-*.md`. ⭐ The rule binds from here, and the
 check above is scoped to merges after this commit.
+
+### ⛔ Ruling 84 — the check above enumerates merges, so run its complement too
+
+⚠️ **`CTO-24/6`. The check above walks `--merges` and asks each one for a
+verdict. It is therefore structurally blind to the two failures that actually
+happened**, one round apart:
+
+| what happened | what the check above saw |
+|---|---|
+| a verdict recorded on a commit that **was not a merge** (an uncommitted trial merge, then `git stash` — which discards `MERGE_HEAD`, so the commit that followed had **one parent** and 1 of the branch's 5 files) | ⛔ nothing — a non-merge is not in `--merges` |
+| two branches merged into the reviewer's **own** branch and reported as merged onto release, which never moved | ⛔ nothing — both merges were real and both carried verdicts |
+
+⛔ **Both were caught by a human reading the tree for content the message
+claimed. Neither was caught by a check.** The complement is one line, it
+enumerates rather than confirms, and it answers the closed question *what is
+not in*:
+
+```bash
+git branch --no-merged release/m0-foundations
+```
+
+⭐ **Read the output against the board.** Every branch listed is either in
+flight or a finding; a branch this round reported as merged that appears here is
+⛔ **the defect, caught before the report is written.** Round 25, run against
+`ee50f77`, listed exactly `feat/QA-03-visual` and `feat/ruling-78-lint-notice` —
+the two the board had in flight, and nothing else.
+
+⛔ **And the two-line habit that makes the first row impossible.** After merging,
+before writing a verdict anywhere:
+
+```bash
+git log --format='%P' -1 | wc -w        # 2 = a merge; 1 = you did not merge
+git log --oneline -1 release/m0-foundations
+```
+
+⚠️ **Reporting a merge you did not make is worse than not merging**, because the
+next agent measures a tree that does not exist. ⛔ **Never `git stash` inside an
+uncommitted trial merge** — it silently discards `MERGE_HEAD` and turns the
+merge you are about to record into an ordinary commit.
 
 ⭐ **This is a mechanism because a promise is not one.** Two branches were merged
 ahead of their verdict in a single round, both in good faith and both to unblock
