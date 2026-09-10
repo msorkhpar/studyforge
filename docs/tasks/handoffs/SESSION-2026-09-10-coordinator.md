@@ -6,6 +6,12 @@
 floor clean**, `ruff check` exit 0, `ruff format --check` exit 0 (**424 derived
 from the tree**; see the denominator note below).
 **M1 is CLOSED at `2fe56a4`. M2 step 2.1 is open.**
+⚠️ **The tip above went stale while this file was being written.** `SF-31` was
+approved and merged at `f3ee177` (**3179 passed, 63 skipped**) between the header
+being typed and the commit landing. ⛔ **Left as written and corrected here rather
+than edited, because it is defect 4 below demonstrating itself in the document
+that records it** — the reading's half-life was shorter than the writing.
+
 **Written by:** the orchestrating session, overnight, with the user asleep and a
 standing instruction to advance the project as far as it would go.
 
