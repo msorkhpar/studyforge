@@ -1,5 +1,7 @@
 # ruling-46 — handoff
 
+**Kind:** ruling record
+
 **Ruling 46 — a sweep declares what it asserts.**
 
 **Status:** done. `fix/ruling-46-sweep-declaration`, branched from

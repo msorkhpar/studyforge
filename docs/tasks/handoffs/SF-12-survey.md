@@ -1,5 +1,7 @@
 # SF-12 survey (W9) — porting `html.py` as a package
 
+**Kind:** survey
+
 **Document kind: `survey`.** ⛔ **Not a task handoff, and it does not owe the
 six-section handoff contract** in `docs/conventions/agent-protocol.md` — it
 produces no code and closes no task. It is the serial half of a `Team`-sized
