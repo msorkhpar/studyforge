@@ -1235,6 +1235,62 @@ clause in `docs/tasks/E*.md` produces ONE ROW in the verdict, in this form:**
 added or edited` — the emptiness claim discharged by a printed zero, never by
 silence (Ruling 155).**
 
+#### ⛔ Ruling 173 (CTO round 44) — Ruling 151's criterion is the **INSTRUMENT**, never the count; a shipped **STAND-IN** discharges the clause, and `QA-04` is exempt by 151's own text
+
+> ⛔ **Ruling 173, answering `W70/2`.** Ruling 151 **DOES** reach a framework
+> Acceptance clause that names a consumer corpus **with no count at all**. Its
+> operative words are *"a reading taken inside a consumer repository"*; a census
+> is one way to need one and it was never the criterion. ⭐ **The count was an
+> accident of the first four instances — which is Ruling 140 pointed at the
+> RULING instead of at a predicate.**
+>
+> ⛔ **But naming a corpus is not the violation. Being UNDISCHARGEABLE HERE is.**
+> A clause naming a consumer corpus is **compliant** where its owning row ships
+> an instrument that runs with the corpus **ABSENT**: the real shape when the
+> sibling is checked out, a **same-shape stand-in** when it is not, **never a
+> skip**, and the provenance printed in the failure message.
+>
+> ⛔ **`QA-04` is EXEMPT, and by Ruling 151's own sentence**, which names
+> *"`QA-04`'s second source"* as a DESTINATION for such clauses. ⭐ **A clause
+> sitting at its destination is not a violation of the rule that sent it there**
+> — and without this the next sweep splits a clause into the row it is in.
+
+⭐ **The live precedent is shipped and was found by reading `tests/`, which no
+document sweep can do** — `tests/studyforge/corpus/placement/test_corpora.py`,
+`shape_to_place()` (`SF-03`, approved and closed): *"Never a skip. The property
+under test … is provable without the repository, and the repository only makes
+the evidence THIS corpus's rather than one like it."*
+
+⛔ **THE READING THIS CLAUSE OBLIGES (Ruling 160(b)).** A reviewer of any branch
+that adds or edits a framework Acceptance clause naming a consumer corpus by
+role produces ONE ROW beside `R20 subject:`:
+
+> ⛔ **`R20 instrument:` — for each such clause, either the TEST that discharges
+> it with the corpus absent (named), or the disposition: SPLIT to the
+> integration side, or RESTATE over material this side owns.** ⭐ **Printed as
+> `R20 instrument: 0 clauses` when there are none (Ruling 155).**
+
+```bash
+# ⛔ Ruling 173's population: framework Acceptance clauses naming a consumer
+#    corpus by ROLE, counted or not. Each owes an instrument or a disposition.
+python3 -c "
+import sys; sys.path[:0] = ['src', '.']
+from tests.test_acceptance_clauses import FRAMEWORK_CLAUSES, CONSUMER_CORPUS_TERMS, _plain
+for c in FRAMEWORK_CLAUSES:
+    if any(t in _plain(c.head).lower() for t in CONSUMER_CORPUS_TERMS):
+        print(c.where, '|', c.head)"
+# Pass: every printed row is answered in the verdict.
+# Measured at 8175d86 (== the round-44 merge tree, git diff --quiet -> 0): 7 rows
+#   E01:483 SF-03  E05:97 SF-19b  E10:332 QA-04  E11:167 SK-01
+#   E11:571 SK-03  E11:594 SK-04  E12:64 TC-00
+```
+
+⛔ **The class is enumerated and therefore CLOSED as a class**, which is what
+3 → 4 → 11 says was never done: **ten** members, not eleven — `QA-04` is exempt,
+`SF-03` already carries its instrument, four are discharged, and **four live
+rows remain** (`SF-19b`, `SK-03`, `SK-04`, `TC-00`) plus `SK-01`, which is closed
+and therefore takes **Ruling 166**'s disposition, never a new gate (Ruling 117).
+
 #### ⛔ Ruling 152 (CTO round 40) — where one helper names N faults, every caller refuses all N or says which it does not
 
 > ⛔ **Where one helper names N faults, every caller either refuses all N, or
