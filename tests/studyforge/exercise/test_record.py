@@ -281,16 +281,36 @@ def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
         assert "exercise" not in json.loads(path.read_text(encoding="utf-8"))
 
 
-def test_exactly_one_committed_document_carries_an_exercise():
-    # ⚠️ Pinned so "improving coverage" cannot quietly make the exception the
-    # majority — see `tests/fixtures/README.md`.
+def _carrying_an_exercise():
     root = repository_root() / "tests/fixtures"
-    carrying = [
+    return [
         path
         for path in sorted(root.rglob("*.json"))
         if "exercise" in json.loads(path.read_text(encoding="utf-8"))
     ]
-    assert len(carrying) == 1, [p.name for p in carrying]
+
+
+def test_exactly_one_valid_corpus_document_carries_an_exercise():
+    # ⚠️ Pinned so "improving coverage" cannot quietly make the exception the
+    # majority — see `tests/fixtures/README.md`. ⛔ The graded state is the
+    # exception in real material, and a set in which it is the majority is a
+    # set that will let a design fitted to the exception look correct.
+    valid = [p for p in _carrying_an_exercise() if "/invalid/" not in p.as_posix()]
+    assert len(valid) == 1, [p.name for p in valid]
+
+
+def test_every_other_exercise_in_the_tree_exists_to_be_refused():
+    # ⭐ The one sanctioned second copy, and its licence is that it must fail.
+    # `user-authoritative` is W18's negative control: restore the forbidden-pair
+    # list and it violates nothing, which reds the fixture-consistency suite.
+    # ⛔ So the rule is not "one exercise in the tree" but "one that validates",
+    # and this states the second half rather than leaving it to a count.
+    others = [p for p in _carrying_an_exercise() if "/invalid/" in p.as_posix()]
+    named = [p.parts[p.parts.index("invalid") + 1] for p in others]
+    assert named == ["user-authoritative"]
+    for path in others:
+        with pytest.raises(ExerciseError):
+            of(json.loads(path.read_text(encoding="utf-8")), path.name)
 
 
 def test_the_frozen_record_is_not_a_validated_one():
