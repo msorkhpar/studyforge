@@ -1275,6 +1275,58 @@ The gate walk derives from the TREE, not the disk (Ruling 153)
 Every Acceptance clause expressible as an `Acceptance` (Ruling 151)
 
 
+⭐ **Three bodies below — `W14`, `W18` and `W27` — were moved here by PO round
+37 at the step-2.3 close.** ⛔ **Moved WHOLE, and none of the three carried a
+`](../BOARD-ARCHIVE.md#…)` link, so the re-addressing step `board.md` prescribes
+was a no-op and is recorded as one rather than silently skipped.**
+
+### W14 — The two missing invalid fixtures on `FND-04`'s surface, and they are one task
+
+⏳ **in flight** — ⛔ **TWO missing invalid fixtures on FND-04's surface, and they are one task** — the **count-mismatch** fixture (`E10` names six, five exist) and the **`user` + `authoritative` R5 pair** (finding 29). ⭐ **Both are record defects, not coverage holes: `check_counts` and the trust rule are implemented and tested — only the fixtures are absent**
+
+⚠️ **Measured on `feat/SF-23-exercise` @ `5a01a30`: the graded fixture shipped, the count-mismatch fixture did not** — `tests/fixtures/invalid/` still holds five. ⛔ **`SF-23`'s Acceptance names both, so this is a live review item, not an escaped one** — flagged to the CTO while the branch is in review. ⭐ **That is the mechanism working: routing an item into a task's *Acceptance* rather than a board row is what makes a reviewer the backstop**
+
+⛔ **An acceptance clause naming a fixture that does not exist is unfalsifiable** — the same class as an acceptance satisfied by an untracked artifact, arriving in a *condition* instead of a build product. ⭐ Ruled: **build the fixture, keep the clause** — it is the only statement that the count check is exercised, and the count check guards *silently lossy ingestion*
+
+### W18 — `user` + `authoritative` is accepted, so a reader's grader may declare itself the source's own
+
+⏳ **in flight, with W14** — ⛔ **`user` + `authoritative` is accepted today** — measured — so **a grader the reader wrote may declare itself the source's own.** ✅ **RULED 35: `authoritative ⟹ bundled`, stated positively**
+
+⭐ **The author believed the set should be `("bundled",)` and did not change it**, because `unit.trust` owns the rule and `E06` names only the `generated` pair — ⚠️ **an argument, not a measurement**, and they said so. ⛔ **Exactly the restraint R21 asks for**: a task that meets an unlocated contract stops and asks. One entry in `unit.trust.FORBIDDEN` if the CTO agrees
+
+### W27 — An R7 refusal is never translated into a package's error family
+
+⛔ **Ruling 58 — an R7 refusal is never translated into a package's error family.** Three sites translate: `unit/content.py` → `ContentError`, `corpus/placement/identity.py` → `PlacementError`, `corpus/manifest/document.py` → `ManifestError`. Re-raise `PersonalDataLeak` as itself at all three, and **state the exception in each package's `errors.py` contract**, exactly as `archive/errors.py` and `corpus/container/errors.py` already do (*"two exceptions travel through, deliberately"*)
+
+⚠️ **R7 is a HARD FAIL rule failing open**: a family exists so a caller catches one type per item and continues, so a translated leak is logged as *"that unit did not build"* and the walk finishes green. ⛔ **Already load-bearing, measured with a control 2026-09-10:** because the manifest translates, `validate/corpus.py:157`'s `except PersonalDataLeak` arm for the manifest **is unreachable**, and a home path in `corpus.json` is filed under `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA` — *"the catch was correct and the raise never came"*, which is W7's own sentence one layer up. ⭐ **The migration is cheap: zero tests assert the translated message** (`grep -rn 'carries personal data and is refused' tests/` → 0). ⚠️ **`corpus/manifest/document.py`'s docstring says it follows `unit.content._gate` *"exactly"*** — that sentence is how one site became three, and it goes with the fix
+
+### W84 — `SK-01`'s consumer-corpus Acceptance clause, answered by Ruling 166
+
+⛔ **Ruling 173's class, and this member arrived ALREADY ANSWERED.** ⭐ **`SK-01`'s
+clause at `docs/tasks/E11-skills-authoring.md:167` — *"Proposes a correct manifest
+for the Java corpus without being told the answer"* — names a consumer corpus by
+role, so it is in the counted population of seven.** ⛔ **It is minted CLOSED
+rather than left out of the register, because a population of seven with five
+rows and two stated non-rows is an enumeration, and a population of seven with
+four rows is a gap.**
+
+⭐ **Ruling 166 is the answer and it is the TRICHOTOMY clause, not the
+dichotomy.** ⚠️ **`PO-34/9` offered two cases — an R20 breach inherited by a
+closed milestone, or a decorative clause never measured — and the CTO settled it
+by reading the record rather than choosing: ⛔ the true case is a THIRD, MEASURED
+ONCE AND UNREPRODUCIBLE NOW.** ⭐ **The disposition is RESTATE AS DELIVERED, never
+DROP and never instrument**, because giving a condition a new instrument after its
+task has closed creates a gate that has never been run against the work it judges
+— Ruling 97's re-opening in a row's clothing.
+
+⛔ **Why this row closes rather than waiting on the restatement:** the DISPOSITION
+is what Ruling 173 asks of each clause, and the disposition is ruled. ⭐ **The
+restatement's own carrier is Ruling 166's item 8, which landed with `W70`'s
+sweep** — ⚠️ **so what remains is an edit to an epic, not an open question about
+this clause.**
+
+⭐ **Merged at `911c56f`, the CTO round-42 annotation that carried Ruling 166.**
+
 ## ⛔ `BOARD.md` as it stood at `bfb8c8c` — every line that did not stay, moved whole
 
 # Board — live status
@@ -9735,3 +9787,403 @@ here would make this record a second register.**
 | ⛔ **W78** | **Line-number citations into files a LIVE document does not own — 105 of them, in 7 documents** (Ruling 163) | framework agent | ⭐ **`todo`, MINTED ROUND 35.** ⛔ **The ruling named ONE instance; the swept live population is 105** |
 | **W79** | The two small carries: each golden regenerator names the other, and the census comment cites its command | framework agent | ⭐ **`todo`, MINTED ROUND 35** (`CTO-42/5`, `CTO-42/2`). ⚠️ **Low urgency, both one-line, and the first is a scheduled collision rather than a present one** |
 ```
+
+---
+
+## ⛔ PO ROUND 37 — M2 step 2.3 CLOSED at `798956c`, step 2.4 OPENED, eleven rows minted, and check 4's sub-step found a collision a line sum cannot see
+
+⭐ **`ARCH/9.1`: this record is written FIRST and the board's cells change to
+match.** ⛔ **Every number below was taken by me on 2026-09-10 in the **PO
+worktree** (`chore/po-round37`) at `798956c`, in the pinned dev image via
+`docker/dev/check` in Ruling 172's form — the sha printed inside the same
+invocation — unless the line declares itself `host-verified`.** ⚠️ **Ruling 147:
+every count names its checkout BY ROLE, never by a path.**
+
+### ✅ M2 STEP 2.3'S CLOSE RUN AT `798956c` — both rows RE-TAKEN, the two merges DERIVED, and the negative control is a SYNTHESISED commit because no branch in this repository is unmerged
+
+⛔ **THE CLOSE REF IS `798956cb9ce296c4e95af118fdcedc8558659521`.** ⭐ **Membership
+is `README.md`'s — line 193, *2.3 — SF-14, SF-27* — and this table is STATE, taken
+here, inheriting nothing** (Ruling 97). ⚠️ **The previous coordinator's handoff
+RECEIVED `SF-27` at `6177738` and `SF-14` at `ffb2411`; both were re-derived
+below rather than copied.**
+
+⭐ **THE MERGES WERE DERIVED, with step 2.2's corrected instrument** — branch-anchored,
+because `--grep=<task-id>` matches any merge that merely MENTIONS the id:
+
+```text
+population declared before the loop: 2 rows, membership from README.md:193
+git log --merges --first-parent -E --grep="^Merge [a-z]*/<id>" 798956c…
+  SF-14 -> exactly 1 match: ffb2411
+  SF-27 -> exactly 1 match: 6177738
+ROWS=2 asserted against 2                                       [Ruling 146]
+```
+
+| # | Row | merge (DERIVED) | ⛔ **`--is-ancestor <merge> 798956c`** |
+|---|---|---|---|
+| 1 | `SF-14` — root index renderer | `ffb2411` | ✅ **YES, exit 0** |
+| 2 | `SF-27` — container page renderer | `6177738` | ✅ **YES, exit 0** |
+
+⛔ **AND THE INSTRUMENT'S THREE READINGS, because a relation that answers YES to
+everything has checked nothing.** ⚠️ **Expected written down BEFORE each command
+ran; all six matched.**
+
+```text
+LIVE        is-ancestor ffb2411  798956c  ->  YES exit 0     [expected YES]
+LIVE        is-ancestor 6177738  798956c  ->  YES exit 0     [expected YES]
+INVERTED    is-ancestor 798956c  ffb2411  ->  NO  exit 1     [expected NO]
+INVERTED    is-ancestor 798956c  6177738  ->  NO  exit 1     [expected NO]
+DIRECTIONAL is-ancestor 6177738  ffb2411  ->  YES exit 0     [6177738 is EARLIER]
+DIRECTIONAL is-ancestor ffb2411  6177738  ->  NO  exit 1     [expected NO]
+```
+
+⛔ **THE IMPOSSIBLE READING COULD NOT BE TAKEN FROM A BRANCH, and that is itself
+the finding that made it interesting.** ⚠️ **`git branch --no-merged
+release/m0-foundations` is EMPTY over a declared population of 109 local
+branches, and a sweep confirms it row by row: ZERO of 109 is not an ancestor of
+the close ref** — ⛔ **`trial/SF35` and `tmp-none` included, so my first two
+candidate controls were VACUOUS in the same way `PO-33/8` was.** ⭐ **Re-taken
+against a SYNTHESISED dangling commit instead — `git commit-tree` over the empty
+tree, no ref pointing at it:**
+
+```text
+population: 109 local branches; ROWS=109 asserted against 109    [Ruling 146]
+branches NOT ancestors of 798956c                        ->  0
+IMPOSSIBLE  is-ancestor <synthesised dangling commit> 798956c
+                                                         ->  NO exit 1  [expected NO]
+```
+
+⭐ **AND THE STEP'S OWN CONDITION, which is no row's:** ⛔ **the tree is green at
+the close ref, in the pinned image, in ONE CHECKOUT I NAME — the **PO worktree**,
+clean:**
+
+```text
+docker/dev/check sh -c 'git rev-parse HEAD; python3 -m pytest -q -rs; python3 -m tools.quality'
+798956cb9ce296c4e95af118fdcedc8558659521
+4343 passed, 63 skipped in 26.89s           exit 0
+  63 skips NAMED, across 29 ^SKIPPED lines:
+     55 tests/visual/ (no browser — QA-03/1)
+      5 tests/docker/ (already inside the dev image)
+      3 tests/test_knowledge_index.py (siblings not beside this checkout)
+knowledge index: none — a NOTICE in this checkout, not a failure   [Ruling 108]
+document pointers: 354 read in 278 markdown files, 126 with an anchor, 0 unresolved
+board: 78 register rows, 50 live, 50 detail files; 4393/8192 narrative,
+       widest row 415/600, 24388/32032 total
+lint: ruff 0.16.6 — check clean; format --check clean, 692 files
+quality floor: clean                        exit 0
+```
+
+⚠️ **The `+1` against MAIN's 279 / 693 is the user's untracked `ONBOARDING.md`,
+which is never moved, deleted or committed** (Ruling 147, and the board's own
+standing decision).
+
+⛔ **`W77` IS SPLIT OFF AND DOES NOT BLOCK THIS CLOSE, and it is the THIRD
+consecutive close to carry one of these.** ⭐ **Ruling 151: the corpus-scale half
+of `SF-14`'s and `SF-27`'s Acceptance — *"renders 166 units"* — is a reading taken
+inside a CONSUMER repository, and R20 keeps it out of a framework close.**
+⚠️ **`SK-08/2` was handled this way at step 2.2's close and `SK-02/4` at step
+2.1's.** ⛔ **It is not silently dropped: it is `W77`, on the integration side.**
+
+### ⏳ M2 STEP 2.4 — OPEN: four rows, NO in-step edge, and check 4's sub-step found a CONTENT collision that a line sum cannot see
+
+⛔ **MEMBERSHIP, from `README.md`:194 and not restated from memory: 2.4 — `SF-15`,
+`SF-26`, `SF-30`, `SF-34`.**
+
+⭐ **The step's parallelism is asserted from the EPIC, never inferred from step
+membership:**
+
+| Row | Team | ⛔ **Depends on** (from the epic) | ⭐ **In-step edge?** | **State @ `798956c`** |
+|---|---|---|---|---|
+| `SF-34` — page chrome styles | solo, ~25k | `SF-11` ✅ (M1), `SF-12` ✅ (M1) | ⭐ **NONE** | ⏳ **in flight** — Developer 1, `feat/SF-34-chrome`, 0 commits |
+| `SF-15` — in-page navigation | solo, ~40k | `SF-12` ✅ (M1), `SF-13` ✅ (`abe7d1c`) | ⭐ **NONE** | `todo` — ⛔ **placed FIRST behind `SF-34`** |
+| `SF-26` — framework test harness | ⚠️ **pair**, ~45k | `SF-12` ✅ (M1), `SF-14` ✅ (`ffb2411`) | ⭐ **NONE** | `todo` — placed second |
+| `SF-30` — reader state on the `file://` floor | solo, ~30k | `SF-11` ✅ (M1), `SF-12` ✅ (M1) | ⭐ **NONE** | `todo` — placed LAST |
+
+⭐ **All eight dependencies are outside the step, so step 2.4 has NO in-step
+edge — the second consecutive M2 step where that is true.** ⛔ **`SF-26`'s
+`SF-14` dependency was satisfied by THIS CLOSE and not before it**, which is why
+the step could not open last round.
+
+#### ⛔ CHECK 4'S SUB-STEP — the shared-file sum, run BEFORE a second row is dispatched, and it returns NO for the obvious pair
+
+⭐ **Ruled round 26: when two rows in one wave share a file, the PO sums their
+expected growth against R11's ceiling BEFORE dispatching them in parallel, one
+`wc -l` per shared file.** ⚠️ **The measured precedent is `SF-35` (398) + `SF-36`
+(399) merging to **419** against a ceiling of 400.**
+
+```text
+one wc -l per candidate shared file, PO worktree @ 798956c (host-verified)
+  src/studyforge/render/page/navigation.py      220/400   headroom 180
+  src/studyforge/render/page/section.py         124/400   headroom 276
+  src/studyforge/render/pageassets/bundle.py    124/400   headroom 276
+  src/studyforge/render/pageassets/surface.py    83/400   headroom 317
+  src/studyforge/render/container/listing.py    108/400   headroom 292
+  src/studyforge/render/index/disclosure.py     190/400   headroom 210
+```
+
+| pair | ⛔ **shared files** | ⭐ **the R11 sum** | **verdict** |
+|---|---|---|---|
+| `SF-34` × `SF-15` | `render/page/navigation.py` | ⭐ **R11 IS NOT THE CONSTRAINT** — 180 lines of headroom, and `SF-34` SHRINKS the file by moving markup to templates | ⛔ **NOT parallel-safe** |
+| `SF-34` × `SF-30` | `pageassets/bundle.py`, `container/listing.py`, `index/disclosure.py`, and the mark control in `render/page/` | ⭐ R11 clear on all four, ≥ 210 headroom each | ⚠️ **contended on three files, two of them `SF-34`'s RULED hook move** |
+| `SF-34` × `SF-26` | ⭐ **NONE in `src/`** — `tests/harness/` does not exist yet; the contact is the 7 goldens in `tests/fixtures/pages/` | ⭐ R11 clear, nothing shared | ⭐ **parallel-safe, with ONE ordering clause** |
+
+⛔ **`PO-37/2` `[structural]` — AND THIS IS THE ROUND'S MOST IMPORTANT READING.
+CHECK 4'S SUB-STEP SUMS LINE GROWTH, SO IT IS BLIND TO A SAME-FUNCTION CONTENT
+COLLISION.** ⭐ **Measured, PO worktree @ `798956c`, host-verified:**
+
+```text
+git grep -n '<nav' -- src/studyforge/render/
+  render/page/navigation.py:171  <nav aria-label="Outline"><p>Contents</p><ol>…
+  render/page/navigation.py:185  <nav aria-label="Between units">…
+  render/container/listing.py    (×2)
+  render/index/disclosure.py     (×1)
+```
+
+⚠️ **`SF-34`'s Acceptance says *"The two `<nav>` regions render from templates and
+no product string is typed in Python"*, and its Definition names the product
+string: `Contents`.** ⛔ **Those two `<nav>` regions are `navigation.py:171` and
+`:185` — inside the single file `SF-15` **Owns** — and they are the bodies of
+`outline()` and `between_units()`, which are exactly the two functions `SF-15`
+rewrites** (prev/next across container boundaries, a breadcrumb from `levels`, a
+jump list from the unit's own headings, and a root-index fallback for a neighbour
+with no page). ⭐ **A line sum reads 220/400 and says *go*. The collision is that
+one row MOVES the markup the other row REWRITES.**
+
+⛔ **This is `PO-26/1`'s own argument one level up:** the sub-step exists to move
+the discovery from the review of the developer who did nothing wrong to the
+wave-open of the person who sequenced them — ⭐ **and it only does that for the
+failure mode it can see.** ⚠️ **A line sum cannot see a same-function collision,
+so the sub-step needs a second derivation beside the `wc -l`: *do the two rows'
+`Owns` and declared out-of-`Owns` edits intersect at all?* — which for this pair
+answers `navigation.py` immediately.** ⛔ **Filed as a finding rather than
+instrumented inside a close round; `W88`'s shape is the precedent for rowing an
+instrument rather than writing one here.**
+
+#### ⭐ THE SEQUENCING CALL — step 2.4 runs SEQUENTIALLY, and the parallelism it has is off-step
+
+⛔ **RULED: `SF-34` (in flight) → `SF-15` → `SF-26` → `SF-30`.**
+
+| # | row | ⛔ **why here, and what it is behind** |
+|---|---|---|
+| 1 | `SF-34` | in flight; it is the row that moves `navigation.py`'s markup into `render/templates/` |
+| 2 | `SF-15` | ⛔ **MUST follow `SF-34`** — same file, same two functions. ⭐ **And it goes to DEVELOPER 1, who will have just written the templates it renders against** — ⚠️ **plus `W90`: until the `toc_api` key lands, `SF-15`'s breadcrumb is the ONLY path to a container page in the whole site** |
+| 3 | `SF-26` | ⛔ **behind `SF-15`, not beside it** — three of 2.4's four rows change RENDERED BYTES and `SF-26`'s whole job is to pin rendered bytes. ⚠️ **`SF-34`'s clause *"the goldens change once, deliberately"* becomes *twice* if a golden floor is generated between them** |
+| 4 | `SF-30` | ⛔ **LAST.** Three files shared with `SF-34`, two of them its ruled `SURFACE_HOOKS` move — ⭐ **and `SF-30`'s own text requires the script order to be *"asserted against the real composed bundle, never against a test harness's own concatenation"*, which is the floor `SF-26` builds** |
+
+⚠️ **SO NO 2.4 PAIR IS DISPATCHED IN PARALLEL, and the reason is structural
+rather than cautious:** ⛔ **three of the four rows change generated bytes and the
+fourth exists to freeze them.** ⭐ **The parallelism this step has is OFF-STEP —
+Developer 2 on `fix/board-instrument` (`W85`, `W86`), which shares not one file
+with `E03`** — and that satisfies *keep unblocked work running* without putting
+two authors in one module.
+
+### ⛔ ROUND 37 — the mint arguments, and the CORRECTIONS the CTO and the integration channel forced MID-ROUND
+
+⛔ **The id space has exactly one minter. High-water mark moves `W79` → `W90`.**
+⭐ **Each row's ARGUMENT is in `rows/<ID>.md` and is not repeated here; what is
+here is why the row exists AT ALL, which is the thing a register cell may not
+carry.**
+
+| id | ⛔ **why it is a row** |
+|---|---|
+| `W80`–`W83` | ⭐ **Ruling 173's five OPEN consumer-corpus clauses, minus the one already answered.** ⛔ **RE-DERIVED at `798956c`, PINNED, with the rubric's own fenced instrument: 7 rows out of a population of 315 framework Acceptance clauses, the same seven and the same line numbers as the `8175d86` reading** |
+| `W84` | ⭐ **The fifth, minted CLOSED on Ruling 166.** ⛔ **A population of seven with five rows and two stated non-rows is an ENUMERATION; one with four rows is a gap** |
+| — | ⛔ **`SF-03` (`E01:483`) and `QA-04` (`E10:332`) are NOT rows, and the reason is recorded so the next sweep does not re-open them:** each is a clause inside a task that already has an id. ⭐ **Ruling 173's population is *Acceptance clauses naming a consumer corpus by ROLE*; a clause is not an id.** ⚠️ **Minting one would be `PO-34/7`'s register defect in reverse — not an id with no row, but a row with no id of its own** |
+| `W85` | ⭐ **Rulings 182 and 183 plus `CTO-47/3`, `/4`, `/5` — SIX carries, ONE row**, because check 4's sub-step forbids splitting one package (`tools/quality/board/`) across two parallel developers |
+| `W86` | ⛔ **Ruling 184's two clauses into check 3, and it is a SEPARATE id because it is GATED ON `W85`** — check 3's text sits in the 74 frozen lines that `W85`'s carry 1 is what unfreezes. ⭐ **That ordering fact is precisely what a row is for** |
+| `W87` | ⭐ **Ruling 186's carry — `board_state` prints the THINNEST ARGUMENT, residue taken by SUBTRACTING the frame.** ⛔ **RE-PURPOSED MID-ROUND: this id was minted for `CTO-47/7` and that finding is DISCHARGED — see the corrections below** |
+| `W88` | ⭐ **`CTO-48/2` + `CTO-48/6` — the thin row files gain an ANCHORED pointer and four lose a dangling deictic.** ⛔ **NOT an instrument: Ruling 186 upholds `board-frame` and re-homes the property to the notice** |
+| `W91` | ⛔ **`CTO-48/3` — the rulings index stops at 56 and rulings run to 186, so 130 of 186 are indexed nowhere.** ⭐ **It GATES `W88`, because 7 of the thin rows cite a bare `Ruling N` and for `N > 56` there is no address to point at** |
+| `W92`–`W94` | ⭐ **PO-Integration's `F31`, `F29` and `F30`, each routed to a framework row with its own first reading named** — ⛔ **and each marked `RECEIVED`, because a claim about another repository is verified IN that repository** (Ruling 115) |
+| `W95` | ⭐ **`Q23`'s fixture gap: no `FND-04` fixture has two units sharing one source file**, so the clip-key question cannot be tested here at all. ⛔ **Before `SF-16`** |
+| `W89` | ⭐ **Ruling 179's row**, owed since CTO round 45 and held through rounds 36 and 37's board freeze |
+| `W90` | ⭐ **`SF-14/3`'s `toc_api` question, now PUTTABLE because `SF-13`'s owner has merged.** ⛔ **Owed by M4, and it does not gate 2.4** |
+| `W79` | ⛔ **Not a mint — its cell WIDENED**: two golden regenerators → THREE, five goldens → SEVEN, measured at `9b9a695` and carried in `E03`. ⚠️ **`SF-14/5` is `SF-27/4` confirmed from a third side** |
+
+#### ⛔ `SF-14/1` IS DISCHARGED WITHOUT A ROW, and that is deliberate
+
+⭐ **Round 36 recorded `SF-14/1`'s move — `data-readable` and `data-kind` spelled
+once in `pageassets.SURFACE_HOOKS` — as a row owed.** ⛔ **It is NOT minted,
+because round 36's own edit put it in `SF-34`'s Acceptance and `SF-34` is
+dispatched.** ⚠️ **Minting an id for work a dispatched task's Acceptance already
+owns is the same defect the `SF-03`/`QA-04` line above refuses.** ⭐ **The
+spelling was verified in the tree rather than in the clause:
+`src/studyforge/render/pageassets/surface.py:74`, exported at
+`pageassets/__init__.py:119`** — ⛔ **and that clause is the only thing stopping
+`SF-34` being built against the wrong spelling, because `SF-34` READS AS COMPLETE
+either way.**
+
+### ⛔ RULINGS 174 AND 176 — LANDED, and both were held for two rounds by the board freeze
+
+| ruling | ⛔ **artifact** | ⭐ **the clause** |
+|---|---|---|
+| **174** | `docs/conventions/board.md`, the archive section | Ruling 106's freeze attaches when material BECOMES a record, not while it is being moved into one |
+| **176** | `docs/conventions/agent-protocol.md`, beside the `office handoff` clause | a new `DOCUMENT_KINDS` entry may be minted by any office ONLY IF it owes at least what the strictest existing kind owes |
+
+⭐ **Neither touches a frozen line, and that was CHECKED rather than assumed:
+Ruling 174's text goes beside `board.md`'s *"The archive is a RECORD"* paragraph,
+which the Board Architect WROTE and which is therefore not in the `bfb8c8c`
+population at all.** ⛔ **The 74 frozen lines are the whole of `## The wave
+checks`, and none of them was edited.**
+
+#### ⭐ THE FROZEN SET, RE-TAKEN BY ME rather than received
+
+⚠️ **The coordinator measured this and I re-derived it, because a close round that
+inherits a reading about what it may not touch is exactly the shape Ruling 97
+refuses.** ⛔ **PO worktree @ `798956c`, host python3, against
+`tools/tests/quality/board/test_migration.py`'s own subjects (`BASE=bfb8c8c`,
+`docs/tasks/BOARD.md`):**
+
+```text
+POPULATION: 8546 BASE lines; 6781 non-structural
+  archive only                   : 6411      <- free: I only APPEND to the archive
+  two or more destinations        :  284      <- free
+  convention only      (FROZEN)   :   74      <- the whole of `## The wave checks`
+  live BOARD.md only   (FROZEN)   :   10      <- the whole of `## Scheduled`
+  NO destination                  :    2      <- ARCH/4's re-addressed anchor, expected
+```
+
+⭐ **The 10 frozen `BOARD.md` lines are exactly `## Scheduled — decided now,
+executed later`: its heading, its two narrative lines, its header row and its six
+item rows. NOT ONE OF THEM WAS EDITED THIS ROUND.** ⛔ **Everything else on the
+board was free to replace, because it survives in `BOARD-ARCHIVE.md` too — which
+is why closing three rows, rewriting the **In flight** table and replacing the
+**Next rows** table cost nothing.** ⚠️ **New text is never in the `bfb8c8c`
+population at all.**
+
+### ⛔ FINDINGS
+
+| # | marker | ⛔ **the finding** |
+|---|---|---|
+| `PO-37/1` | `[structural]` | ⛔ **A 16-row reading of the argument-less row files was taken with a `≤158`-byte threshold chosen FROM its own answer.** ⭐ **Re-measured on the property the contract asserts — *does the file carry the argument or its ADDRESS?* — the class is **20**, and the four extra (`W36`, `W37`, `W38`, `W41`) are the WORSE shape: a bare prose back-reference, *"round 22's mint block above"*, where there is no above.** ⚠️ **`MEASURED` by me at `798956c`, PO worktree, host python3, population 50 declared before the loop; the 16-row list was `RECEIVED` from the coordinator.** ⛔ **Rowed as `W88`, with the disposition ruled: a POINTER per stub, never a second copy of the argument** |
+| `PO-37/2` | `[structural]` | ⛔ **Check 4's sub-step sums LINE GROWTH, so it is blind to a same-function CONTENT collision.** ⭐ **`SF-34` and `SF-15` both rewrite `render/page/navigation.py:171` and `:185` — `outline()` and `between_units()` — and the `wc -l` reads 220/400 with 180 lines of headroom and says *go*.** ⚠️ **`MEASURED` by me at `798956c`, PO worktree, host-verified (`git grep -n '<nav' -- src/studyforge/render/`, 5 hits in 3 modules) against `SF-34`'s Acceptance and `SF-15`'s `Owns`, both read from `E03-rendering.md`.** ⭐ **It changed the plan: no 2.4 pair is dispatched in parallel.** ⛔ **The sub-step owes a second derivation — *do the two rows' declared edit sets intersect at all?*** |
+| `PO-37/3` | `[local]` | ⚠️ **The close's negative control could not be taken from any branch.** ⛔ **`git branch --no-merged release/m0-foundations` is EMPTY over 109 branches and ZERO of 109 is a non-ancestor of the close ref, `trial/SF35` and `tmp-none` included — so a branch-based control is VACUOUS, which is `PO-33/8` recurring with a different cause.** ⭐ **`MEASURED` by me at `798956c`, PO worktree; re-taken against a SYNTHESISED dangling commit (`git commit-tree` over the empty tree, no ref), which returns `NO exit 1` as required.** ⚠️ **Recorded because the next close will reach for a branch again** |
+
+### ⭐ FOR DEPENDENTS
+
+| who | ⛔ **what** |
+|---|---|
+| **Developer 1** | ⭐ **`SF-15` is your next row, after `SF-34` merges.** ⛔ **Read `rows/W90.md` first** — it is why `SF-15`'s breadcrumb is currently the only path to a container page — and ⛔ **`E03-rendering.md`'s Ruling 164 fork before you touch an href** |
+| **Developer 2** | ⭐ **`W85` then `W86`, in that order, on `fix/board-instrument`.** ⛔ **`W86` CANNOT land until `W85`'s carry 1 lifts the freeze on `board.md`'s 74 lines** |
+| **CTO** | ⭐ **`W87` is yours** (`CTO-47/7`), and the row names both halves the remedy owes |
+| **PO-Integration** | ⛔ **`W73` and `W77` are in `W88`'s class — a row file with a naming and no address.** ⭐ **The disposition is one `](../BOARD-ARCHIVE.md#…)` line per row, not a rewrite** |
+
+#### ⛔ THE CORRECTIONS THIS ROUND TOOK MID-FLIGHT, and three of them changed a decision I had already made
+
+⭐ **Recorded as corrections rather than quietly absorbed, because the round's
+first half is already above and `ARCH/9.2` says a correction REPLACES rather than
+standing beside the thing it corrects — so the cells are replaced and this is the
+trace.**
+
+| # | ⛔ **what I had** | ⭐ **what is true** |
+|---|---|---|
+| 1 | `W87` minted for `CTO-47/7`, routed to the CTO | ⛔ **`CTO-47/7` IS DISCHARGED BY THE OFFICE THAT RAISED IT, in the same round, and the row request is WITHDRAWN in writing.** ⭐ **Ruling 185: an exemption a clause DECLARES is implemented in the COMMAND, by narrowing the POPULATION, never by widening the PREDICATE** — ⚠️ **and the CTO measured the wildcard remedy their own annotation had floated and found it silently passes `(CTO: NOT APPROVED)`, flagging 4 of 7 non-approval shapes where a closed vocabulary flags 7.** ⛔ **`W87` is RE-PURPOSED to Ruling 186's carry; the id is not reused for a different subject after landing, and this one had not landed.** |
+| 2 | `W88` as an instrument — wire `_argument_blocks()` into `board-frame` | ⛔ **REFUSED by Ruling 186(a): `board-frame` is UPHELD, and widening it to judge argument PRESENCE would restore precisely the gate Ruling 180 removed** — a check that cannot tell *"the PO re-scoped a row"* from *"the PO pasted a fragment"*. ⭐ **The property re-homes to `board_state`'s NOTICE (`W87`), and `W88` becomes the pointer work.** ⚠️ **`CTO-47/4` survives as the sole correct complaint against `board-frame` and is narrowed to the MESSAGE.** |
+| 3 | `W74` *"the row file does not point there"* | ⛔ **WRONG IN LETTER: `W74`'s 53 bytes ARE `The sibling runnable-module check widens (Ruling 156)`, so it cites its argument and lacked only an ADDRESS.** ⭐ **And the remedy I was handed — `BOARD-ARCHIVE.md:4713-4728` — is `W78` VERBATIM: a line-number citation into a file the row does not own, against an open `todo`.** ⛔ **Both anchors already existed. `W74` is AMENDED this round with both, as `W88`'s worked example.** |
+| 4 | the 16 thin row files | ⛔ **THREE INSTRUMENTS, THREE ANSWERS: 16 (coordinator, ≤158 B), 19 (CTO, ≤158 B, +`W36`/`W37`/`W38`/`W41`, −`W75` at 162 B), 20 (me, NO markdown address at all).** ⭐ **A byte threshold is not the property and `W75` sits TWO BYTES the wrong side of a cut-off nobody ruled** — ⚠️ **which is the whole argument for Ruling 186's printed number over any gate.** ⛔ **And the frame overhead runs 224–346 bytes, so a FILE count reads 279 for `W74` where the argument is 53: the residue subtracts the frame, never a fixed offset.** |
+| 5 | — | ⭐ **`CTO-48/4`: the frozen ten ARE `BOARD.md:200–212`, `## Scheduled` entire, and line 211 IS THE BACK-TRIAGE ROW** for the 23 pre-marker findings — **mine**, and R21's row at 212 is frozen by the same boundary, which is why the CTO is not editing their R21 rows either. ⛔ **So `fix/board-instrument` GATES the wave-open back-triage; it is not cleanup.** ⚠️ **The `## Scheduled` edits are DEFERRED AND NAMED below rather than attempted.** |
+| 6 | `W77`, `todo`, INTEGRATION side | ⛔ **UNOWNED: all three counts are properties of consumer 1's generated output and PO-Integration owns a different corpus, so the row was neither takeable nor re-pointable.** ⭐ **`routed` — folded into `E09`'s delivery, `W5`'s precedent** — ⚠️ **because a `todo` assigned to an office that cannot run it reads as work in a queue and is not.** |
+| 7 | `W73`, *"The re-homed `E11` comparison"* | ⭐ **TAKEN this round, but only after its taker RE-POINTED it at the corpus they own** — ⛔ **so the naming no longer described the row, and a naming is the one line that says WHICH row this is.** ⚠️ **The re-homing changed the READER, not the READABILITY: the operation still cannot be performed for ANY corpus, which is `F29` and is now `W93`.** |
+
+⭐ **AND THE CORRECTION THAT IS MINE AGAINST MY OWN BRIEF — `PO-37/4`.** ⛔ **The
+brief told me *"Rulings index: `docs/tasks/handoffs/CTO-2026-09-09-round17.md`;
+rulings run to 184"*, which reads as *that file indexes 184 rulings*.** ⚠️ **It
+indexes 56, and that stale claim is `CTO-48/3`'s own root cause propagating into
+the briefs that forbid the alternative.** ⭐ **Rowed as `W91`, and it GATES `W88`.**
+
+#### ⛔ RULING 185 — CARRIED BY THE CTO, AND IT IS A STATED NON-ROW
+
+⭐ **Ruling 185's artifact is `docs/conventions/review-rubric.md` and the CTO
+landed it themselves on `chore/cto-round48`, in the same round they minted it.**
+⛔ **So there is no PO row, and the CTO's own dispatch table asks for three rows —
+Ruling 186, `CTO-48/3`, and `CTO-48/2`+`CTO-48/6` — with Ruling 185 absent from
+it by intent: *"it needs no row from the PO, and the row I asked for in the
+annotation is WITHDRAWN."***
+
+⚠️ **The coordinator's relay said Rulings 185 AND 186 both need ids. ⛔ That was
+`RECEIVED` by them from the CTO and explicitly not re-measured; I read the primary
+and it says otherwise.** ⭐ **Minting an id for work a branch has already landed is
+the defect I refused twice this round — at `SF-03`/`QA-04` and at `SF-14/1` — and
+refusing it a third time for consistency is the point.** ⚠️ **Check 3 verifies the
+carry next round once that branch merges; that is the instrument, not a row.**
+
+#### ⭐ `Q23` — REGISTERED, with its deadline task, from PO-Integration
+
+> ⛔ **How is a narration clip keyed when 17 units share one source file?**
+
+| | |
+|---|---|
+| **Deadline task** | ⛔ **`SF-16`**, which mints the clip filename — ⭐ **carried into `SF-17`** |
+| **Why it cannot wait** | ⚠️ **The narration manifest is an R21 row with no file and no version; M3 is the next milestone; and `F21`'s ruling gave PO-Integration's fourth container `origin {path, section}` — ⛔ so 17 units, ONE `path`.** ⭐ **If the clip key derives from the source path, `SF-17`'s bidirectional `<audio>` assertion fails for 16 of 17, or the clips silently OVERWRITE** |
+| **The rule it invokes** | ⭐ **`delivery-flow.md`: a question that arrives AFTER its deadline task has shipped has become a FINDING, and the cost is a schema change under R9 rather than a schema decision.** ⛔ **This is the exact case the deadline mechanism exists for** |
+| **Whose half is whose** | ⛔ **The contract VERSION is the CTO's to mint — R21's register, and R21's board row is inside the frozen `## Scheduled` block.** ⭐ **The FIXTURE is mine and it is `W95`** |
+
+#### ⭐ PO-INTEGRATION'S FINDINGS — routed, every one, and none merely noted
+
+⛔ **All five are `RECEIVED` by me through the coordinator and NONE is re-measured
+here, because a claim about another repository is verified IN that repository**
+(Ruling 115). ⭐ **Each row below names a framework-side reading that CAN be taken
+in this checkout, which is the form R20 requires.**
+
+| id | marker | ⛔ **disposition** |
+|---|---|---|
+| `F32` | `[structural]` | ⛔ **`SK-08` cannot run in the target repository it says it runs in** — neither `import studyforge` nor `docs/tasks/E*.md` resolves there, and every reading was taken from the framework worktree with `PYTHONPATH=src`, the OPPOSITE of the instruction. ⚠️ **The dangerous third fact: their repo has `docs/studyforge/tasks.md`, one directory from a collision, and a wrong guess yields an EMPTY INDEX and a `Terminal` that accepts anything — a silent wrong answer rather than an error.** ⭐ **It STRENGTHENS `W50`, `W55` and `W75` and is NOT a new row** — ⛔ **those three rows are NOT re-scoped this round and that is a NAMED DEFERRAL, not an omission: `W75` is in `W88`'s class and gets its address there** |
+| `F31` | `[structural]` | ⭐ **`W92`** |
+| `F29` | `[structural]` | ⭐ **`W93`**, and it is the remainder `W73`'s re-homing could not reach |
+| `F30` | `[local]` | ⭐ **`W94`** — Ruling 152's class from a fourth side, with a control in the same package |
+| `F28` | `[structural]` | ⭐ **Absorbed into `W88`, and it SHARPENS it: `rows/W73.md` is 29 bytes after its frame and its only content is the naming — the one thing its own frame forbids** |
+
+⭐ **AND THE FINDING THEY DECLINED TO FILE, which is worth more than one they
+filed:** ⛔ **they were offered an *"the arguments are unrecoverable"* framing and
+refused it, because both ARE recoverable from the archive's round-33 and round-34
+mints in two greps.** ⚠️ **So the defect is narrower than it was sold to me — an
+ADDRESSING problem, not a loss — and that is exactly why `W88` is pointers and
+`W91` is the index.**
+
+#### ⛔ DEFERRED AND NAMED — the `## Scheduled` edits, because the freeze has not lifted
+
+⛔ **`BOARD.md:200–212` was not touched this round, confirmed by a green suite:
+`tools/tests/quality/board/test_migration.py` passes, and the CTO planted the
+reverse — rewording ONE WORD inside row 211 turns it red by name.** ⭐ **What is
+owed the moment `fix/board-instrument` merges:**
+
+| line | ⛔ **owed** |
+|---|---|
+| `BOARD.md:211` | ⭐ **The back-triage row for the 23 pre-marker findings — `FND-01` (5), `FND-02` (8), `FND-04` (10).** ⚠️ **Its trigger reads *"before M1's wave opens"* and M1 is CLOSED, so the trigger has LAPSED rather than fired** — ⛔ **and the sweep is structurally blind to all 23, because its search term IS the marker and these were filed before the marker existed** |
+| `BOARD.md:212` | ⛔ **R21's three remaining open rows — the CTO's, frozen by the same boundary** |
+
+⚠️ **A named deferral is acceptable and a red suite is not, which is the whole
+reason this is a table rather than a diff.**
+
+#### ⭐ WAVE-OPEN CHECK 2, RE-TAKEN BY ME — and the spelling moves the answer
+
+⛔ **`RECEIVED`: 434 `[structural]` lines across 118 files in
+`docs/tasks/handoffs/`, from the CTO at `798956c`.** ⭐ **RE-DERIVED by me at
+`798956c`, PO worktree, host-verified, with the expectation written down first —
+and the reading REPRODUCES EXACTLY on the delivery-flow spelling while three
+neighbouring spellings disagree:**
+
+```text
+scope docs/tasks/handoffs/   unbackticked  \[structural\]   ->  118 files / 434 lines  ⭐ EXACT
+scope docs/tasks/handoffs/   backticked   `\[structural\]`  ->  118 files / 428 lines
+scope docs                   unbackticked                  ->  127 files / 536 lines
+scope docs                   backticked                     ->  127 files / 527 lines
+```
+
+⛔ **`PO-37/5` `[local]` — FOUR SPELLINGS, FOUR ANSWERS, AND THE SWEEP IS QUOTED
+WITHOUT ITS SPELLING.** ⭐ **`delivery-flow.md`'s fenced form is
+`grep -rn '[structural]' docs/tasks/handoffs/` — unbackticked, handoffs-scoped —
+and that is the one that reproduces.** ⚠️ **Round 36's check 2 quoted the
+BACKTICKED form over the whole of `docs` and got 125 files, so two consecutive
+rounds have reported *"the `[structural]` sweep"* as though it were one
+instrument.** ⛔ **The 9-line and 6-line gaps are markers inside backticks in
+prose — a check's own documentation counted as a finding — which is §3c's trap
+again, and it is Ruling 126's subject: a ruling that quantifies over a population
+STATES THE COMMAND that derives it.**
+
+⭐ **THE TRIAGE IS MINE AND ITS OUTCOME IS THIS ROUND'S ROWS:** ⛔ **the CTO's four
+new findings are each RULED or ROUTED and none is noted — `CTO-48/1` against
+themselves, `CTO-48/2` → Ruling 186 → `W87`+`W88`, `CTO-48/3` → `W91`,
+`CTO-48/4` → the deferral above** — ⭐ **and PO-Integration's five are the table
+above.** ⚠️ **The 23 pre-marker findings remain invisible to the sweep BY
+CONSTRUCTION, and their row is frozen; that is named above rather than left to
+the next sweep to rediscover for the fourth time.**
