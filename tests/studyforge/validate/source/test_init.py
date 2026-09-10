@@ -1,0 +1,118 @@
+"""Mirror of `src/studyforge/validate/source/__init__.py` (R12).
+
+⛔ **The guard the whole package rests on lives here, and that is the point of
+the split rather than an accident of it.** It used to name one file. A guard
+that names one file in a package of three is a guard the next submodule walks
+straight past, so it is derived from the package directory instead — and the
+derivation asserts its own inhabitation, because a sweep over an empty set
+passes.
+"""
+
+from __future__ import annotations
+
+import ast
+from pathlib import Path
+
+from studyforge.validate import source
+from studyforge.validate.source import classification, completeness
+from tests.support import assert_package_contract, repository_root
+
+#: The package on disk, as the guard below walks it.
+PACKAGE = "src/studyforge/validate/source"
+
+
+def modules() -> dict[str, str]:
+    """Every module of the package, by relative path, with its text."""
+    root = repository_root() / PACKAGE
+    return {
+        path.relative_to(repository_root()).as_posix(): path.read_text(encoding="utf-8")
+        for path in sorted(root.glob("*.py"))
+    }
+
+
+def test_states_its_contract():
+    assert_package_contract(source, "studyforge.validate.source")
+
+
+def test_the_public_surface_is_what_a_consumer_needs_and_no_more():
+    # ⛔ A consumer that has to import `studyforge.validate.source.completeness`
+    # is a consumer this contract failed.
+    for name in source.__all__:
+        assert hasattr(source, name), name
+
+
+def test_both_checks_are_reachable_through_the_package():
+    for name in ("CHECKS", "check_unclassified", "check_completeness", "source_files"):
+        assert name in source.__all__
+
+
+def test_the_checks_run_in_the_order_the_report_reads_best():
+    # ⛔ The order, not the membership: what the files *are* is reported before
+    # what one of them *contains*, and `validate.run` splices this tuple in as
+    # it stands.
+    assert source.CHECKS == (source.check_unclassified, source.check_completeness)
+
+
+def test_every_rule_id_the_package_can_emit_is_on_its_surface():
+    # ⚠️ A script filters a report by rule id and needs the constant rather
+    # than the string. ⛔ **Derived from the two halves rather than re-typed**,
+    # so the next rule id added to either one is exported or this fails —
+    # which is the failure mode, `ignore-declaration` and `contested` both
+    # having been minted rather than folded into `unclassified`.
+    declared = {
+        name
+        for module in (classification, completeness)
+        for name in vars(module)
+        if name.startswith("RULE_")
+    }
+    assert declared, "the derivation found no rule ids at all"
+    assert {name for name in source.__all__ if name.startswith("RULE_")} == declared
+
+
+def test_the_seam_holds_and_neither_half_imports_the_other():
+    # ⛔ **The claim the package docstring makes, asserted rather than stated.**
+    # If one half ever reaches for the other the seam has moved and the two
+    # test modules stop naming what they cover.
+    for module, forbidden in ((classification, "completeness"), (completeness, "classification")):
+        imported = {
+            node.module
+            for node in ast.walk(ast.parse(Path(module.__file__).read_text(encoding="utf-8")))
+            if isinstance(node, ast.ImportFrom) and node.module
+        }
+        assert f"studyforge.validate.source.{forbidden}" not in imported, module.__name__
+
+
+def test_no_module_in_this_package_reaches_for_the_markdown_reader():
+    # ⛔ **The assertion the whole completeness check rests on.** Two readings
+    # from the same parser are not two readings, and the only way to keep that
+    # true is to forbid the import outright — a later hand could otherwise
+    # "simplify" a submodule by reusing the reader and the suite would stay
+    # green.
+    found = modules()
+    # ⭐ Inhabitation first: a sweep over an empty set passes, and a package
+    # renamed out from under this test would do exactly that.
+    assert set(found) == {
+        f"{PACKAGE}/__init__.py",
+        f"{PACKAGE}/classification.py",
+        f"{PACKAGE}/completeness.py",
+    }
+    for where, text in found.items():
+        imported = {
+            node.module
+            for node in ast.walk(ast.parse(text))
+            if isinstance(node, ast.ImportFrom) and node.module and "markdown" in node.module
+        }
+        assert imported == set(), f"{where} imports the reader: {imported}"
+
+
+def test_the_guard_above_would_notice(tmp_path):
+    # ⛔ **The negative control, and it is run negatively.** The sweep is only
+    # worth anything if the same expression flags a module that does import the
+    # reader; without this row a broken `ast` walk would pass on every file.
+    text = "from studyforge.archive.markdown import read\n"
+    imported = {
+        node.module
+        for node in ast.walk(ast.parse(text))
+        if isinstance(node, ast.ImportFrom) and node.module and "markdown" in node.module
+    }
+    assert imported == {"studyforge.archive.markdown"}

@@ -1,0 +1,98 @@
+r"""The two checks that read the material, not only what the adapter wrote.
+
+**What it does.** Refuses a file the manifest classifies as neither included
+nor excluded, and — the check this package exists for — **counts a structural
+feature directly in the raw source and compares it against the archive**.
+
+**How you use it.** `CHECKS`, which `validate.run` drains like every other
+check's tuple; or `check_unclassified(walk)` and `check_completeness(walk)` by
+name. Both yield `Finding`s and `Unchecked`s.
+
+**Depends on.** `corpus.manifest` for the classification, `validate.headings`
+for what a heading is and where a region ends, `validate.corpus`,
+`validate.report`. ⛔ **Not `archive.markdown`**, ever — and
+`tests/studyforge/validate/source/test_init.py` asserts that of **every**
+module in this package rather than of one, because the module the guard used
+to name is no longer the only place the rule could be broken.
+
+| module | what it answers |
+|---|---|
+| `classification` | ⭐ what the corpus says its files **are** — material, output, or neither |
+| `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
+
+## ⛔ Why the seam is here, and it was measured rather than chosen
+
+⭐ **Two tasks a week apart drew it independently.** One landed entirely on the
+classification side — the third state, and the corpus's own declaration of
+what is generated output. The other landed entirely on the completeness side —
+regions, sections, and the two rule ids a section needs. ⚠️ **Neither borrowed
+a line from the other**; the single place they collided was a shared insertion
+anchor for their rule constants.
+
+⛔ **And the residue is genuinely two things, which is a measurement and not an
+opinion.** The heading machinery had already moved out to `validate.headings`
+— 134 lines gone — and the remaining module still **grew**, 377 lines to 425.
+⭐ A module that sheds a whole concern and comes back larger is not one module
+that needs tidying.
+
+⭐ **Nothing crosses the seam.** No name defined in `classification` is read by
+`completeness` or the other way round; what they share is `Walk`, `Finding`
+and `Unchecked`, which every check in `validate` shares.
+
+## ⚠️ What the split does NOT buy, said because a guarantee does not extend to what sits beside it
+
+⛔ **The two halves can still both be wrong about the same corpus**, and
+nothing here cross-checks them: a file swept into the wrong state by
+`classification` is not a file `completeness` will notice, and never was.
+⭐ What the split buys is narrower and worth stating exactly — **a change to
+one half cannot silently reach the other**, and each half's tests name the
+module they are about.
+"""
+
+from __future__ import annotations
+
+from studyforge.validate.source.classification import (
+    IGNORE_TIMEOUT,
+    RULE_CONTESTED,
+    RULE_IGNORE_DECLARATION,
+    RULE_UNCLASSIFIED,
+    SKIP_DIRS,
+    Scan,
+    check_unclassified,
+    source_files,
+)
+from studyforge.validate.source.completeness import (
+    RULE_ORIGIN_MISSING,
+    RULE_SECTION_AMBIGUOUS,
+    RULE_SECTION_MISSING,
+    RULE_SHORT_READ,
+    check_completeness,
+)
+
+#: Both checks, in the order a report reads best — what the files **are**
+#: before what one of them **contains**. ⛔ `validate.run` splices this tuple
+#: into its own, so the order here is the order in the report.
+CHECKS = (check_unclassified, check_completeness)
+
+#: ⛔ The package's whole public surface. A consumer that has to import
+#: `studyforge.validate.source.completeness` directly is a consumer this
+#: contract failed. ⚠️ The rule ids are on it deliberately: a script that
+#: filters a report by rule needs the constant rather than the string, and
+#: that is what stopped `contested` and `ignore-declaration` being folded into
+#: `unclassified` in the first place.
+__all__ = [
+    "CHECKS",
+    "IGNORE_TIMEOUT",
+    "RULE_CONTESTED",
+    "RULE_IGNORE_DECLARATION",
+    "RULE_ORIGIN_MISSING",
+    "RULE_SECTION_AMBIGUOUS",
+    "RULE_SECTION_MISSING",
+    "RULE_SHORT_READ",
+    "RULE_UNCLASSIFIED",
+    "SKIP_DIRS",
+    "Scan",
+    "check_completeness",
+    "check_unclassified",
+    "source_files",
+]
