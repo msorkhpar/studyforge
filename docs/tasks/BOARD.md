@@ -1202,6 +1202,18 @@ not carrying*, above.
 ⚠️ **W1 and W2 are one piece of work and should be assigned together.** W1 without
 W2 is a fix with no guard; W2 without W1 is a red check with 45 findings.
 
+### ⛔ W26–W27 — SF-10's two structural findings, routed by the CTO at round 18
+
+⭐ **Both are R7 coverage, both were found by the author and offered rather than
+assumed, and neither is `SF-10`'s to fix.** ⛔ **`W27` is the more urgent of the
+two: it is a live R7 fail-open that has already produced an unreachable catch
+arm in `validate`.**
+
+| # | Item | Owner | When | Note |
+|---|---|---|---|---|
+| W26 | ⛔ **Ruling 57 — W7's reader tell resolves the *name's origin*, not its spelling.** `SF-10` narrowed `DECODES` from `("loads", "load")` to `("loads", "json.load")` to stop flagging `unit/builder/material.py`, which delegates to `archive.document.load` and decodes nothing. ⭐ **The direction is ratified; the spelling is not.** Replace the token match in `tests/test_gate_coverage.py` with an `ast` walk that maps each module's own imports to an origin and asks whether the call resolves to `json.load`/`json.loads` | **Developer 2** | ⛔ **next**, ahead of any further gate work | ⚠️ **Measured 2026-09-10, with a control: the shipped narrowing misses two genuine ungated readers** — `from json import load` + bare `load(h)`, and `import json as j` + `j.load(h)` — **both of which the old spelling caught.** ⭐ **The tree is not yet inhabited by either** (`import json`, unaliased, is the only spelling in `src/`), which is why this is next rather than urgent. ⛔ **A false negative in an R7 *coverage* check is worse than a false positive**: the false positive is what produced this ruling; the false negative is silent. ⭐ **Prototyped in the trial merge: the import-resolving tell gets all eight probe shapes right — A–E and H readers, F and G delegation — and finds the same six readers in the tree, so there is no migration** |
+| W27 | ⛔ **Ruling 58 — an R7 refusal is never translated into a package's error family.** Three sites translate: `unit/content.py` → `ContentError`, `corpus/placement/identity.py` → `PlacementError`, `corpus/manifest/document.py` → `ManifestError`. Re-raise `PersonalDataLeak` as itself at all three, and **state the exception in each package's `errors.py` contract**, exactly as `archive/errors.py` and `corpus/container/errors.py` already do (*"two exceptions travel through, deliberately"*) | **Developer 2** | ⛔ **urgent — before M1 step 1.5** | ⚠️ **R7 is a HARD FAIL rule failing open**: a family exists so a caller catches one type per item and continues, so a translated leak is logged as *"that unit did not build"* and the walk finishes green. ⛔ **Already load-bearing, measured with a control 2026-09-10:** because the manifest translates, `validate/corpus.py:157`'s `except PersonalDataLeak` arm for the manifest **is unreachable**, and a home path in `corpus.json` is filed under `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA` — *"the catch was correct and the raise never came"*, which is W7's own sentence one layer up. ⭐ **The migration is cheap: zero tests assert the translated message** (`grep -rn 'carries personal data and is refused' tests/` → 0). ⚠️ **`corpus/manifest/document.py`'s docstring says it follows `unit.content._gate` *"exactly"*** — that sentence is how one site became three, and it goes with the fix |
+
 ---
 
 ## Scheduled — decided now, executed later

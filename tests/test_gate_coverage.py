@@ -44,7 +44,18 @@ HOME = "/" + "home/jane"
 #: How a module says it decodes a serialised document. ⛔ Derived, not listed:
 #: a module that turns bytes into a `dict` is reading something somebody else
 #: wrote, whatever its package is called.
-DECODES = ("loads", "load")
+#:
+#: ⚠️ **Amended at SF-10, and narrowed to what this file's own docstring always
+#: said the tell was: `json.loads`.** The first spelling also matched a bare
+#: `load`, which flagged the first module in the tree that reads documents
+#: **only by delegation** — `unit/builder/material.py` calls
+#: `archive.document.load`, which decodes and gates. ⛔ Ruling 50 makes that
+#: difference load-bearing: *do not re-ask within one read path; do gate at
+#: every trust boundary*, so adding `assert_clean` there would have been the
+#: re-ask, and renaming the import to dodge the grep would have been worse.
+#: ⭐ **Ruling 52: this is a case W7 never argued over**, and it is filed as a
+#: finding rather than settled here.
+DECODES = ("loads", "json.load")
 
 #: The gate every such module must call. One name, so no call site can reach
 #: for the weaker of two.
@@ -52,7 +63,13 @@ GATE = "assert_clean"
 
 
 def _calls(path: Path) -> set[str]:
-    """Every function name called in the file at `path`, however it is spelled."""
+    """Every function name called in the file at `path`, however it is spelled.
+
+    ⚠️ An attribute call is recorded **twice**: as its bare name, and — when it
+    is called on a plain module name — as `module.name`. ⭐ That is what lets
+    `DECODES` say `json.load` and mean it, without losing `assert_clean` being
+    reached for as `scrub.assert_clean`.
+    """
     called: set[str] = set()
     for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
         if not isinstance(node, ast.Call):
@@ -61,6 +78,8 @@ def _calls(path: Path) -> set[str]:
             called.add(node.func.id)
         elif isinstance(node.func, ast.Attribute):
             called.add(node.func.attr)
+            if isinstance(node.func.value, ast.Name):
+                called.add(f"{node.func.value.id}.{node.func.attr}")
     return called
 
 
@@ -137,3 +156,29 @@ def test_the_manifest_front_door_refuses_a_leak_end_to_end():
     assert "personal data" in str(raised.value)
     assert "home path" in str(raised.value)
     assert "jane" not in str(raised.value)
+
+
+def test_a_module_that_only_delegates_to_a_gated_reader_is_not_a_reader(tmp_path):
+    # ⛔ **The case W7 never argued over, asserted so the narrowing is not a
+    # hole somebody widens later.** A module that calls another module's gated
+    # loader decodes nothing; Ruling 50 forbids it re-asking the gate, and the
+    # first such module in the tree is `unit/builder/material.py`.
+    delegating = tmp_path / "composer.py"
+    delegating.write_text(
+        "from studyforge.archive.document import load\n\n\n"
+        "def read(paths):\n    return [load(path) for path in paths]\n",
+        encoding="utf-8",
+    )
+    assert document_readers(tmp_path) == []
+
+
+def test_a_module_that_decodes_with_json_load_is_still_a_reader(tmp_path):
+    # ⭐ The other half: narrowing the tell to `json` must not lose the file
+    # spelling, which is a real reader and gates nothing here.
+    reader = tmp_path / "reader.py"
+    reader.write_text(
+        "import json\n\n\ndef read(handle):\n    return json.load(handle)\n",
+        encoding="utf-8",
+    )
+    assert document_readers(tmp_path) == [reader]
+    assert GATE not in _calls(reader)
