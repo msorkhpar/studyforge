@@ -220,6 +220,22 @@ document the framework **writes**. The authored overlay is the one it only ever
 around authorship. ⛔ **A contract is versioned because somebody reads it, not
 because we wrote it** (SF-09's diagnosis, and the reason R21 exists).
 
+⚠️ **A declared v1 limitation: titles must slugify to something** (ruled round
+16). `slugify` replaces every non-ASCII-alphanumeric run with a separator — it
+does **not** transliterate — so an accented title is mangled rather than
+converted (`Ströme` becomes `str-me`) and a title with no ASCII letters at all
+produces an empty slug and is refused. ⛔ **That is a limitation of this
+framework, not a defect in the corpus**, and every refusal must say so: R1 means
+the framework knows nothing about a source, including which alphabet it is
+written in.
+
+⛔ **Open — transliteration.** Taking it later renames every generated page, so
+it is recorded now rather than discovered by the first non-English corpus. ⚠️ All
+four designed corpora are English, so nothing has ever exercised this. ⭐ A
+consequence that is *not* deferred: two titles differing only in accented
+characters can collide, invisibly in the source, which is why **SF-25 checks
+generated names and not only addresses**.
+
 **R10 — Generated output is byte-for-byte reproducible.** No clocks, no
 dependence on filesystem enumeration order. The same inputs produce the same
 bytes on any machine.

@@ -5,11 +5,17 @@ literal; this file is swept by the repository hygiene check like every other.
 ⛔ Nothing here came from any real machine, account or person.
 """
 
+import string
+from urllib.parse import quote
+
 import pytest
 
+from studyforge.address import is_slug
 from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.container.fields import (
-    LABEL_FORBIDDEN,
+    FILENAME_PERMITTED,
+    FILENAME_PERMITTED_DESCRIBED,
+    is_filename_component,
     optional_label,
     optional_path,
     optional_slug,
@@ -111,37 +117,112 @@ def test_said_never_reproduces_a_payload():
 
 
 def test_optional_label_accepts_a_corpus_s_own_numbering():
-    # ⭐ A character class, not a slug: a label is presentation, and `4.4.1`,
-    # `vii` and `§4` are all things real material calls a unit.
-    for label in ("4.4.1", "vii", "A", "1-2"):
+    # ⭐ Not a slug: a label is presentation, and `4.4.1`, `vii` and `01` are
+    # all things real material calls a unit.
+    # ⚠️ `§4`, `A` and `unit_07` are NOT among them any more, and that is
+    # Ruling 8's cost stated honestly: a permitted set admits less than a
+    # forbidden list did. A corpus whose numbering is not in the class records
+    # one that is and keeps the original in its **title**, which is under no
+    # filename constraint at all.
+    for label in ("4.4.1", "vii", "1-2", "01", "s1", "c1", "1"):
         assert optional_label(label, "label", WHERE) == label
     assert optional_label(None, "label", WHERE) is None
 
 
-@pytest.mark.parametrize("label", ["a/b", "a\\b", "4 4 1", "a\tb", "a\nb", "a\rb"])
+#: ⛔ **Measured 2026-09-09 on the merged tree: seven of these thirteen passed
+#: both this guard and SF-03's `label_of` into a filename.** They are here as a
+#: regression suite, not as a longer blacklist — the rule below is a permitted
+#: set, and these are how it is checked.
+UNUSABLE = [
+    "a/b",
+    "a\\b",
+    "4 4 1",
+    "a\tb",
+    "a\nb",
+    "a\rb",
+    "a\vb",
+    "a\fb",
+    "a\xa0b",
+    "a b",
+    'a"b',
+    "a:b",
+    "a*b",
+    "..",
+    ".hidden",
+    "-x",
+]
+
+
+@pytest.mark.parametrize("label", UNUSABLE)
 def test_optional_label_refuses_what_could_not_become_a_filename(label):
     # ⛔ **The seam, closed where it opens.** SF-03's `label_of` refuses these
-    # because a label becomes part of a generated filename. A map that accepted
-    # one would produce a corpus that validates and then fails at render — a
-    # milestone later, in another package, with nothing in between saying why.
-    with pytest.raises(ContainerError, match="path separator or whitespace"):
+    # too. A map that accepted one would produce a corpus that validates and
+    # then fails at render — a milestone later, in another package, with
+    # nothing in between saying why.
+    with pytest.raises(ContainerError, match="may carry only"):
         optional_label(label, "label", WHERE)
 
 
-@pytest.mark.parametrize("label", ["a/b", "4 4 1"])
+@pytest.mark.parametrize("label", ["a/b", "4 4 1", f"{HOME}/x"])
 def test_and_the_refusal_never_reproduces_the_label(label):
     # ⛔ Rubric §1f, the emission clause: every refusal in this module describes
     # a fault rather than echoing a value read out of somebody else's file.
     with pytest.raises(ContainerError) as raised:
         optional_label(label, "label", WHERE)
     assert label not in str(raised.value)
+    assert "jane" not in str(raised.value)
 
 
-def test_every_character_label_of_refuses_is_refused_here_too():
-    # ⚠️ **Two guards, one rule, and drift between them is the whole hazard.**
-    # SF-03's `label_of` refuses `/ \ space tab newline`; this refuses those and
-    # a carriage return as well — strictly stronger at the point of entry, so a
-    # validated map can never carry a label that fails downstream.
-    # ⛔ `LABEL_FORBIDDEN` is exported so `label_of` can import it rather than
-    # spell it a second time; routed in `docs/tasks/handoffs/SF-05.md`.
-    assert set("/\\ \t\n") <= set(LABEL_FORBIDDEN)
+def test_the_refusal_states_the_permitted_class():
+    # ⭐ A closed statement an author can act on. A forbidden class can only
+    # ever be a partial one, which is Ruling 8 in one sentence.
+    with pytest.raises(ContainerError, match=FILENAME_PERMITTED_DESCRIBED):
+        optional_label("a b", "label", WHERE)
+
+
+def test_the_rule_is_a_permitted_set_and_not_a_forbidden_list():
+    # ⛔ **Ruling 8, asserted rather than described.** A forbidden list is an
+    # open set: it is checkable only against characters somebody thought of. A
+    # permitted set is checkable against *everything*, so this test can sweep
+    # the whole of Latin-1 plus a sample of what lies beyond it and know the
+    # answer for every character without having listed one.
+    permitted = {chr(code) for code in range(0x110000) if is_filename_component("a" + chr(code))}
+    assert permitted == set(string.ascii_lowercase + string.digits + ".-")
+
+
+def test_a_filename_component_must_begin_with_a_letter_or_digit():
+    # ⛔ What a permitted set alone does not give you: `..` is a path traversal
+    # and every character in it is permitted.
+    assert is_filename_component("a.b") and not is_filename_component("..")
+    assert is_filename_component("a-b") and not is_filename_component("-b")
+
+
+def test_every_accepted_label_survives_a_file_url_untouched():
+    # ⛔ **R8 is why the open set was a defect and not untidiness**: `:` and `"`
+    # both passed the old forbidden list, and neither survives a `file://`
+    # href. The permitted set is a subset of RFC 3986's unreserved class, so a
+    # name minted from it never needs escaping to be linkable.
+    for character in sorted(string.ascii_lowercase + string.digits + ".-"):
+        assert quote(character, safe="") == character
+
+
+@pytest.mark.parametrize("label", ["A", "VII", "Part2", "unit_07"])
+def test_an_uppercase_or_underscored_label_is_refused(label):
+    # ⚠️ **Ruling 8's cost, and the reason it is worth paying.** `A` and `a`
+    # are one filename on a case-insensitive filesystem, and the `sibling`
+    # profile places twenty units in a single directory — so an uppercase label
+    # is a collision this framework would generate and then fail to detect on
+    # the very machine that generated it. `_` is simply not what a slug
+    # accepts, and the class is derived from that rather than curated.
+    with pytest.raises(ContainerError, match="may carry only"):
+        optional_label(label, "label", WHERE)
+
+
+def test_the_permitted_class_is_the_slug_class_and_is_not_re_typed():
+    # ⛔ **A constant exported and then re-typed is a finding on sight**, so
+    # this one is derived: it is exactly what `is_slug` accepts, plus `.` for
+    # `4.4.1`. ⭐ Pinned literally here so a change to `is_slug` silently
+    # widening what reaches a filename is a decision somebody makes, not one
+    # that arrives.
+    assert FILENAME_PERMITTED == frozenset(string.ascii_lowercase + string.digits + "-.")
+    assert all(is_slug(character) for character in FILENAME_PERMITTED - {"-", "."})

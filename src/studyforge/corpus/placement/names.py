@@ -43,6 +43,10 @@ which routes that field to the archive contract.
 from __future__ import annotations
 
 from studyforge.address import require_ordinal, slugify, unit_name
+from studyforge.corpus.container.fields import (
+    FILENAME_PERMITTED_DESCRIBED,
+    is_filename_component,
+)
 from studyforge.corpus.placement.errors import PlacementError
 
 #: ⛔ The suffix a discovery scan globs for. Load-bearing, not decoration: it
@@ -94,17 +98,46 @@ def unit_stem(ordinal: int, title: str, label: str | None = None) -> str:
 
 
 def label_of(ordinal: int, label: str | None = None) -> str:
-    """Return the corpus's own numbering for a unit, or its ordinal name.
+    r"""Return the corpus's own numbering for a unit, or its ordinal name.
 
     ⚠️ A label is presentation, so it is not required to be a slug — but it
-    becomes part of a filename, so it may not carry a separator or whitespace.
+    becomes part of a filename, so it must be a **usable filename component**.
+
+    ⛔ **The rule is `container.fields.is_filename_component`, imported and
+    never re-spelled.** This function once carried its own forbidden list,
+    `"/\\ \t\n"`, a copy of the map's that was missing the carriage return.
+    Adding the carriage return would have been the wrong fix twice over:
+
+    1. **Ruling 8.** A forbidden list is an open set and cannot be finished.
+       Measured 2026-09-09 on the merged tree, **seven further shapes passed
+       both guards into a filename** — a vertical tab, a form feed, a
+       non-breaking space, U+2028, `"`, `:` and `*` — and `:` and `"` break
+       the `file://` floor, so this was an R8 defect and not a tidy-up.
+    2. **One rule has one home.** Two spellings of one rule is the defect; the
+       missing character was only how it showed. The predicate replaces the
+       constant, so there is no longer a thing to copy.
+
+    ⭐ Defence in depth, and neither guard substitutes for the other: the
+    container map refuses a bad label where it enters, so the failure lands
+    next to the file that caused it; this refuses one at the point a filename
+    is minted, because `label_of` also takes labels from callers that never
+    saw a map. ⛔ They agree because they ask the same predicate — not because
+    two lists were kept in step, which is what was tried and did not hold.
     """
     if label is None:
         return unit_name(ordinal)
-    if not isinstance(label, str) or not label.strip():
-        raise PlacementError(f"unit label must be a non-empty str, got {label!r}")
-    if any(character in label for character in "/\\ \t\n"):
-        raise PlacementError(f"unit label becomes part of a filename, got {label!r}")
+    # ⛔ R7, rubric §1f: a label is read straight out of a file somebody else
+    # wrote, so a refusal names the type and the permitted class, never the
+    # value. Naming what is *permitted* is also the more useful message — it
+    # tells an author what to write, where echoing the label only shows them
+    # what they already typed.
+    if not isinstance(label, str):
+        raise PlacementError(f"a unit label must be a str, got {type(label).__name__}")
+    if not is_filename_component(label):
+        raise PlacementError(
+            "a unit label becomes part of a filename, so it may carry only "
+            f"{FILENAME_PERMITTED_DESCRIBED}; the label is not reproduced here (R7)"
+        )
     return label
 
 
@@ -124,7 +157,13 @@ def container_page_name(titles: tuple[str, ...]) -> str:
         raise PlacementError("a container needs at least one title to be named")
     slug = slugify(titles[-1])
     if not slug:
-        raise PlacementError(f"container title slugifies to nothing: {titles[-1]!r}")
+        # ⛔ §1f: the title is the corpus's own text and is described, not
+        # reproduced. Its depth is what tells the author where to look.
+        raise PlacementError(
+            f"the container title at depth {len(titles)} slugifies to nothing, so "
+            f"it can be given no name; titles are the corpus's, so this is a "
+            f"corpus defect"
+        )
     return slug + CONTAINER_SUFFIX
 
 

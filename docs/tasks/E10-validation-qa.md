@@ -80,6 +80,13 @@ recorded its directory places its page at the repository root and nothing
 raises. ⭐ This task has the filesystem in front of it and is the only place
 the distinction is checkable.
 
+⚠️ **And it checks generated *names*, not only addresses** (round 16, Finding
+8). `slugify` deletes accented characters rather than transliterating them, so
+two titles differing only in accents can produce one slug — a collision that is
+invisible in the source and visible only in the path set this task already
+computes. ⛔ The duplicate-path check above is what catches it; this sentence
+exists so nobody narrows that check to addresses.
+
 This is the single most leverage-per-line task in the project. It is what lets
 an adapter be assigned to an agent working alone with no reviewer: the agent
 does not need to know whether its output is right, because the tool says so.
