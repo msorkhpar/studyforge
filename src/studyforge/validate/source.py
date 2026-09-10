@@ -48,12 +48,41 @@ went missing.
 because an archive is a shippable artifact on its own, and `validate` is the
 adapter's definition of done for *the archive* (R2). What it may not do is
 pretend it checked.
+
+## ⛔ What counts as material is the corpus's declaration, not this file's guess
+
+⭐ **The repository already says which of its files are generated, and
+`source_files` asks it.** Spec §11.2 clause 11 named `git status` from the
+start; the code simply never implemented the definition it had been given, and
+`SKIP_DIRS` was the shape of the gap — five names, two of which
+(`node_modules`, `__pycache__`) were the framework knowing about two
+ecosystems, which is R1 with the sign flipped.
+
+⚠️ **Measured against a real corpus, 2026-09-10:** of 159 files the walk
+enumerated, **100 were the repository's own declared output** and every one was
+reported as unclassified material. ⛔ **The three that were genuinely material
+withheld from the reader were filed among a hundred that were never material at
+all**, which is an audit nobody reads — the exact failure `content.exclude`'s
+mandatory `why` exists to prevent, reached from the other side.
+
+⚠️ **And the number has no fixed point.** The same generated directory held 79
+files, then 91, then 96 within one day, so a framework carrying its own
+exclusion list is a framework that is wrong again tomorrow. The declaration
+moves with the corpus because it belongs to the corpus.
+
+⛔ **A root that is not a git working tree gets the old walk and an
+`Unchecked`** (`ignore-declaration`), never a guess. Same rule as the absent
+source tree above, for the same reason: a half-applied ignore rule is a
+half-present input, and the dangerous half is the one that looks clean.
 """
 
 from __future__ import annotations
 
 import re
+import shutil
+import subprocess
 from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.corpus.manifest import Classification
@@ -63,6 +92,11 @@ from studyforge.validate.report import Finding, Unchecked
 RULE_UNCLASSIFIED = "unclassified"
 RULE_SHORT_READ = "short-read"
 RULE_ORIGIN_MISSING = "origin-missing"
+
+#: ⛔ Its own rule id rather than `unclassified`'s. The classification check did
+#: run; what could not be read is the repository's declaration of what is
+#: output — a different fact, and one a script filters on separately.
+RULE_IGNORE_DECLARATION = "ignore-declaration"
 
 #: An ATX heading, counted **outside** fenced code. ⛔ Deliberately not the
 #: Markdown reader's: this number exists to disagree with the parser, so it
@@ -77,7 +111,19 @@ FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 #: Directories a source scan never descends into. ⚠️ The archive is generated
 #: output living inside the corpus root; sweeping it would classify the
 #: adapter's own writing as unclassified material.
-SKIP_DIRS = (ARCHIVE_DIR, ".git", ".studyforge", "node_modules", "__pycache__")
+#:
+#: ⛔ **These three are the framework's own and nobody else's.** `archive` is
+#: R2's, `.studyforge` is this tool's, and `.git` holds the declaration this
+#: module now reads rather than guesses at. Two more names once sat here —
+#: `node_modules` and `__pycache__` — and they were the framework knowing about
+#: two ecosystems it was told nothing about (R1). A list of other people's
+#: build directories is wrong for the first corpus that uses a third ecosystem,
+#: and right for the second two only by luck.
+SKIP_DIRS = (ARCHIVE_DIR, ".git", ".studyforge")
+
+#: How long git is given to answer. ⚠️ A validator that hangs is worse than one
+#: that says it could not check.
+IGNORE_TIMEOUT = 30
 
 
 def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
@@ -95,15 +141,26 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
     """
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return
-    files = source_files(walk.root)
-    if not files:
+    scan = source_files(walk.root)
+    if not scan.files:
         yield Unchecked(
             RULE_UNCLASSIFIED,
             ".",
             "no source material is present beside the archive, so there is nothing to classify",
         )
         return
-    for path in files:
+    if not scan.consulted:
+        # ⛔ The walk stands and the report says so. A half-applied ignore rule
+        # is the half-present source tree this module's docstring refuses.
+        yield Unchecked(
+            RULE_IGNORE_DECLARATION,
+            ".",
+            "the repository's own declaration of what is generated output could not "
+            "be read — this corpus root is not a git working tree, or git is not "
+            "installed. Every file beside the archive was scanned as material, so "
+            "generated output is reported below as unclassified rather than skipped.",
+        )
+    for path in scan.files:
         where = walk.relative(path)
         if walk.manifest.content.classify(where) is Classification.UNCLASSIFIED:
             yield Finding(
@@ -196,8 +253,44 @@ def count_headings(text: str) -> int:
     return count
 
 
-def source_files(root: Path) -> list[Path]:
-    """Every file in the corpus root that is material rather than output."""
+@dataclass(frozen=True, slots=True)
+class Scan:
+    """What the corpus root holds as material, and whether it was asked.
+
+    ⛔ **One value, because the two halves may never be read apart.** A caller
+    that took the file list without `consulted` would report a hundred
+    generated files as unclassified and print a clean-looking run; a caller
+    that took `consulted` without the list would have nothing to classify. The
+    fallback and the announcement of the fallback are the same fact.
+    """
+
+    files: tuple[Path, ...]
+    consulted: bool
+
+
+def source_files(root: Path) -> Scan:
+    """Every file in the corpus root that is material rather than output.
+
+    ⭐ **The corpus already declares what is output, and this asks it.** Spec
+    §11.2 clause 11 names `git status`; what this reads is the same
+    declaration, one call, in the file every repository has. That is why it is
+    R1-clean: no ecosystem is named here, and the answer arrives as data from
+    the source rather than as a list of names the framework carries.
+
+    ⚠️ **Where the root is not a git working tree the walk stands and the
+    caller says so** — see `Scan`. Refusing a non-repository corpus is wrong
+    (R2: an archive is a shippable artifact on its own), and quietly scanning
+    everything is worse than either, because it looks like a clean run.
+    """
+    walked = _walk(root)
+    declared = _declared_output(root, walked)
+    if declared is None:
+        return Scan(tuple(walked), consulted=False)
+    return Scan(tuple(path for path in walked if path not in declared), consulted=True)
+
+
+def _walk(root: Path) -> list[Path]:
+    """Every file under `root` that is not the framework's own writing."""
     found: list[Path] = []
     for path in sorted(root.rglob("*")):
         if not path.is_file():
@@ -209,6 +302,47 @@ def source_files(root: Path) -> list[Path]:
             continue
         found.append(path)
     return found
+
+
+def _declared_output(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
+    """Which of `candidates` the repository declares as generated output.
+
+    ⛔ **Git's own answer, never a reimplementation of it.** Ignore rules have
+    precedence, negation, per-directory files, an index that makes a tracked
+    file un-ignorable and a user's global configuration. A framework that
+    reproduced four of those five would be wrong on the fifth, silently, in
+    somebody else's repository.
+
+    ⛔ **`None` means "not answered", and it is not the same as "nothing is
+    ignored".** Fail-open is what this task exists to remove: the caller turns
+    `None` into an `Unchecked`, loudly and counted, exactly as an absent source
+    tree is reported. An empty frozenset means git answered "none of them".
+
+    ⚠️ One subprocess for the whole tree, never one per file — `--stdin` takes
+    the batch, and `-z` is what makes a filename with a newline in it a
+    pathname rather than two.
+    """
+    git = shutil.which("git")
+    if git is None:
+        return None
+    payload = "\0".join(path.relative_to(root).as_posix() for path in candidates)
+    try:
+        result = subprocess.run(  # noqa: S603 - fixed argv, no shell
+            [git, "check-ignore", "--stdin", "-z"],
+            input=payload,
+            capture_output=True,
+            text=True,
+            cwd=root,
+            check=False,
+            timeout=IGNORE_TIMEOUT,
+        )
+    except OSError, subprocess.SubprocessError:
+        return None
+    # 0: some path is ignored. 1: none is. 128: not a repository, or worse —
+    # and "or worse" is exactly why an unexpected code is not read as "none".
+    if result.returncode not in (0, 1):
+        return None
+    return frozenset(root / name for name in result.stdout.split("\0") if name)
 
 
 def _origins(walk: Walk) -> list[tuple[str, Path, int]]:
