@@ -4,6 +4,13 @@
 starts further along than the last one.** Owned by the framework Product Owner;
 entries are contributed by whoever measured them, from either side.
 
+⛔ **Contribution and adoption are two different jobs, and only the first had an
+owner until 2026-09-10.** ⭐ **Adopting a consumer's contributions — and recording a
+decision for each one that is not adopted — is **wave check 6**, run by the
+framework PO at every wave-open.** ⚠️ **A contribution silently not adopted is
+indistinguishable from one nobody read**, which is why the refusals are written
+down beside the adoptions rather than left as silence.
+
 ⛔ **Created 2026-09-09, and its absence was the point.** This file is referenced
 by spec §9, by `SK-07`, and by at least three rulings — and it **did not exist**.
 `ls docs/` returned `conventions specs tasks`. ⚠️ Meanwhile PO-Integration had
@@ -188,6 +195,165 @@ narration problem too: a 23-line box-drawing tree read aloud is 23 lines of
 punctuation.** Material that leans on ASCII diagrams should expect to write
 `alt`/summary text for them.
 
+### 11. A hierarchy in filenames is usually a *redundant* encoding — find the record first
+
+**Measured (ISO, `1e49225`; set: the 41 files in `src/`):** zero directories; 38
+unit files in three prefix groups of **16 + 11 + 11**, plus 3 aggregates, **0**
+files matching no rule — **and** the curriculum document records the same three
+groups in the author's own words, in reading order, with a title and an ordinal
+for each of the 38. ⭐ **The two partitions agree exactly.**
+
+⭐ **What an integrator needs to know:** ⛔ **reading the names is derivation;
+reading the document is a record**, and §6 prices derivation at one link in eight
+going nowhere. Propose *"the curriculum is recorded in `<file>`"* and keep the
+prefix rule as a **cross-check that must agree**, never as the source. ⚠️ A skill
+that proposes the regex has produced a plausible manifest for this corpus and an
+unjustifiable one for the next.
+
+### 12. A scan for markup cannot tell the document's own HTML from another language quoted in a fence
+
+**Measured (ISO, `1e49225`; set: the 41 files in `src/`, then the 38 ingested):**
+HTML elements in prose or code **0 of 41**; tag-like tokens outside a fence **0**;
+files carrying an ` ```xml ` fence **18 of 41** — of which **3 are the aggregates
+that are excluded**, so among the 38 ingested it is **15**.
+
+⛔ **The recorded lesson was the opposite of the real one.** *"18 files contain
+raw HTML"* teaches a reader to trust an angle-bracket scan; the real lesson is
+that **the fence is what makes the difference**, and a scan that does not track
+fence state cannot see it. ⚠️ **Cost of getting it wrong: raw HTML, blockquotes
+and thematic breaks were scheduled into the block vocabulary on this evidence,
+and this corpus uses none of the three.**
+
+⭐ **The spec half of this is already corrected** — §1's C3 carries the retraction
+— ⛔ **and the catalogue half is this entry**, because the *method* error outlives
+the one number it produced.
+
+### 13. Title-derived slugs collide hardest where two series mirror each other
+
+**Measured (ISO, `1e49225`; set: the 38 unit titles the curriculum records,
+slugged naively):** **7 collision classes**, **15 of 38 units (39.5%)** inside
+one, **6 classes of exactly two** — the deliberate server/client mirror — **1
+class of three** reaching into the fundamentals group, and **0 collisions inside
+a single container**.
+
+⭐ **The shape is what generalises, not the number:** teaching material that
+covers the same topics for two audiences produces near-total title collision **by
+construction**, and it is the *good* material that does this. ⛔ A second measured
+data point for *an address is recorded, never derived*, from a corpus of an
+entirely different shape from the one that produced the first.
+
+### 14. A reconnaissance report decays; assert instead
+
+**Measured (ISO; set: the 41 files in `src/`):** round 1 reported *"three files
+end without a trailing newline"*. The real answer is **32 of 41**. ⛔ Round 1
+generalised from the three files where the discrepancy happened to be visible,
+and its harness **printed** numbers where the round-2 harness **asserts** them.
+
+⭐ **The difference is not effort — it is `print(n)` versus `assert n ==
+expected`.** ⛔ **A reconnaissance deliverable is a script that fails, not a
+document that states**, and it is re-run when the **framework** moves, not only
+when the material does: three of that integration's twelve open questions closed
+between two rounds a day apart, one of them by a merged schema changing.
+
+### 15. The check and the exposure are not in the same place — verify an ignore rule in **both** directions
+
+**Measured (ISO):** a knowledge-index tool appended a line to the corpus's root
+ignore file during a session in which no command wrote a file — ⛔ in the one
+repository where non-destructive generation is absolute, under an owner
+specifically watching for it. ⚠️ **The same tool wrote a machine-local absolute
+path into a settings file inside the corpus**, which is a personal-data exposure
+created by **tooling** rather than by an author.
+
+⭐ **What an integrator needs to know:** ⛔ **the non-destructive check runs at
+build time and this class of edit happens at index time**, long before any build,
+so a corpus's diff against its own tracked files is worth running at the *start*
+of a session. Make a generated directory ignore **itself**, and verify both ways:
+
+```
+printf '*\n' > <corpus>/<generated dir>/.gitignore
+git check-ignore -v <generated dir>/<a file>   # expect the rule, from that file
+git check-ignore -q <a real source file>       # expect exit 1 -- NOT ignored
+```
+
+⚠️ **A rule that ignores everything is easy to write and easy to get
+catastrophically right**, which is why the negative direction is not optional.
+
+### 16. *"Complete at the reading floor"* is only checkable if the never-used surface is **listed**
+
+**Measured (ISO):** **0 build files, 0 `.java` files, 0 graders** anywhere in the
+repository, and a narration footprint of **21–83 MiB against a ~5 GB soft
+limit** — roughly **1%**.
+
+⛔ **Two plans look identical** — one for a corpus genuinely complete without the
+execution track, one whose planner forgot it existed. ⭐ **What separates them is a
+table naming every framework capability the corpus will never use, with the
+reason**: for that corpus the runner, Run and Submit, the practice panel, the
+whole exercise-generation and toolchain-image epics, execution onboarding, the
+server-side practice record, attachments, video, multi-variant filing, and the
+media-footprint *refusal* path.
+
+⭐ **A corpus with no graders is complete at the reading floor, not short** — but
+saying so is an assertion and the table is its evidence. ⚠️ It is also the only
+way the framework learns **which of its consumers exercises none of that
+surface**.
+
+### 17. Neither the verb nor the pronoun decides runnability — entry 8's counter-example
+
+**Measured (ISO):** the imperative scan (`implement | write a | your task |
+exercise`) over a 3,863-line Gherkin document returns **0**; the same scan plus
+one plausible phrase, *"complete the"*, returns **14** — ⛔ **all fourteen with a
+*system* as grammatical subject**, not one addressing the reader. ⚠️ **Under any
+threshold rule, 14 > 0 flips `exercises` to `true` for a corpus that asks the
+reader to do nothing.**
+
+**And the obvious repair fails in the other direction:** second-person address is
+**2 occurrences in 3,863 lines** in the material that is *not* exercises, and
+**350 across 34 of 38** prose units. ⛔ **A pronoun scan marks 34 of 38 units as
+exercises.**
+
+⭐ **Both tests are cheap, both look principled, and on one real corpus they are
+wrong in opposite directions.** ⛔ **The question that survives is entry 8's —
+whether the reader is under an obligation** — and answering it costs reading,
+which is why nobody wants it to be the answer.
+
+### 18. A rule that forbids globs meets a content-addressed cache, and one of the two has to give
+
+**Measured (ISO):** a generated directory of **79 files, 67 of them content-hash
+named** (`<64 hex>.json`). ⛔ **A "name each file, one reason each" rule is not
+expensive against it — it is unsatisfiable**: the list is invalidated by the tool
+that produced it, and it would cost 79 entries and ≥1,580 characters of reason
+that stay correct until the next re-index.
+
+⚠️ **And the sharpest version is when the framework mandates the tool:** a
+convention requiring a knowledge graph, a skill writing its ignore rules, and a
+validator refusing its output are **three correct decisions composing into a
+corpus that cannot pass**.
+
+> ⭐ **AMENDED 2026-09-10 by the framework, and the amendment is why the entry
+> stays.** ⛔ **`W28` ruled *the corpus is what the corpus's own repository
+> tracks*** — a declared-output directory that ignores itself is no longer
+> enumerated at all, so the 79 stop being findings. ⚠️ **What does not go away is
+> the shape**: an auditable-by-enumeration rule and a content-addressed directory
+> are incompatible, and the framework had to move rather than the corpus. ⭐ **The
+> entry records the *collision*, not the one instance that has since been fixed.**
+
+---
+
+## ⛔ Decisions on contributions **not** adopted — 2026-09-10, check 6's second run
+
+⭐ **A contribution silently not adopted is indistinguishable from a contribution
+nobody read.** ⛔ **So every item is dispositioned here, including the refusals,
+and each names why against the *belongs / does not* table above.**
+
+| Contribution | Decision | Why |
+|---|---|---|
+| *Excluding a file can discard the only witness to something else* | ⭐ **Already carried** | Entry 5's closing paragraph states the same trade — the aggregates are both pure duplication and the only machine-checkable order oracle. ⛔ **Not a second entry; a duplicate entry is the defect this catalogue exists to stop** |
+| *A count restated at a new set travels further than the measurement* | ⭐ **Already carried** | Entry 8's correction banner **is** this contribution, and entry 9 gained the *set* field by it. ⭐ **It landed by the mechanism it argues for** |
+| ⛔ *A placement profile that interleaves output with the source will have its output re-read as source* | ⛔ **DEFERRED — not refused** | ⚠️ **`F19` is open with the CTO.** ⛔ **The catalogue is for what stays true after the framework is right, and this asks whether the framework is right.** ⭐ **Trigger: the PO adopts it the day `F19` rules, in whichever direction** — if the framework changes, it was a finding; if it does not, it is a limit and it belongs |
+| ⛔ *A manifest needs three states for a file* | ⛔ **DEFERRED — not refused** | ⚠️ **This is `F18` verbatim, a schema question open with the CTO under R9.** ⭐ **Same trigger.** ⛔ **Adopting it today would publish a limit the framework may be about to remove, which is the one thing a catalogue must not do** |
+| ⭐ *The `F2` correction* | ✅ **Landed, and it was already landed** | ⛔ **Measured this run rather than assumed: spec §1's C3 carries the retraction and `E02` carries it too.** ⭐ **Its catalogue-shaped half is now entry 12** — the method error, not the number |
+| ⭐ *The `F8` donation — a plausible short parse in real material* | ✅ **ADOPTED, and it is a fixture, not an entry** | ⛔ **A contents document listing 36 of 38 units as list items and 2 as headings: a parser written against the list form reads 36, emits 36, and raises nothing.** ⭐ **Carried as `W32` on the board with an owner and a trigger** — ⚠️ **a catalogue entry would have been the wrong destination for something a fixture can assert** |
+
 ---
 
 ## Owed here, not yet written
@@ -195,6 +361,6 @@ punctuation.** Material that leans on ASCII diagrams should expect to write
 | Entry | Owed by | Note |
 |---|---|---|
 | ⛔ **Finding 44 — routed here rather than fixed in `SK-01`** | PO-Integration, with the PO | ⭐ **Two of its three numbers came from the integration side**, so it is a cross-source fact. ⛔ **Fixing it inside `SK-01` would have buried it in one skill, where the next source cannot find it** — which is R19's shape: what a second integrator would have to re-derive belongs *here* |
-| ⛔ **PO-Integration's ten entries** | PO-Integration | ⭐ **Already written in this document's shape** — adopting them is a copy, and the only thing that was missing was this file. They land by their next commit |
+| ✅ ~~**PO-Integration's ten entries**~~ | — | ⭐ **DISCHARGED 2026-09-10 by wave check 6's second run.** ⛔ **Sixteen contributions measured, not ten** — 4 were already counterparted, **8 are adopted above as entries 11–18**, 2 are recorded as already carried, 2 are **deferred** behind `F18`/`F19` with a trigger, and 2 are the `F2`/`F8` items. ⚠️ **Adoption is the framework PO's, on a wave-open trigger** — the contribution was never the missing half |
 | **What a re-run of reconnaissance is** (`F17`) | PO-Integration → PO | ⛔ **Nothing defines a re-run against a moving framework.** The last one happened because a person asked, which is not a mechanism |
 | **`OPS-05` checks at build time; tooling writes at index time** (`F12`) | PO → `OPS-05`, `SK-07` | See `W15` on the board |
