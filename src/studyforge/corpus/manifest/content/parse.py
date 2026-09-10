@@ -1,27 +1,19 @@
-"""What in a source directory is material, what is deliberately not, and why.
+"""Reading `corpus.json`'s `content` object, and every way it is refused.
 
-**What it does.** Models `corpus.json`'s `content` key — plain `include`
-globs, `exclude` entries that each name one file and carry a `why`, and
-`not_material` globs that each carry one too — and answers one question about
-one path: **included**, **excluded**, **not material**, **contested** or
-**unclassified**?
+**What it does.** Turns the decoded `content` object into a `ContentPolicy`,
+refusing anything that would make the declaration unauditable: a corpus that
+includes nothing, an exclusion with no reason, an exclusion spelled as a glob,
+a `not_material` entry whose wildcard has no directory above it, a path that
+escapes the source root.
 
-**How you use it.** `policy.classify("src/whole-series.md")`. ⛔ It takes a
-path and does no I/O; enumerating a source root is `studyforge validate`'s job
-(SF-25), and refusing the unclassified ones is its verdict.
+**How you use it.** `parse_content(document["content"])`, and every refusal is
+a `ManifestError`.
 
-**Depends on.** `pathlib.PurePosixPath` for glob semantics — a pure path
-object that never touches a disk — and `errors`.
+**Depends on.** `policy` for the objects it builds, `errors`, and
+`studyforge.describe` for the shape it reports back. ⛔ **Nothing here is
+imported by `policy`**, which is the package's seam.
 
-## Why this is a schema field and not a convention
-
-⛔ **C2 is a schema problem, so the countermeasure is a schema field.** One of
-the four designed shapes ships per-unit files *and* three whole-series
-aggregates that are digest-identical ordered concatenations of them, so
-`src/*.md` ingests all 38 units twice and **nothing complains**. Nothing in a
-manifest without this field could say otherwise, and no heuristic should:
-"these two files overlap" is a finding for reconnaissance to report, not a
-guess for an ingest to make.
+## ⭐ Why the reasons are mandatory, and only on one side
 
 ⭐ **The asymmetry is the design.** An inclusion needs no justification; an
 **exclusion is material withheld from the reader**, and a withholding nobody
@@ -33,38 +25,6 @@ entry carries its `why`, long enough to be a reason.
 `why`. One justification covering a pattern is one justification for a set
 whose membership changes when somebody adds a file — which is the audit
 quietly widening itself. Each withheld file is named and explained on its own.
-
-⚠️ **Exclusion wins over inclusion, and that is that shape's case exactly**:
-`include: ["src/*.md"]` with `exclude: [{path: "src/whole-series.md", …}]`. A file may
-match both, and when it does it is withheld.
-
-## ⛔ The third state, and why it takes globs where an exclusion takes a path
-
-⛔ **Two states are not enough, because a real repository is mostly a third.**
-Measured against one, 2026-09-10: of 141 files, 38 were included, 3 excluded
-and **100 unclassified — and only 3 of the hundred were material withheld from
-anybody**. The rest were a licence, ignore files, an editor's workspace, a
-generated cache. Filing those under `exclude` makes every `why` a small lie
-and makes an audit nobody reads.
-
-⭐ **The three states are about whether a file's prose is read into the
-archive**, never about materiality in the abstract: `include` reads it in,
-`exclude` is prose that *would* be read and deliberately is not, and
-`not_material` is not prose to read at all. ⭐ A source `README.md` lands in
-the third by that test rather than as a special case — it is the corpus's own
-navigation, and the reader loses nothing because every address, title and
-ordinal it records is declared in the manifest's container maps.
-
-⚠️ **An exclusion's refusal of globs is right and does not carry over**,
-because the two audits are about different harms: a new member of an
-exclusion's set is a new withholding and needs its own reason, and a new
-member of a `not_material` glob's set is only a harm if it is **actually
-material** — which is caught per file, against a real tree, as `CONTESTED`.
-⛔ **The category also cannot be enumerated file by file:** writing the finding
-that produced this field took the count from 100 to 101, because the new entry
-was the file containing it. ⭐ **`X1` is not weakened, and its domain is now
-stated** — an inclusion needs no justification, and every declaration that the
-framework will *not* read a file needs one.
 
 ## ⛔ Rule 1a — an entry is an exact path, or one directory's wildcard
 
@@ -85,10 +45,9 @@ be true of everything its glob matches, including what nobody has written yet.
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import PurePosixPath
 
+from studyforge.corpus.manifest.content.policy import ContentPolicy, Exclusion, NotMaterial
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.describe import describe, describe_keys
 
@@ -103,103 +62,6 @@ MIN_WHY_CHARS = 20
 #: once because two checks ask the same question of a string: an exclusion
 #: refuses all of them, and rule 1a asks where the first one falls.
 WILDCARDS = ("*", "?", "[")
-
-
-class Classification(Enum):
-    """What the content policy says about one path."""
-
-    INCLUDED = "included"
-    EXCLUDED = "excluded"
-    #: ⛔ Not material at all: the repository's own scaffolding, or content
-    #: *about* the material. ⚠️ Nothing is withheld from a reader here, which
-    #: is why it is not `EXCLUDED`.
-    NOT_MATERIAL = "not-material"
-    #: ⛔ Matched by `include` **and** by `not_material`, and this build
-    #: refuses to choose. ⭐ **Never a precedence** — one would let a loose
-    #: glob quietly drop material, or read the scaffolding aloud. `validate`
-    #: exits 1 on it under its own rule id, which is what stops the third
-    #: state becoming a place to sweep things into.
-    CONTESTED = "contested"
-    #: ⛔ Not a further kind of content — it is the absence of a decision, and
-    #: `validate` exits 1 on it (R6). A corpus cannot grow a file without
-    #: somebody saying what it is, which is the point: the alternative is a
-    #: second aggregate appearing and being read as 38 more units.
-    UNCLASSIFIED = "unclassified"
-
-
-@dataclass(frozen=True, slots=True)
-class Exclusion:
-    """One file withheld from the reader, and the reason it is."""
-
-    path: str
-    why: str
-
-
-@dataclass(frozen=True, slots=True)
-class NotMaterial:
-    """One glob of files that were never material, and the reason they are not."""
-
-    glob: str
-    why: str
-
-
-@dataclass(frozen=True, slots=True)
-class ContentPolicy:
-    """`corpus.json`'s `content`: what is material here, and what is not."""
-
-    include: tuple[str, ...]
-    exclude: tuple[Exclusion, ...]
-    #: ⛔ Defaults to empty, and that is the whole compatibility story: a
-    #: manifest at `corpus_api: 1` declares no third state and classifies
-    #: exactly as it did before.
-    not_material: tuple[NotMaterial, ...] = ()
-
-    def classify(self, path: str) -> Classification:
-        """Say what this manifest declares about `path`, without choosing for it.
-
-        `path` is relative to the source root and spelled with forward
-        slashes, the way every path in every one of this project's documents
-        is.
-
-        ⛔ **Two matches are reported, not resolved.** An exclusion still wins
-        over an inclusion — one file, named once and withheld deliberately —
-        but `include` and `not_material` disagreeing is two glob authors
-        contradicting each other, and the honest answer is `CONTESTED`.
-        """
-        if not isinstance(path, str) or not path:
-            raise ManifestError(f"path to classify must be a non-empty str, got {describe(path)}")
-        candidate = PurePosixPath(path)
-        if any(exclusion.path == path for exclusion in self.exclude):
-            return Classification.EXCLUDED
-        included = any(candidate.full_match(pattern) for pattern in self.include)
-        scaffolding = any(candidate.full_match(entry.glob) for entry in self.not_material)
-        if included and scaffolding:
-            return Classification.CONTESTED
-        if included:
-            return Classification.INCLUDED
-        if scaffolding:
-            return Classification.NOT_MATERIAL
-        return Classification.UNCLASSIFIED
-
-    def why_excluded(self, path: str) -> str | None:
-        """Return the recorded reason `path` is withheld, or None if it is not."""
-        for exclusion in self.exclude:
-            if exclusion.path == path:
-                return exclusion.why
-        return None
-
-    def why_not_material(self, path: str) -> str | None:
-        """Return the recorded reason `path` was never material, or None.
-
-        ⭐ The first matching entry: a `why` nobody can retrieve is a
-        declaration nobody audits, which is the argument that makes it
-        mandatory in the first place.
-        """
-        candidate = PurePosixPath(path)
-        for entry in self.not_material:
-            if candidate.full_match(entry.glob):
-                return entry.why
-        return None
 
 
 def parse_content(value: object) -> ContentPolicy:
