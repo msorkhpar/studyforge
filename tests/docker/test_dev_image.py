@@ -28,8 +28,11 @@ also closer to what a reviewer reads.
 from __future__ import annotations
 
 import os
+import py_compile
 import shutil
+import sys
 import tomllib
+from pathlib import Path
 
 import pytest
 
@@ -213,6 +216,164 @@ def test_no_path_from_anybody_s_machine_is_written_down():
         text = read(name)  # the raw text: a home path in a comment is still a leak
         for shape in ("/home/", "/Users/", "/root/"):
             assert shape not in text, f"{name} names a home directory: {shape}"
+
+
+# --- the bytecode cache, which the mount turns into a READ problem (W30) ---
+#
+# ⛔ `CTO-21/1`, and it is why these four tests are not one: the image sets
+# `PYTHONDONTWRITEBYTECODE=1` and therefore **cannot create** the taint — but
+# the checkout is bind-mounted, so a container run **read** a stale `.pyc` a
+# HOST run had left behind. ⚠️ Ruling 40 is necessary and **not sufficient**.
+#
+# ⭐ Which side runs which, and why. The first three need no daemon and no
+# network and run **on both sides**: two of them are the redirect proved in
+# both directions against a real interpreter, which is a fact about CPython
+# and is therefore as true on a host as in the image. The fourth asks the
+# **running** interpreter and can only be answered inside the image, so it
+# skips on a host — ⛔ named, and on the host side, so it is not a sixth
+# container skip hiding behind the five recursion guards above.
+
+#: A module the probe imports. The name is deliberately unlike anything on
+#: `sys.path`, so an import that resolves is resolving what the test planted.
+PROBE_MODULE = "sf_pycache_probe"
+
+#: What the probe prints: the value it got, and where it got it from. ⛔ Both,
+#: because the value alone cannot distinguish "read the source" from "read a
+#: cache that happens to agree".
+PROBE = f"import {PROBE_MODULE} as m; print(m.VALUE, m.__cached__)"
+
+#: The two revisions. ⛔ **The same length, deliberately.** CPython validates a
+#: cached module against the source's `(mtime, size)`, so a mutant of a
+#: different size invalidates the cache — and the scenario would stop being a
+#: stale-cache scenario while still looking like one.
+CACHED_REVISION = 'VALUE = "old"\n'
+SOURCE_REVISION = 'VALUE = "new"\n'
+
+
+def plant_stale_bytecode(tmp_path: Path) -> Path:
+    """Write a module whose `__pycache__` is one revision behind it.
+
+    Returns the path of the planted `.pyc`, which is inside the tree beside
+    the source — exactly where a host run leaves one in the bind-mounted
+    checkout.
+
+    ⚠️ The cache path is spelled out rather than taken from
+    `importlib.util.cache_from_source`, because that function honours
+    `sys.pycache_prefix` — inside the image it would hand back the redirected
+    path, and the test would plant its evidence somewhere the scenario does
+    not need it.
+    """
+    source = tmp_path / f"{PROBE_MODULE}.py"
+    source.write_text(CACHED_REVISION, encoding="utf-8")
+    cache = tmp_path / "__pycache__" / f"{PROBE_MODULE}.{sys.implementation.cache_tag}.pyc"
+    cache.parent.mkdir(exist_ok=True)
+    py_compile.compile(str(source), cfile=str(cache), doraise=True)
+
+    before = source.stat()
+    source.write_text(SOURCE_REVISION, encoding="utf-8")
+    os.utime(source, (before.st_atime, before.st_mtime))
+    after = source.stat()
+    assert (after.st_size, after.st_mtime) == (before.st_size, before.st_mtime), (
+        "the mutant changed the source's size or mtime, so the cache is no longer stale"
+    )
+    assert cache.is_file(), cache
+    return cache
+
+
+def test_the_bytecode_cache_is_redirected_out_of_the_workspace():
+    # ⛔ The line itself, read from the image's declaration. On its own this
+    # asserts only that a variable is set, which is why the two tests below
+    # exist — but the value has to be checked somewhere, and "outside the
+    # mount" is the whole of the requirement.
+    dockerfile = instructions("Dockerfile")
+    assert "PYTHONPYCACHEPREFIX=" in dockerfile, (
+        "the image does not redirect the bytecode cache; a stale `.pyc` from a "
+        "host run is read out of the bind mount (CTO-21/1)"
+    )
+    value = dockerfile.split("PYTHONPYCACHEPREFIX=")[1].split()[0].rstrip("\\").strip()
+    assert value.startswith("/"), f"the cache prefix is not an absolute path: {value!r}"
+    assert not value.startswith("/workspace"), (
+        f"the cache prefix is inside the bind-mounted checkout: {value!r}"
+    )
+    # ⚠️ The write side stays too. The redirect closes the read; only this
+    # closes "a `__pycache__` owned by the container's uid in somebody's tree".
+    assert "PYTHONDONTWRITEBYTECODE=1" in dockerfile
+
+
+def test_a_stale_bytecode_file_in_the_tree_is_ignored_when_the_prefix_redirects(tmp_path):
+    # ⭐ Direction one: **with** the redirect, the planted `.pyc` is not read.
+    # The prefix goes somewhere `tmp_path` does not contain, which is what the
+    # image's `/tmp/pycache` is to `/workspace`.
+    cache = plant_stale_bytecode(tmp_path)
+    redirect = tmp_path.parent / "redirected-cache"
+    result = run(
+        [
+            "env",
+            "PYTHONDONTWRITEBYTECODE=1",
+            f"PYTHONPYCACHEPREFIX={redirect}",
+            "python3",
+            "-c",
+            PROBE,
+        ],
+        cwd=tmp_path,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    value, cached = result.stdout.split()
+    assert value == "new", f"a stale `.pyc` was read in preference to the source: {result.stdout}"
+    assert Path(cached).is_relative_to(redirect), cached
+    assert cache.is_file(), "the planted `.pyc` vanished; the scenario did not happen"
+
+
+def test_without_the_prefix_that_same_stale_bytecode_is_read(tmp_path):
+    # ⛔ Direction two, and the reason `W30` is a row rather than a comment:
+    # this is the defect, reproduced. `PYTHONDONTWRITEBYTECODE=1` is set here
+    # exactly as the image sets it, and it changes nothing — the interpreter
+    # loads a module whose source says something else.
+    #
+    # ⚠️ `env -u` is the image's own line removed and nothing else. Inside the
+    # image that is a real removal; on a host it is a no-op, and the test
+    # asserts the same thing on both sides either way.
+    cache = plant_stale_bytecode(tmp_path)
+    result = run(
+        ["env", "-u", "PYTHONPYCACHEPREFIX", "PYTHONDONTWRITEBYTECODE=1", "python3", "-c", PROBE],
+        cwd=tmp_path,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
+    value, cached = result.stdout.split()
+    assert value == "old", (
+        "the stale `.pyc` was NOT read without the redirect, so the test above "
+        f"proves nothing: {result.stdout}"
+    )
+    assert Path(cached) == cache, cached
+
+
+def test_no_bytecode_from_the_bind_mount_is_read_in_here():
+    # ⭐ **The acceptance, asserted from inside**, in the same shape as the
+    # runtime check below: every test above reads a file or a temporary tree;
+    # this one asks the interpreter that is running the suite.
+    if not os.environ.get(MARKER):
+        pytest.skip(
+            "not inside the dev image, where the cache prefix is set. The "
+            "checks above assert the Dockerfile sets one and that the redirect "
+            "works in both directions; only a run inside the image can assert "
+            "that this interpreter read no `.pyc` out of the bind mount."
+        )
+    assert sys.pycache_prefix, (
+        "no cache prefix in the running interpreter: the ENV line is declared "
+        "but is not reaching Python"
+    )
+    root = repository_root()
+    assert not Path(sys.pycache_prefix).is_relative_to(root), sys.pycache_prefix
+    from_the_mount = sorted(
+        module.__cached__
+        for module in list(sys.modules.values())
+        if isinstance(getattr(module, "__cached__", None), str)
+        and Path(module.__cached__).is_relative_to(root)
+    )
+    assert not from_the_mount, (
+        "modules were loaded from bytecode inside the bind-mounted checkout, "
+        f"which a host run wrote and this container did not: {from_the_mount}"
+    )
 
 
 # --- the JavaScript runtime (W8, Ruling 21) --------------------------------

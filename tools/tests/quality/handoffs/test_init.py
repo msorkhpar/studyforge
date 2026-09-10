@@ -101,6 +101,33 @@ def test_a_filename_that_looks_like_a_handoff_is_not_read_as_one(tmp_path):
     assert check_handoffs(tmp_path) == []
 
 
+def test_the_ruling_record_sentence_names_every_role_that_writes_one():
+    # ⛔ `W31`, from `PO-19/5`: the registry's sentences named **two** roles
+    # where **three** produce these documents. `ruling record` read *"a CTO
+    # round or a single ruling written up"* and `session log` reads *"a
+    # coordinator's record of one session"* — ⚠️ a **PO round** is neither, and
+    # four of them are in the shipped tree.
+    #
+    # ⭐ The kind was right and the sentence was short by one role, so the fix
+    # is the sentence. ⛔ Never a sixth kind: a role is not a kind of document,
+    # and `DOCUMENT_KINDS` is a closed set whose entries are decisions.
+    #
+    # ⚠️ Asserted against the tree rather than against the string alone. A
+    # sentence describing what may live here is only true if what lives here
+    # matches it, and that is the half a spelling check cannot see.
+    po_rounds = sorted((repository_root() / HANDOFF_DIR).glob("PO-*.md"))
+    assert po_rounds, "no PO round in this tree; this assertion has stopped meaning anything"
+    for path in po_rounds:
+        kind, _ids, _line = declared_kind(path.read_text(encoding="utf-8"))
+        assert kind == "ruling record", f"{path.name} declares {kind!r}"
+    sentence = DOCUMENT_KINDS["ruling record"]
+    for role in ("CTO", "PO"):
+        assert role in sentence, f"the sentence does not admit a {role} round: {sentence!r}"
+    assert not [kind for kind in DOCUMENT_KINDS if "round" in kind], (
+        f"a round is written up as a ruling record, not as a kind of its own: {DOCUMENT_KINDS}"
+    )
+
+
 def test_the_kind_registry_is_inhabited_and_every_entry_says_what_it_owes():
     assert TASK_HANDOFF in DOCUMENT_KINDS
     assert len(DOCUMENT_KINDS) >= 4
