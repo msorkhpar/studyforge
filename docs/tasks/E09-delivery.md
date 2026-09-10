@@ -249,6 +249,20 @@ both correct — `None` is not zero — so the translation is this task's and
 nobody else's.** Ruled by the PO 2026-09-10 from `SF-12/4`; the argument is in
 [`BOARD.md`](BOARD.md).
 
+⛔ **A built site's media resolves on disk.** The renderer emits
+`<img src="images/<basename>">` and **copies nothing** — `SF-12`'s own handoff
+says so — and no task owned the copy, so today a media-bearing page renders the
+broken-image glyph with its `alt` text wrapped under a correctly styled caption.
+⚠️ **No existing test can see it**: `SF-12`'s reference check resolves against a
+tree its own test *writes*, the bytes are stable, and the golden matches. ⭐ **This
+tightens the acceptance already above rather than adding scope** — *"builds and
+serves both FND-04 fixtures"*, and the **depth-1 fixture is the media-bearing
+one** — so the clause is that every `src` and `href` a built page emits resolves
+to a file the build wrote. Ruled by the PO 2026-09-10 from `QA-03/8`; ⛔ **the
+finding routed itself to `SF-27`, which renders a page and owns no build**, and
+the correction is in [`BOARD.md`](BOARD.md). **M4 is the earliest ref at which the
+defect can be observed, which is why the clause lands here.**
+
 ---
 
 ### OPS-07 — Stale artifact reconciliation
