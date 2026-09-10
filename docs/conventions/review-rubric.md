@@ -464,6 +464,36 @@ check that did not run is not evidence* — never *the container is more capable
 A check the image cannot run is a gap in the image; name it, route it to the task
 that owns the image, and record the evidence as unpinned in the meantime.
 
+#### ⛔ Amendment — unpinned green is evidence about the **code**, never about the **toolchain**
+
+⚠️ **Carried by the PO 2026-09-09 with the measurement, after a THIRD
+pinned-vs-host divergence in one session.** ⭐ **The three-state ruling above is
+right and is not being blunted** — the *did not run* / *unpinned green*
+distinction it drew is real and was worth drawing. ⛔ **This narrows exactly one
+row of it, on evidence.**
+
+**The three instances, all one shape:** `ruff format` caught a line the host could
+not see; before that, **four lint errors and three unformatted files stood green
+on a host suite.** ⚠️ Every one was a check whose verdict is **a property of the
+toolchain**, not of the code — a linter version, a formatter's defaults, a
+config the host resolves differently.
+
+⛔ **So: for any check whose verdict depends on the toolchain — lint, format, and
+anything version-sensitive — unpinned green is a *hint*, not evidence, and the
+only evidence is pinned.** ⭐ For checks whose verdict depends on the **code** —
+the test suite proper — the row above stands unchanged: unpinned green is real
+evidence, named in the review.
+
+⚠️ **Why this is worth a rule rather than a third correction:** ⛔ **a known cost
+paid three times is not a known cost, it is a policy of paying it** — this
+board's own words when it refused option 3 of C5, and the count is the same. ⭐
+**And the failure flatters in the direction that gets believed:** the host says
+green, nobody investigates a pass, and the divergence is found by the next person
+to run the image.
+
+⚠️ **The rubric is the CTO's document; this amendment is a PO finding carried
+with its measurement, and the CTO owns whether to keep, widen or narrow it.**
+
 ### ⛔ 4b-i. Every skip is named, or the run did not happen
 
 ```bash
@@ -679,9 +709,44 @@ grep -n '\[structural\]' "docs/tasks/handoffs/$TASK.md"
 
 # ⛔ and the coverage, because an empty result has two causes
 awk '/^## Findings/,/^## For dependents/' "docs/tasks/handoffs/$TASK.md" \
-  | grep -cE '^[0-9]+\.'                       # findings filed
-grep -cE '^[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TASK.md"   # marked
+  | grep -cE '^(#{2,4} )?[0-9]+\.'             # findings filed
+grep -cE '^(#{2,4} )?[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TASK.md"  # marked
 ```
+
+> ⛔ **Corrected 2026-09-09 — C6's sixth instance, and it was inside the section
+> that exists to enforce C6.** ⚠️ These counters matched `^[0-9]+\.` only, while
+> **§8 rules the heading form acceptable** and `SF-03`, `SF-09` and `SF-11` all
+> write their findings as `### 1. …`. ⛔ **So for those handoffs both counters
+> returned zero and *"the two numbers must agree"* passed at 0 = 0** — the check
+> did not fail, it **passed the wrong thing**, which is C2's failure mode
+> precisely and the one this rubric already calls the worse of the two. ⭐ **A
+> counter that under-reports gets believed.**
+>
+> ⛔ **The widened regex above is an INTERIM and is superseded by Ruling 29 — the
+> CTO is landing the real fix here.** ⚠️ **My instinct (narrow, don't widen) was
+> right and aimed one step off:** §8 ruled that a **section header** may take
+> either form, authors reasonably extended that to **items**, and the counter was
+> written for one reading. So §8 is not the thing to reverse. The rule is:
+>
+> ⭐ **A thing merely *present* may be spelled several ways. A thing that is
+> *counted* has exactly one spelling.**
+>
+> ⛔ **Presence fails loudly, at zero, only if *every* spelling is missed. A count
+> is wrong the moment *one* shape is missed — silently, and downward, toward the
+> number that looks like success.** Section headers keep both forms; finding
+> **items** get one, carrying the marker, so *filed* and *marked* stay
+> independently derivable.
+>
+> ⛔ **And the half that catches the class rather than the instance: `0 = 0` is
+> not a pass.** One spelling works until somebody invents a seventh. ⚠️ **§8
+> already says an empty Findings section is *"a prompt to ask, not a pass"* — and
+> §8a's counter contradicted its own section three paragraphs above it.** ⭐ **A
+> zero count must never be self-certifying.**
+>
+> **Measured by the CTO across every merged handoff:** `SF-03` **0 filed / 0
+> marked / 4 present**, `SF-09` **0 / 0 / 4**, `SF-11` **0 / 0 / 3** — ⛔ **eleven
+> structural findings across three merged handoffs, certified by a check that
+> counted none of them.**
 
 ⛔ **The two numbers must agree.** A handoff with ten findings and two markers has
 not been triaged — it has been triaged twice and abandoned. ⭐ An empty
@@ -691,8 +756,38 @@ not been triaged — it has been triaged twice and abandoned. ⭐ An empty
 ⭐ **The reviewer is the last person who reads a handoff while anything can still
 be done about it**, so routing is part of the verdict, not a follow-up. For each
 `[structural]` finding, the review states one of exactly three outcomes and
-nothing else: **ruled** (with the ruling, or the handoff it went to), **scheduled**
-(with the task), or **accepted** (with the cost being accepted, in words).
+nothing else: **ruled** (⛔ **naming the artifact the ruling changes** — see
+below), **scheduled** (with the task), or **accepted** (with the cost being
+accepted, in words).
+
+#### ⛔ C6 — `ruled` names the artifact, **never a handoff**
+
+⚠️ **This clause used to read *"ruled (with the ruling, or the handoff it went
+to)"*.** ⛔ **A handoff is never where a ruling lands** — it is a record, and this
+project's standing rule is that a record is not rewritten — so that clause
+**contradicted the standing rule inside the section written to enforce it.** The
+hole was in the instrument, not in anybody's diligence.
+
+⭐ **C6, named by the CTO: *a ruling is made, is correct, and never reaches the
+artifact it governs.*** ⛔ **It is C5 one level up.** C5 was *the gate asked the
+wrong question*; C6 is *the answer was right and was never delivered*. ⚠️ **Same
+tell as every expensive defect this project has found: nothing looks wrong.** The
+handoff says ruled, the review says ruled, and the task that must act never hears.
+
+**Five instances, four of them found in one round:** round 15's keep-both comment;
+C5's table row; R21's register; §1a's un-swept third copy; and ⛔ **8 of 30 ruled
+findings with no destination**, which is the PO's own.
+
+⛔ **So `ruled` is written as the artifact it changed**, and it is one of exactly
+these: **a task's Acceptance**, **an epic clause**, **a spec ruling**, or **a
+convention document**. ⭐ *"Ruled — carried into `E06` SF-23's Acceptance"* is a
+disposition. *"Ruled — see `handoffs/SF-11.md`"* is not, and no longer passes.
+
+⚠️ **What is deliberately NOT added here, and the reasoning matters more than the
+rule:** the reviewer is **not** asked to verify the destination was reached.
+⛔ **The carry happens *after* the review, so that gate cannot fire — and a gate
+that cannot fire is worse than none, because it reads as coverage.** ⭐ It belongs
+on the **wave-open checklist**, run by the person who does the carrying: the PO.
 
 ⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
 — the author is describing their own scope and is the worst-placed person to see

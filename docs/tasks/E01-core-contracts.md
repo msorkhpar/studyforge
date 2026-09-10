@@ -218,6 +218,33 @@ places a unit page beside its source file. No two units in the Java corpus
 produce the same artifact name. A third profile can be added without changing
 any consumer.
 
+### ⚠️ Revision — `Profile` grew after this task merged, and here is why
+
+⭐ **Carried by the PO 2026-09-09, from CTO round 17 finding 12, so the next
+reader is not left inferring it from a diff.**
+
+⛔ **`SF-25`'s sibling-collision check found that `structure.py:109` branched on a
+placement profile *name*** — and `SF-03`'s own `ast` test, **in another
+package**, failed because of it. ⚠️ **Only the trial merge could see this**: each
+branch was correct alone, which is the only situation that defect occurs in.
+
+⛔ **Branching on a profile name is R1 in miniature** — the framework holding a
+source-shaped fact by name instead of asking for a capability — so `Profile`
+**gains the capability** rather than the caller gaining a special case.
+
+⛔ **And then it did not grow, which is the part worth keeping.** ⭐ **`Profile`
+gained nothing.** SF-25's author measured that the collision check needs **no new
+capability** — `test_nothing_downstream_branches_on_a_profile_name` went **1
+failed → 1 passed**, with **zero** profile names in `validate/` and **zero**
+profiles skipped — and declined to add one, on the same rule that had been used
+to schedule it: ⛔ **a capability designed by somebody with no caller is a guess**,
+and here it would have had **no caller at all.**
+
+⚠️ **So this contract is unchanged, and the record exists to stop somebody adding
+the capability later on the strength of a ruling that was withdrawn.** ⭐ The
+defect was real and is fixed **in the caller**, where it was: `validate` no longer
+knows any profile by name.
+
 **Out of scope.** Reading or scanning files — that is SF-04.
 
 ---

@@ -413,12 +413,90 @@ rule and a check rather than a rebuild.
 zero; ⛔ **it fails when the doc↔code edge census is below a recorded floor**, so
 an index that cannot connect a ruling to its enforcement is not certified as
 healthy — the framework's graph is bridged to establish that floor, and the
-census command is the one `graphify.md` already documents; ⛔ it **fails** on an index older than the newest tracked source, asserted
-by a test that backdates one rather than by description. `graphify.md` carries the
+census command is the one `graphify.md` already documents; ⛔ it **fails** on an index whose **indexed scope has changed since it was built** — ⚠️ **not on a
+timestamp; see the carried ruling below** — asserted
+by a test that constructs a stale index rather than by description. `graphify.md` carries the
 `--graph` invocation for a worktree, and `tests/test_knowledge_index.py` asserts
 it as it does the other runbook entries. ⛔ **No test in the suite skips
 unconditionally** — a skip every run reports is an untested claim wearing a
 skip's clothes.
+
+### ⛔ Carried ruling — freshness is decided by **content, never by mtime**
+
+⚠️ **Carried by the PO 2026-09-09, from the coordinator's finding and the PO's
+own re-measurement. Both halves are needed; each caught the other's error.**
+
+⛔ **This task originally said *"older than the newest tracked file"*. That test
+is wrong and would have shipped a check that cries wolf.** Git rewrites checkout
+mtimes on merge, checkout, rebase and worktree creation — none of which change
+content — so an mtime tripwire fails **after every merge**, which is to say after
+everything this team does. ⭐ **A check that cries wolf gets waved through**, and
+this project has already written that sentence once, about C2. FND-07 exists to
+prevent an index nobody can trust; an mtime test would have made FND-07 the thing
+nobody reads.
+
+⚠️ **And the second half, which is the one worth the most.** The finding's own
+counter-check — *"the index is current, I verified it by content"* — was itself
+wrong. It confirmed **one** symbol (`describe()`, 13 occurrences) and generalised
+to the tree. **Measured by the PO on the same index, 2026-09-09:** an incremental
+`graphify update` added **224 nodes and removed 18**, and the additions are
+exactly the merged-but-unindexed tree — `src/studyforge/unit/content.py` (30),
+`tests/.../test_content.py` (38), `unit/sections.py` (8), `unit/errors.py` (6),
+`corpus/placement/names.py` (6), `corpus/container/fields.py` (7). ⛔ **The index
+was stale by 224 nodes while a content check called it current.**
+
+⭐ **Both failures are one shape, and naming it is the point: a proxy read as the
+thing.** mtime is a proxy for content; one symbol is a proxy for the tree. ⛔ **A
+sample is not a census** — the same sentence as *absence of a connection is not
+proof of absence*, one level over.
+
+⛔ **And the CTO's re-measurement is worse than either, so it settles the
+question rather than merely supporting it** (round 17, ruling 18). Re-run 33
+minutes later with **no content change**, the mtime verdict flipped **FAIL →
+PASS on its own**. ⚠️ **`git worktree add` resets every mtime** — so an mtime
+tripwire fails inside **every trial-merge worktree §0a of the rubric now
+requires**, which is to say ⛔ **the freshness check would break the gate this
+project built to catch C5.** A check that disables another check is not a
+detail; it is the worst available outcome for a tripwire.
+
+⭐ **The mechanism already exists in the artifact and nobody had to design it.**
+`graphify-out/graph.json` carries a top-level **`built_at_commit`**. So:
+
+| | Test | Why this and not the alternative |
+|---|---|---|
+| **Fresh** | `git diff --name-only <built_at_commit>..HEAD -- src tools docs` is **empty** | ⭐ Content-scoped, so it does **not** fire on a commit that touches only the board — which a bare `built_at_commit != HEAD` would, crying wolf in a second way |
+| **Stale** | that diff is **non-empty** → ⛔ **FAIL**, naming the changed paths and the rebuild command | The failure says *what* went unindexed, so it is actionable rather than an alarm |
+| **Absent, or no `built_at_commit`** | report the rebuild command, **exit 0** | A fresh clone legitimately has neither; ⛔ a red suite on clone gets muted |
+| **Unknown commit** (index built at a commit not in this checkout) | report, **exit 0** | ⚠️ Do not fail on a ref this clone cannot resolve — that is an environment fact, not a staleness fact |
+
+**Verified before assignment, 2026-09-09, main checkout @ `9ad45a2`:** after the
+PO's rebuild `built_at_commit` is `9ad45a2`, the scoped diff is **0 files**, and
+the check passes. ⛔ **The mtime test passes right now too — but only because the
+index was rebuilt minutes ago, and it goes red on the next merge.** That contrast
+is the test the author should encode.
+
+⛔ **Ship the test that stops a clock being reintroduced**, and it is the clause
+that makes this ruling durable rather than a comment somebody deletes: **touch
+every tracked file, then assert the verdict does not move.** ⭐ A future author
+reaching for `stat` fails immediately and reads why, which is the difference
+between a decision and a decision that holds. ⚠️ **`!= HEAD` is refused for the
+same family of reasons** — it fails after every commit, including a commit that
+changes only this board, so it cries wolf in a second way. The comparison is
+**scoped to what is indexed**, `-- src tools docs`, and nothing else.
+
+⛔ **Standing rule this task must honour** (C5, option 1): **a commit that adds a
+check brings the tree into compliance in the same commit.** The index is current
+as of `9ad45a2`; if it has drifted by the time this is authored, ⭐ **the rebuild
+is part of the task**, because a tripwire that lands red is a tripwire that gets
+muted. `graphify update <path>` is incremental, needs **no LLM and no API key**,
+and took under a minute here.
+
+⚠️ **One thing the rebuild does not fix, so do not assume it:** `graphify update`
+re-extracts **code** only. The doc layer needs the separate semantic pass, and
+the ⛔ **bridging** clause above is still owed — re-measured after the rebuild,
+code↔prose edges are **510 of 6,463 (7.9%)**, of which 502 are code↔`rationale`
+incidental mentions, and `graphify path "R7 — No Personal Data" "assert_clean()"`
+still returns **no path, even undirected**.
 
 **Out of scope.** Building any graph. Committing one — `graphify-out/` stays
 ignored, and ⛔ the answer to an untracked artifact is never *"track it"*: the
