@@ -36,8 +36,8 @@ row — and the reasoning goes in the round's handoff behind a pointer.** ⚠️
 prose is the 798 lines; the executable surface is the 263. Grow the second.**
 
 ⛔ **And say what you added.** A round that touches this file states, in its
-merge message and its handoff, which sections it added and the new line count.
-The number is the check.
+merge message and its handoff, which sections it added. ⚠️ **The *line count* is
+no longer part of that statement — see Ruling 149 below; the ratio is.**
 
 #### ⛔ The governor is a ratio, because a line count is not a mechanism
 
@@ -68,6 +68,31 @@ denominator stopped being the target.** ⚠️ **Quote the before and after in t
 merge message, beside the line count.** ⛔ **This is not `W34`.** `W34` reorders
 the whole document so the executable surface is on top; this only stops the
 ratio falling while `W34` waits.
+
+#### ⛔ Ruling 149 (CTO round 39) — the line count is RETIRED as a reported governor
+
+⛔ **A number that fired seven times while the property it proxies improved
+seven times is not a governor; it is noise.** The measured rows:
+
+| ref | total | executable (fenced) | ratio |
+|---|---|---|---|
+| `16049d2` | 1977 | 257 | **.129** |
+| `e309172` | 2245 | 342 | **.152** |
+| `bfc0ff6` | 2293 | 344 | **.150** |
+
+⭐ **Executable surface `+34 %` against a total of `+16 %`.** The governor's own
+stated goal — *"the prose is the 798 lines; the executable surface is the 263.
+Grow the second"* — was met in **every interval it alarmed on**.
+
+⛔ **Pass condition, and it is the only one: the ratio above did not fall.**
+`.150` versus `.152` is within one carry and is a **pass**. ⚠️ **A round no
+longer quotes this document's line count**, and a line count is not a `W34`
+start condition (struck at Ruling 118) nor a reported measurement (struck here).
+
+- ⛔ **`PO-24/8`'s remedy is CLOSED as overtaken** — it was owed against a breach
+  the correct instrument says never happened.
+- ⭐ **`W34` is dispatched on its MERITS, not on an alarm**, and it is not
+  urgent. It is rowed that way on [the board](../tasks/BOARD.md).
 
 ---
 
@@ -326,6 +351,32 @@ git diff "$BASE"...HEAD -- '*.py' | grep -E '^\+.*(raise|warn|log|print).*\{' | 
 branch that refuses an absolute path** — not on the neighbouring one that was
 already safe. ⭐ Check which branch the assertion covers, not that an assertion
 exists.
+
+#### ⛔ Ruling 144 (CTO round 39) — R7 has THREE subjects, and an EMITTER and its GATE are read as a pair
+
+⛔ **R7's subjects are the repository, the archive and the RENDERED PAGE, and
+only the first two have a sweep.** A home path that reaches a page has reached a
+file R7 governs; the two existing sweeps look elsewhere and report clean.
+
+⭐ **And the pair rule, which is the transferable half:**
+
+```bash
+# For every value class one function REFUSES to emit, ask what the gate ADMITS.
+# Run both halves on the same input; a disagreement is the finding.
+```
+
+⛔ **Pass condition: where one module emits a value class and another admits it,
+the reviewer runs BOTH on the same input and records the two answers.** ⚠️ **A
+disagreement is a defect whichever way it points** — and it points both ways:
+
+```text
+rooted path     relative_href REFUSES to emit  |  safe_href ADMITTED    -> gate LAX  (the ruling)
+'café.html'     relative_href EMITS            |  safe_href REFUSES     -> gate STRICT (PO-32/4)
+```
+
+⭐ **The lax direction is the security hole; the strict direction is the silent
+drop.** ⛔ **Only the first was named**, which is why the rule is *read them as a
+pair* rather than *tighten the gate*.
 
 ⚠️ **This is not a REJECT.** ⛔ REJECT's R7 cause is "a personal identifier
 **reached a commit**" — it survives deletion, so the branch is rewritten. An
@@ -982,6 +1033,33 @@ checkouts**, so the check that is *right* to be host-verified is the one whose
 answer moves. ⭐ **Every reviewer measures in a trial worktree**, which is
 precisely the checkout that gets the other number.
 
+#### ⛔ Ruling 147 (CTO round 39) — Ruling 108 extended: a base pin is a property of a CHECKOUT, not of a ref
+
+```bash
+git rev-parse --git-dir | grep -q '/worktrees/' && echo "LINKED WORKTREE" || echo "MAIN"
+git status --porcelain                    # ⛔ untracked files change the counts below
+docker/dev/check python3 -m tools.quality # ruff / pointer / index lines, per checkout
+```
+
+⛔ **Pass condition: EVERY count a review quotes — a lint count, a pointer
+count, a file count, a skip set — is either taken in a clean worktree of the
+ref, or names the checkout beside the number.** ⭐ Ruling 108 said this of a
+skip set; the class is every count.
+
+**Measured, one ref, two checkouts:**
+
+```text
+e309172   detached worktree, clean          ruff 559   pointers 177 in 199 md
+e309172   MAIN, `?? ONBOARDING.md`          ruff 560   pointers 177 in 200 md
+f898dbb   wt/po32, clean                    ruff 562   pointers 185 in 202 md
+f898dbb   MAIN, `?? ONBOARDING.md`          ruff 563   pointers 185 in 203 md
+```
+
+⚠️ **The trap is that the flattering reading AGREES with the wrong thing.** A
+reviewer trusting a pinned `560` computes `560 → 560`, concludes the branch
+added no formatted file, and **contradicts the branch's own correct isolation of
+its `+1`.** ⛔ The pin does not merely mislead; it corroborates the error.
+
 #### ⛔ Ruling 87 — a skip class that can hide a SUBSYSTEM announces itself at the end of the run
 
 ⛔ **Pass condition:** when a precondition switches off more than a handful of
@@ -1297,6 +1375,31 @@ is that row earning its mandate twice on one day. ⭐ **Cause 2 fails
 PESSIMISTICALLY and that is the hazard, not the comfort:** a red baseline
 shrugged at is a sweep whose every subsequent `KILLED` is unreadable, and the
 flattering reading is one step away.
+
+#### ⛔ Ruling 146 (CTO round 39) — a sweep asserts its own ROW COUNT, or it is not a sweep
+
+```bash
+rows=0
+while read -r m; do
+    rows=$((rows+1))
+    docker/dev/check python3 -m pytest -q </dev/null   # ⛔ </dev/null on EVERY docker call
+done < mutants.txt
+[ "$rows" -eq "$(wc -l < mutants.txt)" ] \
+  || { echo "SWEEP RAN $rows OF $(wc -l < mutants.txt)"; exit 1; }
+```
+
+⛔ **Pass condition: the row count is asserted against a population declared
+BEFORE the loop — never against a number the loop itself produced — and every
+`docker` invocation inside a loop is redirected `</dev/null`.**
+
+⚠️ **Adopted from a developer whose first sweep silently ran ONE row**, because
+`docker` consumed the loop's stdin. ⛔ **It exited 0, printed two agreeing
+baselines, and looked healthy.**
+
+⭐ **It defeats Rulings 70, 76, 83 and 123 at once, and that is the point: every
+recorded signal was TRUE — of the one row that ran.** ⛔ **No check that inspects
+a row's output can detect a row that never existed**, which is why the count is
+the only instrument that closes it.
 
 #### ⭐ Ruling 71 — suspect evidence is **re-measured**, not scheduled, when measuring is cheaper than filing
 
@@ -2052,6 +2155,21 @@ If the change adds, removes or renames a package or module, the graph is stale
 (R14) — but ⛔ **it is not rebuilt by the agent doing the work**, and a diff
 containing `graphify-out/` is a fail: it is git-ignored, local, rebuilt, never
 merged.
+
+### ⛔ Ruling 143 (CTO round 39) — an out-of-`Owns` TEST edit, under three bounded conditions
+
+⭐ **RATIFIED, and the bound is the test's own comment.** A branch may edit a
+test outside its `Owns` **only** when all three hold:
+
+1. ⛔ **The test pins a DEFECT, and says so in its own body** — the comment is
+   the bound, because it is the thing a later reader can check.
+2. ⛔ **The edit INVERTS the assertion rather than deleting it** — a deleted test
+   is a lost record; an inverted one still names the behaviour.
+3. ⛔ **It is DISCLOSED in the handoff**, as an out-of-`Owns` edit, by path.
+
+⚠️ **This is NOT a licence to edit a test that merely fails.** A failing test
+outside `Owns` is a **finding**, not a diff — the general rule above is
+unchanged, and these three conditions are the whole of the exception.
 
 ### ⛔ 10b. A change to an import is felt by tests in another package
 
