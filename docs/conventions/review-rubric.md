@@ -1077,6 +1077,25 @@ python3 -m pytest -q -rs | sed -n 's/^SKIPPED \[\([0-9]*\)\].*/\1/p' \
   | paste -sd+ - | bc      # must equal the tail's "N skipped"
 ```
 
+> ⛔ **Ruling 170(b) (CTO round 43) — the `29` above is only reachable under
+> `-rs`, and the SAME command under plain `-q` reads `0`.** Measured by the PO
+> (`PO-35/6`) and re-measured by the CTO at `911c56f` and `c998f46`:
+>
+> ```text
+> grep -c '^SKIPPED'   under  pytest -q -rs   ->  29      (an UNDERCOUNT)
+> grep -c '^SKIPPED'   under  pytest -q       ->   0      exit 1
+> multiplicity parse, both invocations        ->  63      ⭐ the answer
+> ```
+>
+> ⚠️ **`0` is the worse reading and it is the one nobody had quoted: it reads as
+> *no skips at all* — a FABRICATION, where `29` is merely an undercount.**
+>
+> **The clause:** ⛔ **every fenced instrument in this document names the EXACT
+> INVOCATION that produces the reading printed beside it, flags included.** ⭐ **A
+> stated reading with no invocation is a number whose instrument the next
+> reviewer has to guess, and they will guess the invocation they happen to be
+> running.**
+
 ⭐ **Two offices hit it independently in one round** — the PO in `PO-30/7` and
 the CTO in their own base census, before reading it. ⛔ **What refused the wrong
 number was neither instrument: it was Ruling 128's EXPECTED reading, written
@@ -2238,6 +2257,32 @@ rule:** the reviewer is **not** asked to verify the destination was reached.
 that cannot fire is worse than none, because it reads as coverage.** ⭐ It belongs
 on the **wave-open checklist**, run by the person who does the carrying: the PO.
 
+> ⛔ **CTO round 43 — the checklist goes 7 → 8, and ONE of two candidates is
+> admitted.** ⭐ **The PO put both to this office rather than adding either
+> unilaterally, which is right: the checklist is a SHARED instrument and only one
+> office may grow it.**
+>
+> | candidate | decision |
+> |---|---|
+> | **`PO-34/7`** — every minted id has a register row | ⭐ **ADMITTED as check 8.** It is an **emptiness claim over a CLOSED population** — minted ids against register rows — so it has a printable population, it is mechanical, and its failure mode has already occurred three times by hand (`SF-35`, `SF-36`, then `W78`/`W79`) |
+> | **Ruling 165 clause 4** — a bare integer in a framework Acceptance | ⛔ **DECLINED as a check. NOT dropped — RE-HOMED into `W70`'s scope** |
+>
+> ⛔ **Why clause 4 is declined, and it is this document's own argument used
+> against its author:** the population is **not closed**. A bare integer in an
+> Acceptance is usually legitimate — a `400`-line cap, a module count, a number
+> of chrome regions. ⚠️ **A grep that returns dozens of legitimate hits every
+> round is a check whose output is routinely ignored, and this document already
+> says at Ruling 84's migration note that *a check whose output is routinely
+> ignored is a check that has stopped running*.** ⛔ **Adding a second such check
+> one clause after writing that sentence would be this office contradicting
+> itself in the same file.**
+>
+> ⭐ **`W70` already reads EVERY Acceptance clause once, with judgement, which is
+> the right instrument for a heuristic.** ⛔ **Ruling 165 clause 4 is discharged
+> into `W70` — one pass, with judgement — rather than into the checklist for a
+> grep in perpetuity.** ⚠️ **`W70` is already dispatched, so this is scope it is
+> being GIVEN by the CTO, not scope it may assume; the PO records it on the row.**
+
 ⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
 — the author is describing their own scope and is the worst-placed person to see
 that something will recur elsewhere.
@@ -2583,6 +2628,28 @@ back-filled**: rewriting merge messages on a branch other agents have already
 built on costs more than the record is worth, and the verdicts themselves are on
 record in `docs/tasks/handoffs/CTO-*.md`. ⭐ The rule binds from here, and the
 check above is scoped to merges after this commit.
+
+> ⛔ **Ruling 170(a) (CTO round 43) — the FENCED command above IS the
+> instrument.** ⚠️ **The PO re-spelled its predicate from memory as
+> `grep -v 'CTO: '` and read `23` where the fenced form reads `24`, at all three
+> refs (`PO-35/7`, a finding they filed against themselves).**
+>
+> ```text
+> …| grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)'   ->  24   ⭐ INSTRUMENT
+> …| grep -v 'CTO: '                                       ->  23
+> diff  ->  7a82249 Merge CTO round 7: … (CTO: self-reversal)
+> ```
+>
+> ⛔ **The re-spelling drops any line carrying a verdict-shaped string; the
+> fenced form drops only the two strings that are APPROVALS.** ⭐ **So the
+> re-spelling is blind to exactly the class this clause exists to surface — a
+> verdict that is NOT an approval — and it reads LOW, which is the direction
+> that misses violations.**
+>
+> **The clause:** where this document fences a command, that command is the
+> instrument. ⛔ **A predicate re-spelled from memory is a SECOND, UNVALIDATED
+> instrument; a reading taken with it is reported as a re-spelling, with BOTH
+> numbers, and never as the check.**
 
 ### ⛔ Ruling 84 — the check above enumerates merges, so run its complement too
 
