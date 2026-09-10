@@ -31,6 +31,39 @@ How a task is picked up, worked, and handed on. Applies to every task in
   something and recorded why, follow it and cite it. Where you think it is
   wrong, say so in the handoff — do not quietly diverge.
 
+### ⛔ Ruling 139 (CTO round 38) — a sweep's artifacts live under the agent's **own worktree**
+
+> ⛔ **A sweep row's artifacts — log, table, harness, mutant backup — are written
+> under the agent's own worktree (`<worktree>/.scratch/`), never the shared
+> scratchpad root.** ⚠️ A sweep is the one artifact that cannot be re-derived
+> cheaply: 39 container runs, ~13 minutes.
+
+⚠️ **Why:** `W40/5` and `SK-05/6` are the same defect reported from opposite
+sides in one round. Both sweeps wrote `sweep.log` into the shared session
+scratchpad; one truncated the other, and `SK-05`'s first log came back carrying
+another row's readings. ⭐ **`W40` kept its numbers by luck** — its rows were in a
+file the other script did not name.
+
+⛔ **The enabling half already shipped and you must not undo it: `.scratch/` is in
+`.gitignore`.** ⚠️ **Without that entry the clause reds the floor** —
+`tools.quality.config.text_files` walks everything git has not been told to
+ignore, deliberately, because a file you have just written and not yet added is
+exactly what an R7 gate must catch (`config.py:253`). ⭐ **Measured in the pinned
+image, three readings, `$?` with no pipeline:**
+
+```text
+1  LIVE     .scratch/ present and NOT ignored  ->  floor exit 1, 108 findings
+1' LIVE     .scratch/ present and ignored      ->  floor exit 0
+3  CONTROL  git check-ignore .scratch/          ->  exit 0, matched by .gitignore:48
+           git check-ignore tests/support.py    ->  exit 1   (the rule is narrow)
+```
+
+⛔ **Run reading 3 before you trust the clause.** ⭐ **It pairs with Ruling 131's
+clean-tree clause** (`review-rubric.md`), which is where the sweep's other
+tree-sensitivity rule lives — ⚠️ **the ruling named this file and named that
+neighbour, and they are two documents; the clause is here and the neighbour is
+cross-referenced rather than copied** (`PO-31/5`).
+
 ## ⛔ An acceptance clause you cannot meet is reported, never rewritten
 
 ⚠️ **Sometimes the plan contradicts itself and only one half can hold.** SF-03
@@ -176,6 +209,25 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
   admission. A new kind is one entry in `DOCUMENT_KINDS`.
 - ⭐ **A handoff for two tasks declares both** — `**Kind:** task handoff — W17,
   W19` — and its title names both. The filename must begin with the first.
+
+### ⛔ Ruling 134 (CTO round 38) — a history-based instrument silently loses a file at a rename it did not score
+
+> ⛔ **When a task splits a module into parts and no part reaches git's default
+> similarity, the handoff RECORDS THE FLAG that recovers the history, and any
+> later task tracing a split file's provenance runs `-M20%` before concluding
+> the history is gone.**
+
+⚠️ **The failure is silent and it flatters** — the history *looks* complete, it
+simply begins later.
+
+```bash
+git log --follow tests/gate_coverage/test_coverage.py   # stops at W40's commit
+git diff -M20% ddddd05 HEAD -- tests/gate_coverage/     # finds it
+```
+
+⛔ **Measured:** no single new module is 50 % of the 600-line original.
+⭐ **`W40` already did this; the ruling ratifies it as the standing form rather
+than one developer's courtesy.**
 
 ### ⛔ A record is ANNOTATED, never edited — and its header names a REF, not a pointer
 

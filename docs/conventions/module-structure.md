@@ -193,6 +193,102 @@ claim that splitting three genuinely separate concerns, each with its own test
 module, would be *worse*. ⭐ **It would not have been, and the reviewer would
 have been obliged to refuse it.**
 
+### ⛔ Ruling 136 (CTO round 38) — Ruling 100's other half: an `Owns` cell names a **module**, never a `.py` **file**
+
+> ⛔ **An `Owns` cell naming a `.py` file is a prediction about size, and R11
+> guarantees the prediction expires.** So the remedy is at the source — the cell
+> stops naming a file — which kills the class instead of chasing it with a
+> checker. ⚠️ **Widening the pointer check is the wrong remedy**: both known
+> instances sit inside code spans, which `pointers.py` strips by design (use
+> versus mention), and widening it would flood every document that quotes a
+> command.
+
+⭐ **Carried by the PO 2026-09-10 (round 31), and the form is SHARPER than the
+ruling's *"names a directory"*. Declared, with the reason.**
+
+⛔ **The cell names a MODULE in Python's own sense** — `corpus/manifest/content`,
+no extension — ⭐ **because a module's name does not change when it becomes a
+package, and that is precisely the change R11 forces.** ⚠️ **Writing the
+directory form instead (`version/`) would fix nine true cells by inventing
+forty-one false predictions of a package that may never exist** — ⛔ **a lie that
+reads as a fact, which is the defect one door along, not the fix.**
+
+⭐ **The `.py` was never carrying information.** It asserted an *implementation*
+— file, not directory — inside a field whose own definition in
+[`../tasks/README.md`](../tasks/README.md) is **"the package this task creates.
+One task, one surface."** ⛔ **The definition was right the whole time; the cells
+drifted from it.**
+
+**Three durable forms, and no fourth:**
+
+| the subject is | the cell names | why it survives |
+|---|---|---|
+| a **surface** | the module path, **no extension** — `corpus/manifest/content` | a package split does not rename a module |
+| a **document** | the file, with its extension — `docs/conventions/agent-protocol.md` | R11's ceiling is asserted of Python modules; a document's name carries no expiry |
+| a **single assertion** | the test function's name | Ruling 133: a shape names the seams, and a function name survives a file split |
+
+⭐ **A test mirror is written *"and its mirror"*, never by path** — a mirror is
+defined by its source and moves with it (`tools/quality/mirror.py` is the
+authority). ⭐ **A greenfield directory is declared as such, with its file count
+at a named ref.**
+
+⚠️ **The consequence, stated so it is not discovered at a collision:** ⛔ **the
+R11 pre-dispatch sum's population is DERIVED at pick-up from the cell, never read
+off it** — the same move already ratified for `W40` (`CTO-32/8`) and `W38`.
+⚠️ **And two rows owning two modules in one package now collide where a
+file-level cell said they did not.** ⭐ **That refusal is correct: R11 guarantees
+either module may become a subpackage of that same parent mid-flight, so the
+finer disjointness was never durable.** ⛔ **The remedy is the one this board
+already uses — ONE dispatch (`W48`/`W42`) — not a finer cell.**
+
+**Measured, PO round 31 @ `e309172`:** the live class is **9**, not 2 — every one
+a cell naming a `.py` that a package split turned into a directory of the same
+name: `E00:509`, `E01:51`, `E01:183`, `E01:324`, `E01:524`, `E01:628`, `E01:681`,
+`E02:93`, `E03:43`. ⛔ **All nine corrected in the carrying commit** (the
+tightening owns the migration). ⚠️ **41 cells still name a `.py` that resolves
+today — latent, not broken — and they are `W62`.**
+
+### ⭐ Ruling 132 (CTO round 38) — a **one-way** seam is a valid R11 split, and mutual independence is the strongest form, not the required one
+
+> ⛔ **`W44` could assert *neither half imports the other*; a parser must build
+> its model, so mutual independence is impossible by construction and demanding
+> it would either forbid the split or force a fake third module to hold the
+> constructors.**
+>
+> ⭐ **What a one-way seam owes instead, all four:**
+>
+> 1. the **direction** is stated in the package contract (`content/__init__.py`
+>    says `parse` builds what `policy` defines);
+> 2. it is **asserted over the source**, never promised in prose —
+>    `test_the_seam_holds_and_the_model_never_reads_the_reader`;
+> 3. the negative control plants the forbidden import in a **spelling the clause
+>    did not picture** — here a *relative* `from .parse import …`;
+> 4. an **impossible** subject shows the detector is not answering `True` to
+>    everything.
+>
+> ⛔ **Measured on the merits, not accepted on the candour.** **APPROVED as the
+> standing form for a producer/consumer split.**
+
+⚠️ **One refinement rides with it:** ⛔ **the inhabitation assertion belongs on
+every sweep, including the ones whose subject looks obviously non-empty** — a
+`policy.py` with no imports at all would pass the seam clause as first written.
+
+### ⭐ Ruling 133 (CTO round 38) — a reviewer's shape names the **seams**, never the file count
+
+> ⛔ **Two assertions with different POPULATIONS are two modules.** A round-22
+> shape said *"the assertions"*, singular; `W40` shipped two and stated the
+> deviation. **RATIFIED.**
+>
+> | module | quantifies over |
+> |---|---|
+> | `test_coverage.py` | ⛔ **the repository tree** — every module under `SCAN_ROOT` |
+> | `test_tell.py` | ⛔ **the probe table** — 12 `PROBES` and two retired spellings |
+>
+> ⭐ **Fusing them puts the probe table inside the module that makes a claim
+> about the tree, and makes one failure mean two unrelated things.** ⛔ **A split
+> that obeys a sketch's arithmetic against the sketch's own reason has followed
+> the wrong half of it.**
+
 ### ⛔ Ruling 101 (CTO round 28) — a constant a SECOND package needs is exported from the first package's surface, or it is not shared
 
 ⛔ **The rule above is stated as a prohibition on the consumer. It has a
