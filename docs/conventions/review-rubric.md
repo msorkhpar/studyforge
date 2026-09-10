@@ -2633,7 +2633,8 @@ verdict attached.
 
 ### ⛔ Rulings 177 + 180 — a MIGRATION is validated over CONTENT, at a REF
 
-⛔ **One clause, two halves, and neither is sufficient alone.** A change that
+⛔ **Ruling 177 is the CONTENT half and Ruling 180 is the REF half. One clause,
+and neither half is sufficient alone.** A change that
 moves material between documents — a board decomposed into row files, an archive
 split, a document renamed — makes the claim *this content went there*. ⭐ **That
 claim is true or false of two REFS, over FIELDS, and a line partition that sums
