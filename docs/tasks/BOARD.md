@@ -5,12 +5,24 @@ the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
 ⭐ **M0 is CLOSED — `FND-05a` merged and the last M0 task is done.** ✅ **M1 steps
-1.1, 1.2 and 1.3 COMPLETE.** ⏳ **M1 step 1.4 is OPEN and `SF-10` is unblocked and
-waiting on nothing** — rulings 50 and 51 cleared it and `W20` has landed.
+1.1, 1.2 and 1.3 COMPLETE.** ⏳ **M1 step 1.4 is OPEN and `SF-10` is
+`in-review`** — ⛔ **built, 1,989 lines, on `feat/SF-10-unit-builder` @ `c33f231`,
+unmerged and awaiting a CTO verdict.** ⚠️ **This board said *"unblocked, waiting
+on nothing"* while that branch existed; see step 1.4.**
 
-📏 **Base, measured in the pinned container at `a7c114b`: 2490 passed, 8 skipped,
-quality floor clean.** ⚠️ **Twenty branches this session.** ⭐ **Skips 46 → 8**, both remaining causes structurally
-unfixable by an image.
+📏 **Base: 2490 passed / 8 skipped in the pinned container at `a7c114b`; ⭐ **2487
+passed / 11 skipped on the host at `e5bcc85`**, quality floor clean, exit 0.
+
+⛔ **Read the two commits, not the two numbers.** ⚠️ **`a7c114b` is two merges
+behind the tip**, so the container figure is a measurement of a tree nobody is
+working on — ⭐ **and the honest form of a base is *what was measured, where, and
+at which commit*, never a bare pair of counts.** ⛔ **A base quoted without its
+commit is the branch-state-as-tip-state defect wearing a number**, which is the
+one this session has catalogued five times. ⚠️ **Neither figure supersedes the
+other and both carry their instrument.** ⭐ **The arithmetic reconciles exactly —
+`2490 + 8 = 2487 + 11 = 2498` — so the difference is *three tests that skip
+off-image*, not three tests that vanished.** ⛔ **Which three is not measured
+here**, and that is the first thing to check if the totals ever stop reconciling.
 
 ⛔ **Release branch: `release/m0-foundations`, and M1 continues on it.** ⚠️ **Its
 name is historical, not descriptive** — there is no `release/m1-*` and there never
@@ -60,6 +72,58 @@ not applied it.**
 *Editing rule:* a status change is one cell. Do not restructure rows; record
 events in the **Log**, which lives in [`BOARD-ARCHIVE.md`](BOARD-ARCHIVE.md) and
 is appended to there.
+
+## ⛔ RULED 2026-09-10 — **findings are numbered per-document; `53`, `54` and `55` are ambiguous and here is which is which**
+
+⭐ **Raised by the coordinator, measured here, ruled here.** ⛔ **The rule lands in
+[`../conventions/agent-protocol.md`](../conventions/agent-protocol.md)** — *a
+finding is numbered inside its own document, never globally*, as
+`<TASK-ID>/<n>` — ⚠️ **and the argument for refusing an allocator is there, not
+restated here.**
+
+⛔ **The measurement found more than the report did, and that is Ruling 55 again.**
+⚠️ **The report named one collision, from a grep of `5[5-9]`. A full census of
+`handoffs/` found THREE — `53`, `54` and `55` — and 10 gaps in a 39-number
+range.** ⭐ **The number was a fact about an instrument.**
+
+### ⛔ The disambiguation, because 8 live citations are ambiguous today
+
+⛔ **Neither document is edited — a handoff is a record.** ⭐ **`W4`'s precedent:
+the board is where a superseded record gets superseded.** ⚠️ **Numbers 20–58 are a
+CLOSED LEGACY RANGE; every existing citation still resolves, and a citation to one
+of these three must say which.**
+
+| # | `FND-05a.md` | `SF-10-survey.md` |
+|---|---|---|
+| **53** | `:137` | `:163` |
+| **54** | `:146` | `:168` |
+| **55** | `:157` — *this gate cannot run inside …* | `:176` — *the load-side validator …* |
+
+⛔ **Cite these three as `FND-05a/53` or `SF-10-survey/53`, never as "finding 53".**
+
+⭐ **The sharpest fact, and it is the one that refused the allocator:** ⛔ **both
+documents have the same author, on two branches, in one wave.** ⚠️ **They collided
+with themselves** — so an allocator file would have been edited on both branches
+and would either conflict (the reviewer catching it, which is what we already
+have) or ⛔ **merge cleanly with both increments and lose one silently.**
+
+### ⭐ The enforcement rides with `W25`, and yes it is worth hurrying for
+
+⛔ **Ruling 49's handoff check is being built this wave, by Developer 2, on this
+exact directory.** ⭐ **One commit rather than a second pass over the same file**,
+and the check is the natural enforcer: it is already deciding what a handoff *is*.
+
+⚠️ **It does not widen `W25`'s scope so much as give it a second, cheaper
+assertion** — ⛔ **`<TASK-ID>/<n>` is a *shape*, and a shape is exactly what that
+check was already going to test.** ⭐ **It also inherits `W25`'s hardest problem
+for free: 29 of 52 files in that directory are not task-shaped, and a finding
+number scoped to its document does not care.**
+
+⛔ **Legacy is not migrated and the check must say so** — ⭐ **numbers 20–58 in the
+existing 12 documents are grandfathered, and a check that reds on them would be a
+check that demands a record be rewritten.**
+
+---
 
 ### ⛔ The editing rule that this document kept breaking: **a summary points, it never restates**
 
@@ -166,19 +230,67 @@ which is the one seam neither can inspect from their own side.
 > SF-09, all merged. **Team**-sized, `~70k`, owns `unit/builder.py` and its
 > package.
 
+⛔ **This table was rebuilt on 2026-09-10, because it had become the defect it
+exists to prevent.** ⚠️ **It carried `W20` twice (`todo` **and** `done`), `SF-10`
+twice (`unblocked` **and** `todo`), and three rows whose status disagreed with
+the tree.** ⭐ **Every cell below is a measurement taken on `e5bcc85` today**, not
+a status inherited from the round that wrote it. The re-measurement is check 4
+and this is what it produced.
+
 | Task | Owner | Status | Gate |
 |---|---|---|---|
 | **W14** — two missing invalid fixtures | Developer 1 | ✅ `done` | — |
 | **W18** — Ruling 35, `authoritative ⟹ bundled` | Developer 1 | ✅ `done` | — |
-| **W23** — the live R7 hole (tilde, `/export/home/`) | Developer 2 | ⏳ `in-progress` | ⛔ **before W20** |
-| **W20** — repo-wide §7c check **and its migration** | Developer 2 | `todo` | ⛔ **before SF-10 lands** |
-| **Ruling 46's helper** — `asserting=` rule-id set + the misattribution message | **Developer 1, now** | ⏳ `in-progress` | ⛔ **stop at the helper; the general seam is scoped once, here** |
+| **W23** — the live R7 hole (tilde, `/export/home/`) | Developer 2 | ✅ `done` — ⛔ **the board said `in-progress` for a round** | — |
+| **W20** — repo-wide §7c check **and its migration** | Developer 2 | ✅ `done` — **0 hits, floor clean, exit 0** | — |
+| **Ruling 46's helper** — `asserting=` rule-id set + the misattribution message | Developer 1 | ✅ `done` — ⚠️ **the board said `in-progress`; it is merged** | ⛔ **stopped at the helper; the general seam is `FND-08`** |
 | **SF-10 survey** — port inventory + R11 package shape (**W5**) | Developer 1 | ✅ `done` — `13b2857`, one document, no code | — |
 | **FND-05a** — the workspace pin file and its verification command | Developer 1 | ✅ `done` — ⭐ **M0 CLOSED** | — |
-| **W20** — repo-wide §7c check and its migration | Developer 2 | ✅ `done` | — |
-| **W25** — Ruling 49's handoff check | Developer 2 | ⏳ `in-progress` | — |
-| **SF-10** — Unit document builder | **Developer 1, now; Developer 2 joins** | ⏳ **unblocked, waiting on nothing** | — |
-| **SF-10** — Unit document builder | **both, as a team** | `todo` | when the survey and W20 land |
+| **SF-10** — Unit document builder | **Developer 1 built it; Developer 2 reviews with the CTO** | ⏳ **`in-review`** — ⛔ **1,989 lines exist on `feat/SF-10-unit-builder` @ `c33f231`, unmerged** | ⛔ **CTO verdict, plus rulings on findings 59 and 60** |
+| **W25** — Ruling 49's handoff check | Developer 2 | ⛔ **`todo` — NEVER STARTED.** The branch is byte-identical to `HEAD` | ⛔ **and it is re-priced: see below** |
+
+#### ⛔ The two rows that were lying, and they lied in opposite directions
+
+⚠️ **`SF-10` is the expensive one, and it is a new shape of the same old defect.**
+The board said *"unblocked, waiting on nothing"* — ⛔ **while 1,989 lines of it,
+across 18 files, sat finished on an unmerged branch.** ⭐ **A second author picking
+the row up would have rewritten the entire package**, and nothing on this board
+would have told them not to. ⛔ **That is *branch state invisible as tip state*,
+which is the mirror of the defect this session has catalogued five times** — and
+the mirror is worse, because the familiar version over-reports progress and this
+one **under**-reports it, so it reads as caution rather than as error.
+
+⭐ **The row now names the branch and the commit.** ⛔ **A row for work in review
+that does not say where the work is has not recorded anything.**
+
+⚠️ **`W25` is the plain one: `in-progress` against a branch containing nothing.**
+⭐ **The coordinator's handoff said "never started" and the board disagreed; the
+`git diff` settles it and the handoff was right.**
+
+⛔ **`W23` and Ruling 46's helper were both `in-progress` and both merged** — so
+three of this table's nine rows were wrong, in **both** directions, in one round.
+⚠️ **That is the argument for check 4 being run rather than read**, and it is now
+the second time running it has changed the plan.
+
+#### ⚠️ `W25` is re-priced, and the number is the reason it is not a small task
+
+⛔ **Ruling 49 binds `<TASK-ID>.md`, and most of that directory is not
+task-shaped.** ⭐ **Measured today, not inherited:**
+
+| `docs/tasks/handoffs/` | count |
+|---|---|
+| files total | **52** |
+| strictly `<TASK-ID>.md` | **23** |
+| not task-shaped at all (CTO rounds, sessions, `README.md`, a drift doc, ruling notes) | **23** |
+| compound or suffixed task ids (`SF-10-survey`, `W1-W2`, `W7-W13`, `W14-W18`, `W17-W19`, `W19-provenance-pin`) | **6** |
+| ⛔ **would need an exemption rule or a rename** | ⛔ **29 of 52 — 56%** |
+
+⛔ **So the check's hard part is not the six sections; it is deciding what a
+handoff *is*.** ⚠️ **A naive check demands six sections from a CTO round document
+and from a survey that owes none** — the coordinator flagged exactly this and the
+measurement makes it 56% of the directory rather than an edge case. ⭐ **The rule
+is `FND-08`'s and it is the same one: *exempt documents by declaration, never by
+guessing at a filename*.**
 
 ### ⭐ Developer 1 takes FND-05a — the M0 residue that has waited a whole milestone
 
@@ -260,7 +372,65 @@ wrote can declare itself the source's own.** That is R5 failing open, and
 alongside SK-01 and did not land. ⭐ **A thing that has evaporated twice does not
 get a third trigger; it gets a gate.**
 
-### ⭐ Scoped before the task is written: **W20 ships a fixture-access seam, and three walks consume it**
+### ⛔ SCOPED AND CLOSED — **Ruling 43's four walks are `FND-08` and `FND-09`**, and the count was wrong
+
+⭐ **Ruling 43's task is scoped, once, and the scoping is now in the epic where a
+task definition belongs — `E00-foundations.md`, `FND-08` and `FND-09`.** ⛔ **The
+section below is kept because its *reasoning* is still load-bearing and its
+correction is the best worked example this board has of a scope written against
+the wrong artifact. ⚠️ Its forward-looking clauses are superseded by the
+measurement.**
+
+⛔ **It owed four walks. Measured on `e5bcc85`, it owes two tasks and one of the
+four is refused outright:**
+
+| Walk | Scoped as | ⛔ **Measured today** | Now |
+|---|---|---|---|
+| **1 — corpus names** | done as `W20` | ✅ **0 hits**, floor clean, exit 0 | ✅ **closed** |
+| **2 — dangling pointers** (`W21`) | a check | **41 links, 33 real, ⭐ 0 dangling** — ⛔ **but 8 of 8 naive hits are false** | ⭐ **`FND-08`** |
+| **4 — the board's own archive pointers** | ⛔ **"the split added a fourth consumer"** | ⛔ **14 links, 14 resolve, `0` anchors** | ⛔ **REFUSED — it collapses into walk 2** |
+| **3 — sweep-by-declaration** (Ruling 46) | one seam, four consumers | **7 modules, 10 call sites, ⛔ 2 more unknown copies** | ⭐ **`FND-09`** |
+
+⛔ **Walk 4 was my own addition and it is the one that had to go.** ⚠️ **I wrote
+*"the board split just added a fourth consumer, since every `BOARD.md` pointer
+into the archive wants the same walk."*** ⭐ **Measured: all 14 pointers resolve
+and not one carries an anchor — so a checker over them can only assert that one
+file exists, and it would pass on the day the archive is emptied.** ⛔ **That is a
+check that cannot fail, which is Ruling 48's defect, arriving inside the scope
+written to prevent it — for the *second* time in this same section.**
+
+⭐ **The first time, I scoped against Ruling 45 and named `VIOLATION.md` without
+opening it. This time I named a walk without counting its links.** ⚠️ **Same
+error, one level up: the first was a ruling I had not read, the second a
+measurement I had not taken.** ⛔ **And both were caught by the *same* remedy —
+opening the artifact — which is now the strongest evidence this board has that
+Ruling 55 is a rule and not a slogan.**
+
+⭐ **The ordering inverts as a result: `BOARD.md` gains anchors first, and walk 4
+becomes an assertion over walk 2's output.** ⛔ **Adding the anchors is mine.**
+
+#### ⭐ Owners, and the measured price each is being asked to pay
+
+| Task | Owner | ⛔ **Measured price** | Gate |
+|---|---|---|---|
+| **`FND-08`** — the document walk | **Developer 2** — ⭐ **`tools/quality/` is their surface, and `W20`, `W21` and `W25` all live on it** | ⛔ **migration `0`; the cost is the markdown parser** — fence state machine **plus inline code-span stripping**, without which the check is **8-of-8 false** on this tree. ⭐ **The file-walk seam is ~80 % built already** in `tools/quality/config.py` | ⛔ **after `W25`** — same surface, and `W25` has the earlier trigger |
+| **`FND-09`** — the fixture-access seam | **Developer 1** — ⭐ **they authored Ruling 46's helper and its negative control** | ⛔ **7 modules, 10 call sites**, plus **2 previously-unknown copies** of the invalid set. ⚠️ **The move is a net size relief**: the helper's host module is at **567 / 600** | ⛔ **not before `SF-10` merges** — it edits the test tree `SF-10` is adding to |
+
+⛔ **Neither task gates the renderer.** ⭐ **Said explicitly because `W20` gated
+`SF-10` and the shape is easy to over-apply** — ⚠️ **`W20` gated it because a
+repository-wide check accumulates a migration from every new emission site, and
+`SF-10` was about to add some.** ⛔ **`FND-08` walks *documents* and `FND-09` walks
+*fixtures*; neither accumulates anything from `SF-12`.** ⭐ **Ruling 52 again: the
+scope that rule was argued over is checks with a growing backlog.**
+
+⚠️ **And the sharpest single correction: `including_invalid=` does not exist in
+any Python file in this repository.** ⭐ **It survives only in prose — including in
+the section below.** ⛔ **A scope written against it is quoting a document as
+code.**
+
+---
+
+### ⭐ Scoped before the task is written: **W20 ships a fixture-access seam, and three walks consume it** — ⚠️ **superseded above**
 
 ⛔ **Decided now because the CTO asked for it before scoping, and because three
 tree-walks are about to be written by three different people.** Ruling 43's task
@@ -325,6 +495,11 @@ it stops the false red, and it is honest about what it does.
 
 ### ⛔ W20 before SF-10, and it is the third instance of one sequencing shape
 
+> ⛔ **HISTORICAL — every number in this subsection is a *pre-migration* reading
+> and none of them describes the tree.** ⭐ **Measured 2026-09-10: `0` hits by the
+> grep and `0` by the check.** ⚠️ **The sequencing argument below is why the
+> answer is `0`; it is not a claim that anything is outstanding.**
+
 ⭐ **Ruling 43 measured 7 §7c hits already on the release branch** — `exercise/
 states.py` (4), `archive/scrub.py` (1), `address/__init__.py` (2) — ⚠️ **all
 predating this work.** So a repository-wide check **goes red the moment it
@@ -351,9 +526,168 @@ not at all**.
 
 ---
 
-## The wave-open checks — ⛔ **four**, run 2026-09-09 by the PO
+## M1 step 1.5 — `SF-12`, then `QA-03`. ⭐ **Order held; the survey is confirmed with three refinements**
 
-⛔ **All four are mine and all four run before the wave, not after it.**
+> **Step 1.5 is `SF-12`** (Templates and unit page renderer, **Team**, `~110k`,
+> owns `render/page/` and `render/templates/`), **then `QA-03`.** ⛔ **`SF-12` is
+> the largest port in the project after `SF-19a` and it is a package (R11) — a
+> task that produces one large module has not done the task.**
+
+| Task | Owner | Status | Gate |
+|---|---|---|---|
+| **`SF-12` survey** — port inventory + R11 package shape + ⛔ **W9's name review** | **Developer 1** | ⏳ `in-progress` — dispatched | ⛔ **a design, not renderer code** |
+| **`SF-12`** — Templates and unit page renderer | **both, as a team** | `todo` | ⛔ **when `SF-10` merges and the survey lands** |
+| **`QA-03`** — Visual and browser verification harness | `todo` | `todo` | ⛔ **after `SF-12`** |
+
+### ⭐ The survey is confirmed — ⛔ **on the precedent, and the precedent is measured**
+
+⭐ **`SF-10`'s survey is the reason, and it paid three ways:** it corrected `W5`'s
+number from *"an 827-line port"* to **≈250 lines left**, it produced the
+`derived`/`authored` seam argument the CTO rated as the read's whole value, and it
+was **R14's first clean instance** — 41 line-anchored nodes answering the
+structure question before a file was opened. ⛔ **The CTO's reason for it at
+`FND-04` holds identically here: only somebody who knows the module's internals
+can answer where it divides.**
+
+⛔ **Deliverable is a design, not renderer code**, and the reason is the
+collision-pair rule's *premise* rather than the rule: ⭐ **`SF-12` is `Team`-sized,
+so its code is not authored by one person ahead of the other.** ⚠️ **But the
+serial part is not the code**, and spending the gap on it is what kept the team
+task intact at 1.4.
+
+#### ⛔ Three refinements, and the first one is not optional
+
+1. ⛔ **The survey reads `feat/SF-10-unit-builder` @ `c33f231`, NOT the release
+   tip.** ⚠️ **`SF-12` renders the document `SF-10` produces, and that document —
+   `unit/served.py`, 157 lines — exists only on an unmerged branch.** ⛔ **A survey
+   conducted against the tip would be surveying a document that is not there**,
+   and this board is exactly why: ⭐ **it said `SF-10` was *"waiting on nothing"*
+   while 1,989 lines of it sat finished.** ⛔ **Nobody gets that fact from the
+   board unless the row names the branch, which is why the row now does.**
+
+2. ⛔ **`W9` is the survey's job, not the build's.** ⭐ **It has landed in `E03` as
+   `SF-12`'s *first act*** — the review of `render/pageassets/surface.py`'s class
+   names. ⚠️ **But *"its first act"* only binds if somebody has measured which
+   names are wrong**, and the survey is the one moment that is free. ⛔ **The
+   deliverable is a table: every published class name against what the port
+   actually calls it, and which side moves.** ⭐ **A rename is a change to
+   `surface.py` **and** the stylesheet together; inventing a second name is
+   forbidden and `test_surface` already fails it.**
+
+3. ⭐ **R13's live work is the survey's sharpest question, and the epic names only
+   one instance of it.** ⛔ **`html.py:1112` is `PLAYER = """<footer id="player">`
+   — triple-quoted markup in the module being ported.** ⚠️ **The epic's own rule is
+   a *judgement per literal*:** the skeleton, figures, panels and section wrapper
+   become template files, while loop bodies, inline wrappers and one-line
+   containers stay in code, *because a template file for a closing tag removes no
+   duplication and adds a hop.* ⛔ **So the survey inventories EVERY triple-quoted
+   markup literal and rules on each** — ⭐ **that is `SF-12`'s equivalent of `W5`'s
+   inventory, and it is the number the task is currently carrying in its head.**
+
+⚠️ **And one question to carry, not to answer:** `SF-10`'s survey left open
+whether the served document gets its own `api` version — ⛔ **no equivalent of
+`UNIT_API = 3` exists.** ⭐ **`SF-12` is its consumer.** ⛔ **If `SF-10`'s build did
+not mint one, `SF-12` is the second task to meet an unlocated contract, and R21
+says it stops and asks rather than choosing quietly.** ⚠️ **`W11` rides here too:
+if this task mints an `api` field, it is the colliding one — one line retires it.**
+
+### ⛔ `QA-03` after `SF-12`, and the check-first rule does **not** apply
+
+⚠️ **Worth stating, because the rule was minted one step ago and this is the first
+case where it does not hold.** ⭐ **`W20` established: *a check and the code it
+will judge are ordered check-first, or the check inherits a backlog it did not
+cause.*** ⛔ **`QA-03` is not that kind of check.**
+
+⭐ **The distinction is the backlog.** A repository-wide check goes red on landing
+because violations already exist — ⛔ **so the cost of arriving late is real and
+grows.** ⚠️ **A visual harness inherits nothing: it needs a page to look at, so it
+*cannot* precede the renderer, and arriving after `SF-12` costs it nothing.**
+
+⛔ **Recorded so the rule is not over-applied**, which is Ruling 52's whole
+subject: ⭐ **the scope `W20` was argued over is *checks that accumulate a
+migration*, and a harness with no migration is outside it.** ⚠️ **A rule stated
+without its scope gets carried at its widest, and this one is three steps old.**
+
+⭐ **`QA-03` still lands in M1 rather than M7, and that has not changed:** `SF-14`,
+`SF-18`, `SF-24` and `QA-02` each carry an acceptance condition no unit test can
+reach, ⛔ **and the precedent is not hypothetical — a highlight misclassification
+italicised every string in one language, the tests passed, and only a screenshot
+caught it.**
+
+---
+
+## The wave-open checks — ⛔ **five**, run 2026-09-10 by the PO
+
+⛔ **All five are mine and all five run before the wave, not after it.**
+
+### ⭐ This round's readings — ⛔ **checks 3 and 4 both changed the plan**
+
+| # | Check | Reading, 2026-09-10 @ `e5bcc85` |
+|---|---|---|
+| 1 | index present and current | ✅ clean in the pinned image |
+| 2 | `[structural]` triage | ✅ **131 marker lines across 32 files** |
+| 3 | ⛔ **C6 — every ruling reached its artifact** | ⛔ **the index was wrong on 6 of 10 audited, all in one direction** |
+| 4 | ⛔ **re-measure every row whose trigger has passed** | ⛔ **3 of 9 step-1.4 rows wrong, in *both* directions** |
+| 5 | `CLAUDE.md`'s *Where to start* | ✅ names M1 step 1.4 / `SF-10`, matching the board |
+
+### ⛔ Check 3 — **the rulings index is an audit, and the audit was wrong six ways**
+
+⚠️ **The index at `handoffs/CTO-2026-09-09-round17.md` lists 30, 43, 47, 48, 49,
+52, 53, 55 and 56 as unlanded or partly so, and summarises itself as *"six
+rulings have not reached an artifact."*** ⛔ **Measured by opening every named
+artifact: six of the ten audited had landed and the index says they had not.**
+
+| # | Index says | ⛔ **Measured** | Where it actually is |
+|---|---|---|---|
+| **30** | not landed | ⛔ **was true — ✅ LANDED THIS ROUND** | spec §4, *The complete key list*. ⭐ **The reversal held: `media` was never wrongly added, and no test asserts equality** |
+| **43** | *"not scoped — four walks waiting"* | ⭐ **LANDED** | `tools/quality/source_names.py`, shipped with its migration |
+| **47** | *"W20 — scheduled"* | ⭐ **LANDED** | `../conventions/personal-data-shapes.md` + `tests/test_shape_vocabulary.py` |
+| **48** | *"`agent-protocol.md`"* | ⭐ **LANDED — in the other file** | `../conventions/module-structure.md:445`. ⛔ **`W24`'s row was right and the index was stale** |
+| **49** | not landed | ✅ **correct — genuinely open** | nothing handoff-shaped in `tools/quality/`. This is `W25` |
+| **52** | *"not landed"* | ⭐ **LANDED verbatim** | `../conventions/agent-protocol.md:226` |
+| **53** | *"`FND-05a` ✅ · rubric §4b"* | ◐ **PARTIAL, and the index names the wrong site** | rubric §4b still holds **three** states; `host-verified` landed in `../conventions/workspace.md:93` — ⭐ **better than ruled, in a document the index does not name** |
+| **55** | *"Ruling 43's task"* | ⭐ **LANDED verbatim** | `../conventions/agent-protocol.md:200` |
+| **56** | *"`module-structure.md` — PO"* | ⭐ **LANDED** | `../conventions/module-structure.md:39` |
+| **46** | landed ✅ | ⭐ **LANDED** | ⚠️ **7 call sites, all in the defining module. Zero external consumers** |
+
+⛔ **Genuinely open after the audit: 30 (now closed), 49, and 53's rubric half.**
+⭐ **Three, not six.**
+
+#### ⛔ The finding, and it is worth more than the nine corrections
+
+⚠️ **An audit column is a *summary of a status owned elsewhere* — which is this
+board's own named defect, arriving in the instrument built to catch it.** ⭐ **It
+went stale in the same direction all six times: *understating* what had landed.**
+
+⛔ **And that direction is the expensive one, because it is the one that looks
+diligent.** ⚠️ **An index that over-reports landing gets caught the first time
+somebody looks for the clause.** ⭐ **One that under-reports it costs a re-landing
+— and a ruling landed twice, by two people, in two documents, is how `48` came to
+be claimed for `agent-protocol.md` and to actually live in `module-structure.md`.**
+
+⛔ **The rule: an index of where rulings landed is *derived by opening the
+artifacts*, never maintained beside them.** ⚠️ **Its author said the writing of it
+*was* C6's audit — ⭐ and it was, for the rulings whose artifact they had just
+written. It was a guess for the ones somebody else carried**, and every one of the
+six errors is in that second set.
+
+#### ⛔ Ruling 55's own founding number is recorded three different ways
+
+⚠️ **The rule says a number in a ruling is an instrument reading. Its own
+measurement — the §7c grep versus the check — is on record as:**
+
+| Artifact | Reading |
+|---|---|
+| `../conventions/agent-protocol.md:203` and `BOARD-ARCHIVE.md` | **7 → 19, across 11 modules** |
+| `../conventions/review-rubric.md:691` | **7 → 19** |
+| ⛔ `tools/quality/source_names.py:42` | ⛔ **7 → 13** |
+| ⭐ **the tree today** | ⭐ **0 → 0** |
+
+⛔ **Three artifacts, two answers, one experiment** — ⭐ **and the rule is right,
+which is why this is not embarrassing but confirming.** ⚠️ **The correction is
+`FND-08`'s and it is one line: whichever number is true, it is stale, because the
+migration ran.** ⛔ **A number quoted from a ruling after the migration it measured
+has completed is not merely imprecise; it describes a tree that no longer exists.**
 
 | # | Check | Command |
 |---|---|---|
@@ -598,6 +932,67 @@ please confirm."*** ⚠️ **A skill reporting an honest uncertainty is the skil
 working**, and it would be a defect to resolve them by guessing on the corpus
 owner's behalf — R6, and the reason reconnaissance reports rather than decides.
 
+#### ✅ ROUTED 2026-09-10 — **finding 45's accountability is `JS-01`'s Acceptance, and the *claim* is bounded by a check**
+
+⛔ **`UNOWNED until E07 opens` is not a routing; it is a row waiting for somebody
+to arrive.** ⚠️ **And it was sitting in the destination this board measured as the
+weakest there is** — a board row with an owner and a trigger — ⭐ **which is the
+same destination `W14` evaporated from, twice.**
+
+⭐ **The routing, and it has two halves because the question does:**
+
+| Half | Goes to | Why there |
+|---|---|---|
+| ⭐ **the judgement** — *do those files ask the reader to produce something?* | ✅ **`JS-01`'s Acceptance** (`E07`, M6) | ⛔ **`JS-01` owns `JS/corpus.json`. It is the task that writes the flag**, so it is the task that justifies it. ⭐ **An acceptance clause has a reviewer behind it** |
+| ⛔ **the claim** — *does `exercises: true` match what the archive holds?* | ⛔ **`studyforge validate` — finding 61, below** | ⭐ **Nobody has to be *trusted*. The tool decides**, and it decides source-agnostically (R1) |
+
+⛔ **That second half is what makes this closable, and it is the part the original
+question could not see.** ⚠️ **The finding asked *"who is accountable for a
+judgement about 168 files?"*** ⭐ **The better question is *what is the judgement
+allowed to be wrong about?*** — and the answer is: the adapter decides what it
+**emits**, after which the flag is corroborated against the emission. ⛔ **A
+judgement only a person can make, bounded by a check a machine makes.**
+
+##### ⚠️ And the finding was already stale in the epic it was routed to
+
+⛔ **`E07`'s own measured-facts table has carried the finer numbers all along and
+nobody cross-referenced them.** ⭐ **`168` is the *test-class* count; the same
+table records `163` maximum name-paired exercises and `14` impl classes with no
+`<Name>Test.java`.**
+
+⚠️ **So the finding's headline number was superseded, in this repository, before
+it was routed anywhere** — ⭐ **which is the standing rule arriving from a new
+direction: a finding is a measurement with an as-of, and it is re-run before it
+becomes a task.** ⛔ **Here the re-run was not even a command; it was reading the
+epic the finding named.**
+
+##### ⛔ Finding 61 — `studyforge validate` does not corroborate `exercises`, and the fixture checker does
+
+**Measured 2026-09-10, `e5bcc85`:**
+
+| | |
+|---|---|
+| the fixture checker | ⭐ `tests/fixture_checks/__init__.py:140` — `if bool(manifest.get("exercises")) != (practices > 0)`, rule id **`exercises-flag`** |
+| `studyforge validate`'s check list | `validate/run.py:30` — `structure.CHECKS + paths.CHECKS + source.CHECKS` |
+| ⛔ **an `exercises-flag` check among them** | ⛔ **none** |
+| what it *does* check | ⭐ `check_practice_counts` — **per-unit** declared-vs-on-disk |
+
+⛔ **So the manifest's front-door boolean is asserted in our own test scaffolding
+and unasserted in the tool an adapter author is told to trust (R2).** ⚠️ **That is
+`W7`'s shape exactly** — *"the tool an integrator is told to trust reports the
+corpus's front door clean"* — ⭐ **and `W7` is the row this board rated URGENT.**
+
+⚠️ **The gap is narrow and real:** per-unit counts are checked, so a corpus that
+declares two practices and ships one fails. ⛔ **A corpus that declares
+`exercises: true` and ships no practice anywhere passes**, because no unit
+declared any to disagree with.
+
+⭐ **Owner: CTO to rule the check's shape, then Developer 2.** ⛔ **Owed before
+`JS-01` runs**, and `JS-01`'s Acceptance says so, which is what stops it becoming
+another row nobody re-reads.
+
+---
+
 #### ⛔ Finding 45: I routed it to the wrong owner, and the refusal is worth more than the routing
 
 ⚠️ **PO-Integration owns ISO. Finding 45 is about the *Java* corpus.** They
@@ -667,6 +1062,62 @@ cannot say "duplicate", because it is not one.** It would be **material withheld
 from the reader**, ⭐ **which is X1's exact test** — an exclusion states its
 reason, and the reason has to be true.
 
+#### ✅ **Q5 RULED 2026-09-10 — INGEST it. ⛔ 38 → 55 units, and `exercises` stays `false`.**
+
+⭐ **This is the PO's call, not the integrator's, and the deciding argument is
+that there is no true reason to exclude it.** ⛔ **X1 does not ask *is exclusion
+defensible?* — it asks for a `why` that is TRUE**, and every candidate `why` has
+been measured away:
+
+| Candidate `why` | ⛔ **Measured** |
+|---|---|
+| *"duplicate"* / *"aggregate"* | ⛔ **False.** 1 of its 2,524 distinct lines appears in `src/`, and that one is a bare code fence. Real aggregates are digest-identical concatenations |
+| *"structure cannot be recorded"* | ⛔ **False.** Its 361 duplicated headings **are** its 17 chapters, recorded in the curriculum exactly as every other container's units are — **§6 is satisfiable** |
+| *"it is a unit, not a container"* | ⛔ **False.** 0 of 38 unit links sit where this one sits; it is the only one of 39 targets linked **as** a `#` heading |
+| *"it is grader material"* | ⛔ **False, and it is the catalogue's own entry 8** |
+
+⛔ **With no true `why` available, exclusion is unavailable.** ⭐ **That is X1
+working as designed: the asymmetry — an inclusion needs no justification, an
+exclusion does — decides this case on its own, without anybody weighing 17 units
+against the cost of ingesting them.**
+
+⭐ **And the affirmative reason, which is worth more than the absence of a
+negative one:** ⚠️ **excluding it would make ISO an *easier* corpus, and ISO's job
+is to be a hard one.** ⛔ **It is the second source (§12), and its value is
+measured in findings, not in a tidy site.** ⭐ **A fourth container that is a
+different shape — 17 chapters, 188 Gherkin scenarios, a fence language nothing
+else uses — is exactly the extensibility signal M8 exists to produce.** ⚠️ **The
+39th target being the one odd one is not a nuisance; it is the test.**
+
+**Two constraints ride with the ingest, and they are Acceptance, not advice:**
+
+1. ⛔ **`exercises` stays `false`. This does not make ISO runnable.** ⭐ **Catalogue
+   entry 8 is the rule and this is the case it was written on:** *188 Gherkin
+   scenarios that look exactly like a grader corpus and ask the reader to do
+   nothing.* ⛔ **Ask whether the reader is asked to produce something — not
+   whether the files look like test code.** ⚠️ **ISO remains complete at the
+   reading floor and never enters the execution track (§11.0, C5).**
+2. ⛔ **The 244 `gherkin` fences render as plain fenced text, asserted, not
+   assumed.** ⭐ **`SF-11`'s ruling already decides this** — *a language with no
+   grammar is left alone rather than dressed up as code* — ⚠️ **and catalogue
+   entry 10 is the sibling: a default that guesses is worse than a default that is
+   plain.** ⛔ **`gherkin` has no vendored Prism grammar, so the failure mode is a
+   silent mis-highlight, which is `SF-11`'s screenshot defect again.**
+
+⭐ **The two open questions turned out to be one rule seen from both sides**, and
+that is the most transferable thing here: ⛔ **finding 45 asks *"168 files that
+look like graders — are they?"* and Q5 asks *"188 scenarios that look like
+graders — are they?"*** ⚠️ **Two corpora, two integrators, one question.** ⛔ **The
+framework's answer must be identical and must not be a per-corpus judgement (R1)
+— which is why both now land on the same check: `exercises` is corroborated
+against what the archive holds, by the tool** (finding 61, above).
+
+⚠️ **Recorded as a decision, not a proposal awaiting one**, per the standing rule
+that implementation decisions belong to the PO and the CTO. ⛔ **It is reversible
+by a later commit** — an ingested container can be excluded with a true `why`
+later; ⭐ **the irreversible direction is the other one**, because a corpus that
+shipped without it teaches nobody that the shape exists.
+
 ### ⛔ W6–W13 — the eight rulings that had nowhere to land
 
 ⚠️ **Every one of these was ruled by the CTO and every one would still have
@@ -679,22 +1130,23 @@ not carrying*, above.
 | W6 | ⛔ **The R7 exception-text check** — any `{exc}` interpolation re-emits the absolute path the inner refusal was careful not to emit. `SF-02` finding 1 and `SF-05` finding 4, ruled round 8: *"build it now — a check that arrives after twenty sites exist is one nobody turns on"* | **Developer 2** | ✅ **merged `f569d0e`** | ⚠️ **`CHECKS` still has five entries and none is this**, four rounds after *"build it now"*. ⭐ The ruling's own urgency argument is the schedule: `SF-04`, `SF-25`, `SF-28` and every adapter each add sites. ⛔ It is a **sibling of W2, not a duplicate** — W2 poisons a *parameter*, this reads a *format string* |
 | W7 | ⛔ **URGENT — `corpus.json` is not gated at all.** A home path in the manifest `title` **validates green: zero findings, zero unchecked claims.** ⛔ **The tool an integrator is told to trust (R2) reports the corpus's front door clean.** Plus round 10's call-site table, of which only `SF-06`'s clause had landed | **Developer 2** | ✅ **merged `f569d0e`** | ⚠️ **Verified independently by the PO, not inherited:** `assert_clean` is called from `archive/document.py`, `corpus/container/document.py` and `unit/content.py` — and ⛔ **`corpus/manifest/` (6 modules, `document.py` among them) calls it nowhere.** ⭐ **`validate` was already wired for it: the catch is correct, the raise never comes** — which is why nothing looked wrong. ⛔ **The fix is a test that every reader gates, never a call added to a list** — a hand-maintained list of readers is how this went missing |
 | W8 | ⛔ **The dev image has no JS runtime**, so 38 tests can only run off-image. `SF-11` finding 1, ruled round 11 an `FND-03` follow-up: *"not optional and not 'when convenient'"* | **Developer 1** | ✅ **merged `dc4686c`** — ⭐ **skips 46 → 8** | ⛔ E03 and E04 widen this gap from here, and the container is authoritative *because it is pinned*. ⚠️ A claim only provable off-image is a claim the verdict cannot rest on |
-| W9 | **The markup contract has one side written** — `surface.py` guesses `SF-12`'s class names. Ruled round 11: **SF-12 reviews the names in one commit as its first act** | `SF-12` | at **SF-12**, step 1.5 | ⛔ Not in `E03` yet. ⭐ *"Its first act"* is a sequencing instruction and it only works if it reaches the task **before** the task starts |
+| W9 | **The markup contract has one side written** — `render/pageassets/surface.py` guesses `SF-12`'s class names. Ruled round 11: **SF-12 reviews the names in one commit as its first act** | `SF-12` | at **SF-12**, step 1.5 | ✅ **LANDED 2026-09-10 in `E03`** as `SF-12`'s *First act* subsection — ⭐ **and the row's own warning is why it went there:** *"its first act"* is a sequencing instruction that only works if it reaches the task **before** the task starts, ⛔ **and a board row is the destination that has evaporated twice.** ⚠️ **The path was under-specified here too** — the module is `render/pageassets/surface.py`, and its docstring already carries the *may-rename-never-duplicate* rule this row was asking for |
 | W10 | **Palette tokens with no painter** — `--hl-*`, `--player-height`, `--practice*` are defined and unclaimed. Ruled round 11: a **named, self-retiring list**, and E04/E08 acceptance gains *remove your token* | PO → E04, E08 | **before E04 / E08 are authored** (M3, M5) | ⭐ Self-retiring is the good part: the list is a number that must reach zero, ⛔ not an exclusion that lives forever. The word *"unclaimed"* currently appears nowhere |
 | W11 | **`api` is a generic field name** — the tree guard would flag a module reading an unrelated `api` key. `SF-33` finding 3 | ◐ **ACCEPTED, cost named** | if a colliding field is ever minted — realistically `SF-10` or E03's TOC | ⭐ **Zero instances today**, and the finding states its own remedy: narrow the rule to the module rather than drop the field. ⛔ Recorded so the remedy is not re-derived under time pressure |
 | W12 | **The extraction source's `naming.py` docstring says 1,282 where the tree holds 1,290.** `SF-09` finding 3, routing half | ◐ **ACCEPTED, cost named** → E11's integration catalogue | at **SK-07** / the catalogue | ⭐ A defect in a repository v1 does not modify (R20), and the *rule* it exercised — **a claim about another repository is verified in that repository** — is already ruled and applied. ⚠️ Its ask was *"route to whoever owns the drift catalogue"*; `DOC-2026-09-09-codesignal-drift.md` predates it and has no entry |
 | W14 | ⏳ **in flight** — ⛔ **TWO missing invalid fixtures on FND-04's surface, and they are one task** — the **count-mismatch** fixture (`E10` names six, five exist) and the **`user` + `authoritative` R5 pair** (finding 29). ⭐ **Both are record defects, not coverage holes: `check_counts` and the trust rule are implemented and tested — only the fixtures are absent** | **Developer 1**, after `W8` | ⛔ **before `SK-01`**, which reads `SF-25`'s output as its model of "valid" | ⚠️ **Measured on `feat/SF-23-exercise` @ `5a01a30`: the graded fixture shipped, the count-mismatch fixture did not** — `tests/fixtures/invalid/` still holds five. ⛔ **`SF-23`'s Acceptance names both, so this is a live review item, not an escaped one** — flagged to the CTO while the branch is in review. ⭐ **That is the mechanism working: routing an item into a task's *Acceptance* rather than a board row is what makes a reviewer the backstop** | ⛔ **An acceptance clause naming a fixture that does not exist is unfalsifiable** — the same class as an acceptance satisfied by an untracked artifact, arriving in a *condition* instead of a build product. ⭐ Ruled: **build the fixture, keep the clause** — it is the only statement that the count check is exercised, and the count check guards *silently lossy ingestion* |
-| W23 | ⛔ **LIVE R7 HOLE — two personal-data shapes pass the gate clean.** Confirmed by probe **with a control**: **tilde-rooted paths** and **`/export/home/<name>/`** both carry an account name and both pass. ⚠️ **Blast radius is wider than `origin`** — `assert_clean` walks **every string in a document**, so a title or block text carrying either shape reaches disk. Developer 2's finding 3 (two overlapping refusal sets) joins the same task | **Developer 2** — ⏳ **dispatched** | ⛔ **now, before `W20`** | ⭐ **The remedy is not a longer list** — see the domain limit now carried in `../conventions/module-structure.md`: where the permitted set is free text it cannot be enumerated, so the answer is **defence in depth, every layer asserted**, because no layer is sufficient |
+| W23 | ⛔ **WAS a live R7 hole — two personal-data shapes passed the gate clean:** **tilde-rooted paths** and **`/export/home/<name>/`**, both carrying an account name. ⚠️ **Blast radius was wider than `origin`** — `assert_clean` walks **every string in a document**. Developer 2's finding 3 (two overlapping refusal sets) rode the same task | **Developer 2** | ✅ **`done` — merged `d178665`, handoff `R44-gate-shapes.md`** | ⛔ **The board carried this as `in-progress` for a full round after it merged — check 4 caught it.** ⭐ **The remedy was not a longer list: three asserted layers, a 9×3 matrix with two controls, and — the part worth keeping — ⛔ a *declared* `RESIDUAL` of three shapes the gate deliberately does not refuse**, because refusing `/var/lib/home/cache/x.md` would refuse a legitimate corpus. ⚠️ **Finding 3 closed structurally**: both readers now import one predicate and a test asserts they agree |
 | W24 | **Ruling 48 — a derived-set assertion asserts *inhabitation*.** `test_a_sweep_excludes_exactly_…` was **born vacuous**: both sides computed, both empty under a directory exclusion, and it passed | PO | ✅ **LANDED this round** in `../conventions/module-structure.md` | ⭐ **Fifth instance of *a check that cannot fail*, and the first with a mechanical tell** — the four before it needed judgement. ⚠️ **It is *`0 = 0` is not a pass* in a second instrument**, and ⛔ **a rule ruled in one instrument does not transfer itself to another**: the same person ruled both without seeing the second while writing the first |
-| W25 | **Ruling 49 — `tools/quality` gains a handoff check.** ⛔ **The six sections and the markers are a *contract*, and the only thing enforcing them is a grep in a rubric that a person runs from memory** | **Developer 2**, with or after `W20` | ⛔ **before the next handoff is written** | ⚠️ **Three instances: `SK-01` (six findings, no markers — approved twice), `fix/gate-shapes`, and this. Two authors and a reviewer.** ⭐ **This project ruled four times in one round that a rule a machine can check should not be a rule a person checks — and then left its own handoff contract as the exception.** Same surface as `W20`, so same developer |
-| W20 | ⛔ **Repository-wide §7c check — and its migration, in the same commit** (Ruling 43). **Measured: 7 hits already on the release branch**, all predating this work — `exercise/states.py` (4), `archive/scrub.py` (1), `address/__init__.py` (2) | **Developer 2** | ⛔ **before `SF-10`** | ⭐ **A repository-wide check goes red the moment it lands**, so Developer 2's finding 1 is ruled: **a commit adding a check owns its migration.** One task, one commit. ⭐ **The exemption generalises: exempt *documents*, never modules** |
-| W21 | ⚠️ **A fifth rubric gap: nothing checks for dangling pointers after a docs move.** `SK-01` built the far end before deleting the near one — ⛔ *"the reverse order would have produced a green suite and sixteen dangling pointers, and nothing in the rubric would have caught it"* | **CTO** (rubric) | with the four queued rubric edits | ⛔ **The suite would have been green.** ⭐ It is the pointer rule needing an enforcer: *hold it or point at where it is held* is a convention today and nothing mechanical holds it |
+| W25 | **Ruling 49 — `tools/quality` gains a handoff check.** ⛔ **The six sections and the markers are a *contract*, and the only thing enforcing them is a grep in a rubric that a person runs from memory** | **Developer 2** | ⛔ **`todo` — NEVER STARTED.** The branch is byte-identical to `HEAD` | ⚠️ **Three instances: `SK-01` (six findings, no markers — approved twice), `fix/gate-shapes`, and this.** ⭐ **This project ruled four times in one round that a rule a machine can check should not be a rule a person checks — and then left its own handoff contract as the exception.** ⛔ **RE-PRICED, and it is not small: 29 of 52 files in `handoffs/` are not `<TASK-ID>.md`** — 23 not task-shaped at all, 6 compound or suffixed. ⭐ **So the hard part is deciding what a handoff *is*, and the answer is `FND-08`'s: exempt by declaration, never by guessing at a filename.** ⛔ **SCOPE ADDED 2026-09-10 — this check is also the enforcer for per-document finding numbers** (`<TASK-ID>/<n>`, ruled above): ⭐ **a second, cheaper assertion on the same file, and a *shape* is what this check was already going to test.** ⚠️ **Numbers 20–58 in the existing 12 documents are GRANDFATHERED** — ⛔ **a check that reds on them demands that a record be rewritten, which this project forbids** |
+| W20 | ⛔ **Repository-wide §7c check — and its migration, in the same commit** (Ruling 43) | **Developer 2** | ✅ **`done`** — ⭐ **re-measured 2026-09-10: `0` hits by the check, `0` by the grep, floor clean, exit 0** | ⛔ **The board carried this row twice, as `todo` and as `done`, two rows apart.** ⭐ **A repository-wide check goes red the moment it lands**, so Developer 2's finding 1 is ruled: **a commit adding a check owns its migration.** ⭐ **The exemption generalises: exempt *documents*, never modules.** ⚠️ **Its pre-migration count is on record three different ways — 7→19 in two conventions, 7→13 in the check's own docstring** — ⛔ **and all three are now equally stale, because the migration ran.** ⭐ **That is Ruling 55 confirming itself** |
+| W21 | ⚠️ **A fifth rubric gap: nothing checks for dangling pointers after a docs move.** `SK-01` built the far end before deleting the near one — ⛔ *"the reverse order would have produced a green suite and sixteen dangling pointers, and nothing in the rubric would have caught it"* | ⭐ **REASSIGNED — `FND-08`, Developer 2.** ⛔ **Not the CTO and not the rubric** | with `FND-08` | ⛔ **A rubric clause is a rule a person runs from memory, which is the exact thing Ruling 49 refuses.** ⭐ **Measured, and it inverts the price: `0` dangling links today, so there is no migration — ⛔ but 8 of 8 naive hits are FALSE, every one illustrative markdown inside backticks.** ⚠️ **So the cost is the parser, not the sweep**, and a repo-wide check that is 100% false-positive on its first run is one somebody switches off |
 | W22 | **Finding 44 owed to the integration catalogue**, not to `SK-01` — ⭐ **two of its three numbers came from PO-Integration** | **PO** → catalogue | ✅ **routed this round** | ⛔ Fixing it inside `SK-01` would have put a cross-source fact in one skill, where the next source cannot find it (R19) |
 | W17 **+ W19** | ⛔ **One commit, and for the reason W7+W13 were.** **W17:** *"describe a value without reproducing it"* — ⭐ **four spellings shrank to two documented holdouts while the item waited** (ruling 36). **W19:** ⛔ **the 39 remaining `{value!r}` sites, ruled urgent** | **Developer 2**, after `FND-07` | ⛔ **after `FND-07`** | ⭐ **This is the `label_of` defect at repository scale, and it is live: `W1` and `W7` are both on this exact discipline, so a fix to one spelling leaves three.** ⚠️ **It compounds with Ruling 20 one level down:** the personal-data **gate** had two copies that disagreed; the **diagnosis helper** has four. ⛔ §1a's *"do not re-derive the patterns, refused five times"* was about the **patterns**, not the **helpers** — so nobody swept here. ⚠️ **Deliberately not unified now:** three of the four are other tasks' contract surfaces and it would collide with two branches mid-flight |
 | W18 | ⏳ **in flight, with W14** — ⛔ **`user` + `authoritative` is accepted today** — measured — so **a grader the reader wrote may declare itself the source's own.** ✅ **RULED 35: `authoritative ⟹ bundled`, stated positively** | **Developer 1**, with `W14` | before `SK-01` | ⭐ **The author believed the set should be `("bundled",)` and did not change it**, because `unit.trust` owns the rule and `E06` names only the `generated` pair — ⚠️ **an argument, not a measurement**, and they said so. ⛔ **Exactly the restraint R21 asks for**: a task that meets an unlocated contract stops and asks. One entry in `unit.trust.FORBIDDEN` if the CTO agrees |
-| W16 | ⛔ **Every canonical example in the spec is a hand-maintained copy of a contract the code now owns** — ⭐ **the last such pair in the project.** The instance: `MANIFEST_KEYS` has **ten** keys, spec §4's example carries **nine**, and `grep -c '"media"'` over the spec returns **0** for a key the contract owns, so ⛔ **`media` is unteachable from the spec** | **PO** for the spec text; **Developer 2** for the asserting test | ⚠️ **Reassigned: the CTO carries no unlanded rulings, and Ruling 30 is mine** | ⛔ **before `SK-01` proposes a manifest against the example** | ⛔ **REMEDY INVERTED — Ruling 28 REVERSED by Ruling 30. Do not add `media` to the example.** ⚠️ `media` is **not in `REQUIRED_KEYS`** — it is optional and defaulted, so **the example was not wrong to omit it.** ⭐ **The corrected remedy: §4 gains the complete key list *beside* the example; the example stays a realistic instance, not an exhaustive one; and ⛔ the test asserts subset one way and coverage the other — never equality.** ⛔ **Equality is what Ruling 28 required and it would have *compelled* the Q16 harm**: names freeze at first declaration, `ISO-04` omits `media`, and `SK-07` **generates** manifests — so an exhaustive example propagates an optional key through a generator and **freezes it on every corpus, including ones with no media** |
+| W16 | ⛔ **Every canonical example in the spec is a hand-maintained copy of a contract the code now owns** — ⭐ **the last such pair in the project.** The instance: `MANIFEST_KEYS` has **ten** keys, spec §4's example carries **nine**, and `media` was unteachable from the spec | ✅ **spec text — PO, LANDED 2026-09-10**; ⏳ **the asserting test — Developer 2, still owed** | ⛔ **before `SK-07` generates a manifest** | ✅ **§4 now carries *The complete key list* beside the example, with required/optional marked and the derivation named.** ⛔ **REMEDY INVERTED — Ruling 28 REVERSED by Ruling 30, and the reversal HELD: `media` was never added to the example, and no test asserts equality.** ⭐ **The two one-way checks are what remain: subset (the spec cannot teach a key the code lacks) and coverage (the code cannot own a key the spec never names — ⭐ the half that closes `media`).** ⛔ **Equality would have *compelled* the harm**: `SK-07` **generates** manifests, so an exhaustive example propagates an optional key onto every corpus, including ones with no media, and R9 freezes it at first declaration |
 | W15 | ⛔ **Tooling wrote to a source repository's root ignore file** — a `graphify` git hook appended `graphify-out` to the ISO repository's ignore file on an ordinary commit, unrequested, ⚠️ **in the one repository where R3 is absolute.** Second half: `.claude/settings.json` carries a machine-local absolute path, an R7 exposure **created by tooling that no ruling names as a source** | PO → `OPS-05`, `SK-07` item 9 | ⛔ **before any adapter runs against a real source** | ⭐ **This framework's own repository is clean — checked, not assumed**: zero tracked files carry the real home path, our `graphify-out/` ignore came from `FND-01`'s scaffolding (deliberate, and this is not a source repository), no hooks installed. ⛔ **So the exposure is scoped to the corpus side, which is exactly where R3 bites.** ⚠️ **The rule is written in `graphify.md` and `SK-07` item 9 and is enforced by nothing that runs** — and `OPS-05` checks at **build** time while this happens at **index** time. PO-Integration reverted it and **re-measured after the fix**: the hook fired again, the root file stayed clean |
 | W13 | ⛔ **One commit with W7 — ruled, see below.** **Two copies of the personal-data gate that already disagree** — `tests/fixture_checks/personal_data.py` skips dict keys where `SF-08`'s does not (`SF-06` finding 3, ruled **urgent**); and **`imports()` is spelled twice** and should be extracted to `tests/support.py` *"before a third scanner writes a third copy"* (`SF-06` finding 8) | **Developer 2** | ✅ **merged `f569d0e`** | ⭐ **One row because they are one defect**: the project's most-repeated diagnosis is *two copies of a contract*, and here it has produced a copy that **already gives a different answer**. ⚠️ `tests/support.py` exists and has no `imports()` |
+| W26 | ⭐ **Finding 62, RAISED AND CLOSED IN ONE STEP — recorded so it is not re-raised.** `tools/quality/config.py:205` and `:256` use PEP 758 unparenthesized `except OSError, subprocess.SubprocessError:`, which is a `SyntaxError` on ≤3.13. ⚠️ **Reported to me as *"this silently pins the quality floor to 3.14+"*** | PO — ✅ **discharged here** | ✅ **closed** | ⛔ **NOT A DEFECT. `pyproject.toml:19` already declares `requires-python = ">=3.14"`** — ⭐ **so the pin is explicit, not silent, and the syntax is legal in the only interpreter this project supports.** ⚠️ **The word *silently* was the whole finding, and it was the part nobody checked.** ⭐ **Kept as a row because the check cost one `grep` and the finding cost a paragraph** — ⛔ **and because the next reader who spots that syntax will raise it again unless this says they need not.** ⭐ **Standing rule, arriving from a new direction: before reporting a defect, open the file it is about** |
 
 ⚠️ **W1 and W2 are one piece of work and should be assigned together.** W1 without
 W2 is a fix with no guard; W2 without W1 is a red check with 45 findings.

@@ -130,6 +130,10 @@ carry it.
 - **1.3** — SF-09, SF-23, SF-25, SK-01 · **FND-07**
 - **1.4** — SF-10
 - **1.5** — SF-12, QA-03
+- ⭐ **alongside 1.4/1.5, on the tooling surface** — **FND-08** (the repository-wide
+  document walk) and **FND-09** (the fixture-access seam). ⛔ **Both are Ruling
+  43's, scoped 2026-09-10 after measurement; neither gates the renderer**, and
+  `BOARD.md` carries why the four walks became two tasks and one refusal.
 
 *Why SF-23 is here:* SF-10 must know the workspace shape to be built once rather
 than revisited — the contract is cheap and it keeps the archive right even for a

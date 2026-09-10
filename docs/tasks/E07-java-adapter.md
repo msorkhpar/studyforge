@@ -89,10 +89,46 @@ This is a small thing that matters: `OPS-05` is the one task whose entire value
 is that it cannot be relaxed, and this is exactly the pressure that would relax
 it.
 
+#### ⛔ `exercises: true` is this task's to justify — **`SK-01` finding 45 lands here**
+
+⚠️ **This is the task that writes the flag, so this is where the accountability
+for it sits.** ⛔ **It had been a board row reading `UNOWNED until E07 opens`, and
+a board row is the weakest destination there is** — measured, twice, on `W14`.
+⭐ **An acceptance clause has a reviewer behind it; a board row has nobody.**
+
+**What the finding said, and it is a *record* — re-measure before acting on it:**
+`SK-01` reached `exercises: true` for this corpus on **168 of 792 files that
+*look* like graders.** ⛔ **A shape count is not a decision** — integration
+catalogue entry **8** is the rule and it was measured on a different corpus:
+***runnability is decided by the reader's obligation, not the file's shape.*** The
+question to answer is **is the reader asked to produce something?**, and
+*code-shaped material that demands nothing of the reader is prose about code.*
+
+⛔ **And this epic's own measured table already supersedes the finding's number,
+which nobody cross-referenced.** ⚠️ `168` is the **test-class** count; the same
+table records **163 maximum name-paired exercises**, not 168, and **14 impl
+classes with no `<Name>Test.java`**. ⭐ **So the finding was stale in this
+document before it was routed** — which is exactly why a finding is a measurement
+with an as-of and is re-run before it becomes a task.
+
 **Acceptance.** The manifest loads. Declared placement resolves a real unit's
 page beside its own `.md`. Names are unique across all 166 units. The declared
 level labels render as "Section › Module › Lesson". **The root `.gitignore` is
 byte-identical after a full build.**
+
+⛔ **And: whatever `exercises` is set to, `studyforge validate` corroborates it.**
+The flag is not accepted on this task's say-so — ⭐ **it is checked against what
+the archive actually holds**, so a `true` with no practice anywhere is a named
+failure rather than a claim nobody audited. ⚠️ **That check does not exist in the
+tool yet** — it exists only in the framework's own fixture checker — and it is
+**finding 61** on the board, owed **before this task runs**. ⛔ **Until it does,
+this clause is unfalsifiable and this task does not start.**
+
+⭐ **The consequence worth stating plainly: nobody has to be *trusted* about the
+168 files.** A shape count decides nothing, and the reader's-obligation question
+decides what the adapter *emits* — after which the tool decides whether the flag
+matches the emission. ⛔ **A judgement that only a person can make is bounded by a
+check that a machine makes.**
 
 ---
 

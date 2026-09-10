@@ -20,8 +20,9 @@ code — because there is no code.
 1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R21**,
    and **§12** (what the second source is for).
    The rulings are the authority you appeal to when a task is ambiguous.
-2. `docs/tasks/README.md` — 85 tasks, 13 epics, 9 milestones; ordering and the
-   critical path.
+2. `docs/tasks/README.md` — **87** tasks, 13 epics, 9 milestones; ordering and the
+   critical path. ⚠️ **`FND-08` and `FND-09` were added 2026-09-10** (Ruling 43's
+   two walks), so a count of 85 quoted anywhere else is stale.
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
    it carries shared context so neighbouring tasks do not re-derive it.
 4. `docs/conventions/` — module structure, graphify, the agent working
@@ -100,6 +101,12 @@ form needs a URL that resolves. The components are:
 
 ✅ **M0 is CLOSED**, and so are **M1 steps 1.1–1.3**. **In flight: M1 step 1.4 —
 `SF-10`, the unit document builder.** ⛔ **Do not start on M0.**
+
+⛔ **`SF-10` is BUILT and `in-review`, not waiting to be started.** ⚠️ **1,989
+lines of it sit on `feat/SF-10-unit-builder`, unmerged**, and the board carried it
+as *"unblocked, waiting on nothing"* for a round. ⭐ **Anything that renders or
+reads a unit document — `SF-12` first — reads that branch, not the release tip.**
+⛔ **Starting `SF-10` from scratch would rewrite a finished package.**
 
 ⚠️ **This section said *"Milestone M0 — FND-01…FND-05, all parallel"* for sixty
 seconds after M0 closed, and it was the second time in two rounds that this file
