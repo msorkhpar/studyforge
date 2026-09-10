@@ -15,6 +15,19 @@ A module's own imports say what `load` means in it, and `ast` can read them, so
 nothing here matches tokens any more. The superseded spellings are kept in one
 place — `_token_tell` — because the ruling was decided by what each of them got
 *wrong*, and a control that cannot be run is a claim.
+
+⛔ **Ruling 67 (`W29`): the scan root is `src/studyforge`, and that bound is now
+named rather than implicit.** `W26/1` reported readers outside it and read as
+though the remedy were a wider scan; it is not. ⭐ **They are three trees under
+three gates, not one hole** — see `GATED_TREES`, which this file asserts is
+total over the repository so that a *fourth* tree cannot appear unnamed.
+⛔ Extending this scan is refused: `tools/` is gated by `tools.quality.
+personal_data` and Ruling 31 forbids it importing the framework, so covering it
+here would mean naming a gate per root. ⛔ **`tests/fixture_checks/corpus.py`
+stays ungated deliberately, under Ruling 60's oracle-independence** — an oracle
+that calls the code under test agrees with its bugs — **and the cost is bounded
+rather than waved: it decodes only the §1e fixture trees this repository itself
+ships, no user data and no corpus the framework did not author.**
 """
 
 import ast
@@ -64,6 +77,31 @@ DECODERS = ("json.load", "json.loads")
 #: The gate every such module must call. One name, so no call site can reach
 #: for the weaker of two.
 GATE = "assert_clean"
+
+#: ⛔ **Ruling 67's bound, named.** Every tree in this repository that holds a
+#: document reader, mapped to the R7 gate that covers it — `None` where a tree
+#: is ungated *on purpose*. ⭐ The point is not the scan; it is that the scan's
+#: root is a **choice among three**, and until now that choice was made by a
+#: string in three test bodies and defended nowhere.
+#:
+#: ⚠️ This map is asserted **total** over the repository's Python below, which
+#: is the half that has teeth: a fourth tree of readers — a new top-level
+#: package, a script directory — cannot arrive without either a gate named here
+#: or a red test. ⛔ Widening `SCAN_ROOT` is not the way to satisfy it (Ruling
+#: 31), and neither is deleting a row.
+GATED_TREES: dict[str, str | None] = {
+    # ⭐ What this file measures, and the only row whose gate is `GATE`.
+    "src/studyforge": "studyforge.archive.scrub.assert_clean",
+    # ⛔ Its own gate, because Ruling 31 forbids `tools/` importing the framework.
+    "tools": "tools.quality.personal_data",
+    # ⛔ None, deliberately — Ruling 60, and see the module docstring.
+    "tests": None,
+}
+
+#: The one tree this file scans. ⛔ Not a bare literal: it is a key of
+#: `GATED_TREES`, and the assertions below check it is the row whose gate is
+#: `GATE` — so the root and its justification cannot drift apart.
+SCAN_ROOT = "src/studyforge"
 
 
 def _dotted(node: ast.expr) -> str | None:
@@ -273,7 +311,7 @@ RULING_57 = "ABCDEFGH"
 def test_every_document_reader_calls_the_gate():
     # ⛔ W7. The assertion that makes an ungated reader unrepresentable rather
     # than merely discouraged — and the reason the fix is not "add a call".
-    root = repository_root() / "src" / "studyforge"
+    root = repository_root() / SCAN_ROOT
     offenders = sorted(
         str(path.relative_to(repository_root()))
         for path in document_readers(root)
@@ -288,10 +326,94 @@ def test_the_reader_scan_is_not_vacuous():
     # ⭐ Both directions. A scanner that found no readers would pass the test
     # above forever, so this asserts it really does see the module W7 was
     # opened against.
-    root = repository_root() / "src" / "studyforge"
+    root = repository_root() / SCAN_ROOT
     found = {str(path.relative_to(root)) for path in document_readers(root)}
     assert "corpus/manifest/document.py" in found
     assert len(found) >= 5, found
+
+
+def test_the_scan_root_is_the_one_tree_this_gate_covers():
+    # ⛔ **Ruling 67, half one.** `SCAN_ROOT` was a literal repeated in three
+    # test bodies and justified nowhere; now it is a row of `GATED_TREES`, and
+    # it must be *the* row whose gate is the one this file looks for. ⭐ Swapping
+    # the root to `tools` — the fix `W26/1` reads as if it wanted — is then not
+    # a one-word edit that keeps the suite green: it contradicts this line.
+    assert SCAN_ROOT in GATED_TREES
+    assert GATED_TREES[SCAN_ROOT] is not None
+    assert GATED_TREES[SCAN_ROOT].endswith(f".{GATE}")
+    assert (repository_root() / SCAN_ROOT).is_dir()
+
+    # ⛔ And the other two rows are named as *not* this test's to measure: one
+    # gated elsewhere, one deliberately ungated.
+    assert GATED_TREES["tools"] == "tools.quality.personal_data"
+    assert GATED_TREES["tests"] is None
+    assert sorted(GATED_TREES) == ["src/studyforge", "tests", "tools"]
+
+
+def test_no_fourth_tree_of_readers_exists_unnamed():
+    # ⛔ **Ruling 67, half two, and the half with teeth.** The bound is not
+    # "`src/studyforge` is where we look"; it is "`src/studyforge` is one of
+    # exactly three trees that decode anything, and the other two have their own
+    # answer". ⚠️ That second clause is about the whole repository, so it is
+    # measured over the whole repository — a new package or script directory
+    # that decodes arrives as a failure naming itself, not as a silent hole.
+    #
+    # ⭐ **`CTO-20-2`: state the set.** Readers by the shipped origin tell over
+    # every `.py` in the repository — 26 today: 6 `src/studyforge`, 2 `tools`,
+    # 18 `tests`. ⛔ `W26/1`'s "three" was a count over a set it never stated
+    # (ungated readers outside `src/studyforge` that are not test modules); the
+    # raw tell finds 20 outside it, and both are true of different sets.
+    root = repository_root()
+    homeless = sorted(
+        str(path.relative_to(root))
+        for path in document_readers(root)
+        if not any(path.relative_to(root).is_relative_to(tree) for tree in GATED_TREES)
+    )
+    assert homeless == [], (
+        "these modules decode a document from a tree GATED_TREES does not name; "
+        f"name the tree and its R7 gate rather than widening SCAN_ROOT (Ruling 67): {homeless}"
+    )
+
+
+def test_every_named_tree_is_populated_so_the_bound_is_not_vacuous():
+    # ⭐ **The control on the control.** Total coverage is cheap if a row is
+    # wrong — `""`, or a directory that does not exist, makes the test above
+    # pass forever. So every row is a real directory that really holds readers,
+    # and the counts are a **decomposition, never a total** (`W22`, Ruling 72).
+    root = repository_root()
+    per_tree = {tree: len(document_readers(root / tree)) for tree in GATED_TREES}
+    assert all((root / tree).is_dir() for tree in GATED_TREES), per_tree
+    assert all(count > 0 for count in per_tree.values()), per_tree
+    assert per_tree["src/studyforge"] >= 5, per_tree
+    assert per_tree["tools"] >= 2, per_tree
+    assert sum(per_tree.values()) == len(document_readers(root)), per_tree
+
+
+def test_a_fourth_tree_is_caught_rather_than_scanned_past(tmp_path):
+    # ⛔ **Ruling 11: watch it pass without the mechanism.** A reader planted in
+    # a tree no row names is exactly the shape the bound exists to refuse, and
+    # nothing in the real repository is in that shape — so the negative control
+    # builds one rather than asserting the absence of one.
+    named, unnamed = tmp_path / "src" / "studyforge", tmp_path / "scripts"
+    named.mkdir(parents=True)
+    unnamed.mkdir()
+    source = "import json\n\n\ndef parse(text):\n    return json.loads(text)\n"
+    (named / "reader.py").write_text(source, encoding="utf-8")
+
+    def homeless(root: Path) -> list[str]:
+        return sorted(
+            str(path.relative_to(root))
+            for path in document_readers(root)
+            if not any(path.relative_to(root).is_relative_to(tree) for tree in GATED_TREES)
+        )
+
+    assert homeless(tmp_path) == []
+    (unnamed / "reader.py").write_text(source, encoding="utf-8")
+    assert homeless(tmp_path) == ["scripts/reader.py"]
+
+    # ⛔ And the wrong remedy does not silence it: pointing `SCAN_ROOT` at the
+    # new tree would move the scan, not name the gate. Only a row does that.
+    assert "scripts" not in GATED_TREES
 
 
 def test_resolving_origins_finds_the_same_readers_the_token_tell_found():
@@ -299,7 +421,7 @@ def test_resolving_origins_finds_the_same_readers_the_token_tell_found():
     # accepted on a measurement that said there is none, and this is that
     # measurement, run rather than inherited. ⛔ If a future module arrives in a
     # spelling only one of the two can see, this goes red and the diff says so.
-    root = repository_root() / "src" / "studyforge"
+    root = repository_root() / SCAN_ROOT
     by_origin = {path for path in document_readers(root)}
     by_token = {
         path
