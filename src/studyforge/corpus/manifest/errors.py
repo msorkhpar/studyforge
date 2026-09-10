@@ -3,18 +3,33 @@
 **What it does.** Names every way `corpus.json` can be unacceptable, so a
 caller catches one type rather than six.
 
-**How you use it.** Catch `ManifestError`. **Reading a manifest raises it
-and nothing else** — including where the rule being applied is SF-01's, as a
-`source` or a `variants` entry that is not a slug is — and none of them repairs
-a value quietly (R6). ⛔ In particular, an unknown `corpus_api` raises rather
-than being migrated: a migration that runs because something merely wanted to
-render a page rewrites the record of what was ingested (R9).
+**How you use it.** Catch `ManifestError`. Every rule this package applies
+raises it — including where the rule is SF-01's, as a `source` or a `variants`
+entry that is not a slug is — and none of them repairs a value quietly (R6).
+⛔ In particular, an unknown `corpus_api` raises rather than being migrated: a
+migration that runs because something merely wanted to render a page rewrites
+the record of what was ingested (R9).
 
-⚠️ **One deliberate exception, and it is not a leak.** `Manifest.parse_key`
-raises SF-01's `AddressError`, because that call is the arity *comparison* and
-SF-01 owns it outright — the manifest is only supplying the depth it declared.
-Reading the document is this package's answer; checking an address against it
-is not.
+⚠️ **Two exceptions travel through, deliberately**, and this docstring used to
+name only one.
+
+1. `Manifest.parse_key` raises SF-01's `AddressError`, because that call is the
+   arity *comparison* and SF-01 owns it outright — the manifest is only
+   supplying the depth it declared. Reading the document is this package's
+   answer; checking an address against it is not.
+2. ⛔ **`PersonalDataLeak` from `archive.scrub` is not wrapped** (Ruling 58,
+   rubric §1d). This family exists so a caller walking a corpus catches one
+   type per file, reports it and continues; an R7 refusal inside it would be
+   logged as one more manifest that would not read, and the walk would finish
+   green about the one thing R7 exists to make loud. ⭐ It is already
+   load-bearing: `validate/corpus.py` catches `ManifestError` and **then**
+   `PersonalDataLeak`, and while `document._gate` translated, that second arm
+   could never fire — a home path in `corpus.json` was filed under
+   `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA`.
+
+⭐ **A contract that names what crosses it is better than one that swallows
+it** — which is the whole answer to *"a promise with one exception is not a
+promise"*.
 
 **Depends on.** Nothing.
 

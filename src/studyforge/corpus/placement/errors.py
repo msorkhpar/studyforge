@@ -5,6 +5,16 @@ so a caller catches one type rather than four.
 
 **How you use it.** Catch `PlacementError`.
 
+⚠️ **One exception travels through, deliberately** (Ruling 58, rubric §1d).
+`identity.from_document` gates the block it reads, and `PersonalDataLeak` from
+`archive.scrub` is **not** wrapped: R7's refusal is louder than a placement
+error, and this family exists so a caller sweeping a site catches one type per
+artifact and carries on. ⛔ An R7 refusal inside it would be logged as one more
+file that could not be placed, and the leak would be the thing nobody looked
+at. ⭐ **A contract that names what crosses it is better than one that swallows
+it** — which is the whole answer to *"a promise with one exception is not a
+promise"*.
+
 **Depends on.** Nothing.
 
 ⚠️ **`ValueError`, following SF-01's split**: every failure here is "you handed

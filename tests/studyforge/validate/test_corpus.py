@@ -137,6 +137,55 @@ def test_a_document_the_personal_data_gate_refuses_is_recorded_too(tmp_path):
     assert result.refused[0].unit == 1
 
 
+def test_a_container_map_carrying_a_home_path_is_filed_as_personal_data_too(tmp_path):
+    # ⭐ The third arm, asserted so *"is it reachable?"* is answered by a test
+    # rather than by reading `container/errors.py` and believing it.
+    # `corpus/container/document.py` calls `assert_clean` bare and never
+    # translated, so this arm was live before W27 and is live after — and the
+    # only way to know that without guessing is to drive it.
+    root = corpora.one_unit(tmp_path / "c")
+    path = root / ARCHIVE_DIR / "demo/container.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["titles"] = ["Notes from " + "/" + "home/jane/corpus"]
+    path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    result = walk(root)
+    assert [f.rule for f in result.findings] == ["personal-data"]
+    assert "jane" not in result.findings[0].message
+
+
+def test_a_manifest_carrying_a_home_path_is_filed_as_personal_data_not_as_a_manifest_defect(
+    tmp_path,
+):
+    # ⛔ **Ruling 58's dead arm, made reachable.** `_manifest` catches
+    # `ManifestError` and **then** `PersonalDataLeak`. While
+    # `corpus/manifest/document._gate` translated the leak into
+    # `ManifestError`, the first arm always won and the second could never
+    # fire — so a home path in `corpus.json`, the single loudest thing R7
+    # exists to catch, was filed under `manifest`: an R7 leak reported as a
+    # formatting defect. ⭐ *"The catch was correct and the raise never came."*
+    #
+    # ⚠️ **This test fails on the pre-W27 tree**, which is the only reason to
+    # trust it: it reports `['manifest']` there and `['personal-data']` here.
+    # A test asserting merely that *some* finding was raised would have passed
+    # on both and proved nothing.
+    #
+    # ⛔ The manifest is poisoned after the corpus is built, because
+    # `corpora.write` parses what it writes and the gate would refuse it there.
+    root = corpora.one_unit(tmp_path / "c")
+    path = root / "corpus.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["title"] = "Notes from " + "/" + "home/jane/corpus"
+    path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    result = walk(root)
+    assert [f.rule for f in result.findings] == ["personal-data"]
+    # ⛔ The finding names the shape and never the value (R7).
+    assert "home path" in result.findings[0].message
+    assert "jane" not in result.findings[0].message
+    # ⚠️ And the walk still stops there, as it does for any unreadable
+    # manifest: there is no corpus to walk without one.
+    assert result.manifest is None
+
+
 def test_a_unit_directory_that_is_not_named_unit_nn_claims_no_ordinal(tmp_path):
     assert UNIT_DIR.match("unit-01") is not None
     assert UNIT_DIR.match("unit-1") is None

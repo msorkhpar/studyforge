@@ -6,6 +6,16 @@ caller catches one type rather than five.
 **How you use it.** Catch `ContentError`; `describe(value)` when a refusal
 needs to say what arrived without reproducing it.
 
+⚠️ **One exception travels through, deliberately** (Ruling 58, rubric §1d).
+`PersonalDataLeak` from `archive.scrub` is **not** wrapped, in `content.py` or
+in `served.py`: R7's refusal is louder than a format error, and this family
+exists so a caller walking a corpus catches one type per unit, reports it and
+continues. ⛔ An R7 refusal inside it would be logged as *"that unit did not
+build"*, the walk would finish, and the report would be green about the one
+thing R7 exists to make loud. ⭐ **A contract that names what crosses it is
+better than one that swallows it** — which is the whole answer to *"a promise
+with one exception is not a promise"*.
+
 **Depends on.** `studyforge.describe`, and nothing else.
 
 ⭐ **`describe` is re-exported, not re-implemented** (Ruling 10). This module

@@ -20,6 +20,7 @@ import pytest
 
 from studyforge.address import Address
 from studyforge.archive import document as archive_document
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.container import document as container_document
 from studyforge.corpus.manifest import document as manifest_document
 from studyforge.corpus.placement import identity as placement_identity
@@ -221,10 +222,16 @@ def test_the_gate_protects_some_fields_and_the_probe_says_which(readers):
     # a shape list, not by construction. Poisoning with both is how the two
     # cases are told apart, and this asserts the distinction is real — the gate
     # really does refuse one and pass the other.
+    #
+    # ⛔ **Ruling 58 made the distinction a TYPE, not a phrase.** This asserted
+    # `"personal data" in str(...)`, which only ever matched the wrapper text
+    # of the translation W27 removed; the gate's own message names the shape.
+    # ⭐ The type is the stronger assertion, and it is the one the ruling is
+    # about: the gate's refusal is not in any package's family.
     manifest = [reader for reader in readers if reader.name == "corpus.json"][0]
-    with pytest.raises(Exception) as home:
+    with pytest.raises(PersonalDataLeak) as home:
         manifest.call({**manifest.document, "title": POISON})
-    assert "personal data" in str(home.value)
+    assert "home path" in str(home.value)
     with pytest.raises(Exception) as escaping:
         manifest.call({**manifest.document, "placement": ESCAPING})
-    assert "personal data" not in str(escaping.value)
+    assert not isinstance(escaping.value, PersonalDataLeak)
