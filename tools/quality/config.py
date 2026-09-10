@@ -249,6 +249,30 @@ def text_files(root: Path) -> list[Path]:
     return sorted(path for path in candidates if path not in ignored)
 
 
+def markdown_files(root: Path) -> list[Path]:
+    """Every markdown document the repository is responsible for, sorted.
+
+    ⭐ **A narrowing of `text_files`, never a second walk.** FND-08's acceptance
+    forbids a second file-walking helper: the pointer check needs *documents*
+    rather than *every text file*, and that is one `suffix` test away from the
+    walk `check_personal_data` already runs. Exclusions, git-ignore and the
+    sort order are therefore inherited rather than restated, and a directory
+    added to `TOOL_OUTPUT_DIRS` reaches this walk on the same commit.
+
+    ⚠️ **`tests/fixtures/` is IN, by decision and not by accident.** It is in
+    `EXCLUDED_DIRS`, so a `python_files`-shaped walk would not see it — but
+    this walk is `text_files`-shaped and `EXCLUDED_DIRS` never applied to it.
+    ⭐ The decision matches the personal-data sweep's, for the same reason: a
+    fixture is allowed to be *shaped* wrong — an invalid corpus is its whole
+    purpose — but `tests/fixtures/README.md` is prose a person reads, and a
+    pointer that goes nowhere is broken there exactly as it is in `docs/`.
+    ⛔ Measured before deciding, on `2926dc2`: 8 markdown files under
+    `tests/fixtures/` carrying **0 pointers between them**, so including them
+    costs no migration today and closes the hole before one is written.
+    """
+    return [path for path in text_files(root) if path.suffix == ".md"]
+
+
 def read_text(path: Path) -> str | None:
     """Return the file's text, or None when it is not text at all."""
     try:
