@@ -54,6 +54,7 @@ from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
+from studyforge.describe import describe, describe_keys
 from studyforge.version import check as check_version
 
 #: The manifest's filename. One spelling, because "what makes a directory a
@@ -184,7 +185,8 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     unknown = sorted(set(document) - set(MANIFEST_KEYS))
     if unknown:
         raise ManifestError(
-            f"{where} has unknown key(s) {unknown}; this build reads {list(MANIFEST_KEYS)}"
+            f"{where} has unknown key(s), {describe_keys(unknown)}; "
+            f"this build reads {list(MANIFEST_KEYS)}"
         )
     missing = [key for key in REQUIRED_KEYS if key not in document]
     if missing:
@@ -238,7 +240,7 @@ def _check_version(document: dict, where: str) -> None:
 def _title_of(value: object, where: str) -> str:
     """Return the corpus's human-readable name. ⚠️ A title, deliberately not a slug."""
     if not isinstance(value, str) or not value.strip():
-        raise ManifestError(f"{where} 'title' must be a non-empty str, got {value!r}")
+        raise ManifestError(f"{where} 'title' must be a non-empty str, got {describe(value)}")
     return value
 
 
@@ -254,7 +256,7 @@ def _labels_of(value: object, key: str, where: str) -> tuple[str, ...]:
     for position, entry in enumerate(entries, start=1):
         if not isinstance(entry, str) or not entry.strip():
             raise ManifestError(
-                f"{where} '{key}[{position - 1}]' must be a non-empty str, got {entry!r}"
+                f"{where} '{key}[{position - 1}]' must be a non-empty str, got {describe(entry)}"
             )
     return tuple(entries)
 
@@ -289,7 +291,7 @@ def _slug_of(value: object, what: str) -> str:
 def _non_empty_list(value: object, key: str, where: str) -> list:
     """Return a list with something in it, or refuse naming the key."""
     if not isinstance(value, list) or not value:
-        raise ManifestError(f"{where} '{key}' must be a non-empty list, got {value!r}")
+        raise ManifestError(f"{where} '{key}' must be a non-empty list, got {describe(value)}")
     return value
 
 
@@ -300,7 +302,7 @@ def _flag_of(value: object, key: str, where: str) -> bool:
     looks like a flag is a mistake worth naming rather than coercing.
     """
     if not isinstance(value, bool):
-        raise ManifestError(f"{where} '{key}' must be true or false, got {value!r}")
+        raise ManifestError(f"{where} '{key}' must be true or false, got {describe(value)}")
     return value
 
 
@@ -308,6 +310,6 @@ def _placement_of(value: object, where: str) -> str:
     """One of the declared placement profiles (spec §5)."""
     if value not in PLACEMENT_PROFILES:
         raise ManifestError(
-            f"{where} 'placement' must be one of {list(PLACEMENT_PROFILES)}, got {value!r}"
+            f"{where} 'placement' must be one of {list(PLACEMENT_PROFILES)}, got {describe(value)}"
         )
     return value

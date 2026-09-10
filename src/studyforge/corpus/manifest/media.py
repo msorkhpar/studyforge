@@ -37,7 +37,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.corpus.manifest.errors import ManifestError
-from studyforge.describe import describe
+from studyforge.describe import describe, describe_keys
 
 #: `always` — commit media whatever the size. `never` — a corpus that has
 #: made the decision to hold its media elsewhere. `auto` — commit while it
@@ -93,7 +93,9 @@ def parse_media(value: object) -> MediaPolicy:
     known = {"commit", "max_total_bytes", "max_file_bytes"}
     unknown = sorted(set(value) - known)
     if unknown:
-        raise ManifestError(f"'media' has unknown key(s) {unknown}; expected {sorted(known)}")
+        raise ManifestError(
+            f"'media' has unknown key(s), {describe_keys(unknown)}; expected {sorted(known)}"
+        )
     commit = value.get("commit", DEFAULT_COMMIT)
     if commit not in COMMIT_MODES:
         raise ManifestError(

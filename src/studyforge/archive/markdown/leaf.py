@@ -109,7 +109,14 @@ def read_image(line: str, lineno: int) -> dict | None:
             attrs[attr.group("name")] = value
         src = attrs.get("src")
         if not src:
-            raise MarkdownError(f"line {lineno} is an <img> tag with no src attribute: {line!r}")
+            # ⛔ The line is the source's own text and is never reproduced
+            # (R7, W19): a markdown line can carry anything the corpus author
+            # wrote, including a path. The line **number** is what a reader
+            # needs, and they have the file.
+            raise MarkdownError(
+                f"line {lineno} is an <img> tag with no src attribute; "
+                f"an image block cannot be written without one"
+            )
         # ⛔ A PIXEL COUNT OR NOTHING. The block contract is `width: int | None`,
         # and authors also write `width="90%"` — `int("90%")` raises a bare
         # ValueError out of here and costs the whole document to an unhandled

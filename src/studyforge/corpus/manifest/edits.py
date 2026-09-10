@@ -57,9 +57,10 @@ from studyforge.corpus.manifest.content import (
     MIN_WHY_CHARS,
     Classification,
     ContentPolicy,
+    _escape,
 )
 from studyforge.corpus.manifest.errors import ManifestError
-from studyforge.describe import describe
+from studyforge.describe import describe, describe_keys
 
 #: The kinds of edit that can be declared. ⚠️ One, because one is what any
 #: source in scope needs, and an unknown kind is refused rather than guessed
@@ -87,7 +88,7 @@ class Reversal:
 
     def __str__(self) -> str:
         """Return a one-line description a person can read in a plan."""
-        return f"{self.kind} {self.content!r} from {self.path}"
+        return f"{self.kind} {describe(self.content)} from {self.path}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -128,7 +129,10 @@ def parse_edits(value: object, content: ContentPolicy) -> tuple[PermittedEdit, .
     for index, entry in enumerate(value):
         edit = _edit_of(entry, f"permitted_edits[{index}]")
         if edit.path in seen:
-            raise ManifestError(f"permitted_edits declares {edit.path!r} twice")
+            raise ManifestError(
+                "permitted_edits declares the same path twice; a path declared twice "
+                "is two reasons for one edit and no way to tell which was audited"
+            )
         seen.add(edit.path)
         _reject_forbidden_target(edit, content)
         edits.append(edit)
@@ -142,19 +146,23 @@ def _edit_of(entry: object, where: str) -> PermittedEdit:
     expected = ("path", "kind", "anchor", "content", "why")
     unknown = sorted(set(entry) - set(expected))
     if unknown:
-        raise ManifestError(f"{where} has unknown key(s) {unknown}; expected {list(expected)}")
+        raise ManifestError(
+            f"{where} has unknown key(s), {describe_keys(unknown)}; expected {list(expected)}"
+        )
     for field in expected:
         candidate = entry.get(field)
         if not isinstance(candidate, str) or not candidate.strip():
-            raise ManifestError(f"{where}.{field} must be a non-empty str, got {candidate!r}")
+            raise ManifestError(
+                f"{where}.{field} must be a non-empty str, got {describe(candidate)}"
+            )
     if entry["kind"] not in EDIT_KINDS:
         raise ManifestError(
-            f"{where}.kind must be one of {list(EDIT_KINDS)}, got {entry['kind']!r}"
+            f"{where}.kind must be one of {list(EDIT_KINDS)}, got {describe(entry['kind'])}"
         )
     if len(entry["why"].strip()) < MIN_WHY_CHARS:
         raise ManifestError(
             f"{where}.why must be at least {MIN_WHY_CHARS} characters of reason, "
-            f"got {entry['why']!r} — an edit nobody has to explain is one nobody audits"
+            f"got {len(entry['why'])} — an edit nobody has to explain is one nobody audits"
         )
     return PermittedEdit(**{field: entry[field] for field in expected})
 
@@ -163,21 +171,29 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
     """Refuse the three targets R3 never permits, however they are declared."""
     path = PurePosixPath(edit.path)
     if edit.path.startswith("/") or ".." in path.parts:
+        # ⛔ The twin of `content._reject_absolute`, and the same W19 fix: this
+        # branch fires *because* the value is an absolute or escaping path, so
+        # quoting it is the leak the check exists to prevent.
         raise ManifestError(
             f"permitted_edits path must be relative to the source root and stay "
-            f"inside it, got {edit.path!r}"
+            f"inside it; it {_escape(edit.path)}, and it is not reproduced here "
+            f"because that shape is where a home directory lives"
         )
     if len(path.parts) == 1 and path.name in IGNORE_NAMES:
+        # ⭐ Safe to name, and this is the distinction W19 turns on: by here the
+        # value is one path component **and a member of `IGNORE_NAMES`** — this
+        # framework's own closed vocabulary, not the caller's text.
         raise ManifestError(
             f"permitted_edits may never name the repository's root ignore file, got "
-            f"{edit.path!r} — write a new ignore file inside a generated directory instead"
+            f"{path.name!r} — write a new ignore file inside a generated directory instead"
         )
     if path.name in VCS_NAMES or VCS_DIRECTORIES & set(path.parts):
         raise ManifestError(
-            f"permitted_edits may never name version-control configuration, got {edit.path!r}"
+            f"permitted_edits may never name version-control configuration; this one "
+            f"names {sorted(VCS_NAMES | VCS_DIRECTORIES & set(path.parts))}"
         )
     if content.classify(edit.path) is Classification.INCLUDED:
         raise ManifestError(
-            f"permitted_edits may never name a file the material's own reader depends on "
-            f"as content, and this corpus's 'content' includes {edit.path!r}"
+            "permitted_edits may never name a file the material's own reader depends on "
+            "as content, and this corpus's 'content' includes it"
         )

@@ -69,6 +69,7 @@ from pathlib import Path
 from studyforge.address import Address, require_ordinal
 from studyforge.archive.blocks import BLOCK_FIELDS
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.describe import describe_keys
 from studyforge.unit.errors import ContentError, describe
 from studyforge.unit.sections import KINDS_WITH_A_LANG, SECTION_KINDS, section_key
 from studyforge.version import check as check_version
@@ -172,7 +173,8 @@ def from_document(document: object, depth: int, where: str = CONTENT_FILENAME) -
     unknown = sorted(set(document) - set(OVERLAY_KEYS))
     if unknown:
         raise ContentError(
-            f"{where} has unknown key(s) {unknown}; this build reads {list(OVERLAY_KEYS)}"
+            f"{where} has unknown key(s), {describe_keys(unknown)}; "
+            f"this build reads {list(OVERLAY_KEYS)}"
         )
     missing = [key for key in OVERLAY_KEYS if key not in document]
     if missing:
@@ -250,7 +252,8 @@ def _section_of(entry: object, index: int, where: str) -> Section:
     unknown = sorted(set(entry) - set(SECTION_FIELDS))
     if unknown:
         raise ContentError(
-            f"{at} has unknown key(s) {unknown}; a section carries {list(SECTION_FIELDS)}"
+            f"{at} has unknown key(s), {describe_keys(unknown)}; "
+            f"a section carries {list(SECTION_FIELDS)}"
         )
     kind = entry.get("kind")
     if kind not in SECTION_KINDS:
