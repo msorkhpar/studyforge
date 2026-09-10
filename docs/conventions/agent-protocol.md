@@ -247,6 +247,13 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
   admission. A new kind is one entry in `DOCUMENT_KINDS`.
 - ⭐ **A handoff for two tasks declares both** — `**Kind:** task handoff — W17,
   W19` — and its title names both. The filename must begin with the first.
+- ⛔ **A supervising office has no task ID, because the id space has ONE MINTER**
+  — so it declares `**Kind:** office handoff — <SCOPE>`, where `<SCOPE>` is what
+  its findings are numbered inside (`ARCH/1`) and ⛔ **must NOT parse as a task
+  ID.** ⭐ **It owes everything a task handoff owes**: the title, the six
+  sections and the markers. ⚠️ **It is not an escape hatch, and that is the
+  whole point of adding it** — the alternative was an office declaring `survey`
+  (*"nothing landed"*, false) or minting an id it does not own.
 
 ### ⛔ Ruling 134 (CTO round 38) — a history-based instrument silently loses a file at a rename it did not score
 

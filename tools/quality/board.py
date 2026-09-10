@@ -148,12 +148,12 @@ RULE_SIZE = "board-size"
 
 
 def _cells(line: str) -> list[str]:
-    """The cells of a markdown table row, outer pipes stripped."""
+    """Return the cells of a markdown table row, outer pipes stripped."""
     return [cell.strip() for cell in line.strip().strip("|").split("|")]
 
 
 def _identifiers(cell: str) -> list[str]:
-    """Every `W`-row id a register's first cell names.
+    """Return every `W`-row id a register's first cell names.
 
     ⚠️ A cell may name two — `W17 + W19` are one commit and one row — so this
     returns a list. ⛔ A cell naming none is a header or a separator and is not
@@ -167,7 +167,7 @@ def _identifiers(cell: str) -> list[str]:
 
 
 def _register(text: str) -> list[tuple[int, list[str], str]]:
-    """`(line number, ids, state cell)` for every register row in the board.
+    """Return `(line number, ids, state cell)` for every register row.
 
     ⛔ Only between `REGISTER_OPEN` and `REGISTER_CLOSE`. ⚠️ A board with no
     markers has no register as far as this is concerned, and `board_state`
@@ -214,7 +214,7 @@ def _narrative_bytes(text: str) -> int:
 
 
 def check_board(root: Path) -> list[Finding]:
-    """Findings for a board that has stopped being a register.
+    """Report every way this board has stopped being a register.
 
     ⛔ **The bijection is asserted in BOTH directions**, and that is deliberate:
     a live row with no detail file is an argument with no home, and a detail
@@ -325,7 +325,7 @@ def check_board(root: Path) -> list[Finding]:
 
 
 def board_state(root: Path) -> list[str]:
-    """The population, printed before it is reduced to a verdict (Ruling 128).
+    """Print the population before it is reduced to a verdict (Ruling 128).
 
     ⛔ Where there is no board this SAYS SO rather than returning nothing: a
     silent notice about an absent register is the `0 = 0` this exists to stop

@@ -21,6 +21,7 @@ from tools.quality.handoffs import (
     DOCUMENT_KINDS,
     HANDOFF_DIR,
     KIND_MARKER,
+    OFFICE_HANDOFF,
     TASK_HANDOFF,
     check_handoffs,
     declared_kind,
@@ -73,7 +74,9 @@ def test_a_declaration_below_the_window_is_not_a_declaration(tmp_path):
     assert "handoff-kind" in rules(tmp_path)
 
 
-@pytest.mark.parametrize("kind", [k for k in DOCUMENT_KINDS if k != TASK_HANDOFF])
+@pytest.mark.parametrize(
+    "kind", [k for k in DOCUMENT_KINDS if k not in (TASK_HANDOFF, OFFICE_HANDOFF)]
+)
 def test_a_document_that_is_not_a_task_handoff_owes_only_its_declaration(tmp_path, kind):
     # ⛔ The trap this check was written to avoid: `docs/tasks/handoffs/` holds
     # surveys, ruling records and session logs, and a naive migration would
@@ -81,6 +84,35 @@ def test_a_document_that_is_not_a_task_handoff_owes_only_its_declaration(tmp_pat
     # excused by an exclusion list — it says what it is.
     write(tmp_path, "anything.md", f"# Some title\n\n{KIND_MARKER} {kind}\n\nProse.\n")
     assert check_handoffs(tmp_path) == []
+
+
+def test_an_office_handoff_owes_everything_a_task_handoff_owes(tmp_path):
+    # ⛔ The one kind that is NOT an escape hatch. ⭐ It exists because the id
+    # space has ONE MINTER, so a supervising office asked to restructure
+    # something has no ID to declare — and every other kind it could have
+    # borrowed owes NOTHING. ⚠️ A kind that lets a document escape the contract
+    # is not a kind, it is a hole.
+    body = f"# Some title\n\n{KIND_MARKER} office handoff — ARCH\n\nProse.\n"
+    write(tmp_path, "anything.md", body)
+    assert "handoff-section" in rules(tmp_path)
+    assert "handoff-title" in rules(tmp_path)
+
+
+def test_an_office_handoff_may_not_name_a_task_id(tmp_path):
+    # ⛔ Naming one would be MINTING one, which is the PO's and nobody else's.
+    body = f"# Some title — handoff\n\n{KIND_MARKER} office handoff — W99\n\nProse.\n"
+    write(tmp_path, "anything.md", body)
+    assert "handoff-kind" in rules(tmp_path)
+
+
+def test_an_office_handoff_numbers_its_findings_inside_its_own_scope(tmp_path):
+    # ⭐ `ARCH/1`, not `W99/1`: the declared SCOPE is what findings are numbered
+    # inside, exactly as a task ID is for a task handoff.
+    good = GOOD.replace("**Kind:** task handoff — W99", "**Kind:** office handoff — ARCH")
+    good = good.replace("# W99 — handoff", "# Board architecture — handoff")
+    good = good.replace("W99/", "ARCH/")
+    write(tmp_path, "anything.md", good)
+    assert "handoff-finding-id" not in rules(tmp_path)
 
 
 def test_the_next_survey_is_refused_until_it_declares_rather_than_passing_quietly(tmp_path):

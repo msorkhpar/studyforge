@@ -84,6 +84,7 @@ __all__ = [
     "MARKER_STRUCTURAL",
     "MIN_NONE_CHARS",
     "SECTIONS",
+    "OFFICE_HANDOFF",
     "TASK_HANDOFF",
     "TASK_ID",
     "check_handoffs",
@@ -108,8 +109,17 @@ KIND_MARKER = "**Kind:**"
 #: owes. Adding a kind is a decision made here, in one place, with its sentence
 #: — never an entry on an exclusion list somewhere else.
 TASK_HANDOFF = "task handoff"
+#: ⛔ A supervising office's handoff for work commissioned outside the id space.
+#: ⚠️ **It owes EXACTLY what a task handoff owes** — the six sections and the
+#: markers — ⭐ **and it exists because the alternative was worse: the id space
+#: has ONE MINTER, so an office asked to restructure something has no id to
+#: declare, and every kind it could otherwise borrow owes NOTHING.** ⛔ A kind
+#: that lets a document escape the contract is not a kind, it is a hole.
+OFFICE_HANDOFF = "office handoff"
 DOCUMENT_KINDS: dict[str, str] = {
     TASK_HANDOFF: "one task's handoff; owes the title, the six sections and the markers",
+    OFFICE_HANDOFF: "a supervising office's handoff, with no task ID because the id "
+    "space has one minter; owes the six sections and the markers, and no ID",
     "ruling record": "a CTO or PO round, or one ruling written up; a record, owes nothing further",
     "session log": "a coordinator's record of one session; owes nothing further",
     "survey": "a read-only investigation or review; nothing landed, so nothing to hand over",
@@ -238,6 +248,41 @@ def _check_identity(relative: str, text: str, ids: list[str]) -> list[Finding]:
     return findings
 
 
+def _check_office_identity(relative: str, text: str, ids: list[str]) -> list[Finding]:
+    """Check an office handoff's SCOPE, which is never a task, and its title.
+
+    ⛔ **Naming a task would be minting one**, which is the PO's and nobody
+    else's. ⭐ So the identity rule inverts: the declaration carries the prefix
+    its findings are numbered inside — `ARCH` — and a value that parses as a
+    task ID is the finding.
+    """
+    findings: list[Finding] = []
+    if len(ids) != 1 or TASK_ID.match(ids[0]):
+        findings.append(
+            Finding(
+                relative,
+                1,
+                RULE_KIND,
+                f"declares `{OFFICE_HANDOFF}` and names {', '.join(ids) or 'nothing'}. "
+                f"Write `{KIND_MARKER} {OFFICE_HANDOFF} — <SCOPE>` with ONE scope that "
+                f"is NOT a task ID: it is what this document's findings are numbered "
+                f"inside, and a task ID here would be minting one.",
+            )
+        )
+    title = next((line for line in text.splitlines() if line.strip()), "")
+    if not title.startswith("# ") or not title.rstrip().endswith("— handoff"):
+        findings.append(
+            Finding(
+                relative,
+                1,
+                RULE_TITLE,
+                f"title is {title.strip()!r}; rubric §8 wants `# <subject> — handoff`, "
+                f"and the word that makes it findable.",
+            )
+        )
+    return findings
+
+
 def check_handoffs(root: Path) -> list[Finding]:
     """Every document in `HANDOFF_DIR` that breaks the contract it declares."""
     directory = root / HANDOFF_DIR
@@ -251,9 +296,12 @@ def check_handoffs(root: Path) -> list[Finding]:
             continue
         kind, ids, declaration = _check_declaration(relative, text)
         findings.extend(declaration)
-        if kind != TASK_HANDOFF:
+        if kind not in (TASK_HANDOFF, OFFICE_HANDOFF):
             continue
-        findings.extend(_check_identity(relative, text, ids))
+        if kind == TASK_HANDOFF:
+            findings.extend(_check_identity(relative, text, ids))
+        else:
+            findings.extend(_check_office_identity(relative, text, ids))
         findings.extend(check_sections(relative, text))
-        findings.extend(check_markers(relative, text, ids or [TASK_HANDOFF]))
+        findings.extend(check_markers(relative, text, ids or [kind]))
     return findings

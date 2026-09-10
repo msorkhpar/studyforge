@@ -35,6 +35,8 @@ from tools.quality.board import (
     BOARD_NARRATIVE_CEILING,
     BOARD_PER_ROW,
     BOARD_ROW_CEILING,
+    REGISTER_CLOSE,
+    REGISTER_OPEN,
     ROWS,
     RULE_DETAIL,
     RULE_DUPLICATE,
@@ -42,8 +44,6 @@ from tools.quality.board import (
     RULE_ORPHAN,
     RULE_SIZE,
     RULE_WIDTH,
-    REGISTER_CLOSE,
-    REGISTER_OPEN,
     board_state,
     check_board,
 )
@@ -51,10 +51,7 @@ from tools.quality.board import (
 #: A minimal register: a header, a separator, one closed row and one live one.
 #: ⛔ Written out rather than generated, so a reader can see what the check
 #: reads without running it.
-HEADER = (
-    "<!-- register -->\n"
-    "| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
-)
+HEADER = "<!-- register -->\n| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
 FOOTER = "<!-- /register -->\n"
 CLOSED = "| W1 | a naming | PO | ✅ done — `abc1234` | [record](BOARD-ARCHIVE.md#w1) |\n"
 LIVE = "| W2 | another naming | PO | `todo` | [rows/W2.md](rows/W2.md) |\n"
