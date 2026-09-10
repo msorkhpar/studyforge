@@ -177,3 +177,20 @@ def test_no_module_carries_a_second_copy_of_this_rule():
                 if path.name != "describe.py":
                     offenders.append(f"{path.name}:{node.lineno}")
     assert offenders == [], f"a second copy of the key-naming rule: {offenders}"
+
+
+def test_the_contract_says_what_a_plain_key_can_still_be():
+    # ⛔ **Ruling 37.** The docstring's promise is that a plain key cannot be a
+    # path, an address or a token — which is true, and is *not* the same as
+    # "cannot identify anybody". A bare lowercase personal name is a valid
+    # lowercase identifier, and this function reproduces it verbatim:
+    assert describe_keys(["jane"]) == "['jane']"
+    # ⭐ So the contract has to say so, in the place a caller reads before
+    # deciding what to pass. ⚠️ Ten call sites now depend on this distinction:
+    # keys here, values through `describe`.
+    # ⚠️ Whitespace-normalised: the sentence is wrapped prose, and a test that
+    # depended on where the formatter broke the line would fail on a reflow
+    # that changed nothing.
+    said = " ".join((describe_keys.__doc__ or "").split())
+    assert "categorical, not total" in said
+    assert "pass keys here, never values" in said
