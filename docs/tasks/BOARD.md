@@ -173,8 +173,61 @@ which is the one seam neither can inspect from their own side.
 | **W23** — the live R7 hole (tilde, `/export/home/`) | Developer 2 | ⏳ `in-progress` | ⛔ **before W20** |
 | **W20** — repo-wide §7c check **and its migration** | Developer 2 | `todo` | ⛔ **before SF-10 lands** |
 | **Ruling 46's helper** — `asserting=` rule-id set + the misattribution message | **Developer 1, now** | ⏳ `in-progress` | ⛔ **stop at the helper; the general seam is scoped once, here** |
-| **SF-10 survey** — port inventory + R11 package shape (**W5**) | **Developer 1, next** | `todo` | ⛔ **design only, no builder code** |
+| **SF-10 survey** — port inventory + R11 package shape (**W5**) | Developer 1 | ✅ `done` — `13b2857`, one document, no code | — |
+| **FND-05a** — the workspace pin file and its verification command | **Developer 1, now** | ⏳ `in-progress` | ⛔ **closes M0**, and it collides with nothing in flight |
 | **SF-10** — Unit document builder | **both, as a team** | `todo` | when the survey and W20 land |
+
+### ⭐ Developer 1 takes FND-05a — the M0 residue that has waited a whole milestone
+
+⛔ **`SF-10` is gated on rulings 53 and 54, and `W20` is ahead of it**, so the
+build cannot start. ⭐ **`FND-05a` is the right use of the gap and it has been
+right for a while:** it is a **tracked pin file plus a verification command**,
+it touches neither `tools/quality/` (Developer 2's `W20`) nor `unit/`
+(`SF-10`), and ⛔ **it is the last open M0 task — landing it closes M0
+outright.**
+
+⚠️ **My own words on it, now a full milestone old:** *"it should not slip
+**indefinitely**: the failure it prevents — a component at a commit the parent
+never recorded — has **no symptom**, so it is discovered by being wrong rather
+than by failing."* ⛔ **A task whose justification is *it can slip* accumulates
+exactly one counter-argument per milestone**, and this is its second.
+
+⭐ **Acceptance is unchanged and already sharp:** verification **exits 0** when
+correct and **exits 1 naming the component** both when a recorded commit is
+absent locally and when a component's `HEAD` moved unrecorded — ⛔ **asserted, not
+described** — and ⛔ **no `.gitmodules` anywhere, no absolute path in any tracked
+file.**
+
+### ⭐ What the survey gives SF-10 — and the seam whose failure is silent
+
+**Proposed shape:** `unit/builder/{__init__,material,derived,authored,document}.py`,
+plus ⭐ **`unit/served.py` as a *sibling*, not a child.** ⚠️ Its **name** was
+stated rather than taken — correctly left as a team decision.
+
+⛔ **The load-bearing seam, and it is FND-04's argument again:** `derived`
+**computes** order; `authored` **must never re-derive it** — because two
+consumers ordering differently **mint different speech ids and desynchronise the
+page from its audio.**
+
+> ⛔ *"Split, the authored path cannot reach the ordering code by accident; in one
+> module they are two branches and nothing but care keeps them apart."*
+
+⭐ **That is a seam, not a slice** — the distinction R11 turns on — ⚠️ **and its
+failure is silent**, which is why it is worth a package boundary rather than a
+convention. ⭐ **`builder/document.py` has the least headroom at ~290, so its next
+seam is named now** rather than discovered at 400.
+
+⛔ **Two CTO rulings are owed before `SF-10` builds — it is gated on them:**
+
+| # | The collision | Why it cannot wait |
+|---|---|---|
+| **53** | `unitdoc.py` re-gates every archive file on **every read, by design** — ⛔ **and Ruling 17 put that gate upstream** | ⚠️ **Both are defensible and they cannot both be implemented.** A builder written against the wrong one is rewritten, not adjusted |
+| **54** | ⛔ **`source` means a *corpus id* here and *a fetch URL* there** | ⛔ **`SF-10` writes the `sources` array, so it is where they collide.** ⚠️ **Rename before 1,290 documents carry it** — R9 makes a written key expensive, and this is the last moment it is free |
+
+⚠️ **Five further open questions are carried in the survey, each with what would
+settle it** — including whether the served document gets its own `api` version.
+⛔ **No equivalent of `UNIT_API = 3` exists**, which makes it an **R21 register row
+in the making**: a contract that is about to be written and is not yet located.
 
 ### ⭐ Developer 1's slot: the survey, not the build
 
@@ -464,7 +517,7 @@ triggers are imminent.
 | W2 | **Behavioural §1f check** — poison an absolute path into each string parameter, fail if the refusal reproduces it. Prototyped, deliberately not shipped. **46 pairs before the label fix, 45 after** | **Developer 2** | ✅ **merged `f569d0e`** | ⭐ It is W1's enforcer: W1 fixes the sites, this stops them coming back. ⚠️ A delta of one, reported honestly, is exactly the number that makes it credible. **Measured since:** 6 of 10 poison shapes reproduced an identifier in a `validate` report; 10 of 10 clean with W1 prototyped |
 | W3 | ⚠️ **Fixture defect, found by a graph build rather than a test** — `depth1/.../media/diagram.svg` says *"Two nodes and an arrow"*, its lesson's `alt` says *"…joined by one arrow"*, and the geometry is an undecorated `<line>` with **no marker and no arrowhead**; the two accessible names also differ in wording | **Developer 2** (FND-04's author) | ✅ **merged** | ⭐ **Worth more than the defect: a graph build found what the test suite did not.** ⛔ **Its old trigger — *"with the next fixture touch"* — named work that is now Developer 1's**, so Developer 2 would have waited forever. A trigger naming somebody else's work is not a trigger |
 | W4 | **`handoffs/SF-05.md` still describes `LABEL_FORBIDDEN`** and lists its duplication as open finding 6; both are resolved by the hotfix | PO — ✅ **discharged here** | ✅ done | ⛔ **A handoff is a record and is not rewritten** — my own rule — ⭐ **so this row *is* the correction.** The board is where a superseded record gets superseded |
-| W5 | **`unitdoc.py` is 827 lines against R11's 400, and belongs to `SF-10`** — not `SF-06` | `SF-10` | at **SF-10**, step 1.4 | ⭐ Routed with the number so the task inherits it. R11: the large modules arrive **as packages or not at all** |
+| W5 | ⛔ **CORRECTED — the number is right about the *file* and misleading about the *task*.** `unitdoc.py` is **827 lines**; ⭐ **about 250 are left to port.** SF-05, SF-06 and SF-09 already landed the overlay reader (`unit/content.py`, 300 lines), the section-key vocabulary, the error type and `AUTHOR_MAY_NOT_WRITE` as `DERIVED_FIELDS`, and **`_check_address_against_map`'s job is already done by `validate/structure.py`** | `SF-10` | at **SF-10** | ⚠️ **`SF-10` has been carrying an 827-line port in its head and the real figure is a third of that** — so the task is **re-priced**, and this row is corrected so the number stops being quoted at its old scope. ⭐ **The inventory *sums* to 827** (201 header / 30 gates / 74 archive reading / 189 derived / 97 build / 134 `content.json` / 102 `unit.json`), so it is checkable rather than asserted. ⭐ **It still wants to be a package, for a measured reason: the same contract is ~145 lines in the source and 300 here — ≈2.1× expansion.** ⚠️ **One data point, and the survey said so** |
 
 ### ⛔ Ruled: **W7 and W13 are one commit**, and it is Ruling 19's argument again
 
@@ -717,6 +770,24 @@ built out of whether this one's questions were worth asking.
   source starts further along than the second.
 
 ---
+
+### ⭐ R14's first clean instance, recorded because the counter-evidence was accumulating
+
+⚠️ **This board has spent the session collecting honest evidence *against* R14's
+premise** — the index absent from 31 of 33 worktrees, `query` confidently wrong
+when phrased as a sentence, a graph with zero doc↔code edges, a coordinator who
+hand-assembled briefings because the graph was not there to ask.
+
+⭐ **`SF-10`'s survey is the first clean instance of the graph doing what every
+`Context` budget in this plan assumes.** The structure question was **answered
+before any file was opened** — 41 line-anchored symbol nodes — and the reading
+that followed was **the contract surface only**: one docstring, the signatures,
+the banners. ⛔ **No CodeSignal generation code, no second large module.**
+
+⭐ **And it happened on the task where the context discipline was hardest** — a
+~70k budget against an 827-line source module. ⚠️ **Recorded deliberately:** a
+board that logs only the counter-evidence produces a plan nobody trusts, and the
+premise is now **measured in both directions** rather than defended in one.
 
 **Context budgets: ⭐ the analysis is in [`BOARD-ARCHIVE.md`](BOARD-ARCHIVE.md).** ⛔ **Two conclusions stay live:** `explain` and `path` take `--graph` and work from an index-less worktree while `query` does not, so **the index cost is paid once per repository**; and **a graph built by running the tool alone has zero doc↔code edges**, so R14's saving is a property of a graph somebody bridged.
 
