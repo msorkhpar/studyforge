@@ -10,12 +10,18 @@ the check rather than against it. The first corpus to hit one would otherwise
 find out by overwriting a page.
 
 ⭐ **The last section is not a check but a pin.** `_collision` quotes the
-placed path with `!r`, which is only safe because a field reader two packages
-away refuses an origin that could carry a home directory. That is provenance
-(Ruling 17), and the architecture is right — ⛔ but a pointer is only better
-than a copy if the far end holds, and until now nothing recorded that this
-consumer depends on it. Weakening `optional_path` gave a green suite and a
-leaking report. It no longer does.
+placed path with `!r`, which is only safe because the value it is given has
+already been refused if it is not a location inside the source. That is
+provenance (Ruling 17), and the architecture is right — ⛔ but a pointer is
+only better than a copy if the far end holds, and nothing recorded that this
+consumer depended on it.
+
+⚠️ **Ruling 44 moved the far end while this pin was watching, which is what a
+pin is for.** The guarantee used to live only in `container.fields`, two
+packages away; it is now `studyforge.sourcepath`, asked by that reader *and* by
+`placement.origin_directory` — the call `paths.py` itself makes. So the second
+test below asserts the refusal rather than the leak, and a third holds the
+channel open on a legal path so the pair cannot pass vacuously.
 """
 
 import ast
@@ -368,20 +374,37 @@ def test_a_home_rooted_origin_is_refused_at_the_reader_and_reaches_no_finding(tm
     assert HOME_ROOTED_DIRECTORY not in said, said
 
 
-def test_and_the_same_origin_past_that_reader_is_reproduced_verbatim(tmp_path):
-    # ⚠️ **Ruling 11: watch it leak with the mechanism removed.** The same
-    # value handed to this module directly — exactly what a weakened
-    # `optional_path` would hand it — reaches the report line in full, so the
-    # test above is not passing because the collision never happens.
-    # ⛔ This is **not** a defect to fix here. A re-check inside `paths.py` is
-    # the two-readings mistake SF-25's author refused, and it would make the
-    # test above pass for the wrong reason. ⭐ If this half ever fails,
-    # somebody added a guard downstream and the safety argument has moved:
-    # read the new guard and rewrite this pair against it, rather than
-    # deleting the record of where the safety comes from.
+def test_and_the_same_origin_past_that_reader_is_refused_by_placement_unquoted(tmp_path):
+    # ⚠️ **This test used to assert the opposite, and its own instruction is
+    # why it now says this.** It read: *"if this half ever fails, somebody
+    # added a guard downstream and the safety argument has moved — read the
+    # new guard and rewrite this pair against it."* Ruling 44 moved it. The
+    # same value handed to this module directly is now refused **here**,
+    # because `origin_directory` asks `studyforge.sourcepath` the same
+    # question the field reader asks, so `_collision` can no longer be reached
+    # with a path that is not source-relative.
+    # ⛔ Still not a re-check inside `paths.py`: the guard is in the call
+    # `paths.py` already makes, which is where it belongs.
     walk = _two_containers_past_the_reader(tmp_path, origin=HOME_ROOTED_ORIGIN)
+    items = list(check_placement(walk))
+    assert {item.rule for item in items} == {"unplaceable"}, items
+    said = "\n".join(item.message for item in items)
+    assert HOME_ROOTED_DIRECTORY not in said, said
+
+
+def test_and_the_collision_line_still_quotes_a_path_it_is_given(tmp_path):
+    # ⭐ **Ruling 11, in the only direction left.** Without this the pair above
+    # could both pass on a corpus that never collides at all, or a profile that
+    # ignores `origin`, and would be pinning nothing. The same two containers
+    # with a *legal* origin do collide, and the message does reproduce the
+    # directory in full — so the leak channel is open, real, and quoting
+    # whatever placement hands it. ⛔ What keeps a home directory out of it is
+    # `sourcepath.source_path_fault` and nothing in this module; that is the
+    # dependence being recorded, and it now holds at two call sites instead of
+    # one.
+    walk = _two_containers_past_the_reader(tmp_path, origin="material/private/README.md")
     messages = [item.message for item in check_placement(walk)]
-    assert any(HOME_ROOTED_DIRECTORY in message for message in messages), messages
+    assert any("material/private" in message for message in messages), messages
 
 
 # --------------------------------------------------------------------------
