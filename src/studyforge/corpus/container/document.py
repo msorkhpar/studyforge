@@ -25,13 +25,30 @@ from studyforge.corpus.manifest import Manifest
 from studyforge.describe import describe, describe_keys
 from studyforge.version import check as check_version
 
-#: The document format version. ⚠️ Bumped when a reader of the old shape would
-#: be *wrong* rather than merely incomplete.
-CONTAINER_API = 1
+#: The document format version, and what a generator writes today. ⚠️ Bumped
+#: when a reader of the old shape would be *wrong* rather than merely
+#: incomplete — ⭐ **2 is Ruling 92's**, the version at which a unit's `origin`
+#: may name a region of a file rather than a whole one.
+CONTAINER_API = 2
 
 #: The versions this build reads. ⛔ The membership test is
-#: `studyforge.version`'s (SF-33); what lives here is the set.
-KNOWN_CONTAINER_API = frozenset({CONTAINER_API})
+#: `studyforge.version`'s (SF-33); what lives here is the set. ⭐ **Spelled as
+#: literals rather than derived from `CONTAINER_API`**: a set built out of the
+#: constant it is meant to accompany moves whenever that constant does, and an
+#: assertion about it can only prove self-consistency (`W39/5`'s shape).
+#:
+#: ⚠️ **1 is still read, and that is not a migration.** A v1 map declares no
+#: region, so every claim it makes is one this build understands unchanged;
+#: R9 refuses the *unknown*, and 1 is known. ⛔ What R9 does require is the
+#: other direction, and `Container.__post_init__` enforces it: a map that uses
+#: the v2 shape may not call itself v1.
+KNOWN_CONTAINER_API = frozenset({1, 2})
+
+#: ⛔ The version at which a unit's `origin` may be an object naming a region
+#: (Ruling 92). A build that does not speak this version must be **unable** to
+#: read a map that uses the shape — otherwise the version is decorative and
+#: an old reader silently takes seventeen regions for seventeen whole files.
+REGION_ORIGIN_API = 2
 
 CONTAINER_FILENAME = "container.json"
 
@@ -50,6 +67,11 @@ CONTAINER_KEYS = (
 
 #: A unit entry's key order. `origin`, `url_slug`, `label` and `note` are
 #: omitted when absent.
+#:
+#: ⭐ **`origin` carries two shapes and remains one key.** A string is a whole
+#: file; an object — `fields.ORIGIN_KEYS`, `{"path": …, "section": …}` — is the
+#: region of a file that opens at that heading (Ruling 92). ⛔ `section` is
+#: therefore **not** a unit key and does not appear here.
 #:
 #: ⭐ **`origin` and `url_slug` are both provenance and neither is redundant.**
 #: `origin` is a path *inside* the source, which is what a repository corpus
@@ -78,6 +100,13 @@ class Unit:
     title: str
     practices: int
     origin: str | None = None
+    #: ⭐ **The second half of `origin`, not a second field of the document.**
+    #: `None` means the unit is the whole file; a heading's exact text means it
+    #: is the region opening at that heading and ending at the next heading of
+    #: the same or shallower depth. ⛔ `origin` stays a plain path either way,
+    #: because every other consumer of it wants a path — `origin_directory`
+    #: takes `.parent` of one, and media placement is unaffected (Ruling 92).
+    origin_section: str | None = None
     url_slug: str | None = None
     label: str | None = None
     note: str | None = None
@@ -111,6 +140,29 @@ class Container:
     note: str | None = None
     container_api: int = CONTAINER_API
 
+    def __post_init__(self) -> None:
+        """Refuse a region declared at a version that has no regions (R9).
+
+        ⛔ **R9's other direction, and the reason a version was minted at
+        all.** A build reading only `container_api: 1` must be *unable* to read
+        a map that uses the v2 shape; a map that uses it and calls itself v1
+        would slip past that build's version check and be read as seventeen
+        whole files. ⭐ Checked here rather than in `from_document` so the
+        render path cannot mint one either — the two directions are one rule
+        and it has one home.
+        """
+        if self.container_api >= REGION_ORIGIN_API:
+            return
+        for unit in self.units:
+            if unit.origin_section is not None:
+                raise ContainerError(
+                    f"{self.address.key} declares unit {unit.n} origin as a region at "
+                    f"container_api {self.container_api}; a region needs "
+                    f"container_api {REGION_ORIGIN_API}. It is refused rather than read: "
+                    f"a build that does not speak the shape must be unable to read the "
+                    f"map, or the version says nothing (R9)."
+                )
+
     @property
     def ordinals(self) -> tuple[int, ...]:
         """The unit ordinals, in declared order."""
@@ -128,7 +180,12 @@ class Container:
 
 def from_document(document: dict, where: str, manifest: Manifest) -> Container:
     """Build a `Container` from a decoded `container.json`, checked against its corpus."""
-    check_version(
+    # ⛔ The declared version is **kept**, never replaced by this build's own.
+    # A v1 map read and written back must come out as a v1 map: `render`'s
+    # round-trip guarantee is that every byte of everything untouched is the
+    # byte that was there, and silently promoting the version would rewrite
+    # the one field that says which reader the document was written for.
+    container_api = check_version(
         "container_api",
         document.get("container_api"),
         KNOWN_CONTAINER_API,
@@ -160,6 +217,7 @@ def from_document(document: dict, where: str, manifest: Manifest) -> Container:
         units=_units(document.get("units"), where),
         origin=fields.optional_path(document.get("origin"), "origin", where),
         note=fields.optional_text(document.get("note"), "note", where),
+        container_api=container_api,
     )
 
 
@@ -226,6 +284,10 @@ def _unit_document(unit: Unit) -> dict:
         value = getattr(unit, key)
         if value is not None:
             entry[key] = value
+    if unit.origin_section is not None:
+        # ⭐ The object replaces the string **in place**, so a region keeps
+        # `origin`'s position in `UNIT_KEYS` and the round trip is byte-exact.
+        entry["origin"] = {"path": unit.origin, "section": unit.origin_section}
     return entry
 
 
@@ -277,11 +339,13 @@ def _unit(entry: object, where: str) -> Unit:
             f"It is preserved verbatim for SF-25 to check against reality, so it is "
             f"never corrected here."
         )
+    origin, section = fields.optional_origin(entry.get("origin"), f"unit {n} origin", where)
     return Unit(
         n=n,
         title=fields.required_text(entry.get("title"), f"unit {n} title", where),
         practices=practices,
-        origin=fields.optional_path(entry.get("origin"), f"unit {n} origin", where),
+        origin=origin,
+        origin_section=section,
         url_slug=fields.optional_slug(entry.get("url_slug"), f"unit {n} url_slug", where),
         label=fields.optional_label(entry.get("label"), f"unit {n} label", where),
         note=fields.optional_text(entry.get("note"), f"unit {n} note", where),

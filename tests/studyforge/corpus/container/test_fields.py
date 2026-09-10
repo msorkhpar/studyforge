@@ -15,8 +15,10 @@ from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.container.fields import (
     FILENAME_PERMITTED,
     FILENAME_PERMITTED_DESCRIBED,
+    ORIGIN_KEYS,
     is_filename_component,
     optional_label,
+    optional_origin,
     optional_path,
     optional_slug,
     optional_text,
@@ -256,3 +258,98 @@ def test_the_permitted_class_is_the_slug_class_and_is_not_re_typed():
     # that arrives.
     assert FILENAME_PERMITTED == frozenset(string.ascii_lowercase + string.digits + "-.")
     assert all(is_slug(character) for character in FILENAME_PERMITTED - {"-", "."})
+
+
+# --------------------------------------------------------------------------
+# ⛔ SF-36 / Ruling 92 — `origin` reads as a whole file or as a region
+# --------------------------------------------------------------------------
+
+REGION = {"path": "TestCases.md", "section": "3. Card issuance"}
+
+
+def test_an_absent_origin_is_two_absences():
+    assert optional_origin(None, "unit 3 origin", WHERE) == (None, None)
+
+
+def test_a_string_origin_is_a_path_and_no_section():
+    assert optional_origin("TestCases.md", "unit 3 origin", WHERE) == ("TestCases.md", None)
+
+
+def test_an_object_origin_is_a_path_and_a_section():
+    assert optional_origin(dict(REGION), "unit 3 origin", WHERE) == (
+        "TestCases.md",
+        "3. Card issuance",
+    )
+
+
+def test_the_object_form_carries_exactly_two_keys():
+    assert ORIGIN_KEYS == ("path", "section")
+
+
+@pytest.mark.parametrize(
+    "value",
+    [
+        {"path": "TestCases.md"},
+        {"section": "3. Card issuance"},
+        {},
+        {"path": "TestCases.md", "section": "3. Card issuance", "lines": [1, 40]},
+        {"path": "TestCases.md", "anchor": "card-issuance"},
+    ],
+)
+def test_an_object_that_is_not_a_region_is_refused(value):
+    # ⛔ Both keys, and only these two. A `path` alone is the string form
+    # written the long way; a `section` alone is a region of nothing; a third
+    # key is a shape this contract does not have.
+    with pytest.raises(ContainerError, match="not a region"):
+        optional_origin(value, "unit 3 origin", WHERE)
+
+
+def test_a_region_with_no_path_is_a_region_of_nothing():
+    with pytest.raises(ContainerError, match="no path"):
+        optional_origin({"path": None, "section": "3. Card issuance"}, "unit 3 origin", WHERE)
+
+
+@pytest.mark.parametrize("path", [3, "", ["TestCases.md"]])
+def test_a_region_whose_path_is_not_text_is_refused(path):
+    with pytest.raises(ContainerError, match="must be a path"):
+        optional_origin({"path": path, "section": "3. Card issuance"}, "unit 3 origin", WHERE)
+
+
+@pytest.mark.parametrize("section", [None, "", "   ", 3, ["3. Card issuance"]])
+def test_a_region_whose_section_is_not_text_is_refused(section):
+    with pytest.raises(ContainerError, match="required and must be text"):
+        optional_origin({"path": "TestCases.md", "section": section}, "unit 3 origin", WHERE)
+
+
+def test_the_path_rules_still_apply_inside_the_object():
+    # ⭐ The rule is `studyforge.sourcepath`'s and the object form does not get
+    # its own copy of it — which is the defect Ruling 44 removed.
+    with pytest.raises(ContainerError, match="absolute path"):
+        optional_origin(
+            {"path": HOME + "/TestCases.md", "section": "3. Card issuance"},
+            "unit 3 origin",
+            WHERE,
+        )
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["TestCases.md#3. Card issuance", {"path": "T.md#a", "section": "3. Card issuance"}],
+)
+def test_a_fragment_is_refused_in_both_shapes(value):
+    # ⛔ Ruling 92: accepted before this task and meaningless — nothing read
+    # the part after the `#`, so the unit silently became the whole file.
+    with pytest.raises(ContainerError, match="fragment"):
+        optional_origin(value, "unit 3 origin", WHERE)
+
+
+def test_a_refusal_never_reproduces_the_origin_it_read():
+    # ⛔ The one shape being refused here is precisely the shape that carries a
+    # home directory (R7, measured by SF-03).
+    with pytest.raises(ContainerError) as raised:
+        optional_origin(
+            {"path": HOME + "/TestCases.md", "section": "3. Card issuance"},
+            "unit 3 origin",
+            WHERE,
+        )
+    assert "jane" not in str(raised.value)

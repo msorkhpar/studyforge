@@ -7,8 +7,9 @@ feature directly in the raw source and compares it against the archive**.
 **How you use it.** `check_unclassified(walk)` and `check_completeness(walk)`,
 both yielding `Finding`s and `Unchecked`s like every other check.
 
-**Depends on.** `corpus.manifest` for the classification, `archive.blocks` for
-what a heading is, `validate.corpus`, `validate.report`.
+**Depends on.** `corpus.manifest` for the classification, `validate.headings`
+for what a heading is and where a region ends, `validate.corpus`,
+`validate.report`. ⛔ **Not `archive.markdown`**, ever — see below.
 
 ## A completeness check counts something the parser did not produce
 
@@ -31,9 +32,20 @@ establishes the realistic failure: raw HTML in real Markdown yields a short,
 well-formed, entirely plausible unit rather than an error.
 
 ⭐ **So this check does not use the Markdown reader.** It counts ATX heading
-lines with a regex of its own, outside fenced code blocks, and compares the
-number against the archive's `headings` count. A check that can only fail when
-the parser already failed loudly is not a check.
+lines with a regex of its own — `validate.headings`, which imports nothing but
+`re` — outside fenced code blocks, and compares the number against the
+archive's `headings` count. A check that can only fail when the parser already
+failed loudly is not a check.
+
+## ⛔ A unit may be a REGION of a file, and then the count is the region's
+
+⚠️ **Seventeen units sharing one `origin` were seventeen comparisons against
+one number** — a real corpus holds 17 regions of a 361-heading file, so sixteen
+short-read by construction. ⭐ **Ruling 92 gives `origin` a second shape**
+(`{path, section}`), bounded by `validate.headings` from the same fence-aware
+regex that produces the count. ⛔ **A section occurring twice, or not at all,
+is a finding with its own rule id**, never resolved by picking one: picking is
+where the silence comes back.
 
 ## Where the source is, and what happens when it is not there
 
@@ -74,11 +86,15 @@ moves with the corpus because it belongs to the corpus.
 `Unchecked`** (`ignore-declaration`), never a guess. Same rule as the absent
 source tree above, for the same reason: a half-applied ignore rule is a
 half-present input, and the dangerous half is the one that looks clean.
+
+Size exception: W44 splits this module into a package, and it is deferred to
+that row rather than done here because this file crossed the ceiling only when
+SF-35 and SF-36 merged — each is under it alone, and neither task may
+restructure a file the other is concurrently editing.
 """
 
 from __future__ import annotations
 
-import re
 import shutil
 import subprocess
 from collections.abc import Iterator
@@ -87,6 +103,7 @@ from pathlib import Path
 
 from studyforge.corpus.manifest import Classification
 from studyforge.validate.corpus import ARCHIVE_DIR, Walk
+from studyforge.validate.headings import count_headings, region
 from studyforge.validate.report import Finding, Unchecked
 
 RULE_UNCLASSIFIED = "unclassified"
@@ -100,20 +117,16 @@ RULE_ORIGIN_MISSING = "origin-missing"
 #: stops the third state becoming somewhere to sweep material into.
 RULE_CONTESTED = "contested"
 
+#: ⛔ Two rule ids, not one. A section the file does not carry is a renamed
+#: heading; one it carries twice is a corpus whose regions are ambiguous. ⚠️
+#: They are fixed differently, so a script filters on them separately.
+RULE_SECTION_MISSING = "origin-section-missing"
+RULE_SECTION_AMBIGUOUS = "origin-section-ambiguous"
+
 #: ⛔ Its own rule id rather than `unclassified`'s. The classification check did
 #: run; what could not be read is the repository's declaration of what is
 #: output — a different fact, and one a script filters on separately.
 RULE_IGNORE_DECLARATION = "ignore-declaration"
-
-#: An ATX heading, counted **outside** fenced code. ⛔ Deliberately not the
-#: Markdown reader's: this number exists to disagree with the parser, so it
-#: may not come from it.
-HEADING_LINE = re.compile(r"^ {0,3}#{1,6}(?:\s|$)")
-
-#: A fence opening or closing. ⚠️ Fence awareness is the whole difficulty: a
-#: `#` inside a code block is a comment in half the languages this framework
-#: will meet, and counting it would make the check cry wolf on correct output.
-FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 
 #: Directories a source scan never descends into. ⚠️ The archive is generated
 #: output living inside the corpus root; sweeping it would classify the
@@ -220,7 +233,7 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
             f"source tree is absent and no unit's completeness was checked",
         )
         return
-    for where, path, recorded in origins:
+    for where, path, section, recorded in origins:
         if not path.exists():
             # ⛔ Half a source tree is a failure, not a discount: a per-file
             # skip would excuse precisely the file that went missing.
@@ -232,14 +245,21 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
                 "none of it is; half of it is where a short read hides.",
             )
             continue
-        yield from _compare(where, path, recorded)
+        yield from _compare(where, path, section, recorded)
 
 
-def _compare(where: str, path: Path, in_archive: int) -> Iterator[Finding]:
+def _compare(where: str, path: Path, section: str | None, in_archive: int) -> Iterator[Finding]:
     text = _read(path)
     if text is None:
         return
-    in_source = count_headings(text)
+    if section is None:
+        in_source = count_headings(text)
+    else:
+        found = region(text, section)
+        if found.occurrences != 1:
+            yield _ambiguous(where, found.occurrences)
+            return
+        in_source = found.headings
     if in_source != in_archive:
         yield Finding(
             RULE_SHORT_READ,
@@ -251,27 +271,30 @@ def _compare(where: str, path: Path, in_archive: int) -> Iterator[Finding]:
         )
 
 
-def count_headings(text: str) -> int:
-    """Count ATX heading lines outside fenced code.
+def _ambiguous(where: str, occurrences: int) -> Finding:
+    """Refuse a `section` that does not name exactly one region.
 
-    ⚠️ **Fence-aware, and that is not decoration.** A `#` at the start of a
-    line inside a fence is a comment in Python, Ruby, shell and YAML; counting
-    those would make this check fire on correct output, and a check that fires
-    on correct output is a check somebody turns off.
+    ⛔ **Never resolved by picking one** — that is Ruling 92's *sixteen silent
+    short reads*. ⚠️ The section is **not** reproduced: it is read out of a
+    file somebody else wrote, and a refusal names the field (R7).
     """
-    count = 0
-    fence: str | None = None
-    for line in text.splitlines():
-        marker = FENCE.match(line)
-        if marker is not None:
-            if fence is None:
-                fence = marker.group(1)[0]
-            elif marker.group(1)[0] == fence:
-                fence = None
-            continue
-        if fence is None and HEADING_LINE.match(line):
-            count += 1
-    return count
+    if occurrences == 0:
+        return Finding(
+            RULE_SECTION_MISSING,
+            where,
+            "declares an origin region whose section is not a heading of that file. "
+            "The section is the exact text of the heading the region opens with, so a "
+            "renamed one breaks it here rather than by silently reading the whole "
+            "file as this unit.",
+        )
+    return Finding(
+        RULE_SECTION_AMBIGUOUS,
+        where,
+        f"declares an origin region whose section is a heading of that file "
+        f"{occurrences} times. A region must be named exactly once: taking the first "
+        f"match gives every other unit sharing this file a region beginning somewhere "
+        f"else, and nothing reports it.",
+    )
 
 
 @dataclass(frozen=True, slots=True)
@@ -366,17 +389,21 @@ def _declared_output(root: Path, candidates: list[Path]) -> frozenset[Path] | No
     return frozenset(root / name for name in result.stdout.split("\0") if name)
 
 
-def _origins(walk: Walk) -> list[tuple[str, Path, int]]:
-    """Return `(unit key, origin path, headings recorded)` per **unit**, not document.
+def _origins(walk: Walk) -> list[tuple[str, Path, str | None, int]]:
+    """Return `(unit key, origin path, section, headings recorded)` per **unit**.
 
     ⚠️ **Summed across the unit's documents, deliberately.** One origin file is
     one unit, and a unit may hold several archive documents — `depth1`'s third
     unit holds two lessons. Comparing one document against the whole file would
     report a short read on every multi-document unit in the corpus, which is
     the shape of a check that gets switched off.
+
+    ⭐ **The sum is unchanged by regions, which is the point** (Ruling 92):
+    units sharing one `path` have **disjoint** sections and key separately, so
+    it is seventeen comparisons against seventeen numbers, not against 361.
     """
     totals: dict[tuple[str, int], int] = {}
-    origins: dict[tuple[str, int], Path] = {}
+    origins: dict[tuple[str, int], tuple[Path, str | None]] = {}
     for unit in walk.units:
         n = unit.document.get("unit")
         declared = next((d for d in unit.container.units if d.n == n), None)
@@ -384,8 +411,8 @@ def _origins(walk: Walk) -> list[tuple[str, Path, int]]:
             continue
         key = (unit.container.address.unit_key(declared.n), declared.n)
         totals[key] = totals.get(key, 0) + (unit.document.get("counts") or {}).get("headings", 0)
-        origins[key] = walk.root / declared.origin
-    return [(key[0], origins[key], totals[key]) for key in sorted(totals)]
+        origins[key] = (walk.root / declared.origin, declared.origin_section)
+    return [(key[0], *origins[key], totals[key]) for key in sorted(totals)]
 
 
 def _read(path: Path) -> str | None:

@@ -32,6 +32,11 @@ NOT_A_SOURCE_PATH = [
     ("file:///etc/passwd", "a path carrying a drive letter or scheme"),
     (r"\\host\home\jane\README.md", "a path written with Windows separators"),
     (r"material\jane\README.md", "a path written with Windows separators"),
+    # ⛔ Ruling 92. Accepted before this rule and meaningless: nothing ever
+    # read the part after the `#`, so the unit silently became the whole file.
+    ("TestCases.md#3. Card issuance", "a path carrying a fragment"),
+    ("TestCases.md#card-issuance", "a path carrying a fragment"),
+    ("docs/TestCases.md#", "a path carrying a fragment"),
 ]
 
 IS_A_SOURCE_PATH = [
@@ -43,6 +48,9 @@ IS_A_SOURCE_PATH = [
     "material-2026/lesson_1.md",
     "docs/~drafts.md",
     "src/home/index.md",
+    # ⭐ The positive one character from the fragment rows above: the same file
+    # without the `#` is a location, and a region of it is declared elsewhere.
+    "TestCases.md",
 ]
 
 

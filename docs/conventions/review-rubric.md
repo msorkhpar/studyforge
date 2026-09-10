@@ -458,6 +458,29 @@ every machine, for the same reason.**
 whose subject is *"does this path exist"* states, in its own contract, whether
 an untracked path counts — and answers the same way on both machines.
 
+#### ⛔ Ruling 110 — §2e has exactly ONE standing exception, and Ruling 96 denied it
+
+⛔ **`W39/4`, escalated as a NEGATIVE.** ⭐ **An exception to §2e is legal only
+while it is enumerated, asserted and owned** — never remembered, never denied.
+
+```bash
+# Ruling 96 said "the exit code does not depend on graphify-out/ in ANY state".
+# FALSE: its own step enumerated one state. It should have said —
+#   No FRESHNESS state changes the floor's exit code: none, unverifiable,
+#   stale and fresh all exit 0. ONE dependency remains, enumerated rather than
+#   denied — a present index below BRIDGE_FLOOR is a finding, and that is
+#   FND-07's last enforcement. Converting it in the same breath would have
+#   deleted the check while claiming to have satisfied a rule.
+python3 -m pytest -q -k UNBRIDGED_finding_still_depends_on_untracked_state
+# Pass: 1 passed. 16049d2: exposure 0.
+# A row that goes green by DISAPPEARING has removed or hidden the exception,
+# and §2e is then owed a fresh measurement rather than a silence.
+```
+
+⭐ **Transferable: a ruling that removes one member of a class names the member,
+never the class** — the universal is the half nobody implements and everybody
+quotes. Reasoning: `docs/tasks/handoffs/CTO-2026-09-10-round31.md`.
+
 ---
 
 ## 3. R11 — the size ceiling
@@ -537,6 +560,59 @@ EOF
 *during* extraction. A change that lands a large module because the source
 module was large has not done the task.
 
+#### ⛔ Ruling 113 — condition 3 has a SECOND admissible form: a deferral naming a live id
+
+⛔ **A breach created by a MERGE of two individually-legal branches cannot
+satisfy condition 3 as written**, because splitting is not worse — it is right,
+and merely belongs to somebody else. ⭐ **So condition 3 is satisfied by
+EITHER form, and by no third:**
+
+| form | reason says | retired by |
+|---|---|---|
+| **design claim** | why splitting would be **worse** | ⛔ never — it is permanent |
+| ⭐ **deferral** | ⛔ **`<TASK-ID>` splits this module**, and why not in this task | ⛔ **that task, which DELETES the line** |
+
+⛔ **The marker stays `Size exception:` — `config.SIZE_EXCEPTION_MARKER` is
+fixed and case-sensitive by ruling, and a second spelling would pass the
+checker and fail here.** ⭐ **A deferral is told from a design claim by its
+reason carrying a task id, which is greppable:**
+
+⛔ **Do NOT `grep` the tree for the marker.** ⚠️ **`tools/quality/size.py`, its
+config and its tests all contain the literal string and always will** — a grep
+returns them forever and the check becomes something a reviewer learns to skim.
+⭐ **Ask `ast`, and only of files actually over their ceiling, deferring to
+`FND-01`'s config exactly as §3a does:**
+
+```bash
+python3 - <<'EOF'
+import ast, pathlib
+from tools.quality import config
+root = pathlib.Path(".")
+for path in config.python_files(root):
+    rel = config.relative(path, root)
+    text = path.read_text(encoding="utf-8")
+    if len(text.splitlines()) <= config.ceiling_for(rel):
+        continue                      # not over the ceiling: no opt-out in play
+    doc = ast.get_docstring(ast.parse(text)) or ""
+    for line in doc.splitlines():
+        if line.strip().startswith(config.SIZE_EXCEPTION_MARKER):
+            print(f"{rel}: {line.strip()}")
+EOF
+```
+
+⛔ **Pass condition: for every line printed, either the reason claims splitting
+would be worse (a DESIGN CLAIM — condition 4 still applies, and a reviewer still
+refuses it if the isolation answer is no), or it names a task id that is a LIVE
+row in `docs/tasks/BOARD.md`.** ⚠️ **An id that has landed, or that never
+existed, is a deferral nobody owns — the finding is against the RELEASE BRANCH,
+and the line is removed or reissued against a real row.** ⭐ **Run it at every
+wave open, beside §8a's `[structural]` sweep.**
+
+
+⛔ **Measured 2026-09-10 at `3f5d984`: the command prints NOTHING — zero
+deferrals and zero size exceptions in the tree.** ⭐ **So the first use of this
+form is `W44`'s, and it starts from a clean instrument.**
+
 ---
 
 ## 4. R12 — tests exist, and the tree mirrors
@@ -611,11 +687,31 @@ REQUESTED.
 cd "$TRIAL"
 python3 -m pytest -q          # the suite
 python3 -m tools.quality      # the floor: size, mirror, contracts, style
+ruff check --no-cache .       # ⛔ NOT a subset of the floor — Ruling 88
+ruff format --check .         # ⛔ covers Markdown too — Ruling 86
 ```
 
-**Pass = exit 0 from both**, output pasted into the review. ⛔ A green suite the
-reviewer did not see is not evidence, and a green suite on the *branch* is not
-the evidence this gate asks for.
+**Pass = exit 0 from all four**, output pasted into the review. ⛔ A green suite
+the reviewer did not see is not evidence, and a green suite on the *branch* is
+not the evidence this gate asks for. ⚠️ **The last two run only where ruff is
+installed; where it is not, the lint line reads `did not run` and that is not
+evidence** (Ruling 79).
+
+##### ⛔ Ruling 109 — a gate command is written in ONE block, and §4b's is it
+
+⛔ **`W39/2`.** Every other clause points at the block above; none copies it.
+
+```bash
+grep -c 'ruff check --no-cache \.' docs/conventions/review-rubric.md
+# Pass: 1, and it is §4b's line.
+# 16049d2, before this ruling: 2 — Ruling 86's measurement and Ruling 88's
+# duplicate block — and 0 inside §4b's own block, which said "Pass = exit 0
+# from both" while Ruling 88 said "all three". A reviewer copying the canonical
+# block ran half the gate and could cite the rubric for it.
+# Ruling 86's --show-files line measures a denominator, is not a gate, no match.
+```
+
+Reasoning: `docs/tasks/handoffs/CTO-2026-09-10-round31.md`.
 
 ⛔ **The container is authoritative for what it runs** (R15) — ⚠️ **because it is
 pinned, not because it is better.** A result that differs between host and
@@ -983,14 +1079,9 @@ agree on the number — `100`, asserted equal by `tools/tests/quality/test_confi
 — and disagree on the rule.** ⭐ **Neither is a subset of the other, so neither
 substitutes for the other.**
 
-```bash
-python3 -m tools.quality                 # exit 0 — always runs, stdlib only
-ruff check --no-cache .                  # exit 0 — only where ruff is installed
-ruff format --check .                    # exit 0
-```
-
-⛔ **Pass condition: all three exit 0, and the lint line (Ruling 79) names which
-of the three ran.** ⚠️ **`quality floor: clean` has never meant lint-clean**
+⛔ **The commands are in §4b's block, not here** (Ruling 109). ⭐ **This clause is
+why that block lists four rather than two**, and the lint line (Ruling 79) names
+which of them ran. ⚠️ **`quality floor: clean` has never meant lint-clean**
 (Ruling 78) — ⭐ **the floor says so itself, in the NOTICE it prints when ruff is
 absent, and a reviewer who reads that line as a lint verdict has been told
 otherwise by the tool.**

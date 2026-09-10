@@ -41,9 +41,14 @@ BLOCKS = [
 ]
 
 
-def container(units, *, address=("demo",), variant="prose", origin=None, titles=None):
+def container(
+    units, *, address=("demo",), variant="prose", origin=None, titles=None, container_api=1
+):
+    """One container map. ⚠️ `container_api` defaults to 1, which is what every
+    corpus here declares; a unit whose `origin` names a region needs 2 (R9).
+    """
     document = {
-        "container_api": 1,
+        "container_api": container_api,
         "address": list(address),
         "titles": ["Demo"] if titles is None else list(titles),
         "variant": variant,
