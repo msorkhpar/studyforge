@@ -23,7 +23,14 @@ and R3 is only credible if that question can be asked without taking the risk.
 inside one corpus is a framework with one consumer (R19); what a corpus
 contributes is its configuration.
 
-**Skeleton at FND-01.** Filled by SF-28 (E09), with SF-31's `plan` (E01) and
-OPS-07's `reconcile` (E09). ⚠️ `pyproject.toml` deliberately declares no
-console entry point yet — see the note there.
+**Skeleton at FND-01.** ⭐ **`plan` has landed** (SF-31, E01) and is a package,
+`studyforge.cli.plan`, runnable today as `python3 -m studyforge.cli.plan`. The
+rest is filled by SF-28 (E09), with OPS-07's `reconcile` (E09).
+⚠️ `pyproject.toml` deliberately declares no console entry point yet — see the
+note there.
+
+⭐ **`plan` is the shape the other commands copy**, and the shape is
+`studyforge.validate`'s: a `report` module for what the answer *is*, one module
+for working it out, a `cli` for the arguments and the exit code, and a
+`__main__` that is four lines on top of `cli.main`.
 """

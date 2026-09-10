@@ -37,6 +37,7 @@ from studyforge.corpus.placement.names import (
     AUDIO_DIRNAME,
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
+    UNIT_MEDIA_DIRNAMES,
     VIDEO_DIRNAME,
     container_page_name,
     unit_page_name,
@@ -68,6 +69,24 @@ class SiblingProfile(Profile):
         return ContainerLocations(
             page=origin_directory(origin, address, "container") / container_page_name(titles)
         )
+
+    def media_ignore_lines(self) -> tuple[str, ...]:
+        """`*.audio/` and its three siblings, unanchored because the material is.
+
+        ⭐ **This is Ruling 91's cheapest half.** Under this profile the
+        generated names are the unit's own stem, so a corpus cannot enumerate
+        them — one measured `sibling` build wrote 79 artifacts, 67 of them
+        content-hash-named, and `content.exclude` refuses globs by design.
+        `.gitignore` takes them, which is why the ignore declaration is where
+        this belongs and `content` never was.
+
+        ⚠️ **The stem suffix is the discriminator and it is not unique to us.**
+        A repository that already keeps a directory called `lecture.audio/`
+        has one git will now ignore. That is stated here rather than guarded
+        against: the alternative is enumerating names that do not exist yet,
+        which is the thing this ruling refused.
+        """
+        return tuple(f"*.{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
 
 
 SIBLING = register(SiblingProfile())

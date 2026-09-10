@@ -88,3 +88,22 @@ def test_placing_the_same_unit_twice_gives_the_same_paths():
 def test_the_profile_declares_its_name_and_what_it_does():
     assert TreeProfile.name == "tree"
     assert "one generated root" in TreeProfile.describes
+
+
+def test_the_media_globs_are_anchored_under_the_generated_root():
+    # ⛔ `audio`, `images`, `video` and `practice` are words a real repository
+    # uses for its own material; an unanchored `audio/` would tell git to
+    # ignore the corpus's own recordings. Under this profile every generated
+    # clip is below the generated root, so the anchor costs nothing.
+    lines = TREE.media_ignore_lines()
+    assert lines
+    assert all(line.startswith(f"/{GENERATED_ROOT}/") and line.endswith("/") for line in lines)
+
+
+def test_there_is_one_media_glob_per_media_kind():
+    from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
+
+    lines = TREE.media_ignore_lines()
+    assert len(lines) == len(UNIT_MEDIA_DIRNAMES)
+    for kind in UNIT_MEDIA_DIRNAMES:
+        assert any(f"/{kind}/" in line for line in lines)

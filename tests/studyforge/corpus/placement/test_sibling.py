@@ -114,3 +114,19 @@ def test_placing_the_same_unit_twice_gives_the_same_paths():
 def test_the_profile_declares_its_name_and_what_it_does():
     assert SiblingProfile.name == "sibling"
     assert "beside the source file" in SiblingProfile.describes
+
+
+def test_the_media_globs_match_the_stems_this_profile_actually_mints():
+    # ⭐ Ruling 91's cheapest half: under this profile the generated names are
+    # the unit's own stem, so a corpus cannot enumerate them — one measured
+    # build wrote 79 artifacts, 67 of them content-hash-named.
+    where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN)
+    stem = unit_stem(7, TITLE)
+    for line in SIBLING.media_ignore_lines():
+        assert line.startswith("*.") and line.endswith("/")
+    kinds = [line[2:-1] for line in SIBLING.media_ignore_lines()]
+    assert [where.media_dir(kind).name for kind in kinds] == [f"{stem}.{k}" for k in kinds]
+
+
+def test_the_media_globs_are_unanchored_because_the_material_is():
+    assert not [line for line in SIBLING.media_ignore_lines() if line.startswith("/")]
