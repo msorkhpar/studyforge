@@ -210,3 +210,62 @@ def test_an_origin_that_escapes_the_source_root_is_refused_without_being_quoted(
         origin_directory(origin, ADDRESS)
     assert origin not in str(raised.value)
     assert "basics/16-streams-api" in str(raised.value)
+
+
+# --- the ignore lines (Ruling 91) -------------------------------------------
+
+
+def test_every_registered_profile_answers_with_ignore_lines():
+    # ⛔ Enumerated over the registry, not over two names: a third profile that
+    # placed media somewhere new and inherited a stale glob would report ignore
+    # rules that ignore nothing.
+    for name in registered():
+        assert profile_for(name).ignore_lines(media=False)
+        assert profile_for(name).media_ignore_lines()
+
+
+def test_the_base_profile_refuses_to_guess_a_media_glob():
+    class Bare(Profile):
+        name = ""
+
+    with pytest.raises(NotImplementedError):
+        Bare().media_ignore_lines()
+
+
+def test_the_shared_lines_are_spelled_from_the_names_module_and_never_retyped():
+    from studyforge.corpus.placement import (
+        CONTAINER_SUFFIX,
+        ROOT_INDEX_FILENAME,
+        SHARED_IGNORE_LINES,
+        SITE_CACHE_FILENAME,
+        UNIT_SUFFIX,
+    )
+
+    assert f"/{ROOT_INDEX_FILENAME}" in SHARED_IGNORE_LINES
+    assert f"*{UNIT_SUFFIX}" in SHARED_IGNORE_LINES
+    assert f"*{CONTAINER_SUFFIX}" in SHARED_IGNORE_LINES
+    assert any(SITE_CACHE_FILENAME in line for line in SHARED_IGNORE_LINES)
+
+
+def test_the_archive_is_absent_from_the_shared_lines():
+    # ⛔ It is the ingested record an adapter wrote (R2), and it is the one
+    # thing under the generated root a clone cannot rebuild without. That is
+    # why `/.studyforge/` is not one line.
+    from studyforge.corpus.placement import ARCHIVE_DIRNAME, SHARED_IGNORE_LINES
+
+    assert not [line for line in SHARED_IGNORE_LINES if ARCHIVE_DIRNAME in line]
+
+
+@pytest.mark.parametrize("name", ["tree", "sibling"])
+def test_media_is_left_out_unless_it_is_asked_for(name):
+    # ⭐ Generated media is committed by default (§5); the caller inverts the
+    # corpus's policy and this never reads a manifest.
+    profile = profile_for(name)
+    media = profile.media_ignore_lines()
+    assert profile.ignore_lines(media=False) == tuple(
+        line for line in profile.ignore_lines(media=True) if line not in media
+    )
+
+
+def test_the_two_shipped_profiles_do_not_ignore_media_the_same_way():
+    assert profile_for("tree").media_ignore_lines() != profile_for("sibling").media_ignore_lines()

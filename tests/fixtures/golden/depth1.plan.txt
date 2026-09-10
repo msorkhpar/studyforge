@@ -1,0 +1,34 @@
+plan depth1-demo  Depth One Demo
+placement tree  all output under one generated root, in directories that spell the address
+read corpus.json + 1 container.json  no file inside the source material was opened
+create .studyforge/archive/  the archive root — an adapter writes it (R2) and every build reads it
+create .studyforge/assets/  the shared stylesheets, scripts and player
+create .studyforge/depth-one/depth-one-demo.section.html  the page for container depth-one
+create .studyforge/depth-one/units/unit-01/audio/  depth-one unit 1's audio
+create .studyforge/depth-one/units/unit-01/images/  depth-one unit 1's images
+create .studyforge/depth-one/units/unit-01/practice/  depth-one unit 1's practice
+create .studyforge/depth-one/units/unit-01/unit-01-what-a-triple-is.unit.html  depth-one unit 1's page
+create .studyforge/depth-one/units/unit-01/video/  depth-one unit 1's video
+create .studyforge/depth-one/units/unit-02/audio/  depth-one unit 2's audio
+create .studyforge/depth-one/units/unit-02/images/  depth-one unit 2's images
+create .studyforge/depth-one/units/unit-02/practice/  depth-one unit 2's practice
+create .studyforge/depth-one/units/unit-02/unit-02-reading-a-small-graph.unit.html  depth-one unit 2's page
+create .studyforge/depth-one/units/unit-02/video/  depth-one unit 2's video
+create .studyforge/depth-one/units/unit-03/audio/  depth-one unit 3's audio
+create .studyforge/depth-one/units/unit-03/images/  depth-one unit 3's images
+create .studyforge/depth-one/units/unit-03/practice/  depth-one unit 3's practice
+create .studyforge/depth-one/units/unit-03/unit-03-asking-the-first-question.unit.html  depth-one unit 3's page
+create .studyforge/depth-one/units/unit-03/video/  depth-one unit 3's video
+create .studyforge/site.json  the discovery cache, never the authority
+create index.html  the root index
+ignore /index.html
+ignore /.studyforge/assets/
+ignore /.studyforge/site.json
+ignore *.section.html
+ignore *.unit.html
+media commit 'auto'  generated media is committed under this policy
+media units 3  each gets one directory per kind: audio, images, video, practice
+media limit max_total_bytes 5000000000
+media limit max_file_bytes 104857600
+media footprint  not projected — a footprint is clips times bytes per clip, this run was given no rate, and none is measurable until SF-32 (M3) generates media. The unit count above is what IS known before the gigabytes exist.
+plan: 20 path(s) to create, 0 file(s) to edit, 5 ignore line(s), 0 refusal(s)

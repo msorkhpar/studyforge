@@ -225,6 +225,9 @@ depth1/
     raw/<variant>/unit-NN/practice-M.json       where a unit sets work
     units/unit-NN/content.json                  the authored overlay, optional
     units/unit-NN/<local>                       what an asset's `local` resolves against
+golden/
+  depth1.plan.txt                               `studyforge plan` output, byte for byte
+  depth2.plan.txt                               `studyforge plan` output, byte for byte
 ```
 
 ⚠️ **`archive/` is a placeholder for `<archive-root>`, which placement owns
@@ -238,7 +241,15 @@ The fixtures **are** the golden files for the artefacts the spec pins down —
 the manifest, the container map and the archive document, each written in its
 canonical form, so a round-trip is a byte comparison against the file itself.
 
-⛔ **Nothing else has a golden file, and that is deliberate.** SF-10, SF-11 and
-SF-12 are unwritten; a golden for output nobody has designed is a fixture that
-will be wrong and will be trusted. `docs/tasks/handoffs/FND-04.md` lists every
-deferred golden and the task that owes it.
+⭐ **`golden/` holds the one written output that has a golden: `studyforge
+plan`.** `golden/depth1.plan.txt` and `golden/depth2.plan.txt` are what the
+command prints for each corpus, byte for byte, asserted by
+`tests/studyforge/cli/plan/test_cli.py`. ⚠️ **Beside the corpora rather than
+inside one**, because a plan says what would be written *into* a corpus root
+and a golden sitting in that root is a file the plan would have to explain.
+
+⛔ **Nothing else has a golden file, and that is still deliberate.** SF-10 and
+SF-11's outputs are designed but not pinned here, and a golden for output
+nobody has designed is a fixture that will be wrong and will be trusted.
+`docs/tasks/handoffs/FND-04.md` lists every deferred golden and the task that
+owes it; `SF-31` closed the largest of them, which was its own acceptance.

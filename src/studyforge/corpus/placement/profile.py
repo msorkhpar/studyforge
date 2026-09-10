@@ -31,6 +31,24 @@ the discovery cache — and differ only in where **pages** land. That is the
 honest difference: `sibling` exists so the reader's own directories gain a page
 beside the file they already know, not so a corpus's archive is scattered
 through it.
+
+## Ignore lines are a profile's answer, not a caller's guess (Ruling 91)
+
+⛔ **`SF-31`'s acceptance is that `studyforge plan` prints the ignore lines its
+profile requires**, and R1 forbids the caller reaching that by asking which
+profile it has. So the profile answers, and `ignore_lines` is the second
+capability on this contract.
+
+⚠️ **`SF-25` measured that the collision check needed no new capability and
+declined to invent one, on the rule that *a capability designed by somebody
+with no caller is a guess*.** ⭐ That argument is met here rather than
+sidestepped: `cli.plan` is the caller, it exists in the same commit, and
+without this it would have to hold a per-profile glob table — R1 in miniature.
+
+⛔ **What is never ignored is the archive**, and that is the whole reason
+`/{GENERATED_ROOT}/` is not one line. The archive is the ingested record an
+adapter wrote (R2); a clone without it cannot rebuild anything, so it stays
+tracked while the assets and the discovery cache beside it do not.
 """
 
 from __future__ import annotations
@@ -47,8 +65,10 @@ from studyforge.corpus.placement.locations import (
 from studyforge.corpus.placement.names import (
     ARCHIVE_DIRNAME,
     ASSETS_DIRNAME,
+    CONTAINER_SUFFIX,
     ROOT_INDEX_FILENAME,
     SITE_CACHE_FILENAME,
+    UNIT_SUFFIX,
 )
 from studyforge.describe import describe
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
@@ -57,6 +77,29 @@ from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 #: out of the way in a repository whose directories are the material — which is
 #: the whole point of `sibling`.
 GENERATED_ROOT = ".studyforge"
+
+#: The ignore lines every profile needs, whatever it does with pages.
+#:
+#: ⛔ **Spelled from `names`' own constants and never retyped.** Four places now
+#: have to agree about `.unit.html` — the writer, the scan, this, and whatever a
+#: corpus pastes into `.gitignore` — and a fourth spelling is how they stop.
+#:
+#: ⭐ **Anchored where a source file could collide, unanchored where it could
+#: not.** `/index.html` is one file at the root; a corpus's own `index.html`
+#: three directories down is left alone. The two page suffixes are unanchored
+#: on purpose: `sibling` puts pages anywhere the material is, and both suffixes
+#: are this framework's, minted so a scan can read them off a listing.
+#:
+#: ⛔ **The archive is absent from this list and that is the point.** It sits
+#: under the same generated root and it is the one thing there a clone cannot
+#: rebuild without.
+SHARED_IGNORE_LINES = (
+    f"/{ROOT_INDEX_FILENAME}",
+    f"/{GENERATED_ROOT}/{ASSETS_DIRNAME}/",
+    f"/{GENERATED_ROOT}/{SITE_CACHE_FILENAME}",
+    f"*{CONTAINER_SUFFIX}",
+    f"*{UNIT_SUFFIX}",
+)
 
 
 class Profile:
@@ -94,6 +137,30 @@ class Profile:
     ) -> ContainerLocations:
         """Where one container's own page goes."""
         raise NotImplementedError
+
+    def media_ignore_lines(self) -> tuple[str, ...]:
+        """Return the lines covering the per-unit media directories this profile mints.
+
+        ⛔ Answered by every subclass, like `unit` and `container`, and for the
+        same reason: a profile that puts media somewhere new and inherited a
+        stale glob would report ignore rules that ignore nothing, which is the
+        one failure mode a dry-run exists to prevent.
+        """
+        raise NotImplementedError
+
+    def ignore_lines(self, *, media: bool) -> tuple[str, ...]:
+        """Return the `.gitignore` lines a build under this profile requires.
+
+        `media` says whether the generated media is to be ignored **too** — it
+        is the corpus's `media` policy inverted, and the caller passes it
+        rather than this method reading a manifest.
+
+        ⛔ **Generated media is committed by default**, so the default answer
+        leaves it out. A framework that ignored a corpus's narration by
+        reflex would produce clones that are silent with no error, which is
+        the outcome §5's whole media policy exists to refuse.
+        """
+        return SHARED_IGNORE_LINES + (self.media_ignore_lines() if media else ())
 
     def corpus(self) -> CorpusLocations:
         """Return the paths that exist once per corpus. ⛔ The same under every profile."""

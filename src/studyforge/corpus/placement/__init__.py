@@ -61,7 +61,7 @@ order a filesystem enumerates.
 
 | Module | Owns |
 |---|---|
-| `profile` | the `Profile` contract, the registry, `origin_directory` |
+| `profile` | the `Profile` contract, the registry, `origin_directory`, the ignore lines |
 | `tree` | the `tree` profile |
 | `sibling` | the `sibling` profile |
 | `names` | what every artifact is called, and why |
@@ -110,6 +110,7 @@ from studyforge.corpus.placement.names import (
 )
 from studyforge.corpus.placement.profile import (
     GENERATED_ROOT,
+    SHARED_IGNORE_LINES,
     Profile,
     origin_directory,
     profile_for,
@@ -134,6 +135,7 @@ __all__ = [
     "KNOWN_IDENTITY_API",
     "PRACTICE_DIRNAME",
     "ROOT_INDEX_FILENAME",
+    "SHARED_IGNORE_LINES",
     "SIBLING",
     "SITE_CACHE_FILENAME",
     "TREE",

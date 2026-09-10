@@ -38,6 +38,7 @@ from studyforge.corpus.placement.names import (
     AUDIO_DIRNAME,
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
+    UNIT_MEDIA_DIRNAMES,
     UNITS_DIRNAME,
     VIDEO_DIRNAME,
     container_page_name,
@@ -76,6 +77,18 @@ class TreeProfile(Profile):
         """Return the container's page, in the directory that spells its address."""
         del origin
         return ContainerLocations(page=self.container_dir(address) / container_page_name(titles))
+
+    def media_ignore_lines(self) -> tuple[str, ...]:
+        """`/.studyforge/**/audio/` and its three siblings.
+
+        ⛔ **Anchored under the generated root, and that is not tidiness.**
+        Every name here — `audio`, `images`, `video`, `practice` — is a word a
+        real repository uses for its own material; an unanchored `audio/`
+        would tell git to ignore the corpus's own recordings. Under this
+        profile every generated clip is below `.studyforge/`, so the anchor
+        costs nothing and the glob cannot reach out of it.
+        """
+        return tuple(f"/{GENERATED_ROOT}/**/{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
 
 
 TREE = register(TreeProfile())
