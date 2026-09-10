@@ -715,6 +715,45 @@ required. ⛔ **That would have been the seventh instance of a check that could
 not fail reporting success, inside the ruling written to stop the sixth.** The
 baseline row is therefore mandatory above, not advisory.
 
+#### ⛔ Ruling 76 — a sweep row prints its **exit code and its test-count tail**, and they must agree
+
+⛔ **Ruling 70's baseline row catches a sweep that is stuck RED. It cannot catch
+one that is stuck GREEN**, because a stuck-green instrument reports the
+baseline's own correct verdict — `SURVIVED` — and the control passes while
+nothing works.
+
+⚠️ **Measured in round 22, by me, while re-running `W29`'s sweep to check it.**
+The harness captured the exit status of the wrong end of a pipeline:
+
+```sh
+out=$(python3 -m pytest -q "$F" 2>&1 | tail -1); code=$?   # ⛔ this is tail's exit
+```
+
+`tail` always succeeds, so `code` was `0` on every row. What it printed:
+
+```
+BASELINE unmutated              exit=0 SURVIVED  | 28 passed
+SCAN_ROOT -> tools              exit=0 SURVIVED  | 4 failed, 24 passed
+GATED_TREES tools -> toolz      exit=0 SURVIVED  | 3 failed, 25 passed
+BASELINE restored               exit=0 SURVIVED  | 28 passed
+```
+
+⛔ **Both baseline rows are correct, and every mutant is reported as surviving a
+run that failed four tests.** ⭐ **The verdict column and the tail column
+contradict each other on their face** — and the tail is the only reason I caught
+it, so the tail is now mandatory rather than decorative.
+
+⭐ **The rule, and it needs no judgement:** every row prints the process exit
+code *and* the last line of pytest's output, and the reviewer reads them
+together. A `KILLED` row shows at least one `failed`; a `SURVIVED` row shows
+none. ⛔ **A row where the two disagree discards the sweep**, exactly as a
+baseline reporting `KILLED` does.
+
+⚠️ **The eighth instance of a check that could not fail reporting success, and
+the second to happen inside the ruling written against it.** ⭐ **That is not
+embarrassing, it is the argument:** the class is not defeated by care, only by
+instruments that print two things which have to agree.
+
 ---
 
 ## 5. R13 — no markup, CSS or JS in Python strings

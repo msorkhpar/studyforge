@@ -490,3 +490,36 @@ here: the digest-mismatch fixture failed, correctly, and the sweep was wrong.
 ⛔ Name the set in the test's own words — *every **valid** fixture document* — so
 the exclusion is a stated scope rather than a filter somebody later mistakes for
 a bug.
+
+## ⛔ Ruling 74 — an `except` clause with several types is **parenthesised**
+
+```python
+except (OSError, ValueError):        # ⭐ this
+except OSError, ValueError:          # ⛔ not this
+```
+
+⛔ **Both are legal here and they mean the same thing.** PEP 758 landed the
+unparenthesised form in Python 3.14, `requires-python` is `>=3.14`, the image is
+pinned `python:3.14-slim`, and `ast` reads it as the same two-element tuple.
+⚠️ **So this is not a correctness rule and it is not styled as one** — `ruff`
+passes both and no check is being added.
+
+⭐ **It is a rule because the cost was measured, twice, on the only people who
+pay it.** The form was a `SyntaxError` for the whole of Python 3 until last
+release, so it reads as a Python 2 relic to anybody who learned Python before
+2026. ⛔ **Two reviewers, in two files, independently stopped on it, went and
+read PEP 758, and recorded a non-finding so that nobody would "fix" it:**
+`src/studyforge/validate/source.py` (`W28`, `CTO-21/3`) and
+`tools/knowledge/index.py` (`W29`). ⚠️ **That is the tell — not that it is
+wrong, but that each reader must prove to themselves it is right, and the proof
+does not stay proved for the next one.**
+
+⛔ **The two parentheses cost nothing and the lookup recurs per reader,
+forever.** ⭐ A novel spelling has to buy something; this one buys two
+characters.
+
+⚠️ **And note what is deliberately NOT done:** no lint rule, no checker, no
+entry in the quality floor. ⛔ **A ban on one spelling is an open set** — the
+next gratuitously novel syntax is not this one — ⭐ **and the two existing
+instances are re-spelled by a task, after which the rule's job is to stop a
+third being written, which is what a convention document is for.**
