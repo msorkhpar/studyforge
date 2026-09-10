@@ -71,7 +71,18 @@ take a reading still true when acted on.***
   interim step is in `delivery-flow.md` **with a written expiry**.
 - ⛔ **Ruling 89 is not runnable in a linked worktree at all** — `git worktree
   add` does not carry the gitignored index. **Rebuild in the main checkout.**
-- ⚠️ **Host and container skip sets are DISJOINT** (55 visual, 5 docker, 3
+- ⛔ **CORRECTED — the line below is FALSE and I propagated it into a dozen
+  briefs.** The sets **intersect on 5 rows**: `tests/docker/test_dev_image.py`
+  512/518/538/547/566 skip in **both**, for different reasons (in the container,
+  *already inside the image*; on the host, docker tests disabled). Measured at
+  `6850c3c`: container 29 skip rows, host 10, `comm -12` → 5. ⚠️ **A third
+  environment (`STUDYFORGE_DOCKER_TESTS=1`) runs those five.** ⭐ **The true
+  claim is the useful half and it survives: the sets do not RECONCILE BY COUNT,
+  so matching them by number matches rows wrongly.** ⛔ **I inherited "disjoint"
+  from a round that had measured the totals, not the rows, and never re-measured
+  it — a reading taken from a proxy, quoted as a property of the thing, which is
+  the common form of every defect in this list.**
+- ⚠️ ~~**Host and container skip sets are DISJOINT**~~ (55 visual, 5 docker, 3
   sibling vs. 2 ruff-absent). They reconcile on the total and on nothing else;
   **matching them by count matches every row wrongly.**
 - ⚠️ **Two test modules are at R11's ceiling** — `test_gate_coverage.py` at
