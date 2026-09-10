@@ -70,11 +70,28 @@ EXPECTED_COUNT_KEYS = (
 FIXTURES = Path("tests/fixtures")
 
 
-def archive_documents():
+def archive_documents(*, including_invalid: bool = False):
+    """Every archive document in the **valid** corpora, unless asked otherwise.
+
+    ⛔ `tests/fixtures/invalid/` is excluded by default, and the default is the
+    point. Every corpus under it exists to break exactly one rule, so a sweep
+    that says *"every fixture agrees with this module"* is asserting the
+    opposite of what those fixtures are for — it passed only while no invalid
+    corpus happened to break a rule this file checks, and `count-mismatch` is
+    one that does.
+
+    ⚠️ The failure mode is worth naming: the sweep does not go red when a new
+    invalid corpus is *wrong*, it goes red when a new invalid corpus is
+    **correctly wrong**, which reads as the fixture's fault. It is the
+    helper's.
+    """
     root = repository_root() / FIXTURES
     for path in sorted(root.rglob("*.json")):
-        if "/raw/" in path.as_posix():
-            yield path, json.loads(path.read_text(encoding="utf-8"))
+        if "/raw/" not in path.as_posix():
+            continue
+        if not including_invalid and "/invalid/" in path.as_posix():
+            continue
+        yield path, json.loads(path.read_text(encoding="utf-8"))
 
 
 # --------------------------------------------------------------------------

@@ -78,6 +78,7 @@ from tests.fixture_checks.corpus import (
     strings_in,
 )
 from tests.fixture_checks.digests import check_digests
+from tests.fixture_checks.exercise import check_exercise
 from tests.fixture_checks.media import check_media
 from tests.fixture_checks.personal_data import check_personal_data, shape_in
 from tests.fixture_checks.shape import check_blocks, check_document_shape, check_manifest
@@ -160,6 +161,7 @@ def check_documents(root, manifest, container_dir, container):
         yield from check_document_shape(path, document, where)
         yield from check_blocks(document, where)
         yield from check_digests(document, where)
+        yield from check_exercise(document, where)
         yield from check_media(container_dir, document, where)
         yield from check_personal_data(document, where)
         yield from check_document_identity(

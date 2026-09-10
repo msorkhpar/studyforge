@@ -189,6 +189,14 @@ above.
 > `digest-mismatch`, `ordinal-gap`, `personal-data` — ⛔ **there is no
 > count-mismatch fixture, so that clause has never been exercised.**
 >
+> ⭐ **Built 2026-09-09 (W14): `tests/fixtures/invalid/count-mismatch/` exists
+> and the clause is now exercised.** ⚠️ The set holds **seven**, not six —
+> `user-authoritative/` was added alongside it as W18's negative control
+> (finding 29). ⛔ The count in this clause is therefore a floor, not a
+> quantity to keep in step: `test_the_invalid_set_is_exactly_what_is_on_disk`
+> derives the set from the directory, so no document has to be updated when
+> one is added.
+>
 > ⭐ **Ruled: the fixture is built; the clause stays.** ⚠️ Dropping it would
 > delete the only statement that the count check is exercised at all — and the
 > count check is the one guarding **silently lossy ingestion**, which this task's

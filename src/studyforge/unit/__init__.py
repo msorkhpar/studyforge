@@ -68,7 +68,7 @@ from studyforge.unit.sections import (
 )
 from studyforge.unit.trust import (
     DEFAULT_TRUST,
-    FORBIDDEN,
+    MAY_BE_AUTHORITATIVE,
     PROVENANCE,
     TRUST,
     check_test_record,
@@ -80,7 +80,7 @@ __all__ = [
     "CONTENT_FILENAME",
     "DEFAULT_TRUST",
     "DERIVED_FIELDS",
-    "FORBIDDEN",
+    "MAY_BE_AUTHORITATIVE",
     "KINDS_WITH_A_LANG",
     "KIND_OF",
     "KNOWN_CONTENT_API",

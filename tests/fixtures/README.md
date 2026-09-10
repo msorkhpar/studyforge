@@ -89,6 +89,14 @@ something.
 graded state is the exception in real material, and a set in which it is the
 majority is a set that will let a design fitted to the exception look correct.
 
+⚠️ **One sanctioned second copy, and its licence is that it must fail.**
+`invalid/user-authoritative/` carries an `exercise` that records
+`provenance: user` with `trust: authoritative`. ⛔ It is not coverage — it is
+W18's **negative control**: restore the forbidden-pair spelling of R5 and that
+corpus violates no rule at all, which reds the fixture-consistency suite. The
+rule the tests state is therefore *"exactly one exercise that **validates**"*,
+not *"exactly one exercise"*.
+
 ## Fence awareness — the highest-value thing in this set
 
 ⛔ **A parser that scans for `<` without tracking fences is wrong, and it fails
@@ -129,6 +137,19 @@ that breaks it, and what `studyforge validate` (SF-25) is expected to say.
 | `digest-mismatch/` | §6 — `content_sha256` must cover the blocks |
 | `ordinal-gap/` | §6 — unit ordinals contiguous from 1 |
 | `personal-data/` | R7 — `assert_clean` must refuse, never rewrite |
+| `count-mismatch/` | §6 — a document's `counts` must agree with its blocks |
+| `user-authoritative/` | **R5** — `authoritative` implies `bundled` (Ruling 35) |
+
+⭐ **`count-mismatch/` is the one an inspection cannot find.** Its digest is
+correct, so the corpus is byte-exact and still lies about itself — and `counts`
+is the field every consumer reads *instead of* walking the blocks.
+
+⛔ **`user-authoritative/` is a negative control, not coverage.** It was a
+**valid** corpus until W18 landed: R5 was spelled as a list of forbidden pairs
+naming `generated` only, so a grader the reader wrote could declare itself the
+source's own and nothing raised. Restore that spelling and this corpus violates
+no rule at all — which reds `test_invalid_corpus_violates_exactly_its_one_rule`
+rather than waiting for a reviewer.
 
 ⚠️ **`invalid/personal-data/` deliberately contains personal-data shapes.**
 Both values in it are fabricated — an obviously-placeholder absolute home path

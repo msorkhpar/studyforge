@@ -90,9 +90,11 @@ MARKUP_SHAPED = re.compile(r"</?[A-Za-z][A-Za-z0-9]*(\s[^<>]*)?/?>")
 INVALID_CORPORA = {
     "bad-corpus-api": "corpus-api",
     "address-directory-mismatch": "address-directory",
+    "count-mismatch": "counts",
     "digest-mismatch": "digest",
     "ordinal-gap": "ordinal-gap",
     "personal-data": "personal-data",
+    "user-authoritative": "exercise-trust",
 }
 
 #: ⚠️ Still declared here, and deliberately: `corpus_api` is SF-02's and
