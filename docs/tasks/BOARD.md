@@ -2176,7 +2176,7 @@ assignment alone skipped a row.**
 
 | Developer | ⭐ **Now** | ⛔ **Then, in order** |
 |---|---|---|
-| **Developer 1** | ⭐ **`SF-31` — `studyforge plan`** (`solo`, ~20k) — ⛔ **IN FLIGHT on `feat/SF-31-plan`.** ⚠️ **It gained ONE acceptance condition this round (Ruling 91) and the developer must re-read `E01`'s `SF-31` section before finishing** | ⛔ **`SF-04` — UNBLOCKED (Ruling 95)** → then **`SF-36`** |
+| **Developer 1** | ⭐ **`SF-31` — `studyforge plan`** (`solo`, ~20k) — ⛔ **`in-review` on `feat/SF-31-plan` @ `171a18a`**, one commit, 23 files, **+2028**, branch claims `3179 / 63`. ⚠️ **RE-READ AT ROUND 24'S CLOSE, not at its open — see `PO-24/9`** | ⛔ **`SF-04` — UNBLOCKED (Ruling 95)** → then **`SF-36`** |
 | **Developer 2** | ⛔ **`W39`** — smallest row on the board with the largest measured cost, and it fixes the instrument the wave is measured with — ⛔ **IN FLIGHT on `fix/W39-index-step`** | ⭐ **`SF-35`** → **`W40`** → **`W41`** → **`SK-02`** |
 
 ⛔ **Why `SF-35` jumps `W40` for Developer 2, and it is measured rather than
@@ -2279,12 +2279,20 @@ naming a state nothing can enter reads as a plan.**
 
 ### ⛔ The queue behind step 2.1 — RE-CUT at round 24
 
-⚠️ **Measured from the tree at `d1270cd`, not inherited: `git branch --no-merged
-release/m0-foundations` returned NOTHING — the queue is EMPTY of anything waiting
-on somebody else.** ⭐ **`feat/SF-31-plan` and `fix/W39-index-step` exist and both
-carry ZERO commits**, so they are assignments rather than branches; ⛔ **checked
-with `git log release/m0-foundations..<branch>`, because a branch name is not a
-branch state** (`PO-23/4`, four instances).
+⚠️ **Measured from the tree at `d1270cd`, and RE-TAKEN at this round's close
+because the first reading aged out inside the round** (`PO-24/9`, ⛔ **the FIFTH
+instance and the first produced by the agent who had just written the finding
+up**).
+
+| Reading | At the round's open | ⛔ **At its close, re-taken** |
+|---|---|---|
+| `git branch --no-merged release/m0-foundations` | ⭐ **nothing** | ⛔ **`feat/SF-31-plan`** |
+| `feat/SF-31-plan` | ⭐ **zero commits — an assignment** | ⛔ **one commit `171a18a`, 23 files, +2028** |
+| `fix/W39-index-step` | ⭐ **zero commits — an assignment** | ⭐ **still zero** |
+| ⛔ **Is anything waiting on somebody else?** | ⭐ **no** | ⛔ **YES — `SF-31` awaits a REVIEWER'S verdict** |
+
+⛔ **Checked with `git log release/m0-foundations..<branch>` both times, because a
+branch NAME is not a branch STATE** (`PO-23/4`, `CTO-27/3`).
 
 | Order | Row | ⛔ **When, and what it jumps** |
 |---|---|---|
@@ -2605,20 +2613,28 @@ the queue can change WITHOUT THE RUNNER DOING IT*.**
 | 3rd (round 21) | ⭐ **no** — queue empty | ⭐ **no** |
 | 4th (round 22) | ⛔ **YES** — branches awaiting a REVIEWER'S verdict | ⛔ **YES — three places** |
 | 5th (round 23) | ⭐ **no** — one branch awaiting the runner's OWN merge | ⭐ **no** |
-| ⭐ **6th (round 24)** | ⭐ **no** — ⛔ **`--no-merged` returned NOTHING, and the two named in-flight branches carry ZERO commits** | ⭐ **NO** |
+| ⛔ **6th (round 24)** | ⛔ **YES, discovered at the CLOSE** — ⭐ at the open `--no-merged` returned nothing and both named branches carried zero commits; ⛔ **by the close `feat/SF-31-plan` carried a commit and awaited a verdict** | ⛔ **YES — one place, and it is [the queue reading](#the-queue-behind-step-21-re-cut-at-round-24)** |
 
-⭐ **Six points, one contradiction, and the re-widened rule is right at all six.**
-⚠️ **`PO-23/2` predicted exactly this case and it is worth saying why the sixth
-point is not merely a repeat: run 5's queue was non-empty and did not drift, so
-the rule survived by naming the HOLDER; run 6's queue is empty by a different
-route** — ⛔ **two branches exist, are assigned, and hold no commits** — ⭐ **so
-*"nothing in the queue is waiting on somebody else"* is true even though *"no
-branch exists"* is false. ⛔ **The old proxy would have said *not empty*; the
-re-widened rule says *no drift*; the run did not drift.**
+⛔ **SIX POINTS, AND THE SIXTH CONFIRMS THE RULE BY DRIFTING.** ⭐ **At the run's
+open the answer to *"can anything change without the runner?"* was NO — two
+assigned branches, zero commits between them.** ⚠️ **It became YES during the
+round, without the runner doing anything, and the run drifted in exactly the row
+that reading fed.**
 
-⚠️ **And the reading was RE-TAKEN at the moment it was acted on, not carried from
-the top of the round** (`PO-23/4`, four instances, `CTO-27/3`'s fourth being the
-sharpest).
+⭐ **That is the rule working rather than failing, and the distinction matters:**
+⛔ **the rule does not predict that a run will not drift; it predicts that a run
+drifts WHEN something in the queue can change without the runner.** ⚠️ **The
+condition was false at the open and true at the close, and the drift arrived with
+it.**
+
+⛔ **What the sixth point ADDS, and it is the thing five rounds of this finding
+had not produced:** ⭐ **the condition is not a property of the queue at a moment
+— it is a property of the WINDOW.** ⚠️ **A runner can establish *"nothing is
+waiting on somebody else"* at the instant they look, and cannot establish it for
+the duration of a round in which two developers are working.** ⛔ **So the
+scheduling rule gains its missing half: re-take the reading at the CLOSE, not
+only at the open** — ⭐ **which is what caught this, ninety minutes after the
+first reading and one commit after the finding that says to do it.**
 
 ### The six at open, run at `d1270cd`
 
