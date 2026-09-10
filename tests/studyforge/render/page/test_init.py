@@ -7,6 +7,7 @@ The seams themselves are asserted in the module each one belongs to.
 
 from __future__ import annotations
 
+import ast
 import re
 
 import pytest
@@ -15,7 +16,17 @@ from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import page
 from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME, written_files
 from tests.studyforge.render.page.pages import CASES, sample_placement
-from tests.support import assert_package_contract
+from tests.support import assert_package_contract, repository_root
+
+#: The package this module is the contract of, as an import prefix.
+PACKAGE = "studyforge.render.page"
+
+#: Where the cross-package sweep looks, and what it excludes. ⛔ The two
+#: excluded trees are this package and **its own mirror**: R12 says a mirror's
+#: subject *is* the module it mirrors, so `test_navigation.py` naming
+#: `page.navigation` is the one correct reach in the repository.
+SWEPT_ROOTS = ("src/studyforge", "tests")
+NOT_SWEPT = ("src/studyforge/render/page", "tests/studyforge/render/page")
 
 #: What a page may never do on open. ⛔ A forbidden list is the wrong instrument
 #: for *deciding* and the right one for testing: these are the ways a page has
@@ -117,6 +128,126 @@ def test_the_public_surface_is_what_the_contract_says():
     assert set(page.__all__) <= set(dir(page))
     for name in page.__all__:
         assert hasattr(page, name), name
+
+
+def cross_package_reaches(root=None) -> list[str]:
+    """Every import of this package, from outside it, that `__all__` does not cover.
+
+    ⛔ **The whole of `SF-27/1` in one function.** Two spellings are a reach:
+    naming a submodule (`from studyforge.render.page.text import escape`), and
+    naming the package but importing something `__all__` does not carry (`from
+    studyforge.render.page import navigation`) — the second is the one that
+    looks legal, and it is the one `render.container` used.
+    """
+    base = repository_root() if root is None else root
+    surface = set(page.__all__)
+    found: list[str] = []
+    for swept in SWEPT_ROOTS:
+        for path in sorted((base / swept).rglob("*.py")):
+            where = path.relative_to(base).as_posix()
+            if any(where.startswith(f"{skip}/") for skip in NOT_SWEPT):
+                continue
+            for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+                if isinstance(node, ast.Import):
+                    found += [
+                        f"{where}: import {alias.name}"
+                        for alias in node.names
+                        if alias.name.startswith(f"{PACKAGE}.")
+                    ]
+                if not isinstance(node, ast.ImportFrom) or node.module is None:
+                    continue
+                if node.module.startswith(f"{PACKAGE}."):
+                    found.append(f"{where}: from {node.module} import ...")
+                elif node.module == PACKAGE:
+                    found += [
+                        f"{where}: from {PACKAGE} import {alias.name}"
+                        for alias in node.names
+                        if alias.name not in surface
+                    ]
+    return found
+
+
+def cross_package_importers(root=None) -> list[str]:
+    """Every module outside this package that imports it at all — the population."""
+    base = repository_root() if root is None else root
+    found: list[str] = []
+    for swept in SWEPT_ROOTS:
+        for path in sorted((base / swept).rglob("*.py")):
+            where = path.relative_to(base).as_posix()
+            if any(where.startswith(f"{skip}/") for skip in NOT_SWEPT):
+                continue
+            body = path.read_text(encoding="utf-8")
+            if any(
+                isinstance(node, ast.ImportFrom)
+                and node.module is not None
+                and (node.module == PACKAGE or node.module.startswith(f"{PACKAGE}."))
+                for node in ast.walk(ast.parse(body))
+            ):
+                found.append(where)
+    return found
+
+
+def test_every_cross_package_import_of_this_package_names_something_on_its_surface():
+    # ⛔ `SF-27/1`, made unrepresentable rather than listed. A list of callers is
+    # not the remedy: the next renderer is `SF-14`, and a contract re-opened by
+    # its third private importer is a contract nobody is defending.
+    importers = cross_package_importers()
+    # ⭐ The inhabitation assertion, before the claim (Ruling 132): a sweep with
+    # no subject would pass the line below just as loudly.
+    assert importers, "no module outside this package imports it — the sweep found nothing"
+    assert cross_package_reaches() == [], cross_package_reaches()
+
+
+def test_the_sweep_above_would_notice(tmp_path):
+    # ⛔ Ruling 123, all three readings. Reading 1 is the test above, live.
+    legal = tmp_path / "src" / "studyforge" / "render" / "container"
+    legal.mkdir(parents=True)
+    (tmp_path / "tests").mkdir()
+    (legal / "listing.py").write_text(
+        f"from {PACKAGE} import PageError, between_units\n", encoding="utf-8"
+    )
+    assert cross_package_importers(tmp_path) == ["src/studyforge/render/container/listing.py"]
+    assert cross_package_reaches(tmp_path) == []
+
+    # ⭐ Reading 2, planted — BOTH spellings, because the second is the one that
+    # reads as legal and is the one that actually happened.
+    (legal / "document.py").write_text(
+        f"from {PACKAGE}.text import escape\nfrom {PACKAGE} import navigation\n",
+        encoding="utf-8",
+    )
+    assert cross_package_reaches(tmp_path) == [
+        f"src/studyforge/render/container/document.py: from {PACKAGE}.text import ...",
+        f"src/studyforge/render/container/document.py: from {PACKAGE} import navigation",
+    ]
+
+    # ⚠️ And the mirror's exemption is run negatively too: the identical reach,
+    # inside the excluded tree, must NOT be reported.
+    mirror = tmp_path / "tests" / "studyforge" / "render" / "page"
+    mirror.mkdir(parents=True)
+    (mirror / "test_navigation.py").write_text(
+        f"from {PACKAGE} import navigation\n", encoding="utf-8"
+    )
+    assert not any("test_navigation" in reach for reach in cross_package_reaches(tmp_path))
+
+    # ⭐ Reading 3, the impossible subject: a tree that never names this package
+    # must read differently from both of the above, on both instruments.
+    quiet = tmp_path / "quiet"
+    (quiet / "src" / "studyforge").mkdir(parents=True)
+    (quiet / "tests").mkdir()
+    (quiet / "src" / "studyforge" / "nothing.py").write_text(
+        f'DOCUMENTED = "{PACKAGE}"\n', encoding="utf-8"
+    )
+    assert cross_package_importers(quiet) == []
+    assert cross_package_reaches(quiet) == []
+
+
+def test_the_bar_is_reachable_from_the_surface_that_publishes_its_argument():
+    # ⭐ `W76`'s decision, asserted: `Links` was published and `between_units`
+    # was not, so the surface carried the argument and hid the call.
+    assert "between_units" in page.__all__
+    links = page.Links(next=page.Link("../unit-03/x.unit.html", "Watching it run"))
+    assert page.between_units(links) == page.between_units(links)
+    assert "Watching it run" in page.between_units(links)
 
 
 def test_links_are_optional_and_a_page_without_them_still_renders():

@@ -63,12 +63,12 @@ from studyforge.address import Address, AddressError
 from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
+from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import navigation
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.navigation import Links
-from studyforge.render.page.text import escape, escape_attribute
 
 #: The skeleton every unit page is filled from.
 SKELETON = "page.html"

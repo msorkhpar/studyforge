@@ -36,6 +36,36 @@ would need.
 **Rulings that bite here:** R8 (`file://`), R10 (byte-for-byte), R11
 (packages), R13 (templates and assets are source files).
 
+### ⛔ **Ruling 164 — a refused href DROPS where the element is CHROME and RAISES where the element is the page's CONTENT**
+
+⛔ **READ THIS BEFORE `SF-14`, `SF-15` OR `SF-34`.** ⚠️ **All three face this
+fork, and `render/page/navigation.py` is the precedent they will find first — it
+DROPS, and it is right to, and copying it into a container page would be
+wrong.** ⭐ **The two shipped modules state opposite policies in their own text
+and they disagree ON PURPOSE. That is not two bugs; it is one rule nobody had
+written down. It is written down here.**
+
+⭐ **The test is not *"is it a link"*. It is one question:**
+
+> ⛔ ***If this element vanishes, has the reader lost a WAY TO GET SOMEWHERE, or
+> has the page lost THE THING IT EXISTS TO SHOW?***
+
+| the element is… | ⛔ **policy** | why |
+|---|---|---|
+| ⭐ **CHROME** — a between-units bar, a breadcrumb, a jump list | **DROP** | A bar with a dead `next` is worse than one with no `next`. ⭐ The reader still has the outline, the masthead and the page itself. **`W57`'s dropping fix is CORRECT and stays** |
+| ⛔ **CONTENT** — a container's unit list, the root index's tree | ⛔ **RAISE** | ⛔ **A container page IS its list.** A silently dropped anchor there is *"every title present, `validate` passing, nothing logged, and not one unit openable"* — ⚠️ **`SF-13/1`'s defect with NO acceptance clause left to catch it** |
+| ⭐ **ABSENT** — no page generated for this unit yet | ⛔ **NEITHER — it is a declared TYPE** | `Item(href=None)`, listed, `data-readable="false"`, §7's three states. ⛔ **A renderer that cannot tell *"no page yet"* from *"bad href"* will always pick the wrong one of drop-or-raise**, so the type is what makes the rule applicable rather than a coin toss |
+
+⭐ **The `""`-by-name pattern rides with it.** Three of the page skeleton's
+eleven slots are passed `""` **by name**, so a dropped slot fails loudly.
+⛔ **Same principle one layer up: ABSENCE IS DECLARED, never implied by
+omission.**
+
+⚠️ **ONE LIMIT, stated rather than discovered.** These renderers check an href's
+**SHAPE**, never its **PRESENCE**. ⛔ **A build that passes a *guessed* href for a
+page that does not exist is the one thing NEITHER policy catches** — and that is
+`SF-28`'s to get right, not this epic's.
+
 ---
 
 ### SF-11 — Page assets

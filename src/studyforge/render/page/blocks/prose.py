@@ -8,7 +8,7 @@ module on which a block's own characters reach the page as markup.
 `render(block, position, …)` renders one; both are read by the dispatcher, and
 nothing else calls this module directly.
 
-**Depends on.** `page.text` for escaping and the inline markers, `page.navigation`
+**Depends on.** `render.markup` for escaping and the inline markers, `page.navigation`
 for a heading's anchor, and `render.pageassets` for the class names. ⛔ Not on
 `page.assets`: nothing here addresses a file.
 
@@ -37,8 +37,8 @@ that names `quote` itself is the next `disclosure` waiting to be forgotten.*
 from __future__ import annotations
 
 from studyforge.archive.blocks import BLOCK_TYPES
+from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page.navigation import block_anchor, heading_level
-from studyforge.render.page.text import escape, escape_attribute, inline
 from studyforge.render.pageassets import SURFACE_HOOKS, class_for
 
 

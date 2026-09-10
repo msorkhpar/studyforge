@@ -1077,6 +1077,25 @@ python3 -m pytest -q -rs | sed -n 's/^SKIPPED \[\([0-9]*\)\].*/\1/p' \
   | paste -sd+ - | bc      # must equal the tail's "N skipped"
 ```
 
+> ⛔ **Ruling 170(b) (CTO round 43) — the `29` above is only reachable under
+> `-rs`, and the SAME command under plain `-q` reads `0`.** Measured by the PO
+> (`PO-35/6`) and re-measured by the CTO at `911c56f` and `c998f46`:
+>
+> ```text
+> grep -c '^SKIPPED'   under  pytest -q -rs   ->  29      (an UNDERCOUNT)
+> grep -c '^SKIPPED'   under  pytest -q       ->   0      exit 1
+> multiplicity parse, both invocations        ->  63      ⭐ the answer
+> ```
+>
+> ⚠️ **`0` is the worse reading and it is the one nobody had quoted: it reads as
+> *no skips at all* — a FABRICATION, where `29` is merely an undercount.**
+>
+> **The clause:** ⛔ **every fenced instrument in this document names the EXACT
+> INVOCATION that produces the reading printed beside it, flags included.** ⭐ **A
+> stated reading with no invocation is a number whose instrument the next
+> reviewer has to guess, and they will guess the invocation they happen to be
+> running.**
+
 ⭐ **Two offices hit it independently in one round** — the PO in `PO-30/7` and
 the CTO in their own base census, before reading it. ⛔ **What refused the wrong
 number was neither instrument: it was Ruling 128's EXPECTED reading, written
@@ -1767,6 +1786,73 @@ A third is needed.**
 one place nobody applied it** — inside the sweep, where the reviewer had already
 accounted for the baseline's skips once and stopped looking.
 
+#### ⛔ Ruling 162 (CTO round 42) — a sweep row records its **FAILURE REASON**, and the `real / lint-only` split is the OTHER half — ⛔ **neither is sufficient alone**
+
+⛔ **THE DEFECT: every signal Rulings 76, 83, 123 and 146 require can be
+CORRECT while the row is a FALSE KILL.** ⚠️ **Reproduced live by the CTO, pinned
+image, on a mutant trimmed to the same byte count and parsing cleanly
+(`target = safe_href(...)` → `targe  = ...`):**
+
+```text
+sweep SCOPED to the subject's own test module          <- W68's shape
+  EXIT CODE:  1                                        <- Ruling 76,  correct
+  TAIL:       54 failed, 50 passed in 0.33s            <- Ruling 76,  correct
+  ROW COUNT:  would assert PASS                        <- Ruling 146, correct
+  SKIPS:      unchanged                                <- §4b-i,      correct
+  REASON:     NameError: name 'target' is not defined  <- ⛔ IT NEVER RAN
+```
+
+⛔ **The exception type is the only discriminator left, and until this clause no
+ruling asked for it.**
+
+⚠️ **AND THE TWO HALVES ARE NOT SYMMETRIC, which is what decides the clause.**
+⭐ **The same mutant over the WHOLE SUITE instead:**
+
+```text
+sweep over the WHOLE SUITE                             <- SF-27's shape
+  TAIL:    57 failed, 4045 passed, 63 skipped
+  REASON:  F821 undefined name `target`
+           F841 local variable `targe` assigned but never used
+           lint: `ruff check .` 3 finding(s) in 1 file(s)
+```
+
+⭐ **Over the whole suite ruff UNMASKS an unexecutable mutant as a lint kill, so
+a `real / lint-only` column makes it visible.** ⛔ **Over a scoped sweep the lint
+modules — `tests/test_repository.py`, `tests/test_quality_floor.py` — are not in
+the population at all, the column reads `0 / 0`, and it certifies nothing.**
+
+**The clauses:**
+
+1. ⛔ **EVERY sweep row records the FAILURE REASON — the exception type of the
+   first failure — beside its count.** ⭐ **A row whose reason is `NameError`,
+   `AttributeError`, `ImportError`, `SyntaxError` or `IndentationError` DID NOT
+   RUN THE CODE UNDER TEST and is NOT A READING.** ⛔ **It is REFUSED, not
+   explained: the row is re-spelled and re-run.**
+2. ⛔ **A sweep scoped to fewer modules than the whole suite SAYS SO, and the
+   reason column is MANDATORY there.** ⭐ The lint modules are a free unmasker
+   and a scoped sweep has thrown them away; clause 1 is what replaces them.
+3. ⭐ **The `real / lint-only` split is ADOPTED for whole-suite sweeps**, and it
+   buys what clause 1 does not: it separates a kill by *tidiness* from a kill by
+   *behaviour*, which matters even when the mutant executes fine. ⛔ **It is not
+   a substitute for clause 1 and clause 1 is not a substitute for it. Both, or
+   the sweep reports a number it cannot defend.**
+4. ⛔ **BYTE-PARITY IS WORTH NOTHING IF THE MUTANT CANNOT EXECUTE.** ⚠️ Ruling
+   70 asks for same-size mutations because of the `.pyc` mtime-and-size window;
+   ⛔ **that is a reason to keep the size, never a certificate that the mutant
+   runs.** ⭐ **The construction that gets this right, and it is cheap:** refuse
+   any mutant spelling that adds or removes a line, and run `ruff format` over
+   the mutated file per row so an orphaned import surfaces before the row does.
+5. ⛔ **WHY THIS OUTRANKS A VERDICT:** ⚠️ **this is the second time in three
+   rounds that a COMPLETE set of correct signals described a sweep that had not
+   run.** ⭐ **A gate that cannot fail is the thing this project keeps minting
+   rulings about, and a sweep is a gate.**
+
+⚠️ **NO ROW IS OWED and that is stated rather than left to be inferred** (PO
+round 35): the deliverable is this clause and the two fences above, both landed
+here, and Ruling 155's precedent is exact — **a correction, not a row.** ⛔ **If
+the reviewing office wants an id anyway, it is minted on request; a ruling that
+names *"a task"* and no id has described a task, not created one.**
+
 #### ⛔ Ruling 124 — a check over a DERIVED population states its inhabitation, or its green is not a reading
 
 ⛔ **A test that walks the tree and asserts a property of what it finds passes
@@ -2171,6 +2257,32 @@ rule:** the reviewer is **not** asked to verify the destination was reached.
 that cannot fire is worse than none, because it reads as coverage.** ⭐ It belongs
 on the **wave-open checklist**, run by the person who does the carrying: the PO.
 
+> ⛔ **CTO round 43 — the checklist goes 7 → 8, and ONE of two candidates is
+> admitted.** ⭐ **The PO put both to this office rather than adding either
+> unilaterally, which is right: the checklist is a SHARED instrument and only one
+> office may grow it.**
+>
+> | candidate | decision |
+> |---|---|
+> | **`PO-34/7`** — every minted id has a register row | ⭐ **ADMITTED as check 8.** It is an **emptiness claim over a CLOSED population** — minted ids against register rows — so it has a printable population, it is mechanical, and its failure mode has already occurred three times by hand (`SF-35`, `SF-36`, then `W78`/`W79`) |
+> | **Ruling 165 clause 4** — a bare integer in a framework Acceptance | ⛔ **DECLINED as a check. NOT dropped — RE-HOMED into `W70`'s scope** |
+>
+> ⛔ **Why clause 4 is declined, and it is this document's own argument used
+> against its author:** the population is **not closed**. A bare integer in an
+> Acceptance is usually legitimate — a `400`-line cap, a module count, a number
+> of chrome regions. ⚠️ **A grep that returns dozens of legitimate hits every
+> round is a check whose output is routinely ignored, and this document already
+> says at Ruling 84's migration note that *a check whose output is routinely
+> ignored is a check that has stopped running*.** ⛔ **Adding a second such check
+> one clause after writing that sentence would be this office contradicting
+> itself in the same file.**
+>
+> ⭐ **`W70` already reads EVERY Acceptance clause once, with judgement, which is
+> the right instrument for a heuristic.** ⛔ **Ruling 165 clause 4 is discharged
+> into `W70` — one pass, with judgement — rather than into the checklist for a
+> grep in perpetuity.** ⚠️ **`W70` is already dispatched, so this is scope it is
+> being GIVEN by the CTO, not scope it may assume; the PO records it on the row.**
+
 ⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
 — the author is describing their own scope and is the worst-placed person to see
 that something will recur elsewhere.
@@ -2516,6 +2628,28 @@ back-filled**: rewriting merge messages on a branch other agents have already
 built on costs more than the record is worth, and the verdicts themselves are on
 record in `docs/tasks/handoffs/CTO-*.md`. ⭐ The rule binds from here, and the
 check above is scoped to merges after this commit.
+
+> ⛔ **Ruling 170(a) (CTO round 43) — the FENCED command above IS the
+> instrument.** ⚠️ **The PO re-spelled its predicate from memory as
+> `grep -v 'CTO: '` and read `23` where the fenced form reads `24`, at all three
+> refs (`PO-35/7`, a finding they filed against themselves).**
+>
+> ```text
+> …| grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)'   ->  24   ⭐ INSTRUMENT
+> …| grep -v 'CTO: '                                       ->  23
+> diff  ->  7a82249 Merge CTO round 7: … (CTO: self-reversal)
+> ```
+>
+> ⛔ **The re-spelling drops any line carrying a verdict-shaped string; the
+> fenced form drops only the two strings that are APPROVALS.** ⭐ **So the
+> re-spelling is blind to exactly the class this clause exists to surface — a
+> verdict that is NOT an approval — and it reads LOW, which is the direction
+> that misses violations.**
+>
+> **The clause:** where this document fences a command, that command is the
+> instrument. ⛔ **A predicate re-spelled from memory is a SECOND, UNVALIDATED
+> instrument; a reading taken with it is reported as a re-spelling, with BOTH
+> numbers, and never as the check.**
 
 ### ⛔ Ruling 84 — the check above enumerates merges, so run its complement too
 

@@ -8,8 +8,10 @@ in order, and the bar that points out of it.
 text; `container.render` is the public entry point and turns it into bytes.
 
 **Depends on.** `render.templates` for the markup, `listing` for the body,
-`render.page.navigation` for the bar, `corpus.placement.identity` for R4's
-block, and `render.page` for `PageError`.
+`render.markup` for the escaping, `corpus.placement.identity` for R4's block,
+and `render.page` for `PageError`, `Links` and `between_units` — the bar itself,
+taken from the page package's published surface rather than from inside it
+(`W76`).
 
 ## ⛔ The skeleton is `page.html`, the unit page's own, and that is the design
 
@@ -55,9 +57,8 @@ from studyforge.render import templates
 from studyforge.render.container import listing
 from studyforge.render.container.entries import Document
 from studyforge.render.container.placement import Placement
-from studyforge.render.page import Links, PageError
-from studyforge.render.page import navigation as page_navigation
-from studyforge.render.page.text import escape, escape_attribute, inline
+from studyforge.render.markup import escape, escape_attribute, inline
+from studyforge.render.page import Links, PageError, between_units
 
 #: The skeleton every page of this site is filled from — the unit page's own.
 SKELETON = "page.html"
@@ -100,7 +101,7 @@ def compose(document: Document, placement: Placement, links: Links | None = None
             script=escape_attribute(placement.script()),
             meta=_region(meta(document)),
             body=body,
-            nav=_region(page_navigation.between_units(links)),
+            nav=_region(between_units(links)),
             **dict.fromkeys(EMPTY_SLOTS, ""),
         )
         + TRAILING_NEWLINE
