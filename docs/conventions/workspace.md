@@ -107,6 +107,18 @@ workspace hands the build four sibling repositories, widening the container's
 trust boundary for a convenience. ⭐ The image is **right** to exclude this
 subject, which is what makes `host-verified` a state rather than an excuse.
 
+> ⚠️ **Ruling 53 is landing in TWO documents and the CTO owns which is the
+> source.** ⛔ **Do not resolve this here.** ⭐ **Measured 2026-09-10: on
+> `chore/po-round18` this file is the only holder — `host-verified` appears
+> nowhere in `review-rubric.md`.** ⚠️ **The rubric's copy is on the CTO's
+> unmerged branch**, so this is a **pending** collision, not an existing one.
+>
+> ⭐ **Neither of us could see the other, which is the finding-number defect one
+> level up: the same ruling, two artifacts, two branches, one wave.** ⛔ **And it
+> is the same remedy — whichever loses POINTS at the winner and is not silently
+> deleted**, because a ruling that vanishes from a document somebody was told to
+> read is worse than a ruling recorded twice.
+
 ⚠️ An explicit `--workspace` is still answered inside the image: the seam is
 *"the computed workspace is not visible"*, not *"we are in a container"*, and
 naming a visible tree is a decision somebody made.

@@ -294,8 +294,11 @@ guessing at a filename*.**
 
 ### ⭐ Developer 1 takes FND-05a — the M0 residue that has waited a whole milestone
 
-⛔ **`SF-10` is gated on rulings 53 and 54, and `W20` is ahead of it**, so the
-build cannot start. ⭐ **`FND-05a` is the right use of the gap and it has been
+⛔ **`SF-10` was gated on rulings 50 and 51, and `W20` was ahead of it**, so the
+build could not start. ⚠️ **This line said *"rulings 53 and 54"* — those are
+`FND-05a`'s — and it survived the same table's duplicate rows being corrected.**
+⭐ **The *summary points, never restates* rule biting inside the section that
+states it**, which is the fourth costume and now the fifth. ⭐ **`FND-05a` is the right use of the gap and it has been
 right for a while:** it is a **tracked pin file plus a verification command**,
 it touches neither `tools/quality/` (Developer 2's `W20`) nor `unit/`
 (`SF-10`), and ⛔ **it is the last open M0 task — landing it closes M0
@@ -1019,7 +1022,7 @@ for that corpus until the question has somebody accountable for the answer.**
 ⭐ **The transferable half PO-Integration contributed instead is now catalogue
 entry 8** — *runnability is decided by the reader's obligation, not the file's
 shape* — ⚠️ **and their own example is the one that proves shape insufficient:
-`TestCases.md` is 188 Gherkin scenarios that look exactly like a grader corpus
+`TestCases.md` is **191** Gherkin scenario declarations that look exactly like a grader corpus
 and ask the reader to do nothing.**
 
 ⚠️ **They also turned `W22` back on us, correctly: *"168 of 792"* states a
@@ -1085,14 +1088,14 @@ against the cost of ingesting them.**
 negative one:** ⚠️ **excluding it would make ISO an *easier* corpus, and ISO's job
 is to be a hard one.** ⛔ **It is the second source (§12), and its value is
 measured in findings, not in a tidy site.** ⭐ **A fourth container that is a
-different shape — 17 chapters, 188 Gherkin scenarios, a fence language nothing
+different shape — 17 chapters, **191** Gherkin scenario declarations, a fence language nothing
 else uses — is exactly the extensibility signal M8 exists to produce.** ⚠️ **The
 39th target being the one odd one is not a nuisance; it is the test.**
 
 **Two constraints ride with the ingest, and they are Acceptance, not advice:**
 
 1. ⛔ **`exercises` stays `false`. This does not make ISO runnable.** ⭐ **Catalogue
-   entry 8 is the rule and this is the case it was written on:** *188 Gherkin
+   entry 8 is the rule and this is the case it was written on:** *191 Gherkin
    scenarios that look exactly like a grader corpus and ask the reader to do
    nothing.* ⛔ **Ask whether the reader is asked to produce something — not
    whether the files look like test code.** ⚠️ **ISO remains complete at the
@@ -1106,7 +1109,7 @@ else uses — is exactly the extensibility signal M8 exists to produce.** ⚠️
 
 ⭐ **The two open questions turned out to be one rule seen from both sides**, and
 that is the most transferable thing here: ⛔ **finding 45 asks *"168 files that
-look like graders — are they?"* and Q5 asks *"188 scenarios that look like
+look like graders — are they?"* and Q5 asks *"191 scenarios that look like
 graders — are they?"*** ⚠️ **Two corpora, two integrators, one question.** ⛔ **The
 framework's answer must be identical and must not be a per-corpus judgement (R1)
 — which is why both now land on the same check: `exercises` is corroborated
@@ -1209,6 +1212,75 @@ was a schema change, and a schema is the one thing R9 makes expensive to alter
 afterwards. ⚠️ The integration side got its answer at the cost of asking early —
 recording that, because the next integrator's incentive to ask early is entirely
 built out of whether this one's questions were worth asking.
+
+### ⛔ PO-Integration round 4 — **`studyforge validate` ran, and it says `NOT valid: 100 findings`**
+
+⭐ **The first round that could *run* the framework rather than reason about it**,
+because `SF-02` and `SF-25` shipped. ⛔ **Zero of the 100 is a defect in the
+corpus** — ⚠️ **all three causes are framework-side, and all three are mine.**
+
+⛔ **They block the track's finish line by construction:** `ISO-09`'s acceptance is
+*"`studyforge validate` green"*, ⚠️ **which is currently unreachable for reasons
+the integrator is forbidden to fix (§12).** ⭐ **That is the seam working exactly
+as designed — and it is also why these cannot wait for M2.**
+
+| # | Finding | ⛔ **Measured** | Owner | Owed before |
+|---|---|---|---|---|
+| **F18** | ⛔ **`content` has two states and a real repository is mostly a third** | **141 files: 38 included, 3 excluded, ⛔ 100 UNCLASSIFIED.** ⭐ **Only 3 are *material withheld from the reader*** | **CTO** — it is a **schema** change (R9) | ⛔ **`SF-31`**, and before `SK-07` generates a manifest |
+| **F19** | ⛔ **a `sibling` build makes its own corpus invalid** | **79 of 79 generated artifacts classify `UNCLASSIFIED`**; `tree` escapes only because `.studyforge` is in `SKIP_DIRS` | **CTO**, then `SF-31` | ⛔ **`SF-31`** — ⭐ **filed *before* it, deliberately** |
+| **F20** | ⛔ **the framework mandates a knowledge graph the manifest cannot declare out** | **79 files, 67 content-hash names, and `exclude` refuses globs** — ⛔ **so the list cannot be WRITTEN, not merely not justified.** Plus `source_files()` ignores git, so `validate` and §11.2 disagree **by 83 files** | **CTO** (schema) + **PO** (§11.2) | ⛔ **`SF-31`** |
+
+#### ⛔ Why F18 is the one to rule first, and it is not the biggest number
+
+⚠️ **`README.md` can be *neither* included nor excluded, and that is a proof
+rather than an inconvenience.** ⛔ **Include it and it becomes a unit that is its
+own table of contents. Exclude it and the `why` must call the sole record of every
+address, title and ordinal *"withheld from the reader"*.**
+
+⭐ **X1's asymmetry is what breaks here, and X1 is mine.** ⛔ **I ruled that an
+inclusion needs no justification and an exclusion does — on the premise that those
+are the only two states.** ⚠️ **A real repository is mostly a third: files that are
+neither material nor withheld, because they are not material at all.** ⭐ **The
+missing state is *not source material*, and it is not a weakening of X1 — it is
+the domain limit X1 was stated without**, which is Ruling 52 arriving against my
+own rule rather than somebody else's.
+
+⛔ **`spec §4`'s *"a file matching neither list is unclassified and `validate`
+exits 1"* is the clause that has to move**, and it is a schema decision under R9,
+so it is the CTO's and not mine. ⚠️ **I am recording the shape, not choosing it.**
+
+⭐ **And the detail worth keeping, because it is the whole finding in one line:**
+⛔ **writing the finding took the count from 100 to 101 — the new entry is the file
+containing it.** ⚠️ **A rule that classifies its own bug report as unclassified
+source material has told you its domain is wrong.**
+
+#### ⚠️ F20's second half is mine, not the CTO's
+
+⛔ **`source_files()` ignores git, so `studyforge validate` and §11.2's acceptance
+disagree about what the corpus contains by 83 files.** ⚠️ **Two definitions of
+*"the corpus"*, one in code and one in the spec** — ⭐ **which is the two-copies
+diagnosis this project has made more than any other, arriving in the one place it
+decides whether an acceptance is reachable.** ⛔ **§11.2 is spec text and mine.**
+
+### ⭐ `Q5` is answered and they were still running when I ruled it
+
+⛔ **INGEST — 38 → 55 units, `exercises` stays `false`.** ⭐ **They parse-tested
+*both* branches, so the answer costs no round.** ⚠️ **The coordinator is relaying.**
+
+⭐ **It does not change `JS-01`'s Acceptance** — checked rather than assumed:
+⛔ **`JS-01` is the *Java* corpus and `Q5` is ISO's fourth container.** ⚠️ **What
+they share is the rule, not the corpus**, and the rule was already carried into
+`JS-01` as *the reader's obligation, not the file's shape*.
+
+### ⏳ Still mine, carried and named rather than left implied
+
+- ⛔ **`Q18` — the track has no definition of done**, and ⚠️ **I have carried it
+  two rounds.** ⭐ **F18/F19/F20 make it urgent rather than tidy:** `ISO-09` says
+  *"`validate` green"*, ⛔ **and that is now provably unreachable**, so the track's
+  finish line currently names a state no corpus can enter.
+- ⭐ **`F24` — corrected.** See the catalogue banner and the four board sites.
+
+---
 
 ### The channel — encoded in `../conventions/delivery-flow.md`, non-negotiable
 
