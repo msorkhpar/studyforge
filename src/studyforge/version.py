@@ -23,11 +23,15 @@ document is then processed as though it declared a version it never declared.
 `1.0` passes the same way. ⭐ **`isinstance(declared, bool)` is not a redundant
 clause; it is the clause**, and the type is tested before the value.
 
-⚠️ R9 names **six** versioned contracts — `corpus_api`, `container_api`,
-`raw_api`, `unit.json`'s `api`, the TOC schema version, and `consuming_api` —
-and five of them are unwritten. Six independent membership tests is six
-chances to write the porous one, in front of five authors who will never have
-met this defect. That is the whole argument: one extraction today, or six
+⚠️ **How many contracts R9 versions is `CONTRACT_FIELDS` below, and it is not
+restated here.** This paragraph used to enumerate six; two tasks appended in
+one round and it would have said six while the tuple said eight. ⛔ A list
+written twice is a list that disagrees with itself (ruled round 15, where the
+spec's own copy was retired for the same reason).
+
+⭐ The argument stands however many there are: one independent membership test
+per contract is one chance per contract to write the porous one, in front of
+authors who will never have met this defect. One extraction today, or N
 divergent re-implementations later.
 
 ⛔ **The refusal is a raise, never a migration** (R9). A migration that runs
@@ -52,8 +56,14 @@ from collections.abc import Collection
 #: test_version.py` that refuses a second implementation. ⚠️ The TOC schema
 #: version has no field name yet — E03 mints it — and it belongs in this
 #: tuple on the day it does. ⭐ `identity_api` joined it the day SF-03 minted
-#: it, which is the convention this line asks for: a task that versions a new
-#: contract registers it here in the same commit, or the guard cannot see it.
+#: it, and `content_api` the day SF-09 did, which is the convention this line
+#: asks for: a task that versions a new contract registers it here in the same
+#: commit, or the guard cannot see it.
+#:
+#: ⛔ **Two tasks appending here conflict, and the resolution is always
+#: keep-both** (Ruling 9). The explicitness is the mechanism — a tuple that
+#: merges cleanly is one nobody had to look at — so a conflict here is the
+#: guard working, and it recurs at the TOC schema version.
 CONTRACT_FIELDS = (
     "corpus_api",
     "container_api",
@@ -61,6 +71,7 @@ CONTRACT_FIELDS = (
     "api",
     "consuming_api",
     "identity_api",
+    "content_api",
 )
 
 
