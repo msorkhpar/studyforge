@@ -585,6 +585,48 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
       "why": "Maven compiles only what sits on a source root (§7)" } ] }
 ```
 
+### The complete key list — ⛔ **the example above is an instance, not the contract**
+
+⚠️ **The example carries nine of ten keys and that is correct.** ⭐ **A canonical
+example is a *realistic* manifest, and a realistic manifest omits the optional
+keys it does not need** — so the example is not where you learn what a manifest
+*may* carry. This list is. ⛔ **Without it `media` was unteachable from this
+document**: the contract owned a key the spec never named, and a reader looking
+for the vocabulary found only one corpus's choices.
+
+| Key | | Notes |
+|---|---|---|
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated |
+| `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
+| `title` | **required** | |
+| `levels` | **required** | Names the *container* levels and fixes the depth |
+| `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
+| `exercises` | **required** | §7's gate onto the execution track |
+| `placement` | **required** | |
+| `content` | **required** | `include` is plain globs; every `exclude` carries its `why` |
+| `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |
+| `permitted_edits` | *optional* | Defaults to `[]`. ⭐ ISO's is structurally empty and that is a pass |
+
+⛔ **The contract is `MANIFEST_KEYS` and `REQUIRED_KEYS` in
+`corpus/manifest/document.py`; this table is derived from them and the derivation
+is asserted, not maintained by hand.** ⚠️ **And the assertion is deliberately
+*two* one-way checks, never an equality** (⭐ **ruling 30, which reversed ruling
+28**):
+
+- **subset** — every key this table names exists in `MANIFEST_KEYS`, so the spec
+  cannot teach a key the code does not have;
+- **coverage** — every key in `MANIFEST_KEYS` appears in this table, so the code
+  cannot own a key the spec never names. ⭐ **That is the half that closes
+  `media`.**
+
+⛔ **Equality was ruling 28's remedy and it was wrong in a way worth recording,
+because it would have been *enforced*.** Equality can only be satisfied by making
+the **example** exhaustive — and `SK-07` **generates** manifests from it, so an
+exhaustive example propagates `media` into every corpus that has none, and R9
+freezes it there at first declaration. ⭐ **The scope this was argued over is a
+canonical example whose consumer is a generator** (ruling 52); a hand-written
+example with no generator downstream would not have carried the same cost.
+
 `content` is **C2's countermeasure, and it is a schema field because C2 is a
 schema problem.** ISO ships both per-unit files *and* whole-series aggregates
 that are concatenations of them, so a `src/*.md` glob ingests every unit twice
