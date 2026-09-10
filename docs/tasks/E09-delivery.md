@@ -249,6 +249,31 @@ both correct — `None` is not zero — so the translation is this task's and
 nobody else's.** Ruled by the PO 2026-09-10 from `SF-12/4`; the argument is in
 [`BOARD.md`](BOARD.md).
 
+#### ⛔ One acceptance condition added by the CTO, 2026-09-10 (round 28) — **Ruling 99**
+
+⛔ **`studyforge plan` and this build agree PATH FOR PATH, on both `FND-04`
+fixtures, asserted by running both and diffing** — not by inspection.
+
+```bash
+python3 -m studyforge.cli.plan tests/fixtures/depth1 | sed -n 's/^create //p' \
+  | cut -d' ' -f1 | sort > /tmp/planned
+<this task's build command> --out <root>            # then enumerate what it wrote
+diff /tmp/planned /tmp/built                        # exit 0 is the pass
+```
+
+⭐ **Pass condition: `diff` exits 0 for `depth1` and for `depth2`, and the two
+committed goldens — `tests/fixtures/golden/depth1.plan.txt` and
+`depth2.plan.txt` — still match `plan`'s output at the same ref.** ⛔ **Both
+halves, because a plan and a build that drifted together would pass the diff
+alone.**
+
+⚠️ **This clause was written on `SF-31` and could not be executed there: at M2
+`src/` contained no writer at all.** ⭐ **`SF-31` produced three independent
+substitutes and the goldens, and filed the clause rather than declaring it met
+— so this is the clause arriving where it can first be run, not new scope.**
+⛔ **`OPS-05` then asserts the other direction — that what was planned is what
+happened, and that nothing else moved (R3).**
+
 ⛔ **A built site's media resolves on disk.** The renderer emits
 `<img src="images/<basename>">` and **copies nothing** — `SF-12`'s own handoff
 says so — and no task owned the copy, so today a media-bearing page renders the

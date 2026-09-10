@@ -543,22 +543,58 @@ module was large has not done the task.
 
 ### 4a. The mirror
 
+⛔ **`tools/quality/mirror.py` owns this and is the authority** (§3a's rule, for
+R12). The hand form asks it rather than re-deriving where a test lives:
+
 ```bash
 printf '%s\n' $CHANGED | grep -E '^src/studyforge/.*\.py$' | while read -r f; do
-  rel=${f#src/studyforge/}
-  case "$rel" in
-    */__init__.py|__init__.py)
-      d="tests/studyforge/$(dirname "$rel")"
-      [ -d "$d" ] && [ -n "$(ls -A "$d" 2>/dev/null)" ] \
-        || echo "MISSING test package for $f -> $d/" ;;
-    *)
-      t="tests/studyforge/$(dirname "$rel")/test_$(basename "$rel")"
-      [ -f "$t" ] || echo "MISSING $t for $f" ;;
-  esac
+  t=$(python3 -c "import sys;from tools.quality.mirror import mirror_for;print(mirror_for(sys.argv[1]) or '')" "$f")
+  [ -n "$t" ] && [ ! -f "$t" ] && echo "MISSING $t for $f"
 done
 ```
 
 **Pass = no `MISSING` line.**
+
+⚠️ **Fallback, where `tools/` is not importable** — ⛔ **dunders drop their
+underscores**, which is the rule the old hand form got wrong (Ruling 103):
+
+```bash
+printf '%s\n' $CHANGED | grep -E '^src/studyforge/.*\.py$' | while read -r f; do
+  rel=${f#src/studyforge/}
+  dir=$(dirname "$rel")
+  stem=$(basename "$rel" .py)
+  case "$stem" in
+    __*__) stem=$(printf '%s' "$stem" | tr -d '_') ;;   # __init__ -> init, __main__ -> main
+  esac
+  case "$dir" in
+    .) t="tests/studyforge/test_$stem.py" ;;
+    *) t="tests/studyforge/$dir/test_$stem.py" ;;
+  esac
+  [ -f "$t" ] || echo "MISSING $t for $f"
+done
+```
+
+⛔ **Both forms must agree.** A disagreement is Ruling 103's case and is a
+finding against this document.
+
+#### ⛔ Ruling 103 — a hand form that duplicates a shipped check is SUBORDINATE to it
+
+```bash
+docker/dev/check python3 -m tools.quality      # the authority; exit 0 = pass
+```
+
+⛔ **Pass condition: where a hand form here duplicates a floor check, the floor
+decides, and a disagreement is a finding against THIS DOCUMENT — never against
+the branch.** ⭐ Generalises §1a and §3a to every grep in this rubric.
+
+**Measured, round 28, two false `MISSING`s against compliant branches:**
+
+| hand form | demanded | the floor says | owner |
+|---|---|---|---|
+| §4a | `test___main__.py` | `test_main.py` | `tools/quality/mirror.py` |
+| §8 | six sections of a `ruling record` | that kind owes none | `tools/quality/handoffs/` |
+
+⭐ Reasoning: `handoffs/CTO-2026-09-10-round28.md`.
 
 ⭐ **Ruling on `__init__.py`:** a package's `__init__.py` is the contract
 (`module-structure.md`), so it is covered by the mirrored **test package**
@@ -1292,13 +1328,20 @@ that merged before this branch existed.
 TASK=<TASK-ID>
 H="docs/tasks/handoffs/$TASK.md"
 test -f "$H" || echo "MISSING $H"
-for s in 'Status' 'What landed' 'Decisions' 'Surprises' 'Findings' 'For dependents'; do
-  grep -qE "^(\*\*$s:\*\*|#{2,3} $s)" "$H" || echo "MISSING section '$s' in $H"
-done
-head -1 "$H" | grep -qE "^# $TASK — handoff" || echo "TITLE does not match '# $TASK — handoff'"
+# ⛔ The six sections are owed by a TASK HANDOFF. A `ruling record` — a CTO or
+# PO round — owes none of them, so read the document's own Kind first.
+KIND=$(grep -m1 '^\*\*Kind:\*\*' "$H" | sed 's/^\*\*Kind:\*\* *//')
+echo "kind: ${KIND:-⛔ NONE DECLARED — the floor fails this}"
+case "$KIND" in task\ handoff*)
+  for s in 'Status' 'What landed' 'Decisions' 'Surprises' 'Findings' 'For dependents'; do
+    grep -qE "^(\*\*$s:\*\*|#{1,3} $s)" "$H" || echo "MISSING section '$s' in $H"
+  done
+  head -1 "$H" | grep -qE "^# $TASK — handoff" || echo "TITLE does not match" ;;
+esac
 ```
 
-**Pass = no output.** The six sections are `agent-protocol.md`'s and ⛔ **a task
+**Pass = no `MISSING` line**, and the `kind:` line is read — `tools/quality/
+handoffs/` owns `DOCUMENT_KINDS` and is the authority for what each kind owes. The six sections are `agent-protocol.md`'s and ⛔ **a task
 with dependents and no handoff is not done.**
 
 ⛔ **The floor runs this now** (`tools/quality/handoffs.py`, Ruling 49), so the
