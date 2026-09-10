@@ -154,6 +154,25 @@ supported** — asserted, with the same for `1.0` and `"1"`. Refusal is a raise,
 never a migration (R9). `SF-02` imports it rather than keeping its own copy, and
 ⛔ **a test fails if a second version check appears in the tree.**
 
+⛔ **Follow-up (CTO round 16, Finding 8): two refusals in this module blame the
+corpus and one of them leaks.**
+
+1. `slugify` produces an empty slug for a title with no ASCII letters, and the
+   refusal reads *"titles are the corpus's, so this is a corpus defect."* ⚠️ **A
+   Russian title is not a defect.** R1 says the framework knows nothing about a
+   source, including its alphabet; R6 licenses failing loudly, not
+   misattributing the fault. ⭐ **Name the framework's limitation instead** — the
+   spec now declares it beside R10.
+2. `require_slug` and `require_ordinal` format `{value!r}`, and the branch fires
+   *because* the value is not a slug — which is exactly when it may be a path.
+   ⛔ **7 of the tree's 26 emission sites are these two lines seen through their
+   callers**; an identity's `corpus` field leaks a full path today. ⚠️ **Do not
+   simply delete the echo:** *"did you pass a title?"* is the most useful
+   sentence in the module. ⭐ Ruling 14 — name the type, or the character class
+   and position that failed. Lands with Ruling 10's `describe` extraction, this
+   pair first.
+
+
 **Out of scope.** Deciding any contract's supported set — each contract's own
 task owns its numbers.
 
