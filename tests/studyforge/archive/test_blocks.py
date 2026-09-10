@@ -13,9 +13,6 @@ and a path allow-list is a list of files nobody re-examines.
 """
 
 import ast
-import json
-import re
-from collections.abc import Collection
 from pathlib import Path
 
 import pytest
@@ -37,7 +34,7 @@ from studyforge.archive.blocks import (
 )
 from studyforge.archive.document import VIDEO_KEYS
 from studyforge.archive.errors import ArchiveError
-from tests.fixture_checks import INVALID_CORPORA
+from tests.fixture_checks import archive_documents, coverage
 from tests.support import imports_module, repository_root
 
 #: The vocabulary, written out. ⛔ In `counts` order, which is the order that
@@ -69,181 +66,6 @@ EXPECTED_COUNT_KEYS = (
     "html",
     "disclosures",
 )
-
-FIXTURES = Path("tests/fixtures")
-
-
-def archive_documents(*, asserting: Collection[str]):
-    """Every archive document a sweep asserting `asserting` is entitled to look at.
-
-    ⭐ **Ruling 46.** A sweep names, as a set of rule ids, every property it
-    asserts; this excludes exactly the fixtures *declared* to violate one of
-    them — `{d for d, rule in INVALID_CORPORA.items() if rule in asserting}`.
-
-    ⛔ **A set, not a name, and read from the declaration, not the directory.**
-    Both coarser forms were tried here and both are wrong at a different grain:
-    excluding by directory drops **9 documents that should be swept** — each
-    invalid in exactly one named way and correct in every other — and excluding
-    by a single id under-excludes for a sweep that asserts two properties, as
-    the block-vocabulary sweep below does.
-
-    ⚠️ **The declaration is `INVALID_CORPORA`, not `VIOLATION.md`.** The two
-    are not copies of one fact: `VIOLATION.md` names the **spec** rule in prose
-    (`spec §6`, `R9`, `R7`, `R5`) for a person reading beside the data, and no
-    one of them names the id a sweep uses. ⛔ Nothing parses it.
-
-    ⭐ **And the failure message matters as much as the exclusion** — see
-    `sweeping`. A sweep that under-declares still reds, and the point was never
-    the red: it was that the red read as the fixture's fault, which is the
-    pressure that neuters a negative control.
-    """
-    excluded = {name for name, rule in INVALID_CORPORA.items() if rule in asserting}
-    root = repository_root() / FIXTURES
-    for path in sorted(root.rglob("*.json")):
-        if "/raw/" not in path.as_posix():
-            continue
-        if declaring(path) in excluded:
-            continue
-        yield sweeping(path), json.loads(path.read_text(encoding="utf-8"))
-
-
-def declaring(path) -> str | None:
-    """The invalid corpus this document belongs to, or `None` for a valid one."""
-    parts = path.relative_to(repository_root() / FIXTURES).parts
-    return parts[1] if parts and parts[0] == "invalid" else None
-
-
-def sweeping(path) -> str:
-    """Where this document is — and, if it declares a violation, why that matters.
-
-    ⛔ **This is the half that closes the defect, not the exclusion.** A sweep
-    that forgets to name one of its properties still goes red the day a fixture
-    declaring that rule is added, and the failure a reader sees decides what
-    they do about it. Unattributed, it reads as *"this fixture is broken"* and
-    the fixture gets edited — ⛔ §1e's exact failure: a negative control
-    neutered into an input that silently passes, which is worse than the sweep
-    that provoked it.
-
-    ⭐ So a declared fixture carries its declaration into every message it can
-    appear in, including an `ArchiveError` raised by the code under test, which
-    is why this returns the string the sweeps pass down rather than a check
-    they must remember to call.
-    """
-    where = path.relative_to(repository_root() / FIXTURES).as_posix()
-    corpus = declaring(path)
-    if corpus is None:
-        return where
-    return (
-        f"{where} — ⛔ {corpus!r} declares rule {INVALID_CORPORA[corpus]!r}. "
-        f"If this sweep asserts that rule, name it in asserting=; "
-        f"do not change the fixture."
-    )
-
-
-# --------------------------------------------------------------------------
-# ⛔ Ruling 46 — a sweep declares what it asserts, and a red names the declaration
-# --------------------------------------------------------------------------
-
-
-def swept(asserting):
-    """Which declared-invalid corpora a sweep asserting `asserting` still sees."""
-    return {
-        where.split("/")[1]
-        for where, _document in archive_documents(asserting=asserting)
-        if where.startswith("invalid/")
-    }
-
-
-def test_a_sweep_excludes_exactly_the_fixtures_declared_to_violate_what_it_asserts():
-    # ⭐ Derived from `INVALID_CORPORA` in both directions, so neither half can
-    # drift into a hand-kept list. ⛔ A fixture is excluded **only** by its own
-    # declaration — never by living under `invalid/`.
-    for rule in sorted(set(INVALID_CORPORA.values())):
-        declaring_it = {name for name, r in INVALID_CORPORA.items() if r == rule}
-        # ⚠️ Non-vacuous on purpose: a helper that excluded everything would
-        # satisfy the equality below against two empty sets, which is the
-        # "check that cannot fail" this round has now seen four times.
-        assert declaring_it <= swept(()), rule
-        assert swept({rule}) == swept(()) - declaring_it, rule
-
-
-def test_naming_two_rules_excludes_both_and_nothing_else():
-    # ⚠️ The reason Ruling 46 takes a **set**: a sweep asserting two properties
-    # excludes the fixtures declared against either, and a single id would
-    # under-exclude at exactly the grain the directory over-excludes.
-    assert swept({"counts", "digest"}) == swept(()) - {"count-mismatch", "digest-mismatch"}
-
-
-def test_a_rule_no_fixture_declares_excludes_nothing():
-    # ⭐ Which is what makes naming a property cheap enough to do honestly. A
-    # sweep may name a rule before any fixture declares it; the declaration
-    # becomes load-bearing on the day one does.
-    assert swept({"key-order"}) == swept(())
-    assert swept(()) == set(INVALID_CORPORA)
-
-
-def test_nine_declared_documents_are_swept_that_a_directory_exclusion_would_drop():
-    # ⛔ **The regression floor for finding 47's second, finer form.** Excluding
-    # by directory dropped these nine — each invalid in exactly one *named* way
-    # and correct in every other. ⚠️ If this number falls, a sweep has been
-    # coarsened back; if it rises, a fixture was added, which is fine.
-    everything = [w for w, _d in archive_documents(asserting=()) if w.startswith("invalid/")]
-    assert len(everything) >= 9
-
-
-def test_a_declared_fixture_carries_its_declaration_into_every_failure():
-    # ⛔ **The half that actually closes the defect.** A sweep that forgets to
-    # name one of its properties still reds; the question is what the reader
-    # does about it. Unattributed it reads as the fixture's fault and the
-    # fixture gets edited — §1e's exact failure, and a neutered negative
-    # control is worse than the sweep that provoked it.
-    where = sweeping(
-        repository_root()
-        / FIXTURES
-        / "invalid/user-authoritative/archive/solo/raw/prose/unit-01/practice-1.json"
-    )
-    assert "user-authoritative" in where
-    assert "exercise-trust" in where
-    assert "name it in asserting=" in where
-    assert "do not change the fixture" in where
-
-
-def test_a_valid_fixture_is_named_and_nothing_more():
-    # ⚠️ The advice appears only where it applies. Attached to every document it
-    # would be noise, and noise is how a sentence stops being read.
-    where = sweeping(repository_root() / FIXTURES / "depth2/corpus.json")
-    assert where == "depth2/corpus.json"
-    assert "declares rule" not in where
-
-
-#: A rule as the **spec** names it — what every `VIOLATION.md` states.
-SPEC_RULE = re.compile(r"spec §\d|\bR\d+\b")
-
-
-def test_the_declaration_is_read_from_the_dict_and_not_from_violation_md():
-    # ⛔ **They are two vocabularies, not two copies of one fact.** Every
-    # `VIOLATION.md` states the rule as the *spec* names it, for a person
-    # reading beside the data; `INVALID_CORPORA` holds the id the *checker*
-    # yields. ⚠️ Parsing the prose would mean a prose parser **and** a
-    # `spec §6 → counts` translation table, to reach a dict that is already
-    # exported and already pinned to the directory by
-    # `test_the_invalid_set_is_exactly_what_is_on_disk`.
-    # ⭐ Asserted as a measurement rather than left as a comment.
-    for name, rule in INVALID_CORPORA.items():
-        prose = (repository_root() / FIXTURES / "invalid" / name / "VIOLATION.md").read_text(
-            encoding="utf-8"
-        )
-        stated = [line for line in prose.splitlines() if "**Rule violated:**" in line]
-        assert len(stated) == 1, name
-        assert SPEC_RULE.search(stated[0]), (name, stated[0])
-        assert not SPEC_RULE.search(rule), (name, rule)
-
-
-def test_a_sweep_must_say_what_it_asserts():
-    # ⭐ No default, deliberately. A default is what let the last two versions
-    # of this helper be wrong without anybody choosing anything.
-    with pytest.raises(TypeError):
-        list(archive_documents())
 
 
 # --------------------------------------------------------------------------
@@ -460,13 +282,19 @@ def test_the_counts_in_every_fixture_agree_with_this_module():
         assert tuple(document["counts"]) == EXPECTED_COUNT_KEYS, where
         assert document["counts"] == counts_of(document["blocks"]), where
         seen += 1
-    assert seen > 0
+    # ⛔ Ruling 48's denominator, not `> 0`: `seen > 0` passes on a sweep that
+    # read one document of twenty, and passes identically the day an exclusion
+    # is widened by mistake. `coverage` states what this sweep was entitled to.
+    assert seen == coverage(asserting={"counts", "key-order"}).swept
 
 
 def test_every_block_type_in_the_fixtures_is_in_the_vocabulary():
     seen = set()
+    read = 0
     for _where, document in archive_documents(asserting={"vocabulary"}):
         seen.update(block["type"] for block in walk(document["blocks"]))
+        read += 1
+    assert read == coverage(asserting={"vocabulary"}).swept
     assert seen <= set(BLOCK_TYPES)
     # ⚠️ And the fixtures exercise all of them, so the vocabulary is not
     # eleven types of which four are theoretical.
@@ -477,9 +305,12 @@ def test_every_block_carries_exactly_the_fields_its_row_names():
     # ⚠️ `vocabulary` is one id covering both halves — `check_blocks` yields it
     # for an unknown type *and* for a known type with the wrong fields — so
     # this sweep and the one above name the same set, correctly.
+    seen = 0
     for where, document in archive_documents(asserting={"vocabulary"}):
         for block in walk(document["blocks"]):
             assert tuple(block) == BLOCK_FIELDS[block["type"]], f"{where}: {block['type']}"
+        seen += 1
+    assert seen == coverage(asserting={"vocabulary"}).swept
 
 
 # --------------------------------------------------------------------------
@@ -557,11 +388,16 @@ def test_the_real_practice_fixtures_are_laid_out():
     # exclude and every document is swept. ⚠️ Inventing an id here would be a
     # second vocabulary; if one is added to the checker, name it here, and
     # until then `sweeping` is what tells whoever hits the red to do that.
-    seen = 0
+    seen = read = 0
     for where, document in archive_documents(asserting=()):
+        read += 1
         layout = read_layout(document, where)
         assert (layout is not None) == (document["kind"] == "practice"), where
         if layout is not None:
             assert layout.starting_code == document["starting_code"]
             seen += 1
-    assert seen > 0
+    # ⚠️ The denominator here is the practices, not the documents: this sweep
+    # reads every document and asserts a property of the practices among them,
+    # so its floor is pinned rather than derived. ⛔ Never `> 0`.
+    assert seen >= 3, seen
+    assert read == coverage(asserting=()).swept

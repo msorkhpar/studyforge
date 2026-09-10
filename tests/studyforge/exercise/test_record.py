@@ -19,6 +19,7 @@ from studyforge.exercise import (
     to_document,
 )
 from studyforge.unit.errors import ContentError
+from tests.fixture_checks import excluded_by, fixture_paths
 from tests.support import repository_root
 
 WHERE = "basics/01-getting-started/unit-01/practice-1"
@@ -276,16 +277,34 @@ def test_the_other_committed_practice_is_ungraded():
 def test_no_exercise_appears_anywhere_in_the_depth_one_fixture():
     # ⛔ E06: "The depth-1 fixture (zero exercises) validates." A corpus with
     # no graders is complete, not short.
+    #
+    # ⭐ **Named reason for not taking `asserting=`** (`FND-09` acceptance 3):
+    # `depth1` is this test's **subject**, not an exclusion policy. The claim
+    # is about that one corpus by name, so there is nothing for a declaration
+    # to widen or narrow. ⛔ Not the same thing as "skip `invalid/`".
     root = repository_root() / "tests/fixtures/depth1"
-    for path in root.rglob("*.json"):
+    swept = 0
+    for path in sorted(root.rglob("*.json")):
         assert "exercise" not in json.loads(path.read_text(encoding="utf-8"))
+        swept += 1
+    assert swept >= 6, swept
 
 
-def _carrying_an_exercise():
-    root = repository_root() / "tests/fixtures"
+#: ⛔ **The rule this module's sweeps assert** (Ruling 46). `of()` refuses an
+#: exercise the source declared authoritative, which is exactly what
+#: `user-authoritative` is declared to break — so the *valid* set is the one
+#: the declaration leaves, and the refused set is the one it drops.
+#: ⚠️ Both used to be `"/invalid/" in p.as_posix()`, which is the directory
+#: name Ruling 46 forbids and which would have swept in an eighth fixture
+#: declaring something else entirely.
+ASSERTED = {"exercise-trust"}
+
+
+def _carrying_an_exercise(*, asserting):
+    """Every archive document a sweep asserting `asserting` may read that grades."""
     return [
         path
-        for path in sorted(root.rglob("*.json"))
+        for _where, path in fixture_paths(asserting=asserting, within="/raw/")
         if "exercise" in json.loads(path.read_text(encoding="utf-8"))
     ]
 
@@ -295,7 +314,7 @@ def test_exactly_one_valid_corpus_document_carries_an_exercise():
     # majority — see `tests/fixtures/README.md`. ⛔ The graded state is the
     # exception in real material, and a set in which it is the majority is a
     # set that will let a design fitted to the exception look correct.
-    valid = [p for p in _carrying_an_exercise() if "/invalid/" not in p.as_posix()]
+    valid = _carrying_an_exercise(asserting=ASSERTED)
     assert len(valid) == 1, [p.name for p in valid]
 
 
@@ -305,9 +324,13 @@ def test_every_other_exercise_in_the_tree_exists_to_be_refused():
     # list and it violates nothing, which reds the fixture-consistency suite.
     # ⛔ So the rule is not "one exercise in the tree" but "one that validates",
     # and this states the second half rather than leaving it to a count.
-    others = [p for p in _carrying_an_exercise() if "/invalid/" in p.as_posix()]
-    named = [p.parts[p.parts.index("invalid") + 1] for p in others]
-    assert named == ["user-authoritative"]
+    everything = _carrying_an_exercise(asserting=())
+    others = [p for p in everything if p not in _carrying_an_exercise(asserting=ASSERTED)]
+    # ⭐ Derived from the declaration in both directions: the refused set is
+    # exactly what naming `exercise-trust` drops, so an eighth fixture cannot
+    # land here silently and cannot be missed here either.
+    assert {p.parts[p.parts.index("invalid") + 1] for p in others} == excluded_by(ASSERTED)
+    assert len(everything) == len(others) + 1
     for path in others:
         with pytest.raises(ExerciseError):
             of(json.loads(path.read_text(encoding="utf-8")), path.name)

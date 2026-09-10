@@ -231,9 +231,23 @@ internals is a sign the surface was drawn wrong.*
 Each stage is independently invocable, because a reader regenerating one
 lesson's narration should not rebuild 166 pages.
 
+⭐ **This task is the first caller `unit.builder.build()` ever has**, which makes
+one clause below a product obligation rather than a plumbing detail.
+
 **Acceptance.** Builds and serves both FND-04 fixtures with no corpus-specific
 code. Every stage runs independently. `OPS-04` is expressible as configuration
 over it — demonstrated, not asserted. No module in `cli/` names a source.
+
+⛔ **A corpus whose manifest carries `"exercises": false` builds units with
+`practices.declared = 0`, and its pages therefore do NOT say "More to come".**
+⭐ **`exercises: false` is a *declaration of zero*, not an absence** — one
+direction only: `exercises: true` implies no count for any unit. ⚠️ **Without
+this, every page of a complete prose corpus claims to be unfinished, which
+contradicts spec §7's three states (C5) and §11.0's reading floor: a graderless
+corpus is *complete at M4, not short*.** ⛔ **The renderer and `unit.builder` are
+both correct — `None` is not zero — so the translation is this task's and
+nobody else's.** Ruled by the PO 2026-09-10 from `SF-12/4`; the argument is in
+[`BOARD.md`](BOARD.md).
 
 ---
 

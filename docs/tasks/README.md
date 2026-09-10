@@ -1,6 +1,6 @@
 # studyforge — task index
 
-**86 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
+**87 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
 `BOARD.md`**, not this file: this one orders the work, that one says where it is.
 Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R21** every
@@ -148,7 +148,7 @@ discovery.
 - **2.1** — SF-04, SF-31, SK-02
 - **2.2** — SK-07, SK-05, SK-08, SF-13
 - **2.3** — SF-14, SF-27
-- **2.4** — SF-15, SF-26, SF-30
+- **2.4** — SF-15, SF-26, SF-30, **SF-34**
 
 ⚠️ **The skills come with this milestone, not after it.** `SK-02` scaffolds an
 adapter and `SK-07` onboards a repository; a corpus built before they exist is a
@@ -264,7 +264,7 @@ OPS-04 → QA-01 → QA-04.
 | E00 | [Foundations](E00-foundations.md) | FND-01…04, 05a, 06, 07 | scaffolding, graphify, dev container, fixtures, the workspace pin file, the R7 check, the index tripwire |
 | E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31, SF-33 | address, manifest, placement, dry-run, discovery, container map, version guard |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
-| E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27 | assets, page, contents, index, navigation |
+| E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27, SF-34 | assets, page, contents, index, navigation, page chrome |
 | E04 | [Narration](E04-narration.md) | SF-16…18, SF-32 | speakable, synthesis, player sync, media footprint |
 | E05 | [Serving & execution](E05-serving-execution.md) | SF-19a/b, SF-20…22, SF-29, SF-30 | API, runner, progress, reader state, Run/Submit |
 | E06 | [Exercise contract](E06-exercise-contract.md) | SF-23…24 | workspace, trust, practice panel |

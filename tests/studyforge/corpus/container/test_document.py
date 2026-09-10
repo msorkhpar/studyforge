@@ -8,7 +8,6 @@ came from any real machine, account or person.
 
 import inspect
 import json
-from pathlib import Path
 
 import pytest
 
@@ -31,11 +30,10 @@ from studyforge.corpus.container import (
 )
 from studyforge.corpus.container import document as mod
 from studyforge.corpus.manifest import from_document as manifest_from_document
+from tests.fixture_checks import coverage, fixture_paths, sweeping
 from tests.support import repository_root
 
 HOME = "/" + "home/jane"
-
-FIXTURES = Path("tests/fixtures")
 
 MANIFEST = {
     "corpus_api": 1,
@@ -75,16 +73,17 @@ def refusal(**overrides):
     return str(raised.value)
 
 
+#: ⛔ Ruling 46 — reading a map needs the manifest, so `corpus-api` joins the
+#: container's own `ordinal-gap`. Naming them gained **five** maps (`FND-09`).
+ASSERTED = {"corpus-api", "ordinal-gap"}
+
+
 def fixture_maps():
-    """`(path, manifest)` for every committed container map in a valid corpus."""
-    root = repository_root() / FIXTURES
-    found = []
-    for corpus in ("depth1", "depth2"):
-        declared = json.loads((root / corpus / "corpus.json").read_text(encoding="utf-8"))
-        made = manifest_from_document(declared, "corpus.json")
-        for path in sorted((root / corpus / "archive").rglob("container.json")):
-            found.append((path, made))
-    return found
+    """`(where, path, manifest)` for every container map `ASSERTED` entitles us to."""
+    for _w, corpus in fixture_paths(asserting=ASSERTED, glob="corpus.json", within=None):
+        made = manifest_from_document(json.loads(corpus.read_text("utf-8")), "corpus.json")
+        for path in sorted((corpus.parent / "archive").rglob("container.json")):
+            yield sweeping(path), path, made
 
 
 # --------------------------------------------------------------------------
@@ -93,11 +92,11 @@ def fixture_maps():
 
 
 def test_every_committed_container_map_round_trips_byte_for_byte():
-    maps = fixture_maps()
-    assert maps
-    for path, made in maps:
+    maps = list(fixture_maps())  # ⛔ Ruling 48: the entitled corpora, counted.
+    assert len(maps) >= coverage(asserting=ASSERTED, glob="corpus.json", within=None).swept > 0
+    for where, path, made in maps:
         text = path.read_text(encoding="utf-8")
-        assert render(load(path, made)) == text, str(path.relative_to(repository_root()))
+        assert render(load(path, made)) == text, where
 
 
 def test_the_key_order_is_what_reaches_disk():
