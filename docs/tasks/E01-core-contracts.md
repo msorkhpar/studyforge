@@ -167,8 +167,13 @@ task owns its numbers.
 **Definition.** The pluggable map from a logical address to physical locations,
 replacing CodeSignal's single prescribed tree. Two profiles ship:
 
-- **`tree`** — CodeSignal's shape, reproduced byte-identically, so its later
-  migration is not also a relocation.
+- **`tree`** — the extraction source's shape below the container segment,
+  reproduced segment for segment, so its later migration moves a tree rather
+  than re-deriving one. ⛔ **The page filename is the one thing it does not
+  reproduce, and cannot** — that tree names every unit page `index.html`, and
+  the naming rule two paragraphs below rules that out. One file per unit is
+  renamed by a migration; every directory and every media href is unchanged.
+  See the ruling in `docs/tasks/handoffs/CTO-2026-09-09-round14.md`.
 - **`sibling`** — artifacts land beside the source file they were generated
   from. This is what lets the LMS *enhance* a repository instead of
   restructuring it (R3), and it is the Java corpus's profile.
@@ -187,7 +192,9 @@ M2** — a definition arriving after its first writer is a definition two tasks
 will each guess at differently.
 
 **Acceptance.** One address under both profiles yields two correct, different
-location sets. `tree` reproduces CodeSignal's current paths exactly. `sibling`
+location sets. `tree` reproduces the extraction source's directory shape below
+the container segment for segment, and its per-unit media hrefs unchanged —
+⚠️ **not its page filenames**, which the naming rule above forbids. `sibling`
 places a unit page beside its source file. No two units in the Java corpus
 produce the same artifact name. A third profile can be added without changing
 any consumer.
@@ -308,6 +315,30 @@ real `course-map.json` carries `folder` and, per unit, `url_slug`; the
 generalised shape as drafted drops both. V2-03 migrates CodeSignal using its
 byte-for-byte tests as the regression harness, so a dropped field is a
 migration that cannot pass. Carry them, or record explicitly where they went.
+
+⛔ **Three per-unit fields are ruled on before the map freezes**
+(`handoffs/CTO-2026-09-09-round14.md`). R9 versions this contract and never
+migrates it at read time, so a field added after SF-05 costs a `container_api`
+bump and every archive already written — which makes "decide it later" the
+expensive option, not the cheap one.
+
+1. **`label`** — *optional* `str`, the corpus's own display numbering for the
+   unit, spelled the way the corpus spells it (`4.4.1`, `1`, `04`). ⚠️ Not a
+   slug: it is presentation. ⛔ It may not be empty and may not carry a path
+   separator or whitespace, because it becomes part of a filename — SF-03's
+   `label_of` already enforces exactly that and already has the assertion that
+   it reproduces spec §5's worked example. ⭐ **It is not speculative**: §5
+   commits to an output that cannot be produced without it, and the seam that
+   consumes it is written and tested. Absent, a unit is named by its ordinal.
+2. **`origin` on a unit** — a path to the **source file**, relative to the
+   source root, never a directory and never absolute. Load-bearing: `sibling`
+   places by it and refuses its absence (R6).
+3. **`origin` on a container** — ⛔ **also a file**, not the container's
+   directory. Placement takes its parent, so a container recording a directory
+   silently places its page one level too high, at the repository root. The
+   fixtures already record `…/README.md`; that convention becomes contract
+   here, and ⚠️ **SF-25 enforces it**, because placement does no I/O and
+   cannot tell a file path from a directory path.
 
 **Acceptance.** Loads a real CodeSignal `course-map.json` after mechanical
 field renaming **with no field lost**. Rejects an address whose arity disagrees with `levels`, a
