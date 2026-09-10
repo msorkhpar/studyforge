@@ -46,7 +46,7 @@ import re
 from dataclasses import dataclass
 
 from studyforge.address import Address, AddressError, is_slug, require_ordinal, require_slug
-from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.placement.errors import PlacementError
 from studyforge.describe import describe, describe_keys
 from studyforge.version import check
@@ -157,12 +157,13 @@ def from_document(document: object, depth: int, where: str = "artifact") -> Iden
     """
     if not isinstance(document, dict):
         raise PlacementError(f"{where}'s identity block is not an object")
-    try:
-        assert_clean(document, where)
-    except PersonalDataLeak as leak:
-        raise PlacementError(
-            f"{where}'s identity block carries personal data and is refused (R7): {leak}"
-        ) from None
+    # ⛔ **`PersonalDataLeak` travels through as itself, not translated**
+    # (Ruling 58, rubric §1d). `PlacementError` exists so a caller sweeping a
+    # site catches one type per artifact and carries on; an R7 refusal inside
+    # that family would be logged as one more file that could not be placed,
+    # and the leak would be the thing nobody looked at. ⭐ See
+    # `placement/errors.py`, which names what crosses this contract.
+    assert_clean(document, where)
     check(
         "identity_api",
         document.get("identity_api"),
