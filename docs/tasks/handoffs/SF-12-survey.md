@@ -9,8 +9,23 @@ answer where it divides.* ⚠️ Named here because `W25` is writing a check on 
 directory and an undeclared document is what will trip it.
 
 **Branch:** `feat/SF-12-survey`, off `release/m0-foundations` @ `e5bcc85`.
-**Base, pinned:** 2487 passed, 11 skipped. ⚠️ This branch changes no code, so
-the branch reading *is* the base reading.
+
+**Base, pinned:** **2490 passed, 8 skipped**, floor clean — a clean worktree of
+`release/m0-foundations` @ `e5bcc85`, in the image.
+**This branch, pinned:** **2490 passed, 8 skipped**, floor clean — **identical
+to base**, which is the right answer for a docs-only branch.
+
+Both measured with `docker/dev/check python3 -m pytest -q -rs` and
+`docker/dev/check python3 -m tools.quality`. ⛔ **All 8 skips are named**
+(§4b-i): five in `tests/docker/test_dev_image.py` — *"already inside the dev
+image; building it again would recurse"* — and three in
+`tests/test_knowledge_index.py` for siblings and a corpus index the image does
+not mount.
+
+⚠️ **An earlier draft of this document reported 2487 / 11 from an unpinned host
+run.** See finding **68**: three tests the image runs did not run on the host,
+and the skips were unnamed, so the *lower* number was the *worse* run and looked
+like the same one.
 
 **Read:** `html.py`'s contract surface — its 68-line docstring, its section
 banners, every top-level span measured with `ast`, and the twelve template files
@@ -88,7 +103,7 @@ immediately above it, taken with `ast` rather than by eye, and they are
 
 ⚠️ **Roughly 47% of the file is somebody else's or nobody's.** ⛔ The 177 lines
 of workspace-plus-read-control sit inside `SF-12`'s stated `~110k` context
-budget and inside two *other* tasks' definitions — see finding **57**.
+budget and inside two *other* tasks' definitions — see finding **64**.
 
 ### The templates already on disk — 12 files, and one is not SF-12's
 
@@ -299,7 +314,7 @@ confused (`test_templates_are_not_confused_with_the_asset_parts`). Proposed:
 
 ⚠️ **This crosses SF-11's `Owns`.** SF-11 owns `render/pageassets.py`; SF-12 owns
 `render/page/` and `render/templates/`. ⛔ **Neither owns the loader**, and E03
-lists it as SF-12 subtask (a). Stated rather than chosen — see finding **58**.
+lists it as SF-12 subtask (a). Stated rather than chosen — see finding **65**.
 
 ---
 
@@ -455,7 +470,7 @@ is stated rather than acted on, because `E03`'s task table assigns it to neither
 
 ## 7. Findings
 
-**56 — the R13 debt in this module is one file, not seventy-two.** `[structural]`
+**63 — the R13 debt in this module is one file, not seventy-two.** `[structural]`
 ⛔ E03's wording — *"triple-quoted markup, in this exact module"* — is true of
 exactly one literal, `PLAYER`. 72 string literals in `html.py` contain a markup
 tag, but **only one has a newline in its value**; the other 71 are one-line
@@ -469,7 +484,7 @@ that would break the rule it is trying to serve.
 `literals whose VALUE spans multiple OUTPUT lines: 20`, of which one
 (`PLAYER`, L1233–1253) is markup and nineteen are separators. 2026-09-10.
 
-**57 — SF-12's context budget names 177 lines that belong to two other tasks.**
+**64 — SF-12's context budget names 177 lines that belong to two other tasks.**
 `[structural]`
 ⛔ `_render_workspace` + `_unit_number` (137 lines) is the Run/Submit surface,
 which `CLAUDE.md` puts on the **execution track at M5**; `render_read_control`
@@ -484,7 +499,7 @@ track at M1.
 `1432-1471 = 40`; banner spans of `tests/test_html.py`: `879-1306 = 428` (15
 tests), `1718-2200 = 483` (14 tests). 2026-09-10.
 
-**58 — the template loader is owned by nobody, and it is SF-12's subtask (a).**
+**65 — the template loader is owned by nobody, and it is SF-12's subtask (a).**
 `[local]`
 SF-11 ported `pageassets.py`'s asset half and not its template half:
 `render/pageassets/` has no `template()` and `render/templates/` does not exist.
@@ -499,7 +514,7 @@ docstring prose and CSS token names, no loader; `find src/studyforge/render -typ
 lists `assets`, `pageassets` and no `templates`. Source: `tools/study/pageassets.py`
 L61–89. 2026-09-10.
 
-**59 — `test_templates.py`'s orphan check names a second source that asks for
+**66 — `test_templates.py`'s orphan check names a second source that asks for
 nothing.** `[local]`
 Its `SOURCES = ("tools/study/html.py", "tools/study/index.py")`, and
 `index.py` requests **zero** templates today. ⚠️ Not a defect — it is correct and
@@ -512,15 +527,47 @@ arrives.
 returns nothing; the same command against `html.py` returns 12 call sites.
 2026-09-10.
 
-**60 — `html.py` is 1699 lines and E03's citation implies ~1100.** `[local]`
+**67 — `html.py` is 1699 lines and E03's citation implies ~1100.** `[local]`
 ⛔ Line 1112 is **blank**; `PLAYER` is at L1233. The citation drifted 121 lines
 across two navigation commits (`716eaa3c`, `72ce2c30`) after E03 was written.
 ⭐ The *claim* survived measurement and only its address moved — which is the
 argument for R11's *"a task counts its own port surface at start rather than
-inheriting a number"*, applied to line numbers as well as totals. ⚠️ Filed
-`[local]` rather than `[structural]` because the fix is a re-measurement at task
-start, which is already the rule.
+inheriting a number"*, applied to line numbers as well as totals. ⚠️ Filed local
+rather than structural because the fix is a re-measurement at task start, which
+is already the rule.
 **Measured** — `wc -l tools/study/html.py` → `1699`;
 `sed -n '1112p'` → empty; `grep -n 'PLAYER' ` → `1233:PLAYER = """<footer id="player">`.
 `workspace.json` pins `49c11d5e`, and `git status --short` in that checkout is
 clean. 2026-09-10.
+
+**68 — an unpinned run that silently skips is indistinguishable from one that
+passed, and the author is the last person able to tell.** `[structural]`
+⛔ **This document reported its own base wrongly, and nothing in the number said
+so.** The host run printed `2487 passed, 11 skipped` with **no skip reasons**;
+the image runs the same tree at `2490 passed, 8 skipped`. ⚠️ **Three tests did
+not run at all**, and the failure mode is that the *host* number is lower in
+passes and higher in skips — so it does not look like a truncated run, it looks
+like a slightly different one. ⭐ Ruling 40 already says unpinned green is
+evidence for the test suite proper and never the verdict, and §4b-i already says
+every skip is named or the run did not happen. ⛔ **Both rules were written for
+the reviewer and both would have caught this at the author**, one round earlier
+and for free — which is §4b-i's own argument arriving one step upstream of where
+it is currently aimed. ⭐ Cheap remedy, and it is a habit rather than a check:
+`-rs` on every run, so an unnamed skip cannot be reported as a base.
+**Measured** — same worktree, same commit, minutes apart:
+`python3 -m pytest -q` on the host → `2487 passed, 11 skipped`;
+`docker/dev/check python3 -m pytest -q -rs` → `2490 passed, 8 skipped`, all 8
+named. Base, in a clean worktree of `release/m0-foundations` @ `e5bcc85` in the
+image → `2490 passed, 8 skipped`, floor clean. 2026-09-10.
+
+---
+
+⚠️ **One correction with no action attached, recorded because it was reported
+verbally and would otherwise not be written down anywhere.** This survey's
+author attributed the extra host skips to this worktree having no
+`graphify-out/`. ⛔ **That was wrong**: a detached worktree of the base measures
+2490 / 8 in the container too, so the missing index was not the cause. ⭐ The
+FND-07 behaviour itself is real and unchanged — an absent index reports a notice
+and exits 0, which is why this docs-only branch leaves the floor clean here and
+will red it only in a checkout that *has* an index. Only the number attributed
+to it was wrong, and finding **68** is where that number came from.
