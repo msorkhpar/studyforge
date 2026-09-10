@@ -210,6 +210,40 @@ the personal-data gate (`archive/`, R7) and that the gate **refuses** rather
 than rewrites. A gate that scrubs silently produces a clean file and a false
 belief.
 
+### ⛔ 1f. The shape the sweep cannot see: what the code would *emit*
+
+⛔ **The sweep reads the diff. It cannot read a runtime value.** Every check
+above answers *"did a personal identifier reach a file?"* ⚠️ **Nothing above
+answers *"would this code write one into a log?"*** — and that is the failure
+R7 was written from: nothing reached a file there either.
+
+⭐ **The reviewer reads every raise, log and report line the diff adds, and
+asks one question of each: could the value being formatted be a path, a URL, a
+hostname or a header the framework did not itself compose?** If it could, the
+message **describes the fault and names a record**, and does not echo the
+value.
+
+⛔ **The tell is a refusal whose own subject is the shape.** A branch that
+exists *because* a value is an absolute path, formatting that value into its
+message, has taken the one input guaranteed to carry a home directory and put
+it in a log — from inside the check written to prevent it.
+
+```bash
+# Every message the diff adds that formats a value. Read them; do not grep the
+# answer, because the leak is in what the NAME can hold, not in the spelling.
+git diff "$BASE"...HEAD -- '*.py' | grep -E '^\+.*(raise|warn|log|print).*\{' | sed 's/^+//'
+```
+
+⚠️ **A test that asserts "the refusal carries no absolute path" belongs on the
+branch that refuses an absolute path** — not on the neighbouring one that was
+already safe. ⭐ Check which branch the assertion covers, not that an assertion
+exists.
+
+⚠️ **This is not a REJECT.** ⛔ REJECT's R7 cause is "a personal identifier
+**reached a commit**" — it survives deletion, so the branch is rewritten. An
+emission that has not happened yet is fixed by an amendment, so it is CHANGES
+REQUESTED, and it is never a nit.
+
 ---
 
 ## 2. R10 — byte-for-byte reproducible

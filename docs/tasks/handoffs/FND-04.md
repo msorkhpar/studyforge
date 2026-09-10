@@ -174,11 +174,30 @@ each is cheap to reverse — the fixtures are generated-shaped data, not code.
    (exercised once). It carries **no `workspace` and no `video`** — both are
    derived from the archive and are "not the author's to write" (SF-10b), and
    the fixture check refuses an overlay that writes either.
-10. **`folder` and `url_slug` — SF-05's two homeless fields — are answered.**
-    `folder` is a real `course-map.json`'s slug path, which is exactly what
-    `address` already is, so it is **subsumed, not dropped**. `url_slug` has no
-    equivalent and is carried as an optional per-unit key; `depth2`'s second
-    container carries it so SF-05 has an input.
+10. ⛔ **OVERRULED — CTO round 14. `folder` is not subsumed, and this ruling
+    was verified against the fixture rather than against the source it was a
+    claim about.** SF-05 measured it; I reproduced it independently:
+    **1 of the 116 real maps carrying `folder` has one derivable from its
+    address fields.** The first level derives; the second never does, because
+    65 of the 116 leaves carry a disambiguating `-N` suffix that comes from the
+    site's uniqueness handling and not from any title. ⭐ **A site's own URL
+    scheme is not a function of its titles** — SF-03's filename argument, one
+    level up. ⛔ **E01 was right that both fields were homeless:**
+    `folder → origin`, `url_slug → url_slug`, which is what SF-05 built. ⚠️ The
+    outcome for the fixtures is unchanged; what changed is a contract field
+    that would otherwise have been silently dropped at V2-03.
+
+    ⚠️ **The failure, recorded because it is the reusable part:** the fixture
+    was built to match the claim, so checking the fixture confirmed nothing. ⛔
+    **A claim about another repository is verified in that repository.** Cost of
+    doing it right: one `slugify` comparison over 116 files. See
+    `CTO-2026-09-09-round14.md`.
+
+    *Original finding:* **`folder` and `url_slug` — SF-05's two homeless fields
+    — are answered.** `folder` is a real `course-map.json`'s slug path, which is
+    exactly what `address` already is, so it is **subsumed, not dropped**.
+    `url_slug` has no equivalent and is carried as an optional per-unit key;
+    `depth2`'s second container carries it so SF-05 has an input.
 11. **`archive/` is a stand-in for `<archive-root>`.** §6 writes the root as a
     variable and §5 shows `.studyforge/archive/` under `sibling`. A plain
     directory keeps the fixtures browsable; consumers must take the root as a

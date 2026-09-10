@@ -178,6 +178,16 @@ the gate that exists to prevent exactly that (R7). ⭐ The rule generalises past
 yours to promise anything about. **Name the field you mean** — `strerror`,
 `errno`, `reason` — and say what *you* know from `where`.
 
+⛔ **And a harmless instance is still fixed** (CTO round 14). Measured: a
+`JSONDecodeError` formats as `line 1 column 2 (char 1)` — no path, no payload.
+⚠️ **So the next author will find a `{exc}`, measure it, find no leak, and
+conclude the rule does not apply to their case.** ⭐ It does. The rule is blanket
+**because auditing each exception type at each call site is exactly the work
+nobody does twice**, and the one that gets skipped is the one holding a
+filename. ⛔ A reviewer who accepts "this one is safe" has replaced a rule that
+holds by inspection with one that holds by argument, and the argument has to be
+re-made by every reader.
+
 ## Illustrative fences are `text`, not `python`
 
 ⭐ A fence tagged `python` is a promise that the block **is** Python, and the

@@ -31,6 +31,61 @@ How a task is picked up, worked, and handed on. Applies to every task in
   something and recorded why, follow it and cite it. Where you think it is
   wrong, say so in the handoff — do not quietly diverge.
 
+## ⛔ An acceptance clause you cannot meet is reported, never rewritten
+
+⚠️ **Sometimes the plan contradicts itself and only one half can hold.** SF-03
+met one: its own task entry asked for the extraction source's paths
+*byte-identically* and, three paragraphs later, for every generated page to
+carry a real name because a scan reads names. Both were written down; both were
+believed; they cannot both be true of a filename.
+
+⭐ **The standard, and it is not a small one:** ⛔ **implement the half you
+judge right, say so in the handoff with the measurement that decides it, and
+leave the document alone.** A task that quietly edits its own acceptance to
+match what it built has removed the only record that a decision was made — and
+the next reader finds a clause that agrees with the code for no stated reason.
+⚠️ A task reporting *"I cannot meet this as written, here is why, here is what I
+did instead"* is doing the harder and more useful thing.
+
+⛔ **The document is then corrected by whoever owns it** — the CTO rules, the PO
+edits — ⭐ **and the correction cites the ruling**, so the clause carries its own
+history. ⚠️ **Do not leave it uncorrected either**: a reported contradiction
+that nobody edits is a trap re-sprung on the next task that reads the clause and
+believes it.
+
+⚠️ **This is not licence to reinterpret an acceptance you merely find
+inconvenient.** The test is whether the two halves are *jointly unsatisfiable*
+and you can show it — a measurement, a counter-example, a contract that would
+have to be versioned twice. "I would have designed it differently" is a finding,
+not a contradiction.
+
+### ⛔ "Loads a real \<source\> file" is met by a recorded measurement, not by a path
+
+⚠️ **The clause cannot be met the way it reads, and that is a rule collision
+rather than a contradiction.** A test citing the file needs an absolute home
+path (R7) and a path inside the extraction source (R20). ⛔ The acceptance asks
+for a thing the project forbids, and the cheapest way to satisfy it literally is
+to paste a path — **which is the R7 failure arriving through an acceptance
+criterion.**
+
+⭐ **It is met by three things together, and none of them alone:**
+
+1. **The measurement is run** against the real source at development time, over
+   **all** of it, not a sample.
+2. **Its command and its output are recorded in the handoff**, so a reader
+   re-runs it and a reviewer reproduces it. ⛔ This is the half that makes it
+   evidence instead of a claim.
+3. **The suite pins the shape** — a key census, one real document committed as a
+   fixture and reproduced field for field, and a test that no field is lost.
+
+⚠️ **The fixture is not the evidence.** It was built to match the claim, so it
+agrees with the claim by construction. It proves the *reader* still works; only
+step 1 proves the *claim*. ⛔ **A claim about another repository is verified in
+that repository** — a CTO ruling was overruled in round 14 for exactly this.
+
+⚠️ **`grep -rn "a real " docs/tasks/E0*.md` finds 12 occurrences.** Unnamed,
+eleven more tasks each invent their own answer.
+
 ## Handoff — required, one file per task
 
 Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:

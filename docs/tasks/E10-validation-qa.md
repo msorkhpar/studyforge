@@ -57,6 +57,29 @@ needs no title at all. ⭐ Defence in depth: the adapter checks the cause
 (`SK-01`, `SK-02`), this catches what gets through, and neither substitutes for
 the other.
 
+### ⛔ Two artifacts must not want the same path — and only this task can see it
+
+⚠️ **`sibling` can collide across containers, and placement cannot tell**
+(CTO round 14, from SF-03). Placement is a pure function of *one* unit: it
+takes an address, an ordinal, a title and an `origin`, and it has no view of
+the corpus. Under `sibling` the directory an artifact lands in comes from the
+`origin`, not the address — so two units in **different** containers whose
+origins share a directory, with the same ordinal and the same title slug,
+compute the same page path, and each profile call is individually correct.
+
+⛔ **So `validate` places every unit and every container of the archive under
+the declared profile and asserts the whole set of paths is distinct** — pages,
+media directories, and container pages together. ⚠️ SF-03's corpus-wide test
+places units only; container pages are the half it does not cover, and two
+containers whose origins share a directory and whose deepest titles slugify
+alike collide the same way.
+
+⛔ **`origin` is a file, not a directory** (SF-05's contract). Placement takes
+its parent and does no I/O, so it cannot tell the two apart; a container that
+recorded its directory places its page at the repository root and nothing
+raises. ⭐ This task has the filesystem in front of it and is the only place
+the distinction is checkable.
+
 This is the single most leverage-per-line task in the project. It is what lets
 an adapter be assigned to an agent working alone with no reviewer: the agent
 does not need to know whether its output is right, because the tool says so.

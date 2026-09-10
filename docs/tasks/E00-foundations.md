@@ -472,6 +472,33 @@ ceiling with a documented bypass**, which is the erosion `FND-01` exists to
 prevent, arriving through the door it left open. A minimum-substance check
 belongs beside the other floor rules.
 
+⛔ **Follow-up (CTO round 14): a split literal defeats the sweep, and folding
+closes it without anyone having to judge intent.** ⚠️ Two of SF-03's tests
+legitimately need the shape they refuse, and spell it as a concatenation of two
+literals so the sweep does not read it as a leak. `tests/studyforge/
+test_version.py` did the same first, and it is now the established technique.
+⛔ The sweep reads source **text**, so it sees the operator between the halves
+and no leak — and it cannot tell a legitimate split from an evasive one.
+
+⭐ **It never needs to.** Evaluate the expression instead of reading the line:
+walk the Python file's AST and constant-fold adjacent literal concatenation
+before matching. A split then folds to the same string as an unsplit one, and
+the distinction the sweep cannot make stops existing. ⚠️ **Python files only,
+and the check says so** — a `.md` file has no AST and keeps the text sweep.
+
+⛔ **Then the tests that genuinely need a shape get one sanctioned home**, not a
+technique: one named module holding the shapes, each with the reason it is
+there, added to `SANCTIONED_PERSONAL_DATA_DIRS` and imported by every test that
+refuses one. ⭐ That is what the sanctioned list already says the design is —
+"the ONE directory allowed to hold the shape" — and the split is a second,
+unlisted one that arrived because it was easier.
+
+⚠️ **State the reach honestly.** Folding stops the accident and the easy
+workaround; `chr(47)`, a `join`, or a runtime-built string still pass, and no
+source-text gate will ever catch those. ⛔ **The gate that matters for those is
+not this one** — see the rubric's emission clause, added in the same round.
+
 **Out of scope.** Rewriting history when a hit is found — that is the author's,
 under the rubric. Scanning commit messages of merged history; this gates what is
-being added.
+being added. ⛔ Chasing an adversary: this repository has no adversary, it has
+agents who need a shape for a test and will take whichever route is open.
