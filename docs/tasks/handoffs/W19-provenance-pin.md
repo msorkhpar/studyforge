@@ -1,5 +1,7 @@
 # Ruling 42 — the provenance pin at `validate/paths.py:124`
 
+**Kind:** ruling record
+
 **Status:** done — one commit, one test module touched, no framework source
 changed.
 

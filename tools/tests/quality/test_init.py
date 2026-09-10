@@ -6,6 +6,7 @@ import tools.quality as quality
 from tests.support import assert_package_contract, repository_root
 from tools.quality import run_all
 from tools.quality.docstrings import check_docstrings
+from tools.quality.handoffs import check_handoffs
 from tools.quality.knowledge_index import check_knowledge_index, notices
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
@@ -29,6 +30,7 @@ def test_every_check_is_registered():
         check_personal_data,
         check_source_names,
         check_knowledge_index,
+        check_handoffs,
     }
     assert quality.CHECKS, "Ruling 48: an empty registry satisfies set() == set()"
 

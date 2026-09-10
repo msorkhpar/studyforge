@@ -93,6 +93,8 @@ Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:
 ```markdown
 # <TASK-ID> — handoff
 
+**Kind:** task handoff — <TASK-ID>
+
 **Status:** done | blocked | partial
 **What landed:** the public surface you created, named. What a consumer imports.
 **Decisions:** anything you chose that the task did not specify, and why.
@@ -103,6 +105,20 @@ Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:
 
 This is the mechanism by which parallel agents share material rather than
 re-deriving it. A task with dependents and no handoff is not done.
+
+⛔ **`tools/quality/handoffs.py` runs this, so it is a build failure and not a
+reviewer's memory** (Ruling 49). Two literals are load-bearing:
+
+- ⛔ **`**Kind:**` is how a document says what it is**, and `docs/tasks/handoffs/`
+  holds four other kinds — `ruling record`, `session log`, `survey`, `index` —
+  that owe none of the six sections. ⚠️ **The filename is not the binding.** It
+  never was: measured 2026-09-10, **10 of that directory's 53 documents were
+  not task handoffs and 8 of those already carried `— handoff` in their own
+  title**. A survey that declares itself is exempt *for a reason*; one that
+  declares nothing is **refused**, which is a question rather than a silent
+  admission. A new kind is one entry in `DOCUMENT_KINDS`.
+- ⭐ **A handoff for two tasks declares both** — `**Kind:** task handoff — W17,
+  W19` — and its title names both. The filename must begin with the first.
 
 ⛔ **Tag an illustrative fence `text`, not `python`.** The formatter reads
 Markdown: `ruff format` discovers `.md`, formats the Python inside a ```` ```python ````
@@ -135,9 +151,20 @@ So findings carry a marker, and the marker creates an obligation:
   CTO for a technical rule, by the PO for sequencing. "Noted" is not one of the
   three outcomes.
 
+- ⭐ **`[none]`** — *nothing outside this task's scope*, said rather than left
+  to be inferred. ⛔ It carries the sentence that says what was looked at, it
+  may not stand beside a real finding, and it is the **only** way to write zero.
+
 ⭐ **The test for `[structural]` is one question: *would this happen again to
 somebody else?*** If yes, mark it. ⚠️ Over-marking costs a sentence in a triage
 list; under-marking costs what C5 cost.
+
+⛔ **A handoff that marks nothing is a build failure** (Ruling 29's other half,
+now enforced): a finding *is* a marked item, so an unmarked one does not exist,
+and `0` was the reading that used to pass silently. ⚠️ **And a marker in prose
+is a finding that does not exist** — write *local* and *structural* as words
+when you are talking *about* the markers, and keep the backticks for the item
+being marked.
 
 ```bash
 grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a wave

@@ -1,5 +1,7 @@
 # R44-gate-shapes — handoff
 
+**Kind:** ruling record
+
 *Ruling 44 — the gate's open set, and the three layers that answer it.*
 
 **Status:** done — one commit.
