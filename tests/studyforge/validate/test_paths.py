@@ -8,14 +8,29 @@ it names and on nothing else.
 corpus's 45 modules and 166 units collide nowhere — which is the argument for
 the check rather than against it. The first corpus to hit one would otherwise
 find out by overwriting a page.
+
+⭐ **The last section is not a check but a pin.** `_collision` quotes the
+placed path with `!r`, which is only safe because a field reader two packages
+away refuses an origin that could carry a home directory. That is provenance
+(Ruling 17), and the architecture is right — ⛔ but a pointer is only better
+than a copy if the far end holds, and until now nothing recorded that this
+consumer depends on it. Weakening `optional_path` gave a green suite and a
+leaking report. It no longer does.
 """
 
 import ast
+import json
 
 import pytest
 
+from studyforge.address import Address
+from studyforge.archive.scrub import leaks
+from studyforge.corpus.container.document import Container
+from studyforge.corpus.manifest import from_document as manifest_from_document
 from studyforge.corpus.placement import registered
 from studyforge.validate import validate
+from studyforge.validate.corpus import Held, Walk
+from studyforge.validate.paths import check_placement
 from tests.studyforge.validate import corpora
 from tests.support import repository_root
 
@@ -250,6 +265,123 @@ def test_an_archive_declaring_no_origin_says_so_rather_than_passing(tmp_path):
     report = validate(root)
     assert report.findings == ()
     assert "origin-not-a-file" in {u.rule for u in report.unchecked}
+
+
+# --------------------------------------------------------------------------
+# the collision line quotes a path, and it is safe because of a guarantee
+# two packages away — this is the only thing that records the dependence
+# --------------------------------------------------------------------------
+
+#: A home directory spelled the way a shell spells it. ⛔ Deliberately **not**
+#: `/home/<name>`: that shape is refused twice over — by `assert_clean` when
+#: the container map is read, and again by `origin_directory` at placement,
+#: which refuses `PurePosixPath.is_absolute()` — so a pin built on it would
+#: still pass with `optional_path` deleted and would measure nothing. A tilde
+#: is absolute to a shell and relative to `PurePosixPath`, so it slips both,
+#: and `corpus.container.fields.optional_path` is the **only** guard in the
+#: whole chain that names it. Both halves of that claim are asserted below
+#: rather than argued.
+HOME_ROOTED_DIRECTORY = "~/material/private-corpus"
+
+#: The origin a container would record. ⚠️ What reaches the collision line is
+#: the **directory**, not this string: placement takes the parent and puts its
+#: own filename on the end. So the leak is asserted against the directory —
+#: which is the half that carries the home, and the half that would be a real
+#: person's if this were a real corpus.
+HOME_ROOTED_ORIGIN = f"{HOME_ROOTED_DIRECTORY}/README.md"
+
+
+def _corpus_declaring(tmp_path, *, origin: str):
+    """A corpus whose `container.json` is written as bytes, not through the reader.
+
+    ⚠️ `corpora.write` builds every container through `from_document`, so a
+    poisoned origin would be refused inside the fixture builder and the test
+    would be measuring the helper. These bytes go down the way an adapter
+    emits them, and `validate` does the reading — which is the point.
+    """
+    root = corpora.write(tmp_path / "c", manifest=dict(corpora.MANIFEST, placement="sibling"))
+    directory = root / "archive" / "demo"
+    directory.mkdir(parents=True, exist_ok=True)
+    document = {
+        "container_api": 1,
+        "address": ["demo"],
+        "titles": ["Demo"],
+        "variant": "prose",
+        "ingested": "2026-01-05",
+        "origin": origin,
+        "units": [{"n": 1, "title": "Unit 1", "practices": 0, "origin": "src/one.md"}],
+    }
+    (directory / "container.json").write_text(json.dumps(document), encoding="utf-8")
+    return root
+
+
+def _two_containers_past_the_reader(tmp_path, *, origin: str) -> Walk:
+    """Two containers built directly, sharing one origin directory and one title."""
+    manifest = manifest_from_document(dict(corpora.MANIFEST, placement="sibling"), "corpus.json")
+
+    def held(where: str, segment: str) -> Held:
+        return Held(
+            where,
+            tmp_path,
+            Container(
+                address=Address((segment,)),
+                titles=("Demo",),
+                variant="prose",
+                ingested="2026-01-05",
+                units=(),
+                origin=origin,
+            ),
+        )
+
+    return Walk(
+        root=tmp_path,
+        manifest=manifest,
+        containers=[held("first/container.json", "demo"), held("second/container.json", "other")],
+    )
+
+
+def test_a_home_rooted_origin_is_refused_at_the_reader_and_reaches_no_finding(tmp_path):
+    # ⭐ **The composition, end to end** (Ruling 42). `_collision` formats the
+    # placed path with `!r`, and under `sibling` the placed path *is* the
+    # container's `origin` with a filename on the end. That line is safe only
+    # because `corpus.container.fields.optional_path` refused this value two
+    # packages earlier — a **pointer** to a guarantee rather than a copy of
+    # it, and a pointer is only better than a copy if the far end holds.
+    # ⛔ Nothing downstream recorded that the pointer was load-bearing, and
+    # that is measurable rather than rhetorical: dropping `~` from
+    # `optional_path` and relaxing that field reader's own two `~/corpus`
+    # cases — which is exactly what a *deliberate* relaxation looks like —
+    # left **2181 passed, 8 skipped and nothing else red** (measured
+    # 2026-09-09, pinned image). A green suite and a leaking report, with no
+    # test anywhere naming the consumer that was relying on it. This one does,
+    # so read it before you loosen the field reader.
+    assert not list(leaks(HOME_ROOTED_ORIGIN, "origin")), (
+        "the R7 gate now sees a tilde, so this pair no longer measures "
+        "optional_path — choose a shape the gate does not see, or retire it"
+    )
+    report = validate(_corpus_declaring(tmp_path, origin=HOME_ROOTED_ORIGIN))
+    assert "container" in report.rules, (
+        "the container reader accepted a home-rooted origin; the collision "
+        "line in paths.py quotes the placed path and now has nothing above it"
+    )
+    said = "\n".join(f.line() for f in report.findings)
+    assert HOME_ROOTED_DIRECTORY not in said, said
+
+
+def test_and_the_same_origin_past_that_reader_is_reproduced_verbatim(tmp_path):
+    # ⚠️ **Ruling 11: watch it leak with the mechanism removed.** The same
+    # value handed to this module directly — exactly what a weakened
+    # `optional_path` would hand it — reaches the report line in full, so the
+    # test above is not passing because the collision never happens.
+    # ⛔ This is **not** a defect to fix here. A re-check inside `paths.py` is
+    # the two-readings mistake SF-25's author refused, and it would make the
+    # test above pass for the wrong reason. ⭐ If this half ever fails,
+    # somebody added a guard downstream and the safety argument has moved:
+    # read the new guard and rewrite this pair against it, rather than
+    # deleting the record of where the safety comes from.
+    walk = _two_containers_past_the_reader(tmp_path, origin=HOME_ROOTED_ORIGIN)
+    messages = [item.message for item in check_placement(walk)]
+    assert any(HOME_ROOTED_DIRECTORY in message for message in messages), messages
 
 
 # --------------------------------------------------------------------------
