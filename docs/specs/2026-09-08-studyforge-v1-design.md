@@ -609,7 +609,21 @@ for the vocabulary found only one corpus's choices.
 
 ⛔ **The contract is `MANIFEST_KEYS` and `REQUIRED_KEYS` in
 `corpus/manifest/document.py`; this table is derived from them and the derivation
-is asserted, not maintained by hand.** ⚠️ **And the assertion is deliberately
+**must be** asserted rather than maintained by hand.**
+
+> ⛔ **CTO, 2026-09-10 — the assertion does NOT exist yet, and this paragraph
+> said it did.** ⚠️ **Measured: no test anywhere reads this document.**
+> `tests/studyforge/corpus/manifest/test_init.py` names `MANIFEST_KEYS` only
+> inside an `__all__` surface check. ⭐ **The table's *content* is correct** — all
+> ten keys match `MANIFEST_KEYS` and all eight *required* match `REQUIRED_KEYS`,
+> verified key by key. ⛔ **It is the claim of coverage that was false, and that
+> is worse than an unasserted table: the next reader trusts the sentence and does
+> not look.** ⚠️ **Ruling 48's shape, landed inside Ruling 30's landing.**
+> ⭐ **Owed as a task on `FND-08`'s seam** — it is a document walk with a
+> code-side comparison, which is exactly what that task builds. **PO to place and
+> number it.**
+
+⚠️ **And the assertion is deliberately
 *two* one-way checks, never an equality** (⭐ **ruling 30, which reversed ruling
 28**):
 
