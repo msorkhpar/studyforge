@@ -81,6 +81,7 @@ class Profile:
     columns: tuple[tuple[str, str], ...]
 
     def __post_init__(self) -> None:
+        """Refuse a profile that maps a column onto a field the backlog has not got."""
         if not self.name.strip():
             raise ExportRefused("a profile with no name cannot be cited in a procedure")
         if not self.columns:

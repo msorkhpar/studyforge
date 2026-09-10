@@ -64,12 +64,13 @@ class Unused:
     why: str
 
     def __post_init__(self) -> None:
+        """Refuse a row filled in to pass rather than to inform."""
         if not self.capability.strip():
             raise TerminalRefused("an unused capability with no name names nothing")
         if len(self.why.strip()) < MIN_REASON_CHARS:
             raise TerminalRefused(
-                f"{self.capability}: {self.why.strip()!r} is not a reason. "
-                "⛔ A table filled in to pass is worse than no table"
+                f"an unused capability's `why` is under {MIN_REASON_CHARS} characters, "
+                "so it is not a reason. ⛔ A table filled in to pass is worse than none"
             )
 
     def row(self) -> str:
@@ -86,6 +87,7 @@ class Terminal:
     unused: tuple[Unused, ...]
 
     def __post_init__(self) -> None:
+        """Refuse a terminal statement with no reading behind it."""
         if not self.milestone.strip():
             raise TerminalRefused("a terminal statement with no milestone states nothing")
         if not self.evidence:
@@ -94,9 +96,12 @@ class Terminal:
                 "measurement, and one with no reading behind it is a preference"
             )
         named = [item.capability for item in self.unused]
-        duplicated = sorted({name for name in named if named.count(name) > 1})
+        duplicated = {name for name in named if named.count(name) > 1}
         if duplicated:
-            raise TerminalRefused(f"{self.milestone}: named twice — {', '.join(duplicated)}")
+            raise TerminalRefused(
+                f"{len(duplicated)} capabilit"
+                f"{'y is' if len(duplicated) == 1 else 'ies are'} named twice in `unused`"
+            )
 
     @property
     def named(self) -> frozenset[str]:
@@ -126,10 +131,11 @@ class Terminal:
         stray = sorted(self.named - forgone)
         if stray:
             raise TerminalRefused(
-                f"{self.milestone}: {', '.join(stray)} "
-                f"{'is' if len(stray) == 1 else 'are'} not delivered after "
-                f"{self.milestone}, so calling {'it' if len(stray) == 1 else 'them'} "
-                "unused says nothing about this corpus"
+                f"{len(stray)} named capabilit"
+                f"{'y is' if len(stray) == 1 else 'ies are'} not delivered after this "
+                "milestone at all, so calling them unused says nothing about this "
+                "corpus. ⛔ Their names are withheld: `unused` is caller text, and a "
+                "refusal that quoted it would put an unvetted value in a log (R7)"
             )
         return self
 

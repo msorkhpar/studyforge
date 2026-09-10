@@ -75,19 +75,20 @@ class Acceptance:
     at: str = ""
 
     def __post_init__(self) -> None:
+        """Refuse a clause that no single instrument decides."""
         if not self.clause.strip():
             raise PlanRefused("an acceptance clause with no text accepts everything")
         looks = bool(self.looked_at_by.strip())
         if looks and not self.at.strip():
             raise PlanRefused(
-                f"{self.clause!r}: {self.looked_at_by} looks at nothing named — "
-                "a reviewer with no subject is an opinion with a name on it"
+                "an acceptance clause names a reviewer and no `at` — ⛔ a reviewer "
+                "with no subject is an opinion with a name on it"
             )
         if bool(self.runs.strip()) == looks:
             raise PlanRefused(
-                f"{self.clause!r}: an acceptance clause names exactly one instrument — "
-                "a command that exits non-zero, or who looks and at what. "
-                f"This one names {'both' if looks else 'neither'}"
+                "an acceptance clause names exactly one instrument — a command that "
+                "exits non-zero, or who looks and at what. This one names "
+                f"{'both' if looks else 'neither'}"
             )
 
     @property
@@ -122,24 +123,24 @@ class Task:
     notes: tuple[str, ...] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
+        """Refuse a task nobody could be shown the end of, or close."""
         if not self.id.strip() or not self.title.strip():
             raise PlanRefused("a task needs an id and a title")
-        shown = self.demonstrable.strip()
-        if len(shown) < MIN_DEMONSTRABLE_CHARS:
+        if len(self.demonstrable.strip()) < MIN_DEMONSTRABLE_CHARS:
             raise PlanRefused(
-                f"{self.id}: {shown!r} does not name something a person can be shown. "
+                "a task's `demonstrable` does not name something a person can be shown. "
                 "A task that ends in a layer hides integration risk until the end"
             )
         if not self.acceptance:
-            raise PlanRefused(f"{self.id}: no acceptance, so nobody can close it")
+            raise PlanRefused("a task with no acceptance, so nobody can close it")
         if not self.owns and not self.evidence.strip():
             raise PlanRefused(
-                f"{self.id}: owns nothing and states no evidence. ⭐ A task MAY own "
+                "a task owns nothing and states no evidence. ⭐ A task MAY own "
                 "nothing — its deliverable is then evidence about generated output, "
                 "and that has to be written down"
             )
         if self.effort < 1:
-            raise PlanRefused(f"{self.id}: effort {self.effort} is not work anybody does")
+            raise PlanRefused(f"a task's effort is {self.effort}, which is not work anybody does")
 
     @property
     def owns_nothing(self) -> bool:
@@ -156,7 +157,7 @@ class Task:
         return tuple(name for name in self.depends_on if name in known)
 
     def corpus_dependencies(self, known: frozenset[str]) -> tuple[str, ...]:
-        """The rest: tasks inside the corpus's own plan."""
+        """Give back the rest: tasks inside the corpus's own plan."""
         return tuple(name for name in self.depends_on if name not in known)
 
     def lines(self) -> list[str]:

@@ -71,10 +71,11 @@ class Carrier:
     effort: int
 
     def __post_init__(self) -> None:
+        """Refuse a carrier that names no work, or no place."""
         if not self.id.strip() or not self.where.strip():
             raise RiskRefused("a carrier names what it is and where it lives")
         if self.effort < 1:
-            raise RiskRefused(f"{self.id}: effort {self.effort} is not work anybody does")
+            raise RiskRefused(f"a carrier's effort is {self.effort}, which is not work")
 
     @property
     def is_outside(self) -> bool:
@@ -121,7 +122,7 @@ class Concentration:
         return len(self.heaviest) * 2 < len(self.carriers)
 
     def headline(self) -> str:
-        """The sentence a reader acts on, with both numbers in it."""
+        """Render the sentence a reader acts on, with both numbers in it."""
         few, all_of_them = len(self.heaviest), len(self.carriers)
         share = 100 * self.outside_share
         verdict = "⛔ CONCENTRATED" if self.concentrated else "⭐ spread"
@@ -143,7 +144,9 @@ class Concentration:
         ]
 
 
-def concentration(tasks: Sequence[Task], *, outside: Sequence[Carrier] | None = None) -> Concentration:
+def concentration(
+    tasks: Sequence[Task], *, outside: Sequence[Carrier] | None = None
+) -> Concentration:
     """Rank a plan's carriers — ⛔ refusing until `outside` has been declared.
 
     `outside` is where this integration's risk sits that is not in the target
@@ -165,8 +168,8 @@ def concentration(tasks: Sequence[Task], *, outside: Sequence[Carrier] | None = 
     repeated = sorted({name for name in named if named.count(name) > 1})
     if repeated:
         raise RiskRefused(
-            f"counted twice — {', '.join(repeated)}. ⛔ A carrier named inside and "
-            "outside inflates the total and flatters the share"
+            f"{len(repeated)} carrier id(s) counted twice. ⛔ A carrier named inside "
+            "and outside inflates the total and flatters every share in the table"
         )
     ordered = sorted(carriers, key=lambda carrier: (-carrier.effort, carrier.id))
     return Concentration(tuple(ordered))

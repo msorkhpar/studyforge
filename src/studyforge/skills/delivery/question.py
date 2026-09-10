@@ -63,12 +63,13 @@ class Answer:
     at: str
 
     def __post_init__(self) -> None:
+        """Refuse an answer that cannot be told from a stale one."""
         if not self.said.strip():
             raise QuestionRefused("an answer with no text answers nothing")
         if not self.at.strip():
             raise QuestionRefused(
-                f"{self.said.strip()!r}: no ref. ⛔ An answer with no ref cannot be "
-                "told from a stale one, which is the whole failure mode"
+                "an answer carries no ref. ⛔ An answer with no ref cannot be told "
+                "from a stale one, which is the whole failure mode"
             )
 
 
@@ -84,8 +85,9 @@ class Question:
     answer: Answer | None = None
 
     def __post_init__(self) -> None:
+        """Refuse a question the person receiving it could not act on."""
         if self.number < 1:
-            raise QuestionRefused(f"{self.asks!r}: questions are numbered from 1")
+            raise QuestionRefused("questions are numbered from 1")
         if not self.asks.strip():
             raise QuestionRefused("a question with no text is not a question")
         if not self.routed_at.strip():
@@ -100,8 +102,9 @@ class Question:
             )
         if len(self.rerun.strip()) < MIN_RERUN_CHARS:
             raise QuestionRefused(
-                f"Q{self.number}: {self.rerun.strip()!r} does not say how to re-run it. "
-                "⛔ A question nobody can re-run is answered once and believed forever"
+                f"Q{self.number}: `rerun` is under {MIN_RERUN_CHARS} characters and does "
+                "not say how to re-run it. ⛔ A question nobody can re-run is answered "
+                "once and believed forever"
             )
 
     def settled(self, said: str, *, at: str) -> Question:
@@ -118,7 +121,7 @@ class Question:
         return self.answer is not None and self.answer.at == ref
 
     def act_on(self, ref: str) -> str:
-        """The answer, or a refusal naming what to re-run.
+        """Give back the answer, or refuse and name what to re-run.
 
         ⭐ This is the whole mechanism: a stale answer does not come back with
         a warning attached, it does not come back.

@@ -39,7 +39,7 @@ text, so the caller names the documents.
 | `task` | that a task ends in a layer, or that a clause is decided by nobody |
 | `terminal` | that a corpus finishes somewhere, while leaving later capabilities unaccounted for |
 | `backlog` | that a milestone waits on framework work it has not declared a gate for |
-| `question` | that a question is open with no way to re-run it, or that a stale answer may be acted on |
+| `question` | that a question is open with no way to re-run it, or a stale answer acted on |
 | `finding` | that a claim is neither measured here nor received from somebody |
 | `export` | that a tracker column maps to a field the backlog does not carry |
 
@@ -47,8 +47,13 @@ text, so the caller names the documents.
 
 ⛔ This package names no source, and the documents it *renders* name no path
 inside one. ⭐ A planner is the one place where a source-specific shortcut
-would look most reasonable — *"for a Java corpus, do this"* — and it is the
-one place where it would be copied by every integration that followed.
+would look most reasonable — *"for a corpus of this kind, do this"* — and it
+is the one place where it would be copied by every integration that followed.
+
+⚠️ **That sentence originally carried a corpus's name as its example, and the
+check in this package's own test suite is what found it** — which is the shape
+of the defect exactly: the naming looked like illustration rather than
+knowledge, and R1's prose form is where source-specific knowledge accumulates.
 """
 
 from __future__ import annotations

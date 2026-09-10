@@ -11,10 +11,11 @@ It runs **in the target repository**, and its authority is `studyforge`.
 
 ## ⛔ The three rules that decide every judgement below
 
-1. ⛔ **The planner never reads the extraction source** (R20). CodeSignal is
-   *this framework's* source, not a consumer's reference. Everything a
-   consumer needs is carried in this repository — as a ruling, a contract, the
-   authoring reference, or **the integration catalogue**.
+1. ⛔ **The planner never reads the extraction source** (R20). The repository
+   this framework was extracted *from* is **this framework's** source, not a
+   consumer's reference, and nothing here will name it or send you to it.
+   Everything a consumer needs is carried in this repository — as a ruling, a
+   contract, the authoring reference, or **the integration catalogue**.
 2. ⛔ **The planner never patches the framework** (§12). It hit a wall, it
    files a **finding**, and the finding becomes a framework task. An
    integrator who can edit the framework fixes their own problem and nobody

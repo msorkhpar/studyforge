@@ -60,14 +60,15 @@ class Milestone:
     gated_by: str | None = None
 
     def __post_init__(self) -> None:
+        """Refuse a milestone that lands nothing, or names a task twice."""
         if not self.id.strip() or not self.name.strip():
             raise PlanRefused("a milestone needs an id and a name")
         if not self.tasks:
-            raise PlanRefused(f"{self.id}: a milestone with no tasks lands nothing")
+            raise PlanRefused("a milestone with no tasks lands nothing")
         ids = [task.id for task in self.tasks]
-        repeated = sorted({name for name in ids if ids.count(name) > 1})
+        repeated = {name for name in ids if ids.count(name) > 1}
         if repeated:
-            raise PlanRefused(f"{self.id}: two tasks share an id — {', '.join(repeated)}")
+            raise PlanRefused(f"two tasks share an id — {len(repeated)} of them")
 
     @property
     def effort(self) -> int:
@@ -96,17 +97,18 @@ class Backlog:
     findings: tuple[Finding, ...] = field(default_factory=tuple)
 
     def __post_init__(self) -> None:
+        """Refuse a plan whose ids, questions or findings collide."""
         if not self.milestones:
             raise PlanRefused("a backlog with no milestones delivers nothing")
         ids = [task.id for task in self.tasks]
-        repeated = sorted({name for name in ids if ids.count(name) > 1})
+        repeated = {name for name in ids if ids.count(name) > 1}
         if repeated:
-            raise PlanRefused(f"a task id is used twice — {', '.join(repeated)}")
+            raise PlanRefused(f"a task id is used twice — {len(repeated)} of them")
         numbered(self.questions)
         found = [item.id for item in self.findings]
-        twice = sorted({name for name in found if found.count(name) > 1})
+        twice = {name for name in found if found.count(name) > 1}
         if twice:
-            raise PlanRefused(f"a finding id is used twice — {', '.join(twice)}")
+            raise PlanRefused(f"a finding id is used twice — {len(twice)} of them")
 
     @property
     def tasks(self) -> tuple[Task, ...]:
@@ -128,7 +130,7 @@ class Backlog:
         for milestone in self.milestones:
             if any(item.id == task for item in milestone.tasks):
                 return milestone.id
-        raise PlanRefused(f"no task {task} in this plan")
+        raise PlanRefused("no such task in this plan")
 
     def checked(self, index: Index) -> Backlog:
         """Refuse a plan the index contradicts, naming what contradicts it."""
@@ -151,7 +153,7 @@ class Backlog:
             return
         if milestone.gated_by is None:
             raise PlanRefused(
-                f"{milestone.id} declares no framework gate and {task.id} waits on "
+                f"a milestone declares no framework gate and one of its tasks waits on "
                 f"{', '.join(reaches)}. ⛔ A corpus milestone silently gated on "
                 "framework work is a plan that slips for an unwritten reason"
             )
@@ -159,8 +161,8 @@ class Backlog:
             lands = index.milestone_of(name)
             if lands > milestone.gated_by:
                 raise PlanRefused(
-                    f"{milestone.id} is gated by {milestone.gated_by}, but {task.id} "
-                    f"waits on {name}, which lands at {lands}"
+                    f"a milestone is gated by {milestone.gated_by}, but one of its "
+                    f"tasks waits on {name}, which lands at {lands}"
                 )
 
     def _check_corpus(
@@ -172,17 +174,14 @@ class Backlog:
                 where = self._milestone_of(name)
             except PlanRefused:
                 raise PlanRefused(
-                    f"{task.id} waits on {name}, which is neither in this plan nor a "
+                    "a task waits on something that is neither in this plan nor a "
                     "capability the index carries"
                 ) from None
             if order[where] > order[milestone.id]:
-                raise PlanRefused(
-                    f"{task.id} is in {milestone.id} and waits on {name}, which is in "
-                    f"{where} — later"
-                )
+                raise PlanRefused("a task waits on a task in a later milestone of this same plan")
 
     def critical_path(self) -> tuple[str, ...]:
-        """The heaviest chain of this plan's own tasks, ⛔ refusing a cycle."""
+        """Derive the heaviest chain of this plan's own tasks, ⛔ refusing a cycle."""
         by_id = {task.id: task for task in self.tasks}
         depth: dict[str, tuple[int, tuple[str, ...]]] = {}
         walking: set[str] = set()
@@ -191,7 +190,7 @@ class Backlog:
             if name in depth:
                 return depth[name]
             if name in walking:
-                raise PlanRefused(f"{name} depends on itself, through this plan's own tasks")
+                raise PlanRefused("a task depends on itself, through this plan's own tasks")
             walking.add(name)
             task = by_id[name]
             best: tuple[int, tuple[str, ...]] = (0, ())
@@ -208,7 +207,7 @@ class Backlog:
         return longest[1]
 
     def lines(self) -> list[str]:
-        """The backlog document, as a reader of the plan sees it."""
+        """Render the backlog document, as a reader of the plan sees it."""
         path = self.critical_path()
         out = [
             f"# Delivery plan — {self.corpus.strip()}",

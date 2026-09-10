@@ -72,13 +72,13 @@ class Claim:
     received: str = ""
 
     def __post_init__(self) -> None:
+        """Refuse a claim that says neither where it was measured nor who it came from."""
         if not self.says.strip():
             raise FindingRefused("a claim with no text claims nothing")
         if bool(self.measured.strip()) == bool(self.received.strip()):
             raise FindingRefused(
-                f"{self.says.strip()!r}: a claim is measured HERE or received FROM "
-                "somebody, and says which. This one says "
-                f"{'both' if self.measured.strip() else 'neither'}"
+                "a claim is measured HERE or received FROM somebody, and says which. "
+                f"This one says {'both' if self.measured.strip() else 'neither'}"
             )
 
     def line(self) -> str:
@@ -98,28 +98,29 @@ class Finding:
     claims: tuple[Claim, ...]
 
     def __post_init__(self) -> None:
+        """Refuse a finding that cannot be routed, or cannot be checked."""
         if self.marker not in MARKERS:
             raise FindingRefused(
-                f"{self.id}: {self.marker!r} is not a marker. ⛔ The vocabulary is "
+                "a finding's `marker` is not a marker. ⛔ The vocabulary is "
                 f"closed at {', '.join(MARKERS)} — a fourth was tried and refused"
             )
         if "/" not in self.id:
             raise FindingRefused(
-                f"{self.id!r} is not a finding id. ⛔ The form is <TASK-ID>/<n>: a "
+                "a finding's `id` is not a finding id. ⛔ The form is <TASK-ID>/<n>: a "
                 "finding is numbered inside its own document, never globally"
             )
         if not self.says.strip():
-            raise FindingRefused(f"{self.id}: a finding with no text is not one")
+            raise FindingRefused("a finding with no text is not one")
         if self.marker == "none":
             if self.claims:
                 raise FindingRefused(
-                    f"{self.id}: a `none` marker beside a real claim. ⛔ It is the only "
+                    "a `none` marker beside a real claim. ⛔ It is the only "
                     "way to write zero, so it may not stand beside a finding"
                 )
         elif not self.claims:
             raise FindingRefused(
-                f"{self.id}: no claims. ⛔ Every claim states measured or received, "
-                "and a finding with none states nothing anybody can check"
+                "a finding carries no claims. ⛔ Every claim states measured or "
+                "received, and a finding with none states nothing anybody can check"
             )
 
     @property
