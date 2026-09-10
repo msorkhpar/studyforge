@@ -249,6 +249,35 @@ both correct — `None` is not zero — so the translation is this task's and
 nobody else's.** Ruled by the PO 2026-09-10 from `SF-12/4`; the argument is in
 [`BOARD.md`](BOARD.md).
 
+#### ⛔ One acceptance condition RE-HOMED here by the PO, 2026-09-10 (round 30) — **Ruling 129**
+
+⛔ **`OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are PRODUCED BY THE
+ONBOARDING SKILL for a corpus, not hand-written — asserted by regenerating them
+and diffing.** ⭐ **This clause stood in `E11`'s `SK-07` Acceptance and could not
+be executed there.**
+
+⚠️ **Why it moved, and it is NOT waived (Ruling 129: an unmeetable clause is
+SPLIT, and CHANGES REQUESTED lands on the PLAN, not on the branch).** ⭐ **The
+command that shows it was unmeetable at `SK-07`'s ref:**
+
+```bash
+ls src/studyforge/cli/     # -> __init__.py  plan/     ONE command
+```
+
+⛔ **There is no build command to configure and no `OPS-*` artifact to
+regenerate, so a generator for them would generate against a contract nobody has
+written** — ⚠️ **which is the failure spec §9 exists to prevent, in the other
+direction.** ⛔ **It also asserted a diff taken inside a CONSUMER repository,
+which R20 forbids a framework task to depend on — the second instance after
+`SK-02/4`.**
+
+⭐ **What `SK-07` left for whoever lands this row, and it is two registration
+points rather than a rewrite: the `OPS-*` renderer is added beside
+`artifacts.py`'s, and `artifacts.paths()` plus `NOT_MATERIAL` are where it
+registers.** ⛔ **A seventh artifact added without a glob then fails in THIS
+repository rather than surfacing as `unclassified` in somebody else's.**
+⚠️ **`SK-07/1` is the finding; `E11`'s `SK-07` carries the split in a table.**
+
 #### ⛔ One acceptance condition added by the CTO, 2026-09-10 (round 28) — **Ruling 99**
 
 ⛔ **`studyforge plan` and this build agree PATH FOR PATH, on both `FND-04`
