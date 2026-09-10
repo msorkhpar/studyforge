@@ -30,9 +30,9 @@ from studyforge.contents import (
     render,
 )
 from studyforge.corpus.placement import ROOT_INDEX_FILENAME
-from studyforge.render.page import document as page_document
-from studyforge.render.page import navigation
-from studyforge.render.page.text import safe_href
+from studyforge.render.markup import safe_href
+from studyforge.render.page import Link, Links
+from studyforge.render.page import compose as compose_page
 from studyforge.skills.reconnaissance import record
 from tests.studyforge.contents.corpora import (
     fixture_containers,
@@ -101,7 +101,7 @@ def test_every_declared_unit_of_both_fixtures_reaches_the_contents():
 # --------------------------------------------------------------------------
 
 
-def a_bar(built, key) -> navigation.Links:
+def a_bar(built, key) -> Links:
     """The renderer's `Links`, built from contents data and nothing else.
 
     ⚠️ **This mapping is the seam, and it is one line.** `contents` returns
@@ -109,9 +109,7 @@ def a_bar(built, key) -> navigation.Links:
     them into its own type. ⛔ Which caller does it is `SF-12`/`SF-14`'s row —
     see `SF-13/1`.
     """
-    return navigation.Links(
-        **{field: navigation.Link(**slot) for field, slot in links(built, key).items()}
-    )
+    return Links(**{field: Link(**slot) for field, slot in links(built, key).items()})
 
 
 def test_the_contents_agree_with_the_placement_the_renderer_was_given():
@@ -132,7 +130,7 @@ def test_a_unit_with_a_neighbour_renders_the_between_units_bar():
     # `src/` and the symptom was neither legible nor illegible — it was absent.
     case = depth1_unit_02()
     built = fixture_contents("depth1")
-    page = page_document.compose(case.document, case.placement, a_bar(built, "depth-one/unit-02"))
+    page = compose_page(case.document, case.placement, a_bar(built, "depth-one/unit-02"))
     assert '<nav aria-label="Between units">' in page
     assert 'rel="prev"' in page and 'rel="next"' in page and 'rel="up"' in page
 
@@ -140,7 +138,7 @@ def test_a_unit_with_a_neighbour_renders_the_between_units_bar():
 def test_the_bar_names_the_units_either_side_and_the_corpus_above():
     case = depth1_unit_02()
     built = fixture_contents("depth1")
-    page = page_document.compose(case.document, case.placement, a_bar(built, "depth-one/unit-02"))
+    page = compose_page(case.document, case.placement, a_bar(built, "depth-one/unit-02"))
     assert "What a triple is" in page
     assert "Asking the first question" in page
     assert "Depth One Demo" in page
@@ -179,15 +177,13 @@ def test_the_same_page_without_a_reading_order_carries_no_bar():
     # ⛔ The negative control, and it is the state every ref before this task
     # was in: the bar is absent, not merely illegible.
     case = depth1_unit_02()
-    assert '<nav aria-label="Between units">' not in page_document.compose(
-        case.document, case.placement
-    )
+    assert '<nav aria-label="Between units">' not in compose_page(case.document, case.placement)
 
 
 def test_the_first_unit_of_the_reading_order_has_no_previous_link_in_its_bar():
     case = depth2_unit_01()
     built = fixture_contents("depth2")
-    page = page_document.compose(
+    page = compose_page(
         case.document, case.placement, a_bar(built, "advanced/02-going-further/unit-01")
     )
     assert '<nav aria-label="Between units">' in page
@@ -208,7 +204,7 @@ def test_a_same_directory_neighbour_survives_in_the_data_and_now_survives_on_the
     slots = links(built, key)
     assert slots["next"]["href"] == "unit-02-fields-and-constructors.unit.html"
     assert safe_href(slots["next"]["href"]) == slots["next"]["href"]
-    page = page_document.compose(case.document, case.placement, a_bar(built, key))
+    page = compose_page(case.document, case.placement, a_bar(built, key))
     assert '<nav aria-label="Between units">' in page
     assert 'rel="prev"' in page and 'rel="up"' in page and 'rel="next"' in page
 
@@ -233,7 +229,7 @@ def test_every_slot_the_contents_compute_reaches_the_page_under_both_profiles(co
     computed, present = 0, 0
     for entry in order(built):
         slots = links(built, entry.key)
-        page = page_document.compose(rendered.document, rendered.placement, a_bar(built, entry.key))
+        page = compose_page(rendered.document, rendered.placement, a_bar(built, entry.key))
         for field, spelling in BAR_RELATIONS.items():
             if field not in slots:
                 continue

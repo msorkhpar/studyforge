@@ -1767,6 +1767,73 @@ A third is needed.**
 one place nobody applied it** — inside the sweep, where the reviewer had already
 accounted for the baseline's skips once and stopped looking.
 
+#### ⛔ Ruling 162 (CTO round 42) — a sweep row records its **FAILURE REASON**, and the `real / lint-only` split is the OTHER half — ⛔ **neither is sufficient alone**
+
+⛔ **THE DEFECT: every signal Rulings 76, 83, 123 and 146 require can be
+CORRECT while the row is a FALSE KILL.** ⚠️ **Reproduced live by the CTO, pinned
+image, on a mutant trimmed to the same byte count and parsing cleanly
+(`target = safe_href(...)` → `targe  = ...`):**
+
+```text
+sweep SCOPED to the subject's own test module          <- W68's shape
+  EXIT CODE:  1                                        <- Ruling 76,  correct
+  TAIL:       54 failed, 50 passed in 0.33s            <- Ruling 76,  correct
+  ROW COUNT:  would assert PASS                        <- Ruling 146, correct
+  SKIPS:      unchanged                                <- §4b-i,      correct
+  REASON:     NameError: name 'target' is not defined  <- ⛔ IT NEVER RAN
+```
+
+⛔ **The exception type is the only discriminator left, and until this clause no
+ruling asked for it.**
+
+⚠️ **AND THE TWO HALVES ARE NOT SYMMETRIC, which is what decides the clause.**
+⭐ **The same mutant over the WHOLE SUITE instead:**
+
+```text
+sweep over the WHOLE SUITE                             <- SF-27's shape
+  TAIL:    57 failed, 4045 passed, 63 skipped
+  REASON:  F821 undefined name `target`
+           F841 local variable `targe` assigned but never used
+           lint: `ruff check .` 3 finding(s) in 1 file(s)
+```
+
+⭐ **Over the whole suite ruff UNMASKS an unexecutable mutant as a lint kill, so
+a `real / lint-only` column makes it visible.** ⛔ **Over a scoped sweep the lint
+modules — `tests/test_repository.py`, `tests/test_quality_floor.py` — are not in
+the population at all, the column reads `0 / 0`, and it certifies nothing.**
+
+**The clauses:**
+
+1. ⛔ **EVERY sweep row records the FAILURE REASON — the exception type of the
+   first failure — beside its count.** ⭐ **A row whose reason is `NameError`,
+   `AttributeError`, `ImportError`, `SyntaxError` or `IndentationError` DID NOT
+   RUN THE CODE UNDER TEST and is NOT A READING.** ⛔ **It is REFUSED, not
+   explained: the row is re-spelled and re-run.**
+2. ⛔ **A sweep scoped to fewer modules than the whole suite SAYS SO, and the
+   reason column is MANDATORY there.** ⭐ The lint modules are a free unmasker
+   and a scoped sweep has thrown them away; clause 1 is what replaces them.
+3. ⭐ **The `real / lint-only` split is ADOPTED for whole-suite sweeps**, and it
+   buys what clause 1 does not: it separates a kill by *tidiness* from a kill by
+   *behaviour*, which matters even when the mutant executes fine. ⛔ **It is not
+   a substitute for clause 1 and clause 1 is not a substitute for it. Both, or
+   the sweep reports a number it cannot defend.**
+4. ⛔ **BYTE-PARITY IS WORTH NOTHING IF THE MUTANT CANNOT EXECUTE.** ⚠️ Ruling
+   70 asks for same-size mutations because of the `.pyc` mtime-and-size window;
+   ⛔ **that is a reason to keep the size, never a certificate that the mutant
+   runs.** ⭐ **The construction that gets this right, and it is cheap:** refuse
+   any mutant spelling that adds or removes a line, and run `ruff format` over
+   the mutated file per row so an orphaned import surfaces before the row does.
+5. ⛔ **WHY THIS OUTRANKS A VERDICT:** ⚠️ **this is the second time in three
+   rounds that a COMPLETE set of correct signals described a sweep that had not
+   run.** ⭐ **A gate that cannot fail is the thing this project keeps minting
+   rulings about, and a sweep is a gate.**
+
+⚠️ **NO ROW IS OWED and that is stated rather than left to be inferred** (PO
+round 35): the deliverable is this clause and the two fences above, both landed
+here, and Ruling 155's precedent is exact — **a correction, not a row.** ⛔ **If
+the reviewing office wants an id anyway, it is minted on request; a ruling that
+names *"a task"* and no id has described a task, not created one.**
+
 #### ⛔ Ruling 124 — a check over a DERIVED population states its inhabitation, or its green is not a reading
 
 ⛔ **A test that walks the tree and asserts a property of what it finds passes

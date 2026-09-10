@@ -5,6 +5,17 @@ loop and no LLM-authored assertions**.
 
 **Shared context for this epic — read this before any task.**
 
+⛔ **`EX-00` BLOCKS ALL OF E08, INCLUDING THE TASK YOU WERE SENT HERE FOR.** It
+is a one-agent-day feasibility spike whose **negative result is a success**, and
+until it runs nobody knows whether E08 yields a study product or a pile of
+generated holes. ⚠️ **It needs `TC-00`'s pinned image: its deliverable is a
+wall-clock measurement that decides the shape of this epic, and one taken on a
+host JDK is not reproducible (R15).** ⭐ **The gate is stated HERE, in the block
+this epic itself flags *read this before any task*, and not only in `EX-00`'s own
+heading further down** — ⛔ **because an agent dispatched straight to `EX-01`
+opens this file well below the heading that would have told them** (Ruling 167,
+CTO round 42).
+
 CodeSignal's scaffolder is 1,793 lines because it must *guess* at a grader it
 cannot see. Every assertion it invents is a judgement call, which is why its
 governing ruling forbids presenting any of them as authoritative.

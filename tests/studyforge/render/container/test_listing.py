@@ -14,7 +14,7 @@ import pytest
 
 from studyforge.render.container import Item, PageError
 from studyforge.render.container import listing as listing_module
-from studyforge.render.page.text import safe_href
+from studyforge.render.markup import safe_href
 
 #: ⛔ Synthetic, and assembled rather than written whole (R7).
 POISON = "/" + "home/example/material/private-corpus"

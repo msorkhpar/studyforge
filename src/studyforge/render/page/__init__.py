@@ -22,8 +22,9 @@ this package raises.
 
 **Depends on.** `unit` for what a served document is, `corpus.placement` for
 where things go and for R4's identity block, `archive.blocks` for the
-vocabulary, and `render.templates` and `render.pageassets` for the markup and
-the class names. ⛔ Not on `serve`: a page that needed a server to render is a
+vocabulary, `render.markup` for escaping and the href gate, and
+`render.templates` and `render.pageassets` for the markup and the class names.
+⛔ Not on `serve`: a page that needed a server to render is a
 page that fails the `file://` floor, and that floor is the baseline rather than
 a fallback.
 
@@ -56,7 +57,6 @@ that is not this framework's own structure comes out of the document.
 
 | module | the question it answers |
 |---|---|
-| `text` | how does a string become safe page text? |
 | `blocks` | which renderer answers for this block type — and which bypass escaping? |
 | `blocks.prose` | heading, para, list, table, rule, quote, disclosure — all escaped |
 | `blocks.figure` | what does the reader look at rather than read? |
@@ -87,6 +87,29 @@ the two-sided markup contract structural**: a stylesheet and a template that
 disagree about a class name produce a page that renders, carries every word, and
 is unstyled — with no error anywhere — and this package cannot reach that state
 by typing a name, because it does not type one.
+
+## ⛔ What is on this surface, and what deliberately is not (`W76`)
+
+⛔ **The sentence beside `__all__` used to be a promise; it is a test now.**
+`test_every_cross_package_import_of_this_package_names_something_on_its_surface`
+sweeps every module under `src/studyforge` that is not part of this package and
+fails on any import that reaches past `__all__` — so the next renderer cannot
+re-open the hole, rather than being asked not to.
+
+⛔ **The escaping routine and the href gate are NOT here.** They were, they were
+private, and `render.container` imported them past this contract anyway
+(`SF-27/1`). They live in **`render.markup`** now, a sibling package, because
+three peer renderers need them — this one, `render.container`, and
+`render/index/` (`SF-14`) — and a name three peers share is not one peer's to
+own. ⭐ Exactly the shape of `render.pageassets`, which is where those same
+peers already take their class names and asset filenames from.
+
+⭐ **`between_units` IS here, and an asymmetry is what decided it.** `Link` and
+`Links` were already published, and there is nothing to do with a `Links` but
+hand it to `between_units`; a surface that publishes the argument while hiding
+the function it is an argument to has published half a call. ⚠️ It is this
+page's bar rather than a primitive — `SF-15` owns the module, and `SF-27/3`'s
+`aria-label` remedy is that task's rather than this surface's.
 """
 
 from __future__ import annotations
@@ -94,7 +117,7 @@ from __future__ import annotations
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
-from studyforge.render.page.navigation import Link, Links
+from studyforge.render.page.navigation import Link, Links, between_units
 
 #: What a page is written as. ⛔ Stated once: a page written as anything else is
 #: a page whose bytes depend on a locale, which R10 forbids.
@@ -109,6 +132,7 @@ __all__ = [
     "Links",
     "PageError",
     "Placement",
+    "between_units",
     "compose",
     "render",
 ]

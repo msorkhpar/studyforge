@@ -12,7 +12,7 @@ points at the previous unit, the next one and the index.
     navigation.outline(document)                   # markup, or ''
     navigation.between_units(navigation.Links(previous=…, next=…, index=…))
 
-**Depends on.** `page.text` for escaping, `page.errors`, and the block
+**Depends on.** `render.markup` for escaping, `page.errors`, and the block
 vocabulary. ⛔ Not on `contents`: the outline is derived from the one document
 being rendered, never from `toc.json`, so a page's own outline is correct
 whether or not a contents document has ever been built.
@@ -54,8 +54,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.address import is_slug
+from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page.errors import PageError
-from studyforge.render.page.text import escape, escape_attribute, inline, safe_href
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3

@@ -7,7 +7,7 @@ whose text reaches the page **unescaped**.
 answered by `ls`, not by reading branches. `render(block, position, …)` renders
 one, and the dispatcher is its only caller.
 
-**Depends on.** Nothing. ⭐ Not even `page.text`: this module's whole content is
+**Depends on.** Nothing. ⭐ Not even `render.markup`: this module's whole content is
 that it does *not* escape, and importing the escaper would put the thing it
 refuses to do one keystroke away.
 
