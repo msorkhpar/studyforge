@@ -178,6 +178,200 @@ task owns its numbers.
 
 ---
 
+### SF-35 — `content.not_material`, and `corpus_api: 2`
+**Milestone** **M2** (step 2.1) · **Depends on** SF-02 · **Team** solo
+**Owns** `corpus/manifest/content.py`
+**Context** ~25k — spec §4's `content` block and §R9's register,
+`corpus/manifest/document.py`, `validate/source.py`,
+`handoffs/CTO-2026-09-10-round26.md` (Ruling 90) and `-round27.md` (Ruling 98)
+
+⛔ **Ruled: Ruling 90 (CTO round 26), sharpened by Ruling 98 (round 27), which
+also ruled that this is its OWN task and does not ride with `SF-04`** — the two
+share no surface (`SF-04` mints a `CONTRACT_FIELDS` member; this one does not,
+because `corpus_api` is already there) and they gate different tracks on
+different clocks.
+
+**Definition.** `content` has two states and a real repository is mostly a
+third. ⛔ A file that was **never material** — the repository's own scaffolding,
+content *about* the material rather than the material — is not *withheld from
+the reader*, so calling it `exclude` makes every `why` a small lie and makes an
+audit nobody can read. ⭐ **`content` gains one key, `not_material`; `include`
+and `exclude` are untouched.**
+
+```json
+"content": {
+  "include": ["src/*.md"],
+  "exclude": [{ "path": "src/ISO.md", "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)" }],
+  "not_material": [
+    { "glob": "docs/studyforge/*", "why": "this integration's own working notes about the corpus, not the corpus" },
+    { "glob": "LICENSE",           "why": "the repository's licence; it teaches nothing and is not withheld from anyone" },
+    { "glob": ".gitignore",        "why": "the repository's own build declaration, read by git and by studyforge, never read aloud" } ] }
+```
+
+⛔ **All of it lands in ONE commit**, per R9's own register note: the field and
+the version bump are the same change, and a build that met `not_material` at
+`corpus_api: 1` would report an unknown key and blame the corpus for the
+framework's age.
+
+**The deliverable, and every item is ruled:**
+
+1. ⛔ **`corpus_api` → `2`, and `KNOWN_CORPUS_API` speaks `{1, 2}`** —
+   `corpus/manifest/document.py:68`. ⚠️ **Not because old manifests break** —
+   they do not; `not_material` is optional and an absent key means an empty
+   tuple — ⭐ **but because a manifest that USES it is unreadable to an older
+   build, which is exactly what R9 versions.**
+2. ⛔ **`content` gains `not_material`**: a list of `{glob, why}`, each `why` at
+   `MIN_WHY_CHARS`, per Ruling 90's rule 1.
+3. ⛔ **Rule 3 — a NEW finding id, exiting 1**: a file matched by **both**
+   `include` and `not_material`. ⭐ **Never a precedence.** ⚠️ **This is what
+   stops the third state becoming a drain**, and it is the rule that makes globs
+   safe here where `exclude` still refuses them.
+4. ⛔ **Rule 4 unchanged**: a file matched by none of the three is still
+   `UNCLASSIFIED` and still exits 1. ⭐ **C2's countermeasure is not weakened by
+   one line.**
+5. ⛔ **Rule 1a — the glob shape (Ruling 98), and it is mechanically checkable.**
+6. ⛔ **Ruling 90 reaches the SPEC in this same commit** — ⚠️ **it exists only in
+   a handoff today, which is the whole reason a coordinator had to go find it.**
+
+#### ⛔ Rule 1a — and it is NOT redundant with rule 3
+
+> ⛔ **A `not_material` entry is either an EXACT PATH, or a glob whose wildcard
+> lies inside a directory prefix that is itself entirely not-material.**
+>
+> ⛔ **A pattern whose correctness depends on which files happen NOT to exist is
+> refused, however exactly it matches today.**
+
+⚠️ **Rule 3 catches a loose glob only when the swept file is ALSO in `include`.**
+⭐ That is why `*.md`, `[A-Z]*` and `*` are all caught today against a real tree.
+⛔ **The hole is the file that does not exist yet:** a `CHANGELOG.md` next year,
+matched by `[CLR]*` and not yet in `include`, is classified `not_material` by a
+`why` that was never about it — ⛔ **and rule 4, the `UNCLASSIFIED` catch that
+would have surfaced it, goes QUIET because the file is now classified.**
+
+⛔ **Stated at its real width: a `not_material` glob can SILENCE RULE 4 for a
+file nobody has considered.** ⭐ **Rule 1a is the constraint that makes that
+impossible** — a directory-scoped glob can only silence rule 4 inside a
+directory already declared not-material, which is the declaration doing its job;
+a filename-shaped glob at the root can silence it anywhere.
+
+⭐ **The check is one sentence: reject an entry containing a wildcard whose fixed
+prefix is not a directory.** ⛔ Ruling 90's own three examples pass unchanged —
+`docs/studyforge/*` is a wildcard under a directory, `LICENSE` and `.gitignore`
+are exact paths.
+
+⚠️ **The measured case that produced the rule, and it is worth reading before
+writing a clever glob:** the integration agent reproduced Ruling 90's three
+globs against ISO's 17 residual files, found they cover **17 of 17**, and then
+**refused to propose them** — because `[CLR]*` covers `CLAUDE.md`, `LICENSE` and
+`README.md` **only because `TestCases.md` begins with T**. ⛔ **It encodes the
+collision, not the intent**, and a `why` cannot be true of a `CHANGELOG.md`
+nobody has written yet. ⭐ **So the answer is five honest entries, not three
+clever ones** — `docs/studyforge/*` plus `CLAUDE.md`, `README.md`, `LICENSE`,
+`.gitignore` as exact paths.
+
+#### ⭐ `README.md` is `not_material`, and it is not a special case
+
+⛔ **The three states are not about materiality in the abstract; they are about
+whether a file's prose is read into the archive.** `include` — read in.
+`exclude` — prose that *would* be read, deliberately not read, per file, with
+its `why`; ⭐ *withheld* is the honest word there because it is true there.
+`not_material` — ⛔ **not prose to read at all.**
+
+⭐ **A source `README.md` is the corpus's own navigation, and navigation is
+scaffolding.** ⚠️ **The reader loses nothing**: the generated site carries its
+own contents from the manifest's container maps, so every address, title and
+ordinal the README records is already declared. ⛔ **`X1` is not weakened by
+this; its domain is now stated** — *an inclusion needs no justification; **every
+declaration that the framework will not read a file** needs one.*
+
+**Acceptance.** A manifest declaring `not_material` at `corpus_api: 2` is
+accepted and one at `corpus_api: 1` is refused by name (R9), with both asserted.
+An absent `not_material` means an empty tuple and `corpus_api: 1` still parses.
+An entry with no `why`, or a `why` under `MIN_WHY_CHARS`, is refused. **A file
+matched by both `include` and `not_material` is a finding with its own rule id
+and exits 1** — asserted, and asserted as a finding rather than as a
+precedence. A file matching none of the three is still `UNCLASSIFIED` and still
+exits 1. **Rule 1a is enforced**: a wildcard whose fixed prefix is not a
+directory is refused, with Ruling 90's three examples asserted as accepted and
+`[CLR]*` asserted as refused. ⛔ **Spec §4's `content` text and §R9's register
+row both carry `not_material` in the same commit** — ⭐ **C6 closes on Ruling 90
+here, not a round later.**
+
+**Out of scope.** ⛔ **`SK-07` is a DEPENDENT, not part of this.** It generates
+manifests and must generate globs that satisfy rule 1a; the finding the
+integration agent produced is against the generator and it is `SK-07`'s.
+
+---
+
+### SF-36 — `origin` may name a region
+**Milestone** **M2** (step 2.1) · **Depends on** SF-02, **SF-35** · **Team** solo
+**Owns** `corpus/manifest/` (the `origin` shape), with `validate/source.py` and
+`studyforge/sourcepath.py`
+**Context** ~25k — `handoffs/CTO-2026-09-10-round26.md` (Ruling 92),
+`validate/source.py`'s `check_completeness`, `SF-35`
+
+⛔ **Ruled: Ruling 92 (CTO round 26), on `F21`.** ⭐ **Shape chosen: sub-file
+units — not a generated split, and not one unit.**
+
+**Definition.** A source that carries several units inside one file has no way
+to say so. `origin` names a whole file, so seventeen units sharing one path are
+seventeen comparisons against one count — ⛔ **and `check_completeness`, the
+check that exists to disagree with the parser, is the thing that breaks.**
+
+```json
+{ "n": 3, "title": "Card issuance", "origin": { "path": "TestCases.md", "section": "3. Card issuance" } }
+```
+
+| | |
+|---|---|
+| `origin` stays a **string** for a whole file | ⛔ unchanged, and every existing manifest keeps parsing |
+| `origin` **may be an object** — `path` + `section` | `section` is the **exact text** of the ATX heading that opens the region |
+| the region **ends** at the next heading of the **same or shallower** depth | ⛔ **not at the next heading of any depth** |
+| `section` must occur **exactly once** in the file, or the manifest is **refused** | ⚠️ ambiguity here is sixteen silent short-reads |
+| ⛔ **`TestCases.md#…` stops being accepted** | ⭐ it is accepted today and means nothing — *"validates and then fails at render, except it never fails"* |
+
+⛔ **Why a heading and not a line range, and it is the only real choice here.**
+⭐ **`check_completeness` exists to DISAGREE with the parser**, so the region
+boundary may not come from the Markdown reader — a heading *anchor* would, and
+that destroys the independence the whole check is built on. ⭐ **`count_headings()`'s
+own regex already knows depth**, so it finds the opening heading and the next at
+that depth or shallower with no help from the reader. ⚠️ **A line range is also
+parser-independent and was refused for a different reason: it is brittle against
+an upstream file that grows a paragraph**, and these corpora are living
+repositories.
+
+⭐ **Two consequences worth writing down.** `_origins()`'s per-unit sum keeps
+working unchanged — seventeen units sharing one `path` have **disjoint**
+regions, so it is seventeen comparisons against seventeen counts, ⛔ **not
+seventeen against 361, which is the finding.** And `origin_directory()` takes
+`.parent` of the path, and an object origin still has a path, ⭐ **so media
+placement is unaffected.**
+
+⚠️ **`F21/3` — 17 pages landing in a repository root under `sibling` — is real,
+is a PLACEMENT question, and is `SF-31`'s, not this task's.**
+
+⛔ **THE ONE OPEN QUESTION, escalated to the CTO by the PO at round 24 and
+answered before this task starts (R21, R9):** ⭐ **does `SF-36` ride inside
+`SF-35`'s `corpus_api: 2`, or take `corpus_api: 3`?** ⚠️ **Both are additive
+optional shapes, and R9's rule is that a manifest USING the new shape must be
+unreadable to a build that does not speak it** — ⛔ **so the answer depends only
+on whether the two land in one commit or two, and that is a sequencing decision
+this board has already made: they land separately.** ⭐ **The PO's reading is
+therefore `3`, and the CTO owns the number.**
+
+**Acceptance.** A string `origin` parses exactly as it does today, asserted
+against an existing fixture. An object `origin` with `path` + `section` is
+accepted; the region runs from that heading to the next of the same or shallower
+depth, asserted against a fixture with a deeper heading inside the region. A
+`section` occurring twice in the file is **refused** by name. A `section`
+occurring zero times is refused. `TestCases.md#anchor` is refused rather than
+accepted-and-ignored. `check_completeness` compares each unit against its own
+region's heading count, asserted for several units sharing one path. Region
+boundaries are computed without calling the Markdown reader — asserted, not
+assumed. `origin_directory()` is unchanged for both shapes.
+
+---
+
 ### SF-03 — Placement policy
 **Milestone** M1 · **Depends on** SF-01, SF-02 · **Team** pair
 **Owns** `corpus/placement/`
@@ -291,6 +485,27 @@ declared edits with their reasons. **Reports the projected media footprint and
 whether it fits the corpus's `media` limits** (SF-32). Runs on a repository with
 no generated output present. Adding a `permitted_edits` entry changes the plan
 and nothing else. Reads no file inside the source material.
+
+#### ⛔ One acceptance condition added by the PO, 2026-09-10 (round 24) — **Ruling 91, carried by check 3**
+
+⛔ **`studyforge plan` PRINTS THE IGNORE LINES ITS CHOSEN PROFILE REQUIRES**, so
+a corpus can declare them without deriving them.
+
+⚠️ **A framework that writes seventy-nine files into somebody's repository and
+does not say where is asking the corpus to re-derive the framework's own
+layout.** ⭐ **This is the half of `F19` that survived** (Ruling 91, CTO round
+26): its classification half closed when `W28` made `source_files()` ask git
+what the repository ignores, ⛔ **and `.gitignore` takes globs where
+`content.exclude` refuses them — which is precisely why the ignore declaration
+is the right home for a content-addressed directory and `content` never was.**
+
+⚠️ **Verify both directions** — integration catalogue entry 15: the printed rule
+matches the generated file, and a real source file is **not** ignored.
+⛔ **A rule that ignores everything is easy to write and easy to get
+catastrophically right.**
+
+⭐ **Carried here rather than left in a handoff because that is C6**, and Ruling
+91 had reached no artifact while this task was already in flight (`PO-24/2`).
 
 ---
 
