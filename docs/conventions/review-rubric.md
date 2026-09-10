@@ -805,6 +805,15 @@ head -1 "$H" | grep -qE "^# $TASK — handoff" || echo "TITLE does not match '# 
 **Pass = no output.** The six sections are `agent-protocol.md`'s and ⛔ **a task
 with dependents and no handoff is not done.**
 
+⛔ **The floor runs this now** (`tools/quality/handoffs.py`, Ruling 49), so the
+snippet above is the hand-runnable form and a reviewer with a shell should
+still have one. ⚠️ **It under-counts, and the two ways it does are worth
+knowing.** Its `$TASK`-from-filename binding is wrong — that directory holds
+surveys, ruling records and session logs, ten of fifty-three when this landed,
+and **eight of the ten already said `— handoff` in their titles**; the check
+reads each document's own `**Kind:**` declaration instead, and refuses one that
+carries none. And it counts markers rather than *placing* them, which is §8a.
+
 ⭐ **Ruling on the form:** the protocol's template writes each section as a bold
 label (`**Findings:**`); a long handoff reads better with them as headings
 (`## Findings`). Both are accepted, and the check above takes either. What is
@@ -860,6 +869,21 @@ grep -n '`\[structural\]`' "$H"                        # each one routed below
 > old counter would have returned `0 = 0` and passed**, so running it would not
 > have helped; this one returns `0` and forces a sentence. **That is the whole
 > difference, and it is why the guard is not optional.**
+
+⛔ **Ruling 49, landed: the floor runs this too, and it says two things the
+count could not.** ⚠️ `MARKED = LINES` catches two markers on one line and
+nothing else — measured on the tip, `FND-04` had **one marker alone on a prose
+line**, which the equality passes because one is one. ⭐ So the check asks where
+the marker *sits*: a marker is a finding only when nothing but bullet, heading,
+numbering or emphasis markup precedes it. Talking *about* the markers is what
+the words *local* and *structural* are for.
+
+⭐ **And the zero line became a third marker rather than a sentence somebody
+owes.** `` `[none]` `` means *nothing outside this task's scope*; it carries the
+sentence that says what was looked at, it may not stand beside a real finding,
+and a handoff that marks nothing at all now **fails the build**. ⛔ The reviewer
+was the last line of defence for a rule they had to remember to run, which is
+the whole of Ruling 49.
 
 ⛔ **A finding with no marker has not been triaged**, and under the rule above it
 is not a finding at all — it is prose in a Findings section, which the zero line

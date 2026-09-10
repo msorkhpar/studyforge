@@ -1,5 +1,7 @@
 # DOC-2026-09-09 — handoff
 
+**Kind:** survey
+
 Documentation review: `studyforge`'s design re-read against 32 hours of further
 CodeSignal work, and against a decision taken since the design was frozen —
 that a second, unnamed repository will be converted by the skills alone as the

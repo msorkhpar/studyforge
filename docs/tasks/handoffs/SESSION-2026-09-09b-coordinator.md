@@ -1,5 +1,7 @@
 # SESSION-2026-09-09b — coordinator handoff
 
+**Kind:** session log
+
 **Release tip:** `release/m0-foundations` — **2490 passed, 8 skipped, floor clean** (pinned).
 **M0 is CLOSED. M1 step 1.3 is CLOSED. Step 1.4 is open.**
 **Written by:** the orchestrating session. Read this before `SESSION-2026-09-09-coordinator.md`,

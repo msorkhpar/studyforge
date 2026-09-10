@@ -1,5 +1,7 @@
 # CTO-2026-09-09-m0-readiness — handoff
 
+**Kind:** ruling record
+
 **Status:** done — the audit. ⛔ **M0 itself is `blocked`:** `FND-05` cannot be
 completed as written, and `FND-01`'s lint acceptance cannot be run on the
 machines available. Both are planning defects, not agent failures.

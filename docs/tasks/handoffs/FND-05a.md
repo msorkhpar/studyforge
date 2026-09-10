@@ -1,5 +1,7 @@
 # FND-05a — handoff
 
+**Kind:** task handoff — FND-05a
+
 **Status:** done, round 2 — the R7 amendment, Ruling 53 and Ruling 54.
 `feat/FND-05a-workspace`, rebased onto `release/m0-foundations` @ `6738559`.
 

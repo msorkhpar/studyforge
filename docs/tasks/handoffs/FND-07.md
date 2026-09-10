@@ -1,5 +1,7 @@
 # FND-07 — handoff
 
+**Kind:** task handoff — FND-07
+
 **Status:** done
 
 **What landed:**
@@ -342,3 +344,10 @@ the `**Rn — …**` form a ruling takes — and everything else (cross-file cen
 citation matching, idempotent re-application) transfers. ⚠️ A corpus's bridge
 is lesson→class rather than ruling→code, which FND-02 already built once; what
 this adds is the **census that tells you whether it worked**.
+---
+
+## ⚠️ Sections added by `W25`'s migration, 2026-09-10
+
+*Ruling 49 made `agent-protocol.md`'s six sections a build failure (`tools/quality/handoffs.py`). This handoff predates the check. ⛔ Nothing above is rewritten — a record that gets edited to match the present is a record of nothing — so the sections it never carried are added here, saying what was and was not recorded.*
+
+**Surprises:** Not recorded when the task ran. The handoff's own *'my first diagnosis was wrong'* section is the nearest thing it has, and it was written as narrative rather than under this heading.
