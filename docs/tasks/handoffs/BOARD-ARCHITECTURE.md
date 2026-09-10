@@ -4,8 +4,8 @@
 
 **Status:** done
 
-**Base:** `9a57b13` (MAIN, `release/m0-foundations`) · **Merge:**
-`chore/board-architecture` in `wt/arch`
+**Base:** `9a57b13` (MAIN, `release/m0-foundations`) · **Merge:** `233a5f3`
+(`chore/board-architecture`, `wt/arch`)
 
 ⚠️ **The tip moved TWICE under this branch while it was being written** — PO
 round 35 + `W76` (`bfb8c8c`), then `W70` + CTO round 44 (`9a57b13`).
@@ -47,14 +47,14 @@ MAIN(base)  -> 9a57b139caa509fa7b2e06f489b130ff2a21b5b3
   quality floor: clean            (no `board:` line — the check does not exist there)
   4129 passed, 63 skipped
 
-MERGE(arch) -> <this branch's tip>
-  ruff 0.16.6 · check: All checks passed! · format: 667 files already formatted
+MERGE(arch) -> 233a5f37ef978268e6e040f5ef07c1ffdc615474
+  ruff 0.16.6 · check: All checks passed! · format: 668 files already formatted
   document pointers: 352 read in 272 markdown files, 125 anchored, 0 unresolved
   board: 78 register rows, 50 live, 50 detail files in docs/tasks/rows/;
          4393 bytes narrative of 8192, widest row 415 of 600,
          24391 bytes total of 32032 allowed
   quality floor: clean
-  4155 passed, 63 skipped
+  4151 passed, 63 skipped
 ```
 
 ⛔ **Two different shas printed from inside the same invocation as the numbers**
