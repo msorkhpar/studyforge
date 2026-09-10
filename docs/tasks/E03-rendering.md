@@ -194,6 +194,17 @@ CodeSignal's dedupe engine (R1). Level display labels come from `levels`.
 the same code. Reproducible byte-for-byte. A mismatched pair is detected, not
 silently joined. Both FND-04 fixtures produce valid contents.
 
+⛔ **Added by the PO, 2026-09-10 (round 22).** This task is the first thing in the
+project that computes a **reading order**, and therefore the first that can
+populate the unit page's between-units bar: `render/page/navigation.py`'s
+`between_units(links)` returns `''` for `links=None`, and **no caller anywhere in
+`src/` has ever passed anything else**. So one clause: a corpus built through this
+task yields `Links` for a unit that has a neighbour, and the rendered page carries
+`<nav aria-label="Between units">`. ⭐ **This matters beyond plumbing:** M1's close
+condition 8 named the bar in its legibility bar and had to **void** the symptom as
+unfalsifiable, because no ref populated it. The bar's rules are `SF-34`'s; its
+*content* is this task's, and until it lands nobody can judge either.
+
 ---
 
 ### SF-14 — Root index renderer
@@ -325,3 +336,47 @@ added to any page. Contrast clears its threshold in both themes (QA-03's
 instrument, not a new one). The two `<nav>` regions render from templates and no
 product string is typed in Python. The goldens change once, deliberately, and
 the change is stated as a product change rather than absorbed.
+
+---
+
+#### ⭐ Four clauses added by the PO, 2026-09-10 (round 22), from `QA-03`'s captures
+
+⛔ **Each is here because the instrument that opened the page found something no
+test can see. The argument for each is in [`BOARD.md`](BOARD.md); this is the
+carrier.**
+
+**(a) The practice panel is this task's fourth region.** `reading.css`'s own
+scope note disowns five regions by name — *"Masthead, navigation rail, narration
+player, progress controls and **practice panels** are NOT here: they belong to
+the tasks that render them"* — and the practice panel's markup is `SF-12`'s, which
+is done. ⛔ **That is this task's founding defect, one region further along.** So
+`SF-34`'s scope is the chrome list `reading.css` disowns, **minus** the regions
+whose markup does not exist yet: the narration player and the progress controls
+stay `SF-18`'s at M3.
+
+**(b) `QA-03/2` — four ownerless colour tokens, and the ledger is the check.**
+`--surface-2`, `--accent-soft`, `--practice` and `--practice-soft` are defined in
+`palette.css` and painted by no stylesheet, and they had no owner at any
+milestone. They are this task's: paint them, or delete them from the palette and
+say so. ⭐ `tests/visual/palette.py`'s `UNPAINTED` rows are **derived from the
+stylesheets and asserted equal in both directions**, so painting one fails the
+ledger test until somebody states which ground its contrast is taken against.
+**That failure is the feature — reclassify the row, never delete it.**
+
+**(c) The between-units bar's legibility bar, re-homed here.** M1's close
+condition 8 named three symptoms and one of them — *"the between-units bar
+indistinguishable from body text"* — was **unfalsifiable at M1**, because nothing
+computes a reading order before `SF-13` and no golden emits the bar. ⛔ **It was
+voided at M1 and re-homed rather than dropped**, so it is discharged here: once
+the bar is populated, it must be distinguishable from body text without reference
+to colour alone. **A bar nobody can see is not a bar that passed.**
+
+**(d) `PO-22/6` — nothing defines *the column*.** `reading.css:38–41` states a
+deliberate decision: *"A figure, a table or a code block is scanned rather than
+read and takes the full column."* That decision is correct. But `body` carries
+`margin: 0; padding: 0 var(--gutter)` and **no `max-width`**, so at a 1280px
+viewport *"the full column"* is the full viewport and the page reads as a narrow
+measure with full-bleed islands. ⛔ **Bounding the page's column is the layout
+grid — `SF-11`'s finding 3 named it and this task inherited it** — so it lands
+here. ⚠️ This is not a licence to re-open the measure decision; it is the missing
+half of it.
