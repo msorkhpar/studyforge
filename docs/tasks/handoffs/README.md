@@ -16,7 +16,7 @@ their own title**, because their authors started from the template.
 ```text
 **Kind:** task handoff — W20        the six sections, the title, the markers
 **Kind:** task handoff — W17, W19   two tasks; the title names both
-**Kind:** ruling record             a CTO round or one ruling written up
+**Kind:** ruling record             a CTO or PO round, or one ruling written up
 **Kind:** session log               a coordinator's record of one session
 **Kind:** survey                    a read-only investigation; nothing landed
 **Kind:** index                     this file

@@ -145,6 +145,7 @@ RUN pip install --no-cache-dir --disable-pip-version-check \
 ENV HOME=/tmp \
     RUFF_CACHE_DIR=/tmp/ruff-cache \
     PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPYCACHEPREFIX=/tmp/pycache \
     PYTHONUNBUFFERED=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
     STUDYFORGE_DEV_CONTAINER=1
@@ -156,6 +157,23 @@ ENV HOME=/tmp \
 # ⚠️ `PYTHONDONTWRITEBYTECODE` above is not a tidiness setting. The checkout is
 # bind-mounted, so a `__pycache__` written in here appears in the contributor's
 # working tree owned by whatever uid the container used.
+#
+# ⛔ `PYTHONPYCACHEPREFIX` is the OTHER half, and W30 exists because the first
+# half alone reads as sufficient and is not (`CTO-21/1`). `DONTWRITEBYTECODE`
+# stops this image CREATING the taint; it does nothing about READING one. The
+# checkout is bind-mounted, so a `__pycache__/` a HOST run left behind is
+# visible in here — and CPython validates a cached module by the source's
+# (mtime, size), so a stale `.pyc` beside a source the host has since changed
+# under the same mtime and size is loaded in preference to the source. The
+# container then certifies code that is in nobody's working tree, which is the
+# divergence R15 exists to eliminate.
+#
+# ⭐ Setting the prefix moves the cache path the loader COMPUTES out of the
+# mount entirely, so the tree's `__pycache__/` is not consulted at all — the
+# read side, closed by the same mechanism that would have closed the write
+# side. ⛔ The value must be outside `/workspace`; `tests/docker/
+# test_dev_image.py` asserts that, and proves the redirect in both directions
+# rather than asserting the variable is merely set.
 #
 # ⭐ `STUDYFORGE_DEV_CONTAINER` is how the suite knows where it is running.
 # `tests/docker/test_dev_image.py` builds this image and runs the suite inside
