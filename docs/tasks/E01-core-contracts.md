@@ -314,6 +314,31 @@ must be detectable rather than silently wrong — which is the same discipline
 `status.json` applies in E03 and the same failure `layout.py` was written to
 prevent.
 
+⭐ **R21's row for this contract is CLOSED — Ruling 95, CTO round 27.** ⛔ **The
+key is `site_api`**, minted in `src/studyforge/version.py`'s `CONTRACT_FIELDS`
+**in the same commit that writes the cache**, per that tuple's own convention;
+`SF-09`'s `content_api` is the worked example. ⛔ **`SF-04` is the one writer** —
+`placement` names the file and the renderer addresses it, but nothing else
+produces it.
+
+⛔ **Two things about `site_api` that a builder will otherwise get wrong, and
+both are ruled:**
+
+1. ⛔ **An unsupported or absent `site_api` does not raise.** It means *the cache
+   is not read*: the scan runs and the cache is rewritten at the current
+   version. ⭐ That IS R9's refusal — nothing in the old document is carried
+   forward, so nothing is migrated — and it is the only reading compatible with
+   §5's *"the scan wins"*. ⚠️ Use `version.is_supported`, **not**
+   `version.check`: that module documents `is_supported` as the predicate *"for
+   a caller that reports rather than refuses"*, and this is that caller. ⛔ The
+   re-scan is **reported** (R6), naming the path and both versions — never
+   silent.
+2. ⛔ **`site_api` is NOT the staleness mechanism.** It answers *"is this the
+   shape of cache I speak?"* and nothing else. Content staleness — the tree
+   moved since the cache was written — is a separate signal and a separate
+   test. ⚠️ Bumping `site_api` per scan would make a contract version into
+   mutable data and would break R9 for every other reader of that tuple.
+
 **Acceptance.** A site assembles correctly after artifacts are moved to a
 different directory. A renamed artifact is still found and correctly
 identified. A stale cache is detected and the scan wins. Two corpora with

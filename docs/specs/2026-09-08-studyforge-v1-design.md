@@ -442,7 +442,7 @@ on the builder.
 | table of contents | `toc.json` | TOC schema version | `SF-13` |
 | local status | `status.json` | TOC schema version | `SF-14` |
 | authored overlay | `<address>/units/unit-NN/content.json` | `content_api` (`SF-09`) | a person |
-| discovery cache | `.studyforge/site.json` | ⛔ **open** | `SF-04` |
+| discovery cache | `.studyforge/site.json` | `site_api` (Ruling 95) | `SF-04` — ⛔ **the one writer** |
 | narration manifest | ⛔ **open** | ⛔ **open** | `NS-02` / `SF-17` |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
