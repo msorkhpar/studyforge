@@ -2,6 +2,40 @@
 
 Enforces **R11**, **R12**, **R13**, **R17**. Read once; it applies to every task.
 
+## ⛔ Enumerate the legal, never the illegal
+
+⭐ **The CTO's own words: the one ruling they would keep if they could keep only
+one.** It is placed first because it is the general form of five separate rulings
+that each arrived at it independently, and because ⛔ **every list of wrong things
+this project has written has been incomplete, and stayed incomplete silently.**
+
+> ⛔ **A list of forbidden things is an *open* set — the unforeseen case is
+> admitted silently. A list of permitted things is a *closed* set — the
+> unforeseen case is refused, and somebody has to decide.**
+> ⭐ **Same shape, opposite failure mode.**
+
+⚠️ **The asymmetry is the whole argument, and it is worth stating plainly:** both
+lists are incomplete, always. What differs is **what incompleteness does**. An
+open set fails toward *acceptance* — nothing raises, nothing logs, and the defect
+is discovered by its consequences. A closed set fails toward *refusal* — loudly,
+at the boundary, naming the thing it did not expect. ⭐ **A refusal costs a
+question; a silent admission costs whatever the unforeseen case does.**
+
+**Five convergences, kept because the convergence is the evidence:**
+
+| Ruling | The open set that failed | The closed set that replaced it |
+|---|---|---|
+| **8** | a character blacklist for filenames — ⛔ **seven shapes got through**, two breaking the `file://` floor | the label class **derived from `is_slug`**, plus a first-character rule |
+| **20** | two personal-data gate copies, one skipping dict keys | ⛔ one implementation, **the duplicate deleted** |
+| **35** | `FORBIDDEN` pairs, restated per package | ⭐ **`authoritative ⟹ bundled`, stated positively** |
+| **38** | *"expect 8 skips"* — ⛔ **a count no test holds** | **every skip declares a cause from a closed, named set** |
+| **D2's reader set** | a hand-maintained list of gate callers — ⛔ **how `corpus.json` went ungated** | the reader set **derived**, so omission is unrepresentable |
+
+⛔ **So: a list of accepted shapes needs justifying; a list of rejected shapes
+needs replacing.** ⚠️ **And the tell that you are writing the wrong one** is that
+you can always think of one more entry — ⭐ **an open set is one you can extend
+without deciding anything, which is exactly why it never gets finished.**
+
 ## Size
 
 | Unit | Soft ceiling | On exceeding |
