@@ -102,11 +102,9 @@ form needs a URL that resolves. The components are:
 ✅ **M0 is CLOSED**, and so are **M1 steps 1.1–1.3**. **In flight: M1 step 1.4 —
 `SF-10`, the unit document builder.** ⛔ **Do not start on M0.**
 
-⛔ **`SF-10` is BUILT and `in-review`, not waiting to be started.** ⚠️ **1,989
-lines of it sit on `feat/SF-10-unit-builder`, unmerged**, and the board carried it
-as *"unblocked, waiting on nothing"* for a round. ⭐ **Anything that renders or
-reads a unit document — `SF-12` first — reads that branch, not the release tip.**
-⛔ **Starting `SF-10` from scratch would rewrite a finished package.**
+⛔ **`SF-10` is DONE — approved and merged at `966ab30`, and step 1.4 is
+CLOSED.** ⭐ **`unit/builder/` and `unit/served.py` are on the release tip.**
+⏳ **Step 1.5 is open: `SF-12`, then `QA-03`.**
 
 ⚠️ **This section said *"Milestone M0 — FND-01…FND-05, all parallel"* for sixty
 seconds after M0 closed, and it was the second time in two rounds that this file

@@ -5,10 +5,12 @@ the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
 ⭐ **M0 is CLOSED — `FND-05a` merged and the last M0 task is done.** ✅ **M1 steps
-1.1, 1.2 and 1.3 COMPLETE.** ⏳ **M1 step 1.4 is OPEN and `SF-10` is
-`in-review`** — ⛔ **built, 1,989 lines, on `feat/SF-10-unit-builder` @ `c33f231`,
-unmerged and awaiting a CTO verdict.** ⚠️ **This board said *"unblocked, waiting
-on nothing"* while that branch existed; see step 1.4.**
+1.1, 1.2 and 1.3 COMPLETE.** ✅ **M1 step 1.4 is CLOSED — `SF-10`
+APPROVED and merged at `966ab30`.** ⏳ **Step 1.5 is OPEN: `SF-12`, then `QA-03`.**
+⚠️ **This board twice mis-stated `SF-10`'s state in one round — first as
+*"unblocked, waiting on nothing"* while it sat built on a branch, then as
+`in-review` after it had merged.** ⛔ **Both errors are one cause: a status
+measured once and quoted later.**
 
 📏 **Base: 2490 passed / 8 skipped in the pinned container at `a7c114b`; ⭐ **2487
 passed / 11 skipped on the host at `e5bcc85`**, quality floor clean, exit 0.
@@ -246,10 +248,17 @@ and this is what it produced.
 | **Ruling 46's helper** — `asserting=` rule-id set + the misattribution message | Developer 1 | ✅ `done` — ⚠️ **the board said `in-progress`; it is merged** | ⛔ **stopped at the helper; the general seam is `FND-08`** |
 | **SF-10 survey** — port inventory + R11 package shape (**W5**) | Developer 1 | ✅ `done` — `13b2857`, one document, no code | — |
 | **FND-05a** — the workspace pin file and its verification command | Developer 1 | ✅ `done` — ⭐ **M0 CLOSED** | — |
-| **SF-10** — Unit document builder | **Developer 1 built it; Developer 2 reviews with the CTO** | ⏳ **`in-review`** — ⛔ **1,989 lines exist on `feat/SF-10-unit-builder` @ `c33f231`, unmerged** | ⛔ **CTO verdict, plus rulings on findings 59 and 60** |
+| **SF-10** — Unit document builder | Developer 1 | ✅ **`done` — APPROVED and merged `966ab30`** | ⭐ **M1 step 1.4 CLOSES** |
 | **W25** — Ruling 49's handoff check | Developer 2 | ⛔ **`todo` — NEVER STARTED.** The branch is byte-identical to `HEAD` | ⛔ **and it is re-priced: see below** |
 
 #### ⛔ The two rows that were lying, and they lied in opposite directions
+
+> ⛔ **AND IT HAPPENED TO ME, IN THIS SECTION, WITHIN THE HOUR.** ⚠️ **I wrote
+> `SF-10` up as `in-review` on an unmerged branch; the CTO approved and merged it
+> at `966ab30` while I was still writing.** ⭐ **So the row below was correct when
+> written and stale when committed — which is the same defect, in the same
+> document, in the paragraph diagnosing it.** ⛔ **That is the argument for
+> re-measuring at wave-CLOSE, and it is now ruled: see the wave-open checks.**
 
 ⚠️ **`SF-10` is the expensive one, and it is a new shape of the same old defect.**
 The board said *"unblocked, waiting on nothing"* — ⛔ **while 1,989 lines of it,
@@ -619,9 +628,48 @@ caught it.**
 
 ---
 
-## The wave-open checks — ⛔ **five**, run 2026-09-10 by the PO
+## The wave checks — ⛔ **five at open, and check 4 AGAIN at close**
 
-⛔ **All five are mine and all five run before the wave, not after it.**
+⛔ **All five are mine.** ⭐ **RULED 2026-09-10: check 4 runs twice — at wave-open
+AND at wave-close** — ⚠️ **and the second run is the one that matters, because
+the trigger check 4 exists to catch is *a task ending*, not a wave starting.**
+
+### ⛔ Why, and this round is the entire argument
+
+⚠️ **I ran check 4 once, at open. In the same round, three things it exists to
+catch happened AFTER it ran:**
+
+| What moved | When | What the board said until now |
+|---|---|---|
+| ⛔ **`SF-10` approved and merged `966ab30`** | mid-round | `in-review`, on an unmerged branch |
+| ⛔ **Ruling 53 merged into the rubric `1ee184f`** | mid-round | *"pending on an unmerged branch"* |
+| **`CTO-18-1` / `CTO-18-2`** | mid-round | uncarried |
+
+⭐ **Check 4 caught three stale rows at open and then went stale itself**, ⛔ **and
+it went stale in the paragraph diagnosing exactly that.**
+
+⛔ **A check that runs only at wave-open measures the tree the wave was PLANNED
+against, not the tree it produced.** ⚠️ **Its own founding case proves the
+timing:** `W14` and `W18` evaporated because *"a trigger that names a task is only
+as good as somebody re-reading the board when that task ends"* — ⭐ **and a task
+ends during the wave, not before the next one.**
+
+⭐ **The close run is cheaper than the open run**, and that is why this is not a
+doubling: at open, every row whose trigger has passed must be re-measured; ⛔ **at
+close, only the rows this wave touched** — the merges are enumerable from
+`git log`, so the instrument is *"what moved since I last measured"*, not a sweep.
+
+⛔ **And the standing rule this generalises, which is broader than check 4:**
+⭐ **a measurement is quoted with the ref it was taken on, or it is not a
+measurement.** ⚠️ **Measured this round: the coordinator and I both counted
+`host-verified` correctly and reported different answers, and the entire
+difference was which tree.** ⛔ **Neither of us named the ref.** ⭐ **A number
+without its ref is not a weak claim — it is an unfalsifiable one**, because the
+reader cannot reproduce it and disagreement looks like error rather than drift.
+
+---
+
+### The five, at open
 
 ### ⭐ This round's readings — ⛔ **checks 3 and 4 both changed the plan**
 
@@ -1180,7 +1228,76 @@ trigger, and the trigger is an event rather than a date.
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration` |
 | **Status** | `in-progress` — reconnaissance and delivery plan |
-| **Closes when** | A milestone-ordered backlog exists whose every task ends in something a person can be shown, with acceptance the framework can evaluate |
+| **Closes when** | ⭐ **See *Q18 ruled*, below.** ⛔ This cell said *"a milestone-ordered backlog exists…"*, which is the **reconnaissance task's** close condition, not the track's — ⚠️ **and mistaking one for the other is why Q18 stayed open two rounds** |
+
+### ⛔ Q18 RULED 2026-09-10 — **the track has two finish lines, and that is why it had none**
+
+⚠️ **I carried this for two rounds as *"the track has no definition of done"*, and
+that framing is what kept it open.** ⭐ **It is not one missing definition. It is
+two definitions that were being asked for as one, and they close at different
+milestones, are owned by different people, and are made of different material.**
+
+| | ⭐ **The corpus's finish line** | ⭐ **The exercise's finish line** |
+|---|---|---|
+| **Asks** | *is this corpus a study site?* | *is this framework extensible?* |
+| **Deliverable** | ⭐ **the site** | ⛔ **the findings log** (§12, §11.2) |
+| **Lands** | **M4** — the reading floor | **M8** — `QA-04` |
+| **Owner** | PO-Integration | ⛔ **the framework side** — §12 forbids the integrator grading their own extensibility |
+| **Done when** | ISO opens offline over `file://`, narrated, navigable, read marks recorded, ⛔ **minus what the source genuinely lacks** | the findings log exists, ⛔ **every hand-edit is named as a defect in the onboarding skill**, and the framework pin is accounted for |
+
+⛔ **ISO never enters the execution track**, so its corpus finish line is **M4 and
+complete there** — ⭐ **a pass, not a shortfall** (§11.0, C5). ⚠️ **Zero exercises
+is a first-class outcome and the finish line must say so in the positive**, or the
+next integrator reads a shortfall into a corpus that has none.
+
+#### ⛔ And the ruling that F18/F19/F20 forced: **`studyforge validate` green is a GATE, not a finish line**
+
+⚠️ **`ISO-09`'s acceptance is *"`studyforge validate` green"*. Measured this
+round: `NOT valid: 100 findings`, ⛔ and zero of the 100 is a corpus defect.**
+
+⛔ **So the track's finish line currently names a state no corpus can enter, for
+reasons §12 forbids the integrator to fix.** ⭐ **That is worse than an open
+question, because it reads as a plan** — a task sitting at *"not done"* looks like
+work outstanding, ⚠️ **when what it actually records is a framework defect wearing
+a corpus's status field.**
+
+⛔ **Ruled: a gate held shut by a framework defect is `Blocked`, not `not done`,
+and it is reported as a finding rather than waited on.** ⭐ **`Blocked` already
+exists and is already defined** — `../conventions/delivery-flow.md` gives it per
+acceptance condition: *name which condition, why, and what will unblock it.*
+⚠️ **It was defined for reviews and never applied to the track**, which is a
+mechanism this project already owns not reaching one of its two halves.
+
+⛔ **`Blocked` is not passed, and it is never a reason to delete the condition.**
+⭐ **`ISO-09` keeps *"validate green"* and records it as Blocked on F18/F19/F20 by
+name** — so the finish line stays honest **and** the framework defect stays
+visible, ⚠️ **instead of one being traded for the other.**
+
+#### ⭐ What this makes checkable, which is the point of ruling it
+
+⛔ **The track closes when:**
+
+1. ⭐ **The corpus reaches the reading floor** — offline, narrated, navigable, read
+   marks — ⛔ **minus what the source genuinely lacks, stated positively.**
+2. ⛔ **Every acceptance condition is `passed` or `Blocked`-with-a-named-finding.**
+   ⭐ **No condition is silently dropped**, and a Blocked one names what unblocks it.
+3. ⛔ **The findings log exists and is non-empty.** ⭐ **A finding count of zero
+   fails this** — *an integration that reports none has not been conducted
+   honestly*, and that is already the spec's sentence, not a new rule.
+4. ⛔ **Every hand-edit is named as a defect in the onboarding skill** (R19).
+   ⭐ **That list is what turns *"extensible"* into something with edges.**
+5. **The framework pin did not move, or every commit it moved across is accounted
+   for.**
+
+⚠️ **Note what is deliberately NOT in the list: *"validate green"*.** ⭐ **It is
+condition 2's subject, not condition 1's** — ⛔ **a gate the corpus must pass
+through or explain, never the thing being measured.**
+
+⭐ **Carried into `ISO-09`'s acceptance by the PO before it is assigned**, which is
+what the question channel is for — ⚠️ **and it is late by exactly the two rounds I
+carried it.**
+
+---
 
 **Confirmed by reconnaissance — record it, because it settles a scope question.**
 ⭐ **ISO is complete at the reading floor and never enters the execution track.**
@@ -1274,10 +1391,10 @@ they share is the rule, not the corpus**, and the rule was already carried into
 
 ### ⏳ Still mine, carried and named rather than left implied
 
-- ⛔ **`Q18` — the track has no definition of done**, and ⚠️ **I have carried it
-  two rounds.** ⭐ **F18/F19/F20 make it urgent rather than tidy:** `ISO-09` says
-  *"`validate` green"*, ⛔ **and that is now provably unreachable**, so the track's
-  finish line currently names a state no corpus can enter.
+- ✅ **`Q18` — RULED this round**, after two carried. ⭐ **It had no answer because
+  it was two questions: the corpus's finish line (M4, the site) and the exercise's
+  (M8, the findings log).** ⛔ **And `validate` green is neither — it is a gate, and
+  a gate a framework defect holds shut is `Blocked`, not `not done`.** See above.
 - ⭐ **`F24` — corrected.** See the catalogue banner and the four board sites.
 
 ---

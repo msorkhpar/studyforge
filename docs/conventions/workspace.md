@@ -107,17 +107,31 @@ workspace hands the build four sibling repositories, widening the container's
 trust boundary for a convenience. ⭐ The image is **right** to exclude this
 subject, which is what makes `host-verified` a state rather than an excuse.
 
-> ⚠️ **Ruling 53 is landing in TWO documents and the CTO owns which is the
-> source.** ⛔ **Do not resolve this here.** ⭐ **Measured 2026-09-10: on
-> `chore/po-round18` this file is the only holder — `host-verified` appears
-> nowhere in `review-rubric.md`.** ⚠️ **The rubric's copy is on the CTO's
-> unmerged branch**, so this is a **pending** collision, not an existing one.
+> ⛔ **Ruling 53 is LIVE IN TWO DOCUMENTS ON THE RELEASE TIP, and the CTO owns
+> which is the source.** ⛔ **Do not resolve this here.**
 >
-> ⭐ **Neither of us could see the other, which is the finding-number defect one
-> level up: the same ruling, two artifacts, two branches, one wave.** ⛔ **And it
-> is the same remedy — whichever loses POINTS at the winner and is not silently
-> deleted**, because a ruling that vanishes from a document somebody was told to
-> read is worse than a ruling recorded twice.
+> **Measured 2026-09-10, per ref, because the ref is the whole point:**
+>
+> | ref | `review-rubric.md` | `workspace.md` |
+> |---|---|---|
+> | ⭐ **`release/m0-foundations`** | ⛔ **5** | **2** |
+> | `chore/po-round18` (predates the merge) | 0 | 3 |
+>
+> ⚠️ **I first reported this as *pending on an unmerged branch*. It is not** — the
+> CTO merged it at `1ee184f` while I was running, and my branch was cut from
+> `e5bcc85`. ⛔ **So the collision is real today, and this note makes it three
+> copies on merge, not two.**
+>
+> ⛔ **The finding is not the number; it is that NEITHER OF US STATED THE TREE.**
+> ⭐ **Two correct measurements, two different answers, one unstated ref** —
+> ⚠️ **which is branch-state-quoted-as-tip-state arriving in the *under*-reporting
+> direction, the one this round named as worse because it reads as caution.**
+> ⭐ **A measurement without its ref is not a weak measurement; it is not a
+> measurement.**
+>
+> ⭐ **The remedy is unchanged: whichever loses POINTS at the winner and is not
+> silently deleted**, because a ruling that vanishes from a document somebody was
+> told to read is worse than a ruling recorded twice.
 
 ⚠️ An explicit `--workspace` is still answered inside the image: the seam is
 *"the computed workspace is not visible"*, not *"we are in a container"*, and
