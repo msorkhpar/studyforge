@@ -194,23 +194,55 @@ def test_the_first_unit_of_the_reading_order_has_no_previous_link_in_its_bar():
     assert 'rel="prev"' not in page
 
 
-def test_a_same_directory_neighbour_survives_in_the_data_and_is_dropped_by_the_page():
-    # ⛔ **`SF-13/1`, pinned rather than described.** Under `sibling` placement
-    # two units of one container share a directory, so `relative_href` answers
-    # with a bare filename — and `render.page.text.SAFE_SCHEMES` is a closed
-    # set of prefixes with no entry for one, so `navigation._link` drops the
-    # link rather than rendering it. ⚠️ The contents data is right; the page
-    # is short by one slot, silently.
+def test_a_same_directory_neighbour_survives_in_the_data_and_now_survives_on_the_page():
+    # ⛔ **`SF-13/1`, fixed by `W57`.** This test pinned the defect: under
+    # `sibling` placement two units of one container share a directory, so
+    # `relative_href` answers with a bare filename, and `SAFE_SCHEMES` was a
+    # closed set of *prefixes* with no entry for one — so `navigation._link`
+    # dropped the slot with nothing raised. ⭐ Its author wrote it so that the
+    # day somebody widened the set, the test would say so. This is that day, and
+    # the assertions are inverted rather than deleted.
     case = depth2_unit_01()
     built = fixture_contents("depth2")
     key = "basics/01-getting-started/unit-01"
     slots = links(built, key)
     assert slots["next"]["href"] == "unit-02-fields-and-constructors.unit.html"
-    assert safe_href(slots["next"]["href"]) is None
+    assert safe_href(slots["next"]["href"]) == slots["next"]["href"]
     page = page_document.compose(case.document, case.placement, a_bar(built, key))
     assert '<nav aria-label="Between units">' in page
-    assert 'rel="prev"' in page and 'rel="up"' in page
-    assert 'rel="next"' not in page
+    assert 'rel="prev"' in page and 'rel="up"' in page and 'rel="next"' in page
+
+
+#: How the rendered bar spells each slot `contents.links` can return.
+BAR_RELATIONS = {"previous": 'rel="prev"', "index": 'rel="up"', "next": 'rel="next"'}
+
+
+@pytest.mark.parametrize(
+    ("corpus", "case"), (("depth1", depth1_unit_02), ("depth2", depth2_unit_01))
+)
+def test_every_slot_the_contents_compute_reaches_the_page_under_both_profiles(corpus, case):
+    # ⛔ **`W57`'s acceptance clause, and it is watched to fail first**: before
+    # the fix `depth2` computed **13** slots and rendered **7**, while `depth1`
+    # computed **7** and rendered **7** — which is why the clause was met under
+    # `tree` and the hole sat beside it (Ruling 56).
+    #
+    # ⭐ Ruling 128 — the population is reported, never reduced to a scalar that
+    # agrees with itself: the failure names the page and the slot.
+    rendered = case()
+    built = fixture_contents(corpus)
+    computed, present = 0, 0
+    for entry in order(built):
+        slots = links(built, entry.key)
+        page = page_document.compose(rendered.document, rendered.placement, a_bar(built, entry.key))
+        for field, spelling in BAR_RELATIONS.items():
+            if field not in slots:
+                continue
+            computed += 1
+            if spelling in page:
+                present += 1
+            else:
+                pytest.fail(f"{corpus} {entry.key}: {field} -> {slots[field]['href']} was dropped")
+    assert computed and computed == present, (corpus, computed, present)
 
 
 def test_a_corpus_of_one_unit_still_points_at_its_index():

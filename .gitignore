@@ -35,6 +35,13 @@ site.json
 # passes locally and fails everywhere else.
 !tests/fixtures/**
 
+# An agent's own scratch: sweep logs, mutant backups, harnesses (Ruling 139).
+# ⛔ Not ignoring it is not a tidiness problem. The quality floor walks the
+# repository, so an unignored `.scratch/` makes the floor read a mutant backup
+# and a poisoned probe as this repository's own source — measured once as
+# `exit 1, 108 findings` against a tree with nothing wrong in it.
+.scratch/
+
 # Editors / OS
 .idea/
 .vscode/
