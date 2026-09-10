@@ -209,7 +209,9 @@ numbers match EX-05 exactly. No personal data anywhere in it (R7).
 
 ### SF-28 — Framework build and serve CLI
 **Milestone** **M4** · **Depends on** SF-10, SF-13, SF-14 · **Team** pair
-**Owns** `studyforge/cli/` — the framework's own entry point
+**Owns** `studyforge/cli/` — the framework's own entry point — **and
+`pyproject.toml`'s `[project.scripts]` table**, which this row is the only
+minter of (added by the PO, round 34, Ruling 157)
 **Context** ~40k — spec §3.2, §9; OPS-04's stage list
 
 **Definition.** The framework's orchestration surface, living **in the
@@ -316,6 +318,73 @@ to a file the build wrote. Ruled by the PO 2026-09-10 from `QA-03/8`; ⛔ **the
 finding routed itself to `SF-27`, which renders a page and owns no build**, and
 the correction is in [`BOARD.md`](BOARD.md). **M4 is the earliest ref at which the
 defect can be observed, which is why the clause lands here.**
+
+#### ⛔ One acceptance condition added by the PO, 2026-09-10 (round 34) — **Ruling 157**
+
+⚠️ **This row also gains `pyproject.toml`'s `[project.scripts]` table to its
+`Owns`** — the clause below is unmeetable in a branch that does not declare it,
+and Ruling 157 says the conversion lands **in the same branch**, never as a
+follow-up.
+
+⛔ **A check with a SCHEDULED EXPIRY is an acceptance condition on the task that
+expires it.** `tests/test_authoring_reference.py`'s
+`test_no_fence_anywhere_offers_a_console_script_that_does_not_exist` exists only
+because there is no entry point. ⭐ **This task builds one, and the check is
+CONVERTED — never deleted.**
+
+⛔ **It is not deleted, and the rubric already says why at §2e:** *a row that goes
+green by DISAPPEARING has removed or hidden the exception.* ⭐ **The blanket
+refusal becomes a DERIVATION from `[project.scripts]`, and the population stays
+whatever `commanded_pages()` returns — 11 documents and growing:**
+
+> **Converted predicate:** a fenced `studyforge <verb>` line names a verb the
+> entry-point table registers. A verb that is not registered still fails; a
+> registered one passes. ⛔ **Derived from `pyproject.toml`, never from a list
+> in the test.**
+
+⭐ **AND THE SECOND HALF, WHICH IS THE POINT: the divergence-caveat population
+must read EMPTY.** ⛔ **A caveat that outlives its ground is the second copy
+nobody re-measures** — the exact failure `CLAUDE.md` was rewritten over at round
+34. So the test asserts **both directions**: the spelling is registered, **and**
+no document still says the entry point is not built yet.
+
+```bash
+# ⛔ SF-28's second acceptance half. Both lines must print NOTHING at its merge ref.
+git grep -InE 'console entry point|\[project\.scripts\]|before .?SF-28.? registers|belongs to .?SF-28' \
+  -- docs/authoring src/ tests/ pyproject.toml
+# and the spelling the two SKILL.md fences and the adapter test pin:
+git grep -In 'python3 -m studyforge\.validate' -- src/studyforge/skills tests/studyforge/skills
+```
+
+⛔ **BLAST RADIUS — MEASURED BY THE PO AT `cab8a04`, AND IT IS ELEVEN FILES.**
+⚠️ **`W61/4` counted FOUR; CTO round 41 corrected it to SIX; the derived
+population is ELEVEN.** ⭐ **The two the CTO's six missed are the two that matter
+most — `pyproject.toml` and `src/studyforge/cli/__init__.py` are where the
+absence is DECLARED, so a sweep that misses them misses the ground the caveat is
+about.** ⛔ **`PO-34/2`.**
+
+| # | file | what `SF-28` breaks in it |
+|---|---|---|
+| 1 | `docs/authoring/README.md` | the divergence caveat |
+| 2 | `docs/authoring/validate.md` | the divergence caveat |
+| 3 | ⛔ **`pyproject.toml`** | ⛔ **the declaration of absence itself** — `# No [project.scripts] yet` |
+| 4 | ⛔ **`src/studyforge/cli/__init__.py`** | ⛔ **the module docstring restates the absence** |
+| 5 | `src/studyforge/cli/plan/__main__.py` | *"belongs to `SF-28`"* |
+| 6 | `src/studyforge/skills/adapter/SKILL.md` | the caveat **and** the fence |
+| 7 | `src/studyforge/skills/onboarding/SKILL.md` | the caveat **and** the fence |
+| 8 | `src/studyforge/validate/__main__.py` | *"before `SF-28` registers it"* |
+| 9 | `tests/studyforge/validate/test_main.py` | *"before `SF-28` registers it"* |
+| 10 | `tests/test_authoring_reference.py` | ⛔ **the predicate itself** |
+| 11 | `tests/studyforge/skills/adapter/test_init.py` | ⛔ **asserts `python3 -m studyforge.validate <corpus-root>` is in the adapter skill** — no caveat text, so a caveat sweep alone cannot see it |
+
+⛔ **A task that discovers eleven red files at its own merge gate spends a round
+on it.** ⭐ **The CTO proved row 11 is not hypothetical: re-spelling the adapter
+fence back to `studyforge validate <corpus-root>` gave `2 failed`, the second on
+exactly that assertion.**
+
+⚠️ **`SF-28` is `[project.scripts]`'s only minter, so this clause has one owner
+and cannot be split off.** ⛔ **It must land before `SF-28` is dispatched — it is
+an edit to an existing Acceptance, not a new row.**
 
 ---
 

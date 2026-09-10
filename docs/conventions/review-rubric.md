@@ -89,6 +89,72 @@ Grow the second"* — was met in **every interval it alarmed on**.
 longer quotes this document's line count**, and a line count is not a `W34`
 start condition (struck at Ruling 118) nor a reported measurement (struck here).
 
+⛔ **THE COMMAND, FENCED — added by the PO, round 34, from `CTO-41/5`.**
+⚠️ **Until now this was the one number in this document with no fenced command,
+and two offices computed two different denominators from one file: the PO read
+`367/2536` (`.145`) and the CTO `367/2392` (`.153`), differing by **142** — one
+per fence DELIMITER.** ⭐ **The numerators agreed exactly both times, and the
+direction agreed, so no conclusion turned on it** — ⛔ **but a number two people
+compute differently is a number nobody can be held to.**
+
+⭐ **AND THE QUESTION WAS ANSWERABLE ALL ALONG, from the TABLE ABOVE.**
+⛔ **`CTO-41/5` says *"nothing in Ruling 149 says which is meant."* Something
+does: the three rows above are a THREE-POINT ORACLE, and only one derivation
+reproduces them.** ⚠️ **Measured at the three refs the table names:**
+
+| ref | total | ⛔ **numerator EXCLUDING delimiters** | numerator INCLUDING them | ⭐ **the table says** |
+|---|---|---|---|---|
+| `16049d2` | 1977 | ⭐ **257 → `.130`** | 369 → `.187` | **257**, `.129` |
+| `e309172` | 2245 | ⭐ **342 → `.152`** | 472 → `.210` | **342**, `.152` |
+| `bfc0ff6` | 2293 | ⭐ **344 → `.150`** | 476 → `.208` | **344**, `.150` |
+
+⛔ **DECIDED, on evidence rather than by decree: the numerator EXCLUDES the fence
+delimiters and the denominator is every line.** ⭐ **The exclusive form reproduces
+all three published rows exactly; the inclusive form reproduces none of them.**
+⚠️ **So both offices' readings were UNCHECKABLE against a table that could have
+checked them, and the check was three `git show`s away — `PO-34/8`.**
+
+```bash
+# ⛔ THE ONE DERIVATION. Numerator: fence BODIES only, delimiters excluded.
+#    Denominator: every line. Verified against Ruling 149's own three rows.
+f=docs/conventions/review-rubric.md
+total=$(wc -l < "$f")
+exe=$(awk '/^```/{inside=!inside; next} inside{print}' "$f" | wc -l)
+awk -v a="$exe" -v b="$total" 'BEGIN{printf "%d / %d = %.3f\n", a, b, a/b}'
+```
+
+⛔ **Pass: the ratio did not fall against the previous round's, computed by THIS
+command.** ⚠️ **A ratio quoted from any other derivation is not comparable to the
+table above and must say so.**
+
+#### ⛔ Ruling 160 (CTO round 41) — an ARGUMENT-shaped clause is admissible here, but it owes a RECORDED READING
+
+> ⭐ **An argument-shaped clause is admissible.** It is not an exception to be
+> apologised for; it is rubric content the fenced ratio cannot see, and this
+> document's own first page says the judgement clauses are the part of review
+> that matters most. ⛔ **A governor that drives them out has optimised the
+> document against its own thesis.**
+>
+> ⛔ **But it owes a RECORDED READING — an output, where a command is
+> impossible.** ⭐ **A judgement clause names THE ARTIFACT A REVIEWER MUST
+> PRODUCE**: a row, a table, or a named sentence in the verdict. ⚠️ **That is
+> what makes it checkable by wave-open check 3 and by the next reviewer, and it
+> is the difference between a clause and an essay.**
+
+⛔ **THE GOVERNOR ABOVE GAINS A DECLARED EXCEPTION, BOUNDED BY DISCLOSURE.** A
+round may decline the ratio **only** when **both** hold:
+
+| | the condition | who can check it |
+|---|---|---|
+| **(a)** | ⭐ its author reports the decline **BEFORE BEING ASKED**, with the numbers | ⛔ **the author, and nobody else can supply it** |
+| **(b)** | ⭐ every un-fenced clause it added **names the reading it obliges** | ⭐ **anyone, from the clause's own text** |
+
+⛔ **Absent both, the ratio binds and the decline is a FINDING.** ⚠️ **A governor
+that can be waived by the person it governs is not one** — which is why (a) is
+disclosure by the author and (b) is checkable by anyone. ⭐ **PO round 33 met (a)
+in full; (b) is discharged for Rulings 151 and 152 below, by the PO at round
+34.**
+
 - ⛔ **`PO-24/8`'s remedy is CLOSED as overtaken** — it was owed against a breach
   the correct instrument says never happened.
 - ⭐ **`W34` is dispatched on its MERITS, not on an alarm**, and it is not
@@ -885,6 +951,35 @@ its subject — `Dockerfile`, `compose.yaml` or `docker/dev/check`. ⛔ A claim
 that the image *cannot* run something, unsupported by the image's own text, is
 `did not run` wearing this row's clothes.
 
+##### ⛔ Ruling 159 (CTO round 41) — the state is named in the SAME SENTENCE as the number, and the check says it in its OWN OUTPUT
+
+> ⛔ **A `host-verified` reading names that state in the SAME SENTENCE as its
+> number, and the check says it in its OWN OUTPUT.** ⭐ Not in a footnote, not in
+> a neighbouring paragraph, not only in the section header — ⚠️ **the sentence,
+> because a reader stops at the first sentence that answers their question.**
+
+⭐ **`tools.workspace verify` is the worked case and it is ADMISSIBLE:** its
+subject is the **sibling checkouts**, and ⛔ **Ruling 108 already measured that
+`git worktree add` does not carry them** — so the image's answer would be
+**wrong**, not merely absent, which is Ruling 53's own discriminator one
+paragraph up.
+
+⛔ **THE DEFECT WAS NEVER THE HOST RUN; IT WAS THAT NOBODY SAID SO.** ⚠️ **PO
+round 32 published a RED reading — `workspace verify` exit 1 — taken outside
+Ruling 40's environment, and neither its board section nor its handoff carried
+the state (`PO-33/1`).** ⛔ **A number without its state is indistinguishable
+from a pinned number, and a RED one is worse, because it is acted on.**
+
+⭐ **The form, and it is one line:**
+
+> **Check 6, host-verified** — the pinned image mounts one directory and cannot
+> see the sibling checkouts (Ruling 108), so this ran on the host —
+> `python3 -m tools.workspace verify` exits **1** on `ISO-8583-jPOS-tutorial`.
+
+⛔ **`W72` inherits this as an ACCEPTANCE CONDITION, not a note:** whatever it
+changes, `tools.workspace verify` stays runnable on the host **and its own
+output names the `host-verified` state in the same line as the number.**
+
 ##### ⭐ Ruling 61 — this section is the **source**; `workspace.md` is its worked example
 
 ⚠️ **Ruling 53 is written in two documents and that was reported as the
@@ -1108,6 +1203,19 @@ would have refused *"recognisably equivalent"* on those grounds alone.
 sweep's live population has NOT been taken and no number for it is quoted here
 (Ruling 81) — taking it is the first job of the row that owns it.**
 
+⭐ **THE READING THIS CLAUSE OBLIGES — added by the PO, round 34, discharging
+Ruling 160(b).** ⛔ **A reviewer of any branch that adds or edits an Acceptance
+clause in `docs/tasks/E*.md` produces ONE ROW in the verdict, in this form:**
+
+> ⛔ **`R20 subject:` — for each clause added or edited, the repository its
+> subject is read in, and `framework` or `consumer`.** ⭐ **A `consumer` row is a
+> CHANGES REQUESTED on the plan, not on the branch (Ruling 129), and the clause
+> is written on the integration side from the outset.**
+
+⚠️ **An empty table is a legitimate row and is printed as `R20 subject: 0 clauses
+added or edited` — the emptiness claim discharged by a printed zero, never by
+silence (Ruling 155).**
+
 #### ⛔ Ruling 152 (CTO round 40) — where one helper names N faults, every caller refuses all N or says which it does not
 
 > ⛔ **Where one helper names N faults, every caller either refuses all N, or
@@ -1134,6 +1242,20 @@ Ruling 128 catching a live defect rather than an instrument defect.
 byte identity over 16 `str(ManifestError)` rows; adding an arm changes behaviour
 inside a refactor, which is exactly what the byte proof exists to rule out.
 ⚠️ **Reported, not smoothed** — and the remedy is scheduled as its own row.
+
+⭐ **THE READING THIS CLAUSE OBLIGES — added by the PO, round 34, discharging
+Ruling 160(b).** ⛔ **A reviewer of any branch that touches a helper naming more
+than one fault, or one of its callers, produces ONE TABLE in the verdict:**
+
+> ⛔ **A row per fault the helper names × a column per caller, each cell
+> `refuses` / `does not refuse, because <reason in the caller's own body>`.**
+> ⭐ **The greppable half is the pass condition: every phrase in the refusal
+> vocabulary is reachable from at least one caller, and a phrase reachable from
+> none is a MISSING GUARD, printed by name.**
+
+⚠️ **The table is produced even when it is all `refuses`** — ⛔ **an unprinted
+table and a table with no gaps are indistinguishable from a green**, which is the
+whole shape of this ruling one level up.
 
 #### ⛔ Ruling 153 (CTO round 40) — `.scratch/` holds what a sweep WRITES; it never holds a CHECKOUT
 
@@ -2357,10 +2479,35 @@ Merge <branch>: <one line> (CTO: APPROVE)
 ```
 
 ```bash
-git log --merges --format='%s' "$REVIEW_BASE" | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)'
+# ⛔ --first-parent IS LOAD-BEARING. Added by the PO, round 34, from `CTO-41/2`.
+git log --merges --first-parent --format='%h %s' "$REVIEW_BASE" \
+  | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)'
 ```
 
 **Pass = no output** *for merges made after this clause landed.*
+
+⛔ **WHY `--first-parent`, MEASURED — and without it this check reads 50 where
+the answer is 24.** ⚠️ **The clause used to walk `--merges` alone, which reaches
+merges made in BOTH directions.** ⭐ **Its top entries were
+`Merge branch 'release/m0-foundations' into feat/SK-08-delivery` and its
+siblings: merges made INTO a feature branch, reachable from release once that
+branch lands, and which never carried a verdict BY DESIGN.**
+
+| instrument | rows, **re-derived by the PO at `cab8a04`** | what they are |
+|---|---|---|
+| `--merges` alone | ⛔ **50** | both directions; **26** of them are release→branch and are not this check's subject |
+| ⭐ `--merges --first-parent` | ⭐ **24** | ⛔ **what was merged ONTO release without a verdict** — the question the clause is asking |
+
+⭐ **All 24 are pre-clause: 143 first-parent merges at `cab8a04`, the most recent
+verdictless one `ab5b1a4`, dated 2026-09-09, and every first-parent merge after
+it carries a verdict.** ⚠️ **The CTO read `139 / 24 / ab5b1a4` at `ce80120` and
+this round reads `143 / 24 / ab5b1a4`** — ⭐ **`+4` is exactly this window's four
+merges and the verdictless count did not move, which is the arithmetic the
+re-derivation exists to expose.** ⛔ **So the gate is CLEAN under the migration
+this clause declares** —
+⚠️ **but a reviewer running the old form read 50 lines, found them all
+explicable, and learned nothing.** ⛔ **A check whose output is routinely ignored
+is a check that has stopped running.**
 
 ⚠️ **The migration, named rather than left to be discovered** (`agent-protocol.md`,
 *the tightening owns the migration*). Every merge on `release/m0-foundations`
