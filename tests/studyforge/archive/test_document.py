@@ -47,6 +47,18 @@ DECORATOR = {
     "text": 'import flask\n@app.route("/x")\ndef x(): ...',
 }
 
+#: A minimal record for the one optional key that has a shape of its own.
+#: ⚠️ Safe-pattern clean by construction — `studyforge.exercise` refuses
+#: anything else, and `tests/studyforge/exercise/` is where that is proved.
+GRADED_EXERCISE = {
+    "main_path": "practice/src/main/java/Solution.java",
+    "test_path": "practice/src/test/java/SolutionTest.java",
+    "run_command": ["mvn", "-q", "compile"],
+    "test_command": ["mvn", "-q", "test"],
+    "provenance": "bundled",
+    "trust": "authoritative",
+}
+
 BASE = {
     "source": "demo",
     "address": ["solo"],
@@ -126,7 +138,16 @@ def test_the_key_order_is_what_reaches_disk():
 def test_optional_keys_are_appended_after_the_digest():
     # ⛔ So adding one cannot disturb `content_sha256`, and a document written
     # before a key existed still renders what it always did.
-    document = build(**BASE, starting_code="x", assets_sha256="a" * 64, media_skipped=True)
+    # ⚠️ Built as a **practice**: `exercise` joined `OPTIONAL_KEYS` at SF-23 and
+    # belongs to a practice document, so asserting "every optional key, in
+    # order" now needs the one document kind that may carry all of them.
+    document = build(
+        **{**BASE, "kind": "practice"},
+        starting_code="x",
+        assets_sha256="a" * 64,
+        media_skipped=True,
+        exercise=GRADED_EXERCISE,
+    )
     assert tuple(document)[: len(DOCUMENT_KEYS)] == DOCUMENT_KEYS
     assert tuple(document)[len(DOCUMENT_KEYS) :] == OPTIONAL_KEYS
 

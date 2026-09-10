@@ -46,6 +46,32 @@ from __future__ import annotations
 SAFE_TO_QUOTE = (int, bool)
 
 
+def describe_keys(keys: object) -> str:
+    """Name the keys that can be named safely, and count the ones that cannot.
+
+    ⭐ **A different guarantee from `describe`, and the difference is why this
+    is a function rather than a call to it.** `describe` refuses to reproduce a
+    value because *any* string may carry an identifier. A **key** that is a
+    plain lowercase identifier structurally cannot: no `/`, no `@`, no `:` and
+    no space fits the pattern, so there is no path, address or token it could
+    be — and naming it is what makes "you misspelled this field" actionable.
+
+    ⛔ **Structural, never a shape list.** Ruling 17 measured what the
+    shape-list argument is worth: 4 of 10 poison shapes came back clean because
+    the personal-data gate's list happened to name them, not because anything
+    refused. This asks what a string *can hold*, which does not depend on
+    anybody keeping a list current.
+
+    ⚠️ Anything else is counted rather than shown, so a caller always learns how
+    many keys it did not recognise even when none of them can be quoted.
+    """
+    keys = list(keys)
+    plain = sorted(k for k in keys if isinstance(k, str) and k.isidentifier() and k.islower())
+    if len(plain) != len(keys):
+        return f"{len(keys)} of which {len(plain)} can be named safely: {plain}"
+    return str(plain)
+
+
 def describe(value: object) -> str:
     """Name what `value` is, without reproducing what it says.
 

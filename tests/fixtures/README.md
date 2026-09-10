@@ -61,11 +61,33 @@ not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 
 | Unit | Carries | So that |
 |---|---|---|
-| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay | SF-10(b), and a practice's three-section layout |
+| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record in the set** | SF-10(b), a practice's three-section layout, and §7's **graded** state |
 | `basics/01-getting-started` 2 | `table`, `rule`, no overlay | SF-10(a), the derived shape |
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
-| `advanced/02-going-further` 1 | a lesson, a practice, `url_slug` | a second container, SF-05's carried field |
+| `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
 | `advanced/02-going-further` 2 | a closing lesson, plus a fenced Maven POM | a container whose last unit has no exercise; fence awareness at depth 2 |
+
+## ⛔ §7's three exercise states are carried by the set, not by a flag
+
+⭐ **All three appear across these two corpora, and none of them is written
+down anywhere as a state.** There is no `state` field to set and none to
+forget — the state *is* which files exist (spec §7, C5, SF-23):
+
+| State | Where it is | How it appears |
+|---|---|---|
+| **none** | all of `depth1` | no `practice-M.json` at all |
+| **ungraded** | `advanced/02-going-further` unit 1 | a practice document with blocks and **no `exercise` key** |
+| **graded** | `basics/01-getting-started` unit 1 | the `exercise` key is present |
+
+⚠️ **`depth1` is the common case and it is `none` throughout.** ISO-8583 is
+`none` for all 38 units and SPARQL is `ungraded` for all 19; the Java repo is
+the exception. ⛔ A corpus with no graders is **complete, not short** (§11.0,
+C5), so nothing in `depth1` should be read as a fixture that is missing
+something.
+
+⛔ **Do not add an `exercise` to a second document to "improve coverage".** The
+graded state is the exception in real material, and a set in which it is the
+majority is a set that will let a design fitted to the exception look correct.
 
 ## Fence awareness — the highest-value thing in this set
 

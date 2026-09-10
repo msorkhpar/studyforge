@@ -74,7 +74,10 @@ from studyforge.address import Address
 from studyforge.archive.blocks import counts_of
 from studyforge.archive.errors import ArchiveError
 from studyforge.archive.scrub import assert_clean
-from studyforge.describe import describe
+from studyforge.describe import describe, describe_keys
+from studyforge.exercise import Exercise, ExerciseError
+from studyforge.exercise import of as exercise_of
+from studyforge.exercise import to_document as exercise_document
 from studyforge.version import check as check_version
 
 #: The document format version. ⚠️ Bumped when a reader of the old shape would
@@ -107,7 +110,14 @@ DOCUMENT_KEYS = (
 )
 
 #: Written only when they have something to say, and always after the digest.
-OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped")
+#: ⚠️ **Appended, never inserted.** `exercise` joined at SF-23 and went on the
+#: end for that reason: every document written before it existed still renders
+#: the bytes it always did.
+OPTIONAL_KEYS = ("assets_sha256", "starting_code", "media_skipped", "exercise")
+
+#: Every key this format defines. ⛔ A document carrying anything else is
+#: **refused** — see `parse`, and the measurement in its docstring.
+KNOWN_KEYS = frozenset(DOCUMENT_KEYS) | frozenset(OPTIONAL_KEYS)
 
 #: What a `video` **record** says, in the order it is written. ⚠️ Two halves
 #: that must not be confused: `src`, `poster` and `mime` are how the page plays
@@ -156,6 +166,7 @@ def build(
     assets_sha256: str | None = None,
     starting_code: str | None = None,
     media_skipped: bool = False,
+    exercise: object = None,
 ) -> dict:
     """Assemble one archive document — every gate run, nothing written.
 
@@ -205,6 +216,11 @@ def build(
         document["starting_code"] = starting_code
     if media_skipped:
         document["media_skipped"] = True
+    if exercise is not None:
+        # ⛔ Validated on the way in, not merely carried. The four workspace
+        # values reach a file a runner executes against, and R5's pair is
+        # refused here so no consumer has to remember to ask (spec §7).
+        document["exercise"] = _exercise_document(exercise, document, where)
 
     # ⛔ The second gate, over every string in the WHOLE document. This is the
     # one that reaches the metadata — a `source`, an asset's remote address —
@@ -226,6 +242,25 @@ def parse(text: str, where: str) -> dict:
     refused for *that* reason before anything else is said about it — otherwise
     a v2 archive is refused for a v1 reason and the integrator upgrades the
     wrong thing.
+
+    ## ⛔ A key this format does not define is refused, not carried
+
+    ⚠️ **Measured 2026-09-09, before this check existed:** a document carrying a
+    top-level `"exercise"` object validated **green — 0 findings, 0 unchecked
+    claims**. `content_sha256` covers `blocks` and nothing else, so an unknown
+    sibling key disturbs no digest and no count, and nothing asked whether it
+    was a key at all.
+
+    ⭐ **Tolerating an unknown key means tolerating a typo in a known one**, and
+    a misspelled `exercise` is a grader the reader is never offered while the
+    corpus passes every check. That is the worst outcome available here: a
+    corpus green with its graders invisible. ⛔ So the key set is closed, and
+    adding a key is a change to `DOCUMENT_KEYS` or `OPTIONAL_KEYS` rather than
+    something a writer can do by accident.
+
+    ⚠️ The check runs **after** the gate, deliberately: `archive.scrub` walks
+    dict keys as well as values, so by the time a key can be named in a refusal
+    it has already been swept.
     """
     try:
         document = json.loads(text)
@@ -246,6 +281,8 @@ def parse(text: str, where: str) -> dict:
         error=ArchiveError,
     )
     assert_clean(document, where)
+    _require_known_keys(document, where)
+    _require_valid_exercise(document, where)
     return document
 
 
@@ -273,3 +310,50 @@ def _require_iso_date(value: object, where: str) -> None:
         raise ArchiveError(
             f"{where} has an invalid 'ingested' value; it must be an ISO date, YYYY-MM-DD"
         )
+
+
+def _exercise_document(exercise: object, document: dict, where: str) -> dict:
+    """Validate an exercise on its way into a document, and return what is written.
+
+    ⛔ Round-tripped through `studyforge.exercise` even when the caller already
+    holds an `Exercise`: the dataclass is frozen, not validated — anybody can
+    construct one with a path outside the safe pattern — and the record that
+    reaches disk must be one the reader would accept back.
+    """
+    raw = exercise_document(exercise) if isinstance(exercise, Exercise) else exercise
+    try:
+        # ⭐ Asked through `of`, so the practice-kind rule is applied by the
+        # module that owns it rather than restated here.
+        record = exercise_of({"kind": document["kind"], "exercise": raw}, where)
+    except ExerciseError as error:
+        raise ArchiveError(str(error)) from None
+    assert record is not None  # noqa: S101 - the key is present by construction
+    return exercise_document(record)
+
+
+def _require_known_keys(document: dict, where: str) -> None:
+    """Refuse a top-level key this format does not define. See `parse`."""
+    unknown = [key for key in document if key not in KNOWN_KEYS]
+    if unknown:
+        raise ArchiveError(
+            f"{where} carries {len(unknown)} key(s) the archive format does not "
+            f"define, {describe_keys(unknown)}. The format is {list(DOCUMENT_KEYS)} plus "
+            f"{list(OPTIONAL_KEYS)}. A key nothing reads is how a misspelled "
+            f"field becomes content nobody is ever shown."
+        )
+
+
+def _require_valid_exercise(document: dict, where: str) -> None:
+    """Apply the exercise contract to a document that carries one (spec §7).
+
+    ⭐ Here rather than in a consumer, so R5 has one enforcement point that
+    every consumer passes through. `studyforge validate` refuses the forbidden
+    pair because it parses the document; so does anything that renders one.
+    """
+    try:
+        exercise_of(document, where)
+    except ExerciseError as error:
+        # ⛔ `archive.errors` states the rule: reading an archive document
+        # raises `ArchiveError` and nothing else, including where the rule
+        # being applied is somebody else's.
+        raise ArchiveError(str(error)) from None

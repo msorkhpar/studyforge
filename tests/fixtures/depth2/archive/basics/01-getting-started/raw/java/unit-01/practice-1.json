@@ -69,5 +69,25 @@
     "disclosures": 1
   },
   "content_sha256": "71eed6329bf706e99286122aa2f246c1109fa7d091e8f875adb00ba24b6daa18",
-  "starting_code": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n"
+  "starting_code": "public final class Greeter {\n    public String greet(String who) {\n        // your code here\n    }\n}\n",
+  "exercise": {
+    "main_path": "practice/basics-01/src/main/java/Greeter.java",
+    "test_path": "practice/basics-01/src/test/java/GreeterTest.java",
+    "run_command": [
+      "mvn",
+      "-q",
+      "-pl",
+      "practice/basics-01",
+      "compile"
+    ],
+    "test_command": [
+      "mvn",
+      "-q",
+      "-pl",
+      "practice/basics-01",
+      "test"
+    ],
+    "provenance": "bundled",
+    "trust": "authoritative"
+  }
 }
