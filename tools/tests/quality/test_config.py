@@ -158,3 +158,29 @@ def test_the_real_repository_reads_its_own_documents_and_fixtures():
     assert "tests/fixtures/invalid/personal-data/VIOLATION.md" in swept
     assert "pyproject.toml" in swept
     assert not [name for name in swept if name.startswith(".idea/")]
+
+
+def test_markdown_files_is_a_narrowing_of_the_shared_walk(tmp_path):
+    # ⭐ FND-08 acceptance 6: no second file-walking helper. The narrowing is
+    # one `suffix` test, so exclusions and the sort order are inherited.
+    init_repository(tmp_path)
+    make(tmp_path, ".gitignore", "graphify-out/\n")
+    make(tmp_path, "docs/notes.md")
+    make(tmp_path, "docs/data.json", "{}\n")
+    make(tmp_path, "graphify-out/GRAPH_REPORT.md")
+    make(tmp_path, "__pycache__/cached.md")
+    found = [config.relative(path, tmp_path) for path in config.markdown_files(tmp_path)]
+    assert found == ["docs/notes.md"]
+    assert set(found) <= set(sweep(tmp_path))
+
+
+def test_markdown_files_reads_the_fixture_tree_by_decision(tmp_path):
+    # ⚠️ `tests/fixtures/` is in `EXCLUDED_DIRS`, so a `python_files`-shaped
+    # walk would not see it — and this walk is `text_files`-shaped, where
+    # `EXCLUDED_DIRS` never applied. The decision is recorded rather than
+    # inherited: a fixture may be shaped wrong, but its README is prose.
+    init_repository(tmp_path)
+    make(tmp_path, "tests/fixtures/README.md")
+    assert config.is_excluded("tests/fixtures/README.md")
+    found = [config.relative(path, tmp_path) for path in config.markdown_files(tmp_path)]
+    assert found == ["tests/fixtures/README.md"]
