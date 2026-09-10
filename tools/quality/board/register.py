@@ -3,8 +3,10 @@ r"""Reading a register out of a markdown table, and it is the parser that is har
 **What it does.** Turns `BOARD.md`'s delimited register into
 `(line number, ids, state cell)` rows, and answers what state a cell DECLARES.
 
-**How you use it.** `tools.quality.board` imports `register`, `state`,
-`is_closed`, `cells` and the two markers. Nothing else does.
+**How you use it.** `tools.quality.board` imports this module's parsers, bounds
+and markers, and nothing else does. ⛔ **The names are not listed here**: that
+list is `tools/quality/board/__init__.py`'s import block, and a second copy of
+it is `CTO-47/3` — the finding this module's own rule codes earned.
 
 **Depends on.** `re` and `pointers.strip_code_spans`. Nothing else, ever.
 
@@ -117,13 +119,15 @@ ROW_FRAME = "and nothing else."
 #: Emoji, emphasis and backticks a state cell may wear before its word.
 STATE_LEAD = re.compile(r"^[\s*`~⛔⭐✅⚠️⏳◐→️]+")
 
-RULE_DETAIL = "board-detail"
-RULE_ORPHAN = "board-orphan"
-RULE_DUPLICATE = "board-duplicate"
-RULE_NARRATIVE = "board-narrative"
-RULE_WIDTH = "board-row-width"
-RULE_SIZE = "board-size"
-RULE_STATE = "board-state"
+# ⛔ **The rule codes are NOT here, and their absence is `CTO-47/3`.** ⚠️ This
+# module defined seven of them — `RULE_DETAIL` … `RULE_STATE` — that nothing
+# imported and that it never used itself: `tools/quality/board/__init__.py`
+# raises every finding and declares all eight codes, `RULE_FRAME` included.
+#
+# ⭐ **This project's most-repeated finding, committed inside the module written
+# to stop it: a fact in two places goes stale in the copy nobody re-measures.**
+# ⛔ **Ruff cannot see it** — module-level assignments are not unused imports —
+# ⭐ **so `test_register.py` asserts the absence, derived rather than listed.**
 
 #: A backslash-escaped pipe, which markdown renders as a literal `|`.
 ESCAPED_PIPE = "\\|"
@@ -228,6 +232,30 @@ def is_closed(cell: str) -> bool:
 def table_lines(text: str) -> list[tuple[int, str]]:
     """Return `(line number, line)` for every markdown table row in `text`."""
     return [(n, line) for n, line in enumerate(text.split("\n"), 1) if line.startswith("|")]
+
+
+def argument_bytes(body: str) -> int:
+    """Return the bytes of a row file's ARGUMENT — everything after its frame.
+
+    ⛔ **The subject is the ARGUMENT and not the FILE, and that is Ruling 186.**
+    ⚠️ **Frame overhead measures 224–346 bytes across the live row files**, so a
+    file-size reading returns **279** for `W74` where its argument is **53** —
+    ⭐ **the right number over the wrong span, a family this project has now met
+    five times.**
+
+    ⛔ **The frame is located by its TEXT, never by an index**: `rows/W17.md`
+    carries one extra frame block — the note that `W19` rides with it — and an
+    index would have silently skipped that row's whole argument. ⭐ `ROW_FRAME`
+    is the sentinel, so there is one home for what a frame says rather than two.
+
+    ⚠️ **A file with no frame reads `0` rather than its own length**: there is no
+    argument to measure, and `board-frame` is what reports the missing frame.
+    """
+    blocks = body.split("\n\n")
+    for index, block in enumerate(blocks):
+        if ROW_FRAME in block:
+            return len("\n\n".join(blocks[index + 1 :]).strip().encode())
+    return 0
 
 
 def narrative_bytes(text: str) -> int:

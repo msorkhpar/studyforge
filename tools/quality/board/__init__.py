@@ -81,6 +81,11 @@ home a reader is told to load stays loadable.
 ⛔ **And nothing about `BOARD-ARCHIVE.md`'s size.** A record is *supposed* to
 grow monotonically; that is what makes it a record. ⭐ **Bounding it would push
 the reasoning back onto the board**, which is the defect, not the remedy.
+
+⛔ **Nor anything about `docs/tasks/rows/`'s size**, and for a different reason:
+a bound there would forbid the amendment those files exist for. ⭐ **So
+`board_state` prints their bytes instead — Ruling 183: a bound REMOVED because
+its subject became editable is replaced by a NOTICE, never by nothing.**
 """
 
 from pathlib import Path
@@ -94,6 +99,7 @@ from tools.quality.board.register import (
     REGISTER_OPEN,
     ROW_FRAME,
     STATES,
+    argument_bytes,
     is_closed,
     narrative_bytes,
     register,
@@ -224,10 +230,20 @@ def check_board(root: Path) -> list[Finding]:
                     relative(path, root),
                     1,
                     RULE_FRAME,
-                    f"does not open `# {identifier}` and say what it is. A row file "
-                    f"states which row it argues and that the naming, owner and state "
-                    f"are the board's — ⛔ a file that lost that is a file nobody can "
-                    f"tell apart from a fragment.",
+                    # ⛔ `CTO-47/4`: the message used to claim the file "states
+                    # which row it argues and that the naming, owner and state
+                    # are the board's". ⚠️ **The predicate is TWO SUBSTRINGS and
+                    # cannot read any of that.** ⭐ A weak predicate is the RIGHT
+                    # trade for amendment-proofness (R3's reading, round 47) —
+                    # the message must describe what is CHECKED, not what is
+                    # hoped, or the next reader debugs the wrong claim.
+                    f"does not begin with the line `# {identifier}`, or does not contain "
+                    f"the phrase {ROW_FRAME!r}. ⚠️ Those TWO SUBSTRINGS are the whole "
+                    f"predicate: it does not read what the file SAYS about its naming, "
+                    f"owner or state. ⭐ That weakness is deliberate — a frame survives "
+                    f"every amendment, which is what lets anything at all be required of "
+                    f"a file the PO is told to edit freely. ⛔ Open `# {identifier}` and "
+                    f"state that the row's naming, owner and state are the board's.",
                 )
             )
         if identifier not in expected:
@@ -291,6 +307,39 @@ def board_state(root: Path) -> list[str]:
     ⛔ Where there is no board this SAYS SO rather than returning nothing: a
     silent notice about an absent register is the `0 = 0` this exists to stop
     (Ruling 48), and the honest line names who does enforce presence.
+
+    ## ⛔ `docs/tasks/rows/` is printed with its BYTES, and that is Ruling 183
+
+    ⚠️ **A bound on a row file would forbid the thing the file exists for** —
+    appending to a live row's argument is the contract's own prescribed action,
+    and nothing can tell *"the PO re-scoped a row"* from *"the PO pasted a
+    fragment"*. ⭐ **That argument retires the GATE. It does not retire the
+    MEASUREMENT.**
+
+    ⛔ **Measured by the CTO at round 47, pinned: `rows/` inflated from 28,787
+    bytes to 3,231,307 — 3.2 MB, 112× — and this line came back BYTE-IDENTICAL
+    with the floor clean**, because it printed the files' COUNT and not one byte
+    of their size. ⚠️ **That is the module's own founding defect under a new
+    carrier:** `BOARD.md` was split once for being 1,615 lines, grew to four
+    times that, *"and nothing noticed, because nothing was measuring."*
+
+    ⭐ **A notice forbids nothing, cannot fire on a correct edit, and restores
+    the only property whose absence caused the defect: somebody is measuring.**
+
+    ## ⛔ The THINNEST ARGUMENT is printed beside the widest row — Ruling 186
+
+    ⚠️ **`board-frame` is the right instrument asked the wrong question.** ⛔ A
+    row file can carry its frame and argue nothing — 19 of them were measured
+    doing it, three ending on a dangling *"round 22's mint block above"* that
+    used to point into `BOARD.md` and now points at the frame — ⭐ **but widening
+    `board-frame` to judge whether an argument is PRESENT restores exactly the
+    gate Ruling 180 removed**, because nothing can tell a thin argument from one
+    the PO has not finished writing.
+
+    ⛔ **So the property re-homes to the notice, and NO THRESHOLD is chosen.**
+    ⭐ **Printing the thinnest argument needs none** — ⚠️ **and if a cutoff ever
+    appears here, that is the signal a gate has been rebuilt.** ⛔ **Measure the
+    ARGUMENT, not the file**: see `argument_bytes`.
     """
     text = read_text(root / BOARD)
     if text is None:
@@ -303,13 +352,28 @@ def board_state(root: Path) -> list[str]:
     identifiers = {i for _n, ids, _s in rows for i in ids}
     live = [row for row in rows if not is_closed(row[2])]
     rows_on_disk = _rows_on_disk(root)
+    # ⛔ Ruling 183, and `st_size` rather than a clock or an enumeration order,
+    # over a SORTED population, so the reading is reproducible (R10).
+    rows_bytes = sum(path.stat().st_size for path in sorted(rows_on_disk.values()))
+    # ⛔ Ruling 186, and the tuple's second member is the TIE-BREAK: the thinnest
+    # argument is named deterministically, never by enumeration order (R10).
+    thinnest = min(
+        ((argument_bytes(read_text(path) or ""), name) for name, path in rows_on_disk.items()),
+        default=None,
+    )
+    thin = (
+        f"thinnest argument {thinnest[0]} bytes in {thinnest[1]}"
+        if thinnest
+        else "no row arguments"
+    )
     table = table_lines(text)
     widest = max((len(line.encode()) for _n, line in table), default=0)
     return [
         f"board: {len(rows)} register rows, {len(live)} live, "
-        f"{len(rows_on_disk)} detail files in {ROWS}/; "
+        f"{len(rows_on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
+        f"(no bound — Ruling 183); "
         f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
-        f"widest row {widest} of {BOARD_ROW_CEILING}, "
+        f"widest row {widest} of {BOARD_ROW_CEILING}, {thin}, "
         f"{len(text.encode())} bytes total of "
         f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed."
     ]

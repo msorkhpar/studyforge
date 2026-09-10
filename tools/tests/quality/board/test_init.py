@@ -37,6 +37,7 @@ from tools.quality.board import (
     BOARD_ROW_CEILING,
     REGISTER_CLOSE,
     REGISTER_OPEN,
+    ROW_FRAME,
     ROWS,
     RULE_DETAIL,
     RULE_DUPLICATE,
@@ -44,10 +45,13 @@ from tools.quality.board import (
     RULE_NARRATIVE,
     RULE_ORPHAN,
     RULE_SIZE,
+    RULE_STATE,
     RULE_WIDTH,
+    STATES,
     board_state,
     check_board,
 )
+from tools.quality.board.register import argument_bytes
 
 #: A minimal register: a header, a separator, one closed row and one live one.
 #: ⛔ Written out rather than generated, so a reader can see what the check
@@ -322,3 +326,246 @@ def test_a_row_file_named_for_a_different_row_is_a_finding(tmp_path: Path) -> No
     root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
     (root / ROWS / "W2.md").write_text(_row("W9"), encoding="utf-8")
     assert _rules(check_board(root)) == [RULE_FRAME]
+
+
+# --------------------------------------------------------------------------
+# ⛔ Ruling 183 — `rows/` is printed with its BYTES, and the three readings
+# --------------------------------------------------------------------------
+
+
+def test_live_notice_names_the_row_files_BYTES_and_not_only_their_count() -> None:
+    """⭐ The LIVE reading, against a DERIVED sum rather than a typed number.
+
+    ⛔ **Ruling 181: a number typed beside the thing it measures goes stale in
+    the copy nobody re-measures**, so the expectation is re-derived from the
+    directory on every run and the notice is what carries the figure.
+    """
+    root = repository_root()
+    files = sorted((root / ROWS).glob("*.md"))
+    # ⛔ Ruling 48: an empty rows/ would satisfy every byte assertion below.
+    assert files, f"{ROWS}/ holds no row files, so this reading is vacuous"
+    total = sum(path.stat().st_size for path in files)
+    assert total > 0
+    assert f"{len(files)} detail files in {ROWS}/ holding {total} bytes" in board_state(root)[0]
+
+
+def test_planted_relocation_into_rows_MOVES_the_notice(tmp_path: Path) -> None:
+    """⛔ `ARCH/14`'s `R2`, which is the reading that decided Ruling 183.
+
+    ⚠️ **Measured by the CTO at round 47, pinned: `rows/` inflated from 28,787
+    bytes to 3,231,307 — 112× — and the `board:` line came back BYTE-IDENTICAL
+    with the floor clean.** ⭐ **The plant is adversarial to the SEARCH TERM**
+    (Ruling 140): the line printed the COUNT, and relocating a board's
+    reasoning into the files it already has does not change the count.
+
+    ⛔ **And it stays a NOTICE**: the same edit must leave `check_board` clean,
+    because appending to a live row's argument is the contract's own prescribed
+    action and a bound there would forbid what the file exists for.
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    before = board_state(root)[0]
+    path = root / ROWS / "W2.md"
+    path.write_text(path.read_text(encoding="utf-8") + "x" * 100_000, encoding="utf-8")
+    after = board_state(root)[0]
+    assert "1 detail files" in before and "1 detail files" in after, "the count cannot see it"
+    assert before != after, "Ruling 183: accretion must move a number somebody reads every run"
+    assert check_board(root) == [], "a notice forbids nothing, and this edit is legal"
+
+
+def test_impossible_a_board_with_no_rows_directory_reads_zero_bytes(tmp_path: Path) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass rather than echoing it.
+
+    ⭐ `0 files holding 0 bytes` is the honest answer for a tree that has a
+    register and no arguments beside it — ⚠️ **and a reader who sees it knows the
+    figure above is about nothing** (Ruling 48).
+    """
+    root = _tree(tmp_path, HEADER + CLOSED + FOOTER)
+    assert f"0 detail files in {ROWS}/ holding 0 bytes" in board_state(root)[0]
+    assert check_board(root) == []
+
+
+# --------------------------------------------------------------------------
+# ⛔ `CTO-47/4` — the `board-frame` message describes the PREDICATE
+# --------------------------------------------------------------------------
+
+
+def test_the_frame_finding_states_what_is_CHECKED_not_what_is_hoped(tmp_path: Path) -> None:
+    """⛔ `CTO-47/4`: the predicate is two substrings; the message claimed more.
+
+    ⚠️ **It said the file *"states which row it argues and that the naming, owner
+    and state are the board's"*** — ⛔ **which `body.startswith` and `in` cannot
+    read.** ⭐ **A weak predicate is the RIGHT trade for amendment-proofness**
+    (`R3`, round 47: a row file rewritten as `# W10` plus *"I ate the sandwich
+    and nothing else."* passes, by design) — ⛔ **but a message that describes a
+    check nobody wrote sends the next reader to debug the wrong claim.**
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    (root / ROWS / "W2.md").write_text("a fragment with no frame at all\n", encoding="utf-8")
+    findings = check_board(root)
+    assert _rules(findings) == [RULE_FRAME]
+    message = findings[0].message
+    assert "`# W2`" in message, "the message names the first substring"
+    assert repr(ROW_FRAME) in message, "and the second one, verbatim"
+    assert "TWO SUBSTRINGS" in message, "and says that is the whole of it"
+
+
+# --------------------------------------------------------------------------
+# ⛔ `CTO-47/5` — `board-state`'s FINDING path, which had no reading at all
+# --------------------------------------------------------------------------
+
+
+def test_live_no_register_row_on_this_board_is_board_state() -> None:
+    """⭐ The LIVE reading. ⛔ `RULE_STATE` was the one code with no test of its path.
+
+    ⚠️ **Ruling 152's reachability held — `check_board` does emit all eight — so
+    this was a test gap and not a missing guard.** ⭐ The population is printed
+    beside the verdict, because `0 register rows` would satisfy this vacuously.
+    """
+    root = repository_root()
+    assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
+    assert int(board_state(root)[0].split("board: ")[1].split(" register")[0]) > 0
+
+
+@pytest.mark.parametrize(
+    "cell",
+    [
+        "after `W44` is done",
+        "DONE-ish — merged `abc1234`",
+        "→ folded into `SF-10`",
+        "◐ spec text landed; the asserting test is owed",
+    ],
+)
+def test_planted_a_state_cell_that_declares_nothing_is_board_state(
+    tmp_path: Path, cell: str
+) -> None:
+    """⛔ The PLANTED reading, adversarial to the SEARCH TERM (Ruling 140).
+
+    ⚠️ **Each plant wears the word the first `is_closed` searched for, in a form
+    the clause did not picture**: `done` arriving after the mention of another
+    row, `done` not ending on a word boundary, and the two shapes that were
+    really on the board — `W5`'s and `W16`'s — which declare nothing at all.
+    ⭐ **`DONE-ish` came from the impossible plant rather than from argument.**
+    """
+    row = f"| W2 | a naming | PO | {cell} | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
+    findings = check_board(root)
+    assert _rules(findings) == [RULE_STATE]
+    assert "declares no state" in findings[0].message
+    assert "W2" in findings[0].message
+
+
+def test_the_cell_that_walked_out_of_the_register_is_LIVE_and_owes_a_FILE(
+    tmp_path: Path,
+) -> None:
+    """⛔ The defect's own cell, and the finding the substring test silently lost.
+
+    ⚠️ **`` `todo` — after `W44` is done ``** read as CLOSED when `is_closed` was
+    a substring test: it owed no detail file, left the bijection, and the floor
+    printed `quality floor: clean` with no finding at all. ⭐ **It DECLARES
+    `todo`, so it is not `board-state`** — the mention is ambiguous and the
+    declaration is not, which is the whole of the closed-set remedy.
+    """
+    row = "| W2 | a naming | PO | `todo` — after `W44` is done | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER)
+    rules = _rules(check_board(root))
+    assert RULE_STATE not in rules, "it declares todo; only the mention is loose"
+    assert rules == [RULE_DETAIL], "⛔ the finding a substring test lost in silence"
+
+
+@pytest.mark.parametrize("declared", sorted(STATES))
+def test_a_cell_that_DECLARES_a_state_is_never_board_state(tmp_path: Path, declared: str) -> None:
+    """⭐ Every word of the closed vocabulary, derived rather than retyped.
+
+    ⛔ **Parametrised over `STATES` itself**, so a word added to the vocabulary
+    joins this population without the test being edited and an EMPTY vocabulary
+    skips rather than passing (Ruling 48).
+    """
+    row = f"| W2 | a naming | PO | ⛔ **{declared}** — `abc1234` | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
+    assert RULE_STATE not in _rules(check_board(root))
+
+
+def test_impossible_board_state_cannot_fire_on_an_EMPTY_register(tmp_path: Path) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass by naming `0`.
+
+    ⭐ A register with no rows has no cell to judge, so silence here is correct —
+    ⚠️ **and `0 = 0` is not a pass**, which is why the population is read out of
+    the notice in the same assertion.
+    """
+    root = _tree(tmp_path, HEADER + FOOTER)
+    assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
+    assert "0 register rows, 0 live" in board_state(root)[0]
+
+
+# --------------------------------------------------------------------------
+# ⛔ Ruling 186 — the notice names the THINNEST ARGUMENT, and no threshold
+# --------------------------------------------------------------------------
+
+
+def test_live_notice_names_the_thinnest_ARGUMENT_beside_the_widest_row() -> None:
+    """⭐ The LIVE reading, and the gap between the two spans is the assertion.
+
+    ⛔ **Ruling 186's constraint: the subject is the ARGUMENT, not the file.**
+    ⚠️ **Frame overhead measures 224–346 bytes across these files**, so a
+    file-size reading is the right number over the wrong span — ⭐ **asserted
+    here as a measured gap on the real tree rather than as a sentence.**
+    """
+    root = repository_root()
+    files = sorted((root / ROWS).glob("*.md"))
+    assert files, f"{ROWS}/ holds no row files, so this reading is vacuous"
+    arguments = {path.stem: argument_bytes(path.read_text(encoding="utf-8")) for path in files}
+    thinnest = min((count, name) for name, count in arguments.items())
+    line = board_state(root)[0]
+    assert f"thinnest argument {thinnest[0]} bytes in {thinnest[1]}" in line
+    assert f"of {BOARD_ROW_CEILING}, thinnest argument" in line, "beside the widest row"
+    assert thinnest[0] < min(path.stat().st_size for path in files), (
+        "⛔ the argument span must be NARROWER than the file span, or it is the "
+        "file being measured under a new name"
+    )
+
+
+def test_planted_padding_the_FRAME_cannot_move_the_thinnest_argument(tmp_path: Path) -> None:
+    """⛔ The PLANTED reading, adversarial to the SEARCH TERM (Ruling 140).
+
+    ⚠️ **The evasion is not a thinner argument; it is a FATTER FRAME** — the
+    shape that makes a file-size reading look healthy while the argument stays
+    empty. ⭐ **The file's bytes move by 5,000 and the argument reading does not
+    move at all**, which is the whole of Ruling 186's first constraint.
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    before = board_state(root)[0]
+    assert "thinnest argument 13 bytes in W2" in before, before
+    path = root / ROWS / "W2.md"
+    was = path.stat().st_size
+    head, argument = path.read_text(encoding="utf-8").rsplit("\n\n", 1)
+    path.write_text(f"{head}\n⭐ **{'pad ' * 1000}**\n\n{argument}", encoding="utf-8")
+    after = board_state(root)[0]
+    assert "thinnest argument 13 bytes in W2" in after, "the frame is not the argument"
+    assert path.stat().st_size - was > 4000, "and the FILE grew by 4,000 bytes while it held"
+    assert check_board(root) == [], "a notice forbids nothing — padding a frame is legal"
+
+
+def test_planted_a_row_file_that_argues_NOTHING_reads_zero(tmp_path: Path) -> None:
+    """⛔ The 19 rows `CTO-48` measured, as a reading rather than as a complaint.
+
+    ⚠️ **`board-frame` passes these files and is RIGHT to** — widening it to
+    judge whether an argument is present restores exactly the gate Ruling 180
+    removed, because nothing can tell a thin argument from an unfinished one.
+    ⭐ **So the notice reads `0` and forbids nothing.**
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    path = root / ROWS / "W2.md"
+    path.write_text(path.read_text(encoding="utf-8").rsplit("\n\n", 1)[0] + "\n", encoding="utf-8")
+    assert "thinnest argument 0 bytes in W2" in board_state(root)[0]
+    assert check_board(root) == [], "⛔ a NOTICE. A gate here is the one Ruling 180 removed."
+
+
+def test_impossible_a_tree_with_no_row_files_has_NO_thinnest_argument(tmp_path: Path) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass by refusing a number.
+
+    ⚠️ **`min()` over nothing is not `0`** — a board with no arguments beside it
+    has no thinnest one, and printing `0` would be the `0 = 0` Ruling 48 names.
+    """
+    root = _tree(tmp_path, HEADER + CLOSED + FOOTER)
+    assert "no row arguments" in board_state(root)[0]
+    assert "thinnest argument" not in board_state(root)[0]
