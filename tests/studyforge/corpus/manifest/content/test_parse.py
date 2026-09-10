@@ -1,76 +1,21 @@
-"""Mirror of `src/studyforge/corpus/manifest/content.py` (R12)."""
+"""Mirror of `src/studyforge/corpus/manifest/content/parse.py` (R12).
+
+⛔ Every test here is about what a declaration must look like to be read at
+all. What a **built** policy then answers is `test_policy.py`'s.
+"""
 
 from __future__ import annotations
 
 import pytest
 
-from studyforge.corpus.manifest import (
-    MIN_WHY_CHARS,
-    Classification,
-    ManifestError,
-    NotMaterial,
-    parse_content,
-)
+from studyforge.corpus.manifest import MIN_WHY_CHARS, ManifestError, NotMaterial, parse_content
+from tests.studyforge.corpus.manifest.content.policies import WHY, policy, scaffolding
 
-#: ⭐ The ISO corpus's real shape, which is why the field exists: per-unit
-#: files, and three whole-series aggregates that are digest-identical ordered
-#: concatenations of them. `src/*.md` ingests all 38 units twice.
-ISO = {
-    "include": ["src/*.md"],
-    "exclude": [
-        {"path": "src/ISO.md", "why": "whole-series aggregate: a concatenation of 1.md…16.md (C2)"},
-        {"path": "src/Server.md", "why": "whole-series aggregate: a concatenation of s1…s11 (C2)"},
-        {"path": "src/Client.md", "why": "whole-series aggregate: a concatenation of c1…c11 (C2)"},
-    ],
-}
-
-
-def policy(**overrides):
-    return parse_content({**ISO, **overrides})
-
-
-@pytest.mark.parametrize("path", ["src/1.md", "src/16.md", "src/s4.md", "src/c11.md"])
-def test_a_per_unit_file_is_included(path):
-    assert policy().classify(path) is Classification.INCLUDED
-
-
-@pytest.mark.parametrize("path", ["src/ISO.md", "src/Server.md", "src/Client.md"])
-def test_an_aggregate_is_excluded_even_though_the_glob_matches_it(path):
-    # ⚠️ Exclusion wins over inclusion, and this is the case it exists for.
-    # Proved both ways: with the exclusions removed the same glob DOES match
-    # the aggregate, which is the double ingest nobody was complaining about.
-    assert policy().classify(path) is Classification.EXCLUDED
-    assert policy(exclude=[]).classify(path) is Classification.INCLUDED
-
-
-@pytest.mark.parametrize("path", ["README.md", "src/nested/deep.md", "pom.xml", "docs/notes.md"])
-def test_a_file_matching_neither_list_is_unclassified(path):
-    # ⛔ Silence is the failure C2 describes, so there is no silent third
-    # answer: `validate` exits 1 on this (R6).
-    assert policy().classify(path) is Classification.UNCLASSIFIED
-
-
-def test_a_star_does_not_cross_a_directory_separator():
-    # Otherwise `src/*.md` would swallow a whole tree, and an aggregate two
-    # directories down would be ingested without anybody declaring it.
-    assert policy().classify("src/a/b.md") is Classification.UNCLASSIFIED
-
-
-def test_the_javas_shape_matches_only_module_readmes():
-    java = parse_content({"include": ["*/*/README*.md"], "exclude": []})
-    assert java.classify("basics/01-getting-started/README.md") is Classification.INCLUDED
-    assert java.classify("basics/01-getting-started/README_1.1.md") is Classification.INCLUDED
-    assert java.classify("pom.xml") is Classification.UNCLASSIFIED
-
-
-def test_the_reason_an_exclusion_gives_is_retrievable():
-    # ⭐ The `why` is not decoration: it is what stops the next maintainer
-    # deleting an exclusion they cannot explain.
-    assert "concatenation" in policy().why_excluded("src/ISO.md")
-    assert policy().why_excluded("src/1.md") is None
-
-
-# --- what a content policy refuses -----------------------------------------
+#: ⭐ Ruling 90's own three examples, copied rather than paraphrased. Rule 1a
+#: was derived from what a loose glob does to rule 4, **not** fitted to these;
+#: they are here so that a later tightening of the rule that would have
+#: refused the ruling's own examples fails loudly.
+RULING_90_GLOBS = ("docs/studyforge/*", "LICENSE", ".gitignore")
 
 
 @pytest.mark.parametrize("include", [[], None, "src/*.md", [""], [7]])
@@ -123,81 +68,9 @@ def test_content_must_be_an_object(value):
         parse_content(value)
 
 
-@pytest.mark.parametrize("path", ["", None, 7])
-def test_classify_refuses_a_path_that_is_not_one(path):
-    with pytest.raises(ManifestError, match="non-empty str"):
-        policy().classify(path)
-
-
-# --- the third state: never material, rather than withheld ------------------
-
-#: ⭐ Ruling 90's own three examples, copied rather than paraphrased. Rule 1a
-#: was derived from what a loose glob does to rule 4, **not** fitted to these;
-#: they are here so that a later tightening of the rule that would have
-#: refused the ruling's own examples fails loudly.
-RULING_90_GLOBS = ("docs/studyforge/*", "LICENSE", ".gitignore")
-
-#: A reason long enough to be one. ⚠️ Written out rather than generated from
-#: `MIN_WHY_CHARS`, for the same reason the boundary cases below are.
-WHY = "the repository's own scaffolding, never read aloud"
-
-
-def scaffolding(*entries, **overrides):
-    """A policy whose third state is `entries`, each `(glob, why)`."""
-    declared = [{"glob": glob, "why": why} for glob, why in entries]
-    return policy(not_material=declared, **overrides)
-
-
 @pytest.mark.parametrize("glob", RULING_90_GLOBS)
 def test_the_rulings_own_three_examples_are_accepted(glob):
     assert scaffolding((glob, WHY)).not_material == (NotMaterial(glob, WHY),)
-
-
-def test_a_file_a_not_material_glob_matches_is_not_material():
-    # ⛔ Not `EXCLUDED`: nothing is withheld from a reader here, and calling it
-    # an exclusion makes every `why` in the audit a small lie.
-    said = scaffolding(("docs/studyforge/*", WHY), ("LICENSE", WHY))
-    assert said.classify("docs/studyforge/notes.md") is Classification.NOT_MATERIAL
-    assert said.classify("LICENSE") is Classification.NOT_MATERIAL
-
-
-def test_an_absent_third_state_is_an_empty_tuple_and_changes_nothing():
-    # ⭐ The compatibility claim in one assertion: the same paths classify the
-    # same way with the key absent as they did before the key existed.
-    assert policy().not_material == ()
-    assert policy().classify("src/1.md") is Classification.INCLUDED
-    assert policy().classify("LICENSE") is Classification.UNCLASSIFIED
-
-
-def test_a_file_matched_by_neither_list_nor_the_third_state_is_unclassified():
-    # ⛔ Rule 4 is not weakened by one line: C2's countermeasure still fires.
-    assert scaffolding(("LICENSE", WHY)).classify("notes.txt") is Classification.UNCLASSIFIED
-
-
-def test_the_reason_a_not_material_entry_gives_is_retrievable():
-    said = scaffolding(("docs/studyforge/*", WHY))
-    assert said.why_not_material("docs/studyforge/notes.md") == WHY
-    assert said.why_not_material("src/1.md") is None
-
-
-# --- rule 3: two states at once is a finding, never a precedence ------------
-
-
-def test_a_file_in_both_include_and_not_material_is_contested():
-    # ⛔ **Never a precedence.** One order would drop material the reader was
-    # promised; the other would read the repository's scaffolding aloud. The
-    # manifest disagreed with itself and the classifier says so.
-    both = scaffolding(("src/*", WHY))
-    assert both.classify("src/1.md") is Classification.CONTESTED
-    assert both.classify("src/1.md") is not Classification.INCLUDED
-    assert both.classify("src/1.md") is not Classification.NOT_MATERIAL
-
-
-def test_an_exclusion_still_wins_over_the_third_state():
-    # ⚠️ The two-state precedence is untouched: an exclusion names one file
-    # deliberately, which is a decision and not a disagreement.
-    both = scaffolding(("src/*", WHY))
-    assert both.classify("src/ISO.md") is Classification.EXCLUDED
 
 
 # --- rule 1a: an exact path, or one directory's wildcard --------------------
@@ -301,3 +174,24 @@ def test_a_not_material_glob_must_be_a_non_empty_string(glob):
 def test_a_not_material_glob_that_escapes_the_source_root_is_refused(glob):
     with pytest.raises(ManifestError, match="stay inside it"):
         scaffolding((glob, WHY))
+
+
+def test_a_bracket_class_is_a_wildcard_wherever_it_falls():
+    # ⛔ **Found by a mutant surviving** (`W40/3`). `WILDCARDS` names three
+    # characters and only two of them were ever exercised in a position that
+    # tells them apart: replacing `[` with `]` left the whole suite green.
+    # ⭐ Both halves are asserted, because `[` is read by two different rules.
+    #
+    # Rule 1a: the class is a wildcard, so what precedes it must be a
+    # directory — accepted under one, refused at the root.
+    assert scaffolding(("docs/[ab]*.md", WHY)).not_material[0].glob == "docs/[ab]*.md"
+    with pytest.raises(ManifestError, match="wildcard where no directory precedes it"):
+        scaffolding(("[ab]*.md", WHY))
+
+
+def test_an_exclusion_naming_an_unclosed_bracket_is_still_a_glob():
+    # ⚠️ The other rule that reads `WILDCARDS`, and the case that pins `[`
+    # by itself: an exclusion carries no closing bracket to be mistaken for
+    # the wildcard, so only `[` can refuse this one.
+    with pytest.raises(ManifestError, match="must name one file"):
+        policy(exclude=[{"path": "src/[abc.md", "why": "a bracket class, spelled by mistake"}])
