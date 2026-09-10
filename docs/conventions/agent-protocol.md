@@ -146,6 +146,34 @@ grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a w
 ⛔ **A wave that begins with an untriaged `[structural]` finding is a wave that
 has decided to pay for it twice.**
 
+### ⛔ Before growing another task's contract, name the caller and the question
+
+⭐ **Carried from CTO ruling 23, 2026-09-09, and the CTO notes this is the *third*
+time an author has beaten a ruling of theirs this way.**
+
+⛔ **Before adding a capability to another task's contract surface: name the
+caller, and name the question the capability answers. ⭐ If the question dissolves
+when you compute the answer directly, compute it directly.**
+
+⚠️ **The instance:** `validate` branched on a placement profile *name*, and the
+PO and CTO both ruled that `Profile` should grow a capability. The author
+measured instead — the check needs **none** — and declined, reporting it with
+evidence rather than diverging quietly. ⭐ **The CTO's own words on accepting it:**
+*"You asked what a capability must answer that placing-and-comparing does not.
+**Nothing — and that is the test, not a concession.** They cleared my standard by
+removing the question rather than answering it."*
+
+⛔ **And why the capability would have been worse than the branch it replaced.** A
+`generates_beside_material` boolean is **an enumeration in disguise**: it sorts
+profiles into two classes, the third must declare a side, and a wrong answer
+costs a **silently skipped check** — ⚠️ *which is the failure the old code already
+had.* The replaced check reported a **non-defect**, so the capability would have
+preserved a **wrong** check behind a cleaner branch.
+
+⭐ **This is *make the illegal value unrepresentable, do not enumerate it*,
+arriving in a contract rather than in a validator** — and the cheapest form of it
+is the one where nothing gets built at all.
+
 ### ⛔ Ruling is not carrying, and a carried ruling is **quoted**
 
 ⚠️ **Two holes were found in this mechanism, one round apart, and both were in

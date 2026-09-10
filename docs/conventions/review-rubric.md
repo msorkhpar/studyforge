@@ -679,9 +679,21 @@ grep -n '\[structural\]' "docs/tasks/handoffs/$TASK.md"
 
 # ⛔ and the coverage, because an empty result has two causes
 awk '/^## Findings/,/^## For dependents/' "docs/tasks/handoffs/$TASK.md" \
-  | grep -cE '^[0-9]+\.'                       # findings filed
-grep -cE '^[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TASK.md"   # marked
+  | grep -cE '^(#{2,4} )?[0-9]+\.'             # findings filed
+grep -cE '^(#{2,4} )?[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TASK.md"  # marked
 ```
+
+> ⛔ **Corrected 2026-09-09 — C6's sixth instance, and it was inside the section
+> that exists to enforce C6.** ⚠️ These counters matched `^[0-9]+\.` only, while
+> **§8 rules the heading form acceptable** and `SF-03`, `SF-09` and `SF-11` all
+> write their findings as `### 1. …`. ⛔ **So for those handoffs both counters
+> returned zero and *"the two numbers must agree"* passed at 0 = 0** — the check
+> did not fail, it **passed the wrong thing**, which is C2's failure mode
+> precisely and the one this rubric already calls the worse of the two. ⭐ **A
+> counter that under-reports gets believed.** The PO carried the mechanical fix;
+> ⚠️ **the CTO owns whether to keep both forms or narrow §8 to one** — one
+> spelling would be stronger than two spellings and a regex, on this project's
+> own repeated finding that a list of accepted shapes is an open set.
 
 ⛔ **The two numbers must agree.** A handoff with ten findings and two markers has
 not been triaged — it has been triaged twice and abandoned. ⭐ An empty
