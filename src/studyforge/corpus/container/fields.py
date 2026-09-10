@@ -5,8 +5,9 @@ text, optional text, an optional source path, an optional slug — and refuses
 each of them in a message that names the field and the fault.
 
 **How you use it.** `required_text`, `optional_text`, `optional_path`,
-`optional_slug`, `optional_label`, and `is_filename_component` for the one
-permitted-set rule a filename component obeys. ⭐ `said` is gone: it is
+`optional_origin`, `optional_slug`, `optional_label`, and
+`is_filename_component` for the one permitted-set rule a filename component
+obeys. ⭐ `said` is gone: it is
 `studyforge.describe.describe`, which now carries the one behaviour this
 module had that the extraction had lost — **an empty string is named as
 one** (W17).
@@ -90,6 +91,12 @@ FILENAME_PERMITTED_DESCRIBED = (
     "lowercase ASCII letters, digits, and . or -, beginning with a letter or digit"
 )
 
+#: The two keys an object `origin` carries (Ruling 92). ⛔ Exactly these, both
+#: required: a `path` alone is the string form written the long way, and a
+#: `section` alone is a region of nothing. ⚠️ Neither is a *unit* key — the
+#: object is the value of `origin`, so `UNIT_KEYS` is unchanged.
+ORIGIN_KEYS = ("path", "section")
+
 
 def is_filename_component(value: object) -> bool:
     """Return whether `value` may be used, unchanged, as one component of a filename.
@@ -158,6 +165,45 @@ def optional_path(value: object, what: str, where: str) -> str | None:
             f"lives."
         )
     return value
+
+
+def optional_origin(value: object, what: str, where: str) -> tuple[str | None, str | None]:
+    """Read an `origin`: a whole file, a **region** of one, or absent.
+
+    Returns `(path, section)`. ⭐ **The section is the second half of one
+    declared field and never a second key**: `origin` is one thing a corpus
+    declares, and every reader that wants a *path* — placement, media, the
+    `.parent` `origin_directory` takes — goes on getting a plain string out of
+    the first half whichever shape was written.
+
+    ⛔ **A region is bounded by a heading, so `section` is the exact text of
+    one** (Ruling 92). A line range would couple the manifest to a file's byte
+    layout and an anchor would couple it to a renderer's slug rules; the
+    heading is the only bound `validate` can find without the Markdown reader,
+    which is the independence `check_completeness` is built on.
+    """
+    if value is None:
+        return None, None
+    if isinstance(value, dict):
+        return _region(value, what, where)
+    return optional_path(value, what, where), None
+
+
+def _region(value: dict, what: str, where: str) -> tuple[str, str]:
+    """Read the object form of an `origin` — ⛔ both keys, both required."""
+    if set(value) != set(ORIGIN_KEYS):
+        raise ContainerError(
+            f"{where} declares {what} as an object that is not a region; a region is "
+            f"{list(ORIGIN_KEYS)}, both required. A path alone is the string form "
+            f"written the long way, and a section alone is a region of nothing. "
+            f"The keys are not reproduced here (R7)."
+        )
+    path = optional_path(value["path"], f"{what} path", where)
+    if path is None:
+        raise ContainerError(
+            f"{where} declares {what} with no path; a region is a region of a file"
+        )
+    return path, required_text(value["section"], f"{what} section", where)
 
 
 def optional_slug(value: object, what: str, where: str) -> str | None:

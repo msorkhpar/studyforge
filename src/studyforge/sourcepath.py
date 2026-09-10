@@ -35,8 +35,17 @@ A source path is legal when **every one of these holds**:
 | no segment is `..` | `../outside`, `a/../../b` |
 | no segment carries `\` | `\\host\home\<name>`, `a\b` |
 | no segment carries `:` | `C:/Users/<name>/x`, `file:///x` |
+| no segment carries `#` | `TestCases.md#3. Card issuance` |
 
-⭐ **The last two narrow the legal set below what POSIX permits, deliberately.**
+⛔ **The fragment row is Ruling 92's, and it removes a shape that was accepted
+and meant nothing.** `TestCases.md#…` named a region of a file before a region
+was declarable; nothing ever read the part after the `#`, so it *"validates and
+then fails at render, except it never fails"* — the unit was silently read as
+the whole file. ⭐ **A region is now declared as `{path, section}`** and this
+rule is what stops the old spelling coming back. ⚠️ **It also refuses a real
+POSIX filename containing `#`**, on the same terms as the two rows above it.
+
+⭐ **The last three narrow the legal set below what POSIX permits, deliberately.**
 A file really may be named `notes:draft.md` on Linux, and this rule refuses to
 place it. That is the price of the row above it: `C:/Users/<name>` and
 `\\host\home\<name>` are home directories that no POSIX predicate calls
@@ -89,6 +98,11 @@ def source_path_fault(value: str) -> str | None:
             return "a path written with Windows separators"
         if ":" in part:
             return "a path carrying a drive letter or scheme"
+        if "#" in part:
+            # ⛔ Ruling 92. A fragment is a *region*, and a region is declared
+            # as an object with its own `section`. Left legal here, the old
+            # spelling keeps validating and keeps meaning nothing.
+            return "a path carrying a fragment"
     return None
 
 

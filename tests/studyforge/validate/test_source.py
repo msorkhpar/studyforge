@@ -14,6 +14,9 @@ exists.
 
 import ast
 
+import pytest
+
+from studyforge.corpus.container import ContainerError
 from studyforge.validate import source as source_module
 from studyforge.validate import validate
 from studyforge.validate.corpus import ARCHIVE_DIR
@@ -362,3 +365,126 @@ def test_a_corpus_with_no_material_says_so_before_it_says_anything_else(tmp_path
     report = validate(corpora.one_unit(tmp_path / "c"))
     assert "unclassified" in {u.rule for u in report.unchecked}
     assert "ignore-declaration" not in {u.rule for u in report.unchecked}
+
+
+# --------------------------------------------------------------------------
+# ⛔ SF-36 / Ruling 92 — a unit may be a REGION of a file
+# --------------------------------------------------------------------------
+
+#: One file, two units, and a heading each unit does not own. ⚠️ Four headings
+#: in the file; two in the first region and one in the second.
+SHARED = "# Test cases\n\n## 1. One\n\n### 1.1 Deeper\n\nProse.\n\n## 2. Two\n\nProse.\n"
+
+REGION_BLOCKS = {
+    1: [
+        {"type": "heading", "level": 2, "text": "1. One"},
+        {"type": "heading", "level": 3, "text": "1.1 Deeper"},
+        {"type": "para", "text": "Prose."},
+    ],
+    2: [
+        {"type": "heading", "level": 2, "text": "2. Two"},
+        {"type": "para", "text": "Prose."},
+    ],
+}
+
+
+def shared_file(tmp_path, *, first_origin=None, second_origin=None, source=SHARED):
+    """Two units of one file, each declaring its own region by default."""
+    origins = {
+        1: first_origin or {"path": "src/shared.md", "section": "1. One"},
+        2: second_origin or {"path": "src/shared.md", "section": "2. Two"},
+    }
+    return corpora.write(
+        tmp_path,
+        containers={
+            "demo": corpora.container(
+                [corpora.unit_entry(n, origin=origins[n]) for n in (1, 2)],
+                container_api=2,
+            )
+        },
+        documents={
+            f"demo/raw/prose/unit-0{n}/lesson-1.json": {
+                "source": "demo",
+                "address": ["demo"],
+                "variant": "prose",
+                "unit": n,
+                "kind": "lesson",
+                "ordinal": 1,
+                "ingested": "2026-01-05",
+                "title": f"Unit {n}",
+                "blocks": REGION_BLOCKS[n],
+            }
+            for n in (1, 2)
+        },
+        sources={"src/shared.md": source},
+    )
+
+
+def test_units_sharing_one_file_are_compared_against_their_own_regions(tmp_path):
+    # ⭐ **`F21`, in two units instead of seventeen.** Each region is counted
+    # on its own — 2 and 1 — and neither against the file's 4.
+    report = validate(shared_file(tmp_path / "c"))
+    assert report.findings == ()
+    assert "short-read" not in {u.rule for u in report.unchecked}
+
+
+def test_the_same_corpus_short_reads_when_the_units_name_the_whole_file(tmp_path):
+    # ⛔ **The negative control for the row above, and it is the defect
+    # itself**: with `origin` a plain path both units are compared against all
+    # four headings, and both report a short read against 2 and 1.
+    root = shared_file(tmp_path / "c", first_origin="src/shared.md", second_origin="src/shared.md")
+    report = validate(root)
+    assert report.rules == ("short-read",)
+    assert len(report.findings) == 2
+
+
+def test_a_region_ends_at_the_next_heading_of_the_same_or_shallower_depth(tmp_path):
+    # ⛔ The clause, end to end. Unit 1's region holds `1.1 Deeper` and stops
+    # at `2. Two`; a bound at the next heading of *any* depth would count 1
+    # and report a short read against the archive's 2.
+    assert validate(shared_file(tmp_path / "c")).findings == ()
+
+
+def test_a_section_the_file_does_not_carry_is_its_own_finding(tmp_path):
+    root = shared_file(
+        tmp_path / "c", first_origin={"path": "src/shared.md", "section": "1. Renamed"}
+    )
+    report = validate(root)
+    assert report.rules == ("origin-section-missing",)
+    assert "exact text" in report.findings[0].message
+
+
+def test_a_section_the_file_carries_twice_is_its_own_finding(tmp_path):
+    root = shared_file(tmp_path / "c", source=SHARED + "\n## 1. One\n\nAgain.\n")
+    report = validate(root)
+    assert "origin-section-ambiguous" in report.rules
+    assert "2 times" in report.findings[0].message
+
+
+def test_an_ambiguous_section_is_refused_rather_than_resolved(tmp_path):
+    # ⚠️ Taking the first match would leave the other unit reading a region
+    # that begins somewhere else, with nothing reporting it.
+    root = shared_file(tmp_path / "c", source=SHARED + "\n## 1. One\n\nAgain.\n")
+    assert "short-read" not in validate(root).rules
+
+
+def test_a_finding_about_a_section_never_reproduces_it(tmp_path):
+    # ⛔ R7's rule as this package keeps it: a declared field is read out of a
+    # file somebody else wrote, so a refusal names the field and not the value.
+    root = shared_file(
+        tmp_path / "c", first_origin={"path": "src/shared.md", "section": "1. Renamed"}
+    )
+    assert "1. Renamed" not in validate(root).findings[0].message
+
+
+def test_a_region_still_names_a_file_that_must_be_on_disk(tmp_path):
+    root = shared_file(tmp_path / "c", first_origin={"path": "src/missing.md", "section": "1. One"})
+    assert "origin-missing" in validate(root).rules
+
+
+def test_a_fragment_origin_is_refused_where_the_map_is_read(tmp_path):
+    # ⛔ Ruling 92: `TestCases.md#…` was accepted and meant nothing. It is now
+    # refused by `studyforge.sourcepath`, before any check runs.
+    with pytest.raises(ContainerError) as raised:
+        shared_file(tmp_path / "c", first_origin="src/shared.md#1. One")
+    assert "fragment" in str(raised.value)

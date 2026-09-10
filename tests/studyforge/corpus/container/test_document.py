@@ -258,7 +258,7 @@ def test_the_version_refusal_says_it_is_not_a_migration():
 
 
 def test_this_module_owns_the_set_and_not_the_check():
-    assert KNOWN_CONTAINER_API == frozenset({CONTAINER_API})
+    assert KNOWN_CONTAINER_API == frozenset({1, 2})  # ⛔ literals, not CONTAINER_API
     source = (repository_root() / "src/studyforge/corpus/container/document.py").read_text(
         encoding="utf-8"
     )
@@ -595,4 +595,4 @@ def test_the_dataclasses_are_what_the_document_says():
     made = built()
     assert isinstance(made, Container)
     assert all(isinstance(unit, Unit) for unit in made.units)
-    assert made.container_api == CONTAINER_API
+    assert made.container_api == 1  # BASE's own, kept rather than promoted
