@@ -197,6 +197,32 @@ to decide whether code needs testing.** A probe is how a finding gets verified
 before it becomes a task, so an unfalsifiable probe corrupts the input to
 everything downstream.
 
+### ⛔ A number in a ruling is evidence, never a bound
+
+⭐ **A number in a ruling is a measurement from an instrument, never a property of
+the tree.**
+
+⚠️ **Measured instance, and the gap is the argument:** the rubric's §7c grep found
+**7** hits in 3 modules; the check built to replace it found **19** in 11.
+⛔ **Twelve real violations the grep could not see** — all one shape, **a corpus
+named in English** (*"the Java corpus"*) rather than by its repository slug, and
+§7c's own sentence is *"a fail even in a comment."*
+
+⛔ **The incentive is the thing to avoid, and its author named it:** *"bound the
+migration by a number and the cheapest compliance is a check scoped to its own
+backlog — which is worse than no check because it's green."*
+
+⭐ **So a ruling that cites a count says what produced it**, and a task that
+inherits one **re-measures with its own instrument rather than treating the
+number as the size of the job.** ⚠️ **The implementer's line is the one to carry:**
+
+> ⛔ *"The number was a fact about an instrument. Building the check to find seven
+> would have been fitting the instrument to the backlog."*
+
+⚠️ **This is Ruling 52's shape in a number rather than a sentence** — a figure
+stated without its instrument is quoted as a bound, exactly as a rule stated
+without its scope is quoted at its widest.
+
 ### ⛔ A ruling states the scope it was argued over
 
 ⭐ **Name the case that produced it, and say what is outside it.** ⚠️ **Otherwise

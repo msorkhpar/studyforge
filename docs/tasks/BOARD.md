@@ -4,12 +4,12 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-✅ **M0 COMPLETE. M1 steps 1.1, 1.2 and 1.3 COMPLETE.** ⏳ **M1 step 1.4 is OPEN** —
-`SF-10`, the unit document builder. **`W14` and `W18` landed and the gate
-cleared.**
+⭐ **M0 is CLOSED — `FND-05a` merged and the last M0 task is done.** ✅ **M1 steps
+1.1, 1.2 and 1.3 COMPLETE.** ⏳ **M1 step 1.4 is OPEN and `SF-10` is unblocked and
+waiting on nothing** — rulings 50 and 51 cleared it and `W20` has landed.
 
-📏 **Base, measured in the pinned container at `ac4ed55`: 2274 passed, 8 skipped,
-quality floor clean.** ⭐ **Skips 46 → 8**, both remaining causes structurally
+📏 **Base, measured in the pinned container at `a7c114b`: 2490 passed, 8 skipped,
+quality floor clean.** ⚠️ **Twenty branches this session.** ⭐ **Skips 46 → 8**, both remaining causes structurally
 unfixable by an image.
 
 ⛔ **Release branch: `release/m0-foundations`, and M1 continues on it.** ⚠️ **Its
@@ -174,7 +174,10 @@ which is the one seam neither can inspect from their own side.
 | **W20** — repo-wide §7c check **and its migration** | Developer 2 | `todo` | ⛔ **before SF-10 lands** |
 | **Ruling 46's helper** — `asserting=` rule-id set + the misattribution message | **Developer 1, now** | ⏳ `in-progress` | ⛔ **stop at the helper; the general seam is scoped once, here** |
 | **SF-10 survey** — port inventory + R11 package shape (**W5**) | Developer 1 | ✅ `done` — `13b2857`, one document, no code | — |
-| **FND-05a** — the workspace pin file and its verification command | **Developer 1, now** | ⏳ `in-progress` | ⛔ **closes M0**, and it collides with nothing in flight |
+| **FND-05a** — the workspace pin file and its verification command | Developer 1 | ✅ `done` — ⭐ **M0 CLOSED** | — |
+| **W20** — repo-wide §7c check and its migration | Developer 2 | ✅ `done` | — |
+| **W25** — Ruling 49's handoff check | Developer 2 | ⏳ `in-progress` | — |
+| **SF-10** — Unit document builder | **Developer 1, now; Developer 2 joins** | ⏳ **unblocked, waiting on nothing** | — |
 | **SF-10** — Unit document builder | **both, as a team** | `todo` | when the survey and W20 land |
 
 ### ⭐ Developer 1 takes FND-05a — the M0 residue that has waited a whole milestone
@@ -356,7 +359,8 @@ not at all**.
 |---|---|---|
 | 1 | Index present and current **in the main checkout** | `built_at_commit` vs `git diff --quiet <it> HEAD -- src tools docs` |
 | 2 | The `[structural]` triage list | `grep -rn '\[structural\]' docs/tasks/handoffs/` |
-| 4 | ⭐ **NEW — nothing ruled is queued-but-unlanded across the boundary** | ask each document owner; ⛔ **and re-measure every board row whose trigger has passed** |
+| 4 | ⭐ **Nothing ruled is queued-but-unlanded across the boundary** | ask each document owner; ⛔ **and re-measure every board row whose trigger has passed** |
+| 5 | ⭐ **NEW — `CLAUDE.md`'s *"Where to start"* names the open milestone** | ⛔ **read it.** It loads into **every** session, so a stale sentence there misdirects every agent that starts — ⚠️ **and it has been the last to learn twice in two rounds** |
 | 3 | ⭐ **C6: every ruling made since the last wave reached its artifact** — ⛔ **and it stays exactly here** (Ruling 39) | for each, open the task/epic/spec/convention it names and read the clause — ⛔ **and the neighbouring rulings in it, not only the clause being added** |
 
 ⚠️ **Check 3's scope, corrected on a measurement (Ruling 39) — I had this wrong.**

@@ -36,6 +36,29 @@ needs replacing.** ⚠️ **And the tell that you are writing the wrong one** is
 you can always think of one more entry — ⭐ **an open set is one you can extend
 without deciding anything, which is exactly why it never gets finished.**
 
+### ⛔ A guarantee does not extend to what sits beside it
+
+⭐ **When you assert a guarantee, name what is adjacent that you have *not*
+asserted.**
+
+⚠️ **The tell, and it catches the author as readily as the reader: when one half
+of a pair is constrained and the other is not, the constrained half is the one
+everybody reads — including the person who wrote both.**
+
+⛔ **Neither measured instance was an open set nobody noticed. Both were a
+*demonstrated* guarantee lending its credibility to an *undemonstrated*
+neighbour:** `where` closed against a fixed set while `name` stayed free; the pin
+file's **bytes** asserted while its **reader** was asserted nowhere.
+
+⭐ **The sentence to keep, adopted verbatim from the developer who found it:**
+
+> ⛔ **A file being clean is not a property of the file.**
+
+⚠️ **It bounds the rule below rather than contradicting it.** *Enumerate the
+legal* tells you to close the set you are defining; ⛔ **this tells you that
+closing one set says nothing about the set next to it** — and that the closed one
+will be mistaken for both.
+
 ### ⛔ The domain limit — and read this before applying the rule above
 
 ⚠️ **This rule is not universal, and without the boundary the next author will try
