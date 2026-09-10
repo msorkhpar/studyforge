@@ -1,6 +1,6 @@
 # SESSION-2026-09-09 — coordinator handoff
 
-**Status:** partial — M1 step 1.3 in progress, two branches awaiting review
+**Status:** clean stop — everything reviewed and merged except one deliberate WIP branch
 **Written by:** the orchestrating session, for whatever session picks the work up next
 
 ⚠️ **Read this first, because it changes what "resume" means.** The CTO, the two
@@ -170,6 +170,64 @@ a developer corrected an inherited claim — `folder`, and C3's raw-HTML count �
 exactly the cases a graph query would have reached faster.** The next coordinator
 should point developers at the graph for structural questions and keep its own
 briefs to rulings and constraints: the things that genuinely are not in the code.
+
+---
+
+## Closed in the final round, so you do not re-derive it
+
+**Release tip is green and everything is merged.** Pinned **1761 passed / 46
+skipped**, unpinned **1800 / 7**, lint clean, floor clean. ⭐ **The only unmerged
+branch is `feat/SF-25-validate` at `96dd17e`, and that is deliberate** — WIP,
+committed so it survives.
+
+- **Ruling 8** shipped: the label class is **derived from `is_slug`**, not re-typed,
+  plus a first-character rule, because ⛔ *a permitted set alone does not refuse `..`*.
+  24 shapes, zero disagreements between the two guards.
+- **Ruling 12–14** landed: the behavioural §1f check **retires** the syntactic one;
+  `require_slug`/`require_ordinal` go first (7 of 26 sites in two lines) but ⛔ the
+  echo is **not** simply deleted — *"did you pass a title?" is the most useful
+  sentence in that module*.
+- ⭐ **The pattern the CTO named after it arrived three times independently: *make
+  the illegal value unrepresentable; do not enumerate it.* Every list of wrong
+  things this project has written has been incomplete and stayed incomplete
+  silently. A list is now the thing that needs justifying.**
+- ⛔ **Finding 8 — `slugify` deletes rather than transliterates.** Verified here:
+  `'Ströme' -> 'str-me'`, `'Потоки' -> ''`, `'日本語' -> ''`, silently. A title with
+  no ASCII letters is then refused as *"a corpus defect"*. ⭐ **A Russian title is
+  not a defect** — R1 says the framework knows nothing about a source, *including
+  its alphabet*. Declared v1 limitation; transliteration is an open row.
+- **`FND-07`** created (M1 step 1.3, unassigned): the graph tripwire. **absent** →
+  report the rebuild command, exit 0, because ⛔ *a red suite on clone gets muted*;
+  **stale** → **FAIL**, because a stale index answers confidently with yesterday's
+  tree; **present, current and unbridged** → also FAIL, because ⛔ *that is a worse
+  lie than absent — every green light is on and the one question that matters
+  returns silence*.
+- **Standing rule, now in `README.md`:** ⛔ **no acceptance condition is satisfied by
+  an untracked artifact alone.** If what a task produces is git-ignored, ⭐ **the
+  task ships the check** — the check travels on the branch and the artifact does not.
+- **W1–W5** are the routed findings; ⚠️ **W1 and W2 are one piece of work** — W1
+  without W2 is a fix with no guard, W2 without W1 is a red check with 45 findings.
+
+⭐ **Two corrections the PO made to this document, both of which improve it.**
+
+**The board defect is worse than I reported and it is the PO's, not mine.** Measured:
+**33 worktrees, 2 with an index — 31 of 33 agents could not have queried the graph
+while the board said it was there.**
+
+**And my R14 admission was reframed rather than filed.** ⛔ It was not a discipline
+failure: *the graph was not in your checkout — you could not have queried it, and
+this board is what told you it existed.* The fix is not *remember to query*; it is
+*the index must be present and the claim must be checkable*. ⚠️ Filing it against
+the coordinator would have hidden a defect in the board behind the coordinator's
+diligence.
+
+⭐ **And the measurement that makes R14 affordable, which nobody had taken:**
+`graphify explain` and `path` accept `--graph <path>` and **work from a worktree
+with no index** — verified from an agent worktree against the main checkout's graph.
+`query` does not. That maps exactly onto R14's own qualification: the two commands
+the ruling holds for *unconditionally* need no local build. ⛔ **The cost is paid
+once per repository, not once per worktree — 33 rebuilds was never payable, and an
+unaffordable rule is one that gets skipped.**
 
 ---
 
