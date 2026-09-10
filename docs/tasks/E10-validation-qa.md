@@ -121,13 +121,38 @@ an integrator has (R2); if it cannot catch a short read, they ship silently
 lossy ingestion, it passes green, and the exercise reports success having lost
 material. That is the worst outcome available to this project.
 
+### ⛔ Carried ruling — `validate` is a **caller of the personal-data gate**, asserted
+
+⚠️ **Carried by the PO from `handoffs/SF-08.md` finding 6, CTO round 10 (*"route
+the table"*), 2026-09-09.** ⛔ `SF-08` shipped the gate with **no callers**, and a
+gate nobody calls is green forever — it cannot fail, so it reports nothing, and
+the first thing that notices is an adapter shipping a home path. Round 10 ruled
+one acceptance clause into each of the tasks that must call it; ⚠️ **only
+`SF-06`'s landed.** This is `SF-25`'s.
+
+⭐ **Acceptance gains a clause:** *a test asserts that `validate` calls the
+`SF-08` gate on every string it reads from an archive* — the call is asserted,
+not described, ⛔ **and the assertion is not satisfied by the gate's own tests.**
+The check under test here is *"is it wired in"*, and only a caller can answer it.
+
+⚠️ **And the escalation raised by SF-25's own author, which this clause must not
+paper over:** `validate` forwards `str(error)` from `SF-01`'s exceptions straight
+into a `Finding`, so if a bad address segment reaches a report through
+`AddressError`, ⛔ **`validate` is an R7 emission site by inheritance** — in the
+one command an adapter author is told to trust. **Measure it rather than assume
+it**; the fix is `W1` (`require_slug`/`require_ordinal` stop formatting
+`{value!r}`), which is in flight on `fix/W1-W2-address-echo`. ⭐ If `W1` merges
+first, this is already closed and the test records that; if not, the test is the
+thing that stops it closing silently.
+
 **Acceptance.** Passes on both FND-04 valid fixtures. Fails, with the specific
 message, on each invalid fixture: unknown version, address mismatch, digest
 mismatch, personal data present, ordinal gap, count mismatch. **Fails on a
 fixture whose source contains a construct the parser silently skipped, where
 every other check passes** — this fixture is built deliberately and is the one
 that proves the completeness check works. Exit codes are usable from a script.
-Output names every failure, not just the first.
+Output names every failure, not just the first. ⛔ **A test asserts `validate`
+calls the personal-data gate**, per the carried ruling above.
 
 ---
 

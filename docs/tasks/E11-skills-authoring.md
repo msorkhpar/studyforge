@@ -89,10 +89,41 @@ two traps real material actually set (C1, C2):
   ingests everything twice with nothing complaining. Detect the overlap and
   propose which set is canonical.
 
+### ⛔ Carried ruling — the **title-collision** check is this skill's, and only this side can do it
+
+⚠️ **Carried by the PO 2026-09-09 from `handoffs/SF-01.md`'s open `[structural]`
+finding, via CTO round 6 and `SF-25`'s definition.** The finding was routed to
+"SK-01/SK-02" by its author and ⛔ **had no clause on either side** — the
+validate-side half is written into `E10 SF-25` and this half was not.
+
+⛔ **`slugify` is ASCII-lossy and silent about it.** Verified: `Ströme →
+str-me`, `Потоки → ''`, `日本語 → ''`. So two distinct titles can produce one
+address — `café` and `cafe` — and a title with no ASCII letters produces none at
+all. ⭐ **A Russian title is not a corpus defect**: R1 says the framework knows
+nothing about a source, *including its alphabet*.
+
+⭐ **Defence in depth, and the two halves are not substitutes.** `SF-25` sees the
+**effect** — two containers at one address — from the archive alone, because by
+then the titles are gone and §6 rules an address *recorded, never derived*.
+⛔ **Only reconnaissance sees the cause**, because this is the one step that still
+holds the titles. So:
+
+- **Acceptance gains a clause:** ⛔ *given material whose titles collide under
+  `slugify` — including a title with no ASCII letters — the report names the
+  colliding titles and refuses to propose an address for them*, rather than
+  proposing a manifest that validates and loses a unit.
+- ⚠️ **It is reported, never silently disambiguated.** Appending `-2` would make
+  the collision validate and hide it; R6 says uncertainty is reported. ⭐ This is
+  the same corpus-scale trap as the duplicate-material one above: the failure is
+  **silent** and the archive looks complete.
+- ⚠️ **Transliteration is a declared v1 limitation**, not this skill's to solve.
+  What is owed here is that a title it cannot address is **named**.
+
 **Acceptance.** Proposes a correct manifest for the Java corpus without being
 told the answer. Proposes a correct 1-level manifest for a flat source.
 Correctly reports "no runnable code, no graders" for a prose-only source. Every
-uncertainty appears in the report rather than as a silent guess.
+uncertainty appears in the report rather than as a silent guess. ⛔ **Colliding
+and unaddressable titles are named in the report**, per the carried ruling above.
 
 ---
 

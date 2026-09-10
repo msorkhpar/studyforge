@@ -218,6 +218,26 @@ places a unit page beside its source file. No two units in the Java corpus
 produce the same artifact name. A third profile can be added without changing
 any consumer.
 
+### ⚠️ Revision — `Profile` grew after this task merged, and here is why
+
+⭐ **Carried by the PO 2026-09-09, from CTO round 17 finding 12, so the next
+reader is not left inferring it from a diff.**
+
+⛔ **`SF-25`'s sibling-collision check found that `structure.py:109` branched on a
+placement profile *name*** — and `SF-03`'s own `ast` test, **in another
+package**, failed because of it. ⚠️ **Only the trial merge could see this**: each
+branch was correct alone, which is the only situation that defect occurs in.
+
+⛔ **Branching on a profile name is R1 in miniature** — the framework holding a
+source-shaped fact by name instead of asking for a capability — so `Profile`
+**gains the capability** rather than the caller gaining a special case.
+
+⚠️ **It was grown inside `SF-25`'s branch, by the only caller**, on the rule that
+a capability designed by somebody with no caller is a guess about what the caller
+needs. ⛔ **It is reviewed as a change to *this* contract, not as a `validate`
+internal** — a contract that grows inside a consumer's branch is exactly where a
+contract grows badly, and naming the vantage point is the guard.
+
 **Out of scope.** Reading or scanning files — that is SF-04.
 
 ---

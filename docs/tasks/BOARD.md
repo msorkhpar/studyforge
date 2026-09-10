@@ -5,12 +5,22 @@ the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
 ✅ **M0 COMPLETE. M1 steps 1.1 and 1.2 COMPLETE.** **In flight: M1 step 1.3** —
-**SF-09 merged**, `fix/SF-03-label-seam` merged, SF-25 part-written, SF-23 and
-SK-01 not started, **FND-07** new and unassigned. ⚠️ **No branch is unmerged.**
-**Release branch: `release/m1-one-page`**, cut from `release/m0-foundations`.
-Developers branch off it, the CTO reviews against
-`../conventions/review-rubric.md`, only reviewed work merges back. Flow:
-`../conventions/delivery-flow.md`.
+**SF-25** in progress (Developer 1, `feat/SF-25-validate` @ `96dd17e`), **W1+W2**
+in progress (Developer 2, `fix/W1-W2-address-echo`); **FND-07**, **SF-23**,
+**SK-01** and **W3** sequenced below and not started.
+
+⛔ **Release branch: `release/m0-foundations`, and M1 continues on it.** ⚠️ **This
+header previously named `release/m1-one-page`, cut from `release/m0-foundations`.
+That branch does not exist and never did** — verified, `git branch -v` lists no
+such ref, and every M1 task (SF-01, SF-02, SF-03, SF-05, SF-06, SF-07, SF-08,
+SF-09, SF-11, SF-33 and the label-seam hotfix) merged into
+`release/m0-foundations`. See **the release-branch reconciliation** below for the
+ruling and why it is not re-cut mid-wave. Developers branch off it, the CTO
+reviews against `../conventions/review-rubric.md`, only reviewed work merges
+back. Flow: `../conventions/delivery-flow.md`.
+
+📏 **Base, measured in the pinned container at `9ad45a2`: 1761 passed, 46
+skipped, quality floor clean.**
 
 ⚠️ **M1 is fifteen tasks and `README.md` calls it the riskiest milestone** —
 where every contract meets every other one for the first time. ⛔ **Two things
@@ -24,6 +34,32 @@ dissolution, G1's recorded loss, the flattering review base), because a recorded
 *Statuses:* `todo` · `in-progress` · `in-review` · `blocked` · `done`.
 *Editing rule:* a status change is one cell. Do not restructure rows; record
 events in the **Log**.
+
+### ⛔ The editing rule that this document kept breaking: **a summary points, it never restates**
+
+⚠️ **Four instances in one milestone, three of them in this file.** The release
+branch that never existed; the index recorded present when it was absent; the C5
+row saying *"CTO to rule"* three screens above the section reading *"✅ RULED"*;
+and the R21 register carrying **two** rows the spec had already closed.
+
+⭐ **They are one defect wearing four costumes, and the shape is now the finding
+rather than the four corrections.** ⛔ **A summary that restates a status owned
+somewhere else is a copy, and a copy goes stale in exactly one direction: the
+summary is what people read, the source is what people update.** So the summary
+is where the *wrong* answer lives and the busy reader is the one who gets it.
+
+⛔ **The rule, and it binds this document first:**
+
+- **A status table carries a pointer to the section or the source, never a
+  restatement of it.** *"✅ RULED — see the C5 section"* is a summary. *"Options
+  1 and 2, option 3 refused"* in a table is a second copy.
+- **A register of things owned elsewhere is derived from that source, not
+  maintained beside it** — R21's register is now the reasoning behind §R9's
+  `open` entries, and §R9 is what says which are open.
+- ⚠️ **This is the same argument as C2's** (*a convention that repeats its own
+  definition is the defect it polices elsewhere*) and the same as the single
+  block-type list, the single size ceiling and the single review base. ⭐ **The
+  fourth appearance is where it stops being a coincidence.**
 
 ⛔ **Standing user decision: nothing is ever pushed to any remote. Everything
 stays in local repositories.** Permanent, not a phase. ⚠️ It changed the plan
@@ -163,7 +199,7 @@ it touches rather than left in a handoff.
 ⚠️ **That is a state to notice, not to relax into.** ⛔ **An empty list is not
 evidence that no contract is unlocated** — R21 exists because five more were
 found by *surveying* rather than by waiting to trip over them, and the register
-below still has **four** open rows. The question list being empty means the known
+below still has **three** open rows. The question list being empty means the known
 unknowns are answered; R21's register is where the unknown ones are tracked.
 
 **Work items carried out of the rulings:**
@@ -213,11 +249,21 @@ task named beside it, *before* that task builds.
 
 | Open row | Owed before | Owner | Why it bites |
 |---|---|---|---|
-| **authored overlay** `content.json` — unversioned | **SF-09** (M1 step 1.3) | CTO | ⭐ **Close this one next.** It is the only document a **person** edits, which makes it the likeliest to drift, and R9 does not list it. Either R9 gains it, or R9 says in words why a hand-edited document needs no version — ⛔ but not silence |
+| ~~**authored overlay** `content.json` — unversioned~~ | ~~SF-09~~ | CTO | ✅ **CLOSED by SF-09 — three open rows, not four.** ⭐ **Verified in the tree rather than inherited from the handoff:** `content_api` is minted in `src/studyforge/version.py`, sits in `CONTRACT_FIELDS`, and `test_the_overlay_is_versioned_and_the_key_is_content_api` asserts it — 23 occurrences across `src/` and `tests/`. R9 **gained** the contract rather than excusing it, and the spec now points at the constant instead of re-listing five names, which is why *"R9 lists five and there are seven"* cannot recur |
 | **discovery cache** `.studyforge/site.json` — no version key | **SF-04** (M2 step 2.1) | CTO | R9 refuses an unknown version rather than migrating; a cache with no version cannot be refused, only misread |
 | **narration manifest** — no file, no version | **NS-02 / SF-17** (M3) | CTO | Two producers named for one contract is Q3's shape exactly, and Q3 needed a ruling |
 | **coverage report** — no file | **EX-05** (M7) | CTO | Not read back, so the cheapest of the five — but R5 is what the report exists to make honest |
-| **component consuming contract** `consuming.json` — no version key | **TC-05** (M5), **E13** (M3) | CTO | ⛔ This is the *runtime seam between the two agents*. An unversioned cross-repository contract is precisely what R9 exists for, and **G1's answer only half covers it** — the pin file records *which commit*, and this contract still does not say *which version of the promise* |
+| ~~**component consuming contract** `consuming.json` — no version key~~ | ~~TC-05, E13~~ | CTO | ✅ **CLOSED — and this board was stale by two rows, not one** (CTO round 17, ruling 16). `consuming_api` is in spec §R9. ⭐ The reasoning survives and is worth keeping: the pin file records **which commit**, `provides` records **the promise**, `consuming_api` versions **the schema** — three different questions that G1's answer only looked like it had all covered |
+
+⛔ **Ruled (round 17): this register stops being a second copy of §R9 and becomes
+a pointer to it.** ⚠️ **Two of its five rows were stale simultaneously**, both in
+the same direction — closed in the spec, open here — which is precisely how a
+duplicated status behaves. ⭐ **The open set is whatever §R9 marks `open`**; the
+rows below are kept only for the *reasoning*, which §R9 does not carry.
+
+**Genuinely open: three, and ⭐ none is due in M1** — discovery cache
+(`SF-04`, M2), narration manifest (`NS-02`/`SF-17`, M3), coverage report
+(`EX-05`, M7).
 
 ⚠️ **`consuming.json` is now the sharper half of what G1 covered.** ⭐ G1's answer
 restores *which commit of each component* — that is what `FND-05a`'s pin file
@@ -235,7 +281,7 @@ which is the one seam neither can inspect from their own side.
 |---|---|---|---|
 | C2 | **The rubric's review base resolved against a stale `main`** — ~100 changed files instead of ~14, three tasks' work attributed to one author. | CTO | ✅ **fixed** |
 | C3 | **`ruff format` vs R11 on one file** — see resolved **Q6**. | CTO | ✅ **ruled**; the split is Developer 2's |
-| C5 | ⛔ **Parallel-authoring defect — three instances, one milestone.** A quality rule merges; a file authored *before* it lands fails it. FND-04/line-length, FND-03's container/formatter, FND-02/formatter. | CTO to rule | ⛔ **open, and no longer a judgement call** |
+| C5 | ⛔ **Parallel-authoring defect — three instances, one milestone.** A quality rule merges; a file authored *before* it lands fails it. FND-04/line-length, FND-03's container/formatter, FND-02/formatter. | CTO | ✅ **RULED** — options 1 **and** 2, option 3 refused. ⛔ **The reasoning lives in the C5 section below and is deliberately not restated here** |
 
 ⛔ **C2 silently corrupted every review it touched**, which is the worst property
 a gate can have: it did not fail, it **passed the wrong thing**. Two details from
@@ -384,10 +430,10 @@ have not run yet**, so they were still cheap when found.
 | SF-01 | Logical address model | Developer 2 | *merged* | ✅ `done` | — | Round-trips every §4 address at depths 1–4; a title where a slug is required raises; two slugs differing only by a leading digit yield different identifiers; wrong arity for a declared depth rejected; ⛔ no filesystem import in the package |
 | SF-02 | Corpus manifest | Developer 2 | *merged* | ✅ `done` | — | Accepts all four §1 shapes incl. two depth-1; refuses unknown `corpus_api`/`placement`/`media.commit`, empty `levels`/`variants`, a forbidden `permitted_edits` target, an `exclude` with no `why`; ⛔ a file matching neither list is **named and refused**; absent `media` asserted as committed-with-defaults; no module derives runnability from a variant name |
 | SF-07 | Block vocabulary and Markdown reader | Developer 1 | *merged* | ✅ `done` | — | CodeSignal's Markdown tests pass unchanged; `disclosure` is a **container block holding blocks**; fence-awareness proved on `depth1` u3 `lesson-2`; parses all 166 Java sub-READMEs **or names every file and construct that fails**; ⛔ no unit yields fewer blocks than its independently-counted structure implies |
-| SF-08 | Personal-data gate | Developer 1 | `feat/SF-08-scrub` | `in-progress` | — | Home path refused at the archive boundary; build output scrubbed before a stream; ⛔ **three patterns, no content shape, no username pattern**; a document of 16-digit card-shaped strings **passes**; material that only resembles personal data after escaping is **not** refused; every gate reads decoded strings — asserted |
-| SF-11 | Page assets | Developer 2 | `feat/SF-11-assets` | `in-progress` | — | Highlight tests pass incl. no token combination taking the comment colour without being a comment; a page opens with only local requests; every palette token defined in **both** themes and clearing contrast; vendored bundles carry licences, unedited |
+| SF-08 | Personal-data gate | Developer 1 | *merged* `f9be376` | ✅ `done` — ⚠️ **its finding 6 is only one-fifth carried; see W7** | — | Home path refused at the archive boundary; build output scrubbed before a stream; ⛔ **three patterns, no content shape, no username pattern**; a document of 16-digit card-shaped strings **passes**; material that only resembles personal data after escaping is **not** refused; every gate reads decoded strings — asserted |
+| SF-11 | Page assets | Developer 2 | *merged* `56caba0` | ✅ `done` — ⚠️ **three rulings from it are uncarried; see W8, W9, W10** | — | Highlight tests pass incl. no token combination taking the comment colour without being a comment; a page opens with only local requests; every palette token defined in **both** themes and clearing contrast; vendored bundles carry licences, unedited |
 
-| SF-33 | Contract version guard | *first free slot* | `feat/SF-33-version` | `todo` | — | ⛔ A JSON `true` is **refused** where `1` is supported — asserted, with `1.0` and `"1"`; refusal is a raise, never a migration; `SF-02` imports it; ⛔ a test fails if a second version check appears. **Before SF-06** |
+| SF-33 | Contract version guard | *first free slot* | *merged* `0e59645` | ✅ `done` — ⚠️ one finding accepted with the cost named; see W11 | — | ⛔ A JSON `true` is **refused** where `1` is supported — asserted, with `1.0` and `"1"`; refusal is a raise, never a migration; `SF-02` imports it; ⛔ a test fails if a second version check appears. **Before SF-06** |
 
 ### The lanes
 
@@ -472,6 +518,255 @@ the ordering; the task definition stays honest about what actually blocks.
 `SF-11` is `pair` and `SF-01`, `SF-02`, `SF-07`, `SF-08` are `solo`. ⭐ **The lane
 assignment does not override that**: a lane is who *owns* the sequence, not who
 sits in the room. SF-11 still gets its second pair of eyes when it runs.
+
+---
+
+## ⛔ The release-branch reconciliation — a name read as a scope
+
+⚠️ **This board's header claimed a release branch that does not exist and never
+did.** It said *"Release branch: `release/m1-one-page`, cut from
+`release/m0-foundations`"*. **Measured 2026-09-09:** `git branch -v` lists no
+`release/m1-one-page`; every M1 task — SF-01, SF-02, SF-03, SF-05, SF-06, SF-07,
+SF-08, SF-09, SF-11, SF-33 and the label-seam hotfix — merged into
+`release/m0-foundations`, and the green base is measured there.
+
+⛔ **It is the third instance in one milestone of reading a record as a status**,
+after the stale finding acted on and the index recorded as present. ⚠️ **And it is
+a new sub-shape worth naming, because it will recur at every milestone boundary:
+the branch's *name* was read as its *scope*.** A branch called
+`release/m0-foundations` looks finished when M0 closes, so a plan document
+invented its successor — and nobody checked, because the name made the claim
+plausible.
+
+### The ruling: M1 continues on `release/m0-foundations`, and the naming scheme is retired
+
+⭐ **Not re-cut mid-wave.** Five agents' bases resolve against that branch, the
+only measured-green number in this project is on it, and re-cutting now would
+invalidate every one of them for a cosmetic gain. ⛔ **A rename that buys tidiness
+and costs five bases is not a trade this board takes mid-wave.**
+
+⭐ **And the deeper fix is not a better name, it is fewer of them.** A
+milestone-named release branch is a claim with an expiry date baked into it, so
+this defect is *guaranteed* to recur at M2 — the name goes stale the moment the
+milestone closes while the branch keeps working perfectly. ⛔ **A name that
+encodes a status is a status stored in the one place nothing can update it.**
+So: `release/m0-foundations` is **the release branch**, its name is now
+**historical rather than descriptive**, and this line is what says so. ⚠️ At the
+M1→M2 boundary the PO decides whether a new branch is cut — and if the answer is
+another milestone name, the answer is wrong.
+
+---
+
+## M1 step 1.3 — the assignment
+
+> Step 1.3 closes when `validate` defines "done" for an adapter, the exercise
+> contract exists, reconnaissance is a skill rather than a thing somebody did by
+> hand, and ⛔ **the index this plan's context budgets assume can be trusted.**
+
+| Task | Title | Owner | Branch | Status | Blocked on | Closes when |
+|---|---|---|---|---|---|---|
+| SF-25 | `studyforge validate` | Developer 1 | `feat/SF-25-validate` @ `96dd17e` | `in-progress` | — | Both valid fixtures pass; each invalid fixture fails with its own message; the silently-skipped-construct fixture fails while every other check passes; ⛔ **a test asserts `validate` calls the SF-08 gate** — carried this round, see **W7**. **Remaining at handoff:** the `report`, `corpus`, `cli`, `init` and `__main__` test modules |
+| W1 + W2 | The `{value!r}` echo, and the check that stops it returning | Developer 2 | `fix/W1-W2-address-echo` | `in-progress` | — | `require_slug`/`require_ordinal` stop reproducing the value; the behavioural §1f sweep ships with a declared allowlist that **fails on any new echo**. ⛔ **One piece of work, not two** |
+| W3 | The fixture SVG that declares an arrow it does not draw | Developer 2 | *with W1+W2* | `todo` | — | The geometry matches the two accessible names, or the names match the geometry — and they agree with each other |
+| FND-07 | Knowledge-index availability and freshness | **Developer 2, next** | — | `todo` | — | Absent → report and exit 0; ⛔ **stale by content, never by mtime** → FAIL; unbridged → FAIL. ⭐ **The task ships the check; the artifact does not travel** |
+| SF-23 | Exercise and workspace contract | **Developer 1, next** | — | `todo` | — *(SF-09 merged)* | §7's three states are structural, with no `state` field to forget; ⛔ **it must ship the `graded` fixture, which does not exist** — see below |
+| SK-01 | Source reconnaissance | **next free slot, after SF-25 merges** | — | `todo` | ⚠️ soft: SF-25 | Correct manifests for the Java corpus, a flat source, and a prose-only source; ⛔ **colliding and unaddressable titles are named**, carried this round |
+
+### ⛔ Merge order inside step 1.3, ruled — **W1+W2 before SF-25**
+
+⚠️ **CTO round 17, ruling 17.** The boundary is **upstream**: `validate` does not
+scrub, ⭐ **W1 is the fix**, and `validate` owns an *end-to-end poison test* which
+is not a duplicate of W2 because it is taken from a different vantage point
+(rubric §10b, third instance). **Measured:** 6 of 10 poison shapes reproduced an
+identifier in a report line; with W1 prototyped, **10 of 10 clean with the
+diagnosis intact** — ⛔ so the echo is removed without deleting the sentence that
+makes the refusal useful.
+
+⭐ **Both developers already have this, and the board is not where they learned
+it** — it is recorded here because the *order* is a scheduling fact and
+scheduling facts belong to this document.
+
+### ⛔ New dependency inside step 1.3: `Profile` grows before the sibling check
+
+⚠️ **Found by the trial merge, and it is C5's ruling paying for itself inside one
+round** (round 17, finding 12). `structure.py:109` in SF-25 **branches on a
+placement profile name**, and **SF-03's `ast` test in another package fails**
+because of it. ⭐ **Nothing but the trial merge could have found this** — each
+branch is correct alone, which is the only situation C5 ever occurs in. Option 2
+was the half that mattered and this is the evidence.
+
+⛔ **Branching on a profile name is R1 in miniature** — the framework knowing a
+source-shaped fact by name instead of asking for a capability — so the fix is not
+to work around it. `Profile` gains the capability the sibling-collision check
+needs.
+
+**Decision — Developer 1 adds it, inside SF-25's branch, and it is reviewed as a
+change to the placement contract.**
+
+- ⭐ **The only caller writes it.** `SF-25` is the first and only consumer of this
+  capability, and ⛔ **a capability designed by somebody with no caller is a guess
+  about what the caller needs** — the same error this board refused when it
+  declined to design `consuming.json`'s content against zero implementations.
+- ⛔ **`SF-03` is merged, so "SF-03 must add it" cannot mean a task acts.** It
+  means the placement contract grows, and the live task holding the need is the
+  one that grows it. ⚠️ **Routing it to a task that does not exist is B1's defect
+  — a condition phrased as "wait for X" is a task that waits forever**, and this
+  board has now cited that twice in one round.
+- ⚠️ **It does not go to Developer 2 despite `placement/` being their step-1.1
+  surface.** That would put a critical-path task behind another developer's
+  queue, ⛔ **which is exactly the coupling the CTO overruled me for in step
+  1.1.** Applying the correction is the point of having taken it.
+- ⛔ **The review vantage point is what makes this safe:** the CTO reviews the
+  `Profile` change as a **contract change on SF-03's surface**, not as a
+  `validate` internal. ⭐ A contract that grows inside a consumer's branch is
+  exactly where a contract grows badly, and naming the vantage point is the
+  cheapest guard available. `E01`'s `SF-03` gains a carried note recording that
+  `Profile` grew and why, so the next reader is not left inferring it.
+- **Developer 1 builds everything not gated by it first** and reports what
+  remains blocked — already instructed by the CTO, recorded here so it is not
+  re-decided.
+
+### The assignment, and the reasoning that makes it re-checkable
+
+⭐ **The collision-pair rule again, and it decided both slots.** It is the rule
+that held through step 1.1 and it is applied here on **measured** surfaces, not
+guessed ones.
+
+| Lane | Developer | Order | Reasoning |
+|---|---|---|---|
+| **A — the archive-document contract** | Developer 1 | **SF-25** → **SF-23** | ⚠️ **They share one surface: what is legal inside a practice archive document.** `SF-25` decides what `validate` accepts in every archive document; `SF-23` puts a **new `exercise` object inside one** (Q2's ruling — not a sixth contract, an object on the existing `raw_api`). ⛔ Split across two agents, they disagree about whether `validate` knows `exercise` exists, and the disagreement surfaces as a corpus that validates green while its graders are invisible. One agent, and the question never arises |
+| **B — `tools/quality`'s `CHECKS`** | Developer 2 | **W1+W2** (+ **W3** as slack) → **FND-07** | ⚠️ **Measured, not assumed:** `handoffs/SF-03.md` finding 6 places W2 *"beside the R7 sweep in `tools/quality`"* in its own words, and `FND-07`'s tripwire registers in the same `CHECKS` tuple — **five entries today**. ⛔ Two agents adding two entries to one tuple in parallel is C5's shape with a contract instead of a line length, and C5 is the defect this milestone has already paid for three times |
+| **slack** | Developer 2, alongside | **W3** | One fixture file, decoupled from everything. ⛔ **Its stated trigger was wrong and is corrected below** |
+| **queued** | next free slot | **SK-01** | The only step-1.3 item with genuine slack — and the one that most wants a slot where two people can sit |
+
+⛔ **W3's trigger was a task that waits forever, and that is B1's defect
+returning.** It was routed to Developer 2 *"with the next fixture touch"* — but
+the next fixture touch is now **SF-23's**, which is Developer 1's, so Developer 2
+would have waited for an event that never reaches them. ⭐ **A trigger naming
+somebody else's work is not a trigger.** W3 is one file, so it is dispatched on
+its own, **now, ahead of SF-23**, which also removes the only collision between
+the two lanes: both touch `tests/fixtures/` and the split digest modules, and
+ordering them in time is cheaper than ruling about them.
+
+### ⛔ SF-23 has no fixture for the state it exists to encode
+
+⚠️ **Measured 2026-09-09:** `grep -rln '"exercise"' tests/fixtures/` returns
+**nothing**, while two `practice-1.json` documents exist under `depth2`. So of
+§7's three states, the fixtures carry **`none`** (depth1 writes no practice
+document) and **`ungraded`** (a practice document with no `exercise` key) — and
+⛔ **`graded`, the state the whole task is about, has no fixture at all.**
+
+⭐ **`SF-23` ships that fixture itself, and this reverses a precedent
+deliberately.** In step 1.1 the disclosure fixture went to FND-04's author and
+**gated a critical-path task on another developer's work** — the CTO overruled
+half of that coupling and was right to. ⚠️ The lesson was *do not put a
+critical-path task behind another developer's refactor*, and applying it here
+means the task that needs the fixture writes the fixture. ⛔ **Additively** (R3),
+and the digest recomputation is part of the task, not a follow-up.
+
+### Why SK-01 is last, and it is a ranking rather than neglect
+
+⚠️ **Its `Context` cites *"SF-25 output"* while its `Depends on` says only
+SF-02.** That is not a contradiction to fix by deleting one of them: SK-01 can be
+*authored* without `validate`, but a reconnaissance skill whose proposal is
+judged by `studyforge validate` cannot be **finished** honestly before that
+command exists. ⭐ So it wants SF-25 merged, which is exactly what is happening.
+
+⭐ **And §9 — a skill precedes the artifact it produces — is satisfied rather
+than strained.** ⚠️ It is worth being honest that it is *already* half-violated:
+ISO's reconnaissance was done **by hand** and its conclusions are on this board.
+⛔ **That is a finding against SK-01 under R19, not a reason to hurry it** — every
+step of that hand-done reconnaissance which SK-01 should have produced is exactly
+the evidence this skill needs, and it is available now precisely because somebody
+did it manually first.
+
+---
+
+## The wave-open checks — run 2026-09-09, both by the PO
+
+⛔ **Both are mine and both are run before the wave, not after it.**
+
+### 1. Index present and current — ⚠️ **FAILED, and it has been fixed**
+
+⛔ **The index in the main checkout was stale, and every agent this wave would
+have queried yesterday's tree.** ⚠️ Note the trap this board documented last
+round: `graphify-out/` is git-ignored, so a **worktree has no index of its own** —
+the check is run against the **main checkout**, and agents reach it with
+`--graph`, which is what makes R14 affordable at all.
+
+**Measured, main checkout, `release/m0-foundations` @ `9ad45a2`:**
+
+| | Before | After |
+|---|---|---|
+| `graph.json` `built_at_commit` | `220ea4b` — **15 commits behind**, 30 files changed | `9ad45a2` ✅ |
+| nodes / edges | 3,075 / 6,081 | **3,281 / 6,463** |
+| dangling-endpoint edges (`graphify diagnose multigraph`) | **203**, 192 collapsed, 1 self-loop | ⭐ **0 / 0 / 0** |
+| code↔prose edges | 232 (3.8%) | 510 (7.9%) — ⛔ still not a bridge |
+| `path "R7 — No Personal Data" "assert_clean()"` | no path | ⛔ **still no path, even undirected** |
+
+⭐ **The fix was `graphify update <path>`: incremental, no LLM, no API key, under
+a minute.** R7-verified after the rebuild: **zero** home paths in `graph.json`.
+
+⚠️ **Two things this measurement retires, and one it does not.**
+
+- ⭐ **Retired: "203 dangling edges — absence of a connection is not proof of
+  absence"** as a *current* claim. The tool's own diagnostic now reports zero
+  dangling, zero collapsed, zero self-loops, zero missing endpoints. ⛔ Any
+  briefing still carrying the 203 is quoting a record as a status — the same
+  defect, and this board is where it gets superseded. ⚠️ **The caution itself
+  survives on other grounds** (the graph is unbridged), so do not read this as
+  *the graph is now complete*.
+- ⛔ **Not retired: the bridge.** `FND-07`'s hardest clause is still owed, and the
+  one question this repository most needs answered still returns silence.
+
+### 2. The `[structural]` sweep — ⭐ 32 findings, and it found a hole in its own rule
+
+**Measured:** `grep -rn '\[structural\]' docs/tasks/handoffs/` — **32 findings
+across 9 task handoffs** (⚠️ SF-03 carries four, not the two a quick count sees).
+FND-01/02/04's 23 pre-marker findings were back-triaged last round and are not
+re-swept.
+
+⭐ **Only two are undispositioned, and both are correctly *accepted with the cost
+named*** — which is one of the three legal outcomes, not a shrug:
+
+1. **`SF-33` finding 3 — `api` is a generic field name.** The tree guard would
+   flag a module reading an unrelated `api` key. ⭐ **Zero instances today** and
+   the finding states its own remedy (narrow the rule to the module rather than
+   drop the field). ⛔ **Accepted**, owner is whoever first mints a colliding
+   field — realistically `SF-10` or the E03 TOC task.
+2. **`SF-09` finding 3, routing half — the extraction source's `naming.py`
+   docstring says 1,282 where the tree holds 1,290.** ⭐ **Accepted**: it is a
+   defect in a repository v1 does not modify (R20), and the *rule* it exercised —
+   *a claim about another repository is verified in that repository* — is already
+   ruled and applied. ⚠️ Its ask was *"route to whoever owns the drift
+   catalogue"*; `DOC-2026-09-09-codesignal-drift.md` predates it and has no entry.
+   It goes to **E11's integration catalogue** rather than nowhere.
+
+### ⛔ And the finding that is worth more than either check: **ruling is not carrying**
+
+⚠️ **Thirty of thirty-two were ruled. Eight of those will still evaporate**,
+because a ruling that reached no board row, no epic clause and no trigger is a
+ruling that lives only in a handoff — ⛔ **and this board's own standing rule is
+that a ruling living only in a handoff gets re-derived by whoever picks the task
+up.**
+
+⭐ **This is the C5 meta-finding one level down, and the sentence is almost
+identical.** Then: *"the protocol said to write findings down; it never said
+anyone had to rule on one."* Now: ⛔ **the protocol says to rule on findings; it
+never said anyone had to carry the ruling.** The three words — *ruled, scheduled,
+accepted* — were treated as terminal, and **only two of them name a destination.**
+"Ruled" names a decision and no home.
+
+⛔ **The rule tightens, and this is the correction: a `[structural]` finding is
+dispositioned when its outcome has a *destination* — a task definition, an
+acceptance clause, or a board row with an owner and a trigger.** ⭐ **A CTO
+ruling is the decision, not the delivery**, and the person who owns delivery is
+the PO. ⚠️ The test is unchanged and still the right one — *would this happen
+again to somebody else?* — it was simply being asked one step too early.
+
+⭐ **The eight are now rows W6–W13 below**, which is the destination they lacked;
+three of them were carried into task definitions this round because their
+triggers are imminent.
 
 ---
 
@@ -575,11 +870,29 @@ unaffordable rule is one that gets skipped**, which is precisely what happened.
 
 | # | Item | Owner | When | Note |
 |---|---|---|---|---|
-| W1 | ⭐ **`require_slug`/`require_ordinal` format `{value!r}`** — every address segment, identity field and unit ordinal inherits an R7 echo, so **7 of 26 emission sites are one pair of lines seen through their callers** | Developer, with Ruling 10's `describe` extraction | **after step 1.3** | ⭐ **The highest-value single fix available**, and the ratio is why: fixing one pair of lines closes 7 sites. ⛔ A refusal that quotes the value has relocated the leak into a log |
-| W2 | **Behavioural §1f check** — poison an absolute path into each string parameter, fail if the refusal reproduces it. Prototyped, deliberately not shipped. **46 pairs before the label fix, 45 after** | *unassigned* | with **W1** | ⭐ It is W1's enforcer: W1 fixes the sites, this stops them coming back. ⚠️ **It needs an owner or it evaporates** — and a delta of one, reported honestly, is exactly the number that makes it credible |
-| W3 | ⚠️ **Fixture defect, found by a graph build rather than a test** — `depth1/.../media/diagram.svg` says *"Two nodes and an arrow"*, its lesson's `alt` says *"…joined by one arrow"*, and the geometry is an undecorated `<line>` with **no marker and no arrowhead**; the two accessible names also differ in wording | Developer 2 (FND-04's author) | with the next fixture touch | ⭐ **Worth more than the defect: a graph build found what the test suite did not.** ⚠️ Nobody had been told |
+| W1 | ⭐ **`require_slug`/`require_ordinal` format `{value!r}`** — every address segment, identity field and unit ordinal inherits an R7 echo, so **7 of 26 emission sites are one pair of lines seen through their callers** | **Developer 2**, `fix/W1-W2-address-echo` | ⛔ **now, and before SF-25 merges** (round 17, ruling 17) | ⭐ **The highest-value single fix available**, and the ratio is why: fixing one pair of lines closes 7 sites. ⛔ A refusal that quotes the value has relocated the leak into a log. ⚠️ **Round 17 finding 9 rides in the same commit:** `AddressError`'s docstring *mandates* the echo this removes |
+| W2 | **Behavioural §1f check** — poison an absolute path into each string parameter, fail if the refusal reproduces it. Prototyped, deliberately not shipped. **46 pairs before the label fix, 45 after** | **Developer 2** — ⭐ **it has an owner now** | with **W1**, same branch | ⭐ It is W1's enforcer: W1 fixes the sites, this stops them coming back. ⚠️ A delta of one, reported honestly, is exactly the number that makes it credible. **Measured since:** 6 of 10 poison shapes reproduced an identifier in a `validate` report; 10 of 10 clean with W1 prototyped |
+| W3 | ⚠️ **Fixture defect, found by a graph build rather than a test** — `depth1/.../media/diagram.svg` says *"Two nodes and an arrow"*, its lesson's `alt` says *"…joined by one arrow"*, and the geometry is an undecorated `<line>` with **no marker and no arrowhead**; the two accessible names also differ in wording | **Developer 2** (FND-04's author) | ⛔ **now, as slack — trigger corrected** | ⭐ **Worth more than the defect: a graph build found what the test suite did not.** ⛔ **Its old trigger — *"with the next fixture touch"* — named work that is now Developer 1's**, so Developer 2 would have waited forever. A trigger naming somebody else's work is not a trigger |
 | W4 | **`handoffs/SF-05.md` still describes `LABEL_FORBIDDEN`** and lists its duplication as open finding 6; both are resolved by the hotfix | PO — ✅ **discharged here** | ✅ done | ⛔ **A handoff is a record and is not rewritten** — my own rule — ⭐ **so this row *is* the correction.** The board is where a superseded record gets superseded |
 | W5 | **`unitdoc.py` is 827 lines against R11's 400, and belongs to `SF-10`** — not `SF-06` | `SF-10` | at **SF-10**, step 1.4 | ⭐ Routed with the number so the task inherits it. R11: the large modules arrive **as packages or not at all** |
+
+### ⛔ W6–W13 — the eight rulings that had nowhere to land
+
+⚠️ **Every one of these was ruled by the CTO and every one would still have
+evaporated**, because a ruling with no row, no clause and no trigger lives only
+in a handoff. ⭐ **This table is the destination they lacked** — see *ruling is
+not carrying*, above.
+
+| # | Item | Owner | When | Note |
+|---|---|---|---|---|
+| W6 | ⛔ **The R7 exception-text check** — any `{exc}` interpolation re-emits the absolute path the inner refusal was careful not to emit. `SF-02` finding 1 and `SF-05` finding 4, ruled round 8: *"build it now — a check that arrives after twenty sites exist is one nobody turns on"* | **Developer 2**, with W1+W2 | ⛔ **now** — the developer is standing in `tools/quality` this minute | ⚠️ **`CHECKS` still has five entries and none is this**, four rounds after *"build it now"*. ⭐ The ruling's own urgency argument is the schedule: `SF-04`, `SF-25`, `SF-28` and every adapter each add sites. ⛔ It is a **sibling of W2, not a duplicate** — W2 poisons a *parameter*, this reads a *format string* |
+| W7 | ⛔ **The gate call-site table** — `SF-08` shipped a gate with **no callers**, and a gate nobody calls is green forever. Round 10 ruled one acceptance clause each into `SF-25`, E05, `SF-16`/`SF-17` and E07 | PO → the four epics | ⭐ **`SF-25`'s carried this round**; the rest **before each task is authored** | ⚠️ **Only `SF-06`'s had landed.** ⛔ These are *acceptance clauses*, not chores — a clause that arrives after the task is written is a clause that gets argued with instead of met |
+| W8 | ⛔ **The dev image has no JS runtime**, so 38 tests can only run off-image. `SF-11` finding 1, ruled round 11 an `FND-03` follow-up: *"not optional and not 'when convenient'"* | *unassigned* — ⚠️ **needs one** | **before the next E03 task** (`SF-12`, step 1.5) | ⛔ E03 and E04 widen this gap from here, and the container is authoritative *because it is pinned*. ⚠️ A claim only provable off-image is a claim the verdict cannot rest on |
+| W9 | **The markup contract has one side written** — `surface.py` guesses `SF-12`'s class names. Ruled round 11: **SF-12 reviews the names in one commit as its first act** | `SF-12` | at **SF-12**, step 1.5 | ⛔ Not in `E03` yet. ⭐ *"Its first act"* is a sequencing instruction and it only works if it reaches the task **before** the task starts |
+| W10 | **Palette tokens with no painter** — `--hl-*`, `--player-height`, `--practice*` are defined and unclaimed. Ruled round 11: a **named, self-retiring list**, and E04/E08 acceptance gains *remove your token* | PO → E04, E08 | **before E04 / E08 are authored** (M3, M5) | ⭐ Self-retiring is the good part: the list is a number that must reach zero, ⛔ not an exclusion that lives forever. The word *"unclaimed"* currently appears nowhere |
+| W11 | **`api` is a generic field name** — the tree guard would flag a module reading an unrelated `api` key. `SF-33` finding 3 | ◐ **ACCEPTED, cost named** | if a colliding field is ever minted — realistically `SF-10` or E03's TOC | ⭐ **Zero instances today**, and the finding states its own remedy: narrow the rule to the module rather than drop the field. ⛔ Recorded so the remedy is not re-derived under time pressure |
+| W12 | **The extraction source's `naming.py` docstring says 1,282 where the tree holds 1,290.** `SF-09` finding 3, routing half | ◐ **ACCEPTED, cost named** → E11's integration catalogue | at **SK-07** / the catalogue | ⭐ A defect in a repository v1 does not modify (R20), and the *rule* it exercised — **a claim about another repository is verified in that repository** — is already ruled and applied. ⚠️ Its ask was *"route to whoever owns the drift catalogue"*; `DOC-2026-09-09-codesignal-drift.md` predates it and has no entry |
+| W13 | ⛔ **Two copies of the personal-data gate that already disagree** — `tests/fixture_checks/personal_data.py` skips dict keys where `SF-08`'s does not (`SF-06` finding 3, ruled **urgent**); and **`imports()` is spelled twice** and should be extracted to `tests/support.py` *"before a third scanner writes a third copy"* (`SF-06` finding 8) | *unassigned* — ⚠️ **needs one** | ⛔ **before `SF-12`**, the next scanner-shaped task | ⭐ **One row because they are one defect**: the project's most-repeated diagnosis is *two copies of a contract*, and here it has produced a copy that **already gives a different answer**. ⚠️ `tests/support.py` exists and has no `imports()` |
 
 ⚠️ **W1 and W2 are one piece of work and should be assigned together.** W1 without
 W2 is a fix with no guard; W2 without W1 is a red check with 45 findings.
@@ -598,7 +911,7 @@ trigger, and the trigger is an event rather than a date.
 | **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | **M1 → M2 boundary** | Five tasks, not eighty-five. They are the discovery-shaped ones, where you do not know the name of the thing you are looking for — `query`'s weak case |
 | **`Effort` field applied beyond the four named tasks** | PO | as each computation-shaped task is assigned | ✅ The field exists now (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill eighty-four tasks; add it when a task is assigned and its shape is known |
 | ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | ⛔ **before M1's wave opens** | The `[structural]` sweep is blind to findings filed before the marker existed — ⚠️ **including the one that motivated the mechanism** |
-| **R21's four remaining open rows** *(was five)* | CTO | each before its named task builds | ✅ `consuming.json` filled. Overlay `content.json` is next, owed before **SF-09** at step 1.3 — ⚠️ **two steps away, so near-term rather than comfortable** |
+| **R21's three remaining open rows** *(was five, then four)* | CTO | each before its named task builds | ✅ `consuming.json` filled; ✅ **overlay `content.json` closed by SF-09** — `content_api` minted and asserted. ⚠️ **The next one is the discovery cache, owed before `SF-04` at M2 step 2.1** — no longer "two steps away", so it is the near one now |
 
 ---
 
@@ -725,10 +1038,74 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 
 ---
 
+## ⛔ `ONBOARDING.md` — ruled: it does not enter the repository
+
+⚠️ **An untracked `ONBOARDING.md` sits at the repository root** (created
+2026-09-09, never committed). ⭐ **It is not a team document at all** — it is a
+generated onboarding template, and reading it changes the question.
+
+**Three of its claims are false, and each is false in the expensive direction:**
+
+| It says | The truth |
+|---|---|
+| *"Design + backlog; nothing implemented yet"* | ⛔ M0 closed; **1761 passed, 46 skipped** in the pinned container |
+| *"composes them as submodules"* | ⛔ **R18 is amended, submodules are not used, `FND-05b` is cancelled** |
+| *"Ask a teammate for clone URLs"* | ⛔ **Nothing is ever pushed to any remote.** Standing user decision, permanent |
+
+⚠️ **And a fourth that is subtler and worse for this project specifically:** it
+teaches `graphify query "..."` as *the* command. ⛔ That is the one command R14's
+own amendment says holds **only when phrased as distinctive nouns**, and the one
+that needs a local index — while `explain` and `path` take `--graph` and work
+from a worktree that has none. ⭐ **It would teach a newcomer the exact habit that
+produced the 31-of-33 defect**, on the day they arrive.
+
+⛔ **Decision: not tracked, and not corrected into the tree.**
+
+- ⭐ **Everything it is for is already owned by a document that is kept true** —
+  `CLAUDE.md` (what this is, the hard rules, the workspace, where to start),
+  `docs/conventions/`, and this board. ⛔ **A second front door is a second thing
+  to keep true, and this one failed at that in four places while sitting
+  untracked for a single afternoon.** That is the pointer-not-restatement rule
+  again, at the scale of a whole document.
+- ⛔ **It carries an embedded `<!-- INSTRUCTION FOR CLAUDE: … -->` block**
+  addressed to an assistant, telling it how to conduct an onboarding
+  conversation. ⚠️ **Tracking that would put instructions to agents, written by
+  nobody on this project, at the repository root** — where every agent reads.
+  ⭐ **That is disqualifying on its own**, independent of the false claims:
+  correcting the prose would leave the block, and deleting the block leaves a
+  document whose remaining content is already elsewhere.
+
+⚠️ **What I did *not* do, deliberately: I did not delete it.** It is untracked, so
+it is not repository state — it is a file in the user's working directory, and
+⛔ **deleting an untracked file is irreversible and outside what a status document
+should do on its own.** ⭐ **The dichotomy in the question was false: the answer is
+neither "track it corrected" nor "delete it", because it is not the
+repository's.** It is recorded here so it is never committed, and the one useful
+thing it contains is noted: it is *evidence* that a newcomer's first document
+gets written when nobody points at `CLAUDE.md` — which is a routing fact, not a
+missing document.
+
+---
+
 ## Log
 
 | Date | Change |
 |---|---|
+| 2026-09-09 | ⛔ **The header named a release branch that does not exist and never did.** `release/m1-one-page` has no ref; all eleven M1 merges landed on `release/m0-foundations`. ⭐ **Ruled: M1 continues there, not re-cut mid-wave** — five agents' bases and the only measured-green number are on it, and a rename that buys tidiness and costs five bases is not a mid-wave trade. ⚠️ **New sub-shape named: the branch's *name* was read as its *scope*.** A milestone-named release branch is a claim with an expiry date, so ⛔ **the naming scheme is retired rather than a better name chosen** — a name that encodes a status stores a status in the one place nothing can update it. |
+| 2026-09-09 | ⛔ **Status cells corrected against `git log`: SF-08, SF-11 and SF-33 were `in-progress`/`todo` and are all merged** (`f9be376`, `56caba0`, `0e59645`) while the header three lines above said step 1.1 was complete. ⚠️ A document that contradicts itself in two screens was read as a status by whoever dispatched from it. |
+| 2026-09-09 | ⭐ **The finding of the round, and it is against the mechanism rather than any task: ruling is not carrying.** The `[structural]` sweep returned **32 findings**; **30 were ruled** and ⛔ **8 of those will still evaporate**, because they reached no board row, no epic clause and no trigger. ⚠️ **It is the C5 meta-finding one level down, in nearly the same words:** then, *the protocol said to write findings down and never said anyone had to rule on one*; now, ⛔ **the protocol says to rule and never said anyone had to carry the ruling.** Of the three legal outcomes — ruled, scheduled, accepted — **only two name a destination.** ⛔ **Rule tightened: a finding is dispositioned when its outcome has a destination.** A CTO ruling is the decision; ⭐ **delivery is the PO's, and this is the PO's own gap.** The eight are now **W6–W13**. |
+| 2026-09-09 | ⛔ **Wave-open check 1 FAILED: the index was stale, and I fixed it.** Built at `220ea4b`, **15 commits and 30 files behind** the tip. ⭐ **Measured by content, not by clock:** an incremental rebuild added **224 nodes and removed 18**, and the additions are exactly the merged-but-unindexed tree — `unit/content.py` (30), `test_content.py` (38), `unit/sections.py` (8), `unit/errors.py` (6), `placement/names.py` (6), `container/fields.py` (7). ⚠️ **Every agent this wave would have queried a graph missing most of SF-09.** Rebuilt with `graphify update` — incremental, **no LLM, no API key**, under a minute; `built_at_commit` now `9ad45a2`; R7-verified, **zero** home paths. |
+| 2026-09-09 | ⭐ **A standing caveat retired by measurement: the graph health warning is gone.** `graphify diagnose multigraph` after the rebuild reports **0 dangling, 0 collapsed, 0 self-loops, 0 missing endpoints** — it was 203 / 192 / 1. ⛔ Any briefing still carrying *"203 dangling edges"* is quoting a record as a status. ⚠️ **The caution survives on other grounds and must not be read as *the graph is complete*:** code↔prose is still **510 of 6,463 (7.9%)**, 502 of them incidental mentions, and `path "R7 …" "assert_clean()"` **still returns no path, even undirected.** |
+| 2026-09-09 | ⛔ **FND-07 must not use mtime, and the two errors that settled it are worth more than the ruling.** The coordinator measured a false FAIL on a current index — git rewrites mtimes on merge, and ⚠️ **`git worktree add` resets every one**, so the check would fail inside **every trial-merge worktree the rubric requires** and ⛔ **break the gate built to catch C5.** ⚠️ **But their counter-check was also wrong**: it confirmed **one** symbol and generalised, while the index was stale by 224 nodes. ⭐ **Both failures are one shape — a proxy read as the thing.** mtime is a proxy for content; one symbol is a proxy for the tree. ⛔ **A sample is not a census.** ⭐ **And the mechanism already existed and nobody had read it:** `graph.json` carries `built_at_commit`. Ruled and carried: `git diff --quiet <built_at_commit> HEAD -- src tools docs`, ⛔ **never `!= HEAD`** (fails after every commit, including one that touches only this board), plus a test that touches every file and asserts the verdict does not move, so a clock cannot be reintroduced. |
+| 2026-09-09 | ⭐ **Step 1.3 assigned on the collision-pair rule, with both surfaces measured rather than guessed.** **Lane A, Developer 1: SF-25 → SF-23** — they share *what is legal inside a practice archive document*; ⛔ split, they disagree about whether `validate` knows `exercise` exists and a corpus validates green with its graders invisible. **Lane B, Developer 2: W1+W2 (+W3, +W6) → FND-07** — ⚠️ **measured from `handoffs/SF-03.md` finding 6's own words**, which place W2 *"beside the R7 sweep in `tools/quality`"*, and FND-07 registers in the same five-entry `CHECKS` tuple. ⛔ Two agents adding two entries to one tuple in parallel is C5 with a contract instead of a line length. **SK-01 queued** to the next free slot. |
+| 2026-09-09 | ⛔ **W3's trigger was a task that waits forever — B1's defect, returning.** It was routed *"with the next fixture touch"*, and the next fixture touch is now **SF-23's**, which is the other developer's. ⭐ **A trigger naming somebody else's work is not a trigger.** Dispatched now, on its own, **ahead of SF-23** — which also removes the only cross-lane collision, since both touch `tests/fixtures/` and the split digest modules, and ordering them in time is cheaper than ruling about them. |
+| 2026-09-09 | ⛔ **SF-23 has no fixture for the state it exists to encode.** Measured: `grep -rln '"exercise"' tests/fixtures/` returns **nothing**, while two `practice-1.json` exist. Of §7's three states the fixtures carry **none** and **ungraded**; ⛔ **graded has no fixture at all.** ⭐ **SF-23 ships it itself, reversing the step-1.1 precedent deliberately** — that precedent gated a critical-path task on another developer's fixture and the CTO overruled half of it. ⚠️ Additively (R3), digest recomputation included, not a follow-up. |
+| 2026-09-09 | ⭐ **New dependency inside step 1.3, and it is C5's ruling paying for itself in one round.** `structure.py:109` branches on a placement profile name and fails `SF-03`'s `ast` test **in another package** — ⛔ **only the trial merge could find it**, because each branch is correct alone, which is the only situation C5 occurs in. **Decision: Developer 1 grows `Profile` inside SF-25's branch**, because ⭐ **the only caller writes it** and a capability designed with no caller is a guess. ⛔ Not Developer 2, despite `placement/` being their step-1.1 surface — **that is the coupling the CTO overruled me for in step 1.1**, and applying the correction is the point of having taken it. ⚠️ Reviewed as a **contract change on SF-03's surface**, not a `validate` internal, and `E01` gains a carried note. |
+| 2026-09-09 | **Merge order ruled: W1+W2 before SF-25** (round 17). The boundary is upstream — `validate` does not scrub, W1 is the fix, and `validate`'s end-to-end poison test is not a duplicate of W2 because the vantage point differs (§10b, third instance). Measured: **6 of 10 poison shapes reproduced an identifier in a report; 10 of 10 clean with W1 prototyped**, diagnosis intact. |
+| 2026-09-09 | ✅ **R21 register: overlay `content.json` CLOSED** — `content_api` minted, in `CONTRACT_FIELDS`, asserted by name, 23 occurrences. ⭐ **Verified in the tree rather than inherited from the handoff.** ⛔ **And the register was stale by *two* rows, not one** — `consuming_api` is in §R9 already. **Three genuinely open, none due in M1.** Ruled: ⭐ **the register is derived from §R9's `open` entries, not kept as a second copy**; the rows survive only for the reasoning §R9 does not carry. |
+| 2026-09-09 | ⛔ **C5's contradiction closed in one place.** The defects table said *"CTO to rule / open"* three screens above a section reading *"✅ RULED"*. ⭐ **The table now carries a pointer and the section carries the reasoning** — and the general rule was ruled with it: **a status table points, it never restates.** |
+| 2026-09-09 | ⭐ **Four instances, one defect, and the pattern is now the finding rather than the four corrections.** The release branch, the index, the C5 row, the R21 register — ⛔ **a summary that restates a status owned elsewhere is a copy, and it goes stale in exactly one direction: the summary is what people read, the source is what people update.** ⚠️ **Three of the four are in this file**, which is why the rule is written into its own editing rules. Same argument as C2's *a convention that repeats its own definition is the defect it polices elsewhere*, the single block-type list, the single size ceiling, the single review base. |
+| 2026-09-09 | ⛔ **`ONBOARDING.md` ruled: it does not enter the repository.** Untracked at the root, it states three things that are false — *"nothing implemented yet"*, *"composes them as submodules"*, *"ask a teammate for clone URLs"* — and ⚠️ teaches `graphify query` as *the* command, ⛔ **the exact habit that produced the 31-of-33 defect.** ⭐ **Disqualifying independently of all that: it carries an embedded `<!-- INSTRUCTION FOR CLAUDE -->` block**, and tracking it would put instructions to agents, authored by nobody here, at the repository root. ⚠️ **Not deleted** — it is untracked, so it is the user's file and not repository state, and ⭐ **the dichotomy in the question was false.** |
 | 2026-09-09 | **`fix/SF-03-label-seam` and `feat/SF-09-unit-document` both merged on APPROVE** — ⭐ **no branch is unmerged.** Step 1.3 is SF-25 (part-written), SF-23, SK-01, and the new **FND-07**. 1797 passed on the host. |
 | 2026-09-09 | ⛔ **The framework's own graph is unbridged — 232 doc↔code edges of 6,081, 3.8% — and `path "R7 …" "assert_clean()"` returns nothing, even undirected.** ⚠️ **That is the question this repository most needs answered.** ⭐ **And we wrote this rule for somebody else:** SK-07 item 9 says a tool-built graph has no doc↔code edges and that bridging is the part that gets missed; FND-02 built the pass and ran it on the **corpus** (806 edges, 162/166) — nobody ran it here. ⛔ **A rule written for the consumer and not applied to the framework is R19's shape from the inside.** `FND-07` gains it, and the tripwire fails on a census below a floor: ⛔ **present, current and unbridged is a worse lie than absent**, because every green light is on and the one question that matters returns silence. |
 | 2026-09-09 | ✅ **M1 steps 1.1 and 1.2 complete** — SF-01, SF-02, SF-07, SF-08, SF-11, SF-33, SF-03, SF-05, SF-06 all APPROVEd. Step 1.3 in progress: SF-09 awaiting review, SF-25 part-written, SF-23 and SK-01 not started. |
