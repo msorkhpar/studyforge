@@ -472,3 +472,10 @@ def test_a_build_output_line_is_scrubbed_before_it_reaches_a_stream():
     assert "jane" not in emitted
     assert "cannot find symbol" in emitted
     assert_clean(emitted, "javac stderr")
+
+
+# ⭐ **W7's tree-wide half lives in `tests/test_gate_coverage.py`**, not here:
+# *"every module that decodes a document calls this gate"* is a claim about the
+# tree rather than about this module's behaviour, and this file is 4 lines from
+# R11's test ceiling. ⚠️ It is one file, one claim — read it when changing what
+# `assert_clean` is for.

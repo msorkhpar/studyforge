@@ -9,7 +9,8 @@ segments; `Address(document["address"])` when you have the JSON list an archive
 document stores; `parse_key(key, depth)` when you have a key and the corpus's
 declared depth. Ask an address for `.key`, `.depth` and `.identifiers`.
 
-**Depends on.** `slug`, `identifier`, `ordinal`, `errors`. ⛔ Not `pathlib`,
+**Depends on.** `slug`, `identifier`, `ordinal`, `errors`,
+`studyforge.describe`. ⛔ Not `pathlib`,
 not `os`, not the manifest — an address is an identity, and where it lives is
 `corpus/placement/`'s answer (R1, R4). `tests/studyforge/address/test_init.py`
 asserts the whole package imports nothing that touches a filesystem.
@@ -51,6 +52,7 @@ from studyforge.address.errors import AddressError
 from studyforge.address.identifier import identifier
 from studyforge.address.ordinal import require_ordinal, unit_name
 from studyforge.address.slug import require_slug
+from studyforge.describe import describe
 
 #: What joins segments into a key. ⛔ Never appears inside a segment, because
 #: `slugify` turns it into a hyphen — that is what makes the join reversible.
@@ -74,7 +76,7 @@ class Address:
         """Normalise to a tuple and refuse anything that is not a slug."""
         if isinstance(self.segments, str) or not isinstance(self.segments, (list, tuple)):
             raise AddressError(
-                f"address segments must be a list or tuple of slugs, got {self.segments!r}"
+                f"address segments must be a list or tuple of slugs, got {describe(self.segments)}"
             )
         segments = tuple(self.segments)
         if not segments:
@@ -123,7 +125,7 @@ class Address:
         `parse_key` makes for you, available on its own.
         """
         if not isinstance(depth, int) or isinstance(depth, bool) or depth < 1:
-            raise AddressError(f"declared depth must be a positive int, got {depth!r}")
+            raise AddressError(f"declared depth must be a positive int, got {describe(depth)}")
         if self.depth != depth:
             raise AddressError(
                 f"address {self.key!r} has {self.depth} segment(s); the corpus "
@@ -156,7 +158,7 @@ def parse_key(key: str, depth: int) -> Address:
     optional.
     """
     if not isinstance(key, str) or not key:
-        raise AddressError(f"address key must be a non-empty str, got {key!r}")
+        raise AddressError(f"address key must be a non-empty str, got {describe(key)}")
     return Address(tuple(key.split(SEPARATOR))).require_depth(depth)
 
 
@@ -168,20 +170,34 @@ def parse_unit_key(key: str, depth: int) -> tuple[Address, int]:
     refused.
     """
     if not isinstance(key, str) or not key:
-        raise AddressError(f"unit key must be a non-empty str, got {key!r}")
+        raise AddressError(f"unit key must be a non-empty str, got {describe(key)}")
     head, separator, tail = key.rpartition(SEPARATOR)
     if not separator:
-        raise AddressError(f"unit key must be '<address>{SEPARATOR}unit-NN', got {key!r}")
+        raise AddressError(
+            f"unit key must be '<address>{SEPARATOR}unit-NN', got {describe(key)} "
+            f"with no {SEPARATOR!r} in it"
+        )
     address = parse_key(head, depth)
     ordinal = _ordinal_of(tail, key)
     return address, ordinal
 
 
 def _ordinal_of(name: str, key: str) -> int:
-    """Return the ordinal a `unit-NN` name carries, or raise naming the whole key."""
+    """Return the ordinal a `unit-NN` name carries, or raise naming the fault.
+
+    ⚠️ **`key` is quoted in the second refusal and described in the first, and
+    the asymmetry is the rule rather than an oversight** (R7, rubric §1f). By
+    the time the second one fires, `name` has been proved to be
+    `unit-<digits>` and the address before it has been proved to be slugs — so
+    the whole key is this framework's own vocabulary. Before that proof it is
+    whatever a caller passed, which may be a path.
+    """
     prefix, separator, digits = name.partition("-")
     if prefix != "unit" or not separator or not digits.isdigit():
-        raise AddressError(f"unit key must end in 'unit-NN', got {name!r} in {key!r}")
+        raise AddressError(
+            f"unit key must end in 'unit-NN'; after the address it carries "
+            f"{describe(name)} that is not one"
+        )
     ordinal = require_ordinal(int(digits), "unit ordinal")
     # ⛔ Round-trip rather than accept: `unit-7` and `unit-007` both parse to 7
     # and would then be written back as `unit-07`, so two spellings of one unit

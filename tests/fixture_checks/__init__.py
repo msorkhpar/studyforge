@@ -79,7 +79,7 @@ from tests.fixture_checks.corpus import (
 )
 from tests.fixture_checks.digests import check_digests
 from tests.fixture_checks.media import check_media
-from tests.fixture_checks.personal_data import PERSONAL_DATA, check_personal_data
+from tests.fixture_checks.personal_data import check_personal_data, shape_in
 from tests.fixture_checks.shape import check_blocks, check_document_shape, check_manifest
 from tests.fixture_checks.vocabulary import (
     BLOCK_FIELDS,
@@ -105,7 +105,6 @@ __all__ = [
     "INVALID_CORPORA",
     "MARKUP_SHAPED",
     "OPTIONAL_KEYS",
-    "PERSONAL_DATA",
     "REQUIRED_TYPES",
     "VALID",
     "all_blocks",
@@ -117,6 +116,7 @@ __all__ = [
     "read_json",
     "rendered",
     "sha256_of",
+    "shape_in",
     "strings_in",
     "violations",
 ]

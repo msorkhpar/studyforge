@@ -28,6 +28,7 @@ asset names a remote host at all.
 
 from __future__ import annotations
 
+from studyforge.describe import describe
 from studyforge.render.pageassets.errors import AssetError
 from studyforge.render.pageassets.source import text
 
@@ -62,7 +63,8 @@ def licence_for(name: str) -> str:
         return VENDORED[name]
     except KeyError:
         raise AssetError(
-            f"{name!r} is not a vendored bundle; it has no licence of its own"
+            f"that is not a vendored bundle and has no licence of its own; "
+            f"this build vendors {sorted(VENDORED)}, and was given {describe(name)}"
         ) from None
 
 

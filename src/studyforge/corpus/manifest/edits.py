@@ -59,6 +59,7 @@ from studyforge.corpus.manifest.content import (
     ContentPolicy,
 )
 from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.describe import describe
 
 #: The kinds of edit that can be declared. ⚠️ One, because one is what any
 #: source in scope needs, and an unknown kind is refused rather than guessed
@@ -121,7 +122,7 @@ def parse_edits(value: object, content: ContentPolicy) -> tuple[PermittedEdit, .
     if value is None:
         return ()
     if not isinstance(value, list):
-        raise ManifestError(f"'permitted_edits' must be a list, got {value!r}")
+        raise ManifestError(f"'permitted_edits' must be a list, got {describe(value)}")
     edits = []
     seen: set[str] = set()
     for index, entry in enumerate(value):
@@ -137,7 +138,7 @@ def parse_edits(value: object, content: ContentPolicy) -> tuple[PermittedEdit, .
 def _edit_of(entry: object, where: str) -> PermittedEdit:
     """One entry, with every field present and of the right shape."""
     if not isinstance(entry, dict):
-        raise ManifestError(f"{where} must be an object, got {entry!r}")
+        raise ManifestError(f"{where} must be an object, got {describe(entry)}")
     expected = ("path", "kind", "anchor", "content", "why")
     unknown = sorted(set(entry) - set(expected))
     if unknown:

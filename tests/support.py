@@ -12,6 +12,7 @@ Imported as `from tests.support import ...` — `pythonpath = ["src", "."]` in
 
 from __future__ import annotations
 
+import ast
 import shutil
 import subprocess
 from pathlib import Path
@@ -132,3 +133,28 @@ def run(command: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
     )
+
+
+def imports_module(path: Path, module: str) -> bool:
+    """Does the Python file at `path` take something from `module` by name?
+
+    ⛔ **The one spelling of "does this module go to the owner?"**, and it was
+    written by hand twice before it was extracted (W13): `test_version.py`'s
+    `imports_the_guard` and `test_blocks.py`'s `imports_the_vocabulary` are the
+    same eleven lines with a different constant, and the fixture checker was
+    about to be the third. ⚠️ This file's own contract says a block repeated
+    between test files is extracted and imported; two copies is where that
+    starts, not where it becomes urgent.
+
+    ⭐ **Equality, not a prefix, and not a re-export chain.** A module deriving
+    from the one source of truth says where it got it — `studyforge.version`
+    matches, `studyforge` does not, and neither does a name re-exported through
+    a package `__init__`.
+    """
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == module:
+            return True
+        if isinstance(node, ast.Import) and any(alias.name == module for alias in node.names):
+            return True
+    return False

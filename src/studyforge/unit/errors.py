@@ -3,9 +3,17 @@
 **What it does.** Names every way a `content.json` can be unacceptable, so a
 caller catches one type rather than five.
 
-**How you use it.** Catch `ContentError`.
+**How you use it.** Catch `ContentError`; `describe(value)` when a refusal
+needs to say what arrived without reproducing it.
 
-**Depends on.** Nothing.
+**Depends on.** `studyforge.describe`, and nothing else.
+
+⭐ **`describe` is re-exported, not re-implemented** (Ruling 10). This module
+wrote the third copy of "name the type, not the value", and the three had
+already drifted about integers. The rule now has one home at
+`studyforge.describe`; the name stays importable from here because that is
+where this package's callers already reach for it, and because a re-export
+cannot disagree with what it re-exports.
 
 ⚠️ **`ValueError`, following SF-01's split and `corpus.manifest`'s reading of
 it:** an overlay is a *value read from a document*, so both halves fail the
@@ -20,36 +28,9 @@ variant the corpus does not have, and a unit with no blocks at all.
 
 from __future__ import annotations
 
-#: Values safe to quote back: a closed set's members and small integers are
-#: this framework's own vocabulary, and quoting them is what makes a refusal
-#: actionable.
-SAFE_TO_QUOTE = (int, bool)
+from studyforge.describe import SAFE_TO_QUOTE, describe
 
-
-def describe(value: object) -> str:
-    """Describe a value from an authored file without reproducing it.
-
-    ⛔ **Rubric §1f, the emission clause.** Every R7 check so far asked whether
-    an identifier reached a *file*; none asked whether the code would write one
-    into a *log*. A refusal that quotes the field it refuses does exactly that,
-    and this module reads a file **a person edits by hand** — so any string in
-    it can be an absolute path.
-
-    ⭐ **Type, not value** — the same answer `studyforge.version._said` gives,
-    for the same reason: a wrong *value* and a wrong *type* are different
-    mistakes and deserve different sentences, and naming the type describes an
-    unexpected payload rather than reproducing it.
-
-    ⚠️ Integers are quoted. They are the one shape that cannot carry an
-    identifier, and a refusal that would not say `unit 4` is a refusal nobody
-    can act on.
-    """
-    if value is None:
-        return "nothing"
-    if isinstance(value, SAFE_TO_QUOTE):
-        return repr(value)
-    name = type(value).__name__
-    return f"a {'n' if name[:1] in 'aeiou' else ''} {name}".replace("  ", " ").strip()
+__all__ = ["SAFE_TO_QUOTE", "ContentError", "describe"]
 
 
 class ContentError(ValueError):

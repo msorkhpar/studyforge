@@ -173,7 +173,24 @@ def test_a_refusal_never_emits_the_address_segment_it_refuses():
     with pytest.raises(PlacementError) as raised:
         identity.from_document(document, 1)
     assert "somebody" not in str(raised.value)
+    # ⭐ W7 moved which refusal fires, and the new one is the better answer:
+    # the personal-data gate now runs over the whole block before any field is
+    # read, so this is refused as a **leak** rather than as a malformed slug.
+    # ⚠️ The claim the test was written for is unchanged and still asserted
+    # above; what changed is that the shape is now named as what it is.
+    assert "personal data" in str(raised.value)
+    assert "address[0]" in str(raised.value)
+
+
+def test_a_segment_that_is_not_a_slug_is_still_refused_by_name():
+    # ⭐ The other half, so W7's gate cannot be read as having replaced SF-01's
+    # check. A segment that is merely not a slug carries no personal data and
+    # reaches the address model exactly as before.
+    document = dict(UNIT.document, address=["Getting Started"])
+    with pytest.raises(PlacementError) as raised:
+        identity.from_document(document, 1)
     assert "segment 1 of 1" in str(raised.value)
+    assert "Getting Started" not in str(raised.value)
 
 
 def test_an_unknown_key_in_the_block_is_refused():

@@ -50,6 +50,7 @@ from studyforge.corpus.placement.names import (
     ROOT_INDEX_FILENAME,
     SITE_CACHE_FILENAME,
 )
+from studyforge.describe import describe
 
 #: Where everything a reader does not browse lives. ⚠️ Dot-prefixed so it sorts
 #: out of the way in a repository whose directories are the material — which is
@@ -128,7 +129,8 @@ def profile_for(name: object) -> Profile:
     if name in _PROFILES:
         return _PROFILES[str(name)]
     raise PlacementError(
-        f"no placement profile named {name!r}; this build registers {registered()}"
+        f"no placement profile by that name; this build registers {registered()}, "
+        f"and was given {describe(name)}"
     )
 
 

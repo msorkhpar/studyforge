@@ -44,6 +44,7 @@ from enum import Enum
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.describe import describe
 
 #: Minimum characters of reason on an exclusion. ⛔ Not a quality bar — it
 #: only stops `"why": "n/a"` from being a way through the gate, which is the
@@ -87,7 +88,7 @@ class ContentPolicy:
         is.
         """
         if not isinstance(path, str) or not path:
-            raise ManifestError(f"path to classify must be a non-empty str, got {path!r}")
+            raise ManifestError(f"path to classify must be a non-empty str, got {describe(path)}")
         candidate = PurePosixPath(path)
         if any(exclusion.path == path for exclusion in self.exclude):
             return Classification.EXCLUDED
@@ -106,7 +107,7 @@ class ContentPolicy:
 def parse_content(value: object) -> ContentPolicy:
     """Build a `ContentPolicy` from the manifest's `content` object."""
     if not isinstance(value, dict):
-        raise ManifestError(f"'content' must be an object, got {value!r}")
+        raise ManifestError(f"'content' must be an object, got {describe(value)}")
     unknown = sorted(set(value) - {"include", "exclude"})
     if unknown:
         raise ManifestError(f"'content' has unknown key(s) {unknown}; expected include, exclude")
@@ -118,7 +119,7 @@ def _include_of(value: dict) -> tuple[str, ...]:
     include = value.get("include")
     if not isinstance(include, list) or not include:
         raise ManifestError(
-            f"'content.include' must be a non-empty list of globs, got {include!r} "
+            f"'content.include' must be a non-empty list of globs, got {describe(include)} "
             f"(a corpus that includes nothing has no material)"
         )
     for position, pattern in enumerate(include, start=1):
@@ -134,13 +135,13 @@ def _exclude_of(value: dict) -> tuple[Exclusion, ...]:
     """Return the `exclude` entries — may be empty, each present one with its reason."""
     exclude = value.get("exclude", [])
     if not isinstance(exclude, list):
-        raise ManifestError(f"'content.exclude' must be a list, got {exclude!r}")
+        raise ManifestError(f"'content.exclude' must be a list, got {describe(exclude)}")
     entries = []
     seen: set[str] = set()
     for index, entry in enumerate(exclude):
         where = f"content.exclude[{index}]"
         if not isinstance(entry, dict):
-            raise ManifestError(f"{where} must be an object, got {entry!r}")
+            raise ManifestError(f"{where} must be an object, got {describe(entry)}")
         unknown = sorted(set(entry) - {"path", "why"})
         if unknown:
             raise ManifestError(f"{where} has unknown key(s) {unknown}; expected path, why")

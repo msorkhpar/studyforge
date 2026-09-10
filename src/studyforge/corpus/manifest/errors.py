@@ -32,8 +32,20 @@ from __future__ import annotations
 class ManifestError(ValueError):
     """A `corpus.json` this build will not accept.
 
-    ⛔ The message names the offending field and value, and — where a closed
-    set was expected — what the accepted values are. A manifest is the first
-    file an integrator writes by hand, so its refusals are the first thing
-    this framework ever says to them.
+    ⛔ **The message names the field, and the accepted values where a closed
+    set was expected — never the offending value itself** (R7, rubric §1f,
+    Ruling 14). It never formats an exception object into itself either, which
+    would carry an absolute path into a log.
+
+    ⚠️ **This sentence used to say the opposite**, and that is the finding
+    worth keeping: it *mandated* the echo, so a fix to the code without a fix
+    to the policy would have been undone by the next author, correctly, by the
+    module's own written rules. ⭐ `studyforge.describe` is how a refusal says
+    what arrived without saying what it said.
+
+    ⚠️ **And a manifest is exactly why.** It is the first file an integrator
+    writes by hand, so its refusals are the first thing this framework ever
+    says to them — and **any** string in a hand-written file can be an
+    absolute path. ⭐ What the reader needs is the field and the permitted
+    class; the value is in front of them already, in the file they just wrote.
     """
