@@ -45,21 +45,20 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git log` is corroborating.**
 
-**Taken at `bfb8c8c`, both instruments, 108 non-release branches.**
+**Taken at `9a57b13`, both instruments, 106 non-release branches.**
 
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W70` | Developer | ⛔ **none** | **+3** | ⏳ in flight |
-| `SF-14` | Developer | `wt/dev1o`, `feat/SF-14-index` | 0 | ⏳ in flight |
+| `SF-14` | Developer | `wt/dev1o`, `feat/SF-14-index` | **+1** | ⏳ in flight |
 | `W14` + `W18` | Developer 1 | none | 0 | ⏳ in flight |
 | `W27` | Developer 2 | none | 0 | ◐ in-review @ `655b527` |
 
-⛔ **The two instruments disagree BY ONE ROW IN EACH DIRECTION this round**, which
-is new: ⚠️ **`git log` alone is blind to `SF-14` (a checkout, no commit) and
-`git worktree list` alone is blind to `W70` (commits, no checkout).** ⭐ **Ruling
-171's primary/corroborating pair arriving as a live reading, and this board is
-still the only total instrument.** ⛔ **`trial/*` branches and `wt/cto44` are the
-CTO's, and are NOT rows.**
+⛔ **Last round the two instruments disagreed BY ONE ROW IN EACH DIRECTION and
+this round they agree**, because the row that only `worktree list` could see
+(`SF-14`, a checkout with no commit) has now committed. ⭐ **The disagreement is
+a property of a row's AGE, not of the instruments** — ⚠️ **which is why the union
+is a lower bound and this board is still the only total instrument** (Ruling
+171). ⛔ **`trial/*` branches are the CTO's and are NOT rows.**
 
 ## Next rows — placed, not yet taken
 
@@ -157,7 +156,7 @@ they have exactly one home each.
 | W67 | The two zero-headroom test modules | framework agent | `todo` — ahead of any row adding a test to `corpus/container` or `corpus/manifest` | [`rows/W67.md`](rows/W67.md) |
 | W68 | The gate walk derives from the tree, not the disk | framework agent | ✅ done — merged late in round 34 | [record](BOARD-ARCHIVE.md#w68-the-gate-walk-derives-from-the-tree-not-the-disk) |
 | W69 | A closed check refusing a bare task-count literal | framework agent | `todo` | [`rows/W69.md`](rows/W69.md) |
-| W70 | Every Acceptance clause expressible as an `Acceptance` | framework agent | ⏳ in flight — `chore/W70-consumer-clause-sweep` | [`rows/W70.md`](rows/W70.md) |
+| W70 | Every Acceptance clause expressible as an `Acceptance` | framework agent | ✅ done — `8b4c92b` | [record](BOARD-ARCHIVE.md#w70-every-acceptance-clause-expressible-as-an-acceptance) |
 | W71 | The tilde arm, and both callers over all three shapes | framework agent | `todo` | [`rows/W71.md`](rows/W71.md) |
 | W72 | `pinned` vs `tracked` in `workspace.json` | framework agent | `todo` — re-scoped round 34 | [`rows/W72.md`](rows/W72.md) |
 | W73 | The re-homed `E11` comparison | INTEGRATION side | `todo` | [`rows/W73.md`](rows/W73.md) |

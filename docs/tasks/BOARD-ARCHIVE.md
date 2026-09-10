@@ -1270,6 +1270,11 @@ The gate walk derives from the TREE, not the disk (Ruling 153)
 
 
 
+### W70 — Every Acceptance clause expressible as an `Acceptance`
+
+Every Acceptance clause expressible as an `Acceptance` (Ruling 151)
+
+
 ## ⛔ `BOARD.md` as it stood at `bfb8c8c` — every line that did not stay, moved whole
 
 # Board — live status

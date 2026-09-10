@@ -4,8 +4,13 @@
 
 **Status:** done
 
-**Base:** `bfb8c8c` (MAIN, `release/m0-foundations`) · **Merge:** `038684b`
-(`chore/board-architecture`, `wt/arch`)
+**Base:** `9a57b13` (MAIN, `release/m0-foundations`) · **Merge:**
+`chore/board-architecture` in `wt/arch`
+
+⚠️ **The tip moved TWICE under this branch while it was being written** — PO
+round 35 + `W76` (`bfb8c8c`), then `W70` + CTO round 44 (`9a57b13`).
+⭐ **Both were merged forward; the second cost one register cell, because the
+partition is heading-driven and `BOARD.md` was untouched by it.**
 
 ---
 
@@ -17,8 +22,8 @@ register row has a single other home.
 | Artifact | What it is |
 |---|---|
 | `docs/tasks/BOARD.md` | **238 lines / 24 KB.** Milestones, in flight, next rows, the `W` register, R21, standing decisions, Scheduled, cross-repo — ⛔ **identity, naming, owner, state, pointer, and nothing else** |
-| `docs/tasks/rows/<ID>.md` | **51 files**, one per row that is not `done`. ⛔ **Titled `# W40` — no naming, no owner, no state.** ⭐ **Zero duplicated facts, by construction** |
-| `docs/tasks/BOARD-ARCHIVE.md` | **+8,351 lines moved WHOLE and UNEDITED**, plus the 27 closed rows' bodies under `### <ID> — <naming>` headings |
+| `docs/tasks/rows/<ID>.md` | **50 files**, one per row that is not `done`. ⛔ **Titled `# W40` — no naming, no owner, no state.** ⭐ **Zero duplicated facts, by construction** |
+| `docs/tasks/BOARD-ARCHIVE.md` | **+8,351 lines moved WHOLE and UNEDITED**, plus the 28 closed rows' bodies under `### <ID> — <naming>` headings |
 | `docs/conventions/board.md` | ⭐ **The standing contract** — one-fact-one-home, what a row may carry, how the PO adds to the board, the instrument. **The wave checks moved into it whole** |
 | `tools/quality/board.py` | The instrument: `check_board` in `CHECKS`, `board_state` in `NOTICES` |
 | `tools/tests/quality/test_board.py` | 19 tests — Ruling 123's three readings, and the two defects this work found in its own instrument |
@@ -32,25 +37,41 @@ register row has a single other home.
 that printed the sha (Ruling 172).**
 
 ```text
-MAIN(base)  -> bfb8c8cd4bfc30384a602d4bff0dae0c3ffd3c40
-               document pointers: 205 read in 219 markdown files, 86 anchored, 0 unresolved
-               quality floor: clean          (no `board:` line — the check does not exist there)
-MERGE(arch) -> 038684b  (MERGE_HEAD bfb8c8cd4bfc30384a602d4bff0dae0c3ffd3c40)
-               document pointers: 353 read in 270 markdown files, 124 anchored, 0 unresolved
-               board: 78 register rows, 51 live, 51 detail files in docs/tasks/rows/;
-                      4361 bytes narrative of 8192, widest row 415 of 600,
-                      24390 bytes total of 32032 allowed
-               quality floor: clean
+$ ./docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check .;
+                            ruff format --check .; python3 -m tools.quality;
+                            python3 -m pytest -q'
+
+MAIN(base)  -> 9a57b139caa509fa7b2e06f489b130ff2a21b5b3
+  ruff 0.16.6 · check: All checks passed! · format: 615 files already formatted
+  document pointers: 205 read in 221 markdown files, 86 anchored, 0 unresolved
+  quality floor: clean            (no `board:` line — the check does not exist there)
+  4129 passed, 63 skipped
+
+MERGE(arch) -> <this branch's tip>
+  ruff 0.16.6 · check: All checks passed! · format: 667 files already formatted
+  document pointers: 352 read in 272 markdown files, 125 anchored, 0 unresolved
+  board: 78 register rows, 50 live, 50 detail files in docs/tasks/rows/;
+         4393 bytes narrative of 8192, widest row 415 of 600,
+         24391 bytes total of 32032 allowed
+  quality floor: clean
+  4155 passed, 63 skipped
 ```
+
+⛔ **Two different shas printed from inside the same invocation as the numbers**
+(Ruling 172), ⭐ **so the base and the merge cannot have been paired wrongly.**
+⚠️ **Skips are 63 in BOTH — 55 `tests/visual/` + 5 `tests/docker/` + 3
+`tests/test_knowledge_index.py`.** ⛔ **A host run of `wt/arch` reads 13 instead,
+because the host has a browser and the pinned image has none (`QA-03/1`) — the
+two numbers describe the MACHINE, not the tree.**
 
 | | ⛔ `bfb8c8c` | ⭐ after |
 |---|---|---|
-| `BOARD.md` | **8,545 lines / 770,843 B** | **238 lines / 24,390 B** |
-| bytes NOT inside a table | 382,194 | **4,361** |
-| bytes inside tables | 388,649 | 20,029 |
+| `BOARD.md` | **8,545 lines / 770,843 B** | **246 lines / 24,391 B** |
+| bytes NOT inside a table | 382,194 | **4,393** |
+| bytes inside tables | 388,649 | 19,998 |
 | widest single table row | **3,485 B** | **415 B** |
-| ⭐ **bytes a reader must load per `W` id indexed** | **9,757** | **301** |
-| ⭐ **the same, in tokens at 4 B/token** | **~2,439** | **~75** |
+| ⭐ **bytes a reader must load per `W` id indexed** | **9,757** | **308** |
+| ⭐ **the same, in tokens at 4 B/token** | **~2,439** | **~77** |
 
 ⭐ **The number that answers the user's question — *what must a reader load to be
 correctly oriented?*** ⛔ **Before: the whole file, ~193k tokens, which is larger
@@ -95,7 +116,7 @@ sum 8546
 | Destination | Lines | Why there |
 |---|---|---|
 | `BOARD-ARCHIVE.md` | 8,351 | rounds, close runs, mint arguments, carried rulings — ⛔ **a record, appended to and never edited** (Ruling 106) |
-| `rows/<ID>.md` | 51 | the register cell of each live row |
+| `rows/<ID>.md` | 51 | the register cell of each live row (`W70` closed after the split; **50** remain) |
 | `BOARD.md` | 16 | the *Scheduled* table, verbatim |
 | `docs/conventions/board.md` | 101 | the wave checks — ⛔ **a process is not a state** |
 
@@ -382,6 +403,15 @@ not failing to summarise; it was failing to be complete** — ⚠️ **`PO-34/7`
 measured seventeen minted ids that appeared in NO register table, and the reader
 had no way to tell.** ⭐ **So the deliverable is completeness plus addresses, not
 condensation, and the register carries all 79 ids for the first time.**
+
+### ⭐ The contract was exercised before it was handed over
+
+⛔ **`W70` merged while this branch was open, so it was CLOSED THROUGH THE
+CONTRACT rather than by editing a cell:** its state cell was replaced, its body
+moved under `### W70 — <naming>` in the archive, and `rows/W70.md` was deleted.
+⭐ **One register cell, one move, one deletion; the check stayed green and the
+bijection held at 50/50.** ⚠️ **The pointer count went 353 → 352 and the anchored
+count 124 → 125, which is the move showing up in the instrument.**
 
 ## For dependents
 
