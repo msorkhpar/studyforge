@@ -345,6 +345,87 @@ be inferred.
 
 ---
 
+### FND-07 — Knowledge-index availability and freshness
+**Milestone** M1 · **Depends on** — · **Team** solo
+**Owns** the index tripwire in `tools/quality/`, and `graphify.md`'s worktree section
+**Context** ~15k — R14, `handoffs/FND-02.md`, `docs/conventions/graphify.md`, `tests/test_knowledge_index.py`
+
+⭐ **This task exists because `FND-02` was marked done for an artifact that never
+reached the repository.** Its acceptance — *"the `studyforge` graph is rebuilt at
+the M0 close"* — was **true in the worktree where it ran and false everywhere
+else**, because `graphify-out/` is git-ignored and ⛔ **an ignored artifact cannot
+travel on a branch.** Measured 2026-09-09: **33 worktrees, 2 with a graph** — the
+main checkout and `FND-02`'s own. ⚠️ **Every agent since has worked without the
+index while the board said it existed**, which is the R14 premise every `Context`
+budget in the plan rests on.
+
+⛔ **This is not a criticism of `FND-02`.** It did the work, it verified it, and it
+recorded what it saw. The defect is that **the acceptance was unverifiable from
+the repository**, so nothing could have caught the gap — which is why the fix is a
+rule and a check rather than a rebuild.
+
+**Definition.** Three things, and the third is the cheap one nobody had measured.
+
+1. ⭐ **The tripwire.** A check that answers, from any checkout, *is there an index
+   here and can it be trusted?*
+   - **Absent** → ⚠️ **report, with the rebuild command, and do not fail.** A
+     fresh clone legitimately has no index, and ⛔ a red suite on clone is hostile
+     and gets muted, which is how a check stops being read.
+   - ⛔ **Present but older than the newest tracked file under `src/`, `tools/` or
+     `docs/` → FAIL.** ⭐ **A stale index is worse than an absent one**, because
+     the agent trusts it: absence is visible and staleness answers confidently
+     with yesterday's tree.
+2. **The wave-open checklist gains a line** — *index present and current in this
+   checkout* — beside the `[structural]` sweep. The PO runs both.
+3. ⭐ **The worktree convention, which makes R14 affordable and is mostly already
+   there.** Measured: `graphify explain` and `graphify path` accept
+   `--graph <path>` and **work from a worktree with no index of its own**;
+   `graphify query` does not and reads `./graphify-out/graph.json` only.
+
+   ⚠️ **That maps exactly onto R14's own qualification.** The two commands the
+   ruling holds for *unconditionally* are the two that need no local build; the
+   one that needs a local build is `query`, already the weak one. ⭐ **So the cost
+   is paid once per repository, not once per worktree** — 33 rebuilds was never
+   payable, and an unaffordable rule is one that gets skipped, which is what
+   happened. `graphify.md` gains the invocation; ⚠️ four tests assert that
+   document's content, so they move with it.
+
+4. ⛔ **Bridge the framework's own graph, and make the tripwire care.** Measured
+   on the rebuilt index: **232 doc↔code edges out of 6,081 — 3.8%**, and
+   `graphify path "R7 — No Personal Data…" "assert_clean()"` returns **no path,
+   even undirected.** ⚠️ **That is the question this repository most needs
+   answered — *which ruling does this code implement?* — and the index cannot
+   answer it.** The 3.8% is incidental, from handoffs naming functions in prose;
+   it is not a bridge.
+
+   ⭐ **We wrote this rule for somebody else and did not apply it to ourselves.**
+   `SK-07` item 9 already says a graph built by running the tool alone has no
+   doc↔code edges and that **bridging is the part that would be missed** —
+   `FND-02` built the bridging pass, applied it to the **corpus** (806 edges, 162
+   of 166 lessons), and nobody ran the equivalent here. The recipe is in
+   `handoffs/FND-02.md`, deterministic, literal symbol occurrence, ⛔ never an LLM.
+
+   ⚠️ **So the tripwire must check usefulness, not just presence** — ⛔ **present,
+   current and unbridged is a worse lie than absent**, because all three green
+   lights are on and the one question that matters returns silence.
+
+**Acceptance.** The tripwire reports absence naming the rebuild command and exits
+zero; ⛔ **it fails when the doc↔code edge census is below a recorded floor**, so
+an index that cannot connect a ruling to its enforcement is not certified as
+healthy — the framework's graph is bridged to establish that floor, and the
+census command is the one `graphify.md` already documents; ⛔ it **fails** on an index older than the newest tracked source, asserted
+by a test that backdates one rather than by description. `graphify.md` carries the
+`--graph` invocation for a worktree, and `tests/test_knowledge_index.py` asserts
+it as it does the other runbook entries. ⛔ **No test in the suite skips
+unconditionally** — a skip every run reports is an untested claim wearing a
+skip's clothes.
+
+**Out of scope.** Building any graph. Committing one — `graphify-out/` stays
+ignored, and ⛔ the answer to an untracked artifact is never *"track it"*: the
+index is 90 MB for a corpus, derived, and rebuilt rather than merged.
+
+---
+
 ### FND-06 — Repository personal-data check
 **Milestone** M0 · **Depends on** FND-01 · **Team** solo
 **Owns** `tools/quality/personal_data.py` and its mirrored test
