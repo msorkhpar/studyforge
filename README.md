@@ -42,9 +42,13 @@ M5, and a corpus enters it only if its material is actually runnable.
 
 ## The workspace
 
-Components are separate repositories composed as **submodules** of one parent
-workspace (R18), so a single checkout is a complete system while each keeps its
-own remote and cadence:
+Components are separate repositories that sit **side by side** on disk, pinned
+by a tracked file rather than composed as submodules (R18, amended — see
+`docs/conventions/workspace.md`). ⛔ Nothing is pushed to any remote, so a
+submodule has no legal form here; `workspace.json` records the commit of each
+component and `python3 -m tools.workspace verify` checks it. ⚠️ That reproduces
+a configuration **across time on this machine**, and deliberately **not** across
+machines:
 
 ```
 <workspace>/
