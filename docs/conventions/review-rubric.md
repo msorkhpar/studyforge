@@ -746,7 +746,11 @@ Two things the reviewer reads rather than greps:
 H="docs/tasks/handoffs/$TASK.md"
 
 MARKED=$(grep -coE '`\[(local|structural)\]`' "$H")     # findings, by definition
-echo "findings=$MARKED"
+LINES=$(grep -cE  '`\[(local|structural)\]`' "$H")     # ⛔ and the lines they sit on
+echo "findings=$MARKED lines=$LINES"
+test "$MARKED" = "$LINES" || echo "A MARKER IS NOT ON ITS OWN FINDING LINE — \
+two on one line, or one in prose. Read them: a marker in explanatory text \
+counts as a finding that does not exist."
 test "$MARKED" -gt 0 || echo "ZERO — say in the review which this is: a task with \
 nothing to report outside its scope, or a Findings section that marked nothing."
 
@@ -821,6 +825,30 @@ on the **wave-open checklist**, run by the person who does the carrying: the PO.
 ⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
 — the author is describing their own scope and is the worst-placed person to see
 that something will recur elsewhere.
+
+### ⛔ 8a-i. A ruling that changes a shared name names its blast radius **across branches**
+
+```bash
+git grep -l "<the shared name>" $(git branch --format='%(refname:short)' \
+    | grep -E 'feat/|fix/') 2>/dev/null
+```
+
+⛔ **A sweep sees the tree; it cannot see the branches.** A ruling collides with
+merged code **and** with work in flight, and those need different mechanisms: a
+**check** for what is there, a **broadcast** for what is coming. ⚠️ **Neither
+substitutes for the other**, and the wave-open sweep is structurally blind to a
+branch that has not merged.
+
+⭐ **The obligation is on whoever *writes* the ruling**, not whoever follows it: the
+author knows what they meant to change, so the grep is free for them and expensive
+for everyone else.
+
+⚠️ **This clause exists because I skipped it.** ⛔ Ruling 35 would have red-lined a
+guard on an unmerged branch; the command above finds that file in one run; **I did
+not run it and the author covered for me.** ⭐ **A reviewer covered for by an author
+has found a hole in their own procedure, not a piece of good luck.**
+
+---
 
 ⛔ **This exists because a correctly-filed prediction was read and not acted on,
 and the defect it named then happened twice more to two other agents in the same
