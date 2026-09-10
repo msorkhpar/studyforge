@@ -6,7 +6,14 @@ into the one string every consumer spells a unit with: `7` → `unit-07`.
 **How you use it.** `require_ordinal(n, what)` at a boundary; `unit_name(n)`
 wherever a unit needs naming.
 
-**Depends on.** `errors`. Nothing else.
+**Depends on.** `errors` and `studyforge.describe`. Nothing else.
+
+⛔ **No refusal here reproduces the value** (R7, rubric §1f, Ruling 14). The
+type branch fires on whatever a caller passed where an ordinal was wanted —
+including a path — so it names the **type** and not the payload. ⭐ The range
+branch does quote, and that is not an inconsistency: by then the value is an
+`int`, which is the one shape that cannot carry an identifier, and a refusal
+that will not say `got 0` is a refusal nobody can act on.
 
 ⚠️ **It is `unit_name`, not `unit_dirname`** — the rename is the point, not
 tidying. The extraction source called it `unit_dirname` because in that project
@@ -27,6 +34,7 @@ source in scope has, and widening later is a change to one function.
 from __future__ import annotations
 
 from studyforge.address.errors import AddressError
+from studyforge.describe import describe
 
 #: `unit-NN`. Zero-padded to at least two digits; a unit numbered 100 widens
 #: rather than truncating, because a truncated ordinal would collide.
@@ -46,9 +54,9 @@ def require_ordinal(value: object, what: str = "unit ordinal") -> int:
     unit's material filed under a flag somebody passed by mistake.
     """
     if not isinstance(value, int) or isinstance(value, bool):
-        raise AddressError(f"{what} must be an int, got {value!r}")
+        raise AddressError(f"{what} must be an int, got {describe(value)}")
     if value < FIRST_ORDINAL:
-        raise AddressError(f"{what} must be {FIRST_ORDINAL} or greater, got {value!r}")
+        raise AddressError(f"{what} must be {FIRST_ORDINAL} or greater, got {describe(value)}")
     return value
 
 

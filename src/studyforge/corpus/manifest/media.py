@@ -37,6 +37,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.describe import describe
 
 #: `always` — commit media whatever the size. `never` — a corpus that has
 #: made the decision to hold its media elsewhere. `auto` — commit while it
@@ -88,14 +89,16 @@ def parse_media(value: object) -> MediaPolicy:
     if value is None:
         return DEFAULT_MEDIA
     if not isinstance(value, dict):
-        raise ManifestError(f"'media' must be an object, got {value!r}")
+        raise ManifestError(f"'media' must be an object, got {describe(value)}")
     known = {"commit", "max_total_bytes", "max_file_bytes"}
     unknown = sorted(set(value) - known)
     if unknown:
         raise ManifestError(f"'media' has unknown key(s) {unknown}; expected {sorted(known)}")
     commit = value.get("commit", DEFAULT_COMMIT)
     if commit not in COMMIT_MODES:
-        raise ManifestError(f"'media.commit' must be one of {list(COMMIT_MODES)}, got {commit!r}")
+        raise ManifestError(
+            f"'media.commit' must be one of {list(COMMIT_MODES)}, got {describe(commit)}"
+        )
     return MediaPolicy(
         commit=commit,
         max_total_bytes=_limit(value, "max_total_bytes", DEFAULT_MAX_TOTAL_BYTES),
@@ -107,5 +110,7 @@ def _limit(value: dict, field: str, default: int) -> int:
     """Return one byte limit: a positive int, or the default when unstated."""
     limit = value.get(field, default)
     if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
-        raise ManifestError(f"'media.{field}' must be a positive int of bytes, got {limit!r}")
+        raise ManifestError(
+            f"'media.{field}' must be a positive int of bytes, got {describe(limit)}"
+        )
     return limit

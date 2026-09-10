@@ -19,7 +19,14 @@ from __future__ import annotations
 class PlacementError(ValueError):
     """An address, origin or profile this build cannot turn into a location.
 
-    ⛔ The message names the value and, where a closed set was expected, what
-    the accepted values are — and never formats an exception object into
-    itself, which would carry an absolute path into a log (R7).
+    ⛔ **The message names the field, and the accepted values where a closed
+    set was expected — never the offending value itself** (R7, rubric §1f,
+    Ruling 14). It never formats an exception object into itself either, which
+    would carry an absolute path into a log.
+
+    ⚠️ **This sentence used to say the opposite**, and that is the finding
+    worth keeping: it *mandated* the echo, so a fix to the code without a fix
+    to the policy would have been undone by the next author, correctly, by the
+    module's own written rules. ⭐ `studyforge.describe` is how a refusal says
+    what arrived without saying what it said.
     """

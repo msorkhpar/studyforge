@@ -74,6 +74,7 @@ from studyforge.address import Address
 from studyforge.archive.blocks import counts_of
 from studyforge.archive.errors import ArchiveError
 from studyforge.archive.scrub import assert_clean
+from studyforge.describe import describe
 from studyforge.version import check as check_version
 
 #: The document format version. ⚠️ Bumped when a reader of the old shape would
@@ -164,7 +165,7 @@ def build(
     directory separator would have made the two the same thing.
     """
     if kind not in KINDS:
-        raise ArchiveError(f"kind must be one of {list(KINDS)}, got {kind!r}")
+        raise ArchiveError(f"kind must be one of {list(KINDS)}, got {describe(kind)}")
     at = address if isinstance(address, Address) else Address(address)
     where = f"{at.key}/unit-{unit}/{kind}-{ordinal}"
     _require_iso_date(ingested, where)

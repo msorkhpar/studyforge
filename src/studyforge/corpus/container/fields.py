@@ -28,6 +28,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from studyforge.address import is_slug
+from studyforge.address.slug import SLUG_PERMITTED
 from studyforge.corpus.container.errors import ContainerError
 
 #: The characters a generated filename component may carry — **a permitted
@@ -51,13 +52,16 @@ from studyforge.corpus.container.errors import ContainerError
 #: pins the resulting set literally, so a change to `is_slug` is a decision
 #: somebody makes rather than one that arrives.
 #:
+#: ⚠️ **The derivation itself now lives once, in `address.slug`**, and this is
+#: `SLUG_PERMITTED | {"."}`. W1 needed the same set to describe a slug fault
+#: without reproducing the value; two copies of one *computation* is the same
+#: defect as two copies of one constant, one step earlier.
+#:
 #: ⚠️ **Lowercase, and that is the point, not an oversight.** `A` and `a` are
 #: one filename on a case-insensitive filesystem, and `sibling` places twenty
 #: units in a single directory — so an uppercase label is a collision this
 #: framework would generate and never detect on the machine that generated it.
-FILENAME_PERMITTED = frozenset(
-    character for character in map(chr, range(128)) if is_slug(f"a{character}a")
-) | {"."}
+FILENAME_PERMITTED = SLUG_PERMITTED | {"."}
 
 #: ⛔ A filename component must *begin* with one of these. A leading `.` is a
 #: hidden file, and a leading `-` is read as an option by half the tools that

@@ -47,6 +47,7 @@ from dataclasses import dataclass
 
 from studyforge.address import Address, AddressError, is_slug, require_ordinal, require_slug
 from studyforge.corpus.placement.errors import PlacementError
+from studyforge.describe import describe
 from studyforge.version import check
 
 #: R9's version for this contract. ⛔ Refused when unknown, never migrated.
@@ -88,7 +89,9 @@ class Identity:
         require_slug(self.corpus, "identity 'corpus'")
         require_slug(self.variant, "identity 'variant'")
         if self.kind not in KINDS:
-            raise PlacementError(f"identity 'kind' must be one of {list(KINDS)}, got {self.kind!r}")
+            raise PlacementError(
+                f"identity 'kind' must be one of {list(KINDS)}, got {describe(self.kind)}"
+            )
         if self.kind == "unit":
             require_ordinal(self.unit, "identity 'unit'")
         elif self.unit is not None:
