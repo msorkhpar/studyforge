@@ -65,7 +65,11 @@ def test_a_refusal_names_the_field_and_the_permitted_class_but_not_the_value():
 def test_a_refusal_over_a_closed_set_says_what_the_set_is():
     with pytest.raises(ManifestError) as raised:
         from_document({"corpus_api": 99})
-    assert "[1]" in str(raised.value)
+    # ⚠️ The whole set, sorted, and it grew to two when `content.not_material`
+    # landed. ⛔ Spelled out rather than read from `KNOWN_CORPUS_API`: the
+    # point of the assertion is that the refusal *names* the set, and one
+    # built from the set would say nothing about what the message contains.
+    assert "[1, 2]" in str(raised.value)
 
 
 def test_it_can_be_caught_as_a_value_error_by_a_caller_that_does_not_import_it():
