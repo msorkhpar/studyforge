@@ -42,9 +42,29 @@ from tools.quality.board.register import cells
 
 _REGISTER_ROW = re.compile(r"^\|\s*(?:[⛔⭐✅⚠️ ]|\*\*)*`?(W\d+)`?\*{0,2}\s*\|")
 
-#: ⛔ The ref the split was taken against, named rather than described.
+#: ⛔ The ref the split was taken FROM, named rather than described.
 BASE = "bfb8c8c"
 SOURCE = "docs/tasks/BOARD.md"
+
+#: ⛔ The ref the split produced, and **this module's subject is the OUTPUT, not
+#: the working tree** (Ruling 180).
+#:
+#: ⚠️ **The first version read `docs/tasks/rows/` off disk, and the branch's own
+#: contract then turned this suite RED on its first ordinary use:** `board.md`
+#: tells the PO that re-scoping a live row means EDITING `rows/<ID>.md`, and
+#: minting one means CREATING a new one. ⛔ **Both are correct actions, and both
+#: failed a test shipped in the same commit** — ⭐ *the right property over the
+#: wrong subject*, which is `CTO-45/1`'s own class recurring inside its fix.
+#:
+#: ⭐ **A migration is a claim about a pair of refs, and both halves of the pair
+#: are now refs.** ⛔ **The live tree is not this module's business: the live
+#: tree's shape is `check_board`'s, which runs on the floor and is
+#: amendment-safe by construction.**
+#:
+#: ⚠️ It is a WHOLE sha rather than a short one, because a short sha is a
+#: prefix and a prefix can become ambiguous in a repository that keeps growing.
+OUTPUT = "5688dcd1a280aaaee27aa1d0763ce897389f2e3e"
+ROWS = "docs/tasks/rows"
 
 #: The three destinations, and the whole claim is that they cover the source.
 ARCHIVE = "docs/tasks/BOARD-ARCHIVE.md"
@@ -65,18 +85,53 @@ MOVED_ANCHOR = "#the-wave-checks-six-at-open-and-check-4-again-at-close"
 RE_ADDRESSED = "../conventions/board.md#the-wave-checks-moved-whole-from-boardmd-2026-09-10"
 
 
-def _base_lines() -> list[str]:
+def _at(ref: str, path: str) -> str:
+    """The content of `path` at `ref`, or a SKIP naming which ref was missing.
+
+    ⛔ Ruling 155: *"could not put the question"* is not *"the answer is yes"*,
+    so an unreachable ref skips with the ref in the message rather than
+    returning an empty string that would satisfy every assertion here.
+    """
     root = repository_root()
     known = subprocess.run(
-        ["git", "cat-file", "-e", f"{BASE}^{{commit}}"], cwd=root, capture_output=True
+        ["git", "cat-file", "-e", f"{ref}^{{commit}}"], cwd=root, capture_output=True
     )
     if known.returncode != 0:
-        pytest.skip(f"{BASE} is not in this checkout, so the question cannot be put")
+        pytest.skip(f"{ref} is not in this checkout, so the question cannot be put")
     shown = subprocess.run(
-        ["git", "show", f"{BASE}:{SOURCE}"], cwd=root, capture_output=True, text=True
+        ["git", "show", f"{ref}:{path}"], cwd=root, capture_output=True, text=True
     )
     assert shown.returncode == 0, shown.stderr
-    return shown.stdout.split("\n")
+    return shown.stdout
+
+
+def _base_lines() -> list[str]:
+    return _at(BASE, SOURCE).split("\n")
+
+
+def _output_row_files() -> dict[str, str]:
+    """`{"W40": <text>}` for every row file the migration PRODUCED.
+
+    ⭐ Read from `OUTPUT`, so an amendment, a mint or a close in the working
+    tree changes nothing here — which is the whole of Ruling 180.
+    """
+    root = repository_root()
+    known = subprocess.run(
+        ["git", "cat-file", "-e", f"{OUTPUT}^{{commit}}"], cwd=root, capture_output=True
+    )
+    if known.returncode != 0:
+        pytest.skip(f"{OUTPUT} is not in this checkout, so the question cannot be put")
+    listed = subprocess.run(
+        ["git", "ls-tree", "--name-only", f"{OUTPUT}:{ROWS}"],
+        cwd=root,
+        capture_output=True,
+        text=True,
+    )
+    assert listed.returncode == 0, listed.stderr
+    names = [n for n in listed.stdout.split("\n") if n.endswith(".md")]
+    # ⛔ Ruling 48: an empty population satisfies every assertion below it.
+    assert len(names) == 50, f"{OUTPUT}:{ROWS} holds {len(names)} files, expected 50"
+    return {n.removesuffix(".md"): _at(OUTPUT, f"{ROWS}/{n}") for n in names}
 
 
 def _consumed_register_lines() -> list[str]:
@@ -98,13 +153,13 @@ def _consumed_register_lines() -> list[str]:
 _FRAME_END = "not in two places.**"
 
 
-def _argument_blocks(path: Path) -> list[str]:
+def _argument_blocks(name: str, text: str) -> list[str]:
     """A row file's argument blocks — everything after its frame."""
-    blocks = [b for b in path.read_text(encoding="utf-8").split("\n\n") if b.strip()]
+    blocks = [b for b in text.split("\n\n") if b.strip()]
     for index, block in enumerate(blocks):
         if _FRAME_END in block:
             return [b.strip() for b in blocks[index + 1 :]]
-    raise AssertionError(f"{path.name} has no frame; every row file states what it is")
+    raise AssertionError(f"{name} has no frame; every row file states what it is")
 
 
 def _unretargeted(block: str) -> str:
@@ -185,19 +240,19 @@ def test_every_block_of_every_row_file_is_a_WHOLE_CELL_of_its_own_row() -> None:
     cell), and text from a neighbouring row fails (it is not one of THIS row's
     cells) — which is both halves of `CTO-45/1` in one assertion.
     """
-    root = repository_root()
     by_id = {}
     for line in _consumed_register_lines():
         match = _REGISTER_ROW.match(line)
         by_id[match.group(1) if match else "W17"] = cells(line)
+    produced = _output_row_files()
     offenders = []
-    for path in sorted((root / "docs/tasks/rows").glob("*.md")):
-        columns = by_id.get(path.stem)
-        assert columns, f"{path.name} has no register line at {BASE}"
-        for block in _argument_blocks(path):
+    for name, text in sorted(produced.items()):
+        columns = by_id.get(name)
+        assert columns, f"{name}.md has no register line at {BASE}"
+        for block in _argument_blocks(name, text):
             if _unretargeted(block) not in columns:
-                offenders.append((path.name, _unretargeted(block)[:70]))
-    assert offenders == [], offenders
+                offenders.append((name, _unretargeted(block)[:70]))
+    assert offenders == [], f"{len(offenders)} of {len(produced)} row files: {offenders}"
 
 
 def test_no_row_file_carries_the_status_column() -> None:
@@ -208,12 +263,11 @@ def test_no_row_file_carries_the_status_column() -> None:
     broken files even if their text had been whole**, because what was in them
     was the status column and it did not belong there whatever its shape.
     """
-    root = repository_root()
     statuses = {cells(line)[3] for line in _consumed_register_lines() if len(cells(line)) >= 5}
     offenders = [
-        path.name
-        for path in sorted((root / "docs/tasks/rows").glob("*.md"))
-        for block in _argument_blocks(path)
+        name
+        for name, text in sorted(_output_row_files().items())
+        for block in _argument_blocks(name, text)
         if _unretargeted(block) in statuses
     ]
     assert offenders == [], offenders
@@ -225,16 +279,19 @@ def test_the_row_files_are_an_extract_of_the_source_not_a_fourth_destination() -
     ⛔ This is what makes `rows/` an extract rather than a move: the record
     keeps the original, so the row file may be freely amended without any byte
     ceasing to exist.
+
+    ⭐ **EVERY block, not just the naming one.** ⚠️ The first version sliced
+    `[:1]` so that amendment would survive it — ⛔ **a workaround for the wrong
+    subject, and it is unnecessary now that the subject is a ref** (Ruling 180).
     """
-    root = repository_root()
     base = "\n".join(_base_lines())
     thin = [
-        path.name
-        for path in sorted((root / "docs/tasks/rows").glob("*.md"))
-        for block in _argument_blocks(path)[:1]
+        (name, block[:60])
+        for name, text in sorted(_output_row_files().items())
+        for block in _argument_blocks(name, text)
         if _unretargeted(block) not in base
     ]
-    assert thin == [], f"row files whose naming block is not in {SOURCE}@{BASE}: {thin}"
+    assert thin == [], f"blocks not in {SOURCE}@{BASE}: {thin}"
 
 
 def test_an_unreachable_base_skips_rather_than_passing(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -245,8 +302,10 @@ def test_an_unreachable_base_skips_rather_than_passing(monkeypatch: pytest.Monke
     of them — ⭐ **`0 = 0` wearing a migration.** ⚠️ Ruling 155: *"could not put
     the question"* is not *"the answer is yes"*, so this reads `Skipped`.
     """
-    monkeypatch.setattr(f"{__name__}.BASE", "0" * 40)
-    with pytest.raises(BaseException) as caught:
-        _base_lines()
-    assert caught.typename == "Skipped", caught.typename
-    assert "cannot be put" in str(caught.value.msg)
+    for name in ("BASE", "OUTPUT"):
+        monkeypatch.setattr(f"{__name__}.{name}", "0" * 40)
+    for reader in (_base_lines, _output_row_files):
+        with pytest.raises(BaseException) as caught:
+            reader()
+        assert caught.typename == "Skipped", (reader.__name__, caught.typename)
+        assert "cannot be put" in str(caught.value.msg)

@@ -31,7 +31,7 @@ register row has a single other home.
 | `docs/tasks/BOARD-ARCHIVE.md` | **9,737 lines.** Every line of the old board, verbatim — including ⭐ **the 78 register lines `CTO-45/1` found had gone nowhere** — plus the 28 closed rows' bodies |
 | `docs/conventions/board.md` | ⭐ **The standing contract** — one-fact-one-home, what a row may carry, how the PO adds to the board, the instrument. **The wave checks moved into it whole** |
 | `tools/quality/board/` | ⛔ **A PACKAGE (R11)** — `__init__.py` carries the six checks, `register.py` the parser where both of `CTO-45`'s defects lived |
-| `tools/tests/quality/board/` | **57 tests** — `test_init.py` (the six rules), `test_register.py` (the two `CTO-45` defects, verbatim corpus), `test_migration.py` (⭐ **Ruling 177, four equalities**) |
+| `tools/tests/quality/board/` | **60 tests** — `test_init.py` (the six rules), `test_register.py` (the two `CTO-45` defects, verbatim corpus), `test_migration.py` (⭐ **Ruling 177, four equalities, subject = a named ref under Ruling 180**) |
 | `docs/conventions/delivery-flow.md` | Four lines: `## The board` now points at `board.md` |
 | `tools/quality/handoffs/__init__.py` | ⛔ **One new document kind, `office handoff`, which owes EXACTLY what a task handoff owes** — `ARCH/8` |
 | `docs/conventions/agent-protocol.md` | The new kind, named where handoffs are described |
@@ -111,37 +111,75 @@ PY
 ### ⭐ 1. The shape: a PARTITION, not a summary — and that is how it reconciles with the round-25 ruling
 
 ⛔ **The PO's standing rule is *"Nothing was summarised. Closed sections moved
-whole, unedited"*, and it is right.** ⭐ **This work does not break it: every one
-of the 8,545 lines went to EXACTLY ONE destination, and the sum is asserted
-rather than claimed.**
+whole, unedited"*, and it is right.** ⭐ **This work does not break it: every
+line of the old board is in the record, verbatim.**
 
-⛔ **The sum below was TRUE and it was the wrong instrument** — ⚠️ **it passed
-while 28,262 bytes of the Status column reached nothing** (`ARCH/10`).
-⭐ **Ruling 177 replaced it with four equalities over content:**
+⛔ **AND IT IS NO LONGER A SUM — the word is withdrawn, `CTO-46/5`.** ⚠️ **The
+old sum was TRUE and it was the wrong instrument: it passed while 28,262 bytes
+of the Status column reached nothing** (`ARCH/10`). ⭐ **Ruling 177 replaced it
+with four equalities over content:**
 
 ```text
 $ python3 -m pytest tools/tests/quality/board/test_migration.py -q
-5 passed
+6 passed
 
-  every line of BOARD.md@bfb8c8c is verbatim in a destination
+  BASE   = bfb8c8c                          (the migration's input)
+  OUTPUT = 5688dcd1a280aaaee27aa1d0763ce897389f2e3e   (its output — Ruling 180)
+
+  every line of BOARD.md@BASE is verbatim in a destination
       -> 2 of 8,546 differ, both ARCH/4's re-addressed anchor, and the test
          asserts BOTH the count and the re-addressed form (a third fails it)
   every consumed register line is in the RECORD          -> 78 of 78
-  every block of a row file is a WHOLE CELL of its own row
-  no row file carries the status column
+  every block of every row file at OUTPUT is a WHOLE CELL of its own row
+  no row file at OUTPUT carries the status column
+  both readers SKIP on an unreachable ref
 ```
+
+⛔ **BOTH halves of the pair are refs, and the working tree is not this module's
+business** (Ruling 180, `ARCH/13`). ⭐ **The live tree's shape is the FLOOR's —
+`check_board`, which is amendment-safe by construction.**
 
 ⭐ **Both directions run** (Ruling 122): the damaged files restored from
 `e9ddf9d` name **exactly the three fragments**; stripping the record names
-**80 of 8,546** and **78 of 78**; ⛔ **an unreachable base SKIPS rather than
+**80 of 8,546** and **78 of 78**; ⛔ **an unreachable ref SKIPS rather than
 passing** — `0 = 0` wearing a migration is the reading this exists to refuse.
+
+⭐ **And the readings that decide whether the contract and the instrument agree
+— expectations written before any command ran, tree restored and
+`git status --porcelain` printed between rows:**
+
+| # | the action, in the contract's own words | migration | floor | `board:` |
+|---|---|---|---|---|
+| **R1** | live | **6 passed** | exit 0, clean | `78 / 50 / 50` |
+| **R2** | *"re-scope a live row — editing it is the point"* | ⭐ **6 passed** | exit 0, clean | `78 / 50 / 50` |
+| **R3** | *"mint a row — one register line, and `rows/<ID>.md`"* | ⭐ **6 passed** | exit 0, clean | `79 / 51 / 51` |
+| **R4** | *"close a row"* — cell, move, delete | **6 passed** | exit 0, clean | `78 / 49 / 49` |
+| **R5** | ⛔ negative control: an ORPHAN row file | 6 passed | ⛔ **exit 1, `[board-orphan]`** | — |
+| **R6** | a 228-byte status fragment appended to a live row | 6 passed | exit 0 | ⚠️ **silent, and `ARCH/14` says why** |
+| **R7** | ⛔ a row file that LOST its frame | 6 passed | ⛔ **exit 1, `[board-frame]`** | — |
+
+⚠️ **R2 and R3 were `1 failed, 5 passed` and `2 failed, 4 passed` before this
+round** — ⛔ **the branch's own contract reddening the branch's own suite.**
+
+⚠️ **R4 took THREE runs and the first two failures were my PLANT's, not the
+instrument's** — a row body carries `](../BOARD-ARCHIVE.md#…)` links that must be
+re-addressed to `](#…)` when the body moves INTO the record, and the register's
+Detail cell must change too. ⭐ **The pointer check caught both, which is the
+instrument doing its job on the person testing it** — and the contract now says
+closing a row is three edits rather than two.
+
+⭐ **Where each of the old board's 8,545 lines is now, and it DOES account for
+all of them** (`CTO-46/5` — the earlier table dropped the 78 and stood under the
+word *sum*):
 
 | Destination | Lines | Why there |
 |---|---|---|
-| `BOARD-ARCHIVE.md` | 8,351 | rounds, close runs, mint arguments, carried rulings — ⛔ **a record, appended to and never edited** (Ruling 106) |
-| `rows/<ID>.md` | ⛔ **not a destination** | a LIVE EXTRACT of 50 live rows' arguments — ⭐ **the record keeps the original, which is what lets a row file be amended** |
-| `BOARD.md` | 16 | the *Scheduled* table, verbatim |
-| `docs/conventions/board.md` | 101 | the wave checks — ⛔ **a process is not a state** |
+| `BOARD-ARCHIVE.md` — the moved block | **8,351** | rounds, close runs, mint arguments, carried rulings — ⛔ **a record, appended to and never edited** (Ruling 106) |
+| `BOARD-ARCHIVE.md` — ⭐ **the 78 register lines, verbatim** | **78** | ⛔ **the ones `CTO-45/1` found had gone nowhere**, Owner and Status columns included |
+| `BOARD.md` | **16** | the *Scheduled* table, verbatim |
+| `docs/conventions/board.md` | **101** | the wave checks — ⛔ **a process is not a state** |
+| ⭐ **total** | **8,546** | ⚠️ 8,545 lines plus the trailing empty line `split` yields |
+| `rows/<ID>.md` | ⛔ **NOT a destination** | a LIVE EXTRACT of 50 rows' arguments — ⭐ **the record keeps the original, which is what lets a row file be amended** |
 
 ⚠️ **The board's live facts — milestone refs, in-flight rows, namings, owners,
 states — were RE-DERIVED on the new board rather than moved, so they also appear
@@ -459,6 +497,84 @@ not from argument: a prefix match read `DONE-ish` as `done`.**
 carries the checks, `board/register.py` the parser, and the test tree mirrors it.
 ⭐ **The parser was the right seam anyway — both of `CTO-45`'s defects live in
 it, and they now have a module whose whole docstring is about them.**
+
+### ARCH/13 `[structural]` — the migration test's subject was the WORKING TREE, and the contract turned it red
+
+**Received** from `CTO-46/1`; **measured** here. ⛔ **Two of the four things
+`docs/conventions/board.md` tells a PO to do reddened a test shipped in the same
+commit** — re-scoping a live row (`1 failed, 5 passed`) and minting one
+(`2 failed, 4 passed`, while the floor stayed clean and read `79/51/51`).
+
+⛔ **It is `CTO-45/1`'s own class inside `CTO-45/1`'s fix: the right PROPERTY
+over the wrong SUBJECT.** ⚠️ **And I had already reasoned about it correctly one
+test over** — `test_the_row_files_are_an_extract_…` sliced `[:1]` precisely so
+amendment would survive — ⭐ **which makes it an oversight, and a `[:1]` slice a
+WORKAROUND for the wrong subject rather than a design.**
+
+⭐ **Ruling 180: a migration test's subject is the migration's OUTPUT at a named
+ref.** Both halves of the pair are now refs — `BASE = bfb8c8c` and
+`OUTPUT = 5688dcd…` — and the row files are read with `git show`, exactly as the
+input already was. ⛔ **The `[:1]` slice is gone: every block of every file is in
+scope, because nothing in the working tree can move it.**
+
+⚠️ **Sha written in full, not abbreviated: a short sha is a prefix, and a prefix
+can become ambiguous in a repository that keeps growing.** ⭐ **The population is
+asserted — `assert len(names) == 50` — so a typo in the ref empties nothing
+silently** (Ruling 48).
+
+### ARCH/14 `[local]` — what Ruling 180 COSTS, and the guarantee I put back
+
+⛔ **Ruling 180 is right and it is not free: bound to a ref, `test_migration.py`
+stops watching the live tree entirely.** ⚠️ **Measured — `R6` re-run: a 228-byte
+fragment of the status column appended to a live `rows/W40.md` is now invisible
+to BOTH the migration test and the floor.**
+
+⭐ **And on inspection that is CORRECT, not a hole.** ⛔ **Appending prose to a
+row file is the contract's own prescribed action**, so no checker can tell *"the
+PO re-scoped a row"* from *"the PO pasted a fragment"* — ⚠️ **and one that tried
+would be exactly the gate Ruling 180 just removed.**
+
+⭐ **What IS still a defect, and now fires: a row file that loses its IDENTITY.**
+`board-frame` requires every row file to open `# <ID>` and say what it is.
+⛔ **It survives every amendment by construction** — amending a row adds to its
+argument and never removes its frame — ⚠️ **so it is the one thing that can be
+required of a file the PO is told to edit freely.** **Measured, `R7`:
+`floor-exit=1`, `[board-frame]`, with a true message.**
+
+### ARCH/15 `[local]` — the contract typed five measurements of the thing it governs
+
+**Received** from `CTO-46/2`; **all five stale at merge**. ⛔ **`ARCH/2`'s own
+defect recurring inside `ARCH/2`'s remedy — the *"live board ~56KB"* sentence,
+in the document written to kill it.**
+
+⭐ **Ruling 181 applied by REMOVAL, which is Ruling 161's shape: the fix for an
+unmaintainable copy is removing the subject.** `docs/conventions/board.md` now
+types **no** measurement of the board; it shows `board_state`'s printed line and
+points at the handoff for the `bfb8c8c` readings, which are a record beside
+their ref (Ruling 169). ⚠️ **`ARCH/2` claimed the number was *printed, not
+typed*, and that claim is true for the first time.**
+
+### ARCH/16 `[local]` — three fold-ins, and one of them was a real number in the wrong place
+
+⛔ **`CTO-46/3`** — `board.md` named `tools/quality/board.py`, which `ARCH/12`
+deleted in the same branch. ⚠️ **Inline code, not a link, so the pointer check
+could not see it.** Fixed; **0 mentions remain**.
+
+⛔ **`CTO-46/4a`** (`CTO-45/3`) — `handoffs.__all__` had `OFFICE_HANDOFF` after
+`SECTIONS`. Sorted; asserted.
+
+⛔ **`CTO-46/4b`** (`CTO-45/5`) — `register.py` said *"round 33's alone was 833
+lines"*. **Measured over the archive's own sections:** round 33's is **31**
+lines, the largest is **`ROUND 35` at 1,151**, and ⚠️ **`833` was a real reading
+from somewhere else** (CTO round 43's `117 files / 833 lines`). ⭐ **That is the
+lesson worth keeping and the comment now carries it: a wrong citation that is a
+REAL NUMBER survives a re-read**, which is why this needed measuring rather than
+eyeballing.
+
+⛔ **`CTO-46/5`** — the *Decisions* table dropped the 78 register lines while
+standing under the word *sum*. ⭐ **Both fixed: the 78 are rowed, the table now
+accounts for 8,546, and the word *sum* is withdrawn** — the claim is the four
+equalities.
 
 ### ARCH/9 `[structural]` — where I think the PO's board practice should change
 

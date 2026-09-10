@@ -11,14 +11,27 @@ is the habit of recording that call *in the board*.**
 ONE CELL, and that an event goes to the Log rather than into the tables.**
 ⛔ **Nothing enforced it.**
 
-| | ⛔ measured at `bfb8c8c` | ⭐ after the split |
-|---|---|---|
-| `BOARD.md` | **8,545 lines / 753 KB** | **238 lines / 23 KB** |
-| bytes NOT inside a table | **382,194** | **3,811** |
-| bytes inside tables | **388,649** | **20,028** |
-| widest single table row | **3,485 B** | **415 B** |
-| ⭐ **bytes a reader loads per `W` id indexed** | **9,757** | **301** |
-| ⭐ **the same, in tokens at 4 B/token** | **~2,439** | **~75** |
+⛔ **This document types NO measurement of the board, and Ruling 181 is why:**
+⭐ **a document governing a SHAPE may not carry a typed measurement of that
+shape.** ⚠️ **Five were typed here and all five were stale at merge** — which is
+`ARCH/2`'s own defect recurring inside `ARCH/2`'s remedy, and it is the
+*"live board ~56KB"* sentence this office was created to kill, reappearing in
+the document written to kill it.
+
+⭐ **Every live number is PRINTED, on every floor run, by `board_state`:**
+
+```text
+$ python3 -m tools.quality | grep '^board:'
+board: <rows> register rows, <live> live, <files> detail files in docs/tasks/rows/;
+       <bytes> bytes narrative of 8192, widest row <bytes> of 600,
+       <bytes> bytes total of <allowed> allowed.
+```
+
+⚠️ **The before/after readings that argued for this split are a RECORD, taken at
+`bfb8c8c`, and they live in
+[`../tasks/handoffs/BOARD-ARCHITECTURE.md`](../tasks/handoffs/BOARD-ARCHITECTURE.md)
+beside the ref they were taken at** (Ruling 169). ⛔ **Do not copy them here: the
+next reader would check them, and this document has no way to keep them true.**
 
 ⚠️ **The split was already tried once.** ⛔ **Round 25 moved the closed sections
 out for exactly this reason, wrote *"live board ~56KB"* in the file, and twelve
@@ -88,7 +101,7 @@ somebody writes an ordinary table.**
 | **minting a row** | one register line, and `../tasks/rows/<ID>.md` with the argument | a mint section on the board |
 | **changing a state** | ⭐ **replace the state cell** | append the new state beneath the old one |
 | **re-scoping a live row** | edit `../tasks/rows/<ID>.md` — ⭐ **it is a live document and editing it is the point** | annotate the board |
-| **closing a row** | set the state to `done` with its merge ref, move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, delete the row file | leave the row file behind — ⛔ **`board-orphan` will say so** |
+| **closing a row** | ⛔ **THREE edits.** ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; delete the row file | leave the row file behind — ⛔ **`board-orphan` will say so** — or leave either link pointing where it used to |
 | **writing a round** | ⭐ **`BOARD-ARCHIVE.md`, appended** — and the board's cells change to match | a `## ROUND n` section on the board |
 
 ⛔ **The archive is a RECORD: it is appended to and corrected by annotating
@@ -96,7 +109,7 @@ beneath, never by editing** (Ruling 106). ⭐ **That is precisely why a live row
 argument may not live there** — and it is the whole reason `rows/` exists rather
 than one more archive section.
 
-## ⛔ The instrument — `tools/quality/board.py`, and it runs on every floor
+## ⛔ The instrument — `tools/quality/board/`, and it runs on every floor
 
 | Rule | Fires when | Why it is that and not a line count |
 |---|---|---|
@@ -107,6 +120,7 @@ than one more archive section.
 | `board-row-width` | one table row exceeds `BOARD_ROW_CEILING` | a cell that wide is an argument, and an argument goes behind a pointer |
 | `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows | ⭐ **the bound with no gap** — see below |
 | `board-state` | a register row's state cell DECLARES no state | ⛔ **the hole that let a LIVE row leave the register in silence** — see below |
+| `board-frame` | a row file does not open `# <ID>` and say what it is | ⭐ **the one live-tree property left after Ruling 180**, and it survives every amendment |
 
 ⛔ **The Ruling 140 plant found a hole in this instrument BEFORE it shipped, and
 the third rule is the fix rather than a tweak to the first two.** ⚠️ **Run

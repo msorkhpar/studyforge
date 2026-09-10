@@ -40,6 +40,7 @@ from tools.quality.board import (
     ROWS,
     RULE_DETAIL,
     RULE_DUPLICATE,
+    RULE_FRAME,
     RULE_NARRATIVE,
     RULE_ORPHAN,
     RULE_SIZE,
@@ -57,13 +58,23 @@ CLOSED = "| W1 | a naming | PO | ✅ done — `abc1234` | [record](BOARD-ARCHIVE
 LIVE = "| W2 | another naming | PO | `todo` | [rows/W2.md](rows/W2.md) |\n"
 
 
+#: The frame every row file carries, and the fixtures carry it because the
+#: live ones do — a fixture that skipped it would test a shape nothing ships.
+def _row(name: str) -> str:
+    return (
+        f"# {name}\n\n⛔ **This file carries the ARGUMENT for board row `{name}` "
+        f"and nothing else.**\n⭐ **Its naming, owner and state live once, in the "
+        f"register in [`../BOARD.md`](../BOARD.md).**\n\nThe argument.\n"
+    )
+
+
 def _tree(tmp_path: Path, board: str, rows: tuple[str, ...] = ()) -> Path:
     (tmp_path / "docs" / "tasks").mkdir(parents=True, exist_ok=True)
     (tmp_path / BOARD).write_text(board, encoding="utf-8")
     if rows:
         (tmp_path / ROWS).mkdir()
         for name in rows:
-            (tmp_path / ROWS / f"{name}.md").write_text(f"# {name}\n", encoding="utf-8")
+            (tmp_path / ROWS / f"{name}.md").write_text(_row(name), encoding="utf-8")
     return tmp_path
 
 
@@ -268,3 +279,46 @@ def test_a_multi_id_row_is_one_row_and_one_file(tmp_path: Path) -> None:
     """
     row = "| W17 + W19 | a naming | PO | `todo` | [rows/W17.md](rows/W17.md) |\n"
     assert check_board(_tree(tmp_path, HEADER + row + FOOTER, rows=("W17",))) == []
+
+
+# --------------------------------------------------------------------------
+# `board-frame` — the live-tree guarantee Ruling 180 would otherwise have cost
+# --------------------------------------------------------------------------
+
+
+def test_a_row_file_that_lost_its_frame_is_a_finding(tmp_path: Path) -> None:
+    """⛔ The one live-tree property left after Ruling 180, and why it is that one.
+
+    ⚠️ **`test_migration.py`'s subject is now the migration's OUTPUT ref**, which
+    is right — a migration is a claim about refs — ⛔ **but it means nothing was
+    left watching a live row file at all.**
+
+    ⭐ **A frame survives every amendment**, because amending a row means adding
+    to its argument and never removing its identity — ⛔ **so this is the one
+    thing that can be required of a file the PO is told to edit freely.**
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    assert check_board(root) == []
+    (root / ROWS / "W2.md").write_text("a fragment with no frame at all\n", encoding="utf-8")
+    assert _rules(check_board(root)) == [RULE_FRAME]
+
+
+def test_appending_to_a_row_file_is_always_clean(tmp_path: Path) -> None:
+    """⭐ The contract's own action — *"editing it is the point"* — stays green.
+
+    ⛔ **This is the assertion `CTO-46/1` was about.** ⚠️ A test that reddened on
+    an ordinary amendment would be a gate people edit their way around, and
+    *"a checker people rename fields around is a checker on its way to being
+    switched off"* is this branch's own sentence.
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    path = root / ROWS / "W2.md"
+    path.write_text(path.read_text(encoding="utf-8") + "\n⛔ **Re-scoped.**\n", encoding="utf-8")
+    assert check_board(root) == []
+
+
+def test_a_row_file_named_for_a_different_row_is_a_finding(tmp_path: Path) -> None:
+    """⚠️ The frame names its own id, so a copied file cannot pass as a new one."""
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    (root / ROWS / "W2.md").write_text(_row("W9"), encoding="utf-8")
+    assert _rules(check_board(root)) == [RULE_FRAME]

@@ -92,6 +92,7 @@ from tools.quality.board.register import (
     BOARD_ROW_CEILING,
     REGISTER_CLOSE,
     REGISTER_OPEN,
+    ROW_FRAME,
     STATES,
     is_closed,
     narrative_bytes,
@@ -116,6 +117,7 @@ RULE_NARRATIVE = "board-narrative"
 RULE_WIDTH = "board-row-width"
 RULE_SIZE = "board-size"
 RULE_STATE = "board-state"
+RULE_FRAME = "board-frame"
 
 __all__ = [
     "BOARD",
@@ -126,8 +128,10 @@ __all__ = [
     "REGISTER_CLOSE",
     "REGISTER_OPEN",
     "ROWS",
+    "ROW_FRAME",
     "RULE_DETAIL",
     "RULE_DUPLICATE",
+    "RULE_FRAME",
     "RULE_NARRATIVE",
     "RULE_ORPHAN",
     "RULE_SIZE",
@@ -213,6 +217,19 @@ def check_board(root: Path) -> list[Finding]:
             )
 
     for identifier, path in on_disk.items():
+        body = read_text(path) or ""
+        if not body.startswith(f"# {identifier}\n") or ROW_FRAME not in body:
+            findings.append(
+                Finding(
+                    relative(path, root),
+                    1,
+                    RULE_FRAME,
+                    f"does not open `# {identifier}` and say what it is. A row file "
+                    f"states which row it argues and that the naming, owner and state "
+                    f"are the board's — ⛔ a file that lost that is a file nobody can "
+                    f"tell apart from a fragment.",
+                )
+            )
         if identifier not in expected:
             findings.append(
                 Finding(

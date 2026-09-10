@@ -45,7 +45,15 @@ REGISTER_CLOSE = "<!-- /register -->"
 
 #: ⛔ Bytes of `BOARD.md` outside any table. Measured **3,811** at the split;
 #: this is 2.1× that, which is room for the frame to gain a section and not
-#: room for a round's narrative — round 33's alone was 833 lines.
+#: room for a round's narrative — ⛔ **the largest round section in the record
+#: is `ROUND 35` at 1,151 lines.**
+#:
+#: ⚠️ **This line read *"round 33's alone was 833 lines"* and the number was
+#: WRONG TWICE OVER** — round 33's section is **31** lines, and `833` was a
+#: real reading from somewhere else entirely (CTO round 43's `117 files /
+#: 833 lines` of findings). ⭐ **A wrong citation that is a real number
+#: survives a re-read**, which is why `CTO-45/5` had to be measured rather
+#: than eyeballed.
 BOARD_NARRATIVE_CEILING = 8192
 
 #: ⛔ Bytes of one table row. Measured widest **415** at the split against
@@ -93,6 +101,18 @@ STATES: dict[str, bool] = {
     "blocked": False,
     "routed": False,
 }
+
+#: ⛔ The sentence every row file carries, and it is the file's IDENTITY rather
+#: than decoration: it says which row this is the argument for, and that its
+#: naming, owner and state live on the board and not here.
+#:
+#: ⚠️ **It is checked on the LIVE tree because `test_migration.py` no longer
+#: can.** ⭐ Ruling 180 bound that module to the migration's OUTPUT ref, which
+#: is right — a migration is a claim about refs — ⛔ **but it means nothing was
+#: left watching a live row file at all.** ⭐ This is what remains watchable
+#: without forbidding an edit: a frame survives every amendment, because
+#: amending a row means adding to its argument, never removing its identity.
+ROW_FRAME = "and nothing else."
 
 #: Emoji, emphasis and backticks a state cell may wear before its word.
 STATE_LEAD = re.compile(r"^[\s*`~⛔⭐✅⚠️⏳◐→️]+")
