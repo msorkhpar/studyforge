@@ -14,9 +14,19 @@ the one nobody re-measures when a fixture gains a container.
 units with `units/unit-NN/…` in one and with a bare filename in the other —
 which is exactly the pair `SF-13/1` and `W57` were about.
 
-Run `python3 -m tests.studyforge.render.container.containers` to rewrite the
-goldens after a deliberate change to the page. ⚠️ A golden that changes without
-a deliberate change to the renderer is the R10 failure the test exists to catch.
+Rewrite the goldens after a deliberate change to the page with:
+
+    docker/dev/check env PYTHONPATH=src:. \
+        python3 -m tests.studyforge.render.container.containers
+
+⚠️ **`PYTHONPATH` is not optional and the command beside this one omits it.**
+`pyproject.toml` puts `src` and `.` on the path through `[tool.pytest]`, which
+`python3 -m` never reads — measured 2026-09-10: without it the run stops at
+`ModuleNotFoundError: No module named 'studyforge'`. `SF-27/4`.
+
+⚠️ A golden that changes without a deliberate change to the renderer is the R10
+failure the test exists to catch — regenerate only once you know which change
+you made.
 """
 
 from __future__ import annotations
