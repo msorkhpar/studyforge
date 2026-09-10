@@ -23,7 +23,7 @@ image; building it again would recurse"* — and three in
 not mount.
 
 ⚠️ **An earlier draft of this document reported 2487 / 11 from an unpinned host
-run.** See finding **68**: three tests the image runs did not run on the host,
+run.** See finding **`SF-12-survey/6`**: three tests the image runs did not run on the host,
 and the skips were unnamed, so the *lower* number was the *worse* run and looked
 like the same one.
 
@@ -103,7 +103,7 @@ immediately above it, taken with `ast` rather than by eye, and they are
 
 ⚠️ **Roughly 47% of the file is somebody else's or nobody's.** ⛔ The 177 lines
 of workspace-plus-read-control sit inside `SF-12`'s stated `~110k` context
-budget and inside two *other* tasks' definitions — see finding **64**.
+budget and inside two *other* tasks' definitions — see finding **`SF-12-survey/2`**.
 
 ### The templates already on disk — 12 files, and one is not SF-12's
 
@@ -314,7 +314,7 @@ confused (`test_templates_are_not_confused_with_the_asset_parts`). Proposed:
 
 ⚠️ **This crosses SF-11's `Owns`.** SF-11 owns `render/pageassets.py`; SF-12 owns
 `render/page/` and `render/templates/`. ⛔ **Neither owns the loader**, and E03
-lists it as SF-12 subtask (a). Stated rather than chosen — see finding **65**.
+lists it as SF-12 subtask (a). Stated rather than chosen — see finding **`SF-12-survey/3`**.
 
 ---
 
@@ -470,7 +470,21 @@ is stated rather than acted on, because `E03`'s task table assigns it to neither
 
 ## 7. Findings
 
-**63 — the R13 debt in this module is one file, not seventy-two.** `[structural]`
+⭐ **Numbered per-document as `SF-12-survey/<n>`**, per the PO's round-18 ruling
+in `docs/conventions/agent-protocol.md`: findings are numbered inside the
+document that raises them, never globally, and there is no allocator. ⛔ **The
+global range 20–58 is closed and grandfathered** — every existing citation keeps
+resolving, and a handoff is a record that is never rewritten. ⚠️ **Two earlier
+drafts of this document numbered these 56–60 and then 63–67**, both of which
+minted global numbers; the ids below are the only ones to cite.
+
+⚠️ **A note for whoever writes the next one, learned by tripping over it twice
+here:** §8a counts the marker spelling itself, so **the rule cannot be quoted or
+illustrated in prose without registering a finding that does not exist.** Say
+"filed local" and "a level-three heading carrying its marker" in words; the
+backticked form belongs only on a finding's own line.
+
+**`SF-12-survey/1`** — **the R13 debt in this module is one file, not seventy-two.** `[structural]`
 ⛔ E03's wording — *"triple-quoted markup, in this exact module"* — is true of
 exactly one literal, `PLAYER`. 72 string literals in `html.py` contain a markup
 tag, but **only one has a newline in its value**; the other 71 are one-line
@@ -484,7 +498,7 @@ that would break the rule it is trying to serve.
 `literals whose VALUE spans multiple OUTPUT lines: 20`, of which one
 (`PLAYER`, L1233–1253) is markup and nineteen are separators. 2026-09-10.
 
-**64 — SF-12's context budget names 177 lines that belong to two other tasks.**
+**`SF-12-survey/2`** — **SF-12's context budget names 177 lines that belong to two other tasks.**
 `[structural]`
 ⛔ `_render_workspace` + `_unit_number` (137 lines) is the Run/Submit surface,
 which `CLAUDE.md` puts on the **execution track at M5**; `render_read_control`
@@ -499,7 +513,7 @@ track at M1.
 `1432-1471 = 40`; banner spans of `tests/test_html.py`: `879-1306 = 428` (15
 tests), `1718-2200 = 483` (14 tests). 2026-09-10.
 
-**65 — the template loader is owned by nobody, and it is SF-12's subtask (a).**
+**`SF-12-survey/3`** — **the template loader is owned by nobody, and it is SF-12's subtask (a).**
 `[local]`
 SF-11 ported `pageassets.py`'s asset half and not its template half:
 `render/pageassets/` has no `template()` and `render/templates/` does not exist.
@@ -514,7 +528,7 @@ docstring prose and CSS token names, no loader; `find src/studyforge/render -typ
 lists `assets`, `pageassets` and no `templates`. Source: `tools/study/pageassets.py`
 L61–89. 2026-09-10.
 
-**66 — `test_templates.py`'s orphan check names a second source that asks for
+**`SF-12-survey/4`** — **`test_templates.py`'s orphan check names a second source that asks for
 nothing.** `[local]`
 Its `SOURCES = ("tools/study/html.py", "tools/study/index.py")`, and
 `index.py` requests **zero** templates today. ⚠️ Not a defect — it is correct and
@@ -527,7 +541,7 @@ arrives.
 returns nothing; the same command against `html.py` returns 12 call sites.
 2026-09-10.
 
-**67 — `html.py` is 1699 lines and E03's citation implies ~1100.** `[local]`
+**`SF-12-survey/5`** — **`html.py` is 1699 lines and E03's citation implies ~1100.** `[local]`
 ⛔ Line 1112 is **blank**; `PLAYER` is at L1233. The citation drifted 121 lines
 across two navigation commits (`716eaa3c`, `72ce2c30`) after E03 was written.
 ⭐ The *claim* survived measurement and only its address moved — which is the
@@ -540,7 +554,7 @@ is already the rule.
 `workspace.json` pins `49c11d5e`, and `git status --short` in that checkout is
 clean. 2026-09-10.
 
-**68 — an unpinned run that silently skips is indistinguishable from one that
+**`SF-12-survey/6`** — **an unpinned run that silently skips is indistinguishable from one that
 passed, and the author is the last person able to tell.** `[structural]`
 ⛔ **This document reported its own base wrongly, and nothing in the number said
 so.** The host run printed `2487 passed, 11 skipped` with **no skip reasons**;
@@ -554,11 +568,36 @@ the reviewer and both would have caught this at the author**, one round earlier
 and for free — which is §4b-i's own argument arriving one step upstream of where
 it is currently aimed. ⭐ Cheap remedy, and it is a habit rather than a check:
 `-rs` on every run, so an unnamed skip cannot be reported as a base.
+
+⭐ **The same shape produced the wrong instruction that renumbered this document
+twice, and that is the generalisation worth carrying.** The finding-collision
+census was first run as `grep '5[5-9]'` and found **one** collision; the tree
+holds **three**. ⛔ **Neither that `grep` nor the unpinned `pytest` reported that
+it had not looked everywhere** — a narrowed instrument and a silent skip produce
+the same artefact: a confident number with its own blind spot inside it. ⚠️
+**That is the protocol's own *"a number in a ruling is evidence, never a bound"*
+arriving twice in one afternoon**, once in a test count and once in a census.
+
+⭐ **And the second-order reason is worse than the numeric window, which is why
+it is verified here rather than inherited.** `FND-05a.md` opens a finding with a
+level-three heading — number, then marker, then title. `SF-10-survey.md` opens
+one with a bold run — number and title together, marker at the end.
+⛔ **Two documents, two markup shapes, so no single pattern sees both** — the
+numeric range was never the binding limit. ⭐ **Per-document ids make the
+collision unrepresentable rather than detected**, which is the right fix
+precisely because no census over two formats was ever going to be reliable.
+
 **Measured** — same worktree, same commit, minutes apart:
 `python3 -m pytest -q` on the host → `2487 passed, 11 skipped`;
 `docker/dev/check python3 -m pytest -q -rs` → `2490 passed, 8 skipped`, all 8
 named. Base, in a clean worktree of `release/m0-foundations` @ `e5bcc85` in the
-image → `2490 passed, 8 skipped`, floor clean. 2026-09-10.
+image → `2490 passed, 8 skipped`, floor clean.
+⭐ **The collision half was re-counted here rather than inherited**, per the
+project's own rule: over `release/m0-foundations`,
+`git show …:docs/tasks/handoffs/FND-05a.md | grep -nE '^###? *5[0-9]'` → findings
+**53–58**, and the same over `SF-10-survey.md` with `grep -nE '^\*\*[0-9]+ —'` →
+findings **52–55**. ⛔ **The overlap is 53, 54, 55 — three, as reported**, and
+each document needed its *own* pattern to be seen at all. 2026-09-10.
 
 ---
 
@@ -570,4 +609,4 @@ author attributed the extra host skips to this worktree having no
 FND-07 behaviour itself is real and unchanged — an absent index reports a notice
 and exits 0, which is why this docs-only branch leaves the floor clean here and
 will red it only in a checkout that *has* an index. Only the number attributed
-to it was wrong, and finding **68** is where that number came from.
+to it was wrong, and finding **`SF-12-survey/6`** is where that number came from.
