@@ -22,8 +22,9 @@ review that matters most.
 ## ⛔ The growth governor, until `W34` lands
 
 ⚠️ **This document is measured every round and it is losing.** `1410` when
-`CTO-23/3` filed it → `1511` → `1611` → **`1702` (round 25: Rulings 84, 85, 86,
-+91)**. ⛔ **Three consecutive reviewers each added ~100 lines to the document
+`CTO-23/3` filed it → `1511` → `1611` → **`1783` (round 25: Rulings 84, 85, 86,
+86a, 87 and this governor, +172 across three items)**. ⛔ **Three consecutive
+reviewers each added ~100 lines to the document
 they had just called too long**, and one of them refused to write a five-line
 correctness clause because of the size — ⭐ **which is the real cost, and it is
 the wrong trade every time.**
@@ -692,6 +693,37 @@ later at the reviewer instead of the author.
 
 ⭐ **So the host run is a convenience and never the verdict.** If the container
 cannot be run, the review is **Blocked**, not APPROVE.
+
+#### ⛔ Ruling 87 — a skip class that can hide a SUBSYSTEM announces itself at the end of the run
+
+⛔ **Pass condition:** when a precondition switches off more than a handful of
+tests, the run's last lines say **how many did not run, why, and both remedies** —
+without `-rs`, and without the reader having asked.
+
+```bash
+python3 -m pytest -q            # the banner is in this output, or the rule is not met
+```
+
+⭐ **Measured, `QA-03`, pinned image** — 55 of 86 visual checks skip because the
+image has no browser, and the run prints:
+
+```
+visual harness: NO BROWSER — 55 visual check(s) DID NOT RUN. searched PATH for
+google-chrome, … and read $STUDYFORGE_VISUAL_BROWSER. … ⛔ The pinned dev image
+has none either — QA-03/1. Set $STUDYFORGE_VISUAL=required to fail instead of
+skipping.
+3090 passed, 63 skipped
+```
+
+⚠️ **This is `FND-07`'s rule and Ruling 78's, arriving for skips:** *"nothing was
+printed"* and *"there was nothing to say"* are indistinguishable. ⛔ **§4b-i asks
+the reviewer to name every skip; this asks the suite to name them first** — and
+the pairing `"N passed, M skipped"` is exactly where 55 absent checks hide.
+
+⭐ **And it carries an escape hatch, tested in both directions:** an environment
+variable that makes the absence **fatal** rather than silent
+(`STUDYFORGE_VISUAL=required` → errors; `=0` → still skips). ⛔ **A banner with no
+way to promote it to a failure is advice, and advice is what gets muted.**
 
 #### ⛔ Ruling 77 — Ruling 31 does **not** reach ruff, and `tools/quality` keeps its independence
 
