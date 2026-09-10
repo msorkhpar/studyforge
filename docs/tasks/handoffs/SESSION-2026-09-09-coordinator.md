@@ -1,5 +1,7 @@
 # SESSION-2026-09-09 — coordinator handoff
 
+**Kind:** session log
+
 **Status:** clean stop — everything reviewed and merged except one deliberate WIP branch
 **Written by:** the orchestrating session, for whatever session picks the work up next
 

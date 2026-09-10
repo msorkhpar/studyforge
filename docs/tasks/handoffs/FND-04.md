@@ -1,5 +1,7 @@
 # FND-04 — handoff
 
+**Kind:** task handoff — FND-04
+
 **Status:** done · **follow-up landed 2026-09-09** — Q1's `disclosure` block
 (`CTO-2026-09-09-rulings-q1-q3.md`). Read *The Q1 follow-up* below before the
 sections it changed; the rest of this handoff is the original task.
@@ -284,8 +286,8 @@ and the placement contract stops being folklore.
 
 Defects and gaps seen outside FND-04's scope. **Not fixed, not in the diff.**
 
-⭐ **Triaged, not merely filed** — each carries `[local]` or `[structural]`, and
-every `[structural]` one is ruled, scheduled, or explicitly open. The test is
+⭐ **Triaged, not merely filed** — each carries *[local]* or *[structural]*, and
+every *[structural]* one is ruled, scheduled, or explicitly open. The test is
 one question: *would this happen again to somebody else?* ⚠️ Finding 10 is why
 that rule exists: it was filed correctly, in the right place, and came true
 twice more because nothing obliged anyone to act on it.

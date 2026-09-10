@@ -1,5 +1,7 @@
 # CTO-2026-09-09-rulings-q1-q3 — handoff
 
+**Kind:** ruling record
+
 **Status:** done. Q1, Q2, Q3, X1 and X2 are ruled and carried into the documents
 they touch. ⭐ **SF-07 is unblocked; M1 step 1.1 has no open question left.**
 

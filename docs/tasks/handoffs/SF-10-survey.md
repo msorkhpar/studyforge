@@ -1,5 +1,7 @@
 # SF-10 survey (W5) — porting `unitdoc.py` as a package
 
+**Kind:** survey
+
 **Status:** survey only. `feat/SF-10-survey`, branched from
 `release/m0-foundations` @ `ac4ed55`.
 

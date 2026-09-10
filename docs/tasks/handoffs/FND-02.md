@@ -1,5 +1,7 @@
 # FND-02 — handoff
 
+**Kind:** task handoff — FND-02
+
 **Status:** done
 
 ## What landed

@@ -59,6 +59,7 @@ from tools.quality.config import (
     TEST_LINE_CEILING,
 )
 from tools.quality.docstrings import check_docstrings
+from tools.quality.handoffs import check_handoffs
 from tools.quality.knowledge_index import check_knowledge_index, notices
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
@@ -80,6 +81,12 @@ from tools.quality.style import check_style
 #: document must be able to name a corpus or the measurements it holds become
 #: unattributable. ⛔ That narrowing is the whole exemption mechanism — a
 #: module cannot be excused, and nothing is scanned that would need excusing.
+#:
+#: ⚠️ `check_handoffs` is the only one that reads **documents alone** — Ruling
+#: 49 mechanises a contract that lives in `docs/`, and there is no module it
+#: could be about. ⛔ Its exemption mechanism is neither a scan root nor a
+#: list: a document in that directory **declares what it is**, and an
+#: undeclared one is refused.
 CHECKS = (
     check_sizes,
     check_mirrors,
@@ -88,6 +95,7 @@ CHECKS = (
     check_personal_data,
     check_source_names,
     check_knowledge_index,
+    check_handoffs,
 )
 
 #: ⛔ **The second channel, and it exists because one of the floor's answers is

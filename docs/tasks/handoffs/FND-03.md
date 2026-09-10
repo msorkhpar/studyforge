@@ -1,5 +1,7 @@
 # FND-03 — handoff
 
+**Kind:** task handoff — FND-03
+
 **Status:** done. ⭐ **FND-01's lint clause is closed** — `ruff check` and
 `ruff format --check` both run for real inside the image and both pass. One
 file is excluded from the **formatter** for a named reason that is a genuine
@@ -174,7 +176,9 @@ image inherits, and `test_no_docker_socket_is_mounted_anywhere` now carries it.
 
 ## Findings
 
-**1. ⛔ `ruff format` and R11 conflict on `tests/test_fixture_consistency.py`,
+⚠️ *`W25`, 2026-09-10: the triage markers below were added by the migration that made rubric §8a a build failure. Under Ruling 29 a finding **is** a marked item, so an unmarked one was unrepresentable rather than untriaged — which is exactly what this handoff shows. No wording is changed; every *structural* one still owes a routing.*
+
+**1. `[structural]` ⛔ `ruff format` and R11 conflict on `tests/test_fixture_consistency.py`,
 and the conflict is unresolved.** The file is 554 lines. The formatter honours
 the magic trailing comma, so it explodes that module's hand-packed key tuples
 one entry per line and the file becomes **606 lines — over R11's 600-line test
@@ -190,7 +194,7 @@ difficult files go. **For FND-04 and the PO:** format it and split it, format
 it and justify it, or keep it hand-packed and keep the exclusion. Any of the
 three is a decision; the assertion exists so it is taken rather than inherited.
 
-**2. ⚠️ The review rubric's `$BASE` is wrong for any branch cut from a release
+**2. `[structural]` ⚠️ The review rubric's `$BASE` is wrong for any branch cut from a release
 branch, and it silently inflates the diff.** `docs/conventions/review-rubric.md`
 §0 says `BASE=$(git merge-base HEAD main)`. `main` is still at `b1569e2`, before
 FND-01 and FND-04 merged, so on this branch that base presents **100 changed
@@ -208,7 +212,7 @@ Suggested fix, which needs no per-task knowledge:
 resolve the branch's upstream. Not fixed here — `docs/conventions/` is not this
 task's to edit.
 
-**3. ⚠️ The host and the container do not run the same pytest, and only one of
+**3. `[structural]` ⚠️ The host and the container do not run the same pytest, and only one of
 them is pinned.** Container: pytest 9.1.1, Python 3.14.7, both pinned. Host:
 whatever is installed — here pytest 9.0.2 on Python 3.14.4, pinned by nothing.
 Both pass, so nothing is wrong today. ⛔ But R15's claim is that *a result never
@@ -217,10 +221,10 @@ claim. **See *For dependents*: the container is authoritative and the host run
 is a convenience.** This is worth a line in `agent-protocol.md` when somebody
 edits it; it is not mine to add.
 
-**4. `docs/tasks/README.md:288` and `CLAUDE.md:33` still say "R1–R19" while the
+**4. `[local]` `docs/tasks/README.md:288` and `CLAUDE.md:33` still say "R1–R19" while the
 spec has R20.** Reported in FND-01's handoff, still open, still outside scope.
 
-**5. E00's FND-03 wording is accurate and needs nothing.** Recorded because
+**5. `[local]` E00's FND-03 wording is accurate and needs nothing.** Recorded because
 FND-01's did not, and the contrast is useful: this task's Definition and
 Acceptance survived contact unchanged.
 

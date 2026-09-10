@@ -1,5 +1,7 @@
 # FND-01 — handoff
 
+**Kind:** task handoff — FND-01
+
 **Status:** done, with one acceptance clause **blocked on FND-03** (lint —
 see *Decisions*, item 2, and *For dependents*).
 

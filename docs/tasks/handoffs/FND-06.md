@@ -1,5 +1,7 @@
 # FND-06 — handoff
 
+**Kind:** task handoff — FND-06
+
 **Status:** done, after one defect found at the merge gate and fixed —
 ⛔ **the sweep's *scope* was wrong: it read git-ignored paths.** See *Decisions*
 3a. The fifth check is in `tools.quality.CHECKS`, the sanctioned directory is
@@ -197,7 +199,9 @@ why this is ~950 lines including tests instead of a rewrite.
 
 ## Findings
 
-**0. ⭐⭐ The check found a real R7 violation on its first run against the full
+⚠️ *`W25`, 2026-09-10: the triage markers below were added by the migration that made rubric §8a a build failure. Under Ruling 29 a finding **is** a marked item, so an unmarked one was unrepresentable rather than untriaged — which is exactly what this handoff shows. No wording is changed; every *structural* one still owes a routing.*
+
+**0. `[structural]` ⭐⭐ The check found a real R7 violation on its first run against the full
 tree, and it was in a file the coordinator had written into this repository.**
 An account name had reached a tracked file. It has been fixed. ⭐ **That is the
 argument for FND-06, and no test in this diff is a better one:** the rule was
@@ -212,7 +216,7 @@ named, because a handoff that quoted either would have relocated the leak into
 a document that *is* tracked. The fix is in the coordinator's hands and the
 sweep now returns clean.
 
-**1. ⭐ The full-tree sweep found nothing else, and the negative result is the
+**1. `[local]` ⭐ The full-tree sweep found nothing else, and the negative result is the
 evidence.** 142 files, 33 of them documents, 41 of them fixtures. Zero shape
 findings, zero identifier findings, zero registry findings — and the identifier
 half was not idle: **six** identifier kinds were derivable on the machine that
@@ -245,7 +249,7 @@ pattern should require a two-character local part, its `*.local` pattern should
 exclude a following `.`, and `$HOME`/`~/` should be marked as *expected* rather
 than as hits to dismiss one at a time.
 
-**2. ⚠️ `tests/test_fixture_consistency.py` now carries R7 patterns that
+**2. `[local]` ⚠️ `tests/test_fixture_consistency.py` now carries R7 patterns that
 duplicate `shapes.py`'s.** FND-04 wrote its `PERSONAL_DATA` tuple before this
 check existed, and the two are deliberately *not* identical — see *Surprises*.
 But "deliberately different" and "drifted apart" look the same in a diff.
@@ -254,7 +258,7 @@ and applies its own stricter allow-list on top, so the difference is one visible
 line rather than two copies. Not done — it is FND-04's module and the change is
 a refactor, not a fix.
 
-**3. ⚠️ The identifier half does nothing inside the dev container, and that is
+**3. `[structural]` ⚠️ The identifier half does nothing inside the dev container, and that is
 correct but worth knowing.** There is no passwd entry, `HOME` is a generic
 path, and git has no identity, so `identifiers()` returns an empty mapping and
 `check_identifiers` returns immediately. A leak originates on the machine that
@@ -265,7 +269,7 @@ enforced in CI, the values would have to be passed in, and ⛔ that is a design
 conversation about handing a container a list of identifiers, not a change to
 make quietly.
 
-**4. `docs/tasks/README.md:288` and `CLAUDE.md:33` still say "R1–R19" while the
+**4. `[local]` `docs/tasks/README.md:288` and `CLAUDE.md:33` still say "R1–R19" while the
 spec has R20.** Reported in FND-01 and FND-03; still open.
 
 ## For dependents
