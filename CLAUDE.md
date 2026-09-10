@@ -99,12 +99,18 @@ form needs a URL that resolves. The components are:
 
 ## Where to start
 
-✅ **M0 is CLOSED**, and so are **M1 steps 1.1–1.3**. **In flight: M1 step 1.4 —
-`SF-10`, the unit document builder.** ⛔ **Do not start on M0.**
+✅ **M0 is CLOSED**, and so are **M1 steps 1.1–1.4**. ⏳ **In flight: M1 step
+1.5.** ⛔ **Do not start on M0.** ⭐ **`docs/tasks/BOARD.md` says what is open in
+it; this line says only which step.**
 
-⛔ **`SF-10` is DONE — approved and merged at `966ab30`, and step 1.4 is
-CLOSED.** ⭐ **`unit/builder/` and `unit/served.py` are on the release tip.**
-⏳ **Step 1.5 is open: `SF-12`, then `QA-03`.**
+⚠️ **CORRECTED 2026-09-10 (PO round 19, check 5). This section said *"In flight:
+M1 step 1.4 — `SF-10`"* directly above a paragraph saying `SF-10` was done and
+step 1.4 closed.** ⛔ **The correction had been *appended below* the stale
+sentence instead of replacing it**, so the file contradicted itself in adjacent
+paragraphs — ⭐ **and the wrong half was the one that reads like the answer,
+because a reader stops at the first sentence that answers their question.**
+⛔ **A correction that leaves the original standing is not a correction; it is a
+second copy, and the reader picks the first one.**
 
 ⚠️ **This section said *"Milestone M0 — FND-01…FND-05, all parallel"* for sixty
 seconds after M0 closed, and it was the second time in two rounds that this file

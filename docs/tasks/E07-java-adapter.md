@@ -121,7 +121,7 @@ The flag is not accepted on this task's say-so — ⭐ **it is checked against w
 the archive actually holds**, so a `true` with no practice anywhere is a named
 failure rather than a claim nobody audited. ⚠️ **That check does not exist in the
 tool yet** — it exists only in the framework's own fixture checker — and it is
-**finding 61** on the board, owed **before this task runs**. ⛔ **Until it does,
+**`PO-18/1`** on the board, owed **before this task runs**. ⛔ **Until it does,
 this clause is unfalsifiable and this task does not start.**
 
 ⭐ **The consequence worth stating plainly: nobody has to be *trusted* about the
