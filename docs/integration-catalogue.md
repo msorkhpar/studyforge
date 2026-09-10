@@ -132,10 +132,26 @@ imperative prompts, zero solution blocks, zero runners** — and ⭐ **the first
 is the one that decided it, because it is the only one about what the reader is
 asked to *do*.**
 
-⛔ **The sharp case, and it is why shape is not enough:** `TestCases.md` is **188
-Gherkin scenarios that look exactly like a grader corpus and ask the reader to do
-nothing.** ⚠️ Any classifier keyed on *what the files look like* marks that corpus
-runnable and is wrong.
+⛔ **The sharp case, and it is why shape is not enough:** `TestCases.md` is **191
+Gherkin scenario declarations that look exactly like a grader corpus and ask the
+reader to do nothing.** ⚠️ Any classifier keyed on *what the files look like* marks
+that corpus runnable and is wrong.
+
+> ⛔ **CORRECTED 2026-09-10 — this entry said 188, and 188 was a count over the
+> wrong set** (`F24`, filed by PO-Integration against themselves). ⚠️ **188 is the
+> *heading* count; the declaration count is 191.** ⛔ **And it looked corroborated
+> because 188 is *also* this corpus's `java` fence count** — ⭐ **a coincidence
+> between two counts over two different sets is the strongest false confirmation
+> available, because the reader who checks it finds agreement.**
+>
+> ⭐ **Entry 9 is this entry's own rule and it applies here: state the ratio, the
+> denominator, AND the set it is over.** ⚠️ **188 carried a denominator and still
+> travelled wrong, because the *set* was unstated** — ⛔ **so the set is the field
+> entry 9 was missing, and it is added to entry 9 by this correction.**
+>
+> ⛔ **The number reached `BOARD.md` in four places and this catalogue in one.**
+> ⭐ **The record keeps its number and gains this banner** rather than being
+> silently corrected — entry 9's own rule, applied to entry 8.
 
 ⭐ **So ask: is the reader asked to produce something?** ⛔ Not *does this look
 like test code* — code-shaped material that demands nothing of the reader is

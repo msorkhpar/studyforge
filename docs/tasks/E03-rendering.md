@@ -112,6 +112,42 @@ long, while a template whose newlines are real output reads as a page.
 ⚠️ This is the largest port in the project after SF-19a. It is a **package**
 (R11); a task that produces one large module has not done the task.
 
+#### ⛔ First act, before any renderer code: **review the markup-contract names** (`W9`)
+
+⭐ **`render/pageassets/surface.py` is one half of a two-sided contract and only
+one side has been written.** `SF-11` published the class names the stylesheet
+targets; ⛔ **it had to guess what a renderer would call them, because the
+renderer did not exist yet.** ⚠️ **`SF-12` is the other side arriving**, and this
+is the one moment the guess is free to correct.
+
+⛔ **So the review is this task's first commit, not a later tidy-up.** ⭐ **The
+failure it prevents is silent and the module says so itself:** a stylesheet and a
+template that disagree about a class name produce a page that renders, carries
+every word, and is **unstyled — with no error anywhere.**
+
+**The rule `surface.py` already states, and it binds this task:** ⭐ **`SF-12` may
+rename any of these**, and a rename is a change to that file **and** the
+stylesheet, *together*. ⛔ **What it may not do is invent a second name for
+something already here** — `test_surface` asserts that every class the shared
+stylesheet targets appears in the mapping, so a rename touching one side fails.
+
+⛔ **These are hooks, not semantics.** Nothing this task writes may read a class
+name back as a block type. ⭐ That is R4's argument about paths, applied to markup.
+
+⚠️ **`W9` had been a board row reading *"not in E03 yet"*, and the board's own
+note said the sequencing instruction *"only works if it reaches the task before
+the task starts."*** ⛔ **It is here now because a board row is the destination
+that has already evaporated twice, measured.**
+
+#### ⚠️ `W11` — if this task mints an `api` field, it is the one that collides
+
+⭐ **Recorded as an accepted finding with its remedy already stated**, so the
+remedy is not re-derived under time pressure: `api` is a generic field name and
+the tree guard would flag a module reading an *unrelated* one. ⛔ **Zero instances
+today**, and the fix is to **narrow the rule to the module, never to drop the
+field.** ⚠️ `SF-12` and E03's TOC task are the two realistic minters — ⭐ **so this
+task answers it in one line rather than inheriting it.**
+
 **Acceptance.** Byte-for-byte stable across runs. A page opens from `file://`
 with working styles, highlighting and navigation, and issues no network
 request. An unfilled placeholder raises. The identity block is present and

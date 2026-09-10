@@ -661,3 +661,195 @@ not this one** — see the rubric's emission clause, added in the same round.
 under the rubric. Scanning commit messages of merged history; this gates what is
 being added. ⛔ Chasing an adversary: this repository has no adversary, it has
 agents who need a shape for a test and will take whichever route is open.
+
+---
+
+### FND-08 — The repository-wide document walk, and its migration
+**Milestone** M1 · **Depends on** FND-01, FND-06 · **Team** solo
+**Owns** `tools/quality/pointers.py`, a `markdown_files()` seam in `tools/quality/config.py`, and their mirrored tests
+**Context** ~30k — Ruling 43, Ruling 55, `handoffs/W20.md`, `tools/quality/config.py`, `tools/quality/source_names.py`
+
+⭐ **Ruling 43 is the parent: a repository-wide check is a *task*, not a test,
+and it owns its migration.** ⛔ **It was said to owe four tree-walks. Measured, it
+owes one, and the measurement is the scoping decision.**
+
+#### ⛔ What the four walks turned out to be, measured on `e5bcc85`
+
+| Walk | Scoped as | ⛔ **Measured** | Disposition |
+|---|---|---|---|
+| **1 — corpus names (§7c)** | done as `W20` | ✅ **0 hits**, floor clean, exit 0 | ✅ **closed** |
+| **2 — dangling pointers** (finding 50 / `W21`) | a check | **41 links, 33 real, 0 dangling** | ⭐ **this task** |
+| **4 — the board's pointers into the archive** | a fourth consumer | ⛔ **14 links, 14 resolve, `0` anchors** | ⛔ **REFUSED as a walk — see below** |
+| **3 — sweep-by-declaration** (Ruling 46) | a consumer of one seam | **7 modules, 10 call sites** | ⛔ **a different task — `FND-09`** |
+
+#### ⛔ Walk 4 is refused, and the reason is Ruling 48
+
+⚠️ **`BOARD.md` carries 14 links into `BOARD-ARCHIVE.md`. All 14 resolve. Not one
+of them carries an `#anchor` — and no link anywhere in this repository does.**
+
+⛔ **So a link checker over walk 4 can only assert that one file exists**, and it
+would pass on the day the archive is emptied, reordered or half-deleted. ⭐ **That
+is a check that cannot fail — Ruling 48's exact defect, and it would have arrived
+*inside the task written to prevent it*.** ⚠️ **Fifth instance was `W24`; this
+would have been the sixth, and the first one somebody built on purpose.**
+
+⭐ **Walk 4 is not a walk; it is a *pointer discipline* that has not been adopted
+yet.** ⛔ **The valuable check is the inverse one** — that the archive still holds
+the sections the board's prose claims are in it — ⚠️ **and it is unbuildable until
+the pointers carry fragments.** ⭐ **So the ordering inverts: the board gains
+anchors first, and the check becomes an assertion over walk 2's output rather than
+a fourth walk.** ⛔ **Building the checker first would have produced a green
+instrument pointed at nothing.**
+
+#### ⚠️ The price is the parser, not the migration — ⛔ **and that is the opposite of `W20`**
+
+⭐ **`W20`'s cost was 19 real violations to move. This task's is `0`.** ⛔ **The
+whole cost is making the check not lie:**
+
+| Measured | |
+|---|---|
+| markdown files | **90** |
+| links found, fence-aware | **41** |
+| ⛔ **apparent dangling, fence-aware only** | ⛔ **8** |
+| ⭐ **true dangling, after inline code spans are stripped** | ⭐ **0** |
+| ⛔ **false-positive rate of the naive walker** | ⛔ **8 of 8 — 100 %** |
+
+⛔ **Every one of the eight is illustrative markdown inside backticks** — a regex
+in `handoffs/FND-05a.md`, `` `# [Test cases](TestCases.md)` `` quoted in a board
+cell, `` `- [1.1. Title](path)` `` in an epic. ⚠️ **A repo-wide check that is
+100 % false-positive on its first run is a check somebody switches off**, which is
+the argument `source_names.py` already makes about allow-lists.
+
+⭐ **So inline-code-span stripping is not an optimisation; it is the task.** ⛔ **A
+fence state machine alone is not enough** — measured.
+
+⭐ **Anchor checking is free today and must still be written**, because walk 4
+depends on it and today's `0` is a reading, not a property (**Ruling 55**).
+
+#### ⭐ The seam already exists and is ~80 % built — ⛔ **do not write a second one**
+
+`tools/quality/config.py` already holds `text_files()` (`:212`), `is_excluded()`
+(`:134`), `ignored_paths()` (`:178`), `relative()` (`:169`) and `read_text()`
+(`:252`); `report.py:18` holds `Finding(path, line, rule, message)`. ⭐ **Walk 1
+already runs on this seam.** ⚠️ **What is missing is one narrowing** — a
+`markdown_files(root)` beside `text_files` — ⛔ **plus the markdown parser, which
+is the only genuinely new code in this task.**
+
+⚠️ **Choose deliberately, and say which:** `EXCLUDED_DIRS` hides
+`tests/fixtures/` from a `python_files`-shaped walk but not from `text_files`, so
+`tests/fixtures/README.md` is in or out **by decision**, not by accident.
+
+**Acceptance.**
+
+1. `python3 -m tools.quality` reports **0** dangling pointers on a clean tree and
+   exits 0 — and the check appears in `tools/quality/__init__.py`'s `CHECKS`.
+2. ⛔ **Watch it fail first, and on each shape separately:** a fixture document
+   with a link to a missing file **fails, naming the file and the line**; a
+   fixture document containing each of the eight measured false-positive shapes
+   **passes**. ⚠️ **Both directions, or the check is unfalsifiable.**
+3. ⛔ **The check reports its coverage, not just its hits** — how many files and
+   how many links it read. ⭐ **A `0` with no denominator is `0 = 0`** (Ruling 48).
+4. Anchor resolution is implemented and exercised by a fixture, ⛔ **even though
+   the tree carries zero anchors today** — walk 4 is blocked on it.
+5. ⛔ **No absolute path in any message** (R7): paths are repo-relative, as
+   `relative()` already guarantees.
+6. ⭐ **No second file-walking helper is added.** The check consumes
+   `tools/quality/config.py`'s.
+
+**Out of scope.** ⛔ **Walk 3** — it is `FND-09` and it is not a document walk.
+⛔ **Adding anchors to `BOARD.md`** — that is the PO's, and it is what unblocks
+walk 4. ⛔ Checking external URLs; this repository has no remote and reaches no
+network.
+
+---
+
+### FND-09 — The fixture-access seam, scoped once
+**Milestone** M1 · **Depends on** FND-04, Ruling 46 · **Team** solo
+**Owns** `tests/fixture_checks/` — the move of `archive_documents`, `declaring` and `sweeping` — and the call sites that adopt it
+**Context** ~35k — Ruling 46, `tests/studyforge/archive/test_blocks.py`, `tests/fixture_checks/vocabulary.py`
+
+⛔ **This is the seam the board promised to scope once and had scoped four
+times.** ⭐ **It is a separate task from `FND-08` for a measured reason, not a
+tidiness one:** its unit is a **JSON document**, not a line; its exclusion key is
+a **directory → rule-id map**, not a path pattern; and its output is a
+**generator feeding a test**, not a `Finding`. ⛔ **Forcing it through `FND-08`'s
+`Finding` seam loses `sweeping()`'s attributed message — which Ruling 46 says is
+the half that actually closes the defect.** ⭐ **Share the walk-and-exclude
+primitive; do not share the report.**
+
+#### ⭐ What exists, measured
+
+| | |
+|---|---|
+| the helper | `archive_documents(*, asserting: Collection[str])`, `test_blocks.py:76` |
+| the rule | `{name for name, rule in INVALID_CORPORA.items() if rule in asserting}` |
+| the declaration | `INVALID_CORPORA`, `tests/fixture_checks/vocabulary.py:90`, **7 entries** |
+| pinned to disk by | `test_the_invalid_set_is_exactly_what_is_on_disk` |
+| call sites | **7 — ⛔ all inside the module that defines it. Zero external consumers** |
+| ⛔ **host module size** | ⛔ **567 / 600 lines — 33 lines of headroom** |
+
+⛔ **The seam cannot grow where it lives**, which is why the move is the task's
+first act rather than its last: `archive_documents`, `declaring` and `sweeping`
+move **verbatim** into `tests/fixture_checks/`, ⭐ **beside `INVALID_CORPORA`,
+which is Ruling 46's whole argument** — read from the declaration, never the
+directory name. ⚠️ **It is a net size relief for `test_blocks.py`.**
+
+#### ⛔ The migration, measured — **7 modules, 10 call sites**
+
+| Policy in use today | modules |
+|---|---|
+| ⛔ **by directory name** — the thing Ruling 46 forbids | **6** |
+| ⛔ **no filter at all** — sweeps all 7 invalid corpora | **2** |
+| ⭐ **by declaration (`asserting=`)** | ⭐ **0 outside the defining module** |
+
+⛔ **Two modules must NOT migrate and the task says so by name**, because routing
+them through the helper makes them **circular**: `tests/test_fixture_consistency.py`
+(the on-disk ↔ declaration pin) and `tools/tests/quality/personal_data/test_registry.py`
+(the §1e registry pin). ⭐ **They *are* the declaration's enforcers.** ⚠️ **Two
+more are already correct** — `fixture_checks/corpus.py` and `fixture_checks/addresses.py`
+take a root from their caller, which is the right seam already.
+
+#### ⛔ Two more declarations of the invalid set, which nobody's scoping knew about
+
+⚠️ **The board scoped this against *two* copies. Measured, there are four:**
+
+| Where | What it holds |
+|---|---|
+| `tests/fixture_checks/vocabulary.py:90` | ⭐ **the declaration** — 7 entries, pinned to disk |
+| `tests/studyforge/archive/test_blocks.py` | the helper that reads it |
+| ⛔ `tests/studyforge/validate/test_run.py:19` | ⛔ **`INVALID` — 5 of 7, with its *own* rule vocabulary** |
+| ⛔ `tests/studyforge/corpus/manifest/test_document.py:358` | ⛔ **`FIXTURES_WITH_A_VALID_MANIFEST` — a hand-written 4-of-7 subset** |
+
+⭐ **The third one argues its divergence deliberately** — *two checkers with
+different subjects must be allowed to disagree* — ⛔ **and that argument is
+probably right, which is exactly why it must be *declared* rather than
+hand-listed.** ⚠️ **Nothing pins either subset to `INVALID_CORPORA`, so an eighth
+fixture lands silently in both.** ⭐ **That is the defect Ruling 46 exists to
+prevent, twice, in the places the scope was not looking.**
+
+⛔ **`including_invalid=` no longer exists in any Python file.** ⚠️ **Any scope
+written against it — `BOARD.md`'s included — is quoting prose as code.**
+
+**Acceptance.**
+
+1. `archive_documents`, `declaring` and `sweeping` live in `tests/fixture_checks/`
+   beside `INVALID_CORPORA`; `test_blocks.py` imports them and is **under 567
+   lines**.
+2. ⛔ **`asserting=` still has no default** — the negative control asserting
+   `TypeError` survives the move. ⭐ **That control is why the seam is honest.**
+3. The **10 call sites in 7 modules** either take `asserting=` or carry a named
+   reason not to. ⛔ **`by directory name` is not a reason.**
+4. ⛔ **The two enforcers are excluded by name, in the code, with the circularity
+   stated** — never silently left behind.
+5. ⛔ **The two unknown subsets are derived from `INVALID_CORPORA` or pinned to
+   it**, so an eighth fixture cannot land silently in either. ⚠️ **A deliberate
+   divergence is legal and states its `why`** — the `personal-data-shapes.md`
+   precedent, not a fresh mechanism.
+6. ⭐ **The failure message still names the declaration and still says *"do not
+   change the fixture"***, asserted by its own test. ⛔ **That sentence is the
+   task.**
+7. A **coverage** number: how many documents each sweep saw. ⛔ **A sweep that
+   excluded everything reports `0` and looks identical to a clean one** (Ruling 48).
+
+**Out of scope.** ⛔ Changing any fixture. ⛔ Changing `INVALID_CORPORA`'s
+entries. ⛔ Document-pointer walking — that is `FND-08`.

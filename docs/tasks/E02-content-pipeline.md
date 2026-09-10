@@ -331,8 +331,19 @@ keys are unique within a unit for a multi-variant corpus.
 
 ### SF-10 — Unit document builder
 **Milestone** M1 · **Depends on** SF-05, SF-06, SF-09 · **Team** team
-**Owns** `unit/builder.py` and its package
+**Owns** `unit/builder/` (the package) **and `unit/served.py`**
 **Context** ~70k — `CS/tools/study/unitdoc.py`, plus SF-05/06/09 outputs
+
+⛔ **`unit/served.py` is a SIBLING of the builder package, not a child** — ruled
+in the survey and pre-approved: ⭐ **its consumers are the page generator, the
+server and the run route, none of which builds.** ⚠️ **This line said
+`unit/builder.py and its package` and was short by that module.**
+
+⛔ **Not cosmetic: rubric §0 guards a review by matching the changed-file count
+against this field** — *if it does not match, the base is wrong; stop and fix it
+rather than reviewing what comes out.* ⭐ **An `Owns` short by a module makes that
+guard misfire on every future review of this surface**, and it misfires in the
+direction that looks like a base error rather than a stale epic.
 
 **Subtasks.**
 (a) **Derived shape** — no overlay: one section per archive file, lessons

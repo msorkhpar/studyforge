@@ -146,6 +146,65 @@ grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a w
 ⛔ **A wave that begins with an untriaged `[structural]` finding is a wave that
 has decided to pay for it twice.**
 
+### ⛔ A finding is numbered **inside its own document**, never globally
+
+⭐ **The form is `<TASK-ID>/<n>` — `SF-12-survey/1`, `FND-05a/3` — and `n` starts
+at 1 in every document.** ⛔ **Do not mint a number from a project-wide
+sequence.**
+
+⚠️ **Because there is no allocator, and there cannot be one.** ⭐ **A global number
+is a contract, so R21 applies: it needs one producer.** ⛔ **A branch cannot have
+one.** Every number is minted by an agent who cannot see the other branches, so
+**the collision is structurally invisible from the place it happens** — ⚠️ **which
+is the tell every expensive defect on this project has shared**, and it is the
+wave-open sweep's known blind spot in a new costume: *a sweep sees the tree and
+cannot see the branches* (ruling 39).
+
+⛔ **Measured 2026-09-10, and the measurement is what refuses the allocator:**
+
+| | |
+|---|---|
+| global numbers minted, `handoffs/` | **29**, across 12 documents |
+| range | 20 – 58 |
+| ⛔ **collisions** | ⛔ **3 — `53`, `54`, `55`** |
+| ⚠️ **gaps in the range** | ⚠️ **10** — 21, 23, 24, 34–40 |
+| citations of a global number, repo-wide | **46**, across 22 files |
+| ⛔ **citations now ambiguous** | ⛔ **8** |
+
+⛔ **The two colliding documents have the SAME AUTHOR, on two branches, in one
+wave.** ⭐ **That is the whole argument in one fact: an allocator is a file, a file
+on a branch is invisible to another branch, and this author would have edited it
+on both.** ⚠️ **Best case it conflicts — which is the reviewer catching it, which
+is what already happens. ⛔ Worst case both increments merge cleanly and one
+number is silently lost.**
+
+⭐ **And the ten gaps kill the cheap version outright:** ⛔ **`max()` over the tree
+is not an allocator's state, it is a lower bound that ignores every unmerged
+branch** — so *"read the highest and add one"* is precisely what produced `53`
+twice.
+
+⭐ **Per-document numbering makes the collision unrepresentable rather than
+detected**, which is this project's most-repeated finding — *enumerate the legal;
+do not enumerate the illegal* — ⚠️ **and it is ruling 29's move one level out.**
+⭐ **The document name is already unique and already enforced**, so the namespace
+costs nothing to create.
+
+#### ⛔ The migration is nearly free, and the reason is a rule this project already has
+
+⛔ **Existing handoffs are NOT renumbered.** ⭐ **A handoff is a record and is never
+rewritten** — so numbers **20–58 are a closed legacy range**, every existing
+citation keeps resolving, and ⚠️ **the three ambiguous numbers are disambiguated
+on `BOARD.md`, not by editing the two documents.** ⭐ **That is `W4`'s precedent:
+the board is where a superseded record gets superseded.**
+
+⛔ **So the rule binds new findings only, and its enforcer is Ruling 49's handoff
+check (`W25`), which is being built on this exact directory.**
+
+⚠️ **Note what is *not* claimed:** ⛔ **this does not stop two documents describing
+the same defect.** ⭐ **It stops two documents claiming the same *name* for
+different defects** — which is the failure that re-points a citation silently and
+turns nothing red.
+
 ### ⛔ Before growing another task's contract, name the caller and the question
 
 ⭐ **Carried from CTO ruling 23, 2026-09-09, and the CTO notes this is the *third*
