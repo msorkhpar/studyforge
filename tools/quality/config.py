@@ -8,7 +8,10 @@ modules that then drift apart.
 `is_test_file()` and `ceiling_for()` answer the questions every check asks
 about a path.
 
-**Depends on.** `pathlib` and `re` only.
+**Depends on.** `pathlib`, `re`, `shutil` and `subprocess` — all standard
+library. ⚠️ This line read *"`pathlib` only"* while the module had imported
+`shutil` and `subprocess` since `FND-08`; corrected here because `W45` was
+editing it anyway, and R17's third part is worth nothing if it is decorative.
 """
 
 from __future__ import annotations
