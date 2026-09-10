@@ -157,8 +157,41 @@ this corpus there were **13,583 code↔code edges, 767 doc↔doc edges, and zero
 edges between the two.** The 806 lesson→class edges that make the `path` answer
 above possible were added deliberately, by matching each lesson's text against
 the class names in its own module. **A new corpus's graph will have the same
-hole until somebody closes it**; check with the edge census in
-`docs/tasks/handoffs/FND-02.md` before believing a cross-layer answer.
+hole until somebody closes it**; check with the census below before believing a
+cross-layer answer.
+
+⛔ **This document and `handoffs/FND-02.md` pointed at each other for that
+census and neither one had it** — which is the whole reason `studyforge`'s own
+graph went unbridged for a milestone while both documents said to check. The
+command is here now, and it is a command rather than a reference:
+
+```bash
+python3 -m tools.knowledge census    # prose-to-code edges, and the floor
+python3 -m tools.knowledge bridge    # add the ruling->code edges, then re-census
+```
+
+⭐ **`census` counts only edges that cross a file boundary**, and that
+distinction is the measurement. A docstring pointing at the function it sits
+above has one code endpoint and one prose endpoint and is **not a bridge**:
+measured on this repository, **495 of 510** such edges never left their own
+file, which is how an unbridged graph came to be reported as 7.9% bridged. The
+honest number was **15**.
+
+⭐ **`bridge` joins each ruling to the code whose docstring cites it.**
+Deterministic, literal, no model: `**Rn — …**` in `docs/specs/` on one side,
+`Rn` in a docstring on the other. Measured 2026-09-09 on the graph rebuilt at
+`dc4686c`, it took the census from **15 to 222** and made this answer possible
+for the first time:
+
+```text
+$ graphify path "docs_specs_2026_09_08_studyforge_v1_design_r7" "assert_clean()"
+Shortest path (1 hops):
+  R7 — No personal data reaches disk or the wire --implemented_by [EXTRACTED]--> assert_clean()
+```
+
+⚠️ **The bridge is only as good as the citing.** Code that implements a ruling
+without naming it stays unbridged — visibly, as a number — which is a better
+failure than a heuristic that guesses.
 
 ⚠️ **The graph reports its own damage; read it.** The Java build carries 1,093
 dangling-endpoint edges (~4% of extracted edges) — semantic extraction naming
@@ -169,13 +202,44 @@ they mean an absent connection is not proof of absence.
 lead, `AMBIGUOUS` a guess. If an answer contradicts the source, the graph is
 stale or wrong — rebuild it, and say so.
 
+## Querying from a worktree, which is where the cost was
+
+⭐ **`explain` and `path` take `--graph <path>` and need no local index at
+all.** This is the clause that makes R14 affordable:
+
+```bash
+graphify explain "require_slug()" --graph <repository>/graphify-out/graph.json
+graphify path "R7 — No personal data…" "assert_clean()" --graph <path>/graph.json
+```
+
+⚠️ **`query` does not.** It reads `./graphify-out/graph.json` and nothing else,
+so it is the one command that needs a build where you are standing.
+
+⭐ **That maps exactly onto R14's own qualification.** The two commands the
+ruling holds for *unconditionally* are the two that need no local build; the
+one that needs a local build is `query`, already the weak one. ⛔ **So the index
+is built once per repository, not once per worktree** — measured 2026-09-09,
+**33 worktrees and 2 with a graph**, because the per-worktree cost was never
+payable and an unaffordable rule is one that gets skipped.
+
+⚠️ **A label can be ambiguous, and `explain` says so rather than guessing.**
+`R7 — No personal data…` matches both the spec and a fixture's `VIOLATION.md`;
+pass the node id it prints.
+
 ## Rebuilding
 
 ```bash
 graphify update <path>            # incremental: re-extract changed CODE, no LLM, no key
 graphify update <path> --force    # full code re-extract, after deletions or a refactor
 graphify export html              # regenerate graph.html from graph.json
+python3 -m tools.knowledge bridge # ⛔ then bridge, or the index answers no cross-layer question
 ```
+
+⛔ **`graphify update` and `bridge` are one operation with two commands.** An
+index that is present and current and **unbridged** is the worst of the three
+states this repository has met: every green light is on and *"which ruling does
+this code implement?"* returns silence. `tools/quality/` fails the build on it,
+against a recorded floor.
 
 `graphify update` is the day-to-day command and it is honest about doing
 nothing: on an unchanged tree it prints *"No code-graph topology changes

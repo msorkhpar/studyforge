@@ -175,6 +175,11 @@ DOCUMENTED_COMMANDS = (
     "graphify query",
     "graphify path",
     "graphify explain",
+    # ⭐ FND-07's three, and the first of them is what makes R14 affordable:
+    # `explain` and `path` answer from a worktree with no index of its own.
+    "--graph",
+    "python3 -m tools.knowledge census",
+    "python3 -m tools.knowledge bridge",
 )
 
 
@@ -222,3 +227,34 @@ def test_the_conventions_document_corrects_the_gitkeep_claim():
     assert is_ignored("graphify-out/.gitkeep", repository_root()), (
         "git no longer ignores graphify-out/.gitkeep; the document's correction is stale"
     )
+
+
+def test_the_conventions_document_carries_the_worktree_invocation():
+    # ⭐ FND-07 item 3. Measured 2026-09-09: **33 worktrees, 2 with a graph** —
+    # the per-worktree rebuild was never payable, and an unaffordable rule is
+    # one that gets skipped, which is what happened to R14 for a milestone.
+    text = conventions()
+    assert "--graph" in text
+    assert "query" in text and "does not" in text, (
+        "the document must say which command still needs a local index"
+    )
+
+
+def test_the_conventions_document_carries_the_census_command_itself():
+    # ⛔ The circular reference this closes: this document said the census was
+    # in `handoffs/FND-02.md`, that handoff said it was in this document, and
+    # **neither one had it**. A reference is not a command.
+    text = conventions()
+    assert "python3 -m tools.knowledge census" in text
+    assert "python3 -m tools.knowledge bridge" in text
+    assert "cross a file boundary" in text, (
+        "the document must say what the census counts, or the number means nothing"
+    )
+
+
+def test_the_conventions_document_says_a_rebuild_without_a_bridge_is_incomplete():
+    # ⛔ The third state: present, current and unbridged. Every green light on,
+    # and the one question that matters returns silence.
+    text = conventions()
+    assert "unbridged" in text
+    assert "one operation with two commands" in text

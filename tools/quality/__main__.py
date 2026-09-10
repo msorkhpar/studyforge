@@ -17,7 +17,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from tools.quality import format_findings, run_all
+from tools.quality import format_findings, run_all, run_notices
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -36,6 +36,10 @@ def main(argv: list[str] | None = None) -> int:
     )
     arguments = parser.parse_args(argv)
 
+    for line in run_notices(arguments.root):
+        # ⛔ Printed, never counted. A notice is how the floor reports
+        # something missing that nobody can be failed for (FND-07).
+        print(line)
     findings = run_all(arguments.root)
     print(format_findings(findings))
     return 1 if findings else 0
