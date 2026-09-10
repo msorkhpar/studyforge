@@ -577,21 +577,37 @@ fixed and case-sensitive by ruling, and a second spelling would pass the
 checker and fail here.** ⭐ **A deferral is told from a design claim by its
 reason carrying a task id, which is greppable:**
 
+⛔ **Do NOT `grep` the tree for the marker.** ⚠️ **`tools/quality/size.py`, its
+config and its tests all contain the literal string and always will** — a grep
+returns them forever and the check becomes something a reviewer learns to skim.
+⭐ **Ask `ast`, and only of files actually over their ceiling, deferring to
+`FND-01`'s config exactly as §3a does:**
+
 ```bash
-# Every deferral in the tree, and the id that owes its removal.
-grep -rn 'Size exception:' src/ tools/ tests/ \
-  | grep -oE '[A-Z]{2,3}-[0-9]+|W[0-9]+' | sort -u
-# Then, for each id printed: it MUST be a live row in docs/tasks/BOARD.md.
-grep -n "$id" docs/tasks/BOARD.md | grep -E 'todo|in-flight|in-review'
-# And the reverse: an exception with NO id is a DESIGN CLAIM and is read as
-# permanent — condition 4 still applies to it, and a reviewer still refuses it
-# if the isolation answer is no. A justification is not a licence.
+python3 - <<'EOF'
+import ast, pathlib
+from tools.quality import config
+root = pathlib.Path(".")
+for path in config.python_files(root):
+    rel = config.relative(path, root)
+    text = path.read_text(encoding="utf-8")
+    if len(text.splitlines()) <= config.ceiling_for(rel):
+        continue                      # not over the ceiling: no opt-out in play
+    doc = ast.get_docstring(ast.parse(text)) or ""
+    for line in doc.splitlines():
+        if line.strip().startswith(config.SIZE_EXCEPTION_MARKER):
+            print(f"{rel}: {line.strip()}")
+EOF
 ```
 
-⛔ **Pass condition: every id printed is a live row.** ⚠️ **An id that has
-landed, or that never existed, is a deferral nobody owns — the finding is
-against the RELEASE BRANCH, and the line is removed or reissued against a real
-row.** ⭐ **Run it at every wave open, beside §8a's `[structural]` sweep.**
+⛔ **Pass condition: for every line printed, either the reason claims splitting
+would be worse (a DESIGN CLAIM — condition 4 still applies, and a reviewer still
+refuses it if the isolation answer is no), or it names a task id that is a LIVE
+row in `docs/tasks/BOARD.md`.** ⚠️ **An id that has landed, or that never
+existed, is a deferral nobody owns — the finding is against the RELEASE BRANCH,
+and the line is removed or reissued against a real row.** ⭐ **Run it at every
+wave open, beside §8a's `[structural]` sweep.**
+
 
 ⛔ **Measured 2026-09-10 at `3f5d984`: the command prints NOTHING — zero
 deferrals and zero size exceptions in the tree.** ⭐ **So the first use of this
