@@ -252,13 +252,34 @@ renderer needs; if it cannot, the contract is missing something. It shares the
 unit page's palette and type stack by importing them rather than restating
 them, so the two documents are one product.
 
-Renders the Java corpus's 10 → 45 → 166 hierarchy, and must render a 1-level
-corpus equally well.
+Renders an arbitrarily deep hierarchy — the Java corpus's is 10 → 45 → 166 —
+and must render a 1-level corpus equally well.
 
-**Acceptance.** Renders 166 units with working deep links into collapsed
-sections. Works with JavaScript disabled. **Reads no file other than the two
-contents documents — asserted, not assumed.** **Issues no runtime fetch —
-asserted.** Renders the depth-1 fixture.
+**Acceptance.** Renders **both `FND-04` fixtures**, at both depths, with working
+deep links into collapsed sections. Works with JavaScript disabled. **Reads no
+file other than the two contents documents — asserted, not assumed.** **Issues
+no runtime fetch — asserted.**
+
+#### ⛔ Acceptance SPLIT by the PO, 2026-09-10 (round 34) — **Ruling 151**, in the same edit as `SF-27`'s
+
+⛔ **The first clause used to read:**
+
+> ~~Renders **166 units** with working deep links into collapsed sections.~~
+
+⚠️ **`166` is a count of the Java corpus, readable only inside a consumer
+repository — the same defect `SF-27/5` reported one row over, and Ruling 151
+closed this class after three instances.** ⛔ **Not waived: R20 means a framework
+close cannot rest on a measurement only the integration agent can take.**
+
+⭐ **The framework half — both fixtures, both depths — is what actually
+discriminates**: a renderer that handles depth-1 and depth-2 handles 166 units or
+fails for a reason the fixtures expose. ⛔ **The scale half joins `SF-27`'s in
+`W77` on the integration side.**
+
+⚠️ **The `Definition`'s *"Renders the Java corpus's 10 → 45 → 166 hierarchy"* is
+kept as an ILLUSTRATION and re-worded to say so** — ⭐ **Ruling 151 forbids the
+clause in an ACCEPTANCE, not the corpus in a description; R20's line is between
+what a close is gated on and what a task is explained with.**
 
 ---
 
@@ -277,10 +298,28 @@ A neighbour with no generated page falls back to the root index anchor for it
 rather than dangling, so navigation degrades to something useful instead of a
 broken link.
 
-**Acceptance.** Prev/next traverses all 166 units in curriculum order,
-including across module and section boundaries. Breadcrumbs read
-"Section › Module › Lesson" from data. Works over `file://`. No dangling links
-anywhere in the corpus — asserted by a link check over generated output.
+**Acceptance.** Prev/next traverses **every unit of both `FND-04` fixtures** in
+curriculum order, including across module and section boundaries. Breadcrumbs
+read "Section › Module › Lesson" from data. Works over `file://`. No dangling
+links anywhere in the generated output — asserted by a link check.
+
+#### ⛔ Acceptance SPLIT by the PO, 2026-09-10 (round 34) — **Ruling 151**, and this one NOBODY REPORTED
+
+⛔ **The first clause used to read:**
+
+> ~~Prev/next traverses **all 166 units** in curriculum order.~~
+
+⚠️ **Same defect as `SF-27/5` and `SF-14`'s, and it was found by SWEEPING for the
+class rather than by fixing the two instances that were handed to me** — ⛔ **`166`
+is a count readable only inside a consumer repository.** ⭐ **The framework half —
+every unit of both fixtures, across module and section boundaries — is what
+actually exercises the boundary-crossing this row exists for.** ⛔ **The scale
+half joins `SF-14`'s and `SF-27`'s in `W77`.**
+
+⚠️ **`SF-15` is step 2.4 and would have been dispatched carrying it** —
+⭐ **which is the argument for sweeping a ruled class instead of discharging its
+reported instances: two were reported, four were framework-side, and the fourth
+is in a CLOSED row (`PO-34/9`).**
 
 ---
 
@@ -302,9 +341,35 @@ Renders at any depth: a 1-level corpus has one container page, a 2-level corpus
 has one per module. The same renderer serves both — level labels come from
 `levels` (SF-02), exactly as the breadcrumb does.
 
-**Acceptance.** All 45 Java module pages render with correct unit lists and
-working links in both directions. SF-04 discovers them by identity. Works over
-`file://`. Byte-for-byte stable. A depth-1 fixture renders one container page.
+**Acceptance.** Every container of **both `FND-04` fixtures**, under **both
+placement profiles**, renders with correct unit lists and working links in both
+directions. SF-04 discovers them by identity. Works over `file://`.
+Byte-for-byte stable. A depth-1 fixture renders one container page.
+
+#### ⛔ Acceptance SPLIT by the PO, 2026-09-10 (round 34) — **Ruling 151**
+
+⛔ **The first clause used to read, and the text is preserved because a removal
+that hides what it removed is not a split:**
+
+> ~~All **45 Java module pages** render with correct unit lists and working links
+> in both directions.~~
+
+⚠️ **That is a COUNT INSIDE A CONSUMER REPOSITORY, and Ruling 151 forbids a
+framework task's Acceptance from resting on one.** ⛔ **R20 is why it cannot be
+waived instead: a framework close may not be gated on a measurement only the
+integration agent can take, and `45` is readable in exactly one place this side
+does not own.** ⭐ **Reported by the developer as `SF-27/5`, NOT rewritten by
+them — which is the reporting half of Ruling 151 working as designed.**
+
+⭐ **The framework half is the clause above and it is strictly stronger in the
+dimension that matters**: *both fixtures × both profiles* exercises depth-1 and
+depth-2 and each placement, where *45 Java pages* exercises one corpus at one
+depth under one profile. ⛔ **The scale half is re-homed to `W77` on the
+integration side, exactly as `SK-08/2`'s went to `W73`.**
+
+⚠️ **`SF-14` carried the identical shape and is split in the same commit** — ⭐ **the
+developer measured that and said splitting both once is cheaper than twice, which
+is right and is why they are one edit.**
 
 ---
 
@@ -324,9 +389,32 @@ directions** — so a single new chrome class costs three files in two packages
 not.** Ruled 2026-09-10: the markup is `SF-12`'s and is done; the rules belong
 with `reading.css`, because **a class name with no rule is not styling**.
 
-**Definition.** Rules for the three chrome regions the unit page already emits —
-the masthead, the outline, and the between-units bar — as a new stylesheet part,
-plus its entry in `STYLE_PARTS` and its hooks in `SURFACE_HOOKS`.
+**Definition.** Rules for the chrome regions the **pages** already emit, as a new
+stylesheet part, plus its entry in `STYLE_PARTS` and its hooks in
+`SURFACE_HOOKS`.
+
+⛔ **SCOPE CORRECTED BY THE PO, 2026-09-10 (round 34) — `SF-27/2`. This line said
+*"the three chrome regions the unit page already emits"* and it was stale in two
+directions at once.** ⚠️ **Note (a) below had already made the practice panel a
+FOURTH; `SF-27`'s container page now emits a FIFTH, and it is a page this line
+did not contemplate at all — the line says *the unit page*, and there are now
+two page kinds.** ⛔ **A `solo` row that READS AS COMPLETE while its scope is
+short is the worst shape a row can have: nothing about it signals the gap.**
+
+| # | region | ⭐ **whose markup, and where it is** |
+|---|---|---|
+| 1 | masthead | `SF-12`, shipped |
+| 2 | outline | `SF-12`, shipped |
+| 3 | between-units bar | `SF-12`, shipped — ⚠️ **and now emitted by the CONTAINER page too** |
+| 4 | practice panel | `SF-12`, shipped — added by note (a) |
+| 5 | ⛔ **the container's unit listing** | ⛔ **`SF-27`** — `<nav aria-label="Units">` with `<ol>`, and **TWO NEW HOOKS**: `data-readable` on each `<li>` and `data-kind="numbering"` on the ordinal `<span>`. ⭐ **Measured on `feat/SF-27` @ `6c39d5f` against `tests/fixtures/pages/getting-started.section.html`, not taken from the report** — ⚠️ **and `SURFACE_HOOKS` on that branch still holds only `table_scroll`, `copy_button`, `code_caption`, so there is NO RULE ANYWHERE for either hook** |
+
+⭐ **The property this task was scheduled late to preserve still holds and is
+re-checked rather than assumed:** the container page addresses its chrome by
+element and `aria-label` and `data-*` only — ⛔ **the `<nav>`, `<ol>` and `<li>`
+carry no class** — so this row still costs no re-render. ⚠️ **`SF-14`'s root
+index will add a SIXTH, and it is now placed: whoever takes `SF-34` re-measures
+the region list against the tree rather than against this table.**
 
 ⭐ **The page needs no change and no re-render.** `SF-12` addressed all three
 regions by element, `aria-label` and `data-*` only — measured: every class the

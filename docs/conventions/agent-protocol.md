@@ -444,6 +444,40 @@ for them past what Ruling 148 said: **76 finding lines across 12 documents**, an
 ⚠️ **So the contract is not merely *unenforced on ruling records*; it is
 *unreadable* wherever the offices' actual format is used.**
 
+#### ⛔ Ruling 158 (CTO round 41) — a ruling that STRIKES a field enumerates its readers and PRINTS the enumeration
+
+> ⛔ **A ruling that strikes a field, a check, a clause or a row enumerates its
+> READERS and prints the enumeration.** ⭐ *"No instrument reads it"* is a claim
+> about **EMPTINESS**, which Ruling 155 above already says is the claim most in
+> need of a population. ⚠️ **An emptiness claim is discharged by a printed
+> population of ZERO, never by not having looked.**
+
+⛔ **THE INSTANCE, AND THE CTO FILED IT AGAINST THEMSELVES.** Ruling 154's second
+call struck `workspace.json`'s `self` commit on the ground that
+`tools.workspace verify` does not read it. ⭐ **The PO re-derived the claim
+instead of carrying it (`PO-33/7`) and printed the readers:**
+
+```text
+tools/workspace/__init__.py:293   if not holds(directory, component.commit):     # every row, self included
+tools/workspace/__init__.py:299   if component.where == "self":
+tools/workspace/__init__.py:302       if not is_ancestor(directory, component.commit, head):
+tools/workspace/__init__.py:49-54 "equality is *unrepresentable* rather than merely unchecked"
+```
+
+⛔ **`self`'s commit is read TWICE, and the module's own docstring states why the
+weaker predicate is the strongest TRUE one available.** ⭐ **RULING 154'S SECOND
+CALL IS WITHDRAWN**: `W72` does the `pinned`/`tracked` split only, `self`'s
+commit stays, and `PO-33/7` is **upheld**. ⚠️ **What remains true is the
+observation underneath it — an ancestor predicate cannot go red for a
+stale-but-ancestral commit, so the field is WEAKLY checked, not unchecked** —
+⛔ **and striking it would have deleted the one check that fires if history is
+rewound or rewritten, while citing a ruling.**
+
+⭐ **The finding is the MECHANISM, not the error: it was caught by re-deriving a
+received claim instead of carrying it**, the same move `PO-32/9` made against its
+own carry table. ⚠️ **Second consecutive round in which re-derivation caught the
+CTO, which is a pattern worth naming rather than a coincidence worth forgiving.**
+
 ⭐ **The test for `[structural]` is one question: *would this happen again to
 somebody else?*** If yes, mark it. ⚠️ Over-marking costs a sentence in a triage
 list; under-marking costs what C5 cost.
