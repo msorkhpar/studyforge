@@ -100,8 +100,17 @@ form needs a URL that resolves. The components are:
 ## Where to start
 
 ✅ **M0 and M1 are both CLOSED.** **M1 closed 2026-09-10 at `2fe56a4`**, all nine
-of its close conditions true at that one ref. ⏳ **Open: M2 — a corpus is
-readable. In flight: M2 step 2.1.** ⛔ **Do not start on M0 or M1.**
+of its close conditions true at that one ref. ✅ **M2 step 2.1 closed 2026-09-10
+at `a00337b`**, all five of its rows re-taken at that one ref. ⏳ **Open: M2 — a
+corpus is readable. In flight: M2 step 2.2.** ⛔ **Do not start on M0 or M1.**
+
+⚠️ **CORRECTED 2026-09-10 (PO round 28, check 5). This section said *"In flight:
+M2 step 2.1"*, which was true when it was written and false the moment that step
+closed** — ⛔ **and the round that closed the step is the round that made this
+file wrong, which is exactly why `CLAUDE.md` is on the wave-open checklist by
+name.** ⭐ **The sentence was REPLACED, not annotated below (Ruling 106 governs
+merged handoffs; a correction to a live instruction replaces it, because a reader
+stops at the first sentence that answers their question).**
 
 ⛔ **THE TASK LIST THAT USED TO STAND HERE HAS BEEN REMOVED, and its removal is
 the point.** ⚠️ **This line named five step-2.1 tasks; two of them — `SF-31` and
