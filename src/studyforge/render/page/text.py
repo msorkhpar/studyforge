@@ -48,13 +48,64 @@ keeps it clickable.
 and a renderer that does not is exactly how markup reaches the page as text, so
 the branch list below is checked against `SEGMENT_KINDS` by this module's test.
 
-## ⛔ A refused scheme keeps its words and loses its link
+## ⛔ A refused href keeps its words and loses its link
 
 ⭐ `javascript:`, `data:` and `vbscript:` render as plain text rather than as a
 live anchor. The corpus is trusted-ish; a page the reader opens in their own
-browser is not the place to find out that it was not. ⚠️ A bare `example.com/x`
-has no scheme and no path prefix — treating it as relative is wrong and treating
-it as `http` is inventing intent — so it loses its link and keeps its words.
+browser is not the place to find out that it was not.
+
+## ⛔ TWO permitted forms, and the second one used to be missing (`W57`)
+
+⛔ **A permitted href is an *absolute* one whose scheme is in `SAFE_SCHEMES`, or
+a *relative reference* that stays inside the site. Nothing else.**
+
+⚠️ **Both halves are closed sets, and that is the point.** The scheme list is
+closed because the unforeseen scheme must be refused; the relative form is
+closed because it is a *grammar* — no scheme, not rooted — rather than a list of
+prefixes somebody extends when a page breaks.
+
+⛔ **The prefix list this replaced was `("http://", "https://", "mailto:", "#",
+"/", "./", "../")`, and four of those seven are not schemes at all.** ⚠️ Crowding
+`#`, `./` and `../` into a set called `SAFE_SCHEMES` made it look complete while
+the commonest relative reference of all — a bare `page.html`, naming a file in
+the same directory — had **no entry**. ⭐ **Measured: under `sibling` placement
+that is every same-container *next* and *previous* link, 6 of the `depth2`
+corpus's 13 navigation slots, dropped with nothing raised.**
+
+⭐ **The consequence, stated rather than hidden: `example.com/x` is now a
+relative link to a local file that does not exist, where it used to keep its
+words.** ⚠️ It is formally indistinguishable from `unit-02-fields.unit.html` —
+both are one path segment containing dots — so separating them needs a *"looks
+like a hostname"* heuristic, which is the open set this project has banned five
+times. ⛔ **A dead relative link costs one reader one click; the alternative cost
+46 % of the bar on every `sibling` corpus.**
+
+## ⛔ What a relative reference may NOT be, and why each one is named
+
+⚠️ **A rooted href — `/x` — is refused (R8).** Opened over `file://` it resolves
+to the *filesystem* root, not the site root, so it is broken at the floor this
+project ships on; `placement.relative_href` already refuses to *emit* one for
+exactly that reason. ⛔ **And `/home/<someone>/notes.html` is a rooted href, so
+admitting the form admits a personal path straight into a page (R7).**
+
+⚠️ **A protocol-relative href — `//host/x` — is refused.** It carries no scheme
+of its own and inherits the page's, which is how a relative-looking string
+reaches a *remote host* and breaks R8's no-network floor.
+
+⛔ **And every character is checked against `_HREF_CHARACTERS`, because a browser
+normalises before it parses.** Tab, newline and carriage return are *stripped*
+from a URL and `\` is *rewritten* to `/`, so `java<TAB>script:x` has no scheme to
+a naive reader and `javascript:` to the browser — and `/\host/x` is `//host/x`.
+⭐ Enumerating the legal spelling closes both; enumerating the illegal one is the
+list that would have forgotten the second.
+
+## ⛔ What this function does NOT guarantee
+
+⭐ **Ruling 56 — name the neighbour you have not asserted.** `safe_href` sees a
+string and no page, so it cannot know how many `../` steps leave the site root:
+`../../../../../etc/passwd` is a well-formed relative reference and is
+**admitted**. ⚠️ Bounding that needs the asking page's depth, which lives in
+`corpus.placement`, not here.
 """
 
 from __future__ import annotations
@@ -64,10 +115,40 @@ import re
 #: Ordered, and `&` is first. ⛔ Any other order double-escapes.
 _ESCAPES = (("&", "&amp;"), ("<", "&lt;"), (">", "&gt;"), ('"', "&quot;"))
 
-#: The prefixes a link may keep. ⛔ A closed set of what is permitted, never a
-#: list of what is refused: the forbidden list is the one that is silently
-#: incomplete, and `vbscript:` is the entry every version of it forgets.
-SAFE_SCHEMES = ("http://", "https://", "mailto:", "#", "/", "./", "../")
+#: The schemes an ABSOLUTE href may carry — lower-cased, and without the `:`.
+#: ⛔ A closed set of what is permitted, never a list of what is refused: the
+#: forbidden list is the one that is silently incomplete, and `vbscript:` is the
+#: entry every version of it forgets.
+#:
+#: ⚠️ **These are schemes and only schemes.** `#`, `/`, `./` and `../` used to
+#: sit in this tuple; none of them is a scheme, and their presence is what made
+#: the set read as complete while a bare `page.html` had no entry (`W57`).
+SAFE_SCHEMES = ("http", "https", "mailto")
+
+#: Every character an href may be spelled with: RFC 3986's whole repertoire —
+#: unreserved, gen-delims, sub-delims and `%` — and nothing else.
+#:
+#: ⛔ This is what keeps a refused scheme refused. A browser strips tab, newline
+#: and carriage return out of a URL and rewrites `\` to `/` **before** deciding
+#: what the scheme is, so a reader that does not check the spelling sees no
+#: scheme in `java<TAB>script:x` where the browser sees `javascript:`.
+_HREF_CHARACTERS = frozenset(
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+    "-._~"  # unreserved
+    ":/?#[]@"  # gen-delims
+    "!$&'()*+,;="  # sub-delims
+    "%"  # percent-encoding
+)
+
+#: RFC 3986's `scheme ":"`, anchored. ⚠️ `/` is deliberately not a scheme
+#: character, so `notes/todo:1` has no scheme — which is what a browser
+#: concludes too, and why the check must be a grammar rather than a `":" in`.
+_SCHEME = re.compile(r"([A-Za-z][A-Za-z0-9+.\-]*):")
+
+#: What a relative reference may not begin with: `/x` is rooted and breaks the
+#: `file://` floor (R8) and can carry a home path (R7); `//x` is protocol-
+#: relative and reaches a remote host. ⭐ One prefix refuses both.
+_OUTSIDE_THE_SITE = "/"
 
 #: What one inline segment can be. ⛔ Ordered as `_INLINE` alternates, so a
 #: position where two markers could both start resolves the same way here as it
@@ -104,12 +185,25 @@ def escape_attribute(value: object) -> str:
 
 
 def safe_href(href: object) -> str | None:
-    """Return the href when its scheme is permitted, else `None` — render as text."""
-    candidate = (href or "").strip() if isinstance(href, str) else ""
-    if not candidate:
+    """Return the href when it is permitted, else `None` — render it as text.
+
+    ⛔ **Two permitted forms and nothing else**, in the order they are decided:
+
+    * **absolute** — a scheme in `SAFE_SCHEMES` followed by `:`;
+    * **relative reference** — no scheme at all, and inside the site: neither
+      rooted (`/x`, R8 and R7) nor protocol-relative (`//host/x`, R8).
+
+    ⚠️ The spelling is checked first, because a browser normalises a URL before
+    it parses one and this function must not read a different string than the
+    browser will.
+    """
+    candidate = href.strip() if isinstance(href, str) else ""
+    if not candidate or not _HREF_CHARACTERS.issuperset(candidate):
         return None
-    lowered = candidate.lower()
-    return candidate if lowered.startswith(SAFE_SCHEMES) else None
+    scheme = _SCHEME.match(candidate)
+    if scheme is not None:
+        return candidate if scheme.group(1).lower() in SAFE_SCHEMES else None
+    return None if candidate.startswith(_OUTSIDE_THE_SITE) else candidate
 
 
 def segments(value: object) -> tuple[tuple[str, str, str], ...]:

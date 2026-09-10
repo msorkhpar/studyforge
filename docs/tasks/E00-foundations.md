@@ -506,7 +506,7 @@ index is 90 MB for a corpus, derived, and rebuilt rather than merged.
 
 ### FND-06 — Repository personal-data check
 **Milestone** M0 · **Depends on** FND-01 · **Team** solo
-**Owns** `tools/quality/personal_data.py` and its mirrored test
+**Owns** `tools/quality/personal_data/` and its mirror
 **Context** ~20k — R7, `../conventions/review-rubric.md` §1a, §1b, §1e, `handoffs/FND-01.md`
 
 ⭐ **Re-sequenced 2026-09-09: this is now the first task to land under whatever

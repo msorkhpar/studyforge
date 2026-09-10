@@ -40,7 +40,7 @@ would need.
 
 ### SF-11 — Page assets
 **Milestone** M1 · **Depends on** — · **Team** pair
-**Owns** `render/assets/`, `render/pageassets.py`
+**Owns** `render/assets/`, `render/pageassets/`
 **Context** ~35k — `CS/tools/study/assets/*.{css,js}`, `CS/tools/study/pageassets.py`, `CS/tests/test_highlight.py`
 
 ⭐ **Budget corrected down.** The assets are *already* 22 real `.css`/`.js`

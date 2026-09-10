@@ -671,6 +671,28 @@ grep asks neither question. Read the sweep, quote the grep.**
 
 ---
 
+#### ⛔ Ruling 140 (CTO round 38) — Ruling 123's sharpening: a plant is adversarial to the **SEARCH TERM**, not to the subject
+
+> ⛔ **A plant written in the spelling the clause SEARCHES FOR tests the search
+> term against itself and always passes. The plant must be in the shape the
+> clause FORBIDS.**
+
+⚠️ **This is not a fourth reading — it is reading 2 run wrongly**, and it is the
+way reading 2 fails while still looking done.
+
+**Three instances, one round, found independently:**
+
+| instance | the clause pictured | the shape that defeats it |
+|---|---|---|
+| `W51` clause 1 | `rglob(CONTAINER_FILENAME)` | ⛔ **bare literals** — `rglob("container.json")` under a literal `"archive"`; 3 of 12 members, and they are the defect the row exists for |
+| `W40`'s seam | an **absolute** import | a **relative** `from .parse import …` |
+| `W40`'s walk | a plainly bound name | a **tuple-bound** name, which a naive walk drops |
+
+⛔ **A grep for the compliant spelling can only ever find the compliant half of
+its own population**, and it returns a smaller scalar with no disagreement in the
+output to warn you (Ruling 128, in its own subject matter).
+
+
 ## 4. R12 — tests exist, and the tree mirrors
 
 ### 4a. The mirror
@@ -894,6 +916,27 @@ with its measurement, and the CTO owns whether to keep, widen or narrow it.**
 ```bash
 python3 -m pytest -q -rs | grep '^SKIPPED'      # read every line
 ```
+
+#### ⛔ Ruling 142 (CTO round 38) — a skip census parses the MULTIPLICITY, and `uniq -c` reads 29 where the answer is 63
+
+> ⛔ **`grep '^SKIPPED' | uniq -c` returns 29 where the answer is 63**, because
+> `-rs` collapses repeats into `SKIPPED [N] …`. ⚠️ **It is stable, plausible and
+> wrong, so nobody re-checks it.**
+>
+> **The clause:** a skip census parses the multiplicity out of `SKIPPED [N]` and
+> reconciles its total against the run's own tail, which is authoritative.
+
+```bash
+python3 -m pytest -q -rs | sed -n 's/^SKIPPED \[\([0-9]*\)\].*/\1/p' \
+  | paste -sd+ - | bc      # must equal the tail's "N skipped"
+```
+
+⭐ **Two offices hit it independently in one round** — the PO in `PO-30/7` and
+the CTO in their own base census, before reading it. ⛔ **What refused the wrong
+number was neither instrument: it was Ruling 128's EXPECTED reading, written
+down first** (`55 + 5 + 3 = 63`). ⚠️ **`uniq -c` collapses a population; the
+scalar it prints is the number of DISTINCT lines, and nothing in the output says
+so.**
 
 ⭐ **A skipped test is not a passing test, and the summary line hides that.**
 `122 passed, 10 skipped` reads as success; what it may mean is *the linter never
@@ -1229,6 +1272,11 @@ means nothing.**
 git clean -fdq && git status --porcelain          # pass: no output
 python3 -m pytest -q -p no:cacheprovider          # then the row
 ```
+
+⭐ **Its pair is Ruling 139 — a sweep's artifacts live under
+`<worktree>/.scratch/`, never the shared scratchpad root — carried into
+[`agent-protocol.md`](agent-protocol.md), which is the file that ruling named.**
+⛔ **Not copied here; the two documents cross-reference rather than both hold it.**
 
 ⚠️ **Two causes, found independently in one round by two offices, from opposite
 directions — which is what makes it a rule rather than a caution:**
