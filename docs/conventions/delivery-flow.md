@@ -167,6 +167,42 @@ not a handoff, not a commit message, not a chat line — makes a task done.
 - ⛔ **`done` never means "the code is written".** It means reviewed, merged, and
   the acceptance output is on the record.
 
+### ⛔ Ruling 75 — a row scheduled ahead of an older unstarted row says so, in the row
+
+⛔ **A newly minted row may not be dispatched ahead of an older `todo` row of the
+same size class unless the newer row's **When** cell names what it is jumping and
+why.** ⭐ One cell, no ranking scheme, no restructuring — and it is the only thing
+being asked for.
+
+⚠️ **Measured, `PO-20/2`:** `W28` and `W29` were minted after `FND-08`/`FND-09`
+and scheduled ahead of both; **`FND-09` has now waited two waves behind three
+newer rows.** ⛔ **Nobody decided that.** ⭐ **A row arrives with its argument
+fresh in the writer's head, which is exactly why it wins a slot it was never
+ranked into** — the newer row is more *vivid*, not more urgent, and vividness is
+indistinguishable from priority at the moment of writing.
+
+⛔ **This does not forbid the jump, and that is deliberate.** Most jumps are
+right: `W29` really did belong in front of `FND-09`, because it placed a ruling
+the board had already taken. ⭐ **The defect is not the ordering, it is that the
+ordering left no trace** — so the next PO inherits a queue whose shape looks
+considered and was not, and the row at the back is invisible precisely because
+nothing ever happened to it.
+
+⭐ **It is this project's standard remedy, applied to scheduling: make the skip
+leave a mark rather than prevent it** — the same shape as the merge message
+naming its verdict, the size ceiling's declared exception, and a `blocked` row
+naming its unblocking condition. ⚠️ **A rule that forbade the jump would be
+worked around within a wave**; one that costs half a sentence is cheaper to obey
+than to evade.
+
+⛔ **A ranked per-developer queue is NOT ruled in.** `PO-20/2` proposes one and
+wants a wave for it. ⭐ **That may be right later and it is not needed to close
+this**: the failure here was silence, not the absence of a total order, and a
+ranking scheme is a bigger instrument than the measurement supports. ⚠️ **Revisit
+it if a row waits a third wave with the trace in place** — at that point the
+board *has* decided, visibly, and the question becomes whether it decided well,
+which is a different question and a better one to have.
+
 ## The two-PO channel
 
 The framework and an integration are run by two product owners. The seam between
