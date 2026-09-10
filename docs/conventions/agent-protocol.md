@@ -203,6 +203,49 @@ description of it in a briefing. ⚠️ A paraphrase is how a ruling arrives *ne
 right, which is worse than not arriving: ⛔ **an absent ruling gets asked about; a
 nearly-right one gets implemented.**
 
+**3. The owner is a field, not a sentence.** ⛔ **A ruling that assigns work names
+the owner in the field the board reads, not only in the sentence that reasons
+about it.**
+
+⚠️ **The instance, and both halves were right alone — which is why it is C6
+again.** The CTO ruled a finding's content and priority correctly but **named no
+owner in a field**; the PO read *"needs an owner"* and assigned **the only name
+attached to the ruling — the CTO** — which was a category error: they do not
+write framework code, and it would have had them write a fix and then review it,
+⛔ **§12's rule applied to themselves.** ⭐ Neither was careless. The owner existed
+in nobody's field, so the board's reader supplied one from context.
+
+### ⚠️ The known blind spot in all of the above, recorded rather than discovered later
+
+⛔ **These clauses make a ruling arrive *faithfully*. None of them makes it
+arrive *correct*.**
+
+⭐ **"A wrong ruling carried promptly is worse than a right ruling carried
+slowly."** ⚠️ **Measured instance:** a CTO finding asserted a `slugify` collision
+that does not exist, and the PO carried it into a task definition **the same
+day** — ⛔ **the quote-don't-summarise clause worked perfectly and propagated an
+error faster.** What caught it was not a carrying rule. **It was somebody
+measuring.**
+
+⛔ **So a carried ruling that makes a factual claim is re-measured at the point of
+carrying**, exactly as a finding is re-run before it becomes a task. ⭐ Same rule,
+one step later in the pipeline, and for the same reason: **carrying turns a
+record into a claim about now.**
+
+### ⚠️ C5's shape in prose, and there is no trial merge for documents
+
+⛔ **Two correct things authored hours apart can contradict each other with
+neither author careless.** ⭐ **Measured instance:** a clause carried into a task
+contradicted a ruling **written by the same person in the same session** — the
+clause told one component to re-ask a question the ruling had just placed
+elsewhere.
+
+⚠️ **That is exactly C5** — *each correct alone, wrong together* — ⛔ **and the
+trial-merge gate that catches C5 in code has no equivalent for documents.** The
+nearest thing is the PO's wave-open check 3, which re-reads the artifact a ruling
+landed in: ⭐ **read the neighbouring rulings in that artifact, not only the
+clause you are adding.**
+
 ## When a convention tightens, the tightening owns the migration
 
 ⛔ **No work done under an older convention is at fault for failing a newer one,
