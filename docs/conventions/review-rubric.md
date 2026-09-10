@@ -1046,19 +1046,144 @@ count, a file count, a skip set — is either taken in a clean worktree of the
 ref, or names the checkout beside the number.** ⭐ Ruling 108 said this of a
 skip set; the class is every count.
 
-**Measured, one ref, two checkouts:**
+> ⛔ **A checkout is named by its ROLE — `MAIN`, *the non-worktree checkout*, a
+> trial worktree, `wt/<name>` — NEVER by its path.** ⭐ **Added CTO round 40
+> (`CTO-40/10`), and the evidence is that the ruler broke it on their own
+> brief:** ⚠️ *name the checkout beside every number* pushes a writer towards
+> the most specific name available, **and the most specific name for a checkout
+> is an absolute path — which is a home path, which is R7.** ⛔ **The shipped
+> gate refused that merge** (`1 finding`, `exit=1`, two tests red). ⭐ **So this
+> sentence is not politeness about style: without it, Ruling 147 as written
+> pushes every careful reviewer into an R7 breach, and it pushed the one who
+> minted it.**
+
+**Measured, one ref, two checkouts — and each row names a ROLE, not a path:**
 
 ```text
 e309172   detached worktree, clean          ruff 559   pointers 177 in 199 md
 e309172   MAIN, `?? ONBOARDING.md`          ruff 560   pointers 177 in 200 md
 f898dbb   wt/po32, clean                    ruff 562   pointers 185 in 202 md
 f898dbb   MAIN, `?? ONBOARDING.md`          ruff 563   pointers 185 in 203 md
+ce80120   wt/po33, clean                    ruff 588   pointers 191 in 208 md
+ce80120   MAIN, `?? ONBOARDING.md`          ruff 589   pointers 191 in 209 md
 ```
+
+⭐ **Six rows, three refs, two offices, and the `+1` is the same untracked file
+every time.** ⚠️ **The last pair was taken at PO round 33 with the denominator
+DERIVED and not quoted (Ruling 81): `py 427 + md 208 − 47 under
+tests/fixtures/ = 588`, and `ruff format --check` independently reports 588.**
 
 ⚠️ **The trap is that the flattering reading AGREES with the wrong thing.** A
 reviewer trusting a pinned `560` computes `560 → 560`, concludes the branch
 added no formatted file, and **contradicts the branch's own correct isolation of
 its `+1`.** ⛔ The pin does not merely mislead; it corroborates the error.
+
+#### ⛔ Ruling 151 (CTO round 40) — a framework task's Acceptance may not depend on a reading taken inside a CONSUMER repository
+
+> ⛔ **A framework task's Acceptance may not contain a clause whose subject is a
+> reading taken inside a consumer repository.** ⭐ **Such a clause belongs to the
+> integration side — `E09`, or `QA-04`'s second source — FROM THE OUTSET, and it
+> is written there rather than split there later.**
+
+⚠️ **THREE INSTANCES, and the third is what closed the class:** `SK-02/4`
+(round 36), `SK-07` (Ruling 129, round 39), `SK-08/2` (round 40) — ⛔ **and the
+third was sitting in `E11` while the second was being ruled on.** ⭐ **A
+per-clause split has now been performed three times, which means the split is
+not the remedy; it is the symptom.**
+
+⛔ **Why it cannot be waived instead: R20.** A framework close may not be gated
+on a measurement only the integration agent can take, and `git log` in a
+repository this side does not own is the only instrument such a clause has.
+⚠️ **`SK-08/2`'s two admissible readings, both taken:** the sibling is absent
+(`ls -d ../<consumer>` → `exit=2`), and the package **touches no filesystem at
+all** by shipped assertion — so *"pointed at the Java corpus"* names an
+operation the subject cannot perform.
+
+⭐ **And the third instance is the one worth ruling on because it is the FIRST
+WITH AN INSTRUMENT.** `studyforge.skills.delivery.Acceptance` — shipped by
+`SK-08` — refuses a clause naming neither a command nor a named reviewer, and it
+would have refused *"recognisably equivalent"* on those grounds alone.
+⛔ **Every Acceptance clause in `docs/tasks/E*.md` ought to be expressible as an
+`Acceptance`, and that is a runnable sweep the class has never had.** ⚠️ **The
+sweep's live population has NOT been taken and no number for it is quoted here
+(Ruling 81) — taking it is the first job of the row that owns it.**
+
+#### ⛔ Ruling 152 (CTO round 40) — where one helper names N faults, every caller refuses all N or says which it does not
+
+> ⛔ **Where one helper names N faults, every caller either refuses all N, or
+> says in its own body which it does not and why.** ⭐ **A phrase in a refusal
+> vocabulary that no branch can reach is a missing guard, and it is greppable.**
+
+⚠️ **The instance:** `_escape` names three faults; `content._reject_absolute`
+refuses all three; ⛔ **`edits._reject_forbidden_target` guards only the leading
+`/` and `..`, so `~/notes.md` is ACCEPTED as a `permitted_edits` target** and
+the *"begins with a tilde"* phrase is unreachable from that call site.
+
+⭐ **This is Ruling 144's pair rule arriving one scope down.** 144 read an
+*emitter* against a *gate* in two modules; this is **one helper against its own
+two callers**, and it fails the same way: ⛔ **both sides were green, separately,
+and the disagreement was invisible from either.**
+
+⭐ **HOW IT WAS FOUND is the part that was ratified.** The author's
+written-first expectation said **8** of 16 byte rows would differ under a
+transposition plant, and only **7** did. ⛔ **Nothing was red; an arithmetic
+mismatch in an expectation written before the reading was the entire signal** —
+Ruling 128 catching a live defect rather than an instrument defect.
+
+⭐ **And NOT fixing it inside the refactor was correct.** `W59`'s acceptance is
+byte identity over 16 `str(ManifestError)` rows; adding an arm changes behaviour
+inside a refactor, which is exactly what the byte proof exists to rule out.
+⚠️ **Reported, not smoothed** — and the remedy is scheduled as its own row.
+
+#### ⛔ Ruling 153 (CTO round 40) — `.scratch/` holds what a sweep WRITES; it never holds a CHECKOUT
+
+> ⛔ **`<worktree>/.scratch/` holds what a sweep WRITES. It never holds a
+> CHECKOUT.** ⭐ **A trial merge, a second clone or any linked worktree is
+> created OUTSIDE every checkout of this repository** — §0a's `TRIAL=$(mktemp
+> -d)/trial` was right before Ruling 139 and is right after it.
+
+⛔ **Measured, one ref, one image, the only difference being where the trial
+worktree lived:**
+
+```text
+.scratch/trial = a linked worktree     ->  2 failed, 31 passed   (assert 44 == 88)
+trial worktree a SIBLING, .scratch/ empty  ->  33 passed
+git status --porcelain                 ->  EMPTY IN BOTH CASES
+```
+
+⚠️ **Ruling 131's clean-tree instrument certifies a tree carrying 723 files of a
+second repository**, because `.scratch/` is ignored. ⭐ **Ruling 147's method —
+*measure in a clean checkout of the ref* — is what surfaced Ruling 139's
+defect**, and the developer who followed it got a red suite naming 44 files that
+were not theirs.
+
+⛔ **AND THE SECOND CALL, which is the one a reviewer will want to get wrong:
+the gate walk is NOT widened to skip anything containing a `.git`.** ⭐ *Skip
+anything containing a `.git`* is a gate learning to ignore a tree, and a gate
+that stops covering something fails silently — which is the whole reason
+`tests/gate_coverage/` exists.
+
+⚠️ **The walk carries a real defect of its own, independent of trial
+worktrees:** `test_no_fourth_tree_of_readers_exists_unnamed` and
+`test_every_named_tree_is_populated_so_the_bound_is_not_vacuous` walk the
+**disk** from `repository_root()`, ⛔ **so their verdict depends on untracked,
+git-ignored state — §2e (Ruling 80) wearing a test instead of a floor check.**
+⭐ **Ruling 86a made this same call for ruff's denominator already: derived from
+the TREE, never from the disk.**
+
+⛔ **Two constraints decide the implementation, and both are pass conditions:**
+
+1. ⛔ **The fix is at the CALL SITE, never inside `document_readers`.** The
+   negative control `test_a_fourth_tree_is_caught_rather_than_scanned_past`
+   plants a reader in a `tmp_path` **outside git** and must keep passing, so the
+   walk stays disk-based and only the two repository-scoped tests derive their
+   population from `git ls-files`.
+2. ⛔ **Reading 2 is a TRACKED plant** (Ruling 140: adversarial to the search
+   term). A reader **committed** into a tree no `GATED_TREES` row names must
+   still be **CAUGHT**. ⚠️ **If the tracked plant is not caught, the change has
+   DELETED the gate while claiming to have de-biased it** — and it would read
+   green, because the untracked plant it was written against is now correctly
+   invisible.
 
 #### ⛔ Ruling 87 — a skip class that can hide a SUBSYSTEM announces itself at the end of the run
 
