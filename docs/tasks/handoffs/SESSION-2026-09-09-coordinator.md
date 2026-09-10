@@ -142,6 +142,25 @@ author is told to trust. Measure it rather than assume it.
    into `graph.json`. `handoffs/FND-02.md` decision 4 had already ruled this; two
    agents rediscovered it independently. **Relativise every chunk, together.**
 
+4. ⚠️ **The graph answers two of three question shapes. Measured, not assumed.**
+
+   | Query | Result |
+   |---|---|
+   | `graphify explain "assert_clean()"` | ⭐ works — sub-second, 27 connections, exact call sites with line numbers |
+   | `graphify query "..."` | works, but noisy — confirms FND-02's finding that `query` holds only when phrased as distinctive nouns |
+   | `graphify path "R7 — No Personal Data…" "assert_clean()"` | ⛔ **no path, even undirected** |
+
+   ⛔ **The last one is the question this repository most needs answered — "which
+   ruling does this code implement?" — and the graph cannot answer it.** Measured:
+   **232 doc↔code edges out of 6,081 (3.8%)**. Better than the Java corpus's
+   initial *zero* only because handoffs name functions explicitly; it is not a
+   deliberate bridge. FND-02 built the bridging pass and applied it **to the corpus
+   only** — 806 edges, 162 of 166 lessons — and nobody ran the equivalent here.
+   ⭐ **So R14's saving is a property of a graph somebody bridged, and the
+   framework's own graph is unbridged.** The bridging recipe is in
+   `handoffs/FND-02.md`; it is deterministic (literal symbol occurrence, never an
+   LLM) and it is the highest-value single improvement available to the index.
+
 ⭐ **And the honest finding about this session's own conduct.** R14 says agents ask
 the graph before exploring, and every task's `Context` budget assumes it. This
 coordinator did not: it hand-assembled a long briefing for each developer from its
