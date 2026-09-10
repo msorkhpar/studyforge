@@ -132,11 +132,17 @@ somebody bridged, not of the tool.**
 
 ```
 python3 -m ingest . <ingested-date>
-studyforge validate .
+python3 -m studyforge.validate .
 ```
 
 ⭐ **Exit 0 is the whole agreement.** ⛔ Not a shape somebody agreed looked
 right — the same rule the adapter skill is written against.
+
+> ⚠️ **A note on the spelling.** The seam is named `studyforge validate` in the
+> design documents and in prose. That console entry point is **not built yet**
+> — `pyproject.toml` declares no `[project.scripts]`, and says why: it belongs
+> to `SF-28`. ⛔ **The fenced form above is the one that runs**, because an
+> agent executes a fence rather than reading it.
 
 ### 7. If it was the wrong repository, take it back out
 

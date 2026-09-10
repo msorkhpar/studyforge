@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import importlib.util
+
+import studyforge.validate as validate_package
 from studyforge.skills import adapter
 from studyforge.skills.adapter import PARTS
 from tests.support import assert_package_contract, repository_root
@@ -29,8 +32,16 @@ def test_the_skill_document_sits_beside_the_code_it_calls():
 def test_the_skill_names_validate_as_its_definition_of_done():
     # ⛔ R2: an adapter's whole obligation is an archive `validate` accepts, and
     # a skill that described a shape instead would be checkable by opinion.
+    # ⛔ W61 / Ruling 138: the command is DERIVED from the module that runs it,
+    # never pinned as a literal. This assertion used to pin
+    # `studyforge validate <corpus-root>` — a console script `pyproject.toml`
+    # deliberately does not declare — so the suite asserted that the skill told
+    # an integrator to run something that would not run. `studyforge validate`
+    # stays R2's name for the seam in prose; a fence is executed, not read.
     text = skill_text()
-    assert "studyforge validate <corpus-root>" in text
+    module = validate_package.__name__
+    assert importlib.util.find_spec(f"{module}.__main__") is not None, f"{module} is not runnable"
+    assert f"python3 -m {module} <corpus-root>" in text
     assert "Done is a machine's answer, not a person's" in text
 
 

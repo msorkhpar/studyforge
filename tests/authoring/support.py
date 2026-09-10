@@ -29,6 +29,12 @@ from tests.support import repository_root
 #: Where the reference lives, relative to the repository root.
 AUTHORING = "docs/authoring"
 
+#: Where the shipped skill documents live, relative to the repository root.
+#: ⛔ A glob, never a list. `W61`: `SK-05` shipped its console-script check with
+#: a population one directory wide, and two shipped `SKILL.md` files carried the
+#: exact defect it refuses for as long as it did.
+SKILLS = "src"
+
 #: The document every other one is reached from. ⛔ Named here rather than in
 #: each test, because "is this document reachable" needs one definition of
 #: where reachability starts.
@@ -66,6 +72,22 @@ def document_paths() -> list[Path]:
 def documents() -> dict[str, str]:
     """Map every document's filename to its text."""
     return {path.name: path.read_text(encoding="utf-8") for path in document_paths()}
+
+
+def skill_documents() -> dict[str, str]:
+    """Every shipped `SKILL.md` under `src/`, keyed by its repository-relative path.
+
+    ⛔ **Walked, not listed.** The population is whatever `src/**/SKILL.md`
+    finds, so a fifth skill package joins it by existing rather than by
+    somebody remembering to add it here — which is the whole of `W61`: the
+    check that refuses a fenced console script shipped watching one directory,
+    and the two skills that ship the defect were never in its population.
+    """
+    root = repository_root()
+    paths = sorted((root / SKILLS).glob("**/SKILL.md"))
+    if not paths:
+        raise AssertionError(f"{SKILLS}/ ships no SKILL.md at all")
+    return {str(path.relative_to(root)): path.read_text(encoding="utf-8") for path in paths}
 
 
 def document(name: str) -> str:
