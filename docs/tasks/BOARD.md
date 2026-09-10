@@ -4,7 +4,8 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-✅ **M0 is COMPLETE.** **Milestone in flight: M1 — One page renders.**
+✅ **M0 COMPLETE. M1 steps 1.1 and 1.2 COMPLETE.** **In flight: M1 step 1.3.**
+Release tip pinned at **1512 passed / 46 skipped**, floor clean.
 **Release branch: `release/m1-one-page`**, cut from `release/m0-foundations`.
 Developers branch off it, the CTO reviews against
 `../conventions/review-rubric.md`, only reviewed work merges back. Flow:
@@ -44,7 +45,7 @@ milestone closes rather than waits.
 | Task | Title | Owner | Branch | Status | Blocked on | Closes when |
 |---|---|---|---|---|---|---|
 | FND-01 | Repository scaffolding and quality floor | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE after changes. `tools/quality/` (size, mirror, docstrings, style) + `tests/test_quality_floor.py`; `tools/` excluded from packaging; zero runtime dependencies. ✅ **Its one `Blocked` clause is now met** — `FND-03` runs ruff inside the image. ⭐ **No per-condition `Blocked` outcome remains anywhere on this board** |
-| FND-02 | Knowledge index | Developer 1 | *merged* | ✅ `done` | — | **Closed 2026-09-09**, APPROVE. Corpus graph 11,107 nodes / 25,566 edges, 217 of 217 documents; framework graph rebuilt at the M0 close. Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
+| FND-02 | Knowledge index | Developer 1 | *merged* | ✅ `done` — ⚠️ **but see the index section: its framework-graph clause was true in one worktree and false in the repository, and `FND-07` is the mechanism** | — | **Closed 2026-09-09**, APPROVE. Corpus graph 11,107 nodes / 25,566 edges, 217 of 217 documents. Both graphs build, the `studyforge` one **rebuilt at the M0/M1 boundary**; three representative queries recorded in `../conventions/graphify.md`; rebuild command documented and incremental; `JS/` ignored via `graphify-out/.gitignore` containing `*` and `git status` there clean |
 | FND-03 | Development and test container | Developer 2 | *merged* | ✅ `done` | — *(**C4** closed)* | **Closed 2026-09-09**, APPROVE. ⭐ **FND-01's lint clause moves from Blocked to met** — ruff runs inside the image and the two tests run rather than skip. Full suite runs in the container from a clean checkout with **no host Python**; ⭐ FND-01's two skipped ruff tests **run and pass**, closing its blocked lint clause; suite and quality floor separately invocable; the same commands run on the host; no network needed to run tests |
 | FND-04 | Shared contract fixtures | Developer 2 | *merged* | ✅ `done` | — | **Closed 2026-09-09.** CTO verdict APPROVE on every rubric check. 7 corpora, 43 files, 22 tests, re-run green post-merge |
 | FND-05a | Workspace, workflow and **the pin file** | *unassigned* — M0 residue | `feat/FND-05a-workspace` | `todo` | — *(unblocked: **B2** ruled)* | A tracked pin file records every component, `studyforge` included; verification **exits 0** when correct and **exits 1 naming the component** both when a recorded commit is absent locally and when a component's `HEAD` moved unrecorded — asserted, not described; the workflow document covers record, verify, advance, the two-commit rule; ⛔ no `.gitmodules` anywhere, and no absolute path in any tracked file |
@@ -498,6 +499,92 @@ discovered by being wrong rather than by failing.
 
 ---
 
+## ⛔ The index was never in the repository, and the mechanism that follows
+
+⚠️ **This board recorded `FND-02` as done with *"framework graph rebuilt at the M0
+close"*. That was true in the worktree where it ran and false in the
+repository.** `graphify-out/` is git-ignored, so ⛔ **an ignored artifact cannot
+travel on a branch** — and I own status truth, so this is a defect in my document
+before it is anything else.
+
+⭐ **Measured 2026-09-09: 33 worktrees, 2 with an index** — the main checkout and
+`FND-02`'s own. **31 of 33 agents could not have queried the graph**, while the
+board told them it was there.
+
+⛔ **It is the deepest instance of the shape this milestone keeps producing:
+reading a record as a status.** The others were a stale finding acted on and a
+back-triage of rulings that had already happened. ⚠️ **This one is worse, because
+the record was a completed *acceptance*** — the strongest claim the process makes
+— and it was never true where it mattered.
+
+⭐ **And it reframes the coordination finding rather than adding one.** The
+coordinator reports hand-assembling briefings instead of querying the graph, and
+offers it as a discipline failure. ⛔ **It is not.** The graph was not in their
+checkout. **They could not have queried it, and the board is what told them it
+existed** — so the fix is not *remember to query*, it is *the index must actually
+be present and the claim must be checkable*. ⚠️ Filing this against the
+coordinator would have hidden the defect in my own document behind somebody's
+diligence.
+
+### The mechanism — `FND-07`, M1 step 1.3
+
+⭐ **The rule generalises; the task ships.**
+
+⛔ **Standing rule, now in `README.md`: no acceptance condition is satisfied by an
+untracked artifact alone.** If what a task produces is git-ignored, ⭐ **the task
+ships the check** — the check travels on the branch and the artifact does not.
+
+**`FND-07` carries three things:**
+
+| | Behaviour | Why |
+|---|---|---|
+| **Index absent** | ⚠️ **report the rebuild command, exit 0** | A fresh clone legitimately has none. ⛔ A red suite on clone is hostile and gets muted, which is how a check stops being read |
+| **Index older than the newest tracked source** | ⛔ **FAIL** | ⭐ **A stale index is worse than an absent one** — absence is visible; staleness answers confidently with yesterday's tree |
+| **Index present, current — and unbridged** | ⛔ **FAIL** on a doc↔code census below a recorded floor | ⚠️ **The worst of the three**, because all the green lights are on |
+| **Wave-open checklist** | *index present and current in this checkout*, beside the `[structural]` sweep | Both are the PO's |
+
+⛔ **The bridging half is the sharper finding and it lands on my own ruling.**
+Measured on the rebuilt framework index: **232 doc↔code edges out of 6,081 —
+3.8%** — and `graphify path "R7 …" "assert_clean()"` returns **no path, even
+undirected.** ⚠️ **That is the question this repository most needs answered —
+*which ruling does this code implement?* — and the index cannot answer it.** The
+3.8% is incidental, from handoffs naming functions in prose.
+
+⭐ **We wrote this rule for somebody else and did not apply it to ourselves.** I
+put into `SK-07` that a graph built by running the tool alone has zero doc↔code
+edges and that **bridging is the part that would be missed**; `FND-02` built the
+bridging pass and ran it on the **corpus** — 806 edges, 162 of 166 lessons — and
+nobody ran the equivalent here. ⛔ **A rule written for the consumer and not
+applied to the framework is exactly the shape R19 exists to catch**, arriving
+from the inside.
+
+⭐ **And the cheap part nobody had measured, which makes R14 affordable.**
+`graphify explain` and `graphify path` accept `--graph <path>` and **work from a
+worktree with no index of its own**; `graphify query` does not.
+
+⚠️ **That maps exactly onto R14's own qualification.** The two commands the ruling
+holds for **unconditionally** are the two needing no local build; the one that
+needs a local build is `query`, already the weak one. ⭐ **So the cost is paid once
+per repository, not once per worktree** — 33 rebuilds was never payable, and ⛔ **an
+unaffordable rule is one that gets skipped**, which is precisely what happened.
+
+---
+
+## Open work items — routed, with owners
+
+| # | Item | Owner | When | Note |
+|---|---|---|---|---|
+| W1 | ⭐ **`require_slug`/`require_ordinal` format `{value!r}`** — every address segment, identity field and unit ordinal inherits an R7 echo, so **7 of 26 emission sites are one pair of lines seen through their callers** | Developer, with Ruling 10's `describe` extraction | **after step 1.3** | ⭐ **The highest-value single fix available**, and the ratio is why: fixing one pair of lines closes 7 sites. ⛔ A refusal that quotes the value has relocated the leak into a log |
+| W2 | **Behavioural §1f check** — poison an absolute path into each string parameter, fail if the refusal reproduces it. Prototyped, deliberately not shipped. **46 pairs before the label fix, 45 after** | *unassigned* | with **W1** | ⭐ It is W1's enforcer: W1 fixes the sites, this stops them coming back. ⚠️ **It needs an owner or it evaporates** — and a delta of one, reported honestly, is exactly the number that makes it credible |
+| W3 | ⚠️ **Fixture defect, found by a graph build rather than a test** — `depth1/.../media/diagram.svg` says *"Two nodes and an arrow"*, its lesson's `alt` says *"…joined by one arrow"*, and the geometry is an undecorated `<line>` with **no marker and no arrowhead**; the two accessible names also differ in wording | Developer 2 (FND-04's author) | with the next fixture touch | ⭐ **Worth more than the defect: a graph build found what the test suite did not.** ⚠️ Nobody had been told |
+| W4 | **`handoffs/SF-05.md` still describes `LABEL_FORBIDDEN`** and lists its duplication as open finding 6; both are resolved by the hotfix | PO — ✅ **discharged here** | ✅ done | ⛔ **A handoff is a record and is not rewritten** — my own rule — ⭐ **so this row *is* the correction.** The board is where a superseded record gets superseded |
+| W5 | **`unitdoc.py` is 827 lines against R11's 400, and belongs to `SF-10`** — not `SF-06` | `SF-10` | at **SF-10**, step 1.4 | ⭐ Routed with the number so the task inherits it. R11: the large modules arrive **as packages or not at all** |
+
+⚠️ **W1 and W2 are one piece of work and should be assigned together.** W1 without
+W2 is a fix with no guard; W2 without W1 is a red check with 45 findings.
+
+---
+
 ## Scheduled — decided now, executed later
 
 ⭐ **Recorded here so they are not rediscovered at M2.** Each has an owner and a
@@ -641,6 +728,16 @@ that is a one-line fix to a definition rather than 85 re-estimates.
 
 | Date | Change |
 |---|---|
+| 2026-09-09 | ⛔ **The framework's own graph is unbridged — 232 doc↔code edges of 6,081, 3.8% — and `path "R7 …" "assert_clean()"` returns nothing, even undirected.** ⚠️ **That is the question this repository most needs answered.** ⭐ **And we wrote this rule for somebody else:** SK-07 item 9 says a tool-built graph has no doc↔code edges and that bridging is the part that gets missed; FND-02 built the pass and ran it on the **corpus** (806 edges, 162/166) — nobody ran it here. ⛔ **A rule written for the consumer and not applied to the framework is R19's shape from the inside.** `FND-07` gains it, and the tripwire fails on a census below a floor: ⛔ **present, current and unbridged is a worse lie than absent**, because every green light is on and the one question that matters returns silence. |
+| 2026-09-09 | ✅ **M1 steps 1.1 and 1.2 complete** — SF-01, SF-02, SF-07, SF-08, SF-11, SF-33, SF-03, SF-05, SF-06 all APPROVEd. Step 1.3 in progress: SF-09 awaiting review, SF-25 part-written, SF-23 and SK-01 not started. |
+| 2026-09-09 | ⭐ **Ruling 8 retires a class: a filename component is validated by what is *permitted*, not by what is *forbidden*.** The blacklist let **seven** shapes through — vertical tab, form feed, non-breaking space, U+2028, `"`, `:`, `*` — two of which break the `file://` floor, making it an **R8** defect. ⛔ **A forbidden list is an open set and cannot be finished.** ⚠️ This project already refuses unknown contract versions, unknown profile names, unknown document keys — **the character blacklist was the one open set left, and it survived because it looked like a filename question rather than a contract question.** |
+| 2026-09-09 | ⛔ **Board defect, mine: `FND-02` was recorded done for an artifact that never reached the repository.** `graphify-out/` is git-ignored, so an ignored artifact cannot travel on a branch. ⭐ **Measured: 33 worktrees, 2 with an index** — the main checkout and FND-02's own. **31 of 33 agents could not have queried the graph while this board said it was there.** |
+| 2026-09-09 | ⛔ **The deepest instance yet of *reading a record as a status***, and the first where the record was a completed **acceptance** — the strongest claim the process makes. ⭐ **Mechanism, not a rebuild:** standing rule — **no acceptance is satisfied by an untracked artifact alone; the task ships the check, because the check travels and the artifact does not.** **`FND-07`** created (M1 step 1.3): absent → report the command, exit 0; ⛔ **stale → FAIL**, because a stale index answers confidently with yesterday's tree while absence is at least visible. |
+| 2026-09-09 | ⭐ **Measured, and it makes R14 affordable: `graphify explain` and `path` accept `--graph` and work from a worktree with no index; `query` does not.** ⚠️ That maps exactly onto R14's own qualification — the two commands it holds for **unconditionally** need no local build, and the one that does is `query`, already the weak one. **The cost is paid once per repository, not once per worktree.** ⛔ 33 rebuilds was never payable, and an unaffordable rule is one that gets skipped. |
+| 2026-09-09 | ⛔ **The coordinator's R14 finding is reframed, not filed.** They report hand-assembling briefings instead of querying, and offer it as a discipline failure. ⭐ **It is not — the graph was not in their checkout, and this board is what told them it was.** The fix is not *remember to query*; it is *the index must be present and the claim must be checkable*. ⚠️ Filing it against the coordinator would have hidden a defect in my own document behind somebody's diligence. |
+| 2026-09-09 | **Five findings routed as W1–W5**, with owners. ⭐ **W1 is the highest-value single fix available**: `require_slug`/`require_ordinal` format `{value!r}`, so **7 of 26 R7 emission sites are one pair of lines seen through their callers**. ⚠️ **W1 and W2 are one piece of work** — W1 without W2 is a fix with no guard, W2 without W1 is a red check with 45 findings. |
+| 2026-09-09 | ⭐ **W3 is worth more than the defect it names: a graph build found a fixture flaw the test suite did not.** The SVG declares an arrow; the geometry is an undecorated `<line>` with no marker, and its two accessible names disagree. ⚠️ Nobody had been told. |
+| 2026-09-09 | **W4 discharged here rather than by editing `handoffs/SF-05.md`.** ⛔ A handoff is a record and is not rewritten — ⭐ **so the board row *is* the correction**, which is what the record-versus-claim rule is for. |
 | 2026-09-09 | ⛔ **My allow-list decision is WITHDRAWN — I acted on a finding without re-running it.** Re-measured on the merged tip: the shipped check reports **0**, the rubric's **current** §1a patterns report **0** over `docs/` and `CLAUDE.md` and do not fire on the E02 line; the **superseded** patterns report **24, every one a false positive**. ⭐ The two-character minimum local part kills `n@router.get` exactly. **The allow-list is specified and deliberately not built** — X2's disposition, for X2's reason. |
 | 2026-09-09 | ⭐ **The correction is a better precedent than my decision was.** An allow-list would have recorded **24 instances of a defect in the pattern as 24 facts about the tree**. ⛔ **Fix the class; list the instance only when the class is right and the instance is genuinely exceptional.** The surviving reasoning — no `docs/` exclusion, prose is not a §1e fixture, a short failing list beats a silent exclusion — is kept in `FND-06` for a real hit. |
 | 2026-09-09 | ⚠️ **Third instance of one shape this milestone: a finding true when written and false when acted on.** ⭐ That is the record-versus-claim rule one level down — a finding is a **record**, but acting on it turns it into a **claim about now**. ⛔ **New rule: a finding is a measurement with an as-of and is re-run before it becomes a task**, and the finding template gains a required **`Measured`** field naming the command and its output. ⚠️ It has now bitten in both directions — a stale finding acted on, and a back-triage where most of the backlog *had already been ruled and could not be seen*. |
