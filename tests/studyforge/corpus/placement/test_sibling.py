@@ -77,8 +77,18 @@ def test_two_containers_sharing_a_directory_would_collide_and_that_is_findable()
 
 @pytest.mark.parametrize("origin", [None, "", 7])
 def test_a_unit_with_no_origin_is_refused(origin):
-    with pytest.raises(PlacementError, match="records no usable 'origin'"):
+    with pytest.raises(PlacementError, match="the unit at .* records no usable 'origin'"):
         SIBLING.unit(ADDRESS, 7, TITLE, origin=origin)
+
+
+@pytest.mark.parametrize("origin", [None, "", 7])
+def test_a_container_with_no_origin_is_refused_and_is_not_called_a_unit(origin):
+    # ⚠️ The two records that carry an `origin` are different records, and an
+    # integrator sent to the wrong one looks in the wrong place.
+    with pytest.raises(PlacementError) as raised:
+        SIBLING.container(ADDRESS, ("Basics", "Streams API"), origin=origin)
+    assert "container" in str(raised.value)
+    assert "unit" not in str(raised.value)
 
 
 def test_a_container_page_lands_beside_the_containers_own_source_file():

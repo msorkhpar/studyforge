@@ -94,10 +94,25 @@ def test_a_page_addresses_a_target_relative_to_itself(page, target, expected):
 def test_an_absolute_path_is_refused_at_either_end():
     # A rooted href works under a server and breaks the moment the page is
     # opened from a file.
-    with pytest.raises(PlacementError, match="relative to the source root"):
+    with pytest.raises(PlacementError, match="the page must be"):
         relative_href(PurePosixPath("/a/page.html"), PurePosixPath("a/x.css"))
-    with pytest.raises(PlacementError, match="relative to the source root"):
+    with pytest.raises(PlacementError, match="its target must be"):
         relative_href(PurePosixPath("a/page.html"), PurePosixPath("/a/x.css"))
+
+
+@pytest.mark.parametrize("end", ["page", "target"])
+def test_the_refusal_never_emits_the_absolute_path_it_refuses(end):
+    # ⛔ R7, rubric §1f — and this is the branch the first version got wrong.
+    # It fires BECAUSE the value is absolute, so echoing it emitted a home
+    # directory out of the check written to prevent one. ⚠️ The original R7
+    # test in this file pointed at `origin_directory`, which was already safe.
+    leak = PurePosixPath("/" + "home/somebody/material/page.html")
+    inside = PurePosixPath("a/x.css")
+    pair = (leak, inside) if end == "page" else (inside, leak)
+    with pytest.raises(PlacementError) as raised:
+        relative_href(*pair)
+    assert "somebody" not in str(raised.value)
+    assert "material" not in str(raised.value)
 
 
 def test_an_href_never_says_how_the_file_arrived():

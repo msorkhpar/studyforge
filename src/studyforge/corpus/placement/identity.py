@@ -45,7 +45,7 @@ import json
 import re
 from dataclasses import dataclass
 
-from studyforge.address import Address, parse_key, require_ordinal, require_slug
+from studyforge.address import Address, AddressError, is_slug, require_ordinal, require_slug
 from studyforge.corpus.placement.errors import PlacementError
 from studyforge.version import check
 
@@ -155,16 +155,57 @@ def from_document(document: object, depth: int, where: str = "artifact") -> Iden
     unknown = sorted(set(document) - set(IDENTITY_KEYS))
     if unknown:
         raise PlacementError(f"{where}'s identity block has unknown key(s) {unknown}")
-    segments = document.get("address")
-    if not isinstance(segments, list):
-        raise PlacementError(f"{where}'s identity block has no 'address' list")
     return Identity(
         corpus=_str_of(document.get("corpus"), "corpus", where),
-        address=parse_key("/".join(segments), depth),
+        address=_address_of(document.get("address"), depth, where),
         variant=_str_of(document.get("variant"), "variant", where),
         kind=document.get("kind", "unit"),
         unit=document.get("unit"),
     )
+
+
+def _address_of(segments: object, depth: int, where: str) -> Address:
+    """Return the recorded address, built from the list the block stores.
+
+    ⛔ **Built from the segments, never from a joined key.** Joining first let
+    a `TypeError` escape on three malformed shapes — a list of ints, a list
+    with a `None` in it, a nested list — and this function is on the path SF-04
+    walks over **every file in a site**. A caller reading a thousand artifacts
+    must be able to catch one type.
+
+    ⚠️ **Reading a document raises `PlacementError`, including for arity.**
+    SF-01 still owns what a slug is and what an address of the wrong depth is;
+    what changes is the front door. The delegation belongs where a *caller asks
+    a question* — `Manifest.parse_key` — not where this package *reads a file*.
+
+    ⛔ **And the refusal names the position, never the segment** (R7, rubric
+    §1f). SF-01's own message echoes the value, which is right when a caller
+    passed a literal and wrong here: this reads a file somebody else wrote, so
+    the offending segment can be an absolute path — and this function runs over
+    **every artifact in a site**, into a log.
+    """
+    if not isinstance(segments, list):
+        raise PlacementError(f"{where}'s identity block has no 'address' list")
+    if not segments:
+        raise PlacementError(f"{where}'s identity block has an empty 'address'")
+    for position, segment in enumerate(segments, start=1):
+        if not isinstance(segment, str):
+            raise PlacementError(
+                f"{where}'s identity block: address segment {position} of "
+                f"{len(segments)} is a {type(segment).__name__}, not a slug"
+            )
+        if not is_slug(segment):
+            raise PlacementError(
+                f"{where}'s identity block: address segment {position} of "
+                f"{len(segments)} is not a slug. It is recorded, never derived (§6), "
+                f"so an adapter slugifies and records the result"
+            )
+    try:
+        return Address(tuple(segments)).require_depth(depth)
+    except AddressError as error:
+        # Arity only — every segment is already known to be a slug, and this
+        # message carries counts rather than content.
+        raise PlacementError(f"{where}'s identity block: {error}") from None
 
 
 def _loads(text: str, where: str) -> object:

@@ -141,17 +141,21 @@ def registered() -> tuple[str, ...]:
     return tuple(sorted(_PROFILES))
 
 
-def origin_directory(origin: object, address: Address) -> PurePosixPath:
+def origin_directory(origin: object, address: Address, what: str = "artifact") -> PurePosixPath:
     """Return the source directory an artifact is placed beside.
+
+    `what` names the thing being placed, so a container's refusal does not
+    call it a unit — the two records that carry an `origin` are different
+    records, and an integrator sent to the wrong one looks in the wrong place.
 
     ⛔ Refuses an origin that escapes the source root — a generated artifact
     written outside the repository is R3's prohibition reached by accident.
     """
     if not isinstance(origin, str) or not origin.strip():
         raise PlacementError(
-            f"the 'sibling' profile places an artifact beside its source file, and "
-            f"{address.key!r} records no usable 'origin' — the container map must "
-            f"carry one for every unit under this profile"
+            f"the 'sibling' profile places an artifact beside its source file, and the "
+            f"{what} at {address.key!r} records no usable 'origin' — the container map "
+            f"must carry one for every {what} placed under this profile"
         )
     path = PurePosixPath(origin)
     if path.is_absolute() or ".." in path.parts:
@@ -163,7 +167,7 @@ def origin_directory(origin: object, address: Address) -> PurePosixPath:
         # the integrator look at the one record named.
         fault = "an absolute path" if path.is_absolute() else "a path leaving the source root"
         raise PlacementError(
-            f"the 'origin' recorded for {address.key!r} is {fault}; an origin is "
-            f"relative to the source root and stays inside it"
+            f"the 'origin' recorded for the {what} at {address.key!r} is {fault}; an "
+            f"origin is relative to the source root and stays inside it"
         )
     return path.parent

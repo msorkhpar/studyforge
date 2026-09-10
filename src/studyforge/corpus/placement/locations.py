@@ -106,9 +106,18 @@ def relative_href(from_page: PurePosixPath, to_target: PurePosixPath) -> str:
     page — never rooted, never absolute. A rooted href would work under a
     server and break the moment the page was opened from a file.
     """
-    for path in (from_page, to_target):
+    # ⛔ The refusal DESCRIBES the offending path and never formats it in
+    # (R7, rubric §1f). This branch fires precisely because the value is
+    # absolute, so echoing it would emit a home directory out of the check
+    # written to prevent one — the same defect `origin_directory` argues
+    # against three modules away, and it was here the whole time.
+    for name, path in (("the page", from_page), ("its target", to_target)):
         if path.is_absolute():
-            raise PlacementError(f"paths are relative to the source root, got {path!s}")
+            raise PlacementError(
+                f"{name} must be a path relative to the source root, and this one is "
+                f"absolute; an href built from it would break the moment the page was "
+                f"opened from a file"
+            )
     here = from_page.parent.parts
     there = to_target.parts
     shared = 0

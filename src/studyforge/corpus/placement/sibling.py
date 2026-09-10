@@ -53,7 +53,7 @@ class SiblingProfile(Profile):
 
     def unit(self, address, ordinal, title, *, origin=None, label=None) -> UnitLocations:
         """Where one unit's artifacts go, beside its own source file."""
-        directory = origin_directory(origin, address)
+        directory = origin_directory(origin, address, "unit")
         stem = unit_stem(ordinal, title, label)
         return UnitLocations(
             page=directory / unit_page_name(ordinal, title, label),
@@ -66,7 +66,7 @@ class SiblingProfile(Profile):
     def container(self, address, titles, *, origin=None) -> ContainerLocations:
         """Return the container's page, beside the container's own source file."""
         return ContainerLocations(
-            page=origin_directory(origin, address) / container_page_name(titles)
+            page=origin_directory(origin, address, "container") / container_page_name(titles)
         )
 
 

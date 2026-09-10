@@ -78,9 +78,19 @@ def test_nothing_downstream_branches_on_a_profile_name():
     # all of `src/` for a comparison against a profile name. A registry that
     # coexists with `if placement == "tree"` somewhere is a registry that has
     # already failed.
+    # ⛔ Excluded by repository-relative PATH, not by basename: a basename
+    # match would skip any `tree.py` anywhere under `src/`, so the day another
+    # package grows one it would leave the scan silently — which is the shape
+    # of exemption this check exists to refuse.
+    exempt = {
+        "src/studyforge/corpus/placement/tree.py",
+        "src/studyforge/corpus/placement/sibling.py",
+        "src/studyforge/corpus/placement/profile.py",
+    }
+    root = repository_root()
     offenders = []
-    for path in sorted((repository_root() / "src").rglob("*.py")):
-        if path.name in ("tree.py", "sibling.py", "profile.py"):
+    for path in sorted((root / "src").rglob("*.py")):
+        if path.relative_to(root).as_posix() in exempt:
             continue  # each names itself once, in `name = "..."`.
         tree = ast.parse(path.read_text("utf-8"), filename=path.name)
         for node in ast.walk(tree):

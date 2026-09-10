@@ -144,11 +144,36 @@ def test_a_block_that_is_not_json_is_refused_without_quoting_it():
     assert "not valid JSON" in str(raised.value)
 
 
-def test_an_address_of_the_wrong_arity_is_refused_by_sf01():
-    # ⚠️ The boundary, again: SF-01 owns the comparison and this module does
-    # not restate it.
-    with pytest.raises(AddressError, match="the corpus declares"):
+def test_reading_a_document_raises_this_packages_error_including_for_arity():
+    # ⚠️ **Changed under review, and the contract is stronger for it.** SF-01
+    # still owns the comparison; what moved is the front door. The delegation
+    # belongs where a CALLER asks a question — `Manifest.parse_key` — not
+    # where this package READS A FILE: SF-04 walks this function over every
+    # artifact in a site, and a caller reading a thousand files must be able
+    # to catch one type.
+    with pytest.raises(PlacementError, match="the corpus declares"):
         identity.parse(page(identity.render(UNIT)), 1)
+
+
+@pytest.mark.parametrize("segments", [[1, 2], ["a", None], [["a"]], [], "a/b", {}, None])
+def test_no_malformed_address_escapes_as_some_other_exception(segments):
+    # ⛔ The defect this replaces: `"/".join(segments)` let a `TypeError` out
+    # on three of these, from the path SF-04 walks over every file in a site.
+    document = dict(UNIT.document, address=segments)
+    with pytest.raises(PlacementError):
+        identity.from_document(document, 2)
+
+
+def test_a_refusal_never_emits_the_address_segment_it_refuses():
+    # ⛔ R7, rubric §1f. This reads a file somebody else wrote, so a segment
+    # can be an absolute path — and SF-01's own message, correct where a
+    # caller passed a literal, would echo it into a build log.
+    leak = "/" + "home/somebody/material"
+    document = dict(UNIT.document, address=[leak])
+    with pytest.raises(PlacementError) as raised:
+        identity.from_document(document, 1)
+    assert "somebody" not in str(raised.value)
+    assert "segment 1 of 1" in str(raised.value)
 
 
 def test_an_unknown_key_in_the_block_is_refused():
