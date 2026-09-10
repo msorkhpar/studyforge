@@ -31,6 +31,22 @@ How a task is picked up, worked, and handed on. Applies to every task in
   something and recorded why, follow it and cite it. Where you think it is
   wrong, say so in the handoff — do not quietly diverge.
 
+### ⛔ Ruling 146 (CTO round 39) — a sweep asserts its own ROW COUNT, and every `docker` call takes `</dev/null`
+
+> ⛔ **A sweep that does not assert how many rows it ran is not a sweep.** The
+> count is asserted against a population declared **before** the loop, and every
+> `docker` invocation inside a loop is redirected **`</dev/null`** — `docker`
+> otherwise consumes the loop's stdin and the sweep silently runs **one** row.
+
+⚠️ **The first sweep to hit this exited 0, printed two agreeing baselines, and
+looked healthy.** ⛔ **It defeats Rulings 70, 76, 83 and 123 at once**, because
+every recorded signal was true — of the one row that ran.
+
+⭐ **The clause and its measured rows live in
+[`review-rubric.md`](review-rubric.md), §4c**, beside Ruling 131's clean-tree
+rule; ⛔ **it is cross-referenced here, not copied — a rule written in two places
+goes stale in the copy nobody re-measures.**
+
 ### ⛔ Ruling 139 (CTO round 38) — a sweep's artifacts live under the agent's **own worktree**
 
 > ⛔ **A sweep row's artifacts — log, table, harness, mutant backup — are written
