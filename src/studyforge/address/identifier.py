@@ -14,7 +14,8 @@ that knows what language the identifier is for.
 ## Why a leading digit is prefixed and never dropped
 
 A leading digit is legal in a directory name and illegal in a Java package
-segment, and the Java corpus numbers every module — `09-records`, `10-sealed`.
+segment, and one of the four designed shapes numbers every module —
+`09-records`, `10-sealed` (spec §4's table names it).
 ⛔ **Dropping the digit makes `01-basics` and `basics` the same identifier**,
 which is one practice module silently overwriting another.
 

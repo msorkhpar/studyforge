@@ -5,7 +5,7 @@ globs, and `exclude` entries that each carry a `why` — and answers one
 question about one path: is this **included**, **excluded**, or
 **unclassified**?
 
-**How you use it.** `policy.classify("src/ISO.md")`. ⛔ It takes a path and
+**How you use it.** `policy.classify("src/whole-series.md")`. ⛔ It takes a path and
 does no I/O; enumerating a source root is `studyforge validate`'s job (SF-25),
 and refusing the unclassified ones is its verdict.
 
@@ -14,8 +14,9 @@ object that never touches a disk — and `errors`.
 
 ## Why this is a schema field and not a convention
 
-⛔ **C2 is a schema problem, so the countermeasure is a schema field.** The
-ISO corpus ships per-unit files *and* three whole-series aggregates that are
+⛔ **C2 is a schema problem, so the countermeasure is a schema field.** One
+of the four designed shapes ships per-unit files *and* three whole-series
+aggregates that are
 digest-identical ordered concatenations of them, so `src/*.md` ingests all 38
 units twice and **nothing complains**. Nothing in a manifest without this
 field could say otherwise, and no heuristic should: "these two files overlap"
@@ -32,8 +33,8 @@ entry carries its `why`, long enough to be a reason.
 whose membership changes when somebody adds a file — which is the audit
 quietly widening itself. Each withheld file is named and explained on its own.
 
-⚠️ **Exclusion wins over inclusion, and that is the ISO case exactly**:
-`include: ["src/*.md"]` with `exclude: [{path: "src/ISO.md", …}]`. A file may
+⚠️ **Exclusion wins over inclusion, and that is that shape's case exactly**:
+`include: ["src/*.md"]` with `exclude: [{path: "src/whole-series.md", …}]`. A file may
 match both, and when it does it is withheld.
 """
 

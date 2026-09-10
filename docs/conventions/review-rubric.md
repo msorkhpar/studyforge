@@ -683,6 +683,19 @@ source is a fail even in a comment, because the next reader takes it as licence.
 A *fixture* under `tests/` naming a shape is fine; a *source module* naming a
 corpus is not.
 
+> ⭐ **This is now a build failure, not a reviewer's grep** —
+> `tools/quality/source_names.py`, in `CHECKS` since W20, so the floor answers
+> it on every run and `7c-i`'s two-number rule is discharged by the check
+> having *no* base to inherit. The grep above stays as the hand-runnable form.
+>
+> ⚠️ **And the grep found seven where the check finds nineteen.** Measured
+> 2026-09-09 on `5ebf83e`: the twelve it missed were one shape — a corpus
+> named in English (`the Java corpus`, `the ISO corpus`) rather than by its
+> repository slug. ⛔ Which is why the check anchors each name on a word only
+> a corpus's name takes: bare `ISO` is an ISO 8601 date thirteen times in this
+> tree and a corpus twice, and a pattern that could not tell them apart would
+> be switched off within a day.
+
 ### ⛔ 7c-i. Run it against the base too, and report both numbers
 
 ```bash
