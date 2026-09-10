@@ -90,7 +90,7 @@ appears**, not by a comment asking people not to write one.
 
 ### SF-07 — Block vocabulary and Markdown reader
 **Milestone** M1 · **Depends on** — · **Team** solo
-**Owns** `archive/markdown.py`
+**Owns** `archive/markdown/`
 **Context** ~35k — `CS/tools/study/markdown.py`, `CS/tests/test_markdown.py`
 **Effort** ⚠️ **Reading is ~35k; the work is not.** The acceptance runs the parser
 over **166 real files** and, where it fails, names every file and construct —

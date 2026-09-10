@@ -48,7 +48,7 @@ for a declared depth is rejected. No filesystem import in the package.
 
 ### SF-02 — Corpus manifest
 **Milestone** M1 · **Depends on** — · **Team** solo
-**Owns** `corpus/manifest.py`
+**Owns** `corpus/manifest/`
 **Context** ~15k — spec §4
 
 **Definition.** `corpus.json` — the file that makes a directory a source.
@@ -180,8 +180,8 @@ task owns its numbers.
 
 ### SF-35 — `content.not_material`, and `corpus_api: 2`
 **Milestone** **M2** (step 2.1) · **Depends on** SF-02 · **Team** solo
-**Owns** `corpus/manifest/content.py`, `corpus/manifest/document.py:68`
-(`KNOWN_CORPUS_API`), and spec §4's `content` block with §R9's register row
+**Owns** `corpus/manifest/content/`, and `KNOWN_CORPUS_API` in
+`corpus/manifest/`, with spec §4's `content` block and §R9's register row
 **Licence, not ownership** ⛔ **`validate/source.py` is owned by `SF-36`.**
 `SF-35` may write TWO regions of it and nothing else: the rule-constant block
 after `RULE_ORIGIN_MISSING`, and `check_unclassified` — its docstring and its
@@ -321,7 +321,7 @@ integration agent produced is against the generator and it is `SK-07`'s.
 
 ### SF-36 — `origin` may name a region
 **Milestone** **M2** (step 2.1) · **Depends on** SF-02, **SF-05** · **Team** solo
-**Owns** `corpus/container/` (the `origin` shape), with `validate/source.py` and
+**Owns** `corpus/container/` (the `origin` shape), with `validate/source/` and
 `studyforge/sourcepath.py`
 **Context** ~25k — `handoffs/CTO-2026-09-10-round26.md` (Ruling 92),
 `validate/source.py`'s `check_completeness`, `corpus/container/fields.py`
@@ -521,7 +521,7 @@ knows any profile by name.
 
 ### SF-31 — Placement dry-run
 **Milestone** **M2** · **Depends on** SF-03, SF-02 · **Team** solo
-**Owns** `studyforge/cli/plan.py`
+**Owns** `studyforge/cli/plan/`
 **Context** ~20k — spec §5, SF-03 output
 
 **Definition.** `studyforge plan <repo>` — what *will* happen to a repository,
@@ -625,7 +625,7 @@ catastrophically right.**
 
 ### SF-04 — Discovery
 **Milestone** M2 · **Depends on** SF-03 · **Team** pair
-**Owns** `corpus/discovery.py`
+**Owns** `corpus/discovery/`
 **Context** ~30k — spec §5, SF-03 output
 
 **Definition.** R4's mechanism, and the reason the framework can be told
@@ -678,7 +678,7 @@ identity block is **reported by name**, never skipped silently (R6).
 
 ### SF-05 — Container map
 **Milestone** M1 · **Depends on** SF-01, SF-02 · **Team** solo
-**Owns** `corpus/container.py`
+**Owns** `corpus/container/`
 **Context** ~20k — spec §6, a real `CSD/study/paths/**/course-map.json`
 
 **Definition.** `container.json` — the deepest container's declaration of what
