@@ -149,17 +149,13 @@ def _said(contract: str, declared: object) -> str:
     ⛔ Naming the type also means an unexpected payload is described rather
     than reproduced into the message (R7).
 
-    ⚠️ **This is not `studyforge.describe`, and the difference is one type.**
-    `describe(True)` is `True`, because an integrator who wrote JSON `true`
-    where `1` was wanted learns nothing from *"a bool"* — except **here**,
-    where that is exactly what they need to be told, for the reason above.
-    ⛔ Ruling 10's extraction is unfinished for that one disagreement and it is
-    a decision, not an oversight; W2 records it rather than resolving it in
-    passing (`docs/tasks/handoffs/W1-W2.md`).
+    ⭐ **This is now `studyforge.describe` with the contract's name in front of
+    it** (W17). It used to be the third copy of that rule and the only one that
+    said *"a bool"*; ⛔ the argument above is why `describe` says *"a bool"*
+    too, rather than why this module keeps its own answer. **The disagreement
+    was resolved in favour of the copy that had made the case.**
     """
     if declared is None:
         return f"no {contract}"
-    if isinstance(declared, int) and not isinstance(declared, bool):
-        return f"{contract} {declared!r}"
-    name = type(declared).__name__
-    return f"{contract} as {'an' if name[:1] in 'aeiou' else 'a'} {name}"
+    described = describe(declared)
+    return f"{contract} {described}" if described[:1].isdigit() else f"{contract} as {described}"

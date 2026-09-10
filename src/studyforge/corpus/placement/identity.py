@@ -48,7 +48,7 @@ from dataclasses import dataclass
 from studyforge.address import Address, AddressError, is_slug, require_ordinal, require_slug
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.placement.errors import PlacementError
-from studyforge.describe import describe
+from studyforge.describe import describe, describe_keys
 from studyforge.version import check
 
 #: R9's version for this contract. ⛔ Refused when unknown, never migrated.
@@ -172,7 +172,9 @@ def from_document(document: object, depth: int, where: str = "artifact") -> Iden
     )
     unknown = sorted(set(document) - set(IDENTITY_KEYS))
     if unknown:
-        raise PlacementError(f"{where}'s identity block has unknown key(s) {unknown}")
+        raise PlacementError(
+            f"{where}'s identity block has unknown key(s), {describe_keys(unknown)}"
+        )
     return Identity(
         corpus=_str_of(document.get("corpus"), "corpus", where),
         address=_address_of(document.get("address"), depth, where),

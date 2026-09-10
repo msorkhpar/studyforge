@@ -44,7 +44,7 @@ from enum import Enum
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest.errors import ManifestError
-from studyforge.describe import describe
+from studyforge.describe import describe, describe_keys
 
 #: Minimum characters of reason on an exclusion. ⛔ Not a quality bar — it
 #: only stops `"why": "n/a"` from being a way through the gate, which is the
@@ -110,7 +110,9 @@ def parse_content(value: object) -> ContentPolicy:
         raise ManifestError(f"'content' must be an object, got {describe(value)}")
     unknown = sorted(set(value) - {"include", "exclude"})
     if unknown:
-        raise ManifestError(f"'content' has unknown key(s) {unknown}; expected include, exclude")
+        raise ManifestError(
+            f"'content' has unknown key(s), {describe_keys(unknown)}; expected include, exclude"
+        )
     return ContentPolicy(_include_of(value), _exclude_of(value))
 
 
@@ -125,7 +127,8 @@ def _include_of(value: dict) -> tuple[str, ...]:
     for position, pattern in enumerate(include, start=1):
         if not isinstance(pattern, str) or not pattern:
             raise ManifestError(
-                f"'content.include[{position - 1}]' must be a non-empty str, got {pattern!r}"
+                f"'content.include[{position - 1}]' must be a non-empty str, "
+                f"got {describe(pattern)}"
             )
         _reject_absolute(pattern, f"content.include[{position - 1}]")
     return tuple(include)
@@ -137,26 +140,34 @@ def _exclude_of(value: dict) -> tuple[Exclusion, ...]:
     if not isinstance(exclude, list):
         raise ManifestError(f"'content.exclude' must be a list, got {describe(exclude)}")
     entries = []
-    seen: set[str] = set()
+    seen: dict[str, int] = {}
     for index, entry in enumerate(exclude):
         where = f"content.exclude[{index}]"
         if not isinstance(entry, dict):
             raise ManifestError(f"{where} must be an object, got {describe(entry)}")
         unknown = sorted(set(entry) - {"path", "why"})
         if unknown:
-            raise ManifestError(f"{where} has unknown key(s) {unknown}; expected path, why")
+            raise ManifestError(
+                f"{where} has unknown key(s), {describe_keys(unknown)}; expected path, why"
+            )
         path = entry.get("path")
         if not isinstance(path, str) or not path:
-            raise ManifestError(f"{where}.path must be a non-empty str, got {path!r}")
+            raise ManifestError(f"{where}.path must be a non-empty str, got {describe(path)}")
         _reject_absolute(path, f"{where}.path")
         if "*" in path or "?" in path or "[" in path:
             raise ManifestError(
-                f"{where}.path must name one file, got the pattern {path!r} — "
+                f"{where}.path must name one file and this one is a glob — "
                 f"one reason cannot explain a set whose membership changes"
             )
         if path in seen:
-            raise ManifestError(f"{where}.path {path!r} is excluded twice")
-        seen.add(path)
+            # ⛔ Both positions, never the path (W19). The reader has the file
+            # in front of them; what they cannot see is which other entry
+            # collides, and two reasons for one exclusion is the actual defect.
+            raise ManifestError(
+                f"{where}.path is already excluded by content.exclude[{seen[path]}]; "
+                f"two reasons for one exclusion is two audits and no record of which held"
+            )
+        seen[path] = index
         entries.append(Exclusion(path, _why_of(entry.get("why"), where)))
     return tuple(entries)
 
@@ -165,19 +176,48 @@ def _why_of(why: object, where: str) -> str:
     """Return the reason an exclusion gives, refused if it is not one."""
     if not isinstance(why, str) or not why.strip():
         raise ManifestError(
-            f"{where}.why must say why this file is withheld from the reader, got {why!r}"
+            f"{where}.why must say why this file is withheld from the reader, got {describe(why)}"
         )
     if len(why.strip()) < MIN_WHY_CHARS:
         raise ManifestError(
             f"{where}.why must be at least {MIN_WHY_CHARS} characters of reason, "
-            f"got {why!r} — an exclusion nobody has to explain is one nobody audits"
+            f"got {len(why)} — an exclusion nobody has to explain is one nobody audits"
         )
     return why
 
 
 def _reject_absolute(pattern: str, where: str) -> None:
-    """Refuse a path that escapes the source root (R7 as much as correctness)."""
+    """Refuse a path that escapes the source root — and never quote it (R7).
+
+    ⛔ **This branch fires *because* the value is an absolute or escaping path,
+    which is precisely when it carries a home directory.** It quoted the value
+    until W19: the check written to keep a path out of the corpus put it in the
+    log instead. ⚠️ **Worse than the site W1 fixed** — `require_slug` fired on
+    "not a slug", which is only *sometimes* a path; this one tests
+    `startswith("/")`.
+
+    ⭐ The fault is named instead, and it is the actionable half: a reader who
+    wrote `/opt/material/x` knows what they wrote and needs to be told which
+    rule it broke.
+    """
     if pattern.startswith("/") or pattern.startswith("~") or ".." in PurePosixPath(pattern).parts:
         raise ManifestError(
-            f"{where} must be relative to the source root and stay inside it, got {pattern!r}"
+            f"{where} must be relative to the source root and stay inside it; "
+            f"it {_escape(pattern)}, and it is not reproduced here because that "
+            f"shape is where a home directory lives"
         )
+
+
+def _escape(pattern: str) -> str:
+    """Name *how* a path leaves the source root, without reproducing it.
+
+    ⛔ Three faults, named separately, because they are three different
+    mistakes: an absolute path, a home-relative one, and one that climbs out
+    with `..`. ⚠️ Reported in the order they are tested, so the sentence
+    matches the branch a reader would go and look at.
+    """
+    if pattern.startswith("/"):
+        return "begins with a slash"
+    if pattern.startswith("~"):
+        return "begins with a tilde"
+    return "climbs above the root with '..'"

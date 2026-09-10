@@ -96,8 +96,8 @@ def test_optional_slug_requires_a_slug():
         (None, "nothing"),
         ("", "an empty string"),
         ("   ", "an empty string"),
-        ("real", "text"),
-        (3, "an int"),
+        ("real", "a str"),
+        (3, "3"),
         (3.5, "a float"),
         (True, "a bool"),
         (["a"], "a list"),
@@ -107,13 +107,20 @@ def test_optional_slug_requires_a_slug():
 def test_said_describes_a_value_by_its_type(value, described):
     # ⭐ The same rule `studyforge.version._said` set: name the type, never
     # print an unexpected payload into a message that lands in a log.
+    # ⛔ W17: `said` **is** `studyforge.describe.describe` now, imported under
+    # this module's name for its callers. Two entries moved when the three
+    # copies were reconciled — `3` is quoted, because an integer cannot carry
+    # an identifier and a refusal that will not say `unit 4` is unactionable;
+    # and a non-empty string is `a str`, because "text" said less. ⭐ What this
+    # module had and the others lacked — an **empty string** named as one —
+    # survived, and it is above.
     assert said(value) == described
 
 
 def test_said_never_reproduces_a_payload():
     assert "jane" not in said({"leak": f"{HOME}/x"})
     assert "jane" not in said([f"{HOME}/x"])
-    assert said(f"{HOME}/x") == "text"
+    assert said(f"{HOME}/x") == "a str"
 
 
 def test_optional_label_accepts_a_corpus_s_own_numbering():

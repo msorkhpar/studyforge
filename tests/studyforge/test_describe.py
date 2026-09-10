@@ -17,9 +17,11 @@ POISON = "/" + "home/example/project/notes"
         (None, "nothing"),
         (3, "3"),
         (0, "0"),
-        (True, "True"),
-        (False, "False"),
+        (True, "a bool"),
+        (False, "a bool"),
         ("anything at all", "a str"),
+        ("", "an empty string"),
+        ("   ", "an empty string"),
         (3.5, "a float"),
         (["a"], "a list"),
         (("a",), "a tuple"),
@@ -63,7 +65,27 @@ def test_a_string_is_never_safe_to_quote():
     # the whole defect Ruling 10 and Ruling 14 exist to remove, so it is
     # asserted rather than left to review.
     assert str not in SAFE_TO_QUOTE
-    assert SAFE_TO_QUOTE == (int, bool)
+    assert SAFE_TO_QUOTE == (int,)
+
+
+def test_a_bool_is_named_rather_than_quoted():
+    # ⛔ W17, and safety was never the question — a bool carries no identifier
+    # either way. `True` is not what the integrator typed: they wrote JSON
+    # `true` where `1` was wanted, and "a bool" names that mistake while
+    # `True` obscures it. ⚠️ `version._said` had this argument written down and
+    # pinned by a test while the extraction quoted the opposite; the copy that
+    # had made the case won.
+    assert describe(True) == "a bool"
+    assert describe(False) == "a bool"
+
+
+def test_an_empty_string_is_named_rather_than_called_a_str():
+    # ⭐ The behaviour `corpus.container.fields.said` had and the extraction
+    # lost. Absent and present-but-blank are different mistakes; the second is
+    # somebody who meant to write something.
+    assert describe("") == "an empty string"
+    assert describe("   ") == "an empty string"
+    assert describe("real") == "a str"
 
 
 def test_the_check_is_not_vacuous():

@@ -5,12 +5,14 @@ text, optional text, an optional source path, an optional slug — and refuses
 each of them in a message that names the field and the fault.
 
 **How you use it.** `required_text`, `optional_text`, `optional_path`,
-`optional_slug`, `optional_label`, `is_filename_component` for the one
-permitted-set rule a filename component obeys, and `said(value)` when you
-need to describe something you will not print.
+`optional_slug`, `optional_label`, and `is_filename_component` for the one
+permitted-set rule a filename component obeys. ⭐ `said` is gone: it is
+`studyforge.describe.describe`, which now carries the one behaviour this
+module had that the extraction had lost — **an empty string is named as
+one** (W17).
 
-**Depends on.** `studyforge.address` for what a slug is, and this package's
-`errors`.
+**Depends on.** `studyforge.address` for what a slug is,
+`studyforge.describe` for how a value is named, and this package's `errors`.
 
 ⛔ **A refusal never quotes the value.** This is not general caution: the field
 this module refuses most often is `origin`, and **the one shape being refused
@@ -18,9 +20,9 @@ there is precisely the shape that carries a home directory** — so a message
 quoting it would copy personal data into a log *from the check that exists to
 catch it* (R7). SF-03 measured that on its own first attempt.
 
-⭐ `said` is the same rule `studyforge.version` applies to a declared version:
-name the type, describe the fault, and let the caller look at the file. It is
-its own function so that a new field reader cannot forget it.
+⭐ **The rule has one home and this module no longer keeps a copy.** It kept
+the third one, and the three disagreed about integers, booleans and the empty
+string — none of it decided by anybody, all of it what a third copy does.
 """
 
 from __future__ import annotations
@@ -30,6 +32,7 @@ from pathlib import Path
 from studyforge.address import is_slug
 from studyforge.address.slug import SLUG_PERMITTED
 from studyforge.corpus.container.errors import ContainerError
+from studyforge.describe import describe as said
 
 #: The characters a generated filename component may carry — **a permitted
 #: set, and deliberately not a forbidden one (Ruling 8)**.
@@ -192,18 +195,3 @@ def optional_label(value: object, what: str, where: str) -> str | None:
             f"because a declared field is read out of a file somebody else wrote (R7)."
         )
     return text
-
-
-def said(value: object) -> str:
-    """Describe a value by its type, never by reproducing it (R7).
-
-    ⭐ The same rule `studyforge.version` applies to a declared version: a
-    wrong type is named, an unexpected payload is described rather than
-    printed into a message that lands in a log.
-    """
-    if value is None:
-        return "nothing"
-    name = type(value).__name__
-    if isinstance(value, str):
-        return "an empty string" if not value.strip() else "text"
-    return f"{'an' if name[:1] in 'aeiou' else 'a'} {name}"

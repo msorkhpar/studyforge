@@ -22,12 +22,21 @@ already drifted: two quoted integers and stated why, the third returned
 finding shape this project has now taken three times: a constant or a rule
 written twice is a rule that disagrees with itself.
 
-⭐ **Integers and booleans are quoted, and that is the behaviour the
-extraction kept**, because two of the three chose it and said why: an integer
-cannot carry an identifier, and a refusal that will not say `unit 4` is a
-refusal nobody can act on. ⚠️ `bool` is quoted alongside `int` for the reader's
-sake, not the type's — an integrator who wrote JSON `true` where `1` was wanted
-is told `True`, and would learn nothing from `a bool`.
+⭐ **Integers are quoted; booleans are not** (W17, and this is the one place
+the three copies genuinely disagreed). An integer cannot carry an identifier
+and a refusal that will not say `unit 4` is a refusal nobody can act on — so
+`3` is quoted. ⛔ A boolean cannot carry one either, so R7 is indifferent, and
+the question is purely which sentence helps: **an integrator who wrote JSON
+`true` where `1` was wanted is told `True`, which is not what they typed.**
+*"a bool"* names the mistake they actually made. ⚠️ `version._said` had that
+argument written down and pinned by a test while the extraction quoted the
+opposite; the extraction was the one that had never made the case.
+
+⭐ **An empty string is `an empty string`**, which `corpus.container.fields.said`
+had and the extraction lost. It reproduces nothing and it separates the two
+mistakes a reader can make — *absent* and *present but blank* — which is a
+distinction `optional_text` exists to draw. ⚠️ Whitespace counts as empty: a
+field of three spaces is somebody who meant to write something.
 
 ⛔ **What this deliberately does not do is guess.** It never truncates, never
 hashes, never redacts a substring: a value is named by its type or it is a
@@ -39,11 +48,16 @@ acceptable amount (R7).
 from __future__ import annotations
 
 #: Types whose *values* a refusal may reproduce. ⛔ Closed, and closed on a
-#: property rather than on taste: these are the types that cannot carry a path,
-#: an email address, a hostname or a username. Widening it to `str` is the
-#: whole defect this module exists to remove, so a fourth entry needs an
-#: argument that a string does not also satisfy.
-SAFE_TO_QUOTE = (int, bool)
+#: property rather than on taste: an `int` cannot carry a path, an email
+#: address, a hostname or a username. Widening it to `str` is the whole defect
+#: this module exists to remove, so a second entry needs an argument that a
+#: string does not also satisfy.
+#:
+#: ⚠️ **`bool` was here and is not any more** (W17). It is equally safe and
+#: quoting it was equally harmless — it was removed because `True` is not what
+#: the integrator typed, and *"a bool"* is. ⭐ Safety was never the question for
+#: that type, which is why the disagreement survived three copies.
+SAFE_TO_QUOTE = (int,)
 
 
 def describe_keys(keys: object) -> str:
@@ -82,10 +96,19 @@ def describe(value: object) -> str:
 
     ⚠️ `None` is `nothing` rather than `a NoneType`: the reader's mistake is
     an absent field, and the type name is Python trivia at that point.
+
+    ⚠️ An empty or blank string is named as such rather than as `a str`. ⛔ It
+    is the one thing a string can be that says nothing about anybody, and
+    *absent* and *present but blank* are different mistakes — the second is
+    somebody who meant to write something.
     """
     if value is None:
         return "nothing"
+    if isinstance(value, bool):
+        return f"a {type(value).__name__}"
     if isinstance(value, SAFE_TO_QUOTE):
         return repr(value)
+    if isinstance(value, str) and not value.strip():
+        return "an empty string"
     name = type(value).__name__
     return f"{'an' if name[:1] in 'aeiou' else 'a'} {name}"

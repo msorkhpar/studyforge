@@ -26,6 +26,7 @@ from collections.abc import Iterator
 
 from studyforge.archive.blocks import counts_of
 from studyforge.archive.document import content_sha256
+from studyforge.describe import describe
 from studyforge.validate.corpus import ARCHIVE_DIR, Unit, Walk
 from studyforge.validate.report import Finding, Unchecked
 
@@ -122,7 +123,7 @@ def _identity(unit: Unit) -> Iterator[Finding]:
         yield Finding(
             RULE_IDENTITY,
             unit.where,
-            f"declares unit {document.get('unit')!r} and sits in {unit.path.parent.name!r}",
+            f"declares unit {describe(document.get('unit'))} and sits in {unit.path.parent.name!r}",
         )
     name = ARCHIVE_FILE.match(unit.path.name)
     if name is None:
@@ -131,8 +132,8 @@ def _identity(unit: Unit) -> Iterator[Finding]:
         yield Finding(
             RULE_IDENTITY,
             unit.where,
-            f"declares kind {document.get('kind')!r} ordinal "
-            f"{document.get('ordinal')!r}, which its filename does not",
+            f"declares kind {describe(document.get('kind'))} ordinal "
+            f"{describe(document.get('ordinal'))}, which its filename does not",
         )
 
 
