@@ -50,6 +50,7 @@ from tests.authoring.support import (
     json_fences,
     rows_under,
     section,
+    skill_documents,
     vocabulary_under,
 )
 from tests.support import repository_root
@@ -401,14 +402,36 @@ def test_every_command_the_reference_gives_names_a_module_that_can_be_run():
         assert importlib.util.find_spec(f"{name}.__main__") is not None, f"{name} is not runnable"
 
 
-def test_no_fence_in_the_reference_offers_a_console_script_that_does_not_exist():
+def commanded_pages() -> dict[str, str]:
+    """Every page that hands a reader a fenced command: the reference, and every skill.
+
+    ⛔ **`W61` widened this, and the widening is the fix.** `SK-05` shipped the
+    check below over `docs/authoring/` alone; `skills/adapter/SKILL.md` and
+    `skills/onboarding/SKILL.md` gave `studyforge validate` in a fence the
+    whole time and were never looked at. Both halves are walked rather than
+    listed, so nothing joins the tree outside the population.
+    """
+    pages = {f"{AUTHORING}/{name}": text for name, text in documents().items()}
+    pages.update(skill_documents())
+    return pages
+
+
+def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
     # ⚠️ `studyforge validate` is how the design documents spell it and there
-    # is no such entry point yet. It may be discussed; it may not be given as
-    # a command, which is what a fenced line reads as.
-    for name, text in documents().items():
+    # is no such entry point yet — `pyproject.toml` declares no
+    # `[project.scripts]`, and says why. It may be *discussed*, which is R2's
+    # prose naming the seam; it may not be *given as a command*, which is what
+    # a fenced line reads as to an agent.
+    pages = commanded_pages()
+    # ⛔ The population must reach both halves. Without this the check silently
+    # degrades to the one directory it used to watch, which is the state W61
+    # exists to leave, and it would still be green.
+    assert any(name.startswith(f"{AUTHORING}/") for name in pages), "no reference page reached"
+    assert any(name.endswith("SKILL.md") for name in pages), "no SKILL.md reached"
+    for name, text in sorted(pages.items()):
         for body in fences(text, ""):
             for line in body.splitlines():
                 assert not line.strip().startswith("studyforge "), (
-                    f"{AUTHORING}/{name} offers {line.strip()!r} as a command, and no "
+                    f"{name} offers {line.strip()!r} as a command, and no "
                     f"console entry point provides it"
                 )

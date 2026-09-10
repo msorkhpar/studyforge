@@ -16,8 +16,15 @@ in the wrong skill and the manifest is incomplete.
 ⛔ **Done is a machine's answer, not a person's.**
 
 ```
-studyforge validate <corpus-root>        # 0, or a named list of what is wrong
+python3 -m studyforge.validate <corpus-root>   # 0, or a named list of what is wrong
 ```
+
+> ⚠️ **A note on the spelling.** The design documents and the prose below write
+> this seam as `studyforge validate`, which is R2's name for it. That console
+> entry point is **not built yet** — `pyproject.toml` declares no
+> `[project.scripts]`, and says why: it belongs to `SF-28`. So the fenced
+> spelling above is the one that runs today, and ⛔ **every fenced line in this
+> skill is written the way it actually runs.** An agent executes a fence.
 
 ⭐ Everything in this procedure exists to make that command reachable by
 somebody who has never read the framework's internals. **Measured at
