@@ -92,6 +92,39 @@ per-corpus data at all, and a knob nobody has asked for is the flexibility §4's
 YAGNI refuses. If a real source wants its disclosures spoken, that is a v2
 finding with a source behind it.
 
+#### ⛔ One acceptance condition added by the PO, 2026-09-10 (round 24) — **Ruling 93 (`Q20`), carried by check 3**
+
+⛔ **A FENCE IS NOT NARRATED, WHATEVER ITS LANGUAGE. And there is NO new field.**
+
+⭐ **Option 2 of three, and option 3 is refused on a precedent this project has
+already paid for.** ⚠️ **A manifest field listing *"which fence languages
+narrate"* is a list of language names in the framework's configuration,
+answering a question a fence already answers about itself** — ⛔ **which is the
+CodeSignal failure verbatim: one list answered *"can this be filed here?"* and
+*"can we generate a test for it?"*, and eight SQL courses became unfileable.**
+⭐ **The spec already separated those two questions once** — `variants` is a
+filing and presentation key and is **not** a code fence's language, which is a
+block's own attribute from the archive. ⛔ **A `narrate_languages` field would
+re-merge them.**
+
+⭐ **The escape hatch is the archive, and it costs no field at all.** If a corpus
+genuinely wants its Given/When/Then narrated, **its adapter emits those steps as
+prose blocks rather than as `gherkin` fences** — the decision is made once, at
+extraction, by the side that knows the material, and it arrives as data (R1).
+⛔ **The framework never learns the word "gherkin".**
+
+⚠️ **What the reader loses: nothing on the page.** The fence renders exactly as
+written. ⛔ **What the *listener* loses, measured on ISO, is 2,106 lines of
+`Given`/`When`/`Then` read aloud** — and integration catalogue entry 10 already
+ruled that direction: *a 23-line box-drawing tree read aloud is 23 lines of
+punctuation.* ⭐ **The reading floor narrates prose and shows everything; those
+are two surfaces on purpose.**
+
+⛔ **This costs E04 one acceptance condition and the spec's block vocabulary one
+sentence.** ⚠️ **The spec sentence is OWED and lands with this task** — ⭐ **it is
+the cheapest half of the ruling and the half that goes missing, which is C6.**
+**Owed before M3; `ISO-12` is unblocked by it** (`PO-24/2`).
+
 **Every speakable string re-enters the personal-data gate here**, regardless of
 what ran upstream (R7). The speech path is gated independently because it
 produces files under names derived from content structure, and a leak there

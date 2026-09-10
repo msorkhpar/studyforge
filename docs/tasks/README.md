@@ -1,6 +1,6 @@
 # studyforge — task index
 
-**87 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
+**89 tasks · 13 epics · 9 milestones.** ⭐ **Live status is
 `BOARD.md`**, not this file: this one orders the work, that one says where it is.
 Companion to
 `../specs/2026-09-08-studyforge-v1-design.md`, whose rulings **R1–R21** every
@@ -47,7 +47,7 @@ is the kind that reorders plans.
 |---|---|---|---|
 | **M0** | Foundations | An agent can start work without inventing anything | 6 |
 | **M1** | One page renders | A unit page from a fixture opens in a browser | 17 |
-| **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** | 12 |
+| **M2** | **A corpus is readable** | Any corpus, offline, with contents, navigation and read marks — **and the skills that built it** | 14 |
 | **M3** | It speaks | Narration with highlight sync, and an honest media footprint | 10 |
 | **M4** | It is served | An origin, an API, and a record of practice passes | 7 |
 
@@ -145,7 +145,7 @@ discovery.
 > prev/next and read marks — **and the skills that produced it exist.**
 > **This is the first genuinely useful state.**
 
-- **2.1** — SF-04, SF-31, SK-02
+- **2.1** — SF-04, SF-31, **SF-35**, **SF-36**, SK-02
 - **2.2** — SK-07, SK-05, SK-08, SF-13
 - **2.3** — SF-14, SF-27
 - **2.4** — SF-15, SF-26, SF-30, **SF-34**
@@ -262,7 +262,7 @@ OPS-04 → QA-01 → QA-04.
 | Epic | Document | Tasks | Owns |
 |---|---|---|---|
 | E00 | [Foundations](E00-foundations.md) | FND-01…04, 05a, 06, 07 | scaffolding, graphify, dev container, fixtures, the workspace pin file, the R7 check, the index tripwire |
-| E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31, SF-33 | address, manifest, placement, dry-run, discovery, container map, version guard |
+| E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31, SF-33, **SF-35**, **SF-36** | address, manifest, placement, dry-run, discovery, container map, version guard, **the third content state**, **sub-file origins** |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27, SF-34 | assets, page, contents, index, navigation, page chrome |
 | E04 | [Narration](E04-narration.md) | SF-16…18, SF-32 | speakable, synthesis, player sync, media footprint |

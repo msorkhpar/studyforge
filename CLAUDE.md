@@ -101,9 +101,14 @@ form needs a URL that resolves. The components are:
 
 ✅ **M0 and M1 are both CLOSED.** **M1 closed 2026-09-10 at `2fe56a4`**, all nine
 of its close conditions true at that one ref. ⏳ **Open: M2 — a corpus is
-readable. In flight: M2 step 2.1 — `SF-31`, `SF-04`, `SK-02`.** ⛔ **Do not start
-on M0 or M1.** ⭐ **`docs/tasks/BOARD.md` says what is open in the step and who
-has it; this line says only which milestone.**
+readable. In flight: M2 step 2.1 — `SF-31`, `SF-04`, `SF-35`, `SF-36`,
+`SK-02`.** ⛔ **Do not start on M0 or M1.** ⭐ **`docs/tasks/BOARD.md` says what is
+open in the step and who has it; this line says only which milestone.**
+
+⚠️ **`SF-35` and `SF-36` were added to step 2.1 at round 24 and they are not new
+scope: they are two CTO rulings that had no task id.** ⛔ **A ruling that names
+*"a framework task"* and no id has described a task, not created one** — ⭐ **the
+id space has exactly one minter, and check 3 is what finds the gap.**
 
 ⚠️ **M2 is not M1 with different task ids: the skills come with it, not after
 it** (`docs/tasks/README.md`, M2). ⛔ **`SK-02` is in step 2.1 for that reason,

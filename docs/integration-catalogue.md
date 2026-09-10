@@ -337,20 +337,68 @@ corpus that cannot pass**.
 > are incompatible, and the framework had to move rather than the corpus. ⭐ **The
 > entry records the *collision*, not the one instance that has since been fixed.**
 
+### 19. A pattern that is correct only because of which files do **not** exist is not a declaration
+
+⛔ **Adopted 2026-09-10 (check 6's third run), from the ruling that closed
+`F18`.** ⚠️ **Ruled and not yet shipped: it lands with `SF-35`**, and it is
+recorded now because the rule is what a corpus author meets, not the commit.
+
+**Measured (ISO):** after the framework stopped enumerating declared output,
+**17 tracked files** remained unclassified. ⭐ **Three globs cover all 17** — and
+`[CLR]*` covers `CLAUDE.md`, `LICENSE` and `README.md` **only because
+`TestCases.md` begins with T.** ⛔ **The integrator who measured that refused to
+propose it**, and the refusal is the entry.
+
+> ⛔ **A declaration that a file will not be read is either an EXACT PATH, or a
+> glob whose wildcard lies inside a directory prefix that is itself entirely
+> not-material.**
+
+⚠️ **Why the obvious objection does not save the clever glob.** A framework can
+already catch a loose pattern that sweeps up **material** — the file is in
+`include` too, and that collision is a finding. ⛔ **The hole is the file that
+does not exist yet:** a `CHANGELOG.md` next year, matched by `[CLR]*` and not
+yet in `include`, is classified by a reason that was never about it — ⛔ **and
+the *unclassified* check that would have surfaced it goes quiet, because the
+file is now classified.**
+
+⭐ **So the cost of a clever glob is not paid by the author who writes it.** It
+is paid by whoever adds a file to that repository months later and is told
+nothing. ⛔ **Five honest entries, not three clever ones**, and the test is one
+question: *would this pattern still be right if somebody added a file tomorrow?*
+
+⚠️ **And this is where a generator earns its place (R19):** a skill that drafts a
+manifest must draft **exact paths and directory-scoped globs**, because a
+generator fitted to today's tree is the same defect with nobody to notice it.
+
 ---
 
-## ⛔ Decisions on contributions **not** adopted — 2026-09-10, check 6's second run
+## ⛔ Decisions on contributions **not** adopted — 2026-09-10, check 6's second run, **amended by the third**
 
 ⭐ **A contribution silently not adopted is indistinguishable from a contribution
 nobody read.** ⛔ **So every item is dispositioned here, including the refusals,
 and each names why against the *belongs / does not* table above.**
 
+⭐ **CHECK 6, THIRD RUN — 2026-09-10, measured on `../ISO-8583-jPOS-tutorial` @
+`6c8dc85` against this file @ `d1270cd`.** ⛔ **`docs/studyforge/catalogue-contributions.md`
+is UNCHANGED since `1e49225`** — ⭐ **still sixteen contributions, so the run
+adopts no new entry from that file.** ⚠️ **What the third run exists for is the
+two DEFERRALS, and both of their triggers have now fired**: `F18` ruled (Ruling
+90/98) and `F19` ruled (Ruling 91), both in the direction *the framework
+changes*. ⭐ **Both rows below are closed, and one of them left a durable
+constraint behind, which is entry 19.**
+
+⚠️ **The run also names what it did NOT sweep:** `questions-for-framework.md`
+(+317 lines) and `tasks.md` (+68) moved in the same window and are **questions
+and a plan**, not catalogue contributions — ⛔ **they are routed through the
+board's question channel, and a check that quietly widened its own instrument
+would be the defect this catalogue's entry 4 describes.**
+
 | Contribution | Decision | Why |
 |---|---|---|
 | *Excluding a file can discard the only witness to something else* | ⭐ **Already carried** | Entry 5's closing paragraph states the same trade — the aggregates are both pure duplication and the only machine-checkable order oracle. ⛔ **Not a second entry; a duplicate entry is the defect this catalogue exists to stop** |
 | *A count restated at a new set travels further than the measurement* | ⭐ **Already carried** | Entry 8's correction banner **is** this contribution, and entry 9 gained the *set* field by it. ⭐ **It landed by the mechanism it argues for** |
-| ⛔ *A placement profile that interleaves output with the source will have its output re-read as source* | ⛔ **DEFERRED — not refused** | ⚠️ **`F19` is open with the CTO.** ⛔ **The catalogue is for what stays true after the framework is right, and this asks whether the framework is right.** ⭐ **Trigger: the PO adopts it the day `F19` rules, in whichever direction** — if the framework changes, it was a finding; if it does not, it is a limit and it belongs |
-| ⛔ *A manifest needs three states for a file* | ⛔ **DEFERRED — not refused** | ⚠️ **This is `F18` verbatim, a schema question open with the CTO under R9.** ⭐ **Same trigger.** ⛔ **Adopting it today would publish a limit the framework may be about to remove, which is the one thing a catalogue must not do** |
+| ⛔ *A placement profile that interleaves output with the source will have its output re-read as source* | ⛔ ~~**DEFERRED**~~ → ✅ **CLOSED as a FINDING, 2026-09-10 (check 6, third run)** | ⛔ **The trigger fired: `F19` ruled (Ruling 91, CTO round 26), and it ruled that the framework changes.** ⭐ **`W28` made `source_files()` ask git what the repository ignores, so generated output under an interleaved profile is no longer enumerated at all** — ⛔ **which is *"if the framework changes, it was a finding"*, exactly as the deferral said.** ⚠️ **Its residue is not a catalogue entry either:** *`studyforge plan` prints the ignore lines its profile requires* is now an **acceptance condition on `SF-31`**, and *verify the rule in both directions* is already **entry 15** |
+| ⛔ *A manifest needs three states for a file* | ⛔ ~~**DEFERRED**~~ → ✅ **CLOSED as a FINDING, 2026-09-10 (check 6, third run)** | ⛔ **The trigger fired: `F18` ruled (Ruling 90, sharpened by Ruling 98), and it ruled that the framework changes** — `content` gains `not_material`, and the task is `SF-35`. ⭐ **So the contribution as filed does NOT become an entry: adopting it would publish a limit that is being removed, which is the one thing a catalogue must not do.** ⚠️ **What the ruling CREATED is durable and is adopted as entry 19 below** — ⛔ **a new constraint on how the third state may be written, which no ruling removes because it is the ruling** |
 | ⭐ *The `F2` correction* | ✅ **Landed, and it was already landed** | ⛔ **Measured this run rather than assumed: spec §1's C3 carries the retraction and `E02` carries it too.** ⭐ **Its catalogue-shaped half is now entry 12** — the method error, not the number |
 | ⭐ *The `F8` donation — a plausible short parse in real material* | ✅ **ADOPTED, and it is a fixture, not an entry** | ⛔ **A contents document listing 36 of 38 units as list items and 2 as headings: a parser written against the list form reads 36, emits 36, and raises nothing.** ⭐ **Carried as `W32` on the board with an owner and a trigger** — ⚠️ **a catalogue entry would have been the wrong destination for something a fixture can assert** |
 
