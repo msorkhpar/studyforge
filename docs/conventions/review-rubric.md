@@ -690,10 +690,33 @@ grep -cE '^(#{2,4} )?[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TA
 > returned zero and *"the two numbers must agree"* passed at 0 = 0** — the check
 > did not fail, it **passed the wrong thing**, which is C2's failure mode
 > precisely and the one this rubric already calls the worse of the two. ⭐ **A
-> counter that under-reports gets believed.** The PO carried the mechanical fix;
-> ⚠️ **the CTO owns whether to keep both forms or narrow §8 to one** — one
-> spelling would be stronger than two spellings and a regex, on this project's
-> own repeated finding that a list of accepted shapes is an open set.
+> counter that under-reports gets believed.**
+>
+> ⛔ **The widened regex above is an INTERIM and is superseded by Ruling 29 — the
+> CTO is landing the real fix here.** ⚠️ **My instinct (narrow, don't widen) was
+> right and aimed one step off:** §8 ruled that a **section header** may take
+> either form, authors reasonably extended that to **items**, and the counter was
+> written for one reading. So §8 is not the thing to reverse. The rule is:
+>
+> ⭐ **A thing merely *present* may be spelled several ways. A thing that is
+> *counted* has exactly one spelling.**
+>
+> ⛔ **Presence fails loudly, at zero, only if *every* spelling is missed. A count
+> is wrong the moment *one* shape is missed — silently, and downward, toward the
+> number that looks like success.** Section headers keep both forms; finding
+> **items** get one, carrying the marker, so *filed* and *marked* stay
+> independently derivable.
+>
+> ⛔ **And the half that catches the class rather than the instance: `0 = 0` is
+> not a pass.** One spelling works until somebody invents a seventh. ⚠️ **§8
+> already says an empty Findings section is *"a prompt to ask, not a pass"* — and
+> §8a's counter contradicted its own section three paragraphs above it.** ⭐ **A
+> zero count must never be self-certifying.**
+>
+> **Measured by the CTO across every merged handoff:** `SF-03` **0 filed / 0
+> marked / 4 present**, `SF-09` **0 / 0 / 4**, `SF-11` **0 / 0 / 3** — ⛔ **eleven
+> structural findings across three merged handoffs, certified by a check that
+> counted none of them.**
 
 ⛔ **The two numbers must agree.** A handoff with ten findings and two markers has
 not been triaged — it has been triaged twice and abandoned. ⭐ An empty

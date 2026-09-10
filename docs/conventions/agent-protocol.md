@@ -232,6 +232,54 @@ carrying**, exactly as a finding is re-run before it becomes a task. ⭐ Same ru
 one step later in the pipeline, and for the same reason: **carrying turns a
 record into a claim about now.**
 
+#### ⛔ And the second failure mode, which is worse, because measuring is the fix for the first
+
+⭐ **A count answers the question you asked. It does not tell you it was the wrong
+one.**
+
+⚠️ **Measured instance, and the CTO filed it against their own ruling.** Ruling 28
+came **from** a measurement — they counted `MANIFEST_KEYS` at ten against the
+spec example's nine, found exactly one missing, and ruled that the example gain
+it. ⛔ **It was still wrong.** They had measured *what the example omitted* and
+never asked **whether the omission was correct** — and `media` is **not in
+`REQUIRED_KEYS`. The fact that would have caught it sat two lines from the tuple
+they counted.**
+
+⛔ **The harm was not hypothetical:** an exhaustive canonical example propagates
+through `SK-07`, which **generates** manifests, and freezes an optional key on
+every corpus including ones with no media.
+
+⚠️ **This project has now found two independent failure modes of its own
+verification discipline in one round** — *a wrong ruling carried promptly*, and
+*a correct measurement of the wrong question* — ⛔ **and neither is fixed by the
+carrying mechanism.** ⭐ **Recorded together, because the first one's remedy is
+"measure", and the second one is a way measuring fails.**
+
+### ⛔ The sideways channel — a finding that arrives from outside the task line
+
+⚠️ **Both of the largest findings of 2026-09-09 arrived sideways**, from another
+agent's unrelated ruling rather than down the task line: the ungated
+`corpus.json` surfaced from a complaint about a **paraphrase**, and Ruling 28's
+reversal was caught by a **scheduling note about key names**. ⭐ **Neither was
+found by the person who owned the thing that was wrong**, and neither would have
+been found by that person continuing to look.
+
+⛔ **The task line carries a task's own findings. It has no channel for *"while
+doing X, I noticed Y about Z"*** — and the two most expensive findings of the
+round both had that shape and both arrived by luck of routing.
+
+⭐ **The mechanism, and it is one line rather than a process:** when carrying a
+ruling that touches a **shared** artifact — the spec, a contract, a generator, a
+convention — ⛔ **name the other agents whose standing constraints it could
+collide with, and if one exists the carry waits for their check.**
+
+⚠️ **It is cheap because the collision is nearly always already written down.**
+Ruling 28 collided with a **scheduling** constraint the PO had recorded four
+hours earlier; the gate clause collided with a **boundary** ruling recorded in
+the same session. ⭐ **Neither needed new information — only somebody asking
+whose constraint this lands on.** ⛔ **The question is the mechanism; the answer
+is usually one name and often none.**
+
 ### ⚠️ C5's shape in prose, and there is no trial merge for documents
 
 ⛔ **Two correct things authored hours apart can contradict each other with
