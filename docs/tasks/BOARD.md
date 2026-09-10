@@ -48,16 +48,26 @@ round.**
 
 ⛔ **Check 4 is the one that went the other way.** ⚠️ **The CTO named THREE stale
 board rows by line in `CTO-2026-09-10-round30.md`.** ⭐ **Re-measuring every row
-whose trigger has passed, from the tree, found FIVE MORE — and all five are one
-ruling: Ruling 102, which landed in `E01` two rounds ago and never reached the
-board.** ⛔ **`SF-36`'s `Owns` cell still sent a developer to `corpus/manifest/`,
-where `origin` does not appear.**
+whose trigger has passed, from the tree, found FIVE MORE — and ~~all five are
+one ruling~~ ⛔ **CORRECTED, CTO round 31 @ `e01b360`: FOUR of the five are one
+ruling**, Ruling 102, which landed in `E01` two rounds ago and never reached the
+board. ⚠️ **The fifth — row 8, the step-2.1 assignment — is stale because `SF-31`
+and `SF-04` MERGED, which is not Ruling 102.** ⭐ **The check-4 table below says
+*"Rows 4–7 are ONE ruling"* and `PO-25/1` says *"FOUR places"*; only this
+headline said five.** ⛔ **`SF-36`'s `Owns` cell still sent a developer to
+`corpus/manifest/`, where `origin` does not appear** — verified by the CTO,
+`0` occurrences at `ce58a36`.
 
 ⭐ **The two readings are the same fact seen from both ends, and it refines
 `PO-24/1` rather than confirming it.** ⛔ **`PO-24/1` said *a ruling lands by
 itself exactly when its artifact is the ruler's own file.* ⚠️ That is REFUTED as
-stated:** rulings 99, 102 and 104 landed in `E01`, `E09` and `E04` — **epic
-documents the PO owns** — and they landed anyway, in the ruler's own commit.
+stated:** rulings 99, 102 and 104 landed in `E01`, `E09` and `E04` **between
+them** — **epic documents the PO owns** — and they landed anyway, in the ruler's
+own commit. ⛔ **CORRECTED, CTO round 31 @ `e01b360`: read as a per-ruling
+mapping that sentence is FALSE** — ⚠️ **Ruling 102 has ZERO occurrences in
+`E09`; it is `E01`-only, and Ruling 99 is the one that reached `E09`.** ⭐ **The
+check-3 table below has it right (`| 99 | E01's SF-31 section AND E09 |`), and
+the refutation stands either way.**
 ⭐ **The variable is not whose FILE it is. It is whether the ruler wrote the
 clause or handed it over** — which is what `PO-24/1`'s own control (Ruling 95)
 already showed and its headline sentence then narrowed too far.
