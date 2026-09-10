@@ -214,6 +214,27 @@ about a filename rather than about a contract.
 value be used as X?"*, enumerate what X accepts. If you find yourself adding a
 character to a list because somebody hit it, the list is the defect.
 
+### ⭐ Make the illegal value unrepresentable; do not enumerate it
+
+⛔ **Every time this project has written a list of things that are wrong, the
+list has been incomplete — and stayed incomplete silently.** Three instances in
+two rounds, reached independently:
+
+| Instead of | Do |
+|---|---|
+| listing the characters a filename may not contain | ⭐ **deriving** the class it may contain, from the predicate that already defines it |
+| slugifying a key so two spellings may collide | ⭐ **requiring** a slug, so a colliding key cannot be represented |
+| exempting nineteen parameters from a leak check | ⭐ **typing** the parameter, so a leaking value cannot be passed |
+
+⚠️ **The tell is a check that grows by one entry each time somebody hits a case
+nobody thought of.** ⛔ That check is not incomplete — it is the wrong shape, and
+adding the entry conceals it for one more round.
+
+⭐ **A list is now the thing that needs justifying**, not the closed set. When a
+list is genuinely right — a sanctioned exception, a formatter exclusion — it is
+short, each entry carries its reason and a name, and **the empty list is the
+claim it is making.**
+
 ### ⛔ A negative test is run once with the mechanism removed
 
 ⚠️ **Three times now a test of a gate would have passed with no gate.** The
