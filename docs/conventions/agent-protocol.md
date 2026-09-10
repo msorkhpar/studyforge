@@ -179,6 +179,16 @@ has decided to pay for it twice.**
 at 1 in every document.** ⛔ **Do not mint a number from a project-wide
 sequence.**
 
+⛔ **A handoff covering two tasks scopes each finding to one of the IDs it
+declares — `W30/1`, `W31/1` — never to the filename's compound stem.**
+⚠️ **`W30-W31/1` is refused, and correctly: `check_finding_ids` compares the
+scope against the IDs on the `**Kind:**` line, and `W30-W31` is not one of
+them** — ⭐ **the file is named `W30-W31.md` because `check_filename` requires the
+stem to begin with the *first* declared ID, which is a filename rule and not an
+identifier.** ⛔ **Ruled `W31/1`, round 26: the code was right and this document
+was silent, and the `W17-W19` precedent in the tree predates the rule, so there
+was no worked two-row example to copy.**
+
 ⚠️ **Because there is no allocator, and there cannot be one.** ⭐ **A global number
 is a contract, so R21 applies: it needs one producer.** ⛔ **A branch cannot have
 one.** Every number is minted by an agent who cannot see the other branches, so
