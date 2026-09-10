@@ -39,14 +39,27 @@ invisible to each one alone, and that is exactly how the label defect survived.
 
 ### Work in flight that was interrupted
 
-**SF-25 (`studyforge validate`)** — the package is written and working: 58 tests
-passing, both valid fixtures green, all five invalid fixtures reporting exactly
-one rule each. ⚠️ Its author found and fixed a real defect while building it: a
-document refused by the R7 gate was then *also* reported as a missing unit — one
+**SF-25 (`studyforge validate`)** — ⭐ **committed as WIP at `96dd17e` on
+`feat/SF-25-validate`; it is NOT lost.** An earlier revision of this handoff said it
+was, and that was wrong — the work was uncommitted in a worktree, and the first act
+of this round was to get it onto the branch. The package is written and working: 58
+tests passing, both valid fixtures green, all five invalid fixtures reporting
+exactly one rule each. ⚠️ Its author found and fixed a real defect while building
+it: a document refused by the R7 gate was *also* reported as a missing unit — one
 defect wearing two names — closed by recording refused files so a downstream check
 reports `Unchecked` rather than absence. **Remaining:** the `report`, `corpus`,
-`cli`, `init` and `__main__` test modules, then the handoff. There is no branch —
-it was never pushed. **This work is lost and must be redone.**
+`cli`, `init` and `__main__` test modules, then the handoff.
+
+⛔ **A worktree is not storage.** The agent worktrees live in a session-scoped
+scratchpad; the branches live in `.git`. Anything uncommitted dies with the session.
+Commit before ending a session, always, even untidy.
+
+⚠️ **And an escalation of finding 1, raised by SF-25's author and worth measuring:**
+`validate` forwards `str(error)` from SF-01's exceptions straight into a `Finding`.
+If a container map's bad address segment reaches a report through `AddressError`,
+then **`validate` is an R7 emission site by inheritance** — which would make the
+`require_slug`/`require_ordinal` fix load-bearing for the one command an adapter
+author is told to trust. Measure it rather than assume it.
 
 ---
 
