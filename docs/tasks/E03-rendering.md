@@ -274,3 +274,54 @@ has one per module. The same renderer serves both — level labels come from
 **Acceptance.** All 45 Java module pages render with correct unit lists and
 working links in both directions. SF-04 discovers them by identity. Works over
 `file://`. Byte-for-byte stable. A depth-1 fixture renders one container page.
+
+---
+
+### SF-34 — Page chrome styles
+**Milestone** M2 · **Depends on** SF-11, SF-12 · **Team** solo
+**Owns** `render/assets/chrome.css`
+**Context** ~25k — `render/assets/reading.css`, `render/pageassets/{bundle,surface}.py`,
+`render/page/{section,navigation}.py`, SF-11's and SF-12's handoffs
+
+⛔ **This task exists because the reading surface and the page chrome met at a
+boundary neither owner had drawn.** `SF-11`'s finding 3 assigned *"masthead and
+layout grid and the navigation rail"* to `SF-12`; `SF-12/5` answered that
+`reading.css` declares chrome out of its own scope and that `test_surface`
+asserts the published class set and the stylesheet's set are **equal in both
+directions** — so a single new chrome class costs three files in two packages
+`SF-12` does not own. ⭐ **Both were right. The markup shipped; the rules did
+not.** Ruled 2026-09-10: the markup is `SF-12`'s and is done; the rules belong
+with `reading.css`, because **a class name with no rule is not styling**.
+
+**Definition.** Rules for the three chrome regions the unit page already emits —
+the masthead, the outline, and the between-units bar — as a new stylesheet part,
+plus its entry in `STYLE_PARTS` and its hooks in `SURFACE_HOOKS`.
+
+⭐ **The page needs no change and no re-render.** `SF-12` addressed all three
+regions by element, `aria-label` and `data-*` only — measured: every class the
+goldens carry is in `SURFACE_CLASSES | SURFACE_HOOKS | {language-java}`, and the
+`<header>`, `<nav>` and `<ol>` carry none. **That is the whole reason this task
+could be scheduled late without cost, and it is the property to preserve.**
+
+⚠️ **Two edits land outside `Owns`, and both are additive**: one entry in
+`render/pageassets/bundle.py`'s `STYLE_PARTS` and one in
+`render/pageassets/surface.py`'s `SURFACE_HOOKS`. **They are named here so the
+next author does not stall on the boundary that produced this task.**
+
+⛔ **In the same change:** the two `<nav>` regions move out of Python f-strings
+into `render/templates/`. They carry a **product string** (`Contents`) in code
+while the rest of the page uses the template mechanism; E03's one-line-container
+exception covers them, but this is the place that exception does the most work.
+
+**Why M2 and not M1.** Two of the three regions get their content from SF-13,
+SF-14 and SF-15, and SF-15 is step 2.4. **Styling a region before its content
+exists is SF-11's own finding-3 warning one layer up** — *the palette defines
+tokens nothing paints with* — and this task is where the unit page's share of
+that leniency is claimed rather than extended.
+
+**Acceptance.** The three regions carry rules in both themes, every token used
+is a palette token, and `test_surface` passes in both directions with no class
+added to any page. Contrast clears its threshold in both themes (QA-03's
+instrument, not a new one). The two `<nav>` regions render from templates and no
+product string is typed in Python. The goldens change once, deliberately, and
+the change is stated as a product change rather than absorbed.
