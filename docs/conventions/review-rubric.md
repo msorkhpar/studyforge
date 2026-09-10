@@ -580,25 +580,50 @@ reason carrying a task id, which is greppable:**
 ⛔ **Do NOT `grep` the tree for the marker.** ⚠️ **`tools/quality/size.py`, its
 config and its tests all contain the literal string and always will** — a grep
 returns them forever and the check becomes something a reviewer learns to skim.
-⭐ **Ask `ast`, and only of files actually over their ceiling, deferring to
-`FND-01`'s config exactly as §3a does:**
+⭐ **Ask `ast`, deferring to `FND-01`'s config exactly as §3a does:**
+
+#### ⛔ CORRECTED at `W45`'s merge (Ruling 121) — it CALLS the shipped reader and it drops the length guard
+
+⚠️ **The sweep printed here used to RE-IMPLEMENT the read inline — `for line in
+doc.splitlines(): … print(line.strip())` — and it had two defects that
+`W45/1` and `W45/3` measured:**
+
+- ⛔ **It printed the marker LINE**, so a justification that wrapped was cut
+  mid-sentence and a deferral's row id could vanish. ⚠️ **Fixing
+  `size_exception()` did NOT fix this sweep, because the sweep was a second
+  copy of the same bug** — ⭐ **which is why it now calls the shipped reader
+  instead of agreeing with it by hand.**
+- ⛔ **It skipped files UNDER their ceiling**, and `check_sizes` skips them
+  too — ⚠️ **so a stale `Size exception:` left behind by a split was read by
+  NOTHING.** ⭐ **That is exactly the hole `W44` could have fallen into.**
+
+⭐ **The guard was there to keep the checker's own package out. It is not
+needed: `size_exception(module_docstring(...))` reads only the FIRST
+docstring, and `size.py`'s mention sits mid-sentence inside one while
+`config.py`'s is a comment.** ⛔ **MEASURED at `W45`'s merge: the whole tree
+yields exactly ONE file, the real deferral.**
 
 ```bash
 python3 - <<'EOF'
-import ast, pathlib
+import pathlib
 from tools.quality import config
+from tools.quality.size import size_exception, module_docstring
 root = pathlib.Path(".")
 for path in config.python_files(root):
     rel = config.relative(path, root)
     text = path.read_text(encoding="utf-8")
-    if len(text.splitlines()) <= config.ceiling_for(rel):
-        continue                      # not over the ceiling: no opt-out in play
-    doc = ast.get_docstring(ast.parse(text)) or ""
-    for line in doc.splitlines():
-        if line.strip().startswith(config.SIZE_EXCEPTION_MARKER):
-            print(f"{rel}: {line.strip()}")
+    reason = size_exception(module_docstring(text, path))
+    if reason is None:
+        continue                      # no exception claimed
+    lines, ceiling = len(text.splitlines()), config.ceiling_for(rel)
+    state = "over" if lines > ceiling else "UNDER — STALE, nothing else reads it"
+    print(f"{rel} ({lines}/{ceiling}, {state}): {reason}")
 EOF
 ```
+
+⚠️ **`under` is a finding on sight.** ⛔ **A module below its ceiling needs no
+exception, so a marker there is one a split forgot to delete** — ⭐ **and it is
+invisible to `check_sizes`, which returns before it opens the docstring.**
 
 ⛔ **Pass condition: for every line printed, either the reason claims splitting
 would be worse (a DESIGN CLAIM — condition 4 still applies, and a reviewer still
