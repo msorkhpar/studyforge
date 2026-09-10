@@ -5,24 +5,25 @@ its content**: what is open, in what order, and who owns it stay the Product
 Owner's, and nothing here overrules a priority call. ⚠️ **What it does overrule
 is the habit of recording that call *in the board*.**
 
-## ⛔ The board reached 8,133 lines, and the rule that would have stopped it was already written
+## ⛔ The board reached 8,545 lines, and the rule that would have stopped it was already written
 
 ⭐ **`delivery-flow.md` has said since it was written that a status change is
 ONE CELL, and that an event goes to the Log rather than into the tables.**
 ⛔ **Nothing enforced it.**
 
-| | measured at `911c56f` | after the split |
+| | ⛔ measured at `bfb8c8c` | ⭐ after the split |
 |---|---|---|
-| `BOARD.md` | **8,133 lines / 716 KB** | **231 lines / 23 KB** |
-| bytes NOT inside a table | **363,187** | **3,436** |
-| bytes inside tables | **368,670** | **19,961** |
+| `BOARD.md` | **8,545 lines / 753 KB** | **238 lines / 23 KB** |
+| bytes NOT inside a table | **382,194** | **3,811** |
+| bytes inside tables | **388,649** | **20,028** |
 | widest single table row | **3,485 B** | **415 B** |
-| ⭐ **bytes a reader loads per row of state** | **9,433** | **308** |
+| ⭐ **bytes a reader loads per `W` id indexed** | **9,757** | **301** |
+| ⭐ **the same, in tokens at 4 B/token** | **~2,439** | **~75** |
 
 ⚠️ **The split was already tried once.** ⛔ **Round 25 moved the closed sections
-out for exactly this reason, wrote *"live board ~56KB"* in the file, and eleven
-rounds later that sentence was wrong by an order of magnitude in the document
-every agent is told to read first.** ⭐ **A restructure with no instrument
+out for exactly this reason, wrote *"live board ~56KB"* in the file, and twelve
+rounds later that sentence was wrong by more than an order of magnitude in the
+document every agent is told to read first.** ⭐ **A restructure with no instrument
 regrows**, which is why the second half of this document is a check rather than
 a paragraph.
 
@@ -62,6 +63,23 @@ of the two is wrong, and it is a finding.**
 
 ⭐ **`BOARD_ROW_CEILING` is 600 bytes and it is not arbitrary: it is the width at
 which a cell stops being a naming and starts being an argument.**
+
+### ⛔ The register is DELIMITED, and the marker is not decoration
+
+```
+<!-- register -->
+| # | Row | Owner | State | Detail |
+…
+<!-- /register -->
+```
+
+⚠️ **The first version of the check inferred the register — *any five-cell row
+whose first cell names a `W` id* — and the very next edit broke it.** ⛔ **An
+*In flight* table naming four rows was read as four DUPLICATE register rows, and
+`board-duplicate` fired on the author of `board-duplicate`.** ⭐ **A board may
+hold as many `W`-shaped tables as it likes; exactly one of them is the register,
+and it SAYS SO.** ⛔ **An inferred boundary is a boundary that moves the moment
+somebody writes an ordinary table.**
 
 ## ⭐ How to add to the board, by the four things a PO actually does
 

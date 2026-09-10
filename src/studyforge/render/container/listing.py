@@ -7,7 +7,7 @@ page and plainly listed when it has not.
 **How you use it.** `listing.render(document.items)` returns the markup;
 `container.document` puts it in the page's body.
 
-**Depends on.** `render.page.text` for escaping and the href gate, `entries`,
+**Depends on.** `render.markup` for escaping and the href gate, `entries`,
 and `render.page` for `PageError`. ⛔ Nothing that knows where a file is: an
 `Item` arrives with its href already answered.
 
@@ -45,8 +45,8 @@ this task does not own — and a class name with no rule is not styling.
 from __future__ import annotations
 
 from studyforge.render.container.entries import Item
+from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page import PageError
-from studyforge.render.page.text import escape, escape_attribute, inline, safe_href
 
 #: What the list is labelled for a reader who cannot see it. ⛔ This framework's
 #: own structural word, never a corpus's: every string on the page that names

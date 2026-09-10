@@ -15,7 +15,7 @@ run, because a `0` with no denominator is `0 = 0` (Ruling 48).
 ## ⛔ Why this exists, and the number is the argument
 
 ⚠️ **`BOARD.md` was split once already, in round 25, for being 1,615 lines and
-~180KB.** ⛔ **Eleven rounds later it was 8,133 lines and 716KB — four times the
+~180KB.** ⛔ **Twelve rounds later it was 8,545 lines and 753KB — four times the
 size that triggered the split — and the paragraph announcing the split still
 said the live board was "~56KB".** ⭐ **Nothing noticed, because nothing was
 measuring.**
@@ -46,7 +46,7 @@ backlog with more rows in it is a longer board and a *better* one.
   indexes | a row raises the allowance by more than it costs |
 
 ⛔ **The second bound is not decoration, and the measurement says so.** At
-`911c56f` the board's table rows carried **368,670 bytes** against **363,187**
+`bfb8c8c` the board's table rows carried **388,649 bytes** against **382,194**
 of prose — ⭐ **the cells were as fat as the narrative**, and a governor watching
 only prose would have called that board half-clean. ⚠️ **The widest single row
 was 3,485 bytes.** ⛔ **A cell that needs more than `BOARD_ROW_CEILING` is an
@@ -96,8 +96,20 @@ BOARD = "docs/tasks/BOARD.md"
 #: contract in `docs/conventions/board.md`, not an implementation detail.
 ROWS = "docs/tasks/rows"
 
-#: ⛔ Bytes of `BOARD.md` outside any table. Measured **3,436** at the split;
-#: this is 2.4× that, which is room for the frame to gain a section and not
+#: ⛔ The register is DELIMITED, and this check reads nothing outside the
+#: markers. ⚠️ **The first version inferred it — *any five-cell row whose first
+#: cell names a `W` id* — and the very next edit broke it**: an *In flight*
+#: table naming four rows was read as four duplicate register rows, and
+#: `board-duplicate` fired on the author of `board-duplicate`.
+#:
+#: ⭐ **A board may hold as many `W`-shaped tables as it likes; exactly one of
+#: them is the register, and it says so.** ⛔ An inferred boundary is a boundary
+#: that moves when somebody writes an ordinary table.
+REGISTER_OPEN = "<!-- register -->"
+REGISTER_CLOSE = "<!-- /register -->"
+
+#: ⛔ Bytes of `BOARD.md` outside any table. Measured **3,811** at the split;
+#: this is 2.1× that, which is room for the frame to gain a section and not
 #: room for a round's narrative — round 33's alone was 833 lines.
 BOARD_NARRATIVE_CEILING = 8192
 
@@ -112,8 +124,9 @@ BOARD_ROW_CEILING = 600
 #: a round's narrative, pasted as one-cell table rows, moved the narrative count
 #: by ZERO and tripped the width rule ONCE.
 #:
-#: ⚠️ Measured at the split: frame **10,459 B**, register **12,938 B** over 76
-#: rows — **170 B a row**. ⭐ A ratio rather than a ceiling is Ruling 149's own
+#: ⚠️ Measured at the split: **23,839 B** total over **78** register rows, of
+#: which the register itself is the majority — **~170 B a row**. ⭐ A ratio
+#: rather than a ceiling is Ruling 149's own
 #: remedy for a governor that alarms while the property improves: adding rows
 #: raises the allowance by more than a row costs, so a longer backlog can never
 #: trip this, and only text that indexes nothing can.
@@ -154,10 +167,23 @@ def _identifiers(cell: str) -> list[str]:
 
 
 def _register(text: str) -> list[tuple[int, list[str], str]]:
-    """`(line number, ids, state cell)` for every register row in the board."""
+    """`(line number, ids, state cell)` for every register row in the board.
+
+    ⛔ Only between `REGISTER_OPEN` and `REGISTER_CLOSE`. ⚠️ A board with no
+    markers has no register as far as this is concerned, and `board_state`
+    prints `0 register rows` rather than guessing — ⭐ **`0 = 0` is visible;
+    a wrong denominator is not.**
+    """
     rows = []
+    inside = False
     for number, line in enumerate(text.split("\n"), 1):
-        if not line.startswith("|"):
+        if line.strip() == REGISTER_OPEN:
+            inside = True
+            continue
+        if line.strip() == REGISTER_CLOSE:
+            inside = False
+            continue
+        if not inside or not line.startswith("|"):
             continue
         cells = _cells(line)
         if len(cells) < 5:

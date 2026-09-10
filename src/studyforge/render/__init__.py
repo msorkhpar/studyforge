@@ -10,6 +10,12 @@ scanner can identify it wherever it ends up (R4), and every asset it references
 is addressed **relative to the page**, so the result opens over `file://` with
 no server (R8).
 
+⛔ **What more than one renderer needs is a SIBLING package, never a name on one
+of them** (`W76`). `markup` holds the escaping routine and the permitted-href
+gate; `pageassets` holds the class names and the two shared asset filenames.
+⚠️ Both are reached through their own `__all__`, so `page`, `container` and
+`index` share them without any of the three owning the others.
+
 **Depends on.** `unit`, `contents`, `address`. ⛔ Not on `serve`: a page that
 needs the server to render is a page that fails the `file://` floor, and that
 floor is the product's baseline rather than a fallback.

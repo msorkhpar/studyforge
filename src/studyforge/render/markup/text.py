@@ -6,14 +6,19 @@ deliberately left in place.
 
 **How you use it.**
 
-    from studyforge.render.page import text
+    from studyforge.render import markup
 
-    text.escape("a < b")            # 'a &lt; b'
-    text.escape_attribute(value)    # additionally neutralises "'"
-    text.inline("see `x` and **y**")
+    markup.escape("a < b")            # 'a &lt; b'
+    markup.escape_attribute(value)    # additionally neutralises "'"
+    markup.inline("see `x` and **y**")
 
-**Depends on.** `re` and `page.errors`. ⛔ Nothing that knows what a block is:
-every block renderer depends on this module, and it depends on none of them.
+**Depends on.** `re`, and nothing else — not this framework's error type and not
+any renderer. ⛔ Nothing that knows what a block is: every block renderer
+depends on this module, and it depends on none of them. ⚠️ **The line this
+replaced said *"`re` and `page.errors`"* and had said so since `SF-12`; the
+import list has never carried `page.errors` (`W76/2`), and a "depends on" that
+names a dependency the module does not have is the sentence that makes the move
+this module has just made look impossible.
 
 ## ⛔ Escaping is not optional, and it is the only thing between the archive and
 ## the browser

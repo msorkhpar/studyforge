@@ -42,6 +42,8 @@ from tools.quality.board import (
     RULE_ORPHAN,
     RULE_SIZE,
     RULE_WIDTH,
+    REGISTER_CLOSE,
+    REGISTER_OPEN,
     board_state,
     check_board,
 )
@@ -49,7 +51,11 @@ from tools.quality.board import (
 #: A minimal register: a header, a separator, one closed row and one live one.
 #: ⛔ Written out rather than generated, so a reader can see what the check
 #: reads without running it.
-HEADER = "| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
+HEADER = (
+    "<!-- register -->\n"
+    "| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
+)
+FOOTER = "<!-- /register -->\n"
 CLOSED = "| W1 | a naming | PO | ✅ done — `abc1234` | [record](BOARD-ARCHIVE.md#w1) |\n"
 LIVE = "| W2 | another naming | PO | `todo` | [rows/W2.md](rows/W2.md) |\n"
 
@@ -106,19 +112,19 @@ def test_live_board_has_a_detail_file_for_every_live_row() -> None:
 
 
 def test_planted_live_row_with_no_detail_file(tmp_path: Path) -> None:
-    root = _tree(tmp_path, HEADER + CLOSED + LIVE)
+    root = _tree(tmp_path, HEADER + CLOSED + LIVE + FOOTER)
     assert _rules(check_board(root)) == [RULE_DETAIL]
 
 
 def test_planted_detail_file_with_no_live_row(tmp_path: Path) -> None:
-    root = _tree(tmp_path, HEADER + CLOSED, rows=("W1",))
+    root = _tree(tmp_path, HEADER + CLOSED + FOOTER, rows=("W1",))
     findings = check_board(root)
     assert _rules(findings) == [RULE_ORPHAN]
     assert "W1" in findings[0].message
 
 
 def test_planted_duplicate_id(tmp_path: Path) -> None:
-    root = _tree(tmp_path, HEADER + LIVE + LIVE, rows=("W2",))
+    root = _tree(tmp_path, HEADER + LIVE + LIVE + FOOTER, rows=("W2",))
     findings = check_board(root)
     assert _rules(findings) == [RULE_DUPLICATE]
     assert "ONE row" in findings[0].message
@@ -126,7 +132,7 @@ def test_planted_duplicate_id(tmp_path: Path) -> None:
 
 def test_planted_narrative(tmp_path: Path) -> None:
     prose = "x" * (BOARD_NARRATIVE_CEILING + 1) + "\n"
-    root = _tree(tmp_path, prose + HEADER + CLOSED)
+    root = _tree(tmp_path, prose + HEADER + CLOSED + FOOTER)
     assert _rules(check_board(root)) == [RULE_NARRATIVE]
 
 
@@ -138,7 +144,7 @@ def test_planted_narrative_disguised_as_a_table(tmp_path: Path) -> None:
     is the reading that proves the two bounds have none between them.
     """
     fat = "| " + "x" * (BOARD_ROW_CEILING + 1) + " |\n"
-    root = _tree(tmp_path, HEADER + CLOSED + fat)
+    root = _tree(tmp_path, HEADER + CLOSED + FOOTER + fat)
     rules = _rules(check_board(root))
     assert RULE_NARRATIVE not in rules, "the narrative bound is blind to this, by construction"
     assert rules == [RULE_WIDTH]
@@ -156,7 +162,7 @@ def test_planted_narrative_as_MANY_SHORT_table_rows(tmp_path: Path) -> None:
     the denominator alone.**
     """
     prose = "".join(f"| a line of a round's reasoning, number {n} |\n" for n in range(400))
-    root = _tree(tmp_path, HEADER + CLOSED + prose)
+    root = _tree(tmp_path, HEADER + CLOSED + FOOTER + prose)
     rules = _rules(check_board(root))
     assert RULE_NARRATIVE not in rules
     assert RULE_WIDTH not in rules
@@ -173,13 +179,13 @@ def test_more_rows_can_never_trip_the_size_bound(tmp_path: Path) -> None:
     """
     row = "| W{n} | " + "n" * (BOARD_PER_ROW - 60) + " | PO | `todo` | [d](rows/W{n}.md) |\n"
     many = "".join(row.format(n=100 + i) for i in range(400))
-    root = _tree(tmp_path, HEADER + many, rows=tuple(f"W{100 + i}" for i in range(400)))
+    root = _tree(tmp_path, HEADER + many + FOOTER, rows=tuple(f"W{100 + i}" for i in range(400)))
     assert RULE_SIZE not in _rules(check_board(root))
 
 
 def test_the_size_bound_allows_the_frame_and_says_so(tmp_path: Path) -> None:
     """⚠️ A board with NO rows still gets `BOARD_FRAME`, and nothing more."""
-    root = _tree(tmp_path, HEADER + "x" * (BOARD_FRAME + 1))
+    root = _tree(tmp_path, HEADER + FOOTER + "x" * (BOARD_FRAME + 1))
     assert _rules(check_board(root)) == [RULE_NARRATIVE, RULE_SIZE]
 
 
@@ -213,6 +219,21 @@ def test_this_repository_has_a_board() -> None:
     """
     assert (repository_root() / BOARD).is_file()
     assert (repository_root() / ROWS).is_dir()
+    board = (repository_root() / BOARD).read_text(encoding="utf-8")
+    assert REGISTER_OPEN in board and REGISTER_CLOSE in board
+
+
+def test_a_W_shaped_table_outside_the_markers_is_not_the_register(tmp_path: Path) -> None:
+    """⛔ The defect this check found in its own author, kept as a test.
+
+    ⚠️ **An *In flight* table naming four rows was read as four DUPLICATE
+    register rows** by the first version, which inferred the register from
+    row shape. ⭐ **A board may hold many `W`-shaped tables; one of them
+    says it is the register.**
+    """
+    elsewhere = "| W2 | in flight | Dev | none | +3 |\n"
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER + elsewhere, rows=("W2",))
+    assert check_board(root) == []
 
 
 def test_impossible_board_with_no_register_rows(tmp_path: Path) -> None:
@@ -222,7 +243,7 @@ def test_impossible_board_with_no_register_rows(tmp_path: Path) -> None:
     here bound shape, not inhabitation — ⭐ **so the population is printed, and
     a reader who sees `0 register rows` knows the verdict is about nothing.**
     """
-    root = _tree(tmp_path, HEADER)
+    root = _tree(tmp_path, HEADER + FOOTER)
     assert check_board(root) == []
     assert "0 register rows, 0 live" in board_state(root)[0]
 
@@ -236,8 +257,8 @@ def test_a_closed_row_never_wants_a_detail_file(tmp_path: Path, state: str) -> N
     prevent.
     """
     row = f"| W1 | a naming | PO | {state} | [record](BOARD-ARCHIVE.md#w1) |\n"
-    assert check_board(_tree(tmp_path / "without", HEADER + row)) == []
-    with_file = _tree(tmp_path / "with", HEADER + row, rows=("W1",))
+    assert check_board(_tree(tmp_path / "without", HEADER + row + FOOTER)) == []
+    with_file = _tree(tmp_path / "with", HEADER + row + FOOTER, rows=("W1",))
     assert _rules(check_board(with_file)) == [RULE_ORPHAN]
 
 
@@ -249,4 +270,4 @@ def test_a_multi_id_row_is_one_row_and_one_file(tmp_path: Path) -> None:
     two would push the PO into splitting a row the CTO fused.
     """
     row = "| W17 + W19 | a naming | PO | `todo` | [rows/W17.md](rows/W17.md) |\n"
-    assert check_board(_tree(tmp_path, HEADER + row, rows=("W17",))) == []
+    assert check_board(_tree(tmp_path, HEADER + row + FOOTER, rows=("W17",))) == []

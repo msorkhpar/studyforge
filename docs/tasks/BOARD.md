@@ -17,7 +17,8 @@ second copy of it.
 ⛔ **The rule that governs every edit to this file, and it is not new:**
 `../conventions/delivery-flow.md` has said since it was written that *"a status
 change is one cell"* and that an event goes to the Log rather than into the
-tables. ⚠️ **Nothing enforced it, and this file reached 8,133 lines.**
+tables. ⚠️ **Nothing enforced it, and this file reached 8,545 lines / 753 KB
+(`bfb8c8c`).**
 ⭐ **`../conventions/board.md` is that sentence with an instrument behind it.**
 
 ---
@@ -33,7 +34,7 @@ why a close ran the way it did is the archive's.**
 | **M1** — the framework stands up | ✅ CLOSED | `2fe56a4` | [record](BOARD-ARCHIVE.md#m1s-close-run-at-2fe56a4-all-nine-true-at-one-ref-and-rows-18-were-re-taken-not-inherited) |
 | **M2 step 2.1** | ✅ CLOSED | `a00337b` | [record](BOARD-ARCHIVE.md#m2-step-21s-close-run-at-a00337b-all-five-re-taken-and-the-ref-moved-twice-underneath-it) |
 | **M2 step 2.2** | ✅ CLOSED | `ce80120` | [record](BOARD-ARCHIVE.md#m2-step-22s-close-run-at-ce80120-all-four-re-taken-and-the-four-merges-derived-rather-than-received) |
-| **M2 step 2.3** | ⏳ **OPEN** | — | [opened](BOARD-ARCHIVE.md#m2-step-23-open-both-rows-free-no-in-step-edge-and-a-load-asymmetry-named-at-open) |
+| **M2 step 2.3** | ⏳ **OPEN** — `SF-27` merged `6177738`; `SF-14` is the one remaining row | — | [opened](BOARD-ARCHIVE.md#m2-step-23-open-both-rows-free-no-in-step-edge-and-a-load-asymmetry-named-at-open) |
 
 ⛔ **Ruling 97 binds every one of those refs: a close is a set of measurements at
 ONE named ref, and no row is inherited across a ref change.**
@@ -42,17 +43,23 @@ ONE named ref, and no row is inherited across a ref change.**
 
 ⛔ **A commit count is a reading with an as-of, not a state** (`PO-30/2`), so
 this table names the ref it was taken at and nothing here is inherited.
+⭐ **Ruling 171: `git worktree list` is PRIMARY and `git log` is corroborating.**
 
-**Taken at `3503f92`.**
+**Taken at `bfb8c8c`, both instruments, 108 non-release branches.**
 
-| Row | Owner | Branch / worktree | State |
-|---|---|---|---|
-| `SF-27` | Developer | `feat/SF-27` @ `6c39d5f` | ◐ **done, with the CTO** |
-| `W76` | Developer | — | ◐ **done, with the CTO** |
-| `W14` + `W18` | Developer 1 | — | ⏳ in flight |
-| `W27` | Developer 2 | `fix/W27-r7-no-translation` @ `655b527` | ◐ in-review |
+| Row | Owner | Checkout | Commits ahead | State |
+|---|---|---|---|---|
+| `W70` | Developer | ⛔ **none** | **+3** | ⏳ in flight |
+| `SF-14` | Developer | `wt/dev1o`, `feat/SF-14-index` | 0 | ⏳ in flight |
+| `W14` + `W18` | Developer 1 | none | 0 | ⏳ in flight |
+| `W27` | Developer 2 | none | 0 | ◐ in-review @ `655b527` |
 
-⛔ **`trial/*` branches are the CTO's trial merges and are NOT rows.**
+⛔ **The two instruments disagree BY ONE ROW IN EACH DIRECTION this round**, which
+is new: ⚠️ **`git log` alone is blind to `SF-14` (a checkout, no commit) and
+`git worktree list` alone is blind to `W70` (commits, no checkout).** ⭐ **Ruling
+171's primary/corroborating pair arriving as a live reading, and this board is
+still the only total instrument.** ⛔ **`trial/*` branches and `wt/cto44` are the
+CTO's, and are NOT rows.**
 
 ## Next rows — placed, not yet taken
 
@@ -62,10 +69,14 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W76` | `render.page`'s helpers are re-drawn before `SF-14` becomes their third private importer | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 2 | `SF-14` | step 2.3's last row; the step cannot close without it. `team` class | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 3 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 4 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+| 1 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
+| 2 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+
+⛔ **Round 35's pair — `W70` then `SF-14` — is SPENT: both are in flight above.**
+⚠️ **This table is the QUEUE BEHIND them, and `W76`'s hold on `SF-14` is
+DISCHARGED: `W76` merged `c3e2919`.** ⭐ **Re-derived here at `bfb8c8c` by the
+board architect, not received from round 35** — ⛔ **so the next PO round re-takes
+it rather than inheriting it (Ruling 97).**
 
 ## The register — every `W` row
 
@@ -75,6 +86,7 @@ else.** ⚠️ **A cell in this table carries no measurement, no ref other than 
 merge ref, and no reasoning** — those are the three things that go stale, and
 they have exactly one home each.
 
+<!-- register -->
 | # | Row | Owner | State | Detail |
 |---|---|---|---|---|
 | W1 | `require_slug`/`require_ordinal` format `{value!r}`, so every caller inherits an R7 echo | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w1-requireslugrequireordinal-format-valuer-so-every-caller-inherits-an-r7-echo) |
@@ -145,14 +157,17 @@ they have exactly one home each.
 | W67 | The two zero-headroom test modules | framework agent | `todo` — ahead of any row adding a test to `corpus/container` or `corpus/manifest` | [`rows/W67.md`](rows/W67.md) |
 | W68 | The gate walk derives from the tree, not the disk | framework agent | ✅ done — merged late in round 34 | [record](BOARD-ARCHIVE.md#w68-the-gate-walk-derives-from-the-tree-not-the-disk) |
 | W69 | A closed check refusing a bare task-count literal | framework agent | `todo` | [`rows/W69.md`](rows/W69.md) |
-| W70 | Every Acceptance clause expressible as an `Acceptance` | framework agent | `todo` | [`rows/W70.md`](rows/W70.md) |
+| W70 | Every Acceptance clause expressible as an `Acceptance` | framework agent | ⏳ in flight — `chore/W70-consumer-clause-sweep` | [`rows/W70.md`](rows/W70.md) |
 | W71 | The tilde arm, and both callers over all three shapes | framework agent | `todo` | [`rows/W71.md`](rows/W71.md) |
 | W72 | `pinned` vs `tracked` in `workspace.json` | framework agent | `todo` — re-scoped round 34 | [`rows/W72.md`](rows/W72.md) |
 | W73 | The re-homed `E11` comparison | INTEGRATION side | `todo` | [`rows/W73.md`](rows/W73.md) |
 | W74 | The sibling runnable-module check widens | framework agent | `todo` — placed round 34, third | [`rows/W74.md`](rows/W74.md) |
 | W75 | No document says how `studyforge` gets on the path | framework agent | `todo` | [`rows/W75.md`](rows/W75.md) |
-| W76 | `render.page`'s five cross-package helpers are private and every renderer imports them | framework agent | `todo` — placed round 34, first | [`rows/W76.md`](rows/W76.md) |
+| W76 | `render.page`'s five cross-package helpers are private and every renderer imports them | framework agent | ✅ done — `c3e2919` | [record](BOARD-ARCHIVE.md#w76-renderpages-five-cross-package-helpers-are-private-and-every-renderer-imports-them) |
 | W77 | The re-homed corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` | INTEGRATION side | `todo` | [`rows/W77.md`](rows/W77.md) |
+| W78 | Line-number citations into files a live document does not own | framework agent | `todo` — minted round 35 | [`rows/W78.md`](rows/W78.md) |
+| W79 | Two small carries — each golden regenerator names the other, and the census comment cites its command | framework agent | `todo` — minted round 35 | [`rows/W79.md`](rows/W79.md) |
+<!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
 register carries them as one.** ⭐ **`W99` is a reserved sentinel and is not an

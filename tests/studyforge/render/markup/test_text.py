@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/render/page/text.py` (R12)."""
+"""Mirror of `src/studyforge/render/markup/text.py` (R12)."""
 
 from __future__ import annotations
 
 import pytest
 
-from studyforge.render.page import text
+from studyforge.render.markup import text
 
 #: A rooted href naming somebody's home directory — the R7 shape the `outside`
 #: class exists for. ⛔ **Joined, never written as a literal**, because the
@@ -32,6 +32,12 @@ REFUSED = (
     ("file:///etc/passwd", "scheme"),
     ("ftp://host/x", "scheme"),
     ("notes:draft.html", "scheme"),
+    # ⛔ A ONE-CHARACTER scheme, and it is here because `W76`'s mutant sweep
+    # found the row missing: RFC 3986's `scheme` is one ALPHA followed by *zero*
+    # or more, so `_SCHEME`'s `*` is load-bearing. ⚠️ With a `+` there instead,
+    # `x:` has no scheme to this function, falls through to the relative branch
+    # and is **admitted** — the gate quietly widened, which is the `W57` shape.
+    ("x:alert(1)", "scheme"),
     # A spelling a browser normalises before it parses. ⛔ Each of these has no
     # scheme to a naive reader and a refused one to a browser.
     ("java\tscript:alert(1)", "spelling"),
