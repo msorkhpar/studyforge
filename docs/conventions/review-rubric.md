@@ -781,12 +781,43 @@ that "no Python changed" makes lint irrelevant. ⭐ **That exemption is void.**
 Ruling 79's line is stated on **every** branch.
 
 ⭐ **And the line names the composition, because the bare number misleads.**
-*"397 files"* reads as Python and is not:
+*"397 files"* reads as Python and is not.
+
+##### ⛔ Ruling 86a — the denominator is derived from the TREE, never from the disk
+
+⚠️ **Corrected within the round that wrote Ruling 86, by `W30/2`, and it is the
+ruling's own shape turned back on it.** ⛔ **`ruff format --check .` walks the
+disk.** An untracked file in the checkout inflates it — and because ruff formats
+**Markdown** (Ruling 86, immediately above), ⛔ **the stray file is usually an
+agent's own draft handoff.** Measured, same commit, same image:
+
+```
+ruff format --no-cache --check .                     -> 401     ⛔ disk
+  … with one untracked .md present                   -> 402     ⛔ moved
+git ls-files -z '*.py' '*.md' \
+  | xargs -0 ruff format --no-cache --force-exclude --check
+                                                     -> 401     ⭐ tree
+  … with the same untracked .md present              -> 401     ⭐ held
+```
+
+⛔ **So a file count is not a property of the commit and may not be compared
+across worktrees.** ⚠️ **Two reviewers once agreed on `398` for different
+reasons** — one had an untracked file, the other had their own handoff's
+Markdown in its place. ⭐ **That is Ruling 81 (*a number can be stable while its
+set is not*) arriving inside the instrument Ruling 79 made mandatory.**
+
+⭐ **The rule, in two parts:**
+
+1. ⛔ **The verdict is the EXIT CODE.** That is what `--check` is for and it is
+   reproducible on any checkout.
+2. ⛔ **A denominator, if quoted, is computed over `git ls-files` with
+   `--force-exclude`**, and is labelled `tracked`. ⚠️ A number taken from the
+   disk walk is quoted only as `disk (not reproducible)`, or not at all.
 
 ```
 Lint: pinned green — ruff 0.16.6 in the dev image
-      check exit 0 over 295 files (294 .py + pyproject.toml)
-      format --check exit 0 over 397 files (294 .py + 103 .md)
+      check exit 0        · 296 .py + pyproject.toml   (tracked)
+      format --check exit 0 · 296 .py + 105 .md = 401  (tracked)
 ```
 
 ⚠️ **Version-bound, and say so.** This is 0.16.6's behaviour; the denominator's
