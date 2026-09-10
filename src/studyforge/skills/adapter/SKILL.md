@@ -21,8 +21,8 @@ studyforge validate <corpus-root>        # 0, or a named list of what is wrong
 
 ⭐ Everything in this procedure exists to make that command reachable by
 somebody who has never read the framework's internals. **Measured at
-`2d86328`:** `validate` runs **12 checks** — 8 about the archive alone, 2 about
-placement, 2 about the source — and can report **22 distinct rule ids**. It
+`f816454`:** `validate` runs **12 checks** — 8 about the archive alone, 2 about
+placement, 2 about the source — and can report **23 distinct rule ids**. It
 reports every one of them in a single run, so there is never a reason to fix
 one problem per invocation.
 
@@ -158,21 +158,30 @@ python3 -m <package> <corpus-root>
   it, so a dict order or a directory listing that leaked into the output is a
   test failure rather than a mystery three integrations later.
 
-⛔ **And the first run will report the adapter's own files as `unclassified`.**
-⚠️ **Measured 2026-09-10, at `corpus_api: 1`:** scaffolding an eight-file
-adapter into a clean corpus and validating produces **8 `unclassified`
-findings — one per generated file — and the corpus is `NOT valid` until every
-one of them is named in `content.exclude` by exact path.**
+⛔ **Declare the adapter itself, or the first run reports every file of it.**
 
-- ⭐ **Do it, and know what you are writing.** `content.exclude` matches by
-  **exact path equality**: a directory does not cover the files beneath it and
-  a glob does not match. **Measured:** `{"path": "ingest"}` classifies nothing.
-- ⚠️ **`exclude` means *material withheld*, and the adapter is not material.**
-  So the eight entries are a true statement in the only vocabulary the document
-  has, and they have to be re-typed whenever the scaffold's file list changes.
-  ⛔ **That is a hole in this skill, not a chore** (R19) — it is filed as
-  `SK-02/1` and it is the same shape reconnaissance reported from the other
-  side. Report it again if it is still here; do not quietly maintain the list.
+⚠️ **Measured 2026-09-10, at `corpus_api: 1`:** scaffolding an eight-file
+adapter into a clean corpus and validating produced **8 `unclassified` findings
+— one per file — and `NOT valid`.** ⭐ Correctly: the adapter is code this
+corpus is *built with*, and a manifest that said nothing about it left it
+unaccounted for, which is how a corpus is read twice or not at all.
+
+⭐ **`corpus_api: 2` is the vocabulary for it, and the scaffold hands you the
+data.** `content.not_material` takes **globs**, each with its own reason:
+
+```python
+made.not_material  # ({"glob": "ingest/**", "why": ...}, {"glob": "tests/ingest/**", ...})
+```
+
+- ⛔ **Paste those into `corpus.json` rather than writing your own.**
+  Customisation enters as manifest data (R19) — and *produced* data is the only
+  kind that does not go stale when this skill's file list changes.
+- ⚠️ **Two globs, not eight paths.** `content.exclude` matches by **exact path
+  equality** — **measured:** `{"path": "ingest"}` classifies nothing at all —
+  and `exclude` means *material withheld*, which the adapter is not.
+- ⛔ **At `corpus_api: 1` there is no third state**, so a v1 manifest can only
+  say this in `exclude`, one exact path at a time, in the wrong words. That is
+  the version's limitation and R9 is the answer to it: bump the manifest.
 
 ### 8. Hand over the exit code **and** what it does not cover
 
@@ -214,12 +223,12 @@ cannot judge whether the archive is the material. What goes with it:
 *rule* and point here; they do not restate the numbers, and — R1 — they name no
 corpus at all.
 
-### A1 — what `validate` judges, measured at `2d86328`
+### A1 — what `validate` judges, measured at `f816454`
 
 | | count | what they are |
 |---|---|---|
 | checks | **12** | 8 structure, 2 paths, 2 source |
-| rule ids | **22** | every distinct way one run can say *no* |
+| rule ids | **23** | every distinct way one run can say *no* |
 | block types | **11** | the closed vocabulary a document body is made of |
 
 ⭐ **The two halves are not substitutes.** The structure checks compare the
@@ -231,9 +240,9 @@ archive.
 
 ### A2 — the three formats, and the version each is at
 
-| document | key | at `2d86328` | this build reads |
+| document | key | at `f816454` | this build reads |
 |---|---|---|---|
-| `corpus.json` | `corpus_api` | **1** | 1 |
+| `corpus.json` | `corpus_api` | **2** | 1 and 2 |
 | `container.json` | `container_api` | **2** | 1 and 2 |
 | `unit-NN/<kind>-N.json` | `raw_api` | **1** | 1 |
 
@@ -243,7 +252,8 @@ membership test — which is the one check whose whole job is to refuse a
 document this build cannot read. The framework's helper already does this;
 an adapter that wrote its own would not.
 
-⭐ **`container_api: 2` is why an `origin` may name a region.** A unit whose
+⭐ **`corpus_api: 2` is why `content.not_material` exists** — the third state
+step 7 needs — and **`container_api: 2` is why an `origin` may name a region.** A unit whose
 material is *part* of a file records the file as `origin` and the heading it
 opens at as `origin_section` — and a map that uses that shape while calling
 itself `container_api: 1` is **refused**, rather than read as whole files.

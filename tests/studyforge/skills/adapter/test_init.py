@@ -38,7 +38,7 @@ def test_the_skill_carries_the_measurements_rather_than_asserting_shape():
     # ⛔ R19: anything a second source would have to re-derive is a hole in the
     # skill. Each number below was counted in the pinned image, not inherited.
     text = skill_text()
-    for measured in ("**12 checks**", "**22 distinct rule ids**", "**11\ntypes**", "12.2%"):
+    for measured in ("**12 checks**", "**23 distinct rule ids**", "**11\ntypes**", "12.2%"):
         assert measured in text, f"the skill no longer carries the measurement {measured!r}"
 
 

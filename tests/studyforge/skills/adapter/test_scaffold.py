@@ -7,7 +7,7 @@ import json
 
 import pytest
 
-from studyforge.corpus.manifest import parse
+from studyforge.corpus.manifest import MIN_WHY_CHARS, Classification, parse
 from studyforge.skills.adapter import (
     PARTS,
     SOURCE_LINE_CEILING,
@@ -92,6 +92,48 @@ def test_regenerate_does_rewrite_when_only_generated_files_are_present(tmp_path)
     generated.write_text("# edited by hand\n", encoding="utf-8")
     scaffolded.write(tmp_path, regenerate=True)
     assert "# edited by hand" not in generated.read_text(encoding="utf-8")
+
+
+def test_the_scaffold_declares_its_own_files_not_material(tmp_path):
+    # ⛔ `SK-02/1`: every file a scaffold writes is code the corpus is built
+    # with, so a manifest that says nothing leaves all eight `unclassified` —
+    # and R19 says the remedy arrives as data rather than as instructions.
+    scaffolded = made()
+    entries = scaffolded.not_material
+    assert entries, "the scaffold declares nothing about the files it writes"
+    policy = parse(
+        json.dumps(
+            {
+                **corpora.MANIFEST,
+                "content": {
+                    "include": ["src/*.md"],
+                    "not_material": [dict(entry) for entry in entries],
+                },
+            }
+        )
+    ).content
+    for where in scaffolded.paths:
+        assert policy.classify(where) is Classification.NOT_MATERIAL, where
+
+
+def test_the_declaration_is_globs_so_it_survives_this_skill_changing():
+    # ⚠️ Two entries for eight files. A list of exact paths would have to be
+    # re-typed the next time a part is added, which is the retyping R19 forbids.
+    entries = made().not_material
+    assert len(entries) < len(made().paths)
+    assert all(entry["glob"].endswith("/**") for entry in entries)
+
+
+def test_every_declaration_carries_a_reason_the_manifest_will_accept():
+    # ⛔ A reason the document refuses is a reason the integrator has to invent.
+    for entry in made().not_material:
+        assert len(entry["why"]) >= MIN_WHY_CHARS, entry["glob"]
+
+
+def test_the_report_hands_over_the_declaration_rather_than_describing_it():
+    lines = made().lines()
+    assert any("content.not_material" in line for line in lines)
+    assert any(line.strip() == "ingest/**" for line in lines)
 
 
 def test_a_plan_is_required_and_a_manifest_is_not_one():

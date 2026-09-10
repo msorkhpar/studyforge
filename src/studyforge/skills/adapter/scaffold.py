@@ -45,7 +45,7 @@ shipped and `src/` may not import it. `tests` pins this number against
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.skills.adapter.parts import PARTS, Part
 from studyforge.skills.adapter.plan import Plan
@@ -54,6 +54,14 @@ from studyforge.skills.adapter.plan import Plan
 #: purpose: `tools.quality.config` owns the number and is not importable from
 #: shipped code. ⛔ The copy is pinned by a test, not by a reader's memory.
 SOURCE_LINE_CEILING = 400
+
+#: Why a scaffold's own files are not material. ⚠️ Long enough to clear the
+#: manifest's minimum on its own, because a reason the document refuses is a
+#: reason the integrator has to invent — which is the retyping R19 forbids.
+WHY_NOT_MATERIAL = (
+    "the adapter that produces this corpus's archive, and its tests: code the "
+    "corpus is built with rather than material the corpus teaches."
+)
 
 
 class ScaffoldRefused(ValueError):
@@ -102,6 +110,25 @@ class Scaffold:
         """The paths a person writes. ⭐ Exactly one, and naming it is R19's whole point."""
         return tuple(item.where for item in self.files if not item.generated)
 
+    @property
+    def not_material(self) -> tuple[dict[str, str], ...]:
+        """The `content.not_material` entries this scaffold implies (`corpus_api: 2`).
+
+        ⛔ **Generated, because otherwise it would be retyped.** Every file a
+        scaffold writes is code the corpus builds *with*, not material it
+        teaches — so without a declaration `validate` reports every one of them
+        as `unclassified`, correctly. ⭐ Handing back the globs is R19's own
+        remedy: customisation enters as manifest data, and the data is produced
+        rather than dictated.
+
+        ⚠️ Globs rather than one entry per file, so the list does not change
+        when this skill's file set does.
+        """
+        return tuple(
+            {"glob": glob, "why": WHY_NOT_MATERIAL}
+            for glob in sorted({f"{PurePosixPath(where).parent}/**" for where in self.paths})
+        )
+
     def oversized(self, ceiling: int = SOURCE_LINE_CEILING) -> tuple[str, ...]:
         """Every generated file over R11's ceiling — measured, not asserted."""
         return tuple(item.where for item in self.files if item.length > ceiling)
@@ -133,6 +160,8 @@ class Scaffold:
         out += self.plan.lines()
         out += ["", f"files ({len(self.files)})"]
         out += [item.line() for item in self.files]
+        out += ["", f"content.not_material ({len(self.not_material)}) — add these to corpus.json"]
+        out += [f"  {entry['glob']}" for entry in self.not_material]
         out += ["", self.verdict()]
         return out
 

@@ -74,10 +74,10 @@ def _scaffolded(root):
     corpora.write(root)
     made = scaffold(plan_for(parse((root / "corpus.json").read_text(encoding="utf-8"))))
     made.write(root)
-    # ⚠️ `SK-02/1`: the manifest cannot classify the adapter until the adapter's
-    # paths exist, so this amendment happens after the scaffold rather than
-    # before it. That ordering is the finding, not a convenience.
-    corpora.classify(root, made.paths)
+    # ⭐ `SK-02/1`: the adapter's own files are code, not material, so the
+    # manifest has to say so or `validate` reports every one of them. The globs
+    # come from the scaffold — nothing here is retyped (R19).
+    corpora.classify(root, made.not_material)
     return made
 
 
@@ -189,7 +189,7 @@ def test_the_manifest_the_walkthrough_writes_is_the_one_the_plan_reads(tmp_path)
     root = tmp_path / "corpus"
     corpora.write(root)
     manifest = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    assert manifest["corpus_api"] == 1
+    assert manifest["corpus_api"] == 2
     assert manifest["exercises"] is False
     assert parse(json.dumps(manifest)).source == "walkthrough"
 

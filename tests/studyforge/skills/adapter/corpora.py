@@ -3,11 +3,11 @@
 ⛔ Synthetic on purpose. A fixture that depends on a sibling repository being
 checked out is a fixture that skips, and a skipped check is not evidence.
 
-⚠️ **The manifest here is written twice, and that is the finding rather than an
-accident.** A corpus is only `validate`-clean once every file the scaffold
-wrote is named in `content.exclude` by exact path — so the paths cannot be
-known until the scaffold has been rendered, and the manifest has to be amended
-afterwards. It is recorded as `SK-02/1`.
+⚠️ **The manifest is written twice, and the second write is the point.** A
+corpus is only `validate`-clean once the adapter's own files are declared
+`content.not_material` — and the globs come from the scaffold rather than from
+a person, which is R19's own remedy applied to the hole this task found
+(`SK-02/1`).
 """
 
 from __future__ import annotations
@@ -20,7 +20,7 @@ INGESTED = "2026-01-01"
 
 #: The manifest before the adapter exists — the state reconnaissance hands over.
 MANIFEST = {
-    "corpus_api": 1,
+    "corpus_api": 2,
     "source": "walkthrough",
     "title": "A Walkthrough Corpus",
     "levels": ["course"],
@@ -30,10 +30,6 @@ MANIFEST = {
     "content": {"include": ["src/*.md", "README.md"]},
     "permitted_edits": [],
 }
-
-#: Why the adapter's own files are withheld. ⚠️ One sentence, over the
-#: manifest's minimum, and it is the sentence `SK-02/1` says is the wrong shape.
-WHY = "the adapter that produced this archive: code rather than teaching material."
 
 #: A filled-in `read.py` — what step 5 of `SKILL.md` produces. ⭐ Short on
 #: purpose: everything that makes an adapter work is downstream of it and is
@@ -124,8 +120,8 @@ def write_manifest(root: Path, manifest: dict) -> None:
     (root / "corpus.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 
 
-def classify(root: Path, paths: tuple[str, ...]) -> None:
-    """Amend the manifest so the adapter's own files are classified (`SK-02/1`)."""
+def classify(root: Path, entries) -> None:
+    """Declare the adapter's own files not material, from the scaffold's own globs."""
     manifest = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    manifest["content"]["exclude"] = [{"path": where, "why": WHY} for where in paths]
+    manifest["content"]["not_material"] = [dict(entry) for entry in entries]
     write_manifest(root, manifest)
