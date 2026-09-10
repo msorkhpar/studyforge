@@ -120,6 +120,27 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
 - ⭐ **A handoff for two tasks declares both** — `**Kind:** task handoff — W17,
   W19` — and its title names both. The filename must begin with the first.
 
+### ⛔ A record is ANNOTATED, never edited — and its header names a REF, not a pointer
+
+⛔ **Ruling 106.** ⚠️ **A `session log`, a `ruling record` and a task handoff are
+RECORDS: their contract is fidelity to what was known when they were written.**
+⭐ **A living document — `CLAUDE.md`, `BOARD.md` — is the opposite: its contract
+is CURRENCY, and it is edited.** ⛔ **Each one's failure mode is the other's
+contract**, which is why the two are never maintained the same way.
+
+- ⭐ **A record that goes out of date is CORRECTED BENEATH, and the correction
+  carries the ref it was taken on.** ⛔ **Editing the original so it reads true
+  today destroys the only thing a record is for**, and it is how a document
+  quietly claims its author knew something they could not have known.
+- ⛔ **But most such staleness is a HEADER-FORM defect rather than a staleness
+  defect, and it is avoidable outright.** ⚠️ **A field labelled `Release tip:`
+  asserts a MOVING POINTER and goes stale the instant anything merges. A field
+  labelled `Measured at: <branch> @ <sha>` is a READING BOUND TO A REF and cannot
+  go stale at all.** ⭐ **When this fired, the numbers under the header were exact
+  and stayed exact — re-measured at the named ref one round later and reproduced
+  to the test; only the word *tip* had aged.** ⛔ **So a record states the ref it
+  measured, never the position it inferred a branch was in.**
+
 ⛔ **Tag an illustrative fence `text`, not `python`.** The formatter reads
 Markdown: `ruff format` discovers `.md`, formats the Python inside a ```` ```python ````
 fence, and leaves ```` ```text ```` and untagged fences alone — measured, and it
@@ -154,6 +175,25 @@ So findings carry a marker, and the marker creates an obligation:
 - ⭐ **`[none]`** — *nothing outside this task's scope*, said rather than left
   to be inferred. ⛔ It carries the sentence that says what was looked at, it
   may not stand beside a real finding, and it is the **only** way to write zero.
+
+⛔ **The vocabulary is CLOSED at these three, and a fourth was tried and
+refused** (Ruling 105). ⚠️ **`[negative]` — *"I looked, and the answer was no"* —
+was written in three documents, by two roles, across three rounds, before anybody
+checked whether it counted.** ⛔ **It does not join them.** ⭐ **A marker encodes
+ROUTING, and a recorded negative routes exactly where a `[local]` routes:
+nowhere.** ⚠️ **Polarity is content, not triage**, so it is written in the
+finding's own first words rather than in a fourth word of vocabulary:
+
+- ⭐ **A recorded negative IS a finding, it is marked `[local]`, and its text
+  opens with `A NEGATIVE result.`** ⛔ **It is a finding because it was
+  investigated, concluded, and recorded so that the next reader does not re-raise
+  it** — ⚠️ **and because a round that disproves three suspicions has not produced
+  fewer findings than one that confirms them.**
+- ⛔ **A "negative" that names a fix, a remedy, a row, or a change anyone should
+  make is NOT a negative.** ⭐ **It is `[local]` or `[structural]` on its merits,
+  whatever is true about how it was originally filed** — ⚠️ **a finding that was
+  NARROWED is still a finding, and that is the failure the fourth marker actually
+  produced in one of its three uses.**
 
 ⭐ **The test for `[structural]` is one question: *would this happen again to
 somebody else?*** If yes, mark it. ⚠️ Over-marking costs a sentence in a triage
@@ -610,6 +650,32 @@ file existed; on a re-capture **619 clips went on speaking the previous wording*
 and the run reported *"0 synthesised"* with every gate green (spec §8.2). ⭐ A
 green report meaning *"I did not look"* is indistinguishable from one meaning
 *"there was nothing to find"*, and only the check itself can tell them apart.
+
+#### ⛔ Ruling 107 — the marker check judges 40 of 84 documents and says so nowhere
+
+⛔ **Measured 2026-09-10 at `6e80c82`:** `check_markers` runs only where
+`kind == TASK_HANDOFF` (`tools/quality/handoffs/__init__.py`), so that directory's
+**38 `ruling record`s, 3 `survey`s, 2 `session log`s and 1 `index` — 44 of 84
+documents — are never read for markers at all.** ⚠️ **The 38 ruling records are
+the CTO's and the PO's own rounds**, which is exactly where the findings that
+ROUTE work are filed. ⛔ **The floor reports `0` across the whole directory, and
+that `0` is the green report meaning *"I did not look"*** — this section's own
+failure, occurring inside the instrument this section governs.
+
+⭐ **It is also why the `[negative]` marker LOOKED invisible while not being the
+cause: registering it changes nothing.** ⛔ **Measured both ways — 0 handoff
+findings before the marker was added to the registry and 0 after** — ⚠️ **because
+all three of its carriers are ruling records, and no marker in any of them has
+ever been counted by anything.** ⭐ **The marker was a symptom; the kind filter is
+the defect.**
+
+⛔ **This needs a row, and its one hard part is named so the row is not scoped
+blind: a ruling record whose SUBJECT is the marker vocabulary must be able to
+spell the markers.** ⭐ Ruling 73's table already shows three of the four
+mention-shapes are safe; the fourth — a line OPENING with a marker — is the shape
+such a document most needs. ⚠️ **The remedy is not a weaker reader; it is an
+exemption the document DECLARES**, the way `**Kind:**` is already declared.
+⛔ **PO: mint.**
 
 ## Reporting
 
