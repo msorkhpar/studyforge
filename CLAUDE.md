@@ -101,9 +101,16 @@ form needs a URL that resolves. The components are:
 
 ✅ **M0 and M1 are both CLOSED.** **M1 closed 2026-09-10 at `2fe56a4`**, all nine
 of its close conditions true at that one ref. ⏳ **Open: M2 — a corpus is
-readable. In flight: M2 step 2.1 — `SF-31`, `SF-04`, `SF-35`, `SF-36`,
-`SK-02`.** ⛔ **Do not start on M0 or M1.** ⭐ **`docs/tasks/BOARD.md` says what is
-open in the step and who has it; this line says only which milestone.**
+readable. In flight: M2 step 2.1.** ⛔ **Do not start on M0 or M1.**
+
+⛔ **THE TASK LIST THAT USED TO STAND HERE HAS BEEN REMOVED, and its removal is
+the point.** ⚠️ **This line named five step-2.1 tasks; two of them — `SF-31` and
+`SF-04` — merged, and this file said *in flight* about both of them anyway.**
+⭐ **A step's MEMBERSHIP belongs in `docs/tasks/README.md`; a task's STATE belongs
+in `docs/tasks/BOARD.md`; ⛔ this file carries neither, because a fact written in
+two places goes stale in the copy nobody re-measures — and the copy nobody
+re-measures is always the one that is not the instrument.** ⚠️ **PO round 25
+found EIGHT stale board rows by exactly that mechanism.**
 
 ⚠️ **`SF-35` and `SF-36` were added to step 2.1 at round 24 and they are not new
 scope: they are two CTO rulings that had no task id.** ⛔ **A ruling that names

@@ -205,6 +205,26 @@ condition 8 named the bar in its legibility bar and had to **void** the symptom 
 unfalsifiable, because no ref populated it. The bar's rules are `SF-34`'s; its
 *content* is this task's, and until it lands nobody can judge either.
 
+#### ⛔ `W32` RE-ROUTED HERE, 2026-09-10 (PO round 25) — the mixed-form contents fixture
+
+⛔ **`W32` was a queue row for four rounds and it could never win one, because
+its exposure is `0` BY CONSTRUCTION: there is no parser for it to catch out.**
+⭐ **Measured at `ce58a36`: `src/studyforge/contents/` is `__init__.py` and 20
+lines, and a `grep` for any list-or-heading parse in it returns nothing.**
+⚠️ **A fixture whose acceptance reads *"the fixture fails if a parser reads only
+the list form"* is unfalsifiable while no parser exists** — ⛔ **which is
+`CTO-29/3`'s family arriving in a queue instead of an acceptance document.**
+
+⭐ **So it becomes an acceptance condition on the task that first needs it, and
+this is that task.** ⛔ **The donation is real material, from check 6's `F8`
+contribution:** a contents document listing **36 of 38** units as list items and
+**2** as headings. ⚠️ **A parser written against the list form reads 36, emits
+36, and raises nothing** — a plausible SHORT PARSE with no symptom.
+
+⭐ **The clause:** ⛔ **a contents document whose entries are MIXED list items and
+headings parses to the FULL count, and the fixture FAILS if a reader sees only
+the list form.** ⚠️ **The fixture is built by this task, not before it.**
+
 ---
 
 ### SF-14 — Root index renderer
