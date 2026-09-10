@@ -55,12 +55,16 @@ from collections.abc import Collection
 from studyforge.describe import describe
 
 #: The fields R9 versions, for the tree check in `tests/studyforge/
-#: test_version.py` that refuses a second implementation. ⚠️ The TOC schema
-#: version has no field name yet — E03 mints it — and it belongs in this
-#: tuple on the day it does. ⭐ `identity_api` joined it the day SF-03 minted
-#: it, `content_api` the day SF-09 did, and `site_api` the day SF-04 did, which
+#: test_version.py` that refuses a second implementation. ⭐ `identity_api`
+#: joined it the day SF-03 minted it, `content_api` the day SF-09 did,
+#: `site_api` the day SF-04 did, and ⭐ **`toc_api` the day SF-13 did** — which
 #: is the convention this line asks for: a task that versions a new contract
 #: registers it here in the same commit, or the guard cannot see it.
+#:
+#: ⚠️ **`toc_api` versions TWO documents** — `toc.json` and the `status.json`
+#: that annotates it — because they are two halves of one schema (spec §5's
+#: register calls it *"the TOC schema version"* for both). ⛔ A build that
+#: spoke one half and not the other could join a pair it does not understand.
 #:
 #: ⚠️ **`site_api` is registered here and is read through `is_supported`, not
 #: through `check`** (Ruling 95). It is the one member of this tuple whose
@@ -72,7 +76,8 @@ from studyforge.describe import describe
 #: ⛔ **Two tasks appending here conflict, and the resolution is always
 #: keep-both** (Ruling 9). The explicitness is the mechanism — a tuple that
 #: merges cleanly is one nobody had to look at — so a conflict here is the
-#: guard working, and it recurs at the TOC schema version.
+#: guard working, and it recurred at the TOC schema version exactly as this
+#: line predicted it would.
 CONTRACT_FIELDS = (
     "corpus_api",
     "container_api",
@@ -82,6 +87,7 @@ CONTRACT_FIELDS = (
     "identity_api",
     "content_api",
     "site_api",
+    "toc_api",
 )
 
 

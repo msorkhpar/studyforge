@@ -71,7 +71,26 @@ time, which is exactly why it comes first rather than last.
 
 ## Milestones in detail
 
-Within a milestone, each **step** runs in parallel; steps are sequential.
+⚠️ **~~Within a milestone, each step runs in parallel~~; steps are sequential.**
+
+⛔ **CORRECTED 2026-09-10 (PO round 29, Ruling 127's round; CTO round 36 item
+5). A STEP IS A BATCH BOUNDARY, NOT A PARALLELISM GUARANTEE.** ⭐ **A step says
+*nothing outside this step may start* — which is a real and useful constraint —
+and it says **nothing at all** about edges INSIDE it.** ⛔ **In-step edges are
+read off the epic document, never inferred from step membership.**
+
+⚠️ **The sentence that stood here was stated as a guarantee a dispatcher may act
+on, and it is not one: it is a heuristic that happens to hold in most steps.**
+⛔ **Step 2.2 is the counter-example and it is live — `SK-08` *Depends on*
+`SK-07` and both are in it (`E11-skills-authoring.md`, `SK-08`'s header line).
+A dispatcher reading the old sentence puts two developers on `SK-07` and `SK-08`
+at once.** ⭐ **`PO-28/2` found it; the CTO's ruling is narrower than either
+option weighed there: the SENTENCE is the defect and the PLAN is fine.**
+
+⛔ **AND THE FIX THAT WAS REFUSED, recorded so it is not re-proposed: moving
+`SK-08` into a step 2.3.** ⚠️ **That is renumbering the plan to protect a
+sentence, and the next in-step edge would move it again.** ⭐ **Membership stays
+here; state stays in `BOARD.md`; the ordering inside a step is the epic's.**
 
 ⭐ **The spine is the reading floor** (spec §11.0). M0–M4 build a framework that
 turns material into a narrated, navigable, offline study site, and that is a
