@@ -180,10 +180,26 @@ task owns its numbers.
 
 ### SF-35 — `content.not_material`, and `corpus_api: 2`
 **Milestone** **M2** (step 2.1) · **Depends on** SF-02 · **Team** solo
-**Owns** `corpus/manifest/content.py`
+**Owns** `corpus/manifest/content.py`, `corpus/manifest/document.py:68`
+(`KNOWN_CORPUS_API`), and spec §4's `content` block with §R9's register row
+**Licence, not ownership** ⛔ **`validate/source.py` is owned by `SF-36`.**
+`SF-35` may write TWO regions of it and nothing else: the rule-constant block
+after `RULE_ORIGIN_MISSING`, and `check_unclassified` — its docstring and its
+classify loop. ⭐ **Measured disjoint from `SF-36`'s regions** (`CTO-31/6`,
+ruled by the PO at round 26; the measurement is in `BOARD.md`).
 **Context** ~25k — spec §4's `content` block and §R9's register,
-`corpus/manifest/document.py`, `validate/source.py`,
+`validate/source.py`,
 `handoffs/CTO-2026-09-10-round26.md` (Ruling 90) and `-round27.md` (Ruling 98)
+
+⛔ **R11, AND IT IS A CONDITION OF THIS TASK.** ⭐ `validate/source.py` is 377
+lines at `d77cb85`, 398 with this task's edit and 399 with `SF-36`'s; **merged it
+is 419 against R11's 400-line ceiling**, and each branch is individually legal.
+⛔ **Whichever of the two lands SECOND merges the tip first, keeps BOTH constant
+blocks at the shared insertion anchor, and adds a `Size exception:` line to the
+module docstring whose reason NAMES `W44`** — the row that splits the module and
+deletes that line. ⚠️ **The opt-out is a deferral with an id; without the id it
+is a permanent exception nobody owns.** ⛔ **Neither task splits the module:
+splitting across a task boundary is what `SF-36/2` correctly declined.**
 
 ⛔ **Ruled: Ruling 90 (CTO round 26), sharpened by Ruling 98 (round 27), which
 also ruled that this is its OWN task and does not ride with `SF-04`** — the two
@@ -372,6 +388,20 @@ grep -n  '"origin"' tests/fixtures/depth2/archive/*/*/container.json   # -> decl
 ⛔ **Pass condition for this task:** `KNOWN_CONTAINER_API` speaks `{1, 2}`, the
 manifest's `corpus_api` is **unchanged**, and a manifest at `corpus_api: 2` with
 no object `origin` anywhere still parses.
+
+#### ⛔ ADDED 2026-09-10 (PO round 26), AFTER `e4a2677` was complete — `SF-36/1`
+
+⛔ **A contract bump and its worked example land in ONE commit.** ⭐ Spec §4's
+worked example declares `container_api: 1` and documents no region shape, so
+after this task the spec teaches the OLD shape to the next reader. ⚠️ **`SF-35`'s
+definition already carries exactly this clause for `corpus_api`/`not_material`
+and this one did not — that asymmetry is the real defect**, and it is why the
+finding had to be raised by the author instead of being met by the task.
+
+⚠️ **This clause was written after the branch was complete and is recorded with
+its date for that reason.** ⛔ **The CTO decides whether it binds `e4a2677` or
+its successor; the PO is not changing a bar mid-review by stealth.** ⭐ **If the
+branch merges as-is, the clause rides with `W44`.**
 
 ⚠️ **Why the reasoning that reached `3` was right in shape and wrong in set.**
 R9's rule — *a document USING the new shape must be unreadable to a build that
