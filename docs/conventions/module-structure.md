@@ -165,6 +165,66 @@ serve/
 `__init__.py` is the contract. If a consumer has to import
 `serve.routes.content` directly, the surface is wrong.
 
+### ⛔ Ruling 100 (CTO round 28) — a task's `Owns` cell naming a `.py` file is a PREDICTION about size, not a licence to exceed R11
+
+⛔ **When the single file a task's `Owns` names would exceed 400 lines, the
+package split is the DEFAULT and needs no re-planning. The size exception is
+the thing that needs one.**
+
+```bash
+wc -l <the file as first written>        # > 400 ?  then split, and say so in the handoff
+```
+
+⭐ **Pass condition: the split lands inside the path the `Owns` cell names, the
+largest module is under the ceiling, and no `Size exception:` is claimed.**
+⛔ **A split that reaches outside that path is scope and is reviewed as scope.**
+
+⭐ **Measured, `SF-31`, 2026-09-10.** `Owns` said `studyforge/cli/plan.py`; as
+one file it was **455**. Shipped as `cli/plan/` — `report` 228, `derive` 198,
+`__init__` 96, `cli` 69, `__main__` 16 — largest at **57 % of the ceiling**,
+no exception claimed, and the shape copied from `validate/`, the other command
+that reads a corpus root.
+
+⚠️ **Why this needs saying at all: the `Owns` cell is written before anybody has
+written the file, so it is a guess about length wearing the clothes of a
+constraint.** ⛔ **Read literally it argues for the one outcome R11 §3c's
+isolation test refuses** — a 455-line module whose exception would have had to
+claim that splitting three genuinely separate concerns, each with its own test
+module, would be *worse*. ⭐ **It would not have been, and the reviewer would
+have been obliged to refuse it.**
+
+### ⛔ Ruling 101 (CTO round 28) — a constant a SECOND package needs is exported from the first package's surface, or it is not shared
+
+⛔ **The rule above is stated as a prohibition on the consumer. It has a
+producer half, and this is it: when a second package needs a name, the fix is
+to put the name on the first package's `__all__` — never to reach past it.**
+
+```bash
+# every cross-package import that names a submodule rather than a package
+grep -rn '^from studyforge\.[a-z_]*\.[a-z_]* import' src/ --include=*.py \
+  | awk -F: '{print $1, $3}'   # read each: is the name on the owner's __all__?
+```
+
+⭐ **Pass condition, and it is two questions with different answers:**
+
+| the name is… | verdict |
+|---|---|
+| on the owner's `__all__` | ⭐ **import it from the package.** A submodule spelling is a deviation, fixed in one line |
+| ⛔ **not on the owner's `__all__`** | ⛔ **the surface is wrong.** Export it, or the two packages do not share it |
+
+⭐ **Measured, `SF-31`, 2026-09-10 — three imports, and they split across that
+table exactly.** `INVALID`/`OK` (from `validate.report`) and `UNUSABLE` (from
+`validate.cli`) are all three on `studyforge.validate.__all__`, so those are
+the first row. ⛔ **`ARCHIVE_DIR` (from `validate.corpus`) is on no surface at
+all** — and its own comment says *"a consumer takes the root as a parameter,
+never as a constant"*, while two packages now take it as a constant.
+
+⚠️ **That second row is `SF-31/3`, and it is `[structural]` rather than
+`[local]` because it recurs by construction: four more commands are planned
+under `cli/`, and every one of them reads a corpus root.** ⛔ **The archive
+root becoming a real parameter is the larger, separate question (§6 permits a
+corpus to put its archive elsewhere) and it stays with whoever needs it first.**
+
 ## Tests mirror source (R12)
 
 ```

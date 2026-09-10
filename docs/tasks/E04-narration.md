@@ -195,12 +195,31 @@ corrupt another's clips.
 **Owns** `corpus/media.py`
 **Context** ~20k — spec §5, SF-02's manifest, SK-07's ignore-rule generation
 
-⭐ **`SF-32` owns these two field names, and renaming them is free exactly
-until M2.** `max_total_bytes` and `max_file_bytes` are illustrative here and have
-never been written by an adapter — ⛔ **the moment one does, at M2, the names are
-a `corpus_api` field and changing them is an R9 migration.** ⚠️ So if better names
-exist, they are chosen now and by this task; *"we can rename it later"* is false
-about anything a manifest declares.
+⛔ ~~**`SF-32` owns these two field names, and renaming them is free exactly
+until M2.**~~ **THE WINDOW HAS CLOSED — Ruling 104, CTO round 28, 2026-09-10.**
+
+⛔ **`max_total_bytes` and `max_file_bytes` are frozen. Renaming either is now
+an R9 migration and is `SF-32`'s to plan, not `SF-32`'s to do casually.**
+
+⭐ **The trigger this note set for itself has fired, in both halves.** Measured
+on `4bc66f0`:
+
+```bash
+grep -n 'max_total_bytes' tests/fixtures/depth*/corpus.json   # written
+grep -n 'max_total_bytes' src/studyforge/cli/plan/report.py   # and now READ
+#   lines 122-123 print the limits; 135-141 compare a projection against them
+python3 -m studyforge.cli.plan tests/fixtures/depth2 --bytes-per-unit 2000000000
+#   media footprint  EXCEEDS max_total_bytes — … against a limit of 5000000000
+```
+
+⚠️ **The note's own wording said *"the moment an adapter writes them, at M2"*,
+and it is a stronger case than that: they are written by both `FND-04`
+fixtures **and** read by a shipped command whose output is a committed golden.**
+⛔ **A rename now moves two goldens, a `corpus_api` field and a consumer
+contract three tasks are already told to build against** (`SF-31`'s *For
+dependents*). ⭐ **Raised by `SF-31` as an R9 deadline expiring; recorded here
+rather than in a handoff, because a deadline that expires only in a record is a
+deadline nobody meets.**
 
 **Definition.** Generated media is **committed by default** (SF-17), because a
 clone that carries its own audio speaks with nothing running. That default holds

@@ -304,11 +304,16 @@ integration agent produced is against the generator and it is `SK-07`'s.
 ---
 
 ### SF-36 — `origin` may name a region
-**Milestone** **M2** (step 2.1) · **Depends on** SF-02, **SF-35** · **Team** solo
-**Owns** `corpus/manifest/` (the `origin` shape), with `validate/source.py` and
+**Milestone** **M2** (step 2.1) · **Depends on** SF-02, **SF-05** · **Team** solo
+**Owns** `corpus/container/` (the `origin` shape), with `validate/source.py` and
 `studyforge/sourcepath.py`
 **Context** ~25k — `handoffs/CTO-2026-09-10-round26.md` (Ruling 92),
-`validate/source.py`'s `check_completeness`, `SF-35`
+`validate/source.py`'s `check_completeness`, `corpus/container/fields.py`
+
+⛔ **The version this task mints is `container_api: 2`, NOT `corpus_api`
+anything — Ruling 102 (CTO round 28).** ⭐ **`Owns`, `Depends on` and `Context`
+above are corrected by that ruling and no longer say `corpus/manifest/` or
+`SF-35`.**
 
 ⛔ **Ruled: Ruling 92 (CTO round 26), on `F21`.** ⭐ **Shape chosen: sub-file
 units — not a generated split, and not one unit.**
@@ -350,14 +355,55 @@ placement is unaffected.**
 ⚠️ **`F21/3` — 17 pages landing in a repository root under `sibling` — is real,
 is a PLACEMENT question, and is `SF-31`'s, not this task's.**
 
-⛔ **THE ONE OPEN QUESTION, escalated to the CTO by the PO at round 24 and
-answered before this task starts (R21, R9):** ⭐ **does `SF-36` ride inside
-`SF-35`'s `corpus_api: 2`, or take `corpus_api: 3`?** ⚠️ **Both are additive
-optional shapes, and R9's rule is that a manifest USING the new shape must be
-unreadable to a build that does not speak it** — ⛔ **so the answer depends only
-on whether the two land in one commit or two, and that is a sequencing decision
-this board has already made: they land separately.** ⭐ **The PO's reading is
-therefore `3`, and the CTO owns the number.**
+#### ⛔ Ruling 102 (CTO round 28) — the escalated question is ANSWERED, and its premise was false
+
+⛔ **`SF-36` mints `container_api: 2`. It does not touch `corpus_api` at all, so
+neither `2` nor `3` was the answer.**
+
+⭐ **`origin` is a `container.json` field.** Measured on `4bc66f0`:
+
+```bash
+grep -rn 'origin' src/studyforge/corpus/manifest/   # -> no match
+grep -n  'CONTAINER_API' src/studyforge/corpus/container/document.py
+#   CONTAINER_API = 1 ; KNOWN_CONTAINER_API = frozenset({CONTAINER_API})
+grep -n  '"origin"' tests/fixtures/depth2/archive/*/*/container.json   # -> declared here
+```
+
+⛔ **Pass condition for this task:** `KNOWN_CONTAINER_API` speaks `{1, 2}`, the
+manifest's `corpus_api` is **unchanged**, and a manifest at `corpus_api: 2` with
+no object `origin` anywhere still parses.
+
+⚠️ **Why the reasoning that reached `3` was right in shape and wrong in set.**
+R9's rule — *a document USING the new shape must be unreadable to a build that
+does not speak it* — is correctly applied, and *two shapes in two commits take
+two versions* is correct. ⛔ **What was wrong is which register the second
+version lives in.** ⭐ **Ruling 95 already fixed that: a located contract takes
+its own filename's noun.** `corpus.json`→`corpus_api`, `container.json`→
+`container_api`. **`origin` is declared in `container.json`, so the version that
+moves is `container_api`, and the two tasks share no register.**
+
+⭐ **So the collision pair dissolves and `SF-36` is unblocked by nothing.**
+⛔ **`Depends on SF-35` is DROPPED** — it was a version dependency and there is
+no shared version. `SF-05` replaces it, because that is the task that owns the
+container map. ⚠️ **The board may still sequence them for developer load; it may
+not sequence them for R9.**
+
+⭐ **And the R9 protection this buys is measured, not asserted.** Today's build,
+run against a container map carrying an object `origin`:
+
+```
+ContainerError: container.json declares unit 1 origin as a dict;
+                it must be a path, or absent
+```
+
+⛔ **That is the framework blaming the corpus for the framework's age** —
+Ruling 98's item-1 argument arriving verbatim in the other document. **After
+this task the same map is refused by version, and the refusal says so.**
+
+> ⛔ **The general rule, and it costs one sentence: a contract version is minted
+> in the register of the DOCUMENT that carries the new key.** ⭐ **Name the file
+> the key appears in before naming the version** — the register row is derived
+> from the filename (Ruling 95), never from which task is adjacent.
 
 **Acceptance.** A string `origin` parses exactly as it does today, asserted
 against an existing fixture. An object `origin` with `path` + `section` is
@@ -485,6 +531,44 @@ declared edits with their reasons. **Reports the projected media footprint and
 whether it fits the corpus's `media` limits** (SF-32). Runs on a repository with
 no generated output present. Adding a `permitted_edits` entry changes the plan
 and nothing else. Reads no file inside the source material.
+
+#### ⛔ Ruling 99 (CTO round 28) — the path-for-path clause is RE-HOMED to `SF-28`, not waived
+
+⛔ **The Acceptance sentence *"output for both FND-04 fixtures matches what a
+real build then creates, path for path — asserted by running both and
+diffing"* was NOT met at `SF-31`, and it was not met because it could not be:
+there is no build.** Measured on `4bc66f0`:
+
+```bash
+grep -rn 'write_text\|write_bytes\|\.mkdir(' src/ --include=*.py
+#   src/studyforge/render/page/__init__.py:17        <- inside a docstring
+#   src/studyforge/render/pageassets/__init__.py:12  <- inside a docstring
+#   nothing else: src/ contains no writer at all
+```
+
+⭐ **The author filed it rather than declaring it met on the substitute, which
+is `Blocked` behaving exactly as `delivery-flow.md` intends.** ⛔ **A clause
+marked green on a substitute is a clause nobody runs later.**
+
+⭐ **The substitute is accepted as evidence about `plan` and was re-measured by
+the reviewer:** an independent second derivation (`independent_paths`, its own
+walk), a count identity through a third route (`4 + containers + units × (1 +
+kinds)`, read straight from the container JSON), and two committed goldens.
+⛔ **A whole-suite mutant sweep confirms each route bites** — un-sorting the
+creations, deleting one corpus-level creation and shrinking the media kinds
+each go red, at exit 1, with the skip column unmoved.
+
+⛔ **The clause itself now lives on `SF-28`** (`E09-delivery.md`), the first
+task that writes files, ⭐ **and the goldens committed here are the instrument
+that discharges it there.**
+
+> ⛔ **The general rule: an Acceptance clause that compares a task's output
+> against an artifact a LATER task produces belongs on the later task.** ⭐ **A
+> clause is written where it can first be RUN, never where the output it
+> describes first exists.** ⚠️ **This is Ruling 72's family arriving at a
+> milestone boundary instead of a number: a criterion stated against something
+> that does not exist yet cannot distinguish *not done* from *not possible*,
+> and the author pays for the difference.**
 
 #### ⛔ One acceptance condition added by the PO, 2026-09-10 (round 24) — **Ruling 91, carried by check 3**
 
