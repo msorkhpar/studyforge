@@ -49,7 +49,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from studyforge.address import Address, AddressError, parse_key, require_slug
-from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
@@ -209,14 +209,21 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
 def _gate(document: dict, where: str) -> None:
     """Refuse a manifest carrying personal data, naming the shape and not the value.
 
-    ⛔ Converted to `ManifestError`, following `unit.content._gate` exactly:
-    this package promises that reading a manifest raises `ManifestError` **and
-    nothing else**, and a promise with one exception is not one.
+    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (Ruling 58,
+    rubric §1d). ⚠️ This docstring used to say it was *"Converted to
+    `ManifestError`, following `unit.content._gate` **exactly**"* — and that
+    sentence is the defect's propagation vector, because a module citing a
+    neighbour as its justification is how one translating site became three.
+    ⭐ The counter-argument it recorded — *a promise with one exception is not
+    a promise* — is answered where it belongs: `manifest/errors.py` names what
+    crosses, rather than swallowing it.
+
+    ⛔ It is already load-bearing. `validate/corpus.py` catches `ManifestError`
+    and **then** `PersonalDataLeak`; while this translated, the second arm
+    could never fire, and a home path in `corpus.json` was filed under
+    `RULE_MANIFEST` rather than `RULE_PERSONAL_DATA`.
     """
-    try:
-        assert_clean(document, where)
-    except PersonalDataLeak as leak:
-        raise ManifestError(f"{where} carries personal data and is refused (R7): {leak}") from None
+    assert_clean(document, where)
 
 
 def _check_version(document: dict, where: str) -> None:

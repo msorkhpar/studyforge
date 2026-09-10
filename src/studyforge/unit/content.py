@@ -68,7 +68,7 @@ from pathlib import Path
 
 from studyforge.address import Address, require_ordinal
 from studyforge.archive.blocks import BLOCK_FIELDS
-from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.archive.scrub import assert_clean
 from studyforge.describe import describe_keys
 from studyforge.unit.errors import ContentError, describe
 from studyforge.unit.sections import KINDS_WITH_A_LANG, SECTION_KINDS, section_key
@@ -188,11 +188,18 @@ def from_document(document: object, depth: int, where: str = CONTENT_FILENAME) -
 
 
 def _gate(document: dict, where: str) -> None:
-    """Refuse an overlay carrying personal data, naming the shape and not the value."""
-    try:
-        assert_clean(document, where)
-    except PersonalDataLeak as leak:
-        raise ContentError(f"{where} carries personal data and is refused (R7): {leak}") from None
+    """Refuse an overlay carrying personal data, naming the shape and not the value.
+
+    ⛔ **`PersonalDataLeak` is raised as itself, not translated** (Ruling 58,
+    rubric §1d). `ContentError` exists so a caller walking a corpus catches one
+    type per overlay, reports it and continues — so an R7 refusal inside that
+    family would be logged as *"that unit did not build"*, the walk would
+    finish, and the report would be green about the one thing R7 exists to make
+    loud. ⭐ It is deliberately not a `ValueError` and deliberately not in this
+    package's family, so it stops the run; `unit/errors.py` states it in the
+    package's own contract, exactly as `unit/served.py` does one file over.
+    """
+    assert_clean(document, where)
 
 
 def _address_of(value: object, depth: int, where: str) -> Address:

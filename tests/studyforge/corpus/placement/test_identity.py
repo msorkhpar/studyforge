@@ -11,6 +11,7 @@ import json
 import pytest
 
 from studyforge.address import Address, AddressError
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.placement import (
     IDENTITY_API,
     IDENTITY_ELEMENT_ID,
@@ -168,17 +169,20 @@ def test_a_refusal_never_emits_the_address_segment_it_refuses():
     # ⛔ R7, rubric §1f. This reads a file somebody else wrote, so a segment
     # can be an absolute path — and SF-01's own message, correct where a
     # caller passed a literal, would echo it into a build log.
-    leak = "/" + "home/somebody/material"
-    document = dict(UNIT.document, address=[leak])
-    with pytest.raises(PlacementError) as raised:
+    found = "/" + "home/somebody/material"
+    document = dict(UNIT.document, address=[found])
+    # ⛔ **Ruling 58: the refusal is a `PersonalDataLeak` and NOT a
+    # `PlacementError`.** W7 moved which refusal fires — the personal-data gate
+    # runs over the whole block before any field is read — and W27 moved which
+    # *type* carries it: a caller sweeping a site catches `PlacementError` per
+    # artifact and carries on, so an R7 refusal inside that family would be
+    # logged as one more file that could not be placed. ⚠️ The claim the test
+    # was written for is unchanged and still asserted below.
+    with pytest.raises(PersonalDataLeak) as raised:
         identity.from_document(document, 1)
+    assert not isinstance(raised.value, PlacementError)
     assert "somebody" not in str(raised.value)
-    # ⭐ W7 moved which refusal fires, and the new one is the better answer:
-    # the personal-data gate now runs over the whole block before any field is
-    # read, so this is refused as a **leak** rather than as a malformed slug.
-    # ⚠️ The claim the test was written for is unchanged and still asserted
-    # above; what changed is that the shape is now named as what it is.
-    assert "personal data" in str(raised.value)
+    assert "home path" in str(raised.value)
     assert "address[0]" in str(raised.value)
 
 
