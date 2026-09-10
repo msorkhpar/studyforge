@@ -1,10 +1,10 @@
-"""Mirror of `src/studyforge/render/page/text.py` (R12)."""
+"""Mirror of `src/studyforge/render/markup/text.py` (R12)."""
 
 from __future__ import annotations
 
 import pytest
 
-from studyforge.render.page import text
+from studyforge.render.markup import text
 
 #: A rooted href naming somebody's home directory — the R7 shape the `outside`
 #: class exists for. ⛔ **Joined, never written as a literal**, because the

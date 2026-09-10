@@ -8,7 +8,7 @@ each is emitted from a template file rather than from a Python string (R13).
 `render(block, position, …)` renders one; both are read by the dispatcher.
 
 **Depends on.** `page.assets` for where a file sits relative to the page,
-`page.text` for escaping, `render.templates` for the markup, and `page.errors`.
+`render.markup` for escaping, `render.templates` for the markup, and `page.errors`.
 
 ## ⛔ The file is addressed relative to the page, and the profile chose where
 
@@ -45,9 +45,9 @@ and `test_surface` says so from the other side.
 from __future__ import annotations
 
 from studyforge.render import templates
+from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page.assets import Placement, is_remote, media_kind
 from studyforge.render.page.errors import PageError
-from studyforge.render.page.text import escape, escape_attribute
 
 #: The block types this module answers for.
 RENDERS = ("code", "image", "video")

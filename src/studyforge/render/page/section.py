@@ -54,11 +54,11 @@ open, which is the one thing R8 forbids outright.
 from __future__ import annotations
 
 from studyforge.render import templates
+from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import blocks
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.navigation import section_anchor
-from studyforge.render.page.text import escape, escape_attribute
 
 #: The unit media directory a section's own deck was placed in.
 DECK_KIND = "video"
