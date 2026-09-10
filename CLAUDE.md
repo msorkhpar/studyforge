@@ -98,8 +98,20 @@ form needs a URL that resolves. The components are:
 
 ## Where to start
 
-Milestone **M0** — `FND-01`…`FND-05`, all parallel. Everything else depends on
-them.
+✅ **M0 is CLOSED**, and so are **M1 steps 1.1–1.3**. **In flight: M1 step 1.4 —
+`SF-10`, the unit document builder.** ⛔ **Do not start on M0.**
+
+⚠️ **This section said *"Milestone M0 — FND-01…FND-05, all parallel"* for sixty
+seconds after M0 closed, and it was the second time in two rounds that this file
+was the last to learn.** ⭐ **That matters more here than anywhere else: this file
+is loaded into *every* session in this project**, so a stale sentence here does
+not mislead one reader — ⛔ **it misdirects every agent that starts.**
+
+⭐ **Live state, and this file is not it:** `docs/tasks/BOARD.md` carries what is
+open, in flight and assigned. ⛔ **This section says only which milestone is
+open; the board says what to do in it.** ⚠️ **If the two disagree, the board is
+right and this file is a defect** — ⭐ **which is why `CLAUDE.md` is now on the
+wave-open checklist by name.**
 
 ⭐ **The first consumer is a small corpus, not the Java tutorial.** The plan's
 spine is the **reading floor** (spec §11.0) — narrated, navigable, offline, no

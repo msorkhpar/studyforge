@@ -125,7 +125,43 @@ remedy** — reconnaissance names the overlap and says which set is canonical, a
 a person decides. ⚠️ A tool that silently picked one would be choosing which half
 of a curriculum a reader never sees.
 
-### 8. A default that guesses is worse than a default that is plain
+### 8. Runnability is decided by the **reader's obligation**, not the file's shape
+
+**Measured (ISO):** `exercises: false` was reached on three counts — **zero
+imperative prompts, zero solution blocks, zero runners** — and ⭐ **the first count
+is the one that decided it, because it is the only one about what the reader is
+asked to *do*.**
+
+⛔ **The sharp case, and it is why shape is not enough:** `TestCases.md` is **188
+Gherkin scenarios that look exactly like a grader corpus and ask the reader to do
+nothing.** ⚠️ Any classifier keyed on *what the files look like* marks that corpus
+runnable and is wrong.
+
+⭐ **So ask: is the reader asked to produce something?** ⛔ Not *does this look
+like test code* — code-shaped material that demands nothing of the reader is
+**prose about code**, and §7's `none` state is the correct answer for it.
+
+### 9. A denominator omitted makes a real trap sound weaker
+
+⚠️ **Measured, and this is the catalogue's own rule turned on its author.** Three
+published numbers were corrected: `35 of 38 misplaced` was **35 of 38 per-group
+(3 sorts) and 37 of 38 corpus-wide (1 sort)**; `14 of 38 collisions` was **15 of
+38 (39.5%) in 7 classes**, ⛔ **the 7th three-way and reaching into
+fundamentals**; `675 lines` was **674**, a `split('\n')` off-by-one.
+
+⛔ **Two of the three made a real trap sound *weaker* than it is — the direction
+that gets a finding dismissed.** ⭐ **Corpus-wide sorting leaves exactly one unit
+in place**, and the filename-hierarchy trap is what makes the corpus-wide sort
+the likelier mistake in the first place.
+
+⚠️ **The lesson is not "check your arithmetic".** It is that ⛔ **an understated
+number and a correct one are indistinguishable to the reader**, and the
+understated one gets the finding closed. ⭐ **State the ratio, the denominator,
+and the set it is over** — and when a number is superseded, **the record keeps its
+numbers and gains a banner**, because a record that is silently corrected cannot
+be audited.
+
+### 10. A default that guesses is worse than a default that is plain
 
 **Measured (ISO):** the 5 fenced blocks with no info string are **ASCII-art trees
 and field layouts**, not code.
@@ -142,6 +178,7 @@ punctuation.** Material that leans on ASCII diagrams should expect to write
 
 | Entry | Owed by | Note |
 |---|---|---|
+| ⛔ **Finding 44 — routed here rather than fixed in `SK-01`** | PO-Integration, with the PO | ⭐ **Two of its three numbers came from the integration side**, so it is a cross-source fact. ⛔ **Fixing it inside `SK-01` would have buried it in one skill, where the next source cannot find it** — which is R19's shape: what a second integrator would have to re-derive belongs *here* |
 | ⛔ **PO-Integration's ten entries** | PO-Integration | ⭐ **Already written in this document's shape** — adopting them is a copy, and the only thing that was missing was this file. They land by their next commit |
 | **What a re-run of reconnaissance is** (`F17`) | PO-Integration → PO | ⛔ **Nothing defines a re-run against a moving framework.** The last one happened because a person asked, which is not a mechanism |
 | **`OPS-05` checks at build time; tooling writes at index time** (`F12`) | PO → `OPS-05`, `SK-07` | See `W15` on the board |

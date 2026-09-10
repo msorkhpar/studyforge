@@ -446,6 +446,14 @@ on the builder.
 | narration manifest | ⛔ **open** | ⛔ **open** | `NS-02` / `SF-17` |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
+| **workspace pin file** | `workspace.json` | `workspace_api` | `FND-05a`; a row per component |
+
+⭐ **`workspace_api` is the eighth versioned contract and the first that lives
+outside `src/`** — which is why the register and the framework's own constant are
+not the same list. ⛔ **Ruled: this table is the register; `CONTRACT_FIELDS` is
+the framework's *subset* of it.** ⚠️ A contract the framework does not read is
+still a contract — the pin file is read by `tools/`, and `R9` governs what is
+*written*, not what `src/` happens to import.
 
 ⭐ **`consuming.json` carries two versions, and conflating them is the defect it
 exists to prevent** (ruled 2026-09-09, round 4). The pin file (R18) records

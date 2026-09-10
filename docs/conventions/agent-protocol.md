@@ -174,6 +174,107 @@ preserved a **wrong** check behind a cleaner branch.
 arriving in a contract rather than in a validator** — and the cheapest form of it
 is the one where nothing gets built at all.
 
+### ⛔ Every negative control is itself run negatively
+
+⭐ **Show the probe failing on the defect before trusting it to pass.**
+
+⚠️ **Four instances in one session, and the pattern is what makes it a rule:** an
+`mv` that reported 38 passed; a rubric edit whose comment swallowed a colon and
+broke collection; a formatter; and ⛔ **a probe that reported all four gate shapes
+REFUSED because `leaks()` returns a generator and the prober tested
+truthiness.**
+
+⛔ **The last one is the dangerous shape, and it was a *verification of somebody
+else's finding*.** ⚠️ **Had the finding been false, a real R7 hole would have been
+closed on the strength of a probe that could not fail.** A green probe and a
+correct system are indistinguishable from the outside — ⭐ **which is the whole
+reason a control has to be shown failing first.**
+
+⚠️ **All four were probes** — a reviewer's or a coordinator's — ⛔ **never a
+task's own tests, where *watch it fail first* already applies.** ⭐ **That is the
+gap: the discipline existed for code under test and not for the instruments used
+to decide whether code needs testing.** A probe is how a finding gets verified
+before it becomes a task, so an unfalsifiable probe corrupts the input to
+everything downstream.
+
+### ⛔ A number in a ruling is evidence, never a bound
+
+⭐ **A number in a ruling is a measurement from an instrument, never a property of
+the tree.**
+
+⚠️ **Measured instance, and the gap is the argument:** the rubric's §7c grep found
+**7** hits in 3 modules; the check built to replace it found **19** in 11.
+⛔ **Twelve real violations the grep could not see** — all one shape, **a corpus
+named in English** (*"the Java corpus"*) rather than by its repository slug, and
+§7c's own sentence is *"a fail even in a comment."*
+
+⛔ **The incentive is the thing to avoid, and its author named it:** *"bound the
+migration by a number and the cheapest compliance is a check scoped to its own
+backlog — which is worse than no check because it's green."*
+
+⭐ **So a ruling that cites a count says what produced it**, and a task that
+inherits one **re-measures with its own instrument rather than treating the
+number as the size of the job.** ⚠️ **The implementer's line is the one to carry:**
+
+> ⛔ *"The number was a fact about an instrument. Building the check to find seven
+> would have been fitting the instrument to the backlog."*
+
+⚠️ **This is Ruling 52's shape in a number rather than a sentence** — a figure
+stated without its instrument is quoted as a bound, exactly as a rule stated
+without its scope is quoted at its widest.
+
+### ⛔ A ruling states the scope it was argued over
+
+⭐ **Name the case that produced it, and say what is outside it.** ⚠️ **Otherwise
+the next reader supplies a scope — and they will supply the widest one the
+sentence allows.**
+
+⛔ **The tell is what makes this expensive: the ruling reads *better* than the
+argument.** A rule stated without its scope is shorter, more quotable, and lands
+more cleanly — ⚠️ **which is exactly why it gets carried further than it was ever
+argued.** Nothing about it looks wrong; it looks *finished*.
+
+**Two measured instances, and they are one pattern:**
+
+| Ruling | What was argued | What was ruled |
+|---|---|---|
+| **28 → 30** | that the contract should be **teachable** from the spec | ⛔ *"the example gains `media`"* — **the remedy over-generalised**, and it would have frozen an optional key on every corpus |
+| **17's qualifier** | **one seam** | ⛔ the boundary **stated generally** — and it contradicted a clause carried in the same session |
+
+⚠️ **Both were caught by an implementer meeting a case the argument never
+covered. Neither was caught by anyone re-reading the ruling** — because re-reading
+is exactly what a well-stated over-broad rule survives.
+
+⭐ **Ruling 44 is the model, and it was accidental:** it ruled a boundary **and
+named its domain** (*enumerate the legal — except where the permitted set is free
+text*). ⛔ **The rulings that needed correcting are the ones with no such
+sentence.**
+
+#### ⚠️ The known cost of the carrying clauses above, and it is theirs specifically
+
+⛔ **This is the one place the carrying machinery makes things worse.** C6 says a
+ruling **reaches its artifact**; *quote, don't summarise* says it arrives
+**verbatim**. ⭐ **Both propagate an over-broad rule faithfully and fast.**
+
+⛔ **The better the delivery, the more expensive the over-reach.** ⚠️ Recorded here
+as the carrying clauses' known cost — beside the two limits of the measurement
+discipline — because ⭐ **a mechanism whose failure mode is undocumented gets
+trusted in exactly the case it fails.**
+
+### ⛔ An announcement is not a hand-over
+
+⚠️ *"Committed as `<sha>`"* reads as bookkeeping **because it is phrased from the
+writer's side.** ⭐ **A hand-over names what the reader must do:** *"merge
+`<branch>`; route Ruling 52 to the PO."*
+
+⛔ **Measured instance, and both halves were real:** one side left **seven
+unmerged commits**; the other **read seven announcements of them and merged
+none.** ⚠️ **Nobody was idle and nothing moved** — which is the shape to watch
+for, because it looks like progress from both ends.
+
+⭐ **Every agent here reports upward or sideways**, so this applies to all of
+them: **end a report with the reader's next action, not the writer's last one.**
+
 ### ⛔ Hold it, or point at where it is held — never point at a document that points back
 
 ⭐ **Rated the best finding of its round, and it is the pointer rule's own failure
@@ -193,6 +294,13 @@ well-organised and contains nothing** — every hop looks like diligence.
 
 ⭐ **So the obligation lands on the pointer's author: follow it once, and confirm
 the far end *holds* rather than *forwards*.**
+
+⚠️ **And the tension a later author will hit, dissolved rather than excepted.**
+When a justification rests on a **measurement**, it can look as though the rule
+forbids naming the corpus the number came from. ⛔ **It does not.** ⭐ **The number
+is the justification; the corpus name was only its citation** — so ⚠️ **this is
+not an exception to the pointer rule, it is the pointer rule applied to the right
+unit.** Hold the number; cite where it came from.
 
 ### ⛔ A citation is not an edge until both ends exist in one index
 

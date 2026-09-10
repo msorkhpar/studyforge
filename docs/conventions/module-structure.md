@@ -36,6 +36,59 @@ needs replacing.** ⚠️ **And the tell that you are writing the wrong one** is
 you can always think of one more entry — ⭐ **an open set is one you can extend
 without deciding anything, which is exactly why it never gets finished.**
 
+### ⛔ A guarantee does not extend to what sits beside it
+
+⭐ **When you assert a guarantee, name what is adjacent that you have *not*
+asserted.**
+
+⚠️ **The tell, and it catches the author as readily as the reader: when one half
+of a pair is constrained and the other is not, the constrained half is the one
+everybody reads — including the person who wrote both.**
+
+⛔ **Neither measured instance was an open set nobody noticed. Both were a
+*demonstrated* guarantee lending its credibility to an *undemonstrated*
+neighbour:** `where` closed against a fixed set while `name` stayed free; the pin
+file's **bytes** asserted while its **reader** was asserted nowhere.
+
+⭐ **The sentence to keep, adopted verbatim from the developer who found it:**
+
+> ⛔ **A file being clean is not a property of the file.**
+
+⚠️ **It bounds the rule below rather than contradicting it.** *Enumerate the
+legal* tells you to close the set you are defining; ⛔ **this tells you that
+closing one set says nothing about the set next to it** — and that the closed one
+will be mistaken for both.
+
+### ⛔ The domain limit — and read this before applying the rule above
+
+⚠️ **This rule is not universal, and without the boundary the next author will try
+to invert a set nobody can write down.** Carried from Ruling 44.
+
+> ⛔ **Where the legal set is *enumerable* — keys, versions, profiles, skip
+> causes, contract fields — enumerate it.**
+> ⛔ **Where it is *free text*, the forbidden list is forced and
+> known-incomplete *by construction*, and the answer is never a longer list: it
+> is defence in depth, every layer asserted, because no layer is sufficient.**
+
+⭐ **The personal-data gate is the worked example, and it is why the boundary had
+to be written down.** *"You cannot enumerate the legal here: the permitted set is
+**all text that is not personal data**, which nobody can write down."*
+
+⚠️ **So a forbidden list is not automatically a defect — sometimes it is the only
+representable thing.** ⛔ **What changes is what you owe when you write one:**
+
+- **Never** treat its length as progress. A longer list is not a stronger claim.
+- **Assert every layer independently**, because the argument for depth is
+  precisely that no single layer is sufficient — ⚠️ **an unasserted layer is an
+  assumption wearing a defence's clothes.**
+- **Say in the docstring that the list is known-incomplete**, so the next reader
+  does not mistake it for a closed set and stop adding layers.
+
+⭐ **The distinction to carry: enumerability is a property of the domain, not a
+choice the author makes.** Ask whether the permitted set can be written down. If
+it can, the forbidden list is a defect. **If it cannot, the forbidden list is
+forced — and depth, not length, is the remedy.**
+
 ## Size
 
 | Unit | Soft ceiling | On exceeding |
@@ -388,6 +441,28 @@ determines one is asserted element-for-element, in order, against the artifact.
 ⭐ **And when two orders disagree, the one that reaches disk wins.** An internal
 tuple used only for membership can be reordered freely; a serialised key order
 cannot, because changing it rewrites every document that was already correct.
+
+## ⛔ A derived-set assertion asserts **inhabitation**, in the same test
+
+⛔ **`assert a == b` where *both* sides are computed is satisfied by
+`set() == set()` — and empty is usually the bug it guards.** ⭐ **So assert the
+collections are inhabited, in the same test.**
+
+⚠️ **Measured instance:** `test_a_sweep_excludes_exactly_…` was **born vacuous** —
+it compared `swept({rule})` against `swept(()) - declaring_it`, and **under a
+directory exclusion both sides are empty and it passes.**
+
+⭐ **Fifth instance of *a check that cannot fail*, and the first with a
+*mechanical* tell.** The four before it needed judgement to spot — a silent `mv`,
+a truthy generator, a comment that swallowed a colon, a formatter nobody ran.
+⛔ **This one has a shape a rule can name**, which is why it is written here
+rather than left as vigilance.
+
+⚠️ **It is *`0 = 0` is not a pass* in a different instrument** — that was ruled
+for a counter over a document; this is the same failure over a derived set. ⛔ **A
+rule ruled in one instrument does not transfer itself to another**, and this pair
+is the evidence: the same person ruled both, weeks apart in argument and minutes
+apart in time, without seeing the second while writing the first.
 
 ## ⛔ Present is not correct — assert the form, not the presence
 
