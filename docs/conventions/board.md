@@ -120,7 +120,7 @@ than one more archive section.
 | `board-row-width` | one table row exceeds `BOARD_ROW_CEILING` | a cell that wide is an argument, and an argument goes behind a pointer |
 | `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows | ⭐ **the bound with no gap** — see below |
 | `board-state` | a register row's state cell DECLARES no state | ⛔ **the hole that let a LIVE row leave the register in silence** — see below |
-| `board-frame` | a row file does not open `# <ID>` and say what it is | ⭐ **the one live-tree property left after Ruling 180**, and it survives every amendment |
+| `board-frame` | a row file does not begin `# <ID>` **or** does not contain the frame's phrase | ⭐ **the one live-tree property left after Ruling 180.** ⛔ **TWO SUBSTRINGS and nothing more** — it cannot read what the file *says*, and that weakness is what lets it survive every amendment (`CTO-47/4`) |
 
 ⛔ **The Ruling 140 plant found a hole in this instrument BEFORE it shipped, and
 the third rule is the fix rather than a tweak to the first two.** ⚠️ **Run
@@ -184,6 +184,33 @@ longer backlog moves the board FURTHER from the bound, never closer.**
 detail files, all three readings and all three limits — before anything is
 reduced to a verdict** (Ruling 128).
 
+### ⛔ What the `board:` line covers, and the two things it prints with NO bound
+
+⭐ **`rows/`, with its BYTES as well as its count — Ruling 183.** ⛔ **A bound on
+a row file would forbid the thing the file exists for**: appending to a live
+row's argument is the action the table above prescribes, and nothing can tell
+*"the PO re-scoped a row"* from *"the PO pasted a fragment"*. ⚠️ **That argument
+retires the GATE and does not retire the MEASUREMENT** — and the reading that
+decided it is `rows/` inflated **112×** with the `board:` line byte-identical
+and the floor clean, because the line printed a COUNT. ⛔ **A bound REMOVED
+because its subject became editable is replaced by a NOTICE, never by nothing.**
+
+⭐ **The THINNEST ARGUMENT, beside the widest row — Ruling 186.** ⛔ **`board-frame`
+is the right instrument asked the wrong question**: a row file can carry its
+frame and argue nothing, and widening the rule to judge whether an argument is
+PRESENT rebuilds exactly the gate Ruling 180 removed, because nothing can tell a
+thin argument from one the PO has not finished writing. ⚠️ **The subject is the
+ARGUMENT and not the FILE** — frame overhead runs to a few hundred bytes, so a
+file-size reading is the right number over the wrong span — ⭐ **so the frame is
+located by its own text and the bytes after it are what is printed.**
+
+⛔ **NO THRESHOLD is chosen for either, and that is structural rather than
+pending.** ⭐ **A notice that prints the thinnest argument needs none** — ⚠️ **and
+a cutoff appearing in `board_state` is the signal that a gate has been rebuilt.**
+⛔ **The numbers themselves are not typed here** (Ruling 181): `board_state`
+prints them every run, and a figure copied into this document is a figure that
+goes stale in the copy nobody re-measures.
+
 ⭐ **What it deliberately does not bound: `BOARD-ARCHIVE.md`.** ⛔ **A record is
 supposed to grow monotonically, and capping it would push the reasoning back
 onto the board** — which is the defect rather than the remedy.
@@ -201,6 +228,59 @@ unedited, and reversible by the PO in one commit if they want it back.
 ⛔ **All six are mine.** ⭐ **Check 6 was added round 19 by `F23`'s ruling.** ⭐ **RULED 2026-09-10: check 4 runs twice — at wave-open
 AND at wave-close** — ⚠️ **and the second run is the one that matters, because
 the trigger check 4 exists to catch is *a task ending*, not a wave starting.**
+
+### ⛔ RULED ROUND 47 — check 3 takes the WHOLE TREE, and admits the PLURAL (Ruling 184)
+
+⭐ **Check 3 asks *did every ruling reach an artifact* — C6's own check.** ⛔ **Two
+clauses, one instrument, and they pull the same way on purpose.**
+
+> ⭐ **(a) Scope.** A ruling's artifact is wherever the rule is ENFORCED, and this
+> project enforces rules in Python as often as in prose. ⛔ **The population is
+> `-- docs src tools tests`, not `-- docs`.**
+>
+> ⭐ **(b) Spelling.** The pattern admits the plural form, because ⛔ **a ruling
+> that instructs a JOINT carry must not be invisible to the check that verifies
+> carries.**
+>
+> ⭐ **And the reason both clauses go the same way:** this check's failure mode is
+> a **FALSE EMPTY** — *"nobody carried it"* returned for something that was
+> carried. ⛔ **So it is tuned to OVER-match, and that is safe for one specific
+> reason: check 3 prints FILES, not a count.** ⚠️ **A false positive costs one
+> `git show`; a false empty costs a lost ruling.**
+
+⛔ **The instrument, and it is PCRE (`-P`), not ERE** — `(?:`, `\s` and `\b` are
+not POSIX ERE and `git grep -E` refuses the pattern outright with *"Invalid
+preceding regular expression"*:
+
+```bash
+# For each ruling minted since check 3 last ran. ⛔ FILES, never a count.
+for n in <the rulings>; do
+  echo "Ruling $n:"
+  git grep -lP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests | sort
+done
+```
+
+⭐ **Measured at `96e8c95`, `dev2` worktree, host git 2.47.3 and the pinned image
+in agreement — and each clause earns its keep on a real reading:**
+
+```text
+(a)  Ruling 175, `-- docs`             -> four handoffs, 0 non-handoff files
+     Ruling 175, `-- docs src tools tests` -> + tools/knowledge/index.py
+                                              + tools/tests/knowledge/test_index.py
+(b)  Ruling 76 in docs/conventions/agent-protocol.md
+       `Ruling 76\b`                   -> ⛔ NOTHING. A FALSE EMPTY, in an
+                                          ARTIFACT rather than a handoff
+       plural-admitting                -> line 42, "defeats Rulings 70, 76, 83
+                                          and 123 at once"
+     ⚠️ and the over-match it costs, in the same file: line 450's "76 finding
+        lines across 12 documents" — ⭐ one `git show` to dismiss, which is the
+        price clause (b) was ruled to be worth
+```
+
+⛔ **The rule this does NOT license: teaching the tree to please the
+instrument.** ⚠️ **`PO-36/9` found the same gap from the other side and fixed the
+DOCUMENT so the standing check would read it** — ⭐ **that was right at the time,
+and it is the instrument's turn now.**
 
 ### ⛔ RULED ROUND 26 — check 4 gains a SUB-STEP and LOSES a population
 
