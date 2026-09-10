@@ -1216,6 +1216,40 @@ observed `62`. ⭐ **The container cannot create this taint; it can inherit one.
 baseline's survival. ⚠️ **`W25` and `W26` were merged on sweeps that stated
 none of the three** — see Ruling 71 for why that did not become a revert.
 
+#### ⛔ Ruling 131 — a sweep row's TREE is clean, not merely its CACHES — and there are two ways it stops being
+
+⛔ **Ruling 70's three remedies are all about `__pycache__`. None of them is
+about the WORKING TREE, and the floor's own checks — mirror, size, format,
+`test_repository.py` — are tree-sensitive.** ⭐ **So one stray file reds every
+row of a sweep, and a sweep in which every row is red is one where `KILLED`
+means nothing.**
+
+```bash
+# between EVERY row, not only at the ends:
+git clean -fdq && git status --porcelain          # pass: no output
+python3 -m pytest -q -p no:cacheprovider          # then the row
+```
+
+⚠️ **Two causes, found independently in one round by two offices, from opposite
+directions — which is what makes it a rule rather than a caution:**
+
+```text
+cause 1  a MUTANT that writes      (SF-13/4, M9: the R7 write gate removed left
+         `alpha` at the repository root; the CLOSING baseline then read
+         `3 failed` where the opening one read `0`)
+cause 2  the HARNESS ITSELF        (CTO-37/2: the sweep script written to the
+         repository root as a `.py`; the OPENING baseline read
+         `exit=1 KILLED | 3 failed, 3604 passed`, and the same sweep run via
+         `python3 -c "$(cat …)"` on a clean tree read
+         `exit=0 SURVIVED | 3607 passed`)
+```
+
+⛔ **Both were caught by Ruling 70's baseline row and by nothing else**, which
+is that row earning its mandate twice on one day. ⭐ **Cause 2 fails
+PESSIMISTICALLY and that is the hazard, not the comfort:** a red baseline
+shrugged at is a sweep whose every subsequent `KILLED` is unreadable, and the
+flattering reading is one step away.
+
 #### ⭐ Ruling 71 — suspect evidence is **re-measured**, not scheduled, when measuring is cheaper than filing
 
 ⛔ **`W25` and `W26` are not re-run as a task, because they were re-measured in
@@ -1908,6 +1942,50 @@ verdict:**
   person whose task passes or fails on it puts the one unautomated judgement in
   the one place the rest of this document refuses to put any other.
 
+### ⛔ Ruling 129 — an UNMEETABLE acceptance clause is SPLIT, and the CHANGES REQUESTED lands on the PLAN, not the branch
+
+⛔ **§9's *"the verdict is CHANGES REQUESTED against the plan rather than the
+author"* has been read as blocking the BRANCH. It is not, and reading it that
+way punishes the one behaviour `agent-protocol.md` asks for** — *implement the
+half you judge right, report it with the measurement, and leave the document
+alone.*
+
+⭐ **So a reviewer meeting one runs three steps, in this order, and records all
+three:**
+
+```text
+1. SPLIT the clause. Name the half the branch MET and the test that discharges
+   it; name the half nothing could meet. A clause is one sentence and usually
+   two obligations.
+2. Show the residue is UNMEETABLE rather than unattempted — a COMMAND, not an
+   argument. Two admissible readings, and only these:
+     · the tool is absent from the PINNED image      (§4b's `did not run`)
+     · the measurement is inside a CONSUMER repository (R20)
+3. Route the residue to a ROW with an OWNER, and say so in the verdict.
+   ⛔ The branch's verdict is then decided WITHOUT the residue.
+```
+
+⛔ **Pass condition: a review that reports an unmeetable clause without step 2's
+command has recorded an opinion.** ⚠️ *"It could not be done"* and *"nobody
+tried"* are the pair this whole document exists to tell apart.
+
+**Measured `39bdc4f`, `SK-07`, both residues, in the pinned image:**
+
+```text
+E11 item 9  "built, bridged graph, doc↔code census non-zero"
+  docker/dev/check sh -c 'command -v graphify'   -> graphify: NOT IN THE PINNED IMAGE
+  ⭐ the clause's OTHER half — the R3-safe ignore file — IS met and asserted
+E11 acceptance  "OPS-01/03/04/05/06 ... for the Java corpus"
+  R20: the diff is measured in a consumer repository this office may not read
+  ⭐ second instance; the first was `SK-02/4`, round 36
+```
+
+⚠️ **What this does NOT license.** ⛔ **A clause a reviewer merely finds
+expensive is not unmeetable**, and step 2 is what separates them: it returns a
+command's output or the split is refused. ⭐ **And the residue's row is minted in
+the SAME round** — a split whose second half reaches nobody is C6 with a
+verdict attached.
+
 ---
 
 ## 10. Scope
@@ -2019,9 +2097,22 @@ not in*:
 
 ```bash
 git branch --no-merged release/m0-foundations
+git worktree list        # ⛔ Ruling 130: the complement's complement — see below
 ```
 
-⭐ **Read the output against the board.** Every branch listed is either in
+##### ⛔ Ruling 130 — `--no-merged` enumerates unmerged COMMITS, not dispatched WORK
+
+```bash
+git worktree list | grep -v "$(git rev-parse --show-toplevel)"
+# Pass: every checkout listed is a row the board knows about.
+# Measured 39bdc4f: `--no-merged` listed 4 branches and MISSED
+# chore/W40-ceiling-population — a checkout at the release tip with zero
+# commits, i.e. a row dispatched this hour. A branch with no commit yet is
+# not in --no-merged BY CONSTRUCTION, and it is exactly the row a reviewer
+# is about to declare free.
+```
+
+⭐ **Read both outputs against the board.** Every branch listed is either in
 flight or a finding; a branch this round reported as merged that appears here is
 ⛔ **the defect, caught before the report is written.** Round 25, run against
 `ee50f77`, listed exactly `feat/QA-03-visual` and `feat/ruling-78-lint-notice` —
