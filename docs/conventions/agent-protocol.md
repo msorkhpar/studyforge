@@ -197,6 +197,58 @@ to decide whether code needs testing.** A probe is how a finding gets verified
 before it becomes a task, so an unfalsifiable probe corrupts the input to
 everything downstream.
 
+### ⛔ A ruling states the scope it was argued over
+
+⭐ **Name the case that produced it, and say what is outside it.** ⚠️ **Otherwise
+the next reader supplies a scope — and they will supply the widest one the
+sentence allows.**
+
+⛔ **The tell is what makes this expensive: the ruling reads *better* than the
+argument.** A rule stated without its scope is shorter, more quotable, and lands
+more cleanly — ⚠️ **which is exactly why it gets carried further than it was ever
+argued.** Nothing about it looks wrong; it looks *finished*.
+
+**Two measured instances, and they are one pattern:**
+
+| Ruling | What was argued | What was ruled |
+|---|---|---|
+| **28 → 30** | that the contract should be **teachable** from the spec | ⛔ *"the example gains `media`"* — **the remedy over-generalised**, and it would have frozen an optional key on every corpus |
+| **17's qualifier** | **one seam** | ⛔ the boundary **stated generally** — and it contradicted a clause carried in the same session |
+
+⚠️ **Both were caught by an implementer meeting a case the argument never
+covered. Neither was caught by anyone re-reading the ruling** — because re-reading
+is exactly what a well-stated over-broad rule survives.
+
+⭐ **Ruling 44 is the model, and it was accidental:** it ruled a boundary **and
+named its domain** (*enumerate the legal — except where the permitted set is free
+text*). ⛔ **The rulings that needed correcting are the ones with no such
+sentence.**
+
+#### ⚠️ The known cost of the carrying clauses above, and it is theirs specifically
+
+⛔ **This is the one place the carrying machinery makes things worse.** C6 says a
+ruling **reaches its artifact**; *quote, don't summarise* says it arrives
+**verbatim**. ⭐ **Both propagate an over-broad rule faithfully and fast.**
+
+⛔ **The better the delivery, the more expensive the over-reach.** ⚠️ Recorded here
+as the carrying clauses' known cost — beside the two limits of the measurement
+discipline — because ⭐ **a mechanism whose failure mode is undocumented gets
+trusted in exactly the case it fails.**
+
+### ⛔ An announcement is not a hand-over
+
+⚠️ *"Committed as `<sha>`"* reads as bookkeeping **because it is phrased from the
+writer's side.** ⭐ **A hand-over names what the reader must do:** *"merge
+`<branch>`; route Ruling 52 to the PO."*
+
+⛔ **Measured instance, and both halves were real:** one side left **seven
+unmerged commits**; the other **read seven announcements of them and merged
+none.** ⚠️ **Nobody was idle and nothing moved** — which is the shape to watch
+for, because it looks like progress from both ends.
+
+⭐ **Every agent here reports upward or sideways**, so this applies to all of
+them: **end a report with the reader's next action, not the writer's last one.**
+
 ### ⛔ Hold it, or point at where it is held — never point at a document that points back
 
 ⭐ **Rated the best finding of its round, and it is the pointer rule's own failure

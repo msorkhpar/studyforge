@@ -419,6 +419,28 @@ determines one is asserted element-for-element, in order, against the artifact.
 tuple used only for membership can be reordered freely; a serialised key order
 cannot, because changing it rewrites every document that was already correct.
 
+## ⛔ A derived-set assertion asserts **inhabitation**, in the same test
+
+⛔ **`assert a == b` where *both* sides are computed is satisfied by
+`set() == set()` — and empty is usually the bug it guards.** ⭐ **So assert the
+collections are inhabited, in the same test.**
+
+⚠️ **Measured instance:** `test_a_sweep_excludes_exactly_…` was **born vacuous** —
+it compared `swept({rule})` against `swept(()) - declaring_it`, and **under a
+directory exclusion both sides are empty and it passes.**
+
+⭐ **Fifth instance of *a check that cannot fail*, and the first with a
+*mechanical* tell.** The four before it needed judgement to spot — a silent `mv`,
+a truthy generator, a comment that swallowed a colon, a formatter nobody ran.
+⛔ **This one has a shape a rule can name**, which is why it is written here
+rather than left as vigilance.
+
+⚠️ **It is *`0 = 0` is not a pass* in a different instrument** — that was ruled
+for a counter over a document; this is the same failure over a derived set. ⛔ **A
+rule ruled in one instrument does not transfer itself to another**, and this pair
+is the evidence: the same person ruled both, weeks apart in argument and minutes
+apart in time, without seeing the second while writing the first.
+
 ## ⛔ Present is not correct — assert the form, not the presence
 
 ⚠️ **A runbook entry, a docstring or a config key can be **present and wrong**, and
