@@ -39,6 +39,36 @@ prose is the 798 lines; the executable surface is the 263. Grow the second.**
 merge message and its handoff, which sections it added and the new line count.
 The number is the check.
 
+#### ⛔ The governor is a ratio, because a line count is not a mechanism
+
+⚠️ **Round 26: the governor above had been in force for one round and had
+reduced nothing.** ⛔ **A promise repeated in a document is what this project
+rules against; the reason it kept failing is that the quantity it named — total
+lines — is the one a correctness clause must be allowed to raise.** ⭐ **So the
+governed quantity is the fenced share, which a clause in operational form
+*raises* and a belt of reasoning *lowers*:**
+
+```bash
+python3 - <<'EOF'
+import pathlib, re
+t = pathlib.Path("docs/conventions/review-rubric.md").read_text().splitlines()
+f = sum(1 for _ in re.finditer(r"(?ms)^```.*?^```", "\n".join(t)+"\n"))
+inside = 0; open_ = False
+for line in t:
+    if line.startswith("```"): open_ = not open_; continue
+    inside += open_
+print(f"{inside}/{len(t)} = {inside/len(t):.1%} in {f} fenced blocks")
+EOF
+```
+
+⛔ **Pass condition: a round that touches this file does not lower the
+percentage.** ⭐ **Raising it is how the clause gets written *and* the document
+gets shorter to execute from — the two goals stopped competing the moment the
+denominator stopped being the target.** ⚠️ **Quote the before and after in the
+merge message, beside the line count.** ⛔ **This is not `W34`.** `W34` reorders
+the whole document so the executable surface is on top; this only stops the
+ratio falling while `W34` waits.
+
 ---
 
 ## 0. Set up the range
@@ -855,6 +885,39 @@ Lint: pinned green — ruff 0.16.6 in the dev image
 ⚠️ **Version-bound, and say so.** This is 0.16.6's behaviour; the denominator's
 shape is a property of the pinned toolchain, which is exactly why Ruling 79 makes
 a review state the version that produced its line.
+
+#### ⛔ Ruling 88 — the floor and ruff are **two** checks, and a review that runs one runs half
+
+⚠️ **`QA-03/4`, re-diagnosed in round 25 and reproduced in round 26.** ⛔ **They
+agree on the number — `100`, asserted equal by `tools/tests/quality/test_config.py`
+— and disagree on the rule.** ⭐ **Neither is a subset of the other, so neither
+substitutes for the other.**
+
+```bash
+python3 -m tools.quality                 # exit 0 — always runs, stdlib only
+ruff check --no-cache .                  # exit 0 — only where ruff is installed
+ruff format --check .                    # exit 0
+```
+
+⛔ **Pass condition: all three exit 0, and the lint line (Ruling 79) names which
+of the three ran.** ⚠️ **`quality floor: clean` has never meant lint-clean**
+(Ruling 78) — ⭐ **the floor says so itself, in the NOTICE it prints when ruff is
+absent, and a reviewer who reads that line as a lint verdict has been told
+otherwise by the tool.**
+
+⭐ **The measured divergence, A/B on two lines of identical length**
+(2026-09-10, ruff 0.16.6, `--isolated --select E501 --line-length 100`):
+
+```
+line 2, 117 chars, overflow is a URL     ruff E501: PASS   floor line-length: FAIL
+line 2, 133 chars, overflow is prose     ruff E501: FAIL   floor line-length: FAIL
+```
+
+⛔ **The exemption is a URL — an over-limit run carrying no whitespace — and
+NOT `# type: ignore`**, which is what round 24 recorded and round 25 corrected.
+⚠️ **And the scopes differ too:** `[tool.ruff] extend-exclude = ["tests/fixtures"]`,
+which the floor does not honour. ⭐ **`W38` rules the floor stays the stricter
+one; this clause is the other half — the stricter check is not the only check.**
 
 ### 4c. The tests test the change
 
@@ -1711,6 +1774,40 @@ un-reviewed merge should be **visible in the log afterwards** rather than
 remembered by whoever did it. ⭐ A gate that leaves no trace when it is skipped is
 a gate that will be skipped again, and this project has already ruled the same
 way twice — once for the module ceiling, once for the R7 sweep.
+
+#### ⛔ Ruling 89 — the merger rebuilds the index, because a merge is what makes it stale
+
+⚠️ **`CTO-25/9`, and round 26 confirms it from the outside: the coordinator had
+run the rebuild by hand after every merge — roughly fifteen times in one
+night.** ⛔ **A step that survives only because one agent remembers it is what
+this project has ruled against six times.** ⭐ **So it joins the two-line habit
+above and makes it three.** ⛔ **After merging, in the checkout you merged into,
+never in a worktree:**
+
+```bash
+graphify update . && python3 -m tools.knowledge bridge
+python3 -m tools.knowledge census        # edges, prose-to-code, floor
+python3 -m tools.quality | grep -i '^knowledge index'   # no `stale`, no `unbridged`
+```
+
+⛔ **Pass condition: the census prints a prose-to-code count at or above the
+floor, and the floor's `knowledge index` line is not a finding.** ⭐ **State the
+census row in the merge message beside the tip confirmation.**
+
+⚠️ **Why it is the merger's and not the author's.** ⛔ `freshness()` diffs
+`DESCRIBED_TREES = ("src", "tools", "docs")` between the commit the index names
+and `HEAD` — ⭐ **and every merge in this project writes a handoff and a board
+row under `docs/`, so every merge reddens the tip by construction, including a
+one-file docs-only one.** ⚠️ **§10 below is unchanged and still right: the
+author does not rebuild, and `graphify-out/` in a diff is still a fail.** ⛔ **The
+hole was that the step was then assigned to nobody.**
+
+⛔ **And the reason nobody noticed for a fortnight: `FND-07`'s three states are
+correct and their blind spot is the reviewer's own seat.** ⭐ **A trial-merge
+worktree has no `graphify-out/`, reports *absent*, and exits 0 — by design, so a
+fresh clone is not hostile.** ⚠️ **So the gate keeps passing in the only checkout
+a reviewer measures, while the main checkout goes red — and the person who finds
+out is whoever measures the tip next, not whoever caused it.**
 
 ---
 
