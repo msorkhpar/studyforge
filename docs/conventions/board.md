@@ -106,6 +106,7 @@ than one more archive section.
 | `board-narrative` | non-table bytes exceed `BOARD_NARRATIVE_CEILING` | ⭐ **invariant to the number of rows** — a new row is a table line and adds nothing to it |
 | `board-row-width` | one table row exceeds `BOARD_ROW_CEILING` | a cell that wide is an argument, and an argument goes behind a pointer |
 | `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows | ⭐ **the bound with no gap** — see below |
+| `board-state` | a register row's state cell DECLARES no state | ⛔ **the hole that let a LIVE row leave the register in silence** — see below |
 
 ⛔ **The Ruling 140 plant found a hole in this instrument BEFORE it shipped, and
 the third rule is the fix rather than a tweak to the first two.** ⚠️ **Run
@@ -116,6 +117,49 @@ text that indexes nothing raises the numerator and leaves the denominator
 alone.** ⛔ **The other two are kept as DIAGNOSIS: `board-size` says the board is
 too big, and they say WHERE — a governor that only says *too big* is one
 somebody raises rather than obeys.**
+
+### ⛔ A state cell DECLARES its state — it does not mention one
+
+⛔ **`board-state` exists because the first `is_closed` was a SUBSTRING TEST.**
+⚠️ **A live row reading `` `todo` — after `W44` is done `` was therefore
+CLOSED**: it owed no detail file, left the bijection, and the floor printed
+`quality floor: clean` with no finding at all. ⭐ **28 of the 78 cells carry the
+`✅ done — <ref>` idiom today**, so this was one subordinate clause from routine
+rather than exotic.
+
+⭐ **A state cell now begins with a word from a CLOSED set** — `todo`,
+`in flight`, `in-progress`, `in-review`, `accepted`, `blocked`, `routed`,
+`done` — ⛔ **and a cell that begins with anything else is a finding, not a
+guess.** ⚠️ The match ends on a word boundary, so `DONE-ish` declares nothing;
+that reading came from the impossible plant, not from argument.
+
+⭐ **This is the project's standard remedy applied to a status: make the illegal
+value unrepresentable rather than enumerate it.** ⛔ **Two live cells failed on
+the day it landed — `W5` and `W16` — and both were rows a reader would have
+sworn were fine.**
+
+### ⛔ A migration that decomposes this board is validated over CONTENT
+
+⚠️ **The split's first validation was a LINE PARTITION and it PASSED while text
+was lost.** ⛔ **A line partition cannot see a line that was split into pieces
+where only some of the pieces were kept** — here, 78 register lines counted as
+consumed while only two of their five cells were written anywhere, losing the
+**Owner** and **Status** columns, **28,262 bytes**.
+
+⭐ **Ruling 177.** `tools/tests/quality/board/test_migration.py` asserts the
+content claim instead, and it is four equalities rather than a sum:
+
+| It asserts | Which catches |
+|---|---|
+| every line of the source board is verbatim in a destination | a whole line going nowhere |
+| every consumed register line is in the RECORD | a column going nowhere |
+| every block of a row file is a WHOLE CELL of its own row | ⛔ **a fragment, and text from the wrong cell** |
+| no row file carries the status column | a live copy of a state |
+
+⚠️ **The third replaced a PROXY.** ⛔ Its first version asked *does the block
+start mid-sentence?* and flagged two correct cells — ⭐ **a reading from a proxy
+is not a property of the thing**, and an equality against the source's own cells
+is both cheaper and exact.
 
 ⛔ **Ruling 149 retired a line-count governor on `review-rubric.md` because it
 alarmed seven times while the property improved seven times.** ⭐ **No bound here

@@ -85,6 +85,20 @@ the reasoning back onto the board**, which is the defect, not the remedy.
 
 from pathlib import Path
 
+from tools.quality.board.register import (
+    BOARD_FRAME,
+    BOARD_NARRATIVE_CEILING,
+    BOARD_PER_ROW,
+    BOARD_ROW_CEILING,
+    REGISTER_CLOSE,
+    REGISTER_OPEN,
+    STATES,
+    is_closed,
+    narrative_bytes,
+    register,
+    state,
+    table_lines,
+)
 from tools.quality.config import read_text, relative
 from tools.quality.report import Finding
 
@@ -92,52 +106,8 @@ from tools.quality.report import Finding
 #: a check that hunts for the board would pass on a repository that had lost it.
 BOARD = "docs/tasks/BOARD.md"
 
-#: The directory holding one file per live row. ⛔ Its name is part of the
-#: contract in `docs/conventions/board.md`, not an implementation detail.
+#: The directory holding one file per live row.
 ROWS = "docs/tasks/rows"
-
-#: ⛔ The register is DELIMITED, and this check reads nothing outside the
-#: markers. ⚠️ **The first version inferred it — *any five-cell row whose first
-#: cell names a `W` id* — and the very next edit broke it**: an *In flight*
-#: table naming four rows was read as four duplicate register rows, and
-#: `board-duplicate` fired on the author of `board-duplicate`.
-#:
-#: ⭐ **A board may hold as many `W`-shaped tables as it likes; exactly one of
-#: them is the register, and it says so.** ⛔ An inferred boundary is a boundary
-#: that moves when somebody writes an ordinary table.
-REGISTER_OPEN = "<!-- register -->"
-REGISTER_CLOSE = "<!-- /register -->"
-
-#: ⛔ Bytes of `BOARD.md` outside any table. Measured **3,811** at the split;
-#: this is 2.1× that, which is room for the frame to gain a section and not
-#: room for a round's narrative — round 33's alone was 833 lines.
-BOARD_NARRATIVE_CEILING = 8192
-
-#: ⛔ Bytes of one table row. Measured widest **415** at the split against
-#: **3,485** before it. ⭐ 600 is the project's own test-file ceiling, reused so
-#: a reader has one number to remember rather than two.
-BOARD_ROW_CEILING = 600
-
-#: ⛔ The board's whole size is bounded as `BOARD_FRAME + BOARD_PER_ROW × register
-#: rows`. ⭐ **This is the bound that has no gap**, and it exists because the
-#: Ruling 140 plant found one in the other two before this shipped: 320 lines of
-#: a round's narrative, pasted as one-cell table rows, moved the narrative count
-#: by ZERO and tripped the width rule ONCE.
-#:
-#: ⚠️ Measured at the split: **23,839 B** total over **78** register rows, of
-#: which the register itself is the majority — **~170 B a row**. ⭐ A ratio
-#: rather than a ceiling is Ruling 149's own
-#: remedy for a governor that alarms while the property improves: adding rows
-#: raises the allowance by more than a row costs, so a longer backlog can never
-#: trip this, and only text that indexes nothing can.
-BOARD_FRAME = 14336
-BOARD_PER_ROW = 224
-
-#: ⛔ The one state that means a row is finished and its argument belongs in a
-#: record rather than in a file that can still be amended. ⚠️ `accepted` is NOT
-#: here: an accepted row still carries a trigger and a remedy, so its argument
-#: is still amendable and still needs a file that can be edited.
-CLOSED_STATES = ("done",)
 
 RULE_DETAIL = "board-detail"
 RULE_ORPHAN = "board-orphan"
@@ -145,57 +115,28 @@ RULE_DUPLICATE = "board-duplicate"
 RULE_NARRATIVE = "board-narrative"
 RULE_WIDTH = "board-row-width"
 RULE_SIZE = "board-size"
+RULE_STATE = "board-state"
 
-
-def _cells(line: str) -> list[str]:
-    """Return the cells of a markdown table row, outer pipes stripped."""
-    return [cell.strip() for cell in line.strip().strip("|").split("|")]
-
-
-def _identifiers(cell: str) -> list[str]:
-    """Return every `W`-row id a register's first cell names.
-
-    ⚠️ A cell may name two — `W17 + W19` are one commit and one row — so this
-    returns a list. ⛔ A cell naming none is a header or a separator and is not
-    a register row.
-    """
-    found = []
-    for token in cell.replace("*", "").replace("`", "").replace("+", " ").split():
-        if len(token) > 1 and token[0] == "W" and token[1:].isdigit():
-            found.append(token)
-    return found
-
-
-def _register(text: str) -> list[tuple[int, list[str], str]]:
-    """Return `(line number, ids, state cell)` for every register row.
-
-    ⛔ Only between `REGISTER_OPEN` and `REGISTER_CLOSE`. ⚠️ A board with no
-    markers has no register as far as this is concerned, and `board_state`
-    prints `0 register rows` rather than guessing — ⭐ **`0 = 0` is visible;
-    a wrong denominator is not.**
-    """
-    rows = []
-    inside = False
-    for number, line in enumerate(text.split("\n"), 1):
-        if line.strip() == REGISTER_OPEN:
-            inside = True
-            continue
-        if line.strip() == REGISTER_CLOSE:
-            inside = False
-            continue
-        if not inside or not line.startswith("|"):
-            continue
-        cells = _cells(line)
-        if len(cells) < 5:
-            continue
-        ids = _identifiers(cells[0])
-        if ids:
-            rows.append((number, ids, cells[3]))
-    return rows
-
-
-def _is_closed(state: str) -> bool:
-    return any(word in state.lower() for word in CLOSED_STATES)
+__all__ = [
+    "BOARD",
+    "BOARD_FRAME",
+    "BOARD_NARRATIVE_CEILING",
+    "BOARD_PER_ROW",
+    "BOARD_ROW_CEILING",
+    "REGISTER_CLOSE",
+    "REGISTER_OPEN",
+    "ROWS",
+    "RULE_DETAIL",
+    "RULE_DUPLICATE",
+    "RULE_NARRATIVE",
+    "RULE_ORPHAN",
+    "RULE_SIZE",
+    "RULE_STATE",
+    "RULE_WIDTH",
+    "STATES",
+    "board_state",
+    "check_board",
+]
 
 
 def _rows_on_disk(root: Path) -> dict[str, Path]:
@@ -203,14 +144,6 @@ def _rows_on_disk(root: Path) -> dict[str, Path]:
     if not directory.is_dir():
         return {}
     return {path.stem: path for path in sorted(directory.glob("*.md"))}
-
-
-def _table_lines(text: str) -> list[tuple[int, str]]:
-    return [(n, line) for n, line in enumerate(text.split("\n"), 1) if line.startswith("|")]
-
-
-def _narrative_bytes(text: str) -> int:
-    return sum(len(line.encode()) + 1 for line in text.split("\n") if not line.startswith("|"))
 
 
 def check_board(root: Path) -> list[Finding]:
@@ -238,7 +171,7 @@ def check_board(root: Path) -> list[Finding]:
     seen: dict[str, int] = {}
     expected: set[str] = set()
 
-    for number, ids, state in _register(text):
+    for number, ids, cell_state in register(text):
         for identifier in ids:
             if identifier in seen:
                 findings.append(
@@ -252,7 +185,18 @@ def check_board(root: Path) -> list[Finding]:
                 )
             else:
                 seen[identifier] = number
-        if _is_closed(state):
+        if state(cell_state) is None:
+            findings.append(
+                Finding(
+                    BOARD,
+                    number,
+                    RULE_STATE,
+                    f"{ids[0]}'s state cell declares no state. Begin it with one of "
+                    f"{', '.join(sorted(STATES))} — ⛔ a cell that merely MENTIONS a "
+                    f"state word is how a live row silently leaves the register.",
+                )
+            )
+        if is_closed(cell_state):
             continue
         # The first id of a multi-id row owns the file; the rest ride with it.
         expected.add(ids[0])
@@ -281,7 +225,7 @@ def check_board(root: Path) -> list[Finding]:
                 )
             )
 
-    narrative = _narrative_bytes(text)
+    narrative = narrative_bytes(text)
     if narrative > BOARD_NARRATIVE_CEILING:
         findings.append(
             Finding(
@@ -308,7 +252,7 @@ def check_board(root: Path) -> list[Finding]:
             )
         )
 
-    for number, line in _table_lines(text):
+    for number, line in table_lines(text):
         width = len(line.encode())
         if width > BOARD_ROW_CEILING:
             findings.append(
@@ -336,18 +280,18 @@ def board_state(root: Path) -> list[str]:
         return [
             f"board: none — no {BOARD} in this checkout. This is not a failure: the floor "
             f"runs over trees that are not this repository. ⛔ In THIS repository its "
-            f"absence is a build failure, and tools/tests/quality/test_board.py says so."
+            f"absence is a build failure, and tools/tests/quality/board/test_init.py says so."
         ]
-    register = _register(text)
-    identifiers = {i for _n, ids, _s in register for i in ids}
-    live = [row for row in register if not _is_closed(row[2])]
+    rows = register(text)
+    identifiers = {i for _n, ids, _s in rows for i in ids}
+    live = [row for row in rows if not is_closed(row[2])]
     rows_on_disk = _rows_on_disk(root)
-    table = _table_lines(text)
+    table = table_lines(text)
     widest = max((len(line.encode()) for _n, line in table), default=0)
     return [
-        f"board: {len(register)} register rows, {len(live)} live, "
+        f"board: {len(rows)} register rows, {len(live)} live, "
         f"{len(rows_on_disk)} detail files in {ROWS}/; "
-        f"{_narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
+        f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
         f"widest row {widest} of {BOARD_ROW_CEILING}, "
         f"{len(text.encode())} bytes total of "
         f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed."

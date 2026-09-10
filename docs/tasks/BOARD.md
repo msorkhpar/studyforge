@@ -49,8 +49,8 @@ this table names the ref it was taken at and nothing here is inherited.
 
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-14` | Developer | `wt/dev1o`, `feat/SF-14-index` | **+1** | ⏳ in flight |
-| `W14` + `W18` | Developer 1 | none | 0 | ⏳ in flight |
+| `SF-14` | Developer | `wt/dev1o`, `feat/SF-14-index` | **+1** | in flight |
+| `W14` + `W18` | Developer 1 | none | 0 | in flight |
 | `W27` | Developer 2 | none | 0 | ◐ in-review @ `655b527` |
 
 ⛔ **Last round the two instruments disagreed BY ONE ROW IN EACH DIRECTION and
@@ -92,20 +92,20 @@ they have exactly one home each.
 | W2 | The behavioural §1f check — poison a path into each string parameter | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w2-the-behavioural-1f-check-poison-a-path-into-each-string-parameter) |
 | W3 | The fixture whose SVG, `alt` text and lesson prose describe three different pictures | Developer 2 | ✅ done | [record](BOARD-ARCHIVE.md#w3-the-fixture-whose-svg-alt-text-and-lesson-prose-describe-three-different-pictures) |
 | W4 | `handoffs/SF-05.md` still describes a constant the hotfix removed | PO | ✅ done | [record](BOARD-ARCHIVE.md#w4-handoffssf-05md-still-describes-a-constant-the-hotfix-removed) |
-| W5 | `SF-10`'s port is re-priced — the file's line count is not the task's | SF-10 | → folded into `SF-10` | [`rows/W5.md`](rows/W5.md) |
+| W5 | `SF-10`'s port is re-priced — the file's line count is not the task's | SF-10 | routed — folded into `SF-10` | [`rows/W5.md`](rows/W5.md) |
 | W6 | The R7 exception-text check — an `{exc}` interpolation re-emits what the inner refusal withheld | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w6-the-r7-exception-text-check-an-exc-interpolation-re-emits-what-the-inner-refusal-withheld) |
 | W7 | `corpus.json` is not gated at all, so a home path in the manifest title validates green | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w7-corpusjson-is-not-gated-at-all-so-a-home-path-in-the-manifest-title-validates-green) |
 | W8 | The dev image has no JS runtime, so a block of tests can only run off-image | Developer 1 | ✅ done — `dc4686c` | [record](BOARD-ARCHIVE.md#w8-the-dev-image-has-no-js-runtime-so-a-block-of-tests-can-only-run-off-image) |
 | W9 | The markup contract has one side written — `SF-12` reviews the class names as its first act | SF-12 | ✅ done — landed in `E03` | [record](BOARD-ARCHIVE.md#w9-the-markup-contract-has-one-side-written-sf-12-reviews-the-class-names-as-its-first-act) |
 | W10 | Palette tokens with no painter, as a named self-retiring list | PO → E04, E08 | `todo` — before E04 / E08 are authored | [`rows/W10.md`](rows/W10.md) |
-| W11 | `api` is a generic field name and the tree guard would flag an unrelated reader | accepted | ◐ accepted, cost named | [`rows/W11.md`](rows/W11.md) |
-| W12 | The extraction source's `naming.py` docstring disagrees with its own tree | accepted → E11 | ◐ accepted, cost named → E11's catalogue | [`rows/W12.md`](rows/W12.md) |
+| W11 | `api` is a generic field name and the tree guard would flag an unrelated reader | accepted | accepted — cost named | [`rows/W11.md`](rows/W11.md) |
+| W12 | The extraction source's `naming.py` docstring disagrees with its own tree | accepted → E11 | accepted — cost named → E11's catalogue | [`rows/W12.md`](rows/W12.md) |
 | W13 | Two copies of the personal-data gate that already disagree | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w13-two-copies-of-the-personal-data-gate-that-already-disagree) |
-| W14 | The two missing invalid fixtures on `FND-04`'s surface, and they are one task | Developer 1 | ⏳ in flight | [`rows/W14.md`](rows/W14.md) |
+| W14 | The two missing invalid fixtures on `FND-04`'s surface, and they are one task | Developer 1 | in flight | [`rows/W14.md`](rows/W14.md) |
 | W15 | Tooling wrote to a source repository's root ignore file | PO → OPS-05, SK-07 | `todo` — before any adapter runs against a real source | [`rows/W15.md`](rows/W15.md) |
-| W16 | The spec's canonical examples are hand-maintained copies of contracts the code owns | PO / Developer 2 | ◐ spec text landed; the asserting test is owed | [`rows/W16.md`](rows/W16.md) |
+| W16 | The spec's canonical examples are hand-maintained copies of contracts the code owns | PO / Developer 2 | in-progress — spec text landed; the asserting test is owed | [`rows/W16.md`](rows/W16.md) |
 | W17 + W19 | One spelling of *describe a value without reproducing it*, and the remaining `{value!r}` sites | Developer 2 | `todo` — after `FND-07` | [`rows/W17.md`](rows/W17.md) |
-| W18 | `user` + `authoritative` is accepted, so a reader's grader may declare itself the source's own | Developer 1 | ⏳ in flight, with `W14` | [`rows/W18.md`](rows/W18.md) |
+| W18 | `user` + `authoritative` is accepted, so a reader's grader may declare itself the source's own | Developer 1 | in flight, with `W14` | [`rows/W18.md`](rows/W18.md) |
 | W20 | The repository-wide §7c check, and its migration in the same commit | Developer 2 | ✅ done | [record](BOARD-ARCHIVE.md#w20-the-repository-wide-7c-check-and-its-migration-in-the-same-commit) |
 | W21 | Nothing checks for dangling pointers after a docs move | Developer 2 | `todo` — with `FND-08` | [`rows/W21.md`](rows/W21.md) |
 | W22 | Finding 44 is owed to the integration catalogue, not to `SK-01` | PO | ✅ done | [record](BOARD-ARCHIVE.md#w22-finding-44-is-owed-to-the-integration-catalogue-not-to-sk-01) |
@@ -113,7 +113,7 @@ they have exactly one home each.
 | W24 | A derived-set assertion asserts inhabitation, or it is born vacuous | PO | ✅ done | [record](BOARD-ARCHIVE.md#w24-a-derived-set-assertion-asserts-inhabitation-or-it-is-born-vacuous) |
 | W25 | `tools/quality` gains a handoff check, because the six sections are a contract | Developer 2 | ✅ done — `2a272a5` | [record](BOARD-ARCHIVE.md#w25-toolsquality-gains-a-handoff-check-because-the-six-sections-are-a-contract) |
 | W26 | `W7`'s reader tell resolves the name's origin, not its spelling | Developer 2 | `todo` — not started | [`rows/W26.md`](rows/W26.md) |
-| W27 | An R7 refusal is never translated into a package's error family | Developer 2 | ◐ in-review — `655b527` | [`rows/W27.md`](rows/W27.md) |
+| W27 | An R7 refusal is never translated into a package's error family | Developer 2 | in-review — `655b527` | [`rows/W27.md`](rows/W27.md) |
 | W28 | `source_files()` respects the repository's own ignore declaration | Developer 1 | ✅ done — `6d65902` | [record](BOARD-ARCHIVE.md#w28-sourcefiles-respects-the-repositorys-own-ignore-declaration) |
 | W29 | One constant naming the three gated trees | Developer 2 | ✅ done — `4f2fbf8` | [record](BOARD-ARCHIVE.md#w29-one-constant-naming-the-three-gated-trees) |
 | W30 | `PYTHONPYCACHEPREFIX` in the dev image — isolation that is structural | framework agent | ✅ done — `3d0eb34` | [record](BOARD-ARCHIVE.md#w30-pythonpycacheprefix-in-the-dev-image-isolation-that-is-structural) |
