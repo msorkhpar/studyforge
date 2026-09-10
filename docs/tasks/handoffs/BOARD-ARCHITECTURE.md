@@ -4,13 +4,18 @@
 
 **Status:** done
 
-**Base:** `9a57b13` (MAIN, `release/m0-foundations`) · **Merge:** `233a5f3`
-(`chore/board-architecture`, `wt/arch`)
+**Base:** `4b25274` (MAIN, `release/m0-foundations`) · **Merge:**
+`chore/board-architecture` in `wt/arch`
 
-⚠️ **The tip moved TWICE under this branch while it was being written** — PO
-round 35 + `W76` (`bfb8c8c`), then `W70` + CTO round 44 (`9a57b13`).
-⭐ **Both were merged forward; the second cost one register cell, because the
-partition is heading-driven and `BOARD.md` was untouched by it.**
+⚠️ **The tip moved THREE times under this branch** — PO round 35 + `W76`
+(`bfb8c8c`), `W70` + CTO round 44 (`9a57b13`), CTO round 45 (`4b25274`).
+⭐ **`BOARD.md` was untouched by the last two**, so each cost one register cell:
+the partition is heading-driven rather than line-numbered.
+
+⛔ **CHANGES REQUESTED at CTO round 45, and both items were real text loss and a
+real hole.** ⭐ **`ARCH/10`, `ARCH/11` and `ARCH/12` below are what came back**,
+and the load-bearing claim of the pushback — *it is a partition* — is now
+asserted over CONTENT rather than over line counts.
 
 ---
 
@@ -23,10 +28,10 @@ register row has a single other home.
 |---|---|
 | `docs/tasks/BOARD.md` | **238 lines / 24 KB.** Milestones, in flight, next rows, the `W` register, R21, standing decisions, Scheduled, cross-repo — ⛔ **identity, naming, owner, state, pointer, and nothing else** |
 | `docs/tasks/rows/<ID>.md` | **50 files**, one per row that is not `done`. ⛔ **Titled `# W40` — no naming, no owner, no state.** ⭐ **Zero duplicated facts, by construction** |
-| `docs/tasks/BOARD-ARCHIVE.md` | **+8,351 lines moved WHOLE and UNEDITED**, plus the 28 closed rows' bodies under `### <ID> — <naming>` headings |
+| `docs/tasks/BOARD-ARCHIVE.md` | **9,737 lines.** Every line of the old board, verbatim — including ⭐ **the 78 register lines `CTO-45/1` found had gone nowhere** — plus the 28 closed rows' bodies |
 | `docs/conventions/board.md` | ⭐ **The standing contract** — one-fact-one-home, what a row may carry, how the PO adds to the board, the instrument. **The wave checks moved into it whole** |
-| `tools/quality/board.py` | The instrument: `check_board` in `CHECKS`, `board_state` in `NOTICES` |
-| `tools/tests/quality/test_board.py` | 19 tests — Ruling 123's three readings, and the two defects this work found in its own instrument |
+| `tools/quality/board/` | ⛔ **A PACKAGE (R11)** — `__init__.py` carries the six checks, `register.py` the parser where both of `CTO-45`'s defects lived |
+| `tools/tests/quality/board/` | **57 tests** — `test_init.py` (the six rules), `test_register.py` (the two `CTO-45` defects, verbatim corpus), `test_migration.py` (⭐ **Ruling 177, four equalities**) |
 | `docs/conventions/delivery-flow.md` | Four lines: `## The board` now points at `board.md` |
 | `tools/quality/handoffs/__init__.py` | ⛔ **One new document kind, `office handoff`, which owes EXACTLY what a task handoff owes** — `ARCH/8` |
 | `docs/conventions/agent-protocol.md` | The new kind, named where handoffs are described |
@@ -41,24 +46,26 @@ $ ./docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check .;
                             ruff format --check .; python3 -m tools.quality;
                             python3 -m pytest -q'
 
-MAIN(base)  -> 9a57b139caa509fa7b2e06f489b130ff2a21b5b3
-  ruff 0.16.6 · check: All checks passed! · format: 615 files already formatted
-  document pointers: 205 read in 221 markdown files, 86 anchored, 0 unresolved
+MAIN(base)  -> 4b252749ae1af1393328c26166ac891a9625eb30
+  ruff 0.16.6 · check: All checks passed! · format: 616 files already formatted
+  document pointers: 205 read in 222 markdown files, 86 anchored, 0 unresolved
   quality floor: clean            (no `board:` line — the check does not exist there)
   4129 passed, 63 skipped
 
-MERGE(arch) -> 233a5f37ef978268e6e040f5ef07c1ffdc615474
-  ruff 0.16.6 · check: All checks passed! · format: 668 files already formatted
-  document pointers: 352 read in 272 markdown files, 125 anchored, 0 unresolved
+MERGE(arch) -> 5688dcd1a280aaaee27aa1d0763ce897389f2e3e
+  ruff 0.16.6 · check: All checks passed! · format: 672 files already formatted
+  document pointers: 352 read in 273 markdown files, 125 anchored, 0 unresolved
   board: 78 register rows, 50 live, 50 detail files in docs/tasks/rows/;
          4393 bytes narrative of 8192, widest row 415 of 600,
-         24391 bytes total of 32032 allowed
+         24388 bytes total of 32032 allowed
   quality floor: clean
-  4151 passed, 63 skipped
+  4189 passed, 63 skipped
 ```
 
 ⛔ **Two different shas printed from inside the same invocation as the numbers**
 (Ruling 172), ⭐ **so the base and the merge cannot have been paired wrongly.**
+⚠️ **`+60` tests: 57 in `tools/tests/quality/board/` and 3 for the office-handoff
+kind.**
 ⚠️ **Skips are 63 in BOTH — 55 `tests/visual/` + 5 `tests/docker/` + 3
 `tests/test_knowledge_index.py`.** ⛔ **A host run of `wt/arch` reads 13 instead,
 because the host has a browser and the pinned image has none (`QA-03/1`) — the
@@ -66,9 +73,9 @@ two numbers describe the MACHINE, not the tree.**
 
 | | ⛔ `bfb8c8c` | ⭐ after |
 |---|---|---|
-| `BOARD.md` | **8,545 lines / 770,843 B** | **246 lines / 24,391 B** |
+| `BOARD.md` | **8,545 lines / 770,843 B** | **246 lines / 24,388 B** |
 | bytes NOT inside a table | 382,194 | **4,393** |
-| bytes inside tables | 388,649 | 19,998 |
+| bytes inside tables | 388,649 | 19,995 |
 | widest single table row | **3,485 B** | **415 B** |
 | ⭐ **bytes a reader must load per `W` id indexed** | **9,757** | **308** |
 | ⭐ **the same, in tokens at 4 B/token** | **~2,439** | **~77** |
@@ -108,15 +115,31 @@ whole, unedited"*, and it is right.** ⭐ **This work does not break it: every o
 of the 8,545 lines went to EXACTLY ONE destination, and the sum is asserted
 rather than claimed.**
 
+⛔ **The sum below was TRUE and it was the wrong instrument** — ⚠️ **it passed
+while 28,262 bytes of the Status column reached nothing** (`ARCH/10`).
+⭐ **Ruling 177 replaced it with four equalities over content:**
+
 ```text
-original 8546   archived 8351   wave 101   scheduled 16   register cells 78
-sum 8546
+$ python3 -m pytest tools/tests/quality/board/test_migration.py -q
+5 passed
+
+  every line of BOARD.md@bfb8c8c is verbatim in a destination
+      -> 2 of 8,546 differ, both ARCH/4's re-addressed anchor, and the test
+         asserts BOTH the count and the re-addressed form (a third fails it)
+  every consumed register line is in the RECORD          -> 78 of 78
+  every block of a row file is a WHOLE CELL of its own row
+  no row file carries the status column
 ```
+
+⭐ **Both directions run** (Ruling 122): the damaged files restored from
+`e9ddf9d` name **exactly the three fragments**; stripping the record names
+**80 of 8,546** and **78 of 78**; ⛔ **an unreachable base SKIPS rather than
+passing** — `0 = 0` wearing a migration is the reading this exists to refuse.
 
 | Destination | Lines | Why there |
 |---|---|---|
 | `BOARD-ARCHIVE.md` | 8,351 | rounds, close runs, mint arguments, carried rulings — ⛔ **a record, appended to and never edited** (Ruling 106) |
-| `rows/<ID>.md` | 51 | the register cell of each live row (`W70` closed after the split; **50** remain) |
+| `rows/<ID>.md` | ⛔ **not a destination** | a LIVE EXTRACT of 50 live rows' arguments — ⭐ **the record keeps the original, which is what lets a row file be amended** |
 | `BOARD.md` | 16 | the *Scheduled* table, verbatim |
 | `docs/conventions/board.md` | 101 | the wave checks — ⛔ **a process is not a state** |
 
@@ -310,11 +333,17 @@ committed by the document that governs its most-read file.**
 
 **Measured**: `2` occurrences of `](#the-wave-checks-…)` inside the 8,351 archived
 lines pointed at a heading that moved to `docs/conventions/board.md`.
-⛔ **Retargeted rather than left dangling**, because the pointer check is live and
-must stay at zero unresolved. ⭐ **The justification, offered for the CTO to
-accept or reject: a pointer is an ADDRESS, not a statement, and re-addressing a
-section that moved does not change what the record SAYS.** ⚠️ **2 of 8,351 lines;
-no other archived byte was touched.**
+⛔ **Retargeted rather than left dangling**, because the pointer check is live
+and must stay at zero unresolved.
+
+⚠️ **ACCEPTED by Ruling 174, on a NARROWER ground than I argued, and the
+correction matters.** ⛔ **My *"a pointer is an ADDRESS, not a statement"* is
+REFUSED** — ⭐ **it would license editing frozen records, which is exactly what
+Ruling 106 exists to stop.** ⭐ **The admitted ground: Ruling 106's freeze
+attaches when material BECOMES a record, not while it is being moved into one.**
+⚠️ **2 lines of 8,546; no other byte was changed, and
+`test_migration.py::test_every_line_of_the_old_board_survives_verbatim` now
+asserts exactly that — it fails if a THIRD line ever differs.**
 
 ### ARCH/5 `[local]` — one line-number citation inside the archive is now false
 
@@ -367,6 +396,69 @@ is zero — measured: no existing document declares the new kind, and the
 parametrised *owes-only-its-declaration* test now excludes it by name rather
 than by an exclusion list.** ⛔ **It is offered for the CTO to accept or reject;
 if rejected, this document needs an id from the PO instead.**
+
+### ARCH/10 `[local]` — the partition was over LINES, and three files carried the wrong cell
+
+**Received** from `CTO-45/1`; **measured** here. ⛔ **A naive `|` split broke on
+pipes INSIDE CODE SPANS**, so `rows/W38.md`, `rows/W40.md` and `rows/W53.md` each
+carried a mid-sentence fragment of the STATUS cell — text that existed nowhere
+else in the tree.
+
+| The row | The span that broke it |
+|---|---|
+| `W38` | ``(py\|md under tests/fixtures/)`` — an unescaped pipe |
+| `W40` | ``'gated BEFORE\\\|gated before'`` — a regex alternation |
+| `W53` | ``` `\\\| wc -l` ``` — a shell pipeline |
+
+⭐ **Every one is a pipe no renderer splits on either**, so the parser was not
+merely strict — ⛔ **it disagreed with what the reader sees.**
+
+⛔ **The residue was a COLUMN, not three files: 28,262 bytes of Owner and
+Status reached no destination**, and three files were only where it became
+unrecoverable. ⭐ **Fixed at the level the loss happened: the 78 consumed
+register lines are now in `BOARD-ARCHIVE.md` VERBATIM**, which makes the claim
+simpler and stronger — ⭐ **every line of the source board is in the record, and
+`rows/` is a LIVE EXTRACT rather than a fourth destination.**
+
+⚠️ **`cells()` reuses `pointers.strip_code_spans`, which blanks spans while
+keeping columns** — ⭐ **the same trick, for the same reason, in a third
+instrument.**
+
+### ARCH/11 `[structural]` — `is_closed` was a substring test, and the failure was silent
+
+**Received** from `CTO-45/2`; **measured** here. ⛔ **A live row whose state cell
+merely MENTIONED `done` was closed**: no detail file owed, out of the bijection,
+`quality floor: clean`, no finding.
+
+⚠️ **The population, printed before the scalar** (`register`/`state` over the
+live board, expected `0 undeclared` before running):
+
+| declared state | rows |
+|---|---|
+| `todo` | 43 |
+| `done` | **28** |
+| `accepted` | 2 |
+| `in flight` | 2 |
+| `routed`, `in-progress`, `in-review` | 1 each |
+| ⛔ **undeclared** | **0** |
+
+⛔ **28 of 78 carry the `✅ done — <ref>` idiom, so a live cell was one
+subordinate clause away** — ⭐ **not exotic, routine.**
+
+⭐ **Closed by the standard remedy — make the illegal value unrepresentable.** A
+state cell DECLARES its state from a closed set, matched **on a word boundary**;
+`board-state` is the finding when it declares nothing. ⚠️ **Two live cells failed
+on the day it landed, `W5` and `W16`, and both were rows a reader would have
+sworn were fine.** ⭐ **The word-boundary rule came from the IMPOSSIBLE reading,
+not from argument: a prefix match read `DONE-ish` as `done`.**
+
+### ARCH/12 `[local]` — the instrument outgrew R11 and is now a package
+
+**Measured**: `tools/quality/board.py` reached **431 lines** against R11's 400.
+⛔ **Split as a package, never as a file** (`CLAUDE.md`): `board/__init__.py`
+carries the checks, `board/register.py` the parser, and the test tree mirrors it.
+⭐ **The parser was the right seam anyway — both of `CTO-45`'s defects live in
+it, and they now have a module whose whole docstring is about them.**
 
 ### ARCH/9 `[structural]` — where I think the PO's board practice should change
 
