@@ -1142,14 +1142,83 @@ a record, and the board row is the correction.**
 |---|---|---|---|
 | 41–43 | Defects found and fixed within the task | `[local]` | ✅ **closed in `SK-01`** — no destination owed |
 | 44 | ⛔ **The denominator finding** — two of its three numbers came from the integration side | `[structural]` | ✅ **routed to the integration catalogue as `W22`.** ⛔ Not fixed in `SK-01`: a cross-source fact buried in one skill is where the next source cannot find it (R19) |
-| 45 | ⛔ **Java's `exercises: true` rests on 168 files that *look* like graders, out of 792** | `[structural]` | ⛔ **OPEN — a question a person must answer, not a defect to fix.** → **PO-Integration**, before E07's adapter declares the manifest |
-| 46 | ⛔ **ISO's record links the 3,863-line `TestCases.md` as its 39th unit** | `[structural]` | ⛔ **OPEN — a question a person must answer.** → **PO-Integration**, before `ISO-04` |
+| 45 | ⛔ **Java's `exercises: true` rests on 168 files that *look* like graders — out of 792 files, ⚠️ and *that* denominator is what the count was missing** | `[structural]` | ⛔ **UNOWNED, explicitly, until `E07` opens — and my routing to PO-Integration was WRONG.** See below. ⛔ **Nothing declares `exercises: true` for the Java corpus until this has an accountable owner** |
+| 46 | ⛔ **ISO's record links the 3,863-line `TestCases.md` as its 39th unit** | `[structural]` | ✅ **ANSWERED — it is a fourth *container*.** The ingest decision remains open; see below |
 
 ⛔ **45 and 46 are not owed to the framework and must not be answered here.** ⭐
 **They are exactly what `SK-01` was built to produce: *"I cannot determine this —
 please confirm."*** ⚠️ **A skill reporting an honest uncertainty is the skill
 working**, and it would be a defect to resolve them by guessing on the corpus
 owner's behalf — R6, and the reason reconnaissance reports rather than decides.
+
+#### ⛔ Finding 45: I routed it to the wrong owner, and the refusal is worth more than the routing
+
+⚠️ **PO-Integration owns ISO. Finding 45 is about the *Java* corpus.** They
+declined it, correctly, and ⛔ **the clause that matters is not that I was wrong
+but what being wrong would have produced:**
+
+> ⛔ *"Routing it to me would make the mechanism look like it worked while
+> producing an answer nobody is accountable for."*
+
+⛔ **That is a new failure mode and it belongs with C6's family: a question routed
+to the wrong owner comes back *answered*, and nothing marks the answer as
+unaccountable.** ⚠️ **An unaccountable answer and a correct one are
+indistinguishable on this board** — and the routing *looks* discharged, so
+nobody checks. ⭐ **The refusal was the only thing that could have surfaced it**,
+which is why an owner declining a question is a contribution and not an
+obstruction.
+
+⛔ **Disposition: `UNOWNED until E07 opens`, stated as a status rather than left
+implied.** The Java corpus **has no PO in this session**. ⚠️ **A row that sits
+looking answered is worse than an empty one**, so this one says it is unowned in
+the field the board reads. ⛔ **And it gates: nothing declares `exercises: true`
+for that corpus until the question has somebody accountable for the answer.**
+
+⭐ **The transferable half PO-Integration contributed instead is now catalogue
+entry 8** — *runnability is decided by the reader's obligation, not the file's
+shape* — ⚠️ **and their own example is the one that proves shape insufficient:
+`TestCases.md` is 188 Gherkin scenarios that look exactly like a grader corpus
+and ask the reader to do nothing.**
+
+⚠️ **They also turned `W22` back on us, correctly: *"168 of 792"* states a
+denominator the source never stated**, so the ratio was unusable where it was
+written. ⭐ **One line at the source versus an unrecoverable ambiguity
+downstream** — the rule applying to us as readily as to them.
+
+#### ⭐ Finding 46 answered decisively, and it changes ISO's shape
+
+**`TestCases.md` is a fourth *container*. Not a unit, not an aggregate.**
+
+| Measurement | Result |
+|---|---|
+| link targets in `README.md` | 39 |
+| position of `TestCases.md` | 39 |
+| markup carrying it (line 310) | `# [Test cases](TestCases.md)` |
+| unit links carried by a `#` heading | ⛔ **0 of 38** |
+
+⛔ **Every one of the 38 units is linked from *inside* a `#` heading; not one is
+linked *as* one.** `TestCases.md` is linked **as** a `#` heading — same markup,
+level and document as the three group headings, and **the only one of 39 targets
+sitting where a container sits.**
+
+**Not an aggregate, decisively:** of its **2,524** distinct non-blank lines,
+**1** appears anywhere in `src/`, and that one is a bare code fence. The three
+real aggregates are digest-identical concatenations.
+
+⭐ **And the sharpest part: the evidence that made it look like an aggregate is
+what proves it is a container.** Trap 4's **361 duplicated headings *are* its 17
+chapters and their sub-structure**, recorded in the curriculum exactly as the
+other containers' units are — ⭐ **so §6's *recorded, never derived* is satisfiable
+for it**, which was the objection that would otherwise have sunk ingesting it.
+
+**Consequence:** still depth-1, a fourth `test-scenarios` container of 17 units,
+**38 → 55 units**, adding `gherkin` (244 fences).
+
+⛔ **Whether to ingest is a separate, still-open decision — and it carries one
+constraint that must not be lost.** ⚠️ **If the answer is *exclude*, the `why`
+cannot say "duplicate", because it is not one.** It would be **material withheld
+from the reader**, ⭐ **which is X1's exact test** — an exclusion states its
+reason, and the reason has to be true.
 
 ### ⛔ W6–W13 — the eight rulings that had nowhere to land
 
