@@ -14,9 +14,9 @@ exists.
 
 import ast
 
-from studyforge.validate.corpus import ARCHIVE_DIR
-from studyforge.validate import validate
 from studyforge.validate import source as source_module
+from studyforge.validate import validate
+from studyforge.validate.corpus import ARCHIVE_DIR
 from studyforge.validate.source import SKIP_DIRS, count_headings, source_files
 from tests.studyforge.validate import corpora
 from tests.support import git, init_repository, repository_root, run
@@ -37,6 +37,7 @@ def track(root, where):
 def scanned(root):
     """The scan's files as posix strings relative to `root`."""
     return {path.relative_to(root).as_posix() for path in source_files(root).files}
+
 
 # --------------------------------------------------------------------------
 # counting a structural feature the parser did not produce
