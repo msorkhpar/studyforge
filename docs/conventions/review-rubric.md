@@ -521,6 +521,30 @@ its subject — `Dockerfile`, `compose.yaml` or `docker/dev/check`. ⛔ A claim
 that the image *cannot* run something, unsupported by the image's own text, is
 `did not run` wearing this row's clothes.
 
+##### ⭐ Ruling 61 — this section is the **source**; `workspace.md` is its worked example
+
+⚠️ **Ruling 53 is written in two documents and that was reported as the
+duplication this project has refused four times.** ⛔ **It is not.** Measured on
+the release tip 2026-09-10: `review-rubric.md` **5** occurrences of
+`host-verified`, `docs/conventions/workspace.md` **2**. ⭐ **They are a rule and
+an application of it, and both are needed.**
+
+| | holds | |
+|---|---|---|
+| **here, §4b** | the four states, and the bound above | ⭐ **the source** |
+| **`../conventions/workspace.md`** | ⭐ **one worked example** — why `tools.workspace verify` **exits 2** inside the image instead of answering, and why mounting the workspace would be *wrong* rather than merely hard | ⭐ **a consumer** |
+
+⭐ **`workspace.md` carries the thing this section asks for and cannot itself
+supply: the sentence in the tool's own definition that excludes its subject.**
+⛔ **So neither document is emptied.** This section states the rule and never
+the instance; `workspace.md` cites this section and never restates the four
+states or the bound.
+
+⚠️ **What was actually wrong was the *index* that named `FND-05a` as 53's
+landing site and this section as unlanded** — ⛔ **an audit column is a summary
+of a status owned elsewhere, and it goes stale in the understating direction.**
+⭐ **Which is why it is abolished rather than repaired** (Ruling 63).
+
 ⛔ **`Blocked` is for an acceptance condition that could not be executed** — not
 for one that executed, passed, and happened to do so outside the image. ⚠️ My
 round-7 wording said *"if the container cannot run it, the verdict is Blocked"*,
@@ -837,6 +861,48 @@ nothing to report outside its scope, or a Findings section that marked nothing."
 
 grep -n '`\[structural\]`' "$H"                        # each one routed below
 ```
+
+#### ⛔ Ruling 65 — the marker's spelling, stated, because it was never written down
+
+⛔ **The marker is exactly `` `[local]` `` or `` `[structural]` `` — square
+brackets, inside backticks.** ⚠️ **Nothing above ever said so**, and §8 two
+paragraphs up explicitly permits *two* section formats, ⭐ **so the document
+taught that formatting here is negotiable and then counted on one spelling.**
+
+⛔ **Measured 2026-09-10, across every handoff in `docs/tasks/handoffs/`:** 34
+documents carry a marker; **34 use backticks, 0 use any other form.** ⚠️ **The
+35th did not** — `PO-2026-09-10-round18.md` wrote `**[structural] 61**`, and the
+check above returned **`findings=0 lines=0` on a file carrying five findings.**
+
+⭐ **The guard worked and this is what it was for.** ⛔ `0 = 0` did not pass
+silently: the zero line forced a sentence, which is Ruling 29's whole point
+arriving one round after it was written. ⚠️ **But the near-miss is that `0` is
+also the legitimate answer for a clean handoff** — so a reviewer in a hurry
+writes *"nothing to report outside its scope"* and moves on. ⛔ **Then a check
+that cannot read the file is indistinguishable from a file with nothing in it**,
+which is §4b-i's sentence in a different section.
+
+⛔ **The spelling is NOT widened to accept the second form.** ⚠️ Four versions of
+this counter were written as lists of accepted shapes and every one failed on a
+handoff its author had not seen; ⭐ **a fifth accepted shape is that mistake, and
+the ruling that closed it says so.** **One spelling, written down, is the fix.**
+
+⚠️ **And the reviewer's own obligation, which no regex closes:** ⛔ **a `0` is
+read against the file, not against the check.** Open the Findings section. If it
+has prose in it and the count is zero, ⭐ **the count is wrong, not the section.**
+
+#### ⚠️ The marker cannot be quoted in prose, and that is a known cost
+
+⛔ **This check counts the marker's own spelling**, so a document that *mentions*
+the marker — to explain this rule, or to illustrate the two forms — registers a
+finding that does not exist. ⚠️ **Measured: `SF-12-survey` hit it while being
+written**, reporting `findings=7 lines=7` where six existed, and reproduced
+`6 = 6` only after the illustration was removed.
+
+⭐ **The rule is: name the marker, do not spell it.** Write *"the structural
+marker"* in prose. ⛔ **Do not fix this by excluding fenced blocks or quoted
+spans** — that is a list of accepted shapes again, and it is the failure this
+clause's own history is made of.
 
 > ⛔ **Ruling 29, landed — and the two-number design was itself the defect, not
 > just its regex.** ⚠️ **I wrote four versions of a *filed* counter before
