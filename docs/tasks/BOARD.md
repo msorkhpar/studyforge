@@ -4,11 +4,14 @@
 the framework Product Owner. Task *definitions* live in the epic documents
 (`E00`…`E13`); this file carries only **state**.
 
-✅ **M0 COMPLETE. M1 steps 1.1 and 1.2 COMPLETE.** ⛔ **M1 step 1.3 has ONE task left: `SK-01`** (Developer 1, after `W14`+`W18`).
-✅ **Done: SF-25, SF-23, FND-07, W1, W2, W3, W6, W7, W8, W13** — merged at
-`f569d0e`, `dba3f74`, `06364c0`, `dc4686c`, `1cc4e6d`, each with its verdict in
-the message. ⏳ **In flight:** `W14`+`W18` (Developer 1) and `W17`+`W19`
-(Developer 2).
+✅ **M0 COMPLETE. M1 steps 1.1 and 1.2 COMPLETE.** ✅ **M1 step 1.3 CLOSED** at `277469e` — **2259 passed, 8 skipped, floor clean**,
+pinned. Done: **SF-23, SF-25, SK-01, FND-07, W1, W2, W3, W6, W7, W8, W13, W17,
+W19** and Ruling 37's clause, across **eight merges, each with its verdict in the
+message**. ⭐ **Skips 46 → 8**, both remaining causes structurally unfixable by an
+image.
+
+⛔ **Step 1.4 is NOT open yet: `W14` and `W18` were ruled and never landed** —
+measured on the tip, not assumed. See *check 4* below and the step 1.4 section.
 
 ⛔ **Release branch: `release/m0-foundations`, and M1 continues on it.** ⚠️ **This
 header previously named `release/m1-one-page`, cut from `release/m0-foundations`.
@@ -20,7 +23,7 @@ ruling and why it is not re-cut mid-wave. Developers branch off it, the CTO
 reviews against `../conventions/review-rubric.md`, only reviewed work merges
 back. Flow: `../conventions/delivery-flow.md`.
 
-📏 **Base, measured in the pinned container at `1cc4e6d`: 2171 passed, 8
+📏 **Base, measured in the pinned container at `277469e`: 2259 passed, 8
 skipped, quality floor clean.** ⭐ **Skips 46 → 8**, and the two remaining causes
 are structurally unfixable by an image.
 
@@ -572,7 +575,7 @@ another milestone name, the answer is wrong.
 | W3 | The fixture SVG that declares an arrow it does not draw | Developer 2 | *merged* | ✅ `done` | — | The geometry matches the two accessible names, or the names match the geometry — and they agree with each other |
 | FND-07 | Knowledge-index availability and freshness | Developer 2 | *merged* `1cc4e6d` | ✅ `done` | — | Absent → report and exit 0; ⛔ **stale by content, never by mtime** → FAIL; unbridged → FAIL. ⭐ **The task ships the check; the artifact does not travel** |
 | SF-23 | Exercise and workspace contract | Developer 1 | *merged* `06364c0` | ✅ `done` | — *(SF-09 merged)* | §7's three states are structural, with no `state` field to forget; ⛔ **it must ship the `graded` fixture, which does not exist** — see below |
-| SK-01 | Source reconnaissance | **Developer 1, after W14** | — | `todo` | ⚠️ soft: SF-25 | Correct manifests for the Java corpus, a flat source, and a prose-only source; ⛔ **colliding and unaddressable titles are named**, carried this round |
+| SK-01 | Source reconnaissance | Developer 1 | *merged* `277469e` | ✅ `done` | ⚠️ soft: SF-25 | Correct manifests for the Java corpus, a flat source, and a prose-only source; ⛔ **colliding and unaddressable titles are named**, carried this round |
 
 ### ⛔ Merge order inside step 1.3, ruled — **W1+W2 before SF-25**
 
@@ -762,14 +765,67 @@ did it manually first.
 
 ---
 
-## The wave-open checks — ⛔ **three**, run 2026-09-09 by the PO
+## M1 step 1.4 — one task, and a gate in front of it
 
-⛔ **All three are mine and all three run before the wave, not after it.**
+> **Step 1.4 is `SF-10`**, the unit document builder — `Depends on` SF-05, SF-06,
+> SF-09, all merged. **Team**-sized, `~70k`, owns `unit/builder.py` and its
+> package.
+
+| Task | Owner | Status | Gate |
+|---|---|---|---|
+| **W14** — two missing invalid fixtures | **Developer 1** | ⛔ `todo` — **ruled, never landed** | ⛔ **blocks step 1.4** |
+| **W18** — Ruling 35, `authoritative ⟹ bundled` | **Developer 1** | ⛔ `todo` — **ruled, never landed** | ⛔ **blocks step 1.4** |
+| **W20** — repo-wide §7c check **and its migration** | **Developer 2** | `todo` | ⛔ **before SF-10** |
+| **SF-10** — Unit document builder | **both, as a team** | `todo` | opens when the three above land |
+
+### ⛔ Why W14 and W18 gate the step rather than riding alongside
+
+⚠️ **W18 is not bookkeeping — it is a live correctness hole.** Measured:
+`FORBIDDEN` still carries only the `generated` pair, so ⛔ **a grader the reader
+wrote can declare itself the source's own.** That is R5 failing open, and
+`SF-10` is the task that assembles what a reader is shown.
+
+⛔ **And letting them ride alongside is what already failed, twice.** They rode
+alongside SK-01 and did not land. ⭐ **A thing that has evaporated twice does not
+get a third trigger; it gets a gate.**
+
+### ⛔ W20 before SF-10, and it is the third instance of one sequencing shape
+
+⭐ **Ruling 43 measured 7 §7c hits already on the release branch** — `exercise/
+states.py` (4), `archive/scrub.py` (1), `address/__init__.py` (2) — ⚠️ **all
+predating this work.** So a repository-wide check **goes red the moment it
+lands**, and Developer 2's finding 1 is ruled: ⛔ **a commit adding a check owns
+its migration.** One task, one commit: the check plus those 7 moved. ⭐ Exemption
+generalises as ***exempt documents, never modules.***
+
+⚠️ **`SF-10` is a ~70k builder that will add emission sites.** Landing the check
+after it means migrating more than 7 — which is `W6`'s argument (*a check that
+arrives after twenty sites exist is one nobody turns on*) and `W13`'s (*a fixture
+authored while the checker is weak was never actually bounded*). ⛔ **Third
+instance of one shape, so it is a rule now and not a judgement call: a check and
+the code it will judge are ordered check-first, or the check inherits a backlog
+it did not cause.**
+
+### ⭐ Why both developers take SF-10 together
+
+`SF-10` is **`Team`**-sized in its own definition, and ⛔ **that is not the
+collision-pair rule being broken — it is the rule's premise.** The pair rule
+exists so a shared surface is not *split*; a team task is one surface with two
+people **in** it. ⚠️ It also carries **W5**: `unitdoc.py` is **827 lines against
+R11's 400**, and R11 is explicit that the large modules arrive **as packages or
+not at all**.
+
+---
+
+## The wave-open checks — ⛔ **four**, run 2026-09-09 by the PO
+
+⛔ **All four are mine and all four run before the wave, not after it.**
 
 | # | Check | Command |
 |---|---|---|
 | 1 | Index present and current **in the main checkout** | `built_at_commit` vs `git diff --quiet <it> HEAD -- src tools docs` |
 | 2 | The `[structural]` triage list | `grep -rn '\[structural\]' docs/tasks/handoffs/` |
+| 4 | ⭐ **NEW — nothing ruled is queued-but-unlanded across the boundary** | ask each document owner; ⛔ **and re-measure every board row whose trigger has passed** |
 | 3 | ⭐ **C6: every ruling made since the last wave reached its artifact** — ⛔ **and it stays exactly here** (Ruling 39) | for each, open the task/epic/spec/convention it names and read the clause — ⛔ **and the neighbouring rulings in it, not only the clause being added** |
 
 ⚠️ **Check 3's scope, corrected on a measurement (Ruling 39) — I had this wrong.**
@@ -782,7 +838,40 @@ dichotomy — the answer is neither.**
 
 ⛔ **A check covers what is there; a broadcast covers what is coming.** This check
 is the backstop for rulings whose subject is **already merged** — a real,
-non-empty, otherwise-unwatched set. ⭐ **The branch half is a *broadcast*
+non-empty, otherwise-unwatched set.
+
+### ⛔ Check 4, and the measurement that forced it — **a board row is the weakest destination there is**
+
+⚠️ **Measured on the release tip `277469e`, 2026-09-09, opening step 1.4:**
+
+| Item | Ruled | State on the tip |
+|---|---|---|
+| **W14** — the two missing invalid fixtures | ✅ ruled twice | ⛔ **`tests/fixtures/invalid/` holds FIVE.** Not landed |
+| **W18** — Ruling 35, `authoritative ⟹ bundled` | ✅ ruled | ⛔ **`FORBIDDEN = (("generated", "authoritative"),)`** — the `generated` pair only. **`user` + `authoritative` is still accepted today** |
+
+⛔ **Both were routed to Developer 1 *"with W14, before SK-01"*. SK-01 merged.
+Neither travelled, and there is no review left to catch them.**
+
+⭐ **This is the destination hierarchy proving itself, and W14 is the controlled
+experiment because it was routed twice, two different ways:**
+
+| Destination | What happened to W14 |
+|---|---|
+| ⭐ **a failing test** | *"The failing SF-02 test was the instruction."* The graded fixture shipped **without anybody being told** |
+| **an Acceptance clause** | ⚠️ half-met — but **the reviewer was the backstop and it was caught in review** |
+| ⛔ **a board row with an owner and a trigger** | ⛔ **evaporated, twice, silently** |
+
+⛔ **So: a board row is a destination only for work nobody is currently in a
+position to encode as a test or a clause.** ⚠️ **W6–W13 gave eight rulings a
+destination and that was the right fix for having none — but I recorded it as
+though all destinations were equal, and they are not.** ⭐ **A trigger that names
+a task is only as good as somebody re-reading the board when that task ends** —
+which is precisely the re-read that check 4 now forces.
+
+⛔ **Step 1.4 does not open until W14 and W18 land** — see the step 1.4 section.
+⚠️ Opening a wave while two ruled items sit unlanded is the exact defect check 4
+was added to catch, and adding the check while committing the defect would make
+it a rule nobody believes. ⭐ **The branch half is a *broadcast*
 obligation on the ruling's author, not a sweep**, and it is now one command in
 `../conventions/agent-protocol.md`: ⛔ **a ruling that changes a shared name names
 its blast radius across branches.** ⚠️ Moving either instrument to do the other's
@@ -1056,6 +1145,9 @@ not carrying*, above.
 | W11 | **`api` is a generic field name** — the tree guard would flag a module reading an unrelated `api` key. `SF-33` finding 3 | ◐ **ACCEPTED, cost named** | if a colliding field is ever minted — realistically `SF-10` or E03's TOC | ⭐ **Zero instances today**, and the finding states its own remedy: narrow the rule to the module rather than drop the field. ⛔ Recorded so the remedy is not re-derived under time pressure |
 | W12 | **The extraction source's `naming.py` docstring says 1,282 where the tree holds 1,290.** `SF-09` finding 3, routing half | ◐ **ACCEPTED, cost named** → E11's integration catalogue | at **SK-07** / the catalogue | ⭐ A defect in a repository v1 does not modify (R20), and the *rule* it exercised — **a claim about another repository is verified in that repository** — is already ruled and applied. ⚠️ Its ask was *"route to whoever owns the drift catalogue"*; `DOC-2026-09-09-codesignal-drift.md` predates it and has no entry |
 | W14 | ⏳ **in flight** — ⛔ **TWO missing invalid fixtures on FND-04's surface, and they are one task** — the **count-mismatch** fixture (`E10` names six, five exist) and the **`user` + `authoritative` R5 pair** (finding 29). ⭐ **Both are record defects, not coverage holes: `check_counts` and the trust rule are implemented and tested — only the fixtures are absent** | **Developer 1**, after `W8` | ⛔ **before `SK-01`**, which reads `SF-25`'s output as its model of "valid" | ⚠️ **Measured on `feat/SF-23-exercise` @ `5a01a30`: the graded fixture shipped, the count-mismatch fixture did not** — `tests/fixtures/invalid/` still holds five. ⛔ **`SF-23`'s Acceptance names both, so this is a live review item, not an escaped one** — flagged to the CTO while the branch is in review. ⭐ **That is the mechanism working: routing an item into a task's *Acceptance* rather than a board row is what makes a reviewer the backstop** | ⛔ **An acceptance clause naming a fixture that does not exist is unfalsifiable** — the same class as an acceptance satisfied by an untracked artifact, arriving in a *condition* instead of a build product. ⭐ Ruled: **build the fixture, keep the clause** — it is the only statement that the count check is exercised, and the count check guards *silently lossy ingestion* |
+| W20 | ⛔ **Repository-wide §7c check — and its migration, in the same commit** (Ruling 43). **Measured: 7 hits already on the release branch**, all predating this work — `exercise/states.py` (4), `archive/scrub.py` (1), `address/__init__.py` (2) | **Developer 2** | ⛔ **before `SF-10`** | ⭐ **A repository-wide check goes red the moment it lands**, so Developer 2's finding 1 is ruled: **a commit adding a check owns its migration.** One task, one commit. ⭐ **The exemption generalises: exempt *documents*, never modules** |
+| W21 | ⚠️ **A fifth rubric gap: nothing checks for dangling pointers after a docs move.** `SK-01` built the far end before deleting the near one — ⛔ *"the reverse order would have produced a green suite and sixteen dangling pointers, and nothing in the rubric would have caught it"* | **CTO** (rubric) | with the four queued rubric edits | ⛔ **The suite would have been green.** ⭐ It is the pointer rule needing an enforcer: *hold it or point at where it is held* is a convention today and nothing mechanical holds it |
+| W22 | **Finding 44 owed to the integration catalogue**, not to `SK-01` — ⭐ **two of its three numbers came from PO-Integration** | **PO** → catalogue | ✅ **routed this round** | ⛔ Fixing it inside `SK-01` would have put a cross-source fact in one skill, where the next source cannot find it (R19) |
 | W17 **+ W19** | ⛔ **One commit, and for the reason W7+W13 were.** **W17:** *"describe a value without reproducing it"* — ⭐ **four spellings shrank to two documented holdouts while the item waited** (ruling 36). **W19:** ⛔ **the 39 remaining `{value!r}` sites, ruled urgent** | **Developer 2**, after `FND-07` | ⛔ **after `FND-07`** | ⭐ **This is the `label_of` defect at repository scale, and it is live: `W1` and `W7` are both on this exact discipline, so a fix to one spelling leaves three.** ⚠️ **It compounds with Ruling 20 one level down:** the personal-data **gate** had two copies that disagreed; the **diagnosis helper** has four. ⛔ §1a's *"do not re-derive the patterns, refused five times"* was about the **patterns**, not the **helpers** — so nobody swept here. ⚠️ **Deliberately not unified now:** three of the four are other tasks' contract surfaces and it would collide with two branches mid-flight |
 | W18 | ⏳ **in flight, with W14** — ⛔ **`user` + `authoritative` is accepted today** — measured — so **a grader the reader wrote may declare itself the source's own.** ✅ **RULED 35: `authoritative ⟹ bundled`, stated positively** | **Developer 1**, with `W14` | before `SK-01` | ⭐ **The author believed the set should be `("bundled",)` and did not change it**, because `unit.trust` owns the rule and `E06` names only the `generated` pair — ⚠️ **an argument, not a measurement**, and they said so. ⛔ **Exactly the restraint R21 asks for**: a task that meets an unlocated contract stops and asks. One entry in `unit.trust.FORBIDDEN` if the CTO agrees |
 | W16 | ⛔ **Every canonical example in the spec is a hand-maintained copy of a contract the code now owns** — ⭐ **the last such pair in the project.** The instance: `MANIFEST_KEYS` has **ten** keys, spec §4's example carries **nine**, and `grep -c '"media"'` over the spec returns **0** for a key the contract owns, so ⛔ **`media` is unteachable from the spec** | **CTO** (spec is theirs) — ⚠️ **explicitly not Developer 2** | ⛔ **before `SK-01` proposes a manifest against the example** | ⛔ **REMEDY INVERTED — Ruling 28 REVERSED by Ruling 30. Do not add `media` to the example.** ⚠️ `media` is **not in `REQUIRED_KEYS`** — it is optional and defaulted, so **the example was not wrong to omit it.** ⭐ **The corrected remedy: §4 gains the complete key list *beside* the example; the example stays a realistic instance, not an exhaustive one; and ⛔ the test asserts subset one way and coverage the other — never equality.** ⛔ **Equality is what Ruling 28 required and it would have *compelled* the Q16 harm**: names freeze at first declaration, `ISO-04` omits `media`, and `SK-07` **generates** manifests — so an exhaustive example propagates an optional key through a generator and **freezes it on every corpus, including ones with no media** |
@@ -1259,6 +1351,16 @@ missing document.
 
 | Date | Change |
 |---|---|
+| 2026-09-09 | ✅ **M1 step 1.3 CLOSED at `277469e` — 2259 passed, 8 skipped, floor clean, pinned.** Eight merges, **each with its verdict in the message**. Done: SF-23, SF-25, SK-01, FND-07, W1, W2, W3, W6, W7, W8, W13, W17, W19 and Ruling 37's clause. ⭐ **Skips 46 → 8.** |
+| 2026-09-09 | ⛔ **Step 1.4 held shut: `W14` and `W18` were ruled and never landed, measured on the tip rather than assumed.** `tests/fixtures/invalid/` holds **five**, and `FORBIDDEN` still carries only the `generated` pair — ⚠️ **so `user` + `authoritative` is accepted today and a grader the reader wrote can declare itself the source's own.** ⛔ **That is R5 failing open, not bookkeeping.** Both were routed *"Developer 1, with W14, before SK-01"*; SK-01 merged and neither travelled. ⭐ **A thing that has evaporated twice does not get a third trigger, it gets a gate** — and ⛔ **opening a wave with two ruled items unlanded, in the same breath as adding the check for exactly that, would make the check a rule nobody believes.** |
+| 2026-09-09 | ⭐ **The destination hierarchy, and `W14` is the controlled experiment because it was routed three ways.** ⛔ **As a failing test** it landed *without anybody being told* — *"the failing SF-02 test was the instruction."* ⚠️ **As an Acceptance clause** it was half-met and **the reviewer caught it.** ⛔ **As a board row with an owner and a trigger it evaporated — twice, silently.** ⭐ **So: a test > an acceptance clause > a board row, and a board row is a destination only for work nobody is yet in a position to encode as either.** ⚠️ **`W6`–`W13` gave eight rulings a destination and that was right for having none — but I recorded it as though all destinations were equal, and they are not.** ⛔ **A trigger naming a task is only as good as somebody re-reading the board when that task ends**, which is what **check 4** now forces. |
+| 2026-09-09 | ⭐ **Wave-open check 4 added: nothing ruled is queued-but-unlanded across a boundary — and every board row whose trigger has passed is re-measured.** ⚠️ **Two independent instances forced it in one round:** my own W14/W18, and ⛔ **the CTO's four rubric edits queued and unlanded** — §8a's counters, Ruling 40's inversion, Ruling 41's verdict mapping, Finding 48's two-number extension. ⭐ **Their own diagnosis is the better one:** *"finding defects in my instrument faster than landing the fixes — Finding 47 in a smaller costume."* ⛔ **A fix that is written and not landed is indistinguishable from one that was never written**, and it is worse, because its author believes it is done. |
+| 2026-09-09 | ⛔ **Finding 48, the CTO against themselves: §7c was run against the branch and never against the base** — ⭐ *§0a-i's own lesson in a check they were not applying it to: a trial merge tells you nothing about the base.* ⚠️ **That is why 7 hits survived three merged tasks, one APPROVEd this round.** The two-number rule now extends to the rubric's own greps. ⭐ **Same shape as C2**, which was also a gate reading the wrong tree and passing the wrong thing. |
+| 2026-09-09 | ⛔ **`W20` before `SF-10`, and it is the third instance of one sequencing shape, so it is a rule now rather than a judgement call.** Ruling 43 measured **7 §7c hits already on the release branch**, all predating this work, so a repository-wide check **goes red the moment it lands** — ruled: **a commit adding a check owns its migration**, one task, one commit. ⭐ **Exemption generalises as *exempt documents, never modules*.** ⚠️ `SF-10` is a ~70k builder that will add sites, so landing the check after it means migrating more than 7 — ⭐ **which is `W6`'s argument and `W13`'s.** ⛔ **A check and the code it will judge are ordered check-first, or the check inherits a backlog it did not cause.** |
+| 2026-09-09 | **Step 1.4 opened as one task, `SF-10`, taken by both developers as a team.** ⭐ **That is not the collision-pair rule being broken — it is the rule's premise:** the pair rule exists so a shared surface is not *split*, and a `Team` task is one surface with two people **in** it. ⚠️ It carries **W5**: `unitdoc.py` is **827 lines against R11's 400**, and the large modules arrive **as packages or not at all**. |
+| 2026-09-09 | ⚠️ **A docs-only merge reds the suite, by design — and the next person to merge a board update should not have to discover it.** `FND-07`'s tripwire watches `docs/`, so board merges go red until `graphify update . && python3 -m tools.knowledge bridge`; it takes seconds. ⭐ **Checked rather than assumed that the rebuild really re-indexes prose instead of merely satisfying the check: it does** — 138 nodes from the newly merged handoff, `built_at_commit` at HEAD. |
+| 2026-09-09 | ⛔ **`W21` — a fifth rubric gap, and the suite would have been green.** Nothing checks for **dangling pointers after a docs move**: `SK-01` built the far end before deleting the near one, and ⚠️ *"the reverse order would have produced a green suite and sixteen dangling pointers."* ⭐ **It is the pointer rule needing an enforcer** — *hold it, or point at where it is held* is a convention today and nothing mechanical holds it. **`W22`: finding 44 routed to the integration catalogue**, not fixed in `SK-01`, because ⛔ **two of its three numbers came from the integration side and a cross-source fact buried in one skill is where the next source cannot find it** (R19). |
+| 2026-09-09 | ⭐ **A tension dissolved rather than excepted, carried beside the pointer rule because the next author will hit it:** when a justification rests on a measurement, the rule can look as though it forbids naming the corpus the number came from. ⛔ **It does not — the number is the justification; the corpus name was only its citation.** ⚠️ **Not an exception to the pointer rule: the pointer rule applied to the right unit.** |
 | 2026-09-09 | ✅ **`FND-07` merged `1cc4e6d` — 2171 passed, 8 skipped, floor clean — and it caught the tree the moment it landed.** ⭐ **A mechanism that paid on arrival:** it named the commit it was built at and **both repair commands**, the rebuild ran, the bridge reported **`edges 8312; prose-to-code 237 (222 from the bridge); floor 100`**, and the floor went clean. ⛔ **And the question `FND-02` could not answer now answers in one hop:** `R7 — No personal data reaches disk or the wire --implemented_by--> assert_clean()`. ⚠️ **The red-then-green was designed, disclosed before it happened, and behaved as predicted** — ⭐ **which is the whole difference between a tripwire and a nuisance.** It closes the defect this board named against itself: **31 of 33 agents could not have queried the graph while this document said it was there.** |
 | 2026-09-09 | ⭐ **`FND-07` satisfies the standing rule it was created to enforce, and that is worth stating once:** *no acceptance condition is satisfied by an untracked artifact alone* — ⛔ **the check travelled on the branch and the artifact did not.** ⚠️ The task that fixed the class was made to obey the class. |
 | 2026-09-09 | ⛔ **Four findings promoted to rules and carried to conventions, not left in a handoff.** **(1)** ⭐ *A document may hold a thing, or point at where it is held; it may never point at a document that points back* — rated its round's best finding, from a real cycle: `graphify.md` pointed at `FND-02`'s handoff, which pointed back, **and neither had the command.** ⚠️ **It is the sharp edge of my own *a summary points, it never restates*:** a stale copy is at least a copy and can be read and found wrong; ⛔ **a cycle of pointers reads as well-organised and contains nothing.** **(2)** *A citation is not an edge until both ends exist in one index* — quoted beside the census, because ⛔ **the number moves on merge and without the sentence somebody reads correct movement as drift.** **(3)** *State the ratio, the denominator, and the set it is over* — ⚠️ **the bare 7.9% cost real work**: a developer *"built a 969-edge bridge on it before measuring."* ⭐ **Placed beside the number it governs, not in a ruling nobody rebuilding a census would read** — placement, not strength, was what it lacked. **(4)** *Present is not correct* — ⛔ **four assertions checked that runbook entries existed and not one could have caught an entry that existed and named the wrong thing.** ⭐ Reached by the developer **from the rule rather than by being told**. |

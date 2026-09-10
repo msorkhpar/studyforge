@@ -194,6 +194,13 @@ well-organised and contains nothing** — every hop looks like diligence.
 ⭐ **So the obligation lands on the pointer's author: follow it once, and confirm
 the far end *holds* rather than *forwards*.**
 
+⚠️ **And the tension a later author will hit, dissolved rather than excepted.**
+When a justification rests on a **measurement**, it can look as though the rule
+forbids naming the corpus the number came from. ⛔ **It does not.** ⭐ **The number
+is the justification; the corpus name was only its citation** — so ⚠️ **this is
+not an exception to the pointer rule, it is the pointer rule applied to the right
+unit.** Hold the number; cite where it came from.
+
 ### ⛔ A citation is not an edge until both ends exist in one index
 
 ⚠️ **Quoted into the record because a census depends on it.** A prose-to-code

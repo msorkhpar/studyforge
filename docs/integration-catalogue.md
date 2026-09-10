@@ -142,6 +142,7 @@ punctuation.** Material that leans on ASCII diagrams should expect to write
 
 | Entry | Owed by | Note |
 |---|---|---|
+| ⛔ **Finding 44 — routed here rather than fixed in `SK-01`** | PO-Integration, with the PO | ⭐ **Two of its three numbers came from the integration side**, so it is a cross-source fact. ⛔ **Fixing it inside `SK-01` would have buried it in one skill, where the next source cannot find it** — which is R19's shape: what a second integrator would have to re-derive belongs *here* |
 | ⛔ **PO-Integration's ten entries** | PO-Integration | ⭐ **Already written in this document's shape** — adopting them is a copy, and the only thing that was missing was this file. They land by their next commit |
 | **What a re-run of reconnaissance is** (`F17`) | PO-Integration → PO | ⛔ **Nothing defines a re-run against a moving framework.** The last one happened because a person asked, which is not a mechanism |
 | **`OPS-05` checks at build time; tooling writes at index time** (`F12`) | PO → `OPS-05`, `SK-07` | See `W15` on the board |
