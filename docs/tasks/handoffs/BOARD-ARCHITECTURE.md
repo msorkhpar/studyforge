@@ -4,11 +4,12 @@
 
 **Status:** done
 
-**Base:** `4b25274` (MAIN, `release/m0-foundations`) · **Merge:**
-`chore/board-architecture` in `wt/arch`
+**Base:** `c65b8a4` (MAIN, `release/m0-foundations`) · **Merge:** `3aedd40`
+(`chore/board-architecture`, `wt/arch`)
 
-⚠️ **The tip moved THREE times under this branch** — PO round 35 + `W76`
-(`bfb8c8c`), `W70` + CTO round 44 (`9a57b13`), CTO round 45 (`4b25274`).
+⚠️ **The tip moved FOUR times under this branch** — PO round 35 + `W76`
+(`bfb8c8c`), `W70` + CTO round 44 (`9a57b13`), CTO round 45 (`4b25274`),
+`SF-14` + CTO round 46 (`c65b8a4`).
 ⭐ **`BOARD.md` was untouched by the last two**, so each cost one register cell:
 the partition is heading-driven rather than line-numbered.
 
@@ -46,26 +47,27 @@ $ ./docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check .;
                             ruff format --check .; python3 -m tools.quality;
                             python3 -m pytest -q'
 
-MAIN(base)  -> 4b252749ae1af1393328c26166ac891a9625eb30
-  ruff 0.16.6 · check: All checks passed! · format: 616 files already formatted
-  document pointers: 205 read in 222 markdown files, 86 anchored, 0 unresolved
+MAIN(base)  -> c65b8a4efeea9784a7df0283dadd2b19e63295e0
+  ruff 0.16.6 · check: All checks passed! · format: 633 files already formatted
+  document pointers: 205 read in 224 markdown files, 86 anchored, 0 unresolved
   quality floor: clean            (no `board:` line — the check does not exist there)
-  4129 passed, 63 skipped
+  4279 passed, 63 skipped
 
-MERGE(arch) -> 5688dcd1a280aaaee27aa1d0763ce897389f2e3e
-  ruff 0.16.6 · check: All checks passed! · format: 672 files already formatted
-  document pointers: 352 read in 273 markdown files, 125 anchored, 0 unresolved
+MERGE(arch) -> 3aedd409490c865c576223c89cb3ae1cd632b1cf
+  ruff 0.16.6 · check: All checks passed! · format: 689 files already formatted
+  document pointers: 353 read in 275 markdown files, 125 anchored, 0 unresolved
   board: 78 register rows, 50 live, 50 detail files in docs/tasks/rows/;
          4393 bytes narrative of 8192, widest row 415 of 600,
          24388 bytes total of 32032 allowed
   quality floor: clean
-  4189 passed, 63 skipped
+  4342 passed, 63 skipped
 ```
 
 ⛔ **Two different shas printed from inside the same invocation as the numbers**
 (Ruling 172), ⭐ **so the base and the merge cannot have been paired wrongly.**
-⚠️ **`+60` tests: 57 in `tools/tests/quality/board/` and 3 for the office-handoff
-kind.**
+⚠️ **`+63` tests: 60 in `tools/tests/quality/board/` and 3 for the office-handoff
+kind.** ⛔ **One F401 was caught by the PINNED image alone** — the host has no
+ruff, and `quality floor: clean` has never meant lint-clean (Ruling 78).
 ⚠️ **Skips are 63 in BOTH — 55 `tests/visual/` + 5 `tests/docker/` + 3
 `tests/test_knowledge_index.py`.** ⛔ **A host run of `wt/arch` reads 13 instead,
 because the host has a browser and the pinned image has none (`QA-03/1`) — the
