@@ -855,6 +855,52 @@ the second to happen inside the ruling written against it.** ⭐ **That is not
 embarrassing, it is the argument:** the class is not defeated by care, only by
 instruments that print two things which have to agree.
 
+#### ⛔ Ruling 83 — a sweep row's tail is read for **`failed`, `error` AND the skip count**
+
+⚠️ **`FND-09`'s row 7 asked whether the wording above covers a tail with no
+failure count. It does not — and re-running that mutant independently found a
+second shape that is worse, so the ruling is written against both.**
+
+⭐ **Shape one, the author's.** *"The walk yields nothing"*, emptied at
+collection: `exit=2`, tail `1 error in 1.02s`, ⛔ **no failure count anywhere.**
+Under *"a `KILLED` row shows at least one `failed`"* that row has **no verdict at
+all**, and a harness matching the string `failed` reads `0` and prints
+`SURVIVED`.
+
+⛔ **Shape two, and it is the dangerous one.** The same mutant written a
+different way empties the parametrization **after** collection, and ⭐ **pytest
+turns an empty parametrization into a SKIP.** Measured, whole suite, pinned
+image:
+
+```
+BASELINE   exit=0   3026 passed,  8 skipped
+mutant     exit=1     14 failed, 2964 passed, 14 skipped   ⛔ skips 8 → 14
+```
+
+⚠️ **Six tests stopped running and the tail still reads like a test run.**
+⛔ **It only went red because the seam under test carried non-vacuity floors
+(`swept >= 20`, `swept(()) == set(INVALID_CORPORA)`).** ⭐ **Strip those and the
+row is `exit=0`, `3032 passed, 14 skipped` — exit code and tail in perfect
+agreement, and six tests gone.** ⛔ **Ruling 76's two columns cannot see that.
+A third is needed.**
+
+⭐ **So the rule, in three parts:**
+
+1. ⛔ **A `KILLED` row's tail reports at least one `failed` or `error`**; a
+   `SURVIVED` row's tail reports neither and exits `0`. ⚠️ A harness matching
+   only `N failed` is defective and its sweep is discarded.
+2. ⛔ **Every row prints the SKIP COUNT, and every row's skip count must equal
+   the baseline's.** ⭐ **A row whose skips moved is discarded exactly as a
+   disagreeing row is** — a mutant may change what *fails*, and it may never
+   change what *runs*.
+3. ⛔ **The check is stated in the negative** — *does the tail say the run passed,
+   with the baseline's skips?* ⭐ **That is a closed question.** ⚠️ A list of the
+   ways a run can fail is the open-set mistake § 8a's own history is made of.
+
+⚠️ **This is § 4b-i's *"a skipped test is not a passing test"* arriving in the
+one place nobody applied it** — inside the sweep, where the reviewer had already
+accounted for the baseline's skips once and stopped looking.
+
 ---
 
 ## 5. R13 — no markup, CSS or JS in Python strings
@@ -1336,6 +1382,60 @@ itself, and it grew by one each time it did.
 ⛔ **So a number that counts a corpus's files, findings or artifacts may not
 stand alone as Acceptance.** Where a count is genuinely the point, it is
 written with the identity that generates it, and the reviewer pastes both.
+
+### ⛔ Ruling 81 — a number that **reproduces** is not evidence that its set held still
+
+⚠️ **Ruling 72 above argues from staleness: a total is false the next time
+anything moves.** ⛔ **`FND-09` measured the other half, and it is the half that
+gets past a careful reader.** Its recorded price — *"7 modules, 10 call sites"* —
+reproduced **exactly**, to the line number, against the ref its walk table cites.
+⭐ **And the membership behind it had changed:** re-run over an export of that
+ref it reads **6 modules and 9 sites**; `SF-10` added the seventh afterwards, and
+one arrival happened to land where one departure was assumed.
+
+⛔ **The rule: a price is re-established by re-running its classifier and
+printing the *members*, never by confirming the count.** ⭐ A matching total is
+evidence that the total matches — nothing more. ⚠️ **The tell is that this
+failure looks like diligence:** the number was checked, it agreed, and agreeing
+is exactly what a wrong set does when its size is right.
+
+⭐ **This is Ruling 55 (*the migration is whatever the check finds*) arriving in
+the case where the check appears to have found the recorded answer**, and it is
+Ruling 72 with the sign flipped: ⛔ **stability of a total is not evidence about
+its set, in either direction.**
+
+### ⛔ Ruling 82 — every decomposition carries one row discharged by **looking at the real thing**
+
+⛔ **Ruling 72 replaces a total with parts, and that trade has a cost nobody had
+named: a decomposition can silently *narrow* the promise it replaced.** A total
+is wrong the moment anything moves; ⚠️ **a decomposition is wrong in a way that
+never goes red — it simply stops covering something, and every row still passes.**
+
+⭐ **Measured, `M1`, 2026-09-10, and in both directions in one round.** M1's
+stated *Done* says a page opens *"with styles"*. The nine rows decompose that
+into **row 4** (references resolve) and **row 5** (highlighting is bounded).
+⛔ **A reviewer — me — reported the unstyled page chrome as blocking *"the close
+condition that a page opens with working styles"*. No such row exists**, and the
+PO was right to refuse the block: appealing to the total is what Ruling 72
+forbids. ⭐ **The decomposition did its job in the direction nobody tests it in.**
+⚠️ **And in the same run it was the reason the chrome had no row at all.**
+
+⛔ **So: a decomposition includes at least one row whose discharge is *somebody
+opened the artifact and recorded what they saw*.** ⭐ It is the only row that can
+catch what the other rows stopped covering, because it is the only one not
+derived from the list of things anyone thought to decompose.
+
+⚠️ **Two conditions on that row, and they are what stop it becoming a taste
+verdict:**
+
+- ⛔ **Its bar is stated in advance, in the negative** — what an observation must
+  show for the row to **fail** — and only against regions the ref under test
+  actually populates. ⭐ **A named failure mode for a region the build does not
+  emit is unfalsifiable, and it reads as rigour.**
+- ⛔ **The observer is not the author of the task the row gates.** The row exists
+  to catch what the decomposition stopped covering; ⚠️ handing the verdict to the
+  person whose task passes or fails on it puts the one unautomated judgement in
+  the one place the rest of this document refuses to put any other.
 
 ---
 
