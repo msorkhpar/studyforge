@@ -206,11 +206,10 @@ def test_every_check_has_a_row_and_every_row_is_a_check():
     assert shipped - named == set(), f"validate.md omits the checks {sorted(shipped - named)}"
 
 
-def test_the_reference_counts_the_checks_it_lists():
-    assert "## The twelve checks" in document("validate.md")
-    assert len(CHECKS) == 12, (
-        "the check count moved; validate.md's heading and table both say twelve"
-    )
+def test_the_heading_the_reader_scans_for_carries_the_derived_check_count():
+    spelled = _spelled(len(CHECKS))
+    assert f"## The {spelled} checks" in document("validate.md")
+    assert len(rows_under(document("validate.md"), f"The {spelled} checks")) == len(CHECKS)
 
 
 def test_every_rule_id_has_a_row_and_no_row_invents_one():
@@ -222,12 +221,19 @@ def test_every_rule_id_has_a_row_and_no_row_invents_one():
     assert shipped - named == set(), f"validate.md omits the rule ids {sorted(shipped - named)}"
 
 
-def test_the_reference_counts_the_rule_ids_it_lists():
-    # ⛔ Ruling 128: the population is printed in the handoff; here the scalar
-    # in the heading is pinned to the derivation rather than to itself.
-    assert len(rule_ids()) == 23, (
-        "the rule-id census moved; validate.md's heading says twenty-three"
-    )
+def test_the_heading_the_reader_scans_for_carries_the_derived_rule_id_count():
+    # ⛔ Ruling 128: the population is printed in the handoff; the scalar is
+    # pinned to the derivation here. ⚠️ And it READS the document — this test
+    # asserted only `len(rule_ids()) == 23` until the empty-population control
+    # showed it passing with the whole reference deleted.
+    spelled = _spelled(len(rule_ids()))
+    assert f"## The {spelled} rule ids" in document("validate.md")
+    assert len(rows_under(document("validate.md"), f"The {spelled} rule ids")) == len(rule_ids())
+
+
+def _spelled(number: int) -> str:
+    """Spell a count the way a heading spells it."""
+    return {12: "twelve", 23: "twenty-three"}[number]
 
 
 def test_the_exit_codes_are_the_ones_the_command_returns():
@@ -294,10 +300,18 @@ def test_the_reference_quotes_each_example_manifest_verbatim(root):
 
 
 @pytest.mark.parametrize("root", EXAMPLES)
-def test_every_manifest_the_reference_shows_is_one_the_parser_accepts(root):
-    # ⚠️ Reading the fixture back through `parse` rather than through `json`
-    # is what makes this a claim about the contract instead of about a file.
-    assert parse_manifest((repository_root() / root / "corpus.json").read_text(encoding="utf-8"))
+def test_the_manifest_the_reference_shows_is_one_the_parser_accepts(root):
+    # ⚠️ The block ON THE PAGE goes through `parse`, never the file on disk.
+    # ⛔ Reading the fixture here would have made this a claim about a file the
+    # reference does not control — which is how a test's name comes to promise
+    # something it never checks. The empty-population control found it.
+    source = json.loads((repository_root() / root / "corpus.json").read_text(encoding="utf-8"))
+    quoted = next(
+        block
+        for block in json_fences(document("examples.md"))
+        if block.get("source") == source["source"]
+    )
+    assert parse_manifest(json.dumps(quoted)).source == source["source"]
 
 
 def test_every_json_block_in_the_reference_that_is_a_manifest_parses_as_one():
