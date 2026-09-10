@@ -28,6 +28,7 @@ also closer to what a reviewer reads.
 from __future__ import annotations
 
 import os
+import shutil
 import tomllib
 
 import pytest
@@ -212,6 +213,96 @@ def test_no_path_from_anybody_s_machine_is_written_down():
         text = read(name)  # the raw text: a home path in a comment is still a leak
         for shape in ("/home/", "/Users/", "/root/"):
             assert shape not in text, f"{name} names a home directory: {shape}"
+
+
+# --- the JavaScript runtime (W8, Ruling 21) --------------------------------
+
+
+def test_a_javascript_runtime_is_installed_and_pinned_by_version():
+    # ⛔ The version says what it is for a reader; the checksum below is what
+    # makes the build reproducible — the same two-part pin the `FROM` line
+    # uses, for the same reason.
+    dockerfile = instructions("Dockerfile")
+    assert "ARG NODE_VERSION=" in dockerfile, "no JavaScript runtime version is pinned"
+    version = dockerfile.split("ARG NODE_VERSION=")[1].split()[0]
+    assert version[0].isdigit(), f"NODE_VERSION is not a version: {version!r}"
+    assert "nodejs.org/dist/v${NODE_VERSION}/" in dockerfile, "the pin is not what is fetched"
+
+
+def test_the_runtime_is_verified_against_a_recorded_checksum():
+    # ⛔ **The half that makes the pin real.** A version in a URL says which
+    # bytes were asked for; only a checksum says which bytes arrived.
+    dockerfile = instructions("Dockerfile")
+    assert "sha256sum --check --strict" in dockerfile, "the download is not verified"
+    recorded = [line for line in dockerfile.splitlines() if line.startswith("ARG NODE_SHA256_")]
+    assert recorded, "no checksum is recorded"
+    for line in recorded:
+        digest = line.split("=", 1)[1].strip()
+        assert len(digest) == 64 and all(c in "0123456789abcdef" for c in digest), line
+
+
+def test_an_architecture_with_no_recorded_checksum_fails_loudly():
+    # ⛔ **Reaching for an unverified fallback is the failure this whole task
+    # closes, one layer down.** An arch nobody pinned must stop the build and
+    # say so, never quietly install whatever is available — and the message
+    # has to tell the reader what to do, because the person who meets it is on
+    # hardware this repository has never built on.
+    dockerfile = instructions("Dockerfile")
+    assert "TARGETARCH" in dockerfile, "the runtime is pinned to one architecture by accident"
+    assert "no pinned Node.js recorded for TARGETARCH" in read("Dockerfile")
+    assert "exit 1" in dockerfile, "an unrecorded architecture does not fail the build"
+
+
+def test_the_runtime_arrives_pinned_rather_than_from_a_package_manager():
+    # ⚠️ `apt-get install nodejs` reintroduces exactly the problem this closes:
+    # the tests would run, and what they ran against would depend on the day
+    # the image was built and on the distribution's snapshot.
+    #
+    # ⛔ Asserted against the **install lines**, not the whole file. The first
+    # version of this check matched the substring `nodejs` anywhere and failed
+    # on `nodejs.org` in the download URL — a check that fires on the correct
+    # implementation, which is a check somebody deletes.
+    installed = [
+        line
+        for line in instructions("Dockerfile").splitlines()
+        if "apt-get install" in line or "apt install" in line
+    ]
+    assert installed, "nothing is installed at all; has the base image changed?"
+    for line in installed:
+        for unpinned in ("nodejs", "npm", "nvm"):
+            assert unpinned not in line, f"the runtime is installed unpinned: {line.strip()!r}"
+    for anywhere in ("nvm install", "corepack enable"):
+        assert anywhere not in instructions("Dockerfile"), anywhere
+
+
+def test_no_javascript_package_manager_survives_into_the_image():
+    # ⛔ The same rule the git install states: an image that quietly grows a
+    # package manager is an image whose results stop being attributable to
+    # what it declares. ⭐ And it is the stronger guarantee — with no `npm`,
+    # `network_mode: none` is not the only thing standing between this suite
+    # and an unpinned tree of packages. The grammars are vendored in `src/`.
+    dockerfile = instructions("Dockerfile")
+    for tool in ("/usr/local/bin/npm", "/usr/local/bin/npx", "/usr/local/bin/corepack"):
+        assert tool in dockerfile, f"{tool} is not removed from the image"
+
+
+def test_the_runtime_is_actually_on_the_path_in_here():
+    # ⭐ **The acceptance, asserted from inside.** Every static check above
+    # reads a file; this one asks the environment. ⛔ It is the difference
+    # between "the Dockerfile says it installs a runtime" and "the runtime is
+    # here", and Ruling 21 exists because 38 tests were skipping on precisely
+    # that gap.
+    if not os.environ.get(MARKER):
+        pytest.skip(
+            "not inside the dev image, where the runtime is pinned. The static "
+            "checks above assert the Dockerfile installs one; only a run inside "
+            "the image can assert it arrived."
+        )
+    assert shutil.which("node"), (
+        "no JavaScript runtime on PATH inside the dev image. The pinned "
+        "environment is the one that certifies a result, so this is a failure "
+        "here even though it is a skip on a host (Ruling 21)."
+    )
 
 
 # --- the formatter exclusion, which no longer exists ------------------------

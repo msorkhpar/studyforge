@@ -35,6 +35,75 @@ RUN apt-get update \
  && apt-get install --no-install-recommends -y git \
  && rm -rf /var/lib/apt/lists/*
 
+# ---------------------------------------------------------------------------
+# The JavaScript runtime (W8, Ruling 21).
+#
+# ⭐ Why it is here at all: `tests/studyforge/render/pageassets/
+# test_highlight_grammars.py` runs the vendored Prism grammars for real, and
+# without a runtime it **skipped 38 tests** in the one environment that is
+# authoritative. ⛔ "Did not run" is not evidence, so those were 38 claims this
+# image could not certify — they passed only on a host that happened to have
+# `node`, which is the divergence R15 exists to eliminate.
+#
+# ⛔ Pinned by version AND checksum, for exactly the reason the `FROM` line
+# above is pinned by tag and digest: the version says what it is for a reader,
+# and the checksum is what makes the build reproducible. ⚠️ An unpinned `node`
+# — `apt-get install nodejs`, or a `latest` tarball — would reintroduce the
+# problem this closes, one layer down: the tests would run, and what they ran
+# against would depend on the day the image was built.
+#
+# ⚠️ **`TARGETARCH`, so the pin is not secretly a pin to one machine.** A
+# hardcoded `x64` builds on this repository's own hardware and fails on a
+# contributor's arm64 laptop, which breaks "Docker and nothing else" for
+# everyone it does not happen to fit. An architecture with no recorded checksum
+# fails **loudly**, naming itself, rather than falling back to something
+# unverified.
+#
+# ⛔ Network is required HERE and only here — the same build/run split the
+# `pip install` below relies on. `compose.yaml` gives the service
+# `network_mode: none`, so nothing can reach one at test time.
+ARG NODE_VERSION=24.21.0
+ARG NODE_SHA256_AMD64=6e1db87ef58b8819e5d5402eff1536491b18edd8eb7bee5ef7897876e88dc5ff
+ARG NODE_SHA256_ARM64=724282c3b43aec998aa9527380465b45d229e021b58035f5f4f63095eabfe5d5
+ARG TARGETARCH
+
+RUN set -eu; \
+    case "${TARGETARCH}" in \
+      amd64) node_arch=x64;   node_sha="${NODE_SHA256_AMD64}" ;; \
+      arm64) node_arch=arm64; node_sha="${NODE_SHA256_ARM64}" ;; \
+      *) echo "no pinned Node.js recorded for TARGETARCH='${TARGETARCH}';" \
+              "add its checksum to docker/dev/Dockerfile rather than" \
+              "installing an unpinned runtime" >&2; exit 1 ;; \
+    esac; \
+    tarball="node-v${NODE_VERSION}-linux-${node_arch}.tar.gz"; \
+    apt-get update; \
+    apt-get install --no-install-recommends -y curl; \
+    curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/${tarball}"; \
+    echo "${node_sha}  ${tarball}" | sha256sum --check --strict -; \
+    tar -xzf "${tarball}" -C /usr/local --strip-components=1 \
+        --no-same-owner --exclude=CHANGELOG.md --exclude=LICENSE --exclude=README.md; \
+    rm -f "${tarball}"; \
+    rm -rf /usr/local/lib/node_modules /usr/local/bin/npm /usr/local/bin/npx \
+           /usr/local/bin/corepack /usr/local/include/node /usr/local/share/doc \
+           /usr/local/share/man /usr/local/share/systemtap; \
+    apt-get purge -y curl; \
+    apt-get autoremove -y; \
+    rm -rf /var/lib/apt/lists/*; \
+    node --version
+
+# ⛔ `npm`, `npx` and `corepack` are removed on the way in, and that is the
+# same rule the git install states: an image that quietly grows a package
+# manager is an image whose results stop being attributable to what it
+# declares. ⚠️ It is also the stronger guarantee — a build step that *could*
+# install a dependency at test time would make `network_mode: none` the only
+# thing standing between this suite and an unpinned tree of packages. Nothing
+# here needs one: the grammars are vendored in `src/`, and the runtime's only
+# job is to execute them.
+#
+# ⭐ `tar --no-same-owner` because this runs as root at build time but the
+# container runs as the invoking uid; without it the extracted tree carries
+# ownership from the tarball's author.
+
 # ⚠️ git refuses to operate on a repository owned by a different uid — "dubious
 # ownership" — and this container deliberately runs as whatever uid invoked it,
 # which is rarely the one that owns the image's own filesystem. Without this
