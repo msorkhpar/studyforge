@@ -30,9 +30,15 @@ It runs **in the target repository**, and its authority is `studyforge`.
 ### 1. Read the capability index — ⛔ never the epic documents
 
 ```
-python3 -c "from studyforge.skills.delivery import capability_index; \
-  print(capability_index(['docs/tasks/E00-foundations.md', '...']))"
+python3 -c "from pathlib import Path; \
+  from studyforge.skills.delivery import capability_index; \
+  print(capability_index((p.name, p.read_text('utf-8')) \
+    for p in sorted(Path('docs/tasks').glob('E*.md'))))"
 ```
+
+⛔ **The caller names the documents, and that is deliberate.** This package
+never goes looking for `docs/tasks/`: a framework module that knew where a
+plan lives would be a module the next repository has to be arranged around.
 
 ⭐ **The index answers one question and it is the only question a planner has
 about the framework: *when does capability X become available?*** It is
