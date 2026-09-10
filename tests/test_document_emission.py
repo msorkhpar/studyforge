@@ -24,7 +24,9 @@ from studyforge.corpus.container import document as container_document
 from studyforge.corpus.manifest import document as manifest_document
 from studyforge.corpus.placement import identity as placement_identity
 from studyforge.exercise import record as exercise_record
+from studyforge.unit import builder as unit_builder
 from studyforge.unit import content as unit_content
+from studyforge.unit import served as unit_served
 from tests.emission.documents import ESCAPING, POISONS, Reader, document_census, leaves
 from tests.emission.probe import POISON
 from tests.support import repository_root
@@ -93,6 +95,16 @@ def readers() -> list[Reader]:
             lambda d: exercise_record.from_document(d, "practice-1.json 'exercise'"),
             load(depth2 / "raw/java/unit-01/practice-1.json")["exercise"],
         ),
+        # ⭐ Added because the derived guard below found it, exactly as it
+        # found `exercise/record.py`: `unit/served.py` reads the one document
+        # every consumer reads, and it is the last boundary before a browser.
+        Reader(
+            "unit.json",
+            lambda d: unit_served.parse(json.dumps(d), "unit.json"),
+            unit_builder.build(
+                unit_builder.read(depth2 / "raw/java/unit-01"), declared_practices=1
+            ),
+        ),
     ]
 
 
@@ -145,6 +157,7 @@ def test_every_module_that_reads_a_document_is_probed(readers):
     # ⛔ The guard on the table. A reader added without a fixture is a reader
     # nothing poisons, and it would look exactly like a clean result.
     covered = {
+        "unit/served.py",
         "corpus/manifest/document.py",
         "corpus/container/document.py",
         "corpus/placement/identity.py",
@@ -163,7 +176,10 @@ def test_every_module_that_reads_a_document_is_probed(readers):
         f"{missing}. Add a Reader above, or say here why the module has no "
         "fields to poison."
     )
-    assert len(readers) == 6
+    # ⚠️ Ruling 48: the table is asserted to be inhabited *and* to have grown
+    # with the tree — a count that nobody updates is a count that stops meaning
+    # anything, and the derived check above is what says which readers are owed.
+    assert len(readers) == len(covered) - 1, "one reader per covered module, bar markdown"
 
 
 # --------------------------------------------------------------------------
