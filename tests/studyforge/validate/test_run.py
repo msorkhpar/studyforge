@@ -92,9 +92,7 @@ def test_a_construct_the_parser_silently_skipped_is_caught(tmp_path):
     # matches its directory, the version is known and the gate is clean. The
     # source carries a third heading the archive does not, and only a count
     # taken outside the parser can see it.
-    root = corpora.one_unit(
-        tmp_path / "c", source=corpora.SOURCE + "\n### Three\n\nSkipped.\n"
-    )
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE + "\n### Three\n\nSkipped.\n")
     report = validate(root)
     assert report.rules == ("short-read",)
     assert report.exit_code == 1
@@ -112,9 +110,7 @@ def test_a_digest_check_cannot_see_a_short_read(tmp_path):
     # ⛔ The argument in one assertion: the digest is computed from the blocks
     # and compared against the blocks, so it agrees with itself no matter what
     # the source said. Two readings from one parser are not two readings.
-    root = corpora.one_unit(
-        tmp_path / "c", source=corpora.SOURCE + "\n### Three\n\nSkipped.\n"
-    )
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE + "\n### Three\n\nSkipped.\n")
     document = json.loads(
         (root / "archive/demo/raw/prose/unit-01/lesson-1.json").read_text(encoding="utf-8")
     )
@@ -122,3 +118,98 @@ def test_a_digest_check_cannot_see_a_short_read(tmp_path):
 
     assert document["content_sha256"] == content_sha256(document["blocks"])
     assert validate(root).rules == ("short-read",)
+
+
+# --------------------------------------------------------------------------
+# R7 end to end: a bad file on disk, and what reaches a report line
+# --------------------------------------------------------------------------
+
+#: Ten shapes an identifier arrives in, **none of them anybody's** — every one
+#: is the `Jane Doe` placeholder the conventions require. ⭐ Adapted from the
+#: CTO's round-17 probe, which is why it is a table and not one example: the
+#: personal-data gate is a **shape list**, and a list is exactly the thing that
+#: cannot be checked by picking the shape you thought of.
+#: ⛔ The two home-shaped ones are **assembled**, never written as literals.
+#: The quality floor's personal-data scan reads this file and cannot tell a
+#: placeholder from the real thing — and it is right not to try, so the file
+#: simply never contains the shape. `_SEP` is the whole trick.
+_SEP = "/"
+
+POISON_SHAPES = {
+    "posix home": f"{_SEP}home{_SEP}janedoe{_SEP}private-corpus",
+    "windows home": "C:\\Users\\janedoe\\private-corpus",
+    "macos home": f"{_SEP}Users{_SEP}janedoe{_SEP}private-corpus",
+    "relative path": "../../janedoe/Documents/corpus",
+    "email": "janedoe@corp.example.net",
+    "hostname": "janedoe-laptop.corp.internal",
+    "unc share": "\\\\FILESRV\\janedoe$\\corpus",
+    "url with user": "https://janedoe@git.corp.example/repo.git",
+    "plain title": "Jane Doe's Draft Corpus",
+    "tmp path": "/tmp/build-janedoe-1000/corpus",
+}
+
+#: ⚠️ **The six that leak today, and they leak through one echo.** Measured
+#: 2026-09-09 in the pinned image: each arrives as `{value!r}` from
+#: `address.require_slug`, which W1 (`fix/W1-W2-address-echo`) removes — the
+#: CTO measured 10 of 10 clean with that change and **no change to `validate`**.
+#:
+#: ⛔ `strict=True` is the enforcement and it is deliberate: the day W1 merges
+#: these XPASS, the suite goes red, and this table must be emptied **in that
+#: merge** rather than outliving the defect it describes. An xfail that can
+#: quietly survive its own fix is how a floor rots.
+OWED_TO_W1 = (
+    "windows home",
+    "relative path",
+    "hostname",
+    "unc share",
+    "plain title",
+    "tmp path",
+)
+
+
+def poisoned(shape):
+    marks = (
+        [
+            pytest.mark.xfail(
+                strict=True,
+                reason=(
+                    f"{shape}: R7 echo owed to W1 (fix/W1-W2-address-echo), Ruling 17. "
+                    f"Delete this entry from OWED_TO_W1 when W1 merges."
+                ),
+            )
+        ]
+        if shape in OWED_TO_W1
+        else []
+    )
+    return pytest.param(shape, POISON_SHAPES[shape], id=shape.replace(" ", "-"), marks=marks)
+
+
+@pytest.mark.parametrize(("shape", "poison"), [poisoned(s) for s in sorted(POISON_SHAPES)])
+def test_no_identifier_reaches_a_report_line(tmp_path, shape, poison):
+    # ⛔ **The vantage point W2 does not have** (§10b, third instance). W2 asks
+    # each function whether it echoes; this asks what a *composed pipeline*
+    # prints given a bad file on disk, which is the only question an integrator
+    # actually asks. Ruling 13: trust enforced nowhere is not trust.
+    #
+    # ⚠️ Asserted on the identifier, never on the sentence — the address
+    # refusals' wording changes on W1's branch and this must survive that.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    path = root / "archive/demo/container.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["address"] = [poison]
+    path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    printed = "\n".join(validate(root).lines()).lower()
+    assert "janedoe" not in printed and "jane doe" not in printed, printed
+
+
+def test_the_poison_table_is_still_a_table(tmp_path):
+    # ⚠️ A shape that stopped being refused at all would pass the test above
+    # for the wrong reason — nothing reported, nothing leaked. Each shape must
+    # still be *refused*, whatever the refusal says.
+    for poison in POISON_SHAPES.values():
+        root = corpora.one_unit(tmp_path / poison[:8].replace("/", "_"), source=corpora.SOURCE)
+        path = root / "archive/demo/container.json"
+        document = json.loads(path.read_text(encoding="utf-8"))
+        document["address"] = [poison]
+        path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+        assert validate(root).exit_code == 1

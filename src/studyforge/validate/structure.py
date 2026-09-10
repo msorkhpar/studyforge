@@ -23,16 +23,14 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
-from pathlib import Path
 
 from studyforge.archive.blocks import counts_of
 from studyforge.archive.document import content_sha256
-from studyforge.validate.corpus import ARCHIVE_DIR, Held, Unit, Walk
+from studyforge.validate.corpus import ARCHIVE_DIR, Unit, Walk
 from studyforge.validate.report import Finding, Unchecked
 
 RULE_ADDRESS_DIRECTORY = "address-directory"
 RULE_DUPLICATE_ADDRESS = "duplicate-address"
-RULE_SIBLING_COLLISION = "sibling-collision"
 RULE_IDENTITY = "identity"
 RULE_DIGEST = "digest"
 RULE_COUNTS = "counts"
@@ -93,52 +91,6 @@ def check_no_duplicate_addresses(walk: Walk) -> Iterator[Finding]:
             )
 
 
-def check_sibling_collisions(walk: Walk) -> Iterator[Finding | Unchecked]:
-    """Under `sibling`, no two containers generate into one origin directory.
-
-    ⚠️ **Measured green and therefore unexercised**: the Java corpus's 45
-    modules and 166 units collide nowhere, so nothing has ever met this. That
-    is the argument for the check, not against it — the risk is real and the
-    first corpus to hit it would find out by overwriting a page.
-
-    ⛔ Only under `sibling`: `tree` derives its directories from the address,
-    which `check_no_duplicate_addresses` already covers.
-    """
-    if walk.manifest is None:  # pragma: no cover - the walk stops without one
-        return
-    if walk.manifest.placement != "sibling":
-        yield Unchecked(
-            RULE_SIBLING_COLLISION,
-            ".",
-            f"placement is {walk.manifest.placement!r}; origin directories are only "
-            f"a collision risk under 'sibling'",
-        )
-        return
-    seen: dict[str, str] = {}
-    for held in walk.containers:
-        if held.container.origin is None:
-            yield Finding(
-                RULE_SIBLING_COLLISION,
-                held.where,
-                "declares no 'origin', and 'sibling' placement generates beside the "
-                "material rather than beside the address. Without it there is "
-                "nowhere for this container's output to go.",
-            )
-            continue
-        directory = _origin_directory(held.container.origin)
-        first = seen.get(directory)
-        if first is None:
-            seen[directory] = held.where
-        else:
-            yield Finding(
-                RULE_SIBLING_COLLISION,
-                held.where,
-                f"shares its origin directory with {first}. Under 'sibling' both "
-                f"generate into that one directory, so one container's pages "
-                f"overwrite the other's.",
-            )
-
-
 def check_document_identity(walk: Walk) -> Iterator[Finding]:
     """Each document agrees with its container and with its own filename (R4).
 
@@ -170,14 +122,11 @@ def _identity(unit: Unit) -> Iterator[Finding]:
         yield Finding(
             RULE_IDENTITY,
             unit.where,
-            f"declares unit {document.get('unit')!r} and sits in "
-            f"{unit.path.parent.name!r}",
+            f"declares unit {document.get('unit')!r} and sits in {unit.path.parent.name!r}",
         )
     name = ARCHIVE_FILE.match(unit.path.name)
     if name is None:
-        yield Finding(
-            RULE_IDENTITY, unit.where, "is not named '<lesson|practice>-<n>.json'"
-        )
+        yield Finding(RULE_IDENTITY, unit.where, "is not named '<lesson|practice>-<n>.json'")
     elif (name.group(1), int(name.group(2))) != (document.get("kind"), document.get("ordinal")):
         yield Finding(
             RULE_IDENTITY,
@@ -241,13 +190,9 @@ def check_declared_units_are_present(walk: Walk) -> Iterator[Finding | Unchecked
     """
     for held in walk.containers:
         present = {
-            unit.document.get("unit")
-            for unit in walk.units
-            if unit.container is held.container
+            unit.document.get("unit") for unit in walk.units if unit.container is held.container
         }
-        refused = {
-            item.unit for item in walk.refused if item.container is held.container
-        }
+        refused = {item.unit for item in walk.refused if item.container is held.container}
         for declared in held.container.units:
             if declared.n in present:
                 continue
@@ -262,8 +207,7 @@ def check_declared_units_are_present(walk: Walk) -> Iterator[Finding | Unchecked
                 yield Finding(
                     RULE_UNIT_MISSING,
                     held.where,
-                    f"declares unit {declared.n} and the archive holds no document "
-                    f"for it",
+                    f"declares unit {declared.n} and the archive holds no document for it",
                 )
 
 
@@ -275,9 +219,7 @@ def check_practice_counts(walk: Walk) -> Iterator[Finding | Unchecked]:
     disagreement this exists to find.
     """
     for held in walk.containers:
-        refused = {
-            item.unit for item in walk.refused if item.container is held.container
-        }
+        refused = {item.unit for item in walk.refused if item.container is held.container}
         for declared in held.container.units:
             if declared.n in refused:
                 # ⛔ Same rule as above: a refused document is not an absent
@@ -306,23 +248,11 @@ def check_practice_counts(walk: Walk) -> Iterator[Finding | Unchecked]:
                 )
 
 
-def _origin_directory(origin: str) -> str:
-    """The directory an origin sits in — a file's parent, or the path itself.
-
-    ⚠️ An origin may name a file (`basics/01/README.md`) or a directory
-    (`path/course`); both mean "here", and `sibling` generates into that one
-    place either way.
-    """
-    path = Path(origin)
-    return path.parent.as_posix() if path.suffix else path.as_posix()
-
-
 #: In the order a report reads best: the corpus, then each container, then
 #: each document.
 CHECKS = (
     check_address_matches_directory,
     check_no_duplicate_addresses,
-    check_sibling_collisions,
     check_declared_units_are_present,
     check_practice_counts,
     check_document_identity,

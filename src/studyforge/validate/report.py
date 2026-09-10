@@ -51,9 +51,27 @@ INVALID = 1
 class Finding:
     """One thing that is wrong, named by rule and by where it is.
 
-    ⛔ `message` never quotes a value that might be carrying personal data.
-    Every check that reads a path or a source string says what is wrong and
-    names the field, following `corpus.container.fields.said` (R7).
+    ## ⛔ R7 is the *raiser's* guarantee, and this class does not scrub
+
+    ⚠️ **The promise this docstring used to make was false, and measuring it is
+    what found that out.** It said `message` never quotes a value. But half of
+    `validate`'s findings are not written here — they are `str(error)` from a
+    refusal raised upstream, and **6 of 10 poison shapes driven end-to-end
+    reproduced an identifier in a report line** (CTO, 2026-09-09; the probe is
+    `tests/.../test_run.py::test_no_identifier_reaches_a_report_line`). The 4
+    that were clean were clean because the personal-data gate's **shape list**
+    happened to name them, not because anything here refused.
+
+    ⭐ **Ruling 17 puts the boundary upstream and it does not move here.** A
+    scrub in this class would silence every leak *in the one report anybody
+    reads*, which makes the upstream fix look unnecessary while the echo stays
+    in every traceback and every other caller of the same function. So:
+
+    - A message **originated** by a check in this package names the field and
+      never the value, following `corpus.container.fields.said`.
+    - A message **forwarded** from an upstream refusal is that module's
+      guarantee to keep, and `validate` is where the composition is measured —
+      Ruling 13: trust enforced nowhere is not trust.
     """
 
     rule: str
@@ -138,6 +156,5 @@ class Report:
         """
         verdict = "valid" if self.ok else "NOT valid"
         return (
-            f"{verdict}: {len(self.findings)} finding(s), "
-            f"{len(self.unchecked)} unchecked claim(s)"
+            f"{verdict}: {len(self.findings)} finding(s), {len(self.unchecked)} unchecked claim(s)"
         )

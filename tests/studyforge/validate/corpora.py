@@ -41,11 +41,11 @@ BLOCKS = [
 ]
 
 
-def container(units, *, address=("demo",), variant="prose", origin=None):
+def container(units, *, address=("demo",), variant="prose", origin=None, titles=None):
     document = {
         "container_api": 1,
         "address": list(address),
-        "titles": ["Demo"],
+        "titles": ["Demo"] if titles is None else list(titles),
         "variant": variant,
         "ingested": "2026-01-05",
     }
@@ -117,4 +117,61 @@ def one_unit(root: Path, *, blocks=None, source=None, origin="src/one.md", **ove
         containers={"demo": container([unit_entry(1, origin=origin)])},
         documents={"demo/raw/prose/unit-01/lesson-1.json": parts},
         sources=sources,
+    )
+
+
+def two_containers(
+    root: Path,
+    *,
+    second_address=("other",),
+    placement=None,
+    origin=None,
+    second_origin=None,
+    titles=None,
+    second_titles=None,
+    unit_origin=None,
+    second_unit_origin=None,
+    unit_title="Unit",
+    second_unit_title="Unit",
+) -> Path:
+    """Two containers, one unit each — the smallest corpus a collision needs.
+
+    ⭐ A collision between two containers cannot be built from one, and every
+    check that places the whole corpus needs at least two things placed.
+    """
+    parts = {
+        "source": "demo",
+        "variant": "prose",
+        "unit": 1,
+        "kind": "lesson",
+        "ordinal": 1,
+        "ingested": "2026-01-05",
+        "title": "Unit 1",
+        "blocks": BLOCKS,
+    }
+    manifest = MANIFEST if placement is None else {**MANIFEST, "placement": placement}
+    second = "/".join(second_address)
+    return write(
+        root,
+        manifest=manifest,
+        containers={
+            "demo": container(
+                [unit_entry(1, origin=unit_origin, title=unit_title)],
+                origin=origin,
+                titles=titles,
+            ),
+            second: container(
+                [unit_entry(1, origin=second_unit_origin, title=second_unit_title)],
+                address=second_address,
+                origin=second_origin,
+                titles=second_titles,
+            ),
+        },
+        documents={
+            "demo/raw/prose/unit-01/lesson-1.json": {**parts, "address": ["demo"]},
+            f"{second}/raw/prose/unit-01/lesson-1.json": {
+                **parts,
+                "address": list(second_address),
+            },
+        },
     )

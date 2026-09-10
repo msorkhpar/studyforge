@@ -20,6 +20,16 @@ must not stop the twelve documents beside it from being read.
 ⛔ **`where` is always workspace-relative**, never the path the tool was given.
 An absolute path in a report is personal data in a log (R7), and a report is
 the most-pasted artifact this tool produces.
+
+## ⛔ This module forwards refusals, and it does not scrub them (Ruling 17)
+
+⚠️ Six of the findings here are `str(error)` from a reader that refused, and a
+refusal's R7-cleanliness is **that reader's** guarantee. Measured 2026-09-09:
+6 of 10 poison shapes reached a report line through this forwarding, all six
+through one `{value!r}` upstream. ⭐ Ruling 17 fixes it there rather than here,
+because a scrub in the one report anybody reads would hide the same echo in
+every traceback and every other caller — and `test_run` measures the
+composition end to end so the trust is enforced somewhere (Ruling 13).
 """
 
 from __future__ import annotations
@@ -28,6 +38,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from studyforge.address import AddressError
 from studyforge.archive.document import parse as parse_document
 from studyforge.archive.errors import ArchiveError
 from studyforge.archive.scrub import PersonalDataLeak
@@ -156,7 +167,12 @@ def _container(walk: Walk, path: Path) -> Held | None:
     assert walk.manifest is not None
     try:
         return Held(where, path.parent, parse_container(text, where, walk.manifest))
-    except (ContainerError, ValueError) as error:
+    except (ContainerError, AddressError) as error:
+        # ⛔ Named types, never the `ValueError` category this once caught.
+        # `AddressError` subclasses `ValueError`, so the wide catch worked —
+        # and a catch that wide cannot know what it is forwarding, which is
+        # exactly how six poison shapes reached a report line unnoticed
+        # (Finding 11). Two names cost nothing and say what crosses here.
         walk.findings.append(Finding(RULE_CONTAINER, where, str(error)))
     except PersonalDataLeak as error:
         walk.findings.append(Finding(RULE_PERSONAL_DATA, where, str(error)))
@@ -204,9 +220,7 @@ def _text(walk: Walk, path: Path, rule: str) -> str | None:
             Finding(RULE_UNREADABLE, walk.relative(path), f"cannot be read: {exc.strerror}")
         )
     except UnicodeDecodeError:
-        walk.findings.append(
-            Finding(RULE_UNREADABLE, walk.relative(path), "is not UTF-8 text")
-        )
+        walk.findings.append(Finding(RULE_UNREADABLE, walk.relative(path), "is not UTF-8 text"))
     return None
 
 

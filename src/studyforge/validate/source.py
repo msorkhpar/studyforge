@@ -100,8 +100,7 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
         yield Unchecked(
             RULE_UNCLASSIFIED,
             ".",
-            "no source material is present beside the archive, so there is nothing "
-            "to classify",
+            "no source material is present beside the archive, so there is nothing to classify",
         )
         return
     for path in files:
@@ -132,8 +131,7 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
         yield Unchecked(
             RULE_SHORT_READ,
             ".",
-            "no container map declares an 'origin', so there is no source file to "
-            "count against",
+            "no container map declares an 'origin', so there is no source file to count against",
         )
         return
     if not present:
@@ -214,7 +212,7 @@ def source_files(root: Path) -> list[Path]:
 
 
 def _origins(walk: Walk) -> list[tuple[str, Path, int]]:
-    """`(unit key, origin path, headings recorded)` per **unit**, not per document.
+    """Return `(unit key, origin path, headings recorded)` per **unit**, not document.
 
     ⚠️ **Summed across the unit's documents, deliberately.** One origin file is
     one unit, and a unit may hold several archive documents — `depth1`'s third
@@ -230,9 +228,7 @@ def _origins(walk: Walk) -> list[tuple[str, Path, int]]:
         if declared is None or declared.origin is None:
             continue
         key = (unit.container.address.unit_key(declared.n), declared.n)
-        totals[key] = totals.get(key, 0) + (unit.document.get("counts") or {}).get(
-            "headings", 0
-        )
+        totals[key] = totals.get(key, 0) + (unit.document.get("counts") or {}).get("headings", 0)
         origins[key] = walk.root / declared.origin
     return [(key[0], origins[key], totals[key]) for key in sorted(totals)]
 
@@ -240,7 +236,7 @@ def _origins(walk: Walk) -> list[tuple[str, Path, int]]:
 def _read(path: Path) -> str | None:
     try:
         return path.read_text(encoding="utf-8")
-    except (OSError, UnicodeDecodeError):  # pragma: no cover - reported by the walk
+    except OSError, UnicodeDecodeError:  # pragma: no cover - reported by the walk
         return None
 
 

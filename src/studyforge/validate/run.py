@@ -7,8 +7,8 @@ knows the full list, so "which checks does `validate` run" has one answer.
 invalid corpus — an invalid corpus is a *result*, and a caller that had to
 catch an exception to learn the verdict could not report ten problems at once.
 
-**Depends on.** `validate.corpus`, `validate.structure`, `validate.source`,
-`validate.report`.
+**Depends on.** `validate.corpus`, `validate.structure`, `validate.paths`,
+`validate.source`, `validate.report`.
 
 ⭐ **The check list is data, so it is assertable.** `tests` asserts that every
 rule id the tool can emit appears in `RULES`, which means a check added without
@@ -21,13 +21,13 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import Path
 
-from studyforge.validate import source, structure
+from studyforge.validate import paths, source, structure
 from studyforge.validate.corpus import Walk, read
 from studyforge.validate.report import Finding, Report, Unchecked
 
 #: Every check, in the order a report reads best. ⛔ One list, so the answer to
 #: "what does validate check" is not spread across four modules.
-CHECKS = (*structure.CHECKS, *source.CHECKS)
+CHECKS = (*structure.CHECKS, *paths.CHECKS, *source.CHECKS)
 
 
 def validate(root: Path | str) -> Report:
@@ -40,9 +40,7 @@ def _run(walk: Walk) -> Iterator[Finding | Unchecked]:
     if walk.manifest is None:
         # ⛔ Without a manifest nothing else can be judged, and saying so is
         # not the same as saying the archive is fine (R6's sibling).
-        yield Unchecked(
-            "corpus", ".", "the manifest did not parse, so no other check could run"
-        )
+        yield Unchecked("corpus", ".", "the manifest did not parse, so no other check could run")
         return
     for item in walk.refused:
         if item.container is None:

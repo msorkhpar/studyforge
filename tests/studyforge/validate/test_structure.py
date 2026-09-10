@@ -14,41 +14,8 @@ from studyforge.validate import validate
 from tests.studyforge.validate import corpora
 
 
-def two_containers(tmp_path, *, second_address=("other",), origin=None, second_origin=None):
-    parts = {
-        "source": "demo",
-        "variant": "prose",
-        "unit": 1,
-        "kind": "lesson",
-        "ordinal": 1,
-        "ingested": "2026-01-05",
-        "title": "Unit 1",
-        "blocks": corpora.BLOCKS,
-    }
-    manifest = {**corpora.MANIFEST}
-    if origin is not None:
-        manifest = {**manifest, "placement": "sibling"}
-    return corpora.write(
-        tmp_path / "c",
-        manifest=manifest,
-        containers={
-            "demo": corpora.container([corpora.unit_entry(1)], origin=origin),
-            "/".join(second_address): corpora.container(
-                [corpora.unit_entry(1)], address=second_address, origin=second_origin
-            ),
-        },
-        documents={
-            "demo/raw/prose/unit-01/lesson-1.json": {**parts, "address": ["demo"]},
-            f"{'/'.join(second_address)}/raw/prose/unit-01/lesson-1.json": {
-                **parts,
-                "address": list(second_address),
-            },
-        },
-    )
-
-
 def test_two_containers_at_different_addresses_are_fine(tmp_path):
-    assert validate(two_containers(tmp_path)).findings == ()
+    assert validate(corpora.two_containers(tmp_path / "c")).findings == ()
 
 
 def test_no_two_containers_may_claim_the_same_address(tmp_path):
@@ -56,7 +23,7 @@ def test_no_two_containers_may_claim_the_same_address(tmp_path):
     # sees the two titles, but it sees the one address they both produced.
     # ⛔ A collision only the adapter can see is one a careless adapter author
     # disables.
-    root = two_containers(tmp_path)
+    root = corpora.two_containers(tmp_path / "c")
     other = root / "archive" / "other" / "container.json"
     document = json.loads(other.read_text(encoding="utf-8"))
     document["address"] = ["demo"]
@@ -78,39 +45,6 @@ def test_the_directory_check_is_not_resolved_by_preferring_either_side(tmp_path)
     message = validate(root).findings[0].message
     assert "recorded, never derived" in message
     assert "'demo'" in message and "'elsewhere'" in message
-
-
-# --------------------------------------------------------------------------
-# sibling collisions
-# --------------------------------------------------------------------------
-
-
-def test_sibling_containers_with_different_origins_are_fine(tmp_path):
-    root = two_containers(tmp_path, origin="a/README.md", second_origin="b/README.md")
-    assert validate(root).findings == ()
-
-
-def test_two_sibling_containers_sharing_an_origin_directory_collide(tmp_path):
-    # ⚠️ Measured green on the Java corpus — 45 modules, 166 units, no
-    # collision — so the risk is real and unexercised. The first corpus to hit
-    # it would otherwise find out by overwriting a page.
-    root = two_containers(tmp_path, origin="a/README.md", second_origin="a/OTHER.md")
-    report = validate(root)
-    assert "sibling-collision" in report.rules
-    assert "shares its origin directory" in report.findings[0].message
-
-
-def test_a_sibling_container_with_no_origin_is_refused(tmp_path):
-    root = two_containers(tmp_path, origin="a/README.md", second_origin=None)
-    assert "sibling-collision" in validate(root).rules
-
-
-def test_a_tree_corpus_reports_the_collision_check_as_not_run(tmp_path):
-    # ⛔ Not silently skipped. `tree` derives directories from the address, so
-    # the question does not arise — and saying that is not the same as saying
-    # nothing was wrong.
-    report = validate(corpora.one_unit(tmp_path / "c"))
-    assert "sibling-collision" in {u.rule for u in report.unchecked}
 
 
 # --------------------------------------------------------------------------
