@@ -51,8 +51,17 @@ from collections.abc import Collection
 #: The fields R9 versions, for the tree check in `tests/studyforge/
 #: test_version.py` that refuses a second implementation. ⚠️ The TOC schema
 #: version has no field name yet — E03 mints it — and it belongs in this
-#: tuple on the day it does.
-CONTRACT_FIELDS = ("corpus_api", "container_api", "raw_api", "api", "consuming_api")
+#: tuple on the day it does. ⭐ `identity_api` joined it the day SF-03 minted
+#: it, which is the convention this line asks for: a task that versions a new
+#: contract registers it here in the same commit, or the guard cannot see it.
+CONTRACT_FIELDS = (
+    "corpus_api",
+    "container_api",
+    "raw_api",
+    "api",
+    "consuming_api",
+    "identity_api",
+)
 
 
 class VersionError(ValueError):
