@@ -46,7 +46,9 @@ import re
 from dataclasses import dataclass
 
 from studyforge.address import Address, AddressError, is_slug, require_ordinal, require_slug
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.placement.errors import PlacementError
+from studyforge.describe import describe, describe_keys
 from studyforge.version import check
 
 #: R9's version for this contract. ⛔ Refused when unknown, never migrated.
@@ -88,7 +90,9 @@ class Identity:
         require_slug(self.corpus, "identity 'corpus'")
         require_slug(self.variant, "identity 'variant'")
         if self.kind not in KINDS:
-            raise PlacementError(f"identity 'kind' must be one of {list(KINDS)}, got {self.kind!r}")
+            raise PlacementError(
+                f"identity 'kind' must be one of {list(KINDS)}, got {describe(self.kind)}"
+            )
         if self.kind == "unit":
             require_ordinal(self.unit, "identity 'unit'")
         elif self.unit is not None:
@@ -142,9 +146,23 @@ def parse(html: str, depth: int, where: str = "artifact") -> Identity:
 
 
 def from_document(document: object, depth: int, where: str = "artifact") -> Identity:
-    """Build an `Identity` from an already-parsed block."""
+    """Build an `Identity` from an already-parsed block.
+
+    ⛔ **Gated like every other document reader** (W7). ⚠️ It is tempting to
+    argue this one is exempt because the framework wrote the block it reads —
+    but `parse`'s own contract says it reads *"files this build may not have
+    written"*, which is the whole reason `IDENTITY_PATTERN` tolerates
+    attribute order. ⭐ A reader whose exemption rests on an assumption its
+    neighbour explicitly refuses is not exempt.
+    """
     if not isinstance(document, dict):
         raise PlacementError(f"{where}'s identity block is not an object")
+    try:
+        assert_clean(document, where)
+    except PersonalDataLeak as leak:
+        raise PlacementError(
+            f"{where}'s identity block carries personal data and is refused (R7): {leak}"
+        ) from None
     check(
         "identity_api",
         document.get("identity_api"),
@@ -154,7 +172,9 @@ def from_document(document: object, depth: int, where: str = "artifact") -> Iden
     )
     unknown = sorted(set(document) - set(IDENTITY_KEYS))
     if unknown:
-        raise PlacementError(f"{where}'s identity block has unknown key(s) {unknown}")
+        raise PlacementError(
+            f"{where}'s identity block has unknown key(s), {describe_keys(unknown)}"
+        )
     return Identity(
         corpus=_str_of(document.get("corpus"), "corpus", where),
         address=_address_of(document.get("address"), depth, where),

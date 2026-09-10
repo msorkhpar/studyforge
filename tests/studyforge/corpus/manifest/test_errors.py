@@ -47,14 +47,19 @@ def test_nothing_repairs_a_value_quietly(function, arguments):
         pytest.fail(f"{function.__name__} accepted a value it should refuse")
 
 
-def test_a_refusal_names_the_field_and_the_value():
+def test_a_refusal_names_the_field_and_the_permitted_class_but_not_the_value():
     # ⭐ A manifest is the first file an integrator writes by hand, so its
     # refusals are the first thing this framework ever says to them.
+    # ⛔ Which is also why the value is not repeated back: any string in a
+    # hand-written file can be an absolute path (R7, Ruling 14). The field and
+    # the permitted set are what the reader cannot see; the value is in the
+    # file in front of them.
     with pytest.raises(ManifestError) as raised:
         parse_media({"commit": "sometimes"})
     message = str(raised.value)
     assert "media.commit" in message
-    assert "sometimes" in message
+    assert "sometimes" not in message
+    assert "always" in message
 
 
 def test_a_refusal_over_a_closed_set_says_what_the_set_is():

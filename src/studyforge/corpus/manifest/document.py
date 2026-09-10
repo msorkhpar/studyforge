@@ -49,10 +49,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from studyforge.address import Address, AddressError, parse_key, require_slug
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
+from studyforge.describe import describe, describe_keys
 from studyforge.version import check as check_version
 
 #: The manifest's filename. One spelling, because "what makes a directory a
@@ -163,12 +165,28 @@ def load(path: str | Path) -> Manifest:
 
 
 def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
-    """Build a `Manifest` from an already-parsed object."""
+    """Build a `Manifest` from an already-parsed object.
+
+    ⛔ **The personal-data gate runs over the whole decoded document** (R7,
+    SF-08), before any field is read. ⚠️ **It was missing entirely until W7**,
+    and the shape of that miss is worth keeping: `studyforge validate` was
+    already wired to report a leak here, the archive and the container map and
+    the overlay all gated, and `corpus.json` — **the corpus's front door** —
+    gated nothing. A home path in `title` validated green. The catch was
+    correct; the raise never came, so nothing looked wrong from either side.
+
+    ⭐ The fields this module validates are not the fields a leak turns up in:
+    `title` is free authored text and `content.exclude[].why` is a sentence
+    somebody wrote. That is why the gate reads the document rather than the
+    fields, exactly as `unit.content` does.
+    """
+    _gate(document, where)
     _check_version(document, where)
     unknown = sorted(set(document) - set(MANIFEST_KEYS))
     if unknown:
         raise ManifestError(
-            f"{where} has unknown key(s) {unknown}; this build reads {list(MANIFEST_KEYS)}"
+            f"{where} has unknown key(s), {describe_keys(unknown)}; "
+            f"this build reads {list(MANIFEST_KEYS)}"
         )
     missing = [key for key in REQUIRED_KEYS if key not in document]
     if missing:
@@ -186,6 +204,19 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
         media=parse_media(document.get("media")),
         permitted_edits=parse_edits(document.get("permitted_edits"), content),
     )
+
+
+def _gate(document: dict, where: str) -> None:
+    """Refuse a manifest carrying personal data, naming the shape and not the value.
+
+    ⛔ Converted to `ManifestError`, following `unit.content._gate` exactly:
+    this package promises that reading a manifest raises `ManifestError` **and
+    nothing else**, and a promise with one exception is not one.
+    """
+    try:
+        assert_clean(document, where)
+    except PersonalDataLeak as leak:
+        raise ManifestError(f"{where} carries personal data and is refused (R7): {leak}") from None
 
 
 def _check_version(document: dict, where: str) -> None:
@@ -209,7 +240,7 @@ def _check_version(document: dict, where: str) -> None:
 def _title_of(value: object, where: str) -> str:
     """Return the corpus's human-readable name. ⚠️ A title, deliberately not a slug."""
     if not isinstance(value, str) or not value.strip():
-        raise ManifestError(f"{where} 'title' must be a non-empty str, got {value!r}")
+        raise ManifestError(f"{where} 'title' must be a non-empty str, got {describe(value)}")
     return value
 
 
@@ -225,7 +256,7 @@ def _labels_of(value: object, key: str, where: str) -> tuple[str, ...]:
     for position, entry in enumerate(entries, start=1):
         if not isinstance(entry, str) or not entry.strip():
             raise ManifestError(
-                f"{where} '{key}[{position - 1}]' must be a non-empty str, got {entry!r}"
+                f"{where} '{key}[{position - 1}]' must be a non-empty str, got {describe(entry)}"
             )
     return tuple(entries)
 
@@ -260,7 +291,7 @@ def _slug_of(value: object, what: str) -> str:
 def _non_empty_list(value: object, key: str, where: str) -> list:
     """Return a list with something in it, or refuse naming the key."""
     if not isinstance(value, list) or not value:
-        raise ManifestError(f"{where} '{key}' must be a non-empty list, got {value!r}")
+        raise ManifestError(f"{where} '{key}' must be a non-empty list, got {describe(value)}")
     return value
 
 
@@ -271,7 +302,7 @@ def _flag_of(value: object, key: str, where: str) -> bool:
     looks like a flag is a mistake worth naming rather than coercing.
     """
     if not isinstance(value, bool):
-        raise ManifestError(f"{where} '{key}' must be true or false, got {value!r}")
+        raise ManifestError(f"{where} '{key}' must be true or false, got {describe(value)}")
     return value
 
 
@@ -279,6 +310,6 @@ def _placement_of(value: object, where: str) -> str:
     """One of the declared placement profiles (spec §5)."""
     if value not in PLACEMENT_PROFILES:
         raise ManifestError(
-            f"{where} 'placement' must be one of {list(PLACEMENT_PROFILES)}, got {value!r}"
+            f"{where} 'placement' must be one of {list(PLACEMENT_PROFILES)}, got {describe(value)}"
         )
     return value

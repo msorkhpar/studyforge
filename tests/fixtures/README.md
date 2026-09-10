@@ -61,11 +61,41 @@ not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 
 | Unit | Carries | So that |
 |---|---|---|
-| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay | SF-10(b), and a practice's three-section layout |
+| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record in the set** | SF-10(b), a practice's three-section layout, and §7's **graded** state |
 | `basics/01-getting-started` 2 | `table`, `rule`, no overlay | SF-10(a), the derived shape |
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
-| `advanced/02-going-further` 1 | a lesson, a practice, `url_slug` | a second container, SF-05's carried field |
+| `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
 | `advanced/02-going-further` 2 | a closing lesson, plus a fenced Maven POM | a container whose last unit has no exercise; fence awareness at depth 2 |
+
+## ⛔ §7's three exercise states are carried by the set, not by a flag
+
+⭐ **All three appear across these two corpora, and none of them is written
+down anywhere as a state.** There is no `state` field to set and none to
+forget — the state *is* which files exist (spec §7, C5, SF-23):
+
+| State | Where it is | How it appears |
+|---|---|---|
+| **none** | all of `depth1` | no `practice-M.json` at all |
+| **ungraded** | `advanced/02-going-further` unit 1 | a practice document with blocks and **no `exercise` key** |
+| **graded** | `basics/01-getting-started` unit 1 | the `exercise` key is present |
+
+⚠️ **`depth1` is the common case and it is `none` throughout.** ISO-8583 is
+`none` for all 38 units and SPARQL is `ungraded` for all 19; the Java repo is
+the exception. ⛔ A corpus with no graders is **complete, not short** (§11.0,
+C5), so nothing in `depth1` should be read as a fixture that is missing
+something.
+
+⛔ **Do not add an `exercise` to a second document to "improve coverage".** The
+graded state is the exception in real material, and a set in which it is the
+majority is a set that will let a design fitted to the exception look correct.
+
+⚠️ **One sanctioned second copy, and its licence is that it must fail.**
+`invalid/user-authoritative/` carries an `exercise` that records
+`provenance: user` with `trust: authoritative`. ⛔ It is not coverage — it is
+W18's **negative control**: restore the forbidden-pair spelling of R5 and that
+corpus violates no rule at all, which reds the fixture-consistency suite. The
+rule the tests state is therefore *"exactly one exercise that **validates**"*,
+not *"exactly one exercise"*.
 
 ## Fence awareness — the highest-value thing in this set
 
@@ -107,6 +137,19 @@ that breaks it, and what `studyforge validate` (SF-25) is expected to say.
 | `digest-mismatch/` | §6 — `content_sha256` must cover the blocks |
 | `ordinal-gap/` | §6 — unit ordinals contiguous from 1 |
 | `personal-data/` | R7 — `assert_clean` must refuse, never rewrite |
+| `count-mismatch/` | §6 — a document's `counts` must agree with its blocks |
+| `user-authoritative/` | **R5** — `authoritative` implies `bundled` (Ruling 35) |
+
+⭐ **`count-mismatch/` is the one an inspection cannot find.** Its digest is
+correct, so the corpus is byte-exact and still lies about itself — and `counts`
+is the field every consumer reads *instead of* walking the blocks.
+
+⛔ **`user-authoritative/` is a negative control, not coverage.** It was a
+**valid** corpus until W18 landed: R5 was spelled as a list of forbidden pairs
+naming `generated` only, so a grader the reader wrote could declare itself the
+source's own and nothing raised. Restore that spelling and this corpus violates
+no rule at all — which reds `test_invalid_corpus_violates_exactly_its_one_rule`
+rather than waiting for a reviewer.
 
 ⚠️ **`invalid/personal-data/` deliberately contains personal-data shapes.**
 Both values in it are fabricated — an obviously-placeholder absolute home path

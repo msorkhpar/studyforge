@@ -86,8 +86,11 @@ set is R1–R21 in the spec.
 
 ## The workspace
 
-Components are separate repositories composed as submodules of one parent
-(R18). They are siblings on disk until `FND-05` stands the parent up:
+Components are separate repositories that are **siblings on disk**, pinned by
+`workspace.json` and checked by `python3 -m tools.workspace verify` (R18,
+amended — `docs/conventions/workspace.md`). ⛔ **Git submodules are not used in
+this project**, because nothing is ever pushed to any remote and every submodule
+form needs a URL that resolves. The components are:
 `CodeSignal` (extraction source, untouched in v1),
 `Claude-senior-java-engineer` (consumer 1), `ISO-8583-jPOS-tutorial` and
 `Claude-SPARQL-tutorial` (v2 targets), plus `code-server-toolchain` and

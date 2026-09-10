@@ -1,10 +1,16 @@
 """The real vendored bundle, run under a real JS runtime, on real samples.
 
-⚠️ **Skipped where there is no JS runtime, and the dev image has none** — so
-the assertions that must hold in the gate live in `test_highlight.py`, which
-needs nothing. This half is what *discovers* a combination nobody has seen; it
-cannot be replaced by a regex of our own, because a regex of our own is exactly
-what it exists not to trust.
+⛔ **The dev image pins a JS runtime (W8, Ruling 21), so in the environment
+that certifies a result this half does not skip — it fails.** Before that, 38
+tests here skipped in the pinned container and ran only on a host that happened
+to have `node`: 38 claims the authoritative environment could not make, and
+*"did not run" is not evidence*. ⚠️ On a host with no runtime it still skips,
+because a contributor without Docker is not the thing being certified.
+
+⭐ The assertions that must hold with no runtime at all live in
+`test_highlight.py`, which needs nothing. This half is what *discovers* a
+combination nobody has seen; it cannot be replaced by a regex of our own,
+because a regex of our own is exactly what it exists not to trust.
 
 ⛔ **The framework knows no list of languages** (R1). What is highlightable is
 whatever grammars the vendored bundle carries, so the languages under test are
@@ -15,6 +21,7 @@ without a sample fails here rather than going quietly untested.
 from __future__ import annotations
 
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -76,15 +83,39 @@ if (spec.list) {
 """
 
 
+#: Set by `docker/dev/Dockerfile`. ⭐ Its presence means "this run is the one
+#: that certifies a result", which is what turns an absent runtime from a skip
+#: into a failure.
+DEV_CONTAINER = "STUDYFORGE_DEV_CONTAINER"
+
+
 def node():
+    """The pinned JS runtime — or a skip on a host, a failure in the image.
+
+    ⛔ **The asymmetry is the whole of Ruling 21.** The pinned container is
+    authoritative *because it is pinned*, so a check that quietly does not run
+    in there turns green into a claim nobody made. On a contributor's host the
+    same absence is a known, stated partial state and stays a skip.
+    """
     runtime = shutil.which("node")
-    if runtime is None:
-        pytest.skip(
-            "node is not installed, so the vendored grammars cannot be run. "
-            "The runtime-free half of this check is tests/studyforge/render/"
-            "pageassets/test_highlight.py, which always runs."
+    if runtime is not None:
+        return runtime
+    if os.environ.get(DEV_CONTAINER):
+        pytest.fail(
+            "no JavaScript runtime on PATH inside the dev image, where "
+            "docker/dev/Dockerfile pins one. This is a failure rather than a "
+            "skip because the pinned environment is the one that certifies a "
+            "result (Ruling 21) — rebuild the image rather than reading this "
+            "run as green."
         )
-    return runtime
+    pytest.skip(
+        "node is not installed on this host, so the vendored grammars cannot be "
+        "run here. ⭐ They are NOT skipped in the pinned dev image, which "
+        "installs a runtime — run `docker/dev/check python3 -m pytest` for the "
+        "authoritative result. The runtime-free half of this check is "
+        "tests/studyforge/render/pageassets/test_highlight.py, which always runs."
+    )
+    return None  # pragma: no cover - unreachable; pytest.skip raises
 
 
 def run(tmp_path, spec):

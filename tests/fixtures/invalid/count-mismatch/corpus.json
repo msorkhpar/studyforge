@@ -1,0 +1,20 @@
+{
+  "corpus_api": 1,
+  "source": "invalid-demo",
+  "title": "Invalid Demo",
+  "levels": [
+    "course"
+  ],
+  "variants": [
+    "prose"
+  ],
+  "exercises": false,
+  "placement": "tree",
+  "content": {
+    "include": [
+      "*.md"
+    ],
+    "exclude": []
+  },
+  "permitted_edits": []
+}

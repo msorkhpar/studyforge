@@ -478,11 +478,23 @@ on a host suite.** ⚠️ Every one was a check whose verdict is **a property of
 toolchain**, not of the code — a linter version, a formatter's defaults, a
 config the host resolves differently.
 
-⛔ **So: for any check whose verdict depends on the toolchain — lint, format, and
-anything version-sensitive — unpinned green is a *hint*, not evidence, and the
-only evidence is pinned.** ⭐ For checks whose verdict depends on the **code** —
-the test suite proper — the row above stands unchanged: unpinned green is real
-evidence, named in the review.
+⛔ **So — and this is Ruling 40's inversion, which is what binds:**
+
+> ⛔ **Unpinned green is evidence for exactly one thing: the test suite proper,
+> run in full. Every other check — lint, format, build, image, packaging, any
+> tool at all — is pinned, or it is not evidence.**
+
+⭐ **A closed set of one, and that is the whole point of stating it this way.**
+⚠️ The first wording asked the reviewer to decide whether a check's verdict
+"depends on the toolchain" — ⛔ **which is precisely the judgement that was wrong
+three times**, because nobody classified the formatter as toolchain-sensitive
+*in advance*; they found out afterwards. ⚠️ And *"anything version-sensitive"* is
+an **open set**, whose tell is that you can always think of one more entry.
+
+⭐ **Inverted, no prediction is required and the unforeseen check is refused by
+default** — *enumerate the legal, never the illegal*
+(`module-structure.md`). ⛔ It costs nothing: `docker/dev/check python3 -m
+tools.quality` is one command that everyone already runs.
 
 ⚠️ **Why this is worth a rule rather than a third correction:** ⛔ **a known cost
 paid three times is not a known cost, it is a policy of paying it** — this
@@ -671,6 +683,43 @@ source is a fail even in a comment, because the next reader takes it as licence.
 A *fixture* under `tests/` naming a shape is fine; a *source module* naming a
 corpus is not.
 
+> ⭐ **This is now a build failure, not a reviewer's grep** —
+> `tools/quality/source_names.py`, in `CHECKS` since W20, so the floor answers
+> it on every run and `7c-i`'s two-number rule is discharged by the check
+> having *no* base to inherit. The grep above stays as the hand-runnable form.
+>
+> ⚠️ **And the grep found seven where the check finds nineteen.** Measured
+> 2026-09-09 on `5ebf83e`: the twelve it missed were one shape — a corpus
+> named in English (`the Java corpus`, `the ISO corpus`) rather than by its
+> repository slug. ⛔ Which is why the check anchors each name on a word only
+> a corpus's name takes: bare `ISO` is an ISO 8601 date thirteen times in this
+> tree and a corpus twice, and a pattern that could not tell them apart would
+> be switched off within a day.
+
+### ⛔ 7c-i. Run it against the base too, and report both numbers
+
+```bash
+# the merge, above — and the base, in the $REVIEW_BASE worktree
+git grep -nEi 'codesignal|java-senior|senior-java|iso-?8583|jpos|sparql' \
+    "$REVIEW_BASE" -- 'src/**/*.py' | wc -l
+```
+
+⛔ **§0a-i's two-number rule applies to this grep exactly as it applies to the
+suite and the floor**, and a hit on the **base** is a finding **against the
+release branch**, never against the change under review.
+
+⚠️ **This clause exists because I did not do it.** ⭐ Measured 2026-09-09: I ran
+§7c against `SK-01` and it caught 21; ⛔ **I never ran it against the base, which
+had carried 7 since `SF-01`** — `exercise/states.py` (4), `archive/scrub.py` (1),
+`address/__init__.py` (2). **Three merged tasks, all APPROVEd, one of them by me
+in the same round.** ⭐ **I wrote the two-number rule for the suite and the floor
+and never extended it to the rubric's own greps** — so the instrument had the
+defect it was written to catch.
+
+⚠️ **It generalises to every grep here.** A check that reads the tree rather than
+the diff answers a question about *the tree*, and the tree includes everything
+that merged before this branch existed.
+
 ---
 
 ## 8. The handoff exists and is in the right format
@@ -704,54 +753,51 @@ Two things the reviewer reads rather than greps:
 
 ### 8a. ⛔ Structural findings are routed by the reviewer, in the review
 
-```bash
-grep -n '\[structural\]' "docs/tasks/handoffs/$TASK.md"
+⛔ **Count the marker, and nothing else. There is no second number.**
 
-# ⛔ and the coverage, because an empty result has two causes
-awk '/^## Findings/,/^## For dependents/' "docs/tasks/handoffs/$TASK.md" \
-  | grep -cE '^(#{2,4} )?[0-9]+\.'             # findings filed
-grep -cE '^(#{2,4} )?[0-9]+\. `\[(local|structural)\]`' "docs/tasks/handoffs/$TASK.md"  # marked
+```bash
+H="docs/tasks/handoffs/$TASK.md"
+
+MARKED=$(grep -coE '`\[(local|structural)\]`' "$H")     # findings, by definition
+LINES=$(grep -cE  '`\[(local|structural)\]`' "$H")     # ⛔ and the lines they sit on
+echo "findings=$MARKED lines=$LINES"
+test "$MARKED" = "$LINES" || echo "A MARKER IS NOT ON ITS OWN FINDING LINE — \
+two on one line, or one in prose. Read them: a marker in explanatory text \
+counts as a finding that does not exist."
+test "$MARKED" -gt 0 || echo "ZERO — say in the review which this is: a task with \
+nothing to report outside its scope, or a Findings section that marked nothing."
+
+grep -n '`\[structural\]`' "$H"                        # each one routed below
 ```
 
-> ⛔ **Corrected 2026-09-09 — C6's sixth instance, and it was inside the section
-> that exists to enforce C6.** ⚠️ These counters matched `^[0-9]+\.` only, while
-> **§8 rules the heading form acceptable** and `SF-03`, `SF-09` and `SF-11` all
-> write their findings as `### 1. …`. ⛔ **So for those handoffs both counters
-> returned zero and *"the two numbers must agree"* passed at 0 = 0** — the check
-> did not fail, it **passed the wrong thing**, which is C2's failure mode
-> precisely and the one this rubric already calls the worse of the two. ⭐ **A
-> counter that under-reports gets believed.**
+> ⛔ **Ruling 29, landed — and the two-number design was itself the defect, not
+> just its regex.** ⚠️ **I wrote four versions of a *filed* counter before
+> landing this, and every one worked on the handoffs I tested and failed on ones
+> I did not:** requiring a trailing period missed `SF-25`'s `### 13 \`[structural]\``;
+> dropping the section scope counted every numbered heading in `FND-07` and
+> reported six untriaged findings that did not exist; anchoring the section on
+> `##` missed the `**Findings:**` form §8 permits. ⛔ **Four attempts to make a
+> numerator match a denominator, each a list of accepted shapes, is the open-set
+> failure — inside the clause that polices it.**
 >
-> ⛔ **The widened regex above is an INTERIM and is superseded by Ruling 29 — the
-> CTO is landing the real fix here.** ⚠️ **My instinct (narrow, don't widen) was
-> right and aimed one step off:** §8 ruled that a **section header** may take
-> either form, authors reasonably extended that to **items**, and the counter was
-> written for one reading. So §8 is not the thing to reverse. The rule is:
+> ⭐ **So: a finding *is* a marked item.** The marker is a literal string with one
+> spelling, it cannot be derived from formatting, and **an unmarked finding is
+> unrepresentable rather than counted-and-compared.** ⚠️ Measured across all 24
+> task handoffs: **every one reads cleanly, markers ≥ structural, no format
+> dependency.**
 >
-> ⭐ **A thing merely *present* may be spelled several ways. A thing that is
-> *counted* has exactly one spelling.**
->
-> ⛔ **Presence fails loudly, at zero, only if *every* spelling is missed. A count
-> is wrong the moment *one* shape is missed — silently, and downward, toward the
-> number that looks like success.** Section headers keep both forms; finding
-> **items** get one, carrying the marker, so *filed* and *marked* stay
-> independently derivable.
->
-> ⛔ **And the half that catches the class rather than the instance: `0 = 0` is
-> not a pass.** One spelling works until somebody invents a seventh. ⚠️ **§8
-> already says an empty Findings section is *"a prompt to ask, not a pass"* — and
-> §8a's counter contradicted its own section three paragraphs above it.** ⭐ **A
-> zero count must never be self-certifying.**
->
-> **Measured by the CTO across every merged handoff:** `SF-03` **0 filed / 0
-> marked / 4 present**, `SF-09` **0 / 0 / 4**, `SF-11` **0 / 0 / 3** — ⛔ **eleven
-> structural findings across three merged handoffs, certified by a check that
-> counted none of them.**
+> ⛔ **And `0` is never self-certifying**, which is the half that catches the
+> class. ⚠️ **Measured 2026-09-09: `SK-01` carries six findings (41–46) and
+> *zero* markers — and I APPROVEd it twice without running this check.** ⭐ **The
+> old counter would have returned `0 = 0` and passed**, so running it would not
+> have helped; this one returns `0` and forces a sentence. **That is the whole
+> difference, and it is why the guard is not optional.**
 
-⛔ **The two numbers must agree.** A handoff with ten findings and two markers has
-not been triaged — it has been triaged twice and abandoned. ⭐ An empty
-`[structural]` list is only a clean bill when the counts match; otherwise it means
-*nobody marked anything*, which is the opposite conclusion.
+⛔ **A finding with no marker has not been triaged**, and under the rule above it
+is not a finding at all — it is prose in a Findings section, which the zero line
+is there to surface. ⭐ **An empty `[structural]` list is a clean bill only when
+the marker count is non-zero**; at zero it means *nobody marked anything*, which
+is the opposite conclusion and the one that used to pass silently.
 
 ⭐ **The reviewer is the last person who reads a handoff while anything can still
 be done about it**, so routing is part of the verdict, not a follow-up. For each
@@ -792,6 +838,30 @@ on the **wave-open checklist**, run by the person who does the carrying: the PO.
 ⚠️ **A reviewer who finds an unmarked structural finding marks it in the review**
 — the author is describing their own scope and is the worst-placed person to see
 that something will recur elsewhere.
+
+### ⛔ 8a-i. A ruling that changes a shared name names its blast radius **across branches**
+
+```bash
+git grep -l "<the shared name>" $(git branch --format='%(refname:short)' \
+    | grep -E 'feat/|fix/') 2>/dev/null
+```
+
+⛔ **A sweep sees the tree; it cannot see the branches.** A ruling collides with
+merged code **and** with work in flight, and those need different mechanisms: a
+**check** for what is there, a **broadcast** for what is coming. ⚠️ **Neither
+substitutes for the other**, and the wave-open sweep is structurally blind to a
+branch that has not merged.
+
+⭐ **The obligation is on whoever *writes* the ruling**, not whoever follows it: the
+author knows what they meant to change, so the grep is free for them and expensive
+for everyone else.
+
+⚠️ **This clause exists because I skipped it.** ⛔ Ruling 35 would have red-lined a
+guard on an unmerged branch; the command above finds that file in one run; **I did
+not run it and the author covered for me.** ⭐ **A reviewer covered for by an author
+has found a hole in their own procedure, not a piece of good luck.**
+
+---
 
 ⛔ **This exists because a correctly-filed prediction was read and not acted on,
 and the defect it named then happened twice more to two other agents in the same
@@ -958,8 +1028,27 @@ The change cannot be fixed by amendment. Four causes, and only these four:
 
 1. **R7 — a personal identifier reached a commit.** It survives a follow-up
    commit that deletes it, so the branch is rewritten, not patched.
-2. **R1 — the framework was taught about a source.** An import, a name or a
-   branch on an adapter is a design failure, not a defect.
+2. **R1 — the framework was taught about a source**, ⛔ **by an `import` or a
+   `branch`.** Behaviour depends on a corpus, so the design is wrong and no
+   amendment reaches it.
+
+   ⛔ **A source's *name in prose* is NOT this cause** (Ruling 41). ⚠️ The list
+   here used to read *"an import, a name or a branch"*, and **one of those three
+   is not like the others**: §7c fails on all three, and rightly — but REJECT is
+   defined as *cannot be fixed by amendment*, and a name in a docstring is fixed
+   by **moving a paragraph**.
+
+   | what | why | verdict |
+   |---|---|---|
+   | an **import** or a **branch** on a source | behaviour depends on a corpus | ⛔ **REJECT** |
+   | a **name in prose** | the design is right; ⚠️ the next reader takes it as licence | **CHANGES REQUESTED** |
+
+   ⭐ **§7c's *check* is unchanged and *"even in a comment"* is the clause that
+   makes it catch this.** Only the verdict changes. ⚠️ Measured 2026-09-09 on
+   `SK-01`: **21 hits, every one inside a docstring, none in live code** — ⛔ **a
+   mechanical reading of the old wording would have REJECTed a branch whose
+   design was correct**, and the fix was to move prose into the document beside
+   the package.
 3. **R3 — an undeclared or non-additive edit to a pre-existing file** in a
    source repository.
 4. **The task was not the task.** The diff implements something else, or

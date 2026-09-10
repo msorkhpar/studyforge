@@ -34,6 +34,7 @@ from pathlib import PurePosixPath
 
 from studyforge.corpus.placement.errors import PlacementError
 from studyforge.corpus.placement.names import UNIT_MEDIA_DIRNAMES
+from studyforge.describe import describe
 
 
 @dataclass(frozen=True, slots=True)
@@ -73,7 +74,7 @@ class UnitLocations:
         and silently wrong under the other.
         """
         if not isinstance(filename, str) or not filename or "/" in filename:
-            raise PlacementError(f"a media href names one file, got {filename!r}")
+            raise PlacementError(f"a media href names one file, got {describe(filename)}")
         return relative_href(self.page, self.media_dir(kind) / filename)
 
 
@@ -130,5 +131,5 @@ def relative_href(from_page: PurePosixPath, to_target: PurePosixPath) -> str:
 def _refuse(kind: object) -> PurePosixPath:
     """Refuse a media kind this unit does not have, naming the ones it does."""
     raise PlacementError(
-        f"{kind!r} is not a kind of unit media; this build places {list(UNIT_MEDIA_DIRNAMES)}"
+        f"a unit's media kind must be one of {list(UNIT_MEDIA_DIRNAMES)}, got {describe(kind)}"
     )

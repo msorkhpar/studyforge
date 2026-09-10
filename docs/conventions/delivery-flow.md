@@ -110,6 +110,30 @@ right format, read — and came true twice more. ⭐ `grep -rn '[structural]'
 docs/tasks/handoffs/` is the triage list, and running it is part of opening a
 wave. The PO owns that sweep.
 
+### ⛔ Opening a wave: two checks, and the second was assumed for a milestone
+
+```bash
+grep -rn '\[structural\]' docs/tasks/handoffs/   # 1. the triage list
+python3 -m tools.quality                          # 2. index present and current
+```
+
+⭐ **The second line is FND-07's, and it is a line in a checklist because the
+alternative was believing a board row.** `FND-02` was marked done for a graph
+that never reached the repository: its acceptance was **true in the worktree
+where it ran and false everywhere else**, because `graphify-out/` is git-ignored
+and ⛔ **an ignored artifact cannot travel on a branch.** Measured 2026-09-09:
+**33 worktrees, 2 with a graph** — so every agent since had worked without the
+index while the board said it existed, and R14's context budgets rest on it.
+
+⛔ **That is not a criticism of `FND-02`**, which did the work and recorded what
+it saw. The defect is that **the acceptance was unverifiable from the
+repository** — which is why the answer is a check every checkout runs, and never
+a rebuild somebody reports.
+
+⚠️ **An absent index is not a failure and the check says so**, printing the two
+commands that build one. ⛔ A *stale* one is, and so is a *current but unbridged*
+one — see `graphify.md`.
+
 **The CTO's verdict is one of three:** `approved` (PO merges, or the CTO does),
 `changes requested` (named, each tied to a ruling or an acceptance condition), or
 `rejected — re-plan` (the task as written cannot be met; it returns to the PO as a

@@ -10,9 +10,9 @@ predicate, for a caller that reports rather than refuses. ⭐ Each contract's
 own task owns **which** versions it accepts and passes them in; this module
 owns only the test.
 
-**Depends on.** Nothing. ⛔ Deliberately not on any contract's package: this
-is the module every one of them imports, so a dependency in the other
-direction is a cycle waiting for the second caller.
+**Depends on.** `studyforge.describe`, which depends on nothing. ⛔ Deliberately
+not on any contract's package: this is the module every one of them imports, so
+a dependency in the other direction is a cycle waiting for the second caller.
 
 ## Why this is a module and not a convention
 
@@ -51,6 +51,8 @@ contract keeps its own front door.
 from __future__ import annotations
 
 from collections.abc import Collection
+
+from studyforge.describe import describe
 
 #: The fields R9 versions, for the tree check in `tests/studyforge/
 #: test_version.py` that refuses a second implementation. ⚠️ The TOC schema
@@ -109,7 +111,23 @@ def check(
     ⛔ `where` is keyword-only and has no default. A refusal that cannot say
     which file it read is a refusal nobody can act on (R6), and the first
     reader of most of these messages is an integrator hand-writing the file.
+
+    ⛔ **`contract` must be one of `CONTRACT_FIELDS`, and that is a gate rather
+    than a note** (W2, Ruling 13). This module's own convention already said a
+    task that versions a new contract registers it in that tuple *in the same
+    commit*; until now the only thing holding the convention was a tree test
+    that a caller outside `src/` never runs. ⭐ Making the unregistered name
+    unrepresentable is cheaper than listing the places it could arrive, and it
+    closes the last §1f site in the tree: `contract` is interpolated into the
+    refusal twice, so a `contract` that could be anything was a refusal that
+    could reproduce anything.
     """
+    if contract not in CONTRACT_FIELDS:
+        raise error(
+            f"{describe(contract)} is not a contract this build versions; R9 "
+            f"versions {list(CONTRACT_FIELDS)}, and a new one is registered in "
+            f"CONTRACT_FIELDS in the commit that mints it."
+        )
     if is_supported(declared, accepted):
         return declared  # type: ignore[return-value]
     raise error(
@@ -130,10 +148,14 @@ def _said(contract: str, declared: object) -> str:
     Python prints `True` and the integrator wrote `true`.
     ⛔ Naming the type also means an unexpected payload is described rather
     than reproduced into the message (R7).
+
+    ⭐ **This is now `studyforge.describe` with the contract's name in front of
+    it** (W17). It used to be the third copy of that rule and the only one that
+    said *"a bool"*; ⛔ the argument above is why `describe` says *"a bool"*
+    too, rather than why this module keeps its own answer. **The disagreement
+    was resolved in favour of the copy that had made the case.**
     """
     if declared is None:
         return f"no {contract}"
-    if isinstance(declared, int) and not isinstance(declared, bool):
-        return f"{contract} {declared!r}"
-    name = type(declared).__name__
-    return f"{contract} as {'an' if name[:1] in 'aeiou' else 'a'} {name}"
+    described = describe(declared)
+    return f"{contract} {described}" if described[:1].isdigit() else f"{contract} as {described}"

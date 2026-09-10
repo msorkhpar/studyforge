@@ -24,9 +24,9 @@ not a page any scan treats as a unit.
 it is tempting to read `4.4.1` out of that filename. ⛔ Three reasons not to:
 
 1. **R1.** `README_<numbering>.md` is one corpus's convention. Measured
-   2026-09-09 across the four designed shapes: the Java corpus spells a unit
+   2026-09-09 across the four designed shapes: one spells a unit
    `README_4.4.1.md`, the depth-1 fixture spells it `01-what-a-triple-is.md`,
-   and the ISO corpus spells it `1.md`, `s1.md`, `c1.md`. Deriving from the
+   and a third spells it `1.md`, `s1.md`, `c1.md`. Deriving from the
    filename means the framework carries a parser per corpus.
 2. **R4.** Inferring what an artifact should be *called* from what the source
    file is *named* is inferring meaning from a path, pointed the other way.

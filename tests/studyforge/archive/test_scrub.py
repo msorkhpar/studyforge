@@ -22,8 +22,10 @@ from pathlib import Path
 import pytest
 
 from studyforge.archive.scrub import (
+    ALSO_SCRUBBED,
     EMAIL_PLACEHOLDER,
     HOME_PATH_PLACEHOLDER,
+    SCRUBBED,
     SHAPES,
     TOKEN_PLACEHOLDER,
     PersonalDataLeak,
@@ -36,6 +38,7 @@ from studyforge.archive.scrub import (
 from tests.support import repository_root
 
 HOME = "/" + "home/jane"
+TILDE_USER = "~" + "jane"
 USERS_HOME = "/" + "Users/jane"
 BEARER = "Bearer " + "eyJhbGciOiJIUzI1NiJ9"
 EMAIL = "jane.doe@example.invalid"
@@ -87,11 +90,29 @@ def test_scrub_leaves_ordinary_lesson_text_alone():
     assert scrub(LESSON_TEXT) == LESSON_TEXT
 
 
-def test_scrub_leaves_a_relative_path_alone():
+BENIGN = "see docs/conventions/ and /var/lib/home/cache and $HOME/.config"
+
+
+def test_the_gate_leaves_a_home_segment_under_a_longer_prefix_alone():
     # ⛔ The lookbehind exists for this: `/home` mid-path names nobody, and a
-    # gate that fired on it would fire on container images and CI checkouts.
-    text = "see docs/conventions/ and /var/lib/home/cache and $HOME/.config"
-    assert scrub(text) == text
+    # gate that *refused* it would refuse a lesson about container images or
+    # CI checkouts. ⚠️ Ruling 44 called `/export/home/<name>` passing this
+    # gate a live hole — and it is — but it is **the same shape as the line
+    # above**, so the gate cannot refuse one without refusing the other. That
+    # is why the layer protecting a path is `studyforge.sourcepath` and not
+    # this one, and why the residual is written down rather than closed.
+    assert shape_in(BENIGN) is None
+    assert_clean(BENIGN, "lesson")
+
+
+def test_and_the_scrubber_rewrites_it_because_its_false_positive_is_free():
+    # ⭐ The asymmetry, made real. Over-rewriting one of *our own* log lines
+    # costs a slightly over-redacted line; over-refusing a corpus costs the
+    # corpus. So the two responses get the widths their consequences justify
+    # — `SHAPES` for the gate, `SCRUBBED` for the scrubber — and this is the
+    # one string where the two sets are visibly different.
+    assert scrub("wrote /var/lib/home/cache/x") == f"wrote /var/lib{HOME_PATH_PLACEHOLDER}/x"
+    assert scrub("docs/conventions/ and $HOME/.config") == "docs/conventions/ and $HOME/.config"
 
 
 @pytest.mark.parametrize("text", [f"a {HOME} b", f"a {EMAIL} b", f"a {BEARER} b"])
@@ -312,14 +333,70 @@ def test_and_the_serialised_form_would_have_matched():
 # --------------------------------------------------------------------------
 
 
-def test_the_pattern_set_is_exactly_the_three_environmental_shapes():
+def test_the_pattern_set_is_exactly_the_four_environmental_shapes():
     # ⛔ Every one reaches a document because of *whose machine and whose
-    # account ran the build*. A fourth entry needs that argument made for it.
+    # account ran the build*. ⚠️ This test said **three** and its comment said
+    # "a fourth entry needs that argument made for it" — and the argument was
+    # made by Ruling 47, from the other side: the repository hygiene check had
+    # swept `<host>.local` since FND-01 and this gate never did. ⛔ A machine
+    # name is personal data in an archive document exactly as much as in a
+    # source file, so the omission was drift rather than a decision. A fifth
+    # entry still needs the argument made for it.
     assert [name for name, _pattern, _placeholder in SHAPES] == [
         "home path",
+        "local hostname",
         "email address",
         "bearer token",
     ]
+
+
+def test_a_tilde_username_is_the_same_shape_as_a_slash_home_path():
+    # ⭐ **Two spellings of one shape, not a new entry.** `~<name>/notes` and
+    # `/home/<name>/notes` name the same account by the same structural
+    # anchor, so the ruling above — three environmental shapes — is untouched
+    # covering it. ⛔ Ruling 44 reported this one as passing clean.
+    assert shape_in(f"built from {TILDE_USER}/material") == "home path"
+    assert scrub(f"built from {TILDE_USER}/material") == (
+        f"built from {HOME_PATH_PLACEHOLDER}/material"
+    )
+
+
+@pytest.mark.parametrize("text", ["about ~5/6 of it", "~50 lines/file", "see foo~bar/baz"])
+def test_and_a_tilde_that_is_not_an_account_name_is_left_alone(text):
+    # ⚠️ The negative control for the line above, and it is why the branch
+    # requires a leading letter and a following slash rather than matching
+    # `~` and hoping. Prose says `~5` and `~50` constantly.
+    assert shape_in(text) is None
+    assert scrub(text) == text
+
+
+def test_a_bare_tilde_is_scrubbed_but_never_refused():
+    # ⛔ `~/src` names *a* home and never *whose*, so it carries no identity
+    # and the gate has no business refusing a lesson that says `cd ~/src`.
+    # ⭐ In our own output it is still a build-machine path, so it is
+    # rewritten — the same string, two answers, decided by whose words it is.
+    assert shape_in("run: cd ~/src") is None
+    assert scrub("run: cd ~/src") == f"run: cd {HOME_PATH_PLACEHOLDER}/src"
+
+
+def test_the_scrubbers_set_contains_the_gates_set_by_construction():
+    # ⭐ Structural, not asserted-and-hoped: `SCRUBBED` is `SHAPES + …`, so
+    # the two can never drift into disagreeing about a shape they share. An
+    # assertion is still here because the `+` could be rewritten as a literal
+    # by somebody tidying, and that is the change worth catching.
+    assert SCRUBBED[: len(SHAPES)] == SHAPES
+    assert SCRUBBED == SHAPES + ALSO_SCRUBBED
+
+
+def test_no_ambiguous_shape_can_reach_a_refusal():
+    # ⛔ The names in `ALSO_SCRUBBED` must never appear in a `PersonalDataLeak`
+    # message: they are the shapes deliberately too ambiguous to refuse, and a
+    # refusal naming one would mean the widths had been merged.
+    wide = {name for name, _pattern, _placeholder in ALSO_SCRUBBED}
+    narrow = {name for name, _pattern, _placeholder in SHAPES}
+    assert wide & narrow == set()
+    for text in ("/export/home/jane/x", r"run \\host\home\jane\x", "cd ~/src"):
+        assert shape_in(text) not in wide
 
 
 CARD_SHAPED = ("4111111111111111", "5500 0000 0000 0004", "3400-0000-0000-009")
@@ -472,3 +549,10 @@ def test_a_build_output_line_is_scrubbed_before_it_reaches_a_stream():
     assert "jane" not in emitted
     assert "cannot find symbol" in emitted
     assert_clean(emitted, "javac stderr")
+
+
+# ⭐ **W7's tree-wide half lives in `tests/test_gate_coverage.py`**, not here:
+# *"every module that decodes a document calls this gate"* is a claim about the
+# tree rather than about this module's behaviour, and this file is 4 lines from
+# R11's test ceiling. ⚠️ It is one file, one claim — read it when changing what
+# `assert_clean` is for.

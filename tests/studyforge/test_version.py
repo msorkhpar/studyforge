@@ -13,7 +13,7 @@ from studyforge.version import (
     check,
     is_supported,
 )
-from tests.support import repository_root
+from tests.support import imports_module, repository_root
 
 ONE = frozenset({1})
 WHERE = "corpus.json"
@@ -202,15 +202,10 @@ def contract_readers(root: Path):
 
 
 def imports_the_guard(path: Path) -> bool:
-    tree = ast.parse(path.read_text(encoding="utf-8"))
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ImportFrom) and node.module == "studyforge.version":
-            return True
-        if isinstance(node, ast.Import) and any(
-            alias.name == "studyforge.version" for alias in node.names
-        ):
-            return True
-    return False
+    # ⭐ The predicate is `tests.support.imports_module` (W13): this was one of
+    # two hand-written copies of it, and the fixture checker was about to be a
+    # third.
+    return imports_module(path, "studyforge.version")
 
 
 def test_no_module_reads_a_contract_field_without_importing_the_guard():

@@ -185,8 +185,9 @@ def test_an_address_whose_arity_disagrees_with_levels_is_refused():
 
 
 def test_a_variant_the_corpus_does_not_declare_is_refused():
+    # ⛔ W19: the refusal names the closed set, never the value it was handed.
     message = refusal(variant="java")
-    assert "java" in message
+    assert "java" not in message
     assert "['prose']" in message
 
 

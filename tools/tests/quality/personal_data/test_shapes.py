@@ -10,8 +10,16 @@ which is the thing under test.
 from __future__ import annotations
 
 import re
+from pathlib import Path
 
-from tests.support import init_repository, repository_root
+import pytest
+
+from tests.support import (
+    imports_module,
+    init_repository,
+    personal_data_shapes,
+    repository_root,
+)
 from tools.quality import config
 from tools.quality.personal_data.shapes import (
     ALLOWED_ADDRESS,
@@ -216,3 +224,36 @@ def test_every_shape_is_a_pattern_holding_no_value():
     for name, pattern in SHAPES:
         assert isinstance(name, str) and name
         assert isinstance(pattern, re.Pattern)
+
+
+# --------------------------------------------------------------------------
+# Ruling 47 — this sweep's column of the shared shape vocabulary
+# --------------------------------------------------------------------------
+
+VOCABULARY = personal_data_shapes()
+BY_SHAPE = [pytest.param(row, id=row["shape"]) for row in VOCABULARY]
+
+
+@pytest.mark.parametrize("row", BY_SHAPE)
+def test_this_sweep_does_what_the_shared_table_says(row):
+    # ⛔ **One shape vocabulary, two policies.** This check and
+    # `archive.scrub` are ruled to have different subjects — this one may
+    # derive the machine's identity and keeps an allow-list, that one may know
+    # nothing — ⛔ and that never justified differing in what they
+    # *recognise*. ⚠️ Ruling 31 forbids importing the framework, so the two
+    # sides share the table at `docs/conventions/personal-data-shapes.md` and
+    # each asserts only its own column. This module reads no framework code.
+    did = "report" if shape_matches(row["example"]) else "ignore"
+    assert did == row["quality"], row["shape"]
+
+
+def test_the_table_this_sweep_is_measured_against_is_inhabited():
+    # ⛔ Ruling 48: the parametrised test above is satisfied by an empty table.
+    assert len(VOCABULARY) >= 12
+    assert {row["quality"] for row in VOCABULARY} == {"report", "ignore"}
+
+
+def test_this_module_reads_the_table_and_never_the_framework():
+    # ⛔ Ruling 31, asserted where it could be broken. Sharing evidence must
+    # not become sharing code by somebody importing what looks convenient.
+    assert not imports_module(Path(__file__), "studyforge")
