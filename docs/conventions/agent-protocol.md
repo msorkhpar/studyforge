@@ -86,6 +86,63 @@ that repository** — a CTO ruling was overruled in round 14 for exactly this.
 ⚠️ **`grep -rn "a real " docs/tasks/E0*.md` finds 12 occurrences.** Unnamed,
 eleven more tasks each invent their own answer.
 
+### ⛔ An acceptance condition NAMES THE INSTRUMENT THAT WOULD FAIL IT
+
+⛔ **Ruled from `CTO-29/3`.** ⭐ **A condition nobody can fail is not an
+acceptance condition. It is a wish** — and a reviewer who meets one has exactly
+one move left, which is to trust the handoff of the person they are reviewing.
+
+⚠️ **The measured instance:** Ruling 91's clause reached an *implementation* and
+never reached the *acceptance document*, so the review had no way to test it.
+⛔ **`W33` catalogued seven instances of *a check that cannot fail*; this is the
+EIGHTH and the first inside the ACCEPTANCE instrument** — ⚠️ **which is the
+worst place for it, because that instrument is what every other row is judged
+with.**
+
+⭐ **So an acceptance condition is written in two parts, and the second is not
+decoration:**
+
+| | |
+|---|---|
+| **the claim** | what must be true when the task is done |
+| ⛔ **the instrument** | ⭐ **the thing that returns a DIFFERENT answer when the claim is false, plus the reading that means REFUSED** |
+
+⛔ **Three instrument forms are admissible:**
+
+1. **A command and its expected reading** — `docker/dev/check python3 -m pytest
+   -q tests/<file>.py` → `N passed`. ⚠️ **The reading is part of the form**; a
+   command with no stated outcome is half a condition.
+2. **A test node id** — ⭐ it is collected or it is not, so a deleted test fails
+   the condition instead of quietly satisfying it.
+3. **A named gate rule** — the gate (`python3 -m tools.quality`) *and* the rule's
+   own name, so a reader can reach the code that decides.
+
+⛔ **What is NOT an instrument, and this is the one that keeps getting
+written:** ⚠️ ***"the handoff records it."*** ⭐ **A handoff is where a reading is
+REPORTED; it is never what TAKES one**, so a condition discharged by reading one
+asks the reviewer to verify the author against the author. ⛔ **Nor are
+*"reviewed"*, *"documented"*, *"consistent with"* or *"as appropriate"*: none of
+them names a thing that can return `no`.**
+
+⭐ **If you cannot write the second column, you have found a defect in the task
+rather than a formality to skip.** ⛔ **Report it — the standard this section
+opens with is unchanged: implement the half you judge right, say so with the
+measurement, and leave the document alone.** ⚠️ **The owner then supplies the instrument or
+DROPS the condition, and dropping it costs nothing, because a condition that
+could never fail was never doing any work.**
+
+⚠️ **Scope, so the next reader does not supply the widest one (see *a ruling
+states the scope it was argued over*, below).** ⛔ **This binds acceptance
+conditions — the clauses on a task row, in an epic document or in the rubric,
+that somebody signs off against.** ⭐ **It does NOT bind design prose, a
+ruling's argument, or a finding**, none of which is a thing anyone passes or
+fails.
+
+⭐ **This clause names its own instrument, which is the whole of it:** ⛔ **read
+each acceptance condition on the row in front of you and ask what would make it
+say `no`. A condition for which that question has no answer FAILS this clause**,
+and the empty answer is the reading that refuses it.
+
 ## Handoff — required, one file per task
 
 Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:
@@ -148,6 +205,76 @@ has now caught three tasks. ⚠️ A tag of `python` is a **promise that the blo
 Python**, so a hand-aligned usage example or a transcript is silently re-spaced
 and your branch goes red at the gate. If it is output, a transcript or an
 illustration, it is `text`.
+
+### ⛔ A reading taken from a PROXY is not a property of the THING
+
+⛔ **Ruled from `CTO-29/8`, and it is Ruling 55 generalised past numbers.**
+⭐ **Ruling 55 says a number is an instrument reading, never a property of the
+tree. Drop the word *number* and the rule gets much larger:** ⛔ **every reading
+comes off something, and that something is usually a PROXY for the subject you
+are about to name.**
+
+⚠️ **Six measured instances, four rounds, three different roles:**
+
+| ⭐ **the reading, and it was ACCURATE** | ⛔ **the subject it got called** |
+|---|---|
+| a **branch** | its **tip** |
+| a **disk walk** | the **tree** |
+| a **constant** | the **check** that reads it |
+| a **worktree** | the **agent** working in it |
+| a **board row** | the **rubric** it quotes |
+| ⚠️ a **`grep` hit** (`PO-26/3`, below) | the **document** it was found in |
+
+⛔ **In all six the reading was CORRECT and the SUBJECT was WRONG.** ⭐ **That is
+why none of them looks like an error, why nothing goes red, and why three roles
+committed the same defect in four rounds:** ⚠️ **the sentence is true of the
+proxy and false of the thing, and only the author knows which one they measured.**
+
+⭐ **The check is two questions, and you ask them of the SENTENCE you are about
+to write, not of the command you just ran:**
+
+1. ⛔ **What did I MEASURE?**
+2. ⛔ **What am I about to CALL it?**
+
+⛔ **Different words mean the sentence names the proxy, and it must then say
+so.** ⚠️ `git branch --no-merged` returns *branches carrying unmerged commits*,
+not *work in flight*. ⚠️ An absent `graphify-out/` says *this checkout has no
+index*, not *the index is stale* — ⭐ **which is Ruling 108 arriving as a special
+case of this clause rather than as its own fact.**
+
+⭐ **The reporting form is already here:** ⛔ **`Measured at: <branch> @ <sha>`
+from the section above, and the instrument beside it.** ⚠️ **A reading whose
+instrument is not written down cannot be checked for this defect by anyone
+except the person who took it.**
+
+#### ⚠️ `PO-26/3` — and the sixth instance is MANUFACTURED by this document's own rules
+
+⛔ **A `grep` hit inside a block marked `CORRECTED`, `~~struck~~`, *"this section
+said"* or *"replaced by"* is NOT a reading of the document.**
+
+⚠️ **Measured instance, PO round 26:** a brief reported that `CLAUDE.md` names M1
+step 1.4 and `SF-10` as in flight. ⛔ **It does not** — the live line reads *"In
+flight: M2 step 2.1"*, and the `SF-10` hit sits inside the round-19 **correction
+record**, quoting the sentence it REPLACED. ⭐ **The document was current; the
+reading was stale.**
+
+⛔ **This is not a `grep` defect. It is a defect this file MANUFACTURES.**
+⭐ **The section immediately above rules that a record is corrected BENEATH and
+that the original stands** — ⚠️ **so a corrected document answers `grep` TWICE
+by construction, and the instrument cannot tell the replaced half from the live
+one.**
+
+⛔ **The remedy is NOT to stop quoting the replaced text**; a correction nobody
+can audit is worse than a duplicate hit. ⭐ **It is that whoever quotes a hit
+owes the SURROUNDING LINE.** ⚠️ **A hit under a correction marker is evidence
+about the record's HISTORY and evidence of nothing about the document's CURRENT
+state.**
+
+⭐ **Runnable, and this clause names its own instrument:** ⛔ **re-take the hit
+as `grep -n -C3 '<pattern>' <file>` and REFUSE it when the context carries
+`CORRECTED`, `~~`, *said* or *replaced*.** ⚠️ **A row whose reading was taken
+with a bare `grep -n` and then quoted as the file's current state FAILS this
+clause**, and the surrounding lines are the reading that refuses it.
 
 ## Findings are triaged, not filed
 
