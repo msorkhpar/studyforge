@@ -58,9 +58,16 @@ from studyforge.describe import describe
 #: test_version.py` that refuses a second implementation. ⚠️ The TOC schema
 #: version has no field name yet — E03 mints it — and it belongs in this
 #: tuple on the day it does. ⭐ `identity_api` joined it the day SF-03 minted
-#: it, and `content_api` the day SF-09 did, which is the convention this line
-#: asks for: a task that versions a new contract registers it here in the same
-#: commit, or the guard cannot see it.
+#: it, `content_api` the day SF-09 did, and `site_api` the day SF-04 did, which
+#: is the convention this line asks for: a task that versions a new contract
+#: registers it here in the same commit, or the guard cannot see it.
+#:
+#: ⚠️ **`site_api` is registered here and is read through `is_supported`, not
+#: through `check`** (Ruling 95). It is the one member of this tuple whose
+#: contract does **not** raise on an unknown version: the discovery cache is
+#: derived and rebuildable, so R9's refusal is spent by discarding the document
+#: whole and re-deriving it rather than by stopping. ⛔ Nothing is migrated,
+#: which is the part of R9 that is about all of them.
 #:
 #: ⛔ **Two tasks appending here conflict, and the resolution is always
 #: keep-both** (Ruling 9). The explicitness is the mechanism — a tuple that
@@ -74,6 +81,7 @@ CONTRACT_FIELDS = (
     "consuming_api",
     "identity_api",
     "content_api",
+    "site_api",
 )
 
 
