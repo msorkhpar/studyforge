@@ -176,12 +176,68 @@ overruled above. A task told to "port `markdown.py` with its governing rule
 intact" will find the current source doing three things differently and should
 know all three are intended.
 
-**Acceptance.** CodeSignal's existing Markdown tests pass unchanged. Parses all
-166 Java sub-READMEs with zero errors — **or** names every file and construct
-that fails, which becomes JS-03's input rather than a silent loss (R6). **And no
+**Acceptance.** CodeSignal's existing Markdown tests pass unchanged. **And no
 unit yields fewer blocks than the source's independently-counted structure
 implies** — a raise is not the only way this parser can lose material, and SF-25
 turns that count into a gate.
+
+#### ⛔ Acceptance clause RESTATED AS DELIVERED — **Ruling 166** (CTO round 42), 2026-09-10 (PO round 35)
+
+⛔ **The first clause used to read, and the text is preserved because a
+restatement that hides what it restates is not a restatement:**
+
+> ~~Parses all **166 Java sub-READMEs** with zero errors — **or** names every
+> file and construct that fails, which becomes JS-03's input rather than a
+> silent loss (R6).~~
+
+⚠️ **This is a count readable only INSIDE A CONSUMER REPOSITORY, which Ruling 151
+forbids in a framework Acceptance and R20 forbids a framework close from resting
+on.** ⛔ **`SF-07` is a CLOSED row and M1 closed over it, so the two obvious
+dispositions are both wrong:**
+
+- ⛔ **INSTRUMENT it? No.** Ruling 117 binds: **giving a closed row's condition a
+  new instrument creates a gate that has never been run against the work it
+  judges.** ⭐ **`SF-07` is NOT reopened and M1 stays CLOSED.**
+- ⛔ **DROP it? No, and this narrows Ruling 117 rather than contradicting it.**
+  ⭐ **DROP is for a condition that was never doing work. This one did work, and
+  the record proves it.** ⚠️ **Dropping it would convert a discharged
+  measurement into a SILENCE, and a silence reads as *never asked*.**
+
+⭐ **THE THIRD CASE IS THE TRUE ONE: MEASURED ONCE, UNREPRODUCIBLE NOW.** ⛔ **The
+clause was measured, carefully, with the denominator trap called out by the
+author against their own number** — and it cannot be re-measured here, because
+the sibling corpora are not checked out beside this repository. ⚠️ **The three
+`tests/test_knowledge_index.py` skips in every suite reading say so by name.**
+
+⭐ **THE READING, EMBEDDED — the number stops being a promise and becomes a
+citation of a record.** ⛔ **Repositories are named BY ROLE, never by path
+(R20)**; the record is `docs/tasks/handoffs/SF-07.md`, cited without a line
+number because Ruling 163 forbids one in a live document:
+
+```text
+the extraction source's Java lesson set    166 / 166 parse, zero errors,  8,083 blocks
+the SPARQL v2 target's lesson set           20 /  20 parse, zero errors
+the ISO-8583 v2 target's lesson set         49 /  49 parse, zero errors
+
+type census over the 166:  heading 166 · list 166 · para 166 · code 165
+                           table 31 · rule 10 · quote 1
+
+⚠️ THE DENOMINATOR TRAP, called out by the author against their own number:
+   `rule` appears in 10 of the 166 LESSON files and `quote` in 1;
+   over all 218 MARKDOWN files in that same repository it is 15 and 2.
+   Same corpus, different denominator — and the clause means the lesson set.
+```
+
+⭐ **THE GENERAL FORM, because this will recur across the closed rows:** ⛔ **a
+closed row's clause that was met by a reading no longer reproducible is RESTATED
+WITH ITS READING EMBEDDED.** ⚠️ **A clause whose evidence lives only in a
+checkout that is not here is one bad session away from being re-derived from
+nothing.**
+
+⚠️ **The failure half is not lost, it is re-homed:** *names every file and
+construct that fails, which becomes JS-03's input rather than a silent loss (R6)*
+is a **behaviour of the parser**, not a corpus count, and it is asserted on the
+`FND-04` fixtures like every other framework clause.
 
 ---
 

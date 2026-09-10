@@ -28,10 +28,32 @@ all four are simultaneously true and `8b639b1` as the ref it would close at. Bot
 were overtaken by `ce80120` before this run started.** ⭐ **[The close run, row by
 row](#m2-step-22s-close-run-at-ce80120-all-four-re-taken-and-the-four-merges-derived-rather-than-received).**
 
-⏳ **OPEN: M2 step 2.3 — `SF-14`, `SF-27`.** ⛔ **`SF-27` IS IN FLIGHT (`wt/dev2p`,
-`feat/SF-27`, 0 commits) and `SF-14` IS THE STEP'S LAST FREE ROW** — ⚠️ **the
-cell below said BOTH were `todo`, FREE, and that became false when the
-coordinator dispatched `SF-27` from round 33's pair.** ⭐ **The step's declared
+⏳ **OPEN: M2 step 2.3 — `SF-14`, `SF-27`.** ✅ **`SF-27` IS MERGED — `6177738`,
+CTO round 42, APPROVE.** ⛔ **`SF-14` IS THE STEP'S ONE REMAINING ROW AND THE STEP
+CANNOT CLOSE WITHOUT IT.** ⭐ **REPLACED, not appended beneath (`PO-29/6`): this
+cell said *"`SF-27` IS IN FLIGHT (`wt/dev2p`, `feat/SF-27`, 0 commits)"*, which
+was true when taken at `cab8a04` and false within that round** — ⚠️ **`PO-30/2`
+for the fourth time: a commit count is a reading with an as-of, not a state.**
+
+✅ **`SF-14` IS UNBLOCKED ON RULING 165, MEASURED — and the ruling was discharged
+BEFORE IT WAS MINTED.** ⛔ **Ruling 165 (CTO round 42) made `SF-14`'s dispatch
+conditional on splitting its *"Renders 166 units"* clause together with
+`SF-27`'s, in ONE edit.** ⭐ **That edit is `753eb26`, merged `18861ae`, an
+ancestor of this base — `git merge-base --is-ancestor 18861ae HEAD` exits 0** —
+⚠️ **and it split THREE clauses, not two, in one commit: `SF-27`, `SF-14` and
+`SF-15`, which nobody had reported.** ⛔ **So the sequencing condition the CTO
+handed the PO as *blocking* was already true in the branch their own annotation
+approved in the same document.** ⭐ **`PO-35/1`.**
+
+⛔ **`SF-14` IS STILL HELD, ON `W76`, AND THE HOLD IS MEASURED RATHER THAN
+PREFERRED.** ⚠️ **`W76` is rewriting `render.page.__all__` right now, and `SF-14`
+is the THIRD consumer of the five helpers it publishes** — ⛔ **dispatching
+`SF-14` first hands an author a contract being rewritten underneath them, which
+is `CTO-41/4`'s exact shape.** ⭐ **`W61` held for `SK-08` on this argument and
+the hold paid off; this is the same shape and it is named at wave-open rather
+than discovered at a merge gate.**
+
+⭐ **The step's declared
 parallelism is TRUE for the first time in M2** — ⛔ **asserted from the EPIC and
 not inferred from step membership:** `SF-14` *Depends on* `SF-13` ✅, `SF-11` ✅;
 `SF-27` *Depends on* `SF-12` ✅, `SF-13` ✅ — ⭐ **all four dependencies are
@@ -41,15 +63,26 @@ a LOAD asymmetry, named here rather than discovered: `SF-14` is `team` (~80k) an
 `README.md`'s, state is this file's, and neither copies the other.** ⭐ **[step
 2.3, opened](#m2-step-23-open-both-rows-free-no-in-step-edge-and-a-load-asymmetry-named-at-open).**
 
-⏳ **IN FLIGHT at `3503f92` — RE-TAKEN LATE IN THE ROUND, and the answer is
-NOBODY IS AUTHORING.** ✅ **`W68` MERGED** (the release tip moved `cab8a04` →
-`3503f92` while this round was being written). ⛔ **`SF-27` is DONE and WITH THE
-CTO** — `feat/SF-27` @ `6c39d5f`, **+3 commits**, `4101 passed / 63 skipped`,
-floor clean, 0 over ceiling, 0 deferrals, **+104 tests**. ⚠️ **The two other
-branches ahead of release are `trial/cto42-w68` and `trial/cto42-sf27`, which are
-the CTO's trial merges and are NOT rows** — ⛔ **a distinction Ruling 130's
-`git worktree list` half cannot make on its own, and this board is again the only
-instrument that can.**
+⏳ **IN FLIGHT at `911c56f` (round 35): `W76` ALONE, `wt/dev1n`,
+`chore/W76-page-surface`, ZERO commits.** ⭐ **REPLACED, not appended beneath.**
+⛔ **Both of Ruling 130's instruments run, and the population is printed before
+the scalar (Ruling 128):**
+
+```text
+git worktree list                     ->  3 checkouts: MAIN (release), wt/dev1n
+                                          (chore/W76-page-surface), wt/po35 (PO)
+population: 105 non-release branches; ROWS=105 asserted against 105  [Ruling 146]
+branches ahead of release/m0-foundations  ->  (none printed)
+git rev-list --count release..chore/W76-page-surface  ->  0
+```
+
+⛔ **`git log` reads ZERO ROWS AHEAD and is BLIND to `W76` entirely; `git worktree
+list` finds it.** ⚠️ **THIRD CONSECUTIVE ROUND of the same one-row disagreement
+in the same direction** — `PO-33/5`, `PO-34/6`, and now `PO-35/2`. ⭐ **`CTO-38/2`'s
+amendment to Ruling 130 has been described as a *caution* for three rounds while
+behaving as a *mechanism*, and the union of the two instruments is a LOWER BOUND:
+this board is the only total instrument.** ⛔ **`wt/po35` is a checkout and NOT a
+row, which is precisely the distinction neither git instrument can make.**
 
 ⛔ **REPLACED, not appended beneath.** ⚠️ **The cell here read *"`W68` at 1 commit,
 `SF-27` at ZERO"*, taken at `cab8a04`, and BOTH readings were true when taken and
@@ -98,8 +131,25 @@ clause it replaced would have printed nothing and exited **1**.** ⚠️ **`W45`
 (`1aa6319`) landed first, so its fix was proved against the live deferral before
 `W44` deleted it, which is the whole reason for that merge order.**
 
-⭐ **NEXT TWO DEVELOPER ROWS (round 34, RE-PLACED at `3503f92`): `W76` then
-`SF-14`.** ⛔ **`W76` moved AHEAD of `SF-14` on a measurement that arrived while
+⭐ **NEXT TWO DEVELOPER ROWS (round 35, at `911c56f`): `W70` then `SF-14`.**
+⛔ **`W76` is SPENT — taken, in flight, and it keeps its place in front of
+`SF-14`.** ⭐ **`W70` goes NOW on a RULING, not a preference: Ruling 166 clause 5
+says *`W70` should not wait*, and it says so because the class it sweeps was
+closed on instance three while its live population was FOUR** — ⚠️ **found only
+when somebody swept for it (`PO-34/10`), and one of the four, `SF-15`, was caught
+BEFORE dispatch.** ⛔ **Closing a class on instance three and never enumerating it
+is how a ruling becomes guidance, which is Ruling 117's own diagnosis.**
+⭐ **`W70`'s `Owns` is a test module and NOTHING under `src/`, so it shares zero
+files with `W76`'s `render/page/__init__.py` — measured, not assumed.**
+⭐ **`SF-14` is SECOND and is RELEASED THE MOMENT `W76` MERGES**; it is `team`
+(~80k), so it takes the *dispatch a small team* slot and is not a second solo
+one. ⚠️ **`W74` slides to THIRD, unchanged and still correct — displaced for the
+second consecutive round by a gate that did not exist when it was placed, which
+is what a re-placement is for.** ⭐ **[The placement, `Owns` in Ruling 136's module
+form, and the R11 pre-dispatch sum](#round-35-the-next-two-rows-owns-in-ruling-136s-form-verified-at-911c56f-and-the-r11-pre-dispatch-sum).**
+
+⚠️ **~~NEXT TWO DEVELOPER ROWS (round 34, RE-PLACED at `3503f92`): `W76` then
+`SF-14`~~** — ⭐ **`W76` SPENT and the placement HELD.** ⛔ **`W76` moved AHEAD of `SF-14` on a measurement that arrived while
 this round was being written, not on a preference:** ⚠️ **`SF-27/1` reports that
 `escape`, `escape_attribute`, `inline`, `safe_href` and `between_units` are used
 across a package boundary by direct import and **none of the five is in
@@ -110,13 +160,16 @@ none. ⭐ **`SF-14` is then step 2.3's last row and the step cannot close withou
 it** — ⚠️ **`team` (~80k), so it takes the *dispatch a small team* slot rather
 than a solo one.**
 
-⛔ **`SF-14` IS NOT DISPATCHABLE UNTIL THIS COMMIT MERGES, and that is a
-correctness gate rather than bookkeeping:** ⚠️ **its first Acceptance clause was
-*"Renders 166 units"* — a count inside a consumer repository, which Ruling 151
-forbids — ⭐ **and dispatching a row whose Acceptance is about to change is
-exactly `CTO-41/4`, an unmeetable clause discovered by the developer who did
-nothing wrong.** ✅ **Split in this commit, together with `SF-27`'s and
-`SF-15`'s.**
+⚠️ **~~`SF-14` IS NOT DISPATCHABLE UNTIL THIS COMMIT MERGES~~** — ✅ **DISCHARGED
+AT ROUND 35, MEASURED: that commit is `753eb26`, it merged as `18861ae`, and
+`git merge-base --is-ancestor 18861ae HEAD` exits 0 against this base.**
+⛔ **Ruling 165 later made the same split a condition on `SF-14`'s dispatch and
+it was ALREADY TRUE — `PO-35/1`.** ⭐ **The argument is kept because it was
+right:** its first Acceptance clause was *"Renders 166 units"*, a count inside a
+consumer repository which Ruling 151 forbids, ⭐ **and dispatching a row whose
+Acceptance is about to change is exactly `CTO-41/4`, an unmeetable clause
+discovered by the developer who did nothing wrong.** ✅ **Split in `753eb26`,
+together with `SF-27`'s and `SF-15`'s — three clauses in one edit.**
 
 ⚠️ **~~NEXT TWO (round 34, first placement): `SF-14` then `W74`~~** — ⛔ **`W74`
 SLIDES to third.** ⭐ **It is unchanged and still correct; it is displaced by a
@@ -2909,6 +2962,322 @@ offline **7**, no_script **5**, keyboard **5**), 5 `tests/docker/
 test_dev_image.py`, 3 `tests/test_knowledge_index.py`. ⚠️ **`grep -c '^SKIPPED'`
 reads **29** at this ref** — the trap Ruling 142 exists for, reproduced.
 
+## ⛔ ROUND 35 — **Ruling 165 was DISCHARGED BEFORE IT WAS MINTED**, check 5's first green is contradicted by the session reading it, and a verdictless-merge count I re-spelled read ONE LOW
+
+### ⛔ ROUND 35 — base, RE-DERIVED, every count naming its checkout BY ROLE (Ruling 147)
+
+⛔ **Both readings are at the same ref, `911c56f`.** ⭐ **Pinned image
+(`docker/dev/check`, `studyforge/dev:local`), Ruling 40, for every row that can
+be taken there.**
+
+| reading | `wt/po35` (clean, `git status --porcelain` empty) | MAIN (`?? ONBOARDING.md`) |
+|---|---|---|
+| pinned suite | ✅ **4102 passed, 63 skipped**, exit 0 | — |
+| quality floor | **clean**, ⛔ **exit 0 read with NO pipeline** | **clean**, exit 0 |
+| `ruff format --check` | **606** | ⛔ **607** |
+| document pointers | **201 in 215 md**, 83 anchors, 0 unresolved | ⛔ **201 in 216 md**, 83 anchors, 0 unresolved |
+| knowledge index | `none` (Ruling 108) | ✅ **`fresh — built at 911c56fc`** |
+
+⭐ **THE `+1` IS PREDICTED, NOT DISCOVERED, and it is predicted in BOTH
+denominators and NEITHER of the others.** ⛔ The brief said a clean worktree reads
+one lower on both — the user's untracked `ONBOARDING.md`, never moved, deleted or
+committed — ⚠️ **and the pointer COUNT (201) and anchor count (83) do not move
+with it, because that file carries no pointer.** ⭐ **A prediction that names the
+file, the direction AND the two readings it must NOT move is a different object
+from one that names a number.**
+
+⭐ **The suite number was predicted from the MECHANISM before it was run.**
+`git diff --name-only cab8a04 911c56f` is **26 files**, of which the `.py` ones
+are `SF-27`'s eleven new modules and `W68`'s one edit — ⛔ **both already merged
+into this base** — so the suite could only read the CTO's post-merge number,
+**4102 / 63**. ✅ **It did.**
+
+⚠️ **All 63 skips named, and RECONCILED BY COMPOSITION rather than by total** —
+the multiplicity parse over `-rs`, printed by module:
+
+```text
+tests/visual/test_contrast.py    31     tests/docker/test_dev_image.py    5
+tests/visual/test_capture.py      7     tests/test_knowledge_index.py     3
+tests/visual/test_offline.py      7
+tests/visual/test_keyboard.py     5     tests/visual/ subtotal           55
+tests/visual/test_no_script.py    5     TOTAL                            63
+```
+
+⛔ **RULING 142'S DECOY IS WORSE THAN ITS OWN RECORD SAYS, MEASURED BOTH WAYS.**
+⚠️ **`grep -c '^SKIPPED'` reads **29** under `pytest -q -rs` — the number every
+round has quoted — and reads **0** under plain `pytest -q`, which is the spelling
+a reader is most likely to run.** ⛔ **`0` reads as *"no skips at all"*, which is
+a COMPLETE fabrication where `29` is merely an undercount.** ⭐ **`PO-35/6`.**
+
+### ⛔ ROUND 35 — the six wave-open checks, instrument, expectation written FIRST, reading
+
+⭐ **Ruling 128: where a reading is a COUNT the POPULATION is printed beside it.**
+⛔ **Ruling 146: every sweep asserts its row count against a population declared
+before its loop.**
+
+| # | ⛔ **Instrument** | ⭐ **Expected, written first, from the MECHANISM** | ⭐ **Reading @ `911c56f`** |
+|---|---|---|---|
+| **1** | `docker/dev/check python3 -m tools.quality`, the `knowledge index:` line, **per checkout** | MAIN `fresh` — the brief says the CTO flagged it owed and the coordinator rebuilt it, stamp `911c56fc`; `wt/po35` `none` (Ruling 108) | ✅ **PASSES.** MAIN **`fresh — built at 911c56fc`**, matching the brief's stamp **to the character**; `wt/po35` **`none`**. ⭐ **A received claim RE-DERIVED, not carried** |
+| **2** | ``git grep -EIc '`\[(local\|structural\|none)\]`' 911c56f -- docs``, `wc -l` for files, `awk -F: '{s+=$NF}'` for lines, `LC_ALL=C` | ⛔ **117 files** — exactly **4** documents entered `docs/` since `cab8a04` (`CTO-42`, `PO-34`, `SF-27`, `W68` handoffs), all four carry findings, so `113 + 4` | ⛔ **117 files / 833 lines**, up **+4 / +48**. ⭐ **FILES EXACT, and the delta list names the same four and nothing else.** `[structural]` alone: **480 lines in 116 files** |
+| **3** | `git grep -In "Ruling <n>\b" 911c56f -- docs \| cut -d: -f2 \| sort -u` — ⛔ **FILES, not a count**, for each of **162–167** | ⛔ **0 of 6**, derived from the MECHANISM: `git show --stat 3e7e346` (546 lines) and `84798a9` (226 lines) each touched **ONE file** — the same handoff — so no ruling *could* have reached a second artifact | ⛔ **0 OF 6, AS PREDICTED.** ⭐ **All six resolve to `CTO-2026-09-10-round42.md` and nothing else.** ✅ **All six carried in this commit → 6 of 6.** [The table](#round-35-all-six-rulings-carried-and-where) |
+| **4** | `git log --oneline --merges cab8a04..911c56f`, then every row whose fact that touches, **plus the head's own summary paragraphs** (`PO-29/6`) | ⛔ **5 first-parent merges**; **5 stale rows**, and I name four in advance — the in-flight cell, the step-2.3 `SF-27` cell, the *not dispatchable* cell, and `W76`'s register row | ⛔ **6 merges total / 5 first-parent (15 commits) and FIVE stale rows.** ⭐ **Right in kind and in count** — [enumerated below](#round-35-check-4s-five-stale-rows) |
+| **5** | ⛔ **Ruling 161's EMPTINESS claim** — *`CLAUDE.md` states NO live fact* — with the blockquote exemption asserted INHABITED | ⭐ **PASSES for the first time**, and the exemption reads **non-zero**: `PO-34` rewrote the file and `CTO-42/7` already tried to break it | ✅ **PASSES.** ⛔ **Exemption inhabited: 4. Population: a printed ZERO, no line output, over 174 lines.** ⚠️ **AND IT IS CONTRADICTED BY THE SESSION THAT RAN IT — `PO-35/3`** |
+| **6** | `git -C ../<repo> rev-parse --short HEAD` ×4; `grep -c '^### ' docs/integration-catalogue.md`; `python3 -m tools.workspace verify`; **AND each consumer's `docs/studyforge/catalogue-contributions.md`** | 4 unchanged refs; catalogue **20**; `workspace verify` **exit 1** on ISO — ⛔ **reported WITH ITS STATE IN THE SAME SENTENCE** (Ruling 159) | ✅ **PASSES, and the state is said.** ⛔ **And the adoption half's instrument was wrong in my hand first — `PO-35/5`.** [The fifth run](#round-35-check-6s-fifth-run-and-the-adoption-halfs-instrument-read-a-false-empty) |
+
+### ⭐ And the seventh, standing from Ruling 113
+
+⛔ **EXPECTED, WRITTEN BEFORE THE RUN: `A_ROWS = 0`, `B_ROWS = 0`.** ⭐ Derived,
+not inherited from round 34's zero: ⛔ **`SF-27` added eleven `.py` files and none
+is near a ceiling** — its largest, `tests/studyforge/render/container/
+test_document.py`, lands at **598/600**, ⚠️ **which is a headroom of TWO and the
+tree's new nearest miss.**
+
+```text
+population declared before the loop:  438 .py files under src/ tools/ tests/
+ROWS=438 asserted against 438                                   [Ruling 146]
+rows at or over the ceiling (400 src / 600 tests)   ->  A_ROWS = 0   [as expected]
+declared size exceptions under src/ (Ruling 113 ast) ->  B_ROWS = 0   [as expected]
+   derivation B scope, DECLARED: 157 .py under src/  <- PO-34/3's correction, held
+A - B = 0        <- the FIFTH consecutive zero
+
+   nearest miss:  tests/studyforge/corpus/container/test_document.py  598/600  headroom 2
+   nearest miss:  src/studyforge/archive/scrub.py                     384/400  headroom 16
+   nearest miss:  tests/docker/test_dev_image.py                      583/600  headroom 17
+   nearest miss:  tools/tests/workspace/test_init.py                  378/400  headroom 22
+   nearest miss:  src/studyforge/corpus/manifest/document.py          370/400  headroom 30
+   nearest miss:  tests/studyforge/corpus/manifest/test_document.py   562/600  headroom 38
+```
+
+⛔ **`PO-34/3`'S CORRECTION HELD ON ITS FIRST RE-RUN.** ⚠️ **Derivation B is run
+at Ruling 113's DECLARED scope — `src/` alone, 157 modules — and the scope is
+load-bearing:** widening it to `src/ tools/ tests/` returns `B_ROWS = 1`, naming
+`tools/quality/size.py`, ⛔ **the CHECKER'S OWN MODULE, whose docstring contains
+the literal string it looks for.** ⭐ **The population grew `427 → 438` and the
+answer did not move, which is the arithmetic the re-derivation exists to
+expose.**
+
+⚠️ **`W67` KEEPS ITS PLACE AHEAD OF ANY ROW ADDING A TEST TO `corpus/container`**,
+and this round is why: `598/600` is a headroom of **two**, and it is now the
+tree's nearest miss by a factor of eight.
+
+### ⛔ ROUND 35 — check 4's five stale rows
+
+⭐ **All five are REPLACED rather than annotated beneath (`PO-29/6`).**
+
+| # | Where | ⛔ **What it said at open** | ⭐ **Corrected to** |
+|---|---|---|---|
+| 1 | head — ⏳ IN FLIGHT | *"IN FLIGHT at `3503f92` … `SF-27` is DONE and WITH THE CTO … the two other branches are `trial/cto42-w68` and `trial/cto42-sf27`"* | ⏳ **`W76` ALONE**, `wt/dev1n`, ZERO commits. ⛔ **Both trial branches are gone and `git log` now reads ZERO rows ahead — `PO-35/2`** |
+| 2 | head — ⏳ OPEN: step 2.3 | *"`SF-27` IS IN FLIGHT (`wt/dev2p`, `feat/SF-27`, 0 commits)"* | ✅ **`SF-27` MERGED `6177738`.** ⛔ **`SF-14` is the step's ONE remaining row** |
+| 3 | head — next two rows | *"NEXT TWO (round 34, RE-PLACED): `W76` then `SF-14`"* | ⭐ **`W76` SPENT and in flight; the placement HELD.** ⛔ **Round 35's pair is `W70` then `SF-14`** |
+| 4 | head — ⛔ *not dispatchable* | *"`SF-14` IS NOT DISPATCHABLE UNTIL THIS COMMIT MERGES"* | ✅ **DISCHARGED — `753eb26` merged `18861ae`, verified an ancestor of this base.** ⛔ **And Ruling 165 later imposed the same condition, already true — `PO-35/1`** |
+| 5 | ⛔ **step 2.3's row table + `W76`'s register row** | `SF-27` *"`in-review` — DONE, with the CTO"*; `W76` *"`todo`, MINTED ROUND 34"* | ✅ **`SF-27` MERGED `6177738`; `W76` IN FLIGHT.** ⚠️ **`SF-27`'s cell has now been re-stamped FOUR times across two rounds** |
+
+### ⛔ ROUND 35 — check 5's FIRST GREEN, and the session that ran it is the counter-example
+
+```text
+PAT='M[0-9]\b|step [0-9]+\.[0-9]|`[0-9a-f]{7,8}`|[0-9]+ (tasks|epics|milestones)'
+grep -E '^>' CLAUDE.md | grep -cE "$PAT"           ->  4     ⭐ exemption INHABITED
+grep -nE "$PAT" CLAUDE.md | grep -vE '^[0-9]+:>'   ->  (nothing printed)
+                                                       population = 0, over 174 lines
+```
+
+⭐ **THE CHECK PASSES, and it passes for the reason Ruling 161 predicted: the
+subject was REMOVED rather than better-checked.** ⛔ **The exemption is asserted
+inhabited at **4** — an uninhabited exemption SKIPS, it does not pass — and all
+four hits are the blockquoted forensics `CTO-42/7` already verified are
+quotations of struck claims rather than assertions of present ones.**
+
+⛔ **AND THE CHECK'S OWN *"necessary, not sufficient"* CLAUSE FIRED ON THIS
+ROUND — `PO-35/3`, and it is the strongest available evidence for Ruling 161.**
+⚠️ **The PO session that ran this check was handed the PRE-STRIP `CLAUDE.md` in
+its session context: the milestone paragraph, the three close refs, *"In flight:
+M2 step 2.1"*, `EX-00`'s gate on `E08`, and *"Nothing is implemented"* — every
+sentence `PO-34` deleted.** ⛔ **The tree reads a printed ZERO and the agent
+reading the tree was working from the old file at the same instant.**
+
+⭐ **This is not a defect in the strip; it is the strip's own argument arriving as
+a measurement.** ⛔ **A green here means the NEXT session starts clean. It says
+nothing about the ones already running, and there is no instrument that can read
+another agent's context** — ⚠️ **so the only remedy that ever worked is the one
+taken: remove the subject.** ⭐ **First round in which the check is green AND its
+insufficiency is demonstrated, in the same round, by the same reader.**
+
+⛔ **THE FOUR NEGATIVE CONTROLS RE-RUN, because a check that has never been shown
+to fail is not evidence that it passed.** ⚠️ **Exit codes read WITHOUT A PIPELINE
+— `PO-34/4` was `tail`'s exit code for all four, in the round whose brief warned
+about exactly that:**
+
+| control | planted | ⛔ **required** | ⭐ **read** |
+|---|---|---|---|
+| **A** | `Open: M2 step 2.3.` asserted | FAIL, exit 1 | ⛔ **1** |
+| **B** | ⭐ **the SAME sentence, blockquoted** | PASS, exit 0 | ✅ **0** — the exemption is DIRECTIONAL, not a hole |
+| **C** | ``closed at `ce80120`.`` | FAIL, exit 1 | ⛔ **1** |
+| **D** | ⛔ **every blockquote removed** | SKIP, exit 2 | ⭐ **2** — an uninhabited exemption SKIPS, it does not pass |
+| ⭐ **LIVE** | nothing planted | PASS, exit 0 | ✅ **0** |
+
+### ⛔ ROUND 35 — check 6's fifth run, and the adoption half's instrument read a FALSE EMPTY
+
+⭐ **RULING 159 HELD. The state is in the sentence with the number:**
+
+> **Check 6 is `host-verified`** — the pinned image mounts one directory and
+> cannot see the sibling checkouts (Ruling 108, measured), so the image's answer
+> would be **wrong** rather than absent (Ruling 53's discriminator) — and on the
+> host `python3 -m tools.workspace verify` exits **1**, on
+> `ISO-8583-jPOS-tutorial`, whose `HEAD` is `6c8dc851a8da` against a pin of
+> `a94151747cb0`.
+
+| sibling | ⭐ **ref @ `911c56f`** | run |
+|---|---|---|
+| `ISO-8583-jPOS-tutorial` | `6c8dc85` | ⛔ **fourteenth consecutive unchanged reading** |
+| `Claude-senior-java-engineer` | `c9cf522` | unchanged |
+| `Claude-SPARQL-tutorial` | `b9aa89b` | unchanged |
+| `CodeSignal` | `49c11d5e` | unchanged |
+
+⭐ **Catalogue: `grep -c '^### ' docs/integration-catalogue.md` → 20, unchanged.**
+
+⛔ **THE ADOPTION HALF — `F23`'s, and MY FIRST INSTRUMENT FOR IT WAS WRONG.**
+
+| consumer | contributions file | ⛔ **decision, RECORDED** |
+|---|---|---|
+| `ISO-8583-jPOS-tutorial` | ⭐ **16 entries, `grep -c '^## '`** | ⛔ **UNCHANGED, DERIVED not asserted:** `git diff 1e49225 HEAD -- docs/studyforge/catalogue-contributions.md` is **0 lines**, and the last commit to touch it (`4351f28`) precedes `1e49225` |
+| `Claude-senior-java-engineer` | ⛔ **none exists** | ⭐ **STATED, not skipped** — check 6 reads *each* consumer, and only one of three has ever written one |
+| `Claude-SPARQL-tutorial` | ⛔ **none exists** | ⭐ **STATED, not skipped** |
+
+⛔ **`PO-35/5`: I ran `grep -c '^### '` — the CATALOGUE's delimiter — against the
+CONTRIBUTIONS file, and it returned `0` with exit 1.** ⚠️ **`0` is exactly what
+*"no entries have been adopted"* looks like, and the true reading is 16.**
+⭐ **Two documents, two heading levels, one instrument carried across the
+boundary between them** — ⛔ **and the failure direction is the dangerous one: a
+FALSE EMPTY, which is Ruling 155's whole subject arriving inside the check that
+is supposed to enforce it.** ⭐ **The command is fenced above so the next round
+does not re-spell it.**
+
+### ⛔ ROUND 35 — the next two rows, `Owns` in Ruling 136's form, verified at `911c56f`, and the R11 pre-dispatch sum
+
+⭐ **`W70` then `SF-14`.** ⛔ **Both `Owns` cells verified against the TREE, not
+copied from the epic.**
+
+| row | ⛔ **`Owns`, module form, verified at `911c56f`** | why here |
+|---|---|---|
+| **`W70`** — every Acceptance clause expressible as an `Acceptance` | ⛔ **the sweep's test module, and NOTHING under `src/`** — ⭐ **GREENFIELD: `git ls-files` over the surface returns ZERO** | ⛔ **Ruling 166 clause 5: *`W70` does not wait*.** ⚠️ **The class was closed on instance THREE and its live population is FOUR** — ⭐ **and Ruling 81 binds this row's first job: reading 1 is the LIVE population and it has NOT been taken. A count guessed in this cell would be the thing Ruling 81 forbids** |
+| **`SF-14`** — root index renderer | `src/studyforge/render/index/` **+** `tests/studyforge/render/index/` — ⛔ **GREENFIELD: `git ls-files` over both returns ZERO, and `ls src/studyforge/render/` shows `assets container page pageassets templates` and no `index`** | ⛔ **Step 2.3's LAST row; the step cannot close without it.** ✅ **UNBLOCKED on Ruling 165.** ⚠️ **HELD on `W76`'s merge, and `team` (~80k), so it consumes the *dispatch a small team* slot and is NOT a second solo slot** |
+
+```text
+⛔ R11 PRE-DISPATCH SUM (PO-26/1), over ALL THREE live rows, at 911c56f
+population declared before the loop: 3 rows
+  W76  1 tracked (src/studyforge/render/page/__init__.py, 125/400, headroom 275)
+  W70  0 tracked   ·   SF-14  0 tracked
+ROWS=3 asserted against 3                                       [Ruling 146]
+SHARED FILES ACROSS THE THREE  ->  0     (comm -12, LC_ALL=C)
+R11 exposure from the pairing  ->  0
+```
+
+⛔ **THE COLLISION THE SUM CANNOT SEE, NAMED AT WAVE-OPEN AND IT IS THE REASON
+`SF-14` IS SECOND.** ⚠️ **`SF-14` must import `escape`, `escape_attribute`,
+`inline`, `safe_href` and `between_units`, and whether it imports them from
+`render.page` or from a named substitute is the decision `W76` is taking right
+now, in flight.** ⭐ **Zero shared files and a live contract dependency are
+different objects, and only this board can hold the second one.** ⛔ **`W61` was
+held for `SK-08` on exactly this argument and the hold paid off; the difference
+is that this one is named before dispatch rather than at a merge gate.**
+
+⚠️ **`W74` slides to THIRD for the second consecutive round.** ⭐ **It is unchanged
+and still correct — `tests/test_authoring_reference.py` (437/600),
+`tests/authoring/support.py` (227/600), one declared-exemption line in
+`src/studyforge/skills/onboarding/SKILL.md`** — ⛔ **and it still GATES `SF-28`:
+both convert a predicate in the same test module, so `W74` lands first or one
+developer takes the run.**
+
+### ⛔ ROUND 35 — TWO ROWS MINTED: `W78`, `W79`
+
+⛔ **High-water mark moves `W77` → `W79`** (`W99` is the reserved sentinel).
+⭐ **Neither is new scope: both are CTO round 42 items with no id, and the id
+space has exactly one minter.**
+
+#### ⛔ `W78` — Ruling 163's class has a live population of **105**, and the ruling named ONE
+
+| | ⛔ **`W78`** |
+|---|---|
+| **What** | ⛔ **Every `<file>:<line>` citation into a file a LIVE document does not own is replaced by the COMMAND and its OUTPUT SHAPE**, or converted into a quotation that declares itself a record |
+| ⛔ **The population, SWEPT, not estimated** | ⭐ **105 hits across 7 of the 36 live documents** — `BOARD.md` **83**, `E00` **6**, `agent-protocol.md` **6**, `E01` **4**, `review-rubric.md` **3**, `E03` **2**, `E05` **1**. ⚠️ **Records and `BOARD-ARCHIVE.md` are EXCLUDED by Ruling 163 clause 3 and the exclusion is part of the population, not a filter applied after** |
+| ⛔ **AND MY FIRST SPELLING MISSED THE FOUNDING CASE** | ⚠️ **An extension-list regex read 104 and did not match `.gitignore:48` — the one instance the ruling was minted from — because `.gitignore` has no extension.** ⭐ **Re-spelled to include extensionless dotfiles: 105. `PO-35/4`, and the row inherits the corrected pattern rather than re-deriving it** |
+| ⛔ **The sub-case it must DECIDE, not assume** | ⚠️ **Four of `agent-protocol.md`'s six are the fenced `tools/workspace/__init__.py:293…` reading in the Ruling 158 section: a RECORD quoted inside a LIVE document.** ⭐ **Ruling 163 clause 3 makes records admissible and clause 1 makes live documents inadmissible; a fenced reading is both, and the row decides which wins** |
+| ⭐ **The instrument already exists for the founding case** | `git check-ignore -v .scratch/probe.py` → `.gitignore:<n>:.scratch/`, exit 0 — ⛔ **it prints its own location, which is why the integer was never needed** |
+| **Owns** | the seven live documents named above, and **nothing under `src/`** |
+| **When** | ⚠️ **Not urgent — nothing is broken.** ⛔ **Urgent in one narrow sense: `BOARD.md` carries 83 of the 105 and grows every round, so the population is a check losing a race (Ruling 26's shape)** |
+
+#### **`W79` — the two small carries, both one line, both from the CTO's own findings**
+
+| | **`W79`** |
+|---|---|
+| **What (a)** | ⭐ **One line in EACH golden regenerator naming the other** (`CTO-42/5`). ⛔ **`tests/fixtures/pages/` now holds 5 goldens written by TWO `regenerate()` bodies that do not know about each other** — ⚠️ **neither enumerates the directory today, so the collision is SCHEDULED rather than present, and the day either gains a `rmtree` or a glob-and-delete it silently deletes the other's evidence** |
+| **What (b)** | ⭐ **The census comment CITES ITS COMMAND rather than carrying `44 … 11/3/30`** (`CTO-42/2`, Ruling 126's shape). ⛔ **The instrument is already importable — `tracked_readers()` and `tracked_python_modules()`** — ⚠️ **and the comment survived a same-round collision by luck: `SF-27` landed `render/container/document.py`, a file whose NAME says *document reader*, and it is not one only because it writes rather than decodes** |
+| ⛔ **NOT a directory split** | ⭐ **The CTO was explicit: (a) wants one line in each regenerator, not a reorganisation.** `tests/studyforge/render/page/` is `SF-12`'s mirror |
+| **Owns** | the two `regenerate()` bodies, and the census comment in `tests/gate_coverage/test_coverage.py` |
+| **When** | ⚠️ **LOW, and behind everything placed.** ⛔ **It is queued rather than dropped, because a scheduled collision with no row is a defect nobody owns** |
+
+### ⛔ ROUND 35 — all six rulings carried, and where
+
+⛔ **A ruling recorded only in a handoff has not landed, and the carrying is
+MINE.** ⚠️ **Named with the literal string `Ruling <n>` in every cell, because
+check 3's instrument greps exactly that.**
+
+| ruling | ⭐ **artifact it reached** | note |
+|---|---|---|
+| **Ruling 162** — a sweep row records its FAILURE REASON; `real / lint-only` is the other half | ⛔ **`docs/conventions/review-rubric.md`**, beside Rulings 76/83, with **both fenced readings** | ⭐ **A CORRECTION, NOT A ROW — Ruling 155's precedent, and it is stated in the clause itself so the next reader does not look for a missing id.** ⛔ **The deliverable was the rubric edit and it is landed; if the reviewing office wants an id anyway it is minted on request** |
+| **Ruling 163** — a live document may not cite `<file>:<line>` into a file it does not own | ⛔ **`docs/conventions/agent-protocol.md` — the ONE-LINE EDIT at the founding case, the ruling in a blockquote, AND the swept population** ⭐ **+ `W78`** | ⚠️ **The ruling asked for one line; the sweep found 105 and the row is what the class needs.** ⛔ **`SK-08.md` and `CTO-2026-09-10-round38.md` are RECORDS and are NOT edited** |
+| **Ruling 164** — chrome drops, content raises, absence is a declared type | ⛔ **`docs/tasks/E03-rendering.md`, in the epic's SHARED CONTEXT** — ⭐ **above `SF-14`, `SF-15` and `SF-34`, not beside them** | ⛔ **Placed in shared context deliberately: all three face the fork and `navigation.py` is the precedent they find FIRST.** ⭐ **The three-state table and the *"what has the reader lost"* question are both in the artifact, not summarised** |
+| **Ruling 165** — split `SF-27`'s and `SF-14`'s clauses in ONE edit before `SF-14` dispatches | ✅ **ALREADY IN `docs/tasks/E03-rendering.md`** — `753eb26`, merged `18861ae` | ⛔ **DISCHARGED BEFORE IT WAS MINTED, and verified as an ancestor rather than assumed.** ⭐ **Clause 4 — *a bare integer in a framework Acceptance is a corpus reading wearing a number* — is the residue, and it is `W69`'s shape one document along** |
+| **Ruling 166** — `SF-07` is RESTATED AS DELIVERED, never DROPPED, never instrumented | ⛔ **`docs/tasks/E02-content-pipeline.md`, `SF-07`'s Acceptance** — the struck clause QUOTED, the reading EMBEDDED, repositories named BY ROLE | ⭐ **`SF-07` is NOT reopened and M1 stays CLOSED.** ⚠️ **The record is cited WITHOUT a line number, which is Ruling 163 applied to the same commit that carries it** |
+| **Ruling 167** — `EX-00`'s gate moves into `E08`'s SHARED-CONTEXT block | ⛔ **`docs/tasks/E08-java-exercises.md`, lines 3–10, the block the epic itself flags *read this before any task*** | ⭐ **This is the CONDITION `CLAUDE.md`'s removal was ratified on, and it is now met.** ⚠️ **Placed in shared context and NOT only in `EX-00`'s heading, because an agent sent to `EX-01` opens the file well below it** |
+
+⭐ **Two CTO findings carried in the same commit, neither of which is a ruling:**
+⛔ **`CTO-42/6`** — a reviewing round re-reads the branch list immediately before
+writing its verdict section and records BOTH readings (`agent-protocol.md`);
+⛔ **`CTO-42/8`** — a ref written into a verdict is read back with
+`git cat-file -e <ref>^{commit}`, no pipeline (`agent-protocol.md`, with the
+three-instrument fence). ⭐ **The second is REPRODUCED here rather than carried:
+seven refs, exit codes read with no pipeline, six real → `0`, `e6e4d51` → `128`.**
+
+### ⛔ ROUND 35 — findings
+
+| id | class | one line |
+|---|---|---|
+| **`PO-35/1`** | `[structural]` | ⛔ **RULING 165 WAS DISCHARGED BEFORE IT WAS MINTED, and the office that minted it approved the discharging branch in the same document.** ⭐ **Measured: the split is `753eb26` (three clauses — `SF-27`, `SF-14`, `SF-15` — in ONE commit), merged `18861ae`, `git merge-base --is-ancestor 18861ae HEAD` exit 0.** ⚠️ **CTO round 42's BODY was written against a tree where `chore/po-round34` had 0 commits; its ANNOTATION reviewed and merged that very branch — ⛔ but Ruling 165, in the body, still reads as a live blocker on `SF-14`, and was handed to the PO as *"blocking on `SF-14`'s dispatch"*.** ⭐ **This is `CTO-42/6` with a consequence attached: the missing handshake did not merely misstate a commit count, it produced a RULING whose condition was already true, and a row would have sat blocked on it for a round** |
+| **`PO-35/2`** | `[structural]` | ⛔ **Ruling 130's two instruments disagree by one row for the THIRD CONSECUTIVE ROUND, in the same direction.** ⭐ **Measured: population 105 non-release branches, ROWS=105 asserted, `git log` finds ZERO ahead; `git worktree list` finds `wt/dev1n` on `chore/W76-page-surface` at 0 commits.** ⚠️ **`PO-33/5`, `PO-34/6`, and this row — three is not a mechanism-in-waiting, it is a mechanism.** ⛔ **`CTO-38/2`'s amendment should stop being described as a caution and become a clause; put to the CTO for the second round running** |
+| **`PO-35/3`** | `[structural]` | ⛔ **CHECK 5 IS GREEN AND THE SESSION THAT RAN IT WAS HANDED THE PRE-STRIP FILE.** ⭐ **Measured: the tree's `CLAUDE.md` at `911c56f` is the rewritten 174-line file, population ZERO, exemption inhabited 4** — ⚠️ **and this PO session's own context carries the OLD file: *"Nothing is implemented"*, the three close refs, *"In flight: M2 step 2.1"*, `EX-00`'s gate.** ⛔ **Ruling 161 clause 1 says the check is necessary and not sufficient; this is the first round in which the green and its insufficiency are demonstrated by the same reader in the same round.** ⭐ **It is EVIDENCE FOR the strip, not against it — no instrument can reach another agent's snapshot, so removing the subject is the only remedy that ever worked** |
+| **`PO-35/4`** | `[local]` | ⛔ **MY OWN SWEEP FOR RULING 163'S CLASS MISSED THE INSTANCE THE RULING WAS MINTED FROM.** ⚠️ **An extension-list regex (`\.(py\|md\|toml\|…)\b:[0-9]+`) read **104** and could not match `.gitignore:48`, because `.gitignore` has no extension.** ⭐ **Re-spelled with `gitignore` in the alternation: **105**, and the founding case appears.** ⛔ **A sweep whose pattern is derived from the examples it happens to remember will always miss the shape that motivated it — and it reads as a COMPLETE population, because 104 is a big believable number** |
+| **`PO-35/5`** | `[local]` | ⛔ **CHECK 6'S ADOPTION HALF READ A FALSE EMPTY IN MY HAND.** ⚠️ **`grep -c '^### '` — the *catalogue's* delimiter — against the *contributions* file returns **0**, exit 1; the file's own delimiter is `^## ` and the true count is **16**.** ⭐ **`0` is precisely what *"no entries adopted"* looks like, so the failure direction is the dangerous one.** ⛔ **Ruling 155's subject — an emptiness claim discharged by an instrument that cannot distinguish *empty* from *wrong delimiter*** — ⚠️ **arriving inside the check that exists to enforce it. Command now fenced** |
+| **`PO-35/6`** | `[local]` | ⛔ **RULING 142'S DECOY IS VERBOSITY-DEPENDENT and its worse reading is the one nobody has quoted.** ⭐ **Measured both ways at `911c56f`, pinned image: `grep -c '^SKIPPED'` reads **29** under `pytest -q -rs` and **0** under plain `pytest -q`.** ⚠️ **Every round has quoted 29.** ⛔ **`0` reads as *no skips at all* — a complete fabrication where 29 is an undercount — and `-q` is the spelling a reader reaches for.** ⭐ **The multiplicity parse reads 63 under both** |
+| **`PO-35/7`** | `[local]` | ⭐ **A RECORDED NEGATIVE (Ruling 155's `[local]`), and it CORRECTS ME rather than the CTO.** ⛔ **I re-spelled Ruling 84's verdictless-merge predicate as `grep -v 'CTO: '` and read **23** where the rubric's own FENCED command reads **24**, at all three refs (`cab8a04`, `6177738`, `911c56f`).** ⚠️ **The row my looser spelling swallowed is `7a82249`, carrying `(CTO: self-reversal)` — a verdict that is NOT an approval, which is exactly the row the clause exists to surface.** ⛔ **A check re-spelled from memory read ONE LOW, and low is the direction that misses violations.** ⭐ **`CTO-41/5` fenced that command for this reason and I walked past the fence** |
+
+⭐ **Ruling 84, re-derived at the fenced spelling: 148 first-parent merges on
+release, 24 verdictless, most recent `ab5b1a4` (2026-09-09).** ⛔ **`+5` on the
+total against `cab8a04`'s 143 is exactly this window's five first-parent merges,
+and the verdictless count did not move** — ⚠️ **the sixth merge in the window,
+`3eff430`, is `release → feat/SF-27`, which `--first-parent` correctly excludes
+and which is the entire reason `CTO-41/2` added that flag.**
+
+### ⚠️ ROUND 35 — Ruling 149's governor, reported against myself before being asked
+
+⛔ **Ruling 160(a) obliges the author to report it unprompted, with the numbers,
+and this section is that report.** ⚠️ **This round's documents are heavily
+un-fenced: Ruling 164's discriminator table, Ruling 166's restatement, and
+Ruling 167's gate paragraph are all judgement content.** ⭐ **What it added in
+fences: Ruling 162's two sweep readings, Ruling 163's `check-ignore` line and
+population block, `CTO-42/8`'s three-instrument fence, Ruling 166's embedded
+reading, and this round's five board fences.**
+
+⛔ **Ruling 160(b), stated so it is checkable by somebody other than me:** every
+un-fenced clause added this round names the reading it obliges — Ruling 162
+clause 1 names an exception type in a named column; clause 2 names the
+scoped-sweep declaration; Ruling 163 names `git check-ignore -v`'s output shape;
+Ruling 164 names the three-state table a renderer must satisfy; Ruling 166 names
+the record its number now cites. ⚠️ **If any of the five does not in fact name a
+producible artifact, the ratio binds and this decline is a finding against me.**
+
+---
+
 ### ⛔ ROUND 34 — base, RE-DERIVED, every count naming its checkout BY ROLE (Ruling 147)
 
 ⛔ **Both readings are at the same ref, `cab8a04`.**
@@ -3466,8 +3835,8 @@ it:
 
 | Row | Team | ⛔ **Depends on** (from `E03-rendering.md`) | ⭐ **In-step edge?** | **State @ `ce80120`** |
 |---|---|---|---|---|
-| `SF-14` — root index renderer | ⚠️ **`team`**, ~80k | `SF-13` ✅ (`abe7d1c`), `SF-11` ✅ (M1) | ⭐ **NONE** — both outside the step | ⛔ **`todo`, FREE — THE STEP'S LAST ROW.** ⭐ **Round 34's first pick** |
-| `SF-27` — container page renderer | **`solo`**, ~35k | `SF-12` ✅ (M1), `SF-13` ✅ (`abe7d1c`) | ⭐ **NONE** — both outside the step | ⛔ **`in-review` — DONE, with the CTO.** `feat/SF-27` @ `6c39d5f`, **4101/63**, floor clean, **+104 tests**, five findings shipped. ⚠️ **RE-STAMPED TWICE IN ONE ROUND: `todo` → `in-progress` (at `cab8a04`) → `in-review` (at `3503f92`)** |
+| `SF-14` — root index renderer | ⚠️ **`team`**, ~80k | `SF-13` ✅ (`abe7d1c`), `SF-11` ✅ (M1) | ⭐ **NONE** — both outside the step | ⛔ **`todo` — THE STEP'S ONE REMAINING ROW.** ✅ **UNBLOCKED on Ruling 165 (`18861ae`, verified an ancestor of `911c56f`)** — ⚠️ **still HELD on `W76`, which is rewriting the contract it is the third consumer of.** ⭐ **Round 35's SECOND pick** |
+| `SF-27` — container page renderer | **`solo`**, ~35k | `SF-12` ✅ (M1), `SF-13` ✅ (`abe7d1c`) | ⭐ **NONE** — both outside the step | ✅ **MERGED `6177738`** (CTO round 42, APPROVE). **+104 tests**, `4102/63` at the merge, floor clean, five findings shipped and all five dispositioned. ⚠️ **RE-STAMPED FOUR TIMES ACROSS TWO ROUNDS: `todo` → `in-progress` (`cab8a04`) → `in-review` (`3503f92`) → `merged` (`6177738`)** — ⛔ **`PO-30/2`, and the cell is REPLACED at each stamp rather than annotated beneath** |
 
 ⭐ **Two free product rows, zero in-step edges — the first M2 step where the
 plan's *"runs in parallel"* is literally true.** ⚠️ **What is NOT true is that it
@@ -7757,16 +8126,18 @@ complete rather than nearly complete.**
 | **W65** | R7's THIRD subject has no sweep (Ruling 144) | framework agent | `todo` — ⭐ **DOES NOT gate step 2.3, measured** |
 | **W66** | The non-ASCII narrowing, and the emitter DISAGREES WITH THE GATE | framework agent | `todo` |
 | **W67** | The two zero-headroom test modules | framework agent | ⛔ **`todo`, and it keeps its place ahead of any row adding a test to `corpus/container` or `corpus/manifest`** — `598/600` is a headroom of **2** |
-| **W68** | The gate walk derives from the TREE, not the disk (Ruling 153) | framework agent | ✅ **MERGED late in round 34** — the release tip moved `cab8a04` → `3503f92`. ⚠️ **Its mutation sweep counted `NameError`s as kills; see the instrument-defect class awaiting a CTO ruling** |
+| **W68** | The gate walk derives from the TREE, not the disk (Ruling 153) | framework agent | ✅ **MERGED `3503f92`** (CTO round 42, APPROVE). ⭐ **Its mutation sweep counted `NameError`s as kills, and that class is now RULED — Ruling 162, carried into `review-rubric.md` at round 35 as a correction, not a row** |
 | **W69** | A closed check refusing a bare task-count literal (Ruling 150) | framework agent | `todo` |
-| **W70** | Every Acceptance clause expressible as an `Acceptance` (Ruling 151) | framework agent | `todo` — ⭐ **Ruling 160 now names the reading its rubric clause obliges** |
+| **W70** | Every Acceptance clause expressible as an `Acceptance` (Ruling 151) | framework agent | ⭐ **`todo`, PLACED FIRST at round 35 — Ruling 166 clause 5: *it does not wait*.** ⛔ **The class was closed on instance three with a live population of FOUR (`PO-34/10`)** — ⚠️ **and Ruling 160 names the reading its rubric clause obliges** |
 | **W71** | The tilde arm, and BOTH callers over all THREE shapes (Ruling 152) | framework agent | `todo` — ⭐ **Ruling 160 now names the table its rubric clause obliges** |
 | **W72** | `pinned` vs `tracked` in `workspace.json` | framework agent | ⛔ **`todo`, and RE-SCOPED THIS ROUND — see the correction below** |
 | **W73** | The re-homed `E11` comparison | ⛔ **INTEGRATION side** | `todo` — ⛔ **not a framework row (R20)** |
 | **W74** | The sibling runnable-module check widens (Ruling 156) | framework agent | ⭐ **`todo`, MINTED ROUND 34 — SECOND of this round's pair** |
 | **W75** | ⛔ **No document says how `studyforge` gets on the path — WIDENED from the skills to EVERY documented `python3 -m` command** (`CTO-41/1`, widened by `SF-27/4`) | framework agent | ⭐ **`todo`, MINTED ROUND 34.** ⛔ **A SECOND, INDEPENDENT instance measured by `SF-27`: a golden-regenerator command does not run, because `python3 -m` never reads pytest's `pythonpath`** |
-| ⭐ **W76** | `render.page`'s five cross-package helpers are PRIVATE and every renderer imports them anyway (`SF-27/1`) | framework agent | ⭐ **`todo`, MINTED ROUND 34 — FIRST of the re-placed pair.** ⛔ **It GATES `SF-14`, the third consumer** |
+| ⭐ **W76** | `render.page`'s five cross-package helpers are PRIVATE and every renderer imports them anyway (`SF-27/1`) | framework agent | ⏳ **IN FLIGHT at `911c56f` — `wt/dev1n`, `chore/W76-page-surface`, ZERO commits.** ⛔ **It GATES `SF-14`, the third consumer, and that hold is live** |
 | ⛔ **W77** | The re-homed corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` (Ruling 151) | ⛔ **INTEGRATION side** | ⭐ **`todo`, MINTED ROUND 34.** ⛔ **Not a framework row and not a gate on any framework close — `W73`'s shape** |
+| ⛔ **W78** | **Line-number citations into files a LIVE document does not own — 105 of them, in 7 documents** (Ruling 163) | framework agent | ⭐ **`todo`, MINTED ROUND 35.** ⛔ **The ruling named ONE instance; the swept live population is 105** |
+| **W79** | The two small carries: each golden regenerator names the other, and the census comment cites its command | framework agent | ⭐ **`todo`, MINTED ROUND 35** (`CTO-42/5`, `CTO-42/2`). ⚠️ **Low urgency, both one-line, and the first is a scheduled collision rather than a present one** |
 
 ### ⛔ `W72` — RE-SCOPED, 2026-09-10 (round 34), on Rulings 158 and 159
 

@@ -91,7 +91,8 @@ image, three readings, `$?` with no pipeline:**
 ```text
 1  LIVE     .scratch/ present and NOT ignored  ->  floor exit 1, 108 findings
 1' LIVE     .scratch/ present and ignored      ->  floor exit 0
-3  CONTROL  git check-ignore .scratch/          ->  exit 0, matched by .gitignore:48
+3  CONTROL  git check-ignore -v .scratch/probe.py
+              -> exit 0, and it PRINTS its own location: `.gitignore:<n>:.scratch/`
            git check-ignore tests/support.py    ->  exit 1   (the rule is narrow)
 ```
 
@@ -477,6 +478,81 @@ rewound or rewritten, while citing a ruling.**
 received claim instead of carrying it**, the same move `PO-32/9` made against its
 own carry table. ⚠️ **Second consecutive round in which re-derivation caught the
 CTO, which is a pattern worth naming rather than a coincidence worth forgiving.**
+
+#### ⛔ Ruling 163 (CTO round 42) — a LIVE document may not cite `<file>:<line>` into a file it does not own; cite the COMMAND and its OUTPUT SHAPE
+
+> ⛔ **A document may not cite `<file>:<line>` into a file it does not own,
+> where an instrument exists that prints the location itself.** ⭐ **Cite the
+> command and its output shape, never the integer.**
+>
+> ⭐ **This is Ruling 136 GENERALISED, and the generalisation is the point.**
+> ⚠️ **The class is not *"board cells"* — it is *a fact about a MUTABLE FILE,
+> recorded where NOTHING RE-MEASURES IT*.**
+>
+> ⛔ **The boundary, so this is not a ban on citations.** A line number is
+> **admissible inside a RECORD** — a handoff, a ruling, a review — because a
+> record is a reading taken at an instant and is annotated, never edited
+> (Ruling 106). ⛔ **It is INADMISSIBLE in a LIVE document, which is read as
+> current.**
+
+⛔ **THE INSTANCE, AND IT WAS THIS FILE.** Line 94 above cited *"matched by
+`.gitignore:48`"*. ⚠️ **`W68`'s own `.gitignore` amendment moved the rule to line
+64 in the same round**, so the citation was correct when written and wrong at the
+merge ref, with nothing re-measuring it. ⭐ **The remedy is the instrument's own
+output, and it is now what line 94 says:**
+
+```text
+git check-ignore -v .scratch/probe.py   ->  .gitignore:<n>:.scratch/    exit 0
+```
+
+⚠️ **THE LIVE POPULATION IS 105, NOT 1** — swept by the PO at round 35 over the
+**36 live documents** (`docs/**.md`, `CLAUDE.md`, `README.md`, records and the
+board archive excluded), spelled to include extensionless dotfiles:
+
+```text
+docs/tasks/BOARD.md              83     docs/conventions/review-rubric.md     3
+docs/tasks/E00-foundations.md     6     docs/tasks/E03-rendering.md           2
+docs/conventions/agent-protocol.md 6    docs/tasks/E05-serving-execution.md   1
+docs/tasks/E01-core-contracts.md  4                              TOTAL      105
+```
+
+⛔ **So Ruling 163 is a ROW, not a one-line edit** — the one line it names is
+landed here, and the class is `W78` on the board. ⚠️ **Four of this file's own
+six are the fenced `tools/workspace/__init__.py:293…` reading in the Ruling 158
+section above: a RECORD quoted inside a LIVE document, which is the sub-case the
+row must decide rather than assume.**
+
+#### ⛔ CTO round 42, `CTO-42/6` — a reviewing round RE-READS the branch list immediately before writing its verdict section, and records BOTH readings
+
+⛔ **A close-time reading of another office's branch is UNKNOWABLE at the instant
+it is taken.** ⚠️ **`git rev-list --count release/m0-foundations..<branch>` read
+`0` and read `1` minutes later — three rounds running, predicted in the third
+round's own body and happening anyway.** ⭐ **A defect that can be predicted and
+not prevented is not a reading error; it is a MISSING HANDSHAKE**: the reviewing
+office has no signal for *"this branch is finished"* other than a commit count,
+which is indistinguishable from *"not started"* and from *"committing right
+now"*. ⛔ **Two readings a minute apart would have caught all three instances.**
+
+#### ⛔ CTO round 42, `CTO-42/8` — a REF written into a verdict is READ BACK, and `git rev-parse` is not the instrument
+
+⛔ **A ref recorded in a verdict, a close or a handoff is verified with
+`git cat-file -e <ref>^{commit}` and its exit code read WITHOUT A PIPELINE.**
+
+```text
+git rev-parse e6e4d51 2>&1 | tail -1              -> prints "e6e4d51"   ⛔ reads as SUCCESS
+git rev-parse --verify e6e4d51^{commit} | tail -1 -> exit 0             ⛔ the pipeline trap
+git cat-file -e e6e4d51^{commit}                  -> exit 128           ⭐ the real answer
+```
+
+⚠️ **`git rev-parse` on a well-formed-but-unknown sha ECHOES THE STRING BACK**,
+so a reviewer checking a ref that way confirms every ref, including invented
+ones. ⛔ **Ruling 84 already requires confirming the tip MOVED; it does not
+require that the recorded ref BE the tip. Those are different checks, and it is
+possible to pass the first while failing the second** — which is how a
+**prediction formatted as a measurement** reached a verdict table.
+
+⭐ **Reproduced by the PO at round 35, seven refs, exit codes read with no
+pipeline:** six real refs → `0`, `e6e4d51` → `128`.
 
 ⭐ **The test for `[structural]` is one question: *would this happen again to
 somebody else?*** If yes, mark it. ⚠️ Over-marking costs a sentence in a triage
