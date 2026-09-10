@@ -107,9 +107,11 @@ from studyforge.corpus.container.document import (
     to_document,
 )
 from studyforge.corpus.container.errors import ContainerError
+from studyforge.corpus.container.fields import LABEL_FORBIDDEN
 
 __all__ = [
     "CONTAINER_API",
+    "LABEL_FORBIDDEN",
     "CONTAINER_FILENAME",
     "CONTAINER_KEYS",
     "EDITORIAL_KEYS",

@@ -29,6 +29,20 @@ from pathlib import Path
 from studyforge.address import is_slug
 from studyforge.corpus.container.errors import ContainerError
 
+#: Characters a `label` may not carry. ⛔ **The constraint lives here, at the
+#: point of entry**, and not only where the label is used.
+#:
+#: ⚠️ A label becomes part of a generated filename (SF-03's `label_of`), which
+#: refuses these characters too. A map that accepted `a/b` would produce a
+#: corpus that **validates and then fails at render** — a milestone later, in
+#: another package, with nothing between the two saying why. ⭐ Refusing it
+#: where it enters means the failure arrives next to the file that caused it.
+#:
+#: ⭐ Defence in depth, and neither substitutes for the other: `label_of` also
+#: takes labels from callers that never came through a map. What must not
+#: happen is the two disagreeing — see `docs/tasks/handoffs/SF-05.md`.
+LABEL_FORBIDDEN = "/\\ \t\n\r"
+
 
 def required_text(value: object, what: str, where: str) -> str:
     """Return a field that must be present and must be non-empty text."""
@@ -91,6 +105,27 @@ def optional_slug(value: object, what: str, where: str) -> str | None:
             f"{where} declares {what} as {said(value)}; it must be a slug, or absent"
         )
     return value
+
+
+def optional_label(value: object, what: str, where: str) -> str | None:
+    """Read a unit's own display numbering, or absent.
+
+    ⛔ Refused if it carries a path separator or whitespace, because it becomes
+    part of a filename downstream (SF-03's `label_of`). ⛔ The refusal names the
+    character class and never reproduces the value: a label is read straight
+    out of a file somebody else wrote, and describing rather than echoing is
+    this module's whole job.
+    """
+    text = optional_text(value, what, where)
+    if text is None:
+        return None
+    if any(character in text for character in LABEL_FORBIDDEN):
+        raise ContainerError(
+            f"{where} declares {what} carrying a path separator or whitespace. "
+            f"A label becomes part of a generated filename, so a corpus that "
+            f"accepted one here would validate and then fail at render."
+        )
+    return text
 
 
 def said(value: object) -> str:

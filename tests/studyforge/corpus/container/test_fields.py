@@ -9,6 +9,8 @@ import pytest
 
 from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.container.fields import (
+    LABEL_FORBIDDEN,
+    optional_label,
     optional_path,
     optional_slug,
     optional_text,
@@ -106,3 +108,40 @@ def test_said_never_reproduces_a_payload():
     assert "jane" not in said({"leak": f"{HOME}/x"})
     assert "jane" not in said([f"{HOME}/x"])
     assert said(f"{HOME}/x") == "text"
+
+
+def test_optional_label_accepts_a_corpus_s_own_numbering():
+    # ⭐ A character class, not a slug: a label is presentation, and `4.4.1`,
+    # `vii` and `§4` are all things real material calls a unit.
+    for label in ("4.4.1", "vii", "A", "1-2"):
+        assert optional_label(label, "label", WHERE) == label
+    assert optional_label(None, "label", WHERE) is None
+
+
+@pytest.mark.parametrize("label", ["a/b", "a\\b", "4 4 1", "a\tb", "a\nb", "a\rb"])
+def test_optional_label_refuses_what_could_not_become_a_filename(label):
+    # ⛔ **The seam, closed where it opens.** SF-03's `label_of` refuses these
+    # because a label becomes part of a generated filename. A map that accepted
+    # one would produce a corpus that validates and then fails at render — a
+    # milestone later, in another package, with nothing in between saying why.
+    with pytest.raises(ContainerError, match="path separator or whitespace"):
+        optional_label(label, "label", WHERE)
+
+
+@pytest.mark.parametrize("label", ["a/b", "4 4 1"])
+def test_and_the_refusal_never_reproduces_the_label(label):
+    # ⛔ Rubric §1f, the emission clause: every refusal in this module describes
+    # a fault rather than echoing a value read out of somebody else's file.
+    with pytest.raises(ContainerError) as raised:
+        optional_label(label, "label", WHERE)
+    assert label not in str(raised.value)
+
+
+def test_every_character_label_of_refuses_is_refused_here_too():
+    # ⚠️ **Two guards, one rule, and drift between them is the whole hazard.**
+    # SF-03's `label_of` refuses `/ \ space tab newline`; this refuses those and
+    # a carriage return as well — strictly stronger at the point of entry, so a
+    # validated map can never carry a label that fails downstream.
+    # ⛔ `LABEL_FORBIDDEN` is exported so `label_of` can import it rather than
+    # spell it a second time; routed in `docs/tasks/handoffs/SF-05.md`.
+    assert set("/\\ \t\n") <= set(LABEL_FORBIDDEN)

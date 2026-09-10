@@ -82,10 +82,17 @@ class Unit:
     note: str | None = None
 
     @property
-    def display(self) -> str:
-        """Return what this unit is called: its label, or its ordinal.
+    def numbering(self) -> str:
+        """Return this unit's numbering **as a reader sees it**: `4.4.1`, or `7`.
 
-        ⛔ Presentation only. Nothing may read this back as an ordinal.
+        ⚠️ **Not the filename component**, which is SF-03's `label_of` and
+        gives `unit-07` where this gives `7`. The two are one rule with two
+        fallbacks: when a label is present they are identical and it *is* the
+        label; when it is absent, a filename wants a prefixed, zero-padded,
+        sortable form and a page heading does not.
+
+        ⛔ Presentation only, either way. Nothing may read one back as an
+        ordinal — R4's argument about paths, applied to numbering.
         """
         return self.label if self.label is not None else str(self.n)
 
@@ -272,6 +279,6 @@ def _unit(entry: object, where: str) -> Unit:
         practices=practices,
         origin=fields.optional_path(entry.get("origin"), f"unit {n} origin", where),
         url_slug=fields.optional_slug(entry.get("url_slug"), f"unit {n} url_slug", where),
-        label=fields.optional_text(entry.get("label"), f"unit {n} label", where),
+        label=fields.optional_label(entry.get("label"), f"unit {n} label", where),
         note=fields.optional_text(entry.get("note"), f"unit {n} note", where),
     )

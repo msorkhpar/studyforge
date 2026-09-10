@@ -15,6 +15,7 @@ def test_the_public_surface_is_declared_and_complete():
         "CONTAINER_KEYS",
         "EDITORIAL_KEYS",
         "KNOWN_CONTAINER_API",
+        "LABEL_FORBIDDEN",
         "UNIT_KEYS",
         "Container",
         "ContainerError",

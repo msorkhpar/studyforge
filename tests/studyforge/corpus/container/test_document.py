@@ -352,8 +352,20 @@ def test_a_document_that_is_not_an_object_is_refused(text):
 # --------------------------------------------------------------------------
 
 
+def test_the_reader_s_numbering_and_the_filename_s_are_named_apart():
+    # ⚠️ Two answers to "what is this unit called", and the fix is to say which
+    # is which. `numbering` is what a reader sees — `7`. SF-03's `label_of` is
+    # the filename component — `unit-07`. ⭐ One rule with two fallbacks: when a
+    # label is present they are identical and both *are* the label.
+    plain = built().unit(1)
+    labelled = built(units=[{"n": 1, "title": "One", "practices": 0, "label": "4.4.1"}]).unit(1)
+    assert plain.numbering == "1"
+    assert labelled.numbering == "4.4.1" == labelled.label
+    assert not hasattr(plain, "display")
+
+
 def test_a_unit_with_no_label_is_called_by_its_ordinal():
-    assert built().unit(1).display == "1"
+    assert built().unit(1).numbering == "1"
     assert built().unit(1).label is None
 
 
@@ -363,7 +375,7 @@ def test_a_label_changes_only_what_a_unit_is_called():
     # *name* must still come from identity, because two of the four designed
     # source shapes differ only in zero-padding.
     labelled = built(units=[{"n": 1, "title": "One", "practices": 0, "label": "4.4.1"}])
-    assert labelled.unit(1).display == "4.4.1"
+    assert labelled.unit(1).numbering == "4.4.1"
     assert labelled.unit(1).n == 1
     assert labelled.ordinals == (1,)
     assert labelled.address.unit_key(1) == "depth-one/unit-01"
@@ -374,7 +386,7 @@ def test_a_label_is_never_parsed_back():
     # label back as an ordinal. `display` returns text and `n` is untouched by
     # it, so there is no inverse to be tempted by.
     labelled = built(units=[{"n": 1, "title": "One", "practices": 0, "label": "9"}])
-    assert labelled.unit(1).display == "9"
+    assert labelled.unit(1).numbering == "9"
     assert labelled.unit(1).n == 1
     with pytest.raises(ContainerError):
         labelled.unit(9)
@@ -389,6 +401,21 @@ def test_a_label_round_trips():
 @pytest.mark.parametrize("label", ["", "  ", 441])
 def test_a_label_that_is_present_but_not_text_is_refused(label):
     assert "label" in refusal(units=[{"n": 1, "title": "a", "practices": 0, "label": label}])
+
+
+@pytest.mark.parametrize("label", ["a/b", "a\\b", "4 4 1", "a\tb", "a\nb", "a\rb"])
+def test_a_label_that_could_not_become_a_filename_is_refused_at_entry(label):
+    # ⛔ **The seam taking `label` now opened, closed where it opens.** A label
+    # becomes part of a generated filename (SF-03's `label_of`), which refuses
+    # exactly these. A map that accepted `a/b` would produce a corpus that
+    # **validates and then fails at render** — a milestone later, in another
+    # package, with nothing between the two saying why.
+    # ⭐ The negative control is in `test_fields.py`, where `4.4.1`, `vii` and
+    # `§4` are all accepted: the constraint is a character class, not a slug.
+    message = refusal(units=[{"n": 1, "title": "a", "practices": 0, "label": label}])
+    assert "path separator or whitespace" in message
+    assert "fail at render" in message
+    assert label not in message
 
 
 def test_an_absent_label_is_not_a_refusal():
