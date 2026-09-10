@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your first class</title>
+<link rel="stylesheet" href="../../.studyforge/assets/page.css">
+<script type="application/json" id="studyforge-identity">{"identity_api":1,"corpus":"depth2-demo","address":["basics","01-getting-started"],"unit":1,"kind":"unit","variant":"java"}</script>
+</head>
+<body>
+<header>
+<h1>Your first class</h1>
+<p>basics · 01-getting-started · java</p>
+</header>
+<nav aria-label="Outline"><p>Contents</p><ol><li data-level="1"><a href="#s-shared">Before you start</a></li><li data-level="1"><a href="#s-java">Your first class</a></li><li data-level="2"><a href="#java-b0">Your first class</a></li><li data-level="1"><a href="#s-practice-java">Practice: Greeter</a></li><li data-level="2"><a href="#practice-java-b0">Problem statement</a></li><li data-level="2"><a href="#practice-java-b3">Lesson: Your first class</a></li><li data-level="2"><a href="#practice-java-b5">Starting code</a></li></ol></nav>
+<main id="content">
+<section id="s-shared" data-section="shared" data-kind="shared" data-label="Before you start">
+<h2>Before you start</h2>
+<p>Read the module README first. This section is the author's, not the archive's, and the builder uses this array verbatim (SF-10b).</p>
+</section>
+<section id="s-java" data-section="java" data-kind="lang" data-label="Your first class">
+<h2 id="java-b0">Your first class</h2>
+<p>A class is a name plus the state and behaviour filed under it. Start with the smallest one that compiles.</p>
+<figure class="code"><figcaption><span class="what">java</span></figcaption><pre><code class="language-java">public final class Greeter {
+    public String greet(String who) {
+        return &quot;Hello, &quot; + who;
+    }
+}
+</code></pre></figure>
+<ol class="items"><li>Declare the class.</li><li>Give it one method.</li><li>Write the test before the body.</li></ol>
+<blockquote><p>A method you cannot name is a method you do not yet understand.</p>
+<ul class="items"><li>Name it.</li><li>Then write it.</li></ul></blockquote>
+</section>
+<section id="s-practice-java" data-section="practice-java" data-kind="practice" data-label="Practice: Greeter">
+<h2 id="practice-java-b0">Problem statement</h2>
+<p>Make <code>Greeter.greet</code> return <code>Hello, &lt;who&gt;</code> for any non-empty name.</p>
+<details class="disclosure"><summary>Show a hint</summary><p>Concatenation is enough. The grader shipped with the material checks the exact string.</p></details>
+<h2 id="practice-java-b3">Lesson: Your first class</h2>
+<p>The test class shipped with the material is the grader. It is authoritative because nobody here wrote it (R5).</p>
+<h2 id="practice-java-b5">Starting code</h2>
+<figure class="code"><figcaption><span class="what">java</span></figcaption><pre><code class="language-java">public final class Greeter {
+    public String greet(String who) {
+        // your code here
+    }
+}
+</code></pre></figure>
+</section>
+</main>
+<script src="../../.studyforge/assets/page.js" defer></script>
+</body>
+</html>
