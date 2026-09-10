@@ -42,8 +42,10 @@ def with_a_board_and_handoffs(tmp_path):
     (tasks / "handoffs" / "W1.md").write_text("# W1 — handoff\n", encoding="utf-8")
     (tasks / "BOARD.md").write_text("# board\n", encoding="utf-8")
     (tasks / "BOARD-ARCHIVE.md").write_text("# archive\n", encoding="utf-8")
+    (tasks / "rows").mkdir(parents=True)
+    (tasks / "rows" / "SF-1.md").write_text("# SF-1\n", encoding="utf-8")
     (tasks / "README.md").write_text("# tasks\n", encoding="utf-8")
-    return root, commit_all(root, "the board, its archive and a handoff exist")
+    return root, commit_all(root, "the board, its archive, a row and a handoff exist")
 
 
 def test_the_graph_path_is_where_graphify_writes_it(tmp_path):
@@ -156,6 +158,20 @@ def test_all_three_moving_at_once_still_leaves_the_index_fresh(tmp_path):
     (tasks / "BOARD.md").write_text("# board — edited\n", encoding="utf-8")
     (tasks / "BOARD-ARCHIVE.md").write_text("# archive — edited\n", encoding="utf-8")
     commit_all(root, "a round closes")
+    assert freshness(root, head) == FRESH
+
+
+def test_a_row_file_under_the_boards_rows_directory_leaves_the_index_fresh(tmp_path):
+    # ⭐ Ruling 175: `docs/tasks/rows/` is the board under a new carrier, not a
+    # new subject. Every byte in it was inside `BOARD.md`, where it was already
+    # excluded, so a round that edits one row must not redden the tip. ⛔ Run,
+    # not read — the whole point of the entry is that this instrument stops
+    # firing, and a received reading is not a reading (Ruling 115).
+    root, head = with_a_board_and_handoffs(tmp_path)
+    rows = root / "docs" / "tasks" / "rows"
+    (rows / "SF-1.md").write_text("# SF-1 — state changed\n", encoding="utf-8")
+    (rows / "SF-2.md").write_text("# SF-2 — minted\n", encoding="utf-8")
+    commit_all(root, "a row moves and a row is minted")
     assert freshness(root, head) == FRESH
 
 

@@ -89,6 +89,33 @@ SHAPES = (
         "local hostname",
         # A machine name. The trailing guard keeps `settings.local.json` — a
         # filename, not a host — out of it.
+        #
+        # ⛔ KNOWN FALSE POSITIVE, RULED AND OWED — Ruling 179 (CTO round 45).
+        # The trailing guard covers a `.` after the word, so a filename
+        # survives; it does NOT cover a Python ATTRIBUTE ACCESS at the end of
+        # an expression, which is the natural shape for every consumer of the
+        # local contents document. Measured 2026-09-10 by `SF-14/4`: six
+        # probes, written with placeholders because spelling them here would
+        # be a finding against this file — `<object>.<the word>)`,
+        # `<object>.<the word>,` and `x = <object>.<the word>` all return
+        # True; `settings.<the word>.json` and `self.<the word>_status`
+        # return False. The floor reported 3 such findings in that author's
+        # own test tree before they renamed the field.
+        #
+        # ⛔ The rename is a WORKAROUND that landed, not the fix. An R7 gate's
+        # false positive on ordinary source is a defect IN THE GATE, and it is
+        # rowed — never absorbed by renaming the source, because a rename
+        # leaves no trace and the next author pays the cost again without
+        # knowing anybody paid it before. ⭐ *A checker people rename fields
+        # around is a checker on its way to being switched off.*
+        #
+        # ⚠️ WHAT THE REMEDY OWES, so it is not re-derived: narrow this ONE
+        # lookahead while KEEPING the hostname shape — it does not weaken R7,
+        # which has no "minor" verdict — and it owes Ruling 123's three
+        # readings with the real shape planted. The vocabulary half is in
+        # `docs/conventions/personal-data-shapes.md` (Ruling 47: one
+        # vocabulary, two policies), so narrowing one side alone is not a
+        # developer's call.
         re.compile(r"(?<![\w.])[A-Za-z0-9-]+\.local(?![\w.])"),
     ),
     (

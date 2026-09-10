@@ -33,6 +33,41 @@ contents documents, and that isolation is asserted rather than trusted,
 because it is the proof that the contract carries everything a future client
 would need.
 
+⛔ **AND THE LAYERING HAS A MEASURED HOLE — `SF-14/3`, and it is a READING-FLOOR
+completeness gap, not an M5 nicety.** ⭐ **`contents.Entry` carries `page`;
+`contents.Group` carries `level`, `segment`, `key`, `title` and nothing else.**
+**Measured at `9b9a695`:** `GROUP_KEYS` in `src/studyforge/contents/entries.py`
+is `("level", "segment", "key", "title")`, and `git grep -n
+'container_page_name' -- src/` reaches `corpus/placement/` and **nothing in
+`contents/`**. ⛔ **So the root index can link every UNIT and no CONTAINER.**
+
+⚠️ **The edge exists in one direction only.** `SF-27`'s own handoff says *"a
+container page's **up** link is the root index"* — ⛔ **so the reader who lands on
+the index first, which is every reader, has no way to reach a container page at
+all**, and the `*.section.html` pages are reachable only from a unit's breadcrumb
+(`SF-15`). ⭐ **It reads as complete: the index renders, every unit opens,
+`validate` passes, and the missing edge is invisible unless somebody asks *"how
+do I get to a module page from here?"***
+
+⛔ **THE RENDERER IS NOT WHERE THIS IS FIXABLE.** This page reads *only* the two
+contents documents, and composing the container page's filename inside the
+renderer — even though `placement.container_page_name` would answer — is exactly
+the isolation the acceptance forbids. ⭐ **If a renderer needs something the data
+does not carry, the data is wrong.** ⚠️ **So it is a `toc_api` question against
+`SF-13`'s owner: a new key in a stable document, which R9 refuses rather than
+migrates, and which only the id space's owner decides.** ⛔ **Every corpus of
+depth ≥ 1 has container pages, and no corpus's index can link them — so this
+lands by **M4**, with the reading floor, and not after it.**
+
+⚠️ **One more shared fact, from `SF-14/5` and it is `SF-27/4` confirmed from a
+third side: `tests/fixtures/pages/` now holds SEVEN goldens written by THREE
+regenerators** — `render/page/pages.py` (2), `render/container/containers.py` (3)
+and `render/index/indexes.py` (2) — ⛔ **and none of the three enumerates the
+directory.** ⭐ **Measured at `9b9a695`.** ⚠️ **The collision is scheduled rather
+than present: the day any one of them gains a `glob`-and-delete it silently
+removes the other two's evidence, and these goldens are the only thing standing
+in for `tests/visual/` here.** ⛔ **Whoever adds a FOURTH reads this line first.**
+
 **Rulings that bite here:** R8 (`file://`), R10 (byte-for-byte), R11
 (packages), R13 (templates and assets are source files).
 
@@ -438,13 +473,37 @@ short is the worst shape a row can have: nothing about it signals the gap.**
 | 3 | between-units bar | `SF-12`, shipped — ⚠️ **and now emitted by the CONTAINER page too** |
 | 4 | practice panel | `SF-12`, shipped — added by note (a) |
 | 5 | ⛔ **the container's unit listing** | ⛔ **`SF-27`** — `<nav aria-label="Units">` with `<ol>`, and **TWO NEW HOOKS**: `data-readable` on each `<li>` and `data-kind="numbering"` on the ordinal `<span>`. ⭐ **Measured on `feat/SF-27` @ `6c39d5f` against `tests/fixtures/pages/getting-started.section.html`, not taken from the report** — ⚠️ **and `SURFACE_HOOKS` on that branch still holds only `table_scroll`, `copy_button`, `code_caption`, so there is NO RULE ANYWHERE for either hook** |
+| 6 | ⛔ **the root index's disclosure tree** | ⛔ **`SF-14`, MERGED** — `src/studyforge/render/index/disclosure.py`, and it re-spells the **SAME TWO HOOKS** as row 5 plus a third, `LEVEL_KIND`. ⭐ **Measured by `SF-14/1` at `9b9a695`: `git grep -n 'data-readable\|data-kind' -- src/` reaches `render/container/listing.py` and `render/index/disclosure.py` **and nothing else** |
 
 ⭐ **The property this task was scheduled late to preserve still holds and is
 re-checked rather than assumed:** the container page addresses its chrome by
 element and `aria-label` and `data-*` only — ⛔ **the `<nav>`, `<ol>` and `<li>`
-carry no class** — so this row still costs no re-render. ⚠️ **`SF-14`'s root
-index will add a SIXTH, and it is now placed: whoever takes `SF-34` re-measures
-the region list against the tree rather than against this table.**
+carry no class** — so this row still costs no re-render. ⚠️ **Whoever takes
+`SF-34` re-measures the region list against the tree rather than against this
+table.**
+
+#### ⛔ `SF-14/1` — the two hooks are spelled in TWO packages, and the destination is RULED
+
+⛔ **`data-readable` and `data-kind="numbering"` are defined twice** —
+`READABLE_ATTRIBUTE` and `NUMBERING_KIND` in `render/container/listing.py` and
+again in `render/index/disclosure.py` — and they mean the same thing in both:
+*this row could not be linked*, and *this is the unit's reader-facing numbering*.
+
+⭐ **RULED (CTO round 45 §12): the home is `render.pageassets`'s `SURFACE_HOOKS`.**
+⛔ **NOT a promotion onto `render.container.__all__`** — `W76`'s own answer
+governs: ***what more than one renderer needs is a SIBLING package, never a name
+on one of them.*** ⚠️ **Measured by `SF-14/1`: neither hook is reachable from
+`render.container.__all__` today (it carries `ENCODING KIND Document Item Link
+Links PageError Placement compose render`), so importing it would have been a
+Ruling 101 row 1 reach, which `render/page/test_init.py`'s sweep now fails on by
+name.**
+
+⛔ **WHY THIS IS NAMED HERE AND NOT LEFT TO THE AUTHOR.** ⚠️ **`SF-34` is the task
+that writes the rules for these hooks, and it will write them against whichever
+spelling it finds first.** ⭐ **Two spellings that agree today disagree the day
+one page gains a third state** — and `SF-27/2` already reports that nothing
+paints either hook at all. ⛔ **This row reads as complete while its scope is
+short, which is the shape the round-34 correction above was minted against.**
 
 ⭐ **The page needs no change and no re-render.** `SF-12` addressed all three
 regions by element, `aria-label` and `data-*` only — measured: every class the
@@ -468,12 +527,23 @@ exists is SF-11's own finding-3 warning one layer up** — *the palette defines
 tokens nothing paints with* — and this task is where the unit page's share of
 that leniency is claimed rather than extended.
 
-**Acceptance.** The three regions carry rules in both themes, every token used
+**Acceptance.** ⛔ **Every region in the table above** — re-measured against the
+tree, not copied from the table — carries rules in both themes, every token used
 is a palette token, and `test_surface` passes in both directions with no class
 added to any page. Contrast clears its threshold in both themes (QA-03's
 instrument, not a new one). The two `<nav>` regions render from templates and no
 product string is typed in Python. The goldens change once, deliberately, and
 the change is stated as a product change rather than absorbed.
+
+⛔ **AND — added by the PO, 2026-09-10 (round 36), from `SF-14/1`:**
+**`data-readable` and `data-kind` are spelled ONCE, in
+`render/pageassets/surface.py`'s `SURFACE_HOOKS`**, and `render/container/
+listing.py` and `render/index/disclosure.py` both read them from there. ⛔ **Not
+promoted onto `render.container.__all__`** — the destination is ruled, not the
+author's to re-choose. ⭐ **The reading this obliges:** `git grep -n
+'data-readable\|data-kind' -- src/` returns hits in **one** module, with the
+population printed beside it; and `test_surface`'s both-directions equality is
+re-run after the move, because the published class set is what the move changes.
 
 ---
 
