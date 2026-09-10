@@ -634,9 +634,40 @@ and the line is removed or reissued against a real row.** ⭐ **Run it at every
 wave open, beside §8a's `[structural]` sweep.**
 
 
-⛔ **Measured 2026-09-10 at `3f5d984`: the command prints NOTHING — zero
-deferrals and zero size exceptions in the tree.** ⭐ **So the first use of this
-form is `W44`'s, and it starts from a clean instrument.**
+⭐ **PASS CONDITION, and it is a printed row count: the sweep prints ZERO
+rows.** ⚠️ **Measured `a00337b`: ONE — the live deferral. Measured `7b5c0a9`,
+after `W44` split the module: ZERO.**
+
+⛔ **The note that stood here said the sweep *"prints NOTHING — zero deferrals
+and zero size exceptions in the tree"*, measured at `3f5d984`.** ⚠️ **It was
+true when taken and false from `426672c` onward, and it sat directly BENEATH
+the block that says the tree yields exactly one file** — ⭐ **a reader looking
+for the expected reading stops at the last measured row, which was the wrong
+one. A correction that leaves the original standing is a second copy.**
+
+#### ⛔ Ruling 123 — an instrument is validated by PLANTING, not only by running
+
+⛔ **Ruling 122 asks both directions. That is necessary and NOT sufficient: it
+proves the instrument RESPONDS, never that it MEASURES THE CLAIM.** ⭐ **Three
+readings, all taken before a clause naming an instrument ships:**
+
+```bash
+# 1. the live tree                                  -> the PASS reading
+# 2. the forbidden thing PLANTED in a form the clause did not picture -> CAUGHT
+# 3. a subject that CANNOT match                    -> DIFFERENT from row 1
+#
+# Row 3 is the one that gets skipped, and it is the one that catches a typo.
+git grep -l 'Size exception:'      -- src/ | wc -l   # 7b5c0a9 -> 0   (pass)
+git grep -l 'ZZZ_no_such_marker'   -- src/ | wc -l   # 7b5c0a9 -> 0   (!!)
+```
+
+⛔ **So Ruling 121's grep is a CORROBORATOR here and not the gate**, and its two
+failure modes are measured, not argued. ⚠️ **At `a00337b`: the marker in a
+**comment** under `src/` takes the grep to `2` while the sweep stays at `1` — a
+false positive on any textual mention. A real deferral planted under `tools/`
+leaves the grep at `1` while the sweep goes to `2` — it never looks outside
+`src/`.** ⭐ **The sweep asks the shipped reader and walks the whole tree; the
+grep asks neither question. Read the sweep, quote the grep.**
 
 ---
 
@@ -1303,6 +1334,36 @@ A third is needed.**
 ⚠️ **This is § 4b-i's *"a skipped test is not a passing test"* arriving in the
 one place nobody applied it** — inside the sweep, where the reviewer had already
 accounted for the baseline's skips once and stopped looking.
+
+#### ⛔ Ruling 124 — a check over a DERIVED population states its inhabitation, or its green is not a reading
+
+⛔ **A test that walks the tree and asserts a property of what it finds passes
+when it finds nothing, and prints the same green either way.** ⭐ **So the
+population size is part of the result, and there are exactly two admissible
+shapes:**
+
+```python
+# A — assert inhabitation, then the property.  W44's guard, and it is the model.
+found = modules()
+assert set(found) == {...}  # ⭐ the derivation names what it expects
+for where, text in found.items():
+    ...
+
+
+# B — parametrize over the derivation, so an empty population SKIPS, not passes.
+# measured, pinned image: empty -> "SKIPPED [1] …: got empty parameter set
+# for (item)";  a plain `for` over the same empty list -> "passed".
+@pytest.mark.parametrize("item", derive())
+def test_each(item): ...
+```
+
+⛔ **Shape B's skip then lands in § 4b-i's census, where a reviewer names every
+skip** — ⭐ **which is the whole point: the vacuity becomes a line somebody has
+to read out loud, instead of a pass.**
+
+⚠️ **Vacuous-by-design is not refused. Vacuous-and-INVISIBLE is.** ⛔ **A test
+whose docstring says *"it stays true vacuously once X lands"* has documented the
+hazard in the one place the person reading the tail is not looking.**
 
 ---
 
