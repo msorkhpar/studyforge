@@ -61,6 +61,7 @@ from tools.quality.config import (
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.knowledge_index import check_knowledge_index, notices
+from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
@@ -122,7 +123,21 @@ CHECKS = (
 #: swallow. ⛔ Ruling 48: `0 dangling` is `0 = 0` until it says *out of how
 #: many*, and FND-08's own acceptance names it: a check reports its coverage,
 #: not just its hits.
-NOTICES = (notices, pointer_coverage)
+#:
+#: ⛔ **`lint_notice` is the third, and it is Ruling 78.** `check_style` is the
+#: standard-library half of lint and Ruling 77 forbids it growing the other
+#: half — the floor's exit code may not depend on whether somebody ran
+#: `pip install`. ⚠️ But the floor was then printing `quality floor: clean` over
+#: a run where no linter existed, and three agents in one wave read that as a
+#: lint verdict; one shipped four `D401` errors under it, and the CTO's `SF-12`
+#: sweep produced a mutant that passes all 2923 tests and is killed only by
+#: `ruff F401`. ⭐ **The resolution is that a notice reporting a tool's absence
+#: does not depend on that tool**, so this reports the lint state — including
+#: its absence — while enforcement stays in `tests/test_repository.py`.
+#:
+#: ⚠️ **It is deliberately last**, so it prints immediately above `quality
+#: floor:` — the line it exists to qualify.
+NOTICES = (notices, pointer_coverage, lint_notice)
 
 __all__ = [
     "CHECKS",
