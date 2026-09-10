@@ -2,37 +2,86 @@
 
 Guidance for Claude Code working in this repository.
 
-## What this is, and what state it is in
+## ⛔ THIS FILE CARRIES NO LIVE STATE. READ THE BOARD.
+
+⭐ **`docs/tasks/BOARD.md` is the instrument. Open it now, before anything
+else.** It carries which milestone and step are open, what is in flight, what is
+assigned, and what to do next. ⛔ **This file names none of those, deliberately
+(Ruling 161), and an empty answer here is the intended answer — not an omission
+to be helpfully filled in by the next editor.**
+
+⚠️ **Why the rule is absolute, and it is not tidiness.** This file is read into
+an agent's context **at session start**, so what an agent acts on is a
+**snapshot**, not the tree. ⛔ **A correction landing at 03:00 never reaches a
+session that started at 02:00, and there is no instrument that can read another
+agent's context** — so a live fact written here cannot be kept true. It can only
+be kept freshly wrong. ⚠️ **Measured, `PO-33/9` and Ruling 161** — ⛔ **and the
+reading is quoted below in a blockquote deliberately, because check 5's
+instrument skips blockquoted lines and this file must not fail its own check by
+citing the defect it was rewritten over:**
+
+> The delivered copy said *"In flight: M2 step 2.1"* for five rounds while the
+> tree had said step 2.2 since PO round 28 — and the wave-open check that guards
+> this file PASSED in every one of those rounds, against a copy no agent reads.
+> A second reading, `PO-34/1`: the sentence *"Nothing is implemented… the first
+> work is milestone M0"* stood in this file from its first commit until PO round
+> 34, false from the day M0 closed, because check 5's instrument was scoped to
+> one section and that sentence was in another.
+
+⭐ **A POINTER cannot go stale in a snapshot the way a fact can: it resolves at
+read time, in the tree. That is a property the board has and this file
+structurally cannot.**
+
+⛔ **The consequence for anyone writing a brief, a task or a handoff: cite
+`docs/tasks/BOARD.md` for anything that moves, never this file.** ⭐ **The three
+instruments, and this file is none of them:**
+
+| The question | ⛔ **The one instrument** |
+|---|---|
+| What is open, in flight, assigned, next | `docs/tasks/BOARD.md` |
+| Which tasks are in a milestone or a step | `docs/tasks/README.md` |
+| How many tasks, epics, capabilities there are | ⭐ the **generated** `docs/capability-index.md` |
+
+⚠️ **The clause this replaces said *"if the two disagree, the board is right and
+this file is a defect."*** ⛔ **It is moot now, and that is the improvement: there
+is no second copy left to disagree.** ⭐ **A reader who wants state is sent one
+place instead of being asked to adjudicate between two.**
+
+## What this is
 
 `studyforge` is a source-agnostic framework that converts any body of teaching
 material into a local, offline study site — reading pages, narration, contents,
 navigation, progress, and graded practices where the material supports them.
 
-⚠️ **Nothing is implemented. This repository is a design and a backlog.** There
-is no `src/`, no tests, no package. The first work is milestone **M0**.
+⭐ **The plan's spine is the reading floor** (spec §11.0) — narrated, navigable,
+offline, no server — which is a **complete product** for prose material. The
+**execution track** (containers, Run and Submit, graded practices) comes after
+it, and a corpus enters it only if its material is runnable. ⛔ **A corpus with
+no graders is complete at the reading floor, not short** (§7's three states, C5).
+⭐ **The first consumer is a small corpus, not the Java tutorial.** ⚠️ **Which
+milestone each of those lands in is `docs/tasks/README.md`'s to say, and how much
+is built today is the board's.**
 
-Do not start writing framework code without reading the spec first. The design
-encodes decisions that were expensive to reach and are not recoverable from the
-code — because there is no code.
+⛔ **Do not start writing framework code without reading the spec first.** The
+design encodes decisions that were expensive to reach and are far cheaper to read
+than to re-derive.
 
 ## Read before doing anything
 
 1. `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4, **all of R1–R21**,
-   and **§12** (what the second source is for).
-   The rulings are the authority you appeal to when a task is ambiguous.
+   and **§12** (what the second source is for). The rulings are the authority you
+   appeal to when a task is ambiguous.
 2. `docs/tasks/README.md` — ordering and the critical path. ⛔ **THIS LINE
-   CARRIES NO COUNT, and its removal is Ruling 150 (CTO round 40).** ⚠️ **It
-   claimed **87** while citing a document that claimed **89**, and the measured
-   answer was **91** live capabilities and **92** rows across **14** epics —
-   ⭐ **a reader who followed the citation was corrected by two and a reader who
-   did not was wrong by four.** ⛔ **The authority is the generated derivation:
-   `docs/capability-index.md`.** ⭐ **This file's own *Where to start* already
-   rules that a fact written in two places goes stale in the copy nobody
-   re-measures — and a count is a fact.**
+   CARRIES NO COUNT, and its removal is Ruling 150 (CTO round 40)**: it claimed a
+   number while citing a document that claimed a different one, and the measured
+   answer was a third. ⭐ **The authority for any count is the generated
+   derivation, `docs/capability-index.md`** — and a count is a fact, so it obeys
+   the rule at the top of this file.
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
-   it carries shared context so neighbouring tasks do not re-derive it.
+   it carries shared context so neighbouring tasks do not re-derive it, and it is
+   where a task's dependencies and its Acceptance live.
 4. `docs/conventions/` — module structure, graphify, the agent working
-   agreement.
+   agreement, the review rubric.
 
 ## Hard rules
 
@@ -88,6 +137,8 @@ set is R1–R21 in the spec.
   counted against the real repositories, and doing so corrected several things
   that had been asserted confidently and wrongly. If a document states a number,
   it is checkable — check it rather than inheriting it.
+- **A measurement is quoted with the ref it was taken on**, and with the
+  checkout and the environment it was taken in, or it is not a measurement.
 - **Refining a task as the project grows is expected.** Silently expanding one
   is not.
 
@@ -103,89 +154,10 @@ form needs a URL that resolves. The components are:
 `Claude-SPARQL-tutorial` (v2 targets), plus `code-server-toolchain` and
 `narrate-service` still to be created by E12 and E13.
 
-## Where to start
-
-✅ **M0 and M1 are both CLOSED.** **M1 closed 2026-09-10 at `2fe56a4`**, all nine
-of its close conditions true at that one ref. ✅ **M2 step 2.1 closed 2026-09-10
-at `a00337b`**, all five of its rows re-taken at that one ref. ✅ **M2 step 2.2
-closed 2026-09-10 at `ce80120`**, all four of its rows re-taken at that one ref.
-⏳ **Open: M2 — a corpus is readable. In flight: M2 step 2.3.** ⛔ **Do not start
-on M0 or M1.**
-
-⚠️ **CORRECTED 2026-09-10 (PO round 33, check 5), and it is the SECOND time this
-section has been wrong about which step is live.** ⛔ **It said *"In flight: M2
-step 2.2"*, and that became false at `176621c` — the merge of `SK-08`, step
-2.2's last row — three merges before this correction was written.** ⭐ **Check 5
-predicted this exact liability IN ADVANCE, by name, in round 32, and named it
-the next round's first job** — ⚠️ **which is check 5 earning its place on the
-wave-open checklist rather than being justified by it.**
-
-⚠️ **CORRECTED 2026-09-10 (PO round 28, check 5). This section said *"In flight:
-M2 step 2.1"*, which was true when it was written and false the moment that step
-closed** — ⛔ **and the round that closed the step is the round that made this
-file wrong.** ⭐ **The sentence was REPLACED, not annotated below (Ruling 106
-governs merged handoffs; a correction to a live instruction replaces it, because
-a reader stops at the first sentence that answers their question).**
-
-⛔ **TWICE IS A MECHANISM, NOT AN ACCIDENT: the round that closes a step is
-always the round that makes this file wrong**, because the close is what changes
-the answer and this file is the copy nobody re-measures while the close is being
-written. ⭐ **The remedy is the one already in force — the board is the
-instrument, this file says only which milestone is open, and check 5 runs at
-every wave-open.**
-
-⛔ **THE TASK LIST THAT USED TO STAND HERE HAS BEEN REMOVED, and its removal is
-the point.** ⚠️ **This line named five step-2.1 tasks; two of them — `SF-31` and
-`SF-04` — merged, and this file said *in flight* about both of them anyway.**
-⭐ **A step's MEMBERSHIP belongs in `docs/tasks/README.md`; a task's STATE belongs
-in `docs/tasks/BOARD.md`; ⛔ this file carries neither, because a fact written in
-two places goes stale in the copy nobody re-measures — and the copy nobody
-re-measures is always the one that is not the instrument.** ⚠️ **PO round 25
-found EIGHT stale board rows by exactly that mechanism.**
-
-⚠️ **`SF-35` and `SF-36` were added to step 2.1 at round 24 and they are not new
-scope: they are two CTO rulings that had no task id.** ⛔ **A ruling that names
-*"a framework task"* and no id has described a task, not created one** — ⭐ **the
-id space has exactly one minter, and check 3 is what finds the gap.**
-
-⚠️ **M2 is not M1 with different task ids: the skills come with it, not after
-it** (`docs/tasks/README.md`, M2). ⛔ **`SK-02` is in step 2.1 for that reason,
-and a corpus built before its skill exists is one the skill can only claim
-retrospectively** (spec §9).
-
-⚠️ **CORRECTED 2026-09-10 (PO round 19, check 5). This section said *"In flight:
-M1 step 1.4 — `SF-10`"* directly above a paragraph saying `SF-10` was done and
-step 1.4 closed.** ⛔ **The correction had been *appended below* the stale
-sentence instead of replacing it**, so the file contradicted itself in adjacent
-paragraphs — ⭐ **and the wrong half was the one that reads like the answer,
-because a reader stops at the first sentence that answers their question.**
-⛔ **A correction that leaves the original standing is not a correction; it is a
-second copy, and the reader picks the first one.**
-
-⚠️ **This section said *"Milestone M0 — FND-01…FND-05, all parallel"* for sixty
-seconds after M0 closed, and it was the second time in two rounds that this file
-was the last to learn.** ⭐ **That matters more here than anywhere else: this file
-is loaded into *every* session in this project**, so a stale sentence here does
-not mislead one reader — ⛔ **it misdirects every agent that starts.**
-
-⭐ **Live state, and this file is not it:** `docs/tasks/BOARD.md` carries what is
-open, in flight and assigned. ⛔ **This section says only which milestone is
-open; the board says what to do in it.** ⚠️ **If the two disagree, the board is
-right and this file is a defect** — ⭐ **which is why `CLAUDE.md` is now on the
-wave-open checklist by name.**
-
-⭐ **The first consumer is a small corpus, not the Java tutorial.** The plan's
-spine is the **reading floor** (spec §11.0) — narrated, navigable, offline, no
-server — which is a *complete product* for prose material and lands by M4. The
-**execution track** (containers, Run and Submit, graded practices) starts at M5,
-and a corpus enters it only if its material is runnable. ⛔ **A corpus with no
-graders is complete at M4, not short** (§7's three states, C5).
-
-⛔ **`EX-00` still gates the whole of E08** and is still the first thing done
-whenever E08 starts — a one-agent-day spike whose negative result is a success.
-It left M0 because exercises are no longer on the first delivery's path. ⚠️ It
-needs `TC-00`'s pinned image: its deliverable is a wall-clock measurement that
-decides the shape of E08, and one taken on a host JDK is not reproducible (R15).
+⚠️ **A worktree does not carry the siblings** — `git worktree add` gives you this
+repository and nothing beside it. ⛔ **So `tools.workspace verify` is
+host-verified by construction**, and a reading from it names that state in the
+same sentence as its number (Ruling 159).
 
 ## Two agents
 
@@ -196,6 +168,7 @@ repository (E07, E08, and what survives of E09). Three seams cross between them
 and all three have a contract: the archive (`studyforge validate`), placement
 (`studyforge plan`), and each shared component's `consuming.json`.
 
-⛔ **During M8 the integration agent does not modify `studyforge`** — findings,
-not patches. A test of extensibility run by somebody who can edit the thing
-being tested measures nothing (§12).
+⛔ **During the extensibility milestone the integration agent does not modify
+`studyforge`** — findings, not patches. A test of extensibility run by somebody
+who can edit the thing being tested measures nothing (§12). ⚠️ **Which milestone
+that is, and whether it is live, is `docs/tasks/README.md`'s and the board's.**
