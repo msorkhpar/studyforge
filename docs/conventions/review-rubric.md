@@ -210,6 +210,44 @@ the personal-data gate (`archive/`, R7) and that the gate **refuses** rather
 than rewrites. A gate that scrubs silently produces a clean file and a false
 belief.
 
+#### ⛔ Ruling 58 — an R7 refusal is never translated into a package's error family
+
+```bash
+git grep -n 'except PersonalDataLeak' -- 'src/*.py'
+```
+
+⭐ **Read every arm. A `raise <PackageError>(...) from None` under one of them is
+a finding**, and it is not a style question: it is R7 **failing open**.
+
+⚠️ **A package error family exists so that a caller walking a corpus can catch
+one type per item, report it, and continue** — that is what the families are
+*for*. ⛔ **So translating an R7 refusal into one converts a hard stop into a
+skipped item:** a leak is logged as *"that unit did not build"*, the walk
+finishes, and the report is green about the one thing R7 exists to make loud.
+⭐ **`PersonalDataLeak` is deliberately not a `ValueError` and deliberately not
+in any package's family** — that design is the mechanism, and a translation
+undoes it one module at a time.
+
+⛔ **The counter-argument is real and it loses.** *"This package promises that
+reading a manifest raises `ManifestError` and nothing else, and a promise with
+one exception is not one"* — true, and the answer is to **state the exception in
+the package's own contract**, which `archive/errors.py` and
+`corpus/container/errors.py` already do: *"two exceptions travel through,
+deliberately."* ⭐ A contract that names what crosses it is a better contract
+than one that swallows what crosses it.
+
+⚠️ **Measured 2026-09-10, and this is not hypothetical.** `corpus/manifest/`
+translates, so `validate/corpus.py`'s `except PersonalDataLeak` arm for the
+manifest **is unreachable** — a home path in `corpus.json` is filed under
+`RULE_MANIFEST` instead of `RULE_PERSONAL_DATA`. ⛔ **The catch was written
+expecting the leak to travel through, and the raise never comes** — the exact
+shape W7 was opened against, one layer up.
+
+⛔ **And a reviewer checks the second spelling.** The translating module's
+docstring may say it follows a neighbour *"exactly"*; that is how this spread
+from one module to three. ⭐ **When one catch site is corrected, grep the tree
+for the others before moving on.**
+
 ### ⛔ 1f. The shape the sweep cannot see: what the code would *emit*
 
 ⛔ **The sweep reads the diff. It cannot read a runtime value.** Every check
@@ -445,13 +483,43 @@ pinned, not because it is better.** A result that differs between host and
 container is a **finding**, and where both ran, the container's answer is the one
 recorded.
 
-⭐ **Three states, not two, and collapsing the last two is a defect I shipped.**
+⭐ **Four states, and collapsing any two of them is a defect I have now shipped
+twice** — once by fusing *unpinned green* into *did not run*, once by having no
+row for the check whose subject the image is **right** to exclude.
 
 | State | What it means | Counts? |
 |---|---|---|
 | **pinned green** | ran in the image, at a pinned toolchain | ⭐ yes — this is the verdict |
 | **unpinned green** | ran and passed, but in an environment nobody pinned | ⚠️ **real evidence, named in the review** — and the image gap is a finding with an owner |
+| **host-verified** | ⛔ ran on the host **because the image is right to exclude the subject** — the check's subject is the workspace, the sibling checkouts, the host's Docker, or the image's own build | ⭐ **yes, and it is the verdict for that check** — bounded, see below |
 | **did not run** | skipped, absent tool, unreachable | ⛔ **not evidence at all** |
+
+#### ⛔ Ruling 53 — `host-verified` is bounded by *the image is right to exclude the subject*
+
+⚠️ **This row is a licence and would be abused as one**, so the bound is the
+whole ruling: a check is `host-verified` only when running it inside the image
+would measure **the wrong thing**, not merely a harder thing.
+
+⭐ **The three shapes that qualify, and they are the only ones seen so far:**
+
+- a check whose subject is the **workspace** — sibling checkouts the image
+  deliberately does not mount (`FND-05a`'s pin verification);
+- a check whose subject is the **image itself** — building it from inside it
+  recurses (`tests/docker/test_dev_image.py`'s five skips);
+- a check whose subject is the **host's own toolchain** — the thing being
+  measured is the developer's machine, and the image would answer for a
+  different one.
+
+⛔ **A check that is merely inconvenient in the image is `unpinned green`, and
+the image gap is a finding with an owner.** ⚠️ The tell is one question: *would
+the image's answer be wrong, or just absent?* Wrong is `host-verified`; absent
+is a gap to close.
+
+⭐ **And the exclusion is asserted, never assumed.** A `host-verified` check
+names, in the review, the sentence in the image's own definition that excludes
+its subject — `Dockerfile`, `compose.yaml` or `docker/dev/check`. ⛔ A claim
+that the image *cannot* run something, unsupported by the image's own text, is
+`did not run` wearing this row's clothes.
 
 ⛔ **`Blocked` is for an acceptance condition that could not be executed** — not
 for one that executed, passed, and happened to do so outside the image. ⚠️ My
