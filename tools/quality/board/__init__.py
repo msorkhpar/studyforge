@@ -12,8 +12,8 @@ observation anywhere on the board to corroborate it** (Ruling 189(b)).
 run, because a `0` with no denominator is `0 = 0` (Ruling 48).
 
 **Depends on.** `register` for the parser, `notice` for the population,
-`observation` for Ruling 189(b), `config` for the tree and `report` for the
-answer. Nothing else.
+`observation` for the observation table and `contradiction` for Ruling 189(b)'s
+rules over it, `config` for the tree and `report` for the answer. Nothing else.
 
 ## ⛔ Why this exists, and the number is the argument
 
@@ -80,10 +80,17 @@ obeys.
 concluded the board is the only TOTAL instrument.** ⛔ **It did not say the board
 is RELIABLE** — ⚠️ **and the board is the only instrument that ASSERTS in-flight
 rather than OBSERVING it, so it is the only one that can be stale in this
-direction.** ⭐ **The three rules live in `observation.py` with their founding
-bytes**, and the reason they are here at all rather than in a wave-check script
+direction.** ⭐ **The rules live in `contradiction.py` with their founding bytes and
+the table they judge is parsed by `observation.py`** — the `W96/3` seam, split at by
+`W111` — and the reason they are here at all rather than in a wave-check script
 is Ruling 189(b): ⛔ **the primary reading needs NO GIT** — it compares three
 cells of one row with each other.
+
+⛔ **And a FOURTH rule, which is a REFUSAL rather than a contradiction** (`W111`,
+Ruling 196(b)'s expiry): ⭐ **a `<!-- inflight -->` block the board DECLARED and the
+parser could not read is `board-unreadable`**, because a declared table that did not
+parse used to read as *no table at all* — ⚠️ **measured by the CTO's round-50 plant:
+two renamed column names, three rules silently inapplicable, and the floor clean.**
 
 ## ⛔ What this deliberately does NOT assert
 
@@ -110,18 +117,21 @@ state (Ruling 80), and a branch position is the purest untracked state there is.
 
 from pathlib import Path
 
+from tools.quality.board.contradiction import (
+    RULE_DISAGREEMENT,
+    RULE_INFLIGHT,
+    RULE_UNOBSERVED,
+    RULE_UNREADABLE,
+    observation_findings,
+)
 from tools.quality.board.notice import board_state, rows_on_disk
 from tools.quality.board.observation import (
     ABSENT,
     INFLIGHT_CLOSE,
     INFLIGHT_OPEN,
     NOT_STARTED,
-    RULE_DISAGREEMENT,
-    RULE_INFLIGHT,
-    RULE_UNOBSERVED,
     STAND_INS,
     STARTED,
-    observation_findings,
 )
 from tools.quality.board.register import (
     BOARD,
@@ -176,6 +186,7 @@ __all__ = [
     "RULE_SIZE",
     "RULE_STATE",
     "RULE_UNOBSERVED",
+    "RULE_UNREADABLE",
     "RULE_WIDTH",
     "STAND_INS",
     "STARTED",

@@ -32,7 +32,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
-from tools.quality.board.observation import observation_reading
+from tools.quality.board.contradiction import observation_reading
 from tools.quality.board.register import (
     BOARD,
     BOARD_FRAME,
