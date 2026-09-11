@@ -6,6 +6,7 @@ import tools.quality as quality
 from tests.support import assert_package_contract, repository_root
 from tools.quality import run_all
 from tools.quality.board import board_state, check_board
+from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.knowledge_index import check_knowledge_index, notices
@@ -38,6 +39,7 @@ def test_every_check_is_registered():
         check_knowledge_index,
         check_handoffs,
         check_pointers,
+        check_anchor_collisions,
         check_rulings_index,
         check_rulings_reach,
     }
@@ -52,11 +54,20 @@ def test_every_notice_is_registered():
     assert set(quality.NOTICES) == {
         notices,
         pointer_coverage,
+        collision_census,
         board_state,
         rulings_notice,
         reach_notice,
         lint_notice,
     }
+
+
+def test_the_collision_census_prints_directly_under_the_pointer_census():
+    # ⛔ Order, not just membership, and for `W140`'s reason: the line this
+    # qualifies is `document pointers: … 0 unresolved`, which is TRUE and reads
+    # as *no anchor in this tree is ambiguous*. A census three lines below a
+    # figure it corrects is a census the reader has already moved past.
+    assert quality.NOTICES.index(collision_census) == quality.NOTICES.index(pointer_coverage) + 1
 
 
 def test_the_lint_notice_prints_last():
