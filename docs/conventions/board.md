@@ -142,6 +142,7 @@ two*.**
 | `board-inflight` | one observation row declares a started state, names **no** checkout and counts **0** commits | ⛔ **Ruling 189(b), and it is a CONTRADICTION PRINTED ON ONE ROW** — ⚠️ the founding bytes stood for 350 commits while every git instrument read correctly |
 | `board-unobserved` | a register cell declares a started state and **no** observation row names it | ⭐ **an asserted state owes an observer** — ⛔ the board is the only instrument that ASSERTS in-flight rather than OBSERVING it, so this is the only direction it can be stale in |
 | `board-disagreement` | one table says the row is **started** and the other says it is **finished** | ⛔ **both cannot be true of one row**, and a state has ONE home; ⚠️ `todo` against started is NOT this — see the narrowing below |
+| `board-unreadable` | a `<!-- inflight -->` block is DECLARED and **no table inside it declares the observation columns** | ⛔ **Ruling 196(b)'s expiry, discharged by `W111`** — ⚠️ the CTO's own plant renamed two column NAMES and read `NONE FOUND, 0 rows` on a GREEN floor, so the instrument announced where it should have refused. ⭐ **The delimiter makes the refusal POSSIBLE; this rule is what makes it HAPPEN** |
 
 ### ⛔ Ruling 189(b) is THREE rules, and the population is located by a DELIMITER
 
@@ -150,14 +151,22 @@ two*.**
 inheriting a git dependency (ruled round 49, below).
 
 - ⛔ **The observation table is DELIMITED**, `<!-- inflight -->` /
-  `<!-- /inflight -->`, the `<!-- register -->` pattern reused. ⚠️ **Until the
-  markers land, the table is located by its HEADER — the one that DECLARES a
-  `Checkout` column and a commits-ahead column** — ⭐ **and the locator that
-  answered is NAMED in the line `board_state` prints**, so a board with no
+  `<!-- /inflight -->`, the `<!-- register -->` pattern reused. ⭐ **The locator
+  that answered is NAMED in the line `board_state` prints**, so a board with no
   markers says so on every run instead of being assumed. ⛔ **An ordinary
   five-cell table is not an observation table**, which is the whole difference
   between a declared boundary and the inferred one that made
   `board-duplicate` fire on its own author.
+- ⛔ **RULING 196(b) HAS EXPIRED AND `W111` DISCHARGED IT.** ⭐ **The header locator
+  survives for a board carrying NO marker at all** — R10's arbitrary roots, and the
+  form `rows/W111.md` asked to be preferred — ⛔ **but a board that DECLARES a block
+  is read ONLY inside its markers, and a declared block whose header declares no
+  role is `board-unreadable` rather than a `NONE FOUND` notice.** ⚠️ **The refusal
+  fires on a header that declares NO role and never on one that declares them
+  differently**, because Ruling 189(b)'s roles are read FROM the header precisely so
+  the PO may rename, reorder, emphasise or prefix a column. ⭐ **And `corroborate`
+  exits `2` for the same two populations, which is where `PO-40/4` lands: the command
+  used to print Ruling 191(a)'s own sentence and return the PASS code beside it.**
 - ⭐ **The roles are read FROM the header, never from a column position** — ⛔ so
   renaming, reordering, emphasising or prefixing a column cannot blind the
   recogniser, which is Ruling 192's question asked of this rule.
@@ -190,7 +199,12 @@ close**, as `python3 -m tools.quality.board.corroborate`, which
 ⭐ **So `corroborate` has THREE answers, not two** — `0` corroborated, `1`
 refuted, ⛔ **`2` NOT AUTHORITATIVE** (Ruling 53's fourth state), because *"git
 could not answer"* and *"nothing is wrong"* must never arrive as the same
-verdict. ⚠️ **And it prints two readings no board cell carries:** the checkouts
+verdict. ⚠️ **`W111` added the third producer of exit `2` and it is the one
+`PO-40/4` found: *the board is there and I could not read its table*** — ⭐ **a
+DECLARED `<!-- inflight -->` block whose header declares no role, and a board
+carrying no marker at all.** ⛔ **A DECLARED, READABLE, EMPTY block is exit `0` and
+says so in its own sentence: that is *nothing is in flight*, which is a real
+answer, and a refusal there would fire on every wave the PO closed correctly.** ⚠️ **And it prints two readings no board cell carries:** the checkouts
 git can see that no row names, and the `trial/*` and `tmp-*` branches that are
 now ancestors of the release branch — ⭐ **each of which reads as dispatched work
 to a human, which is Ruling 189's subject with nowhere to print it.** ⛔ **A

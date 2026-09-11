@@ -11,14 +11,16 @@ checkout of this repository, at a wave's close. ⛔ **Exit `0` corroborated, `1`
 refuted, and `2` NOT AUTHORITATIVE** — Ruling 53's fourth state, because *"git
 could not answer"* and *"nothing is wrong"* must never arrive as the same answer.
 
-**Depends on.** `board.observation` for the population, `tools.workspace.git` for
-the one definition of *run one git command*, and `argparse`. ⛔ **Nothing in
-`tools.quality.CHECKS` imports this**, and that is the design answer below.
+**Depends on.** `board.observation` for the population, `board.contradiction` for
+the reading it prints, `board.graph` for every git answer, and `argparse`.
+⛔ **Nothing in `tools.quality.CHECKS` imports this**, and that is the design answer
+below.
 
 ## ⛔ May the floor shell out? NO — and the reason is measured, not stylistic
 
-⚠️ **`rows/W96.md` owed this answer before it owed code.** ⭐ **The answer is that
-Ruling 189(b)'s reading belongs on the floor and 189(c)'s cannot:**
+⚠️ **`W96`'s row owed this answer before it owed code** (its argument is now in
+`docs/tasks/BOARD-ARCHIVE.md`). ⭐ **The answer is that Ruling 189(b)'s reading
+belongs on the floor and 189(c)'s cannot:**
 
 - ⛔ **Ruling 80 — a floor check's verdict may not depend on untracked state.**
   ⭐ A branch position is the purest untracked state there is: the same tree reads
@@ -30,11 +32,6 @@ Ruling 189(b)'s reading belongs on the floor and 189(c)'s cannot:**
   and found nothing would return **the PASS reading from an empty population**,
   which is the failure Ruling 191 exists to forbid. ⭐ **Here that is impossible
   by construction: an unanswerable run exits `2`.**
-
-⭐ **And the separation is also `W100`'s.** ⛔ **`W100` is a PURE TREE property and
-may not inherit a git dependency to get built** (`board.md`, ruled round 49) — so
-the predicate and its corroboration are two modules, and the half `W100` needs is
-the half with no `subprocess` in it.
 
 ## ⛔ Ruling 189(d) — the ref comes from the BRANCH, never from the ROW
 
@@ -50,23 +47,44 @@ last command and `rev-parse` echoes an unknown name back at you as if it were an
 answer.** ⭐ **And `--ancestry-path | tail -1` is RECORDED AS WRONG and is not
 reused: it returned a different branch's merge, and the error was caught only
 because both forms were run.**
+
+## ⛔ `W110` — the per-branch verdict is `verdict.py`, and TERMINALITY decides it
+
+⚠️ **The defect it closes:** ⛔ **the verdict was a DISJUNCTION whose first arm was
+`if branch in live:`, so a leaked worktree kept a spent row green.** ⭐ **The shipped
+predicate is Ruling 199's shape `C`, read off the COMMIT GRAPH** — ⛔ **the ruling is
+`docs/conventions/board.md`, `RULED ROUND 51` clause (a), and it is POINTED AT rather
+than paraphrased** (Ruling 195). ⭐ **The measurement, the refuted remedy and
+`PO-40/2`'s comparison are all in `verdict.py`'s own docstring.**
+
+## ⛔ `W111`'s half that lives here — exit `2` for a table that did not READ
+
+⚠️ **`PO-40/4`: this command returned the PASS code `0` for a board whose
+observation table it could not read, while printing Ruling 191(a)'s own sentence
+saying that is not the same answer as nothing being in flight.** ⭐ **So the
+unreadable and unlocated cases now exit `NOT_AUTHORITATIVE`, refusing at the first
+declared block that did not parse**, which is Ruling 196(a)'s third state inhabited
+by a third producer.
 """
 
 from __future__ import annotations
 
 import argparse
 import sys
-from dataclasses import dataclass
 from pathlib import Path
 
+from tools.quality.board.contradiction import observation_reading
+from tools.quality.board.graph import Graph
 from tools.quality.board.observation import (
+    DELIMITED,
+    INFLIGHT_OPEN,
     Observation,
+    Table,
     asserted,
-    observation_reading,
-    observations,
+    read,
 )
 from tools.quality.board.register import BOARD
-from tools.workspace import git
+from tools.quality.board.verdict import Verdict, claim, tokens, verdict
 
 #: The branch every *commits ahead* cell on this board counts against. ⭐ A
 #: default rather than a constant: `--release` overrides it, because a milestone
@@ -89,114 +107,23 @@ REFUTED = 1
 NOT_AUTHORITATIVE = 2
 
 
-@dataclass(frozen=True)
-class Claim:
-    """One row's ASSERTION about its carrier, split by what git could observe.
-
-    ⛔ **`branches`, `checkouts` and `unresolved` partition the cell's tokens by
-    OBSERVATION rather than by naming convention** — ⚠️ a reader cannot tell
-    `wt/dev1` from `feat/SF-15-contents` by shape, and a classifier that guessed
-    from the prefix would have read a renamed worktree as a missing branch.
-    """
-
-    row: Observation
-    branches: tuple[str, ...]
-    checkouts: tuple[str, ...]
-    unresolved: tuple[str, ...]
-
-
-def tokens(cell: str) -> tuple[str, ...]:
-    """Every code-spanned token of a `Checkout` cell, in order, de-duplicated.
-
-    ⛔ The code span is the board's own idiom for a carrier — `` `wt/dev1`,
-    `feat/SF-15-contents` `` — and reading the spans rather than the words is what
-    keeps the surrounding prose out of the population.
-    """
-    found: list[str] = []
-    for piece in cell.split("`")[1::2]:
-        name = piece.strip().strip(",")
-        if name and name not in found:
-            found.append(name)
-    return tuple(found)
-
-
-def branch_exists(root: Path, name: str) -> bool:
-    """Whether `refs/heads/<name>` resolves. ⛔ Its OWN command, never a pipeline."""
-    return git(root, "rev-parse", "--verify", "--quiet", f"refs/heads/{name}").returncode == 0
-
-
-def checkouts(root: Path) -> dict[str, str]:
-    """`{branch: checkout path}` for every live checkout, the MAIN one included.
-
-    ⚠️ A detached checkout has no branch line and is not in this map; it is
-    reported as a checkout nothing names rather than dropped, because *"nobody is
-    on that branch"* and *"that checkout has no branch"* are different answers.
-    """
-    result = git(root, "worktree", "list", "--porcelain")
-    found: dict[str, str] = {}
-    where = ""
-    for line in result.stdout.split("\n"):
-        if line.startswith("worktree "):
-            where = line[len("worktree ") :].strip()
-        elif line.startswith("branch refs/heads/"):
-            found[line[len("branch refs/heads/") :].strip()] = where
-    return found
-
-
-def ahead(root: Path, branch: str, release: str) -> int | None:
-    """Return the commits on `branch` and not on `release`, or `None` if git cannot say."""
-    result = git(root, "rev-list", "--count", f"{release}..{branch}")
-    return int(result.stdout.strip()) if result.returncode == 0 else None
-
-
-def merged(root: Path, branch: str, release: str) -> bool:
-    """Whether `branch` is an ancestor of `release`. ⚠️ Equal counts, as git says."""
-    return git(root, "merge-base", "--is-ancestor", branch, release).returncode == 0
-
-
-def merge_of(root: Path, branch: str, release: str) -> str:
-    """Ruling 189(d) step two: the merge ref derived from the BRANCH.
-
-    ⛔ **The branch, never the row**, and the match is on the merge subject's own
-    `Merge <branch>:` idiom. ⚠️ **A row id is a LOWER BOUND here** — three rows
-    that shared one branch are named in no merge message at all — ⭐ so this reads
-    the thing a merge message is guaranteed to carry: itself.
-    """
-    result = git(root, "log", "--merges", "--first-parent", "--format=%h %s", release)
-    for line in result.stdout.split("\n"):
-        ref, _, subject = line.partition(" ")
-        if branch in subject:
-            return ref
-    return ""
-
-
-def _claim(root: Path, row: Observation) -> Claim:
-    live = checkouts(root)
-    branches, paths, unresolved = [], [], []
-    for name in tokens(row.checkout):
-        if branch_exists(root, name):
-            branches.append(name)
-        elif any(Path(where).name == name or where.endswith(name) for where in live.values()):
-            paths.append(name)
-        else:
-            unresolved.append(name)
-    return Claim(row, tuple(branches), tuple(paths), tuple(unresolved))
-
-
 def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     """Every asserted row against git, as printed steps and one exit code.
 
     ⛔ **The population is printed in full before any verdict** (Ruling 128), and
-    ⚠️ **an EMPTY population is not a pass**: between waves the observation table
-    is empty and `--no-merged` is empty with it, which is exactly when a close run
-    is taken. ⭐ **So the size is printed and the verdict says which case it was.**
+    ⚠️ **an EMPTY population is not automatically a pass**: a board that DECLARED an
+    observation table this instrument could not read exits `NOT_AUTHORITATIVE`, and
+    a board declaring no table at all does too. ⭐ **Only a DECLARED and READABLE
+    block with no rows in it means *nothing is in flight*, and the verdict says
+    which case it was** (`W111`, `PO-40/4`).
     """
     board = root / BOARD
     if not board.is_file():
         return [f"corroborate: no {BOARD} in this checkout — nothing to corroborate."], (
             NOT_AUTHORITATIVE
         )
-    if git(root, "rev-parse", "--verify", "--quiet", f"refs/heads/{release}").returncode != 0:
+    graph = Graph.read(root, release)
+    if not graph.exists(release):
         return [
             f"corroborate: NOT AUTHORITATIVE — no branch {release!r} in this checkout, so "
             f"every *commits ahead* cell on this board counts against nothing. ⛔ This is "
@@ -204,68 +131,87 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
         ], NOT_AUTHORITATIVE
 
     text = board.read_text(encoding="utf-8")
-    rows = observations(text)
-    live = checkouts(root)
+    table = read(text)
+    live = graph.checkouts()
     lines = [
-        f"corroborate: release {release}, {len(rows)} observation rows, "
+        f"corroborate: release {release}, {len(table.rows)} observation rows, "
         f"{len(live)} checkouts on a branch, {len(asserted(text))} started register cells.",
         observation_reading(text),
     ]
+    refused = _refusal(table)
+    if refused is not None:
+        return [*lines, refused], NOT_AUTHORITATIVE
+
     refuted = 0
-    for row in rows:
-        claim = _claim(root, row)
+    for row in table.rows:
+        asserted_by = claim(row, graph, live)
         lines.append(
             f"  row -> branch (ASSERTION, Ruling 189(c)): {row.subject} claims "
             f"{', '.join(tokens(row.checkout)) or 'nothing'} — branches "
-            f"{list(claim.branches)}, checkouts {list(claim.checkouts)}, "
-            f"unresolved {list(claim.unresolved)}"
+            f"{list(asserted_by.branches)}, checkouts {list(asserted_by.checkouts)}, "
+            f"unresolved {list(asserted_by.unresolved)}"
         )
         if not row.started:
             lines.append("    not a started state; no carrier is owed.")
             continue
-        verdicts = [_verdict(root, claim, branch, release, live) for branch in claim.branches]
-        if not claim.branches:
-            verdicts = [
-                "    ⛔ REFUTED: the row names no branch this checkout has. An assertion owes "
-                "its own observation (Ruling 189(c))."
-            ]
-        lines.extend(verdicts)
-        if any("REFUTED" in verdict for verdict in verdicts):
+        verdicts = [
+            verdict(asserted_by, branch, graph, live) for branch in asserted_by.branches
+        ] or [
+            Verdict(
+                True,
+                (
+                    "    ⛔ REFUTED: the row names no branch this checkout has. An assertion "
+                    "owes its own observation (Ruling 189(c)).",
+                ),
+            )
+        ]
+        for answer in verdicts:
+            lines.extend(answer.lines)
+        if any(answer.refuted for answer in verdicts):
             refuted += 1
-    lines.extend(_unnamed(rows, live, root, release))
-    lines.extend(_spent(root, release, live))
+    lines.extend(_unnamed(table.rows, live, graph))
+    lines.extend(_spent(graph, live))
     lines.append(
-        f"corroborate: {refuted} of {len(rows)} rows REFUTED by git."
-        if rows
-        else "corroborate: ⚠️ the observation table is EMPTY — nothing was read, which is not "
-        "the same answer as nothing being in flight (Ruling 191(a))."
+        f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git."
+        if table.rows
+        else f"corroborate: the {INFLIGHT_OPEN} block is DECLARED, READ, and carries no row — "
+        f"⭐ that is *nothing is in flight*, which is a real answer and not an empty "
+        f"population (Ruling 191(a), and `W111` is why the two can now be told apart)."
     )
     return lines, REFUTED if refuted else CORROBORATED
 
 
-def _verdict(root: Path, claim: Claim, branch: str, release: str, live: dict[str, str]) -> str:
-    """One branch's observation, with the merge ref derived from the branch."""
-    count = ahead(root, branch, release)
-    if branch in live:
+def _refusal(table: Table) -> str | None:
+    """`W111`: the sentence for a table that did not READ, or `None` when it did.
+
+    ⛔ **Refuses at the FIRST declared block that did not parse** (`rows/W111.md`),
+    and treats *no table located at all* the same way — ⚠️ **because the board's
+    contract has carried the `<!-- inflight -->` markers since the PO's round-40
+    edit, so their total absence is this instrument failing to read THIS board
+    rather than a board that has nothing to say.**
+    """
+    if table.unreadable:
         return (
-            f"    ⭐ CORROBORATED: {branch} is checked out at {Path(live[branch]).name} "
-            f"and is {count} commits ahead."
+            f"corroborate: NOT AUTHORITATIVE — the board DECLARES an observation table at "
+            f"line {table.unreadable[0]} and no table inside it declares the observation "
+            f"columns. ⛔ Exit {NOT_AUTHORITATIVE}, not {CORROBORATED}: a DECLARED block that "
+            f"did not read is *I could not answer*, and this command used to return the PASS "
+            f"code for it while printing Ruling 191(a)'s own sentence (`PO-40/4`, `W111`). "
+            f"⭐ The floor says the same thing as `board-unreadable`."
         )
-    if count:
-        return f"    ⭐ CORROBORATED: {branch} is {count} commits ahead of {release}."
-    if merged(root, branch, release):
-        where = merge_of(root, branch, release) or "(no merge message names the branch)"
+    if table.locator != DELIMITED:
         return (
-            f"    ⛔ REFUTED: {branch} is MERGED at {where}, is 0 ahead, and no checkout holds "
-            f"it. ⚠️ Every git instrument reads correctly here — that is the 350-commit case."
+            f"corroborate: NOT AUTHORITATIVE — no {INFLIGHT_OPEN} block on this board, so the "
+            f"population was located by the Ruling 196(b) header RAMP and read "
+            f"{len(table.rows)} rows. ⛔ Exit {NOT_AUTHORITATIVE}: the markers are this "
+            f"board's contract (`board.md`, ruled round 50), so their absence is this "
+            f"instrument failing to read THIS board — ⚠️ which is not the same answer as "
+            f"nothing being in flight (Ruling 191(a))."
         )
-    return (
-        f"    ⛔ REFUTED: {branch} exists, is 0 ahead of {release}, and no checkout holds it. "
-        f"⚠️ A branch with no commit is invisible to `--no-merged` BY CONSTRUCTION (Ruling 130)."
-    )
+    return None
 
 
-def _unnamed(rows: list[Observation], live: dict[str, str], root: Path, release: str) -> list[str]:
+def _unnamed(rows: tuple[Observation, ...], live: dict[str, str], graph: Graph) -> list[str]:
     """Report the other direction: work git can see that the board does not name.
 
     ⛔ **The measured failure was BIDIRECTIONAL** — stale rows present and live
@@ -283,7 +229,7 @@ def _unnamed(rows: list[Observation], live: dict[str, str], root: Path, release:
     in absolute paths, and an absolute path carries the user's home directory.
     """
     claimed = {name for row in rows for name in tokens(row.checkout)}
-    counts = {branch: ahead(root, branch, release) or 0 for branch in live if branch != release}
+    counts = {branch: graph.ahead(branch) or 0 for branch in live if branch != graph.release}
     missing = sorted(b for b, n in counts.items() if n > 0 and b not in claimed)
     blind = sorted(Path(live[b]).name for b, n in counts.items() if n == 0 and b not in claimed)
     lines = (
@@ -298,20 +244,33 @@ def _unnamed(rows: list[Observation], live: dict[str, str], root: Path, release:
     return lines
 
 
-def _spent(root: Path, release: str, live: dict[str, str]) -> list[str]:
-    """`trial/*` and `tmp-*` branches that are now ancestors of the release branch."""
-    result = git(root, "for-each-ref", "--format=%(refname:short)", "refs/heads")
-    spent = sorted(
-        name
-        for name in result.stdout.split()
-        if name.startswith(SPENT) and name not in live and merged(root, name, release)
+def _spent(graph: Graph, live: dict[str, str]) -> list[str]:
+    """`trial/*` and `tmp-*` branches that are now ancestors of the release branch.
+
+    ⚠️ **Ruling 206(ii) named this line's own blind spot and routed it here:** a
+    trial worktree that is STILL CHECKED OUT is excluded by `name not in live`, so
+    the one shape that keeps a spent row green is the one shape this line cannot
+    print. ⭐ **It is printed now, separately and as a NOTICE**, because removing a
+    worktree you did not cut is always wrong and reporting one never is.
+    """
+    names = [name for name in graph.heads() if name.startswith(SPENT)]
+    spent = sorted(name for name in names if name not in live and graph.merged(name))
+    standing = sorted(name for name in names if name in live)
+    lines = (
+        [
+            f"  ⚠️ spent and deletable ({len(spent)}): {' '.join(spent)} — each is an ancestor "
+            f"of {graph.release}, checked out nowhere, and reads as dispatched work to a human."
+        ]
+        if spent
+        else ["  spent trial/tmp branches: none."]
     )
-    if not spent:
-        return ["  spent trial/tmp branches: none."]
-    return [
-        f"  ⚠️ spent and deletable ({len(spent)}): {' '.join(spent)} — each is an ancestor of "
-        f"{release}, checked out nowhere, and reads as dispatched work to a human."
-    ]
+    lines.append(
+        f"  ⚠️ trial/tmp branches STILL CHECKED OUT ({len(standing)}): {' '.join(standing)} — "
+        f"⛔ report, never remove one you did not cut (Ruling 206(ii))."
+        if standing
+        else "  trial/tmp branches still checked out: none."
+    )
+    return lines
 
 
 def main(argv: list[str] | None = None) -> int:
