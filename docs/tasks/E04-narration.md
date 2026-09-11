@@ -29,6 +29,44 @@ is fixed" as the argument against digests. That is the argument *for* them** —
 the rename is the mechanism. What it correctly protected was the *id*, and the
 id is still positional. Both hold, and the filename carries both.
 
+#### ⭐ `Q23`, ASKED BY PO-INTEGRATION AND RULED — **how is a clip keyed when 17 units share one source file?**
+
+⛔ **Neither half of the key comes from the source path.** ⭐ **The speech id comes
+from the unit's LOGICAL ADDRESS (`SF-01`) and the digest from the SPOKEN TEXT**, so
+seventeen units sharing one `origin.path` key to seventeen distinct clips **by
+construction**, with no corpus knowledge anywhere (R1).
+
+⚠️ **The question arrived because `F21`'s ruling gave one integration's fourth
+container `origin {path, section}`, and a reader could take `path` for the key.**
+⛔ **`origin` is PROVENANCE, and provenance is never identity.** ⭐ **The
+distinction was already carried by the two bullets above — *an id is positional* —
+and this clause is the answer stated against the question so the next reader does
+not have to re-derive it from a naming contract.**
+
+⭐ **Registered and answered before its deadline task shipped, which is the whole
+point of the deadline mechanism:** `delivery-flow.md` — a question that arrives
+AFTER its deadline task has shipped has become a finding, and the cost is a schema
+change under R9 rather than a schema decision.
+
+#### ⛔ RULING 187 (CTO round 48) — *asserted in both directions* proves SURJECTIVITY, not INJECTIVITY, and `SF-17` cannot catch a clip collision
+
+⛔ **`SF-17`'s *"every `<audio>` source resolves to a file on disk, and every file
+on disk is named by a page — asserted in both directions"* CANNOT detect a
+collision.** ⚠️ **Seventeen clips colliding onto one filename means every `<audio>`
+still resolves AND every file is still named by a page** — ⭐ **both stated
+directions pass, the suite stays green, and sixteen units play the wrong audio.**
+
+⭐ **THE OWED ASSERTION, and it is `SF-16`'s because the minter is `SF-16`'s:**
+⛔ **`|clips| == |spoken units|`** — a cardinality equality, which is the only form
+that states injectivity — **plus `SF-16`'s negative: two spoken units that differ
+only in `origin.section` mint DIFFERENT names.** ⚠️ **Owed before `SF-16` ships,
+NOT before `SF-17`**, because by `SF-17` the collision has already happened and
+the assertion that would have caught it is the minter's.
+
+⛔ **It is the sixth appearance of this family — the right property over the wrong
+RELATION** (`CTO-45/1`, `CTO-46/1`, Ruling 182, Ruling 185, Ruling 186, this), and
+that is why it is a ruling rather than one more acceptance clause.
+
 **Display and speech legitimately differ.** A URL is dropped, an identifier is
 respaced, a twenty-line method becomes one caption sentence. Because alignment
 is at speech-unit granularity rather than word level, that difference never has

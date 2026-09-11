@@ -109,7 +109,7 @@ they have exactly one home each.
 | W13 | Two copies of the personal-data gate that already disagree | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w13-two-copies-of-the-personal-data-gate-that-already-disagree) |
 | W14 | The two missing invalid fixtures on `FND-04`'s surface, and they are one task | Developer 1 | ✅ done — `ac4ed55` | [record](BOARD-ARCHIVE.md#w14-the-two-missing-invalid-fixtures-on-fnd-04s-surface-and-they-are-one-task) |
 | W15 | Tooling wrote to a source repository's root ignore file | PO → OPS-05, SK-07 | `todo` — before any adapter runs against a real source | [`rows/W15.md`](rows/W15.md) |
-| W16 | The spec's canonical examples are hand-maintained copies of contracts the code owns | PO / Developer 2 | in-progress — spec text landed; the asserting test is owed | [`rows/W16.md`](rows/W16.md) |
+| W16 | The spec's canonical examples are hand-maintained copies of contracts the code owns | PO / Developer 2 | `todo` — the spec half landed; the two one-way checks are unassigned | [`rows/W16.md`](rows/W16.md) |
 | W17 + W19 | One spelling of *describe a value without reproducing it*, and the remaining `{value!r}` sites | Developer 2 | `todo` — after `FND-07` | [`rows/W17.md`](rows/W17.md) |
 | W18 | `user` + `authoritative` is accepted, so a reader's grader may declare itself the source's own | Developer 1 | ✅ done — `ac4ed55` | [record](BOARD-ARCHIVE.md#w18-user-authoritative-is-accepted-so-a-readers-grader-may-declare-itself-the-sources-own) |
 | W20 | The repository-wide §7c check, and its migration in the same commit | Developer 2 | ✅ done | [record](BOARD-ARCHIVE.md#w20-the-repository-wide-7c-check-and-its-migration-in-the-same-commit) |
@@ -179,15 +179,17 @@ they have exactly one home each.
 | W84 | `SK-01`'s consumer-corpus Acceptance clause, answered by Ruling 166 | PO | ✅ done — Ruling 166, `911c56f` | [record](BOARD-ARCHIVE.md#w84-sk-01s-consumer-corpus-acceptance-clause-answered-by-ruling-166) |
 | W85 | The board instrument's six carries — Rulings 182 and 183, and `CTO-47/3`, `/4`, `/5` | Developer 2 | in flight — `fix/board-instrument` | [`rows/W85.md`](rows/W85.md) |
 | W86 | Ruling 184's two clauses into check 3, and the 74 frozen lines `W85` is what unfreezes | Developer 2 | in flight, behind `W85` | [`rows/W86.md`](rows/W86.md) |
-| W87 | `board_state` prints the THINNEST argument, and the residue subtracts the frame | Developer 2 | in flight, with `W85` | [`rows/W87.md`](rows/W87.md) |
+| W87 | `board_state`'s notice prints the row files whose argument IS their own naming cell | Developer 2 | in-review, with `W85` | [`rows/W87.md`](rows/W87.md) |
 | W88 | The thin row files gain an ANCHORED pointer, and four lose a dangling deictic | PO | `todo` — behind `W91` | [`rows/W88.md`](rows/W88.md) |
 | W89 | An R7 gate's false positive on ordinary source, narrowed in the gate and not in the source | framework agent | `todo` — Ruling 179 | [`rows/W89.md`](rows/W89.md) |
 | W90 | The root index can link no container page, and it is a `toc_api` question | PO | `todo` — owed by M4 | [`rows/W90.md`](rows/W90.md) |
 | W91 | The rulings index stops at 56, and rulings run to 186 | PO | `todo` — gates `W88` | [`rows/W91.md`](rows/W91.md) |
 | W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | `todo` | [`rows/W92.md`](rows/W92.md) |
 | W93 | *Point the skill at a corpus* is not performable — no corpus-shaped input on the surface | framework agent | `todo` | [`rows/W93.md`](rows/W93.md) |
-| W94 | A gate refusal reports one violation where three exist, and names no task | framework agent | `todo` — Ruling 152's class | [`rows/W94.md`](rows/W94.md) |
+| W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | `todo` — Ruling 188 | [`rows/W94.md`](rows/W94.md) |
 | W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | `todo` — before `SF-16` | [`rows/W95.md`](rows/W95.md) |
+| W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | `todo` | [`rows/W96.md`](rows/W96.md) |
+| W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

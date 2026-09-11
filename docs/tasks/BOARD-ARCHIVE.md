@@ -10187,3 +10187,189 @@ themselves, `CTO-48/2` → Ruling 186 → `W87`+`W88`, `CTO-48/3` → `W91`,
 above.** ⚠️ **The 23 pre-marker findings remain invisible to the sweep BY
 CONSTRUCTION, and their row is frozen; that is named above rather than left to
 the next sweep to rediscover for the fourth time.**
+
+---
+
+### ⛔ ROUND 37 FOLLOW-UP — three rows sat `in flight` for 350 commits, `Q23` is ANSWERED, and Rulings 187 and 188 get ids
+
+⭐ **Appended after the round's first record rather than edited into it, because the
+first record is a record.** ⛔ **Everything here was re-taken in the PO worktree at
+`cae114e`, and where a reading is `RECEIVED` it says so and from whom** (Ruling 115).
+
+#### ⛔ THE IN-FLIGHT TABLE WAS NOT STALE — IT WAS WRONG IN A DIRECTION NO GIT INSTRUMENT CAN SEE
+
+⭐ **The close I ran had already closed all three, and the independent confirmation
+arrived afterwards and agrees to the ref.** ⛔ **What it adds is the AGE:**
+
+```text
+fix/W14-W18                tip 1d6e86f   ahead 0   behind 350   merged ac4ed55
+fix/W27-r7-no-translation  tip 655b527   ahead 0   behind 295   merged 5c6c883
+```
+
+⚠️ **RE-TAKEN BY ME with the DIRECT form, because the proxy form is recorded as
+wrong:** `git log --merges --first-parent --ancestry-path ^<tip>~1 | tail -1`
+returns `efbe4a6`, **the merge of a DIFFERENT branch** (`fix/W19-provenance-pin`).
+⭐ **`git log --merges --first-parent --format='%h %s' release/m0-foundations |
+grep -iE 'W14|W18|W27'` returns the right two and nothing else.** ⛔ **A reading
+from a proxy quoted as a property of the thing, caught only because both were
+run** — ⚠️ **and the direct form depends on the merge message naming the row,
+which the verdict convention guarantees and `CTO-47/7`'s 23-commit pre-clause tail
+does not.**
+
+⭐ **AND THE ARTIFACT-LEVEL CONFIRMATION, which is what makes it a disposition
+rather than a branch-position argument.** `rows/W14.md`'s argument named exactly
+two fixtures; both are in the tree, added in one commit at the tip that merged:
+
+```text
+tests/fixtures/invalid/count-mismatch       added 1d6e86f  2026-09-09
+tests/fixtures/invalid/user-authoritative   added 1d6e86f  2026-09-09
+   the other five invalid fixtures all predate it
+```
+
+⛔ **`PO-37/6` `[structural]` — EVERY INSTRUMENT WAS RIGHT AND THE BOARD WAS
+WRONG.** ⚠️ **`worktree list` saw no checkout — TRUE, the work had finished.
+`--no-merged` saw nothing — TRUE, it was merged. And the board's own table printed
+`Checkout: none`, which IS the tell, and it was printed and never read for six
+rounds.** ⭐ **Ruling 171 ruled the OPPOSITE direction and concluded the board is
+the only TOTAL instrument; this is the inverse case and it is worse, because the
+board is the only instrument that can be wrong this way — it ASSERTS in-flight
+rather than OBSERVING it.** ⛔ **Rowed as `W96`, with the predicate closed and its
+population INHABITED before the predicate was written.**
+
+⚠️ **`delivery-flow.md` says `W14` and `W18` *"evaporated because a trigger that
+names a task is only as good as somebody re-reading the board when that task
+ends"*.** ⛔ **They did not evaporate. They FINISHED, and the board never
+noticed** — ⭐ **and `W96` carries the correction to that sentence, because it
+names the wrong mechanism for the thing it is the record of.**
+
+#### ⭐ `W16` — RE-TAKEN, and its cell is CORRECTED
+
+⛔ **`W16` was the only remaining non-`todo`, non-`done` cell and it read
+`in-progress`.** ⭐ **That declares a state legally, so it is not a `board-state`
+finding — ⚠️ but it is precisely the shape that hid three rows for 350 commits: a
+started state with no checkout and no merge ref.** ⛔ **Re-taken rather than
+inherited:**
+
+```text
+git branch --list '*W16*'                          ->  0
+git worktree list | grep -i w16                    ->  0
+a test asserting the spec's canonical examples      ->  none in tests/ or tools/tests/
+```
+
+⭐ **So the SPEC half landed (the row's own argument says so, and §4 carries *The
+complete key list*) and the remaining half — the two one-way checks, subset and
+coverage — has no author, no branch and no checkout.** ⛔ **`in-progress` →
+`todo`, because a row whose started half has landed and whose remainder is
+unassigned is `todo` on the remainder.** ⚠️ **This is `W96`'s predicate finding its
+first live instance BY HAND, in the round that minted it — which is Ruling 48's
+inhabitation requirement met rather than promised.**
+
+⭐ **AND `in-progress` IS THEREFORE IN `W96`'S POPULATION.** ⛔ **It was nearly left
+out, and leaving it out would have been the defect the row exists to close: a
+closed set with a hole in it.** ⭐ **Three words admitted — `in flight`,
+`in-progress`, `in-review`, the three that mean *started and not finished*; five
+excluded with reasons** — `todo` (not started), `done` (carries a merge ref
+instead), `accepted` and `routed` (terminal), `blocked` (owes a named unblocking
+condition, which IS its carrier).
+
+#### ⛔ RULING 186'S NARROWING — and `W87` was minted from the form the CTO ABANDONED
+
+⚠️ **`W87` was minted as *"the thinnest argument, residue taken by subtracting the
+frame"*.** ⛔ **That form is abandoned and the row file is REPLACED, because a
+developer opens the row file and a stale copy beside a correction is the defect
+`ARCH/9.2` names.**
+
+⭐ **The narrowed predicate: a row file whose ENTIRE argument, normalised, EQUALS
+its own register naming cell** — ⛔ **carrying the one thing the frame sentence
+inside it forbids, and `board-frame` passes every one because `startswith` and
+`in` cannot read a CONTRADICTION.**
+
+```text
+MEASURED, CTO, 50 row files x 78 naming cells  ->  7   W60 W63 W64 W66 W67 W72 W73
+    23 legitimately EXTEND the naming; 20 unrelated
+RE-TAKEN, PO,  62 row files x 93 naming cells  ->  6   W60 W63 W64 W66 W67 W72
+    W73 DROPPED OUT — round 37 REPLACED its naming cell
+```
+
+⭐ **THE DROP-OUT IS THE CONFIRMATION AND NOT A DISCREPANCY: one edit, made for an
+unrelated reason, retired a member of the class** — ⛔ **which is the strongest
+available evidence that the predicate measures the right thing, because it moved
+for the right reason.**
+
+⛔ **`PO-37/1` IS THEREFORE RESOLVED RATHER THAN SETTLED, and the resolution is
+the CTO's sentence: *the 16-vs-19 disagreement is RETIRED, because both numbers
+answered a question that should not have been asked.*** ⭐ **The four answers were
+never rivals — they are three properties and two of them are rows:**
+
+| number | the property | whose row |
+|---|---|---|
+| **7** (now 6) | the argument IS the naming — a CONTRADICTION | ⭐ **`W87`**, as a notice |
+| **20** | the argument has no ADDRESS | ⭐ **`W88`**, as pointers |
+| 16 / 19 | a byte threshold over the FILE | ⛔ **neither — the frame overhead is 224–346 bytes, so it measured the boilerplate** |
+
+⚠️ **And a fourth instrument answering a fourth way IS `PO-37/1` recurring inside
+its own remedy**, recorded because that is the shape this project keeps meeting:
+⛔ **the right number over the wrong span.**
+
+#### ⭐ `PO-37/3` RE-MARKED `[structural]`, and the RULING is the CTO's
+
+⛔ **I marked it `[local]` and that is upgraded on an argument I accept:** ⭐ **a
+control drawn from a population that turns out to be EMPTY returns the PASS
+reading and looks like a pass.** ⚠️ **That is Ruling 48's vacuity problem arriving
+in a CONTROL rather than in an assertion, and nothing in R1–R188 says a control
+owes an inhabitation check.** ⛔ **I am not minting a row for it: the candidate
+clause is routed to the CTO, because a clause binding every instrument in the
+project is theirs to rule and mine to obey.** ⭐ **The instance is this round's
+own: two ancestry controls were vacuous over 109 branches before a synthesised
+dangling commit gave the reading.**
+
+#### ⭐ `Q23` — ANSWERED, and it did not wait for its deadline task
+
+> ⛔ **A clip is keyed `<speech-id>-<digest>`: the speech id from the unit's
+> LOGICAL ADDRESS (`SF-01`), the digest from the SPOKEN TEXT.** ⭐ **Neither half
+> from the source path.**
+
+⛔ **`origin {path, section}` is PROVENANCE, and provenance is never identity** —
+⭐ **so seventeen units sharing one `path` key to seventeen clips BY
+CONSTRUCTION, with no corpus knowledge anywhere (R1).** ⚠️ **The framework half
+was already half-written — `E04:63` gives `SF-16` the minter and `E04:186` the
+form — ⛔ and *already written* is not *already answered*: the question was
+answerable from a naming contract and nobody had answered it against the
+question.** ⭐ **Carried into `docs/tasks/E04-narration.md` beside the naming
+contract, as the answer to a registered question.**
+
+⭐ **`W95` SURVIVES AND IS NOW FREE TO DISPATCH.** ⛔ **The fixture gap is not
+discharged by the ruling: `tests/fixtures/` still has no corpus in which two units
+share one source file, so the answer cannot be exercised here at all.** ⚠️ **AND
+THE GATE IT WAS BELIEVED TO HAVE IS GONE: the fixture surface was thought to be
+held by `W14`, which is `done` at `ac4ed55` — ⭐ so there is no collision and no
+check-4 shared-file sum to run, and `W95` can go to the next free developer
+immediately.**
+
+#### ⛔ RULINGS 187 AND 188 — ids minted, and neither has a tree artifact yet
+
+| ruling | id | ⛔ **the clause** |
+|---|---|---|
+| **187** | ⭐ **`W97`** | ⛔ ***Asserted in both directions* proves SURJECTIVITY, not INJECTIVITY.** ⚠️ **`SF-17`'s bidirectional `<audio>` assertion cannot catch a collision: 17 clips colliding onto one filename means every `<audio>` resolves AND every file is named by a page — both directions pass, the suite stays green, 16 units play the wrong audio.** ⭐ **Owed: `\|clips\| == \|spoken units\|` plus `SF-16`'s negative, and owed before `SF-16` ships, NOT before `SF-17`** |
+| **188** | ⭐ **`W94`, RE-SCOPED rather than a new id** | ⛔ **Ruling 128 binds the SHIPPED GATE, not only the reviewer's instrument: a refusal names its WHOLE POPULATION, never its first witness.** ⚠️ **`F30` re-marked `[structural]` on a population: 6 loop-internal first-witness refusals (`skills/delivery/backlog.py:163/176/181`, `capability.py:193/230`×2) against 55 correct ones, with 7 sites in the same package ALREADY using the collect-then-enumerate form** — ⛔ **so fixing the one the integrator hit leaves five.** ⭐ **A first-witness refusal makes the ITERATION COUNT OF FIXING UNKNOWABLE** |
+
+⭐ **Ruling 187's clause is CARRIED into `E04` in this commit; the ASSERTION is
+`W97`'s, because a row discharged by prose nobody can fail is not a row.**
+⛔ **Neither ruling has a tree artifact yet and the CTO recorded that deliberately,
+so Ruling 168's carry check reads the false empty as EXPECTED rather than
+discovered** — ⚠️ **`SF-16` is M3 and unstarted.**
+
+⛔ **RULINGS 185 AND 186 ARE DISCHARGED and neither is a PO row** — ⭐ **185's
+artifact is the rubric and the CTO landed it; 186's is `board_state` and it is
+`W87`.**
+
+#### ⭐ `F31` AND `F32` — both UPHELD with the CTO's own measurements, and `W75` is the row that widens
+
+| finding | ⛔ **the decisive reading** |
+|---|---|
+| `F32` | ⛔ **`PYTHONPATH` occurs **0** times in every shipped `SKILL.md` and **0** times in `docs/conventions/`** — it lives only in handoff RECORDS, which R20 and every brief forbid a consumer from citing — ⚠️ **while `SKILL.md:8` asserts *"It runs in the target repository."*** ⭐ **So it is NOT a documentation gap: it is an INSTRUCTION NAMING A HOST THAT CANNOT SATISFY IT, and its one artifact is producible only in the framework worktree — the single host §12 says must not be the test.** ⛔ **`W75` is the row that widens, and `W75` was itself one of the thin files: it now carries its mint anchor and this widening** |
+| `F31` | ⛔ **The index has exactly FOUR columns — `capability \| what it is \| area \| waits on` — and none distinguishes framework from integration.** ⭐ **`W92`, and the remedy is a fifth column with a CLOSED vocabulary or a stated scope limit — a narrowed population, never a widened predicate** (Ruling 185) |
+
+⚠️ **`W50` and `W55` are STRENGTHENED by `F32` and are NOT re-scoped this round.**
+⛔ **That is a NAMED DEFERRAL: the CTO named `W75` as the row to widen, and
+widening three rows for one finding is the duplication `W53` exists to end.**
