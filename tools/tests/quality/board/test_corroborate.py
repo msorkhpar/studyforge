@@ -446,6 +446,7 @@ def test_a_row_REFUTED_and_a_row_UNANSWERABLE_in_ONE_BOARD_exits_2_and_not_1(
     assert "1 of 2 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
     assert "REFUTED: fix/Wmerged is TERMINAL" in printed, "⭐ the refutation is still PRINTED"
 
+
 # --------------------------------------------------------------------------
 # ⛔ `PO-46/14` — the TWO ROW VERDICTS the exit code folds are NAMED, even when EMPTY
 # --------------------------------------------------------------------------
