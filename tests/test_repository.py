@@ -21,7 +21,7 @@ from tests.support import (
     repository_root,
     run,
     tool_on_path,
-    tracked_python_files,
+    tracked_files,
 )
 
 
@@ -125,22 +125,30 @@ def test_the_same_shapes_outside_the_fixtures_are_still_ignored():
 SCOPED = ("--force-exclude", "--")
 
 
-def lint_population() -> list[str]:
-    """The files a committed lint verdict is taken over: what git tracks.
+#: ⛔ **`ruff check`'s subject, and ONLY its subject.** ⚠️ MEASURED in the pinned
+#: image: `ruff check` over the whole tracked set yields **9046 errors**, because
+#: it reads a document AS Python. ⭐ Narrowing a committed verdict to what git
+#: tracks is right; narrowing it to the wrong tracked THINGS is a second defect
+#: of the same class, so each gate names its own population here.
+LINT_POPULATION = ("*.py",)
 
-    ⛔ **Not `.`** (`W142`, and Ruling 80's own clause — *a floor check's verdict
-    may not depend on untracked state*). ⭐ `ruff check .` walks the **disk**, so
-    an untracked scratch module at the repository root turns a CORRECT tree red:
-    measured by two offices, and it failed **three innocent branches** in one
-    wave under a reviewer who had measured the defect that same hour.
-
-    ⚠️ **The working-tree reading is not deleted, it is demoted** (Ruling 183's
-    standing form). `tools/quality/lint.py`'s lint **notice** still walks the
-    disk, still names the scratch file's finding count and rule codes, and by
-    Rulings 77 and 78 can never fail a build. ⭐ So a reviewer still learns their
-    scratch file is dirty — as a notice, and not as three branches failing.
-    """
-    return tracked_python_files()
+#: ⛔ **`ruff format`'s subject is WIDER, and this is `CTO-64/1`.**
+#: `pyproject.toml` sets `docstring-code-format = true`, so ruff 0.16.6 formats
+#: the python blocks inside markdown as well as `.py` files — and **29 tracked
+#: `.md` carry a python fence**, so the subject is live rather than theoretical.
+#:
+#: ⚠️ **MEASURED at `a04e590`, pinned image, three populations:** the disk form
+#: `ruff format --check .` reports **876 files**; this population reports **876**;
+#: `*.py` alone reports **532**. ⭐ **The disk form and the tracked form name the
+#: SAME subjects** — so there is no trade-off here, and a `*.py`-only format gate
+#: simply DROPS 344 files and goes blind to every python block in every document.
+#:
+#: ⛔ **Both arms were planted** (Ruling 191): a mis-formatted python block in a
+#: tracked `.md` makes the disk form and this population exit `1` and the
+#: `*.py`-only form exit `0` — it MISSES; mis-formatting a `.py` as well makes the
+#: `*.py`-only form exit `1`, which is the control proving it is blind to
+#: markdown specifically rather than blind in general.
+FORMAT_POPULATION = ("*.py", "*.md")
 
 
 def test_ruff_lint_is_clean_where_ruff_exists():
@@ -148,19 +156,78 @@ def test_ruff_lint_is_clean_where_ruff_exists():
     # network install is assumed, so this skips with a message that names the
     # extra rather than passing quietly. Where ruff is present — FND-03's
     # image is the obvious place — it runs for real.
+    #
+    # ⛔ **Over what git TRACKS, never `.`** (`W142`, and Ruling 80's own clause —
+    # *a floor check's verdict may not depend on untracked state*). `ruff check .`
+    # walks the DISK, so an untracked scratch module at the repository root turns
+    # a CORRECT tree red: measured by two offices, and it failed three innocent
+    # branches in one wave under a reviewer who had measured it that same hour.
+    #
+    # ⚠️ **The working-tree reading is not deleted, it is demoted** (Ruling 183's
+    # standing form): `tools/quality/lint.py`'s NOTICE still walks the disk, still
+    # names the scratch file's findings, and by Rulings 77 and 78 can never fail a
+    # build. ⭐ A reviewer still learns their scratch file is dirty — as a notice,
+    # and not as three branches failing.
     ruff = tool_on_path("ruff")
     if ruff is None:
         pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
-    result = run([ruff, "check", *SCOPED, *lint_population()], cwd=repository_root())
+    result = run([ruff, "check", *SCOPED, *tracked_files(LINT_POPULATION)], cwd=repository_root())
     assert result.returncode == 0, result.stdout + result.stderr
 
 
 def test_ruff_format_is_clean_where_ruff_exists():
+    # ⛔ **`FORMAT_POPULATION`, not `LINT_POPULATION`** — see that constant for the
+    # measurement. The two gates ask different questions and take different
+    # subjects; sharing one population is how the wider gate silently narrows.
     ruff = tool_on_path("ruff")
     if ruff is None:
         pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
-    result = run([ruff, "format", "--check", *SCOPED, *lint_population()], cwd=repository_root())
+    result = run(
+        [ruff, "format", "--check", *SCOPED, *tracked_files(FORMAT_POPULATION)],
+        cwd=repository_root(),
+    )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_the_format_population_covers_python_blocks_in_documents(tmp_path):
+    # ⛔ **`CTO-64/1`, made permanent** (R12). The measurement that produced
+    # `FORMAT_POPULATION` lives in a reviewer's terminal and in a constant's
+    # comment; this is the part that goes red if someone narrows the gate again.
+    #
+    # ⭐ **It asserts the CAUSE and the EFFECT, in that order.** The cause is this
+    # repository's own declaration — without `docstring-code-format` the wider
+    # population would be pointless — and the effect is measured with the real
+    # tool in a throwaway repository that declares the same thing.
+    assert pyproject()["tool"]["ruff"]["format"]["docstring-code-format"] is True
+    ruff = tool_on_path("ruff")
+    if ruff is None:
+        pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
+    repository = init_repository(tmp_path / "repository")
+    (repository / "pyproject.toml").write_text(
+        "[tool.ruff.format]\ndocstring-code-format = true\n", encoding="utf-8"
+    )
+    (repository / "clean.py").write_text("VALUE = 1\n", encoding="utf-8")
+    # A python block a formatter would rewrite, inside a document.
+    (repository / "doc.md").write_text("```python\nx=1\n```\n", encoding="utf-8")
+    assert (
+        run([git(), "add", "pyproject.toml", "clean.py", "doc.md"], cwd=repository).returncode == 0
+    )
+
+    narrow = run(
+        [ruff, "format", "--check", *SCOPED, *tracked_files(LINT_POPULATION, repository)],
+        cwd=repository,
+    )
+    assert narrow.returncode == 0, (
+        "the *.py-only population stopped being blind to markdown, so this test "
+        "no longer inhabits the defect it exists to refuse"
+    )
+    wide = run(
+        [ruff, "format", "--check", *SCOPED, *tracked_files(FORMAT_POPULATION, repository)],
+        cwd=repository,
+    )
+    assert wide.returncode == 1, (
+        "the format population no longer sees a python block in a document: " + wide.stdout
+    )
 
 
 def test_the_lint_verdict_is_taken_over_tracked_content_in_both_directions(tmp_path):
@@ -183,8 +250,12 @@ def test_the_lint_verdict_is_taken_over_tracked_content_in_both_directions(tmp_p
     # accident in one checkout and planted deliberately in another.
     (repository / "scratch_probe.py").write_text("import json\n", encoding="utf-8")
 
-    assert tracked_python_files(repository) == ["tracked.py"], "the plant is not untracked"
-    verdict = run([ruff, "check", *SCOPED, *tracked_python_files(repository)], cwd=repository)
+    assert tracked_files(LINT_POPULATION, repository) == ["tracked.py"], (
+        "the plant is not untracked"
+    )
+    verdict = run(
+        [ruff, "check", *SCOPED, *tracked_files(LINT_POPULATION, repository)], cwd=repository
+    )
     assert verdict.returncode == 0, (
         "an UNTRACKED lint-dirty module turned the committed verdict red: " + verdict.stdout
     )
@@ -194,8 +265,10 @@ def test_the_lint_verdict_is_taken_over_tracked_content_in_both_directions(tmp_p
     )
 
     assert run([git(), "add", "scratch_probe.py"], cwd=repository).returncode == 0
-    assert sorted(tracked_python_files(repository)) == ["scratch_probe.py", "tracked.py"]
-    now_tracked = run([ruff, "check", *SCOPED, *tracked_python_files(repository)], cwd=repository)
+    assert sorted(tracked_files(LINT_POPULATION, repository)) == ["scratch_probe.py", "tracked.py"]
+    now_tracked = run(
+        [ruff, "check", *SCOPED, *tracked_files(LINT_POPULATION, repository)], cwd=repository
+    )
     assert now_tracked.returncode == 1, (
         "a TRACKED lint-dirty module did not turn the committed verdict red"
     )

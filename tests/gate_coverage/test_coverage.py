@@ -18,7 +18,7 @@ import pytest
 
 from tests.gate_coverage import GATED_TREES, HOME, SCAN_ROOT
 from tests.gate_coverage.tell import GATE, _calls, decodes, document_readers
-from tests.support import git, init_repository, repository_root, run, tracked_python_files
+from tests.support import git, init_repository, repository_root, run, tracked_files
 
 
 def tracked_python_modules(root: Path | None = None) -> list[Path]:
@@ -63,7 +63,7 @@ def tracked_python_modules(root: Path | None = None) -> list[Path]:
     the half worth keeping local.
     """
     root = repository_root() if root is None else root
-    return [root / name for name in tracked_python_files(root)]
+    return [root / name for name in tracked_files(("*.py",), root)]
 
 
 def tracked_readers(tree: str = "", root: Path | None = None) -> list[Path]:

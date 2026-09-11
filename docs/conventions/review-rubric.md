@@ -829,6 +829,32 @@ working-tree reading is not deleted — it is the notice in the table above
 have been the wrong shape: it hides the scratch file from the human too, and the
 human is the one who needs to see it.**
 
+⛔ **AND THE SECOND HALF, WHICH THE FIRST ATTEMPT AT THIS ROW GOT WRONG
+(`CTO-64/1`): *what git tracks* IS NOT A POPULATION UNTIL YOU SAY OF WHAT.**
+⚠️ **Moving a verdict from the disk to the index is half the remedy; the other
+half is naming the tool's own SUBJECT, and two gates running the same binary do
+not share one.** ⭐ **MEASURED at `a04e590` in the pinned image, and the three
+readings settle it with no trade-off to weigh:**
+
+| the `ruff format --check` population | files | verdict |
+|---|---|---|
+| `.` — the disk form being replaced | **876** | ⛔ depends on untracked state |
+| tracked `*.py` **and** `*.md` | **876** | ⭐ **the SAME subjects, from the index** |
+| tracked `*.py` alone | **532** | ⛔ **drops 344 files in silence** |
+
+⭐ **`pyproject.toml` sets `docstring-code-format = true`, so ruff formats the
+python blocks inside markdown — and **29** tracked `.md` carry one.** ⛔ **A
+`*.py`-only format gate is therefore blind to every python block in every
+document, and it was planted BOTH WAYS: a mis-formatted block in a tracked `.md`
+takes the disk form and the wide population to exit `1` while the narrow one
+exits `0` — it MISSES — and mis-formatting a `.py` as well takes the narrow one
+to exit `1`, which is the control proving it is blind to MARKDOWN rather than
+blind in general.** ⚠️ **The opposite over-correction is measured too and is not
+the fix: `ruff check` over the whole tracked set yields `9046` errors, because it
+reads a document AS Python.** ⭐ **So the rule is the sentence and never the glob:
+a committed verdict's population is what git tracks OF THE THING THAT TOOL
+JUDGES, and each gate states its own.**
+
 ```bash
 # ⛔ THE SWEEP, over the CALL SITES rather than over a memory of them (Ruling
 #    298's form): every ruff invocation whose population is the DISK.
@@ -1081,6 +1107,16 @@ git grep -l 'Size exception:'      -- src/ | wc -l   # 7b5c0a9 -> 0   (pass)
 git grep -l 'ZZZ_no_such_marker'   -- src/ | wc -l   # 7b5c0a9 -> 0   (!!)
 ```
 
+> ⛔ **`W143` — ROW 0 ABOVE IS AMENDED, ADDITIVELY (Ruling 214), AND THE RESTORE
+> STEP IT NAMES MAY NO LONGER BE USED.** ⭐ **`git checkout --` restores to
+> `HEAD`, so over a DIRECTORY it discards an uncommitted repair in a NEIGHBOUR
+> the plant never touched — and `porcelain` then reads CLEAN.** ⚠️ **ROW 0's own
+> `git status --porcelain -- "$SUBJECT"` is scoped to the SUBJECT and cannot see
+> the neighbour at all; its `md5sum` baseline is per-file and correct, which is
+> why the discipline catches this only if the baseline is taken from the WORKING
+> TREE.** ⛔ **The restore is from a COPY, per file, and the clause with its
+> command, its pass condition and its demonstration is §4c, `W143`.**
+
 > ⛔ **Ruling 202 (CTO round 51) — the RESTORE half of this discipline can itself
 > be the destructive act, and it was.** ⭐ **MEASURED by the PO, round 40
 > (`PO-40/7`): `git checkout -- docs/tasks/BOARD.md` to undo a plant reverted the
@@ -1117,16 +1153,6 @@ git grep -l 'ZZZ_no_such_marker'   -- src/ | wc -l   # 7b5c0a9 -> 0   (!!)
 > makes authoritative. ⭐ **The remedy has caught two of the three already and it is
 > always the same: READ THE TREE.** ⛔ **`.scratch/` and this plant protocol both
 > assumed a restore that works, and neither said so.**
-
-> ⛔ **`W143` — ROW 0 ABOVE IS AMENDED, ADDITIVELY (Ruling 214), AND THE RESTORE
-> STEP IT NAMES MAY NO LONGER BE USED.** ⭐ **`git checkout --` restores to
-> `HEAD`, so over a DIRECTORY it discards an uncommitted repair in a NEIGHBOUR
-> the plant never touched — and `porcelain` then reads CLEAN.** ⚠️ **ROW 0's own
-> `git status --porcelain -- "$SUBJECT"` is scoped to the SUBJECT and cannot see
-> the neighbour at all; its `md5sum` baseline is per-file and correct, which is
-> why the discipline catches this only if the baseline is taken from the WORKING
-> TREE.** ⛔ **The restore is from a COPY, per file, and the clause with its
-> command, its pass condition and its demonstration is §4c, `W143`.**
 
 ⛔ **So Ruling 121's grep is a CORROBORATOR here and not the gate**, and its two
 failure modes are measured, not argued. ⚠️ **At `a00337b`: the marker in a

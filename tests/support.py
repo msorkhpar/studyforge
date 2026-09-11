@@ -121,12 +121,22 @@ def is_ignored(path: str, cwd: Path | None = None) -> bool:
     return result.returncode == 0
 
 
-def tracked_python_files(root: Path | None = None) -> list[str]:
-    """Every Python file **git tracks** in `root`, as repo-relative names.
+def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[str]:
+    """Every file **git tracks** in `root` matching `patterns`, repo-relative.
+
+    ⛔ **`patterns` is REQUIRED and is never defaulted, because the caller's tool
+    decides its own subject and no two of them agree** (`CTO-64/1`). ⭐ `ruff
+    check`'s subject is `*.py`; `ruff format`'s is `*.py` **and** `*.md`, because
+    `docstring-code-format` makes a document's python blocks part of what gets
+    formatted. ⚠️ **MEASURED in the pinned image: `ruff check` over the whole
+    tracked set yields 9046 errors — it reads a document AS Python rather than as
+    a host for Python.** ⛔ A shared default here would have been a silent way for
+    one gate to inherit the other's subject, which is the defect this signature
+    refuses to make expressible.
 
     ⛔ **The index, never the disk** (Ruling 153, and Ruling 86a before it for
     ruff's denominator). ⚠️ A `git status --porcelain` clean tree still carries
-    every *ignored* `.py` on the machine — an agent's `.scratch/`, a virtualenv,
+    every *ignored* file on the machine — an agent's `.scratch/`, a virtualenv,
     a second checkout — and a tool that walks the filesystem reads all of them
     as this repository's. ⛔ **And so is an untracked, un-ignored one, which is
     the half `W142` was paid for:** a scratch module at the repository root
@@ -156,13 +166,13 @@ def tracked_python_files(root: Path | None = None) -> list[str]:
     on purpose, without writing into the tree the check is measuring.
     """
     where = repository_root() if root is None else root
-    result = run([git(), "ls-files", "-z", "--", "*.py"], cwd=where)
+    result = run([git(), "ls-files", "-z", "--", *patterns], cwd=where)
     assert result.returncode == 0, (
         f"git ls-files could not answer, so there is no population to check: "
         f"{result.stdout + result.stderr}"
     )
     tracked = [name for name in result.stdout.split("\0") if name]
-    assert tracked, "git tracks no Python file at all; the population is empty"
+    assert tracked, f"git tracks nothing matching {patterns}; the population is empty"
     absent = sorted(name for name in tracked if not (where / name).is_file())
     assert absent == [], (
         "these files are tracked but missing from the working tree, so no check can "
