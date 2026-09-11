@@ -154,10 +154,16 @@ form needs a URL that resolves. The components are:
 `Claude-SPARQL-tutorial` (v2 targets), plus `code-server-toolchain` and
 `narrate-service` still to be created by E12 and E13.
 
-⚠️ **A worktree does not carry the siblings** — `git worktree add` gives you this
-repository and nothing beside it. ⛔ **So `tools.workspace verify` is
-host-verified by construction**, and a reading from it names that state in the
-same sentence as its number (Ruling 159).
+⛔ **A WORKTREE DOES CARRY THE SIBLINGS, and the sentence that stood here saying
+otherwise was FALSE.** ⭐ **The property belongs to the CONTAINER MOUNT, never to
+the worktree (Ruling 248(a)); Ruling 159's own reading is DATED by that and its
+record stands unedited** (Ruling 106). ⭐ **Why: `tools/workspace` resolves
+`git rev-parse --git-common-dir` — the **main** checkout's `.git`, whose
+grandparent is the workspace — so it finds every component from any worktree on
+this host, and a reading taken from one is NOT host-verified.** ⛔ **What is
+genuinely absent is the disk AROUND the tree inside the pinned image, where only
+the checkout is mounted** — ⚠️ **so a reading that finds no sibling names the
+CONTAINER as its reason, and never the worktree.**
 
 ## Two agents
 
