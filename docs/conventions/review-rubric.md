@@ -2965,7 +2965,11 @@ ninth time in this document's history.**
 V=<the review or merge message, as a file>
 H="$(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD | grep '^docs/tasks/handoffs/')"
 printf '%s\n' $H                                        # the population, PRINTED
-S=$(grep -hoE '[A-Z0-9-]+/[0-9]+ `\[structural\]`' $H | awk '{print $1}' | sort -u)
+# ⛔ Ruling 293: the POPULATION is LINES carrying the marker's ONE spelling — a FIXED
+#    string, never a widened pattern (Ruling 65) — and the id is the FIRST id on that line.
+#    The form this REPLACED demanded the two be ADJACENT and read 2 where the answer was 16.
+S=$(grep -hF '`[structural]`' $H \
+    | grep -oE '^[^A-Za-z0-9]*[A-Z0-9-]+/[0-9]+' | grep -oE '[A-Z0-9-]+/[0-9]+' | sort -u)
 printf 'structural: %s\n' "$(printf '%s\n' $S | grep -c .)"; printf '%s\n' $S
 for id in $S; do
     printf '%-12s %s\n' "$id" "$(grep -oiE "$id[^A-Za-z0-9]+.*\
@@ -4134,3 +4138,220 @@ SILENT INSIDE A PLANT LOOP, and that is where the damage is: a loop whose restor
 taken on a tree nobody described.** ⭐ **A loop that discovers this afterwards DISCLOSES WHICH
 DIRECTION THE ACCUMULATION BIASED its readings rather than silently re-running** — ⚠️ **which
 is what makes such readings admissible at all.**
+
+## ⛔ RULED ROUND 60 — nine clauses, each one command and one pass condition
+
+⭐ **The reasoning, every plant and every reading are in
+[round 60's record](../tasks/handoffs/CTO-2026-09-11-round60.md)** — the growth governor's
+form: here, the command and the verdict; there, the argument.
+
+### ⛔ Ruling 288 — a TRIGGER bounds the office that can REMOVE its condition, never the office that must RECORD it
+
+```bash
+# ⛔ Read a fired trigger's ACT and its OFFICE before charging anybody. A trigger whose
+#    clearing act belongs to another office is DISCLOSURE, not a changes-requested cause.
+python3 -m tools.quality 2>&1 | grep '^scheduled'     # by state — … fired N …
+git branch --format='%(refname:short)' | grep -F "$THE_ROW_THAT_CLEARS_IT"
+```
+
+⛔ **Pass: a fired trigger's round is charged ONLY where that round's own office could have
+performed the clearing act.** ⭐ **Where the act is a ROW LANDING, the discharge condition is
+that row being IN THE WAVE, and the reviewer measures it rather than waiting.**
+
+| reading, CTO round 60 | measured |
+|---|---|
+| board states available to the PO for a merged row whose close is unperformable | ⛔ **4, every one FALSE or RED** |
+| `blocked` as the only compliant cell | ⭐ the cell they wrote |
+| the same two closes on the wave tree, after `W129` | ⭐ **`FLOOR_EXIT=0`, floor clean, `0` unresolved of `998`, `2` REDIRECT STUBS** |
+| the control — the same closes with the files DELETED | ⛔ **`FLOOR_EXIT=1`, `5` unresolved pointers** |
+
+⭐ **A trigger written `fired` rather than `pending` when its condition is already true is
+RATIFIED: a trigger whose condition holds is not pending.**
+
+### ⛔ Ruling 289 — a brief demanding an OUTPUT be quoted names the INSTRUMENT that prints it
+
+```bash
+# ⛔ Before quoting an instrument's line, prove the instrument prints it.
+grep -rn '<the exact line>' tools/ src/ tests/ ; echo "GREP_EXIT=$?"   # 1 = it does NOT exist
+```
+
+⛔ **Pass: every output line a document quotes is reachable from a command named beside it.**
+⚠️ **A fabricated REQUIREMENT induces a fabricated MEASUREMENT: the cheapest way to satisfy
+*"quote the line"* is to write the line.**
+
+⭐ **Three clauses.** ⛔ **(a) A brief that asks for an output names the COMMAND; the
+dispatcher owns the defect and the receiving office refuses in writing with a measurement
+(Ruling 280).** ⛔ **(b) A fabricated line in a FROZEN record is NOT edited — the remedy is to
+make the line REAL in the instrument, plus an annotation in the live document that cites it,
+and the round that finds it NAMES every quoting document so the population is closed.**
+⛔ **(c) A review that reproduces the figures AROUND a quoted block has not checked the block:
+a quoted line carries its command and its exit code, or it is prose.**
+
+⭐ **AND THE SHAPE OF THE FIX: where an exit code FOLDS N populations, giving ONE of them an
+empty form ships the same asymmetry one population over, so ALL N get a printed empty form.**
+
+```text
+MEASURED, CTO round 60:  `REFUTED ROWS` absent from tools/ src/ tests/ at HEAD and at each of
+the 400 most recent commits; quoted in exactly 2 documents, both FROZEN.
+After the fix:  `rows refuted by git: none.`  AND  `rows git could not answer about: none.`
+```
+
+### ⛔ Ruling 290 — Ruling 238(d) GAINS THE CLAUSE: the image is held constant by PINS IN THE SAME INVOCATION, and an IMAGE ID can never discharge it
+
+```bash
+# ⭐ The identity is §4b's Ruling 238 block. An id is provenance at most:
+docker image inspect --format '{{.Id}}' studyforge/dev:local    # print it; never compare on it
+```
+
+⛔ **Pass: two readings whose PINS are character-identical in the same invocation as
+`git rev-parse HEAD` are the SAME environment, whatever their ids say.** ⛔ **A reviewer may
+NOT ask an office to *hold the image constant* by id, and an office asked to is being asked
+for something it cannot deliver while a sibling office is live.**
+
+```text
+MEASURED, CTO round 60, one session, ONE build of the reviewer's own:
+  8a9ae8232b9b -> config 8bfeea63… -> 5f4a398c5111… -> aa65c5b92396… -> 955ccf8c0fa4…
+  PINS at every reading: IDENTICAL, character for character
+  `docker image inspect 6a08364` -> exit 1, No such image  (an id a live row had quoted)
+CAUSE: three offices share the mutable tag, `docker/dev/check` rebuilds on every invocation,
+       and buildx re-exports a new manifest even on a full cache hit.
+```
+
+### ⛔ Ruling 291 — a plant whose SUBJECT is `docker/dev/` may not run through `docker/dev/check`
+
+```sh
+# ⛔ NOT `docker/dev/check`: its final exec carries `--build` UNCONDITIONALLY, so a plant into
+#    docker/dev/ is measured by `apt` rather than by the checks.
+# ⭐ The bypass is the invocation compose.yaml documents in its own header:
+docker compose -f docker/dev/compose.yaml run --rm dev python3 -m pytest -ra <nodes>
+```
+
+⛔ **Pass: a row whose plants touch `docker/dev/` DECLARES this deviation with its ground and
+prints the image id each run (Ruling 290), or its readings are not readings of its subject.**
+⭐ **Scoped narrowly: the subject must be text the container READS through the bind mount. A
+row whose subject is the IMAGE uses the wrapper, `--build` and all.** ⚠️ **MEASURED: 11 plant
+readings in CTO round 60 and 16 in `W131` used this form.**
+
+### ⛔ Ruling 292 — an ACCEPTANCE with N arms met by a population of M > N shapes is satisfied by DECLARING the extra arms with an assertion each
+
+```bash
+# ⛔ Count the SHAPES in the population before forcing any member into an arm.
+#    Pass: every member is in a declared arm AND every arm carries an assertion.
+```
+
+⛔ **Pass: the extra arms are declared IN THE SHIPPED ARTIFACT, each with an assertion, so the
+reviewer JUDGES the widening rather than discovering it.** ⚠️ **Forcing a member into an arm
+that does not hold makes the register FALSE, and a false register is read by every later taker
+where an acceptance is read by one.** ⭐ **The arm whose truth is a fact about an ARTEFACT
+rather than about a predicate is the one asserted hardest — it can stop being true with no test
+touched.**
+
+⛔ **(b) AND A RULING THAT NAMES A COPYABLE SITE HAS ASSERTED THAT THE COPY WORKS, which is
+owed a reading BEFORE the ruling ships.**
+
+```text
+MEASURED, CTO round 60, over the REAL docker/dev/Dockerfile with NO plant:
+  collapse-ONLY  (the site Ruling 267 named)  -> the browser check WOULD FAIL on
+                 `chrome-headless-shell`; the runtime check on `nodejs` AND `npm`
+  collapse-THEN-CUT at the shell separators   -> both PASS
+⛔ So a literal copy turns four green-but-blind checks into four RED checks on a CORRECT
+   implementation — strictly worse, and the check somebody deletes. Ruling 267's remedy
+   pointer named the wrong one of its two neighbours; the copyable site collapses AND cuts.
+```
+
+### ⛔ Ruling 293 — §8a's disposition counter constrains an ADJACENCY nobody declared; the POPULATION is narrowed and the MARKER's spelling is NOT touched
+
+⛔ **The repaired command is §8a's own block above.** ⚠️ **§8 permits TWO finding-section
+formats and the old predicate demanded the id and the marker be ADJACENT with one space, so
+the document permitted two formats and counted on one — Ruling 65's defect inside the counter
+Ruling 65 was written beside.**
+
+```text
+MEASURED, CTO round 60, over one three-branch wave's five handoffs:
+  ⛔ the shipped predicate   '[A-Z0-9-]+/[0-9]+ `[structural]`'   ->   2
+  ⭐ the repaired form                                            ->  16
+  ⭐ the hand count                                               ->  16     16 = 16
+  the 14 it could not see sit in TABLES, separated by `` ` | `` rather than by a space.
+```
+
+⛔ **Pass: the count equals the hand count, and a round quoting this counter prints BOTH
+readings until a second office has exercised the repair.** ⛔ **AND THE REMEDY MAY NOT BE A
+WIDENED MARKER: Ruling 65 forbids a list of accepted shapes, and a separator vocabulary is one
+wearing punctuation.** ⭐ **So the POPULATION is narrowed (Ruling 185(b)) to lines carrying the
+shipped constant as a FIXED STRING (Ruling 193), and the id is read from the line.** ⚠️ **Ruling
+65's known cost is UNCHANGED: *name the marker, do not spell it.***
+
+### ⛔ Ruling 294 — a per-row BOUND states its TERM's derivation beside its verdict, and *a row earns more than it costs* is a claim about the MEAN
+
+```bash
+# ⛔ The bound PRINTS its own derivation. Read it, and read the term's rule beside it.
+python3 -m tools.quality 2>&1 | grep '^board:'
+# -> … N bytes total of M allowed (F frame + P×rows + Q×observation + R×scheduled)
+```
+
+⛔ **Pass: every term of a composite bound is DERIVED by a stated rule, a test re-takes the
+derivation on every run, and the instrument PRINTS the derivation beside the verdict.**
+⭐ **A figure four independent means agree on is derived; a figure one mean produces is
+chosen, and a chosen number in a denominator is what a later round raises.**
+
+```text
+MEASURED, CTO round 60 — the rule (population mean line, ceil to the next multiple of 32,
+plus 32) against the shipped constants:
+  register   191.4 | 169.8 | 166.8 | 173.4  (three offices, four means)  -> 192 +32 -> 224 ✅
+  observation rows                    97.5                               -> 128 +32 -> 160 ✅
+  scheduled rows                     418.4                               -> 448 +32 -> 480 ✅
+  14336 + 224×131 = 43680, which is exactly the allowance the single-term form gave.
+```
+
+⛔ **SECOND CLAUSE, and it is the honest one: the invariant *a row raises the allowance by more
+than it costs* holds for the MEAN row and NOT for every row, and the BOUND says so.**
+⚠️ **MEASURED: a row may legally be `600` bytes and earns `224`; the widest today is `587`,
+inhabited to within `13`.** ⭐ **A ceiling-based term is REFUSED — raising the allowance to
+cover the worst case is the *raise it rather than obey it* move the bound exists to prevent.**
+⛔ **TWO terms and not one, also by measurement: `418 B` against `98 B` means one constant
+gifts the smaller population `4.8×`, and a gift in a denominator is an evasion.**
+
+### ⛔ Ruling 295 — Ruling 284's conversion is discharged by an EDIT TO THE ROW FILE; a RELAY is not a register row
+
+```bash
+# ⛔ Before calling an obligation converted, read the ROW FILE for it.
+grep -c '<the clause's own string>' docs/tasks/rows/<ROW>.md    # 0 = NOT converted
+```
+
+⛔ **Pass: the clause is IN the row file, naming what it owes, so no taker re-reads the round
+that routed it.** ⛔ **A clause living only in a record, a brief or a relay is NOT converted,
+however many offices have read it** — Ruling 256's shape, a routing that never became an
+assignment.
+
+⭐ **AND THE POST-DISPATCH FOLD IS RATIFIED, with two conditions, because a developer's
+snapshot is taken at dispatch (Ruling 283):** ⛔ **(i) the row file itself SAYS the clauses
+landed after dispatch, and (ii) the coordinator RELAYS it, including that declining is
+legitimate. BOTH, recorded in the round.**
+
+```text
+MEASURED, CTO round 60: at the wave's base the host row file contained the clause's two
+identifying strings ZERO times each; both lived only in one frozen CTO record and in another
+row's file. ⭐ The fold worked under (i)+(ii): the developer took the clause, re-measured it,
+and corrected the relay's framing of it.
+```
+
+### ⛔ Ruling 296 — a PLACEHOLDER author line is the prescribed form, and a UNIFORM history bought with a real git identity is an R7 violation
+
+```bash
+# ⭐ An agent's own commit. ⛔ Never the machine's configured identity (R7).
+git -c user.name='dev2' -c user.email='dev2@example.invalid' commit -m '…'
+git log --format='%an <%ae>' -1        # read it, and declare it in the handoff
+```
+
+⛔ **Pass: an agent-authored commit carries a placeholder on `example.invalid`.** ⛔ **An
+amendment to make a wave's author line UNIFORM is REFUSED unless the uniform value is itself a
+placeholder — asking for uniformity is asking for the real identity to be written into a
+commit, which is the violation rather than the irregularity.**
+
+⛔ **Pre-existing history carrying the machine's real git identity is NOT rewritten.** ⚠️ **It
+is the user's own configuration, it predates the agent, and rewriting it is the defect Ruling
+223's exemption refuses — an audit trail that edits away its own contents.** ⭐ **An agent
+DECLARES its author line in its handoff when it differs from the surrounding history, because a
+commit's author is the one field the author cannot un-write after a merge.** ⚠️ **MEASURED, CTO
+round 60: no instrument in this repository reads authorship, so nothing depends on it either
+way and the question is entirely R7's.**
