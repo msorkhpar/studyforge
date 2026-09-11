@@ -12,10 +12,10 @@ from pathlib import Path
 
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import read
-from tools.quality.board.verdict import claim, tokens, verdict
+from tools.quality.board.verdict import Answer, claim, tokens, verdict
 from tools.tests.quality.board.support import board
 
-from .conftest import RELEASE
+from .conftest import RELEASE, unreadable
 
 
 def _row(cell: str, state: str = "in flight") -> object:
@@ -24,11 +24,11 @@ def _row(cell: str, state: str = "in flight") -> object:
     return read(text).rows[0]
 
 
-def _judge(repository: Path, cell: str, branch: str) -> tuple[bool, str]:
+def _judge(repository: Path, cell: str, branch: str) -> tuple[Answer, str]:
     graph = Graph.read(repository, RELEASE)
     live = graph.checkouts()
     answer = verdict(claim(_row(cell), graph, live), branch, graph, live)
-    return answer.refuted, "\n".join(answer.lines)
+    return answer.answer, "\n".join(answer.lines)
 
 
 # --------------------------------------------------------------------------
@@ -50,8 +50,8 @@ def test_planted_a_TERMINAL_branch_THAT_IS_CHECKED_OUT_is_REFUTED(repository: Pa
     """
     graph = Graph.read(repository, RELEASE)
     assert "fix/Wleak" in graph.checkouts(), "⛔ born vacuous: the plant must BE checked out"
-    refuted, printed = _judge(repository, "`leak`, `fix/Wleak`", "fix/Wleak")
-    assert refuted
+    answer, printed = _judge(repository, "`leak`, `fix/Wleak`", "fix/Wleak")
+    assert answer is Answer.REFUTED
     assert "REFUTED: fix/Wleak is TERMINAL" in printed
     assert "checked out at leak" in printed, "⭐ the checkout is NAMED and still refuted"
     assert "Ruling 199" in printed
@@ -72,7 +72,9 @@ def test_planted_THE_SAME_BRANCH_WITH_THE_WORKTREE_GONE_reads_the_same_way(
 
     assert git(repository, "worktree", "remove", str(repository.parent / "leak")).returncode == 0
     gone, gone_printed = _judge(repository, "`leak`, `fix/Wleak`", "fix/Wleak")
-    assert held == gone is True, "⛔ the verdict may not depend on whether a worktree stands"
+    assert held == gone == Answer.REFUTED, (
+        "⛔ the verdict may not depend on whether a worktree stands"
+    )
     assert "checked out at leak" in held_printed
     assert "checked out nowhere" in gone_printed
 
@@ -84,15 +86,15 @@ def test_planted_the_POSITIVE_row_still_CORROBORATES(repository: Path) -> None:
     shows it can say yes** — ⚠️ and a predicate that refuted everything would have
     passed a test suite that only planted failures.
     """
-    refuted, printed = _judge(repository, "`held`, `feat/held`", "feat/held")
-    assert refuted is False
+    answer, printed = _judge(repository, "`held`, `feat/held`", "feat/held")
+    assert answer is Answer.CORROBORATED
     assert "CORROBORATED: feat/held is checked out at held and is 1 commits ahead" in printed
 
 
 def test_planted_a_branch_AHEAD_with_no_checkout_CORROBORATES(repository: Path) -> None:
     """⭐ The second corroborating arm, untouched by `W110`: commits are their own answer."""
-    refuted, printed = _judge(repository, "`feat/live`", "feat/live")
-    assert refuted is False
+    answer, printed = _judge(repository, "`feat/live`", "feat/live")
+    assert answer is Answer.CORROBORATED
     assert "is 1 commits ahead of" in printed
 
 
@@ -111,8 +113,8 @@ def test_planted_a_CLAIMED_CHECKOUT_THAT_DID_NOT_ANSWER_is_a_NOTICE_and_NOT_A_RE
     exist.** ⭐ **Both names are printed now and NEITHER refutes**, because office
     worktrees are legitimately re-pointed between waves (`rows/W110.md`).
     """
-    refuted, printed = _judge(repository, "`leak`, `feat/held`", "feat/held")
-    assert refuted is False, "⛔ a name mismatch is bookkeeping, never a refutation"
+    answer, printed = _judge(repository, "`leak`, `feat/held`", "feat/held")
+    assert answer is Answer.CORROBORATED, "⛔ a name mismatch is bookkeeping, never a refutation"
     assert "NOTICE, not a refusal (`PO-40/2`)" in printed
     assert "the row CLAIMS leak" in printed
     assert "the checkout holding feat/held is held" in printed
@@ -127,11 +129,11 @@ def test_planted_a_row_that_names_a_BRANCH_AND_NO_CHECKOUT_says_which_arm_answer
     `unresolved`**, so this arm covers the unresolvable claim as well as the empty
     one — ⛔ and both used to be silent.
     """
-    refuted, printed = _judge(repository, "`feat/held`", "feat/held")
-    assert refuted is False
+    answer, printed = _judge(repository, "`feat/held`", "feat/held")
+    assert answer is Answer.CORROBORATED
     assert "the row names no checkout and the" in printed
     assert "from held" in printed
-    _refuted, typo = _judge(repository, "`wt/nowhere`, `feat/held`", "feat/held")
+    _answer, typo = _judge(repository, "`wt/nowhere`, `feat/held`", "feat/held")
     assert "the row names no checkout and the" in typo
 
 
@@ -152,9 +154,12 @@ def test_planted_the_BOARD_S_OWN_wt_IDIOM_does_NOT_raise_a_mismatch_notice(
     assert (
         git(repository, "worktree", "add", "-q", str(nested / "dev9"), "feat/live").returncode == 0
     )
-    refuted, printed = _judge(repository, "`wt/dev9`, `feat/live`", "feat/live")
-    assert refuted is False
-    assert "NOTICE, not a refusal" not in printed, printed
+    answer, printed = _judge(repository, "`wt/dev9`, `feat/live`", "feat/live")
+    assert answer is Answer.CORROBORATED
+    # ⚠️ NAMED, because `PO-42/7`'s count notice is a DIFFERENT notice and fires here:
+    # this row's cell reads `0` and git reads `1`. ⛔ The subject of THIS plant is the
+    # checkout-NAME comparison, so the assertion names which notice must not fire.
+    assert "NOTICE, not a refusal (`PO-40/2`)" not in printed, printed
 
 
 def test_the_claim_PARTITIONS_the_cell_by_OBSERVATION_and_not_by_NAME_SHAPE(
@@ -190,7 +195,7 @@ def test_tokens_reads_the_code_spans_and_not_the_prose() -> None:
 
 def test_shape_B_and_shape_C_are_BOTH_PRINTED_on_every_judged_branch(repository: Path) -> None:
     """⛔ Ruling 199: `B` is printed beside `C` and the disagreements are PRINTED."""
-    _refuted, printed = _judge(repository, "`fix/Wmerged`", "fix/Wmerged")
+    _answer, printed = _judge(repository, "`fix/Wmerged`", "fix/Wmerged")
     assert "terminality (Ruling 199): graph `C`" in printed
     assert "message `B`" in printed
     assert "DISAGREE" not in printed, "⭐ these two agree, so nothing is claimed"
@@ -200,8 +205,8 @@ def test_a_branch_C_absorbed_and_B_CANNOT_SEE_prints_B_s_FALSE_NEGATIVE(
     repository: Path,
 ) -> None:
     """⛔ `B`'s false-negative population — 25 branches at `2d0cfe7`, pre-convention history."""
-    refuted, printed = _judge(repository, "`fix/Wsilent`", "fix/Wsilent")
-    assert refuted
+    answer, printed = _judge(repository, "`fix/Wsilent`", "fix/Wsilent")
+    assert answer is Answer.REFUTED
     assert "message `B` none" in printed
     assert "DISAGREE: absorbed by a merge whose subject does not declare" in printed
     assert "`C` is the gate" in printed
@@ -216,8 +221,8 @@ def test_a_branch_B_NAMES_and_C_does_not_is_NOT_REFUTED_and_says_so(repository: 
     moved since.** ⛔ **So the exact-match fix does NOT empty `B`'s false-positive
     population, and that is precisely why `B` may not be the gate.**
     """
-    refuted, printed = _judge(repository, "`fix/Wmoved`", "fix/Wmoved")
-    assert refuted is False
+    answer, printed = _judge(repository, "`fix/Wmoved`", "fix/Wmoved")
+    assert answer is Answer.CORROBORATED
     assert "DISAGREE: a merge subject declares `Merge fix/Wmoved:`" in printed
     assert "NOT a refutation" in printed
 
@@ -233,9 +238,9 @@ def test_a_BARE_branch_and_a_FAST_FORWARDED_one_REACH_ONE_ARM_and_it_says_so(
     commit of its own) and `fix/Wff` (merged by fast-forward) arrive at the SAME arm
     and CANNOT be separated by position**, so one sentence names both readings.
     """
-    bare_refuted, bare = _judge(repository, "`feat/bare`", "feat/bare")
-    ff_refuted, ff = _judge(repository, "`fix/Wff`", "fix/Wff")
-    assert bare_refuted and ff_refuted
+    bare_answer, bare = _judge(repository, "`feat/bare`", "feat/bare")
+    ff_answer, ff = _judge(repository, "`fix/Wff`", "fix/Wff")
+    assert bare_answer is Answer.REFUTED and ff_answer is Answer.REFUTED
     for printed in (bare, ff):
         assert "BY CONSTRUCTION (Ruling 130)" in printed
         assert "merged by a FAST-FORWARD" in printed
@@ -254,5 +259,162 @@ def test_the_verdict_carries_its_answer_as_a_FIELD_and_not_as_a_SUBSTRING(
     graph = Graph.read(repository, RELEASE)
     live = graph.checkouts()
     answer = verdict(claim(_row("`held`, `feat/held`"), graph, live), "feat/held", graph, live)
-    assert answer.refuted is False
+    assert answer.answer is Answer.CORROBORATED
     assert isinstance(answer.lines, tuple), "⛔ frozen, so a caller cannot append to a verdict"
+
+
+# --------------------------------------------------------------------------
+# Reading 4 — `W115` / Ruling 216: a GENUINE `None` from git, three ways
+# --------------------------------------------------------------------------
+
+
+def test_LIVE_every_healthy_branch_in_the_fixture_is_ANSWERABLE(repository: Path) -> None:
+    """⛔ The POPULATION IN FULL before any scalar, and the expected reading FIRST.
+
+    ⭐ **Expected, written before the run: `ahead()` answers for all 10 fixture branches
+    and NOT ONE verdict is `NOT_ANSWERABLE`** — ⚠️ **which is the control the next two
+    readings need, because a third state that fired on healthy work would be the
+    notice-on-correct-work family Ruling 179 costs** (`rows/W115.md`: this row must not
+    become *every unreadable thing exits 2*).
+    """
+    graph = Graph.read(repository, RELEASE)
+    population = sorted(graph.heads())
+    assert population == [
+        "feat/bare",
+        "feat/held",
+        "feat/live",
+        "fix/W4",
+        "fix/W40",
+        "fix/Wff",
+        "fix/Wleak",
+        "fix/Wmerged",
+        "fix/Wmoved",
+        "fix/Wsilent",
+        RELEASE,
+        "trial/spent",
+    ], population  # ⛔ the population IN FULL, before any scalar (Ruling 128)
+    answers = {
+        branch: _judge(repository, f"`{branch}`", branch)[0]
+        for branch in population
+        if branch != RELEASE
+    }
+    assert graph.ahead(RELEASE) == 0, "⭐ git answers about the release branch too"
+    assert all(graph.ahead(branch) is not None for branch in population), population
+    assert Answer.NOT_ANSWERABLE not in set(answers.values()), answers
+    assert set(answers.values()) == {Answer.CORROBORATED, Answer.REFUTED}, answers
+
+
+def test_planted_a_branch_GIT_CANNOT_COUNT_is_NOT_ANSWERABLE_and_prints_no_number(
+    repository: Path,
+) -> None:
+    """⛔ **`W115`, site 1: `if count:` is FALSEY, so a `None` printed *is 0 ahead*.**
+
+    ⚠️ **Expected, written before the run:** `ahead()` is `None`, `exists()` is `True`,
+    the answer is `NOT_ANSWERABLE`, ⛔ **and the string `0 ahead` appears NOWHERE** — a
+    number git never gave. ⭐ **The OLD behaviour is asserted from the same plant in
+    `test_corroborate.py`'s exit-code reading, which is where it was observable.**
+
+    ⭐ **The plant is adversarial to the READING and not to the subject** (Rulings
+    123/128/140): the branch still resolves, still has a name, and is still claimed by a
+    row — the ONE variable changed is whether git will count it.
+    """
+    branch = unreadable(repository, "fix/W4")
+    graph = Graph.read(repository, RELEASE)
+    assert graph.exists(branch), "⛔ born vacuous: the plant must still RESOLVE as a branch"
+    assert graph.ahead(branch) is None, "⛔ born vacuous: git must GENUINELY decline"
+    assert graph.tip(branch) == "", "⭐ and the tip does not resolve either"
+    answer, printed = _judge(repository, f"`{branch}`", branch)
+    assert answer is Answer.NOT_ANSWERABLE
+    assert answer not in (Answer.CORROBORATED, Answer.REFUTED), "⛔ it must DIFFER from both"
+    assert "NOT ANSWERABLE: git could not count" in printed
+    assert "is 0 ahead" not in printed, "⛔ THE DEFECT: a number git never gave"
+    assert "None" not in printed, "⛔ and `None` is not a count either"
+    assert "graph `C` none" not in printed, "⚠️ `C` needs the tip, so it is UNREAD, not `none`"
+    assert "shape `C` is UNREAD" in printed.replace("Shape", "shape")
+
+
+def test_planted_the_SAME_BRANCH_HELD_BY_A_CHECKOUT_is_ALSO_NOT_ANSWERABLE(
+    repository: Path,
+) -> None:
+    """⛔ **`W115`, site 2 — the WORST of the three: a FAILED reading reaching exit `0`.**
+
+    ⚠️ **Expected, written before the run:** `_held()` used to print *"is None commits
+    ahead"* and return the row CORROBORATED. ⭐ **ONE VARIABLE changed from the reading
+    above — whether a worktree holds the branch** — ⛔ **and the answer must not move,
+    because a checkout cannot make an unreadable branch readable.**
+    """
+    branch = unreadable(repository, "feat/held")
+    graph = Graph.read(repository, RELEASE)
+    assert graph.checkouts().get(branch), "⛔ born vacuous: the plant must BE checked out"
+    assert graph.ahead(branch) is None, "⛔ born vacuous: git must GENUINELY decline"
+    answer, printed = _judge(repository, f"`held`, `{branch}`", branch)
+    assert answer is Answer.NOT_ANSWERABLE
+    assert "CORROBORATED" not in printed, "⛔ THE DEFECT: a failed reading used to PASS"
+    assert "is None commits ahead" not in printed, "⛔ and it printed the word `None`"
+    assert "checked out at held" in printed, "⭐ the checkout is still NAMED"
+
+
+def test_impossible_a_count_that_is_NEITHER_a_number_NOR_absent_has_no_fourth_answer(
+    repository: Path,
+) -> None:
+    """⛔ The IMPOSSIBLE reading: the answer set is CLOSED at three (Rulings 123/128/140).
+
+    ⭐ **Over the whole fixture plus both plants, `Answer` admits three members and the
+    judged population inhabits all three** — ⚠️ **so the enum is not a wider type than
+    the readings that reach it, which is the shape `corroborate`'s two-valued `bool`
+    failed at.**
+    """
+    assert [answer.value for answer in Answer] == ["corroborated", "refuted", "not answerable"]
+    inhabited = {
+        _judge(repository, "`feat/live`", "feat/live")[0],
+        _judge(repository, "`fix/Wmerged`", "fix/Wmerged")[0],
+        _judge(repository, f"`{unreadable(repository, 'fix/W4')}`", "fix/W4")[0],
+    }
+    assert inhabited == set(Answer), inhabited
+
+
+# --------------------------------------------------------------------------
+# Reading 5 — `PO-42/7`: the CLAIMED count is compared, and it is a NOTICE
+# --------------------------------------------------------------------------
+
+
+def test_a_row_whose_CLAIMED_count_DISAGREES_with_git_gets_a_NOTICE_and_NOT_a_refutation(
+    repository: Path,
+) -> None:
+    """⛔ **`PO-42/7`: the two were parsed, printed side by side, and compared to nothing.**
+
+    ⚠️ **MEASURED by the PO twice, forty minutes apart, with no plant: two cells reading
+    `2` and `2` were `3` and `5`, and the run exited `0`.** ⭐ **The remedy is a printed
+    comparison and NOT a refutation — a commits-ahead cell reads a MOVING TIP, so
+    refuting on a stale number would fire on every wave where somebody committed after
+    the board was written** (Ruling 179, `rows/W115.md`).
+    """
+    graph = Graph.read(repository, RELEASE)
+    assert graph.ahead("feat/live") == 1, "⛔ born vacuous: git's own count is the control"
+    agree, agreed = _judge(repository, "`feat/live`", "feat/live")
+    assert agree is Answer.CORROBORATED, "⛔ the cell reads 0 and git reads 1 — still not refuted"
+    assert "NOTICE, not a refusal (`PO-42/7`)" in agreed
+    assert "claims 0 commits ahead and git reads 1" in agreed
+
+    graph_live = graph.checkouts()
+    row = read(board("| `W42` | Dev | `feat/live` | 9 | in flight |\n", delimited=True)).rows[0]
+    answer = verdict(claim(row, graph, graph_live), "feat/live", graph, graph_live)
+    printed = "\n".join(answer.lines)
+    assert answer.answer is Answer.CORROBORATED, "⛔ a stale NUMBER is not a stale ROW"
+    assert "NOTICE, not a refusal (`PO-42/7`)" in printed
+    assert "claims 9 commits ahead and git reads 1" in printed
+
+
+def test_a_row_whose_CLAIMED_count_AGREES_with_git_says_so_rather_than_staying_silent(
+    repository: Path,
+) -> None:
+    """⭐ Ruling 128: the comparison is PRINTED on the agreeing case too.
+
+    ⛔ **A comparison visible only when it fails is one nobody can tell from a comparison
+    that was never made** — which is precisely the defect `PO-42/7` reports.
+    """
+    graph = Graph.read(repository, RELEASE)
+    live = graph.checkouts()
+    row = read(board("| `W42` | Dev | `feat/live` | 1 | in flight |\n", delimited=True)).rows[0]
+    printed = "\n".join(verdict(claim(row, graph, live), "feat/live", graph, live).lines)
+    assert "commits ahead: the row claims 1, git reads 1 — AGREE." in printed

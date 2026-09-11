@@ -55,15 +55,68 @@ refusal** — ⚠️ **office worktrees are legitimately re-pointed between wave
 `wt/dev1` moved from `feat/SF-26-goldens` to `feat/SF-30-reader-state` inside one
 round.** ⛔ **The refutation belongs to TERMINALITY, which is a property of the
 branch; the name mismatch is a property of the bookkeeping** (`rows/W110.md`).
+
+## ⛔ `W115` — Ruling 216: the answer is THREE-VALUED, because a FAILED READING IS NOT A VERDICT
+
+⚠️ **MEASURED by the CTO at `b5b3982` and RE-MEASURED by me at `6c4e3d0`, in the
+pinned container, with a planted branch git genuinely cannot count:** ⛔ **`Graph.ahead()`
+returns `None` when git could not answer, `if count:` is FALSEY, and the two arms below
+it then printed a number git never produced:**
+
+```text
+no checkout holds the branch  ->  "is 0 ahead of release/…"     ⛔ a FALSE REFUTATION
+a checkout does hold it       ->  "is None commits ahead."      ⛔ and refuted=False, exit 0
+```
+
+⭐ **The fix is NOT a fourth arm: it is that `None` is checked FIRST and never reaches a
+sentence.** ⛔ **`_held()` now takes `count: int`, so the second site is closed by making
+`None` UNREACHABLE there rather than by handling it** — ⚠️ **a handled `None` is a site
+that can be reintroduced, and an unreachable one is not.**
+
+⚠️ **And the unanswerable arm does NOT print shape `C`.** ⛔ **`terminal()` reads `tip()`,
+which returns `""` on failure, so `graph `C` none` in that arm would be a second reading
+git never gave** — ⭐ **it is reported as UNREAD, with shape `B` printed beside it because
+the merge log needs no tip to answer.**
+
+## ⛔ `PO-42/7` — the CLAIMED COUNT is COMPARED now, and a disagreement is a NOTICE
+
+⭐ **MEASURED by the PO twice, forty minutes apart, in one round, with no plant:** two
+cells reading `2` and `2` were `3` and `5` by the second reading, ⛔ **and `corroborate`
+printed `⭐ CORROBORATED … is 3 commits ahead` beside a cell claiming `2` and compared
+neither.** ⚠️ **So the instrument corroborated the ROW and never the CELL.**
+
+⛔ **The remedy is a printed comparison and NOT a refutation, and the reason is
+measured rather than stylistic:** ⭐ **a commits-ahead cell is a reading of a MOVING
+TIP, and the release ref does not move when a developer commits — so the cell was true
+when written and false an hour later with nothing on the board changed.** ⚠️ **A stale
+NUMBER is not a stale ROW, and refuting on one would fire on every wave where somebody
+committed after the board was written, which is every wave** (`rows/W115.md`).
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import StrEnum
 from pathlib import Path
 
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import Observation
+
+
+class Answer(StrEnum):
+    """⛔ Ruling 216's THREE answers, in the ruling's own words and as a CLOSED set.
+
+    ⚠️ **`corroborate` had three PROCESS codes and a row verdict had two**, so *git
+    could not answer about this branch* folded onto `REFUTED` — ⛔ **a FALSE
+    REFUTATION, which is the failure mode Ruling 199 refused in a predicate.**
+    ⭐ **An enum rather than a `bool` pair: a caller cannot spell a fourth answer,
+    and `any(answer.refuted …)` cannot silently swallow the third.**
+    """
+
+    CORROBORATED = "corroborated"
+    REFUTED = "refuted"
+    #: ⛔ Neither *the board is right* nor *the board is wrong*: git did not answer.
+    NOT_ANSWERABLE = "not answerable"
 
 
 @dataclass(frozen=True)
@@ -84,14 +137,18 @@ class Claim:
 
 @dataclass(frozen=True)
 class Verdict:
-    """One branch's observation — ⛔ the answer as a FLAG, and the sentences beside it.
+    """One branch's observation — ⛔ the answer as a FIELD, and the sentences beside it.
 
-    ⚠️ **The flag is a FIELD and not a substring of `lines`.** ⭐ The shipped form
+    ⚠️ **The answer is a FIELD and not a substring of `lines`.** ⭐ The shipped form
     asked `any("REFUTED" in verdict …)` of its own output, which is the same
     substring-for-a-predicate family Ruling 199 retired from `merge_of()`.
+
+    ⛔ **`W115`: the field was a `bool` and is now `Answer`** — ⚠️ **two values cannot
+    carry three answers, and the shipped `bool` sent *git could not answer* to whichever
+    of the two it happened to fall through to** (Ruling 216).
     """
 
-    refuted: bool
+    answer: Answer
     lines: tuple[str, ...]
 
 
@@ -141,15 +198,22 @@ def verdict(asserted: Claim, branch: str, graph: Graph, live: dict[str, str]) ->
     ⭐ **Ruling 199's ORDER, and the order IS the fix** (`docs/conventions/board.md`,
     `RULED ROUND 51` clause (a)): shape `C` is consulted before the live-checkout
     arm, because no checkout can make an absorbed branch in flight again.
+
+    ⛔ **`W115` puts ONE arm ahead of even that one: did git answer at all.** ⚠️ **Every
+    arm below embeds `count` in its own sentence, so a `None` reaching any of them prints
+    a number git never gave** (Ruling 216).
     """
     count = graph.ahead(branch)
+    if count is None:
+        return Verdict(Answer.NOT_ANSWERABLE, _unanswerable(branch, graph, live))
     absorbed, named = graph.terminal(branch), graph.named(branch)
     lines = [_shapes(branch, absorbed, named)] if absorbed or named else []
+    cell = _cell(asserted, branch, count, graph)
     if absorbed:
         where = Path(live[branch]).name if branch in live else ""
         held = f"checked out at {where}" if where else "checked out nowhere"
         return Verdict(
-            True,
+            Answer.REFUTED,
             (
                 *lines,
                 f"    ⛔ REFUTED: {branch} is TERMINAL — its tip was ABSORBED by the merge "
@@ -157,17 +221,22 @@ def verdict(asserted: Claim, branch: str, graph: Graph, live: dict[str, str]) ->
                 f"and {held}. ⚠️ A checkout cannot make an absorbed branch in flight again "
                 f"(Ruling 199, `docs/conventions/board.md`), and the arm that said it could "
                 f"kept a spent row green for as long as somebody forgot a worktree.",
+                *cell,
             ),
         )
     if branch in live:
-        return Verdict(False, (*lines, *_held(asserted, branch, live, count)))
+        return Verdict(Answer.CORROBORATED, (*lines, *_held(asserted, branch, live, count), *cell))
     if count:
         return Verdict(
-            False,
-            (*lines, f"    ⭐ CORROBORATED: {branch} is {count} commits ahead of {graph.release}."),
+            Answer.CORROBORATED,
+            (
+                *lines,
+                f"    ⭐ CORROBORATED: {branch} is {count} commits ahead of {graph.release}.",
+                *cell,
+            ),
         )
     return Verdict(
-        True,
+        Answer.REFUTED,
         (
             *lines,
             f"    ⛔ REFUTED: {branch} is 0 ahead of {graph.release}, no checkout holds it, and "
@@ -178,7 +247,70 @@ def verdict(asserted: Claim, branch: str, graph: Graph, live: dict[str, str]) ->
             f"branches at `2d0cfe7` — and (b) it never carried a commit of its own, which is "
             f"invisible to `--no-merged` BY CONSTRUCTION (Ruling 130). ⛔ Both refute a started "
             f"row, and that is the 350-commit case.",
+            *cell,
         ),
+    )
+
+
+def _unanswerable(branch: str, graph: Graph, live: dict[str, str]) -> tuple[str, ...]:
+    """⛔ Ruling 216's THIRD answer: git did not answer, so this row has NO verdict.
+
+    ⚠️ **Shape `C` is NOT printed here and that is deliberate:** `terminal()` reads
+    `tip()`, which returns `""` when git could not resolve the tip — ⛔ **so
+    `graph `C` none` would be a second reading git never gave, in the arm whose whole
+    subject is a reading git never gave.** ⭐ **Shape `B` IS printed: the merge log
+    answers without the tip.**
+
+    ⛔ **This sentence deliberately quotes NEITHER of the two strings the defect
+    produced** (`is 0 ahead`, `is None commits ahead`) ⚠️ **and neither of the two
+    verdict words.** ⭐ **Their absence from the output is what the gate asserts, and a
+    sentence that mentioned them would make that assertion unwritable** — the history
+    lives in this module's docstring, which no instrument reads as a reading.
+    """
+    where = Path(live[branch]).name if branch in live else ""
+    held = f"checked out at {where}" if where else "checked out nowhere"
+    return (
+        f"    ⛔ NOT ANSWERABLE: git could not count {graph.release}..{branch}, so this row "
+        f"has NO commits-ahead reading and NO terminality reading — the name resolves as a "
+        f"branch, its tip reads {graph.tip(branch) or 'NOTHING'}, and it is {held}. "
+        f"⚠️ Shape `C` is UNREAD rather than `none` (it needs the tip); shape `B` needs only "
+        f"the merge log and says {graph.named(branch) or 'none'}. ⛔ This is Ruling 216's third "
+        f"answer: one of them makes the RUN exit NOT AUTHORITATIVE — never the PASS code and "
+        f"never the refutation code — because *git could not answer about this branch* is "
+        f"neither *the board is right* nor *the board is wrong* (`rows/W115.md`).",
+    )
+
+
+def _cell(asserted: Claim, branch: str, count: int, graph: Graph) -> tuple[str, ...]:
+    """`PO-42/7`: the row's CLAIMED count against git's — ⛔ a NOTICE, never a refutation.
+
+    ⚠️ **The two were parsed, printed on adjacent lines, and compared to nothing.**
+    ⛔ **A row naming several branches is PRINTED and not compared**: one cell cannot be
+    a claim about N branches, and a comparison that invented one would fire on correct
+    work, which is Ruling 179's cost.
+    """
+    claimed = asserted.row.commits
+    if len(asserted.branches) != 1:
+        return (
+            f"    commits ahead: the row claims {claimed} over {len(asserted.branches)} branches, "
+            f"so ONE cell is not a claim about {branch}'s {count} — PRINTED, not compared.",
+        )
+    if claimed is None:
+        return (
+            f"    commits ahead: the row DECLARES none and git reads {count} — ⚠️ a cell reading "
+            f"`—` declares no ahead observation and is not a claim of `0` (Ruling 130), so there "
+            f"is nothing to compare.",
+        )
+    if claimed == count:
+        return (f"    commits ahead: the row claims {claimed}, git reads {count} — AGREE.",)
+    return (
+        f"    ⚠️ NOTICE, not a refusal (`PO-42/7`): the row claims {claimed} commits ahead and "
+        f"git reads {count} for {branch}. ⭐ A commits-ahead cell is a reading of a MOVING TIP "
+        f"and {graph.release} does not move when a developer commits — MEASURED twice forty "
+        f"minutes apart in one round, two cells still reading 2 and 2 were 3 and 5. ⛔ So a "
+        f"stale NUMBER is not a stale ROW: refuting on it would fire on every wave where "
+        f"somebody committed after the board was written, which is every wave (Ruling 179). "
+        f"⚠️ The two used to be printed side by side and compared to nothing.",
     )
 
 
@@ -203,8 +335,15 @@ def _shapes(branch: str, absorbed: str, named: str) -> str:
     )
 
 
-def _held(asserted: Claim, branch: str, live: dict[str, str], count: int | None) -> tuple[str, ...]:
-    """Corroborate from the live checkout, ⛔ with `PO-40/2`'s comparison beside it."""
+def _held(asserted: Claim, branch: str, live: dict[str, str], count: int) -> tuple[str, ...]:
+    """Corroborate from the live checkout, ⛔ with `PO-40/2`'s comparison beside it.
+
+    ⛔ **`count` is `int` and NOT `int | None`** (`W115`, Ruling 216): this function
+    printed *"is None commits ahead"* and returned the row CORROBORATED, exit `0`, which
+    is a FAILED reading reaching the PASS code. ⭐ **`verdict()` refuses a `None` before
+    this arm, so the site is closed by UNREACHABILITY rather than by a handler** — ⚠️ a
+    handled `None` is a site somebody can reintroduce.
+    """
     path = live[branch]
     where = Path(path).name
     lines = [

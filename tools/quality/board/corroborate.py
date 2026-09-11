@@ -65,6 +65,30 @@ saying that is not the same answer as nothing being in flight.** ⭐ **So the
 unreadable and unlocated cases now exit `NOT_AUTHORITATIVE`, refusing at the first
 declared block that did not parse**, which is Ruling 196(a)'s third state inhabited
 by a third producer.
+
+## ⛔ `W115` — Ruling 216: the exit code is a FOLD OF THE ROWS, and the third state survives it
+
+⚠️ **Three process codes and a TWO-valued row verdict: *git could not answer about this
+branch* had nowhere to land.** ⛔ **MEASURED at `6c4e3d0` in the pinned container with a
+planted branch git genuinely cannot count — a ref file written to a sha no object carries,
+so `rev-parse --verify` answers and `rev-list --count` does not:**
+
+```text
+the row's branch, no checkout     ->  ⛔ REFUTED "is 0 ahead"    exit 1  a FALSE REFUTATION
+the row's branch, checked out     ->  ⭐ CORROBORATED "is None"  exit 0  a FAILED reading, PASSED
+a live checkout named by no row   ->  filed under "invisible to git BY CONSTRUCTION"
+```
+
+⭐ **Now: `Answer.NOT_ANSWERABLE` per branch, which is `verdict.py`'s business; and HERE the
+fold — one unanswerable row, or one live checkout whose count did not read, makes the RUN
+exit `NOT_AUTHORITATIVE`.** ⛔ **`_unnamed()`'s `ahead(branch) or 0` is gone: a failed
+reading gets its OWN line, because the line it used to land on is the one whose whole job is
+to say *this is unreadable BY CONSTRUCTION*, where a failure cannot be told from a real `0`.**
+
+⚠️ **What this row is NOT: a rule that every unreadable thing exits `2`.** ⭐ **A DECLARED,
+READABLE, EMPTY `<!-- inflight -->` block is still exit `0` and still says so in its own
+sentence** — *nothing is in flight* is a real answer, and a refusal there would fire on
+every wave the PO closed correctly (`board.md`, ruled round 50).
 """
 
 from __future__ import annotations
@@ -84,7 +108,7 @@ from tools.quality.board.observation import (
     read,
 )
 from tools.quality.board.register import BOARD
-from tools.quality.board.verdict import Verdict, claim, tokens, verdict
+from tools.quality.board.verdict import Answer, Verdict, claim, tokens, verdict
 
 #: The branch every *commits ahead* cell on this board counts against. ⭐ A
 #: default rather than a constant: `--release` overrides it, because a milestone
@@ -142,7 +166,7 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     if refused is not None:
         return [*lines, refused], NOT_AUTHORITATIVE
 
-    refuted = 0
+    refuted = unanswerable = 0
     for row in table.rows:
         asserted_by = claim(row, graph, live)
         lines.append(
@@ -158,7 +182,7 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
             verdict(asserted_by, branch, graph, live) for branch in asserted_by.branches
         ] or [
             Verdict(
-                True,
+                Answer.REFUTED,
                 (
                     "    ⛔ REFUTED: the row names no branch this checkout has. An assertion "
                     "owes its own observation (Ruling 189(c)).",
@@ -167,17 +191,37 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
         ]
         for answer in verdicts:
             lines.extend(answer.lines)
-        if any(answer.refuted for answer in verdicts):
+        answers = {answer.answer for answer in verdicts}
+        # ⛔ `NOT_ANSWERABLE` DOMINATES within a row too (Ruling 216): a row one of whose
+        # branches git could not read is a row this run cannot judge, and folding it onto
+        # `REFUTED` is the FALSE REFUTATION the row exists to close.
+        if Answer.NOT_ANSWERABLE in answers:
+            unanswerable += 1
+        elif Answer.REFUTED in answers:
             refuted += 1
-    lines.extend(_unnamed(table.rows, live, graph))
+    unread_lines, unread = _unnamed(table.rows, live, graph)
+    lines.extend(unread_lines)
     lines.extend(_spent(graph, live))
     lines.append(
-        f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git."
+        f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git, "
+        f"{unanswerable} NOT ANSWERABLE and {unread} live checkout(s) git could not "
+        f"count (Ruling 216's third answer)."
         if table.rows
         else f"corroborate: the {INFLIGHT_OPEN} block is DECLARED, READ, and carries no row — "
         f"⭐ that is *nothing is in flight*, which is a real answer and not an empty "
         f"population (Ruling 191(a), and `W111` is why the two can now be told apart)."
     )
+    if unanswerable or unread:
+        # ⛔ Its OWN sentence, appended only when the third state is inhabited, so the four
+        # `W111` populations keep the four distinct closing sentences they are asserted on.
+        lines.append(
+            f"corroborate: NOT AUTHORITATIVE — exit {NOT_AUTHORITATIVE}, not "
+            f"{CORROBORATED} and not {REFUTED}. ⛔ {unanswerable} row(s) and {unread} live "
+            f"checkout(s) have NO git reading at all, and *git could not answer* is neither "
+            f"*the board is right* nor *the board is wrong* (Ruling 216, Ruling 53's fourth "
+            f"state). ⚠️ The coerced form folded these onto a number and exited 0 or 1."
+        )
+        return lines, NOT_AUTHORITATIVE
     return lines, REFUTED if refuted else CORROBORATED
 
 
@@ -211,7 +255,9 @@ def _refusal(table: Table) -> str | None:
     return None
 
 
-def _unnamed(rows: tuple[Observation, ...], live: dict[str, str], graph: Graph) -> list[str]:
+def _unnamed(
+    rows: tuple[Observation, ...], live: dict[str, str], graph: Graph
+) -> tuple[list[str], int]:
     """Report the other direction: work git can see that the board does not name.
 
     ⛔ **The measured failure was BIDIRECTIONAL** — stale rows present and live
@@ -227,10 +273,18 @@ def _unnamed(rows: tuple[Observation, ...], live: dict[str, str], graph: Graph) 
 
     ⛔ **Directory BASENAMES, never the path** (R7): `git worktree list` answers
     in absolute paths, and an absolute path carries the user's home directory.
+
+    ⛔ **`W115`: the coercion that lived here was `ahead(branch) or 0`**, which filed a
+    FAILED reading under *invisible to git BY CONSTRUCTION* — ⚠️ **the one line whose
+    whole job is to say *this is unreadable*, and where a failure is indistinguishable
+    from a legitimate `0`.** ⭐ **It gets its own line and its own count now, and the
+    count is RETURNED so the caller's fold can reach exit `NOT_AUTHORITATIVE`**
+    (Ruling 216).
     """
     claimed = {name for row in rows for name in tokens(row.checkout)}
-    counts = {branch: graph.ahead(branch) or 0 for branch in live if branch != graph.release}
-    missing = sorted(b for b, n in counts.items() if n > 0 and b not in claimed)
+    counts = {branch: graph.ahead(branch) for branch in live if branch != graph.release}
+    unread = sorted(Path(live[b]).name for b, n in counts.items() if n is None)
+    missing = sorted(b for b, n in counts.items() if n is not None and n > 0 and b not in claimed)
     blind = sorted(Path(live[b]).name for b, n in counts.items() if n == 0 and b not in claimed)
     lines = (
         [f"  ⛔ dispatched and UNNAMED by any row: {' '.join(missing)}"]
@@ -241,7 +295,16 @@ def _unnamed(rows: tuple[Observation, ...], live: dict[str, str], graph: Graph) 
         f"  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no "
         f"row: {len(blind)}" + (f" — {' '.join(blind)}" if blind else "")
     )
-    return lines
+    lines.append(
+        f"  ⛔ git COULD NOT COUNT *commits ahead* for {len(unread)} live checkout(s): "
+        f"{' '.join(unread)} — ⚠️ a FAILED reading, and NOT the Ruling 130 exemption above: "
+        f"that one is earned by a checkout with no commit, this one is git declining to "
+        f"answer. ⛔ `ahead(branch) or 0` used to fold these two together, so a failure "
+        f"read as a `0` somebody had already agreed to ignore."
+        if unread
+        else "  live checkouts git could not count: none."
+    )
+    return lines, len(unread)
 
 
 def _spent(graph: Graph, live: dict[str, str]) -> list[str]:
