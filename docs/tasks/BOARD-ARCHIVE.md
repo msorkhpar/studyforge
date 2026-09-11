@@ -10608,3 +10608,309 @@ lines matching RULINGS? [0-9] across -- docs src tools tests  : 65 in 18 files
 ⭐ **The instrument:** `git grep -liP` in place of `-lP` in `docs/conventions/board.md`'s check 3 block, with the three readings above pinned in the commit. ⛔ **The cost of `-i` stated rather than assumed: it also admits lower-case prose — the spec's own `(ruling 90)` — which is an over-match in the direction Ruling 184 already priced.**
 
 ⚠️ **THE CLAUSE IS THE CTO'S TO RULE AND MINE TO OBEY.** ⛔ **Check 3's contract is Ruling 184's, and a third clause on it belongs to the office that minted the first two** — ⭐ **so this row is PRESENTED with its three readings and does not assume the ruling.** ⚠️ **It is not a blocker: the direction is already ruled by 184's stated reason, so a developer can build it the moment the clause lands.**
+
+---
+
+## ⛔ PO ROUND 39 — the marker's spelling fixed in the document that owns the sweep, `W95` closed, `In flight` re-taken, and five mints from three unrouted structural findings
+
+⭐ **Measured at `7559398` (`755939874faa962da279a017682d61a721ab1873`), PO
+worktree `wt/po`, branch `chore/po-round39`, fast-forwarded to the release tip
+rather than inheriting its cut point.** ⛔ **Every reading below names the ref and
+the checkout role; nothing in this section was received without being re-taken.**
+
+### ⛔ 1. THE `delivery-flow.md` SPELLING DEFECT — RECONCILED, FIXED, AND THE DELTA IS NOT WHAT IT WAS CALLED
+
+⭐ **The received reconciliation reproduces EXACTLY at both refs, and I took it
+myself with `git grep` after validating `git grep` against `grep` at the tip:**
+
+```text
+                          backticked          unbackticked        DELTA
+                     (Ruling 65, §8a,      (delivery-flow:116)
+                      and the shipped
+                      reader — ALL THREE
+                      agree on spelling)
+c18df98c                455 / 121            462 / 121              7
+4e8ba86                 464 / 122            471 / 122              7
+7559398  (the tip)      478 / 125            487 / 125          ⛔ 9
+```
+
+⛔ **SO THE RECEIVED CLAIM — *"a stable 7 at every ref"* — IS REFUTED AT THE TIP.**
+⭐ **The over-count is not an offset, it GROWS**, and it grew in the very wave that
+described it as stable: two of the nine arrived with `chore/po-round38`, whose own
+record quotes the marker while explaining this defect. ⚠️ **That is the argument
+for fixing the instrument rather than living with a known constant: a constant can
+be subtracted and a growing error cannot.**
+
+⭐ **THE POPULATION PRINTED IN FULL BEFORE ANY SCALAR (Ruling 191), all nine:**
+
+```text
+PO-2026-09-10-round38.md:78    a census line quoting both markers
+PO-2026-09-10-round38.md:327   a planted-reading line quoting the marker
+FND-04.md:289                  *italic* marker in prose
+FND-04.md:290                  *italic* marker in prose
+PO-2026-09-10-round19.md:221   the bold-bare form, named as the defect it was
+CTO-2026-09-10-round48.md:234  a quoted census reading
+CTO-2026-09-09-round17.md:3050 a heading quoted inside a table cell
+CTO-2026-09-09-round17.md:3924 a quoted census reading
+CTO-2026-09-09-round17.md:4412 a quoted census reading
+```
+
+⛔ **NOT ONE IS A FINDING. Every one is a MENTION** — and eight of the nine are
+inside RECORDS, which Ruling 106 forbids editing. ⭐ **So the nine cannot be
+chased, and that settles the direction: the instrument is wrong, not the corpus.**
+
+⭐ **THE THREE READINGS THE INSTRUMENT OWES, expectations written before each
+command, planted on the host and the restore verified two ways:**
+
+```text
+EXPECTED : a planted UNBACKTICKED marker must leave the backticked reading
+           UNCHANGED and raise the unbackticked one by exactly 1.
+
+LIVE                                    backticked 478   unbackticked 487
+PLANTED, unbackticked (adversarial to
+  the SEARCH TERM, not to the subject)  backticked 478   unbackticked 488  ⭐
+PLANTED, a true backticked finding       backticked 479   unbackticked 489
+IMPOSSIBLE, a marker spelling no
+  handoff carries                       backticked   0   ⛔ DIFFERS from pass
+RESTORE   git status --porcelain EMPTY · content diff IDENTICAL · reading 478
+```
+
+> ⛔ **THE REMEDY, AND IT IS ONE SPELLING NAMED IN ONE PLACE:**
+> `delivery-flow.md` carried the pattern TWICE — once fenced at the wave-open
+> check and once spelled inside prose — ⭐ **and the prose copy was the worse of
+> the two: unescaped brackets are a grep CHARACTER CLASS, so it matched 44,821
+> lines across every handoff in the tree.** ⚠️ **Nobody had run it; it was read as
+> documentation of the fenced one.** ⛔ **Both are gone. The fence now carries
+> `` `\[structural\]` `` and names its two agreeing authorities; the prose NAMES
+> the marker and spells nothing, which is Ruling 65's own rule applied to the
+> document that was breaking it.**
+
+⭐ **WHAT IS NOT MINE AND IS ROUTED TO THE CTO, stated as two separate questions
+rather than one:**
+
+| routed | why it is the CTO's |
+|---|---|
+| ⭐ **Does Ruling 65's spelling bind EVERY reader of the marker, or only §8a's per-handoff counter?** | ⛔ **Ruling 65 is the CTO's mint and a clause widening its scope is theirs.** ⚠️ **The repository-wide sweep is a SECOND reader and it disagreed silently for the whole life of the clause — so the ruling's scope is not a detail** |
+| ⭐ **The received sentence *"the shipped authority is `marker_lines`, which is neither of them"* is HALF right, and the half that is wrong changes the remedy** | ⛔ **MEASURED: `contract.py`'s `_MARKERS_ON_LINE` is `` `\[(?:local\|structural\|none)\]` `` — the SAME spelling as Ruling 65's, backticks included.** ⭐ **What differs is its VOCABULARY (three markers) and its POPULATION (one file, own-line aware), never its spelling** — ⚠️ **so two of the three readers always agreed and `delivery-flow.md` was the lone dissenter, which is why the fix is a correction and not a negotiation** |
+
+### ⛔ 2. `W95` CLOSED — and the merge ref is derived from the BRANCH under Ruling 189(d)
+
+⭐ **TWO PRINTED STEPS, the first an assertion owing clause (c)'s observation and
+the second an observation, and existence checked as its OWN command:**
+
+```text
+STEP 0  existence, its own command, never behind a pipeline
+   git rev-parse --verify fix/W95-shared-origin-fixture  ->  daff44f  EXISTS
+   git rev-parse --verify feat/SF-15-contents            ->  08d4aa0  EXISTS
+
+STEP 1  row -> branch, an ASSERTION. Its observation:
+   the branch is named for the row in BOARD.md's In-flight cell and in
+   PO-round38's dispatch block and CTO-round49's worktree reading — three
+   documents, two offices.
+
+STEP 2  branch -> merge, an OBSERVATION, taken in BOTH forms because one of
+        them is RECORDED AS WRONG and must not be trusted alone:
+   --ancestry-path, printed WHOLE rather than tail -1
+      fix/W95-shared-origin-fixture  ->  cfe0e0c  (and 5e608bf, 7559398 above it)
+      feat/SF-15-contents            ->  5e608bf  (and 7559398 above it)
+   --grep 'Merge <branch>' corroborating
+      fix/W95-shared-origin-fixture  ->  cfe0e0c   ⭐ AGREE
+      feat/SF-15-contents            ->  5e608bf   ⭐ AGREE
+```
+
+⛔ **AND A CORRECTION TO WHAT I WAS TOLD ABOUT THE ENFORCEMENT, because I checked
+it rather than inheriting it:** ⚠️ **I was briefed that `test_migration.py`
+asserts the re-addressed-link count, so a third re-addressed line would fail by
+name.** ⭐ **MEASURED: that module reads BOTH sides of its equality at pinned refs
+— `BASE = bfb8c8c` and `OUTPUT = 5688dcd1…` — which is Ruling 180 and Ruling 182
+exactly, and its own docstring says *"the live tree is not this module's
+business."*** ⛔ **So a live close cannot turn it red, and the re-addressing
+discipline rests on the PO obeying Ruling 174's form rather than on a test.**
+⚠️ **`W95`'s move re-addressed exactly ONE line — the same count as `W87`'s
+move — so the question is moot this round and the claim is corrected anyway,
+because a successor would have relied on a guard that is not there.**
+
+### ⛔ 3. THREE STRUCTURAL FINDINGS MERGED UNROUTED, AND THAT IS THE FINDING ABOUT THE PROCESS
+
+⭐ **`delivery-flow.md` step 5 makes the REVIEWER the router, *"being the last
+person to read a handoff while anything can still be done about it"*, and
+`CTO-2026-09-10-round49.md` says in its own words *"Every `[structural]` finding
+above is RULED or ROUTED. None is 'noted'."*** ⛔ **That sentence is true of the
+CTO's OWN findings and was never extended to the two branches they approved in
+the same annotation.**
+
+```text
+POPULATION: every marked finding in the two handoffs closed this wave
+SF-15/1  structural   "#" composed in two packages          ⛔ unrouted -> W107
+SF-15/2  local        a container page has no trail             SF-27's, stated
+SF-15/3  structural   the region census cannot see a region  ⭐ ROUTED (Ruling 192)
+SF-15/4  local        the epic carries a stale slot count         fixed in place
+SF-15/5  local        navigation.py is eight lines under R11  ⭐ condition recorded
+SF-15/6  structural   no module-only container boundary       ⛔ unrouted -> W108
+W95/1    local        no fixture exercises corpus_api: 2          stated
+W95/2    local        two negatives have no fixture corpus        stated
+W95/3    structural   a test helper re-read a two-shaped field ⛔ unrouted -> W109
+W95/4    local        a fixture README count nothing checked      fixed in place
+                                        structural: 4, routed by the reviewer: 1
+```
+
+⛔ **THREE OF FOUR IS NOT A LAPSE, IT IS THE DEFAULT the clause was written
+against.** ⭐ **The asymmetry is informative and I am not charging it as fault: the
+CTO routed the finding that produced a RULING and left the three that produce only
+ROWS.** ⚠️ **That is exactly the gradient `delivery-flow.md` predicts — a reviewer
+routes what they must decide and leaves what somebody else must schedule — and the
+remedy is not a reminder: ⭐ the triage sweep is mine, it is a wave-open check, and
+it caught all three.** ⛔ **So the process WORKED at the second gate, and what it
+cost is that the three rows are minted a wave later than the ruling was.**
+
+### ⛔ 4. RULING 192's ENFORCEMENT INSTRUMENT — the populations RE-MEASURED, and one received figure does not reproduce
+
+⭐ **I took all four populations myself, printed in full, narrowed to the element
+the clause's own subject names (`nav[aria-label=…]`):**
+
+```text
+AUTHORABLE, nav-scoped, f-strings RESOLVED                          5
+   "Between units"   templates/between-units.html
+   "Breadcrumb"      templates/breadcrumb.html        <- SF-15's new region
+   "Outline"         templates/outline.html
+   "Units"           container/listing.py   LIST_LABEL = "Units"
+   "Contents"        index/disclosure.py    LIST_LABEL = "Contents"
+
+PAINTED, nav-scoped, every stylesheet                               4
+   Between units · Contents · Outline · Units
+
+REGION_MARKERS, test_chrome.py:85, printed rather than counted      5
+   body · header · main#content · footer#player
+   section[data-section="practices-pending"]
+   ⛔ not ONE is a nav[aria-label=…]
+
+AUTHORED AND UNPAINTED                                              1
+   ⛔ nav[aria-label="Breadcrumb"] — absent from every stylesheet AND
+      absent from REGION_MARKERS, so neither instrument can say so
+```
+
+⛔ **THE RECEIVED FIGURE *"the templates author NINE distinct aria-labels"* DOES
+NOT REPRODUCE, and the reason is the ruling's own subject.** ⭐ **Measured: the
+templates author EIGHT distinct literals; the full authorable set is TEN across
+all elements and FIVE once narrowed to `nav`** — ⚠️ **because two of the authored
+labels are composed in f-strings (`aria-label="{LIST_LABEL}"` in
+`container/listing.py` and `index/disclosure.py`) and a literal `grep` over `src/`
+cannot see either value.**
+
+> ⭐ **THAT IS RULING 192 CLAUSE (c) ARRIVING ON THE MEASUREMENT OF RULING 192.**
+> ⛔ **A developer who builds the authorable population by grepping literals reads
+> `4` authorable against `4` painted, concludes the totality holds, and ships a
+> green check over the one region that is actually missing.** ⚠️ **The true reading
+> is `5` against `4`.** ⭐ **So the row must say that the authorable population is
+> derived from the EMITTERS' resolved values and never from a literal sweep** —
+> and that sentence is worth more than the count it corrects.
+
+### ⛔ 5. `W100`'s ROW FILE CONTRADICTED THE RULING THAT SCOPED IT
+
+⛔ **`rows/W100.md` said, in capitals, *"THE REMEDY IS NOT A SEVENTH COLUMN"* and
+*"widening `## Scheduled` to five columns duplicates the register, which is the
+one thing `board.md`'s one-fact-one-home table forbids."*** ⭐ **`W100`'s scope, RULED CTO round 49 and landed in
+`board.md` beneath Ruling 189, rules the opposite in its clause (b): `## Scheduled` gains its own delimiter AND A STATE
+COLUMN.** ⚠️ **A developer opening only the row file would have built the thing
+the ruling forbids while believing they were obeying it.**
+
+⭐ **The stale form is REPLACED rather than annotated beneath, which is `ARCH/9.2`
+and the same call `W87` made for the same reason: a developer opens this file.**
+⛔ **And the row now carries the separation in its own words — `W96` is NOT gated
+on it, they share only the delimiter, and `W100` must not acquire a `git`
+dependency to get built.**
+
+### ⭐ 6. THE CARRY CHECK — run on a FRESH probe, and the replacement probe is already decaying
+
+⛔ **Ruling 184(c)'s impossible row is only impossible while its number is
+mentioned nowhere, and `board.md`'s own fix demonstrates the decay it warns
+about:**
+
+```text
+probe   as a ruling   anywhere in the tree
+9999        2 files          5 files    ⛔ dead: records quote the probe line
+7431        0 files          1 file     ⚠️ ALREADY DECAYING — the one hit is
+                                           board.md's own replacement clause,
+                                           typed in the commit that minted it
+fresh       0 files          0 files    ⭐ used for this round's impossible row
+```
+
+⛔ **SO THE NUMBER IS NOT WRITTEN DOWN, and that is the ruled form rather than an
+omission:** ⭐ **`board.md` now says `<a number mentioned nowhere>` instead of a
+number, precisely so the clause stops killing its own probe.** ⚠️ **The cost is
+stated: this reading is reproducible in METHOD and not in digits, and a successor
+picks their own fresh number.**
+
+### ⛔ 7. `In flight` RE-TAKEN AT THE TIP, NOT CARRIED
+
+⭐ **`git worktree list` PRIMARY and `git branch` corroborating (Ruling 171), both
+at `7559398`, with the population SIZE printed before any verdict — Ruling 191 as
+corrected by `CTO-49/9`, which is why the size is the load-bearing clause.**
+
+⛔ **BOTH ROWS OF THE TABLE THIS REPLACES HAVE MERGED** — `SF-15` at `5e608bf` and
+`W95` at `cfe0e0c`, both derived from the BRANCH under Ruling 189(d) in §2 above.
+⭐ **So the table is REPLACED, never appended beneath, for the ninth consecutive
+round, and the superseded reading lives here rather than under it.**
+
+⚠️ **AND THE REPLACEMENT IS A DISPATCH TABLE RATHER THAN AN EMPTY ONE: `SF-26` and
+`W96` are dispatched to Developer 1 and Developer 2.** ⛔ **Which makes their cells
+the first test of Ruling 189(b) in the direction it has never been tested —
+a row that is genuinely JUST DISPATCHED, where `Checkout` carries the whole
+evidence and `ahead = 0` is legitimate.** ⭐ **Ruling 130 is why that is not the
+contradiction the predicate hunts, and Ruling 171 is why `worktree list` is the
+cell that decides it.** ⚠️ **`wt/cto`, `wt/po` and `wt/po-int` are checkouts and
+are NOT rows.**
+
+### ⭐ 8. THE QUEUE, RE-TAKEN — and what I changed
+
+⛔ **The inherited order was `SF-26` → `SF-30` → `W96` → `W91` → `W74` →
+`W63`→`W64`.** ⭐ **`SF-26` and `W96` are DISPATCHED, so they leave the queue
+rather than heading it**, and the re-taken order is `SF-30` → `W91` → `W74` →
+`W63`→`W64`, with this round's five mints placed BEHIND all of them.
+
+| change | the argument |
+|---|---|
+| ⭐ **`SF-30` heads the queue and is jumped by no mint** | ⛔ **It is the OPEN STEP's own membership and `README.md` ranks it; a backlog `W` row has never outranked that** (round 38's own clause, kept). ⚠️ **It is gated on `SF-26`, which is in flight — so the gate clears this wave or it does not, and that is an observation rather than a placement** |
+| ⭐ **`W91` holds second and its argument STRENGTHENED** | ⛔ **Ruling 192 is the 192nd mint against an index that stops at 56, and the CTO named that cost out loud for the second consecutive round.** ⚠️ **This round adds a third office's data point: my own brief warned that a bare `(Ruling N)` for `N > 56` is unfollowable, and I hit it four times inside one round** |
+| ⛔ **`W105`–`W109` are placed BEHIND `W63`→`W64` and do NOT invoke Ruling 75** | ⭐ **Ruling 75's subject is a newly minted row JUMPING an older `todo` row of the same size class.** ⛔ **None of these jumps anything** — ⚠️ **so writing a jump argument would imply a contest that does not exist, which is round 38's reasoning applied in the other direction, and it is stated rather than assumed** |
+| ⚠️ **`W36` is NOT promoted although it now gates TWO rows** | ⛔ **A second dependent is not a new argument for a row whose cost is a checksum-pinned browser in the pinned image.** ⭐ **What is recorded is that the dependent count ROSE — `W98` and now `W105` — so the next office weighing it has the reading rather than re-deriving it** |
+
+### ⭐ 9. TWO STANDING MODULE CONDITIONS, recorded WITHOUT their counts
+
+⛔ **Ruling 150's form applied to my own record: where a count is the thing that
+goes stale, the condition is written as a PREDICATE and the number stays in the
+instrument that measures it.** ⭐ **`render/page/navigation.py` and
+`tools/quality/board/__init__.py` both stand at effectively zero headroom against
+R11; the CTO attached a condition to each; and the condition binds the NEXT ROW
+THAT TOUCHES THE FILE rather than the row that left it there.**
+
+⚠️ **Both are already in the relevant developer's brief — they are recorded on the
+board so they survive the brief, which is the whole of `CLAUDE.md`'s own
+argument.** ⛔ **The seam for `navigation.py` is named in `handoffs/SF-15.md`,
+which is where a developer goes for it, so the board carries the POINTER and not a
+second copy of the seam.**
+
+⭐ **AND THE `.claude/settings.json` DECISION, which is the reason a convention
+became a gate:** ⛔ **R18 has said since round 18 that nothing is ever pushed to
+any remote, and for every round since, that rule was enforced by agents reading
+it.** ⭐ **The user approved a project-scoped settings file that DENIES
+`Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS
+`Bash(git merge:*)` so a coordinator can merge without a round trip.** ⚠️ **It was
+untracked, which means it protected exactly one checkout and no worktree** — ⛔ **so
+it is committed, and where it lives is recorded as a standing decision, because a
+machine-enforced rule that only one checkout has is weaker than a convention
+everybody reads.**
+
+### W95 — No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested
+
+⛔ **`Q23`'s fixture gap, and it is a FIXTURE GAP rather than a question.** ⭐ **No `FND-04` fixture has TWO UNITS SHARING ONE SOURCE FILE, so the answer to *how is a narration clip keyed when 17 units share one source file?* cannot be tested in this repository at all.**
+
+⚠️ **The question itself is registered with its DEADLINE TASK — `SF-16`, which mints the clip filename, carried into `SF-17`** — ⭐ **and the register entry is the archive's; this row is the artifact that makes the answer falsifiable.**
+
+⛔ **WHY IT CANNOT WAIT FOR M3.** ⚠️ **The narration manifest is an **R21 row with no file and no version**, M3 is the next milestone, and `F21`'s ruling gave PO-Integration's fourth container `origin {path, section}` — ⛔ **so 17 units, ONE `path`.** ⭐ **If the clip key derives from the source path, `SF-17`'s bidirectional `<audio>` assertion fails for 16 of 17, or the clips silently OVERWRITE.** ⚠️ **`delivery-flow.md`'s own rule: a question that arrives after its deadline task has shipped has become a FINDING, and the cost is a schema change under R9 rather than a schema decision.** ⛔ **This is the exact case the deadline mechanism exists for.**
+
+⛔ **THE R21 HALF IS NOT MINE.** ⭐ **The narration manifest's contract version is minted in the register of the document that carries the key, and that register is the CTO's** — ⚠️ **and R21's board row is `BOARD.md:212`, inside the frozen `## Scheduled` block, which is why the CTO is not editing their R21 rows until `fix/board-instrument` merges.** ⭐ **This row is the framework-side fixture and nothing else.**
+
+⭐ **WHAT SETTLES IT:** one `FND-04` fixture in which two units declare the same `origin.path` and differ only in `origin.section`, plus the assertion that whatever key `SF-16` mints is DISTINCT for both. ⛔ **Two units, not seventeen** — ⚠️ **the pigeonhole only needs two to be exhibited, and a scale count would be a reading taken inside a consumer repository** (Ruling 151, `W77`'s own class).
+
+[round 37's mint](#round-37-the-mint-arguments-and-the-corrections-the-cto-and-the-integration-channel-forced-mid-round)
