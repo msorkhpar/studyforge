@@ -4734,3 +4734,41 @@ the live population on the WAVE TREE (79 live)   contains = 47
 obeyed the row; one who writes the literal has broken it.** ⚠️ **`W119`'s ratified class — a
 committed test that reads this machine's or this moment's population — and the row's author would
 have written the threshold had they measured second.**
+
+## ⛔ RULED ROUND 62 — one clause, its command and its pass condition
+
+⚠️ **Reasoning, every reading and every plant:
+[`docs/tasks/handoffs/CTO-2026-09-11-round62.md`](../tasks/handoffs/CTO-2026-09-11-round62.md).**
+
+### ⛔ Ruling 310 — a QUOTED figure carries its PREDICATE as well as its REF, and copying one out of a frozen record into a LIVE document is a NEW typed measurement
+
+```bash
+# ⛔ (a) Before writing any figure into docs/conventions/, ask where it came from. A record
+#    dates its own readings; a LIVE document cannot, so the as-of does not travel with it.
+git diff --name-only "$BASE"...HEAD -- 'docs/conventions/*.md' | while read -r f; do
+  awk '/^```/{inside=!inside; next} !inside' "$f" | grep -nE '[0-9][0-9,]*[[:space:]]*(lines|rows|files|KB|MB|bytes|tokens|tasks|ids)\b'
+done                                   # §8b's population — then RE-READ each with its instrument
+# ⛔ (b) Before quoting a figure taken against a gate, name the predicate that produced it and
+#    re-read the SAME subject with BOTH, rather than replaying today's over a past ref.
+#    old = <the predicate shipping at that ref>;  new = <the predicate shipping now>
+#    print("lost:", sorted(old - new), "gained:", sorted(new - old))
+```
+
+⛔ **Pass: (a) every figure printed by the first command is a BOUND, or it is replaced by the
+PROPERTY plus a pointer to the instrument that prints it and to the dated record it came from;
+(b) a reach figure is quoted with its PREDICATE as well as its REF wherever a repair of that
+predicate lies between the reading and the quote.** ⭐ **This is Ruling 302 stated as an
+obligation on the QUOTER rather than on the narrower, and Ruling 181 closed against the one
+route a careful author still had into it.**
+
+| reading, CTO round 62, measured in the pinned container | measured |
+|---|---|
+| `587` quoted into `board.md` from round 60's dated *"today's widest"* | ⛔ **wrong by `58`** — `board_state` printed `widest row 529 of 600` at the branch's own tip |
+| the same quantity two merges later, at the register's tip | ⚠️ **`585`** — a third value inside one wave |
+| `board.md`'s own preamble, falsified by the quote further down its own file | ⛔ *"This document types NO measurement of the board"* |
+| `428223c`'s documents under the predicate shipping THERE, and under today's | ⛔ **`40`** and **`41`** — one subject, two predicates, two true numbers |
+| the narrowing's whole effect over `1`–`296`, printed as a SET | ⭐ `lost: [175, 267]`, `gained: []` — byte-identical to Ruling 302's recorded row |
+
+⚠️ **Both arms were found the same way: a figure that was TRUE where it was written and FALSE
+where it was read.** ⛔ **Neither author was careless — one quoted a record, the other replayed
+a shipped predicate — which is why this is a clause and not a finding.**

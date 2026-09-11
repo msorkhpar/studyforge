@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **309 rulings, `1`–`309`, derived from 48 ruling records** —
+⭐ **311 rulings, `1`–`311`, derived from 49 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -354,3 +354,5 @@ procedure.
 | 307 | ⛔ Ruling 307 (CTO round 61) — IDS IN, IDS OUT: a FINDING names its own ID and a DISPOSITION names the finding's ID; neither written as a DESCRIPTION counts | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-307-cto-round-61-ids-in-ids-out-a-finding-names-its-own-id-and-a-disposition-names-the-findings-id-neither-written-as-a-description-counts) |
 | 308 | ⛔ Ruling 308 (CTO round 61) — a POINTER obligation is bounded by the REF the document lives on, and a row file that exists only on an UNMERGED branch is NAMED, not linked | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-308-cto-round-61-a-pointer-obligation-is-bounded-by-the-ref-the-document-lives-on-and-a-row-file-that-exists-only-on-an-unmerged-branch-is-named-not-linked) |
 | 309 | ⛔ Ruling 309 (CTO round 61) — a ROW's clause naming a MEASURED FIGURE is satisfied by an INHABITEDNESS THRESHOLD that PRINTS the figure, never by a literal | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-309-cto-round-61-a-rows-clause-naming-a-measured-figure-is-satisfied-by-an-inhabitedness-threshold-that-prints-the-figure-never-by-a-literal) |
+| 310 | ⛔ Ruling 310 — a QUOTED figure carries its PREDICATE as well as its REF, and copying one out of a frozen record into a LIVE document is a NEW typed measurement | heading | [round 62](handoffs/CTO-2026-09-11-round62.md#ruling-310-a-quoted-figure-carries-its-predicate-as-well-as-its-ref-and-copying-one-out-of-a-frozen-record-into-a-live-document-is-a-new-typed-measurement) |
+| 311 | ⛔ Ruling 311 — a post-dispatch amendment to a HELD row file is permitted only where it widens NO acceptance clause, and that is read off the DIFF | heading | [round 62](handoffs/CTO-2026-09-11-round62.md#ruling-311-a-post-dispatch-amendment-to-a-held-row-file-is-permitted-only-where-it-widens-no-acceptance-clause-and-that-is-read-off-the-diff) |
