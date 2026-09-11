@@ -40,6 +40,12 @@ this shape — a `<nav>`, an `<ol>`, a row per entry — the same way.
 what let `SF-34` be scheduled a milestone after the markup it styles. ⛔ A class
 would cost an entry in `SURFACE_HOOKS` and one in `chrome.css`, in two packages
 this task does not own — and a class name with no rule is not styling.
+
+⭐ **And the hooks themselves are now TAKEN from `pageassets.SURFACE_HOOKS`
+rather than spelled here** (`SF-14/1`, ruled CTO round 45 §12). ⚠️ The spelling
+was identical in this module and in `render.index.disclosure` and meant the same
+thing in both — which is agreement by coincidence, and the day one page gains a
+third state the two part company with nothing to notice.
 """
 
 from __future__ import annotations
@@ -47,6 +53,7 @@ from __future__ import annotations
 from studyforge.render.container.entries import Item
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page import PageError
+from studyforge.render.pageassets import SURFACE_HOOKS
 
 #: What the list is labelled for a reader who cannot see it. ⛔ This framework's
 #: own structural word, never a corpus's: every string on the page that names
@@ -55,12 +62,19 @@ LIST_LABEL = "Units"
 
 #: The attribute that says whether a row could be linked. ⚠️ `data-*` rather
 #: than a class, so this page needs no entry in a published class set — see the
-#: module docstring.
-READABLE_ATTRIBUTE = "data-readable"
+#: module docstring. ⛔ **Taken from the contract, never typed** (`SF-14/1`):
+#: `render.index.disclosure` says the same thing about the same rows, and
+#: `SF-34` writes one rule for both.
+READABLE_ATTRIBUTE = SURFACE_HOOKS["readable"]
+
+#: The attribute a reader-facing label's kind is carried in. ⚠️ Overloaded on
+#: purpose — `templates/section.html` carries a section's own kind in it — which
+#: is why a stylesheet rule for a kind names the element as well.
+KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 
 #: What wraps a unit's numbering, so a stylesheet can reach it without the
 #: numbering being glued to the title in one string.
-NUMBERING_KIND = "numbering"
+NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 
 
 def render(items: tuple[Item, ...]) -> str:
@@ -105,4 +119,4 @@ def _numbering(item: Item) -> str:
     """
     if not item.numbering:
         return ""
-    return f'<span data-kind="{NUMBERING_KIND}">{escape(item.numbering)}</span> '
+    return f'<span {KIND_ATTRIBUTE}="{NUMBERING_KIND}">{escape(item.numbering)}</span> '

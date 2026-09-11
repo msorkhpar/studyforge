@@ -18,6 +18,7 @@ PUBLIC_SURFACE = frozenset(
         "ASSET_DIR",
         "HEADER_CHARS",
         "HEADER_MARKERS",
+        "HOOK_CLASSES",
         "JOIN",
         "LICENCE_SUFFIX",
         "PART_SUFFIXES",

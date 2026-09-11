@@ -46,11 +46,19 @@ from studyforge.render.pageassets.source import text
 #: standing rule for a view that needs something different: theme the vendored
 #: stylesheet from outside, never fork it, so re-vendoring does not strand the
 #: change.
+#:
+#: ⛔ `chrome.css` sits after `reading.css` and before `code-highlight.css`, and
+#: both halves of that are meaning. It comes *after* the reading surface because
+#: it refines what `reading.css` sets on `body` and on `body`'s children — the
+#: page column (`PO-22/6`) is exactly that refinement, and at equal specificity
+#: the last rule wins. It comes *before* the highlight part because the
+#: highlight refines the inside of a code block, which no chrome rule reaches.
 STYLE_PARTS = (
     "reset.css",
     "palette.css",
     "focus.css",
     "reading.css",
+    "chrome.css",
     "code-highlight.css",
     "plyr.css",
     "video-player.css",

@@ -1,0 +1,338 @@
+/* The page's chrome: the regions around the reading surface, and the column
+   that bounds both.
+
+   ⭐ THE SCOPE IS THE LIST `reading.css` DISOWNS, minus the regions whose
+   markup does not exist yet. `reading.css` says of itself: "Masthead,
+   navigation rail, narration player, progress controls and practice panels are
+   NOT here: they belong to the tasks that render them, and each adds its own
+   part beside this one." ⛔ This is that part, for the regions a page already
+   emits — the masthead, the in-page outline, the between-pages bar, the
+   practice panel, a container's unit listing and the root index's tree. The
+   narration player and the progress controls stay out, because their markup is
+   not here yet and a rule for an element nobody emits is the same defect one
+   layer along (SF-11's finding 3).
+
+   ⛔ NOT ONE COLOUR AND NOT ONE MEASURE IS DEFINED HERE. Every value is a
+   `palette.css` token, and the palette defines every colour token in both
+   themes — so "rules in both themes" is a property of the vocabulary rather
+   than a second block of declarations to keep in step. A raw hex here would be
+   a colour that cannot follow the reader's theme, and `test_palette` fails it.
+
+   ⛔ NOT ONE CLASS NAME IS TARGETED HERE EITHER, and that is the whole reason
+   this part could be written a milestone after the markup it styles. Every
+   region is reached by element, `aria-label` or `data-*` attribute — exactly
+   what the three renderers emit — so no page changes, nothing is re-rendered,
+   and no class joins the published markup contract. The attribute spellings
+   come from `pageassets.SURFACE_HOOKS`, which is the one place they are
+   written down.
+
+   ⚠️ `data-kind` IS OVERLOADED AND THE SELECTORS ARE SCOPED FOR IT.
+   `section.html` carries `data-kind="<the section's kind>"`, whose value comes
+   out of a corpus, and the numbering and level hooks are values of the same
+   attribute on a `<span>`. So every rule for a hook names the element too —
+   `span[data-kind="numbering"]`, never `[data-kind="numbering"]` — because a
+   corpus is free to call a section kind whatever it likes, including one of
+   these words.
+
+   ⚠️ Loaded after `reading.css` and before `code-highlight.css`: two rules of
+   equal specificity mean the last one wins, and the page column below
+   deliberately refines what `reading.css` already sets on `body`. */
+
+/* --- the column (PO-22/6) ------------------------------------------------ */
+
+/* ⛔ The missing half of `reading.css:38-41`, which rules that "a figure, a
+   table or a code block is scanned rather than read and takes the full
+   column." That decision is right and is not reopened here. What was missing
+   is THE COLUMN: `body` carries a gutter and no `max-width`, so on a 1280px
+   viewport "the full column" was the full viewport, and the page read as a
+   narrow measure with full-bleed islands beside it.
+
+   ⛔ ONE BOUND, COMPUTED ONCE, ON `body` — and that is a measurement rather
+   than a preference. `--measure` is `80ch`, and `ch` resolves against the
+   ELEMENT's own font, so the same `max-width` written on each region gave three
+   different columns: measured in Chrome 149 at a 1280px viewport, the masthead
+   came out 800px, the outline 715.7px and the between-pages bar 680.3px,
+   because each of them sets its own face and size. ⚠️ A page whose regions
+   disagree about where the column ends is the full-bleed-islands defect wearing
+   the other face. `body` carries the prose font, which is the font the measure
+   was chosen in, so the number is right there and nowhere else.
+
+   ⭐ The arithmetic: `reset.css` sets `box-sizing: border-box`, so `body`'s own
+   two gutters are INSIDE this number. Four gutters therefore leave a content
+   box of `--measure` plus one gutter of air either side — a figure a little
+   wider than the running text, which is what "takes the full column" was always
+   meant to mean. ⚠️ The prose measure itself is untouched: `reading.css` still
+   caps `main p, main li` at `--measure`, and that decision is not reopened.
+
+   ⛔ `--page-max` IS NOT USED, deliberately. It is `96rem`, which is an outer
+   edge for a rail-and-content layout; against a bounded single column it would
+   never bite at any viewport, and a token painted only so a check can say it is
+   painted is the `QA-03/2` defect committed on purpose. It stays unpainted, with
+   `--rail` and `--player-height`, for whoever builds that layout.
+
+   ⛔ `footer` is absent for the same kind of reason. The narration player is the
+   only `<footer>` a page carries, it is `SF-18`'s at M3, and `--player-height`,
+   `--panel` and `--shadow` are defined and waiting for it. Laying out a region
+   whose design has not been decided would be deciding it. */
+
+body {
+  max-width: calc(var(--measure) + 4 * var(--gutter));
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --- region 1: the masthead --------------------------------------------- */
+
+/* Every page kind carries this: the unit page, the container page and the root
+   index all fill the skeleton's `heading` and all but the index fill `meta`. */
+
+body > header {
+  padding: 2.25rem 0 1rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+body > header h1 {
+  margin: 0 0 0.3rem;
+}
+
+/* The quieter second line: where the unit sits, in which variant. ⚠️ It is a
+   `<p>`, so it inherits the prose face and the prose size from `reading.css`
+   and would otherwise read as the page's first sentence. */
+body > header p {
+  margin: 0;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* --- region 2: the in-page outline -------------------------------------- */
+
+/* ⚠️ A card above the content rather than a rail beside it. A sticky side rail
+   is a layout this part cannot verify — `tests/visual/` has no browser in the
+   pinned image (QA-03/1) — and an unverifiable layout is a worse answer than a
+   plain one. `--rail` is still defined for whoever builds it. */
+
+nav[aria-label="Outline"] {
+  margin: 0 0 2rem;
+  padding: 0.9rem 1.15rem 1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+nav[aria-label="Outline"] > p {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+nav[aria-label="Outline"] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav[aria-label="Outline"] li {
+  margin: 0.15rem 0;
+}
+
+/* ⭐ The nesting is the `data-level` the renderer already emits, so the rail
+   needs no nested lists and the outline cannot disagree with the headings it
+   was derived from. `navigation.OUTLINE_MAX_LEVEL` is 3. */
+nav[aria-label="Outline"] li[data-level="2"] {
+  padding-left: 1rem;
+}
+
+nav[aria-label="Outline"] li[data-level="3"] {
+  padding-left: 2rem;
+  font-size: 0.9rem;
+}
+
+/* --- region 3: the between-pages bar ----------------------------------- */
+
+/* ⛔ M1's close condition 8, re-homed here: the bar must be distinguishable
+   from body text WITHOUT REFERENCE TO COLOUR ALONE. So it is told apart by a
+   rule above it, a different face, a smaller size, a heavier weight, tracking
+   and a row layout — six cues, none of them a colour. A reader who cannot
+   tell accent from body text still sees a bar. */
+
+nav[aria-label="Between units"] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 3rem 0 2.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--rule-strong);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* ⚠️ The slot that points up at the index is the quietest of the three: it is
+   where the reader came from, not where they are going. */
+nav[aria-label="Between units"] a[rel="up"] {
+  font-weight: 400;
+  color: var(--muted);
+}
+
+/* --- region 4: the practice panel -------------------------------------- */
+
+/* ⛔ This panel exists because without it the page lies by omission: a unit
+   whose practices were never ingested renders exactly like a unit that has
+   none. So it must not read as more prose — it is a panel, with its own ground
+   and its own edge, and the edge is heavier on one side so it is still a panel
+   with colour off. */
+
+body > section[data-section="practices-pending"] {
+  margin: 2.5rem 0;
+  padding: 1rem 1.15rem;
+  background: var(--practice-soft);
+  border: 1px solid var(--practice);
+  border-left-width: 4px;
+  border-radius: 8px;
+  font-family: var(--font-ui);
+}
+
+body > section[data-section="practices-pending"] h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1rem;
+  letter-spacing: 0.01em;
+  color: var(--practice);
+}
+
+/* ⚠️ No `max-width` here, and the absence is deliberate: `reading.css` caps
+   `main p`, and this panel sits OUTSIDE `<main>`, so there is nothing to undo.
+   A `max-width: none` would have read as a bound on the column it is not. */
+body > section[data-section="practices-pending"] p {
+  margin: 0;
+  font-size: 0.92rem;
+  color: var(--fg-soft);
+}
+
+/* --- regions 5 and 6: the two lists that ARE their pages --------------- */
+
+/* ⛔ Ruling 164's content side. A container page is its unit list and the root
+   index is its tree: these are not chrome the reader can do without, so they
+   are laid out as rows to be scanned and clicked rather than as prose. */
+
+nav[aria-label="Units"],
+nav[aria-label="Contents"] {
+  margin: 1.5rem 0 0;
+  font-family: var(--font-ui);
+  font-size: 0.98rem;
+}
+
+nav[aria-label="Units"] ol,
+nav[aria-label="Contents"] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav[aria-label="Units"] li > a,
+nav[aria-label="Contents"] li > a {
+  display: block;
+  padding: 0.6rem 0.3rem;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+nav[aria-label="Units"] li > a:hover,
+nav[aria-label="Contents"] li > a:hover {
+  background: var(--surface-2);
+  text-decoration: underline;
+}
+
+/* ⛔ `data-readable="false"` is §7's third state — a unit this build has no
+   page for — and it must be legible as "listed, not openable" without colour:
+   no pointer affordance, an italic face and a leading mark. ⚠️ The mark is
+   `content`, so it is decoration a screen reader skips; the state itself is
+   already in the attribute, which is what assistive technology reads. */
+nav[aria-label="Units"] li[data-readable="false"],
+nav[aria-label="Contents"] li[data-readable="false"] {
+  padding: 0.6rem 0.3rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+nav[aria-label="Units"] li[data-readable="false"]::before,
+nav[aria-label="Contents"] li[data-readable="false"]::before {
+  content: "— ";
+}
+
+/* The unit listing is a stack of rows, so each row gets a hairline. */
+nav[aria-label="Units"] li {
+  border-top: 1px solid var(--rule);
+}
+
+nav[aria-label="Units"] li:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+/* The index's tree is nested, so the depth carries the rule instead. ⚠️ The
+   `<details>` here carry NO class, so `reading.css`'s `details.disclosure`
+   never reaches them and the two disclosure looks stay separate on purpose. */
+nav[aria-label="Contents"] ol ol {
+  margin-left: 0.4rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--rule);
+}
+
+nav[aria-label="Contents"] details {
+  margin: 0.2rem 0;
+}
+
+nav[aria-label="Contents"] summary {
+  padding: 0.45rem 0.3rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--fg);
+}
+
+/* --- the two hooks both lists spell --------------------------------- */
+
+/* ⭐ `data-kind="numbering"` is the unit's reader-facing ordinal and
+   `data-kind="level"` is the corpus's own word for a depth. Both are the
+   corpus's text, both sit beside a title, and both have to be findable without
+   being glued to it — so they are set as a chip: tabular figures so ordinals
+   line up down a column, and a ground of their own so the title still reads as
+   the title. ⚠️ Scoped to `span`, because `data-kind` is also on `<section>`
+   with a corpus-supplied value. */
+
+span[data-kind="numbering"],
+span[data-kind="level"] {
+  display: inline-block;
+  padding: 0.05em 0.4em;
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.82em;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+span[data-kind="level"] {
+  text-transform: lowercase;
+  letter-spacing: 0.03em;
+}
+
+/* --- what the reader asked for ---------------------------------------- */
+
+/* ⚠️ `reading.css` already flattens animation under `prefers-reduced-motion`.
+   The one thing it cannot know about is the smooth scroll `reset.css` sets,
+   which it also already undoes. Nothing here adds motion, so nothing here
+   needs undoing — stated rather than left as an absence somebody has to
+   re-derive. */

@@ -165,6 +165,24 @@ def test_every_syntax_colour_clears_the_contrast_threshold(theme):
         ("dark", "--muted", "--bg"),
         ("dark", "--accent", "--bg"),
         ("dark", "--code-fg", "--code-bg"),
+        # ⭐ The six pairs `chrome.css` creates (`SF-34`). ⚠️ They are here and
+        # not only in the browser-driven harness because the browser-driven half
+        # DOES NOT RUN in the pinned image (`QA-03/1`), and a contrast rule that
+        # only an unpinned machine can check erodes exactly like an unenforced
+        # ceiling. ⛔ Not a new instrument: the same parametrised node, with the
+        # pairs the new stylesheet actually paints.
+        ("light", "--muted", "--surface-2"),
+        ("light", "--accent", "--surface-2"),
+        ("light", "--fg", "--surface-2"),
+        ("light", "--accent", "--accent-soft"),
+        ("light", "--practice", "--practice-soft"),
+        ("light", "--fg-soft", "--practice-soft"),
+        ("dark", "--muted", "--surface-2"),
+        ("dark", "--accent", "--surface-2"),
+        ("dark", "--fg", "--surface-2"),
+        ("dark", "--accent", "--accent-soft"),
+        ("dark", "--practice", "--practice-soft"),
+        ("dark", "--fg-soft", "--practice-soft"),
     ],
 )
 def test_every_reading_colour_clears_the_contrast_threshold(theme, foreground, background):

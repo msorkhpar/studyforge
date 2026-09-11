@@ -28,6 +28,23 @@ side fails.
 class name says what the stylesheet may reach. Nothing downstream may read a
 class name back as a block type — that is R4's argument about paths, applied
 to markup.
+
+## ⛔ A hook is not always a class, and `SF-34` is where that stopped being true
+
+⚠️ **`SURFACE_CLASSES` is classes and `SURFACE_HOOKS` no longer is.** Three of
+its entries are classes; the rest are the **name** of a `data-*` attribute or a
+**value** of `data-kind`, because `render.container.listing` and
+`render.index.disclosure` address their rows that way on purpose — ⭐ *"a
+`data-*` rather than a class, so this page needs no entry in a published class
+set"* — and that is the property that let a chrome stylesheet be written a
+milestone after the markup it styles, with no page change and no re-render.
+
+⛔ **So `_FORM_OF` says which form each hook takes, `HOOK_CLASSES` is the
+class-shaped subset, and the both-directions class contract compares against
+that subset and not against the whole mapping.** ⚠️ Comparing against the whole
+mapping is not a harmless widening: it makes the stylesheet owe a rule for
+`.data-readable` in one direction, and lets a template carry
+`class="data-readable"` in the other.
 """
 
 from __future__ import annotations
@@ -68,13 +85,68 @@ SURFACE_CLASSES = {
     if _CLASS_OF[block_type] is not None
 }
 
-#: Wrappers and controls the surface styles that are not block types. ⛔ The
-#: scroll wrapper is not decoration: a table wider than the column must scroll
-#: inside its own box, or the page scrolls sideways and every paragraph with it.
+#: How a hook reaches the page. ⛔ Three forms and no fourth, because a hook
+#: whose form nobody decided is a hook a stylesheet reaches for as a class and a
+#: renderer emits as an attribute — which renders, carries every word, and is
+#: unstyled with no error anywhere.
+CLASS_FORM = "class"  # the element carries it in `class="…"`
+ATTRIBUTE_FORM = "attribute"  # it is the NAME of a `data-*` attribute
+KIND_FORM = "kind"  # it is a VALUE of the `data-kind` attribute
+
+#: `hook -> its form`. ⛔ Every entry of `SURFACE_HOOKS` appears, and a hook
+#: added without a form raises at import — the same door `_CLASS_OF` closes one
+#: mapping up, for the same reason.
+_FORM_OF = {
+    "table_scroll": CLASS_FORM,
+    "copy_button": CLASS_FORM,
+    "code_caption": CLASS_FORM,
+    "readable": ATTRIBUTE_FORM,
+    "kind": ATTRIBUTE_FORM,
+    "numbering": KIND_FORM,
+    "level": KIND_FORM,
+}
+
+#: Wrappers, controls and states the surface styles that are not block types.
+#: ⛔ The scroll wrapper is not decoration: a table wider than the column must
+#: scroll inside its own box, or the page scrolls sideways and every paragraph
+#: with it.
+#:
+#: ⭐ **The last four are here because MORE THAN ONE RENDERER NEEDS THEM**, and
+#: `W76`'s own answer governs: what more than one renderer needs is a sibling
+#: package, never a name on one of them. `render.container.listing` and
+#: `render.index.disclosure` both say *this row could not be linked* and *this is
+#: the unit's reader-facing numbering*, and before `SF-34` they each spelled it
+#: themselves (`SF-14/1`). ⚠️ Two spellings that agree today disagree the day one
+#: page gains a third state — and `SF-34` writes the rules against whichever it
+#: finds first, so the spelling had to stop being plural before the rules
+#: existed. ⛔ **Not promoted onto `render.container.__all__`**: that would be a
+#: Ruling 101 row 1 reach, which `render/page/test_init.py`'s sweep fails by
+#: name.
+#:
+#: ⚠️ **`kind` is the attribute and `numbering`/`level` are two of its values,
+#: and the attribute is OVERLOADED.** `templates/section.html` carries
+#: `data-kind="<the section's kind>"`, whose value comes out of a corpus. So a
+#: rule for `numbering` or `level` names the element too — `chrome.css` uses
+#: `span[data-kind="numbering"]` — because a corpus may call a section kind
+#: anything, including one of these words.
 SURFACE_HOOKS = {
     "table_scroll": "scroll",
     "copy_button": "copy",
     "code_caption": "what",
+    "readable": "data-readable",
+    "kind": "data-kind",
+    "numbering": "numbering",
+    "level": "level",
+}
+
+#: `hook -> the class its element carries`, for the hooks that are classes.
+#: ⛔ Derived from `_FORM_OF` rather than listed, and published because the
+#: markup contract *"every class the stylesheet targets is published, and every
+#: published class is styled"* is about classes only: an attribute name in that
+#: comparison makes the stylesheet owe a rule for `.data-readable`, and a
+#: template carrying `class="data-readable"` pass.
+HOOK_CLASSES = {
+    hook: value for hook, value in SURFACE_HOOKS.items() if _FORM_OF[hook] == CLASS_FORM
 }
 
 

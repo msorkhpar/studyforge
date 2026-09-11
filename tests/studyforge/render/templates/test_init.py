@@ -7,7 +7,7 @@ import re
 import pytest
 
 from studyforge.render import templates
-from studyforge.render.pageassets import SURFACE_CLASSES, SURFACE_HOOKS
+from studyforge.render.pageassets import HOOK_CLASSES, SURFACE_CLASSES
 from tests.support import assert_package_contract, repository_root
 
 #: Every class name any template may carry: the published markup contract, plus
@@ -19,7 +19,14 @@ LIBRARY_CLASS = re.compile(r"^language-")
 #: A template whose markup is emitted on one line is authored on one line.
 #: ⚠️ Derived by asking the loader, not by listing filenames: a template added
 #: tomorrow is covered on the day it appears.
-ONE_LINE = ("code.html", "image.html", "video.html", "video-link.html")
+ONE_LINE = (
+    "between-units.html",
+    "code.html",
+    "image.html",
+    "outline.html",
+    "video.html",
+    "video-link.html",
+)
 
 #: The templates whose newlines are real output. ⭐ Together with `ONE_LINE`
 #: this must be every template on disk, and the test below asserts it — so a new
@@ -141,7 +148,10 @@ def test_a_template_names_no_class_the_surface_does_not_publish(name):
     # emits is published too. Without both, the two sides can still disagree —
     # and a page that renders, carries every word and is unstyled is the failure
     # with no error anywhere.
-    published = set(SURFACE_CLASSES.values()) | set(SURFACE_HOOKS.values())
+    # ⛔ `HOOK_CLASSES` and not `SURFACE_HOOKS`: since `SF-34` the hook mapping
+    # also carries `data-*` attribute names and `data-kind` values, and comparing
+    # a class against those would let a template carry `class="data-readable"`.
+    published = set(SURFACE_CLASSES.values()) | set(HOOK_CLASSES.values())
     body = templates.template(name).template
     used = {
         klass for attribute in re.findall(r'class="([^"$]*)"', body) for klass in attribute.split()
