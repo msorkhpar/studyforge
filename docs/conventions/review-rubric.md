@@ -4355,3 +4355,193 @@ DECLARES its author line in its handoff when it differs from the surrounding his
 commit's author is the one field the author cannot un-write after a merge.** ⚠️ **MEASURED, CTO
 round 60: no instrument in this repository reads authorship, so nothing depends on it either
 way and the question is entirely R7's.**
+
+---
+
+## ⛔ RULED ROUND 61 — seven clauses, each one command and one pass condition
+
+⚠️ **Reasoning: [`docs/tasks/handoffs/CTO-2026-09-11-round61.md`](../tasks/handoffs/CTO-2026-09-11-round61.md).**
+⭐ **Rulings 297, 298, 299, 300, 301, 302 and 303 are stated here, because a ruling that lives
+only in a frozen record is not landed** (Ruling 245, Ruling 286).
+
+### ⛔ Ruling 297 — a claim about the AUTHORITATIVE CENSUS names the environment its reading was taken in; and a ROW discharges against its ACCEPTANCE, never against its ARGUMENT
+
+```bash
+# ⛔ Before quoting any census claim, ask which environment produced it. Ruling 40 makes
+#    the PINNED CONTAINER the authority, so a census sentence with a HOST reading behind
+#    it is a sentence about a different population wearing the authority of this one.
+docker/dev/check python3 -m pytest -ra > /tmp/c.txt 2>&1; C=$?
+python3 -m pytest -ra                  > /tmp/h.txt 2>&1; H=$?
+for f in /tmp/c.txt /tmp/h.txt; do
+    printf '%s groups=%s skips=%s\n' "$f" "$(grep -c '^SKIPPED' "$f")" \
+      "$(sed -n 's/^SKIPPED \[\([0-9]*\)\].*/\1/p' "$f" | awk '{n+=$1} END {print n+0}')"
+done
+# Pass: the two are printed SIDE BY SIDE and every census sentence names which one it read.
+```
+
+⛔ **MEASURED, CTO round 61, at `428223c`.** ⚠️ **Ruling 248(e) says *"three of the eleven skips
+are an instrument defect rather than an absence"* — a sentence about *"the census every office
+quotes"*, which Ruling 40 makes the container's.** ⛔ **Its reading was taken on the HOST. In the
+pinned image those three skips are a TRUE absence caused by the mount, and the sentence is false
+of the population it names.** ⭐ **The trap is the one Ruling 147 already records one section up:
+the flattering reading AGREES with the wrong thing** — both environments read `3`, for two
+different reasons, so nothing disagreed and nobody re-checked.
+
+⭐ **AND THE SECOND CLAUSE, which is why `W127` still discharges.** ⛔ **A row is discharged
+against its ACCEPTANCE TABLE and not against the prose that argued for it.** ⚠️ `W127`'s
+acceptance already required the container to KEEP three skips and said in its own words that *"a
+change that makes the container read `0` has made the container lie"* — ⭐ **so the row had
+corrected 248(e)'s population error inside itself, and the taker met the acceptance exactly.**
+⛔ **248(e)(a) — two resolvers, and the suite calls the wrong one — is a claim about the CODE and
+is true in every environment; only the COST clause was true of the wrong population.**
+
+### ⛔ Ruling 298 — a SKIP CENSUS cannot see a duplicate whose failure mode is a SILENT SUBSTITUTION, so a duplication sweep is taken over the CALL SITES
+
+```bash
+# ⛔ NOT over the skips. A re-derivation whose absent branch SKIPS is visible in the census;
+#    one whose absent branch SUBSTITUTES A STAND-IN is invisible there by construction.
+grep -rn 'repository_root()\.parent' --include=*.py tests/ tools/ studyforge/
+# Pass: every hit is the ONE shipped resolver. A second hit is this class, whether or not
+#       any skip moved. ⭐ Then read each caller's absent branch: `skip` is loud, a
+#       stand-in is silent, and only the loud one is in the census anybody quotes.
+```
+
+⛔ **MEASURED, CTO round 61, at `428223c`, role `wt/cto`, on the HOST — the reading the census
+could not contain.** ⚠️ `tests/studyforge/corpus/placement/test_corpora.py:59-61` carries a
+byte-identical copy of the resolver `W127` removed, and its caller `shape_to_place()` is
+documented ***"Never a skip"***:
+
+```text
+STUDYFORGE_WORKSPACE unset (what every worktree runs)  provenance synthetic  48 modules  240 units
+STUDYFORGE_WORKSPACE=<the workspace>, ONE variable      provenance measured   45 modules  166 units
+the check PASSES in both states -> the remedy is measured SAFE, and the green was never evidence
+```
+
+⛔ **So the property *"no two units in the Java corpus produce the same artifact name"* — which
+`SF-03`'s acceptance names by name — has been proved of a 48×5 grid while the corpus it names
+sat beside the tree.** ⭐ **The disposition of such a finding is a ROW and never a merge
+obligation**, on the measured ground Rulings 284 and 295 already record: a merge obligation
+survived two merges undischarged and had to be converted by edit into a row file.
+
+### ⛔ Ruling 299 — a BRIEF's deliverable that contradicts the ROW's own ACCEPTANCE is refused in its literal form and discharged as INTENT
+
+```bash
+# ⛔ Run BEFORE dispatch, by the office writing the brief. A deliverable demanding a PLANT
+#    states its EXPECTED READING; read that expectation against the row's acceptance table.
+sed -n '/the required reading/,/^$/p' docs/tasks/rows/<ID>.md
+# Pass: no deliverable's expected reading contradicts a cell of that table. A contradiction
+#       is the BRIEF's defect; the row is the tracked artifact and the brief is a snapshot.
+```
+
+⛔ **MEASURED, CTO round 61.** ⚠️ **The brief for `W127` asked for *"a plant proving the repaired
+test FAILS when a sibling genuinely is absent — otherwise you have replaced three honest skips
+with three tests that cannot fail"*, while the row's acceptance requires the pinned container to
+KEEP three skips.** ⭐ **An absent sibling must SKIP, so the literal deliverable was
+unsatisfiable and its own stated purpose was not.**
+
+⭐ **The taker's disposition is the correct one and is RATIFIED: refuse the literal form, file
+it as a finding against the brief, and discharge the INTENT — here, three plants proving the
+skip branch still LIVE and the assertions still RED-CAPABLE.** ⛔ **A taker who obeys a
+deliverable that contradicts the acceptance has broken the row to satisfy its dispatcher, and
+the dispatcher cannot see that from the diff.**
+
+### ⛔ Ruling 300 — a BRIEF states an INVENTORY as a COMMAND, never as a list
+
+```bash
+# ⛔ Every live-state sentence a brief would otherwise assert, replaced by the instrument.
+git worktree list                              # which offices are standing
+python3 -m tools.quality.board.corroborate     # which rows are in flight, and which branches
+# Pass: the brief contains NO typed inventory of worktrees, branches or in-flight rows.
+```
+
+⛔ **`CLAUDE.md`'s own first section is the whole argument and it is already written down**
+(Ruling 161): a brief is read into a taker's context at dispatch, so a live fact typed into one
+is a snapshot that cannot be kept true — only kept freshly wrong. ⚠️ **MEASURED, CTO round 61,
+self-reported by the dispatcher and confirmed by the taker: a brief's worktree inventory was
+false at dispatch — one office named was not on disk yet, and one that existed was not named.**
+⭐ **A POINTER resolves at read time; that is the property the command has and the list
+structurally cannot.**
+
+### ⛔ Ruling 301 — a clause whose GROUND is refuted is RE-GROUNDED, not refuted, and the round that re-grounds it says which of the three terms moved
+
+```bash
+# ⛔ Split any ruling under challenge into three, and rule on each separately.
+#    PREMISE (the fact it cites) · GROUND (the because) · OPERATIVE CLAUSE (the obligation).
+grep -rn "<the ruling's premise, as written>" --include=*.md . | head
+# Pass: the round names all three verdicts. A round that returns ONE verdict for a ruling
+#       with three terms has either kept a refuted premise or discarded a live obligation.
+```
+
+⛔ **MEASURED, CTO round 61 — Ruling 159, the worked instance:**
+
+```text
+PREMISE   "a worktree does not carry the siblings"          REFUTED   (already, Ruling 248(a))
+GROUND    "so `tools.workspace verify` is host-verified
+           BY CONSTRUCTION"                                 RE-GROUNDED — the ground is the
+           CONTAINER MOUNT and the tool's own NOT_AUTHORITATIVE refusal, never the worktree
+OPERATIVE "a reading names that state in the same sentence
+           as its number"                                   STANDS UNTOUCHED, and is MORE
+           necessary now, because the same resolver has two true readings
+```
+
+⭐ **AND THE READING THAT MAKES THE CLAUSE WORTH STATING.** ⛔ **MEASURED by me against my own
+session context** (Ruling 283 permits it): `CLAUDE.md` in the tree has carried the REPAIRED
+paragraph since PO round 44 — *"A WORKTREE DOES CARRY THE SIBLINGS, and the sentence that stood
+here saying otherwise was FALSE"* — ⚠️ **while the copy read into this round's context at
+session start still carried the refuted premise and its `by construction` ground.** ⭐ **So the
+file's own argument was inhabited by the file, against the office reading it, in the one
+sentence this round was convened to adjudicate.**
+
+### ⛔ Ruling 302 — a NARROWING's effect is measured over the POPULATION, never over the WINDOW the instrument prints
+
+```bash
+# ⛔ A widened-or-narrowed predicate is diffed as a SET against the one it replaces, over the
+#    WHOLE subject — not over the slice the notice happens to print.
+python3 - <<'PY'
+from tools.quality.reach import cited_numbers   # or whatever the new predicate is
+# old = {n for n in range(1, CEILING) if OLD_PREDICATE(n, text)}
+# new = set().union(*(cited_numbers(t) for t in texts))
+# print("gained:", sorted(new - old), "lost:", sorted(old - new))
+PY
+# Pass: BOTH differences are printed. A reading scoped to the printed window cannot
+#       distinguish "changes nothing" from "changes nothing YOU CAN SEE".
+```
+
+⛔ **MEASURED, CTO round 61, over the whole of `docs/conventions/` at the `W133` merge:**
+
+```text
+widening  gained   0   over the WHOLE population, not merely inside 272–296
+narrowing lost     2   Ruling 175 and Ruling 267 — each cited ONLY inside a ```text fence
+window 272–296           reached 22, unreached 3 — UNMOVED, because both losses sit outside it
+```
+
+⭐ **Both losses are CORRECT — a fenced measurement quoting a ruling is not a convention
+carrying it — and that is the point: the narrowing is not a no-op, and the only reading that
+could say so was the population one.** ⚠️ **The window reading and the population reading are
+both true and only one of them is the evidence.**
+
+### ⛔ Ruling 303 — Ruling 293's repaired counter is DISCHARGED by its second office, and the form it replaced reads ZERO on this wave's whole population
+
+```bash
+# ⛔ Ruling 293's pass condition: print BOTH readings until a SECOND office has exercised the
+#    repair. CTO round 61 is that office, so this is the last round obliged to print both.
+H="$(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD | grep '^docs/tasks/handoffs/')"
+grep -hoE '[A-Z0-9-]+/[0-9]+ `\[structural\]`' $H | grep -oE '[A-Z0-9-]+/[0-9]+' | sort -u | grep -c .
+grep -hF '`[structural]`' $H | grep -oE '^[^A-Za-z0-9]*[A-Z0-9-]+/[0-9]+' \
+  | grep -oE '[A-Z0-9-]+/[0-9]+' | sort -u | grep -c .
+# Pass: the second equals the hand count. ⭐ From the round AFTER this one, only the second
+#       is run — the comparison has been taken twice and the replaced form has no readings left.
+```
+
+⛔ **MEASURED, CTO round 61, over this wave's two task handoffs:**
+
+```text
+the form Ruling 293 REPLACED   ->   0        ⛔ not merely low — BLIND on this population
+the REPAIRED form              ->   4        W127/1 W127/2 W133/1 W133/2
+the HAND count                 ->   4        ⭐ 4 = 4
+```
+
+⚠️ **Round 60 measured the replaced form at `2` of `16`; on a population where every finding
+writes its id inside backticks it reads `0` of `4`.** ⛔ **A counter whose reading depends on
+which punctuation an author chose is not measuring findings, and the repair is load-bearing
+rather than cosmetic.**
