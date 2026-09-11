@@ -40,10 +40,18 @@ RUN apt-get update \
 #
 # ⭐ Why it is here at all: `tests/studyforge/render/pageassets/
 # test_highlight_grammars.py` runs the vendored Prism grammars for real, and
-# without a runtime it **skipped 38 tests** in the one environment that is
-# authoritative. ⛔ "Did not run" is not evidence, so those were 38 claims this
-# image could not certify — they passed only on a host that happened to have
-# `node`, which is the divergence R15 exists to eliminate.
+# without a runtime it **skipped every test in that module** in the one
+# environment that is authoritative. ⛔ "Did not run" is not evidence, so those
+# were claims this image could not certify — they passed only on a host that
+# happened to have `node`, which is the divergence R15 exists to eliminate.
+#
+# ⭐ **The figure, with its UNIT and its REF, because a historical reading
+# carrying neither is not a measurement** (Ruling 240's general clause, `W122`):
+# **38 tests — every test in that module — DERIVED at `af31fd7` in this image by
+# hiding `node` from `PATH` and reading the module both ways: 38 passed with the
+# runtime, 38 without it.** ⚠️ The unit is *the module's whole population*,
+# which is why the property above is stated in words and the number is dated —
+# a grammar added tomorrow moves the figure and does not move the property.
 #
 # ⛔ Pinned by version AND checksum, for exactly the reason the `FROM` line
 # above is pinned by tag and digest: the version says what it is for a reader,
@@ -132,22 +140,92 @@ RUN set -eu; \
 #
 # ⭐ `chrome-headless-shell` rather than full Chrome: it is the binary
 # `tests/visual/discovery.py` already searches PATH for, it speaks the same
-# DevTools protocol over `--remote-debugging-pipe`, and it links against 21
-# shared libraries instead of Chrome's full desktop set.
+# DevTools protocol over `--remote-debugging-pipe`, and it needs **far fewer
+# shared libraries than full Chrome's desktop set** — which is why the apt list
+# below is as short as it is.
+#
+# ⛔ **NO COUNT IN THAT SENTENCE, AND THAT IS RULING 240 RATHER THAN VAGUENESS**
+# (`W122`). It used to carry a number. ⚠️ No unit made it true: `CTO-55/1`
+# printed five populations beside it — apt `lib*` packages, all apt packages,
+# the binary's `DT_NEEDED` entries, transitive `ldd` lines, and `not found`
+# entries — and the claimed figure was none of the five. ⛔ `CTO-56/8` then
+# found the only unit that did reproduce it, and it was an instrument rather
+# than a fact: a grep for `lib*` over this file, which counted `liberation`,
+# `deliberately`, and the comment's own word in the very sentence making the
+# claim.
+#
+# ⚠️ A corrected number would be falsified again by the next edit to the apt
+# list below, which is the most likely history of the first one — the list was
+# trimmed and the comment was not. ⭐ So a shipped comment either states a
+# property that survives a trim, or it states nothing.
+#
+# ⛔ **The DERIVATION, for a reader who wants a figure rather than a property:
+# run `ldd` on the installed binary, in this image.** That answers it at the
+# version in front of you instead of at the version somebody last edited a
+# comment, which is the whole of why no number is written here.
 #
 # ⚠️ **`TARGETARCH`, for the reason the Node block states**: an architecture
 # with no recorded checksum fails **loudly**, naming itself, rather than
 # falling back to something unverified.
 #
-# ⚠️ The shared libraries and the fonts come from apt, and that is a stated
-# limit rather than an oversight: the *engine* is checksum-pinned, its
-# dependencies are pinned only as far as the base image's Debian snapshot is.
+# ---------------------------------------------------------------------------
+# ⛔ **THE FONT IS PINNED BY VERSION AND CHECKSUM (`W124`, Ruling 236), AND THE
+# SHARED LIBRARIES ARE STILL ONLY SNAPSHOT-PINNED. The two are different on
+# purpose and the difference is measured, not felt.**
+#
+# ⭐ Ruling 236's rule: R10's pin must reach every input whose value a shipped
+# check compares against a **recorded number**, and an input compared against a
+# deliberately **loose** threshold is adequately pinned at the base image's
+# snapshot *provided the threshold says it is loose*.
+#
+# ⚠️ The font is on the wrong side of that line and the libraries are not.
+# `fonts-liberation` is a **font-metric input**: `tests/visual/test_capture.py`
+# compares a body height and a capture size against recorded figures, and
+# `--measure: 80ch` resolves against whatever face the image ships. ⛔ An engine
+# that links a different build of `libxcb` renders the same glyph boxes; a
+# different font does not.
+#
+# ⭐ **Why a version constraint plus a checksum over the installed files, and
+# not either remedy `rows/W124.md` offered.** Both of those were weighed against
+# a build and the readings are in `../../docs/tasks/handoffs/W124.md`:
+#
+#   * a `.deb` from `snapshot.debian.org` pins the **package file** and adds a
+#     fourth build-time host — and the least reliable one in the set — to buy
+#     nothing: if `deb.debian.org` is unreachable, `apt-get update` two lines
+#     up has already failed the build.
+#   * a vendored font costs **4 360 440 bytes** of binary in the repository
+#     (measured) plus an OFL-1.1 licence to carry, and still leaves three
+#     build-time remotes, so it does not make the build offline either.
+#   * ⭐ **What is recorded below pins the bytes the layout engine actually
+#     reads** — the installed `.ttf` files — which is one level closer to the
+#     input than a package file is, and it is the same two-part pin (a version
+#     that says what was asked for, a checksum that says what arrived) that the
+#     `FROM` line, the Node.js tarball and the browser archive all use.
+#
+# ⭐ `Architecture: all` and `Depends:` empty (both measured), so unlike `node`
+# and the browser **one recorded version and one checksum list covers every
+# architecture** — there is no per-arch case to get wrong here.
+#
+# ⚠️ **THE COST, STATED RATHER THAN DISCOVERED: when Debian bumps this package
+# the pinned version leaves the pool and THIS BUILD FAILS, loudly, naming the
+# version it wanted.** ⛔ That is the idiom this file already states twice for
+# an unrecorded `TARGETARCH`, and the remedy is one line plus a checksum list —
+# far cheaper than a reading nobody can reproduce. A build that breaks visibly
+# is not the same defect as an input that moves invisibly.
+#
 # ⛔ `fonts-liberation` is not cosmetic — it is the vendor's own declared
 # dependency, and a font-metric check on an image with no fonts at all would
-# measure a fallback nobody chose.
+# measure a fallback nobody chose. ⚠️ It is also the image's **entire** font
+# surface: 12 files and nothing else (measured), so `serif`, `sans-serif` and
+# `monospace` all resolve inside this one package and pinning it pins every
+# face any page in `tests/visual/` can reach.
 ARG CHROME_VERSION=153.0.8010.36
 ARG CHROME_SHA256_AMD64=a0079df5617da34bcd1debad18196568b072ec3d8ec57944008972a4fc970580
 ARG CHROME_SHA256_ARM64=66776cb47927f88a44dda83ebd113b226714a45e7cd3b6e845907477a0b7b096
+
+# ⛔ The font's two-part pin (`W124`). ⚠️ The epoch is part of the version and
+# apt will not match without it.
+ARG FONTS_LIBERATION_VERSION=1:2.1.5-3
 
 RUN set -eu; \
     case "${TARGETARCH}" in \
@@ -161,11 +239,41 @@ RUN set -eu; \
     apt-get update; \
     apt-get install --no-install-recommends -y \
         ca-certificates curl unzip \
-        fonts-liberation \
+        "fonts-liberation=${FONTS_LIBERATION_VERSION}" \
         libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64 libatspi2.0-0t64 \
         libdbus-1-3 libexpat1 libgbm1 libglib2.0-0t64 libnspr4 libnss3 \
         libx11-6 libxcb1 libxcomposite1 libxdamage1 libxext6 libxfixes3 \
         libxkbcommon0 libxrandr2; \
+    installed=$(dpkg-query -W -f='${Version}' fonts-liberation); \
+    if [ "${installed}" != "${FONTS_LIBERATION_VERSION}" ]; then \
+        echo "fonts-liberation is '${installed}' and this image pins" \
+             "'${FONTS_LIBERATION_VERSION}'; a font metric is an input to" \
+             "tests/visual/ (W124, Ruling 236) — record the new version and" \
+             "its checksums in docker/dev/Dockerfile rather than letting the" \
+             "face move under the readings" >&2; exit 1; \
+    fi; \
+    cd /usr/share/fonts/truetype/liberation; \
+    printf '%s\n' \
+      "ddce09ee3483b2d5faf61f0baba8592e76e0ac6dd4ab36683e5334c288bf5eef  LiberationMono-Bold.ttf" \
+      "2ec6f3e5bd9b24c7fb04c229a1ee64f600e4072c03a041c96c2d62974c2ede2c  LiberationMono-BoldItalic.ttf" \
+      "016743fc425a1b61eb349c72c02f3da6a1349d1da7a5d9aded27321397eed955  LiberationMono-Italic.ttf" \
+      "5883330d94debd992952cd8f0571b225f478c2d797d3f36c7521b0a5c9bde0f2  LiberationMono-Regular.ttf" \
+      "1b5f2da6f4cadce4c05b9ecebe3a6fcd374eb95ae443605e799f4c3287978939  LiberationSans-Bold.ttf" \
+      "352e9dc2be89f210dbd3c0fd5dfaf97135de70e0beb5f22378601861462493a7  LiberationSans-BoldItalic.ttf" \
+      "93ff5260834141b6f9d8f2b846d427f3a5dc492dbdce8ebdad406e38a38f34bb  LiberationSans-Italic.ttf" \
+      "bade59d822652f76e6941aa87b40a87c13d1cc70db98ededb5011127efafd1d3  LiberationSans-Regular.ttf" \
+      "443a4dbd694b6e4689925947b456e0532e10b19c90fa32eb39ea6c2cd9db9ebd  LiberationSerif-Bold.ttf" \
+      "4b2635d2ec4d992373dcae577c742a98ecfd841ffc1b8a103b5f10db163dbc7a  LiberationSerif-BoldItalic.ttf" \
+      "de18fe26337e03241952dca46398d5b66f3c5738d080bfd284f66e67b926f597  LiberationSerif-Italic.ttf" \
+      "9caef765d2e891c10dd73658894f01e660fe0c1c83e0bda7d6edf561d8f623d4  LiberationSerif-Regular.ttf" \
+      | sha256sum --check --strict -; \
+    present=$(find /usr/share/fonts -type f | wc -l); \
+    if [ "${present}" -ne 12 ]; then \
+        echo "this image carries ${present} font file(s) and 12 are pinned;" \
+             "an unrecorded face is an undeclared input to every text-metric" \
+             "reading in tests/visual/ (W124)" >&2; exit 1; \
+    fi; \
+    cd /; \
     curl -fsSLO \
         "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/${chrome_platform}/${archive}"; \
     echo "${chrome_sha}  ${archive}" | sha256sum --check --strict -; \

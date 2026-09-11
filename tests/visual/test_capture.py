@@ -23,8 +23,13 @@ PNG = b"\x89PNG\r\n\x1a\n"
 #:
 #: ⭐ **Deliberately LOOSE, and Ruling 236 is why that is stated here rather than
 #: left to be inferred.** A capture's size is a text-layout output and text layout
-#: is a font metric; `fonts-liberation` is pinned only as far as the base image's
-#: Debian snapshot (`W36/5`, and the remedy is `W124`). ⛔ **The figure is
+#: is a font metric. ⭐ **`fonts-liberation` is now pinned by version AND checksum
+#: in `docker/dev/Dockerfile` (`W124` landed), so the font is no longer an
+#: undeclared input** — ⛔ **but the looseness below stays, and stating it is still
+#: required: a pin records which face arrives, and it does not make a threshold
+#: that was chosen loosely into a tight one.** ⚠️ The pin is what a *recorded px*
+#: assertion would have needed; these two figures never did, and the reason is the
+#: margin. ⛔ **The figure is
 #: unchanged and its MARGIN is not, because `W98` widened the population:** the
 #: CTO measured `45k – 112k` over two unit pages and a margin of `5.7x`; over
 #: seven pages of three kinds the same threshold reads **20 296 – 122 397** bytes,
