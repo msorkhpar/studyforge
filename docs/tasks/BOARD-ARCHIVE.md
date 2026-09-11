@@ -13610,6 +13610,39 @@ per section, bytes:
 | `PO-45/8` | `[none]` | ⭐ **Recorded negative — Ruling 265 is LIVE AGAINST THIS BRANCH and it is not a defect of mine.** **Measured** at `6c4e3d0` with `chore/po-round45` at `0` ahead: `corroborate` exempts `po` as *invisible BY CONSTRUCTION, 0 commits ahead*. ⛔ The moment this round commits, the same branch appears under `dispatched and UNNAMED by any row` — the arm Ruling 264(c) just made the pre-merge gate. ⚠️ **So the reviewer of THIS branch reads that line for a DEVELOPER name only**, which is the instruction Ruling 265's record left live until `W132` lands |
 | `PO-45/9` | `[structural]` | ⛔ **MINE, and it is the round's sharpest finding, because it is `CLAUDE.md`'s own argument inhabited against itself.** **Measured** at `6c4e3d0` by three readings in one invocation: the refuted sibling premise *"A worktree does not carry the siblings"* is PRESENT in `CLAUDE.md` at `d8a8e30^` and ABSENT at `HEAD` — ⭐ **and the copy delivered into THIS session's starting context is the `d8a8e30^` one.** ⛔ **So Ruling 272's correction LANDED, was RATIFIED, and still did not reach the next session.** ⚠️ **`CLAUDE.md` says in its own words that *"a correction landing at 03:00 never reaches a session that started at 02:00"*; this is the first MEASURED instance rather than an argued one, and the interval was a whole WAVE rather than an hour.** ⭐ **NO EDIT IS OWED — the file is already right — so the finding is against the DELIVERY MECHANISM, it is not actionable by any office's diff, and it strengthens `W126`: a ruling that reaches a convention still has to reach a context.** |
 
+### ⛔ THE IN-FLIGHT TABLE, RE-TAKEN AS THIS ROUND'S LAST ACT — RULING 264(b) DISCHARGED
+
+⭐ **MEASURED on the host after the round's last content commit, `git worktree list` PRIMARY and `git branch -v` corroborating** (Ruling 171). ⛔ **Both developer branches moved from `0` ahead to `1` ahead while this round was written, which is exactly the volatility `PO-44/15` measured and Ruling 246's `n @ <tip>` form exists to survive:**
+
+```text
+git worktree list
+  <workspace>/studyforge            6c4e3d0 [release/m0-foundations]
+  <workspace>/studyforge-wt/dev1    f9a8af4 [fix/W126-rulings-cliff]
+  <workspace>/studyforge-wt/dev2    46fe6ee [fix/W115-false-refutation]
+  <workspace>/studyforge-wt/dev2-trial 6c4e3d0 [trial/W115-before]   ⚠️ not mine
+  <workspace>/studyforge-wt/po      f7ae024 [chore/po-round45]
+  <workspace>/studyforge-wt/po-int  798956c (detached HEAD)          ⚠️ not mine
+
+derived cells:  W126 -> 1 @ f9a8af4      W115 -> 1 @ 46fe6ee
+```
+
+⛔ **`CORROBORATE_EXIT=0`, and the refuted list is printed even though it is EMPTY** (Ruling 264(a)'s disclosure form, applied to 264(b)'s gate):
+
+```text
+corroborate: release release/m0-foundations, 2 observation rows, 5 checkouts on a branch, 2 started register cells.
+  ⭐ CORROBORATED: fix/W126-rulings-cliff is checked out at dev1 and is 1 commits ahead.
+  ⭐ CORROBORATED: fix/W115-false-refutation is checked out at dev2 and is 1 commits ahead.
+  ⛔ dispatched and UNNAMED by any row: chore/po-round45
+  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no row: 1 — dev2-trial
+  spent trial/tmp branches: none.
+  ⚠️ trial/tmp branches STILL CHECKED OUT (1): trial/W115-before — report, never remove one you did not cut.
+REFUTED ROWS: none.    corroborate: 0 of 2 rows REFUTED by git.
+```
+
+⭐ **`PO-45/8`'s PREDICTION, WRITTEN BEFORE THE COMMIT, IS CONFIRMED EXACTLY: `chore/po-round45` was exempt at `0` ahead and appears under `dispatched and UNNAMED by any row` the moment it recorded anything.** ⛔ **That is Ruling 265's defect inhabited inside the round that minted `W132` for it, and it is why the reviewer of this branch reads that line for a DEVELOPER name only.**
+
+⚠️ **TWO CHECKOUTS I DID NOT CREATE ARE REPORTED AND NOT REMOVED** (Ruling 206(ii)): ⭐ **`wt/dev2-trial` on `trial/W115-before` — a developer's plant baseline, correctly flagged by the instrument's own trial arm — and the detached `wt/po-int` at `798956c`, which appears in NEITHER arm and is still `PO-44/5`'s open hole belonging to [`W125`](rows/W125.md).**
+
 ### ⭐ TEARDOWN, and the committed tree
 
 ⛔ **I created exactly ONE worktree and ONE branch: `../studyforge-wt/po` and `chore/po-round45`.** ⭐ **The worktree is removed BY NAME as this round's last act and the branch survives, because it is what the CTO reviews and the coordinator merges.**
