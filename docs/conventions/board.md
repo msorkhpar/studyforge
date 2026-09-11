@@ -393,10 +393,46 @@ catch happened AFTER it ran:**
 it went stale in the paragraph diagnosing exactly that.**
 
 ⛔ **A check that runs only at wave-open measures the tree the wave was PLANNED
-against, not the tree it produced.** ⚠️ **Its own founding case proves the
-timing:** `W14` and `W18` evaporated because *"a trigger that names a task is only
-as good as somebody re-reading the board when that task ends"* — ⭐ **and a task
-ends during the wave, not before the next one.**
+against, not the tree it produced.** ⚠️ **Its own founding case proves the timing,
+and the case is CORRECTED here rather than removed** (Ruling 183's form — ⛔ **a
+sentence withdrawn because it was false is replaced by a NOTICE, never by
+nothing**):
+
+> ⛔ **`W14` and `W18` did NOT evaporate. They FINISHED, and merged with a verdict
+> at `ac4ed55`, and this board went on printing `in flight` for 350 commits.**
+> ⚠️ **The sentence stood here, in the document that diagnoses exactly that, and
+> it named the wrong mechanism for the case it is the record of.** ⭐ **The true
+> mechanism is the one the clause above still gets right — *a trigger that names a
+> task is only as good as somebody re-reading the board when that task ends*, and
+> a task ends DURING the wave, not before the next one.** ⛔ **`CTO-48/8`, and it
+> is the founding case for Ruling 189.**
+
+### ⛔ RULED ROUND 48 — an ASSERTED state owes a corroborating OBSERVATION (Ruling 189)
+
+⭐ **Ruling 171 found that `worktree list` can see a row `git log` cannot, and
+concluded the board is the only TOTAL instrument.** ⛔ **It did not say the board
+is RELIABLE** — ⚠️ **and the board is the only instrument that ASSERTS in-flight
+rather than OBSERVING it, so it is the only one that can be stale in this
+direction.** ⭐ **An observed state cannot go stale; an asserted state with no
+observer can only be kept freshly wrong.**
+
+> ⭐ **(b) The PRIMARY reading is INTERNAL and needs no git at all.** ⛔ **`state ∈
+> {in flight, in-progress, in-review}` ∧ `Checkout = none` ∧ `ahead = 0` is a
+> CONTRADICTION printed on ONE ROW**, and the board printed its own refutation, in
+> the same row, for 350 commits. ⚠️ **Every instrument read DOWN A COLUMN.**
+>
+> ⭐ **(c) The CORROBORATING reading is git, and its coverage is the VERDICT
+> CONVENTION's coverage.** ⛔ **`git log --merges --first-parent --format='%h %s'
+> release/m0-foundations | grep -iE '<row>'` finds the merge only if the merge
+> message NAMES the row** — which `Merge <branch>: <line> (CTO: …)` guarantees and
+> the pre-clause tail does not. ⚠️ **So a row-state audit is reliable exactly over
+> the range the verdict clause governs, and not one commit earlier.**
+
+⛔ **The predicate is `W100`'s and `W96`'s, not this document's: `W96` is the
+register's cells and `W100` is `## Scheduled`'s, which declare no state at all.**
+⚠️ **`--ancestry-path | tail -1` is RECORDED AS WRONG for (c) and is not reused:
+it returned a different branch's merge, and the error was caught only because both
+forms were run.**
 
 ⭐ **The close run is cheaper than the open run**, and that is why this is not a
 doubling: at open, every row whose trigger has passed must be re-measured; ⛔ **at

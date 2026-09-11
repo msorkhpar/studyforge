@@ -172,8 +172,14 @@ would be durable.
 structure. **The filename changes under exactly that same edit** — asserted, and
 it is the inverse of the line above rather than a restatement of it. Every id in
 a rendered page has a corresponding clip and every clip has an id in the page —
-asserted in both directions. A code block produces a caption, not a reading of
-the code. **A disclosure's summary is spoken and no block inside it has an id** —
+asserted in both directions. ⛔ **And the CARDINALITY, which is a THIRD assertion
+rather than a restatement of those two: `|clips| == |spoken units|`** — ⭐ **the
+only form that states INJECTIVITY, because a COLLISION satisfies both directions
+above** (Ruling 187). ⛔ **Plus the NEGATIVE, and it is this task's because this
+task mints the name: two spoken units differing only in `origin.section` mint
+DIFFERENT clip names** — ⚠️ **asserted against a fixture in which two units share
+one `origin.path`, which `tests/fixtures/` does not carry today (`W95`).** A code
+block produces a caption, not a reading of the code. **A disclosure's summary is spoken and no block inside it has an id** —
 asserted against `depth1` unit 3, and the withheld count appears in the coverage
 report. The gate refuses a leaking string.
 
@@ -221,7 +227,11 @@ change synthesises exactly the changed segments** — asserted by comparing the
 set of files written, never by trusting the run's own report, which is precisely
 what reported "0 synthesised" over 619 stale clips. **Every `<audio>` source on
 a generated page resolves to a file on disk, and every file on disk is named by
-a page — asserted in both directions.** A clone with the clips present plays
+a page — asserted in both directions.** ⚠️ **That pair proves SURJECTIVITY and NOT
+injectivity — any set of clips colliding onto one filename passes both directions
+with the suite green** — ⛔ **so the reading that catches a collision is `SF-16`'s
+`|clips| == |spoken units|`, owed before `SF-16` SHIPS and not here** (Ruling 187,
+`W97`). A clone with the clips present plays
 them with no synthesis service running. **This module contains no reference to
 git or to any ignore file** — asserted. Synthesis failure for one unit does not
 corrupt another's clips.
