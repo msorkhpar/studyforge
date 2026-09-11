@@ -791,6 +791,111 @@ python3 -m pytest -q -k UNBRIDGED_finding_still_depends_on_untracked_state
 never the class** — the universal is the half nobody implements and everybody
 quotes. Reasoning: `docs/tasks/handoffs/CTO-2026-09-10-round31.md`.
 
+#### ⛔ `W142` — §2e's enumeration is a LIST, and the list is the count
+
+⛔ **Ruling 110 makes §2e a CLOSED claim, and a closed claim whose population is
+INCOMPLETE is worse than none at all** (Rulings 258 and 276). ⚠️ **The clause
+directly above enumerates ONE member, and it was read as though that were the
+whole population.** ⭐ **It never was: that sentence is the member's own sentence
+and not the class's** — which is what the transferable clause above warns of,
+read from the other side.
+
+⛔ **NO NUMBER IS TYPED HERE, and that is deliberate** (Ruling 150's form — the
+authority for a count is the derivation, never a figure retyped beside it).
+⭐ **The enumeration IS the count, and it is checkable by the sweep below rather
+than by anybody's memory.** ⚠️ **Each member says what reads untracked state, and
+whether it may reach a VERDICT:**
+
+| what walks the disk | may it fail a build? | why it is legal |
+|---|---|---|
+| a present `graphify-out/` index below `BRIDGE_FLOOR` | ⛔ **YES** — a finding | Ruling 110's enumerated exception: `FND-07`'s last enforcement, and converting it would delete the check while claiming to satisfy this rule |
+| `python3 -m tools.quality`'s own floor, filtered by `git check-ignore` | ⛔ **YES** | ⭐ It is the working-tree instrument ON PURPOSE — `FND-06` filtered it by the ignore rules rather than by the index precisely so a brand-new unadded module **is** caught. Its question is *does my working tree pass now*, never *is this repository clean* |
+| `tools/quality/lint.py`'s lint **notice**, `ruff … .` | ⭐ **NO, and it cannot** | Rulings 77 and 78 keep it a notice: the floor's exit code is identical with it and without it. ⚠️ It is where the working-tree lint reading LIVES, which is why narrowing the gates below did not delete it (Ruling 183) |
+
+⛔ **AND THE MEMBER THAT WAS NEVER ENUMERATED — removed rather than declared:**
+⭐ **two `ruff` gates in `tests/test_repository.py` and one notice test in
+`tools/tests/quality/test_lint.py` reached a COMMITTED VERDICT through
+`ruff … .`, which walks the disk.** ⚠️ **The exposure was never hypothetical: an
+untracked scratch module at the repository root produced `2 failed, exit 1`
+against a CORRECT tree, and in one wave it failed THREE INNOCENT BRANCHES under
+a reviewer who had measured that very defect the same hour.** ⛔ **What caught it
+was a human re-reading a `git status --porcelain` line they had already printed
+and ignored — which is a near miss, not a remedy.**
+
+⭐ **THE REMEDY IS THE ONE RULING 153 ALREADY RULED for the gate-coverage
+population: a committed verdict's population is what git TRACKS.** ⛔ **The
+working-tree reading is not deleted — it is the notice in the table above
+(Ruling 183's standing form).** ⚠️ **A `.gitignore` entry for a root `.py` would
+have been the wrong shape: it hides the scratch file from the human too, and the
+human is the one who needs to see it.**
+
+⛔ **AND THE SECOND HALF, WHICH THE FIRST ATTEMPT AT THIS ROW GOT WRONG
+(`CTO-64/1`): *what git tracks* IS NOT A POPULATION UNTIL YOU SAY OF WHAT.**
+⚠️ **Moving a verdict from the disk to the index is half the remedy; the other
+half is naming the tool's own SUBJECT, and two gates running the same binary do
+not share one.** ⭐ **MEASURED at `a04e590` in the pinned image, and the three
+readings settle it with no trade-off to weigh:**
+
+| the `ruff format --check` population | files | verdict |
+|---|---|---|
+| `.` — the disk form being replaced | **876** | ⛔ depends on untracked state |
+| tracked `*.py` **and** `*.md` | **876** | ⭐ **the SAME subjects, from the index** |
+| tracked `*.py` alone | **532** | ⛔ **drops 344 files in silence** |
+
+⭐ **`pyproject.toml` sets `docstring-code-format = true`, so ruff formats the
+python blocks inside markdown — and **29** tracked `.md` carry one.** ⛔ **A
+`*.py`-only format gate is therefore blind to every python block in every
+document, and it was planted BOTH WAYS: a mis-formatted block in a tracked `.md`
+takes the disk form and the wide population to exit `1` while the narrow one
+exits `0` — it MISSES — and mis-formatting a `.py` as well takes the narrow one
+to exit `1`, which is the control proving it is blind to MARKDOWN rather than
+blind in general.** ⚠️ **The opposite over-correction is measured too and is not
+the fix: `ruff check` over the whole tracked set yields `9046` errors, because it
+reads a document AS Python.** ⭐ **So the rule is the sentence and never the glob:
+a committed verdict's population is what git tracks OF THE THING THAT TOOL
+JUDGES, and each gate states its own.**
+
+```bash
+# ⛔ THE SWEEP, over the CALL SITES rather than over a memory of them (Ruling
+#    298's form): every ruff invocation whose population is the DISK.
+git grep -nE '\[ruff, "(check|format)"[^]]*"\."\]' -- tests/ tools/tests/
+#
+# ⭐ PASS: every row it prints runs in a THROWAWAY directory. ⛔ A row carrying
+#    `cwd=repository_root()` is a committed verdict taken from the disk: it
+#    belongs in the table above, or it is a defect.
+```
+
+⛔ **RUN BOTH WAYS BEFORE THIS CLAUSE SHIPPED, and the first attempt at it was
+WRONG** (Ruling 53's standing form, earning its keep): the pass condition
+originally read *"no row's argument list contains `.`"*, and the sweep refuted it
+at its own author's tip. ⭐ **`W142`'s negative arm INHABITS the disk-walking form
+on purpose, in a `tmp_path` repository, so `"."` must remain legal where the
+`cwd` is not this repository.** ⚠️ **A pass condition nobody ran against the tree
+it ships on is a pass condition that fails on the first green branch.**
+
+| the sweep run at | rows | reading |
+|---|---|---|
+| `94ad941` (before) | **2** | ⛔ both `cwd=repository_root()` — the defect, twice |
+| this row's tip | **1** | ⭐ `cwd=repository` in a `tmp_path` — the negative arm, inhabited |
+| tip **+ a planted** `run([ruff, "check", "."], cwd=repository_root())` | **2** | ⭐ the plant is PRINTED — the sweep is seen to FIND |
+
+⛔ **MEASURED, ROLE `wt/dev1`, pinned image, three readings each with the
+expectation written first** (Ruling 123). The plant is an untracked, un-ignored,
+lint-dirty `.py` at the repository root, restored per FILE on the host and
+verified with `md5sum -c` against a WORKING-TREE baseline over every tracked
+file:
+
+| reading | before `W142` | after `W142` |
+|---|---|---|
+| live tree | ⭐ 4 passed, exit 0 | ⭐ 4 passed, exit 0 |
+| untracked lint-dirty `.py` at the root | ⛔ **2 failed, 2 passed, exit 1** | ⭐ **4 passed, exit 0** — and the NOTICE still prints `3 finding(s) in 1 file(s) (D100, F401, I001)`, which is the demoted reading doing its job |
+| restored | ⭐ 4 passed, exit 0 | ⭐ 4 passed, exit 0 |
+
+⚠️ **The fourth node id in every reading is the CONTROL, and it is `W68`'s
+already-tracked-scoped gate** (`tests/gate_coverage/test_coverage.py`): it stayed
+GREEN through all six readings, which is what identifies the tracked population
+as the remedy rather than as a coincidence.
+
 ---
 
 ## 3. R11 — the size ceiling
@@ -1001,6 +1106,16 @@ md5sum "$SUBJECT" > /tmp/plant.md5        # ⭐ and `md5sum -c` after every rest
 git grep -l 'Size exception:'      -- src/ | wc -l   # 7b5c0a9 -> 0   (pass)
 git grep -l 'ZZZ_no_such_marker'   -- src/ | wc -l   # 7b5c0a9 -> 0   (!!)
 ```
+
+> ⛔ **`W143` — ROW 0 ABOVE IS AMENDED, ADDITIVELY (Ruling 214), AND THE RESTORE
+> STEP IT NAMES MAY NO LONGER BE USED.** ⭐ **`git checkout --` restores to
+> `HEAD`, so over a DIRECTORY it discards an uncommitted repair in a NEIGHBOUR
+> the plant never touched — and `porcelain` then reads CLEAN.** ⚠️ **ROW 0's own
+> `git status --porcelain -- "$SUBJECT"` is scoped to the SUBJECT and cannot see
+> the neighbour at all; its `md5sum` baseline is per-file and correct, which is
+> why the discipline catches this only if the baseline is taken from the WORKING
+> TREE.** ⛔ **The restore is from a COPY, per file, and the clause with its
+> command, its pass condition and its demonstration is §4c, `W143`.**
 
 > ⛔ **Ruling 202 (CTO round 51) — the RESTORE half of this discipline can itself
 > be the destructive act, and it was.** ⭐ **MEASURED by the PO, round 40
@@ -2044,6 +2159,74 @@ reverted. If there is none, the tests are decoration.
 paste the count.** Measured on `W28`: implementation reverted → **14 failed**;
 restored → **31 passed**. That is two commands, it needs no judgement, and it
 answers the question the sentence only asserts.
+
+#### ⛔ `W143` — A PLANT IS RESTORED FROM A COPY TAKEN BEFORE IT, PER FILE, AND NEVER WITH `git checkout`
+
+⛔ **`git checkout -- <path>` restores to `HEAD`, not to the working tree you
+had.** ⚠️ **So over a DIRECTORY it silently discards an UNCOMMITTED repair in a
+NEIGHBOURING file the plant never touched — and `git status --porcelain` reads
+CLEAN afterwards, because the tree now matches `HEAD` exactly.** ⛔ **The two
+standing remedies that look like they cover this BOTH PASS on the run that loses
+the work:** ⭐ Ruling 202's *commit before planting* is stated from the AUTHOR's
+side and protects the file you plant IN, never a neighbour; ⭐ Ruling 287's
+*read `porcelain` after restoring* was obeyed, and `porcelain` read clean.
+
+⛔ **THE CLAUSE, and it names its command and its pass condition:**
+
+```bash
+# ⛔ ROW 0 — the baseline is taken from the WORKING TREE, per FILE, BEFORE the plant.
+#    NEVER from `HEAD`: a HEAD-derived baseline agrees with the loss (measured below).
+BAK=$(mktemp -d)
+md5sum $SUBJECTS > "$BAK/plant.md5"        # ⭐ $SUBJECTS: every file the restore will touch
+for f in $SUBJECTS; do cp "$f" "$BAK/$(echo "$f" | tr / _)"; done
+
+#    … plant, run, read …
+
+# ⛔ THE RESTORE: from the COPY, per FILE, on the HOST (Ruling 287 — the container cannot
+#    restore at all). ⛔ NEVER `git checkout -- <dir>`, and never `git checkout` at all.
+for f in $SUBJECTS; do cp "$BAK/$(echo "$f" | tr / _)" "$f"; echo "RESTORE_EXIT=$?"; done
+md5sum -c "$BAK/plant.md5"; echo "MD5_EXIT=$?"     # ⭐ THE pass condition
+```
+
+⭐ **PASS: `md5sum -c` reports every file `OK` and exits `0`.** ⛔ **`git status
+--porcelain` is NOT a pass condition for this failure mode and may not be quoted
+as one** — ⚠️ **it is exactly the instrument that agreed with the loss.** ⭐ It
+remains useful for the OTHER thing it sees: a plant taken from another ref stages
+the index, and porcelain shows that where `md5sum` cannot.
+
+⛔ **DEMONSTRATED RATHER THAN ASSERTED** (Ruling 191), ROLE `wt/dev1`, on the
+HOST in a throwaway repository under `mktemp -d` — outside every checkout of this
+repository and not under `.scratch/` (Rulings 139 and 153). A committed
+`suite/a.py` and `suite/b.py`; the author then makes an UNCOMMITTED repair to
+`suite/b.py`; the plant goes into `suite/a.py` only:
+
+| after `git checkout -- suite/` | reading |
+|---|---|
+| the restore command itself | ⛔ **exit `0`, and it printed nothing** |
+| `git status --porcelain` | ⛔ **EMPTY — it reads CLEAN** |
+| `git diff --stat -- suite/` | ⛔ **empty** |
+| `suite/b.py` on disk | ⛔ **back to the committed text. THE REPAIR IS GONE** |
+| `md5sum -c` vs a **WORKING-TREE** baseline | ⭐ **`suite/b.py: FAILED`, exit `1` — it FINDS it** |
+| `md5sum -c` vs a **`HEAD`-derived** baseline | ⛔ **all `OK`, exit `0` — it REFUSES to find it** |
+
+⭐ **And the same plant restored from a COPY, per file:** `md5sum -c` all `OK`
+exit `0`, the repair in `suite/b.py` SURVIVES, and `porcelain` prints
+` M suite/b.py` — ⚠️ **NOT clean, which is the CORRECT reading and is the exact
+opposite of the clean line the destructive run produced.**
+
+⛔ **THE RELATIONSHIP TO RULING 287, stated because 287's own text sends every
+office to the HOST as the safe place:** ⭐ **same class — a silent restore —
+DIFFERENT mechanism and DIFFERENT environment.** ⚠️ 287 is the CONTAINER refusing
+to restore and leaving the plant in place, caught by an unread exit code; this is
+the HOST restoring successfully to the WRONG STATE, and no exit code anywhere
+reports it. ⛔ **A host-side loss, in the environment 287 recommends.**
+
+⚠️ **SCOPE: the PLANT PROTOCOL, not `git checkout`.** ⭐ `git checkout -- <path>`
+is correct for what it does. ⛔ The defect is a PROCEDURE that uses a
+restore-to-`HEAD` where it needs a restore-to-the-tree-I-had. ⚠️ **And this is
+not a ban on planting** — Ruling 123's three readings are how this project
+inhabits its negative arms, and the wave that lost a file to a bad restore caught
+four real defects by planting.
 
 #### ⛔ Ruling 70 — a mutant sweep is evidence only from a **bytecode-cold** run, and it says so
 

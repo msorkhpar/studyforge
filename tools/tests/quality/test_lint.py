@@ -322,13 +322,45 @@ def test_the_notice_module_imports_only_the_standard_library():
 # --- the real tool, where there is one -------------------------------------
 
 
-def test_the_real_tool_reports_the_repository_as_clean():
-    # ⭐ The fakes above prove the shape; this proves the invocation. It skips
+def test_the_real_tool_answers_for_this_repository():
+    # ⭐ The fakes above prove the shape; this proves the INVOCATION. It skips
     # where ruff is absent, naming the extra — and that skip is itself the
     # state `test_absence_is_reported_and_is_not_silent` covers.
+    #
+    # ⛔ **It no longer asserts the repository is CLEAN, and the deletion is the
+    # point** (`W142`). `lint_notice` walks the DISK by design, so requiring a
+    # clean line here made a NOTICE reach a committed verdict that an untracked
+    # scratch module could turn red — measured, and it failed three innocent
+    # branches in one wave. ⭐ Cleanliness is a property of the REPOSITORY and
+    # its enforcement is next door in `tests/test_repository.py`, taken over
+    # what git TRACKS. ⚠️ What is asserted here is the half that is actually
+    # this module's: the tool ran, it answered, and it named its version.
     if tool_on_path(lint.TOOL) is None:
         pytest.skip(f"{lint.TOOL} not installed; `{lint.INSTALL}` to enable this check")
     line = lint_notice(repository_root())[0]
     assert line.startswith(f"lint: {lint.TOOL} ")
     assert "of unknown version" not in line
-    assert "This run carries a real lint signal." in line
+    assert "is NOT installed" not in line
+    assert "could not be run" not in line
+    assert f"`{lint.CHECK_SHOWN}`" in line and f"`{lint.FORMAT_SHOWN}`" in line
+
+
+def test_the_real_tool_names_an_untracked_module_the_committed_verdict_ignores(tmp_path):
+    # ⛔ **Ruling 183's other half, with the real tool** (`W142`). The committed
+    # verdict was narrowed to tracked content, so this is the instrument that
+    # must still SAY an untracked scratch module is dirty — or the reviewer has
+    # simply lost the signal instead of having it demoted.
+    #
+    # ⭐ Both directions, over a directory git has never heard of: dirty here,
+    # and `test_the_real_tool_answers_for_this_repository` above is the clean
+    # arm over a real tree.
+    if tool_on_path(lint.TOOL) is None:
+        pytest.skip(f"{lint.TOOL} not installed; `{lint.INSTALL}` to enable this check")
+    (tmp_path / "scratch_probe.py").write_text("import json\n", encoding="utf-8")
+    line = lint_notice(tmp_path)[0]
+    assert "1 finding(s) in 1 file(s)" in line, line
+    assert "F401" in line, line
+    # ⚠️ And it is still not a verdict: the line points at the module that
+    # enforces rather than claiming to have failed anything (Ruling 78).
+    assert "Not a floor failure and not a floor pass" in line
+    assert lint.GATES in line

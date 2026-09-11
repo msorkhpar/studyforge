@@ -121,6 +121,66 @@ def is_ignored(path: str, cwd: Path | None = None) -> bool:
     return result.returncode == 0
 
 
+def tracked_files(patterns: tuple[str, ...], root: Path | None = None) -> list[str]:
+    """Every file **git tracks** in `root` matching `patterns`, repo-relative.
+
+    ⛔ **`patterns` is REQUIRED and is never defaulted, because the caller's tool
+    decides its own subject and no two of them agree** (`CTO-64/1`). ⭐ `ruff
+    check`'s subject is `*.py`; `ruff format`'s is `*.py` **and** `*.md`, because
+    `docstring-code-format` makes a document's python blocks part of what gets
+    formatted. ⚠️ **MEASURED in the pinned image: `ruff check` over the whole
+    tracked set yields 9046 errors — it reads a document AS Python rather than as
+    a host for Python.** ⛔ A shared default here would have been a silent way for
+    one gate to inherit the other's subject, which is the defect this signature
+    refuses to make expressible.
+
+    ⛔ **The index, never the disk** (Ruling 153, and Ruling 86a before it for
+    ruff's denominator). ⚠️ A `git status --porcelain` clean tree still carries
+    every *ignored* file on the machine — an agent's `.scratch/`, a virtualenv,
+    a second checkout — and a tool that walks the filesystem reads all of them
+    as this repository's. ⛔ **And so is an untracked, un-ignored one, which is
+    the half `W142` was paid for:** a scratch module at the repository root
+    turned three innocent branches red under a reviewer who had measured the
+    defect twenty minutes earlier.
+
+    ⭐ **Repo-relative and never absolute (R7).** A caller hands these to a tool
+    with `cwd=root`, so what the tool reports back — and what then reaches an
+    assertion message and a build log — carries no home directory.
+
+    ⚠️ **The blindness, said here rather than discovered later.** `git ls-files`
+    reads the **index**, so a module written and not yet `git add`ed is
+    invisible. ⭐ That is correct for the question a *committed verdict* asks —
+    *is this repository clean* — and wrong for *does my working tree pass right
+    now*, which is `tools.quality`'s, is answered over `git check-ignore` so a
+    brand-new unadded file **is** caught, and is a different instrument on
+    purpose (review rubric §2e).
+
+    ⚠️ **Two guards, in the body and before any caller counts anything.** An
+    instrument that cannot find its subject must raise rather than report the
+    subject clean (`W61`'s reading 3, Ruling 128); and a tracked file missing
+    from the working tree is refused rather than skipped, because an unstaged
+    deletion would otherwise narrow the population in silence.
+
+    ⭐ `root` is a parameter for Ruling 11's reason: the mechanism is watched
+    working in a throwaway repository, where a plant can be tracked or untracked
+    on purpose, without writing into the tree the check is measuring.
+    """
+    where = repository_root() if root is None else root
+    result = run([git(), "ls-files", "-z", "--", *patterns], cwd=where)
+    assert result.returncode == 0, (
+        f"git ls-files could not answer, so there is no population to check: "
+        f"{result.stdout + result.stderr}"
+    )
+    tracked = [name for name in result.stdout.split("\0") if name]
+    assert tracked, f"git tracks nothing matching {patterns}; the population is empty"
+    absent = sorted(name for name in tracked if not (where / name).is_file())
+    assert absent == [], (
+        "these files are tracked but missing from the working tree, so no check can "
+        f"read them; restore them or stage the deletion: {absent}"
+    )
+    return tracked
+
+
 def run(command: list[str], cwd: Path) -> subprocess.CompletedProcess[str]:
     """Run `command` in `cwd` and capture both streams as text.
 

@@ -863,6 +863,61 @@ to decide whether code needs testing.** A probe is how a finding gets verified
 before it becomes a task, so an unfalsifiable probe corrupts the input to
 everything downstream.
 
+### ⛔ `W143` — restore a plant FROM A COPY taken before it, per FILE. Never with `git checkout`
+
+⛔ **`git checkout -- <path>` restores to `HEAD`, not to the working tree you
+had.** ⚠️ **Over a DIRECTORY it silently discards an UNCOMMITTED repair in a
+NEIGHBOURING file your plant never touched — and `git status --porcelain` then
+reads CLEAN, because the tree does now match `HEAD`.** ⛔ **It has already cost
+this project real work, in the wave it was found in, to an office following the
+standing guidance exactly as written.**
+
+⛔ **THE COMMAND AND ITS PASS CONDITION:**
+
+```bash
+# ⛔ BEFORE the plant. The baseline comes from the WORKING TREE, per FILE — never
+#    from `HEAD`, and never from `git show`. A HEAD-derived baseline AGREES WITH
+#    THE LOSS: measured, it reported every file OK after the repair was destroyed.
+BAK=$(mktemp -d)                              # ⛔ outside every checkout (Rulings 139, 153)
+md5sum $SUBJECTS > "$BAK/plant.md5"           # ⭐ $SUBJECTS = every file the restore touches
+for f in $SUBJECTS; do cp "$f" "$BAK/$(echo "$f" | tr / _)"; done
+
+#    … plant, run, read the effect …
+
+# ⛔ THE RESTORE: from the COPY, per FILE, on the HOST — the container cannot restore
+#    at all (Ruling 287). ⛔ NOT `git checkout -- <dir>`, and not `git checkout` at all.
+for f in $SUBJECTS; do cp "$BAK/$(echo "$f" | tr / _)" "$f"; echo "RESTORE_EXIT=$?"; done
+md5sum -c "$BAK/plant.md5"; echo "MD5_EXIT=$?"
+```
+
+⭐ **PASS: every file `OK` and `MD5_EXIT=0`.** ⛔ **`git status --porcelain` is
+NOT the pass condition here and may not be quoted as one** — ⚠️ **it is the
+instrument that agreed with the loss.** ⭐ Keep reading it for what it *can* see:
+a plant taken from another ref stages the index, and porcelain shows that where
+`md5sum` cannot.
+
+⛔ **WHY THE TWO REMEDIES YOU ALREADY KNOW DO NOT COVER THIS:** ⭐ **Ruling 202
+(*commit before planting*) is stated from the AUTHOR's side** — it protects the
+file you are about to plant IN, and says nothing about a neighbour, while a plant
+over a whole suite naturally takes a directory-wide restore. ⭐ **Ruling 287
+(*read `porcelain` after restoring*) was obeyed on the run that lost the work,
+and `porcelain` read clean.** ⛔ **Both standing remedies PASS on the failing run;
+only a working-tree `md5sum` baseline fails.**
+
+⚠️ **Its relationship to Ruling 287, since 287 sends you to the host as the safe
+place:** ⭐ **same class — a silent restore — different mechanism, different
+environment.** 287 is the CONTAINER refusing to restore and leaving the plant in
+place, caught by an unread exit code; this is the HOST restoring **successfully**
+to the **wrong state**, where no exit code anywhere reports it.
+
+⛔ **THE SCOPE IS THIS PROTOCOL AND NOT `git checkout`.** ⭐ `git checkout --
+<path>` is correct for what it does; the defect is a procedure that uses a
+restore-to-`HEAD` where it needs a restore-to-the-tree-I-had. ⚠️ **And it is not
+a reason to stop planting** — Ruling 123's three readings are how this project
+inhabits its negative arms. ⭐ **The demonstration, both directions, with the
+`HEAD`-baseline control shown REFUSING to find the loss, is the review rubric's
+§4c.**
+
 ### ⛔ A number in a ruling is evidence, never a bound
 
 ⭐ **A number in a ruling is a measurement from an instrument, never a property of
