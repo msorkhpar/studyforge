@@ -1448,6 +1448,31 @@ later at the reviewer instead of the author.
 ⭐ **So the host run is a convenience and never the verdict.** If the container
 cannot be run, the review is **Blocked**, not APPROVE.
 
+#### ⛔ Ruling 275 (CTO round 58) — a skip figure is quoted `N groups / M skips` whenever the two differ
+
+```bash
+# ⛔ ONE flag gives both units. Ruling 255's -ra, never a bare -q and never -rs alone.
+python3 -m pytest -q -ra > /tmp/p.txt 2>&1; P=$?     # Ruling 241, FORM 2
+printf 'groups=%s skips=%s\n' "$(grep -c '^SKIPPED' /tmp/p.txt)" \
+  "$(sed -n 's/^SKIPPED \[\([0-9]*\)\].*/\1/p' /tmp/p.txt | awk '{n+=$1} END {print n+0}')"
+```
+
+⛔ **Pass: every skip figure in a review, a handoff or a close carries BOTH UNITS —
+`N groups / M skips` — whenever the two differ, and carries them anyway when they do not.**
+⭐ **Sharpening Ruling 142 and Ruling 237: 142 said PARSE the multiplicity; this says PRINT
+BOTH, because the group count is the one an eye reads off the tail and the skip count is the
+one the summary line prints.**
+
+| reading, CTO round 58, at the merge | measured |
+|---|---|
+| `grep -c '^SKIPPED'` | ⛔ **12** — `W123`'s four wedge checks all skip through one `require_docker_run()` and pytest groups them as `SKIPPED [4] …` |
+| pytest's own summary | ⛔ **15 skipped** |
+| the same two readings at the BASE | ⚠️ **11 and 11** — every group is `[1]` |
+
+⚠️ **That is the worst possible failure shape for a denominator: the two units agree until
+they do not, so a reviewer learns the habit on a tree where it cannot bite them.**
+⭐ **Ruling 255's `-ra` is what makes both readable from ONE flag.**
+
 #### ⛔ Ruling 108 — a skip SET is a property of the checkout, so name the checkout
 
 ```bash
@@ -3891,6 +3916,93 @@ grep -rn "<the name>" --include='*.md' --include='*.py' .   # ⛔ FILES and LINE
 ⛔ **Pass: a rename lands only with every citation re-pointed IN THE SAME COMMIT, and the citation count in the commit message. Otherwise the population is renamed AROUND the name and the reason goes in the docstring at the point of the decision.** ⚠️ **A rename that dangles a record's citation is `W78` by construction, and a record is annotated beneath, never edited (Ruling 106).** ⭐ **Escape hatch, stated so it is not invented: a name that is actively MISLEADING rather than merely narrow is renamed — with its citations, in one commit.**
 
 ⭐ **MEASURED, round 52:** `W74/2` is the FIFTH refusal in this family and none of the five has been overruled — **8 citation lines in 4 record files** at `2d0cfe7`, plus the definition site. ⛔ **Five unreversed judgement calls is a rule; leaving it a judgement call costs a paragraph of justification every round.**
+
+## ⛔ RULED ROUND 58 — three clauses, each one command and one pass condition
+
+⚠️ **Reasoning, every plant and every reading:
+[`docs/tasks/handoffs/CTO-2026-09-11-round58.md`](../tasks/handoffs/CTO-2026-09-11-round58.md).**
+⭐ **Rulings 266, 267 and 269 are stated HERE rather than left in that record, because a ruling
+that lives only in a frozen record is not landed** (Ruling 245, Ruling 286) — ⛔ **and all three
+had scrolled out of the reach notice's 25-wide window before any round failed on them, which is
+the attrition Ruling 304 now names.**
+
+### ⛔ Ruling 266 — Ruling 238(d) is discharged by comparing the image's PINNED INPUTS by DIGEST, and that is stronger than reconciling the floor arithmetically
+
+```bash
+# ⛔ When a branch CHANGES the image, base-image ≠ merge-image is unavoidable. Do not manage
+#    it away — compare the INPUTS the readings depend on, and plant a control that must fail.
+docker compose -f docker/dev/compose.yaml run --rm dev \
+  sh -c 'cd /usr/share/fonts/truetype/liberation && sha256sum *.ttf | sort' > /tmp/base.txt
+diff /tmp/base.txt /tmp/recorded.txt; echo "DIFF_EXIT=$?"   # ⛔ Ruling 241, read on the NEXT line
+```
+
+⛔ **Pass: an image change is DECLARATIVE for a reading when every pinned input the reading
+depends on is digest-identical across the two images, and a PLANTED control — one digest
+character flipped — makes the same comparison fail.** ⭐ **Arithmetic shows the floor did not
+move; a digest comparison shows the INPUT did not move, and only the second is a statement
+about the environment.**
+
+| reading, CTO round 58 | measured |
+|---|---|
+| font files in the BASE image, population printed in full | ⭐ **12**, all Liberation, one directory |
+| `dpkg-query fonts-liberation`, BASE and MERGE alike | ⭐ **1:2.1.5-3** |
+| digests recorded in the MERGE `Dockerfile` vs measured in the BASE image | ⭐ **12 vs 12**, `DIFF_EXIT=0` |
+| PLANTED control, one digest character flipped | ⛔ **`PLANTED_DIFF_EXIT=1`** — the comparison can refuse |
+
+⚠️ **The arithmetic reconciled exactly anyway and was ACCEPTED as correct; Ruling 266 names the
+stronger form for next time rather than faulting the weaker one.**
+
+### ⛔ Ruling 267 — a check asserting a file does NOT contain something is blind to LINE CONTINUATIONS, so the POPULATION is the splitting sites and every at-risk site owes a PLANT
+
+```bash
+# ⛔ The subject is not the check, it is the SHAPE the check reads. Count the sites where a
+#    logical line is split, before believing any "does not contain" attestation over them.
+grep -rn '\\$' tests/ --include='*.py' | wc -l    # the at-risk population, printed first
+# Then PLANT the forbidden thing ACROSS a continuation and watch the check stay green (R12).
+```
+
+⛔ **Pass: a check of the form *this file does not contain X* is trusted only where the
+continuation-collapsing is done BEFORE the assertion, and each at-risk site carries a plant
+that proves the repaired check goes RED.** ⚠️ **Until then the green is a FALSE ATTESTATION:
+it attests to the absence of a spelling, not to the absence of the thing.**
+
+| reading, CTO round 58 | measured |
+|---|---|
+| line-splitting sites in `tests/docker/` | ⛔ **19** |
+| of those, sites that collapse continuations | ⚠️ **2** |
+| checks confirmed FALSE by the reviewer's own plant | ⛔ **2** — `test_the_browser_does_not_arrive_from_a_package_manager`, `test_the_runtime_arrives_pinned_rather_than_from_a_package_manager` |
+
+⭐ **Ruled a ROW rather than a merge obligation, on its own ground: a class with a measured
+population of 19 and a copyable remedy is work, and work that is called an obligation is work
+nobody is measured on.** ⚠️ **Ruling 292 later corrected this ruling's own remedy POINTER — it
+named the wrong one of two neighbours, and a literal copy would have turned four false greens
+into four false reds on a correct file.**
+
+### ⛔ Ruling 269 — a BARE COUNT cannot be a subject: the UNIT is named, because the population that is NOT the subject is the one that moves
+
+```bash
+# ⛔ Before quoting "the N of them", print EVERY candidate population that could produce N.
+#    A scalar that three populations can produce identifies none of them.
+grep -rno 'STUDYFORGE_[A-Z_]*' tests/visual/ docker/dev/ | cut -d: -f3 | sort -u
+```
+
+⛔ **Pass: a clause naming a count names the UNIT and the population that count is taken over,
+and a reviewer who cannot reconstruct the population from the clause treats the figure as
+UNREAD.** ⭐ **Ruling 277 is the shipped-file half of this; Ruling 269 is the half that binds a
+RULING'S OWN prose, where no instrument is watching.**
+
+| candidate population, CTO round 58, printed in full before any scalar | measured |
+|---|---|
+| distinct `STUDYFORGE_*` names `tests/visual/` reads, over 9 sites | ⭐ **4** |
+| `docker/dev/check`'s mount-boundary list | ⭐ **3** |
+| `docker/dev/check`'s FULL `STUDYFORGE_*` set, on `chore/po-round44` | ⚠️ **5** |
+| `docker/dev/check`'s FULL set, on the docker branch | ⛔ **7** |
+| `compose.yaml`'s `environment:` block, BOTH branches | ⭐ **3** |
+
+⛔ **The measurement that decides it: of the candidate populations, the one that is NOT the
+row's subject is the one that MOVES IN THAT VERY WAVE — 5 → 7 by a sibling branch approved in
+the same record.** ⚠️ **So Ruling 263's `3` was right in MAGNITUDE and wrong in MEMBERSHIP, and
+a bare count could never have told the two apart.**
 
 ### ⛔ Ruling 277 — a COUNT IN A SHIPPED FILE states its UNIT and, if it is a historical reading, its REF
 

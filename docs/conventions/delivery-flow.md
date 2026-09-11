@@ -48,6 +48,27 @@ branch** — that is how two half-finished contracts become one unreviewable dif
 If your task genuinely needs another's unmerged work, that is a dependency the
 board got wrong: say so, do not vendor it.
 
+### ⛔ Ruling 274 (CTO round 58) — ONE branch may carry TWO rows whose surfaces collide, and the register records their outcomes SEPARATELY
+
+⛔ **The rule above is *one task, one branch, one owner*, and this is its ONE bounded
+exception — written here so it is read as a ruling rather than invented as a convenience.**
+⭐ **Ruling 218 is the precedent: one branch may carry rows whose outcomes the register
+records separately, and the register does record them separately.**
+
+⛔ **The three conditions, and all three are MEASURED before the bundling, never asserted
+after it:**
+
+1. ⛔ **The rows edit the SAME FILES.** ⚠️ **MEASURED, CTO round 58: `W124` and `W122` both
+   edit `docker/dev/Dockerfile` and `W123` edits `docker/dev/check`** — splitting them was
+   *"a guaranteed collision"* in the rows' own words.
+2. ⭐ **The board already places them together**, and both row files say so.
+3. ⛔ **The cost is paid in full: one handoff PER ROW, shared readings POINTED AT rather than
+   copied, and findings numbered per document.** ⚠️ **MEASURED: three handoffs.**
+
+⭐ **And the bundling is DISCLOSED as the deciding office's own decision, not attributed to
+the PO.** ⛔ **A bundling nobody claims is indistinguishable from a task branch that merged
+into another one, which is the thing the rule above forbids.**
+
 ⛔ **No personal data in a branch name, a commit message or a log** (R7). No
 absolute home path, hostname, account id, name or email — anywhere, including
 pasted command output in a review.

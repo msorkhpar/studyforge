@@ -31,6 +31,25 @@ How a task is picked up, worked, and handed on. Applies to every task in
   something and recorded why, follow it and cite it. Where you think it is
   wrong, say so in the handoff — do not quietly diverge.
 
+### ⛔ Ruling 268 (CTO round 58) — a grant of a decision ON A READING is decided BY THE READING, never by the row's menu of remedies
+
+⭐ **A row that offers two remedies and says the choice is the taker's has granted a DECISION,
+and where the row also says *the reading that decides between them is a build, not an
+argument*, the grant is to the READING.** ⛔ **So a THIRD remedy the reading produces is inside
+the grant, and a taker who takes it is obeying the row rather than exceeding it.** ⚠️ **A row
+that meant otherwise has pre-empted the thing it said it was not pre-empting, and that is a
+defect in the ROW.**
+
+⛔ **What the taker owes, and it is what makes this a grant rather than an opening:** the
+reading that killed each offered remedy, printed, and the reading that chose the third.
+⭐ **MEASURED, CTO round 58, where the reading excluded BOTH offered remedies: a pinned `.deb`
+added a FOURTH build-time host to buy nothing — three remotes were already required and the
+first one's failure fails `apt-get update` two lines earlier — and a vendored font cost
+**4 360 440** measured bytes plus a licence while still leaving three remotes.**
+
+⭐ **Flag it as the first thing for the reviewer to attack.** ⚠️ **That is how the taker in
+round 58 handled it, and the ratification followed the disclosure rather than the diff.**
+
 ### ⛔ Ruling 146 (CTO round 39) — a sweep asserts its own ROW COUNT, and every `docker` call takes `</dev/null`
 
 > ⛔ **A sweep that does not assert how many rows it ran is not a sweep.** The
@@ -314,6 +333,30 @@ contract**, which is why the two are never maintained the same way.
   and stayed exact — re-measured at the named ref one round later and reproduced
   to the test; only the word *tip* had aged.** ⛔ **So a record states the ref it
   measured, never the position it inferred a branch was in.**
+
+#### ⛔ Ruling 273 (CTO round 58) — a record's FILENAME DATE is the date the record was WRITTEN, and a wrong one is DISCLOSED rather than renamed
+
+⛔ **The date in `CTO-<date>-roundN.md` is the day that record was written — never copied
+forward from the previous round's brief.** ⚠️ **MEASURED, CTO round 58:
+`CTO-2026-09-10-round57.md` was written on 2026-09-11, its filename says `-09-10`, and the
+coordinator disclosed it.** ⭐ **The forward-looking half is a MERGE OBLIGATION on the office
+that writes the record, not a row.**
+
+⛔ **AND THE WRONG ONE IS NOT CORRECTED, on a ground four deep — this is the part a later
+office reaches for and must not:**
+
+1. ⛔ **Ruling 106: a record is corrected by ANNOTATION, and a filename is part of a record's
+   bytes.**
+2. ⛔ **Ruling 174 and Ruling 270's wall: a rename RE-ADDRESSES it.** ⚠️ **MEASURED at that
+   merge: 855 pointers, 0 unresolved — a rename breaks every pointer at that file and the
+   repairs would land INSIDE frozen records, for a cosmetic gain.**
+3. ⭐ **The record's own as-ofs do not resolve through its filename.** Every reading inside it
+   names its REF, which is what Ruling 260 actually requires, and a ref is strictly stronger
+   than a date.
+4. ⭐ **A disclosure in a LIVE document reaches a reader the way an annotation does.**
+
+⚠️ **So Ruling 260 is NARROWED rather than contradicted: a record's date is how its as-ofs
+resolve, 260 is satisfied by the REF, and the filename is an ADDRESS.**
 
 ⛔ **Tag an illustrative fence `text`, not `python`.** The formatter reads
 Markdown: `ruff format` discovers `.md`, formats the Python inside a ```` ```python ````
