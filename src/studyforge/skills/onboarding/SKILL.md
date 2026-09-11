@@ -138,6 +138,16 @@ python3 -m studyforge.validate .
 ⭐ **Exit 0 is the whole agreement.** ⛔ Not a shape somebody agreed looked
 right — the same rule the adapter skill is written against.
 
+**Consumer-side modules:** `ingest`
+
+⛔ **That line is a declaration, read by a check, and it is the only thing that
+exempts a commanded module from having to resolve in this repository.** ⭐ **The
+corpus repository owns `ingest`** — `SK-02`'s scaffold writes it into the
+material's own tree, so it is importable where this skill is *pointed* and
+nowhere here. ⚠️ **Every other `python3 -m` form on this page is the framework's
+and is asserted runnable**, so a typo in one of them fails a check rather than
+reaching a reader.
+
 > ⚠️ **A note on the spelling.** The seam is named `studyforge validate` in the
 > design documents and in prose. That console entry point is **not built yet**
 > — `pyproject.toml` declares no `[project.scripts]`, and says why: it belongs

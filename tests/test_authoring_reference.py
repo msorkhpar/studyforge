@@ -15,7 +15,6 @@ names. Equality would be satisfied by shrinking either side.
 from __future__ import annotations
 
 import importlib
-import importlib.util
 import json
 import pkgutil
 import re
@@ -42,15 +41,24 @@ from studyforge.validate.report import INVALID, OK
 from tests.authoring.support import (
     AUTHORING,
     INDEX,
+    PLACEHOLDER,
+    UNRESOLVED,
+    assert_both_halves_reached,
     code_spans,
+    commanded_modules,
+    commanded_pages,
+    consumer_side,
+    declared_pythonpath,
     document,
     document_paths,
     documents,
     fences,
     json_fences,
+    must_run,
+    resolves,
     rows_under,
+    run_bare,
     section,
-    skill_documents,
     vocabulary_under,
 )
 from tests.support import repository_root
@@ -385,37 +393,6 @@ def test_the_shape_table_agrees_with_the_two_corpora_it_describes():
 # --- every command on the page runs ----------------------------------------
 
 
-def commanded_modules() -> set[str]:
-    """Every `python3 -m <module>` the reference tells a reader to run."""
-    found = set()
-    for text in documents().values():
-        found.update(re.findall(r"python3 -m ([\w.]+)", text))
-    assert found, "the reference gives no runnable command at all"
-    return found
-
-
-def test_every_command_the_reference_gives_names_a_module_that_can_be_run():
-    # ⛔ The reader will type these. A module that is not there, or that has no
-    # `__main__`, sends them to a traceback on the first page they read.
-    for name in sorted(commanded_modules()):
-        assert importlib.util.find_spec(name) is not None, f"no module {name}"
-        assert importlib.util.find_spec(f"{name}.__main__") is not None, f"{name} is not runnable"
-
-
-def commanded_pages() -> dict[str, str]:
-    """Every page that hands a reader a fenced command: the reference, and every skill.
-
-    ⛔ **`W61` widened this, and the widening is the fix.** `SK-05` shipped the
-    check below over `docs/authoring/` alone; `skills/adapter/SKILL.md` and
-    `skills/onboarding/SKILL.md` gave `studyforge validate` in a fence the
-    whole time and were never looked at. Both halves are walked rather than
-    listed, so nothing joins the tree outside the population.
-    """
-    pages = {f"{AUTHORING}/{name}": text for name, text in documents().items()}
-    pages.update(skill_documents())
-    return pages
-
-
 def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
     # ⚠️ `studyforge validate` is how the design documents spell it and there
     # is no such entry point yet — `pyproject.toml` declares no
@@ -423,11 +400,7 @@ def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
     # prose naming the seam; it may not be *given as a command*, which is what
     # a fenced line reads as to an agent.
     pages = commanded_pages()
-    # ⛔ The population must reach both halves. Without this the check silently
-    # degrades to the one directory it used to watch, which is the state W61
-    # exists to leave, and it would still be green.
-    assert any(name.startswith(f"{AUTHORING}/") for name in pages), "no reference page reached"
-    assert any(name.endswith("SKILL.md") for name in pages), "no SKILL.md reached"
+    assert_both_halves_reached(pages)
     for name, text in sorted(pages.items()):
         for body in fences(text, ""):
             for line in body.splitlines():
@@ -435,3 +408,107 @@ def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
                     f"{name} offers {line.strip()!r} as a command, and no "
                     f"console entry point provides it"
                 )
+
+
+def test_every_command_the_reference_gives_names_a_module_that_can_be_run():
+    # ⛔ The reader will type these. A module that is not there, or that has no
+    # `__main__`, sends them to a traceback on the first page they read.
+    #
+    # ⚠️ The NAME is kept although the population is now every commanded page:
+    # five frozen records cite it by name (`SK-05`, `W61`, CTO round 41, the
+    # archive twice) and a record is annotated, never edited (Ruling 106).
+    assert_both_halves_reached(commanded_pages())
+    wanted = must_run()
+    assert wanted, "every commanded module was exempted; this check is vacuous"
+    assert_both_halves_reached({page for pages in wanted.values() for page in pages})
+    for name in sorted(wanted):
+        where = ", ".join(sorted(wanted[name]))
+        assert resolves(name), f"no module {name} — commanded by {where}"
+        assert resolves(f"{name}.__main__"), f"{name} is not runnable — commanded by {where}"
+
+
+@pytest.mark.parametrize("token", sorted(t for t in commanded_modules() if PLACEHOLDER.search(t)))
+def test_the_placeholder_exemption_swallows_only_a_complete_substitution(token):
+    """⛔ Ruling 156 clause 2 — the placeholder skip is ASSERTED INHABITED.
+
+    Ruling 124's form B: parametrized over the derivation, so an empty
+    placeholder class SKIPS and lands in the skip census a reviewer reads out
+    loud, rather than passing. An exemption that swallows nothing and an
+    exemption that swallows a real module name print the same green.
+
+    ⭐ **And the exemption is narrow:** a stray bracket — `studyforge.<mod`,
+    `tools.knowledge>` — is a typo in a fence, not a substitution, and is
+    refused here rather than silently skipped by the check above.
+    """
+    assert re.fullmatch(r"<[\w.-]+>", token), (
+        f"{token!r} is exempted as a placeholder but is not a complete "
+        f"<substitution>; a stray angle bracket in a fence is a typo"
+    )
+
+
+@pytest.mark.parametrize("token", sorted(consumer_side()))
+def test_every_consumer_side_declaration_is_earned_and_still_bites(token):
+    """⛔ Ruling 156 clause 2 — the consumer-side exemption is the DOCUMENT's.
+
+    Form B again: no page declares one and this row SKIPS rather than passing.
+    Two ways a live declaration rots, and both are refused: the page stops
+    commanding the module it exempts, and the module turns out to resolve here
+    after all — which would quietly lift a FRAMEWORK module out of the check
+    above, the one thing a declared exemption must never be able to do.
+    """
+    pages = consumer_side()[token]
+    orphans = sorted(pages - commanded_modules().get(token, set()))
+    assert not orphans, f"{orphans} declare `{token}` consumer-side and command no such module"
+    assert not resolves(token), (
+        f"`{token}` is declared consumer-side but resolves in this repository, "
+        f"so the declaration lifts a framework module out of the runnable check"
+    )
+
+
+@pytest.mark.parametrize("name", sorted(must_run()))
+def test_every_commanded_module_runs_in_a_real_interpreter(name):
+    """⛔ Ruling 156 clause 3 — one row is a real subprocess.
+
+    ⚠️ **It runs under the path `pyproject.toml` declares, and that is NOT the
+    reader's bare shell.** The bare-shell reading is the row below, which says
+    why this one cannot use it yet.
+    """
+    said = run_bare(name, declared_pythonpath())
+    for tell in UNRESOLVED:
+        assert tell not in said, f"python3 -m {name} did not resolve: {tell}"
+    assert "Traceback (most recent call last)" not in said, (
+        f"python3 -m {name} resolves but raises when run: {said[-400:]}"
+    )
+
+
+def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_w75_s():
+    """⛔ The divergence `find_spec` cannot see, PINNED — and it has an expiry.
+
+    ⭐ **This is the row the Acceptance asks for: red for a module `find_spec`
+    resolves and a bare shell does not.** `studyforge` lives under `src/`, no
+    shipped page tells a reader how it gets on the path, and `python3 -m
+    studyforge.validate` from the repository root therefore exits on a module
+    it cannot find — while `find_spec` under pytest, and the row above, read it
+    green off `pythonpath = ["src", "."]`.
+
+    ⛔ **So the set asserted here is non-empty, every member resolves under the
+    declared path, and that is the defect rather than the design.** ⚠️ **The gap
+    is `W75`'s to close, not this row's to assert away.** ⭐ **When `W75` lands,
+    this row goes RED and is CONVERTED — the bare-shell reading becomes the
+    assertion and the row above folds into it** (Ruling 157: a check with a
+    scheduled expiry is an acceptance condition on the task that expires it).
+    """
+    unreachable = {
+        name
+        for name in sorted(must_run())
+        if any(tell in run_bare(name, None) for tell in UNRESOLVED)
+    }
+    assert unreachable, (
+        "every commanded module now runs from a bare shell. ⭐ If W75 landed, "
+        "CONVERT this row — assert the bare-shell reading — and do not delete it"
+    )
+    for name in sorted(unreachable):
+        assert resolves(name), (
+            f"python3 -m {name} fails from a bare shell AND does not resolve "
+            f"under the declared path — that is a typo, not W75's gap"
+        )
