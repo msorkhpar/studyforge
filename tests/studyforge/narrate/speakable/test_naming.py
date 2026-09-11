@@ -133,6 +133,49 @@ def test_no_other_module_of_this_package_computes_a_digest():
     assert users == [THE_MINTER]
 
 
+def truncates_a_digest(tree: ast.AST) -> bool:
+    """Does this module slice a `hexdigest()` call — the shape of minting a short name?
+
+    ⭐ **A tell with no token in it.** The two arms above search for the word
+    `clip_name`, and a module that composed `f"{id}-{sha256(...)[:8]}"` by hand would
+    carry that word nowhere — which is exactly the plant that refuted those arms when
+    it was run outside `narrate/`. This one reads the *shape* instead.
+    """
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Subscript) or not isinstance(node.slice, ast.Slice):
+            continue
+        called = node.value
+        if (
+            isinstance(called, ast.Call)
+            and isinstance(called.func, ast.Attribute)
+            and called.func.attr == "hexdigest"
+        ):
+            return True
+    return False
+
+
+def test_exactly_one_module_in_the_whole_framework_truncates_a_digest():
+    # ⛔ The population printed before the scalar (Ruling 128): six framework modules
+    # compute a digest, and five of them use the whole of it — a `content_sha256`, a
+    # freshness mark, a duplication key. Only a short NAME truncates one, and exactly
+    # one module may mint a short name.
+    digesting = sorted(
+        relative(path)
+        for path in source_modules()
+        if "hexdigest" in path.read_text(encoding="utf-8")
+    )
+    assert len(digesting) >= 2, f"only {digesting} compute a digest; the scan is wrong"
+    truncating = sorted(
+        relative(path)
+        for path in source_modules()
+        if truncates_a_digest(ast.parse(path.read_text(encoding="utf-8")))
+    )
+    assert truncating == [THE_MINTER], (
+        f"{len(digesting)} modules compute a digest ({digesting}); "
+        f"these truncate one into a name: {truncating}"
+    )
+
+
 def test_the_scan_catches_a_second_definition_and_a_bare_composition(tmp_path):
     # ⭐ The instrument validated rather than merely run: two modules written to a
     # temporary tree, one defining a second `clip_name` and one composing the name
