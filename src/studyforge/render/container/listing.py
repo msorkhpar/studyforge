@@ -4,12 +4,34 @@ r"""The list of units a container page exists to show, and the one gate on it.
 declared them, as an ordered list — one row per unit, linked when the unit has a
 page and plainly listed when it has not.
 
-**How you use it.** `listing.render(document.items)` returns the markup;
-`container.document` puts it in the page's body.
+**How you use it.** `listing.render(document.address, document.items)` returns
+the markup; `container.document` puts it in the page's body.
 
-**Depends on.** `render.markup` for escaping and the href gate, `entries`,
-and `render.page` for `PageError`. ⛔ Nothing that knows where a file is: an
-`Item` arrives with its href already answered.
+**Depends on.** `studyforge.address` for the one key composer, `render.markup`
+for escaping and the href gate, `entries`, and `render.page` for `PageError`.
+⛔ Nothing that knows where a file is: an `Item` arrives with its href already
+answered.
+
+## ⛔ A row carries the unit key, and that is what a read mark joins on (SF-30)
+
+⭐ **`Address.unit_key` is the one composer**, and its own docstring says why:
+*"the page writes a read mark under it, the index reads the mark back … a second
+spelling that differed by one character would simply never match anything, with
+nothing failing anywhere."* ⚠️ So the key is asked for rather than spelled, and
+the container's declared order **is** the ordinal order — the container reader
+has already refused any map whose ordinals are not contiguous from 1, which is
+the same invariant `render` relies on to list the units at all.
+
+⛔ **It is the row's `id`, not a second attribute, because `render.index.
+disclosure` already keys its rows that way** and the two pages must be joinable
+by one question. ⭐ A row that can be addressed is also a row that can be
+deep-linked, which this page could not offer before and the root index always
+could.
+
+⚠️ **The address arrives as an argument rather than being read off an `Item`.**
+An `Item` carries what a reader sees; a key is the corpus's own address, which
+belongs to the container and not to each row — and a per-row copy is a second
+place for it to disagree with the ordinal the row was listed under.
 
 ## ⛔ A refused href RAISES here, and that is deliberate (Ruling 56)
 
@@ -50,6 +72,7 @@ third state the two part company with nothing to notice.
 
 from __future__ import annotations
 
+from studyforge.address import Address
 from studyforge.render.container.entries import Item
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page import PageError
@@ -77,23 +100,28 @@ KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 
 
-def render(items: tuple[Item, ...]) -> str:
+def render(address: Address, items: tuple[Item, ...]) -> str:
     """Return the container's units as one ordered list, in declared order.
 
     ⛔ **The declared order is used, never re-derived.** The container reader
     has already refused any map whose ordinals are not contiguous from 1, so the
     declared order *is* the ordinal order; a renderer that sorted would be the
     second orderer `contents` was written to prevent (`SF-13`).
+
+    ⭐ **Which is also what makes each row's key derivable here**: the position a
+    unit is listed at is its ordinal, and `address.unit_key` turns the pair into
+    the one string every surface joins on.
     """
-    rows = "".join(_row(position, item) for position, item in enumerate(items, start=1))
+    rows = "".join(_row(address, position, item) for position, item in enumerate(items, start=1))
     return f'<nav aria-label="{LIST_LABEL}"><ol>{rows}</ol></nav>'
 
 
-def _row(position: int, item: Item) -> str:
+def _row(address: Address, position: int, item: Item) -> str:
     """Return one unit's row: linked when it has a page, plain when it has not."""
     body = f"{_numbering(item)}{inline(item.title)}"
+    where = f'id="{escape_attribute(address.unit_key(position))}"'
     if item.href is None:
-        return f'<li {READABLE_ATTRIBUTE}="false">{body}</li>'
+        return f'<li {where} {READABLE_ATTRIBUTE}="false">{body}</li>'
     target = safe_href(item.href)
     if target is None:
         # ⛔ The href is DESCRIBED by its position and never reproduced (R7).
@@ -107,7 +135,10 @@ def _row(position: int, item: Item) -> str:
             f"is refused rather than dropped, because on this page the links are the "
             f"content and a dropped one is a row nobody can open"
         )
-    return f'<li {READABLE_ATTRIBUTE}="true"><a href="{escape_attribute(target)}">{body}</a></li>'
+    return (
+        f'<li {where} {READABLE_ATTRIBUTE}="true">'
+        f'<a href="{escape_attribute(target)}">{body}</a></li>'
+    )
 
 
 def _numbering(item: Item) -> str:

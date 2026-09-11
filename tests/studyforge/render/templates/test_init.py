@@ -36,7 +36,13 @@ ONE_LINE = (
 #: The templates whose newlines are real output. ⭐ Together with `ONE_LINE`
 #: this must be every template on disk, and the test below asserts it — so a new
 #: template cannot be added without somebody deciding which kind it is.
-MULTI_LINE = ("page.html", "section.html", "pending-practices.html", "player.html")
+MULTI_LINE = (
+    "page.html",
+    "section.html",
+    "pending-practices.html",
+    "player.html",
+    "read-mark.html",
+)
 
 
 def test_the_package_states_its_contract():

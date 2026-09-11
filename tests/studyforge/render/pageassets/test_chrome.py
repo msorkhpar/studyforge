@@ -71,6 +71,12 @@ REGIONS: dict[str, tuple[str, str]] = {
         CHROME_RULED,
         "region 6, the root index's disclosure tree — `SF-14`",
     ),
+    'section[data-section="read-mark"]': (
+        CHROME_RULED,
+        "region 7, the reader's own mark-as-read control — `SF-30`. ⚠️ It ships "
+        "`hidden` and `read-mark.js` unhides it only with a working store behind "
+        "it, so the rules here are for the region a reader actually sees",
+    ),
     "footer#player": (
         DEFERRED,
         "the narration transport is `SF-18`'s at M3, and `--player-height`, "
@@ -88,6 +94,7 @@ REGION_MARKERS = {
     "main#content": r'<main id="content"',
     "footer#player": r'<footer id="player"',
     'section[data-section="practices-pending"]': r'<section data-section="practices-pending"',
+    'section[data-section="read-mark"]': r'<section data-section="read-mark"',
 }
 
 #: The page skeleton's slots, and why each is or is not this part's. ⛔ Asserted
@@ -110,6 +117,11 @@ SKELETON_SLOTS = {
     "outline": "region 2",
     "body": "the reading surface — `reading.css`, by the block vocabulary",
     "pending": "region 4",
+    "mark": (
+        "region 7, `SF-30`'s read control. ⭐ It arrived as a NEW SLOT, which is "
+        "the case this table's own comment said would show up here immediately "
+        "rather than waiting for a golden to emit it — and it did"
+    ),
     "player": "`SF-18`'s at M3 — the one DEFERRED row above",
     "nav": "region 3",
 }

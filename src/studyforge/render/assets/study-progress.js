@@ -1,0 +1,215 @@
+/* The reader's own record of what they have read — and the ONE file that
+   touches the store.
+
+   ⛔ **No server, no origin, no network** (R8). A reader who never starts
+   `studyforge serve` still keeps their place, because a read mark is the
+   reader's own assertion and needs nobody's agreement to be true. ⚠️ The
+   served half is a different fact: a PASS is established by a grader run and
+   is written where it was established (SF-21, spec §8.5). ⛔ **A read mark is
+   never a pass**, and nothing here can produce one — this file has no notion
+   of a practice, a grader or a result at all.
+
+   ⛔ **An explicit act, never inferred.** Nothing here observes scrolling, the
+   narration reaching the end, or the page having been opened. The store is
+   written when the reader presses the control and at no other time. A record
+   the reader cannot trust is worse than none.
+
+   ⛔ **Two records, never one.** The marks and the reader's display
+   preferences have different shapes and different lifetimes, so they are two
+   storage keys, read and written independently, each carrying its own version
+   — and a preference that fails to parse cannot take every mark with it.
+   ⚠️ The floor declares no display preference yet; the record exists because
+   the INDEPENDENCE is the ruling, and the first consumer is expected to be
+   `SF-18`'s transport (a speed, a volume), which has no business sharing a
+   key with the reading record.
+
+   ⛔ **No clock.** A timestamp is a second fact nobody asked for, and it turns
+   `SK-06`'s merge from a set union into an ordering problem. Nothing here
+   reads `Date`, and the marks are kept sorted so the stored text is stable
+   under re-marking rather than ordered by when somebody pressed a button.
+
+   ⛔ **A stored value this cannot display is discarded, not applied.** A
+   record of the wrong shape, an unknown version, an entry that is not a key:
+   dropped. ⚠️ A half-applied record is worse than an empty one — the reader
+   would be shown marks nobody can account for, under names nothing matches.
+
+   ⚠️ **This part comes BEFORE anything that uses it in `bundle.SCRIPT_PARTS`,
+   and the order is asserted against the real composition.** The extraction
+   source placed its store AFTER the page script that read it at startup: the
+   guard skipped, the setting silently never came back, the suite stayed
+   green, and it was found only by loading a page in a browser.
+
+   ⛔ **The key a mark is filed under is minted by `Address.unit_key` in
+   Python and carried to this page as data.** Nothing here composes one: a
+   second spelling that differed by one character would simply never match
+   anything, with nothing failing anywhere. */
+
+(function () {
+  'use strict';
+
+  /* The two records. ⛔ The version is in the NAME, not only in the body: a
+     record this build cannot read is one it must not overwrite in place
+     either, so the next shape is the next key and the old one is left where
+     the reader's browser put it. */
+  var MARKS_KEY = 'studyforge.read.v1';
+  var DISPLAY_KEY = 'studyforge.display.v1';
+
+  /* The shape inside a record. ⚠️ Versioned in the body as well, because a
+     browser can hold a key this build wrote and a key a later build wrote,
+     and a reader whose two machines disagree is the normal case. */
+  var RECORD_VERSION = 1;
+  var MARKS_FIELD = 'read';
+  var DISPLAY_FIELD = 'display';
+
+  /* How long a thing this will keep. ⚠️ A bound rather than a grammar: the
+     unit key's grammar is `Address`'s and re-spelling it here would be a
+     second definition of what a key is, wrong the day one of them changes.
+     What this needs to know is only whether it can display the value. */
+  var LONGEST = 200;
+
+  /* Whether the browser will let us keep anything at all. ⚠️ Probed rather
+     than assumed: a `file://` page in a private window, or one whose site
+     data is blocked, THROWS on the property access itself — not on the
+     write — so there is no answer to be had without a try. */
+  function backing() {
+    try {
+      var store = window.localStorage;
+      var probe = MARKS_KEY + '.probe';
+      store.setItem(probe, '1');
+      store.removeItem(probe);
+      return store;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  var backed = backing();
+
+  /* One record, or null when there is nothing this can use. ⛔ Every way of
+     being unusable lands here and returns the same thing, so a caller never
+     sees a half-parsed record: no store, no entry, not JSON, not an object,
+     a version this build does not know. */
+  function record(name) {
+    if (!backed) { return null; }
+    var raw;
+    try { raw = backed.getItem(name); } catch (error) { return null; }
+    if (raw === null) { return null; }
+    var parsed;
+    try { parsed = JSON.parse(raw); } catch (error) { return null; }
+    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) { return null; }
+    if (parsed.version !== RECORD_VERSION) { return null; }
+    return parsed;
+  }
+
+  function keep(name, body) {
+    if (!backed) { return false; }
+    try {
+      backed.setItem(name, JSON.stringify(body));
+      return true;
+    } catch (error) {
+      /* A quota refusal, or site data blocked between the probe and now. ⛔
+         Reported as a failed write rather than swallowed, so the control
+         reads the store back and shows what is actually there. */
+      return false;
+    }
+  }
+
+  /* Whether this is something the control could show a reader, and a bound
+     rather than a grammar. ⚠️ Written as a loop over code points rather than
+     as a character class: the class is where this went wrong once already,
+     because a HYPHEN inside one is a range operator or a literal depending
+     on where it sits — and every slug this framework mints is hyphenated,
+     so a class that swallowed `-` would discard every key there is.
+     ⛔ Refused: anything at or below a space (every ASCII control and every
+     space), and DEL. A key this cannot display is discarded, not applied. */
+  function usable(value) {
+    if (typeof value !== 'string' || value.length === 0 || value.length > LONGEST) {
+      return false;
+    }
+    for (var at = 0; at < value.length; at += 1) {
+      var code = value.charCodeAt(at);
+      if (code <= 0x20 || code === 0x7f) { return false; }
+    }
+    return true;
+  }
+
+  /* The marks, sorted, with anything unusable dropped. ⛔ Dropped and not
+     repaired: there is no shape a bad entry could be corrected INTO that the
+     reader ever asserted. */
+  function marks() {
+    var held = record(MARKS_KEY);
+    var listed = held && Array.isArray(held[MARKS_FIELD]) ? held[MARKS_FIELD] : [];
+    var kept = [];
+    listed.forEach(function (entry) {
+      if (usable(entry) && kept.indexOf(entry) === -1) { kept.push(entry); }
+    });
+    return kept.sort();
+  }
+
+  function writeMarks(kept) {
+    var body = { version: RECORD_VERSION };
+    body[MARKS_FIELD] = kept.slice().sort();
+    return keep(MARKS_KEY, body);
+  }
+
+  function marked(key) {
+    return usable(key) && marks().indexOf(key) !== -1;
+  }
+
+  function mark(key) {
+    if (!usable(key)) { return false; }
+    var kept = marks();
+    if (kept.indexOf(key) === -1) { kept.push(key); }
+    return writeMarks(kept);
+  }
+
+  function unmark(key) {
+    if (!usable(key)) { return false; }
+    return writeMarks(marks().filter(function (held) { return held !== key; }));
+  }
+
+  /* The second record, and it is deliberately the same machinery over a
+     different key — never the same record with a second field in it. */
+  function preferences() {
+    var held = record(DISPLAY_KEY);
+    var kept = held && held[DISPLAY_FIELD] && typeof held[DISPLAY_FIELD] === 'object'
+      ? held[DISPLAY_FIELD] : {};
+    var answer = {};
+    Object.keys(kept).sort().forEach(function (name) {
+      if (usable(name) && usable(kept[name])) { answer[name] = kept[name]; }
+    });
+    return answer;
+  }
+
+  function preference(name) {
+    var held = preferences();
+    return Object.prototype.hasOwnProperty.call(held, name) ? held[name] : null;
+  }
+
+  function prefer(name, value) {
+    if (!usable(name) || !usable(value)) { return false; }
+    var held = preferences();
+    held[name] = value;
+    var body = { version: RECORD_VERSION };
+    body[DISPLAY_FIELD] = held;
+    return keep(DISPLAY_KEY, body);
+  }
+
+  /* ⛔ Published under one name, so the unit page, the container page and the
+     root index share one implementation. Two would be a mark written under
+     one name and read back under another, with no symptom but a badge that
+     never lights. */
+  window.studyforge = window.studyforge || {};
+  window.studyforge.progress = {
+    MARKS_KEY: MARKS_KEY,
+    DISPLAY_KEY: DISPLAY_KEY,
+    supported: function () { return backed !== null; },
+    marks: marks,
+    marked: marked,
+    mark: mark,
+    unmark: unmark,
+    preferences: preferences,
+    preference: preference,
+    prefer: prefer
+  };
+}());

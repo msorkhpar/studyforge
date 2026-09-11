@@ -67,11 +67,23 @@ STYLE_PARTS = (
 #: The script. ⛔ A library before the code that calls it: `video-player.js`
 #: returns immediately when `Plyr` is undefined, so the order is what makes it
 #: run at all.
+#:
+#: ⛔ **`study-progress.js` DEFINES the reader's store and `read-mark.js` is the
+#: only thing that uses it, so the first must precede the second — and that is
+#: not a tidiness argument.** The extraction source placed its store *after* the
+#: page script that read it at startup: the guard skipped, the setting silently
+#: never came back, the suite stayed green, and it was found only by loading a
+#: page in a browser. ⭐ `read-mark.js` therefore reads the store through its
+#: published name with **no existence guard**, so a wrong order fails loudly
+#: instead of shipping a feature that is quietly absent — and it is **LAST**, so
+#: a throw of its own reaches no other part.
 SCRIPT_PARTS = (
     "prism.js",
     "plyr.js",
+    "study-progress.js",
     "copy-code.js",
     "video-player.js",
+    "read-mark.js",
 )
 
 #: ⛔ Plain names, no content digest. See this module's docstring.
