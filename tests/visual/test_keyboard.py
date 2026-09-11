@@ -19,8 +19,14 @@ from tests.visual.page import SCHEMES, OpenPage
 PRESSES = 40
 
 
-def _links_in_the_outline(page: OpenPage) -> list[str]:
-    """Every in-page anchor the outline offers, in document order."""
+def _links_in_the_chrome(page: OpenPage) -> list[str]:
+    """Every anchor any `nav` region offers, in document order.
+
+    ⭐ **Every region and not only the outline, which is what it used to be.**
+    Since `W98` the tree carries a between-units bar, a container's unit listing
+    and a root index tree, and a keyboard reader has to reach those too — reaching
+    the outline and not the bar is the failure `SF-24` is judged on.
+    """
     return list(
         page.evaluate(
             "Array.from(document.querySelectorAll('nav[aria-label] a'))"
@@ -29,35 +35,45 @@ def _links_in_the_outline(page: OpenPage) -> list[str]:
     )
 
 
-def test_every_outline_link_is_reachable_by_tab_and_in_document_order(
-    open_page: OpenPage, built_site: site.Site
+@pytest.mark.parametrize("case", site.pages())
+def test_every_chrome_link_is_reachable_by_tab_and_in_document_order(
+    open_page: OpenPage, built_site: site.Site, case: str
 ) -> None:
-    """The outline is the page's own navigation; a keyboard reader must reach all of it."""
-    case = "depth2-unit-01"
+    """A page's navigation is navigation only if a keyboard reader reaches all of it.
+
+    ⭐ **Every page kind since `W98`**, because the regions that carry a corpus's
+    navigation are on the other two: a container's unit listing is the only way
+    down from a section page, and the root index tree is the only way in.
+    """
     open_page.open(built_site.url(case))
-    expected = _links_in_the_outline(open_page)
-    assert expected, "the page rendered no outline, so this check would prove nothing"
+    expected = _links_in_the_chrome(open_page)
+    assert expected, f"{case} rendered no navigation at all, so this check would prove nothing"
     reached = [step["label"] for step in open_page.trail(PRESSES)]
     hit = [label for label in reached if label in expected]
-    assert hit == expected, f"tab order reached {hit}, the outline offers {expected}"
+    assert hit == expected, f"{case}: tab order reached {hit}, the chrome offers {expected}"
 
 
+@pytest.mark.parametrize("case", site.pages())
 @pytest.mark.parametrize("scheme", SCHEMES)
 def test_everything_focus_lands_on_shows_a_visible_focus_indicator(
-    open_page: OpenPage, built_site: site.Site, scheme: str
+    open_page: OpenPage, built_site: site.Site, scheme: str, case: str
 ) -> None:
     """⛔ In both themes: a focus ring that is invisible in dark is no ring.
 
     ⚠️ `outline-style: none` is the failure, and it is what a stylesheet gets
     when somebody removes the default ring and forgets to put one back.
+
+    ⭐ **Every page kind since `W98`** — `focus.css` is shared, but the regions
+    it has to reach through are not: a row in a unit listing and a `<summary>` in
+    the index's disclosure tree are both focusable and neither was ever opened.
     """
-    open_page.open(built_site.url("depth2-unit-01"), scheme=scheme)
+    open_page.open(built_site.url(case), scheme=scheme)
     invisible = [
         f"{step['tag']}.{step['label']}: outline {step['outline']}"
         for step in open_page.trail(PRESSES)
         if step["tag"] != "BODY" and step["outline"].startswith(("none", "hidden"))
     ]
-    assert not invisible, f"{scheme}: focused with no visible ring: {invisible}"
+    assert not invisible, f"{case} in {scheme}: focused with no visible ring: {invisible}"
 
 
 def test_shift_tab_walks_back_the_way_tab_walked_forward(
@@ -84,8 +100,8 @@ def test_the_traversal_notices_a_page_nothing_can_be_tabbed_to(
     """
     broken = damaged_sites["keyboard"]
     open_page.open(broken.url("depth2-unit-01"))
-    expected = _links_in_the_outline(open_page)
-    assert expected, "the control page has no outline either, so it proves nothing"
+    expected = _links_in_the_chrome(open_page)
+    assert expected, "the control page has no navigation either, so it proves nothing"
     reached = [step["label"] for step in open_page.trail(PRESSES)]
     assert not [label for label in reached if label in expected], (
         "a page whose every control carries tabindex=-1 was traversed successfully — "

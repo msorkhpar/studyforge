@@ -37,7 +37,14 @@ MEASURED_TOKENS = tuple(
 
 @pytest.fixture(scope="module")
 def readings(browser, built_site: site.Site) -> dict:
-    """One pass over both themes and both pages, reused by every check below.
+    """One pass over both themes and every page kind, reused by every check below.
+
+    ⛔ **Every page kind since `W98`, and that is what makes clause 2 total over
+    `SF-34`'s chrome.** Four of the six regions — the between-units bar, the
+    practice panel, a container's unit listing and the root index's disclosure
+    tree — were painted by `chrome.css` and read by nothing here, because the
+    harness wrote no page that carried one. ⚠️ `SF-34`'s Acceptance row 2(b) is
+    the clause that was part-Blocked on it.
 
     ⭐ A module-scoped reading because launching a browser and laying out four
     pages to answer one question at a time turns a two-second check into a
@@ -54,7 +61,7 @@ def readings(browser, built_site: site.Site) -> dict:
     for scheme in SCHEMES:
         resolved: dict[str, str] = {}
         elements: list[dict] = []
-        for case in site.cases():
+        for case in site.pages():
             page.open(built.url(case), scheme=scheme)
             resolved = theme.resolve(page)
             elements += [dict(each, case=case) for each in theme.text_elements(page)]

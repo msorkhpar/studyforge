@@ -19,12 +19,17 @@ from tests.visual.page import SCHEMES, OpenPage
 LOCAL = "file:"
 
 
-@pytest.mark.parametrize("case", site.cases())
+@pytest.mark.parametrize("case", site.pages())
 @pytest.mark.parametrize("scheme", SCHEMES)
 def test_a_page_opened_from_a_file_asks_for_nothing_but_files(
     open_page: OpenPage, built_site: site.Site, case: str, scheme: str
 ) -> None:
-    """Every request the browser made while loading, and every one is local."""
+    """Every request the browser made while loading, and every one is local.
+
+    ⭐ **Every page kind since `W98`.** R8's floor is a property of the generated
+    *site*, and a container page or a root index reaches for the same two shared
+    assets from a different depth — which is the arithmetic `W57` was about.
+    """
     open_page.open(built_site.url(case), scheme=scheme)
     requests = open_page.requests()
     assert requests, "the browser recorded no request at all, not even for the page itself"
