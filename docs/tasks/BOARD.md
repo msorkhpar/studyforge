@@ -54,7 +54,7 @@ one round — is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-an
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `W142` + `W143` | framework agent | `fix/W142-W143-restore-and-lint-scope` @ `wt/dev1` | 0 @ `94ad941` | in flight |
-| `W140` | framework agent | `fix/W140-anchor-collisions` @ `wt/dev2` | 0 @ `94ad941` | in flight |
+| `W140` | framework agent | `fix/W140-anchor-collisions` @ `wt/dev2` | 1 @ `a8f0c92` | in flight |
 <!-- /inflight -->
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at
