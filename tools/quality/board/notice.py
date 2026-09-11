@@ -49,6 +49,7 @@ from tools.quality.board.register import (
     row_order,
     table_lines,
 )
+from tools.quality.board.scheduled import scheduled_reading
 from tools.quality.config import read_text
 
 
@@ -86,6 +87,13 @@ def board_state(root: Path) -> list[str]:
     dispatched* from *nothing was read* — ⛔ **which is why the locator is named
     in the line and a board with no observation table reads `NONE FOUND` rather
     than `0 rows`** (Ruling 191(a)).
+
+    ⭐ **And the FOURTH line, `W100`'s: the `## Scheduled` table, by state.**
+    ⛔ **It prints every word of the trigger vocabulary with its count, the
+    UNINHABITED ones named** — ⚠️ **`expired` was inhabited only as a trigger's
+    prose and not as a STATE on the day the column landed** (Ruling 191) — ⭐ **and
+    both marker numbers with their units: the lines that ARE a declaration, and the
+    lines that merely MENTION the marker inside a cell** (Ruling 224).
 
     ⛔ **A cutoff appearing in this function is the signal a gate has been
     rebuilt.** ⭐ **The contract all three readings answer to is
@@ -126,6 +134,7 @@ def board_state(root: Path) -> list[str]:
         + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
         + ".",
         observation_reading(text),
+        scheduled_reading(text),
     ]
 
 
