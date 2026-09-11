@@ -29,6 +29,17 @@ behind it and a margin of zero. ⭐ **What is asserted instead is an EQUALITY
 between two measurements taken in the same run** — each region's column against
 the reading surface's — which is invariant under any font the image ships and
 still fails the moment a region resolves a measure of its own.
+
+## ⛔ The one question this module still cannot ask, and its gate is `W124`
+
+⚠️ **Nothing here asserts that the reading column is the measure the palette
+declares.** The equality below catches a region resolving a column of its *own*;
+it cannot catch every region, the reading surface included, resolving the *wrong*
+one — `--measure: 80ch` against a font that changed under the image. ⛔ **That
+check is a resolved `ch` width against a recorded px value, which is the exact
+clause Ruling 236 forbids this row, and `W124` is the row that pins the font.**
+⭐ Stated here rather than left as a silence, so whoever lands `W124` knows where
+the waiting assertion goes.
 """
 
 from __future__ import annotations

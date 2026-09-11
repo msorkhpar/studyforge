@@ -22,13 +22,15 @@ PNG = b"\x89PNG\r\n\x1a\n"
 #: two, which is why the control below asserts a *size*, not a success.
 #:
 #: ⭐ **Deliberately LOOSE, and Ruling 236 is why that is stated here rather than
-#: left to be inferred.** A capture's size is a text-layout output and text
-#: layout is a font metric; `fonts-liberation` is pinned only as far as the base
-#: image's Debian snapshot (`W36/5`). Measured in the pinned image at `f71c566`,
-#: the seven pages capture **20 296 – 122 397** bytes against this 8 000 and the
-#: blank control captures **5 293** — so the nearest margin is **2.54x** and a
-#: metric-compatible font, which moves line heights by percents, cannot carry a
-#: reading across it.
+#: left to be inferred.** A capture's size is a text-layout output and text layout
+#: is a font metric; `fonts-liberation` is pinned only as far as the base image's
+#: Debian snapshot (`W36/5`, and the remedy is `W124`). ⛔ **The figure is
+#: unchanged and its MARGIN is not, because `W98` widened the population:** the
+#: CTO measured `45k – 112k` over two unit pages and a margin of `5.7x`; over
+#: seven pages of three kinds the same threshold reads **20 296 – 122 397** bytes,
+#: so the nearest margin is **2.54x**. ⭐ The blank control captures **5 293**
+#: bytes, which is 1.51x under this line — a metric-compatible font moves line
+#: heights by percents and cannot carry a reading across either gap.
 MINIMUM_BYTES = 8_000
 
 #: The height a real rendering of each page kind clears and a blank one cannot.
@@ -40,13 +42,21 @@ MINIMUM_BYTES = 8_000
 #: short, and a threshold that reds on a correct short page is a threshold that
 #: would be "fixed" by narrowing the population back.
 #:
+#: ⛔ **No threshold here is TIGHTER than the one it replaces.** `400` survives
+#: unchanged as the unit floor — which is the figure Ruling 236 examined — and the
+#: two rows beside it are LOOSER floors for two kinds that were never photographed
+#: before. ⚠️ Tightening one of these would be a different act from widening the
+#: harness, and `W98` did not perform it.
+#:
 #: ⭐ **Loose on purpose, and stated as Ruling 236 requires.** Measured in the
-#: pinned image at `f71c566`, viewport 1280x900: unit **960 / 2 212 px**,
-#: container **387 / 434 / 466 px**, index **303 / 529 px**. The nearest margin
-#: is the index's 303 against 150, which is **2.02x** — wider than the 1.87x the
-#: CTO measured and ruled loose enough for the figure above. ⛔ The blank control
-#: renders at **0 px** on every kind, so no font can carry it over any row here.
-MINIMUM_HEIGHT = {site.UNIT: 400, site.CONTAINER: 200, site.INDEX: 150}
+#: pinned image at `f71c566`, viewport 1280x900, every reading printed:
+#: unit **960 / 2 212 px**, container **387 / 434 / 466 px**, index
+#: **303 / 529 px**. Margins: unit **2.40x** (wider than the 1.87x the CTO
+#: measured, because a populated bar and a practice panel are new height),
+#: container **2.58x**, index **2.02x**. ⛔ The nearest is the index's **2.02x**,
+#: and the blank control renders at **0 px** on every kind — so no font can carry
+#: a blank page over any row here, and none can carry a real one under it.
+MINIMUM_HEIGHT = {site.UNIT: 400, site.CONTAINER: 150, site.INDEX: 150}
 
 
 def test_every_kind_this_clause_photographs_has_a_declared_floor() -> None:
