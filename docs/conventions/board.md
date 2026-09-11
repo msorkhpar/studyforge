@@ -593,4 +593,74 @@ reader cannot reproduce it and disagreement looks like error rather than drift.
 
 ---
 
+## ⛔ RULED ROUND 50 — `corroborate`'s THIRD ANSWER is ratified, the HEADER locator is a RAMP, and the `todo` pairing stays PRINTED
+
+⚠️ **Three questions `W96` routed to me before it owed code, answered on
+measurements I took in a trial merge of `W96` over `chore/po-round39` — which is
+the only place either could be answered, because the instrument reads the table
+the other branch rewrote.** ⭐ **The reading that matters most:**
+
+```text
+corroborate, against the board W96 was written over   : 2 of 2 REFUTED, exit 1
+corroborate, against the board chore/po-round39 wrote : 0 of 2 REFUTED, exit 0
+  ⭐ SF-26 corroborated at wt/dev1, 2 ahead;  W96 corroborated at wt/dev2, 1 ahead
+```
+
+### ⭐ (a) Exit `2` is a REAL third state, and it is RATIFIED as the standing form
+
+⛔ **A clause claiming a third exit code owes that code's INHABITATION, or it is a
+pass wearing a number** (Ruling 191). ⭐ **Both producers inhabited, expected
+readings written before the commands, in a throwaway clone outside every checkout:**
+
+```text
+no release branch in the checkout  -> exit 2, "NOT AUTHORITATIVE — no branch … "
+no BOARD.md in the checkout        -> exit 2, "nothing to corroborate."
+a corroborated board               -> exit 0   ⭐ all three sentences DIFFER
+```
+
+⛔ **Pass condition for any future git-reading instrument in this repository: three
+answers, and the unanswerable one is inhabited in the round that ships it.**
+⚠️ **And the floor may NOT shell out to git** — ⭐ **the split is FORCED, not
+chosen, and the decisive reason is measured rather than stylistic: the floor runs
+in a pinned image over arbitrary roots where no release branch exists, so a git
+check there would return the PASS reading from an empty population.**
+
+### ⛔ (b) The HEADER-declared locator is a MIGRATION RAMP and NOT a contract
+
+⭐ **Admissible, because it PRINTS which locator answered on every run.** ⛔ **But
+it expires when the markers land, and the reason is a measurement rather than a
+preference:**
+
+```text
+PLANTED: two column NAMES changed in the observation table header
+  -> observations (NONE FOUND …): 0 rows     three rules silently inapplicable
+  -> quality floor: clean, exit 0            corroborate: 0 of 0, exit 0
+  restored: git status --porcelain empty, content diff 0 lines
+```
+
+⛔ **A header is INFERRED, so an absent table is indistinguishable from a renamed
+column and can only be ANNOUNCED.** ⭐ **A delimiter is DECLARED, so an absent
+marker can be REFUSED.** ⚠️ **The printed locator name is the whole of what keeps
+the ramp honest, and it is therefore not optional** — ⛔ **so: the `<!-- inflight -->`
+markers are OWED as one PO board edit, and the header branch is removed or turned
+into a refusal in the round after they land.** ⭐ **It is not a defect in `W96`: the
+developer implemented the ruled form and shipped the ramp because the board had not
+been edited yet, and said so.**
+
+### ⭐ (c) `todo` against a started observation stays PRINTED, and owes NO rule of its own
+
+⛔ **Because this board's DISPATCH PROTOCOL is exactly that pairing** — a row is
+dispatched by naming it in the observation table while its register cell is still
+`` `todo` `` — ⚠️ **so a predicate that flagged it would be flagging the protocol,
+and its first live reading did: it fired on a row the PO had written correctly.**
+⭐ **`W87`'s shape, and Ruling 179's answer applies unchanged: a notice whose first
+wave fires on work its author just did is a notice nobody reads twice.**
+
+⛔ **What IS ruled is that the printing is load-bearing rather than decorative:**
+the pairing is named on every run, with its ids, in the line the floor prints.
+⭐ **A finding remains STARTED against a TERMINAL state, which both cannot be true
+of one row** — ⚠️ **and if the dispatch protocol ever changes so that a register
+cell moves off `` `todo` `` at dispatch, this clause is what must be re-read, not
+the predicate.**
+
 ---
