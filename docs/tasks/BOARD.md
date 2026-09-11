@@ -46,25 +46,30 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN at round 38's close, both instruments, at `4e8ba86`** — ⚠️ **the tip
-moved mid-round and the table was re-taken rather than carried, which is the rule
-it exists to obey.**
+**RE-TAKEN at round 39's close, both instruments, at `7559398`** — ⚠️ **the branch
+this was taken on was cut at an older tip and was fast-forwarded to `7559398`
+first, because a reading taken at the cut point would have been a reading of a ref
+nobody is on.**
 
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-15` | Developer 1 | `wt/dev1`, `feat/SF-15-contents` | 0 | in flight |
-| `W95` | Developer 2 | `wt/dev2`, `fix/W95-shared-origin-fixture` | 0 | in flight |
+| `SF-26` | Developer 1 | `wt/dev1`, `feat/SF-26-goldens` | 1 | in flight |
+| `W96` | Developer 2 | `wt/dev2`, `fix/W96-inflight-predicate` | 0 | in flight |
 
-⛔ **RULING 189 FIRED ON THE TABLE THIS REPLACES, AND THE READING NEEDED NO GIT:**
-both its rows declared a started state with **no checkout** and **`ahead 0`** —
-⭐ **a contradiction printed on one row**, while `feat/SF-34-chrome` and
-`fix/board-instrument` had merged. ⛔ **So this table is REPLACED, never appended
-beneath, and the earlier reading is in the round record** (`PO-30/2`, eighth round
-running). ⚠️ **Both rows above carry a CHECKOUT and not a commit, which is Ruling
-130 — a branch with no commit is not in `--no-merged` by construction** — ⭐ **so
-`worktree list` is PRIMARY (Ruling 171) and the `Checkout` cell is the only cell
-that separates JUST DISPATCHED from LONG FINISHED.** ⚠️ **`wt/cto`, `wt/po` and
-`wt/po-int` are checkouts and are NOT rows.**
+⛔ **THE TABLE THIS REPLACES HELD `SF-15` AND `W95`, AND BOTH HAVE MERGED** —
+`5e608bf` and `cfe0e0c`, each derived from the BRANCH and never from the row, which
+is Ruling 189(d). ⭐ **So this table is REPLACED, never appended beneath, and the
+superseded reading is in the round record** (`PO-30/2`, ninth round running).
+
+⚠️ **THE TWO ROWS ABOVE PASS ON DIFFERENT CELLS, and that is why no one cell is the
+rule.** ⭐ **`SF-26` is corroborated TWICE — a live checkout and `1` ahead, the only
+member of `--no-merged` in a population of 115 local branches.** ⛔ **`W96` is
+corroborated ONCE: its branch exists and is checked out, and `ahead = 0` is
+LEGITIMATE because a branch with no commit is not in `--no-merged` by construction,
+which is Ruling 130.** ⭐ **So `git worktree list` is PRIMARY (Ruling 171) and the
+`Checkout` cell is the only cell that separates JUST DISPATCHED from LONG
+FINISHED.** ⚠️ **`wt/po` and `wt/po-int` are checkouts and are NOT rows; `wt/po-int`
+is detached, which is a checkout state and still not a row.**
 
 ## Next rows — placed, not yet taken
 
@@ -74,19 +79,26 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `SF-26` | step 2.4; shares no `src/` file with `SF-15` or `SF-30`, and its golden floor is what makes `SF-30` checkable | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
-| 2 | `SF-30` | step 2.4, last: three files shared with the merged `SF-34`, and a bundle-order assertion that needs `SF-26` | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
-| 3 | `W96` | ⛔ **JUMPED `W74` and `W63`→`W64` under Ruling 75**: Ruling 189's defect has now broken TWO CONSECUTIVE WAVES, so its rate is measured rather than argued | round 38 |
-| 4 | `W91` | ⛔ **JUMPED the same two under Ruling 75**: it gates `W88`, and until it lands a bare `(Ruling N)` for `N > 56` is unfollowable by an agent obeying its own brief | round 38 |
-| 5 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 6 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+| 1 | `SF-30` | step 2.4, last: three files shared with the merged `SF-34`, and a bundle-order assertion that needs `SF-26` — ⚠️ **which is IN FLIGHT, so this is gated on a row above rather than on a queued one** | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 2 | `W91` | ⛔ **JUMPED `W74` and `W63`→`W64` under Ruling 75**: it gates `W88`, and until it lands a bare `(Ruling N)` for `N > 56` is unfollowable by an agent obeying its own brief | round 38, re-affirmed round 39 |
+| 3 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
+| 4 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+| 5 | `W105`–`W109` | ⭐ **round 39's five mints, placed BEHIND everything above and jumping nothing** | round 39 |
 
-⛔ **Rows 1–2 do NOT invoke Ruling 75, and the reason is stated rather than
+⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL, and that is a correction of
+this paragraph rather than a style choice:** ⚠️ **it used to read *"rows 1–2 do not
+invoke Ruling 75, rows 3 and 4 do"*, and the ordinals stopped being true the moment
+two rows were dispatched out of the table.** ⭐ **An id resolves; a position does
+not.**
+
+⛔ **`SF-30` does NOT invoke Ruling 75, and the reason is stated rather than
 assumed: Ruling 75's subject is a NEWLY MINTED row jumping an older `todo` row OF
-THE SAME SIZE CLASS.** ⭐ **These are product rows of the OPEN STEP, and the
-milestone order in `README.md` is what ranks them** — ⛔ **a backlog `W` row has
-never outranked the open step's own membership, and writing the jump down would
-imply a contest that the plan already settled.** ⚠️ **Rows 3 and 4 DO invoke it, and each says so in its own cell.**
+THE SAME SIZE CLASS.** ⭐ **It is a product row of the OPEN STEP, and the milestone
+order in `README.md` is what ranks it** — ⛔ **a backlog `W` row has never outranked
+the open step's own membership, and writing the jump down would imply a contest
+that the plan already settled.** ⚠️ **`W91` DOES invoke it and says so in its own
+cell.** ⭐ **`W74`, `W63`→`W64` and `W105`–`W109` invoke nothing: the first two are
+the rows being jumped, and the mints jump nobody.**
 
 ## The register — every `W` row
 
@@ -192,7 +204,7 @@ they have exactly one home each.
 | W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | `todo` | [`rows/W92.md`](rows/W92.md) |
 | W93 | *Point the skill at a corpus* is not performable — no corpus-shaped input on the surface | framework agent | `todo` | [`rows/W93.md`](rows/W93.md) |
 | W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | `todo` — Ruling 188 | [`rows/W94.md`](rows/W94.md) |
-| W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | `todo` — before `SF-16` | [`rows/W95.md`](rows/W95.md) |
+| W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | ✅ done — `cfe0e0c` | [record](BOARD-ARCHIVE.md#w95-no-fixture-has-two-units-sharing-one-source-file-so-q23s-answer-cannot-be-tested) |
 | W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | `todo` | [`rows/W96.md`](rows/W96.md) |
 | W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
 | W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | `todo` — behind `W36` | [`rows/W98.md`](rows/W98.md) |
@@ -201,6 +213,11 @@ they have exactly one home each.
 | W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | ✅ done — Ruling 184(c), `4e8ba86` | [record](BOARD-ARCHIVE.md#w102-check-3s-pattern-is-case-sensitive-and-the-house-style-writes-ruling-n) |
 | W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
 | W104 | The lint notice names no subject, and `ruff format` formats Markdown as well as Python | framework agent | `todo` — not `W38`'s subject | [`rows/W104.md`](rows/W104.md) |
+| W105 | The region census has no authorable population, so a region the templates emit and nothing paints is unsayable | framework agent | `todo` — Ruling 192, behind `W36` | [`rows/W105.md`](rows/W105.md) |
+| W106 | The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies | framework agent | `todo` — Ruling 103's class | [`rows/W106.md`](rows/W106.md) |
+| W107 | `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither | framework agent | `todo` — `SF-15/1` | [`rows/W107.md`](rows/W107.md) |
+| W108 | No fixture crosses a module boundary inside one section, so a renderer can pass the clause and be wrong | framework agent | `todo` — `SF-15/6`, before `SF-27` | [`rows/W108.md`](rows/W108.md) |
+| W109 | Every consumer that reads `origin` from a document instead of the parser is a second reader of a growing field | framework agent | `todo` — `W95/3` | [`rows/W109.md`](rows/W109.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -231,6 +248,9 @@ here; the argument is in the record.**
 | Decision | Argument |
 |---|---|
 | **`ONBOARDING.md` does not enter the repository** — not tracked, not corrected into the tree, and not deleted, because it is untracked and therefore not repository state | [record](BOARD-ARCHIVE.md#onboardingmd-ruled-it-does-not-enter-the-repository) |
+| ⭐ **`.claude/settings.json` IS tracked, and it is R18 with a machine behind it** — it DENIES `Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS `Bash(git merge:*)`. ⛔ **The opposite call to `ONBOARDING.md`'s, and the distinction is not about tracking: that file is the user's own notes, this one is a PROJECT RULE, and a rule that protects one untracked checkout protects no worktree** | [record](BOARD-ARCHIVE.md#-9-two-standing-module-conditions-recorded-without-their-counts) |
+| ⛔ **A row that touches `render/page/navigation.py` SPLITS IT, at the seam named in [`handoffs/SF-15.md`](handoffs/SF-15.md)** — the condition binds the NEXT row, never the row that left the file where it is. ⭐ **No count here: the count is the floor's and goes stale on the next edit** (Ruling 150's form) | [record](BOARD-ARCHIVE.md#-9-two-standing-module-conditions-recorded-without-their-counts) |
+| ⛔ **Same form for `tools/quality/board/__init__.py`** — the next row touching it splits it, and R11's reading comes from `tools.quality` rather than from this cell | [record](BOARD-ARCHIVE.md#-9-two-standing-module-conditions-recorded-without-their-counts) |
 
 
 ## Scheduled — decided now, executed later

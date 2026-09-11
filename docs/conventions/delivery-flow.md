@@ -106,16 +106,30 @@ start:**
 
 ⚠️ **This exists because the protocol said to write findings down and never said
 anyone had to rule on one.** A prediction was filed in the right place, in the
-right format, read — and came true twice more. ⭐ `grep -rn '[structural]'
-docs/tasks/handoffs/` is the triage list, and running it is part of opening a
-wave. The PO owns that sweep.
+right format, read — and came true twice more. ⭐ **The structural marker's
+repository-wide sweep is the triage list below, and running it is part of opening
+a wave. The PO owns that sweep.** ⛔ **This sentence NAMES the marker and does not
+spell it, which is Ruling 65's own rule** — ⚠️ **it used to carry a second copy of
+the command, and the copy disagreed with the command beneath it.**
 
 ### ⛔ Opening a wave: two checks, and the second was assumed for a milestone
 
 ```bash
-grep -rn '\[structural\]' docs/tasks/handoffs/   # 1. the triage list
+# 1. the triage list. ⛔ THE BACKTICKS ARE PART OF THE MARKER AND PART OF THE
+#    PATTERN — `review-rubric.md` §8a, Ruling 65, and the shipped reader
+#    `tools/quality/handoffs/contract.py`'s `_MARKERS_ON_LINE`, which agree.
+grep -rnE '`\[structural\]`' docs/tasks/handoffs/
 python3 -m tools.quality                          # 2. index present and current
 ```
+
+⛔ **THE SPELLING IS RULING 65'S AND THIS DOCUMENT DOES NOT GET A SECOND ONE.**
+⚠️ **The line above used to drop the backticks, so it matched every PROSE MENTION
+of the marker as well as every finding** — ⭐ **and the over-count was not a
+constant: it grew each wave as records quoted the marker while explaining it.**
+⛔ **Two convention documents disagreeing about one instrument is Ruling 103's
+class, and the third party is the shipped reader, which was right all along.**
+⭐ **The repository-wide sweep has no shipped instrument of its own, and that is
+the open row — the argument and its id are on `../tasks/BOARD.md`.**
 
 ⭐ **The second line is FND-07's, and it is a line in a checklist because the
 alternative was believing a board row.** `FND-02` was marked done for a graph
