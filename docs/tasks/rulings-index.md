@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **197 rulings, `1`–`197`, derived from 37 ruling records** —
+⭐ **207 rulings, `1`–`207`, derived from 38 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -242,3 +242,13 @@ procedure.
 | 195 | 5. Ruling 195 — a row file may not PARAPHRASE the ruling that scoped it | heading | [round 50](handoffs/CTO-2026-09-10-round50.md#5-ruling-195-a-row-file-may-not-paraphrase-the-ruling-that-scoped-it) |
 | 196 | 6. `fix/W96-inflight-predicate` — ⭐ **APPROVE**, and Ruling 196 answers all three routed questions | heading | [round 50](handoffs/CTO-2026-09-10-round50.md#6-fixw96-inflight-predicate-approve-and-ruling-196-answers-all-three-routed-questions) |
 | 197 | 8. Ruling 197 — the BEHIND count, the TWO-DOT span that hides it, and a citation from a checkout that cannot hold the ruling | heading | [round 50](handoffs/CTO-2026-09-10-round50.md#8-ruling-197-the-behind-count-the-two-dot-span-that-hides-it-and-a-citation-from-a-checkout-that-cannot-hold-the-ruling) |
+| 198 | 2. ⛔ Ruling 198 — A BRIEF THAT PINS A STATE IS THE SAME DEFECT AS A STALE NUMBER, AND IT IS CHARGED AGAINST ME | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#2-ruling-198-a-brief-that-pins-a-state-is-the-same-defect-as-a-stale-number-and-it-is-charged-against-me) |
+| 199 | 3. ⛔ Ruling 199 — WHICH TERMINAL PREDICATE SHIPS, and it is NEITHER of the two I was offered alone | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#3-ruling-199-which-terminal-predicate-ships-and-it-is-neither-of-the-two-i-was-offered-alone) |
+| 200 | 4. ⛔ Ruling 200 — a ruling's PRIMARY artifact NAMES ITS OWN NUMBER (`PO-40/3`, and the one-word fix was mine) | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#4-ruling-200-a-rulings-primary-artifact-names-its-own-number-po-403-and-the-one-word-fix-was-mine) |
+| 201 | 5. ⛔ Ruling 201 — the close gains a FOURTH edit (`PO-40/5`), and the pointer check's population IS wrong | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#5-ruling-201-the-close-gains-a-fourth-edit-po-405-and-the-pointer-checks-population-is-wrong) |
+| 202 | 6. ⛔ Ruling 202 — COMMIT BEFORE PLANTING: the RESTORE half can be the destructive act (`PO-40/7`) | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#6-ruling-202-commit-before-planting-the-restore-half-can-be-the-destructive-act-po-407) |
+| 203 | 12. ⛔ THE FOUR-WAY MERGE IS RED, NO BRANCH IS DEFECTIVE, AND THE CAUSE IS MY OWN RECORD — Ruling 203 | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#12-the-four-way-merge-is-red-no-branch-is-defective-and-the-cause-is-my-own-record-ruling-203) |
+| 204 | ⛔ Ruling 204 — THE HOST-BROWSER QUESTION, ANSWERED EXPLICITLY, AND THE DICHOTOMY PUT TO ME WAS FALSE | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#ruling-204-the-host-browser-question-answered-explicitly-and-the-dichotomy-put-to-me-was-false) |
+| 205 | 15. ⛔ Ruling 205 — THE RESTORE CANNOT RUN INSIDE THE AUTHORITY, and I measured it | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#15-ruling-205-the-restore-cannot-run-inside-the-authority-and-i-measured-it) |
+| 206 | ⛔ `W91/4` — RULED, and the cell is the defect (Ruling 206(i)) | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#w914-ruled-and-the-cell-is-the-defect-ruling-206i) |
+| 207 | ⛔ `SF-30/3` — CONFIRMED, and Ruling 207 is the instrument hole | heading | [round 51](handoffs/CTO-2026-09-10-round51.md#sf-303-confirmed-and-ruling-207-is-the-instrument-hole) |
