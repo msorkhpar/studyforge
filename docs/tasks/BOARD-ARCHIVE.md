@@ -10560,3 +10560,51 @@ RE-TAKEN, PO, 62 row files x 93 naming cells    ->  6   W60 W63 W64 W66 W67 W72
 ⭐ **SAME FUNCTION AS RULING 183'S, so it folds into `W85`'s commit rather than following it.** ⛔ **`CTO-47/4` survives as the SOLE correct complaint against `board-frame` and is `W85`'s carry 4: the MESSAGE should describe what is checked, not what is hoped.**
 
 [round 37's follow-up](#round-37-follow-up-three-rows-sat-in-flight-for-350-commits-q23-is-answered-and-rulings-187-and-188-get-ids)
+
+⭐ **`W102` was MINTED AND CLOSED IN ONE ROUND — PO round 38 — and it is recorded
+that way rather than left out of the register** (`W84`'s precedent). ⛔ **Both
+offices measured the same defect in the same wave, independently: the PO as
+`PO-38/1` from check 3's reading of Ruling 188, the CTO as the carry check
+returning a FALSE EMPTY on 2 of their own 6 mints.** ⚠️ **The clause was the
+CTO's to rule and they ruled it — Ruling 184 clause (c), `-liP`, landed at
+`4e8ba86`** — ⭐ **so the row is closed on their merge and the PO's reading stands
+beneath as the corroboration, which is the strongest basis this project has.**
+
+### W102 — Check 3's pattern is case-sensitive, and the house style writes `RULING <n>`
+
+⛔ **RULING 184 GAVE CHECK 3 TWO CLAUSES TO CLOSE A FALSE EMPTY, AND A THIRD ONE IS OPEN: the pattern is CASE-SENSITIVE, and this project's house style writes `RULING <n>` in emphasis.** ⭐ **Found by running check 3 on its own wave — Ruling 188 returned four files and its ONLY tree artifact was not one of them.**
+
+⚠️ **`MEASURED` by the PO at `c18df98c`, PO worktree, host git 2.47.3, expectation written before the command. The instrument is `board.md:313`'s own fenced form:**
+
+```text
+EXPECTED : rows/W94.md carries Ruling 188; if the pattern is case-sensitive it is
+           a FALSE EMPTY for it.
+
+LIVE, the documented form, -lP                        -> 4 files
+   BOARD-ARCHIVE.md · BOARD.md · CTO-round48 · PO-round37
+   ⛔ rows/W94.md ABSENT — and it is Ruling 188's only artifact
+SAME PATTERN + -i                                     -> 5 files, + rows/W94.md
+PLANTED, adversarial to the SEARCH TERM               -> 0 matches, correct
+   "Ruling188" · "Ruling- 188" · "Rule 188"
+IMPOSSIBLE, a ruling that does not exist (999)        -> 0 files, DIFFERS from pass
+```
+
+⛔ **THE POPULATION IS NOT ONE FILE, and that is what makes it `[structural]`:**
+
+```text
+lines matching RULINGS? [0-9] across -- docs src tools tests  : 65 in 18 files
+   of those, ARTIFACTS rather than handoffs:
+      docs/conventions/board.md · docs/conventions/agent-protocol.md
+      docs/tasks/E04-narration.md · docs/tasks/E11-skills-authoring.md
+      docs/tasks/rows/W94.md · docs/tasks/rows/W96.md · docs/tasks/rows/W87.md
+```
+
+⭐ **RULING 184 ALREADY SETTLED THE DIRECTION, so this clause inherits its argument rather than needing a new one:** ⛔ **check 3's failure mode is a FALSE EMPTY — *nobody carried it* returned for something that was carried — so it is tuned to OVER-match, and that is safe for one specific reason: check 3 prints FILES, not a count.** ⚠️ **A false positive costs one `git show`; a false empty costs a lost ruling.**
+
+⭐ **AND THE WITNESS IS THE SAME SHAPE AS RULING 184(b)'S OWN.** ⛔ **184(b) was earned by Ruling 76 being invisible in `agent-protocol.md` — an artifact, not a handoff — because the spelling was plural.** ⚠️ **This is the third spelling of the same defect: scope (a), plural (b), case (c), each found by the check failing to see a carry that had happened.** ⭐ **Three instances is a form, which is why the clause is worth the edit rather than a `-i` typed into one round's transcript.**
+
+### ⛔ WHAT SETTLES IT, AND WHOSE CALL EACH HALF IS
+
+⭐ **The instrument:** `git grep -liP` in place of `-lP` in `docs/conventions/board.md`'s check 3 block, with the three readings above pinned in the commit. ⛔ **The cost of `-i` stated rather than assumed: it also admits lower-case prose — the spec's own `(ruling 90)` — which is an over-match in the direction Ruling 184 already priced.**
+
+⚠️ **THE CLAUSE IS THE CTO'S TO RULE AND MINE TO OBEY.** ⛔ **Check 3's contract is Ruling 184's, and a third clause on it belongs to the office that minted the first two** — ⭐ **so this row is PRESENTED with its three readings and does not assume the ruling.** ⚠️ **It is not a blocker: the direction is already ruled by 184's stated reason, so a developer can build it the moment the clause lands.**

@@ -46,7 +46,9 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN at round 38's open, both instruments, at `c18df98c`.**
+**RE-TAKEN at round 38's close, both instruments, at `4e8ba86`** — ⚠️ **the tip
+moved mid-round and the table was re-taken rather than carried, which is the rule
+it exists to obey.**
 
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
@@ -74,17 +76,17 @@ argument for each placement is in the round record; this table is the outcome.**
 |---|---|---|---|
 | 1 | `SF-26` | step 2.4; shares no `src/` file with `SF-15` or `SF-30`, and its golden floor is what makes `SF-30` checkable | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
 | 2 | `SF-30` | step 2.4, last: three files shared with the merged `SF-34`, and a bundle-order assertion that needs `SF-26` | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
-| 3 | `W91` | ⛔ **JUMPED round 34's `W74` and round 32's pair under Ruling 75**: it gates `W88`, and until it lands a bare `(Ruling N)` for `N > 56` is unfollowable by an agent obeying its own brief | round 38 |
-| 4 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 5 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+| 3 | `W96` | ⛔ **JUMPED `W74` and `W63`→`W64` under Ruling 75**: Ruling 189's defect has now broken TWO CONSECUTIVE WAVES, so its rate is measured rather than argued | round 38 |
+| 4 | `W91` | ⛔ **JUMPED the same two under Ruling 75**: it gates `W88`, and until it lands a bare `(Ruling N)` for `N > 56` is unfollowable by an agent obeying its own brief | round 38 |
+| 5 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
+| 6 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
 
 ⛔ **Rows 1–2 do NOT invoke Ruling 75, and the reason is stated rather than
 assumed: Ruling 75's subject is a NEWLY MINTED row jumping an older `todo` row OF
 THE SAME SIZE CLASS.** ⭐ **These are product rows of the OPEN STEP, and the
 milestone order in `README.md` is what ranks them** — ⛔ **a backlog `W` row has
 never outranked the open step's own membership, and writing the jump down would
-imply a contest that the plan already settled.** ⚠️ **Row 3 DOES invoke it, and
-says so in the row.**
+imply a contest that the plan already settled.** ⚠️ **Rows 3 and 4 DO invoke it, and each says so in its own cell.**
 
 ## The register — every `W` row
 
@@ -196,7 +198,7 @@ they have exactly one home each.
 | W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | `todo` — behind `W36` | [`rows/W98.md`](rows/W98.md) |
 | W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | `todo` — Ruling 189's family | [`rows/W100.md`](rows/W100.md) |
 | W101 | Check 4's sub-step compares `Owns` to a diff, and `Owns` is brace expansion and directory prefixes | framework agent | `todo` — `CTO-48/12`, before the next parallel pair | [`rows/W101.md`](rows/W101.md) |
-| W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | `todo` — Ruling 184's third clause, the CTO's to rule | [`rows/W102.md`](rows/W102.md) |
+| W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | ✅ done — Ruling 184(c), `4e8ba86` | [record](BOARD-ARCHIVE.md#w102-check-3s-pattern-is-case-sensitive-and-the-house-style-writes-ruling-n) |
 | W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
 | W104 | The lint notice names no subject, and `ruff format` formats Markdown as well as Python | framework agent | `todo` — not `W38`'s subject | [`rows/W104.md`](rows/W104.md) |
 <!-- /register -->
