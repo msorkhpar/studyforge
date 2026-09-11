@@ -255,6 +255,71 @@ people.
 | **base** | is the branch everyone merges into healthy? | ⛔ a **finding against the release branch**, not against this change — and it is urgent, because it blocks every other review |
 | **merge** | is the result of this change good? | CHANGES REQUESTED against this change |
 
+### ⛔ 0a-ii. Ruling 197 (CTO round 50) — a BEHIND count, the TWO-DOT span that hides it, and a citation from a checkout that cannot hold the ruling
+
+⛔ **`git branch -v` prints `[ahead 2, behind 2]` and a reviewer who quotes only
+the first half has not read the line.** ⭐ **Three clauses, each with its command:**
+
+#### ⭐ (a) A two-dot diff is NEVER the span for *"what did this branch change"*
+
+```bash
+git diff --name-only "$REVIEW_BASE".."$REV"    # ⛔ WRONG: "how do these trees differ"
+git diff --name-only "$REVIEW_BASE"..."$REV"   # ⭐ RIGHT: three dots, from the merge base
+git rev-list --left-right --count "$REVIEW_BASE...$REV"   # behind / ahead, ALWAYS print both
+```
+
+⛔ **Pass: every changed-file population in a review is taken with three dots, or
+from the branch's own merge base, and the behind/ahead pair is printed beside it.**
+⚠️ **MEASURED THIS ROUND, and the reading was alarming and false: a two-dot span
+over a 2-behind branch reported `16` files including this document, `board.md`, the
+spec and a CTO record, with hunks reading as a DELETION of Ruling 192, Ruling
+189(d) and a whole round-49 ruling.** ⛔ **None of it was real** — it was the
+release branch's own newer content presented as the branch's deletions. ⭐ **The
+true population, three-dot: `12` files, and `0` under `docs/conventions/`.**
+
+⭐ **This is the right-number-over-a-wrong-SPAN family, and the reviewer who wrote
+this clause tripped on it three times while writing it** — an unanchored
+`grep -v naming` that ate a floor line and read as a regression; a `str()` over a
+dataclass that made two identical 165-member populations look disjoint; and a
+`Ruling 189(d)` probe scoped to two files when the spelling lived in a third.
+⛔ **In all three the SCALAR was right and the SPAN was wrong, which is why the
+remedy is never a better eye — it is printing the population first.**
+
+#### ⭐ (b) A BEHIND count is a FORM defect: it is REPORTED, and it does not block a merge
+
+⛔ **Pass: the merge reading is taken (§0a, Ruling 147 — a behind-branch's tip
+reading is structurally not the merge's), and the behind count is stated.**
+⚠️ **A REBASE is owed only when an absent commit BINDS the branch's subject AND the
+branch fails against it** — ⭐ **both halves measured, never assumed, because a
+rebase costs a full re-audit of an already-green branch.**
+
+```bash
+# Does the absent work BIND this branch? Print the intersection, do not reason about it.
+# ⛔ LC_ALL=C on EVERY sort, not only on comm: a prefix does not reach into a
+#    process substitution, and comm then REFUSES the input instead of lying.
+export LC_ALL=C
+comm -12 <(git diff --name-only "$REVIEW_BASE"..."$REV" | sort) \
+         <(git diff --name-only "$(git merge-base "$REVIEW_BASE" "$REV")".."$REVIEW_BASE" | sort)
+```
+
+⛔ **An empty intersection plus a green merge reading is a PASS, and a merge does
+NOT revert a behind-branch's absent commits** — ⭐ **git's three-way merge carries
+them from the other side, which is a property of the algorithm and not a hope.**
+
+#### ⭐ (c) A citation of a ruling ABSENT from the author's checkout is `RECEIVED` by construction
+
+⛔ **An author cannot have read what their base predates, so the citation's
+provenance is whoever relayed it** (Ruling 115). ⭐ **It does NOT weaken the
+finding — it corrects the attribution, and the correction is mechanical:**
+
+```bash
+git merge-base --is-ancestor <the ruling's merge ref> "$REV"   # exit 1 => RECEIVED
+```
+
+⚠️ **And independent derivation is a QUESTION for the author, never an inference
+by the reviewer** — ⛔ **a coincidence is corroboration only once somebody says it
+was not copied.**
+
 ---
 
 ## 1. R7 — no personal data · ⛔ HARD FAIL
@@ -2470,6 +2535,47 @@ nothing else: **ruled** (⛔ **naming the artifact the ruling changes** — see
 below), **scheduled** (with the task), or **accepted** (with the cost being
 accepted, in words).
 
+#### ⛔ Ruling 193 (CTO round 50) — Ruling 65 binds EVERY reader of the marker, and the SHIPPED CONSTANT is the authority
+
+⛔ **Ruling 65 is not scoped to §8a's per-handoff counter.** ⭐ **It is the
+marker's spelling, and a second reader with a second spelling is the same defect
+at a different site.** ⚠️ **The authority is the shipped constant — Ruling 103's
+form applied to this vocabulary:**
+
+```bash
+# THE AUTHORITY. Every other pattern in this repository is SUBORDINATE to it.
+sed -n 's/^_MARKERS_ON_LINE = re.compile(r\(.*\))$/\1/p' \
+    tools/quality/handoffs/contract.py
+# Every pattern typed into a DOCUMENT, with the file that types it:
+grep -rn "grep .*structural" docs/conventions/ docs/tasks/
+```
+
+⛔ **Pass: every document-typed pattern agrees with the constant character for
+character ON THE MARKER ITSELF, or the document states that its population or its
+vocabulary differs and says how.** ⚠️ **Agreement is PRINTED, never asserted — run
+both over one population and print both counts:**
+
+```bash
+P=docs/tasks/handoffs/                        # the population, printed FIRST
+ls "$P" | wc -l
+grep -rnE '`\[structural\]`' "$P" | wc -l     # the ruled spelling
+grep -rn  '\[structural\]'    "$P" | wc -l    # any weaker form: the DELTA is mentions
+```
+
+⛔ **Measured row, base `7559398`, CTO worktree, pinned dev image:** three readers
+existed; **§8a and `_MARKERS_ON_LINE` agreed EXACTLY, backticks included**; ⚠️
+**`delivery-flow.md` dissented twice — `487` against `478` in its fenced copy, a
+delta of **9** and not the `7` two offices had repeated, and `44,821` lines across
+`147` files in a prose copy whose brackets were unescaped into a character class.**
+⭐ **The delta is not a constant to subtract: it GREW inside the wave that called
+it stable, because a record explaining the defect quotes the marker.**
+
+⛔ **So the corpus is never chased.** ⚠️ **Eight of those nine lines sit inside
+records, which Ruling 106 forbids editing** — ⭐ **the instrument is the defect, and
+the only admissible fix is the one Ruling 65 already named: NAME the marker, do not
+spell it.** ⚠️ **The repository-wide sweep still has no shipped reader; that is a
+live row on [the board](../tasks/BOARD.md) and this clause does not wait on it.**
+
 #### ⛔ C6 — `ruled` names the artifact, **never a handoff**
 
 ⚠️ **This clause used to read *"ruled (with the ruling, or the handoff it went
@@ -2556,6 +2662,48 @@ finding count will over-count exactly the documents that discuss this section.**
 arrived, the instrument had already handled three quarters of it and nobody had
 measured which.**
 
+#### ⛔ Ruling 194 (CTO round 50) — §8a's counter gains the PASS CONDITION §8a's own prose already obliges: one disposition per structural finding
+
+⛔ **§8a has said since it was written that the review states one of three
+outcomes for EACH structural finding. Its counter checks `MARKED == LINES` and
+`MARKED > 0` and stops there** — ⭐ **so the obligation had a rule, a population
+and no comparison, which is the right property over the wrong subject for the
+ninth time in this document's history.**
+
+```bash
+# Run it against YOUR OWN VERDICT TEXT, before the verdict is final.
+V=<the review or merge message, as a file>
+H="$(git diff --name-only --diff-filter=ACMR "$BASE"...HEAD | grep '^docs/tasks/handoffs/')"
+printf '%s\n' $H                                        # the population, PRINTED
+S=$(grep -hoE '[A-Z0-9-]+/[0-9]+ `\[structural\]`' $H | awk '{print $1}' | sort -u)
+printf 'structural: %s\n' "$(printf '%s\n' $S | grep -c .)"; printf '%s\n' $S
+for id in $S; do
+    printf '%-12s %s\n' "$id" "$(grep -oiE "$id[^A-Za-z0-9]+.*\
+(ruled|scheduled|accepted)" "$V" | head -1 || echo '⛔ NO DISPOSITION')"
+done
+```
+
+⛔ **Pass: every id printed above carries `ruled`, `scheduled` or `accepted`, and
+the count of dispositions EQUALS the structural count.** ⚠️ **A missing row is
+CHANGES REQUESTED against the review, not against the branch** — ⭐ **the author
+filed it correctly; the reviewer is the one who owes a decision.**
+
+⛔ **MEASURED ROW, and it is against me.** ⚠️ **At `7559398`, the two handoffs the
+last wave merged carry exactly four structural findings — `SF-15/1`, `SF-15/3`,
+`SF-15/6`, `W95/3`. ⛔ My round-49 record names ONE of them (`SF-15/3`, which
+became Ruling 192); the other three appear in it ZERO times.** ⭐ **They were
+recovered one wave later by the PO's wave-open triage sweep, so the cost was three
+rows minted a wave late rather than three findings lost** — ⚠️ **and that second
+gate is why this is a pass condition rather than a REJECT cause.**
+
+⛔ **THE GRADIENT IS PREDICTABLE AND IT IS NOT DILIGENCE.** ⭐ **A reviewer routes
+what THEY must decide and leaves what somebody else must schedule**, so the
+findings that go unrouted are systematically the ones needing a row rather than a
+ruling. ⚠️ **Which is why the command counts ALL of them and does not ask the
+reviewer to notice.** ⛔ **The machine half — a disposition that can still change
+belongs on the board and not in a frozen record — is an existing live row's, not a
+new one's; the board names it.**
+
 ### ⛔ 8a-i. A ruling that changes a shared name names its blast radius **across branches**
 
 ```bash
@@ -2577,6 +2725,46 @@ for everyone else.
 guard on an unmerged branch; the command above finds that file in one run; **I did
 not run it and the author covered for me.** ⭐ **A reviewer covered for by an author
 has found a hole in their own procedure, not a piece of good luck.**
+
+#### ⛔ Ruling 195 (CTO round 50) — §8a-i extended: a ruling that SCOPES A ROW names that ROW'S FILE, and a row file may not PARAPHRASE it
+
+⛔ **A row file can CONTRADICT the ruling that scoped it, and nothing in this
+project reads for that.** ⭐ **§8a-i's blast radius already covers a shared NAME;
+this extends it to a shared DECISION, which has the same author and costs the same
+one free grep:**
+
+```bash
+# For a ruling that decides a row's SCOPE. Run it when you MINT the ruling.
+ROW=<the row id>                                 # e.g. W100
+grep -n "$ROW" docs/conventions/board.md         # what you ruled
+cat "docs/tasks/rows/$ROW.md"                    # what the row file now says
+# The population a bare-citation sweep would have to cover, printed:
+ls docs/tasks/rows/*.md | wc -l
+grep -lEi 'ruling [0-9]+' docs/tasks/rows/*.md | wc -l
+```
+
+⛔ **Pass: the row file QUOTES the ruling's operative clause or POINTS at it. A
+PARAPHRASE is the finding, and it belongs to the reviewer who minted the ruling.**
+⭐ **A quote cannot diverge and a pointer resolves at read time; only a paraphrase
+can be kept freshly wrong** — ⚠️ **which is `CLAUDE.md`'s own argument arriving one
+directory down.**
+
+⛔ **MEASURED ROW, base `7559398`, CTO worktree:** ⚠️ **`rows/W100.md` said in
+capitals *"THE REMEDY IS NOT A SEVENTH COLUMN"* and that widening `## Scheduled`
+*"duplicates the register"*; the round-49 ruling that scoped it says `## Scheduled`
+*"gains its own markers and a STATE column, exactly as the register has."*** ⛔ **A
+developer opening only the row file would have built the thing the ruling forbids
+while believing they were obeying it.** ⭐ **`board-frame`, `board-state`,
+`board-duplicate` and Ruling 186's two predicates ALL PASS on it, because every one
+of them reads a row file against the REGISTER and none against the convention
+document that scoped it.**
+
+⛔ **AND THE SUBJECT IS THE PARAPHRASE, NOT THE BARE CITATION.** ⚠️ **Measured at
+the same ref: `40` of `66` row files cite a ruling number, and `35` of those carry
+no link to the document holding it** — ⭐ **but that population is an existing live
+row's subject, not this clause's, and minting a second instrument for it would be
+the duplication this document refuses.** ⛔ **A sweep over 35 retrofits is not what
+this ruling asks for; one grep at mint time is.**
 
 ---
 
