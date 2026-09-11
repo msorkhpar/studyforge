@@ -198,3 +198,31 @@ task.** ⛔ **Do not read `../BOARD-ARCHIVE.md` or the CTO chain.**
 
 ⛔ **Owed to the user and still unresolved by design:** the four sibling repositories carry push
 URLs and `studyforge` has none. **Ruling 215 says that is the user's call. Nothing was changed.**
+
+---
+
+## ⛔ ANNOTATED AFTER THE FACT — THE COORDINATOR RUNS WAVES CONTINUOUSLY
+
+⚠️ **Appended in its own commit, beneath the record rather than inside it** (Ruling 106).
+
+⛔ **RULED BY THE USER, 2026-09-11, and it binds every coordinator session after this one:
+run waves ONE AFTER THE OTHER and advance the project as far as a session allows.** ⭐ **Do
+NOT merge a wave, write the handoff, and stop to ask whether to start the next one.**
+
+⚠️ **The defect this corrects is in THIS session and is the coordinator's:** the wave above
+merged, the handoff was committed, and the session then stopped at a natural boundary and
+reported. ⛔ **The user read that as a time limit and it was not one** — ⭐ **MEASURED: there
+is no session cap configured and none in the harness; the elapsed ~90 minutes was the wave's
+own duration (three offices concurrent at ~36 min, the reviewer serial at ~40 min, the
+coordinator's own container runs ~15–20 min).** ⚠️ **The pause was a judgement call, not a
+constraint, and it was the wrong call.**
+
+⭐ **Why it costs nothing to obey: the `## For dependents` section of every coordinator
+handoff ALREADY names the next action — it is always the next register round — so there is
+never a question to stop and ask.** ⛔ **Escalate only what is irreversible or genuinely the
+user's to decide. A finished wave is neither.**
+
+⛔ **Throughput relaxes NOTHING.** ⭐ Every measurement rule in this file still binds: measure
+each branch yourself in the pinned container, merge only on a verdict, run the verdict string
+through the rubric's own predicate, measure the release tip after EVERY merge, and record every
+defect by id — the coordinator's own included.
