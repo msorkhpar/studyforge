@@ -28,7 +28,7 @@ from __future__ import annotations
 
 from tests.fixture_checks.corpus import archive_files, read_json
 from tests.fixture_checks.personal_data import check_personal_data
-from tests.fixture_checks.vocabulary import CONTAINER_API
+from tests.fixture_checks.vocabulary import CONTAINER_APIS
 
 OVERLAY_KINDS = ("shared", "lang", "practice")
 
@@ -43,10 +43,16 @@ def check_container(root, manifest, container_dir, container):
     where = str(container_dir.relative_to(root) / "container.json")
     address = container.get("address")
 
-    if container.get("container_api") != CONTAINER_API:
+    if container.get("container_api") not in CONTAINER_APIS:
+        # ⛔ A set, not the newest version: the fixture set carries a
+        # whole-file `origin` at version 1 and a region `origin` at version 2
+        # on purpose, and both are versions this build reads (R9). The message
+        # names what is accepted, because that is what tells an author what to
+        # write.
         yield (
             "container-api",
-            f"{where} declares container_api {container.get('container_api')!r}",
+            f"{where} declares container_api {container.get('container_api')!r}, "
+            f"which is not one of {sorted(CONTAINER_APIS)}",
         )
     located = list(container_dir.relative_to(archive_root).parts)
     if address != located:

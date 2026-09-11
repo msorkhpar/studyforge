@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.address import Address
+from studyforge.corpus.container.fields import optional_origin
 from studyforge.corpus.manifest import load
 from studyforge.corpus.placement import identity, profile_for, registered
 from tests.fixture_checks import FIXTURES as FIXTURE_ROOT
@@ -41,8 +42,9 @@ FIXTURES = tuple(
 def test_the_fixture_set_is_read_from_the_declaration():
     # ⛔ Ruling 48: a walk that matched nothing would parametrize zero tests
     # and every sweep below would pass by never running.
-    assert len(FIXTURES) >= 7, FIXTURES
+    assert len(FIXTURES) >= 8, FIXTURES
     assert "depth1" in FIXTURES and "depth2" in FIXTURES
+    assert "shared-origin" in FIXTURES
     assert "invalid/bad-corpus-api" not in FIXTURES
 
 
@@ -68,16 +70,23 @@ def containers(fixture):
 
 
 def placed(fixture, profile_name):
-    """Every unit of a fixture corpus, placed under one profile."""
+    """Every unit of a fixture corpus, placed under one profile.
+
+    ⛔ **`origin` is read through the map's own reader, never taken raw.** It
+    carries two shapes (Ruling 92) — a path for a whole file, `{path, section}`
+    for a unit that is a *region* of a shared one — and placement wants the
+    path in both cases. ⚠️ `unit["origin"]` was a second reader of a field that
+    has one, and it handed `sibling` a dict the moment a fixture declared the
+    region shape: `PlacementError`, on a corpus that places perfectly.
+    """
     profile = profile_for(profile_name)
     for manifest, container in containers(fixture):
         address = manifest.parse_key("/".join(container["address"]))
         for unit in container["units"]:
-            yield (
-                container,
-                unit,
-                profile.unit(address, unit["n"], unit["title"], origin=unit.get("origin")),
+            origin, _section = optional_origin(
+                unit.get("origin"), f"unit {unit['n']} origin", fixture
             )
+            yield (container, unit, profile.unit(address, unit["n"], unit["title"], origin=origin))
 
 
 @pytest.mark.parametrize("profile", registered())

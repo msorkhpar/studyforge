@@ -14,7 +14,8 @@ from studyforge.cli.plan.cli import UNUSABLE, build_parser, main
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES, VALID
 
-#: Where the two goldens live. ⚠️ Beside the fixtures rather than inside one:
+#: Where the goldens live, one per valid corpus. ⚠️ Beside the fixtures rather
+#: than inside one:
 #: a plan describes what would be written **into** a corpus root, so a golden
 #: sitting in that root is a file the plan would have to explain.
 GOLDEN = FIXTURES / "golden"
@@ -98,8 +99,12 @@ def test_two_runs_of_one_corpus_agree_byte_for_byte(name):
     assert invoke(str(FIXTURES / name)) == invoke(str(FIXTURES / name))
 
 
-def test_the_two_goldens_are_the_only_ones_and_are_exactly_what_is_on_disk():
-    assert sorted(p.name for p in GOLDEN.iterdir()) == [f"{name}.plan.txt" for name in VALID]
+def test_the_goldens_are_one_per_valid_corpus_and_exactly_what_is_on_disk():
+    # ⚠️ The name used to say "two". It is read from `VALID` and has been three
+    # since `W95`, and a test name that states a count states it in the one
+    # place nothing checks.
+    on_disk = sorted(p.name for p in GOLDEN.iterdir())
+    assert on_disk == sorted(f"{name}.plan.txt" for name in VALID)
 
 
 @pytest.mark.parametrize("name", VALID)

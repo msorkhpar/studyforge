@@ -1,0 +1,55 @@
+{
+  "raw_api": 1,
+  "source": "shared-origin-demo",
+  "address": [
+    "field-notes"
+  ],
+  "variant": "prose",
+  "unit": 1,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Taking a reading",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "1. Taking a reading"
+    },
+    {
+      "type": "para",
+      "text": "Read the gauge at the same hour every day, and write the hour down beside the number."
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "text": "What to record"
+    },
+    {
+      "type": "para",
+      "text": "The date, the hour, and the depth in millimetres."
+    },
+    {
+      "type": "code",
+      "lang": "yaml",
+      "text": "### A hash at the start of a line inside a fence is not a heading, and these\n### two are deep enough to land inside the region above rather than end it.\nreadings_per_day: 1\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 2,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "4ff4939be9cbfaab47c6603a61f19f2dbfd925c9378b8cff666b29d8fd1ba9a7"
+}

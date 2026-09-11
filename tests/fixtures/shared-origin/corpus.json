@@ -1,0 +1,20 @@
+{
+  "corpus_api": 1,
+  "source": "shared-origin-demo",
+  "title": "Shared Origin Demo",
+  "levels": [
+    "guide"
+  ],
+  "variants": [
+    "prose"
+  ],
+  "exercises": false,
+  "placement": "sibling",
+  "content": {
+    "include": [
+      "field-notes/*.md"
+    ],
+    "exclude": []
+  },
+  "permitted_edits": []
+}

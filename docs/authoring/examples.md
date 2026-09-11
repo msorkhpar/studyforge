@@ -3,6 +3,13 @@
 **Two complete corpora, both in this repository, both of which you can run the
 commands against right now.**
 
+⚠️ **Two that are walked through here, not two that exist.** The repository's
+valid fixture corpora are whichever `tests/fixture_checks`' `VALID` names, and
+`tests/fixtures/README.md` describes each; a third one carries a property this
+page has nothing to teach about — two units generated from one source file —
+and adding a column for it would make this page about the fixture set rather
+than about authoring a corpus.
+
 **They are deliberately the two ends of the range.** One is a repository-shaped
 source with two container levels, graded practices and a declared edit to a
 build file. The other is a flat set of prose with one level and no exercises at

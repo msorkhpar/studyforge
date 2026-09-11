@@ -1,9 +1,15 @@
 # Shared contract fixtures (FND-04)
 
-Two synthetic corpora and five deliberately invalid ones. **Every downstream
+The synthetic corpora `tests/fixture_checks`' `VALID` names, and the
+deliberately invalid ones its `INVALID_CORPORA` registers. **Every downstream
 epic tests against these**, so that twelve epics are not each inventing their
 own idea of valid input — which is how parallel work drifts into twelve
 incompatible mental models.
+
+⚠️ **This file states no count of them, deliberately.** It said *"two synthetic
+corpora and five deliberately invalid ones"* while the declaration carried
+three and seven — a count in prose is a fact nothing checks, and a pointer
+resolves at read time where a number cannot.
 
 They are synthetic on purpose. A fixture that depends on 166 real files is a
 fixture nobody can debug.
@@ -15,7 +21,12 @@ modules are the authority on what these files claim. Read them before changing
 one of these files, and run `python3 -m tests.fixture_checks` for the
 block-type coverage table.
 
-## The two valid corpora
+⚠️ **One property has a test module of its own**,
+`tests/test_fixture_shared_origin.py`: two units on one `origin.path` is a
+property *of the set* rather than of a corpus, and what it asserts is a
+cardinality — see `shared-origin/` below.
+
+## The valid corpora
 
 ⭐ **`depth1/` is the common case, not the exotic one.** Two of the four
 designed source shapes are depth 1 — SPARQL (`["course"]`) and ISO-8583
@@ -24,19 +35,21 @@ least the care `depth2/` gets, and it exercises two things `depth2/` does not:
 a unit with **two** archive documents, and real media on disk with real
 digests.
 
-| | `depth1/` | `depth2/` |
-|---|---|---|
-| Shape it stands for | SPARQL, ISO-8583 — **2 of the 4** | Java-senior, CodeSignal |
-| `levels` | `["course"]` — **1** | `["section","module"]` — **2** |
-| Containers | 1 | 2 |
-| Units | 3 (4 archive documents) | 5 (3 + 2) |
-| Variants | 1 (`prose`) | 1 (`java`) |
-| Exercises | **zero** | 2 practices |
-| Placement | `tree` | `sibling` |
-| `permitted_edits` | `[]` — the normal case | one `pom.xml` insert (R3) |
-| `media` in the manifest | **absent** — the default case | declared, `auto` + limits |
-| Authored overlay | none | `basics/01-getting-started` unit 1 only |
-| Block types exercised | 10 of 11 (no `video`) | **11 of 11** |
+| | `depth1/` | `depth2/` | `shared-origin/` |
+|---|---|---|---|
+| Shape it stands for | SPARQL, ISO-8583 — **2 of the 4** | Java-senior, CodeSignal | **two units, one source file** |
+| `levels` | `["course"]` — **1** | `["section","module"]` — **2** | `["guide"]` — **1** |
+| `container_api` | 1 — a whole-file `origin` | 1 — a whole-file `origin` | **2** — a **region** `origin` (Ruling 92) |
+| Containers | 1 | 2 | 1 |
+| Units | 3 (4 archive documents) | 5 (3 + 2) | 2 (2 archive documents) |
+| Variants | 1 (`prose`) | 1 (`java`) | 1 (`prose`) |
+| Exercises | **zero** | 2 practices | **zero** |
+| Placement | `tree` | `sibling` | `sibling` |
+| `permitted_edits` | `[]` — the normal case | one `pom.xml` insert (R3) | `[]` |
+| `media` in the manifest | **absent** — the default case | declared, `auto` + limits | **absent** |
+| Authored overlay | none | `basics/01-getting-started` unit 1 only | none |
+| Source material on disk | no | no | ⭐ **yes** — the only one |
+| Block types exercised | 10 of 11 (no `video`) | **11 of 11** | 3 — it is not a coverage corpus |
 
 `depth1` exists to keep the 1-level and no-exercise paths first-class from
 wave 0 rather than discovered late. ⛔ **A corpus with no graders is complete,
@@ -45,6 +58,49 @@ not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 `depth2` carries, deliberately, one unit **with** an authored overlay
 (`units/unit-01/content.json`) and two **without**, because SF-10's two shapes
 — derived and authored — are different code paths and each needs an input.
+
+## ⛔ `shared-origin/` exists for one property, and it is not coverage
+
+⭐ **Two units declare the same `origin.path` and differ only in
+`origin.section`.** Nothing else in this set does, and until it did, *how is a
+clip keyed when several units share one source file?* could not be tested in
+this repository at all. ⛔ **It is the smallest corpus that can exhibit the
+collision** — two is all the pigeonhole needs — and a larger one would be a
+reading taken inside a consumer repository rather than here.
+
+⛔ **Why it cannot be left until the minter exists (Ruling 187).** *"Asserted in
+both directions"* proves **surjectivity, not injectivity**. Clips colliding onto
+one filename means every `<audio>` still resolves **and** every file on disk is
+still named by a page: both stated directions pass, the suite stays green, and
+every unit but one plays the wrong audio. ⭐ The form that states injectivity is
+a **cardinality equality** — `|clips| == |spoken units|` — and it is
+unwritable against a set in which no two units share a file.
+`tests/test_fixture_shared_origin.py` asserts both halves: that a path-derived
+key **does** collide here, and that one derived from the unit's logical address
+(`SF-01`) does not. ⚠️ A fixture asserted to be shared-origin without the first
+half is the vacuous shape the second half would hide.
+
+⭐ **It also gives each `origin` shape an input**, which is `depth2`'s own
+argument about overlays applied one field along: a whole file and a *region* of
+one are two code paths, so the set carries `container_api` 1 and 2 rather than
+only the newest.
+
+⭐ **And it is the only corpus whose source material is committed beside its
+archive**, so it is the only one on which `validate` reports nothing
+`Unchecked`: the heading-count check (`short-read`) and the region checks
+(`origin-section-missing`, `origin-section-ambiguous`) actually run. ⚠️ The
+fenced block inside unit 1's region is load-bearing for that and is **depth 3**
+on purpose: a fence-blind count reads **6** headings in that file where there
+are 4 and **4** in unit 1's region where there are 2, so it short-reads. Make
+those comment lines `#` instead of `###` and they become depth-1 headings that
+*terminate* the region rather than inflating it — the count stays 2 and nothing
+reds. ⛔ Measured, not reasoned: that is what the first version of this fixture
+did.
+
+⛔ **Nothing in this corpus names any real source.** The shape is the subject —
+two units, one file — and the corpus that provoked the question is named in
+`docs/tasks/E04-narration.md`, which is where a source-specific measurement
+belongs (R1).
 
 ### What each unit is for
 
@@ -66,6 +122,13 @@ not short** (spec §7, C5) — nothing here should be read as a degraded corpus.
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
 | `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
 | `advanced/02-going-further` 2 | a closing lesson, plus a fenced Maven POM | a container whose last unit has no exercise; fence awareness at depth 2 |
+
+`shared-origin`
+
+| Unit | Carries | So that |
+|---|---|---|
+| 1 | two `heading`s, two `para`s, and a fence whose comment lines are **depth 3** | a region with a subsection of its own — the bound is the next *shallower* heading, not the next one — and a fence-blind count short-reads it |
+| 2 | one `heading`, one `para`, a markup-shaped fence | a second region of **the same file**, disjoint from the first, so `origin.path` names both units and identifies neither |
 
 ## ⛔ §7's three exercise states are carried by the set, not by a flag
 
@@ -226,9 +289,15 @@ depth1/
     units/unit-NN/content.json                  the authored overlay, optional
     units/unit-NN/<local>                       what an asset's `local` resolves against
 golden/
-  depth1.plan.txt                               `studyforge plan` output, byte for byte
-  depth2.plan.txt                               `studyforge plan` output, byte for byte
+  <corpus>.plan.txt                             `studyforge plan` output, byte for byte — one per valid corpus
 ```
+
+⭐ **`shared-origin/` adds one thing to this layout: the source material.**
+Its `field-notes/` directory holds the two files its container map's `origin`
+records, which is why it is the one corpus `validate` can check against a
+source. ⚠️ Every other corpus's `origin` paths are *declared and absent*, which
+is a first-class state (R2 — an archive ships on its own) and reads as
+`Unchecked`, never as a failure.
 
 ⚠️ **`archive/` is a placeholder for `<archive-root>`, which placement owns
 (SF-03).** Under the `sibling` profile the real root is `.studyforge/archive/`;
