@@ -67,6 +67,7 @@ from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
 from tools.quality.report import Finding, format_findings
+from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
@@ -97,6 +98,13 @@ from tools.quality.style import check_style
 #: neither a scan root, nor a list, nor a declaration, but the **parser**. A
 #: link inside backticks is a *mention* and is not a pointer, so a document is
 #: excused by saying what it means rather than by being named somewhere.
+#:
+#: ⚠️ `check_rulings_index` is the only one whose subject is a GENERATED
+#: document, and its exemption mechanism is a fourth distinct one: there isn't
+#: any. ⛔ The rulings index is derived from the ruling records on every run, so
+#: the check cannot be satisfied by declaring anything — only by regenerating
+#: (`W91`, R19). ⭐ That is what makes the index's completeness ASSERTED rather
+#: than typed: the day a ruling is minted without a row, this returns `no`.
 CHECKS = (
     check_sizes,
     check_board,
@@ -108,6 +116,7 @@ CHECKS = (
     check_knowledge_index,
     check_handoffs,
     check_pointers,
+    check_rulings_index,
 )
 
 #: ⛔ **The second channel, and it exists because one of the floor's answers is
@@ -139,7 +148,7 @@ CHECKS = (
 #:
 #: ⚠️ **It is deliberately last**, so it prints immediately above `quality
 #: floor:` — the line it exists to qualify.
-NOTICES = (notices, pointer_coverage, board_state, lint_notice)
+NOTICES = (notices, pointer_coverage, board_state, rulings_notice, lint_notice)
 
 __all__ = [
     "CHECKS",

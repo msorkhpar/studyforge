@@ -969,6 +969,17 @@ description of it in a briefing. ⚠️ A paraphrase is how a ruling arrives *ne
 right, which is worse than not arriving: ⛔ **an absent ruling gets asked about; a
 nearly-right one gets implemented.**
 
+**2a. And a bare `(Ruling N)` is resolvable, in one hop.** ⛔ **Every office is
+told to appeal to rulings by number and forbidden to read the handoff chain end
+to end, and for most of the series the number resolved for nobody** (`W91`,
+`CTO-48/3`). ⭐ **So: [`../tasks/rulings-index.md`](../tasks/rulings-index.md) —
+one row per numbered ruling, the record's own words QUOTED, and an anchored
+address for the section that carries them.** ⚠️ **It is GENERATED
+(`python3 -m tools.quality.rulings`) and the quality floor fails while it is
+stale, so a ruling either has a row or the build is red.** ⛔ **Quoting from
+there is quoting the record: it holds no summary for anyone to relay, which is
+what clause 2 asks for.**
+
 **3. The owner is a field, not a sentence.** ⛔ **A ruling that assigns work names
 the owner in the field the board reads, not only in the sentence that reasons
 about it.**
