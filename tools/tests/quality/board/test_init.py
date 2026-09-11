@@ -89,11 +89,31 @@ def test_live_notice_names_every_bound_and_the_population() -> None:
 
 
 def test_live_board_has_a_detail_file_for_every_live_row() -> None:
-    """⭐ The bijection, stated as a number rather than as an absence."""
-    line = board_state(repository_root())[0]
-    live = int(line.split(" register rows, ")[1].split(" live")[0])
-    files = int(line.split("live, ")[1].split(" detail files")[0])
-    assert live == files
+    """⭐ The bijection, stated as a number rather than as an absence.
+
+    ⛔ **`W137`: Ruling 270 RETIRED `live == files`, and this test asserted it for as
+    long as the protocol went unused.** ⭐ **The bijection after a close is
+    `detail files == live rows + REDIRECT STUBS`** — ⚠️ **and the third term is read
+    from the notice's SECOND line, which already prints it, rather than recounted
+    here by a second instrument that could disagree with the shipped one.**
+
+    ⛔ **The `+ stubs` term is not a widening, and the reading that shows it is not:
+    the notice's stub population is every CLOSED id whose file REDIRECTS.** ⭐ **So a
+    closed row whose FULL argument file was left behind by a close still reddens this
+    line — it is on disk, it is not a stub, and nothing else counts it.** ⚠️ **The
+    complementary direction — a LIVE row whose file is a stub — is `test_register.py`'s
+    `test_the_LIVE_tree_reads_ZERO_stubs_and_the_CONTAINS_form_would_read_FIFTY`, and
+    neither test alone closes both.**
+    """
+    counts, closed = board_state(repository_root())[:2]
+    live = int(counts.split(" register rows, ")[1].split(" live")[0])
+    files = int(counts.split("live, ")[1].split(" detail files")[0])
+    stubs = int(closed.split("; of those, ")[1].split(" are REDIRECT STUBS")[0])
+    assert files == live + stubs, (
+        f"⛔ {files} detail file(s) for {live} live row(s) + {stubs} REDIRECT STUB(s). "
+        f"⭐ Ruling 270 allows a CLOSED row's file to stay only as a stub, so the "
+        f"surplus is a closed row whose FULL argument was left on disk by a close."
+    )
 
 
 # --------------------------------------------------------------------------

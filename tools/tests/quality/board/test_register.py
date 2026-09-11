@@ -524,19 +524,43 @@ def test_the_LIVE_tree_reads_ZERO_stubs_and_the_CONTAINS_form_would_read_FIFTY()
 
     ⛔ **This predicate reads NONE of them**, and both numbers are asserted so the
     comparison is a reading rather than a claim (Ruling 128: the population, in full).
+
+    ## ⛔ `W137`: the POPULATION is the LIVE row files, and it used to be `rows/*.md`
+
+    ⛔ **This test globbed `rows/*.md` and NAMED that population *live*.** ⭐ **Until
+    Ruling 270's protocol had been used the two sets were equal, so the name was true
+    by accident** — ⚠️ **and `W129`'s own handoff said so in terms: the clause's live
+    population *"is empty and will stay empty until the PO performs the first close."***
+    ⛔ **The first nine closes made the two sets differ, and this test then called nine
+    CLOSED rows `live row file(s)` in its own failure message.**
+
+    ⭐ **`W74/2`: the DECLARED and the READ population both move.** ⛔ **A CLOSED row's
+    file is ALLOWED to be a stub and that is Ruling 270's whole point, so it is not in
+    this population; an ORPHAN file — a stem with no register row at all — is
+    `board-orphan`'s to judge and is not in it either.** ⚠️ **The reading is the
+    register's own LIVE ids intersected with what is on disk, which is a PROPERTY of the
+    clause rather than a function of how many closes have happened to be performed —
+    `W119`'s ratified class, and the defect this row repaired.**
     """
-    files = sorted((repository_root() / ROWS).glob("*.md"))
-    assert len(files) >= 10, f"born vacuous: {len(files)} row files"
-    bodies = {path.stem: path.read_text(encoding="utf-8") for path in files}
+    board = (repository_root() / BOARD).read_text(encoding="utf-8")
+    live_ids = {i for _n, ids, cell in register(board) if not is_closed(cell) for i in ids}
+    paths = sorted((repository_root() / ROWS).glob("*.md"))
+    bodies = {p.stem: p.read_text(encoding="utf-8") for p in paths if p.stem in live_ids}
+    assert len(bodies) >= 10, (
+        f"⛔ born vacuous: {len(bodies)} LIVE row file(s), of {len(paths)} file(s) on disk "
+        f"and {len(live_ids)} live register id(s) — this reads nothing at that size."
+    )
     stubs = sorted(name for name, body in bodies.items() if redirects_to_the_archive(body))
     contains = sorted(
         name for name, body in bodies.items() if "BOARD-ARCHIVE.md#" in argument(body)
     )
     assert stubs == [], (
-        f"⛔ {len(stubs)} live row file(s) read as a Ruling 270 STUB — {stubs}. A live row's "
-        f"argument is AMENDED, so it may not live in the archive."
+        f"⛔ {len(stubs)} LIVE row file(s) read as a Ruling 270 STUB — {stubs}. A live row's "
+        f"argument is AMENDED, so it may not live in the archive. ⭐ Ruling 270's exception "
+        f"is a CLOSED row's, and every id here is LIVE in the register."
     )
     assert len(contains) > 10, (
-        f"⛔ born vacuous: only {len(contains)} row files carry an anchored archive pointer, "
-        f"so the rejected `contains` form would have had nothing to get wrong here"
+        f"⛔ born vacuous: only {len(contains)} of {len(bodies)} LIVE row files carry an "
+        f"anchored archive pointer, so the rejected `contains` form would have had nothing "
+        f"to get wrong here"
     )
