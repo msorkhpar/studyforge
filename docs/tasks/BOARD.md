@@ -56,9 +56,9 @@ consecutive wave** ([the superseded reading](BOARD-ARCHIVE.md#the-in-flight-re-t
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W74` | Developer 1 | `wt/dev1`, `fix/W74-sibling-runnable` | 2 | in flight |
-| `W111` | Developer 2 | `wt/dev2`, `fix/W111-W110-corroborate` | 0 | in flight |
-| `W110` | Developer 2 | `wt/dev2`, `fix/W111-W110-corroborate` | 0 | in flight |
+| `W74` | Developer 1 | `wt/dev1`, `fix/W74-sibling-runnable` | 4 | in flight |
+| `W111` | Developer 2 | `wt/dev2`, `fix/W111-W110-corroborate` | 1 | in flight |
+| `W110` | Developer 2 | `wt/dev2`, `fix/W111-W110-corroborate` | 1 | in flight |
 <!-- /inflight -->
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A

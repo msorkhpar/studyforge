@@ -11481,7 +11481,7 @@ Ruling 75 exists to stop.**
 
 ### ⛔ FINDINGS — round 41
 
-#### `PO-41/1` `[local]` The brief's *three merged rows* is TWO observation rows and ONE register cell
+#### PO-41/1 `[local]` The brief's *three merged rows* is TWO observation rows and ONE register cell
 
 ⛔ **RECEIVED from the coordinator: *"close the three merged rows' register
 cells"*.** ⭐ **MEASURED BY ME at `2d0cfe7`: the delimited observation table holds
@@ -11491,7 +11491,7 @@ merge was `chore/po-round40`, my own round, which is a record rather than a row.
 ⛔ **Obeying the count would have meant inventing a third cell to close.**
 **Measured:** by me, at the close ref. **accepted, no edit beyond the correct two.**
 
-#### `PO-41/2` `[structural]` The dangling-`rows/<ID>.md` population is FIVE, and the fifth is the same shape as the CTO's fourth
+#### PO-41/2 `[structural]` The dangling-`rows/<ID>.md` population is FIVE, and the fifth is the same shape as the CTO's fourth
 
 ⛔ **MEASURED BY ME at `2d0cfe7` with Ruling 201's own fenced command, the whole
 population printed before the scalar:**
@@ -11528,7 +11528,7 @@ of one grep.** ⚠️ **The PO's round-40 count was `3`, the CTO's `4`, mine `5`
 `W78`'s INSTRUMENT rather than for a fourth hand count.**
 **Measured:** by me at `2d0cfe7`, population printed in full. **ROUTED — `W78`, widened with the fifth member named in the row file.**
 
-#### `PO-41/3` `[structural]` The generated index converts three TRUE empties into FALSE PASSES in check 3
+#### PO-41/3 `[structural]` The generated index converts three TRUE empties into FALSE PASSES in check 3
 
 ⛔ **The measurement is in `W91/6`'s pricing above and is not repeated here.**
 ⭐ **The finding is that the CTO scoped the exclusion to *`W88` and every future
@@ -11539,7 +11539,7 @@ real artifact; what is broken is the DETECTION, and that is exactly the class
 Ruling 200 exists for.**
 **Measured:** by me at `2d0cfe7`, all 207 rulings swept, control and impossible rows taken. **ROUTED to the CTO** — ⛔ **one `grep -v` in `board.md`'s own fenced command; REFUSED as a PO edit on `PO-40/3`'s ratified precedent.**
 
-#### `PO-41/4` `[structural]` `navigation.py` is EIGHT lines from R11's ceiling, and the board's standing condition is the only thing that says so
+#### PO-41/4 `[structural]` `navigation.py` is EIGHT lines from R11's ceiling, and the board's standing condition is the only thing that says so
 
 ⛔ **MEASURED BY ME at `2d0cfe7`, host-verified, the whole near-ceiling population
 printed and the sweep run over BOTH sides of the gate:**
@@ -11563,7 +11563,7 @@ will announce until it is zero, and `SF-16`'s wave is when it will be tested.**
 ⭐ **`W40` owns the headroom question and `W67` owns the test module.**
 **Measured:** by me, both sides of the gate. **ROUTED — named in M3 step 3.1's open above, and no new row: `W40`, `W67` and the standing decision cover all three files.**
 
-#### `PO-41/5` `[none]` Ruling 198 is charged against the COORDINATOR, and I am recording it rather than carrying it
+#### PO-41/5 `[local]` Ruling 198 is charged against the COORDINATOR, and I am recording it rather than carrying it
 
 ⛔ **RECEIVED and recorded as instructed: *a brief that pins a STATE is the same
 defect family as one that pins a stale number*, four instances in one brief, and
@@ -11575,3 +11575,116 @@ dangling population of `PO-41/2`** — ⭐ **which is the rule working as intend
 every ruling number, line number and claim in a brief is RECEIVED until measured.**
 **Measured:** the two that did not reproduce are measured above. **accepted — recorded against the coordinator, not against an office that obeyed it.**
 
+
+#### PO-41/6 `[local]` A `Commits ahead` cell was true THREE TIMES with THREE DIFFERENT VALUES inside one round
+
+⛔ **MEASURED BY ME, three readings of one cell while writing this record, each
+with the tip it was taken at:**
+
+```text
+first  reading  fix/W74-sibling-runnable  0 ahead   (wt/dev1 at 2d0cfe7)
+second reading                            2 ahead   (tip f81fd44)
+third  reading                            3 ahead   (tip 466a9fc)
+FOURTH reading, taken with dev2's in ONE command immediately before the commit:
+               fix/W74-sibling-runnable   4 ahead, 0 behind
+               fix/W111-W110-corroborate  1 ahead, 0 behind  (it was 0 all round)
+⛔ THE CELLS NAME THE FOURTH READING AND I STOPPED THERE ON PURPOSE: a fifth
+   re-take would move the ref again, which is the regress Ruling 97 names.
+⭐ And between the first two, wt/dev1 held `trial/W74-merge-reading` at the same
+   tip — a single-parent branch, so NOT a trial merge — while the row claimed
+   `fix/W74-sibling-runnable`. `corroborate` printed BOTH facts, on two lines,
+   and compared neither: ⛔ `checkouts ['wt/dev1']` beside
+   `dispatched and UNNAMED by any row: trial/W74-merge-reading`.
+⭐ REPORTED, NOT TOUCHED (Ruling 206(ii)); attribution taken from the commit
+   graph — `git rev-list --parents -n1` showed ONE parent, so it was the
+   developer's own working branch, and they had removed it by my next reading.
+```
+
+⭐ **THE CELL IS WRITTEN AT MY LAST READING AND THE AS-OF IS WHAT MAKES IT A
+READING RATHER THAN A CONTRADICTION** (`PO-30/2`). ⛔ **But three true values in
+one round is the strongest evidence yet that this column's VALUE is not the
+number: it is the CONTRADICTION the number enables — `Checkout = none ∧ ahead =
+0` — which is Ruling 189(b)'s whole subject.** ⚠️ **A reviewer who diffs the
+number against `git` an hour later is not finding a defect, and an instrument
+that refuted on that difference would fire on every wave.**
+**Measured:** by me, three times, each with its tip. **ROUTED — `W110`'s neighbourhood (its second clause is the uncompared checkout claim), and PRINTED here rather than rowed: the as-of already covers it and a new rule would be one that fires on correct work.**
+
+### ⭐ THE FINAL READINGS — BASE, MERGE, and the three-reading discipline on this round's own instrument
+
+⛔ **BASE is the close ref and MERGE is a TRIAL MERGE, `--no-ff`, in a throwaway
+DETACHED worktree OUTSIDE every checkout** (Ruling 153) — ⭐ **and *the branch tree
+IS the merge tree* is MEASURED by comparing tree objects, never inferred from the
+position:**
+
+```text
+0 behind / 1 ahead      merge base == release tip == 2d0cfe7   (Ruling 197(a))
+merge commit 171a1c3   merge exit 0, 0 conflicts
+merge    tree f8dd8ec900fc93c97ec840803f95ec061317b548
+branch   tree f8dd8ec900fc93c97ec840803f95ec061317b548   ⭐ BYTE-IDENTICAL
+release  tree 0a9e4d47a5d00573b679766fcd92e99e2be193d8
+```
+
+| reading | ⛔ **BASE `2d0cfe7`, role `wt/po`** | ⭐ **MERGE `171a1c3`, role trial** |
+|---|---|---|
+| suite | 4856 passed, 67 skipped, exit 0 | ⭐ **4856 passed, 67 skipped, exit 0** |
+| `quality floor` | clean, exit 0 | ⭐ **clean, exit 0** |
+| `ruff` 0.16.6 | check clean, format clean, **764** | clean, clean, **766** |
+| document pointers | 672 in 318, 379 anchored, **0 unresolved** | 689 in **320**, 387 anchored, **0 unresolved** |
+| board | 109 register / 71 live / 71 detail | ⭐ **112 / 73 / 73** |
+| narrative / widest / total | 6326 of 8192 · 510 · 35050 of 38976 | ⭐ **6095** · 510 · 35682 of 39648 |
+| observation locator | `delimited`, 2 rows | ⭐ **`delimited`, 3 rows** |
+| rulings index | 207 from 38 records, tail 207 | ⭐ **207 from 38 records, tail 207** |
+| `corroborate` | ⛔ **2 of 2 REFUTED, exit 1** | ⭐ **0 of 3 REFUTED, exit 0** |
+
+⭐ **EVERY DELTA RECONCILES, and a PO round that moved the suite would be a defect
+rather than an achievement:**
+
+```text
+suite         4856 + 0                                        = 4856  ⭐ measured
+skips           67 + 0                                         = 67    ⭐ measured
+markdown       318 + 3 (W112-W114) - 1 (W91 deleted)           = 320   ⭐ measured
+                   ⚠️ this record's own handoff is NOT in that tree — see below
+ruff format    764 + 3 - 1                                     = 766   ⭐ measured
+                   ⛔ ruff formats MARKDOWN as well as Python — W104's subject
+register       109 + 3 mints                                   = 112   ⭐ measured
+                   ⭐ a CLOSE does not remove a register row
+live rows       71 + 3 - 1 (W91 closed)                        = 73    ⭐ measured
+detail files    71 + 3 - 1 (rows/W91.md deleted)               = 73    ⭐ BIJECTIVE
+narrative     6326 - 231 (In flight and the queue REPLACED, not appended) = 6095
+rulings index  207 + 0  ⭐ AND THAT IS A MEASURED ANSWER, not an absence:
+   `derive.py:86-88` sets RECORD_DIR = "docs/tasks/handoffs" and `records()`
+   globs `CTO-*.md`, so Ruling 203's coupling reaches the CTO's office ALONE.
+   ⛔ A PO or developer record CANNOT make the index stale.
+```
+
+⛔ **THE THREE READINGS ON THIS ROUND'S OWN INSTRUMENT — `corroborate` — with
+every expectation written BEFORE the command and the plant taken on a COMMITTED
+tree** (Ruling 202):
+
+```text
+LIVE        the board as committed        -> ⭐ 0 of 3 REFUTED, exit 0
+PLANTED     W74's branch cell -> feat/SF-30-reader-state (MERGED d930b79, held by
+            no checkout)                 -> ⛔ 1 of 3 REFUTED, exit 1
+            "⛔ REFUTED: feat/SF-30-reader-state is MERGED at d930b79, is 0 ahead,
+             and no checkout holds it."            [expected, and exact]
+IMPOSSIBLE  W74's branch cell -> a branch name that exists nowhere
+                                         -> ⛔ 1 of 3 REFUTED, exit 1, and the
+            SENTENCE DIFFERS: "the row names no branch this checkout has. An
+            assertion owes its own observation (Ruling 189(c))", with
+            `unresolved ['…']` printed    [expected, and it must DIFFER]
+RESTORED from the HOST and VERIFIED BY READING THE TREE (Ruling 205):
+            md5sum -c -> OK · git status --porcelain -> 0 lines ·
+            git diff -> 0 lines · the cell re-read in the file
+⛔ The restore was NOT run inside the container: `docker/dev/check:48` mounts the
+   git common dir `:ro` and `git checkout --` there exits 128 while the file
+   stays modified. ⭐ RECEIVED from the CTO's Ruling 205 and NOT re-inhabited by
+   me — a second office re-breaking a measured environment defect buys nothing.
+```
+
+⚠️ **AND THE ONE THING THIS RECORD CANNOT DO, stated rather than glossed:** ⛔ **the
+readings above were taken on `b5066ef`, which contains every board and row edit of
+this round but NOT this section and NOT the round's handoff.** ⭐ **The delta is
+prose in two files under `docs/tasks/`, the reproducible form is
+`git diff b5066ef..HEAD`, and re-running the suite to absorb a prose addition would
+move the ref again** — ⚠️ **which is the regress Ruling 97 names when it says a
+close quotes ITS OWN ref rather than the tip.**
