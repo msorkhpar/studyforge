@@ -275,6 +275,32 @@ def test_a_number_across_a_BLOCK_BOUNDARY_is_NOT_a_landing():
     assert cited_numbers(f"is a Ruling\n{probe}0 rounds") == set()
 
 
+def test_an_ORDERED_ITEM_at_ANY_number_is_a_boundary_and_never_a_citation():
+    # ⛔ **CTO round 65's required change, and it is the direction Ruling 65 ranks
+    # WORST: this INVENTED a citation.** ⚠️ The breaker was `1[.)]` — CommonMark's
+    # *only a list starting at one interrupts a paragraph* — which is true of a
+    # PARAGRAPH and false between two adjacent list ITEMS, where every number
+    # starts one. ⭐ 0 live instances, so it was LATENT; refused anyway, and
+    # MEASURED to cost nothing: over all 400 markdown files of this tree the
+    # widened breaker loses nothing and gains nothing.
+    probe = _fresh_probe()
+    assert cited_numbers(f"1. This is a Ruling\n2. {probe} things") == set()
+    assert cited_numbers(f"is a Ruling\n2. {probe} things") == set()
+    assert cited_numbers("is a Ruling\n10.") == set()
+
+
+def test_a_BRACKETED_ordinal_is_ADMITTED_because_the_house_wraps_a_paren():
+    # ⛔ **The other edge of the same boundary, declared rather than left silent.**
+    # ⭐ MEASURED: this tree wraps a parenthesised citation — `(Ruling` with `279)`
+    # beneath it — at `PO-2026-09-10-round25.md:173-174` and
+    # `SESSION-2026-09-11-coordinator-2.md:34-35`, and BOTH are real citations a
+    # `\d{1,4}[.)]` breaker would have thrown away. ⚠️ So `N)` is NOT a boundary,
+    # and this is what stops the next editor widening it back for symmetry.
+    assert cited_numbers("`PO-24/1`'s own control (Ruling\n  95) already showed this") == {95}
+    assert cited_numbers("a GATE only at its own tip (Ruling\n279) — that gate read 0") == {279}
+    assert cited_numbers("is a Ruling\n3) a thing") == {3}
+
+
 def test_an_UNCLOSED_code_span_ends_the_block_rather_than_carrying_a_MENTION():
     # ⛔ `strip_code_spans` is LINE-scoped, so a span opened on one line and
     # closed on the next survives it — and a join across that pair would carry a

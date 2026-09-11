@@ -110,9 +110,29 @@ is a CLOSED CLAIM** (Ruling 258):
 | either line leaves a code span OPEN | see below — a MENTION must not be joined |
 
 ⭐ **A line OPENS a block when it is a heading, a table row, a thematic break, a
-bullet item, or the `1.`/`1)` ordered item CommonMark lets interrupt a
-paragraph.** ⚠️ Only `1`, never `\d+`: `166. That is` mid-paragraph is a SENTENCE,
-and a `\d+[.)]` reading here would refuse the very wraps this reads.
+bullet item, or an ordered item — a number and a PERIOD.**
+
+⛔ **AND WHAT THAT ADMITS IS DECLARED, because a boundary list silent about its
+own edges is the invention the whole block exists to avoid** (Ruling 258, and
+Ruling 65: a predicate that MANUFACTURES a citation is worse than one that misses
+it, because a miss over-reports a hole and an invention reports a hole closed
+that is open). ⭐ **Two edges, both MEASURED rather than reasoned:**
+
+* ⛔ **`N.` breaks for EVERY `N`, not just `1`.** ⚠️ CommonMark lets only a list
+  starting at one interrupt a PARAGRAPH, and reading that rule straight INVENTED
+  a citation between two adjacent list ITEMS — `1. …a Ruling` over
+  `2. 7136 things` read `{2}`, with `Ruling\n10.` and the same shape at every
+  other number behind it. ⭐ **0 live instances, so it was LATENT — and it is
+  refused anyway, at a measured cost of NOTHING: over all 400 markdown files of
+  this tree the widened breaker loses nothing and gains nothing.**
+* ⛔ **`N)` is ADMITTED, and that is a choice with a price on it.** ⭐ The house
+  style wraps a parenthesised citation — `(Ruling` with `279)` beneath it — and a
+  `\d{1,4}[.)]` breaker throws those away: MEASURED, two live sites,
+  `docs/tasks/handoffs/PO-2026-09-10-round25.md:173-174` and
+  `SESSION-2026-09-11-coordinator-2.md:34-35`, **both REAL citations**. ⚠️ So
+  `Ruling\n3) a thing` reads `{3}`, an ordered item written with a bracket is not
+  a boundary, and both halves are asserted in the mirror so the next editor
+  cannot widen this by accident.
 
 ⛔ **AND AN UNCLOSED CODE SPAN ENDS THE BLOCK, which is the one way this could
 have weakened `W133`'s exclusion.** ⭐ `strip_code_spans` is LINE-scoped, so a
@@ -202,10 +222,20 @@ _BODY_TOKEN = re.compile(rf"(?P<member>{_MEMBER})|(?P<dash>[{_RANGE_DASHES}])")
 _QUOTE = re.compile(r"^(?P<quote>(?:[ \t]*>)*)(?P<body>.*)$")
 
 #: A line that OPENS a markdown block, so no citation reaches it from above.
-#: ⚠️ The ordered item is `1` alone and not `\d+`: CommonMark lets only a list
-#: starting at one interrupt a paragraph, and `166. That is` mid-paragraph is a
-#: SENTENCE — a `\d+[.)]` reading here would refuse the very wraps this reads.
-_OPENS = re.compile(r"[ \t]*(?:[#|]|[-*+][ \t]|1[.)][ \t]|(?:-{3,}|\*{3,}|_{3,})[ \t]*$)")
+#:
+#: ⛔ **The ordered item is ANY number with a PERIOD, and a `)` is NOT one**, and
+#: both halves are measured rather than reasoned (`W145`, CTO round 65):
+#:
+#: * ⛔ `1[.)]` — CommonMark's *only a list starting at one interrupts a
+#:   paragraph* — INVENTED a citation between two adjacent list items:
+#:   `1. …a Ruling` over `2. 7136 things` read `{2}`. ⭐ Widening to `\d{1,4}\.`
+#:   refuses it and costs NOTHING: measured over all 400 markdown files of this
+#:   tree, the reading loses nothing and gains nothing.
+#: * ⛔ `)` is DELIBERATELY ADMITTED, because the house style wraps `(Ruling\n279)`
+#:   — MEASURED, two live sites, `PO-2026-09-10-round25.md:173-174` and
+#:   `SESSION-2026-09-11-coordinator-2.md:34-35`, both REAL citations that a
+#:   `\d{1,4}[.)]` breaker would have thrown away.
+_OPENS = re.compile(r"[ \t]*(?:[#|]|[-*+][ \t]|\d{1,4}\.(?=[ \t]|$)|(?:-{3,}|\*{3,}|_{3,})[ \t]*$)")
 
 #: A line that is a block BY ITSELF, so no citation leaves it downward: a heading
 #: ends at its newline, and a table row cannot flow into the row beneath it.
