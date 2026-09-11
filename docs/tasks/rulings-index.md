@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **216 rulings, `1`–`216`, derived from 39 ruling records** —
+⭐ **222 rulings, `1`–`222`, derived from 40 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -261,3 +261,9 @@ procedure.
 | 214 | ⛔ Ruling 214 — A ROW THAT NAMES A MECHANISM IS RE-READ AGAINST EVERY RULING MINTED AFTER IT WAS WRITTEN, AND THE AMENDMENT IS ADDITIVE | heading | [round 52](handoffs/CTO-2026-09-10-round52.md#ruling-214-a-row-that-names-a-mechanism-is-re-read-against-every-ruling-minted-after-it-was-written-and-the-amendment-is-additive) |
 | 215 | ⛔ Ruling 215 — THE NO-PUSH RULE IS THE USER'S AND OUTRANKS THE REPOSITORY BOUNDARY; IT IS NOT `studyforge`'s TO ENFORCE BY CHANGING ANOTHER REPOSITORY'S CONFIGURATION | heading | [round 52](handoffs/CTO-2026-09-10-round52.md#ruling-215-the-no-push-rule-is-the-users-and-outranks-the-repository-boundary-it-is-not-studyforges-to-enforce-by-changing-another-repositorys-configuration) |
 | 216 | ⛔ Ruling 216 — AN AUTHORITY OWES A *NOT AUTHORITATIVE* STATE PER **ROW**, NOT ONLY PER PROCESS — `W110/3` ruled, and a second instrument independently demands it | heading | [round 52](handoffs/CTO-2026-09-10-round52.md#ruling-216-an-authority-owes-a-not-authoritative-state-per-row-not-only-per-process-w1103-ruled-and-a-second-instrument-independently-demands-it) |
+| 217 | ⛔ Ruling 217 — an UNSATISFIABLE acceptance clause is DECLARED AND DECLINED by the developer, never escalated; and Ruling 129 gains a THIRD admissible reading | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-217-an-unsatisfiable-acceptance-clause-is-declared-and-declined-by-the-developer-never-escalated-and-ruling-129-gains-a-third-admissible-reading) |
+| 218 | ⛔ Ruling 218 — `W64` is a RE-SCOPE, not a patch, and the reason is that BOTH routes to exit 0 are forbidden | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-218-w64-is-a-re-scope-not-a-patch-and-the-reason-is-that-both-routes-to-exit-0-are-forbidden) |
+| 219 | ⛔ Ruling 219 — `W64/2`'s remedy is a DERIVATION, not a declaration in 77 records — measured, and it retires the filed blocker | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-219-w642s-remedy-is-a-derivation-not-a-declaration-in-77-records-measured-and-it-retires-the-filed-blocker) |
+| 220 | ⛔ Ruling 220 — *refused by construction* is a claim about the TOKEN SET and owes the SHAPES it covers | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-220-refused-by-construction-is-a-claim-about-the-token-set-and-owes-the-shapes-it-covers) |
+| 221 | ⛔ Ruling 221 — an acceptance reading HANDED FORWARD owes its INSTRUMENT, not only its scalars | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-221-an-acceptance-reading-handed-forward-owes-its-instrument-not-only-its-scalars) |
+| 222 | ⛔ Ruling 222 — the Ruling 186 refusal is RATIFIED: a bounded NOTICE is discharged by ONE row over its whole population | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-222-the-ruling-186-refusal-is-ratified-a-bounded-notice-is-discharged-by-one-row-over-its-whole-population) |
