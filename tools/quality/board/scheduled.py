@@ -11,9 +11,10 @@ every run. ⛔ **It reads no `git` at all** — `W100` is a PURE TREE property a
 inherit a git dependency to get built (`board.md`, ruled round 49).
 
 **Depends on.** `register` for the cell parser, the markup normaliser and the ONE
-word-boundary rule; `contradiction` for `RULE_UNREADABLE`, because *a declared block
-that did not parse* is ONE concept and a second spelling of its code would be
-`CTO-47/3` a second time. ⛔ **Nothing else, ever.**
+word-boundary rule — `state(cell, words)`, whose vocabulary is a PARAMETER — and
+`contradiction` for `RULE_UNREADABLE`, because *a declared block that did not parse* is
+ONE concept and a second spelling of its code would be `CTO-47/3` a second time.
+⛔ **Nothing else, ever.**
 
 ## ⛔ The defect: a cell that carried an obligation and could not say what had happened to it
 
@@ -83,7 +84,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from tools.quality.board.contradiction import RULE_UNREADABLE
-from tools.quality.board.register import BOARD, cells, declared, normalised
+from tools.quality.board.register import BOARD, cells, normalised, state
 from tools.quality.report import Finding
 
 #: ⛔ The `## Scheduled` table is DELIMITED, and these are its markers — the
@@ -194,7 +195,7 @@ def _item(number: int, line: str, roles: dict[str, int]) -> Item | None:
         subject=columns[roles["subject"]],
         trigger=columns[roles["trigger"]],
         cell=cell,
-        declared=declared(cell, TRIGGER_STATES),
+        declared=state(cell, TRIGGER_STATES),
     )
 
 

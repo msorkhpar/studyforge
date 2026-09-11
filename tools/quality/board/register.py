@@ -179,15 +179,15 @@ def cells(line: str) -> list[str]:
     return cells
 
 
-def declared(cell: str, words: Iterable[str]) -> str | None:
-    """Return the word from `words` that `cell` DECLARES, or `None` when it declares none.
+def state(cell: str, words: Iterable[str] = STATES) -> str | None:
+    """Return the state a cell DECLARES from `words`, or `None` when it declares none.
 
     ⛔ The longest match wins, so `in-review` is never read as `in`, and the
     match ends on a WORD BOUNDARY, so `DONE-ish` declares nothing.
 
-    ⚠️ **`words` is a parameter because this board carries TWO closed vocabularies**
-    — `STATES` and `scheduled.py`'s trigger states (`W100`) — ⛔ **and a second copy
-    of the boundary rule is the defect this docstring opens with.**
+    ⚠️ **`words` is a PARAMETER because this board carries TWO closed vocabularies** —
+    `STATES` here and `scheduled.py`'s trigger states (`W100`) — ⛔ **and a second copy
+    of the boundary rule is the defect this module's docstring opens with.**
     """
     text = STATE_LEAD.sub("", cell).lower()
     for word in sorted(words, key=len, reverse=True):
@@ -201,11 +201,6 @@ def declared(cell: str, words: Iterable[str]) -> str | None:
             continue
         return word
     return None
-
-
-def state(cell: str) -> str | None:
-    """Return the register state a cell DECLARES, or `None` when it declares none."""
-    return declared(cell, STATES)
 
 
 def identifiers(cell: str) -> list[str]:
