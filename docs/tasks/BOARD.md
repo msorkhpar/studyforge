@@ -58,15 +58,18 @@ exit 1` against the table this replaces: `SF-16` was ABSORBED by the merge
 |---|---|---|---|---|
 | `W119` | framework agent | `wt/dev1`, `fix/W119-W100-board-instruments` | 0 | in flight |
 | `W100` | framework agent | `wt/dev1`, `fix/W119-W100-board-instruments` | 0 | in flight |
-| `W98` | framework agent | `wt/dev2`, `fix/W98-harness-regions` | 0 | in flight |
+| `W98` | framework agent | `wt/dev2`, `fix/W98-harness-regions` | 1 | in flight |
 <!-- /inflight -->
 
 ⛔ **A `0` ahead is legitimate and it is RULING 130'S CLASS, not a gap:** a branch
 with no commit is invisible to `--no-merged` by construction, so `corroborate`
-prints these checkouts under its *invisible to git BY CONSTRUCTION* arm and its
+prints such a checkout under its *invisible to git BY CONSTRUCTION* arm and its
 *dispatched and unnamed* arm reads `none`. ⚠️ **The as-of for a commits-ahead cell
-is the BRANCH TIP, never the release ref** — ⛔ **`PO-42/7`, and `W115` is where
-the instrument learns to compare the cell rather than only the row.**
+is the BRANCH TIP and never the release ref** — ⛔ **`W98`'s cell was written `0`
+and re-taken `1` at `495166b` INSIDE THIS ROUND, with no edit in between, because
+the developer committed.** ⭐ **`corroborate` returned `0 of 3 REFUTED, exit 0`
+against BOTH values: it corroborates the ROW and never the CELL** (`PO-42/7`
+reproduced, `PO-43/9`, and it is what `W115` is for).
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A
 RAMP** — ⭐ **a header is INFERRED, so an absent table is indistinguishable from a

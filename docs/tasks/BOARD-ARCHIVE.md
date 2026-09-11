@@ -12977,3 +12977,32 @@ lives only in a handoff.** ⚠️ **This is `CLAUDE.md`'s founding failure class
 decision that reached a record and no artifact — and its cost was paid THIS ROUND by
 `PO-43/2`.** ⛔ **ROUTED to the CTO with the wording supplied; clause (c)'s row is
 MINTED as `W125` and that half was MINE.**
+
+#### `PO-43/9` `[structural]` — `PO-42/7` REPRODUCED: a commits-ahead cell went from TRUE to FALSE inside this round, and `corroborate` returned exit `0` against both values
+
+⛔ **MEASURED BY ME, TWICE, inside one round, no plant, one variable — the developer
+committed:**
+
+```text
+when the In flight table was written   wt/dev2, fix/W98-harness-regions -> 0 ahead (f71c566)
+~40 minutes later, re-taken            wt/dev2, fix/W98-harness-regions -> 1 ahead (495166b)
+                                       wt/dev1, fix/W119-W100-…         -> 0 ahead, unmoved
+
+corroborate against the cell reading `0` -> ⭐ 0 of 3 REFUTED, exit 0
+corroborate against the cell reading `1` -> ⭐ 0 of 3 REFUTED, exit 0
+⛔ THE SAME ANSWER FOR A TRUE CELL AND A FALSE ONE.
+```
+
+⭐ **This is `PO-42/7` reproduced in the next round by a different developer on a
+different branch, which makes it a POPULATION rather than an incident.** ⛔ **The
+instrument corroborates the ROW — *is this branch live and checked out where the row
+says* — and is structurally blind to the NUMBER in the *Commits ahead* column.**
+⚠️ **So the one column on this board that is a pure reading is the one column no
+instrument reads**, and Ruling 231's merge-time gate does not close it either: a gate
+that exits `0` against a false cell gates nothing.
+
+⛔ **ROUTED — `rows/W115.md` already carries `PO-42/7` as a second clause added at
+mint time, and this is its second measured instance.** ⭐ **The cell is re-taken to `1`
+with its as-of named (`495166b`, the BRANCH TIP) because Ruling 231 requires the
+register to be true when it merges** — ⚠️ **and it will be false again the next time
+the developer commits, which is the argument for `W125` and not for a third re-take.**
