@@ -14258,6 +14258,8 @@ git status --porcelain -> 0 lines
 
 ⭐ **So the claim is not *the tip is unchanged* but *the tip READS THE SAME*, which is strictly stronger and cost one invocation** (round 45's form, credited). ⛔ **`PO-47/11` `[local]`: I wrote a property of my own commit before measuring it, which is `PO-46/16`'s root — a number written once and not re-taken — caught the same way, by re-taking.**
 
+⭐ **AND THE FIXED POINT IS THEN DEMONSTRATED RATHER THAN ASSERTED, which is the whole reason to re-take a third time.** ⛔ **MEASURED at `9aad78a`, the commit carrying this correction: `pointers 1086 in 370` — IDENTICAL to `dda674c`, because a correction made of prose adds no link. `PYTEST_EXIT=1` `2 failed, 5535 passed, 15 skipped`, 12 skip groups / 15 skips, `FLOOR_EXIT=0` clean, `CORROBORATE_EXIT=0`, `RUFF_CHECK_EXIT=0`, `RUFF_FORMAT_EXIT=0`, board `135 / 79 / 88`, `45577 of 49440`, rulings index `296` from `47`, porcelain `0`.** ⚠️ **`87a38cd` → `dda674c` moved the pointer total by two; `dda674c` → `9aad78a` moved nothing. THAT is the fixed point, and it is a reading rather than a promise.**
+
 ### ⛔ WHAT I DID NOT TOUCH
 
 - ⛔ **No edit to `tools/`, `src/`, `tests/`, `docker/` or `docs/conventions/`.** ⭐ **`tools/quality/reach.py` is `wt/dev1`'s this wave and `tests/test_knowledge_index.py` and `tools/workspace/` are `wt/dev2`'s. Every instrument clause is a CLAUSE OF A ROW.**
