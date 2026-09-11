@@ -89,6 +89,16 @@ to say *this is unreadable BY CONSTRUCTION*, where a failure cannot be told from
 READABLE, EMPTY `<!-- inflight -->` block is still exit `0` and still says so in its own
 sentence** — *nothing is in flight* is a real answer, and a refusal there would fire on
 every wave the PO closed correctly (`board.md`, ruled round 50).
+
+## ⛔ `W132` — Ruling 265, and the FOURTH printed line, are `unclaimed.py`'s
+
+⚠️ **Ruling 130's exemption was gated on `0` commits ahead, and an office's own round
+branch stops satisfying that the moment it records anything** — ⛔ **so the
+`dispatched and UNNAMED` line named a `chore/{po,cto}-round*` branch in every wave,
+forever, and Ruling 264(c) had just made that line the project's ONE pre-merge gate.**
+⭐ **The predicate, the measurement in both states, and the split this row took are all
+in `unclaimed.py`** — one home, not two.
+
 """
 
 from __future__ import annotations
@@ -102,26 +112,18 @@ from tools.quality.board.graph import Graph
 from tools.quality.board.observation import (
     DELIMITED,
     INFLIGHT_OPEN,
-    Observation,
     Table,
     asserted,
     read,
 )
 from tools.quality.board.register import BOARD
+from tools.quality.board.unclaimed import spent, unnamed
 from tools.quality.board.verdict import Answer, Verdict, claim, tokens, verdict
 
 #: The branch every *commits ahead* cell on this board counts against. ⭐ A
 #: default rather than a constant: `--release` overrides it, because a milestone
 #: branch is a fact about this month and not about the instrument.
 RELEASE = "release/m0-foundations"
-
-#: ⛔ Branch namespaces whose members are DELETED once they are ancestors of the
-#: release branch. ⚠️ **The standing form, measured by the CTO at `0285a92` and
-#: `c3e2919`:** such a branch carries nothing unique, is invisible to
-#: `--no-merged` by construction, and its only remaining effect is ⭐ **to read as
-#: dispatched work to a human — which is Ruling 189's subject with no board cell
-#: to print it in.** ⛔ **So this instrument is where it gets printed.**
-SPENT = ("trial/", "tmp-")
 
 CORROBORATED = 0
 REFUTED = 1
@@ -166,7 +168,10 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     if refused is not None:
         return [*lines, refused], NOT_AUTHORITATIVE
 
-    refuted = unanswerable = 0
+    # ⛔ `PO-46/14`: the two ROW verdicts that fold into the exit code are NAMED, and named
+    # EVEN WHEN EMPTY. ⭐ Lists rather than counters, because a count is what they were.
+    refuted_rows: list[str] = []
+    unanswerable_rows: list[str] = []
     for row in table.rows:
         asserted_by = claim(row, graph, live)
         lines.append(
@@ -196,12 +201,16 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
         # branches git could not read is a row this run cannot judge, and folding it onto
         # `REFUTED` is the FALSE REFUTATION the row exists to close.
         if Answer.NOT_ANSWERABLE in answers:
-            unanswerable += 1
+            unanswerable_rows.append(row.subject)
         elif Answer.REFUTED in answers:
-            refuted += 1
-    unread_lines, unread = _unnamed(table.rows, live, graph)
+            refuted_rows.append(row.subject)
+    refuted, unanswerable = len(refuted_rows), len(unanswerable_rows)
+    # ⛔ `PO-46/14`, and it goes BEFORE the other-direction lines so the rows are read before
+    # the branches. ⭐ Only over a population that READ: a refused table returned above.
+    lines.extend(_fold_lines(refuted_rows, unanswerable_rows, table))
+    unread_lines, unread = unnamed(table.rows, live, graph)
     lines.extend(unread_lines)
-    lines.extend(_spent(graph, live))
+    lines.extend(spent(graph, live))
     lines.append(
         f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git, "
         f"{unanswerable} NOT ANSWERABLE and {unread} live checkout(s) git could not "
@@ -223,6 +232,57 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
         )
         return lines, NOT_AUTHORITATIVE
     return lines, REFUTED if refuted else CORROBORATED
+
+
+def _fold_lines(refuted: list[str], unanswerable: list[str], table: Table) -> list[str]:
+    """`PO-46/14`: NAME the two row verdicts the exit code folds — ⛔ even when empty.
+
+    ⛔ **THE DEFECT, and the office that caused it disclosed it: a round-45 brief demanded
+    *"the refuted list printed even when empty (Ruling 264(a)'s form)"* and THAT OUTPUT DID
+    NOT EXIST.** ⚠️ **A plausible line was written to satisfy the instruction and a review
+    reproduced every figure around it without catching the line itself** — ⭐ **a fabricated
+    REQUIREMENT induced a fabricated MEASUREMENT, which is Ruling 264(a)'s own subject.**
+
+    ⭐ **MEASURED by me at `51dee3b`, role `wt/dev1`, confirming `PO-46/14` on my branch:**
+
+    ```text
+    grep -rn "REFUTED ROWS" tools/ src/ tests/   ->  ABSENT, exit 1
+    quoted in                                    ->  docs/tasks/BOARD-ARCHIVE.md
+                                                     docs/tasks/handoffs/PO-2026-09-11-round45.md
+    populations printing an EMPTY form already    ->  5, all in unclaimed.py
+    populations the EXIT CODE folds               ->  3: refuted rows, unanswerable rows,
+                                                     unreadable checkouts — and only the
+                                                     THIRD had a list or an empty form
+    ```
+
+    ⛔ **So the asymmetry was not four-versus-one: it was that the two ROW verdicts — the
+    ones whose counts ARE the exit code — were COUNTERS with no population at all, while
+    five branch-side readings each named theirs and said `none.` when empty.**
+
+    ⚠️ **BOTH row verdicts get a line, not just the refuted one.** ⭐ **Ground: the clause
+    names *"the one whose count IS its exit code"*, and Ruling 216 made that fold
+    THREE-valued — so fixing the refuted half alone would ship the identical asymmetry one
+    population over, which is Ruling 258's shape (a list read as exhaustive that is not).**
+
+    ⛔ **The subjects are printed as the board WROTE them** — `` `W126` `` with its
+    backticks — ⚠️ **because a reader greps the board for what this line says, and
+    normalising here would hand them a string the board does not contain.**
+    """
+    if not table.rows:
+        # ⭐ The DECLARED, READ, EMPTY block keeps its ONE sentence and gains no second
+        # one: *nothing is in flight* is a real answer, and two lines saying `none.` about
+        # no population at all is the `0 = 0` this whole idiom exists to refuse (Ruling 48).
+        return []
+    return [
+        f"  ⛔ rows REFUTED by git ({len(refuted)}): {' '.join(refuted)}"
+        if refuted
+        else "  rows refuted by git: none.",
+        f"  ⛔ rows NOT ANSWERABLE ({len(unanswerable)}): {' '.join(unanswerable)} — ⚠️ git "
+        f"could not count, which is neither *the board is right* nor *the board is wrong* "
+        f"(Ruling 216)"
+        if unanswerable
+        else "  rows git could not answer about: none.",
+    ]
 
 
 def _refusal(table: Table) -> str | None:
@@ -253,87 +313,6 @@ def _refusal(table: Table) -> str | None:
             f"nothing being in flight (Ruling 191(a))."
         )
     return None
-
-
-def _unnamed(
-    rows: tuple[Observation, ...], live: dict[str, str], graph: Graph
-) -> tuple[list[str], int]:
-    """Report the other direction: work git can see that the board does not name.
-
-    ⛔ **The measured failure was BIDIRECTIONAL** — stale rows present and live
-    rows absent, in the same table — ⚠️ **and a check that only read the rows the
-    board printed would have passed the half where the board printed nothing.**
-
-    ⛔ **And the BLIND SPOT is printed rather than implied.** ⚠️ **A checkout with
-    no commit is invisible to every git instrument BY CONSTRUCTION** (Ruling 130,
-    and Ruling 171's founding case): *just dispatched* and *office checkout* are
-    the same bytes to `git`. ⭐ **So those are COUNTED AND NAMED as unreadable
-    here, never silently dropped and never judged** — the board is the only
-    instrument that can tell them apart, which is the whole of Ruling 171.
-
-    ⛔ **Directory BASENAMES, never the path** (R7): `git worktree list` answers
-    in absolute paths, and an absolute path carries the user's home directory.
-
-    ⛔ **`W115`: the coercion that lived here was `ahead(branch) or 0`**, which filed a
-    FAILED reading under *invisible to git BY CONSTRUCTION* — ⚠️ **the one line whose
-    whole job is to say *this is unreadable*, and where a failure is indistinguishable
-    from a legitimate `0`.** ⭐ **It gets its own line and its own count now, and the
-    count is RETURNED so the caller's fold can reach exit `NOT_AUTHORITATIVE`**
-    (Ruling 216).
-    """
-    claimed = {name for row in rows for name in tokens(row.checkout)}
-    counts = {branch: graph.ahead(branch) for branch in live if branch != graph.release}
-    unread = sorted(Path(live[b]).name for b, n in counts.items() if n is None)
-    missing = sorted(b for b, n in counts.items() if n is not None and n > 0 and b not in claimed)
-    blind = sorted(Path(live[b]).name for b, n in counts.items() if n == 0 and b not in claimed)
-    lines = (
-        [f"  ⛔ dispatched and UNNAMED by any row: {' '.join(missing)}"]
-        if missing
-        else ["  dispatched and unnamed: none."]
-    )
-    lines.append(
-        f"  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no "
-        f"row: {len(blind)}" + (f" — {' '.join(blind)}" if blind else "")
-    )
-    lines.append(
-        f"  ⛔ git COULD NOT COUNT *commits ahead* for {len(unread)} live checkout(s): "
-        f"{' '.join(unread)} — ⚠️ a FAILED reading, and NOT the Ruling 130 exemption above: "
-        f"that one is earned by a checkout with no commit, this one is git declining to "
-        f"answer. ⛔ `ahead(branch) or 0` used to fold these two together, so a failure "
-        f"read as a `0` somebody had already agreed to ignore."
-        if unread
-        else "  live checkouts git could not count: none."
-    )
-    return lines, len(unread)
-
-
-def _spent(graph: Graph, live: dict[str, str]) -> list[str]:
-    """`trial/*` and `tmp-*` branches that are now ancestors of the release branch.
-
-    ⚠️ **Ruling 206(ii) named this line's own blind spot and routed it here:** a
-    trial worktree that is STILL CHECKED OUT is excluded by `name not in live`, so
-    the one shape that keeps a spent row green is the one shape this line cannot
-    print. ⭐ **It is printed now, separately and as a NOTICE**, because removing a
-    worktree you did not cut is always wrong and reporting one never is.
-    """
-    names = [name for name in graph.heads() if name.startswith(SPENT)]
-    spent = sorted(name for name in names if name not in live and graph.merged(name))
-    standing = sorted(name for name in names if name in live)
-    lines = (
-        [
-            f"  ⚠️ spent and deletable ({len(spent)}): {' '.join(spent)} — each is an ancestor "
-            f"of {graph.release}, checked out nowhere, and reads as dispatched work to a human."
-        ]
-        if spent
-        else ["  spent trial/tmp branches: none."]
-    )
-    lines.append(
-        f"  ⚠️ trial/tmp branches STILL CHECKED OUT ({len(standing)}): {' '.join(standing)} — "
-        f"⛔ report, never remove one you did not cut (Ruling 206(ii))."
-        if standing
-        else "  trial/tmp branches still checked out: none."
-    )
-    return lines
 
 
 def main(argv: list[str] | None = None) -> int:

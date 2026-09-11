@@ -37,7 +37,7 @@ from tools.quality.board.register import (
     repeats_its_naming,
     row_order,
 )
-from tools.tests.quality.board.test_init import CLOSED, FOOTER, HEADER, LIVE, _tree
+from tools.tests.quality.board.test_bijection import CLOSED, FOOTER, HEADER, LIVE, _tree
 
 # --------------------------------------------------------------------------
 # ⛔ Ruling 183 — `rows/` is printed with its BYTES, and the three readings

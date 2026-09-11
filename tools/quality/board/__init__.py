@@ -11,9 +11,17 @@ observation anywhere on the board to corroborate it** (Ruling 189(b)).
 `board_state(root)` is registered in `NOTICES` and prints the population every
 run, because a `0` with no denominator is `0 = 0` (Ruling 48).
 
-**Depends on.** `register` for the parser, `notice` for the population,
-`observation` for the observation table and `contradiction` for Ruling 189(b)'s
-rules over it, `config` for the tree and `report` for the answer. Nothing else.
+**Depends on.** ⭐ **the four ARMS and nothing else** — `bijection`, `bounds`,
+`contradiction` and `scheduled` — plus `notice` for the population, `register` and
+`observation` for the names it re-exports, `config` for the tree and `report` for the
+answer.
+
+⛔ **THIS MODULE JUDGES NOTHING ITSELF, and that is how `W129`, `W130` and `W132`
+discharge the standing SPLIT decision** (`docs/tasks/BOARD.md`, *Standing decisions*).
+⚠️ **The bijection, the states and the frames were the one arm still living in the
+package SURFACE, for no reason but that they were there first** — ⭐ **they are
+`bijection.py` now, and `check_board` is one file read and the composition of four
+arms.**
 
 ## ⛔ Why this exists, and the number is the argument
 
@@ -32,13 +40,16 @@ document that governs the board.
 ## ⭐ The four arms, and each one is a module rather than a paragraph of this one
 
 ⛔ **`docs/tasks/BOARD.md` carries a standing decision that the next row touching
-this file SPLITS IT**, and `W100` is that row. ⭐ **The seam is the one the three
-existing modules already drew: an arm reads the board AS A REGISTER or it reads it
-AS A FILE.**
+this file SPLITS IT.** ⚠️ **`W100` was that row once and split two arms out;
+`W129`, `W130` and `W132` are that row now and they split the LAST one out.** ⭐ **The
+seam is the one the existing modules already drew: an arm reads the board AS A REGISTER,
+AS A FILE, AS AN OBSERVATION TABLE or AS A SCHEDULE — ⛔ and the package surface reads
+it as NONE of those, because a surface composes.**
 
 | Arm | Module | Its subject |
 |---|---|---|
-| the bijection, the states, the frames | ⭐ **here** | a row's argument has one home |
+| the bijection, the states, the frames | ⭐ **`bijection.py`** | a row's argument has
+  one home — ⛔ **and Ruling 270's STUB is its one exception** |
 | the three SIZE bounds | `bounds.py` | ⛔ **the board as a FILE**, and no bound is a
   line count |
 | the observation table | `contradiction.py` | Ruling 189(b), a contradiction on one row |
@@ -92,10 +103,25 @@ state (Ruling 80), and a branch position is the purest untracked state there is.
 
 from pathlib import Path
 
+from tools.quality.board.bijection import (
+    RULE_DETAIL,
+    RULE_DUPLICATE,
+    RULE_FRAME,
+    RULE_ORPHAN,
+    RULE_STATE,
+    bijection_findings,
+)
 from tools.quality.board.bounds import (
+    BOARD_FRAME,
+    BOARD_NARRATIVE_CEILING,
+    BOARD_PER_OBSERVATION_ROW,
+    BOARD_PER_ROW,
+    BOARD_PER_SCHEDULED_ROW,
+    BOARD_ROW_CEILING,
     RULE_NARRATIVE,
     RULE_SIZE,
     RULE_WIDTH,
+    allowance,
     size_findings,
 )
 from tools.quality.board.contradiction import (
@@ -115,17 +141,15 @@ from tools.quality.board.observation import (
     STARTED,
 )
 from tools.quality.board.register import (
+    ARCHIVE,
     BOARD,
-    BOARD_FRAME,
-    BOARD_NARRATIVE_CEILING,
-    BOARD_PER_ROW,
-    BOARD_ROW_CEILING,
     REGISTER_CLOSE,
     REGISTER_OPEN,
     ROW_FRAME,
     ROWS,
     STATES,
     is_closed,
+    redirects_to_the_archive,
     register,
     state,
 )
@@ -136,21 +160,31 @@ from tools.quality.board.scheduled import (
     TRIGGER_STATES,
     scheduled_findings,
 )
-from tools.quality.config import read_text, relative
+from tools.quality.config import read_text
 from tools.quality.report import Finding
 
-RULE_DETAIL = "board-detail"
-RULE_ORPHAN = "board-orphan"
-RULE_DUPLICATE = "board-duplicate"
-RULE_STATE = "board-state"
-RULE_FRAME = "board-frame"
+# ⛔ **Every name below is a RE-EXPORT and nothing here is defined twice.** ⚠️ **Four of
+# them — `rows_on_disk`, `is_closed`, `register`, `state` — were CALLED here until `W129`
+# moved `check_board`'s body into `bijection.py`; ⭐ they stay in `__all__` because the
+# package surface is what callers import, and a name silently dropped from it is a
+# breaking change nothing would have reported.**
+#
+# ⛔ **The five rule codes moved to `bijection.py` with the arm that RAISES them**, and
+# that is `CTO-47/3`'s own rule applied rather than merely obeyed: ⭐ **a code is declared
+# where its finding is raised — `bounds.py`, `contradiction.py` and `scheduled.py` have
+# always done it that way — and this module RE-EXPORTS all thirteen so a caller still
+# meets one surface.** ⚠️ **`register.py` once declared seven it never used, which is the
+# defect that ruling is about; these are used at their new home.**
 
 __all__ = [
     "ABSENT",
+    "ARCHIVE",
     "BOARD",
     "BOARD_FRAME",
     "BOARD_NARRATIVE_CEILING",
+    "BOARD_PER_OBSERVATION_ROW",
     "BOARD_PER_ROW",
+    "BOARD_PER_SCHEDULED_ROW",
     "BOARD_ROW_CEILING",
     "INFLIGHT_CLOSE",
     "INFLIGHT_OPEN",
@@ -178,23 +212,32 @@ __all__ = [
     "STARTED",
     "STATES",
     "TRIGGER_STATES",
+    "allowance",
+    "bijection_findings",
     "board_state",
     "check_board",
+    "is_closed",
+    "redirects_to_the_archive",
+    "register",
+    "rows_on_disk",
+    "state",
 ]
 
 
 def check_board(root: Path) -> list[Finding]:
-    """Report every way this board has stopped being a register.
+    """Report every way this board has stopped being a register — ⛔ FOUR ARMS, composed.
 
-    ⛔ **The bijection is asserted in BOTH directions**, and that is deliberate:
-    a live row with no detail file is an argument with no home, and a detail
-    file with no row is a file nobody will ever be sent to. ⭐ One of the two
-    always survives a careless edit, which is exactly why the check that only
-    looks one way is the one that misses.
+    ⭐ **This function decides nothing.** ⛔ **It reads the board ONCE and hands the same
+    string to every arm**, which is what stops two arms disagreeing about what the file
+    said — ⚠️ **the shape `size_findings` already refused for its denominator, applied to
+    the text itself.**
 
-    ⚠️ **Ruling 189(b)'s three rules are asserted in both directions for the same
-    reason** — ⛔ **a stale row PRESENT and a live row ABSENT are one defect with
-    two shapes, and the measured failure showed both at once.**
+    | the arm | its module | what it reads the board as |
+    |---|---|---|
+    | the bijection, the states, the frames | `bijection.py` | a REGISTER |
+    | the three size bounds | `bounds.py` | a FILE |
+    | Ruling 189(b)'s four rules | `contradiction.py` | an OBSERVATION TABLE |
+    | `W100`'s trigger rule | `scheduled.py` | a SCHEDULE |
     """
     text = read_text(root / BOARD)
     if text is None:
@@ -207,90 +250,12 @@ def check_board(root: Path) -> list[Finding]:
         # knows the answer should be yes.
         return []
 
-    findings: list[Finding] = []
-    on_disk = rows_on_disk(root)
-    seen: dict[str, int] = {}
-    expected: set[str] = set()
-
-    for number, ids, cell_state in register(text):
-        for identifier in ids:
-            if identifier in seen:
-                findings.append(
-                    Finding(
-                        BOARD,
-                        number,
-                        RULE_DUPLICATE,
-                        f"{identifier} already has a register row at line {seen[identifier]}. "
-                        f"An id gets ONE row; a second one is how a status disagrees with itself.",
-                    )
-                )
-            else:
-                seen[identifier] = number
-        if state(cell_state) is None:
-            findings.append(
-                Finding(
-                    BOARD,
-                    number,
-                    RULE_STATE,
-                    f"{ids[0]}'s state cell declares no state. Begin it with one of "
-                    f"{', '.join(sorted(STATES))} — ⛔ a cell that merely MENTIONS a "
-                    f"state word is how a live row silently leaves the register.",
-                )
-            )
-        if is_closed(cell_state):
-            continue
-        # The first id of a multi-id row owns the file; the rest ride with it.
-        expected.add(ids[0])
-        if ids[0] not in on_disk:
-            findings.append(
-                Finding(
-                    BOARD,
-                    number,
-                    RULE_DETAIL,
-                    f"{ids[0]} is not closed and has no {ROWS}/{ids[0]}.md. A live row's argument "
-                    f"is AMENDED, so it may not live in the archive, and it may not live in this "
-                    f"cell either.",
-                )
-            )
-
-    for identifier, path in on_disk.items():
-        body = read_text(path) or ""
-        if not body.startswith(f"# {identifier}\n") or ROW_FRAME not in body:
-            findings.append(
-                Finding(
-                    relative(path, root),
-                    1,
-                    RULE_FRAME,
-                    # ⛔ `CTO-47/4`: the message used to claim the file "states
-                    # which row it argues and that the naming, owner and state
-                    # are the board's". ⚠️ **The predicate is TWO SUBSTRINGS and
-                    # cannot read any of that.** ⭐ A weak predicate is the RIGHT
-                    # trade for amendment-proofness (R3's reading, round 47) —
-                    # the message must describe what is CHECKED, not what is
-                    # hoped, or the next reader debugs the wrong claim.
-                    f"does not begin with the line `# {identifier}`, or does not contain "
-                    f"the phrase {ROW_FRAME!r}. ⚠️ Those TWO SUBSTRINGS are the whole "
-                    f"predicate: it does not read what the file SAYS about its naming, "
-                    f"owner or state. ⭐ That weakness is deliberate — a frame survives "
-                    f"every amendment, which is what lets anything at all be required of "
-                    f"a file the PO is told to edit freely. ⛔ Open `# {identifier}` and "
-                    f"state that the row's naming, owner and state are the board's.",
-                )
-            )
-        if identifier not in expected:
-            findings.append(
-                Finding(
-                    relative(path, root),
-                    1,
-                    RULE_ORPHAN,
-                    f"{identifier} has a detail file and no live register row. Either the row "
-                    f"closed — in which case its argument belongs in BOARD-ARCHIVE.md — or the "
-                    f"register lost it.",
-                )
-            )
-
+    # ⛔ The board as a REGISTER — `bijection.py`, and Ruling 270's stub is its one
+    # exception. ⭐ It takes the ROOT as well as the text, because the other half of the
+    # bijection is on disk.
+    findings = bijection_findings(root, text)
     # ⛔ The board as a FILE rather than as a register — `bounds.py`, and the
-    # denominator is derived there rather than handed over (see `size_findings`).
+    # denominator is derived there rather than handed over (see `allowance`).
     findings.extend(size_findings(text))
     # ⛔ Ruling 189(b), and the two table arms are LAST because they are the only
     # rules here that read a table against another rather than a cell against a bound.

@@ -117,73 +117,6 @@ def test_planted_a_row_declaring_NO_STARTED_STATE_owes_no_carrier(repository: Pa
     assert "not a started state; no carrier is owed." in printed
 
 
-def test_planted_the_OTHER_direction_work_git_sees_and_the_board_does_not_name(
-    repository: Path,
-) -> None:
-    """⛔ The measured failure was BIDIRECTIONAL — stale rows present, live rows absent."""
-    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
-    _code, printed = _run(repository)
-    assert "dispatched and UNNAMED by any row: feat/live" not in printed, (
-        "feat/live has no checkout, so `worktree list` cannot see it either"
-    )
-    assert git(repository, "worktree", "add", "-q", str(repository.parent / "two"), "feat/live")
-    _code, printed = _run(repository)
-    assert "dispatched and UNNAMED by any row: feat/live" in printed
-
-
-def test_planted_a_spent_trial_branch_is_the_reading_no_board_cell_carries(
-    repository: Path,
-) -> None:
-    """⭐ The standing form, measured by the CTO at `0285a92` and `c3e2919`.
-
-    ⛔ **Such a branch carries nothing unique and is invisible to `--no-merged` by
-    construction** — ⚠️ **its only remaining effect is to read as dispatched work
-    to a human, which is Ruling 189's subject with no cell to print it in.**
-    """
-    write_board(repository, "")
-    _code, printed = _run(repository)
-    assert "spent and deletable (1): trial/spent" in printed
-    assert "ancestor of" in printed
-    assert "trial/tmp branches still checked out: none." in printed
-
-
-def test_planted_a_STANDING_trial_worktree_is_PRINTED_and_never_removed(
-    repository: Path,
-) -> None:
-    """⚠️ Ruling 206(ii) named this line's own blind spot, and it routed it to `W110`.
-
-    ⛔ **`name not in live` excluded exactly the shape that keeps a spent row
-    green** — a trial worktree still standing — ⭐ **so it is printed separately, as a
-    NOTICE**, because reporting a worktree you did not cut is never wrong and removing
-    one always is.
-    """
-    assert (
-        git(
-            repository, "worktree", "add", "-q", str(repository.parent / "t"), "trial/spent"
-        ).returncode
-        == 0
-    )
-    write_board(repository, "")
-    _code, printed = _run(repository)
-    assert "trial/tmp branches STILL CHECKED OUT (1): trial/spent" in printed
-    assert "never remove one you did not cut (Ruling 206(ii))" in printed
-    assert "spent trial/tmp branches: none." in printed, "it is no longer *deletable*"
-
-
-def test_the_blind_spot_is_COUNTED_AND_NAMED_rather_than_judged(repository: Path) -> None:
-    """⚠️ *Just dispatched* and *an office checkout* are the same bytes to `git`.
-
-    ⛔ **So a 0-commit checkout is named as UNREADABLE here** rather than reported
-    as a defect — ⭐ the board is the only instrument that can tell them apart,
-    which is the whole of Ruling 171.
-    """
-    assert git(repository, "worktree", "add", "-q", str(repository.parent / "office"), "feat/bare")
-    write_board(repository, "")
-    _code, printed = _run(repository)
-    assert "invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead" in printed
-    assert "office" in printed, "the directory BASENAME, which is what identifies it"
-
-
 def test_no_reading_prints_an_absolute_path(repository: Path) -> None:
     """⛔ R7: `git worktree list` answers in absolute paths and an absolute path is personal data.
 
@@ -288,10 +221,35 @@ def test_the_FOUR_populations_return_THREE_DISTINCT_codes_and_FOUR_distinct_sent
     ⭐ **All four populations are run in one test so the readings are compared rather
     than asserted one at a time** — ⚠️ which is what caught the two that used to share
     exit `0`.
+
+    ## ⛔ `W115/1` — THIS NAME OVER-CLAIMED, AND `W132` MADE IT TRUE BY MOVING THE POPULATION
+
+    ⚠️ **The `codes` dict asserted below used to read
+    `{CORROBORATED, CORROBORATED, NOT_AUTHORITATIVE, NOT_AUTHORITATIVE}`** — ⛔ **FOUR
+    populations, FOUR sentences and TWO distinct codes, under a name claiming THREE.**
+    ⭐ **The GATE was always sound: `REFUTED` is inhabited in four sibling tests and
+    three-way distinctness is asserted separately. Only the NAME over-claimed, which is
+    Ruling 208's class in a test name for the first time.**
+
+    ⛔ **THE NAME IS NOT RENAMED, and the ground is `W74/2`: a name two FROZEN records
+    quote is not renamed.** ⭐ **RECEIVED from the CTO's round-59 record §4b, MEASURED by
+    them at `b33e01a` — `handoffs/W111.md:134` and
+    `handoffs/CTO-2026-09-10-round52.md:731` both already carried this name on the day
+    `rows/W115.md` claimed it was cited by none, so the claim was false at the INSTANT it
+    was written rather than stale.** ⛔ **`W74/2` is the FIFTH unreversed refusal in its
+    family, so the rule binds and the remedy is the other one.**
+
+    ⭐ **So the DECLARED AND READ population is now a row git REFUTES, and the four
+    populations really do return three distinct codes.** ⚠️ **Nothing is lost: the
+    CORROBORATED-with-rows reading is
+    `test_planted_a_HELD_checkout_is_CORROBORATED_and_is_the_positive_row`'s, by name.**
     """
+    # ⛔ `fix/Wmerged` is TERMINAL in the fixture — absorbed by a `--no-ff` merge and
+    # checked out nowhere — so this population is REFUTED rather than CORROBORATED.
+    refuted = "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 1 | in flight |\n"
     row = "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n"
     readings = {}
-    write_board(repository, row)
+    write_board(repository, refuted)
     readings["declared and read"] = _run(repository)
     write_board(repository, "")
     readings["declared and empty"] = _run(repository)
@@ -307,11 +265,16 @@ def test_the_FOUR_populations_return_THREE_DISTINCT_codes_and_FOUR_distinct_sent
     readings["declared and unreadable"] = _run(repository)
     codes = {name: code for name, (code, _printed) in readings.items()}
     assert codes == {
-        "declared and read": CORROBORATED,
+        "declared and read": REFUTED,
         "declared and empty": CORROBORATED,
         "no marker at all": NOT_AUTHORITATIVE,
         "declared and unreadable": NOT_AUTHORITATIVE,
     }, codes
+    # ⛔ `W115/1`, discharged as a `W132` clause: the NAME says THREE and the reading is
+    # now THREE. ⭐ Asserted as a count of DISTINCT codes, derived rather than retyped, so
+    # the name cannot drift from the population again.
+    assert len(set(codes.values())) == 3, codes
+    assert len(codes) == 4, codes
     lasts = {name: printed.split("\n")[-1] for name, (_code, printed) in readings.items()}
     assert len(set(lasts.values())) == 4, lasts
 
@@ -482,3 +445,96 @@ def test_a_row_REFUTED_and_a_row_UNANSWERABLE_in_ONE_BOARD_exits_2_and_not_1(
     assert code == NOT_AUTHORITATIVE
     assert "1 of 2 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
     assert "REFUTED: fix/Wmerged is TERMINAL" in printed, "⭐ the refutation is still PRINTED"
+
+
+# --------------------------------------------------------------------------
+# ⛔ `PO-46/14` — the TWO ROW VERDICTS the exit code folds are NAMED, even when EMPTY
+# --------------------------------------------------------------------------
+
+
+def test_planted_the_REFUTED_ROWS_are_NAMED_and_the_other_fold_prints_its_EMPTY_form(
+    repository: Path,
+) -> None:
+    """⛔ `PO-46/14`: a round-45 brief demanded an output line that DID NOT EXIST.
+
+    ⚠️ **MEASURED at `51dee3b`, role `wt/dev1`: `grep -rn "REFUTED ROWS" tools/ src/ tests/`
+    is ABSENT (exit 1) while the string is quoted in `docs/tasks/BOARD-ARCHIVE.md` and
+    `docs/tasks/handoffs/PO-2026-09-11-round45.md`.** ⛔ **A fabricated REQUIREMENT induced a
+    fabricated MEASUREMENT, and a CTO review reproduced every figure around the line without
+    catching the line itself** — Ruling 264(a)'s own subject.
+
+    ⭐ **BOTH fold lines are asserted in ONE reading**, so the inhabited form and the empty
+    form are compared rather than asserted one at a time: ⛔ **`fix/Wmerged` is TERMINAL in
+    the fixture, so this row is REFUTED and NO row is unanswerable.**
+    """
+    write_board(repository, "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 1 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == REFUTED
+    assert "  ⛔ rows REFUTED by git (1): `W42`" in printed, printed
+    assert "  rows git could not answer about: none." in printed, (
+        "⛔ the OTHER fold population owes its empty form in the same reading"
+    )
+    # ⭐ The subject is printed as the BOARD WROTE it, backticks included, because a reader
+    # greps the board for what this line says.
+    assert "`W42`" in printed and "rows REFUTED by git (1): W42" not in printed
+
+
+def test_planted_NO_REFUTED_ROW_still_prints_the_LINE_which_is_the_whole_of_the_clause(
+    repository: Path,
+) -> None:
+    """⭐ THE DIRECTION THE CLAUSE IS ABOUT: the empty case PRINTS A LINE AT ALL.
+
+    ⛔ **Before this, a run with nothing refuted said nothing about refuted rows except a
+    `0` inside the closing summary** — ⚠️ **while FIVE branch-side populations each named
+    theirs and said `none.` when empty.** ⭐ **`feat/held` is the fixture's ahead-and-held
+    branch, so this row CORROBORATES and both fold lines are empty.**
+    """
+    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == CORROBORATED
+    assert "  rows refuted by git: none." in printed, printed
+    assert "  rows git could not answer about: none." in printed, printed
+
+
+def test_planted_an_UNANSWERABLE_ROW_is_NAMED_on_its_OWN_line_and_NOT_on_the_refuted_one(
+    repository: Path,
+) -> None:
+    """⛔ Ruling 216's third answer gets a POPULATION and not only a counter.
+
+    ⚠️ **Fixing the refuted half alone would have shipped the identical asymmetry one
+    population over**, which is Ruling 258's shape: a list read as exhaustive that is not.
+    ⭐ **`NOT_ANSWERABLE` DOMINATES, so this row is on its own line and the refuted line
+    reads `none.` — which is the pair that proves the two lines are not one line twice.**
+    """
+    branch = unreadable(repository, "fix/W4")
+    assert Graph.read(repository, RELEASE).ahead(branch) is None, "⛔ born vacuous"
+    write_board(repository, f"| `W42` | Dev | `wt/x`, `{branch}` | 0 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == NOT_AUTHORITATIVE
+    assert "  ⛔ rows NOT ANSWERABLE (1): `W42`" in printed, printed
+    assert "  rows refuted by git: none." in printed, (
+        "⛔ a row git could not read is NOT a refuted row — that fold is `W115`'s whole subject"
+    )
+
+
+def test_impossible_neither_FOLD_LINE_appears_for_a_population_that_does_not_EXIST(
+    repository: Path,
+) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the empty-form pass.
+
+    ⭐ **A DECLARED, READ, EMPTY `<!-- inflight -->` block keeps its ONE sentence and gains
+    no second one:** ⚠️ **two lines saying `none.` about a population that has no members to
+    have is the `0 = 0` the whole idiom exists to refuse** (Ruling 48). ⛔ **And a table that
+    did NOT READ refuses before the loop runs, so it cannot reach either line either.**
+    """
+    write_board(repository, "")
+    code, printed = _run(repository)
+    assert code == CORROBORATED
+    assert "refuted by git" not in printed, printed
+    assert "could not answer about" not in printed, printed
+    assert "DECLARED, READ, and carries no row" in printed, "⭐ the ONE sentence it does keep"
+    row = "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n"
+    write_board(repository, row, delimited=False)
+    ramp_code, ramp_printed = _run(repository)
+    assert ramp_code == NOT_AUTHORITATIVE
+    assert "refuted by git" not in ramp_printed, "⛔ a refusal returns before the fold"
