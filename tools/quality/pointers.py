@@ -76,6 +76,16 @@ unambiguously at a real heading and reads correctly to every human. ⚠️ The
 tolerant direction is also the *safe* direction for a check whose whole thesis
 is that a false positive gets it switched off.
 
+## ⛔ The question this module's `0 unresolved` does NOT answer (`W140`)
+
+⭐ **An anchor that names SIX headings resolves**, so nothing here reports it —
+and `heading_slugs` could not report it if it wanted to, because a set has
+folded the duplicates away by the time it returns. ⛔ **That is not a bug to be
+fixed in this module**: its callers ask *does this document answer to this
+anchor*, which is a set question. ⭐ **The fold is undone by `heading_bases`,
+and the census built on it lives in `tools/quality/collisions.py`** — a sibling
+that imports this module and is imported back by nothing.
+
 ## ⛔ Where this parser is knowingly not CommonMark
 
 ⭐ Stated rather than discovered later, and every one was measured against the
@@ -215,34 +225,57 @@ def slug(heading: str) -> str:
     return _HYPHEN_RUN.sub("-", text).strip("-")
 
 
-def heading_slugs(text: str) -> set[str]:
-    """Every anchor the document answers to, duplicates suffixed as GitHub does.
+def heading_bases(text: str) -> list[str]:
+    """Every heading's UNSUFFIXED slug, in document order, duplicates KEPT.
 
-    ⚠️ Fence-aware, and it has to be: a shell transcript inside a fence is
-    full of `#` comments, and reading those as headings would invent anchors
-    that no renderer offers.
+    ⛔ **The companion `heading_slugs` structurally cannot be** (`W140`). That
+    function answers *does this document answer to this anchor* — a set
+    question, correctly answered by a set — but a set has folded the
+    duplicates away before anyone can ask how many there were, which is why
+    the floor's `0 unresolved` is honest about a question nobody asked it.
+
+    ⭐ **`heading_slugs` is defined in terms of this**, so the two can never
+    disagree about what a heading is or how one slugs. The fold is the only
+    difference between them, and it is the difference `W140` needed removed.
     """
-    slugs: set[str] = set()
-    seen: dict[str, int] = {}
+    bases: list[str] = []
     for _number, line in prose_lines(text):
         match = _HEADING.match(line)
         if match is None:
             continue
         base = slug(match.group("text"))
-        if not base:
-            continue
+        if base:
+            bases.append(base)
+    return bases
+
+
+def heading_slugs(text: str) -> set[str]:
+    """Every anchor the document answers to, duplicates suffixed as GitHub does.
+
+    ⚠️ Fence-aware, and it has to be: a shell transcript inside a fence is
+    full of `#` comments, and reading those as headings would invent anchors
+    that no renderer offers. ⭐ That property is inherited from
+    `heading_bases` rather than restated here.
+    """
+    slugs: set[str] = set()
+    seen: dict[str, int] = {}
+    for base in heading_bases(text):
         count = seen.get(base, 0)
         seen[base] = count + 1
         slugs.add(base if count == 0 else f"{base}-{count}")
     return slugs
 
 
-def _resolve(root: Path, document: Path, pointer: Pointer) -> Path | None:
+def resolve_target(root: Path, document: Path, pointer: Pointer) -> Path | None:
     """Return the file a pointer names, or None when it leaves the repository.
 
     ⛔ Leaving the tree is refused rather than followed: R18 pins the sibling
     components and R20 makes the extraction one-way, so a link that reaches
     out of this checkout is asserting something no checkout can guarantee.
+
+    ⭐ **Public because `tools.quality.collisions` asks the same question of
+    the same pointers** (`W140`), and a second resolver would be free to
+    disagree with this one about what "inside the repository" means.
     """
     if not pointer.path_part:
         return document
@@ -255,7 +288,7 @@ def _resolve(root: Path, document: Path, pointer: Pointer) -> Path | None:
 
 def _check(root: Path, document: Path, pointer: Pointer, text: str) -> Finding | None:
     """Return the finding this pointer earns, or None when it resolves."""
-    target = _resolve(root, document, pointer)
+    target = resolve_target(root, document, pointer)
     if target is None:
         return Finding(
             pointer.document,

@@ -52,6 +52,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from tools.quality.board import board_state, check_board
+from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.config import (
     LINE_LENGTH,
     MIN_JUSTIFICATION_CHARS,
@@ -100,6 +101,16 @@ from tools.quality.style import check_style
 #: link inside backticks is a *mention* and is not a pointer, so a document is
 #: excused by saying what it means rather than by being named somewhere.
 #:
+#: ⚠️ `check_anchor_collisions` reads the same documents as `check_pointers`
+#: and asks the question that one CANNOT (`W140`): `heading_slugs` returns a
+#: `set`, so a duplicate anchor name is folded away before anything can count
+#: it and the floor reports `0 unresolved` about a question nobody asked it.
+#: ⛔ Its exemption mechanism is `check_pointers`'s — the parser — plus one of
+#: its own: a duplicate heading with NOTHING pointing at it is printed by the
+#: notice and is not a finding, because it costs a reader nothing. ⭐ That is
+#: also what keeps it from firing 22 times on its first wave over frozen
+#: archived bytes no office may edit (Ruling 106).
+#:
 #: ⚠️ `check_rulings_index` is the only one whose subject is a GENERATED
 #: document, and its exemption mechanism is a fourth distinct one: there isn't
 #: any. ⛔ The rulings index is derived from the ruling records on every run, so
@@ -128,6 +139,7 @@ CHECKS = (
     check_knowledge_index,
     check_handoffs,
     check_pointers,
+    check_anchor_collisions,
     check_rulings_index,
     check_rulings_reach,
 )
@@ -148,7 +160,16 @@ CHECKS = (
 #: many*, and FND-08's own acceptance names it: a check reports its coverage,
 #: not just its hits.
 #:
-#: ⛔ **`lint_notice` is the third, and it is Ruling 78.** `check_style` is the
+#: ⭐ **`collision_census` is the third, and it exists to QUALIFY the second.**
+#: ⛔ `pointer_coverage`'s `0 unresolved` is true and reads as *no anchor here
+#: is ambiguous*, which it does not say (`W140`). ⚠️ So this prints immediately
+#: under it — the anchor names more than one heading answers to, every one of
+#: them with its count, grouped by the document that is the unit of remedy.
+#: ⛔ A notice rather than a finding for the ones nothing points at: the
+#: population is mostly frozen archived bytes (Ruling 106), and a notice whose
+#: first wave fires on work nobody may correct is a notice nobody reads twice.
+#:
+#: ⛔ **`lint_notice` is the fourth, and it is Ruling 78.** `check_style` is the
 #: standard-library half of lint and Ruling 77 forbids it growing the other
 #: half — the floor's exit code may not depend on whether somebody ran
 #: `pip install`. ⚠️ But the floor was then printing `quality floor: clean` over
@@ -162,14 +183,22 @@ CHECKS = (
 #: ⚠️ **It is deliberately last**, so it prints immediately above `quality
 #: floor:` — the line it exists to qualify.
 #:
-#: ⭐ **`reach_notice` is the fourth, and it carries a BACKLOG rather than an
+#: ⭐ **`reach_notice` is the fifth, and it carries a BACKLOG rather than an
 #: absence.** ⛔ Ruling 245 scopes the *finding* to the index's tail on purpose —
 #: *"a notice whose first wave fires 25 times is a notice nobody reads twice"* —
 #: so the wider window cannot be a `Finding` without making the floor red for
 #: rulings no office has been assigned. ⚠️ It is printed, enumerated by number,
 #: immediately beside the index's own line, because the cliff was invisible for
 #: twenty-five rounds for exactly one reason: nobody printed the population.
-NOTICES = (notices, pointer_coverage, board_state, rulings_notice, reach_notice, lint_notice)
+NOTICES = (
+    notices,
+    pointer_coverage,
+    collision_census,
+    board_state,
+    rulings_notice,
+    reach_notice,
+    lint_notice,
+)
 
 __all__ = [
     "CHECKS",
