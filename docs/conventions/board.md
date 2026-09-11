@@ -437,17 +437,36 @@ reviewer who minted it, against the document they just wrote:**
 
 ```bash
 # For each ruling you minted THIS round, and the pass condition is a FILE, not a count.
+# ⛔ RULING 212 (CTO round 52): THREE exclusions, not one, and the command PRINTS them.
+#    handoffs/           — a record.
+#    BOARD-ARCHIVE.md    — ALSO a record, and `^docs/tasks/handoffs/` never reached it.
+#    rulings-index.md    — GENERATED from the records, so EVERY ruling is in it by
+#                          construction: the records reshaped, never an artifact reached.
+EXCLUDE='^docs/tasks/handoffs/|^docs/tasks/BOARD-ARCHIVE\.md$|^docs/tasks/rulings-index\.md$'
+echo "excluded by name: $EXCLUDE"          # ⛔ the REACH printed beside the verdict
 for n in <the rulings you just minted>; do
   printf 'Ruling %s -> ' "$n"
   git grep -liP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests \
-    | grep -v '^docs/tasks/handoffs/' | paste -sd' ' -
+    | grep -vE "$EXCLUDE" | paste -sd' ' -
 done
 ```
 
-⛔ **Pass: every ruling names at least one NON-handoff file, and the reviewer
-confirms one of them is the document the rule was WRITTEN INTO.** ⚠️ **A record
-is not an artifact: a ruling found only under `docs/tasks/handoffs/` has reached
-nobody, which is why the filter is in the command and not in the reader's head.**
+⛔ **Pass: every ruling names at least one file that survives `$EXCLUDE`, and the
+reviewer confirms one of them is the document the rule was WRITTEN INTO.**
+⚠️ **A record is not an artifact: a ruling found only under
+`docs/tasks/handoffs/`, only in `BOARD-ARCHIVE.md`, or only in the GENERATED
+index has reached nobody, which is why the filter is in the command and not in
+the reader's head.**
+
+⛔ **MEASURED at `2d0cfe7` — Ruling 212, `PO-41/3` CONFIRMED and WIDENED:**
+Rulings **15**, **62** and **68** each returned `docs/tasks/rulings-index.md` and
+nothing else — ⛔ **a PASS under the old filter, a TRUE EMPTY under this one.**
+⚠️ **Two fresh IMPOSSIBLE probe numbers read EMPTY as well, and that is the sharp
+statement of the defect: with the index in the population this check
+distinguished *minted* from *never minted*, NOT *landed* from *not landed* — the
+predicate was SUBSTITUTED by a document landing** (Ruling 208's class).
+⭐ **At `05e230b` the same three gained `BOARD-ARCHIVE.md` as a second
+non-artifact, and the line that did it was the finding's own text.**
 
 ⭐ **MEASURED at `1c5e913`, against this office's own round-50 mints:** Ruling 196
 returned **one** file, the minting CTO's own handoff — ⛔ **while its rule had been
@@ -826,3 +845,92 @@ office can SEE and only one office can ANSWER.**
 > worktrees reported this session really were leaks, so the reports are signal and
 > not noise** — ⚠️ **and `corroborate`'s `spent trial/tmp branches` line has the
 > same blind spot, which is `W110`'s neighbourhood.**
+
+## ⛔ RULED ROUND 52 — a close-time decomposition, a stale row, and a per-ROW third state
+
+⭐ **The reasoning is in [`../tasks/handoffs/CTO-2026-09-10-round52.md`](../tasks/handoffs/CTO-2026-09-10-round52.md) §4.**
+
+### ⭐ Ruling 213 — a milestone may be DECOMPOSED AT CLOSE TIME; its MEMBERSHIP may not
+
+⛔ **A decomposition authored waves early is a PREDICTION about what the close
+will measure, and this project has watched six consecutive waves refute their own
+author's written prediction.** ⭐ **So the questions may be authored at the close —
+Ruling 97 already says a close is a set of measurements at ONE named ref.**
+
+```bash
+# ⛔ The population is declared BEFORE the loop and asserted against its own count.
+echo "population declared before the loop: <N> tasks, membership from <file>:<lines>"
+# … then the rows … then:
+echo "ROWS=<N> asserted against <N>   [Ruling 146]"
+```
+
+⛔ **Pass: the membership cites a source that PRE-EXISTS the close, the count is
+asserted rather than printed, and the record SAYS the decomposition was authored
+at the close.** ⚠️ **A close that chose both its questions AND its population at
+the moment of closing can always pass.**
+
+⭐ **MEASURED at `2d0cfe7` (`M2`'s close):** nine rows authored at the close and
+declared as such; membership `15 tasks, from README.md:191-194`, `ROWS=15 against
+15`; ⛔ **and row 1 re-derives ALL FIFTEEN task merges rather than inheriting four
+step closes taken at four moved refs — the first close here to refuse to inherit
+its own sub-closes, and the standard for the next.** ⚠️ **A close-time
+decomposition also owes its GAPS named rather than omitted.**
+
+### ⛔ Ruling 214 — a row that names a MECHANISM is re-read at DISPATCH against every ruling minted since it was written, and the amendment is ADDITIVE
+
+```bash
+# ⛔ At dispatch, not at take. The DISPATCHER runs this; a taker cannot audit a row
+#    against rulings they have not read.
+git log --oneline --since="<the row's last edit>" -- docs/tasks/handoffs/'CTO-*.md'
+```
+
+⛔ **Pass: the row's named mechanism is either unaffected, or SUPERSEDED BY
+APPENDED TEXT that leaves the original standing under a heading saying it is
+superseded** (Ruling 106's form, applied to a row). ⚠️ **A reworded row loses the
+record of what was offered, and a taker on an older base then reads two different
+rows with one name.**
+
+⭐ **MEASURED at `05e230b`:** `rows/W110.md` was **three rulings stale inside one
+wave** and a taker implementing it as written would have shipped a false-terminal
+generator. ⛔ **The amendment is 14 lines APPENDED, nothing reworded.** ⚠️ **And
+the letter `B` was introduced BY the amendment to retro-label a prose offer that
+named no letter — so the row was INCOMPLETE, never self-contradictory.**
+
+⛔ **The corollary, ruled because a refusal that is right for an unstated reason
+rots: implementing a ruling and REPORTING its measured cost is ONE task; widening
+the predicate is a SECOND.** ⭐ **A developer who widens it on their own reading
+has replaced the ruling with theirs, and `W111`'s refusal to widen `B` — having
+measured that the fix trades 1 false positive for 19 more false negatives, `27 →
+44` disagreements — is CORRECT and is ratified.** ⚠️ **`B` stays as ruled: a
+printed corroborator whose errors are false PASSES, which is the side
+Ruling 199's asymmetry permits.**
+
+### ⛔ Ruling 216 — *NOT AUTHORITATIVE* is owed PER ROW, not only per PROCESS, and the exit code is a FOLD of the rows
+
+⛔ **`corroborate` has three process codes and a row verdict has two, so *git
+could not answer about this branch* lands on `1` — a FALSE REFUTATION, which is
+exactly the failure mode Ruling 199 refused in a predicate.**
+
+```bash
+# ⛔ Every git reading that can fail returns a THIRD value, and the fold preserves it:
+#    one unanswerable row  ->  the run exits 2, never 0 and never 1.
+```
+
+⛔ **Pass: a row's verdict carries `corroborated` / `refuted` / `not answerable`;
+no `None` reading is coerced to a number; and no message prints a count git never
+gave.** ⚠️ **MEASURED at `b5b3982`, and WIDER than `W110/3` filed it:**
+`graph.ahead()` returns `None` on failure, `if count:` is falsey, and the
+REFUTED arm then prints *"is 0 ahead"* — ⛔ **a number git never produced.** ⭐ **Two
+more sites: `_held()` prints *"is None commits ahead"* and returns `refuted=False`
+(exit `0`), and `_unnamed()` coerces `ahead(branch) or 0`, silently filing a
+failed reading under *invisible to git BY CONSTRUCTION*.**
+
+⭐ **AND THE CORROBORATION IS FROM AN UNRELATED TOOL, which is why this is a rule
+and not a row comment:** `python3 -m tools.workspace verify` exits **1** on the
+host (a stale pin) and **2** in the pinned container, which mounts one directory
+and cannot see a sibling. ⛔ **So the only environment that can TAKE the reading
+is the one Ruling 40 does not make authoritative, and the authoritative one
+correctly answers NOT AUTHORITATIVE.** ⚠️ **Two instruments reached by different
+routes need the same third state, so the third state is a property of this
+project's instruments — and Ruling 204 already said a SKIP is a reading OF THE
+GATE. This is that, for an exit code.**

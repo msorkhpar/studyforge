@@ -175,3 +175,43 @@ than merely unchecked, which is why it is stated instead of quietly skipped.
   used, never whether that component's output is correct.
 - ⛔ **Not a place for a URL.** The moment one appears, all three failures above
   are back.
+
+## ⛔ Ruling 215 (CTO round 52) — the NO-PUSH rule reaches every component; its ENFORCEMENT is not this repository's
+
+⭐ **The reasoning is in [`../tasks/handoffs/CTO-2026-09-10-round52.md`](../tasks/handoffs/CTO-2026-09-10-round52.md) §4.**
+
+⭐ **(a) The RULE reaches all five repositories.** It is a standing USER decision,
+not a `studyforge` convention — so ⛔ **neither R20's one-way extraction nor §12's
+repository boundary narrows it.** ⚠️ **A boundary between repositories cannot be
+cited to escape a rule that was never a repository's.**
+
+⛔ **(b) The ENFORCEMENT may not be attempted from here.** ⚠️ **Removing a
+configured remote is a destructive configuration change to a repository this
+project does not own, it is not reversible from inside `studyforge`, and the
+`studyforge` invariant it would imitate is an ABSENCE rather than a check.**
+⭐ **So it is ESCALATED to the user and nothing is changed — which is the only
+call an office may make about another repository's configuration.**
+
+⛔ **What this document records, and all it records — a READING, with no host and
+no URL written down** (R7):
+
+```text
+studyforge                  remotes 0   push-url no    ⭐ the rule is UNBREAKABLE here
+the four pinned siblings    remotes 1   push-url YES   ⚠️ the rule is merely UNBROKEN
+```
+
+⛔ **Pass: the reading is RE-TAKEN, never inherited, and it records counts and a
+yes/no only.** ⚠️ **An invariant that holds by ABSENCE in one place and by
+RESTRAINT in four is not one invariant, and the difference is the thing worth
+writing down.** ⭐ **Nothing is pushed anywhere, by anyone, ever; that half has
+never been in question.**
+
+### ⛔ And the pin's own authority cannot see a stale pin — Ruling 216's second instrument
+
+⭐ **`python3 -m tools.workspace verify` exits **1** on the HOST when a pin is
+stale, and **2** in the pinned container, which mounts one directory and cannot
+see a sibling at all.** ⛔ **So the only environment that can TAKE this reading is
+the one Ruling 40 does not make authoritative, and the authoritative one correctly
+answers NOT AUTHORITATIVE** — ⚠️ **which is why a stale pin is reported rather
+than flagged, and why advancing a pin is never an instrument's call: advancing it
+ASSERTS the new HEAD is intended.**

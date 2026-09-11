@@ -3659,3 +3659,68 @@ reviewer to look.
 ⚠️ Not a verdict on the change. It means an Acceptance condition could not be
 executed for a reason outside the author's control. Record the condition, the
 reason, and what would unblock it, and route it to the plan.
+
+## ⛔ RULED ROUND 52 — four clauses, each one command and one pass condition
+
+⭐ **The reasoning is in [`../tasks/handoffs/CTO-2026-09-10-round52.md`](../tasks/handoffs/CTO-2026-09-10-round52.md) §4** (the growth governor's form: command, pass condition, measured row, pointer).
+
+### ⛔ Ruling 208 — an instrument PRINTS ITS REACH beside its verdict, and the reach is part of the pass condition
+
+⛔ **An instrument whose declared subject is wider than what it can see is not a weak check; it is a FALSE ATTESTATION, and it ships a GREEN where a missing assertion would have shown an absence.**
+
+```bash
+# ⛔ For any check whose population is a PATTERN MATCH, print what the pattern CANNOT see.
+#    Run BOTH patterns over the SAME population and diff the token sets.
+#    A check over a DERIVED population asserts that population INHABITED (Ruling 124 form B).
+```
+
+⛔ **Pass: the reading names the reach — the tokens, files or types the instrument cannot reach — and a reviewer can read it without opening the source.** ⚠️ **An empty class that SKIPS is a pass; an empty class that passes silently is this defect.**
+
+⭐ **MEASURED, round 52, four instances:** the pre-`W74` `python3 -m ([\w.]+)` could not see `<package>` **at all**, so the placeholder rule was UNASSERTABLE (5 tokens vs 6; `adapter/SKILL.md:152`); `W96`'s header locator announced a refusal it could not make; `tools/quality/size.py` is `.py`-only, so `skills/onboarding/SKILL.md` at **206** and `chrome.css` at **399** are unreachable by R11's ceiling; and check 3 in [`board.md`](board.md), after the generated index landed, reads *was this number minted* where it declares *did this ruling reach an artifact*.
+
+### ⛔ Ruling 209 — a STAND-IN is acceptable when a RUN can see it expire; when only a PERSON can, it needs a date — and either way the EXPIRING TASK owes the acceptance condition
+
+```bash
+# ⛔ Do not read the assertion. PLANT the condition the pin pins, and read the row.
+#    Print the PLANT'S EFFECT before the verdict (Ruling 211's second half).
+```
+
+⛔ **Pass: the pinned row goes RED under the planted future state, its message names CONVERT-not-delete (Ruling 157), and the task that expires it carries an Acceptance clause saying so.** ⚠️ **A suite can see an expiry and CANNOT see a DELETION — that residual is what the acceptance condition covers, and it is the only thing it covers.**
+
+⭐ **MEASURED, round 52, on `W74`'s bare-shell pin:** `W75` simulated by a user-site `.pth` → **1 failed, 39 passed**, message *"every commanded module now runs from a bare shell … CONVERT this row … do not delete it"*; must-differ control (same mechanism, absent directory) → **40 passed**. ⛔ **So Ruling 196's class (expiry read by nobody, needs a date) and this one (expiry read by the suite) are DIFFERENT and only the first needs a calendar.** ⭐ **Where a registered expiry would live, named so it is not reinvented: `STAND_INS`, `tools/quality/board/observation.py`, Ruling 185's form.**
+
+### ⛔ Ruling 210 — an INFERRED formatter target is an UNDECLARED INPUT to R10, and §2 checks for it
+
+```bash
+grep -n 'target-version' pyproject.toml    # ⛔ absent = the formatter INFERRED it
+python3 -m ruff format --diff <a file written in the conventional form>
+```
+
+⛔ **Pass: the formatter's target is DECLARED, or the round names the syntax the inference turns on.** ⚠️ **The formatter does not merely tolerate what it emits — it REWRITES the conventional form into it, so no reviewer's preference survives the floor.**
+
+⭐ **MEASURED, round 52:** `pyproject.toml` declares NO `target-version`; with `requires-python ">=3.14"` the pinned `ruff format` **removes** the parentheses from `except (ImportError, ValueError):` (`--diff` proposes the bare PEP 758 form, 1 file would be reformatted, exit 1), and `--target-version py313` leaves the parenthesised form **untouched, exit 0**. ⛔ **`ruff check --select ALL` fires NO rule on either form, so the remedy is the declaration and not a lint selection.** ⚠️ **Population: 23 lines in 21 files at `2d0cfe7`, 24 in 22 after `W74`'s one added site.**
+
+### ⛔ Ruling 211 — `git checkout <ref> -- <path>` POISONS THE INDEX, so the canonical restore puts THE PLANT BACK; and a PLANT'S EFFECT is printed before the verdict
+
+```bash
+# ⛔ A plant taken FROM ANOTHER REF stages the index. `git checkout --` then restores
+#    THE PLANT and reports nothing wrong. Both commands are required:
+git reset   HEAD -- "$SUBJECT"
+git checkout HEAD -- "$SUBJECT"
+md5sum -c /tmp/plant.md5                       # ⭐ content
+git status --porcelain | wc -l                 # ⛔ a LINE COUNT, never a glance at a block
+```
+
+⛔ **Pass: `md5sum -c` all OK and the porcelain COUNT is `0`.** ⛔ **And no probe is a reading until its PLANT'S EFFECT has been printed and read: a plant that did not reach the code returns the PASS value.**
+
+⭐ **MEASURED, round 52, against this office:** after a base-ref plant, `git checkout --` reported success while `md5sum -c` read **FAILED** on both files and porcelain printed `M ` — ⛔ **staged, under a harness label reading `(empty = clean)`**. ⚠️ **And a `.pth` plant that failed with `Permission denied` produced **40 passed**, the PASS reading, which only the printed `ModuleNotFoundError` exposed as a dead probe. ⭐ Rulings 202 and 205 warned the CONTAINER cannot restore; this says the HOST's canonical restore is wrong for the whole plant class a reviewer reaches for when the control is *the old predicate*.**
+
+### ⛔ RULED ROUND 52 — a NAME cited by a FROZEN RECORD is not renamed (the fifth refusal, settled)
+
+```bash
+grep -rn "<the name>" --include='*.md' --include='*.py' .   # ⛔ FILES and LINES, never a count
+```
+
+⛔ **Pass: a rename lands only with every citation re-pointed IN THE SAME COMMIT, and the citation count in the commit message. Otherwise the population is renamed AROUND the name and the reason goes in the docstring at the point of the decision.** ⚠️ **A rename that dangles a record's citation is `W78` by construction, and a record is annotated beneath, never edited (Ruling 106).** ⭐ **Escape hatch, stated so it is not invented: a name that is actively MISLEADING rather than merely narrow is renamed — with its citations, in one commit.**
+
+⭐ **MEASURED, round 52:** `W74/2` is the FIFTH refusal in this family and none of the five has been overruled — **8 citation lines in 4 record files** at `2d0cfe7`, plus the definition site. ⛔ **Five unreversed judgement calls is a rule; leaving it a judgement call costs a paragraph of justification every round.**
