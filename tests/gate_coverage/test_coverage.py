@@ -18,7 +18,7 @@ import pytest
 
 from tests.gate_coverage import GATED_TREES, HOME, SCAN_ROOT
 from tests.gate_coverage.tell import GATE, _calls, decodes, document_readers
-from tests.support import git, init_repository, repository_root, run
+from tests.support import git, init_repository, repository_root, run, tracked_python_files
 
 
 def tracked_python_modules(root: Path | None = None) -> list[Path]:
@@ -53,24 +53,17 @@ def tracked_python_modules(root: Path | None = None) -> list[Path]:
     below, where a plant can be *tracked* or *ignored* on purpose; without the
     parameter that control could only be written against this repository, which
     means writing into the tree the gate is measuring.
+
+    ⛔ **The query itself lives ONCE, in `tests/support.py`, and both guards
+    moved with it** (`W142`). ⭐ `ruff`'s denominator needed exactly this
+    population, and `tests/support.py`'s own contract is that a block repeated
+    between test modules is extracted and imported — the copies drift silently
+    while each one keeps passing. ⚠️ What stays here is this gate's reading of
+    *why* its population is the tracked one, which is not transferable and is
+    the half worth keeping local.
     """
     root = repository_root() if root is None else root
-    result = run([git(), "ls-files", "-z", "--", "*.py"], cwd=root)
-    assert result.returncode == 0, (
-        f"git ls-files could not answer, so this gate has no population: "
-        f"{result.stdout + result.stderr}"
-    )
-    tracked = [root / name for name in result.stdout.split("\0") if name]
-    # ⛔ The population guard, in the body and before any caller counts
-    # anything: an instrument that cannot find its subject must raise, never
-    # report that its subject is clean (`W61`'s reading 3, Ruling 128).
-    assert tracked, "git tracks no Python module at all; the population is empty"
-    absent = sorted(str(path.relative_to(root)) for path in tracked if not path.is_file())
-    assert absent == [], (
-        "these modules are tracked but missing from the working tree, so this gate "
-        f"cannot read them; restore them or stage the deletion: {absent}"
-    )
-    return tracked
+    return [root / name for name in tracked_python_files(root)]
 
 
 def tracked_readers(tree: str = "", root: Path | None = None) -> list[Path]:

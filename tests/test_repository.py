@@ -14,7 +14,15 @@ import tomllib
 import pytest
 
 from tests.harness import isolation
-from tests.support import is_ignored, repository_root, run, tool_on_path
+from tests.support import (
+    git,
+    init_repository,
+    is_ignored,
+    repository_root,
+    run,
+    tool_on_path,
+    tracked_python_files,
+)
 
 
 def pyproject() -> dict:
@@ -107,6 +115,34 @@ def test_the_same_shapes_outside_the_fixtures_are_still_ignored():
 # --- optional tooling ------------------------------------------------------
 
 
+#: ⛔ **`--force-exclude`, and it is load-bearing rather than decorative.**
+#: `pyproject.toml` declares `extend-exclude = ["tests/fixtures"]`, and ruff
+#: applies an exclusion to a file NAMED ON THE COMMAND LINE only when asked to.
+#: ⚠️ Measured at `94ad941`: the tree tracks **no** `.py` under `tests/fixtures`,
+#: so the flag changes nothing today — ⭐ which is exactly when a declared
+#: exclusion is cheapest to keep. The first tracked fixture module would
+#: otherwise be linted against a style an invalid fixture exists to violate.
+SCOPED = ("--force-exclude", "--")
+
+
+def lint_population() -> list[str]:
+    """The files a committed lint verdict is taken over: what git tracks.
+
+    ⛔ **Not `.`** (`W142`, and Ruling 80's own clause — *a floor check's verdict
+    may not depend on untracked state*). ⭐ `ruff check .` walks the **disk**, so
+    an untracked scratch module at the repository root turns a CORRECT tree red:
+    measured by two offices, and it failed **three innocent branches** in one
+    wave under a reviewer who had measured the defect that same hour.
+
+    ⚠️ **The working-tree reading is not deleted, it is demoted** (Ruling 183's
+    standing form). `tools/quality/lint.py`'s lint **notice** still walks the
+    disk, still names the scratch file's finding count and rule codes, and by
+    Rulings 77 and 78 can never fail a build. ⭐ So a reviewer still learns their
+    scratch file is dirty — as a notice, and not as three branches failing.
+    """
+    return tracked_python_files()
+
+
 def test_ruff_lint_is_clean_where_ruff_exists():
     # ⚠️ Ruff is not installed in the environment this was built in and no
     # network install is assumed, so this skips with a message that names the
@@ -115,7 +151,7 @@ def test_ruff_lint_is_clean_where_ruff_exists():
     ruff = tool_on_path("ruff")
     if ruff is None:
         pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
-    result = run([ruff, "check", "."], cwd=repository_root())
+    result = run([ruff, "check", *SCOPED, *lint_population()], cwd=repository_root())
     assert result.returncode == 0, result.stdout + result.stderr
 
 
@@ -123,5 +159,43 @@ def test_ruff_format_is_clean_where_ruff_exists():
     ruff = tool_on_path("ruff")
     if ruff is None:
         pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
-    result = run([ruff, "format", "--check", "."], cwd=repository_root())
+    result = run([ruff, "format", "--check", *SCOPED, *lint_population()], cwd=repository_root())
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_the_lint_verdict_is_taken_over_tracked_content_in_both_directions(tmp_path):
+    # ⛔ **R12's both directions, and both arms are INHABITED** (Ruling 191).
+    # The plant lives in a throwaway repository rather than in this one: a
+    # control that can only be written by writing into the tree it measures is
+    # not a control (Ruling 11).
+    #
+    # ⚠️ **The middle assertion is the one that keeps this honest.** It runs the
+    # disk-walking form in the same directory and requires it to go RED — so the
+    # defect stays inhabited by the very shape this test replaces, and the day
+    # ruff changes that behaviour this test says so instead of quietly passing.
+    ruff = tool_on_path("ruff")
+    if ruff is None:
+        pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
+    repository = init_repository(tmp_path / "repository")
+    (repository / "tracked.py").write_text("VALUE = 1\n", encoding="utf-8")
+    assert run([git(), "add", "tracked.py"], cwd=repository).returncode == 0
+    # An untracked, un-ignored, lint-dirty module — the exact shape found by
+    # accident in one checkout and planted deliberately in another.
+    (repository / "scratch_probe.py").write_text("import json\n", encoding="utf-8")
+
+    assert tracked_python_files(repository) == ["tracked.py"], "the plant is not untracked"
+    verdict = run([ruff, "check", *SCOPED, *tracked_python_files(repository)], cwd=repository)
+    assert verdict.returncode == 0, (
+        "an UNTRACKED lint-dirty module turned the committed verdict red: " + verdict.stdout
+    )
+    assert run([ruff, "check", "."], cwd=repository).returncode == 1, (
+        "the disk-walking form no longer goes red here, so this test has stopped "
+        "inhabiting the defect it exists to refuse"
+    )
+
+    assert run([git(), "add", "scratch_probe.py"], cwd=repository).returncode == 0
+    assert sorted(tracked_python_files(repository)) == ["scratch_probe.py", "tracked.py"]
+    now_tracked = run([ruff, "check", *SCOPED, *tracked_python_files(repository)], cwd=repository)
+    assert now_tracked.returncode == 1, (
+        "a TRACKED lint-dirty module did not turn the committed verdict red"
+    )
