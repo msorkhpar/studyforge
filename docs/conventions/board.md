@@ -462,6 +462,40 @@ rows count: `observation.read` still answers for a board with no marker through 
 196(b)'s header RAMP, and an INFERRED population in a denominator would be the evasion with
 a header on it.**
 
+#### ⛔ Ruling 294 (CTO round 60) — a per-row BOUND states its TERM's DERIVATION beside its verdict, and *a row earns more than it costs* is a claim about the MEAN
+
+⛔ **The section above derives three terms; this is the rule that keeps them derived.** ⭐ **A
+bound of the form `frame + per-row × rows` carries two numbers somebody CHOSE, and a chosen
+number in a denominator is the thing a later round raises rather than obeys.** ⛔ **So the term
+is DERIVED by a stated rule, the rule is RE-TAKEN by a test on every run, and the bound PRINTS
+the derivation beside its verdict.**
+
+⚠️ **MEASURED, CTO round 60, printed by the instrument itself:**
+
+```text
+14336 frame + 224×131 register + 160×2 observation + 480×8 scheduled = 47840
+rule: the population's measured MEAN line, ceiled to the next multiple of 32, plus 32
+  224 <- four independent means taken by three offices: 191.4, 169.8, 166.8, 173.4
+  160 <- 97.5        480 <- 418.4
+```
+
+⭐ **A figure four independent means agree on is DERIVED; a figure one mean produces is
+CHOSEN.**
+
+⛔ **AND THE SECOND CLAUSE, which is the honest one: the invariant *a row raises the allowance
+by more than it costs* holds for the MEAN row and NOT for every row, and the bound SAYS SO in
+its own text.** ⚠️ **A row may legally be 600 bytes (`BOARD_ROW_CEILING`) and earns 224, so
+the WIDEST LEGAL row costs more than it earns and the invariant is false of it.** ⛔ **How
+close the live board actually runs to that ceiling is a READING and is NOT TYPED HERE** —
+⭐ **this document types no measurement of the board (Ruling 181, and the preamble at the top
+of this file); the instrument prints it every run as `widest row N of 600`, and round 60's
+own dated reading is in
+[its record](../tasks/handoffs/CTO-2026-09-11-round60.md).** ⛔ **A ceiling-based term
+(640) is REFUSED — raising the allowance to cover the worst case is the *raise it rather than
+obey it* move these bounds exist to prevent.** ⭐ **TWO terms and not one, also by measurement:
+418 B for a scheduled row against 98 B for an observation row means a single constant gifts the
+smaller population 4.8x.**
+
 ### ⛔ A state cell DECLARES its state — it does not mention one
 
 ⛔ **`board-state` exists because the first `is_closed` was a SUBSTRING TEST.**
@@ -855,6 +889,34 @@ and the other reads it rather than adding a second one.**
 doubling: at open, every row whose trigger has passed must be re-measured; ⛔ **at
 close, only the rows this wave touched** — the merges are enumerable from
 `git log`, so the instrument is *"what moved since I last measured"*, not a sweep.
+
+### ⛔ Ruling 288 (CTO round 60) — a TRIGGER names the ACT that clears it and the OFFICE that can perform that act
+
+⛔ **Ruling 189's family, one clause further: a trigger's state cell is an asserted state, and
+an asserted state whose only clearing act is UNAVAILABLE to the office the trigger binds is
+Ruling 185(a)'s defect wearing a board trigger.** ⭐ **This is the sentence a PO writing a
+`## Scheduled` row is looking for, which is why it is here and not only in the rubric.**
+
+⭐ **THE CLAUSE:** ⛔ **a trigger names the ACT that clears it and the OFFICE that can perform
+that act, and its CHANGES-REQUESTED cause attaches to THAT office's round.** ⚠️ **Where the act
+is a ROW LANDING, the trigger's discharge condition is that row being IN THE WAVE** — which is
+measured, not waited for:
+
+```bash
+python3 -m tools.quality 2>&1 | grep '^scheduled'          # by state — … fired N …
+git branch --format='%(refname:short)' | grep -F "$THE_ROW_THAT_CLEARS_IT"
+```
+
+⛔ **AND THE SECOND HALF, which is the one that saves a round: a trigger whose condition is
+ALREADY TRUE is written `fired`, never `pending`.** ⭐ **A trigger whose condition holds is not
+pending, and RATIFIED as the standing form.**
+
+⚠️ **MEASURED, CTO round 60, and the defect was the REVIEWER'S from round 59:** of the four
+board states available to the PO for a merged row whose close could not be performed, every one
+was FALSE (`done`, or `in flight` on a merged row) or RED (`done` with the file deleted, or with
+a Ruling 270 stub), ⛔ **so `blocked` was the only compliant cell and the trigger fired against
+the one office that could not have prevented it.** ⭐ **A ceiling on a population that grows by
+somebody else's merge cannot charge the office that merely REPORTS the growth.**
 
 ### ✅ RULING 97 — **the close standard, landed here 2026-09-10 (round 24), because it had reached no artifact**
 
