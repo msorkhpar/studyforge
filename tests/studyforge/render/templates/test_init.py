@@ -21,8 +21,13 @@ LIBRARY_CLASS = re.compile(r"^language-")
 #: tomorrow is covered on the day it appears.
 ONE_LINE = (
     "between-units.html",
+    "breadcrumb.html",
     "code.html",
+    "crumb-separator.html",
     "image.html",
+    "link-index.html",
+    "link-next.html",
+    "link-previous.html",
     "outline.html",
     "video.html",
     "video-link.html",

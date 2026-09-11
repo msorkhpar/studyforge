@@ -59,6 +59,8 @@ rather than a surprise.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from studyforge.address import Address, AddressError
 from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
@@ -68,7 +70,7 @@ from studyforge.render.page import navigation
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
-from studyforge.render.page.navigation import Links
+from studyforge.render.page.navigation import Crumb, Links
 
 #: The skeleton every unit page is filled from.
 SKELETON = "page.html"
@@ -93,11 +95,20 @@ META_SEPARATOR = " · "
 TRAILING_NEWLINE = "\n"
 
 
-def compose(document: dict, placement: Placement, links: Links | None = None) -> str:
+def compose(
+    document: dict,
+    placement: Placement,
+    links: Links | None = None,
+    trail: Sequence[Crumb] | None = None,
+) -> str:
     """Return one unit page's exact text.
 
     ⛔ Pure: the same document and the same placement give byte-identical
     output, every run, on every machine (R10).
+
+    ⚠️ `trail` is optional for the reason `links` is: only something that has
+    walked the corpus's hierarchy can build one, so a page renders without it
+    exactly as it will once a build does — minus the region (`SF-15`).
     """
     title = _title(document)
     body = JOIN.join(section_module.render(section, placement) for section in _sections(document))
@@ -110,6 +121,7 @@ def compose(document: dict, placement: Placement, links: Links | None = None) ->
             stylesheet=escape_attribute(placement.stylesheet()),
             script=escape_attribute(placement.script()),
             meta=_region(meta(document)),
+            breadcrumb=_region(navigation.breadcrumb(trail)),
             outline=_region(navigation.outline(document)),
             body=body,
             pending=_region(pending(document)),
@@ -201,9 +213,10 @@ def _region(markup: str) -> str:
     """Return one optional region: exactly empty, or its markup and one newline.
 
     ⭐ The conditional newline lives here and nowhere else. Spread across the
-    slots it is eleven chances to emit a page that differs from its golden file
-    by one blank line, which is the least interesting diff a reviewer can be
-    handed.
+    slots it is one chance per slot to emit a page that differs from its golden
+    file by one blank line, which is the least interesting diff a reviewer can be
+    handed. ⛔ A count here would be a second statement of `page.html`'s slot
+    list, wrong the next time the skeleton grows — which `SF-15` is.
     """
     return f"{markup}{JOIN}" if markup else ""
 

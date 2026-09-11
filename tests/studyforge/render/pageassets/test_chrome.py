@@ -101,6 +101,12 @@ SKELETON_SLOTS = {
     "heading": "the masthead's `<h1>` — region 1",
     # every slot below lands inside the one column `body` bounds
     "meta": "the masthead's second line — region 1",
+    "breadcrumb": (
+        "`SF-15`'s trail. ⛔ NOT a row in `REGIONS`, and that is not an oversight: "
+        "`REGIONS` is asserted EQUAL to what the tree EMITS, and no committed golden "
+        "emits this region — so a row for it would fail `declared - emitted`. "
+        "⚠️ `chrome.css` therefore carries no rule for it — finding `SF-15/3`"
+    ),
     "outline": "region 2",
     "body": "the reading surface — `reading.css`, by the block vocabulary",
     "pending": "region 4",

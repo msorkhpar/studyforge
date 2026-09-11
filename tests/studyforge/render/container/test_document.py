@@ -58,11 +58,16 @@ def test_every_skeleton_slot_is_filled_and_none_is_invented():
     compose(a_document(), a_placement())
 
 
-def test_the_three_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
+def test_the_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
     # ⚠️ Named, so their absence is a decision rather than an oversight: a
     # container page's own contents ARE the unit list, it declares no practices,
     # and narration is a unit's.
-    assert document_module.EMPTY_SLOTS == ("outline", "pending", "player")
+    # ⭐ `breadcrumb` joined them when `SF-15` added the slot, and it is the one
+    # of the four that is a GAP rather than an absence — a container page has
+    # ancestors to name. That it is empty here is `SF-27`'s row (`SF-15/2`), and
+    # the point of the by-name form is that the skeleton's growth could not be
+    # silent: this assertion is what went red.
+    assert document_module.EMPTY_SLOTS == ("breadcrumb", "outline", "pending", "player")
 
 
 def test_the_page_ends_in_exactly_one_newline():
