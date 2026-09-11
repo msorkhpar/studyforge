@@ -1,8 +1,13 @@
 """The browser in the build environment, asserted rather than described (W36, QA-03/1).
 
 ⛔ **This is a second module and not a section of `test_dev_image.py`**, and the
-reason is R11: that file is 583 lines against a 600-line ceiling for tests, so
-the checks below would have taken it over. ⭐ They also have one subject —
+reason is R11: that file sits close enough to the 600-line test ceiling that the
+checks below would have taken it over. ⚠️ **No figure here, because a figure here
+would be falsified by the next edit to THAT file and has been twice** — `W131`'s
+split of `devfiles.py` moved it again. The authority is `python3 -m tools.quality`,
+which reads both files at the ref in front of you (Rulings 240, 277).
+
+⭐ They also have one subject —
 *which browser this image carries and how a rebuild gets the same one* — which
 is exactly the seam a module is supposed to be cut along.
 
@@ -41,7 +46,8 @@ from pathlib import Path
 
 import pytest
 
-from tests.docker.test_dev_image import DEV, MARKER, instructions, read
+from tests.docker.devfiles import DEV, commands, instructions, read
+from tests.docker.test_dev_image import MARKER
 
 #: Where the image's fonts live, and it is the whole of its font surface
 #: (`W124`). ⛔ Measured in the pinned image: 12 files, all from one package, so
@@ -106,12 +112,19 @@ def test_the_archive_comes_from_an_immutable_per_version_url():
     # digest is a complete description of which browser produced a reading.
     # ⛔ A `latest`, a channel name or a branch in the URL would make the
     # checksum a check on today's bytes and nothing more.
-    dockerfile = instructions("Dockerfile")
-    fetched = [line for line in dockerfile.splitlines() if "chrome-for-testing" in line]
+    # ⛔ `commands()` and not raw lines (`W131`). MEASURED: the URL sits on a
+    # CONTINUATION of its own `curl`, so a raw-line reading searched the URL line
+    # alone — and a plant that put `/latest/` on the `curl -fsSLO \` line above
+    # it passed, green. ⭐ One command per element puts the flags and the URL in
+    # the same string, which is the only shape in which "the URL moves" is a
+    # question this can answer.
+    fetched = [command for command in commands("Dockerfile") if "chrome-for-testing" in command]
     assert fetched, "the browser is not fetched from an immutable per-version archive"
-    for line in fetched:
+    for command in fetched:
         for moving in ("/latest/", "/stable/", "/canary/", "LATEST_RELEASE"):
-            assert moving not in line, f"the browser URL moves under the pin: {line.strip()!r}"
+            assert moving not in command, (
+                f"the browser URL moves under the pin: {command.strip()!r}"
+            )
 
 
 def test_an_architecture_with_no_recorded_checksum_fails_loudly():
@@ -121,7 +134,12 @@ def test_an_architecture_with_no_recorded_checksum_fails_loudly():
     # this repository has never built on.
     dockerfile = instructions("Dockerfile")
     assert "no pinned browser recorded for TARGETARCH" in read("Dockerfile")
-    both = [line for line in dockerfile.splitlines() if "CHROME_SHA256_" in line]
+    # ⛔ `commands()` and not raw lines (`W131`): `CHROME_SHA256_` is a SUBSTRING,
+    # and two of the four places it appears are continuations of the `case` inside
+    # the browser's `RUN`. ⭐ MEASURED at `51dee3b` in the pinned image — 4
+    # commands carry it (two `ARG`s and two `case` arms), so the bound below keeps
+    # the margin it had on raw lines and means something after the collapse.
+    both = [command for command in commands("Dockerfile") if "CHROME_SHA256_" in command]
     assert len(both) >= 3, f"fewer than two architectures are pinned: {both}"
     assert "amd64)" in dockerfile and "arm64)" in dockerfile, (
         "the browser is pinned to one architecture by accident, which breaks "
@@ -134,18 +152,29 @@ def test_the_browser_does_not_arrive_from_a_package_manager():
     # the checks would run, and what they ran against would depend on the day
     # the image was built and on the distribution's snapshot.
     #
-    # ⛔ Asserted against the **install lines**, not the whole file, for the
+    # ⛔ Asserted against the **install commands**, not the whole file, for the
     # reason the Node.js version of this check records: a check that fires on
-    # the correct implementation is a check somebody deletes.
+    # the correct implementation is a check somebody deletes. ⚠️ And not against
+    # the whole `RUN` either — it carries `/opt/chrome-headless-shell` four times.
+    #
+    # ⛔ **THIS CHECK SHIPPED VACUOUS AND ROUNDS 36 ONWARD QUOTED ITS GREEN**
+    # (`W124/4`, `W131`, Ruling 267; confirmed by plant in
+    # `CTO-2026-09-11-round58.md` §3a, re-planted in
+    # `docs/tasks/handoffs/W131.md`). The raw-line version read the LINE carrying
+    # `apt-get install` — and all 22 of the packages below it are on
+    # CONTINUATIONS, which is the only form this Dockerfile writes. A planted bare
+    # `chromium`, the literal shape the paragraph above forbids, passed.
     installed = [
-        line
-        for line in instructions("Dockerfile").splitlines()
-        if "apt-get install" in line or "apt install" in line
+        command
+        for command in commands("Dockerfile")
+        if "apt-get install" in command or "apt install" in command
     ]
     assert installed, "nothing is installed at all; has the base image changed?"
-    for line in installed:
+    for command in installed:
         for unpinned in ("chromium", "google-chrome", "chrome-headless-shell"):
-            assert unpinned not in line, f"the browser is installed unpinned: {line.strip()!r}"
+            assert unpinned not in command, (
+                f"the browser is installed unpinned: {command.strip()!r}"
+            )
 
 
 def test_nothing_that_can_fetch_at_test_time_survives_into_the_image():
@@ -262,14 +291,21 @@ def test_the_font_does_not_arrive_unconstrained():
     #
     # ⭐ So the population is the install command's ARGUMENTS: continuations
     # collapsed, then cut at the shell separators that end a command.
-    run = instructions("Dockerfile").replace("\\\n", " ")
-    commands = [
-        segment
-        for segment in run.replace("&&", ";").split(";")
-        if "apt-get install" in segment or "apt install" in segment
+    #
+    # ⭐ **`W131` HOISTED THAT INTO `commands()`** rather than leaving a second
+    # copy here, because the defect this check paid two plants to find turned out
+    # to be shipping in four of its neighbours — and the only thing that stops a
+    # fifth is one reader they all share (`docs/tasks/handoffs/W131.md`). ⚠️ The
+    # behaviour is unchanged and it was RE-PLANTED to prove it: this check is the
+    # sweep's control, not its remedy, and a refactor that silently broke the
+    # control would have hidden the whole row.
+    installing = [
+        command
+        for command in commands("Dockerfile")
+        if "apt-get install" in command or "apt install" in command
     ]
-    assert commands, "nothing is installed at all; has the base image changed?"
-    constraining = [line for line in commands if "fonts-liberation" in line]
+    assert installing, "nothing is installed at all; has the base image changed?"
+    constraining = [line for line in installing if "fonts-liberation" in line]
     assert constraining, (
         "no apt-get install command installs fonts-liberation. Either the font "
         "stopped arriving — and every text metric in tests/visual/ is then "
