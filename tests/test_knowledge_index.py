@@ -32,6 +32,17 @@ from pathlib import Path
 import pytest
 
 from tests.support import git, is_ignored, repository_root, run
+from tools.tests.workspace import support as workspace_support
+
+# ⛔ **The SHIPPED resolver, imported rather than re-derived** (`W127`). This
+# module used to answer *"where do the sibling components live?"* with its own
+# `repository_root().parent` — a **second implementation of a rule this
+# repository already ships**, which is the duplication `review-rubric.md` §1a
+# says this project has refused five times. ⚠️ Imported from `__main__` because
+# that is where the rule and its explanation live, and where
+# `tools/tests/workspace/test_main.py` already imports it from: a **third** home
+# would be this defect again, one directory over.
+from tools.workspace.__main__ import workspace_root as shipped_workspace_root
 
 #: The generated index directory, in every repository this project touches.
 INDEX_DIR = "graphify-out"
@@ -65,8 +76,11 @@ TRACKED_HERE = (
 #: FND-05 stands the parent workspace up (CLAUDE.md, R18).
 SIBLING_CORPORA = ("Claude-senior-java-engineer", "CodeSignal")
 
-#: Env override for a workspace that is not this repository's parent — a
-#: worktree, a container mount, FND-05's parent once it exists.
+#: Env override for a workspace the shipped resolver cannot reach — a container
+#: mount, FND-05's parent once it exists, or a synthetic tree in a plant.
+#: ⛔ **Not for a worktree any more**: `W127` measured that the shipped resolver
+#: answers correctly from one, and the override existed to paper over the
+#: re-derivation this module no longer carries.
 WORKSPACE_ENV = "STUDYFORGE_WORKSPACE"
 
 #: What the R3-safe ignore file contains, and nothing else.
@@ -74,9 +88,22 @@ CORPUS_IGNORE_BODY = "*\n"
 
 
 def workspace_root() -> Path:
-    """Where sibling repositories live."""
+    """Where sibling repositories live, as `tools.workspace` already computes it.
+
+    ⛔ **The derivation is NOT repeated here** (`W127`). This module answered
+    `repository_root().parent`, which is a **worktree's** parent — and agents
+    work in worktrees, so the corpus checks below skipped on a tree that had
+    both corpora sitting right beside it. ⭐ The shipped resolver reads
+    `git rev-parse --git-common-dir`, which names the **main** checkout.
+
+    ⚠️ The override still wins, because it is an instruction rather than a
+    derivation: it is how a caller points the checks at a tree the resolver
+    cannot see from where it is running.
+    """
     override = os.environ.get(WORKSPACE_ENV)
-    return Path(override).expanduser() if override else repository_root().parent
+    if override:
+        return Path(override).expanduser()
+    return shipped_workspace_root(repository_root())
 
 
 def conventions() -> str:
@@ -163,6 +190,110 @@ def test_the_corpus_ignore_file_is_the_ruled_one_where_it_exists():
         )
     if not checked:
         pytest.skip("no corpus repository with a built index is checked out")
+
+
+# --- `W127`: the resolver is the shipped one, and these checks can still fail --
+#
+# ⛔ **Why every check in this block is SYNTHETIC.** R3 forbids writing into a
+# source repository, so a plant that damaged a real sibling would be the
+# violation these checks exist to catch. ⭐ And synthetic means they RUN in the
+# pinned image, where the real siblings are absent — a plant that skipped in the
+# one authoritative environment would prove nothing there.
+
+
+def synthetic_corpus(root: Path, name: str, ignore_body: str | None) -> Path:
+    """A git repository named like a corpus, with an index of the given shape.
+
+    `ignore_body` of `None` means no `graphify-out/` at all; otherwise the
+    directory is created and the body is written verbatim — including a wrong
+    one, which is the point.
+    """
+    corpus = root / name
+    workspace_support.repository(corpus)
+    if ignore_body is not None:
+        (corpus / INDEX_DIR).mkdir()
+        (corpus / INDEX_DIR / ".gitignore").write_text(ignore_body, encoding="utf-8")
+    return corpus
+
+
+def test_the_workspace_is_the_main_checkouts_parent_even_from_a_worktree(tmp_path, monkeypatch):
+    """⛔ The defect `W127` closes, asserted so it cannot come back.
+
+    This module re-derived `repository_root().parent`. ⚠️ A `git worktree` lives
+    **outside** the repository it belongs to, so that is the worktree's own
+    parent — and agents work in worktrees, which is why the corpus checks above
+    skipped on a tree that had both corpora right beside it. ⭐ Asserted against
+    a real synthetic worktree rather than against this machine's, so it is
+    evidence in the pinned image too.
+    """
+    root, main_checkout = workspace_support.workspace(tmp_path / "w")
+    elsewhere = tmp_path / "far" / "away"
+    elsewhere.parent.mkdir(parents=True)
+    workspace_support.run(main_checkout, "worktree", "add", "-q", "-b", "side", str(elsewhere))
+
+    monkeypatch.delenv(WORKSPACE_ENV, raising=False)
+    monkeypatch.setattr(f"{__name__}.repository_root", lambda: elsewhere)
+
+    assert workspace_root() == root, "the workspace is the MAIN checkout's parent"
+    assert workspace_root() != elsewhere.parent, (
+        "this is the answer the re-derived resolver gave, and it holds no component"
+    )
+
+
+def test_a_corpus_check_skips_and_names_the_corpus_when_it_is_genuinely_absent(
+    tmp_path, monkeypatch
+):
+    """⭐ The skip branch stays LIVE, which is what keeps the pinned image honest.
+
+    ⛔ The hazard of `W127` is the inverse of the defect it fixes: three skips
+    that become three checks which cannot fail. This asserts the first half —
+    an absent corpus still **skips**, naming itself, rather than passing.
+    """
+    monkeypatch.setenv(WORKSPACE_ENV, str(tmp_path / "empty"))
+    (tmp_path / "empty").mkdir()
+    with pytest.raises(pytest.skip.Exception) as raised:
+        test_a_corpus_repository_ignores_its_index_without_editing_its_root(SIBLING_CORPORA[0])
+    assert SIBLING_CORPORA[0] in str(raised.value)
+    assert "is not checked out" in str(raised.value)
+
+
+def test_a_corpus_check_fails_on_an_unignored_index_rather_than_passing(tmp_path, monkeypatch):
+    """⛔ The second half: the assertion is REACHABLE and it can go red.
+
+    A corpus carrying `graphify-out/` with no ignore file would commit its
+    index, and that is exactly the silent failure R14 is about.
+    """
+    synthetic_corpus(tmp_path, SIBLING_CORPORA[0], ignore_body=None)
+    (tmp_path / SIBLING_CORPORA[0] / INDEX_DIR).mkdir()
+    monkeypatch.setenv(WORKSPACE_ENV, str(tmp_path))
+    with pytest.raises(AssertionError, match="would commit its knowledge index"):
+        test_a_corpus_repository_ignores_its_index_without_editing_its_root(SIBLING_CORPORA[0])
+
+
+def test_the_ignore_body_check_fails_on_a_negation_rather_than_passing(tmp_path, monkeypatch):
+    """⛔ The `!.gitignore` negation named in the check's own docstring, planted.
+
+    ⚠️ Adversarial to the **search term**: the file exists and is found, so the
+    `continue` branch is not what answers — the byte comparison is.
+    """
+    synthetic_corpus(tmp_path, SIBLING_CORPORA[0], ignore_body="*\n!.gitignore\n")
+    monkeypatch.setenv(WORKSPACE_ENV, str(tmp_path))
+    with pytest.raises(AssertionError, match="not the ruled one-line"):
+        test_the_corpus_ignore_file_is_the_ruled_one_where_it_exists()
+
+
+def test_both_corpus_checks_pass_on_a_correctly_ignored_index(tmp_path, monkeypatch):
+    """⭐ The third state, without which the two plants above prove only half.
+
+    A check that fails on everything is as useless as one that passes on
+    everything, so the ruled body is asserted to be **accepted**.
+    """
+    synthetic_corpus(tmp_path, SIBLING_CORPORA[0], ignore_body=CORPUS_IGNORE_BODY)
+    synthetic_corpus(tmp_path, SIBLING_CORPORA[1], ignore_body=CORPUS_IGNORE_BODY)
+    monkeypatch.setenv(WORKSPACE_ENV, str(tmp_path))
+    for name in SIBLING_CORPORA:
+        test_a_corpus_repository_ignores_its_index_without_editing_its_root(name)
+    test_the_corpus_ignore_file_is_the_ruled_one_where_it_exists()
 
 
 # --- the documented procedure ----------------------------------------------
