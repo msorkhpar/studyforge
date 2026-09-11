@@ -10914,3 +10914,154 @@ everybody reads.**
 ⭐ **WHAT SETTLES IT:** one `FND-04` fixture in which two units declare the same `origin.path` and differ only in `origin.section`, plus the assertion that whatever key `SF-16` mints is DISTINCT for both. ⛔ **Two units, not seventeen** — ⚠️ **the pigeonhole only needs two to be exhibited, and a scale count would be a reading taken inside a consumer repository** (Ruling 151, `W77`'s own class).
 
 [round 37's mint](#round-37-the-mint-arguments-and-the-corrections-the-cto-and-the-integration-channel-forced-mid-round)
+
+### W96 — A cell declaring a started state asserts a live checkout or a branch ahead of release
+
+⛔ **THREE LINES WERE RE-ADDRESSED IN THE COMMIT THAT MOVED THIS MATERIAL, which is Ruling 174's narrow ground and is disclosed rather than merely unnoticed:** ⭐ **two `](../../conventions/board.md)` links became `](../conventions/board.md)` and one `](../BOARD-ARCHIVE.md#…)` became `](#…)`, because this file sits one directory up from `rows/` and inside the archive it was pointing at.** ⚠️ **The frame block is DROPPED, not re-addressed — `board-frame`'s two substrings are a property of a LIVE row file, and this is a record.**
+
+⛔ **Three register rows sat `in flight` for 295–350 commits and EVERY GIT INSTRUMENT READ CORRECTLY.** ⭐ **That is the finding: the board is the only instrument that can be wrong this way, because it is the only one that ASSERTS a row is in flight rather than OBSERVING it.**
+
+⚠️ **MEASURED at the round-37 close, and the closure has landed:**
+
+```text
+fix/W14-W18                tip 1d6e86f   ahead 0   behind 350   merged ac4ed55
+fix/W27-r7-no-translation  tip 655b527   ahead 0   behind 295   merged 5c6c883
+git worktree list        -> no checkout for any of the three
+git branch --no-merged   -> none of the three
+```
+
+⭐ **AND THE CONFIRMATION THAT MAKES IT A DISPOSITION RATHER THAN A BRANCH-POSITION ARGUMENT:** `W14`'s argument named exactly two fixtures, and both are in the tree at `1d6e86f`, added in one commit:
+
+```text
+tests/fixtures/invalid/count-mismatch       added 1d6e86f  2026-09-09
+tests/fixtures/invalid/user-authoritative   added 1d6e86f  2026-09-09
+   the other five invalid fixtures all predate it
+```
+
+⛔ **EVERY INSTRUMENT WAS RIGHT AND THE BOARD WAS WRONG.** ⚠️ **`git worktree list` saw no checkout — TRUE, the work had finished. `--no-merged` saw nothing — TRUE, it was merged. And the board's **In flight** table printed `Checkout: none`, which IS the tell, and it was printed and never read.**
+
+⭐ **RULING 171 RULED THE OPPOSITE DIRECTION** — a row `worktree list` can see and `git log` cannot — ⛔ **and this is the INVERSE case, which is worse: a cell with `Checkout: none` and a nonzero age is either JUST-DISPATCHED or LONG-FINISHED, and nothing in either git instrument distinguishes those two.**
+
+### ⭐ RULING 189 IS THIS ROW'S AUTHORITY, minted CTO round 48 — and this row builds clause (b)
+
+> ⭐ **(a)** Ruling 171 ruled one direction; this is the inverse and it is worse. ⛔ **The board is the only instrument that ASSERTS in-flight rather than OBSERVING it.**
+> ⭐ **(b)** ⛔ **The PRIMARY reading is INTERNAL and needs no git at all:** `state ∈ {in flight, in-progress, in-review}` ∧ `Checkout = none` ∧ `ahead = 0` is a **CONTRADICTION PRINTED ON ONE ROW** — ⚠️ **and for 350 commits every instrument read DOWN A COLUMN instead of ACROSS THE ROW.**
+> ⭐ **(c)** The corroborating reading is git, **and its coverage is the VERDICT CONVENTION's coverage**: the merge grep finds the merge only if the merge message NAMES the row, ⛔ **so a row-state audit is reliable exactly over the range the verdict clause governs and not one commit earlier.**
+
+⛔ **CLAUSE (b) IS WHY THIS ROW IS CHEAPER THAN IT LOOKED WHEN IT WAS MINTED, and it narrows the design question below rather than answering it.** ⭐ **The FIRST reading compares three cells of one table with each other and needs no `git` at all** — ⚠️ **so it belongs in `tools/quality/board/` beside every other `board-*` rule, with no new dependency.** ⛔ **Clause (c) is the git half, and the open question *may the floor shell out?* is now scoped to (c) ALONE.**
+
+⭐ **RE-CONFIRMED at round 38's re-take, `MEASURED` by the PO at `c18df98c`, PO worktree:** the predicate fires on **2 of 2** rows of the table it replaced — `feat/SF-34-chrome` (`ahead 0`, merged `d3acc29`) and `fix/board-instrument` (`ahead 0`, merged `d430f34`), both declaring a started state with no checkout. ⚠️ **And the replacement table's two rows pass on the CHECKOUT cell and NOT on `ahead`, which is Ruling 130** — ⛔ **which is the reason the three cells are read together and no one of them alone is the rule.**
+
+### ⛔ `CTO-49/4` — THE PREDICATE HAS A MEMBER IT CANNOT OBSERVE, AND WIDENING THE INSTRUMENT IS THE WRONG REMEDY
+
+⚠️ **`W73` declares `in-progress` and is in the population by the closed set above.** ⛔ **Its carrier — the checkout and the branch — lives in the `ISO/` repository, so a framework-side instrument cannot observe it without reading across the seam**, which is Ruling 151 and R20 in one step. ⭐ **`RECEIVED` from the CTO as `CTO-49/4`.**
+
+> ⭐ **THE ADMISSIBLE FORM IS RULING 173'S STAND-IN, not a wider instrument.** ⛔ **A row whose carrier is in a repository this one does not own is declared a STAND-IN and EXCLUDED FROM THE PREDICATE BY NAME** — ⚠️ **never excluded silently, and never observed across the seam.**
+
+⛔ **THE DISTINCTION THAT MAKES THIS CHEAP: an exclusion BY NAME is still a total reading.** ⭐ **Ruling 185's form — an exemption a clause declares is implemented in the COMMAND, by narrowing the POPULATION, never by widening the PREDICATE.** ⚠️ **So `W73` is named in the instrument's own population line, and the day a second cross-repo row appears the line names two, which is a reading; a predicate quietly tolerant of unobservable carriers is not.**
+
+⛔ **AND THE ALTERNATIVE IS WORSE THAN A GAP: an instrument that shells into a sibling checkout would be GREEN whenever that sibling is absent** — ⚠️ **which is every worktree in this project by construction (Ruling 159)** — ⭐ **so it would return the pass reading from an empty population, which is Ruling 191 exactly.**
+
+### ⛔ SECOND CONSECUTIVE WAVE — this is the argument for BUILDING it rather than re-taking the table
+
+⭐ **`RECEIVED` from the CTO at `c18df98`, and their reading PREDATES round 38's re-take:** 3 of 4 started cells (`W85` `W86` `W87`) refuted by every git instrument, **and the In-flight table named NEITHER row actually dispatched.** ⚠️ **Round 38 re-took the table by hand and both halves are fixed on that branch** — ⛔ **which is precisely the problem: a hand re-take is correct for exactly as long as nobody merges.**
+
+⛔ **TWO WAVES IN A ROW, BOTH CAUGHT BY A HUMAN READING ACROSS A ROW.** ⭐ **That is the evidence that moves this row up the queue: the defect's rate is now measured rather than argued, and it is once per wave.**
+
+### ⛔ THE PREDICATE, and its population is a CLOSED SET WITH NO HOLE
+
+> ⭐ **For every register cell declaring `in flight`, `in-progress` or `in-review`,
+> assert a live checkout OR a branch ahead of `release/m0-foundations`.**
+> ⛔ **Neither, and the cell is a finding.**
+
+⛔ **`in-progress` IS IN THE POPULATION AND THAT IS A DECISION, NOT AN OVERSIGHT.** ⚠️ **It was nearly left out, and leaving it out would have been the defect this row exists to close: a closed set with a hole in it.** ⭐ **The three admitted words are the three that mean *started and not finished*; the five excluded are excluded for stated reasons** — `todo` (not started, so no carrier is owed), `done` (carries a merge ref instead), `accepted` and `routed` (terminal dispositions, no work pending), `blocked` (owes a named unblocking condition, which IS its carrier).
+
+⭐ **AND THE POPULATION WAS INHABITED BEFORE THE PREDICATE WAS WRITTEN, which Ruling 48 requires:** ⛔ **`W16` is the only remaining non-`todo`, non-`done` cell, it reads `in-progress`, and re-taken at round 37 it has **0 branches, 0 checkouts, and no test anywhere asserting the spec's canonical examples against the code**.** ⚠️ **So the predicate's first live finding exists today rather than hypothetically** — ⭐ **and `W16`'s cell is CORRECTED in the same round on that reading, because its started half landed and its remaining half has no author.**
+
+⚠️ **DESIGN QUESTION THIS ROW OWES AN ANSWER TO BEFORE IT OWES CODE:** it is the natural seventh `board-*` rule and it is a TREE property, so it belongs beside `board-frame` — ⛔ **but it reads `git`, which nothing in `tools/quality/board/` does today.** ⭐ **`tools/workspace` already shells out to `git`, so the precedent exists; the question is whether the floor may.**
+
+### ⛔ THIS ROW IS NOT GATED ON `W100`, RULED CTO ROUND 49
+
+⭐ **TWO RULES, NOT ONE INSTRUMENT.** ⛔ **`W96` reads `git`; `W100` is a pure tree property and must not inherit a git dependency to get built** — ⚠️ **so neither waits for the other, and a developer building this row does not need `W100` to land.** ⭐ **What they share is the DELIMITER: one board edit, landing with whichever row arrives first, and the other reads it rather than adding a second one.** ⛔ **The clause is [`../conventions/board.md`](../conventions/board.md)'s, beneath Ruling 189, and this is a POINTER to it rather than a second copy.**
+
+✅ **THE FALSE SENTENCE IS CORRECTED, PO round 38, and its home was misnamed here too.** ⚠️ **This row said `delivery-flow.md` carried *"`W14` and `W18` evaporated because…"*; it is [`../conventions/board.md`](../conventions/board.md)'s, moved there WHOLE with the wave checks, which is why two offices looked for it in the wrong file.** ⛔ **THEY DID NOT EVAPORATE. THEY FINISHED, and merged with a verdict at `ac4ed55`** — ⭐ **and the sentence is REPLACED BY A NOTICE rather than deleted (Ruling 183's form), because the case it cites is Ruling 189's founding case and deleting it would remove the evidence.** ⚠️ **`CTO-48/8`, discharged.**
+
+⛔ **ONE INSTRUMENT RECORDED AS WRONG so it is not reused:** `git log --merges --first-parent --ancestry-path ^<tip>~1 | tail -1` returns `efbe4a6`, the merge of a DIFFERENT branch (`fix/W19-provenance-pin`). ⭐ **The direct form — `git log --merges --first-parent --format='%h %s' release/m0-foundations | grep -iE '<row>'` — returns the right two**, and the error was caught only because both were run. ⚠️ **It depends on the merge message naming the row, which the verdict convention guarantees and `CTO-47/7`'s 23-commit pre-clause tail does not.**
+
+[round 37's follow-up](#round-37-follow-up-three-rows-sat-in-flight-for-350-commits-q23-is-answered-and-rulings-187-and-188-get-ids)
+
+## Round 40 — the In-flight re-take an INSTRUMENT found, Ruling 196's delimiters, W96 closed, and a routed remedy refuted by measurement
+
+⛔ **Every reading in this section was taken by the PO at `1c5e913` in the PO worktree, in the pinned container where the figure is a suite or a lint figure** (Ruling 40, Ruling 172). ⭐ **The PO worktree carries no siblings, so every `tools.workspace` reading from it is host-verified by construction** (Ruling 159).
+
+### ⭐ THE SUPERSEDED In-flight READING, which the board points here for
+
+⛔ **The table this round replaced, quoted as it stood, because a replaced reading is evidence and the board may not keep two:**
+
+```text
+RE-TAKEN at round 39's close, both instruments, at 7559398
+| `SF-26` | Developer 1 | `wt/dev1`, `feat/SF-26-goldens`        | 1 | in flight |
+| `W96`   | Developer 2 | `wt/dev2`, `fix/W96-inflight-predicate`| 0 | in flight |
+```
+
+⚠️ **It was TRUE when it was taken and false by the time it was read, which is the whole of `W96`'s subject.** ⭐ **AND THE NEW FACT OF THIS ROUND: it is the first time the staleness was found by an INSTRUMENT rather than by a human reading across a row.**
+
+```text
+corroborate, before the edit : 2 of 2 rows REFUTED, exit 1
+   feat/SF-26-goldens       MERGED at 8d17314, 0 ahead, no checkout holds it
+   fix/W96-inflight-predicate MERGED at 3432e9a, 0 ahead, no checkout holds it
+corroborate, after the edit  : 0 of 2 rows REFUTED, exit 0
+   SF-30 corroborated at dev1, 0 ahead;  W91 corroborated at dev2, 0 ahead
+```
+
+⛔ **THE POPULATION BEHIND THE WORD *EMPTY*, because a zero is a reading and owes its population** (Ruling 191): **`git branch` counts 120 local branches at `1c5e913` and `--no-merged release/m0-foundations` returns 0 of 120.** ⭐ **It has now read `0`, `1` and `3` across four rounds, which is why the size is printed beside it rather than the word alone.**
+
+⛔ **BOTH MERGE REFS WERE DERIVED IN TWO PRINTED STEPS AND BOTH FORMS AGREED** (Ruling 189(d)): existence as its own command — `7a44e7e` and `b915aba` both EXIST — then `--ancestry-path` printed WHOLE and `--grep 'Merge <branch>'` corroborating, agreeing on `8d17314` and `3432e9a`. ⚠️ **And both halves of the position were printed, never a two-dot span** (Ruling 197(a)): `SF-26` is **11 behind, 0 ahead**; `W96` is **10 behind, 0 ahead**.
+
+### ⛔ RULING 196'S DELIMITERS — one PO board edit, and the instrument confirms it rather than my word
+
+⭐ **`board_state`'s printed locator moved from `header-declared` to `delimited`, which is the reading that makes the edit load-bearing instead of decorative.** ⛔ **Three readings, each with its expectation written before the command, both restorations verified by `md5sum -c` and `git status --porcelain`:**
+
+```text
+(a) LIVE                          -> locator `delimited`,        2 rows
+(b) the two marker lines removed  -> locator `header-declared`,  2 rows, floor clean
+    ⭐ so the MARKERS are what moved the locator, not the table
+(c) two column NAMES renamed INSIDE the markers
+    -> observations (NONE FOUND): 0 rows      quality floor: clean, exit 0
+    -> corroborate: "the observation table is EMPTY" … exit 0
+    ⛔ so a DELIMITER makes a refusal POSSIBLE and does not make it HAPPEN — W111
+```
+
+⚠️ **Reading (c) reproduces the CTO's round-50 plant EXACTLY on a delimited board, which is what expires the ramp rather than merely dating it.**
+
+### ⛔ THE PLACEMENTS, and two rows invoke Ruling 75 rather than one
+
+⭐ **`SF-30` and `W91` LEAVE the queue — they are dispatched, so they are In flight and not Next, and `git worktree list` is where that was read rather than asserted.** ⛔ **`W111` and `W110` are placed ahead of `W100`, `W103` and `W105`–`W109`, both invoke Ruling 75 and both carry the jump in their own row file:**
+
+- ⭐ **`W111`'s trigger is NOT the PO's.** Ruling 196 gives it *"the round after"* the delimiters land, and they land in this round's merge — ⛔ **so deferring it would be overruling a CTO trigger by inaction.**
+- ⭐ **`W110`'s argument is a measured live hazard, not a preference:** `corroborate` is the instrument that catches a stale observation table, and it is GREEN over one for exactly as long as a worktree is leaked. ⚠️ **Two worktrees were leaked in this session's own history.**
+
+⛔ **AND THE PAIR IS PRICED BEFORE IT IS DISPATCHED, which is check 4's sub-step and not a style note:** ⭐ **both rows live in `tools/quality/board/`, whose modules read `386`, `383` and `337` against R11's 400** — ⚠️ **so `observation.py` SPLITS at `W96/3`'s named seam if `W111` takes it, and the shared-file sum on `__init__.py` is owed before the two go in parallel.**
+
+### ⛔ `W96` CLOSED IN THE THREE RULED EDITS, with the re-addressing DISCLOSED
+
+⭐ **State cell `✅ done — 3432e9a`; Detail repointed at the record; body moved under `### W96 — …` and `rows/W96.md` deleted.** ⛔ **THREE lines were re-addressed in the commit that moved the material (Ruling 174), the count is in the archived section's own banner, and the move was verified as an EQUALITY rather than a line sum** (Ruling 177's form): a `diff` of the source body against the moved body reports **exactly three changed line-pairs and nothing else.**
+
+### ⛔ THE REMEDY THAT WAS ROUTED TO ME IS REFUTED BY MEASUREMENT, AND THAT IS `W110`'S LOAD-BEARING CLAUSE
+
+⭐ **RECEIVED: *"MERGED ∧ 0-ahead is TERMINAL and must refute unconditionally."*** ⛔ **MEASURED at `1c5e913`: all four branches read `merged = 1` and `0` ahead, including BOTH rows dispatched this hour, because `merged()` is `merge-base --is-ancestor` and a branch cut at the release tip IS an ancestor.**
+
+```text
+feat/SF-30-reader-state     merged 1   0 ahead   ⭐ no merge commit names it  <- in flight
+fix/W91-rulings-index       merged 1   0 ahead   ⭐ no merge commit names it  <- in flight
+feat/SF-26-goldens          merged 1   0 ahead   ⛔ 8d17314                   <- spent
+fix/W96-inflight-predicate  merged 1   0 ahead   ⛔ 3432e9a                   <- spent
+```
+
+⚠️ **So the ruled-as-offered form would have refuted both correctly-dispatched rows on its first live run, which is Ruling 179's case exactly.** ⭐ **The separating signal is already computed and only used in the message: a MERGE COMMIT whose subject NAMES the branch — `merge_of()`, Ruling 189(d) step two.** ⛔ **The refined shape is an OFFER to the CTO and is not a ruling of mine.**
+
+### ⭐ WHAT I REFUSED
+
+⛔ **I did not "fix" `W96/2`'s refuted sentence, because it does not exist.** ⚠️ **MEASURED: at `7559398` the board said *"both its rows declared a started state with no checkout and `ahead 0`"* (line 59); at `679a6c5^` both rows named a checkout and one counted `+1`, so the refutation is real; and at `1c5e913` the sentence is GONE — round 39's rewrite replaced it and the CTO recorded it as DISCHARGED.** ⭐ **Manufacturing a correction to bytes that are not there would have been Ruling 192's shape committed in the act of discharging it.**
+
+⛔ **I did not edit `docs/conventions/board.md` to let check 3 find Ruling 196.** ⚠️ **The ruling's own home names no number, so the instrument reads a false empty on its primary artifact** — ⭐ **but it is the CTO's document, edited by them this round, and a PO patch to a ruling's heading inside it is the cross-office fix this project refuses. It is a routed finding.**
