@@ -52,25 +52,25 @@ this table names the ref it was taken at and nothing here is inherited.
 for the EIGHTH consecutive wave** (`W119/4`, Ruling 262) — ⛔ **`corroborate` read
 `3 of 3 REFUTED, exit 1` after the wave's last merge: `W98` absorbed by `8416924`,
 then `W119` and `W100` absorbed by `6d5aeed`** — ⭐ **and the surviving row's cell is
-as-of its BRANCH TIP `5dc363c`, not as-of `ad5ce24`**
+as-of its BRANCH TIP `57ea703`, never as-of `ad5ce24`.** ⛔ **IT WAS WRITTEN `3` AT
+`5dc363c` AND RE-TAKEN `4` INSIDE THIS ROUND WITH NO EDIT BETWEEN — `corroborate`
+exited `0` on BOTH and printed `4` on the same line as its own `CORROBORATED`**
+(`PO-44/14`, and it is `W115`'s subject demonstrated, not argued)
 ([the re-take](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W124` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 3 | in flight |
-| `W122` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 3 | in flight |
-| `W123` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 3 | in flight |
+| `W124` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 4 | in flight |
+| `W122` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 4 | in flight |
+| `W123` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 4 | in flight |
 <!-- /inflight -->
 
-⚠️ **A commits-ahead cell is as-of the BRANCH TIP, and that tip MOVES while a
-developer works** — ⛔ **so `corroborate` corroborates the ROW and never the CELL,
-and its exit is NOT evidence these numbers are right** (`PO-42/7`, `PO-43/9`,
-`CTO-56`'s three false cells confirmed four times; ⭐ **a `0` ahead would be RULING
-130'S CLASS and not a gap**). ⛔ **RULING 262 IS FALSE AS STATED, measured by the
-coordinator against their own merge: absorbing a branch is what refutes its
-In-flight cell, so a post-merge check fails on every CORRECT merge. The obligation
-can only live at the WAVE CLOSE — this table's re-take** (`PO-44/10`, routed).
+⛔ **`corroborate` corroborates the ROW and never the CELL** (`PO-42/7`, `PO-43/9`,
+`PO-44/14`; ⭐ **a `0` ahead would be RULING 130'S CLASS and not a gap**).
+⛔ **RULING 262 IS FALSE AS STATED: absorbing a branch is what refutes its In-flight
+cell, so a post-merge exit check fails on every CORRECT merge, and the obligation can
+only live at the WAVE CLOSE — this table's re-take** (`PO-44/10`, routed).
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY RETIRE A RAMP** — ⭐ **a header is
 INFERRED, so an absent table can only be ANNOUNCED; a delimiter is DECLARED, so an

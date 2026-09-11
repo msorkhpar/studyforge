@@ -13379,3 +13379,22 @@ deleting rows/W100.md -> 2 [pointer] refusals -> FLOOR_EXIT=1
 ⚠️ **Ruling 179 tolerates `todo`-against-started, so nothing was in breach** — ⛔ **but a register cell must be TRUE WHEN IT MERGES (Ruling 231), and these three rows were dispatched: `todo` was simply false.** ⭐ **Set to `in flight`, which makes `register cells declaring a started state` read `3 — W122 W123 W124` and the two tables agree.**
 
 ⛔ **AND THE ONE THAT MATTERED: `W124`'s cell read *"gates `W98`'s clause"*, and `W98` closed at `8416924` in this same round.** ⭐ **Re-taken to name what it gates NOW — a hole the SUITE declares at `tests/visual/test_site.py:33`–`:41` — which is the `PO-44/4` amendment's ground arriving in the register.** ⚠️ **`PO-44/13`, `[local]`, MINE: a close must sweep the register for cells that NAME the row it closed, and the four edits of Ruling 201 do not ask for that. ⭐ **MEASURED by me at `ad5ce24`, and the FIRST number I wrote here was WRONG and counting fixed it — which is why a count is printed rather than asserted:** `grep -n "W98" docs/tasks/BOARD.md` → **3 lines, printed in full**, `:53` the In-flight re-take narrative naming the absorbed branch, `:232` the closed row's own register line, `:257` `W124`'s corrected cell. ⛔ **All three are TRUE; the count I first typed, `1`, was not.****
+
+### ⛔ PO round 44, `PO-44/14` — `W115`'s SUBJECT DEMONSTRATED RATHER THAN ARGUED, inside the round that promoted it, against my own cell
+
+⛔ **THE CELL I WROTE FROM A MEASUREMENT WAS FALSE NINETY SECONDS LATER, AND THE INSTRUMENT EXITED `0` BOTH TIMES.** ⭐ **MEASURED by me, two readings, NO EDIT OF THE BOARD BETWEEN THEM:**
+
+```text
+reading 1   fix/W124-W122-W123-docker-pins  tip 5dc363c  ahead 4?  -> I wrote 3
+            ⛔ taken from `git rev-list --count <own merge base>..<branch>` = 3
+reading 2   the same command, after the developer committed
+            tip 57ea703  ahead 4
+            corroborate: ⭐ CORROBORATED … is 4 commits ahead    CORR_EXIT=0
+            ⛔ while the board's cell still read 3
+```
+
+⭐ **SO `corroborate` PRINTED THE TRUE NUMBER ON THE SAME LINE AS A VERDICT THAT ACCEPTED THE FALSE ONE.** ⛔ **That is not a near-miss: it is the exact mechanism `W115` exists to close, and `CTO-56` measured it three times; this is the fifth instance and the first one an office caught against ITSELF in the same round.**
+
+⚠️ **THE CELL IS RE-TAKEN TO `4`, as-of BRANCH TIP `57ea703`, and I state plainly that it may be false again before this branch merges** — ⛔ **because the as-of of a commits-ahead cell is a developer's working rate, which no register can track.** ⭐ **THAT is the argument for `W125`'s middle shape — generate the CHECKOUT and AHEAD columns, keep the ROW↔BRANCH correspondence asserted — and it is now an argument from this board's own measured behaviour rather than from principle.**
+
+⛔ **AND IT SHARPENS `PO-44/10` AGAINST RULING 262: a merge-time exit check on `corroborate` would have passed this wave while the cell was wrong, because the row corroborates and the cell does not.** ⭐ **An exit code cannot carry this obligation at any point in the cycle. Only `W115`'s comparison can.**
