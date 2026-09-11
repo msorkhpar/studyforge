@@ -1,9 +1,18 @@
 """Mirror of `src/studyforge/narrate/speakable/naming.py` (R12).
 
-⛔ **The central claim here is not about one function, it is about the TREE:**
-there is exactly one minter of a clip name, and every module that names a clip
-goes through it. That is a property a reader cannot check by reading one file, so
-it is asserted over every module under `src/studyforge/`.
+⛔ **The central claim here is not about one function, it is about the TREE:** exactly
+one module mints a clip name. That is a property a reader cannot check by reading one
+file, so it is asserted over every module under `src/studyforge/`.
+
+⚠️ **Ruling 208: three arms, three different reaches, and each one says which it has.**
+A single arm would announce a subject wider than it can see and ship a green over the
+gap, which is worse than an absent assertion because the absence is visible.
+
+| arm | reach | what it cannot see |
+|---|---|---|
+| `..._defines_the_minting_function` | a `def` by that name | a composition under another name |
+| `..._mentions_the_minter_by_name_...` | the token `clip_name` | a composition without it |
+| `..._truncates_a_digest` | `…hexdigest()[:N]`, one expression | a two-statement or argument form |
 """
 
 from __future__ import annotations
@@ -110,18 +119,31 @@ def test_exactly_one_module_in_the_tree_defines_the_minting_function(function):
     assert definers == [THE_MINTER], f"{function} is defined in {definers}"
 
 
-def test_every_module_that_names_a_clip_goes_through_the_minter():
-    # ⛔ The arm that matters. Arm one catches a second *definition*; this catches a
-    # second *composition* — a module that builds `<id>-<digest>` itself without
-    # ever defining a function by that name.
-    offenders = sorted(
-        relative(path)
-        for path in source_modules()
-        if "clip_name" in path.read_text(encoding="utf-8")
-        and relative(path) != THE_MINTER
-        and not takes_from(path, "studyforge.narrate.speakable.naming")
+def test_every_module_that_mentions_the_minter_by_name_goes_through_it():
+    # ⛔ **Ruling 208: the name is the reach, not the ambition.** This was called
+    # `..._that_names_a_clip_...` and its reach is the token `clip_name`, which is
+    # narrower than that subject — and a plant proved it: a module composing
+    # `f"{unit.id}-" + sha256(...).hexdigest()[:8]` by hand carried the token nowhere
+    # and this arm stayed GREEN. A green over a narrower reach than the declared
+    # subject is a false attestation, so the name was narrowed and the reach is
+    # printed beside the verdict. The wider subject is
+    # `test_exactly_one_module_in_the_whole_framework_truncates_a_digest`.
+    scanned = source_modules()
+    mentioning = sorted(
+        relative(path) for path in scanned if "clip_name" in path.read_text(encoding="utf-8")
     )
-    assert offenders == [], f"these name a clip without going through the minter: {offenders}"
+    offenders = sorted(
+        name
+        for name in mentioning
+        if name != THE_MINTER
+        and not takes_from(repository_root() / name, "studyforge.narrate.speakable.naming")
+    )
+    assert offenders == [], (
+        f"REACH: {len(scanned)} modules scanned for the literal token 'clip_name'; "
+        f"{len(mentioning)} mention it: {mentioning}. ⛔ THE PATTERN CANNOT SEE a module "
+        f"that composes the name without using that token — that subject belongs to the "
+        f"truncation arm. Offenders here: {offenders}"
+    )
 
 
 def test_no_other_module_of_this_package_computes_a_digest():
@@ -174,6 +196,19 @@ def test_exactly_one_module_in_the_whole_framework_truncates_a_digest():
         f"{len(digesting)} modules compute a digest ({digesting}); "
         f"these truncate one into a name: {truncating}"
     )
+
+
+def test_the_truncation_arm_declares_what_its_own_scan_cannot_see():
+    # ⛔ **Ruling 208's third form, where the population is a pattern match: the
+    # instrument declares what the pattern CANNOT see.** ⚠️ `truncates_a_digest` reads
+    # `<something>.hexdigest()[:N]` as one expression. It cannot see a module that
+    # binds the full digest to a name and slices that name on the next line, nor one
+    # that truncates a digest it received as an argument. ⭐ Both are recorded here
+    # rather than discovered: the arm is a strong tell and not a total one.
+    left = ast.parse('import hashlib\nd = hashlib.sha256(b"x").hexdigest()\ns = d[:8]\n')
+    right = ast.parse("def f(d):\n    return d[:8]\n")
+    assert not truncates_a_digest(left), "the two-statement form is now visible; widen the docs"
+    assert not truncates_a_digest(right), "the argument form is now visible; widen the docs"
 
 
 def test_the_scan_catches_a_second_definition_and_a_bare_composition(tmp_path):
