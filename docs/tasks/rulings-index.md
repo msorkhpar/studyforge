@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **303 rulings, `1`–`303`, derived from 48 ruling records** —
+⭐ **304 rulings, `1`–`304`, derived from 48 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -348,3 +348,4 @@ procedure.
 | 301 | ⛔ Ruling 301 (CTO round 61) — a clause whose GROUND is refuted is RE-GROUNDED, not refuted, and the round says which of the three terms moved | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-301-cto-round-61-a-clause-whose-ground-is-refuted-is-re-grounded-not-refuted-and-the-round-says-which-of-the-three-terms-moved) |
 | 302 | ⛔ Ruling 302 (CTO round 61) — a NARROWING's effect is measured over the POPULATION, never over the WINDOW the instrument prints | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-302-cto-round-61-a-narrowings-effect-is-measured-over-the-population-never-over-the-window-the-instrument-prints) |
 | 303 | ⛔ Ruling 303 (CTO round 61) — Ruling 293's repaired counter is DISCHARGED by its second office, and the form it replaced reads ZERO on this wave's whole population | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-303-cto-round-61-ruling-293s-repaired-counter-is-discharged-by-its-second-office-and-the-form-it-replaced-reads-zero-on-this-waves-whole-population) |
+| 304 | ⛔ Ruling 304 (CTO round 61) — MINTING SLIDES THE NOTICE WINDOW, so a round that pushes an UNREACHED ruling out of it LANDS that ruling or CARRIES IT BY NAME | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-304-cto-round-61-minting-slides-the-notice-window-so-a-round-that-pushes-an-unreached-ruling-out-of-it-lands-that-ruling-or-carries-it-by-name) |

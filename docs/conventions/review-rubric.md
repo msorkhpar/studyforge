@@ -4545,3 +4545,46 @@ the HAND count                 ->   4        ⭐ 4 = 4
 writes its id inside backticks it reads `0` of `4`.** ⛔ **A counter whose reading depends on
 which punctuation an author chose is not measuring findings, and the repair is load-bearing
 rather than cosmetic.**
+
+### ⛔ Ruling 304 — MINTING SLIDES THE NOTICE WINDOW, so a round that pushes an UNREACHED ruling out of it LANDS that ruling or CARRIES IT BY NAME
+
+```bash
+# ⛔ Run AFTER your own mint and BEFORE handover. The window is the 25 NEWEST rulings, so
+#    minting N rulings retires N members from the only instrument that reports the hole.
+python3 -m tools.quality 2>&1 | grep 'rulings reach'      # your tree, tail and window AFTER the mint
+git show "$REVIEW_BASE":docs/conventions/review-rubric.md > /tmp/base.md   # and the base's
+# Then, for every id the BASE's notice listed as unreached, ask whether it is still uncited:
+for n in <the base's unreached list>; do
+    printf '%s cited: ' "$n"
+    grep -rlE "Ruling[[:space:]]+$n([^0-9]|$)" docs/conventions/ | head -1 || echo NO
+done
+# Pass: `unreached 0` is reported ONLY when the base's unreached members are cited. An
+#       `unreached 0` bought by sliding the window is a FALSE GREEN and is named as one.
+```
+
+⛔ **MEASURED, CTO round 61, against my own mint and it is the round's sharpest finding:**
+
+```text
+BASE   428223c   tail 296   window 272–296   reached 22, unreached 3 — 273, 274, 275
+MINE   after minting 297–303
+                 tail 303   window 279–303   reached 25, unreached 0 — ⛔ "Unreached: none."
+  Ruling 273 cited under docs/conventions/ : False
+  Ruling 274 cited under docs/conventions/ : False
+  Ruling 275 cited under docs/conventions/ : False
+```
+
+⛔ **Nothing landed. The hole did not close — it AGED OUT, and the instrument that exists to
+print it now prints `none`.** ⚠️ **A seven-ruling round buys seven members of silence, and the
+gradient is the wrong way round: the rounds that mint most are the rounds that most need the
+notice.** ⭐ **The CHECK is unaffected — it binds the TAIL alone and the tail is cited — which is
+precisely why the NOTICE is the only reporter and why its silence is worth a clause.**
+
+⭐ **Two discharges, and a round takes one of them:** ⛔ **LAND the member — an edit to a
+convention document carrying its clause (Ruling 245) — or ⭐ **CARRY IT BY NAME** in the round's
+own record and its routing, so the id survives leaving the window. ⚠️ **`273`, `274` and `275`
+are carried by name here and remain `W134`'s population.**
+
+⛔ **AND THE INSTRUMENT OWES A ROW, not an edit by me: the notice should report members that are
+still uncited BELOW the window, or its `unreached 0` means *none in the last 25* while reading
+as *none*.** ⭐ **Routed, not patched — `tools/quality/reach.py` is `385` of R11's `400` and the
+office that owns it this wave has already named the split seam.**
