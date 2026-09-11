@@ -12304,11 +12304,11 @@ docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check --no-cach
 
 | | ⛔ **BASE 1, `e5ab51d`** | ⛔ **BASE 2, `2b564ef`** | ⭐ **MERGE, role `wt/po`** |
 |---|---|---|---|
-| sha printed by the run | `e5ab51d34…` | `2b564ef…` | ⭐ **`0ba512d…`, and the ONLY delta after it is this cell, the `ruff` cell and their twins in the report** |
+| sha printed by the run | `e5ab51d34…` | `2b564ef…` | ⭐ **`1795de7…` — the run PRINTED it, and the only delta after that ref is this cell, the pointer cell and their twins in the report** |
 | suite | 4911 passed, 67 skipped | 4930 passed, 67 skipped | ⭐ **4930 passed, 67 skipped** |
 | floor | clean, **exit 0** | clean, exit 0 | ⭐ **clean, exit 0** |
 | `ruff` 0.16.6 | check clean, format clean, **779** | clean, clean, **781** | ⭐ **clean, clean, 786** |
-| pointers | 723 in 325, 411 anchored, **0 unresolved** | 732 in 327, 411, 0 | ⭐ **774 in 332, 433 anchored, 0 unresolved** |
+| pointers | 723 in 325, 411 anchored, **0 unresolved** | 732 in 327, 411, 0 | ⭐ **775 in 332, 433 anchored, 0 unresolved** |
 | board | **112** register / 73 live / 73 files | 112 / 73 / 73 | ⭐ **119 / 76 / 76**, bijective |
 | narrative | 6095 of 8192 | 6095 of 8192 | **7248 of 8192**, widest row 510 of 600 |
 | rulings index | 216 from 39, tail 216 | **222 from 40, tail 222** | ⭐ **222 from 40, tail 222** — the merge carried it, and ⛔ **this branch mints no ruling, so it cannot go stale on me** (Ruling 203) |
