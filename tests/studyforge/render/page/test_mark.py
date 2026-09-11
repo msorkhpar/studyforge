@@ -123,7 +123,15 @@ def test_the_region_comes_from_a_template_and_no_markup_is_typed_here():
 def test_the_region_ships_hidden_so_a_scriptless_reader_sees_no_dead_control():
     # ⛔ `copy-code.js`'s bargain: a control that does nothing is worse than no
     # control. The region is unhidden by `read-mark.js` only with a working store.
-    assert " hidden>" in mark_module.render(a_document())
+    #
+    # ⚠️ **The REGION's own opening tag, and the first draft of this assertion was
+    # `" hidden>" in region` — which PASSED with the region's `hidden` deleted,
+    # because one of the two labels carries `hidden` too.** A plant refuted the
+    # prediction written for it; this is the form that holds.
+    region = mark_module.render(a_document())
+    opening = region.split(">", 1)[0]
+    assert opening.startswith("<section "), opening
+    assert opening.endswith(" hidden"), f"the region itself is not hidden: {opening}"
 
 
 def test_the_region_says_what_the_store_is():
