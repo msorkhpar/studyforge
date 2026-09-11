@@ -13416,3 +13416,22 @@ reading 4   tip 5b1528a   ahead 6    corroborate exit 0, printed 6  (board said 
 ⭐ **`PO-44/16`, `[local]`, MINE: `wt/dev3` RETIRED while this round was written, so the `Checkout` cell naming it became false.** ⛔ **Re-taken to name the BRANCH and state *no checkout*.** ⚠️ **That is LEGAL and not a contradiction: `board-inflight` fires only when a started row names no checkout AND counts `0` commits, and this one counts `6` and is unmerged (`git branch --contains … release/m0-foundations` → `0`).** ⭐ **The row is genuinely in flight with its work committed and its checkout torn down, which is a state the board could always express and had never been asked to.**
 
 ⛔ **AND THE CONCLUSION I WILL STATE PLAINLY FOR THE CTO: four re-takes of one cell in one round, each correct when written, is not a discipline failure — it is a measurement that an ASSERTED register structurally cannot hold.** ⭐ **`W115` makes the disagreement VISIBLE; `W125`'s middle shape makes the column GENERATED; and `PO-44/15`'s as-of makes the cell HONEST in the meantime.** ⚠️ **Three rows, three different layers, and this round measured the need for all three against itself.**
+
+### ⛔ PO round 44, `PO-44/17` — THE `Checkout` COLUMN HAS THE SAME DEFECT AS `Commits ahead`, AND THE SAME REMEDY: NAME WHAT DOES NOT MOVE
+
+⛔ **MEASURED by me across this single round, `git worktree list` PRIMARY (Ruling 171), with no action of mine involved in any of the three changes:**
+
+```text
+the branch fix/W124-W122-W123-docker-pins held by:
+  reading 1-3   wt/dev3           (the coordinator's original dispatch)
+  reading 4     NO CHECKOUT       (wt/dev3 retired)
+  reading 5     wt/dev1           (the coordinator re-pointed a retired checkout)
+⛔ and corroborate exited 0 on EVERY ONE, including against a cell that said
+   "no checkout" while git said "checked out at dev1"
+```
+
+⭐ **SO THE COLUMN NAMES THE BRANCH FIRST — the one identifier in the row that a third party cannot change — and the checkout is written as the as-of it always was: `<branch>` @ `<checkout>`.** ⛔ **The previous form put the volatile half first and read as though the CHECKOUT were the row's identity, which is how three consecutive readings of one unchanged row produced three different cells.**
+
+⚠️ **AND IT IS THE SAME SHAPE AS `PO-44/15`, so it is one finding's family and not two coincidences: an OBSERVATION table must carry measurements (Ruling 243(c)), a measurement owes its REF (Ruling 246), and every column of this table was carrying one WITHOUT a ref.** ⭐ **Both columns now carry theirs.**
+
+⛔ **WHAT I AM NOT CLAIMING: that this makes the table self-maintaining.** ⭐ **It makes each cell TRUE rather than MOMENTARILY true, which is the most an asserted register can offer — and `W125`'s middle shape is still the answer, with `W115` as the instrument that would have caught all five of these against me.** ⚠️ **`PO-44/17`, `[structural]`, MINE, and routed with `PO-44/15` as one family.**

@@ -55,14 +55,17 @@ commits-ahead cell now CARRIES ITS AS-OF, which is Ruling 246 applied to the col
 names: a bare number is false the moment a developer commits, `n @ <tip>` is true
 forever, and `observation.py` reads the first integer so the column still parses**
 ([the re-take and every reading](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd),
-`PO-44/14`–`PO-44/16`).
+`PO-44/14`–`PO-44/17`). ⛔ **THE SAME HOLDS OF THE `Checkout` COLUMN — that branch sat
+at `wt/dev3`, then at NO checkout, then at `wt/dev1`, in one round** — ⭐ **so the cell
+names the BRANCH, which does not move, and the checkout is written as the as-of it is**
+(`PO-44/17`).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W124` | framework agent | `fix/W124-W122-W123-docker-pins`, no checkout | 6 @ `5b1528a` | in flight |
-| `W122` | framework agent | `fix/W124-W122-W123-docker-pins`, no checkout | 6 @ `5b1528a` | in flight |
-| `W123` | framework agent | `fix/W124-W122-W123-docker-pins`, no checkout | 6 @ `5b1528a` | in flight |
+| `W124` | framework agent | `fix/W124-W122-W123-docker-pins` @ `wt/dev1` | 6 @ `5b1528a` | in flight |
+| `W122` | framework agent | `fix/W124-W122-W123-docker-pins` @ `wt/dev1` | 6 @ `5b1528a` | in flight |
+| `W123` | framework agent | `fix/W124-W122-W123-docker-pins` @ `wt/dev1` | 6 @ `5b1528a` | in flight |
 <!-- /inflight -->
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL** (`PO-42/7`, `PO-43/9`,
