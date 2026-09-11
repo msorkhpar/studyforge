@@ -27,7 +27,7 @@ import importlib
 import pytest
 
 from tests.support import repository_root
-from tools.quality.board import BOARD
+from tools.quality.board import BOARD, ROWS
 from tools.quality.board.register import (
     REGISTER_CLOSE,
     REGISTER_OPEN,
@@ -39,6 +39,7 @@ from tools.quality.board.register import (
     is_closed,
     namings,
     narrative_bytes,
+    redirects_to_the_archive,
     register,
     repeats_its_naming,
     state,
@@ -452,3 +453,89 @@ def test_impossible_an_argument_that_declares_no_state_does_not_duplicate_one(
     """⛔ The IMPOSSIBLE reading. ⚠️ The third wears `Blocked` where the cell would."""
     assert not duplicates_a_state(FRAMED.format(name="W9", argument=argument_text))
     assert not duplicates_a_state("a fragment with no frame at all\n")
+
+# --------------------------------------------------------------------------
+# ⛔ `W129` / Ruling 270 — the REDIRECT STUB predicate, and it is IS not CONTAINS
+# --------------------------------------------------------------------------
+
+#: ⭐ Ruling 270's stub in the shape the ruling prescribes, and the two spellings of the
+#: archive path a row file can legitimately carry.
+_STUB_BODY = (
+    "# W1\n\n⛔ **This file carries the ARGUMENT for board row `W1` and nothing else.**"
+    "\n\n[the argument]({target})\n"
+)
+
+
+@pytest.mark.parametrize(
+    "target",
+    [
+        "../BOARD-ARCHIVE.md#ruling-270-the-close-protocol",
+        "BOARD-ARCHIVE.md#ruling-270-the-close-protocol",
+    ],
+)
+def test_a_stub_whose_ARGUMENT_IS_one_anchored_archive_pointer_is_a_stub(target: str) -> None:
+    """⭐ The positive row, in both spellings of the path a row file may carry.
+
+    ⛔ **The `../` is optional because a row file sits one directory below the archive and
+    this instrument runs over ARBITRARY roots** — a temp tree, a corpus repository — where
+    the nesting is whatever that tree chose.
+    """
+    assert redirects_to_the_archive(_STUB_BODY.format(target=target))
+
+
+@pytest.mark.parametrize(
+    ("body", "why"),
+    [
+        ("", "a file with no frame has no argument this can locate"),
+        (_STUB_BODY.format(target="../BOARD-ARCHIVE.md"), "⛔ the ANCHOR is required"),
+        (_STUB_BODY.format(target="../BOARD.md#the-register"), "⛔ the TARGET is the archive"),
+        (_STUB_BODY.format(target="#ruling-270"), "a same-file anchor is not the archive"),
+        (
+            _STUB_BODY.format(target="../BOARD-ARCHIVE.md#x").replace(
+                "[the argument]", "⭐ **Closed.** [the argument]"
+            ),
+            "⛔ the argument IS the pointer and carries nothing beside it",
+        ),
+        (
+            _STUB_BODY.format(target="../BOARD-ARCHIVE.md#x")
+            + "\nAnd one more paragraph of argument.\n",
+            "⛔ a SECOND block is an argument, not a redirect",
+        ),
+    ],
+)
+def test_planted_everything_that_is_NOT_a_stub(body: str, why: str) -> None:
+    """⛔ The CLOSED predicate, planted on every near-miss it has to refuse.
+
+    ⚠️ **The last two are the ones that matter**: ⭐ **a full argument file that ENDS with
+    an archive pointer is what a `contains` test would have read as a stub**, and
+    `rows/W129.md`, `rows/W130.md` and `rows/W132.md` are all that shape.
+    """
+    assert not redirects_to_the_archive(body), why
+
+
+def test_the_LIVE_tree_reads_ZERO_stubs_and_the_CONTAINS_form_would_read_FIFTY() -> None:
+    """⛔ The LIVE reading, and it is the one that makes the predicate's shape an argument.
+
+    ⚠️ **MEASURED here rather than quoted:** of the live row files, a substantial minority
+    carry an ANCHORED `BOARD-ARCHIVE.md#` pointer somewhere in their argument — ⭐ **so the
+    rejected `contains` predicate would have read every one of them as a CLOSED row's
+    stub, and `board-orphan` would have fallen silent on exactly the files it guards.**
+
+    ⛔ **This predicate reads NONE of them**, and both numbers are asserted so the
+    comparison is a reading rather than a claim (Ruling 128: the population, in full).
+    """
+    files = sorted((repository_root() / ROWS).glob("*.md"))
+    assert len(files) >= 10, f"born vacuous: {len(files)} row files"
+    bodies = {path.stem: path.read_text(encoding="utf-8") for path in files}
+    stubs = sorted(name for name, body in bodies.items() if redirects_to_the_archive(body))
+    contains = sorted(
+        name for name, body in bodies.items() if "BOARD-ARCHIVE.md#" in argument(body)
+    )
+    assert stubs == [], (
+        f"⛔ {len(stubs)} live row file(s) read as a Ruling 270 STUB — {stubs}. A live row's "
+        f"argument is AMENDED, so it may not live in the archive."
+    )
+    assert len(contains) > 10, (
+        f"⛔ born vacuous: only {len(contains)} row files carry an anchored archive pointer, "
+        f"so the rejected `contains` form would have had nothing to get wrong here"
+    )

@@ -101,13 +101,75 @@ somebody writes an ordinary table.**
 | **minting a row** | one register line, and `../tasks/rows/<ID>.md` with the argument — ⭐ **BORN WITH AN ANCHORED POINTER TO ITS ARGUMENT** (Ruling 244(e)) | a mint section on the board, or ⛔ **a row file carrying no `](…#…)` back to the argument that minted it** |
 | **changing a state** | ⭐ **replace the state cell** | append the new state beneath the old one |
 | **re-scoping a live row** | edit `../tasks/rows/<ID>.md` — ⭐ **it is a live document and editing it is the point** | annotate the board |
-| **closing a row** | ⛔ **FOUR edits** (Ruling 201 added the fourth). ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; delete the row file; ⛔ **re-point every INBOUND citation of `rows/<ID>.md` in a LIVE document at the archive record** — see Ruling 201 below | leave the row file behind — ⛔ **`board-orphan` will say so** — leave either link pointing where it used to, or ⛔ **leave a backticked `rows/<ID>.md` standing in live prose or code, which NO instrument can see** |
+| **closing a row** | ⛔ **FOUR edits** (Ruling 201 added the fourth; ⭐ **Ruling 270 changed the third**). ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; ⛔ **REPLACE the row file with a REDIRECT STUB — never delete it** (Ruling 270, below); ⛔ **re-point every INBOUND citation of `rows/<ID>.md` in a LIVE document at the archive record** — see Ruling 201 below | leave the row file behind **with its argument still in it** — ⛔ **`board-orphan` will say so** — ⛔ **DELETE it, which breaks every FROZEN pointer at it and no office may repair those** — leave either link pointing where it used to, or ⛔ **leave a backticked `rows/<ID>.md` standing in live prose or code, which NO instrument can see** |
 | **writing a round** | ⭐ **`BOARD-ARCHIVE.md`, appended** — and the board's cells change to match | a `## ROUND n` section on the board |
 
 ⛔ **The archive is a RECORD: it is appended to and corrected by annotating
 beneath, never by editing** (Ruling 106). ⭐ **That is precisely why a live row's
 argument may not live there** — and it is the whole reason `rows/` exists rather
 than one more archive section.
+
+### ⛔ RULING 270 (CTO round 58) — A CLOSE REPLACES THE ROW FILE WITH A REDIRECT STUB, AND DOES NOT DELETE IT
+
+⛔ **THREE RULES WERE JOINTLY UNSATISFIABLE AND THREE CLOSES STOOD BEHIND THE
+COLLISION.** ⚠️ **Ruling 201 DEFINES a close as deleting `rows/<ID>.md`; Rulings 106 and
+174 forbid editing a frozen record; and frozen records POINT AT row files.** ⭐ **So a
+close had to break a pointer that NO OFFICE MAY REPAIR** — and `W100`, `W122` and `W124`
+could not reach a `done` state at all, which left every round ending with a register that
+was true only because it declined to say `done`.
+
+⭐ **THE RESOLUTION, and it is the POINTER FLOOR that yields rather than the freeze:**
+⛔ **no frozen byte is edited, ever, for any reason, including this one.**
+
+⭐ **THE STUB IS EXACTLY THREE THINGS, and a fourth makes it not a stub:**
+
+```markdown
+# <ID>
+
+⛔ **This file carries the ARGUMENT for board row `<ID>` and nothing else.**
+⭐ **Its argument has CLOSED and moved to the record.**
+
+[the argument](../BOARD-ARCHIVE.md#<the-record-s-own-anchor>)
+```
+
+1. ⭐ **the `# <ID>` frame line** — `board-frame` reads it;
+2. ⭐ **the frame phrase** (`and nothing else.`) — `board-frame` reads that too;
+3. ⭐ **ONE pointer at the ARCHIVE ANCHOR where the argument now lives** — ⛔ **anchored,
+   never a bare `BOARD-ARCHIVE.md`**: Ruling 270's own sentence is *"the reader lands on
+   the argument"*, and a bare link lands them at the top of a record hundreds of sections
+   long (Ruling 244(e)'s property).
+
+⛔ **THE PREDICATE IS *THE ARGUMENT **IS** THE POINTER*, NEVER *CONTAINS ONE*, and that is
+measured rather than stylistic.** ⚠️ **MEASURED at `51dee3b`, role `wt/dev1`: of the **83**
+live row files, **50** carry an anchored `BOARD-ARCHIVE.md#` pointer somewhere and **42**
+END with one.** ⭐ **A `contains` test would therefore have read FIFTY full argument files
+as stubs and silenced `board-orphan` on exactly the files it guards.** ⛔ **There is no
+byte threshold and there is not going to be one** — Ruling 186's remedy, reused: a closed
+predicate retires a disagreement instead of settling it.
+
+⚠️ **A STUB IS STILL JUDGED. The clause is *a CLOSED row's detail file MAY be a stub*, and
+never *a file under `rows/` may be anything*:**
+
+| the file | ⛔ the reading |
+|---|---|
+| a stub whose id has a CLOSED register row | ⭐ **clean** — the one exception |
+| a FULL argument file left behind by a close | ⛔ `board-orphan` — the close did not happen |
+| a stub whose id has NO register row | ⛔ `board-orphan` — the register lost it |
+| a stub whose id has a LIVE register row | ⛔ `board-detail` — ⚠️ **a live argument is
+  AMENDED, so it may not live in the archive**, which is what that finding's message has
+  said since it was written |
+| a stub with no frame phrase | ⛔ `board-frame` **and** `board-orphan` |
+| a stub whose archive pointer does not resolve | ⛔ the POINTER FLOOR, one instrument over |
+
+⭐ **WHY THE STUB AND NOT A FLOOR ARM THAT RESOLVES AN ARCHIVE LINK AT A CLOSED ROW.**
+⛔ **MEASURED by the PO at `6c4e3d0`, role `wt/po`, four states, every expectation written
+down BEFORE the command ran** ([the record](../tasks/handoffs/CTO-2026-09-11-round58.md#6b-ruling-270-w100-is-correctly-blocked-the-po-read-ruling-174-right-the-pointer-floor-yields-and-the-freeze-does-not)):
+⚠️ **performing Ruling 201's delete left **3 unresolved pointers, all FROZEN**; the stub
+leaves **2 findings from ONE arm of ONE instrument** and **0 unresolved.** ⭐ **The
+alternative would have taught the pointer floor to accept a dangling path ON A CONDITION,
+and the condition is a STATE CELL in another file.** ⛔ **The stub keeps the floor's
+predicate exactly as strict as it is and moves the single exception into the instrument
+that already reads the register.**
 
 ### ⛔ Ruling 244(e) (CTO round 56) — a row is BORN with an ANCHORED POINTER to its argument
 
@@ -186,12 +248,12 @@ two*.**
 
 | Rule | Fires when | Why it is that and not a line count |
 |---|---|---|
-| `board-detail` | a live register row has no `rows/<ID>.md` | an argument with no home is an argument that goes back into the cell |
-| `board-orphan` | a `rows/<ID>.md` has no live register row | a file nobody is sent to; ⭐ **the bijection is asserted in BOTH directions, because one of the two always survives a careless edit** |
+| `board-detail` | a live register row has no `rows/<ID>.md` — ⭐ **or has one that is a Ruling 270 REDIRECT STUB** | an argument with no home is an argument that goes back into the cell; ⛔ **and a LIVE row's argument is AMENDED, so it may not live in the archive either** |
+| `board-orphan` | a `rows/<ID>.md` has no live register row — ⭐ **UNLESS its id has a CLOSED register row AND the file is a Ruling 270 REDIRECT STUB** | a file nobody is sent to; ⭐ **the bijection is asserted in BOTH directions, because one of the two always survives a careless edit.** ⛔ **The one exception is Ruling 270's, above: a close REPLACES the row file rather than deleting it, because frozen records point at row files and no office may repair a frozen pointer** |
 | `board-duplicate` | one id has two register rows | ⚠️ **the board once carried `W20` twice, as `todo` AND `done`, two rows apart** |
 | `board-narrative` | non-table bytes exceed `BOARD_NARRATIVE_CEILING` | ⭐ **invariant to the number of rows** — a new row is a table line and adds nothing to it |
 | `board-row-width` | one table row exceeds `BOARD_ROW_CEILING` | a cell that wide is an argument, and an argument goes behind a pointer |
-| `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows | ⭐ **the bound with no gap** — see below |
+| `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows `+ BOARD_PER_OBSERVATION_ROW ×` delimited observation rows `+ BOARD_PER_SCHEDULED_ROW ×` delimited scheduled rows | ⭐ **the bound with no gap** — see below. ⛔ **`W130` added the last two terms: Ruling 271 measured the allowance indexed to a population that could not see its own numerator, and the SLOPE was the defect rather than the size** |
 | `board-state` | a register row's state cell DECLARES no state | ⛔ **the hole that let a LIVE row leave the register in silence** — see below |
 | `board-frame` | a row file does not begin `# <ID>` **or** does not contain the frame's phrase | ⭐ **the one live-tree property left after Ruling 180.** ⛔ **TWO SUBSTRINGS and nothing more** — it cannot read what the file *says*, and that weakness is what lets it survive every amendment (`CTO-47/4`) |
 | `board-inflight` | one observation row declares a started state, names **no** checkout and counts **0** commits | ⛔ **Ruling 189(b), and it is a CONTRADICTION PRINTED ON ONE ROW** — ⚠️ the founding bytes stood for 350 commits while every git instrument read correctly |
@@ -264,17 +326,64 @@ close**, as `python3 -m tools.quality.board.corroborate`, which
 ⭐ **So `corroborate` has THREE answers, not two** — `0` corroborated, `1`
 refuted, ⛔ **`2` NOT AUTHORITATIVE** (Ruling 53's fourth state), because *"git
 could not answer"* and *"nothing is wrong"* must never arrive as the same
-verdict. ⚠️ **`W111` added the third producer of exit `2` and it is the one
-`PO-40/4` found: *the board is there and I could not read its table*** — ⭐ **a
-DECLARED `<!-- inflight -->` block whose header declares no role, and a board
-carrying no marker at all.** ⛔ **A DECLARED, READABLE, EMPTY block is exit `0` and
-says so in its own sentence: that is *nothing is in flight*, which is a real
-answer, and a refusal there would fire on every wave the PO closed correctly.** ⚠️ **And it prints two readings no board cell carries:** the checkouts
-git can see that no row names, and the `trial/*` and `tmp-*` branches that are
-now ancestors of the release branch — ⭐ **each of which reads as dispatched work
-to a human, which is Ruling 189's subject with nowhere to print it.** ⛔ **A
-checkout with NO commit is invisible to every git instrument by construction
-(Ruling 130), so those are COUNTED AND NAMED as unreadable rather than judged.**
+verdict.
+
+⛔ **THE PRODUCERS OF EXIT `2` ARE **SIX**, AND THIS LIST IS A CLOSED CLAIM**
+(`W115/2`, routed by round 59; Ruling 276's form — a declared-gaps list is read as
+EXHAUSTIVE, so an incomplete one is worse than none). ⚠️ **It read *"`W111` added the THIRD
+producer"* for two waves while `W115` was adding the fifth and sixth, which is the same
+defect as this document's rule table and is why the claim now carries its count:**
+
+| # | the producer | its row | the reading that inhabits it |
+|---|---|---|---|
+| 1 | no `docs/tasks/BOARD.md` in this checkout | — | `test_impossible_a_checkout_with_no_board_is_NOT_AUTHORITATIVE` |
+| 2 | the release branch does not resolve | — | `test_impossible_a_release_branch_that_cannot_exist_is_NOT_AUTHORITATIVE` |
+| 3 | a DECLARED `<!-- inflight -->` block whose header declares no role | `W111`, `PO-40/4` | `test_planted_an_UNREADABLE_DECLARED_TABLE_IS_EXIT_2_AND_NOT_A_PASS` |
+| 4 | a board carrying NO marker at all, located by Ruling 196(b)'s RAMP | `W111` | `test_planted_a_board_with_NO_MARKER_is_exit_2_and_names_the_RAMP` |
+| 5 | ⭐ **one ROW whose branch git could not count** — `Answer.NOT_ANSWERABLE`, folded | `W115`, Ruling 216 | `test_planted_a_ROW_whose_branch_GIT_CANNOT_COUNT_exits_2_AND_NOT_1` |
+| 6 | ⭐ **one LIVE CHECKOUT whose `ahead` git could not count** | `W115`, Ruling 216 | `test_planted_a_LIVE_CHECKOUT_git_cannot_count_is_NOT_filed_under_BY_CONSTRUCTION` |
+
+⚠️ **Five RETURN SITES carry those six, because 5 and 6 share one fold** — ⛔ **and that
+fold is the point of Ruling 216: `NOT_ANSWERABLE` DOMINATES, so one unanswerable row makes
+the RUN exit `2` and never `0` or `1`.**
+
+⛔ **A DECLARED, READABLE, EMPTY block is exit `0` and says so in its own
+sentence: that is *nothing is in flight*, which is a real answer, and a refusal there would
+fire on every wave the PO closed correctly.**
+
+⚠️ **And it prints SIX readings no board cell carries, which are
+`tools/quality/board/unclaimed.py`'s** (`W132`'s split): the checkouts no row claims, ⭐ **the
+OFFICE round branches Ruling 265 exempts**, the checkouts invisible to git by construction,
+the ones git could not count at all, and the `trial/*` / `tmp-*` branches that are spent or
+still checked out — ⭐ **each of which reads as dispatched work to a human, which is Ruling
+189's subject with nowhere to print it.**
+
+#### ⛔ RULING 265 (CTO round 58) — the `UNNAMED` arm exempts the OFFICE-BRANCH PATTERN, not `0` ahead
+
+⚠️ **A checkout with NO commit is invisible to every git instrument BY CONSTRUCTION
+(Ruling 130), so those are COUNTED AND NAMED as unreadable rather than judged.** ⛔ **But
+that exemption was gated on `0` commits ahead, and an office's own round branch stops
+satisfying it THE MOMENT IT RECORDS ANYTHING** — ⭐ **so `dispatched and UNNAMED by any
+row` named a `chore/po-round*` or `chore/cto-round*` branch in every wave, forever, and
+Ruling 264(c) had just made that printed line the project's ONE pre-merge gate.** ⚠️ **A
+reviewer was therefore taught to skim a gate, checking only whether a DEVELOPER name
+appeared in it.**
+
+⭐ **MEASURED, one branch and two readings, the only variable being whether the office had
+written anything down yet:** `chore/po-round45` exempt at `6c4e3d0` at `0` ahead;
+`chore/po-round44` named as *dispatched and UNNAMED* at `b5b0577` after it committed.
+
+⛔ **THE PREDICATE IS THE BRANCH NAMESPACE AND NOT EMPTINESS: no register row will EVER
+name an office's round branch, because a row naming it would be a row naming its own
+recorder.** ⭐ **That is decidable from the NAME, the prefix is ANCHORED — `startswith`,
+never `in`, or `fix/W99-po-round-guard` would be exempt — and the exemption is PRINTED with
+its count and its reason**, because a gate that hides a rule is unreadable.
+
+⚠️ **The DETACHED checkout is still in NONE of those lines, and that is NOT absorbed here:**
+⛔ **`wt/po-int` has no `branch refs/heads/…` line for `worktree list --porcelain` to
+report, so the instrument never sees it.** ⭐ **That hole is `PO-44/5`'s and `W125`'s with
+`W96/5`, and the office line carries its OWN count precisely so that Ruling 265's exemption
+shrinks no other line's number without saying where the branches went.**
 
 ⛔ **The Ruling 140 plant found a hole in this instrument BEFORE it shipped, and
 the third rule is the fix rather than a tweak to the first two.** ⚠️ **Run
@@ -285,6 +394,56 @@ text that indexes nothing raises the numerator and leaves the denominator
 alone.** ⛔ **The other two are kept as DIAGNOSIS: `board-size` says the board is
 too big, and they say WHERE — a governor that only says *too big* is one
 somebody raises rather than obeys.**
+
+### ⛔ RULING 271 (CTO round 58) — `board-size`'s DENOMINATOR counts THREE populations, and the SLOPE was the defect
+
+⚠️ **MEASURED by the PO at `6c4e3d0`, role `wt/po`: the board stood at `42707 of 42784`
+— **77** bytes of headroom, **99.82 %** consumed — and round 45's own obligations summed
+to MORE than the `4 × 224 = 896` its four mints earned, before one byte of narrative.**
+⛔ **The register's own round could not be recorded inside the bound that governs the
+register, and that is not a *may*: it BOUND the round.**
+
+⛔ **THE DEFECT IS NOT SIZE. What grew was `## In flight` (+1 880 B) and `## Scheduled`,
+and NEITHER IS A REGISTER ROW** — ⚠️ **so the allowance was indexed to a population that
+cannot see its own numerator.** ⭐ **Both of those tables are DELIMITED and
+`tools/quality/board/` already parses both, so the remedy is a DENOMINATOR TERM PER TABLE:**
+
+```text
+allowed = BOARD_FRAME
+        + BOARD_PER_ROW             × ids the register names
+        + BOARD_PER_OBSERVATION_ROW × rows inside <!-- inflight -->
+        + BOARD_PER_SCHEDULED_ROW   × rows inside <!-- scheduled -->
+```
+
+⛔ **THREE REMEDIES ARE REFUSED, each on a measured ground, so nobody reaches for one:**
+
+| the move | ⛔ why the reading kills it |
+|---|---|
+| raise `BOARD_PER_ROW` | it rewards MINTING, and minting was never the cause — ⚠️ **a LIVE
+  register line means **169.8 B** against an allowance of 224 at `51dee3b`, so each mint
+  already EARNS +54** |
+| archive CLOSED register lines | ⛔ **the slope is ZERO** — a closed line means **229.6 B**
+  against `BOARD_PER_ROW = 224`, so archiving one frees **5.6 B** |
+| raise `BOARD_NARRATIVE_CEILING` | ⚠️ **the SAME defect one bound over**: the narrative is
+  not what grew, and a ceiling raised to absorb a table's growth stops measuring prose |
+
+⭐ **THE FIGURES ARE DERIVED AND THE RULE IS ONE RULE** (Ruling 277 — a number is binding
+wherever it is written, so it is written once, in `tools/quality/board/bounds.py`):
+⛔ **a per-row term is its population's MEASURED MEAN LINE, rounded UP to the next multiple
+of 32, plus one further 32.** ⚠️ **Its property is a STATED, UNIFORM slope — a row earns
+between 32 and 64 bytes more than the mean row of its own population costs — and the rule
+RE-DERIVES `BOARD_PER_ROW = 224`, the constant that has shipped since the split, from
+today's register and from the `~170 B` measured at the split itself.** ⭐ **That is what
+makes it a derivation rather than a figure chosen to clear today's board.**
+
+⛔ **AND THE RULING 140 EVASION STILL FAILS, which had to be re-asserted because a wider
+denominator is exactly where it would have got back in.** ⭐ **A data row counts only when
+its table's own parser reads it, and both parsers require a row to carry at least as many
+cells as their DECLARED HEADER has roles** — ⚠️ **so 400 lines of prose pasted one line per
+table row INSIDE both delimited blocks raise NEITHER denominator.** ⛔ **And only DELIMITED
+rows count: `observation.read` still answers for a board with no marker through Ruling
+196(b)'s header RAMP, and an INFERRED population in a denominator would be the evasion with
+a header on it.**
 
 ### ⛔ A state cell DECLARES its state — it does not mention one
 

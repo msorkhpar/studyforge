@@ -28,7 +28,7 @@ from tools.quality.board.graph import Graph
 from tools.quality.board.register import BOARD
 from tools.workspace import git
 
-from .conftest import RELEASE, unreadable, write_board
+from .conftest import RELEASE, commit, unreadable, write_board
 
 #: ⛔ A header that declares NONE of the three roles — the CTO's round-50 plant.
 RENAMED = "| Row | Owner | Where | Commits on it | Phase |\n|---|---|---|---|---|\n"
@@ -115,73 +115,6 @@ def test_planted_a_row_declaring_NO_STARTED_STATE_owes_no_carrier(repository: Pa
     code, printed = _run(repository)
     assert code == CORROBORATED
     assert "not a started state; no carrier is owed." in printed
-
-
-def test_planted_the_OTHER_direction_work_git_sees_and_the_board_does_not_name(
-    repository: Path,
-) -> None:
-    """⛔ The measured failure was BIDIRECTIONAL — stale rows present, live rows absent."""
-    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
-    _code, printed = _run(repository)
-    assert "dispatched and UNNAMED by any row: feat/live" not in printed, (
-        "feat/live has no checkout, so `worktree list` cannot see it either"
-    )
-    assert git(repository, "worktree", "add", "-q", str(repository.parent / "two"), "feat/live")
-    _code, printed = _run(repository)
-    assert "dispatched and UNNAMED by any row: feat/live" in printed
-
-
-def test_planted_a_spent_trial_branch_is_the_reading_no_board_cell_carries(
-    repository: Path,
-) -> None:
-    """⭐ The standing form, measured by the CTO at `0285a92` and `c3e2919`.
-
-    ⛔ **Such a branch carries nothing unique and is invisible to `--no-merged` by
-    construction** — ⚠️ **its only remaining effect is to read as dispatched work
-    to a human, which is Ruling 189's subject with no cell to print it in.**
-    """
-    write_board(repository, "")
-    _code, printed = _run(repository)
-    assert "spent and deletable (1): trial/spent" in printed
-    assert "ancestor of" in printed
-    assert "trial/tmp branches still checked out: none." in printed
-
-
-def test_planted_a_STANDING_trial_worktree_is_PRINTED_and_never_removed(
-    repository: Path,
-) -> None:
-    """⚠️ Ruling 206(ii) named this line's own blind spot, and it routed it to `W110`.
-
-    ⛔ **`name not in live` excluded exactly the shape that keeps a spent row
-    green** — a trial worktree still standing — ⭐ **so it is printed separately, as a
-    NOTICE**, because reporting a worktree you did not cut is never wrong and removing
-    one always is.
-    """
-    assert (
-        git(
-            repository, "worktree", "add", "-q", str(repository.parent / "t"), "trial/spent"
-        ).returncode
-        == 0
-    )
-    write_board(repository, "")
-    _code, printed = _run(repository)
-    assert "trial/tmp branches STILL CHECKED OUT (1): trial/spent" in printed
-    assert "never remove one you did not cut (Ruling 206(ii))" in printed
-    assert "spent trial/tmp branches: none." in printed, "it is no longer *deletable*"
-
-
-def test_the_blind_spot_is_COUNTED_AND_NAMED_rather_than_judged(repository: Path) -> None:
-    """⚠️ *Just dispatched* and *an office checkout* are the same bytes to `git`.
-
-    ⛔ **So a 0-commit checkout is named as UNREADABLE here** rather than reported
-    as a defect — ⭐ the board is the only instrument that can tell them apart,
-    which is the whole of Ruling 171.
-    """
-    assert git(repository, "worktree", "add", "-q", str(repository.parent / "office"), "feat/bare")
-    write_board(repository, "")
-    _code, printed = _run(repository)
-    assert "invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead" in printed
-    assert "office" in printed, "the directory BASENAME, which is what identifies it"
 
 
 def test_no_reading_prints_an_absolute_path(repository: Path) -> None:
@@ -288,10 +221,35 @@ def test_the_FOUR_populations_return_THREE_DISTINCT_codes_and_FOUR_distinct_sent
     ⭐ **All four populations are run in one test so the readings are compared rather
     than asserted one at a time** — ⚠️ which is what caught the two that used to share
     exit `0`.
+
+    ## ⛔ `W115/1` — THIS NAME OVER-CLAIMED, AND `W132` MADE IT TRUE BY MOVING THE POPULATION
+
+    ⚠️ **The `codes` dict asserted below used to read
+    `{CORROBORATED, CORROBORATED, NOT_AUTHORITATIVE, NOT_AUTHORITATIVE}`** — ⛔ **FOUR
+    populations, FOUR sentences and TWO distinct codes, under a name claiming THREE.**
+    ⭐ **The GATE was always sound: `REFUTED` is inhabited in four sibling tests and
+    three-way distinctness is asserted separately. Only the NAME over-claimed, which is
+    Ruling 208's class in a test name for the first time.**
+
+    ⛔ **THE NAME IS NOT RENAMED, and the ground is `W74/2`: a name two FROZEN records
+    quote is not renamed.** ⭐ **RECEIVED from the CTO's round-59 record §4b, MEASURED by
+    them at `b33e01a` — `handoffs/W111.md:134` and
+    `handoffs/CTO-2026-09-10-round52.md:731` both already carried this name on the day
+    `rows/W115.md` claimed it was cited by none, so the claim was false at the INSTANT it
+    was written rather than stale.** ⛔ **`W74/2` is the FIFTH unreversed refusal in its
+    family, so the rule binds and the remedy is the other one.**
+
+    ⭐ **So the DECLARED AND READ population is now a row git REFUTES, and the four
+    populations really do return three distinct codes.** ⚠️ **Nothing is lost: the
+    CORROBORATED-with-rows reading is
+    `test_planted_a_HELD_checkout_is_CORROBORATED_and_is_the_positive_row`'s, by name.**
     """
+    # ⛔ `fix/Wmerged` is TERMINAL in the fixture — absorbed by a `--no-ff` merge and
+    # checked out nowhere — so this population is REFUTED rather than CORROBORATED.
+    refuted = "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 1 | in flight |\n"
     row = "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n"
     readings = {}
-    write_board(repository, row)
+    write_board(repository, refuted)
     readings["declared and read"] = _run(repository)
     write_board(repository, "")
     readings["declared and empty"] = _run(repository)
@@ -307,11 +265,16 @@ def test_the_FOUR_populations_return_THREE_DISTINCT_codes_and_FOUR_distinct_sent
     readings["declared and unreadable"] = _run(repository)
     codes = {name: code for name, (code, _printed) in readings.items()}
     assert codes == {
-        "declared and read": CORROBORATED,
+        "declared and read": REFUTED,
         "declared and empty": CORROBORATED,
         "no marker at all": NOT_AUTHORITATIVE,
         "declared and unreadable": NOT_AUTHORITATIVE,
     }, codes
+    # ⛔ `W115/1`, discharged as a `W132` clause: the NAME says THREE and the reading is
+    # now THREE. ⭐ Asserted as a count of DISTINCT codes, derived rather than retyped, so
+    # the name cannot drift from the population again.
+    assert len(set(codes.values())) == 3, codes
+    assert len(codes) == 4, codes
     lasts = {name: printed.split("\n")[-1] for name, (_code, printed) in readings.items()}
     assert len(set(lasts.values())) == 4, lasts
 

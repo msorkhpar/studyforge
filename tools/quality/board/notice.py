@@ -10,8 +10,10 @@ editable is replaced by a NOTICE, never by nothing (Ruling 183).
 `rows_on_disk(root)` is the one definition of *which files sit beside the board*
 and `check_board` reads it from here.
 
-**Depends on.** `register` for the parsers and the locations, `observation` for
-Ruling 189(b)'s population, and `config` for the tree. Nothing else.
+**Depends on.** `register` for the parsers and the locations, ⭐ **`bounds` for the
+five size bounds and `W130`'s three-term `allowance`**, `observation` for
+Ruling 189(b)'s population, `scheduled` for `W100`'s, and `config` for the tree.
+Nothing else.
 
 ## ⛔ Why this is its own module, and it is an R11 reading rather than taste
 
@@ -32,18 +34,24 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
+from tools.quality.board.bounds import (
+    BOARD_FRAME,
+    BOARD_NARRATIVE_CEILING,
+    BOARD_PER_OBSERVATION_ROW,
+    BOARD_PER_ROW,
+    BOARD_PER_SCHEDULED_ROW,
+    BOARD_ROW_CEILING,
+    allowance,
+)
 from tools.quality.board.contradiction import observation_reading
 from tools.quality.board.register import (
     BOARD,
-    BOARD_FRAME,
-    BOARD_NARRATIVE_CEILING,
-    BOARD_PER_ROW,
-    BOARD_ROW_CEILING,
     ROWS,
     duplicates_a_state,
     is_closed,
     namings,
     narrative_bytes,
+    redirects_to_the_archive,
     register,
     repeats_its_naming,
     row_order,
@@ -107,8 +115,8 @@ def board_state(root: Path) -> list[str]:
             f"absence is a build failure, and tools/tests/quality/board/test_init.py says so."
         ]
     rows = register(text)
-    identifiers = {i for _n, ids, _s in rows for i in ids}
     live = [row for row in rows if not is_closed(row[2])]
+    closed_ids = {i for _n, ids, cell in rows if is_closed(cell) for i in ids}
     on_disk = rows_on_disk(root)
     # ⛔ Ruling 183, and `st_size` rather than a clock or an enumeration order,
     # over a SORTED population, so the reading is reproducible (R10).
@@ -122,14 +130,33 @@ def board_state(root: Path) -> list[str]:
     )
     table = table_lines(text)
     widest = max((len(line.encode()) for _n, line in table), default=0)
+    # ⛔ `W130`: the allowance's THREE terms, derived in `bounds.allowance` and printed
+    # with each term's own count — ⭐ a total with one denominator hid the slope defect
+    # Ruling 271 found, and a reader who cannot see which term grew cannot see it either.
+    allowed, indexed, observations, scheduled = allowance(text)
+    # ⭐ `W129`, Ruling 270: the stub population, PRINTED rather than bounded — the
+    # clause's denominator is every CLOSED id with a file still on disk (Ruling 48).
+    stubs = sorted(
+        (n for n, body in bodies.items() if n in closed_ids and redirects_to_the_archive(body)),
+        key=row_order,
+    )
+    closed_on_disk = sorted((n for n in bodies if n in closed_ids), key=row_order)
     return [
         f"board: {len(rows)} register rows, {len(live)} live, "
         f"{len(on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
         f"(no bound — Ruling 183); "
         f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
         f"widest row {widest} of {BOARD_ROW_CEILING}, "
-        f"{len(text.encode())} bytes total of "
-        f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed.",
+        f"{len(text.encode())} bytes total of {allowed} allowed "
+        f"({BOARD_FRAME} frame + {BOARD_PER_ROW}×{indexed} register "
+        f"+ {BOARD_PER_OBSERVATION_ROW}×{observations} observation "
+        f"+ {BOARD_PER_SCHEDULED_ROW}×{scheduled} scheduled).",
+        f"closed rows with a detail file still in {ROWS}/ (Ruling 270, no bound): "
+        f"{len(closed_on_disk)}"
+        + (f" — {' '.join(closed_on_disk)}" if closed_on_disk else "")
+        + f"; of those, {len(stubs)} are REDIRECT STUBS"
+        + (f" — {' '.join(stubs)}" if stubs else "")
+        + ".",
         f"row arguments in {ROWS}/ (Ruling 186, no bound): "
         + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
         + ".",

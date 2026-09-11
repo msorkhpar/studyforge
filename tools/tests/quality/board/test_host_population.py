@@ -1,4 +1,12 @@
-"""`W119`'s SWEEP: no committed test in this package takes its POPULATION from the HOST.
+"""`W119`'s SWEEP: no test in this package's WORKING TREE takes its POPULATION from the HOST.
+
+⛔ **RULING 259 — *working tree*, not *committed*, and the one word is the whole point.**
+⚠️ **This guard reads the files beside it with `path.read_text()`, which is the WORKING
+TREE.** ⭐ **That is the RIGHT span and it is stated rather than left to be inferred: a
+guard reading the INDEX would pass the very file its author is about to commit** — ⛔ **it
+would be green on the edit that introduces the defect and red only afterwards, which is a
+tripwire that fires after the trespass.** ⚠️ **The retired first line said *committed*, and
+a reader who believed it would have looked for a `git show` that is not here.**
 
 ⛔ **This module mirrors no source module, and `test_migration.py` is the precedent** — its
 subject is not a module but a PROPERTY OF THE PACKAGE, which is why it has a file of its
@@ -30,6 +38,21 @@ from pathlib import Path
 #: ⚠️ **Matched on the dotted spelling or its last segment**, so `Graph.read`,
 #: `git(...)`, `subprocess.run(...)` and `corroborate(...)` are all reached and
 #: `path.read_text(...)` is not.
+#:
+#: ⛔ **RULING 257 — THIS IS A SUPERSET MATCHER, AND THE GUARD IS SAFE ONLY BY ITS REACH.**
+#: ⚠️ **`run` and `git` are matched on the LAST SEGMENT, so they reach every callable in
+#: the tree spelled that way — git-shaped or not.** ⭐ **Over this package that over-reach
+#: is FREE: the only `run(...)` and `git(...)` calls here ARE git, so a superset of the
+#: true population is the true population.** ⛔ **So the reach is declared HERE, where the
+#: population is declared, rather than being a property somebody re-derives:**
+#:
+#: ⛔ **WIDENING THE GLOB IN
+#: `test_no_module_in_this_package_takes_its_POPULATION_from_the_HOST` — the `*.py` that
+#: bounds this guard to ONE package — REQUIRES NARROWING `GIT_READERS` FIRST.** ⚠️ **A
+#: wider population brings in modules that spell an ordinary helper `run` or `git`, and
+#: the matcher cannot tell those from `tools.workspace.git`: the guard would redden a
+#: correct commit, which is Ruling 179's cost and the failure this module's own
+#: `_hands_the_live_root_to_git` docstring records being caught by running it.**
 GIT_READERS = ("Graph.read", "corroborate", "git", "run", "check_output")
 
 #: ⛔ **The ONE module in this package licensed to hand the live root to git, and the
@@ -80,9 +103,21 @@ def _hands_the_live_root_to_git(source: str) -> list[str]:
     the licensed module clean and had no positive row at all.
 
     ⚠️ **What it does NOT cover, DECLARED rather than implied** (Ruling 220): a root
-    rebound through a second name, a dynamic import, and a reader not in `GIT_READERS`.
-    ⛔ **Nothing in this package does any of the three**, and a guard claiming to cover
-    them would be claiming a reach it has not got.
+    rebound through a second name, a dynamic import, a reader not in `GIT_READERS`, and
+    ⛔ **RULING 258's MISSING SHAPE — a live root obtained WITHOUT CALLING
+    `repository_root()` at all**: `Path(__file__).parents[N]`, `os.getcwd()`,
+    `Path.cwd()`, or a root handed in by a fixture.
+
+    ⛔ **That fourth gap is the one that was missing from this list, and a declared-gaps
+    list is read as EXHAUSTIVE — so an incomplete one is worse than none** (Ruling 258,
+    and Ruling 276 measured the same defect in `board.md`'s rule table). ⚠️ **It is also
+    the gap that is SILENT in the same way as the other three: `_names_the_live_root`
+    looks for the CALL or a name bound to it, so a root spelled any other way reads as an
+    ordinary argument and the module scores clean.**
+
+    ⭐ **Nothing in this package does any of the FOUR**, and that is a measurement rather
+    than a hope: ⛔ **a guard claiming to cover them would be claiming a reach it has not
+    got, which is Ruling 225's own shape.**
     """
     tree = ast.parse(source)
     bound = {

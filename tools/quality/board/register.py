@@ -3,10 +3,16 @@ r"""Reading a register out of a markdown table, and it is the parser that is har
 **What it does.** Turns `BOARD.md`'s delimited register into
 `(line number, ids, state cell)` rows, and answers what state a cell DECLARES.
 
-**How you use it.** `tools.quality.board` imports this module's parsers, bounds
-and markers, and nothing else does. ⛔ **The names are not listed here**: that
-list is `tools/quality/board/__init__.py`'s import block, and a second copy of
-it is `CTO-47/3` — the finding this module's own rule codes earned.
+**How you use it.** `tools.quality.board` imports this module's parsers, its
+locations and its markers, and nothing else does. ⛔ **The names are not listed
+here**: that list is `tools/quality/board/__init__.py`'s import block, and a
+second copy of it is `CTO-47/3` — the finding this module's own rule codes
+earned.
+
+⚠️ **The five SIZE BOUNDS lived here until `W130` moved them to `bounds.py`, the
+module named for them and the only one that spends them** — ⛔ **this one is a
+PARSER, and a derivation for a number it never reads is the *fact in the wrong
+home* shape the rule codes above already earned.**
 
 **Depends on.** `re` and `pointers.strip_code_spans`. Nothing else, ever.
 
@@ -44,6 +50,12 @@ BOARD = "docs/tasks/BOARD.md"
 #: The directory holding one file per live row.
 ROWS = "docs/tasks/rows"
 
+#: ⛔ The record a CLOSED row's argument moves into, and the only target Ruling
+#: 270's REDIRECT STUB may carry. ⭐ Named here beside `BOARD` and `ROWS` for the
+#: same reason they are: a location is what this module answers for, and a second
+#: spelling of it in `bijection.py` would be a fact with two homes.
+ARCHIVE = "BOARD-ARCHIVE.md"
+
 #: ⛔ The register is DELIMITED, and this check reads nothing outside the
 #: markers. ⚠️ **The first version inferred it — *any five-cell row whose first
 #: cell names a `W` id* — and the very next edit broke it**: an *In flight*
@@ -55,39 +67,6 @@ ROWS = "docs/tasks/rows"
 #: that moves when somebody writes an ordinary table.
 REGISTER_OPEN = "<!-- register -->"
 REGISTER_CLOSE = "<!-- /register -->"
-
-#: ⛔ Bytes of `BOARD.md` outside any table. Measured **3,811** at the split;
-#: this is 2.1× that, which is room for the frame to gain a section and not
-#: room for a round's narrative — ⛔ **the largest round section in the record
-#: is `ROUND 35` at 1,151 lines.**
-#:
-#: ⚠️ **This line read *"round 33's alone was 833 lines"* and the number was
-#: WRONG TWICE OVER** — round 33's section is **31** lines, and `833` was a
-#: real reading from somewhere else entirely (CTO round 43's `117 files /
-#: 833 lines` of findings). ⭐ **A wrong citation that is a real number
-#: survives a re-read**, which is why `CTO-45/5` had to be measured rather
-#: than eyeballed.
-BOARD_NARRATIVE_CEILING = 8192
-
-#: ⛔ Bytes of one table row. Measured widest **415** at the split against
-#: **3,485** before it. ⭐ 600 is the project's own test-file ceiling, reused so
-#: a reader has one number to remember rather than two.
-BOARD_ROW_CEILING = 600
-
-#: ⛔ The board's whole size is bounded as `BOARD_FRAME + BOARD_PER_ROW × register
-#: rows`. ⭐ **This is the bound that has no gap**, and it exists because the
-#: Ruling 140 plant found one in the other two before this shipped: 320 lines of
-#: a round's narrative, pasted as one-cell table rows, moved the narrative count
-#: by ZERO and tripped the width rule ONCE.
-#:
-#: ⚠️ Measured at the split: **23,839 B** total over **78** register rows, of
-#: which the register itself is the majority — **~170 B a row**. ⭐ A ratio
-#: rather than a ceiling is Ruling 149's own
-#: remedy for a governor that alarms while the property improves: adding rows
-#: raises the allowance by more than a row costs, so a longer backlog can never
-#: trip this, and only text that indexes nothing can.
-BOARD_FRAME = 14336
-BOARD_PER_ROW = 224
 
 #: ⛔ **The closed vocabulary of states, and it is CLOSED because the first
 #: version was a substring test that a live row could walk straight out of.**
@@ -366,6 +345,38 @@ def duplicates_a_state(body: str) -> bool:
     """
     match = _STATE_LABEL.match(argument(body).split("\n\n")[0])
     return match is not None and state(match.group("label")) is not None
+
+
+#: ⛔ Ruling 270's REDIRECT STUB, as a CLOSED PREDICATE: one markdown link, into
+#: `BOARD-ARCHIVE.md`, carrying an ANCHOR, and nothing else in the argument at all.
+#: ⭐ The `../` is optional because a row file sits one directory below the archive
+#: and the instrument runs over arbitrary roots.
+_STUB = re.compile(rf"^\[[^\]\n]+\]\((?:\.\./)?{re.escape(ARCHIVE)}#[^)\s]+\)$")
+
+
+def redirects_to_the_archive(body: str) -> bool:
+    """Whether a row file's whole ARGUMENT *is* one anchored pointer into the archive.
+
+    ⛔ **Ruling 270's stub, and the predicate is CLOSED with NO byte threshold** —
+    `repeats_its_naming`'s own remedy one function up (Ruling 186): ⚠️ **two sweeps
+    once read 16 and 19 thin rows under two unruled cutoffs and both answered a
+    question that should not have been asked.**
+
+    ⛔ **It is *IS* and never *CONTAINS*, and that is the whole of the predicate.**
+    ⚠️ **MEASURED at `51dee3b`, role `wt/dev1`: of the 83 live row files, **50** carry
+    an ANCHORED `BOARD-ARCHIVE.md#` pointer somewhere and **42** END with one** —
+    ⭐ **so a `contains` test would have read FIFTY full argument files on today's board
+    as stubs, and this predicate reads ZERO of the 83** (the LIVE reading, asserted in
+    `test_register.py`).
+
+    ⚠️ **The ANCHOR is required** (Ruling 244(e)'s form): a bare `BOARD-ARCHIVE.md` lands
+    the reader at the top of a record hundreds of sections long, which fails Ruling 270's
+    own sentence — *"the reader lands on the argument"*.
+
+    ⛔ **Whether the pointer RESOLVES is NOT read here.** ⭐ `tools/quality/pointers.py`
+    answers that, it opens the target to do it, and a second resolver is a second answer.
+    """
+    return _STUB.match(argument(body).strip()) is not None
 
 
 def row_order(name: str) -> tuple[int, str]:
