@@ -1120,8 +1120,23 @@ python3 -m pytest -q -rs | grep '^SKIPPED'      # read every line
 > reconciles its total against the run's own tail, which is authoritative.
 
 ```bash
+# ⛔ `bc` IS NOT IN THE PINNED IMAGE — `CTO-49/8`, measured by two offices. The
+#    `paste -sd+ - | bc` form this clause shipped with printed NOTHING there, so
+#    the one environment Ruling 40 makes authoritative could not run the census
+#    its own rubric prescribes. ⭐ `awk` is present, and `n+0` prints `0` on an
+#    empty input where `bc` printed nothing — a reading instead of a silence.
 python3 -m pytest -q -rs | sed -n 's/^SKIPPED \[\([0-9]*\)\].*/\1/p' \
-  | paste -sd+ - | bc      # must equal the tail's "N skipped"
+  | awk '{ n += $1 } END { print n+0 }'      # must equal the tail's "N skipped"
+```
+
+⛔ **Measured in the PINNED image at `5e608bfc`, both ways** (`W53` — a clause
+naming an instrument is not final until its author has run it):
+
+```text
+command -v bc    ->  (nothing)        ⛔ absent
+command -v awk   ->  /usr/bin/awk     ⭐ present
+the awk form, live         ->  67   ⭐ equals the tail's "67 skipped"
+the awk form, EMPTY input  ->   0   ⭐ a reading; `paste … | bc` prints NOTHING
 ```
 
 > ⛔ **Ruling 170(b) (CTO round 43) — the `29` above is only reachable under
@@ -1986,6 +2001,51 @@ to read out loud, instead of a pass.**
 whose docstring says *"it stays true vacuously once X lands"* has documented the
 hazard in the one place the person reading the tail is not looking.**
 
+#### ⛔ Ruling 192 (CTO round 49) — a census derived from what the tree EMITS owes a second population, what the tree can AUTHOR, and the two are asserted as a SUBSET
+
+> ⭐ **Ruling 124 asks whether a derived population is INHABITED. This asks
+> whether it can REACH.** ⛔ **A census whose population is *the committed
+> artifacts* ∪ *a recogniser* measures coverage of what is emitted TODAY.** ⚠️
+> **That is the right property and it is not total: a shape a template can author
+> but no committed artifact emits is invisible to it, and the census prints
+> COMPLETE either way** — ⛔ **C5 exactly, inside a totality check.**
+>
+> ⭐ **(a) So the recogniser owes an AUTHORABLE population, derived from the
+> authoring surface itself** — the templates, the emitters, the vocabulary a
+> renderer may write — and the census asserts it. ⛔ **A shape the tree can author
+> that no marker can recognise is a NAMED finding, never a silence.**
+>
+> ⛔ **(b) The assertion is `authorable ⊆ recognisable` — a SUBSET, never an
+> equality.** ⭐ **`recognisable` legitimately exceeds `authorable`:** a marker for
+> a region no renderer has written yet is how a contract is stated ahead of its
+> renderer, and an equality would forbid that. ⚠️ **`authorable ⊄ recognisable` is
+> the only direction that can hide a region, so it is the only one asserted.**
+>
+> ⭐ **(c) And the tell that a census has this defect is that DECLARING the missing
+> row FAILS.** ⛔ **If adding a row to the declared set reds `declared - emitted`,
+> the census's population is the emitted set wearing a totality claim** — ⚠️ **which
+> is how `SF-15`'s developer found it: they tried the declaration rather than
+> arguing.**
+
+```bash
+# ⛔ The two populations, printed before any verdict (Ruling 128). The subject
+#    here is the page chrome; the FORM is what transfers.
+grep -rho 'aria-label="[^"]*"' src/studyforge/render/templates/ | sort -u   # AUTHORABLE
+python3 -c "import re,pathlib;print(sorted(re.findall(r'^    (\S.*?):',   pathlib.Path('tests/studyforge/render/pageassets/test_chrome.py').read_text(), re.M)))"
+# Pass: every AUTHORABLE shape is recognisable, and the reviewer prints both sets.
+```
+
+⛔ **Pass condition: both populations are printed and the subset holds; a
+difference is named per member.** ⚠️ **Measured by the CTO at the round-49 wave
+trial `196cda41`, and it is the eighth appearance of the subject-vs-property
+family:** `REGION_MARKERS` carries **5** entries and ⛔ **not one is a
+`nav[aria-label=…]`**, the templates author **9** distinct `aria-label`s, and
+`chrome.css` paints **4** — ⭐ **so the census was blind to the single most common
+shape its own templates use, and `Breadcrumb` is authored and unpainted.**
+⛔ **The enforcement end is framework code and is therefore a ROW, not this
+document's** (`SF-15/3`). ⭐ Derivation:
+[`handoffs/CTO-2026-09-10-round49.md`](../tasks/handoffs/CTO-2026-09-10-round49.md).
+
 ---
 
 ## 5. R13 — no markup, CSS or JS in Python strings
@@ -2811,6 +2871,48 @@ printed between rows:
 would have shipped a class contract that admits `class="data-readable"`.**
 ⭐ Derivation:
 [`handoffs/CTO-2026-09-10-round48.md`](../tasks/handoffs/CTO-2026-09-10-round48.md).
+
+##### ⛔ Ruling 190 gains clause (b) (CTO round 49) — the MIRROR case: a branch that adds a member to a DERIVED POPULATION has edited every distant test that ITERATES it, and such a test can go red for being WRONG
+
+> ⛔ **Ruling 190's first clause is a test made to PASS MORE at a distance. This is
+> the other direction, and §10's general rule sends it the wrong way.** ⚠️ **A
+> branch that adds a legal member to a population other tests DERIVE — a fixture
+> into a declared set, a template into `names()`, a slot into a skeleton — has
+> edited every one of those tests without touching their files.** ⭐ **And one of
+> them may go RED because IT is wrong about the shape, not because the branch is.**
+>
+> ⛔ **§10 says *a failing test outside `Owns` is a finding, not a diff*. Applied
+> here it offers only two outcomes and both are wrong: ship a RED suite, or do not
+> add the member.** ⭐ **So the REPAIR is licensed, under conditions 1 and 3 alone
+> — condition 2 cannot apply, because a repair is neither a deletion nor an
+> inversion** — ⚠️ **and it is bounded by one thing: the fix goes through the
+> field's ONE READER, never a second reader beside it.**
+>
+> ⭐ **The reviewer's obligation, and it is the half only the reviewer can do:
+> enumerate EVERY test that derives from the widened population and say, per test,
+> whether it was edited or is INVARIANT BY CONSTRUCTION.** ⛔ **An unedited
+> comparer is not a blind spot if its form is a partition or a derivation; it is
+> one if its form is a by-name literal.**
+
+```bash
+# every test that derives from a population this diff widened, and which were reached
+LC_ALL=C comm -23 <(grep -rln '<THE POPULATION>' tests/ tools/tests/ | sort) \
+                  <(git diff --name-only "$REVIEW_BASE"...HEAD | sort)
+# ⛔ LC_ALL=C is load-bearing: comm warns "not in sorted order" and prints a
+#    WRONG answer under a locale collation, disclosed at CTO round 48.
+```
+
+⛔ **Pass: every row the command prints is accounted for as invariant, by its
+form.** ⚠️ **Measured by the CTO at the round-49 wave trial `196cda41`, `SF-15`:
+six tests derive from the three widened mappings; five carried by-name equalities
+and were edited to the SAME strength; the sixth** —
+`render/index/test_document.py` — ⭐ **is a PARTITION (`EMPTY ∪ FILLED == slots`,
+disjoint, lengths summing) and is invariant, which is why it never went red and
+needed no edit.** ⭐ **The licensed repair is `W95`'s: `placed()` read
+`unit["origin"]` raw and refused a legal shape — a corpus that places perfectly,
+rejected by the test that checks placement — fixed through
+`optional_origin`, the field's one reader.** ⭐ Derivation:
+[`handoffs/CTO-2026-09-10-round49.md`](../tasks/handoffs/CTO-2026-09-10-round49.md).
 
 ### ⛔ 10b. A change to an import is felt by tests in another package
 
