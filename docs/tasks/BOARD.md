@@ -48,24 +48,25 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN TWICE IN ROUND 42 — the table below is the SECOND re-take, at
-`2b564ef`** — ⛔ **and `corroborate` read `3 of 3 REFUTED, exit 1` against the
-table it first replaced and `2 of 3` against the first re-take, because the
-release tip moved mid-round** ([both re-takes](BOARD-ARCHIVE.md#the-in-flight-re-take-the-instrument-refuted-all-three-rows-and-the-refutation-was-predicted-in-writing-before-the-wave-merged)).
+**RE-TAKEN IN ROUND 43, at `f71c566`** — ⛔ **`corroborate` read `1 of 1 REFUTED,
+exit 1` against the table this replaces: `SF-16` was ABSORBED by the merge
+`4fbc01b` and had stood here as *in flight* across two later release refs**
+([the re-take](BOARD-ARCHIVE.md#po-round-43-w36-closed-the-in-flight-table-re-taken-against-a-row-spent-two-refs-ago-and-four-mints)).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-16` | framework agent | `wt/dev3`, `feat/SF-16-speakable` | 7 | in flight |
+| `W119` | framework agent | `wt/dev1`, `fix/W119-W100-board-instruments` | 0 | in flight |
+| `W100` | framework agent | `wt/dev1`, `fix/W119-W100-board-instruments` | 0 | in flight |
+| `W98` | framework agent | `wt/dev2`, `fix/W98-harness-regions` | 0 | in flight |
 <!-- /inflight -->
 
-⛔ **RE-TAKEN A SECOND TIME INSIDE ONE ROUND, at `2b564ef`, because the release tip
-MOVED while the first re-take was being written:** ⭐ **`W63` and `W64`'s branch was
-absorbed by `0183cd1`, `corroborate` read `2 of 3 REFUTED`, and it is now `0 of 1`.**
-⚠️ **The as-of for that number is the BRANCH TIP — `feat/SF-16-speakable` @ `3bcc698`
-— and not the release ref, because the release ref does not move when a developer
-commits:** ⛔ **`PO-42/7`, and the cell read `2`, then `5`, then `7` inside one
-round while `corroborate` compared it to nothing.**
+⛔ **A `0` ahead is legitimate and it is RULING 130'S CLASS, not a gap:** a branch
+with no commit is invisible to `--no-merged` by construction, so `corroborate`
+prints these checkouts under its *invisible to git BY CONSTRUCTION* arm and its
+*dispatched and unnamed* arm reads `none`. ⚠️ **The as-of for a commits-ahead cell
+is the BRANCH TIP, never the release ref** — ⛔ **`PO-42/7`, and `W115` is where
+the instrument learns to compare the cell rather than only the row.**
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A
 RAMP** — ⭐ **a header is INFERRED, so an absent table is indistinguishable from a
@@ -76,9 +77,8 @@ the floor now reads `1 <!-- inflight --> blocks declared, 0 unreadable`.**
 ⚠️ **ONE BRANCH CAN CARRY TWO ROWS AND ONE OF THEM CAN STOP:** ⛔ **`W63` and `W64`
 shared `fix/W63-W64-marker-kind`, and it merged with `W63` DONE and `W64` STOPPED
 (Ruling 218)** — ⭐ **so a merge is not a close, and the register carries the two
-outcomes separately.** ⚠️ **A `0` ahead is legitimate for a live row, because a
-branch with no commit is invisible to `--no-merged` by construction (Ruling 130),
-which is what `W110` was the cost of.**
+outcomes separately.** ⚠️ **`W119` and `W100` share a branch for the same reason,
+and the same rule binds their close.**
 
 ⛔ **The office checkouts are NOT named here, and that is one fact with one home
 rather than a deletion:** ⭐ **`corroborate` prints every checkout no row names,
@@ -92,17 +92,17 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W36` | ⛔ **ALONE at a wave boundary, RULED** — it does not add a check, it moves the measurement authority: 57 dark checks run and the skip count falls from `67` | [round 42](BOARD-ARCHIVE.md#w36-ruled-it-lands-alone-at-a-wave-boundary-and-the-reason-is-that-it-moves-the-measurement-authority) |
-| 2 | `W119` | ⛔ **a committed test goes RED on a correct tree after every merge until somebody retires a worktree** — `W39`'s class, recurring | round 42 |
-| 3 | `W100` | ⭐ **UNBLOCKED — its `<!-- scheduled -->` half LANDED this round, markers and STATE column both** | round 39, unblocked round 42 |
-| 4 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit** | round 35, promoted round 42 |
-| 5 | `W88` | ⭐ **PROMOTED — 2 of the 6 thin rows were dispatched AND MERGED this wave, one of them with its row file never written** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
-| 6 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
-| 7 | `W115` | ⛔ **the only open row that can make a WAVE-CLOSE GATE return a false pass**, and every wave runs it | round 42 |
-| 8 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
-| 9 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
-| 10 | `W105`–`W109` | ⭐ **round 39's five mints** | round 39 |
-| 11 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
+| 1 | `W124` | ⛔ **it GATES a clause of a row that is in flight RIGHT NOW** — `W98` may not land a font-metric assertion against an unpinned font (Ruling 236) | round 43 |
+| 2 | `W122` + `W123` | ⭐ **one branch in `docker/dev/`, and each closes a standing forfeit cheap** — Ruling 240's founding instance, and Ruling 235(d)'s homeless half | round 43 |
+| 3 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit** | round 35, promoted round 42 |
+| 4 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW to 30 — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
+| 5 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
+| 6 | `W115` | ⛔ **the only open row that can make a WAVE-CLOSE GATE return a false pass**, and every wave runs it | round 42 |
+| 7 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
+| 8 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
+| 9 | `W105`–`W109` | ⭐ **round 39's five mints**, and `W105` is UNBLOCKED — `W36` merged | round 39 |
+| 10 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
+| 11 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL, and that is a correction of
 this paragraph rather than a style choice:** ⚠️ **it used to read *"rows 1–2 do not
@@ -110,12 +110,11 @@ invoke Ruling 75, rows 3 and 4 do"*, and the ordinals stopped being true the mom
 two rows were dispatched out of the table.** ⭐ **An id resolves; a position does
 not.**
 
-⛔ **FOUR ROWS INVOKE RULING 75 AND EACH SAYS SO IN ITS OWN FILE: `W88`, `W120`,
-`W115` and `W121`, each jumping `W103` and `W105`–`W109`.** ⭐ **`W36`, `W119` and `W78` jump
-NOBODY — `W36` and `W78` are older than everything below them, and `W63`→`W64`,
-the pair `W36` would have displaced, is in flight above.** ⚠️ **`W63`'s age stops
-being a queue fact this round: it was DISPATCHED, which is the outcome three
-rounds of displacement were deferring.**
+⛔ **SEVEN ROWS INVOKE RULING 75 AND EACH SAYS SO IN ITS OWN FILE: `W124`, `W122`,
+`W123`, `W88`, `W120`, `W115` and `W121`, each jumping `W103` and `W105`–`W109`.**
+⭐ **`W78` jumps NOBODY — it is older than everything below it.** ⚠️ **`W78`, `W88`
+and `W120` all read and write `docs/`, so they are ONE OWNER or three waves, never
+three takers in one** (check 4's sub-step).
 
 ## The register — every `W` row
 
@@ -162,7 +161,7 @@ they have exactly one home each.
 | W33 | The floor prints its lint state, absence included, as a notice | framework agent | ✅ done — `3a45d4c` | [record](BOARD-ARCHIVE.md#w33-the-floor-prints-its-lint-state-absence-included-as-a-notice) |
 | W34 | `review-rubric.md`'s operational checklist, and the document has no index | framework agent | `todo` — unblocked | [`rows/W34.md`](rows/W34.md) |
 | W35 | `pointers.py` honours the ignore declaration | framework agent | `todo` — queued last | [`rows/W35.md`](rows/W35.md) |
-| W36 | A browser in the pinned dev image, checksum-pinned | framework agent | `todo` — unblocked; gates `W98` | [`rows/W36.md`](rows/W36.md) |
+| W36 | A browser in the pinned dev image, checksum-pinned | framework agent | ✅ done — `5f7734b` | [record](BOARD-ARCHIVE.md#w36-a-browser-in-the-pinned-dev-image-checksum-pinned) |
 | W37 | The repo-wide sweep for checks that cannot fail by construction | framework agent | `todo` | [`rows/W37.md`](rows/W37.md) |
 | W38 | The floor and `ruff` disagree by rule; pin the divergence with a test | framework agent | `todo` — after `W40` | [`rows/W38.md`](rows/W38.md) |
 | W39 | The index goes stale on every merge, so the release tip is red after each one | framework agent | ✅ done — `16049d2` | [record](BOARD-ARCHIVE.md#w39-the-index-goes-stale-on-every-merge-so-the-release-tip-is-red-after-each-one) |
@@ -224,29 +223,33 @@ they have exactly one home each.
 | W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | ✅ done — `cfe0e0c` | [record](BOARD-ARCHIVE.md#w95-no-fixture-has-two-units-sharing-one-source-file-so-q23s-answer-cannot-be-tested) |
 | W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | ✅ done — `3432e9a` | [record](BOARD-ARCHIVE.md#w96-a-cell-declaring-a-started-state-asserts-a-live-checkout-or-a-branch-ahead-of-release) |
 | W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
-| W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | `todo` — behind `W36` | [`rows/W98.md`](rows/W98.md) |
-| W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | `todo` — Ruling 189's family | [`rows/W100.md`](rows/W100.md) |
+| W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | in flight — ⛔ **its font-metric clause is gated on `W124`** | [`rows/W98.md`](rows/W98.md) |
+| W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | in flight — Ruling 189's family | [`rows/W100.md`](rows/W100.md) |
 | W101 | Check 4's sub-step compares `Owns` to a diff, and `Owns` is brace expansion and directory prefixes | framework agent | `todo` — `CTO-48/12`, before the next parallel pair | [`rows/W101.md`](rows/W101.md) |
 | W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | ✅ done — Ruling 184(c), `4e8ba86` | [record](BOARD-ARCHIVE.md#w102-check-3s-pattern-is-case-sensitive-and-the-house-style-writes-ruling-n) |
 | W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
 | W104 | The lint notice names no subject, and `ruff format` formats Markdown as well as Python | framework agent | `todo` — not `W38`'s subject | [`rows/W104.md`](rows/W104.md) |
-| W105 | The region census has no authorable population, so a region the templates emit and nothing paints is unsayable | framework agent | `todo` — Ruling 192, behind `W36` | [`rows/W105.md`](rows/W105.md) |
+| W105 | The region census has no authorable population, so a region the templates emit and nothing paints is unsayable | framework agent | `todo` — Ruling 192, ⭐ **UNBLOCKED, `W36` merged** | [`rows/W105.md`](rows/W105.md) |
 | W106 | The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies | framework agent | `todo` — Ruling 103's class | [`rows/W106.md`](rows/W106.md) |
 | W107 | `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither | framework agent | `todo` — `SF-15/1` | [`rows/W107.md`](rows/W107.md) |
 | W108 | No fixture crosses a module boundary inside one section, so a renderer can pass the clause and be wrong | framework agent | `todo` — `SF-15/6`, before `SF-27` | [`rows/W108.md`](rows/W108.md) |
 | W109 | Every consumer that reads `origin` from a document instead of the parser is a second reader of a growing field | framework agent | `todo` — `W95/3` | [`rows/W109.md`](rows/W109.md) |
 | W110 | `corroborate`'s live-checkout arm discharges a branch git already knows is SPENT, so a leaked worktree keeps a stale row green | framework agent | ✅ done — `923a970` | [record](BOARD-ARCHIVE.md#w110-corroborates-live-checkout-arm-discharges-a-branch-git-already-knows-is-spent-so-a-leaked-worktree-keeps-a-stale-row-green) |
 | W111 | Ruling 196's expiry — the header locator ANNOUNCES where a delimiter can REFUSE, and the delimiters have landed | framework agent | ✅ done — `923a970` | [record](BOARD-ARCHIVE.md#w111-ruling-196s-expiry-the-header-locator-announces-where-a-delimiter-can-refuse-and-the-delimiters-have-landed) |
-| W112 | A browser clause discharged on a HOST reading owes a COMMITTED check, or no second office can reproduce it | framework agent | `todo` — `SF-30/1`, Ruling 204, behind `W36` | [`rows/W112.md`](rows/W112.md) |
+| W112 | A browser clause discharged on a HOST reading owes a COMMITTED check, or no second office can reproduce it | framework agent | `todo` — `SF-30/1`, Ruling 204, ⭐ **UNBLOCKED, `W36` merged** | [`rows/W112.md`](rows/W112.md) |
 | W113 | `Address(tuple(<str>))` is accepted and splits a string into one segment per character | framework agent | `todo` — `SF-30/2`, `SF-12`'s contract | [`rows/W113.md`](rows/W113.md) |
 | W114 | R11's ceiling has no instrument outside `.py`, so an authored asset at the ceiling is invisible to the gate | framework agent | `todo` — Ruling 207 | [`rows/W114.md`](rows/W114.md) |
 | W115 | A failed git reading is coerced to a number, so *git could not answer about this branch* lands on REFUTED and one arm exits `0` | framework agent | `todo` — Ruling 216 | [`rows/W115.md`](rows/W115.md) |
 | W116 | The formatter's target is INFERRED, so an absent declaration made a style decision no document records | framework agent | `todo` — Ruling 210 | [`rows/W116.md`](rows/W116.md) |
 | W117 | `**Consumer-side modules:**` is a contract named in ZERO convention documents, and both its sites are consumers | framework agent | `todo` — `W74/3` | [`rows/W117.md`](rows/W117.md) |
 | W118 | A gap named in FOUR consecutive closes is a different fact from a gap named once, and no instrument reads it | PO | `todo` — `CTO-52/5` | [`rows/W118.md`](rows/W118.md) |
-| W119 | A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge | framework agent | `todo` — `PO-42`'s brief, re-derived | [`rows/W119.md`](rows/W119.md) |
+| W119 | A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge | framework agent | in flight — `PO-42`'s brief, re-derived | [`rows/W119.md`](rows/W119.md) |
 | W120 | The bounded Ruling 186 notice is discharged by ONE row over its WHOLE population, and a partial fix is refused | framework agent | `todo` — Ruling 222 | [`rows/W120.md`](rows/W120.md) |
 | W121 | The marker reader cannot see a finding written as a TABLE ROW, which is the form both offices write | framework agent | `todo` — Ruling 218's gate one, before `W64` | [`rows/W121.md`](rows/W121.md) |
+| W122 | A count in a SHIPPED file that no unit makes true — the Dockerfile's *"21 shared libraries"* | framework agent | `todo` — Ruling 240, `CTO-55/1` | [`rows/W122.md`](rows/W122.md) |
+| W123 | A hang has no deadline anywhere, so a wedged suite returns no reading and no exit code either | framework agent | `todo` — Ruling 235(d), routed and unrequired of `W36` | [`rows/W123.md`](rows/W123.md) |
+| W124 | `0` apt packages are version-constrained, so a font is an undeclared input to a recorded number | framework agent | `todo` — Ruling 236, gates `W98`'s clause | [`rows/W124.md`](rows/W124.md) |
+| W125 | The In flight table is ASSERTED, and generating it naively leaves `corroborate` asserting git against itself | framework agent | `todo` — Ruling 231(c), routed and never minted | [`rows/W125.md`](rows/W125.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
