@@ -66,6 +66,7 @@ from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
+from tools.quality.reach import check_rulings_reach, reach_notice
 from tools.quality.report import Finding, format_findings
 from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
@@ -105,6 +106,17 @@ from tools.quality.style import check_style
 #: the check cannot be satisfied by declaring anything — only by regenerating
 #: (`W91`, R19). ⭐ That is what makes the index's completeness ASSERTED rather
 #: than typed: the day a ruling is minted without a row, this returns `no`.
+#:
+#: ⚠️ `check_rulings_reach` is its complement and the distinction is the whole
+#: point of `W126`: `check_rulings_index` asks whether the index is DERIVED, and
+#: this asks whether the newest ruling REACHED A CONVENTION. ⛔ Ruling 245
+#: measured rulings `217`–`241` reaching `docs/conventions/` **0 of 25**, against
+#: a control of 17 of 21 for the older practice — so a derivation that is
+#: perfectly fresh is fully compatible with twenty-five rulings nobody can read.
+#: ⭐ Its exemption mechanism is a FIFTH distinct one: the SUBJECT is one named
+#: directory, so the three non-artifacts Ruling 212 enumerates — a handoff, the
+#: archive, the generated index — are excluded structurally rather than by a
+#: filter a reader has to remember.
 CHECKS = (
     check_sizes,
     check_board,
@@ -117,6 +129,7 @@ CHECKS = (
     check_handoffs,
     check_pointers,
     check_rulings_index,
+    check_rulings_reach,
 )
 
 #: ⛔ **The second channel, and it exists because one of the floor's answers is
@@ -148,7 +161,15 @@ CHECKS = (
 #:
 #: ⚠️ **It is deliberately last**, so it prints immediately above `quality
 #: floor:` — the line it exists to qualify.
-NOTICES = (notices, pointer_coverage, board_state, rulings_notice, lint_notice)
+#:
+#: ⭐ **`reach_notice` is the fourth, and it carries a BACKLOG rather than an
+#: absence.** ⛔ Ruling 245 scopes the *finding* to the index's tail on purpose —
+#: *"a notice whose first wave fires 25 times is a notice nobody reads twice"* —
+#: so the wider window cannot be a `Finding` without making the floor red for
+#: rulings no office has been assigned. ⚠️ It is printed, enumerated by number,
+#: immediately beside the index's own line, because the cliff was invisible for
+#: twenty-five rounds for exactly one reason: nobody printed the population.
+NOTICES = (notices, pointer_coverage, board_state, rulings_notice, reach_notice, lint_notice)
 
 __all__ = [
     "CHECKS",

@@ -215,3 +215,26 @@ the one Ruling 40 does not make authoritative, and the authoritative one correct
 answers NOT AUTHORITATIVE** — ⚠️ **which is why a stale pin is reported rather
 than flagged, and why advancing a pin is never an instrument's call: advancing it
 ASSERTS the new HEAD is intended.**
+
+#### ⛔ `pending` — `verify` exits `1` on the release tip, for the ISO pin ALONE, and that is DECLARED rather than left to be re-discovered
+
+⛔ **`pending`: `python3 -m tools.workspace verify` exits `1` on the release tip
+because `ISO-8583-jPOS-tutorial`'s HEAD has moved ahead of its pin, and that ONE
+component is the whole of the disagreement** — ⭐ **the pin is deliberately NOT
+advanced, because the track is `in-progress` and re-pinning pins a moving target.**
+
+```bash
+python3 -m tools.workspace verify > /tmp/ws.txt 2>&1   # ⛔ Ruling 241, FORM 2
+echo "WS_EXIT=$?"
+cat /tmp/ws.txt
+```
+
+⛔ **Pass: `WS_EXIT=1` with exactly ONE component named, and that component is
+`ISO-8583-jPOS-tutorial`.** ⚠️ **A SECOND name, or any other exit code, is a finding
+and not this declaration** — ⭐ **which is what makes a standing red a known hole
+wearing a tick rather than a red nobody reads.**
+
+⚠️ **MEASURED by me at `6c4e3d0`, role `wt/dev1`, on the HOST (the pinned container
+cannot see a sibling and answers `2`): `WS_EXIT=1`, HEAD `76e689c6a535`, pin
+`a94151747cb0`, *"1 component(s) disagree with workspace.json"*.** ⭐ **RECEIVED as
+`CTO-56/13` and re-inhabited here rather than carried.**

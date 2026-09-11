@@ -505,6 +505,37 @@ sweep this project later builds must exclude that directory **and only that
 one**, by name. A sweep that excludes `tests/` wholesale has stopped checking
 the tree where fixtures live.
 
+#### ⛔ `CTO-56/15` — an INHABITATION CONTROL for a personal-data sweep MAY NOT BE QUOTED, because quoting it inhabits what the sweep forbids
+
+⛔ **The five conditions above bound a FIXTURE. They say nothing about a
+REVIEWER'S OWN CONTROL, and that is the hole.** ⭐ **Ruling 191 requires a control
+to INHABIT the population it proves the sweep can match; ⛔ for R7 the inhabited
+value is the violation, so a control written into a record IS the leak the sweep
+exists to refuse.** ⚠️ **Ruling 65 — *name the marker, do not spell it* — is the
+half that was already written; this is the other half: a control is discharged by
+naming the SHAPE it matched and the COUNT, never by reproducing the string.**
+
+```bash
+# ⛔ The control is BUILT AT RUN TIME and never appears as a literal in the
+#    record, the review or any tracked file. Name the shape; print the count.
+printf 'someone@%s\n' 'example.invalid' | grep -cE '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+'
+python3 -m tools.quality > /tmp/floor.txt 2>&1     # ⛔ Ruling 241, FORM 2
+echo "FLOOR_EXIT=$?"
+```
+
+⛔ **Pass: the control prints a non-zero count — so the sweep demonstrably CAN
+match — AND `FLOOR_EXIT=0` over the document that reports it.** ⚠️ **A control that
+forces the reviewer to choose between Ruling 191 and R7 has been written the wrong
+way round.**
+
+⭐ **MEASURED, CTO round 56, and THE SHIPPED CHECK CAUGHT IT BEFORE THE COMMIT:**
+the R7 sweep run to clear another office's branch went RED on the reviewer's own
+record — ⛔ *"carries a home path"* and *"carries an email address"*, at the line
+holding the synthetic control strings quoted to prove the grep could match. ⭐ **Fixed
+by naming the shapes; floor re-run, `FLOOR_EXIT=0`, clean.** ⚠️ **The defect was in
+the record that rules on other offices' counts, which is why it is a rule and not a
+note.**
+
 ### 1d. Where the rule is upheld in code, not just in review
 
 If the change touches anything that composes a string destined for the archive,
@@ -1388,6 +1419,11 @@ the awk form, EMPTY input  ->   0   ⭐ a reading; `paste … | bc` prints NOTHI
 > reviewer has to guess, and they will guess the invocation they happen to be
 > running.**
 
+⚠️ **AS-OF — Ruling 242 (CTO round 56), and it DATES every figure in the two blocks
+above rather than correcting one of them**, because a convention is held at the SHIPPED
+standard for what it TEACHES and at the RECORD standard for what it QUOTES:
+**the figures `29`/`63` are `5e608bfc`-era; re-measured `11`/`11` at `4dc8945` (CTO round 56).**
+
 ⭐ **Two offices hit it independently in one round** — the PO in `PO-30/7` and
 the CTO in their own base census, before reading it. ⛔ **What refused the wrong
 number was neither instrument: it was Ruling 128's EXPECTED reading, written
@@ -1483,6 +1519,60 @@ tests/fixtures/ = 588`, and `ruff format --check` independently reports 588.**
 reviewer trusting a pinned `560` computes `560 → 560`, concludes the branch
 added no formatted file, and **contradicts the branch's own correct isolation of
 its `+1`.** ⛔ The pin does not merely mislead; it corroborates the error.
+
+#### ⛔ Ruling 238 (CTO round 55) — Ruling 147 GAINS THE CLAUSE: a reading names its ENVIRONMENT by that environment's own PINS, never by an image TAG and never by an image ID
+
+```bash
+# ⛔ ONE INVOCATION (Ruling 40), and the PINS print beside the ref — Ruling 172
+#    extended from the TREE to the ENVIRONMENT.
+docker/dev/check sh -c '
+  git rev-parse HEAD
+  python3 -VV | head -1; node --version; ruff --version
+  grep -nE "^FROM |_SHA256|^ARG CHROME_VERSION" docker/dev/Dockerfile   # the INPUTS
+  command -v headless-shell            # ⛔ the PATH, before asking it anything
+  headless-shell --version
+  sha256sum "$(command -v headless-shell)"
+  df -h /dev/shm | awk "NR==2 {print \$2}"'
+```
+
+⛔ **Pass: every count a review quotes names the base-image digest, the Node.js
+sha256, the browser version and its sha256 — in the SAME invocation that printed
+`git rev-parse HEAD`.** ⛔ **A TAG is not a reading and an image ID is not one
+either, so neither discharges this.** ⭐ **(d) is the corollary a reviewer uses
+every round: where a reading's SUBJECT is the TREE — the quality floor, the
+pointer census, the board — the image is HELD CONSTANT across base and merge.**
+
+⭐ **Quoted rather than paraphrased** (Ruling 195), from
+[round 55's record](../tasks/handoffs/CTO-2026-09-10-round55.md#ruling-238-ruling-147-gains-the-clause-a-reading-names-its-environment-by-that-environments-own-pins-never-by-an-image-tag-and-never-by-an-image-id):
+
+> ⛔ **(a) The TAG is disqualified, and not merely imprecise.** `studyforge/dev:local`
+> named a 572 MB browserless image and a 1.26 GB browsered one inside 24 hours,
+> ⚠️ **and on the reviewer's own host it still pointed at the OLD one when this
+> round opened.** ⭐ **A name that silently resolves to the wrong content is worse
+> than no name, because it looks like provenance.**
+>
+> ⛔ **(b) The ID is disqualified too, for the opposite reason.** Three builds
+> from one committed file produced `972a0954…`, `1e4b6a8b…` and `63017dd74eae…`.
+> ⚠️ **The id is not reproducible and therefore cannot be an identity; quoting it
+> invites a reader to believe two readings differ when they do not.**
+>
+> ⚠️ **Reading a floor in two different images confounds the one variable the
+> comparison exists to isolate**, and it is how two true numbers become an
+> unreconcilable pair.
+
+⚠️ **MEASURED at `6c4e3d0`, role `wt/dev1`, the fenced command run verbatim in the
+pinned image:** the browser resolves on `PATH` as `headless-shell` →
+`/usr/local/bin/headless-shell`, `Google Chrome for Testing 153.0.8010.36`, sha256
+`dabfdd70006e411b…`, `shm 1.0G`.
+
+⛔ **AND THE FALSE NEGATIVE, MEASURED in the same image rather than repeated:
+`find /opt -name headless-shell` prints NOTHING and exits `0`** — ⚠️ **because the
+binary is `/opt/chrome-headless-shell/chrome-headless-shell` and the name
+`headless-shell` exists only as the `/usr/local/bin` entry, outside `/opt`.**
+⭐ **An empty result under a SUCCESS code is the exact shape three offices have read
+as *no browser*, and it is the second reason the clause resolves the PATH first and
+asks the binary second** (Ruling 191 — an empty population returns the PASS
+reading rather than no reading).
 
 #### ⛔ Ruling 151 (CTO round 40) — a framework task's Acceptance may not depend on a reading taken inside a CONSUMER repository
 
@@ -2087,6 +2177,41 @@ baseline reporting `KILLED` does.
 the second to happen inside the ruling written against it.** ⭐ **That is not
 embarrassing, it is the argument:** the class is not defeated by care, only by
 instruments that print two things which have to agree.
+
+#### ⛔ Ruling 241 (CTO round 55) — the WARNING above is REPLACED BY A FORM, because it failed three offices in three rounds
+
+```sh
+# ⛔ FORM 1 — the pipeline is made to carry its own exit code:
+set -o pipefail
+python3 -m tools.quality | tail -4; echo "FLOOR_EXIT=$?"
+
+# ⛔ FORM 2 — the output goes to a FILE and `$?` is read on the NEXT line,
+#    with NOTHING in between:
+python3 -m pytest -q -ra > /tmp/out.txt 2>&1
+echo "PYTEST_EXIT=$?"
+tail -4 /tmp/out.txt
+```
+
+⛔ **Pass: a record that quotes an exit code NAMES which of the two forms produced
+it.** ⛔ **An exit code printed beside a pipeline is read as UNVERIFIED until the
+form is named** — ⚠️ **it is not a wrong reading, it is not a reading at all.**
+
+⭐ **The block above is NOT deleted: it is the evidence that produced this form,
+and a record is annotated beneath rather than edited** (Ruling 106, Ruling 242(e)).
+⛔ **What is retired is its standing as the instrument.** ⚠️ **A warning that three
+offices READ and three offices then violated is the wrong instrument, and the
+measured row is the whole argument** —
+[round 55's record](../tasks/handoffs/CTO-2026-09-10-round55.md#ruling-241-a-warning-that-has-now-failed-three-offices-in-three-rounds-is-replaced-by-a-form):
+
+| round | office | ⛔ the reading the WARNING produced |
+|---|---|---|
+| 52 | dispatcher | hit it, reported |
+| 55 | developer | predicted `0`, actual `4`; re-read with nothing in between |
+| ⭐ **55** | ⛔ **the REVIEWER who minted it** | ⛔ **`R7_EXIT=0` and `HANDOFF_EXIT=0`, both `tail`'s** |
+
+⚠️ **And the module in that third row is a PACKAGE that is not executable at all**
+— ⭐ **so `0` was `tail`'s verdict on a command that never ran, which is this
+document's own eighth-instance class wearing a shell idiom.**
 
 #### ⛔ Ruling 83 — a sweep row's tail is read for **`failed`, `error` AND the skip count**
 
@@ -3381,17 +3506,55 @@ and is an approval *of the merge*. ⛔ **Nothing else is a verdict.**
 # ⛔ MIGRATION IS LOAD-BEARING. Ruling 185: the exemption this clause DECLARES is
 #    in the COMMAND, so no clause of the pass condition comes from memory.
 MIGRATION=ab5b1a415acba6d779c622a8723040f422fe0b05   # the last verdictless merge
+# ⛔ THE ONE IN-SCOPE EXEMPTION, ENUMERATED HERE RATHER THAN REMEMBERED — Ruling
+#    223 (CTO round 54). `0183cd1`'s message ends `(CTO: APPROVE - Rulings
+#    217-222)`: the verdict token does not CLOSE the bracket, so the closed
+#    vocabulary above correctly refuses it. ⛔ The merge STANDS and is NOT
+#    rewritten — an audit trail that edits away its own defects is not one.
+#    ⚠️ A SECOND entry here is a finding, never a carry.
+EXEMPT=0183cd1
 git log --merges --first-parent --format='%h %s' "$MIGRATION" | wc -l
 git log --merges --first-parent --format='%h %s' "$MIGRATION" \
   | grep -cE -v '\(CTO: (APPROVE|APPROVE after changes)\)'
 git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" | wc -l
-# ⛔ The grep below exits 1 ON PASS — `grep -v` selecting nothing. Read the
+# ⛔ Both greps below exit 1 ON PASS — `grep -v` selecting nothing. Read the
 #    OUTPUT, never `$?`; under `set -e` a PASS aborts the block.
 git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" \
   | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)|\(CTO: [^)]*\bthis record APPROVED\)'
+git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" \
+  | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)|\(CTO: [^)]*\bthis record APPROVED\)' \
+  | grep -v "^$EXEMPT "
 ```
 
-⛔ **Pass = the LAST command prints NOTHING.** ⭐ **The first three print the
+⛔ **Pass = the LAST command prints NOTHING.** ⚠️ **The command ABOVE it prints
+exactly one line — `0183cd1` — and always will; that is the enumerated exemption
+and not a failure.** ⛔ **Before Ruling 223 landed here, the stated pass condition
+was *prints nothing* against a gate that prints `0183cd1` forever: UNSATISFIABLE BY
+CONSTRUCTION, which is precisely what Ruling 185(a) forbids, committed by the
+ruling that quoted the prohibition.** ⭐ **The remedy is a NAMED REF and not a
+loosened predicate: `\(CTO: APPROVE[^)]*\)` is exactly the widening Ruling 185(b)
+refused, because it silently passes `(CTO: NOT APPROVED)`.**
+
+⭐ **Quoted rather than paraphrased** (Ruling 195), from
+[round 54's record](../tasks/handoffs/CTO-2026-09-10-round54.md#ruling-223-the-verdict-token-closes-the-bracket-there-is-no-asymmetry-and-the-predicate-is-not-widened):
+
+> ⭐ **The invariant across all four accepted spellings, including
+> `(CTO: CHANGES REQUESTED x2, this record APPROVED)`: the verdict token is the
+> LAST thing inside the bracket.** ⛔ **So the rule was already consistent and it
+> was never written down. It is now: a verdict token immediately precedes the
+> closing parenthesis, and any qualification goes in the `<one line>` before the
+> bracket, which is unbounded.**
+>
+> ⭐ **And the clause that closes MY half: a CTO verdict block is passed through
+> the fenced check BEFORE it is handed over, and the round record says it was.**
+
+⚠️ **MEASURED at `6c4e3d0`, role `wt/dev1`, the whole fenced block run verbatim:**
+pre-clause tail **`66 / 24`** (history not rewritten), in-scope population **`130`**,
+⛔ **the un-exempted grep printed exactly one line, `0183cd1`**, and ⭐ **the
+exempted grep printed NOTHING.** ⭐ **The first reading under which this gate's own
+stated pass condition can be met.**
+
+⭐ **The first three commands print the
 pre-clause tail and the in-scope population instead of leaving them remembered:**
 **`66`** first-parent merges at or before `MIGRATION`, **`24`** of them
 verdictless, and the in-scope population — **`94`** at `798956cb`. ⚠️ **A tail
