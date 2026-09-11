@@ -53,7 +53,7 @@ one round — is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-an
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W129` `W130` `W132` | framework agent | `fix/W129-W130-W132-board-bounds` @ `wt/dev1` | 0 @ `51dee3b` | in flight |
+| `W129` `W130` `W132` | framework agent | `fix/W129-W130-W132-board-bounds` @ `wt/dev1` | 2 @ `7963408` | in flight |
 | `W131` | framework agent | `fix/W131-continuation-blindness` @ `wt/dev2` | 0 @ `51dee3b` | in flight |
 <!-- /inflight -->
 

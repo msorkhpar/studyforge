@@ -13966,3 +13966,21 @@ git status --porcelain -> 0 lines
 ⭐ **The user's untracked `ONBOARDING.md` was never moved, deleted or committed.**
 
 ⭐ **AND THE TIP WAS RE-TAKEN RATHER THAN EXCUSED, because the recursion has a fixed point when the last commit adds no pointer and no markdown file: MEASURED at `f08b505` in the pinned container, EVERY figure above is IDENTICAL** — ⛔ **`PYTEST_EXIT=0` `5477 passed, 15 skipped`, 12 skip groups / 15 skips, 0 FAILED or ERROR; `FLOOR_EXIT=0` pointers `968 in 362`, `558` anchored, `0` unresolved, ruff `836`, board `44188 of 44352`, narrative `6832 of 8192`, widest row `587 of 600`, rulings index `287` from `46`, tail `287`, reach `17` reached and `8` unreached, quality floor clean; `CORROBORATE_EXIT=0`, `0 of 2` rows REFUTED; porcelain `0`.** ⭐ **So the claim is no longer *the tip is not this ref* but *the tip reads the same*, which is strictly stronger and cost one invocation** (round 45's form, credited). ⚠️ **This paragraph's own commit is the only thing after `f08b505`, and it touches this file alone.**
+
+### ⛔ AND THE CELL MOVED THREE TIMES DURING THE TEARDOWN — ANNOTATED BENEATH (Ruling 106), NOT EDITED INTO THE SECTION ABOVE
+
+⚠️ **The `## In flight` section above says both developer branches were `0` ahead and *"neither cell moved — the first round in four where the re-take changed nothing"*.** ⛔ **THAT WAS TRUE AT `d6d6365` AND IS NOW DATED. `wt/dev1` started committing while this round tore down, and I took THREE readings of one cell:**
+
+```text
+MEASURED, host, `git worktree list` PRIMARY (Ruling 171), during teardown
+  reading 1   fix/W129-W130-W132-board-bounds -> 0 @ 51dee3b   (at d6d6365, quoted above)
+  reading 2   fix/W129-W130-W132-board-bounds -> 1 @ 55a0e0b   (board re-taken to this)
+  reading 3   fix/W129-W130-W132-board-bounds -> 2 @ 7963408   ⛔ moved again while I wrote
+  fix/W131-continuation-blindness            -> 0 @ 51dee3b    unchanged at all three
+```
+
+⭐ **THE CELL CARRIES READING 3 AND I STOP THERE, DELIBERATELY: chasing a tip a developer is actively moving is a recursion with no fixed point, and Ruling 246's `n @ <tip>` form is what makes reading 3 TRUE FOREVER instead of true for a minute.** ⛔ **`PO-44/15` measured a cell going `3`→`4`→`5`→`6` inside one round; this is the same shape at three points in one teardown.**
+
+⛔ **AND THE GATE IS UNAFFECTED, WHICH IS THE MEASUREMENT THAT MATTERS: `CORROBORATE_EXIT=0` at every one of the three, because a stale NUMBER is not a stale ROW.** ⭐ **MEASURED in the pinned container at reading 2's board: `⭐ CORROBORATED: fix/W129-W130-W132-board-bounds is checked out at dev1 and is 2 commits ahead` beside `⚠️ NOTICE, not a refusal (PO-42/7): the row claims 1 commits ahead and git reads 2`.** ⚠️ **That is `fix/W115-false-refutation`'s notice arm firing on a live developer branch rather than on a fixture, and it is the third independent confirmation that Ruling 179 and `rows/W115.md:61` were right to print rather than refute.**
+
+⭐ **`PO-46/17` `[none]` — a recorded negative. **Measured** three times during teardown: the In-flight cell's as-of is a developer's working rate, the gate does not depend on it, and the honest act is to DATE the cell rather than to pretend it settled.** ⛔ **Had this round not re-taken after removing its worktree, the record would have carried *"neither cell moved"* as a standing claim — which is `PO-46/14`'s and `PO-46/16`'s root a third time, caught a third time, in the same round.**
