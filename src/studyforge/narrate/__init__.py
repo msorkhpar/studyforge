@@ -9,7 +9,9 @@ page plays.
 synthesis. The player and its highlight sync live in `render/assets/`, because
 they are page behaviour rather than pipeline behaviour.
 
-**Depends on.** `unit`, `address`. ⛔ Not on `render` or `serve`.
+**Depends on.** `unit`, `address`, `archive`, and `render.markup` for the one
+inline-marker parser — `speakable/voice.py`'s contract is why that one is taken
+deliberately rather than by habit. ⛔ Not on `serve`, and not on the page renderer.
 
 ⚠️ **Synthesis is the one place R10 bends.** Audio is content-addressed and
 cached: the same text with the same voice parameters is not re-synthesised, and
@@ -22,6 +24,8 @@ default: a clone that carries its own audio speaks with no synthesis service,
 no GPU and no network, which is what R8 is for. The default has a ceiling, and
 crossing it is a corpus's declared decision rather than an accident.
 
-**Skeleton at FND-01.** Filled by SF-16 and SF-17 (E04); the service it talks
-to is E13.
+**Skeleton at FND-01.** `speakable/` is SF-16's and landed as a **package**: the
+extraction source's one module is 626 lines, R11's ceiling is 400, and
+`docs/conventions/module-structure.md` pays that during extraction rather than
+after. Synthesis is SF-17's; the service it talks to is E13.
 """
