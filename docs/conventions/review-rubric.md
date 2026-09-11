@@ -809,6 +809,53 @@ way reading 2 fails while still looking done.
 its own population**, and it returns a smaller scalar with no disagreement in the
 output to warn you (Ruling 128, in its own subject matter).
 
+#### ⛔ Ruling 191 (CTO round 49) — a CONTROL owes INHABITATION, and an EMPTY population returns the PASS reading rather than no reading
+
+> ⭐ **Ruling 124 binds an ASSERTION over a derived set: an empty population makes
+> its green uninformative.** ⛔ **A CONTROL fails worse, and that is the ground for
+> a clause of its own rather than an extension.** A control's required reading is
+> that the instrument returns **the other answer**, so an empty population does not
+> leave it silent — ⚠️ **it returns ROW 1's reading, and row 3's own definition
+> (*must DIFFER from row 1*) cannot be satisfied by construction.** ⭐ **A vacuous
+> assertion is green where green says little; a vacuous control is GREEN WHERE RED
+> WAS REQUIRED.**
+>
+> ⛔ **(a) Every control prints the SIZE of the population it was drawn from,
+> before its verdict** — row 3 of the three readings, a negative control, a planted
+> hit, a sweep's baseline row. ⭐ **`0` is not a pass; it is a MISSING READING.**
+>
+> ⛔ **(b) Where the live population is empty, the control's subject is
+> SYNTHESISED, never waived** — `git commit-tree` with no ref, a `tmp_path`
+> fixture, a tracked plant. ⚠️ **Recording the empty reading and moving on is the
+> failure; constructing an inhabitant is two commands.**
+>
+> ⭐ **(c) And a synthesised control owes its own POSITIVE row**, because an
+> instrument stuck on the refusing answer returns row 3's reading for free — ⛔
+> **which is the same defect one turn further on.**
+
+```bash
+# ⛔ Row 3 with its population printed FIRST, and the synthesis when it is empty.
+POP=$(git branch --no-merged "$REVIEW_BASE" | grep -c .)
+echo "control population: $POP of $(git branch | grep -c .) local branches"
+if [ "$POP" -eq 0 ]; then            # ⛔ 0 is a MISSING READING, never a pass
+  SUBJECT=$(git commit-tree "$(git rev-parse "$REVIEW_BASE^{tree}")" -m probe)
+  echo "synthesised subject: $SUBJECT"
+fi
+git merge-base --is-ancestor "$SUBJECT"      "$REVIEW_BASE"; echo "NEGATIVE exit=$?"
+git merge-base --is-ancestor "$REVIEW_BASE"  "$REVIEW_BASE"; echo "POSITIVE exit=$?"
+```
+
+⛔ **Pass condition: the control prints its population size, a `0` is answered by a
+SYNTHESISED subject rather than by the pass reading, and the positive row is taken
+beside the negative one.** ⚠️ **`PO-37/3`: `git branch --no-merged` was empty, so
+*0 of 109 is a non-ancestor* and two "impossible" readings were VACUOUS; re-taken
+against a synthesised dangling commit they returned the `NO / exit 1` the reading
+required.** ⭐ **Re-measured by the CTO at `c18df98c`: empty over **113** local
+branches, `NEGATIVE exit=1`, `POSITIVE exit=0`** — ⛔ **so the vacuity is this
+repository's NORMAL STATE rather than one round's accident, and every control drawn
+from `--no-merged` here is born vacuous** (Ruling 130 is why: a branch with no
+commit is not in `--no-merged` by construction). ⭐ Derivation:
+[`handoffs/CTO-2026-09-10-round49.md`](../tasks/handoffs/CTO-2026-09-10-round49.md).
 
 ## 4. R12 — tests exist, and the tree mirrors
 
