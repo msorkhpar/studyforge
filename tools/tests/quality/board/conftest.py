@@ -47,6 +47,35 @@ AUTHOR = ("-c", "user.name=Example Author", "-c", "user.email=author@example.inv
 
 HEADER = "| Row | Owner | Checkout | Commits ahead | State |\n|---|---|---|---|---|\n"
 
+#: ⛔ A well-formed sha that NO OBJECT CARRIES. ⭐ `git update-ref` REFUSES to write one
+#: ("trying to write non-commit object"), so the plant below writes the ref FILE — which
+#: is the shape a pruned object or a truncated `refs/heads/` write leaves behind.
+MISSING_OBJECT = "0" * 39 + "1"
+
+
+def unreadable(root: Path, branch: str) -> str:
+    """⛔ Plant a branch git CANNOT count — ⭐ a GENUINE failure, never a stubbed `None`.
+
+    ⚠️ **MEASURED at `6c4e3d0` in the pinned container, git 2.47.3, BEFORE any test was
+    written** — the point being that `Graph.ahead()` returns `None` only when git
+    declines, so a mocked `None` would certify nothing (`rows/W115.md`):
+
+    ```text
+    rev-parse --verify --quiet refs/heads/<b>            -> rc 0, echoes the missing sha
+    rev-parse --verify --quiet refs/heads/<b>^{commit}   -> rc 1      (tip() -> "")
+    rev-list --count <release>..<b>                      -> rc 128    (ahead() -> None)
+    merge-base --is-ancestor <b> <release>               -> rc 128
+    worktree list --porcelain / for-each-ref / log --merges -> rc 0, unaffected
+    ```
+
+    ⭐ **So `exists()` is TRUE and `ahead()` is `None`** — exactly `W115`'s state: the
+    row's carrier resolves as a branch and git will not count it.
+    """
+    ref = root / ".git" / "refs" / "heads" / branch
+    ref.parent.mkdir(parents=True, exist_ok=True)
+    ref.write_text(f"{MISSING_OBJECT}\n", encoding="utf-8")
+    return branch
+
 
 def commit(root: Path, name: str, body: str = "x\n") -> None:
     """Write and commit one file, ⛔ asserting each git command's own exit code."""

@@ -28,7 +28,7 @@ from tools.quality.board.graph import Graph
 from tools.quality.board.register import BOARD
 from tools.workspace import git
 
-from .conftest import RELEASE, write_board
+from .conftest import RELEASE, unreadable, write_board
 
 #: ⛔ A header that declares NONE of the three roles — the CTO's round-50 plant.
 RENAMED = "| Row | Owner | Where | Commits on it | Phase |\n|---|---|---|---|---|\n"
@@ -354,3 +354,131 @@ def test_the_command_line_returns_the_code_and_prints_every_step(
     assert code == REFUTED
     assert "row -> branch (ASSERTION, Ruling 189(c))" in printed
     assert "observations (" in printed, "the population comes before the verdict (Ruling 128)"
+
+
+# --------------------------------------------------------------------------
+# Reading 4 — `W115` / Ruling 216: the FOLD, and the third state survives it
+# --------------------------------------------------------------------------
+
+
+def test_LIVE_a_fixture_with_no_plant_reaches_only_EXIT_0_AND_1(repository: Path) -> None:
+    """⛔ **The CONTROL, and `W115`'s own row demands it**: this must not become a rule
+    that every unreadable thing exits `2`.
+
+    ⭐ **Expected, written before the run:** over the unplanted fixture a corroborating
+    row reads `0`, a terminal row reads `1`, and ⛔ **`NOT AUTHORITATIVE` appears in
+    NEITHER** — ⚠️ **a third state that fired here would fire on every wave the PO closed
+    correctly, which is Ruling 179's cost** (`board.md`, ruled round 50).
+    """
+    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
+    good, good_printed = _run(repository)
+    write_board(repository, "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 0 | in flight |\n")
+    spent, spent_printed = _run(repository)
+    assert (good, spent) == (CORROBORATED, REFUTED), (good, spent)
+    assert "NOT AUTHORITATIVE" not in good_printed and "NOT AUTHORITATIVE" not in spent_printed
+    assert "live checkouts git could not count: none." in good_printed
+    assert "0 NOT ANSWERABLE and 0 live checkout(s) git could not count" in good_printed
+
+
+def test_planted_a_ROW_whose_branch_GIT_CANNOT_COUNT_exits_2_AND_NOT_1(
+    repository: Path,
+) -> None:
+    """⛔ **`W115`, site 1, AT THE EXIT CODE — the FALSE REFUTATION Ruling 216 names.**
+
+    ⚠️ **Expected, written before the run:** the shipped fold had two row values, so *git
+    could not answer about this branch* landed on `REFUTED` and the run exited `1` while
+    printing *is 0 ahead* — ⛔ **a refutation of a row nothing was observed about, from a
+    number git never gave.** ⭐ **It is exit `2` now, and the sentence names the defect.**
+    """
+    branch = unreadable(repository, "fix/W4")
+    assert Graph.read(repository, RELEASE).ahead(branch) is None, "⛔ born vacuous"
+    write_board(repository, f"| `W42` | Dev | `wt/x`, `{branch}` | 0 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == NOT_AUTHORITATIVE
+    assert code not in (CORROBORATED, REFUTED), "⛔ it must DIFFER from BOTH verdicts"
+    assert "NOT ANSWERABLE: git could not count" in printed
+    assert "0 of 1 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
+    # ⚠️ `is 0 ahead`, not `0 ahead`: the observation READING legitimately prints
+    # `3 with a checkout, 0 ahead` about the board's own cells, and that is a real count.
+    assert "is 0 ahead" not in printed, "⛔ THE DEFECT: a count git never gave"
+    assert "is None commits ahead" not in printed, "⛔ nor the other site's spelling of it"
+
+
+def test_planted_a_LIVE_CHECKOUT_git_cannot_count_is_NOT_filed_under_BY_CONSTRUCTION(
+    repository: Path,
+) -> None:
+    """⛔ **`W115`, site 3 — and site 2's exit code in the same plant.**
+
+    ⚠️ **Expected, written before the run:** `_unnamed()` coerced `ahead(branch) or 0`, so
+    a FAILED reading was filed under *invisible to git BY CONSTRUCTION (Ruling 130), 0
+    commits ahead* — ⛔ **the one line whose whole job is to say *this is unreadable*, and
+    the one place a reviewer has already agreed to ignore a `0`.** ⭐ **Ruling 130's
+    exemption is EARNED by a checkout with no commit; git declining to answer is not that.**
+
+    ⭐ **`feat/held` is the plant because it is the fixture's one branch that is both
+    CHECKED OUT and AHEAD** — ⚠️ so the reading moves from *a real count* to *no count*
+    with one variable changed, and the board does not name it.
+    """
+    branch = unreadable(repository, "feat/held")
+    graph = Graph.read(repository, RELEASE)
+    assert graph.checkouts().get(branch), "⛔ born vacuous: the plant must BE checked out"
+    assert graph.ahead(branch) is None, "⛔ born vacuous: git must GENUINELY decline"
+    write_board(repository, "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 0 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == NOT_AUTHORITATIVE, "⛔ site 2 and site 3 both used to reach 0 or 1"
+    assert "git COULD NOT COUNT *commits ahead* for 1 live checkout(s): held" in printed
+    exemption = next(line for line in printed.split("\n") if "BY CONSTRUCTION" in line)
+    assert "held" not in exemption, (
+        f"⛔ THE DEFECT: the failed reading used to be COUNTED on this line — {exemption}"
+    )
+    assert "named by no row: 1 — leak" in exemption, exemption
+    assert "1 live checkout(s) git could not count" in printed
+
+
+def test_the_THREE_ROW_ANSWERS_and_the_THREE_PROCESS_CODES_are_COMPARED_in_one_reading(
+    repository: Path,
+) -> None:
+    """⛔ Ruling 216: the exit code is a FOLD of the row answers, and the fold PRESERVES the third.
+
+    ⭐ **All three populations in ONE test so the codes are compared rather than asserted
+    one at a time** — ⚠️ which is the form that caught the two that used to share exit `0`
+    (`W111`), applied to the two that used to share exit `1`.
+    """
+    readings = {}
+    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
+    readings["answerable and corroborated"] = _run(repository)
+    write_board(repository, "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 0 | in flight |\n")
+    readings["answerable and refuted"] = _run(repository)
+    branch = unreadable(repository, "fix/W4")
+    write_board(repository, f"| `W42` | Dev | `wt/x`, `{branch}` | 0 | in flight |\n")
+    readings["git could not answer"] = _run(repository)
+    codes = {name: code for name, (code, _printed) in readings.items()}
+    assert codes == {
+        "answerable and corroborated": CORROBORATED,
+        "answerable and refuted": REFUTED,
+        "git could not answer": NOT_AUTHORITATIVE,
+    }, codes
+    assert len(set(codes.values())) == 3, "⛔ THREE answers, and the fold keeps them apart"
+    lasts = {name: printed.split("\n")[-1] for name, (_code, printed) in readings.items()}
+    assert len(set(lasts.values())) == 3, lasts
+
+
+def test_a_row_REFUTED_and_a_row_UNANSWERABLE_in_ONE_BOARD_exits_2_and_not_1(
+    repository: Path,
+) -> None:
+    """⛔ **The precedence, asserted rather than assumed:** `NOT ANSWERABLE` DOMINATES.
+
+    ⚠️ **A run that folded the unanswerable row onto the refuted one would report `2 of 2
+    REFUTED, exit 1`** — ⭐ **and a wave close reading that exit would conclude the board
+    was measured and wrong, when one of its two rows was never measured at all.**
+    """
+    branch = unreadable(repository, "fix/W4")
+    write_board(
+        repository,
+        f"| `W42` | Dev | `wt/x`, `fix/Wmerged` | 0 | in flight |\n"
+        f"| `W43` | Dev | `wt/x`, `{branch}` | 0 | in flight |\n",
+    )
+    code, printed = _run(repository)
+    assert code == NOT_AUTHORITATIVE
+    assert "1 of 2 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
+    assert "REFUTED: fix/Wmerged is TERMINAL" in printed, "⭐ the refutation is still PRINTED"
