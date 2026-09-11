@@ -9,14 +9,12 @@ ignore rules, and the optional tooling.
 
 from __future__ import annotations
 
-import ast
-import sys
 import tomllib
 
 import pytest
 
+from tests.harness import isolation
 from tests.support import is_ignored, repository_root, run, tool_on_path
-from tools.quality.config import python_files, relative
 
 
 def pyproject() -> dict:
@@ -43,23 +41,16 @@ def test_optional_dependencies_are_tooling_only():
 def test_no_source_module_imports_a_third_party_package():
     # The declaration above says what is allowed; this says what is actually
     # imported, which is the half that goes wrong silently.
-    root = repository_root()
-    allowed = set(sys.stdlib_module_names) | {"studyforge"}
-    offenders: list[str] = []
-    for path in python_files(root):
-        name = relative(path, root)
-        if not name.startswith("src/"):
-            continue
-        tree = ast.parse(path.read_text("utf-8"), filename=name)
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Import):
-                roots = [alias.name.split(".")[0] for alias in node.names]
-            elif isinstance(node, ast.ImportFrom):
-                roots = [(node.module or "").split(".")[0]] if node.level == 0 else []
-            else:
-                continue
-            offenders += [f"{name}: {root_name}" for root_name in roots if root_name not in allowed]
-    assert offenders == []
+    #
+    # ⛔ **Asked of `tests.harness.isolation`, not walked here.** The walk this
+    # test used to carry and the one SF-26 needed for R1's import form are the
+    # same eleven lines against the same closed set, and this file's neighbour
+    # `tests/support.py` states the rule: a block repeated between test modules is
+    # extracted and imported, because the copies drift silently while each keeps
+    # passing. ⭐ The claim is unchanged and so is its strength — what moved is
+    # where the predicate lives, and the harness is where it is proved to fail
+    # when deliberately violated, which is the half this test never had.
+    assert isolation.foreign_imports(isolation.framework_modules()) == []
 
 
 def test_the_quality_tooling_is_excluded_from_packaging():
