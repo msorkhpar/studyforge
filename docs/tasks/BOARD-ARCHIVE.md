@@ -13643,6 +13643,30 @@ REFUTED ROWS: none.    corroborate: 0 of 2 rows REFUTED by git.
 
 ⚠️ **TWO CHECKOUTS I DID NOT CREATE ARE REPORTED AND NOT REMOVED** (Ruling 206(ii)): ⭐ **`wt/dev2-trial` on `trial/W115-before` — a developer's plant baseline, correctly flagged by the instrument's own trial arm — and the detached `wt/po-int` at `798956c`, which appears in NEITHER arm and is still `PO-44/5`'s open hole belonging to [`W125`](rows/W125.md).**
 
+### ⛔ THE COMMITTED TREE — the floor, the suite and the gate, MEASURED in the pinned container
+
+⛔ **MEASURED BY ME at `1c7a011`, role `wt/po`, pins in the SAME invocation as the sha (Ruling 238), Ruling 241's redirect form, `-ra`:**
+
+```text
+1c7a01174b35b9b384b1bb6042c4930ed5ec1539
+Python 3.14.7 (main, Sep  1 2026, 00:05:20) [GCC 14.2.0] | node v24.21.0 | ruff 0.16.6
+Google Chrome for Testing 153.0.8010.36 | fonts-liberation 1:2.1.5-3 | 12 font files | shm 1.0G
+PYTEST_EXIT=0        5453 passed, 15 skipped in 58.85s
+                     12 skip GROUPS / 15 skips | FAILED+ERROR lines: 0
+FLOOR_EXIT=0         pointers 918 in 355, 532 anchored, 0 unresolved | ruff 827
+                     board 130 rows / 83 live / 83 detail | narrative 6663 of 8192
+                     widest row 587 of 600 | 42870 bytes total of 43680 allowed
+                     rulings index 278 from 45, tail 278 | quality floor: clean
+CORROBORATE_EXIT=0   ⭐ 0 of 2 rows REFUTED    REFUTED ROWS: none.
+git status --porcelain -> 0 lines
+```
+
+⭐ **RECONCILED against this round's own base rather than asserted:** ⛔ **markdown files `351 → 355` (**+4** — one handoff plus four new row files minus one deleted); pointers `890 → 918` (**+28**, all inside those five files and the archive record); `ruff format --check` `823 → 827` (**+4** — the same four files, and Ruling 224 again: the denominator counts every file `ruff` considered, markdown included).** ⭐ **The suite is IDENTICAL at `5453 passed, 15 skipped` because this branch touches `docs/` and nothing else.**
+
+⚠️ **THE VISUAL READINGS ARE THIS ROUND'S BASE READINGS AND ARE NOT RE-TAKEN, and saying so is the honest form: `VISUAL_UNSET_EXIT=0` at `161 passed` and `VISUAL_REQUIRED_EXIT=1` at `1 failed, 160 passed`, both at `6c4e3d0`.** ⛔ **No file under `tests/` is in this diff, so a re-run would measure the same tree under a different name.**
+
+⛔ **THE TIP IS NOT THIS REF AND SAYING SO IS THE ONLY HONEST OPTION** — the idiom is `W124.md`'s and is credited to it. ⚠️ **Recording a reading in the tree moves the tree, and chasing the tip with a re-measurement is a recursion with no fixed point.** ⭐ **So: every commit after `1c7a011` touches `docs/tasks/BOARD-ARCHIVE.md` and `docs/tasks/handoffs/PO-2026-09-11-round45.md` and nothing else, and no figure above is claimed for any ref but `1c7a011`.**
+
 ### ⭐ TEARDOWN, and the committed tree
 
 ⛔ **I created exactly ONE worktree and ONE branch: `../studyforge-wt/po` and `chore/po-round45`.** ⭐ **The worktree is removed BY NAME as this round's last act and the branch survives, because it is what the CTO reviews and the coordinator merges.**
