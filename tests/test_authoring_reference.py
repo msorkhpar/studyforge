@@ -455,6 +455,15 @@ def test_every_consumer_side_declaration_is_earned_and_still_bites(token):
     commanding the module it exempts, and the module turns out to resolve here
     after all — which would quietly lift a FRAMEWORK module out of the check
     above, the one thing a declared exemption must never be able to do.
+
+    ⭐ **This is also where the SIBLING question is answered, and it is answered
+    by assertion rather than by assumption.** ⛔ **A worktree carries no sibling
+    component** (Ruling 159), so `ingest` — which the corpus repository owns —
+    is absent here and must STAY absent: the second assertion is exactly the
+    statement that this check's reading does not depend on whether a sibling is
+    on disk. ⚠️ **Nothing in this whole population reads outside this
+    repository**: the pages are `docs/authoring/` and `src/**/SKILL.md`, and
+    `run_bare()` scrubs `PYTHONPATH` and runs at this repository's own root.
     """
     pages = consumer_side()[token]
     orphans = sorted(pages - commanded_modules().get(token, set()))
