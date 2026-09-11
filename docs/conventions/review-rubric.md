@@ -1563,9 +1563,16 @@ pointer census, the board — the image is HELD CONSTANT across base and merge.*
 ⚠️ **MEASURED at `6c4e3d0`, role `wt/dev1`, the fenced command run verbatim in the
 pinned image:** the browser resolves on `PATH` as `headless-shell` →
 `/usr/local/bin/headless-shell`, `Google Chrome for Testing 153.0.8010.36`, sha256
-`dabfdd70006e411b…`, `shm 1.0G`. ⛔ **`find /opt -name headless-shell` reads ABSENT
-in this image and three offices have read that as *no browser*** — ⭐ **which is
-the second reason the clause resolves the PATH first and asks the binary second.**
+`dabfdd70006e411b…`, `shm 1.0G`.
+
+⛔ **AND THE FALSE NEGATIVE, MEASURED in the same image rather than repeated:
+`find /opt -name headless-shell` prints NOTHING and exits `0`** — ⚠️ **because the
+binary is `/opt/chrome-headless-shell/chrome-headless-shell` and the name
+`headless-shell` exists only as the `/usr/local/bin` entry, outside `/opt`.**
+⭐ **An empty result under a SUCCESS code is the exact shape three offices have read
+as *no browser*, and it is the second reason the clause resolves the PATH first and
+asks the binary second** (Ruling 191 — an empty population returns the PASS
+reading rather than no reading).
 
 #### ⛔ Ruling 151 (CTO round 40) — a framework task's Acceptance may not depend on a reading taken inside a CONSUMER repository
 
