@@ -5055,17 +5055,26 @@ worth grepping for.**
 
 ```bash
 # ⛔ THE SPELLING. A declined finding writes this line in the record it is declined in:
-#      DECLINED-AS-RULE: <the rule it would become> (instance N)
+#      DECLINED-AS-RULE: <the rule it would become>
 #    ⭐ The rule text is the KEY — it is what a later instance matches on, so it is
 #    written as the RULE and never as the incident.
 # ⛔ ON ONE PHYSICAL LINE, however long, and NOT wrapped to the document's width.
 #    ⚠️ `git grep` is a LINE instrument: a wrapped rule is truncated at the fold and every
-#    entry then differs from every other, so the accumulator reads 1 forever. MEASURED —
-#    see below. ⭐ A long line is house-compatible; this document's own tables carry longer.
-git grep -c 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ | wc -l   # records carrying any
+#    entry then differs from every other, so the accumulator reads 1 forever. MEASURED.
+# ⛔ AND NO INSTANCE NUMBER. ONE LINE PER INSTANCE, so a round recording two writes two.
+#    ⚠️ `(instance N)` was in the first spelling and it is a TYPED RUNNING TOTAL inside a
+#    clause whose whole point is that the count is DERIVED (Ruling 150). MEASURED.
+# ⛔ AND A RECORD NEVER REPRODUCES THE COMMAND BELOW — it cites this clause by name.
+#    ⚠️ A quoted copy sits in `docs/tasks/handoffs/` and the accumulator COUNTS IT as an
+#    entry. MEASURED. ⭐ Ruling 170(a)'s form: the fenced command is THE instrument, and a
+#    second copy is a second instrument whether or not it was meant as one.
+# ⛔ THE KEY IS DELIMITED BY A BACKTICK SPAN — `DECLINED-AS-RULE: <the rule>` — and the
+#    CLOSING backtick is what ends it. ⚠️ Without a terminator the key runs to end-of-line
+#    and swallows any prose the author put after it, so two records stating the SAME rule
+#    with different commentary read as two rules. MEASURED, twice, in the round that
+#    minted this. ⭐ The delimiter is the house style these entries were already written in.
 git grep -h 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ \
-  | sed 's/.*DECLINED-AS-RULE: //; s/ (instance [0-9]*).*//; s/[`*]//g' \
-  | sort | uniq -c | sort -rn                                      # ⭐ THE ACCUMULATOR
+  | sed -n 's/.*DECLINED-AS-RULE: \([^`]*\)`.*/\1/p' | sort | uniq -c | sort -rn
 ```
 
 ⛔ **RUN BOTH WAYS BEFORE THIS CLAUSE SHIPPED, AND THE FIRST FORM WAS WRONG** (Ruling 53,
