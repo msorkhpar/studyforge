@@ -29,7 +29,17 @@ def as_state(monkeypatch: pytest.MonkeyPatch):
     return use
 
 
-def test_a_missing_browser_skips_with_a_reason_that_names_the_remedy(as_state) -> None:
+def test_a_missing_browser_skips_with_a_reason_that_names_the_remedy(
+    as_state, pinned_environment
+) -> None:
+    """⛔ `pinned_environment` is LOAD-BEARING and is `W128`'s own live instance.
+
+    ⚠️ **Without it this test read the HOST's `$STUDYFORGE_VISUAL`**: MEASURED at
+    `270296d` in the pinned container, unset it passed inside `5561 passed` and
+    `=required` made it the only failure in `1 failed, 5560 passed` — the same
+    tree, one environment variable (`W124/5`, `W115/4`, and
+    `docker/dev/compose.yaml` records it from the other side).
+    """
     as_state(ABSENT)
     with pytest.raises(pytest.skip.Exception) as raised:
         discovery.require_browser()
@@ -38,7 +48,7 @@ def test_a_missing_browser_skips_with_a_reason_that_names_the_remedy(as_state) -
 
 
 def test_a_missing_browser_FAILS_when_the_run_demanded_one(
-    as_state, monkeypatch: pytest.MonkeyPatch
+    as_state, pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """⛔ One word turns every skip below into a failure, and it is checked here.
 
@@ -55,7 +65,7 @@ def test_a_missing_browser_FAILS_when_the_run_demanded_one(
 
 
 def test_the_demand_is_exact_and_not_merely_truthy(
-    as_state, monkeypatch: pytest.MonkeyPatch
+    as_state, pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """⭐ The control: any other value must still skip.
 
@@ -74,14 +84,14 @@ def test_the_demand_is_exact_and_not_merely_truthy(
 
 
 def test_a_present_browser_is_returned_and_neither_skips_nor_fails(
-    as_state, monkeypatch: pytest.MonkeyPatch
+    as_state, pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     as_state(PRESENT)
     monkeypatch.setenv(discovery.DEMAND_VARIABLE, discovery.DEMAND_VALUE)
     assert discovery.require_browser() == "/some/browser"
 
 
-def test_the_summary_line_counts_what_did_not_run(as_state) -> None:
+def test_the_summary_line_counts_what_did_not_run(as_state, pinned_environment) -> None:
     """⛔ The count is the half a reader acts on: *nothing ran* looks like *all passed*."""
     as_state(ABSENT)
     assert "17 visual check(s) DID NOT RUN" in discovery.report_line(17)
@@ -94,7 +104,7 @@ def test_the_summary_line_counts_what_did_not_run(as_state) -> None:
 
 
 def test_a_run_outside_the_image_may_not_call_its_browser_pinned(
-    monkeypatch: pytest.MonkeyPatch,
+    pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """⛔ The one that matters, because it is the claim a review inherits.
 
@@ -111,7 +121,7 @@ def test_a_run_outside_the_image_may_not_call_its_browser_pinned(
 
 
 def test_a_run_inside_the_image_is_pinned_and_says_where_the_pin_is(
-    as_state, monkeypatch: pytest.MonkeyPatch
+    as_state, pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """⭐ And it names the file, because *pinned* with no address is a claim, not evidence."""
     monkeypatch.setenv(discovery.CONTAINER_VARIABLE, "1")

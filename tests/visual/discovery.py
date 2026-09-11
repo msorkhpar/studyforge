@@ -43,6 +43,29 @@ harness does three things instead of one:
    run of the whole suite — not behind `-rs`, not behind `-v`;
 3. `STUDYFORGE_VISUAL=required` turns absence into a **failure**, so a reviewer
    or a CI job that wants the guarantee can demand it in one word.
+
+## ⛔ `W128` — the three variables that reach a VERDICT here are DECLARED
+
+⛔ **A committed verdict may not depend on the host's environment SILENTLY**
+(Ruling 225's environment half, named by Ruling 263 and partitioned by
+Ruling 269). ⭐ **The unit is *the distinct `STUDYFORGE_*` names
+`tests/visual/` reads*, never a bare count**, and they partition in two:
+
+| name | what it decides | partition |
+|---|---|---|
+| `STUDYFORGE_VISUAL` | absence is a FAILURE or a SKIP | ⛔ **a verdict** |
+| `STUDYFORGE_VISUAL_BROWSER` | WHICH engine produced every reading | ⛔ **a verdict** |
+| `STUDYFORGE_DEV_CONTAINER` | ADMISSIBILITY, Ruling 40 | ⛔ **a verdict** |
+| `STUDYFORGE_VISUAL_CAPTURES` | where the PNGs land | ⭐ an artifact only |
+
+⭐ **The remedy is NOT removing `STUDYFORGE_VISUAL=required`** — that variable is
+the whole of how this harness refuses to be a check that cannot fail. ⛔ **It is
+that `environment_declaration()` PRINTS all three, in force, at the end of every
+run**, so a green reading carries the environment it was taken in instead of
+leaving a reader to assume one — exactly as Ruling 204 lets a SKIP be admissible
+when it says so. ⚠️ **The partition itself is asserted over a fixture in
+`test_host_environment.py`, which is also where the licence for the one ambient
+reader is stated.**
 """
 
 from __future__ import annotations
@@ -94,6 +117,13 @@ class State:
     version: str | None
     searched: tuple[str, ...]
 
+    #: ⛔ Whether `$STUDYFORGE_VISUAL_BROWSER` named the engine, rather than
+    #: `PATH` supplying it. ⚠️ **A BOOLEAN and never the value**: that variable
+    #: holds a path, and a path is somebody's home directory (R7). ⭐ It is what
+    #: lets `reason` stop saying *"`$STUDYFORGE_VISUAL_BROWSER` is unset"* on a
+    #: run where it was set and named something unusable — see `W128/1`.
+    named: bool = False
+
     @property
     def available(self) -> bool:
         """Whether a browser was found."""
@@ -112,7 +142,20 @@ class State:
         draft ran to five lines — 275 lines of identical prose above the eight
         pre-existing skips, which is a way of hiding them. ⭐ The long form is
         printed **once**, by `report_line`, at the end of every run.
+
+        ⛔ **Two branches, because one of them used to be FALSE** (`W128/1`).
+        The unnamed branch's wording is unchanged; the named branch exists
+        because a run with `$STUDYFORGE_VISUAL_BROWSER` set to something this
+        machine cannot run printed *"… and `$STUDYFORGE_VISUAL_BROWSER` is
+        unset"* beside 123 skips it had itself caused. ⚠️ **The variable's VALUE
+        is still never printed — it is a path (R7).**
         """
+        if self.named:
+            return (
+                f"no browser: ${BINARY_VARIABLE} is set and names one this machine cannot "
+                f"run — QA-03/1 is closed and the pinned image has one, so see the "
+                f"harness line below"
+            )
         return (
             f"no browser: PATH has none of {self.searched[0]}… and "
             f"${BINARY_VARIABLE} is unset — QA-03/1 is closed and the pinned image "
@@ -138,7 +181,21 @@ def state() -> State:
     found = named or next((path for path in map(shutil.which, CANDIDATES) if path), None)
     if found and not os.path.exists(found):
         found = shutil.which(found)
-    return State(binary=found, version=_version_of(found), searched=CANDIDATES)
+    return State(binary=found, version=_version_of(found), searched=CANDIDATES, named=bool(named))
+
+
+def demand_is_in_force() -> bool:
+    """Whether this run demanded a browser — the ONE site that reads `$STUDYFORGE_VISUAL`.
+
+    ⛔ **One reader, deliberately** (`W128`). ⚠️ The comparison used to be
+    written out at its single call site, and `environment_declaration()` needs
+    the same answer; a second spelling of it is how a run comes to PRINT *"absence
+    is a SKIP"* while `require_browser()` FAILS.
+
+    ⭐ **Exact, never merely truthy** — `STUDYFORGE_VISUAL=0` reads as *off* and
+    must not mean *demand it*, which `test_discovery.py` asserts as a control.
+    """
+    return os.environ.get(DEMAND_VARIABLE, "").strip().lower() == DEMAND_VALUE
 
 
 def require_browser() -> str:
@@ -150,7 +207,7 @@ def require_browser() -> str:
     current = state()
     if current.available:
         return str(current.binary)
-    if os.environ.get(DEMAND_VARIABLE, "").strip().lower() == DEMAND_VALUE:
+    if demand_is_in_force():
         pytest.fail(f"${DEMAND_VARIABLE}={DEMAND_VALUE}, and {current.remedy}", pytrace=False)
     pytest.skip(current.reason)
 
@@ -173,13 +230,57 @@ def evidence_state() -> str:
     return "unpinned (this host's browser, pinned by nothing — the image's is)"
 
 
+def environment_declaration() -> str:
+    """Every environment variable that reaches a VERDICT here, with the state in force.
+
+    ⛔ **`W128`: the defect was never that `$STUDYFORGE_VISUAL` exists — it is
+    that a verdict depended on it SILENTLY.** ⭐ This is the line that makes the
+    dependence DECLARED, and it names all three of the verdict-reaching
+    partition so that a reading quoted into a record carries the environment it
+    was taken in rather than the one its reader assumed.
+
+    ⚠️ **A STATE is printed and never a VALUE.** `$STUDYFORGE_VISUAL_BROWSER`
+    holds a path and a path is somebody's home directory (R7); which engine it
+    selected is named by `report_line()` through the browser's own version
+    string, which the browser supplies rather than the host.
+
+    ⭐ **`STUDYFORGE_VISUAL_CAPTURES` is absent from this line ON PURPOSE**: it
+    reaches no verdict, only where PNGs land. ⛔ A declared list is a CLOSED
+    claim, so an over-wide one is as wrong as a short one (Ruling 258).
+    """
+    demand = (
+        f"={DEMAND_VALUE}, absence is a FAILURE"
+        if demand_is_in_force()
+        else " unset, absence is a SKIP"
+    )
+    engine = " names the engine" if state().named else " unset, the engine came from PATH"
+    pin = (
+        "=1, readings are PINNED"
+        if evidence_state().startswith("pinned")
+        else " unset, readings are UNPINNED"
+    )
+    return (
+        f"declared environment: ${DEMAND_VARIABLE}{demand} · "
+        f"${BINARY_VARIABLE}{engine} · ${CONTAINER_VARIABLE}{pin}"
+    )
+
+
 def report_line(skipped: int | None = None) -> str:
-    """The one sentence the whole suite prints about this harness, run or not."""
+    """The one sentence the whole suite prints about this harness, run or not.
+
+    ⛔ **It carries `environment_declaration()` on BOTH branches** (`W128`). A
+    green run that does not say whether absence would have been fatal is the
+    silent dependence this row exists to close.
+    """
     current = state()
+    declaration = environment_declaration()
     if current.available:
-        return f"visual harness: RAN on {current.version} — evidence state: {evidence_state()}"
+        return (
+            f"visual harness: RAN on {current.version} — evidence state: "
+            f"{evidence_state()} — {declaration}"
+        )
     counted = "" if skipped is None else f" — {skipped} visual check(s) DID NOT RUN"
-    return f"visual harness: NO BROWSER{counted}. {current.remedy}"
+    return f"visual harness: NO BROWSER{counted}. {current.remedy} — {declaration}"
 
 
 def _version_of(binary: str | None) -> str | None:
