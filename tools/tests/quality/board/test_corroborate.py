@@ -445,3 +445,95 @@ def test_a_row_REFUTED_and_a_row_UNANSWERABLE_in_ONE_BOARD_exits_2_and_not_1(
     assert code == NOT_AUTHORITATIVE
     assert "1 of 2 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
     assert "REFUTED: fix/Wmerged is TERMINAL" in printed, "⭐ the refutation is still PRINTED"
+
+# --------------------------------------------------------------------------
+# ⛔ `PO-46/14` — the TWO ROW VERDICTS the exit code folds are NAMED, even when EMPTY
+# --------------------------------------------------------------------------
+
+
+def test_planted_the_REFUTED_ROWS_are_NAMED_and_the_other_fold_prints_its_EMPTY_form(
+    repository: Path,
+) -> None:
+    """⛔ `PO-46/14`: a round-45 brief demanded an output line that DID NOT EXIST.
+
+    ⚠️ **MEASURED at `51dee3b`, role `wt/dev1`: `grep -rn "REFUTED ROWS" tools/ src/ tests/`
+    is ABSENT (exit 1) while the string is quoted in `docs/tasks/BOARD-ARCHIVE.md` and
+    `docs/tasks/handoffs/PO-2026-09-11-round45.md`.** ⛔ **A fabricated REQUIREMENT induced a
+    fabricated MEASUREMENT, and a CTO review reproduced every figure around the line without
+    catching the line itself** — Ruling 264(a)'s own subject.
+
+    ⭐ **BOTH fold lines are asserted in ONE reading**, so the inhabited form and the empty
+    form are compared rather than asserted one at a time: ⛔ **`fix/Wmerged` is TERMINAL in
+    the fixture, so this row is REFUTED and NO row is unanswerable.**
+    """
+    write_board(repository, "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 1 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == REFUTED
+    assert "  ⛔ rows REFUTED by git (1): `W42`" in printed, printed
+    assert "  rows git could not answer about: none." in printed, (
+        "⛔ the OTHER fold population owes its empty form in the same reading"
+    )
+    # ⭐ The subject is printed as the BOARD WROTE it, backticks included, because a reader
+    # greps the board for what this line says.
+    assert "`W42`" in printed and "rows REFUTED by git (1): W42" not in printed
+
+
+def test_planted_NO_REFUTED_ROW_still_prints_the_LINE_which_is_the_whole_of_the_clause(
+    repository: Path,
+) -> None:
+    """⭐ THE DIRECTION THE CLAUSE IS ABOUT: the empty case PRINTS A LINE AT ALL.
+
+    ⛔ **Before this, a run with nothing refuted said nothing about refuted rows except a
+    `0` inside the closing summary** — ⚠️ **while FIVE branch-side populations each named
+    theirs and said `none.` when empty.** ⭐ **`feat/held` is the fixture's ahead-and-held
+    branch, so this row CORROBORATES and both fold lines are empty.**
+    """
+    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == CORROBORATED
+    assert "  rows refuted by git: none." in printed, printed
+    assert "  rows git could not answer about: none." in printed, printed
+
+
+def test_planted_an_UNANSWERABLE_ROW_is_NAMED_on_its_OWN_line_and_NOT_on_the_refuted_one(
+    repository: Path,
+) -> None:
+    """⛔ Ruling 216's third answer gets a POPULATION and not only a counter.
+
+    ⚠️ **Fixing the refuted half alone would have shipped the identical asymmetry one
+    population over**, which is Ruling 258's shape: a list read as exhaustive that is not.
+    ⭐ **`NOT_ANSWERABLE` DOMINATES, so this row is on its own line and the refuted line
+    reads `none.` — which is the pair that proves the two lines are not one line twice.**
+    """
+    branch = unreadable(repository, "fix/W4")
+    assert Graph.read(repository, RELEASE).ahead(branch) is None, "⛔ born vacuous"
+    write_board(repository, f"| `W42` | Dev | `wt/x`, `{branch}` | 0 | in flight |\n")
+    code, printed = _run(repository)
+    assert code == NOT_AUTHORITATIVE
+    assert "  ⛔ rows NOT ANSWERABLE (1): `W42`" in printed, printed
+    assert "  rows refuted by git: none." in printed, (
+        "⛔ a row git could not read is NOT a refuted row — that fold is `W115`'s whole subject"
+    )
+
+
+def test_impossible_neither_FOLD_LINE_appears_for_a_population_that_does_not_EXIST(
+    repository: Path,
+) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the empty-form pass.
+
+    ⭐ **A DECLARED, READ, EMPTY `<!-- inflight -->` block keeps its ONE sentence and gains
+    no second one:** ⚠️ **two lines saying `none.` about a population that has no members to
+    have is the `0 = 0` the whole idiom exists to refuse** (Ruling 48). ⛔ **And a table that
+    did NOT READ refuses before the loop runs, so it cannot reach either line either.**
+    """
+    write_board(repository, "")
+    code, printed = _run(repository)
+    assert code == CORROBORATED
+    assert "refuted by git" not in printed, printed
+    assert "could not answer about" not in printed, printed
+    assert "DECLARED, READ, and carries no row" in printed, "⭐ the ONE sentence it does keep"
+    row = "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n"
+    write_board(repository, row, delimited=False)
+    ramp_code, ramp_printed = _run(repository)
+    assert ramp_code == NOT_AUTHORITATIVE
+    assert "refuted by git" not in ramp_printed, "⛔ a refusal returns before the fold"

@@ -168,7 +168,10 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     if refused is not None:
         return [*lines, refused], NOT_AUTHORITATIVE
 
-    refuted = unanswerable = 0
+    # ⛔ `PO-46/14`: the two ROW verdicts that fold into the exit code are NAMED, and named
+    # EVEN WHEN EMPTY. ⭐ Lists rather than counters, because a count is what they were.
+    refuted_rows: list[str] = []
+    unanswerable_rows: list[str] = []
     for row in table.rows:
         asserted_by = claim(row, graph, live)
         lines.append(
@@ -198,9 +201,13 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
         # branches git could not read is a row this run cannot judge, and folding it onto
         # `REFUTED` is the FALSE REFUTATION the row exists to close.
         if Answer.NOT_ANSWERABLE in answers:
-            unanswerable += 1
+            unanswerable_rows.append(row.subject)
         elif Answer.REFUTED in answers:
-            refuted += 1
+            refuted_rows.append(row.subject)
+    refuted, unanswerable = len(refuted_rows), len(unanswerable_rows)
+    # ⛔ `PO-46/14`, and it goes BEFORE the other-direction lines so the rows are read before
+    # the branches. ⭐ Only over a population that READ: a refused table returned above.
+    lines.extend(_fold_lines(refuted_rows, unanswerable_rows, table))
     unread_lines, unread = unnamed(table.rows, live, graph)
     lines.extend(unread_lines)
     lines.extend(spent(graph, live))
@@ -225,6 +232,57 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
         )
         return lines, NOT_AUTHORITATIVE
     return lines, REFUTED if refuted else CORROBORATED
+
+
+def _fold_lines(refuted: list[str], unanswerable: list[str], table: Table) -> list[str]:
+    """`PO-46/14`: NAME the two row verdicts the exit code folds — ⛔ even when empty.
+
+    ⛔ **THE DEFECT, and the office that caused it disclosed it: a round-45 brief demanded
+    *"the refuted list printed even when empty (Ruling 264(a)'s form)"* and THAT OUTPUT DID
+    NOT EXIST.** ⚠️ **A plausible line was written to satisfy the instruction and a review
+    reproduced every figure around it without catching the line itself** — ⭐ **a fabricated
+    REQUIREMENT induced a fabricated MEASUREMENT, which is Ruling 264(a)'s own subject.**
+
+    ⭐ **MEASURED by me at `51dee3b`, role `wt/dev1`, confirming `PO-46/14` on my branch:**
+
+    ```text
+    grep -rn "REFUTED ROWS" tools/ src/ tests/   ->  ABSENT, exit 1
+    quoted in                                    ->  docs/tasks/BOARD-ARCHIVE.md
+                                                     docs/tasks/handoffs/PO-2026-09-11-round45.md
+    populations printing an EMPTY form already    ->  5, all in unclaimed.py
+    populations the EXIT CODE folds               ->  3: refuted rows, unanswerable rows,
+                                                     unreadable checkouts — and only the
+                                                     THIRD had a list or an empty form
+    ```
+
+    ⛔ **So the asymmetry was not four-versus-one: it was that the two ROW verdicts — the
+    ones whose counts ARE the exit code — were COUNTERS with no population at all, while
+    five branch-side readings each named theirs and said `none.` when empty.**
+
+    ⚠️ **BOTH row verdicts get a line, not just the refuted one.** ⭐ **Ground: the clause
+    names *"the one whose count IS its exit code"*, and Ruling 216 made that fold
+    THREE-valued — so fixing the refuted half alone would ship the identical asymmetry one
+    population over, which is Ruling 258's shape (a list read as exhaustive that is not).**
+
+    ⛔ **The subjects are printed as the board WROTE them** — `` `W126` `` with its
+    backticks — ⚠️ **because a reader greps the board for what this line says, and
+    normalising here would hand them a string the board does not contain.**
+    """
+    if not table.rows:
+        # ⭐ The DECLARED, READ, EMPTY block keeps its ONE sentence and gains no second
+        # one: *nothing is in flight* is a real answer, and two lines saying `none.` about
+        # no population at all is the `0 = 0` this whole idiom exists to refuse (Ruling 48).
+        return []
+    return [
+        f"  ⛔ rows REFUTED by git ({len(refuted)}): {' '.join(refuted)}"
+        if refuted
+        else "  rows refuted by git: none.",
+        f"  ⛔ rows NOT ANSWERABLE ({len(unanswerable)}): {' '.join(unanswerable)} — ⚠️ git "
+        f"could not count, which is neither *the board is right* nor *the board is wrong* "
+        f"(Ruling 216)"
+        if unanswerable
+        else "  rows git could not answer about: none.",
+    ]
 
 
 def _refusal(table: Table) -> str | None:

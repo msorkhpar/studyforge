@@ -351,6 +351,23 @@ the RUN exit `2` and never `0` or `1`.**
 sentence: that is *nothing is in flight*, which is a real answer, and a refusal there would
 fire on every wave the PO closed correctly.**
 
+⭐ **AND THE THREE POPULATIONS THAT FOLD INTO THAT EXIT CODE ARE EACH NAMED, INCLUDING WHEN
+EMPTY** (`PO-46/14`): `rows REFUTED by git (N): …` / `rows refuted by git: none.`,
+`rows NOT ANSWERABLE (N): …` / `rows git could not answer about: none.`, and
+`git COULD NOT COUNT … for N live checkout(s)` / `live checkouts git could not count: none.`
+⛔ **THE DEFECT THIS CLOSES IS RULING 264(a)'s OWN SUBJECT, and the office that caused it
+disclosed it:** ⚠️ **a round-45 brief demanded *"the refuted list printed even when empty"*
+and THAT OUTPUT DID NOT EXIST — `REFUTED ROWS` is quoted in
+[`BOARD-ARCHIVE.md`](../tasks/BOARD-ARCHIVE.md) and in
+[`PO-2026-09-11-round45.md`](../tasks/handoffs/PO-2026-09-11-round45.md) and appears nowhere
+in `tools/`, `src/` or `tests/`.** ⛔ **A fabricated REQUIREMENT induced a fabricated
+MEASUREMENT, and a review reproduced every figure around the line without catching the line.**
+⭐ **The two ROW verdicts were COUNTERS with no population at all, while five branch-side
+readings each named theirs and said `none.` when empty** — ⚠️ **so the asymmetry was never
+four-versus-one: it was that the populations whose counts ARE the exit code were the ones
+with no list.** ⛔ **A DECLARED, READ, EMPTY table prints NEITHER row line, because two
+`none.`s about a population with no members to have is the `0 = 0` the idiom refuses.**
+
 ⚠️ **And it prints SIX readings no board cell carries, which are
 `tools/quality/board/unclaimed.py`'s** (`W132`'s split): the checkouts no row claims, ⭐ **the
 OFFICE round branches Ruling 265 exempts**, the checkouts invisible to git by construction,
