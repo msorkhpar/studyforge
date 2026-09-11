@@ -55,7 +55,13 @@ def test_no_test_module_here_is_outside_the_declared_clauses() -> None:
     ⭐ The other direction of the same claim: a sixth clause added without a row
     in `ACCEPTANCE` is a check nobody agreed to and nobody reviews.
     """
-    machinery = {"test_init", "test_contrast_math", "test_discovery", "test_site"}
+    machinery = {
+        "test_init",
+        "test_contrast_math",
+        "test_discovery",
+        "test_host_environment",
+        "test_site",
+    }
     declared = set(ACCEPTANCE.values()) | machinery
     present = {stem for stem in _sources() if stem.startswith("test_")}
     assert present <= declared, f"undeclared test modules: {sorted(present - declared)}"
@@ -75,7 +81,7 @@ def test_every_declared_damage_is_used_by_some_test() -> None:
 
 
 def test_the_harness_reports_its_state_in_both_directions(
-    monkeypatch: pytest.MonkeyPatch,
+    pinned_environment, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """The summary line says what happened whether or not a browser was found.
 
