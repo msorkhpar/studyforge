@@ -4668,7 +4668,24 @@ for id in $S; do grep -ocE "$id[^A-Za-z0-9]+.*(ruled|scheduled|accepted)" "$V"; 
 #       accepted" has satisfied a reader and not the counter, and the counter is the gate.
 ```
 
-⛔ **MEASURED, CTO round 61 — `PO-47/4`: `W115/3` was disposed of by description and the
-repaired counter cannot see it.** ⚠️ **Ruling 293 narrowed the POPULATION so the counter reads
-every finding; this clause closes the other end, so every finding's disposition is readable.**
-⭐ **Together they are one gate: ids in, ids out.**
+⛔ **AND THE OTHER END, WHICH THE SAME WAVE MEASURED: a FINDING NAMES ITS OWN ID.** ⚠️ **The
+counter reads the FIRST id on the marker's line, so a handoff that NUMBERS its findings has no
+id to read and its findings are invisible to the gate — and to every disposition, because a
+reviewer cannot name what the author did not.**
+
+⛔ **MEASURED, CTO round 61, over the four task handoffs of one wave:**
+
+```text
+`PO-47/4`      W115/3 disposed of BY DESCRIPTION      -> invisible to the counter
+W137.md        5 findings numbered `1.`–`5.`, 1 of
+               them `[structural]`, `0` ids in the
+               whole file                             -> the counter reads 0 from it
+the wave's structural population   counter 10, hand count 11    ⛔ 10 ≠ 11
+⚠️ AND §8a's FIRST check fires on the same population: PO-2026-09-11-round47.md reads
+   MARKED=12 / LINES=11, because line 72 EXPLAINS the format and SPELLS both markers —
+   Ruling 65's declared companion cost, firing on a real wave for the first time.
+```
+
+⭐ **So the gate is IDS IN, IDS OUT: an author writes `<ID>/<n>` on the marker's line, and a
+reviewer writes that same id beside the disposition.** ⛔ **Either end open reads LOW, which is
+the direction that loses findings.**
