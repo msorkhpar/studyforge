@@ -143,6 +143,16 @@ two*.**
 | `board-unobserved` | a register cell declares a started state and **no** observation row names it | ⭐ **an asserted state owes an observer** — ⛔ the board is the only instrument that ASSERTS in-flight rather than OBSERVING it, so this is the only direction it can be stale in |
 | `board-disagreement` | one table says the row is **started** and the other says it is **finished** | ⛔ **both cannot be true of one row**, and a state has ONE home; ⚠️ `todo` against started is NOT this — see the narrowing below |
 | `board-unreadable` | a `<!-- inflight -->` block is DECLARED and **no table inside it declares the observation columns** | ⛔ **Ruling 196(b)'s expiry, discharged by `W111`** — ⚠️ the CTO's own plant renamed two column NAMES and read `NONE FOUND, 0 rows` on a GREEN floor, so the instrument announced where it should have refused. ⭐ **The delimiter makes the refusal POSSIBLE; this rule is what makes it HAPPEN** |
+| `board-trigger` | a `## Scheduled` row's state cell DECLARES no state | ⛔ **`board-state`'s rule ONE TABLE OVER, and the shipped message gives the ground in its own words: *"a `Trigger` cell IS an asserted state wearing another column name (Ruling 189's family), and a scheduled item whose state no instrument can read is one that cannot report that it is owed OR that it was met"*** — ⚠️ MEASURED in that message: one such cell read `before M1's wave opens` through the close of M1 and all four steps of M2 while the work behind it was being done. ⭐ **`expired` is in the set precisely so a trigger whose event has passed can SAY so** |
+
+⛔ **THIS TABLE IS A CLOSED CLAIM AND IT WAS INCOMPLETE FOR THREE ROUNDS** — ⭐ **Ruling
+276 (CTO round 58), and Ruling 258 is the clause it failed: a declared-gaps list is a
+closed claim, so an incomplete one is worse than none.** ⚠️ **MEASURED at `ad5ce24`, both
+populations printed in full and the gap in ONE direction only: `tools/quality/board/`
+defines **13** `RULE_*` constants and this table listed **12**; the one missing was
+`board-trigger`.** ⛔ **It was routed to the CTO in three consecutive rounds and landed in
+none of them, which is Ruling 245's cliff with a name on it** — ⭐ **so the fourth routing
+was refused and the row was written instead.**
 
 ### ⛔ Ruling 189(b) is THREE rules, and the population is located by a DELIMITER
 
