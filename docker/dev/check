@@ -5,6 +5,19 @@
 #     docker/dev/check python3 -m tools.quality   the quality floor alone
 #     docker/dev/check python3 -m pytest -k ruff  anything else
 #
+# ⭐ **Three variables cross into the container** (W36), declared once in
+# `compose.yaml`'s `environment:` block and set the ordinary way:
+#
+#     STUDYFORGE_VISUAL=required docker/dev/check      absence is a FAILURE
+#     STUDYFORGE_VISUAL_BROWSER=/some/browser …        name one explicitly
+#     STUDYFORGE_VISUAL_CAPTURES=/workspace/… …        keep the screenshots
+#
+# ⛔ Unset on the host means unset in there, so this wrapper decides nothing —
+# it only stops the caller's answer being dropped at the boundary. ⚠️ The
+# capture directory is a path INSIDE the container: only somewhere under
+# `/workspace` reaches the checkout, and nothing is written there by default
+# (R7 — a capture's directory is somebody's home).
+#
 # ⭐ On the host, the same work is the same command with the wrapper removed:
 #
 #     python3 -m pytest

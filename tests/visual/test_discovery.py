@@ -88,3 +88,34 @@ def test_the_summary_line_counts_what_did_not_run(as_state) -> None:
     assert "DID NOT RUN" not in discovery.report_line(None)
     as_state(PRESENT)
     assert "RAN on Some Browser 1.2" in discovery.report_line(0)
+
+
+# --- which evidence state a run may claim (W36) -----------------------------
+
+
+def test_a_run_outside_the_image_may_not_call_its_browser_pinned(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """⛔ The one that matters, because it is the claim a review inherits.
+
+    ⚠️ A host with Chrome installed has a **browser** and no **pin**. Keying the
+    state on the browser's presence would print `pinned` on every developer's
+    laptop, and 57 readings would enter the record as reproducible when the
+    engine that produced them is named by nothing a rebuild can consult.
+    """
+    monkeypatch.delenv(discovery.CONTAINER_VARIABLE, raising=False)
+    assert discovery.evidence_state().startswith("unpinned")
+    for not_the_marker in ("", "0", "yes", "true", "TRUE"):
+        monkeypatch.setenv(discovery.CONTAINER_VARIABLE, not_the_marker)
+        assert discovery.evidence_state().startswith("unpinned"), not_the_marker
+
+
+def test_a_run_inside_the_image_is_pinned_and_says_where_the_pin_is(
+    as_state, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """⭐ And it names the file, because *pinned* with no address is a claim, not evidence."""
+    monkeypatch.setenv(discovery.CONTAINER_VARIABLE, "1")
+    assert discovery.evidence_state().startswith("pinned")
+    assert "docker/dev/Dockerfile" in discovery.evidence_state()
+    as_state(PRESENT)
+    assert "evidence state: pinned" in discovery.report_line(0)

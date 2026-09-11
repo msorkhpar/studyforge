@@ -57,4 +57,52 @@ services:
     # set it degrades to "cannot write" rather than to "writes as root".
     user: "${STUDYFORGE_UID:-65534}:${STUDYFORGE_GID:-65534}"
 
+    # ⛔ **Shared memory, and it is a MEASUREMENT rather than a precaution**
+    # (W36). Docker's default `/dev/shm` is 64 MB. The browser transfers a
+    # `Page.captureScreenshot` result through shared memory, and
+    # `tests/visual/page.py` asks for `captureBeyondViewport` — a full-page
+    # capture, not a viewport one. At 64 MB the GPU process died and respawned
+    # in a loop with `VALIDATION_ERROR_DESERIALIZATION_FAILED` on
+    # `viz.mojom.CopyOutputResultSender`, and the suite **hung** rather than
+    # failing: 5 of the 7 capture checks passed and the 6th never returned.
+    # ⚠️ Measured at `a0d7e88` with the browser installed and this line absent.
+    #
+    # ⭐ Fixed HERE rather than by adding `--disable-dev-shm-usage` to the
+    # harness's launch flags, and the reason is whose property it is: the size
+    # of `/dev/shm` is a fact about how this image is RUN, which this file owns.
+    # A flag that routes the browser's shared memory onto disk instead would
+    # change what every reading is taken against, in a file W36 does not own.
+    shm_size: "1gb"
+
+    # ⭐ **The visual harness's three variables, passed through** (W36).
+    # ⛔ Without this the container cannot be told to demand a browser, to name
+    # one, or to keep its captures — the values stop at the host, and a
+    # reviewer who ran `STUDYFORGE_VISUAL=required docker/dev/check` would get
+    # a green run that proved nothing, which is the most expensive way this
+    # could be wrong.
+    #
+    # ⭐ **Pass-through, and deliberately NOT a default.** The bare-name form
+    # takes the host's value and leaves the variable *unset* in here when the
+    # host has none, so this file decides nothing about what a run demands — it
+    # only stops the caller's answer being dropped at the boundary.
+    # ⚠️ Writing `required` in here as a default was tried, measured and
+    # rejected: it sets the demand for every run of the pinned image, which
+    # changes what every reading is taken against, and it turned
+    # `tests/visual/test_discovery.py` red — a test that fakes the browser's
+    # absence but does not control this variable. ⛔ That test is red at
+    # `a0d7e88` too, with no browser and no diff, whenever the variable is set;
+    # the defect is the harness's and the measurement is in
+    # `../tasks/handoffs/W36.md`. ⭐ What keeps the browser honest instead is
+    # `tests/docker/test_dev_image_browser.py`, which asserts from **inside**
+    # this image that one arrived — the idiom the Node.js runtime already uses.
+    #
+    # ⚠️ `STUDYFORGE_VISUAL_CAPTURES` is a path INSIDE the container. A host
+    # path only resolves if it is under the bind mount, and nothing is written
+    # into the checkout by default — `conftest.py` uses pytest's temporary
+    # directory when it is unset (R7: a capture's path is a home directory).
+    environment:
+      - STUDYFORGE_VISUAL
+      - STUDYFORGE_VISUAL_BROWSER
+      - STUDYFORGE_VISUAL_CAPTURES
+
     init: true

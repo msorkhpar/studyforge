@@ -74,18 +74,30 @@ def test_every_declared_damage_is_used_by_some_test() -> None:
     assert not unused, f"declared but never run as a control: {unused}"
 
 
-def test_the_harness_reports_its_state_in_both_directions() -> None:
+def test_the_harness_reports_its_state_in_both_directions(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     """The summary line says what happened whether or not a browser was found.
 
     ⚠️ Asserted on both branches, because the branch that matters is the one
     this machine did *not* take — and it is the one that would otherwise ship
     untested and print nothing on the machine that needed it most.
+
+    ⛔ **`W36` made the evidence state a second axis, and the defect is
+    instructive.** This test asserted `"unpinned"` outright, which was true of
+    every machine for as long as the pinned image had no browser — so it passed
+    everywhere and went red in the image the moment one arrived. ⭐ A line whose
+    value depends on the environment is asserted on **both** of its values,
+    never on the one this machine happens to produce.
     """
     present = discovery.State(binary="/some/browser", version="Some Browser 1.2", searched=())
     absent = discovery.State(binary=None, version=None, searched=discovery.CANDIDATES)
     assert "RAN" in _line_for(present)
     assert "Some Browser 1.2" in _line_for(present)
-    assert "unpinned" in _line_for(present)
+    monkeypatch.delenv(discovery.CONTAINER_VARIABLE, raising=False)
+    assert "evidence state: unpinned" in _line_for(present)
+    monkeypatch.setenv(discovery.CONTAINER_VARIABLE, "1")
+    assert "evidence state: pinned" in _line_for(present)
     assert "NO BROWSER" in _line_for(absent)
     assert "3 visual check(s) DID NOT RUN" in _line_for(absent)
     assert "QA-03/1" in absent.reason, "the skip reason does not point at the finding"

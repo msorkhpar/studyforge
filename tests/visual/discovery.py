@@ -11,25 +11,25 @@ prints at the end of *every* suite run, browser or no browser.
 
 **Depends on.** `os`, `shutil`, `subprocess` and `pytest`. Nothing under `src/`.
 
-## ⛔ The evidence state this harness claims, and the one it does not
+## ⛔ The evidence state this harness claims, and which run it claims it from
 
-⚠️ **The pinned image has no browser** — `docker/dev/Dockerfile` installs `git`
-and a checksum-pinned Node.js and says of both that *"an image that quietly
-grows a package manager is an image whose results stop being attributable to
-what it declares"*. So these checks cannot be **pinned green** today.
+⭐ **`QA-03/1` IS CLOSED: `W36` put a browser in the pinned image**, pinned by
+version AND checksum the way `docker/dev/Dockerfile` pins its base image and its
+Node.js. ⛔ So a run **inside the image** is `pinned green` — the engine that
+produced the reading is named in a file, and a rebuild gets the same one.
 
-⛔ **And they are not `host-verified` either, and claiming so would be an abuse
-of that row.** The rubric §4b bounds `host-verified` by *the image is right to
-exclude the subject*, and its tell is one question: **would the image's answer
-be wrong, or just absent?** The subject here is how a *page* behaves in a
-browser engine — a property of this repository's own output, not of the
-workspace, not of the image, not of the developer's machine. A Chromium in the
-image would answer the same question **better**, because it would be pinned. So
-the answer is *absent*, which the rubric calls a gap to close and not a licence.
+⛔ **A run on a host is not, and this module refuses to let one claim it.** The
+engine there is whatever the machine happened to have, so a contrast ratio or a
+focus order measured on it is measured against something no file records. ⚠️ It
+is not `host-verified` either, and claiming that would be an abuse of the row:
+the rubric §4b bounds `host-verified` by *the image is right to exclude the
+subject*, and this image is not — it now **includes** it.
 
-⭐ **Therefore: the honest state for every clause below is `unpinned green`, and
-the gap is a finding with an owner** (`QA-03/1`, routed to whoever owns
-`docker/dev/`). ⛔ Nothing here edits that image — `TC-00` and `FND-03` own it.
+⭐ **Therefore `report_line()` says which of the two a run was**, keyed on the
+image's own `STUDYFORGE_DEV_CONTAINER` marker, so a review quotes the line
+rather than deciding for itself. ⛔ **The history is recorded because the gap
+was real and expensive**: from `QA-03` until `W36` these clauses were
+`unpinned green` and 57 of their checks did not run in the image at all.
 
 ## ⛔ Absence is loud, counted, and can be made fatal
 
@@ -78,6 +78,13 @@ DEMAND_VARIABLE = "STUDYFORGE_VISUAL"
 #: Its one meaningful value.
 DEMAND_VALUE = "required"
 
+#: The marker `docker/dev/Dockerfile` sets, and the only thing that tells this
+#: module which of the two evidence states a run is entitled to claim. ⛔ Read
+#: rather than guessed: a browser being *present* says nothing about whether
+#: anybody pinned it, and `report_line()` must not print `pinned` on a host that
+#: merely happens to have Chrome.
+CONTAINER_VARIABLE = "STUDYFORGE_DEV_CONTAINER"
+
 
 @dataclass(frozen=True)
 class State:
@@ -108,7 +115,8 @@ class State:
         """
         return (
             f"no browser: PATH has none of {self.searched[0]}… and "
-            f"${BINARY_VARIABLE} is unset — QA-03/1, and see the harness line below"
+            f"${BINARY_VARIABLE} is unset — QA-03/1 is closed and the pinned image "
+            f"has one, so see the harness line below"
         )
 
     @property
@@ -117,7 +125,8 @@ class State:
         return (
             f"searched PATH for {', '.join(self.searched)} and read "
             f"${BINARY_VARIABLE}. Install a Chromium-family browser, or name one in "
-            f"${BINARY_VARIABLE}. ⛔ The pinned dev image has none either — QA-03/1. "
+            f"${BINARY_VARIABLE}. ⭐ The pinned dev image HAS one — run "
+            f"`docker/dev/check` and these checks run there (W36, QA-03/1 closed). "
             f"Set ${DEMAND_VARIABLE}={DEMAND_VALUE} to fail instead of skipping."
         )
 
@@ -146,12 +155,29 @@ def require_browser() -> str:
     pytest.skip(current.reason)
 
 
+def evidence_state() -> str:
+    """Which of the rubric §4b states a run of this harness may claim.
+
+    ⛔ **Keyed on the image's marker and not on the browser's presence**, which
+    is the whole of the distinction: a host that happens to have Chrome
+    installed has a browser and no pin, so its readings are `unpinned green` —
+    the engine that produced them is named by nothing a rebuild can consult.
+
+    ⭐ Inside the pinned image the same readings are `pinned green`, because
+    `W36` records the browser's version and its checksum in
+    `docker/dev/Dockerfile` and `sha256sum --check --strict` refuses anything
+    else. That is the state Ruling 40 asks a reading to be taken in.
+    """
+    if os.environ.get(CONTAINER_VARIABLE, "").strip() == "1":
+        return "pinned (version and checksum in docker/dev/Dockerfile — W36)"
+    return "unpinned (this host's browser, pinned by nothing — the image's is)"
+
+
 def report_line(skipped: int | None = None) -> str:
     """The one sentence the whole suite prints about this harness, run or not."""
     current = state()
     if current.available:
-        where = "unpinned (the dev image has no browser — QA-03/1)"
-        return f"visual harness: RAN on {current.version} — evidence state: {where}"
+        return f"visual harness: RAN on {current.version} — evidence state: {evidence_state()}"
     counted = "" if skipped is None else f" — {skipped} visual check(s) DID NOT RUN"
     return f"visual harness: NO BROWSER{counted}. {current.remedy}"
 
@@ -159,9 +185,9 @@ def report_line(skipped: int | None = None) -> str:
 def _version_of(binary: str | None) -> str | None:
     """The browser's own version string, or `None` if it will not say.
 
-    ⭐ Recorded because the engine is **not pinned**: a contrast ratio or a
-    focus order measured here is measured against whatever the machine had, and
-    a review that cannot name the version cannot tell two runs apart.
+    ⭐ Recorded because the engine is pinned in exactly one place — the dev
+    image — and a run anywhere else is measured against whatever that machine
+    had. A review that cannot name the version cannot tell two runs apart.
     """
     if binary is None:
         return None
