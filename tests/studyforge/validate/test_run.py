@@ -7,7 +7,7 @@ import pytest
 
 from studyforge.validate import validate
 from studyforge.validate.run import CHECKS
-from tests.fixture_checks import INVALID_CORPORA
+from tests.fixture_checks import INVALID_CORPORA, VALID
 from tests.studyforge.validate import corpora
 from tests.support import repository_root
 
@@ -48,8 +48,14 @@ def fixture(name):
     return repository_root() / FIXTURES / name
 
 
-@pytest.mark.parametrize("name", ["depth1", "depth2"])
+@pytest.mark.parametrize("name", VALID)
 def test_a_valid_corpus_passes(name):
+    # ⛔ **Read from `VALID`, not written out.** It carried two names while the
+    # declaration carried three, which is `test_every_declared_corpus_is_exercised`'s
+    # defect pointed at the other half of the set: a valid fixture added to
+    # `VALID` would have been checked by FND-04's own checker and never by this
+    # tool. ⚠️ Only the *names* are shared — the rule vocabulary above stays
+    # this tool's own, and the assertion beside it says so.
     report = validate(fixture(name))
     assert report.findings == (), "\n".join(f.line() for f in report.findings)
     assert report.exit_code == 0
@@ -82,7 +88,7 @@ def test_every_rule_the_tool_can_emit_is_reachable():
     # ⭐ A rule id nobody can produce is a message nobody will ever see, and a
     # check with no rule id is a finding nobody can filter. Both are failures.
     emitted = set()
-    for name in ("depth1", "depth2", *(f"invalid/{n}" for n in INVALID)):
+    for name in (*VALID, *(f"invalid/{n}" for n in INVALID)):
         report = validate(fixture(name))
         emitted |= {f.rule for f in report.findings} | {u.rule for u in report.unchecked}
     assert emitted

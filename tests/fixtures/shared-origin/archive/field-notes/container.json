@@ -1,0 +1,33 @@
+{
+  "container_api": 2,
+  "address": [
+    "field-notes"
+  ],
+  "titles": [
+    "Field Notes"
+  ],
+  "variant": "prose",
+  "ingested": "2026-01-05",
+  "origin": "field-notes/README.md",
+  "note": "Two units, one source file. Both units declare the same 'origin.path' and differ only in 'origin.section', so the path does not distinguish them and nothing keyed off it can. Provenance is shared; identity is not.",
+  "units": [
+    {
+      "n": 1,
+      "title": "Taking a reading",
+      "practices": 0,
+      "origin": {
+        "path": "field-notes/topics.md",
+        "section": "1. Taking a reading"
+      }
+    },
+    {
+      "n": 2,
+      "title": "Writing it down",
+      "practices": 0,
+      "origin": {
+        "path": "field-notes/topics.md",
+        "section": "2. Writing it down"
+      }
+    }
+  ]
+}

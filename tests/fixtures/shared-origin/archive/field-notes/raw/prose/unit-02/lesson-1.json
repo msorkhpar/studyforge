@@ -1,0 +1,46 @@
+{
+  "raw_api": 1,
+  "source": "shared-origin-demo",
+  "address": [
+    "field-notes"
+  ],
+  "variant": "prose",
+  "unit": 2,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Writing it down",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "2. Writing it down"
+    },
+    {
+      "type": "para",
+      "text": "Copy the reading into the book on the same day. A reading nobody wrote down is a reading nobody has."
+    },
+    {
+      "type": "code",
+      "lang": "xml",
+      "text": "<notes>\n  <entry day=\"1\">2 mm</entry>\n</notes>\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "d845a4e6d5a4aa393f7de14751bf9b46e17917985fb5c5f21ae9593cf72d0fc7"
+}
