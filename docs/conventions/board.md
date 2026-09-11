@@ -484,8 +484,13 @@ CHOSEN.**
 
 ⛔ **AND THE SECOND CLAUSE, which is the honest one: the invariant *a row raises the allowance
 by more than it costs* holds for the MEAN row and NOT for every row, and the bound SAYS SO in
-its own text.** ⚠️ **MEASURED: a row may legally be 600 bytes (`BOARD_ROW_CEILING`) and earns
-224; the widest live row was 587, inhabited to within 13 bytes.** ⛔ **A ceiling-based term
+its own text.** ⚠️ **A row may legally be 600 bytes (`BOARD_ROW_CEILING`) and earns 224, so
+the WIDEST LEGAL row costs more than it earns and the invariant is false of it.** ⛔ **How
+close the live board actually runs to that ceiling is a READING and is NOT TYPED HERE** —
+⭐ **this document types no measurement of the board (Ruling 181, and the preamble at the top
+of this file); the instrument prints it every run as `widest row N of 600`, and round 60's
+own dated reading is in
+[its record](../tasks/handoffs/CTO-2026-09-11-round60.md).** ⛔ **A ceiling-based term
 (640) is REFUSED — raising the allowance to cover the worst case is the *raise it rather than
 obey it* move these bounds exist to prevent.** ⭐ **TWO terms and not one, also by measurement:
 418 B for a scheduled row against 98 B for an observation row means a single constant gifts the
