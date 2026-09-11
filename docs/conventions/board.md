@@ -101,7 +101,7 @@ somebody writes an ordinary table.**
 | **minting a row** | one register line, and `../tasks/rows/<ID>.md` with the argument | a mint section on the board |
 | **changing a state** | ⭐ **replace the state cell** | append the new state beneath the old one |
 | **re-scoping a live row** | edit `../tasks/rows/<ID>.md` — ⭐ **it is a live document and editing it is the point** | annotate the board |
-| **closing a row** | ⛔ **THREE edits.** ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; delete the row file | leave the row file behind — ⛔ **`board-orphan` will say so** — or leave either link pointing where it used to |
+| **closing a row** | ⛔ **FOUR edits** (Ruling 201 added the fourth). ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; delete the row file; ⛔ **re-point every INBOUND citation of `rows/<ID>.md` in a LIVE document at the archive record** — see Ruling 201 below | leave the row file behind — ⛔ **`board-orphan` will say so** — leave either link pointing where it used to, or ⛔ **leave a backticked `rows/<ID>.md` standing in live prose or code, which NO instrument can see** |
 | **writing a round** | ⭐ **`BOARD-ARCHIVE.md`, appended** — and the board's cells change to match | a `## ROUND n` section on the board |
 
 ⛔ **The archive is a RECORD: it is appended to and corrected by annotating
@@ -413,6 +413,36 @@ instrument.** ⚠️ **`PO-36/9` found the same gap from the other side and fixe
 DOCUMENT so the standing check would read it** — ⭐ **that was right at the time,
 and it is the instrument's turn now.**
 
+#### ⛔ RULED ROUND 51 — Ruling 200: a ruling's PRIMARY artifact NAMES ITS OWN NUMBER, and the minting reviewer runs check 3 against it
+
+⛔ **A ruling whose own home document never spells its number is INVISIBLE to the
+check that asks whether a ruling reached an artifact.** ⭐ **That is a FALSE EMPTY
+with a third cause — not case (clause (c)), not the plural (clause (b)), but an
+artifact that does not name the rule it carries.** ⛔ **Run at MINT time, by the
+reviewer who minted it, against the document they just wrote:**
+
+```bash
+# For each ruling you minted THIS round, and the pass condition is a FILE, not a count.
+for n in <the rulings you just minted>; do
+  printf 'Ruling %s -> ' "$n"
+  git grep -liP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests \
+    | grep -v '^docs/tasks/handoffs/' | paste -sd' ' -
+done
+```
+
+⛔ **Pass: every ruling names at least one NON-handoff file, and the reviewer
+confirms one of them is the document the rule was WRITTEN INTO.** ⚠️ **A record
+is not an artifact: a ruling found only under `docs/tasks/handoffs/` has reached
+nobody, which is why the filter is in the command and not in the reader's head.**
+
+⭐ **MEASURED at `1c5e913`, against this office's own round-50 mints:** Ruling 196
+returned **one** file, the minting CTO's own handoff — ⛔ **while its rule had been
+written into THIS document, whose `RULED ROUND 50` heading named no number at all.**
+⚠️ **Its round-48 neighbour names `(Ruling 189)` in the heading and reads
+correctly, so the form was already here and was not followed.** ⭐ **The heading
+gained `(Ruling 196)` in round 51 and the reading moved to this file. `PO-40/3`,
+found by the office that could not fix it.**
+
 ### ⛔ RULED ROUND 26 — check 4 gains a SUB-STEP and LOSES a population
 
 ⭐ **Two changes, and they pull in opposite directions on purpose.**
@@ -593,7 +623,7 @@ reader cannot reproduce it and disagreement looks like error rather than drift.
 
 ---
 
-## ⛔ RULED ROUND 50 — `corroborate`'s THIRD ANSWER is ratified, the HEADER locator is a RAMP, and the `todo` pairing stays PRINTED
+## ⛔ RULED ROUND 50 — `corroborate`'s THIRD ANSWER is ratified, the HEADER locator is a RAMP, and the `todo` pairing stays PRINTED (Ruling 196)
 
 ⚠️ **Three questions `W96` routed to me before it owed code, answered on
 measurements I took in a trial merge of `W96` over `chore/po-round39` — which is
@@ -664,3 +694,88 @@ cell moves off `` `todo` `` at dispatch, this clause is what must be re-read, no
 the predicate.**
 
 ---
+
+## ⛔ RULED ROUND 51 — the TERMINAL predicate is read off the COMMIT GRAPH (Ruling 199), and a close owes a FOURTH edit (Ruling 201)
+
+### ⛔ (a) Ruling 199 — `MERGED ∧ 0-ahead` is REFUTED, the MESSAGE is a corroborator, and the GRAPH is the predicate
+
+⛔ **`corroborate`'s live-checkout arm returns `CORROBORATED` before `merged()` is
+ever called, so a leaked worktree keeps a spent row green** (`PO-40/1`, `W110`).
+⚠️ **The remedy routed from this office was *MERGED ∧ 0-ahead refutes
+unconditionally* and it is WRONG: `merged()` is `merge-base --is-ancestor`, and a
+branch cut AT the release tip is an ancestor of it.** ⭐ **Three candidate
+predicates, all three measured over the WHOLE local-branch population:**
+
+```bash
+R=release/m0-foundations
+git log --merges --first-parent --format='%H' $R \
+  | while read -r m; do git rev-list --parents -n1 "$m" | tr ' ' '\n' | tail -n +3; done \
+  | sort -u > /tmp/absorbed            # ⭐ C: the ABSORBED tips
+git log --merges --first-parent --format='%s' $R > /tmp/subjects
+git branch --format='%(refname:short)' | while read -r b; do
+  A=0; git merge-base --is-ancestor "$b" $R && [ "$(git rev-list --count $R..$b)" = 0 ] && A=1
+  B=0; grep -qF "$b" /tmp/subjects && B=1                      # ⛔ SUBSTRING — see (b)
+  C=0; grep -qx "$(git rev-parse "$b")" /tmp/absorbed && C=1
+  [ "$B" != "$C" ] && echo "DISAGREE $b B=$B C=$C"
+done
+```
+
+⛔ **Pass: the predicate is `C`, the disagreements with `B` are PRINTED, and a
+branch reading terminal under `C` REFUTES even when a checkout holds it.**
+
+⭐ **MEASURED at `1c5e913`, 120 local branches, 173 absorbed tips:**
+
+```text
+A  refutes release/m0-foundations ITSELF and chore/cto-round51 — ⛔ correct work,
+   on sight. The W87 shape: a predicate that fires on the thing it guards.
+B  vs C: 80 agree terminal, 14 agree non-terminal, ⛔ 27 DISAGREE
+   25 are C=1 B=0  -> absorbed by a merge whose subject never named the branch
+                      (pre-convention history). B's false-NEGATIVE population.
+    2 are B=1 C=0  -> ⛔ chore/cto-round3 matched "Merge chore/cto-round39:" and
+                      chore/cto-round17 matched "Merge chore/cto-round17-close:".
+                      A PREFIX. B's false-POSITIVE mechanism, and it is the
+                      SHIPPED `merge_of()`'s own `if branch in subject:`.
+C's own blind spot, NAMED rather than hidden: a FAST-FORWARDED merge leaves no
+   merge commit. ⚠️ MEASURED, not hypothetical — 7 spent branches read 00.
+   ⭐ That failure mode is SAFE: it degrades to today's behaviour and can never
+   refute correct work.
+```
+
+⛔ **So: `C` is the gate because its only error is a missed refutation; `B` is
+PRINTED beside it as the human-readable ref and its substring test becomes an
+EXACT match on the `Merge <branch>:` idiom.** ⭐ **A predicate whose failure mode
+is a false REFUTATION may not ship; one whose failure mode is a false PASS may,
+once the gap is measured and printed.**
+
+### ⛔ (b) Ruling 201 — a close re-points its INBOUND citations, because the pointer check cannot see them
+
+⛔ **`document pointers … 0 unresolved` resolves `](…)` targets ONLY, so a
+backticked `` `rows/W96.md` `` in live prose or in a docstring is INVISIBLE to the
+one instrument that exists for exactly this** (`PO-40/5`, `W78`).
+
+```bash
+for f in $(git grep -lI 'rows/W[0-9]*\.md' -- docs src tools tests); do
+  grep -onE 'rows/W[0-9]+\.md' "$f" | while IFS=: read -r ln ref; do
+    [ -f "docs/tasks/$ref" ] || echo "DANGLING $f:$ln -> $ref"
+  done
+done
+```
+
+⛔ **Pass: every printed row is a RECORD (`docs/tasks/handoffs/`,
+`BOARD-ARCHIVE.md` — ⭐ a record may not be edited), a TEST FIXTURE with a
+synthetic id, `W78`'s own tracking table, or ⛔ **THIS CLAUSE'S OWN MEASURED
+POPULATION, immediately below** — ⚠️ **which is named here because the instrument
+flags its own clause otherwise, and a check that fails on the document that
+defines it teaches a reviewer to ignore its output** (Ruling 185's form: narrow
+the population and PRINT the name, never widen the predicate).** ⚠️ **Anything
+else is the fourth edit, undone.** ⭐ **The remedy is always to RE-POINT at the
+archive record, never to delete the sentence** — a citation saying where a design
+question was answered is true about the past.
+
+⭐ **MEASURED at the round-40 merge tree: 40 dangling rows, of which `4` are live
+non-fixture citations** — `docs/conventions/board.md:179` and
+`tools/quality/board/corroborate.py:20` added by `W96`'s own close, plus
+`tools/tests/quality/board/test_observation.py:207` → `rows/W95.md` and
+`tools/quality/board/register.py:351` → `rows/W18.md` pre-existing.
+⚠️ **The PO's population printed `3`; the fourth is `register.py:351`, and
+`rows/W18.md` did exist — added at `f7d7e1b`, deleted at `cae114e`.**

@@ -320,6 +320,56 @@ git merge-base --is-ancestor <the ruling's merge ref> "$REV"   # exit 1 => RECEI
 by the reviewer** — ⛔ **a coincidence is corroboration only once somebody says it
 was not copied.**
 
+#### ⛔ (d) Ruling 198 (CTO round 51) — a brief that pins a STATE is the SAME DEFECT as one that pins a stale NUMBER, and it is CHARGEABLE
+
+⛔ **Clauses (a)–(c) govern numbers and refs. They did not govern a SENTENCE, and
+the same defect walked straight through the gap: a reading of the WORLD — which
+worktrees stand, which branches are live, whether a sentence is still in a file —
+quoted in the present tense at a moment other than the one it was taken in.**
+⭐ **A number pinned to a dead ref and a state pinned to a dead moment are ONE
+family: both resolve at WRITE time where the reader needs them to resolve at READ
+time.** ⚠️ **This is `CLAUDE.md`'s own POINTER-versus-FACT argument, one directory
+up, and it binds a brief exactly as it binds that file.**
+
+```bash
+# Every present-tense claim about the WORLD in a brief or a review, with the
+# instrument that re-reads it. ⛔ The instrument is the pass condition; the
+# sentence is not. Run the RIGHT column, never the left.
+#   "I retired wt/dev1 and wt/dev2"   -> git worktree list
+#   "branch X is 0 ahead"             -> git rev-list --left-right --count base...X
+#   "the false sentence is at line N" -> grep -c '<the sentence>' <file>
+#   "row R is in flight"              -> python3 -m tools.quality.board.corroborate
+```
+
+⛔ **Pass: a brief's every world-claim is either re-read by its instrument before
+being acted on, or pinned to a moment — *"measured at `<ref>`, `<time>`"* — so the
+reader can see it may have moved.** ⭐ **An agent who obeys the SENTENCE over the
+INSTRUMENT has inherited the defect, and the project's standing rule is already
+the remedy: ASK THE TREE.**
+
+⚠️ **MEASURED AGAINST THIS OFFICE, in one brief, in the round that ruled it:**
+
+```text
+1  "I retired wt/dev1 and wt/dev2"  -> TRUE when measured, FALSE when read; both
+   were re-cut onto this wave's branches in between. ⛔ Obeying it would have
+   emptied an observation table with two LIVE rows. The PO read the tree and was
+   right — `PO-40/1`'s sibling, and the PO's refusal is RATIFIED.
+2  "fix W96/2's false board sentence" -> the sentence does NOT EXIST at 1c5e913;
+   round 39 removed it and this office recorded it DISCHARGED. ⛔ The PO REFUSED
+   and measured it at three refs. ⭐ Writing a correction to absent bytes is
+   Ruling 192's shape committed while discharging it. The refusal is RATIFIED.
+3  the brief's own ancestor-of-release column -> ⛔ INVERTED ON ALL FOUR ROWS it
+   named (0 for three branches that were ancestors, 1 for the one that was not).
+   ⭐ The CONCLUSION it carried was nonetheless TRUE — which is precisely the
+   family: right scalar, wrong span, in the column holding the argument.
+4  "grep -c '^SKIPPED' reads 29"     -> ⛔ MEASURED 31, base and merge alike.
+   The LESSON (the grep is not the census) holds; the SCALAR did not.
+```
+
+⛔ **CHARGED, and this office carries it rather than repeating it a fifth time.**
+⭐ **The remedy is the one Ruling 197(a) already names and it generalises without
+amendment: print the population first, and never *be more careful*.**
+
 ---
 
 ## 1. R7 — no personal data · ⛔ HARD FAIL
@@ -834,6 +884,12 @@ proves the instrument RESPONDS, never that it MEASURES THE CLAIM.** ⭐ **Three
 readings, all taken before a clause naming an instrument ships:**
 
 ```bash
+# ⛔ ROW 0 — Ruling 202: COMMIT FIRST. The RESTORE step is `git checkout --`, which
+#    reverts to HEAD and therefore DESTROYS every uncommitted edit in the file you
+#    planted in. Plant on a committed tree or the restore is the destructive act.
+git status --porcelain -- "$SUBJECT"      # ⛔ must be EMPTY before planting
+md5sum "$SUBJECT" > /tmp/plant.md5        # ⭐ and `md5sum -c` after every restore
+#
 # 1. the live tree                                  -> the PASS reading
 # 2. the forbidden thing PLANTED in a form the clause did not picture -> CAUGHT
 # 3. a subject that CANNOT match                    -> DIFFERENT from row 1
@@ -842,6 +898,18 @@ readings, all taken before a clause naming an instrument ships:**
 git grep -l 'Size exception:'      -- src/ | wc -l   # 7b5c0a9 -> 0   (pass)
 git grep -l 'ZZZ_no_such_marker'   -- src/ | wc -l   # 7b5c0a9 -> 0   (!!)
 ```
+
+> ⛔ **Ruling 202 (CTO round 51) — the RESTORE half of this discipline can itself
+> be the destructive act, and it was.** ⭐ **MEASURED by the PO, round 40
+> (`PO-40/7`): `git checkout -- docs/tasks/BOARD.md` to undo a plant reverted the
+> file to HEAD and discarded the round's entire uncommitted board edit.**
+> ⚠️ **`md5sum -c` FAILED twice and is the only reason it was caught in seconds
+> rather than at the close.** ⛔ **The discipline assumed the planted file was
+> otherwise clean and nothing said so.** ⭐ **It also explains a reading that
+> looked like a disagreement between two offices and was not: `PO-40/8` read
+> `quality floor: 4 findings` under a plant where this office read `clean`, and
+> the four were a HALF-APPLIED close, not the plant. ⛔ Right scalar, wrong
+> cause** — and re-measuring on a committed tree reproduced `clean` exactly.
 
 ⛔ **So Ruling 121's grep is a CORROBORATOR here and not the gate**, and its two
 failure modes are measured, not argued. ⚠️ **At `a00337b`: the marker in a
