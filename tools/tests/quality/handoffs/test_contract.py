@@ -7,10 +7,13 @@ the same template one line different from the positive — a check that reports
 
 from __future__ import annotations
 
+import re
+
 import pytest
 
 from tests.support import repository_root
 from tools.quality.handoffs import (
+    FINDING_MARKERS,
     HANDOFF_DIR,
     LEGACY_GLOBAL_MAX,
     MARKER_NONE,
@@ -18,7 +21,11 @@ from tools.quality.handoffs import (
     check_handoffs,
     marker_lines,
 )
-from tools.quality.handoffs.contract import _FINDING_NUMBER
+from tools.quality.handoffs.contract import (
+    _FINDING_NUMBER,
+    _MARKERS_ON_LINE,
+    LEAD_TOKENS,
+)
 from tools.tests.quality.handoffs.support import GOOD, rules, write
 
 # --- the six sections ------------------------------------------------------
@@ -215,3 +222,115 @@ def test_the_pinned_ceiling_still_matches_the_tree():
 def test_an_unnumbered_finding_claims_no_name_and_is_left_alone(tmp_path):
     write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", "### `[local]`"))
     assert check_handoffs(tmp_path) == []
+
+
+# --- W63: the vocabulary is spelled once, and the lead is a closed set ------
+
+
+def test_the_marker_pattern_is_derived_from_the_constant_and_not_typed_twice():
+    # ⛔ Ruling 193: the shipped constant is the authority and a second reader
+    # with a second spelling is the same defect at a different site. ⚠️ This
+    # module held both — the three constants and a hand-typed alternation — so
+    # this is Ruling 103's printed agreement, as a test rather than a sweep.
+    derived = "|".join(re.escape(marker) for marker in sorted(FINDING_MARKERS))
+    assert _MARKERS_ON_LINE.pattern == derived
+
+
+@pytest.mark.parametrize("marker", FINDING_MARKERS)
+def test_every_member_of_the_vocabulary_is_read_by_the_reader(marker):
+    # ⭐ The inhabitation half (Ruling 48): a derivation that read none of its
+    # own members would agree with the constant and assert nothing.
+    assert _MARKERS_ON_LINE.findall(f"- {marker} a thing") == [marker]
+
+
+def test_and_a_marker_shaped_token_outside_the_vocabulary_is_not_read():
+    # ⛔ The closed half. A fourth marker is readable the moment it is NAMED in
+    # `FINDING_MARKERS` and not before, which is the property that was missing:
+    # the old hand-typed alternation would have left it invisible either way.
+    outside = "`[zzqx]`"
+    assert outside not in FINDING_MARKERS
+    assert _MARKERS_ON_LINE.findall(f"- {outside} a thing") == []
+    assert marker_lines(f"- {outside} a thing\n") == []
+
+
+def test_the_lead_tokens_are_pairwise_disjoint_in_what_they_can_start():
+    # ⚠️ This is what makes the order of `LEAD_TOKENS` immaterial, and therefore
+    # the reader reproducible (R10). ⛔ Asserted rather than trusted: two tokens
+    # that could both start at one character would make the loop's answer
+    # depend on the order they happen to be written in.
+    probe = "".join(chr(code) for code in range(0x20, 0x7F)) + "—–⛔⭐⚠✅️\t"
+    starts: dict[str, set[str]] = {}
+    for name, pattern in LEAD_TOKENS:
+        token = re.compile(pattern)
+        starts[name] = {char for char in probe if token.match(char) or token.match(char + "1`")}
+    names = [name for name, _pattern in LEAD_TOKENS]
+    assert all(starts[name] for name in names), (
+        "Ruling 48: a token matching nothing asserts nothing"
+    )
+    for first in range(len(names)):
+        for second in range(first + 1, len(names)):
+            overlap = starts[names[first]] & starts[names[second]]
+            assert not overlap, f"{names[first]} and {names[second]} both start at {overlap}"
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        # ⭐ Quoted from `docs/tasks/handoffs/` at 2d0cfe7, not invented: the
+        # three forms both offices have actually written for thirty rounds.
+        "- **`PO-31/1`** `[structural]` — the rubric has no clause",
+        "- **`CTO-27/1`** — ⛔ **`[local]` The base I was handed is pinned wrong",
+        "- ⛔ **`CTO-26/1`** `[structural]` — **the rubric has no clause**",
+        "### ⛔ 21 `[structural]` — `corpus.json` is not gated",
+        "### ⭐ 4 `[local]` — R14 and R18 are cited by no code",
+    ],
+)
+def test_the_form_both_offices_write_is_now_a_finding_line(line):
+    # ⛔ Ruling 148's subject, measured: 163 lines in 24 documents wrote a
+    # backticked finding ID and NONE of them read as a finding line, so every
+    # rule downstream of the reader was vacuous on them.
+    assert marker_lines(line + "\n")[0][2] is True
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        # ⛔ The negative controls `W63` owes, and they are the whole point of
+        # the closed set: a word, a `|` and a `>` are in no token.
+        "`SF-04/1` and `SF-04/3` are `[local]` and need no routing",
+        "| **47** | ⛔ `[structural]` | **ruled below** |",
+        "> the review marked it `[structural]` and moved on",
+        "**`SF-12-survey/1`** — **the R13 debt is one file.** `[structural]`",
+        "Filed: 3. Marked in the branch: 5 (2 `[local]`, 3 `[structural]`).",
+    ],
+)
+def test_and_the_shapes_that_must_stay_refused_are_still_refused(line):
+    assert marker_lines(line + "\n")[0][2] is False
+
+
+def test_a_backticked_scoped_id_is_read_as_the_number_it_claims(tmp_path):
+    # ⚠️ The module's own docstring warns that a vocabulary is read in two
+    # places or in neither: admitting this lead without teaching
+    # `_FINDING_NUMBER` the same form would have made the ID rule VACUOUS on
+    # every line the lead newly admits.
+    write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", "- **`W99/1`** — `[local]`"))
+    assert check_handoffs(tmp_path) == []
+
+
+def test_and_a_backticked_id_scoped_elsewhere_is_still_a_finding(tmp_path):
+    write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", "- **`W98/1`** — `[local]`"))
+    assert rules(tmp_path) == ["handoff-finding-id"]
+
+
+def test_an_unclosed_backtick_is_not_a_number_and_not_a_finding_line(tmp_path):
+    # ⛔ The ticks are a PAIR, and an unclosed one is in NO token — so the lead
+    # stops at it and the line is refused outright.
+    #
+    # ⚠️ **My written prediction for this control was `[]`** — that the line
+    # would pass as an unnumbered finding. ⭐ It is refused instead, and the
+    # refusal is the better answer: `` `63 `` is markup nobody finished, the
+    # reader says so out loud, and the one thing it must not do is read `63` as
+    # a bare number above the closed legacy ceiling. That is what is asserted.
+    above = LEGACY_GLOBAL_MAX + 1
+    write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", f"### `{above} `[local]`"))
+    assert rules(tmp_path) == ["handoff-findings", "handoff-marker"]
