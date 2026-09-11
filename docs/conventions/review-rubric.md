@@ -5055,13 +5055,26 @@ worth grepping for.**
 
 ```bash
 # ⛔ THE SPELLING. A declined finding writes this line in the record it is declined in:
-#      DECLINED-AS-RULE: <the rule it would become, one line>   (instance N)
+#      DECLINED-AS-RULE: <the rule it would become> (instance N)
 #    ⭐ The rule text is the KEY — it is what a later instance matches on, so it is
 #    written as the RULE and never as the incident.
+# ⛔ ON ONE PHYSICAL LINE, however long, and NOT wrapped to the document's width.
+#    ⚠️ `git grep` is a LINE instrument: a wrapped rule is truncated at the fold and every
+#    entry then differs from every other, so the accumulator reads 1 forever. MEASURED —
+#    see below. ⭐ A long line is house-compatible; this document's own tables carry longer.
 git grep -c 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ | wc -l   # records carrying any
-git grep -h 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ | sed 's/.*DECLINED-AS-RULE: //' \
+git grep -h 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ \
+  | sed 's/.*DECLINED-AS-RULE: //; s/ (instance [0-9]*).*//; s/[`*]//g' \
   | sort | uniq -c | sort -rn                                      # ⭐ THE ACCUMULATOR
 ```
+
+⛔ **RUN BOTH WAYS BEFORE THIS CLAUSE SHIPPED, AND THE FIRST FORM WAS WRONG** (Ruling 53,
+and it caught its own author inside one round). ⚠️ **My first spelling let the rule wrap to
+the document's width, and the accumulator then read `1` for seven distinct entries and
+additionally printed a fragment of its own `sed` script as an eighth row.** ⭐ **The
+one-line constraint and the `(instance N)` trim above are what that reading bought** —
+⛔ **a clause naming an instrument whose author never ran it is the shape this whole
+document exists to refuse, and I committed it four sections after ruling on it.**
 
 ⛔ **PASS: every row the second command prints at `3` or more is a ruling owed in
 the round that reads it, and a round that prints one and mints nothing says why.**
