@@ -208,10 +208,22 @@ def _pytest_runs_it(node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
     fires-on-correct-work class this package has already met five times
     (`W119/2`, Ruling 179). ⭐ **A helper CONTRIBUTES REACH and is never itself
     the offender; the function pytest runs is the one that owes the fixture.**
+
+    ⛔ **BOTH decorator spellings, and the first draft read only one** — see
+    `W128/2`. ⚠️ `@pytest.fixture` is an `ast.Name`/`ast.Attribute` and
+    `@pytest.fixture(scope="session")` is an `ast.Call`, so a predicate that took
+    the dotted spelling of the node itself scored `conftest.browser` — the
+    LICENSED positive row, and the most important fixture in the package — as
+    something pytest does not run. ⭐ **Caught by PLANTING the guard, not by
+    reading it.**
     """
     if node.name.startswith(("test_", "pytest_")):
         return True
-    return any(_dotted(decorator).split(".")[-1] == "fixture" for decorator in node.decorator_list)
+    for decorator in node.decorator_list:
+        spelled = decorator.func if isinstance(decorator, ast.Call) else decorator
+        if _dotted(spelled).split(".")[-1] == "fixture":
+            return True
+    return False
 
 
 def _uncontrolled_verdict_callers(source: str) -> list[str]:
@@ -483,7 +495,7 @@ def test_no_TEST_in_this_package_lets_the_AMBIENT_environment_reach_a_VERDICT() 
 def test_the_AMBIENT_guard_is_PLANTED_in_both_directions_and_the_two_readings_DIFFER() -> None:
     """⛔ Ruling 123: the guard above is validated by PLANTING, not only by running.
 
-    ⭐ **Eight readings.** The PLANTS are the retired shape in every spelling
+    ⭐ **Nine readings.** The PLANTS are the retired shape in every spelling
     pytest runs — a test, a fixture, a hook, and a test reached through a
     one-level helper — and the IMPOSSIBLE readings are the four that must stay
     silent: a controlled test, the HELPER ITSELF (which cannot request a
@@ -492,6 +504,7 @@ def test_the_AMBIENT_guard_is_PLANTED_in_both_directions_and_the_two_readings_DI
     """
     direct = "def test_x():\n    discovery.require_browser()\n"
     fixture = "@pytest.fixture\ndef browser():\n    discovery.require_browser()\n"
+    called = '@pytest.fixture(scope="session")\ndef browser():\n    discovery.require_browser()\n'
     hook = "def pytest_terminal_summary(r):\n    r.write_line(discovery.report_line(1))\n"
     helper = "def _line():\n    return discovery.report_line(1)\n\ndef test_x():\n    _line()\n"
     controlled = f"def test_x({PINNING_FIXTURE}):\n    discovery.require_browser()\n"
@@ -499,6 +512,7 @@ def test_the_AMBIENT_guard_is_PLANTED_in_both_directions_and_the_two_readings_DI
     innocent = "def test_x():\n    assert 1 == 1\n"
     assert _uncontrolled_verdict_callers(direct) == ["test_x"]
     assert _uncontrolled_verdict_callers(fixture) == ["browser"]
+    assert _uncontrolled_verdict_callers(called) == ["browser"], "⛔ W128/2: the CALL spelling"
     assert _uncontrolled_verdict_callers(hook) == ["pytest_terminal_summary"]
     assert _uncontrolled_verdict_callers(helper) == ["test_x"], "⭐ reach, one level"
     assert _uncontrolled_verdict_callers(controlled) == []
