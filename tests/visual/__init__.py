@@ -10,8 +10,23 @@ tab. `discovery.require_browser()` is what makes a check skip — loudly, with t
 remedy named — on a machine with no browser.
 
 **Depends on.** The standard library, `pytest`, and `studyforge.render` for
-building the pages it opens. ⛔ **No driver library and no `pip install`** —
-`browser.py` says why.
+building the pages it opens — through the same three fixture builders the
+committed golden pages come from, never a second spelling of them (`site.py`).
+⛔ **No driver library and no `pip install`** — `browser.py` says why.
+
+## ⛔ What it opens, and why that is a sentence rather than an assumption (`W98`)
+
+⚠️ **Until `W98` this harness wrote the two unit fixtures and nothing else,
+rendered with `links=None`** — so of the six chrome regions `SF-34` rules, the
+two it judged were the two that were already styled, and the between-units bar,
+the practice panel, a container's unit listing and the root index's disclosure
+tree were judged by nothing at all. ⛔ **Every check passed over that population
+and none of them was skipped**, which is why the repair is a census with its own
+negative control (`test_site.py`) rather than a wider list.
+
+⭐ **The tree now carries every page kind the framework renders**, one subtree per
+fixture corpus, and the region census is **derived from `SF-34`'s own disposition
+table** — so a region added there is a red check here on the day it lands.
 
 ## ⛔ Why this exists
 
