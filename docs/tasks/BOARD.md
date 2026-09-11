@@ -53,7 +53,7 @@ one round — is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-an
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W142` + `W143` | framework agent | `fix/W142-W143-restore-and-lint-scope` @ `wt/dev1` | 0 @ `94ad941` | in flight |
+| `W142` + `W143` | framework agent | `fix/W142-W143-restore-and-lint-scope` @ `wt/dev1` | 1 @ `a04e590` | in flight |
 | `W140` | framework agent | `fix/W140-anchor-collisions` @ `wt/dev2` | 1 @ `a8f0c92` | in flight |
 <!-- /inflight -->
 
@@ -93,6 +93,7 @@ argument for each placement is in the round record; this table is the outcome.**
 | 11 | `W141` | ⭐ **a stated count nothing re-derives, and it jumps nobody** — `W134/5` | round 49 |
 | 12 | `W144` | ⭐ **a LABEL defect beside a correct bound, and it jumps nobody** — `PO-48/10` | round 49 |
 | 13 | `W145` | ⭐ **a DECLARED gap, inhabited and measured at ONE false member, so it jumps nobody** — `SESSION-2026-09-11c/6` | round 50 |
+| 14 | `W146` | ⭐ **the notice is a NOTICE and stays one; only its SENTENCE is short, so it jumps nobody** — `PO-50/12` | round 50 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a
 position does not.** ⛔ **And a *Next rows* cell may carry no measurement AND no
@@ -102,8 +103,8 @@ PREDICTION** (243(c)).
 this board's own branch tip over every row file, case-INSENSITIVELY because the house style
 writes `RULING <n>`** (Ruling 102's defect, reproduced by a human instrument — `PO-45/3`):
 ⭐ **`W88`, `W120`, `W121`, `W103`.** ⚠️ **`W125`, `W135` and `W136` MENTION the ruling in order
-to DECLINE it, and `W78`, `W105`–`W109`, `W116`–`W118`, `W141`, `W144` and `W145` are silent
-because they jump nobody** — ⛔ **a search for the number finds all three classes, so the
+to DECLINE it, and `W78`, `W105`–`W109`, `W116`–`W118`, `W141`, `W144`, `W145` and `W146` are
+silent because they jump nobody** — ⛔ **a search for the number finds all three classes, so the
 instrument LOCATES and the row file's own sentence DECIDES** (Ruling 281's use-versus-mention
 clause). ⚠️ **The figure moved from `7` to `4` because `W140`, `W142` and `W143` were DISPATCHED
 out of this table, not because any standing row's declaration changed** — ⛔ **and a sweep of
@@ -115,8 +116,9 @@ takers in one** (check 4's sub-step) — ⛔ **and a REGISTER round writes that 
 why `W78` was skipped rather than demoted.** ⛔ **`W135`, `W136` and `W141` all write
 `docs/conventions/`, WHICH A ROW IN FLIGHT HOLDS** — ⭐ **so they are ONE constraint and none of
 them may be dispatched while `W142`/`W143` are live.** ⭐ **`W144` (`tools/quality/board/notice.py`,
-`bounds.py`) and `W145` (`tools/quality/citations.py`) share a surface with nobody — not with each
-other, not with any queued row, and not with either row in flight.**
+`bounds.py`), `W145` (`tools/quality/citations.py`) and `W146` (`board/observation.py`,
+`board/verdict.py`) share a surface with nobody — not with each other, not with any queued row,
+and not with either row in flight.**
 
 ## The register — every `W` row
 
@@ -272,6 +274,7 @@ they have exactly one home each.
 | W143 | `git checkout -- <dir>` restores a plant to `HEAD`, discarding an uncommitted NEIGHBOUR while `porcelain` reads clean | framework agent | `todo` — `W128/3`, Ruling 287's class | [`rows/W143.md`](rows/W143.md) |
 | W144 | One phrase, two populations — the notice counts table LINES and the bound counts the ID SET, and both say *register rows* | framework agent | `todo` — `PO-48/10` | [`rows/W144.md`](rows/W144.md) |
 | W145 | A citation WRAPPED across a line break is unreadable to the predicate that reads citations, so one of the notice's own three declared gaps is inhabited and its uncited set carries a false member | framework agent | `todo` — `SESSION-2026-09-11c/6` | [`rows/W145.md`](rows/W145.md) |
+| W146 | The commits-ahead notice compares the COUNT and never the TIP the same cell declares, so a reading TRUE at its own ref prints as a disagreement | framework agent | `todo` — `PO-50/12` | [`rows/W146.md`](rows/W146.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
