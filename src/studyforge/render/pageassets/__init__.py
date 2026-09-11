@@ -46,7 +46,7 @@ colour changes.
 | `source` | the directory, and reading one part exactly |
 | `bundle` | what goes into a page, in what order, under what name |
 | `vendored` | the two bundles this project did not write, and their licences |
-| `surface` | the class names the stylesheet targets, published for a renderer |
+| `surface` | the class names and `data-*` hooks the stylesheet targets |
 | `errors` | `AssetError`, the only exception any of it raises |
 
 ⭐ **Assets are shared and linked, never inlined.** They were 79% of each 60 KB
@@ -86,6 +86,7 @@ from studyforge.render.pageassets.source import (
     text,
 )
 from studyforge.render.pageassets.surface import (
+    HOOK_CLASSES,
     SURFACE_CLASSES,
     SURFACE_HOOKS,
     class_for,
@@ -106,6 +107,7 @@ __all__ = [
     "ASSET_DIR",
     "HEADER_CHARS",
     "HEADER_MARKERS",
+    "HOOK_CLASSES",
     "JOIN",
     "LICENCE_SUFFIX",
     "PART_SUFFIXES",

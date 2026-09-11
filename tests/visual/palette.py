@@ -64,19 +64,44 @@ _COLOUR = re.compile(r"^(#[0-9a-f]{3,8}|rgba?\(|hsla?\(|color\()", re.IGNORECASE
 #: `--tok-number` computable on a page whose fixture happens to contain no
 #: numeric literal — measured through the browser's own resolution of both
 #: tokens, never from a number typed here.
+#:
+#: ⭐ **Four rows moved out of `UNPAINTED` in `SF-34`** — `--surface-2`,
+#: `--accent-soft`, `--practice` and `--practice-soft`, which `QA-03/2` reported
+#: as ownerless and `render/assets/chrome.css` now paints. ⚠️ **The move was
+#: forced, and that is the feature:** `test_the_unpainted_rows_are_derived_from_
+#: the_stylesheets_not_believed` fails the moment a stylesheet paints with a row
+#: the ledger calls unpainted, so painting one cannot happen without somebody
+#: saying which ground its contrast is taken against. ⛔ The row is reclassified,
+#: never deleted.
 LEDGER: dict[str, tuple[str, str | None, str]] = {
     "--bg": (SURFACE, None, "the page ground; every prose ratio is taken against it"),
     "--surface": (SURFACE, None, "raised panels — the disclosure, the code caption bar"),
-    "--surface-2": (UNPAINTED, None, "defined, and no stylesheet paints with it — QA-03/2"),
+    "--surface-2": (
+        SURFACE,
+        None,
+        "the chrome ground: the outline card, and a row's hover in either list (SF-34)",
+    ),
     "--fg": (MEASURED, "--bg", "body text, headings, list items"),
     "--fg-soft": (MEASURED, "--bg", "quotes and secondary prose"),
     "--muted": (MEASURED, "--surface", "the code caption and the copy button"),
     "--rule": (STRUCTURAL, None, "a hairline border; no text sits on it"),
     "--rule-strong": (STRUCTURAL, None, "a heavier hairline; no text sits on it"),
     "--accent": (MEASURED, "--bg", "links, including every entry in the outline"),
-    "--accent-soft": (UNPAINTED, None, "defined, and no stylesheet paints with it — QA-03/2"),
-    "--practice": (UNPAINTED, None, "defined, and no stylesheet paints with it — QA-03/2"),
-    "--practice-soft": (UNPAINTED, None, "defined, and no stylesheet paints with it — QA-03/2"),
+    "--accent-soft": (
+        SURFACE,
+        None,
+        "the ground of a numbering or level chip beside a unit's title (SF-34)",
+    ),
+    "--practice": (
+        MEASURED,
+        "--practice-soft",
+        "the practice panel's heading and the edge that marks it off (SF-34)",
+    ),
+    "--practice-soft": (
+        SURFACE,
+        None,
+        "the practice panel's own ground — the 'more to come' panel (SF-34)",
+    ),
     "--code-bg": (SURFACE, None, "the ground every syntax colour is measured against"),
     "--code-fg": (MEASURED, "--code-bg", "code text no highlighter claimed"),
     "--tok-comment": (MEASURED, "--code-bg", "a Prism token class inside a code block"),

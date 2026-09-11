@@ -12,10 +12,10 @@ points at the previous unit, the next one and the index.
     navigation.outline(document)                   # markup, or ''
     navigation.between_units(navigation.Links(previous=…, next=…, index=…))
 
-**Depends on.** `render.markup` for escaping, `page.errors`, and the block
-vocabulary. ⛔ Not on `contents`: the outline is derived from the one document
-being rendered, never from `toc.json`, so a page's own outline is correct
-whether or not a contents document has ever been built.
+**Depends on.** `render.templates` for the two region wrappers, `render.markup`
+for escaping, and `page.errors`. ⛔ Not on `contents`: the outline is derived
+from the one document being rendered, never from `toc.json`, so a page's own
+outline is correct whether or not a contents document has ever been built.
 
 ## ⛔ An anchor is derived from structure, never from a heading
 
@@ -54,11 +54,23 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from studyforge.address import is_slug
+from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page.errors import PageError
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3
+
+#: The markup of the two chrome regions this module renders. ⛔ **Files, not
+#: f-strings** (R13, and `SF-34`): each wrapper carries a product string — the
+#: word `Contents` and two `aria-label`s — and a product string typed in Python
+#: is a sentence every corpus has to live with, in the one language nobody
+#: thinks to look in when the page's wording is wrong. ⭐ The row bodies stay in
+#: code, which is the line `render/page/__init__.py` draws: *"loop bodies and
+#: inline wrappers stay in code, because a file for a closing tag removes no
+#: duplication and adds a hop."*
+OUTLINE_TEMPLATE = "outline.html"
+BETWEEN_UNITS_TEMPLATE = "between-units.html"
 
 #: What a section's own anchor is prefixed with. ⛔ So a section can never
 #: collide with a block anchor, which always reads `<key>-b<n>`.
@@ -168,7 +180,7 @@ def outline(document: dict) -> str:
         f'<li data-level="{level}"><a href="{escape_attribute(href)}">{inline(label)}</a></li>'
         for level, label, href in found
     )
-    return f'<nav aria-label="Outline"><p>Contents</p><ol>{items}</ol></nav>'
+    return templates.fill(OUTLINE_TEMPLATE, items=items)
 
 
 def between_units(links: Links | None) -> str:
@@ -182,7 +194,7 @@ def between_units(links: Links | None) -> str:
     ]
     if not parts:
         return ""
-    return '<nav aria-label="Between units">' + "".join(parts) + "</nav>"
+    return templates.fill(BETWEEN_UNITS_TEMPLATE, links="".join(parts))
 
 
 def _link(link: Link | None, relation: str, lead: str) -> str:

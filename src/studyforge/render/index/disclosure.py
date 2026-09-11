@@ -72,10 +72,15 @@ removes no duplication and adds a hop."* ⚠️ `container.listing` and
 ## ⭐ Not one class name is typed here
 
 ⚠️ Every hook is an element, an `aria-label` or a `data-*` attribute, so this
-page costs no entry in `SURFACE_HOOKS` and none in the stylesheet's own
-vocabulary — which is what let `SF-34` be scheduled after the markup it styles.
-⛔ **Two of the three hooks are spelled in `render.container.listing` too**, and
-that duplication is reported rather than smuggled — `SF-14/1`.
+page costs no entry in the published CLASS vocabulary and needs no class in the
+stylesheet — which is what let `SF-34` be scheduled after the markup it styles.
+⛔ **The three hooks are now TAKEN from `pageassets.SURFACE_HOOKS`** rather than
+spelled here: `SF-14/1` reported that two of them were spelled in
+`render.container.listing` as well and meant the same thing in both, and CTO
+round 45 §12 ruled the home. ⭐ The destination was ruled rather than left to
+this module, because `SF-34` writes the rules against whichever spelling it
+finds first and two spellings that agree today disagree the day one page gains a
+third state.
 """
 
 from __future__ import annotations
@@ -84,6 +89,7 @@ from studyforge.render.index import policy
 from studyforge.render.index.entries import Document, Item, Section
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page import PageError
+from studyforge.render.pageassets import SURFACE_HOOKS
 
 #: What the tree is labelled for a reader who cannot see it. ⛔ This framework's
 #: own structural word, never a corpus's: every string on the page that names
@@ -91,15 +97,22 @@ from studyforge.render.page import PageError
 LIST_LABEL = "Contents"
 
 #: The attribute that says whether a row could be linked. ⚠️ `data-*` rather
-#: than a class, so this page needs no entry in a published class set.
-READABLE_ATTRIBUTE = "data-readable"
+#: than a class, so this page needs no entry in a published class set. ⛔ **Taken
+#: from the contract, never typed** (`SF-14/1`): `render.container.listing` says
+#: the same thing about the same rows, and `SF-34` writes one rule for both.
+READABLE_ATTRIBUTE = SURFACE_HOOKS["readable"]
+
+#: The attribute a reader-facing label's kind is carried in. ⚠️ Overloaded on
+#: purpose — `templates/section.html` carries a section's own kind in it — which
+#: is why a stylesheet rule for a kind names the element as well.
+KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 
 #: What wraps a unit's numbering, so a stylesheet can reach it without the
 #: numbering being glued to the title in one string.
-NUMBERING_KIND = "numbering"
+NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 
 #: What wraps the corpus's own word for a section's depth, for the same reason.
-LEVEL_KIND = "level"
+LEVEL_KIND = SURFACE_HOOKS["level"]
 
 #: How a fragment is introduced. ⛔ Named so `anchor` is the one composer.
 FRAGMENT = "#"
@@ -180,11 +193,11 @@ def _level(section: Section) -> str:
     """
     if not section.level:
         return ""
-    return f'<span data-kind="{LEVEL_KIND}">{escape(section.level)}</span> '
+    return f'<span {KIND_ATTRIBUTE}="{LEVEL_KIND}">{escape(section.level)}</span> '
 
 
 def _numbering(item: Item) -> str:
     """Return the reader-facing numbering and its trailing space, or `''`."""
     if not item.numbering:
         return ""
-    return f'<span data-kind="{NUMBERING_KIND}">{escape(item.numbering)}</span> '
+    return f'<span {KIND_ATTRIBUTE}="{NUMBERING_KIND}">{escape(item.numbering)}</span> '
