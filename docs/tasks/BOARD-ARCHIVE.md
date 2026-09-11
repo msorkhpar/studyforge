@@ -13920,3 +13920,47 @@ MEASURED   44516 bytes total of 44576 allowed   ⛔ board-size did NOT fire — 
 |---|---|---|
 | `PO-46/14` | `[structural]` | ⛔ **MINE, AGAINST MY OWN OFFICE, and it is the round's most serious finding.** Round 45's record and handoff both quote `REFUTED ROWS: none.` as `corroborate`'s printed output, and NO INSTRUMENT HAS EVER PRINTED IT. **Measured** at `6c4e3d0` (absent from the whole tree), at `51dee3b` (absent from `tools/`), and over the 400 most recent commits reachable from any ref (absent from `tools/`, `src/` and `tests/` at every one). ⚠️ **A quoted output block is the strongest evidence form this project uses, and one carried an invented line through a CTO review that reproduced every figure around it.** ⛔ **The REAL hole behind it: `corroborate` prints the empty case for FOUR populations and NOT for the one whose count IS its exit code, which is exactly what Ruling 264(a) asks for.** ⭐ **Folded into [`W132`](rows/W132.md) as its third clause, declared as the one of the three that DOES owe a test** |
 | `PO-46/15` | `[local]` | ⚠️ **MINE, against my own prediction, and it narrowed a claim I was about to make.** I predicted a FOURTH mint would break the board's byte bound. **Measured** by plant in the pinned container: `44516 bytes total of 44576 allowed` — ⛔ **it FITS, with `60` bytes of headroom, and `board-size` did not fire.** ⭐ **So bytes DISCOURAGE a fourth id and do not forbid one, and the clause-versus-mint decision rests on Ruling 284's surface test instead. The plant's `FLOOR_EXIT=1` came from `87` live rows against `86` detail files, which is a different arm entirely** |
+
+### ⛔ THE COMMITTED TREE — the floor, the suite and the gate, MEASURED in the pinned container
+
+⛔ **MEASURED BY ME at `55ffdf3`, role `wt/po`, pins in the SAME invocation as the sha (Ruling 238), Ruling 241's REDIRECT-TO-FILE-THEN-`$?`-ON-THE-NEXT-LINE form, `-ra`:**
+
+```text
+55ffdf39a5df4390698ed6f935718a760ffdcbdc
+Python 3.14.7 | node v24.21.0 | ruff 0.16.6
+Google Chrome for Testing 153.0.8010.36 | fonts-liberation 1:2.1.5-3 | 12 font files | shm 1.0G
+PYTEST_EXIT=0        5477 passed, 15 skipped in 65.10s
+                     12 skip GROUPS / 15 skips | FAILED+ERROR lines: 0
+FLOOR_EXIT=0         pointers 968 in 362, 558 anchored, 0 unresolved | ruff 836
+                     board 133 rows / 86 live / 86 detail | narrative 6832 of 8192
+                     widest row 587 of 600 | 44188 bytes total of 44352 allowed
+                     rulings index 287 from 46, tail 287 | quality floor: clean
+                     rulings reach: tail 287 CITED; over the 25 newest (263–287)
+                       reached 17, unreached 8 — unchanged, because this branch
+                       lands no ruling and edits no convention document
+CORROBORATE_EXIT=0   ⭐ 0 of 2 rows REFUTED, 0 NOT ANSWERABLE, 0 live checkouts
+                     git could not count
+git status --porcelain -> 0 lines
+```
+
+⭐ **RECONCILED against this round's own base rather than asserted:** ⛔ **markdown files `358 → 362` (**+4** — one handoff and three new row files, nothing deleted); pointers `932 → 968` (**+36**, all inside those four files, the archive record and the two board edits); `ruff format --check` `832 → 836` (**+4**, the same four files — Ruling 224, the denominator counts every file `ruff` considered, markdown included).** ⭐ **The suite is IDENTICAL at `5477 passed, 15 skipped` because this branch touches `docs/` and nothing else**, ⚠️ **and the two intermediate readings that were NOT identical are disclosed rather than dropped: at `d74beeb` the suite read `3 failed, 5474 passed` and `FLOOR_EXIT=1` on ONE unresolved anchor — the `## In flight` section this record had not yet been given — which is the pointer floor and its two repository-wide tests agreeing with each other exactly as designed.**
+
+⛔ **`PO-46/10`'s DELTA IS CORRECTED BENEATH ITSELF RATHER THAN EDITED (Ruling 106), and the correction is a finding.** ⭐ **That row says the three mints cost `1402` board bytes for a deficit of `730`. MEASURED at `55ffdf3`: the cost is `+1318` for `+672` of allowance, a deficit of `646`.** ⚠️ **The `1402` was true at `44272`, three content edits before the last commit — the Ruling 279 correction, the head paragraph and the office-checkouts compression all landed after it — and I did not re-derive it.** ⛔ **The inconsistency was detectable from the row alone: `42870 + 1402 = 44272`, not `44188`.** ⭐ **The headroom figures in that row, `810 → 164`, are CORRECT and are the ones that matter: `810 - 646 = 164`.**
+
+| id | marker | ⛔ the finding, and its `Measured` |
+|---|---|---|
+| `PO-46/16` | `[local]` | ⛔ **MINE, and it makes `PO-46/14` a CLASS rather than an incident.** `PO-46/10` published a byte delta it did not re-derive after three further edits to the same file. **Measured** at `55ffdf3`: `+1318` and `646`, against the row's `1402` and `730`. ⚠️ **Three self-caught defects in one round — an invented quoted line, a mispredicted plant, and a stale delta — and all three are the same root: a number written once and not re-taken after the thing it measured moved.** ⭐ **That is `CLAUDE.md`'s *"verify claims by counting"* earning its place, and it is the argument for re-taking a committed tree rather than asserting it** |
+
+⚠️ **THE VISUAL READINGS ARE NOT TAKEN THIS ROUND AND SAYING SO IS THE HONEST FORM:** ⛔ **no file under `tests/` or `src/` is in this diff, so `STUDYFORGE_VISUAL=required`'s one failure is the base's reading, it is `W128`'s class with `W124/5` as its instance, and a re-run would measure the same tree under a different name.**
+
+⛔ **THE TIP IS NOT THIS REF, and the idiom is `W124.md`'s and is credited to it** — ⚠️ **recording a reading in the tree moves the tree.** ⭐ **Every commit after `55ffdf3` touches `docs/tasks/BOARD-ARCHIVE.md` and `docs/tasks/handoffs/PO-2026-09-11-round46.md` and nothing else, adds no markdown FILE and no POINTER, so no figure above can move** — ⛔ **and the claim is re-taken rather than argued, below.**
+
+### ⭐ TEARDOWN
+
+⛔ **I created exactly ONE worktree and ONE branch: `../studyforge-wt/po` and `chore/po-round46`.** ⭐ **The worktree is removed BY NAME as this round's last act and the branch survives, because it is what the CTO reviews and the coordinator merges.** ⛔ **`git branch --list 'trial/*'` reads `0` and no trial checkout was created, so none is owed a removal.**
+
+⛔ **NOT MINE, ATTRIBUTED BEFORE ANY DECISION AND NOT TOUCHED** (Ruling 206(ii)): ⭐ **`wt/dev1` on `fix/W129-W130-W132-board-bounds`, `wt/dev2` on `fix/W131-continuation-blindness`, and the detached idle `wt/po-int` at `798956c`** — ⚠️ **and `wt/dev1` and `wt/dev2` MUST STAY STANDING until their branches merge, because this round's In-flight cells name them and Ruling 279's gate depends on those checkouts existing.**
+
+⭐ **PLANTS: SIX against the live board and its row files — four close states, one fourth-mint byte state, and the four-state set's own live control — every one edited on the HOST and read in the pinned container, every restore run on the HOST with its exit code read (`RESTORE_EXIT=0`) and `git status --porcelain` verified at `0` afterwards.** ⛔ **Ruling 287 honoured by never attempting a restore inside the container, because that failure is silent.** ⭐ **No file under `tools/`, `src/`, `tests/`, `docker/` or `docs/conventions/` was edited, and no other office's handoff was touched.**
+
+⭐ **The user's untracked `ONBOARDING.md` was never moved, deleted or committed.**
