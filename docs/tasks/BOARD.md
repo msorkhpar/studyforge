@@ -80,44 +80,43 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W142` | ⛔ **its cost is borne by EVERY REVIEWER OF EVERY WAVE and was borne last wave** — `CTO-62/5`, a false red on three innocent branches | round 49 |
-| 2 | `W143` | ⛔ **it DESTROYS WORK and every instrument reports that nothing happened** — `W128/3`, and irreversibility is the ground | round 49 |
-| 3 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit** | round 35, promoted round 42 |
-| 4 | `W140` | ⛔ **it grows on every close at a MEASURED rate and the floor is blind to it BY CONSTRUCTION** — `CTO-62/3`; it does not jump `W78`, whose class it shares | round 49 |
-| 5 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW to 30 — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
-| 6 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
-| 7 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
-| 8 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
-| 9 | `W105`–`W109` | ⭐ **round 39's five mints**, and `W105` is UNBLOCKED — `W36` merged | round 39 |
-| 10 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
-| 11 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
-| 12 | `W135` | ⭐ **nothing is broken and the floor is honest, so it jumps nobody** — Ruling 285(b) | round 46 |
-| 13 | `W136` | ⭐ **the exposure is LATENT and measured so — 16 branches, every one `0` ahead and none checked out — so it jumps nobody** | round 47 |
-| 14 | `W141` | ⭐ **a stated count nothing re-derives, and it jumps nobody** — `W134/5` | round 49 |
-| 15 | `W144` | ⭐ **a LABEL defect beside a correct bound, and it jumps nobody** — `PO-48/10` | round 49 |
+| 1 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit.** ⛔ **SKIPPED at round 49's order 3 on a SURFACE ground and the skip is RATIFIED, not inherited** — round 50 wrote four files under `rows/`, this row's own among them | round 35, promoted round 42 |
+| 2 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW to 30 — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
+| 3 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
+| 4 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
+| 5 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
+| 6 | `W105`–`W109` | ⭐ **round 39's five mints**, and `W105` is UNBLOCKED — `W36` merged | round 39 |
+| 7 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
+| 8 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
+| 9 | `W135` | ⭐ **nothing is broken and the floor is honest, so it jumps nobody** — Ruling 285(b) | round 46 |
+| 10 | `W136` | ⭐ **the exposure is LATENT and measured so — 16 branches, every one `0` ahead and none checked out — so it jumps nobody** | round 47 |
+| 11 | `W141` | ⭐ **a stated count nothing re-derives, and it jumps nobody** — `W134/5` | round 49 |
+| 12 | `W144` | ⭐ **a LABEL defect beside a correct bound, and it jumps nobody** — `PO-48/10` | round 49 |
+| 13 | `W145` | ⭐ **a DECLARED gap, inhabited and measured at ONE false member, so it jumps nobody** — `SESSION-2026-09-11c/6` | round 50 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a
 position does not.** ⛔ **And a *Next rows* cell may carry no measurement AND no
 PREDICTION** (243(c)).
 
-⛔ **SEVEN ROWS HERE INVOKE RULING 75 AND EACH DECLARES IT IN ITS OWN FILE — RE-MEASURED at
+⛔ **FOUR ROWS HERE INVOKE RULING 75 AND EACH DECLARES IT IN ITS OWN FILE — RE-MEASURED at
 this board's own branch tip over every row file, case-INSENSITIVELY because the house style
 writes `RULING <n>`** (Ruling 102's defect, reproduced by a human instrument — `PO-45/3`):
-⭐ **`W142`, `W143`, `W140`, `W88`, `W120`, `W121`, `W103`.** ⚠️ **`W125`, `W135` and `W136`
-MENTION the ruling in order to DECLINE it, and `W78`, `W105`–`W109`, `W116`–`W118`, `W141`
-and `W144` are silent because they jump nobody** — ⛔ **a search for the number finds all three
-classes, so the instrument LOCATES and the row file's own sentence DECIDES** (Ruling
-281's use-versus-mention clause). ⚠️ **The figure moved from `6` to `7` because `W138` and `W139`
-were DISPATCHED out of this table while `W140`, `W142` and `W143` were minted declaring it — not
-because any standing row's declaration changed.** ⛔ **`W138` and `W139` still declare it and are
-in flight, so a search of `rows/` finds TWELVE and this table's population is the narrowing.**
+⭐ **`W88`, `W120`, `W121`, `W103`.** ⚠️ **`W125`, `W135` and `W136` MENTION the ruling in order
+to DECLINE it, and `W78`, `W105`–`W109`, `W116`–`W118`, `W141`, `W144` and `W145` are silent
+because they jump nobody** — ⛔ **a search for the number finds all three classes, so the
+instrument LOCATES and the row file's own sentence DECIDES** (Ruling 281's use-versus-mention
+clause). ⚠️ **The figure moved from `7` to `4` because `W140`, `W142` and `W143` were DISPATCHED
+out of this table, not because any standing row's declaration changed** — ⛔ **and a sweep of
+`rows/` now finds TEN rather than twelve, because a CLOSE takes the argument with it: `W138`'s
+and `W139`'s declarations left with them.**
 
-⚠️ **`W78`, `W88` and `W120` all write `docs/`: ONE OWNER or three waves, never three
-takers in one** (check 4's sub-step). ⛔ **`W135`, `W136`, `W141`, `W142` and `W143` all write
-`docs/conventions/`** — ⭐ **so they are ONE constraint rather than five free rows, and no two of
-them may be dispatched in one wave to different takers.** ⭐ **`W140` (`tools/quality/pointers.py`)
-and `W144` (`tools/quality/board/notice.py`, `bounds.py`) share a surface with nobody — not with
-each other, not with any queued row, and not with either row in flight.**
+⚠️ **`W78`, `W88` and `W120` all write `docs/tasks/rows/`: ONE OWNER or three waves, never three
+takers in one** (check 4's sub-step) — ⛔ **and a REGISTER round writes that surface too, which is
+why `W78` was skipped rather than demoted.** ⛔ **`W135`, `W136` and `W141` all write
+`docs/conventions/`, WHICH A ROW IN FLIGHT HOLDS** — ⭐ **so they are ONE constraint and none of
+them may be dispatched while `W142`/`W143` are live.** ⭐ **`W144` (`tools/quality/board/notice.py`,
+`bounds.py`) and `W145` (`tools/quality/citations.py`) share a surface with nobody — not with each
+other, not with any queued row, and not with either row in flight.**
 
 ## The register — every `W` row
 
@@ -265,13 +264,14 @@ they have exactly one home each.
 | W135 | A citation of a tracked document written as a bare filename is invisible to the one instrument that checks citations | framework agent | `todo` — Ruling 285(b) | [`rows/W135.md`](rows/W135.md) |
 | W136 | A pre-merge GATE's exemption is a SPELLING where its ruling's ground is a ROLE, so it flags 13 branches and silently exempts 3 it would flag | framework agent | `todo` — Ruling 265, `W132/2` widened | [`rows/W136.md`](rows/W136.md) |
 | W137 | Two committed tests assert the bijection Ruling 270 RETIRED, so the protocol's FIRST close turns a shipped suite red on a correct board | framework agent | ✅ done — `395d543` | [record](BOARD-ARCHIVE.md#w137-two-committed-tests-assert-the-bijection-ruling-270-retired-so-the-protocols-first-close-turns-a-shipped-suite-red-on-a-correct-board) |
-| W138 | A third re-derivation of the workspace resolver SUBSTITUTES a synthetic corpus instead of skipping, so `SF-03`'s named acceptance is proved of a 48×5 grid no census can see | framework agent | `todo` — Ruling 298 | [`rows/W138.md`](rows/W138.md) |
-| W139 | The reach notice's window is 25 wide and SLIDES, so a ruling still uncited BELOW it reads `unreached 0` and the figure is an artifact | framework agent | `todo` — Ruling 304 | [`rows/W139.md`](rows/W139.md) |
+| W138 | A third re-derivation of the workspace resolver SUBSTITUTES a synthetic corpus instead of skipping, so `SF-03`'s named acceptance is proved of a 48×5 grid no census can see | framework agent | ✅ done — `6e349be` | [record](BOARD-ARCHIVE.md#w138-a-third-re-derivation-of-the-workspace-resolver-substitutes-a-synthetic-corpus-instead-of-skipping-so-sf-03s-named-acceptance-is-proved-of-a-485-grid-no-census-can-see) |
+| W139 | The reach notice's window is 25 wide and SLIDES, so a ruling still uncited BELOW it reads `unreached 0` and the figure is an artifact | framework agent | ✅ done — `09b6459` | [record](BOARD-ARCHIVE.md#w139-the-reach-notices-window-is-25-wide-and-slides-so-a-ruling-still-uncited-below-it-reads-unreached-0-and-the-figure-is-an-artifact) |
 | W140 | 11 anchor names in `BOARD-ARCHIVE.md` answer for 29 headings, and `heading_slugs()` returns a SET so the pointer floor is blind to every one | framework agent | `todo` — `CTO-62/3` | [`rows/W140.md`](rows/W140.md) |
 | W141 | A `RULED ROUND N` heading states its own clause count and no instrument reads it, so two of three were wrong before the branch existed | framework agent | `todo` — `W134/5` | [`rows/W141.md`](rows/W141.md) |
 | W142 | Two floor checks reach their verdict through `ruff check .`, which walks the DISK, so an untracked file reddens a correct tree | framework agent | `todo` — `W134/6`, `CTO-62/5` | [`rows/W142.md`](rows/W142.md) |
 | W143 | `git checkout -- <dir>` restores a plant to `HEAD`, discarding an uncommitted NEIGHBOUR while `porcelain` reads clean | framework agent | `todo` — `W128/3`, Ruling 287's class | [`rows/W143.md`](rows/W143.md) |
 | W144 | One phrase, two populations — the notice counts table LINES and the bound counts the ID SET, and both say *register rows* | framework agent | `todo` — `PO-48/10` | [`rows/W144.md`](rows/W144.md) |
+| W145 | A citation WRAPPED across a line break is unreadable to the predicate that reads citations, so one of the notice's own three declared gaps is inhabited and its uncited set carries a false member | framework agent | `todo` — `SESSION-2026-09-11c/6` | [`rows/W145.md`](rows/W145.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -337,6 +337,7 @@ board edit and not a developer's.**
 | **R21's open rows** | CTO | `pending` — neither is due in the open milestone | each before its named task builds | ⛔ **POINTER, not a second copy — the open set is `## R21` above, and that section resolves from spec §R9.** ⚠️ **The narrative this replaces typed a COUNT that disagreed with `## R21` on the same board** — ⭐ **re-taken round 38 against §R9's own table and routed to the CTO, whose register it is** |
 | ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`; all five closed GREEN in one run** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **RULING 288 AMENDED 282 AND THIS CELL: the CHANGES-REQUESTED cause it named is REFUTED.** ⭐ **[The discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
 | ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | `pending` — ⭐ **MEASURED first: NO live row names `docker/dev`** (Ruling 288's second half) | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`. Both clauses of the block refusing a `STUDYFORGE_VISUAL=required` default are false of the tree; the conclusion is still right** |
+| ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `pending` — ⭐ **OPEN AND NAMED, never open and silent** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
 <!-- /scheduled -->
 
 ---
