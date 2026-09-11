@@ -234,28 +234,81 @@ def table_lines(text: str) -> list[tuple[int, str]]:
     return [(n, line) for n, line in enumerate(text.split("\n"), 1) if line.startswith("|")]
 
 
-def argument_bytes(body: str) -> int:
-    """Return the bytes of a row file's ARGUMENT — everything after its frame.
+def argument(body: str) -> str:
+    """Return a row file's ARGUMENT — everything after its frame.
 
-    ⛔ **The subject is the ARGUMENT and not the FILE, and that is Ruling 186.**
-    ⚠️ **Frame overhead measures 224–346 bytes across the live row files**, so a
-    file-size reading returns **279** for `W74` where its argument is **53** —
-    ⭐ **the right number over the wrong span, a family this project has now met
-    five times.**
+    ⛔ **The subject is the ARGUMENT and not the FILE, and that is Ruling 186's
+    surviving clause (c).** ⚠️ **Frame overhead runs 224–346 bytes across the
+    live row files**, so anything read at file level is the right question over
+    the wrong span — the family this project has now met five times.
 
     ⛔ **The frame is located by its TEXT, never by an index**: `rows/W17.md`
     carries one extra frame block — the note that `W19` rides with it — and an
     index would have silently skipped that row's whole argument. ⭐ `ROW_FRAME`
     is the sentinel, so there is one home for what a frame says rather than two.
 
-    ⚠️ **A file with no frame reads `0` rather than its own length**: there is no
-    argument to measure, and `board-frame` is what reports the missing frame.
+    ⚠️ **A file with no frame has no argument this can locate and returns `""`**;
+    `board-frame` is what reports the missing frame.
     """
     blocks = body.split("\n\n")
     for index, block in enumerate(blocks):
         if ROW_FRAME in block:
-            return len("\n\n".join(blocks[index + 1 :]).strip().encode())
-    return 0
+            return "\n\n".join(blocks[index + 1 :]).strip()
+    return ""
+
+
+#: Markup a cell and an argument may differ by without differing in CONTENT:
+#: emphasis, code spans, the emoji this project's prose wears, and runs of
+#: whitespace a reflow introduces. ⛔ **This is what makes the comparison
+#: NORMALISED-verbatim rather than byte-verbatim** — a copy that was re-bolded
+#: on its way into a file is still a copy.
+_MARKUP = re.compile(r"[*`~]")
+_LEAD_EMOJI = re.compile(r"[⛔⭐✅⚠️⏳◐→️]")
+
+
+def normalised(cell: str) -> str:
+    """Return `cell` with markup, emoji, spacing and a trailing stop removed."""
+    plain = _LEAD_EMOJI.sub(" ", _MARKUP.sub("", cell))
+    return re.sub(r"\s+", " ", plain).strip().rstrip(".").lower()
+
+
+def namings(text: str) -> dict[str, str]:
+    """`{"W60": <naming cell>}` for every register row, by its owning id."""
+    found = {}
+    for line in text.split("\n"):
+        if not line.startswith("|"):
+            continue
+        columns = cells(line)
+        if len(columns) < 5:
+            continue
+        ids = identifiers(columns[0])
+        if ids:
+            found[ids[0]] = columns[1]
+    return found
+
+
+def repeats_its_naming(body: str, cell: str) -> bool:
+    """Whether a row file's whole argument IS its own register naming.
+
+    ⛔ **Ruling 186, narrowed: a CLOSED PREDICATE where there had been a
+    threshold.** ⚠️ **Seven live files carry, as their entire argument, a
+    normalised copy of the naming cell** — ⛔ **which is the one thing the frame
+    sentence inside them forbids:** *"not here, and not in two places."*
+    ⭐ **`board-frame` passes all seven, because `startswith` and `in` cannot
+    read a contradiction.**
+
+    ⚠️ **A file that EXTENDS its naming is not this**, and must not be reported:
+    an argument that opens by restating what the row is and then argues it is
+    doing exactly what the file is for. ⛔ **Equality, never a prefix.**
+
+    ⭐ **And no byte measure and no cutoff at all.** ⚠️ **Two sweeps read 16 and
+    19 thin rows under two unruled thresholds; both answered a question that
+    should not have been asked**, and a predicate retires the disagreement
+    instead of settling it.
+    """
+    wanted = normalised(cell)
+    # ⛔ Ruling 48 in miniature: an empty naming would make every file a repeat.
+    return bool(wanted) and normalised(argument(body)) == wanted
 
 
 def narrative_bytes(text: str) -> int:

@@ -32,12 +32,14 @@ from tools.quality.board.register import (
     REGISTER_CLOSE,
     REGISTER_OPEN,
     STATES,
-    argument_bytes,
+    argument,
     cells,
     identifiers,
     is_closed,
+    namings,
     narrative_bytes,
     register,
+    repeats_its_naming,
     state,
     table_lines,
 )
@@ -251,59 +253,135 @@ def test_every_rule_code_has_exactly_ONE_home() -> None:
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 186 — the ARGUMENT's span, which is not the FILE's
+# ⛔ Ruling 186 — the ARGUMENT's span, and the CLOSED PREDICATE over it
 # --------------------------------------------------------------------------
 
+#: A row file, frame and all, parameterised by what it argues. ⛔ Written out
+#: rather than generated, because the frame's text is the sentinel `argument`
+#: locates and a paraphrase would be testing a shape nothing ships.
+FRAMED = (
+    "# {name}\n\n⛔ **This file carries the ARGUMENT for board row `{name}` and nothing "
+    "else.**\n⭐ **Its naming, owner and state live once, in the register in "
+    "[`../BOARD.md`](../BOARD.md)** — ⛔ **not here, and not in two places.**\n\n{argument}\n"
+)
 
-def test_argument_bytes_measures_the_ARGUMENT_and_not_the_FILE() -> None:
-    """⛔ Ruling 186's constraint, and it is the whole difficulty.
 
-    ⚠️ **Frame overhead measures 224–346 bytes across the live row files**, so a
-    file-size reading returns **279** for `W74` where its argument is **53**.
-    ⭐ **The right number over the wrong span**, measured here as the gap rather
-    than asserted as a sentence.
+def test_argument_is_the_span_after_the_frame_and_not_the_FILE() -> None:
+    """⛔ Ruling 186's surviving clause (c), measured as a gap.
+
+    ⚠️ **Frame overhead runs 224–346 bytes across the live row files**, so any
+    reading taken at file level is the right question over the wrong span.
     """
-    body = (
-        "# W9\n\n⛔ **This file carries the ARGUMENT for board row `W9` and nothing else.**\n"
-        "⭐ **Its naming, owner and state live once, in the register in "
-        "[`../BOARD.md`](../BOARD.md)** — ⛔ **not here, and not in two places.**\n\n"
-        "The argument.\n"
-    )
-    assert argument_bytes(body) == len(b"The argument.")
-    assert argument_bytes(body) < len(body.encode()) - 200, "the frame is the 200+ bytes"
+    body = FRAMED.format(name="W9", argument="The argument.")
+    assert argument(body) == "The argument."
+    assert len(argument(body).encode()) < len(body.encode()) - 200, "the frame is the 200+"
 
 
-def test_argument_bytes_finds_the_frame_by_TEXT_so_an_extra_block_cannot_hide_it() -> None:
+def test_argument_finds_the_frame_by_TEXT_so_an_extra_block_cannot_hide_it() -> None:
     """⛔ `rows/W17.md`'s shape: one extra frame block before the frame proper.
 
     ⚠️ **An index would have silently skipped that row's whole argument** — and
     silently is the word that matters, because the reading would still have been
-    a number.
+    a string.
     """
-    extra = "# W17\n\n⭐ **`W19` has no file of its own: they are ONE COMMIT.**\n\n"
-    frame = (
-        "⛔ **This file carries the ARGUMENT for board row `W17` and nothing else.**\n"
-        "⭐ **Its naming and state live once — ⛔ not in two places.**\n\n"
-    )
-    assert argument_bytes(extra + frame + "Both halves, argued.\n") == len(b"Both halves, argued.")
+    note = "# W17\n\n⭐ **`W19` has no file of its own: they are ONE COMMIT.**\n\n"
+    body = note + FRAMED.format(name="W17", argument="Both halves, argued.").split("\n\n", 1)[1]
+    assert argument(body) == "Both halves, argued."
 
 
 @pytest.mark.parametrize(
-    ("body", "expected"),
+    "body",
     [
-        ("# W9\n\n⛔ **… and nothing else.**\n", 0),
-        ("# W9\n\n⛔ **… and nothing else.**\n\n\n", 0),
-        ("a fragment with no frame at all\n", 0),
+        "# W9\n\n⛔ **… and nothing else.**\n",
+        "# W9\n\n⛔ **… and nothing else.**\n\n\n",
+        "a fragment with no frame at all\n",
     ],
 )
-def test_a_row_file_with_no_argument_reads_ZERO_rather_than_its_own_length(
-    body: str, expected: int
-) -> None:
+def test_a_row_file_with_no_argument_yields_the_EMPTY_string(body: str) -> None:
     """⛔ The IMPOSSIBLE reading: a frame with nothing after it argues nothing.
 
-    ⚠️ **A file-size reading would have returned ~250 for the first two of
-    these**, which is the defect Ruling 186 names. ⭐ **The frameless third reads
-    `0` too, and `board-frame` is what reports the missing frame** — this is a
-    notice and it does not get to hold two opinions.
+    ⭐ **The frameless third is empty too, and `board-frame` is what reports
+    it** — this is a notice and it does not get to hold two opinions.
     """
-    assert argument_bytes(body) == expected
+    assert argument(body) == ""
+
+
+@pytest.mark.parametrize(
+    "cell",
+    [
+        "the marker check judges 41 of 88 documents",
+        "⛔ **the marker check judges 41 of 88 documents**",
+        "`the marker check judges 41 of 88 documents`",
+        "⭐ the  marker   check judges 41 of 88 documents.",
+        "THE MARKER CHECK JUDGES 41 OF 88 DOCUMENTS",
+    ],
+)
+def test_planted_a_naming_copied_under_DIFFERENT_MARKUP_is_still_a_copy(cell: str) -> None:
+    """⛔ PLANTED, and adversarial to the SEARCH TERM (Ruling 140).
+
+    ⚠️ **The evasion is not different words; it is different MARKUP** — a naming
+    re-bolded, wrapped in a code span, reflowed, or given a full stop on its way
+    into a file. ⭐ **A byte-verbatim comparison reports none of these five and a
+    normalised one reports all five**, which is why the ruling says
+    *normalised*-verbatim.
+    """
+    body = FRAMED.format(name="W42", argument="⛔ **the marker check judges 41 of 88 documents**")
+    assert repeats_its_naming(body, cell)
+
+
+def test_a_file_that_EXTENDS_its_naming_is_not_a_repeat() -> None:
+    """⛔ Equality, never a prefix — and this is the assertion that keeps it usable.
+
+    ⭐ **An argument that restates what the row is and then argues it is doing
+    exactly what the file exists for.** ⚠️ **A prefix test would report 17 more
+    files on the live tree**, and a notice that flags correct work is one people
+    learn to scroll past.
+    """
+    cell = "the marker check judges 41 of 88 documents"
+    assert not repeats_its_naming(
+        FRAMED.format(name="W42", argument=f"{cell} — and here is why that matters."), cell
+    )
+    assert not repeats_its_naming(FRAMED.format(name="W42", argument="Something else."), cell)
+
+
+def test_an_EMPTY_naming_cell_does_not_make_every_file_a_repeat() -> None:
+    """⛔ Ruling 48 in miniature, and it is the IMPOSSIBLE reading for this predicate.
+
+    ⚠️ **`normalised("") == normalised("")`**, so a row with no naming cell would
+    otherwise report every frame-only file as a copy of it — ⭐ **a reading that
+    would have been `0 = 0` wearing a finding.**
+    """
+    assert not repeats_its_naming(FRAMED.format(name="W42", argument=""), "")
+    assert not repeats_its_naming("a fragment with no frame at all\n", "")
+
+
+def test_namings_reads_the_OWNING_id_of_every_register_row() -> None:
+    """⭐ The naming cell is column two, and a two-id row is owned by its first id."""
+    text = (
+        "| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
+        "| W17 **+ W19** | one commit, two ids | PO | `todo` | [d](rows/W17.md) |\n"
+        "| ⛔ **W5** | `origin` may name a region | Dev | `todo` | [d](rows/W5.md) |\n"
+    )
+    assert namings(text) == {
+        "W17": "one commit, two ids",
+        "W5": "`origin` may name a region",
+    }
+
+
+def test_the_live_tree_is_an_INHABITED_population_for_this_predicate() -> None:
+    """⛔ Ruling 48: the population, never the verdict — and deliberately NOT a count.
+
+    ⚠️ **The seven repeats measured at `798956c` are `W60 W63 W64 W66 W67 W72
+    W73`** — ⛔ **and that is recorded here as a READING and not as an
+    assertion**, because the PO fixing those seven files is the outcome this
+    notice exists to cause and a test that reddened on it would be a test
+    against the remedy. ⭐ **What is asserted is that the question can be put:
+    every row file has a register naming cell to be compared against.**
+    """
+    text = (repository_root() / BOARD).read_text(encoding="utf-8")
+    named = namings(text)
+    files = sorted((repository_root() / "docs/tasks/rows").glob("*.md"))
+    assert files and named, "neither side of the comparison may be empty"
+    assert [path.stem for path in files if path.stem not in named] == [], (
+        "a row file with no register naming cell cannot be compared; board-orphan owns that"
+    )

@@ -99,10 +99,11 @@ from tools.quality.board.register import (
     REGISTER_OPEN,
     ROW_FRAME,
     STATES,
-    argument_bytes,
     is_closed,
+    namings,
     narrative_bytes,
     register,
+    repeats_its_naming,
     state,
     table_lines,
 )
@@ -308,38 +309,26 @@ def board_state(root: Path) -> list[str]:
     silent notice about an absent register is the `0 = 0` this exists to stop
     (Ruling 48), and the honest line names who does enforce presence.
 
-    ## ⛔ `docs/tasks/rows/` is printed with its BYTES, and that is Ruling 183
+    ## ⛔ Two readings here forbid nothing, and that is what they are for
 
-    ⚠️ **A bound on a row file would forbid the thing the file exists for** —
-    appending to a live row's argument is the contract's own prescribed action,
-    and nothing can tell *"the PO re-scoped a row"* from *"the PO pasted a
-    fragment"*. ⭐ **That argument retires the GATE. It does not retire the
-    MEASUREMENT.**
+    ⭐ **`rows/`'s BYTES — Ruling 183.** ⛔ **A bound on a row file would forbid
+    the thing the file exists for**, and nothing can tell *"the PO re-scoped a
+    row"* from *"the PO pasted a fragment"*. ⚠️ **That retires the GATE and not
+    the MEASUREMENT** — ⛔ **measured by the CTO, pinned: `rows/` inflated 112×,
+    to 3.2 MB, with this line BYTE-IDENTICAL and the floor clean**, because it
+    printed a COUNT. ⭐ **Which is this module's own founding defect wearing a new
+    carrier:** the board was split once, grew to four times the trigger size,
+    *"and nothing noticed, because nothing was measuring."*
 
-    ⛔ **Measured by the CTO at round 47, pinned: `rows/` inflated from 28,787
-    bytes to 3,231,307 — 3.2 MB, 112× — and this line came back BYTE-IDENTICAL
-    with the floor clean**, because it printed the files' COUNT and not one byte
-    of their size. ⚠️ **That is the module's own founding defect under a new
-    carrier:** `BOARD.md` was split once for being 1,615 lines, grew to four
-    times that, *"and nothing noticed, because nothing was measuring."*
+    ⭐ **The files whose ARGUMENT IS THEIR NAMING — Ruling 186.** ⛔ **A CLOSED
+    PREDICATE, not a threshold**: see `repeats_its_naming` for what it compares
+    and `argument` for why the span is never the file. ⚠️ **`board-frame` passes
+    these files and is RIGHT to** — widening it to judge whether an argument is
+    PRESENT rebuilds exactly the gate Ruling 180 removed.
 
-    ⭐ **A notice forbids nothing, cannot fire on a correct edit, and restores
-    the only property whose absence caused the defect: somebody is measuring.**
-
-    ## ⛔ The THINNEST ARGUMENT is printed beside the widest row — Ruling 186
-
-    ⚠️ **`board-frame` is the right instrument asked the wrong question.** ⛔ A
-    row file can carry its frame and argue nothing — 19 of them were measured
-    doing it, three ending on a dangling *"round 22's mint block above"* that
-    used to point into `BOARD.md` and now points at the frame — ⭐ **but widening
-    `board-frame` to judge whether an argument is PRESENT restores exactly the
-    gate Ruling 180 removed**, because nothing can tell a thin argument from one
-    the PO has not finished writing.
-
-    ⛔ **So the property re-homes to the notice, and NO THRESHOLD is chosen.**
-    ⭐ **Printing the thinnest argument needs none** — ⚠️ **and if a cutoff ever
-    appears here, that is the signal a gate has been rebuilt.** ⛔ **Measure the
-    ARGUMENT, not the file**: see `argument_bytes`.
+    ⛔ **A cutoff appearing in this function is the signal a gate has been
+    rebuilt.** ⭐ **The contract both readings answer to is
+    `docs/conventions/board.md`**, and it is not restated here.
     """
     text = read_text(root / BOARD)
     if text is None:
@@ -355,25 +344,30 @@ def board_state(root: Path) -> list[str]:
     # ⛔ Ruling 183, and `st_size` rather than a clock or an enumeration order,
     # over a SORTED population, so the reading is reproducible (R10).
     rows_bytes = sum(path.stat().st_size for path in sorted(rows_on_disk.values()))
-    # ⛔ Ruling 186, and the tuple's second member is the TIE-BREAK: the thinnest
-    # argument is named deterministically, never by enumeration order (R10).
-    thinnest = min(
-        ((argument_bytes(read_text(path) or ""), name) for name, path in rows_on_disk.items()),
-        default=None,
+    # ⛔ Ruling 186. ⭐ Sorted by length then text, so a reader gets W5 before W10
+    # and the order is a property of the ids rather than of the filesystem (R10).
+    named = namings(text)
+    repeats = sorted(
+        (
+            name
+            for name, path in rows_on_disk.items()
+            if repeats_its_naming(read_text(path) or "", named.get(name, ""))
+        ),
+        key=lambda name: (len(name), name),
     )
-    thin = (
-        f"thinnest argument {thinnest[0]} bytes in {thinnest[1]}"
-        if thinnest
-        else "no row arguments"
+    echoed = (
+        f"{len(repeats)} arguing only their own naming — {' '.join(repeats)} (Ruling 186)"
+        if repeats
+        else "none arguing only their own naming (Ruling 186)"
     )
     table = table_lines(text)
     widest = max((len(line.encode()) for _n, line in table), default=0)
     return [
         f"board: {len(rows)} register rows, {len(live)} live, "
         f"{len(rows_on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
-        f"(no bound — Ruling 183); "
+        f"(no bound — Ruling 183), {echoed}; "
         f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
-        f"widest row {widest} of {BOARD_ROW_CEILING}, {thin}, "
+        f"widest row {widest} of {BOARD_ROW_CEILING}, "
         f"{len(text.encode())} bytes total of "
         f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed."
     ]

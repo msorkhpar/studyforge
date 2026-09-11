@@ -195,21 +195,37 @@ decided it is `rows/` inflated **112×** with the `board:` line byte-identical
 and the floor clean, because the line printed a COUNT. ⛔ **A bound REMOVED
 because its subject became editable is replaced by a NOTICE, never by nothing.**
 
-⭐ **The THINNEST ARGUMENT, beside the widest row — Ruling 186.** ⛔ **`board-frame`
-is the right instrument asked the wrong question**: a row file can carry its
-frame and argue nothing, and widening the rule to judge whether an argument is
-PRESENT rebuilds exactly the gate Ruling 180 removed, because nothing can tell a
-thin argument from one the PO has not finished writing. ⚠️ **The subject is the
-ARGUMENT and not the FILE** — frame overhead runs to a few hundred bytes, so a
-file-size reading is the right number over the wrong span — ⭐ **so the frame is
-located by its own text and the bytes after it are what is printed.**
+⭐ **The FILES whose argument IS their naming — Ruling 186.** ⛔ **`board-frame` is
+the right instrument asked the wrong question**: a row file can carry its frame
+and argue nothing, and some carry **as their entire argument a normalised copy of
+their own register naming cell** — ⚠️ **which is the one thing the frame sentence
+inside them forbids:** *"not here, and not in two places."* ⛔ **`startswith` and
+`in` cannot read a contradiction**, so `board-frame` passes them and is right to:
+widening it to judge whether an argument is PRESENT rebuilds exactly the gate
+Ruling 180 removed, because nothing can tell a thin argument from one the PO has
+not finished writing.
 
-⛔ **NO THRESHOLD is chosen for either, and that is structural rather than
-pending.** ⭐ **A notice that prints the thinnest argument needs none** — ⚠️ **and
-a cutoff appearing in `board_state` is the signal that a gate has been rebuilt.**
-⛔ **The numbers themselves are not typed here** (Ruling 181): `board_state`
-prints them every run, and a figure copied into this document is a figure that
-goes stale in the copy nobody re-measures.
+⛔ **It is a CLOSED PREDICATE — equality against that row's own naming, after
+normalising markup, emoji, spacing and a trailing stop — and there is NO byte
+measure and NO cutoff.** ⚠️ **Two sweeps read 16 and 19 *thin* rows under two
+unruled thresholds; both answered a question that should not have been asked**, so
+⭐ **the disagreement is retired rather than settled.** ⛔ **A cutoff appearing in
+`board_state` is the signal that a gate has been rebuilt.**
+
+⭐ **And the span is the ARGUMENT, never the FILE** (Ruling 186's clause (c)):
+frame overhead runs to a few hundred bytes and varies by more than a hundred
+between files, so anything read at file level is the right question over the
+wrong span. ⛔ **The frame is located by its own TEXT** — one row file carries an
+extra frame block, and an index would have skipped that row's whole argument.
+
+⛔ **An argument that EXTENDS its naming is not this, and is not reported.**
+⭐ **Restating what the row is and then arguing it is exactly what the file exists
+for** — ⚠️ **equality, never a prefix**, because a notice that flags correct work
+is one people learn to scroll past.
+
+⛔ **No figure from any of these readings is typed into this document**
+(Ruling 181): `board_state` prints them every run, and a number copied here is a
+number that goes stale in the copy nobody re-measures.
 
 ⭐ **What it deliberately does not bound: `BOARD-ARCHIVE.md`.** ⛔ **A record is
 supposed to grow monotonically, and capping it would push the reasoning back

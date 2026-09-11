@@ -51,7 +51,7 @@ from tools.quality.board import (
     board_state,
     check_board,
 )
-from tools.quality.board.register import argument_bytes
+from tools.quality.board.register import namings, repeats_its_naming
 
 #: A minimal register: a header, a separator, one closed row and one live one.
 #: ⛔ Written out rather than generated, so a reader can see what the check
@@ -382,6 +382,7 @@ def test_impossible_a_board_with_no_rows_directory_reads_zero_bytes(tmp_path: Pa
     root = _tree(tmp_path, HEADER + CLOSED + FOOTER)
     assert f"0 detail files in {ROWS}/ holding 0 bytes" in board_state(root)[0]
     assert check_board(root) == []
+    assert not (root / ROWS).exists(), "and the directory is genuinely absent, not empty"
 
 
 # --------------------------------------------------------------------------
@@ -498,74 +499,82 @@ def test_impossible_board_state_cannot_fire_on_an_EMPTY_register(tmp_path: Path)
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 186 — the notice names the THINNEST ARGUMENT, and no threshold
+# ⛔ Ruling 186 — the notice names the files whose ARGUMENT IS THEIR NAMING
 # --------------------------------------------------------------------------
 
 
-def test_live_notice_names_the_thinnest_ARGUMENT_beside_the_widest_row() -> None:
-    """⭐ The LIVE reading, and the gap between the two spans is the assertion.
+def test_live_notice_names_exactly_the_files_whose_argument_IS_their_naming() -> None:
+    """⭐ The LIVE reading, derived from the tree rather than typed.
 
-    ⛔ **Ruling 186's constraint: the subject is the ARGUMENT, not the file.**
-    ⚠️ **Frame overhead measures 224–346 bytes across these files**, so a
-    file-size reading is the right number over the wrong span — ⭐ **asserted
-    here as a measured gap on the real tree rather than as a sentence.**
+    ⛔ **No count is asserted**, and that is deliberate: the PO fixing those
+    files is the outcome this notice exists to cause, and an assertion on the
+    number would redden on the remedy. ⭐ **What is asserted is the WIRING** —
+    that the notice reports the same set the predicate does, against each row's
+    OWN naming cell rather than against some other row's.
     """
     root = repository_root()
+    text = (root / BOARD).read_text(encoding="utf-8")
+    named = namings(text)
     files = sorted((root / ROWS).glob("*.md"))
-    assert files, f"{ROWS}/ holds no row files, so this reading is vacuous"
-    arguments = {path.stem: argument_bytes(path.read_text(encoding="utf-8")) for path in files}
-    thinnest = min((count, name) for name, count in arguments.items())
-    line = board_state(root)[0]
-    assert f"thinnest argument {thinnest[0]} bytes in {thinnest[1]}" in line
-    assert f"of {BOARD_ROW_CEILING}, thinnest argument" in line, "beside the widest row"
-    assert thinnest[0] < min(path.stat().st_size for path in files), (
-        "⛔ the argument span must be NARROWER than the file span, or it is the "
-        "file being measured under a new name"
+    assert files and named, "Ruling 48: neither side of the comparison may be empty"
+    expected = sorted(
+        (
+            path.stem
+            for path in files
+            if repeats_its_naming(path.read_text(encoding="utf-8"), named.get(path.stem, ""))
+        ),
+        key=lambda name: (len(name), name),
     )
+    line = board_state(root)[0]
+    if expected:
+        assert f"{len(expected)} arguing only their own naming — {' '.join(expected)}" in line
+    else:
+        assert "none arguing only their own naming" in line
 
 
-def test_planted_padding_the_FRAME_cannot_move_the_thinnest_argument(tmp_path: Path) -> None:
-    """⛔ The PLANTED reading, adversarial to the SEARCH TERM (Ruling 140).
+def test_planted_an_argument_that_merely_REPEATS_the_naming_is_named(tmp_path: Path) -> None:
+    """⛔ The PLANTED reading, and the plant is a real live shape.
 
-    ⚠️ **The evasion is not a thinner argument; it is a FATTER FRAME** — the
-    shape that makes a file-size reading look healthy while the argument stays
-    empty. ⭐ **The file's bytes move by 5,000 and the argument reading does not
-    move at all**, which is the whole of Ruling 186's first constraint.
+    ⚠️ **Seven files on the tree at `798956c` carry exactly this** — their whole
+    argument is a normalised copy of the naming — ⛔ **and it is the one thing
+    the frame sentence inside them forbids:** *"not here, and not in two
+    places."* ⭐ **`board-frame` passes it, and must**, which is why this is the
+    notice's business and not the rule's.
     """
-    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
-    before = board_state(root)[0]
-    assert "thinnest argument 13 bytes in W2" in before, before
+    naming = "a naming worth one sentence"
+    row = f"| W2 | {naming} | PO | `todo` | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
     path = root / ROWS / "W2.md"
-    was = path.stat().st_size
-    head, argument = path.read_text(encoding="utf-8").rsplit("\n\n", 1)
-    path.write_text(f"{head}\n⭐ **{'pad ' * 1000}**\n\n{argument}", encoding="utf-8")
-    after = board_state(root)[0]
-    assert "thinnest argument 13 bytes in W2" in after, "the frame is not the argument"
-    assert path.stat().st_size - was > 4000, "and the FILE grew by 4,000 bytes while it held"
-    assert check_board(root) == [], "a notice forbids nothing — padding a frame is legal"
-
-
-def test_planted_a_row_file_that_argues_NOTHING_reads_zero(tmp_path: Path) -> None:
-    """⛔ The 19 rows `CTO-48` measured, as a reading rather than as a complaint.
-
-    ⚠️ **`board-frame` passes these files and is RIGHT to** — widening it to
-    judge whether an argument is present restores exactly the gate Ruling 180
-    removed, because nothing can tell a thin argument from an unfinished one.
-    ⭐ **So the notice reads `0` and forbids nothing.**
-    """
-    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
-    path = root / ROWS / "W2.md"
-    path.write_text(path.read_text(encoding="utf-8").rsplit("\n\n", 1)[0] + "\n", encoding="utf-8")
-    assert "thinnest argument 0 bytes in W2" in board_state(root)[0]
+    head = path.read_text(encoding="utf-8").rsplit("\n\n", 1)[0]
+    path.write_text(f"{head}\n\n⛔ **{naming.upper()}.**\n", encoding="utf-8")
+    assert "1 arguing only their own naming — W2 (Ruling 186)" in board_state(root)[0]
     assert check_board(root) == [], "⛔ a NOTICE. A gate here is the one Ruling 180 removed."
 
 
-def test_impossible_a_tree_with_no_row_files_has_NO_thinnest_argument(tmp_path: Path) -> None:
-    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass by refusing a number.
+def test_planted_an_argument_that_EXTENDS_the_naming_is_NOT_named(tmp_path: Path) -> None:
+    """⛔ The control, and without it the notice flags correct work.
 
-    ⚠️ **`min()` over nothing is not `0`** — a board with no arguments beside it
-    has no thinnest one, and printing `0` would be the `0 = 0` Ruling 48 names.
+    ⭐ **An argument that restates the row and then argues it is what the file is
+    for.** ⚠️ **A prefix test reports 17 more files on the live tree**, and a
+    notice people learn to scroll past is worse than none.
+    """
+    naming = "a naming worth one sentence"
+    row = f"| W2 | {naming} | PO | `todo` | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
+    path = root / ROWS / "W2.md"
+    head = path.read_text(encoding="utf-8").rsplit("\n\n", 1)[0]
+    path.write_text(f"{head}\n\n{naming} — and the reason it matters.\n", encoding="utf-8")
+    assert "none arguing only their own naming" in board_state(root)[0]
+
+
+def test_impossible_a_board_with_no_row_files_names_NONE(tmp_path: Path) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass rather than echoing it.
+
+    ⚠️ **A register with no arguments beside it cannot have one that repeats its
+    naming** — ⭐ **and the notice says `none` out loud rather than falling
+    silent**, which is Ruling 48's whole complaint about `0`.
     """
     root = _tree(tmp_path, HEADER + CLOSED + FOOTER)
-    assert "no row arguments" in board_state(root)[0]
-    assert "thinnest argument" not in board_state(root)[0]
+    line = board_state(root)[0]
+    assert "none arguing only their own naming (Ruling 186)" in line
+    assert f"0 detail files in {ROWS}/ holding 0 bytes" in line
