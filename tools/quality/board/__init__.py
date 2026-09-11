@@ -29,50 +29,24 @@ to the Log rather than into the tables. ⚠️ **A rule recorded only in prose h
 not landed** — this project's own most-repeated finding, committed by the
 document that governs the board.
 
-## ⭐ The two bounds, and why neither is a line count
+## ⭐ The four arms, and each one is a module rather than a paragraph of this one
 
-⛔ **Ruling 149 retired a line-count governor on `review-rubric.md`** because it
-*"alarmed seven times while the property improved seven times"* — the document
-was growing because it had more to say, and the governor could not tell that
-from accretion. ⚠️ **A line ceiling on this file would fail the same way**: a
-backlog with more rows in it is a longer board and a *better* one.
+⛔ **`docs/tasks/BOARD.md` carries a standing decision that the next row touching
+this file SPLITS IT**, and `W100` is that row. ⭐ **The seam is the one the three
+existing modules already drew: an arm reads the board AS A REGISTER or it reads it
+AS A FILE.**
 
-⭐ **So both bounds here are invariant to the number of rows.**
-
-| Bound | What it measures | Why adding rows cannot trip it |
+| Arm | Module | Its subject |
 |---|---|---|
-| `BOARD_NARRATIVE_CEILING` | bytes **not inside a table** | the frame is fixed; a new
-  row is a table line and contributes **nothing** to it |
-| `BOARD_ROW_CEILING` | bytes of **one table row** | a row's width is a property of
-  that row, not of how many there are |
-| `BOARD_FRAME` + `BOARD_PER_ROW` | the **whole file**, against what its register
-  indexes | a row raises the allowance by more than it costs |
+| the bijection, the states, the frames | ⭐ **here** | a row's argument has one home |
+| the three SIZE bounds | `bounds.py` | ⛔ **the board as a FILE**, and no bound is a
+  line count |
+| the observation table | `contradiction.py` | Ruling 189(b), a contradiction on one row |
+| ⭐ the `## Scheduled` table | `scheduled.py` | ⛔ **`W100`** — a trigger is an asserted
+  state wearing another column name |
 
-⛔ **The second bound is not decoration, and the measurement says so.** At
-`bfb8c8c` the board's table rows carried **388,649 bytes** against **382,194**
-of prose — ⭐ **the cells were as fat as the narrative**, and a governor watching
-only prose would have called that board half-clean. ⚠️ **The widest single row
-was 3,485 bytes.** ⛔ **A cell that needs more than `BOARD_ROW_CEILING` is an
-argument, and an argument goes behind a pointer.**
-
-## ⚠️ The evasion this is built against (Ruling 140)
-
-⛔ **The adversarial move is not more prose; it is prose written as a table**, so
-that a narrative-blind byte count reads it as rows. ⚠️ **That plant was run
-against the first two bounds before this module shipped and IT GOT THROUGH:**
-⛔ **320 lines of round 33's narrative, pasted one line per table row, moved the
-narrative reading by ZERO and tripped the width rule exactly ONCE.**
-
-⭐ **`board-size` is the answer, and it is the third bound rather than a tweak to
-the other two**, because the property it measures is different: not *how much
-prose* but *how much file per row of state a reader gets for it*. ⛔ **Text that
-indexes nothing raises the numerator and not the denominator**, which is the
-whole of the evasion and the whole of the bound.
-
-⚠️ **The other two are kept, and they are kept as DIAGNOSIS.** `board-size` says
-the board is too big; ⭐ **`board-narrative` and `board-row-width` say WHERE**,
-and a governor that only says *too big* is one somebody raises rather than
-obeys.
+⚠️ **`notice.py` is the fifth and it forbids nothing**: it prints what there was to
+be wrong (Ruling 48), and `W96` split it off at the seam the CTO named.
 
 ## ⛔ And the fourth subject, which is a STATE rather than a size (Ruling 189)
 
@@ -100,14 +74,15 @@ owner right is the PO's judgement and check 4's job. ⭐ This module asserts
 to load stays loadable, and that a state the board asserts is a state the board
 also observes.
 
-⛔ **And nothing about `BOARD-ARCHIVE.md`'s size.** A record is *supposed* to
-grow monotonically; that is what makes it a record. ⭐ **Bounding it would push
-the reasoning back onto the board**, which is the defect, not the remedy.
+⛔ **And nothing about `BOARD-ARCHIVE.md`'s or `docs/tasks/rows/`'s size**, for
+two different reasons, both in `bounds.py`: a record is *supposed* to grow
+monotonically, and a bound on a row file would forbid the amendment those files
+exist for. ⭐ **`board_state` prints their bytes instead** (Ruling 183).
 
-⛔ **Nor anything about `docs/tasks/rows/`'s size**, and for a different reason:
-a bound there would forbid the amendment those files exist for. ⭐ **So
-`board_state` prints their bytes instead — Ruling 183: a bound REMOVED because
-its subject became editable is replaced by a NOTICE, never by nothing.**
+⛔ **Nor whether a trigger's EVENT has occurred**, which is `scheduled.py`'s own
+refusal: ⭐ **the predicate reads the STATE cell and never the trigger's prose**,
+because an event trigger is the contract's prescribed form and a check deciding
+whether six events had happened would be `W49`'s class.
 
 ⛔ **Nor whether a branch the board names EXISTS**, which is Ruling 189(c) and
 (d). ⭐ **That reading is `corroborate.py`'s, it shells out to `git`, and the
@@ -117,6 +92,12 @@ state (Ruling 80), and a branch position is the purest untracked state there is.
 
 from pathlib import Path
 
+from tools.quality.board.bounds import (
+    RULE_NARRATIVE,
+    RULE_SIZE,
+    RULE_WIDTH,
+    size_findings,
+)
 from tools.quality.board.contradiction import (
     RULE_DISAGREEMENT,
     RULE_INFLIGHT,
@@ -145,10 +126,15 @@ from tools.quality.board.register import (
     ROWS,
     STATES,
     is_closed,
-    narrative_bytes,
     register,
     state,
-    table_lines,
+)
+from tools.quality.board.scheduled import (
+    RULE_TRIGGER,
+    SCHEDULED_CLOSE,
+    SCHEDULED_OPEN,
+    TRIGGER_STATES,
+    scheduled_findings,
 )
 from tools.quality.config import read_text, relative
 from tools.quality.report import Finding
@@ -156,9 +142,6 @@ from tools.quality.report import Finding
 RULE_DETAIL = "board-detail"
 RULE_ORPHAN = "board-orphan"
 RULE_DUPLICATE = "board-duplicate"
-RULE_NARRATIVE = "board-narrative"
-RULE_WIDTH = "board-row-width"
-RULE_SIZE = "board-size"
 RULE_STATE = "board-state"
 RULE_FRAME = "board-frame"
 
@@ -185,12 +168,16 @@ __all__ = [
     "RULE_ORPHAN",
     "RULE_SIZE",
     "RULE_STATE",
+    "RULE_TRIGGER",
     "RULE_UNOBSERVED",
     "RULE_UNREADABLE",
     "RULE_WIDTH",
+    "SCHEDULED_CLOSE",
+    "SCHEDULED_OPEN",
     "STAND_INS",
     "STARTED",
     "STATES",
+    "TRIGGER_STATES",
     "board_state",
     "check_board",
 ]
@@ -302,47 +289,13 @@ def check_board(root: Path) -> list[Finding]:
                 )
             )
 
-    narrative = narrative_bytes(text)
-    if narrative > BOARD_NARRATIVE_CEILING:
-        findings.append(
-            Finding(
-                BOARD,
-                1,
-                RULE_NARRATIVE,
-                f"{narrative} bytes of narrative against a ceiling of {BOARD_NARRATIVE_CEILING}. "
-                f"The board is a register: a round's reasoning goes to BOARD-ARCHIVE.md and a "
-                f"row's goes to {ROWS}/. See docs/conventions/board.md.",
-            )
-        )
-
-    allowed = BOARD_FRAME + BOARD_PER_ROW * len(seen)
-    size = len(text.encode())
-    if size > allowed:
-        findings.append(
-            Finding(
-                BOARD,
-                1,
-                RULE_SIZE,
-                f"{size} bytes against {allowed} allowed — {BOARD_FRAME} of frame plus "
-                f"{BOARD_PER_ROW} for each of {len(seen)} register rows. ⛔ The board grew "
-                f"without indexing anything more. See docs/conventions/board.md.",
-            )
-        )
-
-    for number, line in table_lines(text):
-        width = len(line.encode())
-        if width > BOARD_ROW_CEILING:
-            findings.append(
-                Finding(
-                    BOARD,
-                    number,
-                    RULE_WIDTH,
-                    f"row is {width} bytes against a ceiling of {BOARD_ROW_CEILING}. A cell that "
-                    f"long is an argument, and an argument goes behind a pointer.",
-                )
-            )
-
-    # ⛔ Ruling 189(b), and it is LAST because it is the only rule here that reads
-    # two tables against each other rather than one cell against a bound.
+    # ⛔ The board as a FILE rather than as a register — `bounds.py`, and the
+    # denominator is derived there rather than handed over (see `size_findings`).
+    findings.extend(size_findings(text))
+    # ⛔ Ruling 189(b), and the two table arms are LAST because they are the only
+    # rules here that read a table against another rather than a cell against a bound.
     findings.extend(observation_findings(text))
+    # ⛔ `W100` — Ruling 189's family ONE TABLE OVER, and a board declaring no
+    # `<!-- scheduled -->` marker yields nothing: the floor runs over arbitrary roots.
+    findings.extend(scheduled_findings(text))
     return findings

@@ -8,18 +8,19 @@ one nobody can re-take.
 
 | Reading | What it asserts | Where |
 |---|---|---|
-| **live** | the real `BOARD.md` here is clean under all five rules |
-  `test_live_board_is_clean` |
-| **planted** | each rule fires on a board built to break exactly it | the five `test_planted_*` |
+| **live** | the real `BOARD.md` here is clean under **every** rule the check
+  composes, the arms in the other modules included | `test_live_board_is_clean` |
+| **planted** | each rule fires on a board built to break exactly it | the `test_planted_*` |
 | **impossible** | a state the rule cannot reach reports nothing, and
   absence is not a pass | `test_impossible_*` |
 
-## ⚠️ The plant is adversarial to the SEARCH TERM, not to the subject (Ruling 140)
+## ⛔ What is NOT here, and it is a pointer rather than a deletion
 
-⛔ **A narrative governor's evasion is not more prose; it is prose written as a
-table**, so that a byte count scoped to non-table lines reads it as rows.
-⭐ **`test_planted_narrative_disguised_as_a_table` is that exact move**, and it
-is the reading that decides whether the pair of bounds has a gap.
+⭐ **The three SIZE bounds are `test_bounds.py`'s**, and they moved there with the
+code `W100`'s split took out of `tools/quality/board/__init__.py` — ⚠️ **Ruling 140's
+plant and Ruling 149's negative control with them.** ⭐ **The observation table's four
+rules are `test_contradiction.py`'s and `## Scheduled`'s is `test_scheduled.py`'s.**
+⛔ **This module is the arm that stayed: the bijection, the states and the frames.**
 """
 
 from __future__ import annotations
@@ -31,9 +32,7 @@ import pytest
 from tests.support import repository_root
 from tools.quality.board import (
     BOARD,
-    BOARD_FRAME,
     BOARD_NARRATIVE_CEILING,
-    BOARD_PER_ROW,
     BOARD_ROW_CEILING,
     REGISTER_CLOSE,
     REGISTER_OPEN,
@@ -42,11 +41,8 @@ from tools.quality.board import (
     RULE_DETAIL,
     RULE_DUPLICATE,
     RULE_FRAME,
-    RULE_NARRATIVE,
     RULE_ORPHAN,
-    RULE_SIZE,
     RULE_STATE,
-    RULE_WIDTH,
     STATES,
     board_state,
     check_board,
@@ -141,63 +137,11 @@ def test_planted_duplicate_id(tmp_path: Path) -> None:
     assert "ONE row" in findings[0].message
 
 
-def test_planted_narrative(tmp_path: Path) -> None:
-    prose = "x" * (BOARD_NARRATIVE_CEILING + 1) + "\n"
-    root = _tree(tmp_path, prose + HEADER + CLOSED + FOOTER)
-    assert _rules(check_board(root)) == [RULE_NARRATIVE]
-
-
-def test_planted_narrative_disguised_as_a_table(tmp_path: Path) -> None:
-    """⛔ Ruling 140 — the plant is adversarial to the SEARCH TERM.
-
-    ⚠️ A round's narrative written as `| … |` lines contributes **zero** to the
-    narrative count. ⭐ **`board-row-width` is what closes that gap**, and this
-    is the reading that proves the two bounds have none between them.
-    """
-    fat = "| " + "x" * (BOARD_ROW_CEILING + 1) + " |\n"
-    root = _tree(tmp_path, HEADER + CLOSED + FOOTER + fat)
-    rules = _rules(check_board(root))
-    assert RULE_NARRATIVE not in rules, "the narrative bound is blind to this, by construction"
-    assert rules == [RULE_WIDTH]
-
-
-def test_planted_narrative_as_MANY_SHORT_table_rows(tmp_path: Path) -> None:
-    """⛔ The plant that GOT THROUGH, and the reason `board-size` exists.
-
-    ⚠️ **Run against the first two bounds before this module shipped: 320 lines
-    of round 33's narrative, one line per table row, moved the narrative
-    reading by ZERO and tripped the width rule ONCE.** ⭐ Neither bound sees
-    text that is short per line and enormous in total.
-
-    ⛔ **`board-size` does, because the evasion raises the numerator and leaves
-    the denominator alone.**
-    """
-    prose = "".join(f"| a line of a round's reasoning, number {n} |\n" for n in range(400))
-    root = _tree(tmp_path, HEADER + CLOSED + FOOTER + prose)
-    rules = _rules(check_board(root))
-    assert RULE_NARRATIVE not in rules
-    assert RULE_WIDTH not in rules
-    assert rules == [RULE_SIZE]
-
-
-def test_more_rows_can_never_trip_the_size_bound(tmp_path: Path) -> None:
-    """⭐ Ruling 149's failure mode, asserted absent rather than argued absent.
-
-    ⛔ **The line-count governor it retired *"alarmed seven times while the
-    property improved seven times"*.** ⚠️ **A ratio cannot do that only if a row
-    raises the allowance by MORE than a row costs** — so that is what is
-    measured here, at a row width well over this board's live mean of 170 B.
-    """
-    row = "| W{n} | " + "n" * (BOARD_PER_ROW - 60) + " | PO | `todo` | [d](rows/W{n}.md) |\n"
-    many = "".join(row.format(n=100 + i) for i in range(400))
-    root = _tree(tmp_path, HEADER + many + FOOTER, rows=tuple(f"W{100 + i}" for i in range(400)))
-    assert RULE_SIZE not in _rules(check_board(root))
-
-
-def test_the_size_bound_allows_the_frame_and_says_so(tmp_path: Path) -> None:
-    """⚠️ A board with NO rows still gets `BOARD_FRAME`, and nothing more."""
-    root = _tree(tmp_path, HEADER + FOOTER + "x" * (BOARD_FRAME + 1))
-    assert _rules(check_board(root)) == [RULE_NARRATIVE, RULE_SIZE]
+# ⛔ **THE THREE SIZE BOUNDS ARE `test_bounds.py`'s NOW**, and they MOVED with the code
+# `W100`'s split took out of `tools/quality/board/__init__.py` — ⭐ **`board-narrative`,
+# `board-row-width` and `board-size`, including Ruling 140's plant and Ruling 149's
+# negative control.** ⚠️ **They were not copied: a reading with two homes is what this
+# package's own instrument forbids one layer up.**
 
 
 # --------------------------------------------------------------------------

@@ -30,6 +30,7 @@ finding.**
 """
 
 import re
+from collections.abc import Iterable
 
 from tools.quality.pointers import strip_code_spans
 
@@ -178,14 +179,18 @@ def cells(line: str) -> list[str]:
     return cells
 
 
-def state(cell: str) -> str | None:
-    """Return the state a cell DECLARES, or `None` when it declares none.
+def state(cell: str, words: Iterable[str] = STATES) -> str | None:
+    """Return the state a cell DECLARES from `words`, or `None` when it declares none.
 
     ⛔ The longest match wins, so `in-review` is never read as `in`, and the
     match ends on a WORD BOUNDARY, so `DONE-ish` declares nothing.
+
+    ⚠️ **`words` is a PARAMETER because this board carries TWO closed vocabularies** —
+    `STATES` here and `scheduled.py`'s trigger states (`W100`) — ⛔ **and a second copy
+    of the boundary rule is the defect this module's docstring opens with.**
     """
     text = STATE_LEAD.sub("", cell).lower()
-    for word in sorted(STATES, key=len, reverse=True):
+    for word in sorted(words, key=len, reverse=True):
         if not text.startswith(word):
             continue
         rest = text[len(word) :]
