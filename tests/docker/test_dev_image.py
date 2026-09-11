@@ -36,9 +36,8 @@ from pathlib import Path
 
 import pytest
 
+from tests.docker.devfiles import DEV, commands, instructions, read
 from tests.support import repository_root, run, tool_on_path
-
-DEV = "docker/dev"
 
 #: Set to "1" to build the image and run the suite inside it. Off by default —
 #: see the module docstring.
@@ -47,22 +46,6 @@ OPT_IN = "STUDYFORGE_DOCKER_TESTS"
 #: Set inside the image itself, by the Dockerfile. Its only job is to stop the
 #: integration tests recursing.
 MARKER = "STUDYFORGE_DEV_CONTAINER"
-
-
-def read(name: str) -> str:
-    """The text of a file under `docker/dev/`."""
-    return (repository_root() / DEV / name).read_text(encoding="utf-8")
-
-
-def instructions(name: str) -> str:
-    """`read(name)` with comment lines removed.
-
-    ⚠️ Load-bearing rather than tidy. These files explain themselves at
-    length, so a check for "does this file install packages at run time" that
-    matched the raw text would fire on the comment that says it must not —
-    and the fix a reader would reach for is deleting the explanation.
-    """
-    return "\n".join(line for line in read(name).splitlines() if not line.lstrip().startswith("#"))
 
 
 def pyproject() -> dict:
@@ -191,12 +174,21 @@ def test_studyforge_is_not_installed_into_the_image():
     # ⛔ Installing it would put a second copy in site-packages that can shadow
     # the bind mount, so the container and the host would run different code
     # while reporting the same result.
-    installs = [line for line in instructions("Dockerfile").splitlines() if "pip install" in line]
+    # ⛔ `commands()` and not raw lines (`W131`). MEASURED: with raw lines a plant
+    # that put a SECOND `pip install` on the same physical line as the first read
+    # as healthy — `len(installs)` counts LINES, and two installs joined by `&&`
+    # are one line. One command per element is what makes the count mean what it
+    # says.
+    installs = [command for command in commands("Dockerfile") if "pip install" in command]
     assert len(installs) == 1, installs
     for forbidden in (" -e ", "--editable", "'.'", '".."'):
         assert forbidden not in instructions("Dockerfile"), forbidden
     # The one install reads its packages from the pin file and nowhere else.
-    assert "--requirement /opt/studyforge/requirements.txt" in instructions("Dockerfile")
+    # ⛔ Asserted against THAT command and not the whole file: the flag sits on a
+    # continuation line, so asserting it file-wide was itself a way of not
+    # reading the continuation — it would have passed for a `--requirement`
+    # belonging to some other command entirely.
+    assert "--requirement /opt/studyforge/requirements.txt" in installs[0], installs
 
 
 def test_the_container_never_runs_as_root():
@@ -423,15 +415,26 @@ def test_the_runtime_arrives_pinned_rather_than_from_a_package_manager():
     # version of this check matched the substring `nodejs` anywhere and failed
     # on `nodejs.org` in the download URL — a check that fires on the correct
     # implementation, which is a check somebody deletes.
+    #
+    # ⛔ **AND IT SHIPPED VACUOUS FOR THE OPPOSITE REASON** (`W131`, Ruling 267;
+    # confirmed by plant in `CTO-2026-09-11-round58.md` §3b and re-planted in
+    # `docs/tasks/handoffs/W131.md`). The raw-line version asserted over the
+    # LINE carrying `apt-get install`, and every package this Dockerfile installs
+    # sits on a CONTINUATION below it — so a planted bare `nodejs` in the
+    # browser block's package list passed, green. ⭐ `commands()` collapses the
+    # continuations and then cuts at the shell separators, which is what keeps
+    # `nodejs.org` in a different command from the install.
     installed = [
-        line
-        for line in instructions("Dockerfile").splitlines()
-        if "apt-get install" in line or "apt install" in line
+        command
+        for command in commands("Dockerfile")
+        if "apt-get install" in command or "apt install" in command
     ]
     assert installed, "nothing is installed at all; has the base image changed?"
-    for line in installed:
+    for command in installed:
         for unpinned in ("nodejs", "npm", "nvm"):
-            assert unpinned not in line, f"the runtime is installed unpinned: {line.strip()!r}"
+            assert unpinned not in command, (
+                f"the runtime is installed unpinned: {command.strip()!r}"
+            )
     for anywhere in ("nvm install", "corepack enable"):
         assert anywhere not in instructions("Dockerfile"), anywhere
 
