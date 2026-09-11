@@ -104,6 +104,91 @@ RUN set -eu; \
 # container runs as the invoking uid; without it the extracted tree carries
 # ownership from the tarball's author.
 
+# ---------------------------------------------------------------------------
+# The browser (W36, QA-03/1, Ruling 40).
+#
+# ⭐ Why it is here at all: `tests/visual/` opens a page this repository
+# generated in a real browser and reads back what no assertion over the source
+# can see. ⛔ Without a browser in *this* image those checks **did not run** —
+# 57 of them, measured — and Ruling 40 makes the pinned container the only
+# authority for a reading, so a check that cannot run here is a check with no
+# authority anywhere. ⚠️ The defect that priced this: `--measure: 80ch`
+# resolves `ch` against **the element's own font**, so one declaration produced
+# three different columns. Every stylesheet assertion passed.
+#
+# ⛔ Pinned by version AND checksum, for exactly the reason the `FROM` line and
+# the Node.js tarball above are. ⚠️ An unpinned browser — `apt-get install
+# chromium`, or a `latest` build — is worse here than anywhere else in this
+# file: a contrast ratio, a focus order and a resolved column width are all
+# measured **against the engine**, so an engine that changes under the image
+# changes the answer without changing the question.
+#
+# ⭐ Chrome for Testing rather than a distribution package, and that is the
+# reproducibility argument rather than a preference: its archives are immutable
+# per version at a stable URL, so `${CHROME_VERSION}` plus the digest below is
+# a complete description of which browser produced a reading. A distribution's
+# `chromium` moves with the distribution and records no version a reader can
+# pin.
+#
+# ⭐ `chrome-headless-shell` rather than full Chrome: it is the binary
+# `tests/visual/discovery.py` already searches PATH for, it speaks the same
+# DevTools protocol over `--remote-debugging-pipe`, and it links against 21
+# shared libraries instead of Chrome's full desktop set.
+#
+# ⚠️ **`TARGETARCH`, for the reason the Node block states**: an architecture
+# with no recorded checksum fails **loudly**, naming itself, rather than
+# falling back to something unverified.
+#
+# ⚠️ The shared libraries and the fonts come from apt, and that is a stated
+# limit rather than an oversight: the *engine* is checksum-pinned, its
+# dependencies are pinned only as far as the base image's Debian snapshot is.
+# ⛔ `fonts-liberation` is not cosmetic — it is the vendor's own declared
+# dependency, and a font-metric check on an image with no fonts at all would
+# measure a fallback nobody chose.
+ARG CHROME_VERSION=153.0.8010.36
+ARG CHROME_SHA256_AMD64=a0079df5617da34bcd1debad18196568b072ec3d8ec57944008972a4fc970580
+ARG CHROME_SHA256_ARM64=66776cb47927f88a44dda83ebd113b226714a45e7cd3b6e845907477a0b7b096
+
+RUN set -eu; \
+    case "${TARGETARCH}" in \
+      amd64) chrome_platform=linux64;      chrome_sha="${CHROME_SHA256_AMD64}" ;; \
+      arm64) chrome_platform=linux-arm64;  chrome_sha="${CHROME_SHA256_ARM64}" ;; \
+      *) echo "no pinned browser recorded for TARGETARCH='${TARGETARCH}';" \
+              "add its checksum to docker/dev/Dockerfile rather than" \
+              "installing an unpinned browser" >&2; exit 1 ;; \
+    esac; \
+    archive="chrome-headless-shell-${chrome_platform}.zip"; \
+    apt-get update; \
+    apt-get install --no-install-recommends -y \
+        ca-certificates curl unzip \
+        fonts-liberation \
+        libasound2t64 libatk-bridge2.0-0t64 libatk1.0-0t64 libatspi2.0-0t64 \
+        libdbus-1-3 libexpat1 libgbm1 libglib2.0-0t64 libnspr4 libnss3 \
+        libx11-6 libxcb1 libxcomposite1 libxdamage1 libxext6 libxfixes3 \
+        libxkbcommon0 libxrandr2; \
+    curl -fsSLO \
+        "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/${chrome_platform}/${archive}"; \
+    echo "${chrome_sha}  ${archive}" | sha256sum --check --strict -; \
+    unzip -q "${archive}" -d /opt; \
+    mv "/opt/chrome-headless-shell-${chrome_platform}" /opt/chrome-headless-shell; \
+    ln -s /opt/chrome-headless-shell/chrome-headless-shell /usr/local/bin/headless-shell; \
+    chmod -R a+rX /opt/chrome-headless-shell; \
+    rm -f "${archive}"; \
+    apt-get purge -y curl unzip; \
+    apt-get autoremove -y; \
+    rm -rf /var/lib/apt/lists/*; \
+    headless-shell --version
+
+# ⛔ `curl` and `unzip` are purged on the way out, the same rule the Node block
+# states: an image that quietly grows a way to fetch things at test time is an
+# image whose results stop being attributable to what it declares.
+#
+# ⭐ `chmod -R a+rX` because this runs as root and the container runs as
+# whatever uid invoked it — the same reason the Node extraction passes
+# `--no-same-owner`. Without it a browser installed by root is a browser a
+# contributor's uid cannot execute, and the checks would go back to skipping
+# for a reason that has nothing to do with the browser being absent.
+
 # ⚠️ git refuses to operate on a repository owned by a different uid — "dubious
 # ownership" — and this container deliberately runs as whatever uid invoked it,
 # which is rarely the one that owns the image's own filesystem. Without this

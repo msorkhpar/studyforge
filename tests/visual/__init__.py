@@ -26,19 +26,18 @@ improvising one.
 
 ## ⛔ The evidence state, stated here because a reader will look here first
 
-⚠️ **These checks are `unpinned green`, not `host-verified`.** The pinned dev
-image has no browser, and the rubric §4b bounds `host-verified` by *the image is
-right to exclude the subject*. It is not: the subject is how **this
-repository's own output** behaves in a browser engine, and a Chromium inside the
-image would answer the same question better because it would be pinned. The
-answer there is *absent*, not *wrong* — which the rubric calls a gap to close.
-⭐ **So: the gap is `QA-03/1`, routed to whoever owns `docker/dev/`, and nothing
-in this task edits that image.** `discovery.py` carries the argument in full.
+⭐ **These checks are `pinned green` IN THE DEV IMAGE and `unpinned green`
+anywhere else**, and which one a run was is **printed** rather than assumed.
+⛔ **`QA-03/1` — *the pinned dev image has no browser* — was closed by `W36`**,
+which installed one pinned by version and checksum. Until then 57 of these
+checks did not run in the one environment Ruling 40 makes authoritative, and
+`quality floor: clean` said nothing about any of them.
 
-⚠️ **Every reading here is taken against an engine nobody pinned**, so a review
-of a run of this harness states the browser version. `discovery.report_line()`
-prints it, and prints it at the end of every suite run whether or not a browser
-was found.
+⚠️ **A host run is still taken against an engine nobody pinned**, so a review of
+one states the browser version and does not call it pinned.
+`discovery.evidence_state()` decides which state a run may claim, keyed on the
+image's own marker; `discovery.report_line()` prints that and the version at the
+end of every suite run whether or not a browser was found.
 
 ## The acceptance clauses, and where each one runs
 
