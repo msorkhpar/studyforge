@@ -13,6 +13,7 @@ from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
+from tools.quality.reach import check_rulings_reach, reach_notice
 from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
@@ -38,6 +39,7 @@ def test_every_check_is_registered():
         check_handoffs,
         check_pointers,
         check_rulings_index,
+        check_rulings_reach,
     }
     assert quality.CHECKS, "Ruling 48: an empty registry satisfies set() == set()"
 
@@ -52,6 +54,7 @@ def test_every_notice_is_registered():
         pointer_coverage,
         board_state,
         rulings_notice,
+        reach_notice,
         lint_notice,
     }
 

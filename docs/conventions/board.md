@@ -98,7 +98,7 @@ somebody writes an ordinary table.**
 
 | You are | Do this | ⛔ Not this |
 |---|---|---|
-| **minting a row** | one register line, and `../tasks/rows/<ID>.md` with the argument | a mint section on the board |
+| **minting a row** | one register line, and `../tasks/rows/<ID>.md` with the argument — ⭐ **BORN WITH AN ANCHORED POINTER TO ITS ARGUMENT** (Ruling 244(e)) | a mint section on the board, or ⛔ **a row file carrying no `](…#…)` back to the argument that minted it** |
 | **changing a state** | ⭐ **replace the state cell** | append the new state beneath the old one |
 | **re-scoping a live row** | edit `../tasks/rows/<ID>.md` — ⭐ **it is a live document and editing it is the point** | annotate the board |
 | **closing a row** | ⛔ **FOUR edits** (Ruling 201 added the fourth). ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; delete the row file; ⛔ **re-point every INBOUND citation of `rows/<ID>.md` in a LIVE document at the archive record** — see Ruling 201 below | leave the row file behind — ⛔ **`board-orphan` will say so** — leave either link pointing where it used to, or ⛔ **leave a backticked `rows/<ID>.md` standing in live prose or code, which NO instrument can see** |
@@ -108,6 +108,61 @@ somebody writes an ordinary table.**
 beneath, never by editing** (Ruling 106). ⭐ **That is precisely why a live row's
 argument may not live there** — and it is the whole reason `rows/` exists rather
 than one more archive section.
+
+### ⛔ Ruling 244(e) (CTO round 56) — a row is BORN with an ANCHORED POINTER to its argument
+
+```bash
+# ⛔ Run on the row being minted, BEFORE the mint commit lands. `-L` lists the
+#    files with NO match, so the pass condition is a silence.
+grep -LE '\]\(\.\./(BOARD-ARCHIVE\.md|handoffs/[^)]*)#' ../tasks/rows/<ID>.md
+```
+
+⛔ **Pass: the command names no file.** ⚠️ **An UNANCHORED pointer is not a pass:
+the address has to resolve to the argument, not to the document that contains
+it** — ⭐ **which is the property a pointer has and a restatement does not.**
+
+⭐ **The evidence that the clause costs nothing: the PO did it for all four of
+round 44's mints WITHOUT the clause.** ⚠️ **Without it, `W88`'s population grows by
+one per mint, and 8 of its 10 new members at round 56 were the minter's own** —
+[round 56's record](../tasks/handoffs/CTO-2026-09-10-round56.md#3-ruling-244-a-row-whose-own-predicate-has-rotted-is-amended-never-re-minted-the-dispatch-predicate-is-stated-once-the-rotted-one-is-left-standing-and-dated-and-the-row-is-placed-rather-than-dispatched).
+
+⛔ **This clause binds the MINT and nothing else. It is not a retroactive sweep of
+`rows/`, and the backlog is `W88`'s** — ⚠️ **MEASURED at `6c4e3d0`, role `wt/dev1`,
+clean worktree, the command above widened to `../tasks/rows/*.md`: **33** of **80**
+row files carry no anchored pointer to an argument. ⛔ **Reading it as this clause's
+pass condition would make the clause unsatisfiable on the day it landed**, which is
+Ruling 185(a)'s defect and Ruling 223's worked example.
+
+### ⛔ Ruling 231(b) (CTO round 54) — a REGISTER must be TRUE WHEN IT MERGES, and the freshness check is an INSTRUMENT IN THE MERGE PATH, never a habit
+
+⭐ **The clause, verbatim as the PO supplied it in round 43 and as
+[round 56's record](../tasks/handoffs/CTO-2026-09-10-round56.md#4-ruling-245-a-ruling-no-convention-carries-is-not-a-gap-it-is-a-cliff-rulings-217241-have-reached-no-convention-document-0-of-25-against-a-control-of-17-of-21)
+ordered it landed** (Ruling 195 — quoted, never paraphrased):
+
+> ⛔ Before a merge to a release branch the coordinator runs
+> `python3 -m tools.quality.board.corroborate` and quotes its reading in the merge
+> message's record, beside the verdict. ⚠️ A non-zero exit is a BLOCKING condition
+> on the merge, not a note: a register that is wrong when it merges is wrong for
+> every agent that opens it next
+
+```bash
+python3 -m tools.quality.board.corroborate > /tmp/corr.txt 2>&1
+echo "CORR_EXIT=$?"     # ⛔ read on the NEXT line, nothing in between (Ruling 241)
+cat /tmp/corr.txt       # ⭐ the READING is what the merge message quotes
+```
+
+⛔ **Pass: `CORR_EXIT=0`, and the reading quoted beside the verdict.** ⚠️ **Exit `2`
+is the real third state and is NOT a pass** — see Ruling 216 below.
+
+⛔ **AND THE BOUND ON WHAT THIS GATE CAN PROMISE, adopted into the ruling at round
+56 as Ruling 247: a merge-time gate that exits `0` against a FALSE cell gates
+nothing.** ⭐ **`corroborate` already holds both numbers and prints them side by
+side; turning that into one comparison is `W115`'s, not this clause's.**
+
+⭐ **Ruling 231 does NOT amend Ruling 97 and does not weaken it.** ⛔ **A RECORD is
+true at the ref it was taken at, forever; a REGISTER is true NOW or it is wrong** —
+⚠️ **and Ruling 97 was never the right instrument for a document every agent opens
+as the CURRENT state, which is what a board is FOR.**
 
 ### ⛔ Ruling 174 — Ruling 106's freeze attaches when material BECOMES a record, not while it is being moved into one
 
