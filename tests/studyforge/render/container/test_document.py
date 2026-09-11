@@ -63,11 +63,21 @@ def test_the_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
     # container page's own contents ARE the unit list, it declares no practices,
     # and narration is a unit's.
     # ⭐ `breadcrumb` joined them when `SF-15` added the slot, and it is the one
-    # of the four that is a GAP rather than an absence — a container page has
+    # of the five that is a GAP rather than an absence — a container page has
     # ancestors to name. That it is empty here is `SF-27`'s row (`SF-15/2`), and
     # the point of the by-name form is that the skeleton's growth could not be
     # silent: this assertion is what went red.
-    assert document_module.EMPTY_SLOTS == ("breadcrumb", "outline", "pending", "player")
+    # ⭐ **And it went red a second time, as designed**: `SF-30` added `mark`, and
+    # a read mark is a UNIT's — a container is read by reading what is under it.
+    # ⚠️ The marks themselves DO reach this page, as a state on the rows, which is
+    # why each row now carries the unit key a mark is filed under.
+    assert document_module.EMPTY_SLOTS == (
+        "breadcrumb",
+        "mark",
+        "outline",
+        "pending",
+        "player",
+    )
 
 
 def test_the_page_ends_in_exactly_one_newline():

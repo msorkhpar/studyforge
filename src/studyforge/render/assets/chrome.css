@@ -329,6 +329,67 @@ span[data-kind="level"] {
   letter-spacing: 0.03em;
 }
 
+/* --- region 7: the read control, and the mark it sets ------------------ */
+
+/* ⛔ The reader's own record (`SF-30`), set to read as an ACT and not as more
+   prose: a panel with the page's UI face, a button that looks like one, and the
+   sentence about where the mark lives quiet underneath. ⚠️ The region ships
+   `hidden` and `read-mark.js` unhides it only once it has a working store, so
+   nothing here rules the scriptless case — `[hidden]` is the user agent's, and a
+   control that cannot work is not shown rather than shown greyed out. ⛔ `body >`
+   scopes every selector, as the practice panel's do, because `data-section` is
+   OVERLOADED: `section.html` carries a corpus's own key in it (R1). */
+
+body > section[data-section="read-mark"] {
+  margin: 2.5rem 0 1.5rem;
+  padding: 1rem 1.15rem;
+  background: var(--surface);
+  border-top: 1px solid var(--rule);
+  border-radius: 8px;
+  font-family: var(--font-ui);
+}
+
+body > section[data-section="read-mark"] button {
+  font: inherit;
+  padding: 0.4em 0.95em;
+  background: var(--bg);
+  color: var(--fg);
+  border: 1px solid var(--rule-strong);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ⚠️ The state is told apart by its border and its weight as well as by its
+   colour, because the two labels are the authoritative statement and this is the
+   reinforcement — not the other way round. */
+body > section[data-section="read-mark"][data-marked="true"] button {
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+body > section[data-section="read-mark"] p {
+  margin: 0.7rem 0 0;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+body > section[data-section="read-mark"] p:first-child {
+  margin: 0;
+}
+
+/* ⛔ The mark, surfaced on the two lists that ARE their pages. ⭐ A GLYPH and not
+   a colour: a row nobody can tell apart without seeing colour is a row that is
+   not marked for everybody. ⚠️ `data-marked` is set at read time and emitted by
+   no renderer — the mark is the reader's own, and the generated page is
+   byte-identical whoever opens it (R10). */
+nav[aria-label="Contents"] li[data-marked="true"]::after,
+nav[aria-label="Units"] li[data-marked="true"]::after {
+  content: " \2713";
+  color: var(--accent);
+  font-weight: 700;
+}
+
 /* --- what the reader asked for ---------------------------------------- */
 
 /* ⚠️ `reading.css` already flattens animation under `prefers-reduced-motion`.

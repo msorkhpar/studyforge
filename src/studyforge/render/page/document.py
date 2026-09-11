@@ -28,7 +28,7 @@ says.
 ## ⭐ The seam this module divides on, named before anybody needs it
 
 ⚠️ **This is the module the composer grows into**: every new page region — the
-player, the read control at M5, a container page — adds a slot. ⛔ Its next split
+player, the read control, a container page — adds a slot. ⛔ Its next split
 is **not** at a convenient line number: it is between the **skeleton** (which
 regions exist, in what order, and the one `page.html` substitution that fills
 them) and the **regions themselves**, each of which is *optional and gated on
@@ -66,6 +66,7 @@ from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
+from studyforge.render.page import mark as mark_region
 from studyforge.render.page import navigation
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
@@ -125,6 +126,7 @@ def compose(
             outline=_region(navigation.outline(document)),
             body=body,
             pending=_region(pending(document)),
+            mark=_region(mark_region.render(document)),
             player=_region(player(body)),
             nav=_region(navigation.between_units(links)),
         )

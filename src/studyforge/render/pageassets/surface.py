@@ -102,6 +102,7 @@ _FORM_OF = {
     "code_caption": CLASS_FORM,
     "readable": ATTRIBUTE_FORM,
     "kind": ATTRIBUTE_FORM,
+    "marked": ATTRIBUTE_FORM,
     "numbering": KIND_FORM,
     "level": KIND_FORM,
 }
@@ -123,6 +124,19 @@ _FORM_OF = {
 #: Ruling 101 row 1 reach, which `render/page/test_init.py`'s sweep fails by
 #: name.
 #:
+#: ⭐ **`marked` is the one hook NO renderer emits, and it is published for the
+#: same reason the others are** (`SF-30`). A read mark is the reader's own
+#: assertion, kept in their browser — so it can only be set at read time, by
+#: `render/assets/read-mark.js`, on the unit page's control and on the rows of
+#: the two lists. ⛔ It is here rather than spelled in the script because
+#: `chrome.css` is what DRAWS the marked state, and a state the stylesheet
+#: reaches is exactly what this mapping is for: two spellings that agree today
+#: disagree the day one of them is renamed, and the symptom is a badge that
+#: never lights. ⚠️ **`data-unit`, the key the mark is FILED under, is
+#: deliberately NOT here** — it is a script hook no rule could meaningfully
+#: reach, and putting it here would oblige `chrome.css` to paint a unit's
+#: address. `render/page/mark.py` says so at length.
+#:
 #: ⚠️ **`kind` is the attribute and `numbering`/`level` are two of its values,
 #: and the attribute is OVERLOADED.** `templates/section.html` carries
 #: `data-kind="<the section's kind>"`, whose value comes out of a corpus. So a
@@ -135,6 +149,7 @@ SURFACE_HOOKS = {
     "code_caption": "what",
     "readable": "data-readable",
     "kind": "data-kind",
+    "marked": "data-marked",
     "numbering": "numbering",
     "level": "level",
 }

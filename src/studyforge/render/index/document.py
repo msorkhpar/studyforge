@@ -22,7 +22,7 @@ this task adds no template file and no asset. ⚠️ A second skeleton would be 
 second `<head>`, a second masthead and a second place a `<meta viewport>` has to
 be remembered — and the day one gains a region the other silently would not.
 
-⛔ **Seven of the skeleton's slots are empty here, and they are empty
+⛔ **Eight of the skeleton's slots are empty here, and they are empty
 explicitly.** `templates.fill` refuses a placeholder with no value **and** a
 value with no placeholder, so each one is passed `""` by name rather than
 omitted — which means the day the skeleton drops a slot this module fails by
@@ -42,6 +42,10 @@ say (R1) |
 | `nav` | the between-pages bar points at neighbours in reading order, and the
 index has none: it is where that order begins |
 | `outline` | a unit page's outline is its own headings; this page's body *is* an outline |
+| `mark` | ⛔ a read mark is a UNIT's, and the control belongs on the page
+whose reading it records (`SF-30`). ⭐ The marks themselves DO reach this page —
+as a state on the rows this tree already keys by unit key — but that is the
+shared script's work at read time, not a region this module fills |
 | `pending` | practices belong to a unit |
 | `player` | narration belongs to a unit (`SF-18`) |
 
@@ -86,7 +90,16 @@ TRAILING_NEWLINE = "\n"
 
 #: The skeleton slots the root index has nothing to put in. ⛔ Named and passed
 #: rather than omitted — see this module's docstring for what each absence is.
-EMPTY_SLOTS = ("breadcrumb", "identity", "meta", "nav", "outline", "pending", "player")
+EMPTY_SLOTS = (
+    "breadcrumb",
+    "identity",
+    "mark",
+    "meta",
+    "nav",
+    "outline",
+    "pending",
+    "player",
+)
 
 
 def compose(document: Document, placement: Placement) -> str:

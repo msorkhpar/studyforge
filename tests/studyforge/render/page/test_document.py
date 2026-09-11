@@ -149,6 +149,7 @@ def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():
             "outline",
             "body",
             "pending",
+            "mark",
             "player",
             "nav",
         }
