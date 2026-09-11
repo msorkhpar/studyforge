@@ -254,6 +254,53 @@ people.
 |---|---|---|
 | **base** | is the branch everyone merges into healthy? | ⛔ a **finding against the release branch**, not against this change — and it is urgent, because it blocks every other review |
 | **merge** | is the result of this change good? | CHANGES REQUESTED against this change |
+| ⭐ **N-way cumulative** | is the result of **the whole wave** good? | ⛔ **Ruling 203** — a finding against the WAVE, naming which branch supplies the fix |
+
+#### ⛔ 0a-iii. Ruling 203 (CTO round 51) — a wave of N branches owes the N-WAY reading, and a GENERATED DERIVATION OF THE RECORDS makes every later record a build failure
+
+⛔ **Pairwise-green does not compose.** ⚠️ **Zero file overlap between branches is
+NOT sufficient, and this is the measurement that proves it: three branches with a
+measured EMPTY pairwise intersection, each green in its own trial merge, and the
+four-way merge RED.**
+
+```bash
+# ⛔ Run ONE trial worktree and merge EVERY branch of the wave into it, in order.
+TRIAL=$(mktemp -d)/wave
+git worktree add -q --detach "$TRIAL" "$REVIEW_BASE"
+for b in $WAVE_BRANCHES; do
+  git -C "$TRIAL" merge --no-edit --no-ff "$b" || echo "⛔ CONFLICT at $b"
+done
+( cd "$TRIAL" && docker/dev/check sh -c 'python3 -m pytest -q; python3 -m tools.quality' )
+git worktree remove --force "$TRIAL"
+```
+
+⛔ **Pass: the N-way reading is taken and reported beside the per-branch ones.**
+⚠️ **A wave whose N-way reading is red is not N green branches; it is a red wave,
+and the reviewer names which branch carries the remedy.**
+
+⭐ **MEASURED, round 51, all five readings in the pinned container:**
+
+```text
+base 1c5e913                      4726 / 67   floor clean
++ po-round40                      4726 / 67   floor clean
++ W91                             4775 / 67   floor clean
++ SF-30                           4807 / 67   floor clean
++ po-round40 + W91                4775 / 67   floor clean
+⛔ + po-round40 + W91 + SF-30 + cto-round51   3 FAILED, exit 1
+   docs/tasks/rulings-index.md:0 stale: the records derive 202 and this document
+   is not what that derivation renders.
+⭐ CAUSE: the reviewer's OWN record declares `Rulings minted: 198-202`, and W91
+   lands a GENERATED index of the records. Neither branch is defective.
+⭐ REMEDY, measured: `python3 -m tools.quality.rulings` -> 6 inserted lines,
+   floor back to exit 0.
+```
+
+> ⛔ **THE STANDING OBLIGATION THIS CREATES, and it binds from W91's merge
+> onward:** ⭐ **once a derivation GENERATED FROM THE RECORDS is part of the floor,
+> every ruling record regenerates it IN THE SAME COMMIT.** ⚠️ **A ruling record is
+> no longer a prose-only change** — ⛔ **and a reviewer's own round record is the
+> first thing that breaks this, which is why the clause is written by the office
+> that broke it.**
 
 ### ⛔ 0a-ii. Ruling 197 (CTO round 50) — a BEHIND count, the TWO-DOT span that hides it, and a citation from a checkout that cannot hold the ruling
 
@@ -740,6 +787,31 @@ done
 
 **Pass = no `OVER:` line**, or every one carries a valid opt-out.
 
+#### ⛔ 3b-i. Ruling 207 (CTO round 51) — the ceiling's instrument reads `.py` ONLY, so the reviewer reads the rest
+
+⛔ **`tools/quality/size.py:167` iterates `config.python_files(root)`. R11's
+shipped gate therefore cannot see a single non-Python file** — ⚠️ **and the largest
+authored file in `src/` is one of them, one line under the ceiling.**
+
+```bash
+# ⛔ The ceiling's BLIND SPOT, printed in full. Run it every round; it is cheap.
+git ls-tree -r --name-only HEAD src/ | grep -vE '\.py$' | while read -r f; do
+  printf '%6s  %s\n' "$(git show "HEAD:$f" | wc -l)" "$f"
+done | sort -rn | head
+```
+
+⛔ **Pass: the reviewer prints this population and states, per row, whether it is
+within 400** — ⭐ **and a row within 10 lines of the ceiling is named in the
+verdict whether or not it is over.**
+
+⭐ **MEASURED at `feat/SF-30-reader-state`:** `chrome.css` **399**,
+`skills/adapter/SKILL.md` 302, `reconnaissance/SKILL.md` 231,
+`assets/study-progress.js` 215, `skills/delivery/SKILL.md` 202.
+⛔ **`chrome.css` at `399/400` is ONE LINE from a ceiling its own checker cannot
+read, and `SF-30/3` found it from outside the instrument.** ⚠️ **Widening
+`python_files` is NOT the remedy — the name would then lie; the population is a
+SECOND declared set, and that is a row, routed rather than patched here.**
+
 ### 3c. What a valid justified opt-out looks like
 
 ⭐ **Ruling — the opt-out is a line in the module's own docstring, in the first
@@ -910,6 +982,31 @@ git grep -l 'ZZZ_no_such_marker'   -- src/ | wc -l   # 7b5c0a9 -> 0   (!!)
 > `quality floor: 4 findings` under a plant where this office read `clean`, and
 > the four were a HALF-APPLIED close, not the plant. ⛔ Right scalar, wrong
 > cause** — and re-measuring on a committed tree reproduced `clean` exactly.
+
+> ⛔ **Ruling 205 (CTO round 51) — A RESTORE IS VERIFIED BY READING THE TREE,
+> NEVER BY THE RESTORE COMMAND'S OWN REPORT. And the pinned container CANNOT
+> RESTORE AT ALL.**
+>
+> ```bash
+> # ⛔ The authority mounts the git common dir READ-ONLY, by design (R7):
+> #    docker/dev/check:48   GIT_MOUNT="--volume $common:$common:ro"
+> # So INSIDE the container, `git checkout -- <path>` cannot take index.lock:
+> #    fatal: Unable to create '…/index.lock': Read-only file system   (exit 128)
+> # ⭐ and the file REMAINS MODIFIED. Restore from the HOST, then verify by READING:
+> md5sum -c /tmp/plant.md5          # ⭐ content
+> git status --porcelain -- "$SUBJECT"   # ⭐ must be EMPTY
+> git diff --stat -- "$SUBJECT"     # ⭐ must be empty
+> ```
+>
+> ⛔ **Pass: every restore is followed by at least two of those three, and the
+> restore command's exit code is NOT one of them.** ⚠️ **THIRD INSTANCE IN TWO
+> WAVES of one shape — a failing command with a reassuring line beside it:** this
+> office's `comm -12` refused its input while its own `echo` printed *"(empty above
+> = no shared path)"*; `PO-40/7`'s `git checkout --` destroyed the PO's uncommitted
+> edits; and now a restore that cannot execute inside the very environment Ruling 40
+> makes authoritative. ⭐ **The remedy has caught two of the three already and it is
+> always the same: READ THE TREE.** ⛔ **`.scratch/` and this plant protocol both
+> assumed a restore that works, and neither said so.**
 
 ⛔ **So Ruling 121's grep is a CORROBORATOR here and not the gate**, and its two
 failure modes are measured, not argued. ⚠️ **At `a00337b`: the marker in a
@@ -2949,6 +3046,47 @@ verdict:**
   to catch what the decomposition stopped covering; ⚠️ handing the verdict to the
   person whose task passes or fails on it puts the one unautomated judgement in
   the one place the rest of this document refuses to put any other.
+
+### ⛔ Ruling 204 (CTO round 51) — a HOST BROWSER reading DISCHARGES a clause where the pinned image is INCAPABLE, and a SKIPPED committed check is still Blocked
+
+⛔ **Ruling 40 makes the pinned container authoritative for what it CAN run. It
+cannot make it authoritative for what it cannot run at all** — ⭐ **and the pinned
+image has no browser, by design and by measurement (`QA-03/1`, 57 dark checks in
+every reading).** ⚠️ **So for a browser clause the choice is not *container versus
+host*; it is *a named host reading versus no reading ever*, and refusing the first
+makes every browser clause permanently unmeetable — which Ruling 129 says to SPLIT,
+not to block forever.**
+
+```text
+⭐ A browser half is DISCHARGED when ALL THREE hold:
+   1. the pinned image is INCAPABLE of the reading, not merely different;
+   2. the reading NAMES the browser and its VERSION;
+   3. the PINNED half and the HOST half are stated SEPARATELY, per clause.
+⛔ It is part-BLOCKED when EITHER:
+   a. no browser reading was taken at all; or
+   b. a COMMITTED check for that clause SKIPPED — ⛔ a skip is a reading OF THE
+      GATE, and a host run of something else cannot convert it (§4b-i).
+```
+
+⛔ **THE TWO ROWS THIS WAS ASKED ABOUT ARE BOTH CORRECT, and the dichotomy put to
+me was FALSE. MEASURED BY ME:**
+
+```text
+SF-15  `tests/visual/test_offline.py` EXISTS, is COMMITTED, and SKIPPED.
+       ⭐ MEASURED: SF-15.md names NO browser version anywhere — its 8 "chrome"
+       mentions are all `chrome.css`, the stylesheet. It took NO browser reading.
+       ⛔ part-BLOCKED by arm (a) AND arm (b). CORRECT, and not conservative.
+SF-30  ⭐ MEASURED: 5 readings naming `Chrome 149.0.7827.200`, pinned and host
+       halves stated per clause, and the load-bearing assumption (localStorage on
+       `file://`) measured FIRST rather than inherited.
+       ⛔ And it has NO committed check to skip — which is `SF-30/1`, its own
+       structural finding. DISCHARGED, and not generous.
+```
+
+⚠️ **The DEBT is real and is not waived: a host reading is not reproducible by
+another office until the clause has a COMMITTED home.** ⛔ **So discharge carries
+the routing — `W36` for the browser, and the clause's committed home for the
+check — and a second branch may not cite the first's host reading as a pass.**
 
 ### ⛔ Ruling 129 — an UNMEETABLE acceptance clause is SPLIT, and the CHANGES REQUESTED lands on the PLAN, not the branch
 

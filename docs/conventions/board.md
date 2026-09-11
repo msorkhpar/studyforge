@@ -779,3 +779,36 @@ non-fixture citations** — `docs/conventions/board.md:179` and
 `tools/quality/board/register.py:351` → `rows/W18.md` pre-existing.
 ⚠️ **The PO's population printed `3`; the fourth is `register.py:351`, and
 `rows/W18.md` did exist — added at `f7d7e1b`, deleted at `cae114e`.**
+
+### ⛔ (c) Ruling 206 — TWO OWNERSHIP FACTS NO INSTRUMENT CAN READ, and neither is the reporting office's fault
+
+⛔ **Both halves are the same shape: a fact about WHO owns a thing, which every
+office can SEE and only one office can ANSWER.**
+
+> ⭐ **(i) A dispatch reads the `Owner` cell, and where shipped work contradicts
+> the cell, THE CELL IS THE DEFECT.** ⛔ **MEASURED: `W91`'s register owner reads
+> `PO` and the row was dispatched to a developer, who shipped 5 modules and 49
+> tests.** ⚠️ **The work is developer work, so the cell was wrong** — ⭐ **but the
+> coordinator named that conclusion as a rationalisation after the fact and they
+> were right to, so it is RULED rather than assumed: the cell is read BEFORE
+> dispatch, and a cell that disagrees with the work a row actually needs is a PO
+> fix, never a silent re-assignment.** ⛔ **`W91`'s own register text also still
+> read *"rulings run to 186"* against a tail of `197` — the row describing the
+> staleness was itself stale, which is why this is a cell defect and not a
+> dispatch defect.**
+
+> ⭐ **(ii) A WORKTREE IS INDISTINGUISHABLE FROM A LEAK TO EVERY OFFICE BUT ITS
+> OWNER.** ⛔ **So REPORTING one is NEVER wrong, and REMOVING one you did not cut
+> is ALWAYS wrong.** ⚠️ **Attribution is answered by the live reviewer, from the
+> commit graph, not guessed from the path:**
+>
+> ```bash
+> git rev-list --parents -n1 <the worktree's HEAD>   # ⭐ a trial merge names BOTH parents
+> ```
+>
+> ⭐ **MEASURED, round 51: `…/scratchpad/trial-r51` @ `21a1104`, parents `1c5e913`
+> + `696ad81` — the REVIEWER's own live trial merge, reported THREE times by TWO
+> offices, and both offices correctly refused to touch it.** ⛔ **Two of the three
+> worktrees reported this session really were leaks, so the reports are signal and
+> not noise** — ⚠️ **and `corroborate`'s `spent trial/tmp branches` line has the
+> same blind spot, which is `W110`'s neighbourhood.**
