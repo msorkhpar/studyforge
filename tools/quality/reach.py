@@ -56,6 +56,22 @@ subject confined to `docs/conventions/` excludes all three structurally rather
 than by a filter a reader has to remember** — which is the same exemption shape
 `source_names` uses, and for the same reason.
 
+## ⛔ WHAT THIS CANNOT SEE, DECLARED — because an incomplete gaps list is worse than none
+
+⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ So the one gap is
+named rather than discovered: **this asserts a CITATION, not a LANDING.** ⚠️ A
+convention that merely *mentions* `Ruling N` in passing — inside a neighbouring
+ruling's prose, say — satisfies it exactly as a section that carries the clause
+does. ⛔ **MEASURED, and it is why the gap is stated rather than implied: at
+`6c4e3d0` rulings `235`, `238`, `240` and `241` all read REACHED over Ruling
+245's own population of `217`–`241`, and three of those four were incidental
+mentions inside round 58's sections rather than the clause `W126` was routed to
+land.** ⭐ **Ruling 200 already drew this boundary and drew it the same way —
+*"the reviewer confirms one of them is the document the rule was WRITTEN
+INTO"*** — so the machine's half is the citation and the reviewer's half is
+whether it teaches anything. ⚠️ **A check that tried to judge the second would be
+judging prose, which is the one thing this floor never does.**
+
 ## ⚠️ An empty population is a REFUSAL here, not a pass
 
 ⛔ **Ruling 191: an empty population returns the PASS reading rather than no
