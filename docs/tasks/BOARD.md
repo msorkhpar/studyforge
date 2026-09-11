@@ -48,42 +48,39 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN IN ROUND 44, at `af31fd7`, and it is the SEVENTH CONSECUTIVE WAVE the
-table was stale at a base** (`W119/4`) — ⛔ **`corroborate` read `1 of 3 REFUTED,
-exit 1` against the table this replaces: `W98` was ABSORBED by the merge
-`8416924` and its `wt/dev2` resolved to nothing**
+**RE-TAKEN IN ROUND 44 AS ITS LAST ACT, at `ad5ce24`, and it was stale at a base
+for the EIGHTH consecutive wave** (`W119/4`, Ruling 262) — ⛔ **`corroborate` read
+`3 of 3 REFUTED, exit 1` after the wave's last merge: `W98` absorbed by `8416924`,
+then `W119` and `W100` absorbed by `6d5aeed`** — ⭐ **and the surviving row's cell is
+as-of its BRANCH TIP `5dc363c`, not as-of `ad5ce24`**
 ([the re-take](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W119` | framework agent | `wt/dev1`, `fix/W119-W100-board-instruments` | 8 | in-review |
-| `W100` | framework agent | `wt/dev1`, `fix/W119-W100-board-instruments` | 8 | in-review |
-| `W124` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 0 | in flight |
-| `W122` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 0 | in flight |
-| `W123` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 0 | in flight |
+| `W124` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 3 | in flight |
+| `W122` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 3 | in flight |
+| `W123` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 3 | in flight |
 <!-- /inflight -->
 
-⛔ **A `0` ahead is legitimate and it is RULING 130'S CLASS, not a gap:** a branch
-with no commit is invisible to `--no-merged` by construction, so `corroborate`
-prints such a checkout under its *invisible to git BY CONSTRUCTION* arm. ⭐ **Three
-cells read `0` today and the carrier is `wt/dev3`: the branch exists and has not
-committed.** ⚠️ **The as-of for a commits-ahead cell is the BRANCH TIP and never the
-release ref** — ⛔ **and `corroborate` corroborates the ROW and never the CELL, so
-its exit `0` is NOT evidence these five numbers are right** (`PO-42/7`, `PO-43/9`,
-`CTO-56`'s three false cells confirmed four times — and it is what `W115` is for).
+⚠️ **A commits-ahead cell is as-of the BRANCH TIP, and that tip MOVES while a
+developer works** — ⛔ **so `corroborate` corroborates the ROW and never the CELL,
+and its exit is NOT evidence these numbers are right** (`PO-42/7`, `PO-43/9`,
+`CTO-56`'s three false cells confirmed four times; ⭐ **a `0` ahead would be RULING
+130'S CLASS and not a gap**). ⛔ **RULING 262 IS FALSE AS STATED, measured by the
+coordinator against their own merge: absorbing a branch is what refutes its
+In-flight cell, so a post-merge check fails on every CORRECT merge. The obligation
+can only live at the WAVE CLOSE — this table's re-take** (`PO-44/10`, routed).
 
-⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A
-RAMP** — ⭐ **a header is INFERRED, so an absent table is indistinguishable from a
-renamed column and can only be ANNOUNCED; a delimiter is DECLARED, so an absent
-marker can be REFUSED.** ⭐ **THE REFUSAL SHIPS: `W111` landed at `923a970`, and
-the floor now reads `1 <!-- inflight --> blocks declared, 0 unreadable`.**
+⛔ **THE DELIMITERS ARE RULING 196'S AND THEY RETIRE A RAMP** — ⭐ **a header is
+INFERRED, so an absent table can only be ANNOUNCED; a delimiter is DECLARED, so an
+absent marker can be REFUSED.** ⭐ **`W111` landed at `923a970` and the floor reads
+`1 <!-- inflight --> blocks declared, 0 unreadable`.**
 
-⚠️ **ONE BRANCH CAN CARRY TWO ROWS AND ONE OF THEM CAN STOP:** ⛔ **`W63` and `W64`
-shared `fix/W63-W64-marker-kind`, and it merged with `W63` DONE and `W64` STOPPED
-(Ruling 218)** — ⭐ **so a merge is not a close, and the register carries the two
-outcomes separately.** ⚠️ **`W119` and `W100` share a branch for the same reason,
-and the same rule binds their close.**
+⚠️ **ONE BRANCH CAN CARRY TWO ROWS WITH DIFFERENT OUTCOMES** (Ruling 218): ⛔ **`W63`
+and `W64` shared a branch that merged with `W63` DONE and `W64` STOPPED.** ⭐ **`W119`
+and `W100` shared one too, and they closed SEPARATELY for a third reason — `W119`
+`done`, `W100` `blocked` on `PO-44/8`.**
 
 ⛔ **The office checkouts are NOT named here, and that is one fact with one home
 rather than a deletion:** ⭐ **`corroborate` prints every checkout no row names,
@@ -102,28 +99,28 @@ argument for each placement is in the round record; this table is the outcome.**
 | 1 | `W126` | ⛔ **every round since 53 has OPENED on a refuted premise and five rulings are invisible to the agents they bind** — Ruling 245 | round 44 |
 | 2 | `W127` | ⛔ **3 of the 11 skips every office quotes are an INSTRUMENT DEFECT wearing a legitimate absence** — Ruling 248(e) | round 44 |
 | 3 | `W115` | ⛔ **the only open row that can make a WAVE-CLOSE GATE return a false pass**, every wave runs it, and 3 of 3 cells were false at round 56 — Ruling 247(b) | round 42, promoted round 56 |
-| 4 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit** | round 35, promoted round 42 |
-| 5 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW to 30 — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
-| 6 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
-| 7 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
-| 8 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
-| 9 | `W105`–`W109` | ⭐ **round 39's five mints**, and `W105` is UNBLOCKED — `W36` merged | round 39 |
-| 10 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
-| 11 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
+| 4 | `W128` | ⛔ **Ruling 225's OTHER half — a committed verdict depending on the host's ENVIRONMENT**, and Ruling 263 mints it because a developer may not scope a class they were not given | round 44 |
+| 5 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit** | round 35, promoted round 42 |
+| 6 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW to 30 — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
+| 7 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
+| 8 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
+| 9 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
+| 10 | `W105`–`W109` | ⭐ **round 39's five mints**, and `W105` is UNBLOCKED — `W36` merged | round 39 |
+| 11 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
+| 12 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⚠️ **this paragraph once
 read *"rows 1–2 do not invoke Ruling 75"*, and the ordinals stopped being true the
 moment two rows were dispatched out.** ⭐ **An id resolves; a position does not.**
 ⛔ **And a *Next rows* cell may carry no measurement AND no PREDICTION** (243(c)).
 
-⛔ **SEVEN ROWS HERE INVOKE RULING 75 AND EACH SAYS SO IN ITS OWN FILE — MEASURED
-over all 79 row files, not asserted: `W126`, `W127`, `W115`, `W88`, `W120`, `W121`,
-`W103`.** ⚠️ **This sentence named `W115` among files that said so and
-`rows/W115.md` had no such section; `rows/W103.md` had none either while standing
-above `W105`–`W109`. Both now do** (`PO-44/2`). ⭐ **`W78` jumps NOBODY — it is
-older than everything below it.** ⚠️ **`W78`, `W88` and `W120` all write `docs/`, so
-they are ONE OWNER or three waves, never three takers in one** (check 4's sub-step)
-— ⭐ **while `W126` and `W127` share NO surface and may run concurrently.**
+⛔ **EIGHT ROWS HERE INVOKE RULING 75 AND EACH SAYS SO IN ITS OWN FILE — MEASURED
+over every row file: `W126`, `W127`, `W115`, `W128`, `W88`, `W120`, `W121`, `W103`.**
+⚠️ **This sentence said SEVEN and named `W115`, whose file had no such section;
+`rows/W103.md` had none either. Both now do** (`PO-44/2`). ⭐ **`W78` jumps NOBODY.**
+⚠️ **`W78`, `W88` and `W120` all write `docs/`: ONE OWNER or three waves, never
+three takers in one** (check 4's sub-step) — ⭐ **while `W126` and `W127` share NO
+surface and may run concurrently.**
 
 ## The register — every `W` row
 
@@ -233,7 +230,7 @@ they have exactly one home each.
 | W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | ✅ done — `3432e9a` | [record](BOARD-ARCHIVE.md#w96-a-cell-declaring-a-started-state-asserts-a-live-checkout-or-a-branch-ahead-of-release) |
 | W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
 | W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | ✅ done — `8416924` | [record](BOARD-ARCHIVE.md#w98-qa-03s-harness-judges-2-of-6-chrome-regions-sitepy-passes-no-links-and-builds-one-page-kind) |
-| W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | in flight — Ruling 189's family | [`rows/W100.md`](rows/W100.md) |
+| W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | `blocked` — ⛔ **DELIVERED and MERGED `6d5aeed`; its CLOSE is blocked, `PO-44/8`** | [`rows/W100.md`](rows/W100.md) |
 | W101 | Check 4's sub-step compares `Owns` to a diff, and `Owns` is brace expansion and directory prefixes | framework agent | `todo` — `CTO-48/12`, before the next parallel pair | [`rows/W101.md`](rows/W101.md) |
 | W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | ✅ done — Ruling 184(c), `4e8ba86` | [record](BOARD-ARCHIVE.md#w102-check-3s-pattern-is-case-sensitive-and-the-house-style-writes-ruling-n) |
 | W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
@@ -252,7 +249,7 @@ they have exactly one home each.
 | W116 | The formatter's target is INFERRED, so an absent declaration made a style decision no document records | framework agent | `todo` — Ruling 210 | [`rows/W116.md`](rows/W116.md) |
 | W117 | `**Consumer-side modules:**` is a contract named in ZERO convention documents, and both its sites are consumers | framework agent | `todo` — `W74/3` | [`rows/W117.md`](rows/W117.md) |
 | W118 | A gap named in FOUR consecutive closes is a different fact from a gap named once, and no instrument reads it | PO | `todo` — `CTO-52/5` | [`rows/W118.md`](rows/W118.md) |
-| W119 | A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge | framework agent | in flight — `PO-42`'s brief, re-derived | [`rows/W119.md`](rows/W119.md) |
+| W119 | A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge | framework agent | ✅ done — `6d5aeed` | [record](BOARD-ARCHIVE.md#w119-a-committed-test-reads-this-machines-worktree-set-so-it-goes-red-on-a-correct-tree-in-the-window-after-every-merge) |
 | W120 | The bounded Ruling 186 notice is discharged by ONE row over its WHOLE population, and a partial fix is refused | framework agent | `todo` — Ruling 222 | [`rows/W120.md`](rows/W120.md) |
 | W121 | The marker reader cannot see a finding written as a TABLE ROW, which is the form both offices write | framework agent | `todo` — Ruling 218's gate one, before `W64` | [`rows/W121.md`](rows/W121.md) |
 | W122 | A count in a SHIPPED file that no unit makes true — the Dockerfile's *"21 shared libraries"* | framework agent | `todo` — Ruling 240, `CTO-55/1` | [`rows/W122.md`](rows/W122.md) |
@@ -261,6 +258,7 @@ they have exactly one home each.
 | W125 | The In flight table is ASSERTED, and generating it naively leaves `corroborate` asserting git against itself | framework agent | `todo` — Ruling 231(c), routed and never minted | [`rows/W125.md`](rows/W125.md) |
 | W126 | Rulings 217–241 reached NO convention document, 0 of 25, and the tail has no instrument asserting they ever will | CTO | `todo` — Ruling 245, routed round 56 | [`rows/W126.md`](rows/W126.md) |
 | W127 | `tests/test_knowledge_index.py` ships a second workspace resolver, so 3 of the 11 skips are a defect | framework agent | `todo` — Ruling 248(e) | [`rows/W127.md`](rows/W127.md) |
+| W128 | A committed verdict may not depend on the host's ENVIRONMENT — Ruling 225's other half, in `tests/visual/` | framework agent | `todo` — Ruling 263 | [`rows/W128.md`](rows/W128.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -320,7 +318,7 @@ board edit and not a developer's.**
 | **`Effort` field applied beyond the four named tasks** | PO | `fired` — ⚠️ **a STANDING trigger: it fires again and never discharges, and the closed set has no word for that** (`PO-42/4`) | as each computation-shaped task is assigned | ✅ The field exists (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill; add it when a task is assigned and its shape is known |
 | ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | `discharged` — re-taken round 38 at `c18df98c`, 23 of 23 carrying a marker AND a disposition | ⛔ **EXPIRED trigger — it named M1's wave open, and M1 CLOSED at `2fe56a4`** | ⭐ **The work discharged itself round by round while this cell could not say so. That is `W100`'s founding case, and this row is now the proof the column was needed** |
 | ⛔ **The `ISO-8583-jPOS-tutorial` pin is NOT advanced** | PO | `pending` | the ISO track reaches one of its TWO finish lines (Q18) | ⛔ **Advancing a pin ASSERTS the new HEAD is intended.** The component ADVANCED rather than diverged — the pin is still an ancestor — and the track is `in-progress`, so re-pinning now pins a moving target. ⚠️ **And the only environment that can SEE a stale pin is the one Ruling 40 does not make authoritative** (Ruling 216) |
-| ⛔ **`NS-01` is NOT dispatched** — no sibling `narrate-service` | PO | `pending` — ⭐ **the DECLINE is RATIFIED, only the TRIGGER moved** (Ruling 248(c)) | ⛔ **`W126` merged AND ≤1 developer branch live** — ⚠️ **NOT `W119`** | ⭐ **Two of four reasons survive and suffice: a third concurrent change is scope creep, and `NS-01` is an `E13` task opened by `README.md`'s ordering, not by a handoff.** ⛔ **The reason that collapsed — *a worktree carries no siblings* — is REFUTED (Ruling 248(a)), which is why `W126` gates it |
+| ⛔ **`NS-01` is NOT dispatched** — no sibling `narrate-service` | PO | `pending` — ⭐ **the DECLINE is RATIFIED, only the TRIGGER moved** (Ruling 248(c)) | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **the second half is SATISFIED, so `W126`'s merge is all that holds it** (Ruling 256) | ⭐ **Two of four reasons survive and suffice: scope creep, and `NS-01` is an `E13` task opened by `README.md`'s ordering, not by a handoff.** ⛔ **The reason that collapsed — *a worktree carries no siblings* — is REFUTED (Ruling 248(a)), which is why `W126` gates it |
 | **R21's open rows** | CTO | `pending` — neither is due in the open milestone | each before its named task builds | ⛔ **POINTER, not a second copy — the open set is `## R21` above, and that section resolves from spec §R9.** ⚠️ **The narrative this replaces typed a COUNT that disagreed with `## R21` on the same board** — ⭐ **re-taken round 38 against §R9's own table and routed to the CTO, whose register it is** |
 <!-- /scheduled -->
 

@@ -13240,3 +13240,134 @@ fix/W98-harness-regions          0 ahead, absorbed by 8416924, checked out nowhe
 | re-pointing `rows/W119.md:13`'s node id | ⭐ **refused with a measurement — `PO-44/3`** |
 | deleting the rotted sentences in `rows/W124.md` | ⛔ **Ruling 244(b): the evidence that a row's subject moved is the most valuable thing in its file** |
 | advancing the `ISO-8583-jPOS-tutorial` pin | ⭐ **UPHELD by `CTO-56/13`: the track is `in-progress` and re-pinning pins a moving target.** ⚠️ The standing red belongs in `workspace.md` as `W126`'s clause 9 |
+
+### W119 — A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge
+
+⛔ **CLOSED `done` at `6d5aeed`, PO round 44** — ⭐ **CTO round 57 APPROVED the branch and ruled both rows delivered.** ⚠️ **Ruling 263: this row NARROWS Ruling 225 and does NOT discharge it — the git-shaped half is closed (`0` outside the guarded package, `1` inside, licensed and declared) and the ENVIRONMENT-shaped half is minted as `W128`.**
+
+⛔ **RE-ADDRESSING DISCLOSED** (Ruling 174): two `](../BOARD-ARCHIVE.md#…)` links became `](#…)` and `](../handoffs/…)` became `](handoffs/…)`, because this file sits one directory up from `rows/`. ⭐ **The frame block is DROPPED, not re-addressed — `board-frame`'s two substrings are a property of a LIVE row file.**
+
+⚠️ **AND THE AMENDMENT AT THE FOOT IS NOW DATED BY ITS OWN SUBJECT: it MEASURED the node id LIVE at `af31fd7`, and `6d5aeed` is the merge that retired it.** ⭐ **That is the amendment working as designed — `PO-44/3` refused to edit the quote precisely because the branch had not merged, and the refusal cost nothing because the close moved the material into a record within the same round.**
+
+⛔ **A TEST IN THE COMMITTED SUITE IS A FUNCTION OF THIS MACHINE'S WORKTREE SET RATHER THAN OF THE COMMIT.**
+
+⭐ **RECEIVED from the coordinator, MEASURED BY THEM at `e5ab51d`, both readings, ONE VARIABLE CHANGED** (Ruling 115 — I have not re-inhabited it and I say so):
+
+```text
+immediately after the four-way merge
+  tools/tests/quality/board/test_graph.py
+    ::test_live_the_release_branch_and_every_LIVE_CHECKOUT_read_NON_TERMINAL
+  -> 1 failed, 4910 passed
+cause  four branches had just been merged and four worktrees still held them,
+       so those branches were TERMINAL and LIVE at the same instant
+after retiring exactly those four worktrees, nothing else changed -> 14 passed
+```
+
+⛔ **SO IT GOES RED ON A PERFECTLY CORRECT REPOSITORY, in the window between a merge and the housekeeping — and it would go red on ANY OTHER MACHINE whose set of worktrees differs from this one's.**
+
+### ⛔ THE CLASS, AND IT IS RULING 208 INVERTED
+
+⭐ **Ruling 208 names an instrument whose REACH is NARROWER than its declared subject.** ⛔ **This is an instrument whose reach is WIDER than the tree it ships in: its subject leaks out of the repository and into the host.** ⚠️ **Ruling 80 already said a FLOOR check's verdict may not depend on untracked state, and a branch position is the purest untracked state there is** — ⭐ **this is that rule arriving in `tests/` rather than in `tools/quality/CHECKS`, where nothing enforces it.**
+
+⛔ **AND IT IS NOT CHARGEABLE AGAINST `W111` OR `W110`, stated so the record cannot be read as one:** ⭐ **the CTO's four-way trial merge was GREEN, because the branches were not yet merged when it ran.** ⚠️ **A defect visible ONLY in the instant AFTER a merge is one this project's whole review protocol is blind to by construction, and that is the part that deserves a ruling rather than a patch.**
+
+### ⛔ WHAT THE ROW OWES
+
+⭐ **Both halves, and the second is what makes it more than a test fix:**
+
+1. ⛔ **The test's subject becomes the commit.** ⚠️ **Whether that means a FIXTURE graph, a declared exemption for branches merged in the current session, or a skip with a reason, is the taker's to measure** — ⭐ **and Ruling 204 binds the choice: a SKIP is a reading OF THE GATE and is admissible if it says so.**
+2. ⛔ **THE SWEEP: how many other tests in `tools/tests/` and `tests/` read the host's git state at all?** ⭐ **One instance is a bug; the population is the finding, and a row that fixes one and counts none has left the class open** (Ruling 126, Ruling 128).
+
+⛔ **WHAT IT MUST NOT BECOME: a deletion.** ⭐ **The assertion it makes is a true and useful one — a live checkout should not hold a terminal branch — and it is the reading `W110` shipped.** ⚠️ **Removing it would retire a correct property to silence a host dependency, which is the wrong half to give up.**
+
+⛔ **CHECK 4'S SUB-STEP IS OWED IF IT IS DISPATCHED BESIDE `W115`:** ⭐ **that row's subjects are `verdict.py`, `corroborate.py` and `graph.py`, and this one reaches `graph.py` through whatever it asserts.**
+
+---
+
+### ⚠️ AMENDED PO ROUND 44 — THE NODE ID QUOTED ABOVE IS LIVE AT THIS REF AND RETIRED ON THE BRANCH, AND `W119/3` IS THEREFORE PREMATURE
+
+⛔ **`W119/3` filed `rows/W119.md:13` as a DANGLING citation. It is not dangling at the release ref, and this office MEASURED that before acting on it** (Ruling 115 — ⭐ **and the brief that relayed it is right about the merge and wrong about the tense**):
+
+```text
+MEASURED by the PO at af31fd7, the release tip:
+  grep "test_live_the_release_branch_and_every_LIVE_CHECKOUT_read_NON_TERMINAL"
+    tools/tests/quality/board/test_graph.py:205   ⭐ the node id is LIVE
+    docs/tasks/rows/W119.md:13                    ⭐ the citation RESOLVES
+  git grep <the same id> fix/W119-W100-board-instruments -- tools/
+    -> no hits                                    ⛔ RETIRED, on the BRANCH ONLY
+  and the coordinator's own base reading NAMED it as the failing node
+```
+
+⭐ **SO THE CITATION IS CORRECT TODAY AND BECOMES DANGLING WHEN THAT BRANCH MERGES — which is a thing that has not happened, and Ruling 218 means the branch can merge with this row's outcome different from `W100`'s.** ⛔ **Editing the quote now would introduce the very defect `W119/3` reports, in the case where the branch is stopped or its successor names something else.**
+
+⭐ **AND THE LINE IS ALREADY DATED BY CONSTRUCTION: the block at `:10`–`:18` is headed *RECEIVED from the coordinator, MEASURED BY THEM at `e5ab51d`*, so the node id inside it is a MEASUREMENT SCOPED BY ITS OWN REF** (Ruling 246 — an identifier by position owes its ref, and this one carries one). ⛔ **Ruling 244(b)'s form therefore applies unchanged: the reading stays, dated, and this section is appended beneath it.**
+
+⛔ **WHAT IS OWED, AND BY WHOM:** ⭐ **at this row's CLOSE the file is deleted and the archive record is the durable copy** (Ruling 234), ⚠️ **so the surviving citation is `BOARD-ARCHIVE.md:11963` — a RECORD, annotated beneath and never edited** (Ruling 106). ⛔ **The sweep half of `W119/3` is `W78`'s, as Developer 1 routed it. The row-file half is DISCHARGED BY THIS SECTION rather than by a substitution, and the distinction is the whole finding.**
+
+
+### ⛔ PO round 44 continued — THE RELEASE TIP MOVED TWICE UNDER THIS ROUND, and every figure in §1–§10 above is dated to `af31fd7` by Ruling 260
+
+⛔ **THIS SECTION IS APPENDED AND NOTHING ABOVE IT IS REWORDED.** ⭐ **Ruling 260: a measured figure is an AS-OF, and the reading that governs is the one taken at the MERGE — so §5's In-flight re-take, taken at `af31fd7`, is superseded HERE rather than edited there.** ⚠️ **`6d5aeed` merged `fix/W119-W100-board-instruments`; `ad5ce24` merged `chore/cto-round57` with Rulings 254–263. Both landed while this round was being written.**
+
+⭐ **MERGE READING, image named by its pins in the same invocation as the sha, Ruling 241's second form (redirect, then `$?` with nothing between), role `wt/po`:**
+
+```text
+PINS:  python 3.14.7 | node v24.21.0 | ruff 0.16.6
+       Google Chrome for Testing 153.0.8010.36 | shm 1.0G
+```
+
+| | ⛔ **BASE `af31fd7`** | ⭐ **AFTER MERGING `ad5ce24`** |
+|---|---|---|
+| suite | 5420 passed, 11 skipped, exit 0 | see the handoff's table |
+| `corroborate` | `1 of 3` REFUTED, exit 1 | ⛔ **`3 of 3` REFUTED at the tip before the re-take — Ruling 262's own subject** |
+| rulings index | 253 from 43, tail 253 | ⭐ **263 from 44, tail 263** |
+
+### ⛔ 11. THE THIRD MINT — `W128`, AND ITS POPULATION IS FOUR, NOT THREE
+
+⛔ **Ruling 263 routed `W128` — *a committed verdict may not depend on the host's ENVIRONMENT* — and declared its population as *"`STUDYFORGE_VISUAL` and its two companions in `tests/visual/`"*, THREE.** ⭐ **MEASURED by me at `ad5ce24`, whole population printed, expected reading written down first (expected: the three names `docker/dev/check` documents):**
+
+```text
+grep -rnoE "STUDYFORGE_[A-Z_]+" tests/visual/   -> 4 DISTINCT names, 9 sites
+  STUDYFORGE_VISUAL           discovery.py:76,:153   ⛔ VERDICT: fail vs skip
+  STUDYFORGE_VISUAL_BROWSER   discovery.py:73,:137   ⛔ VERDICT: which engine
+  STUDYFORGE_DEV_CONTAINER    discovery.py:86,:171   ⛔ ADMISSIBILITY under
+                                                        Ruling 40 — pinned vs
+                                                        unpinned. NOT IN THE THREE
+  STUDYFORGE_VISUAL_CAPTURES  conftest.py:27,:71     ⭐ NOT a verdict input —
+                                                        and it IS in the three
+```
+
+⛔ **THE DECLARED THREE ARE `docker/dev/check`'s MOUNT-BOUNDARY list, not a VERDICT list, and the two sets differ in BOTH directions.** ⭐ **So the row is minted at the MEASURED population of four with each member's ROLE stated.** ⚠️ **This is Ruling 258's own shape — *a declared-gaps list is a CLOSED claim, so an incomplete one is worse than none* — minted in the same record that under-declared this one, and it is filed as `PO-44/9` rather than silently widened.**
+
+⚠️ **AND THE `55 of 86` FIGURE IS RECEIVED AND ITS DENOMINATOR HAS MOVED:** ⭐ **MEASURED by me in the pinned container, `tests/visual/` is now `161 passed`, so `86` predates `W98`'s `+71`.** ⛔ **A taker re-measures at dispatch (Rulings 214, 260); the CLASS does not depend on the figure, only its size does.**
+
+### ⛔ 12. `W119` CLOSED, AND `W100` IS `blocked` BECAUSE ITS CLOSE COLLIDES WITH RULING 174 — the register is honest instead of tidy
+
+⭐ **`W119` CLOSED `done — 6d5aeed`, four of Ruling 201's four edits, and no archive link pointed at `rows/W119.md` — measured, `0`.** ⛔ **`W100` CANNOT BE CLOSED AND THE CELL SAYS SO. MEASURED by me at `ad5ce24`, population in full:**
+
+```text
+markdown links  ](rows/W*.md)  inside BOARD-ARCHIVE.md     -> 13
+of those -> rows/W100.md                                   -> 2
+  :11873  frozen record, round 42      :12061  frozen record, round 42
+deleting rows/W100.md -> 2 [pointer] refusals -> FLOOR_EXIT=1
+```
+
+⛔ **RULING 174 FORBIDS THE ONLY REPAIR: re-addressing is part of a MOVE *"in the SAME COMMIT that moves it"*, and the wider ground — *a pointer is an address, not a statement* — was OFFERED AND REFUSED, *"because it would license editing addresses inside records that are already frozen."*** ⚠️ **`tools/tests/quality/board/test_migration.py` asserts the re-addressed-link COUNT, so the prohibition is committed rather than advisory.**
+
+⭐ **THREE ACTIONS ARE AVAILABLE AND ALL THREE ARE WRONG:** ⛔ **edit a frozen record (forbidden);** ⛔ **leave `in flight` (false at merge, Ruling 231, and refuted by `corroborate`);** ⛔ **write `done` and keep the file (`board-orphan`).** ⭐ **`blocked` is in `observation.py`'s `NOT_STARTED` set so it owes no observer, it is TRUE because the CLOSE is what is blocked, and the cell names the finding.** ⚠️ **ELEVEN more archive links point at live row files (`W37`, `W75`, `W78`, `W88`, `W115`, `W122`, `W124`×3, `W125`, `W126`), so the next close of any of them hits the same wall** (`PO-44/8`).
+
+### ⛔ 13. FINDINGS ADDED AFTER THE TIP MOVED
+
+| id | marker | the finding |
+|---|---|---|
+| `PO-44/8` | `[structural]` | ⛔ **CLOSING A ROW THE ARCHIVE LINKED TO IS IMPOSSIBLE WITHOUT VIOLATING RULING 174, AND THE POPULATION IS TWELVE.** **Measured** by me at `ad5ce24`: 13 `](rows/W*.md)` links in `BOARD-ARCHIVE.md`, 2 at `rows/W100.md` in frozen round-42 records, 11 more at row files still live. ⭐ **`W100` is left `blocked` rather than closed, and no frozen byte was touched.** ⛔ **The resolution is a CTO ruling on which instrument yields — Ruling 106/174's freeze or the pointer floor — because both are that office's** |
+| `PO-44/9` | `[local]` | ⛔ **RULING 263'S DECLARED POPULATION IS THREE AND THE MEASUREMENT IS FOUR, and the sets differ in BOTH directions.** **Measured** by me at `ad5ce24`, printed in §11: the declared three are `docker/dev/check`'s mount-boundary list; they OMIT `STUDYFORGE_DEV_CONTAINER`, which gates a reading's ADMISSIBILITY under Ruling 40, and they INCLUDE `STUDYFORGE_VISUAL_CAPTURES`, which reaches no verdict. ⭐ **`W128` is minted at four.** ⚠️ **Ruling 258's own shape, in the record that minted 258** |
+| `PO-44/10` | `[structural]` | ⭐ **RECEIVED from the coordinator, who measured it against their own merge and routed it to round 58 — and I CONFIRM it from my own readings: `corroborate` read `1 of 3` at `af31fd7` and `3 of 3` at `ad5ce24`, the refutations naming the merge that caused them.** ⛔ **Ruling 262's gate is unsatisfiable by construction: absorbing a branch is what refutes its In-flight cell, so a post-merge check fails on every CORRECT merge of an in-flight row.** ⭐ **The obligation can only live at the WAVE CLOSE, after the register is re-taken — which is this office's act.** ⚠️ **Recorded in `../BOARD.md`'s In flight narrative so the next round does not re-derive it** |
+| `PO-44/11` | `[local]` | ⚠️ **`docs/tasks/handoffs/CTO-2026-09-10-round57.md` CARRIES THE WRONG DATE — the round ran on 2026-09-11.** **Measured** by me: the filename says `2026-09-10` and so does round 56's, and `8416924`/`6d5aeed`/`ad5ce24` all land after round 56. ⭐ **The coordinator has already owned it as THEIR specification error, not the reviewer's.** ⛔ **I did NOT rename another office's record** (Ruling 106, and it is theirs). ⚠️ **It matters to datability only as a TIE-BREAK: two records sharing one date cannot be ordered by filename, and this project orders rounds by NUMBER, which is unambiguous. Filed `[local]` for that reason and not `[structural]`** |
+| `PO-44/12` | `[none]` | ⭐ **A RECORDED NEGATIVE ON MY OWN PREDICTION DISCIPLINE: the `W98` close survived the tip moving twice, because its four edits were derived from `git` rather than from the brief.** ⛔ **The `W119`/`W100` close did NOT survive unexamined — it produced `PO-44/8` — and the difference is that `W119`/`W100` had inbound archive links and `W98` had none.** ⚠️ **Filed so the next close MEASURES `](rows/<ID>.md)` in the archive BEFORE starting the four edits, not after** |
+
+### ⛔ 14. WHAT THE QUEUE LOOKS LIKE AFTER THE THIRD MINT
+
+⭐ `W126` → `W127` → `W115` → **`W128`** → `W78` → `W88` → `W120` → `W121` → `W103` → `W105`–`W109` → `W116`–`W118` → `W125`.
+
+⛔ **`W128` IS PLACED BELOW `W115` DELIBERATELY, and the ground is Ruling 40:** ⭐ **the environment half's cost is bounded to HOST readings, which are never authoritative, while `W115` can make the WAVE-CLOSE GATE return a false pass in the one environment that is** — ⚠️ **and Ruling 262 has just made that gate's behaviour the subject of an open ruling.**
