@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **315 rulings, `1`–`315`, derived from 51 ruling records** —
+⭐ **319 rulings, `1`–`319`, derived from 52 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -360,3 +360,7 @@ procedure.
 | 313 | ⛔ Ruling 313 — where a later ROW's ARGUED clause contradicts an earlier finding's SCHEDULED form, the argued clause GOVERNS and the earlier is discharged IN SUBSTANCE or refused BY NAME, nev … | heading | [round 63](handoffs/CTO-2026-09-11-round63.md#ruling-313-where-a-later-rows-argued-clause-contradicts-an-earlier-findings-scheduled-form-the-argued-clause-governs-and-the-earlier-is-discharged-in-substance-or-refused-by-name-never-left-open) |
 | 314 | \| `PO-50/2` \| ⭐ **RULED — MINTED as Ruling 314**, landed in `docs/conventions/board.md` in this branch. The gap is real, it is in MY rulings (270, 306), and the floor being a safety net is n … | section | [round 64](handoffs/CTO-2026-09-11-round64.md#5-every-finding-of-the-wave-by-id-with-a-disposition) |
 | 315 | \| `PO-50/6` \| ⭐ **RULED — MINTED as Ruling 315**, landed in `docs/conventions/review-rubric.md` in this branch. ⛔ **Ruling 11 is mine and it named a threshold with no accumulator** \| | section | [round 64](handoffs/CTO-2026-09-11-round64.md#5-every-finding-of-the-wave-by-id-with-a-disposition) |
+| 316 | 3a. ⭐ Ruling 316 — the TWO-FORM re-point is RATIFIED, and the fork is a MEASUREMENT rather than a taste | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3a-ruling-316-the-two-form-re-point-is-ratified-and-the-fork-is-a-measurement-rather-than-a-taste) |
+| 317 | 3b. ⛔ Ruling 317 — an IMAGE SHA quoted beside a reading PINS NOTHING; the PINS pin, and the CONFIG digest is the sha that does | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3b-ruling-317-an-image-sha-quoted-beside-a-reading-pins-nothing-the-pins-pin-and-the-config-digest-is-the-sha-that-does) |
+| 318 | 3c. ⛔ Ruling 318 — `W78/5` IS AN ACCEPTANCE CORRECTLY REPORTED AS UNMEETABLE, AND THE DEFECT IS THE BRIEF'S SURFACE, WHICH WAS MINE TO DECLARE | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3c-ruling-318-w785-is-an-acceptance-correctly-reported-as-unmeetable-and-the-defect-is-the-briefs-surface-which-was-mine-to-declare) |
+| 319 | 3d. ⛔ Ruling 319 — with NO REGISTER in the wave, Ruling 305's order has nothing to order; the order is THE READER BEFORE THE DOCUMENT IT READS, and Ruling 264(c)'s `UNNAMED` arm is ENUMERATE … | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3d-ruling-319-with-no-register-in-the-wave-ruling-305s-order-has-nothing-to-order-the-order-is-the-reader-before-the-document-it-reads-and-ruling-264cs-unnamed-arm-is-enumerated-never-waived) |

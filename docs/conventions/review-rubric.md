@@ -5290,3 +5290,100 @@ reading, and a control that can only return the pass reading is not a control).
 ⚠️ **The grep is scoped to `docs/tasks/handoffs/`, so this clause CANNOT count
 its own definition** — ⛔ the self-citation that got Ruling 121's grep demoted
 to a corroborator.
+
+### ⛔ Ruling 316 — a RE-POINT at the archive record has TWO FORMS, and the fork is forced by a LINE BOUND rather than chosen
+
+```bash
+# ⛔ Run BEFORE choosing the form, for every re-point Ruling 201's fourth edit performs.
+python3 -c "import sys; sys.path.insert(0,'.'); from tools.quality.pointers import slug; print(slug('<the record heading>'))" | awk '{print length, $0}'
+grep -n 'line-length' pyproject.toml            # the bound the comment form must fit inside
+# Pass: a MARKDOWN document takes the ANCHORED LINK — the pointer floor then RESOLVES it, and a
+#       citation no instrument could see becomes one checked on every run. A PYTHON comment or
+#       docstring takes `` `<ID>`'s record in `BOARD-ARCHIVE.md` `` — no anchor, no integer, and
+#       the anchor DERIVABLE by the shipped slug. ⛔ Never a link split across two source lines.
+```
+
+⭐ **MEASURED, CTO round 65, the three anchors `W78` re-pointed, each re-derived and each UNIQUE
+in `BOARD-ARCHIVE.md`** (Ruling 306's check, run unprompted): `89`, `112` and `127` characters
+against `pyproject.toml`'s `line-length = 100`. ⛔ **So the longest anchor cannot fit a Python
+line AT ALL, and the fork is a measurement rather than a taste.** ⚠️ **The reversal is refused
+and its cost is named: the alternative is a SHORTER ARCHIVE HEADING, which edits a frozen
+record's byte** (Ruling 106) — ⭐ **two forms with one derivable address is cheaper than one form
+with an edited record.**
+
+### ⛔ Ruling 317 — an IMAGE SHA quoted beside a reading PINS NOTHING; the PINS pin, and if a sha is quoted it is the exported CONFIG digest
+
+```bash
+# ⛔ An environment is named by its PINS. Quote these, and a reader can rebuild it.
+grep -E '^FROM' docker/dev/Dockerfile                  # the base digest
+grep -E '^[A-Za-z].*==' docker/dev/requirements.txt    # every `==`
+# ⭐ If a SHA is quoted at all, it is the CONFIG digest, and it is NAMED as the config digest:
+docker/dev/check python3 -c 'pass' 2>&1 | grep 'exporting config'
+# ⛔ FORBIDDEN beside a reading: `docker images` IMAGE ID, the manifest-list digest, and any sha
+#    whose office cannot say which of the three it is.
+# Pass: two offices holding identical pins AGREE, so a DIFFERENCE between two quoted identifiers
+#       is a real difference rather than a build timestamp.
+```
+
+⛔ **MEASURED, CTO round 65, three `docker/dev/check` invocations with `docker/dev/Dockerfile` and
+`docker/dev/requirements.txt` untouched and every build step `CACHED`:** the manifest-list digest
+was DIFFERENT all three times and the `docker images` IMAGE ID tracked it exactly, ⭐ **while the
+exported CONFIG digest was IDENTICAL all three times.** ⚠️ **The cause is `--build` on every run:
+buildkit re-exports an ATTESTATION MANIFEST carrying build-time provenance, so the manifest list
+moves while the contents do not.** ⛔ **A reviewer comparing two offices' tag ids therefore reads
+a DIFFERENCE where there is none, which is a FALSE REFUTATION** — ⭐ and one was observed live in
+that same round, a fourth id standing on the tag that none of the round's own invocations had
+exported. ⛔ **This AMENDS Rulings 40, 172, 238 and 290 and repeals none of them: the obligation
+to name the environment in the same invocation as the reading is unchanged; what changes is WHICH
+identifier discharges it.** ⚠️ **A reading that already quotes a bare tag id is not refuted — its
+environment was pinned — but that sha is DEAD TEXT and may not be compared across offices.**
+
+### ⛔ Ruling 318 — a DECLARED SURFACE that cannot reach the row's own named remedy is a defect of the DISPATCH, and the taker discharges the acceptance by REPORTING it
+
+```bash
+# ⛔ Run at DISPATCH time, not at review time, and the question is one sentence.
+# Read the row's own statement of its remedy, then ask: which files does that remedy ADD?
+# Pass: every file the remedy adds is inside the declared surface. A remedy that is an
+#       INSTRUMENT adds `tools/quality/<new>.py` AND its test mirror — two files, never one.
+# ⛔ A surface permitting ONE new file cannot carry an instrument, and R12 is then unmeetable
+#    BY CONSTRUCTION rather than by the taker's choice.
+```
+
+⭐ **MEASURED, CTO round 65, `W78/5`:** the row names an INSTRUMENT as its remedy from its
+round-41 section onward, and the dispatch permitted exactly one new file. ⛔ **The taker reported
+R12 unmeetable and shipped the reachable half, which is Ruling 5's form discharged correctly.**
+⚠️ **The alternative was worse and is worth naming: a test written to fit the surface would have
+tested the re-points — which are DATA, already covered by the floor — and reported R12 GREEN over
+an acceptance nothing ran**, ⛔ **which is the false-register failure Ruling 292(a) ranks worst.**
+⭐ **The finding is against the DISPATCHER, the row is NOT closed by the partial delivery, and its
+next dispatch carries the surface the remedy needs or it is dispatched for nothing.**
+
+### ⛔ Ruling 319 — with NO REGISTER in a wave, Ruling 305's order has nothing to order; the order is the READER before the DOCUMENT IT READS, and Ruling 264(c)'s UNNAMED arm is ENUMERATED, never waived
+
+```bash
+# (a) ⛔ IS THERE A GATE ROW? Ruling 305's four conditions are CONJUNCTIVE. If no branch is RED,
+#     condition (i) fails and 305 is NOT ENGAGED — there is no gate row to put first.
+python3 -m pytest -ra > /tmp/p.txt 2>&1; echo "PYTEST_EXIT=$?"; grep -cE '^(FAILED|ERROR)' /tmp/p.txt
+# (b) ⭐ WITH NO GATE ROW AND NO REGISTER, order on COUPLING: a branch that ships an INSTRUMENT
+#     READING a directory merges BEFORE a branch that EDITS that directory, so the second merge's
+#     delta is attributable to one cause. ⛔ And MEASURE THE MERGED TREE, which no per-tip
+#     reading covers — two branches green alone can still be red together.
+# (c) ⛔ THE `dispatched and UNNAMED` ARM READS THE REGISTER FOR ITS NAMES. In a wave with no
+#     register round it has NO instrument-readable source, by construction.
+python3 -m tools.quality.board.corroborate; echo "CORROBORATE_EXIT=$?"
+# Pass: the arm names EXACTLY the wave's own dispatched branches, and that is RECORDED with both
+#       names, the reason and the count in every merge record of the wave. It refutes NO branch.
+#       ⛔ A THIRD name in that line is a real finding and is NOT covered by this clause.
+```
+
+⛔ **MEASURED, CTO round 65: `FLOOR_EXIT=0` and `PYTEST_EXIT=0` on both branch tips AND on the
+merged tree, so Ruling 305's condition (i) fails and there is no gate row.** ⭐ **`PO-50/7` ruled
+that a register round and `W78` can never share a wave, because both write `docs/tasks/rows/` —
+so the no-register wave is a STANDING shape and not an accident, and the arm's blindness recurs
+every time it occurs.** ⚠️ **Two tempting answers are REFUSED: extending Ruling 265's namespace
+exemption to `fix/*` exempts the whole population the gate exists to read, and treating the exit
+code as advisory on a reviewer's judgement is the memory-discharged exemption Ruling 185(a)
+forbids.** ⛔ **The durable repair takes Ruling 185(b)'s shape — NARROW THE POPULATION, never
+widen the predicate: the arm reads its names from the wave's DISPATCH, declared where an
+instrument can read it, so that `dispatched and UNNAMED` means *no office claims this branch* in
+every wave and not only in waves the register happens to be open.** ⭐ **ROUTED as a row.**
