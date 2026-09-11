@@ -59,6 +59,7 @@ published in `SURFACE_HOOKS` and taken from there rather than typed here.
 from __future__ import annotations
 
 from studyforge.address import Address, AddressError
+from studyforge.describe import describe
 from studyforge.render import templates
 from studyforge.render.markup import escape_attribute
 from studyforge.render.page.errors import PageError
@@ -75,9 +76,25 @@ def key(document: dict) -> str:
     ⛔ Built by `Address.unit_key` from the document's own recorded address and
     ordinal — the same function the root index's rows are keyed by, so the mark
     the page writes and the mark the index reads back are one string.
+
+    ⚠️ **The list is checked for being a list, and that is a measured defect and
+    not defensiveness.** `tuple("basics")` is `("b","a","s","i","c","s")` — six
+    single-character segments, every one of them a valid slug — so an address
+    recorded as a *string* rather than a list becomes a six-level address that
+    refuses nothing and keys every mark under a name nothing else will ever
+    produce. ⛔ Refused by name instead (R6). See the finding in `SF-30`'s
+    handoff: `page.document.identity` has the same door and it is `SF-12`'s.
     """
+    segments = document.get("address")
+    if segments is not None and not isinstance(segments, list):
+        raise PageError(
+            f"a unit's address is recorded as a list of slugs, and this document "
+            f"records {describe(segments)}; it is refused rather than taken apart, "
+            f"because a string would become one segment per character and key every "
+            f"mark under a name nothing else will ever mint"
+        )
     try:
-        return Address(tuple(document.get("address") or ())).unit_key(document.get("unit"))
+        return Address(tuple(segments or ())).unit_key(document.get("unit"))
     except AddressError as error:
         # ⛔ Re-typed, not re-worded: `address` owns what a key is, and a caller
         # rendering a site catches one family per page. ⚠️ The message carries
@@ -93,8 +110,9 @@ def render(document: dict) -> str:
     """Return the mark-as-read region for this unit page.
 
     ⚠️ Never empty, and that is the difference between this region and every
-    other optional one: a unit page always has an address and an ordinal —
-    `identity` already refuses one that does not — so a page that declined to
-    offer the control would be a page the reader cannot record having read.
+    other optional one: a unit page always has an address and an ordinal, and a
+    document that has not is refused by `key` above rather than rendered without
+    the control — a page that declined to offer it is a page whose reading the
+    reader cannot record.
     """
     return templates.fill(CONTROL_TEMPLATE, unit=escape_attribute(key(document)))

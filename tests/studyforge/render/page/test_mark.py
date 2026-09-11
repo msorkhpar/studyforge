@@ -100,6 +100,18 @@ def test_a_document_that_cannot_be_keyed_raises_this_packages_own_error(document
     assert "read mark" in str(refused.value), why
 
 
+def test_an_address_recorded_as_a_string_is_refused_and_never_taken_apart():
+    # ⛔ **A measured defect, not defensiveness.** `tuple("basics")` is six
+    # single-character segments, every one a valid slug, so a string address would
+    # key `b/a/s/i/c/s/unit-01` — refusing nothing and matching nothing. ⚠️ The
+    # reading that found it: `mark.render({"address": "basics", "unit": 1})`
+    # returned `data-unit="b/a/s/i/c/s/unit-01"` before this guard existed.
+    with pytest.raises(PageError) as refused:
+        mark_module.render(a_document(address="basics"))
+    assert "list of slugs" in str(refused.value)
+    assert "b/a/s" not in str(refused.value)
+
+
 def test_no_refusal_reproduces_a_path_it_was_handed():
     # ⛔ R7, and this runs over every unit in a corpus into a build log.
     with pytest.raises(PageError) as refused:
