@@ -6,8 +6,9 @@ marker may sit, and `<TASK-ID>/<n>` finding numbering. The half that decides
 whether a document is a task handoff **at all** is its package.
 
 **How you use it.** `check_sections(path, text)` and `check_markers(path, text,
-ids)` return findings. `SECTIONS`, `FINDING_MARKERS` and `LEGACY_GLOBAL_MAX`
-are the vocabulary; `marker_lines(text)` is the reader they share.
+ids)` return findings. `SECTIONS`, `FINDING_MARKERS`, `LEAD_TOKENS` and
+`LEGACY_GLOBAL_MAX` are the vocabulary; `marker_lines(text)` is the reader they
+share.
 
 **Depends on.** `report.Finding` and `re`. ⛔ Never its own package: the
 dependency runs one way, so this module reads without the declaration rules and
@@ -17,6 +18,24 @@ those rules cannot quietly start depending on a section.
 handoff had named one commit earlier — *declaration* and *contract* are two
 subjects. ⭐ The prediction and the split are in the same wave, which is the
 only reason the split cost nothing.
+
+## ⛔ The vocabulary is spelled ONCE, and the lead is a CLOSED set (`W63`)
+
+⛔ **Ruling 193: the authority for the marker's spelling is the shipped
+constant, and a second reader with a second spelling is the same defect at a
+different site.** ⚠️ **This module held two spellings of its own** — the three
+`MARKER_*` constants and a hand-typed `local|structural|none` alternation beside
+them — ⭐ so `_MARKERS_ON_LINE` is now **derived** from `FINDING_MARKERS` and a
+fourth marker becomes readable the moment it is named, rather than silently
+invisible to every rule downstream.
+
+⛔ **And the lead is a closed set of claim-free tokens, not a list of accepted
+shapes.** ⚠️ Ruling 29 records four attempts at an accepted-shape list, each of
+which worked on the handoffs its author had seen and failed on one they had not;
+⭐ **`LEAD_TOKENS` inverts it — nothing before the marker may carry a CLAIM, and
+the markup that carries none is enumerated in one place.** A word, a table
+cell's `|`, a blockquote's `>` is not in the set, so prose stays refused **by
+construction** rather than by a pattern that happens to miss it.
 """
 
 from __future__ import annotations
@@ -46,21 +65,45 @@ FINDING_MARKERS = (MARKER_LOCAL, MARKER_STRUCTURAL, MARKER_NONE)
 #: Minimum characters after `[none]` on its line. Not a quality bar — it only
 #: stops a bare marker from being a quieter way of writing `0`.
 MIN_NONE_CHARS = 20
-#: Markup a finding line may carry *before* its marker: a bullet, a heading, a
-#: number, bold. ⭐ Derived by reading all 199 marker lines on the tip rather
-#: than guessed — every genuine one is a heading, a list item or a numbered
-#: item, and every prose mention has a word in front of the marker.
+
+#: ⛔ DERIVED from `FINDING_MARKERS`, never typed a second time (Ruling 193).
+#: ⭐ `sorted()` so the pattern is one enumeration read in a fixed order (R10);
+#: the three members share no prefix, so the order cannot change what matches.
+_MARKERS_ON_LINE = re.compile("|".join(re.escape(marker) for marker in sorted(FINDING_MARKERS)))
+
+#: A finding's number, as it is written: `W25/3` scoped, or a bare `47` from the
+#: closed legacy range, optionally inside backticks. ⛔ Spelled ONCE and composed
+#: into both readers below, because the docstring's own warning was earned:
+#: `<TASK-ID>/<n>` once had to be added in two places and went red the way a
+#: missing shape does — not *"wrong number"* but *"that is not a finding line at
+#: all"*, which made the new form invisible to every rule downstream.
+_ID = r"(?:[A-Za-z][\w.-]*/)?\d+"
+
+#: ⛔ The CLOSED set of markup a finding line may carry BEFORE its marker, each
+#: token named by what it is. ⭐ **The rule is not a list of accepted shapes — it
+#: is that nothing before the marker carries a CLAIM**, and this is the markup
+#: that carries none. A word is in no token, so prose is refused by
+#: construction; `|` and `>` are in no token, so a table row and a blockquote
+#: are refused the same way.
 #:
-#: ⚠️ **`<TASK-ID>/<n>` had to be added here as well as to `_FINDING_NUMBER`**,
-#: and it went red the way a missing shape does: not "wrong number" but *"that
-#: is not a finding line at all"*, so the new form was invisible to every rule
-#: downstream of it. A vocabulary is read in two places or in neither.
-_FINDING_LEAD = re.compile(
-    r"^[ \t]*(?:[-*+][ \t]+|#{1,6}[ \t]+)?(?:\*\*)?"
-    r"(?:(?:[A-Za-z][\w.-]*/)?\d+[.)]?[ \t]+)?(?:\*\*)?"
+#: ⚠️ **Every token's first characters are disjoint from every other's**, which
+#: is what makes the order here immaterial and the reader reproducible (R10).
+#: `test_contract.py` asserts that disjointness rather than trusting it.
+LEAD_TOKENS: tuple[tuple[str, str], ...] = (
+    ("horizontal space", r"[ \t]+"),
+    ("a heading", r"#{1,6}"),
+    ("a bullet, an emphasis run or a hyphen", r"[-*+_]+"),
+    ("an em dash, an en dash or a colon", r"[—–:]"),
+    ("an attention glyph", "[⛔⭐⚠✅️]+"),
+    ("a finding number, backticked or not", rf"(?:`{_ID}`|{_ID})[.)]?"),
+)
+_LEAD = re.compile("|".join(f"(?:{pattern})" for _name, pattern in LEAD_TOKENS))
+#: The same closed set **without the number**, for `check_finding_ids`: that
+#: reader has to see the number the line claims, so the lead may not eat it.
+_MARKUP = re.compile(
+    "|".join(f"(?:{pattern})" for name, pattern in LEAD_TOKENS if not name.startswith("a finding"))
 )
 
-_MARKERS_ON_LINE = re.compile(r"`\[(?:local|structural|none)\]`")
 #: ⛔ The closed legacy range of globally-minted finding numbers. **Pinned from
 #: a measurement of the merged tree, 2026-09-10** — `BOARD.md`'s ruling says
 #: 20–58 and the tree runs to **62**, because `SF-10` minted 59–62 on a branch
@@ -72,15 +115,30 @@ _MARKERS_ON_LINE = re.compile(r"`\[(?:local|structural|none)\]`")
 #: holds nothing above it, so the constant cannot quietly stop being true.
 LEGACY_GLOBAL_MAX = 62
 
-#: Just the markup, without the number. ⛔ Separate from `_FINDING_LEAD`, which
-#: *consumes* the number: reading the claim off a line the lead had already
-#: eaten returned "this line claims nothing", so every scoped number passed and
-#: every bad one did too. Found by the two negative controls going green.
-_MARKUP_LEAD = re.compile(r"^[ \t]*(?:[-*+][ \t]+|#{1,6}[ \t]+)?(?:\*\*)?")
-
 #: The number a finding line claims, and how it claims it: `W25/3` (scoped, the
-#: form going forward) or a bare `47` (the closed legacy range).
-_FINDING_NUMBER = re.compile(r"^(?:(?P<scope>[A-Za-z][\w.-]*)/)?(?P<number>\d+)[.)]?\s")
+#: form going forward) or a bare `47` (the closed legacy range), in backticks or
+#: not. ⛔ The backticks are matched as a PAIR — `` `13 `` with no closing tick
+#: claims nothing — and what may follow is the closed markup the lead is made
+#: of, so `` - **`W25/3`** — `[local]` `` is read and `W25/3x` is not.
+_FINDING_NUMBER = re.compile(
+    r"^(?P<tick>`?)(?:(?P<scope>[A-Za-z][\w.-]*)/)?(?P<number>\d+)(?P=tick)[.)]?(?=[ \t*—–:]|$)"
+)
+
+
+def _claim_free_end(line: str, token: re.Pattern[str]) -> int:
+    """How far into `line` the claim-free markup in `token` reaches.
+
+    ⛔ A loop over a closed token set, never a grammar of accepted sequences:
+    the only question asked at each position is *does what starts here carry a
+    claim*, and the first thing that does ends the lead.
+    """
+    position = 0
+    while position < len(line):
+        match = token.match(line, position)
+        if match is None or match.end() == position:
+            break
+        position = match.end()
+    return position
 
 
 def _section_pattern(section: str) -> re.Pattern[str]:
@@ -92,10 +150,11 @@ def _section_pattern(section: str) -> re.Pattern[str]:
 def marker_lines(text: str) -> list[tuple[int, str, bool]]:
     """`(line number, line, is a finding line)` for every line holding a marker.
 
-    A line is a **finding line** when exactly one marker sits on it and nothing
-    but list, heading, numbering or emphasis markup comes before it. ⛔ Rubric
-    §8a: a marker in explanatory text counts as a finding that does not exist,
-    and two markers on one line is one finding claiming to be two.
+    A line is a **finding line** when exactly one marker sits on it and
+    everything before it is in `LEAD_TOKENS` — the closed set of markup that
+    carries no claim. ⛔ Rubric §8a: a marker in explanatory text counts as a
+    finding that does not exist, and two markers on one line is one finding
+    claiming to be two.
 
     ⭐ **A fenced block is quoted material and is not read.** A handoff that
     documents this vocabulary — a transcript of the check firing, the migration
@@ -115,8 +174,8 @@ def marker_lines(text: str) -> list[tuple[int, str, bool]]:
         markers = _MARKERS_ON_LINE.findall(line)
         if not markers:
             continue
-        rest = line[_FINDING_LEAD.match(line).end() :]
-        own_line = len(markers) == 1 and rest.lstrip("*").startswith(FINDING_MARKERS)
+        rest = line[_claim_free_end(line, _LEAD) :]
+        own_line = len(markers) == 1 and rest.startswith(FINDING_MARKERS)
         found.append((number, line, own_line))
     return found
 
@@ -140,7 +199,7 @@ def check_finding_ids(relative: str, lines: list[tuple[int, str]], ids: list[str
     """Check `<TASK-ID>/<n>` on new findings, without renumbering the record."""
     findings: list[Finding] = []
     for number, line in lines:
-        claim = _FINDING_NUMBER.match(line[_MARKUP_LEAD.match(line).end() :])
+        claim = _FINDING_NUMBER.match(line[_claim_free_end(line, _MARKUP) :])
         if claim is None:
             continue  # an unnumbered finding claims no name, so it collides with none
         scope, claimed = claim.group("scope"), int(claim.group("number"))
