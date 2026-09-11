@@ -4581,10 +4581,94 @@ precisely why the NOTICE is the only reporter and why its silence is worth a cla
 
 ⭐ **Two discharges, and a round takes one of them:** ⛔ **LAND the member — an edit to a
 convention document carrying its clause (Ruling 245) — or ⭐ **CARRY IT BY NAME** in the round's
-own record and its routing, so the id survives leaving the window. ⚠️ **`273`, `274` and `275`
-are carried by name here and remain `W134`'s population.**
+own record and its routing, so the id survives leaving the window.
+
+⛔ **AND IT IS A RATE, NOT AN INSTANCE — three independent inhabitations in ONE round, which is
+the standard Ruling 151 set:**
+
+```text
+1  the PO's own sweep (`PO-47/2`)   266, 268, 269 uncited and already OUT of the window
+2  this round's mint                273, 274, 275 pushed out by minting 297–303
+3  ⛔ round 60's OWN SENTENCE        "the unreached tail falls from 8 to 3" — MEASURED: of the
+                                    five that left, 265 and 267 LANDED and 266, 268, 269 AGED
+                                    OUT. The sentence credited the round for the window's work.
+⭐ AND A FOURTH MECHANISM, measured on the same wave's tree: a NARROWING can retire a member
+   too — with `W133` live, Ruling 267's only citations are inside a fence and it is uncited
+   again, invisible because it is below the window (Ruling 302's `lost: [175, 267]`).
+SEVEN uncited: 266, 267, 268, 269, 273, 274, 275.  The wave's notice prints THREE.
+```
+
+⚠️ **All seven are carried by name here and remain `W134`'s population.**
 
 ⛔ **AND THE INSTRUMENT OWES A ROW, not an edit by me: the notice should report members that are
 still uncited BELOW the window, or its `unreached 0` means *none in the last 25* while reading
 as *none*.** ⭐ **Routed, not patched — `tools/quality/reach.py` is `385` of R11's `400` and the
 office that owns it this wave has already named the split seam.**
+
+
+### ⛔ Ruling 305 — a branch whose RED is a committed test the release RETIRED BY RULING is BLOCKED, not CHANGES REQUESTED; the GATE ROW merges FIRST and Ruling 279's order is AMENDED for exactly that case
+
+```bash
+# ⛔ FOUR conditions, every one MEASURED, before a red branch may be approved at all.
+python3 -m pytest -ra > /tmp/p.txt 2>&1; P=$?          # i   the node list IS the whole red
+grep -cE '^(FAILED|ERROR)' /tmp/p.txt; grep -E '^(FAILED|ERROR)' /tmp/p.txt
+sed -n '<the failing assertion>p' <the test file>       # ii  it asserts a RULED-retired rule
+python3 -m tools.quality > /tmp/f.txt 2>&1; F=$?        # iii the SHIPPED instrument, SAME subject
+echo "FLOOR_EXIT=$F"; grep '<the subject>' /tmp/f.txt   #     -> 0, and it PRINTS the distinction
+git branch --list '<the gate row>'                      # iv  the repair is DISPATCHED this wave
+# Pass: all four. ⛔ (iii) may never be waived — without it, "the test asserts a retired rule"
+#       is a claim by the author of the branch that test is failing on.
+```
+
+⛔ **AND THE ORDER.** ⚠️ **Ruling 279 puts the register FIRST because it CARRIES THE REGISTER —
+a claim about CONTENT, which says nothing about greenness.** ⛔ **A register merged first while
+red puts a RED TIP on the release, and every base reading taken afterwards inherits a red no
+office can separate from its own.** ⭐ **So the GATE ROW merges FIRST, the register second into
+a tree where its own state is already legal, and the tip is never observed red.**
+
+⭐ **THE PRECONDITION THAT MAKES THE REORDER POSSIBLE, and it is measured rather than hoped:
+the gate row must be GREEN ALONE against the base.** ⛔ **MEASURED, CTO round 61 at `428223c`:
+`86 live / 86 detail files` and `0` Ruling 270 stubs, so a repair phrased over `files − stubs`
+is green at the base by construction.** ⚠️ **If the gate row is RED alone, the reorder is
+impossible and the register is BLOCKED — the rubric's fourth verdict, not CHANGES REQUESTED,
+because the author filed it correctly.**
+
+⛔ **THE GROUND FOR PREFERRING RED OVER A FALSE REGISTER is Ruling 292(a)'s, extended by one
+clause: a RED SUITE declares itself to every instrument and every office; a FALSE REGISTER
+declares itself to none and is inherited as a fact.** ⚠️ **MEASURED, CTO round 61: of the three
+available states, the true one was red, one was green at the cost of failing Ruling 279's own
+gate, and the third was green at the cost of a register false for a FOURTH consecutive round.**
+
+### ⛔ Ruling 306 — Ruling 270 GAINS THE CLAUSE: a REDIRECT STUB's archive anchor is DERIVED by the shipped slug and checked for COLLISION before the stub is written
+
+```bash
+# ⛔ Run for EVERY stub, BEFORE writing it. The pointer floor reads an anchor as RESOLVED when
+#    it EXISTS, so a COLLIDING anchor resolves — to the wrong section — and stays green.
+python3 -c "from tools.quality.pointers import slug; print(slug('<the record heading>'))"
+grep -c '^#\{1,6\} ' docs/tasks/BOARD-ARCHIVE.md          # the existing anchor population
+# then: does the derived anchor already name a DIFFERENT section?
+# Pass: the derived anchor is UNIQUE in the destination. ⛔ `0 unresolved` does not check this
+#       and never did — it is a pair of numbers that cannot tell a right landing from a wrong one.
+```
+
+⛔ **MEASURED, CTO round 61, from Ruling 270's own shipped fence in `docs/conventions/board.md`:
+it requires the pointer be ANCHORED — *"never a bare `BOARD-ARCHIVE.md`"* — and says NOTHING
+about deriving the anchor or checking it.** ⚠️ **At the register round's merge the floor reads
+`627 carrying an anchor, 0 unresolved` over nine new stubs; neither number can see a
+collision.** ⭐ **`PO-47/1` did the right thing unprompted — `slug()` on all nine, checked
+against `617` existing anchors — and the ruling should have demanded it.**
+
+### ⛔ Ruling 307 — a DISPOSITION names the finding's ID; a disposition written as a DESCRIPTION is not one
+
+```bash
+# ⛔ §8a's counter reads IDS. A disposition that describes the finding instead is invisible to
+#    it, and it fails in the same LOW direction as the defect Ruling 293 repaired.
+for id in $S; do grep -ocE "$id[^A-Za-z0-9]+.*(ruled|scheduled|accepted)" "$V"; done
+# Pass: every id's count is >= 1. A reviewer who wrote "the second of their findings is
+#       accepted" has satisfied a reader and not the counter, and the counter is the gate.
+```
+
+⛔ **MEASURED, CTO round 61 — `PO-47/4`: `W115/3` was disposed of by description and the
+repaired counter cannot see it.** ⚠️ **Ruling 293 narrowed the POPULATION so the counter reads
+every finding; this clause closes the other end, so every finding's disposition is readable.**
+⭐ **Together they are one gate: ids in, ids out.**

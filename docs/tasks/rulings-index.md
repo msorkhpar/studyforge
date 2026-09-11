@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **304 rulings, `1`–`304`, derived from 48 ruling records** —
+⭐ **307 rulings, `1`–`307`, derived from 48 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -349,3 +349,6 @@ procedure.
 | 302 | ⛔ Ruling 302 (CTO round 61) — a NARROWING's effect is measured over the POPULATION, never over the WINDOW the instrument prints | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-302-cto-round-61-a-narrowings-effect-is-measured-over-the-population-never-over-the-window-the-instrument-prints) |
 | 303 | ⛔ Ruling 303 (CTO round 61) — Ruling 293's repaired counter is DISCHARGED by its second office, and the form it replaced reads ZERO on this wave's whole population | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-303-cto-round-61-ruling-293s-repaired-counter-is-discharged-by-its-second-office-and-the-form-it-replaced-reads-zero-on-this-waves-whole-population) |
 | 304 | ⛔ Ruling 304 (CTO round 61) — MINTING SLIDES THE NOTICE WINDOW, so a round that pushes an UNREACHED ruling out of it LANDS that ruling or CARRIES IT BY NAME | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-304-cto-round-61-minting-slides-the-notice-window-so-a-round-that-pushes-an-unreached-ruling-out-of-it-lands-that-ruling-or-carries-it-by-name) |
+| 305 | ⛔ Ruling 305 (CTO round 61) — a branch whose RED is a committed test the release RETIRED BY RULING is BLOCKED, not CHANGES REQUESTED; the GATE ROW merges FIRST and Ruling 279's order is AMEN … | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-305-cto-round-61-a-branch-whose-red-is-a-committed-test-the-release-retired-by-ruling-is-blocked-not-changes-requested-the-gate-row-merges-first-and-ruling-279s-order-is-amended) |
+| 306 | ⛔ Ruling 306 (CTO round 61) — Ruling 270 GAINS THE CLAUSE: a REDIRECT STUB's archive anchor is DERIVED by the shipped slug and checked for COLLISION before the stub is written | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-306-cto-round-61-ruling-270-gains-the-clause-a-redirect-stubs-archive-anchor-is-derived-by-the-shipped-slug-and-checked-for-collision-before-the-stub-is-written) |
+| 307 | ⛔ Ruling 307 (CTO round 61) — a DISPOSITION names the finding's ID; a disposition written as a DESCRIPTION is not one | heading | [round 61](handoffs/CTO-2026-09-11-round61.md#ruling-307-cto-round-61-a-disposition-names-the-findings-id-a-disposition-written-as-a-description-is-not-one) |
