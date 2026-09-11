@@ -4689,3 +4689,48 @@ the wave's structural population   counter 10, hand count 11    ⛔ 10 ≠ 11
 ⭐ **So the gate is IDS IN, IDS OUT: an author writes `<ID>/<n>` on the marker's line, and a
 reviewer writes that same id beside the disposition.** ⛔ **Either end open reads LOW, which is
 the direction that loses findings.**
+
+### ⛔ Ruling 308 — a POINTER obligation is bounded by the REF the document lives on, and a row file that exists only on an UNMERGED branch is NAMED, not linked
+
+```bash
+# ⛔ Before charging a handoff under Ruling 285(b), ask whether the target EXISTS on that
+#    document's own ref. A link the floor cannot resolve is a FAILING floor, not a pointer.
+git cat-file -e "$BRANCH":docs/tasks/rows/<ID>.md 2>/dev/null && echo PRESENT || echo ABSENT
+python3 -m tools.quality | grep 'document pointers'
+# Pass: `0 unresolved`. ⭐ Where the target is ABSENT on this ref, the backticked NAME is the
+#       correct form and is NOT a 285(b) violation — the pointer is owed by the document that
+#       first shares a ref with its target, which is the merge.
+```
+
+⛔ **MEASURED, CTO round 61: `rows/W137.md` was minted by `chore/po-round47` and the row's own
+taker worked on `fix/W137-bijection-after-stubs`, cut from the release tip — so the row file did
+not exist on the branch its handoff lives on.** ⭐ **A link would have been an UNRESOLVED pointer
+and `FLOOR_EXIT=1`; the backticked name is right.** ⚠️ **Ruling 285(b) says a citation of a
+TRACKED document is a pointer, and *tracked* is a property of a REF — the clause was written in a
+world where every cited document was already on the release.**
+
+### ⛔ Ruling 309 — a ROW's clause naming a MEASURED FIGURE is satisfied by an INHABITEDNESS THRESHOLD that PRINTS the figure, never by a literal
+
+```bash
+# ⛔ Before hard-coding any population figure a row asked you to "assert", read it on EVERY
+#    tree the branch will meet — including the other branches of its own wave.
+python3 - <<'PY'
+# <the derived population>, read on the release tip AND on the wave tree
+PY
+# Pass: the two agree, or the assertion is a THRESHOLD that prints the measured value.
+#       A literal that differs across the wave is `W119`'s class and goes red on a correct tree.
+```
+
+⛔ **MEASURED, CTO round 61 — and it settles an interpretation question with a number rather than
+an argument:**
+
+```text
+the live population on the RELEASE TIP           contains = 53
+the live population on the WAVE TREE (79 live)   contains = 47
+⛔ a hard-coded `53` would go RED on the very tree the branch merges into
+```
+
+⭐ **So a taker who reads *"assert the live figure"* as a threshold plus a printed reading has
+obeyed the row; one who writes the literal has broken it.** ⚠️ **`W119`'s ratified class — a
+committed test that reads this machine's or this moment's population — and the row's author would
+have written the threshold had they measured second.**
