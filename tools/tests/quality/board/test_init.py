@@ -37,6 +37,7 @@ from tools.quality.board import (
     BOARD_ROW_CEILING,
     REGISTER_CLOSE,
     REGISTER_OPEN,
+    ROW_FRAME,
     ROWS,
     RULE_DETAIL,
     RULE_DUPLICATE,
@@ -44,7 +45,9 @@ from tools.quality.board import (
     RULE_NARRATIVE,
     RULE_ORPHAN,
     RULE_SIZE,
+    RULE_STATE,
     RULE_WIDTH,
+    STATES,
     board_state,
     check_board,
 )
@@ -322,3 +325,109 @@ def test_a_row_file_named_for_a_different_row_is_a_finding(tmp_path: Path) -> No
     root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
     (root / ROWS / "W2.md").write_text(_row("W9"), encoding="utf-8")
     assert _rules(check_board(root)) == [RULE_FRAME]
+
+
+# --------------------------------------------------------------------------
+# ⛔ `CTO-47/4` — the `board-frame` message describes the PREDICATE
+# --------------------------------------------------------------------------
+
+
+def test_the_frame_finding_states_what_is_CHECKED_not_what_is_hoped(tmp_path: Path) -> None:
+    """⛔ `CTO-47/4`: the predicate is two substrings; the message claimed more.
+
+    ⚠️ **It said the file *"states which row it argues…"*** — ⛔ **which
+    `startswith` and `in` cannot read.** ⭐ **The weak predicate is the RIGHT trade
+    for amendment-proofness** — ⛔ **a message describing a check nobody wrote sends
+    the next reader to debug the wrong claim.**
+    """
+    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
+    (root / ROWS / "W2.md").write_text("a fragment with no frame at all\n", encoding="utf-8")
+    findings = check_board(root)
+    assert _rules(findings) == [RULE_FRAME]
+    message = findings[0].message
+    assert "`# W2`" in message, "the message names the first substring"
+    assert repr(ROW_FRAME) in message, "and the second one, verbatim"
+    assert "TWO SUBSTRINGS" in message, "and says that is the whole of it"
+
+
+# --------------------------------------------------------------------------
+# ⛔ `CTO-47/5` — `board-state`'s FINDING path, which had no reading at all
+# --------------------------------------------------------------------------
+
+
+def test_live_no_register_row_on_this_board_is_board_state() -> None:
+    """⭐ The LIVE reading. ⛔ `RULE_STATE` was the one code with no test of its path.
+
+    ⚠️ **Ruling 152's reachability held, so this was a test gap, not a missing
+    guard.** ⭐ The population is read out beside the verdict (Ruling 48).
+    """
+    root = repository_root()
+    assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
+    assert int(board_state(root)[0].split("board: ")[1].split(" register")[0]) > 0
+
+
+@pytest.mark.parametrize(
+    "cell",
+    [
+        "after `W44` is done",
+        "DONE-ish — merged `abc1234`",
+        "→ folded into `SF-10`",
+        "◐ spec text landed; the asserting test is owed",
+    ],
+)
+def test_planted_a_state_cell_that_declares_nothing_is_board_state(
+    tmp_path: Path, cell: str
+) -> None:
+    """⛔ The PLANTED reading, adversarial to the SEARCH TERM (Ruling 140).
+
+    ⚠️ **Each wears the word the first `is_closed` searched for, in a form the
+    clause did not picture** — including `W5`'s and `W16`'s real shapes, which
+    declare nothing. ⭐ **`DONE-ish` came from the impossible plant.**
+    """
+    row = f"| W2 | a naming | PO | {cell} | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
+    findings = check_board(root)
+    assert _rules(findings) == [RULE_STATE]
+    assert "declares no state" in findings[0].message
+    assert "W2" in findings[0].message
+
+
+def test_the_cell_that_walked_out_of_the_register_is_LIVE_and_owes_a_FILE(
+    tmp_path: Path,
+) -> None:
+    """⛔ The defect's own cell, and the finding the substring test silently lost.
+
+    ⚠️ **`` `todo` — after `W44` is done ``** read as CLOSED: no detail file owed,
+    out of the bijection, floor green. ⭐ **It DECLARES `todo`**, so the mention is
+    ambiguous and the declaration is not.
+    """
+    row = "| W2 | a naming | PO | `todo` — after `W44` is done | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER)
+    rules = _rules(check_board(root))
+    assert RULE_STATE not in rules, "it declares todo; only the mention is loose"
+    assert rules == [RULE_DETAIL], "⛔ the finding a substring test lost in silence"
+
+
+@pytest.mark.parametrize("declared", sorted(STATES))
+def test_a_cell_that_DECLARES_a_state_is_never_board_state(tmp_path: Path, declared: str) -> None:
+    """⭐ Every word of the closed vocabulary, derived rather than retyped.
+
+    ⛔ **Parametrised over `STATES` itself**, so a word added to the vocabulary
+    joins this population without the test being edited and an EMPTY vocabulary
+    skips rather than passing (Ruling 48).
+    """
+    row = f"| W2 | a naming | PO | ⛔ **{declared}** — `abc1234` | [d](rows/W2.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
+    assert RULE_STATE not in _rules(check_board(root))
+
+
+def test_impossible_board_state_cannot_fire_on_an_EMPTY_register(tmp_path: Path) -> None:
+    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass by naming `0`.
+
+    ⭐ A register with no rows has no cell to judge, so silence here is correct —
+    ⚠️ **and `0 = 0` is not a pass**, which is why the population is read out of
+    the notice in the same assertion.
+    """
+    root = _tree(tmp_path, HEADER + FOOTER)
+    assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
+    assert "0 register rows, 0 live" in board_state(root)[0]

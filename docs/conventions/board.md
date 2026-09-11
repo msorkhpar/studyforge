@@ -120,7 +120,7 @@ than one more archive section.
 | `board-row-width` | one table row exceeds `BOARD_ROW_CEILING` | a cell that wide is an argument, and an argument goes behind a pointer |
 | `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows | ⭐ **the bound with no gap** — see below |
 | `board-state` | a register row's state cell DECLARES no state | ⛔ **the hole that let a LIVE row leave the register in silence** — see below |
-| `board-frame` | a row file does not open `# <ID>` and say what it is | ⭐ **the one live-tree property left after Ruling 180**, and it survives every amendment |
+| `board-frame` | a row file does not begin `# <ID>` **or** does not contain the frame's phrase | ⭐ **the one live-tree property left after Ruling 180.** ⛔ **TWO SUBSTRINGS and nothing more** — it cannot read what the file *says*, and that weakness is what lets it survive every amendment (`CTO-47/4`) |
 
 ⛔ **The Ruling 140 plant found a hole in this instrument BEFORE it shipped, and
 the third rule is the fix rather than a tweak to the first two.** ⚠️ **Run
@@ -184,6 +184,69 @@ longer backlog moves the board FURTHER from the bound, never closer.**
 detail files, all three readings and all three limits — before anything is
 reduced to a verdict** (Ruling 128).
 
+### ⛔ What the `board:` line covers, and the two things it prints with NO bound
+
+⭐ **`rows/`, with its BYTES as well as its count — Ruling 183.** ⛔ **A bound on
+a row file would forbid the thing the file exists for**: appending to a live
+row's argument is the action the table above prescribes, and nothing can tell
+*"the PO re-scoped a row"* from *"the PO pasted a fragment"*. ⚠️ **That argument
+retires the GATE and does not retire the MEASUREMENT** — and the reading that
+decided it is `rows/` inflated **112×** with the `board:` line byte-identical
+and the floor clean, because the line printed a COUNT. ⛔ **A bound REMOVED
+because its subject became editable is replaced by a NOTICE, never by nothing.**
+
+⭐ **The FILES whose argument IS their naming — Ruling 186.** ⛔ **`board-frame` is
+the right instrument asked the wrong question**: a row file can carry its frame
+and argue nothing, and some carry **as their entire argument a normalised copy of
+their own register naming cell** — ⚠️ **which is the one thing the frame sentence
+inside them forbids:** *"not here, and not in two places."* ⛔ **`startswith` and
+`in` cannot read a contradiction**, so `board-frame` passes them and is right to:
+widening it to judge whether an argument is PRESENT rebuilds exactly the gate
+Ruling 180 removed, because nothing can tell a thin argument from one the PO has
+not finished writing.
+
+⛔ **It is a CLOSED PREDICATE — equality against that row's own naming, after
+normalising markup, emoji, spacing and a trailing stop — and there is NO byte
+measure and NO cutoff.** ⚠️ **Two sweeps read 16 and 19 *thin* rows under two
+unruled thresholds; both answered a question that should not have been asked**, so
+⭐ **the disagreement is retired rather than settled.** ⛔ **A cutoff appearing in
+`board_state` is the signal that a gate has been rebuilt.**
+
+⭐ **And the span is the ARGUMENT, never the FILE** (Ruling 186's clause (c)):
+frame overhead runs to a few hundred bytes and varies by more than a hundred
+between files, so anything read at file level is the right question over the
+wrong span. ⛔ **The frame is located by its own TEXT** — one row file carries an
+extra frame block, and an index would have skipped that row's whole argument.
+
+⛔ **An argument that EXTENDS its naming is not this, and is not reported.**
+⭐ **Restating what the row is and then arguing it is exactly what the file exists
+for** — ⚠️ **equality, never a prefix**, because a notice that flags correct work
+is one people learn to scroll past.
+
+⭐ **And the second clause, over the frame's OTHER prohibition: an argument that
+DUPLICATES A STATE.** ⛔ **The predicate is the opening IDIOM — an emphasised
+label, set off by a dash, that declares a state — and NOT a state word anywhere
+past the frame.** ⚠️ **A row argument is *about* states constantly**: *"gated on
+`W63` landing"*, *"accepted at round 22"*, *"already DONE by …"*. ⛔ **A
+vocabulary search fires on every one of those, and it inherits `is_closed`'s own
+founding defect one layer up** — which is why clause one is safe and this one had
+to be narrowed: ⭐ **clause one is an EQUALITY against the register cell.**
+
+⚠️ **And the over-match SCALES WITH THE POPULATION, which is the reading that
+settled it:** a *state word anywhere* predicate read **3** hits over 50 row files
+and **6** over 64 — four of the six being rows their author had just written —
+while the idiom predicate read **2** and then **0**, correctly, because both true
+hits had closed. ⛔ **A notice whose first wave fires on four rows its author just
+wrote is a notice nobody reads twice** (Ruling 179).
+
+⚠️ **This clause is asserted against a PLANTED fixture and a corpus quoted at its
+ref, never against the live tree** — ⛔ **a live population of `0` is born vacuous
+and a pass with no planted hit is not green** (Ruling 48).
+
+⛔ **No figure from any of these readings is typed into this document**
+(Ruling 181): `board_state` prints them every run, and a number copied here is a
+number that goes stale in the copy nobody re-measures.
+
 ⭐ **What it deliberately does not bound: `BOARD-ARCHIVE.md`.** ⛔ **A record is
 supposed to grow monotonically, and capping it would push the reasoning back
 onto the board** — which is the defect rather than the remedy.
@@ -201,6 +264,59 @@ unedited, and reversible by the PO in one commit if they want it back.
 ⛔ **All six are mine.** ⭐ **Check 6 was added round 19 by `F23`'s ruling.** ⭐ **RULED 2026-09-10: check 4 runs twice — at wave-open
 AND at wave-close** — ⚠️ **and the second run is the one that matters, because
 the trigger check 4 exists to catch is *a task ending*, not a wave starting.**
+
+### ⛔ RULED ROUND 47 — check 3 takes the WHOLE TREE, and admits the PLURAL (Ruling 184)
+
+⭐ **Check 3 asks *did every ruling reach an artifact* — C6's own check.** ⛔ **Two
+clauses, one instrument, and they pull the same way on purpose.**
+
+> ⭐ **(a) Scope.** A ruling's artifact is wherever the rule is ENFORCED, and this
+> project enforces rules in Python as often as in prose. ⛔ **The population is
+> `-- docs src tools tests`, not `-- docs`.**
+>
+> ⭐ **(b) Spelling.** The pattern admits the plural form, because ⛔ **a ruling
+> that instructs a JOINT carry must not be invisible to the check that verifies
+> carries.**
+>
+> ⭐ **And the reason both clauses go the same way:** this check's failure mode is
+> a **FALSE EMPTY** — *"nobody carried it"* returned for something that was
+> carried. ⛔ **So it is tuned to OVER-match, and that is safe for one specific
+> reason: check 3 prints FILES, not a count.** ⚠️ **A false positive costs one
+> `git show`; a false empty costs a lost ruling.**
+
+⛔ **The instrument, and it is PCRE (`-P`), not ERE** — `(?:`, `\s` and `\b` are
+not POSIX ERE and `git grep -E` refuses the pattern outright with *"Invalid
+preceding regular expression"*:
+
+```bash
+# For each ruling minted since check 3 last ran. ⛔ FILES, never a count.
+for n in <the rulings>; do
+  echo "Ruling $n:"
+  git grep -lP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests | sort
+done
+```
+
+⭐ **Measured at `96e8c95`, `dev2` worktree, host git 2.47.3 and the pinned image
+in agreement — and each clause earns its keep on a real reading:**
+
+```text
+(a)  Ruling 175, `-- docs`             -> four handoffs, 0 non-handoff files
+     Ruling 175, `-- docs src tools tests` -> + tools/knowledge/index.py
+                                              + tools/tests/knowledge/test_index.py
+(b)  Ruling 76 in docs/conventions/agent-protocol.md
+       `Ruling 76\b`                   -> ⛔ NOTHING. A FALSE EMPTY, in an
+                                          ARTIFACT rather than a handoff
+       plural-admitting                -> line 42, "defeats Rulings 70, 76, 83
+                                          and 123 at once"
+     ⚠️ and the over-match it costs, in the same file: line 450's "76 finding
+        lines across 12 documents" — ⭐ one `git show` to dismiss, which is the
+        price clause (b) was ruled to be worth
+```
+
+⛔ **The rule this does NOT license: teaching the tree to please the
+instrument.** ⚠️ **`PO-36/9` found the same gap from the other side and fixed the
+DOCUMENT so the standing check would read it** — ⭐ **that was right at the time,
+and it is the instrument's turn now.**
 
 ### ⛔ RULED ROUND 26 — check 4 gains a SUB-STEP and LOSES a population
 

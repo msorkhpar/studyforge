@@ -3,8 +3,10 @@ r"""Reading a register out of a markdown table, and it is the parser that is har
 **What it does.** Turns `BOARD.md`'s delimited register into
 `(line number, ids, state cell)` rows, and answers what state a cell DECLARES.
 
-**How you use it.** `tools.quality.board` imports `register`, `state`,
-`is_closed`, `cells` and the two markers. Nothing else does.
+**How you use it.** `tools.quality.board` imports this module's parsers, bounds
+and markers, and nothing else does. ⛔ **The names are not listed here**: that
+list is `tools/quality/board/__init__.py`'s import block, and a second copy of
+it is `CTO-47/3` — the finding this module's own rule codes earned.
 
 **Depends on.** `re` and `pointers.strip_code_spans`. Nothing else, ever.
 
@@ -117,13 +119,25 @@ ROW_FRAME = "and nothing else."
 #: Emoji, emphasis and backticks a state cell may wear before its word.
 STATE_LEAD = re.compile(r"^[\s*`~⛔⭐✅⚠️⏳◐→️]+")
 
-RULE_DETAIL = "board-detail"
-RULE_ORPHAN = "board-orphan"
-RULE_DUPLICATE = "board-duplicate"
-RULE_NARRATIVE = "board-narrative"
-RULE_WIDTH = "board-row-width"
-RULE_SIZE = "board-size"
-RULE_STATE = "board-state"
+#: ⛔ The opening idiom a duplicated state wears: an EMPHASISED label, set off by
+#: a dash. ⚠️ **Measured verbatim from `798956c`** — `⏳ **in flight** — …` and
+#: `⏳ **in flight, with W14** — …`, so the label may say more than the word.
+#:
+#: ⭐ **The label may not cross `*` or a backtick**, which is what stops it
+#: swallowing a whole sentence and matching somewhere it should not:
+#: `rows/W5.md`'s `⛔ **CORRECTED — \`unitdoc.py\` is 827 lines…**` is blocked at
+#: the backtick and never reaches a dash.
+_STATE_LABEL = re.compile(r"^[\s⛔⭐✅⚠️⏳◐→️]*(?P<mark>\*\*|`)(?P<label>[^*`\n]+?)(?P=mark)\s*[—–-]")
+
+# ⛔ **The rule codes are NOT here, and their absence is `CTO-47/3`.** ⚠️ This
+# module defined seven of them — `RULE_DETAIL` … `RULE_STATE` — that nothing
+# imported and that it never used itself: `tools/quality/board/__init__.py`
+# raises every finding and declares all eight codes, `RULE_FRAME` included.
+#
+# ⭐ **This project's most-repeated finding, committed inside the module written
+# to stop it: a fact in two places goes stale in the copy nobody re-measures.**
+# ⛔ **Ruff cannot see it** — module-level assignments are not unused imports —
+# ⭐ **so `test_register.py` asserts the absence, derived rather than listed.**
 
 #: A backslash-escaped pipe, which markdown renders as a literal `|`.
 ESCAPED_PIPE = "\\|"
@@ -228,6 +242,125 @@ def is_closed(cell: str) -> bool:
 def table_lines(text: str) -> list[tuple[int, str]]:
     """Return `(line number, line)` for every markdown table row in `text`."""
     return [(n, line) for n, line in enumerate(text.split("\n"), 1) if line.startswith("|")]
+
+
+def argument(body: str) -> str:
+    """Return a row file's ARGUMENT — everything after its frame.
+
+    ⛔ **The subject is the ARGUMENT and not the FILE, and that is Ruling 186's
+    surviving clause (c).** ⚠️ **Frame overhead runs 224–346 bytes across the
+    live row files**, so anything read at file level is the right question over
+    the wrong span — the family this project has now met five times.
+
+    ⛔ **The frame is located by its TEXT, never by an index**: `rows/W17.md`
+    carries one extra frame block — the note that `W19` rides with it — and an
+    index would have silently skipped that row's whole argument. ⭐ `ROW_FRAME`
+    is the sentinel, so there is one home for what a frame says rather than two.
+
+    ⚠️ **A file with no frame has no argument this can locate and returns `""`**;
+    `board-frame` is what reports the missing frame.
+    """
+    blocks = body.split("\n\n")
+    for index, block in enumerate(blocks):
+        if ROW_FRAME in block:
+            return "\n\n".join(blocks[index + 1 :]).strip()
+    return ""
+
+
+#: Markup a cell and an argument may differ by without differing in CONTENT:
+#: emphasis, code spans, the emoji this project's prose wears, and runs of
+#: whitespace a reflow introduces. ⛔ **This is what makes the comparison
+#: NORMALISED-verbatim rather than byte-verbatim** — a copy that was re-bolded
+#: on its way into a file is still a copy.
+_MARKUP = re.compile(r"[*`~]")
+_LEAD_EMOJI = re.compile(r"[⛔⭐✅⚠️⏳◐→️]")
+
+
+def normalised(cell: str) -> str:
+    """Return `cell` with markup, emoji, spacing and a trailing stop removed."""
+    plain = _LEAD_EMOJI.sub(" ", _MARKUP.sub("", cell))
+    return re.sub(r"\s+", " ", plain).strip().rstrip(".").lower()
+
+
+def namings(text: str) -> dict[str, str]:
+    """`{"W60": <naming cell>}` for every register row, by its owning id."""
+    found = {}
+    for line in text.split("\n"):
+        if not line.startswith("|"):
+            continue
+        columns = cells(line)
+        if len(columns) < 5:
+            continue
+        ids = identifiers(columns[0])
+        if ids:
+            found[ids[0]] = columns[1]
+    return found
+
+
+def repeats_its_naming(body: str, cell: str) -> bool:
+    """Whether a row file's whole argument IS its own register naming.
+
+    ⛔ **Ruling 186, narrowed: a CLOSED PREDICATE where there had been a
+    threshold.** ⚠️ **Seven live files carry, as their entire argument, a
+    normalised copy of the naming cell** — ⛔ **which is the one thing the frame
+    sentence inside them forbids:** *"not here, and not in two places."*
+    ⭐ **`board-frame` passes all seven, because `startswith` and `in` cannot
+    read a contradiction.**
+
+    ⚠️ **A file that EXTENDS its naming is not this**, and must not be reported:
+    an argument that opens by restating what the row is and then argues it is
+    doing exactly what the file is for. ⛔ **Equality, never a prefix.**
+
+    ⭐ **And no byte measure and no cutoff at all.** ⚠️ **Two sweeps read 16 and
+    19 thin rows under two unruled thresholds; both answered a question that
+    should not have been asked**, and a predicate retires the disagreement
+    instead of settling it.
+    """
+    wanted = normalised(cell)
+    # ⛔ Ruling 48 in miniature: an empty naming would make every file a repeat.
+    return bool(wanted) and normalised(argument(body)) == wanted
+
+
+def duplicates_a_state(body: str) -> bool:
+    """Whether a row file's argument OPENS by declaring a state.
+
+    ⛔ **Ruling 186(b)'s second clause, and the predicate is the OPENING IDIOM —
+    `⏳ **<state>** —` — never a state word anywhere past the frame.** ⚠️ **A row
+    argument is *about* states constantly**: *"gated on `W63` landing"*,
+    *"accepted at round 22"*, *"already DONE by `validate/structure.py`"*.
+    ⛔ **An *anywhere* predicate fires on every one of those** — which is
+    `board-state`'s own founding defect one layer up, where the first
+    `is_closed` was a substring test and `` `todo` — after `W44` is done `` read
+    as CLOSED.
+
+    ⭐ **So this reuses `state()`**: the closed set, the leading markup stripped,
+    the match ending on a word boundary — applied to the argument's FIRST BLOCK
+    and nothing else. ⚠️ **Measured at `798956c`: two files declare a state this
+    way (`W14`, `W18`) and the two candidate false positives are both
+    excluded** — `rows/W5.md`'s *"job is already DONE by …"*, which is `done` in
+    ordinary English, and `rows/W18.md`'s later *"is ACCEPTED today"*, which is
+    not the opening.
+
+    ⛔ **A state belongs to the register and to the record; a row file carries the
+    ARGUMENT** — which is the other half of what the frame sentence forbids.
+
+    ⚠️ **`state()` alone is not narrow enough and a planted row said so:** it
+    fires on *"Blocked by nothing; `W44` is unrelated."*, which opens with a
+    vocabulary word used as English. ⭐ **So the IDIOM is matched, not the word** —
+    an emphasised LABEL, set off by a dash, that declares a state.
+    """
+    match = _STATE_LABEL.match(argument(body).split("\n\n")[0])
+    return match is not None and state(match.group("label")) is not None
+
+
+def row_order(name: str) -> tuple[int, str]:
+    """Sort key for row ids: `W5` before `W10`, and deterministic (R10).
+
+    ⛔ Length then text, rather than `int(name[1:])`, because the population is
+    filenames and a filename is not guaranteed to be `W<digits>` — a key that
+    raises on the one file somebody misnamed would take the notice down.
+    """
+    return (len(name), name)
 
 
 def narrative_bytes(text: str) -> int:

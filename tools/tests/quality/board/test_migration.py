@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import re
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -59,6 +60,15 @@ SOURCE = "docs/tasks/BOARD.md"
 #: are now refs.** ⛔ **The live tree is not this module's business: the live
 #: tree's shape is `check_board`'s, which runs on the floor and is
 #: amendment-safe by construction.**
+#:
+#: ⚠️ **That sentence was FALSE for half of this module until `CTO-47/1`, which
+#: is Ruling 182.** ⛔ **`_output_row_files()` read a ref; `_destination_text()`
+#: read `BOARD-ARCHIVE.md`, `docs/conventions/board.md` and `docs/tasks/BOARD.md`
+#: off the working tree** — ⭐ **so the equality had one ref-side and one
+#: tree-side, and that is not half-correct: it is a freeze on whichever
+#: documents the migration happened to put on the tree side.** ⚠️ **Measured at
+#: `798956c`, 84 of 6,781 source lines were frozen that way; both destinations
+#: of the equality are refs now and the same reading is 0.**
 #:
 #: ⚠️ It is a WHOLE sha rather than a short one, because a short sha is a
 #: prefix and a prefix can become ambiguous in a repository that keeps growing.
@@ -171,10 +181,23 @@ def _unretargeted(block: str) -> str:
 
 
 def _destination_text() -> str:
-    root = repository_root()
-    return "\n".join(
-        (root / name).read_text(encoding="utf-8") for name in (ARCHIVE, CONVENTION, BOARD)
-    )
+    """The three destinations, each read at `OUTPUT` (Ruling 182).
+
+    ⛔ **This read the WORKING TREE until `CTO-47/1`**, while the other half of
+    the same equality had already been moved to a ref by Ruling 180. ⚠️ **An
+    equality with one ref-side and one tree-side is not half-correct; it is a
+    FREEZE on whichever documents happen to sit on the tree side** — and those
+    are chosen by the migration, not by anyone who later edits them.
+
+    ⭐ **Measured at `798956c`, dev2 worktree, clean, in the pinned image:** of
+    6,781 non-structural source lines, **84** survived only in a document this
+    project EDITS — **74** in `docs/conventions/board.md`'s `## The wave checks`
+    section and **10** in `BOARD.md`'s `## Scheduled` frame. ⛔ **Rewording or
+    deleting one of those 84 turned this suite red**, so the test forbade an
+    ordinary copy-edit to a live convention document. ⭐ **With both sides at
+    refs the same reading is `0`.**
+    """
+    return "\n".join(_at(OUTPUT, name) for name in (ARCHIVE, CONVENTION, BOARD))
 
 
 def test_every_line_of_the_old_board_survives_verbatim() -> None:
@@ -210,8 +233,13 @@ def test_the_register_lines_carry_their_owner_and_status_columns() -> None:
     files were merely where it became unrecoverable. ⭐ So the assertion is
     about the column: every register line is in the record whole, so every cell
     of it is.
+
+    ⛔ **The record is read at `OUTPUT`, not off the tree** (Ruling 182): the
+    archive is appended to every round, and a test that reads the live copy is
+    asserting *this content is STILL there, unedited*, which is a different
+    claim from the one a migration makes.
     """
-    archive = (repository_root() / ARCHIVE).read_text(encoding="utf-8")
+    archive = _at(OUTPUT, ARCHIVE)
     register_lines = _consumed_register_lines()
     assert len(register_lines) == 78, "Ruling 48: state the population, then reduce it"
     absent = [line for line in register_lines if line not in archive]
@@ -293,17 +321,88 @@ def test_the_row_files_are_an_extract_of_the_source_not_a_fourth_destination() -
     assert thin == [], f"blocks not in {SOURCE}@{BASE}: {thin}"
 
 
+#: ⛔ Every reader this module has. ⭐ Declared once so the two readings below
+#: and the impossible one reduce the SAME population (Ruling 48), rather than
+#: each reducing the two somebody remembered.
+_READERS = (_base_lines, _output_row_files, _destination_text)
+
+
+def test_no_reader_here_opens_a_file_under_the_WORKING_TREE(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """⛔ Ruling 182's pass condition, as an instrument rather than a round's grep.
+
+    ⚠️ **`CTO-47/1` is the third appearance of this class in three rounds**
+    (`CTO-45/1`, `CTO-46/1`, this) — ⛔ **and it kept recurring because each fix
+    was written against the instance instead of the shape.** ⭐ **So the shape is
+    what is asserted: no reader in this module opens any file under the
+    repository root**, whichever destination a later editor adds.
+
+    ⭐ **This is a FUNCTIONAL reading, not a grep of the source** — it fires on a
+    tree read however it is spelled, including one reached through a helper.
+    ⚠️ **Planted by restoring `_destination_text()`'s pre-Ruling-182 body: this
+    test goes red naming `docs/tasks/BOARD-ARCHIVE.md`.**
+    """
+    root = repository_root()
+    real = Path.read_text
+
+    def refusing(self: Path, *args: object, **kwargs: object) -> str:
+        resolved = self.resolve()
+        if resolved == root or root in resolved.parents:
+            raise AssertionError(
+                f"{resolved.relative_to(root)} was opened from the WORKING TREE. ⛔ A "
+                f"migration is a claim about a pair of refs and BOTH sides are refs "
+                f"(Ruling 182) — read it with `_at(<ref>, <path>)`, or this module "
+                f"freezes whatever it touches."
+            )
+        return real(self, *args, **kwargs)  # type: ignore[arg-type]
+
+    monkeypatch.setattr(Path, "read_text", refusing)
+    assert len(_READERS) == 3, "Ruling 48: declare the population before reducing it"
+    for reader in _READERS:
+        reader()
+
+
+def test_every_destination_of_the_equality_is_FETCHED_AT_A_REF(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """⭐ The positive half: all three destinations are asked for, each at `OUTPUT`.
+
+    ⛔ **The guard above says nothing is read off the tree; this says the
+    destinations are read AT ALL.** ⚠️ A `_destination_text()` that silently
+    dropped `docs/conventions/board.md` would satisfy the negative property
+    perfectly and assert the migration over two destinations out of three.
+    """
+    asked: list[tuple[str, str]] = []
+    real = _at
+
+    def recording(ref: str, path: str) -> str:
+        asked.append((ref, path))
+        return real(ref, path)
+
+    monkeypatch.setattr(f"{__name__}._at", recording)
+    _destination_text()
+    assert asked == [(OUTPUT, ARCHIVE), (OUTPUT, CONVENTION), (OUTPUT, BOARD)], asked
+
+
 def test_an_unreachable_base_skips_rather_than_passing(monkeypatch: pytest.MonkeyPatch) -> None:
     """⛔ The IMPOSSIBLE reading, and it is the one that keeps the rest honest.
 
-    ⚠️ **Every assertion above compares the tree against a ref.** ⛔ If that ref
-    is not in the checkout, a walk over an empty source would satisfy all four
-    of them — ⭐ **`0 = 0` wearing a migration.** ⚠️ Ruling 155: *"could not put
-    the question"* is not *"the answer is yes"*, so this reads `Skipped`.
+    ⚠️ **Every assertion above compares one ref against another.** ⛔ If either
+    ref is not in the checkout, a walk over an empty source would satisfy all
+    four of them — ⭐ **`0 = 0` wearing a migration.** ⚠️ Ruling 155: *"could not
+    put the question"* is not *"the answer is yes"*, so this reads `Skipped`.
+
+    ⛔ **`_destination_text` is in the population, and it was NOT before Ruling
+    182**: it read the working tree, so an unreachable `OUTPUT` left it
+    returning real text and this reading could not have named it. ⭐ **Every
+    reader this module has is enumerated here, and adding one that opens a file
+    without `_at` fails the enumeration below.**
     """
     for name in ("BASE", "OUTPUT"):
         monkeypatch.setattr(f"{__name__}.{name}", "0" * 40)
-    for reader in (_base_lines, _output_row_files):
+    assert len(_READERS) == 3, "Ruling 48: declare the population before reducing it"
+    for reader in _READERS:
         with pytest.raises(BaseException) as caught:
             reader()
         assert caught.typename == "Skipped", (reader.__name__, caught.typename)

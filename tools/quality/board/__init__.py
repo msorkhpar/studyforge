@@ -81,8 +81,14 @@ home a reader is told to load stays loadable.
 ⛔ **And nothing about `BOARD-ARCHIVE.md`'s size.** A record is *supposed* to
 grow monotonically; that is what makes it a record. ⭐ **Bounding it would push
 the reasoning back onto the board**, which is the defect, not the remedy.
+
+⛔ **Nor anything about `docs/tasks/rows/`'s size**, and for a different reason:
+a bound there would forbid the amendment those files exist for. ⭐ **So
+`board_state` prints their bytes instead — Ruling 183: a bound REMOVED because
+its subject became editable is replaced by a NOTICE, never by nothing.**
 """
 
+from collections.abc import Callable
 from pathlib import Path
 
 from tools.quality.board.register import (
@@ -94,9 +100,13 @@ from tools.quality.board.register import (
     REGISTER_OPEN,
     ROW_FRAME,
     STATES,
+    duplicates_a_state,
     is_closed,
+    namings,
     narrative_bytes,
     register,
+    repeats_its_naming,
+    row_order,
     state,
     table_lines,
 )
@@ -224,10 +234,20 @@ def check_board(root: Path) -> list[Finding]:
                     relative(path, root),
                     1,
                     RULE_FRAME,
-                    f"does not open `# {identifier}` and say what it is. A row file "
-                    f"states which row it argues and that the naming, owner and state "
-                    f"are the board's — ⛔ a file that lost that is a file nobody can "
-                    f"tell apart from a fragment.",
+                    # ⛔ `CTO-47/4`: the message used to claim the file "states
+                    # which row it argues and that the naming, owner and state
+                    # are the board's". ⚠️ **The predicate is TWO SUBSTRINGS and
+                    # cannot read any of that.** ⭐ A weak predicate is the RIGHT
+                    # trade for amendment-proofness (R3's reading, round 47) —
+                    # the message must describe what is CHECKED, not what is
+                    # hoped, or the next reader debugs the wrong claim.
+                    f"does not begin with the line `# {identifier}`, or does not contain "
+                    f"the phrase {ROW_FRAME!r}. ⚠️ Those TWO SUBSTRINGS are the whole "
+                    f"predicate: it does not read what the file SAYS about its naming, "
+                    f"owner or state. ⭐ That weakness is deliberate — a frame survives "
+                    f"every amendment, which is what lets anything at all be required of "
+                    f"a file the PO is told to edit freely. ⛔ Open `# {identifier}` and "
+                    f"state that the row's naming, owner and state are the board's.",
                 )
             )
         if identifier not in expected:
@@ -291,6 +311,27 @@ def board_state(root: Path) -> list[str]:
     ⛔ Where there is no board this SAYS SO rather than returning nothing: a
     silent notice about an absent register is the `0 = 0` this exists to stop
     (Ruling 48), and the honest line names who does enforce presence.
+
+    ## ⛔ Two readings here forbid nothing, and that is what they are for
+
+    ⭐ **`rows/`'s BYTES — Ruling 183.** ⛔ **A bound on a row file would forbid
+    the thing the file exists for**, and nothing can tell *"the PO re-scoped a
+    row"* from *"the PO pasted a fragment"*. ⚠️ **That retires the GATE and not
+    the MEASUREMENT** — ⛔ **measured by the CTO, pinned: `rows/` inflated 112×,
+    to 3.2 MB, with this line BYTE-IDENTICAL and the floor clean**, because it
+    printed a COUNT. ⭐ **Which is this module's own founding defect wearing a new
+    carrier:** the board was split once, grew to four times the trigger size,
+    *"and nothing noticed, because nothing was measuring."*
+
+    ⭐ **The files whose ARGUMENT IS THEIR NAMING — Ruling 186.** ⛔ **A CLOSED
+    PREDICATE, not a threshold**: see `repeats_its_naming` for what it compares
+    and `argument` for why the span is never the file. ⚠️ **`board-frame` passes
+    these files and is RIGHT to** — widening it to judge whether an argument is
+    PRESENT rebuilds exactly the gate Ruling 180 removed.
+
+    ⛔ **A cutoff appearing in this function is the signal a gate has been
+    rebuilt.** ⭐ **The contract both readings answer to is
+    `docs/conventions/board.md`**, and it is not restated here.
     """
     text = read_text(root / BOARD)
     if text is None:
@@ -303,13 +344,45 @@ def board_state(root: Path) -> list[str]:
     identifiers = {i for _n, ids, _s in rows for i in ids}
     live = [row for row in rows if not is_closed(row[2])]
     rows_on_disk = _rows_on_disk(root)
+    # ⛔ Ruling 183, and `st_size` rather than a clock or an enumeration order,
+    # over a SORTED population, so the reading is reproducible (R10).
+    rows_bytes = sum(path.stat().st_size for path in sorted(rows_on_disk.values()))
+    # ⛔ Ruling 186(b)'s two closed predicates, over ONE declared population.
+    named = namings(text)
+    bodies = {name: read_text(path) or "" for name, path in rows_on_disk.items()}
+    faults = (
+        ("repeat their own naming", repeats_its_naming),
+        ("duplicate a state", lambda body, name: duplicates_a_state(body)),
+    )
     table = table_lines(text)
     widest = max((len(line.encode()) for _n, line in table), default=0)
     return [
         f"board: {len(rows)} register rows, {len(live)} live, "
-        f"{len(rows_on_disk)} detail files in {ROWS}/; "
+        f"{len(rows_on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
+        f"(no bound — Ruling 183); "
         f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
         f"widest row {widest} of {BOARD_ROW_CEILING}, "
         f"{len(text.encode())} bytes total of "
-        f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed."
+        f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed.",
+        f"row arguments in {ROWS}/ (Ruling 186, no bound): "
+        + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
+        + ".",
     ]
+
+
+def _fault_reading(
+    what: str,
+    bodies: dict[str, str],
+    named: dict[str, str],
+    holds: Callable[[str, str], bool],
+) -> str:
+    """One of Ruling 186(b)'s clauses, as a count AND the files it names.
+
+    ⭐ **The files, not only the count** — Ruling 184's reason, reused: a reader
+    who can see WHICH row can dismiss a false positive with one `git show`.
+    ⛔ Ordered by `row_order`, never by the filesystem (R10).
+    """
+    found = sorted(
+        (n for n, body in bodies.items() if holds(body, named.get(n, ""))), key=row_order
+    )
+    return f"{len(found)} {what}" + (f" — {' '.join(found)}" if found else "")
