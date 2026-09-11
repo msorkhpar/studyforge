@@ -9,8 +9,18 @@ all of them, `rows_under(text, heading)` for a table's cells, `fences(text)`
 for the code blocks, and `vocabulary_under(text, heading)` for the backticked
 first column that names a closed set.
 
-**Depends on.** `pathlib`, `re`, `json` and `tests.support`. ⛔ Nothing under
-`src/` — this half reads the document; the assertions import the code.
+⭐ **One population here is not a parser: `commanded_pages()` and everything
+derived from it.** It lives here because `W74` widened the runnable-module check
+onto the same derivation its sibling already used, and a derivation two modules
+can each hold a copy of is how that pair came to disagree at all. ⛔ **The
+derivation and both declared exemptions are here; every assertion over them is
+in `tests/test_authoring_reference.py`.**
+
+**Depends on.** The standard library and `tests.support`. ⛔ Nothing under
+`src/` — this half reads the document; the assertions import the code. ⚠️
+**`run_bare()` is the one accessor that does not read a document: Ruling 156
+clause 3 requires a REAL interpreter, because `find_spec` measures the runner's
+path rather than the reader's. It spawns one; it still imports nothing.**
 
 ⚠️ **The parsers here are deliberately small and strict.** A lenient markdown
 parser that silently found nothing would turn every check that reads it into a
@@ -20,8 +30,14 @@ avoid. Each accessor raises when it finds no subject.
 
 from __future__ import annotations
 
+import importlib.util
 import json
+import os
 import re
+import subprocess
+import sys
+import tomllib
+from collections.abc import Iterable
 from pathlib import Path
 
 from tests.support import repository_root
@@ -225,3 +241,132 @@ def code_spans(text: str) -> set[str]:
     for _, line in prose_lines(text):
         found.update(_CODE_SPAN.findall(line))
     return found
+
+
+def commanded_pages() -> dict[str, str]:
+    """Every page that hands a reader a fenced command: the reference, and every skill.
+
+    ⛔ **`W61` widened this, and the widening is the fix.** `SK-05` shipped its
+    console-script check over `docs/authoring/` alone; `skills/adapter/SKILL.md` and
+    `skills/onboarding/SKILL.md` gave `studyforge validate` in a fence the
+    whole time and were never looked at. Both halves are walked rather than
+    listed, so nothing joins the tree outside the population.
+    """
+    pages = {f"{AUTHORING}/{name}": text for name, text in documents().items()}
+    pages.update(skill_documents())
+    return pages
+
+
+def assert_both_halves_reached(pages: Iterable[str]) -> None:
+    """⛔ The population must reach both halves, or it has silently narrowed.
+
+    Without this a check over `commanded_pages()` degrades to the one directory
+    it used to watch — the state `W61` exists to leave — and stays green.
+    """
+    names = sorted(pages)
+    assert any(name.startswith(f"{AUTHORING}/") for name in names), "no reference page reached"
+    assert any(name.endswith("SKILL.md") for name in names), "no SKILL.md reached"
+
+
+#: Every `python3 -m <token>` form any page gives. ⛔ `<` and `>` are inside the
+#: character class deliberately: a token this pattern cannot SEE is a token the
+#: placeholder rule cannot be ASSERTED over, and the narrow `[\w.]+` this widens
+#: could not see `python3 -m <package>` at all.
+COMMAND = re.compile(r"python3 -m ([\w.<>-]+)")
+
+#: A commanded token that is a substitution for the reader, not a module name.
+#: ⛔ Lexical, not a list somebody maintains — no module name may contain either
+#: character, so the rule is a property of the token.
+PLACEHOLDER = re.compile(r"[<>]")
+
+#: The machine-readable line a page uses to declare a commanded module it does
+#: NOT own. ⛔ Ruling 156: the exemption is the DOCUMENT's, never a list in this
+#: file — `ingest` earns its exemption from `skills/onboarding/SKILL.md`.
+DECLARES_CONSUMER_SIDE = re.compile(r"^\*\*Consumer-side modules:\*\*(.*)$", re.MULTILINE)
+
+
+def commanded_modules() -> dict[str, set[str]]:
+    """Every `python3 -m <token>` any page gives, mapped to the pages giving it.
+
+    ⛔ **Ruling 156 clause 1 — ONE population, both halves.** This read
+    `documents()` while its sibling above read `commanded_pages()`, and a pair
+    of checks over two different populations is exactly how `W61` happened: a
+    typo'd module inside a `SKILL.md` fence was measured by nothing.
+    """
+    found: dict[str, set[str]] = {}
+    for page, text in sorted(commanded_pages().items()):
+        for token in COMMAND.findall(text):
+            found.setdefault(token, set()).add(page)
+    assert found, "no page gives a runnable command at all"
+    return found
+
+
+def consumer_side() -> dict[str, set[str]]:
+    """Every module a page DECLARES it does not own, mapped to the pages declaring it.
+
+    ⛔ **The exemption is scoped to the page that makes it.** A module named in
+    one page's fence earns nothing from another page's declaration, so moving a
+    consumer-side command to a page that does not declare it fails a check.
+    """
+    declared: dict[str, set[str]] = {}
+    for page, text in sorted(commanded_pages().items()):
+        for line in DECLARES_CONSUMER_SIDE.findall(text):
+            for token in re.findall(r"`([\w.]+)`", line):
+                declared.setdefault(token, set()).add(page)
+    return declared
+
+
+def must_run() -> dict[str, set[str]]:
+    """The commanded tokens this repository has to be able to run, after both exemptions."""
+    declared = consumer_side()
+    wanted: dict[str, set[str]] = {}
+    for token, pages in sorted(commanded_modules().items()):
+        if PLACEHOLDER.search(token):
+            continue
+        owned = pages - declared.get(token, set())
+        if owned:
+            wanted[token] = owned
+    return wanted
+
+
+def resolves(name: str) -> bool:
+    """Whether `name` is importable here. ⛔ `find_spec` RAISES on a missing parent."""
+    try:
+        return importlib.util.find_spec(name) is not None
+    except ImportError, ValueError:
+        return False
+
+
+def run_bare(name: str, pythonpath: str | None) -> str:
+    """Run `python3 -m <name> --help` in a real interpreter; return everything it said.
+
+    ⛔ **Ruling 156 clause 3 — a subprocess, NOT `find_spec`.** `find_spec`
+    measures the runner's `sys.path` and the runner's already-imported modules.
+    It cannot see a `__main__.py` that raises, and it cannot see a module that
+    resolves only because a plugin put it there.
+    """
+    env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH"}
+    if pythonpath is not None:
+        env["PYTHONPATH"] = pythonpath
+    done = subprocess.run(  # noqa: S603 — fixed argv, interpreter is `sys.executable`
+        [sys.executable, "-m", name, "--help"],
+        cwd=repository_root(),
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=180,
+        check=False,
+    )
+    return done.stdout + done.stderr
+
+
+#: What a real interpreter says when it could not find the module at all.
+UNRESOLVED = ("No module named", "Error while finding module specification")
+
+
+def declared_pythonpath() -> str:
+    """The path `pyproject.toml` puts the RUNNER on, derived rather than typed."""
+    config = tomllib.loads((repository_root() / "pyproject.toml").read_text("utf-8"))
+    entries = config["tool"]["pytest"]["ini_options"]["pythonpath"]
+    assert entries, "pyproject.toml declares no pythonpath"
+    return os.pathsep.join(entries)
