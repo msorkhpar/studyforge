@@ -3955,3 +3955,182 @@ header claims it needs only `docker`, `id` and shell builtins, and inside it bou
 COMMAND rather than the image BUILD. ⛔ **So a host-side bound would be an UNPINNED bound
 — Ruling 238's reasoning one level down, applied to the instrument rather than to the
 environment.**
+
+### ⛔ Ruling 279 — a GATE names its POINT as a ref-producing COMMAND, never as a moment
+
+⛔ **A gate clause states the COMMAND that produces the ref it is evaluated at.** ⭐ **A
+clause naming only the ref it happened to be measured at has recorded its EVIDENCE and not
+its CONDITION, and the next reader resolves the gap with whatever ref is under their hand.**
+
+⚠️ **MEASURED, CTO round 59, one wave and one instrument producing two true readings:**
+`CORROBORATE_EXIT=1` with 3 of 3 rows refuted at the **release tip** after the wave's final
+merge, and `CORROBORATE_EXIT=0` with 0 of 2 at the **register branch's own tip**. ⛔ **Both
+are correct. Only the second is the gate, and the dispatcher who read the first concluded the
+gate was false as stated.**
+
+⭐ **So Ruling 264(b)'s point is `git rev-parse <the PO's round branch>` and nothing else.**
+⛔ **The heading *"at the wave close"* names a TIME; a gate needs a REF.** ⚠️ **And the
+corollary is an ordering constraint, because Ruling 264(c) requires the register to name a
+developer branch before that branch may merge: the REGISTER BRANCH MERGES FIRST, the branches
+it names follow, and the reviewer's own record merges LAST.**
+
+### ⛔ Ruling 280 — a CITATION predicate is asserted against the PLURAL and RANGE spellings this project actually writes
+
+```bash
+# ⛔ The predicate is `Ruling\s+N(?!\d)`. Run it against the house style BEFORE shipping it.
+grep -rnoE 'Rulings[[:space:]]+[0-9]+' docs/conventions/ | wc -l   # the plural population
+```
+
+⚠️ **MEASURED, CTO round 59, ten cases with the expectation written first:** `Ruling 279`
+matches; ⛔ **`Rulings 279-281`, `Rulings 277, 279` and `Rulings 264–278` all FAIL to match**,
+because the plural `s` defeats `\s+`; and **8 live plural-citation sites** stand in
+`docs/conventions/` itself.
+
+- ⭐ **A NOTICE may under-count, and then it reports its figure as an UPPER BOUND and names
+  the spelling.** ⛔ An `unreached` count printed as a hole when it is a bound is Ruling 48's
+  missing denominator wearing a regex.
+- ⛔ **A CHECK may not have a pass condition that only one undeclared spelling satisfies.**
+  ⭐ Either the predicate accepts the forms the house style writes, or **the finding's own
+  message names the spelling that will clear it.** ⚠️ Not Ruling 185(a) — the singular form
+  always works — but its neighbour, and the remedy is the same: the condition goes in the
+  instrument, never in the reader.
+
+⛔ **AND THE CLAUSE FOR BRIEFS: an instruction that names an act and forbids the only surface
+on which it can be performed is IMPOSSIBLE, and the office receiving it REFUSES IN WRITING
+WITH A MEASUREMENT rather than routing around it.** ⭐ **`PO-45/1` is the form — four board
+states planted, the impossibility measured, the alternative taken under an existing grant.**
+⚠️ **The dispatcher owns the defect; the office owns the refusal.**
+
+### ⛔ Ruling 281 — the REACH metric counts a CITATION, not a LANDING, and the printed notice says so
+
+⛔ **A citation is a reach: the machine's half is that `Ruling N` appears in
+`docs/conventions/`, and the reviewer's half is whether it teaches anything.** ⭐ **Ruling 200
+drew this boundary in the same place and the same way; a check that judged the second half
+would be judging prose, which this floor never does.**
+
+⚠️ **What is owed is the AUDIENCE: the gap declared in a module docstring is read by takers,
+and the NOTICE is read by every office on every run.** ⛔ **So the printed line says it
+asserts a citation and not a landing.** ⭐ **MEASURED: 3 of the 4 rulings reading REACHED at
+`6c4e3d0` were incidental mentions inside one round's own sections.**
+
+⛔ **THE COMPANION CLAUSE, measured in two consecutive rounds: an instrument that counts
+POINTERS is not a `grep` that counts TEXT.** ⚠️ **A prediction about a shipped instrument's
+count is made with THAT INSTRUMENT'S PREDICATE, or it is declared as a text count and
+reconciled afterwards.** ⭐ **Two offices mispredicted this in a row — `4` against a true `3`
+on backticked archive text, and before it a CASE-SENSITIVE `grep` reading `3` against a true
+`8`, which would have FALSELY REFUTED a TRUE claim.** ⛔ **That is the most expensive error
+available here, so the rule binds predictions and not only instruments.**
+
+### ⛔ Ruling 282 — rows standing behind an unperformable CLOSE are acceptable, bounded by a TRIGGER rather than by patience
+
+⛔ **`blocked` is the correct register state for a row that is delivered, approved and merged
+but whose close no office may perform** — ⭐ the form Ruling 270 ratified for `W100`.
+⚠️ **Three such rows is acceptable on three measured grounds: every disposition is written
+into the row file so nothing is inherited (Ruling 97); the blocked population is printed
+rather than estimated; and the alternatives are worse — a `done` cell is false, a deleted row
+file reads `FLOOR_EXIT=1` on frozen pointers, and an absent cell is Ruling 179's silent hole.**
+
+⛔ **WHAT IS NOT ACCEPTABLE IS THE POPULATION GROWING SILENTLY, so the bound is an instrument:
+a FOURTH row reaching that state before the unblocking row lands is a CHANGES-REQUESTED cause
+against the round that puts it there, carried as a `## Scheduled` trigger on the board.**
+⭐ **A trigger in the board fires; a sentence in a record does not.**
+
+### ⛔ Ruling 283 — a property of the DELIVERY MECHANISM is not rowable, and an agent can read its OWN context
+
+⛔ **A finding whose subject is what a harness injects into a session has no performable
+acceptance and is therefore NOT A ROW** — ⭐ a row with no performable acceptance is Ruling
+185(a)'s defect wearing a board cell.
+
+⭐ **But it is not only a finding.** ⛔ **`CLAUDE.md` says *"there is no instrument that can
+read another agent's context"* — and an agent CAN read its own.** ⚠️ **MEASURED, CTO round
+59, by two offices: a refuted premise is ABSENT from `CLAUDE.md` at HEAD and PRESENT at the
+parent of its correction, and the copy delivered into a live session's context was the
+PRE-CORRECTION one.** ⭐ **So the claim is decidable for exactly one case — the reader's own
+session — which is the only case anybody can act on.**
+
+⛔ **THE STANDING CLAUSE EVERY BRIEF OWES: a correction to `CLAUDE.md` may not have reached
+the session reading the brief. An office whose injected context disagrees with the file at
+HEAD treats the FILE as authoritative and records that it did.** ⚠️ **Ruling 272's correction
+landed, was ratified, and still did not reach the next session; that is measured now rather
+than argued.**
+
+⛔ **AND THE SECOND CLAUSE: a RELAYED measurement inherits the framing of whoever relayed
+it.** ⭐ **So a relayed figure is flagged RECEIVED *together with the claim it was relayed as
+supporting* (Ruling 115 extended, Ruling 214's re-measurement still owed).** ⚠️ **MEASURED:
+five readings of one instrument were relayed as if all five demanded a refutation, and two of
+them demand a printed NOTICE by the row's own ratified decision.**
+
+### ⛔ Ruling 284 — a MERGE OBLIGATION that survives TWO merges undischarged becomes a CLAUSE of the next row sharing its surface
+
+⛔ **An obligation routed as *"the next developer in `<package>`"* and still open after two
+merges is not an obligation — it is Ruling 256's shape, a routing that never became an
+assignment.** ⭐ **It is converted, by whoever notices, into ENUMERATED CLAUSES of the next
+row touching that surface, each written out with what it owes, so no taker re-reads the round
+that routed it.**
+
+⚠️ **MEASURED: round 57's three docstring corrections were routed, re-routed unchanged a
+round later, and survived two merges before the PO converted them into clauses of `W132`.**
+⭐ **A fifth row id would have cost two register lines for three sentences under a live
+Ruling 271, and the corrections lived in the same package as the host row's own edit, so one
+taker discharges both.**
+
+⛔ **THE NARROW LIMIT, so this is not a licence to bundle: it applies only where the
+obligation changes NO PREDICATE and therefore owes NO PLANT (R12) — and the host row SAYS
+SO.** ⭐ **An obligation that owes a plant is a row of its own.**
+
+### ⛔ Ruling 285 — a failed reading is closed by a SIGNATURE; and a citation of a tracked document is a POINTER
+
+⭐ **Two clauses, one idea at two levels.**
+
+⛔ **(a) THE SIGNATURE.** ⭐ **Where an instrument's reading can FAIL, the failure is made
+unrepresentable in the RETURN TYPE rather than caught by a guard** — a `bool` verdict becomes
+a three-valued `Answer`, and a helper takes `count: int` instead of `int | None`.
+⚠️ **A handler can be bypassed by the next caller; a signature cannot.** ⛔ **MEASURED, CTO
+round 59: the shape this replaces produced a FALSE REFUTATION at one site and a FAILED READING
+AT THE PASS CODE at another, in one module, from one `None`** — Ruling 191's family at the
+level of a return type.
+
+⛔ **(b) THE POINTER.** ⭐ **A document citing a frozen record, a row file or a ruling section
+cites it as a RESOLVING POINTER, never as a bare filename.** ⚠️ **MEASURED: a 488-line
+handoff carried ZERO markdown pointers while naming two frozen records, and 33 of 80 row
+files carried no anchored pointer at all.** ⛔ **A citation that is not a pointer is invisible
+to the one instrument that checks citations — the use-versus-mention class one level up.**
+⭐ **Scoped deliberately: it binds a citation of a TRACKED DOCUMENT, never a test name, a
+symbol or a sha.**
+
+### ⛔ Ruling 286 — Ruling 245's instrument binds ITS OWN MINTER: the round that mints the tail lands it here, in the same branch
+
+⛔ **`check_rulings_reach` is in `tools.quality.CHECKS` and it binds the rulings index's
+TAIL — which is whatever the current record mints.** ⭐ **So the reviewer who mints a ruling
+lands it in `docs/conventions/` ON THE SAME BRANCH, in the SINGULAR spelling the predicate
+accepts (Ruling 280), and the record NAMES the document it landed in.** ⚠️ **A ruling that
+reaches only its own record is the cliff Ruling 245 measured at 0 of 25; the check now makes
+the minting round pay for it in the round that mints.**
+
+⛔ **AND THE CLIFF IS NOT CLOSED BY THE ROW THAT INSTRUMENTED IT.** ⚠️ **MEASURED: the
+eleven-clause row landed 6 of rulings `217`–`241`, so 19 were routed to nobody, and the
+rolling notice prints the backlog by number on every run.** ⭐ **The backlog is a row the PO
+mints — a developer may not mint their own scoping row (Ruling 263) — and its acceptance is a
+RATE, not a total**, ⛔ **because Ruling 245 already measured that a 25-at-once obligation is
+a notice nobody reads twice.**
+
+### ⛔ Ruling 287 — the CONTAINER cannot restore, and a restore whose exit code is unread is not a restore
+
+```sh
+# ⛔ NEVER inside the container. The git common dir is mounted read-only.
+git checkout HEAD -- <path>     # -> 128, and THE FILE IS LEFT MODIFIED
+# ⭐ Restore on the HOST, from a copy, and read the status of EVERY restore.
+cp "$BAK" "$TARGET"; echo "RESTORE_EXIT=$?"        # Ruling 241, a bare command
+```
+
+⚠️ **MEASURED, CTO round 59, three times by three offices with the expectation written
+first:** inside the pinned container in a LINKED WORKTREE, the restore prints
+`fatal: Unable to create '<workspace>/…/index.lock': Read-only file system`, exits **128**,
+and leaves the planted line in place.
+
+⛔ **Rulings 202 and 205 already say the container cannot restore. NEITHER says the failure is
+SILENT INSIDE A PLANT LOOP, and that is where the damage is: a loop whose restore returns
+`128` unread runs every later state against an ACCUMULATING tree, so each later reading is
+taken on a tree nobody described.** ⭐ **A loop that discovers this afterwards DISCLOSES WHICH
+DIRECTION THE ACCUMULATION BIASED its readings rather than silently re-running** — ⚠️ **which
+is what makes such readings admissible at all.**
