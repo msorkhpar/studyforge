@@ -3724,3 +3724,71 @@ grep -rn "<the name>" --include='*.md' --include='*.py' .   # ⛔ FILES and LINE
 ⛔ **Pass: a rename lands only with every citation re-pointed IN THE SAME COMMIT, and the citation count in the commit message. Otherwise the population is renamed AROUND the name and the reason goes in the docstring at the point of the decision.** ⚠️ **A rename that dangles a record's citation is `W78` by construction, and a record is annotated beneath, never edited (Ruling 106).** ⭐ **Escape hatch, stated so it is not invented: a name that is actively MISLEADING rather than merely narrow is renamed — with its citations, in one commit.**
 
 ⭐ **MEASURED, round 52:** `W74/2` is the FIFTH refusal in this family and none of the five has been overruled — **8 citation lines in 4 record files** at `2d0cfe7`, plus the definition site. ⛔ **Five unreversed judgement calls is a rule; leaving it a judgement call costs a paragraph of justification every round.**
+
+### ⛔ Ruling 277 — a COUNT IN A SHIPPED FILE states its UNIT and, if it is a historical reading, its REF
+
+```bash
+# ⛔ The population is every comment or docstring NUMBER that is not a version,
+#    a digest, a line reference or a bound's own constant. Print it IN FULL.
+grep -rnE '[^0-9v.]([0-9]{2,})[^0-9]' --include='*.py' --include='Dockerfile' <dir>
+```
+
+⛔ **Pass: each surviving number states WHAT IT COUNTS, and a number that is a reading
+taken at a moment also names the REF it was taken at.** ⛔ **A count no unit makes true is
+DELETED or replaced by its DERIVATION — never by a better number** (Ruling 240), ⭐ **and a
+count that states a PROPERTY instead is better than both, because a property survives the
+edit that falsifies a figure.**
+
+⭐ **Ruling 240's general clause, landed here because it has been the taker's evidence and
+nobody's artifact for three rounds** (Ruling 245's cliff). ⚠️ **`W122` is the worked
+example and it is shipped: `docker/dev/Dockerfile`'s `21` was DELETED and replaced by
+*"far fewer shared libraries than full Chrome's desktop set"* plus the derivation (*run
+`ldd` on the binary, in this image*); its `38` was KEPT and gained both halves — the unit
+(*every test in that module*) and the ref (`af31fd7`, read both ways); and its `57`
+already passed, because a CONDITIONAL is not a count.**
+
+⭐ **MEASURED, round 55 and reproduced at `af31fd7` by the taker, population printed in
+full:** the claim *"links against 21 shared libraries"* was measured against five
+candidate units — apt `lib*` packages `18`, all apt packages `22`, `DT_NEEDED` entries
+`28`, transitive `ldd` `=>` lines `44`, `not found` entries `0` — ⛔ **and `21` was none of
+them.** ⚠️ **Round 56 then found the only instrument that DOES reproduce `21`: a
+`grep -oE 'lib[a-z0-9.+-]+'` over the file itself, which counts `liberately`,
+`liberation` and the word `libraries` IN THE VERY SENTENCE MAKING THE CLAIM.** ⭐ **So the
+figure was never a measurement of anything, which is a stronger finding than *no unit
+makes it true* and is why the remedy is deletion rather than correction.**
+
+⚠️ **And the asymmetry is the whole reason this is stricter than it looks: a wrong number
+in a HANDOFF is frozen with its round and a reader can DATE it; a wrong number in a
+Dockerfile comment is read as CURRENT, forever, by everyone who opens the file.**
+
+### ⛔ Ruling 278 — Ruling 235(c) is HALF-RETIRED: the OUTER bound is citable, `CALL_TIMEOUT` is still not
+
+⭐ **Ruling 235(c) had two clauses and `W123` retired exactly one of them. The split is
+ratified here rather than left in a handoff** (Ruling 245's cliff again, and `W123/2`
+routed it to this office).
+
+| clause | state | ⛔ what a reviewer may say |
+|---|---|---|
+| *no record, review, docstring or brief may cite `CALL_TIMEOUT` as a bound* | ⛔ **STANDS** | ⛔ **nothing.** `tests/visual/browser.py` sets `deadline = time.monotonic() + CALL_TIMEOUT` and loops `while time.monotonic() < deadline`, but the loop body blocks in `os.read` on a live pipe with **no deadline** — so `"no answer in 30s"` is UNREACHABLE for a browser that is up and silent and fires only if the pipe CLOSES. ⚠️ **A false attestation stays false until the READ is deadlined, which is a transport change and `QA-03`'s successor's** |
+| *a reviewer who meets a wedged run reports `no reading`, never `a thirty-second timeout`* | ⭐ **REPLACED** | ⭐ **report an OVERRUN AT THE OUTER BOUND, naming `STUDYFORGE_CHECK_TIMEOUT` and its value.** ⛔ **Accept the SET `{124, 137}` and never the single value `124`** — `124` is *terminated*, `137` is *had to be killed because it ignored SIGTERM*, and collapsing them destroys the only signal that says a process is ignoring signals |
+
+⛔ **Both overrun codes sit OUTSIDE pytest's range (`0`–`5`), which is the property that
+makes a wedged run unconfusable with a failing assertion.** ⚠️ **A wrapper that normalised
+either into `1` would make a hang indistinguishable from a red, which is strictly worse
+than the hang it replaces.**
+
+⭐ **MEASURED, round 58, through the real `docker/dev/check`, every expectation written
+before the command ran and each status captured by redirecting to a file and reading `$?`
+on the NEXT line** (Ruling 241): bound `3`s against `sleep 300` → **124**; bound `3`s
+against `trap "" TERM; sleep 300` → **137**; bound `60`s against `exit 7` → **7**
+unchanged; against `exit 0` → **0**; `STUDYFORGE_CHECK_TIMEOUT=0` — GNU `timeout`'s own
+*no limit* — against `exit 5` → **5**. ⛔ **And no container leaked: the
+`studyforge-dev` filter is empty afterwards.**
+
+⚠️ **The bound is INSIDE the container and that is three measurements rather than a
+preference:** the host's `timeout` is not the same program (`uutils coreutils 0.8.0` on
+one host, GNU coreutils `9.7` in the image, and macOS has none), `docker/dev/check`'s own
+header claims it needs only `docker`, `id` and shell builtins, and inside it bounds the
+COMMAND rather than the image BUILD. ⛔ **So a host-side bound would be an UNPINNED bound
+— Ruling 238's reasoning one level down, applied to the instrument rather than to the
+environment.**
