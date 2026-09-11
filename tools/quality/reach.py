@@ -1,22 +1,23 @@
 """Ruling 245's cliff, mechanised: the rulings index's TAIL is reachable from `docs/conventions/`.
 
 **What it does.** Asserts that the newest ruling in `docs/tasks/rulings-index.md`
-— its **tail** — is cited inside `docs/conventions/`, and prints a census of the
-wider tail window through the notice channel. ⛔ A ruling that only its own
-record remembers is a ruling whose cost is paid by the next office that did not
-read that round (Ruling 245).
+— its **tail** — is cited inside `docs/conventions/`, and prints TWO censuses
+through the notice channel: the newest `REACH_WINDOW` rulings, and the members
+still uncited **below** that window. ⛔ A ruling that only its own record
+remembers is a ruling whose cost is paid by the next office that did not read
+that round (Ruling 245).
 
 **How you use it.** `check_rulings_reach(root)` is registered in
-`tools.quality.CHECKS`; `reach_notice(root)` is registered in `NOTICES`. The
-remedy a finding gives is an edit, never a regeneration: a convention document
-has to carry the clause.
+`tools.quality.CHECKS`; `reach_notice(root)` is registered in `NOTICES` and
+returns two lines on any tree that has rulings. The remedy a finding gives is an
+edit, never a regeneration: a convention document has to carry the clause.
 
-**Depends on.** `tools.quality.rulings.derive` for the population and the tail,
-`tools.quality.report` for the answer, `tools.quality.pointers` for the two span
-parsers this reuses rather than re-derives (`prose_lines`, `strip_code_spans` —
-Ruling 73), and `re`. Standard library only. ⛔ It does **not** read
-`config.SCAN_ROOTS`: its subject is one named directory of documents, which is
-the whole exemption mechanism (see below).
+**Depends on.** `tools.quality.citations` for the citation grammar —
+`cited_numbers`, `spellings` and `MAX_RANGE_SPAN` are re-exported here so a
+caller needs one import — `tools.quality.rulings.derive` for the population and
+the tail, `tools.quality.report` for the answer, and `pathlib`. Standard library
+only. ⛔ It does **not** read `config.SCAN_ROOTS`: its subject is one named
+directory of documents, which is the whole exemption mechanism (see below).
 
 ## ⛔ Why the CHECK is the TAIL and the NOTICE is the WINDOW
 
@@ -39,58 +40,42 @@ makes it readable.
 hole nobody can fail you for still has to be visible (FND-07's argument, and
 Ruling 48's: the unreached count means nothing without its denominator).
 
-## ⛔ REACHABILITY, not a grep for digits
+## ⛔ AND THE WINDOW SLIDES, SO THE NOTICE REPORTS BELOW IT TOO (Ruling 304)
 
-⚠️ **`CTO-56`'s own dispatcher measured a bare `grep 231` matching a LINE COUNT**
-— the use-versus-mention family at the level of a bare number. ⛔ **So the
-predicate is the CITATION SPELLING, bounded on the right so `Ruling 27` cannot be
-satisfied by `Ruling 278`** — the same literal spelling the index's own
-population is derived from, and the reason a document mentioning `278` in any
-other role does not count as landing.
+⛔ **`REACH_WINDOW` is 25 wide and it MOVES with the tail, so a ruling still
+uncited BELOW it is invisible to the one number that reports the hole** —
+⭐ **which makes `unreached 0` satisfiable by MINTING: an instrument built to
+report a cliff can be cleared by walking away from it.** ⚠️ **MEASURED across
+two refs by two offices: at `428223c` the notice read *"over the 25 newest
+(272–296) … unreached 3 — 273, 274, 275"*; at `270296d` it read `285–309,
+unreached 0` while all three of those were still uncited. Nothing landed. The
+hole AGED OUT.** ⛔ Ruling 304's own words are the obligation this discharges:
 
-## ⛔ THE SPELLINGS IT READS, DECLARED — and why the list is not `Ruling N` alone
+> ⛔ **AND THE INSTRUMENT OWES A ROW, not an edit by me: the notice should report
+> members that are still uncited BELOW the window, or its `unreached 0` means
+> *none in the last 25* while reading as *none*.**
 
-⛔ **Ruling 280: a CHECK may not have a pass condition that only one undeclared
-spelling satisfies**, and this is a `CHECKS` member rather than a notice.
-⭐ **`W133`'s first arm is taken here — the predicate reads the forms the house
-style writes — and they are ENUMERATED, because an enumeration is a closed claim
-and a paraphrase is not:**
+⭐ **THE TWO FIGURES ARE NEVER SUMMED, and that is a rule rather than a layout
+choice.** They answer different questions — *is the round that minted paying?*
+(Ruling 286's minter-pays clause, which the window measures) and *is the backlog
+being worked?* — ⛔ **and one merged scalar would make a paying minter and a
+growing backlog indistinguishable, which is the defect one bound over.** ⚠️ So
+they are printed as two lines, each with its own denominator, and
+`tools/tests/quality/test_reach.py` asserts each moves WITHOUT the other.
 
-| The spelling | Read as |
-|---|---|
-| `Ruling 296` — SINGULAR, one member | `296`, with the right bound |
-| `Rulings 295, 296` / `Rulings 294, 295 and 296` | each member |
-| `Rulings 177 + 180` — plural `+` join | `177` and `180` |
-| `Rulings 294-296` / `Rulings 264–278` — range | every member of the span |
+⛔ **AND IT IS NOT A WIDENING OF `REACH_WINDOW`.** ⭐ 25 is what makes the
+minter-pays reading cheap and legible; widening it to 100 would replace a sharp
+question with a blunt one and bury Ruling 286's signal. **The remedy is a SECOND
+reading, not a bigger first one.**
 
-⛔ **TWO NARROWINGS go with the widening, both Ruling 65's shape — a widened
-predicate that cannot fail is worse than a narrow one that can** (Ruling 185(b),
-and round 60's own near-miss):
+## ⛔ THE GRAMMAR IS A SIBLING MODULE, and the split is Ruling 261's
 
-* ⭐ **A multi-member body requires the PLURAL word.** ⛔ MEASURED at `428223c`:
-  all ten live plural citation sites write `Rulings` and `0` write a singular
-  word with a multi-member body — while `Ruling 290, 5 distinct ids` is a
-  sentence this project *does* write, and a `Rulings?`-admitting list would read
-  `5` out of it. ⚠️ **So the singular keeps exactly its old reading:
-  `Ruling 279-281` reads `279` and refuses `281`, unchanged.**
-* ⭐ **A range naming more than `MAX_RANGE_SPAN` rulings is NOT expanded.** ⛔ One
-  line reading `Rulings 1-400` would turn this gate green for every tail forever.
-  MEASURED at `428223c`: the widest live range is `Rulings 264–278`, fifteen.
-
-## ⛔ A CODE SPAN IS A MENTION, AND THE EXCLUSION IS THE WHOLE REPAIR
-
-⛔ **The widening is unsafe without it.** The three backticked citations on ONE
-line of `review-rubric.md` sit inside **Ruling 280's own text, quoting these
-forms as examples** — ⭐ **and MEASURED at `428223c`, a span-blind plural
-predicate reads `264`–`281` off that single line. The ruling describing the
-defect would satisfy the check that tests for it, and the cliff would vanish from
-the only instrument that prints it.**
-
-⭐ **Hence `prose_lines` and `strip_code_spans` are imported from
-`tools.quality.pointers` rather than rewritten** (Ruling 73): that module already
-draws this line for a link inside backticks, and its `0 unresolved` is
-trustworthy only because it does. ⚠️ **A fence is quoted material, an inline code
-span is an example, and neither is a landing.**
+⚠️ **MEASURED at `6aef480`: this module was `385` of R11's `400`.** ⭐ **Ruling
+261 — a ceiling is not a budget — so the next edit was the SPLIT `W133`'s taker
+had already named: the citation grammar moved to `tools/quality/citations.py`,
+which owns the spellings, the two narrowings, the code-span exclusion and three
+of the four declared gaps.** ⛔ **The seam runs ONE WAY: this module imports that
+one, and that one imports nothing back.**
 
 ## ⛔ Why `docs/conventions/` and nothing else
 
@@ -102,40 +87,19 @@ subject confined to `docs/conventions/` excludes all three structurally rather
 than by a filter a reader has to remember** — which is the same exemption shape
 `source_names` uses, and for the same reason.
 
-## ⛔ WHAT THIS CANNOT SEE, DECLARED — because an incomplete gaps list is worse than none
+## ⛔ THE FOURTH DECLARED GAP, which is this module's own
 
-⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **The gaps are four,
-and the last three were MEASURED at `428223c` while repairing the spelling hole
-rather than guessed:**
-
-1. **A CITATION is not a LANDING** — the original gap, unchanged, spelled out
-   below.
-2. ⛔ **An EMPHASIS-INTERLEAVED citation reads UNREACHED** — `board.md:703`'s
-   `Rulings **15**, **62** and **68**`, whose digits sit inside `**` runs. ⭐ Not
-   widened over: Ruling 185 forbids a taker widening a ruling's own words, and
-   Ruling 280's are "the forms the house style writes" — this is ONE site of ten.
-3. ⛔ **A citation that WRAPS A LINE BREAK is read only as far as the break** —
-   `board.md:115` writes `Rulings 106 and` with `174` on the next line, so `106`
-   reads cited and `174` does not. ⭐ Line-scoped because `prose_lines` is.
-4. ⛔ **`Rulings minted: 198-202`** (`review-rubric.md:292`) puts a word between
-   the plural and its members and reads UNREACHED.
-
-⭐ **Consequence, carried by Ruling 280's SECOND arm and Ruling 281's audience
-clause: the FINDING names the spellings that clear it, and the NOTICE says beside
-its own number that `unreached` is an UPPER BOUND.** ⛔ An instrument that
-under-reads must say so where the number is read, not in a module docstring the
-reader of a failure never opens.
-
-⭐ So gap 1, named rather than discovered: **this asserts a CITATION, not a
-LANDING.** ⚠️ A
-convention that merely *mentions* `Ruling N` in passing — inside a neighbouring
-ruling's prose, say — satisfies it exactly as a section that carries the clause
-does. ⛔ **MEASURED, and it is why the gap is stated rather than implied: at
-`6c4e3d0` rulings `235`, `238`, `240` and `241` all read REACHED over Ruling
-245's own population of `217`–`241`, and three of those four were incidental
-mentions inside round 58's sections rather than the clause `W126` was routed to
-land.** ⭐ **Ruling 200 already drew this boundary and drew it the same way —
-*"the reviewer confirms one of them is the document the rule was WRITTEN
+⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Three of the four
+gaps belong to the grammar and are declared in `citations.py`; this one belongs
+to what this module CONCLUDES, so it is declared here: a CITATION is not a
+LANDING.** ⚠️ A convention that merely *mentions* `Ruling N` in passing — inside
+a neighbouring ruling's prose, say — satisfies this exactly as a section that
+carries the clause does. ⛔ **MEASURED, and it is why the gap is stated rather
+than implied: at `6c4e3d0` rulings `235`, `238`, `240` and `241` all read REACHED
+over Ruling 245's own population of `217`–`241`, and three of those four were
+incidental mentions inside round 58's sections rather than the clause `W126` was
+routed to land.** ⭐ **Ruling 200 already drew this boundary and drew it the same
+way — *"the reviewer confirms one of them is the document the rule was WRITTEN
 INTO"*** — so the machine's half is the citation and the reviewer's half is
 whether it teaches anything. ⚠️ **A check that tried to judge the second would be
 judging prose, which is the one thing this floor never does.**
@@ -147,15 +111,16 @@ reading.** ⭐ So the two empties are separated: a tree with **no ruling records
 is not this repository and owes nothing (the notice says so); a tree that HAS
 ruling records and **no readable `docs/conventions/`** is this repository with
 its subject missing, and that is a finding. ⚠️ Without the split, deleting the
-conventions directory would turn this check green.
+conventions directory would turn this check green. ⭐ **A third empty joins them
+with the below-window reading: a tree whose whole series FITS inside the window
+has nothing below it, and the notice SAYS SO rather than printing `0 of 0`.**
 """
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
 
-from tools.quality.pointers import prose_lines, strip_code_spans
+from tools.quality.citations import MAX_RANGE_SPAN, cited_numbers, spellings
 from tools.quality.report import Finding
 from tools.quality.rulings.derive import records, series, sites
 
@@ -165,104 +130,23 @@ RULE_UNREACHED = "rulings-reach"
 #: form of Ruling 212's three exclusions — see the contract above.
 CONVENTIONS_DIR = "docs/conventions"
 
-#: How many of the newest rulings the NOTICE reports on. ⭐ 25 because that is
-#: the population Ruling 245 measured (`217`–`241`, reached 0), so the notice's
-#: window is the cliff's own width rather than a number somebody liked.
-#: ⛔ It bounds the NOTICE only; the FINDING binds the tail alone.
+#: How many of the newest rulings the NOTICE's FIRST line reports on. ⭐ 25
+#: because that is the population Ruling 245 measured (`217`–`241`, reached 0),
+#: so the notice's window is the cliff's own width rather than a number somebody
+#: liked. ⛔ It bounds the notice's first line only; the FINDING binds the tail
+#: alone and the SECOND line reports everything below this.
+#:
+#: ⚠️ `citations.MAX_RANGE_SPAN` is this figure, written there because the seam
+#: cannot import backwards; the equality is asserted in this module's mirror.
 REACH_WINDOW = 25
 
-#: The most RULINGS a range may name and still be expanded to its members. ⛔ A
-#: unit — rulings, counted inclusively — not a bare number (Ruling 277). ⭐ Equal
-#: to `REACH_WINDOW`: a range covering the whole notice window in one line is a
-#: pass condition nobody verified (Ruling 65).
-MAX_RANGE_SPAN = REACH_WINDOW
-
-#: Hyphen-minus and EN DASH — the two range separators the house style writes.
-#: ⛔ The EM DASH is excluded deliberately: this project uses it as a sentence
-#: dash on nearly every line, so admitting it would read a citation out of
-#: `Ruling 296 — a heading` plus whatever number followed.
-_RANGE_DASHES = "\\-\u2013"
-
-#: One member: up to four digits, every ruling number this project has and the
-#: `9999` probe besides.
-_MEMBER = r"\d{1,4}"
-
-#: What joins two members: a comma (optionally with `and`), a bare `and`, a `+`,
-#: or a range dash.
-_JOIN = rf"(?:\s*,\s*(?:and\s+)?|\s+and\s+|\s*\+\s*|\s*[{_RANGE_DASHES}]\s*)"
-
-#: ⛔ SINGULAR, one member, with the right bound that keeps `Ruling 27` out of
-#: `Ruling 278`. ⭐ Disjoint from `_PLURAL` by construction: `\s+` demands
-#: whitespace exactly where the plural writes its `s`.
-_SINGULAR = re.compile(rf"Ruling\s+({_MEMBER})(?!\d)")
-
-#: ⛔ PLURAL, one or more members. The body goes to `_members`, not to this
-#: pattern: a range and a list look the same until their separator is read.
-_PLURAL = re.compile(rf"Rulings\s+(?P<body>{_MEMBER}(?:{_JOIN}{_MEMBER})*)(?!\d)")
-
-#: Walks a body: a member, or the dash making the previous member a low bound.
-_BODY_TOKEN = re.compile(rf"(?P<member>{_MEMBER})|(?P<dash>[{_RANGE_DASHES}])")
-
-
-def spellings(number: int) -> str:
-    """Return the citation forms that satisfy this instrument, for `number`.
-
-    ⛔ **Ruling 280's second arm, and it is why this is a function rather than a
-    constant**: a finding that said "write it in the house spelling" would put
-    the pass condition back in the reader. ⭐ The caller is the finding's own
-    message, so the office that trips the gate is told what clears it.
-    """
-    low, lower = number - 1, number - 2
-    return (
-        f"`Ruling {number}`, `Rulings {low}, {number}`, `Rulings {low} and {number}`, "
-        f"`Rulings {low} + {number}`, or a range containing it — "
-        f"`Rulings {lower}-{number}` or `Rulings {lower}\u2013{number}` (en dash). "
-        f"⛔ A citation inside a code span or a ``` fence is an EXAMPLE and is not "
-        f"read; nor is one written with emphasis inside it (`Rulings **{low}**, "
-        f"**{number}**`) or wrapped across a line break"
-    )
-
-
-def _members(body: str) -> set[int]:
-    """Return every ruling number a plural citation's `body` names.
-
-    ⛔ A dash between two members expands to the inclusive span, which is the
-    whole point of reading the range spelling at all — `Rulings 264–278` cites
-    fifteen rulings and not two. ⚠️ A range naming more than `MAX_RANGE_SPAN`
-    rulings, or one that runs backwards, is read as its two endpoints instead.
-    """
-    found: set[int] = set()
-    previous: int | None = None
-    ranged = False
-    for token in _BODY_TOKEN.finditer(body):
-        if token.group("dash"):
-            ranged = previous is not None
-            continue
-        number = int(token.group("member"))
-        if ranged and previous is not None and 0 < number - previous < MAX_RANGE_SPAN:
-            found.update(range(previous, number + 1))
-        else:
-            found.add(number)
-        previous, ranged = number, False
-    return found
-
-
-def cited_numbers(text: str) -> set[int]:
-    """Return every ruling number `text` CITES, in prose, outside every code span.
-
-    ⭐ The two exclusions are `pointers`' own, reused (Ruling 73): a fenced block
-    is quoted material and an inline code span is an example. ⛔ Without them the
-    widened predicate reads Ruling 280's own illustration of this defect as a
-    landing of the eight rulings it quotes — measured, 8 of 8.
-    """
-    found: set[int] = set()
-    for _, line in prose_lines(text):
-        prose = strip_code_spans(line)
-        for match in _SINGULAR.finditer(prose):
-            found.add(int(match.group(1)))
-        for match in _PLURAL.finditer(prose):
-            found |= _members(match.group("body"))
-    return found
+#: ⭐ The declared gaps, named where the number is READ rather than in a module
+#: docstring the reader of a failure never opens (Ruling 280's first arm, Ruling
+#: 281's audience clause). ⛔ It is why both notice lines say UPPER BOUND.
+_GAPS = (
+    "emphasis inside the number, a citation wrapped across a line break, a word "
+    "between the plural and its members"
+)
 
 
 def _conventions(root: Path) -> list[Path]:
@@ -276,9 +160,10 @@ def _conventions(root: Path) -> list[Path]:
 def _citations(documents: list[str]) -> set[int]:
     r"""Return every ruling number cited anywhere in `documents`.
 
-    ⛔ Computed ONCE for the whole window rather than per number: the predicate
-    is no longer a single `re.search` per ruling, and re-deriving it twenty-five
-    times over eight documents would read the same prose two hundred times.
+    ⛔ Computed ONCE for the whole population rather than per number: the
+    predicate is no longer a single `re.search` per ruling, and re-deriving it
+    three hundred times over eight documents would read the same prose
+    twenty-four hundred times.
     """
     found: set[int] = set()
     for text in documents:
@@ -286,13 +171,17 @@ def _citations(documents: list[str]) -> set[int]:
     return found
 
 
-def _tail(root: Path) -> int | None:
-    """Return the highest number in the index's contiguous series, or None if none."""
+def _population(root: Path) -> tuple[int, ...]:
+    """Return the index's contiguous ruling series, lowest first, or empty.
+
+    ⚠️ CONTIGUOUS, so a probe number written as a ruling (`9999`) is outside it.
+    ⛔ If the tail were `max()`, an impossible control in somebody's probe table
+    would become the thing every convention had to cite.
+    """
     written = {site.number for record in records(root) for site in sites(record)}
     if not written:
-        return None
-    tail = series(written).tail
-    return tail or None
+        return ()
+    return series(written).numbers
 
 
 def check_rulings_reach(root: Path) -> list[Finding]:
@@ -303,9 +192,10 @@ def check_rulings_reach(root: Path) -> list[Finding]:
     a corpus, a consumer repository and an installed tree, and none of those
     owes a rulings index or a conventions directory.
     """
-    tail = _tail(root)
-    if tail is None:
+    population = _population(root)
+    if not population:
         return []
+    tail = population[-1]
     paths = _conventions(root)
     if not paths:
         return [
@@ -336,43 +226,84 @@ def check_rulings_reach(root: Path) -> list[Finding]:
     ]
 
 
-def reach_notice(root: Path) -> list[str]:
-    """Return the reach census over the tail window, printed whether anything failed.
+def _window_line(tail: int, window: range, unreached: list[int], documents: int) -> str:
+    """Render the first census: the newest `REACH_WINDOW` rulings, and nothing else."""
+    members = ", ".join(str(number) for number in unreached) or "none"
+    return (
+        f"rulings reach: tail {tail} is "
+        f"{'CITED' if tail not in unreached else 'UNREACHED'} in {CONVENTIONS_DIR}/; "
+        f"over the {len(window)} newest rulings ({window.start}–{tail}) reached "
+        f"{len(window) - len(unreached)}, unreached {len(unreached)} IN THIS WINDOW "
+        f"ALONE — an UPPER BOUND on the hole (Rulings 280, 281), because reach is "
+        f"read from the declared citation spellings outside code spans and fences, "
+        f"and the three declared gaps ({_GAPS}) read UNREACHED. Read from "
+        f"{documents} convention document(s). Unreached: {members}."
+    )
 
-    ⛔ The unreached members are enumerated rather than counted: Ruling 245's
-    finding was invisible for twenty-five rounds precisely because nobody had
-    printed the population, and `0 reached` is `0 = 0` until it says out of how
-    many (Ruling 48, Ruling 128).
+
+def _below_line(window: range, below: tuple[int, ...], uncited: list[int]) -> str:
+    """Render the second census: the members still uncited BELOW the window.
+
+    ⛔ **Ruling 304, and the two clauses that shape it.** The members are NAMED
+    rather than counted, because a bare scalar is the form that produced the
+    defect — `unreached 0` on a tree carrying dozens of uncited rulings. ⚠️ And
+    this figure is NEVER added to the window's: see the contract above.
+
+    ⭐ An empty population below the window is the third empty (Ruling 191): it
+    is REPORTED as the window covering the whole series, never as `0 of 0`.
     """
-    tail = _tail(root)
-    if tail is None:
+    if not below:
+        return (
+            f"rulings reach below the window: the {REACH_WINDOW}-newest window covers "
+            f"the whole derived series ({len(window)} ruling(s)), so there is nothing "
+            f"below it. Still uncited below the window: none."
+        )
+    members = ", ".join(str(number) for number in uncited) or "none"
+    return (
+        f"rulings reach below the window: {len(uncited)} of the {len(below)} rulings "
+        f"below {window.start} are still uncited in {CONVENTIONS_DIR}/ — a SECOND "
+        f"reading, and it is NEVER added to the figure above (Ruling 304). That one "
+        f"asks whether the round that minted is paying (Ruling 286); this one asks "
+        f"whether the backlog is being worked, and minting SLIDES the window, so a "
+        f"member leaves it whether it LANDED or AGED OUT. Also an UPPER BOUND, for "
+        f"the same three declared gaps ({_GAPS}). Still uncited below the window: "
+        f"{members}."
+    )
+
+
+def reach_notice(root: Path) -> list[str]:
+    """Return the two reach censuses, printed whether or not anything failed.
+
+    ⛔ The unreached members are enumerated rather than counted in BOTH: Ruling
+    245's finding was invisible for twenty-five rounds precisely because nobody
+    had printed the population, and `0 reached` is `0 = 0` until it says out of
+    how many (Ruling 48, Ruling 128).
+    """
+    population = _population(root)
+    if not population:
         return [
             f"rulings reach: no ruling records in this checkout, so no ruling is owed a "
             f"{CONVENTIONS_DIR}/ citation. This is not a failure — the floor runs over "
             f"trees that are not this repository."
         ]
+    tail = population[-1]
     paths = _conventions(root)
-    documents = [path.read_text(encoding="utf-8") for path in paths]
-    citations = _citations(documents)
+    citations = _citations([path.read_text(encoding="utf-8") for path in paths])
     window = range(max(1, tail - REACH_WINDOW + 1), tail + 1)
-    unreached = [number for number in window if number not in citations]
-    reached = len(window) - len(unreached)
-    members = ", ".join(str(number) for number in unreached) or "none"
+    below = tuple(number for number in population if number < window.start)
     return [
-        f"rulings reach: tail {tail} is "
-        f"{'CITED' if tail not in unreached else 'UNREACHED'} in {CONVENTIONS_DIR}/; "
-        f"over the {len(window)} newest rulings ({window.start}–{tail}) reached "
-        f"{reached}, unreached {len(unreached)} — an UPPER BOUND on the hole "
-        f"(Rulings 280, 281), because reach is read from the declared citation "
-        f"spellings outside code spans and fences, and the three declared gaps "
-        f"(emphasis inside the number, a citation wrapped across a line break, a "
-        f"word between the plural and its members) read UNREACHED. Read from "
-        f"{len(paths)} convention document(s). Unreached: {members}."
+        _window_line(tail, window, [n for n in window if n not in citations], len(paths)),
+        _below_line(window, below, [n for n in below if n not in citations]),
     ]
 
 
 #: ⭐ Re-exported so a caller needs one import, and named so the mirror test can
-#: assert the module's surface rather than its internals.
+#: assert the module's surface rather than its internals. ⛔ `cited_numbers`,
+#: `spellings` and `MAX_RANGE_SPAN` now LIVE in `tools.quality.citations`; they
+#: stay addressable here because `docs/conventions/review-rubric.md` teaches
+#: `from tools.quality.reach import cited_numbers` as the way to diff a predicate
+#: over its whole population (Ruling 302), and a split may not break a documented
+#: import out from under the document that teaches it.
 __all__ = [
     "CONVENTIONS_DIR",
     "MAX_RANGE_SPAN",
