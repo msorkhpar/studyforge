@@ -58,10 +58,18 @@ post-wave red is the expected state rather than a discovery**
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W63` | framework agent | `wt/dev4`, `fix/W63-W64-marker-kind` | 2 | in flight |
-| `W64` | framework agent | `wt/dev4`, `fix/W63-W64-marker-kind` | 2 | in flight |
-| `SF-16` | framework agent | `wt/dev3`, `feat/SF-16-speakable` | 2 | in flight |
+| `W63` | framework agent | `wt/dev4`, `fix/W63-W64-marker-kind` | 3 | in flight |
+| `W64` | framework agent | `wt/dev4`, `fix/W63-W64-marker-kind` | 3 | in flight |
+| `SF-16` | framework agent | `wt/dev3`, `feat/SF-16-speakable` | 5 | in flight |
 <!-- /inflight -->
+
+⛔ **THE AS-OF FOR THOSE THREE NUMBERS IS THE BRANCH TIP AND NOT THE RELEASE REF,
+and it had to be, because both moved WHILE THIS ROUND WAS BEING WRITTEN:**
+`fix/W63-W64-marker-kind` @ `f2b7c47`, `feat/SF-16-speakable` @ `4d60287`.
+⭐ **Both cells read `2` forty minutes earlier and were true then** — ⚠️ **`PO-42/7`:
+a commits-ahead cell is a reading of a MOVING TIP, so no ref this board can name
+pins it, and `corroborate` prints git's own count beside the cell and compares
+neither.**
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A
 RAMP** — ⭐ **a header is INFERRED, so an absent table is indistinguishable from a

@@ -12063,24 +12063,27 @@ recorded, no edit owed** (Ruling 155: a recorded negative takes the LOCAL marker
 ### ⛔ Ruling 194 applied to my own record
 
 ```text
-structural: 3    PO-42/2  PO-42/3  PO-42/4
+structural: 5    PO-42/2  PO-42/3  PO-42/4  PO-42/6  PO-42/7
 local:      2    PO-42/1  PO-42/5
 none:       0
 PO-42/2  routed -> W88  (promoted; population printed by the floor every run)
 PO-42/3  routed -> W78  (promoted; widened with nine sites)
 PO-42/4  routed -> W100 (pre-dispatch reading in the row file)
-⭐ 3 dispositions for 3 structural findings; the counts are EQUAL
-⭐ 5 findings, 5 disposition lines; every one has a NAMED HOME
+PO-42/6  routed -> the CTO; the record edit is DISCLOSED and reversible in one commit
+PO-42/7  routed -> W115 (a second clause at mint time; re-scope asked of the CTO)
+⭐ 5 dispositions for 5 structural findings; the counts are EQUAL
+⭐ 7 findings, 7 disposition lines; every one has a NAMED HOME
 ```
 
 ⚠️ **And the clause's own warning read against myself for the second consecutive
-round: ALL THREE of my structural findings are *routed*.** ⛔ **That is the
-gradient Ruling 194 names from the other side, and it is worse this round than
-last: three of three rather than two of three.** ⭐ **The mitigating reading, and
-it is a reading rather than an excuse: all three are routed to rows that ALREADY
-EXISTED and were widened, which is the opposite of the mint-per-finding habit —
-and two of the three are PROMOTED in the same edit, so the routing changes a
-priority rather than parking a fact.**
+round: ALL FIVE of my structural findings are *routed*.** ⛔ **That is the gradient
+Ruling 194 names from the other side, and it is worse this round than last: five of
+five rather than two of three.** ⭐ **The mitigating readings, and they are readings
+rather than excuses: THREE are routed to rows that ALREADY EXISTED and were widened
+rather than to new mints, TWO of those three are PROMOTED in the same edit so the
+routing changes a priority rather than parking a fact, and `PO-42/6` is routed
+TOGETHER WITH THE ACTION — the edit is made, disclosed, and reversible in one
+commit, so it is not a fact parked for somebody else.**
 
 ### W74 — The sibling runnable-module check widens
 
@@ -12255,3 +12258,119 @@ plant: two column names renamed inside the markers
 
 ⛔ **AND check 4's sub-step is OWED ON THE PAIR: `W110`'s subject is `corroborate.py` and both rows can reach `tools/quality/board/__init__.py` at `337` through the printed notice line** — ⭐ **so the shared-file sum is taken before these two are dispatched in parallel, or they go in sequence.**
 
+
+### ⛔ `PO-42/7` `[structural]` — a commits-ahead cell is a reading of a MOVING TIP, and `corroborate` compares it to nothing
+
+**Measured:** BY ME, TWICE, forty minutes apart, inside one round, with no plant.
+
+```text
+first reading    fix/W63-W64-marker-kind  ahead 2   feat/SF-16-speakable  ahead 2
+second reading   fix/W63-W64-marker-kind  ahead 3   feat/SF-16-speakable  ahead 5
+                 tips f2b7c47 and 4d60287; release/m0-foundations UNMOVED at e5ab51d
+with the cells still reading 2 and 2, corroborate returned
+  ⭐ CORROBORATED: ... is checked out at dev4 and is 3 commits ahead.
+  corroborate: 0 of 3 rows REFUTED by git.   exit 0
+```
+
+⛔ **THE INSTRUMENT CORROBORATES THE ROW AND NEVER THE CELL:** ⭐ **it parses the
+claimed count, prints git's own count in the same sentence, and compares neither.**
+⚠️ **That is `PO-40/2`'s shape (`W110/1`) in a different column, inhabited LIVE.**
+
+⛔ **AND THE DEEPER HALF, which is why *keep the cell fresher* is not the remedy:**
+⭐ **the release ref does not move when a developer commits, so NO as-of this board
+can name pins a commits-ahead cell.** ⚠️ **Both cells were TRUE when written and
+false an hour later with nothing on the board changed** — ⛔ **so the board names
+the BRANCH TIPS as the as-of, which is the only thing that does pin it.**
+
+**Disposition: ROUTED —** [`rows/W115.md`](rows/W115.md), as a SECOND CLAUSE added
+at mint time: ⭐ **the claimed count is COMPARED to git's and a disagreement is a
+printed NOTICE, never a refutation.** ⛔ **A stale NUMBER is not a stale ROW, and
+refuting on it would fire on every wave where a developer committed after the
+board was written — which is every wave** (Ruling 179). ⚠️ **Whether it should be
+its own row rather than `W115`'s second clause is asked of the CTO and not
+assumed.**
+
+### The final readings — BASE, MERGE, and the two instruments this round had to run in BOTH DIRECTIONS
+
+⛔ **ONE invocation of MY OWN worktree's `docker/dev/check`, PINNED (Ruling 40),
+Ruling 172's form — the invocation PRINTS THE SHA IT READ — and the floor's exit
+code read with NOTHING between it and the command** (`PO-40`'s and `CTO-51/8`'s
+shared defect):
+
+```sh
+docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check --no-cache .; \
+  ruff format --check .; python3 -m pytest -q -rs; python3 -m tools.quality' </dev/null
+```
+
+| | ⛔ **BASE `e5ab51d`, role `wt/po`** | ⭐ **MERGE `b33e01a`+, role `wt/po`** |
+|---|---|---|
+| sha printed by the run | `e5ab51d34…` | `b33e01af3…` |
+| suite | 4911 passed, 67 skipped | ⭐ **4911 passed, 67 skipped** |
+| floor | clean, **exit 0** | ⭐ **clean, exit 0** |
+| `ruff` 0.16.6 | check clean, format clean, **779** | clean, clean, **782** |
+| pointers | 723 in 325, 411 anchored, **0 unresolved** | ⭐ **752 in 328, 425 anchored, 0 unresolved** |
+| board | **112** register / 73 live / 73 files | ⭐ **117 / 75 / 75**, bijective |
+| narrative | 6095 of 8192 | **7348 of 8192**, widest row 510 of 600 |
+| rulings index | 216 from 39, tail 216 | ⭐ **216 from 39, tail 216** — unchanged |
+| `corroborate` | ⛔ **3 of 3 REFUTED, exit 1** | ⭐ **0 of 3 REFUTED, exit 0** |
+
+⭐ **THE MERGE IS A FAST-FORWARD and the equality is MEASURED as TREE OBJECTS
+rather than inferred from `Already up to date.`** — ⛔ **this branch is `0` behind
+`e5ab51d`, so the merge tree and the branch tree are the same object.**
+
+⚠️ **TWO FIGURES READ ONE LOWER THAN MAIN'S AND THE ROLE IS NAMED FOR EVERY COUNT:**
+⭐ **MAIN carries the user's untracked `ONBOARDING.md`, never moved, deleted or
+committed** (Ruling 147). ⛔ **AND THE THIRD DOES NOT MOVE — `PO-42/1`: the
+untracked file is a markdown FILE carrying ZERO pointers, so the FILE count and the
+`ruff` count differ by one and the POINTER count does not.**
+
+#### ⛔ The 67 skips, named in full with `-rs`, re-derived by me rather than carried
+
+```text
+57 visual: test_contrast 33 (1+1+2+26+2+1) · test_offline 7 (4+1+1+1)
+           test_capture 7 (4+2+1) · test_no_script 5 (2+1+1+1) · test_keyboard 5 (1+2+1+1)
+ 5 tests/docker/test_dev_image.py:512,518,538,547,566  (already inside the image)
+ 3 tests/test_knowledge_index.py:130,130,165           (no sibling checked out)
+ 2 tests/studyforge/render/page/test_acceptance.py:109,195  (deliberate)
+⛔ `grep -c '^SKIPPED'` reads 31, NOT 67; plain `-q` reads 0. The multipliers sum.
+```
+
+#### ⛔ THE TWO INSTRUMENTS RUN IN BOTH DIRECTIONS, and the second one is the round's own edit
+
+⭐ **`corroborate`: `3 of 3 REFUTED, exit 1` before the re-take and `0 of 3
+REFUTED, exit 0` after it, same command, same checkout, one variable changed —
+the table.** ⛔ **Both codes inhabited in one round, which is what Ruling 191 asks
+of a clause claiming an exit code.**
+
+⭐ **The floor, over my own board edit, and it went RED on me THREE WAYS before it
+went green — which is the reading I would otherwise have had no way to offer:**
+
+```text
+with rows/W74.md deleted and handoffs/W74.md untouched
+  document pointers: 2 unresolved       quality floor: 2 findings   exit 1
+  ⛔ 3 failed, 4908 passed — test_quality_floor.py, test_main.py, test_pointers.py,
+     ALL THREE the same cause, which is the floor's three guards agreeing
+after the ](…) markup was removed and the anchor written
+  document pointers: 0 unresolved       quality floor: clean        exit 0
+```
+
+⛔ **THAT IS `PO-42/6`'s whole evidence and it was not a thought experiment:** ⭐ **a
+close that deletes a row file cited by a LINK in a record makes the floor red, and
+Ruling 201 exempts records from the fourth edit.** ⚠️ **The exit code was read
+WITHOUT a pipe between it and the command, after I read `FLOOR_EXIT=0` off a
+pipeline earlier in the round and caught it — ⛔ `$?` after a pipeline is the
+pipeline's last command, which is the defect two offices hit last wave.**
+
+#### ⛔ What I did NOT do with the instruments, stated so it is not read as a gap
+
+⚠️ **I PLANTED NOTHING.** ⭐ **This round ships no instrument: the `<!-- scheduled -->`
+markers and the STATE column are an INPUT to an instrument that does not exist yet
+(`W100`), so the three-reading discipline applies to the row that reads them and
+not to the board edit that declares them.** ⛔ **What I did instead is the negative
+control `PO-42/5` records: the floor was run before and after the marker edit and
+`board_state`'s own printed line was read for a moved figure, rather than the
+inertness being reasoned from the source.**
+
+⛔ **AND THE READINGS I DID NOT RE-TAKE ARE MARKED RECEIVED, not quietly carried**
+(Ruling 115): ⭐ **`W115`'s three coercion sites and `W119`'s two suite readings are
+the CTO's and the coordinator's respectively, and neither is restated as mine.**
