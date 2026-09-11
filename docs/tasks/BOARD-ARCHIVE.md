@@ -14192,7 +14192,7 @@ unreached of 217–296 at 428223c  -> 40      19 of 217–241 | 15 of 242–262 
 
 ⚠️ **So the gate is wrong in BOTH directions at once, which is Ruling 225's shape: a defended property false as stated.** ⭐ **13 branches the exemption's ground covers sit outside the glob; 3 branches its ground would flag sit inside it.** ⛔ **It is a ROW and not a note because leaving a measured remedy in prose is Ruling 256's shape, which Ruling 295 has just ruled against by name.** ⭐ **Placed LAST: `16` of `16` read `0` ahead and none is checked out, so the exposure is LATENT and jumps nobody.**
 
-### ⛔ FINDINGS — ten, and all ten are mine
+### ⛔ FINDINGS — eleven, and all eleven are mine
 
 | id | marker | in one line |
 |---|---|---|
@@ -14204,6 +14204,7 @@ unreached of 217–296 at 428223c  -> 40      19 of 217–241 | 15 of 242–262 
 | `PO-47/6` | `[local]` | ⚠️ **`tools/quality/board/register.py` stands at `399` of R11's `400`** and the standing split condition still named `__init__.py`, which `W129`/`W130` DISCHARGED. **Measured** across `51dee3b` → `94a3a4b`: `__init__.py` `301` → `266`, `register.py` `388` → `399`. ⭐ Re-pointed as a Standing decision, NOT minted — R11's ceiling is not a budget (Ruling 261) |
 | `PO-47/7` | `[none]` | ⭐ **recorded negative — `README.md` needed NO edit.** **Measured**: it names no `W` row and carries no count this round falsified. ⚠️ `CLAUDE.md` needed none either, and `ONBOARDING.md` was never moved, deleted or committed |
 | `PO-47/8` | `[structural]` | ⛔ **A CLOSE UNDER RULING 270 CREATES NEW FROZEN ARCHIVE POINTERS AT OTHER ROW FILES — the moved body's SIBLING links become archive links.** ⭐ **Measured** by plant at my own tip: the control read `26` where the pre-existing population was `20`, and all `6` are lines this commit wrote. ⚠️ **Under Ruling 201's delete that is a RATCHET — every close makes the next close's delete-state worse, which is the unnamed mechanism behind `2` → `5` → `20`. Under Ruling 270 it costs nothing** |
+| `PO-47/11` | `[local]` | ⚠️ **I wrote *"this commit adds no pointer"* about my own commit BEFORE measuring it, and it adds TWO.** ⭐ **Measured** at `dda674c`: `1086 in 370` against `1084 in 370`, the two being that paragraph's own anchor links; ⛔ **every other figure IDENTICAL**, so the claim becomes *the tip READS THE SAME*, which is stronger. ⚠️ **`PO-46/16`'s root — a number written once and not re-taken — caught the same way, by re-taking. Corrected BENEATH, never edited** (Ruling 106) |
 | `PO-47/10` | `[structural]` | ⛔ **RULING 270 MOVED THE WALL FROM THE POINTER FLOOR TO THE COMMITTED SUITE, and the reading that declared it gone ran the FLOOR and not the SUITE.** ⭐ **Measured** by me at `428223c` on nine performed closes: `FLOOR_EXIT=0` and clean, `PYTEST_EXIT=1` with `2 failed` — two tests asserting the bijection Ruling 270 RETIRED, one of which calls nine CLOSED rows *"live row file(s)"* in its own failure message. ⚠️ **`W119`'s ratified class; minted as [`W137`](rows/W137.md) and placed FIRST** |
 | `PO-47/9` | `[local]` | ⚠️ **`wt/dev2` was TORN DOWN and then RE-CREATED while this round ran**, so an In-flight cell I had just written named a checkout that did not exist, and the correction was itself overtaken. ⭐ **Measured** FOUR times: `0 @ 428223c` with `wt/dev2` live → `2 ahead`, live → `3 ahead @ fc9e2d6`, checkout GONE (cell re-taken to *no checkout, torn down*) → `3 @ fc9e2d6`, `wt/dev2` BACK. ⛔ **Both forms were TRUE when written and `CORROBORATE_EXIT=0` at every one, because `W96`'s rule is *live checkout OR a branch ahead* and the ahead disjunct held throughout.** ⚠️ **`PO-46/17`'s class a second round running, in a new shape — and I stop at reading four, because Ruling 246's `n @ <tip>` form is what makes a reading true forever rather than true for a minute** |
 
@@ -14249,7 +14250,13 @@ git status --porcelain -> 0 lines
 
 ⚠️ **AND THE ONE FIGURE THAT IS NOT GREEN IS `PYTEST_EXIT=1`, unchanged and unhidden: the same two assertions, `5535 passed`, and `W137` placed first.** ⛔ **The alternative states are measured [above](#ruling-270-moved-the-wall-it-did-not-remove-it-and-the-decisive-reading-of-round-60-was-taken-with-an-instrument-that-cannot-see-this) and none is both true and green.**
 
-⭐ **THE PARAGRAPH YOU ARE READING IS THE ONLY THING AFTER `87a38cd`, and its commit touches this file alone** — ⚠️ **so the figures above are the committed tree's, plus one archive edit that adds no pointer, no markdown file and no register row.**
+⭐ **THE PARAGRAPH YOU ARE READING IS THE ONLY THING AFTER `87a38cd`, and its commit touches this file alone.**
+
+#### ⛔ CORRECTED BENEATH, NOT EDITED (Ruling 106) — the sentence above first said *"adds no pointer"*, and I re-measured rather than assumed
+
+⚠️ **IT ADDS TWO.** ⛔ **MEASURED at `dda674c`, one further invocation of the pinned container: `pointers 1086 in 370` against `1084 in 370` at `87a38cd`, and the two are this paragraph's OWN anchor links.** ⭐ **EVERY OTHER FIGURE IS IDENTICAL — `PYTEST_EXIT=1` with the same `2 failed, 5535 passed, 15 skipped`, `12` skip groups / `15` skips, `FLOOR_EXIT=0` and clean, `0` unresolved, ruff `850`, board `135 / 79 / 88`, `45577 of 49440`, narrative `7001 of 8192`, widest row `529 of 600`, `closed rows … 9; of those, 9`, rulings index `296` from `47`, reach `22`/`3`, `CORROBORATE_EXIT=0`, porcelain `0`.**
+
+⭐ **So the claim is not *the tip is unchanged* but *the tip READS THE SAME*, which is strictly stronger and cost one invocation** (round 45's form, credited). ⛔ **`PO-47/11` `[local]`: I wrote a property of my own commit before measuring it, which is `PO-46/16`'s root — a number written once and not re-taken — caught the same way, by re-taking.**
 
 ### ⛔ WHAT I DID NOT TOUCH
 
