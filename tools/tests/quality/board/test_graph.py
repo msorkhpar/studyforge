@@ -4,17 +4,42 @@
 DISAGREEMENT and a test of the winner alone would assert nothing about why it won.**
 ⭐ **Shape `A` — `MERGED ∧ 0-ahead` — is the remedy first routed for `W110`, and the
 reading that refutes it is reproduced rather than cited.**
+
+## ⛔ `W119` — EVERY POPULATION HERE IS THE FIXTURE'S, AND NONE IS THE HOST'S (Ruling 225)
+
+⚠️ **Three readings in this module used to take their population from the machine the
+suite happened to be running on** — `Graph.read(repository_root(), RELEASE)`, then
+`checkouts()`, `heads()` and the release branch's own merge subjects. ⛔ **The first of
+them asserted a property that is FALSE: it dropped every branch with unmerged work and
+then asserted the survivors — the MERGED ones — are not terminal.**
+
+⭐ **MEASURED three times before this module was rewritten, and the third reading is
+the one that settles the shape:** twice by the coordinator immediately after a wave
+merged (`1 failed, 4910 passed`, then `1 failed, 4929 passed`, both cured by retiring
+the worktrees that held the just-merged branches), and ⛔ **once by the CTO with
+NOTHING MERGED AT ALL** — one worktree opened on a branch absorbed many rounds earlier
+took a clean repository from `1 passed` to `1 FAILED`, and removing it restored green.
+⚠️ **So it is not a window between a merge and the housekeeping. It is unconditional,
+and it would redden a correct commit on any machine whose worktree set differs from
+this one's.**
+
+⭐ **What replaced it is a PREDICATE and not an exemption list** (Ruling 225 is explicit
+that a taker who only adds an exemption ships the same defect with a list attached):
+⛔ **a branch carrying UNMERGED WORK must not read TERMINAL**, asserted over the
+constructed repository `conftest.py` builds, where the population is a fixture and the
+predicate is exercised in BOTH directions. ⚠️ **And the retired reading is KEPT, spelled
+out beside it, because the fix is *the predicate was wrong* and a reader who cannot see
+the old one cannot see why.**
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from tests.support import repository_root
 from tools.quality.board.graph import MERGE_IDIOM, Graph
 from tools.workspace import git
 
-from .conftest import RELEASE, commit
+from .conftest import AUTHOR, RELEASE, commit
 
 #: ⭐ Every branch the fixture cuts, with the shape each exists to inhabit. ⛔ The
 #: POPULATION IS PRINTED as the test's own assertion, never implied by spot checks.
@@ -34,9 +59,70 @@ SHAPES = (
 )
 
 
+#: ⛔ **A tip no object in the fixture has**, used as the IMPOSSIBLE reading's sha.
+#: ⚠️ **It is not asserted to be impossible — it is PROVED to be**, with
+#: `git cat-file -e` against the fixture, because a token's impossibility is a
+#: property of the population and not of how unlikely the author felt it was.
+IMPOSSIBLE_TIP = "b9f3c1" + "0" * 34
+
+#: ⛔ A home-shaped path, ASSEMBLED AT RUN TIME. ⚠️ **Written as one literal it would be
+#: a finding against this very file** — `tools.quality.personal_data`'s `home path` shape
+#: matches `/home/` followed by an account segment — ⭐ **and the placeholder form
+#: `/home/<name>` cannot match the assertion under test, because `<` is outside that
+#: shape's character class.** ⚠️ **Same device `shapes.py`'s own comments use, for the
+#: same reason**, and the account segment is an obvious placeholder (R7).
+PLANTED_HOME = "/home/" + "anaccount/studyforge"
+
+
 def _shape_a(graph: Graph, branch: str) -> bool:
     """Shape `A`, spelled out so the test does not depend on it living in the source."""
     return graph.merged(branch) and graph.ahead(branch) == 0
+
+
+def _unmerged_work_reading_terminal(
+    graph: Graph, branches: tuple[str, ...]
+) -> tuple[list[str], list[str]]:
+    """⭐ `W119`'s FIXED predicate: **unmerged work must never read TERMINAL**.
+
+    ⛔ **Returns `(branches that refute it, branches git could not answer about)`** —
+    ⚠️ **two lists and not one number, because `ahead()` returns `None` for *git could
+    not say* and folding that into `0` is exactly the coercion `W115` exists to close.**
+    ⭐ **The retired reading below does fold it, and is left folding it.**
+
+    ⛔ **Spelled out HERE rather than in `graph.py`**, the way `_shape_a` spells out the
+    refuted remedy: the source ships the READINGS and this module ships the PROPERTY
+    asserted over them (Ruling 225 puts the assertion over the constructed repository).
+    """
+    refuting, unanswerable = [], []
+    for branch in sorted(branches):
+        ahead = graph.ahead(branch)
+        if ahead is None:
+            unanswerable.append(branch)
+        elif ahead > 0 and graph.terminal(branch):
+            refuting.append(branch)
+    return refuting, unanswerable
+
+
+def _a_live_checkout_holding_a_terminal_branch(graph: Graph) -> list[str]:
+    """⛔ The RETIRED predicate — `W110`'s shipped reading, kept INHABITED (Ruling 225).
+
+    ⚠️ **Its population is `checkouts()`, which is THE HOST'S worktree set**, and
+    `if graph.ahead(branch): continue` drops every branch with unmerged work — ⛔ **so
+    the survivors are the MERGED ones, and asserting those are not terminal asserts a
+    contradiction.** ⭐ **A live checkout holding a terminal branch is the ORDINARY
+    STATE of every worktree from the moment its branch merges until somebody retires
+    it.**
+
+    ⚠️ **`if graph.ahead(branch):` also reads `None` as `0`**, and that is preserved
+    rather than corrected: ⛔ **correcting a retired reading hides what it did.**
+    """
+    found = []
+    for branch in sorted(graph.checkouts()):
+        if graph.ahead(branch):
+            continue
+        if graph.terminal(branch):
+            found.append(branch)
+    return found
 
 
 # --------------------------------------------------------------------------
@@ -198,50 +284,141 @@ def test_heads_is_the_whole_local_population_and_ahead_counts_one_direction(
 
 
 # --------------------------------------------------------------------------
-# Reading 2 — LIVE, so the shapes are exercised against real history
+# Reading 2 — ⛔ `W119`: the property the HOST reading got WRONG, over the FIXTURE
 # --------------------------------------------------------------------------
 
 
-def test_live_the_release_branch_and_every_LIVE_CHECKOUT_read_NON_TERMINAL() -> None:
-    """⛔ The reading that would have made `W110` fire on its own author.
+def test_the_RETIRED_predicate_FIRES_on_the_ORDINARY_POST_MERGE_STATE_and_the_FIXED_one_does_NOT(
+    repository: Path,
+) -> None:
+    """⛔ Ruling 225, both predicates, ONE run, ONE fixture, population printed FIRST.
 
-    ⭐ **MEASURED at `2d0cfe7`: shape `A` is true of ALL 124 local branches** — ⚠️ so a
-    predicate built on it would have refuted the release branch, the CTO's round
-    branch and both developer branches dispatched that hour. ⛔ **`C` must read `0`
-    for every branch a checkout currently holds with no merge of its own.**
+    ⭐ **`fix/Wleak` IS the ordinary post-merge state** — its tip is absorbed by a merge
+    AND a worktree still holds it — ⚠️ **and `conftest.py` has built it since `W110`, so
+    the counter-example to the shipped property was already in the fixture and nothing
+    was ever asserted over it.** ⛔ **The retired reading refutes it; the fixed one does
+    not, and that single disagreement is the whole of this row.**
+
+    ⭐ **The guard is asserted INHABITED on both sides** (Ruling 48, Ruling 124): a
+    fixture where nothing carried unmerged work would satisfy the fixed predicate
+    vacuously, and `4 + 6 = 10` is the whole of `SHAPES` accounted for.
     """
-    graph = Graph.read(repository_root(), RELEASE)
-    if not graph.exists(RELEASE):
-        return
-    for branch in graph.checkouts():
-        if graph.ahead(branch):
-            continue
-        assert graph.terminal(branch) == "", f"⛔ {branch} is held by a live checkout"
-    assert graph.absorbed, "⛔ born vacuous: this repository has first-parent merges"
+    graph = Graph.read(repository, RELEASE)
+    population = tuple(branch for branch, *_ in SHAPES)
+    ahead = {branch: graph.ahead(branch) for branch in population}
+    terminal = {branch: bool(graph.terminal(branch)) for branch in population}
+    unmerged = sorted(b for b, count in ahead.items() if count)
+    spent = sorted(b for b, count in ahead.items() if count == 0)
+    assert sorted(graph.checkouts()) == sorted([RELEASE, "feat/held", "fix/Wleak"]), (
+        f"the fixture's checkouts moved: {sorted(graph.checkouts())}"
+    )
+    assert unmerged == ["feat/held", "feat/live", "fix/W4", "fix/Wmoved"], (ahead, terminal)
+    assert len(unmerged) == 4 and len(spent) == 6 and len(population) == 10, (unmerged, spent)
+
+    retired = _a_live_checkout_holding_a_terminal_branch(graph)
+    assert retired == ["fix/Wleak"], (
+        f"⛔ the RETIRED predicate must refute the ordinary post-merge state, and that is "
+        f"why it is retired: {retired}"
+    )
+    assert _unmerged_work_reading_terminal(graph, population) == ([], []), (
+        f"⭐ the FIXED predicate holds over the WHOLE fixture, `fix/Wleak` included: "
+        f"{ahead}, {terminal}"
+    )
 
 
-def test_live_shape_B_and_shape_C_DISAGREE_and_the_disagreement_is_READABLE() -> None:
-    """⚠️ Ruling 199 measured `27` disagreements over `120` branches and ruled them PRINTED.
+def test_planted_the_FIXED_predicate_CAN_FIRE_and_an_IMPOSSIBLE_TIP_leaves_it_SILENT(
+    repository: Path,
+) -> None:
+    """⛔ Ruling 123: the predicate is PLANTED, and the plant is adversarial to the SHA.
 
-    ⭐ **This asserts the disagreement population is INHABITED rather than pinning its
-    size** — ⛔ **a number here would be a measurement in a test, stale the next time
-    anything merges** (Ruling 181's family, one layer down).
+    ⭐ **The plant is `feat/held`'s REAL tip mapped to a REAL merge ref from this
+    fixture's own history** — ⚠️ **nothing but the sha itself distinguishes it from a
+    true terminal reading**, so no shape check could reject it and only the comparison
+    can. ⛔ **The IMPOSSIBLE reading is a tip NO OBJECT HAS, and it is PROVED impossible
+    against the fixture rather than asserted to be.**
     """
-    graph = Graph.read(repository_root(), RELEASE)
-    if not graph.exists(RELEASE):
-        return
-    heads = graph.heads()
-    disagree = [b for b in heads if bool(graph.terminal(b)) != bool(graph.named(b))]
-    assert disagree, "⛔ born vacuous: the two shapes are expected to disagree on real history"
-    assert len(disagree) < len(heads), "⭐ and they agree on most of it"
+    graph = Graph.read(repository, RELEASE)
+    held, merge = graph.tip("feat/held"), graph.terminal("fix/Wmerged")
+    assert held and merge, "born vacuous: the plant needs a real tip and a real merge ref"
+    probe = git(repository, "cat-file", "-e", f"{IMPOSSIBLE_TIP}^{{commit}}")
+    assert probe.returncode != 0, (
+        "⛔ the IMPOSSIBLE tip must be no object in this fixture, and that is MEASURED"
+    )
+
+    planted = Graph(repository, RELEASE, {**graph.absorbed, held: merge}, graph.subjects)
+    impossible = Graph(
+        repository, RELEASE, {**graph.absorbed, IMPOSSIBLE_TIP: merge}, graph.subjects
+    )
+    fired = _unmerged_work_reading_terminal(planted, ("feat/held", "feat/live"))
+    silent = _unmerged_work_reading_terminal(impossible, ("feat/held", "feat/live"))
+    assert fired == (["feat/held"], []), f"⛔ the predicate must be able to return NO: {fired}"
+    assert silent == ([], []), silent
+    assert fired != silent, "⛔ the impossible reading must DIFFER from the plant"
 
 
-def test_live_no_reading_from_the_graph_prints_an_absolute_path(repository: Path) -> None:
-    """⛔ R7: `git worktree list` answers in absolute paths and a path carries a home."""
-    del repository
-    graph = Graph.read(repository_root(), RELEASE)
-    for ref, subject in graph.subjects:
-        assert "/home/" not in subject and "/Users/" not in subject, ref
+def test_the_FIXED_predicate_REPORTS_git_could_not_say_rather_than_folding_it_into_zero(
+    repository: Path,
+) -> None:
+    """⭐ The third answer, and `W115`'s coercion is what it refuses to repeat.
+
+    ⛔ **`ahead()` returns `None` when git cannot answer, and `None` is not `0`**: a
+    branch nothing resolves must arrive as *unanswerable* and never as *satisfies the
+    property*. ⚠️ **The retired predicate folds it** — `if graph.ahead(branch):` — ⭐ and
+    this asserts the replacement does not.
+    """
+    graph = Graph.read(repository, RELEASE)
+    assert graph.ahead("fix/Wtypo") is None, "⛔ *git cannot say* is the premise here"
+    assert _unmerged_work_reading_terminal(graph, ("fix/Wtypo", "feat/held")) == (
+        [],
+        ["fix/Wtypo"],
+    )
+
+
+def test_planted_shape_B_and_shape_C_DISAGREE_and_the_disagreement_is_READABLE(
+    repository: Path,
+) -> None:
+    """⚠️ Ruling 199 measured the disagreement on real history and ruled it PRINTED.
+
+    ⛔ **The population is the FIXTURE's, not the host's** (Ruling 225): the live reading
+    this replaces asserted that `heads()` — every branch on the machine — carried at
+    least one disagreement, which is a property of somebody's housekeeping. ⭐ **Here the
+    two disagreeing shapes are BUILT: `fix/Wsilent` is absorbed and named by nothing,
+    `fix/Wmoved` is named and its tip has moved past its own merge** — and the
+    disagreement is NAMED rather than counted.
+    """
+    graph = Graph.read(repository, RELEASE)
+    population = tuple(branch for branch, *_ in SHAPES)
+    disagree = sorted(b for b in population if bool(graph.terminal(b)) != bool(graph.named(b)))
+    assert disagree == ["fix/Wmoved", "fix/Wsilent"], disagree
+    assert len(disagree) < len(population), "⭐ and the two shapes agree on the rest"
+
+
+def test_planted_no_reading_from_the_graph_PRINTS_A_HOME_PATH_and_a_planted_one_IS_CAUGHT(
+    repository: Path,
+) -> None:
+    """⛔ R7, asserted over a population this module BUILDS and can therefore poison.
+
+    ⚠️ **The reading this replaces swept the host's release branch**, which is a sweep of
+    whatever history that machine had — ⛔ **and it could not be exercised in the failing
+    direction at all, because making it fail means writing a home path into a real merge
+    message.** ⭐ **Over the fixture both directions run: the clean history reads `0`, and
+    one planted merge subject is caught and NAMED.**
+    """
+    graph = Graph.read(repository, RELEASE)
+    assert graph.subjects, "⛔ born vacuous: the fixture carries --no-ff merges"
+    assert [ref for ref, subject in graph.subjects if PLANTED_HOME in subject] == []
+
+    assert git(repository, "checkout", "-q", "-b", "fix/Wr7").returncode == 0
+    commit(repository, "r7.txt")
+    assert git(repository, "checkout", "-q", RELEASE).returncode == 0
+    subject = f"Merge fix/Wr7: a subject carrying {PLANTED_HOME} (CTO: APPROVE)"
+    merged = git(repository, *AUTHOR, "merge", "--no-ff", "-q", "fix/Wr7", "-m", subject)
+    assert merged.returncode == 0, merged.stderr
+
+    planted = Graph.read(repository, RELEASE)
+    caught = [ref for ref, text in planted.subjects if "/home/" in text or "/Users/" in text]
+    assert caught == [planted.named("fix/Wr7")], caught
+    assert len(planted.subjects) == len(graph.subjects) + 1
 
 
 def test_a_commit_moves_the_tip_and_therefore_moves_TERMINALITY(repository: Path) -> None:

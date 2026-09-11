@@ -46,6 +46,20 @@ correct — but it is the one way this predicate can surprise somebody**, and a
 branch cut from the release tip cannot hit it, because the release tip is on the
 FIRST-parent line by construction.
 
+## ⛔ `W119` — what these readings DO and DO NOT license a caller to assert (Ruling 225)
+
+⚠️ **A committed assertion may not take its POPULATION from `checkouts()` or `heads()`.**
+⛔ **Both answer about the HOST**, and a test whose subject leaks out of the repository
+reddens a correct commit: ⚠️ **one worktree opened on a branch absorbed many rounds ago
+took a clean repository from `1 passed` to `1 FAILED`, with nothing merged.**
+
+⭐ **And the property a caller may assert is NARROWER than the one this module's first
+consumer asserted:** ⛔ **a branch carrying UNMERGED WORK must not read `terminal()`.**
+⚠️ **The converse — *a live checkout never holds a terminal branch* — is FALSE, and it is
+false of every worktree from the moment its branch merges until somebody retires it.**
+⭐ **Ruling 225 is POINTED AT rather than paraphrased** (Ruling 195), and the predicate is
+asserted over `conftest.py`'s constructed repository in `test_graph.py`.
+
 ## ⛔ The map is built with ONE git invocation, not one per merge
 
 ⚠️ **Ruling 199's own fenced command runs `git rev-list --parents -n1` once per
