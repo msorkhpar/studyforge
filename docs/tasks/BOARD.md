@@ -46,41 +46,37 @@ ONE named ref, and no row is inherited across a ref change.**
 
 ⛔ **A commit count is a reading with an as-of, not a state** (`PO-30/2`), so
 this table names the ref it was taken at and nothing here is inherited.
-⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
+⭐ **Ruling 171: `git worktree list` PRIMARY, `git branch` corroborating.**
 
-**RE-TAKEN IN ROUND 44 AS ITS LAST ACT, at `ad5ce24`, and it was stale at a base
-for the EIGHTH consecutive wave** (`W119/4`, Ruling 262) — ⛔ **`corroborate` read
-`3 of 3 REFUTED, exit 1` after the wave's last merge: `W98` absorbed by `8416924`,
-then `W119` and `W100` absorbed by `6d5aeed`** — ⭐ **and the surviving row's cell is
-as-of its BRANCH TIP `57ea703`, never as-of `ad5ce24`.** ⛔ **IT WAS WRITTEN `3` AT
-`5dc363c` AND RE-TAKEN `4` INSIDE THIS ROUND WITH NO EDIT BETWEEN — `corroborate`
-exited `0` on BOTH and printed `4` on the same line as its own `CORROBORATED`**
-(`PO-44/14`, and it is `W115`'s subject demonstrated, not argued)
-([the re-take](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)).
+⭐ **RE-TAKEN IN ROUND 44 AS ITS LAST ACT: stale at a base for the EIGHTH wave,
+`corroborate` `3 of 3 REFUTED` at the tip, the cell `3`→`4`→`5`→`6` while the round was
+written with exit `0` every time, and `wt/dev3` retired under it** — ⛔ **so a
+commits-ahead cell now CARRIES ITS AS-OF, which is Ruling 246 applied to the column it
+names: a bare number is false the moment a developer commits, `n @ <tip>` is true
+forever, and `observation.py` reads the first integer so the column still parses**
+([the re-take and every reading](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd),
+`PO-44/14`–`PO-44/16`).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W124` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 4 | in flight |
-| `W122` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 4 | in flight |
-| `W123` | framework agent | `wt/dev3`, `fix/W124-W122-W123-docker-pins` | 4 | in flight |
+| `W124` | framework agent | `fix/W124-W122-W123-docker-pins`, no checkout | 6 @ `5b1528a` | in flight |
+| `W122` | framework agent | `fix/W124-W122-W123-docker-pins`, no checkout | 6 @ `5b1528a` | in flight |
+| `W123` | framework agent | `fix/W124-W122-W123-docker-pins`, no checkout | 6 @ `5b1528a` | in flight |
 <!-- /inflight -->
 
-⛔ **`corroborate` corroborates the ROW and never the CELL** (`PO-42/7`, `PO-43/9`,
-`PO-44/14`; ⭐ **a `0` ahead would be RULING 130'S CLASS and not a gap**).
-⛔ **RULING 262 IS FALSE AS STATED: absorbing a branch is what refutes its In-flight
-cell, so a post-merge exit check fails on every CORRECT merge, and the obligation can
-only live at the WAVE CLOSE — this table's re-take** (`PO-44/10`, routed).
+⛔ **`corroborate` corroborates the ROW and NEVER the CELL** (`PO-42/7`, `PO-43/9`,
+`PO-44/14`). ⛔ **And RULING 262 IS FALSE AS STATED: absorbing a branch is what refutes
+its In-flight cell, so a merge-time exit check passes a wrong cell and fails a correct
+merge — the obligation lives only at the WAVE CLOSE** (`PO-44/10`, routed).
 
-⛔ **THE DELIMITERS ARE RULING 196'S AND THEY RETIRE A RAMP** — ⭐ **a header is
-INFERRED, so an absent table can only be ANNOUNCED; a delimiter is DECLARED, so an
-absent marker can be REFUSED.** ⭐ **`W111` landed at `923a970` and the floor reads
-`1 <!-- inflight --> blocks declared, 0 unreadable`.**
+⛔ **THE DELIMITERS ARE RULING 196'S** — ⭐ **a header is INFERRED and can only be
+ANNOUNCED; a delimiter is DECLARED and can be REFUSED.** ⭐ **`W111` landed at
+`923a970`; the floor reads `1 <!-- inflight --> blocks declared, 0 unreadable`.**
 
 ⚠️ **ONE BRANCH CAN CARRY TWO ROWS WITH DIFFERENT OUTCOMES** (Ruling 218): ⛔ **`W63`
-and `W64` shared a branch that merged with `W63` DONE and `W64` STOPPED.** ⭐ **`W119`
-and `W100` shared one too, and they closed SEPARATELY for a third reason — `W119`
-`done`, `W100` `blocked` on `PO-44/8`.**
+DONE and `W64` STOPPED on one branch.** ⭐ **`W119` and `W100` shared one too and
+closed SEPARATELY for a THIRD reason — `done` against `blocked`** (`PO-44/8`).
 
 ⛔ **The office checkouts are NOT named here, and that is one fact with one home
 rather than a deletion:** ⭐ **`corroborate` prints every checkout no row names,

@@ -13398,3 +13398,21 @@ reading 2   the same command, after the developer committed
 ⚠️ **THE CELL IS RE-TAKEN TO `4`, as-of BRANCH TIP `57ea703`, and I state plainly that it may be false again before this branch merges** — ⛔ **because the as-of of a commits-ahead cell is a developer's working rate, which no register can track.** ⭐ **THAT is the argument for `W125`'s middle shape — generate the CHECKOUT and AHEAD columns, keep the ROW↔BRANCH correspondence asserted — and it is now an argument from this board's own measured behaviour rather than from principle.**
 
 ⛔ **AND IT SHARPENS `PO-44/10` AGAINST RULING 262: a merge-time exit check on `corroborate` would have passed this wave while the cell was wrong, because the row corroborates and the cell does not.** ⭐ **An exit code cannot carry this obligation at any point in the cycle. Only `W115`'s comparison can.**
+
+### ⛔ PO round 44, the final re-take — `PO-44/15` AND `PO-44/16`: THE CELL WENT `3`→`4`→`5`→`6` AND ITS CHECKOUT VANISHED, so the cell now CARRIES ITS AS-OF
+
+⛔ **`PO-44/14` recorded one slip. It was not one: I re-took the same cell FOUR TIMES and it was false again each time before I could commit.** ⭐ **MEASURED by me, every reading from `git rev-list --count <own merge base>..<branch>` with `git worktree list` PRIMARY (Ruling 171):**
+
+```text
+reading 1   tip 5dc363c   ahead 3    corroborate exit 0, printed 3
+reading 2   tip 57ea703   ahead 4    corroborate exit 0, printed 4  (board said 3)
+reading 3   tip 57ea703   ahead 5    corroborate exit 0, printed 5  (board said 4)
+reading 4   tip 5b1528a   ahead 6    corroborate exit 0, printed 6  (board said 5)
+            ⛔ and at reading 4, wt/dev3 was GONE from git worktree list
+```
+
+⭐ **`PO-44/15`, `[structural]`, MINE, AND IT IS A FIX RATHER THAN A COMPLAINT: RULING 246 ALREADY RULED THAT A COMMITS-AHEAD COUNT IS A MEASUREMENT THAT OWES ITS REF — it names that exact quantity — AND THE COLUMN CARRIED NO REF.** ⛔ **Chasing the number is a treadmill that cannot terminate, because its as-of is a developer's working rate.** ⭐ **THE CELL NOW READS `n @ <branch tip>`, which is TRUE FOREVER rather than true for a minute.** ⚠️ **VERIFIED SAFE before writing it: `observation.py:150` declares *"the FIRST integer a commits-ahead cell carries, sign and markup stripped"*, and I exercised `_COUNT` against `'6'`, `'6 @ 5b1528a'`, `` '6 @ `5b1528a`' `` and `'—'` → `6`, `6`, `6`, `None`.** ⛔ **So the parse is unchanged and `board-inflight` still reads the column.**
+
+⭐ **`PO-44/16`, `[local]`, MINE: `wt/dev3` RETIRED while this round was written, so the `Checkout` cell naming it became false.** ⛔ **Re-taken to name the BRANCH and state *no checkout*.** ⚠️ **That is LEGAL and not a contradiction: `board-inflight` fires only when a started row names no checkout AND counts `0` commits, and this one counts `6` and is unmerged (`git branch --contains … release/m0-foundations` → `0`).** ⭐ **The row is genuinely in flight with its work committed and its checkout torn down, which is a state the board could always express and had never been asked to.**
+
+⛔ **AND THE CONCLUSION I WILL STATE PLAINLY FOR THE CTO: four re-takes of one cell in one round, each correct when written, is not a discipline failure — it is a measurement that an ASSERTED register structurally cannot hold.** ⭐ **`W115` makes the disagreement VISIBLE; `W125`'s middle shape makes the column GENERATED; and `PO-44/15`'s as-of makes the cell HONEST in the meantime.** ⚠️ **Three rows, three different layers, and this round measured the need for all three against itself.**
