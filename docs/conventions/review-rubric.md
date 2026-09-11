@@ -2725,6 +2725,46 @@ test outside its `Owns` **only** when all three hold:
 outside `Owns` is a **finding**, not a diff — the general rule above is
 unchanged, and these three conditions are the whole of the exception.
 
+#### ⛔ Ruling 190 (CTO round 48) — changing a VALUE a distant test compares against IS editing that test, and WEAKENING one is the case Ruling 143 does not reach
+
+> ⛔ **Ruling 143's three conditions are written for a test that FAILS.** ⚠️ **A
+> branch can also make a test PASS MORE**, without touching its file, by adding
+> to a set the test compares against. ⭐ **That is an edit to the test, made at a
+> distance, and it is invisible in the diff of the file the test lives in.**
+>
+> ⭐ **So the out-of-`Owns` edit that RESTORES the original strength is
+> LICENSED**, and it is licensed under conditions 1 and 3 alone — ⛔ **condition 2
+> cannot apply, because a NARROWING is neither a deletion nor an inversion.**
+> ⚠️ **The alternative is to ship a test the branch has knowingly weakened and
+> file a finding about it**, which is a known hole wearing a green tick.
+>
+> ⛔ **And the reviewer's obligation: for every published mapping a diff widens,
+> find who COMPARES against it.** ⭐ This is §10b's subject one step past imports
+> — ⚠️ **not a name being imported, a VALUE being compared** — and neither the
+> author of the change nor the reviewer of the file is looking at it.
+
+```bash
+# every test that compares against a mapping this diff widened
+git diff --name-only "$REVIEW_BASE"...HEAD -- src/ | xargs -r -n1 basename
+grep -rn '<MAPPING>' tests/ tools/tests/ | grep -v "$(dirname <the mirror>)"
+```
+
+⛔ **Pass condition: every such test either still asserts what it asserted, or
+the branch narrowed it and disclosed the narrowing by path.** Measured by the
+CTO at trial `9c199a8c`, `SF-34`, one line changed per row, tree restored and
+printed between rows:
+
+| # | `published` compares against | template carries `class="data-readable"` | reading |
+|---|---|---|---|
+| **R1/R4** | ⭐ `HOOK_CLASSES` (the branch) | yes | ⭐ **RED — caught** |
+| **R2b** | ⛔ `SURFACE_HOOKS` (un-narrowed) | yes | ⛔ **GREEN — the loosening, measured** |
+| **R3** | `SURFACE_HOOKS` (un-narrowed) | no | control: GREEN |
+
+⚠️ **`R2b` is the whole argument: the same branch that widened `SURFACE_HOOKS`
+would have shipped a class contract that admits `class="data-readable"`.**
+⭐ Derivation:
+[`handoffs/CTO-2026-09-10-round48.md`](../tasks/handoffs/CTO-2026-09-10-round48.md).
+
 ### ⛔ 10b. A change to an import is felt by tests in another package
 
 ```bash
@@ -2779,19 +2819,41 @@ git check-ignore -v <a path the change should NOT ignore> ; echo "exit=$?"
 ## The verdict is recorded in the merge, not remembered
 
 ⛔ **A merge to a release branch names the verdict it was merged on**, in the
-merge commit's own message:
+merge commit's own message. ⭐ **TWO subject kinds merge onto a release branch
+and the vocabulary is CLOSED over both** (Ruling 185):
 
 ```
 Merge <branch>: <one line> (CTO: APPROVE)
+Merge <branch>: <one line> (CTO: APPROVE after changes)
+Merge chore/cto-round<N>: <one line> (CTO: this record APPROVED)
 ```
+
+⚠️ **The third is the CTO's OWN round record, whose subject is the record and not
+a branch somebody else wrote**; its `<one line>` carries the branch verdicts,
+which is why `(CTO: CHANGES REQUESTED x2, this record APPROVED)` is well-formed
+and is an approval *of the merge*. ⛔ **Nothing else is a verdict.**
 
 ```bash
 # ⛔ --first-parent IS LOAD-BEARING. Added by the PO, round 34, from `CTO-41/2`.
-git log --merges --first-parent --format='%h %s' "$REVIEW_BASE" \
-  | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)'
+# ⛔ MIGRATION IS LOAD-BEARING. Ruling 185: the exemption this clause DECLARES is
+#    in the COMMAND, so no clause of the pass condition comes from memory.
+MIGRATION=ab5b1a415acba6d779c622a8723040f422fe0b05   # the last verdictless merge
+git log --merges --first-parent --format='%h %s' "$MIGRATION" | wc -l
+git log --merges --first-parent --format='%h %s' "$MIGRATION" \
+  | grep -cE -v '\(CTO: (APPROVE|APPROVE after changes)\)'
+git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" | wc -l
+# ⛔ The grep below exits 1 ON PASS — `grep -v` selecting nothing. Read the
+#    OUTPUT, never `$?`; under `set -e` a PASS aborts the block.
+git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" \
+  | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)|\(CTO: [^)]*\bthis record APPROVED\)'
 ```
 
-**Pass = no output** *for merges made after this clause landed.*
+⛔ **Pass = the LAST command prints NOTHING.** ⭐ **The first three print the
+pre-clause tail and the in-scope population instead of leaving them remembered:**
+**`66`** first-parent merges at or before `MIGRATION`, **`24`** of them
+verdictless, and the in-scope population — **`94`** at `798956cb`. ⚠️ **A tail
+that is not `66 / 24` means pre-clause history was rewritten; that is a finding,
+not a carry.**
 
 ⛔ **WHY `--first-parent`, MEASURED — and without it this check reads 50 where
 the answer is 24.** ⚠️ **The clause used to walk `--merges` alone, which reaches
@@ -2822,7 +2884,8 @@ before this clause predates it and none carries a verdict. ⛔ **They are not
 back-filled**: rewriting merge messages on a branch other agents have already
 built on costs more than the record is worth, and the verdicts themselves are on
 record in `docs/tasks/handoffs/CTO-*.md`. ⭐ The rule binds from here, and the
-check above is scoped to merges after this commit.
+check above is scoped to merges after this commit — ⛔ **scoped BY `$MIGRATION`,
+not by the reviewer, which is the repair `CTO-47/7` forced** (Ruling 185).
 
 > ⛔ **Ruling 170(a) (CTO round 43) — the FENCED command above IS the
 > instrument.** ⚠️ **The PO re-spelled its predicate from memory as
@@ -2845,6 +2908,49 @@ check above is scoped to merges after this commit.
 > instrument. ⛔ **A predicate re-spelled from memory is a SECOND, UNVALIDATED
 > instrument; a reading taken with it is reported as a re-spelling, with BOTH
 > numbers, and never as the check.**
+
+#### ⛔ Ruling 185 (CTO round 48) — an exemption a clause DECLARES is implemented in the COMMAND, by narrowing the POPULATION, never by widening the PREDICATE
+
+**Two clauses, one instrument, and they go in opposite directions on purpose.**
+
+> ⭐ **(a) The exemption is executable.** ⛔ **A pass condition with a clause no
+> command evaluates — *"pass = no output **for merges made after this clause
+> landed**"* — is discharged from the reviewer's memory every run.** ⚠️ **The
+> excused set then prints forever, and a reviewer who has explained it away
+> twenty times cannot distinguish the twenty-first from a real violation.**
+> ⭐ **So a declared exemption is a named ref, a named path set, or a named
+> vocabulary — something the fenced command takes as an argument.**
+>
+> ⭐ **(b) And it narrows the POPULATION, not the PREDICATE.** ⛔ **A narrowed
+> population is AUDITABLE: it names a boundary, and the excluded set can be
+> counted and asserted beside it. A widened predicate is not** — a wildcard
+> admits everything the wildcard admits, and that set cannot be enumerated.
+> ⚠️ **Ruling 184 tunes a CARRY check toward over-matching because its failure is
+> a false empty. A GATE fails the other way, so the same reasoning forbids
+> loosening its predicate** — ⛔ **and a gate whose vocabulary is closed and
+> enumerated is how both rulings are satisfied at once.**
+
+```bash
+# Row 3 of the three readings, and it is the one this ruling exists for: run the
+# instrument with the exemption REMOVED. A number that does not move means the
+# exemption was never doing the work the clause claimed for it.
+git log --merges --first-parent --format='%h %s' "$REVIEW_BASE" | grep -cE -v "$CLOSED_VOCABULARY"
+```
+
+⛔ **Pass condition: the scoped reading and the unscoped reading DIFFER, and both
+are printed.** Measured by the CTO at `798956cb`, the verdict check above:
+
+| reading | expected, written first | measured |
+|---|---|---|
+| scoped, closed vocabulary | `0` of `94` | ⭐ **`0`** |
+| unscoped, closed vocabulary | must differ | ⛔ **`24`** |
+| scoped, the OLD predicate | must differ | ⛔ **`3`** — all three CTO record merges |
+| ⚠️ the WILDCARD remedy floated in round 47's annotation, over 7 non-approval shapes | — | ⛔ **flags `4`; the closed vocabulary flags `7`** |
+
+⚠️ **The last row is why (b) is a clause.** ⛔ **`\(CTO: [^)]*APPROVED?\b` — this
+office's own sketch — silently passes `(CTO: NOT APPROVED)`,
+`(CTO: this record APPROVE)` and a bare `(CTO: APPROVED)`.** ⭐ Derivation:
+[`handoffs/CTO-2026-09-10-round48.md`](../tasks/handoffs/CTO-2026-09-10-round48.md).
 
 ### ⛔ Ruling 84 — the check above enumerates merges, so run its complement too
 
