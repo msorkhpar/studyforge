@@ -5029,3 +5029,59 @@ a taker could satisfy `W134/4` literally, observe that nothing changed, and ship
 sum — and the first unlanded mint would then silently merge the two questions.** ⚠️ **That is
 Ruling 5's symmetric obligation arriving on a schedule: a reported contradiction nobody closes
 is a trap re-sprung on the next task that reads the clause and believes it.**
+
+---
+
+## ⛔ RULED ROUND 64 — two clauses, each one command and one pass condition
+
+### ⛔ Ruling 315 — a finding DECLINED on Ruling 11's three names the RULE IT WOULD BECOME, in a fixed spelling, because nothing in this repository ACCUMULATES INSTANCES
+
+⛔ **Ruling 11 says *the third instance is a rule*. It never said where the first
+two WAIT.** ⚠️ **Measured, and the instance is my own office's twice over
+(`PO-50/6`, routed to me by the register): `CTO-63/5` and `CTO-63/6` were each
+DECLINED as rulings on the explicit ground that one instance is not three — and
+both then went into a round record, which is a FROZEN document nobody greps when
+a second instance arrives.** ⛔ **The register office holds the matching half of
+`CTO-63/5` itself and recorded it against its own round, so TWO OFFICES hold
+MATCHING INSTANCES of one pattern and neither has anywhere to put them.** ⭐ **A
+threshold with no accumulator is not a threshold; it is a way of never reaching
+three.**
+
+⭐ **THE REMEDY IS A SPELLING, NOT A DOCUMENT AND NOT A TOOL.** ⛔ **A new
+register would need an office to maintain it, and the thing being counted is
+below the threshold at which anybody is assigned.** ⚠️ **What this project
+already has is `git grep` over its own records, and what it lacks is a string
+worth grepping for.**
+
+```bash
+# ⛔ THE SPELLING. A declined finding writes this line in the record it is declined in:
+#      DECLINED-AS-RULE: <the rule it would become, one line>   (instance N)
+#    ⭐ The rule text is the KEY — it is what a later instance matches on, so it is
+#    written as the RULE and never as the incident.
+git grep -c 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ | wc -l   # records carrying any
+git grep -h 'DECLINED-AS-RULE:' -- docs/tasks/handoffs/ | sed 's/.*DECLINED-AS-RULE: //' \
+  | sort | uniq -c | sort -rn                                      # ⭐ THE ACCUMULATOR
+```
+
+⛔ **PASS: every row the second command prints at `3` or more is a ruling owed in
+the round that reads it, and a round that prints one and mints nothing says why.**
+⚠️ **A row at `1` or `2` is the clause working, not a backlog.** ⭐ **And the
+count is DERIVED — no office types a running total, which is the defect Ruling
+150 exists over.**
+
+⛔ **WHY THE RULE TEXT AND NOT THE INCIDENT, measured against the two live
+instances:** ⭐ `CTO-63/5` (*a difference between two counts is not a finding
+until the two roles are shown to be the same role*) and the register's own half
+are the SAME RULE reached from a reviewer's side and a register's side, and
+their INCIDENTS share no vocabulary at all. ⚠️ **Keyed on the incident they
+never meet; keyed on the rule they are one row of the accumulator at `2`.**
+
+⭐ **AND IT BINDS ITS OWN MINTER, Ruling 286's form:** ⛔ **this round's record
+carries the two instances that MOTIVATED this clause in the spelling above —
+one of them already at `2`, across two offices — beside three more the same
+round found, so the accumulator is INHABITED on the commit that defines it
+rather than born empty** (Ruling 191 — an empty population returns the pass
+reading, and a control that can only return the pass reading is not a control).
+⚠️ **The grep is scoped to `docs/tasks/handoffs/`, so this clause CANNOT count
+its own definition** — ⛔ the self-citation that got Ruling 121's grep demoted
+to a corroborator.

@@ -1275,3 +1275,48 @@ the work an amendment describes is the proof that the amendment widened nothing.
 ⛔ **AND THE DISCLOSURE IS NOT OPTIONAL** (Ruling 283's standing clause): the amending office
 states IN THE ROW FILE that the row is held as the section lands, so a later reader can tell a
 snapshot-safe section from one taken before dispatch.
+
+---
+
+## ⛔ Ruling 314 (CTO round 64) — Ruling 270 GAINS THE CLAUSE: the archive move RE-ADDRESSES EVERY relative pointer in the moved body, not only the ones aimed at the archive
+
+⛔ **A close moves a row's argument from `docs/tasks/rows/<ID>.md` to
+`docs/tasks/BOARD-ARCHIVE.md`, which is ONE DIRECTORY SHALLOWER — so every
+relative pointer in the moved body is re-addressed by the move.** ⚠️ **The
+closing procedure above enumerates exactly ONE of them** — *re-addressing its
+`](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it* —
+⛔ **and that reads as the complete list because it sits inside a table of FOUR
+NAMED EDITS.** ⭐ **It is the SELF-REFERENTIAL case only. Every OTHER pointer in
+the body — at a handoff, at a sibling row, at a convention document — is broken
+by the same move and is named by no clause.**
+
+⛔ **MEASURED, and the reading is the register office's against its own round**
+(`PO-50/2`, routed to me because Rulings 270 and 306 are mine): **the floor found
+`10` of them in one close of two rows.** ⚠️ **Ruling 306 extended 270 with the
+ANCHOR-collision clause and did not reach the PATH, so the gap survived the one
+amendment that was looking directly at it.**
+
+```bash
+# ⛔ BEFORE the body is pasted into BOARD-ARCHIVE.md — every relative pointer it carries.
+grep -oE '\]\([^)#][^)]*\)' docs/tasks/rows/"$ROW".md | sort -u
+# ⭐ Each one is re-addressed by REMOVING one `../`, because rows/ is one level deeper:
+#      ](../../conventions/x.md)  ->  ](../conventions/x.md)
+#      ](../handoffs/X.md)        ->  ](handoffs/X.md)
+#      ](./W99.md) or ](W99.md)   ->  ](rows/W99.md)
+#      ](../BOARD-ARCHIVE.md#a)   ->  ](#a)          ⭐ the case the table already named
+# ⛔ AFTER the whole close, at the closing office's own ref:
+python3 -m tools.quality 2>&1 | grep 'document pointers:'
+```
+
+⛔ **PASS: `0 unresolved`, and the closing office states the COUNT it re-addressed.**
+⚠️ **`0 unresolved` alone is not the pass condition** — ⭐ **a body whose pointers
+were all absolute or all anchors reads `0` without the office having looked, and
+that is the run that teaches the next office the step does not exist.**
+
+⛔ **WHY THIS IS A CLAUSE AND NOT A SHRUG, given the floor already catches it:**
+⭐ **the floor is a SAFETY NET and it is why nothing has ever been lost here.**
+⚠️ **But an office that meets ten broken pointers with no clause telling it to
+expect them cannot tell a consequence of its own move from a defect it inherited**
+— ⛔ **and the one thing a closing office may NOT do is repair a pointer inside
+frozen archived bytes it did not move** (Ruling 106). ⭐ **Knowing which ten are
+YOURS is the whole of the difference, and only the clause can say so.**

@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **313 rulings, `1`–`313`, derived from 50 ruling records** —
+⭐ **315 rulings, `1`–`315`, derived from 51 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -358,3 +358,5 @@ procedure.
 | 311 | ⛔ Ruling 311 — a post-dispatch amendment to a HELD row file is permitted only where it widens NO acceptance clause, and that is read off the DIFF | heading | [round 62](handoffs/CTO-2026-09-11-round62.md#ruling-311-a-post-dispatch-amendment-to-a-held-row-file-is-permitted-only-where-it-widens-no-acceptance-clause-and-that-is-read-off-the-diff) |
 | 312 | ⛔ Ruling 312 — an acceptance discharged by a harness in which the violation is UNREPRESENTABLE is proved of the HARNESS, and the taker REPORTS it rather than widening the row | heading | [round 63](handoffs/CTO-2026-09-11-round63.md#ruling-312-an-acceptance-discharged-by-a-harness-in-which-the-violation-is-unrepresentable-is-proved-of-the-harness-and-the-taker-reports-it-rather-than-widening-the-row) |
 | 313 | ⛔ Ruling 313 — where a later ROW's ARGUED clause contradicts an earlier finding's SCHEDULED form, the argued clause GOVERNS and the earlier is discharged IN SUBSTANCE or refused BY NAME, nev … | heading | [round 63](handoffs/CTO-2026-09-11-round63.md#ruling-313-where-a-later-rows-argued-clause-contradicts-an-earlier-findings-scheduled-form-the-argued-clause-governs-and-the-earlier-is-discharged-in-substance-or-refused-by-name-never-left-open) |
+| 314 | \| `PO-50/2` \| ⭐ **RULED — MINTED as Ruling 314**, landed in `docs/conventions/board.md` in this branch. The gap is real, it is in MY rulings (270, 306), and the floor being a safety net is n … | section | [round 64](handoffs/CTO-2026-09-11-round64.md#5-every-finding-of-the-wave-by-id-with-a-disposition) |
+| 315 | \| `PO-50/6` \| ⭐ **RULED — MINTED as Ruling 315**, landed in `docs/conventions/review-rubric.md` in this branch. ⛔ **Ruling 11 is mine and it named a threshold with no accumulator** \| | section | [round 64](handoffs/CTO-2026-09-11-round64.md#5-every-finding-of-the-wave-by-id-with-a-disposition) |
