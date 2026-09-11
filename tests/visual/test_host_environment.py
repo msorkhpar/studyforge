@@ -58,7 +58,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.visual import discovery
+from tests.visual import conftest, discovery
 
 HERE = Path(__file__).parent
 
@@ -533,3 +533,35 @@ def test_the_ENVIRONMENT_sweep_is_PLANTED_in_both_directions() -> None:
     assert _reads_the_environment(constant, "m") == {"STUDYFORGE_OTHER": "m.f"}
     assert _reads_the_environment(unrelated, "m") == {}, "⛔ only this project's own names"
     assert _reads_the_environment(literal, "m") != _reads_the_environment(unrelated, "m")
+
+
+# --- the COUNT the declaration carries beside the verdict ---------------------
+
+
+def test_the_count_of_what_DID_NOT_RUN_spans_every_outcome_that_reaches_no_verdict() -> None:
+    """⛔ `W128/4`: the same defect, arriving in the COUNT rather than in a test.
+
+    ⭐ **MEASURED at `270296d` in the pinned container, one variable changed:**
+    browserless with `$STUDYFORGE_VISUAL` unset, 123 checks SKIP and the line
+    read *"123 visual check(s) DID NOT RUN"*; with `=required` the same 123
+    become fixture ERRORS and the line read **`0`**. ⚠️ **A loudness mechanism
+    that reads `0` when nothing ran reports the opposite of the truth.**
+
+    ⭐ Asserted over a fixture rather than over a run, so it holds on a machine
+    where every check passes.
+    """
+
+    class Report:
+        def __init__(self, nodeid: str) -> None:
+            self.nodeid = nodeid
+
+    stats = {
+        "skipped": [Report("tests/visual/test_capture.py::a"), Report("tests/other.py::x")],
+        "error": [Report("tests/visual/test_site.py::b"), Report("tests/other.py::y")],
+        "passed": [Report("tests/visual/test_init.py::c")],
+    }
+    assert conftest.checks_that_did_not_run(stats) == 2
+    assert conftest.checks_that_did_not_run({"skipped": stats["skipped"]}) == 1
+    assert conftest.checks_that_did_not_run({"error": stats["error"]}) == 1
+    assert conftest.checks_that_did_not_run({}) == 0
+    assert set(conftest.DID_NOT_RUN) == {"skipped", "error"}

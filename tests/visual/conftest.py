@@ -79,15 +79,38 @@ def pinned_environment(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     cached.cache_clear()
 
 
-def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # noqa: ARG001
-    """Say what the visual harness did, at the end of every run, unconditionally."""
-    skipped = sum(
+#: ⛔ The outcomes that mean *this check reached no verdict on its subject*.
+#: ⚠️ **`error` is here because of `W128/4`**, and it is the SAME defect this row
+#: exists to close arriving in the COUNT rather than in a test: with
+#: `$STUDYFORGE_VISUAL` unset, 123 browser checks SKIP and the line said *"123
+#: visual check(s) DID NOT RUN"*; with `=required` the same 123 become fixture
+#: ERRORS, and the line said **`0`**. ⛔ **MEASURED at `270296d` in the pinned
+#: container: `50 passed, 123 errors` beside `visual harness: NO BROWSER — 0
+#: visual check(s) DID NOT RUN`.** ⭐ A count that reads `0` when nothing ran is
+#: the loudness mechanism reporting the opposite of the truth.
+DID_NOT_RUN = ("skipped", "error")
+
+
+def checks_that_did_not_run(stats: dict) -> int:
+    """How many checks in THIS package produced no verdict on their subject.
+
+    ⭐ A pure function of pytest's own tally, so the count is asserted over a
+    fixture in `test_host_environment.py` rather than only observed in a run.
+    """
+    return sum(
         1
-        for report in terminalreporter.stats.get("skipped", [])
+        for outcome in DID_NOT_RUN
+        for report in stats.get(outcome, [])
         if str(getattr(report, "nodeid", "")).startswith("tests/visual/")
     )
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config) -> None:  # noqa: ARG001
+    """Say what the visual harness did, at the end of every run, unconditionally."""
     terminalreporter.write_line("")
-    terminalreporter.write_line(discovery.report_line(skipped))
+    terminalreporter.write_line(
+        discovery.report_line(checks_that_did_not_run(terminalreporter.stats))
+    )
 
 
 @pytest.fixture(scope="session")
