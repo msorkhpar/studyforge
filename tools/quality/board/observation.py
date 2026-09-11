@@ -57,9 +57,9 @@ here:
 board that declares one marker is read ONLY inside its markers, and a header
 elsewhere on the file can no longer answer for it. ⭐ **The header branch SURVIVES,
 narrowed to a board carrying NO marker at all** — ⚠️ which is R10's arbitrary roots,
-and the form `rows/W111.md` asked to be preferred — ⛔ **but a board that HAS the
-delimiters and fails to declare its columns must not fall back to it, or the ramp is
-permanent.**
+and the form `W111`'s record in `BOARD-ARCHIVE.md` asked to be preferred — ⛔ **but a
+board that HAS the delimiters and fails to declare its columns must not fall back to
+it, or the ramp is permanent.**
 
 ⛔ **What this is NOT, and `W111` is explicit: a rule pinning the column NAMES.**
 ⭐ **Ruling 189(b)'s roles are read FROM the header precisely so the PO may rename,
@@ -294,8 +294,9 @@ def _delimited(lines: list[str]) -> tuple[int, list[Observation], list[int]]:
 def _ramp(lines: list[str]) -> list[Observation]:
     """Ruling 196(b)'s HEADER-declared locator, reachable only on a board with NO marker.
 
-    ⛔ **It is not removed, and `rows/W111.md` states why: this instrument may be
-    pointed at a corpus repository's own board** (R10's arbitrary roots) — ⭐ **but
+    ⛔ **It is not removed, and `W111`'s record in `BOARD-ARCHIVE.md` states why:
+    this instrument may be pointed at a corpus repository's own board** (R10's
+    arbitrary roots) — ⭐ **but
     it can no longer answer for a board that declared a block, which is the half of
     Ruling 196(b) that expired.**
     """

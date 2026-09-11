@@ -288,8 +288,9 @@ def _fold_lines(refuted: list[str], unanswerable: list[str], table: Table) -> li
 def _refusal(table: Table) -> str | None:
     """`W111`: the sentence for a table that did not READ, or `None` when it did.
 
-    ⛔ **Refuses at the FIRST declared block that did not parse** (`rows/W111.md`),
-    and treats *no table located at all* the same way — ⚠️ **because the board's
+    ⛔ **Refuses at the FIRST declared block that did not parse** (`W111`'s record
+    in `BOARD-ARCHIVE.md`), and treats *no table located at all* the same way —
+    ⚠️ **because the board's
     contract has carried the `<!-- inflight -->` markers since the PO's round-40
     edit, so their total absence is this instrument failing to read THIS board
     rather than a board that has nothing to say.**

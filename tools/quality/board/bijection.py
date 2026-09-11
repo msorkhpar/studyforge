@@ -65,6 +65,16 @@ silenced `board-orphan` on exactly the files it guards.** ⛔ **I caught myself 
 *"every full argument file"* here and corrected it to the count: the shape of the
 argument survives, and the number it rests on was wrong.**
 
+⚠️ **NOTICE (`W78`) — the reading above stays TRUE OF `51dee3b`, and its three named
+WITNESSES no longer inhabit it.** ⛔ `W129`, `W130` and `W132` are REDIRECT STUBS
+today, so they are no longer the full argument files the claim cites them for.
+⭐ **RE-TAKEN at `fc56011`, role `wt/dev1`: of the **97** live row files, **65** carry
+an anchored `BOARD-ARCHIVE.md#` pointer somewhere, **59** END with one and **16** are
+stubs by the predicate — so **43** FULL argument files END with an archive pointer,
+and `rows/W105.md`, `rows/W106.md` and `rows/W114.md` are three that do.**
+⚠️ **Annotated, never reworded** (Ruling 183's form; Ruling 97 — a measurement is
+true of the ref it was taken at).
+
 ## ⚠️ What this arm deliberately does NOT assert, DECLARED rather than implied
 
 ⛔ **Nothing about a row's NAMING** — whether a naming is a good one is the PO's

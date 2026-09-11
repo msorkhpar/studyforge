@@ -54,7 +54,8 @@ false pass did not even require the named worktree to exist.**
 refusal** — ⚠️ **office worktrees are legitimately re-pointed between waves, and
 `wt/dev1` moved from `feat/SF-26-goldens` to `feat/SF-30-reader-state` inside one
 round.** ⛔ **The refutation belongs to TERMINALITY, which is a property of the
-branch; the name mismatch is a property of the bookkeeping** (`rows/W110.md`).
+branch; the name mismatch is a property of the bookkeeping** (`W110`'s record in
+`BOARD-ARCHIVE.md`).
 
 ## ⛔ `W115` — Ruling 216: the answer is THREE-VALUED, because a FAILED READING IS NOT A VERDICT
 

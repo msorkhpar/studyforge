@@ -26,8 +26,8 @@ than spending the last fourteen lines** — which is the standing-decision form
 
 ## ⛔ `board-unreadable` — a DECLARED block that did not parse is a FINDING
 
-⚠️ **Ruling 196(b) gave the header-declared locator an EXPIRY, and `rows/W111.md`
-carries the clause that settles what replaces it:**
+⚠️ **Ruling 196(b) gave the header-declared locator an EXPIRY, and `W111`'s record
+in `BOARD-ARCHIVE.md` carries the clause that settles what replaces it:**
 
 > ⭐ **A `<!-- inflight -->` block whose table does not declare the observation
 > columns is a FINDING, not a `NONE FOUND` notice** — ⛔ **because the author has

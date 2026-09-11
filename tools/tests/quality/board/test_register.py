@@ -510,6 +510,14 @@ def test_planted_everything_that_is_NOT_a_stub(body: str, why: str) -> None:
     ⚠️ **The last two are the ones that matter**: ⭐ **a full argument file that ENDS with
     an archive pointer is what a `contains` test would have read as a stub**, and
     `rows/W129.md`, `rows/W130.md` and `rows/W132.md` are all that shape.
+
+    ⚠️ **NOTICE (`W78`) — the sentence above stays TRUE OF THE REF IT WAS TAKEN AT, and
+    its three named witnesses have since CLOSED**: ⛔ `W129`, `W130` and `W132` are
+    REDIRECT STUBS today, which is the opposite of the shape they are cited for.
+    ⭐ **RE-TAKEN at `fc56011`, role `wt/dev1`: `43` of the `97` live row files are FULL
+    argument files that END with an archive pointer — `rows/W105.md`, `rows/W106.md`
+    and `rows/W114.md` among them.** ⚠️ **Annotated, never reworded** (Ruling 183's
+    form).
     """
     assert not redirects_to_the_archive(body), why
 

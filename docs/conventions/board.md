@@ -286,7 +286,8 @@ inheriting a git dependency (ruled round 49, below).
   `board-duplicate` fire on its own author.
 - ⛔ **RULING 196(b) HAS EXPIRED AND `W111` DISCHARGED IT.** ⭐ **The header locator
   survives for a board carrying NO marker at all** — R10's arbitrary roots, and the
-  form `rows/W111.md` asked to be preferred — ⛔ **but a board that DECLARES a block
+  form [`W111`'s record](../tasks/BOARD-ARCHIVE.md#w111-ruling-196s-expiry-the-header-locator-announces-where-a-delimiter-can-refuse-and-the-delimiters-have-landed)
+  asked to be preferred — ⛔ **but a board that DECLARES a block
   is read ONLY inside its markers, and a declared block whose header declares no
   role is `board-unreadable` rather than a `NONE FOUND` notice.** ⚠️ **The refusal
   fires on a header that declares NO role and never on one that declares them
@@ -312,8 +313,8 @@ inheriting a git dependency (ruled round 49, below).
 
 ### ⛔ May the floor shell out for clause (c)? NO, and the instrument is separate
 
-⭐ **`rows/W96.md` owed this answer before it owed code, and the answer is a
-SPLIT:** ⛔ **clause (b) runs on every floor and clause (c) runs at a wave's
+⭐ **[`W96`'s record](../tasks/BOARD-ARCHIVE.md#w96-a-cell-declaring-a-started-state-asserts-a-live-checkout-or-a-branch-ahead-of-release)
+owed this answer before it owed code, and the answer is a SPLIT:** ⛔ **clause (b) runs on every floor and clause (c) runs at a wave's
 close**, as `python3 -m tools.quality.board.corroborate`, which
 `tools.quality.CHECKS` does not import.
 
@@ -1193,8 +1194,8 @@ superseded** (Ruling 106's form, applied to a row). ⚠️ **A reworded row lose
 record of what was offered, and a taker on an older base then reads two different
 rows with one name.**
 
-⭐ **MEASURED at `05e230b`:** `rows/W110.md` was **three rulings stale inside one
-wave** and a taker implementing it as written would have shipped a false-terminal
+⭐ **MEASURED at `05e230b`:** [`W110`'s record](../tasks/BOARD-ARCHIVE.md#w110-corroborates-live-checkout-arm-discharges-a-branch-git-already-knows-is-spent-so-a-leaked-worktree-keeps-a-stale-row-green)
+was **three rulings stale inside one wave** and a taker implementing it as written would have shipped a false-terminal
 generator. ⛔ **The amendment is 14 lines APPENDED, nothing reworded.** ⚠️ **And
 the letter `B` was introduced BY the amendment to retro-label a prose offer that
 named no letter — so the row was INCOMPLETE, never self-contradictory.**
