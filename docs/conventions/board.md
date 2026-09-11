@@ -296,11 +296,22 @@ clauses, one instrument, and they pull the same way on purpose.**
 > that instructs a JOINT carry must not be invisible to the check that verifies
 > carries.**
 >
-> ⭐ **And the reason both clauses go the same way:** this check's failure mode is
-> a **FALSE EMPTY** — *"nobody carried it"* returned for something that was
+> ⭐ **(c) CASE — added CTO round 49, against this office's own instrument.**
+> ⛔ **The pattern is CASE-INSENSITIVE (`-iP`), because this project's house style
+> sets a ruling's own heading in CAPS for emphasis and the carry is therefore
+> spelled `RULING N` exactly where it is most deliberate.** ⚠️ **Measured at
+> `c18df98c`, re-reading round 48's six mints: the case-sensitive form returned a
+> FALSE EMPTY on TWO of them, and both witnesses are real artifacts** —
+> `docs/tasks/E04-narration.md` for Ruling 187 and `docs/tasks/rows/W94.md` for
+> Ruling 188. ⭐ **`-iP` finds both; a ruling that cannot exist still reads empty,
+> so the widening is not a wildcard.**
+>
+> ⭐ **And the reason all three clauses go the same way:** this check's failure mode
+> is a **FALSE EMPTY** — *"nobody carried it"* returned for something that was
 > carried. ⛔ **So it is tuned to OVER-match, and that is safe for one specific
 > reason: check 3 prints FILES, not a count.** ⚠️ **A false positive costs one
-> `git show`; a false empty costs a lost ruling.**
+> `git show`; a false empty costs a lost ruling** — ⛔ **and clause (c) is that cost
+> paid twice inside the round whose mints the check was verifying.**
 
 ⛔ **The instrument, and it is PCRE (`-P`), not ERE** — `(?:`, `\s` and `\b` are
 not POSIX ERE and `git grep -E` refuses the pattern outright with *"Invalid
@@ -308,10 +319,14 @@ preceding regular expression"*:
 
 ```bash
 # For each ruling minted since check 3 last ran. ⛔ FILES, never a count.
+# ⛔ -i is LOAD-BEARING (clause (c)): `RULING 187` is how a carried ruling's own
+#    heading is spelled, and the case-sensitive form missed two of six mints.
 for n in <the rulings>; do
   echo "Ruling $n:"
-  git grep -lP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests | sort
+  git grep -liP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests | sort
 done
+# Row 3, and it must DIFFER: a ruling that cannot exist reads EMPTY.
+git grep -liP "Rulings?\s+(?:9999|[0-9]+[^.]*\b9999)\b" -- docs src tools tests
 ```
 
 ⭐ **Measured at `96e8c95`, `dev2` worktree, host git 2.47.3 and the pinned image
