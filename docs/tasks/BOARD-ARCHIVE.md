@@ -13676,3 +13676,180 @@ git status --porcelain -> 0 lines
 ⭐ **PLANTS: five against the live board and its row files — four states plus one impossible reading — every one restored from a copy taken before the first edit, `git status --porcelain` reading `0` afterwards and verified.** ⛔ **No file under `tools/`, `src/`, `tests/`, `docker/` or `docs/conventions/` was edited, and no other office's handoff was touched.**
 
 ⭐ **The user's untracked `ONBOARDING.md` was never moved, deleted or committed.**
+
+## ⛔ PO round 46 — `W126` and `W115` BLOCKED on the same wall, Ruling 282's trigger FIRED against my own round, three mints and one of them wider than it was routed
+
+⛔ **Branch `chore/po-round46`, cut from `release/m0-foundations` @ `51dee3b`.** ⭐ **Every figure below was taken by this office in the pinned container unless it says otherwise; each claim is marked MEASURED or RECEIVED and names from whom** (Ruling 115). ⛔ **No two-dot span appears in this record** (Ruling 197(a)), **and no absolute home path, email, name, hostname or git identity does either** (R7).
+
+### ⭐ THE BASE READING — role `wt/po`, a clean linked worktree, pins in the SAME invocation as the sha (Ruling 238)
+
+⛔ **RULING 241'S FORM, NAMED: REDIRECT-TO-FILE-THEN-`$?`-ON-THE-NEXT-LINE, with nothing in between.** ⭐ **`-ra` throughout, never bare `-q`** (Rulings 255 / 275).
+
+```text
+51dee3b0e12d885018aca703e85333fc6325fd85
+Python 3.14.7 | node v24.21.0 | ruff 0.16.6
+Google Chrome for Testing 153.0.8010.36 | fonts-liberation 1:2.1.5-3 | 12 font files | shm 1.0G
+PYTEST_EXIT=0        5477 passed, 15 skipped in 62.44s
+                     ⭐ 12 skip GROUPS / 15 skips | FAILED+ERROR lines: 0
+FLOOR_EXIT=0         pointers 932 in 358, 546 anchored, 0 unresolved | ruff 832
+                     board 130 rows / 83 live / 83 detail | narrative 6663 of 8192
+                     widest row 587 of 600 | 42870 bytes total of 43680 allowed
+                     rulings index 287 from 46, tail 287
+                     rulings reach: tail 287 CITED; over the 25 newest (263–287)
+                       reached 17, unreached 8 — 265, 266, 267, 268, 269, 273, 274, 275
+CORROBORATE_EXIT=1   ⛔ 2 of 2 rows REFUTED — both TERMINAL, W126 absorbed by f65a669
+                     and W115 by 0e9a86d; 0 NOT ANSWERABLE, 0 live checkouts git
+                     could not count
+                     dispatched and unnamed: none.
+```
+
+⭐ **RULING 147, and the pair is reproduced exactly as the coordinator's MAIN reading predicts: my clean worktree reads `932 in 358` and `ruff 832` where MAIN reads `932 in 359` and `ruff 833`.** ⛔ **The POINTER TOTAL is identical on both denominators' refs and only the FILE and `ruff` counts move, because MAIN's extra file is the user's untracked `ONBOARDING.md`, which carries no pointer.** ⚠️ **I neither moved, deleted nor committed it, and it is still there.**
+
+⛔ **`CORROBORATE_EXIT=1` AT THE BASE IS 264(a) DISCLOSURE AND NOT A GATE FAILURE** (Ruling 279): ⭐ **the base is the RELEASE tip, and the gate's point is the REGISTER's tip, which is this branch's. The two rows refuted are the two the wave's last merges absorbed — exactly the condition this round exists to clear.**
+
+### ⛔ THE SKIP CENSUS IN FULL, BOTH UNITS (Ruling 275), and the two disagree
+
+```text
+skip GROUPS (grep -c '^SKIPPED') -> 12        skips summed (4 + 1×11) -> 15
+SKIPPED [4] tests/docker/test_dev_image.py:488  already inside the dev image; building it again would recurse
+SKIPPED [1] tests/docker/test_dev_image.py:512  "
+SKIPPED [1] tests/docker/test_dev_image.py:518  "
+SKIPPED [1] tests/docker/test_dev_image.py:538  "
+SKIPPED [1] tests/docker/test_dev_image.py:547  "
+SKIPPED [1] tests/docker/test_dev_image.py:566  "
+SKIPPED [1] tests/studyforge/narrate/speakable/test_init.py:182  no rendered page writes data-audio yet over 2 golden page(s) — SF-18 …
+SKIPPED [1] tests/studyforge/render/page/test_acceptance.py:109  depth1 declares one container, so there is no boundary to cross
+SKIPPED [1] tests/studyforge/render/page/test_acceptance.py:195  "
+SKIPPED [1] tests/test_knowledge_index.py:130  Claude-senior-java-engineer is not checked out beside this repository
+SKIPPED [1] tests/test_knowledge_index.py:130  CodeSignal is not checked out beside this repository
+SKIPPED [1] tests/test_knowledge_index.py:165  no corpus repository with a built index is checked out
+```
+
+⭐ **`:488` is `require_docker_run()`, the one group that is not `[1]` and the whole of the `12`/`15` difference.** ⛔ **`W127` owns 3 of these — the `test_knowledge_index.py` block — and it is placed second in `## Next rows`.**
+
+### ⛔ THE TWO CLOSES THE BRIEF ASKED ME TO DECIDE — MEASURED UNPERFORMABLE, AND BOTH ARE `blocked`
+
+⭐ **FIRST, THE POPULATION, AND IT IS DECLARED AS A TEXT COUNT BEFORE THE INSTRUMENT IS ASKED** (Ruling 281's companion clause, which says a prediction about a shipped instrument is made with that instrument's predicate or declared as a text count and compared afterwards). **MEASURED at `51dee3b`:**
+
+```text
+grep -oE '\]\(rows/W[0-9]+\.md[^)]*\)' docs/tasks/BOARD-ARCHIVE.md   -> 14 at 10 distinct ids
+  W124 ×3 · W125 ×2 · W100 ×2 · W37 · W75 · W78 · W88 · W115 · W122 · W126
+of the two rows under verdict:   W126 -> 1 (:13146)    W115 -> 1 (:12295)
+```
+
+⭐ **Round 45 measured `13 at 10 ids`; the population grew by one — `](rows/W125.md)` inside round 45's OWN record — and the ten ids are unchanged.** ⛔ **Both of this round's subjects are in it, and both occurrences are UNBACKTICKED: `:12295` is *"**Disposition: ROUTED —** [`rows/W115.md`](rows/W115.md)"* in round 42's record and `:13146` is round 44's clause-10 note.** ⚠️ **Neither is `:13012`'s shape, which is the backticked EXAMPLE that made round 45 mispredict by one.**
+
+⛔ **THEN THE FOUR-STATE PLANT, every expectation written down BEFORE the command ran, every edit made ON THE HOST and the floor read in the pinned container, every restore read for its exit code and `git status --porcelain` verified at `0` after each** (Rulings 123/128/140, and Ruling 287 — ⭐ **the container cannot restore and the failure is SILENT, so no restore was attempted inside it**):
+
+```text
+PREDICTED (written first)
+  live : FLOOR_EXIT=0, 0 findings
+  B    : W126+W115 closed, both row files DELETED -> FLOOR_EXIT=1, 2 unresolved, 0 orphan
+  C    : W126+W115 closed, both row files KEPT    -> FLOOR_EXIT=1, 2 board-orphan, 0 unresolved
+  D    : W127 closed + its row file deleted       -> FLOOR_EXIT=0, 0 unresolved, 0 orphan
+
+MEASURED
+  live   FLOOR_EXIT=0   pointers 932 in 358, 0 unresolved                        ✅
+  B      FLOOR_EXIT=1   pointers 927 in 356, 2 unresolved                        ✅
+           BOARD-ARCHIVE.md:12295 [pointer] points at 'rows/W115.md' — no such file
+           BOARD-ARCHIVE.md:13146 [pointer] points at 'rows/W126.md' — no such file
+  C      FLOOR_EXIT=1   0 unresolved, 2 board-orphan on rows/W115.md and rows/W126.md  ✅
+  D      FLOOR_EXIT=0   pointers 927 in 357, 0 unresolved, 0 orphan              ✅
+  RESTORE_EXIT=0 and porcelain 0 after every state, verified on the HOST
+```
+
+⛔ **FOUR PREDICTIONS, FOUR CONFIRMED, and `D` is the control that makes the reading specific rather than general: closing a row and deleting its file is GREEN when no frozen record points at it.** ⭐ **So the wall is not *closing*; it is exactly the archive-pointer population printed above.**
+
+⛔ **AND THE CONCLUSION: THERE IS NO STATE FOR A MERGED ROW THAT IS BOTH TRUE AND GREEN.** ⚠️ **Three options and all three are measured:**
+
+| the state | ⛔ what it costs |
+|---|---|
+| `✅ done`, row file deleted | `FLOOR_EXIT=1`, 2 unresolved pointers in FROZEN records Rulings 106 and 174 forbid editing — state `B` |
+| `✅ done`, row file kept or stubbed | `FLOOR_EXIT=1`, 2 `board-orphan` — state `C`, and round 45's stage 4 measured the Ruling 270 stub at the same reading |
+| left `in flight` | the register asserts a FALSEHOOD — both branches are absorbed — and `CORROBORATE_EXIT=1` at the register's own tip, which Ruling 279 makes this round's gate |
+
+⭐ **SO BOTH ARE `blocked`, in the form Ruling 270 ratified for `W100` and round 45 applied to `W122` and `W124`**: true, inside `observation.py`'s `NOT_STARTED` set so no observer is owed, `corroborate` satisfied, and not one frozen byte moved. ⚠️ **Every disposition of both rows stays in its row file, because Ruling 97 forbids inheriting a row and a disposition nobody wrote down is what gets inherited.**
+
+### ⛔ RULING 282'S TRIGGER FIRED ON THIS ROUND
+
+⛔ **Ruling 282 bounds the wall with an instrument: *a FOURTH row reaching `blocked` on this wall before `W129` lands is a CHANGES-REQUESTED cause against the round that puts it there.*** ⭐ **`W126` and `W115` are the FOURTH and FIFTH. I put them there, the trigger is in `## Scheduled` as ruled, and its state is `fired` rather than `pending` — because a trigger whose condition is already true is not pending, and writing `pending` over a fired condition is the exact class of false cell `W100` was built to catch.**
+
+⚠️ **AND I FILE THE CEILING ITSELF AS A FINDING, because measurement says it binds the wrong office.** ⛔ **The table above is the whole argument: this office had no compliant alternative. The population grows when a branch MERGES, not when the PO chooses — and the only office that can stop it is `W129`'s taker, who is holding the row right now in `wt/dev1`.** ⭐ **So the honest reading is that Ruling 282's trigger is a correctly-built alarm wired to the wrong hand, and the remedy is `W129` landing this wave rather than a changes-requested verdict on a round that measured its way to the only true cell available.** ⚠️ **`PO-46/2` is the finding; the verdict is the reviewer's.**
+
+### ⭐ THE THREE MINTS, AND ONE OF THEM IS WIDER THAN IT WAS ROUTED
+
+| id | ⛔ what it is, and from where |
+|---|---|
+| **`W133`** | ⛔ **Ruling 280, from `CTO-59/1`.** The reach predicate against the plural, comma-list and range spellings, the notice's upper-bound wording, and Ruling 281's printed-gap clause. ⭐ **Plus a TRAP this office measured and the ruling did not name — see below** |
+| **`W134`** | ⛔ **Ruling 286's backlog.** Acceptance is a RATE, as ruled — and the POPULATION is widened from `19` to `42`, measured and disclosed |
+| **`W135`** | ⛔ **Ruling 285(b).** The citation-as-pointer rule, scoped by a population the routed instance did not show: `147` of `183`, `145` of them frozen |
+
+⛔ **`W133`'s TRAP, MEASURED AT `51dee3b` WITH THE EXPECTATION WRITTEN FIRST, 8 of 8 CONFIRMED:** ⭐ **a plural/range-aware predicate that does NOT exclude code spans finds ALL EIGHT currently-unreached rulings — `265`–`269`, `273`–`275` — in ONE line, `docs/conventions/review-rubric.md:3985`, which is Ruling 280's own statement of the defect quoting `` `Rulings 264–278` `` as an example.** ⛔ **USE hits `0`, MENTION hits `8`.** ⚠️ **So the obvious reading of Ruling 280's remedy would move the printed notice from `unreached 8` to `unreached 0` while nothing landed in any convention document. The row carries the negative control as a clause rather than the warning as prose.**
+
+⛔ **AND THE ROUTED FIGURE IS RE-MEASURED AND CORRECTED UPWARD, partitioned into USE and MENTION:** ⭐ **`8` live plural sites at `4aac4a5` reads `9` at `51dee3b` — `12` occurrences, `9` USE and `3` MENTION.** ⚠️ **The extra live one is `review-rubric.md:4131`, *"Rulings 202 and 205 already say the container cannot restore"*, landed by round 59's OWN Ruling 286 discharge — so the house style grew by a live plural citation inside the round that measured it.**
+
+⛔ **`W134`'S WIDENING, MEASURED WITH `check_rulings_reach`'s OWN PREDICATE over `docs/conventions/*.md`, BANDS PRINTED BEFORE ANY SCALAR:**
+
+```text
+band      unreached   of      reached
+  1–100        58     100        42 %
+101–150        17      50        66 %
+151–180         4      30        87 %
+181–216         1      36        97 %   ⭐ the older practice, effectively complete
+217–241        19      25        24 %   ⛔ Ruling 245's cliff, and Ruling 286's 19
+242–262        15      21        29 %   ⛔ A SECOND BAND NO RECORD NAMES
+263–287         8      25        68 %   ⭐ Ruling 286 binding its own minter, working
+          whole series 1–287: 122 unreached of 287
+CONTROL     rulings 140–160 -> 17 of 21 reached        IMPOSSIBLE  9000–9002 -> 0 of 3
+```
+
+⛔ **Ruling 286 routed *the 19 of `217`–`241`*. The band immediately below the tail is WORSE than the cliff Ruling 245 was minted over, and no ruling record names it.** ⭐ **So `W134`'s population is the `42` unreached of `217`–`287`, and discharging exactly `19` would leave `23` rulings with no row — the failure Ruling 286 exists to stop, reproduced by its own remedy.** ⚠️ **The `80` below `217` are EXCLUDED BY NAME AND BY REASON in the row, because an excluded population that is not named is a hole (Ruling 179), and the `181`–`216` band at `97 %` is the measurement that says the practice down there was working.** ⛔ **The widening is DISCLOSED and is not silent — `CLAUDE.md`'s own line, *"Refining a task as the project grows is expected. Silently expanding one is not."***
+
+⭐ **`W135`'S SCOPE, and the population is what decided it. MEASURED at `51dee3b`:** ⛔ **`147` of `183` handoff files carry ZERO markdown pointers, the largest at `4915` lines; `145` of them are FROZEN records Rulings 106 and 174 forbid editing.** ⚠️ **So `handoffs/W115.md` is `1` of `147` and not an outlier, and a `Finding` over that population is Ruling 245's own measured refutation at six times the width that produced it.** ⭐ **The row is therefore a RULE AT AUTHORING TIME plus one bounded live population, never a back-fill** — ⛔ **and the row-file half is named as [`W88`](rows/W88.md)'s, because Ruling 244(a) says one subject has one id and `33 of 83` is `W88`'s own population re-measured rather than a new one.**
+
+### ⛔ THE `W132` FOLD — TAKEN NOW, AND THE DEVELOPER MUST BE TOLD
+
+⛔ **Round 59 routed two things into `W132`: `W115/1`'s cheap remedy (make `test_the_FOUR_populations_return_THREE_DISTINCT_codes_and_FOUR_distinct_sentences` true by changing its declared and read population, NEVER by renaming it — `W74/2` binds) and `W115/2`/Ruling 265's exit-`2` producer count in `docs/conventions/board.md`.** ⚠️ **`W132` is IN FLIGHT in `wt/dev1` as I write, so the brief asked me to choose between folding now and scheduling it.**
+
+⭐ **I FOLD NOW, and the grounds are measured rather than preferred:**
+
+1. ⛔ **Ruling 284 makes the conversion AUTOMATIC — *"by whoever notices"* — and both clauses have already been routed once. Scheduling them is Ruling 256's shape a second time, and round 57's obligation survived TWO merges that way.**
+2. ⭐ **The ONE office that can perform both is holding both surfaces right now: `W132`'s taker is `wt/dev1`, whose files this wave are `tools/quality/board/` AND `docs/conventions/board.md`.** ⛔ **Waiting a wave hands the work to somebody who holds neither.**
+3. ⚠️ **The risk the brief names is real and is MITIGATED rather than denied: the edit is ADDITIVE — two enumerated clauses appended to `rows/W132.md`'s existing clause table — and it changes no clause the developer has already read.** ⛔ **`docs/tasks/rows/` is this office's surface; the developer reads the row and does not own it.**
+4. ⛔ **AND THE PART THAT MAKES IT SAFE IS NOT THE DIFF, IT IS THE RELAY: Ruling 283's standing clause says a correction may not reach the session reading it.** ⭐ **So the coordinator is told, in this round's report and in this record, that `rows/W132.md` gained two clauses AFTER `wt/dev1` started — and a developer who read the row before this merge has a snapshot that does not carry them.** ⚠️ **That is the same defect `PO-46/9` measures against `CLAUDE.md` one level up, and saying so is the whole remedy available.**
+
+### ⭐ THE RE-SEQUENCED QUEUE
+
+⛔ **`W129`, `W130`, `W131` and `W132` are DISPATCHED and leave `## Next rows` for the In-flight table.** ⭐ **The coordinator bundled `W129`, `W130` and `W132` onto ONE branch, which is the constraint round 45's own placement narrative asked for — `tools/quality/board/` is ONE OWNER or three waves (check 4's sub-step) — and I RATIFY it rather than file it** (Ruling 274: placement mine, bundling at dispatch theirs).
+
+⭐ **`W133` → `W127` → `W128` → `W134` → `W78` → `W88` → `W120` → `W121` → `W103` → `W105`–`W109` → `W116`–`W118` → `W125` → `W135`.**
+
+⛔ **`W133` IS FIRST AND IT JUMPS EIGHT ROWS, on one ground that no other row in the table has: its next failure is SCHEDULED.** ⭐ **MEASURED — the project's own form for a round's mints is the PLURAL: round 59's record heads its section `RULINGS 279–287`, and the merge `0183cd1` that §8a exempts by name carries `(CTO: APPROVE - Rulings 217-222)`.** ⚠️ **`check_rulings_reach` is a `CHECKS` member, so the next reviewer who lands their tail in their own house style leaves the floor RED with no diagnostic saying why.** ⛔ **It shares NO surface with any in-flight row — `tools/quality/reach.py` against `tools/quality/board/` and `tests/docker/` — so it may run CONCURRENTLY with either branch.**
+
+⭐ **`W134` IS FOURTH and the ground is a SLOPE rather than a severity claim: the cliff was re-routed in five consecutive ruling records — `223`, `245`, `256`, `264`, `286` — and the band below the tail came out worse while that happened.** ⛔ **It does NOT jump `W127` or `W128`, which keep their round-44 placement.** ⚠️ **`W134` and `W135` both write `docs/conventions/` — ONE OWNER or two waves.**
+
+⛔ **`W135` IS LAST AND JUMPS NOBODY, on the reviewer's own ground accepted rather than argued around: `FLOOR_EXIT=0` is honest today, nothing is broken, and both records `handoffs/W115.md` names do exist.** ⭐ **A row that claimed otherwise to buy a place in the queue is what Ruling 75 exists to expose.**
+
+### ⛔ FINDINGS — `PO-46/1` … `PO-46/13`, and TWELVE are MINE
+
+| id | marker | ⛔ the finding, and its `Measured` |
+|---|---|---|
+| `PO-46/1` | `[structural]` | ⛔ **MINE.** Neither `W126` nor `W115` can be CLOSED: `BOARD-ARCHIVE.md:12295` and `:13146` are UNBACKTICKED pointers in FROZEN records, so Ruling 201's close reads `FLOOR_EXIT=1` with 2 unresolved and the kept-file or stub state reads `FLOOR_EXIT=1` with 2 `board-orphan`. **Measured** at `51dee3b` by the four-state plant, four predictions written first and four confirmed, with state `D` as the control. ⭐ Both are `blocked` |
+| `PO-46/2` | `[structural]` | ⛔ **MINE, and it is the round's main result.** Ruling 282's ceiling is NOT REACHABLE BY THE OFFICE IT BINDS: the three available states for a merged row are `done` (red), `blocked` (the wall) and a false `in flight` (Ruling 231, and `CORROBORATE_EXIT=1` at the gate's own point). **Measured** by the table above. ⛔ The population grows when a branch MERGES, and the only office that can stop it is `W129`'s taker. ⭐ The trigger is written `fired`, against my own round |
+| `PO-46/3` | `[structural]` | ⛔ **MINE, and it corrects the remedy rather than the defect.** A plural/range-aware reach predicate that does not exclude CODE SPANS turns all eight currently-unreached rulings GREEN off ONE backticked example inside Ruling 280's own text. **Measured** at `51dee3b`, expectation first: USE hits `0`, MENTION hits `8`, all at `review-rubric.md:3985`. ⭐ Encoded as `W133` clauses 1 and 2 |
+| `PO-46/4` | `[structural]` | ⛔ **MINE.** Ruling 286 routed `19`; the band `242`–`262` reads `15` unreached of `21` — a WORSE rate than the cliff — and NO ruling record names it. **Measured** with the shipped predicate at `51dee3b`, with a `17 of 21` control and a `0 of 3` impossible reading. ⭐ `W134`'s population is the `42` of `217`–`287`, widened and DISCLOSED |
+| `PO-46/5` | `[structural]` | ⛔ **MINE.** `CTO-59/2`'s population is `147` of `183` handoffs with zero pointers, `145` of them FROZEN. **Measured** at `51dee3b`. ⭐ So `W135` cannot be a sweep, and the row-file half is already `W88`'s (Ruling 244(a)) |
+| `PO-46/6` | `[local]` | ⚠️ **MINE, against the routed figure.** Ruling 280's `8 live plural sites` reads `9` at `51dee3b`, and `12` once backticked MENTIONS are counted. **Measured** and partitioned. ⛔ The extra live one was landed by round 59's own Ruling 286 discharge |
+| `PO-46/7` | `[structural]` | ⛔ **MINE, a live defect in my own file.** `BOARD.md`'s `## In flight` narrative read *"a GATE only at the WAVE CLOSE"* — the exact phrasing Ruling 279 identified as the one that let a correct gate produce a false conclusion. **Measured** by reading Ruling 279 against the board at `51dee3b`. ⭐ Corrected in this commit to the REGISTER's tip, stated as a ref-producing command |
+| `PO-46/8` | `[structural]` | ⛔ **MINE, and the board broke its own closing rule.** Its head carried a SECOND COPY of two facts that each already have a home: `docs/conventions/board.md:8`'s first heading carries *"The board reached 8,545 lines"* and `:31` carries `bfb8c8c`, and `delivery-flow.md:183` and `:189` carry *"a status change is one cell"*. **Measured** at `51dee3b`. ⭐ Replaced by their addresses, which is Ruling 271's relief taken on the board's own rule rather than as a byte trick |
+| `PO-46/9` | `[structural]` | ⛔ **MINE, and `PO-45/9` is now a RATE rather than an instance.** **Measured** at `51dee3b`: `CLAUDE.md` at HEAD reads *"A WORKTREE DOES CARRY THE SIBLINGS, and the sentence that stood here saying otherwise was FALSE"*, while the copy injected into THIS session's starting context carries the refuted sentence AND its refuted consequence, *"host-verified by construction"*, which HEAD explicitly negates. ⛔ The correction landed in round 44 at `8884f79` and has now failed to reach a session in rounds 45 AND 46. ⭐ Ruling 283's standing clause obeyed: the FILE is authoritative, no edit is owed, and this office says so in its record |
+| `PO-46/10` | `[structural]` | ⛔ **MINE, and it is `W130`'s second data point.** Three mints raised the allowance by `672` and cost `1402` board bytes — a deficit of `730` — ⚠️ **and unlike round 45 I was not forced to compress to fit, so this is the slope without the confound.** **Measured** on my committed tree: headroom `810` → `164`. ⛔ At `164` bytes the next round cannot re-take more than a cell or two without minting, and `W130` is in flight |
+| `PO-46/11` | `[local]` | ⚠️ The register's state cells for `W129`–`W132` read `todo` while all four are in flight. **Measured** at `51dee3b` by the floor's own line *"register cells declaring a started state: 2 — W115 W126"*. ⛔ Ruling 231: a register must be true when it MERGES. ⭐ Re-taken to `in flight` |
+| `PO-46/12` | `[none]` | ⭐ **Recorded negative — `docs/tasks/README.md` needs NO edit.** **Measured** at `51dee3b`: it names exactly one `W` row, `W38` at line 15, and carries no count three mints falsify |
+| `PO-46/13` | `[none]` | ⭐ **Recorded negative, and `PO-45/8`'s prediction repeating.** **Measured**: at `0` ahead `corroborate` exempted `po` as *invisible BY CONSTRUCTION*; the moment this round committed, `chore/po-round46` appears under `dispatched and UNNAMED by any row`. ⛔ Ruling 265's defect and `W132`'s fifth measured instance — ⚠️ **so the reviewer of THIS branch reads that line for a DEVELOPER name only** |
+
+### ⛔ WHAT I DID NOT TOUCH, AND ROUTED INSTEAD
+
+- ⛔ **No edit to `tools/`, `src/`, `tests/`, `docker/` or `docs/conventions/`.** ⭐ **`tools/quality/board/` and `docs/conventions/board.md` are `wt/dev1`'s this wave and `tests/docker/` is `wt/dev2`'s; every instrument clause this round identified is a CLAUSE OF A ROW** — `W133` clauses 1–5, `W134` clauses 1–5, `W135` clauses 1–5, and two appended to `W132`.
+- ⭐ **`CLAUDE.md` needed NO edit** — it is already correct at HEAD, and `PO-46/9` is about what reached a session.
+- ⛔ **No other office's handoff was touched, and `docs/tasks/rulings-index.md` was not hand-edited** (R19) — it is regenerated by `python3 -m tools.quality.rulings` and produced a zero-byte diff.
