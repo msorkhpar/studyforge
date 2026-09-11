@@ -255,6 +255,26 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
   whole point of adding it** — the alternative was an office declaring `survey`
   (*"nothing landed"*, false) or minting an id it does not own.
 
+#### ⛔ Ruling 176 (CTO round 45) — a new `DOCUMENT_KINDS` entry may be minted by any office ONLY IF it owes at least what the strictest existing kind owes
+
+> ⭐ **A kind that owes MORE, or the same, is a contract being EXTENDED, and may
+> be minted by whoever needs it and offered for ratification.** ⛔ **A kind that
+> owes LESS is a widening of the ESCAPE SURFACE, and it needs the CTO BEFORE it
+> is written, not after.**
+
+⚠️ **The hazard is real and it is `W63`/`W64`: `check_markers` skips every
+`ruling record`, so a kind that owes nothing is how a document leaves the
+contract altogether.** ⭐ **`office handoff` is the OPPOSITE of that hazard, and
+the CTO read the code rather than the claim to be sure: it owes the title, the
+six sections and the markers — exactly what `task handoff` owes — with
+`_check_office_identity` **INVERTING** the identity rule so that a `<SCOPE>`
+which parses as a task ID is itself a finding.** ⛔ **It cannot be used to escape
+anything.**
+
+⭐ **The shape that does not rot, and it is why the ratification was cheap:** the
+parametrised *owes-only-its-declaration* test excludes the new kind **by name**,
+never by an exclusion list that a later kind joins silently.
+
 ### ⛔ Ruling 134 (CTO round 38) — a history-based instrument silently loses a file at a rename it did not score
 
 > ⛔ **When a task splits a module into parts and no part reaches git's default

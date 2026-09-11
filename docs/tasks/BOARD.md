@@ -34,7 +34,8 @@ why a close ran the way it did is the archive's.**
 | **M1** — the framework stands up | ✅ CLOSED | `2fe56a4` | [record](BOARD-ARCHIVE.md#m1s-close-run-at-2fe56a4-all-nine-true-at-one-ref-and-rows-18-were-re-taken-not-inherited) |
 | **M2 step 2.1** | ✅ CLOSED | `a00337b` | [record](BOARD-ARCHIVE.md#m2-step-21s-close-run-at-a00337b-all-five-re-taken-and-the-ref-moved-twice-underneath-it) |
 | **M2 step 2.2** | ✅ CLOSED | `ce80120` | [record](BOARD-ARCHIVE.md#m2-step-22s-close-run-at-ce80120-all-four-re-taken-and-the-four-merges-derived-rather-than-received) |
-| **M2 step 2.3** | ⏳ **OPEN** — `SF-27` merged `6177738`; `SF-14` is the one remaining row | — | [opened](BOARD-ARCHIVE.md#m2-step-23-open-both-rows-free-no-in-step-edge-and-a-load-asymmetry-named-at-open) |
+| **M2 step 2.3** | ✅ CLOSED | `798956c` | [record](BOARD-ARCHIVE.md#m2-step-23s-close-run-at-798956c-both-rows-re-taken-the-two-merges-derived-and-the-negative-control-is-a-synthesised-commit-because-no-branch-in-this-repository-is-unmerged) |
+| **M2 step 2.4** | ⏳ **OPEN** | — | [opened](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
 
 ⛔ **Ruling 97 binds every one of those refs: a close is a set of measurements at
 ONE named ref, and no row is inherited across a ref change.**
@@ -43,22 +44,23 @@ ONE named ref, and no row is inherited across a ref change.**
 
 ⛔ **A commit count is a reading with an as-of, not a state** (`PO-30/2`), so
 this table names the ref it was taken at and nothing here is inherited.
-⭐ **Ruling 171: `git worktree list` is PRIMARY and `git log` is corroborating.**
+⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**Taken at `9a57b13`, both instruments, 106 non-release branches.**
+**RE-TAKEN at the close of round 37, both instruments, 111 local branches.**
 
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-14` | Developer | `wt/dev1o`, `feat/SF-14-index` | **+1** | in flight |
-| `W14` + `W18` | Developer 1 | none | 0 | in flight |
-| `W27` | Developer 2 | none | 0 | ◐ in-review @ `655b527` |
+| `SF-34` | Developer 1 | `wt/dev1`, `feat/SF-34-chrome` | 0 | in flight |
+| `W85` + `W86` + `W87` | Developer 2 | `wt/dev2`, `fix/board-instrument` | **+1** | in-review |
 
-⛔ **Last round the two instruments disagreed BY ONE ROW IN EACH DIRECTION and
-this round they agree**, because the row that only `worktree list` could see
-(`SF-14`, a checkout with no commit) has now committed. ⭐ **The disagreement is
-a property of a row's AGE, not of the instruments** — ⚠️ **which is why the union
-is a lower bound and this board is still the only total instrument** (Ruling
-171). ⛔ **`trial/*` branches are the CTO's and are NOT rows.**
+⛔ **THE TWO INSTRUMENTS DISAGREE BY ONE ROW AND `worktree list` IS RIGHT, for the
+sixth consecutive round** — `feat/SF-34-chrome` is a checkout at the release tip
+with zero commits, and ⭐ **a branch with no commit is not in `--no-merged` BY
+CONSTRUCTION** (Ruling 130), so the union is a lower bound and this board is the
+only total instrument. ⚠️ **This table was taken ONCE mid-round at `798956c` and
+read `+0` for `fix/board-instrument`; it is REPLACED, not appended beneath, and the
+earlier reading is in the round record** — ⛔ **`PO-30/2` for the seventh round
+running.** ⚠️ **`wt/cto`, `wt/po` and `wt/po-int` are checkouts and are NOT rows.**
 
 ## Next rows — placed, not yet taken
 
@@ -68,14 +70,18 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 2 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+| 1 | `SF-15` | ⛔ **cannot START before `SF-34` MERGES** — it rewrites the two functions `SF-34` has already moved to templates, verified in that branch's diff | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 2 | `SF-26` | step 2.4; shares no `src/` file with any 2.4 row, and its golden floor is what makes `SF-30` checkable | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 3 | `SF-30` | step 2.4, last: three files shared with `SF-34`, and a bundle-order assertion that needs `SF-26` | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 4 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
+| 5 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
 
-⛔ **Round 35's pair — `W70` then `SF-14` — is SPENT: both are in flight above.**
-⚠️ **This table is the QUEUE BEHIND them, and `W76`'s hold on `SF-14` is
-DISCHARGED: `W76` merged `c3e2919`.** ⭐ **Re-derived here at `bfb8c8c` by the
-board architect, not received from round 35** — ⛔ **so the next PO round re-takes
-it rather than inheriting it (Ruling 97).**
+⛔ **Rows 1–3 do NOT invoke Ruling 75, and the reason is stated rather than
+assumed: Ruling 75's subject is a NEWLY MINTED row jumping an older `todo` row OF
+THE SAME SIZE CLASS.** ⭐ **These are product rows of the OPEN STEP, and the
+milestone order in `README.md` is what ranks them** — ⛔ **a backlog `W` row has
+never outranked the open step's own membership, and writing the jump down would
+imply a contest that the plan already settled.**
 
 ## The register — every `W` row
 
@@ -101,11 +107,11 @@ they have exactly one home each.
 | W11 | `api` is a generic field name and the tree guard would flag an unrelated reader | accepted | accepted — cost named | [`rows/W11.md`](rows/W11.md) |
 | W12 | The extraction source's `naming.py` docstring disagrees with its own tree | accepted → E11 | accepted — cost named → E11's catalogue | [`rows/W12.md`](rows/W12.md) |
 | W13 | Two copies of the personal-data gate that already disagree | Developer 2 | ✅ done — `f569d0e` | [record](BOARD-ARCHIVE.md#w13-two-copies-of-the-personal-data-gate-that-already-disagree) |
-| W14 | The two missing invalid fixtures on `FND-04`'s surface, and they are one task | Developer 1 | in flight | [`rows/W14.md`](rows/W14.md) |
+| W14 | The two missing invalid fixtures on `FND-04`'s surface, and they are one task | Developer 1 | ✅ done — `ac4ed55` | [record](BOARD-ARCHIVE.md#w14-the-two-missing-invalid-fixtures-on-fnd-04s-surface-and-they-are-one-task) |
 | W15 | Tooling wrote to a source repository's root ignore file | PO → OPS-05, SK-07 | `todo` — before any adapter runs against a real source | [`rows/W15.md`](rows/W15.md) |
-| W16 | The spec's canonical examples are hand-maintained copies of contracts the code owns | PO / Developer 2 | in-progress — spec text landed; the asserting test is owed | [`rows/W16.md`](rows/W16.md) |
+| W16 | The spec's canonical examples are hand-maintained copies of contracts the code owns | PO / Developer 2 | `todo` — the spec half landed; the two one-way checks are unassigned | [`rows/W16.md`](rows/W16.md) |
 | W17 + W19 | One spelling of *describe a value without reproducing it*, and the remaining `{value!r}` sites | Developer 2 | `todo` — after `FND-07` | [`rows/W17.md`](rows/W17.md) |
-| W18 | `user` + `authoritative` is accepted, so a reader's grader may declare itself the source's own | Developer 1 | in flight, with `W14` | [`rows/W18.md`](rows/W18.md) |
+| W18 | `user` + `authoritative` is accepted, so a reader's grader may declare itself the source's own | Developer 1 | ✅ done — `ac4ed55` | [record](BOARD-ARCHIVE.md#w18-user-authoritative-is-accepted-so-a-readers-grader-may-declare-itself-the-sources-own) |
 | W20 | The repository-wide §7c check, and its migration in the same commit | Developer 2 | ✅ done | [record](BOARD-ARCHIVE.md#w20-the-repository-wide-7c-check-and-its-migration-in-the-same-commit) |
 | W21 | Nothing checks for dangling pointers after a docs move | Developer 2 | `todo` — with `FND-08` | [`rows/W21.md`](rows/W21.md) |
 | W22 | Finding 44 is owed to the integration catalogue, not to `SK-01` | PO | ✅ done | [record](BOARD-ARCHIVE.md#w22-finding-44-is-owed-to-the-integration-catalogue-not-to-sk-01) |
@@ -113,7 +119,7 @@ they have exactly one home each.
 | W24 | A derived-set assertion asserts inhabitation, or it is born vacuous | PO | ✅ done | [record](BOARD-ARCHIVE.md#w24-a-derived-set-assertion-asserts-inhabitation-or-it-is-born-vacuous) |
 | W25 | `tools/quality` gains a handoff check, because the six sections are a contract | Developer 2 | ✅ done — `2a272a5` | [record](BOARD-ARCHIVE.md#w25-toolsquality-gains-a-handoff-check-because-the-six-sections-are-a-contract) |
 | W26 | `W7`'s reader tell resolves the name's origin, not its spelling | Developer 2 | `todo` — not started | [`rows/W26.md`](rows/W26.md) |
-| W27 | An R7 refusal is never translated into a package's error family | Developer 2 | in-review — `655b527` | [`rows/W27.md`](rows/W27.md) |
+| W27 | An R7 refusal is never translated into a package's error family | Developer 2 | ✅ done — `5c6c883` | [record](BOARD-ARCHIVE.md#w27-an-r7-refusal-is-never-translated-into-a-packages-error-family) |
 | W28 | `source_files()` respects the repository's own ignore declaration | Developer 1 | ✅ done — `6d65902` | [record](BOARD-ARCHIVE.md#w28-sourcefiles-respects-the-repositorys-own-ignore-declaration) |
 | W29 | One constant naming the three gated trees | Developer 2 | ✅ done — `4f2fbf8` | [record](BOARD-ARCHIVE.md#w29-one-constant-naming-the-three-gated-trees) |
 | W30 | `PYTHONPYCACHEPREFIX` in the dev image — isolation that is structural | framework agent | ✅ done — `3d0eb34` | [record](BOARD-ARCHIVE.md#w30-pythonpycacheprefix-in-the-dev-image-isolation-that-is-structural) |
@@ -122,7 +128,7 @@ they have exactly one home each.
 | W33 | The floor prints its lint state, absence included, as a notice | framework agent | ✅ done — `3a45d4c` | [record](BOARD-ARCHIVE.md#w33-the-floor-prints-its-lint-state-absence-included-as-a-notice) |
 | W34 | `review-rubric.md`'s operational checklist, and the document has no index | framework agent | `todo` — unblocked | [`rows/W34.md`](rows/W34.md) |
 | W35 | `pointers.py` honours the ignore declaration | framework agent | `todo` — queued last | [`rows/W35.md`](rows/W35.md) |
-| W36 | A browser in the pinned dev image, checksum-pinned | framework agent | `todo` — unblocked | [`rows/W36.md`](rows/W36.md) |
+| W36 | A browser in the pinned dev image, checksum-pinned | framework agent | `todo` — unblocked; gates `W98` | [`rows/W36.md`](rows/W36.md) |
 | W37 | The repo-wide sweep for checks that cannot fail by construction | framework agent | `todo` | [`rows/W37.md`](rows/W37.md) |
 | W38 | The floor and `ruff` disagree by rule; pin the divergence with a test | framework agent | `todo` — after `W40` | [`rows/W38.md`](rows/W38.md) |
 | W39 | The index goes stale on every merge, so the release tip is red after each one | framework agent | ✅ done — `16049d2` | [record](BOARD-ARCHIVE.md#w39-the-index-goes-stale-on-every-merge-so-the-release-tip-is-red-after-each-one) |
@@ -159,13 +165,32 @@ they have exactly one home each.
 | W70 | Every Acceptance clause expressible as an `Acceptance` | framework agent | ✅ done — `8b4c92b` | [record](BOARD-ARCHIVE.md#w70-every-acceptance-clause-expressible-as-an-acceptance) |
 | W71 | The tilde arm, and both callers over all three shapes | framework agent | `todo` | [`rows/W71.md`](rows/W71.md) |
 | W72 | `pinned` vs `tracked` in `workspace.json` | framework agent | `todo` — re-scoped round 34 | [`rows/W72.md`](rows/W72.md) |
-| W73 | The re-homed `E11` comparison | INTEGRATION side | `todo` | [`rows/W73.md`](rows/W73.md) |
+| W73 | `E11`'s delivery-skill comparison, re-pointed by its taker at the corpus they own | INTEGRATION side | in-progress — taken, re-pointed | [`rows/W73.md`](rows/W73.md) |
 | W74 | The sibling runnable-module check widens | framework agent | `todo` — placed round 34, third | [`rows/W74.md`](rows/W74.md) |
 | W75 | No document says how `studyforge` gets on the path | framework agent | `todo` | [`rows/W75.md`](rows/W75.md) |
 | W76 | `render.page`'s five cross-package helpers are private and every renderer imports them | framework agent | ✅ done — `c3e2919` | [record](BOARD-ARCHIVE.md#w76-renderpages-five-cross-package-helpers-are-private-and-every-renderer-imports-them) |
-| W77 | The re-homed corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` | INTEGRATION side | `todo` | [`rows/W77.md`](rows/W77.md) |
+| W77 | The corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` | E09 | routed — folded into `E09`'s delivery, `W5`'s precedent | [`rows/W77.md`](rows/W77.md) |
 | W78 | Line-number citations into files a live document does not own | framework agent | `todo` — minted round 35 | [`rows/W78.md`](rows/W78.md) |
-| W79 | Two small carries — each golden regenerator names the other, and the census comment cites its command | framework agent | `todo` — minted round 35 | [`rows/W79.md`](rows/W79.md) |
+| W79 | Two small carries — each of THREE golden regenerators names the other two, and the census comment cites its command | framework agent | `todo` — minted round 35, widened round 37 | [`rows/W79.md`](rows/W79.md) |
+| W80 | `SF-19b`'s Acceptance names a consumer corpus by ROLE, and owes an instrument or a disposition | PO | `todo` | [`rows/W80.md`](rows/W80.md) |
+| W81 | `SK-03`'s consumer-corpus Acceptance clause, the same class | PO | `todo` | [`rows/W81.md`](rows/W81.md) |
+| W82 | `SK-04`'s consumer-corpus Acceptance clause, the same class | PO | `todo` | [`rows/W82.md`](rows/W82.md) |
+| W83 | `TC-00`'s consumer-corpus Acceptance clause, the same class | PO | `todo` | [`rows/W83.md`](rows/W83.md) |
+| W84 | `SK-01`'s consumer-corpus Acceptance clause, answered by Ruling 166 | PO | ✅ done — Ruling 166, `911c56f` | [record](BOARD-ARCHIVE.md#w84-sk-01s-consumer-corpus-acceptance-clause-answered-by-ruling-166) |
+| W85 | The board instrument's six carries — Rulings 182 and 183, and `CTO-47/3`, `/4`, `/5` | Developer 2 | in flight — `fix/board-instrument` | [`rows/W85.md`](rows/W85.md) |
+| W86 | Ruling 184's two clauses into check 3, and the 74 frozen lines `W85` is what unfreezes | Developer 2 | in flight, behind `W85` | [`rows/W86.md`](rows/W86.md) |
+| W87 | `board_state`'s notice prints the row files whose argument IS their own naming cell | Developer 2 | in-review, with `W85` | [`rows/W87.md`](rows/W87.md) |
+| W88 | The thin row files gain an ANCHORED pointer, and four lose a dangling deictic | PO | `todo` — behind `W91` | [`rows/W88.md`](rows/W88.md) |
+| W89 | An R7 gate's false positive on ordinary source, narrowed in the gate and not in the source | framework agent | `todo` — Ruling 179 | [`rows/W89.md`](rows/W89.md) |
+| W90 | The root index can link no container page, and it is a `toc_api` question | PO | `todo` — owed by M4 | [`rows/W90.md`](rows/W90.md) |
+| W91 | The rulings index stops at 56, and rulings run to 186 | PO | `todo` — gates `W88` | [`rows/W91.md`](rows/W91.md) |
+| W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | `todo` | [`rows/W92.md`](rows/W92.md) |
+| W93 | *Point the skill at a corpus* is not performable — no corpus-shaped input on the surface | framework agent | `todo` | [`rows/W93.md`](rows/W93.md) |
+| W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | `todo` — Ruling 188 | [`rows/W94.md`](rows/W94.md) |
+| W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | `todo` — before `SF-16` | [`rows/W95.md`](rows/W95.md) |
+| W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | `todo` | [`rows/W96.md`](rows/W96.md) |
+| W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
+| W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | `todo` — behind `W36` | [`rows/W98.md`](rows/W98.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

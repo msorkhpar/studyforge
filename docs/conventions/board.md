@@ -109,6 +109,24 @@ beneath, never by editing** (Ruling 106). ⭐ **That is precisely why a live row
 argument may not live there** — and it is the whole reason `rows/` exists rather
 than one more archive section.
 
+### ⛔ Ruling 174 — Ruling 106's freeze attaches when material BECOMES a record, not while it is being moved into one
+
+> ⭐ **Re-addressing a link inside material that is being moved into
+> `../tasks/BOARD-ARCHIVE.md`, in the SAME COMMIT that moves it, is part of the
+> MOVE.** ⛔ **Once it has landed, it is frozen like every other byte and is
+> corrected by annotating beneath.**
+
+⚠️ **This is the narrow ground and it is the only one that holds.** ⛔ **The wider
+ground *"a pointer is an address, not a statement"* was OFFERED and REFUSED**,
+because it would license editing addresses inside records that are already
+frozen — ⭐ **which is the whole of Ruling 106's subject.**
+
+⭐ **What makes a move admissible rather than merely unnoticed is the DISCLOSURE:**
+the archive's own banner says which links were re-addressed and why, and
+`../../tools/tests/quality/board/test_migration.py` asserts the count — ⛔ **so a
+THIRD re-addressed line fails by name instead of passing as *probably the same
+two*.**
+
 ## ⛔ The instrument — `tools/quality/board/`, and it runs on every floor
 
 | Rule | Fires when | Why it is that and not a line count |

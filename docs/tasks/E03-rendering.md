@@ -440,7 +440,12 @@ is right and is why they are one edit.**
 
 ### SF-34 — Page chrome styles
 **Milestone** M2 · **Depends on** SF-11, SF-12 · **Team** solo
-**Owns** `render/assets/chrome.css`
+**Owns** ⛔ **NINE paths in SIX packages, CORRECTED by the PO 2026-09-10 (round 37)
+from the single `render/assets/chrome.css` this cell used to name:**
+`render/assets/chrome.css` (new) · `render/assets/palette.css` (note (b)'s four
+tokens) · `render/pageassets/{bundle,surface,__init__}.py` · `render/templates/`
+(the two `<nav>` parts) · `render/page/navigation.py` · `render/container/listing.py`
+· `render/index/disclosure.py`
 **Context** ~25k — `render/assets/reading.css`, `render/pageassets/{bundle,surface}.py`,
 `render/page/{section,navigation}.py`, SF-11's and SF-12's handoffs
 
@@ -540,10 +545,40 @@ the change is stated as a product change rather than absorbed.
 `render/pageassets/surface.py`'s `SURFACE_HOOKS`**, and `render/container/
 listing.py` and `render/index/disclosure.py` both read them from there. ⛔ **Not
 promoted onto `render.container.__all__`** — the destination is ruled, not the
-author's to re-choose. ⭐ **The reading this obliges:** `git grep -n
-'data-readable\|data-kind' -- src/` returns hits in **one** module, with the
-population printed beside it; and `test_surface`'s both-directions equality is
-re-run after the move, because the published class set is what the move changes.
+author's to re-choose. ⭐ **The reading this obliges:** ⛔ **a QUOTED-LITERAL census** — the two attribute
+spellings appear as string literals in exactly **one** module, `pageassets/surface.py`
+— **with the population printed beside it**; and `test_surface`'s both-directions
+equality is re-run after the move, because the published class set is what the move
+changes.
+
+##### ⛔ SPLIT by the PO, 2026-09-10 (round 37) — **Ruling 129**, and the clause was UNMEETABLE as written
+
+⛔ **The clause used to name its instrument as `git grep -n
+'data-readable|data-kind' -- src/` returning hits in ONE module.** ⚠️ **MEASURED by
+the PO against the presented branch: it returns FIVE.**
+
+```text
+git grep -l 'data-readable\|data-kind' -- src/        ->  5 modules
+  render/assets/chrome.css          <- SELECTORS and comments: it is the stylesheet
+  render/index/__init__.py          <- a docstring naming §7's third state
+  render/index/disclosure.py        <- a docstring
+  render/pageassets/surface.py      <- ⭐ the one REAL definition
+  render/templates/section.html     <- ⛔ data-kind="${kind}", LEGITIMATE and unrelated
+```
+
+⛔ **`templates/section.html` carries `data-kind` for the SECTION'S OWN KIND**, which
+is a different fact wearing the same attribute name, and no correct implementation
+can remove it. ⭐ **So the property — *the hooks are spelled once* — is RIGHT, and
+its instrument was a `grep` over a name that is overloaded.** ⚠️ **The author
+implemented the property and left the clause alone, reporting it** — ⛔ **which is
+Ruling 129 exactly: an unmeetable acceptance clause is SPLIT, and CHANGES REQUESTED
+lands on the PLAN, not on the branch.**
+
+⭐ **The kept half is a QUOTED-LITERAL census**, which is a property of where the
+strings are DEFINED rather than of where the characters occur — ⚠️ **and it survives
+`data-kind` being overloaded, which is the whole reason the first spelling could
+not.** ⛔ **The scoping consequence is the author's and it stays: a selector is
+`span[data-kind="numbering"]`, never a bare `[data-kind="numbering"]`.**
 
 ---
 
