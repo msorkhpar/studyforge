@@ -14211,7 +14211,45 @@ unreached of 217–296 at 428223c  -> 40      19 of 217–241 | 15 of 242–262 
 
 ⛔ **Rulings 231 and 279: the register's truth is owed at the MERGE, and the gate's point is `git rev-parse chore/po-round47` — never a moment and never the release tip.** ⭐ **The recursion has a fixed point when the last commit adds no pointer and no markdown file, which is round 45's form, credited.**
 
-<!-- COMMITTED-TIP-READING -->
+⛔ **MEASURED at `87a38cd`, which IS `git rev-parse chore/po-round47`, role `wt/po`, ONE invocation of the pinned container, pins in the SAME invocation as the sha** (Rulings 238, 290), **Ruling 241's form named — REDIRECT-TO-FILE-THEN-`$?`-ON-THE-NEXT-LINE:**
+
+```text
+87a38cd1152d85ee6e7e717134b76687708d5a8e
+Python 3.14.7 | node v24.21.0 | ruff 0.16.6
+Google Chrome for Testing 153.0.8010.36 | shm 1.0G | STUDYFORGE_DEV_CONTAINER=1
+PYTEST_EXIT=1        ⛔ 2 failed, 5535 passed, 15 skipped in 68.33s
+                     ⭐ 12 skip GROUPS / 15 skips, population IDENTICAL to the base
+                     ⛔ FAILED+ERROR lines: 2 — and both are `W137`, named above
+FLOOR_EXIT=0         ⭐ quality floor: clean
+                     pointers 1084 in 370, 626 anchored, 0 unresolved | ruff 850
+                     board 135 rows / 79 live / 88 detail | narrative 7001 of 8192
+                     widest row 529 of 600
+                     45577 of 49440 allowed (14336 frame + 224×136 register
+                                             + 160×2 observation + 480×9 scheduled)
+                     closed rows … 9; of those, 9 are REDIRECT STUBS
+                     rulings index 296 from 47, tail 296 — ⭐ UNCHANGED, this round
+                       mints no ruling, so no derivation moved (R19)
+                     rulings reach: reached 22, unreached 3 — 273, 274, 275
+CORROBORATE_EXIT=0   ⭐ 0 of 2 rows REFUTED, 0 NOT ANSWERABLE, 0 live checkouts
+                       git could not count
+                     ⭐ CORROBORATED: fix/W133-citation-spellings at dev1, 1 ahead
+                     ⭐ CORROBORATED: fix/W127-two-resolvers at dev2, 3 ahead
+                     rows refuted by git: none.
+                     rows git could not answer about: none.
+                     dispatched and unnamed: none.
+                     OFFICE round branches, EXEMPT by Ruling 265 (2):
+                       chore/cto-round61 +0,  chore/po-round47 +1
+                     invisible to git BY CONSTRUCTION … : 0
+git status --porcelain -> 0 lines
+```
+
+⭐ **RULING 279'S GATE POINT IS DISCHARGED AT THE POINT ITSELF: `CORROBORATE_EXIT=0` at `git rev-parse chore/po-round47`, with BOTH In-flight cells reading AGREE and no notice at all** — ⚠️ **which took FOUR re-takes to reach, because `wt/dev2` was torn down and re-created and `wt/dev1` committed, all while this round ran** (`PO-47/9`).
+
+⛔ **`W132/3` IS INHABITED IN MY OWN COMMITTED READING, which is why it became a clause of [`W125`](rows/W125.md) rather than a note:** ⭐ **`invisible to git BY CONSTRUCTION … : 0` prints a bare `0` while its two neighbours print `none.`, at the tip of the branch that routed it.**
+
+⚠️ **AND THE ONE FIGURE THAT IS NOT GREEN IS `PYTEST_EXIT=1`, unchanged and unhidden: the same two assertions, `5535 passed`, and `W137` placed first.** ⛔ **The alternative states are measured [above](#ruling-270-moved-the-wall-it-did-not-remove-it-and-the-decisive-reading-of-round-60-was-taken-with-an-instrument-that-cannot-see-this) and none is both true and green.**
+
+⭐ **THE PARAGRAPH YOU ARE READING IS THE ONLY THING AFTER `87a38cd`, and its commit touches this file alone** — ⚠️ **so the figures above are the committed tree's, plus one archive edit that adds no pointer, no markdown file and no register row.**
 
 ### ⛔ WHAT I DID NOT TOUCH
 
