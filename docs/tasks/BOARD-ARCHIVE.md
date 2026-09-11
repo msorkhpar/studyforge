@@ -12302,9 +12302,9 @@ docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check --no-cach
   ruff format --check .; python3 -m pytest -q -rs; python3 -m tools.quality' </dev/null
 ```
 
-| | ⛔ **BASE `e5ab51d`, role `wt/po`** | ⭐ **MERGE `b33e01a`+, role `wt/po`** |
+| | ⛔ **BASE `e5ab51d`, role `wt/po`** | ⭐ **MERGE `a134bbd`, role `wt/po`** |
 |---|---|---|
-| sha printed by the run | `e5ab51d34…` | `b33e01af3…` |
+| sha printed by the run | `e5ab51d34…` | `a134bbd…`, and the ONLY delta after it is this cell and its twin in the report |
 | suite | 4911 passed, 67 skipped | ⭐ **4911 passed, 67 skipped** |
 | floor | clean, **exit 0** | ⭐ **clean, exit 0** |
 | `ruff` 0.16.6 | check clean, format clean, **779** | clean, clean, **782** |
