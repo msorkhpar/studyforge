@@ -33,6 +33,16 @@ import re
 
 from tools.quality.pointers import strip_code_spans
 
+#: ⛔ The register itself. ⭐ One file, NAMED here rather than discovered, because
+#: a check that hunted for the board would pass on a repository that had lost it.
+#: ⚠️ **It moved here from the package when `W96` split the 388-line emitter at the
+#: seam the CTO named** — a location is what this module already answers for, and
+#: the alternative was a second copy in each half.
+BOARD = "docs/tasks/BOARD.md"
+
+#: The directory holding one file per live row.
+ROWS = "docs/tasks/rows"
+
 #: ⛔ The register is DELIMITED, and this check reads nothing outside the
 #: markers. ⚠️ **The first version inferred it — *any five-cell row whose first
 #: cell names a `W` id* — and the very next edit broke it**: an *In flight*

@@ -139,6 +139,63 @@ two*.**
 | `board-size` | the whole file exceeds `BOARD_FRAME + BOARD_PER_ROW ×` register rows | ⭐ **the bound with no gap** — see below |
 | `board-state` | a register row's state cell DECLARES no state | ⛔ **the hole that let a LIVE row leave the register in silence** — see below |
 | `board-frame` | a row file does not begin `# <ID>` **or** does not contain the frame's phrase | ⭐ **the one live-tree property left after Ruling 180.** ⛔ **TWO SUBSTRINGS and nothing more** — it cannot read what the file *says*, and that weakness is what lets it survive every amendment (`CTO-47/4`) |
+| `board-inflight` | one observation row declares a started state, names **no** checkout and counts **0** commits | ⛔ **Ruling 189(b), and it is a CONTRADICTION PRINTED ON ONE ROW** — ⚠️ the founding bytes stood for 350 commits while every git instrument read correctly |
+| `board-unobserved` | a register cell declares a started state and **no** observation row names it | ⭐ **an asserted state owes an observer** — ⛔ the board is the only instrument that ASSERTS in-flight rather than OBSERVING it, so this is the only direction it can be stale in |
+| `board-disagreement` | one table says the row is **started** and the other says it is **finished** | ⛔ **both cannot be true of one row**, and a state has ONE home; ⚠️ `todo` against started is NOT this — see the narrowing below |
+
+### ⛔ Ruling 189(b) is THREE rules, and the population is located by a DELIMITER
+
+⭐ **`tools/quality/board/observation.py`** carries all three, and ⛔ **it reads no
+`git` at all** — which is what lets `W100` reuse the half it needs without
+inheriting a git dependency (ruled round 49, below).
+
+- ⛔ **The observation table is DELIMITED**, `<!-- inflight -->` /
+  `<!-- /inflight -->`, the `<!-- register -->` pattern reused. ⚠️ **Until the
+  markers land, the table is located by its HEADER — the one that DECLARES a
+  `Checkout` column and a commits-ahead column** — ⭐ **and the locator that
+  answered is NAMED in the line `board_state` prints**, so a board with no
+  markers says so on every run instead of being assumed. ⛔ **An ordinary
+  five-cell table is not an observation table**, which is the whole difference
+  between a declared boundary and the inferred one that made
+  `board-duplicate` fire on its own author.
+- ⭐ **The roles are read FROM the header, never from a column position** — ⛔ so
+  renaming, reordering, emphasising or prefixing a column cannot blind the
+  recogniser, which is Ruling 192's question asked of this rule.
+- ⛔ **`W73` is a STAND-IN, excluded BY NAME** (`CTO-49/4`): its carrier lives in a
+  repository this one does not own, so observing it would cross the seam (R20,
+  Ruling 151). ⭐ **Ruling 185's form — the POPULATION is narrowed in the
+  instrument and the name is printed; the PREDICATE is never widened.**
+- ⚠️ **THE NARROWING, and it came from the rule firing on correct work.** ⛔ **The
+  first `board-disagreement` flagged any started-against-not-started pairing, and
+  its first live reading hit a row the PO had just dispatched** — because this
+  board dispatches a row by naming it in the observation table and leaving its
+  register cell at `` `todo` ``. ⭐ **So a finding is STARTED against a TERMINAL
+  state** (`done`, `accepted`, `routed`), and the `todo` pairing is **PRINTED
+  rather than flagged** (Ruling 179, Ruling 183's form). ⛔ **A notice whose first
+  wave fires on work its author just did is a notice nobody reads twice.**
+
+### ⛔ May the floor shell out for clause (c)? NO, and the instrument is separate
+
+⭐ **`rows/W96.md` owed this answer before it owed code, and the answer is a
+SPLIT:** ⛔ **clause (b) runs on every floor and clause (c) runs at a wave's
+close**, as `python3 -m tools.quality.board.corroborate`, which
+`tools.quality.CHECKS` does not import.
+
+| Why the floor may not | Which rule |
+|---|---|
+| a floor check's verdict may not depend on untracked state, and a branch position is the purest untracked state there is | Ruling 80 |
+| the floor runs over **arbitrary roots** — a temp tree, a corpus repository — where no release branch exists at all | R10 |
+| ⛔ **the decisive one**: a git check that found nothing would return **the PASS reading from an empty population** | Ruling 191 |
+
+⭐ **So `corroborate` has THREE answers, not two** — `0` corroborated, `1`
+refuted, ⛔ **`2` NOT AUTHORITATIVE** (Ruling 53's fourth state), because *"git
+could not answer"* and *"nothing is wrong"* must never arrive as the same
+verdict. ⚠️ **And it prints two readings no board cell carries:** the checkouts
+git can see that no row names, and the `trial/*` and `tmp-*` branches that are
+now ancestors of the release branch — ⭐ **each of which reads as dispatched work
+to a human, which is Ruling 189's subject with nowhere to print it.** ⛔ **A
+checkout with NO commit is invisible to every git instrument by construction
+(Ruling 130), so those are COUNTED AND NAMED as unreadable rather than judged.**
 
 ⛔ **The Ruling 140 plant found a hole in this instrument BEFORE it shipped, and
 the third rule is the fix rather than a tweak to the first two.** ⚠️ **Run
@@ -448,6 +505,12 @@ observer can only be kept freshly wrong.**
 ⛔ **`--ancestry-path | tail -1` is RECORDED AS WRONG for (c) and is not reused:
 it returned a different branch's merge, and the error was caught only because both
 forms were run.**
+
+✅ **ALL FOUR CLAUSES NOW HAVE AN INSTRUMENT, landed by `W96`** — ⭐ **(b) as three
+floor rules in `../../tools/quality/board/observation.py`, and (c) with (d) as
+`../../tools/quality/board/corroborate.py`**, which is run at a wave's close and
+is not on the floor. ⛔ **The instrument table above is where each rule's predicate
+is stated; this block stays the RULING and does not restate it.**
 
 ### ⛔ RULED ROUND 49 — `W100`'s population is DELIMITED, a trigger gains a CLOSED VOCABULARY, and it is NOT one instrument with `W96`
 
