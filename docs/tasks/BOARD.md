@@ -48,28 +48,24 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN at round 42's OPEN, at `e5ab51d`** — ⛔ **and `corroborate` read
-`3 of 3 rows REFUTED, exit 1` against the table this replaces, which is the THIRD
-consecutive wave the instrument has beaten a human to it** — ⭐ **and the first
-where the reading was PREDICTED IN WRITING before the wave merged, so the
-post-wave red is the expected state rather than a discovery**
-([the re-take](BOARD-ARCHIVE.md#the-in-flight-re-take-the-instrument-refuted-all-three-rows-and-the-refutation-was-predicted-in-writing-before-the-wave-merged)).
+**RE-TAKEN TWICE IN ROUND 42 — the table below is the SECOND re-take, at
+`2b564ef`** — ⛔ **and `corroborate` read `3 of 3 REFUTED, exit 1` against the
+table it first replaced and `2 of 3` against the first re-take, because the
+release tip moved mid-round** ([both re-takes](BOARD-ARCHIVE.md#the-in-flight-re-take-the-instrument-refuted-all-three-rows-and-the-refutation-was-predicted-in-writing-before-the-wave-merged)).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W63` | framework agent | `wt/dev4`, `fix/W63-W64-marker-kind` | 3 | in flight |
-| `W64` | framework agent | `wt/dev4`, `fix/W63-W64-marker-kind` | 3 | in flight |
-| `SF-16` | framework agent | `wt/dev3`, `feat/SF-16-speakable` | 5 | in flight |
+| `SF-16` | framework agent | `wt/dev3`, `feat/SF-16-speakable` | 7 | in flight |
 <!-- /inflight -->
 
-⛔ **THE AS-OF FOR THOSE THREE NUMBERS IS THE BRANCH TIP AND NOT THE RELEASE REF,
-and it had to be, because both moved WHILE THIS ROUND WAS BEING WRITTEN:**
-`fix/W63-W64-marker-kind` @ `f2b7c47`, `feat/SF-16-speakable` @ `4d60287`.
-⭐ **Both cells read `2` forty minutes earlier and were true then** — ⚠️ **`PO-42/7`:
-a commits-ahead cell is a reading of a MOVING TIP, so no ref this board can name
-pins it, and `corroborate` prints git's own count beside the cell and compares
-neither.**
+⛔ **RE-TAKEN A SECOND TIME INSIDE ONE ROUND, at `2b564ef`, because the release tip
+MOVED while the first re-take was being written:** ⭐ **`W63` and `W64`'s branch was
+absorbed by `0183cd1`, `corroborate` read `2 of 3 REFUTED`, and it is now `0 of 1`.**
+⚠️ **The as-of for that number is the BRANCH TIP — `feat/SF-16-speakable` @ `3bcc698`
+— and not the release ref, because the release ref does not move when a developer
+commits:** ⛔ **`PO-42/7`, and the cell read `2`, then `5`, then `7` inside one
+round while `corroborate` compared it to nothing.**
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A
 RAMP** — ⭐ **a header is INFERRED, so an absent table is indistinguishable from a
@@ -77,13 +73,12 @@ renamed column and can only be ANNOUNCED; a delimiter is DECLARED, so an absent
 marker can be REFUSED.** ⭐ **THE REFUSAL SHIPS: `W111` landed at `923a970`, and
 the floor now reads `1 <!-- inflight --> blocks declared, 0 unreadable`.**
 
-⚠️ **TWO ROWS NAMING ONE BRANCH IS THE DISPATCH AND NOT A DUPLICATE:** ⛔ **`W63`
-and `W64` are one branch in one checkout because they are one module, priced as a
-pair before dispatch — the shape `W110`/`W111` had last wave** — ⭐ **and a `0`
-ahead would be legitimate for any of the three, because a branch with no commit is
-invisible to `--no-merged` by construction (Ruling 130).** ⚠️ **So the `Checkout`
-cell is the only cell separating JUST DISPATCHED from LONG FINISHED, which is what
-`W110` was the cost of.**
+⚠️ **ONE BRANCH CAN CARRY TWO ROWS AND ONE OF THEM CAN STOP:** ⛔ **`W63` and `W64`
+shared `fix/W63-W64-marker-kind`, and it merged with `W63` DONE and `W64` STOPPED
+(Ruling 218)** — ⭐ **so a merge is not a close, and the register carries the two
+outcomes separately.** ⚠️ **A `0` ahead is legitimate for a live row, because a
+branch with no commit is invisible to `--no-merged` by construction (Ruling 130),
+which is what `W110` was the cost of.**
 
 ⛔ **The office checkouts are NOT named here, and that is one fact with one home
 rather than a deletion:** ⭐ **`corroborate` prints every checkout no row names,
@@ -101,11 +96,13 @@ argument for each placement is in the round record; this table is the outcome.**
 | 2 | `W119` | ⛔ **a committed test goes RED on a correct tree after every merge until somebody retires a worktree** — `W39`'s class, recurring | round 42 |
 | 3 | `W100` | ⭐ **UNBLOCKED — its `<!-- scheduled -->` half LANDED this round, markers and STATE column both** | round 39, unblocked round 42 |
 | 4 | `W78` | ⭐ **PROMOTED — one close added 8 to its population, all 8 in documents this office may not edit** | round 35, promoted round 42 |
-| 5 | `W88` | ⭐ **PROMOTED — 2 of the 6 thin rows were DISPATCHED this wave** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
-| 6 | `W115` | ⛔ **the only open row that can make a WAVE-CLOSE GATE return a false pass**, and every wave runs it | round 42 |
-| 7 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
-| 8 | `W105`–`W109` | ⭐ **round 39's five mints** | round 39 |
-| 9 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
+| 5 | `W88` | ⭐ **PROMOTED — 2 of the 6 thin rows were dispatched AND MERGED this wave, one of them with its row file never written** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
+| 6 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
+| 7 | `W115` | ⛔ **the only open row that can make a WAVE-CLOSE GATE return a false pass**, and every wave runs it | round 42 |
+| 8 | `W121` | ⛔ **Ruling 218's GATE ONE, and it changes gate two's population** — before any re-take of `W64` | round 42 |
+| 9 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
+| 10 | `W105`–`W109` | ⭐ **round 39's five mints** | round 39 |
+| 11 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL, and that is a correction of
 this paragraph rather than a style choice:** ⚠️ **it used to read *"rows 1–2 do not
@@ -113,8 +110,8 @@ invoke Ruling 75, rows 3 and 4 do"*, and the ordinals stopped being true the mom
 two rows were dispatched out of the table.** ⭐ **An id resolves; a position does
 not.**
 
-⛔ **TWO ROWS INVOKE RULING 75 AND BOTH SAY SO IN THEIR OWN FILE: `W88` and
-`W115`, each jumping `W103` and `W105`–`W109`.** ⭐ **`W36`, `W119` and `W78` jump
+⛔ **FOUR ROWS INVOKE RULING 75 AND EACH SAYS SO IN ITS OWN FILE: `W88`, `W120`,
+`W115` and `W121`, each jumping `W103` and `W105`–`W109`.** ⭐ **`W36`, `W119` and `W78` jump
 NOBODY — `W36` and `W78` are older than everything below them, and `W63`→`W64`,
 the pair `W36` would have displaced, is in flight above.** ⚠️ **`W63`'s age stops
 being a queue fact this round: it was DISPATCHED, which is the outcome three
@@ -192,8 +189,8 @@ they have exactly one home each.
 | W60 | Two copies of one vocabulary, unlinked, inert, and wire-shaped | framework agent | `todo` | [`rows/W60.md`](rows/W60.md) |
 | W61 | Two shipped skills gave a command that does not exist, in a fence | framework agent | ✅ done — `ad27ed2` | [record](BOARD-ARCHIVE.md#w61-two-shipped-skills-gave-a-command-that-does-not-exist-in-a-fence) |
 | W62 | The latent `Owns` cells, and a trigger that cannot be shelved | PO | `todo` | [`rows/W62.md`](rows/W62.md) |
-| W63 | The marker vocabulary's closed check | framework agent | `todo` — placed round 32, unspent; before `W64` | [`rows/W63.md`](rows/W63.md) |
-| W64 | The kind gate widened across the whole document floor | framework agent | `todo` — stops if `W63` has not landed | [`rows/W64.md`](rows/W64.md) |
+| W63 | The marker vocabulary's closed check | framework agent | ✅ done — `0183cd1` | [record](BOARD-ARCHIVE.md#w63-the-marker-vocabularys-closed-check) |
+| W64 | The kind gate widened across the whole document floor | framework agent | `todo` — ⛔ **STOPPED and RE-SCOPED**, Ruling 218; gated on `W121` | [`rows/W64.md`](rows/W64.md) |
 | W65 | R7's third subject has no sweep | framework agent | `todo` | [`rows/W65.md`](rows/W65.md) |
 | W66 | The non-ASCII narrowing, and the emitter disagrees with the gate | framework agent | `todo` | [`rows/W66.md`](rows/W66.md) |
 | W67 | The two zero-headroom test modules | framework agent | `todo` — ahead of any row adding a test to `corpus/container` or `corpus/manifest` | [`rows/W67.md`](rows/W67.md) |
@@ -248,6 +245,8 @@ they have exactly one home each.
 | W117 | `**Consumer-side modules:**` is a contract named in ZERO convention documents, and both its sites are consumers | framework agent | `todo` — `W74/3` | [`rows/W117.md`](rows/W117.md) |
 | W118 | A gap named in FOUR consecutive closes is a different fact from a gap named once, and no instrument reads it | PO | `todo` — `CTO-52/5` | [`rows/W118.md`](rows/W118.md) |
 | W119 | A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge | framework agent | `todo` — `PO-42`'s brief, re-derived | [`rows/W119.md`](rows/W119.md) |
+| W120 | The bounded Ruling 186 notice is discharged by ONE row over its WHOLE population, and a partial fix is refused | framework agent | `todo` — Ruling 222 | [`rows/W120.md`](rows/W120.md) |
+| W121 | The marker reader cannot see a finding written as a TABLE ROW, which is the form both offices write | framework agent | `todo` — Ruling 218's gate one, before `W64` | [`rows/W121.md`](rows/W121.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

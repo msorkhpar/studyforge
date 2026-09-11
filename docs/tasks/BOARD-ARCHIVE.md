@@ -12302,17 +12302,22 @@ docker/dev/check sh -c 'git rev-parse HEAD; ruff --version; ruff check --no-cach
   ruff format --check .; python3 -m pytest -q -rs; python3 -m tools.quality' </dev/null
 ```
 
-| | ⛔ **BASE `e5ab51d`, role `wt/po`** | ⭐ **MERGE `a134bbd`, role `wt/po`** |
-|---|---|---|
-| sha printed by the run | `e5ab51d34…` | `a134bbd…`, and the ONLY delta after it is this cell and its twin in the report |
-| suite | 4911 passed, 67 skipped | ⭐ **4911 passed, 67 skipped** |
-| floor | clean, **exit 0** | ⭐ **clean, exit 0** |
-| `ruff` 0.16.6 | check clean, format clean, **779** | clean, clean, **782** |
-| pointers | 723 in 325, 411 anchored, **0 unresolved** | ⭐ **752 in 328, 425 anchored, 0 unresolved** |
-| board | **112** register / 73 live / 73 files | ⭐ **117 / 75 / 75**, bijective |
-| narrative | 6095 of 8192 | **7348 of 8192**, widest row 510 of 600 |
-| rulings index | 216 from 39, tail 216 | ⭐ **216 from 39, tail 216** — unchanged |
-| `corroborate` | ⛔ **3 of 3 REFUTED, exit 1** | ⭐ **0 of 3 REFUTED, exit 0** |
+| | ⛔ **BASE 1, `e5ab51d`** | ⛔ **BASE 2, `2b564ef`** | ⭐ **MERGE, role `wt/po`** |
+|---|---|---|---|
+| sha printed by the run | `e5ab51d34…` | `2b564ef…` | ⭐ **see the row beneath this table** |
+| suite | 4911 passed, 67 skipped | 4930 passed, 67 skipped | ⭐ **4930 passed, 67 skipped** |
+| floor | clean, **exit 0** | clean, exit 0 | ⭐ **clean, exit 0** |
+| `ruff` 0.16.6 | check clean, format clean, **779** | clean, clean, **781** | ⭐ **clean, clean, 784** |
+| pointers | 723 in 325, 411 anchored, **0 unresolved** | 732 in 327, 411, 0 | ⭐ **774 in 332, 433 anchored, 0 unresolved** |
+| board | **112** register / 73 live / 73 files | 112 / 73 / 73 | ⭐ **119 / 76 / 76**, bijective |
+| narrative | 6095 of 8192 | 6095 of 8192 | **7248 of 8192**, widest row 510 of 600 |
+| rulings index | 216 from 39, tail 216 | **222 from 40, tail 222** | ⭐ **222 from 40, tail 222** — the merge carried it, and ⛔ **this branch mints no ruling, so it cannot go stale on me** (Ruling 203) |
+| `corroborate` | ⛔ **3 of 3 REFUTED, exit 1** | ⛔ **2 of 3 against my FIRST re-take** | ⭐ **0 of 1 REFUTED, exit 0** |
+
+⚠️ **BASE 2's column is the CTO's round-53 reading, RECEIVED and named as theirs
+(`4930/67`, `732 in 327`, `411 anchored`, `ruff 781`) rather than re-taken by me**
+(Ruling 115) — ⛔ **I took BASE 1 and the MERGE myself, in the pinned container, and
+those two are the comparison this verdict rests on.**
 
 ⭐ **THE MERGE IS A FAST-FORWARD and the equality is MEASURED as TREE OBJECTS
 rather than inferred from `Already up to date.`** — ⛔ **this branch is `0` behind
@@ -12374,3 +12379,135 @@ inertness being reasoned from the source.**
 ⛔ **AND THE READINGS I DID NOT RE-TAKE ARE MARKED RECEIVED, not quietly carried**
 (Ruling 115): ⭐ **`W115`'s three coercion sites and `W119`'s two suite readings are
 the CTO's and the coordinator's respectively, and neither is restated as mine.**
+
+### ⛔ PO round 42, CONTINUED — the release tip MOVED while the round was being written, and the In flight table went stale INSIDE the round that was re-taking it
+
+⛔ **MEASURED BY ME, role `wt/po`: I derived my own span (Ruling 197(a)) and read
+`behind: 6`.** ⭐ **Six commits had landed on `release/m0-foundations` between
+`e5ab51d` and `2b564ef` while this round was being written:**
+
+```text
+2b564ef  Merge chore/cto-round53: W63 APPROVED, Rulings 217-222, and W64's
+         re-scope priced down from 77 record edits to zero
+0183cd1  Merge fix/W63-W64-marker-kind: W63 fixes the authority and W64 STOPS
+         on 72 records without editing one            (CTO: APPROVE)
+e159e32  CTO round 53: fix/W63-W64-marker-kind APPROVED, Rulings 217-222
+f2b7c47  W63/W64 handoffs: the merge reading, and two live facts dated
+a024ab0  W63/W64 handoffs: W63 landed, W64 STOPS on 72 records
+95e6648  W63: the marker vocabulary's closed check
+⛔ file overlap with my span: ZERO, measured with comm over two sorted lists
+```
+
+⛔ **SO THE TABLE I HAD JUST RE-TAKEN WAS STALE IN THE SAME ROUND.** ⭐ **`corroborate`,
+same command, same checkout, one variable changed — the release tip:**
+
+```text
+against the board I INHERITED        3 of 3 REFUTED, exit 1   (W74 W110 W111)
+against MY FIRST re-take, at e5ab51d 0 of 3 REFUTED, exit 0   ⭐ correct at that ref
+against MY FIRST re-take, at 2b564ef 2 of 3 REFUTED, exit 1   ⛔ W63 and W64 absorbed
+                                                                 by the merge 0183cd1
+against MY SECOND re-take            0 of 1 REFUTED, exit 0
+```
+
+⚠️ **`PO-42/8`, and it is the round's most uncomfortable reading: the board is stale
+for as long as a round takes to write, and a round takes longer than a wave now.**
+⛔ **Neither re-take was wrong — both were true at the ref they were taken at, and
+Ruling 97 says so** — ⭐ **but a LIVE STATE document is not a close record: it has to
+be true when it MERGES, not when it was written.** ⚠️ **That is a distinction
+Ruling 97 does not make, because Ruling 97 governs closes.**
+
+⛔ **AND THE INSTRUMENT IS WHAT CAUGHT IT, for the second time in one round:** ⭐ **I
+did not notice the release had moved by reading anything — I noticed because
+`git merge-base` said `behind: 6` when I went to compare tree objects for the
+merge-tree equality claim.** ⚠️ **Had the branch been 0 behind, as round 41's was,
+nothing in my own protocol would have asked the question.**
+
+⭐ **WHAT I DID: merged `release/m0-foundations` into this branch (ZERO file
+overlap, no conflict), re-measured, and re-took the table a second time.** ⛔ **I did
+NOT rewrite the first re-take out of the record: it is above, with its ref, because
+a superseded reading with its ref is evidence and a deleted one is not**
+(Ruling 106's form).
+
+### W63 — The marker vocabulary's closed check
+
+⭐ **CLOSED at `0183cd1`, CTO round 53: APPROVE.** ⛔ **Shipped on one branch with
+`W64`, which STOPPED — so a merge is not a close, and the register carries the two
+outcomes separately.** ⚠️ **Its `W63/1` is Ruling 217 (an unsatisfiable acceptance
+clause is DECLARED AND DECLINED by the developer, never escalated) and the CTO
+called the decline *the round's best finding*.**
+
+⛔ **NO LINE WAS RE-ADDRESSED IN THE COMMIT THAT MOVED THIS MATERIAL, because there
+was nothing to re-address — and that is the point of this record rather than an
+aside.** ⭐ **The file's ENTIRE body, frame excluded, was six words:**
+
+```text
+The marker vocabulary's closed check
+```
+
+⛔ **THAT IS THE WHOLE ARGUMENT A TAKER WAS GIVEN, and the row shipped anyway, well,
+and produced the round's best finding.** ⚠️ **It is also `PO-42/2`'s evidence in its
+strongest form: Ruling 214 requires the DISPATCHER to re-read a row's named
+MECHANISM against every ruling minted since the row was written, and this row named
+no mechanism at all** — ⭐ **so the re-read ranged over an empty class and returned
+the pass reading, exactly as Ruling 191 predicts of a control with no inhabitation.**
+⛔ **`W88` and `W120` are where that is fixed, and both are promoted.**
+
+### ⛔ `W64` STOPPED — a RE-SCOPE, not a patch, and the register says so
+
+⛔ **Ruling 218: both routes to exit `0` are FORBIDDEN.** ⭐ **Rewriting 72 records
+is refused by Ruling 106; weakening the marker rule to admit prose is refused by
+Ruling 65; and Ruling 193 has already ruled on this exact corpus — the corpus is
+never chased, the instrument is the defect.** ⚠️ **The taker did not ship it and was
+right not to; the stop is reproduced to the digit in the CTO's own probe.**
+
+⭐ **THE THREE GATES, and only two are rows:** ⛔ **gate one is `W121` (the
+table-row reader), gate two is Ruling 219's filename derivation at ZERO record
+edits, and the third — a rule separating a record's Findings section from its prose
+— is DELIBERATELY NOT MINTED.** ⚠️ **Ruling 218 calls it *needed for exit 0; not yet
+a row*, and minting it now would put a row in the register whose shape nobody has
+measured.**
+
+⛔ **THE ORDERING IS A DEPENDENCY AND NOT A PRIORITY CALL:** ⭐ **gate one CHANGES
+gate two's population — the 48 finding lines claiming no scope are the table-form
+records, and they begin claiming scopes the moment `W121` lands** — ⚠️ **so
+Ruling 219's `31 of 32` is RE-MEASURED after `W121` and never inherited.**
+⛔ **`W64`'s register cell reads `todo` — STOPPED and RE-SCOPED, gated on `W121`,
+because a taker reading only its naming would implement exactly what Ruling 218
+forbids.**
+
+### ⛔ Round 42's two further mints — `W120` and `W121`, both routed by round 53
+
+| row | why it is a row, and who said so |
+|---|---|
+| **`W120`** — the bounded Ruling 186 notice is discharged by ONE row over its WHOLE population | ⛔ **Ruling 222 names the minter in terms: *the PO mints that row; `W63/5` is its argument*.** ⭐ **A bounded notice over a MULTI-OWNER population is discharged by one row with one owner, and a partial fix that improves the count without clearing it is REFUSED** — ⚠️ **which is why its population's three departures this round are DISCLOSED in the row rather than left to be discovered** |
+| **`W121`** — the marker reader cannot see a finding written as a TABLE ROW | ⛔ **Ruling 218's GATE ONE, routed from `W63/2` as *a ROW, ahead of any re-take of `W64`*.** ⭐ **The gate sees fine and the reader behind it could not: a two-organ defect, and flipping the gate alone would print *marks no finding* at documents carrying findings** |
+
+⛔ **AND THE ONE I REFUSED TO MINT: Ruling 218's THIRD gate.** ⭐ **The ruling itself
+says *not yet a row*, and a PO who mints it anyway has invented a scope the CTO
+declined to price.** ⚠️ **It is named in `rows/W64.md` so it cannot be lost, which
+is the difference between a deferral and an omission.**
+
+### ⛔ `PO-42/8` `[structural]` — a LIVE STATE document has to be true when it MERGES, and Ruling 97 only governs when it was WRITTEN
+
+**Measured:** BY ME, role `wt/po`, three `corroborate` readings at two release refs,
+one variable changed each time — the table above carries all four.
+
+⛔ **Both of my re-takes were TRUE at the ref they were taken at and the second one
+was needed anyway.** ⭐ **Ruling 97's *a close does not go stale when the tip moves
+past it* is right about a RECORD and does not reach a REGISTER: `BOARD.md` is read
+as the current state by every agent that opens it, so a table true at `e5ab51d` and
+false at `2b564ef` is a defect the moment the tip moves, not a measurement with an
+as-of.**
+
+⚠️ **AND THE COST IS MEASURED RATHER THAN FEARED: the staleness window is the
+length of a round, and a round is now longer than a wave.** ⛔ **Two waves closed
+inside this one round — `W63`/`W64`'s merge and the CTO's round 53 — so a board
+re-taken at a round's open is stale before the round's own branch is presented.**
+
+**Disposition: ROUTED TO THE CTO as a question I will not answer alone,** because
+every candidate answer changes the delivery protocol rather than a document:
+⭐ **the re-take moves to the MERGE rather than the round's open; or `corroborate`
+becomes a merge-time gate the coordinator runs rather than a wave-close one; or the
+In flight table stops being ASSERTED and becomes GENERATED.** ⛔ **The third is the
+only one that closes the class, and it is also the one that would retire Ruling 189's
+whole subject, so it is not mine to pick.**
