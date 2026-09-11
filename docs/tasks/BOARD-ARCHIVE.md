@@ -10373,3 +10373,115 @@ artifact is the rubric and the CTO landed it; 186's is `board_state` and it is
 ⚠️ **`W50` and `W55` are STRENGTHENED by `F32` and are NOT re-scoped this round.**
 ⛔ **That is a NAMED DEFERRAL: the CTO named `W75` as the row to widen, and
 widening three rows for one finding is the duplication `W53` exists to end.**
+
+---
+
+### ⛔ ROUND 37 SECOND FOLLOW-UP — `SF-34`'s `Owns` cell understated the task by five packages, and it is `PO-37/2` from the other side
+
+⭐ **Two offices measured one defect independently and neither told the other, which
+is the strongest evidence shape this project has** — ⛔ **and it turns the remedy
+from a process note into a DEFINITION FIX.**
+
+| who | what they measured |
+|---|---|
+| **me**, round 37 | ⛔ check 4's sub-step sums LINE GROWTH and is blind to a same-function CONTENT collision (`PO-37/2`) |
+| **Developer 1**, on `feat/SF-34-chrome` | ⛔ the `Owns` cell names ONE file while the Acceptance compels eight paths in five packages — *"the scope line was corrected at round 34; the `Owns` cell was not"* |
+
+#### ⭐ RE-DERIVED BY ME FROM THE PRESENTED BRANCH, not received — and it is WORSE than reported
+
+⛔ **`git diff --stat release/m0-foundations...a4996e9`, so this is what the task
+ACTUALLY touched rather than what its Acceptance implies:**
+
+```text
+src/ paths                                                     9   in SIX packages
+  render/assets/chrome.css                      (new, 338 lines)
+  render/container/listing.py                   render/index/disclosure.py
+  render/page/navigation.py                     render/pageassets/__init__.py
+  render/pageassets/bundle.py                   render/pageassets/surface.py
+  render/templates/between-units.html            render/templates/outline.html
+test paths                                                     6   in THREE directories
+  tests/studyforge/render/pageassets/{test_chrome,test_init,test_palette,test_surface}.py
+  tests/studyforge/render/templates/test_init.py   tests/visual/palette.py
+DECLARED in the Owns cell                                      1
+```
+
+⭐ **So the reported *eight paths in five packages* understates their own work:
+it is NINE in SIX.** ⛔ **`Owns` CORRECTED in `E03-rendering.md` to all nine.**
+
+⛔ **AND `render/page/navigation.py` IS IN THAT DIFF, 24 lines changed — which is
+`PO-37/2` CONFIRMED AGAINST A DIFF rather than against an Acceptance.** ⭐ **The
+collision I ruled on the Acceptance text is real in the code, and `SF-15`'s
+sequencing behind `SF-34` is now verified rather than inferred.**
+
+#### ⛔ WHY THIS IS A DEFINITION DEFECT AND NOT A TIDINESS ONE
+
+⭐ **`board.md`'s own words: check 4's sub-step *"sums the shared files"* and **"it
+needs the `Owns` cells to be right, which is why these two changes are one
+instrument rather than two."*** ⛔ **So a one-file `Owns` beside a nine-path
+Acceptance does not merely understate a task — IT SILENTLY SHRINKS THE POPULATION
+CHECK 4 RUNS OVER.** ⚠️ **My own sub-step run this round summed SIX candidate
+shared files; the true population for `SF-34` alone is nine, and I found the
+collision only because `SF-15`'s single-file `Owns` happened to be inside the
+undeclared part of `SF-34`'s.** ⛔ **`PO-37/7` `[structural]`: the sub-step's
+population is derived from a field nothing asserts, so the check is as right as the
+least-maintained `Owns` cell in the wave.** ⭐ **`W62` is the standing row for the
+latent `Owns` cells and this is its sharpest instance to date** — ⚠️ **named here
+and NOT re-scoped, because `W62` already owns the class and widening it for one
+instance is the duplication `W53` exists to end.**
+
+#### ⛔ `SF-34`'S UNMEETABLE ACCEPTANCE CLAUSE — SPLIT, under Ruling 129
+
+⛔ **The clause named its instrument as `git grep -n 'data-readable|data-kind' --
+src/` returning hits in ONE module.** ⭐ **RE-RUN BY ME against the presented branch:
+it returns FIVE.**
+
+```text
+git grep -l 'data-readable\|data-kind' a4996e9 -- src/   ->  5 modules
+  render/assets/chrome.css        <- SELECTORS and comments: it IS the stylesheet
+  render/index/__init__.py        <- a docstring naming §7's third state
+  render/index/disclosure.py     <- a docstring
+  render/pageassets/surface.py   <- ⭐ the one REAL definition
+  render/templates/section.html  <- ⛔ data-kind="${kind}", LEGITIMATE and unrelated
+```
+
+⚠️ **`templates/section.html` carries `data-kind` for the SECTION'S OWN KIND — a
+different fact wearing the same attribute name — and no correct implementation can
+remove it.** ⭐ **The PROPERTY is right; its INSTRUMENT was a `grep` over an
+overloaded name.** ⛔ **The author implemented the property, left the clause alone
+and REPORTED it** — ⭐ **which is Ruling 129 exactly, and CHANGES REQUESTED lands on
+the PLAN, not on the branch.** ⚠️ **The kept half is a QUOTED-LITERAL census — a
+property of where the strings are DEFINED, not of where the characters occur —
+which survives the overloading the first spelling could not.**
+
+⛔ **It is the subject-vs-property family a SEVENTH time**, and the span this time is
+*characters in a file* standing in for *definitions in a module*.
+
+#### ⭐ SEQUENCING — CONFIRMED: hold Developer 1, and `W95` goes to DEVELOPER 2
+
+⛔ **CONFIRMED, not overruled.** ⭐ **Developer 1 is HELD until `SF-34`'s verdict,
+and `W95` goes to Developer 2 behind `W85`/`W87`/`W86`.** ⚠️ **Three reasons, in
+order:**
+
+| # | ⛔ **why** |
+|---|---|
+| 1 | ⭐ **`SF-34` is the row `SF-15` is gated behind, and `SF-15` is the critical path.** ⛔ **Holding Developer 1 free for CHANGES REQUESTED keeps that path shortest** — `delivery-flow.md`'s *one task at a time, on one branch* is the rule, and here it is also the fastest choice rather than a constraint to work around |
+| 2 | ⭐ **`W95` is genuinely off the critical path: it is owed before `SF-16`, which is M3.** ⛔ **Spending the only developer who can unblock 2.4 on an M3 fixture would be optimising the wrong queue** |
+| 3 | ⭐ **`W95` is `tests/fixtures/` and shares not one path with `tools/quality/board/`**, so it is clean behind Developer 2's branch with no sub-step to run |
+
+⚠️ **AND THE BRANCH IT IS NOT: if `SF-34` is APPROVED outright, Developer 1 goes
+STRAIGHT to `SF-15` and `W95` stays with Developer 2.** ⛔ **`W95` is never the
+reason `SF-15` waits.**
+
+#### ⭐ TWO FINDINGS OF DEVELOPER 1'S, both placed
+
+| finding | ⛔ **disposition** |
+|---|---|
+| `[structural]` — **`QA-03`'s harness judges 2 of 6 chrome regions** | ⭐ **`W98`, and it is BEHIND `W36`.** ⛔ **RE-DERIVED by me: `tests/visual/site.py:85` calls `render(case.document, case.placement)` with NO `links=`, so the between-units bar is never emitted, and line 82 iterates `pages.CASES` — unit pages only, no container page and no index.** ⭐ **They TRIED the fix and reported `1 failed, 87 passed` rather than keeping it**: `test_no_script.py` asserts every `nav[aria-label] a` href resolves ON-PAGE, true of the outline and false of any bar — ⚠️ **so `links=` falsifies a standing assertion that was only ever true because the bar was absent.** ⛔ **Ruling 164's own fork arriving in a test, and the `1 failed` is the EXPECTED reading** |
+| ⭐ **the argument for `W36` none of the rows made** | ⛔ **`--measure` is `80ch` and `ch` resolves against the ELEMENT'S OWN FONT, so a per-region column bound produced THREE columns — 800px / 715.7px / 680.3px, measured in Chrome.** ⚠️ **Caught only by opening the page: every declaration is identical and correct, and the RESOLVED value differs.** ⭐ **`rows/W36.md` WIDENED with it, and it also loses its dangling deictic and gains its anchor** — ⛔ **one of `W88`'s four, discharged as the second worked example after `W74`** |
+
+⚠️ **`W36` also GATES `W98`, and the direction matters: a widened harness that cannot
+run is a LARGER silence, not a smaller one.** ⛔ **57 browser checks are dark in the
+pinned image, and Ruling 40 makes that container the only authority for a reading —
+so a check that cannot run there has no authority anywhere.** ⭐ **`$STUDYFORGE_VISUAL=required`
+turns the silence into a failure today, which makes the skip a CHOICE `W36` is the
+cost of rather than an accident.**
