@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **222 rulings, `1`–`222`, derived from 40 ruling records** —
+⭐ **234 rulings, `1`–`234`, derived from 41 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -267,3 +267,15 @@ procedure.
 | 220 | ⛔ Ruling 220 — *refused by construction* is a claim about the TOKEN SET and owes the SHAPES it covers | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-220-refused-by-construction-is-a-claim-about-the-token-set-and-owes-the-shapes-it-covers) |
 | 221 | ⛔ Ruling 221 — an acceptance reading HANDED FORWARD owes its INSTRUMENT, not only its scalars | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-221-an-acceptance-reading-handed-forward-owes-its-instrument-not-only-its-scalars) |
 | 222 | ⛔ Ruling 222 — the Ruling 186 refusal is RATIFIED: a bounded NOTICE is discharged by ONE row over its whole population | heading | [round 53](handoffs/CTO-2026-09-10-round53.md#ruling-222-the-ruling-186-refusal-is-ratified-a-bounded-notice-is-discharged-by-one-row-over-its-whole-population) |
+| 223 | ⛔ Ruling 223 — the verdict token CLOSES the bracket; there is no asymmetry, and the predicate is NOT widened | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-223-the-verdict-token-closes-the-bracket-there-is-no-asymmetry-and-the-predicate-is-not-widened) |
+| 224 | ⛔ Ruling 224 — a printed count NAMES ITS UNIT; `N file(s) already formatted` is a DENOMINATOR, not a count of Python files | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-224-a-printed-count-names-its-unit-n-files-already-formatted-is-a-denominator-not-a-count-of-python-files) |
+| 225 | ⛔ Ruling 225 — an instrument whose POPULATION is read from the HOST is not a test of the commit; and `W110`'s property, as shipped, is FALSE | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-225-an-instrument-whose-population-is-read-from-the-host-is-not-a-test-of-the-commit-and-w110s-property-as-shipped-is-false) |
+| 226 | ⛔ Ruling 226 — the ARMED SKIP is RATIFIED as a form, with three conditions, and it is reusable | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-226-the-armed-skip-is-ratified-as-a-form-with-three-conditions-and-it-is-reusable) |
+| 227 | ⛔ Ruling 227 — `Team` prices REVIEW, not agents. `pair` was DISCHARGED, and both offices misread the column | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-227-team-prices-review-not-agents-pair-was-discharged-and-both-offices-misread-the-column) |
+| 228 | ⛔ Ruling 228 — taking a FORBIDDEN dependency and amending your OWN contract: the developer's call, under three conditions, and all three were met | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-228-taking-a-forbidden-dependency-and-amending-your-own-contract-the-developers-call-under-three-conditions-and-all-three-were-met) |
+| 229 | ⛔ Ruling 229 — a gate sweep's carrier table declares what it GATES, not what it RECEIVES | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-229-a-gate-sweeps-carrier-table-declares-what-it-gates-not-what-it-receives) |
+| 230 | ⛔ Ruling 230 — `PO-42/6` RATIFIED: a record's immutability protects its CLAIMS, not its MARKUP | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-230-po-426-ratified-a-records-immutability-protects-its-claims-not-its-markup) |
+| 231 | ⛔ Ruling 231 — `PO-42/8`: a REGISTER must be true when it MERGES. Ruling 97 is not amended; it was never sufficient for a register | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-231-po-428-a-register-must-be-true-when-it-merges-ruling-97-is-not-amended-it-was-never-sufficient-for-a-register) |
+| 232 | ⛔ Ruling 232 — `W36`'s clause (b) RATIFIED, with one narrowing that keeps it honest | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-232-w36s-clause-b-ratified-with-one-narrowing-that-keeps-it-honest) |
+| 233 | ⛔ Ruling 233 — `PO-42/4`: there is NO fifth STATE, and the standing row is a CONVENTION that leaves the board | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-233-po-424-there-is-no-fifth-state-and-the-standing-row-is-a-convention-that-leaves-the-board) |
+| 234 | ⛔ Ruling 234 — the eight unperformed fourth edits: a citation's target must OUTLIVE what it cites, and a row file is DEFINED to be deleted | heading | [round 54](handoffs/CTO-2026-09-10-round54.md#ruling-234-the-eight-unperformed-fourth-edits-a-citations-target-must-outlive-what-it-cites-and-a-row-file-is-defined-to-be-deleted) |
