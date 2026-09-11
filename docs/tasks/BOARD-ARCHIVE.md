@@ -13371,3 +13371,11 @@ deleting rows/W100.md -> 2 [pointer] refusals -> FLOOR_EXIT=1
 ⭐ `W126` → `W127` → `W115` → **`W128`** → `W78` → `W88` → `W120` → `W121` → `W103` → `W105`–`W109` → `W116`–`W118` → `W125`.
 
 ⛔ **`W128` IS PLACED BELOW `W115` DELIBERATELY, and the ground is Ruling 40:** ⭐ **the environment half's cost is bounded to HOST readings, which are never authoritative, while `W115` can make the WAVE-CLOSE GATE return a false pass in the one environment that is** — ⚠️ **and Ruling 262 has just made that gate's behaviour the subject of an open ruling.**
+
+### ⛔ PO round 44, the last cell — THREE REGISTER CELLS SAID `todo` WHILE THE OBSERVATION TABLE SAID IN FLIGHT, AND ONE OF THEM CARRIED A PREDICATE `W98`'S CLOSE HAD FALSIFIED
+
+⭐ **Found by reading `corroborate`'s own printed line rather than its exit code, which is the whole lesson of `W115`:** ⛔ **it printed *"started here and `todo` in the register (printed, not flagged — Ruling 179): W122 W123 W124"* while exiting `0`.**
+
+⚠️ **Ruling 179 tolerates `todo`-against-started, so nothing was in breach** — ⛔ **but a register cell must be TRUE WHEN IT MERGES (Ruling 231), and these three rows were dispatched: `todo` was simply false.** ⭐ **Set to `in flight`, which makes `register cells declaring a started state` read `3 — W122 W123 W124` and the two tables agree.**
+
+⛔ **AND THE ONE THAT MATTERED: `W124`'s cell read *"gates `W98`'s clause"*, and `W98` closed at `8416924` in this same round.** ⭐ **Re-taken to name what it gates NOW — a hole the SUITE declares at `tests/visual/test_site.py:33`–`:41` — which is the `PO-44/4` amendment's ground arriving in the register.** ⚠️ **`PO-44/13`, `[local]`, MINE: a close must sweep the register for cells that NAME the row it closed, and the four edits of Ruling 201 do not ask for that. ⭐ **MEASURED by me at `ad5ce24`, and the FIRST number I wrote here was WRONG and counting fixed it — which is why a count is printed rather than asserted:** `grep -n "W98" docs/tasks/BOARD.md` → **3 lines, printed in full**, `:53` the In-flight re-take narrative naming the absorbed branch, `:232` the closed row's own register line, `:257` `W124`'s corrected cell. ⛔ **All three are TRUE; the count I first typed, `1`, was not.****
