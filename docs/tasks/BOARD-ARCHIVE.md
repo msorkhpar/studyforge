@@ -11014,6 +11014,8 @@ corroborate, after the edit  : 0 of 2 rows REFUTED, exit 0
    SF-30 corroborated at dev1, 0 ahead;  W91 corroborated at dev2, 0 ahead
 ```
 
+⛔ **THE POPULATION BEHIND THE WORD *EMPTY*, because a zero is a reading and owes its population** (Ruling 191): **`git branch` counts 120 local branches at `1c5e913` and `--no-merged release/m0-foundations` returns 0 of 120.** ⭐ **It has now read `0`, `1` and `3` across four rounds, which is why the size is printed beside it rather than the word alone.**
+
 ⛔ **BOTH MERGE REFS WERE DERIVED IN TWO PRINTED STEPS AND BOTH FORMS AGREED** (Ruling 189(d)): existence as its own command — `7a44e7e` and `b915aba` both EXIST — then `--ancestry-path` printed WHOLE and `--grep 'Merge <branch>'` corroborating, agreeing on `8d17314` and `3432e9a`. ⚠️ **And both halves of the position were printed, never a two-dot span** (Ruling 197(a)): `SF-26` is **11 behind, 0 ahead**; `W96` is **10 behind, 0 ahead**.
 
 ### ⛔ RULING 196'S DELIMITERS — one PO board edit, and the instrument confirms it rather than my word
