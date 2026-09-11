@@ -223,6 +223,26 @@ extra frame block, and an index would have skipped that row's whole argument.
 for** — ⚠️ **equality, never a prefix**, because a notice that flags correct work
 is one people learn to scroll past.
 
+⭐ **And the second clause, over the frame's OTHER prohibition: an argument that
+DUPLICATES A STATE.** ⛔ **The predicate is the opening IDIOM — an emphasised
+label, set off by a dash, that declares a state — and NOT a state word anywhere
+past the frame.** ⚠️ **A row argument is *about* states constantly**: *"gated on
+`W63` landing"*, *"accepted at round 22"*, *"already DONE by …"*. ⛔ **A
+vocabulary search fires on every one of those, and it inherits `is_closed`'s own
+founding defect one layer up** — which is why clause one is safe and this one had
+to be narrowed: ⭐ **clause one is an EQUALITY against the register cell.**
+
+⚠️ **And the over-match SCALES WITH THE POPULATION, which is the reading that
+settled it:** a *state word anywhere* predicate read **3** hits over 50 row files
+and **6** over 64 — four of the six being rows their author had just written —
+while the idiom predicate read **2** and then **0**, correctly, because both true
+hits had closed. ⛔ **A notice whose first wave fires on four rows its author just
+wrote is a notice nobody reads twice** (Ruling 179).
+
+⚠️ **This clause is asserted against a PLANTED fixture and a corpus quoted at its
+ref, never against the live tree** — ⛔ **a live population of `0` is born vacuous
+and a pass with no planted hit is not green** (Ruling 48).
+
 ⛔ **No figure from any of these readings is typed into this document**
 (Ruling 181): `board_state` prints them every run, and a number copied here is a
 number that goes stale in the copy nobody re-measures.

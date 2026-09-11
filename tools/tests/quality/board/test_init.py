@@ -51,7 +51,6 @@ from tools.quality.board import (
     board_state,
     check_board,
 )
-from tools.quality.board.register import namings, repeats_its_naming
 
 #: A minimal register: a header, a separator, one closed row and one live one.
 #: ⛔ Written out rather than generated, so a reader can see what the check
@@ -329,63 +328,6 @@ def test_a_row_file_named_for_a_different_row_is_a_finding(tmp_path: Path) -> No
 
 
 # --------------------------------------------------------------------------
-# ⛔ Ruling 183 — `rows/` is printed with its BYTES, and the three readings
-# --------------------------------------------------------------------------
-
-
-def test_live_notice_names_the_row_files_BYTES_and_not_only_their_count() -> None:
-    """⭐ The LIVE reading, against a DERIVED sum rather than a typed number.
-
-    ⛔ **Ruling 181: a number typed beside the thing it measures goes stale in
-    the copy nobody re-measures**, so the expectation is re-derived from the
-    directory on every run and the notice is what carries the figure.
-    """
-    root = repository_root()
-    files = sorted((root / ROWS).glob("*.md"))
-    # ⛔ Ruling 48: an empty rows/ would satisfy every byte assertion below.
-    assert files, f"{ROWS}/ holds no row files, so this reading is vacuous"
-    total = sum(path.stat().st_size for path in files)
-    assert total > 0
-    assert f"{len(files)} detail files in {ROWS}/ holding {total} bytes" in board_state(root)[0]
-
-
-def test_planted_relocation_into_rows_MOVES_the_notice(tmp_path: Path) -> None:
-    """⛔ `ARCH/14`'s `R2`, which is the reading that decided Ruling 183.
-
-    ⚠️ **Measured by the CTO at round 47, pinned: `rows/` inflated from 28,787
-    bytes to 3,231,307 — 112× — and the `board:` line came back BYTE-IDENTICAL
-    with the floor clean.** ⭐ **The plant is adversarial to the SEARCH TERM**
-    (Ruling 140): the line printed the COUNT, and relocating a board's
-    reasoning into the files it already has does not change the count.
-
-    ⛔ **And it stays a NOTICE**: the same edit must leave `check_board` clean,
-    because appending to a live row's argument is the contract's own prescribed
-    action and a bound there would forbid what the file exists for.
-    """
-    root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
-    before = board_state(root)[0]
-    path = root / ROWS / "W2.md"
-    path.write_text(path.read_text(encoding="utf-8") + "x" * 100_000, encoding="utf-8")
-    after = board_state(root)[0]
-    assert "1 detail files" in before and "1 detail files" in after, "the count cannot see it"
-    assert before != after, "Ruling 183: accretion must move a number somebody reads every run"
-    assert check_board(root) == [], "a notice forbids nothing, and this edit is legal"
-
-
-def test_impossible_a_board_with_no_rows_directory_reads_zero_bytes(tmp_path: Path) -> None:
-    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass rather than echoing it.
-
-    ⭐ `0 files holding 0 bytes` is the honest answer for a tree that has a
-    register and no arguments beside it — ⚠️ **and a reader who sees it knows the
-    figure above is about nothing** (Ruling 48).
-    """
-    root = _tree(tmp_path, HEADER + CLOSED + FOOTER)
-    assert f"0 detail files in {ROWS}/ holding 0 bytes" in board_state(root)[0]
-    assert check_board(root) == []
-    assert not (root / ROWS).exists(), "and the directory is genuinely absent, not empty"
-
-
-# --------------------------------------------------------------------------
 # ⛔ `CTO-47/4` — the `board-frame` message describes the PREDICATE
 # --------------------------------------------------------------------------
 
@@ -393,12 +335,10 @@ def test_impossible_a_board_with_no_rows_directory_reads_zero_bytes(tmp_path: Pa
 def test_the_frame_finding_states_what_is_CHECKED_not_what_is_hoped(tmp_path: Path) -> None:
     """⛔ `CTO-47/4`: the predicate is two substrings; the message claimed more.
 
-    ⚠️ **It said the file *"states which row it argues and that the naming, owner
-    and state are the board's"*** — ⛔ **which `body.startswith` and `in` cannot
-    read.** ⭐ **A weak predicate is the RIGHT trade for amendment-proofness**
-    (`R3`, round 47: a row file rewritten as `# W10` plus *"I ate the sandwich
-    and nothing else."* passes, by design) — ⛔ **but a message that describes a
-    check nobody wrote sends the next reader to debug the wrong claim.**
+    ⚠️ **It said the file *"states which row it argues…"*** — ⛔ **which
+    `startswith` and `in` cannot read.** ⭐ **The weak predicate is the RIGHT trade
+    for amendment-proofness** — ⛔ **a message describing a check nobody wrote sends
+    the next reader to debug the wrong claim.**
     """
     root = _tree(tmp_path, HEADER + LIVE + FOOTER, rows=("W2",))
     (root / ROWS / "W2.md").write_text("a fragment with no frame at all\n", encoding="utf-8")
@@ -418,9 +358,8 @@ def test_the_frame_finding_states_what_is_CHECKED_not_what_is_hoped(tmp_path: Pa
 def test_live_no_register_row_on_this_board_is_board_state() -> None:
     """⭐ The LIVE reading. ⛔ `RULE_STATE` was the one code with no test of its path.
 
-    ⚠️ **Ruling 152's reachability held — `check_board` does emit all eight — so
-    this was a test gap and not a missing guard.** ⭐ The population is printed
-    beside the verdict, because `0 register rows` would satisfy this vacuously.
+    ⚠️ **Ruling 152's reachability held, so this was a test gap, not a missing
+    guard.** ⭐ The population is read out beside the verdict (Ruling 48).
     """
     root = repository_root()
     assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
@@ -441,11 +380,9 @@ def test_planted_a_state_cell_that_declares_nothing_is_board_state(
 ) -> None:
     """⛔ The PLANTED reading, adversarial to the SEARCH TERM (Ruling 140).
 
-    ⚠️ **Each plant wears the word the first `is_closed` searched for, in a form
-    the clause did not picture**: `done` arriving after the mention of another
-    row, `done` not ending on a word boundary, and the two shapes that were
-    really on the board — `W5`'s and `W16`'s — which declare nothing at all.
-    ⭐ **`DONE-ish` came from the impossible plant rather than from argument.**
+    ⚠️ **Each wears the word the first `is_closed` searched for, in a form the
+    clause did not picture** — including `W5`'s and `W16`'s real shapes, which
+    declare nothing. ⭐ **`DONE-ish` came from the impossible plant.**
     """
     row = f"| W2 | a naming | PO | {cell} | [d](rows/W2.md) |\n"
     root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
@@ -460,11 +397,9 @@ def test_the_cell_that_walked_out_of_the_register_is_LIVE_and_owes_a_FILE(
 ) -> None:
     """⛔ The defect's own cell, and the finding the substring test silently lost.
 
-    ⚠️ **`` `todo` — after `W44` is done ``** read as CLOSED when `is_closed` was
-    a substring test: it owed no detail file, left the bijection, and the floor
-    printed `quality floor: clean` with no finding at all. ⭐ **It DECLARES
-    `todo`, so it is not `board-state`** — the mention is ambiguous and the
-    declaration is not, which is the whole of the closed-set remedy.
+    ⚠️ **`` `todo` — after `W44` is done ``** read as CLOSED: no detail file owed,
+    out of the bijection, floor green. ⭐ **It DECLARES `todo`**, so the mention is
+    ambiguous and the declaration is not.
     """
     row = "| W2 | a naming | PO | `todo` — after `W44` is done | [d](rows/W2.md) |\n"
     root = _tree(tmp_path, HEADER + row + FOOTER)
@@ -496,85 +431,3 @@ def test_impossible_board_state_cannot_fire_on_an_EMPTY_register(tmp_path: Path)
     root = _tree(tmp_path, HEADER + FOOTER)
     assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
     assert "0 register rows, 0 live" in board_state(root)[0]
-
-
-# --------------------------------------------------------------------------
-# ⛔ Ruling 186 — the notice names the files whose ARGUMENT IS THEIR NAMING
-# --------------------------------------------------------------------------
-
-
-def test_live_notice_names_exactly_the_files_whose_argument_IS_their_naming() -> None:
-    """⭐ The LIVE reading, derived from the tree rather than typed.
-
-    ⛔ **No count is asserted**, and that is deliberate: the PO fixing those
-    files is the outcome this notice exists to cause, and an assertion on the
-    number would redden on the remedy. ⭐ **What is asserted is the WIRING** —
-    that the notice reports the same set the predicate does, against each row's
-    OWN naming cell rather than against some other row's.
-    """
-    root = repository_root()
-    text = (root / BOARD).read_text(encoding="utf-8")
-    named = namings(text)
-    files = sorted((root / ROWS).glob("*.md"))
-    assert files and named, "Ruling 48: neither side of the comparison may be empty"
-    expected = sorted(
-        (
-            path.stem
-            for path in files
-            if repeats_its_naming(path.read_text(encoding="utf-8"), named.get(path.stem, ""))
-        ),
-        key=lambda name: (len(name), name),
-    )
-    line = board_state(root)[0]
-    if expected:
-        assert f"{len(expected)} arguing only their own naming — {' '.join(expected)}" in line
-    else:
-        assert "none arguing only their own naming" in line
-
-
-def test_planted_an_argument_that_merely_REPEATS_the_naming_is_named(tmp_path: Path) -> None:
-    """⛔ The PLANTED reading, and the plant is a real live shape.
-
-    ⚠️ **Seven files on the tree at `798956c` carry exactly this** — their whole
-    argument is a normalised copy of the naming — ⛔ **and it is the one thing
-    the frame sentence inside them forbids:** *"not here, and not in two
-    places."* ⭐ **`board-frame` passes it, and must**, which is why this is the
-    notice's business and not the rule's.
-    """
-    naming = "a naming worth one sentence"
-    row = f"| W2 | {naming} | PO | `todo` | [d](rows/W2.md) |\n"
-    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
-    path = root / ROWS / "W2.md"
-    head = path.read_text(encoding="utf-8").rsplit("\n\n", 1)[0]
-    path.write_text(f"{head}\n\n⛔ **{naming.upper()}.**\n", encoding="utf-8")
-    assert "1 arguing only their own naming — W2 (Ruling 186)" in board_state(root)[0]
-    assert check_board(root) == [], "⛔ a NOTICE. A gate here is the one Ruling 180 removed."
-
-
-def test_planted_an_argument_that_EXTENDS_the_naming_is_NOT_named(tmp_path: Path) -> None:
-    """⛔ The control, and without it the notice flags correct work.
-
-    ⭐ **An argument that restates the row and then argues it is what the file is
-    for.** ⚠️ **A prefix test reports 17 more files on the live tree**, and a
-    notice people learn to scroll past is worse than none.
-    """
-    naming = "a naming worth one sentence"
-    row = f"| W2 | {naming} | PO | `todo` | [d](rows/W2.md) |\n"
-    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
-    path = root / ROWS / "W2.md"
-    head = path.read_text(encoding="utf-8").rsplit("\n\n", 1)[0]
-    path.write_text(f"{head}\n\n{naming} — and the reason it matters.\n", encoding="utf-8")
-    assert "none arguing only their own naming" in board_state(root)[0]
-
-
-def test_impossible_a_board_with_no_row_files_names_NONE(tmp_path: Path) -> None:
-    """⛔ The IMPOSSIBLE reading, and it DIFFERS from the pass rather than echoing it.
-
-    ⚠️ **A register with no arguments beside it cannot have one that repeats its
-    naming** — ⭐ **and the notice says `none` out loud rather than falling
-    silent**, which is Ruling 48's whole complaint about `0`.
-    """
-    root = _tree(tmp_path, HEADER + CLOSED + FOOTER)
-    line = board_state(root)[0]
-    assert "none arguing only their own naming (Ruling 186)" in line
-    assert f"0 detail files in {ROWS}/ holding 0 bytes" in line

@@ -88,6 +88,7 @@ a bound there would forbid the amendment those files exist for. ⭐ **So
 its subject became editable is replaced by a NOTICE, never by nothing.**
 """
 
+from collections.abc import Callable
 from pathlib import Path
 
 from tools.quality.board.register import (
@@ -99,11 +100,13 @@ from tools.quality.board.register import (
     REGISTER_OPEN,
     ROW_FRAME,
     STATES,
+    duplicates_a_state,
     is_closed,
     namings,
     narrative_bytes,
     register,
     repeats_its_naming,
+    row_order,
     state,
     table_lines,
 )
@@ -344,30 +347,42 @@ def board_state(root: Path) -> list[str]:
     # ⛔ Ruling 183, and `st_size` rather than a clock or an enumeration order,
     # over a SORTED population, so the reading is reproducible (R10).
     rows_bytes = sum(path.stat().st_size for path in sorted(rows_on_disk.values()))
-    # ⛔ Ruling 186. ⭐ Sorted by length then text, so a reader gets W5 before W10
-    # and the order is a property of the ids rather than of the filesystem (R10).
+    # ⛔ Ruling 186(b)'s two closed predicates, over ONE declared population.
     named = namings(text)
-    repeats = sorted(
-        (
-            name
-            for name, path in rows_on_disk.items()
-            if repeats_its_naming(read_text(path) or "", named.get(name, ""))
-        ),
-        key=lambda name: (len(name), name),
-    )
-    echoed = (
-        f"{len(repeats)} arguing only their own naming — {' '.join(repeats)} (Ruling 186)"
-        if repeats
-        else "none arguing only their own naming (Ruling 186)"
+    bodies = {name: read_text(path) or "" for name, path in rows_on_disk.items()}
+    faults = (
+        ("repeat their own naming", repeats_its_naming),
+        ("duplicate a state", lambda body, name: duplicates_a_state(body)),
     )
     table = table_lines(text)
     widest = max((len(line.encode()) for _n, line in table), default=0)
     return [
         f"board: {len(rows)} register rows, {len(live)} live, "
         f"{len(rows_on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
-        f"(no bound — Ruling 183), {echoed}; "
+        f"(no bound — Ruling 183); "
         f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
         f"widest row {widest} of {BOARD_ROW_CEILING}, "
         f"{len(text.encode())} bytes total of "
-        f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed."
+        f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed.",
+        f"row arguments in {ROWS}/ (Ruling 186, no bound): "
+        + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
+        + ".",
     ]
+
+
+def _fault_reading(
+    what: str,
+    bodies: dict[str, str],
+    named: dict[str, str],
+    holds: Callable[[str, str], bool],
+) -> str:
+    """One of Ruling 186(b)'s clauses, as a count AND the files it names.
+
+    ⭐ **The files, not only the count** — Ruling 184's reason, reused: a reader
+    who can see WHICH row can dismiss a false positive with one `git show`.
+    ⛔ Ordered by `row_order`, never by the filesystem (R10).
+    """
+    found = sorted(
+        (n for n, body in bodies.items() if holds(body, named.get(n, ""))), key=row_order
+    )
+    return f"{len(found)} {what}" + (f" — {' '.join(found)}" if found else "")

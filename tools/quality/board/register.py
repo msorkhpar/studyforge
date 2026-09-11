@@ -119,6 +119,16 @@ ROW_FRAME = "and nothing else."
 #: Emoji, emphasis and backticks a state cell may wear before its word.
 STATE_LEAD = re.compile(r"^[\s*`~⛔⭐✅⚠️⏳◐→️]+")
 
+#: ⛔ The opening idiom a duplicated state wears: an EMPHASISED label, set off by
+#: a dash. ⚠️ **Measured verbatim from `798956c`** — `⏳ **in flight** — …` and
+#: `⏳ **in flight, with W14** — …`, so the label may say more than the word.
+#:
+#: ⭐ **The label may not cross `*` or a backtick**, which is what stops it
+#: swallowing a whole sentence and matching somewhere it should not:
+#: `rows/W5.md`'s `⛔ **CORRECTED — \`unitdoc.py\` is 827 lines…**` is blocked at
+#: the backtick and never reaches a dash.
+_STATE_LABEL = re.compile(r"^[\s⛔⭐✅⚠️⏳◐→️]*(?P<mark>\*\*|`)(?P<label>[^*`\n]+?)(?P=mark)\s*[—–-]")
+
 # ⛔ **The rule codes are NOT here, and their absence is `CTO-47/3`.** ⚠️ This
 # module defined seven of them — `RULE_DETAIL` … `RULE_STATE` — that nothing
 # imported and that it never used itself: `tools/quality/board/__init__.py`
@@ -309,6 +319,48 @@ def repeats_its_naming(body: str, cell: str) -> bool:
     wanted = normalised(cell)
     # ⛔ Ruling 48 in miniature: an empty naming would make every file a repeat.
     return bool(wanted) and normalised(argument(body)) == wanted
+
+
+def duplicates_a_state(body: str) -> bool:
+    """Whether a row file's argument OPENS by declaring a state.
+
+    ⛔ **Ruling 186(b)'s second clause, and the predicate is the OPENING IDIOM —
+    `⏳ **<state>** —` — never a state word anywhere past the frame.** ⚠️ **A row
+    argument is *about* states constantly**: *"gated on `W63` landing"*,
+    *"accepted at round 22"*, *"already DONE by `validate/structure.py`"*.
+    ⛔ **An *anywhere* predicate fires on every one of those** — which is
+    `board-state`'s own founding defect one layer up, where the first
+    `is_closed` was a substring test and `` `todo` — after `W44` is done `` read
+    as CLOSED.
+
+    ⭐ **So this reuses `state()`**: the closed set, the leading markup stripped,
+    the match ending on a word boundary — applied to the argument's FIRST BLOCK
+    and nothing else. ⚠️ **Measured at `798956c`: two files declare a state this
+    way (`W14`, `W18`) and the two candidate false positives are both
+    excluded** — `rows/W5.md`'s *"job is already DONE by …"*, which is `done` in
+    ordinary English, and `rows/W18.md`'s later *"is ACCEPTED today"*, which is
+    not the opening.
+
+    ⛔ **A state belongs to the register and to the record; a row file carries the
+    ARGUMENT** — which is the other half of what the frame sentence forbids.
+
+    ⚠️ **`state()` alone is not narrow enough and a planted row said so:** it
+    fires on *"Blocked by nothing; `W44` is unrelated."*, which opens with a
+    vocabulary word used as English. ⭐ **So the IDIOM is matched, not the word** —
+    an emphasised LABEL, set off by a dash, that declares a state.
+    """
+    match = _STATE_LABEL.match(argument(body).split("\n\n")[0])
+    return match is not None and state(match.group("label")) is not None
+
+
+def row_order(name: str) -> tuple[int, str]:
+    """Sort key for row ids: `W5` before `W10`, and deterministic (R10).
+
+    ⛔ Length then text, rather than `int(name[1:])`, because the population is
+    filenames and a filename is not guaranteed to be `W<digits>` — a key that
+    raises on the one file somebody misnamed would take the notice down.
+    """
+    return (len(name), name)
 
 
 def narrative_bytes(text: str) -> int:

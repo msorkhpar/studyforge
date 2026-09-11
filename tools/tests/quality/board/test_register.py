@@ -34,6 +34,7 @@ from tools.quality.board.register import (
     STATES,
     argument,
     cells,
+    duplicates_a_state,
     identifiers,
     is_closed,
     namings,
@@ -385,3 +386,69 @@ def test_the_live_tree_is_an_INHABITED_population_for_this_predicate() -> None:
     assert [path.stem for path in files if path.stem not in named] == [], (
         "a row file with no register naming cell cannot be compared; board-orphan owns that"
     )
+
+
+# --------------------------------------------------------------------------
+# ⛔ Ruling 186(b) clause 2 — the argument DUPLICATES A STATE
+# --------------------------------------------------------------------------
+
+#: ⛔ **The two live row arguments that OPEN by declaring a state, verbatim from
+#: `798956c:docs/tasks/rows/`** — and the two candidate FALSE POSITIVES beside
+#: them, also verbatim.
+#:
+#: ⚠️ **Embedded rather than read from the live tree, and that is Ruling
+#: 186(b)(ii):** the PO closed `W14` and `W18` in the same round this clause was
+#: written, so the live population is **0** and ⛔ **a clause-2 pass with no
+#: planted hit is VACUOUS, not green** (Ruling 48).
+MEASURED_OPENINGS = (
+    ("W14", True, "⏳ **in flight** — ⛔ **TWO missing invalid fixtures on FND-04's surface**"),
+    ("W18", True, "⏳ **in flight, with W14** — ⛔ **`user` + `authoritative` is accepted today**"),
+    # ⛔ `done` in ordinary English, and it is the false positive a substring
+    # search reports. ⭐ `state()` does not, because the word is not the opening.
+    ("W5", False, "⛔ **CORRECTED — `unitdoc.py` is 827 lines; about 250 are left to port.**"),
+    # ⛔ `W18`'s SECOND block. ⚠️ An *anywhere* predicate counts this a second time.
+    ("W18b", False, '⭐ **The author believed the set should be `("bundled",)`** — accepted'),
+)
+
+
+@pytest.mark.parametrize(("name", "fires", "opening"), MEASURED_OPENINGS)
+def test_the_state_duplication_predicate_reads_the_OPENING_and_not_the_prose(
+    name: str, fires: bool, opening: str
+) -> None:
+    """⛔ Ruling 186(b)(i), and the corpus is why the predicate is what it is.
+
+    ⚠️ **A row argument is *about* states constantly** — *"gated on `W63`"*,
+    *"accepted at round 22"*, *"already DONE by …"*. ⛔ **An *anywhere* predicate
+    fires on all of those, and the over-match SCALES WITH THE POPULATION:**
+    measured at `798956c` (50 rows) *anywhere* reads **3** and the opening idiom
+    reads **2**; at `35b63aa` (64 rows) *anywhere* reads **6** — four of them
+    rows the PO had just written — and the opening idiom reads **0**, correctly,
+    because both true hits were closed. ⭐ **A notice whose first wave fires on
+    four rows its author just wrote is a notice nobody reads twice** (Ruling
+    179).
+
+    ⛔ **Clause 1 is immune and clause 2 as first worded was not**: clause 1 is an
+    EQUALITY against the register cell, and a vocabulary search inherits
+    `is_closed`'s founding defect one layer up.
+    """
+    body = FRAMED.format(name="W9", argument=f"{opening}\n\nAnd then the argument proper.")
+    assert duplicates_a_state(body) is fires, (name, opening[:60])
+
+
+@pytest.mark.parametrize("declared", sorted(STATES))
+def test_every_word_of_the_closed_vocabulary_is_a_state_duplication(declared: str) -> None:
+    """⭐ The whole vocabulary, derived — ⛔ an empty `STATES` SKIPS rather than passing."""
+    opening = f"⏳ **{declared}** — and then the argument"
+    assert duplicates_a_state(FRAMED.format(name="W9", argument=opening))
+
+
+@pytest.mark.parametrize(
+    "argument_text",
+    ["", "The argument, which declares no state.", "Blocked by nothing; `W44` is unrelated."],
+)
+def test_impossible_an_argument_that_declares_no_state_does_not_duplicate_one(
+    argument_text: str,
+) -> None:
+    """⛔ The IMPOSSIBLE reading. ⚠️ The third wears `Blocked` where the cell would."""
+    assert not duplicates_a_state(FRAMED.format(name="W9", argument=argument_text))
+    assert not duplicates_a_state("a fragment with no frame at all\n")
