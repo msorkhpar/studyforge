@@ -326,7 +326,12 @@ for n in <the rulings>; do
   git grep -liP "Rulings?\s+(?:$n|[0-9]+[^.]*\b$n)\b" -- docs src tools tests | sort
 done
 # Row 3, and it must DIFFER: a ruling that cannot exist reads EMPTY.
-git grep -liP "Rulings?\s+(?:9999|[0-9]+[^.]*\b9999)\b" -- docs src tools tests
+# ⛔ The probe number must be MENTIONED NOWHERE, and a number a record has quoted
+#    has STOPPED BEING IMPOSSIBLE — `9999` now matches two records that quote this
+#    very line. ⭐ Measured at 5e608bf: 9999 -> 2 records; 7431 -> empty. It is the
+#    use-versus-mention cost the marker counter already pays, and the remedy is a
+#    fresh number per run, never a wider pattern.
+git grep -liP "Rulings?\s+(?:<a number mentioned nowhere>)\b" -- docs src tools tests
 ```
 
 ⭐ **Measured at `96e8c95`, `dev2` worktree, host git 2.47.3 and the pinned image
@@ -427,12 +432,57 @@ observer can only be kept freshly wrong.**
 > message NAMES the row** — which `Merge <branch>: <line> (CTO: …)` guarantees and
 > the pre-clause tail does not. ⚠️ **So a row-state audit is reliable exactly over
 > the range the verdict clause governs, and not one commit earlier.**
+>
+> ⭐ **(d) ADDED CTO ROUND 49, from `PO-38/3`. The ref is derived from the BRANCH,
+> never from the ROW, because a branch carries N rows and a merge message names one
+> thing: ITSELF.** ⛔ **`--grep '<row id>'` over merge messages is a LOWER BOUND on
+> closes and reads `0` for every row that shared a branch** — ⚠️ **measured: all
+> three of `W85`, `W86` and `W87` returned nothing, and `W86` is named in no commit
+> message on its own branch at all.** ⭐ **So the derivation is TWO steps and both
+> are printed: row → branch, then branch → merge.** ⛔ **The first step is an
+> ASSERTION and owes clause (c)'s observation like any other; only the second is an
+> observation.** ⚠️ **And existence is checked as its OWN command — `git rev-parse
+> --verify` before any grep — never behind a pipeline, because a misspelled branch
+> and an unmerged branch both return empty.**
 
-⛔ **The predicate is `W100`'s and `W96`'s, not this document's: `W96` is the
-register's cells and `W100` is `## Scheduled`'s, which declare no state at all.**
-⚠️ **`--ancestry-path | tail -1` is RECORDED AS WRONG for (c) and is not reused:
+⛔ **`--ancestry-path | tail -1` is RECORDED AS WRONG for (c) and is not reused:
 it returned a different branch's merge, and the error was caught only because both
 forms were run.**
+
+### ⛔ RULED ROUND 49 — `W100`'s population is DELIMITED, a trigger gains a CLOSED VOCABULARY, and it is NOT one instrument with `W96`
+
+⭐ **The question put to me: should `board-state`'s population be every table that
+carries a trigger?** ⛔ **No — every table it can FIND is an inferred boundary, and
+this document has already paid for one:** ⚠️ **the first register check inferred
+its boundary and an ordinary *In flight* table was read as four duplicate register
+rows, so `board-duplicate` fired on the author of `board-duplicate`.** ⭐ **An
+inferred boundary moves the moment somebody writes an ordinary table.** The three
+clauses:
+
+> ⭐ **(a) A `Trigger` cell IS an asserted state wearing another column name.**
+> ⛔ *"before M1's wave opens"* declares **not yet** and has no observer, so Ruling
+> 189 binds it. ⚠️ **Measured cost of its not being read: one trigger stood unfired
+> through M1's close and all four steps of M2, and the work behind it had been done
+> the whole time.**
+>
+> ⭐ **(b) So the population GROWS BY A DELIMITER, never by inference.**
+> ⛔ **`## Scheduled` gains its own `<!-- scheduled -->` / `<!-- /scheduled -->`
+> markers and a STATE column, exactly as the register has**, and `board-state`
+> reads **both delimited tables and nothing else.**
+>
+> ⭐ **(c) And a trigger's state comes from a CLOSED SET, declared as the cell's
+> first word** — ⛔ **`pending`, `fired`, `expired`, `discharged`** — ⚠️ **so
+> EXPIRED becomes REPRESENTABLE, which is the whole defect: the trigger that
+> expired could not say so.** ⭐ **The project's standard remedy applied to a
+> second status: make the illegal value unrepresentable rather than enumerate it.**
+
+⛔ **AND THE SEPARATION, because a developer is building `W96` this hour and must
+not wait:** ⭐ **`W96` and `W100` are TWO RULES, not one instrument.** ⚠️ **`W96`
+reads `git` — which nothing in `tools/quality/board/` does today, and that is its
+own open design question; `W100` is a PURE TREE property and must not inherit a git
+dependency to get built.** ⛔ **So: `W96` is NOT GATED on `W100`.** ⭐ **What they
+share is the DELIMITER — one board edit, landing with whichever row arrives first,
+and the other reads it rather than adding a second one.**
 
 ⭐ **The close run is cheaper than the open run**, and that is why this is not a
 doubling: at open, every row whose trigger has passed must be re-measured; ⛔ **at

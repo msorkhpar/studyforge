@@ -469,8 +469,15 @@ zero sources. ⭐ What is ruled here is only what stops **two components inventi
 two shapes**, which is the failure this seam is actually exposed to: it is the
 one seam neither side can inspect from its own repository.
 
-⛔ **Four open rows are four instances waiting to happen**, and each is owed by
-the task named beside it *before* that task builds. ⚠️ The overlay's row is the
+⛔ **Every row this register marks `open` is an instance waiting to happen**, and
+each is owed by the task named beside it *before* that task builds. ⚠️ **The
+COUNT is not typed here and its removal is `PO-38/2`** — ⛔ **this sentence said
+*"Four"* one line below a table of two, and a third number stood on the board;
+three documents held three counts of one set and two of them were on the same
+page.** ⭐ **The open set is whatever the table above marks `open`, read at read
+time — a document that GOVERNS a register may not carry a typed measurement of
+it** (Ruling 181), ⛔ **and the fix is to REMOVE the count, not to correct it**
+(Ruling 150's form). ⚠️ The overlay's row is the
 sharpest: it is the one document a **person** edits, which makes it the most
 likely to drift, and R9 does not list it. Either R9 gains it or R9 says in words
 why a hand-edited document needs no version — but not silence.
