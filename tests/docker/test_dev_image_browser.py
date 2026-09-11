@@ -241,19 +241,47 @@ def test_an_unrecorded_face_fails_the_build_too():
 
 
 def test_the_font_does_not_arrive_unconstrained():
-    # ⚠️ Asserted against the **install lines** and not the whole file, for the
-    # reason the browser's version of this check records: a check that fires on
-    # the correct implementation is a check somebody deletes.
-    installed = [
-        line
-        for line in instructions("Dockerfile").splitlines()
-        if "apt-get install" in line or "apt install" in line
+    # ⚠️ Asserted against the install command's own arguments and not the whole
+    # file, for the reason the browser's version of this check records: a check
+    # that fires on the correct implementation is a check somebody deletes.
+    #
+    # ⛔ **THE POPULATION COST TWO PLANTS TO GET RIGHT, AND BOTH ARE RECORDED
+    # BECAUSE THE NEXT READER WOULD OTHERWISE NARROW IT BACK.**
+    #
+    # ⚠️ *First* version split on raw lines. `apt-get install` sits on its own
+    # line with every package on a continuation below it, so the package list was
+    # never in the searched text: it passed the live reading AND passed a plant
+    # that removed the version constraint outright — a check with no population
+    # at all (Ruling 191).
+    #
+    # ⚠️ *Second* version collapsed continuations but kept the whole `RUN` as one
+    # string. That RUN also carries `dpkg-query … fonts-liberation` and an error
+    # message naming the package, so "the word appears" stopped meaning "the
+    # package is installed" — and a plant that deleted the install outright still
+    # read as healthy.
+    #
+    # ⭐ So the population is the install command's ARGUMENTS: continuations
+    # collapsed, then cut at the shell separators that end a command.
+    run = instructions("Dockerfile").replace("\\\n", " ")
+    commands = [
+        segment
+        for segment in run.replace("&&", ";").split(";")
+        if "apt-get install" in segment or "apt install" in segment
     ]
-    assert installed, "nothing is installed at all; has the base image changed?"
-    for line in installed:
-        assert "fonts-liberation " not in line and not line.rstrip().endswith("fonts-liberation"), (
-            f"the font is installed without a version constraint: {line.strip()!r}"
-        )
+    assert commands, "nothing is installed at all; has the base image changed?"
+    constraining = [line for line in commands if "fonts-liberation" in line]
+    assert constraining, (
+        "no apt-get install command installs fonts-liberation. Either the font "
+        "stopped arriving — and every text metric in tests/visual/ is then "
+        "measuring a fallback nobody chose — or this check lost its population "
+        "for the third time"
+    )
+    for line in constraining:
+        for word in line.split():
+            assert word != "fonts-liberation", (
+                f"the font is installed without a version constraint, so every "
+                f"text metric in tests/visual/ reads an undeclared input: {line.strip()!r}"
+            )
 
 
 # --- the font, asserted from inside, which is where a stale image shows up ---
