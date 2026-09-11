@@ -110,14 +110,21 @@ hand it to `between_units`; a surface that publishes the argument while hiding
 the function it is an argument to has published half a call. ⚠️ It is this
 page's bar rather than a primitive — `SF-15` owns the module, and `SF-27/3`'s
 `aria-label` remedy is that task's rather than this surface's.
+
+⭐ **`Crumb` and `breadcrumb` are here on that same argument** (`SF-15`). ⚠️ The
+trail also reaches `render` and `compose` as an argument, because a page that
+renders the region only when somebody calls the region's own function is a page
+whose chrome depends on which entry point a build used.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
-from studyforge.render.page.navigation import Link, Links, between_units
+from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
 
 #: What a page is written as. ⛔ Stated once: a page written as anything else is
 #: a page whose bytes depend on a locale, which R10 forbids.
@@ -128,17 +135,24 @@ ENCODING = "utf-8"
 __all__ = [
     "AUDIO_ATTRIBUTE",
     "ENCODING",
+    "Crumb",
     "Link",
     "Links",
     "PageError",
     "Placement",
     "between_units",
+    "breadcrumb",
     "compose",
     "render",
 ]
 
 
-def render(document: dict, placement: Placement, links: Links | None = None) -> bytes:
+def render(
+    document: dict,
+    placement: Placement,
+    links: Links | None = None,
+    trail: Sequence[Crumb] | None = None,
+) -> bytes:
     """Render one unit page.
 
     ⭐ **Bytes, not text, and that is the contract.** What is compared against a
@@ -146,4 +160,4 @@ def render(document: dict, placement: Placement, links: Links | None = None) -> 
     would leave the encoding to whoever wrote the file, and R10's guarantee
     would hold everywhere except the one step that matters.
     """
-    return compose(document, placement, links).encode(ENCODING)
+    return compose(document, placement, links, trail).encode(ENCODING)

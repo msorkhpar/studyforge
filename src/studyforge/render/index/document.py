@@ -22,16 +22,19 @@ this task adds no template file and no asset. ⚠️ A second skeleton would be 
 second `<head>`, a second masthead and a second place a `<meta viewport>` has to
 be remembered — and the day one gains a region the other silently would not.
 
-⛔ **Six of the skeleton's eleven slots are empty here, and they are empty
+⛔ **Seven of the skeleton's slots are empty here, and they are empty
 explicitly.** `templates.fill` refuses a placeholder with no value **and** a
 value with no placeholder, so each one is passed `""` by name rather than
 omitted — which means the day the skeleton drops a slot this module fails by
-name instead of quietly losing a region.
+name instead of quietly losing a region. ⭐ **And the day it GAINS one this
+module fails too, which is how `breadcrumb` arrived** (`SF-15`).
 
 ⚠️ **Each absence is a fact rather than an oversight:**
 
 | slot | why this page has nothing to put in it |
 |---|---|
+| `breadcrumb` | ⛔ the trail says where in the hierarchy the reader is, and this
+page is where every trail ends: a crumb for it would be a link to itself |
 | `identity` | ⛔ see below — the index is the artifact identity does not describe |
 | `meta` | a second masthead line would be this framework's own sentence about
 a corpus, and there is no corpus datum for it that the tree does not already
@@ -83,7 +86,7 @@ TRAILING_NEWLINE = "\n"
 
 #: The skeleton slots the root index has nothing to put in. ⛔ Named and passed
 #: rather than omitted — see this module's docstring for what each absence is.
-EMPTY_SLOTS = ("identity", "meta", "nav", "outline", "pending", "player")
+EMPTY_SLOTS = ("breadcrumb", "identity", "meta", "nav", "outline", "pending", "player")
 
 
 def compose(document: Document, placement: Placement) -> str:
