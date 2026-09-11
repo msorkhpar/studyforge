@@ -16,14 +16,65 @@ lived on: ⛔ **the same citation inside backticks must leave the ruling
 UNREACHED, or the repair hands the gate a line that can never fail again** —
 Ruling 280's own text quotes these forms as examples, so a span-blind widening
 would be satisfied by the description of the defect.
+
+## ⛔ `W145`'s group: the BLOCK, and the BOUNDARIES that keep it from inventing
+
+⛔ **A citation can be UNMADE by a re-wrap with no word changing**, so the unit
+is a block and not a line. ⭐ **Which makes the REFUSALS the load-bearing half:
+every boundary the module declares is asserted with a probe number drawn AFRESH
+per run** (`9999` is disqualified — records quote it), because a join that
+crossed a paragraph, a heading, a table row, a list marker or a fence edge would
+invent citations no renderer shows. ⚠️ And the live control is a POPULATION
+rather than one line number: a specific line pair is one re-wrap away from
+moving, and the property — *some pair of prose lines in `docs/conventions/`
+carries a citation neither line carries alone* — is not.
 """
 
 from __future__ import annotations
 
+import random
+import re
+from functools import lru_cache
+from pathlib import Path
+
 import tools.quality.citations as citations
 from tests.support import assert_package_contract, repository_root
 from tools.quality.citations import MAX_RANGE_SPAN, cited_numbers, spellings
+from tools.quality.pointers import prose_lines
 from tools.quality.reach import CONVENTIONS_DIR
+
+
+@lru_cache(maxsize=1)
+def _four_digit_numbers() -> frozenset[str]:
+    """Every four-digit number written in any markdown file of this tree."""
+    root = repository_root()
+    written: set[str] = set()
+    for path in root.rglob("*.md"):
+        text = path.read_text(encoding="utf-8", errors="replace")
+        written.update(re.findall(r"(?<!\d)\d{4}(?!\d)", text))
+    return frozenset(written)
+
+
+def _fresh_probe() -> int:
+    """A four-digit number NO markdown file in this tree writes, drawn per run.
+
+    ⛔ `9999` is DISQUALIFIED and that is measured rather than preference: two
+    ruling records quote it, so it has stopped being impossible. ⚠️ **And the
+    freshness this needs is not `test_reach._fresh_probe`'s.** That one asks
+    whether a number is outside the DERIVED ruling population; a control here
+    has to be a number a reviewer's grep finds ONLY in the control, so it is
+    drawn against the TEXT of every markdown file instead. ⭐ Two predicates,
+    two populations — which is this module's own subject one level up.
+    """
+    taken = _four_digit_numbers()
+    for candidate in random.sample(range(1000, 10000), 200):
+        if str(candidate) not in taken:
+            return candidate
+    raise AssertionError("200 draws found no unwritten number; the population cannot be dense")
+
+
+def _conventions() -> list[Path]:
+    return sorted((repository_root() / CONVENTIONS_DIR).rglob("*.md"))
 
 
 def test_states_its_contract():
@@ -124,11 +175,9 @@ def test_the_live_tree_is_NOT_green_off_its_own_backticked_examples():
     # by `272`–`281`, read off Ruling 280's own illustration. ⚠️ If this tree
     # ever stops writing a backticked citation, re-derive this reading rather
     # than relaxing it: it is the only live evidence the exclusion does work.
-    root = repository_root()
-    documents = sorted((root / CONVENTIONS_DIR).rglob("*.md"))
     strict: set[int] = set()
     blind: set[int] = set()
-    for path in documents:
+    for path in _conventions():
         text = path.read_text(encoding="utf-8")
         strict |= cited_numbers(text)
         blind |= cited_numbers(text.replace("`", ""))
@@ -162,14 +211,108 @@ def test_a_five_digit_number_is_outside_the_population():
 
 
 def test_the_declared_gaps_read_UNREACHED_and_that_is_the_claim():
-    # ⛔ Ruling 258: a declared-gaps list is a CLOSED CLAIM, so each of the three
+    # ⛔ Ruling 258: a declared-gaps list is a CLOSED CLAIM, so each of the two
     # this module declares is a test rather than a sentence. ⭐ Ruling 185 is why
     # they are gaps and not features: Ruling 280's words are "the forms the house
     # style writes", and widening past them is the taker's, not the ruling's.
+    # ⚠️ A THIRD stood here — `Rulings 106 and\n174` read `{106}` — until `W145`
+    # CLOSED it. The assertion MOVED to the group below rather than being
+    # deleted, because a gap that is closed and a gap that is forgotten leave
+    # the same hole in the list.
     assert cited_numbers("Rulings **15**, **62** and **68** each returned") == set()
-    assert cited_numbers("Rulings 106 and\n174 forbid editing") == {106}
     assert cited_numbers("`Rulings minted: 198-202`") == set()
     assert cited_numbers("Rulings minted: 198-202") == set()
+
+
+# ── W145: a citation WRAPPED across a line break, and where it STOPS ────────
+
+
+def test_a_citation_WRAPPED_across_a_line_break_is_still_a_citation():
+    # ⛔ **The reading this row was minted over.** `review-rubric.md` re-wrapped
+    # a paragraph so `166` began the next line, and the citation was UNMADE with
+    # no word changing — no word added, none removed, and a diff showing a
+    # reflowed paragraph. ⭐ The first of these two is the live loss, quoted from
+    # `review-rubric.md:1824-1825`; the second is the gap `citations.py` used to
+    # declare, quoted from `board.md:115-116`. MEASURED at `fc56011`.
+    assert cited_numbers("closed and therefore takes **Ruling\n166**'s disposition") == {166}
+    assert cited_numbers("Rulings 106 and\n174 forbid editing") == {106, 174}
+
+
+def test_the_number_below_the_break_may_be_INDENTED():
+    # ⚠️ The member that separates the shape's population from a sweep anchored
+    # on a leading digit (`W145`'s clause 6, where three offices read 7, 6 and 1
+    # and all three were right): `review-rubric.md:2549` continues with three
+    # spaces. ⛔ `reach` is indifferent to indentation, so this grammar is too.
+    assert cited_numbers("⚠️ Ruling\n   70 asks for same-size mutations") == {70}
+
+
+def test_a_wrap_INSIDE_a_blockquote_is_read_and_one_ACROSS_its_edge_is_not():
+    # ⭐ `board.md:864-865` writes a wrapped citation inside a `>` block, so the
+    # marker is split off before the join — a rule that refused every quoted
+    # line would have left the closed gap still open in one shape and called it
+    # closed. ⛔ But quoted text and plain text are two markdown blocks, and a
+    # citation crosses between them in neither direction.
+    assert cited_numbers("> so Ruling\n> 189 binds it") == {189}
+    assert cited_numbers("> so Ruling\n189 binds it") == set()
+    assert cited_numbers("so Ruling\n> 189 binds it") == set()
+
+
+def test_a_number_across_a_BLOCK_BOUNDARY_is_NOT_a_landing():
+    # ⛔ **THE IMPOSSIBLE CONTROL, and it is the half that makes the widening
+    # safe** (R12, Ruling 65: a widened predicate that cannot fail is worse than
+    # a narrow one that can). ⚠️ A line count, an ordinal or a year below a
+    # boundary must not become a citation — so the probe is drawn AFRESH per run
+    # and every declared boundary is asserted, not just the paragraph one.
+    probe = _fresh_probe()
+    assert str(probe) not in _four_digit_numbers(), "the probe is not fresh"
+    assert cited_numbers(f"is a Ruling\n\n{probe} rounds later") == set()
+    assert cited_numbers(f"is a Ruling\n# {probe} things") == set()
+    assert cited_numbers(f"| what | Ruling\n| {probe} | a mention |") == set()
+    assert cited_numbers(f"is a Ruling\n- {probe} things") == set()
+    assert cited_numbers(f"is a Ruling\n1. {probe} things") == set()
+    assert cited_numbers(f"is a Ruling\n---\n{probe} things") == set()
+    assert cited_numbers(f"is a Ruling\n```text\nx\n```\n{probe} rounds") == set()
+    assert cited_numbers(f"is a Ruling\n{probe}0 rounds") == set()
+
+
+def test_an_UNCLOSED_code_span_ends_the_block_rather_than_carrying_a_MENTION():
+    # ⛔ `strip_code_spans` is LINE-scoped, so a span opened on one line and
+    # closed on the next survives it — and a join across that pair would carry a
+    # MENTION into the reading, which is the ONE way this change could have
+    # weakened the exclusion `W133` lived on. ⭐ Refused rather than declared,
+    # and MEASURED at `fc56011`: all 14 live wrapped pairs in the conventions
+    # leave both their lines balanced, so the refusal costs nothing real.
+    probe = _fresh_probe()
+    assert cited_numbers(f"an example, `Ruling\n{probe}` in a span") == set()
+    # ⭐ And the other direction, so the rule is a BOUNDARY and not a refusal of
+    # every line that ever held a span: a span that CLOSES on its own line
+    # leaves the join intact.
+    assert cited_numbers("`a span` and Ruling\n296 after it") == {296}
+
+
+def test_the_LIVE_conventions_carry_a_wrapped_citation_and_never_LOSE_one():
+    # ⛔ **The live control, in BOTH directions** (Ruling 191): the instrument
+    # must be seen to FIND and to REFUSE. ⭐ FIND — some pair of prose lines in
+    # `docs/conventions/` yields a citation neither line yields alone, which is
+    # the population `W145` was minted over (14 pairs at `fc56011`). ⚠️ REFUSE —
+    # the block reading never LOSES a member the line reading had, so the gain
+    # cannot be a repair that dropped something quietly (measured: gained
+    # `{166}`, lost nothing). ⛔ If this tree ever stops wrapping a citation,
+    # re-derive this rather than relaxing it: it is the only LIVE evidence.
+    wrapped = 0
+    for path in _conventions():
+        text = path.read_text(encoding="utf-8")
+        lines = prose_lines(text)
+        per_line: set[int] = set()
+        for _, line in lines:
+            per_line |= cited_numbers(line)
+        for (upper, above), (lower, below) in zip(lines, lines[1:], strict=False):
+            if lower != upper + 1:
+                continue
+            if cited_numbers(f"{above}\n{below}") > cited_numbers(above) | cited_numbers(below):
+                wrapped += 1
+        assert per_line <= cited_numbers(text), f"{path.name} LOST a citation to the block"
+    assert wrapped, "no document under docs/conventions/ wraps a citation any more"
 
 
 # ── Ruling 280's second arm: the spellings a finding NAMES ──────────────────

@@ -39,6 +39,7 @@ import tools.quality.reach as reach
 from tests.support import assert_package_contract, repository_root
 from tools.quality.citations import MAX_RANGE_SPAN, cited_numbers
 from tools.quality.reach import (
+    _GAPS,
     CONVENTIONS_DIR,
     REACH_WINDOW,
     RULE_UNREACHED,
@@ -359,3 +360,20 @@ def test_BOTH_notice_lines_say_their_figure_is_an_UPPER_BOUND(tmp_path):
     window, _ = reach_notice(root)
     assert "code spans and fences" in window
     assert "Ruling" in window and "281" in window
+
+
+def test_the_notice_COUNTS_the_declared_gaps_it_NAMES(tmp_path):
+    # ⛔ `W145`, and it is this module's own defect family arriving inside it.
+    # BOTH lines wrote the word "three" beside `_GAPS`, so CLOSING a gap would
+    # have left the instrument mis-stating its own declaration in the same
+    # breath as the figure that declaration qualifies. ⭐ The numeral is DERIVED
+    # from the list now, and this is what keeps it derived: a gap added or
+    # closed moves the count with it or fails here.
+    root = _tree(tmp_path, numbers=SPANNING, convention="Ruling 30 landed\n")
+    for line in reach_notice(root):
+        assert f"{len(_GAPS)} declared gaps" in line
+        for gap in _GAPS:
+            assert gap in line, f"the notice counts {len(_GAPS)} gaps and does not name {gap}"
+    # ⚠️ And the closed one is GONE from both, because a declaration that still
+    # names a gap the grammar reads is the same defect pointing the other way.
+    assert "wrapped across a line break" not in "\n".join(reach_notice(root))
