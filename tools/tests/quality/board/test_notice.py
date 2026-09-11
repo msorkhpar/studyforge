@@ -27,6 +27,7 @@ from tests.support import repository_root
 from tools.quality.board import (
     BOARD,
     ROWS,
+    RULE_UNOBSERVED,
     board_state,
     check_board,
 )
@@ -159,7 +160,17 @@ def test_planted_an_argument_that_OPENS_WITH_A_STATE_is_named(tmp_path: Path) ->
     line = _rows_line(root)
     assert "1 duplicate a state — W2" in line
     assert "0 repeat their own naming" in line, "the two clauses are independent"
-    assert check_board(root) == [], "⛔ a NOTICE, and the state cell is still the register's"
+    # ⛔ **REPAIRED AT THE ONE READER, and `W96` says so** (Ruling 190(b)). ⚠️ This
+    # line read `check_board(root) == []`, and it went red for being WRONG rather
+    # than for `W96` being wrong: ⭐ **the fixture's register cell declares
+    # `in flight` and the fixture board carries no observation table**, which is
+    # exactly `board-unobserved`'s subject — an asserted state with no observer.
+    # ⛔ The clause this test exists for is untouched: Ruling 186(b) is a NOTICE,
+    # and the rule below is a different rule of a different ruling.
+    assert [f.rule for f in check_board(root)] == [RULE_UNOBSERVED], (
+        "⛔ Ruling 186(b) is still a NOTICE; this finding is Ruling 189(b)'s, on the "
+        "fixture's own `in flight` register cell"
+    )
 
 
 def test_planted_an_argument_that_EXTENDS_the_naming_is_NOT_named(tmp_path: Path) -> None:

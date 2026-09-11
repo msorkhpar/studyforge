@@ -1,16 +1,19 @@
 """The board is a register, and this is what keeps it one.
 
 **What it does.** Reads `docs/tasks/BOARD.md` and the per-row files beside it in
-`docs/tasks/rows/`, and fails the build on the four ways a register stops being
-one: a row whose argument has no home, a detail file with no row, one id written
-twice, and **narrative** — prose or a fat cell — accreting in a file every agent
-in this project is told to read.
+`docs/tasks/rows/`, and fails the build on the ways a register stops being one: a
+row whose argument has no home, a detail file with no row, one id written twice,
+**narrative** — prose or a fat cell — accreting in a file every agent in this
+project is told to read, and ⭐ **a row whose state is ASSERTED with no
+observation anywhere on the board to corroborate it** (Ruling 189(b)).
 
 **How you use it.** `check_board(root)` is registered in `tools.quality.CHECKS`;
 `board_state(root)` is registered in `NOTICES` and prints the population every
 run, because a `0` with no denominator is `0 = 0` (Ruling 48).
 
-**Depends on.** `config` for the tree and `report` for the answer. Nothing else.
+**Depends on.** `register` for the parser, `notice` for the population,
+`observation` for Ruling 189(b), `config` for the tree and `report` for the
+answer. Nothing else.
 
 ## ⛔ Why this exists, and the number is the argument
 
@@ -71,12 +74,24 @@ the board is too big; ⭐ **`board-narrative` and `board-row-width` say WHERE**,
 and a governor that only says *too big* is one somebody raises rather than
 obeys.
 
+## ⛔ And the fourth subject, which is a STATE rather than a size (Ruling 189)
+
+⭐ **Ruling 171 found that `git worktree list` can see a row `git log` cannot and
+concluded the board is the only TOTAL instrument.** ⛔ **It did not say the board
+is RELIABLE** — ⚠️ **and the board is the only instrument that ASSERTS in-flight
+rather than OBSERVING it, so it is the only one that can be stale in this
+direction.** ⭐ **The three rules live in `observation.py` with their founding
+bytes**, and the reason they are here at all rather than in a wave-check script
+is Ruling 189(b): ⛔ **the primary reading needs NO GIT** — it compares three
+cells of one row with each other.
+
 ## ⛔ What this deliberately does NOT assert
 
-⚠️ **Nothing about a row's *content*.** Whether a naming is a good naming, an
-owner right, or a state current, is the PO's judgement and check 4's job. ⭐ This
-module asserts **shape**: that every fact has exactly one home, and that the
-home a reader is told to load stays loadable.
+⚠️ **Nothing about a row's *naming*.** Whether a naming is a good naming or an
+owner right is the PO's judgement and check 4's job. ⭐ This module asserts
+**shape**: that every fact has exactly one home, that the home a reader is told
+to load stays loadable, and that a state the board asserts is a state the board
+also observes.
 
 ⛔ **And nothing about `BOARD-ARCHIVE.md`'s size.** A record is *supposed* to
 grow monotonically; that is what makes it a record. ⭐ **Bounding it would push
@@ -86,12 +101,30 @@ the reasoning back onto the board**, which is the defect, not the remedy.
 a bound there would forbid the amendment those files exist for. ⭐ **So
 `board_state` prints their bytes instead — Ruling 183: a bound REMOVED because
 its subject became editable is replaced by a NOTICE, never by nothing.**
+
+⛔ **Nor whether a branch the board names EXISTS**, which is Ruling 189(c) and
+(d). ⭐ **That reading is `corroborate.py`'s, it shells out to `git`, and the
+floor does not import it** — a floor check's verdict may not depend on untracked
+state (Ruling 80), and a branch position is the purest untracked state there is.
 """
 
-from collections.abc import Callable
 from pathlib import Path
 
+from tools.quality.board.notice import board_state, rows_on_disk
+from tools.quality.board.observation import (
+    ABSENT,
+    INFLIGHT_CLOSE,
+    INFLIGHT_OPEN,
+    NOT_STARTED,
+    RULE_DISAGREEMENT,
+    RULE_INFLIGHT,
+    RULE_UNOBSERVED,
+    STAND_INS,
+    STARTED,
+    observation_findings,
+)
 from tools.quality.board.register import (
+    BOARD,
     BOARD_FRAME,
     BOARD_NARRATIVE_CEILING,
     BOARD_PER_ROW,
@@ -99,26 +132,16 @@ from tools.quality.board.register import (
     REGISTER_CLOSE,
     REGISTER_OPEN,
     ROW_FRAME,
+    ROWS,
     STATES,
-    duplicates_a_state,
     is_closed,
-    namings,
     narrative_bytes,
     register,
-    repeats_its_naming,
-    row_order,
     state,
     table_lines,
 )
 from tools.quality.config import read_text, relative
 from tools.quality.report import Finding
-
-#: The register itself. ⛔ One file, named here rather than discovered, because
-#: a check that hunts for the board would pass on a repository that had lost it.
-BOARD = "docs/tasks/BOARD.md"
-
-#: The directory holding one file per live row.
-ROWS = "docs/tasks/rows"
 
 RULE_DETAIL = "board-detail"
 RULE_ORPHAN = "board-orphan"
@@ -130,34 +153,36 @@ RULE_STATE = "board-state"
 RULE_FRAME = "board-frame"
 
 __all__ = [
+    "ABSENT",
     "BOARD",
     "BOARD_FRAME",
     "BOARD_NARRATIVE_CEILING",
     "BOARD_PER_ROW",
     "BOARD_ROW_CEILING",
+    "INFLIGHT_CLOSE",
+    "INFLIGHT_OPEN",
+    "NOT_STARTED",
     "REGISTER_CLOSE",
     "REGISTER_OPEN",
     "ROWS",
     "ROW_FRAME",
     "RULE_DETAIL",
+    "RULE_DISAGREEMENT",
     "RULE_DUPLICATE",
     "RULE_FRAME",
+    "RULE_INFLIGHT",
     "RULE_NARRATIVE",
     "RULE_ORPHAN",
     "RULE_SIZE",
     "RULE_STATE",
+    "RULE_UNOBSERVED",
     "RULE_WIDTH",
+    "STAND_INS",
+    "STARTED",
     "STATES",
     "board_state",
     "check_board",
 ]
-
-
-def _rows_on_disk(root: Path) -> dict[str, Path]:
-    directory = root / ROWS
-    if not directory.is_dir():
-        return {}
-    return {path.stem: path for path in sorted(directory.glob("*.md"))}
 
 
 def check_board(root: Path) -> list[Finding]:
@@ -168,6 +193,10 @@ def check_board(root: Path) -> list[Finding]:
     file with no row is a file nobody will ever be sent to. ⭐ One of the two
     always survives a careless edit, which is exactly why the check that only
     looks one way is the one that misses.
+
+    ⚠️ **Ruling 189(b)'s three rules are asserted in both directions for the same
+    reason** — ⛔ **a stale row PRESENT and a live row ABSENT are one defect with
+    two shapes, and the measured failure showed both at once.**
     """
     text = read_text(root / BOARD)
     if text is None:
@@ -181,7 +210,7 @@ def check_board(root: Path) -> list[Finding]:
         return []
 
     findings: list[Finding] = []
-    on_disk = _rows_on_disk(root)
+    on_disk = rows_on_disk(root)
     seen: dict[str, int] = {}
     expected: set[str] = set()
 
@@ -302,87 +331,7 @@ def check_board(root: Path) -> list[Finding]:
                 )
             )
 
+    # ⛔ Ruling 189(b), and it is LAST because it is the only rule here that reads
+    # two tables against each other rather than one cell against a bound.
+    findings.extend(observation_findings(text))
     return findings
-
-
-def board_state(root: Path) -> list[str]:
-    """Print the population before it is reduced to a verdict (Ruling 128).
-
-    ⛔ Where there is no board this SAYS SO rather than returning nothing: a
-    silent notice about an absent register is the `0 = 0` this exists to stop
-    (Ruling 48), and the honest line names who does enforce presence.
-
-    ## ⛔ Two readings here forbid nothing, and that is what they are for
-
-    ⭐ **`rows/`'s BYTES — Ruling 183.** ⛔ **A bound on a row file would forbid
-    the thing the file exists for**, and nothing can tell *"the PO re-scoped a
-    row"* from *"the PO pasted a fragment"*. ⚠️ **That retires the GATE and not
-    the MEASUREMENT** — ⛔ **measured by the CTO, pinned: `rows/` inflated 112×,
-    to 3.2 MB, with this line BYTE-IDENTICAL and the floor clean**, because it
-    printed a COUNT. ⭐ **Which is this module's own founding defect wearing a new
-    carrier:** the board was split once, grew to four times the trigger size,
-    *"and nothing noticed, because nothing was measuring."*
-
-    ⭐ **The files whose ARGUMENT IS THEIR NAMING — Ruling 186.** ⛔ **A CLOSED
-    PREDICATE, not a threshold**: see `repeats_its_naming` for what it compares
-    and `argument` for why the span is never the file. ⚠️ **`board-frame` passes
-    these files and is RIGHT to** — widening it to judge whether an argument is
-    PRESENT rebuilds exactly the gate Ruling 180 removed.
-
-    ⛔ **A cutoff appearing in this function is the signal a gate has been
-    rebuilt.** ⭐ **The contract both readings answer to is
-    `docs/conventions/board.md`**, and it is not restated here.
-    """
-    text = read_text(root / BOARD)
-    if text is None:
-        return [
-            f"board: none — no {BOARD} in this checkout. This is not a failure: the floor "
-            f"runs over trees that are not this repository. ⛔ In THIS repository its "
-            f"absence is a build failure, and tools/tests/quality/board/test_init.py says so."
-        ]
-    rows = register(text)
-    identifiers = {i for _n, ids, _s in rows for i in ids}
-    live = [row for row in rows if not is_closed(row[2])]
-    rows_on_disk = _rows_on_disk(root)
-    # ⛔ Ruling 183, and `st_size` rather than a clock or an enumeration order,
-    # over a SORTED population, so the reading is reproducible (R10).
-    rows_bytes = sum(path.stat().st_size for path in sorted(rows_on_disk.values()))
-    # ⛔ Ruling 186(b)'s two closed predicates, over ONE declared population.
-    named = namings(text)
-    bodies = {name: read_text(path) or "" for name, path in rows_on_disk.items()}
-    faults = (
-        ("repeat their own naming", repeats_its_naming),
-        ("duplicate a state", lambda body, name: duplicates_a_state(body)),
-    )
-    table = table_lines(text)
-    widest = max((len(line.encode()) for _n, line in table), default=0)
-    return [
-        f"board: {len(rows)} register rows, {len(live)} live, "
-        f"{len(rows_on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
-        f"(no bound — Ruling 183); "
-        f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
-        f"widest row {widest} of {BOARD_ROW_CEILING}, "
-        f"{len(text.encode())} bytes total of "
-        f"{BOARD_FRAME + BOARD_PER_ROW * len(identifiers)} allowed.",
-        f"row arguments in {ROWS}/ (Ruling 186, no bound): "
-        + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
-        + ".",
-    ]
-
-
-def _fault_reading(
-    what: str,
-    bodies: dict[str, str],
-    named: dict[str, str],
-    holds: Callable[[str, str], bool],
-) -> str:
-    """One of Ruling 186(b)'s clauses, as a count AND the files it names.
-
-    ⭐ **The files, not only the count** — Ruling 184's reason, reused: a reader
-    who can see WHICH row can dismiss a false positive with one `git show`.
-    ⛔ Ordered by `row_order`, never by the filesystem (R10).
-    """
-    found = sorted(
-        (n for n, body in bodies.items() if holds(body, named.get(n, ""))), key=row_order
-    )
-    return f"{len(found)} {what}" + (f" — {' '.join(found)}" if found else "")
