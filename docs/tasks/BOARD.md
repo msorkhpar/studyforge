@@ -32,10 +32,12 @@ why a close ran the way it did is the archive's.**
 |---|---|---|---|
 | **M0** — foundations | ✅ CLOSED | — | [record](BOARD-ARCHIVE.md#m0-foundations) |
 | **M1** — the framework stands up | ✅ CLOSED | `2fe56a4` | [record](BOARD-ARCHIVE.md#m1s-close-run-at-2fe56a4-all-nine-true-at-one-ref-and-rows-18-were-re-taken-not-inherited) |
+| **M2** — a corpus is readable | ✅ CLOSED | `2d0cfe7` | [record](BOARD-ARCHIVE.md#m2s-close-run-at-2d0cfe7-nine-rows-the-fifteen-task-merges-re-derived-and-the-two-gaps-are-named-rather-than-absent) |
 | **M2 step 2.1** | ✅ CLOSED | `a00337b` | [record](BOARD-ARCHIVE.md#m2-step-21s-close-run-at-a00337b-all-five-re-taken-and-the-ref-moved-twice-underneath-it) |
 | **M2 step 2.2** | ✅ CLOSED | `ce80120` | [record](BOARD-ARCHIVE.md#m2-step-22s-close-run-at-ce80120-all-four-re-taken-and-the-four-merges-derived-rather-than-received) |
 | **M2 step 2.3** | ✅ CLOSED | `798956c` | [record](BOARD-ARCHIVE.md#m2-step-23s-close-run-at-798956c-both-rows-re-taken-the-two-merges-derived-and-the-negative-control-is-a-synthesised-commit-because-no-branch-in-this-repository-is-unmerged) |
-| **M2 step 2.4** | ⏳ **OPEN** | — | [opened](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| **M2 step 2.4** | ✅ CLOSED | `2d0cfe7` | [record](BOARD-ARCHIVE.md#m2-step-24s-close-run-at-2d0cfe7-all-four-rows-re-taken-the-merges-derived-and-ruling-204-is-what-makes-it-clean) |
+| **M3 step 3.1** | ⏳ **OPEN** | — | [opened](BOARD-ARCHIVE.md#m3-step-31-open-two-rows-no-in-step-edge-and-one-of-them-needs-a-repository-that-does-not-exist) |
 
 ⛔ **Ruling 97 binds every one of those refs: a close is a set of measurements at
 ONE named ref, and no row is inherited across a ref change.**
@@ -46,40 +48,37 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN at round 40's open, both instruments, at `1c5e913`** — ⭐ **and a THIRD
-reading this table has never had: `python3 -m tools.quality.board.corroborate`,
-which is no longer my word against the board.**
+**RE-TAKEN at round 41's CLOSE, all three instruments, at `2d0cfe7`** —
+⛔ **and `corroborate` read `2 of 2 REFUTED, exit 1` against the table this
+replaces, which is the instrument beating a human to a stale table for the SECOND
+consecutive wave** ([the superseded reading](BOARD-ARCHIVE.md#the-in-flight-re-take-the-instrument-found-it-again-and-this-is-the-second-consecutive-wave-it-beat-a-human-to-it)).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-30` | Developer 1 | `wt/dev1`, `feat/SF-30-reader-state` | 0 | in flight |
-| `W91` | Developer 2 | `wt/dev2`, `fix/W91-rulings-index` | 0 | in flight |
+| `W74` | Developer 1 | `wt/dev1`, `fix/W74-sibling-runnable` | 2 | in flight |
+| `W111` | Developer 2 | `wt/dev2`, `fix/W111-W110-corroborate` | 0 | in flight |
+| `W110` | Developer 2 | `wt/dev2`, `fix/W111-W110-corroborate` | 0 | in flight |
 <!-- /inflight -->
 
 ⛔ **THE DELIMITERS ARE RULING 196'S AND THEY ARE THE CONTRACT THAT RETIRES A
 RAMP** — ⭐ **a header is INFERRED, so an absent table is indistinguishable from a
 renamed column and can only be ANNOUNCED; a delimiter is DECLARED, so an absent
-marker can be REFUSED.** ⚠️ **Landing them is one PO board edit and nothing more:
-the REFUSAL is `W111`, because `observation.py` still reads its column roles out of
-the header INSIDE these markers.**
+marker can be REFUSED.** ⚠️ **The REFUSAL is `W111`, in flight above, because
+`observation.py` still reads its column roles out of the header INSIDE these
+markers.**
 
-⛔ **THE TABLE THIS REPLACES HELD `SF-26` AND `W96`, AND BOTH HAVE MERGED** —
-`8d17314` and `3432e9a`, each derived from the BRANCH and never from the row, which
-is Ruling 189(d). ⭐ **So this table is REPLACED, never appended beneath, and the
-superseded reading is in the round record** (`PO-30/2`, tenth round running).
+⚠️ **TWO ROWS NAMING ONE BRANCH IS THE DISPATCH AND NOT A DUPLICATE:** ⛔ **`W111`
+and `W110` are one branch in one checkout because they are one module, priced as a
+pair before dispatch** — ⭐ **and `0` ahead is legitimate for all three rows,
+because a branch with no commit is invisible to `--no-merged` by construction
+(Ruling 130) and `--no-merged` is EMPTY at this ref.** ⚠️ **So the `Checkout` cell
+is the only cell separating JUST DISPATCHED from LONG FINISHED, which is what
+`W110` is the cost of.**
 
-⚠️ **BOTH ROWS ABOVE ARE CORROBORATED ON THE CHECKOUT CELL ALONE, and `0` ahead is
-legitimate for both:** ⛔ **a branch with no commit is invisible to `--no-merged` by
-construction (Ruling 130), and `--no-merged` is EMPTY at this ref.** ⭐ **So the
-`Checkout` cell is the only cell separating JUST DISPATCHED from LONG FINISHED** —
-⚠️ **and `W110` is the row that says what that costs, because a live checkout
-discharges the corroboration of a branch git already knows is spent.**
-
-⛔ **The office checkouts are NOT named here any more, and that is one fact moving
-to one home rather than a deletion:** ⭐ **`corroborate` prints every checkout no
-row names, counted and named, so a prose list on this board would be the second
-copy** (`W96/5`, scheduled on `W100`).
+⛔ **The office checkouts are NOT named here, and that is one fact with one home
+rather than a deletion:** ⭐ **`corroborate` prints every checkout no row names,
+counted and named** (`W96/5`, scheduled on `W100`).
 
 ## Next rows — placed, not yet taken
 
@@ -89,13 +88,11 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W74` | displaced twice by gates that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
-| 2 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
-| 3 | `W111` | ⛔ **JUMPS `W100`, `W103` and `W105`–`W109` under Ruling 75, on a trigger that is NOT mine**: Ruling 196 gives it *"the round after"* the delimiters land, and they land in this round's merge | round 40 |
-| 4 | `W110` | ⛔ **JUMPS the same five under Ruling 75**: `corroborate` is the instrument that catches a stale observation table, and it is GREEN over one whenever a checkout is leaked | round 40 |
-| 5 | `W100` | ⭐ **UNBLOCKED — the delimiter it shares with `W96` landed this round, so its `<!-- scheduled -->` half is all that is left** | round 39, unblocked round 40 |
-| 6 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
-| 7 | `W105`–`W109` | ⭐ **round 39's five mints, jumping nobody** | round 39 |
+| 1 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order — ⛔ **displaced a SECOND time this wave by a gate that postdates it, RATIFIED** | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
+| 2 | `W100` | ⭐ **UNBLOCKED — the delimiter it shares with `W96` has landed, so its `<!-- scheduled -->` half is all that is left** | round 39, unblocked round 40 |
+| 3 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
+| 4 | `W105`–`W109` | ⭐ **round 39's five mints, jumping nobody** | round 39 |
+| 5 | `W88` | ⭐ **UNBLOCKED — its gate `W91` merged** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL, and that is a correction of
 this paragraph rather than a style choice:** ⚠️ **it used to read *"rows 1–2 do not
@@ -103,13 +100,13 @@ invoke Ruling 75, rows 3 and 4 do"*, and the ordinals stopped being true the mom
 two rows were dispatched out of the table.** ⭐ **An id resolves; a position does
 not.**
 
-⛔ **`W111` AND `W110` BOTH INVOKE RULING 75 AND BOTH SAY SO IN THEIR OWN ROWS, and
-the one thing neither may do is arrive in the same wave unpriced:** ⚠️ **they are
-both inside `tools/quality/board/`, whose modules sit at `386`, `383` and `337`
-against R11's 400** — ⛔ **so check 4's sub-step is OWED on the pair before either is
-dispatched beside the other, and each row file carries that condition.** ⭐ **`W74`,
-`W63`→`W64`, `W100`, `W103` and `W105`–`W109` invoke nothing: the first two are the
-rows being jumped and the rest are jumped rather than jumping.**
+⛔ **NO ROW IN THIS TABLE INVOKES RULING 75 ANY MORE, and that is a reading rather
+than a simplification:** ⭐ **`W111` and `W110` were the two that did, and both are
+in flight above; `W63`→`W64` is the pair they jumped.** ⚠️ **A THIRD displacement
+of `W63` is the reading that would make its age a defect rather than an ordering,
+and under Ruling 75 it goes in the row.** ⛔ **`W88` arrives carrying an obligation
+from the row that unblocked it, and that obligation is in `rows/W88.md` — priced
+before dispatch rather than discovered by it.**
 
 ## The register — every `W` row
 
@@ -198,7 +195,7 @@ they have exactly one home each.
 | W75 | No document says how `studyforge` gets on the path | framework agent | `todo` | [`rows/W75.md`](rows/W75.md) |
 | W76 | `render.page`'s five cross-package helpers are private and every renderer imports them | framework agent | ✅ done — `c3e2919` | [record](BOARD-ARCHIVE.md#w76-renderpages-five-cross-package-helpers-are-private-and-every-renderer-imports-them) |
 | W77 | The corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` | E09 | routed — folded into `E09`'s delivery, `W5`'s precedent | [`rows/W77.md`](rows/W77.md) |
-| W78 | Citations into files a live document does not own — a line number that moves, and a `rows/<ID>.md` a close DELETED | framework agent | `todo` — minted round 35, widened round 40 | [`rows/W78.md`](rows/W78.md) |
+| W78 | Citations into files a live document does not own — a line number that moves, and a `rows/<ID>.md` a close DELETED | framework agent | `todo` — minted round 35, widened rounds 40 and 41 | [`rows/W78.md`](rows/W78.md) |
 | W79 | Two small carries — each of THREE golden regenerators names the other two, and the census comment cites its command | framework agent | `todo` — minted round 35, widened round 37 | [`rows/W79.md`](rows/W79.md) |
 | W80 | `SF-19b`'s Acceptance names a consumer corpus by ROLE, and owes an instrument or a disposition | PO | `todo` | [`rows/W80.md`](rows/W80.md) |
 | W81 | `SK-03`'s consumer-corpus Acceptance clause, the same class | PO | `todo` | [`rows/W81.md`](rows/W81.md) |
@@ -208,10 +205,10 @@ they have exactly one home each.
 | W85 | The board instrument's six carries — Rulings 182 and 183, and `CTO-47/3`, `/4`, `/5` | Developer 2 | ✅ done — `d430f34` | [record](BOARD-ARCHIVE.md#w85-the-board-instruments-six-carries-rulings-182-and-183-and-cto-473-4-5) |
 | W86 | Ruling 184's two clauses into check 3, and the 74 frozen lines `W85` is what unfreezes | Developer 2 | ✅ done — `d430f34` | [record](BOARD-ARCHIVE.md#w86-ruling-184s-two-clauses-into-check-3-and-the-74-frozen-lines-w85-is-what-unfreezes) |
 | W87 | `board_state`'s notice prints the row files whose argument IS their own naming cell | Developer 2 | ✅ done — `d430f34` | [record](BOARD-ARCHIVE.md#w87-boardstates-notice-prints-the-row-files-whose-argument-is-their-own-naming-cell) |
-| W88 | The thin row files gain an ANCHORED pointer, and four lose a dangling deictic | PO | `todo` — behind `W91` | [`rows/W88.md`](rows/W88.md) |
+| W88 | The thin row files gain an ANCHORED pointer, and four lose a dangling deictic | PO | `todo` — ⭐ **UNBLOCKED, `W91` merged** | [`rows/W88.md`](rows/W88.md) |
 | W89 | An R7 gate's false positive on ordinary source, narrowed in the gate and not in the source | framework agent | `todo` — Ruling 179 | [`rows/W89.md`](rows/W89.md) |
 | W90 | The root index can link no container page, and it is a `toc_api` question | PO | `todo` — owed by M4 | [`rows/W90.md`](rows/W90.md) |
-| W91 | The rulings index stops at 56, and rulings run to 186 | PO | `todo` — gates `W88` | [`rows/W91.md`](rows/W91.md) |
+| W91 | The hand-maintained rulings index stops short of the live series, so a bare `(Ruling n)` resolves to nothing | Developer 2 | ✅ done — `8be7e86` | [record](BOARD-ARCHIVE.md#w91-the-hand-maintained-rulings-index-stops-short-of-the-live-series-so-a-bare-ruling-n-resolves-to-nothing) |
 | W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | `todo` | [`rows/W92.md`](rows/W92.md) |
 | W93 | *Point the skill at a corpus* is not performable — no corpus-shaped input on the surface | framework agent | `todo` | [`rows/W93.md`](rows/W93.md) |
 | W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | `todo` — Ruling 188 | [`rows/W94.md`](rows/W94.md) |
@@ -231,6 +228,9 @@ they have exactly one home each.
 | W109 | Every consumer that reads `origin` from a document instead of the parser is a second reader of a growing field | framework agent | `todo` — `W95/3` | [`rows/W109.md`](rows/W109.md) |
 | W110 | `corroborate`'s live-checkout arm discharges a branch git already knows is SPENT, so a leaked worktree keeps a stale row green | framework agent | `todo` — `PO-40/1`, placed round 40 | [`rows/W110.md`](rows/W110.md) |
 | W111 | Ruling 196's expiry — the header locator ANNOUNCES where a delimiter can REFUSE, and the delimiters have landed | framework agent | `todo` — Ruling 196, placed round 40 | [`rows/W111.md`](rows/W111.md) |
+| W112 | A browser clause discharged on a HOST reading owes a COMMITTED check, or no second office can reproduce it | framework agent | `todo` — `SF-30/1`, Ruling 204, behind `W36` | [`rows/W112.md`](rows/W112.md) |
+| W113 | `Address(tuple(<str>))` is accepted and splits a string into one segment per character | framework agent | `todo` — `SF-30/2`, `SF-12`'s contract | [`rows/W113.md`](rows/W113.md) |
+| W114 | R11's ceiling has no instrument outside `.py`, so an authored asset at the ceiling is invisible to the gate | framework agent | `todo` — Ruling 207 | [`rows/W114.md`](rows/W114.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
