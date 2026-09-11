@@ -1237,3 +1237,41 @@ correctly answers NOT AUTHORITATIVE.** ⚠️ **Two instruments reached by diffe
 routes need the same third state, so the third state is a property of this
 project's instruments — and Ruling 204 already said a SKIP is a reading OF THE
 GATE. This is that, for an exit code.**
+
+## ⛔ RULED ROUND 62 — a HELD row file may be amended, and the test is the DIFF rather than the author's assurance
+
+⚠️ **Reasoning and the measurement that decided it:
+[`../tasks/handoffs/CTO-2026-09-11-round62.md`](../tasks/handoffs/CTO-2026-09-11-round62.md).**
+
+### ⛔ Ruling 311 — a post-dispatch amendment to a row a developer is HOLDING is permitted only where it widens NO acceptance clause, and that is READ OFF THE DIFF
+
+⛔ **A row file is read into a taker's context at dispatch, so what the taker acts on is a
+SNAPSHOT and not the tree** — ⚠️ **the same property `CLAUDE.md` opens with, and the reason a
+row's round-47 section can call *"nobody holds this row"* the SAFE half of a fold.** ⭐ **The
+unsafe half is nevertheless permitted, because the alternative is a ruling that lives only in
+a record, which is Ruling 295's defect and the very thing such a row exists to close.**
+
+```bash
+# ⛔ Run BEFORE amending a row file that a `git worktree list` shows checked out.
+#    The amendment must be ADDITIVE and every ACCEPTANCE clause byte-identical.
+git diff --numstat "$BASE"...HEAD -- docs/tasks/rows/"$ROW".md    # deletions MUST be 0
+git diff "$BASE"...HEAD -- docs/tasks/rows/"$ROW".md | grep '^@@'  # hunks, and where they land
+```
+
+⛔ **Pass: `0` deletions, and no hunk touches the clause that states the acceptance.** ⚠️ **An
+amendment that widens an acceptance is a re-dispatch, not an amendment, and it is refused —
+the holder cannot be failed against a clause their snapshot cannot contain.** ⭐ **Where the
+amendment is additive the holder's worst case is that they do not do the extra, and the extra
+is not owed: so the snapshot stays sufficient, which is the whole of the permission.**
+
+⭐ **THE MEASUREMENT THAT RATIFIED IT, and it is stronger than any of the three arguments
+offered for it** (CTO round 62, in the pinned container): ⛔ **the amendment converted four
+rulings into a row that was dispatched and HELD; `git diff --numstat` read `+76 / -0` with a
+single hunk appended past the acceptance; and the holder — working from a snapshot taken
+BEFORE the amendment existed — landed `266 267 268 269 273 274 275`, which contains ALL FOUR
+of the rulings the amendment was being written about.** ⚠️ **A holder who independently does
+the work an amendment describes is the proof that the amendment widened nothing.**
+
+⛔ **AND THE DISCLOSURE IS NOT OPTIONAL** (Ruling 283's standing clause): the amending office
+states IN THE ROW FILE that the row is held as the section lands, so a later reader can tell a
+snapshot-safe section from one taken before dispatch.
