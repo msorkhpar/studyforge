@@ -22,6 +22,16 @@ from tests.fixture_checks import FIXTURES as FIXTURE_ROOT
 from tests.fixture_checks import fixture_paths
 from tests.support import repository_root
 
+# ⛔ **The SHIPPED resolver, imported rather than re-derived** (`W127`, `W138`).
+# This module answered *"where do the sibling components live?"* with its own
+# `repository_root().parent` — the **third** copy of a rule this repository
+# ships once, and the only one of the three whose absent branch neither skipped
+# nor failed. ⚠️ Imported from `__main__` because that is where the rule and
+# its explanation live, and where `tests/test_knowledge_index.py` and
+# `tools/tests/workspace/test_main.py` already import it from: a **fourth**
+# home would be this defect again, one directory over.
+from tools.workspace.__main__ import workspace_root as shipped_workspace_root
+
 #: ⛔ **What this module's sweeps assert, as a rule id** (Ruling 46). Placing a
 #: corpus reads its manifest first, and `corpus-api` is the one rule that
 #: refuses before any unit can be placed. ⚠️ Nothing else here is a property an
@@ -48,8 +58,10 @@ def test_the_fixture_set_is_read_from_the_declaration():
     assert "invalid/bad-corpus-api" not in FIXTURES
 
 
-#: Where sibling repositories live, as `tests/test_knowledge_index.py` finds
-#: them. ⚠️ A worktree is not beside them, hence the override.
+#: Env override for a workspace the shipped resolver cannot reach — a container
+#: mount, or a synthetic tree in a plant. ⛔ **Not for a worktree**: `W127`
+#: measured that the shipped resolver answers correctly from one, and `W138`
+#: re-measured it here.
 WORKSPACE_ENV = "STUDYFORGE_WORKSPACE"
 
 #: The corpus SF-03's acceptance names by name.
@@ -57,8 +69,22 @@ JAVA_CORPUS = "Claude-senior-java-engineer"
 
 
 def workspace_root() -> Path:
+    """Where sibling repositories live, as `tools.workspace` already computes it.
+
+    ⛔ **The derivation is NOT repeated here** (`W138`). This module answered
+    `repository_root().parent`, which is a **worktree's** parent — and agents
+    work in worktrees, so the corpus below was absent on a tree that had it
+    sitting right beside it. ⭐ The shipped resolver reads
+    `git rev-parse --git-common-dir`, which names the **main** checkout.
+
+    ⚠️ The override still wins, because it is an instruction rather than a
+    derivation: it is how a caller points these checks at a tree the resolver
+    cannot see from where it is running.
+    """
     override = os.environ.get(WORKSPACE_ENV)
-    return Path(override).expanduser() if override else repository_root().parent
+    if override:
+        return Path(override).expanduser()
+    return shipped_workspace_root(repository_root())
 
 
 def containers(fixture):
@@ -139,12 +165,25 @@ def test_every_placed_unit_can_stamp_and_recover_its_own_identity(fixture):
 # --- the corpus the acceptance names ---------------------------------------
 
 
+#: The stand-in's shape, as two numbers rather than two literals buried in a
+#: comprehension. ⚠️ A `48 × 5` grid is exactly the shape that makes a
+#: uniqueness claim easy, which is why the case that places it now says
+#: `synthetic` in its own name (`W138`).
+SYNTHETIC_MODULES = 48
+SYNTHETIC_UNITS_PER_MODULE = 5
+
+#: The floor every placed shape must clear, so a sweep that placed almost
+#: nothing cannot pass by never running (Ruling 48).
+MINIMUM_PATHS = 200
+
+
 def java_modules():
-    """`{directory: [unit source filename, ...]}` for the real Java corpus.
+    """`{directory: [unit source filename, ...]}` for the real Java corpus, or `{}`.
 
     ⚠️ **Unpinned evidence, and named as such.** It reads a sibling repository
-    that may not be checked out; when it is not, the synthetic stand-in below
-    still proves the property. ⛔ R3: read-only, and nothing is written there.
+    that may not be checked out. ⛔ **`{}` is the ABSENCE and nothing else** —
+    no caller of this may turn it into a stand-in without saying so (`W138`).
+    ⛔ R3: read-only, and nothing is written there.
     """
     root = workspace_root() / JAVA_CORPUS
     if not root.is_dir():
@@ -157,34 +196,135 @@ def java_modules():
     return found
 
 
-def shape_to_place():
-    """The Java corpus's real shape, or a stand-in of the same shape.
+def the_java_corpus_or_skip():
+    """The real corpus's shape, or a SKIP THAT SAYS SO.
 
-    ⭐ Never a skip. The property under test — no two units in a corpus of this
-    size and shape collide — is provable without the repository, and the
-    repository only makes the evidence *this* corpus's rather than one like it.
+    ⛔ **`W138`, and it replaces `shape_to_place()`.** That function answered
+    the absence with a synthetic grid of its own and returned a `provenance`
+    string read only inside an assertion message, which fires on red — so on
+    green a clause naming *the Java corpus* was discharged by a `48 × 5` grid
+    and no instrument in this repository could report it. ⭐ A caller may not
+    pass silently on a stand-in it did not ask for: the absence now skips, and
+    the skip is admissible because it SAYS SO (Ruling 204).
     """
-    real = java_modules()
-    if real:
-        return real, "measured"
-    return {f"{n:02d}-module": [f"README_{n}.{u}.md" for u in range(1, 6)] for n in range(1, 49)}, (
-        "synthetic"
+    modules = java_modules()
+    if not modules:
+        pytest.skip(
+            f"{JAVA_CORPUS} is not checked out beside this repository, so this "
+            f"clause is proved of no corpus here (set {WORKSPACE_ENV} to point at "
+            f"the workspace root); the synthetic stand-in of the same shape is "
+            f"placed by its own case, which says it is synthetic"
+        )
+    return modules
+
+
+def synthetic_modules():
+    """A stand-in of roughly the Java corpus's shape, KEPT and NAMED.
+
+    ⭐ **The stand-in is the right thing to have** and `W138` says so in terms:
+    what was wrong was a caller that could not tell the reader which shape it
+    placed. The grid stays, under a name that reports itself.
+    """
+    return {
+        f"{n:02d}-module": [f"README_{n}.{u}.md" for u in range(1, SYNTHETIC_UNITS_PER_MODULE + 1)]
+        for n in range(1, SYNTHETIC_MODULES + 1)
+    }
+
+
+def place_one(module, filename, ordinal):
+    """Every path a `sibling` build would write for one unit of one module."""
+    profile = profile_for("sibling")
+    address = Address.of("basics", module)
+    title = re.sub(r"[^A-Za-z0-9]+", " ", Path(filename).stem).strip()
+    where = profile.unit(
+        address, ordinal, title or f"unit {ordinal}", origin=f"{module}/{filename}"
     )
+    return [where.page, *where.directories]
+
+
+def artifact_paths(modules):
+    """Every path a `sibling` build would write for `{module: [filename, ...]}`."""
+    paths = []
+    for module, units in modules.items():
+        for ordinal, filename in enumerate(units, start=1):
+            paths += place_one(module, filename, ordinal)
+    return paths
+
+
+def collisions(paths):
+    """Every path the shape would write TWICE, as strings, sorted (R10)."""
+    return sorted({str(p) for p in paths if paths.count(p) > 1})
+
+
+def shape_of(modules):
+    """`(modules, units)` — the two numbers that say which corpus was placed."""
+    return len(modules), sum(len(units) for units in modules.values())
 
 
 def test_no_two_units_in_the_java_corpus_produce_the_same_artifact_name():
-    modules, provenance = shape_to_place()
-    assert modules, "no shape to place"
-    profile = profile_for("sibling")
-    paths = []
-    for module, units in modules.items():
-        address = Address.of("basics", module)
-        for ordinal, filename in enumerate(units, start=1):
-            title = re.sub(r"[^A-Za-z0-9]+", " ", Path(filename).stem).strip()
-            where = profile.unit(
-                address, ordinal, title or f"unit {ordinal}", origin=f"{module}/{filename}"
-            )
-            paths += [where.page, *where.directories]
-    duplicates = sorted({str(p) for p in paths if paths.count(p) > 1})
-    assert duplicates == [], f"{provenance} shape collides: {duplicates}"
-    assert len(paths) >= 200, f"{provenance} shape placed only {len(paths)} paths"
+    # ⭐ The clause SF-03's acceptance names BY NAME, and it is now proved of
+    # that corpus or of nothing — never of a grid standing in for it.
+    modules = the_java_corpus_or_skip()
+    paths = artifact_paths(modules)
+    assert collisions(paths) == [], f"{JAVA_CORPUS} would write to one path twice"
+    assert len(paths) >= MINIMUM_PATHS, f"{JAVA_CORPUS} placed only {len(paths)} paths"
+
+
+def test_no_two_units_in_the_synthetic_stand_in_of_the_same_shape_collide():
+    # ⚠️ Its own case, and its name carries its provenance: this proves the
+    # property of a corpus LIKE the one the acceptance names, which is worth
+    # having and is not the same claim.
+    paths = artifact_paths(synthetic_modules())
+    assert collisions(paths) == [], "the synthetic stand-in would write to one path twice"
+    assert len(paths) >= MINIMUM_PATHS, f"the stand-in placed only {len(paths)} paths"
+
+
+def test_the_java_corpus_and_the_synthetic_stand_in_are_not_the_same_shape():
+    """⛔ The reason the substitution mattered, asserted rather than asserted of.
+
+    ⚠️ A stand-in that happened to be the same shape would make the old silent
+    substitution harmless. It is not: the grid is wider and much deeper than
+    the corpus it stood in for, and a uniqueness claim is easiest in exactly
+    that shape.
+    """
+    real = shape_of(the_java_corpus_or_skip())
+    stand_in = shape_of(synthetic_modules())
+    assert real != stand_in, f"the two shapes agree at {real}, so the stand-in proved the claim"
+    assert real[0] < stand_in[0], f"modules: corpus {real[0]}, stand-in {stand_in[0]}"
+    assert real[1] < stand_in[1], f"units: corpus {real[1]}, stand-in {stand_in[1]}"
+
+
+#: Two source filenames one module can carry side by side whose stems slugify
+#: to ONE name. ⚠️ Not invented: `README_1.1.1.md` is the corpus's own
+#: spelling, and the second differs from it only where `slugify` does not look.
+COLLIDING_SOURCES = ("README_1.1.1.md", "README_1-1-1.md")
+
+#: A module name the corpus actually carries, used by the controls below.
+A_MODULE = "01-java-basics"
+
+
+def test_the_collision_check_goes_red_when_two_units_genuinely_collide():
+    """⭐ Ruling 191: the control is seen to FIND and to REFUSE, in one test.
+
+    ⛔ Without this the clause above is a green with no red behind it, which
+    is the failure this row was minted over one level up.
+    """
+    one, two = COLLIDING_SOURCES
+    together = place_one(A_MODULE, one, 1) + place_one(A_MODULE, two, 1)
+    assert collisions(together), "the check cannot go red, so its green says nothing"
+    apart = place_one(A_MODULE, one, 1) + place_one(A_MODULE, two, 2)
+    assert collisions(apart) == [], "the check fires on a shape that does not collide"
+
+
+def test_the_sweeps_positional_ordinal_is_what_separates_those_two_and_not_the_corpus():
+    """⚠️ `W138/2`, recorded here rather than discovered later.
+
+    ⛔ **This sweep numbers a module's units by POSITION**, so within a module
+    every unit gets a distinct ordinal and a collision is unrepresentable
+    whatever the material says — while a real build numbers them from the
+    archive's own `unit["n"]`, which two units CAN share. ⭐ So the green above
+    is a property of this harness's numbering as much as of the corpus, and the
+    day the numbering becomes the corpus's own, this test goes red and points
+    at the finding instead of the change silently meaning more than it says.
+    """
+    assert collisions(artifact_paths({A_MODULE: list(COLLIDING_SOURCES)})) == []
