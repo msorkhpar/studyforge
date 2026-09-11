@@ -46,21 +46,23 @@ ONE named ref, and no row is inherited across a ref change.**
 this table names the ref it was taken at and nothing here is inherited.
 ⭐ **Ruling 171: `git worktree list` is PRIMARY and `git branch` is corroborating.**
 
-**RE-TAKEN at the close of round 37, both instruments, 111 local branches.**
+**RE-TAKEN at round 38's open, both instruments, at `c18df98c`.**
 
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-34` | Developer 1 | `wt/dev1`, `feat/SF-34-chrome` | 0 | in flight |
-| `W85` + `W86` + `W87` | Developer 2 | `wt/dev2`, `fix/board-instrument` | **+1** | in-review |
+| `SF-15` | Developer 1 | `wt/dev1`, `feat/SF-15-contents` | 0 | in flight |
+| `W95` | Developer 2 | `wt/dev2`, `fix/W95-shared-origin-fixture` | 0 | in flight |
 
-⛔ **THE TWO INSTRUMENTS DISAGREE BY ONE ROW AND `worktree list` IS RIGHT, for the
-sixth consecutive round** — `feat/SF-34-chrome` is a checkout at the release tip
-with zero commits, and ⭐ **a branch with no commit is not in `--no-merged` BY
-CONSTRUCTION** (Ruling 130), so the union is a lower bound and this board is the
-only total instrument. ⚠️ **This table was taken ONCE mid-round at `798956c` and
-read `+0` for `fix/board-instrument`; it is REPLACED, not appended beneath, and the
-earlier reading is in the round record** — ⛔ **`PO-30/2` for the seventh round
-running.** ⚠️ **`wt/cto`, `wt/po` and `wt/po-int` are checkouts and are NOT rows.**
+⛔ **RULING 189 FIRED ON THE TABLE THIS REPLACES, AND THE READING NEEDED NO GIT:**
+both its rows declared a started state with **no checkout** and **`ahead 0`** —
+⭐ **a contradiction printed on one row**, while `feat/SF-34-chrome` and
+`fix/board-instrument` had merged. ⛔ **So this table is REPLACED, never appended
+beneath, and the earlier reading is in the round record** (`PO-30/2`, eighth round
+running). ⚠️ **Both rows above carry a CHECKOUT and not a commit, which is Ruling
+130 — a branch with no commit is not in `--no-merged` by construction** — ⭐ **so
+`worktree list` is PRIMARY (Ruling 171) and the `Checkout` cell is the only cell
+that separates JUST DISPATCHED from LONG FINISHED.** ⚠️ **`wt/cto`, `wt/po` and
+`wt/po-int` are checkouts and are NOT rows.**
 
 ## Next rows — placed, not yet taken
 
@@ -70,18 +72,19 @@ argument for each placement is in the round record; this table is the outcome.**
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `SF-15` | ⛔ **cannot START before `SF-34` MERGES** — it rewrites the two functions `SF-34` has already moved to templates, verified in that branch's diff | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
-| 2 | `SF-26` | step 2.4; shares no `src/` file with any 2.4 row, and its golden floor is what makes `SF-30` checkable | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
-| 3 | `SF-30` | step 2.4, last: three files shared with `SF-34`, and a bundle-order assertion that needs `SF-26` | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 1 | `SF-26` | step 2.4; shares no `src/` file with `SF-15` or `SF-30`, and its golden floor is what makes `SF-30` checkable | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 2 | `SF-30` | step 2.4, last: three files shared with the merged `SF-34`, and a bundle-order assertion that needs `SF-26` | [round 37](BOARD-ARCHIVE.md#m2-step-24-open-four-rows-no-in-step-edge-and-check-4s-sub-step-found-a-content-collision-that-a-line-sum-cannot-see) |
+| 3 | `W91` | ⛔ **JUMPED round 34's `W74` and round 32's pair under Ruling 75**: it gates `W88`, and until it lands a bare `(Ruling N)` for `N > 56` is unfollowable by an agent obeying its own brief | round 38 |
 | 4 | `W74` | displaced by a gate that did not exist when it was placed; gates `SF-28` | [round 34](BOARD-ARCHIVE.md#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum) |
 | 5 | `W63` → `W64` | round 32's pair, UNSPENT, keeping its ruled order | [round 32](BOARD-ARCHIVE.md#round-32-the-marker-contract-cannot-read-the-form-both-offices-write-check-6s-instrument-was-answering-the-wrong-question-and-the-emittergate-pair-is-broken-in-both-directions) |
 
-⛔ **Rows 1–3 do NOT invoke Ruling 75, and the reason is stated rather than
+⛔ **Rows 1–2 do NOT invoke Ruling 75, and the reason is stated rather than
 assumed: Ruling 75's subject is a NEWLY MINTED row jumping an older `todo` row OF
 THE SAME SIZE CLASS.** ⭐ **These are product rows of the OPEN STEP, and the
 milestone order in `README.md` is what ranks them** — ⛔ **a backlog `W` row has
 never outranked the open step's own membership, and writing the jump down would
-imply a contest that the plan already settled.**
+imply a contest that the plan already settled.** ⚠️ **Row 3 DOES invoke it, and
+says so in the row.**
 
 ## The register — every `W` row
 
@@ -177,9 +180,9 @@ they have exactly one home each.
 | W82 | `SK-04`'s consumer-corpus Acceptance clause, the same class | PO | `todo` | [`rows/W82.md`](rows/W82.md) |
 | W83 | `TC-00`'s consumer-corpus Acceptance clause, the same class | PO | `todo` | [`rows/W83.md`](rows/W83.md) |
 | W84 | `SK-01`'s consumer-corpus Acceptance clause, answered by Ruling 166 | PO | ✅ done — Ruling 166, `911c56f` | [record](BOARD-ARCHIVE.md#w84-sk-01s-consumer-corpus-acceptance-clause-answered-by-ruling-166) |
-| W85 | The board instrument's six carries — Rulings 182 and 183, and `CTO-47/3`, `/4`, `/5` | Developer 2 | in flight — `fix/board-instrument` | [`rows/W85.md`](rows/W85.md) |
-| W86 | Ruling 184's two clauses into check 3, and the 74 frozen lines `W85` is what unfreezes | Developer 2 | in flight, behind `W85` | [`rows/W86.md`](rows/W86.md) |
-| W87 | `board_state`'s notice prints the row files whose argument IS their own naming cell | Developer 2 | in-review, with `W85` | [`rows/W87.md`](rows/W87.md) |
+| W85 | The board instrument's six carries — Rulings 182 and 183, and `CTO-47/3`, `/4`, `/5` | Developer 2 | ✅ done — `d430f34` | [record](BOARD-ARCHIVE.md#w85-the-board-instruments-six-carries-rulings-182-and-183-and-cto-473-4-5) |
+| W86 | Ruling 184's two clauses into check 3, and the 74 frozen lines `W85` is what unfreezes | Developer 2 | ✅ done — `d430f34` | [record](BOARD-ARCHIVE.md#w86-ruling-184s-two-clauses-into-check-3-and-the-74-frozen-lines-w85-is-what-unfreezes) |
+| W87 | `board_state`'s notice prints the row files whose argument IS their own naming cell | Developer 2 | ✅ done — `d430f34` | [record](BOARD-ARCHIVE.md#w87-boardstates-notice-prints-the-row-files-whose-argument-is-their-own-naming-cell) |
 | W88 | The thin row files gain an ANCHORED pointer, and four lose a dangling deictic | PO | `todo` — behind `W91` | [`rows/W88.md`](rows/W88.md) |
 | W89 | An R7 gate's false positive on ordinary source, narrowed in the gate and not in the source | framework agent | `todo` — Ruling 179 | [`rows/W89.md`](rows/W89.md) |
 | W90 | The root index can link no container page, and it is a `toc_api` question | PO | `todo` — owed by M4 | [`rows/W90.md`](rows/W90.md) |
@@ -191,11 +194,17 @@ they have exactly one home each.
 | W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | `todo` | [`rows/W96.md`](rows/W96.md) |
 | W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
 | W98 | `QA-03`'s harness judges 2 of 6 chrome regions — `site.py` passes no `links` and builds one page kind | framework agent | `todo` — behind `W36` | [`rows/W98.md`](rows/W98.md) |
+| W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | `todo` — Ruling 189's family | [`rows/W100.md`](rows/W100.md) |
+| W101 | Check 4's sub-step compares `Owns` to a diff, and `Owns` is brace expansion and directory prefixes | framework agent | `todo` — `CTO-48/12`, before the next parallel pair | [`rows/W101.md`](rows/W101.md) |
+| W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | `todo` — Ruling 184's third clause, the CTO's to rule | [`rows/W102.md`](rows/W102.md) |
+| W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
+| W104 | The lint notice names no subject, and `ruff format` formats Markdown as well as Python | framework agent | `todo` — not `W38`'s subject | [`rows/W104.md`](rows/W104.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
 register carries them as one.** ⭐ **`W99` is a reserved sentinel and is not an
-id.**
+id, so round 38's mints START AT `W100`** — ⚠️ **and the gap is deliberate rather
+than a missing row.**
 
 ## R21 — the register of unlocated contracts
 
@@ -233,8 +242,8 @@ trigger, and the trigger is an event rather than a date.
 | **SK-07 must not say "submodule"** | PO | ✅ **done now** — `E11` corrected | R18's amendment reached the ruling but not the task that consumes it. The framework is a **sibling checkout at a recorded commit** |
 | **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | **M1 → M2 boundary** | Five tasks, not eighty-five. They are the discovery-shaped ones, where you do not know the name of the thing you are looking for — `query`'s weak case |
 | **`Effort` field applied beyond the four named tasks** | PO | as each computation-shaped task is assigned | ✅ The field exists now (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill eighty-four tasks; add it when a task is assigned and its shape is known |
-| ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | ⛔ **before M1's wave opens** | The `[structural]` sweep is blind to findings filed before the marker existed — ⚠️ **including the one that motivated the mechanism** |
-| **R21's three remaining open rows** *(was five, then four)* | CTO | each before its named task builds | ✅ `consuming.json` filled; ✅ **overlay `content.json` closed by SF-09** — `content_api` minted and asserted. ⛔ **ROUND 23: the discovery cache is no longer "the near one" — M2 step 2.1 IS OPEN and `SF-04` is BLOCKED on it.** ⭐ **Escalated to the CTO as this round's first item, alongside `W39`** |
+| ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | ⛔ **EXPIRED — it named M1's wave open, and M1 CLOSED at `2fe56a4`** | ✅ **DISCHARGED, re-taken round 38 at `c18df98c`: all 23 carry a marker AND a disposition, so the triage was done and only this cell was not.** ⛔ **The defect is structural and is `W100`: a `## Scheduled` cell declares NO state, so `board-state` cannot read it and an expired trigger can only be kept freshly wrong** |
+| **R21's open rows** | CTO | each before its named task builds | ⛔ **POINTER, not a second copy — the open set is `## R21` above, and that section resolves from spec §R9.** ⚠️ **The narrative this replaces typed a COUNT that disagreed with `## R21` on the same board, and cited a step that has since closed** — ⭐ **re-taken round 38 against §R9's own table and routed to the CTO, whose register it is** |
 
 ---
 

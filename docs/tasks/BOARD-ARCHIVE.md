@@ -10485,3 +10485,78 @@ pinned image, and Ruling 40 makes that container the only authority for a readin
 so a check that cannot run there has no authority anywhere.** ⭐ **`$STUDYFORGE_VISUAL=required`
 turns the silence into a failure today, which makes the skip a CHOICE `W36` is the
 cost of rather than an accident.**
+
+⭐ **Three bodies below — `W85`, `W86` and `W87` — were moved here by PO round 38
+at the close of `fix/board-instrument` (merged `d430f34`).** ⛔ **Moved WHOLE, and
+FOUR links were re-addressed in the commit that moved them, which Ruling 174
+licenses only because it is the SAME commit**: one `](../BOARD-ARCHIVE.md#…)` in
+each of the three, plus `W86`'s `](../../conventions/board.md)`, which resolves
+from `rows/` and would have DANGLED from `docs/tasks/`. ⚠️ **The fourth is
+disclosed because it is NOT the case `board.md`'s table names** — ⭐ **and a
+re-addressing that is merely unnoticed is the thing Ruling 174 refused to
+license.**
+
+### W85 — The board instrument's six carries — Rulings 182 and 183, and `CTO-47/3`, `/4`, `/5`
+
+⛔ **Six carries, ONE package, ONE branch — `tools/quality/board/` and its tests.** ⭐ **They are one row because check 4's sub-step forbids splitting one package across two parallel developers, not because they are one defect.**
+
+| # | carry | ⛔ **what it owes** |
+|---|---|---|
+| 1 | **Ruling 182** (`CTO-47/1`) | `_destination_text()` reads the LIVE TREE for all three destinations while `_output_row_files()` reads a ref. ⛔ **Both sides of a migration equality are refs** — so the archive is read at `OUTPUT`, and the reading the ruling names is PRINTED: the count of BASE lines whose only destination is a document the project edits |
+| 2 | **Ruling 183** (`CTO-47/2`) | `board_state` prints `rows/` **BYTES**, not only the file count. ⛔ **A bound was retired because its subject became editable; the MEASUREMENT was not retired with it** — ⚠️ `rows/` inflated 112× to 3.2 MB with the `board:` line byte-identical and the floor clean |
+| 3 | **`CTO-47/3`** | `register.py:120–126` defines seven `RULE_*` constants that nothing imports and the module never uses; `__init__.py` redefines all seven and adds `RULE_FRAME`. ⛔ **Ruff cannot see it** — module-level assignments, not unused imports |
+| 4 | **`CTO-47/4`** | the `board-frame` message/predicate gap |
+| 5 | **`CTO-47/5`** | `RULE_STATE` is the one rule code with NO test of its FINDING path — `board-state` appears in neither test module |
+| 6 | ⭐ **the freeze itself** | ⛔ **Carry 1 is what unfreezes the 84 lines** — 74 in `docs/conventions/board.md`'s `## The wave checks`, 10 in this board's `## Scheduled` — ⚠️ **and `W86` cannot land until it does** |
+
+⭐ **THE READING THAT MAKES THE FREEZE CHECKABLE, re-taken by the PO at `798956c` in the PO worktree rather than received:** 8546 BASE lines, 6781 non-structural; archive only **6411**, convention only **74**, live `BOARD.md` only **10**, no destination **2** (both `ARCH/4`'s re-addressed anchor, expected by the test). ⛔ **Touch one of the 84 and `tools/tests/quality/board/test_migration.py:197` turns the suite red with a named assertion** — not silently.
+
+⚠️ **Each carry owes Ruling 123's three readings and Ruling 128's printed population.** ⛔ **Carry 5 in particular: a rule code with no finding-path test is a check that has never been seen to fail.**
+
+[round 37's mint](#round-37-the-mint-arguments-and-the-corrections-the-cto-and-the-integration-channel-forced-mid-round)
+
+
+### W86 — Ruling 184's two clauses into check 3, and the 74 frozen lines `W85` is what unfreezes
+
+⛔ **Ruling 184's two clauses, into check 3 in [`../conventions/board.md`](../conventions/board.md).** ⭐ **Check 3 is the wave-open check that verifies a RULING WAS CARRIED, and its failure mode is a FALSE EMPTY — a carried ruling reported as uncarried, which is Ruling 155's subject arriving inside the instrument that verifies carries.**
+
+| clause | ⛔ **the change** | ⭐ **why this direction** |
+|---|---|---|
+| **(a) scope** | check 3's population becomes `-- docs src tools tests` | ⛔ **A ruling's artifact is wherever the rule is ENFORCED, and this project enforces as often in Python as in prose.** ⚠️ **Measured at `eebbe28`: Ruling 175 over `-- docs` reaches handoffs ONLY; over `-- src tools tests` it reaches `tools/knowledge/index.py` and its test** — so the check could not see its own artifact |
+| **(b) spelling** | the pattern admits the plural: `Rulings?\s+(?:<n>\|\d+[^.]*\b<n>)\b` | ⛔ **A ruling that instructs a JOINT carry must not be invisible to the check that verifies carries.** ⚠️ **Live plural spellings: "Rulings 177 + 180", "Rulings 151 and 152", "Rulings 70" ×2, "Rulings 84", "Rulings 76"** |
+
+⭐ **Tuned to OVER-match, and that is safe for one specific reason: check 3 prints FILES, not a count** — ⛔ **a false positive costs one `git show` and a false empty costs a lost ruling.**
+
+⛔ **THIS ROW IS GATED ON `W85`, and the gate is structural rather than preferred:** check 3's text is inside the **74 frozen lines** of `docs/conventions/board.md`'s `## The wave checks` section, and editing one of them fails `tools/tests/quality/board/test_migration.py:197` by name. ⭐ **`W85`'s carry 1 is what lifts the freeze.** ⚠️ **Same branch, same developer, `W85` first.**
+
+[round 37's mint](#round-37-the-mint-arguments-and-the-corrections-the-cto-and-the-integration-channel-forced-mid-round)
+
+
+### W87 — `board_state`'s notice prints the row files whose argument IS their own naming cell
+
+⛔ **RULING 186, IN ITS NARROWED FORM. `board_state`'s notice prints the row files whose ARGUMENT **IS** THEIR OWN REGISTER NAMING CELL.** ⭐ **No byte measure. No cutoff.**
+
+⚠️ **THIS ROW WAS MINTED FROM THE PRE-NARROWING WORDING — *"the thinnest argument, residue taken by subtracting the frame"* — AND THAT FORM IS ABANDONED.** ⛔ **A developer opens this file, so the stale copy is replaced rather than annotated beneath** (`ARCH/9.2`).
+
+⭐ **THE PREDICATE: a row file whose entire argument, once normalised, equals its register naming cell.** ⛔ **Those files carry the one thing the frame sentence INSIDE THEM forbids** — *"its naming lives once, in the register… not in two places"* — ⚠️ **and `board-frame` passes every one of them, because `startswith` and `in` cannot read a CONTRADICTION.**
+
+⭐ **THE POPULATION, and it was taken twice:**
+
+```text
+MEASURED, CTO, 50 row files x 78 naming cells   ->  7   W60 W63 W64 W66 W67 W72 W73
+    23 legitimately EXTEND the naming; 20 are unrelated
+RE-TAKEN, PO, 62 row files x 93 naming cells    ->  6   W60 W63 W64 W66 W67 W72
+    W73 DROPPED OUT because round 37 REPLACED its naming cell
+```
+
+⛔ **THE DROP-OUT IS THE CONFIRMATION, not a discrepancy:** ⭐ **`W73`'s naming was replaced this round to describe the row its taker actually took, and that single edit retired a member of the class** — ⚠️ **which is the strongest available evidence that the predicate measures the right thing, because it moved for the right reason.**
+
+⛔ **WHY A NOTICE AND NOT A GATE, ruled rather than preferred:** `board-frame` is **UPHELD** — its predicate is two substrings BY DESIGN, verified adversarially at CTO round 47, and the frame survives every amendment because `startswith` and `in` are unaffected by anything appended. ⚠️ **Widening it to judge argument PRESENCE would restore precisely the gate Ruling 180 removed** — a check that cannot tell *"the PO re-scoped a row"* from *"the PO pasted a fragment"* — ⛔ **and it would forbid the edit the file exists for.**
+
+⭐ **WHY THERE IS NO BYTE THRESHOLD, and this is clause (c) surviving as the REASON rather than as a thing to print:** ⛔ **the frame overhead runs **224–346 bytes** across the files, so a FILE-level byte count reads `279` for `W74` where the argument is `53`** — ⚠️ **a 5× overstatement in the direction that hides the defect, VARYING by 122 bytes, so not even a consistent overstatement a threshold could absorb.** ⭐ **The subject is the ARGUMENT, not the FILE — and the right answer was to stop asking for a byte count at all.**
+
+⛔ **FOUR INSTRUMENTS ANSWERED FOUR WAYS BEFORE THIS ONE — 16, 19, 20, and now 7 — WHICH IS `PO-37/1` RECURRING INSIDE ITS OWN REMEDY.** ⭐ **The CTO's framing, and it is the resolution: *the 16-vs-19 disagreement is RETIRED rather than settled, because both numbers answered a question that should not have been asked.*** ⚠️ **And the three populations are not rivals — they are three properties: `7` is the CONTRADICTION population and is this row's; `20` is the ADDRESSING population and is `W88`'s; the byte counts measured neither.** ⛔ **Two properties, two rows, and they must not share a number.**
+
+⭐ **SAME FUNCTION AS RULING 183'S, so it folds into `W85`'s commit rather than following it.** ⛔ **`CTO-47/4` survives as the SOLE correct complaint against `board-frame` and is `W85`'s carry 4: the MESSAGE should describe what is checked, not what is hoped.**
+
+[round 37's follow-up](#round-37-follow-up-three-rows-sat-in-flight-for-350-commits-q23-is-answered-and-rulings-187-and-188-get-ids)
