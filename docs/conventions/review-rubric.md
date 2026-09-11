@@ -1662,11 +1662,21 @@ silence (Ruling 155).**
 > sitting at its destination is not a violation of the rule that sent it there**
 > — and without this the next sweep splits a clause into the row it is in.
 
-⭐ **The live precedent is shipped and was found by reading `tests/`, which no
-document sweep can do** — `tests/studyforge/corpus/placement/test_corpora.py`,
-`shape_to_place()` (`SF-03`, approved and closed): *"Never a skip. The property
-under test … is provable without the repository, and the repository only makes
-the evidence THIS corpus's rather than one like it."*
+⛔ **THE PRECEDENT IS DATED, AND IT IS QUOTED AT ITS REF RATHER THAN DELETED**
+(`W138/3`, CTO round 63). ⭐ **It was found by reading `tests/`, which no document
+sweep can do** — `tests/studyforge/corpus/placement/test_corpora.py`,
+`shape_to_place()` (`SF-03`, approved and closed) was documented *"Never a skip.
+The property under test … is provable without the repository, and the repository
+only makes the evidence THIS corpus's rather than one like it."*
+
+⛔ **THAT IS THE SENTENCE `W138` CLOSED, and the precedent now cuts the other
+way** (Ruling 312): the stand-in it justified was SILENT, so a clause naming a
+corpus by name was discharged by a `48 × 5` grid and no instrument could report
+it. ⭐ **A same-shape stand-in is still the right thing to have — what a compliant
+instrument owes is that the reader can tell WHICH shape was placed:** the absence
+SKIPS with a reason that says so (Ruling 204), and the stand-in is placed by a
+case whose own NAME carries its provenance. ⚠️ **"Never a skip" is no longer the
+standard this clause states; "never a SILENT substitution" is.**
 
 ⛔ **THE READING THIS CLAUSE OBLIGES (Ruling 160(b)).** A reviewer of any branch
 that adds or edits a framework Acceptance clause naming a consumer corpus by
@@ -1694,9 +1704,28 @@ for c in FRAMEWORK_CLAUSES:
 
 ⛔ **The class is enumerated and therefore CLOSED as a class**, which is what
 3 → 4 → 11 says was never done: **ten** members, not eleven — `QA-04` is exempt,
-`SF-03` already carries its instrument, four are discharged, and **four live
-rows remain** (`SF-19b`, `SK-03`, `SK-04`, `TC-00`) plus `SK-01`, which is closed
-and therefore takes **Ruling 166**'s disposition, never a new gate (Ruling 117).
+`SF-03` carries an instrument **whose disposition CHANGED at `c78cb33`** (see
+below), four are discharged, and **four live rows remain** (`SF-19b`, `SK-03`,
+`SK-04`, `TC-00`) plus `SK-01`, which is closed and therefore takes **Ruling
+166**'s disposition, never a new gate (Ruling 117).
+
+⛔ **`SF-03`'s ROW IS AMENDED HERE, and the amendment is the point of Ruling 312**
+(`CTO-63/3`, CTO round 63). ⚠️ **This clause used to read *"`SF-03` already carries
+its instrument"*, which was TRUE of an instrument that never skipped and FALSE of
+what that instrument proved.** ⭐ **After `W138` the disposition is a PAIR and both
+halves are stated, because neither alone is honest:**
+
+| the clause | with the sibling PRESENT | with it ABSENT |
+|---|---|---|
+| *no two units in the **Java corpus** collide* | ⭐ **discharged, of that corpus** | ⛔ **SKIPPED, and the skip SAYS SO** (Ruling 204) |
+| *no two units in a corpus **of the same shape** collide* | ⭐ **discharged, always — its own case, its own name** | ⭐ **discharged, always** |
+
+⛔ **So a framework Acceptance clause naming a consumer corpus BY NAME is NOT
+made dischargeable-here by a stand-in, and the older criterion above — a
+same-shape stand-in, *"never a skip"* — is AMENDED to *"never a SILENT
+substitution"*.** ⚠️ **The quoted ruling that states the older form is a record
+and stands unedited** (Ruling 106); ⭐ **this table is where the live standard is
+read from.**
 
 #### ⛔ Ruling 152 (CTO round 40) — where one helper names N faults, every caller refuses all N or says which it does not
 
@@ -4512,16 +4541,29 @@ is true in every environment; only the COST clause was true of the wrong populat
 ```bash
 # ⛔ NOT over the skips. A re-derivation whose absent branch SKIPS is visible in the census;
 #    one whose absent branch SUBSTITUTES A STAND-IN is invisible there by construction.
-grep -rn 'repository_root()\.parent' --include=*.py tests/ tools/ studyforge/
-# Pass: every hit is the ONE shipped resolver. A second hit is this class, whether or not
-#       any skip moved. ⭐ Then read each caller's absent branch: `skip` is loud, a
-#       stand-in is silent, and only the loud one is in the census anybody quotes.
+# ⛔ THREE DEFECTS OF THIS COMMAND, MEASURED AND REPAIRED IN CTO ROUND 63 (`W138/1`, `CTO-63/2`).
+#    Each is recorded rather than quietly fixed, because the command shipped as a PASS CONDITION:
+#    (a) the third tree was spelled `studyforge/`, which HAS NEVER EXISTED at the root — the
+#        source tree is `src/`, so grep errored on it and swept TWO trees while naming three;
+#    (b) the pass condition "every hit is the ONE shipped resolver" is UNSATISFIABLE: the
+#        shipped resolver spells its fallback `repository.parent` and cannot match this pattern;
+#    (c) a FINDING that names a forbidden shape DESCRIBES it, so the repairs of `W127` and
+#        `W138` left the spelling in prose — the pattern now counts the DESCRIBING.
+grep -rn 'repository_root()\.parent' --include=*.py tests/ tools/ src/
+# ⛔ Pass: ZERO hits that are CODE. Read each hit: a hit inside a comment or a docstring is a
+#       finding describing this class and is EXPECTED; a hit in an expression is the class
+#       itself. ⭐ Then read each caller's absent branch: `skip` is loud, a stand-in is
+#       silent, and only the loud one is in the census anybody quotes.
 ```
 
 ⛔ **MEASURED, CTO round 61, at `428223c`, role `wt/cto`, on the HOST — the reading the census
-could not contain.** ⚠️ `tests/studyforge/corpus/placement/test_corpora.py:59-61` carries a
-byte-identical copy of the resolver `W127` removed, and its caller `shape_to_place()` is
-documented ***"Never a skip"***:
+could not contain.** ⚠️ **The reading below is QUOTED AT ITS OWN REF and the two statements it
+rested on are CLOSED at `c78cb33` by `W138`** (`W138/3`): that module then carried a
+byte-identical copy of the resolver `W127` removed, and its caller `shape_to_place()` was
+documented ***"Never a skip"***. ⛔ **Neither is true today — the function does not exist, the
+copy is gone, and the caller SKIPS with a reason that says so.** ⭐ **The precedent is KEPT
+because it is the clearest worked example of the class, and Ruling 163 is why it no longer
+carries a `<file>:<line>` citation into a file this document does not own:**
 
 ```text
 STUDYFORGE_WORKSPACE unset (what every worktree runs)  provenance synthetic  48 modules  240 units
@@ -4610,7 +4652,10 @@ sentence this round was convened to adjudicate.**
 # ⛔ A widened-or-narrowed predicate is diffed as a SET against the one it replaces, over the
 #    WHOLE subject — not over the slice the notice happens to print.
 python3 - <<'PY'
-from tools.quality.reach import cited_numbers   # or whatever the new predicate is
+# ⛔ The GRAMMAR moved to `tools.quality.citations` at `0f3615d` (`W139`, `W139/3`); `reach`
+#    RE-EXPORTS it so this import stays true, and `tools/tests/quality/test_reach.py` asserts
+#    the re-export. ⭐ Import it from its DEFINITION when you write a new caller.
+from tools.quality.citations import cited_numbers   # re-exported by tools.quality.reach
 # old = {n for n in range(1, CEILING) if OLD_PREDICATE(n, text)}
 # new = set().union(*(cited_numbers(t) for t in texts))
 # print("gained:", sorted(new - old), "lost:", sorted(old - new))
@@ -4884,3 +4929,103 @@ route a careful author still had into it.**
 ⚠️ **Both arms were found the same way: a figure that was TRUE where it was written and FALSE
 where it was read.** ⛔ **Neither author was careless — one quoted a record, the other replayed
 a shipped predicate — which is why this is a clause and not a finding.**
+
+### ⛔ Ruling 312 (CTO round 63) — an acceptance discharged by a harness in which the violation is UNREPRESENTABLE is proved of the HARNESS, and the taker REPORTS it rather than widening the row
+
+```bash
+# ⛔ For every acceptance clause of the form "no two X in <named subject> collide", ask the
+#    question the green cannot: CAN the check go red on the SUBJECT's own content?
+#    ⭐ The instrument is a PLANT into the shape the harness actually builds — never a plant
+#    into the detector, which answers a different question and always succeeds.
+python3 - <<'PY'
+# row 1  the live shape                        -> the PASS reading
+# row 2  a genuine violation PLANTED INTO THE SUBJECT'S SHAPE, through the SAME entry point
+#        the acceptance test calls                                      -> must be CAUGHT
+# row 3  the violation planted BELOW that entry point, into the detector -> CAUGHT, and this
+#        row proves only that the DETECTOR works. ⛔ It is NOT row 2 and may not stand in.
+PY
+# Pass: row 2 is CAUGHT. ⛔ If row 2 CANNOT BE CONSTRUCTED, the acceptance is proved of the
+#       harness's own bookkeeping and the verdict says so IN THOSE WORDS.
+```
+
+⛔ **THE READING, MEASURED IN CTO ROUND 63 in the pinned image at `c78cb33`, role `wt/cto` —
+and it is a search, not an anecdote:**
+
+```text
+SUBJECT   tests/studyforge/corpus/placement/test_corpora.py::artifact_paths()
+          the acceptance: "no two units in the Java corpus produce the same artifact name"
+row 1     the real corpus            45 modules / 166 units / 830 paths   0 collisions
+row 2     three plants into the real shape — a filename listed twice, two filenames that
+          slugify to ONE name, and both together                          0 collisions
+row 2'    BRUTE FORCE, the same entry point:
+            91125 cross-module shapes over 10 module slugs x 10 filenames   0 collisions
+            15480 single-module shapes, lists of length 2..4                0 collisions
+          ⛔ 106605 accepted shapes, ZERO representable violations
+row 3     the same two filenames passed to place_one() at ONE ordinal      CAUGHT
+WHY       the sweep numbers a module's units by POSITION (enumerate), so two units in one
+          module can never share an ordinal; and Address.of() REFUSES a module directory
+          name that is not already a slug, so two distinct modules cannot collapse to one
+          address. ⭐ BOTH routes are closed, so row 2 is unconstructible BY CONSTRUCTION.
+```
+
+⭐ **SO THE DISPOSITION IS RULING 5'S AND NOT A REPAIR.** ⛔ **`W138`'s clause 4 — *"the
+repaired check must be shown to go RED when the real corpus's units genuinely collide"* — is
+an acceptance the task CORRECTLY REPORTS IT CANNOT MEET.** ⚠️ **Its halves are jointly
+unsatisfiable and that is SHOWN, which is exactly the test Ruling 5 sets: meeting it requires
+numbering the sweep from the archive's own `unit["n"]`, and that CHANGES WHAT A CLOSED
+ACCEPTANCE IS PROVED OF** — ⛔ **a decision for this office, never a taker widening a row in
+the branch that closes it.**
+
+⛔ **AND THE HALF THAT IS MET IS NAMED SEPARATELY, because a clause with two halves gets two
+verdicts:** ⭐ *"the two shapes must be shown to DIFFER"* **is MET** — `(45, 166)` against
+`(48, 240)`, asserted by a named test, re-measured by this office on the HOST.
+
+⚠️ **THE GENERAL SHAPE, and it is why this is a ruling rather than a finding:** ⛔ **a green
+that CANNOT go red is indistinguishable from a green that HAS NOT gone red, and only the plant
+in row 2 tells them apart.** ⭐ **Ruling 191 already demands a control seen to FIND and to
+REFUSE; this clause says WHERE the control must be injected — at the acceptance's own entry
+point, because a control injected below it measures the detector and reports on the subject.**
+
+### ⛔ Ruling 313 (CTO round 63) — where a later ROW's ARGUED clause contradicts an earlier finding's SCHEDULED form, the argued clause GOVERNS and the earlier is discharged IN SUBSTANCE or refused BY NAME — never left open
+
+```bash
+# ⛔ Run when a row's clause and an earlier scheduled finding name the same instrument.
+#    Print both forms verbatim and ask whether they are jointly satisfiable.
+grep -rn '<the finding id>' docs/tasks/handoffs/ docs/tasks/BOARD.md
+sed -n '/WHAT SETTLES IT/,/WHAT IT MUST NOT BECOME/p' docs/tasks/rows/<ID>.md
+# Pass: the earlier form is marked DISCHARGED IN SUBSTANCE or REFUSED, by name, with the
+#       clause that governs cited. ⛔ A scheduled form left open after the row that
+#       supersedes it MERGES is a trap re-sprung on the next taker, who will meet it
+#       literally and reintroduce exactly what the row's argument refused.
+```
+
+⛔ **THE INSTANCE, and the developer's own measurement is what makes it urgent** (`W139/2`, and
+`PO-49/2` independently — ⭐ **two offices that could not see each other's draft reached the same
+conclusion from opposite sides, one from inside the instrument and one from the register, which
+is why this lands as a ruling and not as one office's preference**):
+
+```text
+W134/4, SCHEDULED   "the notice must print the WHOLE-SERIES unreached count beside the window's"
+W139   clause 2     "THE WINDOW'S FIGURE AND THE BELOW-WINDOW FIGURE ARE NEVER SUMMED INTO ONE
+                     NUMBER" — because a merged scalar makes a working minter and a growing
+                     backlog indistinguishable, and Ruling 286's minter-pays signal is the
+                     thing the first figure measures
+a whole-series count IS window-unreached + below-window-unreached, so the two are JOINTLY
+UNSATISFIABLE in their literal forms
+MEASURED, wt/cto, pinned image, at 0f3615d — the window's unreached is 0 TODAY, so the
+whole-series figure and the below-window figure COINCIDE NUMERICALLY, and the contradiction
+is INVISIBLE until the first mint goes unlanded
+```
+
+⭐ **I RULE: `W139`'s clause 2 GOVERNS, and `W134/4` is DISCHARGED IN SUBSTANCE while its
+LITERAL FORM IS REFUSED.** ⛔ **What shipped carries the substance — the hole outside the window
+is PRINTED, NAMED, and given its OWN DENOMINATOR — and the whole-series figure stays RECOVERABLE
+BY ADDITION from two printed numbers without the instrument ever ASSERTING it as one.** ⚠️ **A
+figure a reader can compute is not the same as a figure an instrument publishes: the second is
+the one that gets quoted.**
+
+⛔ **AND THE COINCIDENCE IS THE WHOLE REASON TO RULE NOW RATHER THAN WHEN IT BITES.** ⭐ **Today
+a taker could satisfy `W134/4` literally, observe that nothing changed, and ship the forbidden
+sum — and the first unlanded mint would then silently merge the two questions.** ⚠️ **That is
+Ruling 5's symmetric obligation arriving on a schedule: a reported contradiction nobody closes
+is a trap re-sprung on the next task that reads the clause and believes it.**
