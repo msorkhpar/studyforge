@@ -2725,6 +2725,46 @@ test outside its `Owns` **only** when all three hold:
 outside `Owns` is a **finding**, not a diff — the general rule above is
 unchanged, and these three conditions are the whole of the exception.
 
+#### ⛔ Ruling 190 (CTO round 48) — changing a VALUE a distant test compares against IS editing that test, and WEAKENING one is the case Ruling 143 does not reach
+
+> ⛔ **Ruling 143's three conditions are written for a test that FAILS.** ⚠️ **A
+> branch can also make a test PASS MORE**, without touching its file, by adding
+> to a set the test compares against. ⭐ **That is an edit to the test, made at a
+> distance, and it is invisible in the diff of the file the test lives in.**
+>
+> ⭐ **So the out-of-`Owns` edit that RESTORES the original strength is
+> LICENSED**, and it is licensed under conditions 1 and 3 alone — ⛔ **condition 2
+> cannot apply, because a NARROWING is neither a deletion nor an inversion.**
+> ⚠️ **The alternative is to ship a test the branch has knowingly weakened and
+> file a finding about it**, which is a known hole wearing a green tick.
+>
+> ⛔ **And the reviewer's obligation: for every published mapping a diff widens,
+> find who COMPARES against it.** ⭐ This is §10b's subject one step past imports
+> — ⚠️ **not a name being imported, a VALUE being compared** — and neither the
+> author of the change nor the reviewer of the file is looking at it.
+
+```bash
+# every test that compares against a mapping this diff widened
+git diff --name-only "$REVIEW_BASE"...HEAD -- src/ | xargs -r -n1 basename
+grep -rn '<MAPPING>' tests/ tools/tests/ | grep -v "$(dirname <the mirror>)"
+```
+
+⛔ **Pass condition: every such test either still asserts what it asserted, or
+the branch narrowed it and disclosed the narrowing by path.** Measured by the
+CTO at trial `9c199a8c`, `SF-34`, one line changed per row, tree restored and
+printed between rows:
+
+| # | `published` compares against | template carries `class="data-readable"` | reading |
+|---|---|---|---|
+| **R1/R4** | ⭐ `HOOK_CLASSES` (the branch) | yes | ⭐ **RED — caught** |
+| **R2b** | ⛔ `SURFACE_HOOKS` (un-narrowed) | yes | ⛔ **GREEN — the loosening, measured** |
+| **R3** | `SURFACE_HOOKS` (un-narrowed) | no | control: GREEN |
+
+⚠️ **`R2b` is the whole argument: the same branch that widened `SURFACE_HOOKS`
+would have shipped a class contract that admits `class="data-readable"`.**
+⭐ Derivation:
+[`handoffs/CTO-2026-09-10-round48.md`](../tasks/handoffs/CTO-2026-09-10-round48.md).
+
 ### ⛔ 10b. A change to an import is felt by tests in another package
 
 ```bash
