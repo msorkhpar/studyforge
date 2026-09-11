@@ -21,25 +21,41 @@ measured one correct declaration producing three different columns — 800 px,
 715.7 px, 680.3 px — and ⛔ **no assertion over a stylesheet can see it**,
 because every declaration involved is identical and right.
 
-⛔ **What this module therefore does NOT assert is a resolved width against a
-recorded number, and Ruling 236 is the reason.** `fonts-liberation` arrives
-unconstrained from the base image's Debian snapshot (`W36/5`, `CTO-55/5`), so a
-px figure written into a test would be a recorded value with an undeclared font
-behind it and a margin of zero. ⭐ **What is asserted instead is an EQUALITY
-between two measurements taken in the same run** — each region's column against
-the reading surface's — which is invariant under any font the image ships and
-still fails the moment a region resolves a measure of its own.
+⛔ **What this module asserts is an EQUALITY between two measurements taken in the
+same run** — each region's column against the reading surface's — rather than a
+resolved width against a recorded number. ⭐ It is invariant under any font the
+image ships and still fails the moment a region resolves a measure of its own.
 
-## ⛔ The one question this module still cannot ask, and its gate is `W124`
+⚠️ **When `W98` wrote that clause, Ruling 236 was also a reason for it:**
+`fonts-liberation` then arrived unconstrained from the base image's Debian
+snapshot (`W36/5`, `CTO-55/5`), so a px figure here would have been a recorded
+value with an undeclared font behind it. ⛔ **That reason is GONE — `W124` landed
+and the font is pinned by version and checksum in `docker/dev/Dockerfile`** — and
+the clause is kept anyway, because an equality between two live measurements is
+the stronger assertion on its own terms: it needs no figure to be re-measured
+when the pin is next moved forward.
+
+## ⭐ The one question this module still cannot ask — ⛔ THE GATE IS NOW OPEN
 
 ⚠️ **Nothing here asserts that the reading column is the measure the palette
 declares.** The equality below catches a region resolving a column of its *own*;
 it cannot catch every region, the reading surface included, resolving the *wrong*
-one — `--measure: 80ch` against a font that changed under the image. ⛔ **That
-check is a resolved `ch` width against a recorded px value, which is the exact
-clause Ruling 236 forbids this row, and `W124` is the row that pins the font.**
-⭐ Stated here rather than left as a silence, so whoever lands `W124` knows where
-the waiting assertion goes.
+one — `--measure: 80ch` against a font that changed under the image.
+
+⛔ **`W124` WAS THAT ASSERTION'S GATE AND HAS LANDED, AND `W124` DELIBERATELY DID
+NOT WRITE IT.** ⭐ The reason is scope and it is recorded in
+`docs/tasks/handoffs/W124.md`: that row's own argument says *"the font is what
+`W98` needs"*, and pinning an input is a different act from authoring an
+acceptance clause over it. ⚠️ **The assertion that goes here needs things `W124`
+neither measured nor owns** — a recorded px figure per page kind and viewport, a
+looseness statement of its own under Ruling 236, and a negative control that
+reds when a face is swapped under the image, which means building a second image
+to prove it can fail. ⛔ **A row that quietly grew all of that would be the scope
+creep this project treats as worse than leaving work undone, so it is ROUTED as a
+finding for the PO to mint rather than written here.**
+
+⭐ Stated rather than left as a silence, so the next reader knows the blocker is
+gone and that what remains is a row, not an oversight.
 """
 
 from __future__ import annotations

@@ -12,6 +12,14 @@
 #     STUDYFORGE_VISUAL_BROWSER=/some/browser …        name one explicitly
 #     STUDYFORGE_VISUAL_CAPTURES=/workspace/… …        keep the screenshots
 #
+# ⭐ **A fourth variable is read HERE and does not cross** (`W123`), because it
+# shapes the command this wrapper builds rather than anything inside:
+#
+#     STUDYFORGE_CHECK_TIMEOUT=300 docker/dev/check    bound the run at 300s
+#
+# ⛔ The outer bound is the block at the bottom of this file; read it before
+# changing the figure.
+#
 # ⛔ Unset on the host means unset in there, so this wrapper decides nothing —
 # it only stops the caller's answer being dropped at the boundary. ⚠️ The
 # capture directory is a path INSIDE the container: only somewhere under
@@ -62,10 +70,85 @@ if [ -f "$ROOT/.git" ] && command -v git >/dev/null 2>&1; then
     esac
 fi
 
+# ---------------------------------------------------------------------------
+# ⛔ **THE OUTER BOUND: a hang becomes a non-zero exit** (`W123`, Ruling 235(d)).
+#
+# ⚠️ **The defect it bounds, and it is not this file's.** `tests/visual/`'s
+# harness sets `deadline = time.monotonic() + CALL_TIMEOUT` and loops
+# `while time.monotonic() < deadline`, but the loop body blocks in `os.read` on
+# a live pipe with no deadline. ⛔ So its own `"no answer in 30s"` is
+# **unreachable** for a browser that is up and silent; it fires only if the pipe
+# closes. A full-page capture at Docker's 64 MB `/dev/shm` default once wedged
+# the suite exactly that way — 5 of 7 capture checks passed and the 6th never
+# returned. ⚠️ **A hang is worse than a failure: it has no verdict at all.**
+#
+# ⛔ **This is the OUTER bound and NOT the deadlined read.** Deadlining the read
+# means `select`-ing on the fd, which is a different I/O path, so it would change
+# what every reading in `tests/visual/` is taken against; that stays with the
+# harness's own row. ⭐ A bound out here changes nothing any reading is taken
+# against, which is the whole of why the two are separable.
+#
+# ⛔ **IT MUST NOT SWALLOW A REAL RED, and the exit codes are MEASURED rather
+# than assumed** (`W123`, in the pinned image):
+#
+#       a command that overruns        -> 124   (`timeout` terminated it)
+#       one that ignores SIGTERM       -> 137   (it had to be killed, 128+9)
+#       one that fails on its own      -> its OWN code, unchanged (7 -> 7)
+#       one that succeeds              -> 0
+#
+# ⚠️ **Both overrun codes are outside pytest's range (0-5), so a wedged run is
+# never confusable with a failing assertion.** ⛔ A wrapper that collapsed them
+# into `1` would make a hang indistinguishable from a red, which is strictly
+# worse than the hang it replaces — so nothing here touches the status.
+#
+# ⭐ **The bound runs INSIDE the container, and that is three measurements
+# rather than a preference:**
+#
+#   1. ⛔ **The host's `timeout` is not the same program.** It is `uutils
+#      coreutils 0.8.0` on the machine this was written on and GNU coreutils 9.7
+#      in the image — and on macOS there is no `timeout` at all. A bound whose
+#      implementation depends on the host is an unpinned bound, which is the
+#      defect Ruling 238 names one level up.
+#   2. ⛔ **This file claims, above, that it uses only `docker`, `id` and shell
+#      builtins** — "a contributor needs Docker and nothing else". A host-side
+#      `timeout` would falsify that claim in the same file that makes it.
+#   3. ⭐ **It bounds the COMMAND and not the image BUILD.** `--build` below can
+#      legitimately take minutes on a cold cache and a slow link; the thing that
+#      hangs is a read inside the suite. Bounding the right one keeps the figure
+#      small enough to be meaningful.
+#
+# ⚠️ **THE FIGURE IS DELIBERATELY LOOSE AND SAYS SO** (Ruling 236's clause).
+# MEASURED at `af31fd7` in the pinned image: the whole suite runs in **57.66 s**
+# and `tests/visual/` alone in **8.44 s**. ⛔ The default below is **1800 s**, a
+# margin of about **31x**, and it is that loose on purpose: with
+# `STUDYFORGE_DOCKER_TESTS=1` the command itself builds images and runs the
+# suite inside them, and a contributor's hardware is not this hardware. ⭐ A
+# bound that fires on a healthy run is a bound somebody deletes.
+#
+#       STUDYFORGE_CHECK_TIMEOUT=300 docker/dev/check     a tighter bound
+#       STUDYFORGE_CHECK_TIMEOUT=0   docker/dev/check     no bound at all
+#
+# ⛔ `0` is GNU `timeout`'s own "no limit" and is not an invention of this file.
+STUDYFORGE_CHECK_TIMEOUT=${STUDYFORGE_CHECK_TIMEOUT:-1800}
+
+# ⚠️ `timeout` needs a command, so the no-argument case has to name one — and
+# the one it names is the image's `CMD`. ⛔ A second copy of that is exactly the
+# divergence this wrapper exists to prevent, so it is a CHECKED copy:
+# `tests/docker/test_dev_check_timeout.py` asserts this line and the
+# `Dockerfile`'s `CMD` stay the same command, and fails if either moves.
+if [ "$#" -eq 0 ]; then
+    set -- python3 -m pytest
+fi
+
 # ⚠️ `--build` on every run: the image is a declaration in `Dockerfile` and
 # `requirements.txt`, and a stale image is a result attributed to a version of
 # the environment nobody can name. The layers are cached, so the cost of being
 # honest here is a second or two.
+#
+# ⛔ `--kill-after`, because a command that ignores SIGTERM would otherwise turn
+# the bound back into the hang it replaces. The grace period is generous enough
+# for pytest to print what it had.
 # shellcheck disable=SC2086  # GIT_MOUNT is deliberately word-split, or empty
 exec docker compose --file "$ROOT/docker/dev/compose.yaml" \
-    run --rm --build $GIT_MOUNT dev "$@"
+    run --rm --build $GIT_MOUNT dev \
+    timeout --kill-after=30s "$STUDYFORGE_CHECK_TIMEOUT" "$@"
