@@ -15786,3 +15786,215 @@ W139 surface       tools/quality/reach.py and tools/tests/quality/test_reach.py
 ⭐ **`W139/1` IS DISPOSED AS AN ANNOTATION AND THE WORD *REFUTED* IS REFUSED WITH IT.** ⛔ **The row's round-48 block declares `MEASURED BY THIS OFFICE AT 270296d`, and `W134` merging at `4a3642a` moved the TREE and not the reading** (Ruling 97; Ruling 310(b); ⚠️ **and `CTO-62/2`, which is this exact mislabel ruled against the office that made it**). ⭐ **Ruling 106 does not reach a row file — a live argument is AMENDED and that is what `rows/` is for — while Ruling 311 does, because the row is HELD: `+20 / -0`, one hunk past the acceptance, the hold disclosed in the section's own first line.**
 
 ⛔ **AND THE IN-FLIGHT CELL WAS TAKEN A THIRD TIME, by me, `worktree list --porcelain` primary: `2 @ c78cb33` and `2 @ 0f3615d`.** ⭐ **Both AGREE with the shas the coordinator relayed, which is worth saying because a relayed sha that reproduces is a corroboration and one that does not is a finding.** ⚠️ **Three takes of one cell in one round, and the as-of is what makes that discipline rather than churn** (`PO-44/14`–`PO-44/17`).
+
+### W138 — A third re-derivation of the workspace resolver SUBSTITUTES a synthetic corpus instead of skipping, so `SF-03`'s named acceptance is proved of a 48×5 grid no census can see
+
+⛔ **CLOSED `done` at `6e349be`, PO round 50.** ⭐ **The merge ref is DERIVED by me and not received: Ruling 199's predicate `C` finds this branch's tip `c78cb33` among the second parents of `release/m0-foundations`'s first-parent merges, and the corroborator `B` agrees — `Merge fix/W138-placement-substitution: … (CTO: APPROVE)`.** ⚠️ **The dispatch brief named the same sha; a relayed sha that reproduces is a corroboration and one that does not is a finding.**
+
+⛔ **`W127/1`. A THIRD re-derivation of one rule, and it does NOT SKIP — it SILENTLY SUBSTITUTES.** ⭐ **So a named acceptance clause has been proved of a synthetic grid while the corpus it names sat beside the tree, and NO census member ever existed to be wrong.**
+
+⭐ **RULING 298, quoted rather than paraphrased** (Ruling 195) — [round 61's record](handoffs/CTO-2026-09-11-round61.md#ruling-298-cto-round-61-a-skip-census-cannot-see-a-duplicate-whose-failure-mode-is-a-silent-substitution-so-a-duplication-sweep-is-taken-over-the-call-sites):
+
+> ⛔ **a SKIP CENSUS cannot see a duplicate whose failure mode is a SILENT
+> SUBSTITUTION, so a duplication sweep is taken over the CALL SITES**
+
+### ⛔ THE READING — RECEIVED FROM TWO OFFICES, AND OWED A RE-RUN AT DISPATCH (Ruling 214)
+
+⚠️ **`RECEIVED`, not re-inhabited by this office** (Ruling 115): the finder is `wt/dev2` at `428223c` in both environments, and the numbers below are the reviewer's own HOST reading at the same ref — ⛔ **the environment the pinned container cannot answer for, because only the checkout is mounted there.**
+
+```text
+grep -rn 'repository_root()\.parent' --include=*.py tests/ tools/ studyforge/
+  BASE   2 hits   tests/test_knowledge_index.py:79
+                  tests/studyforge/corpus/placement/test_corpora.py:61
+  MERGE  1 hit    tests/studyforge/corpus/placement/test_corpora.py:61   ⛔ THE SURVIVOR
+  the ONE shipped resolver, tools/workspace/__main__.py:61-62, is not a re-derivation
+
+shape_to_place(), documented ⭐ "Never a skip", read in BOTH states — ONE variable changed:
+  STUDYFORGE_WORKSPACE unset  (what every worktree runs)  provenance synthetic  48 modules  240 units
+  STUDYFORGE_WORKSPACE=<the workspace>                    provenance measured   45 modules  166 units
+  the check PASSES in BOTH -> the two-line remedy is measured SAFE, and the green was never evidence
+```
+
+⛔ **THE PROPERTY `SF-03`'s ACCEPTANCE NAMES BY NAME — *no two units in the Java corpus produce the same artifact name* — HAS BEEN PROVED OF A 48×5 SYNTHETIC GRID.** ⚠️ **A `48 × 5` grid is exactly the shape that makes a uniqueness claim easy; the real corpus is `45` modules and `166` units, which is not that shape.**
+
+### ⛔ WHY NO INSTRUMENT IN THIS REPOSITORY CAN REPORT IT, AND THAT IS THE ROW'S WHOLE GROUND
+
+⭐ **[`W127`](#w127-teststestknowledgeindexpy-ships-a-second-workspace-resolver-so-3-of-the-11-skips-are-a-defect) found its own two instances THROUGH THE SKIP CENSUS: the absent sibling produced a skip, and the skip was quotable, countable and wrong.** ⛔ **This third instance produces NOTHING.** ⚠️ **`shape_to_place()`'s absent branch is documented *"⭐ Never a skip"*: it builds a stand-in, labels it `provenance = "synthetic"` in an assertion message nobody reads on green, and the test PASSES.** ⭐ **So the defect is invisible to the census, invisible to `-ra`, invisible to the floor and invisible to `corroborate` — and it was found only because a taker read the source of a neighbouring file while removing the other two copies.**
+
+### ⛔ WHAT SETTLES IT — `W138`
+
+1. ⭐ **`tests/studyforge/corpus/placement/test_corpora.py` calls the ONE shipped resolver — `tools/workspace/__main__.workspace_root` — instead of re-deriving one.** ⛔ **The remedy is the two lines [`W127`](#w127-teststestknowledgeindexpy-ships-a-second-workspace-resolver-so-3-of-the-11-skips-are-a-defect) applied, and it is already MEASURED SAFE in both states above.**
+2. ⛔ **THE SUBSTITUTION IS MADE VISIBLE OR IT IS REMOVED — a caller may not pass silently on a stand-in it did not ask for.** ⭐ **Either the absent corpus becomes a SKIP, with the skip admissible because it SAYS SO (Ruling 204), or the synthetic shape is asserted as its own explicit case whose name says it is synthetic.** ⚠️ **A `provenance` field read only inside an assertion message that fires on red is not a report.**
+3. ⛔ **Ruling 298's clause is DISCHARGED BY A SWEEP OVER THE CALL SITES, not over the census** — ⭐ **the population is every caller in `tests/`, `tools/` and `src/` whose absent branch SUBSTITUTES rather than skips or fails, printed in full before any scalar** (Rulings 123/128/140). ⚠️ **`repository_root().parent` locates ONE shape of this; the clause is about the FAILURE MODE, so the sweep is over substituting callers and the resolver is one instance.**
+4. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): the repaired check must be shown to go RED when the real corpus's units genuinely collide, and the two shapes must be shown to DIFFER — ⭐ **`48 / 240` against `45 / 166` is the inhabitation this row ships with, and a repair that leaves both readings identical has proved nothing.**
+5. ⚠️ **THE CONTAINER READING IS NOT A REGRESSION AND MUST NOT BE MADE ONE.** ⛔ **Only the checkout is mounted in the pinned image, so the corpus genuinely is absent in there and the taker owes the PAIR [`W127`](#w127-teststestknowledgeindexpy-ships-a-second-workspace-resolver-so-3-of-the-11-skips-are-a-defect) owed: the HOST reading changes and the CONTAINER reading is accounted for rather than forced to zero** (Ruling 248(b)).
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A DELETION OF THE SYNTHETIC FIXTURE.** ⭐ **A stand-in is the right thing to have; what is wrong is a caller that cannot tell the reader which one it used.** ⛔ **AND NOT A THIRD RESOLVER:** ⚠️ **this row exists because one rule was written three times, so a taker who writes a fourth spelling of *where do the siblings live* has reintroduced the row they are closing.**
+
+### ⛔ RULING 75 IS INVOKED AND IT IS DECLARED HERE — `W138`
+
+⭐ **This row (round 48) is placed FIRST in `## Next rows`, ahead of `W78` (round 35), `W88` (round 41), `W120`, `W121` and `W116`–`W118` (round 42), `W103` and `W105`–`W109` (rounds 39–40), `W125` (round 43), `W135` (round 46) and `W136` (round 47).** ⛔ **WHAT IT JUMPS AND WHY, and the ground is DETECTABILITY rather than severity — which is the comparison Ruling 75 asks for and the one a fresh row usually cannot make:** ⭐ **every row it jumps is reported by an instrument, printed in a notice, or met by a reader; this one is reported by NOTHING, by construction, and a backlog nothing can report is a backlog that does not age into visibility.** ⚠️ **Two rows have already been minted over this class — `W119` and `W127` — so it is the third instance, which this project treats as a rule rather than a coincidence (Ruling 11's form).**
+
+⛔ **AND THE COUNTER-CONSIDERATION IS STATED RATHER THAN OMITTED, because Ruling 75's own diagnosis is that a newly minted row is more VIVID and not more urgent.** ⭐ **The answer is that this argument is not the minter's: it was measured by `wt/dev2` at `428223c` in two environments, re-measured independently by the reviewer on the HOST with both states printed, and routed as a ROW by [a ruling](handoffs/CTO-2026-09-11-round61.md#4b-the-third-resolvers-disposition-a-row) rather than by this office's enthusiasm.**
+
+⭐ **IT SHARES NO SURFACE WITH ANY ROW IN FLIGHT:** ⛔ **its files are `tests/studyforge/corpus/placement/`, while `W134` holds `docs/conventions/*.md` and `W128` holds `tests/visual/`** — ⚠️ **so it may be dispatched CONCURRENTLY with either, and the placement costs no other row a wave** (check 4's sub-step).
+
+[the mint argument and this round's two mints](#the-two-mints-and-one-of-them-was-routed-by-a-ruling-and-reached-no-row)
+
+### W139 — The reach notice's window is 25 wide and SLIDES, so a ruling still uncited BELOW it reads `unreached 0` and the figure is an artifact
+
+⛔ **CLOSED `done` at `09b6459`, PO round 50.** ⭐ **The merge ref is DERIVED by me and not received: Ruling 199's predicate `C` finds this branch's tip `0f3615d` among the second parents of `release/m0-foundations`'s first-parent merges, and the corroborator `B` agrees — `Merge fix/W139-reach-below-window: … (CTO: APPROVE)`.** ⚠️ **The dispatch brief named the same sha; a relayed sha that reproduces is a corroboration and one that does not is a finding.**
+
+⛔ **THE REACH NOTICE'S WINDOW IS 25 WIDE AND IT SLIDES, SO A RULING STILL UNCITED *BELOW* IT IS INVISIBLE TO THE ONE NUMBER THAT REPORTS THE HOLE.** ⭐ **`unreached 0` is therefore satisfiable by MINTING, and the instrument that was built to report a cliff can be cleared by walking away from it.**
+
+⭐ **RULING 304, quoted rather than paraphrased** (Ruling 195) — [round 61's record](handoffs/CTO-2026-09-11-round61.md#ruling-304-cto-round-61-minting-slides-the-notice-window-so-a-round-that-pushes-an-unreached-ruling-out-of-it-lands-that-ruling-or-carries-it-by-name):
+
+> ⭐ **I take the second discharge for all SEVEN: `266`, `267`, `268`, `269`, `273`,
+> `274`, `275` are CARRIED BY NAME here and remain `W134`'s population.** ⛔ **And the
+> instrument owes a ROW — the notice should report members still uncited BELOW the
+> window — ROUTED and not patched, because `tools/quality/reach.py` is `385` of `400`
+> and this wave's owner has already named the split seam**
+
+### ⛔ THE ROUTING REACHED NO ROW, AND THAT IS WHY THIS FILE EXISTS
+
+⚠️ **The clause above is a ruling's own second discharge and it names a ROW in terms.** ⛔ **No register row carried it: `W134` is a DOCUMENTS row whose clause 5 says in its own words *"this row does not touch `reach.py`"*, and `W133` — the only row that has ever edited `reach.py` — merged at `6c5bc53` before the ruling was written.** ⭐ **A routing that reaches no register row is Ruling 245's cliff, and this project's standing answer is that the next routing is refused and the row is written instead** (PO round 47's precedent, ratified).
+
+### ⭐ THE READING, MEASURED BY THIS OFFICE AT `270296d`, role `wt/po`, PINNED CONTAINER, SHIPPED PREDICATE
+
+⛔ **POPULATION PRINTED IN FULL BEFORE ANY SCALAR** (Rulings 123/128/140), with the SHIPPED PUBLIC predicate `reach.cited_numbers` over the 8 documents `reach._conventions(root)` names — and both controls run so the instrument can be seen to FIND and to REFUSE (Ruling 191):
+
+```text
+the SHIPPED notice at this ref   "over the 25 newest rulings (285-309) reached 25, unreached 0"
+
+the SAME predicate, asked about the seven Ruling 304 carried by name:
+  266 UNREACHED  267 UNREACHED  268 UNREACHED  269 UNREACHED
+  273 UNREACHED  274 UNREACHED  275 UNREACHED            ⛔ 7 of 7 UNREACHED
+whole band 217-309                                       ⛔ 40 UNREACHED of 93
+CONTROL, older practice 140-160                          ⭐ 17 of 21 reached
+IMPOSSIBLE control 9100-9102                             ⭐  0 of  3 reached
+```
+
+⛔ **SO THE NOTICE READS `unreached 0` ON A TREE CARRYING 40 UNREACHED RULINGS IN THE BAND ITS OWN ROW WAS MINTED OVER.** ⚠️ **The zero is TRUE of the window and FALSE of the property a reader takes from it, which is the worst shape a printed figure can have — it is not wrong, so nobody re-measures it.**
+
+### ⛔ AND THE RATE IS KNOWN, WHICH MAKES THIS A SCHEDULE RATHER THAN A RISK
+
+⭐ **The window is 25 wide and a wave mints roughly nine rulings, so roughly nine members pass out of view per wave whether or not they landed.** ⛔ **MEASURED across two refs by two offices: at `428223c` the notice read *"over the 25 newest (272–296) … unreached 3 — 273, 274, 275"*; at `270296d` it reads `285–309, unreached 0`, and all three of those are still uncited.** ⚠️ **Nothing landed. The hole AGED OUT** — and round 60's own sentence *"the unreached tail falls from 8 to 3"* credited a round for work the window did.
+
+### ⛔ WHAT SETTLES IT — `W139`
+
+1. ⭐ **The notice reports members still UNCITED BELOW the window, as a named set rather than as a second scalar** — ⛔ **named, because Ruling 245 already measured that a 25-at-once obligation is a notice nobody reads twice, and a bare count is the form that produced this defect.**
+2. ⛔ **THE WINDOW'S FIGURE AND THE BELOW-WINDOW FIGURE ARE NEVER SUMMED INTO ONE NUMBER.** ⭐ **They answer different questions — *is the minter paying?* and *is the backlog being worked?* — and Ruling 286's minter-pays clause is the thing the first one measures.** ⚠️ **A single merged scalar would make a working minter and a growing backlog indistinguishable, which is the defect one bound over.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12), **with an IMPOSSIBLE control**: a planted citation of a below-window ruling must move the set, and a number no record has ever minted must read empty. ⚠️ **`9999` is disqualified as a probe — it is MENTIONED in two records — so the probe number is fresh per run** (check 3's own clause).
+4. ⚠️ **NOT A WIDENING OF THE WINDOW.** ⛔ **`REACH_WINDOW = 25` is what makes the minter-pays reading cheap and legible; widening it to 100 replaces a sharp question with a blunt one and buries Ruling 286's signal.** ⭐ **The remedy is a SECOND reading, not a bigger first one.**
+5. ⛔ **THE SPLIT SEAM IS TAKEN, NOT DEFERRED.** ⚠️ **MEASURED at this branch's tip: `tools/quality/reach.py` is `385` of `400` and `tools/quality/board/register.py` is `399` of `400` — two modules in one package inside 15 lines of a ceiling `FND-01` makes a BUILD FAILURE.** ⭐ **`W133`'s taker named the seam — the citation grammar as a sibling module — and correctly refused to create it outside their surface** (Ruling 261: a ceiling is not a budget, and the next edit is a SPLIT rather than a trim).
+
+### ⚠️ WHAT IT MUST NOT BECOME — `W139`
+
+⛔ **A SECOND COPY OF `W134`.** ⭐ **`W134` LANDS rulings in convention documents; this row makes the ones that have not landed SAYABLE.** ⚠️ **The two are independent in both directions: `W134` can discharge its whole rate with this instrument unbuilt, and this instrument can ship with the backlog untouched** — ⛔ **which is precisely why the routing asked for a row rather than a clause.**
+
+### ⛔ RULING 75 IS INVOKED AND IT IS DECLARED HERE — `W139`
+
+⭐ **This row (round 48) is placed SECOND in `## Next rows`, behind [`W138`](rows/W138.md) and ahead of `W78` (round 35), `W88` (round 41), `W120`, `W121` and `W116`–`W118` (round 42), `W103` and `W105`–`W109` (rounds 39–40), `W125` (round 43), `W135` (round 46) and `W136` (round 47).** ⛔ **WHAT IT JUMPS AND WHY: every row it jumps is a defect whose SIZE is fixed while it waits, and this one's grows at a measured rate of roughly nine rulings per wave — ⭐ and it grows INVISIBLY, because the growth is exactly what leaves the instrument's field of view.** ⚠️ **It is the mechanism behind `W134`'s own promotion argument, one level down: `W134` was promoted because its population was scrolling out of this notice, and this row is why the notice lets it.**
+
+⛔ **AND WHY IT IS BEHIND `W138` RATHER THAN AHEAD OF IT:** ⭐ **this row makes a HOLE VISIBLE; `W138` makes a PROOF true.** ⚠️ **This row's cost is bounded and already carried by name in a ruling record, so nothing is lost while it waits one place; `W138`'s is a named acceptance clause of `SF-03` currently discharged against the wrong object, and no record carries that by name.**
+
+⭐ **SURFACE: `tools/quality/reach.py` and `tools/tests/quality/test_reach.py`** — ⛔ **shared with NO row in flight (`W134` holds `docs/conventions/*.md`, `W128` holds `tests/visual/`) and with no other queued row** (check 4's sub-step).
+
+[the mint argument and this round's two mints](#the-two-mints-and-one-of-them-was-routed-by-a-ruling-and-reached-no-row)
+
+### ⛔ ADDED PO ROUND 49 — `W134/4` IS DISCHARGED BY THIS ROW, AND NOTHING IS ADDED TO ITS ACCEPTANCE
+
+⚠️ **THIS ROW IS HELD AS THIS SECTION LANDS** (Ruling 283's standing disclosure clause, and Ruling 311's permission): `fix/W139-reach-below-window` is checked out at `wt/dev2`, so the holder's snapshot was taken BEFORE this section existed. ⛔ **The section is ADDITIVE, `0` deletions, and no hunk touches clauses 1–5 — measured on the diff and not asserted** (Ruling 311). ⭐ **A holder who never reads it has lost nothing, which is the whole of what makes the amendment permitted.**
+
+⛔ **[CTO round 62 §7](handoffs/CTO-2026-09-11-round62.md#7-dispositions-every-finding-in-the-wave-by-id-ruling-307) scheduled `W134/4` as *"a row against `tools/quality/reach.py`: the notice must print the whole-series unreached count beside the window's"*.** ⭐ **That row already exists and it is this one, minted the wave before and dispatched this wave** — ⚠️ **same defect, same instrument, same module, same test module.**
+
+⛔ **AND THE TWO TEXTS DISAGREE ON FORM, WHICH IS WHY THE DISPOSITION IS RECORDED HERE RATHER THAN OBEYED:** ⭐ **a *whole-series unreached count* IS the sum of the window's figure and the below-window figure, which clause 2 refuses BY NAME, and it is a COUNT where clause 1 requires a NAMED SET and refuses *a second scalar* on Ruling 245's measured ground.** ⛔ **THE CLAUSES STAND AS RULED AND AS DISPATCHED. Nothing above is reworded and no clause is widened** — ⚠️ **the holder owes clauses 1–5 and owes no whole-series count.**
+
+⭐ **It is a finding against the disposition and not against the office that raised it: `W134/4` was written in `wt/dev1`, who had no reason to know what the neighbouring wave's row said.**
+
+### ⛔ ADDED PO ROUND 49, SECOND SECTION — `W139/1`: THE ROUND-48 FIGURES ARE **DATED**, NOT REFUTED, AND THEY ARE ANNOTATED RATHER THAN EDITED
+
+⚠️ **THIS ROW IS STILL HELD AS THIS SECTION LANDS** (Ruling 283): `fix/W139-reach-below-window` is checked out at `wt/dev2`. ⛔ **ADDITIVE, `0` deletions, no hunk in clauses 1–5 — measured on the diff** (Ruling 311).
+
+⭐ **RELAYED, `RECEIVED` and not re-inhabited by this office** (Ruling 115): the taker measures, at their own branch's ref, **`0 of 7`** where the reading block above records `7 of 7 UNREACHED`, and **`29 of 95`** where it records `40 UNREACHED of 93`. ⛔ **The cause is known and is not a defect: `W134` merged at `4a3642a` between the two readings and landed all seven.**
+
+⛔ **THE WORD *REFUTED* IS WRONG HERE AND THIS PROJECT HAS ALREADY PAID FOR IT ONCE.** ⭐ **The block above says in its own header `MEASURED BY THIS OFFICE AT 270296d`, and a figure quoted with its ref is TRUE AT THAT REF forever** (Ruling 97). ⚠️ **What moved is the TREE, not the reading — which is exactly `CTO-62/2`, ruled AGAINST the reviewer who called a correctly-dated round-47 table *"refuted at its own ref"* having replayed only today's predicate, and out of which Ruling 310(b) was minted.** ⛔ **So: ANNOTATED beneath, never edited** (Ruling 183's form).
+
+⭐ **AND THE ROW'S ARGUMENT IS UNTOUCHED BY EITHER NUMBER, which the taker states and I agree with:** ⛔ **the defect is that the notice reads `unreached 0` while a backlog sits BELOW the window, and that is more true after `W134` landed, not less** — ⚠️ **the taker's own second line reports `109` still uncited below `287`.** ⭐ **A row whose arithmetic ages while its argument strengthens is the shape Ruling 310 exists to keep legible.**
+
+## PO round 50 — the two closes derived rather than received, ONE mint from the carry the previous wave left unrouted, three schedules converted without a row, and the skipped queue head ratified against my own diff
+
+⛔ **ROLE `wt/po`, branch `chore/po-round50`, every figure below measured in the pinned image in ONE invocation with the expected reading written down before the command ran.**
+
+### ⭐ THE IN-FLIGHT RE-TAKE, ROUND 50 — THE GATE READ `0` AT MY OWN TIP, AND THE TABLE IT GATES WAS WRITTEN FIRST
+
+⛔ **FIRST ACT** (Ruling 231(b), Ruling 279). ⭐ **`git worktree list` PRIMARY, `git branch` corroborating** (Ruling 171):
+
+```text
+role wt/po, 94ad941 -> 4e2e7af
+  OUT  W138  fix/W138-placement-substitution  tip c78cb33  ABSORBED by 6e349be
+       W139  fix/W139-reach-below-window      tip 0f3615d  ABSORBED by 09b6459
+  IN   W142 + W143  fix/W142-W143-restore-and-lint-scope @ wt/dev1   0 @ 94ad941
+       W140         fix/W140-anchor-collisions          @ wt/dev2   0 @ 94ad941
+  CORROBORATE_EXIT=0 at `git rev-parse chore/po-round50`   ⭐ the GATE, and it holds
+    0 of 2 rows REFUTED, 0 NOT ANSWERABLE, dispatched and unnamed: none
+    office round branches EXEMPT by Ruling 265: chore/cto-round64 +0, chore/po-round50 +1
+```
+
+⭐ **`W142` and `W143` are ONE CELL carrying TWO IDS** — one branch, one taker, and `corroborate` judges them one by one (Ruling 218). ⚠️ **Both branches read `0` ahead and BOTH CORROBORATE, because terminality is consulted first and neither tip is any merge's second parent — `94ad941` is ON the first-parent line.** ⛔ **That is not the `0`-ahead exemption: Ruling 265 exempts the OFFICE-BRANCH NAMESPACE and never emptiness, and these two are named by rows precisely so they are not in that arm.**
+
+### ⛔ THE TWO CLOSES, ROUND 50 — BOTH MERGE REFS DERIVED WITH RULING 199's PREDICATE AND BOTH STUB ANCHORS RUN THROUGH THE SHIPPED SLUG
+
+⭐ **Neither sha was taken from the brief.** ⛔ **Shape `C`, run per branch: the branch tip is looked for among the second parents of `release/m0-foundations`'s first-parent merges, and shape `B` — the merge subject naming the branch — is read beside it and never decides.** ⚠️ **Both agree with the shas the dispatch brief relayed, which is worth recording: a relayed sha that reproduces is a corroboration, and one that does not is a finding.**
+
+⛔ **RULING 306 WAS RUN, NOT TRUSTED.** ⭐ **Both stub anchors were derived with the shipped `pointers.slug()` and checked against `heading_slugs()` over the whole archive BEFORE the stub was written — `753` anchors read, and both new names FREE.**
+
+### ⛔ WHAT CTO ROUND 63 SCHEDULED, CONVERTED ONE BY ONE — AND NOT ONE OF THEM IS A NEW ROW
+
+⚠️ **I read [round 63's own §7](handoffs/CTO-2026-09-11-round63.md#7-dispositions-every-finding-in-the-wave-by-id-ruling-307) rather than inheriting a list, because the previous wave's inherited list was short by two (`SESSION-2026-09-11c/3`).** ⛔ **THE CONVERSION IS A CONVERSION AND NOT A TALLY: of every id that record disposes, exactly THREE ask anything of this register, and NONE of the three is a row.** ⚠️ **No count of that record's ids is written here — it would be a figure this document cannot re-derive** (Ruling 150's form).
+
+| the id | ⛔ round 63's disposition | ⭐ what this round did with it |
+|---|---|---|
+| `PO-49/8` | **ACCEPTED**, *"routed to the register, not repaired here — `docs/tasks/**` is not my surface"* | ⛔ **A CLAUSE ON `W78`, not a mint.** ⭐ The citation is inside `W78`'s OWN tracking population and is exempt under Ruling 201 by name; a row for it would be a second row over one population |
+| `W138/2` | **RULED, Ruling 312**; the renumbering question left *"OPEN AND NAMED, and it belongs to whoever reopens `SF-03`"* | ⛔ **A `pending` SCHEDULED cell**, owner framework agent, and the trigger names the ACT and the OFFICE (Ruling 288). ⚠️ Not a row: nothing is owed until a row reopens that acceptance |
+| `W139/4` | **ACKNOWLEDGED, NO ACTION** — `register.py` at `399` of `400`, *"the next edit to that module is known in advance to be a SPLIT"* | ⭐ **ALREADY CARRIED** — the board's `## Standing decisions` has held exactly that condition for `tools/quality/board/register.py` since round 47. ⛔ **A second cell would be the two-copies defect this board's closing rule forbids**; re-measured and left alone |
+
+⚠️ **AND TWO THAT ROUND 63 DECLINED TO MINT, RECORDED HERE SO THE DECLINE IS NOT READ AS AN OMISSION:** ⛔ **`CTO-63/5`** (a difference between two counts is not a finding until the two ROLES are shown to be the same role) and ⛔ **`CTO-63/6`** (a count of a branch's own findings is self-referential and a merge subject cannot be annotated later). ⭐ **Both are ONE instance each and Ruling 11's form asks for THREE before a rule, so neither is a ruling and neither is a row** — ⚠️ **and I record a finding of my own about the mechanism by which a third instance is ever supposed to find the first two.**
+
+### ⛔ `SESSION-2026-09-11c/6` PLACED — ONE HALF IS A ROW AND THE OTHER IS DATED BY `W139`'s OWN LANDING
+
+⛔ **The carry, in the coordinator's own words, is TWO claims and they do not have the same disposition.**
+
+⭐ **HALF A — *a citation can be UNMADE by re-wrapping a line* — IS A ROW, and it is `W145`.** ⚠️ **RE-MEASURED BY ME at `4e2e7af`, role `wt/po`, with the SHIPPED predicate rather than the coordinator's grep, and the population is WIDER than the one document the carry names:**
+
+```text
+role wt/po, 4e2e7af, tools.quality.citations.cited_numbers over reach._conventions(root)
+  the wrapped shape, all 8 convention documents          11 occurrences
+     of which review-rubric.md                            7      ⭐ the carry's figure, reproduced
+  distinct ruling numbers standing behind them           10   31 65 70 96 166 185 189 196 223 276
+  of those, read UNCITED by the shipped predicate         1   ⛔ 166, in review-rubric.md
+  below-window uncited today                            109   ⛔ of which exactly ONE is false
+```
+
+⛔ **SO THE NOTICE'S OVER-COUNT TODAY IS EXACTLY `1`, AND THAT IS A SHARPER READING THAN *"the figure is an upper bound"*.** ⭐ **Nine of the ten numbers are cited elsewhere in a readable spelling, which is precisely why the gap has never been visible: the shape is common and its consequence is rare.** ⚠️ **`166` is the single member the gap actually costs, and it is the one the coordinator found.**
+
+⭐ **HALF B — *nothing in the tree reports the difference between a held scalar and a held population* — IS DATED, and by the very merge the carry was measured across.** ⛔ **`W139` landed a below-window arm that PRINTS ITS NAMED SET, not a scalar** (its clause 1, and clause 2 refuses the sum). ⚠️ **MEASURED at `4e2e7af`: the floor line ends `Still uncited below the window: 1, 2, 3, 4, 6, 7, …` — `166` is IN that set and `5` is NOT.** ⭐ **Which is exactly the two-members-moving-in-opposite-directions the carry describes, now READABLE OFF THE FLOOR'S OWN OUTPUT by anyone holding two readings.** ⛔ **A second row for it would be a row against a defect that shipped its own remedy in the same wave it was reported.**
+
+⚠️ **I do NOT claim the tree DIFFS two readings for you — it does not, and no instrument here compares one ref to another.** ⭐ **The claim is narrower and is what the carry asked for: the MEMBERS are in the tree, so a change of membership under a held scalar is no longer unreportable.**
+
+### ⛔ THE QUEUE RE-SEQUENCED, ROUND 50 — AND THE HEAD THE COORDINATOR SKIPPED IS RATIFIED AGAINST MY OWN DIFF
+
+⛔ **THE COORDINATOR SKIPPED `W78` AT ORDER 3 ON A SURFACE GROUND AND ASKED ME TO JUDGE THE REASONING RATHER THAN INHERIT IT.** ⭐ **I RATIFY IT, and the corroboration is my own diff rather than my agreement:** ⚠️ **this round writes `docs/tasks/rows/W138.md`, `rows/W139.md`, `rows/W145.md` AND `rows/W78.md` itself** — ⛔ **so a `W78` taker dispatched beside this round would have been holding a file the register rewrote underneath them, which is check 4's sub-step doing exactly what it is for.**
+
+⭐ **AND THE SKIP IS NOT A DEMOTION: `W78` stands at the HEAD of the queue and is owed the next wave's dispatch.** ⚠️ **`W78`, `W88` and `W120` all write `docs/tasks/rows/`, so the next wave may dispatch AT MOST ONE of the three, and `W78` is the one.**
+
+⛔ **RULING 75 IS RE-MEASURED RATHER THAN RE-COUNTED, case-INSENSITIVELY, over the row files this table names** (`PO-45/3`). ⭐ **`W145` declares it NOWHERE and is silent because it jumps nobody: the defect is bounded, its over-count is `1`, and the notice that carries it has declared the gap since it shipped.**
+
+### ⛔ WHAT ROUND 50 DID NOT DO, NAMED SO IT IS NOT READ AS DONE
+
+- ⛔ **`docs/conventions/**`, `tools/**`, `tests/**`, `src/**`** — outside my surface. ⭐ **`W145` is a ROW against `tools/quality/citations.py` and NOT a patch of it**, which is the whole reason the measurement above is a row file rather than a diff.
+- ⛔ **`docs/tasks/handoffs/W142.md` and `docs/tasks/handoffs/W140.md`** — the seam. ⚠️ **Neither exists in my diff and neither was read into it.**
+- ⛔ **I did not read `BOARD-ARCHIVE.md` or the CTO record chain as documents.** ⭐ **Rulings were resolved through `docs/tasks/rulings-index.md` and then `sed -n` around one anchor; the archive was APPENDED TO without being read.**
+- ⚠️ **I did not re-run `W138`'s or `W139`'s acceptance.** ⛔ **A close is a REGISTER act: the merge ref is derived and the argument is moved. The verdict is the reviewer's and it is `(CTO: APPROVE)` for both.**
