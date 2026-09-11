@@ -163,6 +163,12 @@ from tools.quality.board.scheduled import (
 from tools.quality.config import read_text
 from tools.quality.report import Finding
 
+# ⛔ **Every name below is a RE-EXPORT and nothing here is defined twice.** ⚠️ **Four of
+# them — `rows_on_disk`, `is_closed`, `register`, `state` — were CALLED here until `W129`
+# moved `check_board`'s body into `bijection.py`; ⭐ they stay in `__all__` because the
+# package surface is what callers import, and a name silently dropped from it is a
+# breaking change nothing would have reported.**
+#
 # ⛔ **The five rule codes moved to `bijection.py` with the arm that RAISES them**, and
 # that is `CTO-47/3`'s own rule applied rather than merely obeyed: ⭐ **a code is declared
 # where its finding is raised — `bounds.py`, `contradiction.py` and `scheduled.py` have
@@ -210,7 +216,11 @@ __all__ = [
     "bijection_findings",
     "board_state",
     "check_board",
+    "is_closed",
     "redirects_to_the_archive",
+    "register",
+    "rows_on_disk",
+    "state",
 ]
 
 

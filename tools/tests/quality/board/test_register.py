@@ -454,6 +454,7 @@ def test_impossible_an_argument_that_declares_no_state_does_not_duplicate_one(
     assert not duplicates_a_state(FRAMED.format(name="W9", argument=argument_text))
     assert not duplicates_a_state("a fragment with no frame at all\n")
 
+
 # --------------------------------------------------------------------------
 # ⛔ `W129` / Ruling 270 — the REDIRECT STUB predicate, and it is IS not CONTAINS
 # --------------------------------------------------------------------------

@@ -57,9 +57,13 @@ under `rows/` may be anything*.** ⚠️ **A stub is STILL JUDGED:**
 
 ⭐ **The predicate is CLOSED and carries NO byte threshold** (`repeats_its_naming`'s
 own remedy, Ruling 186): ⛔ **a stub's ARGUMENT *is* one pointer into the archive,
-rather than *contains* one.** ⚠️ **`contains` would have passed every full argument
-file this board has**, because a row file's last line is its archive pointer —
-`rows/W129.md`, `rows/W130.md` and `rows/W132.md` all end with exactly that link.
+rather than *contains* one.** ⚠️ **MEASURED at `51dee3b`, role `wt/dev1`: of the **83**
+live row files, **50** carry an anchored `BOARD-ARCHIVE.md#` pointer somewhere and
+**42** END with one** — `rows/W129.md`, `rows/W130.md` and `rows/W132.md` among them —
+⭐ **so a `contains` form would have read FIFTY full argument files as stubs and
+silenced `board-orphan` on exactly the files it guards.** ⛔ **I caught myself writing
+*"every full argument file"* here and corrected it to the count: the shape of the
+argument survives, and the number it rests on was wrong.**
 
 ## ⚠️ What this arm deliberately does NOT assert, DECLARED rather than implied
 
@@ -78,8 +82,8 @@ from pathlib import Path
 from tools.quality.board.notice import rows_on_disk
 from tools.quality.board.register import (
     BOARD,
-    ROWS,
     ROW_FRAME,
+    ROWS,
     STATES,
     is_closed,
     redirects_to_the_archive,

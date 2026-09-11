@@ -77,6 +77,7 @@ def test_the_blind_spot_is_COUNTED_AND_NAMED_rather_than_judged(repository: Path
 # ⛔ `W132` / Ruling 265 — the OFFICE-BRANCH exemption, in BOTH directions
 # --------------------------------------------------------------------------
 
+
 #: ⛔ An office branch that is AHEAD, which is the case Ruling 130 does NOT exempt and the
 #: one `W132` is about. ⭐ `0`-ahead was already exempt, so a `0`-ahead fixture would measure
 #: nothing (`rows/W132.md`: *"not a fixture that is 0 ahead"*).
@@ -85,9 +86,10 @@ def _office(repository: Path, branch: str, where: str) -> int:
     assert git(repository, "checkout", "-q", "-b", branch).returncode == 0
     commit(repository, f"{branch.replace('/', '-')}.txt", "a round's record\n")
     assert git(repository, "checkout", "-q", RELEASE).returncode == 0
-    assert git(
-        repository, "worktree", "add", "-q", str(repository.parent / where), branch
-    ).returncode == 0
+    assert (
+        git(repository, "worktree", "add", "-q", str(repository.parent / where), branch).returncode
+        == 0
+    )
     ahead = Graph.read(repository, RELEASE).ahead(branch)
     assert ahead is not None and ahead > 0, f"⛔ born vacuous: {branch} is {ahead} ahead"
     return ahead
@@ -193,9 +195,12 @@ def test_the_DETACHED_checkout_is_in_NONE_of_the_FOUR_lines_and_that_hole_STAYS_
     saying where the branches went.
     """
     tip = git(repository, "rev-parse", "HEAD").stdout.strip()
-    assert git(
-        repository, "worktree", "add", "-q", "--detach", str(repository.parent / "poi"), tip
-    ).returncode == 0
+    assert (
+        git(
+            repository, "worktree", "add", "-q", "--detach", str(repository.parent / "poi"), tip
+        ).returncode
+        == 0
+    )
     assert "poi" not in str(Graph.read(repository, RELEASE).checkouts()), "⛔ born vacuous"
     _office(repository, "chore/po-round46", "po")
     write_board(repository, "")
@@ -209,6 +214,7 @@ def test_the_DETACHED_checkout_is_in_NONE_of_the_FOUR_lines_and_that_hole_STAYS_
 # --------------------------------------------------------------------------
 # ⛔ `spent()` — Ruling 206(ii)'s two lines, and neither is ever a removal
 # --------------------------------------------------------------------------
+
 
 def test_planted_a_spent_trial_branch_is_the_reading_no_board_cell_carries(
     repository: Path,

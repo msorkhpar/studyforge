@@ -28,7 +28,7 @@ from tools.quality.board.graph import Graph
 from tools.quality.board.register import BOARD
 from tools.workspace import git
 
-from .conftest import RELEASE, commit, unreadable, write_board
+from .conftest import RELEASE, unreadable, write_board
 
 #: ⛔ A header that declares NONE of the three roles — the CTO's round-50 plant.
 RENAMED = "| Row | Owner | Where | Commits on it | Phase |\n|---|---|---|---|---|\n"

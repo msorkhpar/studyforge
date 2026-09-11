@@ -16,6 +16,7 @@ from __future__ import annotations
 import math
 from pathlib import Path
 
+from tests.support import repository_root
 from tools.quality.board import (
     BOARD,
     BOARD_FRAME,
@@ -30,7 +31,6 @@ from tools.quality.board import (
     check_board,
 )
 from tools.quality.board.bounds import allowance, size_findings
-from tests.support import repository_root
 from tools.quality.board.register import is_closed, register
 from tools.quality.report import Finding
 
@@ -139,9 +139,11 @@ def test_the_bounds_arm_is_WIRED_INTO_check_board(tmp_path: Path) -> None:
     found: list[Finding] = check_board(tmp_path)
     assert RULE_NARRATIVE in rules(found)
 
+
 # --------------------------------------------------------------------------
 # ⛔ `W130` / Ruling 271 — the DENOMINATOR counts the things the board HOLDS
 # --------------------------------------------------------------------------
+
 
 #: ⭐ A DELIMITED observation block with `count` rows in it, in the board's own shape.
 def _inflight(count: int) -> str:
@@ -202,9 +204,7 @@ def test_DIRECTION_ONE_a_board_that_grows_by_an_OBSERVATION_ROW_PASSES() -> None
     grown = _board(_inflight(2) + _scheduled(2))
     assert rules(size_findings(base)) == [], "the control: the base board is clean"
     assert rules(size_findings(grown)) == [], "⭐ and growing by one row of each stays clean"
-    slope = (allowance(grown)[0] - allowance(base)[0]) - (
-        len(grown.encode()) - len(base.encode())
-    )
+    slope = (allowance(grown)[0] - allowance(base)[0]) - (len(grown.encode()) - len(base.encode()))
     assert slope > 0, f"⛔ a row of a delimited table must EARN, and this one earned {slope}"
 
 
@@ -272,11 +272,7 @@ def test_the_DERIVATION_RULE_re_derives_BOARD_PER_ROW_from_the_LIVE_REGISTER() -
     """
     text = (repository_root() / BOARD).read_text(encoding="utf-8")
     lines = text.split("\n")
-    live = [
-        lines[number - 1]
-        for number, _ids, cell in register(text)
-        if not is_closed(cell)
-    ]
+    live = [lines[number - 1] for number, _ids, cell in register(text) if not is_closed(cell)]
     assert len(live) >= 10, f"born vacuous: {len(live)} live register lines"
     mean = sum(len(line.encode()) + 1 for line in live) / len(live)
     assert _rule(mean) == BOARD_PER_ROW, (

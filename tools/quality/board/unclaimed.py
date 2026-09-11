@@ -137,11 +137,11 @@ def unnamed(
         f"  ⭐ OFFICE round branches, EXEMPT by Ruling 265 REGARDLESS of commits ahead "
         f"({len(office)}): "
         + ", ".join(f"{b} +{counts[b]}" for b in office)
-        + f" — ⛔ the exemption is the BRANCH NAMESPACE and not emptiness: no register row "
-        f"will EVER name one of these, because a row naming an office's round branch would "
-        f"be a row naming its own recorder. ⚠️ Ruling 130's `0 ahead` form was right about "
-        f"the population and wrong about the reason, and an office branch stops being `0` "
-        f"ahead the moment it records anything (Ruling 264(c) made this line a GATE)."
+        + " — ⛔ the exemption is the BRANCH NAMESPACE and not emptiness: no register row "
+        "will EVER name one of these, because a row naming an office's round branch would "
+        "be a row naming its own recorder. ⚠️ Ruling 130's `0 ahead` form was right about "
+        "the population and wrong about the reason, and an office branch stops being `0` "
+        "ahead the moment it records anything (Ruling 264(c) made this line a GATE)."
         if office
         else f"  office round branches exempt by Ruling 265 ({'|'.join(OFFICE)}*): none."
     )

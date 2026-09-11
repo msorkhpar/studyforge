@@ -208,7 +208,7 @@ RULE_SIZE = "board-size"
 
 
 def allowance(text: str) -> tuple[int, int, int, int]:
-    """`(allowed, register ids, delimited observation rows, delimited scheduled rows)`.
+    """Return `(allowed, register ids, delimited observation rows, delimited scheduled rows)`.
 
     ⛔ **`W130`, Ruling 271: the denominator counts the things the board actually holds**
     — ⚠️ **and all three counts are DERIVED here rather than passed in, because a count

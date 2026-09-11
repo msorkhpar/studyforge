@@ -112,7 +112,6 @@ from tools.quality.board.graph import Graph
 from tools.quality.board.observation import (
     DELIMITED,
     INFLIGHT_OPEN,
-    Observation,
     Table,
     asserted,
     read,
