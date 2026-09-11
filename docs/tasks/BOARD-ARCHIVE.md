@@ -11688,3 +11688,570 @@ prose in two files under `docs/tasks/`, the reproducible form is
 `git diff b5066ef..HEAD`, and re-running the suite to absorb a prose addition would
 move the ref again** — ⚠️ **which is the regress Ruling 97 names when it says a
 close quotes ITS OWN ref rather than the tip.**
+
+---
+
+## PO round 42 — the In flight table re-taken at `e5ab51d`, three rows closed, `## Scheduled` delimited so `W100` can be built, `W36` ruled ALONE, and five mints
+
+⛔ **This section is the ROUND'S REASONING and it is a RECORD.** ⭐ **The state it
+argues for is in [`BOARD.md`](BOARD.md)'s cells; the report asking for a verdict is
+[`handoffs/PO-2026-09-10-round42.md`](handoffs/PO-2026-09-10-round42.md).** ⚠️ **No
+measurement is typed in more than one of the three.**
+
+**Measured at:** every checkout named by ROLE (Ruling 147), never by path. ⛔ **PO
+worktree, `wt/po`, branch `chore/po-round42`, cut from the release tip `e5ab51d`.
+No siblings, so every `tools.workspace` reading from here is host-verified by
+construction** (Ruling 159).
+
+### The In flight re-take — the instrument refuted all three rows, and the refutation was PREDICTED IN WRITING before the wave merged
+
+⛔ **MEASURED BY ME at `e5ab51d`, role `wt/po`, host, whole output read before any
+scalar** — `python3 -m tools.quality.board.corroborate`:
+
+```text
+BEFORE the re-take
+  corroborate: release release/m0-foundations, 3 observation rows,
+               4 checkouts on a branch, 0 started register cells.
+  W74  -> fix/W74-sibling-runnable       ⛔ REFUTED, absorbed by a3efb12
+  W111 -> fix/W111-W110-corroborate      ⛔ REFUTED, absorbed by 923a970
+  W110 -> fix/W111-W110-corroborate      ⛔ REFUTED, absorbed by 923a970   (the same
+          branch, printed twice, because two rows share one branch — honest)
+  ⛔ dispatched and UNNAMED by any row: feat/SF-16-speakable fix/W63-W64-marker-kind
+  invisible to git BY CONSTRUCTION (Ruling 130), 0 ahead and named by no row: 1 — po
+  corroborate: 3 of 3 rows REFUTED by git.   exit 1
+```
+
+⭐ **THE POST-WAVE RED IS THE EXPECTED STATE AND NOT A DEFECT**, and that is a
+different claim from *"it is explained"*: ⛔ **the coordinator wrote the reading
+down BEFORE merging the four branches and it matched exactly, which is the first
+time in this project's record that a stale-board reading was predicted rather than
+discovered.** ⚠️ **THIRD CONSECUTIVE WAVE the instrument has beaten a human to this
+table** — round 40's two, round 41's two, and now three.
+
+⛔ **AND THE CORRECTION AGAINST THE BRIEF, MEASURED: the brief relayed ONE unnamed
+branch (`fix/W63-W64-marker-kind`) and I read TWO.** ⭐ **`feat/SF-16-speakable` at
+`wt/dev3` appeared after the brief was written, which is `PO-30/2`'s *a reading has
+an as-of* arriving inside a brief** — ⚠️ **and it is exactly the class Ruling 198
+charges against a brief that pins a state.**
+
+⭐ **THE RE-TAKE, and it is the OTHER direction that mattered: the three stale rows
+came OUT and the two dispatched branches git could already see went IN.** ⛔ **The
+board is the only instrument that ASSERTS in-flight rather than OBSERVING it
+(Ruling 189), so the table was wrong in BOTH directions at once and only one of
+them had been reported.**
+
+```text
+AFTER the re-take, same command, same checkout, my branch
+  W63    wt/dev4, fix/W63-W64-marker-kind   2 ahead   in flight
+  W64    wt/dev4, fix/W63-W64-marker-kind   2 ahead   in flight
+  SF-16  wt/dev3, feat/SF-16-speakable      2 ahead   in flight
+  ⭐ ahead counts MEASURED: git rev-list --count release/m0-foundations..<branch>
+```
+
+⛔ **`SF-16` IS A TASK AND NOT A `W` ROW, AND THAT IS ESTABLISHED PRACTICE RATHER
+THAN AN INNOVATION:** ⭐ **the delimited table carried `SF-30` at `2d0cfe7`, and
+`identifiers()` returning no `W` id for such a row is handled — `board_state`
+prints *`n` rows, `m` naming a `W` row id* and the disagreement rules iterate
+`row.ids`, which is empty.** ⚠️ **The row still silences `corroborate`'s
+*dispatched and UNNAMED* line, because `_unnamed()` keys on the `Checkout` cell's
+tokens and never on the row id.**
+
+⚠️ **TWO ROWS NAMING ONE BRANCH SURVIVES THE RE-TAKE with a different pair:**
+⛔ **`W63` and `W64` are one branch in one checkout for the same reason `W110` and
+`W111` were — one module, one commit, priced as a pair before dispatch.**
+
+### ⛔ W36 — RULED: it lands ALONE at a wave boundary, and the reason is that it MOVES THE MEASUREMENT AUTHORITY
+
+⛔ **THE COORDINATOR OFFERED THIS JUDGEMENT AND DID NOT IMPOSE IT. I RULE IT, and
+I rule it with one thing added that the offer did not carry: what happens if one
+of the 57 goes red.**
+
+⭐ **THE READING THAT DECIDES IT, MEASURED BY ME at `e5ab51d` in the PINNED
+container (Ruling 40, Ruling 172's form — the invocation printed the sha it read):**
+
+```text
+suite   4911 passed, 67 skipped
+harness visual harness: NO BROWSER — 57 visual check(s) DID NOT RUN.
+                        ⛔ The pinned dev image has none either — QA-03/1.
+skips   67 = 57 visual + 5 tests/docker/test_dev_image.py
+             + 3 tests/test_knowledge_index.py + 2 render/page/test_acceptance.py
+```
+
+⛔ **SO `W36` DOES NOT ADD A CHECK. IT CHANGES WHAT EVERY OTHER READING IN THIS
+PROJECT MEANS.** ⭐ **On the day it lands the skip count falls from `67` to roughly
+`10` and 57 assertions execute for the first time** — ⚠️ **which means every
+concurrent branch's BASE reading was taken against a suite that is no longer the
+same suite, and Ruling 97's *no row is inherited across a ref change* has its
+sharpest possible instance: the ref did not merely move, the INSTRUMENT did.**
+
+| the option | what it costs | ⛔ the failure mode |
+|---|---|---|
+| ⭐ **`W36` alone at a wave boundary** | one wave carries one row | none measured |
+| `W36` merged FIRST in a shared wave | every other branch re-takes its base | a re-take Ruling 97 permits but nobody schedules |
+| `W36` merged LAST in a shared wave | ⛔ **a newly-red visual check is attributed to whichever branch merged beside it** | ⚠️ **a FALSE CHARGE against a developer who did nothing** |
+
+⛔ **THE RULING, three clauses:**
+
+> ⭐ **(a) `W36` is dispatched and merged ALONE.** The wave that carries it opens
+> with every other branch merged and closes carrying only `W36`. ⛔ **No branch is
+> dispatched beside it, because a base reading taken before it lands and a merge
+> reading taken after are not comparable and no arithmetic reconciles them.**
+>
+> ⭐ **(b) A check that goes RED among the 57 is a FINDING of `W36`, never a
+> changes-requested cause against it.** ⛔ **The checks were DARK: nobody could
+> know, so nobody may be charged.** ⚠️ **`W36`'s subject is the image and the
+> browser; a contrast failure's subject is the chrome, and it is rowed at `W36`'s
+> review rather than absorbed into the diff** (R12's *stay inside your task*).
+>
+> ⭐ **(c) `W36`'s own acceptance states the NEW skip count and the per-file
+> verdict of all 57, in the pinned image** — ⛔ **because a row that turns an
+> empty population into an inhabited one owes the inhabitation** (Ruling 191), and
+> ⛔ **because an instrument whose reach changes prints the new reach beside its
+> verdict** (Ruling 208). ⚠️ **A host reading does not discharge any of it**
+> (Ruling 204, and it is `W112`'s whole subject).
+
+⛔ **AND RULING 214'S DISPATCH RE-READ, RUN BY ME AS THE DISPATCHER rather than
+left to the taker:**
+
+```text
+$ git log --oneline --since="<rows/W36.md's last edit, 550e411>" \
+      -- docs/tasks/handoffs/'CTO-*.md'
+  -> 10 CTO records, rulings 188-216
+MECHANISM  a checksum-pinned browser in the image + $STUDYFORGE_VISUAL   ⭐ UNAFFECTED
+SHARPENED  Ruling 191 (the 57 are an empty population returning the PASS reading)
+           Ruling 204 (a host reading does not discharge a committed clause)
+           Ruling 208 (the reach is printed beside the verdict)
+```
+
+⭐ **The amendment to `rows/W36.md` is APPENDED, nothing reworded** (Ruling 214,
+Ruling 106's form applied to a row).
+
+⛔ **PLACED FIRST in *Next rows*, and it JUMPS NOBODY: `W63` → `W64` were the pair
+it would have jumped and both are in flight above.** ⚠️ **So Ruling 75 is not
+invoked by this placement, and that is a reading rather than an omission.**
+
+### ⛔ The `## Scheduled` delimiter and the STATE column — `W100`'s gate, landed
+
+⛔ **Ruling 189's family ruled that `## Scheduled` gains `<!-- scheduled -->` /
+`<!-- /scheduled -->` markers AND A STATE COLUMN, and the instrument cannot be
+built until the board carries them.** ⭐ **It is the same shape as `W96`/`W111`'s
+delimiter: one PO board edit, and the row that reads it is dispatched afterwards.**
+
+⭐ **THE SIX CELLS' STATES ARE DERIVED, NOT ASSIGNED — each one measured at
+`e5ab51d` before the word was typed:**
+
+```text
+SK-07 generates the corpus graph      discharged  carried into E11, round 38
+SK-07 must not say "submodule"        discharged  E11 corrected, round 38
+Context headroom for the five tasks   discharged  ⭐ MEASURED BY ME: 5 of 5 carry a
+   **Context** budget line in their epic —
+   SF-19a  E05-serving-execution.md ~90k   SK-01 E11 ~45k   SK-02 E11 ~40k
+   SK-05   E11 ~35k                        SK-08 E11 ~45k
+`Effort` beyond the four named tasks  fired       ⚠️ a STANDING trigger — see below
+Back-triage the 23 pre-marker findings discharged 23 of 23 re-taken round 38
+R21's open rows                        pending    two rows, neither due in M3
+```
+
+⛔ **AND THE CLOSED VOCABULARY IS ONE VALUE SHORT, FOUND BY USING IT:** ⭐ **`pending`,
+`fired`, `expired`, `discharged` has no word for a trigger that fires REPEATEDLY
+and never discharges** — ⚠️ **the `Effort` row's trigger is *as each
+computation-shaped task is assigned*, which is a standing instruction: it has
+fired (twice, `SF-07` and `FND-02`) and it will fire again, so `discharged` would
+be false and `pending` would be false.** ⛔ **I write `fired` and say why here
+rather than inventing a fifth word, because the vocabulary is the CTO's
+(Ruling 189's family) and `W100` is the row that implements it.** ⭐ **Routed into
+[`rows/W100.md`](rows/W100.md) as a pre-dispatch reading, so the taker meets it
+before the predicate is written rather than after.**
+
+⛔ **What I did NOT do, and it is deliberate: I did not add a STATE column to any
+table that is not `## Scheduled`.** ⚠️ **Every table the instrument can FIND is an
+inferred boundary, and this board has already paid for one** — `board-duplicate`
+firing on the author of `board-duplicate`.
+
+### ⛔ The three closes — FOUR edits each (Ruling 201), and the fourth is UNPERFORMABLE BY THIS OFFICE for six of its nine sites
+
+⭐ **`W74` at `a3efb12`, `W111` and `W110` at `923a970`, all three APPROVED by the
+CTO at round 52.** ⛔ **Edits one to three are done for all three rows: the state
+cell carries the merge ref, the Detail cell points at the record below, the body
+moved here, the row file is deleted.**
+
+⛔ **THE FOURTH EDIT — re-point every INBOUND citation of `rows/<ID>.md` in a LIVE
+document — IS WHERE THIS CLOSE IS HONEST INSTEAD OF CLEAN.** ⭐ **MEASURED BY ME
+at `e5ab51d` with Ruling 201's own fenced command, population printed in full
+before the scalar:**
+
+```text
+inbound citations of the three closing rows, LIVE documents only
+  W74    1  -> docs/tasks/BOARD.md's own register cell      ⭐ mine, and re-pointed
+  W111   6  -> docs/conventions/board.md:162                ⛔ the CTO's document
+                tools/quality/board/contradiction.py:29     ⛔ framework source
+                tools/quality/board/corroborate.py:187      ⛔ framework source
+                tools/quality/board/observation.py:60, :297 ⛔ framework source
+                tools/tests/quality/board/test_observation.py:141
+  W110   3  -> docs/conventions/board.md:893                ⛔ the CTO's document
+                tools/quality/board/verdict.py:57           ⛔ framework source
+                tools/tests/quality/board/test_verdict.py:112
+```
+
+⛔ **I WROTE NONE OF THE NINE EXCEPT MY OWN.** ⭐ **Two are in `board.md`, which is
+the CTO's document and which I refused to edit at round 40 and round 41 — both
+refusals RATIFIED — and six are framework source, which this office does not
+write.** ⚠️ **So a close performed correctly by the only office that performs
+closes leaves eight dead paths in documents it may not touch, and that is not a
+lapse in this close: it is Ruling 201's fourth edit meeting the ownership
+boundary, which nobody had measured against each other until a close's citations
+lived in `src`-side files.**
+
+⛔ **NOTHING GOES RED, AND THAT IS THE WORST PART:** ⭐ **`document pointers … 0
+unresolved` resolves `](…)` targets only, so all eight are INLINE CODE and
+invisible to the one instrument that exists for exactly this** (`PO-40/5`).
+
+⭐ **ROUTED, NOT MINTED: [`rows/W78.md`](rows/W78.md) is the row whose naming
+already says *a `rows/<ID>.md` a close DELETED*, and it is widened with this
+close's population and its ownership finding.** ⛔ **`W78` is PROMOTED in *Next
+rows* on the strength of it — a row whose population TRIPLES at every close is a
+row whose age is now a cost.**
+
+⭐ **The whole-tree reading, for the next office that re-runs it:**
+
+```text
+at e5ab51d, BEFORE this close   83 dangling, 60 in records (a record may not be edited)
+                                 4 live, non-record, non-fixture, not exempt
+                                 (board.md:188 -> W96; register.py:351 -> W18;
+                                  test_contradiction.py:170 -> W95;
+                                  test_notice.py:149 -> W14)
+after this close                 + 8, all eight in documents this office may not edit
+```
+
+### ⛔ Rulings 208–216 — where each one landed on my desk, and the two the CTO had already discharged
+
+| ruling | what I owed, and did |
+|---|---|
+| **208** — an instrument narrower than its declared subject | ⭐ **Three of its four instances are already fixed or rowed** (`W74` merged, `W111` merged, `W114` open, check 3 fixed by the CTO's own commit). ⛔ **The CLAUSE — *print the reach beside the verdict* — has no enforcement arm, and I widened [`rows/W37.md`](rows/W37.md) rather than minting: `W37` is the repo-wide sweep for checks that cannot fail by construction, and a check whose reach is narrower than its subject is that sweep's own population one layer out** |
+| **209** — a pin whose expiry a SUITE reads is acceptable; it owes an ACCEPTANCE | ⛔ **MINE, and discharged: [`rows/W75.md`](rows/W75.md) gains the clause — when `W75` lands, `W74`'s pinned row is CONVERTED to assert the bare-shell reading, never deleted.** ⭐ **Quoted from the ruling, not paraphrased** (Ruling 195) |
+| **210** — the floor's own formatter PRODUCES PEP 758; the remedy is a declared `target-version` | ⛔ **MINTED — `W116`.** ⭐ **The CTO's re-count is carried rather than the brief's: the pre-existing population is `23` lines in `21` files at `2d0cfe7`, and `24 in 22` was the MERGE's** |
+| **211** — `git checkout <ref> -- <path>` poisons the index | ⭐ **Landed by the CTO in `review-rubric.md`. Nothing owed; it BINDS me, and this round planted nothing** |
+| **212** — check 3 excludes the generated index AND the archive | ⭐ **`PO-41/3` FIXED IN THE CTO'S OWN COMMIT. Nothing owed** — ⛔ **and my refusal to make that one-word edit in their document was the right call twice over, because the fix is two exclusions and not one** |
+| **213** — a close-time decomposition is acceptable; its MEMBERSHIP may not be | ⭐ **`M2`'s close RATIFIED. Nothing owed, and it is the standard the next close is held to** |
+| **214** — a row naming a MECHANISM is re-read at DISPATCH | ⛔ **MINE, operationally, and RUN — see `W36` above.** ⚠️ **And it produced a finding when I ran it against the two rows already dispatched: `PO-42/2`** |
+| **215** — the no-push rule reaches every component; its enforcement is not this repository's | ⭐ **RECORDED by the CTO in `workspace.md` (+40). Nothing owed here** — ⛔ **and I changed no sibling's configuration, exactly as the coordinator did not** |
+| **216** — *NOT AUTHORITATIVE* is owed PER ROW | ⛔ **MINTED — `W115`, at the ruling's OWN width and not `W110/3`'s: three sites, not one** |
+
+### ⛔ Round 42's mint arguments — `W115`–`W119`, and what each one is NOT
+
+⭐ **Five mints, every one ROUTED TO ME BY A RULING OR BY A MEASURED DEFECT WITH NO
+EXISTING HOME.** ⛔ **Three further candidates were REFUSED and the refusals are in
+the report.**
+
+| row | why it is a row and not a widening |
+|---|---|
+| **`W115`** — `corroborate` coerces a failed git reading into a number, so *git could not answer* lands on REFUTED | Ruling 216, at the ruling's width: `graph.ahead()` returns `None`, `if count:` is falsey and the REFUTED arm prints *"is 0 ahead"*; `_held()` prints *"is None commits ahead"* and returns `refuted=False` → exit `0`; `_unnamed()` coerces `ahead(branch) or 0`. ⭐ **`CTO-52/6`'s test rename RIDES WITH IT — same file, same subject, and the name is cited by no frozen record yet, so it is cheap TODAY and `W74/2`'s rule makes it expensive later** |
+| **`W116`** — the formatter's target is INFERRED, so an absent declaration made a style decision nobody approved | Ruling 210. ⛔ **Not `W38` (the floor and `ruff` disagreeing by rule) and not `W104` (the lint notice naming no subject): this is `pyproject.toml` declaring no `target-version` while `requires-python >= 3.14` makes the formatter infer one** — ⚠️ **and under R10 an inferred formatter target is an UNDECLARED INPUT to a byte-for-byte reproducibility claim** |
+| **`W117`** — `**Consumer-side modules:**` is a contract named in ZERO convention documents | `W74/3`, routed by the CTO in terms. ⭐ **Two sites hold the whole contract and both are consumers of it; `W60` and `W106` are the class** |
+| **`W118`** — a gap named in FOUR consecutive closes is a different fact from a gap named once, and no instrument reads it | `CTO-52/5`, routed to me as a row. ⛔ **Each close is individually honest and the aggregate is invisible** — ⭐ **and it is Ruling 208's shape at the scale of the project rather than of one check** |
+| **`W119`** — a committed test is a function of THIS MACHINE'S worktree state rather than of the commit | ⛔ **The coordinator's own measurement, RECEIVED and re-derived by me below.** ⭐ **It is not `W110`'s and not `W115`'s: those are about what `corroborate` prints; this is a test in `tools/tests/` whose subject leaks out of the repository** |
+
+### ⛔ `W119`'s argument, because it is the sharpest thing in this wave and it is not chargeable to any branch
+
+⛔ **RECEIVED from the coordinator, MEASURED BY THEM, and the mechanism re-derived
+by me from the shipped source rather than re-run (Ruling 115 — I did not
+re-inhabit it, and I say so):**
+
+```text
+immediately after the four-way merge
+  tools/tests/quality/board/test_graph.py
+    ::test_live_the_release_branch_and_every_LIVE_CHECKOUT_read_NON_TERMINAL
+  -> 1 failed, 4910 passed
+cause  four branches had just been merged and four worktrees still held them,
+       so they were TERMINAL and LIVE at the same instant
+after retiring exactly those four worktrees, nothing else changed -> 14 passed
+```
+
+⛔ **THE SUBJECT OF THAT TEST IS NOT THE COMMIT. IT IS THE MACHINE.** ⚠️ **It goes
+RED on a perfectly correct repository in the window between a merge and the
+housekeeping, and it would go red on any machine whose set of worktrees differs
+from this one's.** ⭐ **That is Ruling 208's shape INVERTED — not an instrument
+narrower than its declared subject, but an instrument WIDER than the tree it ships
+in** — ⛔ **and it is the same family as Ruling 80 (*a floor check's verdict may
+not depend on untracked state*) reaching a test rather than a floor rule.**
+
+⛔ **NOT CHARGEABLE AGAINST `W111`/`W110`, and I state it so the record cannot be
+read as one:** ⭐ **the CTO's four-way trial was GREEN because the branches were not
+yet merged, so no trial merge in this project's protocol could have seen it.**
+⚠️ **A defect visible ONLY in the instant after a merge is one the whole review
+protocol is blind to by construction, and that is the part that deserves a
+ruling.**
+
+### ⛔ The workspace pin — I did NOT advance it, and the decision is SCHEDULED rather than deferred
+
+⛔ **RECEIVED from the coordinator, and the halves I re-measured are marked:**
+`python3 -m tools.workspace verify` reads exit `1` on the host — `ISO-8583-jPOS-tutorial`'s
+HEAD has moved past the recorded pin, the pin is still an ANCESTOR of HEAD, so the
+component ADVANCED rather than diverged. ⭐ **MEASURED BY ME: no sibling is
+checked out beside this worktree, so every `tools.workspace` reading available to
+me is host-verified by construction** (Ruling 159) — ⚠️ **and I therefore do NOT
+re-state the coordinator's exit codes as mine.**
+
+⛔ **THE DECISION IS MINE AND IT IS *NOT YET*:**
+
+> ⭐ **Advancing the pin ASSERTS that the new HEAD is intended.** ⛔ **The ISO
+> track's own status is `in-progress`, five of the seven commits are PO-Integration's
+> live rounds, and a pin re-taken at a mid-flight HEAD pins a moving target — which
+> is the opposite of what a pin is for.** ⚠️ **The pin advances at the integration
+> track's own finish line, which Q18 already ruled there are TWO of.**
+
+⭐ **So it goes into `## Scheduled` with a STATE and a trigger, which is the one
+thing that table could not carry until this round** — ⛔ **and that is the
+delimiter earning its keep on the day it lands, rather than in a future round.**
+
+⚠️ **AND THE ASYMMETRY IS RULED AND RECORDED ALREADY:** ⛔ **Ruling 215 — the
+no-push rule reaches all five repositories and its ENFORCEMENT is not this
+repository's — is landed in `workspace.md` with the reading, counts and a yes/no
+only, no host and no URL.** ⭐ **I add nothing to it and I mint no row for it: a
+second copy of a recorded reading is the defect this board exists to stop.**
+
+### ⛔ Findings — round 42
+
+#### `PO-42/1` `[local]` — the brief's *one unnamed branch* is two, and the pointer figures are not one-for-one
+
+**Measured:** BY ME at `e5ab51d`, both readings, roles named. ⛔ **`corroborate`
+printed `feat/SF-16-speakable fix/W63-W64-marker-kind`; the brief named the second
+only.** ⭐ **And the brief's *pointer and ruff numbers read ONE HIGHER in main*
+holds for the FILE count and the ruff count and NOT for the pointer count: main
+reads `723 in 326` and `wt/po` reads `723 in 325` — ⛔ the untracked
+`ONBOARDING.md` is a markdown FILE carrying ZERO pointers, so one of the three
+figures does not move.** **accepted, recorded against the brief, no edit owed.**
+
+#### `PO-42/2` `[structural]` — Ruling 214's dispatch re-read returns the PASS reading from an EMPTY population for a row whose argument is only its naming
+
+**Measured:** BY ME at `e5ab51d`. ⛔ **`board_state` prints it on every floor run:
+*6 repeat their own naming — W60 W63 W64 W66 W67 W72*.** ⚠️ **TWO of those six —
+`W63` and `W64` — are the rows dispatched in this wave, and their row files carry
+no mechanism at all beyond the register's own naming cell.** ⛔ **So Ruling 214's
+re-read — *is the row's named mechanism affected by any ruling minted since?* — has
+nothing to range over and returns the pass reading from an empty population, which
+is Ruling 191 arriving in a PROCESS rather than in a check.** ⭐ **ROUTED to
+[`rows/W88.md`](rows/W88.md), which owns the thin row files, and `W88` is PROMOTED
+in *Next rows* for exactly this reason.** ⛔ **NOT minted: a second row for the
+same population is the duplication `W53` exists to end.**
+
+#### `PO-42/3` `[structural]` — a close leaves eight dead paths in documents the closing office may not edit
+
+**Measured:** BY ME at `e5ab51d`, whole population printed above. **ROUTED —
+`W78`, widened with the nine sites and the ownership finding, and PROMOTED.**
+⛔ **The fourth edit is not optional and it is not performable; both halves are
+true and the row is where they are reconciled.**
+
+#### `PO-42/4` `[structural]` — the trigger vocabulary has no word for a STANDING trigger
+
+**Measured:** BY ME at `e5ab51d`, by USING the vocabulary on all six `## Scheduled`
+cells. ⛔ **`pending` / `fired` / `expired` / `discharged` cannot say *this fires
+every time a computation-shaped task is assigned and never discharges*.** ⭐ **I
+wrote `fired` and did not invent a fifth word: the set is the CTO's.** **ROUTED —
+[`rows/W100.md`](rows/W100.md), as a pre-dispatch reading its taker meets before
+the predicate is written.**
+
+#### `PO-42/5` `[local]` — a NEGATIVE recorded: the `<!-- scheduled -->` markers changed no reading, and that was checked rather than assumed
+
+**Measured:** BY ME at my own branch tip. ⛔ **`board-state` reads only between
+`<!-- register -->` markers and `_delimited()` reads only `<!-- inflight -->`, so a
+third marker pair is INERT to every shipped rule today** — ⭐ **verified by running
+the floor before and after the edit rather than by reading the source alone, and by
+reading `board_state`'s own printed line for a moved figure.** **accepted,
+recorded, no edit owed** (Ruling 155: a recorded negative takes the LOCAL marker).
+
+### ⛔ Ruling 194 applied to my own record
+
+```text
+structural: 3    PO-42/2  PO-42/3  PO-42/4
+local:      2    PO-42/1  PO-42/5
+none:       0
+PO-42/2  routed -> W88  (promoted; population printed by the floor every run)
+PO-42/3  routed -> W78  (promoted; widened with nine sites)
+PO-42/4  routed -> W100 (pre-dispatch reading in the row file)
+⭐ 3 dispositions for 3 structural findings; the counts are EQUAL
+⭐ 5 findings, 5 disposition lines; every one has a NAMED HOME
+```
+
+⚠️ **And the clause's own warning read against myself for the second consecutive
+round: ALL THREE of my structural findings are *routed*.** ⛔ **That is the
+gradient Ruling 194 names from the other side, and it is worse this round than
+last: three of three rather than two of three.** ⭐ **The mitigating reading, and
+it is a reading rather than an excuse: all three are routed to rows that ALREADY
+EXISTED and were widened, which is the opposite of the mint-per-finding habit —
+and two of the three are PROMOTED in the same edit, so the routing changes a
+priority rather than parking a fact.**
+
+### W74 — The sibling runnable-module check widens
+
+⭐ **CLOSED at `a3efb12`, CTO round 52: APPROVE.** ⛔ **The widening was verified by PLANT — the base predicate is GREEN on a fresh typo the widened check catches, and the old `[\w.]+` could not see `<package>` AT ALL, so the placeholder class was UNASSERTABLE rather than unasserted** (Ruling 208's first instance).
+
+⛔ **TWO LINES WERE RE-ADDRESSED IN THE COMMIT THAT MOVED THIS MATERIAL, which is Ruling 174's narrow ground and is disclosed rather than merely unnoticed:** ⭐ **one `](../BOARD-ARCHIVE.md#…)` became `](#…)` and one `](../handoffs/…)` became `](handoffs/…)`, because this file sits one directory up from `rows/` and inside the archive it was pointing at.** ⚠️ **The frame block is DROPPED, not re-addressed — `board-frame`'s two substrings are a property of a LIVE row file, and this is a record.**
+
+The sibling runnable-module check widens
+([Ruling 156](handoffs/CTO-2026-09-10-round41.md#ruling-156-the-other-half-of-sk-05s-pair-widens-with-a-declared-placeholder-rule-and-one-of-its-rows-is-a-subprocess))
+
+⭐ **The placement argument, the `Owns` cells verified against the TREE rather
+than against a cell, and the R11 pre-dispatch sum:**
+[round 34's placement](#round-34-the-next-two-rows-owns-in-ruling-136s-form-verified-at-cab8a04-and-the-r11-pre-dispatch-sum)
+
+⚠️ **AMENDED by PO round 37, and the amendment is exactly what Ruling 186 and
+`CTO-48/6` ask for: the bare `(Ruling 156)` gains an ANCHOR.** ⛔ **NOT a
+line-number citation — `BOARD-ARCHIVE.md:4713-4728` was offered and refused,
+because a line-number citation into a file this row does not own is `W78`
+verbatim and `W78` is an open `todo`.** ⭐ **This row was never blocked: it cited
+its argument and lacked only an address.** ⛔ **The other 18 are `W88`'s.**
+
+### W110 — `corroborate`'s live-checkout arm discharges a branch git already knows is SPENT, so a leaked worktree keeps a stale row green
+
+⭐ **CLOSED at `923a970`, CTO round 52: APPROVE**, shipped as one commit with `W111`. ⛔ **Its `W110/3` was ruled WIDER than it was filed — three coercion sites, not one — and that widening is the live row `W115`** (Ruling 216).
+
+⛔ **TWO LINES WERE RE-ADDRESSED IN THE COMMIT THAT MOVED THIS MATERIAL** (Ruling 174's narrow ground, disclosed): ⭐ **two `](../../conventions/…)` links became `](../conventions/…)`.** ⚠️ **The frame block is DROPPED, not re-addressed.**
+
+⛔ **`corroborate` IS THE INSTRUMENT THAT CATCHES A STALE OBSERVATION TABLE, AND IT IS GREEN OVER ONE FOR EXACTLY AS LONG AS SOMEBODY FORGETS TO REMOVE A WORKTREE.** ⭐ **The predicate is a DISJUNCTION — a live checkout **or** a branch ahead of release — so the first arm discharges the row before the second is ever consulted, including for a branch git already knows is spent.**
+
+⚠️ **MEASURED at `1c5e913`, and the structural reading is stronger than either scalar because it is read off the shipped source rather than inferred from two runs:**
+
+```text
+tools/quality/board/corroborate.py  _verdict()
+    if branch in live:  -> ⭐ CORROBORATED ... "is {count} commits ahead."
+    if count:           -> ⭐ CORROBORATED
+    if merged(...):     -> ⛔ REFUTED "is MERGED at {where}"
+⛔ `merged()` is NEVER CALLED when any checkout holds the branch, and the
+   CORROBORATED sentence then prints `0 commits ahead` as though it were a pass.
+```
+
+⛔ **AND IT IS INHABITED, ONE VARIABLE CHANGED, by the PO at `1c5e913` in the PO worktree — a checkout planted OUTSIDE every checkout (Ruling 153) on `feat/SF-26-goldens`, which is MERGED at `8d17314` and `0` ahead:**
+
+```text
+no plant            : 2 of 2 rows REFUTED, exit 1
++ the plant         : 1 of 2 rows REFUTED, exit 1
+   ⭐ CORROBORATED: feat/SF-26-goldens is checked out at plant-sf26 and is 0 commits ahead.
+restored            : git worktree list identical, git status --porcelain EMPTY,
+                      corroborate back to 2 of 2, exit 1
+```
+
+⚠️ **A FIRST PLANT READ THE PASS AND IS RECORDED BECAUSE IT NARROWS THE PREDICATE:** ⛔ **a DETACHED checkout of the same commit did NOT corroborate the row** — `checkouts()` is keyed by BRANCH and a detached worktree has no branch line — ⭐ **so the arm is *a worktree with this branch attached*, which is narrower than *somebody has these bytes on disk* and narrower than the row's own claim.**
+
+### ⛔ THE SECOND DEFECT IN THE SAME PREDICATE, AND IT IS NOT THE ONE THAT WAS ROUTED
+
+⭐ **The plant corroborated a row that CLAIMS `wt/dev1` using a checkout named `plant-sf26`, in a throwaway directory outside the repository.** ⛔ **The claimed checkout is PARSED, PRINTED — `checkouts ['wt/dev1']` — and then never compared to the checkout that answered.** ⚠️ **So the false pass does not even require the named worktree to exist: any attached checkout anywhere, under any name, discharges the assertion the row actually made.**
+
+### ⛔ THE REMEDY SHAPE IS THE CTO'S TO RATIFY, AND THE ONE THAT WAS ROUTED IS REFUTED BY MEASUREMENT
+
+⭐ **RECEIVED from the coordinator, quoted rather than paraphrased (Ruling 195):**
+
+> ⭐ **The remedy shape, and it is the CTO's to ratify rather than mine: MERGED ∧
+> 0-ahead is TERMINAL and must refute unconditionally, because no checkout can
+> make a fully-merged branch in flight again.**
+
+⛔ **MEASURED BY THE PO AT `1c5e913`, AND IT WOULD REFUTE BOTH CORRECTLY-DISPATCHED ROWS ON ITS FIRST LIVE RUN:**
+
+```text
+branch                       merged  ahead/behind  merge commit naming it
+feat/SF-30-reader-state         1       0 / 0       ⭐ none   <- in flight, correctly
+fix/W91-rulings-index           1       0 / 0       ⭐ none   <- in flight, correctly
+feat/SF-26-goldens              1      11 / 0       ⛔ 8d17314
+fix/W96-inflight-predicate      1      10 / 0       ⛔ 3432e9a
+```
+
+⚠️ **`merged()` is `merge-base --is-ancestor`, and a branch cut at the release tip with no commit on it IS an ancestor** — ⛔ **so *MERGED ∧ 0-ahead* is true of a row dispatched five minutes ago, and a rule built on it is a notice whose first wave fires on work its author just did** (Ruling 179, and Ruling 130 is why the cell is `0`).
+
+⭐ **THE SEPARATING SIGNAL IS ALREADY COMPUTED AND IS ONLY USED IN THE MESSAGE: a MERGE COMMIT on the release branch whose subject NAMES the branch.** ⛔ **`merge_of()` returns `8d17314` and `3432e9a` for the two spent branches and `""` for both live ones** — ⚠️ **which is Ruling 189(d) step two, already shipped, already printed, and simply not in the decision.**
+
+> ⭐ **So the shape this row offers the CTO, and it is an OFFER: a branch the
+> release branch has a MERGE COMMIT for is TERMINAL, and terminality refutes
+> whatever any checkout says.** ⛔ **Not *merged*; a merge NAMING it.**
+
+⚠️ **AND THE COVERAGE LIMIT IS RULING 189(c)'S, inherited rather than introduced:** ⛔ **`merge_of()` finds the merge only where the verdict convention's `Merge <branch>: …` idiom holds**, so a terminal test built on it is reliable exactly over the range that clause governs and not one commit earlier. ⭐ **A branch merged before the convention reads as *not terminal*, which fails SAFE: it keeps the row observable rather than refuting it wrongly.**
+
+### ⛔ WHAT THIS ROW MUST NOT BECOME
+
+⛔ **A rule that reads the CLAIMED checkout and refuses any other name.** ⚠️ **Office worktrees are renamed and re-pointed between waves — `wt/dev1` held `feat/SF-26-goldens` last wave and holds `feat/SF-30-reader-state` now** — ⭐ **so the name mismatch is a NOTICE with both names printed, never a refusal.** ⛔ **The refutation belongs to terminality, which is a property of the branch; the name mismatch is a property of the bookkeeping.**
+
+⚠️ **AND IT IS NOT CHARGEABLE AGAINST `W96`, stated here so the record cannot be read as one:** ⭐ **`W96` shipped the disjunction Ruling 189 asked for, in the form its own row file stated, and the CTO approved it on a measurement.** ⛔ **This is the next reading of the same instrument, not a defect in the delivery.**
+
+### ⛔ BEFORE IT IS DISPATCHED BESIDE `W111` — check 4's sub-step is OWED
+
+⭐ **`corroborate.py` is `330` and `test_corroborate.py` `347`, so this row has headroom alone.** ⛔ **`W111`'s subject is `observation.py` at `386` of 400, and both rows can reach `tools/quality/board/__init__.py` at `337` through the printed notice line** — ⚠️ **so the shared-file sum is taken before the pair is dispatched in parallel, or they are dispatched in sequence** ([`../../conventions/board.md`](../conventions/board.md), check 4's sub-step).
+
+### ⛔ RULED CTO ROUND 51 — Ruling 199, and the shape this row OFFERED ABOVE is NOT the shape that ships
+
+⛔ **THE OFFER IN THE BLOCKQUOTE ABOVE IS SUPERSEDED, and a taker who implements it implements a FALSE-TERMINAL GENERATOR.** ⭐ **The ruling is in [`../../conventions/board.md`](../conventions/board.md), `RULED ROUND 51` (a), and it is QUOTED here rather than paraphrased because a paraphrase of a predicate is a second predicate** (Ruling 195):
+
+> ⛔ **So: `C` is the gate because its only error is a missed refutation; `B` is
+> PRINTED beside it as the human-readable ref and its substring test becomes an
+> EXACT match on the `Merge <branch>:` idiom.** ⭐ **A predicate whose failure mode
+> is a false REFUTATION may not ship; one whose failure mode is a false PASS may,
+> once the gap is measured and printed.**
+
+⚠️ **`C` is *is the branch TIP a non-first PARENT of a merge on release's first-parent line*, and `B` is this row's own offer — the merge SUBJECT naming the branch.** ⛔ **The ruling's measured reason for demoting `B` is in the shipped source this row is about: `merge_of()` tests `if branch in subject:`, a Python SUBSTRING test, so `chore/cto-round3` reads terminal off `chore/cto-round39`'s merge.** ⭐ **Read the ruling for the population and the 27 disagreements; they are not copied here.**
+
+⛔ **AND THE BLAST RADIUS IS THE CTO'S OWN, NAMED RATHER THAN ASSUMED:** ⚠️ **the ruling was minted on a branch that could not edit this file, so this amendment is the condition on the row's dispatch being discharged by the PO at round 41's close** — ⭐ **and the dependency `C` carries is named in the ruling too: a FAST-FORWARDED merge leaves no merge commit, which degrades to today's behaviour and can never refute correct work.**
+
+### W111 — Ruling 196's expiry — the header locator ANNOUNCES where a delimiter can REFUSE, and the delimiters have landed
+
+⭐ **CLOSED at `923a970`, CTO round 52: APPROVE**, shipped as one commit with `W110`. ⛔ **The ramp is retired in the READING and not only in the prose: the locator line reads `1 <!-- inflight --> blocks declared, 0 unreadable`, and `corroborate` gained the third producer of exit `2`.**
+
+⛔ **TWO LINES WERE RE-ADDRESSED IN THE COMMIT THAT MOVED THIS MATERIAL** (Ruling 174's narrow ground, disclosed): ⭐ **one `](../../conventions/…)` became `](../conventions/…)` and one `](../BOARD.md)` became `](BOARD.md)`.** ⚠️ **The frame block is DROPPED, not re-addressed.**
+
+⛔ **RULING 196 GAVE THIS ROW ITS TRIGGER AND THE TRIGGER HAS FIRED.** ⭐ **The ruling is quoted rather than paraphrased (Ruling 195), from [`../../conventions/board.md`](../conventions/board.md)'s end-of-file section, clause (b):**
+
+> ⛔ **A header is INFERRED, so an absent table is indistinguishable from a renamed
+> column and can only be ANNOUNCED.** ⭐ **A delimiter is DECLARED, so an absent
+> marker can be REFUSED.** ⚠️ **The printed locator name is the whole of what keeps
+> the ramp honest, and it is therefore not optional** — ⛔ **so: the
+> `<!-- inflight -->` markers are OWED as one PO board edit, and the header branch
+> is removed or turned into a refusal in the round after they land.**
+
+⭐ **THE MARKERS LANDED IN PO ROUND 40'S BOARD EDIT, so *the round after* is the next one and this row is what discharges the second half.** ⛔ **It is not a style change: the ramp's cost was measured by the CTO before it shipped, and the reading is the reason this row exists rather than a preference.**
+
+⚠️ **RECEIVED from the CTO at round 50, their own plant, quoted with its reading:**
+
+```text
+PLANTED: two column NAMES changed in the observation table header
+  -> observations (NONE FOUND …): 0 rows     three rules silently inapplicable
+  -> quality floor: clean, exit 0            corroborate: 0 of 0, exit 0
+  restored: git status --porcelain empty, content diff 0 lines
+```
+
+⛔ **AND THE MARKERS ALONE DO NOT FIX IT, which is the part a developer must not assume:** ⭐ **MEASURED by the PO at `1c5e913` by reading `observations()` rather than by running it** — ⚠️ **inside `<!-- inflight -->` the roles are STILL taken from `_columns(line)` on the first `|` line, and `_columns` returns `None` for a header that does not declare the three roles.** ⛔ **So a renamed column inside a correctly delimited table still yields `0` rows and a printed `NONE FOUND`, on a green floor** — ⭐ **the delimiter makes the refusal POSSIBLE; it does not make it happen.**
+
+### ⛔ WHAT SETTLES IT
+
+> ⭐ **A `<!-- inflight -->` block whose table does not declare the observation
+> columns is a FINDING, not a `NONE FOUND` notice** — ⛔ **because the author has
+> DECLARED that a table is there, so *"I could not read it"* is no longer
+> indistinguishable from *"there is none"*.**
+
+### ⛔ AND THE SAME DEFECT HAS A SECOND SITE — `corroborate` RETURNS THE PASS CODE FOR A TABLE IT COULD NOT READ
+
+⭐ **MEASURED BY THE PO at `1c5e913`, from the plant above and confirmed against the source rather than inferred from the run:**
+
+```text
+plant: two column names renamed inside the markers
+  corroborate: ⚠️ the observation table is EMPTY — nothing was read, which is not
+               the same answer as nothing being in flight (Ruling 191(a)).
+  exit = 0            ⛔ THE PASS CODE
+  corroborate.py:243  return lines, REFUTED if refuted else CORROBORATED
+                      ⛔ `rows == []` takes the `else` arm
+```
+
+⛔ **SO THE SENTENCE SAYS RULING 191(a) AND THE EXIT CODE CONTRADICTS IT.** ⚠️ **Ruling 196(a) ratified exit `2` for *"git could not answer"* and inhabited it twice — no release branch, no board file — ⭐ **but *"the board is there and I could not read its table"* has no third-state arm at all**, so it lands on `0`.** ⛔ **A wave-close gate reading the exit code is green over exactly the board this row exists to refuse.**
+
+⭐ **IT IS ONE SUBJECT AND THEREFORE ONE ROW, not a second mint: the floor half reports a declared block it cannot read, and this half stops the wave-close verdict from calling that a pass.** ⚠️ **If the CTO would rather the exit code rode with `W110`, that is a re-scope for them to ask for** — ⛔ **but it must not be split between two rows silently, because then neither one owns the contradiction.**
+
+⭐ **AND THE HEADER BRANCH ITSELF: removed, or kept only for a board with NO markers at all and reported as such.** ⚠️ **The second form is the one to prefer if this instrument is ever pointed at a corpus repository's own board** (R10's arbitrary roots) — ⛔ **but a board that HAS the delimiters and fails to declare its columns must not fall back to the ramp, or the ramp is permanent.**
+
+### ⛔ WHAT THIS ROW MUST NOT BECOME
+
+⛔ **A rule that pins the column NAMES.** ⚠️ **Ruling 189(b) is explicit that the roles are read FROM the header and never from a position, precisely so the PO may rename, reorder, emphasise or prefix a column** — ⭐ **so the refusal fires on a header that declares NO role, never on one that declares them differently.** ⛔ **Narrowing that would answer Ruling 192's question by forbidding the authoring rather than by reading it.**
+
+⚠️ **AND IT MUST NOT SILENTLY WIDEN THE POPULATION:** ⭐ **`W73` stays excluded BY NAME and the name stays printed** (Ruling 185's form, `CTO-49/4`) — ⛔ **a refusal arm is a reason to re-read the exclusion list, never a reason to drop it.**
+
+### ⛔ R11 — THIS ROW'S SUBJECT IS AT `386` OF 400, SO IT SPLITS
+
+⭐ **`observation.py` is `386` and its test `395` of 600, measured in the PO worktree at `1c5e913`.** ⛔ **So this row SPLITS the module at the seam `W96/3` named in advance, rather than spending the last fourteen lines** — ⚠️ **and the standing-decision form on [`../BOARD.md`](BOARD.md) binds the NEXT row touching the package, which is this one.**
+
+⛔ **AND check 4's sub-step is OWED ON THE PAIR: `W110`'s subject is `corroborate.py` and both rows can reach `tools/quality/board/__init__.py` at `337` through the printed notice line** — ⭐ **so the shared-file sum is taken before these two are dispatched in parallel, or they go in sequence.**
+
