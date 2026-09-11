@@ -67,6 +67,16 @@ figure renumbers only the blocks after it.
 
 ## ⛔ The gate runs here, on every string, regardless of what ran upstream (R7)
 
+⛔ **It runs at BOTH ends of the transform, and that is measured rather than
+cautious.** A plant put a local hostname — one of the four shapes the gate's own
+vocabulary recognises — into a list item and it was **admitted**: `split_identifier`
+had already respaced the machine-name shape — a host followed by the `.local`
+suffix — into two words, destroying the dot the gate's pattern anchors on.
+⭐ So `_spoken` gates the **source** string and `_emit` gates the **derived**
+one, and `test_script.py` asserts every refusing row of
+`docs/conventions/personal-data-shapes.md` through every carrier this module has —
+Ruling 144's emitter-and-gate pair, where both halves are this module's own.
+
 ⭐ **It refuses; it does not scrub.** `scrub` is for words this framework wrote —
 a log line, a path in a report. A spoken string is derived from **the source's**
 words, and rewriting one into a placeholder would mean an mp3 that quietly says
@@ -204,47 +214,73 @@ def _one_block(
     if rule == "recurse":
         found, held = units_of(unit, section_key, block.get("blocks"), path)
         return list(found), held
+    where = speech_id(unit, section_key, path)
     if rule == "summary":
-        said = _emit(unit, section_key, path, spoken_text(block.get("summary")), kind)
+        said = _emit(unit, section_key, path, _spoken(block.get("summary"), where), kind)
         return said, sum(1 for _ in walk(block.get("blocks") or []))
     if rule == "items":
-        return _items(unit, section_key, block, path), 0
+        return _items(unit, section_key, block, path, where), 0
     if rule == "rows":
-        return _rows(unit, section_key, block, path), 0
-    return _emit(unit, section_key, path, _block_speech(block, kind), kind), 0
+        return _rows(unit, section_key, block, path, where), 0
+    return _emit(unit, section_key, path, _block_speech(block, kind, where), kind), 0
 
 
-def _block_speech(block: dict, kind: str) -> str:
-    """Return what one whole block says — a caption for a fence, its prose otherwise."""
+def _spoken(value: object, where: str) -> str:
+    """Return `value` spoken, having gated it BEFORE the transform as well as after.
+
+    ⛔ **The transform must not be able to launder a leak, and this is measured rather
+    than feared.** A plant put a local hostname — one of the four shapes the gate's own
+    vocabulary recognises — into a list item, and it was **admitted**: the identifier
+    splitter had already respaced the machine-name shape — a host followed by
+    the `.local` suffix — into two words, destroying the dot the gate anchors on.
+    ⭐ So the source string is gated here and the derived string again in
+    `_emit` — Ruling 144's rule that an emitter and its
+    gate are read as a pair, with the pair being this module's own two ends.
+    """
+    assert_clean(value, where)
+    return spoken_text(value)
+
+
+def _block_speech(block: dict, kind: str, where: str) -> str:
+    """Return what one whole block says — a caption for a fence, its prose otherwise.
+
+    ⚠️ A fence's body is never spoken, and it is gated anyway: the `lang` reaches the
+    caption, and a block whose text never reaches a clip still reaches this module.
+    """
     if kind == "code":
+        assert_clean(block.get("lang"), where)
         return code_caption(block.get("lang"))
-    return spoken_text(block.get("text"))
+    return _spoken(block.get("text"), where)
 
 
-def _items(unit: str, section_key: str, block: dict, path: tuple[int, ...]) -> list[SpeechUnit]:
+def _items(
+    unit: str, section_key: str, block: dict, path: tuple[int, ...], where: str
+) -> list[SpeechUnit]:
     """Return one unit per list item, each numbered aloud when the list is ordered."""
     ordered = bool(block.get("ordered"))
     items = block.get("items")
     said: list[SpeechUnit] = []
     for position, item in enumerate(items if isinstance(items, list) else []):
-        words = spoken_text(item)
+        words = _spoken(item, where)
         if ordered and words:
             words = f"{ordinal_word(position + 1)}, {words}"
         said += _emit(unit, section_key, path, words, "list", position)
     return said
 
 
-def _rows(unit: str, section_key: str, block: dict, path: tuple[int, ...]) -> list[SpeechUnit]:
+def _rows(
+    unit: str, section_key: str, block: dict, path: tuple[int, ...], where: str
+) -> list[SpeechUnit]:
     """Return one unit per table row, each cell labelled by its own header.
 
     ⚠️ The header row is never spoken on its own — it is folded into every cell
     below it, and saying it twice is how a table stops being listenable.
     """
-    headers = [spoken_text(cell) for cell in _cells(block.get("headers"))]
+    headers = [_spoken(cell, where) for cell in _cells(block.get("headers"))]
     rows = block.get("rows")
     said: list[SpeechUnit] = []
     for position, row in enumerate(rows if isinstance(rows, list) else []):
-        words = _row_speech(headers, [spoken_text(cell) for cell in _cells(row)])
+        words = _row_speech(headers, [_spoken(cell, where) for cell in _cells(row)])
         if not headers:
             words = f"Row {position + 1}: {words}" if words else ""
         said += _emit(unit, section_key, path, words, "table", position)

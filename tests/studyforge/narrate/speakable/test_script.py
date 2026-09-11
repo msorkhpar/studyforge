@@ -15,6 +15,7 @@ from studyforge.narrate.speakable.script import (
     ordinal_word,
     units_of,
 )
+from tests.support import personal_data_shapes
 
 UNIT = "corpus--unit-01"
 
@@ -277,3 +278,69 @@ def test_the_gate_refuses_rather_than_rewriting_what_the_source_said():
 @pytest.mark.parametrize("blocks", [None, [], "not a list", 7, {}])
 def test_a_section_with_no_blocks_says_nothing_and_does_not_raise(blocks):
     assert units_of(UNIT, "shared", blocks) == ((), 0)
+
+
+# --------------------------------------------------------------------------
+# ⛔ Ruling 144 — the emitter and the gate read as a pair, over the SHARED vocabulary
+# --------------------------------------------------------------------------
+
+#: Every shape that carries text into this module, named by where it carries it. ⭐ One
+#: row per code path, because the defect a plant found was path-specific: the gate ran
+#: on the *derived* string only, and the identifier splitter had already respaced
+#: the machine-name shape into two words before the gate ever saw it.
+CARRIERS = {
+    "paragraph": lambda text: {"type": "para", "text": text},
+    "heading": lambda text: {"type": "heading", "level": 2, "text": text},
+    "list item": lambda text: {"type": "list", "ordered": False, "items": [text]},
+    "ordered item": lambda text: {"type": "list", "ordered": True, "items": [text]},
+    "table cell": lambda text: {"type": "table", "headers": ["Where"], "rows": [[text]]},
+    "table header": lambda text: {"type": "table", "headers": [text], "rows": [["x"]]},
+    "unlabelled cell": lambda text: {"type": "table", "headers": [], "rows": [[text]]},
+    "disclosure summary": lambda text: {
+        "type": "disclosure",
+        "summary": text,
+        "open": False,
+        "blocks": [],
+    },
+    "fence language": lambda text: {"type": "code", "lang": text, "text": "x"},
+    "quoted paragraph": lambda text: {
+        "type": "quote",
+        "blocks": [{"type": "para", "text": text}],
+    },
+}
+
+REFUSED_SHAPES = [row for row in personal_data_shapes() if row["gate"] == "refuse"]
+ADMITTED_SHAPES = [row for row in personal_data_shapes() if row["gate"] == "pass"]
+
+
+def test_both_halves_of_the_shared_shape_vocabulary_are_inhabited():
+    # ⛔ Ruling 124/191: the populations, asserted before either property.
+    assert len(REFUSED_SHAPES) >= 4, REFUSED_SHAPES
+    assert len(ADMITTED_SHAPES) >= 4, ADMITTED_SHAPES
+    assert len(CARRIERS) == 10
+
+
+@pytest.mark.parametrize("carrier", sorted(CARRIERS))
+@pytest.mark.parametrize("row", REFUSED_SHAPES, ids=lambda row: row["shape"])
+def test_every_refusing_shape_is_refused_through_every_carrier(row, carrier):
+    # ⛔ The defect this closes, measured: a local hostname in a list item was
+    # ADMITTED, because `split_identifier` destroyed the dot the gate anchors on
+    # before the gate ran. The transform must not be able to launder a leak.
+    with pytest.raises(PersonalDataLeak):
+        units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
+
+
+@pytest.mark.parametrize("carrier", sorted(CARRIERS))
+@pytest.mark.parametrize("row", ADMITTED_SHAPES, ids=lambda row: row["shape"])
+def test_every_passing_shape_is_still_admitted_through_every_carrier(row, carrier):
+    # ⭐ The other half of the pair. A gate that refused these would refuse a
+    # legitimate corpus with a diagnosis that looks exactly like a leak.
+    units_of(UNIT, "shared", [CARRIERS[carrier]("".join(row["spelling"]))])
+
+
+def test_the_refusal_says_which_shape_and_never_what_matched():
+    for row in REFUSED_SHAPES:
+        with pytest.raises(PersonalDataLeak) as refused:
+            units_of(UNIT, "shared", [{"type": "para", "text": "".join(row["spelling"])}])
+        assert row["shape"].split()[-1] in str(refused.value)
+        assert "jane" not in str(refused.value)
