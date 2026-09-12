@@ -6035,3 +6035,144 @@ reviewer's authority attached.
 # ⭐ The reviewer's own check, takeable on the draft before it is sent: could a competent
 # office satisfy this in a way I did not think of? If not, it is a means and not a property.
 ```
+
+### ⛔ Ruling 345 — Ruling 296 names a PLACEHOLDER; this names the MECHANISM, and forbids the one that reddens the floor
+
+⛔ **The clause: an agent's author line is set PER INVOCATION, on the command** — `git -c
+user.name='dev2' -c user.email='dev2@example.invalid' commit`, or `GIT_AUTHOR_*` /
+`GIT_COMMITTER_*` in the environment of that one command. ⛔ **NEVER `git config user.name …`.**
+
+⚠️ **Why the forbidden form is not merely untidy.** `extensions.worktreeConfig` is unset in this
+repository, so `git config` in a LINKED WORKTREE writes the **shared common** config: every
+worktree on the host then reads it. ⭐ **And it crosses the container boundary too** — `docker/dev/check`
+mounts the common git directory into the pinned image so a linked worktree can answer git at
+all, so a value written in one office's checkout is read by every other office's floor run, host
+and container alike.
+
+⛔ **MEASURED, wave 9, by two offices independently on two different rows in one night:** a clean
+floor became **327** findings (`W170`, its own branch and ref) and **329** (`W64`, its own branch
+and ref) in about two minutes, across documents nobody had touched, while three offices were
+measuring. ⭐ **Both figures are right and neither can be quoted without its ref, role and
+instrument** — the flagged population is *tracked occurrences of the value*, so it is a property
+of the tree the reading was taken on.
+
+⭐ **THE INSTRUMENT DID NOT MALFUNCTION, and this ruling is not a criticism of it.** ⛔ **It
+fired correctly, in about two minutes, on a premise nobody meant to establish.** ⚠️ **The
+expensive failure in a gate is never a wrong answer; it is a RIGHT answer to a question whose
+premise drifted — and the repair is to fix the premise, never to soften the gate.**
+
+⭐ **The generalisation, which is why this is a MECHANISM rule and not an incident report.**
+`MIN_IDENTIFIER_CHARS = 3`, and the check cannot tell a placeholder somebody set from the user's
+real name — a four-character role name beats the minimum. ⛔ **So a placeholder identity in
+shared config will ALWAYS read as an R7 leak**, and the louder the gate the costlier that false
+alarm is to triage. The per-invocation form is the only one that never enters a shared slot.
+
+```bash
+# Pass, and each clause is a defect that actually occurred in wave 9:
+#  1. EVERY agent commit carries -c on the command, or GIT_AUTHOR_*/GIT_COMMITTER_* in its
+#     environment. `git log --format='%an <%ae>'` over the branch shows the placeholder, and
+#     the handoff DECLARES it (Ruling 296).
+#  2. ⛔ NO office runs `git config user.name` / `user.email` in ANY checkout of this
+#     repository. There is no --local that is safe here: a linked worktree's --local IS the
+#     shared common config while extensions.worktreeConfig is unset.
+#  3. ⛔ NOBODY FLIPS `extensions.worktreeConfig` MID-WAVE. It changes where every other
+#     office's config reads from, under offices that are already measuring.
+#  4. ⛔ The user's GLOBAL config is NOT the repository's and no office reads, edits or
+#     "repairs" it. A normally configured machine is not a leak; the standing decision is
+#     that a real identity in LOCAL commits is fine because nothing is ever pushed.
+#     ⛔ What WOULD be a defect is a project commit carrying it.
+#  5. ⭐ PROVE ABSENCE WITH A NULL CHECK, never by printing the value. ⛔ TWO OFFICES
+#     REACHED FOR THE VALUE IN ONE WAVE — the coordinator, and the reviewer auditing
+#     the coordinator — so this is a property of the TASK rather than of either office,
+#     and it is a CLAUSE here instead of two separate self-charges:
+#         git config --local --get-regexp '^user\.' >/dev/null 2>&1; echo "rc=$?"
+#         # rc 1 = the slot is clean. rc 0 = something is set, and you STILL have not read it.
+#     ⛔ THE REDIRECT IS NOT OPTIONAL, AND THAT IS MEASURED against a fabricated config:
+#     bare `--get-regexp '^user\.'` PRINTS `user.name <value>` and `user.email <value>`
+#     and exits 0. ⚠️ So it proves absence safely ONLY when the answer IS absence — in the
+#     FAILING case, the one you run it for, it emits the exact datum it was meant to
+#     reach past. ⭐ A check that is safe only when it passes is not a safe check.
+#     ⭐ If you need a magnitude rather than a yes/no, COUNT — never cat:
+#         git config --local --get-regexp '^user\.' 2>/dev/null | wc -l
+```
+
+### ⛔ Ruling 346 — a RE-TAKEN row may carry a SECOND handoff, under a new stem, pointing back
+
+⛔ **A row whose first attempt STOPPED already has a handoff, and that file is a RECORD.**
+⚠️ Overwriting it is refused by Ruling 106, and appending to it leaves a freshly-wrong headline
+on a document whose first line is what every reader takes away.
+
+⭐ **So the second attempt writes a SECOND document**, on a stem that begins with the row id and
+distinguishes itself — `W64-gate-two.md` beside `W64.md` — ⛔ **and it POINTS BACK at the first
+in its opening lines**, because a reader who finds only one of the two must be told the other
+exists. ⚠️ **MEASURED at `7a7a178`: no check enforces one handoff per task, and no other task
+has two** — so the shape is new, and it is permitted rather than merely unpoliced.
+
+```bash
+# Pass: <ROW>-<what changed>.md exists, its first 10 lines link <ROW>.md, and <ROW>.md is
+# UNMODIFIED in the diff. ⛔ A second handoff that does not name the first is a finding.
+```
+
+### ⛔ Ruling 347 — *LANDED* takes a MERGE REF; a branch tip is *at its tip*
+
+⛔ **In this project a row has LANDED when its work is on the release branch's first-parent
+line, and the citation is the MERGE ref.** ⚠️ A branch tip is not a landing: it is a proposal,
+and `git branch --contains` names no release branch for it.
+
+⭐ **MEASURED in wave 9, in TWO offices' documents in the same night** — a register round wrote
+*"`W64` has landed at `5b31436`"* and a dispatch brief declared two subjects **LANDED** at their
+branch tips. ⛔ **Neither was merged.** ⚠️ The cost is not pedantic: a reviewer told a subject has
+landed does not re-check that it can still move, and in this same wave one subject's tip DID
+move under its own declared ref.
+
+```bash
+# Pass: every "landed" carries a merge ref, and it verifies:
+git merge-base --is-ancestor <ref> <release>   # rc 0, or it has not landed
+git branch --contains <ref> | grep <release>   # names the release branch
+# ⭐ For a branch still in flight, say "at its tip <sha>" and re-read the tip before merging.
+```
+
+### ⛔ Ruling 348 — a printed arm is not a GATE until its firing MOVES THE EXIT CODE
+
+⛔ **Before crediting any instrument line as a gate, read the fold that produces its exit code
+and confirm the line's population is IN it.** ⚠️ A line that prints a red-looking sentence while
+the command exits `0` is a NOTICE wearing a gate's clothes, and every office downstream believes
+it is protected.
+
+⛔ **MEASURED, wave 9, three independent readings on one line.** `tools/quality/board/`'s
+`corroborate` prints a `dispatched and UNNAMED by any row` arm that a ruling had designated the
+one pre-merge gate. ⭐ **Its exit code folds only the unanswerable rows, the refuted rows and the
+checkouts git could not COUNT** — the unnamed-branch list is returned for printing and never
+enters the fold. ⚠️ **So the arm fired, naming a branch, with the command exiting `0`**; two
+offices read exactly that, and the code path was then read to confirm it is by construction and
+not by accident.
+
+⭐ **The reviewer's own check, and it is cheap:** make the arm fire deliberately and read the
+exit code beside it. ⛔ **If the exit does not move, the line is a notice — say so, and do not
+let a row's justification rest on it being a gate.**
+
+```bash
+# Pass: for each line claimed as a gate, the review records the arm FIRING and the exit code
+# TOGETHER, from one invocation. ⛔ "The gate is red" is not a reading; the reading is the
+# printed arm plus `echo "exit=$?"` from the same run.
+```
+
+### ⛔ Ruling 349 — a RULE lands in the convention document that governs it; the BOARD carries STATE
+
+⛔ **`docs/tasks/BOARD.md` has a byte budget, and it carries what MOVES — open steps, in-flight
+work, assignments.** ⭐ **A RULE does not move**, so it belongs in `docs/conventions/`, which has
+no budget and which CLAUDE.md already names as the place a ruling is landed (Ruling 245, Ruling
+286: a ruling that lives only in a frozen record is not landed).
+
+⚠️ **MEASURED, wave 9:** a register round finished at **17 bytes** of board headroom and routed
+a **personal-data safety rule** — Ruling 345 above — to the reviewer on the ground that it could
+not be boarded. ⛔ **The premise was wrong rather than the arithmetic: that rule was never the
+board's to carry.** ⭐ It is in this document, which is the one every reviewer opens, and the
+board's headroom was never in its way.
+
+```bash
+# Pass: ask what KIND of thing is being written before asking whether it FITS.
+#   does it change between rounds?            -> the BOARD (and it is budgeted)
+#   is it true independently of any round?    -> docs/conventions/ (and it is not)
+# ⛔ A safety rule blocked by a size budget is a ROUTING error, and the routing is the fix.
+```

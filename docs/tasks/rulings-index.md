@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **344 rulings, `1`–`344`, derived from 56 ruling records** —
+⭐ **349 rulings, `1`–`349`, derived from 57 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -389,3 +389,8 @@ procedure.
 | 342 | ⛔ Ruling 342 — a control table reports that something FIRED, never that the RIGHT thing fired, and the difference is only visible to an instrument | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-342-a-control-table-reports-that-something-fired-never-that-the-right-thing-fired-and-the-difference-is-only-visible-to-an-instrument) |
 | 343 | ⛔ Ruling 343 — an exclusive-runner clause is worth no more than its detector, and the detector is specified here | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-343-an-exclusive-runner-clause-is-worth-no-more-than-its-detector-and-the-detector-is-specified-here) |
 | 344 | ⛔ Ruling 344 — a reviewer requires a PROPERTY; the MEANS belongs to the office | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-344-a-reviewer-requires-a-property-the-means-belongs-to-the-office) |
+| 345 | ⛔ Ruling 345 — Ruling 296 names a PLACEHOLDER; this names the MECHANISM | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-345-ruling-296-names-a-placeholder-this-names-the-mechanism) |
+| 346 | ⛔ Ruling 346 — a re-taken row may carry a SECOND handoff, under a new stem, pointing back | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-346-a-re-taken-row-may-carry-a-second-handoff-under-a-new-stem-pointing-back) |
+| 347 | ⛔ Ruling 347 — *LANDED* takes a MERGE REF; a branch tip is *at its tip* | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-347-landed-takes-a-merge-ref-a-branch-tip-is-at-its-tip) |
+| 348 | ⛔ Ruling 348 — a printed arm is not a GATE until its firing MOVES THE EXIT CODE | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-348-a-printed-arm-is-not-a-gate-until-its-firing-moves-the-exit-code) |
+| 349 | ⛔ Ruling 349 — a RULE lands in the convention document that governs it; the BOARD carries STATE | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-349-a-rule-lands-in-the-convention-document-that-governs-it-the-board-carries-state) |
