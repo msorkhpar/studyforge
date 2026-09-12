@@ -17501,6 +17501,21 @@ corroborate's four lines   ⛔ po-int appears in NONE of them — it has no bran
 
 ⛔ **AND A DEFECT IN THE TRIGGER FORM, FOUND BY DISCHARGING ONE.** ⚠️ **The `## Scheduled` cell for `docker/dev/compose.yaml` names its act as *whichever row next owns `docker/dev/**`*. `W152` was that row and it merged — so the trigger FIRED — but it edited the file's HEADER and not the `STUDYFORGE_VISUAL` block the item is about.** ⭐ **A trigger discharged by a ROW LANDING can fire without being MET, which is Ruling 185(a)'s memory-discharged remedy wearing Ruling 288's clothes.** ⛔ **The cell now reads `fired` AND NOT MET, and `W163` carries what the firing did not.** ⚠️ **`PO-53/7`, against this office, because the register wrote that trigger.**
 
+### ⭐ THE FOUR INSTRUMENTS AT `be0285f`, EACH WITH ITS OWN ENVIRONMENT NAMED
+
+⛔ **Ruling 326 is not satisfied by labelling a BLOCK, which is the coordinator's own `/32`. One environment per instrument:**
+
+| Instrument | Environment | Reading |
+|---|---|---|
+| `python3 -m tools.quality` | ⭐ **pinned container**, via `./docker/dev/check` | `quality floor: clean`, `FLOOR_EXIT=0`; `ruff check` and `ruff format --check` both clean over 917 files; `document pointers … 0 unresolved` |
+| `python3 -m pytest -ra` | ⭐ **pinned container**, via `./docker/dev/check` | **5658 passed, 18 skipped** in 82.89 s, `SUITE_EXIT=0` |
+| `python3 -m tools.quality.board.corroborate` | ⚠️ **HOST**, at `git rev-parse chore/po-round53` (Ruling 279's point) | `CORROBORATE_EXIT=0` — `0 of 1 rows REFUTED`, `0 NOT ANSWERABLE`, `0` uncountable checkouts |
+| `python3 -m tools.workspace verify` | ⛔ **HOST — and it is HOST-VERIFIED**, answering `2` inside the pinned container by construction | `VERIFY_EXIT=1`, **2** components |
+
+⚠️ **`verify` named ONE component when this round opened and TWO when it closed, and the second is not a defect: `narrate-service` HEAD is `9e249e5` against a pin of `db80e7b`, because `NS-03` is IN FLIGHT inside it.** ⛔ **A pin is advanced when the row LANDS — advancing it now would assert a moving HEAD is intended, which is the `## Scheduled` ISO cell's own reasoning arriving at a second component.** ⭐ **Reported with its as-of rather than corrected, and it is the register's expected reading for any wave with a live sibling-component dispatch.**
+
+⛔ **THE BOARD'S OWN BOUND, at the same ref: `57554` of `57632` — `78` bytes of headroom after nine mints, ten trims and one close pair.** ⚠️ **`PO-53/8`.**
+
 ### ⛔ FINDINGS, BY ID
 
 - **`PO-53/1`** — against the coordinator. The one-developer ground is a DISK reading (`ls` returns one path) where a DOCUMENTARY one existed unread, and the epic's own `Owns` cells declare the two rows DISJOINT. ⭐ **Conclusion upheld; ground replaced by the dependency edge.**
