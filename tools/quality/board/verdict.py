@@ -79,19 +79,20 @@ which returns `""` on failure, so `graph `C` none` in that arm would be a second
 git never gave** — ⭐ **it is reported as UNREAD, with shape `B` printed beside it because
 the merge log needs no tip to answer.**
 
-## ⛔ `PO-42/7` — the CLAIMED COUNT is COMPARED now, and a disagreement is a NOTICE
+## ⛔ `W40` — THE SEAM THIS MODULE WAS SPLIT AT, NAMED BEFORE CUTTING
 
-⭐ **MEASURED by the PO twice, forty minutes apart, in one round, with no plant:** two
-cells reading `2` and `2` were `3` and `5` by the second reading, ⛔ **and `corroborate`
-printed `⭐ CORROBORATED … is 3 commits ahead` beside a cell claiming `2` and compared
-neither.** ⚠️ **So the instrument corroborated the ROW and never the CELL.**
+⚠️ **This file stood at `400/400` against R11's 400-line source ceiling — ZERO
+headroom, so one line added anywhere in it was a build failure**, and the standing
+SPLIT condition it carries (`docs/tasks/BOARD.md`, *Standing decisions*, and `W166`)
+says the next row touching it splits it at a seam its taker NAMES.
 
-⛔ **The remedy is a printed comparison and NOT a refutation, and the reason is
-measured rather than stylistic:** ⭐ **a commits-ahead cell is a reading of a MOVING
-TIP, and the release ref does not move when a developer commits — so the cell was true
-when written and false an hour later with nothing on the board changed.** ⚠️ **A stale
-NUMBER is not a stale ROW, and refuting on one would fire on every wave where somebody
-committed after the board was written, which is every wave** (`rows/W115.md`).
+⭐ **The seam: this module ANSWERS and `cell.py` SAYS.** ⛔ **What git observes of the
+BRANCH decides — terminality, the count, the live checkout. What the ROW CLAIMS about
+it is printed and never decides**, so `PO-42/7`'s commits-ahead comparison and
+`PO-50/12`'s as-of resolution are `tools/quality/board/cell.py` and their history is
+in that module's docstring rather than duplicated here. ⚠️ **The dependency runs one
+way by construction: `cell.py` imports no name from here, because a module that could
+decide anything would need the `Answer` enum and the import would be a cycle.**
 """
 
 from __future__ import annotations
@@ -100,6 +101,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 
+from tools.quality.board.cell import compared
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import Observation
 
@@ -209,7 +211,7 @@ def verdict(asserted: Claim, branch: str, graph: Graph, live: dict[str, str]) ->
         return Verdict(Answer.NOT_ANSWERABLE, _unanswerable(branch, graph, live))
     absorbed, named = graph.terminal(branch), graph.named(branch)
     lines = [_shapes(branch, absorbed, named)] if absorbed or named else []
-    cell = _cell(asserted, branch, count, graph)
+    cell = compared(asserted.row, len(asserted.branches), branch, count, graph)
     if absorbed:
         where = Path(live[branch]).name if branch in live else ""
         held = f"checked out at {where}" if where else "checked out nowhere"
@@ -279,73 +281,6 @@ def _unanswerable(branch: str, graph: Graph, live: dict[str, str]) -> tuple[str,
         f"answer: one of them makes the RUN exit NOT AUTHORITATIVE — never the PASS code and "
         f"never the refutation code — because *git could not answer about this branch* is "
         f"neither *the board is right* nor *the board is wrong* (`rows/W115.md`).",
-    )
-
-
-def _cell(asserted: Claim, branch: str, count: int, graph: Graph) -> tuple[str, ...]:
-    """`PO-42/7`: the row's CLAIMED count against git's — ⛔ a NOTICE, never a refutation.
-
-    ⚠️ **The two were parsed, printed on adjacent lines, and compared to nothing.**
-    ⛔ **A row naming several branches is PRINTED and not compared**: one cell cannot be
-    a claim about N branches, and a comparison that invented one would fire on correct
-    work, which is Ruling 179's cost.
-    """
-    claimed = asserted.row.commits
-    if len(asserted.branches) != 1:
-        return (
-            f"    commits ahead: the row claims {claimed} over {len(asserted.branches)} branches, "
-            f"so ONE cell is not a claim about {branch}'s {count} — PRINTED, not compared.",
-        )
-    if claimed is None:
-        return (
-            f"    commits ahead: the row DECLARES none and git reads {count} — ⚠️ a cell reading "
-            f"`—` declares no ahead observation and is not a claim of `0` (Ruling 130), so there "
-            f"is nothing to compare.",
-        )
-    if claimed == count:
-        return (f"    commits ahead: the row claims {claimed}, git reads {count} — AGREE.",)
-    if (tip := asserted.row.declared_tip) is not None:
-        return _as_of(claimed, count, branch, tip, graph)
-    return (
-        f"    ⚠️ NOTICE, not a refusal (`PO-42/7`): the row claims {claimed} commits ahead and "
-        f"git reads {count} for {branch}. ⭐ A commits-ahead cell is a reading of a MOVING TIP "
-        f"and {graph.release} does not move when a developer commits — MEASURED twice forty "
-        f"minutes apart in one round, two cells still reading 2 and 2 were 3 and 5. ⛔ So a "
-        f"stale NUMBER is not a stale ROW: refuting on it would fire on every wave where "
-        f"somebody committed after the board was written, which is every wave (Ruling 179). "
-        f"⚠️ The two used to be printed side by side and compared to nothing.",
-    )
-
-
-def _as_of(claimed: int, count: int, branch: str, tip: str, graph: Graph) -> tuple[str, ...]:
-    """`PO-50/12`: resolve the tip the SAME cell declares — ⛔ still a NOTICE, never a verdict.
-
-    ⚠️ **MEASURED at `504bb47`, three takes of one pair of cells in one round: 3 of 3
-    were TRUE AT THEIR OWN DECLARED REF and the notice printed a disagreement for each
-    the moment the branch moved** — ⛔ **so it could not say whether the office
-    MISCOUNTED (a register defect) or the branch MOVED (Rulings 97 and 246 obeyed).**
-    ⭐ **`PO-42/7` is UNTOUCHED: the notice SAYS more, the verdict ANSWERS the same.**
-    ⛔ **An unresolvable tip is Ruling 216's THIRD ANSWER, not a fourth arm** —
-    `ahead()` is `None` when git declines, and such a cell reaches NEITHER case.
-    """
-    if (at_tip := graph.ahead(tip)) is None:
-        return (
-            f"    ⚠️ UNREAD as-of (Ruling 216's third answer): the row claims {claimed} @ {tip}, "
-            f"git reads {count} for {branch}, and git could not count {graph.release}..{tip} — "
-            f"⛔ NEITHER dated NOR disagreeing, and a FAILED READING is not a verdict.",
-        )
-    if at_tip == claimed:
-        return (
-            f"    ⭐ DATED, not wrong (`PO-50/12`): the row claims {claimed} @ {tip}, git reads "
-            f"{count} for {branch} TODAY, and {graph.release}..{tip} is {at_tip} — TRUE AT ITS "
-            f"OWN DECLARED REF, and the branch moved past it. ⚠️ The word is DATED, never "
-            f"`stale`, `refuted` or `wrong` (Ruling 97, Ruling 310(b), `CTO-62/2`).",
-        )
-    return (
-        f"    ⚠️ NOTICE, not a refusal (`PO-42/7`): the row claims {claimed} @ {tip}, git reads "
-        f"{count} for {branch}, and {graph.release}..{tip} is {at_tip} — ⛔ WRONG AT ITS OWN "
-        f"DECLARED REF, so the branch moving does not account for it. ⭐ That is case (a) — the "
-        f"office MISCOUNTED — which a bare count could not tell from case (b) (`PO-50/12`).",
     )
 
 
