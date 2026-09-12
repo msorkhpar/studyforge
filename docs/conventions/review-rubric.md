@@ -116,10 +116,17 @@ for r in "$@"; do
 done
 # ⭐ And the shape that is almost always decoration, printed on its own:
 grep -nE '[0-9]+ (passed|skipped|failed|errors?|findings?|pointers?|rulings?)' "$@"
+# ⛔ THREE ANSWERS, NOT TWO. A line may also be CARRIED: a figure inside a body
+#    this record MOVED rather than wrote — Ruling 270 moves a closed row's body
+#    WHOLE, and the readings inside it are that row's own history. ⭐ Editing one
+#    to satisfy this instrument FALSIFIES the record the move exists to preserve.
+# ⛔ Answer BY CLASS where a class is obvious (refs, ruling ids, addresses, a
+#    moved body). ⚠️ Answering a large population one line at a time is the same
+#    token defect this rule was written to stop.
 ```
 
-⛔ **Pass: every printed line is answered — SUBJECT or CUT — and the reviewer of
-this record is you.** ⚠️ **An empty population is a SKIP, not a pass.**
+⛔ **Pass: every printed line is answered — SUBJECT, CUT or CARRIED — and the
+reader of this record is you.** ⚠️ **An empty population is a SKIP, not a pass.**
 
 ⛔ **THIS REPLACES, AND DOES NOT SUPPLEMENT, EVERY CLAUSE BELOW OBLIGING A
 RECORD TO QUOTE A FIGURE.** ⭐ **Each of those clauses is CUT at its record half
