@@ -157,6 +157,7 @@ SANCTIONED_PERSONAL_DATA_DIRS = ("tests/fixtures/invalid/personal-data",)
 #: expected to correspond to anything under `src/`.
 TEST_SUPPORT_NAMES = ("conftest.py", "support.py")
 
+
 def is_excluded(relative_path: str) -> bool:
     """Report whether `relative_path` (repo-relative, forward slashes) is read."""
     parts = relative_path.split("/")
@@ -351,8 +352,10 @@ def markdown_population(root: Path) -> DocumentPopulation:
 
 
 def markdown_files(root: Path) -> list[Path]:
-    """The paths half of `markdown_population`. ⛔ A caller that prints a FIGURE
-    takes the population instead, so the walk is printed beside it (`W148`).
+    """Return the paths half of `markdown_population`.
+
+    ⛔ A caller that prints a FIGURE takes the population instead, so the walk
+    that produced its denominator is printed beside it (`W148`).
     """
     return list(markdown_population(root).paths)
 

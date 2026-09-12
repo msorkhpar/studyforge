@@ -16,8 +16,6 @@ asserting the disk-walk fallback on purpose.
 
 from __future__ import annotations
 
-import pytest
-
 from tests.support import git, init_repository, repository_root, run
 from tools.quality import config
 from tools.quality.pointers import (
@@ -166,7 +164,6 @@ def test_a_missing_file_is_reported_once_not_twice(tmp_path):
     findings = check_pointers(tmp_path)
     assert len(findings) == 1
     assert findings[0].rule == RULE_POINTER
-
 
 
 def test_coverage_states_a_denominator(tmp_path):

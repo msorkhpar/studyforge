@@ -7,9 +7,9 @@ from pathlib import Path
 from tools.quality.report import (
     DISK_WALK,
     TRACKED_WALK,
+    WALK_CAVEAT,
     DocumentPopulation,
     Finding,
-    WALK_CAVEAT,
     format_findings,
 )
 

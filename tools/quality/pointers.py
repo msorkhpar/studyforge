@@ -97,8 +97,10 @@ from tools.quality.markdown import (
 from tools.quality.report import WALK_CAVEAT, Finding
 
 #: ⭐ Re-exported so no importer moved when the parser did (`W148`). ⛔ Named
-#: explicitly rather than left implicit: `ruff` refuses an unused import, and
-#: a `# noqa` on each would say nothing about why they are here.
+#: explicitly rather than left implicit: `ruff` refuses an unused import, and a
+#: per-import suppression comment would say nothing about why they are here.
+#: ⚠️ Spelling that comment's literal token here made `ruff` warn on every run
+#: about an invalid directive in a `#:` comment — measured, and reworded.
 __all__ = [
     "RULE_ANCHOR",
     "RULE_POINTER",
@@ -133,8 +135,6 @@ class Scan:
     pointers: tuple[Pointer, ...]
     findings: tuple[Finding, ...]
     walk: str
-
-
 
 
 def resolve_target(root: Path, document: Path, pointer: Pointer) -> Path | None:
