@@ -19126,3 +19126,82 @@ CONTROL, and charged another office with it.** ⚠️ **The brief's own words ar
 returning nothing is not evidence a rule is absent; I applied that to `grep` and not to
 `check-ignore`, which has the same failure mode for a different reason.** ⭐ **A negative
 reading about a rule owes a POSITIVE control in the same invocation, and mine had none.**
+
+---
+
+## PO round 58, part two — the second merge
+
+⛔ **SHORT BY RULING, and gates are reported GREEN/RED with an exit code.**
+
+### ⭐ `W182` CLOSED AT `430363b` — MINTED AND DISCHARGED IN ONE WAVE, and that is the row working
+
+⛔ **The §R9 transcription was *mentioned* by two offices across two waves and moved nothing. It moved the wave it became DISPATCHABLE.** ⭐ **That is the whole argument for `PO-58/1` arriving as a ROW rather than as a fourth mention, and it is now evidence rather than a claim.**
+
+### ⭐ RULING 279's RE-GROUNDING, DEMONSTRATED RATHER THAN CITED
+
+⛔ **At `98aa0ad`, before the register's merge, Ruling 264(c)'s arm FIRED: `dispatched and UNNAMED by any row: feat/SF-17-narration-synthesis fix/W34-rubric-checklist`. At `b80f2c5`, after it, the same arm reads NONE and `CORROBORATE_EXIT` moved `1` → `0`.** ⭐ **Nothing about those branches changed; the BOARD did.** ⚠️ **The reading is the coordinator's and I am recording it, not re-deriving it** — ⛔ **it is the case for the register merging FIRST in a wave, measured on one wave instead of argued.**
+
+### ⛔ THE IN-FLIGHT CELLS ARE A READING WITH AN AS-OF, AND TWO OF THEM WILL BE STALE WHEN THIS MERGES
+
+⭐ **`PO-30/2`'s form, and I am naming the limit rather than implying precision I do not have: the commits-ahead cells are measured at `430363b`.** ⛔ **This merge is LAST in the wave, so `SF-18` and `W34` land BEFORE it and both cells go to zero underneath me.** ⚠️ **The register cannot read a merge that has not happened, and the coordinator's release-tip measurement is the authority for the final state.**
+
+⭐ **`SF-17` STAYS NAMED IN THE BLOCK THOUGH IT HAS MERGED, deliberately: its branch is still checked out, and a dispatched branch no row names is exactly what Ruling 264(c)'s arm fires on** — ⛔ **removing the row would turn a true board into a red gate.**
+
+### ⛔ THREE MINTED, AND `W185` IS A HAZARD RATHER THAN A DEFECT
+
+| | |
+|---|---|
+| `W183` | `SF-17/4` — an `Owns` line naming a FILE is a ceiling nobody measured. ⭐ **SECOND in `E04`, and the taker's own words make it a pattern: the same package reached the same answer one row earlier** |
+| `W184` | `SF-17/3` — `narrate/__init__.py`'s `Depends on` wrong a THIRD way. ⛔ **Every sighting came from a row whose surface EXCLUDED the file, so a fourth is the default outcome** |
+| `W185` | ⛔ **`PO-58/10` carried forward as LIVE, jumping every queued row.** ⚠️ **It bit twice in one wave: the round shipped at five bytes and the very next act did not fit either** |
+
+⭐ **AND THE FREEZE HELD: none of the three is a ruling.** ⛔ **`W185` owes a DESIGN DECISION before it owes code, and its own file records the two answers already refused (Ruling 271's three terms, and prose compression) so the next round does not re-derive them.**
+
+### ⛔ `PO-58/8` HAS A NAME, AND NEITHER OFFICE FOUND IT
+
+⭐ **The struck finding is Ruling 337 in terms — a confirmed absence measured over a population that could not contain the thing.** ⛔ **Two offices reached that shape this wave and NEITHER located the ruling that already governs it.** ⚠️ **That is not a second ruling's job and it is not a mint: it is `W34`'s mechanism, observed firing for the third recorded time, and `W34/11` disposes of it as a subject-index row.** ⭐ **Recorded here so the sighting is not lost between two handoffs.**
+
+### ⭐ WHAT WAS ALREADY DONE AND NEEDED NO SECOND ACT
+
+⛔ **`README.md:428`'s *"the merge gate your work is judged by"* was removed in `0b84b27`, which has been sitting in the held branch since Developer 3's first reply.** ⚠️ **It is on the RELEASE tip only because the first merge was taken at `344a675`, one commit earlier** — ⭐ **a sequencing artefact, not an outstanding edit.**
+
+### W182 — Spec §R9's two cells still read `open` for a contract Ruling 351 LOCATED
+
+⭐ **MINTED AND CLOSED IN THE SAME WAVE, and that is the row working rather than a mistake.** ⛔ **`SF-17` filled BOTH §R9 cells at `430363b`** — ⚠️ **the transcription had been *mentioned* by two offices across two waves and moved nothing; it moved the wave it became DISPATCHABLE.** ⭐ **CLOSED PO round 58, part two. Discharged at `430363b`, verified by the register at that ref:**
+
+```text
+git show release/m0-foundations:docs/specs/2026-09-08-studyforge-v1-design.md | grep -n 'narration regeneration state'
+  446:| narration regeneration state | `.studyforge/narration.json` (Ruling 351) | `narration_api` (Ruling 351) | `SF-17` — ⛔ **the one writer** (Ruling 330) |
+```
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W182.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A STEP IS OPEN ON A FACT ITS OWN CITED AUTHORITY STILL CONTRADICTS, and the register opened it knowing that.**
+
+### ⛔ THE TWO SENTENCES THAT DISAGREE — both quoted, neither paraphrased
+
+```text
+grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-design.md
+  446:| narration regeneration state | ⛔ **open** | ⛔ **open** | `SF-17` — ⛔ **the one writer** (Ruling 330) |
+```
+
+⭐ **Against it, Ruling 351 (CTO round 72), landed in `docs/conventions/review-rubric.md`:** *`.studyforge/narration.json`, versioned by `narration_api`, written by `SF-17` — the one writer.*
+
+⛔ **`BOARD.md`'s `## R21` section declares itself a POINTER — *"the open set is whatever §R9 marks `open`"*.** ⚠️ **So the board's own authority says the row is open while the ruling that governs it says it is located, and `M3 step 3.4` is gated on exactly that row.**
+
+### ⛔ WHY IT IS A ROW AND NOT A ONE-LINE FIX SOMEBODY DOES IN PASSING
+
+⛔ **`docs/specs/` has been in NO office's declared surface for two consecutive waves** — ⭐ `CTO-72/8` says so against the dispatch, and Ruling 351 says so in its own text: *"a TRANSCRIPTION for whoever holds `docs/specs/`, which is not this office's declared surface this round"*. ⚠️ **A defect that every office can see and no office may touch does not get fixed by being mentioned again; it gets fixed by being DISPATCHABLE.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **§R9's row for `narration regeneration state` carries the FILE and the VERSION KEY Ruling 351 located**, and stops reading `open` in both columns.
+2. ⛔ **THE SENTENCE AT `:466` IS RE-READ, NOT ASSUMED SPENT** — *"Owed before step 3.4 opens, not before 3.2"*. ⭐ **It is a satisfied obligation once the row above is transcribed; whether it stays as a satisfied record or goes is the taker's call, made out loud.**
+3. ⚠️ **THE FIELDS ARE NOT DESIGNED HERE.** ⛔ **Ruling 351 deliberately did not rule them because designing the record is `SF-17`'s office (Ruling 344), and a transcription that invents a schema has taken a decision it was not given.**
+4. ⭐ **THE CLASS, NOT THE INSTANCE** — ⚠️ **this is the third document in the chain (`spec` → `review-rubric.md` → `BOARD.md`) to carry one contract's location, and two of the three are copies.** ⛔ **The taker states whether R21's board section should stop restating the open set at all, since `CLAUDE.md`'s own argument is that a copy can only be kept freshly wrong.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SILENT EDIT OF THE SPEC BY WHOEVER NOTICES.** ⭐ **The spec is the document R1–R21 live in; a change to it is reviewed, and the reason this row exists is that the change had no owner rather than that it was hard.**
+
+[the divergence, opened over](#po-round-58-the-register) · [Ruling 351, the locating act](handoffs/CTO-2026-09-12-round72.md#ruling-351-r9s-narration-regeneration-state-is-located-and-a-content-addressed-filename-does-not-discharge-a-contract-whose-subject-is-the-conditions-the-content-was-produced-under) · [the refusal it lifts](#m3-step-34-does-not-open-and-the-ground-is-the-specs-own-sentence)

@@ -39,7 +39,7 @@ one does.**
 | **M3 step 3.1** | ✅ CLOSED | `7420c34` | [record](BOARD-ARCHIVE.md#m3-step-31s-close-run-at-7420c34-both-merges-re-derived-on-the-first-parent-chain-and-nothing-inherited) |
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
-| **M3 step 3.4** | ⏳ **OPEN** — ⚠️ **[`W182`](rows/W182.md) owed** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.4** | ⏳ **OPEN** — ⭐ **`SF-17` merged `430363b`; `SF-32` remains** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
 | **M3 step 3.5** | ⏳ **OPEN** — ⭐ **ahead of `3.4`** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -54,9 +54,9 @@ the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-clos
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `M3 step 3.4` |
-| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
-| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12 |
+| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `430363b` | ✅ **MERGED** — `430363b`; ⛔ **named here until its branch is torn down, or Ruling 264(c) fires** |
+| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 2 @ `430363b` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
+| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 4 @ `430363b` | ⏳ **in flight** — wave 12 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE, not an omission** (`W111`, `W147`).
@@ -97,7 +97,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
 | 17 | `W176`–`W181` | ⭐ **round 57's six mints, jumping nobody** | round 57 |
-| 18 | `W182` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⭐ **no other row can close it** | round 58 |
+| 18 | `W185` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⚠️ **the next round that closes five rows does not fit** | round 58 |
+| 19 | `W183`, `W184` | ⭐ **round 58's `SF-17` mints, jumping nobody** | round 58 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -305,7 +306,10 @@ else.**
 | W179 | A new source file is outside the format gate's population until it is committed, so a green suite is not a reading of that gate | framework agent | `todo` — `NS-05/12` | [`rows/W179.md`](rows/W179.md) |
 | W180 | Ruling 349(a) binds the office CHECKING a removal and no rule binds the office MAKING one | framework agent | `todo` — `CTO-71/9` | [`rows/W180.md`](rows/W180.md) |
 | W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | `todo` — `CTO-71`'s `W167` review | [`rows/W181.md`](rows/W181.md) |
-| W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | `todo` — ⛔ **`PO-58/1`, JUMPS the queue** | [`rows/W182.md`](rows/W182.md) |
+| W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | ✅ done — `430363b` | [record](BOARD-ARCHIVE.md#w182-spec-r9s-two-cells-still-read-open-for-a-contract-ruling-351-located) |
+| W183 | An `Owns` line naming a FILE is a ceiling nobody measured, and `E04` has done it twice | framework agent | `todo` — `SF-17/4` | [`rows/W183.md`](rows/W183.md) |
+| W184 | `narrate/__init__.py`'s `Depends on` is wrong a THIRD way, each time found by an office that may not fix it | framework agent | `todo` — `SF-17/3` | [`rows/W184.md`](rows/W184.md) |
+| W185 | The close procedure and `board-size` are jointly unsatisfiable, and it owes a DESIGN DECISION | framework agent | `todo` — ⛔ **`PO-58/10`, live hazard** | [`rows/W185.md`](rows/W185.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
