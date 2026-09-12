@@ -48,6 +48,41 @@ point of the deadline mechanism:** `delivery-flow.md` — a question that arrive
 AFTER its deadline task has shipped has become a finding, and the cost is a schema
 change under R9 rather than a schema decision.
 
+#### ⛔ `W183` — WHAT AN `Owns` LINE NAMES, DECIDED OUT LOUD, SO THE NEXT ROW DOES NOT RE-DERIVE IT
+
+⛔ **AN `Owns` LINE NAMES A SURFACE, NOT A MODULE.** ⭐ **It is the population
+another row reads to find its collisions, so it must name what will be there
+AFTER delivery — and a row naming a file that the R11 ceiling will split has
+handed the collision paragraph a path that does not exist.**
+
+⚠️ **This epic bought the decision twice, in one package, for one cause** —
+`SF-16` split to `narrate/speakable/` and `SF-17` reached the same answer one row
+later, both mid-delivery — ⭐ **and it is not two accidents: the line was drafted
+against an imagined module and the ceiling was met at delivery.**
+
+⛔ **AND IT IS NOT A SWEEP TO DIRECTORIES.** ⚠️ **Measured across the plan's live
+`Owns` entries, in a developer worktree on the host: of those naming a `.py` file
+and BUILT, the large majority delivered AS a file** — ⭐ **so `Owns` naming one
+module is right where one module is genuinely enough, and rewriting every line to
+a directory would answer the question by erasing it.** ⛔ **Both measured
+exceptions are this epic's, and both are ported CodeSignal modules whose ceiling
+was foreseeable BEFORE dispatch.** ⭐ **THE TEST, therefore:** name the
+**directory** where the row's own R11 ceiling makes a split foreseeable at mint
+time; name the **module** otherwise. ⚠️ **That forecast is a judgement about the
+ceiling and never a pre-dispatch line-count estimate — `W64/8` retired exactly
+that.** ⛔ **NO COUNT IS WRITTEN HERE** (Ruling 150's form): the population is
+re-measured by whoever needs it, at their own ref.
+
+⛔ **THE SECOND DIRECTION, AND IT COST MORE: a line can be too narrow in COVERAGE,
+not only in granularity.** ⚠️ **No row owned the renderer that emits `data-audio`
+at all**, though a frozen record assigns it and a neighbouring acceptance needs
+it — ⭐ so the office had to widen into `render/page/` on written authorisation,
+measuring disjointness itself, mid-delivery. ⛔ **A row's `Owns` covers every
+surface its OWN Acceptance forces it to touch, or the acceptance is naming work
+the row is not permitted to do.**
+
+---
+
 #### ⛔ RULING 187 (CTO round 48) — *asserted in both directions* proves SURJECTIVITY, not INJECTIVITY, and `SF-17` cannot catch a clip collision
 
 ⛔ **`SF-17`'s *"every `<audio>` source resolves to a file on disk, and every file
@@ -90,7 +125,7 @@ consuming half — including ignore rules — is generated from the policy).
 
 ### SF-16 — Speakable contract
 **Milestone** **M3** · **Depends on** SF-10 · **Team** pair
-**Owns** `narrate/speakable.py`
+**Owns** `narrate/speakable/` — ⭐ **the DIRECTORY, and `W183`'s decision above is why**: this delivered as a package and the line said `speakable.py` until after it had.
 **Context** ~55k — `CS/tools/study/speakable.py`, `CS/tests/test_speakable.py`
 
 **Definition.** The single source of truth for both halves of narration: what
@@ -187,7 +222,7 @@ report. The gate refuses a leaking string.
 
 ### SF-17 — Narration synthesis
 **Milestone** **M3** · **Depends on** SF-16, SF-03, NS-05 · **Team** solo
-**Owns** `narrate/synth.py`
+**Owns** `narrate/synth/` — ⭐ **the DIRECTORY** (`W183`): delivered as a package at the R11 ceiling, one row after `SF-16` reached the same answer for the same reason.
 **Context** ~35k — `CS/tools/tts/`, `CS/tools/run_unit_audio.py`, OPS-02 output
 
 **Definition.** Turning speakable units into audio clips and placing them
@@ -240,7 +275,7 @@ corrupt another's clips.
 
 ### SF-32 — Media footprint policy ⭐ THE SKILL KNOWS WHEN TO STOP COMMITTING
 **Milestone** **M3** · **Depends on** SF-02, SF-17 · **Team** solo
-**Owns** `corpus/media.py`
+**Owns** `corpus/media/` — ⚠️ **UNBUILT, and named as a DIRECTORY on the `W183` forecast, not on a measurement**: every built sibling under `corpus/` is a package, and this is the cheapest place to prove the decision rather than pay for it a third time. ⭐ **Delivering as a single module is NOT a defect** — the line is the ceiling's forecast, and the row narrows it in its handoff if one module was enough.
 **Context** ~20k — spec §5, SF-02's manifest, SK-07's ignore-rule generation
 
 ⛔ ~~**`SF-32` owns these two field names, and renaming them is free exactly
@@ -328,7 +363,7 @@ verdict and nothing else.
 
 ### SF-18 — Player and highlight sync
 **Milestone** **M3** · **Depends on** SF-12, SF-16 · **Team** pair
-**Owns** `render/assets/narration.js`, `render/assets/narration.css`
+**Owns** `render/assets/narration.js`, `render/assets/narration.css`, and the narration renderer in `render/page/` — ⛔ **the third is `W183`'s COVERAGE direction and it was taken mid-delivery on written authorisation, disjointness measured at the time.** ⚠️ **`render/page/` as a whole is E03's**, and this is a NAMED surface inside it: the module that writes the `data-audio` attribute onto a unit, disjoint from E03's navigation module and from E05's mark control, which are named by their own rows. ⭐ **The attribute's CONSTANT is E03's and stays E03's** — this row writes it, it does not name it.
 **Context** ~45k — `CS/tools/study/assets/*.js`, `CS` design note 02
 
 **Definition.** The reading page's narration control: play and pause,
