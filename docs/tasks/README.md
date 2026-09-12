@@ -125,6 +125,51 @@ option weighed there: the SENTENCE is the defect and the PLAN is fine.**
 sentence, and the next in-step edge would move it again.** ⭐ **Membership stays
 here; state stays in `BOARD.md`; the ordering inside a step is the epic's.**
 
+### ⛔ WIDENED 2026-09-12 (user ruling; drafted PO round 58) — A STEP BOUNDARY BINDS WHAT MAY **CLOSE**, AND NO LONGER BINDS WHAT MAY **START**
+
+⭐ **THE SENTENCE, and it is the whole rule:**
+
+> ⛔ **A wave MAY dispatch a capability row from a LATER step of the SAME
+> milestone once every earlier step in that milestone is CLOSED or SATURATED —
+> provided every dependency the epic declares for that row has MERGED.**
+>
+> ⭐ **A step is SATURATED when no row in it is dispatchable: every row in it is
+> merged, in flight, or blocked on a dependency that has not merged.**
+
+⛔ **THE SHAPE PROPOSED WAS *once the current step's rows are ALL IN FLIGHT*, AND
+IT CANNOT HOLD — refuted at this document's own step 3.4, which is the step it
+was written for.** ⭐ **`3.4` is `SF-17, SF-32`, and `SF-32` *Depends on* `SF-02,
+SF-17` (`E04-narration.md`, `SF-32`'s header line).** ⛔ **So `SF-32` cannot be in
+flight while `SF-17` is, *all in flight* is UNSATISFIABLE there, and the widening
+would have widened nothing in the wave that asked for it.** ⭐ **`SATURATED` is
+the same intent with the blocked case admitted: it is TRUE for `3.4` the moment
+`SF-17` is dispatched.**
+
+⛔ **FOUR THINGS THIS DOES NOT DO, and each is load-bearing:**
+
+1. ⛔ **IT DOES NOT WIDEN *CLOSE*.** ⭐ **A step closes only when ITS OWN rows have
+   all merged; a later-step row merging closes nothing and moves no milestone
+   gate.** ⚠️ **So `3.5` may merge while `3.4` is still open, and both stay open.**
+2. ⛔ **IT DOES NOT CROSS A MILESTONE.** ⭐ **A milestone boundary is a GATE with a
+   close run behind it (Ruling 97), and this clause stops at it.** ⚠️ **The
+   earliest dispatchable row outside the open milestone is still not dispatchable.**
+3. ⛔ **IT DOES NOT LICENSE A ROW WHOSE DECLARED DEPENDENCIES ARE UNMERGED.** ⭐ **The
+   corrected sentence above says a step guarantees nothing about edges INSIDE it;
+   this one says it guarantees nothing about edges ACROSS it either.** ⛔ **The
+   edge is read off the EPIC at dispatch, or the row is not dispatched.**
+4. ⛔ **IT DOES NOT RETIRE THE DISPATCH BOUND** in `BOARD.md`'s Standing decisions.
+   ⭐ **That bound is PRIORITY, not exclusivity; this clause only ENLARGES the
+   population it ranges over — from *the open step* to *every unsaturated step of
+   the open milestone*.** ⚠️ **A `W` row still takes only a slot no capability row
+   can fill.**
+
+⛔ **THE GROUND IS A MEASUREMENT, NOT A PREFERENCE: three waves delivered 15
+merges and 2–3 capabilities**, because an open step admits one or two capability
+rows and the spare slots flow to the `W` register by construction. ⭐ **A boundary
+that costs developer-waves per step and buys nothing the epic's own `Depends on`
+lines do not already buy is a boundary priced wrong** — ⚠️ **and the epic's lines
+are the ones that were doing the work the whole time.**
+
 ⭐ **The spine is the reading floor** (spec §11.0). M0–M4 build a framework that
 turns material into a narrated, navigable, offline study site, and that is a
 **complete product** for any corpus whose material is prose. Everything from M5
@@ -377,7 +422,8 @@ not patches. See spec §12.
 1. `../specs/2026-09-08-studyforge-v1-design.md` — §1–§4 and all of R1–**R20**.
 2. Your **epic document** — shared context for your task's neighbours.
 3. `../conventions/module-structure.md` — size, packages, tests, templates.
-4. `../conventions/graphify.md` — ask the graph before exploring (R14).
+4. `../conventions/graphify.md` — R14. ⛔ **Ask the graph WHERE ONE EXISTS; the
+   index is untracked and so is absent from every linked worktree** (`CLAUDE.md`).
 5. `../conventions/agent-protocol.md` — how to work and how to hand off.
 6. `../conventions/review-rubric.md` — the merge gate your work is judged by.
 7. `handoffs/` — notes from the tasks you depend on.
@@ -410,7 +456,8 @@ person who can make it is standing.
 - Tests are part of the task (R12), never a follow-up.
 - No source module over 400 lines, no test module over 600, or the exception is
   justified in the docstring (R11).
-- Ask the graph before exploring (R14).
+- ⛔ **Do not budget on the graph** — it is untracked and absent from linked
+  worktrees. ⭐ **Use it where it exists (R14); otherwise `git grep` / `grep -rn`.**
 - Write your handoff before you finish.
 - ⛔ **No acceptance condition is satisfied by an untracked artifact alone.** If
   what a task produces is git-ignored, ⭐ **the task ships the check, because the
