@@ -18940,6 +18940,21 @@ one mint (W182), against +224 of new allowance             +252 bytes
 | ⛔ **`PO-58/10`** | ⛔ **`[structural]`** | ⭐ **MEASURED, and it is the round's sharpest.** ⛔ **A register round's MECHANICAL footprint — four closes and one mint — exceeds `board-size`'s allowance by 257 bytes before any state is written**, because Ruling 201's close lengthens a Detail cell by trading `rows/<ID>.md` for a long archive anchor. ⚠️ **Ruling 271 refuses raising a term, so the bound and the close procedure are jointly unsatisfiable at the margin.** ⛔ **Shipped green at 5 bytes of headroom, which the next round consumes** |
 | ⚠️ **`PO-58/11`** | ⚠️ **`[local]`** | ⭐ **MINE.** I composed four `BOARD.md` cells and one `README.md` clause at full length and only then met the byte gate, spending a round trip on compression that writing to the bound would have avoided. ⛔ **The board's remaining headroom is knowable BEFORE the first cell is written, and I did not read it first** |
 
+### ⛔ ONE THING IS OWED **AFTER** THIS BRANCH MERGES, AND IT IS NOT MINE TO DO
+
+⛔ **`W34`'s office could not link `W148`'s archive anchor, and was RIGHT not to: at their ref the
+close is not merged, the row file is still a full argument, and the anchor does not resolve — so
+a link would have put an unresolvable pointer into a document whose floor resolves every anchor.**
+⭐ **They NAMED the destination instead and said why.** ⚠️ **THE SAME PROPERTY BIT ME IN THE MIRROR:
+their canonical anchor for the gate-reading rule does not exist at MY ref either, so `CLAUDE.md`
+and `README.md` NAME it rather than link it.**
+
+⭐ **THE SEQUENCING PROPERTY, stated once for both offices: a close that turns a row file into a
+stub can only be FOLLOWED into another document AFTER it merges, never in the same wave.**
+⛔ **So the link is owed in `docs/conventions/` after this branch lands, and `docs/conventions/` is
+not the register's surface — it stays with `W34`'s office, which has flagged it. Recorded here so
+it is not lost between two offices that each correctly declined to do it.**
+
 ⭐ **AND ONE CORROBORATION RATHER THAN A FINDING: all five merge refs I was handed matched the five I derived.** ⛔ **Recorded because a check that only ever speaks when it disagrees is a check nobody can tell from an absent one.**
 
 ### W172 — Ruling 218's GATE THREE — a record's Findings section told from its prose, and the residue `W64` measured rather than chased
