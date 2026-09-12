@@ -46,32 +46,32 @@ one does.**
 
 ## In flight
 
-⛔ **A commits-ahead cell is a READING with an as-of, not a state** (`PO-30/2`), and the FORM
-is Ruling 246's: `n @ <branch tip>`, and `<branch> @ <checkout>`. ⛔ **Ruling 171:
-`git worktree list` PRIMARY, `git branch` corroborating.** ⭐ **Why the form changed, and why
-the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)** (`PO-44/14`–`PO-44/17`).
+⛔ **A commits-ahead cell is a READING with an as-of, not a state** (`PO-30/2`); the FORM is
+Ruling 246's: `n @ <branch tip>`, `<branch> @ <checkout>`. ⛔ **Ruling 171: `git worktree list`
+PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)** (`PO-44/14`–`PO-44/17`).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `430363b` | ✅ **MERGED** `430363b` — ⛔ **named until teardown, or 264(c) fires** |
-| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 2 @ `430363b` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
-| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 4 @ `430363b` | ⏳ **in flight** — wave 12 |
+| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `a073985` | ✅ **MERGED** `430363b` — ⛔ **named until teardown** |
+| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 2 @ `a073985` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
+| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `a073985` | ✅ **MERGED** `a073985` — ⛔ **named until teardown** |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
-⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED and not assumed** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, and `W161` is the residual.**
+⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, `W161` the residual.**
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at a
-merge and a GATE at `git rev-parse <register branch>`, never a MOMENT and never the release
-tip** (Ruling 279). ⚠️ **AND THE ARM Ruling 264 NAMES IS PRINTED WITHOUT BEING FOLDED — Ruling
-348 — so it fires while the command exits `0`, and it is read WHOLE or it is not read.**
+merge and a GATE at `git rev-parse <register branch>`** (Ruling 279). ⚠️ **Ruling 264's arm is
+printed UNFOLDED (Ruling 348), so it fires while the command exits `0`: read it WHOLE.**
+⭐ **A MERGED row stays NAMED here until its worktree is torn down: that arm fires on an
+absorbed branch no row names.**
 
-⚠️ **ONE BRANCH CAN CARRY ROWS WITH DIFFERENT OUTCOMES** (Ruling 218), ⛔ **so a cell
-may name SEVERAL ROW IDS.**
+⚠️ **ONE BRANCH CAN CARRY ROWS WITH DIFFERENT OUTCOMES** (Ruling 218), ⛔ **so a cell may name
+SEVERAL ROW IDS.**
 
-⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names,
-counted and named.** ⭐ **`W96/5` — that exclusion as DATA — is on [`W125`](rows/W125.md)** (`W100/4`).
+⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names.**
+⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
 
 ## Next rows — placed, not yet taken
 
@@ -159,7 +159,7 @@ else.**
 | W31 | `DOCUMENT_KINDS` names two roles where three produce these documents | framework agent | ✅ done — `3d0eb34` | [record](BOARD-ARCHIVE.md#w31-documentkinds-names-two-roles-where-three-produce-these-documents) |
 | W32 | The mixed-form contents fixture, taken from real material | framework agent | `todo` — re-routed to `SF-13`'s acceptance, no longer a queue row | [`rows/W32.md`](rows/W32.md) |
 | W33 | The floor prints its lint state, absence included, as a notice | framework agent | ✅ done — `3a45d4c` | [record](BOARD-ARCHIVE.md#w33-the-floor-prints-its-lint-state-absence-included-as-a-notice) |
-| W34 | `review-rubric.md`'s operational checklist, and the document has no index | framework agent | ⏳ **in flight** — wave 12 | [`rows/W34.md`](rows/W34.md) |
+| W34 | `review-rubric.md`'s operational checklist, and the document has no index | framework agent | ✅ done — `a073985` | [record](BOARD-ARCHIVE.md#w34-review-rubricmds-operational-checklist-and-the-document-has-no-index) |
 | W35 | `pointers.py` honours the ignore declaration | framework agent | ✅ done — `a8726c1` | [record](BOARD-ARCHIVE.md#w35-pointerspy-honours-the-ignore-declaration) |
 | W36 | A browser in the pinned dev image, checksum-pinned | framework agent | ✅ done — `5f7734b` | [record](BOARD-ARCHIVE.md#w36-a-browser-in-the-pinned-dev-image-checksum-pinned) |
 | W37 | The repo-wide sweep for checks that cannot fail by construction | framework agent | `todo` | [`rows/W37.md`](rows/W37.md) |
