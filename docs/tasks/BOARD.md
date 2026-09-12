@@ -39,8 +39,8 @@ one does.**
 | **M3 step 3.1** | ✅ CLOSED | `7420c34` | [record](BOARD-ARCHIVE.md#m3-step-31s-close-run-at-7420c34-both-merges-re-derived-on-the-first-parent-chain-and-nothing-inherited) |
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
-| **M3 step 3.4** | ⏳ **OPEN** — ⭐ **`SF-17` merged `430363b`; `SF-32` remains** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
-| **M3 step 3.5** | ⏳ **OPEN** — ⭐ **ahead of `3.4`** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.4** | ⏳ **OPEN** — ⭐ **`SF-17` merged; `SF-32` remains** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.5** | ⏳ **OPEN** ⭐ **ahead of `3.4`** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -54,12 +54,12 @@ the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-clos
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `430363b` | ✅ **MERGED** — `430363b`; ⛔ **named here until its branch is torn down, or Ruling 264(c) fires** |
+| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `430363b` | ✅ **MERGED** `430363b` — ⛔ **named until teardown, or 264(c) fires** |
 | `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 2 @ `430363b` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
 | `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 4 @ `430363b` | ⏳ **in flight** — wave 12 |
 <!-- /inflight -->
 
-⭐ **EMPTY IS A STATE, not an omission** (`W111`, `W147`).
+⭐ **EMPTY IS A STATE** (`W111`, `W147`).
 ⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED and not assumed** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, and `W161` is the residual.**
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at a
@@ -97,8 +97,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
 | 17 | `W176`–`W181` | ⭐ **round 57's six mints, jumping nobody** | round 57 |
-| 18 | `W185` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⚠️ **the next round that closes five rows does not fit** | round 58 |
-| 19 | `W183`, `W184` | ⭐ **round 58's `SF-17` mints, jumping nobody** | round 58 |
+| 18 | `W185` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⚠️ **the next five-close round does not fit** | rd 58 |
+| 19 | `W183`, `W184` | ⭐ **round 58's `SF-17` mints, jump nobody** | rd 58 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -307,9 +307,9 @@ else.**
 | W180 | Ruling 349(a) binds the office CHECKING a removal and no rule binds the office MAKING one | framework agent | `todo` — `CTO-71/9` | [`rows/W180.md`](rows/W180.md) |
 | W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | `todo` — `CTO-71`'s `W167` review | [`rows/W181.md`](rows/W181.md) |
 | W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | ✅ done — `430363b` | [record](BOARD-ARCHIVE.md#w182-spec-r9s-two-cells-still-read-open-for-a-contract-ruling-351-located) |
-| W183 | An `Owns` line naming a FILE is a ceiling nobody measured, and `E04` has done it twice | framework agent | `todo` — `SF-17/4` | [`rows/W183.md`](rows/W183.md) |
-| W184 | `narrate/__init__.py`'s `Depends on` is wrong a THIRD way, each time found by an office that may not fix it | framework agent | `todo` — `SF-17/3` | [`rows/W184.md`](rows/W184.md) |
-| W185 | The close procedure and `board-size` are jointly unsatisfiable, and it owes a DESIGN DECISION | framework agent | `todo` — ⛔ **`PO-58/10`, live hazard** | [`rows/W185.md`](rows/W185.md) |
+| W183 | An `Owns` line naming a FILE is a ceiling nobody measured — twice in `E04` | framework agent | `todo` `SF-17/4` | [`rows/W183.md`](rows/W183.md) |
+| W184 | `narrate/__init__.py`'s `Depends on` is wrong a THIRD way, each time found by an office that cannot fix it | framework agent | `todo` `SF-17/3` | [`rows/W184.md`](rows/W184.md) |
+| W185 | The close procedure and `board-size` are jointly unsatisfiable; owes a DESIGN DECISION | framework agent | `todo` — ⛔ **`PO-58/10` LIVE** | [`rows/W185.md`](rows/W185.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -374,7 +374,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | ⛔ **`NS-01` — the DECLINE is LIFTED** | PO | `discharged` — ⭐ **round 51, `NS-01` MERGED at `0fcb6b4`** | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **the trigger FIRED** | ⛔ **All four grounds false or discharged** — [the ruling](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written) |
 | **R21's open rows** | CTO | ⭐ **`discharged`** — ⛔ **Ruling 351 is the act the trigger names, by the office it names** | ⛔ **`M3 step 3.4` OPENS** — the clearing act is the CTO locating a file and a version | ⛔ **POINTER, not a copy.** ⚠️ **Transcription ≠ location: [`W182`](rows/W182.md)** |
 | ⛔ **`SF-17` is told that a `provides` BUMP INVALIDATES EVERY RECORDED ADDRESS** | PO | ⛔ **`fired` AND NOT MET** — ⚠️ **assigned wave 12; telling attempted, CHANNEL FAILED** (`PO-58/2`) | ⛔ **`SF-17` is assigned** — the assignment is the act, the register the office | ⭐ **`NS-05/8`, `NS-04/4`'s residual** ([the narrowing](handoffs/CTO-2026-09-12-round71.md#ns-044-a-cross-repository-coupling-narrowed-off-a-correct-branch)); ⭐ **substance in [the handoff](handoffs/PO-2026-09-12-round58.md)** |
-| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
+| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
 | ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | ⛔ **`fired` AND NOT MET** — ⭐ **`W152` owned it and merged at `3049de9` without carrying this; `W163` does** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`; the conclusion stands and the reasoning does not** |
 | ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `pending` — ⭐ **OPEN AND NAMED, never open and silent** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
 <!-- /scheduled -->

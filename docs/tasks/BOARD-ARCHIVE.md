@@ -19205,3 +19205,15 @@ grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-desig
 ⛔ **A SILENT EDIT OF THE SPEC BY WHOEVER NOTICES.** ⭐ **The spec is the document R1–R21 live in; a change to it is reviewed, and the reason this row exists is that the change had no owner rather than that it was hard.**
 
 [the divergence, opened over](#po-round-58-the-register) · [Ruling 351, the locating act](handoffs/CTO-2026-09-12-round72.md#ruling-351-r9s-narration-regeneration-state-is-located-and-a-content-addressed-filename-does-not-discharge-a-contract-whose-subject-is-the-conditions-the-content-was-produced-under) · [the refusal it lifts](#m3-step-34-does-not-open-and-the-ground-is-the-specs-own-sentence)
+
+### ⛔ PART TWO's FINDINGS — the floor refuted my written expectation, and three of the four are mine
+
+⭐ **I wrote the refutation condition before the command and it FIRED, which is the only reason these are findings rather than a merged defect.**
+
+| id | class | finding |
+|---|---|---|
+| ⛔ **`PO-58/13`** | ⛔ **`[structural]`** | ⭐ **MINE, and it is the worst kind: I wrote the rule and then broke it.** ⛔ **I recorded the sequencing property TWICE this wave — naming rather than linking Developer 3's anchor, and again for the `W148` link — and then put two live links to `handoffs/SF-17.md` in my own new row files, where that file DOES NOT EXIST at this branch's ref.** ⚠️ **The floor caught both.** ⭐ **A property I can state is not a property I have internalised, and the check costs one command** |
+| ⚠️ **`PO-58/14`** | ⚠️ **`[local]`** | ⭐ **MINE.** I computed `board-size`'s allowance at 185 register rows; the instrument counts **184**, because `W182` was already a row and I counted my three mints on top of a number that already included it. ⛔ **I typed an allowance instead of reading the one the instrument prints** — Ruling 150's shape, in the act of managing Ruling 271's bound |
+| ⛔ **`PO-58/15`** | ⛔ **`[structural]`** | ⛔ **`handoff-missing` fired on `W182`, and the instrument is right for a reason it cannot see: the row was DISCHARGED BY ANOTHER ROW'S DELIVERY, so it never had a taker to write one.** ⭐ **A no-taker discharge is indistinguishable from a taker who skipped the handoff.** ⚠️ **Not minted — ROUTED to [`W185`](rows/W185.md), which owns the close procedure; a fourth row would cost the bound the same row is about** |
+
+⭐ **AND THE BOARD SHIPPED AT TWO BYTES UNDER ITS BOUND, after a second compression pass in one round.** ⛔ **That is not a margin and it is not a joke: it is [`W185`](rows/W185.md)'s argument arriving as evidence in the same round the row was minted.**
