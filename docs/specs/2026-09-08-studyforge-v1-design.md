@@ -443,10 +443,34 @@ on the builder.
 | local status | `status.json` | TOC schema version | `SF-14` |
 | authored overlay | `<address>/units/unit-NN/content.json` | `content_api` (`SF-09`) | a person |
 | discovery cache | `.studyforge/site.json` | `site_api` (Ruling 95) | `SF-04` — ⛔ **the one writer** |
-| narration manifest | ⛔ **open** | ⛔ **open** | `NS-02` / `SF-17` |
+| narration regeneration state | ⛔ **open** | ⛔ **open** | `SF-17` — ⛔ **the one writer** (Ruling 330) |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
 | **workspace pin file** | `workspace.json` | `workspace_api` | `FND-05a`; a row per component |
+
+⛔ **THE ROW THAT READ *narration manifest … `NS-02` / `SF-17`* WAS TWO CONTRACTS
+WEARING ONE NAME, and the `/` is what hid it** — ⭐ **located CTO round 67,
+Ruling 330, which is R21's own *one producer* clause applied to its own register.**
+
+- ⛔ **`NS-02`'s batch manifest is a RESPONSE BODY and takes no row here.** ⚠️ **This
+  table's columns are `File` and `Written by`, and the clause below is *`R9` governs
+  what is written*: a wire shape is written to nobody's disk.** ⭐ **It is the
+  service's PROMISE, and the promise register already exists and is two rows above —
+  `consuming.json`, versioned by `consuming_api` + `provides`.** ⛔ **Minting a tenth
+  `*_api` for it would put a framework version key on a shape the framework does not
+  write, making it a second authority on a component's promise — the failure §8.2
+  removes when it rules that the service never writes into a corpus.**
+- ⭐ **`SF-17`'s half IS a file row and stays OPEN above, now naming ONE writer.**
+  ⚠️ **It is the state that makes *"re-running with no content change writes nothing
+  and requests nothing"* (E04, `SF-17`'s Acceptance) decidable, so the framework reads
+  it back and R9 binds it.** ⛔ **Owed before step 3.4 opens, not before 3.2.**
+
+⚠️ **AND THE ORDERING THE SPLIT EXPOSED, which is the part a location alone would have
+missed:** ⛔ **`narrate-service` ships no `consuming.json` today, and E13 assigns it to
+`NS-03` (profiles) and `NS-04` (voices), *"both must contribute their half"*.** ⭐ **`NS-03`
+is in `NS-02`'s OWN STEP with no `Depends on` edge between them, and `NS-04` is the step
+after** — ⛔ **so `NS-02` is buildable before the file that versions its output exists.**
+⚠️ **The edge is owed in `E13` before step 3.2 dispatches `NS-02`** (Ruling 330(c)).
 
 ⭐ **`workspace_api` is the eighth versioned contract and the first that lives
 outside `src/`** — which is why the register and the framework's own constant are

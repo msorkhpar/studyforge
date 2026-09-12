@@ -5623,3 +5623,116 @@ measurement did not support — ⭐ **with `md5sum` over the file at three refs 
 reading different trees* was eliminated before either office argued.** ⚠️ **The arm nobody is
 incentivised to run is the one the charge is AGAINST running it, which is why this is a ruling
 and not a habit.**
+
+## ⛔ RULED ROUND 67 — each clause one command and one pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING** (`W141`, and round 66's own omission): a `RULED ROUND N`
+heading that states its own count is read by no instrument. ⭐ **The clauses below are the
+population, and counting them resolves at read time.**
+
+### ⛔ Ruling 330 — a register row naming TWO producers is TWO contracts until a measurement says otherwise; a WIRE shape takes no §R9 row; and a contract whose version key lands in a LATER task buys a DEPENDENCY EDGE
+
+⛔ **R21 exists to locate a contract before a task builds against it — the file, the key that
+versions it (R9), and the ONE producer that writes it.** ⚠️ **A row whose `Written by` cell
+reads `A / B` has already failed the third of those, and the founding record said so in its own
+`Why it bites` column:** ⭐ *"Two producers named for one contract is Q3's shape exactly, and
+Q3 needed a ruling."*
+
+```bash
+# (a) Split before you locate. For each named producer, read its `Owns` and its Acceptance
+#     and ask what it WRITES. Pass: each producer is shown to write the SAME artifact, or the
+#     row is two rows and each is located separately.
+# (b) A §R9 row is a FILE row — the register's columns are `Contract | File | Versioned by |
+#     Written by` and the spec's own clause reads "R9 governs what is WRITTEN". Pass: an
+#     artifact that is a RESPONSE BODY is declared NOT an R9 row and is versioned by the
+#     promise register that already exists (`consuming.json` / `provides`, §R9).
+# (c) Locate the version key's own FILE, then read WHICH TASK lands it. Pass: that task is an
+#     ancestor of the building task in the epic's `Depends on` graph, or the edge is minted.
+```
+
+⛔ **(b) is the clause that stops a tenth `*_api`.** ⚠️ **Putting a framework version key on a
+wire shape the framework does not write makes the framework a second authority on a component's
+promise** — ⭐ **which is exactly the failure R4 removes for layout and §8.2 removes for
+narration** (*"the service never writes into a corpus"*, *"from the framework's point of view
+this service is a third party"*).
+
+⭐ **(c) IS THE CLAUSE THAT PAYS, and it is why a fired trigger is worth running rather than
+waving through.** ⚠️ **A contract can be correctly located and still unbuildable, because the
+file carrying its key is landed by a SIBLING ROW IN THE SAME STEP with no edge to it** — ⛔ **and
+a step whose two rows are dispatchable in parallel will ship them in either order.**
+
+### ⛔ Ruling 331 — a DECLARED SURFACE is an instrument only over the population that DECLARES one, and a dispatch that cannot check disjointness REPORTS the reading rather than substituting a board cell for it
+
+⛔ **Ruling 318 already names *a DECLARED SURFACE* as a thing a row has.** ⚠️ **MEASURED, CTO
+round 67, at `7420c34`, host, role `wt/cto`:**
+
+```bash
+grep -rlE '^#+ +.*SURFACE' docs/tasks/rows/*.md | wc -l   # declaring rows
+ls docs/tasks/rows/*.md | wc -l                           # the population
+# READ AT 7420c34: 12 of 107. Pass: the two numbers are printed together, never the first alone.
+```
+
+⭐ **`0 collisions` over a population where 95 of 107 members cannot be read is `0 = 0`**
+(Ruling 48's shape, arriving in check 4's sub-step). ⛔ **So a coordinator who cannot verify
+disjointness for a queued row says *this row declares no surface* and names the reading**;
+⚠️ **a board cell asserting a row's files is a SECOND, UNVALIDATED source for the same fact and
+is cited as one, never as the row's own declaration** (Ruling 170(a)'s class).
+
+### ⛔ Ruling 332 — a committed skip whose OWN REASON forbids the condition that would unskip it is a DECLARATION, not an invitation, and the unreachable assertions are ROWED rather than run
+
+⛔ **MEASURED, CTO round 67, at `7420c34`, role `wt/cto`, BOTH environments:**
+
+```text
+host,      STUDYFORGE_DOCKER_TESTS unset   tests/docker/  74 passed, 16 skipped
+                                           9 of them: "set STUDYFORGE_DOCKER_TESTS=1 to build
+                                           the dev image … (the build needs network; a test
+                                           run must not)"
+container, STUDYFORGE_DOCKER_TESTS unset   the SAME 9: "already inside the dev image; building
+                                           it again would recurse"
+⛔ NEITHER ROUTINE ENVIRONMENT RUNS THEM, and the flag is reachable only from the host.
+```
+
+⛔ **The skip reason is a COMMITTED clause of the tree and it says *a test run must not* need
+network.** ⭐ **So setting the flag is not a taker's or a reviewer's discretionary act**; a
+branch whose behaviour is observable only under it discharges its acceptance by REPORTING that
+(Ruling 312's form), and the reviewer does not ask for the run.
+
+```bash
+# Pass: the census is quoted from BOTH routine environments (Ruling 326), and the residual —
+# committed assertions no routine environment reaches — is ROWED by id or named as unrowed.
+```
+
+⚠️ **The residual is not nothing: nine committed assertions certify the pinned image and are
+exercised by no routine run.** ⛔ **Measured at `7420c34`: no live board row names
+`STUDYFORGE_DOCKER_TESTS`** — ⭐ **so it is named here and routed, which is what *rowed or named
+as unrowed* means.**
+
+### ⛔ Ruling 333 — Ruling 332 is RE-GROUNDED, not repealed: the cost belongs to the TEST, never to the MODE, and a skip reason stating a worst case as unconditional is the defect
+
+⭐ **Ruling 301's form, and the round that re-grounds a clause says WHICH TERM MOVED.**
+⛔ **Ruling 332 stood on *"the build needs network; a test run must not"*, quoted from the tree.**
+⚠️ **MEASURED, CTO round 67, host, `wt/dev2`'s trial merge at `30b0315`, cache warm:**
+
+```text
+STUDYFORGE_DOCKER_TESTS=1 python3 -m pytest -q tests/docker/test_dev_provenance.py
+  ⭐ 14 passed in 1.05s — NO build, NO network, NO container started
+```
+
+⛔ **So the gate's own sentence is a property of SOME of the tests it guards and is written as a
+property of the MODE.** ⭐ **The term that moved is the SUBJECT: the cost belongs to the tests
+that build a FRESH image, not to `STUDYFORGE_DOCKER_TESTS=1`.**
+
+⭐ **RULING 332 SURVIVES, NARROWED: a reviewer still does not ask for the tests that BUILD, and
+a branch observable only under those still discharges by REPORTING** (Ruling 312). ⛔ **What is
+withdrawn is the blanket *"the flag is not run"* — a taker MAY set it for tests that neither
+build nor reach the network, and the office that ran it corrects the office that estimated it.**
+
+```bash
+# Pass: a skip reason quantifies over the tests it actually guards. A gate whose message states
+# the worst member's cost as the mode's cost is a finding against the MESSAGE, not the gate.
+```
+
+⚠️ **AND THE HONEST RESIDUAL: the nine in `test_dev_image.py` REMAIN UNMEASURED.** ⛔ **This
+office started that run and it was destroyed in flight when the worktree it was running in was
+removed by another office** (`CTO-67/17`) — ⭐ **so *how much the building tests cost* is still
+nobody's reading, and it is named as unmeasured rather than estimated a third time.**
