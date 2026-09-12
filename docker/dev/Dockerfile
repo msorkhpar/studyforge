@@ -319,12 +319,54 @@ COPY requirements.txt /opt/studyforge/requirements.txt
 RUN pip install --no-cache-dir --disable-pip-version-check \
         --requirement /opt/studyforge/requirements.txt
 
-# ⛔ `studyforge` itself is deliberately NOT installed, not even with `-e`.
-# The source arrives as a bind mount and `pyproject.toml`'s
-# `pythonpath = ["src", "."]` resolves it from there. Installing it would put
-# a second copy in site-packages that could shadow the mount, so the container
-# and the host would be running different code while reporting the same
-# result — which is precisely the failure R15 exists to prevent.
+# ---------------------------------------------------------------------------
+# ⭐ **THE INSTALLED COMMAND: `studyforge` IS ON THE PATH, AND IT RUNS THE MOUNT**
+# (`W211`). Before this block `command -v studyforge` answered 127 in here, so
+# every reading about the installed command was host-only.
+#
+# ⛔ FND-03 refused an install because a SECOND COPY in site-packages could
+# shadow the bind mount. That ground still holds and this install has no copy:
+# it is EDITABLE, so pip writes a `.pth` naming `/workspace/src`, a `dist-info`
+# and the console script — and the code is read from the mount on every run.
+# ⭐ It is built with `/workspace/src` EMPTY, so the image holds no module of
+# this project at all: without the mount, `studyforge` fails on
+# `ModuleNotFoundError` instead of running something stale.
+#
+# ⛔ Not `pip install -e .` at RUN time, which writes into the checkout (`W209`'s
+# class). It happens here, against a `/workspace` that is not the checkout, and
+# only `pyproject.toml` and `README.md` cross — BIND-MOUNTED from the `project`
+# build context `compose.yaml` names, so no layer keeps them and a change to
+# either re-runs this step under `check`'s `--build`.
+#
+# ⚠️ What IS baked is the METADATA: the entry-point table and version as of this
+# build. `tests/docker/test_dev_image_command.py` compares them with the MOUNTED
+# `pyproject.toml` from inside the image, so a stale image is a red, not a lie.
+#
+# ⛔ **The build backend is an image input, pinned by version AND hash** (`W124`'s
+# two-part pin). `pyproject.toml` asks for a RANGE, and build isolation would
+# fetch whatever met it that day; `--no-build-isolation --no-index` leaves the
+# pinned wheel the only backend reachable. ⭐ It is UNINSTALLED on the way out,
+# the rule `curl` and `npm` already follow: an image that can build this package
+# is one where an offline `pip install -e .` into the mount succeeds.
+#
+# ⚠️ A plain `docker build docker/dev` now fails at this step, because the
+# declaration's one source is the checkout. Name it:
+#     docker build --build-context project=. docker/dev
+ARG SETUPTOOLS_VERSION=84.0.0
+ARG SETUPTOOLS_SHA256=51a52592b3b99e102b609654876bd65f19f999935166d1352678931132b0c670
+
+RUN --mount=type=bind,from=project,source=pyproject.toml,target=/workspace/pyproject.toml \
+    --mount=type=bind,from=project,source=README.md,target=/workspace/README.md \
+    set -eu; \
+    printf 'setuptools==%s --hash=sha256:%s\n' \
+        "${SETUPTOOLS_VERSION}" "${SETUPTOOLS_SHA256}" > /tmp/backend.txt; \
+    pip install --no-cache-dir --require-hashes --no-deps --requirement /tmp/backend.txt; \
+    mkdir -p /workspace/src; \
+    pip install --no-cache-dir --no-index --no-build-isolation --no-deps \
+        --editable /workspace; \
+    pip uninstall -y setuptools; \
+    rm -rf /tmp/backend.txt /workspace/src; \
+    command -v studyforge
 #
 # ⛔ And no `COPY . .`. The acceptance is "from a clean checkout", meaning the
 # checkout on disk, not a snapshot baked into a layer at some earlier commit.

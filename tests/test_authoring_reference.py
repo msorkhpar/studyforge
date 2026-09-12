@@ -55,6 +55,7 @@ from tests.authoring.support import (
     document_paths,
     documents,
     fences,
+    installed_for_a_bare_shell,
     json_fences,
     must_run,
     offered_verbs,
@@ -543,12 +544,24 @@ def test_the_reader_s_bare_shell_cannot_run_the_framework_and_that_gap_is_w75_s(
     this row goes RED and is CONVERTED — the bare-shell reading becomes the
     assertion and the row above folds into it** (Ruling 157: a check with a
     scheduled expiry is an acceptance condition on the task that expires it).
+
+    ⭐ **CONVERTED WHERE THE GAP IS CLOSED, and not deleted (`W211`).** Where the
+    bare interpreter has `studyforge` INSTALLED — the pinned image, since `W211`'s
+    editable install — the bare-shell reading IS the assertion: every commanded
+    module runs. ⛔ Where nothing is installed the pin stands exactly as it was.
+    The branch is keyed on the install, never on which machine this is.
     """
     unreachable = {
         name
         for name in sorted(must_run())
         if any(tell in run_bare(name, None) for tell in UNRESOLVED)
     }
+    if installed_for_a_bare_shell():
+        assert must_run() and not unreachable, (
+            f"studyforge is installed for this interpreter and these still fail "
+            f"from a bare shell: {sorted(unreachable)}"
+        )
+        return
     assert unreachable, (
         "every commanded module now runs from a bare shell. ⭐ If W75 landed, "
         "CONVERT this row — assert the bare-shell reading — and do not delete it"

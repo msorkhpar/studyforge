@@ -360,6 +360,28 @@ def run_bare(name: str, pythonpath: str | None) -> str:
     return done.stdout + done.stderr
 
 
+def installed_for_a_bare_shell() -> bool:
+    """Does the interpreter `run_bare` uses carry `studyforge` as an INSTALLED distribution?
+
+    ⭐ Asked of that interpreter in a subprocess, from the same root with the same
+    scrubbed `PYTHONPATH` — never of this runner, whose `sys.path` pytest widened.
+    ⚠️ True in the pinned image since `W211` (an editable install), False on a host
+    that installed nothing.
+    """
+    env = {key: value for key, value in os.environ.items() if key != "PYTHONPATH"}
+    probe = "import importlib.metadata as m; m.distribution('studyforge')"
+    done = subprocess.run(  # noqa: S603 — fixed argv, interpreter is `sys.executable`
+        [sys.executable, "-c", probe],
+        cwd=repository_root(),
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=180,
+        check=False,
+    )
+    return done.returncode == 0
+
+
 #: What a real interpreter says when it could not find the module at all.
 UNRESOLVED = ("No module named", "Error while finding module specification")
 

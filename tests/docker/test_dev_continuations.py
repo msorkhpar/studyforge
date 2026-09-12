@@ -87,13 +87,16 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
     "test_dev_image.py": {
         "requirement_names": "no-continuations",
         "test_every_tool_version_is_pinned_exactly": "no-continuations",
-        "test_studyforge_is_not_installed_into_the_image": "collapsed",
         "test_the_base_image_is_pinned_by_digest": "line-anchored",
         "test_the_base_image_is_python_314": "line-anchored",
         "test_the_runtime_arrives_pinned_rather_than_from_a_package_manager": "collapsed",
         "test_the_runtime_is_verified_against_a_recorded_checksum": "line-anchored",
         "test_the_source_is_mounted_not_copied": "line-anchored",
         "test_the_suite_passes_inside_the_image_with_no_network": "not-dev-text",
+    },
+    # ⭐ `W211`: every read of the Dockerfile in it goes through `dockerfile()`.
+    "test_dev_image_command.py": {
+        "dockerfile": "collapsed",
     },
     "test_dev_image_browser.py": {
         "recorded_digests": "per-physical-line",
