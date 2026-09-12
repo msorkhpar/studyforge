@@ -19786,3 +19786,214 @@ one mint, against +224 of new allowance                     +252 bytes
 ⛔ **[`W171`](rows/W171.md)'s hazard was CHECKED BEFORE CUTTING, because the pointer floor is tree-shaped and cannot see a removal:** ⭐ **the paragraph carried an anchored pointer into `W190`'s archive record, and that anchor is still cited from the surface-collision paragraph on the same board and from [`rows/W190.md`](rows/W190.md), so no record section was orphaned.** ⚠️ **[`W180`](rows/W180.md) is the row saying no rule binds the office MAKING a removal; this paragraph is that obligation discharged by hand, once, and it is not a substitute for the row.**
 
 ⭐ **The board now stands at 7611 bytes of narrative against 8192**, ⛔ **so the next round inherits headroom rather than the 79 bytes this one did.**
+---
+
+## PO round 63 — the six decisions answered and homed, `M3`'s missing ACT given a row, and a build command verified against my own expectation rather than against the coordinator's account
+
+⛔ **Wave 16 closed at `6ffba1e`, five merges re-derived on the first-parent chain rather than received:** `0524ac4` (`chore/po-round62`), `869fd4c` (`W209`), `0160d71` (`SF-37`), `2a88504` (`SF-40`), `6ffba1e` (`W208`).
+
+### ⭐ 1 — `W202` IS ANSWERED IN FULL, AND THE ANSWERS HAVE ONE HOME
+
+⛔ **All six land in [`E09-delivery.md`](E09-delivery.md#w202-what-a-build-is-the-six-decisions-answered-and-every-row-here-cites-them), in one section, and consuming rows CITE it** (`W202` clause 4). ⭐ **1, 2 and 4 are the user's own; 3, 5 and 6 are the register's, taken here.** ⚠️ **[`E04-narration.md`](E04-narration.md) carries a POINTER to answers 3 and 4 and not a second copy** — ⛔ **the failure `CLAUDE.md` was rewritten over is a live fact in two places, and an epic that restated the answer would have been the second copy.**
+
+⛔ **NO RULING WAS MINTED, and the freeze has expired, so that is a choice rather than a constraint.** ⭐ **Every one of the six is a property of what a BUILD is, and an epic that defines the build is where a builder already looks; a ruling would have put the answer where only a search could find it, which is the exact defect the freeze diagnosed.**
+
+⛔ **THE ONE EXCEPTION IS THE R3 REFINEMENT, AND IT IS NOT A RULING EITHER — IT IS R3 ITSELF.** ⭐ **R3 distinguishes the build's own prior output from the user's material, and that sentence had been written down NOWHERE.** ⚠️ **It is now stated once, at R3 in [the spec](../specs/2026-09-08-studyforge-v1-design.md), because R3 is where R3 is authoritative and a refinement recorded anywhere else is a rule two documents disagree about.** ⛔ **`docs/specs/` was NOT on my declared surface: taken deliberately, and recorded as `PO-63/1` against the coordinator.**
+
+### ⛔ 2 — ITEM 3'S ANSWER, AND WHAT IT COST TO FIND OUT IT WAS NOT FREE
+
+⭐ **A BUILD NEVER SYNTHESISES. `studyforge narrate` is its own verb and the only caller of `narrate.synth` outside tests. The record and the clips are INPUTS to a build, so the order is `narrate` then `build`.**
+
+⛔ **The answer's consequence is what makes it worth a round: `narrate.synth` has been a LIBRARY WITH NO CALLER since it landed, and answer 3 says the build is not going to become one.** ⭐ **So something had to be minted, and `SF-42` is it** — ⚠️ **and that is the honest reading of why `M3` would not close with all five of its steps closed: not a step's rows, not `SF-38`, but an ACT no task in this repository ever owned.**
+
+⛔ **`SF-38` IS UNBLOCKED AND ITS ACCEPTANCE IS WRITTEN**, citing answers 3 and 4 instead of re-deriving them. ⚠️ **It is the READ side only: a build opens the record, resolves clips against disk, and renders answer 4's three states, asserted in BOTH directions — a planted player on a no-record page must turn the arm RED, because *silently identical to a failed narration* is the defect answer 4 exists to remove.**
+
+### ⛔ 3 — `W195` CLOSES, AND MY READING CORRECTS THE ACCOUNT I WAS GIVEN IN TWO PLACES
+
+⭐ **Expectation written BEFORE the command, refutation condition named, capture read from file** (`docs/tasks/handoffs/PO-2026-09-12-round63.md` carries it). ⛔ **The pass condition — *a command a user can invoke walks a corpus and writes pages, asserted end to end* — IS MET**, and the two corrections are:
+
+1. ⚠️ **The output root must ALREADY EXIST.** ⛔ **A bare `--out <fresh path>` exits `2` with *a build mints its own pages and never its own root*** — ⭐ **which is answer 1 being stricter than *`--out` is required*, and the section says so.**
+2. ⛔ **THE PINNED IMAGE CANNOT INSTALL THIS PACKAGE AT ALL.** ⚠️ **Measured in the authoritative environment: `command -v studyforge` finds nothing, and `pip install --no-build-isolation .` from a copy inside the container fails with `BackendUnavailable: Cannot import 'setuptools.build_meta'` — no setuptools, no network.** ⭐ **So `W195`'s own close, and every future reading about the installed command, is HOST-ONLY and NOT reproducible by a second office in the pinned image.** ⛔ **That is `W112`'s class one level up, it is not `W195`'s to fix, and it is [`W211`](rows/W211.md).**
+
+### ⛔ 4 — `SF-40/1` IS UPHELD AGAINST ME, AND THE GENERAL CASE IS ROUTED RATHER THAN RE-MINTED
+
+⭐ **`SF-40`'s acceptance sweep carried the literal `\[project\.scripts\]` — the very table the row exists to add — so it could print nothing only if the table were never named, including by the file that declares it.** ⛔ **The acceptance became UNSATISFIABLE the moment the row succeeded, which is Ruling 74's family and Ruling 129's re-homed clause again: an acceptance that cannot be met is indistinguishable from one nobody checked.** ⚠️ **Corrected in `E09`.**
+
+⛔ **IT IS NOT RE-STATED AS A NEW RULE, AND THE FREEZE'S OWN LESSON IS WHY:** ⭐ **the case is already carried by TWO OPEN ROWS — [`W49`](rows/W49.md) (acceptance clauses naming no instrument that can return `no`) and [`W37`](rows/W37.md) (the repo-wide sweep for checks that cannot fail by construction)** — ⚠️ **so capacity goes to REACH, and this is recorded as `W49`'s second witness on `W49`'s own file.**
+
+### ⭐ 5 — WHAT ELSE MOVED
+
+⛔ **CLOSED:** `W195` (`6ffba1e`), `W202` (this round), `W208` (`6ffba1e`), `W209` (`869fd4c`). ⭐ **MINTED:** `W211`–`W217`, each argued on its own file. ⛔ **ROUTED WITHOUT A MINT:** `SF-40/1` → `W49`; `SF-40/2` → `W204`; `SF-37/3` → `W198`, annotated as HALF-discharged so nobody reads it as closed.
+
+⚠️ **`SF-37/2` IS `§9` INVERTED AND IT IS THE MOST EXPENSIVE OF THE SEVEN MINTS:** ⛔ **a build can now find archive media and NO ADAPTER IS INSTRUCTED TO PRODUCE ANY** — ⭐ **so the second source will put media somewhere else and every page will be broken with nothing failing.** ⚠️ **[`W214`](rows/W214.md).**
+
+### W195 — There is no build pipeline: nothing walks a corpus and writes pages, so the reading floor cannot be PRODUCED by anything but a test
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W195.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THERE IS NO BUILD PIPELINE. `studyforge` can synthesise, join and render, and it cannot BUILD A NARRATED SITE.** ⭐ **MEASURED at `4b23ce8` by [`W187`](rows/W187.md)'s taker, population `src/**/*.py`, instrument `git grep` — modules outside `render/` that import the page renderer: **0**; call sites of `page.render(` or `page.compose(` outside `render/`: **0**.** ⚠️ **The only callers of `render.page.compose` and `render.page.render` in this repository are TESTS.**
+
+⛔ **SO THE READING FLOOR — the plan's spine, spec §11.0 — IS PRODUCIBLE BY NOTHING BUT A TEST.** ⭐ **Every part exists and nothing walks a corpus and writes unit pages.** ⚠️ **`W187` stopped at exactly the right place and said so: it delivered the document-level door and refused to invent a corpus walk, a page-writing pass, or a decision about who invokes narration and when** (`W187/4`, against itself).
+
+### ⛔ WHY THIS ROW EXISTS AT ALL, GIVEN E09
+
+⭐ **[`../README.md`](README.md) puts *"compose, build pipeline"* in `E09`, and `E09` is unbuilt.** ⛔ **So the WORK is placed and the FACT is not: no instrument reads a plan document, and a gap this large existing only in one finding of one merged row's handoff is a gap that survives every close run.** ⚠️ **This row is the fact. It is not a second copy of `E09`.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE PLACEMENT IS HELD.** ⭐ **Developer 3 is scoping `E09` and its report does not exist yet; placing this row inside `E09` before reading it would be the register deciding a scope it has not seen.**
+2. ⛔ **IF THE SCOPING REPORTS `E09` IS MIS-SCOPED, THAT IS A FINDING ABOUT THE PLAN AND NOT ABOUT THE OFFICE** — ⭐ **and the register acts on it in the round it lands.**
+3. ⛔ **THE ROW CLOSES WHEN A COMMAND WALKS A CORPUS AND WRITES PAGES, ASSERTED END TO END** — ⚠️ **not when `E09` is authored, and not when a caller exists in a test.**
+4. ⭐ **THE ORDERING QUESTION IS NAMED AND NOT ANSWERED HERE:** ⛔ **who invokes narration and when is a product decision, it is `W187`'s stopping point, and it is owed to whichever row builds the pass.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SECOND PLAN.** ⭐ **`docs/tasks/README.md` and `E09` are the plan; this row is a measured statement of what the tree can and cannot do, and it goes stale the moment the pass exists — which is the point.** ⛔ **AND IT MUST NOT BE CLOSED BY A TEST.** ⚠️ **A caller that exists only under `tests/` is the exact state this row measures.**
+
+---
+
+### ⭐ AMENDMENT — PO ROUND 60: THE GAP IS REFRAMED, AND MY OWN FRAMING WAS THE WEAKER ONE
+
+⛔ **I CALLED THIS A HOLE. IT WAS NOT A HOLE — THE BUILD WAS ALREADY WRITTEN, IN `tests/`.** ⭐ **Developer 3 measured it while scoping `E09`: `tests/studyforge/render/page/pages.py` and `sites.py` are 613 lines that WALK, BUILD, PLACE, RENDER and WRITE, and `sites.py`'s own docstring says it stands in for `SF-28`'s caller.** ⛔ **`cli/plan/derive.plan_for` already enumerates every path a build creates AND ITS OUTPUT IS GOLDENED.**
+
+⭐ **SO THE GAP WAS NEVER KNOWLEDGE. IT WAS THAT THE KNOWLEDGE LIVED WHERE NO PRODUCT COULD REACH IT.** ⚠️ **That is a materially different defect from *nobody has worked out how to build a site*, and it changes what the fix costs: the design exists and is asserted, and what was missing was a caller a user can invoke.** ⛔ **The text above is LEFT STANDING AND DATED rather than edited** (Ruling 244's form) — ⭐ **its measurement was correct and its conclusion was one step short.**
+
+⛔ **THE INCREMENT DELIVERED — `studyforge.generate` — IS THE FIRST NON-TEST CALLER THE PAGE RENDERER HAS EVER HAD**, ⭐ **and it asserts against the COMMITTED PLAN GOLDENS rather than against a retyped list**, which is the property that stops it becoming a fourth copy of the walk ([`W201`](rows/W201.md)).
+
+### ⛔ WHAT THIS ROW NOW OWES, AND IT IS LESS THAN IT WAS
+
+⭐ **`E09` IS EIGHT ROWS ACROSS THREE MILESTONES AND BOTH AGENTS**, measured from the epic's own headers: `SF-28` and `OPS-05` (M4, framework), `OPS-01`/`02`/`03` (M6, integration), `OPS-04`/`OPS-06` (M7, integration), `OPS-07` (M7, framework). ⛔ **`../README.md`'s *"compose, build pipeline"* is TWO of these, ONE PER AGENT — so the plan document compresses a cross-agent, cross-milestone epic into one phrase.** ⚠️ **`../README.md` is not the register's surface and that correction is owed by whoever holds it.**
+
+⛔ **AND `SF-28` IS ITSELF MIS-SCOPED — [`W197`](#w197-sf-28-grew-by-accretion-until-it-stopped-being-a-row-one-definition-five-acceptance-additions-at-least-eight-deliverables), which is owed BEFORE anyone dispatches it.** ⭐ **The six decisions a build cannot ship without are [`W202`](rows/W202.md).** ⚠️ **This row closes when a command a user can invoke walks a corpus and writes pages; it does NOT close by `E09` being authored.**
+
+
+---
+
+### ⛔ AMENDMENT — PO ROUND 61: THE INCREMENT MERGED AND THIS ROW DOES NOT CLOSE
+
+⛔ **`a606033` IS THE MERGE AND IT IS NOT THE CLOSE.** ⭐ **This row's own pass condition, written above and not narrowed here, is *a command a user can invoke walks a corpus and writes pages, asserted end to end*, with two explicit exclusions: not by `E09` being authored, and not by a caller under `tests/`.**
+
+⛔ **WHAT LANDED IS A PACKAGE, NOT A COMMAND.** ⭐ **`studyforge.generate` is importable and its own tests assert it has NO subcommand, NO flag and NO `__main__`** — ⚠️ **deliberately, because `[project.scripts]` has exactly one minter and the delivering office was not it.** ⛔ **So the exclusion this row wrote against `tests/` is satisfied and the positive condition is not: nothing a reader can type builds a site.**
+
+⭐ **WHAT IT STILL OWES, AND IT IS NOW TWO NAMED TASKS RATHER THAN AN OPEN QUESTION:** ⛔ **the rest of the site build (`SF-28`, as split in [`../E09-delivery.md`](E09-delivery.md)) and the console entry point (`SF-40`, the only minter).** ⚠️ **This row closes when those two make a typed command produce a site; it is the FACT and does not become a third copy of the plan.**
+
+⛔ **THE REGISTER IS CLOSING ITS OWN WAVE HERE AND STILL REFUSES THE CLOSE** — ⭐ **the same call as `W185`'s in round 60, applied to a row whose branch the register itself asked to be merged.**
+
+
+### W202 — Six decisions a build cannot ship without, answered: three by the user and three by the register
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W202.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **SIX DECISIONS A BUILD CANNOT SHIP WITHOUT, AND NOT ONE OF THEM IS A DEVELOPER'S TO TAKE.** ⭐ **Developer 3 reached all six while building the first non-test caller the page renderer has ever had, DELIBERATELY DID NOT TAKE THEM, and said so** — ⚠️ **which is the behaviour this project wants and is why they arrive here as a row instead of as six defaults nobody chose.**
+
+| # | the decision | ⛔ what is true today |
+|---|---|---|
+| 1 | **where output goes** | ⛔ **no default exists** |
+| 2 | **what a rebuild does to a page the previous build wrote** | unsaid |
+| 3 | **who invokes narration, and when** | unsaid — ⭐ [`W187`](rows/W187.md)'s stopping point, named twice now |
+| 4 | **what a corpus with NO narration record shows** | the record-absent state is carried quietly; what a PAGE shows is unsaid |
+| 5 | **where the build package finally homes** | ⚠️ `generate/` was chosen to dodge [`W200`](rows/W200.md), not chosen on merit |
+| 6 | **does a build DRAIN findings like `validate`, or STOP on the first?** | ⭐ **it STOPS today, and the office says changing it is one function** |
+
+⛔ **THESE ARE THE REGISTER'S AND THE USER'S. THE COORDINATOR HAS EXPLICITLY DECLINED TO DECIDE THEM AND THE OFFICE THAT FOUND THEM MAY NOT.**
+
+### ⛔ WHY THEY ARE ONE ROW AND NOT SIX
+
+⭐ **Every one of them is answered by the same act — writing down what a BUILD is — and answering any one alone constrains the others.** ⚠️ **Number 6 in particular is a shape decision that `validate` already took the other way, so answering it in isolation gives one product two personalities.** ⛔ **`W197`'s lesson inverted: `SF-28` is one row that should be eight; this is six items that are one decision.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **EACH OF THE SIX IS ANSWERED IN ONE SENTENCE, OR DEFERRED WITH ITS TRIGGER NAMED** — ⭐ **a deferral with a trigger is a decision; a deferral without one is the state they are in now.**
+2. ⛔ **NUMBER 6 IS ANSWERED AGAINST `validate`'s PRECEDENT EXPLICITLY** — ⚠️ **agreeing or diverging, but never by accident.**
+3. ⛔ **NUMBER 2 IS THE ONE WITH AN R3 EDGE** — ⭐ **generation is non-destructive, and *what a rebuild does to a page the previous build wrote* is that rule meeting its first real case.**
+4. ⛔ **THE ANSWERS LAND WHERE DECISIONS LAND — a ruling or the epic — AND THE ROWS THAT CONSUME THEM CITE THEM** ⚠️ **rather than each re-deriving one.**
+5. ⭐ **THE USER IS ASKED ON ANY OF THE SIX WHOSE ANSWER IS A PRODUCT PROMISE RATHER THAN AN IMPLEMENTATION** — ⛔ **1, 2 and 4 read that way; 5 and 6 read as the register's; 3 has been open across three rows and is the oldest.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **SIX DEFAULTS DISCOVERED LATER IN THE CODE.** ⭐ **Every one of them has a default TODAY — that is what shipping without deciding means — and the defaults were chosen by whatever was convenient in a scoping increment.**
+
+
+---
+
+### ⛔ THE THREE THE USER IS ASKED — PO ROUND 61, WRITTEN AS QUESTIONS AND NOT ANSWERED
+
+⛔ **THE REGISTER DID NOT TAKE THESE.** ⭐ **Items 1, 2 and 4 are product promises rather than implementations, and the whole of what this round did to them is to make each answerable in one reading.** ⚠️ **Items 3, 5 and 6 stay the register's and are not asked here.**
+
+**Q1 — WHERE DOES A BUILD WRITE?** ⭐ **`write_pages(root, into)` takes `into` as a required argument with no default, so a reader typing `studyforge build <corpus>` gets an error rather than a site.** ⛔ **Pick one: (a) INSIDE the material repository, at a fixed directory name; (b) BESIDE it, as a sibling directory; (c) NOWHERE by default — `--out` stays required and the command refuses without it.** ⚠️ **R3 makes (a) the sharpest: generation is non-destructive, so a build writing inside the source repository must write only where the corpus manifest declares.**
+
+**Q2 — WHAT DOES A REBUILD DO TO A PAGE THE PREVIOUS BUILD WROTE?** ⭐ **Today it writes over NOTHING and names what it refused, which means the second run of the same command produces no site.** ⛔ **Pick one: (a) OVERWRITE anything the build itself wrote and nothing else; (b) REFUSE unless `--force`; (c) refuse ALWAYS and require the output directory to be empty.** ⚠️ **This is R3 meeting its first real case, and (a) needs a way to know which files the build wrote — which `studyforge plan` already enumerates.**
+
+**Q4 — WHAT DOES A PAGE SHOW FOR A CORPUS WITH NO NARRATION RECORD?** ⭐ **Today: nothing — no `data-audio` attribute is emitted at all, so the page is silently identical to a page whose audio failed.** ⛔ **Pick one: (a) NOTHING, as today — a prose corpus simply has no player; (b) a VISIBLE, disabled player saying narration is not available; (c) the player is emitted and the page says so only when a clip is missing that the record PROMISED.** ⚠️ **Spec §7's three states (C5) and §11.0's reading floor say a graderless corpus is *complete, not short* — the same argument applies to a narrationless one, and (b) is the option that contradicts it.**
+
+⛔ **AN ANSWER OF *DEFER* IS ACCEPTED FOR ANY OF THE THREE — with its trigger named** (clause 1 above). ⭐ **A deferral with a trigger is a decision; the state they are in now is a deferral without one.**
+
+
+### W208 — An `AddressError` escapes the container reader, so a wrong-depth container map CRASHES `studyforge plan`
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W208.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A CONTAINER MAP DECLARED AT THE WRONG DEPTH CRASHES `studyforge plan` — THE ONE COMMAND WHOSE ENTIRE CONTRACT IS THAT NOTHING RAISES.** ⭐ **Raised by Developer 3 as `SF-28/1` and VERIFIED BY THE REGISTER AT SOURCE, at `abee048`, role `wt/po`, HOST:**
+
+```text
+corpus/container/document.py   Address(document.get("address", ())).require_depth(manifest.depth)   -> AddressError
+cli/plan/derive.py:144         except (ContainerError, PersonalDataLeak) as error:                  -> does not catch it
+python3                        issubclass(AddressError, ContainerError)                             -> False
+```
+
+⚠️ **So the refusal a reader is owed — a `Refusal` naming the file and the depth — arrives as a traceback instead.**
+
+### ⛔ THE DISPATCH'S DIAGNOSIS IS WRONG, AND THE CORRECTION CHANGES THE FIX
+
+⭐ **The brief that carried this to the register said the escape happens *"though its contract names only `ContainerError`"*.** ⛔ **It does not.** ⚠️ **`corpus/container/errors.py`'s docstring carries the escape as a DELIBERATE, ARGUED exception:**
+
+> ⚠️ **One deliberate exception, following SF-02's precedent exactly.** An address whose arity disagrees with the corpus raises SF-01's `AddressError`, because that call is the arity *comparison* and SF-01 owns it outright; the container map only supplies the address it declared.
+
+⭐ **So there is no undocumented leak in `corpus/container/`.** ⛔ **The defect is that the CLI's catch list was written against a NARROWER reading of that same docstring than the docstring supports** — ⚠️ **and the same paragraph names `PersonalDataLeak` as the other pass-through, which the CLI DID catch, so the catch list was read once and read incompletely.**
+
+### ⛔ WHY IT IS A ROW AND NOT A ONE-LINE FIX
+
+⭐ **One line makes this instance stop crashing.** ⛔ **It does nothing about the shape:** ⚠️ **a package whose contract deliberately lets two foreign exception types through has NO instrument that tells a caller what the full set is, and the set is stated only in prose inside a docstring** — ⭐ **which is exactly [`W204`](rows/W204.md)'s ungated surface.** ⛔ **The next caller of `parse_container` reads the same paragraph and can make the same partial reading.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`studyforge plan` DOES NOT RAISE ON A WRONG-DEPTH CONTAINER MAP** — ⭐ **it emits a `Refusal` naming the file and what was wrong, like every other refusal that command produces.**
+2. ⛔ **ASSERTED BY A FIXTURE, NOT BY INSPECTION** (R12): ⭐ **an archive holding one container map whose address is the wrong depth, run through `plan`, with the pass condition being the refusal's presence.** ⚠️ **A test that only asserts `AddressError` is raised somewhere has re-tested `corpus/container/` and left the command untested.**
+3. ⛔ **THE PASS-THROUGH SET IS NAMED WHERE A CALLER CAN SEE IT** — ⭐ **on `corpus.container`'s surface, beside `ContainerError`, rather than only in a paragraph** — ⚠️ **and if the answer is *the docstring is the right home*, that is a decision and it is recorded, because it makes the CLI's catch list a hand-maintained copy that nothing checks.**
+4. ⚠️ **THE SWEEP IS THE CHEAP HALF AND IT IS OWED**: ⛔ **`derive.py` is not necessarily the only caller of a `corpus.*` reader whose catch list was written from the same paragraph**, and finding out costs one command.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **`except Exception` IN THE CLI.** ⭐ **A command that reports everything as a refusal reports a bug in itself as the corpus's fault** — ⚠️ **which is the failure `PersonalDataLeak`'s own pass-through exists to prevent, one exception type over.**
+
+[the mint](#w208-an-address-error-escapes-the-container-reader-and-crashes-studyforge-plan)
+
+
+### W209 — `tests/emission` calls every public writer with fillers, so a green suite writes into the checkout and reports nothing
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W209.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`tests/emission` CALLS EVERY PUBLIC CALLABLE IN `src/` WITH FILLER ARGUMENTS, SO ANY PUBLIC FUNCTION THAT WRITES FILES WRITES THEM INTO THE CHECKOUT, RELATIVE TO THE PROCESS'S WORKING DIRECTORY.** ⭐ **Measured by Developer 3 as `SF-28/2`: an untracked `alpha/alpha` appeared in the checkout after a full suite run, from `place(Path("alpha"), PurePosixPath("alpha"), b"alpha", …)`.** ⚠️ **Nothing failed, and nothing reported it.**
+
+### ⛔ IT WAS FOUND TWO WAVES AGO AND FIXED FOR ONE PACKAGE ONLY
+
+⭐ **First seen as `SF-17/11`, where it was closed at the one writer that had it.** ⛔ **`SF-28/2` re-measured it and the reading is GENERAL: the emission suite's population is *every public callable*, so the exposure is a property of the harness and grows with every public writer this project ships.** ⚠️ **That is the difference between a defect and a class, and it is why the second finding gets a row where the first got a patch.**
+
+### ⛔ WHY IT IS WORSE THAN A STRAY FILE
+
+1. ⛔ **IT FALSIFIES OTHER READINGS.** ⭐ **[`W148`](rows/W148.md) and [`W142`](rows/W142.md) both landed because an UNTRACKED file changes what the floor measures** — ⚠️ **so a suite run can redden a subsequent floor run at the same ref, and the two instruments then disagree about a correct tree.**
+2. ⛔ **IT IS SILENT BY CONSTRUCTION.** ⭐ **The emission suite's purpose is to prove a callable does not emit personal data; it has no opinion about what the call DOES.** ⚠️ **A writer that wrote somewhere destructive would be equally unreported.**
+3. ⛔ **R3 IS THE OUTER BOUND AND IT POINTS OUTWARD.** ⭐ **A public writer called with a filler path writes relative to the CWD, and the CWD is not always this repository.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE SUITE CANNOT WRITE INTO THE CHECKOUT, AND THAT IS ASSERTED RATHER THAN ARRANGED** — ⭐ **the pass condition is a reading of the tree taken AFTER a full suite run, not a promise about the harness's design.**
+2. ⛔ **THE REMEDY IS CHOSEN OUT LOUD BETWEEN AT LEAST THESE, WITH THE REFUSED ONES NAMED**: ⭐ **the emission harness runs each call inside a temporary directory it owns; or filler path arguments are minted under one; or a writer is declared unemittable and excluded by a mechanism that can say WHY.** ⚠️ **An exclusion LIST is the weakest, because it grows silently and the next public writer is not on it.**
+3. ⛔ **VALIDATE BY PLANTING** (Rulings 124, 348): ⭐ **a public callable that writes to a relative path, added on purpose, and the pass condition is the MOVED exit code.** ⚠️ **Without the plant this row ships a guard that is green because nothing currently writes, which is the state it is fixing.**
+4. ⚠️ **THE CLEAN-TREE ASSERTION IS THE CHEAP HALF AND IT IS OWED EITHER WAY** — ⛔ **`git status --porcelain` after the suite, as a check, catches every future instance regardless of which remedy wins.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SECOND POINT FIX.** ⭐ **`SF-17/11` already did that once and the exposure was general the whole time** — ⚠️ **so a diff that touches one writer and leaves the harness alone has reproduced the finding rather than closed it.**
+
+[the mint](#w209-the-emission-suite-calls-every-public-writer-so-a-test-run-writes-into-the-repository)

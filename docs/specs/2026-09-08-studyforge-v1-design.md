@@ -172,6 +172,19 @@ depends on as content.
 ⭐ **The reverse of every declared edit is recorded.** An onboarding that cannot
 be undone is one nobody will run against a repository they care about.
 
+⛔ **R3 DISTINGUISHES THE BUILD'S OWN PRIOR OUTPUT FROM THE USER'S MATERIAL, and
+a file the build wrote last time is not somebody's material** — it is the
+build's own previous answer, and replacing it is the build answering again.
+⭐ **So a rebuild may overwrite exactly the paths its own generation created, and
+which those are is not a guess: `studyforge plan` enumerates every path a build
+creates before it creates one.** ⛔ **R3 still protects everything else
+absolutely — a hand-edited file, a foreign file, or any path the enumeration
+does not name is REFUSED BY NAME and never replaced** — ⚠️ **and an enumeration
+that has drifted from what the build writes is a build failure rather than a
+licence, because the two are asserted to agree path for path.** ⭐ **Ruled by
+the user, 2026-09-12, answering *what does a rebuild do*; the six decisions it
+belongs to are in [`../tasks/E09-delivery.md`](../tasks/E09-delivery.md).**
+
 **R4 — Location is data; identity is embedded.** The framework never infers
 what a file *is* from where it sits. Every generated artifact carries its own
 address inside it, and the server discovers artifacts by scanning.
