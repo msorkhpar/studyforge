@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import tomllib
 
-from tests.support import init_repository, repository_root
-from tools.quality import config
+from tests.support import git, init_repository, repository_root, run, tracked_files
+from tools.quality import config, report
 
 
 def test_the_size_exception_marker_is_the_ruled_literal():
@@ -160,6 +160,12 @@ def test_the_real_repository_reads_its_own_documents_and_fixtures():
     assert not [name for name in swept if name.startswith(".idea/")]
 
 
+def track(root, *paths: str):
+    """`git add` those paths in `root`, and refuse a silent failure."""
+    result = run([git(), "add", "--", *paths], cwd=root)
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
 def test_markdown_files_is_a_narrowing_of_the_shared_walk(tmp_path):
     # ⭐ FND-08 acceptance 6: no second file-walking helper. The narrowing is
     # one `suffix` test, so exclusions and the sort order are inherited.
@@ -169,6 +175,7 @@ def test_markdown_files_is_a_narrowing_of_the_shared_walk(tmp_path):
     make(tmp_path, "docs/data.json", "{}\n")
     make(tmp_path, "graphify-out/GRAPH_REPORT.md")
     make(tmp_path, "__pycache__/cached.md")
+    track(tmp_path, ".gitignore", "docs/notes.md", "docs/data.json", "__pycache__/cached.md")
     found = [config.relative(path, tmp_path) for path in config.markdown_files(tmp_path)]
     assert found == ["docs/notes.md"]
     assert set(found) <= set(sweep(tmp_path))
@@ -181,6 +188,74 @@ def test_markdown_files_reads_the_fixture_tree_by_decision(tmp_path):
     # inherited: a fixture may be shaped wrong, but its README is prose.
     init_repository(tmp_path)
     make(tmp_path, "tests/fixtures/README.md")
+    track(tmp_path, "tests/fixtures/README.md")
     assert config.is_excluded("tests/fixtures/README.md")
     found = [config.relative(path, tmp_path) for path in config.markdown_files(tmp_path)]
     assert found == ["tests/fixtures/README.md"]
+
+
+# --- W148: the document population is the INDEX; the R7 sweep is not --------
+#
+# ⛔ The hard constraint this row was written under, pinned by tests rather
+# than by a docstring: the narrowing is at `markdown_files` and NEVER at
+# `text_files`, because `text_files` is the personal-data sweep's population
+# (`personal_data/shapes.py` and `personal_data/identity.py` both walk it) and a
+# file written and not yet added is exactly what that gate must catch.
+
+
+def test_the_narrowing_is_NOT_in_the_personal_data_sweeps_population(tmp_path):
+    # ⛔ THE TEST THAT MATTERS MOST IN THIS ROW. If this ever fails, an
+    # untracked file has left the R7 gate and the floor has gone quiet by going
+    # blind — which `rows/W148.md` names as what the row must not become.
+    init_repository(tmp_path)
+    make(tmp_path, "docs/tracked.md")
+    track(tmp_path, "docs/tracked.md")
+    make(tmp_path, "docs/brand-new-and-unadded.md")
+    make(tmp_path, "notes-and-unadded.txt")
+    swept = sweep(tmp_path)
+    assert "docs/brand-new-and-unadded.md" in swept
+    assert "notes-and-unadded.txt" in swept
+    # ⭐ And the same file is OUT of the document population, in one assertion,
+    # so the two walks are read apart rather than assumed to differ.
+    documents = [config.relative(path, tmp_path) for path in config.markdown_files(tmp_path)]
+    assert documents == ["docs/tracked.md"]
+
+
+def test_the_population_says_which_walk_produced_it(tmp_path):
+    init_repository(tmp_path)
+    make(tmp_path, "docs/tracked.md")
+    track(tmp_path, "docs/tracked.md")
+    assert config.markdown_population(tmp_path).walk == report.TRACKED_WALK
+
+
+def test_a_tree_git_cannot_answer_for_falls_back_and_SAYS_so(tmp_path):
+    # ⛔ Ruling 216's THIRD answer. Not a silent fall-through and not a hard
+    # failure: `tracked_paths` returns None, the walk is named `disk`, and
+    # `WALK_CAVEAT` carries what that costs a reader.
+    make(tmp_path, "docs/notes.md")
+    assert config.tracked_paths(tmp_path) is None
+    population = config.markdown_population(tmp_path)
+    assert population.walk == report.DISK_WALK
+    assert [config.relative(path, tmp_path) for path in population.paths] == ["docs/notes.md"]
+    assert report.WALK_CAVEAT[report.DISK_WALK] != ""
+    assert report.WALK_CAVEAT[report.TRACKED_WALK] == ""
+
+
+def test_tracked_paths_reads_the_INDEX_and_not_the_disk(tmp_path):
+    # ⚠️ `None` is never an empty set, and an empty index is never `None`:
+    # a repository that genuinely tracks nothing ANSWERS, with nothing.
+    init_repository(tmp_path)
+    assert config.tracked_paths(tmp_path) == set()
+    make(tmp_path, "one.md")
+    assert config.tracked_paths(tmp_path) == set()
+    track(tmp_path, "one.md")
+    assert config.tracked_paths(tmp_path) == {tmp_path / "one.md"}
+
+
+def test_the_repositorys_own_document_population_agrees_with_git_ls_files():
+    # ⭐ `W148` clause 1: the figure the floor prints and `git ls-files '*.md'`
+    # are the same number, so a reading is reproducible from any checkout.
+    root = repository_root()
+    population = config.markdown_population(root)
+    assert population.walk == report.TRACKED_WALK
+    assert len(population.paths) == len(tracked_files(("*.md",)))

@@ -9,9 +9,10 @@ modules that then drift apart.
 about a path.
 
 **Depends on.** `pathlib`, `re`, `shutil` and `subprocess` — all standard
-library. ⚠️ This line read *"`pathlib` only"* while the module had imported
-`shutil` and `subprocess` since `FND-08`; corrected here because `W45` was
-editing it anyway, and R17's third part is worth nothing if it is decorative.
+library — and `report`, for the shape a walk's answer takes (`W148`). ⚠️ This
+line read *"`pathlib` only"* while the module had imported `shutil` and
+`subprocess` since `FND-08`; corrected here because `W45` was editing it
+anyway, and R17's third part is worth nothing if it is decorative.
 """
 
 from __future__ import annotations
@@ -20,6 +21,8 @@ import re
 import shutil
 import subprocess
 from pathlib import Path
+
+from tools.quality.report import DISK_WALK, TRACKED_WALK, DocumentPopulation
 
 # --- R11: the size ceiling -------------------------------------------------
 
@@ -273,8 +276,42 @@ def text_files(root: Path) -> list[Path]:
     return sorted(path for path in candidates if path not in ignored)
 
 
-def markdown_files(root: Path) -> list[Path]:
-    """Every markdown document the repository is responsible for, sorted.
+def tracked_paths(root: Path) -> set[Path] | None:
+    """Return the paths git's INDEX holds under `root`, or None when it cannot say.
+
+    ⛔ **`None` is a THIRD answer and is never an empty set** (Ruling 216). A
+    tree with no git, or one that is not a repository — the normal case for a
+    test's temporary directory — has not said it tracks *nothing*; it has
+    failed to answer, and coercing that to `set()` empties every population
+    built on it in silence.
+
+    ⚠️ **The INDEX, and `ignored_paths` asks a DIFFERENT question on purpose.**
+    That one answers *has this repository been told to ignore this*, which the
+    personal-data sweep needs: a file written and not yet added must be swept
+    **before** it enters. This answers *is this file repository state*, which
+    is what a figure quoted between two checkouts needs.
+    """
+    git = shutil.which("git")
+    if git is None:
+        return None
+    try:
+        result = subprocess.run(  # noqa: S603 - fixed argv, no shell
+            [git, "ls-files", "-z"],
+            capture_output=True,
+            text=True,
+            cwd=root,
+            check=False,
+            timeout=30,
+        )
+    except OSError, subprocess.SubprocessError:
+        return None
+    if result.returncode != 0:  # 128: not a repository, or worse
+        return None
+    return {root / name for name in result.stdout.split("\0") if name}
+
+
+def markdown_population(root: Path) -> DocumentPopulation:
+    """Every markdown document git TRACKS under `root`, sorted, with its walk.
 
     ⭐ **A narrowing of `text_files`, never a second walk.** FND-08's acceptance
     forbids a second file-walking helper: the pointer check needs *documents*
@@ -282,6 +319,19 @@ def markdown_files(root: Path) -> list[Path]:
     walk `check_personal_data` already runs. Exclusions, git-ignore and the
     sort order are therefore inherited rather than restated, and a directory
     added to `TOOL_OUTPUT_DIRS` reaches this walk on the same commit.
+
+    ⛔ **And one further narrowing, which is `W148`: the document population is
+    repository state, and repository state is what git TRACKS.** An untracked
+    markdown file in a main checkout is counted by a disk walk and is absent
+    from every linked worktree, so no disk-derived figure is reproducible
+    between two correct checkouts at ONE ref — measured, `458` against `457`,
+    same content, ZERO extra pointers, which defeats Ruling 277's ROLE
+    discipline exactly where it is supposed to work.
+
+    ⛔ **THE NARROWING IS HERE AND NEVER IN `text_files`.** That walk is the
+    personal-data sweep's population and its own docstring says why it is
+    ignore-based: narrowing *it* to the index would take every not-yet-added
+    file out of the R7 gate — the one thing that gate exists to catch.
 
     ⚠️ **`tests/fixtures/` is IN, by decision and not by accident.** It is in
     `EXCLUDED_DIRS`, so a `python_files`-shaped walk would not see it — but
@@ -294,7 +344,20 @@ def markdown_files(root: Path) -> list[Path]:
     `tests/fixtures/` carrying **0 pointers between them**, so including them
     costs no migration today and closes the hole before one is written.
     """
-    return [path for path in text_files(root) if path.suffix == ".md"]
+    documents = [path for path in text_files(root) if path.suffix == ".md"]
+    tracked = tracked_paths(root)
+    if tracked is None:
+        return DocumentPopulation(tuple(documents), DISK_WALK)
+    return DocumentPopulation(tuple(path for path in documents if path in tracked), TRACKED_WALK)
+
+
+def markdown_files(root: Path) -> list[Path]:
+    """Return the paths half of `markdown_population`.
+
+    ⛔ A caller that prints a FIGURE takes the population instead, so the walk
+    that produced its denominator is printed beside it (`W148`).
+    """
+    return list(markdown_population(root).paths)
 
 
 def read_text(path: Path) -> str | None:
