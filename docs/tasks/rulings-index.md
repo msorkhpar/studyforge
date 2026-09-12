@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **319 rulings, `1`–`319`, derived from 52 ruling records** —
+⭐ **320 rulings, `1`–`320`, derived from 52 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -364,3 +364,4 @@ procedure.
 | 317 | 3b. ⛔ Ruling 317 — an IMAGE SHA quoted beside a reading PINS NOTHING; the PINS pin, and the CONFIG digest is the sha that does | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3b-ruling-317-an-image-sha-quoted-beside-a-reading-pins-nothing-the-pins-pin-and-the-config-digest-is-the-sha-that-does) |
 | 318 | 3c. ⛔ Ruling 318 — `W78/5` IS AN ACCEPTANCE CORRECTLY REPORTED AS UNMEETABLE, AND THE DEFECT IS THE BRIEF'S SURFACE, WHICH WAS MINE TO DECLARE | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3c-ruling-318-w785-is-an-acceptance-correctly-reported-as-unmeetable-and-the-defect-is-the-briefs-surface-which-was-mine-to-declare) |
 | 319 | 3d. ⛔ Ruling 319 — with NO REGISTER in the wave, Ruling 305's order has nothing to order; the order is THE READER BEFORE THE DOCUMENT IT READS, and Ruling 264(c)'s `UNNAMED` arm is ENUMERATE … | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#3d-ruling-319-with-no-register-in-the-wave-ruling-305s-order-has-nothing-to-order-the-order-is-the-reader-before-the-document-it-reads-and-ruling-264cs-unnamed-arm-is-enumerated-never-waived) |
+| 320 | ⛔ Ruling 320 — a VERDICT is issued against a REF, the reviewer's OWN RECORD included; and the regress terminates because a PROPERTY survives its own tip moving where a READING cannot | heading | [round 65](handoffs/CTO-2026-09-11-round65.md#ruling-320-a-verdict-is-issued-against-a-ref-the-reviewers-own-record-included-and-the-regress-terminates-because-a-property-survives-its-own-tip-moving-where-a-reading-cannot) |

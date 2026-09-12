@@ -5417,3 +5417,38 @@ forbids.** ⛔ **The durable repair takes Ruling 185(b)'s shape — NARROW THE P
 widen the predicate: the arm reads its names from the wave's DISPATCH, declared where an
 instrument can read it, so that `dispatched and UNNAMED` means *no office claims this branch* in
 every wave and not only in waves the register happens to be open.** ⭐ **ROUTED as a row.**
+
+### ⛔ Ruling 320 — a VERDICT is issued against a REF, the reviewer's OWN RECORD included; and the regress terminates because a PROPERTY survives its own tip moving where a READING cannot
+
+```bash
+# ⛔ Every subject in a wave, INCLUDING the reviewer's own round record. Run before each merge.
+git rev-parse <the branch the verdict was issued against>   # the ref the verdict NAMES
+git rev-parse <the branch now>                              # the ref about to be merged
+# Pass: they are EQUAL. If they differ the verdict is RE-OPENED and is discharged by
+#       RE-MEASURING at the new ref — never by asserting the change was small.
+# ⛔ And the subject's `<one line>` is then re-read against the record, not only its bracket.
+```
+
+⛔ **THIS WIDENS `CTO-65/9`'s TEXT, and the widening is FORCED by a third instance rather than
+chosen.** ⚠️ **`CTO-65/9` was written as *an `after changes` verdict names the ref it was issued
+against* — read off two instances that happened to share an accident: both were `after changes`
+and both were somebody else's branch.** ⛔ **The third instance was the REVIEWER'S OWN RECORD,
+whose token is `this record APPROVED`, so the narrow text did not reach the one instance that
+actually bit.** ⭐ **Ruling 315's accumulator is keyed on the RULE TEXT and not the incident, so
+the honest act is to widen the text and RE-KEY all three — which reads `3` — rather than to hold
+the text narrow and leave the third orphaned.** ⚠️ **A rule written from its first two instances
+is a rule fitted to their accident; the third is what separates the rule from the sample.**
+
+⭐ **AND THE CLAUSE THAT STOPS THE REGRESS, because *re-measure at the new ref* is otherwise
+unbounded — every re-measurement is itself a commit that moves the tip:**
+
+⛔ **A SUBJECT STATED AS A PROPERTY IS TRUE AT EVERY REF; A SUBJECT STATED AS A READING IS TRUE
+AT ONE.** ⭐ **So a `<one line>` that names a PROPERTY survives its own tip moving and needs no
+reissue, while one that quotes a COUNT is falsified by the next commit and cannot be annotated
+afterwards** (`CTO-63/6`, Ruling 161's form applied to a merge subject). ⚠️ **MEASURED, CTO round
+65: the same record's subject was reissued from *three defects of my own recorded by id* to
+*every defect of my own recorded by id*, and the tip then moved THREE more times — the count form
+would have been false at every one of them and the property form was true at all of them,
+including at the tip that added this ruling.** ⛔ **That is why the regress terminates in the
+DRAFTING and not in the discipline: the reviewer does not stop re-measuring, but a property-form
+subject stops needing to be rewritten when they do.**
