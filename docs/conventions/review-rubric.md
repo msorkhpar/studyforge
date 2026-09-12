@@ -5452,3 +5452,148 @@ would have been false at every one of them and the property form was true at all
 including at the tip that added this ruling.** ⛔ **That is why the regress terminates in the
 DRAFTING and not in the discipline: the reviewer does not stop re-measuring, but a property-form
 subject stops needing to be rewritten when they do.**
+
+---
+
+## ⛔ RULED ROUND 66 — each clause one command and one pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING, DELIBERATELY, and the omission is `W141`'s:** ⛔ **a
+`RULED ROUND N` heading that states its own count is read by no instrument, and two of three
+were wrong before their branch existed.** ⭐ **The clauses below are the population; counting
+them is the reader's and it resolves at read time.**
+
+### ⛔ Ruling 321 — Ruling 305(ii) is satisfied by a CITED ruling that makes the asserted rule FALSE, not only by one that RETIRED it
+
+> ⛔ **THE NODE ASSERTS A RULE A CITED RULING MAKES FALSE.**
+
+⚠️ **`W147`'s node asserted that the live In-flight table is INHABITED. No ruling RETIRED that,
+because no ruling ever ENACTED it** — ⭐ **it was an over-assertion, made false by Ruling 191(a)
+and by `board.md`'s round-50 clause that a DECLARED, READABLE, EMPTY block is exit `0` and a
+real answer.** ⛔ **Reading (ii) literally would make it unsatisfiable for exactly the class
+where nobody wrote the retirement down — which is Ruling 185(a)'s own prohibition, committed
+inside the ruling that quotes it.**
+
+```bash
+# Pass: the node's assertion is quoted, and a CITED ruling is quoted beside it that makes
+# the assertion false. Either provenance — retired, or contradicted — discharges (ii).
+```
+
+### ⛔ Ruling 322 — Ruling 305(iii) is SATISFIED BY the instrument/test opposition and is never DEFEATED by it
+
+⭐ **Quoted rather than paraphrased** (Ruling 195), from §3A-b of
+[round 61's record](../tasks/handoffs/CTO-2026-09-11-round61.md#3a-b-the-four-conditions-i-require-before-approving-a-red-branch-all-four-measured):
+
+> ⭐ **With it, the tree itself has voted: one instrument reads the new state correctly and
+> another does not, and the disagreement locates the defect.**
+
+⛔ **A reviewer who reads *the shipped instrument is green while the test is red* as a reason
+to DOUBT has inverted the condition.** ⚠️ **Without (iii), *"the test asserts a rule no longer
+in force"* is a claim by the author of the branch the test fails on; with it, a second shipped
+instrument has said so independently.** ⭐ **MEASURED, CTO round 66: `corroborate` did not
+merely pass on `W147`'s subject — it PRINTED its reason in the same invocation, naming the
+exact distinction `W111` was built to buy.**
+
+### ⛔ Ruling 323 — the component-prerequisite instrument's surface is `Owns` ALONE, and `Context` is a SECOND reading that is DECLARED and never FOLDED IN
+
+⛔ **`Owns` is a CONTRACT — what the row WRITES. `Context` is a BUDGET HINT — what the taker
+READS.** ⭐ **Folding them puts two different harms behind one predicate with one message,
+which is Ruling 185(b).** ⚠️ **So `SK-09` is neither a hit nor a non-hit: it is a DECLARED
+non-member with its own line and its own reason** (Ruling 292's form), ⛔ **which preserves
+`W156`'s *the graph is sound except one row* reading instead of muddying it.**
+
+### ⛔ Ruling 324 — an UNMERGED round commit is a DRAFT and Ruling 106 does not bind it; a ref HANDED TO A REVIEWER is a commitment, and the amending office owes notice AT THE AMEND
+
+⛔ **Ruling 106's subject is a LANDED record.** ⭐ **A record freezes when it merges; before
+that it is being written, and an office that could not correct its own unlanded draft would be
+forced to land a figure it knows is false in order to annotate it afterwards** — ⚠️ **which
+manufactures exactly the defect `W149` exists to stop.**
+
+⭐ **TWO CONDITIONS, BOTH REQUIRED:**
+
+```bash
+# (a) the correction is DISCLOSED in the record's own text, not silently applied.
+# (b) no frozen pointer can yet resolve to a re-titled anchor — MEASURED, not assumed:
+python3 -m tools.quality          # pass: `0 unresolved` over the whole pointer population
+```
+
+⚠️ **THE COST IS THE HANDOVER, NOT THE EDIT.** ⛔ **A verdict is issued against a REF
+(Ruling 320), so an amend after handover VOIDS the review in progress.** ⭐ **The office owes
+the reviewer notice AT THE AMEND, the reviewer re-derives at the new ref, and the verdict names
+the ref it was taken at.**
+
+### ⛔ Ruling 325 — a COORDINATOR'S CHARGE against another office is held until THAT OFFICE'S OWN INSTRUMENT has been opened; a tree reading alone never grounds one
+
+⛔ **MEASURED, CTO round 66, over one wave's six coordinator findings: THREE were one class —
+a git measurement taken CORRECTLY, converted into a charge against an office whose board cell,
+scheduled row or record was never read.** ⚠️ **The other three were self-caught process defects
+and are NOT that shape.**
+
+```bash
+# Pass: a finding naming another office as at fault QUOTES the instrument the charge is
+# about — the board cell, the scheduled row, the record — alongside the tree reading.
+# A charge citing only a git reading is a QUESTION to that office and is sent as one.
+```
+
+⭐ **This is narrower than *read the board before the git command* and it catches all three
+where the ordering rule catches one.** ⛔ **Measured cost of not having it: a charge reached a
+live round and MINTED a row on a framing the register then had to decline.**
+
+### ⛔ Ruling 326 — a READING is quoted with its ENVIRONMENT or it is not a measurement, and *green* names the environment that produced it
+
+⛔ **`CLAUDE.md` already requires ref AND checkout AND environment. This project has been
+rigorous about the first two and has quoted the third essentially never.**
+
+⭐ **MEASURED, CTO round 66, why this is not fastidiousness — ONE ref, both green, both
+correct, differing by a population neither run mentions:**
+
+```text
+82bff6d  pinned container   5615 passed · 17 skipped
+82bff6d  host               5607 passed · 25 skipped
+         collection AGREES at 5632 in both; the delta is ENTIRELY skips
+⛔ NEITHER ENVIRONMENT RUNS A SUPERSET OF THE OTHER:
+   host      blind to the in-image and ruff assertions
+   container blind to every sibling/workspace assertion — only the checkout is mounted
+```
+
+⚠️ **So Ruling 40 makes the container AUTHORITATIVE and the authoritative environment is
+STRUCTURALLY BLIND to the workspace and R18 assertions** — ⭐ **`CLAUDE.md`'s own container
+clause and Ruling 216's *"the only environment that can SEE a stale pin is the one Ruling 40
+does not make authoritative"*, arriving from the suite side in test counts.**
+
+```bash
+# Pass: a suite reading carries failed / passed / SKIPPED and names its environment.
+# A bare `passed` count is not a reading. This binds the BRIEFS an office writes, not
+# only the records it files.
+```
+
+### ⛔ Ruling 327 — a ROUND SPAN is derived by COUNTING MERGES and never by SUBTRACTING LABELS
+
+⛔ **MEASURED at `82bff6d`, first-parent, and re-derived by two offices independently:**
+
+```bash
+git log --first-parent --merges --format='%s' | grep -oE 'chore/po-round[0-9]+' | sort -u | wc -l
+# merge EVENTS 32 · distinct LABELS 31 · label 17 merged TWICE
+# labels 18, 21 and 22 NEVER merged · labels 17..50 are 34 wide, 31 actually merged
+```
+
+⚠️ **A round label is neither unique nor contiguous, so *round N to round M* is arithmetic over
+a sequence that supports none of it, and it is wrong by a DIFFERENT amount at every pair of
+endpoints.** ⭐ **This is `W149`'s first DECIDABLE member: unlike *is this prose true*, a
+label-span claim can be refused by a predicate.**
+
+### ⛔ Ruling 328 — a GATE's predicate ranges over state THE BRANCH CONTROLS; a property over HOST state is a DISCLOSURE and never a gate
+
+⛔ **MEASURED, CTO round 66:** a register round narrowed an R18 gate to the property
+*"`verify` names no disagreement whose component is `narrate-service`"* — ⭐ **the right
+instinct, because a property survives its own tip moving where a reading does not**
+(Ruling 320) — ⚠️ **but applied to the wrong VARIABLE.** ⛔ **It was TRUE when measured and
+FALSE an hour later, flipped by a concurrent dispatch creating a sibling checkout, without one
+file the branch owns being touched.**
+
+⭐ **THE TEST: can the branch's own diff make the predicate true?** ⛔ **If the answer is no,
+the reading is a DISCLOSURE under Ruling 264(a) and is reported at the merge; it is not a
+condition the branch can be held to.** ⚠️ **Siblings are HOST state (Ruling 248(a)), so no
+tree can move a `verify` reading — ⭐ and the branch-controlled restatement is available and is
+the one to use: `workspace.json` RECORDS the component present at a named commit, which is a
+file the branch owns and which `docs/conventions/workspace.md` already requires in the commit
+that creates the component.**
