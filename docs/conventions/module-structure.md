@@ -391,6 +391,26 @@ each rebuilt these paths from string pieces and missing one left half the
 pipeline looking in the old place with nothing failing loudly"* prevents the
 regression. One that says *"path utilities"* does not.
 
+### ⛔ What a reader lets out is a `RAISES` tuple on its package surface (`W208`, `W212`, `W213`)
+
+⚠️ **A package whose reader deliberately lets another package's exception
+through** — SF-01's `AddressError`, R7's `PersonalDataLeak` — **exports that
+set as `RAISES` in its `__init__.py`**, and a caller catches the tuple. ⛔ **A
+caller never retypes the list from the docstring**: three catch sites did, two
+dropped a member, and one of those crashed a shipped command.
+
+1. ⭐ **Every member is reached from the reader by a fixture** in the package's
+   own `test_init.py`, and a population test pins the fixtures to the tuple —
+   so an unreachable member fails as loudly as a missing one.
+2. ⛔ **A site that handles members differently keeps its own arms** and still
+   names the tuple: the different arm comes FIRST (`except PersonalDataLeak:`),
+   then `except RAISES`. Under Ruling 58 that first arm re-raises or files its
+   own rule; it never translates.
+3. ⚠️ **Enforced for `corpus.container` and `corpus.manifest`** by
+   `tests/studyforge/corpus/test_init.py`'s sweep. It reads the handler's
+   NAME only, so `RAISES[:1]` passes the sweep, and each caller's behavioural
+   tests are what catch a narrowed tuple.
+
 ## Markup, CSS and JS (R13)
 
 Templates live in `templates/*.html`, styles and scripts in `assets/*.{css,js}`,

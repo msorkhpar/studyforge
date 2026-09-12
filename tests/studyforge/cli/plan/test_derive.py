@@ -419,5 +419,7 @@ def test_the_catch_list_is_the_readers_own_tuple_and_not_a_copy():
     # declaration, and this one had already drifted once — so the fix is
     # checked by reading the source, where a re-typed tuple would appear.
     source = (repository_root() / "src/studyforge/cli/plan/derive.py").read_text("utf-8")
-    assert "except RAISES as error:" in source
+    assert "except CONTAINER_RAISES as error:" in source
+    assert "except MANIFEST_RAISES as error:" in source  # ⭐ `W213`, the manifest site
     assert "except (ContainerError" not in source, "the catch list was retyped again"
+    assert "except (ManifestError" not in source, "the catch list was retyped again"

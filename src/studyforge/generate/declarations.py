@@ -5,7 +5,9 @@ archive, works out which declared units have material on disk, and builds the
 contents document the whole site is navigated by — all of it in memory.
 
 **How you use it.** `read_corpus(root)` for the lot; `sources(root)` when only
-the unit walk is wanted. `BuildError` is the only exception any of it raises.
+the unit walk is wanted. `BuildError` is the only exception any of it raises,
+**except** `PersonalDataLeak`, which travels through untranslated (Ruling 58) —
+the package's `RAISES` is the pair.
 
 **Depends on.** `corpus.manifest`, `corpus.container` and `corpus.placement`
 for the declarations, `skills.adapter` for the archive's layout, and `contents`
@@ -34,11 +36,14 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.address import Address, AddressError
+from studyforge.address import Address
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.contents import Contents, ContentsError, build, order
-from studyforge.corpus.container import CONTAINER_FILENAME, Container, ContainerError
+from studyforge.corpus.container import CONTAINER_FILENAME, Container
+from studyforge.corpus.container import RAISES as CONTAINER_RAISES
 from studyforge.corpus.container import parse as parse_container
-from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest, ManifestError
+from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
+from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.corpus.placement import (
     CorpusLocations,
@@ -225,7 +230,10 @@ def read_manifest(root: Path | str) -> Manifest:
     text = _text(Path(root) / MANIFEST_FILENAME, MANIFEST_FILENAME)
     try:
         return parse_manifest(text, MANIFEST_FILENAME)
-    except ManifestError as error:
+    except PersonalDataLeak:
+        raise  # ⛔ R7's refusal is never translated into `BuildError` (Ruling 58).
+    except MANIFEST_RAISES as error:
+        # ⭐ The reader's own tuple (`W213`): a member it gains arrives here.
         raise BuildError(str(error)) from None
 
 
@@ -243,14 +251,12 @@ def containers(root: Path | str, manifest: Manifest) -> tuple[tuple[str, Contain
         text = _text(path, where)
         try:
             held.append((where, parse_container(text, where, manifest)))
-        except ContainerError as error:
-            raise BuildError(f"{where}: {error}") from None
-        except AddressError as error:
-            # ⚠️ `corpus.container.parse` calls `Address(...).require_depth` and
-            # lets its `AddressError` out, though the package's contract names
-            # `ContainerError` as what it raises — `SF-28/1`. Caught here so this
-            # package keeps its own one-exception promise; ⛔ `PersonalDataLeak`
-            # is deliberately NOT caught (Ruling 58).
+        except PersonalDataLeak:
+            raise  # ⛔ R7's refusal is never translated into `BuildError` (Ruling 58).
+        except CONTAINER_RAISES as error:
+            # ⭐ What `corpus.container` lets out is its `RAISES`, stated in its
+            # package contract (`W208`); every member but the leak above becomes
+            # this package's refusal, so a wrong-depth map refuses (`W212`).
             raise BuildError(f"{where}: {error}") from None
     return tuple(held)
 

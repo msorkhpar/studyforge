@@ -8,10 +8,12 @@ ever needs to reach past `__init__` into a module.
 from __future__ import annotations
 
 import ast
+import json
 from pathlib import Path
 
 import pytest
 
+from studyforge.address import AddressError
 from studyforge.corpus import manifest
 from tests.support import assert_package_contract
 
@@ -30,6 +32,7 @@ PUBLIC_SURFACE = frozenset(
         "MANIFEST_KEYS",
         "MIN_WHY_CHARS",
         "PLACEMENT_PROFILES",
+        "RAISES",
         "REQUIRED_KEYS",
         "Classification",
         "ContentPolicy",
@@ -130,3 +133,76 @@ def test_the_worked_example_in_the_contract_is_the_api_that_exists():
     assert built.parse_key("basics/01-intro").key == "basics/01-intro"
     assert built.media.commits is True
     assert built.allows_edit_to("pom.xml") is False
+
+
+# --------------------------------------------------------------------------
+# `RAISES` — the tuple a caller catches (`W213`)
+# --------------------------------------------------------------------------
+
+#: ⛔ Assembled rather than written whole, so this file needs no exception from
+#: the repository's own personal-data sweep (R7). Nothing here is real.
+HOME = "/" + "home/jane"
+
+VALID = {
+    "corpus_api": 1,
+    "source": "demo",
+    "title": "Demo",
+    "levels": ["section"],
+    "variants": ["prose"],
+    "exercises": False,
+    "placement": "tree",
+    "content": {"include": ["**/*.md"]},
+}
+
+#: ⛔ One document per member, so the tuple is measured against what `parse`
+#: does rather than against the paragraph in `errors.py`.
+REACHES = {
+    "ManifestError": {**VALID, "placement": "nowhere"},
+    "PersonalDataLeak": {**VALID, "title": f"notes from {HOME}/corpus"},
+}
+
+
+def test_the_tuple_is_the_reader_s_own_error_and_the_r7_pass_through():
+    assert [error.__name__ for error in manifest.RAISES] == ["ManifestError", "PersonalDataLeak"]
+
+
+@pytest.mark.parametrize("name", sorted(REACHES))
+def test_every_member_is_reachable_from_parse(name):
+    wanted = {error.__name__: error for error in manifest.RAISES}[name]
+    with pytest.raises(wanted):
+        manifest.parse(json.dumps(REACHES[name]))
+
+
+def test_the_population_is_not_silently_narrower_than_the_tuple():
+    assert sorted(REACHES) == sorted(error.__name__ for error in manifest.RAISES)
+
+
+def test_address_error_is_not_a_member_because_parse_translates_it():
+    # ⚠️ **The property `W208/1` found and nothing asserted**: a non-slug
+    # `source` is SF-01's refusal, re-raised as `ManifestError` in `_slug_of`.
+    # `parse_key` is the one call that lets `AddressError` out, and no reader
+    # makes it — if that ever moves, this fails before a command crashes.
+    with pytest.raises(manifest.ManifestError):
+        manifest.parse(json.dumps({**VALID, "source": "Not A Slug"}))
+    built = manifest.parse(json.dumps(VALID))
+    with pytest.raises(AddressError):
+        built.parse_key("a/b")
+
+
+#: Values of every wrong JSON type, plus one slug-shaped and one leaking string.
+WRONG = [None, 0, True, 1.5, "", "Not A Slug", [], [1], {}, {"a": 1}, f"{HOME}/x"]
+
+
+def test_nothing_outside_the_tuple_escapes_parse_for_any_key_of_any_type():
+    # ⭐ The other direction, over a population rather than one case per
+    # member: every top-level key replaced by every wrong type. ⛔ The count is
+    # asserted so a sweep that iterated nothing could not pass.
+    cases = 0
+    for key in manifest.MANIFEST_KEYS:
+        for value in WRONG:
+            cases += 1
+            try:
+                manifest.parse(json.dumps({**VALID, key: value}))
+            except manifest.RAISES:
+                continue
+    assert cases == len(manifest.MANIFEST_KEYS) * len(WRONG) > 0

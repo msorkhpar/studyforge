@@ -17,7 +17,7 @@ existing files it may add to.
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
 **Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,
-and the standard library. ⛔ Nothing source-specific (R1), asserted over the
+`studyforge.archive.scrub` for R7's, and the standard library. ⛔ Nothing source-specific (R1), asserted over the
 whole of `src/` rather than promised.
 
 ⭐ **This file is where a corpus's customisation lives** (SK-07). Everything
@@ -49,6 +49,7 @@ between them would decide by rule order what nobody declared.
 
 from __future__ import annotations
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest.content import (
     MIN_WHY_CHARS,
     Classification,
@@ -83,6 +84,19 @@ from studyforge.corpus.manifest.media import (
     parse_media,
 )
 
+#: ⛔ **What `parse`, `load` and `from_document` let out, as a tuple a caller
+#: catches** (`W213`), rather than the paragraph in `errors.py` it replaces.
+#: `ManifestError`, plus `PersonalDataLeak`, which Ruling 58 forbids wrapping.
+#:
+#: ⚠️ **`AddressError` is NOT a member, and that is measured, not forgotten.**
+#: `errors.py` names it as a pass-through of `Manifest.parse_key`, which no
+#: reader calls; `parse` translates SF-01's slug refusal in `_slug_of`. A
+#: caller of `parse_key` catches `AddressError` itself.
+#:
+#: ⛔ **Adding a member costs a fixture**: `tests/studyforge/corpus/manifest/`
+#: reaches every one from `parse`, so a member nothing raises fails too.
+RAISES: tuple[type[Exception], ...] = (ManifestError, PersonalDataLeak)
+
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.corpus.manifest.document` directly is a consumer this contract
 #: failed.
@@ -96,6 +110,7 @@ __all__ = [
     "MANIFEST_KEYS",
     "MIN_WHY_CHARS",
     "PLACEMENT_PROFILES",
+    "RAISES",
     "REQUIRED_KEYS",
     "Classification",
     "ContentPolicy",

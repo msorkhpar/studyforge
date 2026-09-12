@@ -200,3 +200,12 @@ def test_render_is_json_a_person_can_read_and_a_diff_can_hold_still():
     assert text.endswith("\n")
     assert json.loads(text)["corpus_api"] == NOT_MATERIAL_API
     assert render(json.loads(text)) == text, "a second render must not reformat the first"
+
+
+def test_a_promoted_manifest_carrying_a_home_path_is_refused_as_itself():
+    # ⛔ Ruling 58: `_refuse_unreadable` catches the reader's `RAISES` but
+    # re-raises the leak rather than filing it as a promotion refusal.
+    from studyforge.archive.scrub import PersonalDataLeak
+
+    with pytest.raises(PersonalDataLeak):
+        promote(corpora.draft(title="notes from " + "/" + "home/jane/x"))

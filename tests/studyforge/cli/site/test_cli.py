@@ -8,6 +8,8 @@ that used a relative default would be the first one to do it.
 from __future__ import annotations
 
 import io
+import json
+import shutil
 
 import pytest
 
@@ -15,6 +17,7 @@ from studyforge.cli.site.cli import build_parser, main
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES
+from tests.support import repository_root
 
 
 def invoke(*argv):
@@ -152,3 +155,59 @@ def test_the_refusal_message_is_not_prefixed_with_the_corpus_root(tmp_path):
     # the wrong directory.
     _, printed = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path / "missing"))
     assert not printed.startswith(str(FIXTURES / "depth1"))
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W212` — a declaration the build cannot read is refused, never raised
+# --------------------------------------------------------------------------
+
+#: ⛔ Assembled rather than written whole (R7's sweep reads this file).
+HOME = "/" + "home/jane"
+
+
+def a_corpus_whose_first_map_has(tmp_path, fixture, **fields):
+    """A fixture copy with fields replaced in its first container map, and that map's path."""
+    root = tmp_path / "corpus"
+    shutil.copytree(FIXTURES / fixture, root)
+    path = sorted((root / "archive").rglob("container.json"))[0]
+    path.write_text(json.dumps({**json.loads(path.read_text("utf-8")), **fields}), "utf-8")
+    (tmp_path / "out").mkdir()
+    return root, path.relative_to(root).as_posix()
+
+
+def test_a_wrong_depth_container_map_is_refused_naming_the_file_and_the_depth(tmp_path):
+    # ⛔ Through the verb, with the refusal's presence as the pass condition.
+    root, where = a_corpus_whose_first_map_has(
+        tmp_path, "depth2", address=["basics"], titles=["Basics"]
+    )
+    code, printed = invoke(str(root), "--out", str(tmp_path / "out"))
+    assert code == UNUSABLE
+    assert printed.startswith(f"{where}: ")
+    assert "the corpus declares 2 level(s)" in printed
+    assert str(tmp_path) not in printed, "R7: a refusal never carries a path"
+    assert list((tmp_path / "out").iterdir()) == []
+
+
+def test_a_leaking_container_map_is_refused_and_not_a_traceback(tmp_path):
+    # ⭐ The pass-through `BuildError` alone missed: it left `main` as an
+    # exception whose traceback names absolute paths (R7).
+    root, where = a_corpus_whose_first_map_has(tmp_path, "depth1", note=f"from {HOME}/corpus")
+    code, printed = invoke(str(root), "--out", str(tmp_path / "out"))
+    assert code == UNUSABLE
+    assert where in printed and "home path" in printed
+    assert "jane" not in printed
+
+
+def test_a_leaking_manifest_is_refused_and_not_a_traceback(tmp_path):
+    root, _ = a_corpus_whose_first_map_has(tmp_path, "depth1")
+    document = json.loads((root / "corpus.json").read_text("utf-8"))
+    (root / "corpus.json").write_text(json.dumps({**document, "title": f"{HOME}/x"}), "utf-8")
+    code, printed = invoke(str(root), "--out", str(tmp_path / "out"))
+    assert code == UNUSABLE
+    assert "corpus.json" in printed and "jane" not in printed
+
+
+def test_the_catch_list_is_the_build_s_own_tuple_and_not_a_copy():
+    source = (repository_root() / "src/studyforge/cli/site/cli.py").read_text("utf-8")
+    assert "except RAISES as refusal:" in source
+    assert "except BuildError" not in source and "except (BuildError" not in source
