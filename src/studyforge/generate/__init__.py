@@ -1,10 +1,10 @@
 r"""Turning what an adapter wrote into the pages a reader opens.
 
 **What it does.** Holds the framework's build — the walk from a corpus root to
-files on disk. Today that is the **reading floor's HTML**: every unit page, one
-container page per declared container, the root index, and the shared bundle
-those three link. The media copy and narration are each a separate pass and
-neither is here yet.
+files on disk. Today that is the **reading floor**: every unit page, one
+container page per declared container, the root index, the shared bundle those
+three link, and every file a page shows, copied out of the archive into the
+directory the page addresses. Narration is a separate pass and is not here yet.
 
 **How you use it.**
 
@@ -14,8 +14,9 @@ neither is here yet.
 
 `sources(root)` answers *which units have material and where*;
 `read_corpus(root)` hands back everything a corpus declares, read once;
-`write_pages(root, into)` runs the unit-page pass alone. `BuildError` is the
-only exception any of it raises.
+`write_pages(root, into)` runs the unit-page pass alone and
+`write_media(root, into)` the media pass alone. `BuildError` is the only
+exception any of it raises.
 
 **Depends on.** the declaration, contents, placement, builder and renderer
 packages. ⛔ Nothing here knows any source (R1), and nothing here is a command:
@@ -44,7 +45,8 @@ move or absorb it without a consumer having imported a command.
 | `navigation` | the contents document joined to a page's bar and its trail |
 | `units` | the unit-page pass |
 | `containers` | the `*.section.html` pass, and where each one went |
-| `site` | the whole floor: the three passes, the index, and the bundle |
+| `media` | the media directories, and the copy that fills them |
+| `site` | the whole floor: the passes, the index, the bundle and the media |
 
 ## ⚠️ Why this package is not called `build`
 
@@ -71,6 +73,7 @@ from studyforge.generate.declarations import (
     sources,
     unit_location,
 )
+from studyforge.generate.media import Reference, references, unit_media, write_media
 from studyforge.generate.navigation import ancestors, bar, index_href, trail
 from studyforge.generate.site import assets, root_index, write_site
 from studyforge.generate.units import unit_pages, write_pages
@@ -83,6 +86,7 @@ from studyforge.generate.writing import Written
 __all__ = [
     "BuildError",
     "Corpus",
+    "Reference",
     "UnitSource",
     "Written",
     "ancestors",
@@ -95,11 +99,14 @@ __all__ = [
     "page_paths",
     "read_corpus",
     "read_manifest",
+    "references",
     "root_index",
     "sources",
     "trail",
     "unit_location",
+    "unit_media",
     "unit_pages",
+    "write_media",
     "write_pages",
     "write_site",
 ]

@@ -12,6 +12,7 @@ import re
 
 import pytest
 
+from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
 from studyforge.generate import assets, read_corpus, root_index, write_site
 from tests.studyforge.generate.corpora import (
     BOTH,
@@ -22,11 +23,12 @@ from tests.studyforge.generate.corpora import (
 )
 
 #: Every local reference a page makes, absolute URLs and mail links excluded.
-REFERENCE = re.compile(r'(?:src|href)="([^"]*)"')
-
-#: The media directories `corpus.placement` mints per unit. ⛔ Named so the one
-#: seam this row stops at is spelled once.
-MEDIA = ("audio", "images", "video", "practice")
+#: ⚠️ **`poster` is in here and it was not before `SF-37`.** A `<video poster="…">`
+#: addresses a file exactly as a `src` does; the Acceptance's wording — *"every
+#: `src` and `href`"* — was written before anything emitted one, and measured at
+#: this ref `depth2` emits a poster. Left out, one media reference per deck is
+#: invisible to every check in this module.
+REFERENCE = re.compile(r'(?:src|href|poster)="([^"]*)"')
 
 
 def references_in(body: str) -> list[str]:
@@ -64,8 +66,28 @@ def test_nothing_on_disk_afterwards_is_a_path_the_plan_did_not_declare(tmp_path,
         path.relative_to(tmp_path).as_posix() for path in tmp_path.rglob("*") if path.is_file()
     }
     assert on_disk == {path.as_posix() for path in written.paths}
-    for path in written.assets:
+    for path in written.assets + written.media:
         assert f"{path.parent.as_posix()}/" in declared, f"{path} sits outside the plan"
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_every_directory_the_plan_declared_is_a_directory_afterwards(tmp_path, name):
+    """⛔ Ruling 99 over the plan's `create <dir>/` lines, which are the media ones.
+
+    ⭐ **`SF-28` could assert the `.html` half only**, and named the four
+    per-unit directories as the half it was leaving. This is that half: every
+    trailing-slash line in the golden, minus the two whose owner is not the
+    build — the archive, which the **adapter** writes (R2), and the discovery
+    cache's own directory.
+    """
+    write_site(FIXTURES / name, tmp_path)
+    corpus = read_corpus(FIXTURES / name)
+    archive = f"{corpus.shared.archive.as_posix()}/"
+
+    directories = [path for path in planned(name, "/") if path != archive]
+    assert directories, "the goldens declare directories; this is measuring nothing otherwise"
+    for path in directories:
+        assert (tmp_path / path).is_dir(), f"{path} was declared and is not there"
 
 
 @pytest.mark.parametrize("name", BOTH)
@@ -92,43 +114,80 @@ def test_the_committed_golden_still_matches_what_plan_says_at_this_ref(name):
 def test_no_reference_between_pages_or_to_the_bundle_dangles(tmp_path, name):
     """⛔ `SF-15`'s acceptance, and it is false of a function and true only of a directory.
 
-    ⚠️ **Media is deliberately excluded and that is this row's seam.** The
-    renderer emits `<img src="images/…">` and copies nothing — `SF-28`'s
-    Acceptance carries the clause and no pass owns it yet — so a media reference
-    dangling here is the *next* row's finding, asserted separately below rather
-    than silently tolerated.
+    ⚠️ **Media is excluded HERE and nowhere else now.** This clause is about the
+    site holding together — a reader can get from any page to any other and to
+    the bundle — and it was true before the media copy existed and stays true
+    independently of it. ⭐ Media's own clause is `SF-37`'s, below, and it is
+    asserted over the whole population rather than as an exception carved here.
     """
     write_site(FIXTURES / name, tmp_path)
 
     dangling = []
     for page in sorted(tmp_path.rglob("*.html")):
         for reference in references_in(page.read_text(encoding="utf-8")):
-            if any(f"{kind}/" in reference for kind in MEDIA):
+            if any(f"{kind}/" in reference for kind in UNIT_MEDIA_DIRNAMES):
                 continue
             if not landing(page, reference).exists():
                 dangling.append((page.relative_to(tmp_path).as_posix(), reference))
     assert dangling == []
 
 
-@pytest.mark.parametrize("name", BOTH)
-def test_every_reference_that_DOES_dangle_is_media_and_nothing_else(tmp_path, name):
-    """⛔ The seam, measured rather than described — and it closes when the copy lands.
+def dangling_in(out) -> set:
+    """Every reference a built site emits that lands on nothing, as output-root paths.
 
-    ⭐ Ruling 99's media clause: *"every `src` and `href` a built page emits
-    resolves to a file the build wrote"*. It does not hold yet, so this test
-    states exactly what is missing. ⛔ When the media pass exists this test fails
-    and is replaced by the clause itself.
+    ⭐ Resolved to a path relative to the output root rather than kept as the
+    page-relative href, so the answer can be compared with what the build
+    *said* it could not write.
     """
-    write_site(FIXTURES / name, tmp_path)
-
-    dangling = [
-        reference
-        for page in sorted(tmp_path.rglob("*.html"))
+    return {
+        landing(page, reference).relative_to(out.resolve())
+        for page in sorted(out.rglob("*.html"))
         for reference in references_in(page.read_text(encoding="utf-8"))
         if not landing(page, reference).exists()
-    ]
-    assert dangling, "the fixtures carry media; if this is empty the copy has landed"
-    assert all(any(f"{kind}/" in reference for kind in MEDIA) for reference in dangling)
+    }
+
+
+def test_the_media_bearing_fixture_emits_no_reference_that_dangles(tmp_path):
+    """⛔ `SF-37`'s Acceptance, verbatim, on the fixture it names.
+
+    ⭐ *"Every `src` and `href` a built page emits resolves to a file the build
+    wrote"* — and after the copy the population it is asserted over is **empty**,
+    which is the strongest form the clause has. ⚠️ The `SF-28` test this replaces
+    asserted the opposite and said it would go red the day this landed.
+    """
+    written = write_site(FIXTURES / "depth1", tmp_path)
+
+    assert dangling_in(tmp_path) == set()
+    assert written.missing == ()
+    assert written.media, "the depth-1 fixture is the media-bearing one"
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_every_reference_that_DOES_dangle_is_one_the_build_NAMED_missing(tmp_path, name):
+    """⛔ The clause in both directions, and the remainder has an owner.
+
+    ⭐ `depth2`'s third unit carries `media_skipped: true` — *"an ingest that
+    named media and deliberately did not fetch it"* — so its page reaches for
+    three files that are on no disk anywhere, and no copy can produce one. ⛔ The
+    build **names** each of them, and this asserts the two sets are the same set:
+    nothing dangles that was not named, and nothing is named that resolves.
+    """
+    written = write_site(FIXTURES / name, tmp_path)
+
+    assert dangling_in(tmp_path) == set(written.missing)
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_every_media_file_the_build_wrote_sits_where_the_page_addresses_it(tmp_path, name):
+    """⭐ The other half: no file is copied that no page reaches for."""
+    written = write_site(FIXTURES / name, tmp_path)
+
+    addressed = {
+        landing(page, reference).relative_to(tmp_path.resolve())
+        for page in sorted(tmp_path.rglob("*.html"))
+        for reference in references_in(page.read_text(encoding="utf-8"))
+    }
+    assert set(written.media) <= addressed
 
 
 @pytest.mark.parametrize("name", BOTH)

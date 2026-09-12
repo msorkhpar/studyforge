@@ -56,6 +56,7 @@ from __future__ import annotations
 from studyforge.skills.adapter.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
+    UNITS_DIR,
     Layout,
     LayoutError,
     document_name,
@@ -78,6 +79,7 @@ __all__ = [
     "PARTS",
     "RAW_DIR",
     "SOURCE_LINE_CEILING",
+    "UNITS_DIR",
     "Layout",
     "LayoutError",
     "Part",

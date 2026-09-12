@@ -12,7 +12,14 @@ from studyforge.archive.document import render as render_document
 from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
 from studyforge.corpus.container import render as render_map
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.skills.adapter import ARCHIVE_DIR, RAW_DIR, Layout, LayoutError, document_name
+from studyforge.skills.adapter import (
+    ARCHIVE_DIR,
+    RAW_DIR,
+    UNITS_DIR,
+    Layout,
+    LayoutError,
+    document_name,
+)
 from studyforge.validate.corpus import read as walk
 from tests.studyforge.skills.adapter import corpora
 
@@ -41,6 +48,40 @@ def test_the_unit_directory_is_named_by_the_package_that_owns_the_padding(tmp_pa
     # rather than the string it happens to produce.
     layout = Layout(tmp_path, "archive")
     assert layout.unit_dir(ADDRESS, "prose", 7).name == unit_name(7)
+
+
+def test_a_units_own_directory_is_beside_raw_and_not_inside_any_variant(tmp_path):
+    """⛔ The distinction is the variant, and it is the whole reason both exist.
+
+    ⭐ `unit_dir` is per *variant* and holds the archive documents; `unit_files`
+    is per *unit* and holds what the unit owns — an asset's `local` path
+    resolves against it, and `<address>/units/unit-NN/content.json` is the
+    authored overlay §5's contract table names.
+    """
+    layout = Layout(tmp_path, "archive")
+
+    files = layout.unit_files(ADDRESS, 7)
+
+    assert files == layout.container_dir(ADDRESS) / UNITS_DIR / unit_name(7)
+    assert RAW_DIR not in files.parts
+    assert layout.variant_dir(ADDRESS, "prose") not in files.parents
+
+
+def test_the_two_shipped_fixtures_keep_their_material_where_unit_files_says():
+    """⭐ The behavioural pin, on the corpora rather than on a literal.
+
+    ⚠️ **This method was landed by `SF-37` because the path was declared nowhere
+    in `src/`** — both fixtures use the directory and every reader was composing
+    it for itself. A literal compared against the same literal would agree with
+    itself; these are files somebody else wrote.
+    """
+    fixtures = Path(__file__).resolve().parents[3] / "fixtures"
+
+    depth1 = Layout(fixtures / "depth1").unit_files(ADDRESS, 2)
+    depth2 = Layout(fixtures / "depth2").unit_files(Address(["basics", "01-getting-started"]), 1)
+
+    assert (depth1 / "media" / "diagram.svg").is_file()
+    assert (depth2 / "content.json").is_file()
 
 
 def test_staging_is_beside_the_archive_and_never_inside_it(tmp_path):
