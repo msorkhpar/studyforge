@@ -19266,3 +19266,25 @@ grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-desig
 | id | class | finding |
 |---|---|---|
 | ⚠️ **`PO-58/18`** | ⚠️ **`[local]`** | ⭐ **MINE, and caught by my own instrument twice in a row.** ⛔ **`SF-18`'s cell went stale the same way `W34`'s did, and for the same structural reason — the register merges LAST, so every row it names lands underneath it.** ⚠️ **Two identical refutations in one round is not two mistakes; it is [`W185`](rows/W185.md)/`PO-58/17` asking to be answered** |
+
+### ⛔ THE COORDINATOR'S FIVE ROUTED ITEMS — three rowed, one FOLDED rather than minted, one already standing
+
+| routed | disposition |
+|---|---|
+| `SF-17/4` + the `E04` pattern | ⭐ **`W183`** |
+| `SF-18/1` — no row owns the renderer emitting `data-audio` | ⛔ **FOLDED INTO `W183`, not minted.** ⚠️ **It is the SAME mechanism in the other direction: `SF-17/4` is an `Owns` line too narrow in GRANULARITY, `SF-18/1` is one too narrow in COVERAGE, and both come of drafting the line against an imagined module.** ⭐ **A second row would be a second copy of one argument** (Ruling 214's amend-don't-re-mint) |
+| `data-speech-id` / round 19 §5.3 | ⭐ **`W186`** — ⛔ **and the row's difficulty is stated: §5.3 is in a FROZEN record, so the reconciliation cannot land where the stale instruction lives** (Ruling 106) |
+| `SF-17/3` | ⭐ **`W184`** |
+| `SF-18/4` — the position→filename map | ⛔ **`W187`, PLACED AT THE HEAD OF THE QUEUE, jumping everything** (Ruling 75) — ⭐ **two merged rows cannot meet without it and the user has approved a live run.** ⚠️ **The row carries the constraint as its centre, not as a note: JOIN ON THE SPEECH ID, and a positional implementation must FAIL its second test, because positional failure is silent with every file present** |
+
+⛔ **`README.md:428` NEEDED NO ACT AND I AM SAYING SO A THIRD TIME, WITH THE INSTRUMENT:** ⭐ **`grep -n 'judged by' docs/tasks/README.md` returns exit `1` on this branch, and `git log -S` locates its removal at `0b84b27`.** ⚠️ **It survives on the release tip only because the wave's FIRST merge was taken at `344a675`, one commit earlier than the fix** — ⛔ **a sequencing artefact of a mid-round merge, not an outstanding edit, and it lands with this one.**
+
+### ⚠️ FOUR COMPRESSION PASSES IN ONE ROUND, AND THE FOURTH IS THE ARGUMENT
+
+⛔ **`board-size` was breached and repaired FOUR times in round 58: at the first close set, at `W182`'s close plus three mints, at `W34`'s close, and at these two mints.** ⭐ **The board ships THREE BYTES under its bound.**
+
+⚠️ **THAT IS NOT A STYLE COMPLAINT AND IT IS NOT UNTIDINESS.** ⛔ **A register round's ordinary acts — close what merged, mint what was found — now cost more than the bound allows, every time, and the repair is a compression pass whose cost is a round's tokens for a round's headroom** (Ruling 149's subject exactly). ⭐ **[`W185`](rows/W185.md) holds it, jumping every row below it, with the two obvious answers already refused inside its own file so the next round does not re-derive them.**
+
+| id | class | finding |
+|---|---|---|
+| ⛔ **`PO-58/19`** | ⛔ **`[structural]`** | ⭐ **The routed `SF-18/1` was very nearly a second row for one argument.** ⛔ **Minting it would have split `E04`'s `Owns` defect across two files that each carried half a mechanism** — ⚠️ **which is `W17`/`W19`'s shape, and the register is the only office positioned to see it, because it is the only one that reads both findings against the same row file** |

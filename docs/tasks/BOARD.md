@@ -40,7 +40,7 @@ one does.**
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
 | **M3 step 3.4** | ⏳ **OPEN** — ⭐ **`SF-17` merged; `SF-32` remains** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
-| **M3 step 3.5** | ⏳ **OPEN** — ⛔ **`SF-18` MERGED `f7c62ad`; it does NOT close while `3.4` is open** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.5** | ⏳ **OPEN** — ⛔ **`SF-18` MERGED `f7c62ad`; does NOT close while `3.4` is open** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -97,8 +97,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
 | 17 | `W176`–`W181` | ⭐ **round 57's six mints, jumping nobody** | round 57 |
-| 18 | `W185` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⚠️ **the next five-close round does not fit** | rd 58 |
-| 19 | `W183`, `W184` | ⭐ **round 58's `SF-17` mints, jump nobody** | rd 58 |
+| 18 | `W187` | ⛔ **JUMPS EVERYTHING** (Ruling 75) — ⭐ **two merged rows cannot meet without it** | 58 |
+| 19 | `W185` | ⛔ **JUMPS every row below** (Ruling 75) — ⚠️ **the next five-close round breaches** | 58 |
+| 20 | `W183`, `W184`, `W186` | ⭐ **round 58's wave-12 mints, jump nobody** | 58 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -111,8 +112,8 @@ takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.**
 `W168`, `W169`, `W171`, `W179` and `W180` name `docs/conventions/` — ⭐ ONE constraint, not a
 row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
-`W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/` — ONE OWNER or two waves for
-each set.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
+`W158`, `W162`, `W163` name `docker/dev/`; `W183`+`W184` write `E04` — ONE OWNER or two waves
+for each set.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
@@ -307,9 +308,11 @@ else.**
 | W180 | Ruling 349(a) binds the office CHECKING a removal and no rule binds the office MAKING one | framework agent | `todo` — `CTO-71/9` | [`rows/W180.md`](rows/W180.md) |
 | W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | `todo` — `CTO-71`'s `W167` review | [`rows/W181.md`](rows/W181.md) |
 | W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | ✅ done — `430363b` | [record](BOARD-ARCHIVE.md#w182-spec-r9s-two-cells-still-read-open-for-a-contract-ruling-351-located) |
-| W183 | An `Owns` line naming a FILE is a ceiling nobody measured — twice in `E04` | framework agent | `todo` `SF-17/4` | [`rows/W183.md`](rows/W183.md) |
+| W183 | `E04`'s `Owns` lines were drafted without measurement — wrong in GRANULARITY and COVERAGE | framework agent | `todo` `SF-17/4`, `SF-18/1` | [`rows/W183.md`](rows/W183.md) |
 | W184 | `narrate/__init__.py`'s `Depends on` is wrong a THIRD way, each time found by an office that cannot fix it | framework agent | `todo` `SF-17/3` | [`rows/W184.md`](rows/W184.md) |
 | W185 | The close procedure and `board-size` are jointly unsatisfiable; owes a DESIGN DECISION | framework agent | `todo` — ⛔ **`PO-58/10` LIVE** | [`rows/W185.md`](rows/W185.md) |
+| W186 | Round 19 §5.3 still instructs `data-speech-id`, ruled NOT emitted | framework agent | `todo` `SF-18` | [`rows/W186.md`](rows/W186.md) |
+| W187 | Nothing in `src/` builds the position→filename map; the join is on the SPEECH ID | framework agent | `todo` — ⛔ **`SF-18/4`, CRITICAL PATH** | [`rows/W187.md`](rows/W187.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
