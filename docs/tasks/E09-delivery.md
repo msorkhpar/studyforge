@@ -219,7 +219,7 @@ numbers match EX-05 exactly. No personal data anywhere in it (R7).
 **Owns** `studyforge/generate/` — the corpus walk and the page writer — and
 `tests/studyforge/generate/`
 **Context** ~40k — spec §3.2, §9; the measured entry-point table in
-[`handoffs/DEV3-E09-build-scope.md`](handoffs/DEV3-E09-build-scope.md)
+[`handoffs/W195.md`](handoffs/W195.md)
 
 ⛔ **SPLIT BY THE REGISTER, PO ROUND 61 — [`W197`](rows/W197.md), and the split
 lands here because the epic is where a task's definition lives.** ⭐ **One row
