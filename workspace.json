@@ -39,7 +39,8 @@
     {
       "name": "narrate-service",
       "where": "sibling",
-      "status": "not-yet-created"
+      "status": "present",
+      "commit": "db80e7b3e93f9c5a9330230d0050a216c6e70b15"
     }
   ]
 }
