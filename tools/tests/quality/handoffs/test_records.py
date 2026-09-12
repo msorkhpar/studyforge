@@ -1,20 +1,21 @@
-"""`W64` gate two: a `ruling record` has a scope, and the ID rule reaches it.
+"""Mirror of `tools/quality/handoffs/records.py` (R12) — gates two and three.
 
-⛔ **Every test here that goes GREEN would also have gone green before this
-row**, because before it `check_handoffs` returned at the kind test and a record
-was read by no rule at all. ⭐ **So the tests that matter are the ones that FIRE**
+⛔ **Every test here that goes GREEN would also have gone green before `W64`**,
+because before it `check_handoffs` returned at the kind test and a record was
+read by no rule at all. ⭐ **So the tests that matter are the ones that FIRE**
 — and each is paired with the same document under a kind that was already
 admitted, so the two readers cannot drift apart (`W121`'s discipline).
 
-⚠️ **Gate three is NOT this row and is asserted absent, not asserted correct**:
-`test_a_record_is_held_to_neither_the_marker_rule_nor_the_six_sections` pins the
-scope of this change so that widening it later is a visible decision.
+⭐ **`W172` adds gate three below, and its three REFUSED arms are asserted as
+refusals rather than left silent** (the row's clause 2): each has a test that
+goes green on a document a task handoff would be refused for, paired with the
+handoff that IS refused for it.
 """
 
 from __future__ import annotations
 
 from tools.quality.handoffs import KIND_MARKER, check_handoffs, record_scopes
-from tools.quality.handoffs.records import derived_scope
+from tools.quality.handoffs.records import derived_scope, record_finding_lines
 from tools.tests.quality.handoffs.support import GOOD, rules, write
 
 #: ⭐ The minimally-inhabited RECORD, in the shape both offices actually write:
@@ -152,31 +153,156 @@ def test_a_record_CITES_another_scope_and_a_handoff_TAKES_it(tmp_path):
     assert rules(tmp_path) == ["handoff-finding-id"]
 
 
-# --- what gate two deliberately does NOT do (Ruling 218) -------------------
+# --- gate three: the PREDICATE, which is what tells a finding from prose ---
 
 
-def test_a_record_is_held_to_neither_the_marker_rule_nor_the_six_sections(tmp_path):
-    # ⛔ Gate three — a rule separating a record's Findings section from its
-    # prose — is NOT YET A ROW. ⚠️ This document has a marker in prose, no six
-    # sections, and no title a handoff would accept; every one of those is a
-    # finding for a task handoff and none of them is one here.
-    body = f"""# CTO round 99 — closing
+def test_a_marker_OUTSIDE_the_findings_section_is_prose_and_is_not_read(tmp_path):
+    # ⛔ THE test of gate three. A record's prose names markers constantly and
+    # legitimately; measured at `bec9d5c`, 724 of a record's marker-bearing
+    # lines sit outside any Findings section. ⚠️ This one claims a scope AND
+    # buries its marker, so only the region keeps it quiet.
+    body = RECORD.replace(
+        "## Findings",
+        "## Decisions\n\n`CTO-99/4` was ruled `[structural]` and not `[local]`.\n\n## Findings",
+    )
+    write(tmp_path, *record(body))
+    assert check_handoffs(tmp_path) == []
+    assert [number for number, _line in record_finding_lines(body)] == [13]
 
-{KIND_MARKER} ruling record — CTO round 99
+    # ⭐ The pair, one edit away: the SAME line inside the section IS read.
+    moved = RECORD.replace(
+        "|---|---|---|",
+        "|---|---|---|\n\n`CTO-99/4` was ruled `[structural]` and not `[local]`.\n",
+    )
+    write(tmp_path, *record(moved))
+    assert rules(tmp_path) == ["handoff-marker"]
 
-The reviewer marked it `[structural]` and said so twice, `[local]` as well.
-"""
+
+def test_inside_the_section_a_line_claiming_NO_scope_is_still_prose(tmp_path):
+    # ⭐ Gate two's own ruling read forward: a record's finding is numbered
+    # inside a SCOPE, so a marker on a line claiming none is a sentence about
+    # markers. Measured: 80 such lines in the corpus, every one of them prose.
+    body = RECORD.replace(
+        "|---|---|---|",
+        "|---|---|---|\n\nAll 5 were `[structural]`, and 2 of them `[local]` as well.\n",
+    )
     write(tmp_path, *record(body))
     assert check_handoffs(tmp_path) == []
 
-    handoff = body.replace("ruling record — CTO round 99", "task handoff — W99")
+
+def test_the_marker_may_sit_in_ANY_cell_of_a_numbered_row(tmp_path):
+    # ⛔ Ruling 189(b): *the marker may sit in the first cell or the fifth*.
+    # ⚠️ The offices write `| # | Finding | Marker |`, so the marker sits
+    # BEHIND a cell of prose and `marker_lines`'s own_line refuses it.
+    behind = RECORD.replace(
+        "| `CTO-99/1` | `[local]` | ⭐ Something that was measured and is now recorded. |",
+        "| `CTO-99/1` | ⭐ Something that was measured and is now recorded. | `[local]` |",
+    )
+    write(tmp_path, *record(behind))
+    assert check_handoffs(tmp_path) == []
+
+    # ⭐ The other direction: no cell of the row starts with a marker at all.
+    buried = RECORD.replace(
+        "| `CTO-99/1` | `[local]` | ⭐ Something that was measured and is now recorded. |",
+        "| `CTO-99/1` | ⭐ Something measured, filed `[local]`, and now recorded. |",
+    )
+    write(tmp_path, *record(buried))
+    findings = check_handoffs(tmp_path)
+    assert [finding.rule for finding in findings] == ["handoff-marker"]
+    assert "buries its marker" in findings[0].message
+
+
+def test_a_marker_QUOTED_in_a_findings_prose_does_not_make_it_two_findings(tmp_path):
+    # ⚠️ A disposition quotes the marker it is arguing about. That is one
+    # finding, not two — the count arm survives only for markers where no
+    # claim precedes them.
+    quoted = RECORD.replace(
+        "⭐ Something that was measured and is now recorded.",
+        "⭐ Recorded, and `[local]` was the right marker for it after all.",
+    )
+    write(tmp_path, *record(quoted))
+    assert check_handoffs(tmp_path) == []
+
+    # ⭐ The pair: two markers where NO claim precedes either is still one
+    # finding claiming to be two.
+    twice = RECORD.replace("| `[local]` |", "| `[local]` | `[structural]` |")
+    write(tmp_path, *record(twice))
+    findings = check_handoffs(tmp_path)
+    assert [finding.rule for finding in findings] == ["handoff-marker"]
+    assert "marks it 2 times" in findings[0].message
+
+
+def test_a_records_none_marker_still_owes_its_sentence(tmp_path):
+    # ⛔ The one `[none]` arm a record DOES owe: `0` is never self-certifying,
+    # and that argument does not turn on the kind of document.
+    bare = RECORD.replace(
+        "| `[local]` | ⭐ Something that was measured and is now recorded. |",
+        "| `[none]` | ⭐ nothing |",
+    )
+    write(tmp_path, *record(bare))
+    assert rules(tmp_path) == ["handoff-findings"]
+
+    said = RECORD.replace("| `[local]` |", "| `[none]` |")
+    write(tmp_path, *record(said))
+    assert check_handoffs(tmp_path) == []
+
+
+# --- gate three's three REFUSALS, each taken explicitly (the row's clause 2)
+
+
+def test_a_record_does_not_owe_the_six_sections_and_that_is_RATIFIED(tmp_path):
+    # ⛔ `W64` left this a silence; `W172` ends it. ⭐ A record hands nothing
+    # over, so *Status*, *What landed* and *For dependents* name nothing it
+    # has — and applying them prints 437 findings in 98 of the 110 records.
+    write(tmp_path, *record())
+    assert check_handoffs(tmp_path) == []
+
+    # ⭐ The pair: the same body as a task handoff owes all six.
+    handoff = (
+        RECORD.replace("ruling record — CTO round 99", "task handoff — W99")
+        .replace("# CTO round 99 — closing", "# W99 — handoff")
+        .replace("`CTO-99/1`", "`W99/1`")
+    )
     write(tmp_path, "W99.md", handoff)
-    assert set(rules(tmp_path)) == {
-        "handoff-findings",
-        "handoff-marker",
-        "handoff-section",
-        "handoff-title",
-    }
+    assert set(rules(tmp_path)) == {"handoff-section"}
+
+
+def test_a_record_that_marks_NO_finding_is_not_refused(tmp_path):
+    # ⛔ The measurement that decides gate three: of 311 numbered claims inside
+    # a record's Findings section, 92 in 27 documents carry no marker at all.
+    # ⭐ A record's findings are DISPOSITIONS, not triage items; Ruling 29's
+    # *a finding is a marked item* is a task handoff's contract.
+    unmarked = RECORD.replace("| `[local]` | ", "| ACCEPTED | ")
+    write(tmp_path, *record(unmarked))
+    assert check_handoffs(tmp_path) == []
+
+    # ⭐ The pair: a task handoff marking nothing IS refused.
+    write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]` a defect somewhere else", "none."))
+    assert rules(tmp_path) == ["handoff-findings"]
+
+
+def test_a_records_none_may_stand_BESIDE_a_real_finding(tmp_path):
+    # ⚠️ In a handoff `[none]` means *nothing outside this task's scope*, so it
+    # cannot stand beside a finding. ⭐ A record uses it per-finding, to mean a
+    # recorded negative — all 4 in the corpus do exactly that.
+    both = RECORD + (
+        "| `CTO-99/2` | `[none]` | ⭐ A recorded negative: I predicted a "
+        "collision and measured none. |\n"
+    )
+    write(tmp_path, *record(both))
+    assert check_handoffs(tmp_path) == []
+
+    # ⭐ The pair: the same pairing inside a task handoff is refused.
+    handoff = GOOD.replace(
+        "### 1. `[local]` a defect somewhere else",
+        "### 1. `[local]` a defect somewhere else\n\n"
+        "### 2. `[none]` and nothing else was outside my scope at all",
+    )
+    write(tmp_path, "W99.md", handoff)
+    assert rules(tmp_path) == ["handoff-findings"]
+
+
+# --- what NEITHER gate takes, and it is a decision (Ruling 218) -------------
 
 
 def test_a_survey_is_still_outside_this_gate(tmp_path):
