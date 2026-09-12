@@ -330,8 +330,7 @@ def test_the_documented_direct_invocation_carries_the_variable():
 def test_the_documented_invocation_check_can_say_no():
     doctored = read("compose.yaml").replace(f"{VARIABLE}=1 \\", "")
     assert not documented_invocation_carries_the_variable(doctored), (
-        "the predicate accepts a documented --build invocation with no "
-        "variable anywhere near it"
+        "the predicate accepts a documented --build invocation with no variable anywhere near it"
     )
 
 
