@@ -35,12 +35,13 @@ one does.**
 | **M2 step 2.2** | ✅ CLOSED | `ce80120` | [record](BOARD-ARCHIVE.md#m2-step-22s-close-run-at-ce80120-all-four-re-taken-and-the-four-merges-derived-rather-than-received) |
 | **M2 step 2.3** | ✅ CLOSED | `798956c` | [record](BOARD-ARCHIVE.md#m2-step-23s-close-run-at-798956c-both-rows-re-taken-the-two-merges-derived-and-the-negative-control-is-a-synthesised-commit-because-no-branch-in-this-repository-is-unmerged) |
 | **M2 step 2.4** | ✅ CLOSED | `2d0cfe7` | [record](BOARD-ARCHIVE.md#m2-step-24s-close-run-at-2d0cfe7-all-four-rows-re-taken-the-merges-derived-and-ruling-204-is-what-makes-it-clean) |
-| **M3** — it speaks | ⏳ **OPEN** — ⛔ **ALL FIVE STEPS CLOSED, the close REFUSED on `M3`'s own *Done when*, and ⭐ the missing ACT now has an owner: `SF-42`** | — | [the refusal](BOARD-ARCHIVE.md#m3-steps-34-and-35-close-at-abee048-and-m3-itself-does-not) |
+| **M3** — it speaks | ⏳ **OPEN** — ⛔ **steps 3.1–3.5 CLOSED and the close REFUSED on `M3`'s own *Done when*; ⭐ the missing ACT is `SF-42`, admitted to step 3.6** | — | [the refusal](BOARD-ARCHIVE.md#m3-steps-34-and-35-close-at-abee048-and-m3-itself-does-not) |
 | **M3 step 3.1** | ✅ CLOSED | `7420c34` | [record](BOARD-ARCHIVE.md#m3-step-31s-close-run-at-7420c34-both-merges-re-derived-on-the-first-parent-chain-and-nothing-inherited) |
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
 | **M3 step 3.4** | ✅ CLOSED | `abee048` | [record](BOARD-ARCHIVE.md#m3-steps-34-and-35-close-at-abee048-and-m3-itself-does-not) |
 | **M3 step 3.5** | ✅ CLOSED | `abee048` | [record](BOARD-ARCHIVE.md#m3-steps-34-and-35-close-at-abee048-and-m3-itself-does-not) |
+| **M3 step 3.6** | ⏳ **OPEN** — `SF-42` in flight | — | [the step](BOARD-ARCHIVE.md#po-round-64-wave-17-closed-in-part-sf-38-held-open-on-its-own-acceptance-m3-given-step-36-and-the-clip-deletion-rule-written) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -53,9 +54,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-43` | Developer 1 | `feat/rebuild-own-output` @ `wt/dev1` | 0 @ `6ffba1e` | in-progress |
-| `W207` | Developer 2 | `fix/W207-max-files` @ `wt/dev2` | 0 @ `6ffba1e` | in-progress |
-| `SF-38` | Developer 3 | `feat/narration-promise-states` @ `wt/dev3` | 0 @ `6ffba1e` | in-progress |
+| `SF-42` | Developer 1 | `feat/SF-42-narrate` @ `wt/dev1` | 0 @ `5d37f73` | in-progress |
+| `W212` + `W213` | Developer 2 | `fix/W212-build-raises` @ `wt/dev2` | 0 @ `5d37f73` | in-progress |
+| `W217` | Developer 3 | `fix/W217-suite-outside-checkout` @ `wt/dev3` | 0 @ `5d37f73` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -72,8 +73,8 @@ SEVERAL ROW IDS.**
 
 ⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names.**
 ⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
-⛔ **`SF-28` LEFT at wave 16's close — `wt/dev3` no longer holds its branch, so the *named until teardown* clause is spent** (Ruling 171). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **WAVE 17 IS NAMED, and every one of the three carriers was CONFIRMED by the coordinator on request rather than inferred from its branch name** (`PO-61/4`) — ⛔ **which ends two consecutive waves of the register being unable to see live work.** ⚠️ **`PO-63/2` stands anyway and was upheld without narrowing: two of the three were dispatched against text that did not exist, so an id was minted before dispatch and the ROW behind it was not.** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
+⛔ **Wave 17's three cells LEFT at its close — every branch absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **WAVE 18 IS NAMED, every carrier CONFIRMED by the coordinator** (`PO-61/4`). ⛔ **`SF-38` LEFT WITHOUT CLOSING: its read side merged at `6199164`, its Acceptance is a BUILD's, and the remainder is written under `SF-38` in [`E09`](E09-delivery.md).** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
 
 ## Next rows — placed, not yet taken
 
@@ -83,9 +84,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 0 | `W212` | ⛔ **A LIVE CRASH in a shipped command — the leak `W208` closed in `plan`, reaching `build`, Ruling 75** | 63 |
-| 0 | `W217` | ⛔ **a suite writing into a HOME DIRECTORY, invisible at the default uid — R7 and R3's outer bound, Ruling 75** | 63 |
-| 0 | `W193` | ⛔ **RAISED OUT OF ORDER 20 BY A MEASUREMENT, Ruling 75** — ⭐ **`SF-32/5`: unpruned clips count against a SHIPPED ceiling and can refuse a build a pruning pass would pass** | 62 |
+| 0 | `W218` | ⛔ **`W193`'s Ruling 75 ground passes to it — `SF-32/5`'s ceiling — and `SF-42` writes the first clips this wave** | 64 |
 | 1 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
 | 2 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
 | 3 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
@@ -108,12 +107,10 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 23 | `W202` | ⛔ **it owes DECISIONS before it owes code, and the user is asked on three of the six** | 60 |
 | 24 | `W204` | ⭐ **round 60's mint, jumping nobody** | 60 |
 | 25 | `W205` | ⛔ **NOT DISPATCHABLE — it is a RULING and the freeze is in force; minted so the case is not lost** | 60 |
-| 26 | `W206` | ⛔ **the half of `W197` this round could not perform, and it jumps nobody** | 61 |
-| 27 | `W207` | ⛔ **a published example that does not validate — it owes a DECISION before it owes code, and it jumps nobody** | 62 |
 | 28 | `W210` | ⭐ **both spellings are correct today, so it jumps nobody** — Ruling 285(b)'s ground | 62 |
 | 29 | `W214` | ⛔ **§9 INVERTED — a build reads media no adapter is told to write, and the second source is what §12 rests on** | 63 |
 | 30 | `W211` | ⛔ **it makes every entry-point acceptance in this plan unmeetable in the authoritative environment** — ⭐ **it jumps nobody, but it prices every row after it** | 63 |
-| 31 | `W213`, `W215`, `W216` | ⭐ **round 63's remaining mints, each jumping nobody** | 63 |
+| 31 | `W215`, `W216` | ⭐ **round 63's remaining mints, each jumping nobody** | 63 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -334,7 +331,7 @@ else.**
 | W190 | `corroborate`'s `dispatched and UNNAMED` arm has a population of CHECKOUTS, so a branch carrying work is invisible to it whenever its office cleans up after itself | framework agent | ✅ done — `c49f254` | [`rows/W190.md`](rows/W190.md) |
 | W191 | The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone | framework agent | `todo` — ⛔ **UNASSIGNED through four waves** | [`rows/W191.md`](rows/W191.md) |
 | W192 | Ruling 218's multi-id cell is readable in exactly ONE spelling, and the comma form observes the wrong row silently | framework agent | `todo` — `PO-59/7` | [`rows/W192.md`](rows/W192.md) |
-| W193 | The narration record and its clips grow without bound and nothing prunes; pruning owes a RULE about which clips a build may delete | PO | `todo` — `W187/1`, owed before `SF-32` | [`rows/W193.md`](rows/W193.md) |
+| W193 | The narration record and its clips grow without bound and nothing prunes; pruning owes a RULE about which clips a build may delete | PO | ✅ done — PO round 64 | [`rows/W193.md`](rows/W193.md) |
 | W194 | `narrate-service`'s `docs/api.md` example manifest is schema-stale against the service's own live answer | framework agent | `todo` — `NS-07` F3, sibling | [`rows/W194.md`](rows/W194.md) |
 | W195 | There is no build pipeline: nothing walks a corpus and writes pages, so the reading floor cannot be PRODUCED by anything but a test | framework agent | ✅ done — `6ffba1e` | [`rows/W195.md`](rows/W195.md) |
 | W196 | Ruling 74 and Ruling 78's suite gate are JOINTLY UNSATISFIABLE — the formatter strips the parens the ruling requires | Developer 2 | ✅ done — `f1684e6` | [`rows/W196.md`](rows/W196.md) |
@@ -347,18 +344,19 @@ else.**
 | W203 | Graphify retired from every live document and from `tools/`, with the floor/suite scope line | framework agent | ✅ done — `2cf11f1` | [`rows/W203.md`](rows/W203.md) |
 | W204 | Prose inside Python is an UNGATED citation surface, so a deleted module stays quoted as authority indefinitely | framework agent | `todo` — `W203`'s measurement | [`rows/W204.md`](rows/W204.md) |
 | W205 | A frozen record can be made to fail a gate from outside itself, and Ruling 106's annotate-beneath remedy cannot reach a POINTER | framework agent | `todo` — ⛔ **HELD BY THE RULING FREEZE** | [`rows/W205.md`](rows/W205.md) |
-| W206 | Five tasks exist with no step membership: `W197`'s split landed in the epic and its ordering half did not | PO | `todo` — ⛔ **`README.md` is nobody's surface this wave** | [`rows/W206.md`](rows/W206.md) |
-| W207 | `E04`'s own `media` example declares a limit `parse_media` refuses by name, so a corpus copying the epic does not validate | framework agent | in-progress — `SF-32/1`, verified by the register | [`rows/W207.md`](rows/W207.md) |
+| W206 | Five tasks exist with no step membership: `W197`'s split landed in the epic and its ordering half did not | PO | ✅ done — PO round 64 | [`rows/W206.md`](rows/W206.md) |
+| W207 | `E04`'s own `media` example declares a limit `parse_media` refuses by name, so a corpus copying the epic does not validate | framework agent | ✅ done — `4fb111d` | [`rows/W207.md`](rows/W207.md) |
 | W208 | An `AddressError` escapes the container reader, so a wrong-depth container map CRASHES `studyforge plan` | framework agent | ✅ done — `6ffba1e` | [`rows/W208.md`](rows/W208.md) |
 | W209 | `tests/emission` calls every public writer with fillers, so a green suite writes into the checkout and reports nothing | framework agent | ✅ done — `869fd4c` | [`rows/W209.md`](rows/W209.md) |
 | W210 | The media policy is spelled twice — `cli/plan/report.py` re-derives what `ignore_lines` exists to be the one spelling of | framework agent | `todo` — `SF-32/4` | [`rows/W210.md`](rows/W210.md) |
 | W211 | The pinned image cannot install this package, so every reading about the INSTALLED command is host-only and no second office can reproduce one | framework agent | `todo` — `W195`'s close, taken by the register | [`rows/W211.md`](rows/W211.md) |
-| W212 | The `AddressError` leak `W208` fixed in `plan` reaches `studyforge build` too, and the justification beside the catch is false | framework agent | `todo` — `SF-40/3` + `W208/2` | [`rows/W212.md`](rows/W212.md) |
-| W213 | The manifest reader's catch list is a retyped subset, correct only by a property of the reader that nothing asserts | framework agent | `todo` — `W208/1` | [`rows/W213.md`](rows/W213.md) |
+| W212 | The `AddressError` leak `W208` fixed in `plan` reaches `studyforge build` too, and the justification beside the catch is false | framework agent | in-progress — `SF-40/3` + `W208/2` | [`rows/W212.md`](rows/W212.md) |
+| W213 | The manifest reader's catch list is a retyped subset, correct only by a property of the reader that nothing asserts | framework agent | in-progress — `W208/1`, one branch with `W212` (Ruling 218) | [`rows/W213.md`](rows/W213.md) |
 | W214 | A build can find archive media and NO ADAPTER IS INSTRUCTED TO PRODUCE ANY — §9 inverted, the artifact arrived first | framework agent | `todo` — `SF-37/2` | [`rows/W214.md`](rows/W214.md) |
 | W215 | A unit's `assets` and `attachments` are declared in the archive and read by nothing in `src/`, and spec C4 says what they are for | framework agent | `todo` — `SF-37/6` | [`rows/W215.md`](rows/W215.md) |
 | W216 | `tests/test_emission.py`'s coverage floor sits so far below its own census that it cannot fall, and the sweep is the R7 gate's population | framework agent | `todo` — `W209/5` | [`rows/W216.md`](rows/W216.md) |
-| W217 | The suite writes OUTSIDE the checkout, and `W209`'s detector is repository-scoped by construction so it cannot see it | framework agent | `todo` — `W209/1` | [`rows/W217.md`](rows/W217.md) |
+| W217 | The suite writes OUTSIDE the checkout, and `W209`'s detector is repository-scoped by construction so it cannot see it | framework agent | in-progress — `W209/1` | [`rows/W217.md`](rows/W217.md) |
+| W218 | `W193`'s rule is written and nothing carries it out: dead clips count against a shipped ceiling and no instrument discloses or prunes them | framework agent | `todo` — `W193`'s rule | [`rows/W218.md`](rows/W218.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

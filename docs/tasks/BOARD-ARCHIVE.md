@@ -19997,3 +19997,112 @@ python3                        issubclass(AddressError, ContainerError)         
 ⛔ **A SECOND POINT FIX.** ⭐ **`SF-17/11` already did that once and the exposure was general the whole time** — ⚠️ **so a diff that touches one writer and leaves the harness alone has reproduced the finding rather than closed it.**
 
 [the mint](#w209-the-emission-suite-calls-every-public-writer-so-a-test-run-writes-into-the-repository)
+
+## PO round 64 — wave 17 closed in part, `SF-38` held open on its own Acceptance, `M3` given step 3.6, and the clip-deletion rule written
+
+⛔ **Wave 17's three merges re-derived on the first-parent chain rather than received:** `4fb111d` (`W207`), `34782d0` (`SF-43`), `6199164` (`SF-38`). ⭐ **`corroborate` at `5d37f73`, HOST, refuted exactly those three as TERMINAL, matching the expectation written before it ran.**
+
+### ⛔ 1 — `SF-38` DOES NOT CLOSE
+
+⭐ **Its Acceptance is phrased over a BUILD** (*"a corpus with no record builds a page…"*, `Owns` `generate/narration.py`). ⛔ **Measured at `5d37f73`, role `wt/po`, HOST: no module in `src/studyforge/generate/` names the record, `playable` or `Narration`; `generate/narration.py` does not exist; `generate/units.py` renders every page `SILENT`** — ⚠️ **the same grep fires on `render/page/`, so the arm is shown capable of a hit.** ⭐ **What merged is the renderer's half, over library entry points, and the office said so itself (`SF-38/6`).** ⛔ **The remainder is written as an amendment under `SF-38` in [`E09-delivery.md`](E09-delivery.md), with the Acceptance unchanged, so the next wave dispatches a row with its text rather than an id.**
+
+### ⭐ 2 — `SF-43` AND `W207` CLOSE
+
+⛔ **`SF-43`:** `tests/studyforge/generate/test_writing.py` asserts a foreign file survives a rebuild byte for byte. ⛔ **`W207`:** the limit was kept, and the test reads `E04`'s example from the epic. ⭐ **Both on the merge's own green readings plus the coordinator's release-tip measurement** — no reviewer this wave.
+
+### ⭐ 3 — `W206` PERFORMED, `W193` ANSWERED, `W218` MINTED
+
+⭐ **`W206`:** membership given in [`README.md`](README.md), `SF-42` into a NEW step `3.6`; the critical path DERIVED rather than typed. ⭐ **`W193`:** the rule stated once in `E09`. ⛔ **`W218`:** the disclosure and the explicit prune that rule owes, at order 0 on `W193`'s ground. ⭐ **Wave 18 named: `SF-42`, `W212` + `W213`, `W217`, every carrier confirmed by the coordinator.**
+
+### W193 — The narration record and its clips grow without bound and nothing prunes; pruning owes a RULE about which clips a build may delete
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W193.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`synthesise` MERGES INTO WHAT IT READ, so every id a corpus ever minted stays in `.studyforge/narration.json` forever and its clip stays on disk.** ⭐ **For [`W187`](rows/W187.md) that was a HELP — it is why the join must be by id — but R8 says that file is COMMITTED, so a corpus edited over a year commits dead weight and keeps the audio behind it** (`W187/1`).
+
+⛔ **IT OWES A RULE BEFORE IT OWES CODE** (Ruling 231(c)'s shape). ⭐ **The rule is one sentence: WHICH CLIPS MAY A BUILD DELETE?** ⚠️ **Nobody can write the pruning pass until that is answered, and the office that finds the growth is not the office that may answer it.**
+
+### ⭐ THE CONSEQUENCE IS NOW MEASURED, AND IT IS WHY THIS ROW WAS RAISED
+
+⛔ **`SF-32` LANDED, AND WITH IT A CEILING THIS GROWTH CAN CROSS.** ⭐ **`SF-32/5`, from the office that built it: the media package weighs what is **on disk**, so clips no page addresses any more count against `max_total_bytes` and can REFUSE A BUILD that a pruning pass would let through.** ⚠️ **So the unbounded record is no longer only future weight in somebody's clone — it can turn a green build red, and the reader's remedy would be to raise a limit rather than to delete dead clips.**
+
+⭐ **That is what moved this row from order 20 to order 0** ([the round](#w193-is-raised-and-by-a-measurement-rather-than-by-an-opinion)). ⛔ **It changes the priority and NOT the row: the rule owed is still *which clips may a build delete*, and `SF-32`'s ceiling is a consumer of the answer rather than a second question.**
+
+### ⛔ WHY IT IS NOT `SF-32`
+
+⭐ **`SF-32` answers *should this corpus's media be in git?* from a `media` policy and a MEASUREMENT of what was generated.** ⛔ **That is a COMMIT decision. This is a DELETE decision, and the two come apart:** ⚠️ **a corpus small enough to commit can still carry clips for units that no longer exist, and a corpus too big to commit is not thereby permitted to delete anything.** ⭐ **`SF-32` is this row's CONSUMER, and the rule is owed before it.**
+
+### ⛔ WHAT SETTLES IT — a rule, stated out loud, before any pass is written
+
+1. ⛔ **THE SAFE ANSWER IS NAMED FIRST AND IT MAY WIN:** ⭐ **a build deletes NOTHING, an operator prunes explicitly, and the record's growth is disclosed rather than acted on.** ⚠️ **A generator that deletes committed bytes on its own is a much larger promise than anything else in this framework makes.**
+2. ⛔ **IF A BUILD MAY DELETE, THE PREDICATE IS STATED IN TERMS OF THE DOCUMENT AND NEVER THE DISK** — ⭐ **an entry whose speech id is absent from the corpus AS BUILT, over a build that walked the WHOLE corpus.** ⚠️ **A partial build must be unable to satisfy it, or the first `--only-one-unit` run deletes the other ninety-nine clips.**
+3. ⛔ **R3 IS THE OUTER BOUND** — generation is non-destructive, and a clip this framework generated is still a file in somebody's repository.
+4. ⛔ **THE DISCLOSURE IS OWED EITHER WAY**, and it is the cheap half: ⭐ **the record can say how many entries it holds that this build did not produce, without any rule about deleting them.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A PRUNING PASS THAT SHIPS BEFORE THE RULE IS WRITTEN DOWN.** ⭐ **The failure mode is silent and irreversible in somebody else's repository, which is the one class of defect this project cannot measure its way out of afterwards.**
+
+### ⭐ CLOSED — PO ROUND 64: THE RULE IS WRITTEN, AND ITS TWO OWED HALVES ARE A ROW
+
+⛔ **The rule is stated once, in [`E09-delivery.md`](E09-delivery.md#w193-which-clips-may-be-deleted-none-by-a-build-none-unasked-by-narrate-and-a-prune-is-its-own-request)** — ⭐ **a build deletes no clip; `studyforge narrate` deletes none unasked; a prune is its own explicit request over a whole-corpus walk.** ⚠️ **Clause 1's safe answer WON for the build and for `narrate`.** ⛔ **Clause 4's disclosure and the prune itself are owed and are [`W218`](rows/W218.md), which inherits this row's order-0 ground.**
+
+### W206 — Five tasks exist with no step membership: `W197`'s split landed in the epic and its ordering half did not
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W206.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W197`'S SPLIT LANDED IN THE EPIC AND ITS ORDERING HALF DID NOT, SO FIVE TASKS NOW EXIST WITH NO STEP MEMBERSHIP.** ⭐ **`SF-37`, `SF-38`, `SF-39`, `SF-40` and `SF-41` are defined in [`../E09-delivery.md`](E09-delivery.md) and [`../README.md`](README.md)'s step `4.3` still names `SF-28` alone.**
+
+⛔ **THIS IS NOT A TIDY-UP: MEMBERSHIP IS THE ONE FACT `README.md` OWNS** ([`../../conventions/board.md`](../conventions/board.md)'s one-fact-one-home table), ⚠️ **so a task with no step is a task no wave can be told to dispatch, and the dispatch bound ranges over the OPEN MILESTONE'S UNSATURATED STEPS — a step that does not list a task cannot saturate on it.**
+
+### ⛔ WHY IT WAS NOT DONE IN THE ROUND THAT CREATED IT
+
+⭐ **`docs/tasks/README.md` was NAMED OUT LOUD as outside the register's surface for PO round 61**, ⛔ **and [`W197`](#w197-sf-28-grew-by-accretion-until-it-stopped-being-a-row-one-definition-five-acceptance-additions-at-least-eight-deliverables) itself says the ordering is not the register's to perform.** ⚠️ **Minting this rather than performing it silently is the whole point: the alternative was closing `W197` on half of its own settling condition.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **EACH OF THE FIVE GETS A STEP IN `README.md`**, ⭐ **and `SF-41` is the one that is NOT in M4 — it is M7, after `OPS-06`, and putting it in a step beside the others would undo the re-homing that produced it.**
+2. ⛔ **`README.md`'s CRITICAL PATH LINE IS RE-DERIVED, not patched** — ⚠️ **it reads `… SF-19a → SF-28 → SF-22 …` today, and `SF-28` is no longer the whole of what stands between them.**
+3. ⭐ **THE GENERATED [`../../capability-index.md`](../capability-index.md) IS REGENERATED IN THE SAME COMMIT, NEVER HAND-EDITED** (R19) — ⛔ **and if the two disagree, the epic is the source and the index is the derivation.**
+4. ⛔ **`E11`'s `SK-03` NAMES `SF-28` AS THE SURFACE IT WRAPS** — ⚠️ **after the split that surface is the verbs `SF-40` registers, and `E11` is not this row's surface either, so it is named here and carried rather than fixed in passing.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RE-SPLIT.** ⭐ **The partition is settled in the epic and this row places it in an order; a taker who disagrees with the partition files a finding rather than re-cutting it.**
+
+[the split that created it](#po-round-61-wave-14-closed-in-part-sf-28-split-into-six-and-the-two-graphify-rows-decided)
+
+### ⭐ CLOSED — PO ROUND 64: MEMBERSHIP GIVEN, THE PATH RE-DERIVED, AND CLAUSE 4 CARRIED
+
+⛔ **Clause 1:** `SF-37`–`SF-40` and `SF-43` joined step `4.3`; `SF-41` joined `7.6`; ⭐ **`SF-42` got a NEW step `3.6`, because `3.5` closed at `abee048` and a closed step's membership is part of its close record (Ruling 97).** ⛔ **Clause 2:** the critical path is now DERIVED from the index's *waits on* column, and the line it replaced was measured to contain two non-edges. ⭐ **Clause 3:** the index derives from the epics, not from step lists, and the suite pins it byte for byte, so no regeneration moved it. ⚠️ **Clause 4 (`E11`'s `SK-03` names `SF-28`) is CARRIED as `PO-64/3`, not fixed.**
+
+### W207 — `E04`'s own `media` example declares a limit `parse_media` refuses by name, so a corpus copying the epic does not validate
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W207.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`E04-narration.md`'s OWN `media` EXAMPLE DECLARES A FIELD THE MANIFEST READER REFUSES BY NAME, SO A CORPUS THAT COPIES THE EPIC DOES NOT VALIDATE.** ⭐ **Raised by Developer 1 as `SF-32/1` and VERIFIED BY THE REGISTER AT SOURCE, at `abee048`, role `wt/po`, HOST:** `parse_media`'s `known` set is `{"commit", "max_total_bytes", "max_file_bytes"}`, and an unknown key raises `ManifestError` naming it.
+
+⚠️ **The office that found it correctly refused to widen into `corpus/manifest/`, which is why this is a row and not a line in that branch's diff.**
+
+### ⛔ IT IS NOT A TYPO IN AN EXAMPLE, AND READING IT AS ONE IS THE TRAP
+
+⭐ **The example is the only place the intent was ever written down: a corpus should be able to say *stop at this many files*, not only at these many bytes.** ⛔ **Deleting the key from the epic makes the documents agree and DELETES A REQUIREMENT nobody re-derives.** ⚠️ **Adding the key makes the code agree and asserts a limit no round has decided on.** ⭐ **The row exists because those are different answers and one of them has to be chosen out loud.**
+
+⭐ **THE CHEAP HALF IS ALREADY DONE AND THAT IS WHY THIS IS SMALL:** ⛔ **the count is already measured and reported — `MediaFootprint.count` — so if the answer is *keep the limit*, it plugs in behind one `Crossing` beside the two that exist.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE OF THE TWO ANSWERS IS CHOSEN AND THE OTHER IS NAMED AS REFUSED** — ⭐ **a count limit exists and `parse_media` accepts it, or the epic's example loses the key and the epic says why a byte ceiling is sufficient.**
+2. ⛔ **THE THREE DOCUMENTS END UP SAYING ONE THING**: ⭐ **`E04-narration.md`'s example, `corpus/manifest/media.py`'s `known` set, and `MediaPolicy`'s fields.**
+3. ⛔ **VALIDATE BY PLANTING** (Rulings 124, 348): ⚠️ **the epic's example, fed verbatim to `parse_media`, is the test — whichever answer wins, that example must parse.** ⭐ **Today it raises, and no test anywhere reads it, which is the reason a published example could be wrong for a whole milestone.**
+4. ⚠️ **`corpus/manifest/media.py`'s docstring STILL OFFERS THE RENAME OF THE TWO LIMIT NAMES AS AN OPEN QUESTION** (`SF-32/3`) — ⛔ **it is not open: Ruling 104 closed the window and `SF-32` confirmed the names.** ⭐ **A row editing that `known` set is standing in the paragraph and should carry the one-line correction with it rather than leave a stale offer beside a fresh edit.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD LIMIT ADDED BECAUSE TWO LOOKED LONELY.** ⭐ **The test for `max_files` is whether a corpus can cross it while under both byte limits and be right to stop** — ⚠️ **and if nobody can state that case, the answer is the epic's example losing the key, which is a fine outcome and must be recorded as a decision rather than a tidy-up.**
+
+[the mint](#w207-a-media-limit-the-epics-example-declares-and-the-manifest-refuses)
+
+### ⭐ CLOSED — `4fb111d`
+
+⛔ **Answer: KEEP THE LIMIT** — `max_files` is accepted by `parse_media`, and the test reads `E04`'s example from the epic itself (`tests/studyforge/corpus/manifest/test_media.py`). ⭐ **Merge re-derived on the first-parent chain, PO round 64.**

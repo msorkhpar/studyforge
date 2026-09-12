@@ -305,13 +305,24 @@ once SF-16 lands and let the next milestone begin without waiting for it.
 - **3.3** — NS-04, NS-05, NS-06
 - **3.4** — SF-17, SF-32
 - **3.5** — SF-18
+- **3.6** — **SF-42**
+
+⛔ **`3.6` IS A NEW STEP, NOT A SIXTH MEMBER OF `3.5` (PO round 64, `W206`).** ⭐ **`3.5` closed at
+`abee048` with `SF-18` as its whole membership, and a close is a set of measurements at ONE
+ref (Ruling 97): admitting a task into a closed step would make that record describe a step
+that never existed.** ⚠️ **`SF-42` is the act `M3`'s *Done when* is waiting on — see
+[`E09`](E09-delivery.md) § *3*.**
 
 ### M4 — It is served
 > **Done when:** the site has an origin, an API, and records practice passes.
 
 - **4.1** — SF-21, OPS-05
 - **4.2** — SF-19a
-- **4.3** — SF-19b, SF-28
+- **4.3** — SF-19b, SF-28, **SF-37**, **SF-38**, **SF-39**, **SF-40**, **SF-43**
+
+⭐ **`SF-37`–`SF-40` and `SF-43` join `SF-28`'s step because they ARE `SF-28`, split
+([`W197`](rows/W197.md)); the in-step edges are the epic's, as above.** ⛔ **`SF-41` is
+NOT here — it is `M7`, step `7.6`, after `OPS-06`.**
 - **4.4** — SK-03, SK-06
 
 ⚠️ **M4 is a serial bottleneck wearing a milestone's name.** SF-19a is one task
@@ -362,7 +373,7 @@ quietly absorbed.
 - **7.3** — EX-02, EX-03
 - **7.4** — EX-04
 - **7.5** — EX-05, SK-04, OPS-04
-- **7.6** — OPS-06, OPS-07
+- **7.6** — OPS-06, OPS-07, **SF-41**
 - **7.7** — QA-01, QA-02
 
 ⛔ **EX-00 still gates all of E08**, and it is still a one-agent-day spike whose
@@ -384,9 +395,17 @@ practices are a milestone of *this consumer* rather than of the framework.
 ⭐ **The deliverable is the findings log, not the site** (spec §12). ⛔ Whoever
 integrates does not modify `studyforge` — findings, not patches.
 
-**Critical path.** FND-01 → SF-01 → SF-03 → SF-31 → SK-02 → SK-07 → SF-10 →
-SF-12 → SF-04 → SF-13 → SF-16 → SF-17 → SF-19a → SF-28 → SF-22 → EX-04 →
-OPS-04 → QA-01 → QA-04.
+**Critical path.** ⛔ **DERIVED, NOT TYPED (PO round 64, `W206`): the longest chain of
+*waits on* edges in the generated [`../capability-index.md`](../capability-index.md).**
+⚠️ **The line that stood here was a SPINE and not a path — `SF-28` does not wait on
+`SF-19a`, and `SF-22` does not wait on `SF-28`.** ⭐ **The longest chain to `QA-04` is TIED, so one
+representative is shown; the ties differ only in their first two links and at `EX-02`/`EX-03`:**
+
+SF-01 → SF-05 → SF-25 → SK-02 → SK-07 → JS-01 → JS-02 → JS-04 → EX-01 → EX-02 →
+EX-04 → OPS-04 → QA-01 → QA-04.
+
+⭐ **`M3`'s own gate chain, the one live now:** SF-01 → SF-03 → SF-04 → SF-13 → SF-14 →
+SF-28 → SF-40 → **SF-42**. ⚠️ **An `M3` task waits on two `M4` tasks, both merged.**
 
 ---
 
