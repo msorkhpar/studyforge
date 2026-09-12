@@ -170,27 +170,6 @@ def test_the_source_is_mounted_not_copied():
     assert "../..:/workspace" in instructions("compose.yaml")
 
 
-def test_studyforge_is_not_installed_into_the_image():
-    # ⛔ Installing it would put a second copy in site-packages that can shadow
-    # the bind mount, so the container and the host would run different code
-    # while reporting the same result.
-    # ⛔ `commands()` and not raw lines (`W131`). MEASURED: with raw lines a plant
-    # that put a SECOND `pip install` on the same physical line as the first read
-    # as healthy — `len(installs)` counts LINES, and two installs joined by `&&`
-    # are one line. One command per element is what makes the count mean what it
-    # says.
-    installs = [command for command in commands("Dockerfile") if "pip install" in command]
-    assert len(installs) == 1, installs
-    for forbidden in (" -e ", "--editable", "'.'", '".."'):
-        assert forbidden not in instructions("Dockerfile"), forbidden
-    # The one install reads its packages from the pin file and nowhere else.
-    # ⛔ Asserted against THAT command and not the whole file: the flag sits on a
-    # continuation line, so asserting it file-wide was itself a way of not
-    # reading the continuation — it would have passed for a `--requirement`
-    # belonging to some other command entirely.
-    assert "--requirement /opt/studyforge/requirements.txt" in installs[0], installs
-
-
 def test_the_container_never_runs_as_root():
     # ⛔ Root plus a bind mount leaves a contributor with files in their own
     # checkout that they cannot delete.

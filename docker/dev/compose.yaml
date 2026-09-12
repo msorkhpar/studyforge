@@ -43,6 +43,11 @@ services:
       # and no absolute path is written down (R7).
       context: .
       dockerfile: Dockerfile
+      # ⭐ `W211`: the checkout as a NAMED context, for the Dockerfile's install
+      # step to bind-mount `pyproject.toml` and `README.md` from. BuildKit
+      # transfers only the paths a step names, so nothing else crosses.
+      additional_contexts:
+        project: ../..
     image: studyforge/dev:local
 
     # ⛔ The acceptance condition, enforced rather than asserted: **no network
