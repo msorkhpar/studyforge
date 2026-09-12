@@ -466,11 +466,20 @@ Ruling 330, which is R21's own *one producer* clause applied to its own register
   it back and R9 binds it.** ⛔ **Owed before step 3.4 opens, not before 3.2.**
 
 ⚠️ **AND THE ORDERING THE SPLIT EXPOSED, which is the part a location alone would have
-missed:** ⛔ **`narrate-service` ships no `consuming.json` today, and E13 assigns it to
-`NS-03` (profiles) and `NS-04` (voices), *"both must contribute their half"*.** ⭐ **`NS-03`
-is in `NS-02`'s OWN STEP with no `Depends on` edge between them, and `NS-04` is the step
-after** — ⛔ **so `NS-02` is buildable before the file that versions its output exists.**
-⚠️ **The edge is owed in `E13` before step 3.2 dispatches `NS-02`** (Ruling 330(c)).
+missed:** ⛔ **`narrate-service`'s `consuming.json` is written by TWO tasks — E13 assigns it
+to `NS-03` (profiles) and `NS-04` (voices), *"both must contribute their half"* — so the file
+names its own holes in `not_yet_declared` rather than being absent.** ⭐ **`NS-03` is in
+`NS-02`'s own step and `NS-04` is the step after** — ⛔ **so `NS-02` could have been built
+before the file that versions its output existed.** ⚠️ **The edge was owed in `E13` before
+step 3.2 dispatched `NS-02`** (Ruling 330(c)).
+
+⛔ **CORRECTED, CTO round 69 — this paragraph asserted the POPULATION of another office's
+file and both halves went false as the tasks landed** (Ruling 335, and `NS-03/2` + `NS-02/3`
+reporting it two waves running). ⭐ **What it said, kept so the correction is legible:**
+*"`narrate-service` ships no `consuming.json` today"* and *"`NS-03` is in `NS-02`'s OWN STEP
+with no `Depends on` edge between them"*. ⚠️ **The first was false from `NS-03`'s landing and
+the second from round 53's edge; the repaired form POINTS at `not_yet_declared`, which
+resolves at read time, instead of claiming what the component ships.**
 
 ⭐ **`workspace_api` is the eighth versioned contract and the first that lives
 outside `src/`** — which is why the register and the framework's own constant are
@@ -1283,7 +1292,14 @@ Four decisions, three of them corrections to what exists today:
   (§8.4), so the API takes a list of `{id, text}` and returns one artifact per
   id plus a manifest. A batch rather than a request per segment because a corpus
   is thousands of segments, and per-request overhead is the difference between
-  minutes and hours.
+  minutes and hours. ⛔ **THE BATCH API ARRIVES IN TWO STEPS, and this paragraph
+  describes the FINISHED shape rather than the first one.** ⭐ The service is
+  stood up behind a single-utterance route first; the batch route and its
+  content-addressed cache land after it, and `E13` carries the split and which
+  task owns which half. ⚠️ **Written here because `E13` sends a taker to this
+  section FIRST, so a reader of this paragraph alone would build the whole batch
+  API in the task that only stands the service up** (`NS-01/1`, settled in code
+  by `NS-02`; this sentence is the remainder Ruling 335 leaves to this register).
 - **The service never writes into a corpus.** It returns artifacts for the
   caller to fetch and place through the placement policy. A synthesis service
   that knew where a study site keeps its audio would be a second authority on

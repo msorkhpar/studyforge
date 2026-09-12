@@ -5879,3 +5879,159 @@ section) is what it looks like when that payment goes wrong.
 # ⛔ A claim that a bounded file cannot absorb a correction is measured ACROSS THE SPAN, bound
 # and content together — a bound that scales with a population moves while the content does.
 ```
+
+## ⛔ RULED ROUND 69 — each clause one command and one pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING** (`W141`). ⭐ **The clauses below are the population.**
+
+### ⛔ Ruling 339 — a `### SURFACE` block that names no POPULATION is not a claim, and *shares with nobody* is the form that proves it
+
+⛔ **Stated by the register at PO round 54 and deliberately left UNNUMBERED, on the ground that
+every ruling in the index is sourced to a CTO record.** ⭐ **The routing is accepted and the
+bound is NARROWED (Ruling 329): the defect is not that *shares with nobody* is unsafe, it is
+that the sentence has NO TRUTH VALUE until the population it ranges over is named.**
+
+⭐ **Two witnesses, and they fail DIFFERENTLY, which is what makes it a rule rather than an
+incident.** `rows/W167.md`'s claim was **FALSE** on the day it was written — the row it shares
+`tools/quality/handoffs/` with was already in the queue. `rows/W148.md`'s is **UNDECIDABLE**,
+because *queued* denotes the `Next rows` table and the live register, those two disagree, and
+the sentence names neither. ⛔ **One instrument would have caught the first and NOT the second**,
+which is why the remedy is *name your population* and never *check harder*.
+
+⛔ **VENUE, by Ruling 337's own test.** The clause fires when an OFFICE writes a row, so its home
+is the board, and the register has already landed it there — its surface paragraph now states
+the population it ranges over instead of implying a complete one. ⭐ **What belongs HERE is the
+half that fires when a REVIEWER accepts such a claim, and that half is below.**
+
+```bash
+# Pass: a reviewer accepting a "shares a surface with nobody" claim — in a row's `### SURFACE`
+# block, in the board's surface paragraph, or in a brief — REFUSES it unless the sentence names
+# the population it ranges over: `Next rows`, the live register, or rows DECLARING a surface.
+# ⛔ Where the populations disagree, the claim is UNDECIDABLE and is recorded as undecidable,
+# never as false and never as true.
+```
+
+### ⛔ Ruling 340 — a wave's surfaces are disjoint only if the POPULATIONS of the instruments it changes are disjoint too, and where they are not the ORDER is the remedy
+
+⛔ **`PO-54/2` is the witness and it is not a near miss.** Wave 8's surfaces were disjoint at FILE
+level, re-derived by two offices and true — ⚠️ **while one dispatch widened a reader whose
+population contains the OTHER dispatch's owed deliverable.** ⭐ **Check 4's sub-step compares
+file growth against R11, so it is structurally incapable of seeing this class**, and two
+branches that touch no common file look disjoint to it.
+
+⭐ **THE RULE HAS TWO HALVES AND THE SECOND IS THE USEFUL ONE.** ⛔ **First: a wave that changes
+an INSTRUMENT declares the POPULATION that instrument reads, not only the files it edits.**
+⛔ **Second: where a population coupling exists, the MERGE ORDER is the remedy and a patch is
+not — the instrument merges FIRST**, so that the office owning each affected document measures
+it against the reader that will judge it. ⚠️ **The other order puts a red inside a document the
+finding branch may not edit** (Ruling 106, and the standing rule that a defect outside a task is
+a finding rather than a diff) — ⛔ **a defect with no legal repair, which is strictly worse than
+one that is merely late.**
+
+```bash
+# Pass: a wave dispatching a change to a shared INSTRUMENT names the population that instrument
+# reads, and the reviewer COUNTS that population at the cumulative trial-merge tip rather than
+# reasoning about it. Where the count is non-zero the instrument merges first; where it is zero
+# the order is still ruled, because the exposure is forward-looking and the count is a reading
+# with an as-of, not a property.
+```
+
+### ⛔ Ruling 341 — §R9 governs a file that crosses a BOUNDARY, and a version key is what makes the question worth asking rather than what answers it
+
+⛔ **Asked twice and derived from scratch both times** — Ruling 330(b) held that a wire shape
+takes no row, and `NS-02/5` asked whether an on-disk record carrying a version key takes one.
+⭐ **A trigger is written here so there is no third derivation.**
+
+⭐ **A file takes an §R9 row when a party OTHER than the one that writes it reads it back** —
+another component, another office, a corpus repository, or the framework. ⛔ **It does not take
+one merely for being a FILE, for being written and read back, or for carrying a version key.**
+⚠️ **A version key is evidence that its author expected the shape to move, which is precisely
+why the question must be ASKED — and it is not the answer**, because a component versions its
+own internals for its own future self as a matter of routine.
+
+⭐ **The taker who ROUTES this question rather than answering it silently is behaving
+correctly**, and the register answers with a CONDITION rather than a verdict: a verdict about a
+file's audience goes stale the first time the audience changes.
+
+```bash
+# Pass: a task that mints a persisted format states WHO READS IT BACK. Where every reader is
+# inside the writing component, no §R9 row is minted and the task says so; the row is owed the
+# moment a party outside that component opens the file, or a second writer appears in the same
+# store. ⛔ A version key alone never triggers a row and never excuses omitting the question.
+```
+
+### ⛔ Ruling 342 — a control table reports that something FIRED, never that the RIGHT thing fired, and only an instrument sees the difference
+
+⛔ **`CTO-69/11` named the class — an office reporting a measurement whose instrument is not in
+the tree — and `NS-02` closed it in the same wave by committing the harness.** ⭐ **The witness
+is the sharpest kind, because the instrument caught its own author:** a plant that inserted a
+field between two others SEPARATED the pair whose adjacency made a collision test collide, so
+that test had gone **born vacuous** (`W24`'s subject). The plant still turned something red;
+⛔ **a hand-run table would have recorded it green.**
+
+⛔ **THE DEFECT IS NOT THAT A PROSE TABLE IS UNVERIFIABLE, AND THAT WIDTH IS DECLINED**
+(Ruling 329). ⭐ **A prose table is verifiable by RE-PLANTING**, and a reviewer who re-plants
+and reads the COMPOSITION of the failures — not their count — catches exactly this. ⚠️ **What
+does not scale is doing that for thirteen controls; what a prose table cannot do at ANY scale
+is distinguish *fired* from *fired on the right test*.**
+
+⭐ **IT BINDS AS A PROPERTY, NEVER AS A MODULE.** ⛔ **No repository inherits another's harness**
+— a component's module is not the framework's, and mandating one across the seam is the
+extraction running backwards (R20, R1).
+
+```bash
+# Pass: a control table that GATES a verdict names, per control, the ANCHOR it asserted and
+# that the anchor resolved EXACTLY ONCE, the test it EXPECTED to fail (written before the run),
+# and the tests that ACTUALLY failed. ⛔ A control whose expected and actual sets DIFFER is a
+# finding and not a pass — including when the COUNT matches, which is the case a count cannot
+# see. Where a committed harness exists, the table is GENERATED by it and never typed.
+```
+
+### ⛔ Ruling 343 — an exclusive-runner clause is worth no more than its detector, and the detector is specified here
+
+⛔ **The clause: a TREE-MUTATING instrument has exactly one runner, and a reviewer who DELEGATES
+one may not also run it.** ⚠️ **A clause that cannot be checked is advice**, and in the wave that
+minted it TWO offices broke the same detector independently — which is the bar for specifying
+rather than restating it.
+
+⛔ **What a stranded plant costs:** a control harness edits a file, runs the suite and restores.
+Two runners in one tree produce a green suite from an unplanted control, a red from another
+runner's plant, and — measured — a plant left APPLIED in the tree afterwards. ⭐ **None of those
+is distinguishable from a real reading by looking at it.**
+
+```bash
+# Pass, and each clause is a defect that actually occurred:
+#  1. THE IDLE CHECK IS ITS OWN INVOCATION and its result is READ before the next is issued.
+#     A check chained ahead of what it gates is a LOG LINE — the shell has already queued the
+#     measurement it was supposed to prevent.
+#  2. IT RUNS FROM OUTSIDE THE SUBJECT — the main checkout, never the tree being counted.
+#     A counter whose own shell sits inside the subject matches ITSELF, so a genuine second
+#     runner is indistinguishable from the count's own shell. ⛔ The false alarm is not the
+#     hazard; the collision it hides is.
+#  3. ⭐ PREFER AN EXTRACT TO A DETECTOR. A `git archive` extract outside every checkout
+#     cannot collide, needs no detector, and Ruling 153 already requires one for controls.
+#  4. WHERE THE SUBJECT MUST BE THE LIVE TREE, the reading carries the tip AND the porcelain
+#     before and after. "The subject held still" rescues a reading; "it was probably fine"
+#     does not.
+```
+
+### ⛔ Ruling 344 — a reviewer requires a PROPERTY; the MEANS belongs to the office
+
+⛔ **Twice in one round a reviewer offered a two-branch remedy and the CHEAPER branch was the
+worse one; both times the office refuted it in writing and was right.** ⭐ One pair was *hash the
+value into the address, or record it and treat a mismatch as a miss* — where the second reopens
+the very defect the first closes. ⭐ The other was *take the lock in the readers, or correct the
+sentence* — where the second leaves a real defect standing behind an accurate sentence.
+
+⚠️ **The shape is not carelessness about the alternatives.** It is that naming means AT ALL
+invites the cheapest one, ⛔ **and the reviewer is the party least placed to price them** —
+they do not hold the code, they do not bear the cost, and their cheaper branch arrives with a
+reviewer's authority attached.
+
+```bash
+# Pass: a required change states the PROPERTY that must hold and the EVIDENCE that would show
+# it. A means may be named as an ILLUSTRATION, said to be one — never as one of two
+# alternatives, because offering two is choosing the cheaper on the office's behalf.
+# ⭐ The reviewer's own check, takeable on the draft before it is sent: could a competent
+# office satisfy this in a way I did not think of? If not, it is a means and not a property.
+```
