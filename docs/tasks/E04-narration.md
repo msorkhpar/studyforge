@@ -318,6 +318,8 @@ manifest's `media` policy and a **measurement** of what was actually generated:
            "max_files": 20000 }
 ```
 
+⛔ **`max_files` IS NOT ACCEPTED BY THE SHIPPED READER AND THIS EXAMPLE DOES NOT VALIDATE TODAY** — ⭐ **[`W207`](rows/W207.md) carries it, and the choice between adding the limit and dropping the key is that row's to make out loud.** ⚠️ **Named here rather than quietly corrected, because deleting the key would delete the only written record that a count limit was ever wanted.**
+
 - `commit: always` — commit it, whatever the size. The corpus owner's call.
 - `commit: never` — ignore it; the corpus supplies its own delivery.
 - `commit: auto` *(default)* — commit while under the limits, and ⛔ **refuse and

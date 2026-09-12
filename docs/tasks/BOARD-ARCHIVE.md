@@ -19580,3 +19580,209 @@ grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-desig
 
 ⛔ **A RENUMBERING.** ⭐ **Splitting `SF-28` into `SF-28a`…`SF-28h` with the same prose divided by headings changes nothing: the test is whether each piece has an Acceptance that an instrument could fail.** ⛔ **AND IT MUST NOT SILENTLY DROP AN ITEM** — ⚠️ **anything the split does not carry forward is DECLINED OUT LOUD, with its ruling named.**
 
+
+## ⭐ PO ROUND 62 — WAVE 15 CLOSED, `M3` STEPS 3.4 AND 3.5 CLOSED, `M3` ITSELF REFUSED ON ITS OWN DONE WHEN, FOUR IDS MINTED BEFORE DISPATCH, AND THE DEV3 CITATION BREAK REPAIRED
+
+**Branch:** `chore/po-round62`, cut from `release/m0-foundations` @ `abee048`.
+**Office:** `po <po@example.invalid>`. ⛔ **No reviewer and no verdict: self-certified on this round's own floor, suite and `corroborate` readings.**
+
+### ⭐ The five merge refs, DERIVED and not received
+
+⛔ **`git log --first-parent --oneline a606033..release/m0-foundations`, role `wt/po`, HOST, read back out of a capture file:**
+
+```text
+abee048  Repoint E09's context link at the renamed handoff …   <- the coordinator's repair
+c7791c2  Merge feat/generate-containers (SF-28, remaining half)
+87e0b25  Merge feat/SF-32
+f1684e6  Merge fix/W196-ruling74-formatter (W196, W185)
+79b209d  Merge chore/po-round61
+```
+
+⭐ **Every parent pair re-derived with `git rev-list --parents -n1`, so the chain is a reading and not a transcription of the brief.**
+
+### ⛔ WAVE 15 — THREE CLOSES, AND ONE ROW STAYS NAMED IN FLIGHT ON PURPOSE
+
+| Row | Merge, DERIVED | Outcome |
+|---|---|---|
+| [`W196`](rows/W196.md) | `f1684e6` | ✅ closed |
+| [`W185`](rows/W185.md) | `f1684e6` | ✅ closed — its ONE remaining arm, `board-detail`, landed on the same branch |
+| `SF-32` | `87e0b25` | ✅ closed — epic task, no register cell to flip (`W161`'s subject) |
+| `SF-28` | `c7791c2` | ✅ merged — ⛔ **BUT IT STAYS NAMED IN THE IN FLIGHT TABLE**, because `wt/dev3` still holds `feat/generate-containers` and the board's own clause is *a MERGED row stays NAMED here until its worktree is torn down* |
+
+⛔ **Predicate C run for each, never inherited** (Ruling 199), at `abee048`, role `wt/po`, HOST:
+
+```text
+                                  head       ahead  checked out
+chore/po-round61                  16a86f96   0      NOWHERE
+fix/W196-ruling74-formatter       8a95dccf   0      NOWHERE
+feat/SF-32                        c61ee7f1   0      NOWHERE
+feat/generate-containers          219db234   0      wt/dev3        <- absorbed and STILL CHECKED OUT
+```
+
+### `M3` steps 3.4 and 3.5 close at `abee048`, and `M3` itself does NOT
+
+⛔ **Membership first, `grep -n`, because a step closes on the rows `README.md` says are in it:**
+
+```text
+docs/tasks/README.md:306    - **3.4** — SF-17, SF-32
+docs/tasks/README.md:307    - **3.5** — SF-18
+```
+
+⭐ **The three merges on the first-parent line of `abee048`, and the ordinals are `grep -n` line numbers of that log:**
+
+```text
+ 3:87e0b25  Merge feat/SF-32 …
+17:f7c62ad  Merge feat/SF-18-player-highlight-sync …
+19:430363b  Merge feat/SF-17-narration-synthesis …
+```
+
+⛔ **Predicate C, run for each:**
+
+```text
+                                     merge^2    head       ahead  checked out
+feat/SF-17-narration-synthesis       09e93a42   09e93a42   0      NOWHERE
+feat/SF-18-player-highlight-sync     b6387548   b6387548   0      NOWHERE
+feat/SF-32                           c61ee7f1   c61ee7f1   0      NOWHERE
+```
+
+⭐ **ALL THREE TERMINAL, so both steps close at `abee048`.** ⛔ **`SF-17`, `SF-18` and `SF-32` are EPIC TASKS with no register cell to flip: the close IS the milestone cell plus this record.**
+
+#### ⛔ `M3` DOES NOT CLOSE, AND THE GROUND IS `M3`'S OWN SENTENCE
+
+⭐ **All five of `M3`'s steps are now closed, so a close run would be legal to attempt.** ⛔ **It is REFUSED, and the refusal is a reading rather than a caution.** `README.md`'s `M3` cell says:
+
+> **Done when:** narration is generated and the highlight tracks playback.
+
+⛔ **The first half is FALSE at `abee048`, and the office that delivered `SF-18` said so unprompted in its own handoff** — ⚠️ **quoted rather than paraphrased, from [`handoffs/SF-18.md`](handoffs/SF-18.md):**
+
+> **no clip file exists on disk anywhere in the fixtures**, because nothing in this repository runs synthesis and committing binary audio to make a check pass would be a fixture built to satisfy the check.
+
+⭐ **What IS held is page↔MINTER in both directions with the cardinality; the missing leg is DISK.** ⛔ **So *narration is generated* has never been true of this repository, and closing `M3` would assert it.** ⚠️ **This is `PO-61/3`'s form applied one level up: a close is refused on the stated condition's own words, not on a feeling that it is early.**
+
+⭐ **THE CLOSE IS NOT BLOCKED FOREVER AND IT IS NOT A NEW TASK EITHER:** ⛔ **`SF-18/4`'s build wiring is what first narrates a fixture corpus, and after the `W197` split that wiring is `SF-38`'s — which is itself BLOCKED on [`W202`](rows/W202.md) items 3 and 4.** ⚠️ **So the honest statement of `M3`'s position is: **every step closed, the milestone gated on one product fact that no step was ever asked to produce.** ⭐ **That gap between *all steps closed* and *the milestone's own sentence* is recorded here rather than resolved by lowering the sentence.**
+
+### ⛔ FOUR IDS MINTED, AND THE POINT IS THAT THEY EXIST BEFORE THE DISPATCH
+
+⚠️ **Five rows have now been dispatched across two waves with no id, producing two collisions and two refusals from this office.** ⭐ **The class is fixed by minting first, so this round mints before anything else it does.** ⛔ **All four subjects were VERIFIED AT SOURCE by the register at `abee048`, role `wt/po`, HOST — not inherited from the handoffs that raised them.**
+
+#### W207 — a media limit the epics example declares and the manifest refuses
+
+⛔ **`E04-narration.md`'s `media` example declares a fourth key; `corpus/manifest/media.py` accepts three and refuses unknown ones by name.** ⭐ **Verified at source:** `parse_media`'s `known` set is `{"commit", "max_total_bytes", "max_file_bytes"}` and an unknown key raises `ManifestError`. ⚠️ **So a corpus that copies the epic's own example does not validate.** ⭐ **The count is already measured — `MediaFootprint.count` — so the limit plugs in behind one `Crossing`.** ⛔ **Raised as `SF-32/1` by an office that correctly refused to widen into `corpus/manifest/`.**
+
+#### W208 — an address error escapes the container reader and crashes studyforge plan
+
+⛔ **A LIVE CRASH IN THE ONE COMMAND WHOSE WHOLE CONTRACT IS THAT NOTHING RAISES.** ⭐ **Verified at source at `abee048`:** `corpus/container/document.py` calls `Address(...).require_depth(manifest.depth)`, which raises `AddressError`; `cli/plan/derive.py:144` catches `(ContainerError, PersonalDataLeak)`; and `issubclass(AddressError, ContainerError)` is **False**. ⚠️ **So a container map declared at the wrong depth crashes `studyforge plan` instead of becoming a `Refusal`.** ⛔ **Raised as `SF-28/1`.**
+
+⚠️ **AND THE BRIEF THAT DISPATCHED IT IS WRONG ABOUT WHY, WHICH MATTERS BECAUSE IT CHANGES THE FIX.** ⭐ **The coordinator's dispatch says the escape happens *though its contract names only `ContainerError`*.** ⛔ **The contract does NOT name only `ContainerError`: `corpus/container/errors.py`'s docstring carries the escape as a DELIBERATE, ARGUED exception** — *"An address whose arity disagrees with the corpus raises SF-01's `AddressError`, because that call is the arity comparison and SF-01 owns it outright"* — ⚠️ **so the defect is not an undocumented leak in the container package; it is that the CLI's catch list was written against a narrower reading of that same docstring than the docstring supports.** ⭐ **The document wins over the brief (standing brief §10), and the row is scoped accordingly: it is a `cli/plan/` defect with a `corpus/container/` decision behind it, and *one line* is a forecast the row does not adopt.**
+
+#### W209 — the emission suite calls every public writer, so a test run writes into the repository
+
+⛔ **`tests/emission` calls every public callable in `src/` with filler arguments, so any public function that writes files writes them into the CHECKOUT, relative to the process's working directory.** ⭐ **Measured by the office that found it: an untracked `alpha/alpha` appeared after a full suite run, from `place(Path("alpha"), PurePosixPath("alpha"), b"alpha", …)`.** ⚠️ **Nothing failed and nothing reported it.** ⛔ **First seen as `SF-17/11` two waves ago and fixed FOR ONE PACKAGE ONLY; re-raised as `SF-28/2` with the general form measured.** ⭐ **That is the whole reason it is a row and not a second point fix.**
+
+#### W210 — the media policy is inverted in a second place
+
+⛔ **`cli/plan/report.py`'s `MediaProjection.ignored` returns `not policy.commits`, which is exactly what `media.ignore_lines` exists to be the ONE spelling of.** ⭐ **Both are correct today; the defect is that they are two, and the second one is in the package that will be asked to change when the policy grows a third mode.** ⛔ **Raised as `SF-32/4` against `SF-31`'s surface.**
+
+### ⭐ W193 IS RAISED, AND BY A MEASUREMENT RATHER THAN BY AN OPINION
+
+⛔ **`W193` owes a RULE — which clips may a build delete — and it has sat behind two waves of code rows.** ⭐ **`SF-32/5` gives it a CONSEQUENCE that lands on a shipped ceiling: the media package weighs what is on DISK, so clips no page addresses any more count against `max_total_bytes` and can refuse a build that a pruning pass would let through.** ⚠️ **A row that owed a rule now owes it to a gate that can say no**, so it moves ahead of the `W198`–`W201` band and the row file carries the reading.
+
+### ⛔ THE `DEV3` → `W195` CITATION BREAK — A CELL IS NOT A POINTER, WHICH IS WHY A GATE COULD NOT SEE IT
+
+⭐ **The floor rejects `DEV3` as a finding scope, so [`handoffs/W195.md`](handoffs/W195.md)'s rename made every `DEV3/<n>` into `W195/<n>` — same number, one-to-one, with the mapping at the top of that file.** ⛔ **The register's own cells kept the dead spelling:** `BOARD.md`'s Detail cells for `W198`–`W201` and the opening line of each of those four row files. ⚠️ **These are CELLS and PROSE, not `](…)` pointers, so the pointer floor is structurally blind to them** — ⭐ **which is [`W150`](rows/W150.md)'s and [`W204`](rows/W204.md)'s shape a third time, and it is why this needed a ROUND rather than a gate.** ⛔ **Repaired by `sed` over those eight sites, `DEV3/<n>` → `W195/<n>`, the number after the slash unchanged in every one.** ⭐ **The pass condition is a SILENCE: after the edit, `git grep -rn 'DEV3' -- docs/tasks/` names only records and the old FILENAME, and never a live cell.**
+
+⚠️ **ONE SITE IS NOT REPAIRED AND IS NAMED RATHER THAN LEFT SILENT:** ⛔ **`docs/conventions/module-structure.md` cites `DEV3/8` at three places, and `docs/conventions/` is not this round's surface.** ⭐ **It maps to `W195/8` by the same one-to-one; carried as a finding.**
+### W185 — The close procedure and `board-size` are jointly unsatisfiable; owes a DESIGN DECISION
+
+⭐ **CLOSED PO round 62. Discharged at `f1684e6` on `fix/W196-ruling74-formatter`, merge ref DERIVED from the first-parent line and read back out of a capture file.** ⛔ **The ASSERTION arm landed as `board-detail` in `tools/quality/board/bijection.py`: a CLOSED register row's Detail cell must EQUAL `born_detail(<ID>)`.** ⭐ **Ten shipped tests had been passing on fixtures encoding the very form this row abolished, and they passed for a full round after the clause landed — which is the evidence the arm was owed** (`W196/6`).
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W185.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE CLOSE PROCEDURE AND `board-size` ARE JOINTLY UNSATISFIABLE AT THE MARGIN, and the margin is where the board now sits.** ⭐ **It owes a DESIGN DECISION before it owes code** (Ruling 231(c)'s shape).
+
+### ⛔ THE MECHANISM, WHICH IS STRUCTURAL AND NOT UNTIDINESS
+
+⛔ **Ruling 201's close RE-POINTS a row's Detail cell from `rows/<ID>.md` to the archive anchor, and an archive anchor is the row's whole NAMING slugified.** ⭐ **So every close makes the board PERMANENTLY LONGER, by an amount proportional to how well the row was named** — ⚠️ **and a long, descriptive naming, which the register is otherwise right to want, is the expensive case.**
+
+⛔ **MEASURED at `98aa0ad`, role `wt/po`, HOST — `PO-58/10`, and the figures stay because the figure IS this row's subject:**
+
+```text
+headroom at base                                              67 bytes
+four closes, Detail cells only                              +296 bytes
+one mint, against +224 of new allowance                     +252 bytes
+                                     IRREDUCIBLE +548 against +224 allowed
+⛔ the round OVERRAN by 257 bytes before one word of STATE was written
+```
+
+⚠️ **AND IT BIT AGAIN IN THE SAME WAVE, which is why it is a row and not a note:** ⛔ **the round shipped at FIVE bytes of headroom, and the very next act — closing `W182` and minting three rows — did not fit either.**
+
+### ⛔ WHY THE OBVIOUS ANSWERS ARE ALREADY REFUSED
+
+⛔ **RAISING A TERM IS REFUSED BY RULING 271, by measurement, for all three terms.** ⛔ **CHASING IT WITH PROSE COMPRESSION IS WHAT THIS ROUND DID, and it buys one round** — ⚠️ **Ruling 149's subject exactly.** ⭐ **So the answer is a CHANGE OF FORM, and naming which is the decision this row owes.**
+
+### ⛔ WHAT SETTLES IT — a decision, stated out loud, before any edit
+
+1. ⭐ **A SHORTER ANCHOR FORM FOR A CLOSED ROW.** ⛔ **`BOARD-ARCHIVE.md#w148` is 5 bytes where the naming-slug is over 130** — ⚠️ **and it costs Ruling 244(e)'s property, that the reader lands on the argument rather than on a document.** ⭐ **A stable per-row anchor emitted BESIDE the naming heading keeps both; whether the archive may carry an explicit anchor is the question.**
+2. ⭐ **OR: THE DETAIL CELL OF A CLOSED ROW STOPS MOVING.** ⛔ **It keeps pointing at `rows/<ID>.md`, which Ruling 270 already guarantees is a REDIRECT STUB carrying exactly one anchored pointer onward.** ⚠️ **One extra hop for the reader, zero growth for the board, and no frozen byte touched** — ⭐ **and it makes Ruling 201's fourth edit cheaper everywhere, not just here.**
+3. ⛔ **OR: THE REGISTER IS DECOMPOSED**, which `../conventions/board.md` already contemplates and validates over CONTENT. ⚠️ **The largest change and the one that does not have to be taken twice.**
+4. ⛔ **THE DECISION IS RECORDED WITH ITS REFUSALS**, so the next round does not re-derive them, and ⭐ **whichever is taken is ASSERTED IN BOTH DIRECTIONS** (R12): a close must not grow the board, and the reader must still land on the argument.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RAISED TERM.** ⭐ **Ruling 271 refused all three by measurement and this row does not reopen that.** ⛔ **AND NOT ANOTHER COMPRESSION PASS** — ⚠️ **that is the act this row exists because of, and it is a round's worth of tokens for a round's worth of headroom.**
+
+[`PO-58/10`, measured](#po-round-58-the-register) · [the round that rowed it](#po-round-58-part-two-the-second-merge)
+
+---
+
+### ⭐ AMENDMENT — PO round 59: THE DECISION IS MADE, AND ONLY THE ASSERTION ARM REMAINS
+
+⛔ **CANDIDATE 2 IS TAKEN and the clause is [`../../conventions/board.md`](../conventions/board.md)'s**, beside the close procedure it amends — ⭐ **with its refusals, so nothing above needs re-deriving.** ⚠️ **The three candidate paragraphs above are LEFT STANDING AND DATED rather than edited** (Ruling 244's form): ⛔ **a row's reasoning is what makes its outcome checkable.**
+
+⭐ **PERFORMED IN THE SAME ROUND, and forced rather than tidy: the board shipped with THREE bytes of headroom, so no wave could be opened without it.** ⛔ **Every closed row now has a Ruling 270 stub and every closed Detail cell points at it.**
+
+⛔ **WHAT THIS ROW STILL OWES, and it is the ONLY thing:** ⭐ **the arm asserting that a CLOSED register row's Detail cell is `[`rows/<ID>.md`](rows/<ID>.md)` and never an archive link.** ⚠️ **The other direction — the reader still lands on the argument — is already held by `bijection.py`'s Ruling 270 exception and by the pointer floor, so do NOT re-derive it; assert the direction that has no instrument.** ⛔ **VALIDATE IT BY PLANTING** (Rulings 124, 348, `W34`'s method): ⭐ **plant an archive link in a closed row's Detail cell, and the pass condition is the MOVED exit code, not the arm's existence.**
+
+
+---
+
+### ⭐ AMENDMENT — PO ROUND 61: THE WORDING IS CONFIRMED AGAINST THE OFFICE THAT CAN DELIVER IT
+
+⛔ **CHECKED, NOT ASSUMED: everything this row still owes is inside `tools/`, which Developer 2 holds in wave 15.** ⭐ **The DECISION is landed and is `../../conventions/board.md`'s; the clause table there already names the arm as owed by this row's taker; so the remaining act is ONE assertion plus its plant, and it needs no mandate over the board's contract.** ⚠️ **`PO-60/3` said a row owing an assertion about the BOARD needs a taker who holds `tools/` AND the board — that was true while the DECISION was open, and it is no longer, which is why this dispatch is not a repeat of the last one.**
+
+⛔ **ONE CARRY THE TAKER MUST READ FIRST, AND IT IS NOT NEW SCOPE:** ⭐ **`tools/quality/board/register.py` is under a STANDING SPLIT CONDITION — the next row touching it splits it at a seam its taker NAMES before cutting** ([`../BOARD.md`](BOARD.md)'s Standing decisions). ⚠️ **A Detail-cell assertion is very likely to touch it, so the seam is named at the start of the row rather than discovered at its merge gate.**
+
+### W196 — Ruling 74 and Ruling 78's suite gate are JOINTLY UNSATISFIABLE — the formatter strips the parens the ruling requires
+
+⭐ **CLOSED PO round 62. Discharged at `f1684e6` on `fix/W196-ruling74-formatter`, merge ref DERIVED from the first-parent line and read back out of a capture file.** ⛔ **Ruling 74 is WITHDRAWN in place, nothing renumbered, its reasoning left standing and dated.** ⭐ **The ground is a re-taken measurement rather than a paragraph: every multi-type `except` in the tree is spelled exactly as `ruff format` demands and NOT ONE as an author chose, so the ruling had ZERO CAUSAL EFFECT ON THE TREE.** ⚠️ **Neither published figure reproduced at `a606033` — not the ruling's own 2, not the inherited 28 — and the second was a correct reading of ANOTHER REF** (`W196/3`).
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W196.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RULING 74 AND RULING 78'S SUITE GATE ARE JOINTLY UNSATISFIABLE, AND EVERY OFFICE IN THIS PROJECT WALKS INTO IT.** ⭐ **Ruling 74 lives in [`../../conventions/module-structure.md`](../conventions/module-structure.md) and requires a multi-type `except` clause to be PARENTHESISED.** ⛔ **`ruff format` — the FORMATTER, not the linter — STRIPS those parentheses whenever there is no `as` binding, and `ruff format --check` is a suite gate by Ruling 78.** ⚠️ **So obeying the ruling turns the suite RED, and obeying the suite breaks the ruling. There is no third option available to an office writing code.**
+
+⛔ **THIS ROW JUMPS EVERYTHING BELOW IT** (Ruling 75), ⭐ **and the ground is not importance but REACHABILITY: it is not a defect somebody may hit, it is a rule that CANNOT BE OBEYED, hit by every office that writes an `except`.**
+
+### ⛔ THE FIGURE, WHICH IS THIS ROW'S SUBJECT — and it is the OFFICE'S, not the register's
+
+⛔ **Ruling 74's own text claims TWO instances. Developer 3 measured 28 in tracked `*.py` while scoping `E09`.** ⚠️ **THE REGISTER DID NOT RE-DERIVE IT and says so rather than passing it off as its own** — ⭐ **and the coordinator's own attempt returned ZERO, which is a filter that did not match rather than a measurement** (Ruling 337's shape). ⛔ **THE TAKER RE-MEASURES BEFORE ACTING; the figure here is a POINTER to a reading, not a reading.**
+
+⭐ **THE SHARPEST FACT IN IT: RULING 74'S OWN CLAUSE WAS REWRITTEN BY THE FORMATTER BEFORE ANYONE NOTICED.** ⛔ **A rule whose own statement its enforcement environment silently edits is not a rule in force; it is a rule that has already lost.**
+
+### ⛔ WHAT SETTLES IT — one of exactly two, and the freeze blocks neither
+
+1. ⭐ **A FORMATTER SETTING** that makes `ruff format` leave the parentheses alone, if one exists — ⛔ **and if it does not, say so with the version and the option list, because *"there is no setting"* is a finding and not an absence.**
+2. ⭐ **A WITHDRAWAL OF RULING 74.** ⛔ **A withdrawal is NOT a mint, so the ruling freeze does not block it** (the coordinator's own reading, and the register accepts it). ⚠️ **It is recorded by ANNOTATION beneath the ruling, never by editing the frozen record** (Ruling 106).
+3. ⛔ **WHICHEVER IS TAKEN, THE 28 SITES ARE BROUGHT INTO LINE IN THE SAME COMMIT** — ⭐ **a rule withdrawn while its violations stand is a second silent state, and a rule restored by a setting is worth nothing until the tree satisfies it.**
+4. ⛔ **AND AN ARM ASSERTS IT** (R12): ⭐ **plant an `except (A, B):` and require the chosen answer to hold — the parens survive `ruff format`, or the ruling no longer asks for them.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A `# fmt: off` SPRINKLED OVER 28 SITES.** ⭐ **That satisfies both instruments and states the contradiction 28 times instead of resolving it once.** ⛔ **AND NOT A RE-RULING.** ⚠️ **The freeze is in force; this row picks a setting or withdraws, and a NEW ruling about `except` clauses is the one outcome that is refused.**
+
+### ⛔ ONE PARAGRAPH REMOVED FROM THE BOARD, AND THE OFFICE MAKING THE REMOVAL SAYS SO
+
+⭐ **`board-narrative` was RED at my first take: the board had **79 bytes of headroom at `abee048`** and this round wanted more.** ⛔ **Removed: round 60's paragraph explaining that `W190` and `W191` never entered the Next rows table because each was minted and dispatched in one act.** ⚠️ **It is a ROUND'S NARRATIVE, not a rule — no convention loses anything, and Ruling 349's *a rule no convention carries STAYS* is not engaged.**
+
+⛔ **[`W171`](rows/W171.md)'s hazard was CHECKED BEFORE CUTTING, because the pointer floor is tree-shaped and cannot see a removal:** ⭐ **the paragraph carried an anchored pointer into `W190`'s archive record, and that anchor is still cited from the surface-collision paragraph on the same board and from [`rows/W190.md`](rows/W190.md), so no record section was orphaned.** ⚠️ **[`W180`](rows/W180.md) is the row saying no rule binds the office MAKING a removal; this paragraph is that obligation discharged by hand, once, and it is not a substitute for the row.**
+
+⭐ **The board now stands at 7611 bytes of narrative against 8192**, ⛔ **so the next round inherits headroom rather than the 79 bytes this one did.**

@@ -133,7 +133,7 @@ nothing:**
 
 | the property | ⛔ what asserts it |
 |---|---|
-| **a close must not GROW the board** | ⭐ **`board-detail`, in `tools/quality/board/bijection.py`** — a closed row's Detail cell must EQUAL `born_detail(<ID>)`, and never an archive link. ⚠️ **The arm was owed by [`W185`](../tasks/rows/W185.md) and is DISCHARGED** |
+| **a close must not GROW the board** | ⭐ **`board-detail`, in `tools/quality/board/bijection.py`** — a closed row's Detail cell must EQUAL `born_detail(<ID>)`, and never an archive link. ⚠️ **The arm was owed by [`W185`](../tasks/BOARD-ARCHIVE.md#w185-the-close-procedure-and-board-size-are-jointly-unsatisfiable-owes-a-design-decision) and is DISCHARGED** |
 | **the reader must still LAND ON THE ARGUMENT** | `board-orphan`'s Ruling 270 exception, unchanged: a closed row's file must EXIST and must BE a stub with a resolving archive anchor. ⭐ **Two instruments already hold this half — `bijection.py` and the pointer floor — so this direction is asserted today** |
 
 ⛔ **THE REFUSALS ARE RECORDED SO THE NEXT ROUND DOES NOT RE-DERIVE THEM:**
