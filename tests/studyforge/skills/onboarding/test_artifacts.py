@@ -55,11 +55,9 @@ def test_the_manifest_is_not_declared_not_material_by_the_document_it_is():
     assert not artifacts.classified(artifacts.MANIFEST)
 
 
-def test_the_ignore_rule_goes_inside_the_generated_directory_and_never_at_the_root():
+def test_this_skill_never_writes_a_repository_root_ignore_file():
     # ⛔ R3, and W15's measured breach: tooling appended to a source
     # repository's root ignore file on an ordinary commit, unrequested.
-    assert artifacts.GRAPH_IGNORE == f"{artifacts.GRAPH_DIR}/.gitignore"
-    assert artifacts.graph_ignore() == "*\n"
     roots = [where for where in artifacts.paths() if where in (".gitignore", ".gitattributes")]
     assert not roots, f"this skill writes a repository-root ignore file: {roots}"
 
@@ -67,9 +65,10 @@ def test_the_ignore_rule_goes_inside_the_generated_directory_and_never_at_the_ro
 def test_no_ignore_rule_this_skill_writes_reaches_the_archive():
     # ⛔ SF-32's verdict: generated media is committed by default, so an ignore
     # rule that swept it out would flip a corpus's policy without anybody
-    # declaring it. The rule is scoped to its own directory by construction.
-    assert artifacts.graph_ignore().strip() == "*"
-    assert artifacts.GRAPH_IGNORE.startswith(f"{artifacts.GRAPH_DIR}/")
+    # declaring it. ⭐ This skill now writes no ignore rule at all, at any
+    # depth — the assertion is over every path it occupies, not one name.
+    rules = [where for where in artifacts.paths() if where.rsplit("/", 1)[-1] == ".gitignore"]
+    assert not rules, f"this skill writes an ignore rule: {rules}"
 
 
 def test_the_generated_non_destructive_check_bakes_in_this_corpus_declared_edits():
@@ -86,9 +85,7 @@ def test_a_corpus_that_declares_no_edit_gets_a_check_that_permits_none():
 
 
 def test_the_generated_checks_are_modules_that_parse():
-    for text in (artifacts.edits_test(_manifest()), artifacts.graph_ignore()):
-        if text.strip() == "*":
-            continue
+    for text in (artifacts.edits_test(_manifest()),):
         ast.parse(text)
 
 

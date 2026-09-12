@@ -170,8 +170,8 @@ def test_impossible_no_board_at_all(tmp_path: Path) -> None:
 
     ⚠️ **The floor runs over arbitrary roots** — a temp tree, a corpus repository —
     ⛔ **so a finding here would be asserting which repository you are in.** ⭐ **This is
-    `check_knowledge_index`'s split, reused**: absence is reported through the notice
-    channel and presence is enforced by a test that knows the answer should be yes.
+    the floor's standing split**: absence is reported through the notice channel and
+    presence is enforced by a test that knows the answer should be yes.
 
     ⚠️ **`0 = 0` is not a pass** (Ruling 48), which is why the notice may not be silent —
     and it is not. ⭐ **The presence half is

@@ -64,7 +64,6 @@ from tools.quality.config import (
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
-from tools.quality.knowledge_index import check_knowledge_index, notices
 from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
@@ -149,7 +148,6 @@ CHECKS = (
     check_style,
     check_personal_data,
     check_source_names,
-    check_knowledge_index,
     check_handoffs,
     check_handoff_existence,
     check_pointers,
@@ -158,19 +156,20 @@ CHECKS = (
     check_rulings_reach,
 )
 
-#: ⛔ **The second channel, and it exists because one of the floor's answers is
-#: not a failure.** `check_knowledge_index` must be able to say *"there is no
-#: knowledge index here, and this is how you build one"* **without failing**: a
-#: fresh clone legitimately has none, and a red suite on clone is hostile and
-#: gets muted — which is how a check stops being read (FND-07).
+#: ⛔ **The second channel, and it exists because some of the floor's answers
+#: are not failures.** A tree can legitimately be missing something the reader
+#: still needs told about — an absent linter, a module approaching its ceiling
+#: — and a red run for a condition nobody may be failed for is a red run that
+#: gets muted, which is how a check stops being read (FND-07).
 #:
 #: ⚠️ A notice never affects the exit code. Anything that should fail a build
 #: is a `Finding`, and nothing here is a quieter way to report one.
 #:
-#: ⭐ **`pointer_coverage` is the second, and it is here for the opposite
-#: reason.** `notices` speaks when something is missing; this speaks when
-#: nothing is wrong — it prints the denominator a green run would otherwise
-#: swallow. ⛔ Ruling 48: `0 dangling` is `0 = 0` until it says *out of how
+#: ⭐ **`pointer_coverage` is the first of them, and it is here for the
+#: opposite reason to `lint_notice`.** That one speaks when something is
+#: missing; this
+#: speaks when nothing is wrong — it prints the denominator a green run would
+#: otherwise swallow. ⛔ Ruling 48: `0 dangling` is `0 = 0` until it says *out of how
 #: many*, and FND-08's own acceptance names it: a check reports its coverage,
 #: not just its hits.
 #:
@@ -223,7 +222,6 @@ CHECKS = (
 #: ⚠️ It sits beside `board_state` because it reads the same register.
 NOTICES = (
     approach_notice,
-    notices,
     pointer_coverage,
     collision_census,
     board_state,

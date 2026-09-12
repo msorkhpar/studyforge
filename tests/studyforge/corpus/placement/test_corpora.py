@@ -27,9 +27,9 @@ from tests.support import repository_root
 # `repository_root().parent` — the **third** copy of a rule this repository
 # ships once, and the only one of the three whose absent branch neither skipped
 # nor failed. ⚠️ Imported from `__main__` because that is where the rule and
-# its explanation live, and where `tests/test_knowledge_index.py` and
-# `tools/tests/workspace/test_main.py` already import it from: a **fourth**
-# home would be this defect again, one directory over.
+# its explanation live, and where `tools/tests/workspace/test_main.py` already
+# imports it from: a **fourth** home would be this defect again, one directory
+# over.
 from tools.workspace.__main__ import workspace_root as shipped_workspace_root
 
 #: ⛔ **What this module's sweeps assert, as a rule id** (Ruling 46). Placing a

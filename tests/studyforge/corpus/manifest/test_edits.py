@@ -59,7 +59,7 @@ def test_the_reverse_of_a_declared_edit_is_recorded():
 @pytest.mark.parametrize("path", [".gitignore", ".hgignore"])
 def test_the_root_ignore_file_is_never_editable(path):
     # ⛔ Write a new ignore file INSIDE a generated directory instead — which
-    # is what FND-02 did for `graphify-out/`, and it works.
+    # is what FND-02 did for a generated directory, and it works.
     with pytest.raises(ManifestError, match="root ignore file"):
         edits({**POM_EDIT, "path": path})
 

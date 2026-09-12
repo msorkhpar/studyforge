@@ -80,8 +80,8 @@ than to re-derive.
 3. The **epic document** for whatever you are working on (`docs/tasks/E*.md`) —
    it carries shared context so neighbouring tasks do not re-derive it, and it is
    where a task's dependencies and its Acceptance live.
-4. `docs/conventions/` — module structure, graphify, the agent working
-   agreement, the review rubric.
+4. `docs/conventions/` — module structure, the agent working agreement, the
+   review rubric.
 
 ## Hard rules
 
@@ -125,19 +125,14 @@ set is R1–R21 in the spec.
 
 ## Working practice
 
-- ⛔ **`graphify` IS NOT SOMETHING A TASK'S CONTEXT BUDGET MAY ASSUME, and the
-  sentence that said it was is REMOVED rather than softened.** ⭐ **The reason is
-  a PROPERTY and not a reading, so it cannot go stale in a snapshot: the index
-  directory is UNTRACKED, and an untracked directory does not travel to a linked
-  worktree — which is where every agent in this project works.** ⚠️ **Corroborated
-  at `98aa0ad`: `git ls-files` returns `0` for it, it is present in the main
-  checkout, and it is absent from all four linked worktrees.**
-- ⭐ **THE TOOL IS NOT RETIRED and `docs/conventions/graphify.md` still governs
-  it (R14).** ⛔ **What changed is that you CHECK whether an index is there before
-  planning around one, and you never budget a task on the assumption that it is.**
-  ⭐ **The search path that is always present is `git grep`, `grep -rn` and
-  `sed -n`.** ⚠️ **Whether the index should be built per worktree, tracked, or
-  dropped is UNDECIDED, and this clause forecloses none of the three.**
+- ⭐ **THE SEARCH PATH IS `git grep`, `grep -rn` AND `sed -n`.** ⛔ **There is no
+  code-graph or index tool in this project and no document may name one; if one
+  does, that document is stale and saying so is a finding.** ⚠️ **R14 required
+  the opposite and is WITHDRAWN IN PLACE in the spec (2026-09-12, user ruling) —
+  the id is retained so every historical citation still resolves.** ⭐ **The
+  reason is a PROPERTY and not a reading, so it cannot go stale in a snapshot:
+  the index directory was UNTRACKED, and an untracked directory does not travel
+  to a linked worktree — which is where every agent in this project works.**
 - ⛔ **RUN EVERY GATE; DO NOT TRANSCRIBE ITS READING.** ⭐ **A merge body,
   handoff, brief, round record or message reports a gate as GREEN or RED plus
   its exit code and quotes NO figures out of it** — ⚠️ **the exception is a

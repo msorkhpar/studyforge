@@ -99,11 +99,10 @@ What lands, and why each one exists:
 |---|---|
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
 | the adapter package and its suite | `SK-02`'s scaffold, wired in — seven generated files and one that is yours |
-| `graphify-out/.gitignore`, one `*` | R14 needs an index; ⛔ R3 forbids a line in the **root** ignore file, so the rule goes *inside* the generated directory |
 | `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
 | `tests/` — two checks | R3's assertion with this corpus's declared edits baked in, and the pin-drift check |
 | `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations |
-| `.studyforge/installed.json` | what step 7 undoes, and the digest that proves nothing was hand-edited |
+| `.studyforge/installed.json` | what step 6 undoes, and the digest that proves nothing was hand-edited |
 
 ### 4. Write the one file that is a person's
 
@@ -114,21 +113,7 @@ python3 -m pytest tests -q          # ⛔ it fails, and the failure is the speci
 ⭐ **`made.hand_written` names it** — `ingest/read.py`, three functions. Every
 other file in the corpus is downstream of it and is generated.
 
-### 5. Build the index, and bridge it
-
-```
-graphify update .
-python3 -m tools.knowledge bridge
-```
-
-⚠️ **Building it is not enough, and this is the part that gets missed.** A
-graph built by running the tool alone has **zero doc↔code edges** — measured on
-the Java corpus at 13,583 code↔code, 767 doc↔doc, **0 doc↔code** — because code
-is extracted by AST and prose by a model, and no extractor ever sees a lesson
-and its class together. ⛔ **R14's budget saving is a property of a graph
-somebody bridged, not of the tool.**
-
-### 6. Ingest, and let the machine say whether it worked
+### 5. Ingest, and let the machine say whether it worked
 
 ```
 python3 -m ingest . <ingested-date>
@@ -154,7 +139,7 @@ reaching a reader.
 > to `SF-28`. ⛔ **The fenced form above is the one that runs**, because an
 > agent executes a fence rather than reading it.
 
-### 7. If it was the wrong repository, take it back out
+### 6. If it was the wrong repository, take it back out
 
 ```
 python3 -c "from studyforge.skills.onboarding import uninstall; \

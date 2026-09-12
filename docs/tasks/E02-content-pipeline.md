@@ -206,8 +206,8 @@ dispositions are both wrong:**
 ⭐ **THE THIRD CASE IS THE TRUE ONE: MEASURED ONCE, UNREPRODUCIBLE NOW.** ⛔ **The
 clause was measured, carefully, with the denominator trap called out by the
 author against their own number** — and it cannot be re-measured here, because
-the sibling corpora are not checked out beside this repository. ⚠️ **The three
-`tests/test_knowledge_index.py` skips in every suite reading say so by name.**
+the sibling corpora are not checked out beside this repository. ⚠️ **The suite's
+own skip rows say so by name whenever a check's subject is the workspace.**
 
 ⭐ **THE READING, EMBEDDED — the number stops being a promise and becomes a
 citation of a record.** ⛔ **Repositories are named BY ROLE, never by path

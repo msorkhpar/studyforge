@@ -15,9 +15,9 @@ this package's `compose` and `pin`. ⛔ No I/O, and nothing source-specific (R1)
 
 ⚠️ **R3 forbids an edit to a source repository's root ignore file, however
 declared** — and tooling has already done exactly that once in this project,
-unrequested, in the one repository where R3 is absolute (`W15`). ⭐ So the rule
-for the generated index is `graphify-out/.gitignore`, one `*`, written *inside*
-the generated directory, which needs no edit to anything that already exists.
+unrequested, in the one repository where R3 is absolute (`W15`). ⭐ So any rule
+this skill needs for a generated directory goes in a `.gitignore` written
+*inside* that directory, which needs no edit to anything that already exists.
 
 ⛔ **And nothing here ignores generated media.** `SF-32`'s verdict is that media
 is committed by default; when a corpus outgrows that, the report says so and
@@ -27,9 +27,9 @@ deciding a corpus's git history for it.
 
 ## ⭐ Coverage is asserted, not the list
 
-⚠️ **`NOT_MATERIAL` is a list, and a list is exactly what goes stale.** A
-seventh artifact added without a glob is an `unclassified` finding in somebody
-else's repository, discovered by them. ⛔ So the test that holds this walks the
+⚠️ **`NOT_MATERIAL` is a list, and a list is exactly what goes stale.** An
+artifact added without a glob is an `unclassified` finding in somebody else's
+repository, discovered by them. ⛔ So the test that holds this walks the
 paths this module says it writes and asks `classified` about each — the
 question the corpus's own `validate` will ask — rather than comparing one
 literal against another.
@@ -54,10 +54,6 @@ from studyforge.skills.onboarding.pin import (
 #: to know which module owns it.
 MANIFEST = MANIFEST_FILENAME
 
-#: The generated index and its ignore rule (R14; `FND-02` proved the shape).
-GRAPH_DIR = "graphify-out"
-GRAPH_IGNORE = f"{GRAPH_DIR}/.gitignore"
-
 #: The corpus's own test directory, and the checks this skill generates into
 #: it. ⚠️ Deliberately **not** under the adapter's `tests/ingest/`: these assert
 #: things about the repository, not about the adapter.
@@ -75,10 +71,6 @@ WHY_PIN = (
     "the framework pin, its skill stubs and the record of what onboarding "
     "wrote: this corpus's own bookkeeping, never material it teaches."
 )
-WHY_GRAPH = (
-    "the knowledge index this corpus is queried through, built by a tool from "
-    "the material rather than being any of it."
-)
 WHY_TESTS = (
     "the checks onboarding generated to hold this corpus to R3 and to its "
     "framework pin: code the corpus is audited with, not material."
@@ -94,7 +86,6 @@ WHY_READER = (
 #: walk never offers for classification anyway.
 NOT_MATERIAL = (
     {"glob": f"{PIN_DIR}/**", "why": WHY_PIN},
-    {"glob": f"{GRAPH_DIR}/**", "why": WHY_GRAPH},
     {"glob": f"{TESTS_DIR}/*.py", "why": WHY_TESTS},
     {"glob": READER_DOC, "why": WHY_READER},
 )
@@ -104,7 +95,6 @@ def paths(skills: Sequence[str] = SKILLS) -> tuple[str, ...]:
     """Every path this skill occupies, in the order onboarding writes them."""
     return (
         MANIFEST,
-        GRAPH_IGNORE,
         PIN_FILE,
         *stub_paths(skills),
         EDITS_TEST,
@@ -118,11 +108,6 @@ def classified(where: str, entries: Sequence[Mapping[str, str]] = NOT_MATERIAL) 
     """Whether one path is covered by a glob this module declares."""
     candidate = PurePosixPath(where)
     return any(candidate.full_match(entry["glob"]) for entry in entries)
-
-
-def graph_ignore() -> str:
-    """Return the R3-safe ignore rule: one `*`, inside the generated directory."""
-    return "*\n"
 
 
 def edits_test(manifest: Manifest) -> str:

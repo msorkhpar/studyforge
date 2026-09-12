@@ -275,25 +275,29 @@ code. Inherited from CodeSignal, where 80 KB of triple-quoted strings meant
 changing a colour required editing Python. Loop bodies and inline wrappers stay
 in code — a template file for a closing tag removes no duplication.
 
-**R14 — Graphify is the project's knowledge index, and agents query it before
-exploring.** Every repository **in this project's working set** carries a built
-graph — a repository enters that set when it is onboarded, not when it is first
-mentioned. An agent answering a "where / what calls / how does X work" question
-**asks the graph first** and reads files second. The graph is rebuilt when
-structure changes. This is what keeps a task's context budget honest: the
-alternative is every agent grepping the whole tree to re-derive what the graph
-already knows.
+**R14 — ⛔ WITHDRAWN 2026-09-12, by user ruling. The number is retained and is
+never reused.**
 
-⚠️ **Qualified 2026-09-09, by measurement, because the budgets depend on it.**
-`explain` and `path` hold unconditionally — sub-second, a few hundred tokens,
-against ~20k tokens of equivalent reading. `query` holds **only when phrased as
-distinctive nouns**; asked as an English sentence it returns confidently wrong
-material. ⛔ **That distinction belongs in the ruling and not only in the
-convention, because confidently wrong is not the same failure as slow.** A budget
-premised on a tool that answers slowly produces late work; one premised on a tool
-that answers wrongly produces wrong work, and the agent has no signal that it
-did. `docs/conventions/graphify.md` carries the *What it answers badly* section
-an agent reads before trusting an answer.
+⭐ **The search path is `git grep`, `grep -rn` and `sed -n`.** ⛔ **No document
+in this project may name a code-graph or index tool, and no task's context
+budget may assume one exists.**
+
+⚠️ **What it used to say, and why it is gone.** R14 required every repository in
+the working set to carry a built knowledge index and required an agent to query
+it before reading files. ⛔ **The instruction could not be obeyed.** The index
+directory was git-ignored, so it existed only in the main checkout and was
+**absent from every linked worktree** — which is where the offices work — and
+the one copy was stale by the floor's own check, which says a stale index is
+worse than an absent one. ⭐ The tool has since been removed from the machine
+this project is built on, so the instruction is now false as well as
+unfollowable.
+
+⛔ **The id is WITHDRAWN IN PLACE and nothing is renumbered.** R1–R21 are cited
+by number across the whole corpus, including frozen records that cannot be
+edited (Ruling 106). ⚠️ **Renumbering would silently redirect every historical
+`R14` citation to a different rule** — unrecoverable, because the records cannot
+be edited to follow. ⭐ A withdrawn rule that explains itself is what every
+existing citation must still resolve to.
 
 **R15 — Every step whose result depends on installed tooling runs in a
 container.** A build, a test run, a grader verdict, a synthesis job: each is
@@ -579,7 +583,6 @@ studyforge/
     skills/      the authoring and conversion skills (§9)
   tests/         mirrors src/ package for package (R12)
   docker/        dev, test and serve images (R15)
-  graphify-out/  the project's knowledge index (R14)
 
 Claude-senior-java-engineer/      consumer 1 — built in v1
   ingest/         curriculum · lessons · sources · emit · audit
@@ -587,7 +590,6 @@ Claude-senior-java-engineer/      consumer 1 — built in v1
   practice/       generated exercise sources (additive Maven module)
   docker/ docker-compose.yml
   index.html  .studyforge/{assets,archive,site.json}
-  graphify-out/
   00-base/ 01-java-basics/ ... 45-java-persistence/   UNCHANGED
 
 code-server-toolchain/            shared, its own repo (§8.1)
@@ -1676,7 +1678,8 @@ about a real source, not a milestone everyone waits behind.
 7. Every package has tests, and the test tree mirrors the source tree (R12).
 8. Tests, generation and serving all run in a container from a clean checkout,
    with Docker as the only prerequisite (R15).
-9. Every repository carries a current graphify index (R14).
+9. ⛔ **WITHDRAWN 2026-09-12 with R14.** The number is retained so nothing
+   below it moves; there is no index and no criterion here.
 
 ### 11.2 Any corpus the framework builds
 

@@ -394,7 +394,7 @@ OPS-04 → QA-01 → QA-04.
 
 | Epic | Document | Tasks | Owns |
 |---|---|---|---|
-| E00 | [Foundations](E00-foundations.md) | FND-01…04, 05a, 06, 07 | scaffolding, graphify, dev container, fixtures, the workspace pin file, the R7 check, the index tripwire |
+| E00 | [Foundations](E00-foundations.md) | FND-01…04, 05a, 06, 07 | scaffolding, dev container, fixtures, the workspace pin file, the R7 check |
 | E01 | [Core contracts](E01-core-contracts.md) | SF-01…05, SF-31, SF-33, **SF-35**, **SF-36** | address, manifest, placement, dry-run, discovery, container map, version guard, **the third content state**, **sub-file origins** |
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27, SF-34 | assets, page, contents, index, navigation, page chrome |
@@ -458,8 +458,9 @@ not patches. See spec §12.
 1. `../specs/2026-09-08-studyforge-v1-design.md` — §1–§4 and all of R1–**R20**.
 2. Your **epic document** — shared context for your task's neighbours.
 3. `../conventions/module-structure.md` — size, packages, tests, templates.
-4. `../conventions/graphify.md` — R14. ⛔ **Ask the graph WHERE ONE EXISTS; the
-   index is untracked and so is absent from every linked worktree** (`CLAUDE.md`).
+4. ⭐ **The search path is `git grep`, `grep -rn` and `sed -n`.** ⛔ **There is no
+   code-graph or index tool here and no document may name one** (R14, withdrawn
+   in place 2026-09-12).
 5. `../conventions/agent-protocol.md` — how to work and how to hand off.
 6. `../conventions/review-rubric.md` — the standard your work is held to.
    ⛔ **THERE IS NO REVIEWING OFFICE AND NO VERDICT: a row is SELF-CERTIFIED by

@@ -10,7 +10,7 @@ from __future__ import annotations
 import sys
 
 from tests.support import repository_root, run
-from tools.quality.__main__ import main
+from tools.quality.__main__ import SCOPE, main
 
 
 def write_offending_module(root):
@@ -23,11 +23,36 @@ def write_offending_module(root):
 
 def test_a_clean_tree_exits_zero(tmp_path, capsys):
     assert main(["--root", str(tmp_path)]) == 0
-    # ⚠️ The last line, not the whole output: FND-07's index notice prints
-    # above it and is deliberately not a finding. ⛔ Asserting the whole
-    # stream would make "the floor is clean" and "nothing else was worth
-    # saying" one claim, and they are not.
-    assert capsys.readouterr().out.strip().splitlines()[-1] == "quality floor: clean"
+    # ⚠️ Two named lines, not the whole output: notices print above and are
+    # deliberately not findings. ⛔ Asserting the whole stream would make "the
+    # floor is clean" and "nothing else was worth saying" one claim, and they
+    # are not.
+    printed = capsys.readouterr().out.strip().splitlines()
+    assert printed[-2] == "quality floor: clean"
+    assert printed[-1] == SCOPE
+
+
+def test_the_LAST_line_says_the_floor_is_not_the_suite(tmp_path, capsys):
+    # ⛔ `W187/5`, and the position is the whole fix: the floor was GREEN and
+    # the suite RED at the same ref, and an office that self-certifies on the
+    # floor's last line merged defects. ⭐ Ruling 78 keeps format enforcement in
+    # the suite, so the floor cannot close this by checking more — only by
+    # saying what it is a verdict ON, below the verdict.
+    main(["--root", str(tmp_path)])
+    printed = capsys.readouterr().out.strip().splitlines()
+    assert printed[-1] is not None and printed[-1] == SCOPE
+    assert "tests/test_repository.py" in SCOPE
+    assert "SEPARATE gate" in SCOPE
+    assert printed.index("quality floor: clean") == len(printed) - 2
+
+
+def test_a_RED_floor_also_says_what_it_is_a_verdict_on(tmp_path, capsys):
+    # ⛔ Both directions. A red floor is not evidence the suite is red too, and
+    # a reader who learns the scope only on green learns it from the run that
+    # needed it least.
+    write_offending_module(tmp_path)
+    assert main(["--root", str(tmp_path)]) == 1
+    assert capsys.readouterr().out.strip().splitlines()[-1] == SCOPE
 
 
 def test_findings_exit_one_and_are_printed(tmp_path, capsys):
@@ -45,4 +70,6 @@ def test_the_repository_itself_passes_through_a_real_process():
     root = repository_root()
     result = run([sys.executable, "-m", "tools.quality"], cwd=root)
     assert result.returncode == 0, result.stdout + result.stderr
-    assert result.stdout.strip().splitlines()[-1] == "quality floor: clean"
+    printed = result.stdout.strip().splitlines()
+    assert printed[-2] == "quality floor: clean"
+    assert printed[-1] == SCOPE

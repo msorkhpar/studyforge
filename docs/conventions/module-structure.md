@@ -695,8 +695,8 @@ pay it.** The form was a `SyntaxError` for the whole of Python 3 until last
 release, so it reads as a Python 2 relic to anybody who learned Python before
 2026. ⛔ **Two reviewers, in two files, independently stopped on it, went and
 read PEP 758, and recorded a non-finding so that nobody would "fix" it:**
-`src/studyforge/validate/source.py` (`W28`, `CTO-21/3`) and
-`tools/knowledge/index.py` (`W29`). ⚠️ **That is the tell — not that it is
+`src/studyforge/validate/source.py` (`W28`, `CTO-21/3`) and a `tools/` module
+since removed (`W29`). ⚠️ **That is the tell — not that it is
 wrong, but that each reader must prove to themselves it is right, and the proof
 does not stay proved for the next one.**
 

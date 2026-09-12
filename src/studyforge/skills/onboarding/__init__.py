@@ -62,7 +62,6 @@ from __future__ import annotations
 
 from studyforge.skills.onboarding.artifacts import (
     EDITS_TEST,
-    GRAPH_IGNORE,
     NOT_MATERIAL,
     PIN_TEST,
     READER_DOC,
@@ -99,7 +98,6 @@ from studyforge.skills.onboarding.pin import (
 #: ⛔ The package's whole public surface.
 __all__ = [
     "EDITS_TEST",
-    "GRAPH_IGNORE",
     "INSTALLED_API",
     "NOT_MATERIAL",
     "NOT_MATERIAL_API",

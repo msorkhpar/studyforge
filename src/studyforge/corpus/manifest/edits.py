@@ -25,7 +25,7 @@ R3 names them, and this module refuses each **however declared**:
 
 1. **The repository's root ignore file.** Write new ignore files *inside*
    generated directories instead — which is exactly the mechanism FND-02 used
-   for `graphify-out/`, and it works.
+   for a generated directory, and it works.
 2. **Any version-control configuration.** `.git/`, `.gitattributes`,
    `.gitmodules`.
 3. ⭐ **Any file the material's own reader depends on as content** — and this

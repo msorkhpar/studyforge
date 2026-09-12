@@ -362,7 +362,7 @@ def test_impossible_a_board_with_NO_MARKER_yields_nothing_and_the_reading_SAYS_S
 
     ⚠️ **A temp tree or a corpus repository's own board has no `## Scheduled` table at
     all** — ⭐ **a refusal there would be asserting which repository you are in**, which is
-    `check_knowledge_index`'s split and `check_board`'s own answer for a missing board.
+    the floor's standing split and `check_board`'s own answer for a missing board.
 
     ⛔ **And the reading DIFFERS from the delimited one** (Ruling 191(a)): *nothing was
     read* and *nothing is scheduled* are not the same answer, so the locator is in the

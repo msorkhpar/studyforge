@@ -41,15 +41,13 @@ office; wherever it says *the verdict*, read it as the two gate readings.**
    handoff and proceed under a stated assumption.
 2. Read your **epic document** — it carries the shared context for your task's
    neighbours, so you do not re-derive it.
-3. Read `docs/conventions/module-structure.md` and `graphify.md`.
+3. Read `docs/conventions/module-structure.md`.
 4. Read **only** the files in your task's *Context* field. ⛔ **Your search path
-   is `git grep`, `grep -rn` and `sed -n`.** ⚠️ **`graphify` (R14) is OPTIONAL and
-   is NEVER a premise — a USER DECISION.** ⭐ **`graphify-out/` is git-ignored and
-   untracked, so it exists only in the MAIN checkout, is ABSENT from every linked
-   worktree, and `graphify` is not in the pinned image** ([`graphify.md`](graphify.md)).
-   ⛔ **No context budget may assume an index exists.** If you need more files,
-   note it in your handoff — a wrong context budget is a planning defect worth
-   recording.
+   is `git grep`, `grep -rn` and `sed -n`.** ⚠️ **There is NO code-graph or index
+   tool in this project and no document may name one** — R14 required one and is
+   WITHDRAWN IN PLACE in the spec (2026-09-12, user ruling). ⛔ **No context
+   budget may assume an index exists.** If you need more files, note it in your
+   handoff — a wrong context budget is a planning defect worth recording.
 5. Check `docs/tasks/handoffs/` for notes from tasks you depend on.
 
 ## While working
@@ -435,9 +433,9 @@ to write, not of the command you just ran:**
 
 ⛔ **Different words mean the sentence names the proxy, and it must then say
 so.** ⚠️ `git branch --no-merged` returns *branches carrying unmerged commits*,
-not *work in flight*. ⚠️ An absent `graphify-out/` says *this checkout has no
-index*, not *the index is stale* — ⭐ **which is Ruling 108 arriving as a special
-case of this clause rather than as its own fact.**
+not *work in flight*. ⚠️ An absent generated directory says *this checkout has
+not built one*, not *the built one is stale* — ⭐ **which is Ruling 108 arriving
+as a special case of this clause rather than as its own fact.**
 
 ⭐ **The reporting form is already here:** ⛔ **`Measured at: <branch> @ <sha>`
 from the section above, and the instrument beside it.** ⚠️ **A reading whose
@@ -1055,8 +1053,8 @@ them: **end a report with the reader's next action, not the writer's last one.**
 ### ⛔ Hold it, or point at where it is held — never point at a document that points back
 
 ⭐ **Rated the best finding of its round, and it is the pointer rule's own failure
-mode.** ⚠️ **Measured instance:** `graphify.md` said the census command was in
-`FND-02`'s handoff; that handoff said it was in `graphify.md`. ⛔ **Neither had
+mode.** ⚠️ **Measured instance:** a convention document said a command was in
+`FND-02`'s handoff; that handoff said it was in the convention. ⛔ **Neither had
 it.** Two documents pointed at each other and the thing they pointed at did not
 exist anywhere.
 

@@ -20,11 +20,11 @@ def test_a_flat_prose_corpus_is_counted(tmp_path):
 
 def test_generated_and_tooling_directories_are_not_material(tmp_path):
     root = sources.flat_prose(tmp_path / "c")
-    (root / "graphify-out").mkdir()
-    (root / "graphify-out" / "graph.json").write_text("{}", encoding="utf-8")
+    (root / "build").mkdir()
+    (root / "build" / "output.md").write_text("# x", encoding="utf-8")
     (root / ".studyforge").mkdir()
     (root / ".studyforge" / "notes.md").write_text("# x", encoding="utf-8")
-    assert all("graphify" not in p.as_posix() for p in take(root).material)
+    assert all("build" not in p.as_posix() for p in take(root).material)
     assert all(".studyforge" not in p.as_posix() for p in take(root).material)
 
 

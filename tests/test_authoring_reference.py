@@ -437,7 +437,7 @@ def test_the_placeholder_exemption_swallows_only_a_complete_substitution(token):
     exemption that swallows a real module name print the same green.
 
     ⭐ **And the exemption is narrow:** a stray bracket — `studyforge.<mod`,
-    `tools.knowledge>` — is a typo in a fence, not a substitution, and is
+    `tools.workspace>` — is a typo in a fence, not a substitution, and is
     refused here rather than silently skipped by the check above.
     """
     assert re.fullmatch(r"<[\w.-]+>", token), (

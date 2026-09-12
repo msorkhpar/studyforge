@@ -165,7 +165,7 @@ def test_tool_output_is_never_swept(tmp_path):
     # ⛔ `.git` holds every previous version of every file, so sweeping it
     # would report a violation that was already corrected as if it were live.
     write(tmp_path, ".git/COMMIT_EDITMSG", HOME_SHAPE + "\n")
-    write(tmp_path, "graphify-out/GRAPH_REPORT.md", ADDRESS + "\n")
+    write(tmp_path, "build/REPORT.md", ADDRESS + "\n")
     write(tmp_path, "__pycache__/x.txt", ADDRESS + "\n")
     assert check_shapes(tmp_path) == []
 

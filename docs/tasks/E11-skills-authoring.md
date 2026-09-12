@@ -262,23 +262,14 @@ which would make the extensibility exercise largely a test of typing speed.
 6. **Reader documentation** — from the corpus's *actual* state: how many units have narration, how many are reading-only, what needs a container and what does not.
 7. **The framework pin and the skill stubs** (spec §9) — thin pointers carrying the pinned version, with a check that fails when a stub drifts from its pin.
 8. **An uninstall** — the reverse of every edit it made.
-9. ⭐ **The knowledge graph, built and bridged, with its R3-safe ignore file.**
-   `FND-02` proved every part of this and it is three commands; ⛔ **without it a
-   newly onboarded corpus has no index at all**, and R14 then binds on a
-   repository nothing built one for. The ignore file is `graphify-out/.gitignore`
-   containing a single `*`, written *inside* the generated directory — ⛔ never a
-   line in the repository's root ignore file, which R3 forbids **however
-   declared**.
-
-   ⚠️ **Building it is not enough, and this is the part that would be missed.**
-   A graph built by running the tool alone has **zero doc↔code edges** — measured
-   on the Java corpus at 13,583 code↔code, 767 doc↔doc, **0 doc↔code** — because
-   code is extracted by AST and prose by LLM, and no extractor ever sees a lesson
-   and its class together. ⭐ **The budget saving R14 promises is a property of a
-   graph somebody bridged, not of the tool**, so this step bridges the layers and
-   runs the census `graphify.md` documents. A skill that emits an unbridged graph
-   has emitted an index that answers the one question the corpus exists for with
-   silence.
+9. ⛔ **RETIRED 2026-09-12 with R14, by user ruling. The number is retained so
+   nothing above it moves and every `item 9` citation still resolves.** ⚠️ It
+   required this skill to build and bridge a knowledge index into every
+   onboarded corpus. ⭐ **The R3 shape it carried survives as a rule and not as
+   an artifact: an ignore rule for a generated directory goes *inside* that
+   directory, never in the repository's root ignore file, which R3 forbids
+   however declared** — and this skill now writes no ignore rule at all, which
+   its own tests assert over every path it occupies.
 
 ⭐ **This is the reading floor's onboarding, and for most corpora it is the whole
 of it** (spec §11.0). A source with runnable material also needs a compose file
@@ -311,11 +302,10 @@ to get both:
 
 **Acceptance.** A repository goes from nothing to a serving site with the
 framework checked out beside it and one command run. ⛔ **No `.gitmodules` and no
-`git submodule add` anywhere in what this skill emits** — asserted. **The corpus
-carries an R3-safe ignore file for its graph directory** — `graphify-out/.gitignore`
-containing a single `*`, written *inside* the generated directory, with the
-repository's root ignore file byte-identical to before — asserted, not described.
-Afterwards `git status` shows only additions plus the declared
+`git submodule add` anywhere in what this skill emits** — asserted. **The
+repository's root ignore file is byte-identical to before, and this skill writes
+no ignore rule at any depth** — asserted over every path it occupies, not
+described. Afterwards `git status` shows only additions plus the declared
 `permitted_edits`. **Re-running changes nothing.** The uninstall returns the
 repository to its prior state, asserted by diff. Every artifact it produces is
 regenerable, and a hand-edit to one is reported as a finding rather than
@@ -331,7 +321,7 @@ was APPROVED.** ⭐ **Carried here by the PO, round 30. Neither half is deleted.
 | ⛔ **The clause that stood here** | ⭐ **Where it went, and the command that shows it was unmeetable** |
 |---|---|
 | ⛔ *"`OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are **produced by this skill** for the Java corpus, not hand-written — asserted by regenerating them and diffing."* | ⭐ **RE-HOMED to `SF-28` in `E09`.** ⛔ **`ls src/studyforge/cli/` → `__init__.py`, `plan/` — ONE command, and none of the five `OPS-*` artifacts exists to regenerate.** ⚠️ **It also asserts a diff taken inside a CONSUMER repository, which R20 forbids a framework task to depend on — the second instance after `SK-02/4`.** ⭐ **`artifacts.paths()` and `NOT_MATERIAL` are the two registration points this task already left for it, and `SK-07/1` is the finding** |
-| ⛔ *"…a built, bridged graph… with the doc↔code edge census non-zero"* | ⭐ **RE-HOMED to `W54` on the board.** ⛔ **`graphify` is an external binary that is measurably not in the pinned image, and `src/` may not import `tools/` — the same rule that made `SK-02` re-declare `SOURCE_LINE_CEILING`.** ⚠️ **So no framework task could ever close it as written; `W54` places it OUTSIDE `src/`.** ⭐ **The ignore-file half above is MET today and stays here. `SK-07/2` is the finding** |
+| ⛔ *"…a built, bridged index… with the doc↔code edge census non-zero"* | ⭐ **RE-HOMED to `W54` on the board, and ⛔ RETIRED OUTRIGHT 2026-09-12 with R14** — the register owns `W54`'s disposition. ⚠️ **The reason it was unmeetable stands and is transferable: the tool was an external binary measurably not in the pinned image, and `src/` may not import `tools/`** — the same rule that made `SK-02` re-declare `SOURCE_LINE_CEILING`. ⭐ **`SK-07/2` is the finding** |
 
 ⛔ **Item 4 above — *the build entry point, corpus configuration over `SF-28`'s
 CLI* — is a DEFINITION line, not an acceptance clause, and it stands.** ⚠️ **It
@@ -436,7 +426,7 @@ it patching the framework. Three kinds of request, each with a defined answer:
 
 | It asks | Because | It gets |
 |---|---|---|
-| **A question** — *"what does the framework do about X?"* | it is planning around a capability | the rulings, the contracts, the authoring reference (SK-05), and the knowledge graph (R14) |
+| **A question** — *"what does the framework do about X?"* | it is planning around a capability | the rulings, the contracts, and the authoring reference (SK-05) |
 | **An improvement** — *"the framework cannot do X"* | it hit a wall | a **finding**, which becomes a framework task. ⛔ Never a patch (§12) |
 | **Task-writing help** — *"how should this be cut?"* | somebody has been here before | the **integration catalogue**, below |
 

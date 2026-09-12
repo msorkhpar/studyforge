@@ -26,7 +26,7 @@ its destination.
 |---|---|
 | [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R20** that every task cites |
 | [`docs/tasks/README.md`](docs/tasks/README.md) | **83 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
-| [`docs/conventions/`](docs/conventions/) | Module structure, graphify usage, the agent working agreement |
+| [`docs/conventions/`](docs/conventions/) | Module structure, the agent working agreement, the review rubric |
 | [`docs/tasks/v2-backlog.md`](docs/tasks/v2-backlog.md) | Deliberately unplanned future work |
 
 **Nothing has been implemented.** The first work is milestone **M0** —
