@@ -13,8 +13,11 @@ continues at `W64/6`.** ⚠️ **Writing over it was what my brief directed —
 ## Status
 
 ⭐ **Done — GATE TWO ONLY, and exit `0` was not aimed at** (Ruling 218). Branch
-`fix/W64-kind-gate-scope`, cut at `7a7a178`, tip `TIP_SHA`. ⛔ Not merged and not
-pushed; no remote was added, set or queried, and this checkout has none. Every
+`fix/W64-kind-gate-scope`, cut at `7a7a178`, **code tip `6f156a3`**, and the
+branch tip is this document's own commit — one document, no code. ⛔ Not merged
+and not pushed; no remote was added, set or queried, and this checkout has none.
+⭐ **The floor and the suite were re-run at the branch tip and are identical to
+the readings below.** Every
 commit is authored `dev1 <dev1@example.invalid>` (Ruling 296), **passed per
 invocation with `git -c user.name=… -c user.email=…` and NOT written into any
 config file** — `W64/14` is why that distinction is not a detail.
@@ -399,7 +402,37 @@ file** — each was redirected whole, then read.
 the counterfactual RED on exactly the tests that only the new gate can pass.**
 
 ```text
-READINGS_BLOCK
+ref                 6f156a3  — the code ref; this document's own commit is the
+                    TIP and changes one document and no code. ⛔ The floor and
+                    the suite were RE-RUN at that tip and are identical; the
+                    re-run is in the coordinator hand-back.
+ROLE                studyforge-wt/dev1, branch fix/W64-kind-gate-scope
+ENVIRONMENT         the pinned container, ./docker/dev/check, from this checkout
+
+quality floor       ./docker/dev/check python3 -m tools.quality
+                    "quality floor: clean"                        EXIT=0
+                    lint: ruff 0.16.6 — `ruff check .` All checks passed;
+                    `ruff format --check .` clean, 929 files
+
+suite               ./docker/dev/check python3 -m pytest -ra
+                    5688 passed, 18 skipped in 86.95s             EXIT=0
+                    (5671 + 18 at 5b54936 per W121; +17 is test_records.py)
+
+R12, second way     the four-line gate in check_handoffs removed, everything
+                    else in place:
+                    ./docker/dev/check python3 -m pytest \
+                        tools/tests/quality/handoffs/test_records.py -ra
+                    5 failed, 12 passed in 0.07s                  EXIT=1
+                    git status --short empty after the restore
+
+ENVIRONMENT: HOST   python3 -m tools.workspace verify
+                    1 component disagrees with workspace.json     EXIT=2*
+                    ⚠️ ISO-8583-jPOS-tutorial HEAD 76e689c6a535, pin
+                    a94151747cb0. INHERITED and pre-existing: this branch
+                    touches tools/ and one document and no component, and no
+                    pin file is in the diff. *the process exit was 1; the
+                    figure `2` in circulation is the CONTAINER's, and this is
+                    the HOST reading (Ruling 326).
 ```
 
 ⛔ **R12 in BOTH directions.** The second direction is the one that counts: with
