@@ -17,8 +17,8 @@ existing files it may add to.
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
 **Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,
-`studyforge.archive.scrub` for R7's, and the standard library. ⛔ Nothing source-specific (R1), asserted over the
-whole of `src/` rather than promised.
+`studyforge.archive.scrub` for R7's, and the standard library. ⛔ Nothing
+source-specific (R1), asserted over the whole of `src/` rather than promised.
 
 ⭐ **This file is where a corpus's customisation lives** (SK-07). Everything
 that differs between two sources and is not the source's own content is a
