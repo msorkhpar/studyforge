@@ -4,7 +4,10 @@ r"""Turning what an adapter wrote into the pages a reader opens.
 files on disk. Today that is the **reading floor**: every unit page, one
 container page per declared container, the root index, the shared bundle those
 three link, and every file a page shows, copied out of the archive into the
-directory the page addresses. Narration is a separate pass and is not here yet.
+directory the page addresses. Narration is READ here and never made: a page
+plays the clips `studyforge narrate` recorded, names the ones it promised and
+cannot find, and a corpus with no record renders exactly as before (`W202`
+answers 3 and 4). `write_narration(root, into)` re-runs that pass alone.
 
 **How you use it.**
 
@@ -49,6 +52,7 @@ move or absorb it without a consumer having imported a command.
 | `writing` | `Written`, and the one call that makes R3 a refusal |
 | `navigation` | the contents document joined to a page's bar and its trail |
 | `units` | the unit-page pass |
+| `narration` | which of the three narration states a page is in, read from the record |
 | `containers` | the `*.section.html` pass, and where each one went |
 | `media` | the media directories, and the copy that fills them |
 | `site` | the whole floor: the passes, the index, the bundle and the media |
@@ -81,6 +85,7 @@ from studyforge.generate.declarations import (
 )
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.generate.media import Reference, references, unit_media, write_media
+from studyforge.generate.narration import Renarrated, write_narration
 from studyforge.generate.navigation import ancestors, bar, index_href, trail
 from studyforge.generate.site import assets, root_index, write_site
 from studyforge.generate.units import unit_pages, write_pages
@@ -101,6 +106,7 @@ __all__ = [
     "Footprint",
     "RAISES",
     "Reference",
+    "Renarrated",
     "UnitSource",
     "Written",
     "ancestors",
@@ -122,6 +128,7 @@ __all__ = [
     "unit_media",
     "unit_pages",
     "write_media",
+    "write_narration",
     "write_pages",
     "write_site",
 ]

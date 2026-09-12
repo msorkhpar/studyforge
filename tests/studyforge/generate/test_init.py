@@ -23,6 +23,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
         "Footprint",
         "RAISES",
         "Reference",
+        "Renarrated",
         "UnitSource",
         "Written",
         "ancestors",
@@ -44,6 +45,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
         "unit_media",
         "unit_pages",
         "write_media",
+        "write_narration",
         "write_pages",
         "write_site",
     }
