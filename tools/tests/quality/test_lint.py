@@ -95,8 +95,8 @@ def test_absence_names_both_commands_that_did_not_run(monkeypatch, tmp_path):
 def test_absence_names_the_gates_that_skipped_and_both_ways_to_get_the_signal(
     monkeypatch, tmp_path
 ):
-    # ⭐ `knowledge_index.notices` set the standard: an absence notice prints
-    # the commands that produce the missing thing, so nobody has to go looking.
+    # ⭐ The standard for an absence notice: it prints the commands that produce
+    # the missing thing, so nobody has to go looking.
     monkeypatch.setattr(lint, "_which", lambda name: None)
     line = lint_notice(tmp_path)[0]
     assert lint.GATES in line

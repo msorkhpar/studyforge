@@ -289,11 +289,11 @@ def test_the_repositorys_own_figure_is_taken_over_the_tracked_walk():
 
 
 def ignoring_repository(tmp_path):
-    """A repository that ignores `graphify-out/` and links into it from a tracked doc."""
+    """A repository that ignores `generated/` and links into it from a tracked doc."""
     root = repository(tmp_path)
-    write(root, ".gitignore", "graphify-out/\n")
+    write(root, ".gitignore", "generated/\n")
     add(root, ".gitignore")
-    write(root, "docs/tracked.md", "[the index](../graphify-out/GRAPH_REPORT.md)\n")
+    write(root, "docs/tracked.md", "[the report](../generated/REPORT.md)\n")
     return root
 
 
@@ -301,7 +301,7 @@ def test_a_pointer_into_a_git_ignored_tree_is_a_finding(tmp_path):
     # ⛔ The ASYMMETRY `W35` names: this walk already honoured `.gitignore` when
     # choosing what to READ, and now honours it when deciding what RESOLVES.
     root = ignoring_repository(tmp_path)
-    write(root, "graphify-out/GRAPH_REPORT.md", "# Built on this machine\n")
+    write(root, "generated/REPORT.md", "# Built on this machine\n")
     findings = check_pointers(root)
     assert len(findings) == 1
     assert findings[0].rule == RULE_POINTER
@@ -316,7 +316,7 @@ def test_the_ignored_target_earns_the_same_finding_whether_or_not_it_was_built(t
     # BEFORE existence rather than after it.
     root = ignoring_repository(tmp_path)
     absent = check_pointers(root)
-    write(root, "graphify-out/GRAPH_REPORT.md", "# Built on this machine\n")
+    write(root, "generated/REPORT.md", "# Built on this machine\n")
     built = check_pointers(root)
     assert len(absent) == len(built) == 1
     assert absent[0] == built[0]

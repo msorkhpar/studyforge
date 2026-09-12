@@ -17,7 +17,7 @@ own rather than a section of `test_graph.py`.
 `W119`'s handoff: exactly THREE committed lines handed the live repository root to a reader
 of branches or worktrees, and all three were in `test_graph.py`** — ⛔ **the module Ruling
 225 was minted against.** ⚠️ **The two other live-root git readings in the tree are
-`ls-files` — `tests/test_knowledge_index.py` and `tests/gate_coverage/test_coverage.py` —
+`ls-files` — `tests/gate_coverage/test_coverage.py` and one module since removed —
 and they are NAMED and excluded: their subject is the INDEX, which is the commit.**
 
 ⛔ **So this is the enforcement arm, and it is narrow on purpose**: it governs the package
@@ -149,8 +149,8 @@ def test_no_module_in_this_package_takes_its_POPULATION_from_the_HOST() -> None:
     Ruling 128). ⭐ **MEASURED over the whole tree before this was written: exactly THREE
     committed lines handed the live repository root to a reader of branches or
     worktrees, and all three were in this module.** ⛔ **The two other live-root git
-    readings in the tree — `tests/test_knowledge_index.py`'s and
-    `tests/gate_coverage/test_coverage.py`'s `ls-files` — are NAMED and excluded: their
+    readings in the tree — `tests/gate_coverage/test_coverage.py`'s `ls-files` and one
+    module's since removed — are NAMED and excluded: their
     subject is the INDEX, which is the commit, not the host's housekeeping.**
 
     ⭐ **This is the enforcement arm, and it is narrow on purpose**: it governs the

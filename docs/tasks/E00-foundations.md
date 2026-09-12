@@ -2,13 +2,13 @@
 
 **Wave 0. Blocks everything.**
 
-This epic exists so that no other agent has to invent a package layout, hunt
-for a knowledge index, build its own container, or hand-roll test data. Small
-tasks, deliberately first. Everything here is infrastructure the other twelve
+This epic exists so that no other agent has to invent a package layout, build
+its own container, or hand-roll test data. Small tasks, deliberately first. Everything here is infrastructure the other twelve
 epics consume without thinking about it.
 
 **Rulings that bite here:** R7 (personal data), R11 (size), R12 (tests mirror
-source), R14 (graphify), R15 (containers), R17 (docstrings as contract).
+source), R15 (containers), R17 (docstrings as contract). ⚠️ **R14 bit here too
+and is WITHDRAWN IN PLACE** (2026-09-12, user ruling).
 
 ⚠️ **Revised 2026-09-09**, after the CTO's M0 readiness audit
 (`handoffs/CTO-2026-09-09-m0-readiness.md`). `FND-03` gained a dependency it
@@ -46,8 +46,8 @@ dependencies allowed); the test runner; lint and format configuration; and a
 **module size check that fails the build** on a source module over 400 lines or
 a test module over 600, with a documented per-module opt-out that requires a
 justification line in the docstring. Also the git ignore rules for **generated
-audio produced by this repository's own runs and test runs**, discovery caches
-and `graphify-out/`.
+audio produced by this repository's own runs and test runs** and discovery
+caches.
 
 ⚠️ **That wording is deliberate and it was corrected once.** ⛔ **A corpus's
 narration is committed by default** (`SF-17`, `SF-32`) — a clone that carries its
@@ -69,51 +69,31 @@ runtime dependencies.
 
 ---
 
-### FND-02 — Knowledge index
+### FND-02 — ⛔ RETIRED 2026-09-12 (was: knowledge index)
+
 **Milestone** M0 · **Depends on** — · **Team** solo
-**Owns** `graphify-out/` in all three repositories
-**Context** ~20k — `../conventions/graphify.md`, `CSD/graphify-out/GRAPH_REPORT.md` (skim only)
-**Effort** ⚠️ **Large, and measured after the fact: roughly an order of magnitude
-over the reading budget.** A 12-chunk parallel extraction over 217 documents plus
-a bridging pass, then the same again for this repository. ⭐ Recorded because it
-is the evidence that produced the `Effort` field at all.
+**Owns** — **Context** —
 
-**Definition.** R14's enablement. Builds and verifies a graph for `studyforge`
-and for `Claude-senior-java-engineer` (CodeSignal already has one at
-`CSD/graphify-out/`), confirms the query, path and explain commands answer, and
-records in the repository how an agent invokes them and when the graph is
-rebuilt. Establishes the rebuild point — between waves, never mid-task by the
-agent doing the work, because a graph built against a half-finished tree
-indexes a state nobody will see again.
+⛔ **RETIRED BY USER RULING, 2026-09-12, together with R14 and the tool it
+built for.** ⭐ **The id is retained in place and never reused**, so every
+citation of `FND-02` in the records still resolves to something that explains
+itself (Ruling 106 — the records cannot be edited to follow a renumbering).
 
-The Java repository's graph is the more valuable of the two: 212 documents and
-345 classes are exactly the shape where an agent otherwise burns its whole
-context budget re-deriving structure.
+⚠️ **What it was.** R14's enablement: build and verify a knowledge index for
+this repository and for the Java corpus, document how an agent invokes it, and
+establish when it is rebuilt.
 
-⛔ **How `graphify-out/` is ignored in `JS/` is ruled, and the obvious way is
-forbidden.** `JS/` is a consumer repository, so R3 applies: the repository's root
-ignore file is one of the three edits **no `permitted_edits` entry can
-authorise**. ⭐ The fix is the one R3 names — write the ignore file *inside* the
-generated directory: `graphify-out/.gitignore` containing a single `*`, which
-ignores every path in that directory including itself. `git status` in `JS/`
-stays clean and **zero pre-existing files are touched**. ⚠️ This does not apply
-to `SF/`, whose own `.gitignore` already carries the directory and is free to.
+⭐ **What survives it, and it is the durable half.** ⛔ **Its acceptance was
+unverifiable from the repository** — the artifact was git-ignored, so *"the
+index was rebuilt"* was true in the worktree where it ran and false everywhere
+else, and no reader could tell which. ⚠️ **That lesson is now carried by
+`docs/conventions/delivery-flow.md`**, not by this task.
 
-⚠️ **The two halves of this task are separated in time, on purpose.** The `JS/`
-graph is buildable the day the task starts and is the valuable one. A `studyforge`
-graph built before `FND-01` lands indexes a tree with no `src/` — "a state nobody
-will see again", which is the failure this task's own rebuild rule exists to
-prevent.
-
-**Acceptance.** Both graphs build. ⭐ **The `studyforge` graph is rebuilt at the
-M0/M1 boundary, after `FND-01`'s layout exists, and that rebuild is the one the
-acceptance is judged on** — a graph of a docs-only tree does not satisfy this
-task. Three representative queries return useful answers, recorded as examples in
-the conventions document. The rebuild command is documented and works
-incrementally. `graphify-out/` is ignored in both repositories — in `SF/` by its
-root ignore file, in `JS/` by `graphify-out/.gitignore` containing `*`, and
-`git status` in `JS/` is clean with the graph present. `graphify.md` states that
-R14 binds on a repository when it enters the project's working set, not before.
+⭐ **The R3 shape it proved also survives**: an ignore rule for a generated
+directory goes *inside* that directory, never in a source repository's root
+ignore file — which is one of the three edits no `permitted_edits` entry can
+authorise. `src/studyforge/skills/onboarding/` carries the rule; ⛔ **it no
+longer writes one, because there is no longer a directory to write it for.**
 
 ---
 
@@ -345,162 +325,32 @@ be inferred.
 
 ---
 
-### FND-07 — Knowledge-index availability and freshness
+### FND-07 — ⛔ RETIRED 2026-09-12 (was: knowledge-index availability and freshness)
+
 **Milestone** M1 · **Depends on** — · **Team** solo
-**Owns** the index tripwire in `tools/quality/`, and `graphify.md`'s worktree section
-**Context** ~15k — R14, `handoffs/FND-02.md`, `docs/conventions/graphify.md`, `tests/test_knowledge_index.py`
+**Owns** — **Context** —
 
-⭐ **This task exists because `FND-02` was marked done for an artifact that never
-reached the repository.** Its acceptance — *"the `studyforge` graph is rebuilt at
-the M0 close"* — was **true in the worktree where it ran and false everywhere
-else**, because `graphify-out/` is git-ignored and ⛔ **an ignored artifact cannot
-travel on a branch.** Measured 2026-09-09: **33 worktrees, 2 with a graph** — the
-main checkout and `FND-02`'s own. ⚠️ **Every agent since has worked without the
-index while the board said it existed**, which is the R14 premise every `Context`
-budget in the plan rests on.
+⛔ **RETIRED BY USER RULING, 2026-09-12, together with R14, `FND-02` and the
+tool they served.** ⭐ **The id is retained in place and never reused.**
 
-⛔ **This is not a criticism of `FND-02`.** It did the work, it verified it, and it
-recorded what it saw. The defect is that **the acceptance was unverifiable from
-the repository**, so nothing could have caught the gap — which is why the fix is a
-rule and a check rather than a rebuild.
+⚠️ **What it was.** A floor tripwire reporting whether a knowledge index was
+present and current, and the tests behind it. ⛔ **The check, its module and its
+tests are deleted**; the floor no longer prints an index line.
 
-**Definition.** Three things, and the third is the cheap one nobody had measured.
+⭐ **What survives it, in three places, and none of them is this task:**
 
-1. ⭐ **The tripwire.** A check that answers, from any checkout, *is there an index
-   here and can it be trusted?*
-   - **Absent** → ⚠️ **report, with the rebuild command, and do not fail.** A
-     fresh clone legitimately has no index, and ⛔ a red suite on clone is hostile
-     and gets muted, which is how a check stops being read.
-   - ⛔ **Present but older than the newest tracked file under `src/`, `tools/` or
-     `docs/` → FAIL.** ⭐ **A stale index is worse than an absent one**, because
-     the agent trusts it: absence is visible and staleness answers confidently
-     with yesterday's tree.
-2. **The wave-open checklist gains a line** — *index present and current in this
-   checkout* — beside the `[structural]` sweep. The PO runs both.
-3. ⭐ **The worktree convention, which makes R14 affordable and is mostly already
-   there.** Measured: `graphify explain` and `graphify path` accept
-   `--graph <path>` and **work from a worktree with no index of its own**;
-   `graphify query` does not and reads `./graphify-out/graph.json` only.
+1. ⛔ **An acceptance a reader cannot check from the repository is not an
+   acceptance** — `docs/conventions/delivery-flow.md`.
+2. ⛔ **A floor check's verdict may not depend on untracked state** (Ruling 80,
+   review-rubric §2e). ⭐ **Its one enumerated standing exception was this
+   task's last enforcement and is now gone**, so §2e's list is shorter by
+   exactly that member and says so.
+3. ⛔ **An absence is REPORTED and never punished** — the notice channel in
+   `tools/quality/`, which this task's check established and `lint_notice`
+   now carries alone.
 
-   ⚠️ **That maps exactly onto R14's own qualification.** The two commands the
-   ruling holds for *unconditionally* are the two that need no local build; the
-   one that needs a local build is `query`, already the weak one. ⭐ **So the cost
-   is paid once per repository, not once per worktree** — 33 rebuilds was never
-   payable, and an unaffordable rule is one that gets skipped, which is what
-   happened. `graphify.md` gains the invocation; ⚠️ four tests assert that
-   document's content, so they move with it.
-
-4. ⛔ **Bridge the framework's own graph, and make the tripwire care.** Measured
-   on the rebuilt index: **232 doc↔code edges out of 6,081 — 3.8%**, and
-   `graphify path "R7 — No Personal Data…" "assert_clean()"` returns **no path,
-   even undirected.** ⚠️ **That is the question this repository most needs
-   answered — *which ruling does this code implement?* — and the index cannot
-   answer it.** The 3.8% is incidental, from handoffs naming functions in prose;
-   it is not a bridge.
-
-   ⭐ **We wrote this rule for somebody else and did not apply it to ourselves.**
-   `SK-07` item 9 already says a graph built by running the tool alone has no
-   doc↔code edges and that **bridging is the part that would be missed** —
-   `FND-02` built the bridging pass, applied it to the **corpus** (806 edges, 162
-   of 166 lessons), and nobody ran the equivalent here. The recipe is in
-   `handoffs/FND-02.md`, deterministic, literal symbol occurrence, ⛔ never an LLM.
-
-   ⚠️ **So the tripwire must check usefulness, not just presence** — ⛔ **present,
-   current and unbridged is a worse lie than absent**, because all three green
-   lights are on and the one question that matters returns silence.
-
-**Acceptance.** The tripwire reports absence naming the rebuild command and exits
-zero; ⛔ **it fails when the doc↔code edge census is below a recorded floor**, so
-an index that cannot connect a ruling to its enforcement is not certified as
-healthy — the framework's graph is bridged to establish that floor, and the
-census command is the one `graphify.md` already documents; ⛔ it **fails** on an index whose **indexed scope has changed since it was built** — ⚠️ **not on a
-timestamp; see the carried ruling below** — asserted
-by a test that constructs a stale index rather than by description. `graphify.md` carries the
-`--graph` invocation for a worktree, and `tests/test_knowledge_index.py` asserts
-it as it does the other runbook entries. ⛔ **No test in the suite skips
-unconditionally** — a skip every run reports is an untested claim wearing a
-skip's clothes.
-
-### ⛔ Carried ruling — freshness is decided by **content, never by mtime**
-
-⚠️ **Carried by the PO 2026-09-09, from the coordinator's finding and the PO's
-own re-measurement. Both halves are needed; each caught the other's error.**
-
-⛔ **This task originally said *"older than the newest tracked file"*. That test
-is wrong and would have shipped a check that cries wolf.** Git rewrites checkout
-mtimes on merge, checkout, rebase and worktree creation — none of which change
-content — so an mtime tripwire fails **after every merge**, which is to say after
-everything this team does. ⭐ **A check that cries wolf gets waved through**, and
-this project has already written that sentence once, about C2. FND-07 exists to
-prevent an index nobody can trust; an mtime test would have made FND-07 the thing
-nobody reads.
-
-⚠️ **And the second half, which is the one worth the most.** The finding's own
-counter-check — *"the index is current, I verified it by content"* — was itself
-wrong. It confirmed **one** symbol (`describe()`, 13 occurrences) and generalised
-to the tree. **Measured by the PO on the same index, 2026-09-09:** an incremental
-`graphify update` added **224 nodes and removed 18**, and the additions are
-exactly the merged-but-unindexed tree — `src/studyforge/unit/content.py` (30),
-`tests/.../test_content.py` (38), `unit/sections.py` (8), `unit/errors.py` (6),
-`corpus/placement/names.py` (6), `corpus/container/fields.py` (7). ⛔ **The index
-was stale by 224 nodes while a content check called it current.**
-
-⭐ **Both failures are one shape, and naming it is the point: a proxy read as the
-thing.** mtime is a proxy for content; one symbol is a proxy for the tree. ⛔ **A
-sample is not a census** — the same sentence as *absence of a connection is not
-proof of absence*, one level over.
-
-⛔ **And the CTO's re-measurement is worse than either, so it settles the
-question rather than merely supporting it** (round 17, ruling 18). Re-run 33
-minutes later with **no content change**, the mtime verdict flipped **FAIL →
-PASS on its own**. ⚠️ **`git worktree add` resets every mtime** — so an mtime
-tripwire fails inside **every trial-merge worktree §0a of the rubric now
-requires**, which is to say ⛔ **the freshness check would break the gate this
-project built to catch C5.** A check that disables another check is not a
-detail; it is the worst available outcome for a tripwire.
-
-⭐ **The mechanism already exists in the artifact and nobody had to design it.**
-`graphify-out/graph.json` carries a top-level **`built_at_commit`**. So:
-
-| | Test | Why this and not the alternative |
-|---|---|---|
-| **Fresh** | `git diff --name-only <built_at_commit>..HEAD -- src tools docs` is **empty** | ⭐ Content-scoped, so it does **not** fire on a commit that touches only the board — which a bare `built_at_commit != HEAD` would, crying wolf in a second way |
-| **Stale** | that diff is **non-empty** → ⛔ **FAIL**, naming the changed paths and the rebuild command | The failure says *what* went unindexed, so it is actionable rather than an alarm |
-| **Absent, or no `built_at_commit`** | report the rebuild command, **exit 0** | A fresh clone legitimately has neither; ⛔ a red suite on clone gets muted |
-| **Unknown commit** (index built at a commit not in this checkout) | report, **exit 0** | ⚠️ Do not fail on a ref this clone cannot resolve — that is an environment fact, not a staleness fact |
-
-**Verified before assignment, 2026-09-09, main checkout @ `9ad45a2`:** after the
-PO's rebuild `built_at_commit` is `9ad45a2`, the scoped diff is **0 files**, and
-the check passes. ⛔ **The mtime test passes right now too — but only because the
-index was rebuilt minutes ago, and it goes red on the next merge.** That contrast
-is the test the author should encode.
-
-⛔ **Ship the test that stops a clock being reintroduced**, and it is the clause
-that makes this ruling durable rather than a comment somebody deletes: **touch
-every tracked file, then assert the verdict does not move.** ⭐ A future author
-reaching for `stat` fails immediately and reads why, which is the difference
-between a decision and a decision that holds. ⚠️ **`!= HEAD` is refused for the
-same family of reasons** — it fails after every commit, including a commit that
-changes only this board, so it cries wolf in a second way. The comparison is
-**scoped to what is indexed**, `-- src tools docs`, and nothing else.
-
-⛔ **Standing rule this task must honour** (C5, option 1): **a commit that adds a
-check brings the tree into compliance in the same commit.** The index is current
-as of `9ad45a2`; if it has drifted by the time this is authored, ⭐ **the rebuild
-is part of the task**, because a tripwire that lands red is a tripwire that gets
-muted. `graphify update <path>` is incremental, needs **no LLM and no API key**,
-and took under a minute here.
-
-⚠️ **One thing the rebuild does not fix, so do not assume it:** `graphify update`
-re-extracts **code** only. The doc layer needs the separate semantic pass, and
-the ⛔ **bridging** clause above is still owed — re-measured after the rebuild,
-code↔prose edges are **510 of 6,463 (7.9%)**, of which 502 are code↔`rationale`
-incidental mentions, and `graphify path "R7 — No Personal Data" "assert_clean()"`
-still returns **no path, even undirected**.
-
-**Out of scope.** Building any graph. Committing one — `graphify-out/` stays
-ignored, and ⛔ the answer to an untracked artifact is never *"track it"*: the
-index is 90 MB for a corpus, derived, and rebuilt rather than merged.
+**Out of scope, and it always was.** Tracking a generated artifact: ⛔ the
+answer to an untracked artifact is never *"track it"*.
 
 ---
 
@@ -581,10 +431,10 @@ excluded from the packaging config.
 the fifth rule to a tree that fifteen M1 branches are open against. **If the
 sweep finds anything, `FND-06` fixes it** — it does not file fifteen findings.
 
-⭐ **It also carries one consolidation it did not create.** `is_ignored()` is
-duplicated between `tests/test_repository.py` and `tests/test_knowledge_index.py`,
-against `tests/support.py`'s own stated rule. `FND-02` created the duplicate
-deliberately rather than edit a file outside its task, and said so. ⛔ Three
+⭐ **It also carries one consolidation it did not create.** `is_ignored()` was
+duplicated between `tests/test_repository.py` and a second module (since
+removed), against `tests/support.py`'s own stated rule. `FND-02` created the
+duplicate deliberately rather than edit a file outside its task, and said so. ⛔ Three
 lines, into `tests/support.py`, and both call sites import it — this task is the
 next one whose scope legitimately spans both.
 

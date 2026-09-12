@@ -166,7 +166,7 @@ the command, and the copy disagreed with the command beneath it.**
 #    PATTERN — `review-rubric.md` §8a, Ruling 65, and the shipped reader
 #    `tools/quality/handoffs/contract.py`'s `_MARKERS_ON_LINE`, which agree.
 grep -rnE '`\[structural\]`' docs/tasks/handoffs/
-python3 -m tools.quality                          # 2. index present and current
+python3 -m tools.quality                          # 2. the quality floor
 ```
 
 ⛔ **THE SPELLING IS RULING 65'S AND THIS DOCUMENT DOES NOT GET A SECOND ONE.**
@@ -178,34 +178,23 @@ class, and the third party is the shipped reader, which was right all along.**
 ⭐ **The repository-wide sweep has no shipped instrument of its own, and that is
 the open row — the argument and its id are on `../tasks/BOARD.md`.**
 
-⭐ **The second line is FND-07's, and it is a line in a checklist because the
-alternative was believing a board row.** `FND-02` was marked done for a graph
-that never reached the repository: its acceptance was **true in the worktree
-where it ran and false everywhere else**, because `graphify-out/` is git-ignored
-and ⛔ **an ignored artifact cannot travel on a branch.** Measured 2026-09-09:
-**33 worktrees, 2 with a graph** — so every agent since had worked without the
-index while the board said it existed. ⛔ **AND THAT IS WHY NOTHING RESTS ON IT
-— a USER DECISION: `graphify` is OPTIONAL and is never a premise; no task's
-context budget may assume an index exists** ([`graphify.md`](graphify.md)).
+⭐ **The second line is a line in a checklist because the alternative was
+believing a board row.** `FND-02` was marked done for a generated artifact that
+never reached the repository: its acceptance was **true in the worktree where it
+ran and false everywhere else**, because the directory was git-ignored and
+⛔ **an ignored artifact cannot travel on a branch.** Measured 2026-09-09:
+**33 worktrees, 2 carrying it.**
 
 ⛔ **That is not a criticism of `FND-02`**, which did the work and recorded what
 it saw. The defect is that **the acceptance was unverifiable from the
 repository** — which is why the answer is a check every checkout runs, and never
 a rebuild somebody reports.
 
-⚠️ **An absent index is not a failure and the check says so**, printing the two
-commands that build one. ⛔ A *stale* one is not a failure either, since Ruling
-96 — it is a **notice**, and the review rubric requires it to be quoted (4b-ii).
-⛔ A *current but unbridged* one is still a finding — see `graphify.md`.
-
-⭐ **The INTERIM rebuild step that stood here is DELETED by `W39`, and its expiry
-was met rather than lapsed.** ⚠️ **It read *"whoever merges to a release branch
-rebuilds the index before quoting the tip"*, because `freshness()` fired on any
-change under `docs/` and every merge writes a handoff and a board row.** ⛔ **The
-CTO ruled (96) that the rebuild is not the answer**: staleness is now scoped to
-what the index actually describes, and a stale index cannot redden a tip. ⭐ **The
-rebuild survives in the rubric as a courtesy to the next agent's queries, with no
-pass condition and no power to invalidate a number.**
+⛔ **`FND-07`'s index tripwire is RETIRED (2026-09-12, user ruling) together with
+R14 and the tool it watched.** ⭐ **The search path is `git grep`, `grep -rn` and
+`sed -n`**, and no document here may name a code-graph or index tool again.
+⚠️ **The general lesson is what survives, and it is the paragraph above:** an
+acceptance a reader cannot check from the repository is not an acceptance.
 
 ⛔ **THE THREE-VERDICT VOCABULARY IS HISTORICAL — a USER DECISION.** ⭐ **A row
 now has TWO outcomes and neither is a verdict string:**

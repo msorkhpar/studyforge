@@ -269,7 +269,7 @@ does. A subject missing here is a finding, and adding a row is not a mint.**
 | **setting up the RANGE for a wave** | [§0](#0-set-up-the-range) · [§0a](#0a-review-the-merge-not-the-branch) · [§0a-i](#0a-i-measure-the-base-too-and-report-both-numbers) · [Ruling 203](#0a-iii-ruling-203-cto-round-51-a-wave-of-n-branches-owes-the-n-way-reading-and-a-generated-derivation-of-the-records-makes-every-later-record-a-build-failure) · [Ruling 197](#0a-ii-ruling-197-cto-round-50-a-behind-count-the-two-dot-span-that-hides-it-and-a-citation-from-a-checkout-that-cannot-hold-the-ruling) · [(b)](#b-a-behind-count-is-a-form-defect-it-is-reported-and-it-does-not-block-a-merge) · [(c)](#c-a-citation-of-a-ruling-absent-from-the-authors-checkout-is-received-by-construction) |
 | **editing a TEST your row does not own** | [Ruling 143](#ruling-143-cto-round-39-an-out-of-owns-test-edit-under-three-bounded-conditions) · [Ruling 190](#ruling-190-cto-round-48-changing-a-value-a-distant-test-compares-against-is-editing-that-test-and-weakening-one-is-the-case-ruling-143-does-not-reach) · [Ruling 190(b)](#ruling-190-gains-clause-b-cto-round-49-the-mirror-case-a-branch-that-adds-a-member-to-a-derived-population-has-edited-every-distant-test-that-iterates-it-and-such-a-test-can-go-red-for-being-wrong) |
 | **R11 — the size ceiling and its opt-outs** | [§3](#3-r11-the-size-ceiling) · [Ruling 207](#3b-i-ruling-207-cto-round-51-the-ceilings-instrument-reads-py-only-so-the-reviewer-reads-the-rest) · [§3c](#3c-what-a-valid-justified-opt-out-looks-like) · [Ruling 113](#ruling-113-condition-3-has-a-second-admissible-form-a-deferral-naming-a-live-id) · [Ruling 121](#corrected-at-w45s-merge-ruling-121-it-calls-the-shipped-reader-and-it-drops-the-length-guard) |
-| **the LINT, FLOOR and INDEX lines of a review** | [Ruling 77](#ruling-77-ruling-31-does-not-reach-ruff-and-toolsquality-keeps-its-independence) · [Ruling 78](#ruling-78-the-floor-prints-the-lint-state-including-its-absence) · [Ruling 79](#ruling-79-the-lint-gate-is-run-separately-and-floor-clean-never-covers-lint) · [Ruling 96](#4b-ii-ruling-96-the-index-line-is-read-beside-the-lint-gate) · [Ruling 86](#ruling-86-a-documentation-only-branch-needs-a-lint-line-too) · [Ruling 86a](#ruling-86a-the-denominator-is-derived-from-the-tree-never-from-the-disk) · [Ruling 88](#ruling-88-the-floor-and-ruff-are-two-checks-and-a-review-that-runs-one-runs-half) |
+| **the LINT and FLOOR lines of a review** | [Ruling 77](#ruling-77-ruling-31-does-not-reach-ruff-and-toolsquality-keeps-its-independence) · [Ruling 78](#ruling-78-the-floor-prints-the-lint-state-including-its-absence) · [Ruling 79](#ruling-79-the-lint-gate-is-run-separately-and-floor-clean-never-covers-lint) · [`W187/5`](#4b-ii-w1875-the-floors-last-line-says-the-floor-is-not-the-suite) · [Ruling 86](#ruling-86-a-documentation-only-branch-needs-a-lint-line-too) · [Ruling 86a](#ruling-86a-the-denominator-is-derived-from-the-tree-never-from-the-disk) · [Ruling 88](#ruling-88-the-floor-and-ruff-are-two-checks-and-a-review-that-runs-one-runs-half) |
 | **a COMPONENT CONTRACT (§R9)** | [Ruling 330](#ruling-330-a-register-row-naming-two-producers-is-two-contracts-until-a-measurement-says-otherwise-a-wire-shape-takes-no-r9-row-and-a-contract-whose-version-key-lands-in-a-later-task-buys-a-dependency-edge) · [Ruling 341](#ruling-341-r9-governs-a-file-that-crosses-a-boundary-and-a-version-key-is-what-makes-the-question-worth-asking-rather-than-what-answers-it) · [Ruling 351](#ruling-351-r9s-narration-regeneration-state-is-located-and-a-content-addressed-filename-does-not-discharge-a-contract-whose-subject-is-the-conditions-the-content-was-produced-under) · [Ruling 323](#ruling-323-the-component-prerequisite-instruments-surface-is-owns-alone-and-context-is-a-second-reading-that-is-declared-and-never-folded-in) |
 | ⛔ **asserting a NEGATIVE — that no rule, instrument or name covers X** | [Ruling 337](#ruling-337-a-negative-over-instruments-is-a-claim-about-a-population-and-is-never-established-by-a-grep-for-a-name) · [Ruling 191](#ruling-191-cto-round-49-a-control-owes-inhabitation-and-an-empty-population-returns-the-pass-reading-rather-than-no-reading) · [Ruling 124](#ruling-124-a-check-over-a-derived-population-states-its-inhabitation-or-its-green-is-not-a-reading) · [Ruling 123](#ruling-123-an-instrument-is-validated-by-planting-not-only-by-running) · [Ruling 140](#ruling-140-cto-round-38-ruling-123s-sharpening-a-plant-is-adversarial-to-the-search-term-not-to-the-subject) · [Ruling 342](#ruling-342-a-control-table-reports-that-something-fired-never-that-the-right-thing-fired-and-only-an-instrument-sees-the-difference) |
 | **editing THIS document** | [the governor](#the-growth-governor-until-w34-lands) · [Ruling 149](#ruling-149-cto-round-39-the-line-count-is-retired-as-a-reported-governor) · [Ruling 160](#ruling-160-cto-round-41-an-argument-shaped-clause-is-admissible-here-but-it-owes-a-recorded-reading) · [§8b](#8b-ruling-181-a-document-that-governs-a-shape-may-not-carry-a-typed-measurement-of-that-shape) · [Ruling 349](#ruling-349-a-rule-lands-in-the-convention-document-that-governs-it-the-board-carries-state) |
@@ -1039,13 +1039,13 @@ verdict can differ between a fresh clone and a working machine, it is not a
 check — it is a report on the reviewer's disk, and R10 is the rule it breaks.
 
 ⭐ **The measured instance.** `tools/quality/pointers.py` resolves a link by
-asking whether the target **exists**. A generated or git-ignored artifact
-(`graphify-out/graph.json`, a built index) exists on a machine that built it and
-not in a fresh clone, so a document pointing at one is:
+asking whether the target **exists**. A generated or git-ignored artifact exists
+on a machine that built it and not in a fresh clone, so a document pointing at
+one is:
 
-| | fresh clone | machine that ran `graphify update .` |
+| | fresh clone | machine that built it |
 |---|---|---|
-| `[the index](../../graphify-out/graph.json)` | ⛔ **1 finding, exit 1** | ⭐ **clean, exit 0** |
+| `[the report](../../generated/REPORT.md)` | ⛔ **1 finding, exit 1** | ⭐ **clean, exit 0** |
 
 ⛔ **Both runs are green-or-red for a reason that has nothing to do with the
 commit under review.** ⚠️ Today no document in the tree carries such a link, so
@@ -1062,28 +1062,22 @@ every machine, for the same reason.**
 whose subject is *"does this path exist"* states, in its own contract, whether
 an untracked path counts — and answers the same way on both machines.
 
-#### ⛔ Ruling 110 — §2e has exactly ONE standing exception, and Ruling 96 denied it
+#### ⛔ Ruling 110 — an exception to §2e is enumerated, asserted and owned
 
 ⛔ **`W39/4`, escalated as a NEGATIVE.** ⭐ **An exception to §2e is legal only
 while it is enumerated, asserted and owned** — never remembered, never denied.
 
-```bash
-# Ruling 96 said "the exit code does not depend on graphify-out/ in ANY state".
-# FALSE: its own step enumerated one state. It should have said —
-#   No FRESHNESS state changes the floor's exit code: none, unverifiable,
-#   stale and fresh all exit 0. ONE dependency remains, enumerated rather than
-#   denied — a present index below BRIDGE_FLOOR is a finding, and that is
-#   FND-07's last enforcement. Converting it in the same breath would have
-#   deleted the check while claiming to have satisfied a rule.
-python3 -m pytest -q -k UNBRIDGED_finding_still_depends_on_untracked_state
-# Pass: 1 passed. 16049d2: exposure 0.
-# A row that goes green by DISAPPEARING has removed or hidden the exception,
-# and §2e is then owed a fresh measurement rather than a silence.
-```
+⚠️ **Ruling 110's own standing exception is GONE**, retired 2026-09-12 with R14
+and the index tool it guarded, so the class it enumerated is now empty of that
+member and the table below carries what remains. ⛔ **A row that goes green by
+DISAPPEARING has removed or hidden an exception, and §2e is then owed a fresh
+measurement rather than a silence** — this one was removed out loud, which is
+the difference.
 
-⭐ **Transferable: a ruling that removes one member of a class names the member,
-never the class** — the universal is the half nobody implements and everybody
-quotes. Reasoning: `docs/tasks/handoffs/CTO-2026-09-10-round31.md`.
+⭐ **Transferable, and it outlives the member: a ruling that removes one member
+of a class names the member, never the class** — the universal is the half
+nobody implements and everybody quotes. Reasoning:
+`docs/tasks/handoffs/CTO-2026-09-10-round31.md`.
 
 #### ⛔ `W142` — §2e's enumeration is a LIST, and the list is the count
 
@@ -1102,7 +1096,6 @@ whether it may reach a VERDICT:**
 
 | what walks the disk | may it fail a build? | why it is legal |
 |---|---|---|
-| a present `graphify-out/` index below `BRIDGE_FLOOR` | ⛔ **YES** — a finding | Ruling 110's enumerated exception: `FND-07`'s last enforcement, and converting it would delete the check while claiming to satisfy this rule |
 | `python3 -m tools.quality`'s own floor, filtered by `git check-ignore` | ⛔ **YES** | ⭐ It is the working-tree instrument ON PURPOSE — `FND-06` filtered it by the ignore rules rather than by the index precisely so a brand-new unadded module **is** caught. Its question is *does my working tree pass now*, never *is this repository clean* |
 | `tools/quality/lint.py`'s lint **notice**, `ruff … .` | ⭐ **NO, and it cannot** | Rulings 77 and 78 keep it a notice: the floor's exit code is identical with it and without it. ⚠️ It is where the working-tree lint reading LIVES, which is why narrowing the gates below did not delete it (Ruling 183) |
 
@@ -1906,11 +1899,11 @@ taken in the main checkout.**
 ```
 main checkout   host rows 10   ∩ container 5   siblings on disk
 linked worktree host rows 13   ∩ container 7   ⛔ two numbers moved
-  the difference, both rows:   tests/test_knowledge_index.py:125
-                               tests/test_knowledge_index.py:160
+  the difference, both rows:   one module, two rows  (⚠️ that module has since
+                               been removed; the reading stands at its ref)
 ```
 
-⚠️ **`test_knowledge_index.py`'s subject is the workspace** — Ruling 53's first
+⚠️ **That module's subject was the workspace** — Ruling 53's first
 `host-verified` shape — ⛔ **and `git worktree add` does not carry the sibling
 checkouts**, so the check that is *right* to be host-verified is the one whose
 answer moves. ⭐ **Every reviewer measures in a trial worktree**, which is
@@ -2291,9 +2284,9 @@ silence.** `python3 -m tools.quality` says `quality floor: clean` and means
 *the standard-library floor passed*. It has never meant *lint-clean*, and
 nothing in its output says so.
 
-⛔ **The floor gains a `lint` NOTICE — never a check** (`NOTICES`, beside
-`knowledge_index.notices`, which is the exact precedent: it prints *"none in
-this checkout … this is not a failure"*). It reports whether a linter was
+⛔ **The floor gains a `lint` NOTICE — never a check** (`NOTICES`, whose shape
+is an absence line that says *"this is not a failure"* in the same breath as it
+names what is missing). It reports whether a linter was
 found, its version, and what it said. ⭐ **A notice that reports a tool's
 absence does not depend on that tool**, so Ruling 77 is untouched and the floor
 stays standard-library-only.
@@ -2339,46 +2332,29 @@ Lint: did not run — ruff absent, both gates skipped        ⛔ NOT EVIDENCE (�
 row this table already calls *not evidence at all*, and a review that omits the
 lint line entirely is making that claim silently.
 
-##### ⛔ 4b-ii — Ruling 96: the INDEX LINE is READ, beside the lint gate
+##### ⛔ 4b-ii — `W187/5`: the floor's LAST line says the floor is not the suite
 
-⛔ **CUT AT THE RECORD HALF: the index state is READ and is never a gate; the
-record does not transcribe it
-([the rule](#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)).**
-⚠️ **And `graphify` is OPTIONAL — an absent index is the normal reading in a
-worktree and obliges nothing** ([`graphify.md`](graphify.md)).
+⛔ **The clause that stood here required a knowledge-index line to be quoted. It
+is GONE with R14 and the tool (2026-09-12, user ruling), and this replaces it in
+the same slot**, because the slot's job — *the floor's output is read for what it
+does NOT cover* — is the one that keeps being needed.
 
-⛔ **The floor prints one, always, in all four states. Quote it verbatim:**
+⚠️ **Measured: the floor was GREEN and the suite RED at the same ref.** ⛔ Neither
+gate is wrong. Ruling 78 puts format and lint enforcement in
+`tests/test_repository.py` **deliberately**, so the floor cannot close this by
+checking more. ⭐ **What was wrong is that `quality floor: clean` was the LAST
+line of the run and read as a verdict on the repository** — and every row now
+self-certifies, so an office reading the floor alone merges defects.
 
-```bash
-python3 -m tools.quality | grep '^knowledge index: '
-```
+⭐ **`python3 -m tools.quality` now prints a scope sentence BELOW the summary**,
+naming the other gate. ⛔ **Below, not above: a qualifier above the verdict is one
+the reader has already scrolled past** — `lint_notice` is above because it
+qualifies *lint*, and this qualifies *the verdict*.
 
-```
-knowledge index: fresh — built at 6850c3c9, and nothing it describes has moved since.
-knowledge index: stale — built at 6850c3c9, and src/, tools/ or docs/ has changed since …
-knowledge index: unverifiable — present, and its freshness could not be checked …
-knowledge index: none — none in this checkout. R14's budgets assume one …
-```
-
-⛔ **`stale` does not block APPROVE and never did after Ruling 96** — ⚠️ **it is
-not a licence either: a reviewer who quotes `stale` has said, in their own
-review, that their queries answered from yesterday's tree.** ⭐ **That is
-falsifiable, which no exit code here could be:** `graphify-out/` is git-ignored,
-so a verdict built on it reads clean on a fresh clone and red on a working
-machine, **on the same commit** — the untracked-state dependency §2e forbids.
-
-⚠️ **`none` is the honest and usual answer in a trial-merge worktree**, because
-`git worktree add` does not carry a git-ignored directory. ⛔ **Quote it rather
-than omitting the line**: the omission and the absence look identical in a
-review, and only one of them is a measurement.
-
-⛔ **AND `none` IS NOT A DEFICIENCY — a USER DECISION.** ⭐ **`graphify` is
-OPTIONAL and is never a premise of anything: no brief, row or budget may assume
-an index exists** ([`graphify.md`](graphify.md)). ⚠️ **The shipped `none`
-message still says *R14's budgets assume one*; that sentence is now false and
-its repair belongs to whoever owns `tools/quality/knowledge_index.py` — it is
-NOT edited here, because a document may not paraphrase a string the code
-prints.**
+⛔ **Pass condition: a record that quotes the floor is not evidence about the
+suite, and a row is certified on BOTH gates run at the ref that merges.** ⭐ The
+scope line is asserted by `tools/tests/quality/test_main.py` in both directions —
+clean and red — so it cannot quietly stop printing.
 
 #### ⛔ Ruling 86 — a **documentation-only** branch needs a lint line too
 
@@ -3877,9 +3853,9 @@ tried"* are the pair this whole document exists to tell apart.
 **Measured `39bdc4f`, `SK-07`, both residues, in the pinned image:**
 
 ```text
-E11 item 9  "built, bridged graph, doc↔code census non-zero"
-  docker/dev/check sh -c 'command -v graphify'   -> graphify: NOT IN THE PINNED IMAGE
-  ⭐ the clause's OTHER half — the R3-safe ignore file — IS met and asserted
+E11 item 9  (an external tool the pinned image does not carry)
+  docker/dev/check sh -c 'command -v <tool>'     -> NOT IN THE PINNED IMAGE
+  ⚠️ the clause has since been retired outright with R14 (2026-09-12)
 E11 acceptance  "OPS-01/03/04/05/06 ... for the Java corpus"
   R20: the diff is measured in a consumer repository this office may not read
   ⭐ second instance; the first was `SK-02/4`, round 36
@@ -3965,10 +3941,8 @@ outside the task goes in the handoff as a **finding**, not into the diff. This
 cuts both ways: a diff that is too small for its Acceptance is the same defect
 wearing the other face.
 
-If the change adds, removes or renames a package or module, the graph is stale
-(R14) — but ⛔ **it is not rebuilt by the agent doing the work**, and a diff
-containing `graphify-out/` is a fail: it is git-ignored, local, rebuilt, never
-merged.
+⛔ **A diff may not carry a git-ignored, locally generated directory** — rebuilt
+on somebody's machine, never merged.
 
 ### ⛔ Ruling 143 (CTO round 39) — an out-of-`Owns` TEST edit, under three bounded conditions
 
@@ -4408,41 +4382,24 @@ remembered by whoever did it. ⭐ A gate that leaves no trace when it is skipped
 a gate that will be skipped again, and this project has already ruled the same
 way twice — once for the module ceiling, once for the R7 sweep.
 
-#### ⛔ Ruling 89, NARROWED by `W39` — the merger rebuilds as a **courtesy**, never as a precondition
+#### ⛔ Ruling 89, NARROWED by `W39`, then RETIRED — there is nothing to rebuild
 
-⛔ **After merging, in the checkout you merged into — a worktree has no index to
-rebuild:**
+⛔ **The post-merge rebuild step that stood here is GONE (2026-09-12, user
+ruling), with R14 and the tool it invoked.** ⭐ **The search path is `git grep`,
+`grep -rn` and `sed -n`**, and no clause in this document may name a code-graph
+or index tool again.
 
-```bash
-graphify update . && python3 -m tools.knowledge bridge
-python3 -m tools.knowledge census        # edges, prose-to-code, floor
-```
+⚠️ **What is worth keeping is the reason it had already been narrowed to a
+courtesy, because the shape recurs.** ⛔ **The generated directory was
+git-ignored, so `git worktree add` did not carry it and the obligation
+evaporated in every linked worktree while standing in the main checkout** —
+⭐ **measured twice, by two agents, in two checkouts (`CTO-27/6`).** ⛔ **An
+obligation that silently changes depending on which checkout you stand in is the
+untracked-state dependency §2e forbids, wearing a procedure instead of an exit
+code.**
 
-⭐ **Pass condition: none. This step can no longer invalidate anybody's
-number.** ⛔ **AND NO BUDGET DEPENDS ON IT — a USER DECISION: `graphify` is
-OPTIONAL, it is never a premise, and no task's context budget may assume an
-index exists** ([`graphify.md`](graphify.md)). ⚠️ **It stays as a courtesy to
-whoever next works in the MAIN checkout** — ⛔ **and it is skipped without
-comment where `graphify` is not installed, which is every linked worktree and
-the pinned image both.**
-
-⚠️ **What was narrowed, and why the other half had to go.** ⛔ **Ruling 89
-bundled two reasons: *the next agent needs an index* (kept) and *the tip is red
-until you rebuild, so rebuild before quoting it* (deleted).** ⭐ **`W39` removed
-the second's cause on both sides** — `freshness()` no longer fires on a handoff
-or a board row, and a stale index is a **notice** rather than a finding (4b-ii),
-so **a stale index cannot redden a tip.**
-
-⛔ **And the deleted half was never runnable everywhere, which is the sharper
-reason.** ⚠️ **`git worktree add` does not carry a git-ignored directory, so
-`graphify-out/` is absent in every linked worktree, the floor reads `none`, and
-there is nothing to rebuild** — ⭐ **measured twice, by two agents, in two
-checkouts (`CTO-27/6`).** ⛔ **An obligation that silently evaporates depending
-on which checkout you stand in is the untracked-state dependency §2e forbids,
-wearing a procedure instead of an exit code.**
-
-⚠️ **§10 below is unchanged and still right:** the author does not rebuild, and
-`graphify-out/` in a diff is still a fail.
+⚠️ **§10 below is unchanged and still right:** a locally generated, git-ignored
+directory in a diff is a fail.
 
 ---
 

@@ -46,8 +46,7 @@ could read as *fresh* — and neither reading could be told from the other.
 ⚠️ An absent cache, an unreadable one and one declaring a `site_api` this build
 does not speak are all states where the question **could not be put**. Calling
 any of them `stale` is a verdict the evidence does not support, and R6's *fail
-loud* means saying **which**, not guessing. ⭐ The same three, for the same
-reason, as `tools/knowledge/index.py`.
+loud* means saying **which**, not guessing.
 """
 
 from __future__ import annotations

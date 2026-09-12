@@ -176,8 +176,8 @@ def read(path: Path | str, where: str | None = None) -> Cached | None:
     ⚠️ **A malformed cache reads as a `Cached` with a fault, never as an
     exception.** It is a local, derived, rebuildable artifact; a half-written
     one is a rebuild the reader needs to be **told** about, not a crash in a
-    server's startup. ⭐ That is the same judgement `tools/knowledge/index.py`
-    made for a graph in a different tree, reached for the same reason.
+    server's startup. ⭐ That is the same judgement this package's `freshness`
+    makes about a cache it cannot read, reached for the same reason.
 
     ⛔ **`None` means "no file", and it is not the same as "nothing readable".**
     Collapsing them would make an absent cache and a corrupt one produce the

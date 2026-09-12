@@ -113,9 +113,9 @@ def test_nothing_it_emits_makes_the_framework_a_submodule(tmp_path):
 
 
 def test_the_repositorys_own_root_ignore_file_is_untouched(tmp_path):
-    # ⛔ Clause 3, and W15's measured breach: tooling appended `graphify-out` to
-    # a source repository's root ignore file on an ordinary commit. The rule
-    # goes inside the generated directory instead.
+    # ⛔ Clause 3, and W15's measured breach: tooling appended a generated
+    # directory to a source repository's root ignore file on an ordinary
+    # commit. Any rule this skill needs goes inside its own directory instead.
     root = corpora.material(tmp_path / "corpus")
     (root / ".gitignore").write_text("target/\n", encoding="utf-8")
     before = (root / ".gitignore").read_bytes()
@@ -123,7 +123,6 @@ def test_the_repositorys_own_root_ignore_file_is_untouched(tmp_path):
     onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root)
 
     assert (root / ".gitignore").read_bytes() == before
-    assert (root / "graphify-out/.gitignore").read_text(encoding="utf-8") == "*\n"
 
 
 def test_afterwards_nothing_that_existed_has_changed(tmp_path):

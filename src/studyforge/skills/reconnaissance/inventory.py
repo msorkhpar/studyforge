@@ -57,7 +57,6 @@ NOT_MATERIAL = (
     ".vscode",
     "node_modules",
     "__pycache__",
-    "graphify-out",
     ".studyforge",
     "target",
     "build",

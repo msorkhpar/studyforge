@@ -122,7 +122,6 @@ TOOL_OUTPUT_DIRS = (
     ".ruff_cache",
     "build",
     "dist",
-    "graphify-out",
     "node_modules",
 )
 

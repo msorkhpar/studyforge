@@ -29,9 +29,9 @@ will be"* (`style.py`'s own contract). The floor stays standard-library-only.
 
 ⭐ **The trick that makes both hold at once: a notice reporting a tool's absence
 does not depend on that tool.** Nothing here is required for the floor to reach
-a verdict, so nothing here can weaken one. `knowledge_index.notices` is the
-precedent named in the ruling — it prints *"none in this checkout … this is not
-a failure"* and exits 0.
+a verdict, so nothing here can weaken one. ⭐ The shape the ruling names is an
+absence notice that says *"this is not a failure"* in the same breath as it
+names what is missing, and exits 0.
 
 ⚠️ **Enforcement stays in `tests/test_repository.py`**, which fails the build
 where ruff exists. ⭐ **This notice supplies visibility of absence; that test

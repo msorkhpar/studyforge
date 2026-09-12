@@ -241,7 +241,7 @@ def check_board(root: Path) -> list[Finding]:
     """
     text = read_text(root / BOARD)
     if text is None:
-        # ⛔ Not a finding, and this is `check_knowledge_index`'s split, reused.
+        # ⛔ Not a finding, and the split is the floor's standing one.
         # The floor runs over ARBITRARY roots — a temp tree, a corpus
         # repository — and a check that failed every tree that is not this one
         # would be asserting *which repository you are in*. ⭐ Absence is

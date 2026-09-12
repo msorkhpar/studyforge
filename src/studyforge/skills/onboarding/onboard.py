@@ -183,7 +183,6 @@ def onboard(
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
         *made.files,
-        _own(artifacts.GRAPH_IGNORE, artifacts.graph_ignore(), "R3-safe: inside the index (R14)"),
         *_pin_files(framework_commit, skills),
         _own(artifacts.EDITS_TEST, artifacts.edits_test(manifest), "R3, with this corpus's edits"),
         _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),

@@ -1,5 +1,4 @@
 # The knowledge index is local, rebuilt, never merged (R14)
-graphify-out/
 
 # Python
 __pycache__/

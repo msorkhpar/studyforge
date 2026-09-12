@@ -104,10 +104,10 @@ def is_ignored(path: str, cwd: Path | None = None) -> bool:
     must never arrive as the same answer.
 
     ⭐ One definition, per this file's own rule. It was written twice —
-    `tests/test_repository.py` had it first and `tests/test_knowledge_index.py`
-    copied it, because FND-02 was told not to touch the file that already had
-    it and recorded the duplication as a finding rather than reaching outside
-    its task. Consolidated here by FND-06, which owns both callers.
+    `tests/test_repository.py` had it first and a second module copied it,
+    because FND-02 was told not to touch the file that already had it and
+    recorded the duplication as a finding rather than reaching outside its
+    task. Consolidated here by FND-06, which owns both callers.
 
     ⚠️ `cwd` defaults to this repository and is a parameter because FND-02 asks
     the same question of *sibling* repositories, where the answer is about

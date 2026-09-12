@@ -9,6 +9,24 @@ defaults to the current directory, which is expected to be the repository
 root.
 
 **Depends on.** `argparse` and `tools.quality`.
+
+## ⛔ `W187/5` — the floor is NOT the suite, and it now says so LAST
+
+⚠️ **Measured: the floor was GREEN and the suite RED at the same ref.** ⛔ That
+is not a defect in either gate — Ruling 78 put format and lint enforcement in
+`tests/test_repository.py` **deliberately**, because the floor's exit code may
+not depend on whether somebody ran `pip install`, and `lint.py` may only report
+the tool's absence. ⭐ **The defect is what the floor SAYS about itself:**
+`quality floor: clean` is the last line of the run and reads as a verdict on the
+repository, so an office that certifies on the floor alone merges defects the
+suite would have refused.
+
+⛔ **So the scope sentence is printed BELOW the summary and not above it.** ⚠️ A
+qualifier above the verdict is a qualifier the reader has already scrolled past;
+`lint_notice` is above because it qualifies *lint*, and this qualifies *the
+verdict*. ⭐ **The last line an office copies is now the one that names the other
+gate** — and `format_findings` is untouched, so the verdict token it produces is
+still exactly `quality floor: clean`.
 """
 
 from __future__ import annotations
@@ -18,6 +36,15 @@ import sys
 from pathlib import Path
 
 from tools.quality import format_findings, run_all, run_notices
+from tools.quality.lint import GATES
+
+#: ⛔ The gate this run is NOT. Printed last, on every run, clean or not — see
+#: the module docstring. ⚠️ It names `tests/test_repository.py` through
+#: `lint.GATES` rather than re-typing it, so the two cannot drift.
+SCOPE = (
+    f"scope: the floor only — `python3 -m pytest` is a SEPARATE gate and can be RED at "
+    f"this same ref (format and lint are enforced in {GATES}, Ruling 78)"
+)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -42,6 +69,9 @@ def main(argv: list[str] | None = None) -> int:
         print(line)
     findings = run_all(arguments.root)
     print(format_findings(findings))
+    # ⛔ Below the verdict, never above it (`W187/5`). A qualifier above the
+    # line it qualifies is one the reader has already scrolled past.
+    print(SCOPE)
     return 1 if findings else 0
 
 

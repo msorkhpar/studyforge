@@ -96,9 +96,9 @@ def test_a_git_ignored_path_is_not_the_repository_s(tmp_path):
     # the repository and it never will. Gating on it made the floor
     # unconditionally red for anyone with an IDE running.
     init_repository(tmp_path)
-    make(tmp_path, ".gitignore", ".idea/\ngraphify-out/\n")
+    make(tmp_path, ".gitignore", ".idea/\ngenerated/\n")
     make(tmp_path, ".idea/workspace.xml")
-    make(tmp_path, "graphify-out/GRAPH_REPORT.md")
+    make(tmp_path, "generated/REPORT.md")
     make(tmp_path, "docs/notes.md")
     assert sweep(tmp_path) == [".gitignore", "docs/notes.md"]
 
@@ -170,10 +170,10 @@ def test_markdown_files_is_a_narrowing_of_the_shared_walk(tmp_path):
     # ⭐ FND-08 acceptance 6: no second file-walking helper. The narrowing is
     # one `suffix` test, so exclusions and the sort order are inherited.
     init_repository(tmp_path)
-    make(tmp_path, ".gitignore", "graphify-out/\n")
+    make(tmp_path, ".gitignore", "generated/\n")
     make(tmp_path, "docs/notes.md")
     make(tmp_path, "docs/data.json", "{}\n")
-    make(tmp_path, "graphify-out/GRAPH_REPORT.md")
+    make(tmp_path, "generated/REPORT.md")
     make(tmp_path, "__pycache__/cached.md")
     track(tmp_path, ".gitignore", "docs/notes.md", "docs/data.json", "__pycache__/cached.md")
     found = [config.relative(path, tmp_path) for path in config.markdown_files(tmp_path)]

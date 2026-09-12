@@ -13,7 +13,7 @@
 | capability | what it is | area | waits on |
 |---|---|---|---|
 | `FND-01` | Repository scaffolding and quality floor | Foundations | — |
-| `FND-02` | Knowledge index | Foundations | — |
+| `FND-02` | ⛔ RETIRED 2026-09-12 (was: knowledge index) | Foundations | — |
 | `FND-03` | Development and test container | Foundations | `FND-01` |
 | `FND-04` | Shared contract fixtures | Foundations | — |
 | `FND-05a` | Workspace, workflow and the pin file | Foundations | — |
@@ -23,7 +23,7 @@
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
-| `FND-07` | Knowledge-index availability and freshness | Foundations | — |
+| `FND-07` | ⛔ RETIRED 2026-09-12 (was: knowledge-index availability and freshness) | Foundations | — |
 | `FND-08` | The repository-wide document walk, and its migration | Foundations | `FND-01`, `FND-06` |
 | `FND-09` | The fixture-access seam, scoped once | Foundations | `FND-04`, `Ruling 46` |
 | `SF-01` | Logical address model | Core contracts | — |

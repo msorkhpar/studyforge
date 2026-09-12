@@ -17,17 +17,16 @@ remedy a finding gives is one command: `python3 -m tools.quality.rulings`.
 ⛔ **Why this is a package INSIDE `tools.quality` and not a sibling of it**
 (decided, not drifted). The derivation writes 197 anchors and `check_pointers`
 reads every one, so the slug algorithm must have exactly one definition —
-`pointers.slug`. ⚠️ A sibling package could not import it: `tools.knowledge`'s
-standing rule is that a generator stays importable by a tree whose floor will
-not import, and honouring that here would have meant a second copy of the
-anchor algorithm. ⭐ **`tools/quality/board/` is the precedent**: a package
+`pointers.slug`. ⚠️ A sibling package could not import it without a second copy
+of the anchor algorithm, since a generator has to stay importable by a tree
+whose floor will not import. ⭐ **`tools/quality/board/` is the precedent**: a package
 inside the floor, reading and asserting one document's shape.
 
-## ⛔ Why this is a FINDING and not a notice, unlike the knowledge index
+## ⛔ Why this is a FINDING and not a notice
 
-⚠️ **`check_knowledge_index` had to become a notice because its subject is
-git-ignored** (Ruling 80): the same commit read clean on a fresh clone and red on
-a machine that had built an index, so the verdict depended on untracked state.
+⚠️ **Ruling 80 sets the condition:** a check whose subject is git-ignored had to
+become a notice, because the same commit read clean on a fresh clone and red on
+a machine that had built the artifact — the verdict depended on untracked state.
 ⭐ **Nothing here is untracked.** The records are tracked, the index is tracked,
 and the derivation is pure — so the same commit gives the same answer on every
 machine, which is exactly the condition Ruling 80 sets for a check to be allowed
