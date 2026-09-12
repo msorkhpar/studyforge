@@ -714,13 +714,46 @@ deterministic — a `sorted()` on the outer call does nothing.
 
 ```bash
 printf '%s\n' $PY | xargs -r grep -nE 'for .* in (set\(|\{)' 
-printf '%s\n' $PY | xargs -r grep -nE '\.join\(.*(set\(|\{)'
+# ⛔ The brace must FOLLOW `join(` — an unanchored `.*` matches an f-string
+#    PLACEHOLDER and reads a message line as a set. Repaired CTO round 72.
+printf '%s\n' $PY | xargs -r grep -nE '\.join\(\s*(sorted\()?\s*(set\(|\{)'
 ```
 
 **Pass = no output**, or each hit is sorted before it reaches an artifact.
 ⚠️ `str` hashing is salted per process, so iterating a set of strings is
 **not** stable across runs, only within one. `dict` insertion order is
 guaranteed and is fine.
+
+#### ⛔ `CTO-72/4` — the second grep matched an f-string BRACE, so it had a 100 % false-positive rate and had stopped running
+
+⛔ **The form that shipped was `\.join\(.*(set\(|\{)`, and `.*` reaches past the
+call into the string literal.** ⚠️ **Nearly every message line in this repository
+is `something.join(...)` inside an f-string, so the check fired on correct code
+and only on correct code.** ⭐ **This document already rules that *a check whose
+output is routinely ignored is a check that has stopped running*; this one had.**
+
+| reading, CTO round 72 at `8b6e241`, over `git ls-files '*.py'` — population **545** | measured |
+|---|---|
+| the shipped form | ⛔ **41 lines in 28 files** |
+| of those 41, hits that are a set | ⛔ **0** |
+| ⭐ the repaired form, same population | ⭐ **0 lines in 0 files** |
+
+⛔ **RUN BOTH WAYS BEFORE IT SHIPPED** (Ruling 53), and the plant is in the shapes
+the clause FORBIDS rather than the one it searches for (Ruling 140), in a
+throwaway directory outside every checkout (Ruling 153):
+
+```text
+"".join({"b", "a"})                       ⭐ CAUGHT by both
+"".join(set(items))                       ⭐ CAUGHT by both
+"".join(sorted({"b", "a"}))               ⭐ CAUGHT by both — legal, and the reviewer clears it
+", ".join(f"{x}: {y}" for x, y in pairs)  ⛔ old CAUGHT · ⭐ new REFUSES
+f"{', '.join(a.checkouts)} and {b} is {c}"⛔ old CAUGHT · ⭐ new REFUSES — a tuple, in a message
+```
+
+⚠️ **The FIRST grep is NOT widened and NOT narrowed, because its population is
+readable: **2** lines at `8b6e241`**, and both were read — a `#` comment quoting
+`True in {1}`, and a `not in set(run)` MEMBERSHIP test already inside `sorted(...)`.
+⛔ **Two readable lines is the check working; forty-one unreadable ones is not.**
 
 ### 2d. The claim, proved
 
@@ -2122,6 +2155,44 @@ Lint: pinned green — ruff 0.16.6 in the dev image
 shape is a property of the pinned toolchain, which is exactly why Ruling 79 makes
 a review state the version that produced its line.
 
+##### ⛔ Ruling 224 — a printed count NAMES ITS UNIT; `N file(s) already formatted` is a DENOMINATOR, not a count of Python files
+
+⛔ **LANDED HERE AT CTO ROUND 72, minted at round 54 and cited in NO convention
+document until now** — ⚠️ **one of the members Ruling 304 calls uncited BELOW the
+window, and it cost exactly what that clause predicts: a reviewer reached for the
+wrong ruling because the right one was absent from the document a reviewer reads
+before ruling** (`CTO-72/6`).
+
+```bash
+# ⛔ A count PRINTED BY AN INSTRUMENT states the unit it counts, in the same line.
+#    Ruling 269 binds a RULING'S OWN PROSE and says so; Ruling 277 binds a count
+#    TYPED into a shipped file. This binds a count the running code EMITS.
+python3 -m tools.quality 2>&1 | grep -E '^(lint|document pointers|anchor collisions|board):'
+```
+
+⛔ **Pass: every count an instrument prints names what it counts, and a reviewer
+who cannot reconstruct the population from the printed line treats the figure as
+UNREAD.** ⭐ **Measured at round 54: `ruff format --check` reports `1 file already
+formatted` for a single MARKDOWN file, so the figure is not a count of Python
+files and never was** — ⚠️ **and it is not `.py + .md` either, because the same 49
+files are counted when named and not counted when walked from their parent, so the
+figure depends on how the tool was INVOKED and not only on what is in the tree.**
+
+⚠️ **THREE INDEPENDENT SIGHTINGS OF THIS CLASS IN CTO ROUND 72 ALONE, by three
+offices, which is why it is landed rather than left in its record:**
+
+| sighting | the printed line | the unit it does not name |
+|---|---|---|
+| `W40/8` | `lint: … N file(s) already formatted` | ⛔ counts MARKDOWN too, and a reader reads it as Python |
+| `W148/2` | the same line, from the other side | ⛔ agrees with `git ls-files` only while the tree is clean |
+| `CTO-72/3` | `rows REFUTED by git (N): <ids>` | ⛔ the scalar counts ROWS and the ids are CELLS; one row may carry two |
+
+⭐ **The third is the sharpest because the scalar is RIGHT.** ⛔ **A correct count
+whose unit is unstated reads as a miscount, and the repair is to name the unit —
+never to move the number**, which is what a reader meeting only the incident would
+do. ⚠️ **Measured at the wave's fourth merge: `rows REFUTED by git (2)` naming
+THREE ids, all three correct.**
+
 #### ⛔ Ruling 88 — the floor and ruff are **two** checks, and a review that runs one runs half
 
 ⚠️ **`QA-03/4`, re-diagnosed in round 25 and reproduced in round 26.** ⛔ **They
@@ -2911,6 +2982,40 @@ label (`**Findings:**`); a long handoff reads better with them as headings
 (`## Findings`). Both are accepted, and the check above takes either. What is
 **not** negotiable is that all six are present and the title matches — the
 sections are the contract, the emphasis markers are not.
+
+⚠️ **`CTO-72/5` — THE TITLE CHECK ABOVE BINDS `$TASK` FROM THE FILENAME, AND
+RULING 346 MADE THAT WRONG FOR A SECOND HANDOFF.** ⛔ **A re-taken row writes
+`<ROW>-<what changed>.md` and titles it `# <ROW> — handoff`, so the hand form
+demands `# W40-zero-headroom — handoff` and the SHIPPED check, which reads the
+document's own `**Kind:**`, accepts it and exits `0`.** ⭐ **Ruling 103 decides
+it: where a hand form here duplicates a floor check the FLOOR decides, and the
+disagreement is a finding against THIS DOCUMENT — never against the branch.**
+⚠️ **Measured CTO round 72 at `8b6e241` on `docs/tasks/handoffs/W40-zero-headroom.md`:
+kind declared, six sections present, `FLOOR_EXIT=0`, and the hand form's title arm the
+only thing that objected.** ⛔ **So read the `kind:` line and let the floor answer
+the title; the snippet's `$TASK`-from-filename binding was already called
+under-counting two paragraphs up, and this is its third way of being wrong.**
+
+⭐ **THE READING THIS CLAUSE OBLIGES** (Ruling 160(b)) — ⛔ **the hand form takes the
+document's OWN declared row id, never the filename's stem:**
+
+```bash
+# ⛔ $H is the handoff. The id comes from the `**Kind:**` line, which Ruling 346's
+#    second-handoff stem does NOT change, and the FLOOR is the authority either way.
+H="$1"
+KIND=$(grep -m1 '^\*\*Kind:\*\*' "$H" | sed 's/^\*\*Kind:\*\* *//')
+echo "kind: ${KIND:-⛔ NONE DECLARED — the floor fails this}"
+ROW=$(printf '%s' "$KIND" | grep -oE '[A-Z]+-?[0-9]+$')
+echo "row declared by the document: ${ROW:-none}"
+head -1 "$H" | grep -qE "^# ${ROW:-NO_ROW_DECLARED} — handoff" \
+  && echo "TITLE agrees with the DECLARED row" \
+  || echo "⚠️ TITLE disagrees — report it, and let the floor decide (Ruling 103)"
+python3 -m tools.quality > /tmp/floor.txt 2>&1
+echo "FLOOR_EXIT=$?"
+grep -E '^handoff' /tmp/floor.txt
+# ⭐ Pass: FLOOR_EXIT=0. ⛔ A title objection from THIS snippet against a green floor
+#    is a finding against this document, never against the branch.
+```
 
 Two things the reviewer reads rather than greps:
 
@@ -6233,3 +6338,59 @@ Ruling 340 for the opposite of what Ruling 340 says.
 
 ⭐ **The cure is `CLAUDE.md`'s own opening argument one directory down: a POINTER resolves at
 read time, and a paraphrase can only be kept freshly wrong.**
+
+## ⛔ RULED ROUND 72 — each clause one command and one pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING** (`W141`). ⭐ **The clauses below are the population.**
+⛔ **Ruling 224 is not among them: it was minted at round 54 and is LANDED this round, in §4b,
+where the denominator it was measured over lives.** ⭐ **Ruling 352 is minted here and landed in
+[`module-structure.md`](module-structure.md), which is the document that prescribes the remedy it
+gates** (Ruling 349).
+
+### ⛔ Ruling 351 — §R9's `narration regeneration state` is LOCATED, and a content-addressed FILENAME does not discharge a contract whose subject is the CONDITIONS the content was produced UNDER
+
+```bash
+# ⛔ Before locating any §R9 row, run Ruling 341's test: is a party OTHER than the writer
+#    reading it back? Then ask the question a content address hides —
+#    WHAT ELSE moves that the address does not encode?
+grep -n 'Owed before step 3.4 opens' docs/specs/2026-09-08-studyforge-v1-design.md
+# Pass: the row names a FILE, a VERSION KEY and ONE producer (Ruling 330), and the round says
+#       which of those three it moved. ⛔ A row left `open` in two columns blocks its step.
+```
+
+⭐ **THE LOCATION:**
+
+| Contract | File | Versioned by | Written by |
+|---|---|---|---|
+| narration regeneration state | ⭐ **`.studyforge/narration.json`** | ⭐ **`narration_api`** | `SF-17` — the one writer (Ruling 330, unchanged) |
+
+⛔ **WHY A ROW IS OWED AT ALL, because Ruling 341 says a file does not take one merely for
+being a file.** ⭐ **`SF-16` names clips `<speech-id>-<digest>`, so *has the WORDING changed* is
+answerable from the filename and needs no state at all.** ⚠️ **But the acceptance is *"re-running
+with no content change writes nothing AND REQUESTS NOTHING"*, and a wording digest cannot carry
+what a clip was synthesised UNDER.** ⛔ **A voice change or a service `provides` bump leaves every
+filename byte-identical while every clip is stale** — ⭐ **which is `NS-04/4`'s residual, routed to
+`SF-17` by this office at round 71 and now the reason the row cannot be discharged by the address.**
+
+⭐ **GROUND FOR THE FILE, and it is the table's own precedent rather than a new decision:**
+`discovery cache | .studyforge/site.json | site_api (Ruling 95) | SF-04 — the one writer`.
+⛔ **`.studyforge/` is where framework-written, framework-read-back state already lives, it is
+outside the corpus content tree — so §8.2's *the service never writes into a corpus* and R3's
+non-destructive rule both hold — and `SF-17`'s own *"contains no reference to git or to any
+ignore file"* is untouched.** ⭐ **GROUND FOR THE KEY: the convention every one of the seven
+existing `*_api` keys already follows.**
+
+⭐ **RULING 330(c) DISCHARGED RATHER THAN DEFERRED:** the version key's own file **is** this file,
+and the task that lands it is `SF-17`, which is the building task — ⛔ **so no dependency edge is
+owed and none is minted, and 330(c)'s failure mode (a sibling row in the same step landing the key
+with no edge to it) cannot arise here by construction.**
+
+⛔ **WHAT THIS RULING DELIBERATELY DOES NOT DECIDE (Ruling 344): the FIELDS.** ⭐ **The property
+is *for each speech unit, whether the clip on disk was synthesised under the conditions in force
+now*.** ⚠️ **Designing the record is the office's; naming the fields would be a reviewer choosing
+the means.**
+
+⛔ **AND THE SURFACE GAP, REPORTED RATHER THAN WORKED AROUND (Ruling 318): `docs/specs/` is not in
+this office's declared surface this round**, so the two spec cells are a TRANSCRIPTION for whoever
+holds it. ⭐ **The ruling is landed where this office may land it and the row is located; the
+finding is against the DISPATCH and against no office's work.**

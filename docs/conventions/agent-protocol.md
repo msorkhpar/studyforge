@@ -508,6 +508,25 @@ offences were committed in. ⭐ **Ruling 73's answer to a check that cannot see 
 shape is the fence, not a weaker check**, and that is why this is written here
 and not routed to `check_markers`.
 
+> ⛔ **DATED BY `W172`, CTO round 72 — the sentence above is TRUE OF ITS OWN REF
+> AND FALSE OF THE TREE, and it is not edited** (Ruling 106's form, and Ruling 335:
+> the office whose task falsified it may not edit it, and the register that owns
+> the sentence lands the repair as a POINTER). ⭐ **`W172` shipped Ruling 218's
+> gate three: a record's markers ARE now read, inside its Findings section.**
+> ⚠️ **Do not take a count from here. The current answer is whatever the shipped
+> reader returns — `tools/quality/handoffs/` owns it, and it resolves at read
+> time where a typed figure cannot:**
+>
+> ```bash
+> python3 -m tools.quality 2>&1 | grep -E '^(handoff|document)'
+> ```
+>
+> ⛔ **MEASURED at the wave-11 cumulative tree: the reader returns `8` marker
+> lines on one ruling record**, so *cannot fire at all* names a behaviour the tree
+> no longer has. ⭐ **The FENCE below is UNAFFECTED and still the right advice** —
+> its ground was never that the checker was blind, it was that a marker opening a
+> line reads as a finding, which `W172` did not change.
+
 ⛔ **This is a CORRECTION, not new scope.** ⭐ **`W63` and `W64` remain the
 mechanism and their ruled order is unchanged** — and `PO-32/3` sharpens the case
 for them past what Ruling 148 said: **76 finding lines across 12 documents**, and
@@ -1272,6 +1291,35 @@ mention-shapes are safe; the fourth — a line OPENING with a marker — is the 
 such a document most needs. ⚠️ **The remedy is not a weaker reader; it is an
 exemption the document DECLARES**, the way `**Kind:**` is already declared.
 ⛔ **PO: mint.**
+
+> ⛔ **DISCHARGED AND DATED BY `W172`, CTO round 72 — `W172/4`.** ⭐ **The row was
+> minted, taken, and shipped as Ruling 218's gate three; this section is annotated
+> beneath rather than edited** (Ruling 106, Ruling 335).
+>
+> ⚠️ **TWO SENTENCES ABOVE ARE NOW FALSE OF THE TREE and both stand unedited.**
+> ⛔ *"44 of 84 documents are never read for markers at all"* — a ruling record's
+> Findings section IS read now. ⛔ **And the count is doubly dated: it is a typed
+> figure over a directory that has grown every wave since** (Ruling 181). ⭐ **Ask
+> the reader, which resolves at read time where a figure cannot:**
+>
+> ```bash
+> python3 -m tools.quality 2>&1 | grep -E '^handoff'
+> ```
+>
+> ⛔ **AND THE NAMED REMEDY WAS SUPERSEDED ON A MEASUREMENT, which is the part a
+> later reader would otherwise implement.** ⚠️ *"an exemption the document
+> DECLARES"* was refused by the row that discharged it: **a declared exemption is
+> an off-by-default gate — a check that cannot fail, which is `W37`'s subject —
+> and it would need an edit inside every record that carries a marker.** ⭐ **What
+> shipped instead is a STRUCTURAL predicate: the markers are read inside a
+> record's Findings section and nowhere else**, so no record is edited and no
+> document can switch the check off.
+>
+> ⭐ **MEASURED by that row over 110 ruling records:** the fully widened rule fires
+> **181** times in 53 documents; restricted to the Findings section, **27** in 7;
+> restricted further to lines claiming a scoped number, **0**. ⛔ **The 27 all sit
+> inside records, so a gate printing them would hold the floor red forever — which
+> is why the corpus is never chased and the instrument is the subject** (Ruling 193).
 
 ## Reporting
 

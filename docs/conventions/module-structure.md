@@ -109,6 +109,36 @@ module docstring, in one sentence, saying why splitting would be worse.
 (2,743 lines) and `scaffold.py` (1,793) are ported as packages. A task that
 ports one of them whole has not done the task.
 
+#### ⛔ Ruling 352 (CTO round 72) — *split into a package* is GATED on the file carrying no inbound pointer from a FROZEN record, and this document is where that gate is named
+
+⛔ **Turning `x.py` into `x/` DELETES the path `x.py`.** ⚠️ **A markdown pointer at
+that path, inside a record no office may repair (Ruling 106), then goes unresolved
+and the floor exits `1` — so the remedy the table above prescribes is UNAVAILABLE,
+for a reason nothing in this document said.**
+
+```bash
+# ⛔ Run BEFORE choosing the package form, for the file you are about to split.
+grep -rn "](.*/$(basename "$F")" docs/tasks/handoffs/ docs/tasks/BOARD-ARCHIVE.md
+# Pass: no hit. ⭐ A hit means the package form is CLOSED for this file and the split
+#       takes SIBLING MODULES instead — not a lesser remedy, the only available one.
+# ⛔ The record is NOT edited to free the path.
+```
+
+⭐ **MEASURED, CTO round 72, and it is not one file.** ⛔ **`W148` built `pointers/`
+as a package first and measured `1 unresolved` against a pointer in `W133.md` spelled
+`` [`tools/quality/pointers.py`](../../../tools/quality/pointers.py) ``, then shipped
+sibling modules instead** — the right call, made with no clause to cite for it.
+
+| the class at `8b6e241`, over `docs/tasks/handoffs/` and `BOARD-ARCHIVE.md` | measured |
+|---|---|
+| distinct `.py` linked BY PATH from a frozen record — each un-packageable | ⛔ **16** |
+| of those, already within 60 lines of their R11 ceiling | ⚠️ **3** — `test_register.py` at 26, `test_host_environment.py` at 33, `test_corroborate.py` at 60 |
+
+⚠️ **So three files are moving toward a remedy already closed to them, and nothing
+prints that today.** ⭐ **The cheap prophylactic is what Ruling 285(b) already asks
+on other grounds: cite a source file by NAME in a record, never as a resolving path
+pointer, and the record stops mortgaging that file's future shape.**
+
 ### The ceiling is enforced, and the exception is declared
 
 `python3 -m tools.quality` fails on a module over its ceiling, and
