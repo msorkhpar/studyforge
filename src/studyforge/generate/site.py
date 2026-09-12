@@ -13,7 +13,8 @@ its page looks for it.
     written.pages      # every page, relative to the output root
     written.assets     # the shared bundle
     written.media      # every file a page shows, copied out of the archive
-    written.refused    # every target already on disk, left byte-for-byte alone
+    written.replaced   # every path that held this build's own previous answer
+    written.refused    # every other target on disk, left byte-for-byte alone
     written.missing    # every file the material names and the archive has not
 
 **Depends on.** `generate.declarations`, `.units`, `.containers`, `.navigation`
@@ -96,14 +97,17 @@ def root_index(corpus: Corpus, into: Path | str) -> Written:
     local = status(corpus.contents, corpus.present)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
+    replaced: list[PurePosixPath] = []
     place(
         Path(into),
         where.shared.root_index,
         render_index(from_contents(corpus.contents, local, where), where),
         written,
         refused,
+        replaced,
+        footprint=corpus.footprint,
     )
-    return Written(pages=tuple(written), refused=tuple(refused))
+    return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
 
 
 def assets(corpus: Corpus, into: Path | str) -> Written:
@@ -117,6 +121,15 @@ def assets(corpus: Corpus, into: Path | str) -> Written:
     directory = corpus.shared.assets
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
+    replaced: list[PurePosixPath] = []
     for filename, body in sorted(written_files().items()):
-        place(out, directory / filename, body.encode("utf-8"), written, refused)
-    return Written(assets=tuple(written), refused=tuple(refused))
+        place(
+            out,
+            directory / filename,
+            body.encode("utf-8"),
+            written,
+            refused,
+            replaced,
+            footprint=corpus.footprint,
+        )
+    return Written(assets=tuple(written), refused=tuple(refused), replaced=tuple(replaced))

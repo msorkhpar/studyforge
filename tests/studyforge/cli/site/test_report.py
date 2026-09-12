@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import PurePosixPath
 
-from studyforge.cli.site.report import ALREADY_THERE, exit_code, lines
+from studyforge.cli.site.report import ALREADY_THERE, REBUILT, exit_code, lines
 from studyforge.generate import Written
 from studyforge.validate.report import INVALID, OK
 
@@ -51,3 +51,38 @@ def test_every_path_it_prints_is_relative_to_the_output_root():
     out = lines(written(pages=["index.html"], refused=["a/b.html"]), "corpus", "site")
     for line in out[1:]:
         assert not line.split()[1].startswith("/"), f"{line!r} carries an absolute path"
+
+
+# --------------------------------------------------------------------------
+# ⛔ the rebuild policy's half of the report
+# --------------------------------------------------------------------------
+
+
+def test_a_replacement_is_not_a_refusal_and_exits_zero():
+    """⭐ Otherwise every rebuild is a failure to the script that ran it."""
+    assert exit_code(written(pages=["index.html"], replaced=["index.html"])) == OK
+
+
+def test_a_replaced_path_is_named_with_the_reason_it_was_allowed():
+    printed = lines(written(pages=["index.html"], replaced=["index.html"]), "in", "out")
+
+    assert f"replace index.html  {REBUILT}" in printed
+
+
+def test_a_replaced_path_is_not_also_reported_as_written():
+    """⛔ Ruling 99: one line per path, or the diff against `plan` counts twice."""
+    printed = lines(written(pages=["index.html", "a.unit.html"], replaced=["index.html"]), "i", "o")
+
+    assert "wrote index.html" not in printed
+    assert "wrote a.unit.html" in printed
+    assert len([line for line in printed if "index.html" in line]) == 1
+
+
+def test_a_rebuild_and_a_refusal_are_reported_side_by_side():
+    record = written(pages=["index.html"], replaced=["index.html"], refused=["notes.txt"])
+
+    printed = lines(record, "in", "out")
+
+    assert f"replace index.html  {REBUILT}" in printed
+    assert f"refuse notes.txt  {ALREADY_THERE}" in printed
+    assert exit_code(record) == INVALID

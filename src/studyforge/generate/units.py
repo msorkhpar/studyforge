@@ -68,6 +68,7 @@ def unit_pages(corpus: Corpus, into: Path | str) -> Written:
     above = page_paths(corpus)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
+    replaced: list[PurePosixPath] = []
     for source in corpus.units:
         at = unit_location(
             corpus,
@@ -90,5 +91,5 @@ def unit_pages(corpus: Corpus, into: Path | str) -> Written:
                 {key: relative_href(at.page, page) for key, page in above.items()},
             ),
         )
-        place(out, at.page, body, written, refused)
-    return Written(pages=tuple(written), refused=tuple(refused))
+        place(out, at.page, body, written, refused, replaced, footprint=corpus.footprint)
+    return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))

@@ -98,26 +98,37 @@ def test_every_page_carries_the_bar_and_the_trail_the_contents_computed(tmp_path
 # --------------------------------------------------------------------------
 
 
-def test_a_file_already_at_a_target_path_is_named_and_left_byte_for_byte_alone(tmp_path):
+def test_a_hand_edited_page_at_a_declared_path_is_REPLACED_and_that_is_the_gap(tmp_path):
+    """⛔ **This clause pins the known cost of the rebuild policy, not a win.**
+
+    ⭐ A footprint answers a question about the PLAN, so it cannot tell this
+    build's own prior output from a copy of it somebody edited. R19 rules a
+    hand-edit to a generated artifact a *finding, not a fix*, and every
+    placement profile already ignores these pages — so the edit is taken.
+    ⛔ **Anyone who closes that gap should break this test**, and should read
+    `generate/writing.py`'s table before deciding it was passing by accident.
+    """
     first = write_pages(FIXTURES / "depth1", tmp_path)
     target = tmp_path / first.pages[0]
-    target.write_bytes(b"a reader's own file")
+    target.write_bytes(b"a page somebody edited by hand")
 
     second = write_pages(FIXTURES / "depth1", tmp_path)
 
-    assert first.pages[0] in second.refused
-    assert first.pages[0] not in second.pages
-    assert target.read_bytes() == b"a reader's own file"
+    assert second.refused == ()
+    assert first.pages[0] in second.replaced
+    assert target.read_bytes() != b"a page somebody edited by hand"
 
 
-def test_a_second_build_over_its_own_output_rewrites_nothing(tmp_path):
+def test_a_second_build_over_its_own_output_rewrites_every_page_it_declared(tmp_path):
     first = write_pages(FIXTURES / "depth1", tmp_path)
     stamps = {page: (tmp_path / page).read_bytes() for page in first.pages}
 
     second = write_pages(FIXTURES / "depth1", tmp_path)
 
-    assert second.pages == ()
-    assert sorted(second.refused) == sorted(first.pages)
+    assert sorted(second.pages) == sorted(first.pages)
+    assert second.refused == ()
+    assert sorted(second.replaced) == sorted(first.pages)
+    # ⭐ Same declarations in, same bytes out (R10) — a rebuild is not a churn.
     assert {page: (tmp_path / page).read_bytes() for page in first.pages} == stamps
 
 

@@ -21,9 +21,11 @@ flag defers the decision to the person running the command**, which is the only
 form of "unanswered" a command can actually have.
 
 ⛔ **Exit codes are usable from a script** and mean one thing each: `0` the
-whole site was written, `1` something already existed and was left alone (R3),
-`2` the tool could not run at all. ⚠️ The third is `validate`'s own, imported
-rather than respelled.
+whole site was written, `1` something that is not this build's own output
+already existed and was left alone (R3), `2` the tool could not run at all.
+⚠️ The third is `validate`'s own, imported rather than respelled. ⭐ **A rebuild
+that replaced only its own previous answer exits `0`** — otherwise *edit a
+lesson, build again* would be a failure to every script that ran it.
 """
 
 from __future__ import annotations
@@ -41,8 +43,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="studyforge build",
         description=(
-            "Write one corpus's study site into a directory you name. Nothing that "
-            "already exists is overwritten: an occupied path is reported, not replaced."
+            "Write one corpus's study site into a directory you name. A rebuild "
+            "replaces this build's own previous output and nothing else: any other "
+            "file already there is reported by name, not overwritten."
         ),
     )
     parser.add_argument("root", help="the corpus root — the directory holding corpus.json")

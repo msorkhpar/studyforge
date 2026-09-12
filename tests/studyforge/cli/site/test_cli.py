@@ -71,16 +71,58 @@ def test_it_builds_the_deeper_fixture_too(tmp_path):
     assert (tmp_path / "index.html").is_file()
 
 
-def test_a_second_run_refuses_every_path_and_overwrites_nothing(tmp_path):
-    # ⛔ R3 is enforced by refusing, not by remembering, and the command must
-    # SURFACE the refusals rather than swallow them.
+def test_a_second_run_rebuilds_its_own_output_and_exits_zero(tmp_path):
+    """⛔ *Build, edit a lesson, build again* has to be usable from a script.
+
+    ⭐ This clause asserted the OPPOSITE before the rebuild policy: exit `1`,
+    every path refused, no site. ⚠️ A replacement is NOT a refusal, and the
+    exit code is what a script reads.
+    """
     invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
-    first = (tmp_path / "index.html").read_bytes()
     code, printed = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
+    assert code == OK
+    assert "replace index.html" in printed
+    assert "refuse " not in printed
+
+
+def test_a_rebuild_prints_each_path_exactly_once(tmp_path):
+    """⛔ Ruling 99: the report is a path-for-path diff against `studyforge
+    plan`, and a path printed as both `wrote` and `replace` breaks the diff."""
+    invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
+    _, printed = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
+
+    subjects = [
+        line.split()[1]
+        for line in printed.splitlines()
+        if line.startswith(("wrote ", "replace ", "refuse "))
+    ]
+
+    assert subjects
+    assert len(subjects) == len(set(subjects))
+
+
+def test_a_file_the_plan_never_declared_survives_a_rebuild_untouched(tmp_path):
+    """⛔ The other half of the decision, through the command: R3 is absolute
+    for everything outside the footprint."""
+    mine = b"a reader's own file"
+    (tmp_path / "notes.txt").write_bytes(mine)
+
+    invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
+    code, _ = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
+
+    assert code == OK
+    assert (tmp_path / "notes.txt").read_bytes() == mine
+
+
+def test_a_directory_where_a_declared_page_belongs_still_exits_one(tmp_path):
+    """⭐ The refusal exit code is still reachable, and still named."""
+    (tmp_path / "index.html").mkdir()
+
+    code, printed = invoke(str(FIXTURES / "depth1"), "--out", str(tmp_path))
+
     assert code == INVALID
     assert "refuse index.html" in printed
-    assert "wrote " not in printed
-    assert (tmp_path / "index.html").read_bytes() == first
+    assert (tmp_path / "index.html").is_dir()
 
 
 def test_a_corpus_root_that_is_not_a_directory_is_unusable(tmp_path):

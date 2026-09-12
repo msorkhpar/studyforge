@@ -17,6 +17,7 @@ from studyforge.generate import assets, read_corpus, root_index, write_site
 from tests.studyforge.generate.corpora import (
     BOTH,
     FIXTURES,
+    a_corpus,
     an_output,
     planned,
     with_a_unit_missing,
@@ -258,35 +259,96 @@ def test_the_bundle_is_asked_of_pageassets_as_one_call(tmp_path):
 
 
 @pytest.mark.parametrize("name", BOTH)
-def test_a_second_build_over_its_own_output_writes_nothing_and_names_everything(tmp_path, name):
+def test_a_second_build_replaces_its_own_output_and_refuses_nothing(tmp_path, name):
+    """⛔ The row's whole point. ⭐ This asserted the OPPOSITE before the
+    footprint: a second run refused every path and produced no site."""
     first = write_site(FIXTURES / name, tmp_path)
-    stamps = {path: (tmp_path / path).read_bytes() for path in first.paths}
 
     second = write_site(FIXTURES / name, tmp_path)
 
-    assert second.paths == ()
-    assert sorted(second.refused) == sorted(first.paths)
-    assert {path: (tmp_path / path).read_bytes() for path in first.paths} == stamps
+    assert second.refused == ()
+    assert sorted(second.paths) == sorted(first.paths)
+    assert sorted(second.replaced) == sorted(first.paths)
 
 
-def test_a_readers_own_file_at_any_target_survives_byte_for_byte(tmp_path):
-    corpus = read_corpus(FIXTURES / "depth1")
+def test_a_rebuild_after_the_material_changed_carries_the_change_onto_the_page(tmp_path):
+    """⛔ The acceptance the decision is FOR, measured through the BYTES.
+
+    ⚠️ A run that recorded `replaced` for every path while leaving the disk
+    alone would pass every clause above this one.
+    """
+    root = a_corpus(tmp_path, "depth1")
+    out = an_output(tmp_path)
+    lesson = root / "archive/depth-one/raw/prose/unit-01/lesson-1.json"
+    write_site(root, out)
+    page = next(path for path in planned("depth1") if "unit-01" in path)
+    assert "one breath" in (out / page).read_text(encoding="utf-8")
+
+    lesson.write_text(
+        lesson.read_text(encoding="utf-8").replace("one breath", "a single breath"),
+        encoding="utf-8",
+    )
+    write_site(root, out)
+
+    after = (out / page).read_text(encoding="utf-8")
+    assert "a single breath" in after
+    assert "one breath" not in after
+
+
+def test_a_readers_own_file_OUTSIDE_the_footprint_survives_byte_for_byte(tmp_path):
+    """⛔ The other half of the decision, over the whole site: R3 still protects
+    everything the plan did not declare, absolutely."""
+    out = an_output(tmp_path)
     mine = b"a reader's own file"
-    (tmp_path / corpus.shared.root_index).parent.mkdir(parents=True, exist_ok=True)
-    (tmp_path / corpus.shared.root_index).write_bytes(mine)
+    (out / ".studyforge").mkdir(parents=True)
+    for at in ("notes.txt", "README.md", ".studyforge/NOTES.md"):
+        (out / at).write_bytes(mine)
 
-    written = write_site(FIXTURES / "depth1", tmp_path)
+    write_site(FIXTURES / "depth1", out)
+    write_site(FIXTURES / "depth1", out)
+
+    for at in ("notes.txt", "README.md", ".studyforge/NOTES.md"):
+        assert (out / at).read_bytes() == mine, at
+
+
+def test_a_directory_standing_where_a_declared_page_belongs_is_refused_by_name(tmp_path):
+    """⛔ Replacing this build's own file is a write; removing a tree is a
+    deletion. ⭐ The only whole-site refusal the footprint leaves standing on a
+    path the plan DOES declare, and it is still named."""
+    corpus = read_corpus(FIXTURES / "depth1")
+    out = an_output(tmp_path)
+    (out / corpus.shared.root_index).mkdir(parents=True)
+
+    written = write_site(FIXTURES / "depth1", out)
 
     assert corpus.shared.root_index in written.refused
-    assert (tmp_path / corpus.shared.root_index).read_bytes() == mine
+    assert (out / corpus.shared.root_index).is_dir()
 
 
-def test_root_index_alone_refuses_the_same_way(tmp_path):
+def test_root_index_alone_rebuilds_the_same_way(tmp_path):
     corpus = read_corpus(FIXTURES / "depth1")
     first = root_index(corpus, tmp_path)
 
     second = root_index(corpus, tmp_path)
 
     assert first.pages == (corpus.shared.root_index,)
+    assert second.pages == first.pages
+    assert second.replaced == first.pages
+    assert second.refused == ()
+
+
+def test_a_pass_handed_a_corpus_with_no_footprint_still_refuses(tmp_path):
+    """⛔ `Corpus.footprint` defaults to owning nothing, so a corpus assembled
+    by hand — or one whose plan refused — gets R3's floor, never a licence."""
+    import dataclasses
+
+    from studyforge.generate import Footprint
+
+    corpus = read_corpus(FIXTURES / "depth1")
+    floored = dataclasses.replace(corpus, footprint=Footprint())
+    root_index(floored, tmp_path)
+
+    second = root_index(floored, tmp_path)
+
     assert second.pages == ()
-    assert second.refused == first.pages
+    assert second.refused == (corpus.shared.root_index,)
