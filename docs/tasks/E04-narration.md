@@ -318,7 +318,9 @@ manifest's `media` policy and a **measurement** of what was actually generated:
            "max_files": 20000 }
 ```
 
-⛔ **`max_files` IS NOT ACCEPTED BY THE SHIPPED READER AND THIS EXAMPLE DOES NOT VALIDATE TODAY** — ⭐ **[`W207`](rows/W207.md) carries it, and the choice between adding the limit and dropping the key is that row's to make out loud.** ⚠️ **Named here rather than quietly corrected, because deleting the key would delete the only written record that a count limit was ever wanted.**
+⭐ **`max_files` IS THE LIMIT, AND THE EXAMPLE VALIDATES — [`W207`](rows/W207.md) chose *keep it* and the alternative, deleting the key, is REFUSED.** ⛔ **The ground is that the case is statable, which is the test that row set: 20 000 clips at 20 KB each is 400 MB — under this example's own 2 GiB total and a five-hundredth of its per-file block, so BOTH BYTE LIMITS SAY YES while the clone is a repository every `clone`, `status` and `checkout` pays 20 000 paths for.** ⚠️ **It has no default: unstated is unbounded, because §5 measured the two byte numbers and nobody measured a count.**
+
+⛔ **This example needs `corpus_api: 3`, which is the version `media.max_files` was added at.** ⚠️ **Pasting it into a `corpus_api: 2` manifest is refused naming both numbers (R9) — the same shape as `content.not_material` at `1`.** ⭐ **The example above is no longer only prose: `tests/studyforge/corpus/manifest/test_media.py` reads this block out of this file and parses it, so it cannot go stale again without a red suite.**
 
 - `commit: always` — commit it, whatever the size. The corpus owner's call.
 - `commit: never` — ignore it; the corpus supplies its own delivery.

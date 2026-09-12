@@ -66,24 +66,36 @@ MANIFEST_FILENAME = "corpus.json"
 #: because something merely wanted to render a page rewrites the record of
 #: what was ingested.
 #:
-#: ⭐ **`2` added `content.not_material`** (Ruling 90), and the bump is not
-#: about old manifests — the key is optional and an absent one means an empty
-#: tuple, so every `1` still parses. ⛔ **It is about a manifest that *uses*
-#: the key being unreadable to an older build**, which reports an unknown key
-#: and blames the corpus for the framework's age. That is exactly what R9
-#: versions, and the field and the bump therefore landed in one commit.
+#: ⭐ **`2` added `content.not_material`** (Ruling 90) and ⭐ **`3` added
+#: `media.max_files`** (`W207`), and neither bump is about old manifests — both
+#: keys are optional and an absent one has a stated default, so every `1` still
+#: parses. ⛔ **A bump is about a manifest that *uses* the key being unreadable
+#: to an older build**, which reports an unknown key and blames the corpus for
+#: the framework's age. That is exactly what R9 versions, and the field and the
+#: bump therefore land in one commit.
 #:
 #: ⚠️ **The accepted set is spelled out rather than derived from
 #: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
 #: `2` on the day somebody writes `3`, and the refusal for an unknown version
-#: has to stay exactly as sharp as it is for `3` today.
-CORPUS_API = 2
-KNOWN_CORPUS_API = frozenset({1, 2})
+#: has to stay exactly as sharp as it is for `4` today.
+CORPUS_API = 3
+KNOWN_CORPUS_API = frozenset({1, 2, 3})
 
-#: The `corpus_api` each `content` key added after version 1 requires.
-#: ⚠️ **A map rather than a branch**, because the second entry is the one that
-#: gets written as a branch beside the first and then disagrees with it.
-CONTENT_KEY_VERSIONS = {"not_material": 2}
+#: The `corpus_api` each key added after version 1 requires, keyed by the block
+#: it lives under and its name.
+#:
+#: ⚠️ **ONE map over every block, not one map per block.** It was
+#: `CONTENT_KEY_VERSIONS` while `content` was the only block that had grown a
+#: key, and `SF-35` wrote the convention down as *"an entry in
+#: `CONTENT_KEY_VERSIONS` **if it lives under `content`**"* — leaving the other
+#: half of the sentence to whoever added a key somewhere else. ⛔ **A second
+#: map beside the first is the branch beside the branch this constant's own
+#: note warned about**: the gate would have been complete for one block and
+#: silently absent for the rest.
+KEY_VERSIONS = {
+    ("content", "not_material"): 2,
+    ("media", "max_files"): 3,
+}
 
 #: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
 #: this is only the set a manifest may name**, and the two must not drift.
@@ -210,7 +222,7 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
     if missing:
         raise ManifestError(f"{where} is missing required key(s) {missing}")
 
-    _check_content_version(document, corpus_api, where)
+    _check_key_versions(document, corpus_api, where)
     content = parse_content(document["content"])
     return Manifest(
         source=_slug_of(document["source"], f"{where} 'source'"),
@@ -270,22 +282,27 @@ def _check_version(document: dict, where: str) -> int:
     )
 
 
-def _check_content_version(document: dict, corpus_api: int, where: str) -> None:
-    """Refuse a `content` key from a version this manifest does not declare (R9).
+def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
+    """Refuse a key from a version this manifest does not declare (R9).
 
     ⛔ **The version is the corpus's statement of which contract it was written
     to, and it is never inferred from the keys present.** A manifest using
     `not_material` under a `1` is unreadable to exactly the build it claims to
     be readable by, which is the whole thing R9 versions — and the refusal is
     a raise naming both numbers, never a quiet upgrade of the declaration.
+
+    ⚠️ **Every gated block, not one of them.** The check ran over `content`
+    alone while `content` was the only block that had grown a key; a key added
+    under `media` would have shipped ungated and the omission would have looked
+    exactly like a decision.
     """
-    content = document.get("content")
-    if not isinstance(content, dict):
-        return
-    for key, needed in CONTENT_KEY_VERSIONS.items():
-        if key in content and corpus_api < needed:
+    for (block, key), needed in KEY_VERSIONS.items():
+        declared = document.get(block)
+        if not isinstance(declared, dict) or key not in declared:
+            continue
+        if corpus_api < needed:
             raise ManifestError(
-                f"{where} declares corpus_api {corpus_api} and uses 'content.{key}', "
+                f"{where} declares corpus_api {corpus_api} and uses '{block}.{key}', "
                 f"which corpus_api {needed} added; declare corpus_api {needed}. The "
                 f"version is what tells an older build it cannot read this manifest, "
                 f"and it is not inferred from the keys present (R9)."

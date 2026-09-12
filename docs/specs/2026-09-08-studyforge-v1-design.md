@@ -647,7 +647,7 @@ for the vocabulary found only one corpus's choices.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90); this build reads `1` and `2` |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90) and ⭐ **`3` added `media.max_files`** (`W207`); this build reads `1`, `2` and `3` |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |

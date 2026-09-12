@@ -58,7 +58,7 @@ below.
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1` and `2`; `2` is what added `content.not_material` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1`, `2` and `3`; `2` added `content.not_material` and `3` added `media.max_files` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
@@ -179,9 +179,18 @@ service, no GPU and no network.
 | `commit` | `"auto"` | `always`, `never` or `auto` |
 | `max_total_bytes` | `5000000000` | the whole corpus's media |
 | `max_file_bytes` | `104857600` | any one clip |
+| `max_files` | *none* | how many clips there may be. **Needs `corpus_api: 3`** |
+
+**`max_files` is the one you cross while the byte limits are fine.** Narration
+makes many small files: 20 000 clips at 20 KB each is 400 MB, which is under
+both ceilings above, and it is still 20 000 paths every `clone`, `status` and
+`checkout` pays for. It has **no default** — leave it out and there is no
+ceiling on the count — because the two byte defaults come from a measurement
+and nobody has measured a count. Declaring it is how you say your repository
+has one.
 
 **Crossing a limit stops the build and says so, naming the number and the
-limit.** It never silently starts ignoring media — which would produce clones
+limit — the count for `max_files`, the file for `max_file_bytes`.** It never silently starts ignoring media — which would produce clones
 that are silent with no error — and it never silently keeps committing. The
 default ceilings are not arbitrary: one real corpus reached 11.42 GiB of packed
 history against a ~5 GB soft limit, with a single 150.9 MiB file against a hard

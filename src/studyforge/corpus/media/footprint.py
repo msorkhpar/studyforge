@@ -90,9 +90,10 @@ class MediaFootprint:
     def count(self) -> int:
         """How many generated media files there are.
 
-        ⭐ Recorded even though no limit reads it today: a file count is the
-        third thing a host bounds, and a measurement that had to be re-taken to
-        answer that question would be a measurement taken twice.
+        ⭐ **`max_files` reads it** (`W207`) — the limit a corpus of many small
+        clips crosses while both byte ceilings are still under. ⚠️ It was
+        recorded here before any limit read it, on the ground that a file count
+        is the third thing a host bounds; that forecast is now discharged.
         """
         return len(self.files)
 

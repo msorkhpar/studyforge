@@ -44,6 +44,16 @@ with no footprint at all for them and never walks a disk to second-guess one.
 ⛔ **`auto` with no measurement is the refused case** — a mode whose whole
 content is "compare against the limits" cannot answer with nothing to compare.
 
+## ⭐ Three limits, and the third is not a bigger version of the other two
+
+⚠️ **`max_files` can be crossed while both byte limits are comfortably under.**
+Narration generates many small clips, and 20 000 of them at 20 KB each is
+400 MB — a fifth of a 2 GiB total and a five-hundredth of a 100 MiB per-file
+block. ⛔ **A repository is paid for per path as well as per byte**, so the
+count is a limit a corpus can be right to stop at, and the crossing reports it
+**in files**. ⚠️ It has no default: unstated is unbounded, and a ceiling
+invented here would refuse builds on a number nobody measured.
+
 ## ⛔ The limits are data, and this module names no host
 
 ⚠️ **The numbers live in `corpus.json` and their defaults live in the
@@ -69,6 +79,13 @@ from studyforge.corpus.placement import Profile
 LIMIT_TOTAL = "max_total_bytes"
 LIMIT_FILE = "max_file_bytes"
 
+#: ⚠️ **Spelled `LIMIT_COUNT`, not `LIMIT_FILES`.** One letter would have been
+#: the whole difference between the per-file byte ceiling and the file-count
+#: ceiling, on adjacent lines. ⛔ The manifest field it names is `max_files`.
+#: ⚠️ **Not frozen by Ruling 104**, which froze the two above; it is new here
+#: and R9 versions it instead — `corpus_api: 3`.
+LIMIT_COUNT = "max_files"
+
 #: What a person can do about a crossing, in the order they are usually
 #: considered. ⭐ Stated as a pair because the whole point of refusing early is
 #: that there is a decision to take; a refusal with no way forward is a wall.
@@ -78,7 +95,7 @@ WAYS_FORWARD = (
     "repository — an href never encodes how a file arrived (§5), so the pages do not "
     "change and a reader who has the media still hears it",
     "raise the limit in corpus.json, if the place this repository is pushed to accepts "
-    "the measured size — the limits are the corpus's own declaration, not this "
+    "what was measured — the limits are the corpus's own declaration, not this "
     "framework's",
 )
 
@@ -100,11 +117,17 @@ class Crossing:
     #: The generated files responsible, relative to the corpus root — empty for
     #: a limit whose subject is the whole footprint rather than any one file.
     responsible: tuple[PurePosixPath, ...] = ()
+    #: What `measured` and `allowed` are counted in. ⛔ **A crossing that
+    #: reported a file COUNT in bytes would print `20001 byte(s)` for a corpus
+    #: whose problem is 20 001 files** — the number would be right, the
+    #: sentence wrong, and a person would go looking for a size.
+    unit: str = "byte"
 
     def sentence(self) -> str:
         """One line naming the limit, the measured value and what is responsible."""
         head = (
-            f"media {self.limit} crossed: {self.measured} byte(s) against a limit of {self.allowed}"
+            f"media {self.limit} crossed: {self.measured} {self.unit}(s) "
+            f"against a limit of {self.allowed}"
         )
         if not self.responsible:
             return head
@@ -210,7 +233,17 @@ def require_committable(verdict: MediaVerdict) -> None:
 
 
 def _crossings(policy: MediaPolicy, footprint: MediaFootprint) -> tuple[Crossing, ...]:
-    """Every limit this footprint crossed, total first, then per-file."""
+    """Every limit this footprint crossed, in the order `corpus.json` declares them.
+
+    ⭐ **The count is weighed independently of the bytes, which is the whole
+    reason it exists.** Many small clips clear both byte ceilings and still
+    make a repository every clone pays for; a corpus can therefore cross
+    `max_files` alone, and the report says so in files rather than in bytes.
+
+    ⛔ **An undeclared `max_files` is not a ceiling of zero.** `None` skips the
+    comparison outright — the failure this branch must never have is refusing
+    the first clip a corpus generates.
+    """
     found: list[Crossing] = []
     if footprint.total_bytes > policy.max_total_bytes:
         found.append(Crossing(LIMIT_TOTAL, policy.max_total_bytes, footprint.total_bytes))
@@ -224,4 +257,6 @@ def _crossings(policy: MediaPolicy, footprint: MediaFootprint) -> tuple[Crossing
                 tuple(one.path for one in over),
             )
         )
+    if policy.max_files is not None and footprint.count > policy.max_files:
+        found.append(Crossing(LIMIT_COUNT, policy.max_files, footprint.count, unit="file"))
     return tuple(found)
