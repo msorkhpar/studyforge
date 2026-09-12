@@ -5879,3 +5879,83 @@ section) is what it looks like when that payment goes wrong.
 # ⛔ A claim that a bounded file cannot absorb a correction is measured ACROSS THE SPAN, bound
 # and content together — a bound that scales with a population moves while the content does.
 ```
+
+## ⛔ RULED ROUND 69 — each clause one command and one pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING** (`W141`). ⭐ **The clauses below are the population.**
+
+### ⛔ Ruling 339 — a `### SURFACE` block that names no POPULATION is not a claim, and *shares with nobody* is the form that proves it
+
+⛔ **Stated by the register at PO round 54 and deliberately left UNNUMBERED, on the ground that
+every ruling in the index is sourced to a CTO record.** ⭐ **The routing is accepted and the
+bound is NARROWED (Ruling 329): the defect is not that *shares with nobody* is unsafe, it is
+that the sentence has NO TRUTH VALUE until the population it ranges over is named.**
+
+⭐ **Two witnesses, and they fail DIFFERENTLY, which is what makes it a rule rather than an
+incident.** `rows/W167.md`'s claim was **FALSE** on the day it was written — the row it shares
+`tools/quality/handoffs/` with was already in the queue. `rows/W148.md`'s is **UNDECIDABLE**,
+because *queued* denotes the `Next rows` table and the live register, those two disagree, and
+the sentence names neither. ⛔ **One instrument would have caught the first and NOT the second**,
+which is why the remedy is *name your population* and never *check harder*.
+
+⛔ **VENUE, by Ruling 337's own test.** The clause fires when an OFFICE writes a row, so its home
+is the board, and the register has already landed it there — its surface paragraph now states
+the population it ranges over instead of implying a complete one. ⭐ **What belongs HERE is the
+half that fires when a REVIEWER accepts such a claim, and that half is below.**
+
+```bash
+# Pass: a reviewer accepting a "shares a surface with nobody" claim — in a row's `### SURFACE`
+# block, in the board's surface paragraph, or in a brief — REFUSES it unless the sentence names
+# the population it ranges over: `Next rows`, the live register, or rows DECLARING a surface.
+# ⛔ Where the populations disagree, the claim is UNDECIDABLE and is recorded as undecidable,
+# never as false and never as true.
+```
+
+### ⛔ Ruling 340 — a wave's surfaces are disjoint only if the POPULATIONS of the instruments it changes are disjoint too, and where they are not the ORDER is the remedy
+
+⛔ **`PO-54/2` is the witness and it is not a near miss.** Wave 8's surfaces were disjoint at FILE
+level, re-derived by two offices and true — ⚠️ **while one dispatch widened a reader whose
+population contains the OTHER dispatch's owed deliverable.** ⭐ **Check 4's sub-step compares
+file growth against R11, so it is structurally incapable of seeing this class**, and two
+branches that touch no common file look disjoint to it.
+
+⭐ **THE RULE HAS TWO HALVES AND THE SECOND IS THE USEFUL ONE.** ⛔ **First: a wave that changes
+an INSTRUMENT declares the POPULATION that instrument reads, not only the files it edits.**
+⛔ **Second: where a population coupling exists, the MERGE ORDER is the remedy and a patch is
+not — the instrument merges FIRST**, so that the office owning each affected document measures
+it against the reader that will judge it. ⚠️ **The other order puts a red inside a document the
+finding branch may not edit** (Ruling 106, and the standing rule that a defect outside a task is
+a finding rather than a diff) — ⛔ **a defect with no legal repair, which is strictly worse than
+one that is merely late.**
+
+```bash
+# Pass: a wave dispatching a change to a shared INSTRUMENT names the population that instrument
+# reads, and the reviewer COUNTS that population at the cumulative trial-merge tip rather than
+# reasoning about it. Where the count is non-zero the instrument merges first; where it is zero
+# the order is still ruled, because the exposure is forward-looking and the count is a reading
+# with an as-of, not a property.
+```
+
+### ⛔ Ruling 341 — §R9 governs a file that crosses a BOUNDARY, and a version key is what makes the question worth asking rather than what answers it
+
+⛔ **Asked twice and derived from scratch both times** — Ruling 330(b) held that a wire shape
+takes no row, and `NS-02/5` asked whether an on-disk record carrying a version key takes one.
+⭐ **A trigger is written here so there is no third derivation.**
+
+⭐ **A file takes an §R9 row when a party OTHER than the one that writes it reads it back** —
+another component, another office, a corpus repository, or the framework. ⛔ **It does not take
+one merely for being a FILE, for being written and read back, or for carrying a version key.**
+⚠️ **A version key is evidence that its author expected the shape to move, which is precisely
+why the question must be ASKED — and it is not the answer**, because a component versions its
+own internals for its own future self as a matter of routine.
+
+⭐ **The taker who ROUTES this question rather than answering it silently is behaving
+correctly**, and the register answers with a CONDITION rather than a verdict: a verdict about a
+file's audience goes stale the first time the audience changes.
+
+```bash
+# Pass: a task that mints a persisted format states WHO READS IT BACK. Where every reader is
+# inside the writing component, no §R9 row is minted and the task says so; the row is owed the
+# moment a party outside that component opens the file, or a second writer appears in the same
+# store. ⛔ A version key alone never triggers a row and never excuses omitting the question.
+```
