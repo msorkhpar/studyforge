@@ -55,6 +55,59 @@ STUDYFORGE_UID=${STUDYFORGE_UID:-$(id -u)}
 STUDYFORGE_GID=${STUDYFORGE_GID:-$(id -g)}
 export STUDYFORGE_UID STUDYFORGE_GID
 
+# ---------------------------------------------------------------------------
+# ⛔ **ONE ENVIRONMENT, ONE IDENTIFIER: no build provenance** (`W152`, the
+# durable repair Ruling 317 was routed for).
+#
+# ⚠️ **The defect, and it is this file's.** `--build` at the bottom re-runs the
+# exporter on every invocation, and BuildKit stamps TWO of the FOUR digests it
+# exports with build-time provenance — so byte-identical contents get a fresh
+# attestation manifest, and a fresh manifest list indexing it, every time.
+# ⛔ MEASURED here, three invocations with `docker/dev/` untouched and every
+# build step `CACHED`, with the line below absent:
+#
+#       exporting config                 IDENTICAL 3/3
+#       exporting manifest               IDENTICAL 3/3
+#       exporting attestation manifest   THREE DISTINCT VALUES
+#       exporting manifest list          THREE DISTINCT VALUES
+#
+# ⛔ And `docker image inspect --format '{{.Id}}'` reports the manifest LIST —
+# the worst of the four and the first one an office reaches for. So two offices
+# holding an IDENTICAL environment read DIFFERENT shas for it, and a reviewer
+# comparing them reads a difference where there is none. ⭐ With the line, the
+# attestation is never built, the list stops being exported at all, and the two
+# stable digests are the only two left.
+#
+# ⚠️ **A VARIABLE AND NOT A FLAG, and that is FORCED rather than preferred.**
+# `docker compose run --build` accepts no `--provenance`; only `docker compose
+# build` does, and this wrapper cannot use that without running two commands.
+# ⛔ And `compose.yaml`'s declarative `build: provenance: false` key is INERT on
+# this Docker — MEASURED at Compose v5.2.0 / buildx v0.35.0, the attestation was
+# still exported and still moved, through `run --build`, through plain `build`,
+# and through `COMPOSE_BAKE=true`. A `.env` beside `compose.yaml` does not carry
+# it either: that file is interpolated into the YAML, not exported to the
+# client. ⭐ Shipping the inert key anyway would be a decoration that READS like
+# the fix, which is worse than no fix at all.
+#
+# ⛔ **Set unconditionally, with no `${VAR:-…}` escape** — the only variable in
+# this file that has none, deliberately. The others carry a CALLER's answer
+# across a boundary; this one is the wrapper's own guarantee that a reading
+# taken here is comparable to a reading taken in another checkout, and a caller
+# who unset it would silently restore the defect while everything still looked
+# green.
+#
+# ⭐ **It is read by the docker CLIENT and does not cross.** What crosses is
+# `compose.yaml`'s `environment:` block, which stays at three entries.
+#
+# ⭐ **And it changes NOTHING THE IMAGE CONTAINS.** An attestation is metadata
+# ABOUT the build: the base digest, both toolchain pins and every `==` in
+# `requirements.txt` are untouched, so every reading in this repository is still
+# taken against the environment it names. ⛔ **THE PINS STILL PIN** (Ruling 317,
+# not repealed by this line): a stable sha becomes QUOTABLE, never
+# AUTHORITATIVE. `tests/docker/test_dev_provenance.py` asserts all of this.
+BUILDX_NO_DEFAULT_ATTESTATIONS=1
+export BUILDX_NO_DEFAULT_ATTESTATIONS
+
 # ⚠️ A linked git worktree keeps its real git directory OUTSIDE the checkout —
 # `.git` is a file naming it, not a directory. Mounting only the checkout
 # would leave git unable to answer anything inside the container, and

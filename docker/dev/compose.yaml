@@ -3,9 +3,22 @@
 #     docker/dev/check                      the whole suite, in the container
 #     docker/dev/check python3 -m tools.quality      anything else, in it
 #
-# or directly, from anywhere:
+# or directly, from anywhere — ⛔ **with the variable, or this build re-exports
+# moving provenance digests and the environment stops having one identifier**
+# (`W152`; the measurement and the ground are in `check`'s own block):
 #
-#     docker compose -f docker/dev/compose.yaml run --rm --build dev
+#     BUILDX_NO_DEFAULT_ATTESTATIONS=1 \
+#         docker compose -f docker/dev/compose.yaml run --rm --build dev
+#
+# ⚠️ **The declarative form belongs in THIS file and is INERT here.**
+# `build: provenance: false` was tried and MEASURED at Compose v5.2.0 / buildx
+# v0.35.0: the attestation manifest was still exported and still moved, through
+# `run --build`, through plain `build`, and through `COMPOSE_BAKE=true`; a
+# `.env` beside this file does not carry the variable either. ⛔ So the key is
+# NOT shipped — a decoration that reads like the fix is worse than none — and
+# the wrapper is the only site that works. ⭐ `tests/docker/test_dev_provenance.py`
+# asserts both halves: that this header carries the variable, and that the inert
+# key is absent from the YAML.
 #
 # ⭐ The command inside is the same command a contributor runs on the host:
 # `python3 -m pytest`. That is the point of the image rather than a detail of
