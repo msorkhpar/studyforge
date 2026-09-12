@@ -101,8 +101,8 @@ build-and-serve skill (`SK-03`). Never a build, never a test, never `serve`.**
 
 ⛔ **THE CONSEQUENCE FOR `M3`:** ⭐ **the verb is what makes *narration is
 generated* performable, so it is an `M3` obligation and it is `SF-42` below.**
-⚠️ **Its STEP MEMBERSHIP is [`README.md`](README.md)'s and is owed — see
-[`W206`](rows/W206.md).**
+⭐ **Its STEP MEMBERSHIP is [`README.md`](README.md)'s: step `3.6`, given by
+[`W206`](rows/W206.md) in PO round 64.**
 
 ### ⭐ 4 — A CORPUS WITH NO NARRATION RECORD → **PLAYER WHEN PROMISED; COMPLAIN ONLY ON A BROKEN PROMISE.**
 
@@ -174,6 +174,29 @@ the seam already sits where the answer puts it** — ⭐ **what was missing was
 anybody having DECIDED it, which is what makes the next module's author stop
 re-deriving it.** ⛔ **What each module owes now is a CITATION of this answer in
 place of its own paragraph of reasoning.**
+
+## ⛔ W193 — WHICH CLIPS MAY BE DELETED → **NONE BY A BUILD, NONE UNASKED BY `narrate`, AND A PRUNE IS ITS OWN REQUEST**
+
+⭐ **Answered by the register, PO round 64, where a builder and a narrator already look.**
+
+1. ⛔ **A BUILD DELETES NO CLIP, EVER.** ⭐ **It follows from answers 2 and 3: clips sit
+   beside the material under `corpus.placement`, outside the footprint `studyforge plan`
+   enumerates, and a build only READS them.**
+2. ⛔ **`studyforge narrate` DELETES NONE AS A SIDE EFFECT OF NARRATING.** ⭐ **It merges
+   into the record (`SF-17`'s behaviour), so a run over any part of a corpus removes
+   nothing.** ⚠️ **`SF-42`'s Acceptance already complies; a taker who adds deletion there
+   has taken this decision in a code branch.**
+3. ⭐ **A PRUNE IS ITS OWN EXPLICIT REQUEST, and its predicate is over the DOCUMENT, never
+   the disk:** ⛔ **an entry whose speech id is absent from the corpus, over a walk of the
+   WHOLE corpus — a partial walk refuses by name.** ⛔ **It deletes only clips the record
+   names; any other file beside them is not its to touch** (answer 2's discrimination by
+   PATH).
+4. ⛔ **THE DISCLOSURE IS OWED EITHER WAY:** ⭐ **`narrate` reports how many record entries
+   the corpus as walked did not produce.**
+
+⛔ **R3 is the outer bound: a generated clip is still a file in somebody's repository.**
+⚠️ **Clauses 3 and 4 are NOT built, and `SF-32/5`'s ceiling makes that live — a build can
+be refused by dead clips nothing can yet remove. [`W218`](rows/W218.md) owns both.**
 
 ---
 
@@ -549,6 +572,28 @@ synthesises, and answer 3 forbids it.** ⛔ **A corpus with no narration record
 still BUILDS, exit `0`.** ⭐ **The pass is independently invocable: regenerating
 narration does not rewrite pages whose speech did not change.**
 
+#### ⛔ AMENDED PO ROUND 64 — THE READ SIDE MERGED AT `6199164` AND THIS ROW DOES NOT CLOSE
+
+⭐ **Merged:** the renderer's three states (`render.page`'s `Narration.missing` and
+`promised`, the gap panel) and the no-synthesis assertion over `generate/`, all asserted
+over LIBRARY entry points. ⛔ **Measured at `5d37f73`, role `wt/po`, HOST: no module in
+`src/studyforge/generate/` names the record, `playable` or `Narration`;
+`generate/narration.py` does not exist; `generate/units.py` renders every page
+`SILENT`.** ⚠️ **So no BUILD can produce the second or third state, and the Acceptance
+above is a build's.**
+
+⛔ **WHAT REMAINS — the Acceptance above is UNCHANGED and binds it:**
+
+1. ⭐ **`generate/narration.py` opens the corpus's record, calls `playable_of` WITH
+   `audio=`** (ask `synth.incremental.audio_dir`), **and partitions `silent` as
+   [`handoffs/SF-38.md`](handoffs/SF-38.md) *For dependents* names** — ⛔ `NOT_RECORDED`
+   is never a gap.
+2. ⛔ **`generate/units.py`'s call into `render` passes that narration instead of
+   `SILENT`.** ⚠️ **That call site is on this row's surface by necessity;
+   `generate/writing.py` is `SF-43`'s and is not.**
+3. ⛔ **The three states are asserted THROUGH `generate`, over the `FND-04` fixtures** —
+   ⭐ **the renderer tests that merged are that half and do not discharge this one.**
+
 ---
 
 ### SF-39 — `studyforge serve`, the CLI stage
@@ -706,10 +751,9 @@ service still reads, which is the floor.** ⛔ **No module in `cli/` names a
 source.** ⚠️ **Exit codes follow `cli/site/`'s: `0` narrated, `1` something the
 corpus declared could not be produced, `2` the tool could not run at all.**
 
-⚠️ **STEP MEMBERSHIP IS OWED AND IS NOT THIS EPIC'S TO GIVE**: ⛔ **all five
-`M3` steps are closed, this task is `M3`, and [`README.md`](README.md) is where a
-step admits a task** — ⭐ **[`W206`](rows/W206.md) already owns that surface and
-now owes one more row than it did.**
+⭐ **STEP MEMBERSHIP GIVEN, PO ROUND 64: step `3.6` in [`README.md`](README.md)**,
+⛔ **a NEW step, because `3.5` closed at `abee048` and a closed step's membership is
+part of its close record** ([`W206`](rows/W206.md)).
 
 ---
 
