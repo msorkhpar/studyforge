@@ -1,0 +1,184 @@
+/* The narration transport, and the highlight that tracks what is being spoken.
+
+   ⭐ THE SCOPE IS THE ONE REGION `chrome.css` DEFERRED. It says of itself:
+   "`footer` is absent … The narration player is the only `<footer>` a page
+   carries, it is `SF-18`'s at M3, and `--player-height`, `--panel` and
+   `--shadow` are defined and waiting for it." ⛔ This is that part. Five palette
+   tokens were `UNPAINTED` in `tests/visual/palette.py`'s ledger with `SF-18`
+   named against each; painting them is what forces the ledger to say which
+   ground each one's contrast is taken against.
+
+   ⛔ NOT ONE COLOUR AND NOT ONE MEASURE IS DEFINED HERE. Every value is a
+   `palette.css` token, so the transport follows the reader's theme and
+   `test_palette` fails a raw hex.
+
+   ⛔ NOT ONE CLASS NAME IS TARGETED HERE EITHER, for the reason `chrome.css`
+   gives: every hook is an element, an id from `templates/player.html`, or a
+   `data-*` attribute, so nothing here joins the published class contract and no
+   page has to be re-rendered for a style change.
+
+   ⚠️ `data-speaking` is this part's and `narration.js`'s, and it is deliberately
+   NOT in `pageassets.SURFACE_HOOKS`. `data-marked` is published because
+   `chrome.css` paints a state `read-mark.js` writes — two offices, two ends of
+   one spelling. Here both ends are one task's, and publishing a hook nobody else
+   may reach would oblige a contract that has no second side.
+
+   ⚠️ Loaded after `code-highlight.css` and before the vendored `plyr.css`: the
+   highlight refines the inside of a code block, which the highlighter has just
+   painted, and at equal specificity the last rule wins. The vendored player
+   theme stays last so a video control keeps its own look. */
+
+/* --- the transport ------------------------------------------------------- */
+
+/* ⛔ STICKY, NOT FIXED, and that is the reason there is no rule on `body` here.
+   A fixed footer overlaps the last paragraph of every unit and has to be paid
+   for with a `padding-bottom` on `body` — a second rule answering the question
+   `chrome.css` already answers once, on one element (`PO-22/6`). The footer is
+   the last child of `body`, so sticking it to the bottom pins it while the
+   reader scrolls and lets the page end underneath it.
+
+   ⚠️ It ships `hidden` and `narration.js` unhides it, so every rule here is for
+   a transport a reader can actually use. */
+
+footer#player {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  min-height: var(--player-height);
+  box-sizing: border-box;
+  margin-top: 2.5rem;
+  padding: 0 0 1rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--fg);
+}
+
+footer#player > div:last-of-type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  padding-top: 0.85rem;
+}
+
+/* The keyboard sentence: a full-width line under the controls rather than one
+   more thing competing with them for the row. */
+footer#player p {
+  flex-basis: 100%;
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* --- progress through the unit ------------------------------------------- */
+
+/* ⛔ The width comes from `--progress`, which `narration.js` sets and nothing
+   else reads, so the script states a number and this file draws it. The
+   fallback is `0%`: a page whose script never ran shows an empty bar rather
+   than a full one. */
+
+#track {
+  height: 0.3rem;
+  background: var(--surface-2);
+  overflow: hidden;
+}
+
+#fill {
+  width: var(--progress, 0%);
+  height: 100%;
+  background: var(--hl-bar);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #fill {
+    transition: width 0.2s linear;
+  }
+}
+
+/* --- the controls -------------------------------------------------------- */
+
+footer#player button,
+footer#player select {
+  font: inherit;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: 0.25rem;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+}
+
+footer#player button:hover:enabled,
+footer#player select:hover:enabled {
+  background: var(--surface-2);
+}
+
+/* ⛔ A disabled control is dimmed AND says so through the attribute, never
+   through colour alone: a reader who cannot tell the two greys apart still gets
+   the cursor and the button's own disabled semantics from the browser. */
+footer#player button:disabled,
+footer#player select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+#play {
+  font-weight: 600;
+}
+
+/* --- what is playing, and what is wrong ---------------------------------- */
+
+#where {
+  color: var(--muted);
+}
+
+#where:not(:empty) + #counter::before {
+  content: " · ";
+}
+
+#counter {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ⛔ Every sentence in here is markup (`templates/player.html`) and the script
+   only unhides one. ⚠️ The region itself is hidden when there is nothing to
+   say — by the script, because "all my children are hidden" is not a state CSS
+   can ask about without `:has`, and a transport with nothing to say must not
+   reserve a gap that reads as a message that failed to appear. */
+#status {
+  flex-basis: 100%;
+  color: var(--accent);
+}
+
+/* --- the highlight ------------------------------------------------------- */
+
+/* ⛔ Speech-unit granularity, which is the whole of why this needs no timing
+   data: the lit passage is the passage whose clip is loaded. The wash is drawn
+   with `box-shadow` rather than padding so lighting a paragraph does not move
+   the paragraph — a highlight that reflowed the page would make the text jump
+   away from the reader on every advance. */
+
+[data-speaking] {
+  background: var(--hl-bg);
+  color: var(--hl-fg);
+  box-shadow: 0 0 0 0.3rem var(--hl-bg);
+  border-radius: 0.15rem;
+}
+
+/* ⚠️ A code block inside a lit passage keeps its own ground AND its own text
+   colours — the seven syntax tokens were measured against `--code-bg`, and
+   repainting either half would invalidate every one of those ratios. It takes a
+   wash over the top instead, which is exactly what `--hl-code` is for. ⛔ So no
+   `color` is set here, and the wash is a `background-image` so the ground
+   underneath it is still the one the numbers were taken against. */
+[data-speaking] pre,
+[data-speaking] code {
+  background-image: linear-gradient(var(--hl-code), var(--hl-code));
+}
+
+[data-speaking] pre code {
+  background-image: none;
+}

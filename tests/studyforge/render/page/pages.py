@@ -18,7 +18,8 @@ from pathlib import Path, PurePosixPath
 from studyforge.address import Address
 from studyforge.corpus import placement as placement_module
 from studyforge.corpus.placement import CorpusLocations, UnitLocations
-from studyforge.render.page import Placement, render
+from studyforge.narrate.speakable import clip_name, speakable_of
+from studyforge.render.page import Narration, Placement, render
 from studyforge.unit import content
 from studyforge.unit.builder import build_unit
 from tests.support import repository_root
@@ -31,6 +32,18 @@ GOLDEN_DIR = repository_root() / "tests" / "fixtures" / "pages"
 #: The corpus root of each fixture, relative to the repository.
 FIXTURES = repository_root() / "tests" / "fixtures"
 
+#: The clip suffix these fixtures are built with.
+#:
+#: ⛔ **A FIXTURE'S STAND-IN FOR A RECORD, AND NOT A DECISION THE FRAMEWORK MAKES.**
+#: A clip's real filename is whatever synthesis placed — `narrate/client.py` names
+#: it from a format the SERVICE answered with — and `SF-17`'s
+#: `.studyforge/narration.json` records it per clip. ⚠️ A build reads that record;
+#: this harness has no service and no record, so it stands one in. ⛔ Nothing under
+#: `src/` may do the same: a renderer that assumed a format would be a second
+#: authority on it, and the symptom is a page linking files that are not there
+#: with the suite green.
+FIXTURE_CLIP_SUFFIX = ".mp3"
+
 
 @dataclass(frozen=True)
 class Case:
@@ -39,6 +52,30 @@ class Case:
     name: str
     document: dict
     placement: Placement
+
+    @property
+    def narration(self) -> Narration:
+        """What a build would hand the renderer once this unit had been narrated.
+
+        ⭐ **Keyed on `SpeechUnit.position` and named by `clip_name`** — the one
+        minter, called rather than imitated, so this harness cannot disagree with
+        the names synthesis actually writes.
+        """
+        units = speakable_of(self.document).units
+        clips = {unit.position: clip_name(unit) + FIXTURE_CLIP_SUFFIX for unit in units}
+        return Narration.of(clips, self.placement)
+
+    def render(self) -> bytes:
+        """This case's page exactly as a build would write it.
+
+        ⛔ **The ONE producer.** `tests/harness/goldens.py` and `regenerate()`
+        below both call it, so the bytes a golden is compared against and the
+        bytes it is rewritten from cannot come from two different calls — which
+        is the defect this module's own docstring names and which returned the
+        moment `narration` became an argument one caller passed and the other
+        did not.
+        """
+        return render(self.document, self.placement, narration=self.narration)
 
     @property
     def golden(self) -> Path:
@@ -135,7 +172,7 @@ def regenerate() -> list[Path]:
     changed = []
     for build in CASES:
         case = build()
-        page = render(case.document, case.placement)
+        page = case.render()
         if not case.golden.exists() or case.golden.read_bytes() != page:
             case.golden.write_bytes(page)
             changed.append(case.golden)

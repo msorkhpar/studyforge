@@ -44,7 +44,6 @@ from functools import partial
 from pathlib import Path
 
 from studyforge.cli.plan import cli as plan_cli
-from studyforge.render.page import render as render_page
 from tests.fixture_checks import FIXTURES, VALID
 from tests.studyforge.render.container import containers
 from tests.studyforge.render.index import indexes
@@ -160,7 +159,7 @@ def _pages() -> tuple[Golden, ...]:
             path=case.golden,
             writer=pages.__name__,
             case=case.name,
-            emit=partial(render_page, case.document, case.placement),
+            emit=case.render,
         )
         for case in built
     )

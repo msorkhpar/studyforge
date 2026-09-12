@@ -71,6 +71,7 @@ from studyforge.render.page import navigation
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
+from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Links
 
 #: The skeleton every unit page is filled from.
@@ -101,6 +102,7 @@ def compose(
     placement: Placement,
     links: Links | None = None,
     trail: Sequence[Crumb] | None = None,
+    narration: Narration = SILENT,
 ) -> str:
     """Return one unit page's exact text.
 
@@ -110,9 +112,16 @@ def compose(
     ⚠️ `trail` is optional for the reason `links` is: only something that has
     walked the corpus's hierarchy can build one, so a page renders without it
     exactly as it will once a build does — minus the region (`SF-15`).
+
+    ⭐ `narration` is optional for a third reason, and it is the one the player's
+    gate below was designed around: a corpus whose clips have not been
+    synthesised renders exactly as a corpus that will never have any (R6), and
+    the transport is absent in both cases rather than present and dead.
     """
     title = _title(document)
-    body = JOIN.join(section_module.render(section, placement) for section in _sections(document))
+    body = JOIN.join(
+        section_module.render(section, placement, narration) for section in _sections(document)
+    )
     return (
         templates.fill(
             SKELETON,

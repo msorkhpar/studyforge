@@ -24,6 +24,11 @@ PALETTE = "palette.css"
 #: so it cannot quietly widen.
 RAW_COLOUR_EXEMPTIONS = {"video-player.css": {"#000", "#fff"}}
 
+#: Custom properties a SCRIPT sets and a stylesheet reads, which are therefore
+#: not the palette's to define. ⛔ By prefix and stated one at a time, so the
+#: exemption cannot quietly widen into "any token nobody defined".
+SET_BY_SCRIPT = ("--plyr", "--progress")
+
 COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\([^)]*\)")
 DEFINED = re.compile(r"^\s*(--[\w-]+)\s*:", re.MULTILINE)
 USED = re.compile(r"var\(\s*(--[\w-]+)")
@@ -111,8 +116,15 @@ def test_every_token_used_anywhere_is_defined():
     offenders = []
     for name in authored_parts():
         used = set(USED.findall(uncommented(name)))
-        # Plyr's own properties are set BY us and read by the library.
-        offenders += [f"{name}: {t}" for t in sorted(used - defined) if not t.startswith("--plyr")]
+        # Plyr's own properties are set BY us and read by the library, and
+        # `--progress` is the same shape one step along: `narration.js` sets it and
+        # `narration.css` reads it, so it is RUNTIME STATE and not vocabulary.
+        # ⛔ Defining it in the palette would be worse than exempting it — the
+        # palette is "every colour, measure and font", and a value that changes
+        # while the reader listens is none of the three.
+        offenders += [
+            f"{name}: {t}" for t in sorted(used - defined) if not t.startswith(SET_BY_SCRIPT)
+        ]
     assert offenders == [], "undefined token: " + ", ".join(offenders)
 
 

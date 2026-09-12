@@ -46,10 +46,22 @@ itself is the next `disclosure` waiting to be forgotten.*
 
 ## ⚠️ One signature, for every renderer
 
-⛔ Each renderer takes `(block, position, *, placement, section, children)` and
-ignores what it does not need. A renderer that took fewer would be the one that
-has to be special-cased the day it needs one more, and the dispatcher would grow
-a branch per module — which is the shape this package exists to avoid.
+⛔ Each renderer takes `(block, position, *, placement, section, children, path,
+narration)` and ignores what it does not need. A renderer that took fewer would
+be the one that has to be special-cased the day it needs one more, and the
+dispatcher would grow a branch per module — which is the shape this package
+exists to avoid. ⭐ `SF-18` added the last two and added them to **every**
+renderer for that reason, not only to the two that read them.
+
+## ⛔ `path` IS THE BLOCK'S ADDRESS FROM THE SECTION DOWN, AND THAT IS WHY IT IS THREADED
+
+⚠️ **`position` is an index within one run of blocks and resets at every level**,
+so a block nested inside a quote carries the same `position` as one of the
+quote's own neighbours. ⛔ A clip is addressed by `SpeechUnit.position`, whose
+`block_path` is *"the 0-based indices from the section down"* — so the dispatcher
+accumulates the prefix as it recurses and hands each renderer the whole path.
+⭐ Recomputing it inside a renderer would be a second numbering scheme, which is
+the one thing `narrate.speakable` exists to prevent.
 """
 
 from __future__ import annotations
@@ -57,6 +69,7 @@ from __future__ import annotations
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
 from studyforge.render.page.blocks import figure, prose, verbatim
 from studyforge.render.page.errors import PageError
+from studyforge.render.page.narration import SILENT, Narration
 
 #: The modules that answer for block types, in a stated order. ⛔ A tuple, so
 #: the mapping below does not depend on iteration order (R10).
@@ -104,15 +117,36 @@ RENDERERS = _mapping()
 RAW_TYPES = frozenset(verbatim.RENDERS)
 
 
-def render_all(blocks, *, placement=None, section: str = "") -> str:
-    """Render a run of blocks in reading order, joined by `JOIN`."""
+def render_all(
+    blocks,
+    *,
+    placement=None,
+    section: str = "",
+    path: tuple[int, ...] = (),
+    narration: Narration = SILENT,
+) -> str:
+    """Render a run of blocks in reading order, joined by `JOIN`.
+
+    `path` is the address of the run's *container*, so a top-level run is `()`
+    and a quote's children are the quote's own path.
+    """
     return JOIN.join(
-        render_one(block, position, placement=placement, section=section)
+        render_one(
+            block, position, placement=placement, section=section, path=path, narration=narration
+        )
         for position, block in enumerate(blocks or ())
     )
 
 
-def render_one(block, position: int, *, placement=None, section: str = "") -> str:
+def render_one(
+    block,
+    position: int,
+    *,
+    placement=None,
+    section: str = "",
+    path: tuple[int, ...] = (),
+    narration: Narration = SILENT,
+) -> str:
     """Render one block, recursing first into the blocks it holds."""
     if not isinstance(block, dict):
         raise PageError(f"a block is an object; block {position} of this section is not")
@@ -124,9 +158,27 @@ def render_one(block, position: int, *, placement=None, section: str = "") -> st
             f"is {list(BLOCK_TYPES)}, and a block silently dropped is a lesson short "
             f"of a paragraph with nothing to show for it"
         )
+    #: ⛔ Where THIS block sits, from the section down — the prefix plus its own
+    #: index. Children are rendered against it, which is what makes the path an
+    #: address rather than a depth.
+    here = (*path, position)
     children = (
-        render_all(block.get("blocks"), placement=placement, section=section)
+        render_all(
+            block.get("blocks"),
+            placement=placement,
+            section=section,
+            path=here,
+            narration=narration,
+        )
         if block_type in CONTAINER_TYPES
         else ""
     )
-    return renderer(block, position, placement=placement, section=section, children=children)
+    return renderer(
+        block,
+        position,
+        placement=placement,
+        section=section,
+        children=children,
+        path=here,
+        narration=narration,
+    )

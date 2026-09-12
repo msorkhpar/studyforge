@@ -58,19 +58,27 @@ from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import blocks
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
+from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import section_anchor
 
 #: The unit media directory a section's own deck was placed in.
 DECK_KIND = "video"
 
 
-def render(section: dict, placement: Placement) -> str:
-    """Render one section: its deck, when it has one, then the section itself."""
+def render(section: dict, placement: Placement, narration: Narration = SILENT) -> str:
+    """Render one section: its deck, when it has one, then the section itself.
+
+    ⚠️ **The section's own key is what a clip is addressed under**, which is the
+    reason `data-section` is minted from kind and variant rather than from a
+    heading: *"the page carries that key verbatim, so the player at M3, progress
+    at M5 and an in-page link all address the same thing"*. ⛔ Narration is
+    looked up under that key and never under a title.
+    """
     if not isinstance(section, dict):
         raise PageError("a served section is an object, and this one is not")
     key = section.get("key")
     contents = list(section.get("blocks") or ())
-    body = blocks.render_all(contents, placement=placement, section=key)
+    body = blocks.render_all(contents, placement=placement, section=key, narration=narration)
     wrapper = templates.fill(
         "section.html",
         id=escape_attribute(section_anchor(key)),

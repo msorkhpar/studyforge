@@ -79,8 +79,10 @@ REGIONS: dict[str, tuple[str, str]] = {
     ),
     "footer#player": (
         DEFERRED,
-        "the narration transport is `SF-18`'s at M3, and `--player-height`, "
-        "`--panel` and `--shadow` are defined and waiting for it",
+        "the narration transport is `SF-18`'s, and it has ARRIVED — in "
+        "`narration.css`, its own part, which is why this row stays DEFERRED "
+        "rather than becoming this part's: `--player-height`, `--panel` and "
+        "`--shadow` are painted there and this file still reaches none of them",
     ),
 }
 

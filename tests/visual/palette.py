@@ -111,11 +111,32 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
     "--tok-type": (MEASURED, "--code-bg", "a Prism token class inside a code block"),
     "--tok-function": (MEASURED, "--code-bg", "a Prism token class inside a code block"),
     "--tok-punct": (MEASURED, "--code-bg", "a Prism token class inside a code block"),
-    "--hl-bg": (UNPAINTED, None, "the narration highlight; SF-18 paints it at M3"),
-    "--hl-bar": (UNPAINTED, None, "the narration progress bar; SF-18, M3"),
-    "--hl-fg": (UNPAINTED, None, "text inside the narration highlight; SF-18, M3"),
-    "--hl-code": (UNPAINTED, None, "the highlight's wash over code; SF-18, M3"),
-    "--panel": (UNPAINTED, None, "the player region; SF-18 paints it at M3 (SF-12/3)"),
+    "--hl-bg": (
+        SURFACE,
+        None,
+        "the ground of the passage being spoken — `narration.css` paints it, and "
+        "`--hl-fg` is the text measured against it (SF-18)",
+    ),
+    "--hl-bar": (
+        STRUCTURAL,
+        None,
+        "`#fill`, the bar inside `#track`; it is a length made visible and no text "
+        "ever sits on it (SF-18)",
+    ),
+    "--hl-fg": (MEASURED, "--hl-bg", "the words of the passage being spoken (SF-18)"),
+    "--hl-code": (
+        STRUCTURAL,
+        None,
+        "a translucent wash laid OVER a code block inside a lit passage; the ground "
+        "underneath stays `--code-bg`, deliberately, because the seven syntax ratios "
+        "were measured against it and repainting it would invalidate all of them (SF-18)",
+    ),
+    "--panel": (
+        SURFACE,
+        None,
+        "the narration transport's own ground — `footer#player`, the one region "
+        "`chrome.css` deferred (SF-18, SF-12/3)",
+    ),
     "--focus": (STRUCTURAL, None, "the focus ring; `test_keyboard` asserts it is visible"),
 }
 

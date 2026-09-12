@@ -38,6 +38,7 @@ from __future__ import annotations
 
 from studyforge.archive.blocks import BLOCK_TYPES
 from studyforge.render.markup import escape, escape_attribute, inline
+from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import block_anchor, heading_level
 from studyforge.render.pageassets import SURFACE_HOOKS, class_for
 
@@ -49,6 +50,8 @@ def render(
     placement: object = None,
     section: str = "",
     children: str = "",
+    path: tuple[int, ...] = (),
+    narration: Narration = SILENT,
 ) -> str:
     """Render one prose block. ⛔ `placement` is unused and is part of the shape.
 
@@ -58,50 +61,68 @@ def render(
     cased the day it needs one more.
     """
     del placement
-    return _RENDERERS[block["type"]](block, position, section, children)
+    return _RENDERERS[block["type"]](block, position, section, children, path, narration)
 
 
-def _heading(block: dict, position: int, section: str, children: str) -> str:
+def _heading(block, position, section, children, path, narration) -> str:
     """One heading, carrying the anchor the outline and any inbound link use."""
     del children
     level = heading_level(block)
     anchor = escape_attribute(block_anchor(section, position))
-    return f'<h{level} id="{anchor}">{inline(block.get("text"))}</h{level}>'
+    audio = narration.attribute(section, path)
+    return f'<h{level} id="{anchor}"{audio}>{inline(block.get("text"))}</h{level}>'
 
 
-def _para(block: dict, position: int, section: str, children: str) -> str:
+def _para(block, position, section, children, path, narration) -> str:
     """Return one paragraph, escaped.
 
     ⛔ See this package's `verbatim` module for the one block type that is not,
     and for why the difference cannot be read off the text.
     """
-    del position, section, children
-    return f"<p>{inline(block.get('text'))}</p>"
+    del position, children
+    return f"<p{narration.attribute(section, path)}>{inline(block.get('text'))}</p>"
 
 
-def _rule(block: dict, position: int, section: str, children: str) -> str:
-    """Return a thematic break: the element, and nothing else."""
-    del block, position, section, children
+def _rule(block, position, section, children, path, narration) -> str:
+    """Return a thematic break: the element, and nothing else.
+
+    ⛔ Never narrated — `SPEECH_OF` calls a rule `silent`, and a horizontal line
+    has no words to say.
+    """
+    del block, position, section, children, path, narration
     return "<hr>"
 
 
-def _listing(block: dict, position: int, section: str, children: str) -> str:
-    """One list, ordered or not, its items rendered as inline prose."""
-    del position, section, children
+def _listing(block, position, section, children, path, narration) -> str:
+    """One list, ordered or not, its items rendered as inline prose.
+
+    ⚠️ **Narrated per ITEM, not per list.** `SPEECH_OF` calls a list `items`, so
+    each `<li>` is its own speech unit with its own clip — which is what lets the
+    highlight sit on the line being read rather than over the whole list.
+    """
+    del position, children
     tag = "ol" if block.get("ordered") else "ul"
     klass = escape_attribute(class_for("list"))
-    items = "".join(f"<li>{inline(item)}</li>" for item in block.get("items") or ())
+    items = "".join(
+        f"<li{narration.attribute(section, path, index)}>{inline(item)}</li>"
+        for index, item in enumerate(block.get("items") or ())
+    )
     return f'<{tag} class="{klass}">{items}</{tag}>'
 
 
-def _table(block: dict, position: int, section: str, children: str) -> str:
+def _table(block, position, section, children, path, narration) -> str:
     """One table, inside its own scrolling box.
 
     ⛔ The wrapper is not decoration: a table wider than the reading column must
     scroll inside its own box, or the page scrolls sideways and every paragraph
     goes with it.
+
+    ⚠️ **Narrated per body ROW** (`SPEECH_OF` says `rows`), and the header row is
+    not one: a `<tr>` inside `<thead>` gets no speech id from the walker, so it
+    must carry no attribute here — a header that linked a clip would light up
+    under audio that is not reading it.
     """
-    del position, section, children
+    del position, children
     klass = escape_attribute(SURFACE_HOOKS["table_scroll"])
     parts = [f'<div class="{klass}"><table>']
     headers = block.get("headers") or ()
@@ -109,35 +130,48 @@ def _table(block: dict, position: int, section: str, children: str) -> str:
         cells = "".join(f"<th>{inline(header)}</th>" for header in headers)
         parts.append(f"<thead><tr>{cells}</tr></thead>")
     parts.append("<tbody>")
-    for row in block.get("rows") or ():
+    for index, row in enumerate(block.get("rows") or ()):
         cells = "".join(f"<td>{inline(cell)}</td>" for cell in row)
-        parts.append(f"<tr>{cells}</tr>")
+        parts.append(f"<tr{narration.attribute(section, path, index)}>{cells}</tr>")
     parts.append("</tbody></table></div>")
     return "".join(parts)
 
 
-def _quote(block: dict, position: int, section: str, children: str) -> str:
+def _quote(block, position, section, children, path, narration) -> str:
     """Return a quotation, holding whatever blocks it holds.
 
     ⚠️ A container, not a paragraph in italics: a list or a code block inside a
     quote must still read as itself.
+
+    ⛔ **The quote itself is never narrated** — `SPEECH_OF` calls it `recurse`,
+    so the clips belong to the blocks inside it, which the dispatcher has already
+    rendered against this block's own path.
     """
-    del block, position, section
+    del block, position, section, path, narration
     return f"<blockquote>{children}</blockquote>"
 
 
-def _disclosure(block: dict, position: int, section: str, children: str) -> str:
+def _disclosure(block, position, section, children, path, narration) -> str:
     """Content the archive records as shown on demand — a real `<details>`.
 
     ⭐ It opens, closes and takes keyboard focus with scripting off entirely,
     which is the third state between shown and absent. ⛔ `open` is the
     author's, delivered from the archive, and is never defaulted here.
+
+    ⛔ **The clip belongs to the `<summary>`, never to the `<details>`.**
+    Narration speaks a disclosure's summary and stops (CTO ruling); the body gets
+    no speech id at all, so a `<details>` carrying the attribute would put the
+    highlight over content the audio deliberately withheld — on a surface the
+    reader chose not to open.
     """
-    del position, section
+    del position
     klass = escape_attribute(class_for("disclosure"))
     opened = " open" if block.get("open") else ""
     summary = escape(block.get("summary") or "")
-    return f'<details class="{klass}"{opened}><summary>{summary}</summary>{children}</details>'
+    audio = narration.attribute(section, path)
+    return (
+        f'<details class="{klass}"{opened}><summary{audio}>{summary}</summary>{children}</details>'
+    )
 
 
 #: `block type -> the function that renders it`. ⛔ Named functions rather than
