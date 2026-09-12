@@ -1,4 +1,4 @@
-"""The CITATION GRAMMAR: which ruling numbers a line of this project's prose CITES.
+r"""The CITATION GRAMMAR: which ruling numbers a line of this project's prose CITES.
 
 **What it does.** Reads the ruling-citation spellings the house style writes —
 `Ruling 296`, `Rulings 295, 296`, `Rulings 177 + 180`, `Rulings 264–278` — and
@@ -83,22 +83,84 @@ draws this line for a link inside backticks, and its `0 unresolved` is
 trustworthy only because it does. ⚠️ **A fence is quoted material, an inline code
 span is an example, and neither is a landing.**
 
+## ⛔ A CITATION MAY SPAN A LINE BREAK, AND THE BLOCK IS WHAT BOUNDS IT
+
+⛔ **`W145`: a citation can be UNMADE with no word changing.** ⭐ An ordinary
+re-wrap moved `166` onto the next line of `review-rubric.md` and this grammar
+stopped reading it, while the diff a reviewer read showed a reflowed paragraph.
+⚠️ **The patterns always admitted the break — every separator here is `\s`,
+which matches a newline — so the blindness was the LINE LOOP and never the
+grammar, and the remedy is to feed it a BLOCK rather than a line.**
+
+⛔ **A BLOCK IS NOT THE DOCUMENT, and that is the whole safety of it.** ⚠️ Joining
+a document's lines before the exclusions run would read every fenced example as a
+landing — measured below, 8 of 8 — and joining across a paragraph boundary would
+invent citations no renderer shows, which is the invented-anchor family
+`pointers.heading_slugs` is fence-aware to avoid. ⭐ **So two consecutive prose
+lines are in ONE block only when none of these stands between them, and the list
+is a CLOSED CLAIM** (Ruling 258):
+
+| The boundary | Why no citation crosses it |
+|---|---|
+| a blank line | the paragraph ended |
+| a gap in the line numbers | a fence stood there and `prose_lines` dropped it |
+| a different blockquote prefix | quoted text and plain text are two blocks |
+| the upper line is a heading or a table row | each is a block of ONE line |
+| the lower line OPENS a block | see below — it belongs to the block it starts |
+| either line leaves a code span OPEN | see below — a MENTION must not be joined |
+
+⭐ **A line OPENS a block when it is a heading, a table row, a thematic break, a
+bullet item, or an ordered item — a number and a PERIOD.**
+
+⛔ **AND WHAT THAT ADMITS IS DECLARED, because a boundary list silent about its
+own edges is the invention the whole block exists to avoid** (Ruling 258, and
+Ruling 65: a predicate that MANUFACTURES a citation is worse than one that misses
+it, because a miss over-reports a hole and an invention reports a hole closed
+that is open). ⭐ **Two edges, both MEASURED rather than reasoned:**
+
+* ⛔ **`N.` breaks for EVERY `N`, not just `1`.** ⚠️ CommonMark lets only a list
+  starting at one interrupt a PARAGRAPH, and reading that rule straight INVENTED
+  a citation between two adjacent list ITEMS — `1. …a Ruling` over
+  `2. 7136 things` read `{2}`, with `Ruling\n10.` and the same shape at every
+  other number behind it. ⭐ **0 live instances, so it was LATENT — and it is
+  refused anyway, at a measured cost of NOTHING: over all 400 markdown files of
+  this tree the widened breaker loses nothing and gains nothing.**
+* ⛔ **`N)` is ADMITTED, and that is a choice with a price on it.** ⭐ The house
+  style wraps a parenthesised citation — `(Ruling` with `279)` beneath it — and a
+  `\d{1,4}[.)]` breaker throws those away: MEASURED, two live sites,
+  `docs/tasks/handoffs/PO-2026-09-10-round25.md:173-174` and
+  `SESSION-2026-09-11-coordinator-2.md:34-35`, **both REAL citations**. ⚠️ So
+  `Ruling\n3) a thing` reads `{3}`, an ordered item written with a bracket is not
+  a boundary, and both halves are asserted in the mirror so the next editor
+  cannot widen this by accident.
+
+⛔ **AND AN UNCLOSED CODE SPAN ENDS THE BLOCK, which is the one way this could
+have weakened `W133`'s exclusion.** ⭐ `strip_code_spans` is LINE-scoped, so a
+span opened on one line and closed on the next survives both — and a join across
+that pair would carry a MENTION into the reading. ⚠️ **Refused rather than
+declared, and the refusal is measured to cost nothing: all 14 live wrapped pairs
+in `docs/conventions/` leave both of their lines balanced.**
+
+⭐ **MEASURED at `fc56011`, role `wt/dev2`, pinned image, over the eight documents
+`reach._conventions(root)` names: the block reading GAINS `{166}` and LOSES
+nothing** — exactly the citation a re-wrap had unmade, and no invention anywhere
+else in that corpus. ⚠️ **Over all 398 markdown files of the tree it gains 36 and
+loses 0**, and every gain read back as a real citation.
+
 ## ⛔ WHAT THIS CANNOT SEE, DECLARED — because an incomplete gaps list is worse than none
 
-⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Three of the four
-gaps are the GRAMMAR's and live here; the fourth — that a CITATION is not a
+⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Two of the three
+gaps are the GRAMMAR's and live here; the third — that a CITATION is not a
 LANDING — is a property of what `reach.py` concludes and is declared there.**
-⚠️ **These three were MEASURED at `428223c` while repairing the spelling hole
-rather than guessed:**
+⚠️ **These two were MEASURED at `428223c` while repairing the spelling hole
+rather than guessed, and the WRAPPED citation that stood third among them was
+CLOSED by `W145` rather than dropped from the claim:**
 
 1. ⛔ **An EMPHASIS-INTERLEAVED citation reads UNREACHED** — `board.md:703`'s
    `Rulings **15**, **62** and **68**`, whose digits sit inside `**` runs. ⭐ Not
    widened over: Ruling 185 forbids a taker widening a ruling's own words, and
    Ruling 280's are "the forms the house style writes" — this is ONE site of ten.
-2. ⛔ **A citation that WRAPS A LINE BREAK is read only as far as the break** —
-   `board.md:115` writes `Rulings 106 and` with `174` on the next line, so `106`
-   reads cited and `174` does not. ⭐ Line-scoped because `prose_lines` is.
-3. ⛔ **`Rulings minted: 198-202`** (`review-rubric.md:292`) puts a word between
+2. ⛔ **`Rulings minted: 198-202`** (`review-rubric.md:292`) puts a word between
    the plural and its members and reads UNREACHED.
 
 ⭐ **Consequence, carried by Ruling 280's SECOND arm and Ruling 281's audience
@@ -153,6 +215,32 @@ _PLURAL = re.compile(rf"Rulings\s+(?P<body>{_MEMBER}(?:{_JOIN}{_MEMBER})*)(?!\d)
 #: Walks a body: a member, or the dash making the previous member a low bound.
 _BODY_TOKEN = re.compile(rf"(?P<member>{_MEMBER})|(?P<dash>[{_RANGE_DASHES}])")
 
+#: A line's BLOCKQUOTE MARKERS, split from the text they prefix. ⛔ Two lines
+#: share a block only when these are IDENTICAL — `>` text and plain text are two
+#: markdown blocks — and splitting them rather than testing for them is what lets
+#: a citation wrapped INSIDE a quote be read at all (`board.md:864`, measured).
+_QUOTE = re.compile(r"^(?P<quote>(?:[ \t]*>)*)(?P<body>.*)$")
+
+#: A line that OPENS a markdown block, so no citation reaches it from above.
+#:
+#: ⛔ **The ordered item is ANY number with a PERIOD, and a `)` is NOT one**, and
+#: both halves are measured rather than reasoned (`W145`, CTO round 65):
+#:
+#: * ⛔ `1[.)]` — CommonMark's *only a list starting at one interrupts a
+#:   paragraph* — INVENTED a citation between two adjacent list items:
+#:   `1. …a Ruling` over `2. 7136 things` read `{2}`. ⭐ Widening to `\d{1,4}\.`
+#:   refuses it and costs NOTHING: measured over all 400 markdown files of this
+#:   tree, the reading loses nothing and gains nothing.
+#: * ⛔ `)` is DELIBERATELY ADMITTED, because the house style wraps `(Ruling\n279)`
+#:   — MEASURED, two live sites, `PO-2026-09-10-round25.md:173-174` and
+#:   `SESSION-2026-09-11-coordinator-2.md:34-35`, both REAL citations that a
+#:   `\d{1,4}[.)]` breaker would have thrown away.
+_OPENS = re.compile(r"[ \t]*(?:[#|]|[-*+][ \t]|\d{1,4}\.(?=[ \t]|$)|(?:-{3,}|\*{3,}|_{3,})[ \t]*$)")
+
+#: A line that is a block BY ITSELF, so no citation leaves it downward: a heading
+#: ends at its newline, and a table row cannot flow into the row beneath it.
+_CLOSES = re.compile(r"[ \t]*[#|]")
+
 
 def spellings(number: int) -> str:
     """Return the citation forms that satisfy this grammar, for `number`.
@@ -169,7 +257,10 @@ def spellings(number: int) -> str:
         f"`Rulings {lower}-{number}` or `Rulings {lower}\u2013{number}` (en dash). "
         f"⛔ A citation inside a code span or a ``` fence is an EXAMPLE and is not "
         f"read; nor is one written with emphasis inside it (`Rulings **{low}**, "
-        f"**{number}**`) or wrapped across a line break"
+        f"**{number}**`). ⭐ A citation WRAPPED across a line break IS read, so long "
+        f"as the two lines are one paragraph: a blank line, a heading, a table row, "
+        f"a fence or a list marker between them ends it, and the number below is then "
+        f"not read as a citation"
     )
 
 
@@ -197,6 +288,50 @@ def _members(body: str) -> set[int]:
     return found
 
 
+def _unquote(line: str) -> tuple[str, str]:
+    """Split a line's blockquote markers from the text they prefix.
+
+    ⚠️ The markers are returned rather than discarded: two lines are in one
+    block only when theirs are the SAME, so a quoted line and a plain one below
+    it stay apart while two quoted lines join.
+    """
+    match = _QUOTE.match(line)
+    return match.group("quote", "body") if match else ("", line)
+
+
+def _blocks(text: str) -> list[str]:
+    """Return the prose BLOCKS of `text` — the runs of lines a citation may span.
+
+    ⛔ **The exclusions run BEFORE the join, per line, and that ordering is the
+    safety** (Ruling 73, and `W145`'s clause 2): `prose_lines` has already
+    dropped every fence, `strip_code_spans` blanks this line's spans, and only
+    then may a line be appended to the one above it. ⚠️ The boundaries are the
+    module docstring's table, and they are a closed claim rather than a taste.
+    """
+    blocks: list[list[str]] = []
+    previous: tuple[int, str, str] | None = None
+    for number, line in prose_lines(text):
+        quote, body = _unquote(strip_code_spans(line))
+        if not body.strip():
+            previous = None
+            continue
+        joins = (
+            previous is not None
+            and number == previous[0] + 1
+            and quote == previous[1]
+            and "`" not in previous[2]
+            and "`" not in body
+            and not _CLOSES.match(previous[2])
+            and not _OPENS.match(body)
+        )
+        if joins:
+            blocks[-1].append(body)
+        else:
+            blocks.append([body])
+        previous = (number, quote, body)
+    return ["\n".join(block) for block in blocks]
+
+
 def cited_numbers(text: str) -> set[int]:
     """Return every ruling number `text` CITES, in prose, outside every code span.
 
@@ -204,13 +339,16 @@ def cited_numbers(text: str) -> set[int]:
     is quoted material and an inline code span is an example. ⛔ Without them the
     widened predicate reads Ruling 280's own illustration of this defect as a
     landing of the eight rulings it quotes — measured, 8 of 8.
+
+    ⚠️ **The unit is a BLOCK and not a line** (`W145`): a citation the house
+    style wrapped is still a citation, and reading one line at a time let an
+    ordinary re-wrap unmake one with no word changing.
     """
     found: set[int] = set()
-    for _, line in prose_lines(text):
-        prose = strip_code_spans(line)
-        for match in _SINGULAR.finditer(prose):
+    for block in _blocks(text):
+        for match in _SINGULAR.finditer(block):
             found.add(int(match.group(1)))
-        for match in _PLURAL.finditer(prose):
+        for match in _PLURAL.finditer(block):
             found |= _members(match.group("body"))
     return found
 

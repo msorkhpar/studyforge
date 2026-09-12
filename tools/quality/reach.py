@@ -73,9 +73,9 @@ reading, not a bigger first one.**
 ⚠️ **MEASURED at `6aef480`: this module was `385` of R11's `400`.** ⭐ **Ruling
 261 — a ceiling is not a budget — so the next edit was the SPLIT `W133`'s taker
 had already named: the citation grammar moved to `tools/quality/citations.py`,
-which owns the spellings, the two narrowings, the code-span exclusion and three
-of the four declared gaps.** ⛔ **The seam runs ONE WAY: this module imports that
-one, and that one imports nothing back.**
+which owns the spellings, the two narrowings, the code-span exclusion, the BLOCK
+a citation may wrap inside, and two of the three declared gaps.** ⛔ **The seam
+runs ONE WAY: this module imports that one, and that one imports nothing back.**
 
 ## ⛔ Why `docs/conventions/` and nothing else
 
@@ -87,9 +87,9 @@ subject confined to `docs/conventions/` excludes all three structurally rather
 than by a filter a reader has to remember** — which is the same exemption shape
 `source_names` uses, and for the same reason.
 
-## ⛔ THE FOURTH DECLARED GAP, which is this module's own
+## ⛔ THE THIRD DECLARED GAP, which is this module's own
 
-⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Three of the four
+⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Two of the three
 gaps belong to the grammar and are declared in `citations.py`; this one belongs
 to what this module CONCLUDES, so it is declared here: a CITATION is not a
 LANDING.** ⚠️ A convention that merely *mentions* `Ruling N` in passing — inside
@@ -143,10 +143,21 @@ REACH_WINDOW = 25
 #: ⭐ The declared gaps, named where the number is READ rather than in a module
 #: docstring the reader of a failure never opens (Ruling 280's first arm, Ruling
 #: 281's audience clause). ⛔ It is why both notice lines say UPPER BOUND.
+#:
+#: ⛔ **A SEQUENCE and not a sentence, because BOTH notice lines used to write
+#: the word "three" beside it** (`W145`): closing a gap in the list while the
+#: numeral stayed put would have left the instrument mis-stating its own
+#: declaration in the same breath as its figure. ⭐ The count is now DERIVED
+#: from the list, so the two cannot disagree — `len(_GAPS)` is the numeral.
 _GAPS = (
-    "emphasis inside the number, a citation wrapped across a line break, a word "
-    "between the plural and its members"
+    "emphasis inside the number",
+    "a word between the plural and its members",
 )
+
+
+def _gaps_phrase() -> str:
+    """Render the declared gaps with a count that is derived, never typed."""
+    return f"{len(_GAPS)} declared gaps ({', '.join(_GAPS)})"
 
 
 def _conventions(root: Path) -> list[Path]:
@@ -236,7 +247,7 @@ def _window_line(tail: int, window: range, unreached: list[int], documents: int)
         f"{len(window) - len(unreached)}, unreached {len(unreached)} IN THIS WINDOW "
         f"ALONE — an UPPER BOUND on the hole (Rulings 280, 281), because reach is "
         f"read from the declared citation spellings outside code spans and fences, "
-        f"and the three declared gaps ({_GAPS}) read UNREACHED. Read from "
+        f"and the {_gaps_phrase()} read UNREACHED. Read from "
         f"{documents} convention document(s). Unreached: {members}."
     )
 
@@ -266,7 +277,7 @@ def _below_line(window: range, below: tuple[int, ...], uncited: list[int]) -> st
         f"asks whether the round that minted is paying (Ruling 286); this one asks "
         f"whether the backlog is being worked, and minting SLIDES the window, so a "
         f"member leaves it whether it LANDED or AGED OUT. Also an UPPER BOUND, for "
-        f"the same three declared gaps ({_GAPS}). Still uncited below the window: "
+        f"the same {_gaps_phrase()}. Still uncited below the window: "
         f"{members}."
     )
 
