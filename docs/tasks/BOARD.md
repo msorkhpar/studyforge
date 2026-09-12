@@ -12,19 +12,19 @@ second copy of it.
 | what a closed row was, and every round's reasoning | [`BOARD-ARCHIVE.md`](BOARD-ARCHIVE.md) — the record, appended to and never edited |
 | what a task *is* (its definition, `Owns`, `Depends on`, Acceptance) | the epic, `E00`…`E13`. ⛔ **Never this file** |
 | which step a task belongs to | [`README.md`](README.md). ⛔ **Membership is not state** |
-| how this file is allowed to grow | [`../conventions/board.md`](../conventions/board.md) — the structural contract, and the check that enforces it |
+| how this file is allowed to grow, and what a cell may carry | [`../conventions/board.md`](../conventions/board.md) — the structural contract, and the check that enforces it |
+| how a state is allowed to change | [`../conventions/delivery-flow.md`](../conventions/delivery-flow.md) |
 
-⛔ **A status change is ONE CELL**
-([`../conventions/delivery-flow.md`](../conventions/delivery-flow.md)) — ⭐ **and the reading
-that founded the rule stays behind the address in the table above, never in a second copy
-here, which is this file's own closing rule.**
+⛔ **RULING 349 IS BEING APPLIED TO THIS FILE, ONE VERIFIED PARAGRAPH AT A TIME, AND
+[`W173`](rows/W173.md) OWNS THE SWEEP** — ⭐ **a rule removed here is one whose convention
+already carries it, named in that round's record; a rule no convention carries STAYS until
+one does.**
 
 ---
 
 ## Milestones
 
-⭐ **State only.** ⛔ **Which tasks are in which step is `README.md`'s;
-why a close ran the way it did is the archive's.**
+⭐ **State only.**
 
 | Milestone | State | Ref | The close run |
 |---|---|---|---|
@@ -52,9 +52,9 @@ the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-clos
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W64` | Developer 1 | `fix/W64-kind-gate-scope` @ `wt/dev1` | 0 @ `7a7a178` | ⏳ **in flight** — wave 9 |
-| `W155` | Developer 2 | `fix/W155-ceiling-growth` @ `wt/dev2` | 0 @ `7a7a178` | ⏳ **in flight** — wave 9 |
-| `W170` | Developer 3 | `fix/W170-trial-namespace-gate` @ `wt/dev3` | 0 @ `7a7a178` | ⏳ **in flight** — wave 9 |
+| `NS-04` `NS-06` | Developer 1 | `feat/NS-04-NS-06-voice-and-adapter` @ `wt/dev1` | 0 @ `4b48e6d` | ⏳ **in flight** — wave 10 |
+| `NS-05` | Developer 2 | `feat/NS-05-framework-client` @ `wt/dev2` | 0 @ `4b48e6d` | ⏳ **in flight** — wave 10 |
+| `W167` | Developer 3 | `fix/W167-handoff-existence-arm` @ `wt/dev3` | 0 @ `4b48e6d` | ⏳ **in flight** — wave 10 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE, not an omission** (`W111`, `W147`).
@@ -62,8 +62,8 @@ the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-clos
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at a
 merge and a GATE at `git rev-parse <register branch>`, never a MOMENT and never the release
-tip** (Ruling 279). ⭐ **The arm to read BEFORE a merge is `dispatched and UNNAMED by any
-row`** (Ruling 264) — ⚠️ **and `W170`, in flight, is that arm naming a branch no row can name.**
+tip** (Ruling 279). ⚠️ **AND THE ARM Ruling 264 NAMES IS PRINTED WITHOUT BEING FOLDED — Ruling
+348 — so it fires while the command exits `0`, and it is read WHOLE or it is not read.**
 
 ⛔ **THE DELIMITERS ARE RULING 196'S** — ⭐ **a header is INFERRED and can only be
 ANNOUNCED; a delimiter is DECLARED and can be REFUSED.** ⚠️ **ONE BRANCH CAN CARRY ROWS
@@ -92,7 +92,9 @@ argument for each placement is in the round record; this table is the outcome.**
 | 10 | `W144` | ⭐ **a LABEL defect beside a correct bound, and it jumps nobody** — `PO-48/10` | round 49 |
 | 11 | `W148`–`W151`, `W153`, `W154`, `W156` | ⭐ **each jumps nobody** | round 51 |
 | 12 | `W157`–`W160` | ⭐ **each jumps nobody** | round 52 |
-| 13 | `W161`–`W165`, `W167`–`W169`, `W171` | ⭐ **each jumps nobody**; ⛔ **`W167` HELD behind `W64`** | round 54 |
+| 13 | `W161`–`W165`, `W168`, `W169`, `W171` | ⭐ **each jumps nobody**; ⛔ **`W167` LEFT — it is in flight** | round 54 |
+| 14 | `W34`, `W40` | ⭐ **older than every row above, so each jumps nobody** | round 56 |
+| 15 | `W172`, `W173` | ⭐ **round 56's two mints, jumping nobody** | round 56 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -105,19 +107,19 @@ takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.**
 `W168`, `W169` and `W171` name `docs/conventions/` — ⭐ ONE constraint, not a row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
 `W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/`; `W35`+`W148` write
-`pointers.py` — ONE OWNER or two waves for each set.** ⛔ **`W64`+`W167` share ONE FILE, not merely a directory — `tools/quality/handoffs/__init__.py`
-holds `DOCUMENT_KINDS`, the kind gate `W64` widens, and `check_handoffs`, the arm `W167`
-re-populates — so `W167` is HELD while `W64` is in flight** (`PO-55/2`). ⚠️ **This paragraph
-ranges over DECLARED surfaces: `W64` and `W35` declare none, so the register asserts theirs
-here or nowhere** (Ruling 331, `PO-54/3`, `PO-54/4`).
+`pointers.py` — ONE OWNER or two waves for each set.** ⛔ **`W167`+`W172` share ONE FILE, not
+merely a directory: `tools/quality/handoffs/contract.py` holds `check_markers`, which `W172`
+re-predicates, beside `check_handoffs`'s callers, which `W167` re-populates — and `W167` is IN
+FLIGHT, so `W172` waits a wave.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
+writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⚠️ **This paragraph ranges
+over DECLARED surfaces: `W35` declares none, so the register asserts its own here or nowhere**
+(Ruling 331, `PO-54/3`, `PO-54/4`).
 
 ## The register — every `W` row
 
 ⛔ **One row per id, and the id space has exactly one minter.** ⭐ **A row's
 NAMING is here and nowhere else; its ARGUMENT is behind the pointer and nowhere
-else.** ⚠️ **A cell in this table carries no measurement, no ref other than a
-merge ref, and no reasoning** — those are the three things that go stale, and
-they have exactly one home each.
+else.**
 
 <!-- register -->
 | # | Row | Owner | State | Detail |
@@ -184,7 +186,7 @@ they have exactly one home each.
 | W61 | Two shipped skills gave a command that does not exist, in a fence | framework agent | ✅ done — `ad27ed2` | [record](BOARD-ARCHIVE.md#w61-two-shipped-skills-gave-a-command-that-does-not-exist-in-a-fence) |
 | W62 | The latent `Owns` cells, and a trigger that cannot be shelved | PO | `todo` | [`rows/W62.md`](rows/W62.md) |
 | W63 | The marker vocabulary's closed check | framework agent | ✅ done — `0183cd1` | [record](BOARD-ARCHIVE.md#w63-the-marker-vocabularys-closed-check) |
-| W64 | The kind gate widened across the whole document floor | framework agent | ⏳ **in flight** — Ruling 218's gate two; `W121` merged | [`rows/W64.md`](rows/W64.md) |
+| W64 | The kind gate widened across the whole document floor | framework agent | ✅ done — `2c9082d` | [record](BOARD-ARCHIVE.md#w64-the-kind-gate-widened-across-the-whole-document-floor) |
 | W65 | R7's third subject has no sweep | framework agent | `todo` | [`rows/W65.md`](rows/W65.md) |
 | W66 | The non-ASCII narrowing, and the emitter disagrees with the gate | framework agent | `todo` | [`rows/W66.md`](rows/W66.md) |
 | W67 | The two zero-headroom test modules | framework agent | `todo` — ahead of any row adding a test to `corpus/container` or `corpus/manifest` | [`rows/W67.md`](rows/W67.md) |
@@ -274,7 +276,7 @@ they have exactly one home each.
 | W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [record](BOARD-ARCHIVE.md#w152-dockerdevcheck-re-exports-provenance-on-every-run-so-two-offices-read-different-shas-for-one-identical-environment) |
 | W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | framework agent | `todo` | [`rows/W153.md`](rows/W153.md) |
 | W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | framework agent | `todo` | [`rows/W154.md`](rows/W154.md) |
-| W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | ⏳ **in flight** — wave 9 | [`rows/W155.md`](rows/W155.md) |
+| W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | ✅ done — `0011d5d` | [record](BOARD-ARCHIVE.md#w155-r11s-ceiling-has-an-instrument-and-its-approach-has-none-the-predicate-is-proximity-growth-and-proximity-alone-flags-the-ceiling-working) |
 | W156 | A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge | framework agent | `todo` | [`rows/W156.md`](rows/W156.md) |
 | W157 | The knowledge index goes stale on every merge, nothing owns the rebuild, and no instrument can fail on it | framework agent | `todo` — `CTO-66/10` | [`rows/W157.md`](rows/W157.md) |
 | W158 | The authoritative environment is structurally blind to the workspace assertions, so `green` names two different answers | framework agent | `todo` — `CTO-66/11` | [`rows/W158.md`](rows/W158.md) |
@@ -286,11 +288,13 @@ they have exactly one home each.
 | W164 | A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently | framework agent | `todo` | [`rows/W164.md`](rows/W164.md) |
 | W165 | A cost figure over a GATED population carries its spread or only its sample, and one end of a 32x range decided a mode | framework agent | `todo` | [`rows/W165.md`](rows/W165.md) |
 | W166 | The standing SPLIT condition `tools/quality/board/verdict.py` is owed, third member inside one package | PO | ✅ done — PO round 55 | [record](BOARD-ARCHIVE.md#w166-the-standing-split-condition-toolsqualityboardverdictpy-is-owed-third-member-inside-one-package) |
-| W167 | The handoff check iterates the files that EXIST, so *the handoff is missing* is unreachable by construction | framework agent | `todo` — `CTO-67/10` | [`rows/W167.md`](rows/W167.md) |
+| W167 | The handoff check iterates the files that EXIST, so *the handoff is missing* is unreachable by construction | framework agent | ⏳ **in flight** — wave 10; the `W64` hold discharged | [`rows/W167.md`](rows/W167.md) |
 | W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | framework agent | `todo` — `CTO-67/11` | [`rows/W168.md`](rows/W168.md) |
 | W169 | Ruling 96's line has no named checkout, and its instrument answers `none` in every office tree and `stale` in one | framework agent | `todo` — `CTO-67/3` | [`rows/W169.md`](rows/W169.md) |
-| W170 | A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for | framework agent | ⏳ **in flight** — wave 9 | [`rows/W170.md`](rows/W170.md) |
+| W170 | A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for | framework agent | ✅ done — `4d4c7c7` | [record](BOARD-ARCHIVE.md#w170-a-live-trial-branch-reaches-the-one-pre-merge-gate-line-on-the-ground-ruling-265-already-exempted-a-namespace-for) |
 | W171 | An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal | framework agent | `todo` — `CTO-68/4` | [`rows/W171.md`](rows/W171.md) |
+| W172 | Ruling 218's GATE THREE — a record's Findings section told from its prose, and the residue `W64` measured rather than chased | framework agent | `todo` — Ruling 218's *"not yet a row"*, rowed at `W64`'s close | [`rows/W172.md`](rows/W172.md) |
+| W173 | The board carries RULES where Ruling 349 says a rule is the convention's, and no instrument can tell a board POINTER from a board RESTATEMENT | framework agent | `todo` — Ruling 349 | [`rows/W173.md`](rows/W173.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -324,7 +328,7 @@ here; the argument is in the record.**
 | ⛔ **Same form for `tools/quality/board/verdict.py`, a THIRD member inside `tools/quality/board/`** — the next row touching it splits it at a seam its taker NAMES before cutting. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](BOARD-ARCHIVE.md#w166-the-standing-split-condition-toolsqualityboardverdictpy-is-owed-third-member-inside-one-package) |
 | ⛔ **Same form for `tests/visual/test_host_environment.py`, and it is a FOURTH member** — ruled [CTO round 62 §5](BOARD-ARCHIVE.md#w128-a-committed-verdict-may-not-depend-on-the-hosts-environment-ruling-225s-other-half-in-testsvisual), against the 600-line TEST ceiling, and the office disclosed it unprompted with its seam. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](handoffs/CTO-2026-09-11-round62.md#5-fixw128-visual-env-verdicts-the-acceptance-is-a-pair-of-readings-and-i-took-both-at-both-refs) |
 | ⛔ **NO `W` ROW DISPATCHES INTO A WAVE WHERE AN OPEN-STEP ROW IS DISPATCHABLE AND UNDISPATCHED** — ⭐ **and a step whose rows are ALL MERGED is not a step with no dispatchable row, it is a step awaiting a CLOSE, so the register closes it and opens the next BEFORE any `W` row is placed into that wave** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-landed-because-no-document-carried-it) |
-| ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A slot the open step cannot fill takes the queue head, and a wave leaving one EMPTY under this bound has mis-read it** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-and-a-queue-it-cannot-be-dispatched-into-the-bound-is-priority-not-exclusivity) |
+| ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A wave leaving such a slot EMPTY has mis-read it, and the EMPTINESS is the finding** — ⚠️ **CORRECTED round 56: this cell also read *"a slot the open step cannot fill takes the queue head"*, which is in NO record and came from round 55's own handoff** (`PO-56/2`) | [record](BOARD-ARCHIVE.md#the-dispatch-bound-and-a-queue-it-cannot-be-dispatched-into-the-bound-is-priority-not-exclusivity) |
 | ⛔ **Same form for `tools/quality/reach.py`, and it is a THIRD member** — `W133/4` as the reviewer widened it. ⭐ **`W133`'s taker NAMED the seam — the citation grammar as a sibling module — and correctly refused to cut it outside their surface.** ⚠️ **No count here** (Ruling 150's form, and Ruling 261: a ceiling is NOT a budget, so the next edit is a SPLIT rather than a trim) | [record](BOARD-ARCHIVE.md#w133-checkrulingsreachs-predicate-cannot-read-the-plural-comma-list-or-range-citation-form-and-a-checks-pass-condition-is-satisfiable-by-one-undeclared-spelling) |
 
 
@@ -376,16 +380,3 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 the round-4 relay, the `validate` run and its findings — is
 [in the record](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none).**
 
----
-
-## Where everything else went, and why it is not here
-
-| It was | It is now | Because |
-|---|---|---|
-| every round's reasoning — rounds 25 → 34, the close runs, the mint arguments, the carried rulings | [`BOARD-ARCHIVE.md`](BOARD-ARCHIVE.md), **moved whole and unedited** | ⛔ **A record is corrected by annotating beneath, never by editing** (Ruling 106). ⭐ **Nothing was summarised** — the round-25 split's own standing rule, and this move keeps it |
-| the full argument for a live row | `rows/<ID>.md`, one file per row | ⭐ **A live row's argument is AMENDED — re-scoped, re-framed, struck.** ⛔ **A record cannot be amended, so a live argument may not live in one** |
-| the wave checks, and how this board is maintained | [`../conventions/board.md`](../conventions/board.md) | ⛔ **A process is not a state.** ⭐ **A convention is where a rule lives; a board is where a reading lives** |
-| the Log | [`BOARD-ARCHIVE.md`](BOARD-ARCHIVE.md) | unchanged — it was already there |
-
-⛔ **If a fact appears both here and behind a pointer, ONE OF THE TWO IS WRONG,
-and it is a finding.** ⭐ **When a fact changes, exactly one file changes.**
