@@ -57,9 +57,18 @@ from studyforge.describe import describe
 #: The fields R9 versions, for the tree check in `tests/studyforge/
 #: test_version.py` that refuses a second implementation. ⭐ `identity_api`
 #: joined it the day SF-03 minted it, `content_api` the day SF-09 did,
-#: `site_api` the day SF-04 did, and ⭐ **`toc_api` the day SF-13 did** — which
-#: is the convention this line asks for: a task that versions a new contract
+#: `site_api` the day SF-04 did, ⭐ **`toc_api` the day SF-13 did**, and
+#: ⭐ **`narration_api` the day SF-17 did** (Ruling 351) — which is the
+#: convention this line asks for: a task that versions a new contract
 #: registers it here in the same commit, or the guard cannot see it.
+#:
+#: ⚠️ **`narration_api` is read through `check` and NOT through `is_supported`,
+#: which is the opposite of `site_api` below and is the same argument reaching
+#: the other answer.** ⛔ The discovery cache may be discarded because the tree
+#: rebuilds it; `.studyforge/narration.json` is rebuildable only by
+#: re-synthesising every clip in the corpus, so discarding it spends the whole
+#: cost the incremental pass exists to avoid, silently. R9's refusal is spent
+#: by stopping.
 #:
 #: ⚠️ **`toc_api` versions TWO documents** — `toc.json` and the `status.json`
 #: that annotates it — because they are two halves of one schema (spec §5's
@@ -88,6 +97,7 @@ CONTRACT_FIELDS = (
     "content_api",
     "site_api",
     "toc_api",
+    "narration_api",
 )
 
 

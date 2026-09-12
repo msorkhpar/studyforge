@@ -443,7 +443,7 @@ on the builder.
 | local status | `status.json` | TOC schema version | `SF-14` |
 | authored overlay | `<address>/units/unit-NN/content.json` | `content_api` (`SF-09`) | a person |
 | discovery cache | `.studyforge/site.json` | `site_api` (Ruling 95) | `SF-04` — ⛔ **the one writer** |
-| narration regeneration state | ⛔ **open** | ⛔ **open** | `SF-17` — ⛔ **the one writer** (Ruling 330) |
+| narration regeneration state | `.studyforge/narration.json` (Ruling 351) | `narration_api` (Ruling 351) | `SF-17` — ⛔ **the one writer** (Ruling 330) |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
 | **workspace pin file** | `workspace.json` | `workspace_api` | `FND-05a`; a row per component |
@@ -460,10 +460,16 @@ Ruling 330, which is R21's own *one producer* clause applied to its own register
   `*_api` for it would put a framework version key on a shape the framework does not
   write, making it a second authority on a component's promise — the failure §8.2
   removes when it rules that the service never writes into a corpus.**
-- ⭐ **`SF-17`'s half IS a file row and stays OPEN above, now naming ONE writer.**
-  ⚠️ **It is the state that makes *"re-running with no content change writes nothing
-  and requests nothing"* (E04, `SF-17`'s Acceptance) decidable, so the framework reads
-  it back and R9 binds it.** ⛔ **Owed before step 3.4 opens, not before 3.2.**
+- ⭐ **`SF-17`'s half IS a file row and is now CLOSED above — located by Ruling 351 and
+  filled in by `SF-17` itself, the task that builds it.** ⚠️ **It is the state that makes
+  *"re-running with no content change writes nothing and requests nothing"* (E04,
+  `SF-17`'s Acceptance) decidable, so the framework reads it back and R9 binds it.**
+  ⛔ **It was owed before step 3.4 opens, not before 3.2, and the two cells were
+  transcribed here in the commit that minted the key** — ⭐ **`narration_api` is
+  registered in `version.CONTRACT_FIELDS` in that same commit, per that tuple's own
+  convention, and it is read through `check` rather than `is_supported`: unlike the
+  discovery cache two rows above, this record is rebuildable only by re-synthesising
+  every clip in the corpus, so R9's refusal is spent by stopping.**
 
 ⚠️ **AND THE ORDERING THE SPLIT EXPOSED, which is the part a location alone would have
 missed:** ⛔ **`narrate-service`'s `consuming.json` is written by TWO tasks — E13 assigns it
