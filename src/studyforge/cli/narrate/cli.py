@@ -5,9 +5,10 @@ one `NarrateClient`, runs `stage.narrate_corpus`, prints the report and returns
 the exit code.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.cli.narrate`.
+`--prune` in place of `--voice` runs `prune.prune_corpus` instead.
 ⭐ The dispatcher registers this same callable as the `narrate` verb.
 
-**Depends on.** `cli.narrate.stage`, `cli.narrate.report`, `narrate.client` for
+**Depends on.** `cli.narrate.stage`, `cli.narrate.prune`, `cli.narrate.report`, `narrate.client` for
 the client and its one socket-opening transport, `validate.cli` for `UNUSABLE`,
 and `argparse`.
 
@@ -19,6 +20,12 @@ clips were made under. ⭐ So the person running the command names it, exactly
 as `studyforge build` makes them name `--out`. `--format` defaults to `mp3`,
 the one format the service's contract offers; `--service` defaults to the
 loopback address that component publishes.
+
+## ⛔ `--prune` is its own request, and EXCLUSIVE with `--voice` (`W218`)
+
+⭐ One of the two is required and the parser refuses both, so a run that
+synthesises cannot prune and a prune cannot synthesise (`E09` § W193 answers
+2 and 3). ⛔ **The prune branch builds no client**, so it can make no request.
 
 ⛔ **Order is `narrate` then `build`** (`E09` § W202 answer 3). A build never
 synthesises; this is the only verb that probes the service or writes clips.
@@ -33,7 +40,8 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from studyforge.cli.narrate.report import exit_code, lines
+from studyforge.cli.narrate.prune import prune_corpus
+from studyforge.cli.narrate.report import exit_code, lines, prune_exit_code, prune_lines
 from studyforge.cli.narrate.stage import narrate_corpus
 from studyforge.narrate.client import NarrateClient, over_http
 from studyforge.narrate.speakable import SpeakableError
@@ -58,12 +66,20 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument("root", help="the corpus root — the directory holding corpus.json")
-    parser.add_argument(
+    request = parser.add_mutually_exclusive_group(required=True)
+    request.add_argument(
         "--voice",
-        required=True,
         help=(
-            "the voice every clip is synthesised in. Required and with no default: "
-            "the record must say what its clips were made under"
+            "the voice every clip is synthesised in. Required to narrate and with no "
+            "default: the record must say what its clips were made under"
+        ),
+    )
+    request.add_argument(
+        "--prune",
+        action="store_true",
+        help=(
+            "narrate nothing: delete the clips of record entries this corpus no longer "
+            "produces, over a walk of the whole corpus. Requests nothing from any service"
         ),
     )
     parser.add_argument(
@@ -93,15 +109,21 @@ def main(argv: list[str] | None = None, out=None) -> int:
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
     try:
-        client = NarrateClient(
-            arguments.service, voice=arguments.voice, fmt=arguments.fmt, transport=over_http
-        )
-        narrated = narrate_corpus(root, client, voice=arguments.voice, fmt=arguments.fmt)
+        if arguments.prune:
+            # ⛔ No client on this branch: a prune makes no request (`W218`).
+            pruned = prune_corpus(root)
+            report, code = prune_lines(pruned, arguments.root), prune_exit_code(pruned)
+        else:
+            client = NarrateClient(
+                arguments.service, voice=arguments.voice, fmt=arguments.fmt, transport=over_http
+            )
+            narrated = narrate_corpus(root, client, voice=arguments.voice, fmt=arguments.fmt)
+            report, code = lines(narrated, arguments.root), exit_code(narrated)
     except (ValueError, SpeakableError, StateError) as refusal:
         # ⭐ `BuildError` and the builder's `ContentError` are both `ValueError`s
         # and name the record rather than the path; so do `Conditions`' own.
         print(str(refusal), file=stream)
         return UNUSABLE
-    for line in lines(narrated, arguments.root):
+    for line in report:
         print(line, file=stream)
-    return exit_code(narrated)
+    return code

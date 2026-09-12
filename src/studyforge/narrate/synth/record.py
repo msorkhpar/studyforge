@@ -29,7 +29,7 @@ only the filename is this contract's (R4).
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -246,6 +246,41 @@ def render_state(clips: Mapping[str, Clip], conditions: Conditions) -> str:
     document = {key: written[key] for key in STATE_KEYS}
     assert_clean(document, NARRATION_STATE_FILENAME)
     return json.dumps(document, indent=2, ensure_ascii=False, sort_keys=False) + "\n"
+
+
+def forget(path: Path | str, speech_ids: Iterable[str]) -> tuple[str, ...]:
+    """Remove the named entries from the record, keeping everything else; return those removed.
+
+    ⛔ **`W218`'s removal, and the smallest one**: it deletes no file, decides
+    nothing about which entries are dead, and keeps the record's top-level
+    conditions as they were — the prune in `cli/narrate/` is the caller that
+    decides. ⭐ Here so the record keeps ONE writer (Ruling 330). An id the
+    record does not hold is passed over, and nothing removed writes nothing.
+    """
+    file = the_one_file(path)
+    known = read_state(file)
+    removed = tuple(sorted({str(speech_id) for speech_id in speech_ids} & set(known.clips)))
+    if not removed:
+        return ()
+    payload = json.loads(file.read_text(encoding=ENCODING))
+    kept = {key: clip for key, clip in known.clips.items() if key not in removed}
+    write_state(file, kept, _conditions_of(payload.get("conditions")))
+    return removed
+
+
+def _conditions_of(document: object) -> Conditions:
+    """Return the record's top-level conditions, or refuse without reproducing any of them."""
+    where = NARRATION_STATE_FILENAME
+    if not isinstance(document, dict):
+        raise StateError(f"{where} holds conditions that are {describe(document)}, not an object")
+    provides, chunk_chars = document.get("provides"), document.get("chunk_chars")
+    for value in (provides, chunk_chars):
+        if value is not None and (not isinstance(value, int) or isinstance(value, bool)):
+            raise StateError(f"{where} records a deployment condition that is not an int")
+    try:
+        return Conditions(document.get("voice"), document.get("format"), provides, chunk_chars)
+    except ValueError:
+        raise StateError(f"{where} records conditions with no voice or no format") from None
 
 
 def write_state(path: Path | str, clips: Mapping[str, Clip], conditions: Conditions) -> bool:
