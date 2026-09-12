@@ -17690,3 +17690,17 @@ after four further argument-to-pointer trims     57794 of 57856   ⭐  62 under
 ```
 
 ⛔ **A one-cell correction demanded by review put the board over its own bound, and paying for it cost four more trims of text nobody asked to lose.** ⚠️ **That is the third witness in one round and it is the most pointed: the board cannot absorb its own MANDATED corrections.** ⭐ **`W159` is the row; the figures are here rather than in a cell, because a board cell carries no measurement.**
+
+### ⚠️ ANNOTATION, same round — `W170`'s witness is DATED, and the ref it was true at is named
+
+⛔ **The two readings above say *at this branch's tip*, and the tip has moved since: they were taken at `d912a4f` (mine) and at `d912a4f` (the coordinator's, ROLE `wt/po`, both environments).** ⭐ **Re-taken at `bcfa3f9`, role `wt/po`, host AND pinned container:**
+
+```text
+  dispatched and unnamed: none.
+  trial/tmp branches still checked out: none.
+  CORROBORATE_EXIT=0        ⭐ 0 in both environments
+```
+
+⭐ **`trial/cto-round68-wave7` has been retired by the office that cut it, between the two readings.** ⛔ **So the witness is DATED — true at `d912a4f` and taken there by two offices independently — and it is NOT withdrawn: `W170`'s row carries its own reading at `7455f10`, and the defect is in the predicate, which no worktree retirement touches.** ⚠️ **The word is DATED, never `stale`, `refuted` or `wrong`** (Ruling 97, Ruling 310(b), `CTO-62/2`) — ⭐ **and saying so is the whole of `W146`, applied to a reading of my own rather than to a cell.**
+
+⚠️ **A reader who takes the gate reading at the merge ref and finds the line silent should not conclude `W170` is unfounded.** ⛔ **It fires whenever a reviewer's trial worktree is live, which is precisely when the gate is read and not when it is later audited** — ⭐ **which is itself the row's argument, and the disappearance is the second half of the evidence rather than a counter-example.**
