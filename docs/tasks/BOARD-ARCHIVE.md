@@ -17250,6 +17250,23 @@ container-only 5  tests/studyforge/corpus/placement/test_corpora.py:212 ×2
 
 ⛔ **`CORROBORATE_EXIT=0` IS A GATE AT MY OWN TIP AND NOT A DISCLOSURE** (Ruling 279). ⭐ **It read `0` before this round and it reads `0` after, and the arm that mattered moved the right way: `invisible to git BY CONSTRUCTION … named by no row` went from `2 — dev1 dev2` to `0`.**
 
+### ⚠️ APPENDED AFTER THE ROUND COMMIT — A THIRD READING OF ONE CELL, AND I AM DELIBERATELY NOT CHASING IT
+
+⛔ **Disclosed at the moment it happened, per Ruling 324, and APPENDED rather than amended so `2cdb92f` stays an ancestor.**
+
+```text
+W152 / fix/W152-check-provenance, three readings inside one round, role wt/po, HOST:
+  0 @ 7420c34   at the top of the round, from `git worktree list`
+  1 @ 0b6aaf3   re-derived when corroborate refused the first
+  3 @ df6979d   git, minutes after the round commit
+```
+
+⛔ **THE CELL IS LEFT READING `1 @ `0b6aaf3``, AND THAT IS A DECISION RATHER THAN AN OVERSIGHT.** ⭐ **Ruling 246's form is `n @ <branch tip>`: the cell is a reading WITH AN AS-OF, and *1 ahead at `0b6aaf3`* is TRUE at `0b6aaf3` and will stay true at `0b6aaf3` forever.** ⚠️ **`corroborate` prints a NOTICE and not a refusal precisely because *a stale NUMBER is not a stale ROW* — Ruling 179, `PO-42/7` — and the ROW is corroborated: the branch exists, the checkout exists, and the claim resolves.**
+
+⛔ **Chasing the number is the treadmill the as-of form exists to end, and a register that re-took it would still be wrong by the time the coordinator read it.** ⭐ **What the three readings ARE is the best live evidence `W146` has yet had for its own subject — *the notice compares the COUNT and never the TIP the same cell declares* — produced against the register that dispatched `W146`, while `W146` is in flight.**
+
+⚠️ **`rows/W146.md` is a HELD row file and I have not touched it** (Ruling 311). ⭐ **The witness is recorded here, where it can be read without an edit its taker did not ask for.**
+
 ### W147 — A committed test asserts the In-flight table is INHABITED, so the shipped suite goes RED on a correct board when nothing is in flight
 
 ⛔ **This file carries the ARGUMENT for board row `W147` and nothing else.**
