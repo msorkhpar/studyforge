@@ -6,6 +6,15 @@
 per-milestone decomposition and every row, and a hand-edit to it fails
 `test_the_shipped_index_is_exactly_what_the_generator_produces_today`.**
 
+⛔ **AND IT IS GENERATED FROM THE `E*.md` FILES IN THIS DIRECTORY, SO EDITING A
+TASK'S `Depends on` MAKES IT STALE IN THE SAME COMMIT.** ⭐ **The regeneration
+command lives ONCE, in
+[`../../src/studyforge/skills/delivery/SKILL.md`](../../src/studyforge/skills/delivery/SKILL.md),
+and is not copied here.** ⚠️ **The TRIGGER is named here because this is the
+directory whose edits fire it, and the office that edits an epic most often is
+the one the command was hardest to find from** (`PO-53/9`). ⛔ **The suite is
+the gate and it bites; what was missing was the sentence, not the instrument.**
+
 ⚠️ **This line used to open with a bare count — **89** — while `CLAUDE.md` cited
 this document and quoted **87**.** ⛔ **The measured answer at `ce80120` was
 neither: **91** live capabilities, **1** cancelled row, **92** rows across

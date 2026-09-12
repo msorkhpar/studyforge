@@ -37,6 +37,21 @@ Dockerfile or compose file** to work out how to run it. It belongs to whichever
 task lands the profiles (NS-03) and the voice catalogue (NS-04); both must
 contribute their half.
 
+⛔ **AND A THIRD CONTRIBUTOR, WHICH THE SENTENCE ABOVE DOES NOT NAME AND RULING
+330 CREATED.** ⭐ **`NS-02`'s batch manifest is a WIRE shape and takes no §R9 row;
+it is the service's PROMISE, and the promise is versioned by `provides` in this
+same file** (spec §R9, Ruling 330(b)). ⚠️ **So `provides` is bumped by any task
+that changes what the service promises — `NS-02` included — and *two halves* was
+a complete claim only while the manifest had nowhere to be versioned.**
+
+⛔ **`NS-03` CREATES THE FILE.** ⭐ **Three contributors and no named creator is
+`consuming.json` with the defect it exists to prevent** — ⚠️ **the seam neither
+side can inspect from its own repository, which is why the spec rules only *what
+stops two components inventing two shapes*.** ⛔ **`NS-03` lands the file, its
+schema and `consuming_api`; `NS-02` and `NS-04` amend it.** ⭐ **That is the
+DIRECTION the ordering below is derived from, and it is stated here rather than
+inferred from which row happened to dispatch first.**
+
 ---
 
 ### NS-01 — Extract the service into its own repository
@@ -61,9 +76,19 @@ modified.
 ---
 
 ### NS-02 — Batch job API and content-addressed cache
-**Milestone** **M3** · **Depends on** NS-01 · **Team** pair
+**Milestone** **M3** · **Depends on** NS-01, NS-03 · **Team** pair
 **Owns** the job API and the artifact store
 **Context** ~35k — NS-01 output, spec §8.2
+
+⛔ **THE `NS-03` EDGE IS RULING 330(c)'s AND IT WAS MINTED BY THE REGISTER, ROUND
+53** — ⭐ **the version key for this row's output lives in `consuming.json`, and
+`NS-03` is the task that lands that file** (the preamble above). ⚠️ **Without the
+edge both rows of step 3.2 are dispatchable in parallel and ship in either order,
+and half the orders leave a manifest versioned by a file that does not exist.**
+⛔ **The edge is DIRECTIONAL and the reverse is a CYCLE: `NS-04` also contributes
+to `consuming.json` and already depends on `NS-02`, so the file cannot be
+COMPLETE before this row builds** — ⭐ **which is why the edge is to the row that
+CREATES the file and not to every row that writes it.**
 
 **Definition.** The shape the framework actually needs. Today's client sends
 one request per unit and receives one file; narration ids are **positional and

@@ -72,7 +72,7 @@
 | `SF-32` | Media footprint policy | Narration | `SF-02`, `SF-17` |
 | `SF-18` | Player and highlight sync | Narration | `SF-12`, `SF-16` |
 | `NS-01` | Extract the service into its own repository | Narration service (shared repository) | — |
-| `NS-02` | Batch job API and content-addressed cache | Narration service (shared repository) | `NS-01` |
+| `NS-02` | Batch job API and content-addressed cache | Narration service (shared repository) | `NS-01`, `NS-03` |
 | `NS-03` | Engine adapters and hardware independence | Narration service (shared repository) | `NS-01` |
 | `NS-04` | Voice catalogue and selection | Narration service (shared repository) | `NS-02` |
 | `NS-05` | Framework client | Narration service (shared repository) | `NS-02`, `SF-08` |
