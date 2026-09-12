@@ -20,7 +20,6 @@ from pathlib import Path, PurePosixPath
 import pytest
 
 from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
-from studyforge.generate.media import MEDIA_BLOCKS
 from studyforge.generate import (
     BuildError,
     Reference,
@@ -29,6 +28,7 @@ from studyforge.generate import (
     unit_media,
     write_media,
 )
+from studyforge.generate.media import MEDIA_BLOCKS
 from studyforge.skills.adapter import Layout
 from tests.studyforge.generate.corpora import (
     BOTH,

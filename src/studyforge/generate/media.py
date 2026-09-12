@@ -159,7 +159,7 @@ def references(document: dict) -> Iterator[Reference]:
 
 
 def _deck(video: object) -> Iterator[Reference]:
-    """The unit's own narrated video and its poster, when the archive filed one.
+    """Yield the unit's own narrated video and its poster, when one was filed.
 
     ⛔ **Gated on `src` exactly as `render.page.section` gates the region it
     renders.** A poster with no video is a file no page reaches for, and copying
