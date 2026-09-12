@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **349 rulings, `1`–`349`, derived from 57 ruling records** —
+⭐ **350 rulings, `1`–`350`, derived from 58 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -394,3 +394,4 @@ procedure.
 | 347 | ⛔ Ruling 347 — *LANDED* takes a MERGE REF; a branch tip is *at its tip* | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-347-landed-takes-a-merge-ref-a-branch-tip-is-at-its-tip) |
 | 348 | ⛔ Ruling 348 — a printed arm is not a GATE until its firing MOVES THE EXIT CODE | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-348-a-printed-arm-is-not-a-gate-until-its-firing-moves-the-exit-code) |
 | 349 | ⛔ Ruling 349 — a RULE lands in the convention document that governs it; the BOARD carries STATE | heading | [round 70](handoffs/CTO-2026-09-12-round70.md#ruling-349-a-rule-lands-in-the-convention-document-that-governs-it-the-board-carries-state) |
+| 350 | ⛔ Ruling 350 — a BRIEF cites a ROW's argument by POINTER and quotes no POPULATION out of it; a paraphrased population can restate the row's DEFECT as its CURE | heading | [round 71](handoffs/CTO-2026-09-12-round71.md#ruling-350-a-brief-cites-a-rows-argument-by-pointer-and-quotes-no-population-out-of-it-a-paraphrased-population-can-restate-the-rows-defect-as-its-cure) |
