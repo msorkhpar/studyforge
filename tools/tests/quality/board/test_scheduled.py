@@ -22,6 +22,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 from tools.quality.board import (
     BOARD,
     RULE_TRIGGER,
@@ -79,23 +81,119 @@ def _board(table: str = HEADER + ROWS, *, delimited: bool = True, extra: str = "
 # --------------------------------------------------------------------------
 
 
+def clauses(text: str) -> tuple[str, int, bool, bool, bool]:
+    """⛔ **Every clause the LIVE arm asserts, read as ONE tuple** — ⭐ `W147`, one table over.
+
+    ⚠️ **The locator, the block count, the readability, the per-row declaration and the
+    floor's own verdict** — ⛔ **and not one of the five needs a row.** ⭐ **They are read
+    here so the three directions `W147` clause 3 requires measure the SAME sentence the
+    live tree is measured by.**
+    """
+    schedule = read(text)
+    return (
+        schedule.locator,
+        schedule.blocks,
+        schedule.unreadable == (),
+        [row.line for row in schedule.rows if row.declared is None] == [],
+        len([row for row in schedule.rows if row.declared in TRIGGER_STATES]) == len(schedule.rows),
+    )
+
+
+#: ⭐ What `clauses` reads for a `## Scheduled` block that is DECLARED and READ — ⛔ **at
+#: whatever population, `0` included.**
+DECLARED_AND_READ = (DELIMITED, 1, True, True, True)
+
+
+def population(text: str) -> str:
+    """⛔ Ruling 191(a): the population is PRINTED before the verdict, and `0` IS one."""
+    schedule = read(text)
+    return (
+        f"scheduled ({schedule.locator}): {len(schedule.rows)} row(s), "
+        f"{schedule.blocks} block(s) declared, {len(schedule.unreadable)} unreadable"
+    )
+
+
 def test_live_the_real_scheduled_table_DECLARES_A_STATE_ON_EVERY_ROW() -> None:
     """⭐ The reading that makes the planted ones mean something.
 
     ⛔ **No size is pinned.** ⚠️ **`7` rows on the day this landed, and the PO schedules
     things** — ⭐ so what is asserted is the ARITHMETIC: the table is located by its
-    delimiter, it is inhabited, every row declares a state from the closed set, and the
-    per-state counts sum to the rows.
+    delimiter, every row declares a state from the closed set, and the per-state counts
+    sum to the rows.
+
+    ⛔ **INHABITATION IS NOT ASSERTED HERE, AND THAT IS `W147`'s SWEEP.** ⚠️ **This arm
+    carried `assert schedule.rows` and would have gone RED the round the PO dispatched
+    the last scheduled item** — ⭐ **MEASURED: with the `<!-- scheduled -->` block
+    declared and closed EMPTY the quality floor exits `0` and this test alone went red,
+    which is `W119`'s class and the exact defect `W147` was minted for one table over.**
+    ⭐ **The inhabited reading is MOVED onto a fixture below, never dropped.**
     """
     text = Path(BOARD_PATH).read_text(encoding="utf-8")
-    schedule = read(text)
-    assert schedule.locator == DELIMITED and schedule.blocks == 1
-    assert schedule.unreadable == ()
-    assert schedule.rows, "⛔ born vacuous: this repository's board carries scheduled items"
-    assert [row.line for row in schedule.rows if row.declared is None] == []
-    declaring = [row.declared for row in schedule.rows if row.declared in TRIGGER_STATES]
-    assert len(declaring) == len(schedule.rows)
+    reading = clauses(text)
+    assert reading == DECLARED_AND_READ, f"⛔ {population(text)} — {reading}"
     assert scheduled_findings(text) == []
+
+
+#: ⛔ **`W147` clause 3, directions ONE and TWO** — ⭐ the two shapes a CORRECT board can
+#: be in: items scheduled, and the block declared and closed EMPTY once they are all
+#: dispatched or discharged.
+DECLARED_BOARDS = (
+    ("inhabited", _board()),
+    ("declared and EMPTY", _board(HEADER)),
+)
+
+#: ⛔ **`W147` clause 3, direction THREE** — ⚠️ **a board with no `<!-- scheduled -->`
+#: block at all is a DIFFERENT answer and must still FAIL**, or the repair gives back
+#: the false `NONE FOUND` on a declared block that `W111` was bought to end.
+UNDECLARED_BOARDS = (
+    ("no marker at all", _board(delimited=False)),
+    ("no scheduled table at all", "# Board\n\n## Scheduled\n\nnothing here.\n"),
+)
+
+
+@pytest.mark.parametrize(
+    ("name", "text"), DECLARED_BOARDS, ids=[name for name, _text in DECLARED_BOARDS]
+)
+def test_fixture_the_LIVE_clauses_hold_INHABITED_and_hold_DECLARED_AND_EMPTY(
+    name: str, text: str
+) -> None:
+    """⛔ `W147` clause 3: the live sentence is TRUE at four rows AND true at zero."""
+    assert clauses(text) == DECLARED_AND_READ, (name, population(text))
+    assert scheduled_findings(text) == [], (name, population(text))
+
+
+@pytest.mark.parametrize(
+    ("name", "text"), UNDECLARED_BOARDS, ids=[name for name, _text in UNDECLARED_BOARDS]
+)
+def test_fixture_a_board_with_NO_DECLARED_BLOCK_still_FAILS_the_LIVE_clauses(
+    name: str, text: str
+) -> None:
+    """⛔ `W147` clause 3, direction THREE — ⚠️ **and this is what must NOT be loosened.**"""
+    reading = clauses(text)
+    assert reading != DECLARED_AND_READ, (name, population(text))
+    assert reading[0] == NONE_FOUND, (
+        f"⛔ the LOCATOR is the clause that falls, BY NAME — {name}: {population(text)}"
+    )
+
+
+def test_fixture_the_INHABITATION_clause_MOVED_here_and_can_still_FAIL() -> None:
+    """⭐ `W147` clause 2: inhabitation is asserted OF A FIXTURE, where it belongs.
+
+    ⛔ **MOVED off the live tree, never dropped** — ⚠️ **a live test that can only ever
+    read `0` once the backlog empties prints a number that refutes nothing**, ⭐ while
+    `0` here is a failure of the parser against a fixture that carries four rows and one
+    row per inhabited state.
+    """
+    text = _board()
+    schedule = read(text)
+    assert schedule.rows, f"⛔ born vacuous: {population(text)}"
+    assert len(schedule.rows) == 4
+    assert sorted(row.declared or "" for row in schedule.rows) == [
+        "discharged",
+        "expired",
+        "fired",
+        "pending",
+    ]
 
 
 def test_live_the_reading_names_EVERY_word_of_the_vocabulary_with_its_count() -> None:
