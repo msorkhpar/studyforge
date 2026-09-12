@@ -1,0 +1,44 @@
+"""The `narrate` verb: the CLI stage that puts a corpus's clips on disk.
+
+**What it does.** Holds the argument parsing, the corpus walk, the report and
+the exit code for `studyforge narrate`. Synthesis itself is `narrate.synth`'s
+and the wire is `narrate.client`'s; this package is their caller — ⛔ never a
+second author of either.
+
+**How you use it.**
+
+    studyforge narrate <corpus-root> --voice <voice>
+    python3 -m studyforge.cli.narrate <corpus-root> --voice <voice>
+
+`main(argv) -> int` is the callable the dispatcher registers;
+`narrate_corpus(root, client, voice=…, fmt=…)` is the stage with its client
+handed in.
+
+**Depends on.** `generate.declarations`, `unit.builder`, `narrate.speakable`,
+`narrate.synth`, `narrate.client`, and `validate` for the exit codes.
+⛔ Nothing here knows any source (R1).
+
+⭐ **`E09` § W202 answer 3 is this package's reason to exist**: a build never
+synthesises, so something a person can type must — and the order is `narrate`
+then `build`. ⚠️ Clips land beside the material through `corpus.placement`,
+never under a build's `--out`.
+"""
+
+from __future__ import annotations
+
+from studyforge.cli.narrate.cli import DEFAULT_FORMAT, DEFAULT_SERVICE, build_parser, main
+from studyforge.cli.narrate.report import NO_SERVICE, exit_code, lines
+from studyforge.cli.narrate.stage import Narrated, narrate_corpus
+
+#: ⛔ The package's whole public surface.
+__all__ = [
+    "DEFAULT_FORMAT",
+    "DEFAULT_SERVICE",
+    "NO_SERVICE",
+    "Narrated",
+    "build_parser",
+    "exit_code",
+    "lines",
+    "main",
+    "narrate_corpus",
+]

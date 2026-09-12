@@ -32,6 +32,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 
+from studyforge.cli.narrate.cli import main as narrate_main
 from studyforge.cli.plan.cli import main as plan_main
 from studyforge.cli.site.cli import main as build_main
 from studyforge.validate.cli import UNUSABLE
@@ -54,12 +55,14 @@ class Verb:
 
 
 #: ⛔ **The registered table.** Ordered as a reader meets them: check the
-#: archive, ask what a build would write, then write it.
+#: archive, ask what a build would write, narrate it, then write it. ⭐ `narrate`
+#: precedes `build` because clips are a build's INPUT (`E09` § W202 answer 3).
 VERBS: Mapping[str, Verb] = {
     verb.name: verb
     for verb in (
         Verb("validate", "decide whether a corpus's archive is valid", validate_main),
         Verb("plan", "say what a build would write, before it writes it", plan_main),
+        Verb("narrate", "synthesise a corpus's clips from a narration service", narrate_main),
         Verb("build", "write the site for one corpus into a directory you name", build_main),
     )
 }

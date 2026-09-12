@@ -51,9 +51,9 @@ def test_every_registered_verb_can_actually_be_run():
 
 
 def test_the_verbs_the_contract_promises_but_does_not_register_are_absent():
-    # ⚠️ The package contract names five commands and registers three. Asserted
+    # ⚠️ The package contract names six commands and registers four. Asserted
     # so that landing `serve` without registering it fails here.
-    assert set(VERBS) == {"validate", "plan", "build"}
+    assert set(VERBS) == {"validate", "plan", "narrate", "build"}
 
 
 # --------------------------------------------------------------------------
