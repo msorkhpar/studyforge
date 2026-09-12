@@ -40,21 +40,131 @@ from tools.tests.quality.board.support import (
 # --------------------------------------------------------------------------
 
 
-def test_live_the_observation_population_is_INHABITED_and_DELIMITED() -> None:
-    """⛔ Ruling 191(a): print the population BEFORE the verdict, and `0` is missing.
+def clauses(text: str) -> tuple[str, bool, bool, bool]:
+    """⛔ **Every clause the LIVE arm asserts, read as ONE tuple** — ⭐ `W147` clause 1.
+
+    ⚠️ **The locator, the declaration, the readability and the parser's agreement** —
+    ⛔ **and not one of the four needs a row.** ⭐ **They are read here rather than
+    written out at each call site so that the three directions `W147` clause 3 requires
+    measure the SAME sentence the live tree is measured by**, instead of four
+    restatements that can drift apart one assertion at a time.
+    """
+    table = read(text)
+    return (
+        table.locator,
+        table.declared >= 1,
+        table.unreadable == (),
+        observations(text) == list(table.rows),
+    )
+
+
+#: ⭐ What `clauses` reads for a board whose block is DECLARED and READ — ⛔ **at
+#: whatever population, `0` included.**
+DECLARED_AND_READ = (DELIMITED, True, True, True)
+
+
+def population(text: str) -> str:
+    """⛔ Ruling 191(a): the population is PRINTED before the verdict, and `0` IS one."""
+    table = read(text)
+    return (
+        f"observations ({table.locator}): {len(table.rows)} row(s), "
+        f"{table.declared} block(s) declared, {len(table.unreadable)} unreadable"
+    )
+
+
+def test_live_the_observation_block_is_DECLARED_and_READ_at_whatever_population() -> None:
+    """⛔ Ruling 191(a): print the population BEFORE the verdict, and `0` IS a population.
 
     ⭐ **Ruling 196(b)'s ramp has EXPIRED on this board** — the `<!-- inflight -->`
     markers landed in the PO's round-40 edit — ⚠️ **so the live reading asserts the
     DELIMITED locator rather than merely *some* locator**, which is what makes the
     ramp's removal visible instead of assumed.
+
+    ⛔ **INHABITATION IS NOT ASSERTED HERE, AND THAT IS `W147`.** ⚠️ **This test opened
+    with `assert table.rows` and so went RED on a CORRECT board**: a round that closes
+    the last in-flight row and correctly records *nothing is in flight* empties the
+    table, so the suite paid a bounty for leaving the register FALSE — ⛔ **`W119`'s
+    class (a committed test goes RED on a correct tree), with `W24`'s inhabitation
+    clause pointed the wrong way.** ⭐ **The subject here is the LOCATOR, which IS
+    meaningful at zero**, so it is ASSERTED at zero rather than skipped past
+    (`test_contradiction.py`'s skip is right for ITS subject and would be wrong here) —
+    ⚠️ **and the inhabited reading is MOVED onto a fixture below, never dropped.**
     """
     text = (repository_root() / BOARD).read_text(encoding="utf-8")
+    reading = clauses(text)
+    assert reading == DECLARED_AND_READ, (
+        f"⛔ {population(text)} — the four clauses read {reading} where a board whose "
+        f"block is DECLARED and READ reads {DECLARED_AND_READ}. ⭐ `W111`: a DECLARED "
+        f"block this parser cannot read is a FINDING, and a false `NONE FOUND` on a "
+        f"declared block is the answer the delimiter was bought to end."
+    )
+
+
+#: ⛔ **`W147` clause 3, directions ONE and TWO** — ⭐ the two shapes a CORRECT board can
+#: be in: rows in flight, and the block declared and closed EMPTY between waves.
+DECLARED_BOARDS = (
+    ("inhabited", board(THREE_HUNDRED_AND_FIFTY, delimited=True)),
+    ("declared and EMPTY", board(delimited=True)),
+)
+
+#: ⛔ **`W147` clause 3, direction THREE** — ⚠️ **the arm `W111` PAID FOR and the one a
+#: careless repair deletes**: a board carrying no `<!-- inflight -->` block at all.
+UNDECLARED_BOARDS = (
+    ("no marker at all — Ruling 196(b)'s ramp", board(THREE_HUNDRED_AND_FIFTY)),
+    ("no observation table at all", board()),
+)
+
+
+@pytest.mark.parametrize(
+    ("name", "text"), DECLARED_BOARDS, ids=[name for name, _text in DECLARED_BOARDS]
+)
+def test_fixture_the_LIVE_clauses_hold_INHABITED_and_hold_DECLARED_AND_EMPTY(
+    name: str, text: str
+) -> None:
+    """⛔ `W147` clause 3: the live sentence is TRUE at two rows AND true at zero.
+
+    ⚠️ **A repair that merely deleted `assert table.rows` would leave the live arm's own
+    predicate asserted by nothing** — ⭐ **so the predicate is measured here, in BOTH
+    populations, against fixtures that can fail.**
+    """
+    assert clauses(text) == DECLARED_AND_READ, (name, population(text))
+
+
+@pytest.mark.parametrize(
+    ("name", "text"), UNDECLARED_BOARDS, ids=[name for name, _text in UNDECLARED_BOARDS]
+)
+def test_fixture_a_board_with_NO_DECLARED_BLOCK_still_FAILS_the_LIVE_clauses(
+    name: str, text: str
+) -> None:
+    """⛔ `W147` clause 3, direction THREE — ⚠️ **and this is what must NOT be loosened.**
+
+    ⭐ **Dropping the inhabitation clause must not buy back the false `NONE FOUND`**:
+    ⛔ **a board with no marker at all is a DIFFERENT answer from one that declares a
+    block and closes it empty**, which is exactly the distinction `W111` bought, and
+    only the second of the two passes.
+    """
+    reading = clauses(text)
+    assert reading != DECLARED_AND_READ, (name, population(text))
+    assert reading[0] != DELIMITED, (
+        f"⛔ the LOCATOR is the clause that falls, BY NAME — {name}: {population(text)}"
+    )
+
+
+def test_fixture_the_INHABITATION_clause_MOVED_here_and_can_still_FAIL() -> None:
+    """⭐ `W147` clause 2: inhabitation is asserted OF A FIXTURE, where it belongs.
+
+    ⛔ **The clause is MOVED off the live tree, never dropped.** ⚠️ **Ruling 191(a)
+    wants the population printed before the verdict, and a live test that can only ever
+    read `0` between waves prints a number that refutes nothing.** ⭐ **Here the
+    population is the fixture's own founding bytes (`cae114e^`, two rows), so `0` HERE
+    is a failure of the parser while `0` on the live board is a real answer.**
+    """
+    text = board(THREE_HUNDRED_AND_FIFTY, delimited=True)
     table = read(text)
-    assert table.rows, f"⛔ born vacuous: no observation table on the live board — {table}"
-    assert table.locator == DELIMITED
-    assert table.declared >= 1
-    assert table.unreadable == (), "⛔ a DECLARED block this parser cannot read is `W111`'s finding"
-    assert observations(text) == list(table.rows)
+    assert table.rows, f"⛔ born vacuous: {population(text)}"
+    assert len(table.rows) == 2
+    assert [row.ids for row in table.rows] == [("W14", "W18"), ("W27",)]
+    assert all(row.delimited for row in table.rows)
 
 
 def test_live_the_stand_in_is_named_rather_than_excluded_in_silence() -> None:
