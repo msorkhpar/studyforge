@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **329 rulings, `1`–`329`, derived from 53 ruling records** —
+⭐ **333 rulings, `1`–`333`, derived from 54 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -374,3 +374,7 @@ procedure.
 | 327 | ⛔ Ruling 327 (CTO round 66) — a ROUND SPAN is derived by COUNTING MERGES and never by SUBTRACTING LABELS | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-327-cto-round-66-a-round-span-is-derived-by-counting-merges-and-never-by-subtracting-labels) |
 | 328 | ⛔ Ruling 328 (CTO round 66) — a GATE's predicate ranges over state THE BRANCH CONTROLS; a property over HOST state is a DISCLOSURE and never a gate | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-328-cto-round-66-a-gates-predicate-ranges-over-state-the-branch-controls-a-property-over-host-state-is-a-disclosure-and-never-a-gate) |
 | 329 | ⛔ Ruling 329 (CTO round 66) — a CHARGE IS ACCEPTED ONLY TO THE WIDTH THE MEASUREMENT SUPPORTS, and over-accepting is its own defect | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-329-cto-round-66-a-charge-is-accepted-only-to-the-width-the-measurement-supports-and-over-accepting-is-its-own-defect) |
+| 330 | 1c. ⭐ THE RULING — Ruling 330, and the `NS-02` half is NOT an R9 row at all | heading | [round 67](handoffs/CTO-2026-09-11-round67.md#1c-the-ruling-ruling-330-and-the-ns-02-half-is-not-an-r9-row-at-all) |
+| 331 | … CELL asserting its files, not the row's own declaration.** ⛔ **That is a second, unvalidated source for the same fact** (Ruling 170(a)'s class) — ⚠️ **and it is Ruling 331's second clause.** | section | [round 67](handoffs/CTO-2026-09-11-round67.md#2b-the-queue-skip-upheld-in-substance-and-the-count-is-wrong-by-one-member) |
+| 332 | ⛔ **THE RULING — Ruling 332. `W152`'s taker does NOT set the flag, and the reason is in the tree rather than in my preference:** ⭐ **the skip reason is a committed clause and it says *a test … | section | [round 67](handoffs/CTO-2026-09-11-round67.md#3-the-third-environment-ruled-and-the-answer-is-no) |
+| 333 | ⛔ Ruling 333 — Ruling 332 is RE-GROUNDED, not repealed: the cost belongs to the TEST, never to the MODE | heading | [round 67](handoffs/CTO-2026-09-11-round67.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode) |
