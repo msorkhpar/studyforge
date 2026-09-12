@@ -2897,7 +2897,7 @@ esac
 handoffs/` owns `DOCUMENT_KINDS` and is the authority for what each kind owes. The six sections are `agent-protocol.md`'s and ⛔ **a task
 with dependents and no handoff is not done.**
 
-⛔ **The floor runs this now** (`tools/quality/handoffs.py`, Ruling 49), so the
+⛔ **The floor runs this now** (the `tools/quality/handoffs/` PACKAGE, Ruling 49), so the
 snippet above is the hand-runnable form and a reviewer with a shell should
 still have one. ⚠️ **It under-counts, and the two ways it does are worth
 knowing.** Its `$TASK`-from-filename binding is wrong — that directory holds
@@ -6176,3 +6176,60 @@ board's headroom was never in its way.
 #   is it true independently of any round?    -> docs/conventions/ (and it is not)
 # ⛔ A safety rule blocked by a size budget is a ROUTING error, and the routing is the fix.
 ```
+
+#### ⛔ Ruling 349(a) (CTO round 71) — a removal is CHECKED against the DESTINATION's spelling, never the source's
+
+```bash
+# ⛔ For every paragraph a round removes under Ruling 349, the REMOVING round names the
+#    destination AND the string AS THE DESTINATION SPELLS IT; the REVIEWER greps for THAT.
+git grep -c -F -- '<the string the removing round named>' -- docs/conventions/<the named file>
+# Pass: >= 1 for every removal, and the reviewer prints the row per removal.
+# ⛔ Grepping the conventions for the SOURCE document's own wording reads PRESENT IN NO
+#    CONVENTION and is a FALSE NEGATIVE — a convention states the rule in ITS OWN words,
+#    which is the whole reason it is a different document.
+```
+
+⛔ **MEASURED, CTO round 71, against this office.** ⚠️ **Four removals checked with the
+BOARD's spelling returned *"PRESENT IN NO CONVENTION"* four times, and this reviewer was one
+step from charging the register with losing three rules it had already named by string.**
+⭐ **All five strings verified present, one occurrence each, the moment the DESTINATION's
+spelling was used.** ⛔ **Ruling 325 — open the charged office's instrument before charging —
+is the only thing that stopped it**, and Ruling 337 is the general form: a NEGATIVE over
+instruments is never established by a grep for a NAME. ⚠️ **The procedure was derived by the
+register in its own round and written into `BOARD-ARCHIVE.md`, which is a frozen record — so
+by Rulings 245 and 286 it was not landed. This is its reviewer half, landed.**
+
+## ⛔ RULED ROUND 71 — one clause, its command and its pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING** (`W141`). ⭐ **The clauses below are the population.**
+
+### ⛔ Ruling 350 — a BRIEF cites a ROW's argument by POINTER and quotes no POPULATION out of it; a paraphrased population can restate the row's DEFECT as its CURE
+
+```bash
+# ⛔ Run over your OWN brief before dispatch, over the WHOLE brief and not its preamble.
+grep -oE 'docs/tasks/rows/[A-Z0-9-]+\.md' <the brief>     # every row the brief names
+# Pass: each named row is reached by a POINTER and the brief quotes NO population out of it.
+# ⛔ A sentence STATING what population a row ranges over is the finding, whatever else the
+#    brief gets right. ⭐ The brief names the DELIVERABLE; the taker derives the population
+#    from the row, and the brief says that is what it must do.
+```
+
+⛔ **Pass: the condition is run over the WHOLE brief.** ⚠️ **A rule stated in a preamble and
+violated in the body is Ruling 245's cliff inside one document** — ⭐ **measured here, because
+the office that wrote *a brief POINTS at the row's table and quotes NONE of it* into its own
+preamble then paraphrased the row in its body.**
+
+⭐ **MEASURED, CTO round 71 — four instances across four waves, every one verified in the
+tree rather than relayed:** `/34` a scope dropped in a relay, `/41` a count read off a
+truncated window, `W155/8` a table's rows restated, and `CTO-71/2`.
+
+⛔ **THE FOURTH IS WHY THIS IS A CLAUSE AND NOT A CORRECTION: THE PARAPHRASE DID NOT DRIFT, IT
+INVERTED.** ⚠️ **`W167`'s brief described *documents that exist* as the population the row's
+new arm widens into.** ⭐ **That is the population of the BROKEN arm the row exists to repair,
+stated in capitals in `rows/W167.md`, and the row's own first deliverable was that very
+denominator.** ⛔ **A taker reconciling against the brief would have reconciled against the
+bug** — and the brief's merge-order conclusion, drawn from the same wrong population, cited
+Ruling 340 for the opposite of what Ruling 340 says.
+
+⭐ **The cure is `CLAUDE.md`'s own opening argument one directory down: a POINTER resolves at
+read time, and a paraphrase can only be kept freshly wrong.**

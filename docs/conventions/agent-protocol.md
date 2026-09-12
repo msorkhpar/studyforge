@@ -253,7 +253,7 @@ Write `docs/tasks/handoffs/<TASK-ID>.md` before you finish:
 This is the mechanism by which parallel agents share material rather than
 re-deriving it. A task with dependents and no handoff is not done.
 
-⛔ **`tools/quality/handoffs.py` runs this, so it is a build failure and not a
+⛔ **The `tools/quality/handoffs/` PACKAGE runs this, so it is a build failure and not a
 reviewer's memory** (Ruling 49). Two literals are load-bearing:
 
 - ⛔ **`**Kind:**` is how a document says what it is**, and `docs/tasks/handoffs/`
