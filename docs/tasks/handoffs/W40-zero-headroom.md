@@ -185,10 +185,17 @@ silently**; the exploration below was done with `git grep` and cost accordingly.
 
 ⚠️ **THE LAST READING AT THE REF THAT WILL MERGE.** Readings 2–4 are at `c2b1bbe`,
 which is the code. ⛔ **This document is a further commit, so the tip that merges is
-NOT `c2b1bbe`** — the floor, the suite and the derivation were re-run at the handoff
-commit and those figures are in the branch's report to the coordinator. ⚠️ **A
-document cannot quote a reading taken at the ref that contains it; what it can do is
-say so rather than let a reader assume the tip was measured.**
+NOT `c2b1bbe`** — all three instruments were re-run at the tip and those figures are
+in the branch's report to the coordinator. ⚠️ **A document cannot quote a reading
+taken at the ref that contains it — the regress does not terminate — so what it does
+instead is SAY SO, rather than let a reader assume the tip was measured.** ⭐ **An
+intermediate reading below is labelled as one; the merge-ref reading exists and is
+reported, and the delta between the two refs is markdown only.**
+
+⚠️ **Reading 2 was taken at `c2b1bbe` and re-taken at the handoff commit; the only
+figures that moved are the two that COUNT MARKDOWN — the pointer census
+(`1528 in 457` → `1529 in 458`) and, less obviously, the lint file count. That second
+one is `W40/8`.**
 
 ---
 
@@ -315,6 +322,21 @@ explicitly). ⚠️ **Reported because a brief that budgets context on the assum
 that `graphify query` answers in a few thousand tokens is budgeting against an
 instrument this checkout does not have**, and the substitute is `git grep` over
 `BOARD-ARCHIVE.md`, which is 18,000+ lines.
+
+### W40/8 `[local]` The floor's lint line counts MARKDOWN, so a markdown-only commit moves a figure a reader will read as Python
+
+⛔ **MEASURED, ROLE `wt/dev3`, pinned container, `ruff 0.16.6`: the floor printed
+`953 file(s) already formatted` at `c2b1bbe` and `954` one commit later, and the whole
+of that commit is ONE added markdown document.** ⭐ **Confirmed directly rather than
+inferred — `ruff format --check` on this handoff alone answers `1 file already
+formatted`, so `ruff format --check .` discovers `.md` and counts it.**
+
+⚠️ **The line is not wrong: it says `file(s)`, not modules.** ⛔ **But every other
+count on the floor that a reader compares across refs is a Python population, and an
+office reading `953 → 954` beside a diff of one markdown file would look for a Python
+module that is not there.** ⭐ **Recorded so the next reader spends a sentence on it
+rather than a measurement, and because it is the same shape as the pointer count
+above: THE POPULATION IS NOT THE ONE THE NEIGHBOURING FIGURES ARE OVER.**
 
 ---
 
