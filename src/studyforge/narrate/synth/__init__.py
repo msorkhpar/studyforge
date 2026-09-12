@@ -103,7 +103,6 @@ from studyforge.narrate.synth.incremental import (
 )
 from studyforge.narrate.synth.record import (
     CLIP_KEYS,
-    FINGERPRINT_LENGTH,
     KNOWN_NARRATION_API,
     NARRATION_API,
     NARRATION_STATE_FILENAME,
@@ -116,6 +115,7 @@ from studyforge.narrate.synth.record import (
     read_state,
     render_state,
     state_file,
+    the_one_file,
     write_state,
 )
 
@@ -125,7 +125,6 @@ __all__ = [
     "CLIP_KEYS",
     "CONDITIONS_MOVED",
     "DEFAULT_BATCH_CHARS",
-    "FINGERPRINT_LENGTH",
     "KNOWN_NARRATION_API",
     "NARRATION_API",
     "NARRATION_STATE_FILENAME",
@@ -146,6 +145,7 @@ __all__ = [
     "render_state",
     "state_file",
     "synthesise",
+    "the_one_file",
     "wanted_name",
     "write_state",
 ]

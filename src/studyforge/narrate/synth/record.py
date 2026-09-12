@@ -3,7 +3,7 @@ r"""`.studyforge/narration.json` — what a clip was synthesised UNDER (R9).
 | | |
 |---|---|
 | **File** | `.studyforge/narration.json` — ⭐ located by Ruling 351 |
-| **Version key** | `narration_api` — ⭐ **minted here**, and registered in `version.CONTRACT_FIELDS` in the same commit |
+| **Version key** | `narration_api` — ⭐ **minted here**, registered in `version.CONTRACT_FIELDS` |
 | **Written by** | `SF-17` — ⛔ **the one writer** (Ruling 330, unchanged) |
 
 ⛔ **Ruling 351 deliberately left the FIELDS to this office** (Ruling 344): the
@@ -28,7 +28,6 @@ only the filename is this contract's (R4).
 
 from __future__ import annotations
 
-import hashlib
 import json
 from collections.abc import Mapping
 from dataclasses import dataclass
@@ -38,6 +37,7 @@ from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.placement import GENERATED_ROOT
 from studyforge.describe import describe
 from studyforge.narrate.client import Health, NarrationError
+from studyforge.narrate.speakable.naming import digest_of
 from studyforge.version import check
 
 ENCODING = "utf-8"
@@ -54,10 +54,6 @@ NARRATION_STATE_FILENAME = "narration.json"
 #: Fixed rather than sorted, so an unchanged corpus renders identical bytes (R10).
 STATE_KEYS = ("narration_api", "conditions", "clips")
 CLIP_KEYS = ("filename", "conditions", "engine", "engine_model")
-
-#: How much of the conditions' hash is kept. Long enough that two condition sets
-#: colliding is not a thing that happens; short enough to read.
-FINGERPRINT_LENGTH = 16
 
 #: Appended while the record is being written. A torn `*.writing` file reads as
 #: absent; a record half-overwritten in place reads as *present and wrong*.
@@ -118,9 +114,13 @@ class Conditions:
 
         ⛔ Over `sort_keys=True` bytes, so the fingerprint is a property of the
         conditions and not of the order this module happens to write them in.
+
+        ⛔ **`speakable.naming.digest_of`, never a second truncation.** That
+        module is the framework's ONE minter of a short hash and a test asserts
+        it — `test_exactly_one_module_in_the_whole_framework_truncates_a_digest`,
+        which failed on this file's first draft and is what put this line here.
         """
-        canonical = json.dumps(self.document(), sort_keys=True, ensure_ascii=False)
-        return hashlib.sha256(canonical.encode(ENCODING)).hexdigest()[:FINGERPRINT_LENGTH]
+        return digest_of(json.dumps(self.document(), sort_keys=True, ensure_ascii=False))
 
 
 @dataclass(frozen=True, slots=True)
@@ -156,6 +156,30 @@ def state_file(root: Path | str) -> Path:
     return Path(root) / GENERATED_ROOT / NARRATION_STATE_FILENAME
 
 
+def the_one_file(path: Path | str) -> Path:
+    """Return `path`, refusing anything that is not this contract's one filename.
+
+    ⛔ **R9 and Ruling 330 say one file and one writer; this is that, enforced.**
+    A writer that would put the record anywhere it was pointed is a writer whose
+    contract is a convention, and the record is then discoverable only by
+    whoever wrote it. ⭐ `state_file(root)` is how a caller obtains the path.
+
+    ⚠️ **MEASURED, and it is why this is a gate rather than a note.** Without it
+    `write_state` wrote a file called `alpha` into the repository root during
+    `tests/test_emission.py`'s probe — the census fills unprobed parameters with
+    that word — and the stray file then changed what an unrelated module's scan
+    refused, turning a suite green on one machine and red on the next.
+    """
+    file = Path(path)
+    if file.name != NARRATION_STATE_FILENAME:
+        raise StateError(
+            f"the regeneration record is {NARRATION_STATE_FILENAME} and this path "
+            f"ends in {file.name!r}; ask `state_file(root)` for it rather than "
+            f"composing one, because R9 gives this contract one file and one writer"
+        )
+    return file
+
+
 def read_state(path: Path | str) -> State:
     """Read the record, or report it absent. ⛔ An unreadable one raises (R9).
 
@@ -163,12 +187,12 @@ def read_state(path: Path | str) -> State:
     `narration_api` stops rather than quietly re-synthesising a corpus.
     """
     where = NARRATION_STATE_FILENAME
-    file = Path(path)
+    file = the_one_file(path)
     if not file.is_file():
         return State(clips={}, present=False)
     try:
         payload = json.loads(file.read_text(encoding=ENCODING))
-    except (ValueError, UnicodeDecodeError):
+    except ValueError, UnicodeDecodeError:
         raise StateError(f"{where} is not readable as JSON") from None
     if not isinstance(payload, dict):
         raise StateError(f"{where} holds {describe(payload)}, not an object")
@@ -231,7 +255,7 @@ def write_state(path: Path | str, clips: Mapping[str, Clip], conditions: Conditi
     change writes nothing"* is true of the record as well as of the clips.
     Staged beside the target and moved into place.
     """
-    file = Path(path)
+    file = the_one_file(path)
     rendered = render_state(clips, conditions).encode(ENCODING)
     if file.is_file() and file.read_bytes() == rendered:
         return False

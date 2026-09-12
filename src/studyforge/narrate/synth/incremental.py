@@ -181,7 +181,10 @@ def synthesise(
     try:
         for batch in batches(decided.stale, budget=budget):
             narration = client.narrate(batch)
-            written.extend(place(narration, into))
+            # ⛔ A batch that produced nothing places nothing, so a run that
+            # synthesised no clip leaves no empty media directory behind.
+            if narration.artifacts:
+                written.extend(place(narration, into))
             for artifact in narration.artifacts:
                 recorded[artifact.speech_id] = Clip(
                     filename=artifact.filename,

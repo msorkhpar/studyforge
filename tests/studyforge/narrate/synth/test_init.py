@@ -66,9 +66,7 @@ def test_no_module_in_the_package_names_version_control_or_an_exclusion_file():
     # carried is a manifest policy (SF-02, SF-32) and this package has no
     # opinion — so the words are absent from the prose as well as from the code.
     pattern = re.compile(r"(?i)\b(git|gitignore|ignore|ignored|ignoring|exclude)\b")
-    offenders = {
-        path.name: pattern.findall(path.read_text(encoding="utf-8")) for path in MODULES
-    }
+    offenders = {path.name: pattern.findall(path.read_text(encoding="utf-8")) for path in MODULES}
     assert {name: hits for name, hits in offenders.items() if hits} == {}
 
 
@@ -100,6 +98,6 @@ def test_the_record_half_does_not_import_the_pass_half():
     # read the contract without dragging a client in.
     source = (PACKAGE / "record.py").read_text(encoding="utf-8")
     assert "incremental" not in source
-    assert "from studyforge.narrate.synth.record import" in (
-        PACKAGE / "incremental.py"
-    ).read_text(encoding="utf-8")
+    assert "from studyforge.narrate.synth.record import" in (PACKAGE / "incremental.py").read_text(
+        encoding="utf-8"
+    )

@@ -7,12 +7,15 @@ machine, account or person.
 """
 
 import json
+from pathlib import Path
 
 import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.narrate.client import Health, NarrationError
+from studyforge.narrate.speakable.naming import digest_of
+from studyforge.narrate.synth import record as record_module
 from studyforge.narrate.synth.record import (
     NARRATION_API,
     NARRATION_STATE_FILENAME,
@@ -22,6 +25,7 @@ from studyforge.narrate.synth.record import (
     read_state,
     render_state,
     state_file,
+    the_one_file,
     write_state,
 )
 
@@ -61,8 +65,10 @@ def test_an_absent_record_is_a_state_and_not_a_failure(tmp_path):
         pytest.param('{"narration_api": 1, "clips": []}', id="clips-not-an-object"),
         pytest.param('{"narration_api": true}', id="a-bool-is-not-a-version"),
         pytest.param('{"narration_api": 2}', id="a-version-this-build-cannot-speak"),
-        pytest.param('{"narration_api": 1, "clips": {"u1": {"filename": "u1-a.mp3"}}}',
-                     id="a-clip-with-no-conditions"),
+        pytest.param(
+            '{"narration_api": 1, "clips": {"u1": {"filename": "u1-a.mp3"}}}',
+            id="a-clip-with-no-conditions",
+        ),
         pytest.param('{"narration_api": 1, "clips": {"u1": 7}}', id="a-clip-that-is-not-an-object"),
     ],
 )
@@ -173,3 +179,47 @@ def test_conditions_are_read_off_a_probe_and_not_from_a_constant():
 
 def test_the_record_lives_beside_the_discovery_cache_under_the_generated_root(tmp_path):
     assert state_file(tmp_path) == tmp_path / GENERATED_ROOT / NARRATION_STATE_FILENAME
+
+
+# --------------------------------------------------------------------------
+# ⛔ One file and one writer, enforced — and it is not a stylistic gate
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("named", ["alpha", "narration.jsonl", "state.json", ".narration.json"])
+def test_the_writer_refuses_any_path_that_is_not_this_contracts_one_file(tmp_path, named):
+    # ⛔ MEASURED: without this, `tests/test_emission.py`'s probe — which fills
+    # unprobed parameters with the word `alpha` — made `write_state` drop a file
+    # called `alpha` into the repository root, and that stray file changed what
+    # an UNRELATED module's scan refused. A writer pointed anywhere is a
+    # contract nobody can find and a suite whose colour depends on run order.
+    target = tmp_path / named
+    with pytest.raises(StateError):
+        write_state(target, one_clip(), conditions())
+    with pytest.raises(StateError):
+        read_state(target)
+    assert list(tmp_path.iterdir()) == []
+
+
+def test_the_one_file_itself_is_accepted_and_written(tmp_path):
+    # ⭐ The positive control: a gate that refused every path would pass above.
+    path = state_file(tmp_path)
+    assert the_one_file(path) == path
+    assert write_state(path, one_clip(), conditions()) is True
+    assert path.is_file()
+
+
+def test_the_refusal_says_how_to_obtain_the_right_path(tmp_path):
+    with pytest.raises(StateError) as refusal:
+        the_one_file(tmp_path / "alpha")
+    assert "state_file" in str(refusal.value)
+    assert NARRATION_STATE_FILENAME in str(refusal.value)
+
+
+def test_the_fingerprint_comes_from_the_one_minter_and_is_not_a_second_truncation():
+    # ⛔ `test_exactly_one_module_in_the_whole_framework_truncates_a_digest`
+    # failed on this file's first draft, which computed its own. The fingerprint
+    # is `speakable.naming.digest_of` over the canonical conditions.
+    canonical = json.dumps(conditions().document(), sort_keys=True, ensure_ascii=False)
+    assert conditions().fingerprint == digest_of(canonical)
+    assert "hexdigest" not in (Path(record_module.__file__)).read_text(encoding="utf-8")
