@@ -19288,3 +19288,134 @@ grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-desig
 | id | class | finding |
 |---|---|---|
 | ⛔ **`PO-58/19`** | ⛔ **`[structural]`** | ⭐ **The routed `SF-18/1` was very nearly a second row for one argument.** ⛔ **Minting it would have split `E04`'s `Owns` defect across two files that each carried half a mechanism** — ⚠️ **which is `W17`/`W19`'s shape, and the register is the only office positioned to see it, because it is the only one that reads both findings against the same row file** |
+
+## ⭐ PO ROUND 60 — WAVE 13 CLOSED, THE INSTRUMENT FAMILY NAMED, AND SIX ROWS MINTED
+
+⛔ **NO VERDICT AND NO REVIEWER: self-certified on this round's own floor, suite and `corroborate` readings at the ref that merges.** ⭐ **The round's reasoning, its findings by id and its readings are in [`handoffs/PO-2026-09-12-round60.md`](handoffs/PO-2026-09-12-round60.md); this section carries the four closes and the arguments they move.**
+
+⛔ **`W185` DOES NOT CLOSE and returns to `todo`.** ⭐ **The DECISION landed in PO round 59 and is in `../conventions/board.md`; the merge that carried its wave-13 branch carried NONE of the assertion arm, and the taker's own handoff says so — its change asserts nothing about the register table or any Detail cell.** ⚠️ **`docs/conventions/board.md`'s own clause table already states the arm is owed by `W185`'s taker and the clause is not discharged until it exists, so the row is open on its own convention's word rather than on the register's.**
+
+⛔ **THE FAMILY, and it is the round's finding rather than any one row's: AN INSTRUMENT EXITING `0` HAS TOLD YOU NOTHING FAILED, NOT THAT EVERYTHING WAS CHECKED.** ⭐ **[`W190`](rows/W190.md), [`W191`](rows/W191.md) and [`W192`](rows/W192.md) are the open members, `W188` and `W34` the fixed ones, and one more was found while composing this round: the handoff Kind parser reads a COMMA list and not a `+` list, which is the EXACT INVERSE of the register's own observation parser.** ⚠️ **Two instruments in one repository, each accepting the multi-id spelling the other refuses, both silent on the form they cannot read.**
+
+
+### W183 — `E04`'s `Owns` lines were drafted without measurement — wrong in GRANULARITY and COVERAGE
+
+⭐ **CLOSED PO round 60. Discharged at `7d77b0d`, on the branch `fix/W188-contradiction-disarm` that carried three rows** (Ruling 218) — ⛔ **and the taker's handoff records the ground it turned on: `Owns` names a SURFACE, so the lines were corrected from a DECISION rather than from a sweep of the tree.** ⚠️ **The merge ref was DERIVED by the register from the first-parent line and read back out of a capture file, not received from the dispatch.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W183.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`E04`'s `Owns` LINES WERE DRAFTED WITHOUT MEASUREMENT, AND THEY ARE WRONG IN TWO DIRECTIONS AT ONCE.**
+
+⭐ **WIDENED at mint time, before dispatch, because the second direction arrived in the same wave** (Ruling 214's form — a row is re-read against what has landed since it was written, and amended rather than re-minted):
+
+| direction | the instance | what it costs |
+|---|---|---|
+| ⛔ **TOO NARROW IN GRANULARITY** — the line names a FILE that cannot fit under R11 | `SF-17/4`, and `SF-16` one row earlier in the same package | the delivered path is a PACKAGE, so the `Owns` line names something that does not exist after delivery |
+| ⛔ **TOO NARROW IN COVERAGE** — the line omits a surface the row MUST touch | `SF-18/1`: **no row owns the renderer that emits `data-audio`**, yet round 19 §5.3 assigns it to `SF-18` and `SF-17`'s acceptance needs it | the office had to widen into `render/page/` on written authorisation, measuring disjointness itself, mid-delivery |
+
+⚠️ **ONE MECHANISM, NOT TWO ROWS: the line was written against an imagined module rather than against a measured one, and granularity and coverage are the two ways that goes wrong.**
+
+### ⛔ WHY IT IS A PATTERN AND NOT TWO ACCIDENTS — the taker's own words
+
+⭐ **`SF-17/4`, quoted rather than paraphrased** (Ruling 195): *"Split into `record` … and `incremental` … under `narrate/synth/` — **the same answer `narrate/speakable/` reached one row earlier, in this same package, for the same reason**."* ⛔ **Two rows, one epic, one package, one cause: the `Owns` line was drafted against an imagined module and the ceiling was met at delivery.**
+
+⚠️ **THE COST IS NOT THE SPLIT — a split at a named seam is R11 working.** ⛔ **The cost is that the row's `Owns` line, which is a CONTRACT another row reads to find its collisions, names a path that does not exist after delivery** — ⭐ **so the surface-collision paragraph in [`../BOARD.md`](BOARD.md) is computed from a population that is wrong before the row is even dispatched.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DECISION, TAKEN OUT LOUD: does an `Owns` line name a MODULE or a SURFACE?** ⭐ **If a surface, `narrate/synth/` is correct and neither row was ever defective; if a module, every `Owns` line in the plan owes a pre-dispatch measurement.** ⚠️ **The two readings disagree about work that is already merged, which is why it is a decision rather than a fix.**
+2. ⛔ **THE POPULATION IS MEASURED, NEVER INHERITED FROM THIS FILE** (Ruling 214) — ⭐ **how many live `Owns` lines name a `.py` FILE rather than a package, at the taker's own ref, role and environment.** ⛔ **NO COUNT IS WRITTEN HERE** (Ruling 150's form).
+3. ⛔ **`SF-18`'s `Owns` GAINS THE RENDERER SURFACE IT ACTUALLY TOOK**, with the disjointness the office already measured recorded beside it — ⭐ **so the next row reads the argument instead of re-deriving it, which is the coordinator's stated reason for rowing it.**
+4. ⚠️ **THIS ROW DOES NOT REWRITE `E04`'s DELIVERED LINES BY ITSELF.** ⭐ **`SF-32` is still unbuilt in `3.4` and its `Owns` is `corpus/media.py` — the next instance if the decision is not taken first, and the cheapest place to prove the answer.**
+5. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12) if any instrument lands: a line naming a package must not be flagged, and a line naming a file that delivered as a package must be.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SWEEP THAT REWRITES EVERY `Owns` LINE TO A DIRECTORY.** ⭐ **That answers the question by erasing it, and `Owns` naming one module is genuinely right where one module is genuinely enough.** ⛔ **AND NOT A PRE-DISPATCH LINE-COUNT ESTIMATE** — ⚠️ **`W64/8` retired exactly that: a population priced against a dry run rather than the shipped derivation.**
+
+⛔ **`SF-17/4`, in `docs/tasks/handoffs/SF-17.md` — NAMED AND NOT LINKED: that handoff arrives with `SF-17`'s merge and does not exist at this branch's ref.** · [the round that rowed it](#po-round-58-part-two-the-second-merge)
+
+### W187 — Nothing in `src/` builds the position→filename map; the join is on the SPEECH ID
+
+⭐ **CLOSED PO round 60. Discharged at `70131e2`** — ⛔ **the join landed keyed on the SPEECH ID, with the positional answer refuted by a control rather than by argument.** ⚠️ **The row's own office then measured its *"one wiring"* claim FALSE and recorded the correction against itself** (`W187/4`), ⭐ **which is what [`W195`](rows/W195.md) exists to carry: there is no build pipeline for that wiring to land in.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W187.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **NOTHING IN `src/` BUILDS THE POSITION→FILENAME MAP, AND THE LIVE NARRATION RUN NEEDS IT.** ⭐ **This is the next wave's CRITICAL PATH and it is rowed as such.**
+
+### ⛔ WHY IT IS URGENT AND NOT MERELY OPEN
+
+⭐ **The user has approved a live narration run against the real engine.** ⛔ **`SF-17` synthesises and `SF-18` plays, and the wiring between what was synthesised and what the page asks for is in NO module.** ⚠️ **`SF-18/4` found it from the player's side; it is not `SF-18`'s to add, and it is the one thing standing between two merged rows and a run that proves them together.**
+
+### ⛔ THE CONSTRAINT, AND IT IS THE WHOLE DESIGN — stated before any code
+
+⛔ **JOIN ON THE SPEECH ID. NEVER ON THE POSITION.** ⭐ **`SF-16` names clips `<speech-id>-<digest>`, so the id is the join key the corpus already carries.** ⚠️ **A positional join is correct exactly until one unit gains or loses a speakable element, at which point EVERY clip after it silently addresses the wrong audio** — ⛔ **and it fails SILENTLY, with every file present and every filename valid, which is the worst failure shape available here.**
+
+⭐ **`SF-17`'s regeneration record is the corroborator: it knows what each clip was synthesised UNDER, so a join that disagrees with it is detectable rather than merely wrong.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE MODULE IN `src/` OWNS THE MAP**, and it is named before it is written. ⚠️ **Neither `SF-17`'s nor `SF-18`'s package by default — the taker states which, and why, out loud.**
+2. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12), and the SECOND direction is the one that matters: ⭐ **a unit whose speakable elements have SHIFTED still resolves every clip correctly**, and ⛔ **a positional implementation must FAIL that test.** ⚠️ **A test that only proves the happy path proves the bug is absent today, not that it cannot return.**
+3. ⭐ **A MISSING CLIP IS A NAMED STATE, not a `KeyError` and not silence** — ⛔ **the run is long and a failure discovered at the end of it costs the whole run.**
+4. ⚠️ **THE LIVE RUN IS NOT THIS ROW.** ⭐ **This row makes the run possible; whether it is performed, and against what corpus, is the register's and the user's.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A POSITIONAL MAP WITH A COMMENT SAYING IT SHOULD BE BY ID.** ⭐ **That is the defect with a note attached, and the note is not read by the failure.** ⛔ **AND NOT A WIDENING OF `SF-18`** — ⚠️ **that row merged, and its office already widened once, mid-delivery, on written authorisation.**
+
+[the round that rowed it](#po-round-58-part-two-the-second-merge)
+
+### W188 — The contradiction check SKIPS when no register cell declares a started state — the state a register leaves at every wave boundary
+
+⭐ **CLOSED PO round 60. Discharged at `7d77b0d`** — ⛔ **the live check that stood itself down at every wave boundary is now guarded by a plant spliced into the board's own bytes, and the reason it had been standing down turned out to be NEITHER of the two causes anyone had named.** ⚠️ **It is member 4 of the instrument family named in [`handoffs/PO-2026-09-12-round60.md`](handoffs/PO-2026-09-12-round60.md), and it is fixed.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W188.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE LIVE CONTRADICTION CHECK DISARMS ITSELF AT EVERY WAVE BOUNDARY, AND THE BOUNDARY IS WHERE THE BOARD IS REWRITTEN MOST HEAVILY.** ⭐ **`tools/tests/quality/board/test_contradiction.py` skips when no board row declares a started state** — ⚠️ **and that is precisely the state a register leaves once it has closed everything, so the check is asleep across exactly the edit it exists to judge and re-arms only when the next wave dispatches.**
+
+⛔ **FOUND BY MEASUREMENT AND ONLY BECAUSE AN EXPECTATION WAS WRITTEN DOWN FIRST.** ⭐ **The coordinator predicted wave 12's closing tip would hold the skip count `SF-18` armed; it did not — one test moved from passing to SKIPPED across a MARKDOWN-ONLY merge** ([the reading](handoffs/SESSION-2026-09-12-coordinator-5.md)).
+
+### ⛔ WHY THIS IS THE CLASS `W34` JUST PROVED DANGEROUS
+
+⭐ **`W34` planted a collapsed verdict span and showed the gate goes SILENT rather than red, so the collapse reads as coverage.** ⛔ **A skip reads the same way: green, quiet, and indistinguishable from a check that ran.** ⚠️ **Ruling 191 is the general form — a PASS taken from an EMPTY population is not a pass.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ASSERT THE POPULATION IS NON-EMPTY, or state IN THE SKIP why an empty board needs no check** — ⭐ **one of the two, written down, never neither.**
+2. ⛔ **VALIDATE THE ARM BY PLANTING, the way `W34` did** (Rulings 124, 348): ⭐ **the pass condition is the MOVED exit code AND the silence, both, because the first is what stops the second being vacuous.**
+3. ⚠️ **If the honest answer is that an empty board genuinely admits no contradiction, then the skip STAYS and gains its reason** — ⛔ **but the reason is asserted, not assumed, because the empty board is the state a register ships in.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHECK THAT PASSES BY RUNNING OVER NOTHING.** ⭐ **Removing the skip without asserting inhabitation converts a visible skip into an invisible vacuous pass, which is strictly worse** — ⚠️ **`W24`'s standing clause, and `W147`'s opposite error is the other ditch: a committed test that asserts a table is INHABITED goes RED on a correct board when nothing is in flight.** ⛔ **The subject is the CHECK's own population, never the board's.**
+
+### W189 — `narrate-service` has produced no real audio and its `README` claims a measurement the repository does not hold
+
+⭐ **CLOSED PO round 60. Discharged at `978fa1b`** — ⛔ **`narrate-service` has produced real audio for the first time, and the bytes were verified by the specification-built parser rather than by a status code.** ⚠️ **The RUN itself landed in the sibling at `ce975b6`; what merged HERE is the handoff, [`handoffs/NS-07.md`](handoffs/NS-07.md), which is exactly the shape the register ruled for this row.** ⭐ **The parser arm that every deployment runs turned out never to have executed against a single byte.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W189.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`narrate-service` HAS NEVER PRODUCED A BYTE OF REAL AUDIO, AND ITS OWN `README` CLAIMS A RECORDED REAL-ENGINE MEASUREMENT THE REPOSITORY DOES NOT HOLD.** ⭐ **Every one of its tests runs against `FakeEngine`, so the engine-adapter layer's only witness is the substitute for the thing under test** — ⚠️ **Ruling 191's shape, one repository over: a PASS taken from a population the claim is not about.**
+
+⭐ **THIS ROW EXISTS BECAUSE THE USER APPROVED THE RUN EXPLICITLY, and a row is how an approved act becomes visible on the board rather than only in a handoff.** ⛔ **It is a `W` row and not an `NS` task on purpose: nothing new is being specified. `NS-02` and `NS-03` are MERGED and their acceptance is what is in doubt** — ⭐ **so this is the missing WITNESS for work already claimed, which is the register's subject and not the plan's.**
+
+### ⛔ WHAT IT MUST DO
+
+1. ⛔ **Run the pinned engine against real material and keep the BYTES.** ⭐ **It costs no download: both pinned engine images are already on the host at exactly the digests `compose.yaml` and `compose.gpu.yaml` pin, and `narrate-service:local` is already built** — the grounds are in [the coordinator's handoff](handoffs/SESSION-2026-09-12-coordinator-5.md).
+2. ⛔ **VERIFY THE BYTES, NEVER THE STATUS CODE.** ⭐ **The suite already carries an MPEG parser built from the specification; the real output goes through it.** ⚠️ **A `200` from a service that wrote silence is the exact reading this row exists to refuse.**
+3. ⛔ **`README.md`'s claimed real-engine measurement is either REPRODUCED at a named ref in a named environment, or the claim is struck.** ⭐ **A measurement is quoted with its ref, its checkout role and its environment, or it is not a measurement** — ⚠️ **and a claim that survives because nobody re-ran it is the class this project has met repeatedly.**
+4. ⛔ **DO NOT TOUCH `kokoro-tts-nvidia`.** ⭐ **It belongs to the `codesignal` compose project and the user is retiring it themselves.**
+5. ⛔ **Tear down every container this row creates and nothing it did not** (the standing brief).
+
+### ⛔ THE SEAM, and it is why this row is dispatched beside `W187`
+
+⭐ **`W187` builds the page↔record join; this row buys the record↔DISK leg** — ⚠️ **the one half that `SF-17` and `SF-18` each declined, separately and in the same terms, because no clip file exists on disk anywhere and committing binary audio to make a check pass would be a fixture built to satisfy the check.** ⛔ **Neither office was wrong; the leg has to be bought by RUNNING the engine, which is this row.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A COMMITTED AUDIO FIXTURE.** ⭐ **Two offices already refused that and this row does not reopen it.** ⛔ **AND NOT A GREEN TAKEN FROM `FakeEngine` WEARING A NEW NAME** — ⚠️ **if the run cannot reach a real engine, the finding is that it cannot, stated with the reading, and the row does not close on a substitute.**
+
+⛔ **THE RUN IS IN THE `narrate-service` SIBLING** ([`../../conventions/workspace.md`](../conventions/workspace.md)), ⭐ **but this row is NOT a stand-in: its handoff and every framework-side correction land in THIS checkout, so it WILL have a carrier here.** ⚠️ **[`W73`](rows/W73.md) is the other case — a row whose CARRIER itself lives across the seam** (`CTO-49/4`) — ⛔ **and the distinction is the carrier, never the work.**
+
+⛔ **ITS BRANCH IS NOT CUT AT THE REGISTER'S TIP, SO THE ROW IS `todo` AND *ASSIGNED*, NEVER `in flight`.** ⭐ **A started state ASSERTS a live checkout or a branch ahead of release (`W96`), and neither is true yet** — ⚠️ **so declaring one would be a cell that is false at the moment it merges.** ⛔ **The taker names their OWN branch and the register observes it next round; `PO-59/8` records why the register did not invent one.**
