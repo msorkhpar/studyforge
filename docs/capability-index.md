@@ -6,7 +6,7 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**91 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
+**96 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
 
 ## M0 — 6 capabilities
 
@@ -78,7 +78,7 @@
 | `NS-05` | Framework client | Narration service (shared repository) | `NS-02`, `SF-08` |
 | `NS-06` | Agent-callable adapter | Narration service (shared repository) | `NS-02` |
 
-## M4 — 7 capabilities
+## M4 — 11 capabilities
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
@@ -86,7 +86,11 @@
 | `SF-19b` | Serving API: state, discovery, addressing | Serving and execution | `SF-19a`, `SF-04`, `SF-13` |
 | `SF-21` | Progress store | Serving and execution | `SF-01` |
 | `OPS-05` | Non-destructive guarantee | Delivery | `SF-02`, `SF-03` |
-| `SF-28` | Framework build and serve CLI | Delivery | `SF-10`, `SF-13`, `SF-14` |
+| `SF-28` | The site build | Delivery | `SF-10`, `SF-13`, `SF-14`, `SF-31` |
+| `SF-37` | The build's media copy | Delivery | `SF-28` |
+| `SF-38` | Narration in the build | Delivery | `SF-28`, `SF-16`, `SF-17` |
+| `SF-39` | `studyforge serve`, the CLI stage | Delivery | `SF-19a`, `SF-40` |
+| `SF-40` | The console entry point, and the caveat sweep | Delivery | `SF-28` |
 | `SK-03` | Build and serve | Skills and authoring kit | `SF-28` |
 | `SK-06` | Personal archive | Skills and authoring kit | `SK-03`, `SF-21` |
 
@@ -121,7 +125,7 @@
 | `OPS-02` | Narration deployment | Delivery | `NS-03` |
 | `OPS-03` | Compose and study server | Delivery | `OPS-01`, `OPS-02`, `SF-19b` |
 
-## M7 — 12 capabilities
+## M7 — 13 capabilities
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
@@ -133,6 +137,7 @@
 | `EX-05` | Coverage report | Java exercise generation | `EX-04` |
 | `OPS-04` | Build pipeline | Delivery | `SF-28`, `JS-06`, `SF-14`, `EX-04` |
 | `OPS-06` | Reader documentation | Delivery | `OPS-04` |
+| `SF-41` | The `OPS-*` artifacts are regenerated and diffed | Delivery | `OPS-01`, `OPS-03`, `OPS-04`, `OPS-05`, `OPS-06` |
 | `OPS-07` | Stale artifact reconciliation | Delivery | `OPS-04` |
 | `QA-01` | End-to-end acceptance | Validation and QA | `OPS-04` |
 | `QA-02` | Accessibility and theme | Validation and QA | `SF-14`, `SF-12` |

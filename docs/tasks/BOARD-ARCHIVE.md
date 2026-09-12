@@ -19419,3 +19419,164 @@ grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-desig
 ⛔ **THE RUN IS IN THE `narrate-service` SIBLING** ([`../../conventions/workspace.md`](../conventions/workspace.md)), ⭐ **but this row is NOT a stand-in: its handoff and every framework-side correction land in THIS checkout, so it WILL have a carrier here.** ⚠️ **[`W73`](rows/W73.md) is the other case — a row whose CARRIER itself lives across the seam** (`CTO-49/4`) — ⛔ **and the distinction is the carrier, never the work.**
 
 ⛔ **ITS BRANCH IS NOT CUT AT THE REGISTER'S TIP, SO THE ROW IS `todo` AND *ASSIGNED*, NEVER `in flight`.** ⭐ **A started state ASSERTS a live checkout or a branch ahead of release (`W96`), and neither is true yet** — ⚠️ **so declaring one would be a cell that is false at the moment it merges.** ⛔ **The taker names their OWN branch and the register observes it next round; `PO-59/8` records why the register did not invent one.**
+
+## ⭐ PO ROUND 61 — WAVE 14 CLOSED IN PART, `SF-28` SPLIT INTO SIX, AND THE TWO GRAPHIFY ROWS DECIDED
+
+⛔ **NO VERDICT AND NO REVIEWER: self-certified on this round's own floor, suite and `corroborate` readings at the ref that merges.** ⭐ **The round's findings by id and its readings are in [`handoffs/PO-2026-09-12-round61.md`](handoffs/PO-2026-09-12-round61.md); this section carries the closes, the split's argument and the two decisions.**
+
+### ⛔ WAVE 14 — every merge ref DERIVED, none received
+
+| Row | Merge | How it was derived |
+|---|---|---|
+| [`W190`](rows/W190.md) | `c49f254` | `git log --first-parent a606033 --grep="Merge fix/corroborate-dispatch-population"`, captured to file and read from it |
+| [`W203`](rows/W203.md) | `2cf11f1` | same instrument, `chore/retire-graphify` |
+| [`W195`](rows/W195.md) | `a606033` | same instrument, `feat/E09-build-scope` — ⛔ **and the merge subject names NO row id, which is why the id had to be re-derived from the register rather than read off the merge** |
+
+⛔ **[`W195`](rows/W195.md) DOES NOT CLOSE, AND ITS OWN TEXT IS WHAT REFUSES.** ⭐ **The row's stated pass condition is *a command a user can invoke walks a corpus and writes pages*, with two explicit exclusions: it does not close by `E09` being authored, and it does not close by a caller that exists under `tests/`.** ⛔ **What merged at `a606033` is `studyforge.generate` — a PACKAGE, whose own tests assert it has no subcommand, no flag and no `__main__`, because `[project.scripts]` has one minter and it was not that office.** ⚠️ **So the increment is real, it is the first non-test caller the renderer has ever had, and it is not yet a command.** ⭐ **The row is AMENDED with what it still owes rather than closed on a narrowed reading — `W185`'s precedent from round 60, applied to my own wave this time.**
+
+### ⛔ `SF-28` IS SPLIT — [`W197`](rows/W197.md) DISCHARGED, and the split is in the epic
+
+⭐ **ONE ROW CARRYING ONE `Definition` AND FIVE SEPARATELY-HEADED ACCEPTANCE ADDITIONS BECAME SIX ROWS AND ONE RE-HOMED CLAUSE**, in [`E09-delivery.md`](E09-delivery.md): `SF-28` keeps the site build, `SF-37` the media copy, `SF-38` narration in the build, `SF-39` the `serve` stage, `SF-40` the console entry point and the eleven-file caveat sweep, and `SF-41` — at **M7** — the `OPS-*` regeneration diff. ⛔ **Every item is accounted for in a table in the epic, and the two that leave M4 say so with the ruling that put them there** (`W197` clause 4).
+
+⛔ **THE FINDING THE SPLIT PRODUCED, AND IT IS THE SHARPEST THING IN THIS ROUND: RULING 129'S CLAUSE WAS RE-HOMED ONTO A TASK WHERE IT IS STILL UNMEETABLE.** ⭐ **The clause asserts that `OPS-01`, `OPS-03`, `OPS-04`, `OPS-05` and `OPS-06` are regenerated and diffed. `SF-28` is M4. Of those five, only `OPS-05` is M4 — two are M6 and two are M7 — so at `SF-28`'s merge ref four of the five artifacts do not exist to regenerate.** ⚠️ **That is the same defect Ruling 129 was minted to fix, carried one document further on, and it was invisible because nobody re-read the clause against the milestone it landed in.** ⛔ **Ruling 129's own remedy is applied rather than argued with: the clause is SPLIT off and lands at M7 as `SF-41`, where it can first be RUN.**
+
+⭐ **A SECOND ONE OF THE SAME CLASS, SMALLER: *`OPS-04` is expressible as configuration over it — demonstrated, not asserted* was an acceptance clause on `SF-28` at M4, and `OPS-04` is M7.** ⛔ **It is re-homed into `OPS-04`'s own Acceptance, where the thing it demonstrates exists.**
+
+⚠️ **`SF-40` INHERITS A ROLE AND NOT ONLY WORK: Ruling 157 named `SF-28` as `[project.scripts]`'s only minter, and the role moves with the work.** ⛔ **Said out loud here and in the epic, because a minter role that moves silently is how a second minter appears.**
+
+⭐ **THE PARTITION IS NOT THE ONE THE SCOPING HANDOFF PROPOSED, and `W197` clause 3 required exactly that check.** ⛔ **It differs in two places: Ruling 129's clause is NOT absorbed into the build, and `serve` is NOT the serving API — `SF-19a` owns `serve/`, so `SF-39` is the CLI stage over it and its `Owns` says so.** ⚠️ **That is the surface half of `PO-59/2` and `SF-18/7` applied to rows I wrote myself: `SF-37` and `SF-38` name MODULES inside `generate/` rather than the package, so the two can be dispatched into one wave without two owners of one surface.**
+
+### ⛔ THE TWO ROWS THE GRAPHIFY RETIREMENT ORPHANED — decided, not deferred again
+
+⭐ **[`W54`](rows/W54.md) IS WITHDRAWN.** ⛔ **Its obligation was the tool's: *an onboarded corpus's knowledge graph is built, bridged and its census asserted* came from `SK-07`'s Acceptance, and [`W203`](rows/W203.md) removed that clause from `E11` along with the tool.** ⚠️ **MEASURED at this round's tip, instrument `git grep -i graph` over `docs/tasks/E11-skills-authoring.md`: no clause of `SK-07`'s asks for a graph, so there is no surviving consumer to re-scope the row around.** ⭐ **R14's budget assumptions go with it, and they already have — `W203` withdrew R14 in place.**
+
+⛔ **[`W157`](rows/W157.md) IS WITHDRAWN TOO, AND THE ROUND CHANGED ITS OWN MIND ON A MEASUREMENT RATHER THAN ON A VIEW.** ⭐ **I first RE-SCOPED it onto the generated [`../capability-index.md`](../capability-index.md), on a reading that `tools/` contains no reader of that file — which is TRUE and is the wrong population.** ⛔ **THE READER IS IN `tests/`, and this round's own suite run went RED on it: `test_the_shipped_index_is_exactly_what_the_generator_produces_today` asserts the shipped index is byte-identical to a regeneration from the epics, and my split had changed the epics.** ⚠️ **So the artifact I chose as the surviving instance of *nothing owns the rebuild and no instrument can fail on it* has an owner AND a gate, and the gate caught me.** ⭐ **The row is withdrawn on that ground, the refuted re-scope is left standing and dated in the row file, and NO negative is asserted about any other generated artifact — this round did not sweep for one.**
+
+### ⛔ `SF-32` IS DISPATCHED — `PO-60/1` ANSWERED BY THE COORDINATOR
+
+⭐ **The dispatch bound is satisfied for the first time in four waves: `M3 step 3.4`'s remaining row is dispatched to Developer 1 in wave 15.** ⛔ **It is NOT entered in the In flight table: its branch is not cut at this tip, and a started state ASSERTS a live checkout or a branch ahead of release (`W96`, `PO-59/8`).** ⚠️ **The taker names their own branch and the next register round observes it.**
+
+⛔ **THE SCHEDULED TRIGGER FIRES WITH THE ASSIGNMENT AND IS NOT YET DISCHARGED.** ⭐ **`SF-32` is owed the telling that a `provides` BUMP INVALIDATES EVERY RECORDED ADDRESS; the assignment is the act the trigger names.** ⚠️ **The register CANNOT ADDRESS DEVELOPER 1 — the standing brief's clause 8 — so the telling is relayed through the coordinator, and the trigger stays `fired` and NOT discharged until the relay is confirmed.** ⛔ **It expired once already, at `SF-17`, exactly this way (`PO-58/2`).**
+
+### ⛔ [`W206`](rows/W206.md) — MINTED, and it is the half of `W197` this round could not perform
+
+⭐ **`W197` clause 2 requires the split in the epic AND the ordering in [`README.md`](README.md).** ⛔ **`README.md` is explicitly outside this round's surface, so the ordering half is undone: five new tasks exist with no step membership, and `README.md`'s step `4.3` still names `SF-28` alone.** ⚠️ **A mint rather than a deferral, because the alternative was to close `W197` on half of its own settling condition.**
+
+### ⚠️ THE THREE DECISIONS LEFT FOR THE USER
+
+⛔ **[`W202`](rows/W202.md) carries six decisions and three of them read as the user's rather than the register's.** ⭐ **They are written in that row as three answerable questions and nowhere else** — ⛔ **the register did NOT take them, and writing them as questions is the whole of what this round did to them.**
+
+
+### W190 — `corroborate`'s `dispatched and UNNAMED` arm has a population of CHECKOUTS, so a branch carrying work is invisible to it whenever its office cleans up after itself
+
+⭐ **CLOSED PO round 61. Discharged at `c49f254` on `fix/corroborate-dispatch-population`, and the merge ref was DERIVED by the register from the first-parent line and read back out of a capture file.** ⛔ **The office REFUSED this file's own proposal — widening the arm's population — and PRINTED THE DIFFERENCE on a second line instead, which is better than what the row asked for.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W190.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`corroborate`'s `dispatched and UNNAMED` arm ITERATES CHECKOUTS. Its subject is BRANCHES.** ⭐ **So a branch that carries real work, is named by no row, and is checked out nowhere is invisible to the one gate that exists to find exactly that** — ⚠️ **and "checked out nowhere" is the state a tidy office leaves behind, so the arm is blindest against the offices that behave best.**
+
+⛔ **MEASURED at `70131e2`, role `wt/po`, HOST, by the register:** ⭐ **branch `docs/NS-07-handoff` existed at `10a5470`, carried the whole of `NS-07`'s handoff, was named by NO register row, and the arm printed `dispatched and unnamed: none`.** ⚠️ **The office had not left a worktree on it, and that alone is what made it invisible.**
+
+### ⛔ THE FAMILY THIS BELONGS TO
+
+⭐ **AN INSTRUMENT EXITING `0` HAS TOLD YOU NOTHING FAILED, NOT THAT EVERYTHING WAS CHECKED.** ⛔ **Several independent instances across two waves, and the ones already fixed are the proof the shape RECURS rather than the proof it is handled:** [`W188`](rows/W188.md)'s self-disarming contradiction check and [`W34`](rows/W34.md)'s collapsed verdict span, both green and both silent. ⚠️ **The family is enumerated once, in [`../handoffs/PO-2026-09-12-round60.md`](handoffs/PO-2026-09-12-round60.md).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE POPULATION BECOMES BRANCHES**, not checkouts — every local branch git can answer for, less the exemptions Ruling 265 already names (office round branches, `trial/`, `tmp-*`).
+2. ⛔ **A BRANCH THAT IS ABSORBED IS NOT DISPATCHED.** ⭐ **Ruling 199's terminality test already exists in this module and is the right filter: the arm's subject is a branch that is LIVE, unnamed, and ahead of release.** ⚠️ **Widening to every branch without that filter turns the arm into a census of this repository's whole history and it will be disabled within a round.**
+3. ⛔ **VALIDATE BY PLANTING** (Rulings 124, 348, `W34`'s method): ⭐ **cut a branch with a commit, name it in no row, tear down no worktree because there was none — the pass condition is the MOVED exit code, not the arm's existence.**
+4. ⭐ **KEEP THE CHECKOUT ARM.** ⛔ **It is a different subject — a worktree left behind — and Ruling 130's `invisible BY CONSTRUCTION` line is its output. This row ADDS a population; it does not swap one.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A GATE THAT FIRES ON EVERY MERGED BRANCH IN THE REPOSITORY.** ⭐ **Several hundred `chore/`, `feat/` and `fix/` branches are absorbed and still present; a version of this arm that names them is a version nobody will run.** ⚠️ **And it must not report a count without its unit — [`W176`](rows/W176.md)'s subject, in this same module.**
+
+---
+
+### ⭐ AMENDMENT — PO round 60, AFTER THE FACT: THE ROW WAS ALREADY TAKEN WHEN THE REGISTER MINTED IT
+
+⛔ **THE ID WAS SELF-ASSIGNED BY ITS TAKER BEFORE THE REGISTER MINTED ANYTHING, AND THE TWO LANDED ON THE SAME SUBJECT INDEPENDENTLY.** ⭐ **Developer 2 took `W190` because `handoff-kind` requires a task-ID shape and `rows/W189.md` existed while `rows/W190.md` did not** — ⚠️ **`PO-59/9`'s shape exactly, second instance in two waves: an item dispatched un-rowed makes the id space have more than one minter.** ⛔ **NO RENAME IS OWED: the subject the taker chose is the subject this file already carries.** ⭐ **Carrier `fix/corroborate-dispatch-population` @ `1301af2`, held by `wt/dev2`, gates GREEN by its own office.**
+
+⛔ **THE TEXT ABOVE IS LEFT STANDING AND DATED rather than edited** (Ruling 244's form) — ⭐ **its *WHAT SETTLES IT* item 1 proposed that the POPULATION BECOMES BRANCHES, and the office REFUSED that and did something better.**
+
+### ⛔ WHAT THE OFFICE ACTUALLY DID, AND WHY IT IS BETTER THAN THIS FILE'S PROPOSAL
+
+⭐ **THE GATE IS TWO LINES FROM NOW ON. The existing arm is untouched and a SECOND reading prints immediately below it:** `UNMERGED and HELD BY NO CHECKOUT, named by no row (N)`. ⛔ **So the difference is PRINTED rather than folded, and anything that treated `dispatched and UNNAMED by any row` as the whole answer now takes HALF — the gate line says so in its own text.** ⚠️ **The anchor phrase `HELD BY NO CHECKOUT` deliberately appears in no other line.**
+
+⛔ **ITS REFUSALS, RECORDED SO NOBODY RE-DERIVES THEM:**
+
+1. ⛔ **WIDENING THE EXISTING ARM IS REFUSED** — ⭐ **a branch a checkout HOLDS is work somebody is ON, and folding two answers onto one line is the coercion [`W115`](rows/W115.md) removed a line over.**
+2. ⛔ **NARROWING THE ARM'S NAME IS REFUSED** — an honest gate with an open hole beside it beats a gate renamed to fit its blind spot.
+3. ⛔ **A `docs/*` EXEMPTION IS REFUSED** — Ruling 319 refused exactly that, over exactly that namespace.
+4. ⛔ **MOVING THE EXIT CODE IS UNTOUCHED, DELIBERATELY** — ⭐ **asserted in a test and left for the coordinator to rule on.** ⚠️ **That is the one half of this row that is still open, and it is a RULING's to settle rather than a taker's.**
+
+⭐ **CRY-WOLF WAS MEASURED RATHER THAN ASSUMED: of 208 local branches every one is `0` ahead, so the new line names nothing today, and the `ahead > 0` filter is self-retiring.**
+
+### ⛔ THE TWO THINGS IT HANDED THE REGISTER, DISPOSED HERE
+
+- ⭐ **`W190/4` — [`W153`](rows/W153.md) IS THE SAME ARM'S OTHER HALF, AND THEY STAY TWO ROWS.** ⛔ **`W153` widens what counts as NAMED; this widens what counts as a CANDIDATE — orthogonal, and they compose.** ⚠️ **The `SF-18/1` fold last round joined two halves of ONE mechanism inside ONE file; these are two mechanisms, and one of them has already MERGED, so folding is not available even if it were right.**
+- ⭐ **`W190/5` — a non-live SPENT branch that is UNMERGED sits on NEITHER line and is exempt from both halves.** ⛔ **NOT A DEFECT: [`W170`](rows/W170.md)'s exemption behaving exactly as ruled.** ⚠️ **Recorded so it is not re-found as a hole.**
+- ⭐ **`W190/3` is already repaired in its own scope** — `docs/conventions/board.md` said SIX readings and enumerated FIVE, never updated for `W170`; the office replaced the count with a pointer carrying no count, which is Ruling 150's form.
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/board/unclaimed.py` and its tests, plus `docs/conventions/board.md` for the gate's declaration.** ⚠️ **NOT `corroborate.py`: `W132`'s split moved this arm, and [`W153`](rows/W153.md) and [`W176`](rows/W176.md) both still DECLARE the old file** — ⭐ **a stale declared surface is invisible to check 4's sub-step, which is [`W160`](rows/W160.md)'s subject.**
+
+
+### W203 — Graphify retired from every live document and from `tools/`, with the floor/suite scope line
+
+⭐ **CLOSED PO round 61. Discharged at `2cf11f1` on `chore/retire-graphify`, merge ref DERIVED and read back out of a capture file.** ⛔ **The register's half — the two rows this retirement orphaned — is discharged in the same round: [`W54`](rows/W54.md) WITHDRAWN and [`W157`](rows/W157.md) RE-SCOPED.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W203.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **GRAPHIFY IS RETIRED FROM EVERY LIVE DOCUMENT AND FROM `tools/`, AND THE FLOOR/SUITE SCOPE LINE GOES WITH IT.** ⭐ **Taken by Developer 1 in wave 14 on `chore/retire-graphify`.**
+
+⛔ **THIS ROW WAS DISPATCHED UN-ROWED AND ITS OFFICE COINED `W190` FOR IT.** ⚠️ **So did Developer 2, for a different subject, in the same wave and at the same base — neither office could see the other.** ⭐ **THE REGISTER RESOLVES IT HERE: `W190` stays with Developer 2's row and THIS is `W203`.**
+
+### ⛔ WHY `W190` STAYS WITH THE OTHER ONE, AND IT IS NOT *"IT WAS WRITTEN DOWN FIRST"*
+
+⭐ **The register INDEPENDENTLY minted `W190` this round for Developer 2's subject** — the `dispatched and UNNAMED` gate's population — ⛔ **before either collision was relayed, from `W187`'s and this round's own measurements.** ⚠️ **So two authorities that could not see each other landed on the same id for the same subject; that is the one tie-break available that is not arbitrary.** ⛔ **[`rows/W190.md`](rows/W190.md) already carries that argument in full, the register cell names it, and the In flight table names its carrier.** ⭐ **Moving it would invalidate three cells to save one rename.**
+
+⚠️ **THE COST IS REAL AND IS NAMED: this office renames its handoff file, its title, its `**Kind:**` line and five finding ids together, and the coordinator's merge disclosures citing `W190/1..5` for THIS subject must be re-read as `W203/1..5`.**
+
+### ⭐ THE POPULATION, WHICH IS THE OFFICE'S MEASUREMENT AND NOT THE REGISTER'S
+
+⛔ **53 files carried a reference after excluding handoffs, the archive and `rows/`, against 209 raw hits.** ⭐ **Six remain and all six are DELIBERATE — three withdrawal notices, two the register's, one measured integration evidence naming no tool.** ⚠️ **The register did not re-derive these and says so.**
+
+### ⛔ WHAT THIS ROW STILL OWES THE REGISTER, AND IT IS THE REGISTER'S HALF
+
+⭐ **Two live rows LOSE THEIR SUBJECT to this retirement and neither is the office's to touch** — [`W54`](rows/W54.md) and [`W157`](rows/W157.md), both amended by the register in PO round 60. ⛔ **a third and a fourth mention graphify incidentally — [`W15`](rows/W15.md) and [`W169`](rows/W169.md) — and are NOT chased: their arguments survive the tool's removal.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SWEEP THAT LEAVES THE ROWS THAT DEPENDED ON THE TOOL STANDING AS IF NOTHING HAPPENED.** ⭐ **A retired tool with live rows pointing at it is a queue that cannot be worked, and the queue is not the retiring office's surface — which is precisely why it is said here.**
+
+
+### W197 — `SF-28` grew by accretion until it stopped being a row — one Definition, five acceptance additions, at least eight deliverables
+
+⭐ **CLOSED PO round 61 by the register, and there is no merge ref because the act is a document act:** ⛔ **`SF-28` is split in [`E09-delivery.md`](E09-delivery.md) into six rows and one re-homed clause, every item accounted for in a table, and the two that leave M4 named with the ruling that put them there.** ⚠️ **ONE HALF OF ITS OWN SETTLING CONDITION IS NOT PERFORMED — the ordering in `README.md`, which is outside the register's surface this round — and that half is [`W206`](rows/W206.md) rather than a silent omission.**
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W197.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`SF-28` GREW BY ACCRETION UNTIL IT STOPPED BEING A ROW, AND NOBODY MAY DISPATCH IT IN THAT STATE.** ⭐ **Measured by Developer 3 from the epic's own headers while scoping `E09`: ONE `Definition` plus FIVE separately-headed acceptance additions, minted by four rulings (99, 129, 157, and two PO rulings of 2026-09-10).**
+
+⛔ **READ AS WORK ITEMS IT CARRIES AT LEAST EIGHT INDEPENDENTLY DELIVERABLE THINGS** — ⭐ **the unit-page build; container pages, index and contents; the contents→`Links`/`Crumb` join; the media copy; narration wiring; `serve`; `[project.scripts]` plus an eleven-file caveat sweep the row itself tabulates; and the `exercises: false` translation.** ⚠️ **ITEM 7 ALONE IS A WAVE.**
+
+⭐ **THIS IS THE DISEASE THE REGISTER ALREADY DIAGNOSED IN `E04`'s `Owns` LINES ([`W183`](rows/W183.md)), ONE LEVEL UP:** ⛔ **there it was a surface drafted without measurement; here it is a whole TASK whose scope was never re-measured after four rulings added to it.**
+
+### ⛔ WHY IT IS NOT SOMEBODY'S JOB TO JUST TAKE IT CAREFULLY
+
+⛔ **A task nobody can estimate is a task whose Acceptance nobody can discharge**, and this one's Acceptance is five sections written by five different acts. ⚠️ **The office that takes it will deliver a third of it and either overrun or silently narrow — and silent narrowing is invisible to every instrument this project has**, because `Acceptance` is prose.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`SF-28` IS SPLIT BEFORE IT IS DISPATCHED**, into tasks each of which one office can finish in one wave and each of which has an Acceptance that can return `no`.
+2. ⛔ **THE SPLIT IS PERFORMED IN THE EPIC, `E09`, AND THE ORDERING IN [`../README.md`](README.md)** — ⚠️ **neither is the register's surface, so this row is the register saying WHAT is wrong and not the register doing it.**
+3. ⭐ **THE EIGHT ITEMS ABOVE ARE A STARTING PARTITION AND NOT THE ANSWER** — ⛔ **the taker re-derives them from the epic's own text, because a partition inherited from a handoff is the same error one document further on.**
+4. ⛔ **EACH RESULTING TASK NAMES WHICH OF THE FOUR RULINGS PUT IT THERE**, or the next round re-derives the provenance that made this row necessary.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RENUMBERING.** ⭐ **Splitting `SF-28` into `SF-28a`…`SF-28h` with the same prose divided by headings changes nothing: the test is whether each piece has an Acceptance that an instrument could fail.** ⛔ **AND IT MUST NOT SILENTLY DROP AN ITEM** — ⚠️ **anything the split does not carry forward is DECLINED OUT LOUD, with its ruling named.**
+
