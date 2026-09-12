@@ -195,8 +195,9 @@ place of its own paragraph of reasoning.**
    the corpus as walked did not produce.**
 
 ⛔ **R3 is the outer bound: a generated clip is still a file in somebody's repository.**
-⚠️ **Clauses 3 and 4 are NOT built, and `SF-32/5`'s ceiling makes that live — a build can
-be refused by dead clips nothing can yet remove. [`W218`](rows/W218.md) owns both.**
+⭐ **Clauses 3 and 4 are carried out by [`W218`](rows/W218.md)**: `narrate` prints the
+dead-entry count on every run, and `--prune` in place of `--voice` is the prune. ⚠️ What it
+HOLDS rather than deletes is in [its handoff](handoffs/W218.md).
 
 ---
 
