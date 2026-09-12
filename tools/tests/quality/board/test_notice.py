@@ -146,8 +146,8 @@ def test_planted_an_argument_that_OPENS_WITH_A_STATE_is_named(tmp_path: Path) ->
 
     ⚠️ **The live population is `0` once the two rows that carried it close**, and
     ⛔ **a clause-2 pass with no planted hit is VACUOUS, not green** (Ruling 48,
-    Ruling 186(b)(ii)). ⭐ The planted text is `rows/W14.md`'s opening idiom,
-    verbatim in shape from `798956c`.
+    Ruling 186(b)(ii)). ⭐ The planted text is the opening idiom of `W14`'s record
+    in `BOARD-ARCHIVE.md`, verbatim in shape from `798956c`.
     """
     row = "| W2 | a naming | PO | `in flight` | [d](rows/W2.md) |\n"
     root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))

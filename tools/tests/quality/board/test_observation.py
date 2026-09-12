@@ -138,7 +138,7 @@ def test_planted_an_UNCLOSED_block_is_still_judged_at_end_of_file() -> None:
 
 
 def test_planted_the_RAMP_survives_only_for_a_board_with_NO_MARKER_AT_ALL() -> None:
-    """⛔ `rows/W111.md`: the header branch is kept for a board with NO markers, and SAYS SO.
+    """⛔ `W111`'s record: the header branch is kept for a board with NO markers, and SAYS SO.
 
     ⭐ **The second form is the one to prefer if this instrument is ever pointed at a
     corpus repository's own board** (R10's arbitrary roots) — ⚠️ **but a board that

@@ -111,7 +111,8 @@ def test_planted_a_CLAIMED_CHECKOUT_THAT_DID_NOT_ANSWER_is_a_NOTICE_and_NOT_A_RE
     ⚠️ **MEASURED by the PO: a checkout named `plant-sf26` corroborated a row claiming
     `wt/dev1`** — ⛔ **so the false pass did not even require the named worktree to
     exist.** ⭐ **Both names are printed now and NEITHER refutes**, because office
-    worktrees are legitimately re-pointed between waves (`rows/W110.md`).
+    worktrees are legitimately re-pointed between waves (`W110`'s record in
+    `BOARD-ARCHIVE.md`).
     """
     answer, printed = _judge(repository, "`leak`, `feat/held`", "feat/held")
     assert answer is Answer.CORROBORATED, "⛔ a name mismatch is bookkeeping, never a refutation"

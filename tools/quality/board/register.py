@@ -332,8 +332,8 @@ def duplicates_a_state(body: str) -> bool:
     and nothing else. ⚠️ **Measured at `798956c`: two files declare a state this
     way (`W14`, `W18`) and the two candidate false positives are both
     excluded** — `rows/W5.md`'s *"job is already DONE by …"*, which is `done` in
-    ordinary English, and `rows/W18.md`'s later *"is ACCEPTED today"*, which is
-    not the opening.
+    ordinary English, and `W18`'s record in `BOARD-ARCHIVE.md`, whose later
+    *"is ACCEPTED today"* is not the opening.
 
     ⛔ **A state belongs to the register and to the record; a row file carries the
     ARGUMENT** — which is the other half of what the frame sentence forbids.
