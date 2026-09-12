@@ -132,6 +132,8 @@ is a `container_api` bump, and every map written under the old version is
 
 from __future__ import annotations
 
+from studyforge.address import AddressError
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.container.document import (
     CONTAINER_API,
     CONTAINER_FILENAME,
@@ -151,6 +153,25 @@ from studyforge.corpus.container.document import (
 from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.container.fields import ORIGIN_KEYS, is_filename_component
 
+#: ⛔ **Everything `parse` and `load` can raise, as a tuple a caller catches.**
+#:
+#: ⚠️ `errors.py`'s contract argues for THREE exceptions, not one: its own
+#: `ContainerError`, plus two deliberate pass-throughs it declines to wrap —
+#: `AddressError`, because the arity comparison is SF-01's outright, and
+#: `PersonalDataLeak`, because R7's refusal must not be swallowed by a caller
+#: writing `except ContainerError: skip_this_file()`.
+#:
+#: ⛔ **It is a tuple here because prose was not enough** (`W208`). A caller
+#: retyped that paragraph's members and got two of the three, so a wrong-depth
+#: container map crashed `studyforge plan` — the command whose whole contract
+#: is that nothing raises. ⭐ A caller now catches `container.RAISES` and cannot
+#: read the paragraph partially, because there is no list left to read.
+#:
+#: ⛔ **Adding a member here is not free**: `tests/studyforge/corpus/container/`
+#: reaches every one of them from `parse`, so a member nothing can raise fails
+#: as loudly as one that is missing.
+RAISES: tuple[type[Exception], ...] = (ContainerError, AddressError, PersonalDataLeak)
+
 __all__ = [
     "CONTAINER_API",
     "CONTAINER_FILENAME",
@@ -158,6 +179,7 @@ __all__ = [
     "EDITORIAL_KEYS",
     "KNOWN_CONTAINER_API",
     "ORIGIN_KEYS",
+    "RAISES",
     "REGION_ORIGIN_API",
     "UNIT_KEYS",
     "Container",
