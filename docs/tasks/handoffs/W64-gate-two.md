@@ -365,6 +365,61 @@ structural one** (Ruling 65 — the marker is named, not spelled): **the record'
 what I acted on. ⛔ **Not edited** — a record is annotated, never edited
 (Ruling 106) — and filed here so the two documents agree.
 
+### ⛔ `W64/17` `[structural]` — the WITHDRAWN pair `560 → 1308` reproduces EXACTLY at the release tip, and that must not be read as a defence
+
+⛔ **Measured, cold cache, at `1a55e12` — the release tip after `W170` and the
+register's round 55 landed, a ref that did not exist when I wrote the figure:**
+`numbered claims JUDGED by check_finding_ids` is **`560 → 1308`**, digit for
+digit the pair `CTO-70/9` charged and I have withdrawn.
+
+```text
+REF 1a55e12   228 documents, 107 ruling records, this branch NOT in it
+  documents reaching a rule beyond the declaration   106 -> 213   +107
+  finding lines HANDED                               574 -> 1374  +800
+  numbered claims JUDGED                             560 -> 1308  +748
+  findings returned by check_handoffs                  0 ->    0    +0
+```
+
+⚠️ **So a reviewer who re-measures at the release tip will reproduce my
+withdrawn pair and may conclude `CTO-70/9` was wrong. It was not.** ⭐ **A figure
+is a reading of a ref, never a property of the tree** (Ruling 55), and mine was
+taken at NO ref: `748` came from `7a7a178`, `560` from a working tree holding
+this handoff at 8 findings, and `1308` from addition. ⛔ **Agreeing by accident
+with a ref one never measured is not measurement**, and the agreement is the
+strongest possible argument for the property `CTO-70/9` demands rather than
+against it.
+
+⭐ **And the original table's OTHER row is exactly right at a DIFFERENT ref:**
+`105 → 211` is `7a7a178` to the digit. ⚠️ **Two rows, each correct, at two refs,
+in one unnamed-ref table** — that is `CTO-70/9`'s charge stated as cleanly as it
+can be stated, and it is why the replacement prints the ref on every block.
+
+### ⭐ `W64/18` `[local]` — a recorded negative: the stale byte-code hazard eliminated three ways, not assumed away
+
+⚠️ **The coordinator routed `W155/12` to me because this row plants and mutates:
+CPython invalidates cached byte-code on `(mtime, size)`, so a same-length
+in-place edit inside one mtime tick re-runs the PREVIOUS source and fails
+silently in the direction of agreement.** ⛔ **I did not reason it away; I
+eliminated it.**
+
+1. ⭐ **It cannot apply to the coupling table at all.** The *gate OFF* column is
+   built by REBINDING `handoffs.RULING_RECORD` in the running process — **no
+   file is edited, so no source's `(mtime, size)` is consulted and no cached
+   module is reloaded.** ⛔ That is a property of the instrument, not an
+   accident, and it is the reason it was written that way.
+2. ⭐ **Re-run cold anyway:** every `__pycache__` removed and
+   `PYTHONDONTWRITEBYTECODE=1` set, at both refs and at the release tip. **Every
+   figure identical.**
+3. ⭐ **The R12 counterfactual is a file edit and therefore the exposed one** —
+   but it REMOVES four lines, so the size changes and the invalidation cannot
+   miss it. ⚠️ **Re-run cold in the pinned container regardless: `5 failed, 12
+   passed`, `EXIT=1`**, and the restore verified by `md5sum` against
+   `git show HEAD:` rather than by a grep (`CTO-53/6`'s lesson).
+
+⛔ **Filed as a negative because a hazard that was checked and absent is worth
+exactly as much on the record as one that was found**, and because the reviewer
+nearly read three silent plants as a pass in this same round (`CTO-70/4`).
+
 ## For dependents
 
 ### ⛔ The population, re-derived at my own ref and NOT inherited
@@ -466,16 +521,20 @@ numbered claims JUDGED by check_finding_ids          552      1300     +748
 findings returned by check_handoffs                    0         0       +0
 
 REF the branch AT ITS TIP (Ruling 347) — the corpus that MERGES:
-             227 documents, this handoff among them, carrying 11 findings
+             227 documents, this handoff among them, carrying 13 findings
 UNIT                                            gate OFF   gate ON    delta
 documents reaching a rule beyond the declaration     106       212     +106
-finding lines HANDED to check_finding_ids            577      1377     +800
-numbered claims JUDGED by check_finding_ids          563      1311     +748
+finding lines HANDED to check_finding_ids            579      1379     +800
+numbered claims JUDGED by check_finding_ids          565      1313     +748
 findings returned by check_handoffs                     0         0      +0
 
 ⭐ the two refs differ by exactly this document's own contribution, and that
    is the arithmetic that shows the population is self-inclusive rather than
    the arithmetic that shows a figure was derived
+
+⚠️ a THIRD ref, the release tip 1a55e12, is in W64/17 — where the pair this
+   section withdraws reproduces exactly, by coincidence, and must not be read
+   as a refutation of CTO-70/9
 ```
 
 ⛔ **THE INSTRUMENT ITSELF, so the table can be re-taken by whoever doubts it
@@ -624,6 +683,15 @@ coupling table      the instrument printed in For dependents, run at that tip
                     227 documents; the six figures printed above  EXIT=0
                     ENVIRONMENT: HOST — standard library only, no container
                     dependency; reproduced in the pinned container as well
+                    ⛔ RE-RUN COLD (W155/12's hazard, W64/18): every
+                    __pycache__ removed and PYTHONDONTWRITEBYTECODE=1, at all
+                    THREE refs. Every figure identical.
+
+R12 cold            the same counterfactual, cache cleared, byte-code writing
+                    disabled inside the container, -p no:cacheprovider:
+                    5 failed, 12 passed in 0.07s                  EXIT=1
+                    restore verified by md5sum against git show HEAD:, not by
+                    a grep (CTO-53/6)
 
 R12, second way     the four-line gate in check_handoffs removed, everything
                     else in place:
