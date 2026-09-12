@@ -17509,6 +17509,7 @@ corroborate's four lines   ⛔ po-int appears in NONE of them — it has no bran
 - **`PO-53/5`** — against the coordinator. *"~160x spread"* is a file-total ratio quoted against a per-test table; the per-test spread is **31.8x**.
 - **`PO-53/6`** — against the coordinator. Four line numbers relayed with a clause about the limits of `grep`, and none came from `grep -n`: `:502`/`:514`/`:520` are each one low, and `:348` should be `:357`.
 - **`PO-53/7`** — against this office. A `## Scheduled` trigger whose act is *whichever row next owns X* fires when the row lands, not when the correction happens, so it can fire unmet. Measured on the register's own cell.
+- **`PO-53/9`** — against this office. A generated derivation (`docs/capability-index.md`) went stale on my own `E13` edit and I did not know I owed the regeneration. ⭐ **Caught by the suite, regenerated rather than hand-edited, and the missing TRIGGER landed in `docs/tasks/README.md`.**
 - **`PO-53/8`** — against this office. **The board went OVER its own size bound the moment two closes and one dispatch were recorded, before a single mint**, and it took seven separate trims to land inside it. ⭐ **Measured, role `wt/po`, ref `0564997`, env HOST:**
 
 ```text
@@ -17518,6 +17519,32 @@ after seven trims of argument-into-this-record         57364 of 57408   ⭐ 44 U
 ```
 
 ⛔ **The remedy was legitimate and is the board's own closing rule — an argument goes behind a pointer — but a register round that must trim SEVEN passages to record its own work is the reading.** ⚠️ **`Next rows` is `29` rows earning ZERO allowance term, which is `W159`'s subject and now has a second, quantified witness.** ⭐ **And the shape is structural rather than incidental: a CLOSE costs bytes and earns none (a `todo` cell becomes `✅ done — <sha>` and a 30-byte `rows/` link becomes a ~190-byte archive anchor), while a MINT is roughly allowance-neutral. ⛔ So the bound penalises exactly the act it should reward, and `W144`'s *one phrase, two populations* is the neighbour.**
+
+### ⭐ `W146`'s NEW CODE FIRED ON A LIVE CELL ONE WAVE AFTER MERGE, AND IN THE ARM THAT WAS HARDEST TO GET
+
+⛔ **The gate reading below was taken at `7e331a4`, and between writing the `NS-03` cell and taking it, the developer committed.** ⭐ **So the cell declares `0 @ 0564997` and git reads `1` today — the exact configuration `W146` was minted for:**
+
+```text
+⭐ CORROBORATED: feat/NS-03-engine-adapters is checked out at dev1 and is 1 commits ahead.
+⭐ DATED, not wrong (`PO-50/12`): the row claims 0 @ 0564997, git reads 1 … TODAY, and
+   release/m0-foundations..0564997 is 0 — TRUE AT ITS OWN DECLARED REF, and the branch
+   moved past it. ⚠️ The word is DATED, never `stale`, `refuted` or `wrong`.
+```
+
+⭐ **Before `W146` this printed as a DISAGREEMENT and a reader could not tell a register that miscounted from a register that was right and got overtaken.** ⛔ **The cell is LEFT STANDING, deliberately: Ruling 246's as-of form is what makes it true, and re-taking it would only move the same cell to a ref the next commit passes** (round 52's addendum ruled exactly this).
+
+### ⛔ AND A CARRY I DID NOT KNOW I OWED — the generated derivation went stale on my own edge
+
+⚠️ **`docs/capability-index.md` is GENERATED from `docs/tasks/E*.md`, so landing `NS-02`'s new `Depends on` made it stale in the same commit.** ⛔ **MEASURED — the suite caught it in the pinned container, `SUITE_EXIT=1`, two failures, both in `tests/studyforge/skills/delivery/test_walkthrough.py`:**
+
+```text
+-  | `NS-01` |
++  | `NS-01`, `NS-03` |
+```
+
+⭐ **REGENERATED, never hand-edited (R19), and the resulting diff is EXACTLY that one line with the file's trailing bytes preserved** — ⛔ **the first regeneration dropped a trailing newline and it was restored, because *regenerating changes no byte* is `E11`'s acceptance and a whitespace drift would have been a hand-edit wearing a generator's name.**
+
+⚠️ **`PO-53/9`, against this office, and the gap is a SENTENCE rather than an instrument.** ⛔ **The regeneration command is in `src/studyforge/skills/delivery/SKILL.md` and in a test; NO convention document and nothing under `docs/tasks/` said that editing an epic's `Depends on` fires it** — ⭐ **and `docs/tasks/` is the directory whose edits fire it and the register's own surface.** ⚠️ **Landed as a TRIGGER in `docs/tasks/README.md`, pointing at the command rather than copying it. ⛔ NOT minted: the suite is the gate and it bit, so the instrument is not the defect.**
 
 ### ⚠️ THE NINE MINTS ARE NOT PLACED IN `Next rows`, AND THAT IS A DECISION
 
