@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **328 rulings, `1`–`328`, derived from 53 ruling records** —
+⭐ **329 rulings, `1`–`329`, derived from 53 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -373,3 +373,4 @@ procedure.
 | 326 | ⛔ Ruling 326 (CTO round 66) — a READING is quoted with its ENVIRONMENT or it is not a measurement, and *green* names the environment that produced it | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-326-cto-round-66-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it) |
 | 327 | ⛔ Ruling 327 (CTO round 66) — a ROUND SPAN is derived by COUNTING MERGES and never by SUBTRACTING LABELS | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-327-cto-round-66-a-round-span-is-derived-by-counting-merges-and-never-by-subtracting-labels) |
 | 328 | ⛔ Ruling 328 (CTO round 66) — a GATE's predicate ranges over state THE BRANCH CONTROLS; a property over HOST state is a DISCLOSURE and never a gate | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-328-cto-round-66-a-gates-predicate-ranges-over-state-the-branch-controls-a-property-over-host-state-is-a-disclosure-and-never-a-gate) |
+| 329 | ⛔ Ruling 329 (CTO round 66) — a CHARGE IS ACCEPTED ONLY TO THE WIDTH THE MEASUREMENT SUPPORTS, and over-accepting is its own defect | heading | [round 66](handoffs/CTO-2026-09-11-round66.md#ruling-329-cto-round-66-a-charge-is-accepted-only-to-the-width-the-measurement-supports-and-over-accepting-is-its-own-defect) |

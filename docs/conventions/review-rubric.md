@@ -5597,3 +5597,29 @@ tree can move a `verify` reading — ⭐ and the branch-controlled restatement i
 the one to use: `workspace.json` RECORDS the component present at a named commit, which is a
 file the branch owns and which `docs/conventions/workspace.md` already requires in the commit
 that creates the component.**
+
+### ⛔ Ruling 329 — a CHARGE IS ACCEPTED ONLY TO THE WIDTH THE MEASUREMENT SUPPORTS, and over-accepting is its own defect
+
+⭐ **Quoted rather than paraphrased** (Ruling 195), from the office the charge was against:
+
+> ⛔ **Over-accepting a charge is its own defect: a coordinator who takes a wider charge than
+> the measurement supports has stopped measuring in the other direction.**
+
+⛔ **THIS IS RULING 325'S MIRROR AND THE PAIR IS THE RULE.** ⚠️ **325 binds the office ISSUING
+a charge — open the charged instrument first. 329 binds the office RECEIVING one — accept it
+only as wide as the measurement reaches.** ⭐ **A project holding only 325 trades false charges
+for inflated confessions, and an inflated confession corrupts the record exactly as a false
+charge does.**
+
+```bash
+# Pass: each clause of an accepted charge is re-measured, and the acceptance is
+# narrowed to the clauses that survive. A partially-true charge is accepted IN PART
+# and the refused part is named, with its reading.
+```
+
+⛔ **MEASURED, CTO round 66:** a reviewer charged a coordinator with two wrong line citations;
+the coordinator re-measured, found `:263` wrong and `:276` RIGHT, and refused the half the
+measurement did not support — ⭐ **with `md5sum` over the file at three refs first, so *we were
+reading different trees* was eliminated before either office argued.** ⚠️ **The arm nobody is
+incentivised to run is the one the charge is AGAINST running it, which is why this is a ruling
+and not a habit.**
