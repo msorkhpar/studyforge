@@ -32,33 +32,12 @@ LEAST_PATHS_PROBED = 30
 
 
 @pytest.fixture(scope="module")
-def found(tmp_path_factory):
-    # ⛔ **The census runs with its working directory OUTSIDE the checkout, and
-    # that is containment rather than tidiness.** This harness calls every
-    # public callable in `src/` with filler arguments, and `fillers.filler_for`
-    # answers a `Path` parameter with the RELATIVE `Path("alpha")` — so any
-    # public writer whose path parameter is not the one being poisoned writes
-    # into whatever directory pytest happens to be in.
-    #
-    # ⚠️ Measured twice, in the tree, by two different offices: `SF-17/11` (a
-    # file named `alpha` in the repository root, which then changed what an
-    # UNRELATED module's probe refused and turned that module RED) and
-    # `SF-28/2` (an untracked `alpha/alpha` after a full suite run, with
-    # nothing failing and nothing reporting it). Both were closed one package
-    # at a time, by that package refusing something.
-    #
-    # ⛔ Everything else escapes today by LUCK and not by design: an audit hook
-    # over this census at `abee048` recorded eight public callables attempting
-    # a write, every one of them saved only by the poison being an absolute
-    # path the process cannot create. One relative filler in the wrong slot
-    # undoes that. This line is what makes it structural instead.
-    #
-    # ⭐ It is not the whole answer — the census can still write outside the
-    # tree, and a test elsewhere can still write inside it. `conftest.py` is
-    # the net that knows nothing about writers; this is the containment for the
-    # one harness that is KNOWN to call them.
-    with contextlib.chdir(tmp_path_factory.mktemp("census-cwd")):
-        return census("studyforge")
+def found():
+    # ⛔ **No `chdir` here, and that is the containment having moved, not gone.**
+    # Every call the census makes now runs in a directory the harness mints and
+    # can write nowhere else (`tests/emission/containment.py`, `W217`) — which
+    # also keeps `SF-17/11`'s relative `Path("alpha")` out of the checkout.
+    return census("studyforge")
 
 
 # --------------------------------------------------------------------------
@@ -80,6 +59,21 @@ def test_no_refusal_reproduces_a_directory_it_was_handed(found):
     # entry point that turns a `Path` into a `where` passes `path.name`; four
     # docstrings said so and nothing tested it. This does.
     assert found.path_echoes == [], "\n" + found.report()
+
+
+def test_no_call_writes_anywhere_the_harness_does_not_own(found):
+    # ⛔ `W217`. The population is every audited write to any path, not one
+    # directory: a guard scoped to `/home` would be `W209`'s repository scoping
+    # one level out. An escape is refused as well as reported, so this failing
+    # never leaves the file behind.
+    assert found.contained.escapes == [], "\n" + found.report()
+
+
+def test_the_containment_saw_the_writers_it_contains(found):
+    # ⛔ Ruling 191. The framework has public writers, and the census hands
+    # them the poison; an armed hook that counted none of those refusals has
+    # stood down, and would pass the test above forever.
+    assert found.contained.refused > 0, found.report()
 
 
 # --------------------------------------------------------------------------
@@ -179,18 +173,23 @@ def test_the_filler_really_does_hand_a_writer_a_relative_path(tmp_path):
     # ⛔ THE PLANT, and it is `SF-17/11` reduced to its shape rather than a
     # story about it. `out` is a `Path` and `note` is the only `str`, so
     # `_probe_strings` poisons `note` and FILLS `out` — with `Path("alpha")`,
-    # which resolves against the working directory. A public callable of this
-    # shape is one commit away at any time; Developer 1's new entry point is
-    # exactly this shape.
+    # which resolves against the working directory.
     #
-    # ⚠️ The assertion is that the file IS written. A test asserting it is not
-    # would be asserting the framework has no writers, which is false and
-    # would go stale the moment one is added.
+    # ⚠️ The assertion is that the file IS written — into the directory the
+    # harness minted for that one call, which is gone once it returns — and
+    # neither where the caller stood nor in the checkout.
+    landed: list[tuple[Path, bool]] = []
+
     def emit(out: Path, note: str) -> None:
         out.write_text(note, encoding="utf-8")
+        landed.append((out.resolve(), out.is_file()))
 
     with contextlib.chdir(tmp_path):
-        probe_callable(emit, "a writer invented inside a test")
+        found = probe_callable(emit, "a writer invented inside a test")
 
-    assert (tmp_path / "alpha").is_file()
+    [(where, written)] = landed
+    assert written
+    assert not where.exists()
+    assert found.contained.landed == 1
+    assert not (tmp_path / "alpha").exists()
     assert not (repository_root() / "alpha").exists()

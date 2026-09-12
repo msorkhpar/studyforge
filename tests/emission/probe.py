@@ -24,6 +24,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path, PurePath
 
+from tests.emission.containment import Tally, contained
 from tests.emission.fillers import UNFILLABLE, filler_for
 
 #: ⛔ **Synthetic, and that is not a detail.** A fixture carrying this
@@ -36,6 +37,11 @@ POISON = "/" + "home/example/material/private-corpus"
 #: The directory half of the poison, for the path probe. Every component of it
 #: is forbidden in a refusal; only the final filename may appear.
 POISON_DIRECTORY = "/" + "home/example/material"
+
+#: The fictional home both poisons live under. ⛔ The harness invented it and
+#: hands it out, so a write aimed into it is refused and counted rather than
+#: reported (`tests/emission/containment.py`, `W217`).
+POISON_ROOT = "/" + "home/example"
 
 #: ⛔ **The parameters a refusal exists to reproduce, excluded by construction
 #: rather than by an allow-list** (Ruling 13, condition 3).
@@ -105,6 +111,7 @@ class Census:
     accepted: int = 0
     path_probes: int = 0
     path_echoes: list[Echo] = field(default_factory=list)
+    contained: Tally = field(default_factory=Tally)
 
     def report(self) -> str:
         """A one-screen summary, printed into any failure this check causes."""
@@ -116,7 +123,12 @@ class Census:
             f"{self.accepted} probe(s) were accepted — a callable with no refusal "
             f"on that parameter emits nothing",
             f"{len(self.unreached)} probe(s) crashed before any refusal ran (coverage)",
+            f"{self.contained.landed} write(s) landed in directories the harness minted; "
+            f"{self.contained.refused} refused inside the poison's namespace; "
+            f"{self.contained.spawns} process start(s) refused",
+            f"{len(self.contained.escapes)} write(s) aimed outside anything the harness owns",
         ]
+        lines += [f"  - {escape}" for escape in sorted(self.contained.escapes)]
         lines += [f"  - {echo}" for echo in sorted(self.echoes)]
         lines += [f"  - {echo}" for echo in sorted(self.path_echoes)]
         return "\n".join(lines)
@@ -224,11 +236,15 @@ def _parameters(obj: object) -> list[inspect.Parameter] | None:
     ]
 
 
-def _call(obj: object, arguments: dict[str, object]) -> BaseException | None:
-    try:
-        obj(**arguments)
-    except BaseException as raised:  # noqa: BLE001 — the message is the subject
-        return raised
+def _call(
+    found: Census, where: str, obj: object, arguments: dict[str, object]
+) -> BaseException | None:
+    """Call `obj` inside a directory the harness mints, and nowhere else (`W217`)."""
+    with contained(found.contained, where, POISON_ROOT):
+        try:
+            obj(**arguments)
+        except BaseException as raised:  # noqa: BLE001 — the message is the subject
+            return raised
     return None
 
 
@@ -300,7 +316,8 @@ def _probe_strings(
         combinations.append([parameter.name for parameter in data])
     for names in combinations:
         found.probed += 1
-        raised = _call(obj, _arguments(parameters, hints, dict.fromkeys(names, POISON)))
+        arguments = _arguments(parameters, hints, dict.fromkeys(names, POISON))
+        raised = _call(found, where, obj, arguments)
         label = "+".join(names)
         if raised is None:
             # ⭐ Not a blind spot. A predicate or a constructor that validates
@@ -333,6 +350,7 @@ def _probe_paths(
         if not _admits(annotation, PurePath):
             continue
         found.path_probes += 1
-        raised = _call(obj, _arguments(parameters, hints, {parameter.name: poisoned}))
+        arguments = _arguments(parameters, hints, {parameter.name: poisoned})
+        raised = _call(found, where, obj, arguments)
         if raised is not None and POISON_DIRECTORY in str(raised):
             found.path_echoes.append(Echo(where, parameter.name, str(raised)))
