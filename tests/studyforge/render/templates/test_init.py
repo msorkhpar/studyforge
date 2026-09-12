@@ -41,6 +41,7 @@ MULTI_LINE = (
     "section.html",
     "pending-practices.html",
     "player.html",
+    "narration-gap.html",
     "read-mark.html",
 )
 

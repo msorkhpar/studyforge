@@ -84,6 +84,11 @@ PENDING_TEMPLATE = "pending-practices.html"
 #: open — see this module's docstring.
 PLAYER_TEMPLATE = "player.html"
 
+#: The panel that says this unit was narrated and some of its audio is not on
+#: disk. ⛔ Inside the player's own region rather than a slot of its own, so the
+#: notice and the transport it explains cannot arrive separately.
+NARRATION_GAP_TEMPLATE = "narration-gap.html"
+
 #: What separates two rendered sections, and what closes an optional region.
 JOIN = "\n"
 
@@ -136,7 +141,7 @@ def compose(
             body=body,
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),
-            player=_region(player(body)),
+            player=_region(player(body, narration)),
             nav=_region(navigation.between_units(links)),
         )
         + TRAILING_NEWLINE
@@ -210,14 +215,45 @@ def pending(document: dict) -> str:
     return templates.fill(PENDING_TEMPLATE, count=escape(count))
 
 
-def player(body: str) -> str:
+def player(body: str, narration: Narration = SILENT) -> str:
     """Return the narration transport, or `''` when this page has nothing to play.
 
     ⛔ **Derived from the body, never from a document field** — see this
     module's docstring for why the gate is here rather than in a key `SF-12`
-    would have had to invent one milestone early.
+    would have had to invent one milestone early. ⭐ **The derivation survived
+    `W202`'s Q4 unchanged**, and that is the payoff for writing it as one: a
+    promised clip that is not on disk emits an *empty* `AUDIO_ATTRIBUTE`, so the
+    body carries the attribute and the transport arrives with no new gate.
+
+    ⚠️ The gap notice rides inside this region rather than in a slot of its own,
+    so a page can never say *"some narration is missing"* with no transport to
+    say it about.
     """
-    return templates.fill(PLAYER_TEMPLATE) if AUDIO_ATTRIBUTE in body else ""
+    if AUDIO_ATTRIBUTE not in body:
+        return ""
+    return templates.fill(PLAYER_TEMPLATE, gap=_region(narration_gap(narration)))
+
+
+def narration_gap(narration: Narration) -> str:
+    """Return the panel naming this page's unkept narration promises, or `''`.
+
+    ⛔ **Empty is the ordinary answer and it is the whole product decision**
+    (`W202` Q4): a corpus that was never narrated is COMPLETE, not short (§7's
+    C5, §11.0), so it carries no notice — while a corpus whose audio broke says
+    so. ⚠️ Before this the two rendered identically.
+
+    ⭐ The count is composed here and the explanation is in the template, which
+    is `pending`'s split exactly: a number is not prose, and prose a reader sees
+    is a file (R13).
+    """
+    absent = len(narration.missing)
+    if not absent:
+        return ""
+    count = (
+        f"{absent} of {narration.promised} narrated passages on this page have no "
+        f"audio file on disk."
+    )
+    return templates.fill(NARRATION_GAP_TEMPLATE, count=escape(count))
 
 
 def _region(markup: str) -> str:

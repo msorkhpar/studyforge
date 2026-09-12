@@ -173,6 +173,29 @@ def test_the_three_honest_states_each_have_their_own_sentence(state):
     assert len(match.group(1)) > 40, f"the {state} sentence is a label, not an explanation"
 
 
+def test_the_nothing_to_play_sentence_does_not_claim_the_unit_was_never_narrated():
+    # ⛔ **`W202` Q4, at the one sentence that could still undo it.** After the
+    # promise states landed, a page reaches this transport ONLY when a narration
+    # record exists — a corpus nobody ever narrated emits no passage at all and
+    # this part returns before unhiding anything. ⚠️ So *"no audio has been
+    # generated for this unit yet"* became a sentence that can only be FALSE when
+    # it is shown, and it is the exact conflation this row was dispatched to
+    # remove: the reader is told the unit was never narrated when in fact its
+    # clips went missing.
+    #
+    # ⭐ **PLANT `P14`.** Reverting the wording was caught only by the committed
+    # goldens, which the next person regenerates without knowing why they moved.
+    # This states the intent, so the wording has a reason rather than a hash.
+    match = re.search(r'data-state="none" hidden>([^<]+)<', player_markup())
+    assert match, "no sentence for the none state"
+    sentence = match.group(1)
+    assert "never" not in sentence.lower()
+    assert "has been generated" not in sentence, (
+        "the transport tells the reader nothing was narrated, in the one state "
+        "that is only reachable when something WAS"
+    )
+
+
 def test_the_play_button_carries_both_of_its_faces_rather_than_being_relabelled():
     # ⚠️ A button whose label the script types is a button in one language. Both
     # faces are markup and the script only unhides one, which is `read-mark.html`'s
