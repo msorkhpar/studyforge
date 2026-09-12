@@ -33,10 +33,12 @@ from tools.quality.board.contradiction import (
 from tools.quality.board.observation import NOT_STARTED, STAND_INS, STARTED, read
 from tools.tests.quality.board.support import (
     BIDIRECTIONAL,
+    PLANT,
     RENAMED,
     THE_CHECKOUT_CELL,
     THREE_HUNDRED_AND_FIFTY,
     board,
+    plant_a_contradiction,
     rules,
 )
 
@@ -53,11 +55,90 @@ def test_live_no_row_on_this_board_contradicts_itself() -> None:
     be pinning today's board, and the day the PO corrects a cell the test would
     go red for the tree being RIGHT (Ruling 190's shape). ⭐ `check_board`'s own
     live reading is `test_init.py`'s, which is where a board defect belongs.
+
+    ⚠️ **THIS ARM IS VACUOUS AT ZERO STARTED ROWS AND IS NO LONGER SKIPPED FOR
+    IT** (`W188`) — ⭐ the guard that makes the silence mean something is the next
+    test, which runs at EVERY population including zero.
     """
     text = (repository_root() / BOARD).read_text(encoding="utf-8")
-    if not [row for row in read(text).rows if row.started]:
-        pytest.skip("no row of this board's observation table declares a started state")
     assert [f for f in observation_findings(text) if f.rule == RULE_INFLIGHT] == []
+
+
+def test_live_the_contradiction_rule_is_ARMED_at_WHATEVER_population() -> None:
+    """⛔ `W188`: the moved exit code, so a pass needs BOTH the silence and the guard.
+
+    ⚠️ **MEASURED at `35bf14e`, and it is why this test exists:** the live board's
+    observation table carried rows and **`0` of them declaring a started state** —
+    ⛔ **the state a register leaves at the END OF EVERY WAVE once it has closed
+    everything** — so the arm above `pytest.skip`ped, and the live contradiction
+    check was DISARMED at the exact moment the board is rewritten most heavily,
+    re-arming only when the next wave dispatched.
+
+    ⛔ **THE CURE IS NOT `assert the population is non-empty`.** ⚠️ `W147` measured
+    that twice, once per table: `assert table.rows` and `assert schedule.rows`
+    each went RED on a CORRECT board — a round that closes the last row and
+    honestly records *nothing is in flight* — which is `W119`'s class. ⭐ **An
+    empty in-flight table genuinely owes no contradiction check; what it does NOT
+    excuse is a green that cannot tell an empty board from a broken reader.** So
+    the contradiction is spliced into the LIVE board's own bytes and the rule
+    must speak.
+
+    ⭐ **Form-independent by construction**: the planted row is laid out from the
+    board's OWN declaring header, so the register renaming, reordering or ADDING
+    a column cannot silently defuse this guard — ⛔ and a declared block with no
+    readable header raises instead of passing, because that is
+    `board-unreadable`'s subject and is asserted on its own two tests down.
+    """
+    text = (repository_root() / BOARD).read_text(encoding="utf-8")
+    planted = observation_findings(plant_a_contradiction(text))
+    found = [f for f in planted if f.rule == RULE_INFLIGHT]
+    assert len(found) == 1, (
+        f"⛔ a started row naming no checkout and counting 0 ahead was spliced into "
+        f"this board's own `<!-- inflight -->` block and `{RULE_INFLIGHT}` did not fire "
+        f"exactly once. ⭐ Live population: {observation_reading(text)}"
+    )
+    assert PLANT in found[0].message, (
+        "⛔ the finding must name the PLANTED row, or the guard is borrowing its pass "
+        "from a real row of the live board"
+    )
+
+
+UNDECLARED = "declaring NO state this vocabulary carries"
+
+
+def test_live_the_reading_TELLS_A_CLOSED_WAVE_APART_FROM_AN_UNREADABLE_STATE_CELL() -> None:
+    """⛔ `W188`, the SIBLING: `0 declaring a started state` had two causes and named neither.
+
+    ⚠️ **MEASURED at `35bf14e`: every row of the live observation table read
+    `declared = None`** — the register writes `MERGED` in the State cell and the
+    closed vocabulary carries `done`. ⛔ **So the reading that made the check skip
+    was not *the wave is closed*; it was *no cell was understood*, and the two
+    printed the same number.**
+
+    ⭐ **The count is DERIVED here, never pinned** (Ruling 186): the register owns
+    the board's form and the day it writes `done` this reads `0` without an edit.
+    ⛔ **And it is PRINTED, NOT FLAGGED** — the register table asserts
+    `undeclared == []` live (`test_register.py`) and the scheduled table asserts a
+    state on every row (`test_scheduled.py`); ⚠️ **the observation table is the one
+    of the three with NO such arm, and adding one today would go RED for the board
+    being in a state its OWNER chose.** ⭐ That flag is the register's to ask for;
+    the reading is this package's to owe.
+    """
+    text = (repository_root() / BOARD).read_text(encoding="utf-8")
+    undeclared = sum(1 for row in read(text).rows if row.declared is None)
+    assert f"{undeclared} {UNDECLARED}" in observation_reading(text)
+
+
+def test_the_UNDECLARED_count_is_asserted_in_BOTH_directions() -> None:
+    """⛔ R12: a cell the vocabulary carries must NOT be counted, and one it does not MUST be."""
+    known = board("| `W42` | Dev | none | 0 | in flight |\n", delimited=True)
+    unknown = board("| `W42` | Dev | none | 0 | ✅ **MERGED** `430363b` |\n", delimited=True)
+    assert f"0 {UNDECLARED}" in observation_reading(known)
+    assert f"1 {UNDECLARED}" in observation_reading(unknown)
+    assert observation_findings(unknown) == [], (
+        "⛔ PRINTED, NOT FLAGGED (Ruling 179) — a cell outside the vocabulary is the "
+        "register's form to choose, and a rule firing on it would fire on correct work"
+    )
 
 
 def test_live_the_reading_NAMES_the_locator_the_blocks_and_the_stand_in() -> None:

@@ -21,7 +21,7 @@ rows that were correct (Ruling 130, and Ruling 179's cost).
 
 from __future__ import annotations
 
-from tools.quality.board.observation import INFLIGHT_CLOSE, INFLIGHT_OPEN
+from tools.quality.board.observation import INFLIGHT_CLOSE, INFLIGHT_OPEN, _columns
 from tools.quality.report import Finding
 
 #: The observation table's header, verbatim from every In-flight table this board
@@ -84,3 +84,57 @@ def board(
 def rules(findings: list[Finding]) -> list[str]:
     """The rule codes of `findings`, sorted, so a reading is compared as a SET of rules."""
     return sorted(finding.rule for finding in findings)
+
+
+#: ⛔ **The subject of the row `plant_a_contradiction` splices in** — a `W` id no
+#: board has ever carried, so a finding naming it CANNOT be a live row's and the
+#: guard cannot borrow a pass from real work.
+PLANT = "W0"
+
+
+def plant_a_contradiction(text: str) -> str:
+    """Splice ONE contradicting row into `text`'s OWN `<!-- inflight -->` block.
+
+    ⛔ **This is the moved exit code for `W188`.** ⚠️ The live contradiction arm
+    used to `pytest.skip` when no row declared a started state — ⭐ **which is
+    exactly the state a register leaves at the END OF EVERY WAVE**, so the check
+    was disarmed at the moment the board is rewritten most heavily and re-armed
+    only when the next wave dispatched. ⛔ **Asserting the population non-empty
+    instead would go RED on a correctly closed board** — `W147`'s measured cost,
+    twice paid, once per table — ⭐ **so what is asserted at zero is that the
+    instrument would have SPOKEN, and the pass then needs BOTH the silence and
+    the guard.**
+
+    ⭐ **The row is built from the board's OWN declaring header rather than from a
+    fixed five-cell layout**, so it survives the register renaming, reordering or
+    ADDING a column — ⛔ which is `_columns`'s stated promise, EXERCISED here
+    rather than trusted.
+    """
+    lines = text.splitlines(keepends=True)
+    inside = False
+    roles: dict[str, int] | None = None
+    close: int | None = None
+    for index, line in enumerate(lines):
+        stripped = line.strip()
+        if stripped == INFLIGHT_OPEN:
+            inside, roles = True, None
+        elif stripped == INFLIGHT_CLOSE:
+            if roles is not None:
+                close = index
+                break
+            inside = False
+        elif inside and roles is None:
+            roles = _columns(line)
+    if roles is None or close is None:
+        raise AssertionError(
+            "⛔ no `<!-- inflight -->` block of this text DECLARES the observation "
+            "columns and CLOSES, so no contradiction can be planted into it. ⭐ That is "
+            "`board-unreadable`'s subject, asserted separately, and it must not read as "
+            "an armed guard here."
+        )
+    row = ["plant"] * (max(roles.values()) + 1)
+    row[roles["subject"]] = f"`{PLANT}`"
+    row[roles["checkout"]] = "none"
+    row[roles["ahead"]] = "0"
+    row[roles["state"]] = "in flight"
+    return "".join(lines[:close] + ["| " + " | ".join(row) + " |\n"] + lines[close:])

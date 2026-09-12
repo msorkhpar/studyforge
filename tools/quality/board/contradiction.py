@@ -220,6 +220,20 @@ def observation_reading(text: str) -> str:
     ⭐ **And `W111` adds the third case the locator could not distinguish:** a board
     that DECLARED a block this package could not read says so, by line, in the same
     sentence as the locator that answered.
+
+    ⛔ **`W188` adds the FOURTH, and it is the one that was disarming the live
+    check.** ⚠️ **`0 declaring a started state` had TWO causes a reader could not
+    tell apart**: a wave the register honestly closed, and rows whose State cell
+    declares a word this package's closed vocabulary does not carry — ⭐ **measured
+    at `35bf14e`: every row of the live observation table read `declared = None`,
+    because the register writes `MERGED` where `STATES` carries `done`.** ⛔ **Both
+    read `0 started`, and the second is `NONE FOUND` one column over.**
+
+    ⭐ **PRINTED, NOT FLAGGED (Ruling 179).** ⚠️ The register table asserts
+    `undeclared == []` live and the scheduled table asserts a state on every row —
+    ⛔ **the observation table can assert neither today without going RED for the
+    board being in a state its owner chose**, so what this package owes is the
+    READING, and the flag is the register's to ask for.
     """
     table = read(text)
     rows = table.rows
@@ -238,6 +252,8 @@ def observation_reading(text: str) -> str:
         f"observations ({table.locator}, Ruling 189(b), no git): {len(rows)} rows, "
         f"{sum(1 for row in rows if row.ids)} naming a `W` row id, "
         f"{sum(1 for row in rows if row.started)} declaring a started state, "
+        f"{sum(1 for row in rows if row.declared is None)} declaring NO state this "
+        f"vocabulary carries (`W188`, printed not flagged), "
         f"{sum(1 for row in rows if row.started and row.observes_a_checkout)} with a checkout, "
         f"{sum(1 for row in rows if row.started and (row.commits or 0) > 0)} ahead; "
         f"{locator_reading(table)}; "
