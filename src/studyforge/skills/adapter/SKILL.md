@@ -16,15 +16,14 @@ in the wrong skill and the manifest is incomplete.
 ⛔ **Done is a machine's answer, not a person's.**
 
 ```
-python3 -m studyforge.validate <corpus-root>   # 0, or a named list of what is wrong
+studyforge validate <corpus-root>   # 0, or a named list of what is wrong
 ```
 
-> ⚠️ **A note on the spelling.** The design documents and the prose below write
-> this seam as `studyforge validate`, which is R2's name for it. That console
-> entry point is **not built yet** — `pyproject.toml` declares no
-> `[project.scripts]`, and says why: it belongs to `SF-28`. So the fenced
-> spelling above is the one that runs today, and ⛔ **every fenced line in this
-> skill is written the way it actually runs.** An agent executes a fence.
+> ⚠️ **A note on the spelling.** This is R2's name for the seam and it is the
+> installed command, registered by `pyproject.toml`. ⭐ `docs/authoring/` gives
+> the module form that reaches the same code from a checkout nobody installed.
+> ⛔ **Every fenced line in this skill is written the way it actually runs.** An
+> agent executes a fence.
 
 ⭐ Everything in this procedure exists to make that command reachable by
 somebody who has never read the framework's internals. **Measured at

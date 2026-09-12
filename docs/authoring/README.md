@@ -29,11 +29,11 @@ by rule — every single thing that is wrong. Not the first thing. Every thing.
 no plugin to write, no framework API your code has to call. If it exits `0`,
 you are done, and nobody's opinion enters into it.
 
-> **A note on the command's spelling.** The design documents write this as
-> `studyforge validate`. That console entry point is not built yet, so the
-> spelling above — `python3 -m studyforge.validate` — is what runs today, and
-> every command in this reference is written the way it actually runs. See
-> [What `validate` checks](validate.md) for the rest.
+> **A note on the command's spelling.** Both spellings run the same code.
+> `studyforge validate` is the installed command; `python3 -m
+> studyforge.validate` reaches it from a checkout you have not installed, and
+> that is the form this reference uses so every command here works before you
+> install anything. See [What `validate` checks](validate.md) for the rest.
 
 ---
 

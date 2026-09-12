@@ -117,7 +117,7 @@ other file in the corpus is downstream of it and is generated.
 
 ```
 python3 -m ingest . <ingested-date>
-python3 -m studyforge.validate .
+studyforge validate .
 ```
 
 ⭐ **Exit 0 is the whole agreement.** ⛔ Not a shape somebody agreed looked
@@ -133,11 +133,12 @@ nowhere here. ⚠️ **Every other `python3 -m` form on this page is the framewo
 and is asserted runnable**, so a typo in one of them fails a check rather than
 reaching a reader.
 
-> ⚠️ **A note on the spelling.** The seam is named `studyforge validate` in the
-> design documents and in prose. That console entry point is **not built yet**
-> — `pyproject.toml` declares no `[project.scripts]`, and says why: it belongs
-> to `SF-28`. ⛔ **The fenced form above is the one that runs**, because an
-> agent executes a fence rather than reading it.
+> ⚠️ **A note on the spelling.** `studyforge validate` is the installed
+> command, registered by `pyproject.toml`, and it is the seam's name in the
+> design documents and in prose. ⭐ `docs/authoring/` gives the module form that
+> reaches the same code from a checkout nobody installed. ⛔ **The fenced form
+> above is the one that runs**, because an agent executes a fence rather than
+> reading it.
 
 ### 6. If it was the wrong repository, take it back out
 

@@ -1,4 +1,4 @@
-"""`python3 -m studyforge.validate` — the command, before SF-28 registers it.
+"""`python3 -m studyforge.validate` — the `validate` verb, run without installing.
 
 ⚠️ One implementation: this module is four lines on top of `cli.main`, so the
 module entry point and the installed console script cannot come to disagree

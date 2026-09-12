@@ -370,3 +370,64 @@ def declared_pythonpath() -> str:
     entries = config["tool"]["pytest"]["ini_options"]["pythonpath"]
     assert entries, "pyproject.toml declares no pythonpath"
     return os.pathsep.join(entries)
+
+
+def console_scripts() -> dict[str, str]:
+    """`[project.scripts]`, read from `pyproject.toml` — the ground of the derivation.
+
+    ⛔ Asserted non-empty. Ruling 157 converted the check above this one rather
+    than deleting it, and a converted check whose population can silently
+    become empty is the deletion wearing a different name.
+    """
+    config = tomllib.loads((repository_root() / "pyproject.toml").read_text("utf-8"))
+    scripts = config.get("project", {}).get("scripts", {})
+    assert scripts, "pyproject.toml registers no console script; the derivation has no ground"
+    return scripts
+
+
+def registered_verbs() -> dict[str, frozenset[str]]:
+    """Each installed command mapped to the verbs it registers.
+
+    ⛔ **Derived, never listed here.** The script name and its target come from
+    `[project.scripts]`; the verbs come from the target module's own `VERBS`.
+    A verb retired in the dispatcher is retired here in the same commit, which
+    is the property a list in this file could not have.
+    """
+    found: dict[str, frozenset[str]] = {}
+    for name, target in sorted(console_scripts().items()):
+        module_name = target.partition(":")[0]
+        module = importlib.import_module(module_name)
+        verbs = getattr(module, "VERBS", None)
+        assert verbs, f"{module_name} registers no verbs, so `{name} <verb>` provides nothing"
+        found[name] = frozenset(verbs)
+    return found
+
+
+def offered_verbs(pages: dict[str, str]) -> list[tuple[str, str, str]]:
+    """Every fenced line giving an installed command, as (page, command, verb).
+
+    ⚠️ The verb is `""` when a fence gives the bare command with no verb after
+    it, which is not something the tree provides either.
+    """
+    commands = sorted(registered_verbs())
+    found: list[tuple[str, str, str]] = []
+    for page, text in sorted(pages.items()):
+        for body in fences(text, ""):
+            for raw in body.splitlines():
+                line = raw.strip()
+                for command in commands:
+                    if line != command and not line.startswith(f"{command} "):
+                        continue
+                    rest = line[len(command) :].split()
+                    found.append((page, command, rest[0] if rest else ""))
+    return found
+
+
+def assert_fenced_commands_are_registered(pages: dict[str, str]) -> None:
+    """⛔ Every fenced `<command> <verb>` names a verb the tree actually installs."""
+    registered = registered_verbs()
+    for page, command, verb in offered_verbs(pages):
+        assert verb in registered[command], (
+            f"{page} offers {command!r} with the verb {verb!r}, and "
+            f"[project.scripts] registers no such verb"
+        )

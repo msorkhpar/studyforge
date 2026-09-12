@@ -1,4 +1,4 @@
-"""`python3 -m studyforge.cli.plan` — the command, before SF-28 registers it.
+"""`python3 -m studyforge.cli.plan` — the `plan` verb, run without installing.
 
 ⚠️ One implementation: this module is four lines on top of `cli.main`, so the
 module entry point and the installed console script cannot come to disagree

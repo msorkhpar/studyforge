@@ -5,9 +5,15 @@ from __future__ import annotations
 import importlib.util
 
 import studyforge.validate as validate_package
+from studyforge.cli import PROGRAM, VERBS
 from studyforge.skills import adapter
 from studyforge.skills.adapter import PARTS
 from tests.support import assert_package_contract, repository_root
+
+#: The verb the skill's fence gives. ⛔ Checked against the registered table
+#: rather than assumed, so retiring the verb fails here and not in a reader's
+#: shell.
+VERB = "validate"
 
 SKILL = "src/studyforge/skills/adapter/SKILL.md"
 WHERE = "src/studyforge/skills/adapter"
@@ -32,16 +38,17 @@ def test_the_skill_document_sits_beside_the_code_it_calls():
 def test_the_skill_names_validate_as_its_definition_of_done():
     # ⛔ R2: an adapter's whole obligation is an archive `validate` accepts, and
     # a skill that described a shape instead would be checkable by opinion.
-    # ⛔ W61 / Ruling 138: the command is DERIVED from the module that runs it,
-    # never pinned as a literal. This assertion used to pin
-    # `studyforge validate <corpus-root>` — a console script `pyproject.toml`
-    # deliberately does not declare — so the suite asserted that the skill told
-    # an integrator to run something that would not run. `studyforge validate`
-    # stays R2's name for the seam in prose; a fence is executed, not read.
+    # ⛔ W61 / Ruling 138: the command is DERIVED from what runs it, never
+    # pinned as a literal. ⭐ SF-40 registered the console script, so the fence
+    # is now the installed spelling and the derivation moves with it: the verb
+    # comes from `cli.VERBS` and the program name from `cli.PROGRAM`, both
+    # reached from `[project.scripts]`. Pinning the string here would let the
+    # skill outlive the verb.
     text = skill_text()
     module = validate_package.__name__
     assert importlib.util.find_spec(f"{module}.__main__") is not None, f"{module} is not runnable"
-    assert f"python3 -m {module} <corpus-root>" in text
+    assert VERB in VERBS, f"{VERB!r} is not a registered verb; the skill's fence would not run"
+    assert f"{PROGRAM} {VERB} <corpus-root>" in text
     assert "Done is a machine's answer, not a person's" in text
 
 

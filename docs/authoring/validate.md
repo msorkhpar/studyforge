@@ -11,10 +11,10 @@ fix one problem and run it again to discover the next. A validator that
 reported nine problems out of ten and exited `0` would be worse than none at
 all.
 
-> **Why not `studyforge validate`?** That is the spelling the design documents
-> use, and the console entry point it names is not built yet. `python3 -m
-> studyforge.validate` is what runs today and is what every command on these
-> pages uses.
+> **Why not `studyforge validate`?** That spelling runs too — it is the
+> installed command, and the same code. `python3 -m studyforge.validate`
+> reaches it from a checkout you have not installed, so it is the form every
+> command on these pages uses.
 
 ---
 
