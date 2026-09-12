@@ -61,6 +61,13 @@ ARCHIVE_DIR = "archive"
 #: search.
 RAW_DIR = "raw"
 
+#: The directory under a container that holds each unit's **own** files — the
+#: ones that belong to the unit rather than to one of its variants: its media,
+#: its attachments, and the authored overlay. ⚠️ Re-derived here on exactly the
+#: terms `ARCHIVE_DIR` and `RAW_DIR` are, and pinned behaviourally by the
+#: fixtures rather than by a literal compared against itself.
+UNITS_DIR = "units"
+
 #: What a document file is called. ⛔ The `kind` half is a **closed set** —
 #: `archive.document.KINDS` — and this module refuses anything else rather
 #: than writing a file `validate` will not recognise as a document at all.
@@ -132,6 +139,26 @@ class Layout:
     def unit_dir(self, address: Address | list | tuple, variant: str, unit: int) -> Path:
         """One unit's directory. ⚠️ `unit_name` owns the zero padding, not this module."""
         return self.variant_dir(address, variant) / unit_name(unit)
+
+    def unit_files(self, address: Address | list | tuple, unit: int) -> Path:
+        """One unit's own directory, beside `raw/` rather than inside it.
+
+        ⛔ **Not `unit_dir`, and the difference is the variant.** That one is
+        per *variant* and holds the archive documents; this one is per *unit*
+        and holds everything a unit owns that is not a document:
+
+        - an asset's or attachment's `local` path resolves against it — which
+          is what lets a build find the file a lesson's `<img>` names;
+        - the authored overlay sits in it, as `<address>/units/unit-NN/
+          content.json` (§5's contract table).
+
+        ⚠️ **This is stated here because it was stated nowhere in `src/`.** The
+        two shipped fixtures both use the directory, the spec's contract table
+        names a file inside it, and every reader of it was composing the path
+        for itself — which is the second-authority failure `layout.py` exists
+        to remove.
+        """
+        return self.container_dir(address) / UNITS_DIR / unit_name(unit)
 
     def document(
         self,
