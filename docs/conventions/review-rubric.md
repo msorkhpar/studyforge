@@ -5338,6 +5338,36 @@ to name the environment in the same invocation as the reading is unchanged; what
 identifier discharges it.** ⚠️ **A reading that already quotes a bare tag id is not refuted — its
 environment was pinned — but that sha is DEAD TEXT and may not be compared across offices.**
 
+#### ⛔ Ruling 317(a) — the class is NARROWER than *buildkit digests move*: FOUR digests are exported and exactly TWO of them are provenance-bearing
+
+```bash
+# ⛔ Read all four rather than one, and the stable pair is what an office quotes.
+docker/dev/check python3 -c 'pass' 2>&1 | grep -E 'exporting (config|manifest|attestation manifest|manifest list)'
+# Pass: `exporting config` and `exporting manifest` are IDENTICAL across invocations with the
+#       same pins. `exporting attestation manifest` and `exporting manifest list` are NOT, and
+#       the manifest list moves only BECAUSE it indexes the attestation manifest beside the image.
+# ⛔ `docker image inspect --format '{{.Id}}'` and `docker images` IMAGE ID both report the
+#    MANIFEST LIST under the containerd image store, which is why the tag id is the worst of
+#    the four to quote and is the one an office reaches for first.
+```
+
+⭐ **MEASURED, CTO round 65, TWELVE `docker/dev/check` invocations across five trees, every build
+step `CACHED` and `docker/dev/` untouched throughout:** `exporting config` and `exporting
+manifest` were **byte-identical in all twelve**; `exporting attestation manifest` and `exporting
+manifest list` were **twelve distinct values each**. ⛔ **So the defect is not that a build emits
+unstable digests — it is that TWO of the four carry build-time provenance and the tooling
+surfaces exactly one of those two as the image's identity.** ⚠️ **The developer's own four-run
+reading reached the same conclusion independently and is what prompted this amendment; the
+readings agree at `n = 4` and at `n = 12` and were taken in different checkouts.**
+
+⭐ **AND THE PHANTOM-ID HALF IS NOT CORROBORATED AND STAYS UNCORROBORATED.** ⛔ **Neither office
+can attribute the stray tag id it observed** — mine matches none of my twelve manifest lists,
+theirs matches none of their four — ⚠️ **and the developer DECLINED to confirm it on the ground
+that the reading was taken after an invocation whose build log was not captured.** ⭐ **A near
+match is not a measurement, and an office refusing to corroborate a reviewer's finding for want
+of one log is the behaviour that makes its confirmations worth having** (Ruling 115). ⛔ **The
+clause above does not rest on it: the twelve config-and-manifest readings settle 317 without it.**
+
 ### ⛔ Ruling 318 — a DECLARED SURFACE that cannot reach the row's own named remedy is a defect of the DISPATCH, and the taker discharges the acceptance by REPORTING it
 
 ```bash
