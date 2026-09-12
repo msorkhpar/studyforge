@@ -102,7 +102,7 @@ def test_the_player_is_absent_when_the_body_carries_no_audio():
     # ⛔ At M1 `SF-12` mints no speech id and writes no audio attribute, so the
     # gate is never open and a page carries no transport for nothing.
     assert document_module.player("<p>no audio here</p>") == ""
-    assert '<footer id="player">' not in compose()
+    assert '<footer id="player"' not in compose()
 
 
 def test_the_player_appears_the_moment_the_body_carries_audio():
@@ -110,7 +110,12 @@ def test_the_player_appears_the_moment_the_body_carries_audio():
     # when `SF-18` writes the attribute the transport arrives with it.
     body = f'<p {AUDIO_ATTRIBUTE}="audio/a-1.mp3">spoken</p>'
     markup = document_module.player(body)
-    assert markup.startswith('<footer id="player">')
+    # ⛔ `hidden` is part of the opening tag and is `SF-18`'s: the transport ships
+    # hidden and `narration.js` unhides it once there is something behind it, the
+    # way `read-mark.html` ships its control hidden. With scripting off a reader
+    # is shown nothing rather than a Play button that cannot play, which is the
+    # row's own "no dead control".
+    assert markup.startswith('<footer id="player" hidden>')
     assert '<audio id="narrator"' in markup
 
 

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import copy
 import re
+from pathlib import PurePosixPath
 
 import pytest
 
@@ -35,7 +36,14 @@ FIXTURES = repository_root() / "tests" / "fixtures"
 #: against, and it ships in `VALID` so the whole contract suite sees it.
 SHARED_ORIGIN = FIXTURES / "shared-origin/archive/field-notes/raw/prose"
 
-#: Finds every speech id a rendered page addresses an audio clip by.
+#: Finds every clip href a rendered page addresses its audio by.
+#:
+#: ⛔ **The value is an HREF, not a speech id** — `render/page/assets.py` declares
+#: `AUDIO_ATTRIBUTE` in the module whose whole subject is where a page reaches, and
+#: the id is recovered from the filename through `parse_clip_name` below. ⚠️ This
+#: comment used to be wrong in the other direction and the assertion under it
+#: compared these values to the id set; it never ran, because nothing wrote the
+#: attribute until `SF-18`.
 AUDIO_VALUES = re.compile(re.escape(AUDIO_ATTRIBUTE) + r'="([^"]*)"')
 
 
@@ -169,23 +177,38 @@ def test_every_id_maps_to_exactly_one_clip_and_every_clip_back_to_its_id(name, d
 
 
 def test_every_id_a_rendered_page_addresses_resolves_to_a_clip_and_back():
-    # ⛔ The page half of the clause. ⚠️ SKIPPED today with its reason stated rather
-    # than passed over a population of nothing: `AUDIO_ATTRIBUTE` is declared by
-    # `render/page/assets.py` one milestone before its writer, and no renderer writes
-    # it yet — `SF-18` is the task that does. ⭐ This arms itself the moment it does.
+    # ⛔ The page half of the clause, and it is ARMED — `SF-18` writes the attribute.
+    # ⭐ CONVERTED rather than deleted (Ruling 209's residual), and converted UPWARDS:
+    # the skipped form compared the attribute's values to the set of minted ids, which
+    # only made sense while the attribute was believed to hold an id. It holds an HREF,
+    # so the id is now RECOVERED from the filename through `parse_clip_name` — the
+    # published inverse of the one minter — which is strictly stronger than the
+    # containment it replaced: it proves the page's real file reference parses, that
+    # its id is one this walker mints, and that its digest is the one this walker
+    # would have computed for those exact words.
     pages = sorted((repository_root() / "tests/fixtures/pages").glob("*.unit.html"))
     assert pages, "no golden pages at all; the scan is wrong"
     addressed = sorted(
         value for page in pages for value in AUDIO_VALUES.findall(page.read_text(encoding="utf-8"))
     )
-    if not addressed:
-        pytest.skip(
-            f"no rendered page writes {AUDIO_ATTRIBUTE} yet over {len(pages)} golden page(s) — "
-            f"SF-18 is the renderer that links a clip, and this assertion arms itself then"
+    assert addressed, (
+        f"no rendered page writes {AUDIO_ATTRIBUTE} over {len(pages)} golden page(s); "
+        f"the renderer that links a clip has gone away and this clause has no population"
+    )
+    minted = {clip_name(unit) for _name, document in CASES for unit in speakable_of(document).units}
+    by_name = {}
+    for href in addressed:
+        assert not href.startswith("/") and "://" not in href, (
+            f"a clip is addressed relative to the page it plays on (R8), and this is not: {href}"
         )
-    minted = {unit.id for _name, document in CASES for unit in speakable_of(document).units}
-    assert set(addressed) <= minted
-    assert len(addressed) == len(set(addressed))
+        stem = PurePosixPath(href).stem
+        identifier, digest = parse_clip_name(stem)
+        assert stem in minted, f"the page links a clip this walker never mints: {identifier}"
+        by_name.setdefault(stem, []).append(href)
+    # ⛔ Ruling 187's shape, at the page: two elements addressing one clip is sixteen
+    # passages playing the wrong audio, and every containment check still passes.
+    collided = sorted(name for name, hrefs in by_name.items() if len(hrefs) > 1)
+    assert collided == [], f"two elements on a page address one clip: {collided}"
 
 
 # --------------------------------------------------------------------------

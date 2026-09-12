@@ -66,8 +66,11 @@ def test_both_fixtures_render_against_their_golden_files(case):
     # renderer is the R10 failure; regenerate with
     # `python3 -m tests.studyforge.render.page.pages` once you know which change
     # you made.
+    # ⭐ Through `case.render()` — the ONE producer — so this cannot compare a
+    # golden against a call that differs from the one that wrote it. It did once:
+    # `narration` became an argument the regenerator passed and this line did not.
     assert case.golden.exists(), f"no golden committed for {case.name}"
-    assert page.render(case.document, case.placement) == case.golden.read_bytes()
+    assert case.render() == case.golden.read_bytes()
 
 
 def test_a_page_is_byte_for_byte_stable_across_runs(case):

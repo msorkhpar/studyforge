@@ -53,6 +53,14 @@ from studyforge.render.pageassets.source import text
 #: page column (`PO-22/6`) is exactly that refinement, and at equal specificity
 #: the last rule wins. It comes *before* the highlight part because the
 #: highlight refines the inside of a code block, which no chrome rule reaches.
+#:
+#: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
+#: parts, and both halves of that are meaning too. It comes *after* the
+#: highlight because the narration highlight washes over the inside of a code
+#: block the highlighter has just painted, and at equal specificity the last
+#: rule wins. It comes *before* `plyr.css` because the rule stated above is
+#: unchanged: nothing authored may follow the vendored player theme, or a video
+#: control stops taking its own look.
 STYLE_PARTS = (
     "reset.css",
     "palette.css",
@@ -60,6 +68,7 @@ STYLE_PARTS = (
     "reading.css",
     "chrome.css",
     "code-highlight.css",
+    "narration.css",
     "plyr.css",
     "video-player.css",
 )
@@ -77,12 +86,19 @@ STYLE_PARTS = (
 #: published name with **no existence guard**, so a wrong order fails loudly
 #: instead of shipping a feature that is quietly absent — and it is **LAST**, so
 #: a throw of its own reaches no other part.
+#:
+#: ⭐ `narration.js` needs no library and defines nothing anybody else reads, so
+#: its position is not load-bearing the way the two above are — but it is stated
+#: rather than left to the alphabet like every other entry here. It sits before
+#: `read-mark.js` because that part's LAST-ness is the property being kept, and
+#: after `video-player.js` so the two media parts read together.
 SCRIPT_PARTS = (
     "prism.js",
     "plyr.js",
     "study-progress.js",
     "copy-code.js",
     "video-player.js",
+    "narration.js",
     "read-mark.js",
 )
 

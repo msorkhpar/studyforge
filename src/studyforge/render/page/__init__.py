@@ -124,6 +124,7 @@ from collections.abc import Sequence
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
+from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
 
 #: What a page is written as. ⛔ Stated once: a page written as anything else is
@@ -135,9 +136,11 @@ ENCODING = "utf-8"
 __all__ = [
     "AUDIO_ATTRIBUTE",
     "ENCODING",
+    "SILENT",
     "Crumb",
     "Link",
     "Links",
+    "Narration",
     "PageError",
     "Placement",
     "between_units",
@@ -152,6 +155,7 @@ def render(
     placement: Placement,
     links: Links | None = None,
     trail: Sequence[Crumb] | None = None,
+    narration: Narration = SILENT,
 ) -> bytes:
     """Render one unit page.
 
@@ -159,5 +163,9 @@ def render(
     golden file, written to disk and served is a byte string; handing back text
     would leave the encoding to whoever wrote the file, and R10's guarantee
     would hold everywhere except the one step that matters.
+
+    ⚠️ `narration` is `SILENT` by default, and that default is the reading floor:
+    a corpus with no clips renders exactly as it did before narration existed,
+    with no transport at all (R6, spec §11.0).
     """
-    return compose(document, placement, links, trail).encode(ENCODING)
+    return compose(document, placement, links, trail, narration).encode(ENCODING)

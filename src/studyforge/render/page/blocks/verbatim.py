@@ -76,6 +76,8 @@ def render(
     placement: object = None,
     section: str = "",
     children: str = "",
+    path: tuple[int, ...] = (),
+    narration: object = None,
 ) -> str:
     """Emit the block's text exactly as the archive stored it.
 
@@ -83,6 +85,11 @@ def render(
     reached only because the dispatcher looked `block["type"]` up in a mapping
     whose raw half is this module's `RENDERS`; nothing here inspects a character
     of the payload, and there is no other way in.
+
+    ⛔ **And it is never narrated.** `SPEECH_OF` calls `html` `silent`, which is
+    the only answer available here: this module emits a payload whose elements,
+    if it has any, are the archive's own — so there is nothing for an attribute
+    to be written onto that would not be an edit to a source's markup.
     """
-    del position, placement, section, children
+    del position, placement, section, children, path, narration
     return str(block.get("text") or "")
