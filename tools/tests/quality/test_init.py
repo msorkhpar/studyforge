@@ -10,6 +10,7 @@ from tools.quality.board import board_state, check_board
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
+from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
 from tools.quality.knowledge_index import check_knowledge_index, notices
 from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
@@ -39,6 +40,7 @@ def test_every_check_is_registered():
         check_source_names,
         check_knowledge_index,
         check_handoffs,
+        check_handoff_existence,
         check_pointers,
         check_anchor_collisions,
         check_rulings_index,
@@ -58,6 +60,7 @@ def test_every_notice_is_registered():
         pointer_coverage,
         collision_census,
         board_state,
+        handoff_existence,
         rulings_notice,
         reach_notice,
         lint_notice,
