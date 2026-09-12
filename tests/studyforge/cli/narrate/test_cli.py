@@ -153,3 +153,26 @@ def test_an_unreadable_record_exits_two_without_a_request(tmp_path, monkeypatch)
 
     assert code == UNUSABLE
     assert service.sent == []
+
+
+def test_prune_takes_the_place_of_voice_and_the_two_are_exclusive():
+    # ⛔ W218: one of the two is required, and both is refused — so a narration
+    # run cannot prune and a prune cannot narrate.
+    arguments = build_parser().parse_args(["corpus", "--prune"])
+    assert (arguments.prune, arguments.voice) == (True, None)
+    assert build_parser().parse_args(["corpus", "--voice", VOICE]).prune is False
+    with pytest.raises(SystemExit):
+        build_parser().parse_args(["corpus", "--voice", VOICE, "--prune"])
+
+
+def test_a_prune_over_an_unreadable_record_exits_two_and_touches_nothing(tmp_path):
+    root = a_corpus(tmp_path, "depth1")
+    record = state_file(root)
+    record.parent.mkdir(parents=True, exist_ok=True)
+    record.write_text("[]", encoding="utf-8")
+    before = files(root)
+
+    code, _ = invoke(str(root), "--prune")
+
+    assert code == UNUSABLE
+    assert files(root) == before

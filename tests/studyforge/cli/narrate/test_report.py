@@ -6,7 +6,17 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.cli.narrate.report import NO_SERVICE, exit_code, lines
+from studyforge.cli.narrate.prune import Pruned
+from studyforge.cli.narrate.report import (
+    DEAD,
+    NO_SERVICE,
+    PARTIAL,
+    REFUSED,
+    exit_code,
+    lines,
+    prune_exit_code,
+    prune_lines,
+)
 from studyforge.cli.narrate.stage import Narrated
 from studyforge.narrate.client import Health
 from studyforge.narrate.synth import Synthesis
@@ -83,3 +93,38 @@ def test_the_summary_counts_written_and_fresh_clips():
     assert printed[-1] == (
         "narrated corpus  1 clip(s) written, 2 already synthesised under these conditions"
     )
+
+
+# --------------------------------------------------------------------------
+# ⛔ W193 answer 4, and `--prune`'s own report
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("health", [UP, DOWN])
+def test_the_dead_count_is_printed_on_every_run_zero_included(health):
+    assert f"dead record  0 {DEAD}" in lines(Narrated(health=health), "corpus")
+    printed = lines(Narrated(health=health, dead=("u.gone.b1",)), "corpus")
+    assert f"dead record  1 {DEAD}" in printed
+
+
+def test_a_partial_walk_is_named_and_a_whole_one_prints_no_such_line():
+    assert not any(line.startswith("partial walk") for line in lines(Narrated(health=UP), "c"))
+    printed = lines(Narrated(health=UP, unwalked=("a/unit-01", "a/unit-02")), "c")
+    assert f"partial walk  {PARTIAL}: a/unit-01, a/unit-02" in printed
+
+
+def test_a_refused_prune_names_the_units_and_exits_one():
+    pruned = Pruned(unwalked=("a/unit-02",))
+    assert prune_lines(pruned, "corpus") == ["prune corpus", f"refuse walk  {REFUSED}: a/unit-02"]
+    assert prune_exit_code(pruned) == INVALID
+
+
+def test_a_prune_that_held_an_entry_exits_one_and_a_clean_one_zero(tmp_path):
+    root = tmp_path / "corpus"
+    done = Pruned(deleted=(root / "a" / "audio" / "u.gone.b1-deadbeef.mp3",), forgotten=("x",))
+    printed = prune_lines(done, str(root))
+    assert "delete a/audio/u.gone.b1-deadbeef.mp3" in printed
+    assert str(tmp_path) not in "\n".join(line for line in printed if line.startswith("delete"))
+    assert printed[-1].endswith("1 clip(s) deleted, 1 record entries removed, 0 held")
+    assert prune_exit_code(done) == OK
+    assert prune_exit_code(Pruned(held=(("x", "why"),))) == INVALID

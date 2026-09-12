@@ -22,6 +22,7 @@ from studyforge.narrate.synth.record import (
     Clip,
     Conditions,
     StateError,
+    forget,
     read_state,
     render_state,
     state_file,
@@ -226,3 +227,53 @@ def test_the_fingerprint_comes_from_the_one_minter_and_is_not_a_second_truncatio
     canonical = json.dumps(conditions().document(), sort_keys=True, ensure_ascii=False)
     assert conditions().fingerprint == digest_of(canonical)
     assert "hexdigest" not in (Path(record_module.__file__)).read_text(encoding="utf-8")
+
+
+# --------------------------------------------------------------------------
+# ⛔ W218: `forget` — the smallest removal, and the record keeps one writer
+# --------------------------------------------------------------------------
+
+
+def two_clips() -> dict[str, Clip]:
+    return {**one_clip(), "u2": Clip("u2-bbbbbbbb.mp3", conditions().fingerprint, "k", "k")}
+
+
+def test_forget_removes_only_the_named_entries_and_keeps_the_conditions(tmp_path):
+    record = state_file(tmp_path)
+    write_state(record, two_clips(), conditions(voice="other"))
+
+    assert forget(record, ["u2", "never-recorded"]) == ("u2",)
+
+    assert render_state(one_clip(), conditions(voice="other")) == record.read_text("utf-8")
+
+
+def test_forget_with_nothing_to_remove_writes_nothing(tmp_path):
+    record = state_file(tmp_path)
+    write_state(record, one_clip(), conditions())
+    before = (record.read_bytes(), record.stat().st_mtime_ns)
+
+    assert forget(record, ["absent"]) == ()
+    assert (record.read_bytes(), record.stat().st_mtime_ns) == before
+    assert forget(state_file(tmp_path / "none"), ["u1"]) == ()
+    assert not state_file(tmp_path / "none").exists()
+
+
+@pytest.mark.parametrize(
+    "broken", [[], {"voice": "", "format": FMT}, {"voice": VOICE, "format": FMT, "provides": "2"}]
+)
+def test_forget_refuses_a_record_whose_conditions_it_cannot_carry_over(tmp_path, broken):
+    record = state_file(tmp_path)
+    write_state(record, two_clips(), conditions())
+    payload = json.loads(record.read_text("utf-8"))
+    payload["conditions"] = broken
+    record.write_text(json.dumps(payload), encoding="utf-8")
+    before = record.read_bytes()
+
+    with pytest.raises(StateError):
+        forget(record, ["u2"])
+    assert record.read_bytes() == before
+
+
+def test_forget_refuses_any_file_but_the_one_record(tmp_path):
+    with pytest.raises(StateError):
+        forget(tmp_path / "alpha", ["u1"])

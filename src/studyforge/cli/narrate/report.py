@@ -4,10 +4,11 @@
 `studyforge narrate` prints, and into its exit code.
 
 **How you use it.** `lines(narrated, root)` renders the report;
+`prune_lines(pruned, root)` and `prune_exit_code(pruned)` render `--prune`'s;
 `exit_code(narrated)` is `0` narrated, `1` something the corpus declared could
 not be produced, `2` the tool could not run at all — `cli/site/`'s three.
 
-**Depends on.** `stage.Narrated` for the record's shape, and `validate` for the
+**Depends on.** `stage.Narrated` and `prune.Pruned` for the two shapes, and `validate` for the
 three exit codes, imported rather than respelled. ⛔ No filesystem and no
 network: this module knows what a run said, never how it found out.
 
@@ -26,6 +27,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from studyforge.cli.narrate.prune import Pruned
 from studyforge.cli.narrate.stage import Narrated
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
@@ -43,6 +45,19 @@ RETRY = "the job stopped early; running this command again asks only for what is
 #: What a clip placed under another format says.
 UNSETTLED = "the service answered in another format; this unit will be asked for again"
 
+#: ⭐ `E09` § W193 answer 4 — printed on EVERY run, zero included, so an absent
+#: line is a disclosure that did not run rather than a corpus with none.
+DEAD = "record entries name a speech id this corpus did not produce; --prune deletes their clips"
+
+#: What a walk that missed declared units says, on either request.
+PARTIAL = (
+    "declared units have no material, so this walk is partial and a prune refuses "
+    "until every declared unit is read"
+)
+
+#: ⛔ W193 answer 3: a partial walk refuses BY NAME, and before a file is touched.
+REFUSED = "nothing was deleted: these declared units have no material, so the walk is partial"
+
 
 def exit_code(narrated: Narrated) -> int:
     """`2` no service, `1` anything declared was not produced, `0` otherwise."""
@@ -59,7 +74,7 @@ def lines(narrated: Narrated, root: str) -> list[str]:
     if not narrated.health.reachable:
         out.append(f"refuse service  {NO_SERVICE}")
         out.append(f"detail service  {narrated.health.detail}")
-        return out
+        return out + _disclosure(narrated)
     out.append(f"probe service  {narrated.health.detail}")
     base = Path(root)
     out += [f"wrote {path}" for path in sorted(_relative(item, base) for item in narrated.written)]
@@ -68,9 +83,40 @@ def lines(narrated: Narrated, root: str) -> list[str]:
     out += [f"unsettled {speech_id}  {UNSETTLED}" for speech_id in narrated.unsettled]
     if narrated.stopped:
         out.append(f"stopped service  {narrated.stopped}")
+    out += _disclosure(narrated)
     out.append(
         f"narrated {root}  {len(narrated.written)} clip(s) written, "
         f"{narrated.fresh} already synthesised under these conditions"
+    )
+    return out
+
+
+def _disclosure(narrated: Narrated) -> list[str]:
+    """Return the dead-entry count and the units a partial walk missed — named, never paths."""
+    out = [f"dead record  {len(narrated.dead)} {DEAD}"]
+    if narrated.unwalked:
+        out.append(f"partial walk  {PARTIAL}: {', '.join(narrated.unwalked)}")
+    return out
+
+
+def prune_exit_code(pruned: Pruned) -> int:
+    """`1` refused or anything held, `0` otherwise — ⛔ a refusal is never `0`."""
+    return INVALID if pruned.refused or pruned.held else OK
+
+
+def prune_lines(pruned: Pruned, root: str) -> list[str]:
+    """Return `--prune`'s whole report, one fact per line, paths relative (R7, R10)."""
+    out = [f"prune {root}"]
+    if pruned.refused:
+        out.append(f"refuse walk  {REFUSED}: {', '.join(pruned.unwalked)}")
+        return out
+    base = Path(root)
+    out += [f"delete {path}" for path in sorted(_relative(item, base) for item in pruned.deleted)]
+    out += [f"forget {speech_id}" for speech_id in pruned.forgotten]
+    out += [f"held {speech_id}  {why}" for speech_id, why in pruned.held]
+    out.append(
+        f"pruned {root}  {len(pruned.deleted)} clip(s) deleted, "
+        f"{len(pruned.forgotten)} record entries removed, {len(pruned.held)} held"
     )
     return out
 

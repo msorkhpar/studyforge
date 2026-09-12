@@ -13,12 +13,16 @@ empty too.
 
 from __future__ import annotations
 
+import shutil
+
 import pytest
 
 from studyforge.cli.narrate.stage import narrate_corpus
 from studyforge.generate import BuildError
+from studyforge.generate.declarations import read_corpus
 from studyforge.narrate.client import NarrateClient
 from studyforge.narrate.synth import StateError, state_file
+from tests.studyforge.cli.narrate.plant import narrated, plant_dead_entry
 from tests.studyforge.cli.narrate.service import (
     BASE,
     FMT,
@@ -194,3 +198,36 @@ def test_a_failed_segment_is_reported_and_leaves_no_clip(tmp_path):
 
     assert [speech_id for speech_id, _ in narrated.failed] == [lost]
     assert lost not in clip_ids(new_clips(root, before))
+
+
+# --------------------------------------------------------------------------
+# ⛔ W193 answer 4: the disclosure — a PLANTED entry, and the count that moves
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_a_planted_dead_entry_moves_the_disclosed_count_from_zero_to_one(tmp_path, name):
+    root = narrated(tmp_path, name)
+    assert run(root, FakeService()).dead == (), "the control: a clean corpus discloses none"
+    dead, _ = plant_dead_entry(root)
+
+    assert run(root, FakeService()).dead == (dead,)
+
+
+def test_the_disclosure_is_owed_when_the_service_is_absent_too(tmp_path):
+    root = narrated(tmp_path)
+    dead, _ = plant_dead_entry(root)
+    assert run(root, FakeService(reachable=False)).dead == (dead,)
+
+
+def test_a_walk_that_missed_a_declared_unit_names_it_and_deletes_nothing(tmp_path):
+    root = narrated(tmp_path)
+    missing = read_corpus(root).units[0]
+    shutil.rmtree(missing.directory)
+    before = files(root)
+
+    done = run(root, FakeService())
+
+    assert done.unwalked == (missing.key,)
+    assert done.dead, "every entry of the unit it missed looks dead to this walk"
+    assert files(root) == before
