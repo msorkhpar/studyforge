@@ -183,16 +183,14 @@ def closed_rows(text: str) -> list[tuple[int, str, str]]:
 
 
 def owing(rows: list[tuple[int, str, str]]) -> list[tuple[int, str, str]]:
-    """The closed rows that OWE a task handoff, after both narrowings."""
+    """Return the closed rows that OWE a task handoff, after both narrowings."""
     return [
-        row
-        for row in rows
-        if int(row[1][1:]) > HANDOFF_OWED_FROM and row[2] not in OFFICE_OWNERS
+        row for row in rows if int(row[1][1:]) > HANDOFF_OWED_FROM and row[2] not in OFFICE_OWNERS
     ]
 
 
 def _board(root: Path) -> str | None:
-    """The register's text, or `None` when this tree has no board at all."""
+    """Read the register's text, or `None` when this tree has no board at all."""
     path = root / BOARD
     return config.read_text(path) if path.is_file() else None
 
@@ -227,7 +225,7 @@ def existence_findings(root: Path, declared: set[str]) -> list[Finding]:
 
 
 def existence_lines(root: Path, declared: set[str]) -> list[str]:
-    """The population this arm read, printed whether or not anything is wrong.
+    """Print the population this arm read, whether or not anything is wrong.
 
     ⛔ Ruling 191, and it is the reason this notice ships WITH the check rather
     than after it: the denominator is empty today, and `0 = 0` over an empty
