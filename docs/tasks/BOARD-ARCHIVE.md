@@ -19252,3 +19252,17 @@ grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-desig
 |---|---|---|
 | ⚠️ **`PO-58/16`** | ⚠️ **`[local]`** | ⭐ **MINE.** My `W34` commits-ahead cell was **wrong at its own declared ref**, not merely overtaken — the instrument distinguished the two and I could not have. ⛔ **A cell I wrote from a live `git rev-list` against a release tip that had already moved** |
 | ⛔ **`PO-58/17`** | ⛔ **`[structural]`** | ⛔ **A ROW MERGING MID-ROUND HAS NO DEFINED HANDLING and I invented one twice** — `SF-17`, then `W34`. ⭐ **The register cannot read a merge that has not happened, and with the register merging LAST its cells are stale by construction for every row that lands after it starts.** ⚠️ **Routed to [`W185`](rows/W185.md) with the close procedure, since both are the same question: what a close costs and when it may be taken** |
+
+### ⛔ `SF-18` MERGED TOO, AND MY OWN CLAUSE'S EXAMPLE SENTENCE BECAME LOAD-BEARING WITHIN THE ROUND THAT WROTE IT
+
+⭐ **`SF-18` merged at `f7c62ad`. All three wave-12 rows have now landed and the register's merge is genuinely last.** ⛔ **`M3 step 3.5`'s ONLY row has merged, so it could be argued closable — and I am REFUSING to close it, on the sentence I drafted this round:**
+
+> ⭐ *"It does not widen CLOSE. A step closes only when ITS OWN rows have all merged; a later-step row merging closes nothing and moves no milestone gate. **So `3.5` may merge while `3.4` is still open, and both stay open.**"*
+
+⛔ **`3.4` IS STILL OPEN — `SF-32` is unbuilt — so `3.5` STAYS OPEN with its own row merged.** ⚠️ **Closing it would let step closes run out of order, which empties *steps are sequential* of the only meaning it still has for the milestone gate.** ⭐ **The case arrived in the same round as the sentence, which is the strongest evidence I could have that the sentence was worth writing rather than assumed.**
+
+⚠️ **AND THE HONEST COST, NAMED: the widened rule buys throughput at the price of steps that are OPEN WITH NOTHING IN THEM.** ⛔ **`3.5` is now such a step, and it will sit that way until `SF-32` clears `3.4`.** ⭐ **That is not a defect; it is the trade the user chose, and a register that hid it would be reporting a milestone shape the plan does not have.**
+
+| id | class | finding |
+|---|---|---|
+| ⚠️ **`PO-58/18`** | ⚠️ **`[local]`** | ⭐ **MINE, and caught by my own instrument twice in a row.** ⛔ **`SF-18`'s cell went stale the same way `W34`'s did, and for the same structural reason — the register merges LAST, so every row it names lands underneath it.** ⚠️ **Two identical refutations in one round is not two mistakes; it is [`W185`](rows/W185.md)/`PO-58/17` asking to be answered** |

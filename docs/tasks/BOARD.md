@@ -40,7 +40,7 @@ one does.**
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
 | **M3 step 3.4** | ⏳ **OPEN** — ⭐ **`SF-17` merged; `SF-32` remains** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
-| **M3 step 3.5** | ⏳ **OPEN** ⭐ **ahead of `3.4`** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.5** | ⏳ **OPEN** — ⛔ **`SF-18` MERGED `f7c62ad`; it does NOT close while `3.4` is open** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -53,9 +53,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `a073985` | ✅ **MERGED** `430363b` — ⛔ **named until teardown** |
-| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 2 @ `a073985` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
-| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `a073985` | ✅ **MERGED** `a073985` — ⛔ **named until teardown** |
+| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `f7c62ad` | ✅ **MERGED** `430363b` — ⛔ **named until teardown** |
+| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 0 @ `f7c62ad` | ✅ **MERGED** `f7c62ad` — ⛔ **named until teardown** |
+| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `f7c62ad` | ✅ **MERGED** `a073985` — ⛔ **named until teardown** |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
