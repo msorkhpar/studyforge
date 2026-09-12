@@ -95,6 +95,7 @@ argument for each placement is in the round record; this table is the outcome.**
 | 13 | `W161`–`W165`, `W168`, `W169`, `W171` | ⭐ **each jumps nobody**; ⛔ **`W167` LEFT — it is in flight** | round 54 |
 | 14 | `W34`, `W40` | ⭐ **older than every row above, so each jumps nobody** | round 56 |
 | 15 | `W172`, `W173` | ⭐ **round 56's two mints, jumping nobody** | round 56 |
+| 16 | `W174`, `W175` | ⭐ **round 56's re-take mints, jumping nobody**; ⛔ **`W175` behind `W167`** | round 56 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -295,6 +296,8 @@ else.**
 | W171 | An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal | framework agent | `todo` — `CTO-68/4` | [`rows/W171.md`](rows/W171.md) |
 | W172 | Ruling 218's GATE THREE — a record's Findings section told from its prose, and the residue `W64` measured rather than chased | framework agent | `todo` — Ruling 218's *"not yet a row"*, rowed at `W64`'s close | [`rows/W172.md`](rows/W172.md) |
 | W173 | The board carries RULES where Ruling 349 says a rule is the convention's, and no instrument can tell a board POINTER from a board RESTATEMENT | framework agent | `todo` — Ruling 349 | [`rows/W173.md`](rows/W173.md) |
+| W174 | Ruling 201's FOURTH EDIT lands outside the closing office's surface, and the two rules are jointly unsatisfiable for a row cited from code | framework agent | `todo` — `PO-56/3`, converted to a row | [`rows/W174.md`](rows/W174.md) |
+| W175 | `W167`'s *owes nothing* escape has no legal site, so a pass that cannot be earned is reachable only by the checker's own default | framework agent | `todo` — `W167/5`; the site is a CONTRACT CHANGE and goes to the reviewer first | [`rows/W175.md`](rows/W175.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -329,6 +332,7 @@ here; the argument is in the record.**
 | ⛔ **Same form for `tests/visual/test_host_environment.py`, and it is a FOURTH member** — ruled [CTO round 62 §5](BOARD-ARCHIVE.md#w128-a-committed-verdict-may-not-depend-on-the-hosts-environment-ruling-225s-other-half-in-testsvisual), against the 600-line TEST ceiling, and the office disclosed it unprompted with its seam. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](handoffs/CTO-2026-09-11-round62.md#5-fixw128-visual-env-verdicts-the-acceptance-is-a-pair-of-readings-and-i-took-both-at-both-refs) |
 | ⛔ **NO `W` ROW DISPATCHES INTO A WAVE WHERE AN OPEN-STEP ROW IS DISPATCHABLE AND UNDISPATCHED** — ⭐ **and a step whose rows are ALL MERGED is not a step with no dispatchable row, it is a step awaiting a CLOSE, so the register closes it and opens the next BEFORE any `W` row is placed into that wave** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-landed-because-no-document-carried-it) |
 | ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A wave leaving such a slot EMPTY has mis-read it, and the EMPTINESS is the finding** — ⚠️ **CORRECTED round 56: this cell also read *"a slot the open step cannot fill takes the queue head"*, which is in NO record and came from round 55's own handoff** (`PO-56/2`) | [record](BOARD-ARCHIVE.md#the-dispatch-bound-and-a-queue-it-cannot-be-dispatched-into-the-bound-is-priority-not-exclusivity) |
+| ⛔ **Same form for `src/studyforge/narrate/client.py`, and it is the FIRST in `src/`** — the next row touching it splits it at the WIRE SEAM, named by its taker before cutting. ⚠️ **The reviewer did NOT require the split when the file landed and this cell does not reverse that** (Ruling 261 — a ceiling is not a budget, and `NS-05`'s `Owns` scopes the file); ⛔ **it binds the NEXT row, never the row that left the file where it is.** ⚠️ **No count here** (Ruling 150's form) | [record](BOARD-ARCHIVE.md#po-round-56-three-closes-on-derived-merge-refs-two-mints-three-routings-refused-into-rows-that-already-held-the-mechanism-and-ruling-349-applied-to-the-board-for-the-first-time) |
 | ⛔ **Same form for `tools/quality/reach.py`, and it is a THIRD member** — `W133/4` as the reviewer widened it. ⭐ **`W133`'s taker NAMED the seam — the citation grammar as a sibling module — and correctly refused to cut it outside their surface.** ⚠️ **No count here** (Ruling 150's form, and Ruling 261: a ceiling is NOT a budget, so the next edit is a SPLIT rather than a trim) | [record](BOARD-ARCHIVE.md#w133-checkrulingsreachs-predicate-cannot-read-the-plural-comma-list-or-range-citation-form-and-a-checks-pass-condition-is-satisfiable-by-one-undeclared-spelling) |
 
 

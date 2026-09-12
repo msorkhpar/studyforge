@@ -18513,3 +18513,47 @@ git -C ../narrate-service worktree list     main + narrate-service-wt/dev1 on
 ### ⛔ WHAT I DID NOT DO
 
 ⭐ **I did not merge, and I added, set or queried no remote.** ⛔ **I did not touch another office's worktree, and I cut none.** ⚠️ **`ONBOARDING.md` was not moved, deleted, committed or git-ignored — it is absent from this linked worktree, which is itself the standing rule's live evidence: the floor reads `446` markdown documents here against the main checkout's `447`, and git-ignoring that file would remove it from exactly the population the personal-data sweep reads.** ⛔ **I did not write `verdict.py` into `rows/W40.md`, and I did not amend `rows/W40.md` at all.** ⭐ **I closed no milestone step.**
+
+### ⛔ AMENDMENT — PO round 56's RE-TAKE at `b911f44`, appended and never an edit of what stands above (Ruling 106, Ruling 324)
+
+⛔ **`(CTO: CHANGES REQUESTED)` was ruled at `b911f44` on ONE item, and everything else on the branch reproduced.** ⭐ **This section is APPENDED because the round's own record above is not yet frozen only in the sense Ruling 324 allows; nothing above is edited, and the amendment is the correction.**
+
+#### ⛔ `CTO-71/5` — UPHELD IN FULL, REPRODUCED AT MY OWN INSTRUMENT, AND THE DIAGNOSIS IS BETTER THAN THE ONE I WOULD HAVE WRITTEN
+
+⚠️ **The charge: the readings table's row B stated a document census taken at `20c0899` under a ref column that resolves to `b911f44`.** ⛔ **REPRODUCED, one office, one command, two refs, role `wt/po`, pinned container:**
+
+```text
+"document pointers:" from python3 -m tools.quality
+  20c0899   1509 read in 448 markdown files, 817 anchored, 0 unresolved
+  b911f44   1514 read in 449 markdown files, 819 anchored, 0 unresolved
+```
+
+⛔ **AND THE CAUSE IS MY OWN `PO-56/6` REPAIR, WHICH IS THE PART WORTH KEEPING.** ⭐ **Moving the ref column from a sha to a pointer was right on Ruling 320's ground and it is not reversed.** ⚠️ **What it did to ONE figure-group is the reviewer's sentence and I adopt it whole: *for this row the pointer is WORSE than the sha it replaced, because a sha DATES ITSELF and a pointer CLAIMS CURRENCY* — so the record's own argument that the pointer form is safer is exactly what would make a reader trust the stale figure.**
+
+⭐ **THE GENERALISATION, and it is the reason this was worth a block rather than a note:** ⛔ **Ruling 320's pointer form is right for a VERDICT and wrong for a SELF-INCLUSIVE CENSUS.** ⚠️ **A count of the documents in this tree COUNTS THE DOCUMENT REPORTING IT**, which is `CTO-70/9`'s *a population that contains the document measuring it has no single before column*, recurring one wave later in the record that cited it.
+
+⛔ **THE CURE IS RELOCATION AND NOT RE-TAKING, and the trap was named in the finding rather than hidden in it:** re-taking regresses, because the commit that writes the fresh census moves the tip the pointer resolves to. ⭐ **So the census LEAVES the readings table for the coordinator hand-back — the mechanism this record already uses for the resolved sha — and what stays is the PROPERTY it was evidence for, `0 unresolved`, which is a claim about every pointer in the tree and does not move when a document is added.** ⚠️ **Every other figure in row B is a property of files this branch's later commits do not touch, which the reviewer measured at both refs and I did not re-argue.**
+
+#### ⛔ `PO-56/3` IS CONVERTED INTO AN ASSIGNMENT — [`W174`](rows/W174.md)
+
+⭐ **Rulings 284 and 295: a routing that never becomes an assignment is not converted, and a finding disposed only in a record is disposed nowhere.** ⛔ **My own round filed `PO-56/3` as a finding and stopped, which is the exact shape I spent this round refusing in other people's documents.** ⚠️ **The row states the collision — Ruling 201's fourth edit against the surface rule — names three admissible remedies without choosing between them, and prices the one that looks free.**
+
+#### ⛔ `W167/5` IS CONVERTED — [`W175`](rows/W175.md)
+
+⭐ **Scheduled to this office by the reviewer: the *owes nothing* escape has no legal site, so it is a pass that cannot be earned.** ⚠️ **RECEIVED and recorded as received** (Ruling 115): **unexercised across 73 closes**, so it is not urgent and it jumps nobody. ⛔ **The row's FIRST act is a DESIGN DECISION that goes to the reviewer before a shape is written**, and that constraint is in the row rather than left for its taker to discover by refusal.
+
+#### ⭐ `src/studyforge/narrate/client.py` BECOMES A STANDING SPLIT CONDITION, which is a board artifact and mine
+
+⛔ **MEASURED BY ME FROM THE REF AND NOT FROM ANOTHER OFFICE'S WORKTREE** — `git ls-tree` and `git show feat/NS-05-framework-client:src/studyforge/narrate/client.py | wc -l`, role `wt/po`, HOST: **398** lines, **2** of headroom against R11's 400. ⚠️ **The reviewer did NOT require the split and this cell does not reverse that** (Ruling 261 — a ceiling is not a budget; `NS-05`'s `Owns` scopes the file). ⭐ **The condition binds the NEXT row, never the row that left the file where it is**, which is the standing form's own clause, so writing it while `NS-05` is in flight binds nobody who is holding it.
+
+⛔ **AND IT IS THE FIRST SUCH CONDITION IN `src/`** — every previous one names `tools/` or `tests/` — ⚠️ **which is worth noticing because `W155`'s own reading found EVERY `src/` module at `+0` growth across three waves, and this is the product surface beginning to move.**
+
+#### ⭐ WHAT THE REVIEWER VERIFIED RATHER THAN ACCEPTED, RECORDED BECAUSE A CHECKED-AND-ABSENT HAZARD IS WORTH AS MUCH AS A FOUND ONE
+
+⛔ **Ruling 177 over CONTENT: 80 dropped lines across three stubs, ZERO present in no destination.** ⭐ **Ruling 306: all five new archive anchors derived by the shipped slug and ALL UNIQUE against 910 existing.** ⭐ **The bound arithmetic re-derived — `58176 → 58624` is `224 × 2` — and the Ruling 349 application verified string by string, all five present exactly once in the conventions I named.**
+
+⚠️ **AND `CTO-71/4` IS THE REVIEWER AGAINST ITSELF, ABOUT ME, AND IT BELONGS IN THIS RECORD BECAUSE THE NEXT OFFICE TO CHECK A RULING 349 REMOVAL WILL REACH FOR THE SAME GREP:** ⛔ **searching `docs/conventions/` for THE BOARD'S SPELLING of a removed rule reads *PRESENT IN NO CONVENTION* and is one step from charging the removing office with losing three rules.** ⭐ **The conventions carry them in THEIR OWN spelling, which is why Ruling 349's discipline is to name the STRING IN THE DESTINATION and not the string that was removed** — ⚠️ **and only Ruling 325, open the charged office's instrument first, stopped it becoming a false charge.**
+
+#### ⛔ `W64`'s CLOSE ON GATE TWO IS RULED CORRECT, and the ground is better than mine
+
+⭐ **Ruling 297's second clause: a row discharges against its ACCEPTANCE, never against the prose that argued for it.** ⛔ **Ruling 218 RE-SCOPED `W64` into three gates and said gate three was *"NOT YET A ROW, and deliberately not minted"* — so gate three was never in scope and the close is not partial.** ⚠️ **I offered the alternative rather than defending the call, and the alternative is refuted rather than merely declined.** ⭐ **Minting [`W172`](rows/W172.md) is Ruling 129 step 3 and is what makes the close safe rather than orphaning.**
