@@ -12,8 +12,8 @@ decision this module does not take.
 
 **Depends on.** `generate.declarations` for the corpus, `generate.navigation`
 for the join, `generate.containers` for where a crumb points, `generate.writing`
-for R3, `unit.builder` for the document and `render.page` for the bytes. ⛔ It
-names no source (R1).
+for R3, `generate.narration` for what each page plays, `unit.builder` for the
+document and `render.page` for the bytes. ⛔ It names no source (R1).
 
 ## ⛔ Why this module exists at all
 
@@ -24,9 +24,10 @@ navigation join were finished and reachable only from tests.
 
 ## ⚠️ Two things this module deliberately does NOT do, each for a reason
 
-⛔ **No narration.** Every page renders with `render.page.SILENT`, so a corpus
-that has never been narrated is quiet rather than linking clips that are not on
-disk. Who invokes synthesis, and when, is not this module's to say.
+⛔ **No synthesis.** Each page's narration is `generate.narration`'s answer
+over the record `studyforge narrate` wrote; a corpus with no record renders
+`SILENT`, byte for byte the pre-narration page. A build never invokes synthesis
+(`W202` answer 3).
 
 ⛔ **No authored overlay.** `unit.content` mints `CONTENT_FILENAME` and
 `skills.adapter.Layout` mints every other archive path, but **nothing in `src/`
@@ -38,11 +39,13 @@ shape, and the adapter that wrote the file would not know about it.
 
 from __future__ import annotations
 
+from collections.abc import Iterator
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.placement import relative_href
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
+from studyforge.generate.narration import narration_for, recorded
 from studyforge.generate.navigation import bar, index_href, trail
 from studyforge.generate.writing import Written, place
 from studyforge.render.page import Placement, render
@@ -63,12 +66,24 @@ def write_pages(root: Path | str, into: Path | str) -> Written:
 def unit_pages(corpus: Corpus, into: Path | str) -> Written:
     """Run the unit-page pass over declarations that have already been read."""
     out = Path(into)
-    shared = corpus.shared
-    absent = corpus.absent
-    above = page_paths(corpus)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
+    for at, body in unit_bodies(corpus):
+        place(out, at, body, written, refused, replaced, footprint=corpus.footprint)
+    return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
+
+
+def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
+    """Yield `(page path, rendered bytes)` for every unit with material, writing nothing.
+
+    The narration record is read once, before the first page is rendered, so an
+    unreadable record stops the pass before anything reaches disk.
+    """
+    state = recorded(corpus.root)
+    shared = corpus.shared
+    absent = corpus.absent
+    above = page_paths(corpus)
     for source in corpus.units:
         at = unit_location(
             corpus,
@@ -90,6 +105,6 @@ def unit_pages(corpus: Corpus, into: Path | str) -> Written:
                 index_href(corpus.contents, source.key),
                 {key: relative_href(at.page, page) for key, page in above.items()},
             ),
+            narration_for(corpus, source, at, document, placement, state),
         )
-        place(out, at.page, body, written, refused, replaced, footprint=corpus.footprint)
-    return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
+        yield at.page, body
