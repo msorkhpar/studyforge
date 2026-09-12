@@ -104,6 +104,25 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "test_the_font_does_not_arrive_unconstrained": "collapsed",
         "test_the_visual_harness_variables_cross_into_the_container": "no-continuations",
     },
+    # ⭐ `W152`'s module. Every site in it that reads `check` goes through its own
+    # `joined()` rather than claiming an exemption; the two that read `compose.yaml`
+    # structurally rest on that file's own lack of continuations instead.
+    # ⚠️ `documented_invocation_carries_the_variable` is the one that NEEDED the
+    # collapse: `compose.yaml` documents the direct invocation as a variable on one
+    # comment line and the command on the next, so a raw split sees a command with
+    # no variable beside it and a variable with no command, and either half alone
+    # would satisfy a careless predicate.
+    "test_dev_provenance.py": {
+        "assigned_value": "collapsed",
+        "declares_the_inert_key": "no-continuations",
+        "documented_invocation_carries_the_variable": "collapsed",
+        "exports_the_variable": "collapsed",
+        "set_before_the_build": "collapsed",
+        "test_it_does_not_cross_into_the_container": "no-continuations",
+        "test_the_assignment_check_can_say_no": "collapsed",
+        "test_the_export_check_can_say_no": "collapsed",
+        "test_the_ordering_check_can_say_no": "collapsed",
+    },
     # ⭐ And this module is inside its own population, which is the point: an
     # instrument exempt from the rule it enforces is the defect one level up.
     "test_dev_continuations.py": {
@@ -126,7 +145,7 @@ CLASSIFIED: dict[str, str] = {
 #: functions own two each. ⛔ Declared separately from `CLASSIFIED` on purpose: a
 #: second site added inside an ALREADY-classified function would otherwise enter
 #: the suite unexamined, which is the shape of every defect this module is about.
-DECOMPOSITION_SITES = 25
+DECOMPOSITION_SITES = 34
 
 #: ⛔ **THE ANCHORS THE `line-anchored` VERDICT RESTS ON, per file.** Each is a
 #: prefix some site above matches against the start of a (stripped) line. ⚠️ `#` is
