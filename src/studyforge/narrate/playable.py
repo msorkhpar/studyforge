@@ -4,14 +4,20 @@ r"""Which clip each narrated element plays — ⛔ joined on the SPEECH ID, neve
 and returns the one mapping a page needs: `SpeechUnit.position -> filename`,
 plus a **named state** for every unit that has no clip to play.
 
-**How you use it.**
+**How you use it.** ⭐ Read the record ONCE for the corpus, then ask per document:
 
     from studyforge.narrate.playable import playable_of
-    from studyforge.narrate.speakable import speakable_of
     from studyforge.narrate.synth.record import read_state, state_file
 
-    playing = playable_of(speakable_of(document).units, read_state(state_file(root)))
+    recorded = read_state(state_file(root))          # once per corpus
+    playing = playable_of(document, recorded)        # once per page
     narration = Narration.of(playing.filenames, placement)   # the renderer's side
+
+⚠️ **`read_state` on a corpus that has never been narrated answers `present=False`
+rather than raising**, and this module keeps that quiet all the way through —
+`playing.narrated` is `False`, `playing.silent` is empty, and the page renders
+exactly as it did before narration existed. ⛔ That is the ordinary case, not an
+error path.
 
 **Depends on.** `narrate.speakable` for the unit record and the clip-name
 parser, `narrate.synth.record` for the recorded state, and `describe`. ⛔ **Not
@@ -76,6 +82,7 @@ from pathlib import Path
 from types import MappingProxyType
 
 from studyforge.describe import describe
+from studyforge.narrate.speakable import speakable_of
 from studyforge.narrate.speakable.naming import digest_of, parse_clip_name
 from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
 from studyforge.narrate.synth.record import State
@@ -123,6 +130,12 @@ class Playable:
     #: Every unit whose clip is real but was made from other words. ⚠️ These ARE
     #: in `filenames` and do play; see the module contract.
     stale: tuple[Unmatched, ...]
+    #: Whether the corpus has a narration record at all. ⛔ **`False` is the
+    #: ORDINARY case** — a corpus that has never been narrated — and it is QUIET:
+    #: `silent` is empty, because a unit with no clip in a corpus with no clips
+    #: is not a fault anyone can act on. ⭐ Spelled the way `record.State.present`
+    #: is, and for the same reason: absent is a state, not a failure.
+    narrated: bool = True
 
     def __bool__(self) -> bool:
         """Whether this page plays anything at all."""
@@ -141,12 +154,33 @@ class Playable:
 
 
 def playable_of(
+    document: dict,
+    state: State,
+    *,
+    audio: Path | str | None = None,
+) -> Playable:
+    """Return the clips one served unit document can play — ⭐ `speakable_of`'s mirror.
+
+    ⛔ **This is the whole join, from the thing a build actually holds.** A build
+    reads the record once for the corpus (`read_state(state_file(root))`) and asks
+    this per document; the answer goes straight to `render.page.Narration.of`.
+
+    ⚠️ It walks the document through `speakable_of`, so the units it joins are the
+    minter's own and no caller derives a second set.
+    """
+    return playable_of_units(speakable_of(document).units, state, audio=audio)
+
+
+def playable_of_units(
     units: Sequence[SpeechUnit],
     state: State,
     *,
     audio: Path | str | None = None,
 ) -> Playable:
     """Return the clips `units` can play, joined to `state` **on the speech id**.
+
+    ⭐ The lower door, for a caller that has already walked the document. Most
+    callers want `playable_of` above.
 
     ⛔ `audio` is the directory those clips were placed in — ask the placement
     policy for it (`synth.incremental.audio_dir`) and never compose one. When it
@@ -157,6 +191,12 @@ def playable_of(
     one would silently replace the earlier in the mapping, which is one clip
     going missing with nothing raised — the failure shape this module exists to
     remove.
+
+    ⛔ **A corpus with no record at all is QUIET.** Every unit is unplayable, but
+    none of them is reported: `narrated` is `False` and `silent` is empty. ⚠️ The
+    alternative is a build that prints one complaint per paragraph for every
+    corpus that has never been narrated, which is the reading floor arriving as
+    an error log (R6, and `SF-18`'s `SILENT` is the same answer at the page).
     """
     if not isinstance(state, State):
         raise TypeError(f"the recorded clips arrive as a State, got {describe(state)}")
@@ -176,12 +216,15 @@ def playable_of(
         seen.add(unit.position)
         filename, reason = _clip_for(unit, state, directory)
         if reason:
-            silent.append(Unmatched(unit.position, unit.id, reason, filename))
+            if state.present:
+                silent.append(Unmatched(unit.position, unit.id, reason, filename))
             continue
         resolved[unit.position] = filename
         if _words_moved(unit, filename):
             stale.append(Unmatched(unit.position, unit.id, WORDS_MOVED, filename))
-    return Playable(MappingProxyType(resolved), tuple(silent), tuple(stale))
+    return Playable(
+        MappingProxyType(resolved), tuple(silent), tuple(stale), narrated=state.present
+    )
 
 
 def _clip_for(unit: SpeechUnit, state: State, directory: Path | None) -> tuple[str, str]:
