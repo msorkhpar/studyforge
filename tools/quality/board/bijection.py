@@ -83,22 +83,55 @@ judgement and check 4's job. ⭐ This arm asserts SHAPE.
 ⛔ **And it does not read whether a stub's pointer RESOLVES.** ⚠️ **That is
 `tools/quality/pointers.py`'s reading and it stays there**: this arm would need to
 open another file to answer it, and a second resolver is a second answer.
+
+## ⛔ `W185` — A CLOSE MAY NOT GROW THE BOARD, and this is the arm that clause was owed
+
+⭐ **The clause is `docs/conventions/board.md`'s** (PO round 59): ⛔ **a close leaves
+the Detail cell exactly as it was born, and does not re-point it at an archive
+anchor.** ⚠️ **An archive anchor is the row's whole NAMING slugified, so the old
+edit made the board PERMANENTLY LONGER by an amount proportional to how well the row
+was named** — ⛔ **`PO-58/10` measured a round overrunning `board-size` by 257 bytes
+before one word of STATE was written.**
+
+⛔ **THE CLAUSE SHIPPED WITH ONE DIRECTION ASSERTED AND ONE OWED, and this is the
+owed one.** ⭐ **The *reader still lands on the argument* half was already held by
+Ruling 270's exception above and by the pointer floor** — a closed row's file must
+EXIST and must BE an anchored stub — ⚠️ **but NOTHING read the register CELL, so the
+next close could have quietly re-pointed it and grown the board with every gate
+green.**
+
+⭐ **THE PREDICATE IS AN EQUALITY, and that is Ruling 186's and Ruling 270's own
+remedy reused rather than a stricter taste:** ⛔ **a closed predicate retires a
+disagreement instead of settling it.** ⚠️ **The alternative — *the cell does not
+mention the archive* — is satisfied by a cell pointing anywhere at all, which is the
+direction a bijection check fails toward.** ⛔ **MEASURED at `a606033`: all **87**
+closed register rows already carry the born form exactly, so the equality is
+inhabited by the whole population rather than by a hopeful majority.**
+
+⚠️ **The cell is read off `register()`'s OWN line numbers** rather than by a second
+walk of the `<!-- register -->` markers. ⛔ **A second walk is a second answer to
+*what is a register row*, and this package already paid for that once: an inferred
+boundary read an *In flight* table as four duplicate register rows.**
 """
 
 from __future__ import annotations
 
+import posixpath
 from pathlib import Path
 
 from tools.quality.board.notice import rows_on_disk
 from tools.quality.board.register import (
+    ARCHIVE,
     BOARD,
     ROW_FRAME,
     ROWS,
     STATES,
+    cells,
     is_closed,
     redirects_to_the_archive,
     register,
     state,
+    table_lines,
 )
 from tools.quality.config import read_text, relative
 from tools.quality.report import Finding
@@ -108,6 +141,22 @@ RULE_ORPHAN = "board-orphan"
 RULE_DUPLICATE = "board-duplicate"
 RULE_STATE = "board-state"
 RULE_FRAME = "board-frame"
+
+#: ⛔ How `ROWS` is spelled FROM THE BOARD, which is the only place a Detail cell is
+#: ever written. ⭐ Derived from the two locations this package already answers for
+#: rather than typed: a third spelling of `rows` is a fact with three homes, and the
+#: one nobody re-measures is the one that goes stale.
+ROWS_FROM_BOARD = posixpath.relpath(ROWS, posixpath.dirname(BOARD))
+
+
+def born_detail(identifier: str) -> str:
+    """Return the Detail cell a row is born with — ⛔ the one `W185` says a close LEAVES.
+
+    ⭐ **One function, called by the arm AND by its test**, so the expected cell has
+    a single home. ⚠️ A test that spelled the cell out for itself would agree with a
+    typo here and report nothing.
+    """
+    return f"[`{ROWS_FROM_BOARD}/{identifier}.md`]({ROWS_FROM_BOARD}/{identifier}.md)"
 
 
 def bijection_findings(root: Path, text: str) -> list[Finding]:
@@ -125,6 +174,9 @@ def bijection_findings(root: Path, text: str) -> list[Finding]:
     seen: dict[str, int] = {}
     expected: set[str] = set()
     closed: set[str] = set()
+    # ⛔ `W185`: the raw line behind each register row, so the Detail cell is read at
+    # `register()`'s OWN line numbers and never by a second walk of the markers.
+    lines = dict(table_lines(text))
 
     for number, ids, cell_state in register(text):
         for identifier in ids:
@@ -154,6 +206,28 @@ def bijection_findings(root: Path, text: str) -> list[Finding]:
         if is_closed(cell_state):
             # ⭐ Ruling 270: this row's file may be a REDIRECT STUB, and only this row's.
             closed.update(ids)
+            # ⛔ `W185`: and its Detail cell STOPS MOVING. A close that re-points the
+            # cell at an archive anchor grows the board permanently, by the length of
+            # the row's own naming — see this module's docstring for the measurement.
+            detail = cells(lines[number])[4].strip()
+            if detail != born_detail(ids[0]):
+                findings.append(
+                    Finding(
+                        BOARD,
+                        number,
+                        RULE_DETAIL,
+                        f"{ids[0]} is closed and its Detail cell is {detail!r}. ⛔ A close "
+                        f"LEAVES the cell as it was born — {born_detail(ids[0])!r} — and "
+                        f"never re-points it"
+                        f"{f' at a {ARCHIVE} anchor' if ARCHIVE in detail else ''}. "
+                        f"⚠️ An archive anchor is the row's whole NAMING slugified, so "
+                        f"re-pointing grows the board permanently and `board-size` pays "
+                        f"for it every round after. ⭐ Ruling 270 already makes "
+                        f"{ROWS}/{ids[0]}.md a REDIRECT STUB, so the reader still lands "
+                        f"on the argument — in two hops, at zero cost to the register. "
+                        f"See docs/conventions/board.md.",
+                    )
+                )
             continue
         # The first id of a multi-id row owns the file; the rest ride with it.
         expected.add(ids[0])
