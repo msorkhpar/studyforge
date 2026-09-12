@@ -425,7 +425,10 @@ not patches. See spec §12.
 4. `../conventions/graphify.md` — R14. ⛔ **Ask the graph WHERE ONE EXISTS; the
    index is untracked and so is absent from every linked worktree** (`CLAUDE.md`).
 5. `../conventions/agent-protocol.md` — how to work and how to hand off.
-6. `../conventions/review-rubric.md` — the merge gate your work is judged by.
+6. `../conventions/review-rubric.md` — the standard your work is held to.
+   ⛔ **THERE IS NO REVIEWING OFFICE AND NO VERDICT: a row is SELF-CERTIFIED by
+   its own office on floor + suite GREEN at the ref that merges** (a user
+   decision; the rubric carries it).
 7. `handoffs/` — notes from the tasks you depend on.
 
 ## Task fields
@@ -460,10 +463,10 @@ person who can make it is standing.
   worktrees. ⭐ **Use it where it exists (R14); otherwise `git grep` / `grep -rn`.**
 - ⛔ **RUN EVERY GATE; DO NOT TRANSCRIBE ITS READING.** ⭐ **Report a gate as
   GREEN or RED with its exit code; quote a figure only where the figure IS the
-  subject** (a finding, or a gate's own bound). ⛔ **The clause lives ONCE, in
-  `../conventions/`, and this is a pointer.** ⚠️ **Ground: no defect this session
-  came from RUNNING an instrument; six came from copying a figure into a sentence
-  where it was stale or belonged to another instrument or ref.**
+  subject** — ⚠️ **and a RED gate's breached bound always is: say WHICH bound and
+  BY HOW MUCH.** ⛔ **The clause lives ONCE, in `../conventions/review-rubric.md`
+  under `#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision`,
+  NAMED rather than linked because that anchor lands with `W34`.**
 - Write your handoff before you finish.
 - ⛔ **No acceptance condition is satisfied by an untracked artifact alone.** If
   what a task produces is git-ignored, ⭐ **the task ships the check, because the

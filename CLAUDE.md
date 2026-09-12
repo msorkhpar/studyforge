@@ -141,9 +141,13 @@ set is R1–R21 in the spec.
 - ⛔ **RUN EVERY GATE; DO NOT TRANSCRIBE ITS READING.** ⭐ **A merge body,
   handoff, brief, round record or message reports a gate as GREEN or RED plus
   its exit code and quotes NO figures out of it** — ⚠️ **the exception is a
-  figure that IS the subject, including a gate's own declared bound.** ⛔ **The
-  rule and its ground live ONCE, in `docs/conventions/`; this is a pointer and
-  the clause is not restated here.**
+  figure that IS the subject, and a RED gate's own breached bound is always
+  such a figure: say WHICH bound broke and BY HOW MUCH.** ⛔ **The clause and
+  its ground live ONCE, in `docs/conventions/review-rubric.md`, under
+  `#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision`.**
+  ⚠️ **NAMED AND NOT LINKED ON PURPOSE: that anchor lands with `W34` and does
+  not resolve at every ref this file is read at, and an unresolvable link is
+  worse than a name.** ⭐ **When the two disagree, the convention wins.**
 - **Write a handoff** at `docs/tasks/handoffs/<TASK-ID>.md` before finishing a
   task with dependents. That is how parallel agents share findings instead of
   re-deriving them. Format is in `docs/conventions/agent-protocol.md`.

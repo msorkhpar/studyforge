@@ -39,39 +39,39 @@ one does.**
 | **M3 step 3.1** | ✅ CLOSED | `7420c34` | [record](BOARD-ARCHIVE.md#m3-step-31s-close-run-at-7420c34-both-merges-re-derived-on-the-first-parent-chain-and-nothing-inherited) |
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
-| **M3 step 3.4** | ⏳ **OPEN** — ⚠️ **[`W182`](rows/W182.md) owed** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
-| **M3 step 3.5** | ⏳ **OPEN** — ⭐ **ahead of `3.4`** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.4** | ⏳ **OPEN** — ⭐ **`SF-17` merged; `SF-32` remains** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.5** | ⏳ **OPEN** — ⛔ **`SF-18` MERGED `f7c62ad`; does NOT close while `3.4` is open** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
 ## In flight
 
-⛔ **A commits-ahead cell is a READING with an as-of, not a state** (`PO-30/2`), and the FORM
-is Ruling 246's: `n @ <branch tip>`, and `<branch> @ <checkout>`. ⛔ **Ruling 171:
-`git worktree list` PRIMARY, `git branch` corroborating.** ⭐ **Why the form changed, and why
-the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)** (`PO-44/14`–`PO-44/17`).
+⛔ **A commits-ahead cell is a READING with an as-of, not a state** (`PO-30/2`); the FORM is
+Ruling 246's: `n @ <branch tip>`, `<branch> @ <checkout>`. ⛔ **Ruling 171: `git worktree list`
+PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)** (`PO-44/14`–`PO-44/17`).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `M3 step 3.4` |
-| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
-| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12 |
+| `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `f7c62ad` | ✅ **MERGED** `430363b` — ⛔ **named until teardown** |
+| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 0 @ `f7c62ad` | ✅ **MERGED** `f7c62ad` — ⛔ **named until teardown** |
+| `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `f7c62ad` | ✅ **MERGED** `a073985` — ⛔ **named until teardown** |
 <!-- /inflight -->
 
-⭐ **EMPTY IS A STATE, not an omission** (`W111`, `W147`).
-⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED and not assumed** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, and `W161` is the residual.**
+⭐ **EMPTY IS A STATE** (`W111`, `W147`).
+⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, `W161` the residual.**
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at a
-merge and a GATE at `git rev-parse <register branch>`, never a MOMENT and never the release
-tip** (Ruling 279). ⚠️ **AND THE ARM Ruling 264 NAMES IS PRINTED WITHOUT BEING FOLDED — Ruling
-348 — so it fires while the command exits `0`, and it is read WHOLE or it is not read.**
+merge and a GATE at `git rev-parse <register branch>`** (Ruling 279). ⚠️ **Ruling 264's arm is
+printed UNFOLDED (Ruling 348), so it fires while the command exits `0`: read it WHOLE.**
+⭐ **A MERGED row stays NAMED here until its worktree is torn down: that arm fires on an
+absorbed branch no row names.**
 
-⚠️ **ONE BRANCH CAN CARRY ROWS WITH DIFFERENT OUTCOMES** (Ruling 218), ⛔ **so a cell
-may name SEVERAL ROW IDS.**
+⚠️ **ONE BRANCH CAN CARRY ROWS WITH DIFFERENT OUTCOMES** (Ruling 218), ⛔ **so a cell may name
+SEVERAL ROW IDS.**
 
-⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names,
-counted and named.** ⭐ **`W96/5` — that exclusion as DATA — is on [`W125`](rows/W125.md)** (`W100/4`).
+⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names.**
+⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
 
 ## Next rows — placed, not yet taken
 
@@ -97,7 +97,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
 | 17 | `W176`–`W181` | ⭐ **round 57's six mints, jumping nobody** | round 57 |
-| 18 | `W182` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⭐ **no other row can close it** | round 58 |
+| 18 | `W187` | ⛔ **JUMPS EVERYTHING** (Ruling 75) — ⭐ **two merged rows cannot meet without it** | 58 |
+| 19 | `W185` | ⛔ **JUMPS every row below** (Ruling 75) — ⚠️ **the next five-close round breaches** | 58 |
+| 20 | `W183`, `W184`, `W186` | ⭐ **round 58's wave-12 mints, jump nobody** | 58 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -110,8 +112,8 @@ takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.**
 `W168`, `W169`, `W171`, `W179` and `W180` name `docs/conventions/` — ⭐ ONE constraint, not a
 row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
-`W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/` — ONE OWNER or two waves for
-each set.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
+`W158`, `W162`, `W163` name `docker/dev/`; `W183`+`W184` write `E04` — ONE OWNER or two waves
+for each set.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
@@ -158,7 +160,7 @@ else.**
 | W31 | `DOCUMENT_KINDS` names two roles where three produce these documents | framework agent | ✅ done — `3d0eb34` | [record](BOARD-ARCHIVE.md#w31-documentkinds-names-two-roles-where-three-produce-these-documents) |
 | W32 | The mixed-form contents fixture, taken from real material | framework agent | `todo` — re-routed to `SF-13`'s acceptance, no longer a queue row | [`rows/W32.md`](rows/W32.md) |
 | W33 | The floor prints its lint state, absence included, as a notice | framework agent | ✅ done — `3a45d4c` | [record](BOARD-ARCHIVE.md#w33-the-floor-prints-its-lint-state-absence-included-as-a-notice) |
-| W34 | `review-rubric.md`'s operational checklist, and the document has no index | framework agent | ⏳ **in flight** — wave 12 | [`rows/W34.md`](rows/W34.md) |
+| W34 | `review-rubric.md`'s operational checklist, and the document has no index | framework agent | ✅ done — `a073985` | [record](BOARD-ARCHIVE.md#w34-review-rubricmds-operational-checklist-and-the-document-has-no-index) |
 | W35 | `pointers.py` honours the ignore declaration | framework agent | ✅ done — `a8726c1` | [record](BOARD-ARCHIVE.md#w35-pointerspy-honours-the-ignore-declaration) |
 | W36 | A browser in the pinned dev image, checksum-pinned | framework agent | ✅ done — `5f7734b` | [record](BOARD-ARCHIVE.md#w36-a-browser-in-the-pinned-dev-image-checksum-pinned) |
 | W37 | The repo-wide sweep for checks that cannot fail by construction | framework agent | `todo` | [`rows/W37.md`](rows/W37.md) |
@@ -305,7 +307,12 @@ else.**
 | W179 | A new source file is outside the format gate's population until it is committed, so a green suite is not a reading of that gate | framework agent | `todo` — `NS-05/12` | [`rows/W179.md`](rows/W179.md) |
 | W180 | Ruling 349(a) binds the office CHECKING a removal and no rule binds the office MAKING one | framework agent | `todo` — `CTO-71/9` | [`rows/W180.md`](rows/W180.md) |
 | W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | `todo` — `CTO-71`'s `W167` review | [`rows/W181.md`](rows/W181.md) |
-| W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | `todo` — ⛔ **`PO-58/1`, JUMPS the queue** | [`rows/W182.md`](rows/W182.md) |
+| W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | ✅ done — `430363b` | [record](BOARD-ARCHIVE.md#w182-spec-r9s-two-cells-still-read-open-for-a-contract-ruling-351-located) |
+| W183 | `E04`'s `Owns` lines were drafted without measurement — wrong in GRANULARITY and COVERAGE | framework agent | `todo` `SF-17/4`, `SF-18/1` | [`rows/W183.md`](rows/W183.md) |
+| W184 | `narrate/__init__.py`'s `Depends on` is wrong a THIRD way, each time found by an office that cannot fix it | framework agent | `todo` `SF-17/3` | [`rows/W184.md`](rows/W184.md) |
+| W185 | The close procedure and `board-size` are jointly unsatisfiable; owes a DESIGN DECISION | framework agent | `todo` — ⛔ **`PO-58/10` LIVE** | [`rows/W185.md`](rows/W185.md) |
+| W186 | Round 19 §5.3 still instructs `data-speech-id`, ruled NOT emitted | framework agent | `todo` `SF-18` | [`rows/W186.md`](rows/W186.md) |
+| W187 | Nothing in `src/` builds the position→filename map; the join is on the SPEECH ID | framework agent | `todo` — ⛔ **`SF-18/4`, CRITICAL PATH** | [`rows/W187.md`](rows/W187.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -370,7 +377,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | ⛔ **`NS-01` — the DECLINE is LIFTED** | PO | `discharged` — ⭐ **round 51, `NS-01` MERGED at `0fcb6b4`** | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **the trigger FIRED** | ⛔ **All four grounds false or discharged** — [the ruling](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written) |
 | **R21's open rows** | CTO | ⭐ **`discharged`** — ⛔ **Ruling 351 is the act the trigger names, by the office it names** | ⛔ **`M3 step 3.4` OPENS** — the clearing act is the CTO locating a file and a version | ⛔ **POINTER, not a copy.** ⚠️ **Transcription ≠ location: [`W182`](rows/W182.md)** |
 | ⛔ **`SF-17` is told that a `provides` BUMP INVALIDATES EVERY RECORDED ADDRESS** | PO | ⛔ **`fired` AND NOT MET** — ⚠️ **assigned wave 12; telling attempted, CHANNEL FAILED** (`PO-58/2`) | ⛔ **`SF-17` is assigned** — the assignment is the act, the register the office | ⭐ **`NS-05/8`, `NS-04/4`'s residual** ([the narrowing](handoffs/CTO-2026-09-12-round71.md#ns-044-a-cross-repository-coupling-narrowed-off-a-correct-branch)); ⭐ **substance in [the handoff](handoffs/PO-2026-09-12-round58.md)** |
-| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
+| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
 | ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | ⛔ **`fired` AND NOT MET** — ⭐ **`W152` owned it and merged at `3049de9` without carrying this; `W163` does** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`; the conclusion stands and the reasoning does not** |
 | ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `pending` — ⭐ **OPEN AND NAMED, never open and silent** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
 <!-- /scheduled -->
