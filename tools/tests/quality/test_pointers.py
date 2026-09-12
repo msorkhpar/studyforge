@@ -1,60 +1,33 @@
-"""Mirror of `tools/quality/pointers.py` (R12).
+"""Mirror of `tools/quality/pointers.py` (R12) — the CHECK, not the parser.
 
-⛔ **Every positive here is paired with the mention it is one backtick from.**
-That pairing is not a style choice: the whole finding this task was scoped on
-is that the naive walker's hits were **11 of 11 false**, so a suite that only
-proved the check fires would prove the wrong half.
+⛔ **The parser's own tests moved to `test_markdown.py` with the parser**
+(`W148`); what is asserted here is everything that needs a DISK: what resolves,
+what does not, which documents are read at all, and what the coverage line
+says about how it found them.
 
-⭐ **The mention corpus is verbatim.** `MEASURED_MENTIONS` holds the real lines
-from the real documents, at the sha they were measured on, rather than
-invented lookalikes — because the shapes that broke the naive walker are ones
-nobody would have thought to invent (a double-backtick span wrapping a
-single-backtick one; a regex whose character classes read as a link).
+⚠️ **The two rows this module carries are asserted in a REAL git repository and
+not in a bare `tmp_path`**, deliberately. ⛔ `W148`'s clause 3: *"a test that
+would pass with the disk walk still in place is not the test"* — and a
+`tmp_path` under no repository is exactly where the disk walk still runs, by
+design (Ruling 216's third answer). ⭐ So every clause of `W148` and `W35` below
+takes `init_repository` and `git add`, and the `tmp_path` tests that remain are
+asserting the disk-walk fallback on purpose.
 """
 
 from __future__ import annotations
 
 import pytest
 
-from tests.support import repository_root
+from tests.support import git, init_repository, repository_root, run
 from tools.quality import config
 from tools.quality.pointers import (
     RULE_ANCHOR,
     RULE_POINTER,
-    Pointer,
     check_pointers,
-    heading_slugs,
     pointer_coverage,
-    pointers,
-    prose_lines,
     scan,
-    slug,
-    strip_code_spans,
 )
-
-#: ⛔ **The eleven false positives, verbatim, from the nine lines that carry
-#: them** — re-measured on `2926dc2`. Two lines carry two links each.
-#:
-#: ⚠️ The one line broken across two Python strings is 101 characters in its
-#: source document and would breach `LINE_LENGTH` here; implicit concatenation
-#: reassembles it exactly rather than paraphrasing it shorter.
-MEASURED_MENTIONS = [
-    "| markup carrying it (line 310) | `# [Test cases](TestCases.md)` |",
-    "in `handoffs/FND-05a.md`, `` `# [Test cases](TestCases.md)` `` quoted in a board",
-    "cell, `` `- [1.1. Title](path)` `` in an epic. A repo-wide check that is",
-    "`- [1.1. Title](path)`, a handful read `- 1.5. [Title](path)` — the number",
-    "way. `SAFE_NAME` is `^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$`: no",
-    "  in a handoff, `` `# [Test cases](TestCases.md)` `` quoted in a board cell.",
-    "`1. [Title](src/1.md)` — the form every top-level entry of all three",
-    "| Java-senior | 205 as `- [1.1. Title](x)` | **6 as `- 1.5. [Title](x)`**"
-    ", ordinal outside the link |",
-    "| all three | `N. [Title](x)`, the ordinal **as** the list marker | — |",
-]
-
-#: How many links a fence-aware walker that does **not** strip code spans finds
-#: in the corpus above. ⛔ This number is the task's whole justification, so it
-#: is asserted rather than described.
-NAIVE_HITS = 11
+from tools.quality.report import DISK_WALK, TRACKED_WALK
 
 
 def write(tmp_path, name: str, text: str):
@@ -65,31 +38,13 @@ def write(tmp_path, name: str, text: str):
     return path
 
 
-# --- the negative direction: a mention is not a pointer --------------------
+def add(root, *paths: str):
+    """`git add` those paths in `root`, and refuse a silent failure."""
+    result = run([git(), "add", "--", *paths], cwd=root)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
-def test_the_measured_mentions_are_what_broke_the_naive_walker():
-    # ⛔ Watch the naive walker fail on this corpus first. Without this the
-    # next assertion is satisfied by a corpus that contains no links at all,
-    # which is Ruling 48's defect wearing a passing test.
-    import re
-
-    naive = re.compile(r"\[[^\]\n]*\]\(([^)\s]+)\)")
-    hits = [match for line in MEASURED_MENTIONS for match in naive.finditer(line)]
-    assert len(hits) == NAIVE_HITS
-
-
-def test_not_one_measured_mention_is_read_as_a_pointer(tmp_path):
-    write(tmp_path, "mentions.md", "\n".join(MEASURED_MENTIONS) + "\n")
-    assert check_pointers(tmp_path) == []
-    assert scan(tmp_path).pointers == ()
-
-
-@pytest.mark.parametrize("line", MEASURED_MENTIONS)
-def test_each_measured_mention_alone_is_not_a_pointer(tmp_path, line):
-    # Parametrised as well as collectively: a failure names the shape.
-    write(tmp_path, "one.md", line + "\n")
-    assert check_pointers(tmp_path) == []
+# --- the parser reaching the check -----------------------------------------
 
 
 def test_a_fenced_block_is_quoted_material(tmp_path):
@@ -213,74 +168,6 @@ def test_a_missing_file_is_reported_once_not_twice(tmp_path):
     assert findings[0].rule == RULE_POINTER
 
 
-# --- slugs -----------------------------------------------------------------
-
-
-def test_the_trees_one_real_anchor_slugs_to_its_heading():
-    # ⛔ Re-measured: the task was scoped on "zero anchors in the tree" and the
-    # tree now carries one. This is that exact pair, and it is the reason the
-    # hyphen-run collapse below is a decision rather than an accident.
-    heading = "The wave checks — ⛔ **SIX at open, and check 4 AGAIN at close**"
-    assert slug(heading) == "the-wave-checks-six-at-open-and-check-4-again-at-close"
-
-
-@pytest.mark.parametrize(
-    ("heading", "expected"),
-    [
-        ("Simple Heading", "simple-heading"),
-        ("**Bold** and `code`", "bold-and-code"),
-        ("Trailing punctuation!", "trailing-punctuation"),
-        ("A — B", "a-b"),
-        ("  Padded  ", "padded"),
-        ("R11's ceiling", "r11s-ceiling"),
-        ("⛔ leading emoji", "leading-emoji"),
-    ],
-)
-def test_slug_shapes(heading, expected):
-    assert slug(heading) == expected
-
-
-def test_headings_inside_a_fence_are_not_headings():
-    # ⚠️ A shell transcript in a fence is full of `#` comments; reading those
-    # as headings invents anchors no renderer offers.
-    text = "# Real\n\n```bash\n# not a heading\n```\n"
-    assert heading_slugs(text) == {"real"}
-
-
-def test_a_duplicated_heading_takes_a_suffix():
-    assert heading_slugs("# Same\n\n# Same\n\n# Same\n") == {"same", "same-1", "same-2"}
-
-
-def test_a_closed_atx_heading_drops_its_closing_hashes():
-    assert heading_slugs("## Closed ##\n") == {"closed"}
-
-
-# --- the seam and the coverage channel -------------------------------------
-
-
-def test_prose_lines_keeps_real_line_numbers():
-    text = "a\n```\nb\n```\nc\n"
-    assert prose_lines(text) == [(1, "a"), (5, "c")]
-
-
-def test_strip_code_spans_preserves_columns():
-    line = "x `abc` y"
-    stripped = strip_code_spans(line)
-    assert len(stripped) == len(line)
-    assert stripped == "x       y"
-
-
-def test_pointers_reports_the_line_it_was_written_on():
-    text = "one\ntwo\n[three](a.md)\n"
-    assert pointers("doc.md", text) == [Pointer("doc.md", 3, "a.md")]
-
-
-def test_a_pointer_splits_its_target_into_path_and_anchor():
-    assert Pointer("d.md", 1, "a/b.md#sec").path_part == "a/b.md"
-    assert Pointer("d.md", 1, "a/b.md#sec").anchor == "sec"
-    assert Pointer("d.md", 1, "#sec").path_part == ""
-    assert Pointer("d.md", 1, "a/b.md").anchor == ""
-
 
 def test_coverage_states_a_denominator(tmp_path):
     write(tmp_path, "target.md", "# T\n")
@@ -321,4 +208,148 @@ def test_the_repository_walk_reads_something():
     # denominator that stops `0 = 0` from reading as coverage.
     result = scan(repository_root())
     assert result.files > 50
+    assert len(result.pointers) > 20
+
+
+# --- W148: the document population is what git TRACKS ----------------------
+
+
+def repository(tmp_path):
+    """A throwaway repository carrying two TRACKED documents and nothing else."""
+    init_repository(tmp_path)
+    write(tmp_path, "docs/target.md", "# Target\n")
+    write(tmp_path, "docs/tracked.md", "[t](target.md)\n")
+    add(tmp_path, "docs/target.md", "docs/tracked.md")
+    return tmp_path
+
+
+def test_an_untracked_document_is_not_counted_as_repository_state(tmp_path):
+    # ⛔ THE SYMPTOM `W148` WAS MINTED OVER, in miniature. One untracked
+    # markdown file at a main checkout's root made the floor read `458 markdown
+    # files` there and `457` in every linked worktree — same content, ZERO
+    # extra pointers, so the denominator moved and the numerator did not, and a
+    # reader comparing the two would have concluded both were invariant.
+    root = repository(tmp_path)
+    before = scan(root)
+    write(root, "UNTRACKED-AT-THE-ROOT.md", "# Untracked\n\n[t](docs/target.md)\n")
+    after = scan(root)
+    assert (after.files, len(after.pointers)) == (before.files, len(before.pointers))
+    assert after.files == 2
+    assert after.walk == TRACKED_WALK
+
+
+def test_the_disk_walk_reads_that_same_untracked_file_and_would_have_passed(tmp_path):
+    # ⚠️ `W148` clause 3 run NEGATIVELY: *"a test that would pass with the disk
+    # walk still in place is not the test"*. ⛔ The identical three files in a
+    # tree git cannot answer for give a population of THREE, which is the
+    # figure the assertion above would read if the narrowing were not there.
+    write(tmp_path, "docs/target.md", "# Target\n")
+    write(tmp_path, "docs/tracked.md", "[t](target.md)\n")
+    write(tmp_path, "UNTRACKED-AT-THE-ROOT.md", "# Untracked\n\n[t](docs/target.md)\n")
+    result = scan(tmp_path)
+    assert result.files == 3
+    assert result.walk == DISK_WALK
+
+
+def test_an_untracked_documents_dangling_pointer_is_not_this_floors_finding(tmp_path):
+    # ⭐ The COST of the narrowing, asserted rather than discovered later: a
+    # document that is not repository state is not read here, so its broken
+    # link earns nothing. ⛔ It is still swept for PERSONAL DATA — that
+    # population is `config.text_files`, which `W148` deliberately does not
+    # touch, and `test_config.py` holds the assertion that it still sees it.
+    root = repository(tmp_path)
+    write(root, "scratch.md", "[gone](nowhere.md)\n")
+    assert check_pointers(root) == []
+
+
+def test_the_figure_names_the_walk_that_produced_it(tmp_path):
+    root = repository(tmp_path)
+    line = pointer_coverage(root)[0]
+    assert "(tracked walk)" in line
+    assert "not reproducible from another checkout" not in line
+
+
+def test_a_tree_git_cannot_answer_for_says_so_and_is_not_a_failure(tmp_path):
+    # ⛔ Ruling 216's THIRD answer, and `W148` clause 4: neither a silent
+    # fall-through to the disk nor a hard failure — the figure SAYS which walk
+    # produced it, and what that costs the reader.
+    write(tmp_path, "doc.md", "# D\n")
+    line = pointer_coverage(tmp_path)[0]
+    assert "(disk walk)" in line
+    assert "not reproducible from another checkout" in line
+    assert check_pointers(tmp_path) == []
+
+
+def test_the_repositorys_own_figure_is_taken_over_the_tracked_walk():
+    # ⛔ The property that makes a floor reading quotable between two offices
+    # (Ruling 277): this figure is the same from the main checkout and from
+    # every linked worktree, and the line says which walk produced it.
+    assert scan(repository_root()).walk == TRACKED_WALK
+    assert "(tracked walk)" in pointer_coverage(repository_root())[0]
+
+
+# --- W35: an ignored target does not resolve (Ruling 80) --------------------
+
+
+def ignoring_repository(tmp_path):
+    """A repository that ignores `graphify-out/` and links into it from a tracked doc."""
+    root = repository(tmp_path)
+    write(root, ".gitignore", "graphify-out/\n")
+    add(root, ".gitignore")
+    write(root, "docs/tracked.md", "[the index](../graphify-out/GRAPH_REPORT.md)\n")
+    return root
+
+
+def test_a_pointer_into_a_git_ignored_tree_is_a_finding(tmp_path):
+    # ⛔ The ASYMMETRY `W35` names: this walk already honoured `.gitignore` when
+    # choosing what to READ, and now honours it when deciding what RESOLVES.
+    root = ignoring_repository(tmp_path)
+    write(root, "graphify-out/GRAPH_REPORT.md", "# Built on this machine\n")
+    findings = check_pointers(root)
+    assert len(findings) == 1
+    assert findings[0].rule == RULE_POINTER
+    assert findings[0].line == 1
+    assert "git IGNORES" in findings[0].message
+
+
+def test_the_ignored_target_earns_the_same_finding_whether_or_not_it_was_built(tmp_path):
+    # ⛔ Ruling 80's whole subject, in both directions: the machine that
+    # generated the artifact and a fresh clone that did not must reach the same
+    # verdict — and the same MESSAGE, which is why the ignore question is asked
+    # BEFORE existence rather than after it.
+    root = ignoring_repository(tmp_path)
+    absent = check_pointers(root)
+    write(root, "graphify-out/GRAPH_REPORT.md", "# Built on this machine\n")
+    built = check_pointers(root)
+    assert len(absent) == len(built) == 1
+    assert absent[0] == built[0]
+    assert "git IGNORES" in built[0].message
+
+
+def test_an_untracked_but_not_ignored_target_still_resolves(tmp_path):
+    # ⚠️ `W35` is about the IGNORE declaration and NOT about the index, and the
+    # two are different questions on purpose. A file written and not yet added
+    # is not ignored, so a link to it resolves exactly as it did before.
+    root = repository(tmp_path)
+    write(root, "docs/unadded.md", "# Not added yet\n")
+    write(root, "docs/tracked.md", "[u](unadded.md)\n")
+    assert check_pointers(root) == []
+
+
+def test_a_tree_git_cannot_answer_for_reports_no_ignored_target(tmp_path):
+    # ⚠️ `config.ignored_paths` fails OPEN by design: an unanswerable question
+    # means nothing is ignored, which reports too little here rather than
+    # inventing a finding no reader could act on. ⛔ The reading still says so.
+    write(tmp_path, "target.md", "# T\n")
+    write(tmp_path, "doc.md", "[t](target.md)\n")
+    assert check_pointers(tmp_path) == []
+    assert "(disk walk)" in pointer_coverage(tmp_path)[0]
+
+
+def test_the_repository_has_no_pointer_into_an_ignored_tree():
+    # ⛔ Ruling 48: the assertion is `0`, so the denominator is quoted with it.
+    # MEASURED at `bec9d5c`, role `wt/dev2`: 0 ignored targets among 308
+    # distinct existing targets reached by 1528 pointers.
+    result = scan(repository_root())
+    assert [finding for finding in result.findings if "git IGNORES" in finding.message] == []
     assert len(result.pointers) > 20

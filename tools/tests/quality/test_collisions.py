@@ -15,7 +15,7 @@ change that quietly made the old one report collisions it was never asked for.
 
 from __future__ import annotations
 
-from tests.support import repository_root
+from tests.support import git, init_repository, repository_root, run
 from tools.quality.collisions import (
     RULE_COLLISION,
     check_anchor_collisions,
@@ -24,6 +24,7 @@ from tools.quality.collisions import (
     scan,
 )
 from tools.quality.pointers import check_pointers, heading_bases, heading_slugs
+from tools.quality.report import DISK_WALK, TRACKED_WALK
 
 #: ⛔ The archive's own shape, reduced to four lines: a house template gives
 #: every row the same section name, and the close copies it in. This is the
@@ -96,7 +97,7 @@ def test_the_census_states_its_denominators_when_the_population_is_empty(tmp_pat
 def test_the_census_prints_every_name_with_its_count(tmp_path):
     write(tmp_path, "rows.md", TEMPLATE + "\n# W3\n\n## Findings\n\n# W4\n\n## Findings\n")
     lines = collision_census(tmp_path)
-    assert "2 anchor names in 1 of 1 markdown documents answer for 4 headings" in lines[0]
+    assert "2 anchor names in 1 of 1 markdown documents (disk walk) answer for 4" in lines[0]
     assert "0 of them carry an inbound pointer" in lines[0]
     assert lines[1] == "  rows.md: findings x2; what-settles-it x2"
 
@@ -212,3 +213,30 @@ def test_the_live_population_is_inhabited_so_the_census_is_not_zero_equals_zero(
     assert result.headings > len(result.collisions)
     assert result.documents_colliding >= 2
     assert result.anchored > 100
+
+
+def test_the_census_names_the_walk_that_produced_its_population(tmp_path):
+    # ⛔ `W148`: this census and `pointer_coverage`'s denominator are the SAME
+    # population, so both name the walk they came off. ⚠️ A `tmp_path` under no
+    # repository is Ruling 216's third answer, and the line SAYS so rather than
+    # falling through to the disk in silence.
+    write(tmp_path, "one.md", "# Same\n\n# Same\n")
+    line = collision_census(tmp_path)[0]
+    assert "(disk walk)" in line
+    assert "not reproducible from another checkout" in line
+    assert scan(tmp_path).walk == DISK_WALK
+
+
+def test_an_untracked_document_is_outside_the_census(tmp_path):
+    # ⛔ `W148` clause 3: asserted in a REAL repository, because in a tree git
+    # cannot answer for the disk walk still runs and this would pass anyway.
+    init_repository(tmp_path)
+    write(tmp_path, "tracked.md", "# Same\n\n# Same\n")
+    result = run([git(), "add", "--", "tracked.md"], cwd=tmp_path)
+    assert result.returncode == 0, result.stdout + result.stderr
+    write(tmp_path, "untracked.md", "# Other\n\n# Other\n")
+    census = scan(tmp_path)
+    assert census.documents == 1
+    assert census.walk == TRACKED_WALK
+    assert [collision.document for collision in census.collisions] == ["tracked.md"]
+    assert "(tracked walk)" in collision_census(tmp_path)[0]

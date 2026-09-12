@@ -1,80 +1,71 @@
 r"""Ruling 43's second walk: a pointer between documents resolves, or it fails.
 
-**What it does.** Reads every markdown document in the repository, finds every
-link that names a path inside it, and fails the build on one that resolves to
-nothing — and on an `#anchor` that names no heading in the document it points
-at. It also reports its **coverage** through the notice channel, because a `0`
-with no denominator is `0 = 0` (Ruling 48).
+**What it does.** Reads every markdown document the repository TRACKS, finds
+every link that names a path inside it, and fails the build on one that
+resolves to nothing, on one whose target git IGNORES, and on an `#anchor` that
+names no heading in the document it points at. It also reports its **coverage**
+through the notice channel, because a `0` with no denominator is `0 = 0`
+(Ruling 48).
 
 **How you use it.** `check_pointers(root)` is registered in
 `tools.quality.CHECKS`; `pointer_coverage(root)` is registered in `NOTICES`.
-`scan(root)` is the one pass both read, so the findings and the denominator
-can never describe different walks.
+`scan(root)` is the one pass both read, so the findings and the denominator can
+never describe different walks.
 
-**Depends on.** `config` for the tree, `report` for the answer, and `re`.
-Nothing else, ever.
+**Depends on.** `markdown` for the parser, `config` for the tree, `report` for
+the answer, and `pathlib`. Nothing else, ever.
 
-## ⛔ The price is the parser, and it is the parser *because* the naive hits are false
+## ⛔ THE PARSER MOVED OUT, AND THE ADDRESS DID NOT (`W148`)
 
-⭐ **Measured on `2926dc2`, and re-measured because Ruling 55 says a number in
-a ruling is an instrument reading rather than a property of the tree:**
+⭐ **`prose_lines`, `strip_code_spans`, `pointers`, `slug`, `heading_bases` and
+`heading_slugs` now live in `markdown.py`**, which carries the
+measurement that split them out and the reason the shape is a sibling rather
+than the package `docs/conventions/module-structure.md` prefers. ⛔ **They are
+re-exported here**, so every existing `from tools.quality.pointers import …`
+names the same objects and no importer moved.
 
-| | recorded on `e5bcc85` | ⛔ **re-measured on `2926dc2`** |
-|---|---|---|
-| markdown files | 90 | ⛔ **102** |
-| links found, fence-aware | 41 | ⛔ **45** |
-| apparent dangling, fence-aware only | 8 | ⛔ **11** |
-| ⭐ true dangling, after code spans are stripped | 0 | ⭐ **0** |
-| ⛔ false-positive rate of the naive walker | 8 of 8 | ⛔ **11 of 11 — 100 %** |
+## ⛔ THE DOCUMENT POPULATION IS WHAT GIT TRACKS, AND IT SAYS SO (`W148`)
 
-⛔ **Every founding number moved; the only one that held is the one the task
-was scoped on.** ⭐ The *shape* is what survived: the migration is still `0`,
-and the naive walker is still wrong about every single hit it reports.
+⛔ **A figure whose denominator comes off the DISK is not reproducible between
+two correct checkouts at ONE ref.** ⚠️ MEASURED: one untracked markdown file at
+a main checkout's root gave `458 markdown files` there and `457` in every
+linked worktree — ⭐ **the denominator moved and the numerator did not**, so a
+reader comparing `1528 pointers` across the two would have concluded, wrongly,
+that both figures were checkout-invariant. ⛔ That defeats Ruling 277's ROLE
+discipline exactly where it is meant to work.
 
-⚠️ **And this table is already a reading rather than a property**, which is the
-point of Ruling 55 rather than an admission: the file count went to 103 in the
-commit that added FND-08's own handoff. ⭐ **Do not maintain these numbers by
-hand — `pointer_coverage` prints the live ones on every run**, which is why it
-exists.
+⭐ **So the walk is `config.markdown_population`, and every figure NAMES it:**
+`(tracked walk)` or `(disk walk)`, with `report.WALK_CAVEAT` spelling out what
+the second costs a reader. ⛔ **Git failing to answer is Ruling 216's THIRD
+answer** — it neither falls through to the disk in silence nor fails the build.
 
-⚠️ **So inline-code-span stripping is not an optimisation; it is the task.** A
-fence state machine alone leaves 11 false findings, and ⛔ **a repository-wide
-check that is 100 % false-positive on its first run is a check somebody
-switches off** — which is the argument `source_names.py` already makes about
-allow-lists, arriving from the other end.
+⛔ **AND THE NARROWING IS NOT IN `config.text_files`**, which is the R7
+personal-data sweep's population and is ignore-based on purpose: a file written
+and not yet added is exactly what that gate must catch, *before* it enters.
+⚠️ Narrowing that walk to the index would have made this figure look fixed by
+blinding the gate — which is `W148`'s own hard constraint, and it is a user
+rule rather than a style note.
 
-## ⭐ Use versus mention, arriving in a third instrument
+## ⛔ AN IGNORED TARGET DOES NOT RESOLVE (`W35`, Ruling 80)
 
-⛔ **A walk that cannot tell a *use* from a *mention* is the defect**, not a
-walk with some noise in it. `F27` named the distinction, Ruling 73 measured it
-against `handoffs/contract.py`'s `marker_lines`, and this module is the third
-place it has come up. ⭐ **It is not re-derived here; it is reused**, and the
-reuse is deliberate down to the state machine: a fenced block is quoted
-material and is not read, and that is `marker_lines`'s sentence, not a new one.
+⛔ **A floor check's verdict may not depend on untracked state.** ⚠️ Resolving a
+link by `Path.exists()` alone made a pointer into a generated artifact clean on
+the machine that built it and a finding on a fresh clone — one tree, two
+verdicts, and nothing in either reading naming the cause. ⭐ **The ASYMMETRY was
+the defect:** this walk already honoured `.gitignore` when choosing what to
+READ, and now honours it when deciding what RESOLVES.
 
-⚠️ **What this module adds is the layer Ruling 73 did not need.** `marker_lines`
-gets *"a table cell does not count"* for free, because a marker in a cell has a
-lead word in front of it. A **link** has no such tell — `` | `[a](b.md)` | ``
-and `| [a](b.md) |` differ only by backticks — so the span parser is load-
-bearing here in a way it was not there. ⛔ Three of the eleven measured false
-positives are exactly that shape.
+⚠️ **The ignore question is asked BEFORE existence**, so the MESSAGE is stable
+and not only the verdict. ⛔ **ONE `check-ignore` call for every target in the
+tree**, never one per pointer, which is why `scan` reads the whole population
+before it judges any of it.
 
-## ⚠️ Anchors: `0` today was a reading too, and it has already moved
-
-⛔ **The task was scoped on *"no link anywhere in this repository carries an
-anchor"*, measured `0` on `e5bcc85`.** ⭐ **Re-measured: there is one** —
-`docs/tasks/BOARD.md:37` points at its own wave-checks heading — so anchor
-resolution is not the speculative half of this check any more. It is exercised
-by the tree on the first run.
-
-⭐ **Slugs collapse runs of hyphens, and that is a decision.** GitHub's slugger
-does not collapse, so `## A — B` yields `a---b` there and `a-b` here. ⛔ Nothing
-in this repository is ever pushed to any remote and no renderer is
-authoritative over it, so matching a hosting service's exact algorithm would
-buy nothing and would fail the tree's one real anchor — which points
-unambiguously at a real heading and reads correctly to every human. ⚠️ The
-tolerant direction is also the *safe* direction for a check whose whole thesis
-is that a false positive gets it switched off.
+⭐ **Exposure measured at this row's own base, `bec9d5c`, role `wt/dev2`: `0`
+ignored targets among `308` distinct existing targets reached by `1528`
+pointers.** ⚠️ The fix therefore adds no finding to the tree it lands in, which
+is what `PO-24/8` measured and why `W35` was queued last rather than ranked —
+⛔ **and a `0` with no denominator would have been `0 = 0`, which is why the
+denominator is quoted with it.**
 
 ## ⛔ The question this module's `0 unresolved` does NOT answer (`W140`)
 
@@ -86,184 +77,64 @@ anchor*, which is a set question. ⭐ **The fold is undone by `heading_bases`,
 and the census built on it lives in `tools/quality/collisions.py`** — a sibling
 that imports this module and is imported back by nothing.
 
-## ⛔ Where this parser is knowingly not CommonMark
-
-⭐ Stated rather than discovered later, and every one was measured against the
-tree before it was accepted:
-
-- **Code spans do not cross lines.** The walk is line-based, like
-  `marker_lines`. A span opened on one line and closed on the next is not
-  understood. ⚠️ Fails *toward a finding*, never away from one.
-- **`~~~` fences are not fences.** Measured: `0` in the tree.
-- **Four-space indented code blocks are not code.** Measured: `0` lines
-  matching `^    .*](`.
-- **`<angle>` targets and reference-style links are not parsed.** Measured:
-  `0` of each.
-- **A closing backtick run longer than the opening one closes the span
-  anyway.** CommonMark requires equal length; nothing in the tree distinguishes
-  them.
-
-⛔ **External URLs are out of scope by ruling** — this repository has no remote
-and reaches no network, so a check on `https://` could only be a check that
-sometimes fails for a reason nobody in this repository can fix.
 """
 
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass
 from pathlib import Path
 
 from tools.quality import config
-from tools.quality.report import Finding
+from tools.quality.markdown import (
+    Pointer,
+    heading_bases,
+    heading_slugs,
+    pointers,
+    prose_lines,
+    slug,
+    strip_code_spans,
+)
+from tools.quality.report import WALK_CAVEAT, Finding
+
+#: ⭐ Re-exported so no importer moved when the parser did (`W148`). ⛔ Named
+#: explicitly rather than left implicit: `ruff` refuses an unused import, and
+#: a `# noqa` on each would say nothing about why they are here.
+__all__ = [
+    "RULE_ANCHOR",
+    "RULE_POINTER",
+    "Pointer",
+    "Scan",
+    "check_pointers",
+    "heading_bases",
+    "heading_slugs",
+    "pointer_coverage",
+    "pointers",
+    "prose_lines",
+    "resolve_target",
+    "scan",
+    "slug",
+    "strip_code_spans",
+]
 
 RULE_POINTER = "pointer"
 RULE_ANCHOR = "anchor"
 
-#: A markdown inline link whose target has no whitespace in it, with the
-#: optional `"title"` CommonMark allows after the target.
-_LINK = re.compile(r"\[(?P<text>[^\]\n]*)\]\((?P<target>[^)\s]+)(?:\s+\"[^\"]*\")?\)")
-
-#: A code span: a run of backticks, the shortest body that reaches a run of the
-#: same length, and that run. ⛔ The variable-length run is not decoration —
-#: three of the measured false positives are ``` `` `x` `` ``` , a double-tick
-#: span wrapping a single-tick one, and a fixed `` `[^`]*` `` pattern reads the
-#: inner ticks as the delimiters and strips the wrong half of the line.
-_CODE_SPAN = re.compile(r"(?P<ticks>`+)(?P<body>.+?)(?P=ticks)")
-
-#: `scheme:` or a protocol-relative `//host` — the network, which is not ours.
-_EXTERNAL = re.compile(r"^[A-Za-z][A-Za-z0-9+.\-]*:|^//")
-
-#: An ATX heading, with the optional closing run of `#` CommonMark allows.
-_HEADING = re.compile(r"^(?P<hashes>#{1,6})\s+(?P<text>.*?)\s*#*\s*$")
-
-#: Dropped from a heading before it becomes a slug: everything that is not a
-#: word character, a hyphen or a space. Emphasis markers and backticks go
-#: first, so `**SIX**` slugs as `six` rather than disappearing.
-_EMPHASIS = re.compile(r"[*_`~]")
-_NOT_SLUG = re.compile(r"[^\w\- ]", re.UNICODE)
-_HYPHEN_RUN = re.compile(r"-+")
-
-
-@dataclass(frozen=True)
-class Pointer:
-    """One link, as written, with the document and line it was written on."""
-
-    document: str
-    line: int
-    target: str
-
-    @property
-    def path_part(self) -> str:
-        """The target with any `#anchor` removed — `''` for a same-file link."""
-        return self.target.partition("#")[0]
-
-    @property
-    def anchor(self) -> str:
-        """The `#anchor`, without its `#` — `''` when the target carries none."""
-        return self.target.partition("#")[2]
-
 
 @dataclass(frozen=True)
 class Scan:
-    """One pass over the tree: what was read, and what was wrong with it."""
+    """One pass over the tree: what was read, how it was found, and what was wrong.
+
+    ⛔ `walk` is `report.TRACKED_WALK` or `report.DISK_WALK` and is carried
+    rather than re-derived, so the denominator and the sentence naming how it
+    was reached can never describe different walks (`W148`).
+    """
 
     files: int
     pointers: tuple[Pointer, ...]
     findings: tuple[Finding, ...]
+    walk: str
 
 
-def prose_lines(text: str) -> list[tuple[int, str]]:
-    """`(line number, line)` for every line outside a ``` fence.
-
-    ⭐ **A fenced block is quoted material and is not read** — `marker_lines`'s
-    sentence, reused rather than re-derived (Ruling 73). A document that
-    demonstrates a broken link, or transcribes this check firing, necessarily
-    contains one, and every one of those is evidence rather than a claim.
-    """
-    lines: list[tuple[int, str]] = []
-    fenced = False
-    for number, line in enumerate(text.splitlines(), start=1):
-        if line.lstrip().startswith("```"):
-            fenced = not fenced
-            continue
-        if not fenced:
-            lines.append((number, line))
-    return lines
-
-
-def strip_code_spans(line: str) -> str:
-    """Blank every inline code span, keeping the line's length and columns.
-
-    ⛔ **This function is the task.** Blanked rather than deleted so a reported
-    line number still lines up with what a reader sees, and so two adjacent
-    spans cannot fuse into text that was never written.
-    """
-    return _CODE_SPAN.sub(lambda match: " " * len(match.group(0)), line)
-
-
-def pointers(document: str, text: str) -> list[Pointer]:
-    """Every link in `text` that names a path this repository owns."""
-    found: list[Pointer] = []
-    for number, line in prose_lines(text):
-        for match in _LINK.finditer(strip_code_spans(line)):
-            target = match.group("target")
-            if _EXTERNAL.match(target):
-                continue
-            found.append(Pointer(document, number, target))
-    return found
-
-
-def slug(heading: str) -> str:
-    """Return the anchor a heading answers to.
-
-    GitHub's algorithm with one deliberate difference: runs of hyphens
-    collapse. The module docstring carries the reasoning and the measurement.
-    """
-    text = _EMPHASIS.sub("", heading).lower()
-    text = _NOT_SLUG.sub("", text).replace(" ", "-")
-    return _HYPHEN_RUN.sub("-", text).strip("-")
-
-
-def heading_bases(text: str) -> list[str]:
-    """Every heading's UNSUFFIXED slug, in document order, duplicates KEPT.
-
-    ⛔ **The companion `heading_slugs` structurally cannot be** (`W140`). That
-    function answers *does this document answer to this anchor* — a set
-    question, correctly answered by a set — but a set has folded the
-    duplicates away before anyone can ask how many there were, which is why
-    the floor's `0 unresolved` is honest about a question nobody asked it.
-
-    ⭐ **`heading_slugs` is defined in terms of this**, so the two can never
-    disagree about what a heading is or how one slugs. The fold is the only
-    difference between them, and it is the difference `W140` needed removed.
-    """
-    bases: list[str] = []
-    for _number, line in prose_lines(text):
-        match = _HEADING.match(line)
-        if match is None:
-            continue
-        base = slug(match.group("text"))
-        if base:
-            bases.append(base)
-    return bases
-
-
-def heading_slugs(text: str) -> set[str]:
-    """Every anchor the document answers to, duplicates suffixed as GitHub does.
-
-    ⚠️ Fence-aware, and it has to be: a shell transcript inside a fence is
-    full of `#` comments, and reading those as headings would invent anchors
-    that no renderer offers. ⭐ That property is inherited from
-    `heading_bases` rather than restated here.
-    """
-    slugs: set[str] = set()
-    seen: dict[str, int] = {}
-    for base in heading_bases(text):
-        count = seen.get(base, 0)
-        seen[base] = count + 1
-        slugs.add(base if count == 0 else f"{base}-{count}")
-    return slugs
 
 
 def resolve_target(root: Path, document: Path, pointer: Pointer) -> Path | None:
@@ -286,8 +157,15 @@ def resolve_target(root: Path, document: Path, pointer: Pointer) -> Path | None:
     return candidate
 
 
-def _check(root: Path, document: Path, pointer: Pointer, text: str) -> Finding | None:
-    """Return the finding this pointer earns, or None when it resolves."""
+def _check(
+    root: Path, document: Path, pointer: Pointer, text: str, ignored: frozenset[Path]
+) -> Finding | None:
+    """Return the finding this pointer earns, or None when it resolves.
+
+    ⛔ `ignored` is asked BEFORE existence, and that order is `W35`: the same
+    pointer must earn the same finding with the same message on the machine
+    that generated the artifact and on a fresh clone (Ruling 80).
+    """
     target = resolve_target(root, document, pointer)
     if target is None:
         return Finding(
@@ -297,6 +175,17 @@ def _check(root: Path, document: Path, pointer: Pointer, text: str) -> Finding |
             f"points at {pointer.target!r}, which leaves this repository. A sibling "
             f"component is pinned by `workspace.json` (R18) and the extraction source "
             f"is never cited by path (R20); name the ruling or the contract instead.",
+        )
+    if target.resolve() in ignored:
+        return Finding(
+            pointer.document,
+            pointer.line,
+            RULE_POINTER,
+            f"points at {pointer.target!r}, which git IGNORES. It is present on the "
+            f"machine that generated it and absent from a fresh clone, so resolving it "
+            f"by existence makes this verdict depend on untracked state (Ruling 80). "
+            f"Name the generator, the ruling or the contract instead, or put the link "
+            f"in backticks if it is an example rather than a reference.",
         )
     if not target.exists():
         return Finding(
@@ -339,22 +228,39 @@ def scan(root: Path) -> Scan:
     one walk and reported its findings from another could say `0 dangling in
     45` while having looked at 45 different links — which is Ruling 48's
     defect wearing a denominator.
+
+    ⚠️ **The findings come after the whole read rather than during it** (`W35`):
+    every target git might ignore is asked about in ONE `check-ignore` call,
+    because the alternative is one subprocess per pointer.
     """
-    files = 0
-    found: list[Pointer] = []
-    findings: list[Finding] = []
-    for path in config.markdown_files(root):
+    population = config.markdown_population(root)
+    read: list[tuple[Path, str, tuple[Pointer, ...]]] = []
+    for path in population.paths:
         text = config.read_text(path)
         if text is None:
             continue
-        files += 1
-        document = config.relative(path, root)
-        for pointer in pointers(document, text):
-            found.append(pointer)
-            finding = _check(root, path, pointer, text)
-            if finding is not None:
-                findings.append(finding)
-    return Scan(files, tuple(found), tuple(findings))
+        read.append((path, text, tuple(pointers(config.relative(path, root), text))))
+    found = [pointer for _path, _text, carried in read for pointer in carried]
+    # ⚠️ The ignore query is asked in the RESOLVED frame, and every target is
+    # resolved into it. `root` need not be absolute — `python3 -m tools.quality`
+    # hands it `Path(".")` — and `resolve_target` hands back a same-document
+    # link exactly as it was given, so a mixed frame reaches `relative()` and
+    # raises on the first target.
+    inside = root.resolve()
+    targets = {
+        target.resolve()
+        for path, _text, carried in read
+        for pointer in carried
+        if (target := resolve_target(root, path, pointer)) is not None
+    } - {inside}
+    ignored = frozenset(config.ignored_paths(inside, sorted(targets)))
+    findings = [
+        finding
+        for path, text, carried in read
+        for pointer in carried
+        if (finding := _check(root, path, pointer, text, ignored)) is not None
+    ]
+    return Scan(len(read), tuple(found), tuple(findings), population.walk)
 
 
 def check_pointers(root: Path) -> list[Finding]:
@@ -375,5 +281,6 @@ def pointer_coverage(root: Path) -> list[str]:
     anchored = sum(1 for pointer in result.pointers if pointer.anchor)
     return [
         f"document pointers: {len(result.pointers)} read in {result.files} markdown "
-        f"files, {anchored} carrying an anchor, {len(result.findings)} unresolved."
+        f"files ({result.walk} walk), {anchored} carrying an anchor, "
+        f"{len(result.findings)} unresolved.{WALK_CAVEAT[result.walk]}"
     ]

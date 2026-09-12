@@ -49,6 +49,15 @@ suffixing rule GitHub applies and `heading_slugs` reproduces. ⛔ **Only the BAS
 name is ambiguous**, so only a link to the base is reported — a reader who has
 already disambiguated is not failed for it.
 
+## ⛔ AND THE POPULATION IS WHAT GIT TRACKS, NAMED IN THE LINE (`W148`)
+
+⭐ **This census and `pointer_coverage`'s denominator are the SAME population**,
+so they take it from the same `config.markdown_population` and each prints
+`(tracked walk)` or `(disk walk)` beside its figure. ⛔ Before `W148` both came
+off the disk, and one untracked file in a main checkout made every figure here
+irreproducible from a linked worktree at the same ref — ⚠️ **the denominator
+moved and the numerator did not.**
+
 ## ⭐ WHY THE CENSUS PRINTS ONE LINE PER DOCUMENT
 
 ⛔ **Ruling 128 — the population was the finding; the count concealed it** — so
@@ -68,7 +77,7 @@ from pathlib import Path
 
 from tools.quality import config
 from tools.quality.pointers import Pointer, heading_bases, pointers, resolve_target
-from tools.quality.report import Finding
+from tools.quality.report import WALK_CAVEAT, Finding
 
 RULE_COLLISION = "collision"
 
@@ -85,12 +94,18 @@ class Collision:
 
 @dataclass(frozen=True)
 class CollisionScan:
-    """One pass over the tree: the census and the findings, from one walk."""
+    """One pass over the tree: the census and the findings, from one walk.
+
+    ⛔ `walk` is `report.TRACKED_WALK` or `report.DISK_WALK`, carried rather
+    than re-derived so the census and the sentence naming how its population
+    was reached can never describe different walks (`W148`).
+    """
 
     documents: int
     anchored: int
     collisions: tuple[Collision, ...]
     findings: tuple[Finding, ...]
+    walk: str
 
     @property
     def documents_colliding(self) -> int:
@@ -147,11 +162,12 @@ def scan(root: Path) -> CollisionScan:
     a population the finding half never looked at — Ruling 48's defect wearing
     a denominator.
     """
+    population = config.markdown_population(root)
     documents = 0
     collisions: dict[Path, dict[str, int]] = {}
     names: dict[Path, str] = {}
     found: list[Pointer] = []
-    for path in config.markdown_files(root):
+    for path in population.paths:
         text = config.read_text(path)
         if text is None:
             continue
@@ -178,16 +194,18 @@ def scan(root: Path) -> CollisionScan:
         if name in duplicates:
             inbound.setdefault((target.resolve(), name), []).append(pointer)
 
-    population = [
+    census = [
         Collision(names[path], name, count, tuple(inbound.get((path, name), ())))
         for path, duplicates in collisions.items()
         for name, count in duplicates.items()
     ]
-    population.sort(key=_order)
+    census.sort(key=_order)
     findings = [
-        _finding(pointer, collision) for collision in population for pointer in collision.inbound
+        _finding(pointer, collision) for collision in census for pointer in collision.inbound
     ]
-    return CollisionScan(documents, len(anchored), tuple(population), tuple(sorted(findings)))
+    return CollisionScan(
+        documents, len(anchored), tuple(census), tuple(sorted(findings)), population.walk
+    )
 
 
 def check_anchor_collisions(root: Path) -> list[Finding]:
@@ -217,15 +235,16 @@ def collision_census(root: Path) -> list[str]:
     if not result.collisions:
         return [
             f"anchor collisions: none — no anchor name in {result.documents} markdown "
-            f"documents answers for more than one heading, and {result.anchored} "
-            f"anchored pointers were read."
+            f"documents ({result.walk} walk) answers for more than one heading, and "
+            f"{result.anchored} anchored pointers were read.{WALK_CAVEAT[result.walk]}"
         ]
     carrying = sum(1 for collision in result.collisions if collision.inbound)
     lines = [
         f"anchor collisions: {len(result.collisions)} anchor names in "
-        f"{result.documents_colliding} of {result.documents} markdown documents answer "
-        f"for {result.headings} headings; {carrying} of them carry an inbound pointer, "
-        f"out of {result.anchored} anchored pointers read."
+        f"{result.documents_colliding} of {result.documents} markdown documents "
+        f"({result.walk} walk) answer for {result.headings} headings; {carrying} of them "
+        f"carry an inbound pointer, out of {result.anchored} anchored pointers read."
+        f"{WALK_CAVEAT[result.walk]}"
     ]
     grouped: dict[str, list[Collision]] = {}
     for collision in result.collisions:

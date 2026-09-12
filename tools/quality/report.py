@@ -1,18 +1,51 @@
-"""What a failed check says, and how it is printed.
+"""What a check says, what a notice counts, and how either is printed.
 
-**What it does.** Gives the four checks one shape of answer — a `Finding` —
-and one way of rendering it, so a failure names a rule, a file and a line
-whatever produced it (R6: fail loud, by name).
+**What it does.** Gives the floor's two channels one shape of answer each — a
+`Finding` for a violation, and a `DocumentPopulation` for the denominator a
+notice prints beside a scalar — plus one way of rendering a finding, so a
+failure names a rule, a file and a line whatever produced it (R6: fail loud,
+by name).
 
 **How you use it.** A check returns `list[Finding]`; a caller renders them
-with `format_findings`. Nothing else here.
+with `format_findings`. A walk that a figure will be quoted over returns a
+`DocumentPopulation`, and the notice quoting that figure names its `walk` and
+appends `WALK_CAVEAT[walk]` (`W148`).
 
-**Depends on.** `dataclasses` only.
+**Depends on.** `dataclasses` and `pathlib` — standard library. ⚠️ This line
+read *"`dataclasses` only"* until `W148` gave a population a type.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
+
+#: ⛔ **How a document population was derived, NAMED in every figure taken over
+#: it** (`W148`). Two named walks and never a boolean: `W148`'s whole cost was
+#: two offices at ONE ref printing different figures with nothing in either
+#: reading naming the cause.
+TRACKED_WALK = "tracked"
+DISK_WALK = "disk"
+
+#: ⚠️ Appended to a figure taken over `DISK_WALK`, and EMPTY for the other one.
+#: Ruling 216's third answer wearing a sentence: git failing to answer may
+#: neither fall through to the disk in silence nor fail the build, so the
+#: figure says which walk produced it and what that costs the reader.
+WALK_CAVEAT = {
+    TRACKED_WALK: "",
+    DISK_WALK: (
+        " ⚠️ This population came off the DISK — git named no tracked set here — so it "
+        "carries untracked files and is not reproducible from another checkout."
+    ),
+}
+
+
+@dataclass(frozen=True)
+class DocumentPopulation:
+    """The documents a figure is taken over, and which walk produced them."""
+
+    paths: tuple[Path, ...]
+    walk: str
 
 
 @dataclass(frozen=True, order=True)
