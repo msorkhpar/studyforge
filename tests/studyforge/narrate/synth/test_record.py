@@ -63,8 +63,11 @@ def test_an_absent_record_is_a_state_and_not_a_failure(tmp_path):
         pytest.param("not json at all", id="not-json"),
         pytest.param("[]", id="not-an-object"),
         pytest.param('{"narration_api": 1, "clips": []}', id="clips-not-an-object"),
-        pytest.param('{"narration_api": true}', id="a-bool-is-not-a-version"),
-        pytest.param('{"narration_api": 2}', id="a-version-this-build-cannot-speak"),
+        # ⛔ Both carry a VALID `clips`, so the version is the only thing wrong.
+        # Without it they passed on the clips check instead and a plant that
+        # accepted every version left them green.
+        pytest.param('{"narration_api": true, "clips": {}}', id="a-bool-is-not-a-version"),
+        pytest.param('{"narration_api": 2, "clips": {}}', id="a-version-this-build-cannot-speak"),
         pytest.param(
             '{"narration_api": 1, "clips": {"u1": {"filename": "u1-a.mp3"}}}',
             id="a-clip-with-no-conditions",
@@ -83,7 +86,7 @@ def test_a_record_this_build_cannot_read_raises_rather_than_guessing(tmp_path, w
 def test_the_refusal_is_in_the_narration_family_and_names_the_file(tmp_path):
     path = state_file(tmp_path)
     path.parent.mkdir(parents=True)
-    path.write_text('{"narration_api": 2}', encoding="utf-8")
+    path.write_text('{"narration_api": 2, "clips": {}}', encoding="utf-8")
     with pytest.raises(NarrationError) as refusal:
         read_state(path)
     assert NARRATION_STATE_FILENAME in str(refusal.value)
