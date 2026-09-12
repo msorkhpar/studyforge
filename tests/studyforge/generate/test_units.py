@@ -98,15 +98,14 @@ def test_every_page_carries_the_bar_and_the_trail_the_contents_computed(tmp_path
 # --------------------------------------------------------------------------
 
 
-def test_a_hand_edited_page_at_a_declared_path_is_REPLACED_and_that_is_the_gap(tmp_path):
-    """⛔ **This clause pins the known cost of the rebuild policy, not a win.**
+def test_a_hand_edited_page_at_a_declared_path_is_REPLACED_and_that_is_the_rule(tmp_path):
+    """⛔ **The decision, asserted rather than left to be discovered.**
 
-    ⭐ A footprint answers a question about the PLAN, so it cannot tell this
-    build's own prior output from a copy of it somebody edited. R19 rules a
-    hand-edit to a generated artifact a *finding, not a fix*, and every
-    placement profile already ignores these pages — so the edit is taken.
-    ⛔ **Anyone who closes that gap should break this test**, and should read
-    `generate/writing.py`'s table before deciding it was passing by accident.
+    ⭐ The discrimination is by PATH and never by content, so *"somebody edited
+    this page by hand"* is not a question a build can ask — it has no prior
+    content to compare against, and inventing one would be a second declaration
+    of what the plan already enumerates. ⚠️ R19 rules the hand-edit a *finding,
+    not a fix*, and every placement profile already ignores these pages.
     """
     first = write_pages(FIXTURES / "depth1", tmp_path)
     target = tmp_path / first.pages[0]

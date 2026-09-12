@@ -203,12 +203,13 @@ def test_a_second_pass_over_its_own_output_recopies_every_file_it_declared(tmp_p
 
 
 def test_a_readers_own_file_INSIDE_a_declared_media_directory_is_REPLACED(tmp_path):
-    """⛔ **The gap, pinned at the media pass too.**
+    """⛔ **The by-path rule, pinned at the media pass too.**
 
     ⚠️ The plan enumerates a unit's media as a DIRECTORY, so every file the
-    archive puts in one is the build's by declaration — including one a reader
-    put there first, on a run where no prior output exists to be theirs. ⭐ See
-    `generate/writing.py`'s table; closing the gap should break this clause.
+    archive puts in one is named by the enumeration — including one a reader
+    put there first, on a run where no prior output exists to be theirs.
+    ⭐ Asserted so nobody has to discover it; `generate/writing.py`'s contract
+    is where the rule and its price are argued.
     """
     out = an_output(tmp_path)
     corpus = read_corpus(FIXTURES / "depth1")

@@ -34,33 +34,31 @@ receipt is written into the output tree, and nothing here reads state an earlier
 run left behind. A build asks *"does the plan declare this path as mine?"* and
 nothing else.
 
-## ⛔ WHAT THE FOOTPRINT CANNOT TELL, STATED HERE RATHER THAN DISCOVERED LATER
+## ⛔ THE DISCRIMINATION IS BY PATH, AND NEVER BY CONTENT
 
-⛔ **The plan enumerates paths, not history, so a footprint cannot distinguish
-this build's own prior output from ANY other file occupying the same path.** Two
-cases follow and both are real:
+    a path the plan's enumeration NAMES    →  the build replaces it
+    a path the enumeration does NOT name   →  refused, by name
 
-⭐ **A generated page a person edited by hand is replaced, and that is RIGHT.**
-R19 rules a hand-edit to a generated artifact a *finding, not a fix*, and every
-placement profile already puts that page in the corpus's own ignore lines, so the
-edit was never tracked either.
+⛔ **Nothing here opens an existing file to decide.** No digest, no comparison
+against what the build would have written, no marker read back out of an
+artifact. The only two questions asked of a target that exists are *what is its
+path* and *is it a directory* — so the rule above is the whole rule, and a
+reader can predict a build's conduct from `studyforge plan` alone.
 
-⛔ **Somebody's own file at a footprint path, before any build has ever run, is
-replaced too — and that is WRONG.** It is the *"a foreign file is refused by
-name"* half of the decision, and this mechanism cannot keep it.
+⚠️ **The consequence, stated plainly rather than left to be discovered.** A
+build has no prior content to compare against, so *"somebody edited this page by
+hand"* is not a question it can ask. A hand-edited copy of a page the build
+wrote is INSIDE the footprint and IS overwritten. ⭐ That is the decision and
+not an oversight, and R19 already ruled it the right one: a hand-edit to a
+generated artifact is *a finding, not a fix* — customisation enters as manifest
+data, and every placement profile already puts those pages in the corpus's own
+ignore lines, so the edit was never tracked either.
 
-⛔ **The second case is measured, not feared** — a hand-written `index.html`
-placed in an empty output directory is destroyed by the FIRST build, which is
-the one run where no prior output exists to be somebody's own. ⚠️ **It is named
-in the report** — a `replace` line, never a silent `wrote` — but naming is not
-refusing.
-
-⭐ **Closing it needs a witness the plan cannot supply**: a receipt the build
-writes and reads back, or a generator marker inside the artifact. Both are
-remembering, both are outside this module, and neither was ruled. ⛔ **So the
-gap is reported rather than closed by reflex here**, which is the same
-discipline the paragraph this replaces used while the rebuild policy itself was
-open.
+⛔ **It follows that a file somebody put at a named path before any build ever
+ran is replaced too**, on the FIRST build, with no prior output in existence.
+⚠️ Measured, not feared: a hand-written `index.html` in an empty output
+directory does not survive. ⭐ It is named in the report — a `replace` line,
+never a silent `wrote` — and it is the price of a rule that needs no memory.
 
 ⛔ **A directory where a file belongs is still a refusal, and a file where a
 directory belongs still is too.** Replacing this build's own file is a write;

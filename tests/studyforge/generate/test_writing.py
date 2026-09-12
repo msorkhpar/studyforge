@@ -383,3 +383,45 @@ def test_a_writer_cannot_be_reached_without_answering_whose_file_this_is(tmp_pat
         place(tmp_path, A, b"body", [], [], [])
     with pytest.raises(TypeError):
         copy(tmp_path, A, tmp_path, [], [], [])
+
+
+def test_the_same_bytes_are_replaced_or_refused_purely_on_which_path_they_sit_at(tmp_path):
+    """⛔ **By PATH, never by content** — the rule stated as one measurement.
+
+    ⭐ Identical bytes at two paths get opposite treatment, so no reading of the
+    file can be what decided. ⚠️ The converse is asserted too: different bytes
+    at the SAME named path are still replaced, so content cannot be smuggled in
+    later as a tie-breaker without breaking this clause.
+    """
+    mine = b"a reader's own file"
+    for at in (A, B):
+        (tmp_path / at).parent.mkdir(parents=True, exist_ok=True)
+        (tmp_path / at).write_bytes(mine)
+    written, refused, replaced = [], [], []
+
+    place(tmp_path, A, b"new", written, refused, replaced, footprint=MINE)
+    place(tmp_path, B, b"new", written, refused, replaced, footprint=MINE)
+
+    assert (replaced, refused) == ([A], [B])
+    assert (tmp_path / B).read_bytes() == mine
+
+    # ⭐ Bytes byte-for-byte equal to what the build would write, at the named
+    # path: still a replacement, because nothing compared them.
+    (tmp_path / A).write_bytes(b"new")
+    again = []
+    place(tmp_path, A, b"new", [], [], again, footprint=MINE)
+    assert again == [A]
+
+
+def test_a_foreign_file_in_the_output_root_survives_a_rebuild_byte_for_byte(tmp_path):
+    """⛔ The refusal half, read back through the BYTES rather than the record."""
+    foreign = PurePosixPath("notes.txt")
+    mine = b"a reader's own file, at a path no plan names"
+    (tmp_path / foreign).write_bytes(mine)
+    refused = []
+
+    for _ in range(2):
+        place(tmp_path, foreign, b"clobbered", [], refused, [], footprint=MINE)
+
+    assert refused == [foreign, foreign]
+    assert (tmp_path / foreign).read_bytes() == mine

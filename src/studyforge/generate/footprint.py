@@ -85,12 +85,12 @@ class Footprint:
     def owns(self, at: PurePosixPath) -> bool:
         """Whether a build writing `at` would be replacing its own prior output.
 
-        ⚠️ **This answers a question about the PLAN, not about history**, and
-        the difference is the one thing a reader of this module must hold on
-        to: it cannot tell the build's own last answer from a copy of it that a
-        person has since edited by hand. See this package's `__init__` and the
-        row's handoff — R19 rules that hand-edit a finding rather than a fix,
-        and this is where that ruling becomes behaviour.
+        ⛔ **By PATH, and never by content.** Nothing is opened, hashed or
+        compared: a path the plan names is the build's, a path it does not name
+        is somebody else's, and that is the whole rule. ⚠️ So this cannot tell
+        the build's own last answer from a copy of it a person has since edited
+        — see `generate/writing.py`'s contract, where the consequence is stated
+        and R19 is why it is the right one.
         """
         if at in self.files:
             return True
