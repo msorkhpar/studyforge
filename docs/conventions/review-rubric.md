@@ -6081,9 +6081,19 @@ alarm is to triage. The per-invocation form is the only one that never enters a 
 #     "repairs" it. A normally configured machine is not a leak; the standing decision is
 #     that a real identity in LOCAL commits is fine because nothing is ever pushed.
 #     ⛔ What WOULD be a defect is a project commit carrying it.
-#  5. ⭐ PROVE ABSENCE WITH A NULL CHECK, never by printing the value:
-#         git config --get user.email >/dev/null 2>&1; echo "rc=$?"
-#     A reviewer verifying the slot is clean must not read what is in it.
+#  5. ⭐ PROVE ABSENCE WITH A NULL CHECK, never by printing the value. ⛔ TWO OFFICES
+#     REACHED FOR THE VALUE IN ONE WAVE — the coordinator, and the reviewer auditing
+#     the coordinator — so this is a property of the TASK rather than of either office,
+#     and it is a CLAUSE here instead of two separate self-charges:
+#         git config --local --get-regexp '^user\.' >/dev/null 2>&1; echo "rc=$?"
+#         # rc 1 = the slot is clean. rc 0 = something is set, and you STILL have not read it.
+#     ⛔ THE REDIRECT IS NOT OPTIONAL, AND THAT IS MEASURED against a fabricated config:
+#     bare `--get-regexp '^user\.'` PRINTS `user.name <value>` and `user.email <value>`
+#     and exits 0. ⚠️ So it proves absence safely ONLY when the answer IS absence — in the
+#     FAILING case, the one you run it for, it emits the exact datum it was meant to
+#     reach past. ⭐ A check that is safe only when it passes is not a safe check.
+#     ⭐ If you need a magnitude rather than a yes/no, COUNT — never cat:
+#         git config --local --get-regexp '^user\.' 2>/dev/null | wc -l
 ```
 
 ### ⛔ Ruling 346 — a RE-TAKEN row may carry a SECOND handoff, under a new stem, pointing back
