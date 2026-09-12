@@ -404,7 +404,7 @@ representative is shown; the ties differ only in their first two links and at `E
 SF-01 → SF-05 → SF-25 → SK-02 → SK-07 → JS-01 → JS-02 → JS-04 → EX-01 → EX-02 →
 EX-04 → OPS-04 → QA-01 → QA-04.
 
-⭐ **`M3`'s own gate chain, the one live now:** SF-01 → SF-03 → SF-04 → SF-13 → SF-14 →
+⭐ **`M3`'s own gate chain:** SF-01 → SF-03 → SF-04 → SF-13 → SF-14 →
 SF-28 → SF-40 → **SF-42**. ⚠️ **An `M3` task waits on two `M4` tasks, both merged.**
 
 ---
