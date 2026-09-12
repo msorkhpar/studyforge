@@ -18557,3 +18557,34 @@ git -C ../narrate-service worktree list     main + narrate-service-wt/dev1 on
 #### ⛔ `W64`'s CLOSE ON GATE TWO IS RULED CORRECT, and the ground is better than mine
 
 ⭐ **Ruling 297's second clause: a row discharges against its ACCEPTANCE, never against the prose that argued for it.** ⛔ **Ruling 218 RE-SCOPED `W64` into three gates and said gate three was *"NOT YET A ROW, and deliberately not minted"* — so gate three was never in scope and the close is not partial.** ⚠️ **I offered the alternative rather than defending the call, and the alternative is refuted rather than merely declined.** ⭐ **Minting [`W172`](rows/W172.md) is Ruling 129 step 3 and is what makes the close safe rather than orphaning.**
+
+#### ⛔ THE RULING 349 REMOVALS ARE FIVE, NOT THREE, AND THE TWO ADDED IN THE RE-TAKE ARE NAMED HERE
+
+⚠️ **The section above this amendment says three and lists three; it stands unedited** (Ruling 106). ⭐ **The re-take added two more, each verified in the destination BEFORE it was removed, and the full list is:**
+
+| removed from `BOARD.md` | the convention that carries it | the string that proves it, IN THE DESTINATION |
+|---|---|---|
+| *a status change is ONE CELL* | `delivery-flow.md` | `- **A status change is one cell.**` |
+| *no measurement, no ref other than a merge ref, no reasoning* | `board.md` | `- ⛔ **No measurement.**` · `- ⛔ **No ref except a merge ref.**` · `- ⛔ **No reasoning.**` |
+| the `## Where everything else went` migration note | `board.md` | its `One fact, one home` table |
+| ⭐ **RE-TAKE** — *a header is INFERRED and can only be ANNOUNCED; a delimiter is DECLARED and can be REFUSED* | `board.md` | `⛔ **A header is INFERRED, so an absent table is indistinguishable from a renamed column and can only be ANNOUNCED.** ⭐ **A delimiter is DECLARED, so an absent marker can be REFUSED.**` |
+| ⭐ **RE-TAKE** — *a row scheduled ahead of an older unstarted row says what it is jumping and why* | `delivery-flow.md` | `### ⛔ Ruling 75 — a row scheduled ahead of an older unstarted row says so, in the row` |
+
+⛔ **THE STRING QUOTED IS THE DESTINATION'S, NEVER THE BOARD'S, AND THAT IS `CTO-71/4`'S LESSON MADE PROCEDURAL** — ⚠️ **a reviewer grepping the conventions for the BOARD's spelling reads *PRESENT IN NO CONVENTION* and is one step from a false charge.** ⭐ **Two candidates were REFUSED on the same test and are named so nobody re-derives them: Ruling 68's *one row per id, exactly one minter*, and Ruling 243(c)'s *a queue cell carries no census* — neither is carried by any convention, so both stay until one carries them.**
+
+#### ⛔ `PO-56/8` — `W159`'s NAMING WAS FALSE, AND IT IS THIS ROUND'S OWN COST EXPLAINED
+
+⚠️ **`W159`'s register naming read *"`Next rows` is the board's only undelimited table"*.** ⛔ **MEASURED at the merging ref, role `wt/po`, HOST, instrument `re.fullmatch(r'\|[-: |]+\|')` over the board's lines against a grep for `^<!-- `:**
+
+```text
+table separator rows on BOARD.md          : 10
+delimited blocks                          :  3   (inflight, register, scheduled)
+```
+
+⭐ **So most of the board's tables are undelimited and `Next rows` is not the only one — `Standing decisions`, `Milestones`, `R21` and the cross-repo table are too.** ⛔ **The naming is CORRECTED in the register, which is where a naming lives.**
+
+⚠️ **AND IT IS NOT PEDANTRY, BECAUSE IT PRICED THIS ROUND:** ⛔ **the re-take added one `Next rows` row and one `Standing decisions` row, and BOTH tables earn ZERO allowance** — ⭐ **so a standing split condition, which is a board artifact the reviewer correctly says is mine, costs the board bytes and buys it none.** ⚠️ **`W159` is the row and its population is wider than it said.**
+
+#### ⚠️ THE ROUND ENDS AT A THIN MARGIN AND I AM SAYING SO RATHER THAN LETTING THE NEXT ROUND FIND IT
+
+⛔ **The board's headroom at the merging ref is printed by the instrument on every run and is NOT typed here** (Ruling 181). ⭐ **What IS worth recording is the SHAPE: four mints earned `4 × 224`, and against that this round spent bytes on two tables that earn nothing at all.** ⚠️ **That is not a reason to raise a term — Ruling 271 refuses all three obvious moves by measurement, and Ruling 261 says a ceiling is not a budget.** ⛔ **It is `W173` and `W159` together, and the next register round should expect the same squeeze until one of them lands.**
