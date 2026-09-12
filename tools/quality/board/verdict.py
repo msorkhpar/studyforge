@@ -304,6 +304,8 @@ def _cell(asserted: Claim, branch: str, count: int, graph: Graph) -> tuple[str, 
         )
     if claimed == count:
         return (f"    commits ahead: the row claims {claimed}, git reads {count} — AGREE.",)
+    if (tip := asserted.row.declared_tip) is not None:
+        return _as_of(claimed, count, branch, tip, graph)
     return (
         f"    ⚠️ NOTICE, not a refusal (`PO-42/7`): the row claims {claimed} commits ahead and "
         f"git reads {count} for {branch}. ⭐ A commits-ahead cell is a reading of a MOVING TIP "
@@ -312,6 +314,38 @@ def _cell(asserted: Claim, branch: str, count: int, graph: Graph) -> tuple[str, 
         f"stale NUMBER is not a stale ROW: refuting on it would fire on every wave where "
         f"somebody committed after the board was written, which is every wave (Ruling 179). "
         f"⚠️ The two used to be printed side by side and compared to nothing.",
+    )
+
+
+def _as_of(claimed: int, count: int, branch: str, tip: str, graph: Graph) -> tuple[str, ...]:
+    """`PO-50/12`: resolve the tip the SAME cell declares — ⛔ still a NOTICE, never a verdict.
+
+    ⚠️ **MEASURED at `504bb47`, three takes of one pair of cells in one round: 3 of 3
+    were TRUE AT THEIR OWN DECLARED REF and the notice printed a disagreement for each
+    the moment the branch moved** — ⛔ **so it could not say whether the office
+    MISCOUNTED (a register defect) or the branch MOVED (Rulings 97 and 246 obeyed).**
+    ⭐ **`PO-42/7` is UNTOUCHED: the notice SAYS more, the verdict ANSWERS the same.**
+    ⛔ **An unresolvable tip is Ruling 216's THIRD ANSWER, not a fourth arm** —
+    `ahead()` is `None` when git declines, and such a cell reaches NEITHER case.
+    """
+    if (at_tip := graph.ahead(tip)) is None:
+        return (
+            f"    ⚠️ UNREAD as-of (Ruling 216's third answer): the row claims {claimed} @ {tip}, "
+            f"git reads {count} for {branch}, and git could not count {graph.release}..{tip} — "
+            f"⛔ NEITHER dated NOR disagreeing, and a FAILED READING is not a verdict.",
+        )
+    if at_tip == claimed:
+        return (
+            f"    ⭐ DATED, not wrong (`PO-50/12`): the row claims {claimed} @ {tip}, git reads "
+            f"{count} for {branch} TODAY, and {graph.release}..{tip} is {at_tip} — TRUE AT ITS "
+            f"OWN DECLARED REF, and the branch moved past it. ⚠️ The word is DATED, never "
+            f"`stale`, `refuted` or `wrong` (Ruling 97, Ruling 310(b), `CTO-62/2`).",
+        )
+    return (
+        f"    ⚠️ NOTICE, not a refusal (`PO-42/7`): the row claims {claimed} @ {tip}, git reads "
+        f"{count} for {branch}, and {graph.release}..{tip} is {at_tip} — ⛔ WRONG AT ITS OWN "
+        f"DECLARED REF, so the branch moving does not account for it. ⭐ That is case (a) — the "
+        f"office MISCOUNTED — which a bare count could not tell from case (b) (`PO-50/12`).",
     )
 
 

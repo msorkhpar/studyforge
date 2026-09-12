@@ -338,6 +338,52 @@ def test_a_cell_that_counts_NO_commits_is_not_a_cell_that_counts_ZERO() -> None:
     assert zero[0].commits == 0
 
 
+def _ahead(cell: str) -> tuple[int | None, str | None]:
+    """The COUNT and the AS-OF of one commits-ahead cell, read ACROSS one grammar."""
+    row = read(board(f"| `W46` | Dev | none | {cell} | in flight |\n", delimited=True)).rows[0]
+    return row.commits, row.declared_tip
+
+
+@pytest.mark.parametrize(
+    ("cell", "count", "tip"),
+    [
+        # ⛔ **MEASURED BYTES, not invented ones** (Ruling 97): the In-flight cells this
+        # board wrote at `504bb47` and at `d530394`, in Ruling 246's form.
+        ("0 @ `94ad941`", 0, "94ad941"),
+        ("1 @ `a04e590`", 1, "a04e590"),
+        # ⭐ The form that PREDATES Ruling 246 — `7559398`'s own cell, tip and all absent.
+        ("0", 0, None),
+        ("—", None, None),
+        ("**+1**", 1, None),
+        # ⛔ **THE LEAK**: the count half searched the WHOLE cell, so a cell declaring NO
+        # count answered `123` out of the sha beside it.
+        ("— @ `abc123`", None, "abc123"),
+    ],
+)
+def test_ruling_246s_cell_is_ONE_grammar_and_the_COUNT_half_never_reads_the_TIP(
+    cell: str, count: int | None, tip: str | None
+) -> None:
+    """⛔ **`PO-50/12`: the `@ <branch tip>` half reached NO READER AT ALL.**
+
+    ⭐ **Both halves come out of ONE cell here and nowhere else** — ⚠️ a tip parsed in
+    `verdict.py` would put two halves of one grammar in two modules, which is the seam
+    `W139` paid to cut properly one package over.
+    """
+    assert _ahead(cell) == (count, tip), cell
+
+
+def test_a_cell_declaring_NO_TIP_is_UNCHANGED_and_that_is_the_historical_population() -> None:
+    """⛔ **Clause 3: a remedy firing on correct historical work is Ruling 179's cost.**
+
+    ⚠️ **`THE_CHECKOUT_CELL` is `7559398`'s own pair of rows and it PASSED then** —
+    ⭐ **both predate Ruling 246, and `None` is what *this cell declares no as-of*
+    reads as, which is the answer `verdict.py` routes to the notice it already had.**
+    """
+    rows = read(board(THE_CHECKOUT_CELL, delimited=True)).rows
+    assert [row.declared_tip for row in rows] == [None, None]
+    assert [row.commits for row in rows] == [0, 0]
+
+
 @pytest.mark.parametrize("absent", sorted(ABSENT - {""}))
 def test_every_spelling_of_NO_CARRIER_reads_the_same_way(absent: str) -> None:
     """⛔ Ruling 140: the forbidden thing in a form the clause did not picture.
