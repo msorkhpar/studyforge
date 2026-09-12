@@ -8,7 +8,8 @@ it, and refused to force exit `0` — ⛔ **and Ruling 218 RATIFIED that refusal
 Ruling 106 protects it as a record and it is not edited here, not even its
 `Status:` line.** ⚠️ **Its finding ids `W64/1`–`W64/5` are minted; this document
 continues at `W64/6`.** ⚠️ **Writing over it was what my brief directed —
-`W64/6` below.**
+`W64/6` below, UPHELD and disposed by Ruling 346, which now says in the rubric
+that a re-taken row MAY carry a second handoff on a new stem pointing back.**
 
 ## Status
 
@@ -16,11 +17,28 @@ continues at `W64/6`.** ⚠️ **Writing over it was what my brief directed —
 `fix/W64-kind-gate-scope`, cut at `7a7a178`, **code tip `6f156a3`**, and the
 branch tip is this document's own commit — one document, no code. ⛔ Not merged
 and not pushed; no remote was added, set or queried, and this checkout has none.
-⭐ **The floor and the suite were re-run at the branch tip and are identical to
-the readings below.** Every
-commit is authored `dev1 <dev1@example.invalid>` (Ruling 296), **passed per
-invocation with `git -c user.name=… -c user.email=…` and NOT written into any
-config file** — `W64/14` is why that distinction is not a detail.
+⭐ Every commit is authored `dev1 <dev1@example.invalid>`, **passed per
+invocation with `git -c user.name=… -c user.email=…` and NEVER with
+`git config`** — ⛔ **which is Ruling 296 as Ruling 345 now spells it, and
+`W64/14` is one of the two independent findings behind that ruling.**
+
+### ⛔ Round 70: CHANGES REQUESTED at `5b31436`, discharged here
+
+⛔ **`CTO-70/9` is the whole of the required change and it is UPHELD IN FULL:**
+two figures in the coupling table reproduced under no unit, because the pair was
+**derived and not measured**. ⭐ **That section is REPLACED** — one instrument
+reading both columns in one process, at two named refs, with the three units
+named and distinguished. The re-derivation is printed beside the table it
+replaces, and the cause is named to the digit.
+
+⚠️ **Nothing else was asked of me.** `W64/6` is disposed by Ruling 346 and this
+document already complied; `W64/11` is UPHELD and independently reproduced — a
+planted `QQQ-999/1` produced 0 findings, confirming that refusing to ship the
+citation rule left a real residue and not an imagined one.
+
+⛔ **This tip is NOT covered by that verdict.** The bracket
+`(CTO: CHANGES REQUESTED)` was ruled at `5b31436` and nowhere else; it is not
+mine to carry forward, and nothing here should be merged on it.
 
 ⛔ **The row prices three gates and this document ships one.** Gate one was
 `W121` and merged this wave. ⭐ **Gate two — a declarable scope for
@@ -278,6 +296,75 @@ state exactly), and **Ruling 296 does not say which mechanism it means.** ⛔ Th
 second is routed to the CTO as a one-clause amendment; the first is a defect of
 mine, recorded rather than tidied.
 
+⭐ **DISPOSED, round 70: this became Ruling 345, from two offices' independent
+findings in one night.** ⛔ **The ruling's own words are that the instrument did
+NOT malfunction** — it fired correctly, in about two minutes, on a premise
+nobody meant to establish — ⭐ which is the better reading and is not the one I
+filed. ⚠️ **And `CTO-70/13` corrects the null check I would have reached for
+next:** bare `git config --local --get-regexp '^user\.'` **prints the values** at
+rc 0 when a slot is set, so it is safe only when it passes. ⛔ **The redirected
+form is the one that proves absence without emitting what it is checking for**,
+and every absence check taken on this branch after round 70 used it.
+
+### ⛔ `W64/15` `[structural]` — `CTO-70/9`'s illustration re-measured its AFTER column and inherited its BEFORE column, which is the class it filed
+
+⭐ **`CTO-70/9` says in its own words that its figures are an ILLUSTRATION and
+explicitly not a required means, and that if the office finds the population it
+did not, the finding is its.** ⛔ **I found it, so it is filed here.**
+
+⚠️ **The illustration quotes three pairs at ref `5b31436`. Every AFTER column
+reproduces EXACTLY at that ref. No BEFORE column does — and each is short by
+exactly this document's own contribution at that ref, because each is the figure
+measured at `7a7a178`, where this handoff does not exist.**
+
+```text
+one instrument, one process, both columns, at each ref (mine, HOST):
+
+                                   7a7a178            5b31436
+  documents reaching a rule       105 ->  211      106 ->  212
+  finding lines HANDED            566 -> 1366      575 -> 1375
+  numbered claims JUDGED          552 -> 1300      561 -> 1309
+
+  CTO-70/9's illustration, all three declared at 5b31436:
+  documents                       105 ->  212   <- before is 7a7a178's
+  finding lines HANDED            566 -> 1375   <- before is 7a7a178's
+  numbered claims JUDGED          552 -> 1309   <- before is 7a7a178's
+
+  this document contributes 1 document and 9 finding lines at 5b31436,
+  and 9 is exactly the gap in both line-unit BEFORE columns
+```
+
+⛔ **So the row *documents held to more than say what you are: 105 → 211* was
+never wrong** — it is my `7a7a178` reading, and `212` is the same quantity at
+`5b31436`. ⚠️ **What was wrong is that the table named no ref**, so a reviewer
+measuring at the merge ref got a different right answer. ⭐ **`560 → 1308` is a
+different matter and is wholly mine: `552 + 8 = 560` is this document at the
+moment it carried 8 findings, and `1308` was `560 + 748` rather than a reading.**
+⛔ **`CTO-70/9` is upheld in full on that second row and the whole table is
+replaced rather than patched.**
+
+⚠️ **The point that generalises, and it is the reviewer's own:** *a population
+that contains the document measuring it has no single before column* — the ref
+must be named, and both offices reached for the one that suited the sentence.
+
+### ⚠️ `W64/16` `[local]` — round 70's two per-subject sections point at the WRONG finding id, each off by one
+
+⛔ **In the `W64` section the closing sentence reads *"What does NOT reproduce is
+`CTO-70/10` below"*, and in the `W155` section it reads *"What does not
+reproduce is `CTO-70/11` below"*** — in
+`docs/tasks/handoffs/CTO-2026-09-12-round70.md`, at the record's live tip, and I
+re-read it there rather than at the sha I was first handed. ⚠️ **`W64`'s finding
+is `CTO-70/9` and `W155`'s is `CTO-70/10`; `CTO-70/11` is a recorded negative in
+`W155`'s FAVOUR that asks for nothing.** ⛔ **So each subject's own section sends
+it at the next subject's charge, and `W155`'s sends it at a finding it does not
+have to discharge.**
+
+⭐ **Recoverable, which is why it carries the local marker and not the
+structural one** (Ruling 65 — the marker is named, not spelled): **the record's own
+*THE REQUIRED CHANGES, by id* table routes both correctly**, and that table is
+what I acted on. ⛔ **Not edited** — a record is annotated, never edited
+(Ruling 106) — and filed here so the two documents agree.
+
 ## For dependents
 
 ### ⛔ The population, re-derived at my own ref and NOT inherited
@@ -287,9 +374,14 @@ mine, recorded rather than tidied.
 this reading is reproducible from the tree rather than from prose (`W121/2` is
 discharged by that, and the driver that prints the table below is a scratchpad
 script that imports both and adds no logic of its own).
-⭐ **Ref:** `7a7a178`, the branch base; the corpus is byte-identical at the tip,
-which changes only `tools/` and this document.
-⭐ **Directory:** `docs/tasks/handoffs`, **226** documents.
+⭐ **Ref:** `7a7a178`, the branch base — **the corpus this branch INHERITED, in
+which this document does not yet exist.** ⛔ **At the merge ref the directory
+holds 227 rather than 226, because this handoff is itself in the population the
+rule reads**, and every figure below that counts a `ruling record` is unmoved by
+that while every figure that counts a `task handoff` is not. ⚠️ **The
+`ruling record` corpus is byte-identical between the two refs: this branch adds
+no record and edits none.** ⭐ The coupling section prints both refs.
+⭐ **Directory:** `docs/tasks/handoffs`, **226** documents at this ref.
 
 ```text
 UNIT = documents          directory = docs/tasks/handoffs, 226 total
@@ -323,26 +415,133 @@ UNIT = finding lines      population = 106 ruling records
 never been applied to it, which is why this row could ship green without one
 record being touched.
 
-### ⛔ POPULATION COUPLING — the direction is WIDER, and here is the size
+### ⛔ POPULATION COUPLING — RE-DERIVED at the real call site (`CTO-70/9`)
+
+⛔ **`CTO-70/9` is UPHELD and the table it charges is REPLACED, not patched.**
+⭐ **The reviewer's arithmetic gave the defect away exactly** — `1308 − 560 =
+748` — and it was right: **the pair was derived, not measured.** ⚠️ **The whole
+cause, which I can now name to the line:** `748` was measured over the corpus at
+`7a7a178`, `560` was measured minutes later over the working tree **after this
+handoff had been written into it carrying 8 findings**, and `1308` was then
+added rather than read. ⛔ **552 + 8 = 560.** ⭐ **So the two rows of that table
+were in two different populations and the table named no ref at all.**
 
 ⚠️ **`W64` is file-disjoint from `W155` (`tools/quality/size.py`) and `W170`
 (`tools/quality/board/unclaimed.py`) and is NOT population-disjoint from them,
 because every office writes a handoff and the floor reads it.**
 
-| population | before this row | after | direction |
-|---|---|---|---|
-| documents `check_handoffs` reads at all | 226 | 226 | ⭐ unchanged |
-| documents held to more than *say what you are* | 105 | 211 | ⛔ **+106** |
-| finding lines read by `handoff-finding-id` | 560 | 1308 | ⛔ **+748** |
-| rules a `ruling record` can fail | 1 | 3 | ⛔ **+2** |
-| directories read | 1 | 1 | ⭐ unchanged |
+⛔ **THE INSTRUMENT, and it is one instrument reading both columns in one
+process at one ref.** ⭐ It wraps the SHIPPED `check_handoffs` at its own call
+sites — `check_finding_ids`, `check_sections`, `check_markers`, `check_record` —
+and counts what they are actually handed. ⛔ **The *gate OFF* column is the same
+shipped code with `handoffs.RULING_RECORD` rebound to a string no document
+declares**, so the gate is disabled and **nothing else differs**: not the
+reader, not the corpus, not the process. ⚠️ It is a scratchpad driver of about
+50 lines that adds no logic of its own; the derivation it calls is shipped.
+
+⛔ **THREE UNITS APPEAR BELOW AND THEY ARE THREE DIFFERENT UNITS**, which is the
+half the replaced table did not say. ⭐ *Documents* is a count of files;
+*lines HANDED* is every finding line `check_markers` and `check_record` pass
+down; *claims JUDGED* is the subset of those on which `_FINDING_NUMBER` matched
+and a verdict was therefore reached. **A line handed and not judged carries no
+number and collides with nothing.**
+
+⛔ **AND THE POPULATION CONTAINS THIS DOCUMENT**, which is why two refs are
+printed rather than one. ⭐ **`7a7a178` is the corpus this branch INHERITED —
+226 documents, this handoff not yet written.** ⭐ **The merge ref is the corpus
+that MERGES — 227 documents, this handoff among them, contributing its own
+findings to the columns that count findings.** ⚠️ **Neither is the *true* one
+and quoting either without its ref is the defect `CTO-70/9` filed.**
+
+```text
+INSTRUMENT   the shipped check_handoffs, wrapped at its own call sites;
+             the OFF column is the same code with the ruling-record gate
+             disabled by rebinding handoffs.RULING_RECORD
+
+REF 7a7a178  — the corpus INHERITED, 226 documents, this handoff absent
+UNIT                                            gate OFF   gate ON    delta
+documents reaching a rule beyond the declaration     105       211     +106
+finding lines HANDED to check_finding_ids            566      1366     +800
+numbered claims JUDGED by check_finding_ids          552      1300     +748
+findings returned by check_handoffs                    0         0       +0
+
+REF the branch AT ITS TIP (Ruling 347) — the corpus that MERGES:
+             227 documents, this handoff among them, carrying 11 findings
+UNIT                                            gate OFF   gate ON    delta
+documents reaching a rule beyond the declaration     106       212     +106
+finding lines HANDED to check_finding_ids            577      1377     +800
+numbered claims JUDGED by check_finding_ids          563      1311     +748
+findings returned by check_handoffs                     0         0      +0
+
+⭐ the two refs differ by exactly this document's own contribution, and that
+   is the arithmetic that shows the population is self-inclusive rather than
+   the arithmetic that shows a figure was derived
+```
+
+⛔ **THE INSTRUMENT ITSELF, so the table can be re-taken by whoever doubts it
+without asking me for a scratchpad** (Ruling 221, and `W121/2` at a second
+site). ⭐ Run it from a checkout root; pass a root to read another ref's corpus.
+
+```text
+import sys; sys.path.insert(0, ".")
+from pathlib import Path
+import tools.quality.handoffs as H
+from tools.quality.handoffs import contract as C, records as R
+from tools.quality.handoffs.contract import _FINDING_NUMBER, _MARKUP, _claim_free_end
+
+IDS, SEC, MRK, REC = C.check_finding_ids, C.check_sections, C.check_markers, H.check_record
+
+def run(gate, root=Path(".")):
+    docs, handed, judged = set(), [], []
+    def ids(rel, lines, i, **kw):
+        docs.add(rel); handed.extend(lines)
+        judged.extend(l for _n, l in lines
+                      if _FINDING_NUMBER.match(l[_claim_free_end(l, _MARKUP):]))
+        return IDS(rel, lines, i, **kw)
+    def wrap(fn):
+        return lambda rel, *a, **k: (docs.add(rel), fn(rel, *a, **k))[1]
+    C.check_finding_ids = R.check_finding_ids = ids
+    C.check_sections = H.check_sections = wrap(SEC)
+    C.check_markers = H.check_markers = wrap(MRK)
+    H.check_record = wrap(REC)
+    saved, H.RULING_RECORD = H.RULING_RECORD, H.RULING_RECORD if gate else "\x00"
+    try:
+        found = H.check_handoffs(root)
+    finally:
+        H.RULING_RECORD = saved
+        C.check_finding_ids = R.check_finding_ids = IDS
+        C.check_sections = H.check_sections = SEC
+        C.check_markers = H.check_markers = MRK
+        H.check_record = REC
+    return len(docs), len(handed), len(judged), len(found)
+
+print("gate OFF", run(False), "\ngate ON ", run(True))
+```
+
+⚠️ **`"\x00"` is a kind no document declares, so the OFF column disables the
+gate and only the gate.** ⛔ **Restoring in a `finally` is not decoration** — a
+half-restored module would make the second column a reading of a third thing,
+which is the failure this table is being corrected for.
+
+| population | direction and size, ref-independent |
+|---|---|
+| documents `check_handoffs` reads at all | ⭐ unchanged |
+| documents reaching a rule beyond the declaration | ⛔ **+106** |
+| numbered claims judged by `handoff-finding-id` | ⛔ **+748** |
+| finding lines handed to it | ⛔ **+800** |
+| rules a `ruling record` can fail | ⛔ **1 → 3**, and the reviewer fired each by its own plant |
+| directories read | ⭐ unchanged |
+
+⭐ **The DELTAS are the ref-independent half and they reproduce at both refs**,
+which is why `CTO-70/9` says the direction and the deltas were always right.
 
 ⛔ **Every document any office writes as a `ruling record` this wave is now in
 the floor's population**, including the CTO's own round record and the PO's.
 ⭐ **What it costs them is one line: a filename of the settled shape, or
 `**Kind:** ruling record — <OFFICE> round <N>`.** ⚠️ **A record that declares a
 scope disagreeing with its filename is now RED, and that is a new way for a
-merge to go red that did not exist at `7a7a178`.**
+merge to go red that did not exist at `7a7a178`.** ⭐ **`po-round55` is the first
+record to face the rule and the reviewer verified it passes.**
 
 ⭐ **No new directory is read and no new file type**, so check 4's file-growth
 sub-step still sees everything it saw before.
@@ -402,10 +601,12 @@ file** — each was redirected whole, then read.
 the counterfactual RED on exactly the tests that only the new gate can pass.**
 
 ```text
-ref                 6f156a3  — the code ref; this document's own commit is the
-                    TIP and changes one document and no code. ⛔ The floor and
-                    the suite were RE-RUN at that tip and are identical; the
-                    re-run is in the coordinator hand-back.
+ref                 fix/W64-kind-gate-scope AT ITS TIP (Ruling 347 — a branch
+                    tip is named as a tip, and its sha is in the coordinator
+                    hand-back where it cannot go stale in a frozen record). ⛔ The
+                    round-70 discharge changes THIS DOCUMENT ONLY; the code ref
+                    is unmoved at 6f156a3 and the readings below are re-runs at
+                    the tip, not carried forward from 5b31436.
 ROLE                studyforge-wt/dev1, branch fix/W64-kind-gate-scope
 ENVIRONMENT         the pinned container, ./docker/dev/check, from this checkout
 
@@ -415,8 +616,14 @@ quality floor       ./docker/dev/check python3 -m tools.quality
                     `ruff format --check .` clean, 929 files
 
 suite               ./docker/dev/check python3 -m pytest -ra
-                    5688 passed, 18 skipped in 86.95s             EXIT=0
+                    5688 passed, 18 skipped                       EXIT=0
                     (5671 + 18 at 5b54936 per W121; +17 is test_records.py)
+
+coupling table      the instrument printed in For dependents, run at that tip
+                    the shipped check_handoffs wrapped at its own call sites
+                    227 documents; the six figures printed above  EXIT=0
+                    ENVIRONMENT: HOST — standard library only, no container
+                    dependency; reproduced in the pinned container as well
 
 R12, second way     the four-line gate in check_handoffs removed, everything
                     else in place:
