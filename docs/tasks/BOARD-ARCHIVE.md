@@ -18210,3 +18210,30 @@ git rev-list --count release/m0-foundations..<branch>
 ### ⛔ ONE FINDING ADDED BY THIS AMENDMENT — `PO-55/6`
 
 - ⚠️ **`PO-55/6` — AGAINST THE COORDINATOR, and NARROW.** ⛔ **A mid-round message read *"`W64` has landed at `5b31436`"*, in a project whose register writes `✅ done — <merge ref>` for a row that has landed and whose In flight cells are refuted by exactly that event.** ⭐ **`5b31436` is the BRANCH TIP; `git branch --contains` names no release branch and `release/m0-foundations` is still `7a7a178`.** ⛔ **I measured before touching a cell, so nothing moved — but the same word in the same sentence as *re-take your readings* is one an office acts on quickly.** ⚠️ **THE WIDER CHARGE IS DECLINED** (Ruling 329): the message's substance was correct, timely, self-verified and unprompted, and it named the cause, the repair and the check it wanted. ⭐ **The remedy is one word: a branch TIP is *at*, a merge is *merged at*.**
+
+## ⛔ AMENDMENT 2, PO round 55 — `W170` got a LIVE WITNESS at the register's own tip while `W170` was in flight, and the exit code did not move; APPENDED, so `33f1e13` stays an ancestor (Ruling 324, Ruling 106)
+
+⛔ **BETWEEN THIS ROUND'S TWO CLOSING `corroborate` RUNS THE REVIEWER CUT A TRIAL WORKTREE, AND THE GATE LINE FIRED.** ⭐ **Both readings are the pinned container's, role `wt/po`, `./docker/dev/check`, and the only difference between them is five minutes of another office's work:**
+
+```text
+ref 775bf5a   corroborate: … 6 checkouts on a branch …
+              dispatched and unnamed: none.
+              trial/tmp branches still checked out: none.
+              CORR_EXIT=0
+
+ref 33f1e13   corroborate: … 7 checkouts on a branch …
+              ⛔ dispatched and UNNAMED by any row: trial/cto70-wave
+              ⚠️ trial/tmp branches STILL CHECKED OUT (1): trial/cto70-wave
+                 — ⛔ report, never remove one you did not cut (Ruling 206(ii)).
+              CORR_EXIT=0        ⛔ THE EXIT CODE DID NOT MOVE
+```
+
+⛔ **`CORR_EXIT=0` IS TRUE AND IT IS NOT THE WHOLE READING.** ⭐ **The row arm is genuinely clean — *0 of 3 rows REFUTED by git, 0 NOT ANSWERABLE* — and the arm Ruling 264(c) made the project's ONE pre-merge gate is INHABITED at the same instant.** ⚠️ **An office that tailed the exit code would have reported this tip as clean; the reading is read WHOLE or it is not read, which is why it is quoted whole above and in the handoff.**
+
+⭐ **THIS IS `W170`'s PREDICATE, AND `W170` IS IN FLIGHT AT `wt/dev3` AS I WRITE IT.** ⛔ **The same branch is named TWICE by one instrument, on two lines whose populations are supposed to be disjoint — once on the GATE line where it is a FALSE POSITIVE, and once on the line whose whole job is to report it, where it is CORRECT. That is `rows/W170.md`'s founding sentence, reproduced.**
+
+⚠️ **AND IT IS A SECOND, INDEPENDENT INSTANCE RATHER THAN THE SAME ONE RE-READ.** ⛔ **`W170`'s founding reading was `trial/cto-round68-wave7` at ref `7455f10`, taken by PO round 53 on the HOST. This is `trial/cto70-wave` at ref `33f1e13`, taken in the PINNED CONTAINER, two waves later, by a different review.** ⭐ **So the row's claim — *it fires precisely when a review is in progress, which is the only moment the gate is read* — is now confirmed by two instances at two refs in two environments, and it stopped being an argument.**
+
+⛔ **WHAT I DID NOT DO, and Ruling 206(ii) is the ground: I did not remove, prune or touch that worktree.** ⭐ **I did not cut it — it is a REVIEWER's trial merge for CTO round 70, its branch `trial/cto70-wave` is `5` commits ahead of release at `6c742c5`, and it is checked out in a scratch directory under `/tmp` rather than in the workspace.** ⚠️ **AND THE PATH IS NOT PROOF OF OWNERSHIP: that scratch directory is shared by more than one office in this session, so *it is under a path I also write to* is not a reason to retire a worktree. CLEAN IS NOT IDLE, and `CTO-67/17` is the round that paid for that lesson.**
+
+⭐ **NO CELL MOVES AND NO ROW IS MINTED.** ⛔ **`W170` already carries this argument, a live row's argument is AMENDED rather than duplicated, and the row is in flight — so annotating its file now would collide with its taker inside one wave, which is the collision this project keeps recording.** ⚠️ **THE WITNESS IS DATED THE MOMENT THE REVIEWER RETIRES THAT WORKTREE, and it is recorded here with its ref so that it reads DATED rather than wrong** (Ruling 310(b)).
