@@ -4,9 +4,8 @@ r"""The command line: one root in, one report out, an exit code a script reads.
 checks, prints the report and returns the exit code.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.validate`.
-⚠️ The installed console script is SF-28's to register; this module is the
-callable it will register, so the two cannot disagree about what the command
-does.
+⭐ The dispatcher registers this same callable as the `validate` verb, so the
+two cannot disagree about what the command does.
 
 **Depends on.** `validate.run`, `validate.report`, and `argparse`.
 

@@ -44,9 +44,11 @@ from tests.authoring.support import (
     PLACEHOLDER,
     UNRESOLVED,
     assert_both_halves_reached,
+    assert_fenced_commands_are_registered,
     code_spans,
     commanded_modules,
     commanded_pages,
+    console_scripts,
     consumer_side,
     declared_pythonpath,
     document,
@@ -55,6 +57,8 @@ from tests.authoring.support import (
     fences,
     json_fences,
     must_run,
+    offered_verbs,
+    registered_verbs,
     resolves,
     rows_under,
     run_bare,
@@ -394,20 +398,53 @@ def test_the_shape_table_agrees_with_the_two_corpora_it_describes():
 
 
 def test_no_fence_anywhere_offers_a_console_script_that_does_not_exist():
-    # ⚠️ `studyforge validate` is how the design documents spell it and there
-    # is no such entry point yet — `pyproject.toml` declares no
-    # `[project.scripts]`, and says why. It may be *discussed*, which is R2's
-    # prose naming the seam; it may not be *given as a command*, which is what
-    # a fenced line reads as to an agent.
+    # ⛔ Ruling 157: SF-40 registered `[project.scripts]`, and this check was
+    # CONVERTED rather than deleted. The blanket refusal — no fenced line may
+    # begin `studyforge ` — became a derivation: a fenced line may give the
+    # installed command with a verb the tree registers, and may not give one it
+    # does not.
+    #
+    # ⚠️ The NAME is kept although the predicate changed: frozen records cite
+    # it, and a record is annotated, never edited (Ruling 106).
     pages = commanded_pages()
     assert_both_halves_reached(pages)
-    for name, text in sorted(pages.items()):
-        for body in fences(text, ""):
-            for line in body.splitlines():
-                assert not line.strip().startswith("studyforge "), (
-                    f"{name} offers {line.strip()!r} as a command, and no "
-                    f"console entry point provides it"
-                )
+    assert_fenced_commands_are_registered(pages)
+
+
+def test_some_fence_actually_offers_the_installed_command():
+    # ⛔ A derivation nothing exercises is a check that cannot fail. The skills
+    # give `studyforge validate` in a fence; if every fence stopped naming the
+    # command, the check above would pass over an empty population and say
+    # nothing.
+    offered = offered_verbs(commanded_pages())
+    assert offered, "no fenced line gives the installed command; the check above is vacuous"
+
+
+def test_a_fence_naming_an_unregistered_verb_fails():
+    # ⛔ Rulings 124 and 348: the pass condition is the MOVED exit code. The
+    # planted page is the future state the converted check has to refuse, and
+    # `frobnicate` is not a verb any table registers.
+    command = sorted(registered_verbs())[0]
+    planted = {"docs/authoring/planted.md": f"```\n{command} frobnicate .\n```\n"}
+    with pytest.raises(AssertionError, match="registers no such verb"):
+        assert_fenced_commands_are_registered(planted)
+
+
+def test_the_derivation_reads_the_registered_table_and_not_a_list_here():
+    # ⛔ The verbs come from `[project.scripts]` → the target module → `VERBS`.
+    # Asserted so that a future edit replacing the derivation with a literal
+    # list fails rather than passing quietly.
+    scripts = console_scripts()
+    assert scripts, "pyproject.toml registers no console script"
+    verbs = registered_verbs()
+    assert set(verbs) == set(scripts), "a registered script provides no verbs"
+    for name, target in sorted(scripts.items()):
+        module = importlib.import_module(target.partition(":")[0])
+        attribute = target.partition(":")[2]
+        assert callable(getattr(module, attribute, None)), (
+            f"{name} is registered against {target}, which is not callable"
+        )
+        assert verbs[name] == frozenset(module.VERBS)
 
 
 def test_every_command_the_reference_gives_names_a_module_that_can_be_run():

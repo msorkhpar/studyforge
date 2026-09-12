@@ -1,9 +1,9 @@
-"""`python3 -m studyforge.validate` — the command, before SF-28 registers it.
+"""`python3 -m studyforge.validate` — the command, reached without installing.
 
 ⚠️ **Run as a real process, deliberately.** The module entry point exists so
 that an adapter author has a command *today*, and a command is only a command
 if a shell can run it and read its exit status. Calling `main()` in-process
-would test everything except the part SF-28 is going to depend on.
+would test everything except the part the installed command depends on.
 """
 
 import os
@@ -59,9 +59,9 @@ def test_it_exits_two_when_given_no_argument():
 
 def test_the_module_is_one_implementation_on_top_of_cli_main():
     # ⛔ Four lines on top of `cli.main`, so the module entry point and the
-    # console script SF-28 registers cannot come to disagree about what the
-    # command does. Asserted on the source, because that is where the
-    # duplication would appear.
+    # registered `validate` verb cannot come to disagree about what the command
+    # does. Asserted on the source, because that is where the duplication would
+    # appear.
     source = (repository_root() / "src/studyforge/validate/__main__.py").read_text("utf-8")
     body = [
         line

@@ -24,10 +24,17 @@ dependencies = []
 test = ["pytest>=8.0"]
 lint = ["ruff>=0.6"]
 
-# ⚠️ No `[project.scripts]` yet. The console entry point belongs to SF-28,
-# which owns `studyforge/cli/`. Declaring `studyforge = "studyforge.cli:main"`
-# against a `main` that does not exist yet makes an installed package that
-# fails on first invocation, which is a worse state than no entry point.
+# ⛔ The installed command, and SF-40 is this table's ONLY minter: nothing else
+# in the tree registers a verb. The verbs are `studyforge.cli.dispatch.VERBS`,
+# reached from here rather than listed anywhere a second time.
+#
+# ⚠️ One script name, not one per verb. `studyforge-build` and its siblings
+# would put the subcommand structure in two places — here and in the dispatcher
+# — and the two would drift. `tests/test_authoring_reference.py` reads this
+# table, resolves the target and asks it for its verbs, so a document cannot
+# offer a fenced `studyforge <verb>` the tree does not install.
+[project.scripts]
+studyforge = "studyforge.cli:main"
 
 [tool.setuptools]
 package-dir = { "" = "src" }

@@ -4,9 +4,8 @@
 plan, prints it and returns the exit code.
 
 **How you use it.** `main(argv) -> int`, and `python3 -m studyforge.cli.plan`.
-⚠️ The installed console script is SF-28's to register; this module is the
-callable it will register, so the two cannot disagree about what the command
-does.
+⭐ The dispatcher registers this same callable as the `plan` verb, so the two
+cannot disagree about what the command does.
 
 **Depends on.** `cli.plan.derive`, `validate.cli` for `UNUSABLE`, and
 `argparse`.
