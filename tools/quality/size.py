@@ -31,6 +31,23 @@ to be used. What automation changes is *where* the exception is recorded: in
 the module, in the diff, in front of the reviewer. A ceiling that lives only
 in a document erodes under deadline, and the 2,743-line module this project is
 paying down is what erosion looks like when nothing ever said no.
+
+## ⛔ The ceiling has an instrument; the APPROACH to it lives NEXT DOOR (`W155`)
+
+⭐ **`tools/quality/approach.py` is the other half**, and it is a NOTICE rather
+than a finding: R11's ceiling already fails the build, and a second hard gate
+*below* the first would make the real one unreachable. ⛔ **Its predicate is
+proximity × GROWTH and not proximity** — a static module sitting under an
+enforced ceiling is the ceiling WORKING, and an instrument that flagged it
+would cry on its own successes.
+
+⚠️ **It is a SEPARATE MODULE because it did not fit here.** ⛔ MEASURED, by
+writing it here first: with the notice in this file `wc -l tools/quality/size.py`
+read **479 against a ceiling of 400**. ⭐ **The remedy R11 names is
+a SPLIT at a named seam and not a trim, so the row that instruments the
+approach takes its own advice rather than buying an exception from the check
+it is extending.** The seam is the question asked: this module answers *"is
+this file over the line"* and that one answers *"is it heading for it"*.
 """
 
 from __future__ import annotations
