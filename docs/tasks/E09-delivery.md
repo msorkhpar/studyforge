@@ -516,6 +516,21 @@ regenerate for four of the five.** ⭐ **Ruling 129's own remedy is the right on
 and it is applied again rather than argued with: an unmeetable clause is SPLIT,
 and it lands where it can first be RUN.**
 
+#### ⛔ THE GENERAL FORM, STATED ONCE SO THE NEXT RE-HOME IS NOT A RE-PARENTING
+
+⛔ **A CLAUSE DOES NOT BECOME SATISFIABLE BY MOVING TO A DIFFERENT ROW. IT BECOMES
+SATISFIABLE BY MOVING TO A ROW THAT CAN REACH ITS SUBJECTS.** ⭐ **Ruling 129 moved
+this clause off `SK-07` because `SK-07` could not reach the five `OPS-*` artifacts,
+and put it on a row that could not reach four of them either — a re-parenting, not a
+repair.** ⚠️ **The test is one question, asked at the destination and not at the
+origin: *at THIS row's milestone, does every subject the clause names EXIST?*** ⛔ **If
+the answer is no for any subject, the destination is wrong however natural it reads.**
+
+⭐ **Applied twice in PO round 61, in both directions: this clause moved DOWN the plan
+to M7 where its subjects exist, and *`OPS-04` is expressible as configuration over the
+build* moved SIDEWAYS into `OPS-04`'s own Acceptance, which is the row that IS the
+subject.**
+
 **Acceptance.** Each of the five artifacts is regenerated from manifest data and
 diffs clean against what the corpus repository holds. ⛔ **A sixth artifact added
 without a glob fails in THIS repository rather than surfacing as `unclassified`

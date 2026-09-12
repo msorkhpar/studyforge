@@ -55,6 +55,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 |---|---|---|---|---|
 | `SF-32` | Developer 1 | `feat/SF-32` @ `wt/dev1` | 0 @ `a606033` | ⏳ **in flight** — wave 15 |
 | `W196` | Developer 2 | `fix/W196-ruling74-formatter` @ `wt/dev2` | 0 @ `a606033` | ⏳ **in flight** — wave 15 |
+| `SF-28` | Developer 3 | `feat/generate-containers` @ `wt/dev3` | 0 @ `a606033` | ⏳ **in flight** — wave 15 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -73,7 +74,7 @@ SEVERAL ROW IDS.**
 ⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
 ⛔ **WAVE 14'S THREE ROWS LEFT THIS TABLE: every `wt/dev*` has moved on (`git worktree list`, Ruling 171), so *named until teardown* cannot fire.**
 ⛔ **[`W185`](rows/W185.md) IS ASSIGNED (Developer 2, wave 15) AND ABSENT HERE ON PURPOSE** — ⭐ **nothing observable ties its arm to that office's live carrier, and asserting a carrier the register cannot see is what `PO-59/8` refused.** ⚠️ **Same for [`W191`](rows/W191.md).**
-⛔ **A THIRD LIVE CHECKOUT IS ON A BRANCH NO ROW NAMES — `wt/dev3`, `0` ahead** ([`PO-61/4`](handoffs/PO-2026-09-12-round61.md#findings-by-id)). ⭐ **Unnamed here deliberately: a cell is an ASSERTION (Ruling 189(c)) and the id would be an inference from a branch name.**
+⭐ **`SF-28`'s CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
 
 ## Next rows — placed, not yet taken
 
