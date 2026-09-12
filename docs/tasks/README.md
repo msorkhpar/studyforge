@@ -458,6 +458,12 @@ person who can make it is standing.
   justified in the docstring (R11).
 - ⛔ **Do not budget on the graph** — it is untracked and absent from linked
   worktrees. ⭐ **Use it where it exists (R14); otherwise `git grep` / `grep -rn`.**
+- ⛔ **RUN EVERY GATE; DO NOT TRANSCRIBE ITS READING.** ⭐ **Report a gate as
+  GREEN or RED with its exit code; quote a figure only where the figure IS the
+  subject** (a finding, or a gate's own bound). ⛔ **The clause lives ONCE, in
+  `../conventions/`, and this is a pointer.** ⚠️ **Ground: no defect this session
+  came from RUNNING an instrument; six came from copying a figure into a sentence
+  where it was stale or belonged to another instrument or ref.**
 - Write your handoff before you finish.
 - ⛔ **No acceptance condition is satisfied by an untracked artifact alone.** If
   what a task produces is git-ignored, ⭐ **the task ships the check, because the

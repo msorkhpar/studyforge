@@ -39,8 +39,8 @@ one does.**
 | **M3 step 3.1** | ✅ CLOSED | `7420c34` | [record](BOARD-ARCHIVE.md#m3-step-31s-close-run-at-7420c34-both-merges-re-derived-on-the-first-parent-chain-and-nothing-inherited) |
 | **M3 step 3.2** | ✅ CLOSED | `7a7a178` | [record](BOARD-ARCHIVE.md#m3-step-32s-close-run-at-7a7a178-both-merges-re-derived-and-ruling-199s-predicate-c-run-for-each) |
 | **M3 step 3.3** | ✅ CLOSED | `bec9d5c` | [record](BOARD-ARCHIVE.md#m3-step-33s-close-run-at-bec9d5c) |
-| **M3 step 3.4** | ⏳ **OPEN** — ⚠️ **opened on Ruling 351, and the spec's two cells are a TRANSCRIPTION still owed** ([`W182`](rows/W182.md)) | — | [the open](BOARD-ARCHIVE.md#po-round-58-step-34-opened-on-the-act-my-own-refusal-named-the-step-rule-widened-and-four-closes) |
-| **M3 step 3.5** | ⏳ **OPEN** — ⭐ **dispatched AHEAD of `3.4`'s close under the WIDENED step rule** ([`README.md`](README.md)) | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-step-34-opened-on-the-act-my-own-refusal-named-the-step-rule-widened-and-four-closes) |
+| **M3 step 3.4** | ⏳ **OPEN** — ⚠️ **[`W182`](rows/W182.md) owed** | — | [the open](BOARD-ARCHIVE.md#po-round-58-the-register) |
+| **M3 step 3.5** | ⏳ **OPEN** — ⭐ **ahead of `3.4`** | — | [the ruling](BOARD-ARCHIVE.md#po-round-58-the-register) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -55,7 +55,7 @@ the branch comes first, is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-clos
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `SF-17` | Developer 1 | `feat/SF-17-narration-synthesis` @ `wt/dev1` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `M3 step 3.4` |
-| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `M3 step 3.5` ⭐ **ahead of `3.4`'s close, RULED LEGAL** |
+| `SF-18` | Developer 2 | `feat/SF-18-player-highlight-sync` @ `wt/dev2` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12, `3.5` ⭐ **ruled legal** |
 | `W34` | Developer 3 | `fix/W34-rubric-checklist` @ `wt/dev3` | 0 @ `98aa0ad` | ⏳ **in flight** — wave 12 |
 <!-- /inflight -->
 
@@ -94,11 +94,10 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 11 | `W148`–`W151`, `W153`, `W154`, `W156` | ⭐ **each jumps nobody** | round 51 |
 | 12 | `W157`–`W160` | ⭐ **each jumps nobody** | round 52 |
 | 13 | `W161`–`W165`, `W168`, `W169`, `W171` | ⭐ **each jumps nobody** | round 54 |
-| 14 | ~~`W34`~~ | ⛔ **LEFT — in flight, wave 12**; ⭐ **`W40` closed at `8b6e241`** | round 56 |
-| 15 | `W173` | ⭐ **round 56's mint, jumping nobody**; ⭐ **`W172` closed at `a033a45`** | round 56 |
+| 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
 | 17 | `W176`–`W181` | ⭐ **round 57's six mints, jumping nobody** | round 57 |
-| 18 | `W182` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⭐ **a step is OPEN on a fact its own cited authority still contradicts, and no other row can close that** | round 58 |
+| 18 | `W182` | ⛔ **IT JUMPS EVERY ROW ABOVE IT** (Ruling 75) — ⭐ **no other row can close it** | round 58 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -111,12 +110,12 @@ takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.**
 `W168`, `W169`, `W171`, `W179` and `W180` name `docs/conventions/` — ⭐ ONE constraint, not a
 row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
-`W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/`; `W35`+`W148` write
-`pointers.py`; `W172`+`W181` write `tools/quality/handoffs/` — ONE OWNER or two waves for each
-set.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
+`W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/` — ONE OWNER or two waves for
+each set.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⚠️ **This paragraph ranges
-over DECLARED surfaces: `W35` declares none, so the register asserts its own here or nowhere**
-(Ruling 331, `PO-54/3`, `PO-54/4`).
+over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
+`PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
+closed.**
 
 ## The register — every `W` row
 
@@ -306,7 +305,7 @@ else.**
 | W179 | A new source file is outside the format gate's population until it is committed, so a green suite is not a reading of that gate | framework agent | `todo` — `NS-05/12` | [`rows/W179.md`](rows/W179.md) |
 | W180 | Ruling 349(a) binds the office CHECKING a removal and no rule binds the office MAKING one | framework agent | `todo` — `CTO-71/9` | [`rows/W180.md`](rows/W180.md) |
 | W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | `todo` — `CTO-71`'s `W167` review | [`rows/W181.md`](rows/W181.md) |
-| W182 | Spec §R9's two cells still read `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own cited authority contradicts | framework agent | `todo` — ⛔ **`PO-58/1`; it JUMPS the queue** | [`rows/W182.md`](rows/W182.md) |
+| W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | `todo` — ⛔ **`PO-58/1`, JUMPS the queue** | [`rows/W182.md`](rows/W182.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -321,10 +320,10 @@ it.** ⭐ **The open set is whatever §R9 marks `open`.**
 
 | Open row | Owed before | Owner |
 |---|---|---|
-| ⚠️ **narration regeneration state** — ⭐ **LOCATED by Ruling 351: `.studyforge/narration.json`, `narration_api`, written by `SF-17`.** ⛔ **§R9's OWN CELLS STILL READ `open`/`open` — a TRANSCRIPTION owed, [`W182`](rows/W182.md)** | `SF-17` (M3 step 3.4) | CTO |
+| ⭐ **narration regeneration state — LOCATED** (Ruling 351); ⛔ **§R9 still reads `open`, [`W182`](rows/W182.md)** | `SF-17` (M3 step 3.4) | CTO |
 | **coverage report** — no file | `EX-05` (M7) | CTO |
 
-⚠️ **THE FIRST ROW BLOCKED `M3 step 3.4` AND NO LONGER DOES.** ⛔ **Round 57's refusal named its own unblocking act — *the CTO locating a file and a version* — and Ruling 351 PERFORMED it, by that office** ([the refusal](BOARD-ARCHIVE.md#m3-step-34-does-not-open-and-the-ground-is-the-specs-own-sentence), [the open](BOARD-ARCHIVE.md#po-round-58-step-34-opened-on-the-act-my-own-refusal-named-the-step-rule-widened-and-four-closes)). ⛔ **AND THIS SECTION IS A POINTER, SO IT REPORTS THE DIVERGENCE RATHER THAN HIDING IT: §R9's two cells are UN-TRANSCRIBED, `docs/specs/` is in no office's surface, and [`W182`](rows/W182.md) carries it.** ⭐ **Ruling 330 SPLIT *narration manifest* and located `NS-02`'s half off this register** ([the reading](BOARD-ARCHIVE.md#the-ns-02ns-03-ordering-ruled-the-edge-lands-and-ruling-330cs-pass-condition-is-satisfiable-for-only-one-of-two-named-contributors)). ⭐ **[Why R21 exists](BOARD-ARCHIVE.md#r21-the-register-of-unlocated-contracts).**
+⚠️ **ROW ONE NO LONGER BLOCKS `M3 step 3.4`** ([the open](BOARD-ARCHIVE.md#po-round-58-the-register)). ⛔ **A POINTER REPORTS A DIVERGENCE RATHER THAN HIDE IT: §R9's two cells are UN-TRANSCRIBED, and [`W182`](rows/W182.md) carries them.** ⭐ **[Ruling 330's split](BOARD-ARCHIVE.md#the-ns-02ns-03-ordering-ruled-the-edge-lands-and-ruling-330cs-pass-condition-is-satisfiable-for-only-one-of-two-named-contributors) · [why R21 exists](BOARD-ARCHIVE.md#r21-the-register-of-unlocated-contracts).**
 
 ## Standing decisions
 
@@ -334,15 +333,16 @@ here; the argument is in the record.**
 | Decision | Argument |
 |---|---|
 | **`ONBOARDING.md` does not enter the repository** — not tracked, not corrected into the tree, and not deleted, because it is untracked and therefore not repository state | [record](BOARD-ARCHIVE.md#onboardingmd-ruled-it-does-not-enter-the-repository) |
-| ⭐ **`.claude/settings.json` IS tracked, and it is R18 with a machine behind it** — it DENIES `Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS `Bash(git merge:*)`. ⛔ **The opposite call to `ONBOARDING.md`'s, and the distinction is not about tracking: that file is the user's own notes, this one is a PROJECT RULE, and a rule that protects one untracked checkout protects no worktree** | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
+| ⭐ **`.claude/settings.json` IS tracked, and it is R18 with a machine behind it** — it DENIES `Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS `Bash(git merge:*)`. ⛔ **The opposite call to `ONBOARDING.md`'s, and the distinction is not tracking: that is the user's own notes, this is a PROJECT RULE** | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
 | ⛔ **A row that touches `render/page/navigation.py` SPLITS IT, at the seam named in [`handoffs/SF-15.md`](handoffs/SF-15.md)** — the condition binds the NEXT row, never the row that left the file where it is. ⭐ **No count here: the count is the floor's and goes stale on the next edit** (Ruling 150's form) | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
 | ⛔ **Same form for `tools/quality/board/register.py`** — the next row touching it splits it, and R11's reading comes from `tools.quality` rather than from this cell. ⭐ **It INHERITS the condition `tools/quality/board/__init__.py` carried, which `W129`/`W130` PERFORMED and DISCHARGED** | [record](BOARD-ARCHIVE.md#po-round-47-the-first-nine-closes-under-ruling-270-the-wall-measured-gone-on-my-own-tree-and-the-empty-population-inhabited) |
 | ⛔ **Same form for `tools/quality/board/verdict.py`, a THIRD member inside `tools/quality/board/`** — the next row touching it splits it at a seam its taker NAMES before cutting. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](BOARD-ARCHIVE.md#w166-the-standing-split-condition-toolsqualityboardverdictpy-is-owed-third-member-inside-one-package) |
 | ⛔ **Same form for `tests/visual/test_host_environment.py`, and it is a FOURTH member** — ruled [CTO round 62 §5](BOARD-ARCHIVE.md#w128-a-committed-verdict-may-not-depend-on-the-hosts-environment-ruling-225s-other-half-in-testsvisual), against the 600-line TEST ceiling, and the office disclosed it unprompted with its seam. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](handoffs/CTO-2026-09-11-round62.md#5-fixw128-visual-env-verdicts-the-acceptance-is-a-pair-of-readings-and-i-took-both-at-both-refs) |
 | ⛔ **NO `W` ROW DISPATCHES INTO A WAVE WHERE AN OPEN-STEP ROW IS DISPATCHABLE AND UNDISPATCHED** — ⭐ **and a step whose rows are ALL MERGED is not a step with no dispatchable row, it is a step awaiting a CLOSE, so the register closes it and opens the next BEFORE any `W` row is placed into that wave** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-landed-because-no-document-carried-it) |
-| ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A wave leaving such a slot EMPTY has mis-read it, and the EMPTINESS is the finding** — ⚠️ **CORRECTED round 56: this cell also read *"a slot the open step cannot fill takes the queue head"*, which is in NO record and came from round 55's own handoff** (`PO-56/2`) ⛔ **AMENDED ROUND 58 — THE POPULATION THE BOUND RANGES OVER IS WIDENED, and the bound itself is untouched: it now reads *EVERY UNSATURATED STEP OF THE OPEN MILESTONE*, not *the open step*, because [`README.md`](README.md)'s step rule was widened by the user this morning.** ⭐ **A `W` row still takes only a slot no capability row can fill** | [record](BOARD-ARCHIVE.md#po-round-58-step-34-opened-on-the-act-my-own-refusal-named-the-step-rule-widened-and-four-closes) |
+| ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A wave leaving such a slot EMPTY has mis-read it, and the EMPTINESS is the finding** — ⚠️ **CORRECTED round 56: this cell also read *"a slot the open step cannot fill takes the queue head"*, which is in NO record and came from round 55's own handoff** (`PO-56/2`) | [record](BOARD-ARCHIVE.md#the-dispatch-bound-and-a-queue-it-cannot-be-dispatched-into-the-bound-is-priority-not-exclusivity) |
+| ⛔ **AMENDED ROUND 58 — the bound is UNTOUCHED; the POPULATION it ranges over widens to *every UNSATURATED step of the open milestone*** ([the step rule](README.md)) | [record](BOARD-ARCHIVE.md#po-round-58-the-register) |
 | ⛔ **Same form for `src/studyforge/narrate/client.py`, the FIRST in `src/`** — the next row touching it splits it at the WIRE SEAM, named before cutting. ⚠️ **No count here** (Ruling 150's form) | [record](BOARD-ARCHIVE.md#amendment-po-round-56s-re-take-at-b911f44-appended-and-never-an-edit-of-what-stands-above-ruling-106-ruling-324) |
-| ⛔ **Same form for `tools/quality/reach.py`, and it is a THIRD member** — `W133/4` as the reviewer widened it. ⭐ **`W133`'s taker NAMED the seam — the citation grammar as a sibling module — and correctly refused to cut it outside their surface.** ⚠️ **No count here** (Ruling 150's form, and Ruling 261: a ceiling is NOT a budget, so the next edit is a SPLIT rather than a trim) | [record](BOARD-ARCHIVE.md#w133-checkrulingsreachs-predicate-cannot-read-the-plural-comma-list-or-range-citation-form-and-a-checks-pass-condition-is-satisfiable-by-one-undeclared-spelling) |
+| ⛔ **Same form for `tools/quality/reach.py`, and it is a THIRD member** — `W133/4` as the reviewer widened it. ⭐ **`W133`'s taker NAMED the seam — the citation grammar as a sibling module — and refused to cut it outside their surface.** ⚠️ **No count here** (Ruling 150's form; Ruling 261: the next edit is a SPLIT, not a trim) | [record](BOARD-ARCHIVE.md#w133-checkrulingsreachs-predicate-cannot-read-the-plural-comma-list-or-range-citation-form-and-a-checks-pass-condition-is-satisfiable-by-one-undeclared-spelling) |
 
 
 ## Scheduled — decided now, executed later
@@ -361,16 +361,16 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 <!-- scheduled -->
 | Item | Owner | State | Trigger | Decision |
 |---|---|---|---|---|
-| ⭐ **SK-07 generates the corpus graph** — built, **bridged**, with the R3-safe ignore file | framework agent | `discharged` — carried into `E11` | `SK-07` is authored | The highest graphify exposure converted into a generated artifact, closing an R19 hole in the same edit. ⚠️ Bridging is the part that would have been missed: a graph built by running the tool alone has **zero** doc↔code edges |
+| ⭐ **SK-07 generates the corpus graph** — built, **bridged**, with the R3-safe ignore file | framework agent | `discharged` — carried into `E11` | `SK-07` is authored | ⚠️ **Bridging is the half that would have been missed: the tool alone yields ZERO doc↔code edges** |
 | **SK-07 must not say "submodule"** | PO | `discharged` — `E11` corrected | `SK-07` is authored | R18's amendment reached the ruling but not the task that consumes it. The framework is a **sibling checkout at a recorded commit** |
-| **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | `discharged` — ⭐ **5 of 5 carry a `**Context**` budget in their epic, re-measured round 42** | M1 → M2 boundary, PASSED | Five tasks, not eighty-five — the discovery-shaped ones, which are `query`'s weak case |
+| **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | `discharged` — ⭐ **5 of 5 carry a `**Context**` budget, re-measured round 42** | M1 → M2 boundary, PASSED | Five tasks, not eighty-five — the discovery-shaped ones |
 | **`Effort` field applied beyond the four named tasks** | PO | `fired` — ⚠️ **a STANDING trigger: it fires again and never discharges, and the closed set has no word for that** (`PO-42/4`) | as each computation-shaped task is assigned | ✅ The field exists (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill; add it when a task is assigned and its shape is known |
-| ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | `discharged` — re-taken round 38 at `c18df98c`, 23 of 23 | ⛔ **EXPIRED trigger — it named M1's wave open, and M1 CLOSED at `2fe56a4`** | ⭐ **It discharged itself round by round while this cell could not say so: `W100`'s founding case** |
-| ⛔ **The `ISO-8583-jPOS-tutorial` pin is NOT advanced** | PO | `pending` | the ISO track reaches one of its TWO finish lines (Q18) | ⛔ **Advancing a pin ASSERTS the new HEAD is intended.** The component ADVANCED rather than diverged — the pin is still an ancestor — and the track is `in-progress`, so re-pinning now pins a moving target. ⚠️ **And the only environment that can SEE a stale pin is the one Ruling 40 does not make authoritative** (Ruling 216) |
-| ⛔ **`NS-01` — the DECLINE is LIFTED** | PO | `discharged` — ⭐ **round 51, and `NS-01` MERGED at `0fcb6b4`** | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **TRUE; the trigger FIRED** | ⛔ **All four stated grounds false or discharged** — [the ruling](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written) |
-| **R21's open rows** | CTO | ⭐ **`discharged` for `narration regeneration state`** — ⛔ **the act the trigger names, *the CTO locating a file and a version*, was PERFORMED by that office as Ruling 351.** ⚠️ **`coverage report` is still `EX-05`'s and stays `pending`** | ⛔ **`M3 step 3.4` OPENS** — spec §R9's words, and the clearing act is the CTO locating a file and a version | ⛔ **POINTER, not a second copy — the open set is `## R21` above.** ⚠️ **THE TRANSCRIPTION INTO §R9 IS NOT THE LOCATING ACT and is owed separately: [`W182`](rows/W182.md)** |
-| ⛔ **`SF-17` is told that a `provides` BUMP INVALIDATES EVERY RECORDED ADDRESS** | PO | ⛔ **`fired` AND NOT MET** — ⚠️ **`SF-17` WAS assigned in wave 12, so the trigger fired; the register attempted the telling and the CHANNEL FAILED (no developer session was addressable, `PO-58/2`).** ⭐ **The substance is carried in [`handoffs/PO-2026-09-12-round58.md`](handoffs/PO-2026-09-12-round58.md) and discharges when `SF-17`'s office acknowledges it — an ACT with an OBSERVER, not a hope** | ⛔ **`SF-17` is assigned** — that assignment is the act, the register is the office | ⭐ **`NS-05/8` and `NS-04/4`'s narrowed residual: `NS-05` records no addresses, so the cache-invalidation claim lands on `SF-17` and nowhere earlier** ([the narrowing](handoffs/CTO-2026-09-12-round71.md#ns-044-a-cross-repository-coupling-narrowed-off-a-correct-branch)) |
-| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`; all five closed GREEN in one run** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell.** ⭐ **[The discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
+| ⛔ **Back-triage the 23 pre-marker findings** | **PO** | `discharged` — re-taken round 38 at `c18df98c`, 23 of 23 | ⛔ **EXPIRED trigger — it named M1's wave open, and M1 CLOSED at `2fe56a4`** | ⭐ **`W100`'s founding case** |
+| ⛔ **The `ISO-8583-jPOS-tutorial` pin is NOT advanced** | PO | `pending` | the ISO track reaches one of its TWO finish lines (Q18) | ⛔ **Advancing a pin ASSERTS the new HEAD is intended.** The component ADVANCED rather than diverged and the track is `in-progress`, so re-pinning pins a moving target. ⚠️ **And only the environment Ruling 40 does not make authoritative can SEE a stale pin** (Ruling 216) |
+| ⛔ **`NS-01` — the DECLINE is LIFTED** | PO | `discharged` — ⭐ **round 51, `NS-01` MERGED at `0fcb6b4`** | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **the trigger FIRED** | ⛔ **All four grounds false or discharged** — [the ruling](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written) |
+| **R21's open rows** | CTO | ⭐ **`discharged`** — ⛔ **Ruling 351 is the act the trigger names, by the office it names** | ⛔ **`M3 step 3.4` OPENS** — the clearing act is the CTO locating a file and a version | ⛔ **POINTER, not a copy.** ⚠️ **Transcription ≠ location: [`W182`](rows/W182.md)** |
+| ⛔ **`SF-17` is told that a `provides` BUMP INVALIDATES EVERY RECORDED ADDRESS** | PO | ⛔ **`fired` AND NOT MET** — ⚠️ **assigned wave 12; telling attempted, CHANNEL FAILED** (`PO-58/2`) | ⛔ **`SF-17` is assigned** — the assignment is the act, the register the office | ⭐ **`NS-05/8`, `NS-04/4`'s residual** ([the narrowing](handoffs/CTO-2026-09-12-round71.md#ns-044-a-cross-repository-coupling-narrowed-off-a-correct-branch)); ⭐ **substance in [the handoff](handoffs/PO-2026-09-12-round58.md)** |
+| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
 | ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | ⛔ **`fired` AND NOT MET** — ⭐ **`W152` owned it and merged at `3049de9` without carrying this; `W163` does** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`; the conclusion stands and the reasoning does not** |
 | ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `pending` — ⭐ **OPEN AND NAMED, never open and silent** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
 <!-- /scheduled -->

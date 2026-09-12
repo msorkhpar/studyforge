@@ -138,6 +138,12 @@ set is R1–R21 in the spec.
   ⭐ **The search path that is always present is `git grep`, `grep -rn` and
   `sed -n`.** ⚠️ **Whether the index should be built per worktree, tracked, or
   dropped is UNDECIDED, and this clause forecloses none of the three.**
+- ⛔ **RUN EVERY GATE; DO NOT TRANSCRIBE ITS READING.** ⭐ **A merge body,
+  handoff, brief, round record or message reports a gate as GREEN or RED plus
+  its exit code and quotes NO figures out of it** — ⚠️ **the exception is a
+  figure that IS the subject, including a gate's own declared bound.** ⛔ **The
+  rule and its ground live ONCE, in `docs/conventions/`; this is a pointer and
+  the clause is not restated here.**
 - **Write a handoff** at `docs/tasks/handoffs/<TASK-ID>.md` before finishing a
   task with dependents. That is how parallel agents share findings instead of
   re-deriving them. Format is in `docs/conventions/agent-protocol.md`.

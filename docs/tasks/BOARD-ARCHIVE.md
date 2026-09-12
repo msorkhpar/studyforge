@@ -18836,7 +18836,7 @@ tools/quality/board/corroborate.py
 
 ---
 
-## PO round 58 — step 3.4 opened on the act my own refusal named, the step rule widened, and four closes
+## PO round 58 — the register
 
 ⛔ **SHORT BY RULING: the user made token budget the binding constraint this morning.** ⭐ **Findings are a table, populations are not restated, and nothing another document already says is re-derived here.**
 
@@ -18903,6 +18903,29 @@ grep -n 'Depends on' docs/tasks/E04-narration.md
 | ⛔ **REFUSED — a row for `review-rubric.md:6001`'s stale `rows/W148.md` citation** | ⭐ **`W34` is IN FLIGHT in that exact file this wave.** ⚠️ **A row minted over a line another office is already holding is `W167`'s collision, bought for nothing — routed as `PO-58/6` instead** |
 | ⛔ **REFUSED — a row for `W35` closing with no `### SURFACE`** | ⭐ **`W160` already holds that mechanism and its own evidence quotes `W35` by name.** ⚠️ **Ruling 349's shape: annotate the live row, do not mint a second copy of its subject** |
 
+### ⛔ THE FLOOR CAME BACK **RED** AND THE CAUSE IS STRUCTURAL: A REGISTER ROUND NO LONGER FITS ON THIS BOARD
+
+⛔ **`board-size` breached, and the figure IS the subject here so it is quoted** (the new gate-reading rule's own exception). ⭐ **MEASURED, role `wt/po`, environment HOST, at `98aa0ad`:**
+
+```text
+headroom at base                                            67 bytes
+four closes — the Detail cell of a CLOSED row is LONGER
+  than a live one's, because the archive anchor is longer
+  than `rows/<ID>.md`                                      +296 bytes
+one mint (W182), against +224 of new allowance             +252 bytes
+                                                    IRREDUCIBLE +548 for +224
+```
+
+⛔ **SO THE MECHANICAL FOOTPRINT OF THIS ROUND — four closes and one mint, before a single word of state is written — OVERRUNS THE BOUND BY 257 BYTES.** ⚠️ **Ruling 271 refuses raising any of the three terms, by measurement, so the remedy cannot be a bigger bound.** ⭐ **THE CLOSE PROCEDURE ITSELF IS WHAT GROWS THE FILE: Ruling 201's re-pointed Detail cell trades a short relative path for a long archive anchor, and it does that once per close, forever.**
+
+⭐ **WHAT I DID TO SHIP GREEN, and I am naming it rather than letting it read as tidying:** ⛔ **I compressed MY OWN additions to the bone, deleted queue and collision entries naming rows that have LEFT the queue (correct bookkeeping, not a sweep), and moved the ARGUMENT out of five SETTLED `Scheduled` cells behind pointers those cells already carried** — ⭐ **which is the board's own *one fact, one home* contract, not Ruling 349's rule-removal sweep.** ⚠️ **`W173` OWNS THAT SWEEP AND I DID NOT PERFORM IT: no rule was removed, no state was changed, and no `pending` or `fired` row was touched.** ⛔ **THE BOARD NOW SITS 5 BYTES UNDER ITS BOUND, WHICH IS NOT A MARGIN — the next round cannot close a single row without breaching it, and that is `PO-58/10`.**
+
+### ⭐ THE NEW GATE-READING RULE — homed in ONE place, which is not this office's
+
+⛔ **The user's rule this morning: run every gate, stop transcribing readings.** ⭐ **`docs/conventions/` is the canonical home and it is `W34`'s office this wave; I messaged Developer 3 the proposed wording directly rather than writing a second copy that could disagree, and `CLAUDE.md` and `README.md` carry POINTERS with one operative sentence each.** ⛔ **`BOARD.md` carries NOTHING of it** — ⚠️ **a register carries identity, naming, owner, state and a pointer, and a rule in it would be exactly the second copy the rule exists to prevent.**
+
+⚠️ **AND I FLAGGED THE RULE'S OWN EDGE BACK TO THAT OFFICE:** ⛔ **read literally, *report GREEN/RED and no figures* would forbid saying WHICH bound broke and BY HOW MUCH — the one number the next office needs.** ⭐ **The exception must be explicit for a gate's own declared bound, and this round is the worked example of why.**
+
 ### Findings
 
 | id | class | finding |
@@ -18914,6 +18937,8 @@ grep -n 'Depends on' docs/tasks/E04-narration.md
 | ⚠️ **`PO-58/5`** | ⚠️ **`[local]`** | ⭐ **MINE, against the register.** `W35` closed at `a8726c1` having **never declared a `### SURFACE`** — the exact blind population `W160` exists over, and `W160`'s evidence names `W35`. ⛔ **The mechanism landed a third time and closed unaddressed.** Annotated beneath `W160`'s frozen reading rather than edited (Ruling 106) |
 | ⚠️ **`PO-58/6`** | ⚠️ **`[local]`** | `docs/conventions/review-rubric.md:6001` carries a live backticked `rows/W148.md`, now a redirect stub — Ruling 201's fourth edit, owed in a document that is **not my surface**. ⭐ **Routed to `W34`, in flight in that file this wave** (Ruling 318: reported, not worked around) |
 | ⚠️ **`PO-58/7`** | ⚠️ **`[local]`** | against the coordinator — my brief carries its **`TOKEN BUDGET IS NOW THE BINDING CONSTRAINT` section twice, verbatim**, as its own §§ at two places. ⚠️ **Small, and the subject makes it worth one line** |
+| ⛔ **`PO-58/10`** | ⛔ **`[structural]`** | ⭐ **MEASURED, and it is the round's sharpest.** ⛔ **A register round's MECHANICAL footprint — four closes and one mint — exceeds `board-size`'s allowance by 257 bytes before any state is written**, because Ruling 201's close lengthens a Detail cell by trading `rows/<ID>.md` for a long archive anchor. ⚠️ **Ruling 271 refuses raising a term, so the bound and the close procedure are jointly unsatisfiable at the margin.** ⛔ **Shipped green at 5 bytes of headroom, which the next round consumes** |
+| ⚠️ **`PO-58/11`** | ⚠️ **`[local]`** | ⭐ **MINE.** I composed four `BOARD.md` cells and one `README.md` clause at full length and only then met the byte gate, spending a round trip on compression that writing to the bound would have avoided. ⛔ **The board's remaining headroom is knowable BEFORE the first cell is written, and I did not read it first** |
 
 ⭐ **AND ONE CORROBORATION RATHER THAN A FINDING: all five merge refs I was handed matched the five I derived.** ⛔ **Recorded because a check that only ever speaks when it disagrees is a check nobody can tell from an absent one.**
 
