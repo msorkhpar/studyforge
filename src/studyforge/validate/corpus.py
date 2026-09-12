@@ -38,13 +38,14 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from studyforge.address import AddressError
 from studyforge.archive.document import parse as parse_document
 from studyforge.archive.errors import ArchiveError
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.corpus.container import CONTAINER_FILENAME, Container, ContainerError
+from studyforge.corpus.container import CONTAINER_FILENAME, Container
+from studyforge.corpus.container import RAISES as CONTAINER_RAISES
 from studyforge.corpus.container import parse as parse_container
-from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest, ManifestError
+from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
+from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.validate.report import Finding
 
@@ -152,10 +153,12 @@ def _manifest(walk: Walk) -> Manifest | None:
         return None
     try:
         return parse_manifest(text, MANIFEST_FILENAME)
-    except ManifestError as error:
-        walk.findings.append(Finding(RULE_MANIFEST, MANIFEST_FILENAME, str(error)))
     except PersonalDataLeak as error:
+        # ⛔ FIRST, and its own arm: the tuple below contains it, and two finding
+        # rules must not collapse into one (`W213`).
         walk.findings.append(Finding(RULE_PERSONAL_DATA, MANIFEST_FILENAME, str(error)))
+    except MANIFEST_RAISES as error:
+        walk.findings.append(Finding(RULE_MANIFEST, MANIFEST_FILENAME, str(error)))
     return None
 
 
@@ -167,15 +170,13 @@ def _container(walk: Walk, path: Path) -> Held | None:
     assert walk.manifest is not None
     try:
         return Held(where, path.parent, parse_container(text, where, walk.manifest))
-    except (ContainerError, AddressError) as error:
-        # ⛔ Named types, never the `ValueError` category this once caught.
-        # `AddressError` subclasses `ValueError`, so the wide catch worked —
-        # and a catch that wide cannot know what it is forwarding, which is
-        # exactly how six poison shapes reached a report line unnoticed
-        # (Finding 11). Two names cost nothing and say what crosses here.
-        walk.findings.append(Finding(RULE_CONTAINER, where, str(error)))
     except PersonalDataLeak as error:
+        # ⛔ FIRST, for the same reason as `_manifest`'s arm.
         walk.findings.append(Finding(RULE_PERSONAL_DATA, where, str(error)))
+    except CONTAINER_RAISES as error:
+        # ⛔ Named types, never the `ValueError` category this once caught
+        # (Finding 11) — and named by the reader, never retyped here (`W213`).
+        walk.findings.append(Finding(RULE_CONTAINER, where, str(error)))
     return None
 
 

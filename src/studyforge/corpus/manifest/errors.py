@@ -46,6 +46,11 @@ name only one.
 it** — which is the whole answer to *"a promise with one exception is not a
 promise"*.
 
+⛔ **A caller of `parse` catches `manifest.RAISES`, not this paragraph**
+(`W213`). ⚠️ Item 1 is `parse_key`'s and not `parse`'s, which is exactly the
+distinction a reader of this paragraph gets wrong; the tuple states it. It is
+in the package contract and not here because this module depends on nothing.
+
 **Depends on.** Nothing.
 
 ⚠️ **`ValueError`, following SF-01's proposed precedent** — a *value* error

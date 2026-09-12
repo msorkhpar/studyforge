@@ -51,3 +51,20 @@ def test_the_module_is_one_implementation_on_top_of_cli_main():
     ]
     assert any("from studyforge.cli.site.cli import main" in line for line in body)
     assert not any("def " in line for line in body), "this module forwards and defines nothing"
+
+
+def test_a_refusal_leaves_the_process_as_a_line_and_not_a_traceback(tmp_path):
+    # ⛔ `W212`: only a real process shows what reaches stderr.
+    import json
+    import shutil
+
+    root = tmp_path / "corpus"
+    shutil.copytree(FIXTURES / "depth1", root)
+    path = sorted((root / "archive").rglob("container.json"))[0]
+    document = json.loads(path.read_text("utf-8"))
+    path.write_text(json.dumps({**document, "note": "/" + "home/jane/x"}), "utf-8")
+    (tmp_path / "out").mkdir()
+    result = module(str(root), "--out", str(tmp_path / "out"))
+    assert result.returncode == UNUSABLE
+    assert "Traceback" not in result.stdout + result.stderr
+    assert "home path" in result.stdout

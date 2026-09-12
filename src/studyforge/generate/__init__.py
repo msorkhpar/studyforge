@@ -15,8 +15,10 @@ directory the page addresses. Narration is a separate pass and is not here yet.
 `sources(root)` answers *which units have material and where*;
 `read_corpus(root)` hands back everything a corpus declares, read once;
 `write_pages(root, into)` runs the unit-page pass alone and
-`write_media(root, into)` the media pass alone. `BuildError` is the only
-exception any of it raises.
+`write_media(root, into)` the media pass alone. ⛔ **A caller catches
+`RAISES`**: `BuildError`, plus `PersonalDataLeak`, which travels through
+untranslated (Ruling 58) — so a command over this package refuses a leak
+instead of printing a traceback (`W212`).
 
 **Depends on.** the declaration, contents, placement, builder and renderer
 packages. ⛔ Nothing here knows any source (R1), and nothing here is a command:
@@ -64,6 +66,7 @@ git never saw.
 
 from __future__ import annotations
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import (
     BuildError,
@@ -83,6 +86,11 @@ from studyforge.generate.site import assets, root_index, write_site
 from studyforge.generate.units import unit_pages, write_pages
 from studyforge.generate.writing import Written
 
+#: ⛔ **What a build lets out, as the tuple a command catches** (`W212`).
+#: ⭐ Every member is reached from `write_site` in
+#: `tests/studyforge/generate/test_init.py`, so an unreachable one fails.
+RAISES: tuple[type[Exception], ...] = (BuildError, PersonalDataLeak)
+
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.generate.declarations` directly is a consumer this contract
 #: failed — `docs/conventions/module-structure.md` calls `__init__.py` the
@@ -91,6 +99,7 @@ __all__ = [
     "BuildError",
     "Corpus",
     "Footprint",
+    "RAISES",
     "Reference",
     "UnitSource",
     "Written",

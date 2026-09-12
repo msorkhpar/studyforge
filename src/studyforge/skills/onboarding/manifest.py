@@ -59,13 +59,14 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping, Sequence
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import (
     CORPUS_API,
     KNOWN_CORPUS_API,
     MANIFEST_KEYS,
     MIN_WHY_CHARS,
+    RAISES,
     REQUIRED_KEYS,
-    ManifestError,
     parse,
 )
 from studyforge.version import check as check_version
@@ -270,5 +271,7 @@ def _refuse_unreadable(document: Mapping[str, object]) -> None:
     """
     try:
         parse(render(document))
-    except ManifestError as exc:
+    except PersonalDataLeak:
+        raise  # ⛔ R7's refusal is never translated into `PromotionRefused` (Ruling 58).
+    except RAISES as exc:
         raise PromotionRefused(f"the promoted manifest would not parse: {exc}") from None

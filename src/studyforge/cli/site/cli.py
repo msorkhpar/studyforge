@@ -8,8 +8,8 @@ returns the exit code.
 ⭐ The dispatcher registers this same callable as the `build` verb, so the two
 cannot disagree about what the command does.
 
-**Depends on.** `generate.write_site`, `cli.site.report`, `validate.cli` for
-`UNUSABLE`, and `argparse`.
+**Depends on.** `generate.write_site` and its `RAISES`, `cli.site.report`,
+`validate.cli` for `UNUSABLE`, and `argparse`.
 
 ## ⛔ `--out` is REQUIRED and has NO DEFAULT
 
@@ -34,7 +34,7 @@ import argparse
 from pathlib import Path
 
 from studyforge.cli.site.report import exit_code, lines
-from studyforge.generate import BuildError, write_site
+from studyforge.generate import RAISES, write_site
 from studyforge.validate.cli import UNUSABLE
 
 
@@ -76,10 +76,12 @@ def main(argv: list[str] | None = None, out=None) -> int:
         return UNUSABLE
     try:
         written = write_site(root, Path(arguments.out))
-    except BuildError as refusal:
-        # ⛔ The message alone, with no path prepended: a `BuildError` already
-        # names the record it refused, and a prefix naming the corpus root
-        # would misattribute a refusal about `--out` to the corpus.
+    except RAISES as refusal:
+        # ⛔ **The package's own tuple, never a list retyped here** (`W212`).
+        # Catching `BuildError` alone let `PersonalDataLeak` out as a traceback
+        # naming absolute paths (R7). ⛔ The message alone, with no path
+        # prepended: each refusal already names the record it refused, and a
+        # prefix naming the corpus root would misattribute one about `--out`.
         print(str(refusal), file=stream)
         return UNUSABLE
     for line in lines(written, arguments.root, arguments.out):

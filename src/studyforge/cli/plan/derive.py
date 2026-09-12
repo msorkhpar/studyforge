@@ -29,11 +29,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.cli.plan.report import Creation, MediaProjection, Plan, Refusal
-from studyforge.corpus.container import CONTAINER_FILENAME, RAISES, Container
+from studyforge.corpus.container import CONTAINER_FILENAME, Container
+from studyforge.corpus.container import RAISES as CONTAINER_RAISES
 from studyforge.corpus.container import parse as parse_container
-from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest, ManifestError
+from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
+from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.corpus.placement import (
     UNIT_MEDIA_DIRNAMES,
@@ -118,11 +119,10 @@ def _manifest(root: Path) -> tuple[Manifest | None, list[Refusal]]:
         return None, [Refusal(MANIFEST_FILENAME, "is not UTF-8 text")]
     try:
         return parse_manifest(text, MANIFEST_FILENAME), []
-    except (ManifestError, PersonalDataLeak) as error:
-        # ⛔ Both, and `PersonalDataLeak` is not translated on the way through
-        # (Ruling 58): the manifest reader raises it as itself, and a plan
-        # that reported a leak as a parse error would send its reader to fix
-        # the wrong thing in the worst five minutes of their integration.
+    except MANIFEST_RAISES as error:
+        # ⛔ **The reader's own tuple** (`W213`), which was a retyped pair here.
+        # It includes `PersonalDataLeak`, untranslated (Ruling 58): its message
+        # says it is a leak, so a plan does not report it as a parse error.
         return None, [Refusal(MANIFEST_FILENAME, str(error))]
 
 
@@ -141,7 +141,7 @@ def _containers(
             continue
         try:
             held.append((where, parse_container(text, where, manifest)))
-        except RAISES as error:
+        except CONTAINER_RAISES as error:
             # ⛔ **The reader's own tuple, never a list retyped here** (`W208`).
             # This site caught `ContainerError` and `PersonalDataLeak` and
             # missed `AddressError`, which `container`'s contract argues for in

@@ -219,3 +219,19 @@ def test_a_container_map_whose_address_is_the_wrong_depth_refuses_as_a_BuildErro
 
     assert where in str(raised.value)
     assert str(tmp_path) not in str(raised.value), "R7: a refusal never carries a path"
+
+
+@pytest.mark.parametrize("target", ["corpus.json", "container.json"])
+def test_a_leak_travels_through_as_itself_and_never_as_a_BuildError(tmp_path, target):
+    """⛔ Ruling 58: the tuple is caught, and its R7 member is re-raised untranslated."""
+    import json
+
+    from studyforge.archive.scrub import PersonalDataLeak
+
+    root = a_corpus(tmp_path, "depth1")
+    path = sorted(root.rglob(target))[0]
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document["title" if target == "corpus.json" else "note"] = "/" + "home/jane/x"
+    path.write_text(json.dumps(document), encoding="utf-8")
+    with pytest.raises(PersonalDataLeak):
+        read_corpus(root)

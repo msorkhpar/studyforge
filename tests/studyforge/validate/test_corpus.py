@@ -211,3 +211,16 @@ def test_the_walk_reads_each_file_exactly_once(tmp_path, monkeypatch):
     monkeypatch.setattr(type(root), "read_text", counted)
     walk(root)
     assert sorted(opened) == ["container.json", "corpus.json", "lesson-1.json"]
+
+
+def test_a_container_map_at_the_wrong_depth_is_a_container_finding_not_an_exception(tmp_path):
+    # ⛔ `AddressError` from the arity comparison, a member of the reader's
+    # `RAISES` that is not the leak: it is filed under `container` (`W213`).
+    root = corpora.one_unit(tmp_path / "c")
+    path = root / ARCHIVE_DIR / "demo/container.json"
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document.update(address=["demo", "extra"], titles=["Demo", "Extra"])
+    path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    result = walk(root)
+    assert [f.rule for f in result.findings] == ["container"]
+    assert "level(s)" in result.findings[0].message
