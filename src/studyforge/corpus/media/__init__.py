@@ -61,6 +61,7 @@ from studyforge.corpus.media.footprint import (
     measure_directories,
 )
 from studyforge.corpus.media.verdict import (
+    LIMIT_COUNT,
     LIMIT_FILE,
     LIMIT_TOTAL,
     MOST_NAMED,
@@ -74,6 +75,7 @@ from studyforge.corpus.media.verdict import (
 
 __all__ = [
     "Crossing",
+    "LIMIT_COUNT",
     "LIMIT_FILE",
     "LIMIT_TOTAL",
     "MOST_NAMED",

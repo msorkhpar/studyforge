@@ -25,11 +25,30 @@ number and the limit. ⛔ It never silently switches to ignoring media, which
 would produce clones that are silent with no error, and it never silently
 keeps committing.
 
-⚠️ **The two limit field names are FND-04's and are not in the spec.** They
-were invented for a fixture, and this module carries them forward so the
-fixture and the reader agree. **SF-32 owns the real names**, and renaming them
-while `corpus_api` is still unconsumed is nearly free — see
-`docs/tasks/handoffs/SF-02.md`.
+⛔ **The two byte-limit field names are CONFIRMED and FROZEN, and the rename
+`SF-02` offered is CLOSED** — Ruling 104, discharged by `SF-32`. ⚠️ The
+paragraph that stood here still described that window as open long after it
+had shut, which is how a stale offer gets taken up by somebody moving fast.
+
+## ⭐ Three limits, and only two of them have a default
+
+⚠️ **`max_files` bounds the file COUNT, and it is the limit narration actually
+needs.** A corpus's clips are many and small: 20 000 of them at 20 KB each is
+400 MB — under a 5 GB total and under a 100 MiB per-file block, so **both byte
+limits say yes** while the clone is a repository whose every `status`, `clone`
+and `checkout` pays for 20 000 paths. ⛔ That is the case neither byte ceiling
+can state, and it is why this is a third limit rather than a lonely one.
+
+⛔ **It has NO default, deliberately.** The two byte defaults trace to §5's
+measured numbers; there is no measured count in this project, and a number
+invented here would make every existing corpus's build depend on a ceiling no
+round chose. ⭐ **Unstated means unbounded** — the count is measured and
+reported either way, and it refuses only where a corpus asked it to.
+
+⛔ **`max_files` is `corpus_api: 3`'s key** (`document.py`'s `KEY_VERSIONS`).
+An older build refuses an unknown key by name and blames the corpus for the
+framework's age, which is exactly what R9 versions — so the field and the bump
+landed in one commit, as they did for `content.not_material` at `2`.
 """
 
 from __future__ import annotations
@@ -52,6 +71,12 @@ DEFAULT_COMMIT = "auto"
 DEFAULT_MAX_TOTAL_BYTES = 5_000_000_000
 DEFAULT_MAX_FILE_BYTES = 100 * 1024 * 1024
 
+#: ⛔ **The count limit has no default and `None` is that statement.** §5
+#: measured the two byte numbers; nobody measured a count, and a ceiling
+#: invented here would refuse a build on a number no round chose. ⭐ A corpus
+#: that wants one declares it.
+DEFAULT_MAX_FILES: int | None = None
+
 
 @dataclass(frozen=True, slots=True)
 class MediaPolicy:
@@ -60,6 +85,10 @@ class MediaPolicy:
     commit: str = DEFAULT_COMMIT
     max_total_bytes: int = DEFAULT_MAX_TOTAL_BYTES
     max_file_bytes: int = DEFAULT_MAX_FILE_BYTES
+    #: ⚠️ **`None` is *unbounded*, never *zero*.** A reader that treated an
+    #: unstated ceiling as `0` would refuse the first clip every corpus
+    #: generates, which is the direction this field must never fail in.
+    max_files: int | None = DEFAULT_MAX_FILES
 
     @property
     def commits(self) -> bool:
@@ -90,7 +119,7 @@ def parse_media(value: object) -> MediaPolicy:
         return DEFAULT_MEDIA
     if not isinstance(value, dict):
         raise ManifestError(f"'media' must be an object, got {describe(value)}")
-    known = {"commit", "max_total_bytes", "max_file_bytes"}
+    known = {"commit", "max_total_bytes", "max_file_bytes", "max_files"}
     unknown = sorted(set(value) - known)
     if unknown:
         raise ManifestError(
@@ -105,14 +134,36 @@ def parse_media(value: object) -> MediaPolicy:
         commit=commit,
         max_total_bytes=_limit(value, "max_total_bytes", DEFAULT_MAX_TOTAL_BYTES),
         max_file_bytes=_limit(value, "max_file_bytes", DEFAULT_MAX_FILE_BYTES),
+        max_files=_count(value),
     )
 
 
-def _limit(value: dict, field: str, default: int) -> int:
-    """Return one byte limit: a positive int, or the default when unstated."""
+def _limit(value: dict, field: str, default: int | None = None, unit: str = "bytes") -> int:
+    """Return one limit: a positive int, or the default when unstated.
+
+    ⚠️ **The unit is named because the message is read by a person editing
+    `corpus.json`.** *"must be a positive int of bytes"* against `max_files`
+    would send them to convert a count into a size.
+
+    ⛔ **A `None` default means the key is not optional here** and an absent
+    one falls into the same refusal as a bad one — which is what `_count`
+    relies on, having already answered the absent case itself.
+    """
     limit = value.get(field, default)
     if not isinstance(limit, int) or isinstance(limit, bool) or limit < 1:
         raise ManifestError(
-            f"'media.{field}' must be a positive int of bytes, got {describe(limit)}"
+            f"'media.{field}' must be a positive int of {unit}, got {describe(limit)}"
         )
     return limit
+
+
+def _count(value: dict) -> int | None:
+    """Return the optional file-count ceiling, or `None` when it is unstated.
+
+    ⛔ **Absent and `null` are different answers.** An absent key is *no
+    ceiling*; an explicit `null` is a corpus that tried to state one and wrote
+    something that is not a count, and it is refused like any other bad value.
+    """
+    if "max_files" not in value:
+        return DEFAULT_MAX_FILES
+    return _limit(value, "max_files", unit="files")

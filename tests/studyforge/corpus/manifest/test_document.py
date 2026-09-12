@@ -130,16 +130,17 @@ def test_the_same_key_is_right_at_one_depth_and_wrong_at_another():
 # --- R9: an unknown version is refused, never migrated ----------------------
 
 
-@pytest.mark.parametrize("api", [0, 3, 99, "1", 1.0, None, True])
+@pytest.mark.parametrize("api", [0, 4, 99, "1", 1.0, None, True])
 def test_an_unknown_corpus_api_is_refused(api):
-    # ⚠️ `3` is where `2` used to sit. ⛔ Widening the known set to `{1, 2}`
-    # may not blunt the refusal by one degree, so the case immediately above
-    # the top of the range is asserted rather than dropped.
+    # ⚠️ `4` is where `3` used to sit, which is where `2` used to sit. ⛔ Each
+    # widening of the known set moves this case up by one rather than dropping
+    # it: the refusal one degree above the top of the range is the one that
+    # goes quiet first.
     assert "corpus_api" in refusal(corpus_api=api)
 
 
-@pytest.mark.parametrize("api", [1, 2])
-def test_both_versions_this_build_speaks_are_accepted(api):
+@pytest.mark.parametrize("api", [1, 2, 3])
+def test_every_version_this_build_speaks_is_accepted(api):
     # ⭐ Literal numbers, never `KNOWN_CORPUS_API`: an assertion that reads the
     # set it is meant to pin passes whatever the set becomes.
     assert manifest(corpus_api=api).corpus_api == api
@@ -150,7 +151,7 @@ def test_a_manifest_reports_the_version_it_declared_and_not_this_build_s():
     # one number this was true by coincidence, because the default and the
     # only legal value were the same number.
     assert manifest(corpus_api=1).corpus_api == 1
-    assert CORPUS_API == 2
+    assert CORPUS_API == 3
 
 
 #: A `content` block using the key that `corpus_api` 2 added.
@@ -186,6 +187,36 @@ def test_a_manifest_that_declares_no_third_state_still_parses_at_the_first_versi
     built = manifest(corpus_api=1)
     assert built.content.not_material == ()
     assert built.content.classify("LICENSE") is Classification.UNCLASSIFIED
+
+
+#: A `media` block using the key that `corpus_api` 3 added.
+WITH_MAX_FILES = {"commit": "auto", "max_files": 20_000}
+
+
+def test_the_key_the_third_version_added_is_accepted_at_the_third_version():
+    assert manifest(corpus_api=3, media=WITH_MAX_FILES).media.max_files == 20_000
+
+
+@pytest.mark.parametrize("api", [1, 2])
+def test_the_key_the_third_version_added_is_refused_under_every_earlier_one(api):
+    # ⛔ **The gate is not `content`'s alone.** It ran over one block while one
+    # block was all that had grown a key; a `media` key added beside it would
+    # have shipped ungated, and an older build would then have refused the
+    # corpus for an "unknown key" and blamed it for the framework's age.
+    message = refusal(corpus_api=api, media=WITH_MAX_FILES)
+    assert "media.max_files" in message
+    assert f"corpus_api {api}" in message
+    assert "corpus_api 3" in message
+
+
+@pytest.mark.parametrize("api", [1, 2, 3])
+def test_a_manifest_that_declares_no_count_ceiling_parses_at_every_version(api):
+    # ⭐ **The backward-compatibility claim, both halves.** A manifest written
+    # before this key existed carries no `media` block at all, and one that
+    # carries a `media` block without the key is the same answer: unbounded,
+    # and equal to the default the previous build returned.
+    assert manifest(corpus_api=api).media.max_files is None
+    assert manifest(corpus_api=api, media={"commit": "auto"}).media == DEFAULT_MEDIA
 
 
 def test_the_version_refusal_says_why_it_is_not_migrated():
