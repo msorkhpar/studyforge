@@ -235,8 +235,20 @@ def test_the_setting_is_unconditional_and_not_a_caller_default():
 
 def test_the_unconditional_check_can_say_no():
     # ⭐ The control for the clause above: the shape it forbids, fed to it.
+    #
+    # ⚠️ **This control is DERIVED from the real file, so it fails LOUDLY when
+    # the assignment is gone rather than passing over an empty doctoring** — and
+    # that is deliberate. MEASURED: with `docker/dev/check` planted back to its
+    # pre-`W152` state, this is the SIXTH red beside the five the plant was
+    # predicted to produce. ⛔ A control that quietly passed there would be a
+    # control whose subject had vanished, which is the vacuous pass Ruling 191
+    # is about.
     doctored = instructions("check").replace(f"{VARIABLE}=1", f"{VARIABLE}=${{{VARIABLE}:-1}}")
-    assert f"${{{VARIABLE}:-" in doctored, "the doctored copy does not carry the shape"
+    assert f"${{{VARIABLE}:-" in doctored, (
+        f"the doctored copy carries no `${{{VARIABLE}:-…}}`, which means the "
+        f"real file had no `{VARIABLE}=1` to doctor — this control's subject is "
+        f"absent, so it refuses to report a pass"
+    )
     assert assigned_value(doctored) == f"${{{VARIABLE}:-1}}", (
         "the predicate reads an overridable assignment as the literal value, so "
         "the check above could not tell the two apart"
