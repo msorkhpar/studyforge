@@ -53,9 +53,9 @@ document does not own, and every one of the 170 resolves to a scope that exists
 in the tree.** ⚠️ So `cites_elsewhere` is a permission this module grants with a
 population behind it, not a hole left open.
 
-⚠️ **What is held off by CONVENTION and not by construction** (Ruling 220): 8
-records derive no scope and declare none — the ones written before the
-`<OFFICE>-<DATE>-round<N>` filename settled, plus the three surveys. ⭐ They are
+⚠️ **What is held off by CONVENTION and not by construction** (Ruling 220): **5
+of the 106 records** derive no scope and declare none — the ones written before
+the `<OFFICE>-<DATE>-round<N>` filename settled. ⭐ They are
 held to the legacy-ceiling rule and nothing else, and this module does NOT
 refuse them: refusing would demand a rename or a declaration inside a record
 Ruling 106 protects. ⛔ Every record written under the settled filename derives
@@ -93,7 +93,7 @@ _SCOPE = re.compile(r"^[A-Z]{2,4}-\d+$")
 
 
 def _normalise(declared: str) -> str | None:
-    """`declared` as a scope, or `None` when it is not one."""
+    """Read `declared` as a scope, or `None` when it is not one."""
     match = _ROUND_DECLARATION.match(declared)
     if match is not None:
         return f"{match.group('office')}-{match.group('number')}"
@@ -101,13 +101,13 @@ def _normalise(declared: str) -> str | None:
 
 
 def derived_scope(stem: str) -> str | None:
-    """The scope a record's FILENAME derives, or `None` (Ruling 219)."""
+    """Derive a record's scope from its FILENAME, or `None` (Ruling 219)."""
     match = _ROUND_FILENAME.match(stem)
     return None if match is None else f"{match.group('office')}-{match.group('number')}"
 
 
 def record_scopes(stem: str, declared: list[str]) -> list[str]:
-    """Every scope this record owns — the derived one first, then declared ones.
+    """List every scope this record owns — the derived one first, then declared.
 
     ⛔ A list rather than one value, and in that order, because the derivation
     is the authority and a declaration that agrees with it must not appear
@@ -123,7 +123,7 @@ def record_scopes(stem: str, declared: list[str]) -> list[str]:
 
 
 def _check_declaration(relative: str, stem: str, declared: list[str]) -> list[Finding]:
-    """The declaration rules: one scope, a scope, and the filename's own."""
+    """Enforce the declaration rules: one scope, a scope, the filename's own."""
     findings: list[Finding] = []
     derived = derived_scope(stem)
     if len(declared) > 1:
@@ -165,7 +165,7 @@ def _check_declaration(relative: str, stem: str, declared: list[str]) -> list[Fi
 
 
 def check_record(relative: str, stem: str, declared: list[str], text: str) -> list[Finding]:
-    """A `ruling record`'s scope, and the finding IDs that rule now reaches.
+    """Check a `ruling record`'s scope, and the finding IDs it now reaches.
 
     ⛔ **Gate two only.** The marker rule, the six sections and *marks no
     finding* are gate three's and are not applied here — see the module
