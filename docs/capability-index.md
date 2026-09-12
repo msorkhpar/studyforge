@@ -148,3 +148,4 @@
 | capability | what it is | area | waits on |
 |---|---|---|---|
 | `QA-04` | The second source | Validation and QA | `QA-01`, `SK-07` |
+
