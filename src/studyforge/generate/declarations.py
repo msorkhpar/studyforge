@@ -47,6 +47,7 @@ from studyforge.corpus.placement import (
     UnitLocations,
     profile_for,
 )
+from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.skills.adapter import Layout
 
 
@@ -99,6 +100,14 @@ class Corpus:
     maps: tuple[tuple[str, Container], ...]
     contents: Contents
     units: tuple[UnitSource, ...]
+    #: Which paths under an output root are this build's own to replace.
+    #:
+    #: ⭐ **Read once with everything else**: a footprint is a declaration
+    #: about the corpus, and five passes each deriving one would be five
+    #: chances to disagree about which files a rebuild may touch. ⛔ **The
+    #: default owns nothing**, so a `Corpus` assembled by hand gets R3's floor
+    #: rather than a licence; `read_corpus` is what fills it.
+    footprint: Footprint = Footprint()
 
     @property
     def shared(self) -> CorpusLocations:
@@ -126,13 +135,15 @@ def read_corpus(root: Path | str) -> Corpus:
     root = Path(root)
     manifest = read_manifest(root)
     maps = containers(root, manifest)
+    profile = profile_for(manifest.placement)
     return Corpus(
         root=root,
         manifest=manifest,
-        profile=profile_for(manifest.placement),
+        profile=profile,
         maps=maps,
         contents=_contents(manifest, maps),
         units=_sources(root, manifest, maps),
+        footprint=footprint_for(root, profile),
     )
 
 

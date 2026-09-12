@@ -15,6 +15,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
     assert set(generate.__all__) == {
         "BuildError",
         "Corpus",
+        "Footprint",
         "Reference",
         "UnitSource",
         "Written",
@@ -24,6 +25,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
         "container_pages",
         "containers",
         "declared_practices",
+        "footprint_for",
         "index_href",
         "page_paths",
         "read_corpus",

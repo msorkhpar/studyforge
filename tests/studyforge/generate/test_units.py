@@ -98,26 +98,36 @@ def test_every_page_carries_the_bar_and_the_trail_the_contents_computed(tmp_path
 # --------------------------------------------------------------------------
 
 
-def test_a_file_already_at_a_target_path_is_named_and_left_byte_for_byte_alone(tmp_path):
+def test_a_hand_edited_page_at_a_declared_path_is_REPLACED_and_that_is_the_rule(tmp_path):
+    """⛔ **The decision, asserted rather than left to be discovered.**
+
+    ⭐ The discrimination is by PATH and never by content, so *"somebody edited
+    this page by hand"* is not a question a build can ask — it has no prior
+    content to compare against, and inventing one would be a second declaration
+    of what the plan already enumerates. ⚠️ R19 rules the hand-edit a *finding,
+    not a fix*, and every placement profile already ignores these pages.
+    """
     first = write_pages(FIXTURES / "depth1", tmp_path)
     target = tmp_path / first.pages[0]
-    target.write_bytes(b"a reader's own file")
+    target.write_bytes(b"a page somebody edited by hand")
 
     second = write_pages(FIXTURES / "depth1", tmp_path)
 
-    assert first.pages[0] in second.refused
-    assert first.pages[0] not in second.pages
-    assert target.read_bytes() == b"a reader's own file"
+    assert second.refused == ()
+    assert first.pages[0] in second.replaced
+    assert target.read_bytes() != b"a page somebody edited by hand"
 
 
-def test_a_second_build_over_its_own_output_rewrites_nothing(tmp_path):
+def test_a_second_build_over_its_own_output_rewrites_every_page_it_declared(tmp_path):
     first = write_pages(FIXTURES / "depth1", tmp_path)
     stamps = {page: (tmp_path / page).read_bytes() for page in first.pages}
 
     second = write_pages(FIXTURES / "depth1", tmp_path)
 
-    assert second.pages == ()
-    assert sorted(second.refused) == sorted(first.pages)
+    assert sorted(second.pages) == sorted(first.pages)
+    assert second.refused == ()
+    assert sorted(second.replaced) == sorted(first.pages)
+    # ⭐ Same declarations in, same bytes out (R10) — a rebuild is not a churn.
     assert {page: (tmp_path / page).read_bytes() for page in first.pages} == stamps
 
 

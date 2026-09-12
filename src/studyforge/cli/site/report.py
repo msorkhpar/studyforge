@@ -6,6 +6,9 @@ reads.
 
 **How you use it.** `lines(written, root, into)` renders the report;
 `exit_code(written)` is `0` when nothing was refused and `1` when anything was.
+⚠️ **A replaced path is not a refusal**: a rebuild that overwrote only its own
+previous output exits `0`, which is what makes *build, edit a lesson, build
+again* usable from a script.
 
 **Depends on.** `generate.Written` for the record's shape and
 `validate.report` for the two exit codes, imported rather than respelled.
@@ -34,6 +37,15 @@ from studyforge.validate.report import INVALID, OK
 #: have.
 ALREADY_THERE = "a file is already there; nothing was overwritten"
 
+#: What replacing this build's own prior output says. ⛔ **A separate verb
+#: rather than a second `wrote` line**, because *"which of my files did this
+#: run overwrite"* is the question the rebuild policy owes an auditable answer
+#: to, and a report that spelled a replacement and a creation the same way
+#: would not be one. ⚠️ The sentence names the reason it was allowed, not just
+#: the fact: a reader who sees it should be able to tell at once whether the
+#: build has just eaten something of theirs.
+REBUILT = "the plan declares this path as the build's own; its previous output was replaced"
+
 
 def exit_code(written: Written) -> int:
     """`0` when the whole site was written, `1` when any path was refused."""
@@ -41,9 +53,21 @@ def exit_code(written: Written) -> int:
 
 
 def lines(written: Written, root: str, into: str) -> list[str]:
-    """Return the whole report, one fact per line, paths sorted (R10)."""
+    """Return the whole report, one fact per line, paths sorted (R10).
+
+    ⛔ **Every written path gets exactly one line.** `Written.replaced` is a
+    cross-cutting record over `paths` rather than a fourth category, so a
+    replaced path is subtracted from the `wrote` lines here — a reader counting
+    `wrote` lines against `studyforge plan` must not see one path twice.
+    """
+    replaced = {str(path) for path in written.replaced}
     out = [f"build {root}  into {into}"]
-    out += [f"wrote {path}" for path in sorted(str(path) for path in written.paths)]
+    out += [
+        f"wrote {path}"
+        for path in sorted(str(path) for path in written.paths)
+        if path not in replaced
+    ]
+    out += [f"replace {path}  {REBUILT}" for path in sorted(replaced)]
     out += [
         f"refuse {path}  {ALREADY_THERE}" for path in sorted(str(path) for path in written.refused)
     ]

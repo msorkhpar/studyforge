@@ -5,23 +5,65 @@ alone — and the three calls every pass writes through: `place` for bytes a pas
 rendered, `copy` for a file it brings in from the archive, and `mint` for a
 directory the plan declares.
 
-**How you use it.** `place(out, at, body, written, refused)`;
-`copy(out, at, source, written, refused)`; `mint(out, at, refused)`; add the
-records two passes return with `+`.
+**How you use it.** `place(out, at, body, written, refused, replaced,
+footprint=…)`; `copy(out, at, source, written, refused, replaced,
+footprint=…)`; `mint(out, at, refused)`; add the records two passes return
+with `+`.
 
-**Depends on.** Nothing but the standard library.
+**Depends on.** `generate.footprint` for the line between the build's own
+output and everybody else's, and the standard library.
 
 ## ⛔ R3 BY REFUSING, NOT BY REMEMBERING
 
-**No path that already exists is written.** A target on disk is named in
-`Written.refused` and left byte-for-byte alone; nothing is moved, renamed or
-overwritten, and the only directories minted are the ones a target needs.
+**No path that already exists is written unless the plan declares it as this
+build's own.** Every other target on disk is named in `Written.refused` and left
+byte-for-byte alone; nothing is moved, renamed or deleted, and the only
+directories minted are the ones a target needs.
 
-⚠️ **That is R3's floor and it is NOT a rebuild policy.** What a *second* build
-should do to a file the first build wrote — overwrite it, skip it, compare a
-digest — is a decision left open on purpose. ⛔ Deciding it here by reflex is
-exactly how a generator ends up rewriting material somebody else owns, and the
-safe direction while it is open is to write nothing over anything.
+## ⛔ THE REBUILD POLICY, AND WHY IT IS A FOOTPRINT RATHER THAN A MEMORY
+
+⭐ **R3 distinguishes the build's own prior output from the user's material.** A
+file the build wrote last time is not somebody's material; it is the build's own
+previous answer, and replacing it is what *rebuilding after editing a lesson*
+means. ⛔ Everything else stays protected absolutely and is refused **by name**.
+
+⛔ **The line between the two is `generate.footprint.Footprint`, derived from
+`studyforge plan`** — the enumeration that already exists, is goldened and is
+asserted. ⚠️ **It is not a memory of what ran**: no digest is recorded, no
+receipt is written into the output tree, and nothing here reads state an earlier
+run left behind. A build asks *"does the plan declare this path as mine?"* and
+nothing else.
+
+## ⛔ THE DISCRIMINATION IS BY PATH, AND NEVER BY CONTENT
+
+    a path the plan's enumeration NAMES    →  the build replaces it
+    a path the enumeration does NOT name   →  refused, by name
+
+⛔ **Nothing here opens an existing file to decide.** No digest, no comparison
+against what the build would have written, no marker read back out of an
+artifact. The only two questions asked of a target that exists are *what is its
+path* and *is it a directory* — so the rule above is the whole rule, and a
+reader can predict a build's conduct from `studyforge plan` alone.
+
+⚠️ **The consequence, stated plainly rather than left to be discovered.** A
+build has no prior content to compare against, so *"somebody edited this page by
+hand"* is not a question it can ask. A hand-edited copy of a page the build
+wrote is INSIDE the footprint and IS overwritten. ⭐ That is the decision and
+not an oversight, and R19 already ruled it the right one: a hand-edit to a
+generated artifact is *a finding, not a fix* — customisation enters as manifest
+data, and every placement profile already puts those pages in the corpus's own
+ignore lines, so the edit was never tracked either.
+
+⛔ **It follows that a file somebody put at a named path before any build ever
+ran is replaced too**, on the FIRST build, with no prior output in existence.
+⚠️ Measured, not feared: a hand-written `index.html` in an empty output
+directory does not survive. ⭐ It is named in the report — a `replace` line,
+never a silent `wrote` — and it is the price of a rule that needs no memory.
+
+⛔ **A directory where a file belongs is still a refusal, and a file where a
+directory belongs still is too.** Replacing this build's own file is a write;
+removing a tree, or a file the build never wrote, is a deletion, and nothing
+here deletes.
 
 ⭐ **One module, so the refusal cannot be forgotten by a pass added later.** A
 second pass that opened a file itself would be a second R3 policy, and the one
@@ -58,15 +100,16 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.generate.declarations import BuildError
+from studyforge.generate.footprint import Footprint
 
 
 @dataclass(frozen=True, slots=True)
 class Written:
     """What one run put on disk, and what it refused to touch.
 
-    ⭐ All three are paths **relative to the output root**, exactly as placement
-    named them — so a caller can diff them against `studyforge plan` without
-    knowing where the run wrote.
+    ⭐ All of them are paths **relative to the output root**, exactly as
+    placement named them — so a caller can diff them against `studyforge plan`
+    without knowing where the run wrote.
 
     ⚠️ `pages`, `assets` and `media` are separate because they answer different
     questions: the plan enumerates pages one by one and both the shared bundle
@@ -76,6 +119,14 @@ class Written:
     ⭐ `missing` is the one entry that is not about this build's own conduct: a
     file the corpus's material names and its archive does not hold. It is
     reported rather than raised — see this module's docstring.
+
+    ⛔ **`replaced` is a CROSS-CUTTING record, exactly like `refused`, and not a
+    fourth category of output.** A replaced page is still one of `pages`, so
+    `paths` stays the path-for-path diff against `studyforge plan` that
+    Ruling 99 asks for whether the run was a first build or a rebuild. ⭐ It is
+    reported separately because *"which of my files did this run overwrite"* is
+    the question the rebuild policy owes an auditable answer to, and a report
+    that said `wrote` for both would not be one.
     """
 
     pages: tuple[PurePosixPath, ...] = ()
@@ -83,6 +134,7 @@ class Written:
     media: tuple[PurePosixPath, ...] = ()
     refused: tuple[PurePosixPath, ...] = ()
     missing: tuple[PurePosixPath, ...] = ()
+    replaced: tuple[PurePosixPath, ...] = ()
 
     def __add__(self, other: Written) -> Written:
         """Two passes' records, in the order the passes ran."""
@@ -94,6 +146,7 @@ class Written:
             media=self.media + other.media,
             refused=self.refused + other.refused,
             missing=self.missing + other.missing,
+            replaced=self.replaced + other.replaced,
         )
 
     @property
@@ -108,17 +161,26 @@ def place(
     body: bytes,
     written: list[PurePosixPath],
     refused: list[PurePosixPath],
+    replaced: list[PurePosixPath],
+    *,
+    footprint: Footprint,
 ) -> None:
     """Write `body` at `at` under `out`, or name the path and leave it alone.
 
     ⛔ Refuses when `out` is not an existing directory — see this module's
     docstring. The refusal names neither the root nor the target (R7).
+
+    ⛔ **`footprint` is required and keyword-only.** A pass added later cannot
+    reach the write without answering *whose file is this*, and an omission is
+    a `TypeError` at the call rather than a silent overwrite at a reader's.
     """
     target = _under(out, at)
     if target.exists():
-        # ⛔ R3: named and left alone, never opened for writing.
-        refused.append(at)
-        return
+        if not _mine(target, at, footprint):
+            # ⛔ R3: named and left alone, never opened for writing.
+            refused.append(at)
+            return
+        replaced.append(at)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_bytes(body)
     written.append(at)
@@ -130,6 +192,9 @@ def copy(
     source: Path,
     written: list[PurePosixPath],
     refused: list[PurePosixPath],
+    replaced: list[PurePosixPath],
+    *,
+    footprint: Footprint,
 ) -> None:
     """Copy `source` to `at` under `out`, or name the path and leave it alone.
 
@@ -146,12 +211,28 @@ def copy(
     """
     target = _under(out, at)
     if target.exists():
-        # ⛔ R3, the same refusal `place` makes and for the same reason.
-        refused.append(at)
-        return
+        if not _mine(target, at, footprint):
+            # ⛔ R3, the same refusal `place` makes and for the same reason.
+            refused.append(at)
+            return
+        replaced.append(at)
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, target)
     written.append(at)
+
+
+def _mine(target: Path, at: PurePosixPath, footprint: Footprint) -> bool:
+    """Whether an existing `target` is this build's own prior output to replace.
+
+    ⛔ **A directory is never this build's own file**, whatever the plan says
+    about the path: replacing one would mean removing a tree, and the rebuild
+    policy is *overwrite what the build wrote*, not *delete what is in the way*.
+    ⚠️ Checked before the footprint rather than after, so a directory standing
+    where a page belongs is refused by name under both profiles.
+    """
+    if target.is_dir():
+        return False
+    return footprint.owns(at)
 
 
 def mint(out: Path, at: PurePosixPath, refused: list[PurePosixPath]) -> None:

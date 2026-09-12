@@ -27,7 +27,9 @@ this is the library a command would call, not the command.
 ⚠️ **`docs/tasks/E09-delivery.md` puts the pipeline in `SF-28` and `OPS-04`, and
 both are larger than this.** What is here is the part that is genuinely true end
 to end — a corpus goes in, a navigable site comes out, an unnarrated corpus stays
-quiet, and nothing that already existed is touched (R3). ⛔ **It is deliberately
+quiet, this build's own previous answer is replaced and everything else in the
+output directory is refused by name (R3, and `footprint`'s contract for the line
+between the two). ⛔ **It is deliberately
 not a subcommand and not a flag**: registering an entry point is `SF-28`'s and
 its only minter's, and adding one here would put a second declaration of the
 build's surface in the tree.
@@ -41,6 +43,7 @@ move or absorb it without a consumer having imported a command.
 | Module | Owns |
 |---|---|
 | `declarations` | `Corpus` — the manifest, the container maps, the tree, the walk |
+| `footprint` | which paths under an output root are the build's own to replace |
 | `writing` | `Written`, and the one call that makes R3 a refusal |
 | `navigation` | the contents document joined to a page's bar and its trail |
 | `units` | the unit-page pass |
@@ -73,6 +76,7 @@ from studyforge.generate.declarations import (
     sources,
     unit_location,
 )
+from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.generate.media import Reference, references, unit_media, write_media
 from studyforge.generate.navigation import ancestors, bar, index_href, trail
 from studyforge.generate.site import assets, root_index, write_site
@@ -86,6 +90,7 @@ from studyforge.generate.writing import Written
 __all__ = [
     "BuildError",
     "Corpus",
+    "Footprint",
     "Reference",
     "UnitSource",
     "Written",
@@ -95,6 +100,7 @@ __all__ = [
     "container_pages",
     "containers",
     "declared_practices",
+    "footprint_for",
     "index_href",
     "page_paths",
     "read_corpus",

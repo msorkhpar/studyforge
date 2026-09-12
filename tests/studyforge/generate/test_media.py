@@ -188,7 +188,7 @@ def test_the_pass_runs_alone_over_a_corpus_root_and_writes_no_page(tmp_path):
 # --------------------------------------------------------------------------
 
 
-def test_a_second_pass_over_its_own_output_copies_nothing_and_names_everything(tmp_path):
+def test_a_second_pass_over_its_own_output_recopies_every_file_it_declared(tmp_path):
     out = an_output(tmp_path)
     corpus = read_corpus(FIXTURES / "depth1")
     first = unit_media(corpus, out)
@@ -196,12 +196,21 @@ def test_a_second_pass_over_its_own_output_copies_nothing_and_names_everything(t
 
     second = unit_media(corpus, out)
 
-    assert second.media == ()
-    assert sorted(second.refused) == sorted(first.media)
+    assert sorted(second.media) == sorted(first.media)
+    assert second.refused == ()
+    assert sorted(second.replaced) == sorted(first.media)
     assert {path: (out / path).read_bytes() for path in first.media} == stamps
 
 
-def test_a_readers_own_file_at_a_media_target_survives_byte_for_byte(tmp_path):
+def test_a_readers_own_file_INSIDE_a_declared_media_directory_is_REPLACED(tmp_path):
+    """⛔ **The by-path rule, pinned at the media pass too.**
+
+    ⚠️ The plan enumerates a unit's media as a DIRECTORY, so every file the
+    archive puts in one is named by the enumeration — including one a reader
+    put there first, on a run where no prior output exists to be theirs.
+    ⭐ Asserted so nobody has to discover it; `generate/writing.py`'s contract
+    is where the rule and its price are argued.
+    """
     out = an_output(tmp_path)
     corpus = read_corpus(FIXTURES / "depth1")
     at = corpus.profile.unit(corpus.maps[0][1].address, 2, "Reading a small graph")
@@ -211,8 +220,24 @@ def test_a_readers_own_file_at_a_media_target_survives_byte_for_byte(tmp_path):
 
     written = unit_media(corpus, out)
 
-    assert target in written.refused
-    assert (out / target).read_bytes() == b"a reader's own file"
+    assert target in written.replaced
+    assert written.refused == ()
+    assert (out / target).read_bytes() != b"a reader's own file"
+
+
+def test_a_readers_own_file_BESIDE_a_declared_media_directory_survives(tmp_path):
+    """⭐ The half that does hold: outside the footprint, R3 is absolute."""
+    out = an_output(tmp_path)
+    corpus = read_corpus(FIXTURES / "depth1")
+    at = corpus.profile.unit(corpus.maps[0][1].address, 2, "Reading a small graph")
+    beside = at.images.parent / "images-of-mine"
+    (out / beside).mkdir(parents=True)
+    (out / beside / "diagram.svg").write_bytes(b"a reader's own file")
+
+    unit_media(corpus, out)
+    unit_media(corpus, out)
+
+    assert (out / beside / "diagram.svg").read_bytes() == b"a reader's own file"
 
 
 # --------------------------------------------------------------------------

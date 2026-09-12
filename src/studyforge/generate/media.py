@@ -121,6 +121,7 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
     layout = Layout(corpus.root)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
+    replaced: list[PurePosixPath] = []
     missing: list[PurePosixPath] = []
     for at in _declared(corpus):
         for directory in at.directories:
@@ -132,8 +133,13 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
             if not origin.is_file():
                 missing.append(target)
                 continue
-            copy(out, target, origin, written, refused)
-    return Written(media=tuple(written), refused=tuple(refused), missing=tuple(missing))
+            copy(out, target, origin, written, refused, replaced, footprint=corpus.footprint)
+    return Written(
+        media=tuple(written),
+        refused=tuple(refused),
+        missing=tuple(missing),
+        replaced=tuple(replaced),
+    )
 
 
 def references(document: dict) -> Iterator[Reference]:

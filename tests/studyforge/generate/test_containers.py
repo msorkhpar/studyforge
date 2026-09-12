@@ -152,14 +152,29 @@ def test_a_unit_with_no_material_is_listed_without_a_link(tmp_path):
 # --------------------------------------------------------------------------
 
 
-def test_a_container_page_already_on_disk_is_named_and_left_alone(tmp_path):
+def test_a_container_page_the_plan_declared_is_replaced_on_a_rebuild(tmp_path):
     corpus = read_corpus(FIXTURES / "depth1")
     first = container_pages(corpus, tmp_path)
     target = tmp_path / first.pages[0]
-    target.write_bytes(b"a reader's own file")
+    target.write_bytes(b"the previous run's answer")
 
     second = container_pages(corpus, tmp_path)
 
-    assert second.pages == ()
-    assert second.refused == first.pages
-    assert target.read_bytes() == b"a reader's own file"
+    assert second.pages == first.pages
+    assert second.replaced == first.pages
+    assert second.refused == ()
+    assert target.read_bytes() != b"the previous run's answer"
+
+
+def test_a_directory_where_a_container_page_belongs_is_still_named_and_left_alone(tmp_path):
+    """⛔ The refusal the footprint does NOT dissolve: nothing here deletes."""
+    corpus = read_corpus(FIXTURES / "depth1")
+    first = container_pages(corpus, an_output(tmp_path, "second"))
+    out = an_output(tmp_path)
+    (out / first.pages[0]).mkdir(parents=True)
+
+    written = container_pages(corpus, out)
+
+    assert written.refused == first.pages
+    assert written.pages == ()
+    assert (out / first.pages[0]).is_dir()

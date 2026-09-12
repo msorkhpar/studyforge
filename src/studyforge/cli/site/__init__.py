@@ -26,7 +26,7 @@ directory is spelled differently, and this note is why.
 from __future__ import annotations
 
 from studyforge.cli.site.cli import build_parser, main
-from studyforge.cli.site.report import ALREADY_THERE, exit_code, lines
+from studyforge.cli.site.report import ALREADY_THERE, REBUILT, exit_code, lines
 
 #: ⛔ The package's whole public surface.
-__all__ = ["ALREADY_THERE", "build_parser", "exit_code", "lines", "main"]
+__all__ = ["ALREADY_THERE", "REBUILT", "build_parser", "exit_code", "lines", "main"]

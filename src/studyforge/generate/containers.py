@@ -49,6 +49,7 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
     shared = corpus.shared
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
+    replaced: list[PurePosixPath] = []
     for _, container in corpus.maps:
         at = _location(corpus, container)
         placement = ContainerPlacement(corpus=corpus.manifest.source, container=at, shared=shared)
@@ -58,8 +59,10 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
             render_container(_document(corpus, container, at), placement),
             written,
             refused,
+            replaced,
+            footprint=corpus.footprint,
         )
-    return Written(pages=tuple(written), refused=tuple(refused))
+    return Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
 
 
 def page_paths(corpus: Corpus) -> dict[str, PurePosixPath]:
