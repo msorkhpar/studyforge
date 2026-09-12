@@ -17159,6 +17159,8 @@ inbound citations of rows/W147.md in LIVE documents: 1 — BOARD.md:280, the reg
 
 ⛔ **The row is NOT re-minted and its acceptance is NOT widened** (Ruling 311's direction). ⚠️ **It is ANNOTATED: the reading that minted it is TRUE of its own population and returns a FALSE NEGATIVE on a wave that ships a sibling component, so the instrument the row asks for owes a SECOND COLUMN rather than a correction.**
 
+- ⛔ **`PO-56/6` `[structural]` — AGAINST THIS OFFICE, and it is the round's own brief demonstrated rather than quoted.** ⚠️ **I committed a pointer in my own handoff that resolved to nothing** — `](../tasks/rows/W172.md)`, where a document in `handoffs/` reaches a row by `](../rows/…)`. ⛔ **At the intermediate tip, which did not yet contain the handoff, the floor read `clean` and the suite read `5712 passed`; at the tip that would actually have merged, the floor read `quality floor: 1 finding` and the suite read `3 failed, 5709 passed, 18 skipped`.** ⭐ **The brief's clause is *readings at intermediate refs are honest only if labelled, and they still leave the merge ref unmeasured*, and this round would have handed over a green table over a red tree if it had stopped one commit earlier.** ⚠️ **Fixed, re-measured at the merging ref, and the readings table now names its ref by POINTER rather than by a sha the writing of which moves the sha** (Ruling 320).
+
 ### ⛔ WHAT I DID NOT DO
 
 - ⛔ **I did not mint the narration manifest contract.** ⭐ It is the CTO's R21 row; I located the trigger and marked it `fired`.
@@ -18237,3 +18239,352 @@ ref 33f1e13   corroborate: … 7 checkouts on a branch …
 ⛔ **WHAT I DID NOT DO, and Ruling 206(ii) is the ground: I did not remove, prune or touch that worktree.** ⭐ **I did not cut it — it is a REVIEWER's trial merge for CTO round 70, its branch `trial/cto70-wave` is `5` commits ahead of release at `6c742c5`, and it is checked out in a scratch directory under `/tmp` rather than in the workspace.** ⚠️ **AND THE PATH IS NOT PROOF OF OWNERSHIP: that scratch directory is shared by more than one office in this session, so *it is under a path I also write to* is not a reason to retire a worktree. CLEAN IS NOT IDLE, and `CTO-67/17` is the round that paid for that lesson.**
 
 ⭐ **NO CELL MOVES AND NO ROW IS MINTED.** ⛔ **`W170` already carries this argument, a live row's argument is AMENDED rather than duplicated, and the row is in flight — so annotating its file now would collide with its taker inside one wave, which is the collision this project keeps recording.** ⚠️ **THE WITNESS IS DATED THE MOMENT THE REVIEWER RETIRES THAT WORKTREE, and it is recorded here with its ref so that it reads DATED rather than wrong** (Ruling 310(b)).
+
+### W64 — The kind gate widened across the whole document floor
+
+⛔ **CLOSED `done` at merge `2c9082d`, PO round 56 — and the merge ref is DERIVED, not received:** `git rev-list --parents -n1 2c9082d` names `df9ad80`, the tip of `fix/W64-kind-gate-scope`, as its second parent, and Ruling 199's predicate `C` reads that tip in the absorbed set at `0` ahead of release (244 absorbed tips, role `wt/po`, HOST). ⭐ **The merge subject carries `(CTO: APPROVE after changes)`.**
+
+⛔ **IT CLOSES ON RULING 218's GATE TWO AND NOT ON EXIT `0`, WHICH IT NEVER AIMED AT.** ⭐ **Ruling 218 priced three gates; gate one was `W121` and merged at `e60224b`, gate two is this, and gate three the ruling itself called *"needed for exit 0; not yet a row"*.** ⚠️ **The register's own cell had already narrowed this row's live scope to *Ruling 218's gate two* before it was dispatched, so what merged is what the row was carrying** — ⛔ **and gate three is MINTED here as [`W172`](rows/W172.md) rather than left inside a closed row, because a residue with no id is a residue nobody re-reads.**
+
+⭐ **TWO HANDOFFS, AND RULING 346 IS WHAT PERMITS THE PAIR:** [`W64.md`](handoffs/W64.md) is the STOP Ruling 218 ratified and Ruling 106 protects; [`W64-gate-two.md`](handoffs/W64-gate-two.md) is the delivery, on a new stem, pointing back. ⛔ **Neither is edited by this close.**
+
+⚠️ **`W64/7` IS UPHELD, AND IT IS DISCHARGED HERE RATHER THAN INSIDE THE ARGUMENT.** ⛔ **The taker filed that the argument below writes *"48 finding lines claiming none"* where Ruling 219's own reading counts DOCUMENTS, and routed it to this office because `docs/tasks/rows/` is this office's surface.** ⭐ **The unit is the defect and the sentence is otherwise true:** Ruling 219's block reads `finding lines claim NO scope : 48` over a population of `80` records and surveys, and `W121/1` measured that same `48` as a count of DOCUMENTS in the partition `31 + 1 + 48 = 80` — ⛔ **so `48` is a count of DOCUMENTS wearing the words *finding lines*, and the finding-LINE figure at Ruling 219's own reproducing ref is `77`.** ⚠️ **The argument below is moved with that sentence STANDING, because it is quoted from a ruling record and a record is annotated rather than edited** (Ruling 106) — ⭐ **the annotation is this paragraph, and it is deliberately in the close and not inside the moved body, so that nothing but re-addressing distinguishes the body from the file it was moved from.**
+
+⛔ **Ruling 201's four edits, performed.** ⚠️ **RE-ADDRESSING DISCLOSED** (Ruling 174, Ruling 314): `](../../conventions/…)` → `](../conventions/…)` ×1, `](../handoffs/…)` → `](handoffs/…)` ×1. ⭐ **The frame block is DROPPED.** ⛔ **The inbound sweep printed only records and this board's own register cell for this id** — ⚠️ **`W155`'s did not, and that is in `W155`'s section.**
+
+The kind gate widened across the whole document floor
+
+### ⛔ STOPPED AND RE-SCOPED — Ruling 218, CTO round 53, and this row may not be re-taken as written
+
+⛔ **The taker DID NOT SHIP THIS ROW AND WAS RIGHT NOT TO.** ⭐ **The kind gate was widened, the dry run was taken, and the row STOPPED on a measured population rather than forcing exit `0`.** ⚠️ **RECEIVED from the CTO, who reproduced the stop to the digit from the shipped functions rather than relaying it** (Ruling 115):
+
+```text
+BASE 2d0cfe7 population, ROWS = 155 asserted
+  TOTAL 522 findings in 72 documents
+     216 handoff-finding-id   39 handoff-findings   267 handoff-marker
+  by kind: ruling record 516, survey 6
+⚠️ on the LIVE merged population it is already 554 in 74 — the population GROWS
+   every wave, so this row gets more expensive, never less
+```
+
+⛔ **BOTH ROUTES TO EXIT `0` ARE FORBIDDEN, which is why this is a RE-SCOPE and not a patch:** ⭐ **rewriting 72 records is refused by Ruling 106 (a record is annotated, never edited) and weakening the marker rule to admit prose is refused by Ruling 65.** ⚠️ **Ruling 193 has already ruled on this exact corpus: the corpus is never chased; the instrument is the defect.**
+
+⭐ **THE THREE GATES, PRICED BY THE CTO AND QUOTED RATHER THAN PARAPHRASED** (Ruling 195) — [`../../conventions/review-rubric.md`](../conventions/review-rubric.md) and [round 53's record](handoffs/CTO-2026-09-10-round53.md):
+
+| gate | worth | verdict |
+|---|---|---|
+| the TABLE-ROW reader | ⭐ the form BOTH offices write today | ⛔ **REQUIRED, FIRST — and it is `W121`** |
+| a declarable scope for `ruling record` | 216 of the 522 | ⛔ **REQUIRED, SECOND — and Ruling 219 prices it at ZERO record edits** |
+| a rule separating a record's Findings section from its prose | the residue | ⚠️ **needed for exit 0; NOT YET A ROW, and deliberately not minted** |
+
+⛔ **THE ORDERING IS NOT A PREFERENCE: gate one CHANGES gate two's population.** ⭐ **Ruling 219 measured 31 of 32 records claiming the filename-derived scope today, with 48 finding lines claiming none — and *"the 48 that claim no scope are the table-form records, and they will begin claiming scopes the moment gate one lands"*.** ⚠️ **So gate two's derivation is RE-MEASURED after `W121`, never inherited from round 53's reading.**
+
+⛔ **AND IT MAY NOT SHIP BEHIND A FLAG.** ⭐ **The taker's refusal to flag it is RATIFIED: an off-by-default gate is a check that cannot fail, which is `W37`'s subject, and shipping one to make a row look done manufactures the defect the row existed to close.**
+
+⚠️ **THIS ROW IS THEREFORE GATED ON `W121` AND NOT DISPATCHABLE, and its register cell says so.** ⛔ **A taker who reads only the naming above — *the kind gate widened across the whole document floor* — would implement exactly what Ruling 218 forbids, which is why this amendment is APPENDED here rather than left to the dispatch** (Ruling 214).
+
+### W155 — R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working
+
+⛔ **CLOSED `done` at merge `0011d5d`, PO round 56 — DERIVED, not received:** `git rev-list --parents -n1 0011d5d` names `56ac8c0`, the tip of `fix/W155-ceiling-growth`, and Ruling 199's predicate `C` reads that tip absorbed, `0` ahead of release. ⭐ **The merge subject carries `(CTO: APPROVE after changes)`.**
+
+⭐ **THE ROW'S OWN CLAUSE 5 IS WHAT SHIPPED, AND IT SHIPPED BY THE REMEDY R11 PRESCRIBES:** the approach notice is its own module rather than an exception bought against the ceiling it measures. ⚠️ **The floor now prints the classification the argument below asked for, and this office reads it every run:** at this round's own base, `size approach: headroom 21 growth +0 379/400 tools/quality/pointers.py near and static` and `headroom 54 growth +0 346/400 tools/quality/rulings/derive.py near and static` — ⛔ **so the row's sharpest live instance, `pointers.py` at `+33` over three waves, now reads `+0` and is correctly SILENT as a risk while remaining visible as a reading.**
+
+⛔ **RULING 201's FOURTH EDIT IS NOT WHOLLY PERFORMABLE BY THIS OFFICE, AND THAT IS RECORDED RATHER THAN QUIETLY SKIPPED.** ⚠️ **The inbound sweep prints two LIVE, non-record citations of `docs/tasks/rows/W155.md` — one in shipped source and one in a shipped test — and both are load-bearing:** they are the comment justifying `NEAR_BAND = 60` in `tools/quality/approach.py` and the same justification on the assertion `NEAR_BAND == 60 and GROWTH_WAVES == 3` in `tools/tests/quality/test_approach.py`, each saying the figure comes from the row rather than from the module. ⛔ **`tools/` is not this office's surface and three developers are live on it this wave**, so the citations are a FINDING and not a diff (`PO-56/3`). ⭐ **They do not DANGLE — Ruling 270's stub keeps `rows/W155.md` on disk and it now points at this section — so the cost is one hop, not a broken address**, ⚠️ **and that is exactly the case Ruling 270 was written to make survivable.**
+
+⛔ **Ruling 201's other three edits, performed.** ⚠️ **RE-ADDRESSING DISCLOSED** (Ruling 174, Ruling 314): `](../BOARD-ARCHIVE.md#…)` → `](#…)` ×1. ⭐ **The frame block is DROPPED.**
+
+⛔ **R11's ceiling has an instrument and R11's APPROACH to it has none.** ⭐ **The reviewer's predicate is **proximity × growth** and NOT proximity — ⚠️ **a static module sitting under an enforced ceiling is THE CEILING WORKING, and flagging it is an instrument that cries on its own successes.**
+
+### ⭐ THE READING THAT MINTED IT — role `wt/po`, `82bff6d`, growth taken over three waves (`428223c` → `HEAD`)
+
+⛔ **POPULATION PRINTED IN FULL BEFORE ANY SCALAR** (Rulings 123/128/140). ⭐ **Twenty modules sit within 60 lines of their R11 ceiling. The predicate separates them into THREE classes and proximity alone sees only one:**
+
+```text
+headroom  growth   module                                        class
+      21     +33   tools/quality/pointers.py                     ⛔ NEAR AND MOVING
+      26     +32   tools/tests/quality/board/test_register.py    ⛔ NEAR AND MOVING
+      34      +1   tools/quality/board/verdict.py                ⚠️ near, barely moving
+      46      +1   tools/quality/board/observation.py            ⚠️ near, barely moving
+      33    +567   tests/visual/test_host_environment.py         ⭐ BORN in the window
+      37    +363   tools/quality/citations.py                    ⭐ BORN in the window
+       1      +0   tools/quality/board/register.py               ⭐ static, SPLIT condition
+       8      +0   src/studyforge/render/page/navigation.py      ⭐ static, SPLIT condition
+     598/600 +0    tests/studyforge/corpus/container/test_document.py  ⭐ static
+   …and 11 more at +0
+⛔ PROXIMITY ALONE FLAGS 20. PROXIMITY × GROWTH FLAGS 2.
+```
+
+⚠️ **RE-MEASURED AT DISPATCH (Ruling 214).** ⭐ **And an independent confirmation falls out of the same reading: EVERY `src/` module is `+0` across all three waves, which is the product-standstill finding reproduced from a different instrument than the one that raised it.**
+
+### ⛔ THE SHARPEST LIVE INSTANCE, AND IT IS NOT HYPOTHETICAL
+
+⛔ **`tools/quality/pointers.py` has 21 lines of headroom and took +33 in three waves.** ⚠️ **At the rate measured it crosses the ceiling in the NEXT wave that touches it** — ⭐ **and `W148` names that exact module as its surface, so the collision is in the queue already.**
+
+### ⛔ AND THE THIRD CLASS IS THE ONE A NAIVE PREDICATE GETS WRONG
+
+⭐ **A file BORN inside the window has growth equal to its own size, which is not growth.** ⛔ **Two of the eight *near and moving* are that shape, and a predicate that cannot say so would report the project's two newest well-sized modules as its two worst risks.** ⚠️ **DECLARED here so a taker builds the arm rather than discovering it** (Ruling 292).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A notice whose predicate is proximity AND growth over a NAMED window**, with the window's two endpoints quoted in the output — ⭐ **a growth figure with no window is not a reading.**
+2. ⭐ **THE THREE CLASSES ARE NAMED IN THE OUTPUT** — near-and-moving, near-and-static, born-in-window — ⛔ **so a reader judges the classification rather than inheriting a scalar.**
+3. ⛔ **A MODULE UNDER A STANDING SPLIT CONDITION IS ALREADY ANSWERED AND MUST NOT BE RE-REPORTED AS A RISK.** ⚠️ **Four such conditions stand on this board today; the next row touching each one splits it, and an instrument that flagged them would be reporting a decision as a defect.**
+4. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a near-and-static module is SILENT and a near-and-moving one is NAMED — ⭐ **and the silent arm is the one worth planting, because it is the arm that makes the notice readable.**
+5. ⚠️ **A CEILING IS NOT A BUDGET** (Ruling 261). ⛔ **This row reports approach; it must not imply that a file at `+0` and one line of headroom is healthier than one at `+33` and twenty — only that the ceiling is holding the first and is about to be tested by the second.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A BUILD FAILURE.** ⭐ **R11's ceiling already fails the build; APPROACHING a ceiling is a notice, and a second hard gate below the first would make the real one unreachable.** ⛔ **AND NOT A TRIM INSTRUCTION** — ⚠️ **the answer to a module approaching its ceiling is a SPLIT at a named seam, which is what all four standing conditions say.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/size.py` and its tests.** ⚠️ **Shares a surface with no row in flight and with no queued row** (check 4's sub-step).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+### W170 — A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for
+
+⛔ **CLOSED `done` at merge `4d4c7c7`, PO round 56 — DERIVED, not received:** `git rev-list --parents -n1 4d4c7c7` names `90ab41a`, the tip of `fix/W170-trial-namespace-gate`, and Ruling 199's predicate `C` reads that tip absorbed, `0` ahead of release. ⭐ **The merge subject carries `(CTO: APPROVE)`.**
+
+⭐ **THE ROW CLOSES WITH THREE INDEPENDENT WITNESSES AND NOT ONE, AND ONLY THE FIRST IS ITS OWN:** the founding reading `trial/cto-round68-wave7` at `7455f10`, role `wt/po`, HOST; the register's own closing gate firing on `trial/cto70-wave` at `33f1e13` in the PINNED CONTAINER two waves later, recorded at the end of PO round 55; and the reviewer's own trial merge, run as a counterfactual with the instrument varied and the host state held still. ⛔ **The predicate stopped being an argument before the branch merged.**
+
+⚠️ **AND THE ARM THIS ROW NARROWED IS NOT A GATE IN THE SENSE THE ROW ASSUMED** — ⭐ **Ruling 348, minted in the same review, measured that the `dispatched and UNNAMED` list is returned for printing and never enters `corroborate`'s fold, so the arm fires while the command exits `0`.** ⛔ **That does not weaken this close: the row's subject was the FALSE POSITIVE on the line an office reads before a merge, and the false positive is gone in both environments.** ⚠️ **What Ruling 348 changes is who owns the exit code, and that is [`W153`](rows/W153.md)'s and Ruling 279's neighbourhood rather than this row's.**
+
+⛔ **Ruling 201's four edits, performed.** ⚠️ **RE-ADDRESSING DISCLOSED** (Ruling 174, Ruling 314): `](../BOARD-ARCHIVE.md#…)` → `](#…)` ×1. ⭐ **The frame block is DROPPED.** ⛔ **The inbound sweep printed only records and this board's own register cell for this id.**
+
+⛔ **A LIVE `trial/*` BRANCH LANDS ON `dispatched and UNNAMED by any row`, WHICH RULING 264(c) MADE THE PROJECT'S ONE PRE-MERGE GATE — AND NO REGISTER ROW WILL EVER NAME ONE.** ⭐ **That is exactly the ground Ruling 265 gave for exempting an office's round branch, applied to a namespace the exemption does not carry.**
+
+### ⛔ THE READING — role `wt/po`, ref `7455f10`, environment HOST, at the gate point Ruling 279 names
+
+```text
+python3 -m tools.quality.board.corroborate     git rev-parse chore/po-round53 = 7455f10
+
+  ⛔ dispatched and UNNAMED by any row: trial/cto-round68-wave7
+  ⭐ OFFICE round branches, EXEMPT by Ruling 265 …: chore/cto-round68 +0, chore/po-round53 +2
+  ⚠️ trial/tmp branches STILL CHECKED OUT (1): trial/cto-round68-wave7
+```
+
+⭐ **THE SAME BRANCH IS NAMED TWICE BY ONE INSTRUMENT, on two lines whose populations are supposed to be disjoint** — ⛔ **once on the GATE line, where it is a false positive, and once on the line whose whole job is to report it, where it is correct.**
+
+### ⛔ WHY IT IS THE SAME ARGUMENT RULING 265 ALREADY MADE
+
+⚠️ **`unclaimed.py` declares `OFFICE = ("chore/cto-round", "chore/po-round")` and `SPENT = ("trial/", "tmp-")`, and the `dispatched and UNNAMED` arm excludes `OFFICE` alone.** ⭐ **Ruling 265's own words are that the exemption is the BRANCH NAMESPACE and not emptiness, because *no register row will EVER name one of these*.** ⛔ **A `trial/*` branch is a REVIEWER'S TRIAL MERGE — it is never dispatched, never taken by a row, and it is already reported by its own arm** — ⚠️ **so the ground transfers whole and the namespace was simply not enumerated.**
+
+### ⛔ WHY IT MATTERS MORE THAN ITS SIZE
+
+⭐ **`W132` was minted because this line named a `chore/*-round*` branch in every wave, forever, right after Ruling 264(c) made it the one pre-merge gate.** ⛔ **This is the same defect surviving in a second namespace, and it fires precisely when a review is in progress — which is the only moment the gate is read.** ⚠️ **A gate that cries wolf during every review is one an office learns to read past** (Ruling 179's cost, arriving at the gate rather than at a notice).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE `dispatched and UNNAMED` POPULATION EXCLUDES `SPENT`'s NAMESPACES TOO**, on Ruling 265's stated ground, and the exclusion is NAMED in the output rather than silent — ⭐ **the same form the office line already uses.**
+2. ⚠️ **AND THE EXCLUDED BRANCH IS STILL REPORTED**, by the arm that already reports it — ⛔ **removing it from the gate must not remove it from the instrument** (Ruling 206(ii): reporting a worktree is never wrong).
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a live `trial/*` branch ahead of release does NOT reach the gate line and DOES reach the still-checked-out line; a `fix/W*` branch ahead of release and named by no row still DOES reach the gate.
+4. ⭐ **A CONTROL THAT MUST FAIL** (Ruling 266's form): with the widening reverted, the gate line names the trial branch again — ⚠️ **or the exclusion is asserted rather than measured.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A WIDER PREDICATE THAN THE NAMESPACE.** ⭐ **Ruling 265 refused *empty means exempt* and chose the namespace deliberately; a rule like *anything a reviewer created* is unreadable to git.** ⛔ **AND NOT A REMOVAL OF THE `trial/tmp still checked out` LINE** — ⚠️ **two of three worktrees reported in one recent session really were leaks, so that line is signal.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/board/unclaimed.py` and its tests under `tools/tests/quality/board/`.** ⚠️ **Shares that module with NO queued row; `W153` names `corroborate`'s register-blind arm and `W125` the table's GENERATION, neither of which is this predicate** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+## PO round 56 — three closes on derived merge refs, two mints, three routings refused into rows that already held the mechanism, and Ruling 349 applied to the board for the first time
+
+⛔ **EVERY MERGE REF BELOW IS DERIVED FROM `git` AND NOT RECEIVED, and the derivation is the command rather than my word for it:** `git log --first-parent --oneline 7a7a178..4b48e6d` over the wave, then `git rev-list --parents -n1 <merge>` for each second parent. ⭐ **FIVE merges on the first-parent line** (Ruling 327 — a round span is derived by COUNTING MERGES): `7a7a178` → `4d4c7c7` → `1a55e12` → `0011d5d` → `2c9082d` → `ad74a55`, then the coordinator's handoff commit `4b48e6d`, which is this round's base. ⚠️ **All five agree with the table I was handed, and the agreement is recorded because a disagreement would have been a finding.**
+
+### ⭐ WHAT CLOSED, AND THE PREDICATE THAT CLOSED IT
+
+⛔ **Ruling 199's predicate `C` — read off the COMMIT GRAPH, never off a merge subject — run over all three, role `wt/po`, HOST, 244 absorbed tips at `4b48e6d`:**
+
+```text
+fix/W64-kind-gate-scope        tip df9ad80   TERMINAL(C)=1   0 ahead of release
+fix/W155-ceiling-growth        tip 56ac8c0   TERMINAL(C)=1   0 ahead of release
+fix/W170-trial-namespace-gate  tip 90ab41a   TERMINAL(C)=1   0 ahead of release
+```
+
+⭐ **Each row's own close, its four edits and its re-addressing disclosure are in its own section above** — [`W64`](#w64-the-kind-gate-widened-across-the-whole-document-floor), [`W155`](#w155-r11s-ceiling-has-an-instrument-and-its-approach-has-none-the-predicate-is-proximity-growth-and-proximity-alone-flags-the-ceiling-working), [`W170`](#w170-a-live-trial-branch-reaches-the-one-pre-merge-gate-line-on-the-ground-ruling-265-already-exempted-a-namespace-for) — ⛔ **and not restated here, which is the rule this round spent itself applying.**
+
+### ⛔ `M3 step 3.3` DOES NOT CLOSE, AND THAT IS THE ANSWER RATHER THAN A DEFERRAL
+
+⭐ **`docs/tasks/README.md` places `NS-04`, `NS-05` and `NS-06` in step 3.3, and all three are DISPATCHED in wave 10.** ⛔ **Dispatched is not merged.** ⚠️ **Ruling 97 binds every close ref and Ruling 199's predicate is a merge in the graph, so a step cannot close on a wave that has not yet produced one** — ⭐ **and the register does not pre-announce a close, because a close is a reading and a reading is taken at the ref it is taken at.** ⛔ **So step 3.3 stays `⏳ OPEN`, its three rows are observed in flight, and the earliest round that can close it is the one after their merges.**
+
+### ⛔ THE 17 BYTES — RULING 349 REACHES THE BLOCKER AND NOT THE ARITHMETIC, AND THAT DISTINCTION IS THE WHOLE ANSWER
+
+⚠️ **I was told the arithmetic and told that Ruling 349 exists, and asked whether the ruling in fact reaches this. MEASURED, and the answer is HALF:**
+
+⭐ **IT REACHES THE BLOCKER, COMPLETELY.** ⛔ **The blocker round 55 routed was *a personal-data safety rule cannot be boarded*, and Ruling 349's disposal is that the rule was never the board's to carry.** ⚠️ **That obligation is gone and the board's headroom was never in its way — the coordinator's own framing error, disclosed against themselves, is the better reading and I adopt it.**
+
+⛔ **IT DOES NOT REACH THE ARITHMETIC, AND SAYING OTHERWISE WOULD HAVE COST ME THIS ROUND.** ⭐ **Ruling 349 frees no byte and moves no bound.** ⚠️ **MEASURED at my base `4b48e6d`, role `wt/po`, pinned container, the floor's own `board:` line: `58159 bytes total of 58176 allowed` — 17 — and this round's obligations, before one byte of prose, are three Detail cells repointed at archive anchors that are between 48 and 133 bytes longer than the row-file pointers they replace.** ⛔ **A round that had inherited *Ruling 349 solves it* would have discovered the overage at its closing measurement rather than at its start.**
+
+### ⭐ SO RULING 349 WAS APPLIED AS AN INSTRUMENT INSTEAD, AND IT IS THE FIRST TIME
+
+⛔ **THE RULE IS: a paragraph is removed from the board ONLY where a convention document demonstrably carries it, and the removing round NAMES the document and the string.** ⚠️ **Removing a rule no convention carries is not applying Ruling 349 — it is losing the rule.** ⭐ **THREE REMOVALS, EACH VERIFIED BEFORE IT WAS MADE:**
+
+| removed from `BOARD.md` | the convention that carries it | the string that proves it |
+|---|---|---|
+| *a status change is ONE CELL*, with its trailing gloss | `docs/conventions/delivery-flow.md` | `- **A status change is one cell.**` |
+| *a cell in this table carries no measurement, no ref other than a merge ref, and no reasoning* | `docs/conventions/board.md` | `- ⛔ **No measurement.**` · `- ⛔ **No ref except a merge ref.**` · `- ⛔ **No reasoning.**` |
+| the whole `## Where everything else went` migration note — a 2026-09-10 note whose four rows are one table over | `docs/conventions/board.md` | its `One fact, one home` table: `a **round's** reasoning` · `a **live** row's argument` · `a task's **step membership**` · `a **process**` |
+
+⛔ **THE THIRD REMOVAL TOOK THE BOARD'S OWN CLOSING RULE WITH IT** — *"If a fact appears both here and behind a pointer, ONE OF THE TWO IS WRONG, and it is a finding"* — ⭐ **and that is the sharpest demonstration this round can offer, because the convention carries that sentence too, so the board's closing warning was itself the second copy it warns about.**
+
+⚠️ **A FOURTH CANDIDATE WAS REFUSED and it is named so nobody re-derives it: *one row per id, and the id space has exactly one minter* (Ruling 68) is carried by NO convention document.** ⛔ **It stays on the board until one carries it, and landing it is not this office's surface.**
+
+### ⛔ THE READING BEHIND [`W173`](rows/W173.md), AND WHY THE SWEEP IS A ROW RATHER THAN A ROUND
+
+⭐ **Role `wt/po`, ref `4b48e6d`, HOST. Instrument stated so it can be re-run:**
+
+```text
+grep -oE 'Ruling [0-9]+' docs/tasks/BOARD.md | sort -u
+for each n: grep -rE "Ruling <n>\b" docs/conventions/
+
+  distinct rulings CITED on BOARD.md            : 41
+  ALSO carried in docs/conventions/             : 36
+  carried by NO convention document             :  5   ->  166, 222, 225, 246, 261
+```
+
+⚠️ **UPPER BOUND on the duplication, LOWER BOUND on the hole, and both directions are stated because a citation is an ADDRESS and only some of the 36 are copies.** ⛔ **Nothing in the tree can tell one from the other, which is exactly why it is a row and not a tidy-up** — ⭐ **and the 5 must land in `docs/conventions/` BEFORE the board half runs, which is another office's surface.**
+
+### ⛔ TWO MINTS, AND NEITHER IS MINTED FOR HEADROOM
+
+⭐ **[`W172`](rows/W172.md) — Ruling 218's GATE THREE.** ⛔ **Ruling 218 priced three gates and said of the third *"needed for exit 0; not yet a row"*.** ⚠️ **Gate one merged as `W121`, gate two as `W64`, and `W64` closes this round — so without a mint the residue would have been named only inside a closed row.** ⭐ **It is rowed NOW rather than at Ruling 218's date because gate two changed its population**, which is the ordering Ruling 218 itself gave: `W64`'s own gate table priced this at *216 of the 522* and delivery retired that figure twice over (`W64/8`, and `170` of the `216` turning out to be citations gate two RULES LEGITIMATE). ⛔ **The row therefore carries the instrument and the refusal, not the scalars.**
+
+⭐ **[`W173`](rows/W173.md) — the board carries RULES.** ⛔ **Ruling 349 is three days old, no row holds it, and its board half needs a predicate that can tell a POINTER from a RESTATEMENT** — ⚠️ **which is `board-frame`'s own founding difficulty one layer up, so it is not a paragraph of work.**
+
+### ⛔ THREE ROUTINGS, ALL THREE REFUSED AS MINTS, EACH INTO A ROW THAT ALREADY HELD THE MECHANISM
+
+⭐ **`CTO-70/16` — REFUSED, ROUTED TO [`W34`](rows/W34.md).** ⛔ **The premise I was handed is that Ruling 70's reach failed; MEASURED at `4b48e6d`, role `wt/po`, HOST, it did not:**
+
+```text
+grep -rn 'Ruling 70\b' docs/conventions/
+  docs/conventions/review-rubric.md  — 4 citations, a whole section, three
+  proved remedies and both failure directions
+and the floor's own reach arm agrees: 70 is ABSENT from
+  "Still uncited below the window", which lists 106 of the 324 below 325
+```
+
+⛔ **So reach-to-DOCUMENT is satisfied and the residual is reach-to-READER, which is `W34`'s named mechanism and not a new one.** ⭐ **The reviewer's ground — a second ruling would be *"exactly the second copy that can disagree"* — applies one level further than they took it: a second ROW can disagree with `W34` in exactly the same way.** ⚠️ **`W34` was `todo` and UNPLACED; it is placed at 14, it jumps nobody because it is older than every row above it, and its stale `2068 LINES, 100 HEADINGS` is replaced by the INSTRUMENT rather than by a fresher figure** (Ruling 150's form, `CTO-69/6`'s remedy).
+
+⭐ **`W167`'s HOLD — DISCHARGED, and the coordinator's dispatch is CLEAN.** ⛔ **`PO-55/2`'s ground was *`W167` is HELD while `W64` is IN FLIGHT*; `W64` merged at `2c9082d`, so the stated condition is spent.** ⚠️ **I also checked the bound the board's own cell would have failed them on, and it is my cell that was wrong — see `PO-56/2` below.** ⭐ **The row is amended additively at `wt/dev3`'s tip with Ruling 311's check run first: `git diff --numstat 4b48e6d -- docs/tasks/rows/W167.md` reads `10 0`, one hunk at `@@ -26,3 +26,13 @@`, past every acceptance clause.**
+
+⭐ **`tools/quality/board/verdict.py` at 400/400 — NOT WRITTEN INTO A ROW, and the coordinator's own correction is why.** ⛔ **REPRODUCED at `4b48e6d` in both environments: `wc -l` on the HOST reads `400`, and the pinned container's floor prints `size approach: headroom 0 growth +0 400/400 tools/quality/board/verdict.py near and static`.** ⚠️ **AND A SECOND MODULE THE ROUTING DID NOT NAME: `tools/quality/board/register.py` at `399/400`, one line of headroom, in the SAME package, and both already carry standing SPLIT conditions on this board.** ⛔ **`W40` is the row and its wording reaches the at-ceiling case exactly — its own struck witness was `600 of 600` — but `CTO-32/8` RE-FRAMED that row precisely to remove an enumerated population, so writing `verdict.py` into it would reinstate the defect the re-framing cured.** ⭐ **The reading lives here, with its ref, its role and its environment; the row is PLACED at 14 and carries no census.**
+
+⚠️ **AND THE THING THE ROUTING SURFACED THAT IS NOBODY'S ROW YET, recorded rather than minted:** ⛔ **the approach notice reads `verdict.py` as `near and static` and does not flag it, which is `W155`'s clause 3 working as written — *a module under a standing SPLIT condition is already answered* — but clause 3's ground was *an instrument that flagged them would be reporting a decision as a defect*, and at ZERO headroom that ground weakens: the standing condition says *the next row touching it splits it*, and the next row touching it must now split it in the SAME commit or fail the build before it can.** ⭐ **`W155` merged this wave and shipped exactly what it argued, so this is not a defect in it; it is stated here so that whoever takes `W40` reads it, and it is deliberately not a second row that could disagree with a clause three days old.**
+
+### ⭐ THE ONE OWNER FOR `NS-04` AND `NS-06` — UPHELD, AND THE SELF-CHARGE IS OVER-STATED
+
+⛔ **The coordinator disclosed filling three placed rows with two offices as a departure from `PO-55/1` and invited refutation. REFUTED, in their favour.** ⚠️ **`PO-55/1` is quoted from its own record rather than restated:** *"Three `W` rows dispatched into a wave the coordinator's own handoff says must close `3.2` and open `3.3` BEFORE any `W` row is placed, while three `solo` open-step rows sat with every dependency merged."* ⭐ **It is a charge about COMPOSITION — which rows took the slots — and it says nothing whatever about how many offices the three rows go to.** ⛔ **So there is no departure from it to defend.**
+
+⭐ **AND THE GROUND FOR ONE OWNER IS INDEPENDENTLY MEASURED AT MY OWN REF, role `wt/po`, HOST:**
+
+```text
+git log --oneline -5 -- workspace.json      3a2f0d9 71269e2 bcf3a81 00eda6b d9e5d31
+  five consecutive sibling landings, five pin bumps, one file
+  four are 1 changed line; d9e5d31 is 2+/1- because NS-01 CREATED the entry
+git -C ../narrate-service worktree list     main + narrate-service-wt/dev1 on
+                                            feat/NS-04-NS-06 ;  remotes: 0
+```
+
+⚠️ **The coordinator's reading printed ONE worktree; mine prints TWO, and the second is Developer 1's own, cut after that reading.** ⛔ **Not a disagreement — a reading with a timestamp** — ⭐ **and it CORROBORATES the call rather than weakening it: one office holds one branch carrying both rows, which is Ruling 218's *one branch can carry rows with different outcomes* used correctly.**
+
+### ⛔ THE DISPATCH BOUND, RE-DERIVED — AND MY OWN BOARD NEARLY MANUFACTURED A FINDING AGAINST THE COORDINATOR
+
+⚠️ **Under the bound as the board's Standing decisions cell stated it, `W167` at queue position 13 would have been a defect: the cell read *"a slot the open step cannot fill takes the queue head"*, and the queue head is `W88`.** ⛔ **I went to the record the cell's own pointer names before charging anybody, and the clause is NOT THERE.** ⭐ **The round-53 amendment says, in full:**
+
+> ⛔ **AMENDED: the bound binds a SLOT AN OPEN-STEP ROW COULD HAVE TAKEN, and never a slot no open-step row can fill.** ⭐ **A wave that leaves a slot EMPTY under this bound has mis-read it, and the emptiness is the finding.**
+
+⛔ **EMPTINESS is the finding, and nothing in that record says a slot takes the queue head.** ⚠️ **The clause was typed into the board from PO round 55's OWN handoff, which wrote *"takes the queue head, which is `W88`"* — my office's sentence, promoted to a standing decision and attributed to a record that does not contain it.** ⭐ **`PO-56/2`, against this office, and it is exactly the class the removed closing rule named.** ⛔ **The cell is corrected, and the correction QUOTES the struck clause rather than deleting it** (Ruling 183's form).
+
+⭐ **THE BOUND, APPLIED CORRECTLY: wave 10 leaves no slot empty and no open-step row undispatched — all three of step 3.3's rows are dispatched, and the fourth slot takes a `W` row because the open step has nothing left to fill it with.** ⛔ **CLEAN. And it would have been clean under the struck clause too:** `W88`, `W120` and `W160` all write `docs/tasks/rows/`, which a REGISTER round writes, so the queue head is structurally undispatchable into any wave that has one.
+
+### ⛔ FINDINGS, BY ID
+
+⭐ **`/1` and `/4` against the COORDINATOR; `/2` and `/5` against MY OWN OFFICE; `/3` against a close this office cannot complete.**
+
+- ⛔ **`PO-56/1` `[structural]` — AGAINST THE COORDINATOR, and it is the third instance of the shape they asked me to price.** ⚠️ **The brief states *"`PO-55/1` placed three rows in three slots and I filled them with two offices"*.** ⛔ **`PO-55/1` placed nothing: it is a FINDING about which rows took wave 9's slots, and the record's own words are quoted above.** ⭐ **Placement is an act of the register in `Next rows`; a finding is not a placement, and the restatement converted one into the other.** ⚠️ **The cost is real rather than pedantic: it made the coordinator charge themselves with a departure from a clause that does not exist, and it asked me to adjudicate a defect that was never committed.** ⛔ **This is the same shape as `CTO-71/1` and `CTO-71/2` — a population or a claim RESTATED where the document should have been POINTED AT — and it is the third instance in one brief-chain, which is the count the coordinator asked for.**
+- ⛔ **`PO-56/2` `[structural]` — AGAINST THIS OFFICE.** ⚠️ **A Standing decisions cell asserted *"a slot the open step cannot fill takes the queue head"* against a record containing no such clause, sourced from round 55's own handoff.** ⭐ **A standing decision is the most load-bearing prose on this board — it binds dispatch — and this one would have charged another office.** ⛔ **Corrected this round, struck clause quoted.**
+- ⛔ **`PO-56/3` `[structural]` — RULING 201's FOURTH EDIT IS NOT COMPLETABLE BY THIS OFFICE FOR `W155`.** ⚠️ **The inbound sweep prints two LIVE non-record citations of `docs/tasks/rows/W155.md`: the comment justifying `NEAR_BAND = 60` in `tools/quality/approach.py`, and the same justification on the assertion of `NEAR_BAND` and `GROWTH_WAVES` in `tools/tests/quality/test_approach.py`.** ⛔ **`tools/` is not this office's surface and three developers are live on it, so it is a finding and not a diff.** ⭐ **Ruling 270's stub keeps both citations RESOLVING, so the cost is one hop rather than a broken address** — ⚠️ **and it is the first case where a close's fourth edit and the surface rule pull in opposite directions, which is worth a rule and is not mine to write.**
+- ⚠️ **`PO-56/4` `[local]` — AGAINST THE COORDINATOR, and it is small.** ⛔ **The brief's step paragraph cites `docs/tasks/README.md` BY LINE NUMBER, into a document the brief does not own, on the same page as its own instruction forbidding exactly that** — ⭐ **and Ruling 334 is the disposition: a redundant line citation is still a line citation, and the QUOTE is the cure only if the NUMBER goes.** ⚠️ **The quoted string — `**3.3** — NS-04, NS-05, NS-06` — is correct and I resolved it BY THE STRING, so nothing was lost.** ⛔ **The number is deliberately not reproduced here: filing this finding in the defective form would make it a third instance rather than a report of two, and this office has committed that exact inversion before** (`NS-03/3`, `NS-02/4`).
+- ⭐ **`PO-56/5` `[local]` — A RECORDED NEGATIVE against my own expectation.** ⚠️ **I opened `CTO-70/16` expecting to confirm that Ruling 70 had reached no convention document, and to mint or route on that basis.** ⛔ **It has reached one, in full, with a section of its own — my prediction was wrong, and the routing that survives is a DIFFERENT one from the one I set out to make.** ⭐ **Kept rather than tidied** (Ruling 155): a reading that refutes the office taking it is the shape this project keeps recording, and this is mine for the wave.
+
+### ⛔ WHAT I DID NOT DO
+
+⭐ **I did not merge, and I added, set or queried no remote.** ⛔ **I did not touch another office's worktree, and I cut none.** ⚠️ **`ONBOARDING.md` was not moved, deleted, committed or git-ignored — it is absent from this linked worktree, which is itself the standing rule's live evidence: the floor reads `446` markdown documents here against the main checkout's `447`, and git-ignoring that file would remove it from exactly the population the personal-data sweep reads.** ⛔ **I did not write `verdict.py` into `rows/W40.md`, and I did not amend `rows/W40.md` at all.** ⭐ **I closed no milestone step.**
+
+### ⛔ AMENDMENT — PO round 56's RE-TAKE at `b911f44`, appended and never an edit of what stands above (Ruling 106, Ruling 324)
+
+⛔ **`(CTO: CHANGES REQUESTED)` was ruled at `b911f44` on ONE item, and everything else on the branch reproduced.** ⭐ **This section is APPENDED because the round's own record above is not yet frozen only in the sense Ruling 324 allows; nothing above is edited, and the amendment is the correction.**
+
+#### ⛔ `CTO-71/5` — UPHELD IN FULL, REPRODUCED AT MY OWN INSTRUMENT, AND THE DIAGNOSIS IS BETTER THAN THE ONE I WOULD HAVE WRITTEN
+
+⚠️ **The charge: the readings table's row B stated a document census taken at `20c0899` under a ref column that resolves to `b911f44`.** ⛔ **REPRODUCED, one office, one command, two refs, role `wt/po`, pinned container:**
+
+```text
+"document pointers:" from python3 -m tools.quality
+  20c0899   1509 read in 448 markdown files, 817 anchored, 0 unresolved
+  b911f44   1514 read in 449 markdown files, 819 anchored, 0 unresolved
+```
+
+⛔ **AND THE CAUSE IS MY OWN `PO-56/6` REPAIR, WHICH IS THE PART WORTH KEEPING.** ⭐ **Moving the ref column from a sha to a pointer was right on Ruling 320's ground and it is not reversed.** ⚠️ **What it did to ONE figure-group is the reviewer's sentence and I adopt it whole: *for this row the pointer is WORSE than the sha it replaced, because a sha DATES ITSELF and a pointer CLAIMS CURRENCY* — so the record's own argument that the pointer form is safer is exactly what would make a reader trust the stale figure.**
+
+⭐ **THE GENERALISATION, and it is the reason this was worth a block rather than a note:** ⛔ **Ruling 320's pointer form is right for a VERDICT and wrong for a SELF-INCLUSIVE CENSUS.** ⚠️ **A count of the documents in this tree COUNTS THE DOCUMENT REPORTING IT**, which is `CTO-70/9`'s *a population that contains the document measuring it has no single before column*, recurring one wave later in the record that cited it.
+
+⛔ **THE CURE IS RELOCATION AND NOT RE-TAKING, and the trap was named in the finding rather than hidden in it:** re-taking regresses, because the commit that writes the fresh census moves the tip the pointer resolves to. ⭐ **So the census LEAVES the readings table for the coordinator hand-back — the mechanism this record already uses for the resolved sha — and what stays is the PROPERTY it was evidence for, `0 unresolved`, which is a claim about every pointer in the tree and does not move when a document is added.** ⚠️ **Every other figure in row B is a property of files this branch's later commits do not touch, which the reviewer measured at both refs and I did not re-argue.**
+
+#### ⛔ `PO-56/3` IS CONVERTED INTO AN ASSIGNMENT — [`W174`](rows/W174.md)
+
+⭐ **Rulings 284 and 295: a routing that never becomes an assignment is not converted, and a finding disposed only in a record is disposed nowhere.** ⛔ **My own round filed `PO-56/3` as a finding and stopped, which is the exact shape I spent this round refusing in other people's documents.** ⚠️ **The row states the collision — Ruling 201's fourth edit against the surface rule — names three admissible remedies without choosing between them, and prices the one that looks free.**
+
+#### ⛔ `W167/5` IS CONVERTED — [`W175`](rows/W175.md)
+
+⭐ **Scheduled to this office by the reviewer: the *owes nothing* escape has no legal site, so it is a pass that cannot be earned.** ⚠️ **RECEIVED and recorded as received** (Ruling 115): **unexercised across 73 closes**, so it is not urgent and it jumps nobody. ⛔ **The row's FIRST act is a DESIGN DECISION that goes to the reviewer before a shape is written**, and that constraint is in the row rather than left for its taker to discover by refusal.
+
+#### ⭐ `src/studyforge/narrate/client.py` BECOMES A STANDING SPLIT CONDITION, which is a board artifact and mine
+
+⛔ **MEASURED BY ME FROM THE REF AND NOT FROM ANOTHER OFFICE'S WORKTREE** — `git ls-tree` and `git show feat/NS-05-framework-client:src/studyforge/narrate/client.py | wc -l`, role `wt/po`, HOST: **398** lines, **2** of headroom against R11's 400. ⚠️ **The reviewer did NOT require the split and this cell does not reverse that** (Ruling 261 — a ceiling is not a budget; `NS-05`'s `Owns` scopes the file). ⭐ **The condition binds the NEXT row, never the row that left the file where it is**, which is the standing form's own clause, so writing it while `NS-05` is in flight binds nobody who is holding it.
+
+⛔ **AND IT IS THE FIRST SUCH CONDITION IN `src/`** — every previous one names `tools/` or `tests/` — ⚠️ **which is worth noticing because `W155`'s own reading found EVERY `src/` module at `+0` growth across three waves, and this is the product surface beginning to move.**
+
+#### ⭐ WHAT THE REVIEWER VERIFIED RATHER THAN ACCEPTED, RECORDED BECAUSE A CHECKED-AND-ABSENT HAZARD IS WORTH AS MUCH AS A FOUND ONE
+
+⛔ **Ruling 177 over CONTENT: 80 dropped lines across three stubs, ZERO present in no destination.** ⭐ **Ruling 306: all five new archive anchors derived by the shipped slug and ALL UNIQUE against 910 existing.** ⭐ **The bound arithmetic re-derived — `58176 → 58624` is `224 × 2` — and the Ruling 349 application verified string by string, all five present exactly once in the conventions I named.**
+
+⚠️ **AND `CTO-71/4` IS THE REVIEWER AGAINST ITSELF, ABOUT ME, AND IT BELONGS IN THIS RECORD BECAUSE THE NEXT OFFICE TO CHECK A RULING 349 REMOVAL WILL REACH FOR THE SAME GREP:** ⛔ **searching `docs/conventions/` for THE BOARD'S SPELLING of a removed rule reads *PRESENT IN NO CONVENTION* and is one step from charging the removing office with losing three rules.** ⭐ **The conventions carry them in THEIR OWN spelling, which is why Ruling 349's discipline is to name the STRING IN THE DESTINATION and not the string that was removed** — ⚠️ **and only Ruling 325, open the charged office's instrument first, stopped it becoming a false charge.**
+
+#### ⛔ `W64`'s CLOSE ON GATE TWO IS RULED CORRECT, and the ground is better than mine
+
+⭐ **Ruling 297's second clause: a row discharges against its ACCEPTANCE, never against the prose that argued for it.** ⛔ **Ruling 218 RE-SCOPED `W64` into three gates and said gate three was *"NOT YET A ROW, and deliberately not minted"* — so gate three was never in scope and the close is not partial.** ⚠️ **I offered the alternative rather than defending the call, and the alternative is refuted rather than merely declined.** ⭐ **Minting [`W172`](rows/W172.md) is Ruling 129 step 3 and is what makes the close safe rather than orphaning.**
+
+#### ⛔ THE RULING 349 REMOVALS ARE FIVE, NOT THREE, AND THE TWO ADDED IN THE RE-TAKE ARE NAMED HERE
+
+⚠️ **The section above this amendment says three and lists three; it stands unedited** (Ruling 106). ⭐ **The re-take added two more, each verified in the destination BEFORE it was removed, and the full list is:**
+
+| removed from `BOARD.md` | the convention that carries it | the string that proves it, IN THE DESTINATION |
+|---|---|---|
+| *a status change is ONE CELL* | `delivery-flow.md` | `- **A status change is one cell.**` |
+| *no measurement, no ref other than a merge ref, no reasoning* | `board.md` | `- ⛔ **No measurement.**` · `- ⛔ **No ref except a merge ref.**` · `- ⛔ **No reasoning.**` |
+| the `## Where everything else went` migration note | `board.md` | its `One fact, one home` table |
+| ⭐ **RE-TAKE** — *a header is INFERRED and can only be ANNOUNCED; a delimiter is DECLARED and can be REFUSED* | `board.md` | `⛔ **A header is INFERRED, so an absent table is indistinguishable from a renamed column and can only be ANNOUNCED.** ⭐ **A delimiter is DECLARED, so an absent marker can be REFUSED.**` |
+| ⭐ **RE-TAKE** — *a row scheduled ahead of an older unstarted row says what it is jumping and why* | `delivery-flow.md` | `### ⛔ Ruling 75 — a row scheduled ahead of an older unstarted row says so, in the row` |
+
+⛔ **THE STRING QUOTED IS THE DESTINATION'S, NEVER THE BOARD'S, AND THAT IS `CTO-71/4`'S LESSON MADE PROCEDURAL** — ⚠️ **a reviewer grepping the conventions for the BOARD's spelling reads *PRESENT IN NO CONVENTION* and is one step from a false charge.** ⭐ **Two candidates were REFUSED on the same test and are named so nobody re-derives them: Ruling 68's *one row per id, exactly one minter*, and Ruling 243(c)'s *a queue cell carries no census* — neither is carried by any convention, so both stay until one carries them.**
+
+#### ⛔ `PO-56/8` — `W159`'s NAMING WAS FALSE, AND IT IS THIS ROUND'S OWN COST EXPLAINED
+
+⚠️ **`W159`'s register naming read *"`Next rows` is the board's only undelimited table"*.** ⛔ **MEASURED at the merging ref, role `wt/po`, HOST, instrument `re.fullmatch(r'\|[-: |]+\|')` over the board's lines against a grep for `^<!-- `:**
+
+```text
+table separator rows on BOARD.md          : 10
+delimited blocks                          :  3   (inflight, register, scheduled)
+```
+
+⭐ **So most of the board's tables are undelimited and `Next rows` is not the only one — `Standing decisions`, `Milestones`, `R21` and the cross-repo table are too.** ⛔ **The naming is CORRECTED in the register, which is where a naming lives.**
+
+⚠️ **AND IT IS NOT PEDANTRY, BECAUSE IT PRICED THIS ROUND:** ⛔ **the re-take added one `Next rows` row and one `Standing decisions` row, and BOTH tables earn ZERO allowance** — ⭐ **so a standing split condition, which is a board artifact the reviewer correctly says is mine, costs the board bytes and buys it none.** ⚠️ **`W159` is the row and its population is wider than it said.**
+
+#### ⚠️ THE ROUND ENDS AT A THIN MARGIN AND I AM SAYING SO RATHER THAN LETTING THE NEXT ROUND FIND IT
+
+⛔ **The board's headroom at the merging ref is printed by the instrument on every run and is NOT typed here** (Ruling 181). ⭐ **What IS worth recording is the SHAPE: four mints earned `4 × 224`, and against that this round spent bytes on two tables that earn nothing at all.** ⚠️ **That is not a reason to raise a term — Ruling 271 refuses all three obvious moves by measurement, and Ruling 261 says a ceiling is not a budget.** ⛔ **It is `W173` and `W159` together, and the next register round should expect the same squeeze until one of them lands.**
