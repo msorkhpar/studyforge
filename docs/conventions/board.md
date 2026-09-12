@@ -435,12 +435,15 @@ four-versus-one: it was that the populations whose counts ARE the exit code were
 with no list.** ⛔ **A DECLARED, READ, EMPTY table prints NEITHER row line, because two
 `none.`s about a population with no members to have is the `0 = 0` the idiom refuses.**
 
-⚠️ **And it prints SIX readings no board cell carries, which are
-`tools/quality/board/unclaimed.py`'s** (`W132`'s split): the checkouts no row claims, ⭐ **the
-OFFICE round branches Ruling 265 exempts**, the checkouts invisible to git by construction,
-the ones git could not count at all, and the `trial/*` / `tmp-*` branches that are spent or
-still checked out — ⭐ **each of which reads as dispatched work to a human, which is Ruling
-189's subject with nowhere to print it.**
+⚠️ **And it prints the readings NO BOARD CELL CARRIES, which are
+`tools/quality/board/unclaimed.py`'s** (`W132`'s split) — ⭐ **each of which reads as
+dispatched work to a human, which is Ruling 189's subject with nowhere to print it.**
+⛔ **THE LIST IS A POINTER AND CARRIES NO COUNT, and that is a repair rather than a style:**
+⚠️ **the sentence that stood here said SIX and enumerated five, having never been updated
+when `W170` added the `SPENT`-namespace exemption line** — ⭐ **so read the table in that
+module's own `unnamed()` docstring, which resolves at read time and cannot be one short.**
+⛔ **One of them is Ruling 264(c)'s GATE, and its population is LIVE CHECKOUTS: a branch no
+worktree holds is read on the line BELOW it, never on it.**
 
 #### ⛔ RULING 265 (CTO round 58) — the `UNNAMED` arm exempts the OFFICE-BRANCH PATTERN, not `0` ahead
 
