@@ -90,7 +90,7 @@ def recorded(root: Path | str) -> State:
 
 
 def gaps(playing: Playable) -> tuple:
-    """The positions the record promised a clip for and cannot deliver, in reading order."""
+    """Return the positions the record promised a clip for and cannot deliver, in order."""
     return tuple(entry.position for entry in playing.silent if entry.reason in UNKEPT)
 
 
