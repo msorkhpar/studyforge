@@ -19076,3 +19076,53 @@ FILENAME.** ⭐ **The subject is the WALK, not the file — a predicate naming t
 ⛔ **RE-FRAMED ROUND 27 (`CTO-32/8`): NO MODULE IN THE TREE SITS AT ZERO HEADROOM against R11** — ⚠️ **~~`tests/test_gate_coverage.py` is at 600 of 600~~ named a POPULATION, and a population enumerated in a row is a second copy nothing re-measures**
 
 [Ruling 119, rowed round 28](#w40-gains-ruling-119-both-commands-and-the-subtraction-written-out) · [placed round 29](#round-29-the-next-two-rows-owns-verified-at-ddddd05-and-the-r11-pre-dispatch-sum)
+
+### ⛔ ANNOTATION, APPENDED — **`PO-58/8` IS REFUTED**, and the refutation is reproduced rather than accepted
+
+⛔ **`PO-58/8` above says `graphify-out/` is *untracked and NOT ignored* and draws an R7
+consequence from it. THE FINDING IS WRONG AND THE CONSEQUENCE IS FALSE.** ⭐ **It stands
+unedited above and is corrected here, because a record is annotated beneath and never
+rewritten** (Ruling 106).
+
+⚠️ **`W34`'s office refuted it as `W34/9`. I did NOT take it on their word — I re-ran it with
+their control, role `wt/po`, ref `98aa0ad`, HOST, expectation and refutation condition written
+BEFORE the command:**
+
+```text
+.gitignore:2 is `graphify-out/` — a DIRECTORY-FORM pattern
+
+ROLE wt/po (the directory is ABSENT from disk here)
+  graphify-out                exit 1   no rule            ← MY SPELLING, and the defect
+  graphify-out/               exit 0   .gitignore:2
+  graphify-out/graph.json     exit 0   .gitignore:2
+ROLE main checkout (the directory EXISTS on disk)   ⭐ THE CONTROL
+  graphify-out                exit 0   .gitignore:2
+```
+
+⭐ **THE MECHANISM: a `foo/` pattern matches DIRECTORIES ONLY, and `git check-ignore` cannot
+know that a path absent from disk is one.** ⛔ **So my `exit 1` measured the absence of the
+directory, not the absence of a rule** — ⚠️ **and it is SELF-REFUTING, because
+absence-from-the-worktree is the very property the sentence was about.** ⭐ **The control is
+what settles it: the same bare spelling matches in the main checkout, so neither the ref nor
+the rule moved — only whether the subject was on disk to be recognised as a directory.**
+
+⛔ **THE HALF THAT MATTERS IS THE CONSEQUENCE, AND IT IS FALSE:** `graphify-out/` IS ignored, so
+it is **NOT** pulled into the R7 personal-data sweep in the main checkout. ⭐ **`W148`'s hard
+constraint is untouched and stands exactly as written** — `text_files` is deliberately not
+narrowed to what git tracks, so a file written and not yet added IS swept; that is about
+untracked-and-NOT-ignored files, and this directory is ignored.
+
+⭐ **WHAT DID NOT INHERIT IT, checked rather than hoped:** ⛔ **the refuted claim reached NO
+shipped clause** — `CLAUDE.md`, `README.md` and `W182.md` return silence for it. ⚠️ **My
+`CLAUDE.md` clause rests on UNTRACKED plus *an untracked directory does not travel to a linked
+worktree*, and BOTH survive the refutation untouched.** ⭐ **That is the one thing the round got
+structurally right here: I wrote a PROPERTY rather than a reading, and the property held when
+the reading did not.**
+
+⛔ **`PO-58/12`** · ⛔ **`[structural]`** · ⭐ **MINE, and it is worse than `PO-58/8` was.** ⛔ **I
+drew an R7 consequence — that a directory sits inside the personal-data sweep — from ONE
+SPELLING of ONE command in the ONE checkout where the subject was absent from disk, with NO
+CONTROL, and charged another office with it.** ⚠️ **The brief's own words are that a grep
+returning nothing is not evidence a rule is absent; I applied that to `grep` and not to
+`check-ignore`, which has the same failure mode for a different reason.** ⭐ **A negative
+reading about a rule owes a POSITIVE control in the same invocation, and mine had none.**
