@@ -14,13 +14,26 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
     """Ruling 101's producer half: every name a consumer needs is on `__all__`."""
     assert set(generate.__all__) == {
         "BuildError",
+        "Corpus",
         "UnitSource",
         "Written",
+        "ancestors",
+        "assets",
+        "bar",
+        "container_pages",
         "containers",
         "declared_practices",
+        "index_href",
+        "page_paths",
+        "read_corpus",
         "read_manifest",
+        "root_index",
         "sources",
+        "trail",
+        "unit_location",
+        "unit_pages",
         "write_pages",
+        "write_site",
     }
     for name in generate.__all__:
         assert hasattr(generate, name), f"{name} is exported and does not exist"
