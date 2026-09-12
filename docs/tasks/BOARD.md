@@ -52,7 +52,8 @@ change.** ⛔ **Ruling 171: `git worktree list` PRIMARY, `git branch` corroborat
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `NS-03` | Developer 1 | `feat/NS-03-engine-adapters` @ `wt/dev1` | 0 @ `0564997` | ⏳ **in flight** — dispatched wave 7 |
+| `NS-02` | Developer 1 | `feat/NS-02-batch-api` @ `wt/dev1` | 0 @ `5b54936` | ⏳ **in flight** — dispatched wave 8 |
+| `W121` | Developer 2 | `fix/W121-marker-table-rows` @ `wt/dev2` | 0 @ `5b54936` | ⏳ **in flight** — dispatched wave 8 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE, not an omission** (`W111`, `W147`).
@@ -91,18 +92,10 @@ argument for each placement is in the round record; this table is the outcome.**
 | 9 | `W136` | ⭐ **the exposure is LATENT and measured so — 16 branches, every one `0` ahead and none checked out — so it jumps nobody** | round 47 |
 | 10 | `W141` | ⭐ **a stated count nothing re-derives, and it jumps nobody** — `W134/5` | round 49 |
 | 11 | `W144` | ⭐ **a LABEL defect beside a correct bound, and it jumps nobody** — `PO-48/10` | round 49 |
-| 12 | `W148` | ⭐ **it jumps nobody** | round 51 |
-| 13 | `W149` | ⭐ **it jumps nobody** | round 51 |
-| 14 | `W150` | ⭐ **it jumps nobody** | round 51 |
-| 15 | `W151` | ⭐ **it jumps nobody** | round 51 |
-| 16 | `W153` | ⭐ **it jumps nobody** | round 51 |
-| 17 | `W154` | ⭐ **it jumps nobody** | round 51 |
-| 18 | `W155` | ⭐ **it jumps nobody** | round 51 |
-| 19 | `W156` | ⭐ **it jumps nobody** | round 51 |
-| 20 | `W157` | ⭐ **it jumps nobody** | round 52 |
-| 21 | `W158` | ⭐ **it jumps nobody** | round 52 |
-| 22 | `W159` | ⭐ **it jumps nobody** | round 52 |
-| 23 | `W160` | ⭐ **it jumps nobody** | round 52 |
+| 12 | `W148`–`W151`, `W153`–`W156` | ⭐ **each jumps nobody** | round 51 |
+| 13 | `W157`–`W160` | ⭐ **each jumps nobody** | round 52 |
+| 14 | `W161`–`W165`, `W167`–`W171` | ⭐ **each jumps nobody** | round 54 |
+| 15 | `W166` | ⛔ **its slot is a REGISTER ROUND, not a developer's — it writes this file's own *Standing decisions*** | round 54 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a
 position does not.** ⛔ **And a *Next rows* cell may carry no measurement AND no
@@ -114,10 +107,13 @@ decides which of Ruling 281's three classes it is, and a board cell carries no m
 ⚠️ **`W88`, `W120` and `W160` all write `docs/tasks/rows/`: ONE OWNER or two waves, never two
 takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too, and `W166` writes
 `BOARD.md` itself.** ⛔ **`W135`, `W136`, `W141`, `W149`, `W153`, `W154`, `W157`, `W159`,
-`W160`, `W161`, `W164`, `W165`, `W168` and `W169` name `docs/conventions/` — ⭐ ONE constraint,
-not a row each.** ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write
-`board/bounds.py`; `W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/` — ONE OWNER
-or two waves for each set.** ⭐ **`W148` (`pointers.py`), `W155` (`size.py`), `W167` (`quality/handoffs/`) and `W170` (`unclaimed.py`) share a MODULE surface with nobody.**
+`W160`, `W161`, `W164`, `W165`, `W168`, `W169` and `W171` name `docs/conventions/` — ⭐ ONE
+constraint, not a row each.** ⛔ **`W150`+`W151` write `tools/quality/citations.py`;
+`W144`+`W159` write `board/bounds.py`; `W158`, `W162` and `W163` name `docker/dev/` or
+`tests/docker/`; `W121`+`W167` write `tools/quality/handoffs/`; `W35`+`W148` write
+`pointers.py` — ONE OWNER or two waves for each set.** ⭐ **`W155` (`size.py`) and `W170`
+(`unclaimed.py`) share a module with no row that DECLARES one** — ⚠️ **this paragraph ranges
+over DECLARED surfaces and says so, because `W121` declares none** (Ruling 331, `PO-54/3`).
 
 ## The register — every `W` row
 
@@ -248,7 +244,7 @@ they have exactly one home each.
 | W118 | A gap named in FOUR consecutive closes is a different fact from a gap named once, and no instrument reads it | PO | `todo` — `CTO-52/5` | [`rows/W118.md`](rows/W118.md) |
 | W119 | A committed test reads THIS MACHINE'S worktree set, so it goes RED on a correct tree in the window after every merge | framework agent | ✅ done — `6d5aeed` | [record](BOARD-ARCHIVE.md#w119-a-committed-test-reads-this-machines-worktree-set-so-it-goes-red-on-a-correct-tree-in-the-window-after-every-merge) |
 | W120 | The bounded Ruling 186 notice is discharged by ONE row over its WHOLE population, and a partial fix is refused | framework agent | `todo` — Ruling 222 | [`rows/W120.md`](rows/W120.md) |
-| W121 | The marker reader cannot see a finding written as a TABLE ROW, which is the form both offices write | framework agent | `todo` — Ruling 218's gate one, before `W64` | [`rows/W121.md`](rows/W121.md) |
+| W121 | The marker reader cannot see a finding written as a TABLE ROW, which is the form both offices write | framework agent | ⏳ **in flight** — Ruling 218's gate one, before `W64` | [`rows/W121.md`](rows/W121.md) |
 | W122 | A count in a SHIPPED file that no unit makes true — the Dockerfile's *"21 shared libraries"* | framework agent | ✅ done — `7b03763` | [record](BOARD-ARCHIVE.md#w122-a-count-in-a-shipped-file-that-no-unit-makes-true-the-dockerfiles-21-shared-libraries) |
 | W123 | A hang has no deadline anywhere, so a wedged suite returns no reading and no exit code either | framework agent | ✅ done — `7b03763` | [record](BOARD-ARCHIVE.md#w123-the-hangs-outer-bound-closed) |
 | W124 | `0` apt packages are version-constrained, so a font is an undeclared input to a recorded number | framework agent | ✅ done — `7b03763` | [record](BOARD-ARCHIVE.md#w124-0-apt-packages-are-version-constrained-so-a-font-is-an-undeclared-input-to-a-recorded-number) |
