@@ -222,9 +222,7 @@ def playable_of_units(
         resolved[unit.position] = filename
         if _words_moved(unit, filename):
             stale.append(Unmatched(unit.position, unit.id, WORDS_MOVED, filename))
-    return Playable(
-        MappingProxyType(resolved), tuple(silent), tuple(stale), narrated=state.present
-    )
+    return Playable(MappingProxyType(resolved), tuple(silent), tuple(stale), narrated=state.present)
 
 
 def _clip_for(unit: SpeechUnit, state: State, directory: Path | None) -> tuple[str, str]:
