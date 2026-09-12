@@ -17159,6 +17159,8 @@ inbound citations of rows/W147.md in LIVE documents: 1 — BOARD.md:280, the reg
 
 ⛔ **The row is NOT re-minted and its acceptance is NOT widened** (Ruling 311's direction). ⚠️ **It is ANNOTATED: the reading that minted it is TRUE of its own population and returns a FALSE NEGATIVE on a wave that ships a sibling component, so the instrument the row asks for owes a SECOND COLUMN rather than a correction.**
 
+- ⛔ **`PO-56/6` `[structural]` — AGAINST THIS OFFICE, and it is the round's own brief demonstrated rather than quoted.** ⚠️ **I committed a pointer in my own handoff that resolved to nothing** — `](../tasks/rows/W172.md)`, where a document in `handoffs/` reaches a row by `](../rows/…)`. ⛔ **At the intermediate tip, which did not yet contain the handoff, the floor read `clean` and the suite read `5712 passed`; at the tip that would actually have merged, the floor read `quality floor: 1 finding` and the suite read `3 failed, 5709 passed, 18 skipped`.** ⭐ **The brief's clause is *readings at intermediate refs are honest only if labelled, and they still leave the merge ref unmeasured*, and this round would have handed over a green table over a red tree if it had stopped one commit earlier.** ⚠️ **Fixed, re-measured at the merging ref, and the readings table now names its ref by POINTER rather than by a sha the writing of which moves the sha** (Ruling 320).
+
 ### ⛔ WHAT I DID NOT DO
 
 - ⛔ **I did not mint the narration manifest contract.** ⭐ It is the CTO's R21 row; I located the trigger and marked it `fired`.
