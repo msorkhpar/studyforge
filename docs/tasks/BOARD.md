@@ -299,6 +299,7 @@ they have exactly one home each.
 | W167 | The handoff check iterates the files that EXIST, so *the handoff is missing* is unreachable by construction | framework agent | `todo` — `CTO-67/10` | [`rows/W167.md`](rows/W167.md) |
 | W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | framework agent | `todo` — `CTO-67/11` | [`rows/W168.md`](rows/W168.md) |
 | W169 | Ruling 96's line has no named checkout, and its instrument answers `none` in every office tree and `stale` in one | framework agent | `todo` — `CTO-67/3` | [`rows/W169.md`](rows/W169.md) |
+| W170 | A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for | framework agent | `todo` | [`rows/W170.md`](rows/W170.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

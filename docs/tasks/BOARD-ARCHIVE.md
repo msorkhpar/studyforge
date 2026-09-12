@@ -17497,6 +17497,7 @@ corroborate's four lines   ⛔ po-int appears in NONE of them — it has no bran
 | `W167` | `CTO-67/10` | the one instrument enforcing the handoff contract cannot see an ABSENT handoff |
 | `W168` | `CTO-67/11` | the trial-merge wrapper clause |
 | `W169` | `CTO-67/3` | the knowledge-index floor line is worktree-blind, so a defect is visible in one checkout on the host |
+| `W170` | this round, from its OWN gate reading | a live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for |
 
 ⛔ **AND A DEFECT IN THE TRIGGER FORM, FOUND BY DISCHARGING ONE.** ⚠️ **The `## Scheduled` cell for `docker/dev/compose.yaml` names its act as *whichever row next owns `docker/dev/**`*. `W152` was that row and it merged — so the trigger FIRED — but it edited the file's HEADER and not the `STUDYFORGE_VISUAL` block the item is about.** ⭐ **A trigger discharged by a ROW LANDING can fire without being MET, which is Ruling 185(a)'s memory-discharged remedy wearing Ruling 288's clothes.** ⛔ **The cell now reads `fired` AND NOT MET, and `W163` carries what the firing did not.** ⚠️ **`PO-53/7`, against this office, because the register wrote that trigger.**
 
@@ -17519,6 +17520,20 @@ after seven trims of argument-into-this-record         57364 of 57408   ⭐ 44 U
 ```
 
 ⛔ **The remedy was legitimate and is the board's own closing rule — an argument goes behind a pointer — but a register round that must trim SEVEN passages to record its own work is the reading.** ⚠️ **`Next rows` is `29` rows earning ZERO allowance term, which is `W159`'s subject and now has a second, quantified witness.** ⭐ **And the shape is structural rather than incidental: a CLOSE costs bytes and earns none (a `todo` cell becomes `✅ done — <sha>` and a 30-byte `rows/` link becomes a ~190-byte archive anchor), while a MINT is roughly allowance-neutral. ⛔ So the bound penalises exactly the act it should reward, and `W144`'s *one phrase, two populations* is the neighbour.**
+
+### ⛔ THE GATE READING FOUND A FALSE POSITIVE IN THE GATE — `W170`, minted from this round's own instrument run
+
+⭐ **`CORROBORATE_EXIT=0` at `git rev-parse chore/po-round53` = `7455f10`, role `wt/po`, environment HOST — and the run named a branch on the ONE pre-merge gate line that no row can ever name:**
+
+```text
+⛔ dispatched and UNNAMED by any row: trial/cto-round68-wave7
+⭐ OFFICE round branches, EXEMPT by Ruling 265 …: chore/cto-round68 +0, chore/po-round53 +2
+⚠️ trial/tmp branches STILL CHECKED OUT (1): trial/cto-round68-wave7
+```
+
+⛔ **ONE INSTRUMENT NAMES ONE BRANCH TWICE, on two lines whose populations are meant to be disjoint.** ⚠️ **`unclaimed.py:70` declares `OFFICE = ("chore/cto-round", "chore/po-round")` and `unclaimed.py:50` declares `SPENT = ("trial/", "tmp-")`; the gate arm excludes the first and not the second.** ⭐ **Ruling 265's ground — *no register row will EVER name one of these* — transfers to `trial/*` whole, and the namespace was simply not enumerated. `W132`'s defect surviving in a second namespace, and it fires exactly when a review is live.**
+
+⚠️ **THE BRANCH IS THE REVIEWER'S OWN TRIAL MERGE AND IS NOT TOUCHED** (Ruling 206(ii): reporting one is never wrong, removing one you did not cut is always wrong). ⛔ **It appeared BETWEEN this round's two gate readings — 4 checkouts, then 5 — so it is reported with its as-of and not as a standing fact.**
 
 ### ⭐ `W146`'s NEW CODE FIRED ON A LIVE CELL ONE WAVE AFTER MERGE, AND IN THE ARM THAT WAS HARDEST TO GET
 
