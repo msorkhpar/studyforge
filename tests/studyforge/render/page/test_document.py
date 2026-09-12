@@ -9,6 +9,7 @@ from studyforge.render import templates
 from studyforge.render.page import document as document_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE
 from studyforge.render.page.errors import PageError
+from studyforge.render.page.narration import SILENT, Narration
 from tests.studyforge.render.page.pages import depth1_unit_02, sample_placement
 
 
@@ -117,6 +118,64 @@ def test_the_player_appears_the_moment_the_body_carries_audio():
     # row's own "no dead control".
     assert markup.startswith('<footer id="player" hidden>')
     assert '<audio id="narrator"' in markup
+
+
+def test_a_page_that_was_promised_nothing_carries_no_gap_panel():
+    # ⛔ `W202` Q4's first row, and the reason the expensive option was chosen
+    # over a permanent notice: a corpus without narration is COMPLETE, not short.
+    assert document_module.narration_gap(SILENT) == ""
+    assert "narration-gap" not in compose()
+
+
+def test_the_gap_panel_names_both_counts_and_not_only_the_shortfall():
+    # ⚠️ A bare "2 passages are silent" leaves the reader unable to tell a mostly
+    # working unit from a wholly broken one, which is the same conflation one
+    # layer along.
+    narration = Narration.of(
+        {("s", (0,), None): "a-11111111.mp3"},
+        sample_placement(),
+        missing=[("s", (1,), None), ("s", (2,), None)],
+    )
+    markup = document_module.narration_gap(narration)
+    assert "2 of 3 narrated passages" in markup
+    assert markup.startswith('<section data-section="narration-gap">')
+
+
+def test_the_gap_notice_rides_inside_the_players_own_region():
+    # ⭐ So a page can never say "some narration is missing" with no transport to
+    # say it about — and so no eighth skeleton slot had to be minted for it.
+    narration = Narration.of({}, sample_placement(), missing=[("s", (0,), None)])
+    body = f'<p {AUDIO_ATTRIBUTE}="">spoken, and not on disk</p>'
+    markup = document_module.player(body, narration)
+    assert markup.index("narration-gap") < markup.index('<footer id="player"')
+
+
+def test_a_body_with_no_audio_at_all_takes_neither_the_player_nor_the_notice():
+    # ⛔ The negative control run negatively: the gate is still derived from the
+    # body, so a caller naming gaps for a page that emitted no attribute gets
+    # neither half rather than a notice about a transport that is not there.
+    narration = Narration.of({}, sample_placement(), missing=[("s", (0,), None)])
+    assert document_module.player("<p>no audio here</p>", narration) == ""
+
+
+def test_the_panel_tells_the_reader_which_of_the_two_states_this_is():
+    # ⛔ **PLANT `P13` SURVIVED TWELVE RED AND THIS IS THE TEST IT ASKED FOR.**
+    # Deleting the panel's last sentence — the one that says the audio WENT
+    # MISSING rather than was NEVER MADE — broke nothing, and that sentence is
+    # the entire product promise of `W202` Q4 as a reader experiences it. ⭐ The
+    # counts are machinery; this is what makes the two states distinguishable to
+    # a person, so it is a CONTRACT, exactly as `player.html`'s keyboard sentence
+    # is one.
+    markup = templates.template(document_module.NARRATION_GAP_TEMPLATE).template
+    assert "never been narrated" in markup, "the panel does not name the state it is NOT"
+    assert "went missing" in markup, "the panel does not name the state it IS"
+
+
+def test_the_gap_markup_is_a_template_file_and_not_a_python_string():
+    # ⛔ R13: the count is composed in Python and every word a reader sees is a
+    # file, which is `pending`'s split exactly.
+    assert document_module.NARRATION_GAP_TEMPLATE in templates.names()
+    assert "\n" in templates.template(document_module.NARRATION_GAP_TEMPLATE).template
 
 
 def test_the_player_markup_is_a_template_file_and_not_a_python_string():

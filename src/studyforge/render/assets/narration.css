@@ -153,6 +153,45 @@ footer#player select:disabled {
   color: var(--accent);
 }
 
+/* --- the promise the record made and the disk did not keep ---------------- */
+
+/* ⛔ THE ONE NOTICE THIS PART PAINTS, AND IT IS NOT ON EVERY PAGE. A corpus that
+   was never narrated is COMPLETE rather than short (spec §7 C5, §11.0), so it
+   carries nothing at all; this region exists only when the narration record
+   PROMISED a clip that is not on disk — which used to render identically to
+   never having been narrated (`W202` Q4).
+
+   ⚠️ It is `chrome.css`'s eighth region and is DEFERRED there for the reason
+   `footer#player` is: both are the transport's, both are painted here, and that
+   file still reaches none of these tokens.
+
+   ⭐ It takes the transport's own ground rather than the page's, because it is
+   the transport speaking — and because `--fg` and `--accent` are already
+   measured against `--panel` by the footer above. ⛔ NOT hidden: the footer
+   ships `hidden` and needs a script to come back, and a reader with scripting
+   off must still be told that audio this unit was promised is missing. */
+
+section[data-section="narration-gap"] {
+  margin-top: 2.5rem;
+  padding: 0.85rem 1rem;
+  background: var(--panel);
+  border-left: 0.2rem solid var(--accent);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  color: var(--fg);
+}
+
+section[data-section="narration-gap"] h2 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+  color: var(--accent);
+}
+
+section[data-section="narration-gap"] p {
+  margin: 0.35rem 0 0;
+  color: var(--fg);
+}
+
 /* --- the highlight ------------------------------------------------------- */
 
 /* ⛔ Speech-unit granularity, which is the whole of why this needs no timing

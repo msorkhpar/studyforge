@@ -84,6 +84,15 @@ REGIONS: dict[str, tuple[str, str]] = {
         "rather than becoming this part's: `--player-height`, `--panel` and "
         "`--shadow` are painted there and this file still reaches none of them",
     ),
+    'section[data-section="narration-gap"]': (
+        DEFERRED,
+        "region 8, the panel that names a narration promise the disk did not keep "
+        "(`W202` Q4). ⛔ It is the transport's own region and is painted in "
+        "`narration.css` beside `footer#player`, for the same reason and against "
+        "the same `--panel` ground — so this file reaches none of it either. "
+        "⚠️ It is NOT on every page: a corpus that was never narrated is complete "
+        "rather than short, and carries no notice at all",
+    ),
 }
 
 #: How a framework-typed region element is recognised in a template. ⚠️ `section`
@@ -97,6 +106,7 @@ REGION_MARKERS = {
     "footer#player": r'<footer id="player"',
     'section[data-section="practices-pending"]': r'<section data-section="practices-pending"',
     'section[data-section="read-mark"]': r'<section data-section="read-mark"',
+    'section[data-section="narration-gap"]': r'<section data-section="narration-gap"',
 }
 
 #: The page skeleton's slots, and why each is or is not this part's. ⛔ Asserted
