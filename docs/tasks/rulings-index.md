@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **341 rulings, `1`–`341`, derived from 56 ruling records** —
+⭐ **342 rulings, `1`–`342`, derived from 56 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -386,3 +386,4 @@ procedure.
 | 339 | ⛔ Ruling 339 — a `### SURFACE` block naming no population is not a claim, and *shares with nobody* is the form that proves it | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-339-a-surface-block-naming-no-population-is-not-a-claim-and-shares-with-nobody-is-the-form-that-proves-it) |
 | 340 | ⛔ Ruling 340 — a wave's surfaces are disjoint only if the POPULATIONS of the instruments it changes are disjoint too, and where they are not, the ORDER is the remedy | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-340-a-waves-surfaces-are-disjoint-only-if-the-populations-of-the-instruments-it-changes-are-disjoint-too-and-where-they-are-not-the-order-is-the-remedy) |
 | 341 | ⛔ Ruling 341 — §R9 governs a file that crosses a BOUNDARY, and a version key is what makes the question worth asking rather than what answers it | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-341-r9-governs-a-file-that-crosses-a-boundary-and-a-version-key-is-what-makes-the-question-worth-asking-rather-than-what-answers-it) |
+| 342 | ⛔ Ruling 342 — a control table reports that something FIRED, never that the RIGHT thing fired, and the difference is only visible to an instrument | heading | [round 69](handoffs/CTO-2026-09-12-round69.md#ruling-342-a-control-table-reports-that-something-fired-never-that-the-right-thing-fired-and-the-difference-is-only-visible-to-an-instrument) |
