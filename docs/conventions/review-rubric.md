@@ -4130,12 +4130,23 @@ FOREVER and could never pass again.** ⛔ **That is Ruling 185(a)'s
 UNSATISFIABLE BY CONSTRUCTION, and this document forbids it in its own text
 ([Ruling 185](#ruling-185-cto-round-48-an-exemption-a-clause-declares-is-implemented-in-the-command-by-narrowing-the-population-never-by-widening-the-predicate)).**
 
-⭐ **THE REMEDY IS A SECOND BOUNDARY, NOT A LOOSER PREDICATE.** ⛔ **The gate now
+⭐ **THE REMEDY IS A SECOND BOUNDARY, NOT A LOOSER PREDICATE.** ⛔ **The gate
 checks a CLOSED span — from `MIGRATION`, the last verdictless merge, to
 `VERDICT_END`, the last merge carrying a bracket — so it still audits every
-merge verdict discipline ever governed, and it passes.** ⚠️ **`VERDICT_END` is
-an INPUT and is never guessed: it is named by the coordinator once the wave that
-ends the discipline is placed, and the block refuses to run without it.**
+merge verdict discipline ever governed, and it passes.**
+
+⛔ **`VERDICT_END` IS A REF, DERIVED AND NOT CHOSEN: the FIRST match walking
+`--first-parent` for a subject carrying a bracket, i.e. the most recent merge
+that took a verdict.** ⭐ **The derivation is in the block, beside the pin, so
+the pin is CHECKABLE rather than remembered.**
+
+⛔ **AND THE SPAN ASSERTS ITS OWN INHABITATION, WHICH IS THE HALF THAT MAKES IT
+A GATE.** ⚠️ **Two boundaries collapsed together give an EMPTY span, over which
+`grep -v` prints nothing and the pass condition reads GREEN while checking
+NOTHING** — ⛔ **worse than no control, because it reads as coverage** (Ruling
+124: a check over a derived population states its inhabitation, or its green is
+not a reading; Ruling 348: a printed arm is not a gate until its firing moves
+the exit code). ⭐ **So the count is computed, not trusted, and zero is RED.**
 
 ⛔ **Ruling 185(b) is untouched: the PREDICATE is not widened, the POPULATION is
 narrowed.** ⭐ **`0183cd1` stays enumerated as the one in-scope exemption.**
@@ -4170,11 +4181,20 @@ MIGRATION=ab5b1a415acba6d779c622a8723040f422fe0b05   # the last verdictless merg
 #    rewritten — an audit trail that edits away its own defects is not one.
 #    ⚠️ A SECOND entry here is a finding, never a carry.
 EXEMPT=0183cd1
-# ⛔ VERDICT_END IS THE SECOND BOUNDARY AND IT IS AN INPUT, NOT A GUESS: the last
-#    merge carrying a `(CTO: …)` bracket, named by the coordinator. Verdict
-#    discipline ENDED there, so the span is CLOSED and the gate stays satisfiable
-#    (Ruling 185(a)) without widening the predicate (Ruling 185(b)).
-: "${VERDICT_END:?set to the last merge carrying a bracket; never guessed, never \$REVIEW_BASE}"
+# ⛔ VERDICT_END IS THE SECOND BOUNDARY: the last merge carrying a `(CTO: …)`
+#    bracket. Verdict discipline ENDED there, so the span is CLOSED and the gate
+#    stays satisfiable (Ruling 185(a)) without widening the predicate (185(b)).
+VERDICT_END=2912a335e72089df4fd345e44b584cd9ff30db8f   # Merge chore/cto-round72
+# ⭐ THE DERIVATION, printed beside the pin so the pin is CHECKED, not remembered.
+#    It must print VERDICT_END. A DIFFERENT sha means a bracketed merge landed
+#    after the discipline ended, which is a finding and not a re-pin.
+git log --first-parent --format='%H %s' "$REVIEW_BASE" | grep -m1 -E '\(CTO: ' | cut -d' ' -f1
+# ⛔ INHABITATION, AND IT MOVES THE EXIT CODE (Rulings 124, 348). A span whose
+#    boundaries have collapsed is EMPTY, and `grep -v` over nothing prints
+#    nothing — GREEN while checking NOTHING. Zero is RED, never a pass.
+SPAN=$(git log --merges --first-parent --format='%h' "$MIGRATION".."$VERDICT_END" | wc -l)
+{ [ "$SPAN" -gt 0 ]; } ; SPAN_EXIT=$?
+echo "audited span: $SPAN first-parent merges, SPAN_EXIT=$SPAN_EXIT"
 git log --merges --first-parent --format='%h %s' "$MIGRATION" | wc -l
 git log --merges --first-parent --format='%h %s' "$MIGRATION" \
   | grep -cE -v '\(CTO: (APPROVE|APPROVE after changes)\)'
@@ -4191,7 +4211,11 @@ git log --merges --first-parent --format='%h %s' "$MIGRATION".."$VERDICT_END" \
 git log --merges --first-parent --format='%h %s' "$VERDICT_END".."$REVIEW_BASE" | wc -l
 ```
 
-⛔ **Pass = the LAST command prints NOTHING.** ⚠️ **The command ABOVE it prints
+⛔ **Pass = `SPAN_EXIT=0` AND the LAST command prints NOTHING.** ⚠️ **Both, and
+the first is not optional: an empty span makes the second vacuous.** ⭐ **The
+record reports this gate as `GREEN`/`RED` plus `SPAN_EXIT`, and does not
+transcribe the span's size** — that figure is printed by the instrument
+([the rule](#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)). ⚠️ **The command ABOVE it prints
 exactly one line — `0183cd1` — and always will; that is the enumerated exemption
 and not a failure.** ⛔ **Before Ruling 223 landed here, the stated pass condition
 was *prints nothing* against a gate that prints `0183cd1` forever: UNSATISFIABLE BY
