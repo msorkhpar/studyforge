@@ -1,15 +1,42 @@
 # Graphify — the project's knowledge index
 
-Enforces **R14**. A repository in this project's working set carries a built
-graph, and agents query it before exploring.
+Carries **R14**. ⛔ **AND IT IS OPTIONAL — a USER DECISION, and it overrides
+every clause below that reads as an obligation.**
 
-## Why this is a rule and not a nicety
+## ⛔ READ THIS FIRST — `graphify` IS OPTIONAL AND IS NEVER A PREMISE
 
-Task context budgets assume an agent can find what it needs without reading the
-tree. Without a graph the alternative is every agent grepping the whole
-repository to re-derive structure another agent already established — which is
-exactly the cost the budgets exist to prevent. It also degrades answers: a grep
-finds a name, the graph finds the *relationship*.
+⛔ **No task, brief, row, budget or acceptance condition may assume an index
+exists.** ⭐ **An agent's search path is `git grep`, `grep -rn` and `sed -n`.**
+⚠️ **This is a USER DECISION recorded as the standard; it is not a ruling and
+nothing here derives it.**
+
+⛔ **WHY, and each half is a property rather than an opinion:**
+
+| the property | the consequence |
+|---|---|
+| ⛔ `graphify-out/` is **git-ignored and untracked** | ⭐ it exists **only in the MAIN checkout** and is **ABSENT from every linked worktree** — `git worktree add` does not carry a git-ignored directory |
+| ⛔ `graphify` is **not in the pinned image** | ⭐ no reading taken in the pinned container can use it |
+| ⚠️ the one copy is **STALE** by the floor's own freshness check | ⛔ and the floor's own words are that **a stale index is worse than an absent one** |
+
+⛔ **So a document that says *ask the graph first* is describing something most
+agents structurally cannot do.** ⭐ **Where this document still reads that way
+below, read it as *if an index is present in this checkout*.**
+
+⚠️ **THE TOOL AND THIS CONVENTION ARE KEPT, DELIBERATELY.** ⛔ **Whether to
+repair the index is UNDECIDED and is not foreclosed here** — what is decided is
+only that nothing may DEPEND on it.
+
+## Why it was made a rule, and what that argument is worth now
+
+⚠️ **The argument below is the ORIGINAL one and it is retained as the record of
+why R14 exists.** ⛔ **Read it as an argument for the tool's VALUE, never as a
+premise about the tool's AVAILABILITY — the section above governs that.**
+
+Task context budgets were written assuming an agent could find what it needed
+without reading the tree. Without a graph the alternative is every agent
+grepping the whole repository to re-derive structure another agent already
+established — which is exactly the cost the budgets were meant to prevent. It
+also degrades answers: a grep finds a name, the graph finds the *relationship*.
 
 ⭐ **Measured, not asserted** (FND-02). Against the Java corpus — 610 files,
 604,556 words — `explain` and `path` each answered in **under a second** and in
@@ -226,6 +253,12 @@ one that needs a local build is `query`, already the weak one. ⛔ **So the inde
 is built once per repository, not once per worktree** — measured 2026-09-09,
 **33 worktrees and 2 with a graph**, because the per-worktree cost was never
 payable and an unaffordable rule is one that gets skipped.
+
+⛔ **AND `--graph <path>` DOES NOT RESCUE A WORKTREE AGENT, which is why the
+optionality above is a decision and not a caveat:** ⭐ **the path it needs
+points into the MAIN checkout's ignored directory, which a worktree agent may
+not have on disk at all, and `graphify` itself is absent from the pinned
+image.** ⚠️ **Try it if you like; do not budget for it.**
 
 ## ⛔ Ambiguity: `explain` refuses, `path` does not — and that difference bites
 

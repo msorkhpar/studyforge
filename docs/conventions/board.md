@@ -213,8 +213,20 @@ echo "CORR_EXIT=$?"     # ⛔ read on the NEXT line, nothing in between (Ruling 
 cat /tmp/corr.txt       # ⭐ the READING is what the merge message quotes
 ```
 
-⛔ **Pass: `CORR_EXIT=0`, and the reading quoted beside the verdict.** ⚠️ **Exit `2`
-is the real third state and is NOT a pass** — see Ruling 216 below.
+⛔ **Pass: `CORR_EXIT=0`, reported as `GREEN`/`RED` plus that exit code
+([the rule](review-rubric.md#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)).**
+⚠️ **The quoted clause says *quotes its reading*; the record now carries the
+verdict word and the code, and the FIGURES only where a row is refuted — which
+is a gate's own bound and is the exception.**
+⚠️ **Exit `2` is the real third state and is NOT a pass** — see Ruling 216 below.
+
+⚠️ **THE QUOTED CLAUSE SAYS *beside the verdict* AND IT IS LEFT UNEDITED**
+(Ruling 195 — a ruling is quoted, never paraphrased). ⛔ **There is no verdict
+any more: no reviewing office and no bracket, a USER DECISION**
+([`delivery-flow.md`](delivery-flow.md#the-gate-is-self-certification-there-is-no-reviewing-office-a-user-decision)).
+⭐ **The GATE is unchanged and the OBLIGATION is unchanged — the coordinator runs
+it before the merge and quotes the reading in the merge message's record. Only
+the thing it stood beside is gone.**
 
 ⛔ **AND THE BOUND ON WHAT THIS GATE CAN PROMISE, adopted into the ruling at round
 56 as Ruling 247: a merge-time gate that exits `0` against a FALSE cell gates

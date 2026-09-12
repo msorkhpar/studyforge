@@ -3,6 +3,36 @@
 How a task is picked up, worked, and handed on. Applies to every task in
 `docs/tasks/`.
 
+## ⛔ TWO STANDING USER DECISIONS, and they change how a task ENDS
+
+⛔ **NO REVIEWING OFFICE, NO VERDICT. EVERY ROW IS SELF-CERTIFIED BY THE OFFICE
+THAT DID THE WORK.** ⭐ **The FLOOR and the SUITE are the gates:** both green **at
+the ref that will merge**, each reading carrying **ref + checkout ROLE +
+ENVIRONMENT**, and the **expectation written BEFORE the command**. ⚠️ Then the
+coordinator's release-tip measurement, after the merge. ⛔ **Self-certified is
+not a lower bar; it is the same bar signed by a different office** — the runnable
+block is in
+[`review-rubric.md`](review-rubric.md#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified)
+and your handoff pastes it.
+
+⛔ **RULING MINT FREEZE, THREE WAVES.** ⭐ **No new ruling unless a defect is
+otherwise unpreventable; capacity goes to REACH — landing rulings that exist and
+are cited nowhere.** ⚠️ **A finding whose remedy is *"a ruling should say this"*
+is discharged by CITING the ruling that already does, or by naming the rule it
+would become in a fixed spelling — never by minting a second copy that can
+disagree with the first.**
+
+⛔ **RUN EVERY GATE. STOP TRANSCRIBING READINGS INTO PROSE.** ⭐ **Every gate
+runs unchanged and RED STOPS THE MERGE; what changes is the RECORD — a handoff,
+brief or message reports a gate as `GREEN`/`RED` plus its exit code and quotes
+NO figure from it.** ⚠️ **Exceptions and ground:
+[`review-rubric.md`](review-rubric.md#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)
+— the canonical home, and this is a pointer rather than a second copy.**
+
+⚠️ **None of these is a ruling, and nothing in this document derives them.**
+⛔ **Wherever a clause below says *the reviewer*, read it as the certifying
+office; wherever it says *the verdict*, read it as the two gate readings.**
+
 ## Picking up a task
 
 1. Read `docs/specs/2026-09-08-studyforge-v1-design.md` — §1–§4 and every
@@ -12,9 +42,14 @@ How a task is picked up, worked, and handed on. Applies to every task in
 2. Read your **epic document** — it carries the shared context for your task's
    neighbours, so you do not re-derive it.
 3. Read `docs/conventions/module-structure.md` and `graphify.md`.
-4. Read **only** the files in your task's *Context* field. If you need more,
-   **ask the graph first** (R14). If you still need more, note it in your
-   handoff — a wrong context budget is a planning defect worth recording.
+4. Read **only** the files in your task's *Context* field. ⛔ **Your search path
+   is `git grep`, `grep -rn` and `sed -n`.** ⚠️ **`graphify` (R14) is OPTIONAL and
+   is NEVER a premise — a USER DECISION.** ⭐ **`graphify-out/` is git-ignored and
+   untracked, so it exists only in the MAIN checkout, is ABSENT from every linked
+   worktree, and `graphify` is not in the pinned image** ([`graphify.md`](graphify.md)).
+   ⛔ **No context budget may assume an index exists.** If you need more files,
+   note it in your handoff — a wrong context budget is a planning defect worth
+   recording.
 5. Check `docs/tasks/handoffs/` for notes from tasks you depend on.
 
 ## While working
@@ -163,8 +198,8 @@ criterion.**
 1. **The measurement is run** against the real source at development time, over
    **all** of it, not a sample.
 2. **Its command and its output are recorded in the handoff**, so a reader
-   re-runs it and a reviewer reproduces it. ⛔ This is the half that makes it
-   evidence instead of a claim.
+   re-runs it and any other office reproduces it. ⛔ This is the half that makes
+   it evidence instead of a claim.
 3. **The suite pins the shape** — a key census, one real document committed as a
    fixture and reproduced field for field, and a test that no field is lost.
 
@@ -210,7 +245,9 @@ decoration:**
 ⛔ **What is NOT an instrument, and this is the one that keeps getting
 written:** ⚠️ ***"the handoff records it."*** ⭐ **A handoff is where a reading is
 REPORTED; it is never what TAKES one**, so a condition discharged by reading one
-asks the reviewer to verify the author against the author. ⛔ **Nor are
+verifies the author against the author. ⛔ **With self-certification that is no
+longer a hypothetical — it is the ONE failure mode the standard has, and the
+answer is that the INSTRUMENT is the gate, never the handoff.** ⛔ **Nor are
 *"reviewed"*, *"documented"*, *"consistent with"* or *"as appropriate"*: none of
 them names a thing that can return `no`.**
 
@@ -1323,10 +1360,14 @@ exemption the document DECLARES**, the way `**Kind:**` is already declared.
 
 ## Reporting
 
-Report outcomes faithfully. If tests fail, say so and include the output. If
-you skipped part of the scope, say which part and why. Do not describe work as
-complete before it is verified — run the command and read the result. Evidence
-before assertions, always.
+Report outcomes faithfully. ⛔ **A gate is reported as `GREEN` or `RED` plus its
+exit code, and its figures are NOT transcribed** (the rule and its exceptions are
+in [`review-rubric.md`](review-rubric.md#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)).
+⚠️ **If a gate is RED, say which bound broke and by how much — that figure IS the
+subject.** If you skipped part of the scope, say which part and why. Do not
+describe work as complete before it is verified — run the command and read the
+result. ⭐ **Evidence before assertions, always: the evidence is the exit code you
+read, not a number you retyped.**
 
 ## Escalating
 

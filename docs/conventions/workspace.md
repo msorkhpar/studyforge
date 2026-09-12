@@ -133,6 +133,13 @@ subject, which is what makes `host-verified` a state rather than an excuse.
 > silently deleted**, because a ruling that vanishes from a document somebody was
 > told to read is worse than a ruling recorded twice.
 
+⛔ **THE OFFICE THAT NOTE NAMES IS GONE — a USER DECISION: there is no CTO and
+no reviewing office** ([`delivery-flow.md`](delivery-flow.md#the-gate-is-self-certification-there-is-no-reviewing-office-a-user-decision)).
+⭐ **The note itself is a frozen reading and is left unedited** (Ruling 106).
+⚠️ **So the open question — which document is Ruling 53's source — falls to
+whichever office next edits either of them, under the remedy the note already
+states: the loser POINTS, and nothing is silently deleted.**
+
 ⚠️ An explicit `--workspace` is still answered inside the image: the seam is
 *"the computed workspace is not visible"*, not *"we are in a container"*, and
 naming a visible tree is a decision somebody made.

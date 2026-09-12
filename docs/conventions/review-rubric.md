@@ -19,6 +19,267 @@ failures that are mechanical. Whether the boundary is in the right place —
 R11's real test, the isolation question — is a judgement, and it is the part of
 review that matters most.
 
+## ⛔ START HERE — the operational checklist, and who certifies a row
+
+⛔ **Read this section and the index below it. Do not read this document
+whole.** ⚠️ **Round 72's reviewer did, and recorded that the clause it needed
+was not in it** — a whole-document read is both the most expensive way to review
+and the one that most reliably misses a clause, because the ruled tail below is
+ordered by ROUND and a reader's question is ordered by SUBJECT. ⭐ **The
+checklist is the procedure; [the index](#the-index-and-it-resolves-at-read-time)
+is how you reach the clause governing the one thing your diff touched.**
+
+⛔ **Nothing in this section is a mint.** ⭐ **The standards below are USER
+DECISIONS, recorded here as the standard, and nothing derives them.**
+
+### ⛔ THERE IS NO REVIEWING OFFICE AND NO VERDICT — EVERY ROW IS SELF-CERTIFIED
+
+⛔ **A USER DECISION, in force for every row: capability and tooling alike.**
+⭐ **There is no CTO reviewer, no verdict bracket, no dispositions round and no
+accumulator run.** ⚠️ **The office that did the work certifies it, and the
+FLOOR and the SUITE are the gates.**
+
+| what a row merges on | who produces it |
+|---|---|
+| ⛔ **the floor green at the ref that will merge** | ⭐ the office that did the work |
+| ⛔ **the suite green at that same ref** | ⭐ the office that did the work |
+| ⭐ **the coordinator's release-tip measurement** | ⭐ the coordinator, after the merge |
+
+⛔ **SELF-CERTIFIED IS NOT A LOWER BAR. IT IS THE SAME BAR, SIGNED BY A
+DIFFERENT OFFICE.** ⚠️ Both readings are taken **at the ref that will merge**,
+each carries **ref + checkout ROLE + ENVIRONMENT**
+([Ruling 238](#ruling-238-cto-round-55-ruling-147-gains-the-clause-a-reading-names-its-environment-by-that-environments-own-pins-never-by-an-image-tag-and-never-by-an-image-id),
+[Ruling 326](#ruling-326-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it)),
+and **the expectation is written BEFORE the command**. ⭐ **What is dropped is a
+second office's round trip. No reading is dropped, and no section below is.**
+
+⭐ **THE OBLIGED ARTIFACT** (Ruling 160's (b)): the row's handoff carries both
+readings **in the author's own name**, so the coordinator's release-tip
+measurement CHECKS a stated claim rather than being the only reading anyone
+took. ⛔ **This block is what a handoff pastes, and it is a command so that no
+part of the claim comes from memory:**
+
+```bash
+# ⛔ RUN AT THE REF THAT WILL MERGE, from your own checkout, in the pinned
+#    image. Write the expectation ABOVE the block before you run it.
+# ⛔ Ruling 241's FORM: the output goes to a FILE and `$?` is read on the NEXT
+#    line with NOTHING in between, so no pipeline eats the exit code.
+git rev-parse HEAD; git status --porcelain | head    # the REF, and it is clean
+git rev-parse --git-common-dir                       # the ROLE: which checkout
+./docker/dev/check > "$CAP/floor.txt" 2>&1
+FLOOR_EXIT=$?
+{ ./docker/dev/check pytest -ra > "$CAP/suite.txt" 2>&1; } ; SUITE_EXIT=$?
+# ⛔ The record is composed AFTER these files exist and is READ FROM THEM.
+grep -H -E 'passed|failed|error|skipped' "$CAP/suite.txt" | tail -3
+echo "FLOOR_EXIT=$FLOOR_EXIT SUITE_EXIT=$SUITE_EXIT"
+```
+
+⛔ **Pass = `FLOOR_EXIT=0` and `SUITE_EXIT=0`, both quoted with the ref, the
+role and the environment's own PINS** (never an image tag, never an image id —
+[Ruling 290](#ruling-290-ruling-238d-gains-the-clause-the-image-is-held-constant-by-pins-in-the-same-invocation-and-an-image-id-can-never-discharge-it)).
+⚠️ **A killed run is not a reading.** ⭐ **A red gate stops the merge; there is
+no office left to appeal to, which is the point.**
+
+### ⛔ RUN EVERY GATE. STOP TRANSCRIBING READINGS INTO PROSE. (a USER DECISION)
+
+⛔ **Nothing about GATING relaxes. Every gate still runs, its exit code is read,
+and red stops the merge.** ⭐ **What changes is the RECORD.**
+
+| in a record — a merge body, handoff, brief, round record or message | |
+|---|---|
+| ⭐ **REPORT** | ⛔ **`GREEN` or `RED`, plus the exit code**, naming the form that produced it ([Ruling 241](#ruling-241-cto-round-55-the-warning-above-is-replaced-by-a-form-because-it-failed-three-offices-in-three-rounds)) |
+| ⛔ **DO NOT QUOTE** | the ruling count, the markdown-file count, the board bounds, `N passed, M skipped`, the pointer census — **any figure the instrument prints** |
+| ⭐ **THE EXCEPTION** | ⛔ **the figure IS the subject** — a row about a count, a count this row MOVED, ⚠️ **or a GATE'S OWN DECLARED BOUND: which bound a red gate breached, and by how much.** Then it is a FINDING, not decoration, and it carries its ref as before |
+| ⛔ **KEPT** | the one-line **expected reading, written BEFORE the command**, with its refutation condition |
+
+⚠️ **WHEN IN DOUBT, CARRY THE FIGURE AND SAY SO. Losing a check is the worse
+error**, and a `RED` that does not say WHICH bound broke and BY HOW MUCH has
+cost the next office the one number it needed.
+
+⚠️ **THE GROUND, measured this session:** ⛔ **not one defect recorded against
+any office came from RUNNING an instrument; six came from copying a figure into
+a sentence where it was stale, or belonged to another instrument or another
+ref** — `CTO-72/7`, `CTO-70/12`'s recurrence, the base-figure disagreement,
+`PO-54/1`, `CTO-69/3`, `CTO-72/3`. ⭐ **A whole commit, `98aa0ad`, exists only to
+correct one transcribed figure.**
+
+⭐ **THE INSTRUMENT, run against your OWN record before you finish it** — ⛔ it
+prints a POPULATION to read, not a verdict, because only the author knows which
+figure is a subject:
+
+```bash
+# ⛔ Every line of your record carrying a 3-or-more-digit figure. Read each one
+#    and answer ONE question: is this figure the SUBJECT, or is it decoration?
+#    ⭐ A gate's own breached BOUND is a subject. `N passed, M skipped` is not.
+for r in "$@"; do
+  awk '/^```/{inside=!inside; next} !inside && /[0-9]{3}/' "$r" | sed "s|^|$r: |"
+done
+# ⭐ And the shape that is almost always decoration, printed on its own:
+grep -nE '[0-9]+ (passed|skipped|failed|errors?|findings?|pointers?|rulings?)' "$@"
+# ⛔ THREE ANSWERS, NOT TWO. A line may also be CARRIED: a figure inside a body
+#    this record MOVED rather than wrote — Ruling 270 moves a closed row's body
+#    WHOLE, and the readings inside it are that row's own history. ⭐ Editing one
+#    to satisfy this instrument FALSIFIES the record the move exists to preserve.
+# ⛔ Answer BY CLASS where a class is obvious (refs, ruling ids, addresses, a
+#    moved body). ⚠️ Answering a large population one line at a time is the same
+#    token defect this rule was written to stop.
+```
+
+⛔ **Pass: every printed line is answered — SUBJECT, CUT or CARRIED — and the
+reader of this record is you.** ⚠️ **An empty population is a SKIP, not a pass.**
+
+⛔ **THIS REPLACES, AND DOES NOT SUPPLEMENT, EVERY CLAUSE BELOW OBLIGING A
+RECORD TO QUOTE A FIGURE.** ⭐ **Each of those clauses is CUT at its record half
+where it stands — its RUN half is untouched — so there is no second copy left to
+disagree** (`PO-33/9`'s failure, and the reason `CLAUDE.md` carries no live
+state).
+
+⚠️ **THE SECTIONS BELOW DID NOT STOP BEING TRUE WHEN THE VERDICT WENT.** ⛔ Each
+one names a command and a pass condition, and the office that certifies its own
+row runs them itself. ⭐ **What is HISTORICAL is only the OFFICE and the BRACKET:
+wherever a clause below says *the reviewer* or *CHANGES REQUESTED*, read it as
+the certifying office and as a red gate.**
+
+### ⛔ STANDING — the MINT FREEZE (a USER DECISION, three waves)
+
+⛔ **No new ruling is minted unless a defect is otherwise unpreventable.**
+⭐ **Capacity goes to REACH: landing rulings that already exist and are cited
+nowhere.** ⚠️ **A finding whose remedy is *"a ruling should say this"* is, while
+the freeze holds, discharged by CITING the ruling that already does, or by
+naming the rule it would become in a fixed spelling
+([Ruling 315](#ruling-315-a-finding-declined-on-ruling-11s-three-names-the-rule-it-would-become-in-a-fixed-spelling-because-nothing-in-this-repository-accumulates-instances))**
+— ⛔ **never by minting a second copy that can disagree with the first.**
+
+⭐ **THE OBLIGED ARTIFACT: a round that mints during the freeze names, in its
+own record, the defect it holds to be otherwise unpreventable.** ⛔ Absent that
+sentence the mint is a finding against the round.
+
+### ⛔ THE CHECKLIST — in order, and every row names the section that governs it
+
+⚠️ **Run it top to bottom. A row you skip is a row you failed
+(the document's own first page).** ⛔ **The `pass` column is a reminder, never
+the authority — the section is.**
+
+| # | what you do | the section | the pass, in short |
+|---|---|---|---|
+| **0** | ⛔ Fix the RANGE: review the **merge**, not the branch; measure the **base** too; a wave of N owes the **N-way** reading | [§0](#0-set-up-the-range) | ⭐ both numbers reported; the N-way trial worktree exists |
+| **1** | ⛔ **R7 — personal data.** Shipped check; commit messages; the emitter and its gate as a **pair** | [§1](#1-r7-no-personal-data-hard-fail) | ⛔ **HARD FAIL.** A control is described, never quoted |
+| **2** | ⛔ **R10 — reproducible.** No clocks, no filesystem order, no `set` order; §2e's enumeration is a **list** | [§2](#2-r10-byte-for-byte-reproducible) | ⭐ the claim is proved, not asserted |
+| **3** | ⛔ **R11 — the size ceiling.** The build's own checker; then what its instrument cannot read | [§3](#3-r11-the-size-ceiling) | ⭐ every opt-out meets §3c's conditions |
+| **4** | ⛔ **R12 — tests.** The mirror; the floor **and** ruff; every **skip** named; a sweep row **bytecode-cold** | [§4](#4-r12-tests-exist-and-the-tree-mirrors) | ⭐ floor line, lint line and index line, all three |
+| **5** | ⛔ **R13** — no markup, CSS or JS in Python strings | [§5](#5-r13-no-markup-css-or-js-in-python-strings) | ⭐ the sweep is green over the diff |
+| **6** | ⛔ **R17** — every package states its contract | [§6](#6-r17-every-package-states-its-contract) | ⭐ each touched package's docstring answers |
+| **7** | ⛔ **Dependencies** — standard library only in framework source; **R1** on the same pass; the **base** too | [§7](#7-dependencies-standard-library-only-in-framework-source) | ⭐ both numbers reported; the relative import form resolved |
+| **8** | ⛔ The **HANDOFF** exists and is in format; **structural findings routed**, one **disposition** per finding | [§8](#8-the-handoff-exists-and-is-in-the-right-format) | ⭐ the counter's pass condition is met |
+| **9** | ⛔ The task's **ACCEPTANCE** was actually **run**, clause by clause | [§9](#9-the-tasks-acceptance-conditions-were-actually-run) | ⭐ a decomposition, never a total |
+| **10** | ⛔ **SCOPE** — build configuration is behaviour; a distant test felt an import change | [§10](#10-scope) | ⭐ an out-of-`Owns` test edit meets Ruling 143's three |
+| **C** | ⛔ **CERTIFY**: paste both readings, at the ref that will merge, and say what you MOVED versus what you WROTE | [the block above](#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified) | ⭐ `FLOOR_EXIT=0`, `SUITE_EXIT=0`, each with ref + ROLE + ENVIRONMENT |
+
+⛔ **WHICH ROWS HAVE A POPULATION, AND WHAT MOVED VERSUS WHAT WAS WRITTEN** —
+⭐ a self-certifying office owes both, and neither may come from memory:
+
+```bash
+# ⭐ 1. Which checklist rows the diff actually inhabits. A row with an EMPTY
+#    population is SKIPPED and said to be, never silently passed (Ruling 124).
+git diff --name-only "$BASE"...HEAD | sed -n '
+  s|.*\.py$|rows 2 3 4 5 6 7 10|p
+  s|^tools/tests/.*|row 4|p
+  s|^docs/tasks/handoffs/.*|row 8|p
+  s|^docs/conventions/.*|rows 8 10|p
+  s|^pyproject\.toml$|row 10a|p
+  s|^docker/.*|rows 4 10a|p' | tr ' ' '\n' | sort -u | tr '\n' ' '; echo
+# ⛔ 2. MOVED versus WRITTEN, and the instrument decides it, not the author.
+#    -M finds renames; -C --find-copies-harder finds a block LIFTED between
+#    files, which is the case an author most often reports as "written".
+git diff -M -C --find-copies-harder --stat "$BASE"...HEAD
+git diff -M -C --find-copies-harder --summary "$BASE"...HEAD   # ⭐ empty = nothing moved
+git diff --numstat "$BASE"...HEAD | awk '{a+=$1; d+=$2} END{print "+" a " -" d}'
+```
+
+⛔ **Pass: every row the first command prints is answered, and the handoff's
+MOVED/WRITTEN split agrees with the second.** ⚠️ **A disagreement is the finding
+— an author who calls a lifted block *written* has hidden a move from the only
+reader left.**
+
+⛔ **Row `C` replaced a verdict bracket, and the eleven rows above it did not
+change.** ⚠️ **The verdict vocabulary is retained below as a HISTORICAL record
+of the merges that carry it** —
+[§Verdict](#verdict) and
+[the merge-message gate](#the-verdict-is-recorded-in-the-merge-not-remembered)
+— ⛔ **a merge made from now carries no bracket, and that is the standard, not
+an omission.**
+
+## ⛔ THE INDEX, and it resolves at read time
+
+⛔ **An index typed into a document is a second copy that can disagree with the
+first, and this project rules against exactly that.** ⭐ **So the complete index
+is a COMMAND: it prints every heading in this document, in order, with the
+anchor that heading answers to — the whole navigable surface for the cost of one
+run instead of one read.**
+
+```bash
+# ⛔ FENCE-AWARE, and that is the whole point: `grep -c '^#'` reads the SHELL
+#    COMMENTS inside these blocks as headings and OVERSTATES this document
+#    heavily. This uses the parser the floor's own pointer check uses, so every
+#    anchor it prints is one `python3 -m tools.quality` will resolve.
+python3 - <<'EOF'
+import pathlib, re, sys
+sys.path.insert(0, ".")
+from tools.quality.markdown import prose_lines, slug
+text = pathlib.Path("docs/conventions/review-rubric.md").read_text()
+for _number, line in prose_lines(text):
+    match = re.match(r"^(#{1,6})\s+(.*)$", line)
+    if match:
+        print(f"{'  ' * (len(match.group(1)) - 1)}{match.group(2)}\t#{slug(match.group(2))}")
+EOF
+```
+
+⛔ **Pass: it prints, and the headings it prints are this document's.**
+⭐ **Filter it — `… | grep -i <your subject>` — do not read it.** ⚠️ **A count
+of `^#` lines taken WITHOUT the fence filter is not a heading count of this
+document and may not be quoted as one** (the class is
+[Ruling 269](#ruling-269-a-bare-count-cannot-be-a-subject-the-unit-is-named-because-the-population-that-is-not-the-subject-is-the-one-that-moves)'s:
+the population that is not the subject is the one that moves).
+
+### ⭐ THE SUBJECT INDEX — the tail below is ordered by ROUND; your question is not
+
+⛔ **The ruled sections below are chronological, so a clause is findable only if
+you already know which round minted it — which is the failure `CTO-72/6`
+recorded.** ⭐ **This table is the missing order: what you are about to DO, and
+the clauses that govern it.** ⚠️ **It is deliberately a SUBJECT index and not a
+census — it does not claim to list every clause, and the command above is what
+does. A subject missing here is a finding, and adding a row is not a mint.**
+
+| you are about to… | the clauses that govern it |
+|---|---|
+| **taking or quoting a READING** | [Ruling 238](#ruling-238-cto-round-55-ruling-147-gains-the-clause-a-reading-names-its-environment-by-that-environments-own-pins-never-by-an-image-tag-and-never-by-an-image-id) · [Ruling 326](#ruling-326-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it) · [Ruling 317](#ruling-317-an-image-sha-quoted-beside-a-reading-pins-nothing-the-pins-pin-and-if-a-sha-is-quoted-it-is-the-exported-config-digest) · [Ruling 290](#ruling-290-ruling-238d-gains-the-clause-the-image-is-held-constant-by-pins-in-the-same-invocation-and-an-image-id-can-never-discharge-it) · [Ruling 266](#ruling-266-ruling-238d-is-discharged-by-comparing-the-images-pinned-inputs-by-digest-and-that-is-stronger-than-reconciling-the-floor-arithmetically) · [Ruling 108](#ruling-108-a-skip-set-is-a-property-of-the-checkout-so-name-the-checkout) · [Ruling 147](#ruling-147-cto-round-39-ruling-108-extended-a-base-pin-is-a-property-of-a-checkout-not-of-a-ref) · [Ruling 53](#ruling-53-host-verified-is-bounded-by-the-image-is-right-to-exclude-the-subject) |
+| **quoting a FIGURE, a count or a ratio** | [Ruling 269](#ruling-269-a-bare-count-cannot-be-a-subject-the-unit-is-named-because-the-population-that-is-not-the-subject-is-the-one-that-moves) · [Ruling 277](#ruling-277-a-count-in-a-shipped-file-states-its-unit-and-if-it-is-a-historical-reading-its-ref) · [Ruling 224](#ruling-224-a-printed-count-names-its-unit-n-files-already-formatted-is-a-denominator-not-a-count-of-python-files) · [Ruling 309](#ruling-309-a-rows-clause-naming-a-measured-figure-is-satisfied-by-an-inhabitedness-threshold-that-prints-the-figure-never-by-a-literal) · [Ruling 310](#ruling-310-a-quoted-figure-carries-its-predicate-as-well-as-its-ref-and-copying-one-out-of-a-frozen-record-into-a-live-document-is-a-new-typed-measurement) · [Ruling 327](#ruling-327-a-round-span-is-derived-by-counting-merges-and-never-by-subtracting-labels) · [§8b](#8b-ruling-181-a-document-that-governs-a-shape-may-not-carry-a-typed-measurement-of-that-shape) |
+| **PLANTING a control, and restoring it** | [Ruling 123](#ruling-123-an-instrument-is-validated-by-planting-not-only-by-running) · [Ruling 140](#ruling-140-cto-round-38-ruling-123s-sharpening-a-plant-is-adversarial-to-the-search-term-not-to-the-subject) · [Ruling 191](#ruling-191-cto-round-49-a-control-owes-inhabitation-and-an-empty-population-returns-the-pass-reading-rather-than-no-reading) · [`W143`](#w143-a-plant-is-restored-from-a-copy-taken-before-it-per-file-and-never-with-git-checkout) · [Ruling 211](#ruling-211-git-checkout-ref-path-poisons-the-index-so-the-canonical-restore-puts-the-plant-back-and-a-plants-effect-is-printed-before-the-verdict) · [Ruling 287](#ruling-287-the-container-cannot-restore-and-a-restore-whose-exit-code-is-unread-is-not-a-restore) · [Ruling 291](#ruling-291-a-plant-whose-subject-is-dockerdev-may-not-run-through-dockerdevcheck) |
+| **running a mutant SWEEP** | [Ruling 70](#ruling-70-a-mutant-sweep-is-evidence-only-from-a-bytecode-cold-run-and-it-says-so) · [Ruling 131](#ruling-131-a-sweep-rows-tree-is-clean-not-merely-its-caches-and-there-are-two-ways-it-stops-being) · [Ruling 146](#ruling-146-cto-round-39-a-sweep-asserts-its-own-row-count-or-it-is-not-a-sweep) · [Ruling 76](#ruling-76-a-sweep-row-prints-its-exit-code-and-its-test-count-tail-and-they-must-agree) · [Ruling 83](#ruling-83-a-sweep-rows-tail-is-read-for-failed-error-and-the-skip-count) · [Ruling 162](#ruling-162-cto-round-42-a-sweep-row-records-its-failure-reason-and-the-real-lint-only-split-is-the-other-half-neither-is-sufficient-alone) · [Ruling 298](#ruling-298-a-skip-census-cannot-see-a-duplicate-whose-failure-mode-is-a-silent-substitution-so-a-duplication-sweep-is-taken-over-the-call-sites) |
+| **reading an EXIT CODE out of a pipeline** | [Ruling 241](#ruling-241-cto-round-55-the-warning-above-is-replaced-by-a-form-because-it-failed-three-offices-in-three-rounds) · [Ruling 76](#ruling-76-a-sweep-row-prints-its-exit-code-and-its-test-count-tail-and-they-must-agree) · [Ruling 287](#ruling-287-the-container-cannot-restore-and-a-restore-whose-exit-code-is-unread-is-not-a-restore) · [Ruling 348](#ruling-348-a-printed-arm-is-not-a-gate-until-its-firing-moves-the-exit-code) |
+| **reporting the SKIPS from a suite run** | [§4b-i](#4b-i-every-skip-is-read-and-the-run-says-green-or-red) · [Ruling 142](#ruling-142-cto-round-38-a-skip-census-parses-the-multiplicity-and-uniq-c-reads-29-where-the-answer-is-63) · [Ruling 275](#ruling-275-cto-round-58-a-skip-figure-is-quoted-n-groups-m-skips-whenever-the-two-differ) · [Ruling 108](#ruling-108-a-skip-set-is-a-property-of-the-checkout-so-name-the-checkout) · [Ruling 87](#ruling-87-a-skip-class-that-can-hide-a-subsystem-announces-itself-at-the-end-of-the-run) · [Ruling 332](#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) · [Ruling 333](#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) |
+| **R7 — personal data, and the author line** | [§1](#1-r7-no-personal-data-hard-fail) · [Ruling 144](#ruling-144-cto-round-39-r7-has-three-subjects-and-an-emitter-and-its-gate-are-read-as-a-pair) · [`CTO-56/15`](#cto-5615-an-inhabitation-control-for-a-personal-data-sweep-may-not-be-quoted-because-quoting-it-inhabits-what-the-sweep-forbids) · [Ruling 296](#ruling-296-a-placeholder-author-line-is-the-prescribed-form-and-a-uniform-history-bought-with-a-real-git-identity-is-an-r7-violation) · [Ruling 345](#ruling-345-ruling-296-names-a-placeholder-this-names-the-mechanism-and-forbids-the-one-that-reddens-the-floor) · [Ruling 336](#ruling-336-the-personal-data-gates-population-is-this-repository-a-component-owes-the-sweep-and-the-framework-gates-only-the-declaration) |
+| **writing or checking a HANDOFF** | [§8](#8-the-handoff-exists-and-is-in-the-right-format) · [C6](#c6-ruled-names-the-artifact-never-a-handoff) · [Ruling 346](#ruling-346-a-re-taken-row-may-carry-a-second-handoff-under-a-new-stem-pointing-back) |
+| **routing a FINDING, writing a DISPOSITION** | [§8a](#8a-structural-findings-are-routed-by-the-reviewer-in-the-review) · [Ruling 65](#ruling-65-the-markers-spelling-stated-because-it-was-never-written-down) · [Ruling 193](#ruling-193-cto-round-50-ruling-65-binds-every-reader-of-the-marker-and-the-shipped-constant-is-the-authority) · [Ruling 194](#ruling-194-cto-round-50-8as-counter-gains-the-pass-condition-8as-own-prose-already-obliges-one-disposition-per-structural-finding) · [Ruling 293](#ruling-293-8as-disposition-counter-constrains-an-adjacency-nobody-declared-the-population-is-narrowed-and-the-markers-spelling-is-not-touched) · [Ruling 307](#ruling-307-a-disposition-names-the-findings-id-a-disposition-written-as-a-description-is-not-one) · [Ruling 315](#ruling-315-a-finding-declined-on-ruling-11s-three-names-the-rule-it-would-become-in-a-fixed-spelling-because-nothing-in-this-repository-accumulates-instances) |
+| **writing or taking a BRIEF, a ROW, a SURFACE** | [Ruling 300](#ruling-300-a-brief-states-an-inventory-as-a-command-never-as-a-list) · [Ruling 299](#ruling-299-a-briefs-deliverable-that-contradicts-the-rows-own-acceptance-is-refused-in-its-literal-form-and-discharged-as-intent) · [Ruling 350](#ruling-350-a-brief-cites-a-rows-argument-by-pointer-and-quotes-no-population-out-of-it-a-paraphrased-population-can-restate-the-rows-defect-as-its-cure) · [Ruling 339](#ruling-339-a-surface-block-that-names-no-population-is-not-a-claim-and-shares-with-nobody-is-the-form-that-proves-it) · [Ruling 318](#ruling-318-a-declared-surface-that-cannot-reach-the-rows-own-named-remedy-is-a-defect-of-the-dispatch-and-the-taker-discharges-the-acceptance-by-reporting-it) · [Ruling 331](#ruling-331-a-declared-surface-is-an-instrument-only-over-the-population-that-declares-one-and-a-dispatch-that-cannot-check-disjointness-reports-the-reading-rather-than-substituting-a-board-cell-for-it) · [Ruling 340](#ruling-340-a-waves-surfaces-are-disjoint-only-if-the-populations-of-the-instruments-it-changes-are-disjoint-too-and-where-they-are-not-the-order-is-the-remedy) · [Ruling 198](#d-ruling-198-cto-round-51-a-brief-that-pins-a-state-is-the-same-defect-as-one-that-pins-a-stale-number-and-it-is-chargeable) |
+| **issuing a VERDICT, ordering a wave's merges** | [§Verdict](#verdict) · [Blocked](#blocked) · [Ruling 320](#ruling-320-a-verdict-is-issued-against-a-ref-the-reviewers-own-record-included-and-the-regress-terminates-because-a-property-survives-its-own-tip-moving-where-a-reading-cannot) · [Ruling 305](#ruling-305-a-branch-whose-red-is-a-committed-test-the-release-retired-by-ruling-is-blocked-not-changes-requested-the-gate-row-merges-first-and-ruling-279s-order-is-amended-for-exactly-that-case) · [Ruling 319](#ruling-319-with-no-register-in-a-wave-ruling-305s-order-has-nothing-to-order-the-order-is-the-reader-before-the-document-it-reads-and-ruling-264cs-unnamed-arm-is-enumerated-never-waived) · [Ruling 208](#ruling-208-an-instrument-prints-its-reach-beside-its-verdict-and-the-reach-is-part-of-the-pass-condition) |
+| **discharging an ACCEPTANCE** | [§9](#9-the-tasks-acceptance-conditions-were-actually-run) · [Ruling 72](#ruling-72-an-acceptance-condition-is-a-decomposition-never-a-total) · [Ruling 82](#ruling-82-every-decomposition-carries-one-row-discharged-by-looking-at-the-real-thing) · [Ruling 129](#ruling-129-an-unmeetable-acceptance-clause-is-split-and-the-changes-requested-lands-on-the-plan-not-the-branch) · [Ruling 292](#ruling-292-an-acceptance-with-n-arms-met-by-a-population-of-m-n-shapes-is-satisfied-by-declaring-the-extra-arms-with-an-assertion-each) · [Ruling 312](#ruling-312-cto-round-63-an-acceptance-discharged-by-a-harness-in-which-the-violation-is-unrepresentable-is-proved-of-the-harness-and-the-taker-reports-it-rather-than-widening-the-row) |
+| **CITING a ruling, writing a POINTER** | [Ruling 334](#ruling-334-a-redundant-line-citation-is-still-a-line-citation-and-the-quote-cures-it-only-when-the-number-goes) · [Ruling 308](#ruling-308-a-pointer-obligation-is-bounded-by-the-ref-the-document-lives-on-and-a-row-file-that-exists-only-on-an-unmerged-branch-is-named-not-linked) · [Ruling 285](#ruling-285-a-failed-reading-is-closed-by-a-signature-and-a-citation-of-a-tracked-document-is-a-pointer) · [Ruling 280](#ruling-280-a-citation-predicate-is-asserted-against-the-plural-and-range-spellings-this-project-actually-writes) · [Ruling 281](#ruling-281-the-reach-metric-counts-a-citation-not-a-landing-and-the-printed-notice-says-so) · [Ruling 306](#ruling-306-ruling-270-gains-the-clause-a-redirect-stubs-archive-anchor-is-derived-by-the-shipped-slug-and-checked-for-collision-before-the-stub-is-written) |
+| **landing a RULE versus recording STATE** | [Ruling 349](#ruling-349-a-rule-lands-in-the-convention-document-that-governs-it-the-board-carries-state) · [Ruling 349(a)](#ruling-349a-cto-round-71-a-removal-is-checked-against-the-destinations-spelling-never-the-sources) · [Ruling 347](#ruling-347-landed-takes-a-merge-ref-a-branch-tip-is-at-its-tip) · [§8a-i](#8a-i-a-ruling-that-changes-a-shared-name-names-its-blast-radius-across-branches) · [Ruling 195](#ruling-195-cto-round-50-8a-i-extended-a-ruling-that-scopes-a-row-names-that-rows-file-and-a-row-file-may-not-paraphrase-it) |
+| **setting up the RANGE for a wave** | [§0](#0-set-up-the-range) · [§0a](#0a-review-the-merge-not-the-branch) · [§0a-i](#0a-i-measure-the-base-too-and-report-both-numbers) · [Ruling 203](#0a-iii-ruling-203-cto-round-51-a-wave-of-n-branches-owes-the-n-way-reading-and-a-generated-derivation-of-the-records-makes-every-later-record-a-build-failure) · [Ruling 197](#0a-ii-ruling-197-cto-round-50-a-behind-count-the-two-dot-span-that-hides-it-and-a-citation-from-a-checkout-that-cannot-hold-the-ruling) · [(b)](#b-a-behind-count-is-a-form-defect-it-is-reported-and-it-does-not-block-a-merge) · [(c)](#c-a-citation-of-a-ruling-absent-from-the-authors-checkout-is-received-by-construction) |
+| **editing a TEST your row does not own** | [Ruling 143](#ruling-143-cto-round-39-an-out-of-owns-test-edit-under-three-bounded-conditions) · [Ruling 190](#ruling-190-cto-round-48-changing-a-value-a-distant-test-compares-against-is-editing-that-test-and-weakening-one-is-the-case-ruling-143-does-not-reach) · [Ruling 190(b)](#ruling-190-gains-clause-b-cto-round-49-the-mirror-case-a-branch-that-adds-a-member-to-a-derived-population-has-edited-every-distant-test-that-iterates-it-and-such-a-test-can-go-red-for-being-wrong) |
+| **R11 — the size ceiling and its opt-outs** | [§3](#3-r11-the-size-ceiling) · [Ruling 207](#3b-i-ruling-207-cto-round-51-the-ceilings-instrument-reads-py-only-so-the-reviewer-reads-the-rest) · [§3c](#3c-what-a-valid-justified-opt-out-looks-like) · [Ruling 113](#ruling-113-condition-3-has-a-second-admissible-form-a-deferral-naming-a-live-id) · [Ruling 121](#corrected-at-w45s-merge-ruling-121-it-calls-the-shipped-reader-and-it-drops-the-length-guard) |
+| **the LINT, FLOOR and INDEX lines of a review** | [Ruling 77](#ruling-77-ruling-31-does-not-reach-ruff-and-toolsquality-keeps-its-independence) · [Ruling 78](#ruling-78-the-floor-prints-the-lint-state-including-its-absence) · [Ruling 79](#ruling-79-the-lint-gate-is-run-separately-and-floor-clean-never-covers-lint) · [Ruling 96](#4b-ii-ruling-96-the-index-line-is-read-beside-the-lint-gate) · [Ruling 86](#ruling-86-a-documentation-only-branch-needs-a-lint-line-too) · [Ruling 86a](#ruling-86a-the-denominator-is-derived-from-the-tree-never-from-the-disk) · [Ruling 88](#ruling-88-the-floor-and-ruff-are-two-checks-and-a-review-that-runs-one-runs-half) |
+| **a COMPONENT CONTRACT (§R9)** | [Ruling 330](#ruling-330-a-register-row-naming-two-producers-is-two-contracts-until-a-measurement-says-otherwise-a-wire-shape-takes-no-r9-row-and-a-contract-whose-version-key-lands-in-a-later-task-buys-a-dependency-edge) · [Ruling 341](#ruling-341-r9-governs-a-file-that-crosses-a-boundary-and-a-version-key-is-what-makes-the-question-worth-asking-rather-than-what-answers-it) · [Ruling 351](#ruling-351-r9s-narration-regeneration-state-is-located-and-a-content-addressed-filename-does-not-discharge-a-contract-whose-subject-is-the-conditions-the-content-was-produced-under) · [Ruling 323](#ruling-323-the-component-prerequisite-instruments-surface-is-owns-alone-and-context-is-a-second-reading-that-is-declared-and-never-folded-in) |
+| ⛔ **asserting a NEGATIVE — that no rule, instrument or name covers X** | [Ruling 337](#ruling-337-a-negative-over-instruments-is-a-claim-about-a-population-and-is-never-established-by-a-grep-for-a-name) · [Ruling 191](#ruling-191-cto-round-49-a-control-owes-inhabitation-and-an-empty-population-returns-the-pass-reading-rather-than-no-reading) · [Ruling 124](#ruling-124-a-check-over-a-derived-population-states-its-inhabitation-or-its-green-is-not-a-reading) · [Ruling 123](#ruling-123-an-instrument-is-validated-by-planting-not-only-by-running) · [Ruling 140](#ruling-140-cto-round-38-ruling-123s-sharpening-a-plant-is-adversarial-to-the-search-term-not-to-the-subject) · [Ruling 342](#ruling-342-a-control-table-reports-that-something-fired-never-that-the-right-thing-fired-and-only-an-instrument-sees-the-difference) |
+| **editing THIS document** | [the governor](#the-growth-governor-until-w34-lands) · [Ruling 149](#ruling-149-cto-round-39-the-line-count-is-retired-as-a-reported-governor) · [Ruling 160](#ruling-160-cto-round-41-an-argument-shaped-clause-is-admissible-here-but-it-owes-a-recorded-reading) · [§8b](#8b-ruling-181-a-document-that-governs-a-shape-may-not-carry-a-typed-measurement-of-that-shape) · [Ruling 349](#ruling-349-a-rule-lands-in-the-convention-document-that-governs-it-the-board-carries-state) |
+
+⛔ **Every link above is checked by the floor** — `tools.quality.pointers`
+resolves a bare `#anchor` against this document's own headings and fails the
+build on one that names none. ⭐ **So a heading renamed without its index row is
+a RED BUILD, not a stale index**, and that is the property a typed index cannot
+have.
+
 ## ⛔ The growth governor, until `W34` lands
 
 ⚠️ **This document is measured every round and it is losing.** `1410` when
@@ -1513,7 +1774,14 @@ to run the image.
 ⚠️ **The rubric is the CTO's document; this amendment is a PO finding carried
 with its measurement, and the CTO owns whether to keep, widen or narrow it.**
 
-### ⛔ 4b-i. Every skip is named, or the run did not happen
+### ⛔ 4b-i. Every skip is READ, and the run says GREEN or RED
+
+⛔ **CUT AT THE RECORD HALF — a USER DECISION
+([above](#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)):
+the census is still RUN and every skip still READ, and a skip that hides a
+subsystem is still a finding. ⭐ The record says `GREEN`/`RED` and the exit code.
+⛔ It does NOT transcribe `N groups / M skips` unless the skip set IS this row's
+subject.** ⚠️ **Everything below is the RUN half and is unchanged.**
 
 ```bash
 python3 -m pytest -q -rs | grep '^SKIPPED'      # read every line
@@ -2035,7 +2303,13 @@ the build where ruff exists. ⭐ **The notice supplies visibility of absence; th
 test supplies enforcement of presence.** Together they close the hole; neither
 does alone.
 
-#### ⛔ Ruling 79 — a review states its **lint line**, and `floor clean` never covers lint
+#### ⛔ Ruling 79 — the lint gate is RUN separately, and `floor clean` never covers lint
+
+⛔ **CUT AT THE RECORD HALF: the record says `lint GREEN`/`lint RED` and the exit
+code, not the line's figures
+([the rule](#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)).**
+⭐ **The RUN half — lint is a SECOND gate and a floor reading never covers it —
+is the part that mattered and it is unchanged.**
 
 ⚠️ **This is the third clause in this section written against the same
 mistake, and the first two were prose.** The amendment above was written after
@@ -2065,7 +2339,13 @@ Lint: did not run — ruff absent, both gates skipped        ⛔ NOT EVIDENCE (�
 row this table already calls *not evidence at all*, and a review that omits the
 lint line entirely is making that claim silently.
 
-##### ⛔ 4b-ii — Ruling 96: a review states its **INDEX LINE**, beside its lint line
+##### ⛔ 4b-ii — Ruling 96: the INDEX LINE is READ, beside the lint gate
+
+⛔ **CUT AT THE RECORD HALF: the index state is READ and is never a gate; the
+record does not transcribe it
+([the rule](#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)).**
+⚠️ **And `graphify` is OPTIONAL — an absent index is the normal reading in a
+worktree and obliges nothing** ([`graphify.md`](graphify.md)).
 
 ⛔ **The floor prints one, always, in all four states. Quote it verbatim:**
 
@@ -2091,6 +2371,14 @@ machine, **on the same commit** — the untracked-state dependency §2e forbids.
 `git worktree add` does not carry a git-ignored directory. ⛔ **Quote it rather
 than omitting the line**: the omission and the absence look identical in a
 review, and only one of them is a measurement.
+
+⛔ **AND `none` IS NOT A DEFICIENCY — a USER DECISION.** ⭐ **`graphify` is
+OPTIONAL and is never a premise of anything: no brief, row or budget may assume
+an index exists** ([`graphify.md`](graphify.md)). ⚠️ **The shipped `none`
+message still says *R14's budgets assume one*; that sentence is now false and
+its repair belongs to whoever owns `tools/quality/knowledge_index.py` — it is
+NOT edited here, because a document may not paraphrase a string the code
+prints.**
 
 #### ⛔ Ruling 86 — a **documentation-only** branch needs a lint line too
 
@@ -3832,6 +4120,40 @@ git check-ignore -v <a path the change should NOT ignore> ; echo "exit=$?"
 
 ## The verdict is recorded in the merge, not remembered
 
+### ⛔ HISTORICAL, AND BOUNDED AT BOTH ENDS — verdict discipline has ENDED (a USER DECISION)
+
+⛔ **There is no reviewing office and no verdict bracket
+([START HERE](#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified)).**
+⚠️ **A merge made from now carries NO bracket, so the gate below — whose pass
+condition is *the last command prints nothing* — would print every future merge
+FOREVER and could never pass again.** ⛔ **That is Ruling 185(a)'s
+UNSATISFIABLE BY CONSTRUCTION, and this document forbids it in its own text
+([Ruling 185](#ruling-185-cto-round-48-an-exemption-a-clause-declares-is-implemented-in-the-command-by-narrowing-the-population-never-by-widening-the-predicate)).**
+
+⭐ **THE REMEDY IS A SECOND BOUNDARY, NOT A LOOSER PREDICATE.** ⛔ **The gate
+checks a CLOSED span — from `MIGRATION`, the last verdictless merge, to
+`VERDICT_END`, the last merge carrying a bracket — so it still audits every
+merge verdict discipline ever governed, and it passes.**
+
+⛔ **`VERDICT_END` IS A REF, DERIVED AND NOT CHOSEN: the FIRST match walking
+`--first-parent` for a subject carrying a bracket, i.e. the most recent merge
+that took a verdict.** ⭐ **The derivation is in the block, beside the pin, so
+the pin is CHECKABLE rather than remembered.**
+
+⛔ **AND THE SPAN ASSERTS ITS OWN INHABITATION, WHICH IS THE HALF THAT MAKES IT
+A GATE.** ⚠️ **Two boundaries collapsed together give an EMPTY span, over which
+`grep -v` prints nothing and the pass condition reads GREEN while checking
+NOTHING** — ⛔ **worse than no control, because it reads as coverage** (Ruling
+124: a check over a derived population states its inhabitation, or its green is
+not a reading; Ruling 348: a printed arm is not a gate until its firing moves
+the exit code). ⭐ **So the count is computed, not trusted, and zero is RED.**
+
+⛔ **Ruling 185(b) is untouched: the PREDICATE is not widened, the POPULATION is
+narrowed.** ⭐ **`0183cd1` stays enumerated as the one in-scope exemption.**
+
+⚠️ **The vocabulary below is retained as the record of what the merges in that
+span mean. It is not a form anyone writes any more.**
+
 ⛔ **A merge to a release branch names the verdict it was merged on**, in the
 merge commit's own message. ⭐ **TWO subject kinds merge onto a release branch
 and the vocabulary is CLOSED over both** (Ruling 185):
@@ -3859,20 +4181,41 @@ MIGRATION=ab5b1a415acba6d779c622a8723040f422fe0b05   # the last verdictless merg
 #    rewritten — an audit trail that edits away its own defects is not one.
 #    ⚠️ A SECOND entry here is a finding, never a carry.
 EXEMPT=0183cd1
+# ⛔ VERDICT_END IS THE SECOND BOUNDARY: the last merge carrying a `(CTO: …)`
+#    bracket. Verdict discipline ENDED there, so the span is CLOSED and the gate
+#    stays satisfiable (Ruling 185(a)) without widening the predicate (185(b)).
+VERDICT_END=2912a335e72089df4fd345e44b584cd9ff30db8f   # Merge chore/cto-round72
+# ⭐ THE DERIVATION, printed beside the pin so the pin is CHECKED, not remembered.
+#    It must print VERDICT_END. A DIFFERENT sha means a bracketed merge landed
+#    after the discipline ended, which is a finding and not a re-pin.
+git log --first-parent --format='%H %s' "$REVIEW_BASE" | grep -m1 -E '\(CTO: ' | cut -d' ' -f1
+# ⛔ INHABITATION, AND IT MOVES THE EXIT CODE (Rulings 124, 348). A span whose
+#    boundaries have collapsed is EMPTY, and `grep -v` over nothing prints
+#    nothing — GREEN while checking NOTHING. Zero is RED, never a pass.
+SPAN=$(git log --merges --first-parent --format='%h' "$MIGRATION".."$VERDICT_END" | wc -l)
+{ [ "$SPAN" -gt 0 ]; } ; SPAN_EXIT=$?
+echo "audited span: $SPAN first-parent merges, SPAN_EXIT=$SPAN_EXIT"
 git log --merges --first-parent --format='%h %s' "$MIGRATION" | wc -l
 git log --merges --first-parent --format='%h %s' "$MIGRATION" \
   | grep -cE -v '\(CTO: (APPROVE|APPROVE after changes)\)'
-git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" | wc -l
+git log --merges --first-parent --format='%h %s' "$MIGRATION".."$VERDICT_END" | wc -l
 # ⛔ Both greps below exit 1 ON PASS — `grep -v` selecting nothing. Read the
 #    OUTPUT, never `$?`; under `set -e` a PASS aborts the block.
-git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" \
+git log --merges --first-parent --format='%h %s' "$MIGRATION".."$VERDICT_END" \
   | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)|\(CTO: [^)]*\bthis record APPROVED\)'
-git log --merges --first-parent --format='%h %s' "$MIGRATION".."$REVIEW_BASE" \
+git log --merges --first-parent --format='%h %s' "$MIGRATION".."$VERDICT_END" \
   | grep -vE '\(CTO: (APPROVE|APPROVE after changes)\)|\(CTO: [^)]*\bthis record APPROVED\)' \
   | grep -v "^$EXEMPT "
+# ⭐ THE DISCLOSURE, and it is not the gate: every merge AFTER the boundary,
+#    which carries no bracket by standard. A non-empty list here is EXPECTED.
+git log --merges --first-parent --format='%h %s' "$VERDICT_END".."$REVIEW_BASE" | wc -l
 ```
 
-⛔ **Pass = the LAST command prints NOTHING.** ⚠️ **The command ABOVE it prints
+⛔ **Pass = `SPAN_EXIT=0` AND the LAST command prints NOTHING.** ⚠️ **Both, and
+the first is not optional: an empty span makes the second vacuous.** ⭐ **The
+record reports this gate as `GREEN`/`RED` plus `SPAN_EXIT`, and does not
+transcribe the span's size** — that figure is printed by the instrument
+([the rule](#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision)). ⚠️ **The command ABOVE it prints
 exactly one line — `0183cd1` — and always will; that is the enumerated exemption
 and not a failure.** ⛔ **Before Ruling 223 landed here, the stated pass condition
 was *prints nothing* against a gate that prints `0183cd1` forever: UNSATISFIABLE BY
@@ -4076,9 +4419,12 @@ python3 -m tools.knowledge census        # edges, prose-to-code, floor
 ```
 
 ⭐ **Pass condition: none. This step can no longer invalidate anybody's
-number.** ⚠️ **It stays because R14's context budgets assume an index and the
-next agent inherits yours** — ⛔ **and it is skipped without comment where
-`graphify` is not installed.**
+number.** ⛔ **AND NO BUDGET DEPENDS ON IT — a USER DECISION: `graphify` is
+OPTIONAL, it is never a premise, and no task's context budget may assume an
+index exists** ([`graphify.md`](graphify.md)). ⚠️ **It stays as a courtesy to
+whoever next works in the MAIN checkout** — ⛔ **and it is skipped without
+comment where `graphify` is not installed, which is every linked worktree and
+the pinned image both.**
 
 ⚠️ **What was narrowed, and why the other half had to go.** ⛔ **Ruling 89
 bundled two reasons: *the next agent needs an index* (kept) and *the tip is red
@@ -5998,9 +6344,13 @@ that the sentence has NO TRUTH VALUE until the population it ranges over is name
 
 ⭐ **Two witnesses, and they fail DIFFERENTLY, which is what makes it a rule rather than an
 incident.** `rows/W167.md`'s claim was **FALSE** on the day it was written — the row it shares
-`tools/quality/handoffs/` with was already in the queue. `rows/W148.md`'s is **UNDECIDABLE**,
+`tools/quality/handoffs/` with was already in the queue. ⛔ **`W148`'s is **UNDECIDABLE**,
 because *queued* denotes the `Next rows` table and the live register, those two disagree, and
-the sentence names neither. ⛔ **One instrument would have caught the first and NOT the second**,
+the sentence names neither.** ⚠️ **`W148` CLOSES on the register's own branch this wave, after which its row
+file becomes a redirect stub and the argument lives in `BOARD-ARCHIVE.md` under
+that row's archive anchor.** ⛔ **NAMED and not linked: at this document's own
+ref the close has not merged, so the anchor does not resolve here** (Ruling 308).
+⭐ Routed by the register, because `docs/conventions/` is not its surface. ⛔ **One instrument would have caught the first and NOT the second**,
 which is why the remedy is *name your population* and never *check harder*.
 
 ⛔ **VENUE, by Ruling 337's own test.** The clause fires when an OFFICE writes a row, so its home
