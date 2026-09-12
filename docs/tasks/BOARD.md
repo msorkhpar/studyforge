@@ -39,8 +39,7 @@ why a close ran the way it did is the archive's.**
 | **M3 step 3.1** | ✅ CLOSED | `7420c34` | [record](BOARD-ARCHIVE.md#m3-step-31s-close-run-at-7420c34-both-merges-re-derived-on-the-first-parent-chain-and-nothing-inherited) |
 | **M3 step 3.2** | ⏳ **OPEN** | — | [opened](BOARD-ARCHIVE.md#m3-step-32-opens-both-rows-depend-only-on-a-merged-task-and-r21-is-what-separates-them) |
 
-⛔ **Ruling 97 binds every one of those refs: a close is a set of measurements at
-ONE named ref, and no row is inherited across a ref change.**
+⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
 ## In flight
 
@@ -56,14 +55,14 @@ change.** ⛔ **Ruling 171: `git worktree list` PRIMARY, `git branch` corroborat
 | `NS-03` | Developer 1 | `feat/NS-03-engine-adapters` @ `wt/dev1` | 0 @ `0564997` | ⏳ **in flight** — dispatched wave 7 |
 <!-- /inflight -->
 
-⭐ **EMPTY IS A STATE, not an omission** (`W111`) — ⛔ **and `W147` is what a committed test that forgot it costs.**
+⭐ **EMPTY IS A STATE, not an omission** (`W111`, `W147`).
 ⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED and not assumed** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, and `W161` is the residual.**
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at
 a merge and a GATE at the tip of the branch carrying the REGISTER — `git rev-parse
-<register branch>`, never a MOMENT and never the release tip** (Ruling 279, which gave
-264(b) its point). ⭐ **The arm to read BEFORE a merge is `dispatched and UNNAMED by any
-row`** — Ruling 264, which amended 262 after both offices measured it false both ways.
+<register branch>`, never a MOMENT and never the release tip** (Ruling 279). ⭐ **The arm
+to read BEFORE a merge is `dispatched and UNNAMED by any row`** (Ruling 264) — ⚠️ **and
+`W170` is that arm naming a branch no row can ever name.**
 
 ⛔ **THE DELIMITERS ARE RULING 196'S** — ⭐ **a header is INFERRED and can only be
 ANNOUNCED; a delimiter is DECLARED and can be REFUSED.** ⚠️ **ONE BRANCH CAN CARRY ROWS
@@ -113,13 +112,12 @@ PREDICTION** (243(c)).
 decides which of Ruling 281's three classes it is, and a board cell carries no measurement.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written).**
 
 ⚠️ **`W88`, `W120` and `W160` all write `docs/tasks/rows/`: ONE OWNER or two waves, never two
-takers in one** (check 4's sub-step) — ⛔ **and a REGISTER round writes that surface too.**
-⛔ **`W135`, `W136`, `W141`, `W149`, `W153`, `W154`, `W157`, `W159` and `W160` all name
-`docs/conventions/` — ⭐ they are ONE constraint and not a row each.** ⛔ **`W150` and `W151`
-BOTH write `tools/quality/citations.py`; `W144` and `W159` BOTH write `board/bounds.py`; `W158`
-names `docker/dev/`, which `W152` holds IN FLIGHT — ONE OWNER or two waves for each pair.**
-⭐ **`W148` (`pointers.py`, `collisions.py`), `W155` (`size.py`) and `W157`
-(`knowledge_index.py`) share a surface with nobody.**
+takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too, and `W166` writes
+`BOARD.md` itself.** ⛔ **`W135`, `W136`, `W141`, `W149`, `W153`, `W154`, `W157`, `W159`,
+`W160`, `W161`, `W164`, `W165`, `W168` and `W169` name `docs/conventions/` — ⭐ ONE constraint,
+not a row each.** ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write
+`board/bounds.py`; `W158`, `W162` and `W163` name `docker/dev/` or `tests/docker/` — ONE OWNER
+or two waves for each set.** ⭐ **`W148` (`pointers.py`), `W155` (`size.py`), `W167` (`quality/handoffs/`) and `W170` (`unclaimed.py`) share a MODULE surface with nobody.**
 
 ## The register — every `W` row
 
@@ -300,6 +298,7 @@ they have exactly one home each.
 | W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | framework agent | `todo` — `CTO-67/11` | [`rows/W168.md`](rows/W168.md) |
 | W169 | Ruling 96's line has no named checkout, and its instrument answers `none` in every office tree and `stale` in one | framework agent | `todo` — `CTO-67/3` | [`rows/W169.md`](rows/W169.md) |
 | W170 | A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for | framework agent | `todo` | [`rows/W170.md`](rows/W170.md) |
+| W171 | An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal | framework agent | `todo` — `CTO-68/4` | [`rows/W171.md`](rows/W171.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -317,7 +316,7 @@ it.** ⭐ **The open set is whatever §R9 marks `open`.**
 | **narration regeneration state** — no file, no version | `SF-17` (M3 step 3.4) | CTO |
 | **coverage report** — no file | `EX-05` (M7) | CTO |
 
-⛔ **NEITHER IS DUE IN AN OPEN STEP, AND THE ROW THAT WAS IS GONE FROM THE SET RATHER THAN SATISFIED** — ⭐ **Ruling 330 SPLIT *narration manifest* and located `NS-02`'s half at `consuming.json` / `provides`, which is not an §R9 row** ([the reading](BOARD-ARCHIVE.md#the-ns-02ns-03-ordering-ruled-the-edge-lands-and-ruling-330cs-pass-condition-is-satisfiable-for-only-one-of-two-named-contributors)).
+⛔ **NEITHER IS DUE IN AN OPEN STEP, AND THE ROW THAT WAS IS GONE FROM THE SET RATHER THAN SATISFIED** — ⭐ **Ruling 330 SPLIT *narration manifest* and located `NS-02`'s half at `consuming.json` / `provides`, which is not an §R9 row** ([the reading](BOARD-ARCHIVE.md#the-ns-02ns-03-ordering-ruled-the-edge-lands-and-ruling-330cs-pass-condition-is-satisfiable-for-only-one-of-two-named-contributors)). ⭐ **[Why R21 exists](BOARD-ARCHIVE.md#r21-the-register-of-unlocated-contracts).**
 
 ## Standing decisions
 

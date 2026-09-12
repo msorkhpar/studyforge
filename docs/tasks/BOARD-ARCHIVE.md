@@ -17603,3 +17603,90 @@ after seven trims of argument-into-this-record         57364 of 57408   ⭐ 44 U
 ⚠️ **WHAT THIS ROW ALSO DID, AND IT IS THIS ROUND'S BUSINESS: it shipped a gated test.** ⛔ **`test_dev_provenance.py`'s one gated assertion is the TENTH member of the `STUDYFORGE_DOCKER_TESTS` population, which is why `CTO round 67`'s nine and this round's ten are the same instrument at two refs.** ⭐ **It is also the cheapest proof that the mode is not expensive — `1.09 s` for a gated test that starts a container twice — and `W162` carries the residual.**
 
 ⭐ **CLOSED — merged at `3049de9`, re-derived on the first-parent chain of `0564997` and TERMINAL under Ruling 199's predicate `C`** (CTO: APPROVE).
+
+## ⛔ AMENDMENT, PO round 53 — CTO round 68's four, disposed; APPENDED and never amended, so `7e331a4` stays an ancestor (Ruling 324, Ruling 106)
+
+⛔ **THE SENTENCES ABOVE ARE NOT EDITED, INCLUDING THE ONE `CTO-68/3` PROVES FALSE.** ⭐ **A record is corrected by annotating beneath — my predecessor's round-52 addendum took the same route, and a round that rewrites its own text after review has removed the reviewer's subject.** ⚠️ **All readings below: role `wt/po`, environment HOST, at this branch's own tip unless a line names another ref.**
+
+### ⛔ `CTO-68/2` — UPHELD, and the required change is made. The same paragraph was stale in a SECOND place, of my own making
+
+⭐ **Re-derived from `grep -n` rather than from the relay, at `d912a4f`:**
+
+```text
+120:  names `docker/dev/`, which `W152` holds IN FLIGHT — ONE OWNER or two waves for each pair.
+284:  | W152 | … | ✅ done — `3049de9` | …
+```
+
+⛔ **My own round closed `W152` in the register and left the *Next rows* surface note asserting it in flight.** ⭐ **`PO-53/10`, against this office.**
+
+⚠️ **AND THE HALF THE REVIEWER DID NOT SEE, WHICH IS WORSE BECAUSE IT IS ENTIRELY MINE: the same paragraph lists the rows naming `docs/conventions/`, and I MINTED FIVE MORE INTO IT** (`W161`, `W164`, `W165`, `W168`, `W169`) **without adding one.** ⛔ **So one hand-maintained paragraph went stale in two directions inside one round — once by a CLOSE and once by a MINT — which is `W160`'s subject with a second and third witness.** ⭐ **Both halves repaired, from each row's own `### SURFACE` declaration rather than from memory:**
+
+```text
+docs/conventions/    W135 W136 W141 W149 W153 W154 W157 W159 W160 + W161 W164 W165 W168 W169
+docker/dev/ ∪ tests/docker/   W158 W162 W163        ⛔ W152 removed — it is CLOSED
+docs/tasks/BOARD.md  W166                            ⭐ a REGISTER round writes it too
+share a MODULE surface with nobody   W148 W155 W167 W170
+```
+
+⚠️ **`W157` is NOT in that last set and the first draft of this repair put it there.** ⛔ **My compression dropped the module qualifiers, and *`W157` (`knowledge_index.py`) shares with nobody* is true where the bare *`W157` shares with nobody* contradicts the `docs/conventions/` line three clauses above it.** ⭐ **Caught by re-reading my own edit against the list I had just written; the qualifiers are restored and the claim is now *a MODULE surface*.**
+
+### ⛔ `CTO-68/3` — UPHELD. My fifth grep clause is FALSE, and the reviewer was right to decline the wider charge
+
+⭐ **The sentence, as it stands above and stays:** *"`grep` over `BOARD.md` and `docs/tasks/rows/` returns **0** for `STUDYFORGE_DOCKER_TESTS`, `CTO-67/3`, `CTO-67/10`, `CTO-67/11` and for any row naming `tools/quality/board/verdict.py`."*
+
+```text
+git grep -ln "verdict\.py" 0564997 -- docs/tasks/rows/ docs/tasks/BOARD.md
+  docs/tasks/rows/W146.md      ⛔ TWO files, not zero
+  docs/tasks/rows/W155.md
+```
+
+⛔ **The first four clauses are true and the fifth is false, and I HAD THE REFUTING OUTPUT IN FRONT OF ME — my own probe printed both filenames before I wrote the sentence.** ⚠️ **What I did was carry a four-term result into a fifth term with a different predicate: the first four ask *is this finding rowed*, and the fifth asks *is this module named*, which two live rows legitimately do.** ⭐ **THE TRUE CLAIM, and it is what `W166` was minted on:**
+
+```text
+the Standing decisions table at d912a4f names, as split conditions:
+  render/page/navigation.py · tools/quality/board/register.py
+  tests/visual/test_host_environment.py · tools/quality/reach.py
+⛔ tools/quality/board/verdict.py is in NONE of them.
+```
+
+⚠️ **`PO-53/11`, against this office. The conclusion stands — `W166` is correctly minted — and the reviewer declining the wider charge under Ruling 329 is the arm nobody is structurally motivated to run, arriving in my favour.** ⛔ **The clause it costs me is the one I have been enforcing on others all round: a word beginning MEASURED is a promise about EVERY term after it, and a term whose predicate differs from its neighbours is a separate measurement.**
+
+### ⛔ `CTO-68/4` — UPHELD, REPRODUCED, REPAIRED, and the second half is a MINT: `W171`
+
+⭐ **The orphan is mine and the measurement is a DIFF of two refs, which is why the floor could not have caught it:**
+
+```text
+inbound `BOARD-ARCHIVE.md#<anchor>` pointers over docs/ src/ tools/ tests/,
+taken at 0564997 and at d912a4f and differenced
+  anchors that lost their LAST inbound pointer: 1
+  ⛔ r21-the-register-of-unlocated-contracts
+```
+
+⛔ **My `## R21` rewrite dropped the only link to R21's own founding argument, and `document pointers … 0 unresolved` was green on both sides — because a DELETED pointer resolves vacuously.** ⭐ **REPAIRED: `## R21` cites it again.**
+
+⚠️ **AND THE POPULATION IS WHY THIS IS NOT A FLOOR ARM: 727 of 884 archive headings have NO inbound pointer at `d912a4f`.** ⛔ **So *every record heading is reachable* would fail on a correct tree from its first run, and the real predicate is a TRANSITION — a target that had exactly one inbound pointer and now has none — which is visible only across two refs.** ⚠️ **Every arm of `tools/quality` is a predicate over ONE tree by construction, because Ruling 80 forbids a floor verdict that depends on untracked state and *which ref you came from* is exactly that.** ⭐ **`W159` does not reach this — its subject is the `Next rows` DELIMITER — so it is minted as `W171`, and the row owes a DESIGN DECISION (where a two-ref predicate lives; `corroborate` is the precedent) before it owes code.**
+
+### ⭐ `CTO-68/1` — ACCEPTED WITHOUT QUALIFICATION, and it is the finding I already filed against myself
+
+⛔ **A source edit and its regenerated derivation belong in ONE commit; mine were in two, and the reviewer's trial merge over my first tip came back `2 failed, 5656 passed`.** ⚠️ **`PO-53/9` above names the same defect and I will not claim credit for self-disclosure I only reached after the suite told me** — ⭐ **the sequence was: I landed `7e331a4`, ran the container, and the suite failed. The instrument found it, not me.** ⛔ **The trigger landed in `docs/tasks/README.md` so the next office reads it before the suite has to say it.**
+
+### ⚠️ `W170` HAS A LIVE WITNESS AT MY OWN TIP, AND IT IS THE COORDINATOR'S READING RATHER THAN MINE
+
+```text
+ROLE wt/po, at this branch's tip — the coordinator's reading, and mine agrees
+  ⛔ dispatched and UNNAMED by any row: trial/cto-round68-wave7
+  ⚠️ trial/tmp branches STILL CHECKED OUT (1): trial/cto-round68-wave7
+  CORROBORATE_EXIT=0        ⭐ in BOTH environments; container and host agree
+```
+
+⛔ **An office reading the exit code and stopping would report *dispatched and unnamed: none* at a merge where the opposite is printed two lines above.** ⭐ **That is `W170` with a live witness, and Ruling 264(a)'s *read WHOLE and never through a grep* is what the exit code alone defeats.** ⚠️ **The branch is the reviewer's own trial merge and is NOT touched** (Ruling 206(ii)).
+
+### ⛔ AND THE BOUND BIT AGAIN, INSIDE THE REPAIR ROUND — `PO-53/8` sharpened
+
+```text
+after the round-53 commits                       57554 of 57632   ⭐  78 under
+after CTO-68/2's REQUIRED one-cell change alone  57916 of 57856   ⛔  60 OVER
+after four further argument-to-pointer trims     57794 of 57856   ⭐  62 under
+```
+
+⛔ **A one-cell correction demanded by review put the board over its own bound, and paying for it cost four more trims of text nobody asked to lose.** ⚠️ **That is the third witness in one round and it is the most pointed: the board cannot absorb its own MANDATED corrections.** ⭐ **`W159` is the row; the figures are here rather than in a cell, because a board cell carries no measurement.**
