@@ -150,6 +150,8 @@ the same intent with the blocked case admitted: it is TRUE for `3.4` the moment
 1. ⛔ **IT DOES NOT WIDEN *CLOSE*.** ⭐ **A step closes only when ITS OWN rows have
    all merged; a later-step row merging closes nothing and moves no milestone
    gate.** ⚠️ **So `3.5` may merge while `3.4` is still open, and both stay open.**
+   ⛔ **AND THE ORDERING HOLDS: a step does not close ahead of an earlier step of
+   its own milestone.**
 2. ⛔ **IT DOES NOT CROSS A MILESTONE.** ⭐ **A milestone boundary is a GATE with a
    close run behind it (Ruling 97), and this clause stops at it.** ⚠️ **The
    earliest dispatchable row outside the open milestone is still not dispatchable.**
@@ -162,6 +164,40 @@ the same intent with the blocked case admitted: it is TRUE for `3.4` the moment
    population it ranges over — from *the open step* to *every unsaturated step of
    the open milestone*.** ⚠️ **A `W` row still takes only a slot no capability row
    can fill.**
+
+### ⭐ CLAUSE — PO round 59: THE ORDERING PRICE IS PAYABLE, AND THE CELL PAYS IT
+
+⛔ **THE COST NAMED HONESTLY WHEN THE RULE WAS DRAFTED: clause 1 leaves a step OPEN with
+NOTHING IN IT.** ⭐ **`M3 step 3.5`'s only row merged and the step could not close, because
+`3.4` is open.** ⚠️ **The question this clause answers is whether to narrow clause 1.**
+
+⛔ **IT IS NOT NARROWED.** ⭐ **Two grounds, and neither is inertia:**
+
+1. ⭐ **A NON-MONOTONE CLOSED COLUMN CANNOT BE READ.** ⛔ **If `3.5` may close while `3.4`
+   is open, a reader looking at the milestone table can no longer tell a step that was
+   DEFERRED from a step that was SKIPPED** — ⚠️ **and the step column is the one place a
+   milestone's frontier is legible at all.**
+2. ⭐ **NARROWING BUYS NO DISPATCH.** ⛔ **The widened rule already decoupled dispatch from
+   closure: the population is *every unsaturated step of the open milestone*, and clause 4
+   left the dispatch bound standing as PRIORITY rather than exclusivity.** ⚠️ **So closing
+   `3.5` early unblocks nothing; it converts one deferred close run into two, and the
+   deferred one is strictly better evidence — it is re-taken at a ref where `3.4`'s rows
+   are true as well.**
+
+⛔ **WHAT WAS ACTUALLY WRONG IS THE CELL, NOT THE RULE.** ⭐ **`OPEN` was answering two
+different questions with one word: *work remains here* and *nothing remains here but an
+earlier step's close*.** ⚠️ **That is the empty-population failure this project keeps
+meeting — a state indistinguishable from a different state reads as the one you expect.**
+
+⭐ **THE CLAUSE, and it is the whole of it:**
+
+> ⛔ **A step whose OWN rows have all merged, and which is held open only by an earlier
+> step of its milestone, declares `AWAITING CLOSE` in its state cell — never `OPEN`.**
+> ⭐ **`OPEN` then means what it says: a row in this step is still dispatchable or in
+> flight.**
+
+⚠️ **It is a CLAUSE and not a ruling: the mint freeze is in force, and the milestone table
+is the board's own cell vocabulary rather than a new authority.**
 
 ⛔ **THE GROUND IS A MEASUREMENT, NOT A PREFERENCE: three waves delivered 15
 merges and 2–3 capabilities**, because an open step admits one or two capability

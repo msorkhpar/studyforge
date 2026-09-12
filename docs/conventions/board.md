@@ -101,13 +101,67 @@ somebody writes an ordinary table.**
 | **minting a row** | one register line, and `../tasks/rows/<ID>.md` with the argument — ⭐ **BORN WITH AN ANCHORED POINTER TO ITS ARGUMENT** (Ruling 244(e)) | a mint section on the board, or ⛔ **a row file carrying no `](…#…)` back to the argument that minted it** |
 | **changing a state** | ⭐ **replace the state cell** | append the new state beneath the old one |
 | **re-scoping a live row** | edit `../tasks/rows/<ID>.md` — ⭐ **it is a live document and editing it is the point** | annotate the board |
-| **closing a row** | ⛔ **FOUR edits** (Ruling 201 added the fourth; ⭐ **Ruling 270 changed the third**). ⭐ set the state to `done` with its merge ref **and repoint the Detail cell at the record**; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; ⛔ **REPLACE the row file with a REDIRECT STUB — never delete it** (Ruling 270, below); ⛔ **re-point every INBOUND citation of `rows/<ID>.md` in a LIVE document at the archive record** — see Ruling 201 below | leave the row file behind **with its argument still in it** — ⛔ **`board-orphan` will say so** — ⛔ **DELETE it, which breaks every FROZEN pointer at it and no office may repair those** — leave either link pointing where it used to, or ⛔ **leave a backticked `rows/<ID>.md` standing in live prose or code, which NO instrument can see** |
+| **closing a row** | ⛔ **FOUR edits** (Ruling 201 added the fourth; ⭐ **Ruling 270 changed the third**; ⛔ **`W185` changed the FIRST — see below**). ⭐ set the state to `done` with its merge ref and ⛔ **LEAVE THE DETAIL CELL WHERE IT IS**, pointing at `rows/<ID>.md`; move `rows/<ID>.md`'s body under a `### <ID> — <naming>` heading in `BOARD-ARCHIVE.md`, **re-addressing its `](../BOARD-ARCHIVE.md#…)` links to `](#…)` now that they are inside it**; ⛔ **REPLACE the row file with a REDIRECT STUB — never delete it** (Ruling 270, below); ⛔ **re-point every INBOUND citation of `rows/<ID>.md` in a LIVE document at the archive record** — see Ruling 201 below | leave the row file behind **with its argument still in it** — ⛔ **`board-orphan` will say so** — ⛔ **DELETE it, which breaks every FROZEN pointer at it and no office may repair those** — leave either link pointing where it used to, or ⛔ **leave a backticked `rows/<ID>.md` standing in live prose or code, which NO instrument can see** |
 | **writing a round** | ⭐ **`BOARD-ARCHIVE.md`, appended** — and the board's cells change to match | a `## ROUND n` section on the board |
 
 ⛔ **The archive is a RECORD: it is appended to and corrected by annotating
 beneath, never by editing** (Ruling 106). ⭐ **That is precisely why a live row's
 argument may not live there** — and it is the whole reason `rows/` exists rather
 than one more archive section.
+
+### ⛔ `W185` (PO round 59) — A CLOSE MAY NOT GROW THE BOARD, SO THE DETAIL CELL OF A CLOSED ROW STOPS MOVING
+
+⛔ **THIS IS A CLAUSE, NOT A RULING.** ⭐ **The mint freeze is in force and no defect here
+was otherwise unpreventable; the decision is the register's own procedure, so it lands in
+the register's own convention.**
+
+⛔ **THE DEFECT IT SETTLES.** ⭐ **Edit one used to RE-POINT a closed row's Detail cell from
+`rows/<ID>.md` at the archive anchor, and an archive anchor is the row's whole NAMING
+slugified.** ⚠️ **So every close made the board PERMANENTLY LONGER by an amount
+proportional to how well the row was named, and a long descriptive naming — which the
+register is otherwise right to want — was the expensive case.** ⛔ **`PO-58/10` measured a
+round OVERRUNNING `board-size` by 257 bytes before one word of STATE was written, and the
+same round breached and repaired four times.**
+
+⭐ **THE DECISION.** ⛔ **A close leaves the Detail cell exactly as it was born: `[`rows/<ID>.md`](rows/<ID>.md)`.**
+⭐ **Ruling 270 already guarantees that file is a REDIRECT STUB whose whole argument is one
+anchored pointer onward, so the reader still lands on the argument — in two hops instead of
+one, and never on a search.**
+
+⛔ **ASSERTED IN BOTH DIRECTIONS (R12), because one direction alone is satisfiable by doing
+nothing:**
+
+| the property | ⛔ what asserts it |
+|---|---|
+| **a close must not GROW the board** | a closed row's Detail cell is `[`rows/<ID>.md`](rows/<ID>.md)` and never an archive link — ⚠️ **the arm is owed by [`W185`](../tasks/rows/W185.md)'s taker; the clause is not discharged until it exists** |
+| **the reader must still LAND ON THE ARGUMENT** | `board-orphan`'s Ruling 270 exception, unchanged: a closed row's file must EXIST and must BE a stub with a resolving archive anchor. ⭐ **Two instruments already hold this half — `bijection.py` and the pointer floor — so this direction is asserted today** |
+
+⛔ **THE REFUSALS ARE RECORDED SO THE NEXT ROUND DOES NOT RE-DERIVE THEM:**
+
+1. ⛔ **RAISING A TERM IS REFUSED** — Ruling 271 refused all three by measurement, and this
+   clause does not reopen it.
+2. ⛔ **ANOTHER PROSE COMPRESSION PASS IS REFUSED** — ⚠️ **that is the act `W185` exists
+   because of: a round's worth of tokens for a round's worth of headroom** (Ruling 149's
+   subject).
+3. ⛔ **A SHORTER ARCHIVE ANCHOR (`#w148`) IS REFUSED, and the ground is not taste.**
+   ⭐ **It saves nothing the stub does not: `[record](BOARD-ARCHIVE.md#w148)` and
+   `[`rows/W148.md`](rows/W148.md)` are within a couple of bytes of each other.** ⛔ **It
+   recovers NOTHING already spent, because an explicit anchor beside an existing archive
+   heading is an edit to a FROZEN byte** (Ruling 106) — ⚠️ **so it could only ever apply
+   forward.** ⛔ **And it would need a second anchor form, a second derivation and a second
+   collision check beside Ruling 306's.**
+4. ⛔ **DECOMPOSING THE REGISTER IS DEFERRED, NOT REFUSED.** ⭐ **It stays available and is
+   the answer if this clause's headroom is ever spent** — ⚠️ **it is the largest change and
+   the one that does not have to be taken twice, so it is not taken while a smaller one
+   holds.**
+
+⭐ **PERFORMED RETROACTIVELY IN THE SAME ROUND, and that was forced rather than tidy: the
+board shipped with THREE bytes of headroom, so no wave could be opened without it.** ⛔ **The
+sweep created a Ruling 270 stub for every closed row whose file a pre-270 close had DELETED,
+each carrying the anchor its own Detail cell already resolved, and then re-pointed every
+closed Detail cell at that stub.** ⚠️ **NO ARCHIVE SECTION WAS ORPHANED: the pointer moved
+from the board to the stub, it did not disappear** — ⭐ **which is [`W171`](../tasks/rows/W171.md)'s
+subject, and the reason the sweep is stated here rather than left to be noticed.**
 
 ### ⛔ RULING 270 (CTO round 58) — A CLOSE REPLACES THE ROW FILE WITH A REDIRECT STUB, AND DOES NOT DELETE IT
 
