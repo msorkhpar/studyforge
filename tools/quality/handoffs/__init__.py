@@ -51,6 +51,22 @@ bare numbers up to `LEGACY_GLOBAL_MAX` pass and anything above it must carry its
 document's ID. ⚠️ **That bound is pinned from a measurement, not from a ruling:
 `BOARD.md` says 20–58 and the merged tree runs to 62**, because `SF-10` minted
 four more on a branch before the ruling landed. Ruling 55, in one line.
+
+## ⛔ A `ruling record` is no longer outside that rule (`W64`, gate two)
+
+⚠️ **It was, and the hole was the size of the corpus:** this function returned
+at the kind test, so **106 records holding 748 finding lines** were read by no
+rule but *say what you are*. ⭐ **A record now carries a SCOPE** — derived from
+its filename, declarable beside it — ⛔ **and `records.py` owns that derivation,
+so Ruling 219's reading is shipped code rather than a number in a record**
+(`W121/2`).
+
+⛔ **This is gate two of the three Ruling 218 priced, and the gate is NOT fully
+widened here.** ⚠️ A record is held to its scope and its finding IDs, and NOT to
+the marker rule, the six sections or *marks no finding*: those are gate three,
+which is **not yet a row**. ⭐ Reaching exit `0` by rewriting records is refused
+by Ruling 106 and by weakening the marker rule by Ruling 65 — Ruling 193, the
+corpus is never chased.
 """
 
 from __future__ import annotations
@@ -71,6 +87,7 @@ from tools.quality.handoffs.contract import (
     check_sections,
     marker_lines,
 )
+from tools.quality.handoffs.records import RULING_RECORD, check_record, record_scopes
 from tools.quality.report import Finding
 
 __all__ = [
@@ -84,12 +101,14 @@ __all__ = [
     "MARKER_STRUCTURAL",
     "MIN_NONE_CHARS",
     "OFFICE_HANDOFF",
+    "RULING_RECORD",
     "SECTIONS",
     "TASK_HANDOFF",
     "TASK_ID",
     "check_handoffs",
     "declared_kind",
     "marker_lines",
+    "record_scopes",
 ]
 RULE_KIND = "handoff-kind"
 RULE_TITLE = "handoff-title"
@@ -120,7 +139,8 @@ DOCUMENT_KINDS: dict[str, str] = {
     TASK_HANDOFF: "one task's handoff; owes the title, the six sections and the markers",
     OFFICE_HANDOFF: "a supervising office's handoff, with no task ID because the id "
     "space has one minter; owes the six sections and the markers, and no ID",
-    "ruling record": "a CTO or PO round, or one ruling written up; a record, owes nothing further",
+    RULING_RECORD: "a CTO or PO round, or one ruling written up; owes a SCOPE its findings "
+    "are numbered inside, derived from its filename and declarable beside it",
     "session log": "a coordinator's record of one session; owes nothing further",
     "survey": "a read-only investigation or review; nothing landed, so nothing to hand over",
     "index": "the directory's own README, which describes the others and is not one of them",
@@ -296,6 +316,10 @@ def check_handoffs(root: Path) -> list[Finding]:
             continue
         kind, ids, declaration = _check_declaration(relative, text)
         findings.extend(declaration)
+        if kind == RULING_RECORD:
+            stem = relative.rsplit("/", 1)[-1].removesuffix(".md")
+            findings.extend(check_record(relative, stem, ids, text))
+            continue
         if kind not in (TASK_HANDOFF, OFFICE_HANDOFF):
             continue
         if kind == TASK_HANDOFF:

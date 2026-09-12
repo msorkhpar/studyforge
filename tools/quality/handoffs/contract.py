@@ -221,9 +221,25 @@ def check_sections(relative: str, text: str) -> list[Finding]:
     ]
 
 
-def check_finding_ids(relative: str, lines: list[tuple[int, str]], ids: list[str]) -> list[Finding]:
-    """Check `<TASK-ID>/<n>` on new findings, without renumbering the record."""
+def check_finding_ids(
+    relative: str,
+    lines: list[tuple[int, str]],
+    ids: list[str],
+    *,
+    cites_elsewhere: bool = False,
+) -> list[Finding]:
+    """Check `<TASK-ID>/<n>` on new findings, without renumbering the record.
+
+    ⛔ **`cites_elsewhere` inverts ONE arm, for `ruling record` only (`W64`).**
+    ⭐ A task handoff numbering a finding inside another task's name has taken
+    that name; a review record's disposition table does it on purpose, because
+    the row it reviewed is where those findings are numbered. ⚠️ The permission
+    is measured, not assumed — `records.py`'s docstring carries the reading.
+    """
     findings: list[Finding] = []
+    #: ⛔ A record whose filename derives no scope and which declares none owns
+    #: nothing to suggest, so the message names the SHAPE rather than crashing.
+    suggestion = ids[0] if ids else "<SCOPE>"
     for number, line in lines:
         claim = _FINDING_NUMBER.match(line[_claim_free_end(line, _MARKUP) :])
         if claim is None:
@@ -239,11 +255,11 @@ def check_finding_ids(relative: str, lines: list[tuple[int, str]], ids: list[str
                     RULE_FINDING_ID,
                     f"finding {claimed} continues the global sequence, which is closed at "
                     f"{LEGACY_GLOBAL_MAX}. A finding is numbered inside its own document: "
-                    f"write `{ids[0]}/<n>`, starting at 1. There is no allocator, because a "
-                    f"branch cannot hold one.",
+                    f"write `{suggestion}/<n>`, starting at 1. There is no allocator, because "
+                    f"a branch cannot hold one.",
                 )
             )
-        elif scope not in ids:
+        elif scope not in ids and not cites_elsewhere:
             findings.append(
                 Finding(
                     relative,
