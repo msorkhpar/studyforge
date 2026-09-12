@@ -17869,3 +17869,291 @@ census of docs/tasks/handoffs/ by declared Kind:
 ### ⭐ THE FOUR INSTRUMENTS AT THIS BRANCH'S TIP, EACH WITH ITS OWN ENVIRONMENT NAMED
 
 ⛔ **Ruling 279 makes `corroborate` a GATE at `git rev-parse chore/po-round54` — this branch's tip, never the release tip and never a moment.** ⭐ **The readings are in the handoff, `docs/tasks/handoffs/PO-2026-09-12-round54.md`, quoted whole rather than tailed.**
+
+## PO round 55 — `3.2` closed and `3.3` opened, `W121` and `NS-02` closed on re-derived merges, the dispatch bound ruled against the office that quoted it, and `W166` performed by the round its own placement named
+
+⛔ **EVERY READING IN THIS RECORD: ref `7a7a178`, role `wt/po` (`chore/po-round55`), environment HOST, unless the reading names another one on its own line** (Ruling 326). ⚠️ **`python3 -m tools.workspace verify` is HOST-verified and returns `2` inside the pinned container by construction; the closing floor, suite and `corroborate` are the pinned container's and say so.**
+
+⭐ **AUTHOR LINE, DECLARED (Ruling 296): every commit on `chore/po-round55` is authored `po <po@example.invalid>`.** ⛔ **Nothing pushed; no remote added, set or queried.** ⛔ **`ONBOARDING.md` was not moved, deleted, committed or git-ignored, and this worktree does not carry it.**
+
+### `M3 step 3.2`'s close run at `7a7a178` — both merges re-derived and Ruling 199's predicate `C` run for each
+
+⛔ **The coordinator supplied `e60224b` and `4e25edf`. Neither was taken on trust.** ⭐ **The membership first, `grep -n`, because a step closes on the rows `README.md` says are in it:**
+
+```text
+docs/tasks/README.md:223    - **3.2** — NS-02, NS-03
+docs/tasks/README.md:224    - **3.3** — NS-04, NS-05, NS-06
+
+git log --first-parent --format='%h %s' 7a7a178 | grep -nE 'Merge feat/NS-0(2|3)'
+    3:4e25edf  Merge feat/NS-02-batch-api …                (CTO: APPROVE)
+    8:1760b11  Merge feat/NS-03-engine-adapters …          (CTO: APPROVE)
+```
+
+⭐ **`NS-03` closed at PO round 54 against `1760b11`, and it is NOT re-closed here.** ⛔ **`NS-02` is the last row of the step, and predicate `C` is run rather than inherited:**
+
+```text
+⭐ predicate C — the ABSORBED-tip set read off the commit graph, never the merge subject:
+   git rev-parse 4e25edf^2                          4c6cede8…
+   git rev-parse refs/heads/feat/NS-02-batch-api    4c6cede8…   ⭐ EQUAL → absorbed
+   git rev-list --count 7a7a178..4e25edf^2          0           ⭐ 0 ahead
+   git worktree list                                ⭐ checked out NOWHERE — wt/dev1
+                                                       now holds fix/W64-kind-gate-scope
+```
+
+⛔ **`W121` is closed in the same run, and it is a `W` row rather than a step member, so it takes Ruling 201's four edits and `NS-02` takes none:**
+
+```text
+   git rev-parse e60224b^2                                d55468a0…
+   git rev-parse refs/heads/fix/W121-marker-table-rows    d55468a0…   ⭐ EQUAL → absorbed
+   git rev-list --count 7a7a178..e60224b^2                0           ⭐ 0 ahead
+   git worktree list                                      ⭐ wt/dev2 now holds
+                                                             fix/W155-ceiling-growth
+```
+
+⭐ **BOTH TERMINAL, and `corroborate` agrees at the cut ref before any edit of mine — role `wt/po`, ref `7a7a178`, environment HOST:** ⛔ ***"corroborate: 2 of 2 rows REFUTED by git, 0 NOT ANSWERABLE and 0 live checkout(s) git could not count"***, `CORR_EXIT=1`. ⚠️ **That `1` is the round's OWN subject, not a failure to fix elsewhere: the two rows it refutes are the two this round closes, and the gate is re-read at this branch's tip after the close.**
+
+⛔ **`NS-02` IS AN EPIC TASK AND HAS NO REGISTER CELL TO FLIP** (`W161`'s subject, round 54's own wording): the close IS the removal from the In flight table plus this record.
+
+### `M3 step 3.3` opens — three rows, every dependency merged, and each a slot this wave had already spent
+
+⛔ **The bound is the board's own, and it is quoted rather than paraphrased** (Ruling 195). ⭐ **`grep -n` on the file that carries it:**
+
+```text
+docs/tasks/BOARD.md:329  ⛔ **NO `W` ROW DISPATCHES INTO A WAVE WHERE AN OPEN-STEP ROW IS
+                         DISPATCHABLE AND UNDISPATCHED** — ⭐ **and a step whose rows are ALL
+                         MERGED is not a step with no dispatchable row, it is a step awaiting
+                         a CLOSE, so the register closes it and opens the next BEFORE any `W`
+                         row is placed into that wave**
+```
+
+⭐ **`3.3`'s three rows, each read off the epic that DEFINES it rather than off any brief — `grep -n docs/tasks/E13-narration-service.md`:**
+
+| row | heading | the `Depends on` / `Team` line | every dependency merged? |
+|---|---|---|---|
+| `NS-04` | `138:### NS-04 — Voice catalogue and selection` | `139:**Milestone** **M3** · **Depends on** NS-02 · **Team** solo` | ⭐ `NS-02` at `4e25edf` |
+| `NS-05` | `154:### NS-05 — Framework client` | `155:**Milestone** **M3** · **Depends on** NS-02, SF-08 · **Team** solo` | ⭐ `NS-02` at `4e25edf`, `SF-08` at `f9be376` |
+| `NS-06` | `178:### NS-06 — Agent-callable adapter` | `179:**Milestone** **M3** · **Depends on** NS-02 · **Team** solo` | ⭐ `NS-02` at `4e25edf` |
+
+```text
+git log --first-parent --format='%h %s' 7a7a178 | grep -nE 'Merge feat/(NS-01|SF-08)'
+    17:0fcb6b4  Merge feat/NS-01-narrate-service …
+   228:f9be376  Merge feat/SF-08-personal-data-gate (CTO: APPROVE)
+```
+
+⛔ **THREE ROWS, ALL `solo`, ALL DISPATCHABLE, AND THE WAVE HAS THREE DEVELOPER SLOTS.** ⭐ **The step is OPEN and the arithmetic of the next wave is written down here so nobody re-derives it: wave 10's first three developer slots are `NS-04`, `NS-05` and `NS-06`, and the queue head takes a fourth only if a fourth exists.**
+
+### ⛔ THE DISPATCH BOUND, RULED — the clause the coordinator quoted in their own handoff is the clause their own wave broke
+
+⚠️ **The coordinator asked me to rule whether dispatching three `W` rows into this wave is compatible with the clause, and offered a ground: *"the close had not yet been possible when I dispatched."*** ⛔ **RULED: IT IS A DEFECT, `PO-55/1`, and the ground is refuted by the coordinator's own document rather than by my reading of theirs.**
+
+⭐ **THE GROUND IS TRUE OF ROUND 54 AND FALSE OF WAVE 9, and the first-parent line with its commit dates is what separates them:**
+
+```text
+git log --first-parent --format='%h %ad %s' --date=format:'%m-%d %H:%M' 7a7a178
+   7a7a178  09-12 03:37  Handoff: two refusals to merge on a stale verdict …   ⛔ wave 9's CUT
+   03bebe9  09-12 03:33  Merge chore/cto-round69 …
+   4e25edf  09-12 03:26  Merge feat/NS-02-batch-api …    ⛔ step 3.2 becomes ALL MERGED HERE
+   e60224b  09-12 00:57  Merge fix/W121-marker-table-rows …
+   48f87bf  09-12 00:54  Merge chore/po-round54 …        ⭐ the register round, ELEVEN minutes
+                                                            of history BEFORE 3.2 completed
+```
+
+⛔ **So the register round that could have closed `3.2` had already merged before `3.2` existed to close.** ⭐ **Round 54 was right to leave the step open and said so in its own record.** ⛔ **But the act being judged is not round 54's: it is the composition of WAVE 9, cut at `7a7a178`, which is one commit and eleven minutes AFTER `4e25edf`.** ⚠️ **At that cut the close was possible, and the coordinator knew it — their own handoff schedules it into this wave:**
+
+> ⭐ **And `M3 step 3.2` is now ALL MERGED, which the board's own standing bound says is *a step awaiting a CLOSE* — so the register closes 3.2 and opens 3.3 (`NS-04`, `NS-05`, `NS-06`) BEFORE any `W` row is placed.**
+
+⛔ **That sentence is item 1 of their wave-9 composition; items 2 and 3 place three `W` rows into the same wave.** ⭐ **A document that states the rule and then breaks it three lines later is the strongest evidence available, and it is theirs rather than mine.** ⚠️ **The ground offered to me — *the close had not yet been possible* — contradicts their own item 1, which asserts that it is possible now.**
+
+⛔ **AND THE AMENDMENT DOES NOT RESCUE IT.** ⭐ **Round 53's amendment is PRIORITY, not exclusivity: it binds *a slot an open-step row COULD have taken*, never *a slot none can fill*.** ⛔ **Three `solo` rows against three developer slots is the case where every slot is one an open-step row could have taken, so the amendment bites at full width rather than not at all.**
+
+⭐ **WHAT WAS AVAILABLE, so the charge is not a demand for the impossible.** ⛔ **The clause is satisfiable inside one wave and does not require an idle one: the register round and the three `NS` rows go into wave 9 TOGETHER, because a close is a REGISTER act and a dependency is a MERGE fact, and `NS-04`/`NS-05`/`NS-06` had every dependency merged at the cut whatever the board's state cell said.** ⚠️ **The board carries a step's STATE; `README.md` carries its MEMBERSHIP and the epic carries a task's DEPENDS ON — so a dispatch is licensed by the epic and recorded by the board, and waiting for the cell would be reading state as though it were the dependency.**
+
+⛔ **THE CHARGE IS BOUNDED** (Ruling 329). ⭐ **I do not charge the three rows: `W64` is Ruling 218's gate two and `W121` merging in the previous wave is exactly what unblocked it, `W155` and `W170` share a module with nothing in flight, and all three grounds hold on their own documents.** ⛔ **The defect is the COMPOSITION — three developer slots spent on queue rows while three open-step rows sat one register act away — and the cost is one wave of `M3` throughput, which is the only thing the bound exists to protect.**
+
+⚠️ **AND A SECOND, STRUCTURAL READING THAT IS NOT A CHARGE AGAINST ANYONE.** ⛔ **The clause says the register *closes it and opens the next BEFORE any `W` row is placed*, and the register only ever runs INSIDE a wave.** ⭐ **Read as literal temporal precedence the clause makes an idle developer wave mandatory whenever the last open-step row merges in the same merge run as the next cut; read as PRIORITY over the slots it costs nothing.** ⛔ **I rule the second reading, and it is the reading round 53's amendment already chose — *the bound is PRIORITY, not EXCLUSIVITY*.** ⚠️ **I do not number the reading: the numbered series is the reviewer's, and a register minting into it would be minting on someone else's surface** (round 54's own ground). ⭐ **ROUTED TO THE CTO as a candidate clarification, with this wave as its evidence.**
+
+### `W167`'s deferral — the ground is UPHELD and it is STRONGER than it was stated: one FILE, not one directory
+
+⭐ **The coordinator asked whether `PO-54/2` was applied wrongly in holding `W167` back. It was applied CORRECTLY, and understated.** ⛔ **The stated ground is a shared DIRECTORY, `tools/quality/handoffs/`. The measured ground is a shared FILE — `grep -n`, role `wt/po`, ref `7a7a178`, environment HOST:**
+
+```text
+ls -1 tools/quality/handoffs/
+   __init__.py
+   contract.py
+
+grep -n 'DOCUMENT_KINDS: dict\|if kind not in DOCUMENT_KINDS\|def check_handoffs\|rglob' \
+     tools/quality/handoffs/__init__.py
+   119:DOCUMENT_KINDS: dict[str, str] = {          ⛔ the kind registry W64 widens
+   182:    if kind not in DOCUMENT_KINDS:          ⛔ the gate itself
+   286:def check_handoffs(root: Path) -> list[Finding]:   ⛔ the arm W167 re-populates
+   292:    for path in sorted(directory.rglob("*.md")):   ⛔ W167's whole defect, one line
+                                                            below the function it is in
+```
+
+⛔ **ONE FILE, and the two subjects are 167 lines apart inside it.** ⭐ **A directory-level *one owner or two waves* would have been the right call for the wrong reason; the file-level reading makes it unarguable.** ⚠️ **`W167`'s own row file already says it shares the surface with `W121` and names `contract.py` — it does NOT name `W64` or `__init__.py`, so the row understates its own collision, and the register's surface paragraph did too until this round.** ⛔ **That omission is `PO-55/2`, against me.**
+
+⭐ **AND THE PRAISE IS OWED PLAINLY: the coordinator applied `PO-54/2` BEFORE the dispatch rather than being charged with it after, which is the whole point of recording a finding.** ⛔ **It also does NOT excuse `PO-55/1` — applying one bound correctly is not a credit against another.**
+
+⚠️ **A THIRD READING THE COORDINATOR ASKED FOR AND DID NOT GET FROM THE FILE READING: the three dispatched rows are FILE-disjoint (`handoffs/__init__.py`, `size.py`, `board/unclaimed.py`) and I re-derived that and do not dispute it. `W155` is the one that widens a POPULATION** — its row reports R11 approach over EVERY module in the tree, so `W64`'s and `W170`'s own edits enter `W155`'s population, and only a CUMULATIVE trial merge in the ruled order can see it. ⭐ **Direction, stated as the brief asked: `W155` WIDENS a reader to the whole `.py` population; `W170` NARROWS one gate line by a namespace; `W64` WIDENS a gate from a subset of documents to the whole document floor.**
+
+### Wave 9's three dispatches, and `wt/dev3` MEASURED rather than assumed
+
+| Row | Branch | Checkout | Cut at |
+|---|---|---|---|
+| `W64` | `fix/W64-kind-gate-scope` | `wt/dev1` | `7a7a178` |
+| `W155` | `fix/W155-ceiling-growth` | `wt/dev2` | `7a7a178` |
+| `W170` | `fix/W170-trial-namespace-gate` | `wt/dev3` | `7a7a178` |
+
+⛔ **Ruling 171: `git worktree list` PRIMARY. Its output at `7a7a178`, role `wt/po`, environment HOST, quoted whole rather than summarised, with the absolute paths reduced to their roles (R7):**
+
+```text
+<root>                    7a7a178 [release/m0-foundations]
+<root>-wt/cto             7a7a178 [chore/cto-round70]
+<root>-wt/dev1            7a7a178 [fix/W64-kind-gate-scope]
+<root>-wt/dev2            7a7a178 [fix/W155-ceiling-growth]
+<root>-wt/dev3            7a7a178 [fix/W170-trial-namespace-gate]
+<root>-wt/po              7a7a178 [chore/po-round55]
+<root>-wt/po-int          798956c (detached HEAD)
+```
+
+⛔ **`wt/dev3` IS A CHECKOUT ROLE THIS PROJECT HAS NEVER USED, and the coordinator asked for the finding now rather than at the gate.** ⭐ **THERE IS NO FINDING, and it is MEASURED rather than argued.** ⛔ **`corroborate` at `7a7a178`, BEFORE any edit of mine, already read all three:**
+
+> `invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no row: 3 — dev1 dev2 dev3`
+
+⭐ **THREE, named individually, `dev3` among them.** ⛔ **The reason it costs nothing is structural and I checked it rather than inferring it: `grep -n` over `tools/quality/board/` finds NO closed set of checkout names — `unclaimed.py` declares only `SPENT = ("trial/", "tmp-")` and `OFFICE = ("chore/cto-round", "chore/po-round")`, both BRANCH namespaces, and every `dev1`/`dev2` string in that package is inside a docstring recording where a past measurement was taken.** ⚠️ **The observation contract compares a cell's code-spanned `` `wt/devN` `` against the checkout's BASENAME — `verdict.py`'s own docstring says so — which is a string comparison with no enumeration behind it.**
+
+⛔ **THE REAL EXPOSURE IS ELSEWHERE AND IT IS NOT `dev3`'s: `wt/po-int` sits at `798956c`, a DETACHED HEAD, and round 54's `⚠️ AN ARM OF `corroborate` THAT A DETACHED HEAD WALKS PAST` is already the routed row for it.** ⭐ **I did not touch that worktree, and `/proc/*/cwd` named no process inside it at `08:40 UTC` — a reading with a timestamp, not a property.**
+
+### The queue re-placed after three developer slots
+
+⛔ **`W64` was never IN `Next rows`** — it was `todo` and gated on `W121` in the register, which is why the queue's own order-3 cell named it rather than carrying it. ⭐ **THREE ROWS LEAVE THE TABLE AND ONE LEAVES BY BEING PERFORMED:**
+
+| out | why |
+|---|---|
+| `W121` (was order 3) | ⭐ MERGED at `e60224b` and CLOSED this round |
+| `W155` (was inside order 12's range) | ⭐ dispatched, wave 9 |
+| `W170` (was inside order 14's range) | ⭐ dispatched, wave 9 |
+| `W166` (was order 15) | ⭐ PERFORMED this round — see below |
+
+⛔ **The ordinals are RENUMBERED 1…13 and not left with holes.** ⭐ **The table's own note licenses it — *THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL; an id resolves, a position does not* — and a ranked queue with a gap asserts a member that is not there.** ⛔ **NOT ONE ROW ID LEFT THE QUEUE OTHER THAN THE FOUR ABOVE, AND NOT ONE `Placed` ROUND CHANGED.**
+
+⭐ **THE HEAD IS `W88`, and it has been the head since round 41.** ⚠️ **`W167` stays in its round-54 cell and gains four words — `HELD behind `W64`` — because a queue that silently keeps offering a row nobody may take is the deferral-wearing-a-placement shape round 54 named for `W166`.**
+
+### ⭐ `W166` PERFORMED — round 54 named the next register round as its taker, and this is that round
+
+⛔ **This is not unrequested scope, and the authority is round 54's own sentence rather than my judgement** (quoted, Ruling 195): ***"It is therefore placed at its own ordinal with its slot NAMED: a register round, and the next one is its taker."*** ⭐ **Round 54 declined to perform it for a stated reason — *a close I authorise in the same round I record* — and that reason expires exactly once, at the next register round.** ⛔ **`W166`'s own `### SURFACE` is `docs/tasks/BOARD.md`'s *Standing decisions* table, which no developer may write, so a `W166` left to a developer slot can never be taken at all.**
+
+⭐ **PERFORMED AS THE ROW SPECIFIES AND NO WIDER: one cell in *Standing decisions*, in the form the three existing members already use, carrying NO COUNT** (Ruling 150's form, Ruling 261) — ⛔ **and NOT the split itself, which the row explicitly forbids this row from doing.**
+
+### ⛔ THE SIZE BOUND REFUSED THIS ROUND'S REQUIRED ACTS, and every byte recovered is itemised rather than silent
+
+⛔ **`PO-54/5` was `W159`'s first live witness. This is its second, and it is worse in kind rather than in degree.** ⭐ **Last round the bound refused eleven PLACEMENTS — discretionary work. This round it refused a CLOSE and a STANDING DECISION, which are the two acts a register exists to perform.** ⛔ **MEASURED, role `wt/po`, environment HOST, `python3 -m tools.quality`'s own `board:` line, three states with the expectation written down before each run:**
+
+```text
+at 7a7a178, BEFORE any edit          57820 of 58016 allowed   ⭐ 196 B headroom
+after the four required acts         58695 of 58176 allowed   ⛔ 519 B OVER — REFUSED
+after the recovery itemised below    58159 of 58176 allowed   ⚠️ 17 B headroom
+```
+
+⚠️ **`58016` → `58176` is the allowance rising by `160` because the In flight table went from two delimited rows to three; nothing else in the denominator moved.**
+
+⛔ **THE RECOVERY, ITEMISED, AND NOT ONE ITEM IS A FACT DELETED.** ⭐ **Every one is the board's OWN closing rule applied to the board — *if a fact appears both here and behind a pointer, ONE OF THE TWO IS WRONG*:**
+
+1. ⛔ **Two `Next rows` cells carried a measurement, which that table's own note forbids twice over** — `PO-55/3`, below. The figures are struck and the readings stay in the rows that own them.
+2. ⛔ **The frame paragraph asserted *"Neither fact is copied here"* while copying a rule AND a figure** — `PO-55/5`, below.
+3. ⭐ **Two paragraphs under `Next rows` stated *no measurement* twice** — merged into one, no clause lost.
+4. ⭐ **The `In flight` and `corroborate` paragraphs restated arguments their own adjacent pointers carry** — the pointers stay, the restatements go.
+5. ⭐ **The `## Scheduled` preamble carried three lines of `W100`'s history, and `W100` is CLOSED at `6d5aeed`** — replaced by the fact plus its record.
+
+⛔ **`17` BYTES IS NOT A PASS, IT IS A WARNING PRINTED IN GREEN.** ⭐ **The next register round cannot close a row and open a step without compacting something first, and there is no fifth cheap paragraph left.** ⚠️ **`W159` is `Next rows` order 12 and has been queued since round 51.**
+
+### ⭐ WHAT THE CTO ROUTED TO THIS ROUND, DISPOSED
+
+- ⛔ **`CTO-69/6` — ACCEPTED WITHOUT QUALIFICATION.** My round-54 `## Status` said *"Three commits"* and the branch carried four. ⭐ **The remedy is mechanical and is applied: this round's handoff DERIVES its commit count with `git rev-list --count` at the tip it hands over, rather than typing a number that a later commit falsifies.**
+- ⛔ **CTO round 69's last section, left undone deliberately and routed:** ***"`docs/tasks/rows/W121.md` still declares no `### SURFACE` block … the row file is the register's and adding the block is `W160`'s work or the next register round's, not mine."*** ⭐ **DISCHARGED BY THE CLOSE rather than by adding the block, and the ground matters: `W121` closes this round, its file becomes a Ruling 270 REDIRECT STUB, and a stub is *exactly three things* — a `### SURFACE` block would be a fourth and would make it not a stub.** ⛔ **So the fact is preserved where a closed row's facts belong, here, MEASURED at `7a7a178`: `W121`'s surface was `tools/quality/handoffs/contract.py` — `grep -n 'def check_markers' tools/` reads `contract.py:260` at this ref, and read `contract.py:234` at `5b54936`, which is the same function moved by `W121`'s own landing.** ⚠️ **`rows/W167.md` cites the `:234` reading WITH its ref, so it is DATED and not wrong** (Ruling 146's disposition), ⭐ **and `W160` remains the row that makes surfaces machine-readable instead of asserted.**
+
+### ⛔ FINDINGS, BY ID — PO round 55, and three of the five are my own office's
+
+- ⛔ **`PO-55/1` — AGAINST THE COORDINATOR. Three `W` rows dispatched into a wave the coordinator's own handoff says must close `3.2` and open `3.3` *BEFORE any `W` row is placed*, while three `solo` open-step rows sat with every dependency merged.** ⭐ **The ground offered — *the close had not yet been possible when I dispatched* — is true of ROUND 54 and false of the WAVE-9 CUT, which is eleven minutes and one merge after `4e25edf`, and it is refuted by item 1 of the coordinator's own composition.** ⚠️ **Bounded to the COMPOSITION** (Ruling 329): each of the three dispatch grounds is upheld on its own document, and the cost is one wave of `M3` throughput.
+
+- ⛔ **`PO-55/2` — AGAINST THE REGISTER, WHICH IS ME. `BOARD.md`'s surface paragraph named `W121`+`W167` for `tools/quality/handoffs/` and never named `W64`, which widens `DOCUMENT_KINDS` in the SAME FILE as `W167`'s `check_handoffs`.** ⭐ **Found while checking the coordinator's ground, which the coordinator got RIGHT from a directory reading while my paragraph had it wrong from a declared-surface one.** ⛔ **Corrected in the paragraph, at file granularity, with the two symbols named.**
+
+- ⛔ **`PO-55/3` — AGAINST THE REGISTER. Two `Next rows` cells carried a measurement, in the one table whose own note forbids it in two consecutive paragraphs.** ⭐ **`W88`'s cell read *"its population GREW to 30"* and `W136`'s read *"16 branches, every one `0` ahead and none checked out"*, against *a `Next rows` cell may carry no measurement AND no PREDICTION* (243(c)) and *this table carries no census of the jumps and NO COUNT*.** ⛔ **Both figures struck from the cells; neither reading is lost, because each row file owns its own.**
+
+- ⛔ **`PO-55/4` — AGAINST THE BOARD'S SIZE RULE, `W159`'s SECOND live witness and the first where the refused acts were MANDATORY.** ⭐ **The three readings are in the section above; the round landed at `17` bytes of headroom and only by five compactions.**
+
+- ⛔ **`PO-55/5` — AGAINST THE REGISTER. The board's frame paragraph asserted *"Neither fact is copied here: the table above holds the address"* while copying both the rule and the `8,545`-line reading at `bfb8c8c` into the sentence that denied it.** ⭐ **A self-refuting frame is worse than a plain duplicate: it tells the next editor the duplication has already been checked for.** ⛔ **Replaced by the rule plus the address, with the figure left where its own heading carries it.**
+
+### W121 — The marker reader cannot see a finding written as a TABLE ROW, which is the form both offices write
+
+⚠️ **MOVED WHOLE from `rows/W121.md` under Ruling 201's second edit, and ONE link was re-addressed as part of the move (Ruling 174, disclosed here): `](../BOARD.md)` → `](BOARD.md)`, because this file sits beside `BOARD.md` and the row file sat one directory below it.** ⛔ **No other byte changed, and the file carried no `](../BOARD-ARCHIVE.md#…)` link to re-address — it was minted at round 42, before Ruling 244(e).**
+
+⛔ **This file carries the ARGUMENT for board row `W121` and nothing else.**
+⭐ **Its naming, owner and state live once, in the register in [`BOARD.md`](BOARD.md)** — ⛔ **not here, and not in two places.**
+
+⛔ **RULING 218'S GATE ONE, ROUTED FROM `W63/2` AS *A ROW, ahead of any re-take of `W64`*.**
+
+⭐ **THE DEFECT IS A TWO-ORGAN ONE AND THE CTO NAMED IT THAT WAY: the gate sees fine and the READER BEHIND IT could not.** ⛔ **A finding written as a TABLE ROW — which is the form BOTH offices write today — is invisible to the marker reader, so the widened gate's headline would be FALSE on a large fraction of what it fires on.**
+
+⚠️ **RECEIVED from the CTO at round 53 and NOT re-inhabited by me** (Ruling 115):
+
+```text
+⭐ the two-organ diagnosis CONFIRMED: flipping the gate alone would have printed
+   *marks no finding* at documents CARRYING findings
+⛔ which is why W63 went first, and that sequencing was right
+```
+
+#### ⛔ IT CHANGES ANOTHER GATE'S POPULATION, WHICH IS WHY IT IS FIRST AND NOT MERELY EARLY
+
+⭐ **Ruling 219 measured 31 of 32 records claiming the filename-derived scope and **48** finding lines claiming NONE — and named the cause:** ⛔ ***"the 48 that claim no scope are the table-form records, and they will begin claiming scopes the moment gate one lands."*** ⚠️ **So gate two's derivation is RE-MEASURED after this row lands and is never inherited from round 53's reading.**
+
+⛔ **THE ORDERING IS THEREFORE A DEPENDENCY AND NOT A PRIORITY CALL** — ⭐ **`W64` is gated on this row in the register, and this row is gated on nothing.**
+
+#### ⛔ WHAT IT MUST NOT BECOME
+
+⛔ **A reader that pins the TABLE FORM.** ⚠️ **Ruling 189(b)'s precedent is the governing one: roles are read FROM a header and never from a position, precisely so an author may rename, reorder, emphasise or prefix.** ⭐ **A table-row reader that matched one column layout would be the header locator's defect re-introduced in a second instrument.**
+
+⛔ **AND IT MUST NOT CHASE THE CORPUS.** ⭐ **Ruling 193 on this exact population: the corpus is never chased; the instrument is the defect.** ⚠️ **If the reader lands and the count moves, the count moving is the reading — not a licence to edit a record** (Ruling 106).
+
+⛔ **RULING 75 IS INVOKED: this row (round 42) is placed ahead of `W103` (round 40) and `W105`–`W109` (round 39).** ⭐ **What it jumps and why: it is the named GATE of a row that has already STOPPED once, so every wave it waits is a wave in which `W64` cannot be re-taken at all.**
+
+### W166 — The standing SPLIT condition `tools/quality/board/verdict.py` is owed, third member inside one package
+
+⚠️ **MOVED WHOLE from `rows/W166.md` under Ruling 201's second edit, and TWO links were re-addressed as part of the move (Ruling 174, disclosed here): `](../BOARD.md)` → `](BOARD.md)`, and `](../BOARD-ARCHIVE.md#the-nine-mints-…)` → `](#the-nine-mints-…)` now that it is inside this file.** ⛔ **No other byte changed.**
+
+⛔ **This file carries the ARGUMENT for board row `W166` and nothing else.**
+⭐ **Its naming, owner and state live once, in the register in [`BOARD.md`](BOARD.md)** — ⛔ **not in two places.**
+
+⛔ **`tools/quality/board/verdict.py` GAINS THE STANDING SPLIT CONDITION — the next row touching it SPLITS IT.** ⭐ **Routed by `CTO round 67` §6A-c, which measured the whole family rather than the one file, and it reached no board cell.**
+
+#### ⛔ THE READING — RECEIVED from the reviewing office, role `wt/cto`, and it is a FAMILY reading rather than a file one
+
+⚠️ **The reviewer's own words are that they measured the seven-module neighbourhood rather than the module `W146` happened to touch.** ⛔ **`tools/quality/board/` already carries standing split conditions on `register.py` and — one instrument over — on `reach.py`, so this is the third member inside one package.**
+
+⭐ **RE-TAKEN HERE, role `wt/po`, ref `0564997`, environment HOST, so the row is not carried on a received figure alone:**
+
+```bash
+wc -l tools/quality/board/*.py
+```
+
+⛔ **The figures are NOT typed into this file** (Ruling 150's form): they go stale on the next edit, and the instrument is `python3 -m tools.quality`, which prints R11's reading for the whole tree.
+
+#### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE NEXT ROW TOUCHING `verdict.py` SPLITS IT AT A NAMED SEAM** — ⭐ **the taker NAMES the seam before cutting, as `W133`'s taker did, and refusing to cut outside one's surface is the correct answer.**
+2. ⚠️ **A CEILING IS NOT A BUDGET** (Ruling 261): ⛔ **a taker who finds themselves TRIMMING rather than SPLITTING is in the wrong module.**
+3. ⭐ **THE CONDITION BINDS THE NEXT ROW, never the row that left the file where it is** — the form the three existing members already use.
+
+#### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A COUNT ON THE BOARD.** ⭐ **Ruling 150's form and Ruling 261: the reading comes from `tools.quality`, not from a cell.** ⛔ **AND NOT A SPLIT PERFORMED BY THIS ROW** — ⚠️ **the condition is the artifact; the cut belongs to whoever next has a reason to be in the file.**
+
+#### ⭐ SURFACE
+
+⛔ **`docs/tasks/BOARD.md`'s *Standing decisions* table, which is the register's.** ⚠️ **Shares that surface with every register round: ONE OWNER or two waves** (check 4's sub-step, and a REGISTER round writes it too).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+### ⭐ THE THREE INSTRUMENTS AT THIS BRANCH'S TIP, EACH WITH ITS OWN ENVIRONMENT NAMED
+
+⛔ **Ruling 279 makes `corroborate` a GATE at `git rev-parse chore/po-round55` — this branch's tip, never the release tip and never a moment.** ⭐ **The readings are in the handoff, `docs/tasks/handoffs/PO-2026-09-12-round55.md`, quoted whole rather than tailed, and the closing three were taken in the pinned container through `docker/dev/check` from this checkout.**
