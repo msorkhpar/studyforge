@@ -5,6 +5,9 @@ The machinery is `tests/emission/`; this module is what fails the suite on it.
 
 from __future__ import annotations
 
+import contextlib
+from pathlib import Path
+
 import pytest
 
 from studyforge.address import AddressError, require_slug
@@ -15,6 +18,7 @@ from tests.emission import (
     probe_callable,
     public_callables,
 )
+from tests.support import repository_root
 
 #: ⭐ A floor on **coverage**, not on defects. It can only be broken by the
 #: probe reaching less of the tree than it does today — a package that stops
@@ -28,8 +32,33 @@ LEAST_PATHS_PROBED = 30
 
 
 @pytest.fixture(scope="module")
-def found():
-    return census("studyforge")
+def found(tmp_path_factory):
+    # ⛔ **The census runs with its working directory OUTSIDE the checkout, and
+    # that is containment rather than tidiness.** This harness calls every
+    # public callable in `src/` with filler arguments, and `fillers.filler_for`
+    # answers a `Path` parameter with the RELATIVE `Path("alpha")` — so any
+    # public writer whose path parameter is not the one being poisoned writes
+    # into whatever directory pytest happens to be in.
+    #
+    # ⚠️ Measured twice, in the tree, by two different offices: `SF-17/11` (a
+    # file named `alpha` in the repository root, which then changed what an
+    # UNRELATED module's probe refused and turned that module RED) and
+    # `SF-28/2` (an untracked `alpha/alpha` after a full suite run, with
+    # nothing failing and nothing reporting it). Both were closed one package
+    # at a time, by that package refusing something.
+    #
+    # ⛔ Everything else escapes today by LUCK and not by design: an audit hook
+    # over this census at `abee048` recorded eight public callables attempting
+    # a write, every one of them saved only by the poison being an absolute
+    # path the process cannot create. One relative filler in the wrong slot
+    # undoes that. This line is what makes it structural instead.
+    #
+    # ⭐ It is not the whole answer — the census can still write outside the
+    # tree, and a test elsewhere can still write inside it. `conftest.py` is
+    # the net that knows nothing about writers; this is the containment for the
+    # one harness that is KNOWN to call them.
+    with contextlib.chdir(tmp_path_factory.mktemp("census-cwd")):
+        return census("studyforge")
 
 
 # --------------------------------------------------------------------------
@@ -139,3 +168,29 @@ def test_every_module_of_the_framework_is_walked():
     from studyforge.address import slug
 
     assert dict(public_callables(slug))["require_slug"] is require_slug
+
+
+# --------------------------------------------------------------------------
+# The harness writes. Watch it write, somewhere it cannot do any harm.
+# --------------------------------------------------------------------------
+
+
+def test_the_filler_really_does_hand_a_writer_a_relative_path(tmp_path):
+    # ⛔ THE PLANT, and it is `SF-17/11` reduced to its shape rather than a
+    # story about it. `out` is a `Path` and `note` is the only `str`, so
+    # `_probe_strings` poisons `note` and FILLS `out` — with `Path("alpha")`,
+    # which resolves against the working directory. A public callable of this
+    # shape is one commit away at any time; Developer 1's new entry point is
+    # exactly this shape.
+    #
+    # ⚠️ The assertion is that the file IS written. A test asserting it is not
+    # would be asserting the framework has no writers, which is false and
+    # would go stale the moment one is added.
+    def emit(out: Path, note: str) -> None:
+        out.write_text(note, encoding="utf-8")
+
+    with contextlib.chdir(tmp_path):
+        probe_callable(emit, "a writer invented inside a test")
+
+    assert (tmp_path / "alpha").is_file()
+    assert not (repository_root() / "alpha").exists()
