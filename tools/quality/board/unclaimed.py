@@ -1,10 +1,11 @@
 """The OTHER direction: what `git` can see that the board does not NAME.
 
 **What it does.** Reads every live checkout and every `trial/*` / `tmp-*` branch against
-the release branch and prints ⭐ **six readings NO BOARD CELL CARRIES** — the checkouts no
-row claims, the office round branches Ruling 265 exempts, the checkouts that are invisible
-to git by construction, the ones git could not count at all, the spent branches that are
-deletable, and the spent ones still checked out.
+the release branch and prints ⭐ **seven readings NO BOARD CELL CARRIES** — the checkouts no
+row claims, the office round branches Ruling 265 exempts, ⛔ **the `SPENT`-namespace branches
+`W170` exempts on Ruling 265's OWN ground**, the checkouts that are invisible to git by
+construction, the ones git could not count at all, the spent branches that are deletable,
+and the spent ones still checked out.
 
 **How you use it.** `unnamed(rows, live, graph)` returns `(lines, the count of checkouts
 git could not read)` — ⛔ **the count is RETURNED so `corroborate`'s fold can reach exit
@@ -47,6 +48,20 @@ from tools.quality.board.verdict import tokens
 #: `--no-merged` by construction, and its only remaining effect is ⭐ **to read as
 #: dispatched work to a human — which is Ruling 189's subject with no board cell
 #: to print it in.** ⛔ **So this instrument is where it gets printed.**
+#:
+#: ⛔ **`W170`: this tuple is ALSO taken out of the `dispatched and UNNAMED` GATE's
+#: population, on Ruling 265's OWN stated ground.** ⭐ **That ground is *no register row
+#: will EVER name one of these*, and it transfers whole: a `trial/*` or `tmp-*` branch is
+#: a REVIEWER'S TRIAL MERGE — never dispatched, never taken by a row, and already reported
+#: by `spent()`'s own two lines.** ⚠️ **Ruling 265 chose the NAMESPACE over emptiness
+#: deliberately, so the namespace was simply not enumerated; `W132`'s defect survived here
+#: in a second namespace and fired precisely when a review was in progress, which is the
+#: only moment Ruling 264(c)'s gate is read.**
+#:
+#: ⛔ **This NARROWS a population and does NOT widen the predicate** (Ruling 185(b)).
+#: ⚠️ **Ruling 319 refuses extending this exemption to `fix/*` — that would exempt the
+#: whole population the gate exists to read.** ⭐ **`fix/W*` is untouched here, and
+#: `test_unclaimed.py` asserts that direction as its own reading.**
 SPENT = ("trial/", "tmp-")
 
 #: ⛔ **`W132`, Ruling 265: an OFFICE's own round branch, and the prefix is ANCHORED.**
@@ -96,21 +111,30 @@ def unnamed(
     count is RETURNED so the caller's fold can reach exit `NOT_AUTHORITATIVE`**
     (Ruling 216).
 
-    ## ⛔ `W132`, Ruling 265 — FOUR lines now, and each is a DIFFERENT answer
+    ## ⛔ `W132`/Ruling 265 and `W170` — FIVE lines now, and each is a DIFFERENT answer
 
     | line | its population |
     |---|---|
-    | `dispatched and UNNAMED` | ahead `> 0`, unclaimed, ⛔ **not an office branch** — ⚠️ the
-      line Ruling 264(c) made the PRE-MERGE GATE |
+    | `dispatched and UNNAMED` | ahead `> 0`, unclaimed, ⛔ **neither an office branch nor a
+      `SPENT` namespace** — ⚠️ the line Ruling 264(c) made the PRE-MERGE GATE |
     | ⭐ `OFFICE round branches` | `chore/{cto,po}-round*`, ANY count — see `OFFICE` |
+    | ⭐ `SPENT namespaces` | `W170`: `trial/*` / `tmp-*` that WOULD have been gated —
+      ⛔ **the DIFFERENCE the exemption made, printed with its count** |
     | `invisible BY CONSTRUCTION` | ahead `== 0`, unclaimed — ⛔ **a `fix/W*` branch at `0`
-      STAYS HERE and is still NAMED** |
+      STAYS HERE and is still NAMED**, and so does a `SPENT` branch at `0`: ⚠️ **that one
+      was never in the gate's population, so this exemption removed NOTHING from it** |
     | `git COULD NOT COUNT` | `ahead()` returned `None` — a FAILED reading (`W115`) |
 
-    ⚠️ **The DETACHED checkout is in NONE of the four, deliberately** — it has no branch
+    ⚠️ **The DETACHED checkout is in NONE of the five, deliberately** — it has no branch
     line for `graph.checkouts()` to read. ⭐ **That hole is `PO-44/5`'s and `W125`'s, and
-    Ruling 265's widening must not make it harder to see**, which is why the office line
-    carries its OWN count rather than merely shrinking another line's number.
+    neither Ruling 265's widening nor `W170`'s must make it harder to see**, which is why
+    each exemption line carries its OWN count rather than merely shrinking another line's
+    number.
+
+    ⛔ **`W170`: the `SPENT` exemption touches the GATE arm ALONE.** ⭐ **`spent()`'s
+    `trial/tmp branches STILL CHECKED OUT` line reads the SAME branches and is UNCHANGED,
+    because removing a branch from the GATE must never remove it from the INSTRUMENT**
+    (Ruling 206(ii): reporting a worktree you did not cut is never wrong).
     """
     claimed = {name for row in rows for name in tokens(row.checkout)}
     counts = {branch: graph.ahead(branch) for branch in live if branch != graph.release}
@@ -118,10 +142,22 @@ def unnamed(
     # ⛔ `W132`, Ruling 265: the office exemption is taken out of the POPULATION before
     # either arm reads it, and is then PRINTED with its count and its reason.
     office = sorted(b for b in counts if b.startswith(OFFICE))
+    # ⛔ `W170`, Ruling 265's OWN ground: the `SPENT` namespaces come out of the GATE's
+    # population too — and this list is the DIFFERENCE, exactly what the gate would have
+    # named and no longer does, so the exclusion is auditable rather than asserted.
+    trial = sorted(
+        b
+        for b, n in counts.items()
+        if b.startswith(SPENT) and n is not None and n > 0 and b not in claimed
+    )
     missing = sorted(
         b
         for b, n in counts.items()
-        if n is not None and n > 0 and b not in claimed and not b.startswith(OFFICE)
+        if n is not None
+        and n > 0
+        and b not in claimed
+        and not b.startswith(OFFICE)
+        and not b.startswith(SPENT)
     )
     blind = sorted(
         Path(live[b]).name
@@ -144,6 +180,28 @@ def unnamed(
         "ahead the moment it records anything (Ruling 264(c) made this line a GATE)."
         if office
         else f"  office round branches exempt by Ruling 265 ({'|'.join(OFFICE)}*): none."
+    )
+    # ⛔ `W170`. ⭐ APPENDED AFTER the office line deliberately: both carry the token
+    # `Ruling 265`, and the office line's own readings select on it.
+    #
+    # ⛔ **AND THIS LINE'S PROSE QUOTES NO OTHER LINE'S ANCHOR VERBATIM.** ⚠️ **The first
+    # draft said *STILL REPORTED below on `trial/tmp branches STILL CHECKED OUT`* and a
+    # `next(... if "STILL CHECKED OUT" in line)` then selected THIS line instead of that
+    # one** — ⭐ **a decoy anchor in an instrument's own output, which costs a human
+    # grepping the reading exactly what it cost the reading that caught it.**
+    lines.append(
+        f"  ⭐ SPENT namespaces EXEMPT from the GATE on Ruling 265's OWN ground "
+        f"({'|'.join(SPENT)}*) ({len(trial)}): "
+        + ", ".join(f"{b} +{counts[b]}" for b in trial)
+        + " — ⛔ a trial/tmp branch is a REVIEWER'S TRIAL MERGE: never dispatched, never "
+        "taken by a row, so no register row will EVER name one, which is the ground "
+        "Ruling 265 gave and it transfers whole. ⚠️ This line is the DIFFERENCE the "
+        "exemption made, and every branch on it is STILL REPORTED by the standing-worktree "
+        "line below — removing it from the GATE never removes it from the INSTRUMENT "
+        "(Ruling 206(ii)). ⛔ NARROWING a population, never widening the predicate "
+        "(Ruling 185(b)); Ruling 319 refuses the `fix/*` widening, which this is not."
+        if trial
+        else f"  spent namespaces exempt from the gate ({'|'.join(SPENT)}*): none."
     )
     lines.append(
         f"  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no "
@@ -169,6 +227,11 @@ def spent(graph: Graph, live: dict[str, str]) -> list[str]:
     the one shape that keeps a spent row green is the one shape this line cannot
     print. ⭐ **It is printed now, separately and as a NOTICE**, because removing a
     worktree you did not cut is always wrong and reporting one never is.
+
+    ⛔ **`W170` DEPENDS ON THIS LINE AND DOES NOT TOUCH IT.** ⭐ **The `SPENT` namespaces
+    are exempt from `unnamed()`'s GATE precisely BECAUSE this arm already reports them** —
+    ⚠️ **so a change here that narrowed `standing` would remove the only reading of a
+    standing trial worktree, which is the one shape Ruling 206(ii) exists to print.**
     """
     names = [name for name in graph.heads() if name.startswith(SPENT)]
     spent = sorted(name for name in names if name not in live and graph.merged(name))

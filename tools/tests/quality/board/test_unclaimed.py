@@ -1,4 +1,4 @@
-"""Mirror of `tools/quality/board/unclaimed.py` (R12) — ⛔ the OTHER DIRECTION's six readings.
+"""Mirror of `tools/quality/board/unclaimed.py` (R12) — ⛔ the OTHER DIRECTION's seven readings.
 
 ⛔ **These readings MOVED here from `test_corroborate.py` with the code they measure**, the
 way `test_bounds.py`'s moved with `W100`'s split and `test_bijection.py`'s with `W129`'s —
@@ -17,18 +17,39 @@ a control drawn from the live tree is born vacuous exactly when a close run is t
 | an office branch AHEAD `> 0` | ⭐ **exempt**, and PRINTED with its count and its reason |
 | a `fix/W*` branch at `0` ahead, no row | ⛔ **still NAMED**, on Ruling 130's own line |
 | a branch merely CONTAINING `po-round` | ⛔ **NOT exempt** — the prefix is ANCHORED |
-| ⚠️ a DETACHED checkout | ⛔ **in NONE of the four lines**, and that hole stays visible |
+| ⚠️ a DETACHED checkout | ⛔ **in NONE of the five lines**, and that hole stays visible |
 
 ⚠️ **The office plant is AHEAD and never `0`-ahead, deliberately:** ⛔ **`0`-ahead was
 ALREADY exempt under Ruling 130, so a `0`-ahead fixture would measure nothing** — which is
 `rows/W132.md`'s own instruction and the whole of what Ruling 265 changes.
+
+## ⛔ `W170` / Ruling 265's OWN ground — the `SPENT`-NAMESPACE exemption, in BOTH directions
+
+| direction | ⛔ the expectation, written BEFORE the run |
+|---|---|
+| a `trial/*` branch AHEAD and CHECKED OUT | ⭐ **NOT on the GATE line**, ON the exemption
+  line with its count and reason, and ⛔ **STILL on `STILL CHECKED OUT`** |
+| a `fix/W*` branch AHEAD and named by no row | ⛔ **STILL GATED** — ⚠️ Ruling 319 refuses
+  exactly the `fix/*` widening, which would empty the population the gate exists to read |
+| ⭐ the CONTROL that must FAIL (Ruling 266) | with `SPENT` reverted to `()`, the gate names
+  the trial branch AGAIN — ⛔ **so the exclusion is MEASURED and not asserted** |
+| ⚠️ the EXIT CODE | ⛔ **does not move**: this line REPORTS, and Ruling 264(c)'s gate is
+  read by a REVIEWER — a fold that carried it would refute every wave under review |
+
+⚠️ **The trial plant is AHEAD and CHECKED OUT, deliberately, and the fixture's own
+`trial/spent` is neither:** ⛔ **a `0`-ahead trial branch was NEVER in the gate's
+population**, so it would measure nothing here — the same reasoning `rows/W132.md` applied
+to `0`-ahead office branches, one namespace over.
 """
 
 from __future__ import annotations
 
 from pathlib import Path
 
-from tools.quality.board.corroborate import corroborate
+import pytest
+
+from tools.quality.board import unclaimed
+from tools.quality.board.corroborate import CORROBORATED, corroborate
 from tools.quality.board.graph import Graph
 from tools.workspace import git
 
@@ -41,7 +62,7 @@ def _run(root: Path, release: str = RELEASE) -> tuple[int, str]:
 
 
 # --------------------------------------------------------------------------
-# ⛔ The four lines of `unnamed()` — the board's blind side
+# ⛔ The five lines of `unnamed()` — the board's blind side
 # --------------------------------------------------------------------------
 
 
@@ -78,10 +99,16 @@ def test_the_blind_spot_is_COUNTED_AND_NAMED_rather_than_judged(repository: Path
 # --------------------------------------------------------------------------
 
 
-#: ⛔ An office branch that is AHEAD, which is the case Ruling 130 does NOT exempt and the
-#: one `W132` is about. ⭐ `0`-ahead was already exempt, so a `0`-ahead fixture would measure
-#: nothing (`rows/W132.md`: *"not a fixture that is 0 ahead"*).
-def _office(repository: Path, branch: str, where: str) -> int:
+#: ⛔ A branch that is AHEAD and CHECKED OUT, which is the case Ruling 130 does NOT exempt
+#: and the one `W132` is about. ⭐ `0`-ahead was already exempt, so a `0`-ahead fixture would
+#: measure nothing (`rows/W132.md`: *"not a fixture that is 0 ahead"*).
+#:
+#: ⚠️ **`W170` reuses it VERBATIM and varies ONLY the branch NAME** — ⭐ **which is the row's
+#: whole argument made executable: the exemption is decidable from the NAMESPACE, so one
+#: plant shape measures the office, the `SPENT` and the `fix/W*` directions alike.** ⛔ **It
+#: was called `_office` until `W170`; the name was a lie the moment a second namespace used
+#: it, and a helper named after one of its callers is how a shared fixture stops being read.**
+def _plant(repository: Path, branch: str, where: str) -> int:
     """Cut `branch`, commit on it, check it out at `where`, and return its ahead count."""
     assert git(repository, "checkout", "-q", "-b", branch).returncode == 0
     commit(repository, f"{branch.replace('/', '-')}.txt", "a round's record\n")
@@ -113,7 +140,7 @@ def test_planted_an_OFFICE_branch_that_is_AHEAD_is_EXEMPT_and_the_REASON_is_PRIN
     ⛔ **And the exemption is PRINTED with its reason and its count**, because Ruling
     264(c) made this a gate and a gate that hides a rule is unreadable.
     """
-    ahead = _office(repository, "chore/po-round46", "po")
+    ahead = _plant(repository, "chore/po-round46", "po")
     write_board(repository, "")
     _code, printed = _run(repository)
     dispatched = next(line for line in printed.split("\n") if "dispatched and" in line)
@@ -124,7 +151,7 @@ def test_planted_an_OFFICE_branch_that_is_AHEAD_is_EXEMPT_and_the_REASON_is_PRIN
     # DEVELOPER branch and it is still named, so the exemption narrowed the population
     # rather than emptying the gate (Ruling 185, and Ruling 191(c)'s positive row).
     assert "feat/held" in dispatched, dispatched
-    exemption = next(line for line in printed.split("\n") if "Ruling 265" in line)
+    exemption = next(line for line in printed.split("\n") if "round branches" in line)
     assert f"chore/po-round46 +{ahead}" in exemption, (
         f"⭐ the count is printed, so nobody can read the exemption as `0 ahead` — {exemption}"
     )
@@ -144,7 +171,7 @@ def test_planted_a_fix_branch_at_ZERO_AHEAD_and_NAMED_BY_NO_ROW_IS_STILL_NAMED(
     apart, which is the whole of Ruling 171.**
     """
     assert git(repository, "worktree", "add", "-q", str(repository.parent / "dev2"), "feat/bare")
-    _office(repository, "chore/cto-round59", "cto")
+    _plant(repository, "chore/cto-round59", "cto")
     write_board(repository, "")
     _code, printed = _run(repository)
     blind = next(line for line in printed.split("\n") if "BY CONSTRUCTION" in line)
@@ -168,18 +195,18 @@ def test_planted_a_branch_that_merely_CONTAINS_po_round_is_NOT_EXEMPT(
 
     ⛔ **So the prefix is ANCHORED, and this is the reading that says so.**
     """
-    ahead = _office(repository, "fix/W99-po-round-guard", "sneaky")
+    ahead = _plant(repository, "fix/W99-po-round-guard", "sneaky")
     write_board(repository, "")
     _code, printed = _run(repository)
     dispatched = next(line for line in printed.split("\n") if "dispatched and" in line)
     assert "UNNAMED by any row" in dispatched and "fix/W99-po-round-guard" in dispatched, (
         f"⛔ THE DEFECT an anchored prefix prevents — {dispatched}; it is {ahead} ahead"
     )
-    exemption = next(line for line in printed.split("\n") if "Ruling 265" in line)
+    exemption = next(line for line in printed.split("\n") if "round branches" in line)
     assert "fix/W99" not in exemption, f"⭐ and it is not on the exemption line — {exemption}"
 
 
-def test_the_DETACHED_checkout_is_in_NONE_of_the_FOUR_lines_and_that_hole_STAYS_VISIBLE(
+def test_the_DETACHED_checkout_is_in_NONE_of_the_FIVE_lines_and_that_hole_STAYS_VISIBLE(
     repository: Path,
 ) -> None:
     """⛔ `rows/W132.md` clause 3: widening this arm must not make a known hole harder to see.
@@ -190,9 +217,13 @@ def test_the_DETACHED_checkout_is_in_NONE_of_the_FOUR_lines_and_that_hole_STAYS_
     silently absorbed here.**
 
     ⛔ **This is a RECORDED NEGATIVE with a named population** (Ruling 191(c)'s form): the
-    detached checkout is asserted ABSENT from all four lines, and the office line carries
-    its OWN count so that Ruling 265's exemption SHRINKS no other line's number without
-    saying where the branches went.
+    detached checkout is asserted ABSENT from all five lines, and each exemption line
+    carries its OWN count so that neither Ruling 265's nor `W170`'s exemption SHRINKS
+    another line's number without saying where the branches went.
+
+    ⚠️ **`W170` added the FIFTH line, so this negative was WIDENED to cover it** — ⛔ **a
+    recorded negative that still names four lines after a fifth ships is a negative whose
+    population quietly stopped matching the instrument's.**
     """
     tip = git(repository, "rev-parse", "HEAD").stdout.strip()
     assert (
@@ -202,10 +233,16 @@ def test_the_DETACHED_checkout_is_in_NONE_of_the_FOUR_lines_and_that_hole_STAYS_
         == 0
     )
     assert "poi" not in str(Graph.read(repository, RELEASE).checkouts()), "⛔ born vacuous"
-    _office(repository, "chore/po-round46", "po")
+    _plant(repository, "chore/po-round46", "po")
     write_board(repository, "")
     _code, printed = _run(repository)
-    for label in ("dispatched and", "Ruling 265", "BY CONSTRUCTION", "could not count"):
+    for label in (
+        "dispatched and",
+        "round branches",
+        "namespaces exempt from the gate",
+        "BY CONSTRUCTION",
+        "could not count",
+    ):
         line = next(line for line in printed.split("\n") if label in line)
         assert "poi" not in line, f"⛔ the detached checkout must stay in NO arm — {line}"
     assert "Ruling 265" in printed, "⭐ and the office line is there, carrying its own count"
@@ -253,3 +290,139 @@ def test_planted_a_STANDING_trial_worktree_is_PRINTED_and_never_removed(
     assert "trial/tmp branches STILL CHECKED OUT (1): trial/spent" in printed
     assert "never remove one you did not cut (Ruling 206(ii))" in printed
     assert "spent trial/tmp branches: none." in printed, "it is no longer *deletable*"
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W170` — the `SPENT`-NAMESPACE exemption, in BOTH directions and with a CONTROL
+# --------------------------------------------------------------------------
+
+#: ⛔ The branch name is the one the LIVE witness carried, so the fixture reproduces the
+#: SHAPE rather than citing it. ⚠️ The reading it reproduces, role `wt/po`, ref `7455f10`,
+#: environment HOST: `dispatched and UNNAMED by any row: trial/cto-round68-wave7`, with the
+#: SAME branch on `trial/tmp branches STILL CHECKED OUT (1)` two lines below it.
+WITNESS = "trial/cto-round68-wave7"
+
+
+def test_planted_a_TRIAL_branch_AHEAD_is_EXEMPT_from_the_GATE_and_is_STILL_REPORTED(
+    repository: Path,
+) -> None:
+    """⛔ DIRECTION 1 — a live `trial/*` branch does NOT reach Ruling 264(c)'s ONE gate.
+
+    ⚠️ **Expected, written before the run:** the same branch is named TWICE by one
+    instrument, on two lines whose populations are supposed to be disjoint — ⛔ **once on
+    the GATE, where it is a FALSE POSITIVE, and once on the line whose whole job is to
+    report it, where it is CORRECT.**
+
+    ⭐ **Ruling 265's ground transfers WHOLE:** a `trial/*` branch is a REVIEWER'S TRIAL
+    MERGE — never dispatched, never taken by a row — ⛔ **so no register row will EVER name
+    one, which is the exact sentence Ruling 265 gave for the office namespace.**
+
+    ⚠️ **And it fires precisely when a review is in progress, which is the only moment the
+    gate is read** — ⛔ **a gate that cries wolf during every review is one an office learns
+    to read past** (Ruling 179's cost, arriving at the gate rather than at a notice).
+    """
+    ahead = _plant(repository, WITNESS, "trial-wt")
+    write_board(repository, "")
+    _code, printed = _run(repository)
+    dispatched = next(line for line in printed.split("\n") if "dispatched and" in line)
+    assert WITNESS not in dispatched, (
+        f"⛔ THE DEFECT: a reviewer's trial branch named on the pre-merge gate — {dispatched}"
+    )
+    # ⭐ The CONTROL, in the SAME line: `feat/held` is the fixture's ahead-and-unclaimed
+    # DEVELOPER branch and it is still named, so the exemption NARROWED the population
+    # rather than emptying the gate (Ruling 185(b), and Ruling 191(c)'s positive row).
+    assert "feat/held" in dispatched, dispatched
+    exemption = next(
+        line for line in printed.split("\n") if "namespaces EXEMPT from the GATE" in line
+    )
+    assert f"{WITNESS} +{ahead}" in exemption, (
+        f"⭐ the count is printed, so nobody can read the exemption as `0 ahead` — {exemption}"
+    )
+    assert "never dispatched, never taken by a row" in exemption, "⛔ the REASON, not the name"
+    # ⛔ SETTLING CONDITION 2: removing it from the GATE must not remove it from the
+    # INSTRUMENT (Ruling 206(ii): reporting a worktree you did not cut is never wrong).
+    #
+    # ⚠️ **And EXACTLY ONE line carries the anchor.** ⛔ **The first draft of the exemption
+    # line quoted this one's anchor verbatim in its own prose, and this very selector then
+    # chose the WRONG line** — ⭐ **so the DECOY is now a reading of its own, because a
+    # human grepping the instrument's output pays the same cost the test just paid.**
+    carriers = [line for line in printed.split("\n") if "STILL CHECKED OUT" in line]
+    assert len(carriers) == 1, f"⛔ a DECOY ANCHOR in the instrument's own output — {carriers}"
+    assert f"STILL CHECKED OUT (1): {WITNESS}" in carriers[0], carriers[0]
+
+
+def test_planted_a_fix_W_branch_AHEAD_and_NAMED_BY_NO_ROW_STILL_REACHES_THE_GATE(
+    repository: Path,
+) -> None:
+    """⛔ DIRECTION 2 — the narrowing must not reach the population the gate EXISTS to read.
+
+    ⚠️ **Ruling 319 refuses this widening BY NAME:** *extending Ruling 265's namespace
+    exemption to `fix/*` exempts the whole population the gate exists to read.* ⭐ **So the
+    `fix/W*` direction is a RECORDED POSITIVE here, taken in the same reading as the trial
+    branch's exemption** — ⛔ **one run, both directions, so neither can be true of a tree
+    the other was not measured on.**
+    """
+    ahead = _plant(repository, "fix/W170-not-exempt", "d3")
+    _plant(repository, WITNESS, "trial-wt")
+    write_board(repository, "")
+    _code, printed = _run(repository)
+    dispatched = next(line for line in printed.split("\n") if "dispatched and" in line)
+    assert "UNNAMED by any row" in dispatched and "fix/W170-not-exempt" in dispatched, (
+        f"⛔ THE DEFECT the narrowing must NOT cause — {dispatched}; it is {ahead} ahead"
+    )
+    assert WITNESS not in dispatched, f"⭐ and the trial branch is still exempt — {dispatched}"
+    exemption = next(
+        line for line in printed.split("\n") if "namespaces EXEMPT from the GATE" in line
+    )
+    assert "fix/W170" not in exemption, f"⭐ and it is not on the exemption line — {exemption}"
+
+
+def test_the_CONTROL_with_the_SPENT_EXEMPTION_REVERTED_the_GATE_NAMES_IT_AGAIN(
+    repository: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """⭐ Ruling 266's form — a control that MUST FAIL, or the exclusion is ASSERTED.
+
+    ⛔ **One tree, one plant, TWO readings, and the ONLY variable is `SPENT`.** ⚠️ **With
+    the tuple reverted to `()` the gate names the trial branch again** — ⭐ **so the green
+    reading above is caused by this exemption and not by the fixture failing to plant.**
+
+    ⚠️ **The reverted reading ALSO empties `STILL CHECKED OUT`, and that is the coupling
+    stated rather than hidden:** ⛔ **both arms read the same tuple, which is exactly why
+    the gate could be narrowed without the branch going unreported.**
+    """
+    _plant(repository, WITNESS, "trial-wt")
+    write_board(repository, "")
+    _code, printed = _run(repository)
+    assert WITNESS not in next(line for line in printed.split("\n") if "dispatched and" in line)
+    monkeypatch.setattr(unclaimed, "SPENT", ())
+    _reverted_code, reverted = _run(repository)
+    dispatched = next(line for line in reverted.split("\n") if "dispatched and" in line)
+    assert WITNESS in dispatched, (
+        f"⛔ BORN VACUOUS: the gate does not name it even with the exemption reverted "
+        f"— {dispatched}"
+    )
+    assert "trial/tmp branches still checked out: none." in reverted, (
+        "⭐ and the reverted tuple empties the REPORTING arm too — the coupling, measured"
+    )
+
+
+def test_the_GATE_line_REPORTS_and_the_EXIT_CODE_DOES_NOT_MOVE_WITH_IT(
+    repository: Path,
+) -> None:
+    """⚠️ Ruling 264(c)'s gate is read by a REVIEWER; `corroborate`'s exit does not carry it.
+
+    ⛔ **This is the claim the row told me to CHECK rather than inherit** — ⭐ **and it is
+    checked in both states of the only variable: one tree, a positive row, with and without
+    a trial worktree standing.** ⚠️ **It matters in both directions: if the exit HAD moved,
+    the defect would have been a false REFUTATION rather than a false positive on a line,
+    and the remedy would have had to reach the fold.**
+    """
+    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
+    before, before_printed = _run(repository)
+    assert before == CORROBORATED, before_printed
+    _plant(repository, WITNESS, "trial-wt")
+    after, after_printed = _run(repository)
+    assert after == before == CORROBORATED, after_printed
+    assert f"STILL CHECKED OUT (1): {WITNESS}" in after_printed, (
+        "⛔ born vacuous: the trial worktree must actually be standing for this to measure"
+    )
