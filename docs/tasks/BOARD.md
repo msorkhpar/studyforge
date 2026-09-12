@@ -48,18 +48,16 @@ ONE named ref, and no row is inherited across a ref change.**
 the FORM is Ruling 246's: `n @ <branch tip>`, and `<branch> @ <checkout>` — ⭐ **the
 branch first, because it is the only identifier in the row a third party cannot
 change.** ⛔ **Ruling 171: `git worktree list` PRIMARY, `git branch` corroborating.**
-⭐ **Why the form changed — four re-takes of ONE cell and three values of another, in
-one round — is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)
-(`PO-44/14`–`PO-44/17`).**
+⭐ **Why the form changed is [in the record](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-minted-w124-amended-not-re-minted-and-the-refuted-sibling-premise-out-of-claudemd)** (`PO-44/14`–`PO-44/17`).
 
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W146` | Developer 1 | `fix/W146-observation-verdict` @ `wt/dev1` | 1 @ `6abf576` | ⏳ **in flight** — dispatched wave 5 |
-| `W152` | Developer 2 | `fix/W152-check-provenance` @ `wt/dev2` | 1 @ `0b6aaf3` | ⏳ **in flight** — dispatched wave 5 |
+| `NS-03` | Developer 1 | `feat/NS-03-engine-adapters` @ `wt/dev1` | 0 @ `0564997` | ⏳ **in flight** — dispatched wave 7 |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE, not an omission** (`W111`) — ⛔ **and `W147` is what a committed test that forgot it costs.**
+⛔ **AN EPIC TASK IS ADMITTED HERE AND IS NOT A `W` ROW** — ⭐ **`NS-01/2`, MEASURED and not assumed** ([the reading](BOARD-ARCHIVE.md#wave-7s-dispatch-and-the-observation-table-measured-against-a-non-w-row-rather-than-argued-about)); ⚠️ **its detail file is the EPIC, and `W161` is the residual.**
 
 ⛔ **`corroborate` corroborates the ROW and NEVER the CELL; its exit code is DISCLOSURE at
 a merge and a GATE at the tip of the branch carrying the REGISTER — `git rev-parse
@@ -69,8 +67,7 @@ row`** — Ruling 264, which amended 262 after both offices measured it false bo
 
 ⛔ **THE DELIMITERS ARE RULING 196'S** — ⭐ **a header is INFERRED and can only be
 ANNOUNCED; a delimiter is DECLARED and can be REFUSED.** ⚠️ **ONE BRANCH CAN CARRY ROWS
-WITH DIFFERENT OUTCOMES** (Ruling 218) — ⛔ **and a cell may carry SEVERAL ROW IDS, which
-the parser reads as a list and `corroborate` judges one by one.**
+WITH DIFFERENT OUTCOMES** (Ruling 218), ⛔ **so a cell may name SEVERAL ROW IDS.**
 
 ⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row
 names, counted and named.** ⭐ **`W96/5` — make that exclusion DATA — is scheduled on
@@ -278,13 +275,13 @@ they have exactly one home each.
 | W143 | `git checkout -- <dir>` restores a plant to `HEAD`, discarding an uncommitted NEIGHBOUR while `porcelain` reads clean | framework agent | ✅ done — `ed1dcdd` | [record](BOARD-ARCHIVE.md#w143-git-checkout-dir-restores-a-plant-to-head-discarding-an-uncommitted-neighbour-while-porcelain-reads-clean) |
 | W144 | One phrase, two populations — the notice counts table LINES and the bound counts the ID SET, and both say *register rows* | framework agent | `todo` — `PO-48/10` | [`rows/W144.md`](rows/W144.md) |
 | W145 | A citation WRAPPED across a line break is unreadable to the predicate that reads citations, so one of the notice's own three declared gaps is inhabited and its uncited set carries a false member | framework agent | ✅ done — `410d171` | [record](BOARD-ARCHIVE.md#w145-a-citation-wrapped-across-a-line-break-is-unreadable-to-the-predicate-that-reads-citations-so-one-of-the-notices-own-three-declared-gaps-is-inhabited-and-its-uncited-set-carries-a-false-member) |
-| W146 | The commits-ahead notice compares the COUNT and never the TIP the same cell declares, so a reading TRUE at its own ref prints as a disagreement | framework agent | `todo` — `PO-50/12` | [`rows/W146.md`](rows/W146.md) |
+| W146 | The commits-ahead notice compares the COUNT and never the TIP the same cell declares, so a reading TRUE at its own ref prints as a disagreement | framework agent | ✅ done — `743af6a` | [record](BOARD-ARCHIVE.md#w146-the-commits-ahead-notice-compares-the-count-and-never-the-tip-the-same-cell-declares-so-a-reading-true-at-its-own-ref-prints-as-a-disagreement) |
 | W147 | A committed test asserts the In-flight table is INHABITED, so the shipped suite goes RED on a correct board when nothing is in flight | framework agent | ✅ done — `adab956` | [record](BOARD-ARCHIVE.md#w147-a-committed-test-asserts-the-in-flight-table-is-inhabited-so-the-shipped-suite-goes-red-on-a-correct-board-when-nothing-is-in-flight) |
 | W148 | The floor's document population is read off the DISK, so an untracked file makes a MAIN reading unreproducible from a worktree | framework agent | `todo` | [`rows/W148.md`](rows/W148.md) |
 | W149 | A merge subject's PROSE is re-derived against its record by nobody, and a subject cannot be annotated after it lands | framework agent | `todo` | [`rows/W149.md`](rows/W149.md) |
 | W150 | A citation into a file the document does not own, written as a BARE BASENAME, satisfies Ruling 163's letter and is strictly worse | framework agent | `todo` | [`rows/W150.md`](rows/W150.md) |
 | W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | framework agent | `todo` | [`rows/W151.md`](rows/W151.md) |
-| W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | `todo` | [`rows/W152.md`](rows/W152.md) |
+| W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [record](BOARD-ARCHIVE.md#w152-dockerdevcheck-re-exports-provenance-on-every-run-so-two-offices-read-different-shas-for-one-identical-environment) |
 | W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | framework agent | `todo` | [`rows/W153.md`](rows/W153.md) |
 | W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | framework agent | `todo` | [`rows/W154.md`](rows/W154.md) |
 | W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | `todo` | [`rows/W155.md`](rows/W155.md) |
@@ -293,6 +290,15 @@ they have exactly one home each.
 | W158 | The authoritative environment is structurally blind to the workspace assertions, so `green` names two different answers | framework agent | `todo` — `CTO-66/11` | [`rows/W158.md`](rows/W158.md) |
 | W159 | `Next rows` is the board's only undelimited table: no instrument reads it and the size bound gives it no term | framework agent | `todo` | [`rows/W159.md`](rows/W159.md) |
 | W160 | A live row's SURFACE is checked by nothing, so check 4's sub-step is undecidable and its one answer is a hand-maintained paragraph | framework agent | `todo` | [`rows/W160.md`](rows/W160.md) |
+| W161 | The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident | framework agent | `todo` — `NS-01/2` | [`rows/W161.md`](rows/W161.md) |
+| W162 | Ten gated assertions no routine environment reaches, and the skip's own stated ground is false whenever the image is already built | framework agent | `todo` — Ruling 332 | [`rows/W162.md`](rows/W162.md) |
+| W163 | `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which the row that fired its trigger landed beside and did not carry | framework agent | `todo` — `W128/6` | [`rows/W163.md`](rows/W163.md) |
+| W164 | A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently | framework agent | `todo` | [`rows/W164.md`](rows/W164.md) |
+| W165 | A cost figure over a GATED population carries its spread or only its sample, and one end of a 32x range decided a mode | framework agent | `todo` | [`rows/W165.md`](rows/W165.md) |
+| W166 | The standing SPLIT condition `tools/quality/board/verdict.py` is owed, third member inside one package | PO | `todo` — `CTO-67`/§6A-c | [`rows/W166.md`](rows/W166.md) |
+| W167 | The handoff check iterates the files that EXIST, so *the handoff is missing* is unreachable by construction | framework agent | `todo` — `CTO-67/10` | [`rows/W167.md`](rows/W167.md) |
+| W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | framework agent | `todo` — `CTO-67/11` | [`rows/W168.md`](rows/W168.md) |
+| W169 | Ruling 96's line has no named checkout, and its instrument answers `none` in every office tree and `stale` in one | framework agent | `todo` — `CTO-67/3` | [`rows/W169.md`](rows/W169.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -307,15 +313,10 @@ it.** ⭐ **The open set is whatever §R9 marks `open`.**
 
 | Open row | Owed before | Owner |
 |---|---|---|
-| **narration manifest** — no file, no version | `NS-02` / `SF-17` (M3) | CTO |
+| **narration regeneration state** — no file, no version | `SF-17` (M3 step 3.4) | CTO |
 | **coverage report** — no file | `EX-05` (M7) | CTO |
 
-⛔ **THE NARRATION MANIFEST IS DUE IN THE OPEN MILESTONE — `NS-02` is `M3 step 3.2`, OPEN, and
-`SF-17` is `3.4`** ([the reading](BOARD-ARCHIVE.md#m3-step-32-opens-both-rows-depend-only-on-a-merged-task-and-r21-is-what-separates-them)). ⚠️ **The coverage report is `M7` and is not.**
-⛔ **The reasoning — why R21 exists,
-what each closed row cost, and the ruling that a contract version is minted in
-the register of the document that carries the key — is
-[in the record](BOARD-ARCHIVE.md#r21-the-register-of-unlocated-contracts).**
+⛔ **NEITHER IS DUE IN AN OPEN STEP, AND THE ROW THAT WAS IS GONE FROM THE SET RATHER THAN SATISFIED** — ⭐ **Ruling 330 SPLIT *narration manifest* and located `NS-02`'s half at `consuming.json` / `provides`, which is not an §R9 row** ([the reading](BOARD-ARCHIVE.md#the-ns-02ns-03-ordering-ruled-the-edge-lands-and-ruling-330cs-pass-condition-is-satisfiable-for-only-one-of-two-named-contributors)).
 
 ## Standing decisions
 
@@ -330,6 +331,7 @@ here; the argument is in the record.**
 | ⛔ **Same form for `tools/quality/board/register.py`** — the next row touching it splits it, and R11's reading comes from `tools.quality` rather than from this cell. ⭐ **It INHERITS the condition `tools/quality/board/__init__.py` carried, which `W129`/`W130` PERFORMED and DISCHARGED** | [record](BOARD-ARCHIVE.md#po-round-47-the-first-nine-closes-under-ruling-270-the-wall-measured-gone-on-my-own-tree-and-the-empty-population-inhabited) |
 | ⛔ **Same form for `tests/visual/test_host_environment.py`, and it is a FOURTH member** — ruled [CTO round 62 §5](BOARD-ARCHIVE.md#w128-a-committed-verdict-may-not-depend-on-the-hosts-environment-ruling-225s-other-half-in-testsvisual), against the 600-line TEST ceiling, and the office disclosed it unprompted with its seam. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](handoffs/CTO-2026-09-11-round62.md#5-fixw128-visual-env-verdicts-the-acceptance-is-a-pair-of-readings-and-i-took-both-at-both-refs) |
 | ⛔ **NO `W` ROW DISPATCHES INTO A WAVE WHERE AN OPEN-STEP ROW IS DISPATCHABLE AND UNDISPATCHED** — ⭐ **and a step whose rows are ALL MERGED is not a step with no dispatchable row, it is a step awaiting a CLOSE, so the register closes it and opens the next BEFORE any `W` row is placed into that wave** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-landed-because-no-document-carried-it) |
+| ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A slot the open step cannot fill takes the queue head, and a wave leaving one EMPTY under this bound has mis-read it** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-and-a-queue-it-cannot-be-dispatched-into-the-bound-is-priority-not-exclusivity) |
 | ⛔ **Same form for `tools/quality/reach.py`, and it is a THIRD member** — `W133/4` as the reviewer widened it. ⭐ **`W133`'s taker NAMED the seam — the citation grammar as a sibling module — and correctly refused to cut it outside their surface.** ⚠️ **No count here** (Ruling 150's form, and Ruling 261: a ceiling is NOT a budget, so the next edit is a SPLIT rather than a trim) | [record](BOARD-ARCHIVE.md#w133-checkrulingsreachs-predicate-cannot-read-the-plural-comma-list-or-range-citation-form-and-a-checks-pass-condition-is-satisfiable-by-one-undeclared-spelling) |
 
 
@@ -353,14 +355,14 @@ board edit and not a developer's.**
 |---|---|---|---|---|
 | ⭐ **SK-07 generates the corpus graph** — built, **bridged**, with the R3-safe ignore file | framework agent | `discharged` — carried into `E11` | `SK-07` is authored | The highest graphify exposure converted into a generated artifact, closing an R19 hole in the same edit. ⚠️ Bridging is the part that would have been missed: a graph built by running the tool alone has **zero** doc↔code edges |
 | **SK-07 must not say "submodule"** | PO | `discharged` — `E11` corrected | `SK-07` is authored | R18's amendment reached the ruling but not the task that consumes it. The framework is a **sibling checkout at a recorded commit** |
-| **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | `discharged` — ⭐ **5 of 5 carry a `**Context**` budget in their epic, re-measured round 42** | M1 → M2 boundary, PASSED | Five tasks, not eighty-five. They are the discovery-shaped ones, where you do not know the name of the thing you are looking for — `query`'s weak case |
+| **Context headroom for SF-19a and SK-01/02/05/08** | PO, with CTO agreement | `discharged` — ⭐ **5 of 5 carry a `**Context**` budget in their epic, re-measured round 42** | M1 → M2 boundary, PASSED | Five tasks, not eighty-five — the discovery-shaped ones, which are `query`'s weak case |
 | **`Effort` field applied beyond the four named tasks** | PO | `fired` — ⚠️ **a STANDING trigger: it fires again and never discharges, and the closed set has no word for that** (`PO-42/4`) | as each computation-shaped task is assigned | ✅ The field exists (`README.md`), and `SF-07` and `FND-02` carry it. ⛔ Do not backfill; add it when a task is assigned and its shape is known |
-| ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | `discharged` — re-taken round 38 at `c18df98c`, 23 of 23 carrying a marker AND a disposition | ⛔ **EXPIRED trigger — it named M1's wave open, and M1 CLOSED at `2fe56a4`** | ⭐ **The work discharged itself round by round while this cell could not say so. That is `W100`'s founding case, and this row is now the proof the column was needed** |
+| ⛔ **Back-triage the 23 pre-marker findings** — `FND-01` (5), `FND-02` (8), `FND-04` (10) | **PO** | `discharged` — re-taken round 38 at `c18df98c`, 23 of 23 | ⛔ **EXPIRED trigger — it named M1's wave open, and M1 CLOSED at `2fe56a4`** | ⭐ **It discharged itself round by round while this cell could not say so: `W100`'s founding case** |
 | ⛔ **The `ISO-8583-jPOS-tutorial` pin is NOT advanced** | PO | `pending` | the ISO track reaches one of its TWO finish lines (Q18) | ⛔ **Advancing a pin ASSERTS the new HEAD is intended.** The component ADVANCED rather than diverged — the pin is still an ancestor — and the track is `in-progress`, so re-pinning now pins a moving target. ⚠️ **And the only environment that can SEE a stale pin is the one Ruling 40 does not make authoritative** (Ruling 216) |
-| ⛔ **`NS-01` — the DECLINE is LIFTED** | PO | `discharged` — ⭐ **round 51; `NS-01` is DISPATCHABLE and is a PAIR task** | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **TRUE; the trigger has FIRED** | ⛔ **All four stated grounds are false or discharged** — [the ruling](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written) |
-| **R21's open rows** | CTO | ⛔ **`fired`** — ⭐ the narration manifest's named task `NS-02` is in the OPEN step; `pending` for the coverage report | each before its named task builds | ⛔ **POINTER, not a second copy — the open set is `## R21` above, and that section resolves from spec §R9.** ⚠️ **The narrative this replaces typed a COUNT that disagreed with `## R21` on the same board** — ⭐ **re-taken round 38 against §R9's own table and routed to the CTO, whose register it is** |
-| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`; all five closed GREEN in one run** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **RULING 288 AMENDED 282 AND THIS CELL: the CHANGES-REQUESTED cause it named is REFUTED.** ⭐ **[The discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
-| ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | `pending` — ⭐ **the OBSERVER HAS ARRIVED: `W152` names `docker/dev/` and is queued** ⛔ **the clause that read *NO live row names `docker/dev`* was true when written and is DATED by that mint, never wrong** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`. Both clauses of the block refusing a `STUDYFORGE_VISUAL=required` default are false of the tree; the conclusion is still right** |
+| ⛔ **`NS-01` — the DECLINE is LIFTED** | PO | `discharged` — ⭐ **round 51, and `NS-01` MERGED at `0fcb6b4`** | ⛔ **`W126` merged AND ≤1 developer branch live** — ⭐ **TRUE; the trigger FIRED** | ⛔ **All four stated grounds false or discharged** — [the ruling](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written) |
+| **R21's open rows** | CTO | ⛔ **`pending`** — ⭐ **round 53: the half that had fired was `NS-02`'s, and Ruling 330 DISCHARGED it by locating the contract rather than by minting one; neither surviving row is due in an open step** | each before its named task builds | ⛔ **POINTER, not a second copy — the open set is `## R21` above, and that section resolves from spec §R9** |
+| ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` landed at `94a3a4b`; all five closed GREEN in one run** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell.** ⭐ **[The discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
+| ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | ⛔ **`fired` AND NOT MET** — ⭐ **`W152` owned it and merged at `3049de9` without carrying this; `W163` does** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`; the conclusion stands and the reasoning does not** |
 | ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `pending` — ⭐ **OPEN AND NAMED, never open and silent** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
 <!-- /scheduled -->
 

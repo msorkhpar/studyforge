@@ -17319,3 +17319,230 @@ role wt/po, pinned container, ONE invocation, PO round 51's tree
 [the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
 
 ⭐ **CLOSED — merged at `adab956`, re-derived on the first-parent chain of `7420c34` by the round-52 register** (CTO: APPROVE).
+
+## PO round 53 — `W146` and `W152` closed against a re-derived predicate, the `NS-02` → `NS-03` edge landed so the open step stops offering a row nobody can take, the dispatch bound given the capacity clause its own wave proved it needed, and a reading a live ruling forbids me to take corroborated without taking it
+
+⛔ **EVERY READING IN THIS RECORD: ref `0564997`, role `wt/po` (`chore/po-round53`), environment HOST, unless the reading names another one on its own line** (Ruling 326). ⚠️ **`python3 -m tools.workspace verify` is HOST-verified and answers `2` inside the pinned container by construction; the floor and the suite below are the pinned container's. ⛔ Four instruments, four environments, named one at a time — the coordinator's `/32` is the defect that form exists to avoid.**
+
+⭐ **AUTHOR LINE, DECLARED (Ruling 296): every commit on `chore/po-round53` is authored `po <po@example.invalid>`.**
+
+### `W146` and `W152` — the close run at `0564997`, both merges re-derived and the predicate run rather than inherited
+
+⛔ **Ruling 97: a close is a set of measurements at ONE named ref, and no row is inherited across a ref change.** ⭐ **The coordinator supplied both merge shas; NEITHER was taken on trust, and the TERMINAL predicate is Ruling 199's shape `C` — the ABSORBED-tip set read off the commit graph — rather than the merge subject, which is only its corroborator:**
+
+```text
+git log --first-parent --format='%h %s' 0564997 | grep -nE 'Merge fix/(W146|W152)'
+   3:3049de9  Merge fix/W152-check-provenance:   … (CTO: APPROVE)
+   4:743af6a  Merge fix/W146-observation-verdict: … (CTO: APPROVE after changes)
+
+⭐ predicate C, run over both, against the absorbed-tip set of 0564997's own merge list:
+   fix/W146-observation-verdict   tip 9cb8564   absorbed=1   ahead=0   checked out nowhere
+   fix/W152-check-provenance      tip df6979d   absorbed=1   ahead=0   checked out nowhere
+```
+
+⭐ **Both TERMINAL, both merged, both `done`.** ⛔ **The two rows read RED at the release tip through the whole of wave 6 and that red was CORRECT** — `SESSION-2026-09-11c/18`: the round that AUTHORISES a dispatch cannot also RECORD it, so round 52 could not close rows it had just written. ⚠️ **This is the round that can, and the gate it is measured against is Ruling 279's — `git rev-parse chore/po-round53`, this branch's own tip, and never the release tip.**
+
+### Wave 7's dispatch, and the observation table MEASURED against a non-`W` row rather than argued about
+
+⛔ **The coordinator dispatched ONE developer this wave: `NS-03`, on `feat/NS-03-engine-adapters`, at checkout `wt/dev1`, cut at `0564997`.** ⭐ **Recorded in Ruling 246's form (`n @ <branch tip>`, `<branch> @ <checkout>`) inside Ruling 196's delimiters.**
+
+⚠️ **`NS-01/2` — filed against the coordinator by the previous developer — is that the In-flight table did not name `NS-01`, an EPIC task rather than a `W` row. `NS-03` is the same shape, and the coordinator correctly said they could not rule from where they stood. ⭐ IT IS MEASURABLE, AND HERE IS THE MEASUREMENT:**
+
+```text
+python3 -m tools.quality.board.corroborate     role wt/po, ref 0564997, env HOST
+  1 observation rows, 0 naming a `W` row id, 1 declaring a started state, 1 with a checkout
+  row -> branch (ASSERTION): `NS-03` claims feat/NS-03-engine-adapters, wt/dev1
+    ⭐ CORROBORATED: … is checked out at dev1 and is 0 commits ahead.
+    commits ahead: the row claims 0, git reads 0 — AGREE.
+  dispatched and unnamed: none.
+  invisible to git BY CONSTRUCTION …: 0        ⛔ dev1 was 1 before this row existed
+CORROBORATE_EXIT=0
+```
+
+⭐ **THE TABLE ADMITS IT, JUDGES IT, AND THE PRE-MERGE GATE STOPS BEING BLIND TO `dev1`.** ⛔ **The mechanism, read from the shipped code rather than from the output: `_observation()` keys a row on the DELIMITER and the declared header and never on the subject's spelling, so `ids` comes back EMPTY and nothing downstream needs it — `claim()` reads the CHECKOUT cell, and `bounds.allowance()` counts DELIMITED observation rows rather than `W` ids, so the row earns its 160-byte term like any other.** ⚠️ **The one figure that moves is the notice's own *naming a `W` row id*, from `2 of 2` to `0 of 1`, and it is a description rather than a verdict.**
+
+⛔ **SO `NS-01/2` IS DISCHARGED BY MEASUREMENT AND OWES NO CODE.** ⭐ **The residual is real and is NOT the same defect: a `W` row's argument lives in `rows/<ID>.md` and an epic task's lives in its epic, and NO instrument says so — `board-orphan` and the bijection are keyed on `W`, so an epic task in this table is exempt by accident rather than by rule.** ⭐ **Minted as `W161`.**
+
+### The `NS-02`/`NS-03` ordering, RULED — the edge lands, and Ruling 330(c)'s pass condition is satisfiable for only ONE of two named contributors
+
+⛔ **THE ROUTING IS `CTO round 67`'s and the authority is already in the tree, so this round CONFIRMS rather than invents.** ⭐ **Every line re-derived from `grep -n` at `0564997` rather than inherited from the brief:**
+
+```text
+docs/tasks/README.md:214                       - **3.2** — NS-02, NS-03
+docs/tasks/E13-narration-service.md:64         NS-02 … Depends on NS-01
+docs/tasks/E13-narration-service.md:93         NS-03 … Depends on NS-01
+docs/tasks/E13-narration-service.md:37         "…the profiles (NS-03) and the voice catalogue (NS-04)"
+docs/tasks/E13-narration-service.md:114        NS-04 … Depends on NS-02
+docs/specs/…-v1-design.md:473                  "The edge is owed in `E13` before step 3.2
+                                                dispatches `NS-02`" (Ruling 330(c))
+```
+
+⛔ **RULED: THE EDGE LANDS. `NS-02` now reads `Depends on NS-01, NS-03`.** ⭐ **It is not a new decision — Ruling 330(c) is a CTO ruling standing in `docs/conventions/review-rubric.md:5633` and in spec §R9, and a register that declined it would be overruling a ruling from the one surface it does own.**
+
+⚠️ **AND THE PART THE ROUTING GOT WRONG, WHICH IS WHY IT WAS WORTH RE-DERIVING RATHER THAN APPLYING.** ⛔ **Ruling 330(c)'s pass condition reads *locate the version key's own FILE, then read WHICH TASK lands it … that task is an ancestor of the building task*. `consuming.json` is landed by TWO tasks by `E13:37`'s own words — `NS-03` AND `NS-04` — and `NS-04` ALREADY DEPENDS ON `NS-02` (`E13:114`).** ⭐ **So the clause applied literally to both named contributors demands a CYCLE, and it is satisfiable for exactly one of them.**
+
+⛔ **THE RESOLUTION, and it is a distinction the clause does not yet carry: what `NS-02` needs is the KEY'S FILE TO EXIST, not the file to be COMPLETE.** ⭐ **`NS-03` creates it; `NS-04` amends it; the edge goes to the CREATOR and to nobody else, and the direction is now stated in `E13`'s preamble rather than left to be inferred from whichever row dispatched first.**
+
+⛔ **AND A THIRD CONTRIBUTOR RULING 330 CREATED AND `E13:37` DOES NOT NAME.** ⚠️ **`NS-02`'s manifest is versioned by `provides` — that is Ruling 330(b) — so `NS-02` writes into `consuming.json` too, and *"both must contribute their half"* was a complete claim only while the manifest had nowhere to be versioned.** ⭐ **Landed in `E13`'s preamble in the same edit, because a register that lands an edge and leaves the sentence the edge contradicts has moved the defect rather than closed it.**
+
+⚠️ **THE FORWARD CONSEQUENCE, STATED SO NO WAVE HAS TO REDERIVE IT: `NS-02` is now NOT dispatchable while `NS-03` is undelivered.** ⛔ **`M3 step 3.2` therefore holds ZERO dispatchable-and-undispatched rows for as long as `NS-03` is in flight, and the bound at `BOARD.md`'s *Standing decisions* does not bite in that window.**
+
+### The coordinator's one-developer ground — CONCLUSION UPHELD, GROUND CORRECTED, and the correction is the point
+
+⛔ **The coordinator asked to be checked and named the risk themselves (`SESSION-2026-09-11c/12`: justifying an idle developer on a reading never taken).** ⭐ **Every premise re-taken at `0564997`, role `wt/po`, env HOST:**
+
+```text
+E13:44                          NS-01 Owns "`narrate-service` — the repository"      ⭐ TRUE
+ls -d …/narrate-service*        exactly ONE path                                     ⭐ TRUE
+tools/workspace/__main__.py:57  workspace_root() = git-common-dir's grandparent       ⭐ TRUE
+python3 -m tools.workspace verify   HOST: VERIFY_EXIT=1, only the board-held ISO pin  ⭐ TRUE
+```
+
+⭐ **SO THE CONCLUSION IS RIGHT AND THE READING IS SOUND.** ⛔ **THE GROUND IS STILL THE WRONG ONE, in two ways that both matter forward:**
+
+1. ⛔ **IT IS A DISK READING WHERE A DOCUMENTARY ONE EXISTED UNREAD.** ⚠️ *"`ls` returns one path"* is true today and is one `git worktree add` away from being false; **`E13:37` plus Ruling 330 make `NS-02` and `NS-03` both writers of `consuming.json`, which is a FILE-level collision declared in the epic and the spec.** ⭐ **A dispatch ground that a second checkout can falsify is not the ground to record.**
+2. ⚠️ **THE EPIC'S OWN `Owns` CELLS SAY THE OPPOSITE, and nobody cited them.** ⛔ **`NS-02` Owns *the job API and the artifact store* (`E13:65`); `NS-03` Owns *the engine adapter interface, the CPU and GPU profiles* (`E13:94`) — DISJOINT as declared.** ⭐ **The collision is found only by going BELOW `Owns` to the checkout, which is Ruling 331's shape arriving at an EPIC task instead of a `W` row: the declaration cannot express *shared repository*, so disjointness by `Owns` is `0 = 0`.**
+
+⭐ **AND ONCE THE EDGE LANDS THE WHOLE ARGUMENT IS MOOT: `NS-02` is not dispatchable at all, so one developer follows from the DEPENDENCY GRAPH — which no second checkout can falsify — rather than from a `ls`.** ⛔ **Recorded as `PO-53/1` against the coordinator: the conclusion stands, the ground is replaced, and the replacement is the one their own routed question was about.**
+
+### The dispatch bound and a queue it cannot be dispatched into — the bound is PRIORITY, not EXCLUSIVITY
+
+⛔ **THE QUEUE, MEASURED, because the figure in circulation is of the wrong population:**
+
+```text
+docs/tasks/BOARD.md:85   the `Next rows` header line
+  ordinals  23        ⛔ the number three briefs and this round's own have quoted
+  row ids   29        ⭐ the number the table is KEYED BY — position 5 is `W105`–`W109`
+                         and position 6 is `W116` → `W117` → `W118`
+```
+
+⚠️ **`BOARD.md`'s own note says *THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL* and *this table carries NO COUNT*, and a count of ordinals quoted as a count of rows is `W141`'s class exactly.** ⭐ **`PO-53/2`, against the coordinator, and against my own brief which inherited it.**
+
+⛔ **NOW THE BOUND.** ⚠️ **In wave 7 the open step offered ONE dispatchable row and the bound forbade every one of the 29 queued rows, so a second slot could be filled by nothing at all.** ⭐ **That is not the bound working; it is the bound read as EXCLUSIVITY when it was minted as PRIORITY.** ⛔ **Its founding argument is that milestone work precedes backlog work — which is a rule about WHICH ROW TAKES A SLOT, and says nothing about a slot no open-step row can take.**
+
+> ⛔ **AMENDED: the bound binds a SLOT AN OPEN-STEP ROW COULD HAVE TAKEN, and never a slot no open-step row can fill.** ⭐ **A wave that leaves a slot EMPTY under this bound has mis-read it, and the emptiness is the finding.**
+
+⚠️ **The amendment is DELIBERATELY not a capacity number, and that is Ruling 150's form: a count of developers is a fact about this week.** ⛔ **And it does not weaken the priority half by one byte — an open-step row still takes precedence over every queued `W` row for any slot it CAN fill.** ⭐ **What it removes is the reading under which a starved queue and an idle slot are simultaneously compliant.**
+
+⚠️ **This round is the wrong round to test it: with the `NS-02` → `NS-03` edge landed, the open step holds zero dispatchable-and-undispatched rows while `NS-03` is in flight, so wave 8's `W` rows are admitted by the ORIGINAL clause and need no amendment.** ⭐ **The amendment is for the configuration wave 7 actually met, which will recur the moment a step offers fewer dispatchable rows than there are slots.**
+
+### The three relayed items — and the one I am forbidden to take is corroborated without taking it
+
+⛔ **RELAY 1 — Ruling 332's residual, measured GREEN by a peer session.** ⚠️ **I was asked to verify it. ⛔ I MAY NOT: Ruling 332 stands in `docs/conventions/review-rubric.md` and rules that an office setting `STUDYFORGE_DOCKER_TESTS=1` is running the thing the suite declares a test run must not do.** ⭐ **`PO-53/3`, against the coordinator: a round cannot be asked to verify a reading a live ruling forbids it to take.** ⭐ **SO I CORROBORATED EVERYTHING BUT THE VERDICT, AND THE FLAG WAS NEVER SET:**
+
+```text
+role wt/po, ref 0564997, env HOST, STUDYFORGE_DOCKER_TESTS UNSET
+
+python3 -m pytest --collect-only -q tests/docker/            113 collected
+python3 -m pytest -q -rs tests/docker/                        96 passed, 17 skipped
+  ⭐ 96 + 17 = 113, and the peer's WITH-flag half is 106 + 7 = 113 — SAME DENOMINATOR
+gated skips, weighted by their [n] groups                     10
+per-file, each selected alone:  test_dev_image 5 · test_dev_check_timeout 4
+                                · test_dev_provenance 1                     = 10
+```
+
+⭐ **So the population (113), the without-flag half (96/17) and the gated set (10) all reproduce exactly. The ONE thing not corroborated is that the ten PASS, and that is precisely the clause the ruling reserves.**
+
+⛔ **AND THE `9` vs `10` IS RECONCILED, WHICH NEITHER OFFICE HAD DONE.** ⚠️ **`CTO round 67` §3 measured NINE at `7420c34`. `test_dev_image.py` is BYTE-IDENTICAL at both refs (`05a6963` at each), so the delta is not that file:**
+
+```text
+gated TESTS      7420c34: 5 + 4 + 0 = 9      0564997: 5 + 4 + 1 = 10
+gate CALL SITES  7420c34: 4 + 4 + 0 = 8      0564997: 4 + 4 + 1 =  9
+```
+
+⛔ **`CTO-67`'s nine is a count of gated TESTS and it was TRUE AT ITS OWN REF; the population grew by one when `W152` merged its own gated test.** ⭐ **DATED, not wrong** (Ruling 310(b), `CTO-62/2`). ⚠️ **The coordinator's later rehabilitation — *"nine is a true count of call sites; ten is the count of gated tests"* — lands on the right number by the wrong route: call sites at `7420c34` were EIGHT, and adopting it attributes to the reviewer an instrument they did not use.** ⭐ **`PO-53/4`, against the coordinator, and it is a correction to a correction.**
+
+⛔ **AND THE RESIDUAL THE RULING RESERVED IS NOW WORSE-EVIDENCED, NOT BETTER.** ⚠️ **The skip's own reason is *"the build needs network; a test run must not"*. The peer's run had the image ALREADY BUILT and network untouched — so the reason's premise did not obtain, and the gate refused a run that was never going to do the thing the reason forbids.** ⭐ **A gate whose stated ground is false in the ordinary case is a gate nobody can reason about. Minted as `W162`; the RULING is the CTO's to amend and this round does not touch the rubric.**
+
+⛔ **RELAY 2 — the peer's SPREAD clause, and its own headline is an instance of the defect it names.** ⭐ **The clause is right and I adopt it as the residual's framing:** *a cost figure over a gated population carries its spread, or it carries only its sample.* ⚠️ **I could not take the timings — same ruling — so I checked the arithmetic instead, which needs no run:**
+
+```text
+relayed per-test: 1 × 1.09 s  +  4 × 9.5 s  +  5 × 34.7 s  =  212.59 s
+relayed marginal for the whole directory                   =  215.75 s
+⭐ 1.5% apart — the per-file figures and the directory figure CORROBORATE each other
+
+⛔ but the relayed headline: "~160x spread"
+   34.7 / 1.09    =  31.8x     ⭐ the PER-TEST spread the table is labelled with
+   5×34.7 / 1.09  = 159.2x     ⛔ a FILE-TOTAL ratio, quoted against a per-test table
+```
+
+⭐ **`PO-53/5`, against the coordinator: the headline is off by 5× because it silently changes population mid-sentence — which is the clause's own subject, demonstrated in the sentence that proposes it.** ⛔ **Adopted anyway, and mint `W165` carries it, because a clause is not refuted by its author's arithmetic.**
+
+⚠️ **And `/37`'s clause is UPHELD and independently reproduced: a gate is not only where it is CALLED.** ⛔ **`grep -n` at `0564997`: the session fixture `dev_image` is declared at `:503`/`:504` and calls the gate at `:506`; its two consumers are at `:515` and `:521` and call nothing.** ⭐ **Four call sites, five gated tests, and `grep` cannot see the fixture edge. Minted as `W164`.** ⚠️ **`PO-53/6`, against the coordinator: the three line numbers relayed for exactly this — `:502`, `:514`, `:520` — are EACH ONE LESS than `grep -n`, and `test_dev_provenance.py`'s gate is at `:357`, not `:348`. A clause about the limits of `grep` was relayed with four line numbers that were not taken from it.**
+
+⛔ **RELAY 3 — `wt/po-int`, and the ground is written down so the next office does not re-derive it.** ⭐ **Verified rather than inherited:**
+
+```text
+git worktree list          …/studyforge-wt/po-int   798956c   (detached HEAD)
+BOARD.md                   `W73` … INTEGRATION side … in-progress — taken, re-pointed
+798956c                    M2 step 2.3's own close ref
+corroborate's four lines   ⛔ po-int appears in NONE of them — it has no branch line
+                              for `graph.checkouts()` to read
+```
+
+⭐ **THE GROUND IS `W73`, IN FLIGHT ON THE INTEGRATION SIDE — not a presumed owner, and not a peer session, which states it has never created a worktree in any repository.** ⛔ **The structural half is already routed: `unclaimed.py`'s own docstring names the detached hole as `PO-44/5`'s and `W125`'s, and `W73` is a stand-in `corroborate` excludes BY NAME (`CTO-49/4`).** ⚠️ **So this tree is invisible to the instrument twice over, on two independently-routed grounds, and survives on a ground nothing records.** ⭐ **No new row: `W125` owns the instrument and `W153` owns the naming; the GROUND is recorded here, which is what was asked.**
+
+### The nine mints — and FIVE of them are `CTO round 67`'s own routings, which reached NO row
+
+⛔ **MEASURED before minting, at `0564997`:** `grep` over `BOARD.md` and `docs/tasks/rows/` returns **0** for `STUDYFORGE_DOCKER_TESTS`, `CTO-67/3`, `CTO-67/10`, `CTO-67/11` and for any row naming `tools/quality/board/verdict.py`. ⭐ **`CTO round 67` §8 item 5 routed SIX mints to the register; exactly ONE (Ruling 331's, absorbed by `W160`) had a home.** ⚠️ **Round 52 could not have taken them — the reviewer wrote §8 while reviewing that round's own branch — so they are this round's, and a second round without them would be `W126`'s founding case with the ruling number changed.**
+
+| Row | Its origin | What it is |
+|---|---|---|
+| `W161` | `NS-01/2`'s residual, this round | an epic task in the In-flight table has no `rows/<ID>.md` and no instrument says where its argument lives |
+| `W162` | `CTO-67` §8/5, Ruling 332 | ten gated assertions no routine environment reaches, and the skip's own stated ground is false on a warm cache |
+| `W163` | this round, from a `fired`-and-not-met trigger | `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which `W152` landed beside and did not carry |
+| `W164` | the coordinator's `/37` | a gate is not only where it is called: a fixture propagates it and `grep` cannot see propagation |
+| `W165` | the peer's clause | a cost figure over a gated population carries its spread, or it carries only its sample |
+| `W166` | `CTO-67` §8/5 | the standing SPLIT condition on `tools/quality/board/verdict.py`, with `W155`'s near-ceiling reading |
+| `W167` | `CTO-67/10` | the one instrument enforcing the handoff contract cannot see an ABSENT handoff |
+| `W168` | `CTO-67/11` | the trial-merge wrapper clause |
+| `W169` | `CTO-67/3` | the knowledge-index floor line is worktree-blind, so a defect is visible in one checkout on the host |
+
+⛔ **AND A DEFECT IN THE TRIGGER FORM, FOUND BY DISCHARGING ONE.** ⚠️ **The `## Scheduled` cell for `docker/dev/compose.yaml` names its act as *whichever row next owns `docker/dev/**`*. `W152` was that row and it merged — so the trigger FIRED — but it edited the file's HEADER and not the `STUDYFORGE_VISUAL` block the item is about.** ⭐ **A trigger discharged by a ROW LANDING can fire without being MET, which is Ruling 185(a)'s memory-discharged remedy wearing Ruling 288's clothes.** ⛔ **The cell now reads `fired` AND NOT MET, and `W163` carries what the firing did not.** ⚠️ **`PO-53/7`, against this office, because the register wrote that trigger.**
+
+### ⛔ FINDINGS, BY ID
+
+- **`PO-53/1`** — against the coordinator. The one-developer ground is a DISK reading (`ls` returns one path) where a DOCUMENTARY one existed unread, and the epic's own `Owns` cells declare the two rows DISJOINT. ⭐ **Conclusion upheld; ground replaced by the dependency edge.**
+- **`PO-53/2`** — against the coordinator, and against my own brief which inherited it. *"A 23-row queue"* counts ORDINALS; the table is keyed by ROW ID and holds **29**.
+- **`PO-53/3`** — against the coordinator. I was asked to verify a reading Ruling 332 forbids this office to take. ⭐ **Corroborated by denominator, without-flag half and gated set instead; the flag was never set.**
+- **`PO-53/4`** — against the coordinator. The `9` → `10` rehabilitation reaches the right number by the wrong route: call sites at `7420c34` were EIGHT, and the real reconciliation is a REF change, `W152`'s own gated test.
+- **`PO-53/5`** — against the coordinator. *"~160x spread"* is a file-total ratio quoted against a per-test table; the per-test spread is **31.8x**.
+- **`PO-53/6`** — against the coordinator. Four line numbers relayed with a clause about the limits of `grep`, and none came from `grep -n`: `:502`/`:514`/`:520` are each one low, and `:348` should be `:357`.
+- **`PO-53/7`** — against this office. A `## Scheduled` trigger whose act is *whichever row next owns X* fires when the row lands, not when the correction happens, so it can fire unmet. Measured on the register's own cell.
+- **`PO-53/8`** — against this office. **The board went OVER its own size bound the moment two closes and one dispatch were recorded, before a single mint**, and it took seven separate trims to land inside it. ⭐ **Measured, role `wt/po`, ref `0564997`, env HOST:**
+
+```text
+after the two closes + the dispatch, before any mint   56088 of 55392   ⛔ 696 OVER
+after the nine mints                                   58095 of 57408   ⛔ 687 OVER
+after seven trims of argument-into-this-record         57364 of 57408   ⭐ 44 UNDER
+```
+
+⛔ **The remedy was legitimate and is the board's own closing rule — an argument goes behind a pointer — but a register round that must trim SEVEN passages to record its own work is the reading.** ⚠️ **`Next rows` is `29` rows earning ZERO allowance term, which is `W159`'s subject and now has a second, quantified witness.** ⭐ **And the shape is structural rather than incidental: a CLOSE costs bytes and earns none (a `todo` cell becomes `✅ done — <sha>` and a 30-byte `rows/` link becomes a ~190-byte archive anchor), while a MINT is roughly allowance-neutral. ⛔ So the bound penalises exactly the act it should reward, and `W144`'s *one phrase, two populations* is the neighbour.**
+
+### ⚠️ THE NINE MINTS ARE NOT PLACED IN `Next rows`, AND THAT IS A DECISION
+
+⛔ **A *Next rows* placement is a promise about a SLOT.** ⭐ **The queue already holds 29 rows that the bound at *Standing decisions* forbade every one of in wave 7, and adding nine more promises to a queue nothing can be dispatched into would be the exact reading this round's amendment refuses.** ⚠️ **They are `todo` in the register, which is a complete state; a placement is owed when a wave can take one, and Ruling 75 binds only a row scheduled AHEAD of an older one.** ⛔ **Recorded here so a successor does not read the absence as an omission** (`W111`'s clause, one table over).
+
+### W146 — The commits-ahead notice compares the COUNT and never the TIP the same cell declares, so a reading TRUE at its own ref prints as a disagreement
+
+⛔ **`PO-50/12`. Ruling 246 put a tip into the commits-ahead cell so the reading would carry its own as-of, and the one instrument that read that cell parsed the number and threw the tip away** — ⭐ **so a cell TRUE when written and a cell WRONG when written printed the same sentence.**
+
+⭐ **THE MINT READING, taken by the register at `504bb47`, role `wt/po`: three re-takes of one pair of cells in one round, all three case (b) — true at their own declared ref and printed as a disagreement.** ⛔ **The remedy was NEVER a change of verdict: `PO-42/7` rules a count disagreement a NOTICE and never a refutation, and this row asked the NOTICE to say more.**
+
+⭐ **WHAT LANDED, and the reviewer re-derived rather than accepted it:** the declared tip is parsed beside the count in `observation.py` — ⛔ **one cell, one grammar, one reader** — and resolved in the verdict, so case (b) reads `DATED` and only a cell false at its OWN tip reads as a disagreement. ⚠️ **`DATED` and never `stale`, `refuted` or `wrong`** (Ruling 310(b), `CTO-62/2`). ⭐ **Asserted in BOTH directions (R12), and the branch's own control plant found a latent count read out of a sha that would have silenced the contradiction rule.**
+
+⛔ **AND THE ORDERING IS THE PART WORTH KEEPING.** ⚠️ **Merged SECOND, after the register, its new code fired on a real In-flight cell at the release tip. Merged FIRST it would have proved nothing while looking green — `W24`'s and `W147`'s founding defect arriving by ORDERING rather than by authorship** (Ruling 305, `CTO-67/8`).
+
+⭐ **CLOSED — merged at `743af6a`, re-derived on the first-parent chain of `0564997` and TERMINAL under Ruling 199's predicate `C`** (CTO: APPROVE after changes; the one item was the absent handoff, and `CTO-67/14` re-attributed it to the brief that forbade one).
+
+### W152 — `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment
+
+⛔ **Ruling 317's durable repair, routed as a row rather than patched: twelve `docker/dev/check` invocations over five trees, every step cached, exported TWELVE DISTINCT values for the attestation manifest and the manifest list while config and manifest were identical in all twelve.**
+
+⛔ **THE ROW'S OWN NAMED REMEDY WAS REFUTED BY ITS TAKER AT THE TOOLCHAIN, which is the outcome worth recording.** ⚠️ **`build: provenance: false` in `compose.yaml` is INERT — Compose accepts and normalises it and the attestation manifest is still exported and still moves, through `run --build`, through `build`, and through `COMPOSE_BAKE`.** ⭐ **`BUILDX_NO_DEFAULT_ATTESTATIONS=1`, exported by the wrapper, works and shipped — held by a TEST rather than by a comment, and the inert key is asserted ABSENT so a decoration that reads like the fix cannot land later.**
+
+⭐ **CONFIRMED AT THE TIP BY THREE OFFICES IN THREE CHECKOUTS:** `docker image inspect --format '{{.Id}}'` reads one identical digest for the taker, the reviewer and the coordinator — ⚠️ **and Ruling 317 named `{{.Id}}` as the command that surfaces the WORSE of the four digests, which is why that is the reading worth quoting.** ⛔ **The PINS stay the identifier: a stable sha is QUOTABLE, never authoritative.**
+
+⚠️ **WHAT THIS ROW ALSO DID, AND IT IS THIS ROUND'S BUSINESS: it shipped a gated test.** ⛔ **`test_dev_provenance.py`'s one gated assertion is the TENTH member of the `STUDYFORGE_DOCKER_TESTS` population, which is why `CTO round 67`'s nine and this round's ten are the same instrument at two refs.** ⭐ **It is also the cheapest proof that the mode is not expensive — `1.09 s` for a gated test that starts a container twice — and `W162` carries the residual.**
+
+⭐ **CLOSED — merged at `3049de9`, re-derived on the first-parent chain of `0564997` and TERMINAL under Ruling 199's predicate `C`** (CTO: APPROVE).
