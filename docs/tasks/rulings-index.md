@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **337 rulings, `1`–`337`, derived from 55 ruling records** —
+⭐ **338 rulings, `1`–`338`, derived from 55 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -382,3 +382,4 @@ procedure.
 | 335 | (b) Ruling 335 — a half-completed two-half contract falsifies every live sentence asserting the whole was absent, and this is now a RULE rather than an incident | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#b-ruling-335-a-half-completed-two-half-contract-falsifies-every-live-sentence-asserting-the-whole-was-absent-and-this-is-now-a-rule-rather-than-an-incident) |
 | 336 | (c) Ruling 336 — the personal-data gate's population, ruled on the coordinator's routed question | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#c-ruling-336-the-personal-data-gates-population-ruled-on-the-coordinators-routed-question) |
 | 337 | (d) Ruling 337 — where `/34`'s and `/37`'s clauses belong | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#d-ruling-337-where-34s-and-37s-clauses-belong) |
+| 338 | ⛔ Ruling 338 — a BOUNDED file's correction cost, and `PO-53/8`'s wide form is REFUTED by its own span | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#ruling-338-a-bounded-files-correction-cost-and-po-538s-wide-form-is-refuted-by-its-own-span) |

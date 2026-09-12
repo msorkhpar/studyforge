@@ -5847,3 +5847,35 @@ reads as diligence.**
 # fires when a REVIEWER accepts a figure belongs HERE, because this is the document a reviewer
 # reads before ruling and the board is not.
 ```
+
+### ⛔ Ruling 338 — a BOUNDED file's correction has a cost the REQUIRING reviewer does not see, and "it cannot absorb its own corrections" is refuted by measuring the span
+
+⛔ **The charge routed to CTO round 68 was that `BOARD.md` *"cannot absorb its own mandated
+corrections"*: a required one-cell fix put it 60 bytes over its bound and paying for it cost
+four argument-to-pointer trims nobody asked to lose.** ⭐ **MEASURED over the span the charge
+itself names, `git cat-file -s <ref>:docs/tasks/BOARD.md`:**
+
+```text
+7e331a4   content 57364   bound 57408   headroom 44     ⭐ before the required change
+cd529c1   content 57792   bound 57856   headroom 64     ⭐ after it, and after the repair
+                   +428          +448            +20
+```
+
+⛔ **The board ended with MORE headroom than it began with.** The bound scales at 224 bytes per
+register row and the round minted two rows over the same span, so the ceiling rose faster than
+the content. ⭐ **REFUTED at that width (Ruling 329), and it is refuted by the charge's own
+span rather than by an appeal to a different one.**
+
+⭐ **THE NARROWER THING IS TRUE.** The transient overflow was real, and what paid for it was
+**argument prose in cells unrelated to the correction** — ⚠️ **a cost the requiring reviewer
+neither sees nor bears**, and `CTO-68/4` (a trim that removed the last pointer to a record
+section) is what it looks like when that payment goes wrong.
+
+```bash
+# Pass: a reviewer requiring a change to a BOUNDED file states the byte DIRECTION of the
+# requirement. Where payment must come from content unrelated to the correction, the office
+# REPORTS the trims alongside the correction rather than absorbing them silently, and no trim
+# removes the last pointer to a record section.
+# ⛔ A claim that a bounded file cannot absorb a correction is measured ACROSS THE SPAN, bound
+# and content together — a bound that scales with a population moves while the content does.
+```
