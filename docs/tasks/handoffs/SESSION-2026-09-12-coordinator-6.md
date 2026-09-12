@@ -129,6 +129,20 @@ that; do not re-derive it.** All six items are answered there.
    own verb, `studyforge narrate`. The record and clips are INPUTS. Order is
    narrate → build, and a narrate AFTER a build is answered by a REBUILD.
 
+## ⚠️ WHAT A SUCCESSOR WILL SEE FIRST, AND IT IS NOT A DEFECT
+
+⛔ **`corroborate` at the release tip reads RED, and that is CORRECT.** Wave 17's
+three rows — `W207`, `SF-43`, `SF-38` — are MERGED and NOT YET CLOSED, so the
+instrument refutes them as TERMINAL. ⭐ **The board is always one round behind at
+a wave boundary**: the register's next round closes them and the reading goes
+green. ⛔ **Do not "fix" the board by hand — `docs/tasks/BOARD.md` and
+`docs/tasks/rows/` are the REGISTER's, and a coordinator editing them is how two
+copies of state start disagreeing.**
+
+⚠️ **The wave-17 worktrees still hold their merged branches**, so `corroborate`
+reports each as *checked out at devN*. Harmless, and cleared by teardown or by
+the next dispatch reusing the worktree.
+
 ## ⛔ THE NEXT ACTION — wave 18, composed and grounded
 
 ⭐ **`SF-42` — `studyforge narrate`, and it is the critical path.** ⛔ `M3` has
