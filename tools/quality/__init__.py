@@ -63,6 +63,7 @@ from tools.quality.config import (
 )
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
+from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
 from tools.quality.knowledge_index import check_knowledge_index, notices
 from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
@@ -94,6 +95,17 @@ from tools.quality.style import check_style
 #: could be about. ⛔ Its exemption mechanism is neither a scan root nor a
 #: list: a document in that directory **declares what it is**, and an
 #: undeclared one is refused.
+#:
+#: ⛔ `check_handoff_existence` is that check's MISSING HALF and it is here
+#: because `check_handoffs` iterates `rglob("*.md")`: its population is
+#: *documents that exist*, so *the handoff is missing* is unreachable by
+#: construction (`W167`, `CTO-67/10`). ⭐ Its population is the other one — rows
+#: `BOARD.md`'s register DECLARES CLOSED — so it is the only check here whose
+#: subject is a document that is NOT there. ⚠️ Its exemption mechanism is a
+#: SIXTH distinct one and it is two pinned readings rather than a declaration:
+#: a legacy bound and the board's own owner vocabulary, both measured, because
+#: `closed → owes` fires 11 times on the shipped tree and 5 of those are office
+#: rounds recording in the archive (Ruling 179).
 #:
 #: ⚠️ `check_pointers` reads **documents alone** as `check_handoffs` does, but
 #: every document rather than one directory's — Ruling 43's second walk. ⛔ Its
@@ -139,6 +151,7 @@ CHECKS = (
     check_source_names,
     check_knowledge_index,
     check_handoffs,
+    check_handoff_existence,
     check_pointers,
     check_anchor_collisions,
     check_rulings_index,
@@ -201,12 +214,20 @@ CHECKS = (
 #: because a static module under an enforced ceiling is the ceiling WORKING and
 #: an instrument that flagged it would cry on its own successes — measured at
 #: `7a7a178`, proximity alone flags 20 modules where proximity × growth flags 0.
+#:
+#: ⭐ **`handoff_existence` is the seventh, and it ships WITH its check rather
+#: than after it** (`W167`): its denominator is EMPTY on the tree that minted it
+#: — one closed row lies above the pinned bound and it is an office round — so
+#: `0 findings` reads as a clean bill unless the population is printed beside
+#: it. ⛔ **Ruling 191, and Ruling 48 one row over: `0 = 0` is not a result.**
+#: ⚠️ It sits beside `board_state` because it reads the same register.
 NOTICES = (
     approach_notice,
     notices,
     pointer_coverage,
     collision_census,
     board_state,
+    handoff_existence,
     rulings_notice,
     reach_notice,
     lint_notice,
