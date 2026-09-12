@@ -51,6 +51,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from tools.quality.approach import approach_notice
 from tools.quality.board import board_state, check_board
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.config import (
@@ -190,7 +191,18 @@ CHECKS = (
 #: rulings no office has been assigned. ⚠️ It is printed, enumerated by number,
 #: immediately beside the index's own line, because the cliff was invisible for
 #: twenty-five rounds for exactly one reason: nobody printed the population.
+#:
+#: ⭐ **`approach_notice` is the sixth, and it is FIRST here to mirror
+#: `check_sizes` being first in `CHECKS`** — the ceiling's finding and the
+#: ceiling's approach printed by the same reader in the same order. ⛔ **A
+#: notice and never a finding** (`W155`): R11's ceiling already fails the
+#: build, and a second hard gate *below* the first makes the real one
+#: unreachable. ⚠️ **Its predicate is proximity × GROWTH and not proximity**,
+#: because a static module under an enforced ceiling is the ceiling WORKING and
+#: an instrument that flagged it would cry on its own successes — measured at
+#: `7a7a178`, proximity alone flags 20 modules where proximity × growth flags 0.
 NOTICES = (
+    approach_notice,
     notices,
     pointer_coverage,
     collision_census,
@@ -209,6 +221,7 @@ __all__ = [
     "SOURCE_LINE_CEILING",
     "TEST_LINE_CEILING",
     "Finding",
+    "approach_notice",
     "format_findings",
     "run_all",
     "run_notices",

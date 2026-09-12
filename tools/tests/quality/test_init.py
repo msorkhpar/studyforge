@@ -5,6 +5,7 @@ from __future__ import annotations
 import tools.quality as quality
 from tests.support import assert_package_contract, repository_root
 from tools.quality import run_all
+from tools.quality.approach import approach_notice
 from tools.quality.board import board_state, check_board
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.docstrings import check_docstrings
@@ -52,6 +53,7 @@ def test_every_notice_is_registered():
     # "nothing was printed" is indistinguishable from "there was nothing to
     # say" (FND-07, and `agent-protocol.md`'s coverage rule).
     assert set(quality.NOTICES) == {
+        approach_notice,
         notices,
         pointer_coverage,
         collision_census,
@@ -60,6 +62,13 @@ def test_every_notice_is_registered():
         reach_notice,
         lint_notice,
     }
+
+
+def test_the_size_approach_prints_first():
+    # ⛔ Order, not just membership, and it mirrors `check_sizes` being first in
+    # `CHECKS`: the ceiling's finding and the ceiling's approach are read by the
+    # same reader in the same order (`W155`).
+    assert quality.NOTICES[0] is approach_notice
 
 
 def test_the_collision_census_prints_directly_under_the_pointer_census():
