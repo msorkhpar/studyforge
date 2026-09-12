@@ -238,3 +238,26 @@ def test_nothing_in_the_framework_calls_the_prune_or_the_removal_but_their_owner
                 if called in callers:
                     callers[called].add(path.relative_to(repository_root()).as_posix())
     assert callers == owners, f"{len(scanned)} modules scanned"
+
+
+def test_an_entry_whose_id_and_filename_climb_out_of_the_audio_directory_is_held(tmp_path):
+    # ⛔ The crafted case the separator guard exists for: the id and the filename
+    # agree, and the id's unit IS walked, so only the guard keeps the prune inside
+    # the unit's audio directory. The intermediate directory exists, so the path
+    # would resolve to the file beside that directory.
+    root = narrated(tmp_path)
+    live_id, live = sorted(record_of(root)["clips"].items())[0]
+    audio = next(root.rglob(live["filename"])).parent
+    token = live_id.partition(".")[0]
+    (audio / f"{token}.x").mkdir()
+    outside = audio / "outside-deadbeef.mp3"
+    outside.write_bytes(b"not a clip")
+    dead, _ = plant_dead_entry(
+        root, section="x/../outside", filename=f"{token}.x/../outside-deadbeef.mp3", clip=False
+    )
+    before = files(root)
+
+    pruned = prune_corpus(root)
+
+    assert pruned.held == ((dead, NOT_ITS_CLIP),)
+    assert files(root) == before
