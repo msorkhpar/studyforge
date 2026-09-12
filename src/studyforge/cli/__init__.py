@@ -9,6 +9,7 @@ imports a consumer, and a consumer never imports past this seam.
 
     studyforge validate <archive>   an adapter's definition of done (R2)
     studyforge plan <corpus>        what would be written, before it is
+    studyforge narrate <corpus> --voice <voice>
     studyforge build <corpus> --out <directory>
     studyforge serve <corpus>
     studyforge reconcile <corpus>   artifacts whose source is gone
@@ -26,8 +27,8 @@ and R3 is only credible if that question can be asked without taking the risk.
 inside one corpus is a framework with one consumer (R19); what a corpus
 contributes is its configuration.
 
-⛔ **Three of the five verbs above are REGISTERED and two are not.**
-`validate`, `plan` and `build` are in `dispatch.VERBS` and run today.
+⛔ **Four of the six verbs above are REGISTERED and two are not.**
+`validate`, `plan`, `narrate` and `build` are in `dispatch.VERBS` and run today.
 ⚠️ `serve` and `reconcile` are named here as the shape the command line will
 have — `SF-39` and `OPS-07` build them — and are deliberately absent from the
 table, because a verb registered against a callable that does not exist yet
