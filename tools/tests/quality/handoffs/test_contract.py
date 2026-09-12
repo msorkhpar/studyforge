@@ -296,9 +296,13 @@ def test_the_form_both_offices_write_is_now_a_finding_line(line):
     "line",
     [
         # ⛔ The negative controls `W63` owes, and they are the whole point of
-        # the closed set: a word, a `|` and a `>` are in no token.
+        # the closed set: a word and a `>` are in no token.
+        #
+        # ⚠️ **A `|` row stood in this list until `W121`.** It was never a
+        # negative control — it was the defect being asserted as correct — so
+        # it has MOVED to the positive block below rather than been deleted,
+        # which keeps the reversal legible in one diff.
         "`SF-04/1` and `SF-04/3` are `[local]` and need no routing",
-        "| **47** | ⛔ `[structural]` | **ruled below** |",
         "> the review marked it `[structural]` and moved on",
         "**`SF-12-survey/1`** — **the R13 debt is one file.** `[structural]`",
         "Filed: 3. Marked in the branch: 5 (2 `[local]`, 3 `[structural]`).",
@@ -334,3 +338,107 @@ def test_an_unclosed_backtick_is_not_a_number_and_not_a_finding_line(tmp_path):
     above = LEGACY_GLOBAL_MAX + 1
     write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", f"### `{above} `[local]`"))
     assert rules(tmp_path) == ["handoff-findings", "handoff-marker"]
+
+
+# --- W121: a finding written as a TABLE ROW is the form both offices write ---
+
+
+@pytest.mark.parametrize(
+    "line",
+    [
+        # ⛔ Quoted from `docs/tasks/handoffs/` at 5b54936, not invented. The
+        # first is the exact line `W63` pinned as *correctly refused*.
+        "| **47** | ⛔ `[structural]` | **ruled below** |",
+        "| `W63/2` | `[structural]` | ⭐ **UPHELD — it is gate one.** Ruling 218.",
+        "| `W64/1` | `[structural]` | ⭐ **UPHELD.** Ruling 218 — a RE-SCOPE.",
+        # ⭐ The marker in the FIRST cell, and the number after it: the role is
+        # read from what the cell HOLDS, so the order of the two may invert.
+        "| `[local]` | `W99/1` | a defect somewhere else |",
+        # ⭐ A claim-free cell BETWEEN the number and the marker — no column
+        # index is named, so an author may insert one.
+        "| `W99/1` | ⛔ | `[local]` | a defect |",
+        # ⭐ A row written without its leading pipe still reads.
+        "`W99/1` | `[local]` | a defect |",
+    ],
+)
+def test_the_table_form_both_offices_write_is_now_a_finding_line(line):
+    # ⛔ Ruling 218's GATE ONE, and the two-organ half: the gate above could
+    # see these documents fine and THIS reader could not, so a widened gate
+    # would have printed *marks no finding* at documents carrying findings.
+    #
+    # ⚠️ Measured at 5b54936: `docs/tasks/handoffs/` holds 393 marker-bearing
+    # table rows and this reader read ZERO of them.
+    assert marker_lines(line + "\n")[0][2] is True
+
+
+@pytest.mark.parametrize(
+    ("row", "untabled"),
+    [
+        # ⛔ Ruling 189(b): the row must NOT be read by column position. What
+        # still ends the lead is a cell that carries a CLAIM — and it ends it
+        # in exactly the way the un-tabled sentence does. Both halves are
+        # asserted together so the pair cannot drift apart.
+        (
+            "| **`W74/1`** — `W75` must CONVERT the pinned row | `[structural]` |",
+            "- **`W74/1`** — `W75` must CONVERT the pinned row `[structural]`",
+        ),
+        (
+            "| handoff | filed | marked | `[structural]` actually present |",
+            "- handoff filed marked `[structural]` actually present",
+        ),
+        (
+            "| `W61/2` | `[local]` | a recorded negative takes `[local]` |",
+            "- `W61/2` `[local]` a recorded negative takes `[local]`",
+        ),
+    ],
+)
+def test_and_a_table_row_is_refused_for_the_reason_a_LINE_is_refused(row, untabled):
+    assert marker_lines(row + "\n")[0][2] is False
+    assert marker_lines(untabled + "\n")[0][2] is False
+
+
+def test_the_boundary_is_a_named_token_and_not_a_table_parser():
+    # ⛔ The whole of `W121` is one entry in the closed set. A reader that
+    # SPLIT the line into cells and looked at cell 2 would be the header
+    # locator's defect (Ruling 189(b)) re-introduced in a second instrument,
+    # so this asserts the remedy's SHAPE and not only its effect.
+    assert ("a table cell boundary", r"\|") in LEAD_TOKENS
+
+
+def test_the_marker_is_read_from_the_cell_and_never_from_its_column():
+    # ⭐ The inhabitation half of the rule above (Ruling 48): the SAME finding
+    # written with its marker in three different columns reads three times.
+    # A reader pinned to one layout would pass the shape test and fail this.
+    rows = [
+        "| `[local]` | `W99/1` | a defect |",
+        "| `W99/1` | `[local]` | a defect |",
+        "| `W99/1` | ⭐ | `[local]` | a defect |",
+    ]
+    assert [marker_lines(row + "\n")[0][2] for row in rows] == [True, True, True]
+
+
+def test_a_scoped_id_in_a_table_row_is_read_as_the_number_it_claims(tmp_path):
+    # ⛔ Ruling 219's population, as a test: the ID reader shares `LEAD_TOKENS`,
+    # so admitting the boundary in one place admits it in both. ⚠️ Without this
+    # the marker rule would newly SEE 393 rows while the ID rule stayed VACUOUS
+    # on every one of them — the same *two readers, one vocabulary* defect
+    # Ruling 193 named, at a third site.
+    write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", "| `W99/1` | `[local]` |"))
+    assert check_handoffs(tmp_path) == []
+
+
+def test_and_a_table_row_scoped_to_another_document_is_now_a_finding(tmp_path):
+    # ⛔ The direction that proves the rule is not vacuous on the new form.
+    # This is the reading that MOVES gate two's population: at 5b54936 these
+    # rows claimed no scope because they were not finding lines at all.
+    write(tmp_path, "W99.md", GOOD.replace("### 1. `[local]`", "| `W98/1` | `[local]` |"))
+    assert rules(tmp_path) == ["handoff-finding-id"]
+
+
+def test_a_table_row_inside_a_fenced_block_is_still_quoted_material(tmp_path):
+    # ⚠️ Ruling 220's half: a record that DOCUMENTS this vocabulary in a table
+    # is held off by the FENCE — a convention, not construction — and that is
+    # named in the module docstring rather than left to be discovered.
+    fenced = "```text\n| `W98/1` | `[structural]` | quoted from another record |\n```\n"
+    write(tmp_path, "W99.md", GOOD.replace("**For dependents:**", fenced + "\n**For dependents:**"))
+    assert check_handoffs(tmp_path) == []

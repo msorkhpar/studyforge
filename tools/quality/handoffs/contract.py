@@ -33,9 +33,24 @@ invisible to every rule downstream.
 shapes.** ⚠️ Ruling 29 records four attempts at an accepted-shape list, each of
 which worked on the handoffs its author had seen and failed on one they had not;
 ⭐ **`LEAD_TOKENS` inverts it — nothing before the marker may carry a CLAIM, and
-the markup that carries none is enumerated in one place.** A word, a table
-cell's `|`, a blockquote's `>` is not in the set, so prose stays refused **by
-construction** rather than by a pattern that happens to miss it.
+the markup that carries none is enumerated in one place.** A word and a
+blockquote's `>` are in no token, so prose stays refused **by construction**
+rather than by a pattern that happens to miss it.
+
+## ⛔ A table cell's `|` carries no claim either (`W121`)
+
+⛔ **It was in no token, and that was the defect: the form BOTH offices actually
+write was invisible to this reader, and therefore to every rule downstream of
+it.** ⚠️ Ruling 218 named it two-organ — the gate above could see the document
+fine and the reader behind it could not — ⭐ so widening the gate alone would
+have printed *marks no finding* at documents that carry findings.
+
+⭐ **The remedy is one token, not a table parser.** A `|` delimits a cell; it
+asserts nothing, so it joins the set for the reason horizontal space is already
+in it. ⛔ **No column index is named anywhere** (Ruling 189(b)): the marker may
+sit in the first cell or the fifth, before its number or after it. ⚠️ And a cell
+carrying PROSE still ends the lead wherever it appears, so
+`| the review said | ...` is refused exactly as the un-tabled sentence is.
 """
 
 from __future__ import annotations
@@ -83,8 +98,18 @@ _ID = r"(?:[A-Za-z][\w.-]*/)?\d+"
 #: token named by what it is. ⭐ **The rule is not a list of accepted shapes — it
 #: is that nothing before the marker carries a CLAIM**, and this is the markup
 #: that carries none. A word is in no token, so prose is refused by
-#: construction; `|` and `>` are in no token, so a table row and a blockquote
-#: are refused the same way.
+#: construction; `>` is in no token, so a blockquote is refused the same way.
+#:
+#: ⛔ **A table cell boundary IS in the set (`W121`), and it is the whole of that
+#: row's change.** ⭐ It names no column, so a role is still read from what a
+#: cell HOLDS and never from where the cell sits (Ruling 189(b)).
+#:
+#: ⚠️ **Ruling 220 — what is held off by CONVENTION here and not by
+#: construction:** a table that DOCUMENTS this vocabulary, one marker to a row,
+#: now reads as a row of findings. ⭐ The fence rule holds it off, as it already
+#: does for a transcript, and Ruling 65's *name the marker, do not spell it*
+#: holds off the rest. ⛔ That is a convention, and it is written here rather
+#: than left for the next author to discover.
 #:
 #: ⚠️ **Every token's first characters are disjoint from every other's**, which
 #: is what makes the order here immaterial and the reader reproducible (R10).
@@ -95,6 +120,7 @@ LEAD_TOKENS: tuple[tuple[str, str], ...] = (
     ("a bullet, an emphasis run or a hyphen", r"[-*+_]+"),
     ("an em dash, an en dash or a colon", r"[—–:]"),
     ("an attention glyph", "[⛔⭐⚠✅️]+"),
+    ("a table cell boundary", r"\|"),
     ("a finding number, backticked or not", rf"(?:`{_ID}`|{_ID})[.)]?"),
 )
 _LEAD = re.compile("|".join(f"(?:{pattern})" for _name, pattern in LEAD_TOKENS))
