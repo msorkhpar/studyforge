@@ -20106,3 +20106,123 @@ python3                        issubclass(AddressError, ContainerError)         
 ### ⭐ CLOSED — `4fb111d`
 
 ⛔ **Answer: KEEP THE LIMIT** — `max_files` is accepted by `parse_media`, and the test reads `E04`'s example from the epic itself (`tests/studyforge/corpus/manifest/test_media.py`). ⭐ **Merge re-derived on the first-parent chain, PO round 64.**
+
+## PO round 65 — wave 18 closed, step 3.6 and `M3` closed at `1ede082`, wave 19 named, five mints
+
+⛔ **Wave 18's three merges re-derived on the first-parent chain of `1ede082`, not received:** `419c805` (`W212` + `W213`), `475370c` (`W217`), `1ede082` (`SF-42`). ⭐ **`corroborate` at `1ede082`, HOST, role `wt/po`, before any edit: exit 1, refuting exactly those three as TERMINAL — the expectation written before it ran.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                                   merge^2   branch head  ahead  checked out
+feat/SF-42-narrate                 cc7ac521  cc7ac521     0      NOWHERE
+fix/W212-build-raises              6f21961e  6f21961e     0      NOWHERE
+fix/W217-suite-outside-checkout    b118d44d  b118d44d     0      NOWHERE
+```
+
+⭐ **All three TERMINAL.** ⛔ **`W212`, `W213`, `W217` close under the four edits; `SF-42` is an EPIC TASK and its close is the In flight removal plus this record.** ⚠️ **`W212` is met AS WRITTEN with its premise annotated (below): clause 1 was already true at the base, and the other three are this merge's.**
+
+### `M3` step 3.6 and `M3` close at `1ede082`
+
+⛔ **Membership, `grep -n`:** `docs/tasks/README.md:303`–`308`, steps `3.1`–`3.6`; ⭐ **`3.6` is `SF-42` alone and it is terminal above; `3.1`–`3.5` closed at their own refs.**
+
+⛔ **`M3`'s *Done when*: *narration is generated and the highlight tracks playback.***
+
+1. ⭐ **WHICH TEXT DECIDES *GENERATED*: [`E09`](E09-delivery.md) answer 3, *THE CONSEQUENCE FOR `M3`*** — *"the verb is what makes narration is generated performable, so it is an `M3` obligation and it is `SF-42`"* — ⛔ **read with round 62's refusal, whose ground was *"the missing leg is DISK"*, and `SF-42`'s Acceptance, *"asserted as a reading of the DISK"*.** ⭐ **So *generated* means CLIPS ON DISK. A narrated PAGE is a build's, and answer 3 put the build's read in `SF-38` (`M4`, its own header).** ⚠️ **Holding `M3` for `SF-38` would gate a milestone on a later milestone's row, which is the edge `PO-64/4` already objected to.**
+2. ⭐ **THE DISK, MEASURED BY ME**, HOST, role `wt/po`, HEAD `1ede082`, `narrate-service` CPU profile on loopback, started and stopped by me, the sibling's status unchanged: `tests/studyforge/cli/narrate/test_end_to_end.py` → **2 passed, 0 skipped, exit 0; depth1 22 clip files / 22 speech units, depth2 39 / 39.** ⚠️ **TWO readings: the first probed `/healthz` while the engine was still starting (`engine_reachable` false) and still passed; the retake waited for `engine_reachable` true. Both cache-served** — ⛔ **so engine SYNTHESIS is the office's reading at `b1289f9` on identical `src/`, RECEIVED** (`PO-65/1`).
+3. ⭐ **THE HIGHLIGHT:** `SF-18`, closed with step `3.5`, page↔minter both directions (`tests/studyforge/render/page/test_narration.py`, `tests/studyforge/narrate/speakable/test_init.py`), ran in the suite at this round's tip. ⚠️ **A highlight over a GENERATED clip on a BUILT page is `SF-38`'s third assertion, `M4`** (`PO-65/3`).
+
+⭐ **`M3` CLOSES at `1ede082`.** ⛔ **Ruling 97's gate at that ref is the coordinator's release-tip measurement (floor GREEN 0, suite GREEN 0, RECEIVED); this round's own floor and suite were taken at its tip, which differs from `1ede082` in `docs/tasks/` only.** ⭐ **`M4` opens; its steps are `README.md`'s.**
+
+### ⭐ 3 — WAVE 19 NAMED, and the five mints
+
+⭐ **`W218` (Developer 1), `SF-38` build half (Developer 2), `W211` (Developer 3), all cut at `1ede082`, carriers CONFIRMED by the coordinator** (`PO-61/4`). ⛔ **`SF-38` is `M4` step `4.3`, now the open milestone.**
+
+⛔ **Minted, each with its argument in `rows/`:** [`W219`](rows/W219.md) (`W212/2` + `W212/4`), [`W220`](rows/W220.md) (`W217/2`), [`W221`](rows/W221.md) (`W217/3`), [`W222`](rows/W222.md) (`SF-42/1`), [`W223`](rows/W223.md) (`SF-42/2` + `W212/3`). ⭐ **Folded, no mint:** `W217/5` into [`W216`](rows/W216.md). **Disposed:** `SF-42/4` (a handoff is a record; `SF-42`'s handoff and `test_dispatch.py`'s verb set are the correction), `PO-64/4` (the cross-milestone edges are merged history; clause 2 stands and is not amended by a close).
+
+### W212 — The `AddressError` leak `W208` fixed in `plan` reaches `studyforge build` too, and the justification beside the catch is false
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W212.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE SAME `AddressError` LEAK [`W208`](#w208-an-addresserror-escapes-the-container-reader-so-a-wrong-depth-container-map-crashes-studyforge-plan) FIXED IN `studyforge plan` REACHES `studyforge build`, AND `build` IS NOW AN INSTALLED COMMAND.** ⭐ **Raised as `SF-40/3` by the office that shipped the entry point, which named the reason it did not take it: *"it needs the id the register is minting"*.**
+
+⚠️ **`generate/declarations.py` catches the escape at ONE call site**, so a wrong-depth container map still crashes the verb rather than refusing it.
+
+### ⛔ AND THE JUSTIFICATION BESIDE THAT CATCH IS NOW FALSE
+
+⭐ **`W208/2`, from a second office:** ⛔ **the comment cites `SF-28/1` and the claim that *"the package's contract names `ContainerError` as what it raises"*** — ⚠️ **which `PO-62/1` refuted and `W208`'s own record documents at length: `corpus/container/errors.py` carries the pass-through as a DELIBERATE, ARGUED exception.** ⭐ **The code is correct; the reason written next to it is not** — ⛔ **and a correct line held up by a false reason is the state the next editor removes it in.**
+
+### ⛔ WHY IT IS ONE ROW WITH `W208` AND NOT A SECOND COPY OF IT
+
+⭐ **`W208` fixed a CALLER. This is a different caller with the same defect, found by a third office** — ⚠️ **which is the evidence that the shape, and not the site, is the subject.** ⛔ **`W208` landed the answer as a TUPLE the package exports (`RAISES`), so this row is the cheap half: consume it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`studyforge build` DOES NOT RAISE ON A WRONG-DEPTH CONTAINER MAP** — ⭐ **it refuses, naming the file and the depth, exactly as `plan` now does.**
+2. ⛔ **THE CATCH LIST IS `corpus.container`'s `RAISES`, NOT A RETYPED SUBSET** — ⚠️ **the whole point of `W208`'s tuple is that the next caller stops reading a paragraph.**
+3. ⛔ **ASSERTED THROUGH THE COMMAND** (R12, and `W208`'s clause 2): ⭐ **the same wrong-depth fixture, run through `build`, with the refusal's presence as the pass condition.** ⚠️ **A test asserting `AddressError` is raised somewhere has re-tested `corpus/container/` and left the verb untested.**
+4. ⭐ **THE FALSE COMMENT GOES IN THE SAME COMMIT**, replaced by a citation of the contract rather than by a second paraphrase of it.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD HAND-WRITTEN CATCH LIST.** ⭐ **Three offices have now read the same docstring and two read it incompletely; the tuple exists so the reading stops happening.**
+
+### ⭐ CLOSED — PO ROUND 65
+
+⭐ **CLOSED — `419c805`. MET AS WRITTEN, PREMISE ANNOTATED.** ⛔ **Clause 1 was already true at the base `5d37f73`** (`W212/1`): the wrong-depth map was refused through an arm whose comment was false. ⭐ **Clauses 2–4 are this merge's:** `generate/declarations.py` catches `corpus.container`'s `RAISES`; `tests/studyforge/cli/site/test_cli.py` asserts the refusal THROUGH `build` (absent at `5d37f73`, read by `git show`); `SF-28/1` is gone from `src/` (`git grep`, 0 lines at `1ede082`). ⚠️ **The live crash the office found instead — a personal-data leak escaping `build` as a traceback — is refused by `generate.RAISES`.** A premise that was false does not unmeet a settlement that is true; it is annotated here rather than re-scoped after the fact.
+
+### W213 — The manifest reader's catch list is a retyped subset, correct only by a property of the reader that nothing asserts
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W213.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE MANIFEST READER IS CORRECT BY A PROPERTY NOTHING ASSERTS, AND IT IS THE SHAPE THAT PRODUCED [`W208`](#w208-an-addresserror-escapes-the-container-reader-so-a-wrong-depth-container-map-crashes-studyforge-plan).** ⭐ **`W208/1`, raised by `W208`'s own taker against their own fix, and deliberately not taken there: *"it is a second row's worth of design, and this one had to land."***
+
+⚠️ **`cli/plan/derive.py` catches `(ManifestError, PersonalDataLeak)` around `parse_manifest` — a RETYPED subset of the same three-name paragraph that `corpus/manifest/errors.py` states in prose.** ⛔ **It is NOT a live crash today: `manifest.parse` translates `AddressError` in `_slug`, and `Manifest.parse_key` is not reached from `parse`.**
+
+### ⛔ WHY *NOT A CRASH TODAY* IS THE REASON TO TAKE IT, NOT THE REASON TO SKIP IT
+
+⭐ **The container reader was also correct until a caller met an input nobody had tried.** ⛔ **What makes this one green is a property of the READER's internals — where a translation happens to sit — and nothing in the tree asserts that property or notices when it moves.** ⚠️ **So the catch list is a copy that is accidentally right, which is the strictly worse state: it will keep passing until it does not, and the failure arrives as a traceback in a shipped command.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`corpus.manifest` EXPORTS ITS PASS-THROUGH SET THE WAY `corpus.container` NOW DOES** — ⭐ **a `RAISES` tuple on the package surface, not a paragraph** — ⚠️ **and `W208`'s taker already priced the cost: *"adding a member to `RAISES` costs a fixture"*, because every member must be reachable from `parse`.**
+2. ⛔ **EVERY CALLER OF `parse_manifest` CONSUMES THE TUPLE**, and the sweep for other `corpus.*` readers whose catch list was written from a paragraph is this row's cheap half (`W208`'s clause 4, still owed).
+3. ⚠️ **A CATCH SITE THAT HANDLES THE MEMBERS DIFFERENTLY KEEPS ITS OWN ARMS** — ⛔ **`validate/corpus.py` is the named example, and flattening it into one tuple would collapse two finding rules into one.**
+4. ⭐ **IF THE PATTERN NOW HAS THREE INSTANCES IT IS A CONVENTION AND NOT A HABIT** — ⚠️ **`W208`'s *For dependents* says exactly this: `docs/conventions/` carries nothing about it yet, and a third instance is when it should.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A TUPLE PER PACKAGE WITH NO RULE BEHIND IT.** ⭐ **Two packages exporting `RAISES` and no convention naming the pattern is two habits that will drift.**
+
+### ⭐ CLOSED — PO ROUND 65
+
+⭐ **CLOSED — `419c805`.** ⛔ **Clause 1:** `corpus.manifest.RAISES` exported. **Clause 2:** seven catch sites consume a tuple, the corpus sweep asserts the set. **Clause 3:** `validate/corpus.py` keeps its leak arm first. **Clause 4:** the convention is written once in `docs/conventions/module-structure.md`. ⚠️ **The sweep's own narrowness is [`W219`](rows/W219.md).**
+
+### W217 — The suite writes OUTSIDE the checkout, and `W209`'s detector is repository-scoped by construction so it cannot see it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W217.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE SUITE WRITES OUTSIDE THE CHECKOUT, AND THE DETECTOR THAT JUST LANDED IS REPOSITORY-SCOPED BY CONSTRUCTION SO IT CANNOT SEE IT.** ⭐ **`W209/1`, measured by `W209`'s taker in the pinned image with `STUDYFORGE_UID=0`: `/home` holds ONE entry before `tests/test_emission.py` runs and TWO after, the new one containing `material`.** ⚠️ **Under `docker/dev/check`'s default uid the same `mkdir` fails on permissions, which is the only reason it has never been seen.**
+
+⛔ **[`W209`](#w209-testsemission-calls-every-public-writer-with-fillers-so-a-green-suite-writes-into-the-checkout-and-reports-nothing) DID NOT FIX THIS AND SAID SO.** ⭐ **Its `treestate` delta is a reading of the REPOSITORY; a write to `/home` is outside its population by design, not by oversight.**
+
+### ⛔ WHY IT IS NOT A SMALLER VERSION OF `W209`
+
+1. ⛔ **`W209`'s OWN THIRD GROUND POINTED HERE:** ⭐ *"R3 is the outer bound and it points OUTWARD — a public writer called with a filler path writes relative to the CWD, and the CWD is not always this repository."* ⚠️ **That sentence is now MEASURED rather than argued, and against an absolute path rather than a relative one.**
+2. ⛔ **IT IS INVISIBLE IN THE ENVIRONMENT THAT IS AUTHORITATIVE.** ⭐ **The default uid turns the write into a permission error the harness swallows** — ⚠️ **so the tree is green because the container is unprivileged, which is luck wearing the costume of a guard.**
+3. ⛔ **R7 IS ENGAGED AND R3 IS THE OUTER BOUND.** ⭐ **A home directory is personal data and a suite that mints paths inside one is the exact act this project's hardest rule forbids** — ⚠️ **and `material` is a name the framework chose, so the write is the framework's and not a filler's accident.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **NO CALL THE EMISSION SWEEP MAKES CAN WRITE ANYWHERE THE HARNESS DOES NOT OWN** — ⭐ **the remedy `W209` named first and did not take: every call runs inside a temporary directory the harness mints, so a filler path has nowhere else to land.** ⚠️ **A per-writer exclusion list is refused for `W209`'s reason: it grows silently and the next public writer is not on it.**
+2. ⛔ **ASSERTED AT `STUDYFORGE_UID=0`, WHICH IS WHERE THE DEFECT IS VISIBLE** — ⭐ **a reading taken only at the default uid measures the permission bit and not the behaviour** (Ruling 225's family: a verdict that depends on the environment).
+3. ⛔ **PLANT IT** (Rulings 124, 348): ⭐ **a public callable that writes to an absolute path outside the checkout, and the pass condition is the MOVED exit code.**
+4. ⚠️ **THE POPULATION IS *EVERYWHERE*, NOT *`/home`*.** ⛔ **A guard scoped to one directory has reproduced `W209`'s repository-scoping one level out.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHECK THAT RUNS ONLY AS ROOT.** ⭐ **The fix belongs in the harness, so that the unprivileged run is correct for a reason rather than by permission.**
+
+### ⭐ CLOSED — PO ROUND 65
+
+⭐ **CLOSED — `475370c`.** ⛔ **Clause 1:** every emission call runs inside `contained(...)`. **Clause 2:** the office's uid-0 reading moved RED → GREEN across the change. **Clause 3:** a planted fixed-path writer moved the suite exit 0 → 1 at both uids. **Clause 4:** the population is every audited write to any path. ⚠️ **The WHOLE suite outside the emission harness is [`W221`](rows/W221.md); `document_census` rides [`W216`](rows/W216.md).**
