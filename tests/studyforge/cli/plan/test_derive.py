@@ -19,7 +19,7 @@ from studyforge.validate.corpus import ARCHIVE_DIR
 from studyforge.validate.report import INVALID, OK
 from tests.emission import POISON
 from tests.fixture_checks import FIXTURES, VALID
-from tests.support import init_repository, is_ignored
+from tests.support import init_repository, is_ignored, repository_root
 
 
 def copy_fixture(name: str, tmp_path):
@@ -349,3 +349,75 @@ def test_a_rate_turns_the_footprint_into_a_verdict():
     plan = plan_for(FIXTURES / "depth2", bytes_per_unit=2_000_000_000)
     footprint = [line for line in plan.lines() if line.startswith("media footprint")][0]
     assert "EXCEEDS max_total_bytes" in footprint
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W208` — nothing raises out of `plan_for`, whatever a container map says
+# --------------------------------------------------------------------------
+
+
+def break_a_container_map(root, **fields):
+    """Rewrite the first container map under `root`, returning its plan path."""
+    path = sorted((root / ARCHIVE_DIR).rglob(CONTAINER_FILENAME))[0]
+    document = json.loads(path.read_text(encoding="utf-8"))
+    document.update(fields)
+    path.write_text(json.dumps(document), encoding="utf-8")
+    return path.relative_to(root).as_posix()
+
+
+def test_a_wrong_depth_container_address_is_a_refusal_and_not_a_crash(tmp_path):
+    # ⛔ **The defect `W208` records.** `container.parse` raises SF-01's
+    # `AddressError` for an arity disagreement — argued for in the reader's own
+    # contract — and this site caught two of the three names that paragraph
+    # gives. A wrong-depth map therefore CRASHED the one command whose whole
+    # contract is that nothing raises.
+    root = copy_fixture("depth2", tmp_path)
+    where = break_a_container_map(root, address=["basics"], titles=["Basics"])
+
+    plan = plan_for(root)
+
+    assert plan.exit_code == INVALID
+    assert where in [refusal.where for refusal in plan.refusals]
+
+
+def test_a_leaking_container_map_is_a_refusal_and_not_a_crash(tmp_path):
+    # ⭐ The pass-through this site already had, kept under the derived tuple so
+    # the fix cannot be a swap of one omission for another.
+    root = copy_fixture("depth1", tmp_path)
+    where = break_a_container_map(root, note=f"ingested from {POISON}")
+
+    plan = plan_for(root)
+
+    assert plan.exit_code == INVALID
+    assert where in [refusal.where for refusal in plan.refusals]
+
+
+def test_an_unreadable_container_map_is_a_refusal_and_not_a_crash(tmp_path):
+    # ⭐ The third shape, so the three arms of this reader's failure handling
+    # are exercised together rather than one at a time as each one bites.
+    root = copy_fixture("depth1", tmp_path)
+    where = break_a_container_map(root, variant="no-such-variant")
+
+    plan = plan_for(root)
+
+    assert plan.exit_code == INVALID
+    assert where in [refusal.where for refusal in plan.refusals]
+
+
+def test_no_refusal_carries_the_absolute_path_it_was_read_from(tmp_path):
+    # ⛔ R7: the crash this row fixes would have printed a traceback naming the
+    # absolute path, so the refusal that replaces it must not.
+    root = copy_fixture("depth2", tmp_path)
+    break_a_container_map(root, address=["basics"], titles=["Basics"])
+
+    for refusal in plan_for(root).refusals:
+        assert str(tmp_path) not in refusal.line()
+
+
+def test_the_catch_list_is_the_readers_own_tuple_and_not_a_copy():
+    # ⛔ The durable half. A hand-copied list of exception types is a second
+    # declaration, and this one had already drifted once — so the fix is
+    # checked by reading the source, where a re-typed tuple would appear.
+    source = (repository_root() / "src/studyforge/cli/plan/derive.py").read_text("utf-8")
+    assert "except RAISES as error:" in source
+    assert "except (ContainerError" not in source, "the catch list was retyped again"

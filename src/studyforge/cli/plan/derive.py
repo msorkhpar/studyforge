@@ -31,7 +31,7 @@ from pathlib import Path
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.cli.plan.report import Creation, MediaProjection, Plan, Refusal
-from studyforge.corpus.container import CONTAINER_FILENAME, Container, ContainerError
+from studyforge.corpus.container import CONTAINER_FILENAME, RAISES, Container
 from studyforge.corpus.container import parse as parse_container
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest, ManifestError
 from studyforge.corpus.manifest import parse as parse_manifest
@@ -141,7 +141,13 @@ def _containers(
             continue
         try:
             held.append((where, parse_container(text, where, manifest)))
-        except (ContainerError, PersonalDataLeak) as error:
+        except RAISES as error:
+            # ⛔ **The reader's own tuple, never a list retyped here** (`W208`).
+            # This site caught `ContainerError` and `PersonalDataLeak` and
+            # missed `AddressError`, which `container`'s contract argues for in
+            # the same paragraph — so a container map whose address was the
+            # wrong depth CRASHED the one command whose whole contract is that
+            # nothing raises. ⭐ A member added to the reader now arrives here.
             refusals.append(Refusal(where, str(error)))
     return held, refusals
 

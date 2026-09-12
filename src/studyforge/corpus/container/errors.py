@@ -19,6 +19,18 @@ because the rule is SF-01's but the document is this contract's.
 ⚠️ `PersonalDataLeak` from `archive.scrub` is not wrapped either: R7's refusal
 is louder than a format error, and a caller writing `except ContainerError:
 skip_this_file()` must not silently swallow one.
+
+⛔ **A caller catches `container.RAISES`, not this paragraph.** The three names
+above are the tuple's members and the tuple is in the package contract, where a
+caller already looks. ⚠️ **This module still depends on nothing**, which is why
+the tuple is not here: `fields` and `document` both import this one, and giving
+it two imports of its own would put them in a module that has no other business
+with either.
+
+⭐ **The tuple exists because this paragraph was read PARTIALLY** (`W208`).
+`cli/plan/derive.py` caught `PersonalDataLeak` and not `AddressError` — the
+second pass-through applied and the first missed, which is how you can tell it
+was read and half-copied rather than never read.
 """
 
 from __future__ import annotations
