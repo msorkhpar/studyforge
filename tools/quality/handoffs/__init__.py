@@ -61,12 +61,14 @@ its filename, declarable beside it — ⛔ **and `records.py` owns that derivati
 so Ruling 219's reading is shipped code rather than a number in a record**
 (`W121/2`).
 
-⛔ **This is gate two of the three Ruling 218 priced, and the gate is NOT fully
-widened here.** ⚠️ A record is held to its scope and its finding IDs, and NOT to
-the marker rule, the six sections or *marks no finding*: those are gate three,
-which is **not yet a row**. ⭐ Reaching exit `0` by rewriting records is refused
-by Ruling 106 and by weakening the marker rule by Ruling 65 — Ruling 193, the
-corpus is never chased.
+## ⛔ And its MARKERS are read, inside its Findings section only (`W172`, gate three)
+
+⭐ **All three of Ruling 218's gates have landed**, and gate three could only be
+built after gate two: a record's finding is a line claiming a SCOPED number, and
+gate two is what gave a record a scope. ⛔ **Elsewhere a marker is a record's
+PROSE** and is not read. ⚠️ **Three arms are refused explicitly, each against a
+measurement** — the six sections, *marks no finding*, and `[none]` beside a real
+finding — ⭐ and `records.py` carries every figure and every argument.
 """
 
 from __future__ import annotations
@@ -140,7 +142,8 @@ DOCUMENT_KINDS: dict[str, str] = {
     OFFICE_HANDOFF: "a supervising office's handoff, with no task ID because the id "
     "space has one minter; owes the six sections and the markers, and no ID",
     RULING_RECORD: "a CTO or PO round, or one ruling written up; owes a SCOPE its findings "
-    "are numbered inside, derived from its filename and declarable beside it",
+    "are numbered inside, derived from its filename and declarable beside it, and the "
+    "marker discipline inside its Findings section — but NOT the six sections",
     "session log": "a coordinator's record of one session; owes nothing further",
     "survey": "a read-only investigation or review; nothing landed, so nothing to hand over",
     "index": "the directory's own README, which describes the others and is not one of them",

@@ -206,6 +206,36 @@ def marker_lines(text: str) -> list[tuple[int, str, bool]]:
     return found
 
 
+def claimed_scope(line: str) -> str | None:
+    """Return the SCOPE a line's numbered claim carries, or `None` (`W172`).
+
+    ⛔ `None` means *this line claims no scope*, and it does not distinguish a
+    line carrying nothing from one carrying a bare legacy number: both are
+    outside the scoped form, which is the only distinction any caller makes.
+    ⭐ It reads through the same `_MARKUP` lead as `check_finding_ids`, so the
+    two can never disagree about what a line claims.
+    """
+    claim = _FINDING_NUMBER.match(line[_claim_free_end(line, _MARKUP) :])
+    return None if claim is None else claim.group("scope")
+
+
+def claim_free_markers(line: str) -> int:
+    """How many markers on `line` sit where no CLAIM has preceded them.
+
+    ⛔ **Every cell is tested, not only the line (Ruling 189(b)):** *the marker
+    may sit in the first cell or the fifth*, so a cell's own lead is what
+    decides, and a prose cell earlier in the row does not bury a marker later
+    in it. ⚠️ `marker_lines`'s `own_line` tests the LINE's lead only, which is
+    the stricter reading a task handoff is held to; ⭐ this is the reading
+    Ruling 189(b) states, and `records.py` explains why a record gets it.
+    """
+    return sum(
+        1
+        for cell in line.split("|")
+        if cell[_claim_free_end(cell, _LEAD) :].startswith(FINDING_MARKERS)
+    )
+
+
 def check_sections(relative: str, text: str) -> list[Finding]:
     """Check `agent-protocol.md`'s six, in either spelling rubric §8 accepts."""
     return [

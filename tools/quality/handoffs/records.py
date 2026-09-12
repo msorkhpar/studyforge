@@ -1,28 +1,112 @@
-"""A `ruling record`'s SCOPE: what its findings are numbered inside (`W64`).
+"""A `ruling record`'s SCOPE and its MARKERS (`W64` gate two, `W172` gate three).
 
-**What it does.** Gives a `ruling record` the one thing it has never had — a
-scope — so that the finding-ID rule can reach the 106 records this directory
-holds. The scope is **derived from the filename** and may be **declared** on
-the `**Kind:**` line; nothing in a record is rewritten to produce it.
+**What it does.** Gives a `ruling record` the two things it has never had — a
+scope, and a rule that reads the markers on its findings. The scope is
+**derived from the filename** and may be **declared** on the `**Kind:**` line;
+the marker rule reads only its *Findings* section. ⛔ Nothing in a record is
+rewritten to produce either (Ruling 106).
 
 **How you use it.** `record_scopes(stem, declared)` is the derivation, shipped
 rather than described (`W121/2`). `check_record(relative, stem, declared,
-text)` returns findings: the declaration rules, then `check_finding_ids` over
-the record's own finding lines.
+text)` returns findings: the declaration rules, `check_finding_ids` over the
+record's own finding lines, and `check_record_markers` over its Findings
+section.
 
-**Depends on.** `contract` and `report.Finding`. ⛔ Never its own package: the
-dependency runs one way, exactly as `contract`'s does.
+**Depends on.** `contract`, `sections` and `report.Finding`. ⛔ Never its own
+package: the dependency runs one way, exactly as `contract`'s does.
 
-## ⛔ This is GATE TWO of three, and it is not the whole gate (Ruling 218)
+## ⛔ GATE TWO: the scope (Ruling 218, `W64`)
 
 ⛔ **Ruling 218 stopped `W64` and priced three gates.** ⭐ Gate one was `W121`'s
-table-cell boundary. ⭐ **Gate two is this module.** ⚠️ **Gate three — a rule
-separating a record's Findings section from its prose — is NOT YET A ROW**, so
-`check_markers`, `check_sections` and the *marks no finding* rule are
-deliberately **not** applied to a record here. ⛔ Applying them would print
-*marks no finding* and *a marker is not on its own finding line* across a corpus
-that may not be rewritten (Ruling 106) — which is the exit-`0` chase Ruling 193
-forbids.
+table-cell boundary; gate two is the scope below; gate three is the marker rule
+that follows it.
+
+## ⛔ GATE THREE: the marker rule reaches a record, and it is DOUBLY narrowed (`W172`)
+
+⭐ **Ruling 218's third gate in one sentence: a rule that separates a record's
+Findings section from its prose, so `check_markers` can be applied without
+firing on every sentence that discusses a marker.** ⛔ **The predicate alone is
+not enough, and that is this gate's measured result.** All figures below: the
+110 `ruling record` documents in `docs/tasks/handoffs`, at `bec9d5c`, HOST,
+through the shipped readers.
+
+```text
+what the marker rule fires, dry-run over the 110 records
+  fully widened, whole document      181 findings in 53 documents
+  restricted to the Findings section  27 findings in  7 documents
+  ...and to lines claiming a SCOPE     0 findings
+```
+
+⛔ **So the gate is narrowed TWICE, and the second narrowing is not tuning: it
+is gate two's own ruling read forward.** ⭐ Gate two established that a record's
+findings are numbered inside a SCOPE. ⭐ **So a line in the Findings section
+that claims a scoped number is a FINDING, and a line that claims none is
+PROSE** — the disposition arguing whether something was `[local]` or
+`[structural]`, the count of what was filed, the table documenting the
+vocabulary. ⚠️ **Measured: 80 marker-bearing lines inside a Findings section
+claim no scope, and 219 do.** ⛔ Every one of the 80 is prose, and reading them
+was the whole of the 27.
+
+### ⛔ THREE ARMS ARE REFUSED, EXPLICITLY RATHER THAN BY OMISSION
+
+⛔ **1. The six sections (`check_sections`) — RATIFIED ABSENT.** ⚠️ `W64` left
+this a silence and pinned it in a test; this gate ends the silence. ⭐ **A
+record is not a handoff**: it hands nothing over, so *Status*, *What landed*
+and *For dependents* name nothing it has. ⚠️ **Measured: applying them prints
+437 findings in 98 of the 110 records** — a debt no record ever owed.
+
+⛔ **2. *Marks no finding* — REFUSED, and this is the measurement that decides
+gate three.** ⚠️ **A record does not TRIAGE-mark its findings, and the corpus
+says so: of 311 numbered claims inside a Findings section, 92 in 27 documents
+carry no marker at all** — every finding in the most recent CTO round among
+them. ⭐ **A record's findings are DISPOSITIONS, not triage items**: Ruling 29's
+*a finding is a marked item* is a task handoff's contract, written for a
+document whose findings are routed onward. ⛔ Demanding a marker would be
+Ruling 193's chase in its purest form, against 106 documents that may not be
+edited.
+
+⛔ **3. `[none]` standing beside a real finding — REFUSED for a record.** ⭐ In a
+handoff `[none]` means *nothing outside this task's scope*, so it cannot stand
+beside a finding. ⚠️ **A record uses it per-finding, to mean a recorded
+negative** — measured, all 4 of the `[none]` lines in the corpus's Findings
+sections do exactly that, beside real findings. ⛔ **The other `[none]` arm IS
+applied**: a marker that carries no sentence is a quieter way of writing `0`,
+and that argument does not turn on the kind of document.
+
+### ⛔ WHAT DOES FIRE, and Ruling 189(b) is why it is not stricter
+
+⭐ **A line in the Findings section claiming a scoped number must carry its
+marker where no CLAIM has preceded it** — in the line's lead, or at the start of
+one of its cells. ⛔ **Every cell, never a column index** (Ruling 189(b)):
+`contract.claim_free_markers` tests each, ⚠️ **because a record's findings table
+is written `| # | Finding | Marker |` and the marker sits behind a cell of
+prose.** ⛔ `marker_lines`'s `own_line` reads the LINE's lead only and therefore
+refuses that table — the stricter reading a task handoff is held to, and the
+one Ruling 189(b) says is not the rule.
+
+⭐ **Two markers in claim-free positions is still one finding claiming to be
+two**, and that half of Ruling 65's count rule survives. ⚠️ A marker QUOTED
+inside the finding's own prose does not, because that is the sentence gate
+three exists to stop reading.
+
+## ⛔ WHAT GATE THREE DOES NOT TAKE, and it is a decision rather than an oversight
+
+⛔ **`survey` is still outside every one of these rules, and a record that
+derives no scope is still not refused.** ⭐ Both were named as residue by `W64`
+and re-measured at `bec9d5c`, HOST, unmoved: **3 surveys, 5 scopeless records.**
+⚠️ Admitting `survey` widens a kind Ruling 218 names, and refusing a scopeless
+record demands a rename or an edit inside a record — so both are declined out
+loud rather than left silent.
+
+⛔ **`W64/11`'s citation-resolution rule is REFUSED PERMANENTLY, not deferred.**
+⭐ Requiring a cited scope to EXIST is green today — **re-measured at `bec9d5c`,
+HOST: 170 citation lines in 14 records, 0 dangling, against a universe of 340
+scopes that exist.** ⚠️ **Its failure mode is a red nobody may discharge:** the
+offending line is inside a record, a record is annotated and never edited, so
+the day a row file is retired the floor goes red and the only repair is
+forbidden. ⛔ **A check whose failure cannot be fixed is worse than the hole it
+closes**, and no narrowing available here changes that, so it is refused for
+good rather than routed to a fourth gate.
 
 ## ⛔ The scope is DERIVED, at zero record edits (Ruling 219)
 
@@ -66,7 +150,17 @@ from __future__ import annotations
 
 import re
 
-from tools.quality.handoffs.contract import check_finding_ids, marker_lines
+from tools.quality.handoffs.contract import (
+    MARKER_NONE,
+    MIN_NONE_CHARS,
+    RULE_FINDINGS,
+    RULE_MARKER,
+    check_finding_ids,
+    claim_free_markers,
+    claimed_scope,
+    marker_lines,
+)
+from tools.quality.handoffs.sections import in_findings
 from tools.quality.report import Finding
 
 RULE_RECORD_SCOPE = "handoff-record-scope"
@@ -164,15 +258,84 @@ def _check_declaration(relative: str, stem: str, declared: list[str]) -> list[Fi
     return findings
 
 
-def check_record(relative: str, stem: str, declared: list[str], text: str) -> list[Finding]:
-    """Check a `ruling record`'s scope, and the finding IDs it now reaches.
+def record_finding_lines(text: str) -> list[tuple[int, str]]:
+    """Return every line gate three reads as one of `text`'s findings (`W172`).
 
-    ⛔ **Gate two only.** The marker rule, the six sections and *marks no
-    finding* are gate three's and are not applied here — see the module
-    docstring for why an exit-`0` chase is refused rather than attempted.
+    ⛔ **Two conditions, and the module docstring measures both:** the line is
+    inside a *Findings* section, and it claims a SCOPED finding number.
+    ⭐ Everything else carrying a marker is a record's prose about markers,
+    which is the thing this gate exists not to read.
+    """
+    region = in_findings(text)
+    return [
+        (number, line)
+        for number, line, _own_line in marker_lines(text)
+        if number in region and claimed_scope(line) is not None
+    ]
+
+
+def check_record_markers(relative: str, text: str) -> list[Finding]:
+    """Gate three: the marker discipline a `ruling record` DOES owe (`W172`).
+
+    ⛔ **Three arms of `check_markers` are deliberately absent** — the six
+    sections, *marks no finding*, and `[none]` standing beside a real finding.
+    Each is refused in the module docstring against a measurement, not omitted.
+    """
+    findings: list[Finding] = []
+    for number, line in record_finding_lines(text):
+        markers = claim_free_markers(line)
+        if markers == 0:
+            findings.append(
+                Finding(
+                    relative,
+                    number,
+                    RULE_MARKER,
+                    "numbers a finding and buries its marker in the finding's own prose. "
+                    "Rubric §8a: a marker in explanatory text counts as a finding that "
+                    "does not exist. Put it in the lead, or in a cell of its own — "
+                    "any cell (Ruling 189(b)), never a named column.",
+                )
+            )
+        elif markers > 1:
+            findings.append(
+                Finding(
+                    relative,
+                    number,
+                    RULE_MARKER,
+                    f"numbers one finding and marks it {markers} times. Two markers where "
+                    f"no claim precedes them is one finding claiming to be two; a marker "
+                    f"QUOTED inside the prose is not one of them and is not counted.",
+                )
+            )
+        if MARKER_NONE in line and len(line.split(MARKER_NONE, 1)[1].strip(" *—-:`|")) < (
+            MIN_NONE_CHARS
+        ):
+            findings.append(
+                Finding(
+                    relative,
+                    number,
+                    RULE_FINDINGS,
+                    f"{MARKER_NONE} carries no sentence. `0` is never self-certifying: "
+                    f"say what was looked at and found clean.",
+                )
+            )
+    return findings
+
+
+def check_record(relative: str, stem: str, declared: list[str], text: str) -> list[Finding]:
+    """Check a `ruling record`'s scope, its finding IDs, and its markers.
+
+    ⛔ **Gates two and three.** ⚠️ The finding-ID rule reads the WHOLE document
+    and the marker rule reads only the Findings section, and that asymmetry is
+    deliberate: *is this number legal* is a safe question anywhere, and *is
+    this line a finding at all* is exactly the question a record's prose
+    defeats. ⭐ Narrowing gate two to the region would REDUCE the floor's reach
+    by **475 of the 790** claims it judges across the 110 records — measured at
+    `bec9d5c`, HOST — and close no defect.
     """
     findings = _check_declaration(relative, stem, declared)
     scopes = record_scopes(stem, declared)
     lines = [(number, line) for number, line, own_line in marker_lines(text) if own_line]
     findings.extend(check_finding_ids(relative, lines, scopes, cites_elsewhere=True))
+    findings.extend(check_record_markers(relative, text))
     return findings
