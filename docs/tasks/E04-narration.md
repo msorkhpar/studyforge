@@ -121,6 +121,26 @@ early, explained event rather than a failed push.
 ran upstream), R8 (`file://`), R10 (reproducible), R12 (tests), R19 (the
 consuming half — including ignore rules — is generated from the policy).
 
+#### ⛔ WHO INVOKES NARRATION, AND WHAT A PAGE SHOWS WITHOUT IT — ANSWERED, AND NOT ANSWERED HERE
+
+⛔ **`W202` items 3 and 4 are ANSWERED, and this epic carries a POINTER rather
+than a second copy** — ⭐ **their one home is
+[`E09-delivery.md`'s `W202` section](E09-delivery.md#w202-what-a-build-is-the-six-decisions-answered-and-every-row-here-cites-them),
+answers 3 and 4.** ⚠️ **Two sentences of consequence for the rows in THIS epic;
+every detail is behind that pointer:**
+
+- ⛔ **A BUILD NEVER SYNTHESISES.** ⭐ **`studyforge narrate` (`SF-42`, `M3`, in
+  that epic) becomes the only caller of `narrate.synth` outside tests; `SF-17`
+  stays the library and gains no verb.** ⚠️ **`W187`'s stopping point, named for
+  the third time and now closed.**
+- ⛔ **A PAGE SHOWS A PLAYER WHEN A RECORD PROMISES ONE, AND COMPLAINS ONLY ON A
+  BROKEN PROMISE** — ⭐ **no record at all means a clean prose page with no
+  player and no notice, because §7's three states (C5) make a narrationless
+  corpus COMPLETE, not short.** ⚠️ **`SF-18`'s *"a unit with no generated audio
+  says so"* is NARROWED by that: it says so when a record PROMISED the clip and
+  says nothing when no record exists** — ⛔ **the distinction the tree cannot
+  currently make, and the whole reason the user chose the expensive option.**
+
 ---
 
 ### SF-16 — Speakable contract

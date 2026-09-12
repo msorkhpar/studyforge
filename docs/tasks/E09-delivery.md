@@ -29,6 +29,154 @@ epic — because the second source will hit it too. This is the same argument
 
 ---
 
+## ⛔ W202 — WHAT A BUILD IS. THE SIX DECISIONS, ANSWERED, AND EVERY ROW HERE CITES THEM
+
+⭐ **This section is the ONE home of the six answers.** ⛔ **A row that consumes
+one CITES this section and does not re-derive it** (`W202`'s clause 4), and ⛔ **an
+office that finds one inconvenient records a finding rather than deviating.**
+⚠️ **1, 2 and 4 are the USER's own, given directly on 2026-09-12 with the options
+and their costs in front of them: they are product promises and no office may
+re-open one.** ⭐ **3, 5 and 6 are the register's, taken PO round 63.**
+
+### ⭐ 1 — WHERE A BUILD WRITES → **NOWHERE BY DEFAULT. `--out` STAYS REQUIRED.**
+
+⛔ **The command refuses without an explicit output directory, and it refuses
+again if that directory does not already exist** — a build mints its own pages
+and never its own root. ⭐ **This is what ships today, so the BEHAVIOUR does not
+change; its STATUS does — it is now a decision rather than an accident of a
+scoping increment.**
+
+⚠️ **The costs, accepted out loud:** there is no zero-argument demo and every
+invocation carries the flag. ⭐ **What it buys: no path is ever guessed, R3 is
+never engaged by a default, and the existing refusal already explains itself.**
+
+### ⭐ 2 — WHAT A REBUILD DOES → **OVERWRITE ONLY WHAT THE BUILD ITSELF WROTE.**
+
+⛔ **A rebuild replaces the files the build created and REFUSES ANYTHING ELSE BY
+NAME.** ⭐ **The footprint is KNOWN rather than guessed: `studyforge plan`
+already enumerates every path a build creates, goldened and asserted** — that
+enumeration is what makes this honest rather than a shrug, and it is why the
+answer is (a) and not *refuse unless `--force`*.
+
+⛔ **THE R3 REFINEMENT THIS CARRIES IS THE SPEC'S AND LIVES AT R3** — ⭐ **R3
+distinguishes the build's own prior output from the user's material** — ⚠️ **and
+it is stated ONCE, in
+[the spec at R3](../specs/2026-09-08-studyforge-v1-design.md), not restated here.**
+
+⚠️ **Today's behaviour is the OTHER one:** measured at `6ffba1e`, a second
+`studyforge build` into the same directory refuses all eight paths and exits
+`1`. ⛔ **Nothing owned the change, so the register minted the row that does.**
+
+### ⛔ 3 — WHO INVOKES NARRATION, AND WHEN → **NOT THE BUILD. A SEPARATE, EXPLICIT STAGE.**
+
+⛔ **A BUILD NEVER SYNTHESISES AND NEVER TALKS TO THE NARRATION SERVICE.**
+⭐ **Synthesis is its own stage with its own verb, `studyforge narrate <corpus>`:
+it is the only thing in this framework that probes the service, writes clips, or
+writes the narration record.** ⛔ **A build READS that record and never writes
+one.**
+
+⭐ **WHEN: the record and the clips are INPUTS to a build, exactly like the
+archive.** ⛔ **So the order is `narrate` then `build`, and a `narrate` after a
+build is answered by a REBUILD rather than by a page rewrite** — which is only
+affordable because answer 2 made a rebuild legal. ⭐ **WHO: a person, or the
+build-and-serve skill (`SK-03`). Never a build, never a test, never `serve`.**
+
+⚠️ **Four grounds, and the first is the one that would have been paid for late:**
+
+1. ⛔ **R8 and §11.0 — the reading floor is offline with no server.** ⭐ **A
+   build that probed a synthesis service would make the FLOOR'S OWN PRODUCER
+   depend on a network service, which is the property the floor exists to have.**
+2. ⛔ **Answer 2 depends on the build's footprint being exactly what
+   `studyforge plan` enumerates.** ⚠️ **Clips are placed by `corpus.placement`,
+   beside the material — NOT under `--out`** — ⭐ **so a build that also
+   synthesised would write outside its own enumerated footprint and *overwrite
+   only what the build itself wrote* would stop being decidable.**
+3. ⭐ **This epic already asserts stage independence** — *regenerating one
+   lesson's narration should not rebuild every page* — ⛔ **and that property is
+   only TRUE if narration is a stage a caller can invoke alone.**
+4. ⭐ **`narrate.synth`'s shipped contract already assumes this caller:**
+   *`probe()` is the caller's, and a build probes once for a whole corpus rather
+   than once per unit* (`NS-05`'s *For dependents*). ⛔ **The library was built
+   for a caller nobody had named; this names it.**
+
+⛔ **THE CONSEQUENCE FOR `M3`:** ⭐ **the verb is what makes *narration is
+generated* performable, so it is an `M3` obligation and it is `SF-42` below.**
+⚠️ **Its STEP MEMBERSHIP is [`README.md`](README.md)'s and is owed — see
+[`W206`](rows/W206.md).**
+
+### ⭐ 4 — A CORPUS WITH NO NARRATION RECORD → **PLAYER WHEN PROMISED; COMPLAIN ONLY ON A BROKEN PROMISE.**
+
+| state | ⛔ what the page shows |
+|---|---|
+| no record at all | ⭐ clean prose page — **no player, no notice** |
+| record present, every clip on disk | player, and the audio plays |
+| ⛔ record PROMISED a clip that is **not** on disk | player, **and the page names the gap** |
+
+⛔ **THE DEFECT THIS FIXES:** ⭐ **today a corpus that was NEVER NARRATED renders
+IDENTICALLY to one whose audio FAILED.** ⚠️ **After this, *never narrated* and
+*narration broke* are distinguishable to a reader.**
+
+⭐ **It follows the spec rather than fighting it:** §7's three states (C5) and
+§11.0's reading floor say a corpus without narration is **COMPLETE, NOT SHORT**,
+so a finished prose corpus carries no permanent *something is missing* notice.
+⛔ **The rejected option — a visible disabled player — is the one that
+contradicts that, and it was refused on exactly that ground.**
+
+⚠️ **Cost, accepted: more machinery, and the third row of the table is only
+fully testable once something actually narrates a corpus** — ⭐ **which is
+answer 3's verb.**
+
+### ⭐ 5 — WHERE THE BUILD PACKAGE HOMES → **`generate/` STAYS, AND NOW ON MERIT.**
+
+⚠️ **It was chosen to dodge [`W200`](rows/W200.md) — the root ignore file's bare
+`build/` would have swallowed `src/studyforge/build/`.** ⛔ **That is not a
+reason to keep a name, so here is one:**
+
+1. ⭐ **`generate` is the SPEC'S OWN WORD for this act** — R3 is *"Generation is
+   non-destructive"* and R19 is *"the consuming half of a corpus is
+   generated"*. ⛔ **The package is named after the rule that binds it.**
+2. ⛔ **`build/` is reserved by convention in a Python source tree** — every
+   packaging toolchain writes one — ⭐ **so `W200`'s ignore rule is CORRECT about
+   `build/` in general and only over-broad about its scope.**
+3. ⭐ **`build` is the VERB A READER TYPES; `generate` is the package that
+   answers it.** ⛔ **The two are allowed to differ, and one already does:
+   `cli/plan/` matches its verb because a CLI package must, and an engine
+   package is not a verb.**
+
+⛔ **[`W200`](rows/W200.md) IS NOT DISCHARGED BY THIS.** ⚠️ **Its subject is a
+bare pattern that ignores more than it means to; that stands whatever this
+package is called** — ⭐ **and this answer removes the deadline from it, not the
+row.**
+
+### ⛔ 6 — DRAIN OR STOP → **BOTH, AT A NAMED SEAM. IT DIVERGES FROM `validate` DELIBERATELY.**
+
+⛔ **ANSWERED AGAINST `validate`'s PRECEDENT EXPLICITLY, which `W202` required.**
+⭐ **`validate` DRAINS every check because its PRODUCT IS THE REPORT (R6): a
+finding is its output, so stopping early would be shipping less of the thing
+asked for.** ⛔ **A build's product is a SITE, so the rule is different and it is
+not two personalities — it is one rule read against two products:**
+
+> ⭐ **A BUILD DRAINS WHAT IT CAN STILL FINISH AROUND, AND STOPS ON WHAT MAKES
+> FINISHING IMPOSSIBLE. `validate` DRAINS EVERYTHING BECAUSE ITS PRODUCT IS THE
+> REPORT.**
+
+| ⛔ the seam | ⭐ what happens | why |
+|---|---|---|
+| an occupied path (`refused`), a declared-but-unfetched file (`missing`) | ⭐ **DRAINED** — every one named, one exit code at the end | ⭐ a site is still produced around them, and `Written` already records them rather than raising |
+| an unreadable manifest, container map or contents document | ⛔ **STOPS** | ⛔ there is no site to finish; and `studyforge validate` is the command ONE STEP EARLIER whose whole job is that report |
+
+⭐ **THIS RATIFIES THE TREE RATHER THAN CHANGING IT.** ⛔ **`generate/writing.py`
+already names `refused` and `missing` instead of raising, and
+`generate/declarations.py`'s own docstring already states the stop and its
+ground.** ⚠️ **So the office's *"changing it is one function"* was priced against
+a build that stops everywhere, and the register's reading at `6ffba1e` is that
+the seam already sits where the answer puts it** — ⭐ **what was missing was
+anybody having DECIDED it, which is what makes the next module's author stop
+re-deriving it.** ⛔ **What each module owes now is a CITATION of this answer in
+place of its own paragraph of reasoning.**
+
+---
+
 ### OPS-01 — Java toolchain image
 **Milestone** **M6** · **Depends on** TC-03, TC-06 · **Team** solo
 **Owns** `JS/docker/toolchain/`
@@ -372,17 +520,34 @@ document-level door and refused to invent who invokes narration and when.**
 **Definition.** The build's narration pass: what a build does about audio.
 Every page `studyforge.generate` writes today renders `SILENT`.
 
-⛔ **THIS ROW IS BLOCKED ON A DECISION IT MAY NOT TAKE** — [`W202`](rows/W202.md)
-items 3 and 4: *who invokes synthesis, and when*, and *what a corpus with no
-narration record shows*. ⚠️ **A taker who answers either of those inside this row
-has taken a product decision in a code branch, which is the act `W202` exists to
-prevent.**
+⭐ **UNBLOCKED, PO ROUND 63.** ⛔ **It stood blocked on
+[`W202`](BOARD-ARCHIVE.md#w202-six-decisions-a-build-cannot-ship-without-answered-three-by-the-user-and-three-by-the-register)
+items 3 and 4; both are ANSWERED above and this row CITES them rather than
+re-deriving either.** ⚠️ **A taker who reaches a different answer inside this row
+has taken a product decision in a code branch, which is the act `W202` existed
+to prevent — the remedy is a finding, not a deviation.**
 
-**Acceptance.** Written once `W202`'s items 3 and 4 are answered, and it CITES
-them rather than re-deriving them. ⭐ **What can be stated now, because it does
-not depend on the answer: a build's narration pass is independently invocable —
-regenerating one lesson's narration does not rewrite pages whose speech did not
-change — and a corpus with no narration record still BUILDS.**
+⛔ **WHAT ANSWER 3 MAKES THIS ROW: THE READ SIDE, AND ONLY THE READ SIDE.**
+⭐ **A build never synthesises and never probes the service; the narration record
+and its clips are INPUTS, like the archive. Producing them is `SF-42`'s verb and
+`SF-17`'s library.** ⚠️ **So this module opens a record, resolves each unit's
+clip against disk, and hands the renderer the three states — it makes no
+request and mints no clip.**
+
+**Acceptance.** ⛔ **Answer 4's three states, one test each, over the `FND-04`
+fixtures:** a corpus with **no record** builds a page with **no player and no
+notice**; a record whose every clip is **on disk** builds a page with a player
+whose sources resolve; a record **promising a clip that is absent** builds a
+page that **names the gap**. ⭐ **Asserted in both directions (R12): the
+no-record page must not merely lack a source — a planted player on it turns the
+arm RED — because *silently identical to a failed narration* is the exact defect
+answer 4 exists to remove.**
+
+⛔ **No module in this package imports `narrate.client` or `narrate.synth`'s
+request path**, asserted — ⭐ **that import is the shape of a build that
+synthesises, and answer 3 forbids it.** ⛔ **A corpus with no narration record
+still BUILDS, exit `0`.** ⭐ **The pass is independently invocable: regenerating
+narration does not rewrite pages whose speech did not change.**
 
 ---
 
@@ -447,11 +612,25 @@ no document still says the entry point is not built yet.
 
 ```bash
 # ⛔ This row's second acceptance half. Both lines must print NOTHING at its merge ref.
-git grep -InE 'console entry point|\[project\.scripts\]|before .?SF-28.? registers|belongs to .?SF-28' \
+git grep -InE 'console entry point|before .?SF-28.? registers|belongs to .?SF-28' \
   -- docs/authoring src/ tests/ pyproject.toml
 # and the spelling the two SKILL.md fences and the adapter test pin:
 git grep -In 'python3 -m studyforge\.validate' -- src/studyforge/skills tests/studyforge/skills
 ```
+
+⛔ **CORRECTED BY THE REGISTER, PO ROUND 63, AND THE DEFECT WAS MINE: the
+alternation above carried the literal `\[project\.scripts\]`, WHICH IS THE VERY
+TABLE THIS ROW EXISTS TO ADD.** ⭐ **So sweep A could print nothing only if the
+table were never named — including inside `pyproject.toml`, which declares it —
+and the acceptance became UNSATISFIABLE the moment the row succeeded.**
+⚠️ **`SF-40/1`, raised by the delivering office against the register; the office
+measured the corrected pattern and it prints nothing.** ⛔ **The class — an
+acceptance that cannot be met is indistinguishable from one nobody checked —
+already has two open rows and is not re-minted here:
+[`W49`](rows/W49.md) (acceptance clauses naming no instrument that can return
+`no`) and [`W37`](rows/W37.md) (the repo-wide sweep for checks that cannot fail
+by construction).** ⭐ **This case is recorded as `W49`'s second witness, which
+is what the freeze's own lesson asks for: REACH before new text.**
 
 ⛔ **BLAST RADIUS — MEASURED BY THE PO AT `cab8a04`, AND IT IS ELEVEN FILES.**
 ⚠️ **`W61/4` counted FOUR; CTO round 41 corrected it to SIX; the derived
@@ -491,6 +670,82 @@ ref**, the converted predicate derives its verb list from `pyproject.toml`, and
 ⭐ **a planted fence naming an unregistered verb still FAILS** — the pass
 condition is the MOVED exit code (Rulings 124, 348), because a predicate that
 cannot fail is the thing §2e refuses.
+
+---
+
+### SF-42 — `studyforge narrate`, the CLI stage ⭐ THE ACT `M3` IS WAITING ON
+**Milestone** **M3** · **Depends on** SF-17, SF-40, NS-05 · **Team** solo
+**Owns** `studyforge/cli/narrate/` — ⛔ **and NOT `narrate/`, which is `SF-16`'s
+and `SF-17`'s**: a row whose `Owns` reached inside `narrate/` would be a second
+author of the synthesis library. ⭐ **`SF-39`'s shape exactly, one stage over.**
+**Context** ~20k — [answer 3 above](#3-who-invokes-narration-and-when-not-the-build-a-separate-explicit-stage),
+`narrate.synth.synthesise`, `NS-05`'s *For dependents*, `SF-40`'s dispatcher notes
+
+⛔ **MINTED BY THE REGISTER, PO ROUND 63, AS THE DIRECT CONSEQUENCE OF ANSWER 3.**
+⭐ **Answer 3 says a build never synthesises, so SOMETHING ELSE MUST — and
+nothing did: `narrate.synth` has been a library with no caller outside tests
+since it landed.** ⚠️ **That absence is why `M3` could not close with all five
+of its steps closed: its *Done when* is *"narration is generated"* and this
+repository ran no synthesis.**
+
+**Definition.** `studyforge narrate <corpus>` — the verb that turns a corpus's
+speakable units into clips on disk and writes the narration record. It probes
+the service once for the whole corpus, hands `narrate.synth` the answer, and
+places what comes back through `corpus.placement`. ⛔ **Synthesising is
+`SF-17`'s; this is the stage a person can type.**
+
+**Acceptance.** ⛔ **A `FND-04` fixture corpus is NARRATED END TO END against a
+running `narrate-service`, and clip files exist on disk afterwards** — ⭐ **which
+is the leg `M3` is missing, and it is asserted as a reading of the DISK, never
+as the run's own report** (`SF-17`'s *"0 synthesised" over 619 stale clips*).
+⛔ **Re-running with no content change writes nothing and REQUESTS nothing**,
+asserted over the set of ids submitted through a recording transport, not over
+the report. ⛔ **An ABSENT service is a named refusal and never a traceback** —
+`probe()` never raises for absence (R6, R8) — ⭐ **and a corpus with no narration
+service still reads, which is the floor.** ⛔ **No module in `cli/` names a
+source.** ⚠️ **Exit codes follow `cli/site/`'s: `0` narrated, `1` something the
+corpus declared could not be produced, `2` the tool could not run at all.**
+
+⚠️ **STEP MEMBERSHIP IS OWED AND IS NOT THIS EPIC'S TO GIVE**: ⛔ **all five
+`M3` steps are closed, this task is `M3`, and [`README.md`](README.md) is where a
+step admits a task** — ⭐ **[`W206`](rows/W206.md) already owns that surface and
+now owes one more row than it did.**
+
+---
+
+### SF-43 — The rebuild, and the footprint it may replace
+**Milestone** **M4** · **Depends on** SF-28, SF-40 · **Team** solo
+**Owns** `studyforge/generate/writing.py`'s replacement policy and
+`studyforge/cli/site/` — ⛔ **NAMED MODULES, so this row and `SF-38` can be
+dispatched into one wave without two owners of one surface**
+**Context** ~20k — [answer 2 above](#2-what-a-rebuild-does-overwrite-only-what-the-build-itself-wrote),
+spec R3, `cli/plan/derive.plan_for` and its committed goldens
+
+⛔ **MINTED BY THE REGISTER, PO ROUND 63.** ⭐ **Answer 2 is a USER decision and
+nothing in the tree owned the change it implies.** ⚠️ **MEASURED at `6ffba1e`,
+role `wt/po`, HOST, from an installed console script: a second
+`studyforge build` into the same directory refuses every path it wrote the first
+time and exits `1`** — ⛔ **which is the option the user did NOT choose.**
+
+**Definition.** A rebuild replaces the files the build itself created and
+refuses everything else by name. ⭐ **The permission is the ENUMERATION's, not
+the directory's: a path `studyforge plan` names for this corpus may be
+overwritten; a path it does not name is refused exactly as today**, which is the
+spec's R3 refinement made operational.
+
+**Acceptance.** ⛔ **Build twice into one directory: the second run exits `0` and
+the tree is byte-identical to the first** — the pages are deterministic, so a
+difference is a defect rather than a rebuild. ⛔ **A file at a path the
+enumeration does NOT name survives untouched and is REFUSED BY NAME**, asserted
+by planting a foreign file in the output root and reading it back byte for byte
+after a rebuild. ⚠️ **The discrimination is by PATH and never by content — a
+build cannot know a file was hand-edited** — ⭐ **so the honest promise is the
+enumeration's, and that is why answer 2 rests on `studyforge plan` rather than
+on a timestamp or a manifest of hashes.** ⛔ **Nothing outside the enumeration is
+ever deleted and the output root is never emptied.** ⛔ **The enumeration and the
+build still agree PATH FOR PATH** (Ruling 99) — ⚠️ **and this row makes that
+agreement LOAD-BEARING FOR R3 rather than merely goldened, which raises what a
+drift between them costs.**
 
 ---
 

@@ -6,7 +6,7 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**96 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
+**98 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
 
 ## M0 — 6 capabilities
 
@@ -63,7 +63,7 @@
 | `SK-08` | Delivery planning | Skills and authoring kit | `SK-01`, `SK-07`, `SF-31` |
 | `SK-05` | Authoring reference | Skills and authoring kit | `SK-02` |
 
-## M3 — 10 capabilities
+## M3 — 11 capabilities
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
@@ -71,6 +71,7 @@
 | `SF-17` | Narration synthesis | Narration | `SF-16`, `SF-03`, `NS-05` |
 | `SF-32` | Media footprint policy | Narration | `SF-02`, `SF-17` |
 | `SF-18` | Player and highlight sync | Narration | `SF-12`, `SF-16` |
+| `SF-42` | `studyforge narrate`, the CLI stage | Delivery | `SF-17`, `SF-40`, `NS-05` |
 | `NS-01` | Extract the service into its own repository | Narration service (shared repository) | — |
 | `NS-02` | Batch job API and content-addressed cache | Narration service (shared repository) | `NS-01`, `NS-03` |
 | `NS-03` | Engine adapters and hardware independence | Narration service (shared repository) | `NS-01` |
@@ -78,7 +79,7 @@
 | `NS-05` | Framework client | Narration service (shared repository) | `NS-02`, `SF-08` |
 | `NS-06` | Agent-callable adapter | Narration service (shared repository) | `NS-02` |
 
-## M4 — 11 capabilities
+## M4 — 12 capabilities
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
@@ -91,6 +92,7 @@
 | `SF-38` | Narration in the build | Delivery | `SF-28`, `SF-16`, `SF-17` |
 | `SF-39` | `studyforge serve`, the CLI stage | Delivery | `SF-19a`, `SF-40` |
 | `SF-40` | The console entry point, and the caveat sweep | Delivery | `SF-28` |
+| `SF-43` | The rebuild, and the footprint it may replace | Delivery | `SF-28`, `SF-40` |
 | `SK-03` | Build and serve | Skills and authoring kit | `SF-28` |
 | `SK-06` | Personal archive | Skills and authoring kit | `SK-03`, `SF-21` |
 
