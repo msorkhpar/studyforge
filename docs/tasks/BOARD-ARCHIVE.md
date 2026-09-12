@@ -18157,3 +18157,56 @@ wc -l tools/quality/board/*.py
 ### ⭐ THE THREE INSTRUMENTS AT THIS BRANCH'S TIP, EACH WITH ITS OWN ENVIRONMENT NAMED
 
 ⛔ **Ruling 279 makes `corroborate` a GATE at `git rev-parse chore/po-round55` — this branch's tip, never the release tip and never a moment.** ⭐ **The readings are in the handoff, `docs/tasks/handoffs/PO-2026-09-12-round55.md`, quoted whole rather than tailed, and the closing three were taken in the pinned container through `docker/dev/check` from this checkout.**
+
+## ⛔ AMENDMENT, PO round 55 — the host-wide identity window raised mid-round, all four readings checked against it and the mechanism verified read-only; APPENDED and never amended, so `2e8875b` stays an ancestor (Ruling 324, Ruling 106)
+
+### ⛔ THE HOST-WIDE IDENTITY WINDOW — my four readings checked against it, and the mechanism verified read-only rather than inherited
+
+⚠️ **APPENDED after the round's first commit and BEFORE the closing re-take, because the coordinator raised it mid-round** (Ruling 106: appended, never edited into what stands above). ⛔ **The report: another office set an identity with `git config user.name …` inside a LINKED WORKTREE, which writes the SHARED common `.git/config`; the personal-data gate then read that value as this machine's git author and flagged every tracked occurrence of it — reported as `329` findings across documents nobody had touched, for roughly two minutes, while three offices were measuring.** ⭐ **Disclosed by the office as `W64/14`.**
+
+⛔ **THE ASK WAS A CHECK, NOT A CHANGE, AND THE CHECK IS NEGATIVE FOR THIS ROUND.** ⭐ **None of my four readings is a casualty, and the evidence is the readings themselves rather than a timestamp comparison:**
+
+| reading | ref | environment | did it carry a `personal-data-identifier` finding? |
+|---|---|---|---|
+| floor `A` | `2e8875b` | pinned container | ⭐ NO — `quality floor: clean`, `FLOOR_EXIT=0`, whole output captured |
+| gate `B` | `2e8875b` | pinned container | ⭐ NO — `CORR_EXIT=0`; this instrument reads no document |
+| suite `C` | `2e8875b` | pinned container | ⭐ NO — `5671 passed, 18 skipped`, `PYTEST_EXIT=0` |
+| `verify` `D` | `2e8875b` | HOST | ⭐ NO — one component, the board-held ISO pin, the expected reading |
+
+⛔ **A CLEAN FLOOR IS A STRONGER ANSWER THAN A CLOCK: whether or not my run overlapped the window, a run that returned `clean` did not read a poisoned config.** ⭐ **And the closing re-take below is taken AFTER the repair, at the tip that merges, which settles it a second way.**
+
+⛔ **THE MECHANISM, VERIFIED HERE READ-ONLY RATHER THAN ACCEPTED** (Ruling 115 — received facts are re-derived where the derivation is free), role `wt/po`, ref `2e8875b`, environment HOST:
+
+```text
+git config --local --get-regexp '^user\.'          exit 1, no output   ⭐ nothing local here
+grep -n '^\[user\]' "$(git rev-parse --git-common-dir)/config"
+                                                    exit 1, no match    ⭐ the section is gone
+git config --get extensions.worktreeConfig          exit 1, no output   ⛔ THIS IS THE CAUSE
+```
+
+⭐ **THE THIRD LINE IS THE ONE THAT MATTERS AND THE REPORT DID NOT CARRY IT.** ⛔ **`extensions.worktreeConfig` is UNSET, and that is precisely why a `git config --local` run inside a linked worktree lands in the SHARED common config instead of a per-worktree one.** ⚠️ **So the hazard is not one office's slip: it is a property of this workspace's configuration that makes every linked worktree's `git config` a host-wide write, and it will do the same thing to the next office that reaches for the convenient spelling.**
+
+⭐ **THIS ROUND USED THE SAFE MECHANISM, and it is measured rather than asserted:** ⛔ **every commit on `chore/po-round55` was made with `git -c user.name=… -c user.email=… commit`, which sets the identity for ONE invocation and writes no file. `git log --format='%h A:%an <%ae> C:%cn <%ce>'` over `7a7a178..HEAD` returns `po <po@example.invalid>` as BOTH author and committer.**
+
+### ⭐ TWO THINGS THE COORDINATOR HANDED ME, AND WHAT I DID WITH EACH
+
+1. ⛔ **RULING 296 DOES NOT NAME A MECHANISM, and the gap is real.** ⭐ **It requires a placeholder identity and is silent on `git -c …` versus `git config …`, so an office can satisfy every word of it and still poison every other worktree on the host.** ⛔ **I DID NOT PUT IT ON THE BOARD, and the ground is three-fold rather than a shrug:** ⚠️ **(a) it is a CANDIDATE and not yet a decision — the affected office has already routed the one-clause amendment to the CTO, and the *Standing decisions* table carries decisions rather than proposals; (b) the numbered series is sourced to CTO records, so a register minting into it would be minting on someone else's surface (round 54's own ground); and (c) — ⛔ **the cost, named rather than hidden** — **the board finished this round at `17` bytes of headroom, so the cell CANNOT be written today whatever anyone decides.** ⭐ **That is `PO-55/4` arriving inside its own round: the size bound is now standing between a personal-data safety rule and the one document every agent opens.** ⚠️ **The rule's natural home is `docs/conventions/agent-protocol.md`, whose surface is already under a ONE-OWNER constraint with queued rows naming `docs/conventions/`.**
+
+2. ⭐ **THE GATE IS RECORDED AS A POSITIVE READING OF THE INSTRUMENT, and it is owed.** ⛔ **A personal-data gate that goes from clean to `329` findings within about two minutes of a host-wide identity appearing, on documents whose authors did nothing, is the instrument working exactly as R7 intends — a false alarm in ATTRIBUTION and a true alarm in FACT: the identity really was in the shared config and really would have been readable.** ⚠️ **RECEIVED, not re-inhabited** (Ruling 115): **`329` is the coordinator's figure from the coordinator's run and I did not reproduce it — reproducing it would have required re-poisoning the config, which is the one thing nobody should do.** ⭐ **What I DID verify is the state after the repair, above.**
+
+⛔ **AND A THIRD THING NOBODY HANDED ME — the relay word, `PO-55/6` below.** ⭐ **The message reads *"`W64` has landed at `5b31436`"*, and in this project a row that has LANDED gets `✅ done — <merge ref>` in the register.** ⛔ **MEASURED before touching a cell, role `wt/po`, environment HOST, `09:07 UTC`:**
+
+```text
+git rev-parse --short refs/heads/fix/W64-kind-gate-scope    5b31436   ⛔ the BRANCH TIP
+git rev-parse --short release/m0-foundations                7a7a178   ⭐ release has NOT moved
+git branch --contains refs/heads/fix/W64-kind-gate-scope
+    + fix/W64-kind-gate-scope                                         ⭐ and nothing else
+git rev-list --count release/m0-foundations..<branch>
+    W64 3        W155 1        W170 1                                 ⭐ all three live and ahead
+```
+
+⭐ **NOT MERGED. The In flight row for `W64` stands, DATED at its own declared ref and not refuted, and no cell moved.**
+
+### ⛔ ONE FINDING ADDED BY THIS AMENDMENT — `PO-55/6`
+
+- ⚠️ **`PO-55/6` — AGAINST THE COORDINATOR, and NARROW.** ⛔ **A mid-round message read *"`W64` has landed at `5b31436`"*, in a project whose register writes `✅ done — <merge ref>` for a row that has landed and whose In flight cells are refuted by exactly that event.** ⭐ **`5b31436` is the BRANCH TIP; `git branch --contains` names no release branch and `release/m0-foundations` is still `7a7a178`.** ⛔ **I measured before touching a cell, so nothing moved — but the same word in the same sentence as *re-take your readings* is one an office acts on quickly.** ⚠️ **THE WIDER CHARGE IS DECLINED** (Ruling 329): the message's substance was correct, timely, self-verified and unprompted, and it named the cause, the repair and the check it wanted. ⭐ **The remedy is one word: a branch TIP is *at*, a merge is *merged at*.**
