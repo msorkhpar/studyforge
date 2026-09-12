@@ -34,7 +34,7 @@ spec; a brief that cites `Ruling 11` is citing this table.**
 
 ## The derivation, and what the next office does when 198 is minted
 
-⭐ **333 rulings, `1`–`333`, derived from 54 ruling records** —
+⭐ **337 rulings, `1`–`337`, derived from 55 ruling records** —
 every row re-derived on each run, and ⛔ **no count in this document is typed.**
 ⚠️ **Written as a ruling but OUTSIDE the contiguous series, and therefore not indexed: `9999`.** ⛔ **Printed rather than dropped** — at least one of these is an *impossible* control in a probe table, and a population that discards a member in silence is the defect this index exists to close.
 
@@ -378,3 +378,7 @@ procedure.
 | 331 | … CELL asserting its files, not the row's own declaration.** ⛔ **That is a second, unvalidated source for the same fact** (Ruling 170(a)'s class) — ⚠️ **and it is Ruling 331's second clause.** | section | [round 67](handoffs/CTO-2026-09-11-round67.md#2b-the-queue-skip-upheld-in-substance-and-the-count-is-wrong-by-one-member) |
 | 332 | ⛔ **THE RULING — Ruling 332. `W152`'s taker does NOT set the flag, and the reason is in the tree rather than in my preference:** ⭐ **the skip reason is a committed clause and it says *a test … | section | [round 67](handoffs/CTO-2026-09-11-round67.md#3-the-third-environment-ruled-and-the-answer-is-no) |
 | 333 | ⛔ Ruling 333 — Ruling 332 is RE-GROUNDED, not repealed: the cost belongs to the TEST, never to the MODE | heading | [round 67](handoffs/CTO-2026-09-11-round67.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode) |
+| 334 | (a) Ruling 334 — a redundant line citation is still a line citation, and the QUOTE is the cure only if the NUMBER goes | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#a-ruling-334-a-redundant-line-citation-is-still-a-line-citation-and-the-quote-is-the-cure-only-if-the-number-goes) |
+| 335 | (b) Ruling 335 — a half-completed two-half contract falsifies every live sentence asserting the whole was absent, and this is now a RULE rather than an incident | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#b-ruling-335-a-half-completed-two-half-contract-falsifies-every-live-sentence-asserting-the-whole-was-absent-and-this-is-now-a-rule-rather-than-an-incident) |
+| 336 | (c) Ruling 336 — the personal-data gate's population, ruled on the coordinator's routed question | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#c-ruling-336-the-personal-data-gates-population-ruled-on-the-coordinators-routed-question) |
+| 337 | (d) Ruling 337 — where `/34`'s and `/37`'s clauses belong | heading | [round 68](handoffs/CTO-2026-09-11-round68.md#d-ruling-337-where-34s-and-37s-clauses-belong) |
