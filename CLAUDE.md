@@ -125,9 +125,25 @@ set is R1–R21 in the spec.
 
 ## Working practice
 
-- **Ask the knowledge graph before exploring** (R14, `docs/conventions/graphify.md`).
-  Task context budgets assume it. `graphify query "..."` answers in a few
-  thousand tokens where equivalent exploration costs tens of thousands.
+- ⛔ **`graphify` IS NOT SOMETHING A TASK'S CONTEXT BUDGET MAY ASSUME, and the
+  sentence that said it was is REMOVED rather than softened.** ⭐ **The reason is
+  a PROPERTY and not a reading, so it cannot go stale in a snapshot: the index
+  directory is UNTRACKED, and an untracked directory does not travel to a linked
+  worktree — which is where every agent in this project works.** ⚠️ **Corroborated
+  at `98aa0ad`: `git ls-files` returns `0` for it, it is present in the main
+  checkout, and it is absent from all four linked worktrees.**
+- ⭐ **THE TOOL IS NOT RETIRED and `docs/conventions/graphify.md` still governs
+  it (R14).** ⛔ **What changed is that you CHECK whether an index is there before
+  planning around one, and you never budget a task on the assumption that it is.**
+  ⭐ **The search path that is always present is `git grep`, `grep -rn` and
+  `sed -n`.** ⚠️ **Whether the index should be built per worktree, tracked, or
+  dropped is UNDECIDED, and this clause forecloses none of the three.**
+- ⛔ **RUN EVERY GATE; DO NOT TRANSCRIBE ITS READING.** ⭐ **A merge body,
+  handoff, brief, round record or message reports a gate as GREEN or RED plus
+  its exit code and quotes NO figures out of it** — ⚠️ **the exception is a
+  figure that IS the subject, including a gate's own declared bound.** ⛔ **The
+  rule and its ground live ONCE, in `docs/conventions/`; this is a pointer and
+  the clause is not restated here.**
 - **Write a handoff** at `docs/tasks/handoffs/<TASK-ID>.md` before finishing a
   task with dependents. That is how parallel agents share findings instead of
   re-deriving them. Format is in `docs/conventions/agent-protocol.md`.

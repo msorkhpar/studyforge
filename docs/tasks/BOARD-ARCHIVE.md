@@ -18833,3 +18833,231 @@ tools/quality/board/corroborate.py
 | `python3 -m tools.workspace verify` | `git rev-parse chore/po-round57` | `wt/po` | ⛔ **HOST — it returns `2` inside the pinned image BY CONSTRUCTION** | ⚠️ **`VERIFY_EXIT=1`, ONE component: `ISO-8583-jPOS-tutorial`.** ⭐ **The second name `NS-04/8` predicted is GONE, and the coordinator's `--ff-only` of `../narrate-service` is what cleared it — the instrument's own second remedy, measured rather than assumed** |
 
 ⛔ **NOT ONE FIGURE IN THIS RECORD IS A BOARD CELL.** ⭐ **A register carries no measurement** — the board's own rule — ⚠️ **and the two places a reading may live are this record and the handoff.**
+
+---
+
+## PO round 58 — the register
+
+⛔ **SHORT BY RULING: the user made token budget the binding constraint this morning.** ⭐ **Findings are a table, populations are not restated, and nothing another document already says is re-derived here.**
+
+### ⭐ THE FIVE MERGE REFS, RE-DERIVED — and all five match what I was handed
+
+⛔ **Derived, never received** (Ruling 199's family) — for each branch, the LAST merge on the ancestry path from its tip to the release branch:
+
+```text
+role wt/po, ref 98aa0ad, environment HOST
+  for b in <the five>; do git rev-list --ancestry-path --merges "$b"..release/m0-foundations | tail -1; done
+
+  chore/po-round57                  tip 88764f5   merge 88f00e4
+  fix/W148-W35-tracked-population   tip 632be3a   merge a8726c1
+  fix/W172-gate-three               tip 4af8795   merge a033a45
+  fix/W40-zero-headroom             tip 13d9ae7   merge 8b6e241
+  chore/cto-round72                 tip 2aca77d   merge 2912a33
+```
+
+⭐ **FOUR ROWS CLOSED, each with Ruling 201's four edits and Ruling 270's stub: `W172` at `a033a45`, `W148` and `W35` at `a8726c1`, `W40` at `8b6e241`.**
+
+### ⛔ `M3 step 3.4` OPENS, AND I AM OPENING IT AGAINST A DOCUMENT THAT STILL CONTRADICTS IT — said out loud rather than smoothed over
+
+⭐ **Round 57 refused the open and NAMED ITS OWN UNBLOCKING ACT, in the state cell, as `delivery-flow.md` requires:** *the CTO locating a file and a version.* ⛔ **Ruling 351 performed exactly that act, by exactly that office: `.studyforge/narration.json`, versioned by `narration_api`, written by `SF-17`.** ⭐ **A precise unblocking condition that is met is met, and refusing anyway would make the condition decorative.**
+
+⚠️ **BUT THE SPEC'S OWN CELLS ARE UNCHANGED, and `BOARD.md`'s `## R21` declares itself a POINTER at them:**
+
+```text
+grep -n 'narration regeneration state' docs/specs/2026-09-08-studyforge-v1-design.md
+  446:| narration regeneration state | ⛔ **open** | ⛔ **open** | `SF-17` — ⛔ **the one writer** (Ruling 330) |
+```
+
+⛔ **So the board and its cited authority disagree, and the honest handling is the one `CLAUDE.md` argues for: REPORT the divergence at the pointer, do not paper it.** ⭐ **The `## R21` row now carries the located triple AND the fact that §R9 has not been transcribed; the milestone cell says the same; and `W182` makes the transcription DISPATCHABLE, which is the thing three separate mentions across two waves did not do.** ⚠️ **I did not edit the spec: `docs/specs/` is outside my declared surface, and reaching outside it would be the very defect I am charging.**
+
+### ⛔ THE STEP RULE IS WIDENED — the decision is the user's, the sentence is mine, and the shape I was handed DOES NOT HOLD
+
+⭐ **The sentence landed in [`README.md`](README.md), with its ground and its four exclusions.** ⛔ **The shape proposed was *a wave may dispatch capability rows from the NEXT step once the current step's rows are ALL IN FLIGHT*, and it is UNSATISFIABLE at the step it was written for:**
+
+```text
+grep -n 'Depends on' docs/tasks/E04-narration.md
+  242:**Milestone** **M3** · **Depends on** SF-02, SF-17 · **Team** solo      ← SF-32
+  330:**Milestone** **M3** · **Depends on** SF-12, SF-16 · **Team** pair      ← SF-18
+```
+
+⛔ **`3.4` is `SF-17, SF-32`; `SF-32` depends on `SF-17`; so `SF-32` cannot be in flight while `SF-17` is, and *all in flight* is FALSE for `3.4` in every wave.** ⭐ **The predicate I drafted instead is `SATURATED` — *no row in the step is dispatchable: every row is merged, in flight, or blocked on a dependency that has not merged* — which is the same intent with the blocked case admitted, and which is TRUE for `3.4` the moment `SF-17` is dispatched.**
+
+⭐ **Bounded in four ways, each written into the clause: it does not widen CLOSE, it does not cross a MILESTONE, it does not license a row whose declared dependencies are unmerged, and it does not retire the dispatch bound — it only enlarges the population that bound ranges over.**
+
+### ⭐ `SF-18`'s DISPATCH IS RULED **LEGAL**, and the ruling is not a favour to the office that made it
+
+⛔ **Measured against the epic, not against intent: `SF-18` *Depends on* `SF-12` (closed M2) and `SF-16` (closed `M3 step 3.1`) — NOT `SF-17`, NOT `SF-32`.** ⭐ **Same milestone; `3.4` saturated; declared dependencies merged. Legal under the clause as drafted.**
+
+⚠️ **AND THE NEAR MISS IS RECORDED RATHER THAN ENJOYED** (`PO-58/4`): ⛔ **under the shape the brief itself proposed, the same dispatch would have been ILLEGAL**, because `3.4` can never be *all in flight*. ⭐ **The dispatch was right because of a drafting choice I made after it, which is not the same as being right when it was made.**
+
+### ⛔ WAVE 12's THIRD SLOT — `W34` is legal, and I checked rather than assumed
+
+⭐ **Within `M3`, `3.4` is saturated (`SF-32` blocked on `SF-17`) and `3.5` is saturated (`SF-18` in flight).** ⛔ **The widening stops at the milestone gate, so no `M4` row is dispatchable.** ⭐ **No capability row can fill a third slot, so the dispatch bound — PRIORITY, not exclusivity — leaves it to the register, and `W34` is the queue head that jumps nobody.**
+
+### ⛔ MINTED: ONE. REFUSED: THREE.
+
+| | |
+|---|---|
+| ⭐ **`W182` MINTED** | spec §R9's un-transcribed cells. ⛔ **It JUMPS every queued row (Ruling 75): a step is OPEN on a fact its cited authority contradicts, and no other row can close that** |
+| ⛔ **REFUSED — a ruling for any of the above** | ⚠️ **MINT FREEZE is in force and none of this is otherwise unpreventable: the step rule is a `README.md` clause, the divergence is a ROW, and the near miss is a finding.** ⭐ **Capacity goes to reach** |
+| ⛔ **REFUSED — a row for `review-rubric.md:6001`'s stale `rows/W148.md` citation** | ⭐ **`W34` is IN FLIGHT in that exact file this wave.** ⚠️ **A row minted over a line another office is already holding is `W167`'s collision, bought for nothing — routed as `PO-58/6` instead** |
+| ⛔ **REFUSED — a row for `W35` closing with no `### SURFACE`** | ⭐ **`W160` already holds that mechanism and its own evidence quotes `W35` by name.** ⚠️ **Ruling 349's shape: annotate the live row, do not mint a second copy of its subject** |
+
+### ⛔ THE FLOOR CAME BACK **RED** AND THE CAUSE IS STRUCTURAL: A REGISTER ROUND NO LONGER FITS ON THIS BOARD
+
+⛔ **`board-size` breached, and the figure IS the subject here so it is quoted** (the new gate-reading rule's own exception). ⭐ **MEASURED, role `wt/po`, environment HOST, at `98aa0ad`:**
+
+```text
+headroom at base                                            67 bytes
+four closes — the Detail cell of a CLOSED row is LONGER
+  than a live one's, because the archive anchor is longer
+  than `rows/<ID>.md`                                      +296 bytes
+one mint (W182), against +224 of new allowance             +252 bytes
+                                                    IRREDUCIBLE +548 for +224
+```
+
+⛔ **SO THE MECHANICAL FOOTPRINT OF THIS ROUND — four closes and one mint, before a single word of state is written — OVERRUNS THE BOUND BY 257 BYTES.** ⚠️ **Ruling 271 refuses raising any of the three terms, by measurement, so the remedy cannot be a bigger bound.** ⭐ **THE CLOSE PROCEDURE ITSELF IS WHAT GROWS THE FILE: Ruling 201's re-pointed Detail cell trades a short relative path for a long archive anchor, and it does that once per close, forever.**
+
+⭐ **WHAT I DID TO SHIP GREEN, and I am naming it rather than letting it read as tidying:** ⛔ **I compressed MY OWN additions to the bone, deleted queue and collision entries naming rows that have LEFT the queue (correct bookkeeping, not a sweep), and moved the ARGUMENT out of five SETTLED `Scheduled` cells behind pointers those cells already carried** — ⭐ **which is the board's own *one fact, one home* contract, not Ruling 349's rule-removal sweep.** ⚠️ **`W173` OWNS THAT SWEEP AND I DID NOT PERFORM IT: no rule was removed, no state was changed, and no `pending` or `fired` row was touched.** ⛔ **THE BOARD NOW SITS 5 BYTES UNDER ITS BOUND, WHICH IS NOT A MARGIN — the next round cannot close a single row without breaching it, and that is `PO-58/10`.**
+
+### ⭐ THE NEW GATE-READING RULE — homed in ONE place, which is not this office's
+
+⛔ **The user's rule this morning: run every gate, stop transcribing readings.** ⭐ **`docs/conventions/` is the canonical home and it is `W34`'s office this wave; I messaged Developer 3 the proposed wording directly rather than writing a second copy that could disagree, and `CLAUDE.md` and `README.md` carry POINTERS with one operative sentence each.** ⛔ **`BOARD.md` carries NOTHING of it** — ⚠️ **a register carries identity, naming, owner, state and a pointer, and a rule in it would be exactly the second copy the rule exists to prevent.**
+
+⚠️ **AND I FLAGGED THE RULE'S OWN EDGE BACK TO THAT OFFICE:** ⛔ **read literally, *report GREEN/RED and no figures* would forbid saying WHICH bound broke and BY HOW MUCH — the one number the next office needs.** ⭐ **The exception must be explicit for a gate's own declared bound, and this round is the worked example of why.**
+
+### Findings
+
+| id | class | finding |
+|---|---|---|
+| ⛔ **`PO-58/1`** | ⛔ **`[structural]`** | against the DISPATCH — `docs/specs/` has been in no office's declared surface for **three consecutive waves** while it carries the gate on `M3`. `CTO-72/8` charged it, Ruling 351 charged it, and nothing changed, because a defect that is only ever *mentioned* has no owner. ⭐ **Rowed as `W182`, which is the difference** |
+| ⛔ **`PO-58/2`** | ⛔ **`[structural]`** | against the coordinator — process change 4 grants the register direct developer messaging and **no developer session was addressable**: `Developer 1`, `Developer 2`, `dev1`, `developer-2` all returned *"No agent named … is reachable."* ⚠️ **A granted channel that does not exist is worse than none: I planned two acts around it and one was a SCHEDULED cell that consequently could not discharge** |
+| ⛔ **`PO-58/3`** | ⛔ **`[structural]`** | ⭐ **MINE, against my own round-57 record.** I wrote the R21 trigger as *the CTO locating a file and a version*, and it fired correctly — onto a board whose cited authority still says the opposite. ⛔ **A trigger must name the act that makes the DOCUMENT true, not the act that makes the FACT true**, and mine stopped one edit short |
+| ⚠️ **`PO-58/4`** | ⚠️ **`[local]`** | against the coordinator — `SF-18` was dispatched against a rule that did not exist, whose drafting the same brief assigned to me. ⭐ **Ruled legal** — ⛔ **and under the brief's own proposed shape it would have been illegal, because `3.4` can never be *all in flight***. Right by my later choice, not by construction |
+| ⚠️ **`PO-58/5`** | ⚠️ **`[local]`** | ⭐ **MINE, against the register.** `W35` closed at `a8726c1` having **never declared a `### SURFACE`** — the exact blind population `W160` exists over, and `W160`'s evidence names `W35`. ⛔ **The mechanism landed a third time and closed unaddressed.** Annotated beneath `W160`'s frozen reading rather than edited (Ruling 106) |
+| ⚠️ **`PO-58/6`** | ⚠️ **`[local]`** | `docs/conventions/review-rubric.md:6001` carries a live backticked `rows/W148.md`, now a redirect stub — Ruling 201's fourth edit, owed in a document that is **not my surface**. ⭐ **Routed to `W34`, in flight in that file this wave** (Ruling 318: reported, not worked around) |
+| ⚠️ **`PO-58/7`** | ⚠️ **`[local]`** | against the coordinator — my brief carries its **`TOKEN BUDGET IS NOW THE BINDING CONSTRAINT` section twice, verbatim**, as its own §§ at two places. ⚠️ **Small, and the subject makes it worth one line** |
+| ⛔ **`PO-58/10`** | ⛔ **`[structural]`** | ⭐ **MEASURED, and it is the round's sharpest.** ⛔ **A register round's MECHANICAL footprint — four closes and one mint — exceeds `board-size`'s allowance by 257 bytes before any state is written**, because Ruling 201's close lengthens a Detail cell by trading `rows/<ID>.md` for a long archive anchor. ⚠️ **Ruling 271 refuses raising a term, so the bound and the close procedure are jointly unsatisfiable at the margin.** ⛔ **Shipped green at 5 bytes of headroom, which the next round consumes** |
+| ⚠️ **`PO-58/11`** | ⚠️ **`[local]`** | ⭐ **MINE.** I composed four `BOARD.md` cells and one `README.md` clause at full length and only then met the byte gate, spending a round trip on compression that writing to the bound would have avoided. ⛔ **The board's remaining headroom is knowable BEFORE the first cell is written, and I did not read it first** |
+
+⭐ **AND ONE CORROBORATION RATHER THAN A FINDING: all five merge refs I was handed matched the five I derived.** ⛔ **Recorded because a check that only ever speaks when it disagrees is a check nobody can tell from an absent one.**
+
+### W172 — Ruling 218's GATE THREE — a record's Findings section told from its prose, and the residue `W64` measured rather than chased
+
+⭐ **CLOSED PO round 58. Reviewed at `4af8795`, MERGED at `a033a45`, both re-derived by the register rather than received.** ⛔ **The body below is the row's argument MOVED WHOLE from `rows/W172.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RULING 218 PRICED THREE GATES AND CALLED THIS ONE *"needed for exit 0; not yet a row"*.** ⭐ **Gate one merged as `W121`, gate two as `W64`, and this is the residue neither of them was scoped to take.** ⚠️ **It is rowed at `W64`'s close rather than at Ruling 218's date, because a residue named only inside a row that has since closed is a residue nobody re-reads** (Ruling 295's shape).
+
+### ⛔ WHY IT WAS RIGHT NOT TO MINT IT EARLIER, AND WHY THAT GROUND HAS EXPIRED
+
+⭐ **Ruling 218's own ordering is the argument: gate one CHANGED gate two's population, and gate two changes this one's.** ⛔ **A row minted before gate two landed would have been priced against a population that no longer exists** — ⚠️ **which is exactly what happened to `W64`'s own gate table, whose *216 of the 522* was retired by two separate corrections at delivery (`W64/8`).** ⭐ **The population is now measured against the shipped derivation rather than against a dry run, so the row can be priced instead of estimated.**
+
+### ⛔ WHAT IT IS, IN ONE SENTENCE
+
+⭐ **A rule that separates a `ruling record`'s Findings section from its prose, so that `check_markers` can be applied to a record without firing on every sentence that discusses a marker.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A PREDICATE THAT TELLS A RECORD'S FINDINGS SECTION FROM ITS PROSE**, and it is the hard part — ⚠️ **`check_markers` is Ruling 65's *name the marker, do not spell it*, and a record's prose names markers constantly and legitimately.**
+2. ⛔ **THE DECISION THAT A RECORD DOES NOT OWE THE SIX SECTIONS AT ALL, taken explicitly rather than by omission.** ⭐ **`W64` pinned that absence in a test so widening it later is visible; this row either ratifies the absence or ends it, and either way it stops being a silence.**
+3. ⚠️ **`W64/11`'s CITATION-RESOLUTION RULE, WHICH WAS MEASURED GREEN AND REFUSED.** ⛔ **Its failure mode is a red nobody may discharge — the offending line is inside a record, and a record is annotated rather than edited (Ruling 106) — so this row either finds a discharge path or records the refusal as permanent.** ⭐ **The instrument is written out in that handoff, so the next taker re-runs it rather than rebuilding it** (Ruling 221).
+4. ⛔ **THE THREE `survey` DOCUMENTS AND THE FIVE RECORDS THAT OWN NO SCOPE are named as residue by `W64` and are NOT this row's by default** — ⚠️ **admitting either is a decision this row makes out loud or leaves alone.**
+5. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12), and ⭐ **the population is re-measured at dispatch and never inherited from this file** (Ruling 214) — ⚠️ **every figure `W64` handed forward was a reading of a ref, and the corpus grows every wave.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHASE OF EXIT `0` OVER THE CORPUS.** ⭐ **Ruling 193 has ruled on this exact corpus twice: the corpus is never chased; the instrument is the defect.** ⛔ **AND IT MAY NOT SHIP BEHIND A FLAG** — ⚠️ **Ruling 218 ratified that refusal for gate two and the ground is unchanged: an off-by-default gate is a check that cannot fail, which is `W37`'s subject.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/handoffs/` and its tests.** ⛔ **IT SHARES ONE FILE WITH `W167`: `check_markers` lives in `tools/quality/handoffs/contract.py` beside the callers `W167` re-populates, and `W167` is IN FLIGHT** — ⭐ **ONE OWNER or two waves** (check 4's sub-step).
+
+[the mint argument](#w64-the-kind-gate-widened-across-the-whole-document-floor)
+
+### W148 — The floor's document population is read off the DISK, so an untracked file makes a MAIN reading unreproducible from a worktree
+
+⭐ **CLOSED PO round 58. Reviewed at `632be3a`, MERGED at `a8726c1`, both re-derived by the register rather than received.** ⛔ **The body below is the row's argument MOVED WHOLE from `rows/W148.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **The floor's DOCUMENT population is read off the DISK, so an untracked file is counted as repository state by the instrument that reports on repository state** — ⭐ **and this board carries a STANDING DECISION that the file in question is *not* repository state.**
+
+### ⛔ THE READING THAT MINTED IT — two roles, ONE ref, `82bff6d`
+
+```text
+ROLE MAIN    git ls-files '*.md'   401     floor's document population   402
+ROLE wt/po   git ls-files '*.md'   401     floor's document population   401
+⛔ THE DELTA IS ONE UNTRACKED MARKDOWN FILE IN THE MAIN CHECKOUT.
+```
+
+⭐ **The board's own Standing decisions table rules that file *"does not enter the repository — not tracked, not corrected into the tree, and not deleted, because it is untracked and therefore not repository state."*** ⛔ **The floor disagrees with the board, in the board's own repository.**
+
+### ⛔ WHY THIS IS NOT `W142` AND IS NOT ALREADY FIXED
+
+⚠️ **`W142` closed at `ed1dcdd` and narrowed the two checks that reach their verdict through `ruff check .` to what git TRACKS.** ⭐ **It did not touch the pointer walk or the collision walk, which reach the same disk by a different route** — ⛔ **so the class `W142` named is live in a neighbouring instrument, and `W68` (*the gate walk derives from the tree, not the disk*) is its third member.**
+
+### ⛔ THE COST, AND IT IS NOT COSMETIC
+
+⛔ **NO FLOOR READING TAKEN IN THE MAIN CHECKOUT IS REPRODUCIBLE FROM A WORKTREE.** ⭐ **That is the entire purpose of the ROLE discipline (Ruling 277, `PO-49/1`): a reading is quoted with its role so a second office can reproduce it.** ⚠️ **Two offices at ONE ref, both correct, printing different figures, with nothing in either reading naming the cause.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The document population is derived from what git TRACKS**, and the three affected notices — pointers, anchor collisions, and the lint file count — agree with each other and with `git ls-files`.
+2. ⭐ **THE POPULATION IS PRINTED BEFORE ANY SCALAR** (Rulings 123/128/140), so a future divergence is visible rather than inferred.
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a fixture with an untracked markdown file beside a tracked one yields the SAME figure from both, and a test that would pass with the disk walk still in place is not the test.
+4. ⚠️ **A checkout where git is absent or answers nothing is Ruling 216's THIRD answer** — ⛔ **it must not fall through to the disk silently, and it must not be a hard failure either; it SAYS which walk produced the figure.**
+
+### ⛔ THE HARD CONSTRAINT — READ THIS BEFORE TOUCHING ANY WALK. IT IS A USER RULE, NOT A STYLE NOTE
+
+⛔ **THE NATURAL PLACE TO FIX THIS ONCE IS THE WRONG PLACE, AND IT SILENTLY BREAKS THE R7 GATE.**
+
+```text
+grep -n, tools/quality/config.py at this row's own ref
+  :236  def text_files(root)        ⭐ the PERSONAL-DATA SWEEP's population
+  :276  def markdown_files(root)    ⛔ ":279  A narrowing of `text_files`, never a second walk"
+  personal_data/shapes.py:174   for path in config.text_files(root)
+  personal_data/identity.py:172 for path in config.text_files(root)
+⛔ NARROW `text_files` TO WHAT GIT TRACKS AND EVERY UNTRACKED FILE LEAVES THE R7 SWEEP.
+```
+
+⭐ **`config.py` says why, in its own words at `:254`: *"a file you have just written and not
+yet added is exactly what a gate on 'personal data entering the repository' must catch —
+before it enters."*** ⚠️ **So the narrowing belongs at `markdown_files` and at the pointer and
+collision walks, and NEVER at `text_files`.**
+
+⛔ **AND THE FILE THIS ROW WAS MINTED OVER IS THE USER'S OWN AND IS GOVERNED BY A STANDING
+RULE:** ⭐ **`ONBOARDING.md` is never moved, never deleted, never committed — ⛔ AND NEVER
+GIT-IGNORED**, ⚠️ **because ignoring it would remove it from the personal-data sweep, which
+is the single thing that rule exists to prevent.** ⛔ **MEASURED at this row's ref:
+`git check-ignore` does not match it, and it must stay that way.**
+
+⭐ **`W148` IS ABOUT THE REPRODUCIBILITY OF A READING. IT IS NOT ABOUT THAT FILE, and a taker
+who "solves" it by making the file disappear from a walk has inverted the row.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A NARROWING OF `text_files`, OR A GIT-IGNORE ENTRY** — the two shapes above, both of
+which make the floor quiet by making the R7 gate blind. ⛔ **AND NOT A SPECIAL CASE FOR ONE
+FILENAME.** ⭐ **The subject is the WALK, not the file — a predicate naming that file by name would go stale the first time a second untracked document appeared and would encode a standing decision in an instrument that cannot read it.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/pointers.py`, `tools/quality/collisions.py` and their tests.** ⚠️ **`pointers.py` was `W140`'s surface and `W140` has CLOSED, so that constraint is spent.** ⛔ **IT SHARES `pointers.py` WITH `W35` — *"`pointers.py` honours the ignore declaration (Ruling 80)"*, live and `todo` in the register — ONE OWNER or two waves** (check 4's sub-step).
+
+⚠️ **CORRECTED PO round 54, sentence QUOTED not deleted** (Ruling 183's form): ⛔ ***"shares a surface with no row in flight and with no queued row"*** — ⭐ **it depends on which population *queued* names, and the two disagree: `W35` is NOT in `Next rows` and IS live `todo` in the register, whose own cell reads *`todo` — queued last*.** ⛔ **`W35` declares no `### SURFACE`, so the same blind spot that produced `W167`'s claim produced this one** (Ruling 331, `PO-54/4`, and `W160` is the row that settles it).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+### W35 — `pointers.py` honours the ignore declaration
+
+⭐ **CLOSED PO round 58. Reviewed at `632be3a`, MERGED at `a8726c1`, both re-derived by the register rather than received.** ⛔ **The body below is the row's argument MOVED WHOLE from `rows/W35.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+`pointers.py` honours the ignore declaration (Ruling 80)
+
+[`PO-24/8` discharged](#po-248-discharged-w32-and-w35-measured-and-only-one-of-them-was-a-queue-row)
+
+### W40 — No module in the tree sits at zero headroom against R11
+
+⭐ **CLOSED PO round 58. Reviewed at `13d9ae7`, MERGED at `8b6e241`, both re-derived by the register rather than received.** ⛔ **The body below is the row's argument MOVED WHOLE from `rows/W40.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RE-FRAMED ROUND 27 (`CTO-32/8`): NO MODULE IN THE TREE SITS AT ZERO HEADROOM against R11** — ⚠️ **~~`tests/test_gate_coverage.py` is at 600 of 600~~ named a POPULATION, and a population enumerated in a row is a second copy nothing re-measures**
+
+[Ruling 119, rowed round 28](#w40-gains-ruling-119-both-commands-and-the-subtraction-written-out) · [placed round 29](#round-29-the-next-two-rows-owns-verified-at-ddddd05-and-the-r11-pre-dispatch-sum)
