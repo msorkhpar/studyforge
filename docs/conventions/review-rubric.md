@@ -5736,3 +5736,146 @@ build nor reach the network, and the office that ran it corrects the office that
 office started that run and it was destroyed in flight when the worktree it was running in was
 removed by another office** (`CTO-67/17`) — ⭐ **so *how much the building tests cost* is still
 nobody's reading, and it is named as unmeasured rather than estimated a third time.**
+
+## ⛔ RULED ROUND 68 — each clause one command and one pass condition
+
+⚠️ **NO CLAUSE COUNT IN THIS HEADING** (`W141`). ⭐ **The clauses below are the population.**
+
+### ⛔ Ruling 334 — a REDUNDANT line citation is still a line citation, and the QUOTE cures it only when the NUMBER goes
+
+⛔ **Ruling 163 forbids a LIVE document citing `<file>:<line>` into a file it does not own.**
+⚠️ **`NS-03/3` asked the narrower question: is the form harmless when the SAME SENTENCE also
+quotes the string it is citing?** ⭐ **Measured, CTO round 68, ENV host, ref `0564997`: the
+coordinator's brief cited `E13:32` and `E13:37` AND quoted *"both must contribute their half"*,
+and BOTH citations RESOLVED.** ⛔ **So this is a FORM finding and NOT a wrong-citation one, and
+that width is where it is accepted (Ruling 329).**
+
+⭐ **IT IS NOT HARMLESS, and the reason inverts the intuition.** A quote beside a line number
+does not cure the number — it makes it **REDUNDANT**, ⛔ **and a redundant citation is the most
+dangerous kind, because it is the one nobody thinks to re-check.** ⚠️ **A reader who sees
+`E13:37` goes to line 37; when the line has moved, the quote that would have saved them is
+precisely the thing they did not read.**
+
+```bash
+# Pass: where a live document carries BOTH a line citation into a file it does not own AND a
+# quoted string from it, the LINE NUMBER IS DELETED and the QUOTE IS KEPT. Ruling 163's cure is
+# "cite the command and its output shape"; a quoted string IS that. Adding the quote while
+# keeping the number satisfies NEITHER.
+```
+
+### ⛔ Ruling 335 — a task completing HALF of a two-half contract falsifies every live sentence asserting the whole was absent, and it may not edit them
+
+⛔ **Twice in two waves, which is what makes it a rule rather than an incident:** `NS-01/3`,
+then `NS-03/2`. ⭐ **Measured, CTO round 68, ENV host, ref `0564997`:
+`grep -rn "ships no \`consuming.json\`" docs/ CLAUDE.md` returns EXACTLY ONE LIVE HIT** —
+`docs/specs/2026-09-08-studyforge-v1-design.md`, §R9 — ⛔ **and it goes FALSE the moment
+`NS-03` merges.** ⚠️ **The taker was right not to edit it: the spec is another office's, and a
+task that edits its own acceptance's evidence has reviewed itself.**
+
+⭐ **THE DURABLE FORM IS `CLAUDE.md`'s OWN OPENING ARGUMENT ONE LEVEL DOWN: A LIVE DOCUMENT MAY
+NOT ASSERT THE POPULATION OF A FILE THAT ANOTHER OFFICE'S TASK WILL CHANGE — IT POINTS AT THE
+FILE, WHICH RESOLVES AT READ TIME.** ⛔ **`consuming.json` already ships the mechanism:
+`not_yet_declared` names its own holes**, so the sentence's repaired form cites that key rather
+than claiming what the component ships.
+
+```bash
+# Pass: a task landing half a declared two-half contract SEARCHES for live sentences asserting
+# the whole was absent, NAMES each by file and quoted string in its handoff, and edits NONE of
+# them. The reviewer whose register owns the sentence lands the repair, as a POINTER.
+```
+
+### ⛔ Ruling 336 — the personal-data gate's population is THIS repository; a component owes the SWEEP and the framework gates only the DECLARATION
+
+⛔ **The gap, verified rather than relayed. Measured, CTO round 68, ENV host, ref `0564997`:**
+
+```text
+tools/quality/config.py  text_files(root)   walks `root` — this checkout. Nothing widens it.
+grep -rn 'workspace_root|STUDYFORGE_WORKSPACE' tools/quality/     GREP_EXIT=1
+tools/quality/pointers.py  resolve_target   REFUSES to leave the tree, citing R18 and R20
+docs/conventions/personal-data-shapes.md    governs the SHAPES swept, never the POPULATION
+```
+
+⛔ **(i) A SWEEP OF A SIBLING MAY NOT BE A GATE**, and that is settled by rulings already on the
+books. Ruling 248(a): the pinned image mounts ONE directory, so no sibling is visible from
+inside it. Ruling 328: a property over HOST state is a DISCLOSURE and never a gate. ⚠️ **A gate
+that could only ever be green in the one environment Ruling 40 does not make authoritative
+measures nothing.**
+
+⛔ **(ii) "NOTHING" IS ALSO REFUSED.** The obligation is real, `E12` GROWS the uncovered surface,
+and ⭐ **an ad-hoc grep by an office is not an instrument.**
+
+⭐ **(iii) THE FRAMEWORK GATES THE DECLARATION; THE COMPONENT OWNS THE SWEEP.** The truth of
+*"this component is R7-clean"* is a property of the component and belongs in the component's own
+suite, in the component's own environment. ⛔ **What the framework may gate is that every
+`present` component DECLARES the obligation — a check over THIS repository's TRACKED bytes
+(`workspace.json`), so it runs in the pinned container, is byte-reproducible (R10), and depends
+on no untracked state (Ruling 80).** ⚠️ **A host-only DISCLOSURE naming what could not be swept
+belongs in `tools.workspace verify` and NOWHERE ELSE**, because that instrument is ALREADY
+declared host-verified and already non-authoritative in the container.
+
+```bash
+# Pass: no gate resolves a path outside the checkout. Every `present` component in
+# workspace.json carries a declaration that its own suite sweeps R7. Any statement about a
+# sibling's cleanliness is printed by a HOST-verified instrument and labelled a DISCLOSURE.
+```
+
+### ⛔ Ruling 337 — a NEGATIVE over instruments is a claim about a POPULATION and is never established by a GREP FOR A NAME
+
+⛔ **Measured, CTO round 68, ENV pinned container, trial merge at `83c11dd`.** A delegated pass
+reported *"I found no instrument that detects this: `grep -rl capability.index tools/ skills/`
+returns nothing, so nothing will catch it."* ⭐ **The suite had ALREADY refuted it:**
+
+```text
+FAILED tests/studyforge/skills/delivery/test_walkthrough.py::test_the_shipped_index_is_exactly_what_the_generator_produces_today
+FAILED tests/studyforge/skills/delivery/test_walkthrough.py::test_the_procedures_first_command_runs_and_prints_the_index
+```
+
+⚠️ **The grep was not wrong; it answered a different question.** The test reaches the artefact
+through `studyforge.skills.delivery.capability_index` and a rendered comparison, ⛔ **so a grep
+for the FILE'S NAME cannot see it.** ⭐ **This is `/37`'s clause with the subject changed: there
+a grep could not see a gate PROPAGATING THROUGH A FIXTURE; here it cannot see an artefact
+REACHED UNDER ANOTHER NAME.**
+
+⭐ **Ruling 191's founding defect is a PASS from an EMPTY population. This is its mirror — a
+CONFIRMED ABSENCE from an UNSEARCHED one, and it is the more dangerous of the two because it
+reads as diligence.**
+
+```bash
+# Pass: "no instrument covers X" is asserted only after the SUITE has been run, or it is
+# written as "I did not find one by grepping for <term>", which is a different sentence.
+# AND: a clause that fires when an OFFICE writes a row belongs on the BOARD; a clause that
+# fires when a REVIEWER accepts a figure belongs HERE, because this is the document a reviewer
+# reads before ruling and the board is not.
+```
+
+### ⛔ Ruling 338 — a BOUNDED file's correction has a cost the REQUIRING reviewer does not see, and "it cannot absorb its own corrections" is refuted by measuring the span
+
+⛔ **The charge routed to CTO round 68 was that `BOARD.md` *"cannot absorb its own mandated
+corrections"*: a required one-cell fix put it 60 bytes over its bound and paying for it cost
+four argument-to-pointer trims nobody asked to lose.** ⭐ **MEASURED over the span the charge
+itself names, `git cat-file -s <ref>:docs/tasks/BOARD.md`:**
+
+```text
+7e331a4   content 57364   bound 57408   headroom 44     ⭐ before the required change
+cd529c1   content 57792   bound 57856   headroom 64     ⭐ after it, and after the repair
+                   +428          +448            +20
+```
+
+⛔ **The board ended with MORE headroom than it began with.** The bound scales at 224 bytes per
+register row and the round minted two rows over the same span, so the ceiling rose faster than
+the content. ⭐ **REFUTED at that width (Ruling 329), and it is refuted by the charge's own
+span rather than by an appeal to a different one.**
+
+⭐ **THE NARROWER THING IS TRUE.** The transient overflow was real, and what paid for it was
+**argument prose in cells unrelated to the correction** — ⚠️ **a cost the requiring reviewer
+neither sees nor bears**, and `CTO-68/4` (a trim that removed the last pointer to a record
+section) is what it looks like when that payment goes wrong.
+
+```bash
+# Pass: a reviewer requiring a change to a BOUNDED file states the byte DIRECTION of the
+# requirement. Where payment must come from content unrelated to the correction, the office
+# REPORTS the trims alongside the correction rather than absorbing them silently, and no trim
+# removes the last pointer to a record section.
+# ⛔ A claim that a bounded file cannot absorb a correction is measured ACROSS THE SPAN, bound
+# and content together — a bound that scales with a population moves while the content does.
+```
