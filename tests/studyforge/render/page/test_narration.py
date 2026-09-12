@@ -17,6 +17,7 @@ import re
 import pytest
 
 from studyforge.narrate.speakable import clip_name, speakable_of
+from studyforge.render import templates
 from studyforge.render.page import AUDIO_ATTRIBUTE, Narration, PageError
 from studyforge.render.page import document as document_module
 from studyforge.render.page.blocks import render_all
@@ -343,6 +344,64 @@ def test_the_three_states_are_told_apart_from_the_bytes_of_the_page_alone(case):
     # ⭐ Row 3: the player, and the gap named.
     assert '<footer id="player"' in broke
     assert "narration-gap" in broke
+
+
+def test_the_no_record_page_is_a_WHOLE_page_and_not_merely_an_unnarrated_one(case):
+    # ⛔ **`SF-38`'s Acceptance, and it is the arm that a negative alone cannot
+    # hold.** *"No `data-audio` anywhere"* is ALSO true of a page that rendered
+    # nothing at all — and *"renders nothing"* is one of the states answer 4
+    # exists to tell apart, so the negative needs a positive companion or it is
+    # satisfied by the failure it is meant to exclude.
+    #
+    # ⭐ **The companion is an EQUALITY, not a smoke test**: strip the narration
+    # attribute out of the fully narrated page and what is left must be the
+    # no-record page, byte for byte, minus the transport. Every word, every
+    # block and every region the reader gets when narration works, they get
+    # when it was never run.
+    never = document_module.compose(case.document, case.placement, narration=SILENT)
+    plays = document_module.compose(case.document, case.placement, narration=case.narration)
+
+    assert positions(case), "this fixture speaks nothing, so its silence proves nothing"
+    assert case.document["title"] in never
+    assert never.count("<section") >= len(case.document["sections"])
+
+    transport = document_module._region(document_module.player(plays))
+    assert transport, "the narrated page carries no transport, so this comparison is empty"
+    stripped = re.sub(rf'\s{re.escape(AUDIO_ATTRIBUTE)}="[^"]*"', "", plays).replace(transport, "")
+    assert stripped == never, (
+        "the page a reader gets with no narration record is not the narrated page "
+        "minus its narration — something else was added or dropped with it"
+    )
+
+
+def unnarrated_and_whole(page: str, case) -> bool:
+    """The arm above as a predicate, so the plant below can make it FAIL."""
+    return (
+        AUDIO_ATTRIBUTE not in page
+        and '<footer id="player"' not in page
+        and "narration-gap" not in page
+        and case.document["title"] in page
+    )
+
+
+def test_a_planted_player_on_the_no_record_page_turns_this_arm_red(case):
+    # ⛔ **The both-directions half, RUN as a plant rather than promised** (R12,
+    # and `SF-38`'s Acceptance says it in those words). ⚠️ A negative assertion
+    # nobody has seen fail is a negative assertion nobody knows can.
+    #
+    # ⭐ The plant is the transport a build would wrongly emit for a corpus that
+    # was never narrated — the rejected option, a dead control on every page of a
+    # finished prose corpus — and the predicate must go RED on it.
+    never = document_module.compose(case.document, case.placement, narration=SILENT)
+    assert unnarrated_and_whole(never, case)
+
+    transport = templates.fill(document_module.PLAYER_TEMPLATE, gap="")
+    planted = never.replace("</main>", "</main>\n" + transport, 1)
+    assert planted != never, "the plant did not apply, so this control measured nothing"
+    assert not unnarrated_and_whole(planted, case), (
+        "a page carrying a transport it was never given a clip for still satisfies "
+        "the no-record arm, so that arm would not catch the rejected option"
+    )
 
 
 def test_a_finished_prose_corpus_gains_no_mark_of_any_kind(case):
