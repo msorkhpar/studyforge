@@ -58,13 +58,27 @@ from tools.quality.board import (
     board_state,
     check_board,
 )
+from tools.quality.board.bijection import born_detail
+from tools.quality.board.register import cells, is_closed, register, table_lines
 
 #: A minimal register: a header, a separator, one closed row and one live one.
 #: ⛔ Written out rather than generated, so a reader can see what the check reads
 #: without running it.
 HEADER = "<!-- register -->\n| # | Row | Owner | State | Detail |\n|---|---|---|---|---|\n"
 FOOTER = "<!-- /register -->\n"
-CLOSED = "| W1 | a naming | PO | ✅ done — `abc1234` | [record](BOARD-ARCHIVE.md#w1) |\n"
+
+#: ⛔ **`W185`: this fixture's Detail cell CHANGED, and the change is the clause.**
+#: ⚠️ **It read `[record](BOARD-ARCHIVE.md#w1)` until this row landed** — the
+#: re-pointed form a close used to perform, and the one that grew the board by the
+#: row's whole naming every time. ⭐ **A close now LEAVES the cell as it was born, so
+#: a fixture still carrying the old form would be ten tests asserting the retired
+#: behaviour** — which is what they were, and what `board-detail` caught.
+CLOSED = f"| W1 | a naming | PO | ✅ done — `abc1234` | {born_detail('W1')} |\n"
+
+#: ⛔ **The retired form itself, kept as a PLANT and never as a fixture.** ⭐ Naming it
+#: once is what stops the next fixture author reaching for it by habit.
+RETIRED_DETAIL = "[record](BOARD-ARCHIVE.md#w1-a-naming)"
+
 LIVE = "| W2 | another naming | PO | `todo` | [rows/W2.md](rows/W2.md) |\n"
 
 #: ⭐ Ruling 270's REDIRECT STUB, verbatim in the shape the ruling prescribes: the
@@ -291,12 +305,106 @@ def test_a_closed_row_never_wants_a_FULL_detail_file(tmp_path: Path, state: str)
     ⚠️ **Ruling 270 narrowed this and did not retire it:** ⭐ **a closed row may keep a
     STUB and may not keep an ARGUMENT**, which is the third assertion below.
     """
-    row = f"| W1 | a naming | PO | {state} | [record](BOARD-ARCHIVE.md#w1) |\n"
+    row = f"| W1 | a naming | PO | {state} | {born_detail('W1')} |\n"
     assert check_board(_tree(tmp_path / "without", HEADER + row + FOOTER)) == []
     with_file = _tree(tmp_path / "with", HEADER + row + FOOTER, rows=("W1",))
     assert _rules(check_board(with_file)) == [RULE_ORPHAN]
     stubbed = _tree(tmp_path / "stub", HEADER + row + FOOTER, rows=("W1",), body=_stub)
     assert check_board(stubbed) == [], "⭐ Ruling 270, and it holds for every closed word"
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W185` — A CLOSE MAY NOT GROW THE BOARD: the assertion arm the clause was owed
+#
+# ⭐ **The clause is `docs/conventions/board.md`'s and it shipped HALF-ASSERTED.**
+# ⚠️ **The *reader lands on the argument* half was already held** — Ruling 270's
+# exception above requires a closed row's file to BE an anchored stub, and the
+# pointer floor resolves it — ⛔ **but NOTHING read the register CELL, so the next
+# close could have re-pointed it at an archive anchor with every gate green.**
+#
+# ⛔ **THE PLANT IS THE RETIRED FORM ITSELF.** ⭐ Until this arm landed,
+# `CLOSED` above CARRIED that form and ten tests passed on it — ⚠️ **which is the
+# strongest evidence available that the arm was owed: the fixtures encoded the
+# behaviour the clause abolished, and nothing said so.**
+# --------------------------------------------------------------------------
+
+
+def test_planted_a_CLOSED_row_RE_POINTED_at_the_archive_is_board_detail(tmp_path: Path) -> None:
+    """⛔ THE DIRECTION THAT HAD NO INSTRUMENT — the close that grows the board.
+
+    ⭐ **This is the edit Ruling 201 used to prescribe**, replayed verbatim: the
+    Detail cell of a closed row re-pointed from `rows/<ID>.md` at the archive anchor.
+    ⚠️ **An archive anchor is the row's whole NAMING slugified** — ⛔ **`PO-58/10`
+    measured four such closes costing 296 bytes against 224 of allowance, and the
+    round overran `board-size` by 257 bytes before one word of STATE was written.**
+
+    ⛔ **The row is otherwise PERFECT**: closed, with a Ruling 270 stub on disk that
+    the pointer floor would resolve. ⭐ So the one finding is the cell and nothing
+    else, which is what makes this a plant of the clause rather than of a broken row.
+    """
+    row = f"| W1 | a naming | PO | ✅ done — `abc1234` | {RETIRED_DETAIL} |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W1",), body=_stub)
+    findings = check_board(root)
+    assert _rules(findings) == [RULE_DETAIL]
+    assert RETIRED_DETAIL in findings[0].message, "⭐ the message quotes the cell it read"
+    assert born_detail("W1") in findings[0].message, "⭐ and the cell it wanted"
+    assert "grows the board" in findings[0].message
+
+
+def test_planted_the_predicate_is_an_EQUALITY_and_not_merely_NO_ARCHIVE(tmp_path: Path) -> None:
+    """⛔ THE CONTROL THAT CONSTRAINS THE PREDICATE, and it is the reason for Ruling 186's form.
+
+    ⚠️ **A predicate reading *the cell does not mention `BOARD-ARCHIVE.md`* passes on a
+    cell pointing ANYWHERE** — at another row, at a handoff, at nothing. ⛔ **That is
+    the direction a bijection check fails toward: silently, on the case that looks
+    right.** ⭐ **So the clause is asserted as the EQUALITY it is written as**, and this
+    plant carries no archive link at all and must still be refused.
+    """
+    row = "| W1 | a naming | PO | ✅ done — `abc1234` | [`rows/W9.md`](rows/W9.md) |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W1",), body=_stub)
+    findings = check_board(root)
+    assert _rules(findings) == [RULE_DETAIL], "⭐ refused, and no archive anchor was involved"
+    assert "BOARD-ARCHIVE.md anchor" not in findings[0].message, (
+        "⛔ the message may not blame an archive anchor when the cell carries none — "
+        "⚠️ a finding that names the wrong cause sends the next reader to the wrong fix"
+    )
+
+
+def test_a_LIVE_row_pointing_at_the_archive_is_NOT_this_finding(tmp_path: Path) -> None:
+    """⚠️ THE ARM MAY NOT WIDEN — the clause is gated on a CLOSED row and only a closed one.
+
+    ⛔ **A live row whose Detail cell points at the archive is already `board-detail`'s
+    neighbour's business and it is a DIFFERENT defect** — the argument is still being
+    amended, so what is wrong is that it lives in the archive at all, not that the cell
+    moved. ⭐ **This plant fires the rules that already existed and adds none**, which
+    is how a new arm is shown not to have swallowed its neighbours.
+    """
+    row = f"| W2 | another naming | PO | `todo` | {RETIRED_DETAIL} |\n"
+    root = _tree(tmp_path, HEADER + row + FOOTER, rows=("W2",))
+    assert check_board(root) == [], "⭐ the new arm is silent on every LIVE row's cell"
+
+
+def test_live_every_CLOSED_row_on_the_real_board_carries_the_BORN_cell() -> None:
+    """⭐ THE LIVE READING, and it DECLARES ITS OWN DENOMINATOR (Ruling 48).
+
+    ⛔ **A board with no closed rows would satisfy this clause vacuously**, and a
+    vacuous pass is the state `0 = 0` exists to make visible — ⚠️ **so the population
+    is asserted non-empty in the same breath as the property.** ⭐ Without that, the
+    arm would go quietly green on exactly the board it has nothing to say about.
+    """
+    text = (repository_root() / BOARD).read_text(encoding="utf-8")
+    lines = dict(table_lines(text))
+    closed = [
+        (ids[0], cells(lines[number])[4].strip())
+        for number, ids, cell_state in register(text)
+        if is_closed(cell_state)
+    ]
+    assert closed, "⛔ no CLOSED register row on this board, so the clause is untested here"
+    moved = [name for name, detail in closed if detail != born_detail(name)]
+    assert moved == [], (
+        f"⛔ {len(moved)} of {len(closed)} closed rows have a MOVED Detail cell: "
+        f"{', '.join(moved)}. A close leaves the cell as it was born."
+    )
 
 
 def test_a_multi_id_row_is_one_row_and_one_file(tmp_path: Path) -> None:

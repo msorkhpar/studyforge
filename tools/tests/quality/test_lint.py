@@ -364,3 +364,117 @@ def test_the_real_tool_names_an_untracked_module_the_committed_verdict_ignores(t
     # enforces rather than claiming to have failed anything (Ruling 78).
     assert "Not a floor failure and not a floor pass" in line
     assert lint.GATES in line
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W196` — WHAT KEEPS RULING 74'S WITHDRAWAL HONEST
+#
+# ⭐ **Ruling 74 required a multi-type `except` to be parenthesised.** ⛔ **The
+# FORMATTER strips those parentheses whenever the clause has no `as` binding, and
+# `ruff format --check` is a suite gate under Ruling 78** — ⚠️ **so the ruling and
+# the suite were jointly unsatisfiable and the ruling was WITHDRAWN**
+# (`docs/conventions/module-structure.md`).
+#
+# ⛔ **THE RULING SURVIVED BECAUSE IT DECLARED ITSELF UNMEASURED** — *"no lint rule,
+# no checker, no entry in the quality floor"* — ⭐ **so this is the measurement it
+# refused, and it is the whole enforcement of the withdrawal.** ⚠️ **A withdrawal
+# defended only by a paragraph is the same defect wearing the opposite sign.**
+#
+# ⭐ **BOTH DIRECTIONS, because one alone is satisfiable by a formatter that does
+# nothing at all:** the no-`as` form must be REWRITTEN (so no convention may ask for
+# the parens) and the `as` form must be LEFT (so the withdrawal does not license
+# stripping parens PEP 758 requires).
+# --------------------------------------------------------------------------
+
+#: ⛔ A multi-type `except`, one spelling per module so one verdict is one clause.
+#: ⚠️ The body is a bare `pass` and the module is otherwise already formatted, so the
+#: ONLY thing the formatter can have an opinion about is the clause itself.
+EXCEPT_MODULE = '''"""Probe."""
+
+
+def f():
+    """Probe."""
+    try:
+        pass
+    {clause}
+        pass
+'''
+
+PARENTHESISED_NO_AS = "except (OSError, ValueError):"
+PARENTHESISED_WITH_AS = "except (OSError, ValueError) as exc:"
+BARE_NO_AS = "except OSError, ValueError:"
+
+
+def _formats_clean(ruff: str, tmp_path, name: str, clause: str) -> bool:
+    """Whether `ruff format --check` leaves a module holding `clause` alone.
+
+    ⛔ **`--config` at this repository's own `pyproject.toml`, and it CHANGES NO
+    READING TODAY — measured, rather than claimed either way.** ⚠️ **I expected the
+    flag to be load-bearing, on the reasoning that PEP 758's spelling exists only
+    from Python 3.14 and a probe in a `tmp_path` finds no `requires-python` to infer
+    a target from.** ⛔ **REFUTED at `ruff 0.16.6` in the pinned image: the same probe
+    exits `1` with the flag and `1` without it, so ruff's DEFAULT target already
+    strips the parentheses.**
+
+    ⭐ **The flag stays for a reason that survives that refutation: the withdrawal is
+    a claim about what THIS PROJECT'S GATE does, and the gate reads this config.**
+    ⛔ **`target-version` is refusal 2's own lever and it lives in that file** — ⚠️ so
+    a future office setting `py313` to resurrect Ruling 74 turns this arm RED, which
+    is precisely the conversation that should happen. ⭐ Without the flag the arm
+    would answer for a configuration nothing runs under and stay green through it.
+    """
+    path = tmp_path / f"{name}.py"
+    path.write_text(EXCEPT_MODULE.format(clause=clause), encoding="utf-8")
+    return (
+        subprocess.run(
+            [
+                ruff,
+                "format",
+                "--no-cache",
+                "--check",
+                "--config",
+                str(repository_root() / "pyproject.toml"),
+                str(path),
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        ).returncode
+        == 0
+    )
+
+
+def test_the_formatter_and_not_this_project_decides_how_a_multi_type_except_is_spelled(
+    tmp_path,
+):
+    """⛔ `W196` — the measurement Ruling 74's withdrawal rests on, re-taken every run.
+
+    ⭐ **PLANTED, not observed.** ⚠️ The tree cannot show this: at `a606033` all 35
+    multi-type clauses in tracked `*.py` are already spelled the way the formatter
+    wants — **10 parenthesised, every one of them with an `as` binding; 25 bare,
+    every one of them without** — ⛔ **so reading the tree measures the formatter's
+    past output and never its rule.** ⭐ Only a plant distinguishes the two.
+
+    ⛔ **If this goes RED, the withdrawal is what gets reconsidered, not this test.**
+    """
+    ruff = tool_on_path(lint.TOOL)
+    if ruff is None:
+        pytest.skip(f"{lint.TOOL} not installed; `{lint.INSTALL}` to enable this check")
+
+    assert not _formats_clean(ruff, tmp_path, "no_as", PARENTHESISED_NO_AS), (
+        "⛔ `ruff format` NO LONGER strips the parentheses from a multi-type `except` "
+        "with no `as` binding. ⭐ That is the sole ground on which Ruling 74 was "
+        "withdrawn — see docs/conventions/module-structure.md — so the withdrawal is "
+        "now standing on a fact that has stopped being true. ⚠️ Re-open it; do not "
+        "delete this assertion."
+    )
+    assert _formats_clean(ruff, tmp_path, "with_as", PARENTHESISED_WITH_AS), (
+        "⛔ `ruff format` has started rewriting a multi-type `except` that BINDS a "
+        "name. ⚠️ PEP 758 requires the parentheses there, so this is not a style "
+        "change — the withdrawal never licensed it and 10 sites in this tree depend "
+        "on it."
+    )
+    assert _formats_clean(ruff, tmp_path, "bare", BARE_NO_AS), (
+        "⛔ The formatter no longer accepts the spelling it PRODUCES, which is the one "
+        "25 sites in this tree carry. ⚠️ That is a contradiction inside ruff itself."
+    )

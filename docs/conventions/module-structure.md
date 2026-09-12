@@ -679,6 +679,22 @@ a bug.
 
 ## ⛔ Ruling 74 — an `except` clause with several types is **parenthesised**
 
+> ⛔ **WITHDRAWN 2026-09-12 by `W196`, because it CANNOT BE OBEYED. The number is
+> retained and is never reused.** ⭐ **What replaces it: nothing. The FORMATTER
+> decides how a multi-type `except` is spelled, this project does not, and no
+> document may ask an author for a spelling `ruff format` will overwrite.**
+>
+> ⭐ **The rule that remains, and it is `ruff`'s rather than ours:** ⛔ **a
+> multi-type clause with an `as` binding is parenthesised — PEP 758 requires it —
+> and one WITHOUT an `as` binding is bare.** ⚠️ **Neither is a choice an author
+> makes.** ⭐ **`tools/tests/quality/test_lint.py` asserts both directions against
+> the real tool**, so the day that stops being true, something says so.
+>
+> ⚠️ **The text below is LEFT STANDING AND DATED rather than edited** (Ruling
+> 244's form, and Ruling 106's): ⛔ **the reasoning is what makes the withdrawal
+> checkable, and a rule deleted without it is a rule the next round re-derives.**
+> ⭐ **The full argument for the withdrawal, with its refusals, is beneath it.**
+
 ```python
 except (OSError, ValueError):        # ⭐ this
 except OSError, ValueError:          # ⛔ not this
@@ -709,3 +725,103 @@ entry in the quality floor. ⛔ **A ban on one spelling is an open set** — the
 next gratuitously novel syntax is not this one — ⭐ **and the two existing
 instances are re-spelled by a task, after which the rule's job is to stop a
 third being written, which is what a convention document is for.**
+
+### ⛔ THE WITHDRAWAL — `W196`, 2026-09-12
+
+⛔ **RULING 74 AND RULING 78'S SUITE GATE WERE JOINTLY UNSATISFIABLE.**
+⭐ **`ruff format` — the FORMATTER, not the linter — REMOVES the parentheses from a
+multi-type `except` that has no `as` binding, and `ruff format --check` is a suite
+gate.** ⚠️ **So obeying this ruling turned the suite RED and obeying the suite broke
+this ruling, and no third option was available to anybody writing an `except`.**
+
+⭐ **MEASURED at `a606033`, in the pinned image (`ruff 0.16.6`), by `ruff format
+--diff` on a probe:**
+
+```text
+except (OSError, ValueError):            -> REWRITTEN to `except OSError, ValueError:`
+except (OSError, ValueError) as exc:     -> LEFT ALONE (PEP 758 requires the parens)
+```
+
+⛔ **THE SENTENCE ABOVE THAT WAS FALSE, and it is the one that made the rule look
+free:** ⚠️ ***"`ruff` passes both and no check is being added."*** ⭐ **`ruff check`
+does pass both — the LINTER was never the problem — but `ruff format` does not, and
+this ruling was written without distinguishing them.** ⛔ **An office writing its own
+compliant clause had it silently rewritten into the forbidden form before it noticed
+(`DEV3/8`).**
+
+⭐ **THE POPULATION, RE-MEASURED rather than inherited.** ⚠️ **This ruling's own text
+claims TWO instances; `W44/3` counted 17; `CTO-35/5` ratified 17 in 15 files;
+`DEV3/8` measured 28.** ⛔ **Instrument: `ast.parse` over every tracked `*.py`, every
+`ExceptHandler` whose `.type` is a `Tuple`, classified by whether
+`ast.get_source_segment` of that type begins with `(` and by whether the handler
+binds a name — ⭐ which a `grep` cannot do, because it cannot tell source from a
+string literal and cannot see a clause that wraps.** ⛔ **At `a606033`, over **553**
+tracked `*.py`, **0** unparseable:**
+
+```text
+parenthesised + `as`      10 sites in  9 files     <- required by PEP 758
+parenthesised + no `as`    0 sites in  0 files     <- what this ruling ASKED FOR
+bare          + `as`       0 sites in  0 files     <- not legal syntax
+bare          + no `as`   25 sites in 22 files     <- what the formatter PRODUCES
+```
+
+⛔ **THE TWO EMPTY CELLS ARE THE FINDING, and they are worth more than the 25.**
+⭐ **Every one of the 35 multi-type clauses in this repository is spelled exactly as
+`ruff format` demands, and NOT ONE is spelled the way an author chose.** ⚠️ **So this
+ruling never had any causal effect on this tree at all: it was not *mostly obeyed*,
+it was obeyed in precisely the cases where the formatter happened to agree and
+violated in precisely the cases where it did not.** ⛔ **A rule with a 100%
+correlation to a tool's behaviour and 0% correlation to authorship is not a rule in
+force.**
+
+⭐ **AND NOTHING IS RE-SPELLED BY THIS WITHDRAWAL, which is the same fact stated as a
+diff:** ⛔ **the tree already satisfies the withdrawn state at every one of the 35
+sites, so the source change this withdrawal requires is EMPTY.**
+
+#### ⛔ THE REFUSALS, recorded so the next round does not re-derive them
+
+1. ⛔ **A FORMATTER SETTING — REFUSED, because there is none, and that is a MEASURED
+   ABSENCE rather than a failure to look.** ⭐ **`ruff config --output-format=json`
+   at `0.16.6` enumerates **191** settings, of which **9** are `format.*`:**
+   `docstring-code-format`, `docstring-code-line-length`, `exclude`, `indent-style`,
+   `line-ending`, `nested-string-quote-style`, `preview`, `quote-style`,
+   `skip-magic-trailing-comma`. ⚠️ **Not one touches except-clause
+   parenthesisation.** ⛔ **The three settings whose NAMES match `parenthes` are
+   `flake8-pytest-style.fixture-parentheses`, `flake8-pytest-style.mark-parentheses`
+   and `ruff.parenthesize-tuple-in-subscript` — all LINT settings, all about other
+   constructs.**
+2. ⛔ **`target-version = "py313"` — REFUSED, and it is refused although it WORKS.**
+   ⭐ **Measured: at `--target-version py313` the formatter leaves both spellings
+   alone**, because PEP 758's form is not valid before 3.14. ⚠️ **But
+   `requires-python` is `>=3.14` and the image is pinned `python:3.14-slim`, so this
+   buys two characters by declaring a target this project does not run on** — ⛔ **and
+   the `UP` ruleset is selected, so every version-sensitive judgement ruff makes would
+   then answer for the wrong Python.** ⭐ **A false declaration in the config is a
+   worse defect than the one it hides, and `per-file-target-version` is the same lie
+   held more quietly.**
+3. ⛔ **`# fmt: off` AT THE SITES — REFUSED.** ⭐ **It satisfies both instruments and
+   states the contradiction once per site instead of resolving it once.**
+4. ⛔ **ONE TYPE PER CLAUSE — REFUSED.** ⚠️ **It is what `DEV3/8` did to escape, and
+   it changes the SHAPE of 25 handlers — duplicating each body — to preserve a
+   spelling preference.**
+5. ⛔ **A REPLACEMENT RULING — REFUSED by the mint freeze, and it would be refused
+   anyway.** ⭐ **The lesson of this row is that a convention about a spelling a
+   formatter owns cannot hold; a new one would inherit that.**
+
+#### ⛔ WHAT ENFORCES THE WITHDRAWAL, because a sentence does not
+
+⚠️ **This ruling survived because nothing measured it: it declared *no lint rule, no
+checker, no entry in the quality floor*, so the day the formatter started
+contradicting it, nothing said so.** ⛔ **The withdrawal does not repeat that.**
+⭐ **`tools/tests/quality/test_lint.py` runs the real `ruff format` over a planted
+clause in BOTH directions** — the bare form must survive and the parenthesised
+no-`as` form must be rewritten — ⚠️ **so if a future ruff ever stops stripping the
+parens, that test goes RED and this withdrawal is reconsidered on a measurement
+instead of on a memory.**
+
+⛔ **AND A TRAP FOR THE NEXT EDITOR OF THIS FILE: `pyproject.toml` sets
+`docstring-code-format = true` and the format gate's population includes `*.md`, so
+`ruff format` FORMATS PYTHON FENCES IN THIS DOCUMENT.** ⭐ **The fence above survives
+only because two `except` clauses with no `try` are unparseable and ruff skips what
+it cannot parse.** ⚠️ **A well-formed illustrative fence here WOULD be rewritten** —
+⛔ **which is why every illustration in this section is a `text` fence.**
