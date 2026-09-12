@@ -10,8 +10,9 @@ board, and the channel between the two product owners.
 | Role | Owns |
 |---|---|
 | **PO-Framework** | task assignment, priority, task modification, status truth, `../tasks/BOARD.md` |
-| **CTO** | technical authority. Reviews every change before it merges to a release branch |
-| **Developer** | one task at a time, on one branch |
+| **CTO** | ⛔ **STOOD DOWN — a USER DECISION. There is no reviewing office.** ⭐ Its technical rulings STAND, in `review-rubric.md` and in the frozen records; ⚠️ nothing is reviewed by it any more |
+| **Developer** | one task at a time, on one branch — ⛔ **and CERTIFIES it: floor and suite green at the ref that merges** |
+| **Coordinator** | opens waves, dispatches rows, merges them, and takes the **release-tip measurement** afterwards |
 | **PO-Integration** | one corpus repository, and the findings it produces |
 
 ⭐ **A product owner does not write framework code, and a developer does not
@@ -75,16 +76,38 @@ pasted command output in a review.
 
 ## The review gate
 
-⛔ **Nothing merges to a release branch unreviewed.** The CTO is the only
-approver. This is not a formality: M0 is where every later task's assumptions get
+### ⛔ THE GATE IS SELF-CERTIFICATION — there is no reviewing office (a USER DECISION)
+
+⛔ **Nothing merges to a release branch uncertified, and the office that did the
+work is the office that certifies it** — capability rows and tooling rows alike.
+⭐ **The FLOOR and the SUITE are the gates**, both green **at the ref that will
+merge**, each reading carrying **ref + checkout ROLE + ENVIRONMENT**, and the
+expectation written **before** the command. ⚠️ **Then the coordinator's
+release-tip measurement, after the merge.**
+
+⛔ **SELF-CERTIFIED IS NOT A LOWER BAR; IT IS THE SAME BAR SIGNED BY A DIFFERENT
+OFFICE.** ⭐ **The runnable form is in
+[`review-rubric.md`](review-rubric.md#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified),
+and that block is what a handoff pastes.** ⚠️ **A red gate stops the merge, and
+there is no office left to appeal to.**
+
+⛔ **AND THE RECORD REPORTS `GREEN`/`RED` PLUS THE EXIT CODE, never the gate's
+figures** — a USER DECISION, with its exceptions and its measured ground in
+[`review-rubric.md`](review-rubric.md#run-every-gate-stop-transcribing-readings-into-prose-a-user-decision).
+⚠️ **Nothing about gating relaxes; only the transcription goes.**
+
+⛔ **This is not a formality:** M0 is where every later task's assumptions get
 fixed, and a defect here is discovered simultaneously by five agents in M1.
 
 ⭐ **The rubric is `review-rubric.md` and it is the gate, not a guide.** It
-carries one runnable command per ruling and the three verdicts. Read its §9
-before you finish a task: your Acceptance bullets get pasted into the review with
-the command and its output beneath each one, and ⛔ **restating a condition is not
-meeting it**. What follows here is the process around that document, not a second
-copy of it.
+carries one runnable command per clause. ⛔ **Start at its
+[START HERE](review-rubric.md#start-here-the-operational-checklist-and-who-certifies-a-row)
+checklist and use its
+[index](review-rubric.md#the-index-and-it-resolves-at-read-time) to reach the
+clause you need — do NOT read it whole.** Read its §9 before you finish a task:
+your Acceptance bullets get pasted into the handoff with the command and its
+output beneath each one, and ⛔ **restating a condition is not meeting it**. What
+follows here is the process around that document, not a second copy of it.
 
 ⛔ **The gate reviews the trial merge, not the branch** (`review-rubric.md` §0a,
 §4b). ⭐ **The diff is the branch's; the verdict is the merge's.** Reviewing the
@@ -101,8 +124,8 @@ have, because nothing looks wrong, and the failure *flatters*: the reviewer sees
 more work, not less, so nobody questions the number. A review whose range was
 wrong is re-run, not amended.
 
-**What a developer presents for review — all of it, or the review does not
-start:**
+**What a developer presents WITH THEIR CERTIFICATION — all of it, or the row is
+not certified:**
 
 1. **The task's Acceptance conditions, run, with output pasted.** Every
    condition in the epic document, in order, each with the command that produced
@@ -120,10 +143,13 @@ start:**
 5. ⭐ **Findings marked `[local]` or `[structural]`.** The test is one question:
    *would this happen again to somebody else?* ⛔ **Every `[structural]` finding is
    ruled, scheduled, or explicitly accepted before the next wave opens** —
-   *"noted"* is not one of the three. The reviewer routes them **in the review**,
-   being the last person to read a handoff while anything can still be done about
-   it, and marks an unmarked one: an author describing their own scope is the
-   worst-placed person to see that something recurs elsewhere.
+   *"noted"* is not one of the three. ⛔ **With no reviewing office, the AUTHOR
+   routes them, in the handoff, and the coordinator carries what is unrouted into
+   the next wave's dispatch.** ⚠️ **That is a KNOWN WEAKNESS of self-certification
+   and it is stated rather than hidden: an author describing their own scope is
+   the worst-placed person to see that something recurs elsewhere, which is why
+   the marker's repository-wide sweep at wave-open is now the only instrument
+   that catches one, and running it is not optional.**
 
 ⚠️ **This exists because the protocol said to write findings down and never said
 anyone had to rule on one.** A prediction was filed in the right place, in the
@@ -158,7 +184,9 @@ that never reached the repository: its acceptance was **true in the worktree
 where it ran and false everywhere else**, because `graphify-out/` is git-ignored
 and ⛔ **an ignored artifact cannot travel on a branch.** Measured 2026-09-09:
 **33 worktrees, 2 with a graph** — so every agent since had worked without the
-index while the board said it existed, and R14's context budgets rest on it.
+index while the board said it existed. ⛔ **AND THAT IS WHY NOTHING RESTS ON IT
+— a USER DECISION: `graphify` is OPTIONAL and is never a premise; no task's
+context budget may assume an index exists** ([`graphify.md`](graphify.md)).
 
 ⛔ **That is not a criticism of `FND-02`**, which did the work and recorded what
 it saw. The defect is that **the acceptance was unverifiable from the
@@ -179,12 +207,21 @@ what the index actually describes, and a stale index cannot redden a tip. ⭐ **
 rebuild survives in the rubric as a courtesy to the next agent's queries, with no
 pass condition and no power to invalidate a number.**
 
-**The CTO's verdict is one of three:** `approved` (PO merges, or the CTO does),
-`changes requested` (named, each tied to a ruling or an acceptance condition), or
-`rejected — re-plan` (the task as written cannot be met; it returns to the PO as a
-planning defect, which is a legitimate and cheap outcome).
+⛔ **THE THREE-VERDICT VOCABULARY IS HISTORICAL — a USER DECISION.** ⭐ **A row
+now has TWO outcomes and neither is a verdict string:**
 
-⭐ **A fourth outcome exists per condition, and it is not a verdict: `Blocked`.**
+| outcome | what it means | who says it |
+|---|---|---|
+| ⭐ **certified** | ⛔ floor and suite **green at the ref that will merge**, both readings quoted with ref + ROLE + ENVIRONMENT | ⭐ the office that did the work |
+| ⛔ **not certified** | ⛔ either gate is red, or a reading is missing, or it was taken at another ref | ⭐ the same office, saying so |
+
+⚠️ **What the vocabulary meant, retained because the merges in the record carry
+it:** `approved` (merged), `changes requested` (named, each tied to a ruling or
+an acceptance condition), `rejected — re-plan` (the task as written cannot be
+met; it returns to the PO as a planning defect). ⛔ **No merge made from now
+carries any of them, and that is the standard, not an omission.**
+
+⭐ **The per-condition outcome SURVIVES, and it is not a verdict: `Blocked`.**
 An acceptance condition that cannot be *run* — because the tool it needs is not
 installed, or the task it depends on has not landed — is Blocked, and the review
 records which condition, why, and what will unblock it. ⛔ **Blocked is not
@@ -192,7 +229,7 @@ passed, and it is never a reason to delete the condition.** An unenforced rule
 erodes exactly like an unenforced ceiling; the point of writing it down is that
 somebody has to come back to it.
 
-⚠️ **A reviewer who cannot run the acceptance commands has not reviewed
+⚠️ **An office that cannot run its own acceptance commands has not certified
 anything.** If a condition has no runnable form, that is the finding.
 
 ## The board
@@ -210,10 +247,12 @@ lines under it.** ⭐ **`board.md` is that sentence with a check behind it.**
 - **A status change is one cell.** Do not restructure the tables to record an
   event; add a line to the **Log** instead.
 - **Transitions:** `todo` → `in-progress` when assigned and started ·
-  → `in-review` when the developer presents the package above ·
-  → `done` **only** on the CTO's `approved` **and** the merge to the release
-  branch · → `blocked` at any time, and a `blocked` row must name a **precise
-  unblocking condition**, not a symptom.
+  → `in-review` when the developer presents the package above with their
+  certification ·
+  → `done` **only** on the owning office's **certification** — floor and suite
+  green at the ref that merges — **and** the merge to the release branch ·
+  → `blocked` at any time, and a `blocked` row must name a **precise unblocking
+  condition**, not a symptom.
 - ⛔ **`done` never means "the code is written".** It means reviewed, merged, and
   the acceptance output is on the record.
 
@@ -366,7 +405,8 @@ spent on a document that had been correct since the first. **The check is one
 
 ## Who decides
 
-⭐ **Implementation decisions belong to the PO and the CTO.** Priority,
+⭐ **Implementation decisions belong to the PO** — ⚠️ **and to the office doing
+the work, since the CTO has stood down.** Priority,
 sequencing, scope and task modification are theirs to take, and the user reviews
 the end result rather than adjudicating between options.
 
@@ -387,8 +427,10 @@ so a later reader can tell a judgement from an accident.
 
 - **A developer escalates to the PO**, not to another developer. Cross-task
   negotiation between developers is how two contracts quietly diverge.
-- **The PO escalates a technical disagreement to the CTO**, and records the
-  ruling on the board's Log. ⛔ **A ruling that is not written down did not
+- ⛔ **There is no CTO to escalate to.** ⭐ **A technical disagreement is settled
+  by the PO on a READING, and the reading is recorded on the board's Log.**
+  ⚠️ **While the MINT FREEZE holds it is settled by CITING an existing ruling, or
+  by naming the rule it would become in a fixed spelling — never by minting.** ⛔ **A ruling that is not written down did not
   happen** — that is the whole reason R1–R21 exist as a numbered list. A ruling
   lands in a handoff under `../tasks/handoffs/`, is logged on the board, and is
   **carried into the affected task's definition by the PO** — a ruling that lives
