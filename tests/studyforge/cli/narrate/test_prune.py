@@ -22,7 +22,7 @@ from studyforge.generate.declarations import read_corpus
 from studyforge.narrate.synth import read_state, state_file
 from studyforge.validate.report import INVALID, OK
 from tests.studyforge.cli.narrate.plant import PLANTED, narrated, plant_dead_entry, record_of
-from tests.studyforge.cli.narrate.service import VOICE, FakeService, files, speech_ids
+from tests.studyforge.cli.narrate.service import FMT, VOICE, FakeService, files, speech_ids
 from tests.studyforge.generate.corpora import BOTH, an_output
 from tests.support import repository_root
 
@@ -241,20 +241,19 @@ def test_nothing_in_the_framework_calls_the_prune_or_the_removal_but_their_owner
 
 
 def test_an_entry_whose_id_and_filename_climb_out_of_the_audio_directory_is_held(tmp_path):
-    # ⛔ The crafted case the separator guard exists for: the id and the filename
-    # agree, and the id's unit IS walked, so only the guard keeps the prune inside
-    # the unit's audio directory. The intermediate directory exists, so the path
-    # would resolve to the file beside that directory.
+    # ⛔ The crafted case the separator guard exists for: the filename is minted
+    # from the entry's OWN id, and that id's unit IS walked — so only the guard
+    # keeps the prune inside the unit's audio directory. ⚠️ A first draft paired a
+    # filename with a different id; the id check refused it and the guard's plant
+    # SURVIVED. The intermediate directory exists, so the path really resolves.
     root = narrated(tmp_path)
     live_id, live = sorted(record_of(root)["clips"].items())[0]
     audio = next(root.rglob(live["filename"])).parent
-    token = live_id.partition(".")[0]
-    (audio / f"{token}.x").mkdir()
-    outside = audio / "outside-deadbeef.mp3"
+    (audio / f"{live_id.partition('.')[0]}.x").mkdir()
+    dead, _ = plant_dead_entry(root, section="x/../../outside", clip=False)
+    outside = audio.parent / f"outside.b1-deadbeef.{FMT}"
+    assert (audio / f"{dead}-deadbeef.{FMT}").resolve() == outside.resolve()
     outside.write_bytes(b"not a clip")
-    dead, _ = plant_dead_entry(
-        root, section="x/../outside", filename=f"{token}.x/../outside-deadbeef.mp3", clip=False
-    )
     before = files(root)
 
     pruned = prune_corpus(root)
