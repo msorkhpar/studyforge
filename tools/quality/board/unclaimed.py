@@ -1,11 +1,53 @@
 """The OTHER direction: what `git` can see that the board does not NAME.
 
-**What it does.** Reads every live checkout and every `trial/*` / `tmp-*` branch against
-the release branch and prints ⭐ **seven readings NO BOARD CELL CARRIES** — the checkouts no
-row claims, the office round branches Ruling 265 exempts, ⛔ **the `SPENT`-namespace branches
-`W170` exempts on Ruling 265's OWN ground**, the checkouts that are invisible to git by
-construction, the ones git could not count at all, the spent branches that are deletable,
-and the spent ones still checked out.
+**What it does.** Reads every live checkout, ⛔ **every local branch NO checkout holds**, and
+every `trial/*` / `tmp-*` branch against the release branch, and prints ⭐ **eight readings NO
+BOARD CELL CARRIES** — the checkouts no row claims, the office round branches Ruling 265
+exempts, ⛔ **the `SPENT`-namespace branches `W170` exempts on Ruling 265's OWN ground**, the
+checkouts that are invisible to git by construction, the ones git could not count at all,
+⛔ **the UNMERGED branches HELD BY NO CHECKOUT**, the spent branches that are deletable, and
+the spent ones still checked out.
+
+## ⛔ `W-dispatch-population` — the GATE's population was CHECKOUTS, and its NAME says BRANCHES
+
+⚠️ **MEASURED at `70131e2` by the coordinator and reproduced at `2d2af22`, role `wt/dev2`,
+host:** ⛔ **`docs/NS-07-handoff` existed at `10a5470`, carried a real commit, was named by no
+row, and `dispatched and UNNAMED by any row` printed `none.`** — ⭐ **because `counts` is built
+over `graph.checkouts()`, so a branch is in Ruling 264(c)'s ONE pre-merge gate only while some
+worktree holds it.** ⚠️ **The office that made it used a throwaway worktree and removed it,
+which is CORRECT hygiene: the gate goes blind exactly when an office cleans up after itself.**
+
+⛔ **The reading was already committed and read as design rather than as a hole:**
+`test_planted_the_OTHER_direction_work_git_sees_and_the_board_does_not_name` asserts
+`feat/live` ABSENT until a worktree is added, and its own justification is a statement of
+MECHANISM — *"`worktree list` cannot see it either"* — not of intent. ⭐ **`rows/W136.md`
+states the same fact in prose.**
+
+⭐ **THE CHOICE TAKEN, and the two refused ones, because a gate that cries wolf is worse than
+the hole:**
+
+- ⛔ **REFUSED — widening the gate arm itself.** ⚠️ **Its population and this one need
+  DIFFERENT actions: a branch a checkout holds is work SOMEBODY IS ON, and a branch no
+  checkout holds is work NOBODY IS ON.** ⭐ **Folding two answers onto one line where they
+  cannot be told apart is the exact coercion `W115` removed one line over.**
+- ⛔ **REFUSED — narrowing the arm's NAME to *checked out and unnamed*.** ⚠️ That makes the
+  gate honest and leaves the hole open, and Ruling 319 had just made this line the wave's
+  only reading of undeclared work.
+- ⛔ **REFUSED — a `docs/*` namespace exemption for the measured instance.** ⚠️ **Ruling 319
+  refuses the `fix/*` widening on the ground that it empties the population the gate exists to
+  read; `docs/*` is the same error one namespace over — a handoff branch IS dispatched work.**
+- ⛔ **REFUSED — folding this line into the exit code.** ⚠️ That changes every merge's
+  disclosure in this project, which is a ruling and not a detail. ⭐ **It is a NOTICE, like
+  the five beside it, and `CORROBORATE_EXIT` does not move with it.**
+
+⭐ **AND THE SPLIT IS SELF-DISCLOSING: the gate line NAMES its own population**, because a
+reader who takes one line of two as exhaustive is Ruling 258's shape. ⛔ **The pointer carries
+NO other line's selector** — `unnamed()`'s own `W170` note records what a decoy anchor costs.
+
+⚠️ **MEASURED at `2d2af22`, role `wt/dev2`, host: of 208 local branches every one is `0` ahead
+of the release branch, so this line names NOTHING today.** ⭐ **That is the cry-wolf answer:
+the `ahead > 0` filter is SELF-RETIRING — a branch leaves this population the moment it
+merges — so the line speaks only while genuinely unmerged work is held by nobody.**
 
 **How you use it.** `unnamed(rows, live, graph)` returns `(lines, the count of checkouts
 git could not read)` — ⛔ **the count is RETURNED so `corroborate`'s fold can reach exit
@@ -111,12 +153,15 @@ def unnamed(
     count is RETURNED so the caller's fold can reach exit `NOT_AUTHORITATIVE`**
     (Ruling 216).
 
-    ## ⛔ `W132`/Ruling 265 and `W170` — FIVE lines now, and each is a DIFFERENT answer
+    ## ⛔ `W132`/Ruling 265, `W170` and the population row — SIX lines, each a DIFFERENT answer
 
     | line | its population |
     |---|---|
-    | `dispatched and UNNAMED` | ahead `> 0`, unclaimed, ⛔ **neither an office branch nor a
-      `SPENT` namespace** — ⚠️ the line Ruling 264(c) made the PRE-MERGE GATE |
+    | `dispatched and UNNAMED` | ⛔ **LIVE CHECKOUTS**, ahead `> 0`, unclaimed, neither an
+      office branch nor a `SPENT` namespace — ⚠️ the line Ruling 264(c) made the PRE-MERGE
+      GATE, ⭐ **and it now NAMES that population in its own text** |
+    | ⛔ `UNMERGED and HELD BY NO CHECKOUT` | the SAME three exemptions over the branches
+      `git worktree list` cannot see — ⭐ **the gate's other half, a NOTICE, never folded** |
     | ⭐ `OFFICE round branches` | `chore/{cto,po}-round*`, ANY count — see `OFFICE` |
     | ⭐ `SPENT namespaces` | `W170`: `trial/*` / `tmp-*` that WOULD have been gated —
       ⛔ **the DIFFERENCE the exemption made, printed with its count** |
@@ -164,11 +209,59 @@ def unnamed(
         for b, n in counts.items()
         if n == 0 and b not in claimed and not b.startswith(OFFICE)
     )
+    # ⛔ The GATE's OTHER HALF: the same three exemptions over the branches no worktree holds.
+    # ⭐ The exemptions are applied to the POPULATION before any `ahead()` runs (Ruling 185(b)),
+    # which is also why this costs one git call per CANDIDATE and not one per local branch.
+    candidates = [
+        b
+        for b in graph.heads()
+        if b != graph.release
+        and b not in live
+        and b not in claimed
+        and not b.startswith(OFFICE)
+        and not b.startswith(SPENT)
+    ]
+    held_by_none = {b: graph.ahead(b) for b in candidates}
+    adrift = sorted(b for b, n in held_by_none.items() if n is not None and n > 0)
+    # ⛔ NOT `or 0`: `W115`'s coercion, and the line it would land on is the one whose whole
+    # job is to say *this is unreadable*, where a failure cannot be told from a real `0`.
+    unjudged = sorted(b for b, n in held_by_none.items() if n is None)
     lines = (
-        [f"  ⛔ dispatched and UNNAMED by any row: {' '.join(missing)}"]
+        [
+            f"  ⛔ dispatched and UNNAMED by any row: {' '.join(missing)}"
+            f" — ⚠️ population: LIVE CHECKOUTS only; a branch no worktree holds is read on the"
+            f" line below and NEVER here."
+        ]
         if missing
-        else ["  dispatched and unnamed: none."]
+        else [
+            "  dispatched and unnamed: none. — ⚠️ population: LIVE CHECKOUTS only; a branch no "
+            "worktree holds is read on the line below and NEVER here."
+        ]
     )
+    # ⛔ IMMEDIATELY BELOW THE GATE, because the gate's own text points at *the line below* and
+    # a pointer that has to be searched for is a pointer a reader skips.
+    #
+    # ⛔ **THIS LINE'S PROSE CARRIES NO OTHER LINE'S SELECTOR** — not `dispatched and`, not
+    # `could not count`, not `STILL CHECKED OUT` — ⚠️ because `W170`'s own note records a decoy
+    # anchor selecting the wrong line out of this very instrument's output.
+    lines.append(
+        f"  ⛔ UNMERGED and HELD BY NO CHECKOUT, named by no row ({len(adrift)}): "
+        f"{' '.join(adrift)} — ⚠️ this is the GATE's other half: a branch carrying real work "
+        f"that `git worktree list` cannot see, which is what an office leaves behind when it "
+        f"removes a throwaway worktree. ⛔ A NOTICE and NOT folded into the exit code, because "
+        f"folding it would change every merge's disclosure and that is a ruling, not a detail."
+        if adrift
+        else f"  unmerged branches held by no checkout, named by no row: none. — ⭐ the same "
+        f"three exemptions as the gate above ({'|'.join(OFFICE)}*, {'|'.join(SPENT)}*, and any "
+        f"branch a row claims), over {len(candidates)} candidate branch(es)."
+    )
+    if unjudged:
+        lines.append(
+            f"  ⛔ git DECLINED to answer *commits ahead* for {len(unjudged)} branch(es) NO "
+            f"WORKTREE IS ON: {' '.join(unjudged)} — ⚠️ a FAILED reading, printed rather than "
+            f"coerced to `0` (`W115`), and ⛔ NOT folded into the exit code: the fold Ruling "
+            f"216 built is over LIVE CHECKOUTS, and widening it is a ruling and not a detail."
+        )
     lines.append(
         f"  ⭐ OFFICE round branches, EXEMPT by Ruling 265 REGARDLESS of commits ahead "
         f"({len(office)}): "
