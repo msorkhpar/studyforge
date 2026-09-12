@@ -216,7 +216,7 @@ def _decoded(answer: Received, where: str) -> dict[str, object]:
     """Return `answer`'s body as a decoded JSON object, or raise `ManifestError`."""
     try:
         payload = json.loads(answer.body.decode(ENCODING))
-    except (ValueError, UnicodeDecodeError):
+    except ValueError, UnicodeDecodeError:
         raise ManifestError(f"{where} answered with a body that is not JSON") from None
     return _object(payload, where)
 
