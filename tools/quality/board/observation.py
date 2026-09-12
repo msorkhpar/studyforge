@@ -150,6 +150,14 @@ ABSENT = frozenset({"", "none", "no", "na", "n/a", "-", "—", "–", "nothing",
 #: The first integer a commits-ahead cell carries, sign and markup stripped.
 _COUNT = re.compile(r"-?\d+")
 
+#: ⛔ **Ruling 246's cell is `n @ <branch tip>`, and this is where the two halves
+#: part.** ⚠️ **`PO-50/12`: the `@ <tip>` half reached NO READER AT ALL**, so a cell
+#: that was TRUE WHEN IT WAS WRITTEN and a cell that was WRONG WHEN IT WAS WRITTEN
+#: printed the same disagreement. ⭐ **ONE cell, ONE grammar, ONE reader**: the tip is
+#: parsed here beside the count and never in `verdict.py`, because two halves of one
+#: grammar in two modules is the seam `W139` paid to cut properly one package over.
+_AS_OF = "@"
+
 
 @dataclass(frozen=True)
 class Observation:
@@ -174,14 +182,37 @@ class Observation:
         return normalised(self.checkout) not in ABSENT
 
     @property
+    def _halves(self) -> tuple[str, str]:
+        """The cell's COUNT half and its AS-OF half, split at Ruling 246's `@`."""
+        count, _, tip = normalised(self.ahead).partition(_AS_OF)
+        return count, tip.strip()
+
+    @property
     def commits(self) -> int | None:
         """The commits the row counts ahead, or `None` when it counts none at all.
 
         ⛔ `None` is not `0`: a cell reading `—` declares no ahead observation,
         and a cell reading `0` declares one whose value refutes the row.
+
+        ⚠️ **The COUNT half only.** ⛔ Searching the WHOLE cell read a number out of
+        the sha beside it — `— @ abc123` declared no count and answered `123`.
         """
-        found = _COUNT.search(normalised(self.ahead))
+        found = _COUNT.search(self._halves[0])
         return int(found.group()) if found else None
+
+    @property
+    def declared_tip(self) -> str | None:
+        """The ref this cell declares as its AS-OF, or `None` when it declares none.
+
+        ⛔ **A cell declaring NO tip is the form that predates Ruling 246 and it stays
+        exactly as it is** — ⚠️ a remedy turning a missing tip into a finding would
+        fire on correct historical work (Ruling 179, Ruling 185(a)).
+
+        ⭐ **Whether the ref RESOLVES is git's answer and never this module's**: this
+        module reads no git at all, which is the split `W100` paid for.
+        """
+        tip = self._halves[1].split()
+        return tip[0] if tip else None
 
 
 @dataclass(frozen=True)
