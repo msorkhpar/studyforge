@@ -25,12 +25,11 @@ its destination.
 | Read | For |
 |---|---|
 | [`docs/specs/2026-09-08-studyforge-v1-design.md`](docs/specs/2026-09-08-studyforge-v1-design.md) | The design, and rulings **R1–R20** that every task cites |
-| [`docs/tasks/README.md`](docs/tasks/README.md) | **83 tasks, 13 epics, 9 milestones** — the index, ordering and critical path |
+| [`docs/tasks/README.md`](docs/tasks/README.md) | The index, ordering and critical path; every count is the generated [`docs/capability-index.md`](docs/capability-index.md)'s |
 | [`docs/conventions/`](docs/conventions/) | Module structure, the agent working agreement, the review rubric |
 | [`docs/tasks/v2-backlog.md`](docs/tasks/v2-backlog.md) | Deliberately unplanned future work |
 
-**Nothing has been implemented.** The first work is milestone **M0** —
-`FND-01`…`FND-05`, all parallel. Everything else depends on it.
+⭐ **What is built, what is open and what is next is [`docs/tasks/BOARD.md`](docs/tasks/BOARD.md)'s.** This file carries no state.
 
 ⭐ **The first consumer is a small corpus, not the 166-unit Java tutorial.** A
 framework proven on a small source and then applied to a large one has been

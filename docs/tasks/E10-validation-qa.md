@@ -214,7 +214,7 @@ above.
 ### SF-26 — Framework test harness
 **Milestone** M2 · **Depends on** SF-12, SF-14 · **Team** pair
 **Owns** `tests/harness/`, golden files
-**Context** ~45k — `CS/tests/` structure, FND-04 fixtures
+**Context** ~45k — `CS/.pipeline/tests/` structure, FND-04 fixtures
 
 **Definition.** The regression floor: golden generated output for both FND-04
 fixtures, compared **byte-for-byte**, plus the isolation assertions that keep
