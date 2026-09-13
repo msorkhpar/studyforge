@@ -7,8 +7,9 @@ archive carry this path, and does it carry a personal-data shape (R7).
 
 **How you use it.** `manifest_document(kind, source, files, progress=...)` and `render`
 to write. `read_manifest(text)` to read: it refuses and never repairs.
-`refused_path(path, store)` and `gate(path, data)` on every file. `speaker(stream)`
-for the report, which scrubs every line.
+`refused_path(path, store)` and `gate(path, data)` on every file. For a sharing
+archive, `judge_bytes(path, data)` on every file `gate` could not read as text.
+`speaker(stream)` for the report, which scrubs every line.
 
 **Depends on.** `studyforge.version` for R9, `studyforge.archive.scrub` for R7, and
 `studyforge.corpus.manifest` for its exceptions. ⛔ Not on `studyforge.progress`:
@@ -19,12 +20,13 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import sys
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import PurePosixPath
 
-from studyforge.archive.scrub import assert_clean, scrub
+from studyforge.archive.scrub import assert_clean, leaks, scrub
 from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.version import check
 
@@ -51,6 +53,20 @@ NEVER_MATERIAL = frozenset({".git", "__pycache__"})
 
 MANIFEST_KEYS = frozenset({"personal_archive_api", "kind", "source", "material", "progress"})
 FILE_KEYS = frozenset({"path", "sha256", "bytes", "executable"})
+
+#: The shortest run of printable characters that `judge_bytes` reads as text. ⚠️ Measured,
+#: not chosen (`W235`'s handoff): over random bytes, runs of 12 still misfire on a short
+#: `~x/` or an address-shaped fragment and runs of 16 do not, so real audio passes. A
+#: shape in a shorter run is not seen, and `SKILL.md` states that cost.
+TEXT_RUN = 16
+
+#: How a run of text is spelled in bytes: single bytes, then UTF-16 in both byte orders.
+_CHARACTER = rb"[\x20-\x7e\t]"
+TEXT_RUNS: tuple[tuple[re.Pattern[bytes], str], ...] = (
+    (re.compile(_CHARACTER + b"{%d,}" % TEXT_RUN), "ascii"),
+    (re.compile(b"(?:" + _CHARACTER + b"\x00){%d,}" % TEXT_RUN), "utf-16-le"),
+    (re.compile(b"(?:\x00" + _CHARACTER + b"){%d,}" % TEXT_RUN), "utf-16-be"),
+)
 
 #: A zip entry's date. ⭐ Fixed, so two exports of one tree are the same bytes.
 EPOCH = (1980, 1, 1, 0, 0, 0)
@@ -177,8 +193,8 @@ def gate_name(path: str) -> None:
 def gate(path: str, data: bytes) -> bool:
     """Refuse a carried file whose name or UTF-8 text holds a personal-data shape.
 
-    Return whether the contents were read. ⚠️ A file that is not UTF-8 text is
-    carried as bytes, and its contents are not read (`SK-06/3`).
+    Return whether the contents were read as text. ⛔ `False` is an answer the caller
+    must act on: a sharing archive hands such a file to `judge_bytes` (`SK-06/3`).
     """
     gate_name(path)
     try:
@@ -187,6 +203,29 @@ def gate(path: str, data: bytes) -> bool:
         return False
     assert_clean(text, path)
     return True
+
+
+def carried_text(data: bytes) -> list[str]:
+    """Return the text in `data`: every run of `TEXT_RUN` or more printable characters."""
+    return [
+        found.group().decode(encoding)
+        for pattern, encoding in TEXT_RUNS
+        for found in pattern.finditer(data)
+    ]
+
+
+def judge_bytes(path: str, data: bytes) -> None:
+    """Refuse, by name and with the remedy, a file that is not text whose text holds a shape.
+
+    ⛔ For a sharing archive, on every file `gate` could not read. The message names the
+    file and the shape, never the value (R7).
+    """
+    for _where, shape in leaks(carried_text(data), path):
+        raise ArchiveError(
+            f"'{path}' is not UTF-8 text and its bytes carry text shaped like {shape} (R7); "
+            f"remove the file or strip what it carries before sharing it, "
+            f"or keep it in an owner archive, which carries it unread"
+        )
 
 
 def _file(entry: object, where: str) -> None:
