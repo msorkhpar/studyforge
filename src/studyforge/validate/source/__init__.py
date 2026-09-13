@@ -19,6 +19,7 @@ to name is no longer the only place the rule could be broken.
 |---|---|
 | `classification` | ⭐ what the corpus says its files **are** — material, output, or neither |
 | `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
+| `membership` | ⭐ what sits beneath the archive root, which `classification` skips (`W248`) |
 
 ## ⛔ Why the seam is here, and it was measured rather than chosen
 
@@ -68,11 +69,17 @@ from studyforge.validate.source.completeness import (
     RULE_SHORT_READ,
     check_completeness,
 )
+from studyforge.validate.source.membership import (
+    RULE_ARCHIVE_STRAY,
+    archive_members,
+    check_archive_members,
+)
 
-#: Both checks, in the order a report reads best — what the files **are**
-#: before what one of them **contains**. ⛔ `validate.run` splices this tuple
-#: into its own, so the order here is the order in the report.
-CHECKS = (check_unclassified, check_completeness)
+#: The three checks, in the order a report reads best — what the archive root
+#: holds, then what the files beside it **are**, then what one **contains**.
+#: ⛔ `validate.run` splices this tuple into its own, so the order here is the
+#: order in the report.
+CHECKS = (check_archive_members, check_unclassified, check_completeness)
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.validate.source.completeness` directly is a consumer this
@@ -83,6 +90,7 @@ CHECKS = (check_unclassified, check_completeness)
 __all__ = [
     "CHECKS",
     "IGNORE_TIMEOUT",
+    "RULE_ARCHIVE_STRAY",
     "RULE_CONTESTED",
     "RULE_IGNORE_DECLARATION",
     "RULE_ORIGIN_MISSING",
@@ -92,6 +100,8 @@ __all__ = [
     "RULE_UNCLASSIFIED",
     "SKIP_DIRS",
     "Scan",
+    "archive_members",
+    "check_archive_members",
     "check_completeness",
     "check_unclassified",
     "source_files",
