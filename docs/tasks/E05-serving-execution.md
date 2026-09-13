@@ -42,7 +42,7 @@ measures its own port surface at start and ports from HEAD.
 ### SF-19a — Serving API: content, assets, security
 **Milestone** **M4** · **Depends on** SF-10 · **Team** team
 **Owns** `serve/` — app wiring, `routes/content.py`, `routes/assets.py`, `security.py`, `caching.py`
-**Context** ~90k — `CS/tools/study/backend.py` (**read by section, not whole**), `CS/tests/test_backend.py`
+**Context** ~90k — `CS/.pipeline/tools/study/backend.py` (**read by section, not whole**), `CS/.pipeline/tests/test_backend.py`
 
 **Subtasks — each its own module (R11).**
 (a) **Content namespace** — what a unit *is*. Cacheable, strong validators,
@@ -110,7 +110,7 @@ one instance. A stale discovery cache is detected rather than trusted.
 ### SF-20 — Command runner
 **Milestone** **M5** · **Depends on** SF-02, TC-00 · **Team** pair
 **Owns** `execute/`
-**Context** ~45k — `CS/tools/study/runner.py`, `CS/tests/test_runner.py`
+**Context** ~45k — `CS/.pipeline/tools/study/runner.py`, `CS/.pipeline/tests/test_runner.py`
 
 **Definition.** The **only** package permitted to start a process. Two modes,
 one contract: execute inside the toolchain container when it is up — so a run
@@ -153,7 +153,7 @@ against a real container, not a mock.**
 ### SF-21 — Progress store
 **Milestone** **M4** · **Depends on** SF-01 · **Team** solo
 **Owns** `progress/`
-**Context** ~40k — `CS/tools/study/progress.py`
+**Context** ~40k — `CS/.pipeline/tools/study/progress.py`
 
 **Definition.** The record of **practice passes** — facts established by a
 grader run: **one git-ignored JSON file**, never a database, never inside served
@@ -289,7 +289,7 @@ follows the open practice.
 ### SF-29 — Run output filter
 **Milestone** **M5** · **Depends on** SF-20 · **Team** solo
 **Owns** `execute/quiet.py`
-**Context** ~30k — `CS/tools/study/quiet.py`, `CS/tests/test_quiet.py`
+**Context** ~30k — `CS/.pipeline/tools/study/quiet.py`, `CS/.pipeline/tests/test_quiet.py`
 
 **Definition.** The filter between the runner and the page that drops build
 noise so a reader sees their program's output and their grader's verdict rather

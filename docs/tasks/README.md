@@ -351,7 +351,7 @@ a second agent does not help. Plan around it rather than discovering it.
 > navigable, with read marks recorded — minus what the source genuinely lacks,
 > stated positively.
 
-⭐ **The ISO track's first finish line (Q18), delivered by the corpus.** ⛔ **Its rows are the track's delivery plan in `ISO/`, owned by PO-Integration, not an epic here** — which is why the capability index prints no `M6`. ⭐ **Every framework capability it uses is `M0`–`M4`'s, and each gap it meets is a finding (R19).**
+⭐ **The ISO track's first finish line (Q18), delivered by the corpus.** ⛔ **Its rows are the track's delivery plan in `ISO/`, owned by PO-Integration, not an epic here** — so no framework capability in the capability index belongs to `M6`. ⭐ **Every framework capability it uses is `M0`–`M4`'s, and each gap it meets is a finding (R19).**
 
 ### M8 — It is a framework
 > **Done when:** `ISO-8583` has been converted **by the skills alone**, and the
