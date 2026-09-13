@@ -56,7 +56,8 @@ from studyforge.corpus.placement import (
     Profile,
     profile_for,
 )
-from studyforge.narrate.speakable import SEGMENT, SpeakableError, parse_clip_name, unit_token
+from studyforge.narrate.speakable import SpeakableError
+from studyforge.narrate.speakable.naming import SEGMENT, parse_clip_name, unit_token
 from studyforge.narrate.synth import StateError, read_state, state_file
 from studyforge.validate.corpus import ARCHIVE_DIR
 
