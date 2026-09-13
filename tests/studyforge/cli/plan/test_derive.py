@@ -453,7 +453,7 @@ def test_each_clip_the_record_files_under_a_declared_unit_is_a_narration_creatio
         tmp_path,
         {
             "{token}.intro.b1": "{token}.intro.b1-0123abcd.mp3",
-            "{token}.intro.b2": "{token}.intro.b1-0123abcd.mp3",
+            "{token}.intro.b2": "{token}.intro.b9-0123abcd.mp3",
             "{token}.intro.b3": "",
             "no--such--unit.intro.b1": "no--such--unit.intro.b1-0123abcd.mp3",
         },
