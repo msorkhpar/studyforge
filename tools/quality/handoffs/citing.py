@@ -32,6 +32,10 @@ may repair.
   cannot leave. ⛔ Nothing here names a document, so the next handoff needs no
   entry and there is no list to go stale.
 
+⛔ **THE PIN IS THE TREE THE RULE LANDS IN, never the cut** (`W135/6`). ⚠️ Measured
+on a trial stack: a pin at the cut read three handoffs that merged BEFORE this
+rule as new, and the floor went RED on records no office may edit.
+
 ⛔ **A PIN, NOT A KNOB** — the same construction as `existence.HANDOFF_OWED_FROM`.
 Moving it forward to quiet a red handoff exempts that handoff, which is the one
 use it must never have; the repair is the link.
@@ -61,6 +65,10 @@ and a sha are not `.md` tokens, so they are never read.
    decision this row does not make.
 3. **A blockquote is read as prose**, so a quoted bare name in a new handoff is
    a finding.
+4. ⚠️ **SURVIVOR: a handoff ADDED before the rule landed but absent from the
+   pin** is read as new. The suite asserts the pin is an ancestor of HEAD, which
+   does not catch this; catching it needs per-file history (Ruling 134's hazard),
+   and the harmful case already fails the floor on the citation itself.
 """
 
 from __future__ import annotations
@@ -77,9 +85,10 @@ from tools.quality.report import Finding
 
 RULE_BARE = "handoff-bare-citation"
 
-#: ⛔ The ref whose tree IS the frozen population: the release tip this rule was
-#: cut from. A PIN, NOT A KNOB — see the module docstring.
-CITATION_PIN = "b182a8822af05998c31bbf08bec4c92ee67fe52b"
+#: ⛔ The ref whose tree IS the frozen population: the release tip this rule
+#: LANDS ON, never the tip it was cut from (`W135/6`). A PIN, NOT A KNOB — see
+#: the module docstring.
+CITATION_PIN = "4d3c74218609971e076535416064b6dffa6f9440"
 
 #: A markdown filename as it is written, with any directories and an optional
 #: anchor. ⛔ Bounded on both sides so `x.md.bak` and `a/b.mdx` are not read.

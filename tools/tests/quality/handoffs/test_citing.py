@@ -128,6 +128,21 @@ def test_the_shipped_pin_is_a_full_sha_this_repository_can_read():
     frozen = frozen_documents(repository_root())
     assert frozen is not None
     assert "docs/tasks/handoffs/W106.md" in frozen
+    # ⛔ `W135/6`: the pin is the tree the rule LANDS in, so every handoff merged
+    # before it is frozen — the three a pin at the cut read as new among them.
+    assert {"docs/tasks/handoffs/W108.md", "docs/tasks/handoffs/W125.md"} <= frozen
+
+
+def test_the_pin_is_an_ancestor_of_head():
+    # ⭐ A pin outside HEAD's history (a typo, a rewritten line) is refused here.
+    # ⚠️ It does NOT catch a handoff added before the rule landed and absent from
+    # the pin — that survivor is declared in `citing.py`, gap 4.
+    result = subprocess.run(
+        [git(), "merge-base", "--is-ancestor", CITATION_PIN, "HEAD"],
+        cwd=repository_root(),
+        check=False,
+    )
+    assert result.returncode == 0, f"{CITATION_PIN} is not an ancestor of HEAD"
 
 
 def test_the_exemption_is_load_bearing_on_the_shipped_tree():
