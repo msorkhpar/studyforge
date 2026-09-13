@@ -99,6 +99,7 @@ CONTRACT_FIELDS = (
     "toc_api",
     "narration_api",
     "progress_api",
+    "personal_archive_api",
 )
 
 
