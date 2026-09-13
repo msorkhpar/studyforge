@@ -423,3 +423,91 @@ def test_the_catch_list_is_the_readers_own_tuple_and_not_a_copy():
     assert "except MANIFEST_RAISES as error:" in source  # ⭐ `W213`, the manifest site
     assert "except (ContainerError" not in source, "the catch list was retyped again"
     assert "except (ManifestError" not in source, "the catch list was retyped again"
+
+
+# --------------------------------------------------------------------------
+# ⛔ the narration record is a plan input (`W224`, `E09` § SF-38/8)
+# --------------------------------------------------------------------------
+
+
+def a_recorded_corpus(tmp_path, clips: dict[str, str]):
+    """A fixture copy whose narration record files `clips` (speech id -> filename)."""
+    from studyforge.generate import read_corpus
+    from studyforge.narrate.speakable import unit_token
+    from studyforge.narrate.synth import Clip, Conditions, state_file, write_state
+
+    root = copy_fixture("depth1", tmp_path)
+    token = unit_token(read_corpus(root).units[0].key)
+    settings = Conditions(voice="voice-a", fmt="mp3", provides=3, chunk_chars=320)
+    record = {
+        speech_id.format(token=token): Clip(name.format(token=token), settings.fingerprint)
+        for speech_id, name in clips.items()
+    }
+    state_file(root).parent.mkdir(parents=True, exist_ok=True)
+    write_state(state_file(root), record, settings)
+    return root, token
+
+
+def test_each_clip_the_record_files_under_a_declared_unit_is_a_narration_creation(tmp_path):
+    root, token = a_recorded_corpus(
+        tmp_path,
+        {
+            "{token}.intro.b1": "{token}.intro.b1-0123abcd.mp3",
+            "{token}.intro.b2": "{token}.intro.b9-0123abcd.mp3",
+            "{token}.intro.b3": "",
+            "no--such--unit.intro.b1": "no--such--unit.intro.b1-0123abcd.mp3",
+        },
+    )
+
+    plan = plan_for(root)
+
+    clips = [c for c in plan.creations if c.narration and not c.path.endswith("/")]
+    assert plan.exit_code == OK
+    assert [c.path.rsplit("/", 1)[1] for c in clips] == [f"{token}.intro.b1-0123abcd.mp3"]
+    audio = [c.path for c in plan.creations if c.narration and c.path.endswith("/")]
+    assert clips[0].path.startswith(tuple(audio))
+    assert plan.read_files[-1] == ".studyforge/narration.json"
+    assert ".studyforge/narration.json" in plan.lines()[2]
+
+
+def test_with_a_record_it_opens_the_record_and_still_no_source_material(tmp_path, monkeypatch):
+    import pathlib
+
+    root, _ = a_recorded_corpus(tmp_path, {"{token}.intro.b1": "{token}.intro.b1-0123abcd.mp3"})
+    opened: list[str] = []
+    original = pathlib.Path.read_text
+
+    def record(self, *args, **kwargs):
+        opened.append(self.name)
+        return original(self, *args, **kwargs)
+
+    monkeypatch.setattr(pathlib.Path, "read_text", record)
+    plan_for(root)
+    assert "narration.json" in opened
+    assert set(opened) <= {MANIFEST_FILENAME, CONTAINER_FILENAME, "narration.json"}
+
+
+def test_an_unreadable_record_or_a_clip_name_with_a_directory_is_a_refusal_not_a_raise(tmp_path):
+    root, _ = a_recorded_corpus(
+        tmp_path / "a", {"{token}.intro.b1": "../{token}.intro.b1-0123abcd.mp3"}
+    )
+    named = plan_for(root)
+    assert named.exit_code == INVALID
+    assert [r.where for r in named.refusals] == [".studyforge/narration.json"]
+    assert not [c for c in named.creations if c.narration and not c.path.endswith("/")]
+
+    broken = copy_fixture("depth2", tmp_path / "b")
+    (broken / ".studyforge").mkdir()
+    (broken / ".studyforge/narration.json").write_text("not a record", "utf-8")
+    plan = plan_for(broken)
+    assert plan.exit_code == INVALID
+    assert [r.where for r in plan.refusals] == [".studyforge/narration.json"]
+
+
+@pytest.mark.parametrize("name", VALID)
+def test_only_a_units_audio_directory_is_marked_narration_when_no_record_exists(name):
+    marked = [c for c in plan_for(FIXTURES / name).creations if c.narration]
+    assert marked
+    assert all(c.path.endswith("/") and "audio" in c.path for c in marked)
+    audio = [c for c in plan_for(FIXTURES / name).creations if c.what.endswith("'s audio")]
+    assert marked == audio

@@ -8,7 +8,7 @@ from pathlib import Path, PurePosixPath
 import pytest
 
 from studyforge.generate import Footprint, Written
-from studyforge.generate.writing import copy, mint, place
+from studyforge.generate.writing import copy, mint, place, same_root
 
 A = PurePosixPath("one/a.html")
 B = PurePosixPath("two/b.html")
@@ -425,3 +425,27 @@ def test_a_foreign_file_in_the_output_root_survives_a_rebuild_byte_for_byte(tmp_
 
     assert refused == [foreign, foreign]
     assert (tmp_path / foreign).read_bytes() == mine
+
+
+# --------------------------------------------------------------------------
+# same_root — whether a build's output IS the corpus root (`W224`)
+# --------------------------------------------------------------------------
+
+
+def test_same_root_asks_the_filesystem_not_the_spelling(tmp_path):
+    corpus = tmp_path / "corpus"
+    elsewhere = tmp_path / "out"
+    corpus.mkdir()
+    elsewhere.mkdir()
+
+    assert same_root(corpus, corpus)
+    assert same_root(Path(f"{corpus}/../{corpus.name}"), corpus)
+    assert not same_root(elsewhere, corpus)
+
+
+def test_same_root_refuses_an_output_root_that_is_not_a_directory(tmp_path):
+    from studyforge.generate import BuildError
+
+    with pytest.raises(BuildError, match="output root") as raised:
+        same_root(tmp_path / "absent", tmp_path)
+    assert str(tmp_path) not in str(raised.value)

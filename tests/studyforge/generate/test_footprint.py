@@ -6,7 +6,8 @@ from pathlib import PurePosixPath
 
 import pytest
 
-from studyforge.generate import Footprint, footprint_for, read_corpus
+from studyforge.corpus.placement import AUDIO_DIRNAME
+from studyforge.generate import Footprint, footprint_for, read_corpus, unit_location
 from studyforge.generate.footprint import of
 from tests.studyforge.generate.corpora import BOTH, GOLDEN, a_corpus
 
@@ -98,7 +99,16 @@ def test_the_derived_footprint_is_the_committed_plans_own_enumeration(tmp_path, 
     root = a_corpus(tmp_path, name)
     corpus = read_corpus(root)
 
-    expected = of(plan_lines(name), excluding=corpus.shared.archive)
+    # ⭐ Which golden lines are a unit's audio directory is asked of placement
+    # here, by a route of its own, against the plan's `narration` marking.
+    audio = [
+        unit_location(corpus, c.address, u.n, u.title, origin=u.origin, label=u.label)
+        for _, c in corpus.maps
+        for u in c.units
+    ]
+    audio = [f"{at.media_dir(AUDIO_DIRNAME)}/" for at in audio]
+    assert audio and set(audio) <= set(plan_lines(name))
+    expected = of(plan_lines(name), excluding=corpus.shared.archive, narration=audio)
 
     assert corpus.footprint == expected
     assert corpus.footprint == footprint_for(root, corpus.profile)
@@ -144,3 +154,32 @@ def test_a_corpus_whose_plan_refuses_yields_a_footprint_that_owns_nothing(tmp_pa
     assert plan.refusals and plan.paths
 
     assert footprint_for(root, profile_for("tree")) == Footprint()
+
+
+# --------------------------------------------------------------------------
+# ⛔ narration (`W224`): an audio directory is no prefix, a clip copy is owned one by one
+# --------------------------------------------------------------------------
+
+AUDIO = "units/unit-01/audio/"
+CLIP = "units/unit-01/audio/u.intro.b1-0123abcd.mp3"
+
+
+def test_a_marked_audio_directory_is_no_prefix_and_a_marked_clip_is_owned_by_path():
+    footprint = of(
+        [AUDIO, CLIP, "units/unit-01/images/"], excluding=ARCHIVE, narration=[AUDIO, CLIP]
+    )
+
+    assert footprint.owns(PurePosixPath(CLIP))
+    assert not footprint.owns(PurePosixPath(f"{AUDIO}narrates-own-0000abcd.mp3"))
+    assert footprint.owns(PurePosixPath("units/unit-01/images/a.svg"))
+    assert footprint.clips == {PurePosixPath(CLIP)}
+
+
+def test_without_clips_owns_no_clip_and_everything_else_it_did():
+    footprint = of([AUDIO, CLIP, "index.html"], excluding=ARCHIVE, narration=[AUDIO, CLIP])
+
+    beside = footprint.without_clips()
+
+    assert not beside.owns(PurePosixPath(CLIP))
+    assert beside.owns(PurePosixPath("index.html"))
+    assert beside.files == footprint.files and beside.directories == footprint.directories

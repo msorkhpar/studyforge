@@ -15,7 +15,9 @@ whose bytes moved.
     moved.unchanged        # this build's own pages whose bytes did not move
 
 `recorded(root)` and `narration_for(...)` are the two halves `generate.units`
-calls while it renders; a page pass never reads the record itself.
+calls while it renders; a page pass never reads the record itself. `heard(...)`
+is the join both the page and `generate.clips` ask, so the clip a build copies
+is the clip the page addresses.
 
 **Depends on.** `narrate.playable` for the join, `narrate.synth` for where the
 record lives, how it is read and where a unit's clips were placed,
@@ -105,6 +107,14 @@ def narration_for(
     """Return one unit page's narration, in whichever of the three states it is in."""
     if not state.present:
         return SILENT
+    _, playing = heard(corpus, source, at, document, state)
+    return Narration.of(playing.filenames, placement, missing=gaps(playing))
+
+
+def heard(
+    corpus: Corpus, source: UnitSource, at: UnitLocations, document: dict, state: State
+) -> tuple[Path, Playable]:
+    """Return the directory one unit's clips were probed in, and what its page plays."""
     wrote = audio_dir(
         corpus.root,
         corpus.profile,
@@ -116,19 +126,22 @@ def narration_for(
     looks = corpus.root / Path(str(at.media_dir(AUDIO_DIRNAME)))
     # `SF-42/1`: probe where the page's hrefs resolve, which is `wrote` unless a
     # label moved the page's directory and not the writer's.
-    playing = playable_of(document, state, audio=wrote if wrote == looks else looks)
-    return Narration.of(playing.filenames, placement, missing=gaps(playing))
+    probed = wrote if wrote == looks else looks
+    return probed, playable_of(document, state, audio=probed)
 
 
 def write_narration(root: Path | str, into: Path | str) -> Renarrated:
     """Re-run the unit-page pass after narration moved, rewriting only moved pages.
 
-    `into` is required, as for every pass in this package. The import is
-    deferred because `generate.units` imports this module for `narration_for`.
+    `into` is required, as for every pass in this package. The imports are
+    deferred because `generate.units` and `generate.clips` import this module.
+    ⭐ The clips a moved page addresses are copied too (`generate.clips`), or a
+    narration re-run into any output but the corpus root would link nothing.
     """
+    from studyforge.generate.clips import for_output, unit_clips
     from studyforge.generate.units import unit_bodies
 
-    corpus = read_corpus(root)
+    corpus = for_output(read_corpus(root), into)
     out = Path(into)
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
@@ -140,10 +153,8 @@ def write_narration(root: Path | str, into: Path | str) -> Renarrated:
             unchanged.append(at)
             continue
         place(out, at, body, written, refused, replaced, footprint=corpus.footprint)
-    return Renarrated(
-        Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced)),
-        tuple(unchanged),
-    )
+    pages = Written(pages=tuple(written), refused=tuple(refused), replaced=tuple(replaced))
+    return Renarrated(pages + unit_clips(corpus, out), tuple(unchanged))
 
 
 def _holds(target: Path, body: bytes) -> bool:
