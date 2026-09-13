@@ -192,11 +192,9 @@ def unnamed(
       nothing** (`offices.py`) |
     | `git COULD NOT COUNT` | `ahead()` returned `None` — a FAILED reading (`W115`) |
 
-    ⚠️ **The DETACHED checkout is in NONE of the five, deliberately** — it has no branch
-    line for `graph.checkouts()` to read. ⭐ **That hole is `PO-44/5`'s and `W125`'s, and
-    neither Ruling 265's widening nor `W170`'s must make it harder to see**, which is why
-    each exemption line carries its OWN count rather than merely shrinking another line's
-    number.
+    ⛔ **`W251`: a DETACHED checkout is in NONE of those lines** — it has no branch for a row
+    or a carrier to claim — ⭐ **so it is NAMED on its OWN line, by basename and head**, a
+    NOTICE that does not move the exit: it cannot be dispatched work under `W153`'s contract.
 
     ⛔ **`W170`: the `SPENT` exemption touches the GATE arm ALONE.** ⭐ **`spent()`'s
     `trial/tmp branches STILL CHECKED OUT` line reads the SAME branches and is UNCHANGED,
@@ -328,6 +326,15 @@ def unnamed(
         "row: none."
     )
     lines.append(declared)
+    loose = sorted((Path(where).name, head) for where, head in graph.detached().items())
+    lines.append(
+        f"  ⚠️ DETACHED checkouts, on no branch ({len(loose)}): "
+        + " ".join(f"{name}@{head}" for name, head in loose)
+        + " — no row or carrier can claim a worktree with no branch, so no line above reads "
+        "it. A NOTICE, and NOT folded into the exit code (`W251`)."
+        if loose
+        else "  detached checkouts, on no branch: none."
+    )
     lines.append(
         f"  ⛔ git COULD NOT COUNT *commits ahead* for {len(unread)} live checkout(s): "
         f"{' '.join(unread)} — ⚠️ a FAILED reading, and NOT the Ruling 130 exemption above: "

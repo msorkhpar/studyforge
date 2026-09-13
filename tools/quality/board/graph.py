@@ -161,9 +161,9 @@ class Graph:
     def checkouts(self) -> dict[str, str]:
         """`{branch: checkout path}` for every live checkout, the MAIN one included.
 
-        ⚠️ A detached checkout has no branch line and is not in this map; it is
-        reported as a checkout nothing names rather than dropped, because *"nobody is
-        on that branch"* and *"that checkout has no branch"* are different answers.
+        ⚠️ A detached checkout has no branch line and is not in this map: `detached()` reads
+        it, because *"nobody is on that branch"* and *"that checkout has no branch"* are
+        different answers (`W251`).
         """
         result = self._git("worktree", "list", "--porcelain")
         found: dict[str, str] = {}
@@ -173,6 +173,20 @@ class Graph:
                 where = line[len("worktree ") :].strip()
             elif line.startswith("branch refs/heads/"):
                 found[line[len("branch refs/heads/") :].strip()] = where
+        return found
+
+    def detached(self) -> dict[str, str]:
+        """`{checkout path: short head sha}` for every live checkout on NO branch (`W251`)."""
+        result = self._git("worktree", "list", "--porcelain")
+        found: dict[str, str] = {}
+        where = head = ""
+        for line in result.stdout.split("\n"):
+            if line.startswith("worktree "):
+                where, head = line[len("worktree ") :].strip(), ""
+            elif line.startswith("HEAD "):
+                head = line[len("HEAD ") :].strip()[:7]
+            elif line.strip() == "detached":
+                found[where] = head
         return found
 
     def heads(self) -> list[str]:
