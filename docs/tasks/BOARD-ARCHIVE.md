@@ -20336,3 +20336,42 @@ pip install --no-build-isolation .   (from a COPY in /tmp, not the checkout)
 ### ⭐ CLOSED — PO ROUND 66
 
 ⭐ **CLOSED — `f382a4a`.** ⛔ **Clause 1:** `studyforge` is on the path inside `docker/dev/check` — `tests/docker/test_dev_image_command.py`'s in-image checks, and this round's own pinned run opened on `command -v studyforge`. **Clause 2:** `setuptools` pinned by version AND sha256, `--require-hashes`, uninstalled in the same step (plant: the uninstall removed → RED). **Clause 3:** the installed command is RUN and its exit read (`test_the_installed_entry_point_is_the_mounted_declaration` among them). **Clause 4:** not reached — the answer was *install*. ⭐ **Must-not met:** the install is at IMAGE BUILD against an empty `/workspace/src`, with only `pyproject.toml` and `README.md` bind-mounted — RECEIVED from the office; the suite's tree-state net is the reading. ⚠️ **`W211/1` → [`W75`](rows/W75.md); `W211/2` + `/3` → [`W225`](rows/W225.md).**
+
+## PO round 67 — wave 20 closed in part, steps 4.1 and 4.2 closed, SK-03's edge corrected, three mints
+
+⛔ **Three merges re-derived on the first-parent chain of `171366c`, not received:** `4ed6938` (`SF-21`), `77e47e5` (`OPS-05`), `171366c` (`SF-19a`). ⭐ **`corroborate` at `171366c`, HOST, role `wt/po`, before any edit: exit 1, refuting exactly those three as TERMINAL — the expectation written before it ran.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                              merge^2   branch head  ahead  checked out
+feat/SF-21-progress-store     270a6ab9  270a6ab9     0      NOWHERE
+feat/OPS-05-nondestructive    8b621b6c  8b621b6c     0      NOWHERE
+feat/SF-19a-serving-api       e4552e1b  e4552e1b     0      NOWHERE
+```
+
+⭐ **All three TERMINAL, all three EPIC TASKS: each close is the In flight removal plus this record.** `SF-21` and `SF-19a` close as written, on their offices' tables and the coordinator's release-tip readings (RECEIVED). ⭐ **`SF-21/2` is DISCHARGED at `171366c`** by `tests/studyforge/serve/routes/test_assets.py::test_the_readers_progress_record_is_never_served_by_any_spelling` (`git grep`).
+
+### ⛔ 2 — `OPS-05` CLOSES, ITS JAVA-CORPUS CLAUSE CARRIED
+
+⭐ **Closed at `77e47e5`: every other clause is met by a named test and a plant that turned it RED ([its handoff](handoffs/OPS-05.md)).** ⛔ **The Java-corpus clause is not met and cannot be at `M4`: the sibling at its pin has no manifest — Ruling 173's class.** ⚠️ **Holding the row open would hold step `4.1` on a consumer's archive no framework office can produce, which is `PO-64/4`'s objection.** ⭐ **Its disposition is owed with [`W80`](rows/W80.md)'s and [`W81`](rows/W81.md)'s, both re-placed at order 0; [`W228`](rows/W228.md) is why no instrument counted it; [`W227`](rows/W227.md) carries `OPS-05/2`.**
+
+### ⭐ 3 — STEPS `4.1` AND `4.2` CLOSE
+
+⛔ **Membership, `README.md`:** `4.1` is `SF-21`, `OPS-05`; `4.2` is `SF-19a`. ⭐ **`4.1` closes at `77e47e5`, where both its rows are in; `4.2` at `171366c`, after `4.1`.** ⛔ **Ruling 97's gate at each ref is the coordinator's release-tip measurement (guard 0, floor GREEN 0, suite GREEN 0), RECEIVED; this round's own readings are at its tip, which differs from `171366c` in `docs/` only.** ⚠️ **`M4` stays OPEN: `4.3` holds `SF-19b` and `SF-39`; `4.4` is unmerged.**
+
+### ⭐ 4 — WAVE 20'S SECOND HALF, PLACEMENT RATIFIED
+
+⭐ **`W224` (Developer 2, cut at `4ed6938`), `SF-39` (Developer 1) and `SF-19b` (Developer 3), both cut at `171366c`, carriers CONFIRMED by the coordinator; `git worktree list` PRIMARY (Ruling 171).**
+
+⛔ **RATIFIED.** `SF-39` ← `SF-19a`, `SF-40`; `SF-19b` ← `SF-19a`, `SF-04`, `SF-13` — every edge merged on the first-parent chain. ⭐ **Both are capability rows of unsaturated step `4.3`, so the dispatch bound puts them ahead of `W225`.** ⭐ **`W224` took its slot while `SF-19a` was unmerged and no capability row was dispatchable — `SK-03` included, by §5.**
+
+### ⛔ 5 — `SK-03`: `PO-66/2` REFUTED, AND TWO TEXTS WERE WRONG
+
+1. ⭐ **THE MILESTONE: `SK-03`'s own header (`M4`) and `README.md` step `4.4` decide.** ⛔ **`E11`'s split table read `M7` for all three wrapping skills because `b1569e2` moved the `SK-03` and `SK-06` headers and not the table** (`git log -S`). ⭐ **Corrected in two rows; the table's REASON — the wrapped entry points must exist first — was right and stands.**
+2. ⛔ **THE EDGE: `SK-03` wraps `SF-28`'s entry points, and [`W197`](rows/W197.md) split them — `serve` is `SF-39`.** ⚠️ **The header still read `SF-28` alone, and round 66 read it off the epic as the step rule requires: faithfully, and wrongly** (`PO-67/1`). ⭐ **Now `SF-28`, `SF-37`, `SF-38`, `SF-39`, `SF-40`.**
+3. ⛔ **DISPATCHABLE WHEN `SF-39` MERGES AND `W81`'S DISPOSITION IS WRITTEN.** ⚠️ **The second is not an epic edge; it is `OPS-05`'s PARTIAL, which shows what dispatching a clause no office can meet returns.** ⭐ **`W80` is owed before `SF-19b` closes, for the same reason.**
+
+### ⛔ 6 — THE MINTS, each argued on its own file
+
+[`W227`](rows/W227.md) (`OPS-05/2`), [`W228`](rows/W228.md) (`PO-67/2` + `OPS-05/1`), [`W229`](rows/W229.md) (`OPS-05/7`), each jumping nobody. ⭐ **Rider:** `OPS-05/5` → [`W215`](rows/W215.md). ⭐ **Sentences, no row:** `SF-21/1` → spec §R9's register; `SF-21/3` → `E11` § `SK-06`; `SF-21/4` → `E05` § `SF-22`. ⭐ **No convention owed:** `OPS-05/6` + `SF-19a/5` — Ruling 139 (`agent-protocol.md`) already homes a harness under `<worktree>/.scratch/` (`PO-67/3`). **Disposed:** `OPS-05/3` (spec §5: `permitted_edits` enumerates files a corpus MAY HAVE ADDED TO; nothing gives the framework the edit), `OPS-05/4` (a surviving plant named in its handoff, accepted), `OPS-05/8` (surface taken and disclosed), `SF-19a/2` (`SF-19b`'s brief), `SF-19a/3` (cost named; re-opened by a measured reading), `SF-19a/4` (disclosed RFC 9110 decisions; no document owes the embed-origin `frame-src` relaxation). ⭐ **Relayed:** `SF-19a/1` to `SF-19b`, whose discovery wiring meets it.

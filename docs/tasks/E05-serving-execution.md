@@ -252,6 +252,8 @@ unit document and hands the one command that mode names — that exact string,
 never anything a client sent — to the runner, streaming output back line by
 line; the outcome is recorded.
 
+⛔ **The page names a practice by `progress.practice_key`** (`SF-21/4`) — a pass recorded under any other spelling is one the page never reads.
+
 **Two modes because Run and Submit are different acts.** Run shows the reader
 what their own program printed. Submit runs the grader, and only Submit can
 complete a practice. Collapsing them would let a program that compiles and

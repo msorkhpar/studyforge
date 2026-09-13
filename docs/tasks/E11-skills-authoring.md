@@ -38,7 +38,10 @@ So the epic splits in two:
 | | Skills | Milestone | Why |
 |---|---|---|---|
 | **Producing** | SK-01, SK-02, SK-07, SK-05 | **M1–M2** | E07 and E09 are their **first output**, not their input |
-| **Wrapping** | SK-03, SK-04, SK-06 | M7 | genuinely thin wrappers over entry points that must exist first |
+| **Wrapping** | SK-03, SK-06 | **M4** | genuinely thin wrappers over entry points that must exist first |
+| **Wrapping** | SK-04 | M7 | the same |
+
+⛔ **CORRECTED, PO round 67 (`PO-67/1`): this table read `M7` for `SK-03` and `SK-06` after `b1569e2` moved both headers to `M4`.** ⭐ **The headers and [`README.md`](README.md) step 4.4 decide; the reason column stood.**
 
 ⚠️ **The cost of the front half is real and is accepted.** SK-02 at M2 is
 written before anybody knows what a second adapter looks like. The answer is
@@ -540,7 +543,7 @@ remembered.
 ---
 
 ### SK-03 — Build and serve
-**Milestone** **M4** · **Depends on** SF-28 · **Team** solo
+**Milestone** **M4** · **Depends on** SF-28, SF-37, SF-38, SF-39, SF-40 · **Team** solo
 **Owns** the build-and-serve skill
 **Context** ~30k — SF-28's entry points
 
@@ -553,6 +556,8 @@ surface wrong and that is the finding.
 depend on `OPS-04` — a file in the Java repository — which is the exact hole
 `SF-28` was created to close: a source-agnostic skill wrapping one consumer's
 script means the second consumer rewrites the skill.
+
+⛔ **Its edge read `SF-28` alone until PO round 67 (`PO-67/1`): [`W197`](rows/W197.md) split `SF-28`'s entry points, and `serve` is `SF-39`'s.**
 
 Handles the honest partial states rather than failing on them: no narration
 service, no toolchain container, no exercises. Each is a **known state with a
@@ -627,6 +632,8 @@ progress; an export meant for the owner's other machine carries both. That is
 a choice the exporter makes explicitly, never a default that leaks (R7). SF-21
 already keeps progress in one file outside served content, which is what makes
 this a clean split rather than a filtering exercise.
+
+⚠️ **`SF-21/3`: `SF-21` ships NO merge rule.** ⛔ **What two machines' `first_passed_at` and `runs` combine to is this row's decision, stated before code, and a merge writes through `progress`'s locked seam, never to the file.**
 
 **Acceptance.** A corpus exported and re-imported on another machine restores
 material and progress intact. An export marked for sharing contains no progress

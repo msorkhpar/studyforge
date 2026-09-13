@@ -365,6 +365,8 @@ profile, and for the LMS "enhancing rather than restructuring", rests on it
 being true. Untested, it is an intention that erodes the first time a generator
 finds it convenient to rewrite a README.
 
+⭐ **CLOSED, PO round 67, at `77e47e5` — the Java-corpus clause below CARRIED, not met:** that sibling has no manifest at its pin (`OPS-05/1`), Ruling 173's class, and [`W228`](rows/W228.md) is why no instrument counted it. ⚠️ **Nothing runs the check on a real build: [`W227`](rows/W227.md).**
+
 **Acceptance.** Passes on a correct build of the Java corpus. **Fails, naming the
 file**, when a generator is deliberately made to touch an existing README.
 **Fails when a declared edit rewrites a line rather than adding one.** Fails when
