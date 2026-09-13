@@ -61,8 +61,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `W257` | Developer 3 | `fix/W257-emit-date-and-copy` @ `wt/dev3` | 2 @ `2406a6e` | in-progress |
-| `W258` | Developer 1 | `fix/W258-nested-list-not-flattened` @ `wt/dev1` | 2 @ `c67e568` | in-progress |
 | `W256` | Developer 2 | `fix/W256-handwritten-seam-recorded` @ `wt/dev2` | 2 @ `84d933f` | in-progress |
+| `W164` | Developer 1 | `fix/W164-gated-census-from-the-runner` @ `wt/dev1` | 0 @ `d05d856` | in-progress |
+| `W171` | Developer 3 | `fix/W171-last-pointer-orphan` @ `wt/dev3` | 0 @ `d05d856` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -78,8 +79,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W252`, `W161`, `W255`, `W254` LEFT at `c8da50e`, `761c787`, `1fefe9c`, `d05d856`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W257`, `W258`, `W256` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked).** ⚠️ **`W164` PARKED, not in flight (`PO-80/1`): its declared branch is held by no checkout.** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W252`, `W161`, `W255`, `W254`, `W258` LEFT at `c8da50e`, `761c787`, `1fefe9c`, `d05d856`, `bce08dd`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W257`, `W256`, `W164`, `W171` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -99,7 +100,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
-| 13 | `W164`, `W165`, `W168`, `W169`, `W171` | ⭐ **each jumps nobody** | round 54 |
+| 13 | `W165`, `W168`, `W169` | ⭐ **each jumps nobody** | round 54 |
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
 | 17 | `W176`–`W181` | ⭐ **round 57's six mints, jumping nobody** | round 57 |
@@ -123,7 +124,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 45 | `W259` | ⭐ **round 79's mint, jumping nobody; after `W255`, one surface** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one of the `docs/conventions/` set** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
-| 47 | `W261`, `W262` | ⭐ **round 80's mints, each jumping nobody; `W261` after `W259`, one surface** | [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked) |
+| 47 | `W261`–`W264` | ⭐ **round 80's mints, each jumping nobody; `W261` after `W259`, one surface** | [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -312,14 +313,14 @@ else.**
 | W161 | The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident | Developer 3 | ✅ done — `761c787` | [`rows/W161.md`](rows/W161.md) |
 | W162 | Ten gated assertions no routine environment reaches, and the skip's own stated ground is false whenever the image is already built | Developer 3 | ✅ done — `828b37f` | [`rows/W162.md`](rows/W162.md) |
 | W163 | `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which the row that fired its trigger landed beside and did not carry | Developer 2 | ✅ done — `accceaf` | [`rows/W163.md`](rows/W163.md) |
-| W164 | A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently | framework agent | `todo` — ⚠️ **parked round 80** (`PO-80/1`): its declared branch stays, held by no checkout | [`rows/W164.md`](rows/W164.md) |
+| W164 | A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently | Developer 1 | in-progress — on `fix/W164-gated-census-from-the-runner` | [`rows/W164.md`](rows/W164.md) |
 | W165 | A cost figure over a GATED population carries its spread or only its sample, and one end of a 32x range decided a mode | framework agent | `todo` | [`rows/W165.md`](rows/W165.md) |
 | W166 | The standing SPLIT condition `tools/quality/board/verdict.py` is owed, third member inside one package | PO | ✅ done — PO round 55 | [`rows/W166.md`](rows/W166.md) |
 | W167 | The handoff check iterates the files that EXIST, so *the handoff is missing* is unreachable by construction | framework agent | ✅ done — `4bfd720` | [`rows/W167.md`](rows/W167.md) |
 | W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | framework agent | `todo` — `CTO-67/11` | [`rows/W168.md`](rows/W168.md) |
 | W169 | Ruling 96's line has no named checkout, and its instrument answers `none` in every office tree and `stale` in one | framework agent | `todo` — `CTO-67/3` | [`rows/W169.md`](rows/W169.md) |
 | W170 | A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for | framework agent | ✅ done — `4d4c7c7` | [`rows/W170.md`](rows/W170.md) |
-| W171 | An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal | framework agent | `todo` — `CTO-68/4` | [`rows/W171.md`](rows/W171.md) |
+| W171 | An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal | Developer 3 | in-progress — `CTO-68/4`, on `fix/W171-last-pointer-orphan` | [`rows/W171.md`](rows/W171.md) |
 | W172 | Ruling 218's GATE THREE — a record's Findings section told from its prose, and the residue `W64` measured rather than chased | framework agent | ✅ done — `a033a45` | [`rows/W172.md`](rows/W172.md) |
 | W173 | The board carries RULES where Ruling 349 says a rule is the convention's, and no instrument can tell a board POINTER from a board RESTATEMENT | framework agent | `todo` — Ruling 349 | [`rows/W173.md`](rows/W173.md) |
 | W174 | Ruling 201's FOURTH EDIT lands outside the closing office's surface, and the two rules are jointly unsatisfiable for a row cited from code | framework agent | `todo` — `PO-56/3`, converted to a row | [`rows/W174.md`](rows/W174.md) |
@@ -406,11 +407,13 @@ else.**
 | W255 | `check_completeness` says the source tree is absent from the declared origins alone, so a one-unit archive with a missing origin reads valid | Developer 1 | ✅ done — `1fefe9c` | [`rows/W255.md`](rows/W255.md) |
 | W256 | `SK-07`'s install record files the hand-written `read.py` under its stub's digest, so a person's edit reads as a hand-edit | Developer 2 | in-progress — `INT-09/1`, on `fix/W256-handwritten-seam-recorded` | [`rows/W256.md`](rows/W256.md) |
 | W257 | `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths | Developer 3 | in-progress — `INT-09/3` + `/7`, on `fix/W257-emit-date-and-copy` | [`rows/W257.md`](rows/W257.md) |
-| W258 | `archive.markdown` keeps a nested list line as literal text inside its parent item | Developer 1 | in-progress — `INT-09/6`, on `fix/W258-nested-list-not-flattened` | [`rows/W258.md`](rows/W258.md) |
+| W258 | `archive.markdown` keeps a nested list line as literal text inside its parent item | Developer 1 | ✅ done — `bce08dd` | [`rows/W258.md`](rows/W258.md) |
 | W259 | `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently | framework agent | `todo` — `W248/1` | [`rows/W259.md`](rows/W259.md) |
 | W260 | No wave-close procedure tells a close to run the capability-delivery reading `W154` shipped | framework agent | `todo` — `W154/3` | [`rows/W260.md`](rows/W260.md) |
 | W261 | `completeness` reads presence only where the origins point, so origins written against the wrong root read `Unchecked` beside a present source | framework agent | `todo` — `W255/2` + `/3` | [`rows/W261.md`](rows/W261.md) |
 | W262 | Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued | framework agent | `todo` — `W161/4` + `/5` | [`rows/W262.md`](rows/W262.md) |
+| W263 | `validate` and `check_blocks` never read a list item's shape, so a malformed item passes both | framework agent | `todo` — `W258/1` | [`rows/W263.md`](rows/W263.md) |
+| W264 | A `list` block records no first number, so an ordered list that starts past one loses its numbering | framework agent | `todo` — `W258/3` | [`rows/W264.md`](rows/W264.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

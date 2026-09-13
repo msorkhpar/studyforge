@@ -23071,3 +23071,45 @@ build     exit 0   50 unit pages on disk; 5 "replace … its previous output was
 #### ⭐ CLOSED — PO ROUND 80
 
 ⭐ **Merged at `d05d856`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `d05d856` is RECEIVED.** ⭐ **Under `sibling`, a unit's page and media names carry its container's address, and `plan` and `build` refuse by name any path two artifacts claim, before anything is written.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### ⭐ 4 — `W258` CLOSED, AND THE READING OF RECORD MOVES
+
+⭐ **`bce08dd` (`W258`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after this office's first pinned run, at `9151043`, had finished. Host `corroborate` then REFUTED `W258` as absorbed, which is a GATE at a register branch (Ruling 279). So the close is taken here, and the reading of record is the pinned run after it, as round 79 did for `W154`.** Reversible.
+
+```text
+                                    merge^2   branch head  ahead  checked out
+fix/W258-nested-list-not-flattened  c67e5687  c67e5687     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W258.md`.**
+
+⭐ **Carriers, confirmed against git:** [`W164`](rows/W164.md), Developer 1, `fix/W164-gated-census-from-the-runner` @ `wt/dev1`, fast-forwarded to `d05d856`, declared `W164`, NAMED. ⭐ **This DATES `PO-80/1` in § 2: the row was resumed, so it is no longer parked.** [`W171`](rows/W171.md), Developer 3, `fix/W171-last-pointer-orphan` @ `wt/dev3`, cut `d05d856`, declared `W171`, NAMED. ⚠️ **`W257` is absorbed at `08aae9f` and stays named: its message has not arrived.**
+
+| finding | became |
+|---|---|
+| `W258/1` | ⭐ **minted [`W263`](rows/W263.md)**, jumping nobody, order 47 |
+| `W258/2` | disposed at the close: a recorded negative, moot since `W254` merged |
+| `W258/3` | ⭐ **minted [`W264`](rows/W264.md)**, jumping nobody, order 47 |
+| `W258`, spec §6 | ⭐ **confirmed: no `raw_api` bump.** §6 states the ground in the same diff: a document with no nested list reads byte-identical. Relayed to `ISO-09`, which re-emits, and to `M8` |
+| `PO-80/2` | ⚠️ **`W164` and `W171` are both in flight in the `docs/conventions/` one-owner set**, on two developers. ⭐ **Ruled, reversible: accepted for this wave**, because `W164` writes `review-rubric.md` and `W171` writes `board.md`, disjoint files. ⛔ The second to merge re-reads the first's diff |
+| `W257/1`–`/7` | received from the coordinator; ⚠️ **held to `W257`'s close**, whose reading has not arrived |
+
+### W258 — `archive.markdown` keeps a nested list line as literal text inside its parent item
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W258.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/6`: `archive.markdown` keeps a nested list line (indent 4) as literal `- …` text inside its parent item.** ⭐ **No text is lost, since digests agree, but the structure is.** ⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14).** ⭐ **RE-MEASURED in part (Ruling 214):** at ISO `8afdd5b`, `src/2.md` holds 25 lines opening with four spaces and `- `. ⚠️ **Their literal form inside the archive is RECEIVED.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A nested list is read as a nested list, or refused by name.** It is never flattened into its parent item's text.
+2. ⚠️ **If the block vocabulary carries no nesting, the taker says so first.** A vocabulary change is a contract change (spec §6), stated in the same diff, never widened silently.
+3. ⛔ **Asserted both ways (R12)** on a two-level list fixture, with the flattening planted back to RED.
+
+⭐ **Surface:** `src/studyforge/archive/markdown/` and its tests, and `archive/blocks.py` plus §6 only if the vocabulary changes. ⛔ **`M6` work, order 2; nothing in flight writes that surface.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `bce08dd`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `bce08dd` is RECEIVED.** ⭐ **A nested list is read as a nested list: a list item is a string, or its parts in reading order with whole nested `list` blocks, and the page and the narration carry it inside its parent item.** ⚠️ **Each finding's disposition is this round's § 4.**
