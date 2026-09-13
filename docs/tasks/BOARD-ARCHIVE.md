@@ -22897,3 +22897,376 @@ src/**/*.py LINES:  428223c 25376 · 110504b 25376 · 82bff6d 25376 · 0fcb6b4 2
 #### ⭐ CLOSED — PO ROUND 79
 
 ⭐ **Merged at `2ffd4a8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2ffd4a8` is RECEIVED.** ⭐ **Capability delivery between two named refs is printed by `python3 -m tools.quality.board.delivery`, never by the floor and never on the board. Its population is the generated index, and a roll-up subject citing an id is printed, not counted.** ⚠️ **Each finding's disposition is this round's § 7.**
+
+## PO round 80 — `W252`, `W161`, `W255` and `W254` closed, `W256`–`W258` named, and `W164` parked
+
+⭐ **Cut at `d05d856`, release after `W254`'s merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                         merge^2   branch head  ahead  checked out
+fix/W252-heading-entry-ordinal           b1202203  b1202203     0      NOWHERE
+fix/W161-observation-subject-vocabulary  6610a6f2  6610a6f2     0      NOWHERE
+fix/W255-missing-origin-refused          514eef49  514eef49     0      NOWHERE
+fix/INT09-5-mirrored-unit-collision      078069d8  078069d8     0      NOWHERE
+```
+
+⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **Ruling 97's gate is RECEIVED for each: the coordinator's guarded release-tip reading at `c8da50e`, `761c787`, `1fefe9c` and `d05d856`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⭐ **The fourth edits:** [`W259`](rows/W259.md) re-pointed at `W255`'s record; [`W260`](rows/W260.md) at `W161`'s, dated; the board's `M6` and ISO status cells at `W254`'s. [`W252`](#w252-sk-01-reads-no-ordinal-from-a-heading-form-contents-entry-so-a-numbered-heading-that-links-a-file-reads-as-unordered) has no live inbound citation. ⚠️ **`W255` closes without ever being named:** it was dispatched after round 79's reading of record (`PO-79/2`), so its owner cell is set to Developer 1 at the close.
+
+⭐ **Ruling 312's Scheduled item is `discharged` by `W254`, on the REFUSED BY NAME arm.** ⭐ Distinct containers are distinct by construction, and a label and title repeated in one container are refused by name by `validate`, `plan` and the build, with the control injected at the container reader. Confirmed, reversible.
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT, AND ONE PARKED
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W257`](rows/W257.md) | Developer 3 | `fix/W257-emit-date-and-copy` @ `wt/dev3` | `c5b0cd0` | `W257`, NAMED |
+| [`W258`](rows/W258.md) | Developer 1 | `fix/W258-nested-list-not-flattened` @ `wt/dev1` | `761c787` | `W258`, NAMED |
+| [`W256`](rows/W256.md) | Developer 2 | `fix/W256-handwritten-seam-recorded` @ `wt/dev2` | `1fefe9c` | `W256`, NAMED |
+
+⛔ **`PO-80/1` — `W164` IS PARKED, NOT IN FLIGHT.** ⭐ Developer 1 was dispatched on it at `2ffd4a8` and redirected to `W255` minutes later (`PO-79/2`). Its branch `fix/W164-gated-census-from-the-runner` is declared `W164`, carries no commit and is held by no checkout. ⭐ **Ruled: `W164` stays `todo` at order 13, with the note in its cell.** ⛔ **The branch is not deleted; branch deletion is the user's.** `corroborate` prints the declaration on its informational line and never on a gate. Reversible.
+
+### ⭐ 3 — FINDINGS
+
+| finding | became |
+|---|---|
+| `W252/1` | accepted, cost named: a group label's own ordinal is not kept. ⭐ Measured by reading: every consumer of `Record.groups` in `src/` reads its presence or its count, never a label's ordinal |
+| `W161/1`, `/2` | disposed at the close: clause 3a closed as `board-detail`; `notice.py` and a new test module taken outside the surface, disclosed |
+| `W161/3` | ⛔ **ruled: a finding id is NOT admitted as an In-flight subject.** ⭐ The register mints a `W` row before it names a carrier, as round 79 did for `INT-09/5`, so the vocabulary's third line stays *printed by name, never refused*. Reversible |
+| `W161/4` | ⭐ **minted [`W262`](rows/W262.md)**, jumping nobody, order 47 |
+| `W161/5` | ⭐ **a rider on [`W262`](rows/W262.md)**, whose surface is `bijection.py`: the taker splits it |
+| `W161/6` | ⭐ **applied: the board's In-flight note takes the proposed text** |
+| `PO-79/2` | disposed: acted on by the coordinator. Developer 1 took `W255` and Developer 3 took `W257`; `W161` finished, being 20+ minutes in |
+| `W255/1` | ⭐ **`PO-79/1` is DATED, not refuted:** its witness was taken at `b09cedf`, before `W248` and `W249`, and does not reproduce at `c5b0cd0`. No row |
+| `W255/2`, `/3` | ⭐ **minted [`W261`](rows/W261.md)**, ONE row: `/2` is `/3`'s remedy. Jumping nobody, order 47, one owner with `W259` |
+| `W255/4` | disposed at the close: two authoring pages quote the checker's new line, taken from its output, disclosed |
+| `W254/1` `[structural]` | ⛔ **ruled: clause 1 is KEPT.** ⭐ A name stays a function of one artifact's identity. Qualifying only on collision makes a later declaration rename an existing page, which is the set-dependent naming clause 1 refused. ⭐ **Cost named:** longer names, and every `sibling` page moves once now. ⭐ Measured: ISO has committed no page (`ISO-10`), and the Java consumer has no committed `*.unit.html` and no `corpus.json`. Reversible until a consumer commits pages |
+| `W254/2` `[structural]` | accepted, cost named: ⭐ measured by reading, `cli/site/cli.py` (the build) is the one caller of `generate.write_site` in `src/`, and it preflights. A library caller is stopped by the same-run guard after the first colliding unit. ⛔ A new caller outside the CLI owes the preflight |
+| `W254/3` `[local]` | accepted, relayed to `ISO-10` and to `M8`'s Java re-validation: a document that spells a `sibling` page name follows the rename |
+| `W254`, Ruling 312 | ⭐ **confirmed**, § 1 |
+| `W254`, clause 4 | ⭐ **confirmed:** a fixture built by a committed helper (`corpora.mirrored`, `corpora.repeated_label`) into `tmp_path` is a committed fixture. Its definition is in the tree and deterministic. Reversible |
+
+⭐ **The ISO track:** ISO stays pinned at `8afdd5b`; nothing has merged into ISO since round 79. ⭐ **`W254` discharges `ISO-09`'s framework blocker, subject to ISO integration round 10's re-read**, which is dispatched on `d05d856`.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause.
+
+### W252 — `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W252.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W250/2`: `record._split` reads no ordinal from a heading-form contents entry such as `## 15. [Title](x)`**, because only a bullet is stripped before the outside-ordinal match. ⭐ **RECEIVED from [`W250`](#w250-sk-01-reads-a-heading-that-links-a-file-as-a-contents-entry-so-f21s-fourth-container-is-never-proposed-and-iso-07-stops)'s close at `5d9436d`:** at ISO `ab9e765`, `src/15.md` and `src/16.md` read no ordinal. ⚠️ **It predates `W250`, which left it untouched.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A heading-form entry yields the ordinal a bullet-form entry with the same text yields**, or the survey says by name why not.
+2. ⛔ **Asserted both ways (R12)**, over a fixture shaped like the finding.
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/` and its tests. ⚠️ **One owner with [`W249`](rows/W249.md), after it.**
+
+[the mint](#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `c8da50e`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8da50e` is RECEIVED.** ⭐ **`SK-01` reads a heading-form contents entry's ordinal exactly as it reads its bullet-form twin's, and a heading with no ordinal still reads none.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W161 — The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W161.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE In-flight TABLE ADMITS AN EPIC TASK — MEASURED, round 53 — AND NOTHING SAYS WHERE THAT ROW'S ARGUMENT LIVES.** ⭐ **A `W` row's argument is `rows/<ID>.md`; an epic task's is its epic; and the two instruments that assert the pairing are keyed on `W`, so an epic task is exempt BY ACCIDENT rather than BY RULE.**
+
+### ⛔ THE READING, role `wt/po`, ref `0564997`, environment HOST
+
+```text
+observation parser   `_observation()` keys a row on the DELIMITER and the declared header;
+                     `identifiers()` accepts only `W<digits>`, so `ids` comes back EMPTY
+corroborate          reads, judges and CORROBORATES the `NS-03` row; exit 0
+bounds.allowance()   counts DELIMITED observation rows, so the row earns its 160-byte term
+board-orphan         iterates `W` ids — an `NS-03` row is invisible to it, both ways
+```
+
+⭐ **So the table is RIGHT to admit it and `NS-01/2` is discharged by measurement.** ⛔ **What is missing is the RULE: nothing declares that a non-`W` observation row's detail file is its EPIC, so the next office either invents `rows/NS-03.md` — which would be a second home for a task's argument, against the board's own closing rule — or leaves the pairing unstated a second time.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DECLARED subject vocabulary for the observation table**, with the epic named as the detail location for a non-`W` subject, in `docs/conventions/board.md` where the structural contract lives.
+2. ⭐ **The bijection and orphan arms say which population they are over**, so `0 collisions` over a `W`-only population is not read as a claim about every row (Ruling 48's shape, Ruling 331's arriving form).
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a `W` row with no detail file still fails, and an epic-task row with no `rows/` file still passes — ⚠️ **and the second arm is the one a careless repair deletes.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RULE THAT EVERY OBSERVATION ROW OWNS A `rows/` FILE.** ⭐ **That gives a task's argument two homes, which is the defect `rows/` exists to prevent one level down.** ⛔ **AND NOT A NARROWING OF THE PARSER** — ⚠️ **refusing a non-`W` subject would re-open `NS-01/2` as a build failure.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/board/bijection.py`, `tools/quality/board/observation.py` and their tests, plus `docs/conventions/board.md`.** ⚠️ **`docs/conventions/` is a SHARED constraint whose members are listed ONCE in the board's *Next rows* note** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `761c787`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `761c787` is RECEIVED.** ⭐ **The In-flight table's subject vocabulary is declared in `board.md`: an In-flight `W` id with no row file is `board-detail`, an epic task is argued in its epic and owes no row file, and the parser refuses no subject.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W255 — `check_completeness` says the source tree is absent from the declared origins alone, so a one-unit archive with a missing origin reads valid
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W255.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/4`, a SURVIVING PLANT: `check_completeness` says *"the source tree is absent"* whenever no declared origin is on disk, and never checks the tree.** ⭐ **So a one-unit archive whose origin points at a missing file reads valid beside a present source.** ⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14), and RE-MEASURED by the register (Ruling 214)** at framework `b09cedf`, host, on a scratch copy of ISO `8afdd5b` cut to its 16-unit `iso-fundamentals` container:
+
+```text
+control, origins as emitted            validate exit 0
+one origin at a missing file           validate exit 1  [origin-missing] names the unit
+all 16 origins at missing files        validate exit 0  "the source tree is absent"   (41 src/*.md on disk)
+```
+
+⭐ **In a one-unit archive, one missing origin is all of them, which is ISO's reading.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **"The source tree is absent" is a CHECKED claim:** it is decided from the source beside the archive, never inferred from the declared origins alone. The taker names what it reads.
+2. ⛔ **Source present and every declared origin missing is a finding** naming each unit (`origin-missing`), exit `1`, one-unit archive included.
+3. ⭐ **No source beside the archive still reads `Unchecked`, exit `0`** (R2; `completeness.py`'s all-or-nothing design stands).
+4. ⛔ **Asserted both ways (R12):** a one-unit archive with its origin at a missing file beside a present source is RED; the same archive alone is `Unchecked`.
+
+⚠️ **`PO-79/1`, a witness for the taker:** in that non-git scratch copy, `[unclassified]` reads *"no source material is present beside the archive"* while 41 `src/*.md` are on disk. A presence reader borrowed from there is measured on the taker's own fixture, not assumed.
+
+⭐ **Surface:** `src/studyforge/validate/source/completeness.py` and its tests. ⭐ **`W248` merged at `a2ae2c4`, so `validate/source/` is free; shared with [`W259`](rows/W259.md), one owner.** ⛔ **`M6` work, order 1.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `1fefe9c`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `1fefe9c` is RECEIVED.** ⭐ **Every origin missing beside source the manifest classifies where the origins point is `origin-missing` for each unit, exit `1`; the tree reads absent only when nothing there is source.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W254 — Under `sibling`, mirrored units in two containers place one page path, and `plan` and `build` exit `0` while the build replaces five pages
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W254.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/5`, and it BLOCKS `ISO-09`: under `sibling`, a unit page and its media directories are named from the unit's ordinal and title in its origin's directory, with no container.** ⭐ **ISO's mirrored server and client series share 5 ordinal+title pairs in `src/`.** ⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14), and RE-MEASURED by the register (Ruling 214)** at framework `b09cedf`, on the host, on a scratch `git archive` of ISO `8afdd5b` emitted with its own `python3 -m ingest`:
+
+```text
+validate  exit 1   25 [duplicate-path]
+plan      exit 0   0 refusal(s); 55 unit-page creates over 50 distinct paths
+build     exit 0   50 unit pages on disk; 5 "replace … its previous output was replaced"
+```
+
+⛔ **The build overwrote a page it wrote earlier in the SAME run, and both instruments a person acts on exited `0`.** ⚠️ **`cli/plan/derive.py` says the collision is `validate`'s to raise and the plan does not restate it. This row DATES that sentence: a plan that exits `0` is the go signal for a build.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Under `sibling`, two distinct unit addresses never place at one path, by construction.** Names stay a pure function of ONE artifact's identity, so the container's identity takes part in a sibling unit's names (page and media). ⛔ **No naming that depends on the set** ("disambiguate only on collision"). The taker names the shape. ⚠️ **A recorded `label` that repeats across containers is disambiguated the same way, or refused by `validate` by name.** §5's worked example stays reproducible, or §5 is amended in the same diff.
+2. ⛔ **`plan` refuses a path claimed by two artifacts:** it names both claimants and exits non-zero. It never prints the pair as two `create` lines beside `0 refusal(s)`. ⭐ **It reuses `validate`'s one duplicate-path enumeration, never a second copy.**
+3. ⛔ **`build` refuses before writing any file when its plan carries such a refusal**, and never replaces an artifact it wrote in the same run.
+4. ⛔ **Asserted both ways (R12)** on a committed fixture: two containers whose units share ordinal and title and one origin directory. Distinct paths, no `duplicate-path`, and one page per unit. A planted collision makes `plan` non-zero naming both, and `build` writes nothing.
+5. ⭐ **Re-read on a scratch copy of ISO `8afdd5b`, never inside ISO:** `validate` reports no `duplicate-path`; `plan` has 0 refusals and as many distinct unit-page paths as unit-page creates; `build` exits `0` with one page per unit.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A corpus-side workaround.** ISO passing labels by hand to dodge the collision is a hole in the skills (R19). ⛔ **And not a change to `tree` names**, unless the taker measures `tree` sharing the defect and says so.
+
+⭐ **Surface:** `src/studyforge/corpus/placement/`, `src/studyforge/cli/plan/`, `src/studyforge/cli/site/`, and their tests. ⚠️ **`cli/plan/` is declared by [`W210`](rows/W210.md) (not in flight). [`W248`](rows/W248.md) declared it too; its diff touches none of `cli/plan/`, measured at `1a4d0fb`.** ⚠️ **If the diff reopens `SF-03`'s placement acceptance, it is the act the Scheduled Ruling 312 item names: read that item first.** ⛔ **`M6`'s critical path: order 0, in flight.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `d05d856`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `d05d856` is RECEIVED.** ⭐ **Under `sibling`, a unit's page and media names carry its container's address, and `plan` and `build` refuse by name any path two artifacts claim, before anything is written.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### ⭐ 4 — `W258` CLOSED, AND THE READING OF RECORD MOVES
+
+⭐ **`bce08dd` (`W258`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after this office's first pinned run, at `9151043`, had finished. Host `corroborate` then REFUTED `W258` as absorbed, which is a GATE at a register branch (Ruling 279). So the close is taken here, and the reading of record is the pinned run after it, as round 79 did for `W154`.** Reversible.
+
+```text
+                                    merge^2   branch head  ahead  checked out
+fix/W258-nested-list-not-flattened  c67e5687  c67e5687     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W258.md`.**
+
+⭐ **Carriers, confirmed against git:** [`W164`](rows/W164.md), Developer 1, `fix/W164-gated-census-from-the-runner` @ `wt/dev1`, fast-forwarded to `d05d856`, declared `W164`, NAMED. ⭐ **This DATES `PO-80/1` in § 2: the row was resumed, so it is no longer parked.** [`W171`](rows/W171.md), Developer 3, `fix/W171-last-pointer-orphan` @ `wt/dev3`, cut `d05d856`, declared `W171`, NAMED. ⚠️ **`W257` is absorbed at `08aae9f` and stays named: its message has not arrived.**
+
+| finding | became |
+|---|---|
+| `W258/1` | ⭐ **minted [`W263`](rows/W263.md)**, jumping nobody, order 47 |
+| `W258/2` | disposed at the close: a recorded negative, moot since `W254` merged |
+| `W258/3` | ⭐ **minted [`W264`](rows/W264.md)**, jumping nobody, order 47 |
+| `W258`, spec §6 | ⭐ **confirmed: no `raw_api` bump.** §6 states the ground in the same diff: a document with no nested list reads byte-identical. Relayed to `ISO-09`, which re-emits, and to `M8` |
+| `PO-80/2` | ⚠️ **`W164` and `W171` are both in flight in the `docs/conventions/` one-owner set**, on two developers. ⭐ **Ruled, reversible: accepted for this wave**, because `W164` writes `review-rubric.md` and `W171` writes `board.md`, disjoint files. ⛔ The second to merge re-reads the first's diff |
+| `W257/1`–`/7` | received from the coordinator; ⚠️ **held to `W257`'s close**, whose reading has not arrived |
+
+### W258 — `archive.markdown` keeps a nested list line as literal text inside its parent item
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W258.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/6`: `archive.markdown` keeps a nested list line (indent 4) as literal `- …` text inside its parent item.** ⭐ **No text is lost, since digests agree, but the structure is.** ⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14).** ⭐ **RE-MEASURED in part (Ruling 214):** at ISO `8afdd5b`, `src/2.md` holds 25 lines opening with four spaces and `- `. ⚠️ **Their literal form inside the archive is RECEIVED.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A nested list is read as a nested list, or refused by name.** It is never flattened into its parent item's text.
+2. ⚠️ **If the block vocabulary carries no nesting, the taker says so first.** A vocabulary change is a contract change (spec §6), stated in the same diff, never widened silently.
+3. ⛔ **Asserted both ways (R12)** on a two-level list fixture, with the flattening planted back to RED.
+
+⭐ **Surface:** `src/studyforge/archive/markdown/` and its tests, and `archive/blocks.py` plus §6 only if the vocabulary changes. ⛔ **`M6` work, order 2; nothing in flight writes that surface.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `bce08dd`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `bce08dd` is RECEIVED.** ⭐ **A nested list is read as a nested list: a list item is a string, or its parts in reading order with whole nested `list` blocks, and the page and the narration carry it inside its parent item.** ⚠️ **Each finding's disposition is this round's § 4.**
+
+### ⭐ 5 — `W257` CLOSED MID-ROUND, AT THE COORDINATOR'S WORD
+
+⭐ **`08aae9f` (`W257`) merged into this round, no rebase; its guarded release-tip reading, GREEN in the pinned image, arrived before this round's reading of record.**
+
+```text
+                             merge^2   branch head  ahead  checked out
+fix/W257-emit-date-and-copy  2406a6e6  2406a6e6     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **The fourth edit:** [`W265`](rows/W265.md) cites the record; no live row cites `rows/W257.md`.
+
+| finding | became |
+|---|---|
+| `W257/1` `[structural]` | accepted, cost named: a document points at `CHECKS`, never at a count of rule ids (Ruling 150's form). No row |
+| `W257/2` `[structural]` | ⛔ **minted [`W265`](rows/W265.md), order 1. RULING 75 IS INVOKED:** `ISO` inherits `W257`'s fixes only by a regenerate, which this refusal blocks, so it is on `M6`'s path. After `W256`. Reversible |
+| `W257/3` | accepted, cost named: a force-tracked file inside an ignored directory is left out, and if it is material the emit fails loudly, never silently |
+| `W257/4`, `/7` | disposed at the close: fixed inside the diff, the `R7` leak with a planted RED |
+| `W257/5` `[structural]` | disposed at the close: `validate/source/classification.py`, its `__init__.py` and test taken outside the surface, disclosed. ⭐ Relayed to [`W259`](rows/W259.md)'s taker: re-read `classification.py` at `08aae9f` |
+| `W257/6` | accepted, relayed to the ISO track: regenerating the generated parts is integration's action, after `W265` |
+| `W257`, rider `W248/3` | ⭐ **confirmed:** dated in place with a printing command, not re-derived |
+
+### W257 — `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W257.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/3` and `/7`, ONE ROW because both are `SK-02`'s generated scaffold:**
+
+- ⛔ **`/3`:** the generated `emit` hands `ingested` to each document and not to `read.containers`, so a container map's `ingested` is the reader's own date and can disagree with its documents'.
+- ⛔ **`/7`:** the generated `test_emit` copies the corpus root excluding only `.git`, the archive, its staging directory and caches. A git-ignored scratch directory is copied too: one ISO run took over a minute.
+
+⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14).** ⭐ **RE-MEASURED by reading (Ruling 214)** at framework `b09cedf`: `skills/adapter/parts/adapter.py` renders `for container in read.containers(root):` with no date. `parts/suite.py`'s `NOT_COPIED` names those four patterns and nothing the repository ignores.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **In one `emit` run, every container map's `ingested` equals its documents'.** The taker names whether the date reaches the reader or is applied after it. ⛔ **Asserted over a generated scaffold, with a planted mismatch that goes RED.**
+2. ⛔ **The generated `test_emit` copies only what the repository does not ignore**, read through the one ignore reader (`W28`), never a second list. ⛔ **Planted with an ignored directory that must not arrive in the copy.**
+
+⭐ **Rider, PO round 79 — `W248/3`:** `SK-02`'s `SKILL.md` states check and rule-id counts dated at `f816454`, pinned as strings by `skills/adapter/test_init.py`. They were stale before `W248`; this row re-derives them or dates them in place (Ruling 106).
+
+⭐ **Surface:** `src/studyforge/skills/adapter/` and its tests. ⚠️ **A regenerated corpus inherits the fix, never a hand-edit (R19).** ⛔ **`M6` work, order 2; nothing in flight writes that surface.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `08aae9f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `08aae9f` is RECEIVED.** ⭐ **The generated `emit` dates every container with its run, and the generated `test_emit` copies only what the repository does not ignore, through one ignore reader.** ⚠️ **Each finding's disposition is this round's § 5.**
+
+### ⭐ 6 — `W256` CLOSED, `W259` NAMED, AND `W265` RE-PLACED
+
+⭐ **`c8ca605` (`W256`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after this office's pinned run at `31be5ed` had finished, and host `corroborate` REFUTED `W256` as absorbed, a GATE at a register branch (Ruling 279). So the close is taken here, and the reading of record is the pinned run after it, as § 4 did.** Reversible.
+
+```text
+                                    merge^2   branch head  ahead  checked out
+fix/W256-handwritten-seam-recorded  b1a78b60  b1a78b60     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W256.md`.** ⭐ **Every framework row minted from ISO round 9, `W254`–`W258`, is now merged.**
+
+⭐ **Carrier, confirmed against git:** [`W259`](rows/W259.md), Developer 2, `fix/W259-nested-studyforge-scanned` @ `wt/dev2`, cut `08aae9f`, declared `W259`, NAMED.
+
+⛔ **`W265` IS RE-PLACED, AND § 5's RULING 75 IS WITHDRAWN.** ⭐ **Re-read at `cc5670f` on the coordinator's measurement:** onboarding's `write(regenerate=True)` keeps an existing hand-written module and says the difference is deliberate; only `Scaffold.write` refuses. ISO regenerates through onboarding, so `W257/2` is not on `M6`'s path. ⭐ **Ruled: `W265` stays minted, re-scoped to the two writers' disagreement, and placed at order 47, jumping nobody.** § 5's row is dated by this, not edited. Reversible.
+
+| finding | became |
+|---|---|
+| `W256/1` | accepted, relayed to the ISO integrator: ISO's own verifier reads a digest from every install-record entry (R20: not a framework row) |
+| `W256/2` | disposed at the close: the row's received clause is measured, the recorded digest was the stub's |
+| `W256/3` | accepted, cost named, relayed to the ISO track: a framework at ISO's old pin refuses an api-2 record by name, so ISO re-pins and regenerates in one step |
+| `W256/4` | accepted, cost named: the declared remainder. An absent person's module is written as the stub, as a first scaffold writes it |
+| `W256`, office rulings | ⭐ **confirmed:** no digest for the person's module; `installed_api` bumped to 2, disclosed in the diff; uninstall keeps an edited person's module; `OnboardingRefused` and `INSTALLED_API` moved into `record.py`, still exported |
+
+### W256 — `SK-07`'s install record files the hand-written `read.py` under its stub's digest, so a person's edit reads as a hand-edit
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W256.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/1`: `SK-07`'s install record files the one hand-written module, `ingest/read.py`, under its STUB's digest, and a regenerate keeps that digest.** ⭐ **Nothing marks the file as a person's, so a corpus cannot tell the one legitimate edit from a hand-edit to a generated file (R19).** ⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14).** ⭐ **RE-MEASURED in part (Ruling 214):** at ISO `8afdd5b`, `.studyforge/installed.json` records `ingest/read.py` as `6adb328f…`, and the file's digest is `a92c6524…`. ⚠️ **That the recorded digest is the stub's is RECEIVED.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The record marks `read.py` as the person's module**, and a regenerate neither re-records its digest nor writes the file.
+2. ⛔ **Every other generated file still reads as hand-edited when its bytes differ from the record.**
+3. ⛔ **Asserted both ways (R12):** an edited `read.py` reads clean after a regenerate; an edited generated module is named.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/` and its tests; `skills/adapter/` only if the hand-written seam's name is declared there, disclosed. ⛔ **`M6` work, order 2; nothing in flight writes that surface.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `c8ca605`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8ca605` is RECEIVED.** ⭐ **`SK-07`'s install record marks the scaffold's hand-written module as a person's, with no digest, and a regenerate neither re-records nor writes it; every generated file still reads as hand-edited when its bytes differ.** ⚠️ **Each finding's disposition is this round's § 6.**
+
+### ⭐ 7 — `W164` CLOSED, `W165` NAMED, AND THE ISO PIN ADVANCED TO `366c124`
+
+⭐ **`2fe2afb` (`W164`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after the pinned run at `73718c7` had finished, and host `corroborate` REFUTED `W164` as absorbed, a GATE at a register branch (Ruling 279). The close is taken here, as § 4 and § 6 did, and the reading of record moves again.** Reversible.
+
+```text
+                                       merge^2   branch head  ahead  checked out
+fix/W164-gated-census-from-the-runner  daed323c  daed323c     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W164.md`.** ⭐ **Carrier, confirmed against git:** [`W165`](rows/W165.md), Developer 1, `fix/W165-gated-cost-carries-spread` @ `wt/dev1`, cut `2fe2afb`, declared `W165`, NAMED; order 13, after `W164` on one surface. ⚠️ **`PO-80/2` carries over:** `W165` writes `review-rubric.md` beside `W171`'s `board.md`, disjoint files.
+
+| finding | became |
+|---|---|
+| `W164/1` | accepted: the frozen witness's line numbers moved, same shape at `d05d856`; left unedited (Ruling 106) |
+| `W164/2` | accepted, recorded: under pytest 9.0.2 a skip raised in a fixture reports at each test, so Ruling 142's folding holds only where a location and a reason repeat. ⭐ The clause beside Ruling 142 is its home. No row |
+| `W164/3` | accepted, recorded: a missed spelling makes a gate census a LOWER bound where Ruling 280's notice is an upper one. No row |
+| `W164/4` | accepted, cost named: inside the pinned image the docker tests skip on the recursion guard's reason, and a census taken there filters on it |
+| `W164`, the command | ⭐ **confirmed:** `python3 -m tools.quality.gated` is a command, in neither `CHECKS` nor `NOTICES`, as `W154`'s reading is |
+
+⭐ **ISO integration round 10 merged at ISO `366c124`: `ISO-09` and `ISO-10` taken**, reading framework `d05d856`; `INT-09/5` discharged by `W254`. ⭐ **The pin advanced to `366c124` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, `wt/po`: exit `1` before, naming `ISO-8583-jPOS-tutorial` alone; exit `0` after. ⭐ **Round 11 is dispatched on `c8ca605`** for the one-step re-pin (`W256/3`).
+
+⚠️ **`INT-10/1`, `/2`, `/4`–`/8` and `/13` are RECEIVED and NOT minted: each owes a re-measure (Ruling 214) before a mint, and that is round 81's.** ⚠️ `INT-10/4` is a surviving plant, so it is measured first. `INT-10/13` is [`W90`](rows/W90.md)'s family. `INT-10/3`, `/9`–`/12` are not framework rows.
+
+### W164 — A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W164.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A GATE IS NOT ONLY WHERE IT IS CALLED: A FIXTURE PROPAGATES IT, AND `grep` CANNOT SEE PROPAGATION.** ⭐ **So a census of a gated population taken with `grep` is an UNDER-count, and the under-count is silent.**
+
+### ⛔ THE WITNESS, from `grep -n` at `0564997`, role `wt/po`, environment HOST
+
+```text
+tests/docker/test_dev_image.py:503   @pytest.fixture(scope="session")
+tests/docker/test_dev_image.py:504   def dev_image() -> str:
+tests/docker/test_dev_image.py:506       docker = require_docker_run()   ⭐ the gate, called ONCE
+tests/docker/test_dev_image.py:515   def test_the_image_builds(dev_image):          ⛔ calls nothing
+tests/docker/test_dev_image.py:521   def test_the_image_runs_python_314(dev_image): ⛔ calls nothing
+
+call sites in that file   4        gated tests in that file   5
+```
+
+⚠️ **The office that first counted this grepped for the helper's name and reported EIGHT where the answer is ten.** ⭐ **The error is not carelessness: it is the instrument, and the instrument is the one every office reaches for.**
+
+### ⛔ WHY IT IS NOT ONE FILE'S PROBLEM
+
+⭐ **The same shape reaches every census this project takes with `grep`** — a marker sweep, a citation sweep, a surface declaration — ⛔ **wherever the thing being counted can be inherited rather than written.** ⚠️ **`W133`'s defect is the same family one spelling over: a predicate whose pass condition is satisfiable by exactly one way of writing the thing.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A CENSUS OF A GATED POPULATION IS TAKEN FROM THE RUNNER, NOT FROM `grep`** — ⭐ **`pytest -rs` with the gate unset names every skipped test and its reason, and that reading sees propagation because the runner resolves fixtures.**
+2. ⚠️ **AND WHERE `grep` IS THE ONLY INSTRUMENT AVAILABLE, IT REPORTS ITS FIGURE AS A LOWER BOUND AND NAMES THE SPELLING IT CANNOT SEE** (Ruling 280's form, which already says this for citations and does not say it for gates).
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a directly-gated test is counted, AND a fixture-gated test is counted.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A BAN ON `grep`.** ⭐ **It is the right instrument for a great many of these and its failure mode here is measured rather than assumed.** ⛔ **AND NOT A CHANGE TO THE FIXTURE** — ⚠️ **a session fixture that gates once is the correct design; the defect is in how it is COUNTED.**
+
+### ⭐ SURFACE
+
+⛔ **`docs/conventions/review-rubric.md`'s census clauses, and whichever instrument takes a gated census.** ⚠️ **It may name `docs/conventions/`, a SHARED constraint whose members are listed ONCE in the board's *Next rows* note** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `2fe2afb`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2fe2afb` is RECEIVED.** ⭐ **A gated census is taken from the runner's own skip report by `python3 -m tools.quality.gated`, never by `grep`, and its clause stands beside Ruling 142 in `review-rubric.md`.** ⚠️ **Each finding's disposition is this round's § 7.**
