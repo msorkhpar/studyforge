@@ -385,7 +385,7 @@ subject may be and where its argument lives:**
 | the subject | its form | ⛔ where its argument lives | what the bijection does |
 |---|---|---|---|
 | a **board row** | `W<digits>` | `rows/<ID>.md` | ⛔ **no row file is `board-detail`**, in the register AND in this table |
-| an **EPIC TASK** | `<PREFIX>-<digits>`, optional letter (`NS-03`, `SF-19b`) | ⭐ **its EPIC**, `docs/tasks/E<nn>-*.md` | ⭐ **owes NO row file**; a `rows/<ID>.md` for it is `board-orphan` — a second home |
+| an **EPIC TASK** | `<PREFIX>-<digits>`, optional letter (`NS-03`, `SF-19b`) | ⭐ **its EPIC**, `docs/tasks/E<nn>-*.md`, ⛔ **which DEFINES it and argues it there** | ⭐ **owes NO row file**; a `rows/<ID>.md` for it is `board-orphan` — a second home. ⛔ **One no epic defines is `board-detail`** (`W262`): what defines a task is decided in [`vocabulary.py`](../../tools/quality/board/vocabulary.py), not here |
 | anything else (`INT-09/5`) | neither form | ⚠️ **undeclared** | ⭐ **read and PRINTED by name, never refused** |
 
 ⛔ **Two things this is NOT.** ⚠️ **Not a rule that every observation row owns a `rows/` file**

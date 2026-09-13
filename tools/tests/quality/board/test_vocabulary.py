@@ -161,6 +161,10 @@ def test_live_board_md_declares_the_vocabulary_with_the_epic_as_home() -> None:
     assert heading in text
     section = text.split(heading, 1)[1].split("\n### ", 1)[0]
     assert "`rows/<ID>.md`" in section and "its EPIC" in section and "never refused" in section
+    # ⛔ `W279`: both halves, defined AND argued in the epic, and `W262`'s check pointed at.
+    epic_row = next(line for line in section.splitlines() if "**EPIC TASK**" in line)
+    assert "DEFINES it and argues it there" in epic_row
+    assert "`board-detail`" in epic_row and "(../../tools/quality/board/vocabulary.py)" in epic_row
 
 
 # --------------------------------------------------------------------------
