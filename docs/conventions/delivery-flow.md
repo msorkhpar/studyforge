@@ -162,21 +162,18 @@ the command, and the copy disagreed with the command beneath it.**
 ### ⛔ Opening a wave: two checks, and the second was assumed for a milestone
 
 ```bash
-# 1. the triage list. ⛔ THE BACKTICKS ARE PART OF THE MARKER AND PART OF THE
-#    PATTERN — `review-rubric.md` §8a, Ruling 65, and the shipped reader
-#    `tools/quality/handoffs/contract.py`'s `_MARKERS_ON_LINE`, which agree.
-grep -rnE '`\[structural\]`' docs/tasks/handoffs/
+python3 -m tools.quality.handoffs                 # 1. the triage list (W106)
 python3 -m tools.quality                          # 2. the quality floor
 ```
 
-⛔ **THE SPELLING IS RULING 65'S AND THIS DOCUMENT DOES NOT GET A SECOND ONE.**
-⚠️ **The line above used to drop the backticks, so it matched every PROSE MENTION
-of the marker as well as every finding** — ⭐ **and the over-count was not a
-constant: it grew each wave as records quoted the marker while explaining it.**
-⛔ **Two convention documents disagreeing about one instrument is Ruling 103's
-class, and the third party is the shipped reader, which was right all along.**
-⭐ **The repository-wide sweep has no shipped instrument of its own, and that is
-the open row — the argument and its id are on `../tasks/BOARD.md`.**
+⛔ **THIS DOCUMENT NAMES THE COMMAND AND CARRIES NO PATTERN** — Ruling 150's move:
+the document points at the instrument and the instrument holds the fact.
+⚠️ **The line above used to be a typed pattern, and a typed copy went wrong twice**
+— once without the backticks, counting every PROSE MENTION, and once without the
+backslashes too, as a character class. ⭐ **The reader reads `marker_lines`' own
+vocabulary and prints the LINES, labelled, because its answer includes mentions
+by construction and triage is a person reading a list;** a fenced line is counted
+as not read. ⛔ **A weak pattern typed into a convention is a floor failure.**
 
 ⭐ **The second line is a line in a checklist because the alternative was
 believing a board row.** `FND-02` was marked done for a generated artifact that
