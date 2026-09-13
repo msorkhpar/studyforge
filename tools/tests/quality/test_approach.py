@@ -23,9 +23,13 @@ fixture, which is the one datum this project refuses to record anywhere.
 
 from __future__ import annotations
 
+import ast
+import re
 from pathlib import Path
 
-from tools.quality import CHECKS, NOTICES, config
+import pytest
+
+from tools.quality import CHECKS, NOTICES, approach, config
 from tools.quality.approach import (
     CLASS_ANSWERED,
     CLASS_BORN,
@@ -33,14 +37,16 @@ from tools.quality.approach import (
     CLASS_STATIC,
     GROWTH_WAVES,
     NEAR_BAND,
-    WAVE_CLOSE_PREFIX,
+    WAVE_CLOSE_OFFICE,
     Approach,
     approach_notice,
+    closes_wave,
     growth_window,
     measured,
     near_modules,
     standing_split,
 )
+from tools.quality.board import unclaimed
 from tools.workspace import git
 
 #: ⛔ Fabricated, and `.invalid` is reserved by RFC 2606 so it reaches nobody.
@@ -78,7 +84,7 @@ def close_wave(root: Path, number: int) -> None:
         "--no-ff",
         "-q",
         "-m",
-        f"{WAVE_CLOSE_PREFIX}{number}: the wave measured green",
+        f"Merge chore/cto-round{number}: the wave measured green",
         f"chore/cto-round{number}",
     )
 
@@ -124,12 +130,12 @@ def test_the_window_names_two_endpoints(tmp_path):
     # first-parent line. Four waves closed here, so it opens at round 2 — and
     # the assertion is on the SUBJECT, because the subject is what picked it.
     assert run(root, "log", "-1", "--format=%s", base) == (
-        f"{WAVE_CLOSE_PREFIX}{5 - GROWTH_WAVES}: the wave measured green"
+        f"Merge chore/cto-round{5 - GROWTH_WAVES}: the wave measured green"
     )
 
 
 def test_an_ordinary_branch_merge_does_not_close_a_wave(tmp_path):
-    # ⛔ The negative control for `WAVE_CLOSE_PREFIX`. A wave is closed by a
+    # ⛔ The negative control for `closes_wave`. A wave is closed by a
     # round merge; a branch landing inside a wave must not slide the window,
     # or "three waves" would mean whatever number of branches happened to land.
     root = repository(tmp_path)
@@ -344,3 +350,113 @@ def test_the_band_is_the_minted_width_and_the_window_the_minted_depth():
     # so this population is comparable with the one the row argues about.
     assert NEAR_BAND == 60
     assert GROWTH_WAVES == 3
+
+
+# --- `W245`: a wave close is the WHOLE round name, `OFFICE` imported ---------
+
+#: ⛔ The four topic branches the row measured under the prefix, and the two
+#: shapes `W136` names: a developer branch containing the office word, and a
+#: round number that is a prefix of another.
+TOPIC = [
+    "Merge chore/cto-round17-close: Ruling 52, and the round's closing state",
+    "Merge chore/cto-round31-corrections: the two changes po-round25 was approved after",
+    "Merge chore/cto-round34-rubric: Rulings 121-122",
+    "Merge chore/cto-round49-annotation: Ruling 192",
+    "Merge fix/W99-cto-round-guard: a developer's branch",
+    "Merge branch 'chore/cto-round5'",
+    "Merge chore/cto-round: no number",
+]
+
+
+@pytest.mark.parametrize("subject", TOPIC)
+def test_a_topic_branch_inside_the_prefix_is_not_a_close(subject):
+    assert not closes_wave(subject), subject
+
+
+@pytest.mark.parametrize(
+    "subject",
+    ["Merge chore/cto-round72: a merge order", "Merge chore/cto-round3 (CTO round 3): x"],
+)
+def test_a_round_branch_is_a_close(subject):
+    assert closes_wave(subject), subject
+
+
+def test_the_population_is_cto_rounds_and_a_po_round_is_not_silently_added():
+    # ⚠️ `W245/1`: no ruling names a close's office. `W155` shipped over `cto`,
+    # and a widening is a population change that must go RED here, not pass.
+    assert WAVE_CLOSE_OFFICE == "cto"
+    assert not closes_wave("Merge chore/po-round79 (PO round 79): W249 closed")
+
+
+def test_the_pattern_is_unclaimeds_office_imported_and_never_retyped(monkeypatch):
+    # ⛔ Identity, and then BEHAVIOUR: a retyped copy under any other name keeps
+    # reading rounds as closes after `OFFICE` is swapped for a pattern that
+    # matches nothing, so this goes RED on the copy whatever it is called.
+    assert approach.OFFICE is unclaimed.OFFICE
+    assert closes_wave("Merge chore/cto-round72: x")
+    monkeypatch.setattr(approach, "OFFICE", re.compile(r"(?!)(cto)"))
+    assert not closes_wave("Merge chore/cto-round72: x")
+
+
+def test_the_source_imports_office_and_spells_no_branch_of_its_own():
+    # ⛔ PLANTED AND SURVIVED without this (`W245/3`): `OFFICE = re.compile(<the
+    # same pattern>)` retyped IN `approach.py` passes the identity check above,
+    # because `re` caches compiled patterns and returns the SAME object. So the
+    # import is read off the SOURCE: imported once, never assigned, no `re`, and
+    # no string outside a docstring that spells a `chore/` branch.
+    tree = ast.parse(Path(approach.__file__).read_text(encoding="utf-8"))
+    imported = [
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom) and node.module == "tools.quality.board.unclaimed"
+        for alias in node.names
+    ]
+    assert imported == ["OFFICE"]
+    assigned = [
+        target.id
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Assign | ast.AnnAssign)
+        for target in (node.targets if isinstance(node, ast.Assign) else [node.target])
+        if isinstance(target, ast.Name)
+    ]
+    assert "OFFICE" not in assigned
+    modules = {
+        alias.name
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Import)
+        for alias in node.names
+    }
+    assert "re" not in modules
+    docstrings = {
+        id(node.body[0].value)
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Module | ast.FunctionDef | ast.ClassDef)
+        and node.body
+        and isinstance(node.body[0], ast.Expr)
+    }
+    spelled = [
+        node.value
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Constant)
+        and isinstance(node.value, str)
+        and id(node) not in docstrings
+        and "chore/" in node.value
+    ]
+    assert spelled == []
+
+
+def test_a_topic_merge_under_the_prefix_does_not_slide_the_window(tmp_path):
+    # ⛔ The row's measured shape on a real history: `chore/cto-round17-close`
+    # merged three times after its round closed. Under the prefix each slid the
+    # window by one wave.
+    root = repository(tmp_path)
+    before = growth_window(root)
+    for n in range(GROWTH_WAVES):
+        run(root, "checkout", "-q", "-B", "chore/cto-round4-close")
+        run(root, "commit", "-q", "--allow-empty", "-m", f"topic {n}")
+        run(root, "checkout", "-q", "main")
+        subject = f"Merge chore/cto-round4-close: ruling {n}"
+        run(root, "merge", "--no-ff", "-q", "-m", subject, "chore/cto-round4-close")
+    after = growth_window(root)
+    assert after[0] == before[0], "a topic branch under the round prefix slid the window"
+    assert after[1] != before[1], "HEAD did not move, so the fixture proved nothing"
