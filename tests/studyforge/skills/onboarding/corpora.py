@@ -48,6 +48,22 @@ DRAFT = {
 }
 
 
+#: ⭐ `W266`: the draft a PERSON settled before onboarding. The README records the units and no
+#: unit reads it, so it is `not_material` (`docs/authoring/corpus.md`), never an include.
+SETTLED = {
+    **DRAFT,
+    "content": {
+        "include": ["src/*.md"],
+        "not_material": [
+            {
+                "glob": "README.md",
+                "why": "navigation that records the units; no unit reads it (W266)",
+            }
+        ],
+    },
+}
+
+
 #: A `not_material` block a PERSON settled in the draft (INT06-1's shape): a
 #: directory of notes about the material, which no generator writes and so no
 #: generator can declare. ⚠️ Not written by `material` — a test that needs the

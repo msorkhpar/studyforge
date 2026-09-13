@@ -449,3 +449,72 @@ def test_a_store_beneath_the_archive_root_stays_an_archive_stray(tmp_path):
     where = plant(root, f"{ARCHIVE_DIR}/demo/.git/HEAD")
     assert where in named(root, RULE_ARCHIVE_STRAY)
     assert named(root, RULE_NESTED_REPOSITORY) == []
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W266` — an INCLUDED file no origin names is refused by name
+# --------------------------------------------------------------------------
+
+#: A whole-series aggregate: the unit's own prose again, which a glob sweeps in beside it.
+AGGREGATE = "src/all-units.md"
+
+
+def test_an_INCLUDED_aggregate_NO_origin_names_is_refused_BY_NAME_exit_1(tmp_path):
+    # ⛔ Clause 1 and clause 3's RED arm: the aggregate shape, un-excluded.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    plant(root, AGGREGATE, corpora.SOURCE)
+    report = validate(root)
+    assert report.rules == ("included-unread",)
+    assert [finding.where for finding in report.findings] == [AGGREGATE]
+    assert report.exit_code == 1
+
+
+def test_the_SAME_aggregate_EXCLUDED_is_the_control_and_reads_clean(tmp_path):
+    # ⭐ Clause 2 and clause 3's GREEN arm: withheld with its reason, it is not unread material.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    plant(root, AGGREGATE, corpora.SOURCE)
+    redeclare(root, {"include": ["src/*.md"], "exclude": [{"path": AGGREGATE, "why": WHY}]})
+    report = validate(root)
+    assert report.findings == ()
+    assert report.exit_code == 0
+
+
+def test_a_file_EVERY_unit_reads_is_clean_and_ONE_only_a_CONTAINER_names_is_NOT_read(tmp_path):
+    # ⭐ Clause 2: a unit's origin is read. ⛔ A container's `origin` only PLACES its page,
+    # which is exactly how an aggregate hides (it is ISO's shape), so it is not a read.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    assert validate(root).findings == (), "⭐ the file the unit reads is clean"
+    held = root / "archive" / "demo" / "container.json"
+    held.write_text(
+        held.read_text(encoding="utf-8").replace(
+            '"container_api": 1,', '"container_api": 1,\n  "origin": "src/all-units.md",'
+        ),
+        encoding="utf-8",
+    )
+    plant(root, AGGREGATE, corpora.SOURCE)
+    assert [f.where for f in validate(root).findings] == [AGGREGATE]
+
+
+def test_a_fresh_STRAY_included_file_is_named(tmp_path):
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    plant(root, "src/zz-stray.md", "# Stray\n")
+    assert [f.where for f in validate(root).findings] == ["src/zz-stray.md"]
+
+
+def test_NOT_MATERIAL_code_and_DECLARED_OUTPUT_are_never_refused_as_unread(tmp_path):
+    # ⭐ Neither is material a unit reads: the hand-written ingest module is `not_material`,
+    # and a file the repository declares as output never enters the scan.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    declared_output(root, "src/draft.md")
+    plant(root, "ingest/adapter.py", "print('reads the source')\n")
+    plant(root, "src/draft.md", "# Draft\n")
+    redeclare(root, {"include": ["src/*.md"], "not_material": [{"glob": "ingest/**", "why": WHY}]})
+    report = validate(root)
+    assert "included-unread" not in report.rules, report.rules
+
+
+def test_NO_origin_on_disk_is_origin_missing_s_answer_and_never_unread(tmp_path):
+    # ⛔ W255/W261 keep their own reading: with every origin absent nothing here is judged.
+    root = corpora.one_unit(tmp_path / "c", origin="src/missing.md")
+    plant(root, "src/present.md", corpora.SOURCE)
+    assert validate(root).rules == ("origin-missing",)
