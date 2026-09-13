@@ -103,7 +103,7 @@ def test_live_the_contradiction_rule_is_ARMED_at_WHATEVER_population() -> None:
     )
 
 
-UNDECLARED = "declaring NO state this vocabulary carries"
+UNDECLARED = "rows declaring NO state this vocabulary carries"
 
 
 def test_live_the_reading_TELLS_A_CLOSED_WAVE_APART_FROM_AN_UNREADABLE_STATE_CELL() -> None:
