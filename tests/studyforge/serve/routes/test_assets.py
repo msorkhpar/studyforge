@@ -135,7 +135,9 @@ def test_a_satisfiable_range_is_206_with_its_exact_arithmetic(site, header, span
     assert response.header("Content-Range") == f"bytes {first}-{last}/1024"
 
 
-@pytest.mark.parametrize("header", ["bytes=1024-", "bytes=5-1", "bytes=-0", "bytes=x-"])
+@pytest.mark.parametrize(
+    "header", ["bytes=1024-", "bytes=1024-2000", "bytes=5-1", "bytes=-0", "bytes=x-"]
+)
 def test_an_unsatisfiable_range_is_416_naming_the_length(site, header):
     response = get(site, "/.studyforge/clip.mp3", Range=header)
     assert response.status == 416

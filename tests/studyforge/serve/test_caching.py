@@ -68,6 +68,7 @@ def test_a_weak_tag_matches_its_own_opaque_value():
         ("bytes=95-200", (95, 99)),
         ("BYTES = 0-0", (0, 0)),
         ("bytes=100-", UNSATISFIABLE),
+        ("bytes=100-150", UNSATISFIABLE),
         ("bytes=10-5", UNSATISFIABLE),
         ("bytes=abc", UNSATISFIABLE),
         ("bytes=-", UNSATISFIABLE),
