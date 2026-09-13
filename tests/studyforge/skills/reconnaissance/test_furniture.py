@@ -4,6 +4,8 @@
 ⛔ Asserted both ways: a furnished source drafts its globs, and a control with
 no furniture drafts none. SF-02 judges, and SK-07's `onboard` is the collision
 check, never a restatement of it.
+⛔ `W269`: a file a declared glob covers is never re-proposed, and a proposal that
+stands down says so by name. Both asserted both ways.
 """
 
 from __future__ import annotations
@@ -19,6 +21,7 @@ from studyforge.skills.reconnaissance import survey
 from studyforge.skills.reconnaissance.furniture import propose
 from studyforge.validate.source import source_files
 from tests.studyforge.skills.reconnaissance import sources
+from tests.support import init_repository
 
 #: A recorded commit nobody's checkout has. ⛔ A placeholder (R7).
 COMMIT = "a" * 40
@@ -67,21 +70,23 @@ def test_the_open_reasons_are_asked_about_with_the_population_they_were_judged_o
 # --------------------------------------------------------------------------
 
 
-def test_onboarding_takes_the_draft_and_a_resurvey_proposes_nothing_onboarding_wrote(tmp_path):
+def test_onboarding_takes_the_draft_and_a_resurvey_re_proposes_nothing_it_declared(tmp_path):
     root = sources.furnished(tmp_path / "c")
     first = survey(root).proposal
     made = onboard(first, framework_commit=COMMIT, reasons=sources.reasons(first))
     made.write(root)
 
     again = survey(root).proposal
-    assert globs(again) == globs(first)
-    # ⭐ `promote` refuses a drafted glob equal to a generated one, so this is the
-    # collision check, asked of the owner rather than restated.
+    # ⛔ `W269`, `INT-10/2`: the written manifest's globs cover every file, so none returns.
+    assert globs(again) == []
+    # ⭐ SK-07 still takes the re-survey's draft, and `promote` refuses a drafted glob equal
+    # to a generated one, so this is the collision check, asked of the owner.
     remade = onboard(again, framework_commit=COMMIT, reasons=sources.reasons(again))
     declared = [entry["glob"] for entry in remade.not_material]
     assert len(declared) == len(set(declared))
+    written = parse((root / "corpus.json").read_text(encoding="utf-8")).content
     judged = [path.relative_to(root).as_posix() for path in source_files(root).files]
-    verdicts = {where: remade.manifest.content.classify(where) for where in judged}
+    verdicts = {where: written.classify(where) for where in judged}
     assert Classification.UNCLASSIFIED not in verdicts.values(), verdicts
 
 
@@ -122,3 +127,89 @@ def test_a_directory_holding_a_read_file_is_never_swept_by_a_directory_glob(tmp_
     assert "notes/about/**" in found.globs and "notes/**" not in found.globs
     assert "src/.keep" in found.globs
     assert found.judged == 12
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W269`, `INT-10/2`: a file a declared glob covers is never re-proposed
+# --------------------------------------------------------------------------
+
+
+def declare(root, *declared):
+    """Write a manifest declaring `declared` as `not_material`, as onboarding would."""
+    entries = [{"glob": glob, "why": sources.REASON} for glob in declared]
+    manifest = {"content": {"not_material": entries}}
+    (root / "corpus.json").write_text(json.dumps(manifest), encoding="utf-8")
+    return root
+
+
+def test_a_glob_at_DEPTH_keeps_what_it_covers_out_and_holds_its_directory(tmp_path):
+    root = declare(sources.furnished(tmp_path / "c"), "notes/about/**", "LICENSE")
+    # ⭐ `notes/**` would sweep a covered file again, so the uncovered one is named exactly.
+    assert globs(survey(root).proposal) == [
+        ".gitattributes",
+        ".gitignore",
+        "NOTES.md",
+        "README.md",
+        "notes/two.md",
+        "src/.keep",
+    ]
+    assert propose(root, ["src/*.md"], ["src/Whole.md"]).covered == 2
+
+
+def test_a_directory_ONLY_PARTLY_covered_proposes_only_its_uncovered_files(tmp_path):
+    root = declare(sources.furnished(tmp_path / "c"), "notes/*.md")
+    proposed = globs(survey(root).proposal)
+    assert "notes/about/**" in proposed
+    assert "notes/**" not in proposed and "notes/two.md" not in proposed
+    assert propose(root, ["src/*.md"], ["src/Whole.md"]).covered == 1
+
+
+def test_control_a_declared_glob_covering_nothing_changes_no_proposal(tmp_path):
+    root = declare(sources.furnished(tmp_path / "c"), "nothing/here/**")
+    # ⭐ The manifest itself is never judged: validate's walk does not classify it.
+    assert globs(survey(root).proposal) == sources.FURNISHED_GLOBS
+    assert propose(root, ["src/*.md"], ["src/Whole.md"]).covered == 0
+
+
+def test_a_manifest_carrying_a_home_path_is_refused_as_itself(tmp_path):
+    # ⛔ R7: the declared globs are paths, so the manifest is gated before one is read.
+    # ⚠️ A placeholder, split so the literal never sits in this file whole.
+    root = declare(sources.furnished(tmp_path / "c"), "/" + "home/jane/x")
+    with pytest.raises(PersonalDataLeak):
+        propose(root, ["src/*.md"], [])
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W269`, `INT-10/1`: a proposal that stands down says so by name
+# --------------------------------------------------------------------------
+
+
+def stood_down(root):
+    return [q for q in survey(root).uncertainties if "stood down" in q.question]
+
+
+def test_a_root_git_does_not_answer_for_says_so_even_when_it_proposes_nothing(tmp_path):
+    root = sources.flat_prose(tmp_path / "c")
+    (root / "README.md").unlink()
+    [question] = stood_down(root)
+    assert "git's ignore rules were not read" in question.why
+    # ⭐ The report a person reads, which is what SK-07's step prints.
+    assert any("stood down" in line for line in survey(root).lines())
+
+
+def test_a_root_inside_another_repositorys_IGNORED_directory_says_it_judged_no_file(tmp_path):
+    outer = init_repository(tmp_path / "outer")
+    (outer / ".gitignore").write_text("copy/\n", encoding="utf-8")
+    root = sources.furnished(outer / "copy")
+    found = propose(root, ["src/*.md"], [])
+    assert (found.judged, found.consulted, found.entries) == (0, True, ())
+    [question] = stood_down(root)
+    assert "it judged no file" in question.why
+
+
+def test_control_a_root_that_is_its_own_git_working_tree_does_not_stand_down(tmp_path):
+    root = sources.flat_prose(tmp_path / "c")
+    (root / "README.md").unlink()
+    init_repository(root)
+    assert propose(root, ["*.md"], []).stands_down is None
+    assert stood_down(root) == []

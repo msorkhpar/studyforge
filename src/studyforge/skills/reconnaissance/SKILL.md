@@ -166,6 +166,14 @@ the record and the root's furniture. Nothing onboarding recorded writing is
 proposed, so no glob collides with `SK-07`'s. Give each reason to `promote`
 in `reasons`, keyed by its glob.
 
+⛔ **A re-survey never proposes again what the corpus already declares, and
+a proposal that stands down says so (`W269`).** A file a `not_material` glob
+in the root's own `corpus.json` covers is not proposed, and no directory glob
+sweeps it. A survey that judged no file, or judged without git's ignore
+rules, asks one question naming why, even when it proposes nothing. ⚠️ A
+root inside another repository's ignored directory judges no file: survey
+the corpus as its own working tree.
+
 ---
 
 ## What this skill must never do

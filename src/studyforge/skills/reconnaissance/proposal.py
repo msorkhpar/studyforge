@@ -305,8 +305,20 @@ def _choices(
 
 
 def _unread(furniture: Furniture) -> Iterator[Uncertainty]:
-    """Ask for every reason the proposed `not_material` globs leave open (`W240/3`)."""
+    """Ask for every reason the proposed `not_material` globs leave open (`W240/3`).
+
+    ⛔ `W269`: a proposal that stands down says so by name, even when it proposes nothing.
+    """
     if not furniture.entries:
+        if furniture.stands_down:
+            yield Uncertainty(
+                question="the not_material proposal stood down: is nothing here furniture?",
+                why=f"no glob was proposed, and {furniture.stands_down}",
+                settles_it=(
+                    "survey the corpus root as its own git working tree, outside any other "
+                    "repository's ignored directory, or declare content.not_material by hand"
+                ),
+            )
         return
     ignore = "read" if furniture.consulted else "not read, as this is not a git working tree"
     yield Uncertainty(
@@ -316,7 +328,9 @@ def _unread(furniture: Furniture) -> Iterator[Uncertainty]:
         ),
         why=(
             f"of {furniture.judged} file(s) validate will classify (git's ignore rules "
-            f"{ignore}), these match no include and no exclude; every reason is open"
+            f"{ignore}), these match no include and no exclude; every reason is open. "
+            f"{furniture.covered} file(s) a glob the manifest declares already covers "
+            f"are not re-proposed"
         ),
         settles_it=(
             "give each glob its reason in promote's reasons mapping, keyed by the glob; "
