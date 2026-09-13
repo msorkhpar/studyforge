@@ -266,7 +266,7 @@ does. A subject missing here is a finding, and adding a row is not a mint.**
 | **discharging an ACCEPTANCE** | [§9](#9-the-tasks-acceptance-conditions-were-actually-run) · [Ruling 72](#ruling-72-an-acceptance-condition-is-a-decomposition-never-a-total) · [Ruling 82](#ruling-82-every-decomposition-carries-one-row-discharged-by-looking-at-the-real-thing) · [Ruling 129](#ruling-129-an-unmeetable-acceptance-clause-is-split-and-the-changes-requested-lands-on-the-plan-not-the-branch) · [Ruling 292](#ruling-292-an-acceptance-with-n-arms-met-by-a-population-of-m-n-shapes-is-satisfied-by-declaring-the-extra-arms-with-an-assertion-each) · [Ruling 312](#ruling-312-cto-round-63-an-acceptance-discharged-by-a-harness-in-which-the-violation-is-unrepresentable-is-proved-of-the-harness-and-the-taker-reports-it-rather-than-widening-the-row) |
 | **CITING a ruling, writing a POINTER** | [Ruling 334](#ruling-334-a-redundant-line-citation-is-still-a-line-citation-and-the-quote-cures-it-only-when-the-number-goes) · [Ruling 308](#ruling-308-a-pointer-obligation-is-bounded-by-the-ref-the-document-lives-on-and-a-row-file-that-exists-only-on-an-unmerged-branch-is-named-not-linked) · [Ruling 285](#ruling-285-a-failed-reading-is-closed-by-a-signature-and-a-citation-of-a-tracked-document-is-a-pointer) · [Ruling 280](#ruling-280-a-citation-predicate-is-asserted-against-the-plural-and-range-spellings-this-project-actually-writes) · [Ruling 281](#ruling-281-the-reach-metric-counts-a-citation-not-a-landing-and-the-printed-notice-says-so) · [Ruling 306](#ruling-306-ruling-270-gains-the-clause-a-redirect-stubs-archive-anchor-is-derived-by-the-shipped-slug-and-checked-for-collision-before-the-stub-is-written) |
 | **landing a RULE versus recording STATE** | [Ruling 349](#ruling-349-a-rule-lands-in-the-convention-document-that-governs-it-the-board-carries-state) · [Ruling 349(a)](#ruling-349a-cto-round-71-a-removal-is-checked-against-the-destinations-spelling-never-the-sources) · [Ruling 347](#ruling-347-landed-takes-a-merge-ref-a-branch-tip-is-at-its-tip) · [§8a-i](#8a-i-a-ruling-that-changes-a-shared-name-names-its-blast-radius-across-branches) · [Ruling 195](#ruling-195-cto-round-50-8a-i-extended-a-ruling-that-scopes-a-row-names-that-rows-file-and-a-row-file-may-not-paraphrase-it) |
-| **setting up the RANGE for a wave** | [§0](#0-set-up-the-range) · [§0a](#0a-review-the-merge-not-the-branch) · [§0a-i](#0a-i-measure-the-base-too-and-report-both-numbers) · [Ruling 203](#0a-iii-ruling-203-cto-round-51-a-wave-of-n-branches-owes-the-n-way-reading-and-a-generated-derivation-of-the-records-makes-every-later-record-a-build-failure) · [Ruling 197](#0a-ii-ruling-197-cto-round-50-a-behind-count-the-two-dot-span-that-hides-it-and-a-citation-from-a-checkout-that-cannot-hold-the-ruling) · [(b)](#b-a-behind-count-is-a-form-defect-it-is-reported-and-it-does-not-block-a-merge) · [(c)](#c-a-citation-of-a-ruling-absent-from-the-authors-checkout-is-received-by-construction) |
+| **setting up the RANGE for a wave** | [§0](#0-set-up-the-range) · [§0a](#0a-review-the-merge-not-the-branch) · [`W168`](#w168-a-trial-merge-is-measured-by-the-trial-trees-own-wrapper-and-the-run-declares-the-one-fact-only-the-trial-tree-has) · [§0a-i](#0a-i-measure-the-base-too-and-report-both-numbers) · [Ruling 203](#0a-iii-ruling-203-cto-round-51-a-wave-of-n-branches-owes-the-n-way-reading-and-a-generated-derivation-of-the-records-makes-every-later-record-a-build-failure) · [Ruling 197](#0a-ii-ruling-197-cto-round-50-a-behind-count-the-two-dot-span-that-hides-it-and-a-citation-from-a-checkout-that-cannot-hold-the-ruling) · [(b)](#b-a-behind-count-is-a-form-defect-it-is-reported-and-it-does-not-block-a-merge) · [(c)](#c-a-citation-of-a-ruling-absent-from-the-authors-checkout-is-received-by-construction) |
 | **editing a TEST your row does not own** | [Ruling 143](#ruling-143-cto-round-39-an-out-of-owns-test-edit-under-three-bounded-conditions) · [Ruling 190](#ruling-190-cto-round-48-changing-a-value-a-distant-test-compares-against-is-editing-that-test-and-weakening-one-is-the-case-ruling-143-does-not-reach) · [Ruling 190(b)](#ruling-190-gains-clause-b-cto-round-49-the-mirror-case-a-branch-that-adds-a-member-to-a-derived-population-has-edited-every-distant-test-that-iterates-it-and-such-a-test-can-go-red-for-being-wrong) |
 | **R11 — the size ceiling and its opt-outs** | [§3](#3-r11-the-size-ceiling) · [Ruling 207](#3b-i-ruling-207-cto-round-51-the-ceilings-instrument-reads-py-only-so-the-reviewer-reads-the-rest) · [§3c](#3c-what-a-valid-justified-opt-out-looks-like) · [Ruling 113](#ruling-113-condition-3-has-a-second-admissible-form-a-deferral-naming-a-live-id) · [Ruling 121](#corrected-at-w45s-merge-ruling-121-it-calls-the-shipped-reader-and-it-drops-the-length-guard) |
 | **the LINT and FLOOR lines of a review** | [Ruling 77](#ruling-77-ruling-31-does-not-reach-ruff-and-toolsquality-keeps-its-independence) · [Ruling 78](#ruling-78-the-floor-prints-the-lint-state-including-its-absence) · [Ruling 79](#ruling-79-the-lint-gate-is-run-separately-and-floor-clean-never-covers-lint) · [`W187/5`](#4b-ii-w1875-the-floors-last-line-says-the-floor-is-not-the-suite) · [Ruling 86](#ruling-86-a-documentation-only-branch-needs-a-lint-line-too) · [Ruling 86a](#ruling-86a-the-denominator-is-derived-from-the-tree-never-from-the-disk) · [Ruling 88](#ruling-88-the-floor-and-ruff-are-two-checks-and-a-review-that-runs-one-runs-half) |
@@ -466,7 +466,7 @@ REV=$(git rev-parse HEAD)                       # the branch under review
 TRIAL=$(mktemp -d)/trial
 git worktree add -q --detach "$TRIAL" "$REVIEW_BASE"
 git -C "$TRIAL" merge --no-edit --no-ff "$REV"; echo "merge exit=$?"
-( cd "$TRIAL" && python3 -m pytest -q && python3 -m tools.quality )
+# ⛔ measure it HERE, by the TRIAL tree's own wrapper: the `W168` block below
 git worktree remove --force "$TRIAL"            # always, even on a failure
 ```
 
@@ -490,6 +490,36 @@ parallel tasks are each correct alone.
 ⚠️ **It generalises past style.** Any rule, fixture, contract or checker
 introduced on one branch is invisible to every branch cut before it. The trial
 merge is the only check that sees rules nobody thought to look for.
+
+#### ⛔ `W168` — a TRIAL merge is measured by the TRIAL tree's OWN wrapper, and the run declares the one fact only the trial tree has
+
+⛔ **`docker/dev/check` mounts the tree the SCRIPT sits in, never your `cwd`.** So your
+own checkout's wrapper, invoked by its absolute path from inside a trial worktree,
+measures YOUR tree under the trial's name, and every figure reads plausible. ⚠️ The
+witness, `CTO-67/11`: the suite count matched the base and would have filed a false
+finding. Only the floor's rulings figure disagreed. The argument is
+[the row](../tasks/rows/W168.md).
+
+```bash
+# ⛔ Taken on the HOST, after the merge: the merge commit exists in the trial tree only.
+M=$(git -C "$TRIAL" rev-parse HEAD)
+# ⛔ The TRIAL tree's own wrapper, by a RELATIVE path, never `<your checkout>/docker/dev/check`.
+#    The discriminator runs FIRST inside, and a refusal exits before any gate prints.
+cd "$TRIAL" && ./docker/dev/check sh -c 'python3 -m tools.quality.trial "$1" || exit; python3 -m tools.quality; echo "FLOOR_EXIT=$?"; python3 -m pytest -q; echo "SUITE_EXIT=$?"' trial "$M"
+```
+
+- ⛔ **Pass condition:** the capture prints `⭐ PASSED: the mounted tree is the trial merge
+  of …` before any gate. `REFUSED` names ANOTHER tree, or a `HEAD` that is no merge
+  commit, and the run stops there. `2` read nothing, and is never a pass. Asserted both
+  ways by `tools/tests/quality/test_trial.py`, on synthetic trees.
+- ⭐ **It binds every trial reading**, the N-way wave of
+  [Ruling 203](#0a-iii-ruling-203-cto-round-51-a-wave-of-n-branches-owes-the-n-way-reading-and-a-generated-derivation-of-the-records-makes-every-later-record-a-build-failure)
+  included: after the last merge, `M` is the wave's `HEAD`. That ruled block is a record
+  and is not edited (Ruling 106).
+- ⚠️ **The sha is the discriminator, never a path.** Inside the container every tree is
+  `/workspace`, and outside it a path is a home directory (R7).
+- ⛔ **Not a change to how `docker/dev/check` resolves `ROOT`.** Deriving it from the
+  script is correct: it is what lets any `cwd` inside the tree work.
 
 ### ⛔ 0a-i. Measure the base too, and report both numbers
 
