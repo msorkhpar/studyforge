@@ -64,8 +64,8 @@ Why this shape, and not the other two:
   clip's name. A clip is judged like every other file.
 - **Not a refusal of every file that is not text.** That refuses every real clip
   and every image. The run length is why real audio passes: over a GiB of random
-  bytes, runs of 12 characters still misfired on a short `~x/` or an
-  address-shaped fragment, and runs of 16 did not. The readings over real clips
+  bytes, runs of 12 characters still misfired on a short tilde fragment or an
+  address-shaped one, and runs of 16 did not. The readings over real clips
   and images are in `W235`'s handoff.
 
 ⚠️ **What the judgement cannot see.** Each is a stated cost, not a promise:

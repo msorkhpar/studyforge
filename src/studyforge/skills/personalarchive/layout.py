@@ -56,7 +56,7 @@ FILE_KEYS = frozenset({"path", "sha256", "bytes", "executable"})
 
 #: The shortest run of printable characters that `judge_bytes` reads as text. ⚠️ Measured,
 #: not chosen (`W235`'s handoff): over random bytes, runs of 12 still misfire on a short
-#: `~x/` or an address-shaped fragment and runs of 16 do not, so real audio passes. A
+#: tilde fragment or an address-shaped one and runs of 16 do not, so real audio passes. A
 #: shape in a shorter run is not seen, and `SKILL.md` states that cost.
 TEXT_RUN = 16
 
