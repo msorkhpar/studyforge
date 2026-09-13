@@ -5,11 +5,13 @@ and the generated check that fails when a stub and the pin disagree.
 
 **How you use it.** `pin_document(commit)`, `stub(name, commit)`,
 `stub_paths(skills)` and `pin_test(skills)`; `onboard` composes them.
+`check_held(commit, framework_of(root))` before anything is written.
 
-**Depends on.** `compose` and the standard library. ⛔ No I/O, nothing
-source-specific (R1), and nothing from `artifacts` — the dependency runs one
-way, so what a corpus is told about the framework cannot come to depend on what
-the framework generated into the corpus.
+**Depends on.** `compose`, `git` on the path, and the standard library. ⛔ The
+one I/O here is `check_held`'s local object lookup. Nothing source-specific
+(R1), and nothing from `artifacts` — the dependency runs one way, so what a
+corpus is told about the framework cannot come to depend on what the framework
+generated into the corpus.
 
 ## ⛔ Not a submodule, and never a path
 
@@ -23,6 +25,16 @@ path, which carries somebody's home directory** (R7).
 value that fails that test is almost always a path, and a refusal is read in a
 log and pasted into a bug report.
 
+## ⛔ A pinned commit is one the framework checkout HAS (`W270`)
+
+⚠️ Forty hex characters is a shape, and a mistyped sha has it. ⭐ So
+`check_held` asks the sibling checkout — `framework_of(root)`, the same
+`../studyforge` every stub points at — with `git cat-file -e`, a local object
+lookup that never fetches. ⛔ An absent checkout, one that is not a git
+checkout, a missing `git` and a commit it lacks are each refused by name, and
+none of them passes silently. The generated `test_framework_pin.py` asks the
+same question from inside the corpus.
+
 ## ⭐ A stub is a pointer, and the check is what keeps it one
 
 ⛔ **A copied procedure ages without saying so.** Each stub names the pin it was
@@ -33,8 +45,12 @@ somebody has to remember to refresh.
 
 from __future__ import annotations
 
+import os
 import re
+import shutil
+import subprocess
 from collections.abc import Sequence
+from pathlib import Path
 
 from studyforge.describe import describe
 from studyforge.skills.onboarding.compose import module
@@ -61,9 +77,20 @@ SKILLS = ("reconnaissance", "adapter", "onboarding")
 #: out of the pin: `../somewhere/studyforge` is not forty hex characters (R7).
 COMMIT = re.compile(r"[0-9a-f]{40}")
 
+#: The framework checkout's name, as a sibling of the corpus root. ⛔ A name,
+#: never a path (R7).
+FRAMEWORK = "studyforge"
+
 #: Where a skill's procedure actually lives, relative to the corpus root.
 #: ⚠️ Relative, and the first segment is the sibling's name.
-PROCEDURE = "../studyforge/src/studyforge/skills/{name}/SKILL.md"
+PROCEDURE = "../" + FRAMEWORK + "/src/studyforge/skills/{name}/SKILL.md"
+
+#: ⛔ A local object lookup never fetches: no lazy fetch from a promisor remote,
+#: and no prompt for credentials that would stall a run.
+GIT_LOCAL_ONLY = {"GIT_NO_LAZY_FETCH": "1", "GIT_TERMINAL_PROMPT": "0"}
+
+#: How long one local git question may take, in seconds.
+GIT_TIMEOUT = 60
 
 
 class PinRefused(ValueError):
@@ -113,10 +140,19 @@ def pin_test(skills: Sequence[str] = SKILLS) -> str:
     """Return the drift check: a commit in the pin, every stub agreeing, no submodule."""
     return module(
         summary="The framework pin, and the stubs that must agree with it.",
-        imports=["import json", "import pathlib", "import re"],
+        imports=[
+            "import json",
+            "import os",
+            "import pathlib",
+            "import re",
+            "import shutil",
+            "import subprocess",
+        ],
         body=[
             f"PIN = {PIN_FILE!r}",
             f"STUBS = {list(stub_paths(skills))!r}",
+            f"FRAMEWORK = {FRAMEWORK!r}",
+            f"GIT_LOCAL_ONLY = {GIT_LOCAL_ONLY!r}",
             "",
             "",
             "def _root():",
@@ -131,6 +167,31 @@ def pin_test(skills: Sequence[str] = SKILLS) -> str:
             "        'the pin records a commit; a path is not one'",
             "    )",
             "    assert pin['where'] == 'sibling', 'the framework is a sibling checkout'",
+            "",
+            "",
+            "def test_the_framework_beside_this_corpus_holds_the_pinned_commit():",
+            '    """A pin naming a commit the framework lacks points at nothing (W270)."""',
+            "    pin = json.loads((_root() / PIN).read_text(encoding='utf-8'))",
+            "    framework = _root().parent / FRAMEWORK",
+            "    assert framework.is_dir(), (",
+            "        'there is no framework checkout beside this corpus, a sibling named ' +",
+            "        repr(FRAMEWORK) + ', so the pinned commit cannot be checked'",
+            "    )",
+            "    git = shutil.which('git')",
+            "    assert git, 'git is not installed, so the pinned commit cannot be checked'",
+            "    env = {**os.environ, **GIT_LOCAL_ONLY}",
+            "",
+            "    def ask(*arguments):",
+            "        command = [git, '-C', str(framework), *arguments]",
+            "        return subprocess.run(command, capture_output=True, env=env, check=False)",
+            "",
+            "    assert ask('rev-parse', '--git-dir').returncode == 0, (",
+            "        'the framework beside this corpus is not a git checkout'",
+            "    )",
+            "    assert ask('cat-file', '-e', pin['commit'] + '^{commit}').returncode == 0, (",
+            "        'the framework checkout beside this corpus does not hold the pinned '",
+            "        'commit; regenerate the pin at a commit it has (R19)'",
+            "    )",
             "",
             "",
             "def test_no_stub_has_drifted_from_the_pin():",
@@ -167,6 +228,59 @@ def check_commit(commit: object) -> str:
             "path, and a path carries a home directory"
         )
     return commit
+
+
+def framework_of(root: Path | str) -> Path:
+    """Return where the pin looks for the framework: the sibling named `FRAMEWORK`.
+
+    ⚠️ Resolved first, because `Path(".").parent` is `.` itself and the
+    procedure writes into `.`.
+    """
+    return Path(root).resolve().parent / FRAMEWORK
+
+
+def check_held(commit: object, checkout: Path | str) -> str:
+    """Refuse a commit the framework checkout does not hold, naming why and quoting nothing.
+
+    ⛔ The shape is checked first, so a path never reaches `git` (R7). Then a
+    missing `git`, an absent checkout, a directory that is not a git checkout and
+    a commit it lacks are each refused by name (`W270`). ⭐ `cat-file -e` is a
+    local object lookup, and `GIT_LOCAL_ONLY` keeps it from ever fetching.
+    """
+    checked = check_commit(commit)
+    git = shutil.which("git")
+    if git is None:
+        raise PinRefused(
+            "git is not installed, so the framework checkout cannot be asked whether it "
+            "holds the pinned commit"
+        )
+    where = Path(checkout)
+    if not where.is_dir():
+        raise PinRefused(
+            f"there is no framework checkout where the pin looks for one, a sibling named "
+            f"{FRAMEWORK!r}, so the pinned commit cannot be checked"
+        )
+    if _ask(git, where, "rev-parse", "--git-dir").returncode != 0:
+        raise PinRefused(
+            "the framework checkout is not a git checkout, so the pinned commit cannot be checked"
+        )
+    if _ask(git, where, "cat-file", "-e", f"{checked}^{{commit}}").returncode != 0:
+        raise PinRefused(
+            "the framework checkout does not hold the pinned commit; the value is not "
+            "reproduced here, so compare it with the checkout's own log"
+        )
+    return checked
+
+
+def _ask(git: str, where: Path, *arguments: str) -> subprocess.CompletedProcess:
+    """Ask one local question of a checkout. ⛔ Never a fetch, never a prompt."""
+    return subprocess.run(
+        [git, "-C", str(where), *arguments],
+        capture_output=True,
+        check=False,
+        env={**os.environ, **GIT_LOCAL_ONLY},
+        timeout=GIT_TIMEOUT,
+    )
 
 
 def known(skills: Sequence[str]) -> tuple[str, ...]:

@@ -56,6 +56,8 @@ from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
     SKILLS,
+    check_held,
+    framework_of,
     known,
     pin_document,
     pin_test,
@@ -75,6 +77,8 @@ class Onboarding:
     manifest: Manifest
     files: tuple[Written, ...]
     not_material: tuple[dict[str, str], ...]
+    #: The framework commit the pin records, checked against the checkout at `write`.
+    commit: str
 
     @property
     def paths(self) -> tuple[str, ...]:
@@ -97,7 +101,12 @@ class Onboarding:
         overwritten nor treated as a collision. ⛔ That is `write_files`, the
         rule `Scaffold.write` follows too (`W265`): two copies of it disagreed
         once (`W257/2`), so there is one.
+
+        ⛔ **The pin is checked against the framework beside `root` first**
+        (`W270`): a commit that checkout does not hold is refused by name, and
+        nothing is written.
         """
+        check_held(self.commit, framework_of(root))
         return write_files(
             self.files,
             root,
@@ -170,6 +179,7 @@ def onboard(
         manifest=manifest,
         files=tuple(files),
         not_material=tuple(dict(entry) for entry in document["content"].get("not_material", ())),
+        commit=framework_commit,
     )
 
 

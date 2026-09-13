@@ -20,11 +20,12 @@ from studyforge.skills.onboarding import RECORD_FILE, onboard
 from studyforge.skills.reconnaissance import survey
 from studyforge.skills.reconnaissance.furniture import propose
 from studyforge.validate.source import source_files
+from tests.studyforge.skills.onboarding import corpora
 from tests.studyforge.skills.reconnaissance import sources
 from tests.support import init_repository
 
 #: A recorded commit nobody's checkout has. ⛔ A placeholder (R7).
-COMMIT = "a" * 40
+COMMIT = corpora.COMMIT
 
 
 def globs(proposal):
@@ -74,6 +75,7 @@ def test_onboarding_takes_the_draft_and_a_resurvey_re_proposes_nothing_it_declar
     root = sources.furnished(tmp_path / "c")
     first = survey(root).proposal
     made = onboard(first, framework_commit=COMMIT, reasons=sources.reasons(first))
+    corpora.framework_beside(root)
     made.write(root)
 
     again = survey(root).proposal

@@ -61,6 +61,7 @@ def _onboarded(tmp_path: Path) -> Path:
     # ⭐ The repository's own ignore file, declared the way a person declares it
     # in the draft (W239 carries the block through).
     document["content"]["not_material"] = [{"glob": ".gitignore", "why": WHY_ROOT_IGNORE}]
+    corpora.framework_beside(root)
     onboard({**document, "placement": "sibling"}, framework_commit=corpora.COMMIT).write(root)
     return root
 
