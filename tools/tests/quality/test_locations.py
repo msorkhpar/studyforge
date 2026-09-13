@@ -112,6 +112,14 @@ def test_a_fenced_REF_admits_the_integer_and_never_the_path(tmp_path):
     assert [(row[1], row[3]) for row in verdicts(root)] == [(3, REF), (4, PATH), (8, INTEGER)]
 
 
+def test_a_ref_written_in_DIGITS_ONLY_is_the_declared_gap_and_reads_as_no_ref(tmp_path):
+    # ⚠️ Found by a plant, not reasoned: a real short sha can be all digits, and a
+    # seven-digit number is not a ref this predicate can tell apart from a count.
+    text = "```text\nmeasured at 2153778\npkg/target.py:1 read\n```\n"
+    root = tree(tmp_path, {"docs/live.md": text})
+    assert [(row[1], row[3]) for row in verdicts(root)] == [(3, INTEGER)]
+
+
 def test_the_two_harms_are_spelled_apart_and_each_remedy_is_the_output_shape():
     assert HARM_PATH != HARM_INTEGER
     assert remedy(PATH).startswith(HARM_PATH)

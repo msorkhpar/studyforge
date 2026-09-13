@@ -57,6 +57,8 @@ population is read rather than assumed; a later row promotes it once the residue
 2. ⛔ A citation QUOTED as a refused example is a mention and is read as a citation.
 3. ⛔ A basename that happens to resolve at the root — `README.md` — resolves, whichever
    of the tree's same-named files its author meant (`W78/4`).
+4. ⚠️ A ref written in DIGITS ONLY is not read as a ref, so its fenced reading reads
+   `INTEGER`: a seven-digit sha and a seven-digit count look the same (found by plant).
 """
 
 from __future__ import annotations
