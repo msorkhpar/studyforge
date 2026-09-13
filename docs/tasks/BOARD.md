@@ -28,7 +28,7 @@ one does.**
 
 | Milestone | State | Ref | The close run |
 |---|---|---|---|
-| **M0** — foundations | ✅ CLOSED | — | [record](BOARD-ARCHIVE.md#m0-foundations) |
+| **M0** — foundations | ✅ CLOSED | `a7c114b` | [record](BOARD-ARCHIVE.md#m0-foundations) |
 | **M1** — the framework stands up | ✅ CLOSED | `2fe56a4` | [record](BOARD-ARCHIVE.md#m1s-close-run-at-2fe56a4-all-nine-true-at-one-ref-and-rows-18-were-re-taken-not-inherited) |
 | **M2** — a corpus is readable | ✅ CLOSED | `2d0cfe7` | [record](BOARD-ARCHIVE.md#m2s-close-run-at-2d0cfe7-nine-rows-the-fifteen-task-merges-re-derived-and-the-two-gaps-are-named-rather-than-absent) |
 | **M2 step 2.1** | ✅ CLOSED | `a00337b` | [record](BOARD-ARCHIVE.md#m2-step-21s-close-run-at-a00337b-all-five-re-taken-and-the-ref-moved-twice-underneath-it) |
@@ -61,7 +61,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `W254` | Developer 2 | `fix/INT09-5-mirrored-unit-collision` @ `wt/dev2` | 0 @ `973fc67` | in-progress |
-| `W154` | Developer 3 | `fix/W154-capability-delivery-reading` @ `wt/dev3` | 0 @ `973fc67` | in-progress |
+| `W161` | Developer 3 | `fix/W161-observation-subject-vocabulary` @ `wt/dev3` | 0 @ `a2ae2c4` | in-progress |
 | `W252` | Developer 1 | `fix/W252-heading-entry-ordinal` @ `wt/dev1` | 0 @ `88a1f51` | in-progress |
 <!-- /inflight -->
 
@@ -78,8 +78,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W249`, `W248` LEFT at `88a1f51`, `a2ae2c4`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W254`, `W252` NAMED, `W154` CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W249`, `W248`, `W154` LEFT at `88a1f51`, `a2ae2c4`, `2ffd4a8`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W254`, `W252`, `W161` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -124,6 +124,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 42 | `W251` | ⭐ **round 78's mint, jumping nobody** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 45 | `W259` | ⭐ **round 79's mint, jumping nobody; after `W255`, one surface** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
+| 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one owner with `W161` on `docs/conventions/`** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -302,14 +303,14 @@ else.**
 | W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | Developer 2 | ✅ done — `579e1df` | [`rows/W151.md`](rows/W151.md) |
 | W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [`rows/W152.md`](rows/W152.md) |
 | W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | Developer 3 | ✅ done — `947a007` | [`rows/W153.md`](rows/W153.md) |
-| W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | Developer 3 | in-progress — on `fix/W154-capability-delivery-reading` | [`rows/W154.md`](rows/W154.md) |
+| W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | Developer 3 | ✅ done — `2ffd4a8` | [`rows/W154.md`](rows/W154.md) |
 | W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | ✅ done — `0011d5d` | [`rows/W155.md`](rows/W155.md) |
 | W156 | A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge | Developer 3 | ✅ done — `973fc67` | [`rows/W156.md`](rows/W156.md) |
 | W157 | The knowledge index goes stale on every merge, nothing owns the rebuild, and no instrument can fail on it | framework agent | `accepted` — ⛔ **WITHDRAWN PO round 61**, and the re-scope that preceded it was refuted by this round's own suite | [`rows/W157.md`](rows/W157.md) |
 | W158 | The authoritative environment is structurally blind to the workspace assertions, so `green` names two different answers | Developer 3 | ✅ done — `baefd6c` | [`rows/W158.md`](rows/W158.md) |
 | W159 | Most of the board's tables are UNDELIMITED — `Next rows` and `Standing decisions` among them: no instrument reads them and the size bound gives them no term | framework agent | `todo` — naming corrected `PO-56/8` | [`rows/W159.md`](rows/W159.md) |
 | W160 | A live row's SURFACE is checked by nothing, so check 4's sub-step is undecidable and its one answer is a hand-maintained paragraph | framework agent | `todo` | [`rows/W160.md`](rows/W160.md) |
-| W161 | The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident | framework agent | `todo` — `NS-01/2` | [`rows/W161.md`](rows/W161.md) |
+| W161 | The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident | Developer 3 | in-progress — `NS-01/2`, on `fix/W161-observation-subject-vocabulary` | [`rows/W161.md`](rows/W161.md) |
 | W162 | Ten gated assertions no routine environment reaches, and the skip's own stated ground is false whenever the image is already built | Developer 3 | ✅ done — `828b37f` | [`rows/W162.md`](rows/W162.md) |
 | W163 | `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which the row that fired its trigger landed beside and did not carry | Developer 2 | ✅ done — `accceaf` | [`rows/W163.md`](rows/W163.md) |
 | W164 | A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently | framework agent | `todo` | [`rows/W164.md`](rows/W164.md) |
@@ -408,6 +409,7 @@ else.**
 | W257 | `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths | framework agent | `todo` — `INT-09/3` + `/7` | [`rows/W257.md`](rows/W257.md) |
 | W258 | `archive.markdown` keeps a nested list line as literal text inside its parent item | framework agent | `todo` — `INT-09/6` | [`rows/W258.md`](rows/W258.md) |
 | W259 | `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently | framework agent | `todo` — `W248/1` | [`rows/W259.md`](rows/W259.md) |
+| W260 | No wave-close procedure tells a close to run the capability-delivery reading `W154` shipped | framework agent | `todo` — `W154/3` | [`rows/W260.md`](rows/W260.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

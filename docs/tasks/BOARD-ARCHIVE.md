@@ -22818,3 +22818,82 @@ fix/W248-archive-root-refuses-strays  1a4d0fb6  1a4d0fb6     0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 79
 
 ⭐ **Merged at `a2ae2c4`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `a2ae2c4` is RECEIVED.** ⭐ **A file beneath the archive root that no reader reads is refused by name as `archive-stray`, never skipped, and an adapter-written archive reads clean.** ⚠️ **Each finding's disposition is this round's § 6.**
+
+### ⭐ 7 — `W154` CLOSED, AND THE READING OF RECORD MOVES
+
+⭐ **`2ffd4a8` (`W154`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after this office's first pinned run, at `b314d32`, had started. Host `corroborate` then REFUTED `W154` as absorbed, which is a GATE at a register branch (Ruling 279). So the close is taken here, and the reading of record is the pinned run after it, as round 78 did for `W156`.** Reversible.
+
+```text
+                                      merge^2   branch head  ahead  checked out
+fix/W154-capability-delivery-reading  e51c469d  e51c469d     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W154.md`.** ⭐ **Carrier confirmed against git:** [`W161`](rows/W161.md), Developer 3, `fix/W161-observation-subject-vocabulary` @ `wt/dev3`, cut `a2ae2c4`, declared `W161`, NAMED here; § 6's *not named* is dated by this. ⚠️ **It is order 13 and was dispatched before `W255`–`W258` were minted at orders 1–2, so the next free developer takes those first.**
+
+| finding | became |
+|---|---|
+| `W154/1` | disposed at the close: a surviving plant, fixed with a fixture and re-planted RED |
+| `W154/2` | ⛔ **ruled: `M0`'s Ref cell records `a7c114b`**, the close merge the record names at its 2026-09-09 entry, on release's first-parent line. Reversible |
+| `W154/3` | ⭐ **minted [`W260`](rows/W260.md)**, jumping nobody; `docs/conventions/` is `W161`'s in flight |
+| `W154/4` | accepted, cost named: `NS-05`'s area names the service and its `Owns` is in `studyforge`; the index lets `Owns` decide, so it reads in the framework column, which is right |
+| `W154/5` | accepted, cost named: `delivery.py` is born near its R11 ceiling; the approach notice sees it, and the next arm splits it |
+
+### W154 — Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W154.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **COMMITS-PER-CAPABILITY WENT BAD OVER THREE WAVES AND NOTHING MEASURES IT.** ⭐ **The reading was taken by a peer session, re-derived by the coordinator, and re-derived a third time by this office — which is three manual derivations of one figure and zero instruments.**
+
+### ⛔ THE READING THAT MINTED IT, AND WHY IT IS NOT THE ROW'S ACCEPTANCE
+
+```text
+capability population, generated docs/capability-index.md          91
+delivered                                                          41
+undelivered                                                        50
+three waves, 68 commits, 17 first-parent merges           ⛔ ZERO new capabilities
+src/**/*.py across all three waves                        ⛔ BYTE-IDENTICAL
+⚠️ RE-MEASURED AT DISPATCH (Ruling 214). A taker who inherits these has inherited the defect.
+```
+
+### ⚠️ ANNOTATION, PO ROUND 52 — THE READING ABOVE IS PARTLY A FALSE NEGATIVE, AND THE ROW IS NOT RE-MINTED
+
+⛔ **`src/**/*.py … BYTE-IDENTICAL` returns a FALSE NEGATIVE on any wave that ships a SIBLING COMPONENT.** ⭐ **RECEIVED from the coordinator, environment MAIN checkout, and it is a reading this row's own mint could not have taken:**
+
+```text
+src/**/*.py LINES:  428223c 25376 · 110504b 25376 · 82bff6d 25376 · 0fcb6b4 25376
+⛔ IDENTICAL ACROSS THE MERGE THAT DELIVERED A CAPABILITY — and that is CORRECT, not a defect.
+```
+
+⚠️ **`NS-01`'s `Owns` is a SIBLING REPOSITORY, so the deliverable is `125` tests and three routes in `../narrate-service` and studyforge receives two files.** ⛔ **Thirteen of the open rows deliver ZERO bytes into the tree this instrument measures — every `E12` and `E13` row — so `src/**/*.py` cannot see that class of capability at all.**
+
+⭐ **THE ROW IS NOT RE-MINTED AND ITS NAMING AND ACCEPTANCE ARE NOT WIDENED** (Ruling 311's direction, and Ruling 244's form: a rotted predicate is DATED, never silently replaced). ⛔ **The minting reading is TRUE of its own population — three waves of register work — and the correction is a CONSTRAINT ON THE INSTRUMENT THIS ROW ASKS FOR: it owes a SECOND COLUMN for component-owned capabilities, not a correction to the first.** ⚠️ **An instrument shipped without it would report a velocity collapse every time the project delivers a sibling, which is `W147`'s inversion — a check that goes red for the tree being right.**
+
+### ⛔ WHY IT IS NOT A BOARD CELL, AND THE REFUSAL IS THE BOARD'S OWN CONTRACT
+
+⚠️ **The request that produced this row asked for a standing per-wave READING on the register.** ⛔ **`BOARD.md`'s register says of itself: *"A cell in this table carries no measurement, no ref other than a merge ref, and no reasoning — those are the three things that go stale, and they have exactly one home each."*** ⭐ **A standing per-wave reading is a MEASUREMENT, and putting one on the board rebuilds precisely the defect `CLAUDE.md` was rewritten to remove: a live fact in a snapshot, kept freshly wrong.**
+
+⭐ **A POINTER RESOLVES AT READ TIME; A FIGURE DOES NOT. So the reading belongs in an instrument whose output IS its reading — which is what the floor's notices already are.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THIS ROW OWES A DESIGN DECISION BEFORE IT OWES CODE:** ⭐ **whose instrument prints it — the quality floor, `tools/quality/board/`, or a wave-close step in `docs/conventions/board.md`** — ⚠️ **and the answer is constrained, because a floor that reads the COMMIT GRAPH is a floor whose reading changes with no file changing.**
+2. ⭐ **THE POPULATION IS THE GENERATED INDEX'S** — `docs/capability-index.md` — ⛔ **never a hand-kept list, or the instrument inherits `W151`'s defect in its own first commit.**
+3. ⛔ **THE FALSE-POSITIVE CLASS IS DECLARED, NOT DISCOVERED:** ⚠️ **a capability id matches a merge subject for reasons OTHER than delivery — ruling prose carried in a roll-up subject is the measured instance, and two ids were false positives under a naive grep.** ⭐ **A predicate that cannot separate them prints a plausible number, which is the exact failure mode this row exists to stop.**
+4. ⚠️ **THE MILESTONE LEDGER IS THE STRONGER INSTRUMENT AND THE GREP IS THE WEAKER ONE.** ⛔ **Milestones CLOSE at named refs under Ruling 97; a subject grep merely agrees with them. A taker who builds only the grep has built the second-best reading and should say so.**
+5. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a wave that delivers a capability prints a different figure from one that delivers none.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A QUOTA, A TARGET OR A GATE.** ⭐ **The figure is a READING and this project's answer to *the register took the whole wave* is a PRECEDENCE PROPERTY, not a ratio** (`PO-51` §6, Q1). ⚠️ **An instrument that went red on a low figure would refuse correct waves — a wave spent on one large capability task has the worst possible ratio and is exactly what this project wants.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/` or `tools/quality/board/`, per the decision in clause 1, plus `docs/conventions/board.md` if the reading is a wave-close step.** ⚠️ **It names `docs/conventions/`, which is a SHARED constraint and not this row's alone —
+⛔ the members are listed ONCE, in the board's own *Next rows* note, and are not retyped here**
+(check 4's sub-step, and the board's closing rule: when a fact changes, exactly one file changes).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 79
+
+⭐ **Merged at `2ffd4a8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2ffd4a8` is RECEIVED.** ⭐ **Capability delivery between two named refs is printed by `python3 -m tools.quality.board.delivery`, never by the floor and never on the board. Its population is the generated index, and a roll-up subject citing an id is printed, not counted.** ⚠️ **Each finding's disposition is this round's § 7.**
