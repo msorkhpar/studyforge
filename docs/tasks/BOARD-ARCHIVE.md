@@ -22362,7 +22362,7 @@ gated skips, weighted by their [n] groups                            10
 
 ## PO round 78 — `W163` closed, `W250` named, and ISO round 8 pending on `W242`
 
-⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) and `5d9436d` (`W250`, carrying `cbc0991`, `W242`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings at `accceaf`, `947a007`, `cbc0991` and `5d9436d`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; a second run, at `79a5669`, started before the `W242` and `W250` readings arrived. The reading of record is the run after `5d9436d`'s merge.**
+⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) `5d9436d` (`W250`, carrying `cbc0991`, `W242`) and `973fc67` (carrying `b9e68cc`, `W149`, and `W156`'s merge) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each closed row is RECEIVED: the coordinator's release-tip readings at `accceaf`, `947a007`, `cbc0991`, `5d9436d` and `b9e68cc`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; a second run, at `79a5669`, started before the `W242` and `W250` readings arrived. The reading of record is the run after `973fc67`'s merge.**
 
 ### ⭐ 1 — CLOSES
 
@@ -22372,9 +22372,10 @@ fix/W163-visual-reasoning             0362b7d6  0362b7d6     0      NOWHERE
 fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
 fix/W242-sibling-ignore-home          1b39682d  1b39682d     0      NOWHERE
 fix/W250-linked-heading-not-an-entry  a6602c6b  a6602c6b     0      NOWHERE
+fix/W149-merge-subject-prose          be324640  be324640     0      NOWHERE
 ```
 
-⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W248.md` re-pointed for `W242`, `rows/W249.md` for `W250`; `W163` and `W153` have none. ⚠️ **The four rows' own handoffs and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
+⭐ **All five TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W248.md` re-pointed for `W242`, `rows/W249.md` for `W250`; `W163`, `W153` and `W149` have none. ⚠️ **The four rows' own handoffs and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
 
 ⚠️ **`docker/dev/` is an image build input, so this merge moved the dev image identity from `inputs-f1874d21…` to `inputs-f5bb0ced…`.** The change is comment lines only; no configuration line changed.
 
@@ -22383,8 +22384,9 @@ fix/W250-linked-heading-not-an-entry  a6602c6b  a6602c6b     0      NOWHERE
 1. ⛔ **`W163/2` is relayed to the user and folded into the held `W162/7` + `W162/8` question, not minted.** No environment reaches the two identity checks: the FRESH arm returns before the flag is read, and they need the host, a daemon, Compose and network to the package index. [Ruling 332](../conventions/review-rubric.md#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) and [Ruling 333](../conventions/review-rubric.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) forbid a taker from supplying that network, so a row would be one no office may take. ⭐ **They stay declared unmeasured in `devgate.FRESH`, which prints on every run.**
 2. ⭐ **`W153/2`, adopted by the coordinator, is RECORDED.** Every carrier is cut with `git config branch.<branch>.description W<n>`. A declared carrier leaves `corroborate`'s *dispatched and unnamed* gate before a register round names it, and the In flight table stays authoritative wherever it names a branch. ⭐ **The dispatch convention now points at [the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded):** one line under `delivery-flow.md`'s branch table, because a taker cutting a branch reads that table and not `corroborate`'s section. ⚠️ **The board does not repeat it: `board.md` carries the rule (Ruling 349), and the board's narrative is at its bound.**
 3. ⭐ **`W153` closes in this round, not round 79.** The message arrived before the reading of record, and `947a007` is merged here. Reversible.
-5. ⭐ **`W242` and `W250` close in this round too, at the coordinator's word.** `5d9436d` is merged here, and the reading of record follows it. Reversible.
 4. ⛔ **`W242/1` is CONFIRMED: a build's output is committed** — its pages, the root index, the asset bundle and `site.json`. §5 now says so in one sentence. ⭐ **The ground is §5's own:** *regenerable is not the same as available*, so a clone that ignores its pages has no reading floor (R8, §11.0). `ISO-05` also refuses any generated rule matching `*.html` or `*.json`. ⚠️ **This DATES the first half of [Ruling 91](../tasks/handoffs/CTO-2026-09-10-round26.md#ruling-91-f19-a-sibling-build-does-not-need-readmemd-rewritten-and-never-did), which declared `sibling` output in `.gitignore`.** Ruling 91's record stands unedited (Ruling 106), and its profile-switch half is untouched. ⭐ **Reversible:** no page is committed into ISO before `ISO-10`, and ISO round 8 (`ISO-05`) commits none.
+5. ⭐ **`W242` and `W250` close in this round too, at the coordinator's word.** `5d9436d` is merged here, and the reading of record follows it. Reversible.
+6. ⭐ **`W149` closes here too, and `W156` does not.** `973fc67` carries `W156`'s merge, whose reading had not arrived when the run of record was cut, so `W156` stays named and closes in round 79. ⭐ **`W149/1` is ADOPTED by the coordinator:** every merge subject runs through `tools.quality.subject` before the merge. Reversible.
 
 ### ⭐ 3 — WHAT EACH FINDING BECAME
 
@@ -22412,10 +22414,13 @@ fix/W250-linked-heading-not-an-entry  a6602c6b  a6602c6b     0      NOWHERE
 | `W250/2` | ⭐ **minted [`W252`](rows/W252.md)**: a heading-form entry reads no ordinal. Same surface as `W249`, so one owner, after it |
 | `INT-08/4` | discharged: `ISO-10` waited on `W242/1`, CONFIRMED in § 2.4 |
 | `INT-08/6` | discharged: `ISO-07` and `ISO-08` needed `W250`, closed in this round at `5d9436d` |
+| `W149/1` | ⭐ **adopted by the coordinator, § 2.6** |
+| `W149/2` | accepted, cost named: a reading with no count is DECLARED and not decided, because a claim's tense is not decidable from the string |
+| `W149/3` | disposed at the close: the predicate is one submodule of `tools/quality/` with its mirror, inside the declared surface |
 
-⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** [`W249`](rows/W249.md), Developer 2, `fix/W249-source-and-not-material-globs` @ `wt/dev2`, cut `5d9436d`, declared by its branch description; it follows `W250` on `skills/reconnaissance/`. ⭐ **Mints, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42) and [`W252`](rows/W252.md) (`W250/2`, order 43).
+⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** [`W249`](rows/W249.md), Developer 2, `fix/W249-source-and-not-material-globs` @ `wt/dev2`, cut `5d9436d`, declared by its branch description; it follows `W250` on `skills/reconnaissance/`. [`W248`](rows/W248.md), Developer 1, `fix/W248-archive-root-refuses-strays` @ `wt/dev1`, cut `b9e68cc`, declared by its branch description. ⚠️ **It jumps board order as the only free framework surface serving `M6`, the coordinator's ground (Ruling 75); `W210`, which shares `cli/plan/`, is not in flight.** ⭐ **Mints, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42) and [`W252`](rows/W252.md) (`W250/2`, order 43).
 
-⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) was dispatched mid-round at `W242`'s merge, reading framework `cbc0991`. With `W242` merged, every framework blocker ISO round 6 found (`W239`–`W243`) is in. It merged into ISO at `a71a290`, and `ISO-05` is TAKEN; `ISO-06` was not, because its XML clause waits on `W243/1`. ⭐ **RECEIVED:** `INT-07/4` is discharged by `W242` at `cbc0991`, re-measured on a real `sibling` build with a planted control. ⭐ **The pin advanced to `a71a290` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, at `168a78e`, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`. ⚠️ **`W149` merged at `b9e68cc` after this round's run of record was cut. It closes on the coordinator's reading, and `corroborate` refutes it until then.**
+⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) was dispatched mid-round at `W242`'s merge, reading framework `cbc0991`. With `W242` merged, every framework blocker ISO round 6 found (`W239`–`W243`) is in. It merged into ISO at `a71a290`, and `ISO-05` is TAKEN; `ISO-06` was not, because its XML clause waits on `W243/1`. ⭐ **RECEIVED:** `INT-07/4` is discharged by `W242` at `cbc0991`, re-measured on a real `sibling` build with a planted control. ⭐ **The pin advanced to `a71a290` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, at `168a78e`, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`. ⚠️ **`W156` merged at `973fc67`, and its reading had not arrived before the run of record. It closes in round 79, and `corroborate` refutes it until then.**
 
 ⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8`, now with `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
 
@@ -22575,3 +22580,57 @@ CORROBORATE_EXIT=0
 #### ⭐ CLOSED — PO ROUND 78
 
 ⭐ **Merged at `5d9436d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5d9436d` is RECEIVED.** ⭐ **A heading that links a file is a group label whose units are that file's regions, so `F21`'s fourth container is proposed.** ⭐ **RECEIVED, the ISO re-read:** `TestCases.md` becomes a container of regions, which unblocks `ISO-07` and `ISO-08`. ⚠️ **[`W249`](rows/W249.md) follows on the same surface. `W250/1` and `/2`: this round's § 3.**
+
+### W149 — A merge subject's PROSE is re-derived against its record by nobody, and a subject cannot be annotated after it lands
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W149.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`SESSION-2026-09-11c/11`, accepted by the reviewing office as a real gap and filed to this board: a merge subject is read for its VERDICT TOKEN and its BRACKET, and its PROSE is re-derived against the record by nobody.** ⭐ **A merge subject cannot be annotated afterwards, so a false one enters the release UNCORRECTABLE.**
+
+### ⛔ THE LIVE WITNESSES — EVERY ONE THE REVIEWING OFFICE'S OWN, AND THE LAST TWO ARRIVED IN THE ROUND THAT MINTED THIS ROW
+
+| id | ⛔ what entered a subject |
+|---|---|
+| `CTO-65/8` | a subject stated a COUNT of the record's own recorded defects and the count was short of what the record held — ⚠️ **caught only because a branch happened to return** |
+| `CTO-65/12` | a section asserted an invariant about subjects THREE LINES ABOVE a subject that violated it |
+| `CTO-66/4` | ⭐ **THIRD, found by the reviewer inside the record that mints this row** — an office's own defect entry stated the very defect it was entered for, three lines below the correction |
+| `CTO-66/19` | ⭐ **FOURTH, and the first whose subject's AUTHOR was the office that minted this row** — a verdict subject composed in READING form (*"two branches reviewed"*) in the same record that ruled a subject's prose is re-derived by nobody, and unnoticed across three further commits |
+
+⭐ **The reviewing office's own words, ruling it onto this board: *"a merge subject is read for its verdict token and its bracket, and its PROSE is re-derived against the record by nobody — which is exactly how `CTO-65/8`'s wrong count would have entered the release. That is the same shape as `W78`'s whole row: a claim nothing re-measures."***
+
+### ⛔ THE FOURTH WITNESS IS THE STRONGEST ARGUMENT THIS ROW WILL EVER GET, AND IT IS NOT THIS OFFICE'S CLAIM
+
+⭐ **The reviewing office's own words, routing `CTO-66/19` here** (Ruling 195 — quoted, not paraphrased):
+
+> ⚠️ **I composed a verdict subject in READING form in the same record in which I minted `W149` and ruled that a subject's prose is re-derived by nobody.** ⛔ **It was wrong at the moment I wrote it and I did not notice across three further commits.** ⭐ **THE COORDINATOR CANNOT FIX IT AND SAID SO PLAINLY — they check the token and the bracket and do not re-derive the prose.** ⚠️ **So the one defect class `W149` exists for was, this round, caught by the office that has no instrument for it, against the office that had just ruled on it.**
+
+⛔ **The repair the reviewer reached without an instrument is ALSO the row's own best clause, and it terminates the regress: A SUBJECT STATED AS A PROPERTY IS TRUE AT EVERY REF; A SUBJECT STATED AS A READING IS TRUE AT ONE.** ⭐ **Both round-66 subjects were rewritten in property form — *every branch offered*, *every defect of my own* — and survived two further tip moves unchanged, which turns Ruling 320 from a diagnosis into a construction.**
+
+⚠️ **RECORDED BY THE ROUND-52 REGISTER, which is the office that owns `docs/tasks/` and therefore the only one that could perform the routing the reviewer asked for.**
+
+### ⭐ WHY THIS IS `W78` ONE LEVEL UP AND IS NOT `W78`
+
+⛔ **`W78` is a claim in a DOCUMENT that no instrument re-derives, and its remedy could be an instrument over documents.** ⚠️ **A merge subject is in the COMMIT GRAPH: it is immutable, it is not a file, no floor walks it, and no annotation can reach it.** ⭐ **So the remedy must run BEFORE the merge, which makes it a GATE and not a sweep — a different shape from `W78`'s, on a population `W78` cannot see.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A PRE-MERGE PREDICATE over the subject string, run by whoever composes it, with its pass condition stated in `docs/conventions/review-rubric.md`.** ⭐ **`CTO-63/6` already forbids a COUNT in a subject and `Ruling 320` already distinguishes a PROPERTY from a READING — this row gives those two an instrument instead of a memory.**
+2. ⭐ **THE POPULATION IS THE SUBJECT'S CLAIMS, ENUMERATED, and the pass condition is that every claim is a PROPERTY** — ⛔ **never *the office checked it*, which is the memory-discharged exemption Ruling 185(a) forbids.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a subject carrying a bare integer is REFUSED, and a subject stating the same fact as a property PASSES — ⚠️ **and the refusal arm is tested on a string built for the test, never on a real historical subject, because a historical subject is frozen and re-deriving one is not this row's business.**
+4. ⚠️ **THE VERDICT TOKEN AND BRACKET ARE ALREADY READ AND STAY READ.** ⭐ **This row ADDS a reader; it removes none.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **AN INSTRUMENT THAT EDITS OR PROPOSES SUBJECTS.** ⭐ **The subject is the merging office's sentence and stays theirs; the instrument REFUSES and says which clause refused.** ⛔ **AND NOT A SWEEP OF HISTORY** — ⚠️ **every past subject is frozen, no office may repair one, and a check that reports on them produces a backlog nobody is permitted to clear** (Rulings 106, 174).
+
+### ⭐ SURFACE
+
+⛔ **`docs/conventions/review-rubric.md` for the clause, and `tools/quality/` for the predicate if the decision puts one there.** ⚠️ **It names `docs/conventions/`, which is a SHARED constraint and not this row's alone —
+⛔ the members are listed ONCE, in the board's own *Next rows* note, and are not retyped here**
+(check 4's sub-step, and the board's closing rule: when a fact changes, exactly one file changes).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `b9e68cc`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `b9e68cc` is RECEIVED.** ⭐ **A merge subject's prose is read by a pre-merge predicate, `tools.quality.subject`, whose pass condition is in `docs/conventions/review-rubric.md`: a claim carrying a bare count is refused before the merge.** ⭐ **The coordinator runs it on every merge subject (`W149/1`).** ⚠️ **A reading with no count is declared, not decided (`W149/2`). Each finding's disposition is in this round's § 3.**
