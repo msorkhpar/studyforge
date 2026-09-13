@@ -99,7 +99,7 @@ python3 -m studyforge.validate tests/fixtures/depth1
 ```
 .: [origin-not-a-file] not checked — none of the 4 declared origin path(s) is on disk, so whether each names a file rather than a directory could not be checked
 .: [unclassified] not checked — no source material is present beside the archive, so there is nothing to classify
-.: [short-read] not checked — none of the 3 declared origin file(s) is present, so the source tree is absent and no unit's completeness was checked
+.: [short-read] not checked — none of the 3 declared origin file(s) is present, and no file in a top-level directory those origins name is source the manifest's 'content' declares, so the source tree is absent and no unit's completeness was checked
 valid: 0 finding(s), 3 unchecked claim(s)
 ```
 
