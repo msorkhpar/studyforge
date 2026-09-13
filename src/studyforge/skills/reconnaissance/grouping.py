@@ -4,7 +4,8 @@ r"""Which lines in a curriculum record are group labels, and which are units.
 where its lines sit rather than from how they are marked up.
 
 **How you use it.** `grouping(lines, entries)` returns
-`(group labels, entries each carrying its group)`.
+`(group labels, entries each carrying its group)`. `choose(lines, entries,
+holds)` returns the labels with their lines, for a caller that needs positions.
 
 **Depends on.** `record`'s `Entry` and its line patterns. ⛔ Split out of
 `record` at SK-01 because they answer different questions and the module was
@@ -24,9 +25,29 @@ corpora and the counts.
 ⭐ So a group label is *"a line that introduces a run of entries and is not
 itself an entry"*, and the labels of one grouping all share one **shape**. Both
 corpora fall out of that rule; neither falls out of a syntax rule.
+
+## ⛔ A heading that links a file is not a unit by the link alone (W250)
+
+⭐ **It is read as a group label that names where its units are**, when it
+stands where the grouping's labels stand, opens no entry of the record, and the
+file it links is cut into regions (`regions`). Its units are those regions.
+
+- **§6 reads a record by position, not by mark.** A link records an `origin`,
+  and a container carries an `origin` exactly as a unit does, so a link says
+  *where something is* and never *what role it has*. Role stays positional.
+- **Ruling 92 makes a unit a region of one file** (`origin: {path, section}`). A
+  label whose file is cut into regions heads a container of sub-file units, and
+  reading that label as one whole-file unit erases every unit inside it.
+
+⚠️ **Anywhere else a linked heading is still an entry:** inside a run of
+entries, at a shape that is not the labels', above entries it opens, or linking
+a file that is one unit. `record.observe` asks about the last by name.
 """
 
 from __future__ import annotations
+
+from collections import Counter
+from dataclasses import replace
 
 from studyforge.skills.reconnaissance.record import (
     HEADING,
@@ -71,8 +92,16 @@ def shape(line: str) -> str:
     return "bare" if line.strip() else "blank"
 
 
-def grouping(lines, entries: list[Entry]) -> tuple[list[str], list[Entry]]:
-    """Return `(group labels, entries with a group each)`, or no grouping at all.
+def grouping(lines, entries: list[Entry], holds=frozenset()) -> tuple[list[str], list[Entry]]:
+    """Return `(group labels, entries with a group each)`; `choose` decides them."""
+    found, kept = choose(lines, entries, holds)
+    return [text for _, text in found], assign(kept, found)
+
+
+def choose(
+    lines, entries: list[Entry], holds=frozenset()
+) -> tuple[list[tuple[int, str]], list[Entry]]:
+    """Return `(labels as (line, text), the entries that are still entries)`.
 
     ⛔ **One shape wins or none does.** Candidate labels are gathered by shape —
     `h1`, `h2`, a bare line, a list item at some indent — and a shape qualifies
@@ -85,8 +114,12 @@ def grouping(lines, entries: list[Entry]) -> tuple[list[str], list[Entry]]:
     ⭐ Both measured corpora fall out of this one rule and neither falls out
     of a syntax rule — one labels with headings, the other with bare numbered
     lines and no heading anywhere in the region (`SKILL.md` step 3).
+
+    ⭐ `holds` names the linked files cut into regions. A heading linking one
+    is a candidate label of its own shape (module docstring); it is settled a
+    label only if it opens no entry, and otherwise stays the entry it was.
     """
-    carrying = {entry.line for entry in entries}
+    carrying = Counter(entry.line for entry in entries)
     candidates: dict[str, list[tuple[int, str]]] = {}
     for number in range(1, entries[-1].line + 1):
         if number in carrying:
@@ -94,20 +127,54 @@ def grouping(lines, entries: list[Entry]) -> tuple[list[str], list[Entry]]:
         text = label(lines[number - 1])
         if text:
             candidates.setdefault(shape(lines[number - 1]), []).append((number, text))
-    # ⚠️ Labels above the first entry are kept only as far back as the one that
-    # opens it: a document's own title is a label for everything below it, and
-    # a measured corpus records its first container exactly there — see
-    # `SKILL.md`, appendix **A3**.
-    candidates = {shape: _from_opening(found, entries) for shape, found in candidates.items()}
-    qualified = {shape: found for shape, found in candidates.items() if _partitions(found, entries)}
+    linked: dict[str, list[tuple[int, str]]] = {}
+    for entry in entries:
+        line = lines[entry.line - 1]
+        if carrying[entry.line] == 1 and entry.target in holds and HEADING.match(line):
+            linked.setdefault(shape(line), []).append((entry.line, entry.title))
+    qualified = {}
+    for kind in sorted(set(candidates) | set(linked)):
+        settled = _settle(candidates.get(kind, []), linked.get(kind, []), entries)
+        if settled is not None:
+            qualified[kind] = settled
     if len(qualified) != 1:
         return [], entries
-    found = _drop_stray_opening(next(iter(qualified.values())), entries)
-    return [text for _, text in found], _assign(entries, found)
+    found, kept, labels = next(iter(qualified.values()))
+    return _drop_stray_opening(found, kept, labels), kept
+
+
+def _settle(plain, linked, entries: list[Entry]):
+    """Return `(labels, entries left, linked label lines)` if this shape groups, else `None`.
+
+    ⚠️ A linked candidate that opens an entry is put back as that entry, and the
+    rest are judged again, because putting one back widens the label above it.
+    """
+    while True:
+        lines = {number for number, _ in linked}
+        kept = [entry for entry in entries if entry.line not in lines]
+        if not kept:
+            return None
+        # ⚠️ Labels above the first entry are kept only as far back as the one
+        # that opens it: a document's own title is a label for everything below
+        # it, and a measured corpus records its first container exactly there —
+        # see `SKILL.md`, appendix **A3**.
+        found = sorted(_from_opening(plain, kept) + linked)
+        opening = {number for number, _ in linked if _opens(number, found, kept)}
+        if not opening:
+            break
+        linked = [candidate for candidate in linked if candidate[0] not in opening]
+    return (found, kept, lines) if _partitions(found, kept, lines) else None
+
+
+def _opens(number: int, found: list[tuple[int, str]], entries: list[Entry]) -> bool:
+    """Say whether the label on line `number` has an entry before the next label."""
+    after = [line for line, _ in found if line > number]
+    end = after[0] if after else float("inf")
+    return any(number < entry.line < end for entry in entries)
 
 
 def _drop_stray_opening(
-    found: list[tuple[int, str]], entries: list[Entry]
+    found: list[tuple[int, str]], entries: list[Entry], linked=frozenset()
 ) -> list[tuple[int, str]]:
     """Drop a leading label that opens too few entries to be a group.
 
@@ -121,8 +188,10 @@ def _drop_stray_opening(
     ⭐ A run smaller than the allowance is not a group; it is the stray the
     allowance exists for, and `observe` names it. ⛔ Applied only at the front:
     a genuinely small *last* container is a real thing and this must not eat it.
+    ⛔ Nor a linked label: it opens no entry by construction, and its units are
+    the regions of its file.
     """
-    while len(found) > 2:
+    while len(found) > 2 and found[0][0] not in linked:
         opened = sum(1 for entry in entries if found[0][0] < entry.line < found[1][0])
         if opened > UNLABELLED_ALLOWANCE * len(entries):
             break
@@ -136,13 +205,14 @@ def _from_opening(found: list[tuple[int, str]], entries: list[Entry]) -> list[tu
     return found[above[-1] :] if above else found
 
 
-def _partitions(found: list[tuple[int, str]], entries: list[Entry]) -> bool:
+def _partitions(found: list[tuple[int, str]], entries: list[Entry], linked=frozenset()) -> bool:
     """Judge whether these labels cut the entries into runs, leaving few above the first.
 
     ⛔ Every label must open at least one entry. That is the test that refuses
     a document's many top-level headings when only a few of them are
     containers: the rest head a chapter of an entirely different document, and
-    no unit sits beneath any of them (`SKILL.md` step 3).
+    no unit sits beneath any of them (`SKILL.md` step 3). ⭐ A linked label is
+    the one exception, and `_settle` has already required it to open none.
 
     ⚠️ And almost every entry must be under a label. `UNLABELLED_ALLOWANCE`
     says how much slack that "almost" is worth, and `observe` reports whatever
@@ -151,22 +221,18 @@ def _partitions(found: list[tuple[int, str]], entries: list[Entry]) -> bool:
     """
     if len(found) < 2:
         return False
-    lines_of = [entry.line for entry in entries]
-    edges = [number for number, _ in found] + [entries[-1].line + 1]
-    if not all(
-        any(edges[index] < line < edges[index + 1] for line in lines_of)
-        for index in range(len(found))
-    ):
+    plain = [number for number, _ in found if number not in linked]
+    if not all(_opens(number, found, entries) for number in plain):
         return False
-    stray = sum(1 for line in lines_of if line < found[0][0])
+    stray = sum(1 for entry in entries if entry.line < found[0][0])
     return stray <= UNLABELLED_ALLOWANCE * len(entries)
 
 
 def label(line: str) -> str | None:
     """Return the text of a line that could introduce a group, or `None`.
 
-    ⛔ A line carrying a link is an entry, never a label — that is the one
-    syntactic test here, and it is about the corpus rather than about Markdown.
+    ⛔ A line carrying a link is never read as a label **here**: whether a
+    linked heading is one is decided by its position, in `choose`.
     """
     if LINK.search(line):
         return None
@@ -180,7 +246,7 @@ def label(line: str) -> str | None:
     return numbered.group("rest").strip() if numbered else stripped
 
 
-def _assign(entries: list[Entry], found: list[tuple[int, str]]) -> list[Entry]:
+def assign(entries: list[Entry], found: list[tuple[int, str]]) -> list[Entry]:
     """Attach each entry to the label most recently opened above it."""
     out: list[Entry] = []
     for entry in entries:
@@ -188,5 +254,5 @@ def _assign(entries: list[Entry], found: list[tuple[int, str]]) -> list[Entry]:
         for number, text in found:
             if number < entry.line:
                 current = text
-        out.append(Entry(entry.target, entry.title, entry.ordinal, entry.line, current))
+        out.append(replace(entry, group=current))
     return out
