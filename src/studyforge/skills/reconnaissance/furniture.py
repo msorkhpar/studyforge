@@ -7,10 +7,13 @@ globs (R19, `W249`).
 
 **How you use it.** `propose(root, include, exclude)` returns a `Furniture`:
 its `entries` (each `{"glob": ..., "why": None}`), how many files it judged,
-and whether git's ignore rules were read.
+whether git's ignore rules were read, the globs the root's manifest already
+declares, how many files those cover, and `stands_down`: why the proposal
+cannot be read as complete, by name, or `None` (`W269`).
 
 **Depends on.** `studyforge.validate.source.source_files` for the population,
-and `studyforge.skills.onboarding.RECORD_FILE` for what onboarding wrote.
+`studyforge.skills.onboarding.RECORD_FILE` for what onboarding wrote, and
+`studyforge.corpus.manifest.MANIFEST_FILENAME` for what the corpus declares.
 ⛔ Nothing source-specific (R1): no file name is special here.
 
 ## ⛔ The population is validate's walk, never a list here
@@ -41,6 +44,20 @@ not propose them. ⚠️ An unreadable record reads as no footprint, and any
 collision that follows is refused by `promote` by name. ⛔ The record is a list
 of paths, so it is gated before a field is read (R7, W7), and a leak raises.
 
+## ⛔ A file a declared glob covers is never re-proposed (`W269`, `INT-10/2`)
+
+A re-survey reads the root's own manifest. A file one of its `not_material`
+globs covers, by the manifest's own match, is neither proposed nor swept by a
+directory glob: it holds its directory, as a read file does. ⚠️ An unreadable
+manifest reads as no declaration, and it is gated before a field is read (R7).
+
+## ⛔ A proposal that stands down says so (`W269`, `INT-10/1`)
+
+Judging no file, or judging without git's ignore rules, is named in
+`stands_down` whatever was proposed. ⚠️ A root inside another repository's
+ignored directory is answered for by THAT repository, so it judges no file:
+the silence this names.
+
 ## ⛔ The reasons are a person's (`W240/3`)
 
 Every `why` is `None`. SF-02 refuses it, and `promote` pairs it from the
@@ -55,6 +72,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
+from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.skills.onboarding import RECORD_FILE
 from studyforge.validate.source import source_files
 
@@ -72,11 +90,33 @@ class Furniture:
     judged: int
     #: False where the root is not a git working tree, so no ignore rule was read.
     consulted: bool
+    #: ⭐ `W269`: the `not_material` globs the root's own manifest already declares.
+    declared: tuple[str, ...] = ()
+    #: ⭐ `W269`: files a declared glob covers, and so never re-proposed.
+    covered: int = 0
 
     @property
     def globs(self) -> list[str]:
         """The proposed globs, in the order they are drafted."""
         return [str(entry["glob"]) for entry in self.entries]
+
+    @property
+    def stands_down(self) -> str | None:
+        """Name why this proposal cannot be read as complete, or return `None` (`W269`)."""
+        if not self.judged and self.consulted:
+            return (
+                "it judged no file: git's ignore rules, answered by the working tree that "
+                "holds this root, declare every file output, which is how a root inside "
+                "another repository's ignored directory reads"
+            )
+        if not self.judged:
+            return "it judged no file, and git's ignore rules were not read"
+        if not self.consulted:
+            return (
+                "git's ignore rules were not read, as this root is not a git working tree, "
+                "so generated output was judged as if it were material"
+            )
+        return None
 
 
 def propose(root: Path | str, include: Sequence[str], exclude: Iterable[str]) -> Furniture:
@@ -90,7 +130,9 @@ def propose(root: Path | str, include: Sequence[str], exclude: Iterable[str]) ->
         for where in seen
         if where in withheld or any(PurePosixPath(where).full_match(g) for g in include)
     }
-    occupied = read | _footprint(root)
+    declared = _declared(root)
+    covered = {where for where in seen if any(PurePosixPath(where).full_match(g) for g in declared)}
+    occupied = read | covered | _footprint(root)
     held = {parent.as_posix() for where in occupied for parent in PurePosixPath(where).parents}
     left = [where for where in seen if where not in occupied]
     globs = sorted({_glob(where, held) for where in left})
@@ -98,6 +140,8 @@ def propose(root: Path | str, include: Sequence[str], exclude: Iterable[str]) ->
         entries=tuple({"glob": glob, "why": OPEN_REASON} for glob in globs),
         judged=len(seen),
         consulted=scan.consulted,
+        declared=declared,
+        covered=len(covered),
     )
 
 
@@ -125,4 +169,22 @@ def _footprint(root: Path) -> frozenset[str]:
         entry["where"]
         for entry in files
         if isinstance(entry, dict) and isinstance(entry.get("where"), str)
+    )
+
+
+def _declared(root: Path) -> tuple[str, ...]:
+    """Every `not_material` glob the root's manifest declares, or none if it cannot be read."""
+    try:
+        document = json.loads((root / MANIFEST_FILENAME).read_text(encoding="utf-8"))
+    except OSError, ValueError:
+        return ()
+    assert_clean(document, MANIFEST_FILENAME)
+    content = document.get("content") if isinstance(document, dict) else None
+    entries = content.get("not_material") if isinstance(content, dict) else None
+    if not isinstance(entries, list):
+        return ()
+    return tuple(
+        entry["glob"]
+        for entry in entries
+        if isinstance(entry, dict) and isinstance(entry.get("glob"), str)
     )
