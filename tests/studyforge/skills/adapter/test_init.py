@@ -3,12 +3,19 @@
 from __future__ import annotations
 
 import importlib.util
+import os
+import subprocess
+import sys
 
 import studyforge.validate as validate_package
 from studyforge.cli import PROGRAM, VERBS
 from studyforge.skills import adapter
 from studyforge.skills.adapter import PARTS
+from studyforge.validate import CHECKS
 from tests.support import assert_package_contract, repository_root
+
+#: How far past a dated figure its dating must appear, in characters.
+DATED_WITHIN = 400
 
 #: The verb the skill's fence gives. ⛔ Checked against the registered table
 #: rather than assumed, so retiring the verb fails here and not in a reader's
@@ -55,9 +62,35 @@ def test_the_skill_names_validate_as_its_definition_of_done():
 def test_the_skill_carries_the_measurements_rather_than_asserting_shape():
     # ⛔ R19: anything a second source would have to re-derive is a hole in the
     # skill. Each number below was counted in the pinned image, not inherited.
+    # ⚠️ W257 (rider W248/3): the check and rule-id counts went stale after
+    # `f816454`. They are DATED IN PLACE (Ruling 106), not rewritten, so the
+    # date beside each is pinned with it.
     text = skill_text()
     for measured in ("**12 checks**", "**23 distinct rule ids**", "**11\ntypes**", "12.2%"):
         assert measured in text, f"the skill no longer carries the measurement {measured!r}"
+    for stale in ("**12 checks**", "| checks | **12** |"):
+        following = text[text.index(stale) : text.index(stale) + DATED_WITHIN]
+        assert "⚠️ **Dated, and stale**" in following, (
+            f"{stale!r} reads as current; it is a reading at f816454 and must say so"
+        )
+
+
+def test_the_skill_prints_the_check_count_rather_than_carrying_it():
+    # ⭐ Ruling 163: a pointer resolves at read time, and an agent executes a
+    # fence, so the fence is run here rather than read.
+    fences = [line for line in skill_text().splitlines() if "len(v.CHECKS)" in line]
+    assert len(fences) == 1, fences
+    assert fences[0].startswith('python3 -c "') and fences[0].endswith('"'), fences[0]
+    env = {**os.environ, "PYTHONPATH": str(repository_root() / "src")}
+    result = subprocess.run(
+        [sys.executable, "-c", fences[0][len('python3 -c "') : -1]],
+        capture_output=True,
+        text=True,
+        env=env,
+        timeout=60,
+        check=False,
+    )
+    assert result.stdout.strip() == f"{len(CHECKS)} checks", result.stdout + result.stderr
 
 
 def test_every_part_is_produced_by_a_step_the_skill_document_writes_down():

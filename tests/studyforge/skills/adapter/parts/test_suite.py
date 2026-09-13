@@ -8,6 +8,7 @@ import json
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.skills.adapter.parts.suite import SUITE_PARTS
+from studyforge.validate.source import repository_ignores
 from tests.studyforge.skills.adapter import corpora
 
 
@@ -48,8 +49,27 @@ def test_the_emission_test_asserts_the_exit_code_and_not_a_shape():
 
 def test_the_emission_test_never_writes_into_the_corpus_it_reads():
     text = files()["tests/ingest/test_emit.py"]
-    assert "shutil.copytree(CORPUS_ROOT, where, ignore=NOT_COPIED)" in text
+    assert "shutil.copytree(CORPUS_ROOT, where, ignore=left_out)" in text
     assert "emit(root," in text and "emit(CORPUS_ROOT," not in text
+
+
+def test_the_working_copy_asks_the_one_ignore_reader_and_keeps_no_list():
+    # ⛔ W257 (INT-09/7): what a copy leaves behind is the repository's answer,
+    # read through W28's one reader. A pattern list beside it is a second
+    # reader that is wrong for the first scratch directory it does not name.
+    text = files()["tests/ingest/test_emit.py"]
+    assert f"from studyforge.validate.source import {repository_ignores.__name__}" in text
+    assert "repository_ignores(CORPUS_ROOT, asked)" in text
+    assert "ignore_patterns" not in text
+    assert "__pycache__" not in text and ".pytest_cache" not in text
+
+
+def test_the_emission_test_holds_every_container_to_its_documents_date():
+    # ⛔ W257 (INT-09/3): the generated suite carries the property, so a
+    # regenerated corpus inherits it (R19).
+    text = files()["tests/ingest/test_emit.py"]
+    assert "def test_every_container_is_dated_with_its_documents(tmp_path):" in text
+    assert "rglob(CONTAINER_FILENAME)" in text
 
 
 def test_the_archive_is_the_one_thing_a_working_copy_leaves_behind():
