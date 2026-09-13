@@ -653,7 +653,7 @@ starts what `SF-19a` built, and the distinction is the surface — a row whose
 **Definition.** `studyforge serve` over a built site: the verb, its arguments,
 and its exit behaviour. Serving the bytes is `SF-19a`'s.
 
-**Acceptance.** Serves both `FND-04` fixtures from a built root. ⛔ **No module
+**Acceptance.** Serves both `FND-04` fixtures from a built root. ⭐ **Two forms, PO round 71 (`W230/1`): with no configured path it serves every corpus under one root, and `--site` serves one corpus built elsewhere.** ⛔ **No module
 in `cli/` names a source.** ⛔ **The Docker socket is never mounted into the
 serving process** (spec §8.3) — not behind a flag, not "only locally".
 ⭐ **A site built by `SF-28` still opens over `file://` with no server**

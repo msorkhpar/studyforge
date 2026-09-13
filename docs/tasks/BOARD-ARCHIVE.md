@@ -20721,3 +20721,132 @@ docs/conventions/review-rubric.md:2561-2   ruled + weak     ⭐ DELIBERATE: the 
 #### ⭐ CLOSED — PO ROUND 70
 
 ⭐ **Merged at `a82db50`, TERMINAL by predicate `C`. The office's gates at `92e460a` and the coordinator's disclosure at `8c24fb7` are RECEIVED from the merge body.** ⭐ **The split condition on `render/page/navigation.py` is discharged by this merge.** ⛔ **`W107/3`: at `a8742c1`, `render.index` defined the composer and no module under `src/` called it. Both composing producers were in `render.page` ([its handoff](handoffs/W107.md)).**
+
+## PO round 71 — W230 and W103 closed, W109, W116 and W117 named, one mint
+
+⛔ **Two merges re-derived on the first-parent chain of `release/m0-foundations`, past round 70's merge `dc0c39b`:** `a956b6c` (`W230`), `a8c4738` (`W103`). ⭐ **`corroborate`, HOST, role `wt/po`, before any register edit: exit 1, refuting exactly those two (the expectation), with `W109`'s branch printed as dispatched and unnamed.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                               merge^2   branch head  ahead  checked out
+fix/W230-serve-every-corpus    b9e64911  b9e64911     0      NOWHERE
+fix/W103-live-disposition      810e038e  810e038e     0      NOWHERE
+```
+
+⭐ **Both are TERMINAL and close under the four edits.** ⭐ **Ruling 97's gate at `a956b6c` and at `a8c4738` is the coordinator's guarded release-tip reading (guard 0, floor GREEN 0, suite GREEN 0, porcelain 0), RECEIVED from the merge bodies and by relay.** ⛔ **The fourth edit for `W103` is not this office's: `docs/conventions/agent-protocol.md` cites `rows/W103.md`, and `W117` in flight holds that directory. That is `PO-71/1`, a rider on [`W231`](rows/W231.md); the stub keeps the link resolving meanwhile.**
+
+### ⭐ 2 — WHAT THE CLOSES SETTLE
+
+⭐ **`W230`: `SK-03/2`'s rider and `PO-70/2` are DISCHARGED.** `--site` stayed, and `verbs.serve` and `SKILL.md`'s fence parse unchanged. ⛔ **`W233` was NOT folded in, so it stays open, and it is FREE now.** ⚠️ **Clause 1 said *through `make_instance`*; the verb calls `discover` and `instance_of`, and `make_instance` is now those two plus the report.** ⭐ **DISPOSED: the substance is met (one instance built from discovery, no configured path), and the letter was refused for a stated reason: an unbuilt corpus exits `1` before a socket exists.** ⚠️ **What it moves is where `run` registers, so that is a sentence in `E05` § `SF-22`.**
+
+⭐ **`W103`: `FND-04/3` annotated CLOSED beneath the record; the form written once in `agent-protocol.md`.** ⭐ **`W103/1` — `FND-04/7` is CLOSED by the register.** ⛔ **MEASURED at `a8c4738`, role `wt/po`, HOST: the largest module under `src/` is 398 lines, and no module under `src/` carries a `Size exception:`.** ⭐ **Its question was whether the ports of two modules over R11's ceiling would fit it. They landed as packages under a floor that fails on the ceiling (`FND-01`), and the floor is GREEN at this ref.** ⚠️ **The annotation points at `SF-12`, `SF-19a` and `W5`, all closed, so it reads true without an edit.**
+
+### ⭐ 3 — PLACEMENT, RATIFIED
+
+⭐ **The coordinator's argument holds on every premise read:** step `4.4` is `SK-06`'s alone. `W88` and `W120` (orders 1–2) write `docs/tasks/rows/`. `W108` adds an `FND-04` fixture, and `E11` § `SK-06`'s Acceptance produces and serves *each* `FND-04` fixture. So `W109` (order 4) took Developer 3's slot and `W116` (order 5) took Developer 1's. ⭐ **`W117` was held only by `W103`'s hold on `docs/conventions/`, released at `a8c4738`, and took `wt/dev3` after `W109` handed back GREEN.** `W118`'s owner is `PO`. ⛔ **`W117` now holds `docs/conventions/`, so `W231` is still not free.**
+
+⚠️ **`W109`'s branch is held by no checkout; its cell keeps `wt/dev3` as dispatched, and `wt/dev3` holds `W117`'s branch. `corroborate` answers CORROBORATED and says nothing about the mismatch: [`W234`](rows/W234.md)'s subject, live on this board.**
+
+### ⛔ 4 — `W88` AND `W120`: THE SKIP IS A PERMANENT CONDITION, SO IT GETS A DISPOSITION
+
+⛔ **The skip's ground is *a register round writes `docs/tasks/rows/`*. Every close writes a stub and every mint writes a file, so every register round writes that directory by construction, and every wave has one.** ⭐ **A deferral whose release condition cannot occur is not a queue position. It is indefinite, and restating it each wave hides that.**
+
+| the exit | ⛔ why it is refused |
+|---|---|
+| a wave with no register round | ⚠️ **it is [`W153`](rows/W153.md)'s shape: the unnamed arm is blind by construction, and `W153` is unrepaired** |
+| a developer takes them beside a register round | ⛔ **check 4's sub-step, and Ruling 222 calls `docs/tasks/rows/` the PO's live surface** |
+
+⭐ **DISPOSITION: THE REGISTER TAKES BOTH.** `W88`'s owner already read `PO`; `W120`'s now does. ⛔ **They are taken as the work of a register round whose brief names them, with both populations re-measured at dispatch (Ruling 214). The coordinator places that round, and no developer placement skips them again.**
+
+⭐ **The wait costs nothing measurable, which is why this is a disposition and not an emergency.** ⛔ **MEASURED at `a8c4738`, role `wt/po`, HOST, over live row files with the prose predicate of `rows/W88.md`: 29 of 120 carry no address beyond the frame. Round 43 read 30, so the population stopped growing once rows were born with a pointer.** ⭐ **Plants: a frame-only file was counted and a file with an archive pointer was not.** ⚠️ **`W120`'s population is the floor's Ruling 186 line, which names the same three rows as at the mint.**
+
+### ⭐ 5 — THE FINDINGS
+
+⭐ **Minted:** [`W234`](rows/W234.md) (`COORD-21/1`), jumping nobody. ⭐ **Sentences, no row:** `W230/1` → `E09` § `SF-39`; `W230/3` → `E11` § `SK-03`; the `make_instance` split → `E05` § `SF-22`. ⭐ **Rider:** `PO-71/1` → [`W231`](rows/W231.md). ⭐ **Closed:** `FND-04/7` (`W103/1`, § 2). **Disposed:** `W230/2` (the usage line is accurate at a root); `W230/4` (fixed in the branch, recorded at the close); `W103/2` (the quote is a reading at its own ref, moved whole, Ruling 106); `W103/3` (a surviving plant, accepted with its cost named: a wrong ref in a record passes the floor. A spelling predicate also matches digests, so no check is built before that population is measured, Ruling 65. Re-opened by the first record found naming a non-ancestor); `W103/4` (accepted, cost named: rule identity is not a spelling. Re-opened by a second instance); `W103/5` (brief hygiene: the register is R21's, spec §2, relayed). `W106/5` and `SK-03/6` were disposed in round 70.
+
+⛔ **`PO-68/2` is unchanged and relayed to the user.**
+
+### W230 — One instance serving several corpora exists in `serve/` and a reader cannot reach it — the verb never builds it and the static mount refuses a nested corpus
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W230.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **ONE INSTANCE SERVING SEVERAL CORPORA EXISTS IN `serve/`, AND A READER CANNOT REACH IT.** ⭐ **`SF-19b/2` + `SF-19b/3`, from [`handoffs/SF-19b.md`](handoffs/SF-19b.md); received, not re-measured by the register.**
+
+1. ⛔ **THE VERB NEVER BUILDS IT** (`SF-19b/3`): `studyforge serve <corpus-root> --site <dir>` takes a configured path; `serve.instance.make_instance(root)` is the seam that needs none, and nothing on the CLI calls it.
+2. ⛔ **THE STATIC MOUNT REFUSES A NESTED CORPUS** (`SF-19b/2`): `serve/routes/assets.resolve` admits the generated dot-directory only as the FIRST URL segment, so a nested `tree` corpus's pages and every nested corpus's `.studyforge/assets/` are refused — while content and state serve both.
+
+### ⛔ WHY IT JUMPS EVERY OTHER `W` ROW
+
+⭐ **`M4`'s *Done when* is *the site has an origin*, and `SF-19b`'s clause is two corpora from one instance** — ⚠️ **the API half is met and asserted; the pages half is false in the configuration the clause names.** ⭐ **`SK-03`, in flight, wraps `serve`, so its skill lands on the verb this row changes.** ⛔ **The dispatch bound is untouched: capability rows take a slot first** (`W224`'s precedent).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`studyforge serve <root>` WITH NO CONFIGURED PATH SERVES EVERY CORPUS `discover(root)` FINDS, THROUGH `make_instance`** — both `FND-04` fixtures under one root, asserted over the wire. ⚠️ **Whether `--site` stays as an override is the taker's to argue; a change to `E09` § `SF-39`'s text is the register's, asked for in the handoff.**
+2. ⛔ **EVERY PAGE AND ASSET HREF A NESTED `tree` CORPUS'S BUILT PAGE EMITS RESOLVES ON THE STATIC MOUNT**, and the progress record is still refused by every spelling (`SF-39/4`). ⭐ **Plant: the first-segment rule restored; the pass condition is the MOVED exit code** (Rulings 124, 348).
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A mount list the reader configures** — that is the configured path the clause refuses. ⛔ **A widened mount that serves a progress store.**
+
+[the mint](#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints)
+
+⭐ **Rider, PO round 70 — `SK-03/2`:** `SK-03` merged at `71ae733`, after this row's cut. The skill spells `serve`'s `--site` and its `started=` hook only in `src/studyforge/skills/buildserve/verbs.py` and in `SKILL.md` step 2's fence, and `test_verbs.py` goes RED first. ⛔ **Whatever this row does to the verb's arguments, that seam moves with it on this branch** ([`handoffs/SK-03.md`](handoffs/SK-03.md), *For dependents*). ⚠️ **[`W233`](rows/W233.md) writes `tests/studyforge/cli/test_serve_process.py`, which this branch edits — ONE OWNER or two waves** ([the round](#po-round-70-w106-w107-and-sk-03-closed-w230-sk-06-and-w103-named-two-mints)).
+
+#### ⭐ CLOSED — PO ROUND 71
+
+⭐ **Merged at `a956b6c`, TERMINAL by predicate `C`. The office's gates at `b9e6491` and the coordinator's disclosure at `dc0c39b` are RECEIVED from the merge body.** ⭐ **`--site` stayed as the override for one corpus built elsewhere; the rider above is discharged.** ⛔ **`W230/4`: a nested `sibling` corpus's `.studyforge/assets/` hrefs were refused as well, and the branch fixed both ([its handoff](handoffs/W230.md)).**
+
+### W103 — A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W103.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A FINDING'S MARKER IS A PROPERTY AND ITS DISPOSITION IS A STATE, AND BOTH LIVE IN THE SAME SENTENCE OF A FROZEN RECORD.** ⭐ **A handoff is corrected by annotating beneath (Ruling 106), so a disposition written into one cannot be replaced when it changes — it can only be contradicted further down, or left standing and wrong.**
+
+⚠️ **`MEASURED` by the PO at `c18df98c`, PO worktree, while discharging the back-triage cell (`W100`). Population declared before the scalar:**
+
+```text
+POPULATION: the 23 pre-marker findings of FND-01, FND-02, FND-04
+dispositions still reading ⚠️ OPEN                              : 2
+   FND-04 finding 3  "the authored overlay is not among R9's versioned contracts"
+   FND-04 finding 7  "CodeSignal's markdown.py 678 / unitdoc.py 827 vs R11's 400"
+of those, ALREADY DISCHARGED ELSEWHERE                          : 1
+   spec §R9's register now reads:
+     | authored overlay | <address>/units/unit-NN/content.json | content_api (SF-09) | a person |
+   ⛔ so FND-04/3 is CLOSED in the spec and reads OPEN in the record
+legitimately open                                               : 1  (FND-04/7)
+```
+
+⭐ **THE SECOND HALF OF THE READING IS WHAT MAKES IT A ROW:** ⛔ **the board's own `## Scheduled` cell has said *"✅ overlay `content.json` closed by SF-09 — `content_api` minted and asserted"* for rounds, so this project held BOTH answers simultaneously, in two documents, and neither pointed at the other.** ⚠️ **`board.md`'s rule is that if a fact appears in two places one of them is wrong — here the wrong one was the immovable one.**
+
+⛔ **AND FND-04/3 IS NOT A CLERICAL MISS. IT IS THE ROW R21 WAS BUILT FOR.** ⭐ **It reads *"now row 1 of §2's register of located contracts"* — it became an R21 row, the R21 row was closed, and the finding that raised it was never told.** ⚠️ **Which is the mechanism working in one direction only: a finding promotes into the register, and nothing demotes the promotion back onto the finding.**
+
+### ⛔ WHAT SETTLES IT, AND IT IS A POINTER RATHER THAN AN EDIT
+
+> ⭐ **A finding whose disposition can still CHANGE is recorded in the handoff and
+> ADDRESSED on the board.** ⛔ **The record keeps the finding and the reading; the
+> board keeps the state.**
+
+⚠️ **THE EDIT THIS ROW MUST NOT MAKE:** ⛔ **rewriting `⚠️ OPEN` to `✅ RULED` inside `FND-04.md`.** ⭐ **That is editing a record, which Ruling 106 forbids and which would destroy the very thing the record is for — what was true when the task ended.** ⚠️ **So the discharge is an ANNOTATION BENEATH, naming the ref and the register row that closed it.**
+
+⭐ **AND THE GENERAL FORM IS CHEAP BECAUSE THE SWEEP ALREADY EXISTS:** it is `delivery-flow.md`'s own triage instrument, ⛔ **and the reading it cannot take today is *which of these dispositions is still the live one*.** ⚠️ **`W46` is the adjacent row and is NOT this one: `W46` asks whether a finding says MEASURED or RECEIVED per claim; this asks whether its disposition is still true.**
+
+⛔ **THE SWEEP IS NO LONGER SPELLED HERE, AND THAT IS A CORRECTION RATHER THAN A STYLE CHOICE** — `CTO-50/1`, **RECEIVED** from the CTO and **MEASURED** by the PO at `1c5e913`. ⚠️ **This row carried the pattern in its WEAK form, square brackets with no backticks, and attributed it to `delivery-flow.md`, which has carried the ruled spelling since round 39 merged.** ⭐ **So the sentence was false on the tip in BOTH halves, and a developer opening this file would have copied a pattern Ruling 65 forbids out of a row that told them where it came from.** ⛔ **The spelling has one home and it is the shipped constant** (Ruling 193); **the remaining copies are `W106`'s population, so this row NAMES the sweep and does not spell it.**
+
+### ⭐ RULING 194's MACHINE HALF WAS DISPOSITIONED HERE BY CTO ROUND 50 — recorded as a POINTER, and the scope is UNCHANGED
+
+⛔ **Quoted rather than paraphrased (Ruling 195), from `handoffs/CTO-2026-09-10-round50.md` §4:** *"The machine half is `W103`'s, already live; I mint no row, and `W91` owns the bare-citation half. No new register pressure from this round."*
+
+⚠️ **MEASURED BY THE PO against this row's own scope clause below: it says TWO findings, ONE annotation, and it REFUSES a sweep** — ⛔ **so Ruling 194's per-finding COMPARISON is not inside that scope as written, and folding it in silently would be the expansion this project refuses.** ⭐ **What the two genuinely share is the subject — where a disposition lives so that it can still be read as true.** ⛔ **Ruling 194's comparison runs against a review's own verdict text AT REVIEW TIME and the rubric §8a already carries the command, so it needs no code from this row.** ⚠️ **The disposition is therefore RECORDED and the scope is NOT widened; if the CTO meant the comparison to become this row's instrument, that is a re-scope for them to ask for and it is not assumed here.**
+
+⛔ **SCOPE, STATED SO IT IS NOT EXPANDED: TWO findings, ONE annotation, and the form written down.** ⭐ **Not a sweep of 462 marker lines** — ⚠️ **a sweep would re-open every disposition in the project and is `W49`'s class if no instrument can return `no` for them.**
+
+### ⛔ RULING 75 IS INVOKED AND IT IS DECLARED HERE — ADDED PO ROUND 44
+
+⚠️ **This row has stood above `W105`–`W109` (round 39) since it was placed in round 40, with no Ruling 75 section in this file** (`PO-44/2`, measured over all 79 row files). ⭐ **The placement is unchanged; what was missing is the declaration the rule requires.**
+
+⛔ **This row (round 40) is placed ahead of `W105`–`W109` (round 39).** ⭐ **What it jumps and why: a finding's disposition lives only in a FROZEN record, so `FND-04`'s reads `OPEN` after `SF-09` closed it — ⚠️ every round that files findings adds to that population, while `W105`–`W109`'s populations are fixed by artifacts that already exist.**
+
+#### ⭐ CLOSED — PO ROUND 71
+
+⭐ **Merged at `a8c4738`, TERMINAL by predicate `C`. The office's gates at `810e038` and the coordinator's disclosure at `a956b6c` are RECEIVED from the merge body.** ⭐ **Two findings, one annotation, the form written once, and no sweep, as the scope clause above required.** ⛔ **`W103/1`: `FND-04/7` is closed by this round ([the round](#po-round-71-w230-and-w103-closed-w109-w116-and-w117-named-one-mint)).**
