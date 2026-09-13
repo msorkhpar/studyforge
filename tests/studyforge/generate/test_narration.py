@@ -290,15 +290,31 @@ def test_an_unreadable_record_stops_the_build_before_a_page_is_written(tmp_path)
     assert code == UNUSABLE and "Traceback" not in printed
 
 
-def test_a_build_places_no_clip_under_its_output_root(tmp_path):
-    # W193 answer 1 and W202 answer 2: a build reads clips and never writes one.
+def test_a_build_writes_no_clip_beside_the_material_and_none_under_its_output_no_page_addresses(
+    tmp_path,
+):
+    """CONVERTED from `test_a_build_places_no_clip_under_its_output_root` (`W224` clause 6).
+
+    That test cited `W193` answer 1, which is a DELETION rule about the originals;
+    `E09` § SF-38/8 has a build copy each clip a page addresses into its output.
+    """
     root = a_corpus(tmp_path, "depth1")
-    narrate(root)
+    placed = narrate(root)
+    orphan = placed[0].parent / "an-orphan-0000abcd.mp3"
+    orphan.write_bytes(b"ID3")
+    before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
     out = an_output(tmp_path)
 
     build(root, out)
 
-    assert [path for path in out.rglob("*.mp3")] == []
+    assert {path: path.read_bytes() for path in root.rglob("*") if path.is_file()} == before
+    copies = sorted(path.resolve() for path in out.rglob("*.mp3"))
+    pages = unit_pages(out)
+    hrefs = {
+        (page.parent / h).resolve() for page, body in pages.items() for h in HREF.findall(body)
+    }
+    assert copies and copies == sorted(hrefs - {page.parent.resolve() for page in pages})
+    assert list(out.rglob(orphan.name)) == []
 
 
 # --------------------------------------------------------------------------

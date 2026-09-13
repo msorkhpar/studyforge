@@ -41,7 +41,7 @@ def test_pyproject_registers_this_module_under_the_program_name():
 
 
 def test_every_registered_verb_can_actually_be_run():
-    # ⛔ The reason `serve` and `reconcile` are absent: a verb registered
+    # ⛔ The reason `reconcile` is absent: a verb registered
     # against a callable that does not exist fails on first invocation.
     assert VERBS, "no verb is registered; the installed command provides nothing"
     for name, verb in VERBS.items():
@@ -51,9 +51,10 @@ def test_every_registered_verb_can_actually_be_run():
 
 
 def test_the_verbs_the_contract_promises_but_does_not_register_are_absent():
-    # ⚠️ The package contract names six commands and registers four. Asserted
-    # so that landing `serve` without registering it fails here.
-    assert set(VERBS) == {"validate", "plan", "narrate", "build"}
+    # ⚠️ The package contract names six commands and registers five (`SF-39`
+    # registered `serve`). Asserted so that landing `reconcile` without
+    # registering it — or unregistering `serve` — fails here.
+    assert set(VERBS) == {"validate", "plan", "narrate", "build", "serve"}
 
 
 # --------------------------------------------------------------------------

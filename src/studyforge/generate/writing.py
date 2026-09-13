@@ -95,6 +95,7 @@ it.
 
 from __future__ import annotations
 
+import os
 import shutil
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -248,6 +249,17 @@ def mint(out: Path, at: PurePosixPath, refused: list[PurePosixPath]) -> None:
         refused.append(at)
         return
     directory.mkdir(parents=True, exist_ok=True)
+
+
+def same_root(out: Path, root: Path) -> bool:
+    """Whether the output root IS the corpus root, refusing one that is not a directory.
+
+    ⭐ Asked of the filesystem, not of two spellings: `.` and an absolute path
+    can name one directory, and a comparison of strings would copy a clip onto
+    itself. ⛔ The refusal is `_under`'s, so it names neither root (R7).
+    """
+    _under(out, PurePosixPath())
+    return os.path.samefile(out, root)
 
 
 def _under(out: Path, at: PurePosixPath) -> Path:

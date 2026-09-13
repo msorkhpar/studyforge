@@ -205,3 +205,17 @@ def test_a_plan_with_no_media_projection_prints_no_media_line():
     # The corpus whose manifest would not parse: there is no policy to report,
     # and inventing one would be a claim nothing here is entitled to make.
     assert not [line for line in a_plan().lines() if line.startswith("media ")]
+
+
+def test_the_read_line_counts_container_maps_and_names_the_narration_record():
+    read = a_plan(
+        read_files=("corpus.json", "archive/x/container.json", ".studyforge/narration.json")
+    ).lines()[2]
+    assert read.startswith("read corpus.json + 1 container.json + .studyforge/narration.json  ")
+
+
+def test_a_creation_is_not_narration_unless_it_says_so_and_its_line_is_unchanged():
+    plain = Creation("a/audio/", "one")
+    marked = Creation("a/audio/", "one", narration=True)
+    assert not plain.narration
+    assert marked.line() == plain.line() == "create a/audio/  one"

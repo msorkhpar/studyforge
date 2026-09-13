@@ -42,6 +42,17 @@ address a path beneath it, "the build's own output" would silently mean
 "everything the reader has". ⛔ Asked of `Profile.corpus()`, the one owner of
 where an archive sits, never spelled.
 
+## ⛔ NARRATION IS `narrate`'S BESIDE THE MATERIAL, AND A COPY IS OWNED ONLY ELSEWHERE
+
+⭐ **A unit's audio directory is where `studyforge narrate` writes clips beside
+the material, so it is NOT a prefix here** — owning it would make narrate's
+clips "the build's own" at `--out` = the corpus root. ⛔ **The files a build
+copies into it are `clips`, enumerated one by one by the plan from the
+narration record** (`E09` § SF-38/8, `W224`), and `without_clips()` is the
+footprint a build into the corpus root uses, where nothing is copied. ⚠️ Which
+plan lines are narration is the plan's own `Creation.narration`, never a name
+read back off a path.
+
 ⚠️ **`site.json` is NOT excluded and that is deliberate.** No pass writes it
 either, but it is a single regenerable cache file — *"never the authority"* —
 so a wrong answer about it costs a rebuild rather than a corpus.
@@ -57,7 +68,7 @@ build that does too little rather than one that overwrites the wrong thing.
 from __future__ import annotations
 
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.placement import Profile
@@ -81,6 +92,13 @@ class Footprint:
     #: Paths the plan names as directories, whose contents a build fills — the
     #: shared bundle and each unit's media. ⚠️ A prefix, not a member.
     directories: tuple[PurePosixPath, ...] = ()
+    #: Copies of `narrate`'s clips under an output root that is NOT the corpus
+    #: root, one path each. ⛔ Never a directory: see this module's contract.
+    clips: frozenset[PurePosixPath] = frozenset()
+
+    def without_clips(self) -> Footprint:
+        """Return this footprint for a build into the corpus root, where clips are narrate's."""
+        return replace(self, clips=frozenset())
 
     def owns(self, at: PurePosixPath) -> bool:
         """Whether a build writing `at` would be replacing its own prior output.
@@ -92,7 +110,7 @@ class Footprint:
         — see `generate/writing.py`'s contract, where the consequence is stated
         and R19 is why it is the right one.
         """
-        if at in self.files:
+        if at in self.files or at in self.clips:
             return True
         return any(at.is_relative_to(directory) for directory in self.directories)
 
@@ -121,23 +139,36 @@ def footprint_for(root: Path | str, profile: Profile) -> Footprint:
     if plan.refusals:
         # ⛔ An incomplete enumeration is not a footprint. See the docstring.
         return Footprint()
-    return of(plan.paths, excluding=profile.corpus().archive)
+    narration = [creation.path for creation in plan.creations if creation.narration]
+    return of(plan.paths, excluding=profile.corpus().archive, narration=narration)
 
 
-def of(paths: Iterable[str], *, excluding: PurePosixPath) -> Footprint:
+def of(
+    paths: Iterable[str], *, excluding: PurePosixPath, narration: Iterable[str] = ()
+) -> Footprint:
     """Split a plan's `create` paths into the files and the directory prefixes.
 
     ⭐ Separated from `footprint_for` so the split is testable against a list
     of plan lines with no corpus on disk, which is how the goldens are read.
+    `narration` names the lines the plan marks as narration: a directory among
+    them is no prefix, and a file among them is a clip copy.
     """
     files: set[PurePosixPath] = set()
+    clips: set[PurePosixPath] = set()
     directories: list[PurePosixPath] = []
     excluded = PurePosixPath(excluding)
+    marked = frozenset(narration)
     for path in paths:
+        if path in marked:
+            if not path.endswith("/"):
+                clips.add(PurePosixPath(path))
+            continue
         if path.endswith("/"):
             directory = PurePosixPath(path.rstrip("/"))
             if directory != excluded:
                 directories.append(directory)
             continue
         files.add(PurePosixPath(path))
-    return Footprint(files=frozenset(files), directories=tuple(sorted(directories)))
+    return Footprint(
+        files=frozenset(files), directories=tuple(sorted(directories)), clips=frozenset(clips)
+    )

@@ -7,7 +7,9 @@ three link, and every file a page shows, copied out of the archive into the
 directory the page addresses. Narration is READ here and never made: a page
 plays the clips `studyforge narrate` recorded, names the ones it promised and
 cannot find, and a corpus with no record renders exactly as before (`W202`
-answers 3 and 4). `write_narration(root, into)` re-runs that pass alone.
+answers 3 and 4). `write_narration(root, into)` re-runs that pass alone. Under
+any output root but the corpus root the clips a page addresses are copied there
+(`E09` § SF-38/8); `write_clips(root, into)` is that copy alone.
 
 **How you use it.**
 
@@ -55,6 +57,7 @@ move or absorb it without a consumer having imported a command.
 | `narration` | which of the three narration states a page is in, read from the record |
 | `containers` | the `*.section.html` pass, and where each one went |
 | `media` | the media directories, and the copy that fills them |
+| `clips` | narration clips copied under any output root but the corpus root |
 | `site` | the whole floor: the passes, the index, the bundle and the media |
 
 ## ⚠️ Why this package is not called `build`
@@ -71,6 +74,7 @@ git never saw.
 from __future__ import annotations
 
 from studyforge.archive.scrub import PersonalDataLeak
+from studyforge.generate.clips import for_output, unit_clips, write_clips
 from studyforge.generate.containers import container_pages, page_paths
 from studyforge.generate.declarations import (
     BuildError,
@@ -116,6 +120,7 @@ __all__ = [
     "containers",
     "declared_practices",
     "footprint_for",
+    "for_output",
     "index_href",
     "page_paths",
     "read_corpus",
@@ -124,9 +129,11 @@ __all__ = [
     "root_index",
     "sources",
     "trail",
+    "unit_clips",
     "unit_location",
     "unit_media",
     "unit_pages",
+    "write_clips",
     "write_media",
     "write_narration",
     "write_pages",
