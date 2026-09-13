@@ -14,7 +14,9 @@ anything is runnable, whether a grader ships with it — and proposes a draft
     print("\\n".join(found.lines()))    # the report a person reads
     found.proposal                      # the draft manifest they edit
 
-**Depends on.** The standard library. ⛔ Not on `corpus.manifest`: this writes a
+**Depends on.** The standard library, `studyforge.address`, `validate`'s
+heading scan and source walk, and `skills.onboarding` for its record path and
+the version `not_material` needs. ⛔ Not on `corpus.manifest`: this writes a
 **draft for a person**, and a draft that had to satisfy the reader could not
 leave a field open — which is the one thing it must be able to do.
 
