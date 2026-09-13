@@ -24,6 +24,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.support import repository_root
 from tools.quality.board import (
     BOARD,
     RULE_TRIGGER,
@@ -33,7 +34,6 @@ from tools.quality.board import (
     TRIGGER_STATES,
     check_board,
 )
-from tools.quality.board.register import BOARD as BOARD_PATH
 from tools.quality.board.scheduled import (
     DELIMITED,
     NONE_FOUND,
@@ -128,7 +128,7 @@ def test_live_the_real_scheduled_table_DECLARES_A_STATE_ON_EVERY_ROW() -> None:
     which is `W119`'s class and the exact defect `W147` was minted for one table over.**
     ⭐ **The inhabited reading is MOVED onto a fixture below, never dropped.**
     """
-    text = Path(BOARD_PATH).read_text(encoding="utf-8")
+    text = (repository_root() / BOARD).read_text(encoding="utf-8")
     reading = clauses(text)
     assert reading == DECLARED_AND_READ, f"⛔ {population(text)} — {reading}"
     assert scheduled_findings(text) == []
@@ -207,12 +207,24 @@ def test_live_the_reading_names_EVERY_word_of_the_vocabulary_with_its_count() ->
     ⛔ **Both marker numbers are printed WITH THEIR UNITS** (Ruling 224): the lines that ARE
     a declaration, and the lines that MENTION the marker inside a cell.
     """
-    line = scheduled_reading(Path(BOARD_PATH).read_text(encoding="utf-8"))
+    line = scheduled_reading((repository_root() / BOARD).read_text(encoding="utf-8"))
     assert line.startswith("scheduled (delimited")
     for word in TRIGGER_STATES:
         assert f"{word} " in line, word
     assert "states with no row at all:" in line
     assert "declaration line(s)" in line and "MENTIONING the marker inside a cell" in line
+
+
+def test_live_neither_reading_depends_on_the_callers_working_directory(tmp_path, monkeypatch):
+    """⛔ `W158` clause 3: the two LIVE readings pass from a directory that is not the root.
+
+    ⚠️ **They read the board through a RELATIVE path until `W158`**, so they passed only when
+    pytest was started at the repository root — Ruling 225's subject, a verdict that depends
+    on the process's working directory. ⭐ Called from a harness-minted directory instead.
+    """
+    monkeypatch.chdir(tmp_path)
+    test_live_the_real_scheduled_table_DECLARES_A_STATE_ON_EVERY_ROW()
+    test_live_the_reading_names_EVERY_word_of_the_vocabulary_with_its_count()
 
 
 # --------------------------------------------------------------------------
