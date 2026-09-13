@@ -16,13 +16,9 @@ from studyforge.corpus.manifest import Classification, parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.skills.onboarding import artifacts
 from studyforge.skills.onboarding.manifest import PromotionRefused
-from studyforge.skills.onboarding.onboard import (
-    INSTALLED_API,
-    OnboardingRefused,
-    onboard,
-    uninstall,
-)
+from studyforge.skills.onboarding.onboard import onboard, uninstall
 from studyforge.skills.onboarding.pin import RECORD_FILE
+from studyforge.skills.onboarding.record import INSTALLED_API, OnboardingRefused
 from tests.studyforge.skills.onboarding import corpora
 from tests.support import init_repository, is_ignored
 

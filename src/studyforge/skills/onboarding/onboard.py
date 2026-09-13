@@ -12,9 +12,10 @@ take it back out again.
     print("\n".join(made.lines()))   # every path, and the one that is yours
     made.write(corpus_root)          # ⛔ refuses to overwrite anything
 
-**Depends on.** `corpus.manifest`, `skills.adapter` for the scaffold, and this
-package's own renderers. ⛔ Not on `validate`: what this writes is a corpus,
-and the corpus's own generated tests are what call it.
+**Depends on.** `corpus.manifest`, `skills.adapter` for the scaffold, this
+package's own renderers, and `record` for the install record. ⛔ Not on
+`validate`: what this writes is a corpus, and the corpus's own generated tests
+are what call it.
 
 ## ⛔ The manifest is promoted twice, and the second pass is the whole point
 
@@ -42,17 +43,15 @@ a hand-edit is a **finding against this skill** rather than a fix (R19), and
 
 from __future__ import annotations
 
-import hashlib
 import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest import Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import Written, plan_for, scaffold
-from studyforge.skills.onboarding import artifacts
+from studyforge.skills.onboarding import artifacts, record
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
@@ -63,20 +62,10 @@ from studyforge.skills.onboarding.pin import (
     stub,
     stub_paths,
 )
-
-#: The version of the install record's own shape.
-INSTALLED_API = 1
+from studyforge.skills.onboarding.record import OnboardingRefused
 
 #: Which step of `SKILL.md` writes this skill's own documents.
 STEP = 3
-
-
-class OnboardingRefused(ValueError):
-    """An onboarding that will not be written or undone, and every reason at once.
-
-    ⛔ Paths are root-relative, never absolute (R7): the first thing an
-    integrator does with a refusal is paste it somewhere.
-    """
 
 
 @dataclass(frozen=True, slots=True)
@@ -197,7 +186,7 @@ def onboard(
             "what a reader is told, from the declarations",
         ),
     ]
-    files.append(_own(RECORD_FILE, _record(files), "what uninstall undoes, and its digests"))
+    files.append(_own(RECORD_FILE, record.render(files), "what uninstall undoes, and its digests"))
     return Onboarding(
         manifest=manifest,
         files=tuple(files),
@@ -227,26 +216,16 @@ def uninstall(root: Path | str) -> list[str]:
     ⛔ **A file somebody filled in is never silently destroyed.** The usual
     reason a clean uninstall refuses is the adapter's reading step, which is the
     one file that was a person's — and losing it to a tidy-up is the failure
-    this check exists for.
+    this check exists for. ⭐ The record carries no digest for that file
+    (`INT-09/1`), so it is removed only while it is still the stub the written
+    manifest scaffolds.
     """
     root = Path(root)
-    record = root / RECORD_FILE
-    if not record.exists():
-        raise OnboardingRefused(
-            f"{RECORD_FILE} is not here, so there is no record of what to remove; "
-            f"an uninstall that guessed would be deleting somebody's repository"
-        )
-    entries = _entries(record)
-    changed = [
-        entry["where"]
-        for entry in entries
-        if (root / entry["where"]).exists() and _digest_of(root / entry["where"]) != entry["sha256"]
-    ]
-    if changed:
-        raise OnboardingRefused(
-            f"{len(changed)} file(s) changed since onboarding wrote them and are not "
-            f"removed: {sorted(changed)}. Move what you want to keep, then run again"
-        )
+    entries = record.entries(root)
+    changed = record.changed(root, entries)
+    filled = _filled_in(root, entries, changed)
+    if changed or filled:
+        raise OnboardingRefused(_kept(changed, filled))
     removed = []
     for where in [*[entry["where"] for entry in entries], RECORD_FILE]:
         path = root / where
@@ -255,6 +234,47 @@ def uninstall(root: Path | str) -> list[str]:
             removed.append(where)
     _prune(root, removed)
     return sorted(removed)
+
+
+def _filled_in(root: Path, entries: Sequence[dict], changed: Sequence[str]) -> list[str]:
+    """Every person's module on disk that is not the stub onboarding left there, sorted.
+
+    ⚠️ The stub is re-derived from the written manifest, which the scaffold
+    varies on and nothing else does. ⛔ If that manifest changed or cannot be
+    read, no stub can be derived, and every such module counts as filled in.
+    """
+    yours = [e["where"] for e in entries if record.is_yours(e) and (root / e["where"]).exists()]
+    stubs = {} if not yours or artifacts.MANIFEST in changed else _stubs(root)
+    return sorted(where for where in yours if _text(root / where) != stubs.get(where))
+
+
+def _stubs(root: Path) -> dict[str, str]:
+    """Return the scaffold's hand-written stubs from the manifest on disk, or nothing."""
+    try:
+        made = scaffold(plan_for(parse((root / artifacts.MANIFEST).read_text(encoding="utf-8"))))
+    except OSError, ValueError:
+        return {}
+    return {item.where: item.text for item in made.files if not item.generated}
+
+
+def _text(path: Path) -> str | None:
+    """Return a file's text, or None when it is not UTF-8 (and so is not a stub)."""
+    try:
+        return path.read_text(encoding="utf-8")
+    except ValueError:
+        return None
+
+
+def _kept(changed: Sequence[str], filled: Sequence[str]) -> str:
+    """Name every file uninstall will not remove, and why, at once."""
+    parts = []
+    if changed:
+        parts.append(
+            f"{len(changed)} generated file(s) changed since onboarding wrote them: {changed}"
+        )
+    if filled:
+        parts.append(f"{len(filled)} file(s) of yours are no longer the stub: {filled}")
+    return f"{'; '.join(parts)}. Nothing was removed. Move what you want to keep, then run again"
 
 
 def _pin_files(commit: str, skills: Sequence[str]) -> list[Written]:
@@ -269,61 +289,6 @@ def _pin_files(commit: str, skills: Sequence[str]) -> list[Written]:
 def _own(where: str, text: str, why: str) -> Written:
     """One file this skill owns. ⭐ Always generated: none of them is a person's."""
     return Written(where=where, step=STEP, why=why, generated=True, text=text)
-
-
-def _record(files: Sequence[Written]) -> str:
-    """Return what uninstall undoes: every path, and the digest written there.
-
-    ⚠️ The record does not list itself — it is removed last, unconditionally,
-    because a record that had to verify its own digest could never be written.
-    """
-    return (
-        json.dumps(
-            {
-                "installed_api": INSTALLED_API,
-                "files": [{"where": item.where, "sha256": _digest(item.text)} for item in files],
-            },
-            indent=2,
-        )
-        + "\n"
-    )
-
-
-def _entries(record: Path) -> list[dict]:
-    """Read the install record, gating it and refusing a shape this build does not speak.
-
-    ⛔ **The personal-data gate runs over the whole decoded document** (R7, W7),
-    before any field is read — the rule `corpus.json` was missing until W7, and
-    this document is a *list of paths*, which is the shape a home directory
-    arrives in. ⚠️ It is the one document this skill reads back rather than
-    writes, so it is the only place the gate can be owed.
-    """
-    try:
-        document = json.loads(record.read_text(encoding="utf-8"))
-    except OSError, ValueError:
-        raise OnboardingRefused(
-            f"{RECORD_FILE} is not readable JSON, so nothing is removed"
-        ) from None
-    assert_clean(document, RECORD_FILE)
-    if not isinstance(document, dict) or document.get("installed_api") != INSTALLED_API:
-        raise OnboardingRefused(
-            f"{RECORD_FILE} declares an install record this build does not read; "
-            f"this build writes installed_api {INSTALLED_API}"
-        )
-    entries = document.get("files")
-    if not isinstance(entries, list):
-        raise OnboardingRefused(f"{RECORD_FILE} lists no files, so there is nothing to remove")
-    return [entry for entry in entries if isinstance(entry, dict) and "where" in entry]
-
-
-def _digest(text: str) -> str:
-    """Return the digest of what was written, so a hand-edit is visible rather than assumed."""
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
-def _digest_of(path: Path) -> str:
-    """Return the digest of what is on disk now."""
-    return _digest(path.read_text(encoding="utf-8"))
 
 
 def _prune(root: Path, removed: Sequence[str]) -> None:
