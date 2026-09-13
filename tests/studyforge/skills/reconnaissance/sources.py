@@ -206,6 +206,25 @@ def marker_ordinals(root: Path) -> Path:
     return write(root, files)
 
 
+def heading_entries(root: Path, heading: bool = True) -> Path:
+    """Marker-ordinal entries with two minority entries written as `## N. [Title](x)`.
+
+    ⭐ **W250/2's finding, at the smallest size that sets it.** Most entries
+    carry the ordinal as the list marker; two carry it outside the link after a
+    heading's hashes, under heading group labels. ⚠️ `heading=False` is the twin:
+    the same two entries after a bullet, the form whose ordinal was always read.
+    """
+    files = {f"src/{n}.md": unit(f"Chapter {n}") for n in (1, 2, 3, 4)}
+    files.update({f"src/s{n}.md": unit(f"Server {n}") for n in (1, 2)})
+    marker = "##" if heading else "-"
+    files["README.md"] = (
+        "# A Numbered Course\n\n1. [**Chapter 1**](src/1.md)\n\n2. [Chapter 2](src/2.md)\n\n"
+        f"{marker} 3. [**Chapter 3**](src/3.md)\n\n{marker} 4. [Chapter 4](src/4.md)\n\n"
+        "# Server\n\n1. [Server 1](src/s1.md)\n2. [Server 2](src/s2.md)\n"
+    )
+    return write(root, files)
+
+
 def over_deep_ordinals(root: Path) -> Path:
     """Linked units whose ordinals have four components — more levels than names."""
     files = {}
