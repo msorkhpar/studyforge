@@ -161,3 +161,41 @@ def test_permitted_edits_must_be_a_list(value):
 def test_an_unknown_key_in_an_entry_is_refused():
     with pytest.raises(ManifestError, match="unknown key"):
         edits({**POM_EDIT, "reverse": "remove the line"})
+
+
+# --- `W278`: content is a property of the file in its repository ---------------
+
+#: ⛔ ISO's shape, built for the test: the root README is `not_material` for the site.
+README_NOT_MATERIAL = parse_content(
+    {
+        "include": ["src/*.md"],
+        "exclude": [],
+        "not_material": [{"glob": "README.md", "why": "the curriculum record, never a page"}],
+    }
+)
+
+
+@pytest.mark.parametrize("path", ["README.md", "readme.rst", "README", "LICENSE", "COPYING.LESSER"])
+def test_repository_root_documentation_is_never_editable_whatever_content_says(path):
+    with pytest.raises(ManifestError, match="repository-root documentation") as refused:
+        parse_edits([{**POM_EDIT, "path": path}], README_NOT_MATERIAL)
+    assert path in str(refused.value)
+
+
+def test_a_build_file_beside_it_is_still_editable_under_the_same_policy():
+    assert parse_edits([POM_EDIT], README_NOT_MATERIAL)[0].path == "pom.xml"
+
+
+@pytest.mark.parametrize("path", ["docs/README.md", "README-notes.md", "notes/LICENSE"])
+def test_a_nested_or_differently_named_file_is_not_root_documentation(path):
+    # ⚠️ Decided (`W278`): the convention is the repository's ROOT, by exact stem.
+    assert parse_edits([{**POM_EDIT, "path": path}], README_NOT_MATERIAL)[0].path == path
+
+
+def test_the_content_policy_refusal_still_reads_exactly_as_it_did():
+    with pytest.raises(ManifestError) as refused:
+        edits({**POM_EDIT, "path": "basics/01-getting-started/README.md"})
+    assert str(refused.value) == (
+        "permitted_edits may never name a file the material's own reader depends on "
+        "as content, and this corpus's 'content' includes it"
+    )

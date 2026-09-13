@@ -169,6 +169,14 @@ ignore file — write new ignore files *inside* generated directories instead;
 any version-control configuration; and any file the material's own reader
 depends on as content.
 
+⛔ **Content is a property of the file in its repository, not of the site's
+`content` policy** (`W278`, `INT-13/1`). A file the policy includes or contests
+is content, and so is **repository-root documentation**: a root `README`,
+`LICENSE`, `LICENCE` or `COPYING`, of any suffix, which the repository's own
+readers read whatever the manifest classifies it as for the site. ⭐ The
+manifest parser refuses such a declaration and the non-destructive check a
+declared change to it, through one predicate.
+
 ⭐ **The reverse of every declared edit is recorded.** An onboarding that cannot
 be undone is one nobody will run against a repository they care about.
 

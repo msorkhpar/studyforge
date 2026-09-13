@@ -16,7 +16,8 @@ from pathlib import Path
 import pytest
 
 import studyforge.generate.site as site
-from studyforge.corpus.manifest import ManifestError, PermittedEdit, load
+from studyforge.corpus.manifest import ManifestError, PermittedEdit, load, parse_content
+from studyforge.corpus.manifest import edits as edits_module
 from studyforge.generate import read_corpus, write_site
 from studyforge.validate import nondestructive
 from studyforge.validate.nondestructive import (
@@ -357,6 +358,46 @@ def test_the_verdict_follows_the_declaration_and_not_the_file_name(tmp_path):
         POM.replace("<modules>\n", "<modules>\n    <module>practice</module>\n")
     )
     assert judge(other, arbitrary, change) == ()
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W278`: a declared edit to repository-root documentation, whatever content says
+# --------------------------------------------------------------------------
+
+#: ⛔ ISO's shape, built for the test: the root README is `not_material` for the site.
+ROOT_README_NOT_MATERIAL = {
+    "include": ["depth-one/*.md"],
+    "exclude": [],
+    "not_material": [{"glob": "README.md", "why": "the curriculum record, never a page"}],
+}
+
+
+@pytest.mark.parametrize("policy", ["unclassified", "not_material"])
+def test_a_declared_additive_edit_to_the_root_readme_fails_however_declared(tmp_path, policy):
+    root = a_corpus(tmp_path, "depth1")
+    (root / "README.md").write_text("anchor\n", encoding="utf-8")
+    manifest = declared(root, "README.md", "anchor", "added")
+    if policy == "not_material":
+        manifest = dataclasses.replace(manifest, content=parse_content(ROOT_README_NOT_MATERIAL))
+
+    def change(r):
+        (r / "README.md").write_text("anchor\nadded\n", encoding="utf-8")
+
+    assert judge(root, manifest, change) == ((RULE_FORBIDDEN, "README.md"),)
+
+
+def test_a_declared_additive_build_file_edit_still_passes_beside_it(tmp_path):
+    root, manifest = a_declared_pom(tmp_path)
+    (root / "README.md").write_text("anchor\n", encoding="utf-8")
+    manifest = dataclasses.replace(manifest, content=parse_content(ROOT_README_NOT_MATERIAL))
+    added = rewrite_pom(POM.replace("<modules>\n", "<modules>\n    <module>practice</module>\n"))
+    assert judge(root, manifest, added) == ()
+
+
+def test_the_parser_and_the_check_decide_content_through_ONE_predicate():
+    # ⛔ Clause 2: the check imports the parser's predicate and keeps no copy of it.
+    assert nondestructive.reads_as_content is edits_module.reads_as_content
+    assert ".classify(" not in module_text()
 
 
 def module_text() -> str:

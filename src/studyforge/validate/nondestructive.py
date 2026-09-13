@@ -54,11 +54,13 @@ unnoticed. A symbolic link is compared by its target and never followed.
 ## ⚠️ What this cannot decide mechanically
 
 *"A file the material's own reader depends on as content"* is decided by the
-manifest's own `content` policy. A file the reader depends on that the policy
-does not include — a picture a lesson embeds by a relative link, say — is
-invisible to that test, and no mechanical reading of a corpus supplies it. It is
-still protected by rule 5 unless it is declared; it is not protected from a
-declaration.
+manifest parser's own predicate, `reads_as_content` (`W278`): the corpus's
+`content` policy, or repository-root documentation by convention. ⚠️ The
+convention refuses a DECLARED change; an undeclared one is `modified`, as it
+was. A file the reader depends on that neither covers — a picture a lesson
+embeds by a relative link, say — is invisible to that test, and no mechanical
+reading of a corpus supplies it. It is still protected by rule 5 unless it is
+declared; it is not protected from a declaration.
 
 ## ⚠️ Pass loud
 
@@ -75,8 +77,15 @@ from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Protocol
 
-from studyforge.corpus.manifest import Classification, Manifest, PermittedEdit
-from studyforge.corpus.manifest.edits import IGNORE_NAMES, VCS_DIRECTORIES, VCS_NAMES
+from studyforge.corpus.manifest import Manifest, PermittedEdit
+from studyforge.corpus.manifest.edits import (
+    BY_CONVENTION,
+    BY_POLICY,
+    IGNORE_NAMES,
+    VCS_DIRECTORIES,
+    VCS_NAMES,
+    reads_as_content,
+)
 from studyforge.validate.report import Finding, Report, Unchecked
 
 RULE_DELETED = "deleted"
@@ -206,7 +215,7 @@ def _judge(
     now = after.digests.get(path)
     if now == digest:
         return []
-    forbidden = _forbidden(path, manifest)
+    forbidden = _forbidden(path, manifest, declared=path in edits)
     if now is not None and forbidden:
         return [Finding(RULE_FORBIDDEN, path, f"was changed, and {forbidden} — however declared")]
     if now is None:
@@ -229,13 +238,22 @@ def _judge(
     ]
 
 
-def _forbidden(path: str, manifest: Manifest) -> str:
-    """Why R3 forbids changing `path` whatever is declared, or `""`."""
+def _forbidden(path: str, manifest: Manifest, declared: bool = True) -> str:
+    """Why R3 forbids changing `path` whatever is declared, or `""`.
+
+    ⛔ `W278`: content is the parser's own predicate, never a second copy of it.
+    """
     reason = _forbidden_to_create(path)
     if reason:
         return reason
-    if manifest.content.classify(path) in (Classification.INCLUDED, Classification.CONTESTED):
+    content = reads_as_content(path, manifest.content)
+    if content == BY_POLICY:
         return "the corpus's own content policy includes it, so the reader depends on it as content"
+    if content == BY_CONVENTION and declared:
+        return (
+            "it is repository-root documentation, which the repository's own readers read "
+            "as content whatever the site's content policy classifies it as"
+        )
     return ""
 
 
