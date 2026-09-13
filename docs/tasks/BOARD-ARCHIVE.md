@@ -22190,7 +22190,7 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 
 ## PO round 77 — `W239` and `W243` closed, `W242` and `W153` named, and `W162/8` folded into the held `W162/7`
 
-⭐ **Merged after round 76's cut at `1e70007` and not closed by it: `0e65df9` (`W239`) and `5f772d9` (`W243`). This round is cut at `6cdab6d`, which carries both; `828b37f` (`W162`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+⭐ **Merged after round 76's cut at `1e70007` and not closed by it: `0e65df9` (`W239`) and `5f772d9` (`W243`). This round is cut at `6cdab6d`, which carries both; `828b37f` (`W162`) and `579e1df` (`W151`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
 
 ### ⭐ 1 — CLOSES
 
@@ -22199,9 +22199,10 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 fix/INT06-1-promote-not-material  dbf98ede  dbf98ede     0      NOWHERE
 fix/INT06-9-highlight-languages   d41fe017  d41fe017     0      NOWHERE
 fix/W162-docker-gate-ground       b1a3178b  b1a3178b     0      NOWHERE
+fix/W151-docstring-counts         8ea558c6  8ea558c6     0      NOWHERE
 ```
 
-⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W242.md` re-pointed for `W239`. `W243` and `W162` have no live inbound citation. ⚠️ **`handoffs/PO-2026-09-13-round75.md` cites the `W239` and `W243` row files, and `handoffs/W162.md` cites its own; they are records, and the stubs resolve.**
+⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W242.md` re-pointed for `W239`, `rows/W216.md` for `W151`. `W243` and `W162` have no live inbound citation. ⚠️ **`handoffs/PO-2026-09-13-round75.md` cites the `W239` and `W243` row files, and `handoffs/W162.md`, `handoffs/W151.md` and two older records cite theirs; they are records, and the stubs resolve.**
 
 ### ⭐ 2 — RULED, REVERSIBLE
 
@@ -22221,7 +22222,7 @@ fix/W162-docker-gate-ground       b1a3178b  b1a3178b     0      NOWHERE
 | the `W243` close | ⭐ **recorded at the close below:** `ISO-06`'s *"XML highlighted"* waits on `W243/1`, the user's Prism download |
 | the `W239` and `W243` handoffs | ⭐ **verified, § 2.2** |
 
-⭐ **Carriers, each confirmed against git:** [`W242`](rows/W242.md), Developer 1, `fix/W242-sibling-ignore-home` @ `wt/dev1`, cut `5f772d9`, order 2 now that `W239` and `W241` have merged; it collides with nothing in flight. [`W153`](rows/W153.md), Developer 3, `fix/W153-unnamed-arm-register-blind` @ `wt/dev3`, cut `5f772d9`, by board order (order 11). Its surface is `tools/quality/board/corroborate.py`, its tests and `docs/conventions/board.md`, and no other member of either set is in flight. [`W163`](rows/W163.md), Developer 2, `fix/W163-visual-reasoning` @ `wt/dev2`, cut `828b37f`, after `W162` merged: the `STUDYFORGE_VISUAL` block of `docker/dev/compose.yaml`, plus riders `W162/5` and `/6` in `tests/docker/`. ⚠️ **Its merge moves the dev image identity.** ⚠️ **`W151` merged at `579e1df` after this round's merge of `828b37f`. It closes on the coordinator's reading, and `corroborate` refutes it until then.**
+⭐ **Carriers, each confirmed against git:** [`W242`](rows/W242.md), Developer 1, `fix/W242-sibling-ignore-home` @ `wt/dev1`, cut `5f772d9`, order 2 now that `W239` and `W241` have merged; it collides with nothing in flight. [`W153`](rows/W153.md), Developer 3, `fix/W153-unnamed-arm-register-blind` @ `wt/dev3`, cut `5f772d9`, by board order (order 11). Its surface is `tools/quality/board/corroborate.py`, its tests and `docs/conventions/board.md`, and no other member of either set is in flight. [`W163`](rows/W163.md), Developer 2, `fix/W163-visual-reasoning` @ `wt/dev2`, cut `828b37f`, after `W162` merged: the `STUDYFORGE_VISUAL` block of `docker/dev/compose.yaml`, plus riders `W162/5` and `/6` in `tests/docker/`. ⚠️ **Its merge moves the dev image identity.**
 
 ⭐ **The ISO track:** integration round 7 merged into ISO at `ab9e765`, and `ISO-04` is TAKEN. ⭐ **RECEIVED:** its re-read at `5f772d9` DISCHARGES `INT-06/1`, `/2`, `/3`, `/5`, `/6` and `/9`'s fallback, each with a plant. ⭐ **The pin advanced to `ab9e765` (`W244`'s cadence), the ISO line alone (`PO-76/1`).** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`.
 
@@ -22316,3 +22317,45 @@ gated skips, weighted by their [n] groups                            10
 #### ⭐ CLOSED — PO ROUND 77
 
 ⭐ **Merged at `828b37f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `828b37f` is RECEIVED.** ⭐ **The docker gate's skip reason says what is true. A default run makes NO docker call and says the cache was not probed. With `STUDYFORGE_DOCKER_TESTS` set, the gate tells a cold cache from a warm one from `docker/dev/check`'s own identity, and never builds.** ⭐ **`W162/7` is PROVED: a recording fake `docker` on `PATH` sees no call for the gate or for all of `tests/docker/`, and a planted probe turns it RED.** ⚠️ **`W162/8` is ruled in this round's § 2.1. `W162/5` and `/6` ride on [`W163`](rows/W163.md).**
+
+### W151 — Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W151.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W145/1`. A COUNT TYPED INTO A DOCSTRING IS READ BY NOTHING, and the branch that DERIVED one numeral left three hand-typed copies of the same figure standing beside it.** ⭐ **The reviewing office added `CTO-65/10` to this row's population BY NAME.**
+
+### ⛔ THE POPULATION AS IT ARRIVED, from two rounds and two offices
+
+| witness | ⛔ the shape |
+|---|---|
+| `W145/1` | the reach notice's gap numeral is now DERIVED; **three docstring copies of the same count are still typed** |
+| `CTO-65/10` | **three shipped sites** state a markdown-file total that BOTH instruments contradict — ⚠️ the figure was a MAIN reading written beside a measurement taken in a worktree, quoted with no ref and no role (Ruling 277) |
+
+⭐ **The reviewing office's disposition placed the second inside the first: *"It joins `W145/1`'s own population — hand-typed counts in docstrings needing an instrument."*** ⚠️ **RE-MEASURED AT DISPATCH (Ruling 214): both figures above were true of their own refs and neither is this row's acceptance.**
+
+### ⭐ WHY IT IS ONE ROW AND NOT TWO
+
+⛔ **Both are the same defect: a SCALAR about a growing population, written in prose, inside a file that the population does not change.** ⭐ **That is Ruling 150's mechanism, which `CLAUDE.md` and `README.md` were both rewritten over, arriving in DOCSTRINGS — the one surface neither rewrite reached.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A closed check that REFUSES a bare count of a derived population in a docstring**, on the population it can decide, with the undecidable remainder DECLARED rather than forced into an arm (Ruling 292).
+2. ⭐ **OR THE NARROWER ANSWER, and a taker may reach it: the count is DERIVED at import or at test time from the same source the claim is about** — ⚠️ **which is what `W145` did for the one numeral it owned, and this row's job is to do it for the rest rather than to invent a second mechanism.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a docstring stating a derived count goes RED, and one stating the same fact as a PROPERTY passes.
+4. ⚠️ **`W69` is the neighbour and is NOT this row** — ⭐ **`W69` refuses a bare TASK-count literal; this row's subject is any count of a population the file does not own. A taker holding both should say which predicate answers which.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CORRECTION OF THE THREE NUMERALS.** ⭐ **Correcting `400` to `399` buys exactly one round — that is the reasoning `README.md` records for REFUSING to correct `87` and `89` to `91`, and this row exists because the correction is not the fix.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/citations.py`, `tools/quality/reach.py` and their tests.** ⚠️ **Shares `citations.py` with `W150` and `reach.py` carries a STANDING SPLIT condition (`W133/4`) — ⛔ **a taker who finds themselves trimming rather than splitting is in the wrong module** (Ruling 261).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+⭐ **Rider, PO round 72 — `W116/3`:** `tools/tests/quality/test_lint.py`'s figures (*25 bare*, *10 parenthesised*) are `a606033`'s, and `W116` read other figures at `a956b6c`. ⛔ **A witness, not a population change: a count in a test's prose that nothing re-derives** ([the round](#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)).
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `579e1df`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `579e1df` is RECEIVED.** ⭐ **A bare count of a growing population typed into Python prose fails the floor: `check_derived_counts` refuses a figure before *"markdown files"* or *"declared gaps"* unless its own sentence names the ref it was measured at, and the eleventh notice, `count_census`, prints bare and dated counts apart.** ⚠️ **Only those two nouns are read (`W151/2`), and `W116/3`'s test figures stay outside them (`W151/3`). Each finding's disposition is in this round's § 3.**

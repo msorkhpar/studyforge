@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W151` | Developer 2 | `fix/W151-docstring-counts` @ none | 0 @ `8ea558c` | in-progress |
 | `W242` | Developer 1 | `fix/W242-sibling-ignore-home` @ `wt/dev1` | 0 @ `5f772d9` | in-progress |
 | `W153` | Developer 3 | `fix/W153-unnamed-arm-register-blind` @ `wt/dev3` | 0 @ `5f772d9` | in-progress |
 | `W163` | Developer 2 | `fix/W163-visual-reasoning` @ `wt/dev2` | 0 @ `828b37f` | in-progress |
@@ -79,8 +78,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W239`, `W243`, `W162` LEFT at `0e65df9`, `5f772d9`, `828b37f`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W151` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended); `W242`, `W153`, `W163` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W239`, `W243`, `W162`, `W151` LEFT at `0e65df9`, `5f772d9`, `828b37f`, `579e1df`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W242`, `W153`, `W163` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -299,7 +298,7 @@ else.**
 | W148 | The floor's document population is read off the DISK, so an untracked file makes a MAIN reading unreproducible from a worktree | framework agent | ✅ done — `a8726c1` | [`rows/W148.md`](rows/W148.md) |
 | W149 | A merge subject's PROSE is re-derived against its record by nobody, and a subject cannot be annotated after it lands | framework agent | `todo` | [`rows/W149.md`](rows/W149.md) |
 | W150 | A citation into a file the document does not own, written as a BARE BASENAME, satisfies Ruling 163's letter and is strictly worse | Developer 2 | ✅ done — `b3123f5` | [`rows/W150.md`](rows/W150.md) |
-| W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | Developer 2 | in-progress — on `fix/W151-docstring-counts` | [`rows/W151.md`](rows/W151.md) |
+| W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | Developer 2 | ✅ done — `579e1df` | [`rows/W151.md`](rows/W151.md) |
 | W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [`rows/W152.md`](rows/W152.md) |
 | W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | Developer 3 | in-progress — on `fix/W153-unnamed-arm-register-blind` | [`rows/W153.md`](rows/W153.md) |
 | W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | framework agent | `todo` | [`rows/W154.md`](rows/W154.md) |
