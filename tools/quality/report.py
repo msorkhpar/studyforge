@@ -9,14 +9,17 @@ by name).
 **How you use it.** A check returns `list[Finding]`; a caller renders them
 with `format_findings`. A walk that a figure will be quoted over returns a
 `DocumentPopulation`, and the notice quoting that figure names its `walk` and
-appends `WALK_CAVEAT[walk]` (`W148`).
+appends `WALK_CAVEAT[walk]` (`W148`). A test run's summary prints
+`unreachable_population(stats)` — the tests it skipped, counted and grouped by
+the reason each skip gave (`W158`).
 
-**Depends on.** `dataclasses` and `pathlib` — standard library. ⚠️ This line
+**Depends on.** `collections`, `dataclasses` and `pathlib` — standard library. ⚠️ This line
 read *"`dataclasses` only"* until `W148` gave a population a type.
 """
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -81,3 +84,45 @@ def format_findings(findings: list[Finding]) -> str:
     noun = "finding" if len(lines) == 1 else "findings"
     lines.append(f"quality floor: {len(lines)} {noun}")
     return "\n".join(lines)
+
+
+#: ⛔ **The label every test run prints, reached or not** (`W158`). ⚠️ Printed on
+#: an EMPTY population too: `green` with nothing skipped and `green` with a hole
+#: are two answers, and only a line present in BOTH tells them apart (Ruling 191).
+UNREACHABLE = "unreachable population"
+
+#: What pytest prefixes to a skip's own reason, dropped so the reason reads as typed.
+SKIP_PREFIX = "Skipped: "
+
+
+def skip_reason(report: object) -> str:
+    """Return the reason a skipped report gave, as its author wrote it.
+
+    ⭐ Read off pytest's `longrepr` — `(path, line, "Skipped: reason")` for a skip —
+    and never matched against a list: a reason no list anticipated still prints.
+    """
+    longrepr = getattr(report, "longrepr", None)
+    text = longrepr[2] if isinstance(longrepr, tuple) and len(longrepr) == 3 else longrepr
+    reason = str(text or "no reason given")
+    return reason.removeprefix(SKIP_PREFIX)
+
+
+def unreachable_population(stats: dict) -> list[str]:
+    """Return the tests this run did not reach, as a COUNT and each REASON (`W158`).
+
+    ⛔ **Derived from the run's own tally** (`terminalreporter.stats`), never typed:
+    a test count, one per skipped report, as pytest's closing line counts them.
+    ⛔ **A disclosure and never a verdict** (Ruling 328) — it returns lines and
+    no exit code, because what is unreachable is host state no branch controls.
+    """
+    reasons = Counter(skip_reason(report) for report in stats.get("skipped", []))
+    total = sum(reasons.values())
+    if not total:
+        return [f"{UNREACHABLE}: 0 skipped test(s) — this run reached every test it collected"]
+    lines = [
+        f"{UNREACHABLE}: {total} skipped test(s) — this run's green does not cover them "
+        f"(a disclosure, never a failure)"
+    ]
+    for reason, count in sorted(reasons.items(), key=lambda item: (-item[1], item[0])):
+        lines.append(f"  {count} × {reason}")
+    return lines

@@ -1,16 +1,29 @@
-"""Mirror of `tools/quality/report.py` (R12)."""
+"""Mirror of `tools/quality/report.py` (R12).
+
+⭐ **`W158`'s end-to-end arms run a CHILD pytest** through the repository's own root
+`conftest.py`, because the disclosure is a line in a run's summary and a line nobody
+printed cannot be asserted over a pure function alone.
+"""
 
 from __future__ import annotations
 
+import os
+import subprocess
+import sys
+import uuid
 from pathlib import Path
+from types import SimpleNamespace
 
+from tests.support import repository_root
 from tools.quality.report import (
     DISK_WALK,
     TRACKED_WALK,
+    UNREACHABLE,
     WALK_CAVEAT,
     DocumentPopulation,
     Finding,
     format_findings,
+    unreachable_population,
 )
 
 
@@ -62,3 +75,109 @@ def test_a_population_carries_its_paths_and_the_walk_that_found_them():
     population = DocumentPopulation((Path("a.md"),), TRACKED_WALK)
     assert population.paths == (Path("a.md"),)
     assert population.walk == TRACKED_WALK
+
+
+# --- W158: the population a run could not reach -----------------------------
+
+#: A bound on each child run. ⚠️ A bound rather than a hope: a hang is no verdict.
+TIMEOUT = 180
+
+#: ⛔ Where the child's `conftest.py` finds the REAL root one. An environment variable
+#: rather than a path written into the fixture, so no path is written into any file (R7).
+ROOT_CONFTEST_ENV = "STUDYFORGE_W158_ROOT_CONFTEST"
+
+#: The child suite's `conftest.py`: the repository's own summary hook, loaded by path.
+#: ⛔ The REAL hook and not a copy, or a defect in the wiring would pass here.
+CHILD_CONFTEST = f"""
+import importlib.util, os
+_spec = importlib.util.spec_from_file_location("root_conftest", os.environ["{ROOT_CONFTEST_ENV}"])
+_root = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_root)
+pytest_terminal_summary = _root.pytest_terminal_summary
+"""
+
+
+def _skipped(reason: str) -> SimpleNamespace:
+    """A skipped report the way pytest tallies one: `(path, line, "Skipped: reason")`."""
+    return SimpleNamespace(nodeid="t.py::t", longrepr=("t.py", 1, f"Skipped: {reason}"))
+
+
+def _pytest(arguments: list[str], cwd: Path, **extra: str) -> subprocess.CompletedProcess:
+    """A child pytest with the repository importable and nothing inherited that steers it."""
+    env = dict(os.environ)
+    env.pop("PYTEST_ADDOPTS", None)
+    env["PYTHONPATH"] = os.pathsep.join([str(repository_root()), str(repository_root() / "src")])
+    env[ROOT_CONFTEST_ENV] = str(repository_root() / "conftest.py")
+    env.update(extra)
+    return subprocess.run(
+        [sys.executable, "-m", "pytest", "-p", "no:cacheprovider", *arguments],
+        cwd=cwd,
+        env=env,
+        capture_output=True,
+        text=True,
+        timeout=TIMEOUT,
+        check=False,
+    )
+
+
+def _child_suite(root: Path, body: str) -> subprocess.CompletedProcess:
+    """Run a synthetic suite in a harness-minted directory through the root summary hook."""
+    (root / "conftest.py").write_text(CHILD_CONFTEST, encoding="utf-8")
+    (root / "test_child.py").write_text(f"import pytest\n\n{body}", encoding="utf-8")
+    return _pytest(["-q", str(root)], root)
+
+
+def _disclosure(output: str) -> list[str]:
+    """The disclosure as a run printed it: the label line and the indented reasons under it."""
+    lines = output.splitlines()
+    start = next(i for i, line in enumerate(lines) if line.startswith(f"{UNREACHABLE}: "))
+    found = [lines[start]]
+    for line in lines[start + 1 :]:
+        if not line.startswith("  "):
+            break
+        found.append(line)
+    return found
+
+
+def test_an_empty_population_is_still_PRINTED_as_zero():
+    # ⛔ The arm a careless repair deletes: `0` is a reading, never an absence.
+    assert unreachable_population({}) == [
+        f"{UNREACHABLE}: 0 skipped test(s) — this run reached every test it collected"
+    ]
+
+
+def test_the_count_and_every_reason_are_DERIVED_from_the_tally():
+    # ⛔ Reasons minted at run time, so no typed list of reasons can produce them.
+    first, second = f"absent {uuid.uuid4().hex}", f"absent {uuid.uuid4().hex}"
+    stats = {"skipped": [_skipped(first), _skipped(second), _skipped(first)], "passed": [1]}
+    lines = unreachable_population(stats)
+    assert lines[0].startswith(f"{UNREACHABLE}: 3 skipped test(s) — ")
+    assert lines[1:] == [f"  2 × {first}", f"  1 × {second}"]
+
+
+def test_a_run_that_reaches_everything_prints_the_EMPTY_population_and_exits_0(tmp_path):
+    result = _child_suite(tmp_path, "def test_one():\n    pass\n")
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert _disclosure(result.stdout) == unreachable_population({})
+
+
+def test_a_run_with_skips_prints_a_NON_EMPTY_population_and_its_exit_does_not_move(tmp_path):
+    reason = f"a sibling {uuid.uuid4().hex} is not checked out"
+    body = f"def test_one():\n    pytest.skip({reason!r})\n\ndef test_two():\n    pass\n"
+    result = _child_suite(tmp_path, body)
+    # ⛔ Ruling 328: a disclosure, never a failure — the skip-only run is still `0`.
+    assert result.returncode == 0, result.stdout + result.stderr
+    lines = _disclosure(result.stdout)
+    assert lines[0].startswith(f"{UNREACHABLE}: 1 skipped test(s) — ")
+    assert lines[1:] == [f"  1 × {reason}"]
+
+
+def test_the_REAL_sibling_assertions_with_the_workspace_absent_print_a_NON_EMPTY_one(tmp_path):
+    # ⭐ The row's own population: the Java corpus absent, as it is in the pinned container,
+    # made absent HERE by pointing the workspace at an empty harness-minted directory.
+    module = "tests/studyforge/corpus/placement/test_corpora.py"
+    result = _pytest(["-q", module], repository_root(), STUDYFORGE_WORKSPACE=str(tmp_path))
+    assert result.returncode == 0, result.stdout + result.stderr
+    lines = _disclosure(result.stdout)
+    assert not lines[0].startswith(f"{UNREACHABLE}: 0 "), lines
+    assert any("is not checked out beside this repository" in line for line in lines[1:]), lines

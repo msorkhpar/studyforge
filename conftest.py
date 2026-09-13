@@ -30,6 +30,16 @@ when it is green
 less: the stray file may be *why* the run failed. So the report always prints.
 ⛔ But the exit status is only taken over from `0`, because overwriting a real
 failure's code with this one would hide which gate spoke.
+
+## ⛔ `W158` — every run PRINTS the population it could not reach
+
+⚠️ **The two routine environments are not supersets of each other** (Ruling 326):
+the pinned container mounts only the checkout and skips every sibling assertion,
+the host skips the in-image ones, and both print `passed`. ⭐ So the summary says
+how many tests this run skipped and why — derived from the run's own tally by
+`tools.quality.report.unreachable_population`, and printed when the count is `0`.
+⛔ **It never touches the exit status**: a population out of reach is a
+disclosure, not a failure (Ruling 328).
 """
 
 from __future__ import annotations
@@ -91,3 +101,12 @@ def pytest_sessionfinish(session: pytest.Session, exitstatus: int) -> None:
         reporter.write_line(treestate.report(moved), red=True)
     if exitstatus == 0:
         session.exitstatus = DIRTY_EXIT
+
+
+def pytest_terminal_summary(terminalreporter) -> None:
+    """Print what this run could not reach, on every run, empty or not (`W158`)."""
+    from tools.quality.report import unreachable_population
+
+    terminalreporter.write_line("")
+    for line in unreachable_population(terminalreporter.stats):
+        terminalreporter.write_line(line)
