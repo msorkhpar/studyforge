@@ -960,6 +960,8 @@ corpus.json                                   the manifest (§4)
     raw/<variant>/unit-NN/practice-M.json     optional
 ```
 
+⛔ **A file under the archive root that is not a member of this layout is refused by name (`archive-stray`), never skipped** (`W248`, amended PO round 79).
+
 ```json
 // container.json — generalises CodeSignal's course-map.json
 { "container_api": 1,
