@@ -13,7 +13,8 @@ path §6 requires a writer to build at before it moves anything into place.
     layout.document(address, "prose", 3, "lesson", 2)
 
 **Depends on.** `address` (for `Address`, `unit_name` and `require_ordinal`)
-and `corpus.container`/`corpus.manifest` for the two filenames they own.
+`corpus.container`/`corpus.manifest` for the two filenames they own, and
+`corpus.placement` for the archive root.
 ⛔ Not on `validate`: this module says where to *write*, `validate` says
 whether what was written is right, and a writer that imported its own judge
 would be checking itself.
@@ -26,15 +27,16 @@ lesson-2.json` is five joins, four of which are silent when wrong. An adapter
 that writes to `unit-3/` instead of `unit-03/` produces a tree `validate`
 reports as *unit missing*, at the reader rather than at the writer.
 
-## ⛔ The two names below are re-derived, and that is the ruled outcome
+## ⛔ `ARCHIVE_DIR` is imported; the `raw/` segment is still re-derived
 
-⚠️ `ARCHIVE_DIR` and the `raw/` segment are owned by `validate.corpus`, which
-puts neither on a package surface. **Ruling 101's table:** a name that is not
-on the owner's `__all__` is not shared — export it, or re-derive it. Exporting
-is outside this task's `Owns`, so they are re-derived here **and pinned
-behaviourally**: `tests/studyforge/skills/adapter/test_layout.py` lays out a
-tree with this module and asserts `validate` reads exactly the documents it
-wrote. ⛔ A literal compared against the same literal would agree with itself.
+⛔ **`ARCHIVE_DIR` is `corpus.placement.ARCHIVE_DIRNAME`, never a literal here**
+(`INT-06/6`). It was re-derived under Ruling 101's second row, and three
+spellings let `plan` print a root neither this module nor `validate` read.
+⚠️ The `raw/` segment is owned by `validate.corpus`, off its surface, so it is
+re-derived here **and pinned behaviourally**:
+`tests/studyforge/skills/adapter/test_layout.py` lays out a tree with this
+module and asserts `validate` reads exactly the documents it wrote. ⛔ A
+literal compared against the same literal would agree with itself.
 
 ⚠️ `unit_name` is *not* re-derived. It is on `studyforge.address.__all__`, so
 the same ruling's other row applies and it is imported.
@@ -49,12 +51,12 @@ from studyforge.address import Address, require_ordinal, unit_name
 from studyforge.archive.document import KINDS
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME
 
-#: The archive directory §6 leaves to the corpus, and the value every fixture
-#: and every check in this repository uses today. ⚠️ A default, never a
-#: constant a caller is forced to accept: `Layout` takes it as a field, so a
-#: corpus that puts its archive elsewhere changes one argument.
-ARCHIVE_DIR = "archive"
+#: The archive root `validate`, `plan` and a build read: placement's one spelling,
+#: on this skill's surface. ⚠️ `Layout` still takes it as a field, and any other
+#: value writes where `validate` reads nothing, which it reports as `no-archive`.
+ARCHIVE_DIR = ARCHIVE_DIRNAME
 
 #: The directory under a container that holds its documents, by variant.
 #: ⚠️ One variant per container (SF-05), so this is one directory and not a

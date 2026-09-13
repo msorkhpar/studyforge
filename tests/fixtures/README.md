@@ -300,10 +300,10 @@ source. ⚠️ Every other corpus's `origin` paths are *declared and absent*, wh
 is a first-class state (R2 — an archive ships on its own) and reads as
 `Unchecked`, never as a failure.
 
-⚠️ **`archive/` is a placeholder for `<archive-root>`, which placement owns
-(SF-03).** Under the `sibling` profile the real root is `.studyforge/archive/`;
-the fixtures use a plain directory so they can be browsed. A consumer of these
-fixtures should take the root as a parameter, never as a constant.
+⭐ **`archive/` is the archive root under every profile** — `ARCHIVE_DIRNAME`,
+spelled once in `corpus.placement.names` and read by `validate`, `plan`, a build
+and the adapter layout (`INT-06/6`). ⚠️ This paragraph once called it a
+placeholder for `.studyforge/archive/`: the root `plan` printed and nothing read.
 
 ## Golden files
 

@@ -172,9 +172,13 @@ def test_the_generated_root_sorts_out_of_the_way():
     # ⚠️ Dot-prefixed, because under `sibling` the repository's directories
     # are the material.
     assert GENERATED_ROOT.startswith(".")
+    from studyforge.corpus.placement import ARCHIVE_DIRNAME
+
     corpus = profile_for("tree").corpus()
-    for path in corpus.directories:
-        assert str(path).startswith(GENERATED_ROOT)
+    assert str(corpus.assets).startswith(GENERATED_ROOT)
+    # ⛔ The archive is the one exception, and it is ruled (`INT-06/6`): it sits at
+    # `ARCHIVE_DIRNAME` beside `corpus.json`, where `validate` reads it.
+    assert corpus.archive == PurePosixPath(ARCHIVE_DIRNAME)
 
 
 def test_the_root_index_is_the_one_index_html_and_it_is_at_the_top():

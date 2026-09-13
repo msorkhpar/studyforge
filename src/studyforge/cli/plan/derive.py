@@ -7,10 +7,10 @@ container and unit under the corpus's own profile, and collects the result.
 **How you use it.** `plan_for(root)`, or `plan_for(root, bytes_per_unit=N)` to
 project the media footprint at a rate.
 
-**Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement`,
-`cli.plan.report`, `validate.corpus` for the archive directory's one
-spelling, and `narrate.synth` / `narrate.speakable` for the record and its
-clip names. ⛔ It opens three kinds of file and no others, and no unit document.
+**Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement` (which
+also says where the archive is: the plan reads maps from the root it prints,
+`INT-06/6`), `cli.plan.report`, and `narrate.synth` / `narrate.speakable` for
+the record and its clip names. ⛔ It opens three kinds of file and no others, and no unit document.
 
 ## ⛔ The narration record is a plan input (`E09` § SF-38/8, `W224`)
 
@@ -59,7 +59,6 @@ from studyforge.corpus.placement import (
 from studyforge.narrate.speakable import SpeakableError
 from studyforge.narrate.speakable.naming import SEGMENT, parse_clip_name, unit_token
 from studyforge.narrate.synth import StateError, read_state, state_file
-from studyforge.validate.corpus import ARCHIVE_DIR
 
 #: What a clip's `create` line says about who writes it, and when a build does.
 CLIP_COPY = (
@@ -81,7 +80,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     if manifest is None:
         return _unplannable(refusals)
     profile = profile_for(manifest.placement)
-    held, unreadable = _containers(root, manifest)
+    held, unreadable = _containers(root, manifest, profile)
     refusals += unreadable
     clips, record, misrecorded = _recorded(root)
     refusals += misrecorded
@@ -152,12 +151,12 @@ def _manifest(root: Path) -> tuple[Manifest | None, list[Refusal]]:
 
 
 def _containers(
-    root: Path, manifest: Manifest
+    root: Path, manifest: Manifest, profile: Profile
 ) -> tuple[list[tuple[str, Container]], list[Refusal]]:
     """Every container map under the archive, in sorted path order (R10)."""
     held: list[tuple[str, Container]] = []
     refusals: list[Refusal] = []
-    for path in sorted((root / ARCHIVE_DIR).rglob(CONTAINER_FILENAME)):
+    for path in sorted((root / profile.corpus().archive).rglob(CONTAINER_FILENAME)):
         where = path.relative_to(root).as_posix()
         try:
             text = path.read_text(encoding="utf-8")
