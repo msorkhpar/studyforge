@@ -201,7 +201,7 @@ place of its own paragraph of reasoning.**
 ⛔ **R3 is the outer bound: a generated clip is still a file in somebody's repository.**
 ⭐ **Clauses 3 and 4 are carried out by [`W218`](BOARD-ARCHIVE.md#w218-w193s-rule-is-written-and-nothing-carries-it-out-dead-clips-count-against-a-shipped-ceiling-and-no-instrument-discloses-or-prunes-them)**: `narrate` prints the
 dead-entry count on every run, and `--prune` in place of `--voice` is the prune. ⚠️ What it
-HOLDS rather than deletes is in [its handoff](handoffs/W218.md), and reaching it is [`W226`](rows/W226.md).
+HOLDS rather than deletes is in [its handoff](handoffs/W218.md), and reaching it is [`W226`](BOARD-ARCHIVE.md#w226-the-narration-record-cannot-locate-every-clip-it-wrote-so-a-removed-units-clips-and-a-re-worded-passages-old-clip-are-beyond-the-only-prune).
 ⛔ **A scope added to `narrate` or `reconcile` lands in `Walk.unwalked`, or `--prune` reads
 out-of-scope entries as dead** (`W218/4`: no partial REQUEST exists today; the partial walk
 asserted is a declared unit with no material).
