@@ -7,11 +7,15 @@ a state from the closed vocabulary; and that every row file carries its frame.
 REDIRECT STUB.**
 
 **How you use it.** `bijection_findings(root, text)` returns the findings and is
-called from `check_board`. ⛔ **It is handed the board's text rather than reading
+called from `check_board`; `bijection_reading(root, text)` is the population it was
+over, printed by `board_state` (`W161`). ⛔ **It is handed the board's text rather than reading
 it**, so the four arms read one string and cannot disagree about what the file said.
 
-**Depends on.** `register` for the parsers and the frame, `notice` for the files on
-disk, `config` for `relative`/`read_text`, and `report` for the answer. Nothing else.
+**Depends on.** `register` for the parsers and the frame, `observation` for the
+In-flight table's subjects, `config` for `relative`/`read_text`, and `report` for the
+answer. Nothing else. ⭐ **`rows_on_disk` is DEFINED here and `notice` imports it**
+(`W161`): the files on disk are this arm's other half, and the notice now prints this
+arm's reading, so the old direction of that import would have been a cycle.
 
 ## ⛔ Why this is its own module, and it is a STANDING DECISION rather than taste
 
@@ -112,14 +116,25 @@ inhabited by the whole population rather than by a hopeful majority.**
 walk of the `<!-- register -->` markers. ⛔ **A second walk is a second answer to
 *what is a register row*, and this package already paid for that once: an inferred
 boundary read an *In flight* table as four duplicate register rows.**
+
+## ⛔ `W161` — this arm is over `W` ids ONLY, and it SAYS which population it read
+
+⭐ **The SUBJECT VOCABULARY is `docs/conventions/board.md`'s:** a `W` id is argued in
+`rows/<ID>.md`, an EPIC TASK (`NS-03`) in its EPIC — ⛔ so an epic task's row file is
+`board-orphan`. ⚠️ **At `a2ae2c4` an In-flight `W` id with no register row and no file
+read CLEAN; it is `board-detail` now.** ⛔ **`0 findings` over a `W`-only population is
+not a claim about every row** (Ruling 48, Ruling 331), so `bijection_reading` prints it,
+the epic tasks outside it, and the residue — read, never refused (`NS-01/2`).
 """
 
 from __future__ import annotations
 
 import posixpath
+import re
 from pathlib import Path
+from typing import NamedTuple
 
-from tools.quality.board.notice import rows_on_disk
+from tools.quality.board.observation import read
 from tools.quality.board.register import (
     ARCHIVE,
     BOARD,
@@ -147,6 +162,64 @@ RULE_FRAME = "board-frame"
 #: rather than typed: a third spelling of `rows` is a fact with three homes, and the
 #: one nobody re-measures is the one that goes stale.
 ROWS_FROM_BOARD = posixpath.relpath(ROWS, posixpath.dirname(BOARD))
+
+#: ⛔ `W161`: an EPIC TASK id as the In-flight table writes one — `NS-03`, `SF-19b` —
+#: and never a finding id, which continues past a `/` (`INT-09/5`). ⭐ The vocabulary
+#: this answers to is `docs/conventions/board.md`'s, and it is not restated here.
+EPIC_TASK = re.compile(r"(?<![\w/-])[A-Z]{2,}-\d+[a-z]?(?![\w/-])")
+
+#: Where an epic task's argument lives, as the messages and the reading spell it.
+EPIC_HOME = "its EPIC, docs/tasks/E<nn>-*.md"
+
+
+class Subjects(NamedTuple):
+    """The In-flight table's subjects, partitioned by the declared vocabulary."""
+
+    w_rows: tuple[tuple[int, str], ...]
+    epic_tasks: tuple[str, ...]
+    unclassified: tuple[str, ...]
+
+
+def rows_on_disk(root: Path) -> dict[str, Path]:
+    """`{"W96": <path>}` for every row file beside the board, in sorted order (R10)."""
+    directory = root / ROWS
+    if not directory.is_dir():
+        return {}
+    return {path.stem: path for path in sorted(directory.glob("*.md"))}
+
+
+def subjects(text: str) -> Subjects:
+    """Partition every observation row's subject: `W` ids, epic tasks, and the residue.
+
+    ⛔ **The residue is a subject naming NEITHER form, and it is READ and printed by
+    name, never refused** — the parser admits every subject (`NS-01/2`).
+    """
+    w_rows, epics, residue = [], [], []
+    for row in read(text).rows:
+        w_rows.extend((row.line, identifier) for identifier in row.ids)
+        found = EPIC_TASK.findall(row.subject)
+        epics.extend(found)
+        if not row.ids and not found:
+            residue.append(row.subject.strip())
+    return Subjects(tuple(w_rows), tuple(epics), tuple(residue))
+
+
+def bijection_reading(root: Path, text: str) -> str:
+    """Name the population `board-detail` and `board-orphan` were over (`W161`).
+
+    ⛔ **Printed on a CLEAN run too**, because a silence over a `W`-only population
+    reads as a claim about every row (Ruling 48, Ruling 331).
+    """
+    ids = {identifier for _n, row_ids, _cell in register(text) for identifier in row_ids}
+    vocabulary = subjects(text)
+    return (
+        f"bijection ({RULE_DETAIL}, {RULE_ORPHAN} — `W161`) over `W` ids ONLY: "
+        f"{len(ids)} register ids and {len(vocabulary.w_rows)} observation `W` ids against "
+        f"{len(rows_on_disk(root))} files in {ROWS}/; epic tasks OUTSIDE it by rule, "
+        f"argued in {EPIC_HOME}: {' '.join(vocabulary.epic_tasks) or 'none'}; "
+        f"observation subjects in NEITHER vocabulary, read and not judged: "
+        f"{' | '.join(vocabulary.unclassified) or 'none'}."
+    )
 
 
 def born_detail(identifier: str) -> str:
@@ -255,6 +328,22 @@ def bijection_findings(root: Path, text: str) -> list[Finding]:
                 )
             )
 
+    # ⛔ `W161`: an observation `W` id owes its row file too — it read CLEAN with no
+    # register row and no file. ⭐ An EPIC TASK owes none: its argument is its epic.
+    for number, identifier in subjects(text).w_rows:
+        if identifier not in on_disk:
+            findings.append(
+                Finding(
+                    BOARD,
+                    number,
+                    RULE_DETAIL,
+                    f"{identifier} is named in the In-flight table and has no "
+                    f"{ROWS}/{identifier}.md. ⛔ A `W` subject's argument lives in its row "
+                    f"file (the subject vocabulary, docs/conventions/board.md); only an "
+                    f"EPIC TASK's lives elsewhere, in {EPIC_HOME}.",
+                )
+            )
+
     for identifier, path in on_disk.items():
         body = bodies[identifier]
         if not body.startswith(f"# {identifier}\n") or ROW_FRAME not in body:
@@ -293,7 +382,13 @@ def bijection_findings(root: Path, text: str) -> list[Finding]:
                 f"closed — in which case Ruling 270 replaces this file with a REDIRECT STUB "
                 f"whose whole argument is one pointer into BOARD-ARCHIVE.md, and its argument "
                 f"moves there — or the register lost it. ⚠️ A file still carrying its FULL "
-                f"argument is a close that did not happen; see docs/conventions/board.md.",
+                f"argument is a close that did not happen; see docs/conventions/board.md."
+                + (
+                    f" ⛔ {identifier} is an EPIC TASK (`W161`): its argument lives in "
+                    f"{EPIC_HOME}, and a row file is a SECOND home for it."
+                    if EPIC_TASK.fullmatch(identifier)
+                    else ""
+                ),
             )
         )
     return findings

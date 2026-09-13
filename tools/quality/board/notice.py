@@ -7,12 +7,14 @@ because their gates were retired, and a bound REMOVED because its subject became
 editable is replaced by a NOTICE, never by nothing (Ruling 183).
 
 **How you use it.** `board_state(root)` is registered in `tools.quality.NOTICES`;
-`rows_on_disk(root)` is the one definition of *which files sit beside the board*
-and `check_board` reads it from here.
+`rows_on_disk(root)` is the one definition of *which files sit beside the board*;
+⭐ **it is defined in `bijection.py` since `W161` and re-exported from here**, so the
+notice can print that arm's population without an import cycle.
 
 **Depends on.** `register` for the parsers and the locations, ⭐ **`bounds` for the
 five size bounds and `W130`'s three-term `allowance`**, `observation` for
-Ruling 189(b)'s population, `scheduled` for `W100`'s, and `config` for the tree.
+Ruling 189(b)'s population, `scheduled` for `W100`'s, `bijection` for the files on
+disk and `W161`'s population, and `config` for the tree.
 Nothing else.
 
 ## ⛔ Why this is its own module, and it is an R11 reading rather than taste
@@ -34,6 +36,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from pathlib import Path
 
+from tools.quality.board.bijection import bijection_reading, rows_on_disk
 from tools.quality.board.bounds import (
     BOARD_FRAME,
     BOARD_NARRATIVE_CEILING,
@@ -59,14 +62,6 @@ from tools.quality.board.register import (
 )
 from tools.quality.board.scheduled import scheduled_reading
 from tools.quality.config import read_text
-
-
-def rows_on_disk(root: Path) -> dict[str, Path]:
-    """`{"W96": <path>}` for every row file beside the board, in sorted order (R10)."""
-    directory = root / ROWS
-    if not directory.is_dir():
-        return {}
-    return {path.stem: path for path in sorted(directory.glob("*.md"))}
 
 
 def board_state(root: Path) -> list[str]:
@@ -164,6 +159,7 @@ def board_state(root: Path) -> list[str]:
         f"row arguments in {ROWS}/ (Ruling 186, no bound): "
         + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
         + ".",
+        bijection_reading(root, text),
         observation_reading(text),
         scheduled_reading(text),
     ]

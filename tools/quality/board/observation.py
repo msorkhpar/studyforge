@@ -76,6 +76,10 @@ they claim to be.** ⭐ **The complement is `corroborate.py`**: this half catche
 cell that ADMITS no observation, and that one catches a cell that CLAIMS one
 falsely. ⛔ **Neither is the other's test, and the division is stated here so the
 next reader does not widen one into the other.**
+
+⛔ **A SUBJECT is never refused here (`W161`):** `ids` is empty for an epic task and
+the row is read all the same, or `NS-01/2` re-opens as a build failure. ⭐ **Which
+subject owes which detail file is `bijection.py`'s, against `board.md`'s vocabulary.**
 """
 
 from __future__ import annotations
