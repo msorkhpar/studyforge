@@ -6,7 +6,7 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**98 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
+**100 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
 
 ## M0 — 6 capabilities
 
@@ -96,24 +96,37 @@
 | `SK-03` | Build and serve | Skills and authoring kit | `SF-28`, `SF-37`, `SF-38`, `SF-39`, `SF-40` |
 | `SK-06` | Personal archive | Skills and authoring kit | `SK-03`, `SF-21` |
 
-## M5 — 12 capabilities
+## M5 — 5 capabilities
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
-| `SF-20` | Command runner | Serving and execution | `SF-02`, `TC-01` |
+| `SF-20` | Command runner | Serving and execution | `SF-02`, `TC-00` |
 | `SF-22` | Run and Submit | Serving and execution | `SF-19a`, `SF-19b`, `SF-20`, `SF-21`, `SF-12` |
 | `SF-29` | Run output filter | Serving and execution | `SF-20` |
+| `SF-44` | The terminal command | Serving and execution | `SF-20`, `SF-23`, `TC-00` |
+| `TC-00` | The runner image | Toolchain image (shared repository) | — |
+
+## M7 — 9 capabilities
+
+| capability | what it is | area | waits on |
+|---|---|---|---|
 | `SF-24` | Practice panel | Exercise contract | `SF-22`, `SF-23` |
+| `QA-02` | Accessibility and theme | Validation and QA | `SF-14`, `SF-12` |
 | `SK-09` | Execution onboarding | Skills and authoring kit | `SK-07`, `TC-05` |
-| `TC-00` | Minimal pinned build image | Toolchain image (shared repository) | — |
-| `TC-01` | Extract the image into its own repository | Toolchain image (shared repository) | — |
+| `TC-01` | Extract the image into its own repository | Toolchain image (shared repository) | `TC-00` |
 | `TC-02` | Toolchain selection and pinning | Toolchain image (shared repository) | `TC-01` |
 | `TC-03` | Cache-priming contract | Toolchain image (shared repository) | `TC-01` |
 | `TC-04` | Workbench lockdown extension | Toolchain image (shared repository) | `TC-01` |
 | `TC-05` | Compose and mount contract | Toolchain image (shared repository) | `TC-02`, `TC-03` |
 | `TC-06` | Versioning and consumer pinning | Toolchain image (shared repository) | `TC-02` |
 
-## M6 — 9 capabilities
+## M8 — 1 capability
+
+| capability | what it is | area | waits on |
+|---|---|---|---|
+| `QA-04` | The second source | Validation and QA | `SK-07` |
+
+## M9 — 22 capabilities
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
@@ -123,31 +136,20 @@
 | `JS-04` | Source pairing | Java ingestion adapter | `JS-02` |
 | `JS-05` | Archive emission | Java ingestion adapter | `JS-03`, `JS-04`, `SF-06`, `SF-25` |
 | `JS-06` | Ingest audit | Java ingestion adapter | `JS-05` |
-| `OPS-01` | Java toolchain image | Delivery | `TC-03`, `TC-06` |
-| `OPS-02` | Narration deployment | Delivery | `NS-03` |
-| `OPS-03` | Compose and study server | Delivery | `OPS-01`, `OPS-02`, `SF-19b`, `SK-03`, `OPS-05` |
-
-## M7 — 13 capabilities
-
-| capability | what it is | area | waits on |
-|---|---|---|---|
 | `EX-00` | Exercise feasibility spike | Java exercise generation | `TC-00` |
 | `EX-01` | Body-blanking transformer | Java exercise generation | `JS-04`, `EX-00` |
 | `EX-02` | Gate runner | Java exercise generation | `EX-01`, `OPS-01` |
 | `EX-03` | Practice module and build wiring | Java exercise generation | `EX-01` |
 | `EX-04` | Exercise emission | Java exercise generation | `EX-02`, `EX-03`, `SF-23` |
 | `EX-05` | Coverage report | Java exercise generation | `EX-04` |
+| `OPS-01` | Java toolchain image | Delivery | `TC-03`, `TC-06` |
+| `OPS-02` | Narration deployment | Delivery | `NS-03` |
+| `OPS-03` | Compose and study server | Delivery | `OPS-01`, `OPS-02`, `SF-19b`, `SK-03`, `OPS-05` |
 | `OPS-04` | Build pipeline | Delivery | `SF-28`, `JS-06`, `SF-14`, `EX-04` |
 | `OPS-06` | Reader documentation | Delivery | `OPS-04` |
 | `SF-41` | The `OPS-*` artifacts are regenerated and diffed | Delivery | `OPS-01`, `OPS-03`, `OPS-04`, `OPS-05`, `OPS-06` |
 | `OPS-07` | Stale artifact reconciliation | Delivery | `OPS-04` |
 | `QA-01` | End-to-end acceptance | Validation and QA | `OPS-04` |
-| `QA-02` | Accessibility and theme | Validation and QA | `SF-14`, `SF-12` |
+| `QA-05` | The re-validation on the Java corpus | Validation and QA | `QA-04`, `QA-01` |
 | `SK-04` | Exercise derivation | Skills and authoring kit | `EX-04` |
-
-## M8 — 1 capability
-
-| capability | what it is | area | waits on |
-|---|---|---|---|
-| `QA-04` | The second source | Validation and QA | `QA-01`, `SK-07` |
 

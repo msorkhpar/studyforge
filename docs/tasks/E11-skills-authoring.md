@@ -39,7 +39,7 @@ So the epic splits in two:
 |---|---|---|---|
 | **Producing** | SK-01, SK-02, SK-07, SK-05 | **M1–M2** | E07 and E09 are their **first output**, not their input |
 | **Wrapping** | SK-03, SK-06 | **M4** | genuinely thin wrappers over entry points that must exist first |
-| **Wrapping** | SK-04 | M7 | the same |
+| **Wrapping** | SK-04 | M9 | the same |
 
 ⛔ **CORRECTED, PO round 67 (`PO-67/1`): this table read `M7` for `SK-03` and `SK-06` after `b1569e2` moved both headers to `M4`.** ⭐ **The headers and [`README.md`](README.md) step 4.4 decide; the reason column stood.**
 
@@ -513,7 +513,7 @@ integration side from the outset, rather than split there later.**
 ---
 
 ### SK-09 — Execution onboarding
-**Milestone** **M5** · **Depends on** SK-07, TC-05 · **Team** solo
+**Milestone** **M7** · **Depends on** SK-07, TC-05 · **Team** solo
 **Owns** the execution half of onboarding
 **Context** ~30k — `TC/consuming.json`, the narration service's equivalent, SK-07's output
 
@@ -539,6 +539,8 @@ from manifest data alone. ⛔ **A corpus whose manifest says it is not runnable
 gets nothing from this skill and no error** — asserted. Re-running changes
 nothing. The compose file honours §8.1's four rulings, each asserted rather than
 remembered.
+
+⛔ **PO round 74 — `M7`, with `TC-05` and the editor it composes** (user direction). ⭐ **The runtime set a corpus declares reaches the runner at `M5` through `TC-00` and `SF-44`; this row later renders the editor's compose file and prime project from that same declaration.**
 
 ---
 
@@ -575,12 +577,12 @@ state is reported with what is missing and what still works.
 
 > ~~Produces and serves the Java corpus end to end.~~
 
-⛔ **A reading no framework office can take: that sibling has no manifest and no archive at its pin (`OPS-05/1`; R20, Ruling 173).** ⭐ **Framework half: the restated first clause.** ⛔ **The Java half is RE-HOMED to `OPS-03` (`M6`, integration side), `W77`'s shape — the one disposition `SF-19b` and `OPS-05` also take.** ⭐ **With it written, `SK-03` is dispatchable when `SF-39` merges.**
+⛔ **A reading no framework office can take: that sibling has no manifest and no archive at its pin (`OPS-05/1`; R20, Ruling 173).** ⭐ **Framework half: the restated first clause.** ⛔ **The Java half is RE-HOMED to `OPS-03` (`M9` since PO round 74, integration side), `W77`'s shape — the one disposition `SF-19b` and `OPS-05` also take.** ⭐ **With it written, `SK-03` is dispatchable when `SF-39` merges.**
 
 ---
 
 ### SK-04 — Exercise derivation
-**Milestone** **M7** · **Depends on** EX-04 · **Team** pair
+**Milestone** **M9** · **Depends on** EX-04 · **Team** pair
 **Owns** the exercise-derivation skill
 **Context** ~35k — spec §7, E08 in full
 
@@ -652,4 +654,6 @@ material and progress intact. An export marked for sharing contains no progress
 and no personal data — asserted, not inspected. Re-import into an existing
 corpus merges rather than clobbering, and says what it merged.
 
-⛔ **PO round 72 — `SK-06` merged at `ddede67` and is NOT closed.** The Acceptance above is unchanged. ⛔ **`SK-06/3`: a sharing archive carries a non-UTF-8 file with its contents ungated and unreported, so *no personal data — asserted* is not met. [`W235`](rows/W235.md) carries it, and `SK-06` closes on its merge.** ⚠️ **`SK-06/2`: read marks (`SF-30`) are not carried, so for a prose corpus *what the reader has completed* is empty. [`W236`](rows/W236.md) carries it, and it is not a gate** ([the close](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)).
+⛔ **PO round 72 — `SK-06` merged at `ddede67` and is NOT closed.** The Acceptance above is unchanged. ⛔ **`SK-06/3`: a sharing archive carries a non-UTF-8 file with its contents ungated and unreported, so *no personal data — asserted* is not met. [`W235`](BOARD-ARCHIVE.md#w235-a-sharing-archive-carries-a-non-utf-8-file-with-its-contents-ungated-and-unreported-so-no-personal-data-asserted-holds-over-a-subset) carries it, and `SK-06` closes on its merge.** ⚠️ **`SK-06/2`: read marks (`SF-30`) are not carried, so for a prose corpus *what the reader has completed* is empty. [`W236`](rows/W236.md) carries it, and it is not a gate** ([the close](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)).
+
+⭐ **PO round 74 — `SK-06` CLOSED at `4d3c742`, on `W235`'s merge** ([the close](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).

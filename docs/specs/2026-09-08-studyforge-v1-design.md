@@ -101,8 +101,8 @@ configuration. The requirement survives; its constituency moved, and moved
 | Construct | Where it is actually measured | Consequence |
 |---|---|---|
 | raw HTML | **SPARQL, 6 of 19** — `<details>`/`<summary>` | a v2 source, but see below |
-| thematic break | **Java, 10 of 166** | consumer 1, at M6 |
-| blockquote | **Java, 1 of 166** | consumer 1, at M6 |
+| thematic break | **Java, 10 of 166** | consumer 1, at M9 |
+| blockquote | **Java, 1 of 166** | consumer 1, at M9 |
 | **XML inside a fence** | **ISO, 26 of 41** | the real ISO constraint |
 
 ⭐ **So the ISO constraint is fence-awareness, not tag counting.** A parser that
@@ -1291,6 +1291,16 @@ And what the *compose* side gets right, which stays per-project:
   docker creates it root-owned; the backend creates it and the container waits
   on the backend's health check.
 
+#### ⛔ AMENDED PO round 74 — the browser editor comes after the framework milestone (user direction, 2026-09-12)
+
+> *"We can even move the code-server to when after we are a framework! Because that functionallity is needed mostly for when exercises are in the picture. We can still have a dockerfile to run code in Java, Kotlin, Python, and Nodejs and maybe even shell and sql using an in memory database or whatver that course requires without the need of having the code-server to be deployed or shown in the web to client. Client still can run things in their terminal update the file and run them by a command which then will be run against that unit test associated with the file if there is any."*
+
+1. ⭐ **The execution track opens with a RUNNER IMAGE, not an editor** (`TC-00`, `M5`): pinned, no IDE, never served. ⛔ **The user's list is a requirement — Java, Kotlin, Python, Node.js, and possibly shell and SQL against an in-memory database, or whatever the course requires — and R1 makes the set a corpus gets MANIFEST DATA.**
+2. ⭐ **The reader runs a unit's test from their own terminal** (`SF-44`, `M5`). ⛔ **A file with no test is not a failure** (§7, C5).
+3. ⭐ **This section's image, the editor, lands at `M7`, and every measured property above binds it then.** ⛔ **§8.3 is untouched: the Docker socket is never mounted into the serving process.**
+
+⭐ **Ruled by the register as reversible, because the words do not decide it:** the terminal command and graded Submit both take `SF-20`'s two modes as §8.3 already states them — the runner container when it is up, the host otherwise, with identical observable behaviour.
+
 ### 8.2 The narration service — its own repository
 
 Narration gets the same treatment as the IDE, and for the same reasons:
@@ -1670,6 +1680,8 @@ because it is what every consumer gets and the only thing some consumers want.
 The execution track is built when a corpus needs it — which is a real decision
 about a real source, not a milestone everyone waits behind.
 
+⛔ **AMENDED PO round 74 (user direction, quoted in §8.1's amendment and §12's):** ⭐ **the track's container is the runner image, and the browser editor joins at `M7`.** ⚠️ **The track now runs AFTER the first corpus and the framework proof — `M4` → `M6` → `M8` → `M5` → `M7` — and the Java corpus re-validates at `M9`.**
+
 ### 11.1 The framework
 
 1. `studyforge validate` passes on a valid archive and fails, naming the
@@ -1777,3 +1789,12 @@ honestly — these skills will have seen exactly one source, and the odds that a
 unknown repository fits it perfectly are not good. The finding count is the
 **yield**, not the failure, in the same sense the exercise-feasibility spike
 already uses correctly: a negative result is a successful experiment.
+
+### ⛔ AMENDED PO round 74 — the second source is named, it goes first, and the Java corpus re-validates (user direction, 2026-09-12)
+
+> *"M6 M8 M5 M7 is the order I want also we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework ( now if it worked M5 and M7 should be finished then) and then apply it to java-senior project to revalidate being a framework."*
+
+1. ⭐ **The second source is `ISO-8583-jPOS-tutorial`, and the exercise is `M8`** (`QA-04`). ⛔ **The anonymity clause above is withdrawn for it by the user's own words; the control it bought is the cost.** ⚠️ Q18 had already named it as the track's second finish line.
+2. ⭐ **It runs BEFORE the execution track, not after v1 is otherwise accepted.** ⛔ **ISO never enters that track (zero build files, graders and exercises; Q18), so at `M5` and `M7` it passes with zero exercises (§7, C5), and those milestones are proved on the framework's own fixtures.**
+3. ⭐ **`Claude-senior-java-engineer` then re-validates the framework at `M9`** (`QA-05`), ⛔ **under every rule in this section.**
+4. ⛔ **The no-patch rule holds for the integrator of `M8` and of `M9`.** ⭐ **Between them, `M5` and `M7` are framework work, and every commit the framework pin moves across is listed (bullet 1 above).**

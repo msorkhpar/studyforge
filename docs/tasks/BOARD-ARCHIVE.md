@@ -21407,3 +21407,259 @@ MODULE-ONLY crossing, inside one section                     ⛔ 0 in either fix
 #### ⭐ CLOSED — PO ROUND 73
 
 ⭐ **Merged at `79db35b`, TERMINAL by predicate `C`. The office's guarded gates at `7edc184` and the coordinator's disclosure at `e48a0bd` are RECEIVED from the merge body.** ⭐ **`depth2` gained a second module inside one section, and crossings are counted per kind, never summed. A renderer mishandling a module step turns 14 fixture-driven tests RED, and the same plant without the container survives, which is the row's point.**
+
+## PO round 74 — M4 closed at `4d3c742`, and the order after it is M6, M8, M5, M7, then M9 (user direction)
+
+⛔ **Three merges re-derived on the first-parent chain since round 73's `0dd9fa4`:** `7b2e5d0` (`W144`), `4d3c742` (`W235`), `2bfbcb7` (`W135`). ⭐ **Ruling 97's gate at each is RECEIVED: `W144`'s office reading at `af91feb` from its merge body, and the coordinator's guarded release-tip readings of `4d3c742` and `2bfbcb7`, GREEN in the pinned image. Both tips were merged into this round at the coordinator's word, after those readings.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                      merge^2   branch head  ahead  checked out
+fix/W144-population-labels            af91feb9  af91feb9     0      NOWHERE
+fix/W235-sharing-gates-every-member   33cd2cee  33cd2cee     0      NOWHERE
+fix/W135-citation-pointer-rule        8e274114  8e274114     0      NOWHERE
+```
+
+⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **`SK-06` CLOSES on `W235`: `SK-06/3`'s clause is met by the tests and eleven plants in [its handoff](handoffs/W235.md).**
+
+⛔ **Step `4.4` and `M4`, at `4d3c742`.** Membership as round 72 declared it (`README.md` § M4, twelve tasks), each on the first-parent chain. ⭐ **Since `fc668f2` the chain gained `W233`, `W108`, `W125`, `W144` and `W235`, none a member.** ⭐ ***Done when*, re-taken HOST at `e261e29`, whose tree equals `4d3c742`, each a pytest exit:** an origin (the four `tests/studyforge/cli/test_serve*.py`) `0`; an API (`tests/studyforge/serve/`) `0`; records practice passes (`tests/studyforge/progress/`, `serve/routes/`, and `skills/personalarchive/`) `0`. ⭐ **All three true: `4.4` and `M4` CLOSE.** ⚠️ **Gaps named (Ruling 213), none a gate:** [`W90`](rows/W90.md), the index links no container page; [`W237`](rows/W237.md), in flight, three process tests read then `communicate()`; [`W236`](rows/W236.md), no read marks in a personal archive; the Java halves of `SF-19b`, `SK-03` and `OPS-05`, carried by `OPS-03`, now `M9`.
+
+⭐ **What opens is `M6`, next by the user's order.** ⭐ **Its rows are the ISO track's, and the user's go-ahead (2026-09-12) makes them dispatchable on this round's merge, on that repository's integration branch only (§ 5).** ⛔ **No framework capability row is dispatchable until `M6` and `M8` close, so every developer slot goes to `W` rows meanwhile (`PO-74/8`).**
+
+### ⛔ 2 — THE ORDER, AS APPLIED
+
+⭐ **The three directions are quoted whole in spec §8.1 and §12, amended, and in [`README.md`](README.md) § *Reordered*.** ⛔ **Population printed BEFORE editing: 109 lines in 19 live files naming `M5`–`M8` or their steps.**
+
+| milestone | about, now | corpus | Q18's finish line |
+|---|---|---|---|
+| `M6` | the first corpus reads | `ISO-8583` | the corpus's |
+| `M8` | it is a framework (`QA-04`) | `ISO-8583` | the exercise's |
+| `M5` | runs code: runner image, terminal command, Run and Submit | `FND-04` fixtures; ISO passes with zero exercises | — |
+| `M7` | practices: the editor and the practice panel | the fixtures; ISO passes with zero | — |
+| `M9` | the Java corpus re-validates (`QA-05`, minted) | `Claude-senior-java-engineer` | — |
+
+⭐ **Ids are kept, and it is the user's words that decide it:** they named the order *"M6 M8 M5 M7"* by id. ⭐ **Steps keep their milestone's prefix.** `M5` and `M7` are re-cut, because neither step list had opened. `M9`'s steps are old `M6` then old `M7`, in their order, with `EX-00` first. ⚠️ **Only `5.1` is cited in records (three times); it now resolves to a subset of its old members.** ⭐ **The Java re-validation is a MILESTONE:** it follows `M5` and `M7`, and a close run cannot stay open across two milestones (Ruling 97).
+
+| edge | outcome |
+|---|---|
+| `QA-04` → `QA-01` | ⛔ **removed**: `QA-01` reads Java at `M9`; `QA-04` waits on `SK-07` |
+| *E08 depends on the Java adapter* | ⭐ **kept true**: `E08` moved to `M9` with `E07` |
+| `EX-00` → `TC-00` | ⭐ **kept**: `TC-00` is `M5`, re-scoped as a superset |
+| `EX-01` → `JS-04`, `EX-02` → `OPS-01` | ⭐ **kept**: all `M9` |
+| `OPS-03`'s Java clauses | ⭐ **moved** with `OPS-03` to `M9` |
+| `SF-20` → `TC-01` (`PO-72/2`) | ⛔ **re-pointed** to `TC-00` |
+| `TC-01` → — | ⭐ **gains `TC-00`**: `TC-00` creates `TC/` (`W156`'s edge half) |
+| `OPS-01` → `TC-03`, `TC-06` | ⭐ **kept**: `M7` precedes `M9` |
+| `OPS-07` → `OPS-04`; `SF-41` → `OPS-*` | ⚠️ **kept**; framework rows inside `M9` (`PO-74/4`) |
+
+⭐ **Read back mechanically over the regenerated index, every edge against M0…M4, M6, M8, M5, M7, M9:** one edge waits on a later milestone, `SF-42` → `SF-40`, which predates this round and `README.md` names. ⭐ **The critical path was re-derived: tied, length 14, ending at `QA-05` or `SF-41`.**
+
+| code-server walk (direction 1b) | now |
+|---|---|
+| `TC-00` | stays `M5`; re-scoped as the runner image; the user's runtime list is manifest data (R1); creates `TC/` |
+| `TC-01`–`TC-06` | move to `M7` with the editor; `TC-02` selects from `TC-00`'s pins |
+| `SF-20` | stays `M5`; its container clause names the runner; edge `TC-00` |
+| `SF-22` | splits: Run and Submit stay `M5`; the editor task-file clause goes to `SF-24` |
+| `SF-24`, `SK-09` | move to `M7` |
+| `SF-29` | stays `M5` |
+| `SF-44` | minted, `M5`: the terminal command, its contract in `E05` |
+
+⛔ **§12's rule, with ISO also the corpus of `M5` and `M7`:** ISO enters neither (Q18), so nothing there is integrated against it. The rule binds the integrator of `M8` and of `M9`. `M5` and `M7` are framework work between them, and the pin's moves are listed.
+
+⛔ **`PO-68/2`:** the Java corpus is now `M9`. ⭐ **What remains is who integrates it, and it is still the user's.** ⚠️ **Records are not edited (Ruling 106); this section is their pointer to the new order.**
+
+⚠️ **REMAINING, named:** the index prints milestones by id and has no `M6` ([`W238`](rows/W238.md)); `reconnaissance/SKILL.md` (`src/`, a rider on `W238`); `CLAUDE.md` calls ISO a v2 target (`PO-74/5`). ⭐ **`docs/conventions/` holds no site, so nothing waits on `W135`'s hold.**
+
+### ⭐ 3 — IN FLIGHT
+
+⭐ **NAMED on the coordinator's confirmation:** `W150` (Developer 2, cut `79db35b`); `W237` (cut `0dd9fa4`, order 1, handed back GREEN and held by no checkout, merging after this round); `W136` (Developer 1, cut `2bfbcb7`, order 8); `W158` (Developer 3, cut `2bfbcb7`, order 12). ⭐ **`W136` RATIFIED:** `W135`'s merge released `docs/conventions/`, and it heads what is free. ⭐ **`W158` RATIFIED:** `W141` and the rows of orders 11–12 that name `docs/conventions/` collide with `W136`, `W151` waits on `W150`'s `citations.py`, and nobody in flight holds `docker/dev/`. ⭐ **`W150` at order 11 RATIFIED:** `W149`, `W153` and `W154` are held by `docs/conventions/` or the register, and `W151` shares `citations.py`. ⚠️ **`W156`'s *waits on `TC-01`* is REFUTED by the reorder:** its edge half landed here and its predicate names `tools/quality/`, which `W150` does not write.
+
+### ⭐ 4 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `W144/1`, `/2` | rider on [`W231`](rows/W231.md); `docs/conventions/` is `W135`'s until it merges |
+| `W144/3` | disposed: a disclosed widening, one label in each of two tests that parse it |
+| `W144/4` | carried into the board's collision paragraph |
+| `W144/5`, `/6` | disposed at the close |
+| `W135/1` | disposed at the close: the rule was built to a ref, recorded in its handoff |
+| `W135/2`, `/6` | disposed at the close: the re-pin to `4d3c742` holds every earlier handoff inside the pin, the ancestor test shipped, and the survivor is declared |
+| `W135/3` | accepted, cost named: a register record is not a bound kind, and this round writes pointers anyway |
+| `W135/4` | rider on [`W150`](rows/W150.md): whether a pointer resolves is its subject |
+| `W135/5` | accepted, cost named; the coordinator's instruction to offices is the mitigation |
+| `W125/6`, `/7` | received: coordinator hygiene |
+| `PO-73/3` | relayed to the user |
+| `PO-73/4` | ⭐ **no rule:** `W135`'s pin is the tree it landed in, so a handoff merged before it is inside the pin, and one merged after was judged at its own merge; a byte-identical carry adds nothing either arm has not read. This round merged its tips and carried nothing |
+| `W235/1` | rider on [`W226`](rows/W226.md): what the narration record holds, one `narrate/` owner |
+| `W235/2` | accepted, cost named: the survivor is stated in the skill |
+| `W235/3` | recorded: the refusal is correct under R7 |
+| `W235/4` | rider on [`W236`](rows/W236.md), the same skill |
+| `W235/5` | accepted, cost named: one test's reach |
+| `PO-74/1`, `/3` | [`W238`](rows/W238.md), minted, jumping nobody |
+
+### ⭐ 5 — THE USER'S GO-AHEAD, THE REVERSIBLE RULINGS, AND THE ONE QUESTION
+
+⭐ **The user, 2026-09-12, relayed by the coordinator:** *"finish the current milestone and then contine from the given order we talked about"* — ⭐ **read as the go-ahead for the ISO track, within the coordinator's limits:** its existing integration branch only, a linked worktree, nothing pushed or destroyed, CodeSignal and the Java corpus untouched, and §12's no-patch rule.
+
+⭐ **Ruled by the register as REVERSIBLE, where the words do not decide:** `M5` and `M7` are proved on the `FND-04` fixtures, with the Java rows in `M9` (headers move back if the user says otherwise); the terminal command and graded Submit take `SF-20`'s two modes as §8.3 states them (`SF-44` is untaken). ⛔ **The one question left is the user's, and it is in [this round's record](handoffs/PO-2026-09-12-round74.md): frozen records rewritten in place, against Ruling 106.**
+
+⭐ **The FIRST dispatchable `M6` work, for the coordinator:**
+
+| | |
+|---|---|
+| **Office** | PO-Integration — ⛔ **findings, not patches** (§12) |
+| **Repository** | `ISO/`, branch `release/studyforge-integration` at `76e689c` (its round 5), in a linked worktree. ⛔ **The workspace pin stays `a941517`** (Scheduled) |
+| **The framework** | read-only, at this round's merge |
+| **The rows** | ISO's own plan on that branch carries `M6` as its C1–C4, `ISO-04`…`ISO-17`; `ISO-16` asserts the reading floor, `M6`'s *Done when* |
+| **First** | ⭐ **(1)** re-take the plan against the release tip: its readings are of `798956c`, its C1–C4 gates (framework `M2`, `M3`, `M4`) are all closed now, and its `Q1`, `Q6` and `Q10` answers are re-read, not inherited. ⭐ **(2)** `ISO-04`: ratify and commit `corpus.json` — one new file, `permitted_edits` `[]`, `exercises` `false` |
+| **Also on the board** | [`W73`](rows/W73.md), INTEGRATION side, in progress since ISO's round 5 |
+| ⚠️ **Before dispatch** | **that branch is checked out in ISO's main checkout, so git refuses a linked worktree on it until that checkout leaves it** — the coordinator's to arrange; the register touches neither (`PO-74/9`) |
+
+### W144 — One phrase, two populations — the notice counts table LINES and the bound counts the ID SET, and both say *register rows*
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W144.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`PO-48/10`. ONE PHRASE, TWO POPULATIONS: the board notice prints `<n> register rows` counting table LINES, and the bound prints `224×<m> register` counting the distinct ID SET, and both call the population *register rows*.** ⭐ **The two agree on every board where no row names two ids — which is the worst failure shape a denominator can have, because the disagreement appears only on the board that already has an unusual row.**
+
+### ⛔ THE READING — REPRODUCED AND DIAGNOSED BY THE REVIEWER, NOT INHERITED
+
+⚠️ **`RECEIVED` from `wt/cto`** (Ruling 115), ⛔ **who reproduced this office's report and then found the separating row:**
+
+```text
+notice.py:145   len(rows)          = 137   table LINES        printed as "register rows"
+bounds.py:225   the distinct ID SET = 138   ids the register names
+bounds.py:272   labels that id count "register rows" TOO
+the separating row is register row 146, naming `W17` and `W19`  -- one line, two ids
+```
+
+⛔ **THE BOUND IS CORRECTLY INDEXED TO IDS** — Ruling 271's derivation is per ROW-of-the-population and `W17 + W19` is two rows of backlog carried on one line — ⭐ **so the DEFECT IS THE LABEL, not the arithmetic, and a taker who "fixes" the bound has broken a correct denominator.**
+
+### ⛔ WHY A LABEL IS WORTH A ROW
+
+⭐ **Ruling 294 requires a per-row bound to PRINT ITS DERIVATION beside its verdict, precisely so a later round cannot raise a chosen number instead of obeying it.** ⛔ **A derivation printed with two different meanings of its own population word is a derivation a reader cannot check** — ⚠️ **and the first person to check it read `137 register rows` beside `224×138 register` on ONE line and had to open two modules to find out which was wrong. Neither was.**
+
+⭐ **AND IT IS `W137/3` FROM THE OTHER SIDE: the `live` rows-versus-ids arithmetic was routed to a surface with no row and no owner, and it is the same numerator.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **THE TWO POPULATIONS ARE NAMED DISTINCTLY WHEREVER EITHER IS PRINTED** — the line count and the id count — ⛔ **and the word `register rows` is used for AT MOST ONE of them across `tools/quality/board/`.**
+2. ⛔ **THE DERIVATION LINE SAYS WHICH ONE ITS TERM IS INDEXED TO**, because Ruling 294's whole point is that the bound is checkable from its own output.
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12), **against a board where the two DIFFER**: a fixture whose register carries a multi-id row must print two different numbers with two different labels, and a fixture with no multi-id row must print the same number twice without either label becoming a lie. ⚠️ **The live board is an inhabitant of the first case today (`W17` / `W19`), so the fixture is known to be reachable** (Ruling 48).
+4. ⚠️ **NOT A CHANGE TO THE BOUND, AND NOT A SPLIT OF THE `W17 + W19` ROW.** ⛔ **That row is ONE COMMIT, ruled, and the register carries it as one** — ⭐ **splitting it to make two counters agree is teaching the tree to please the instrument, which check 3's own rule refuses by name.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RE-DERIVATION OF `BOARD_PER_ROW`.** ⭐ **Ruling 271 refuses three remedies on measured grounds and Ruling 294 keeps the term derived; this row changes no number.** ⚠️ **If a taker finds themselves editing `bounds.py`'s constants, they are in `W130`'s closed argument rather than in this row.**
+
+### ⭐ ONE CARRY, ADDED PO ROUND 62 — it is on this row's declared surface and it had no other home
+
+⛔ **`tools/tests/quality/board/test_bounds.py`'s own `CLOSED` fixture STILL CARRIES THE RETIRED ARCHIVE-LINK DETAIL CELL** that [`W185`](#w185-the-close-procedure-and-board-size-are-jointly-unsatisfiable-owes-a-design-decision) abolished and `f1684e6` landed the arm for (`W196/4`, filed by the office that could not fix it inside its own row). ⭐ **Harmless where it sits — that module measures BYTES, and changing the fixture MOVES ITS FIGURES, which is precisely why it must be done by the row that owns those figures rather than in passing.** ⚠️ **It is the retired form left exactly where the next author will copy it from.**
+
+⚠️ **AND THIS ROW'S OWN COLLISION READING HAS ROTTED:** ⛔ **the SURFACE line below names `W138` and `W139` as the rows it does not collide with, and both have CLOSED** — ⭐ **Ruling 214 has this re-taken at DISPATCH, and the register is naming it rather than re-taking it in a round that is not dispatching the row.**
+
+⭐ **SURFACE: `tools/quality/board/notice.py`, `tools/quality/board/bounds.py` and their tests.** ⛔ **Shared with NO row in flight (`W138` holds `tests/studyforge/corpus/placement/`, `W139` holds `tools/quality/reach.py`) and with no other queued row** — ⚠️ **and it is NOT `tools/quality/board/register.py`, which carries a standing SPLIT condition on its next edit.**
+
+[the mint argument and this round's five mints](#the-five-mints-the-one-absorption-and-the-one-scheduled-item-that-is-not-a-row)
+
+#### ⭐ CLOSED — PO ROUND 74
+
+⭐ **Merged at `7b2e5d0`, TERMINAL by predicate `C`. The office's guarded gates at `af91feb` and the coordinator's disclosure at `0dd9fa4` are RECEIVED from the merge body.** ⭐ **The notice counts `register lines` and the bound `register ids`; no number moved.**
+
+### W235 — A sharing archive carries a non-UTF-8 file with its contents ungated and unreported, so *no personal data — asserted* holds over a subset
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W235.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A SHARING ARCHIVE CARRIES A NON-UTF-8 FILE WITH ITS CONTENTS UNGATED AND UNREPORTED, SO `E11` § `SK-06`'s *"no personal data — asserted"* HOLDS OVER A SUBSET.** ⭐ **`SK-06/3`, disclosed by `SK-06`'s office and carried in the merge body `ddede67`. The register re-measured it.**
+
+```text
+MEASURED by the PO at fc668f2, role wt/po, HOST, depth1 copied to .scratch/
+no plant                                   export --for sharing  exit 0
+cover.bin = bytes around a placeholder
+  home path (not UTF-8)                    exit 0; material/cover.bin carries it;
+                                           the output says "material 9 file(s)", nothing more
+cover.md  = the same path as UTF-8 text    exit 1, no archive written   (the control)
+FND-04 depth1 / depth2: non-UTF-8 material members   0 / 0
+```
+
+### ⛔ WHY IT IS A ROW, AND WHY IT HOLDS `SK-06`
+
+⭐ **The Acceptance says *asserted, not inspected*; for a non-UTF-8 member it is neither.** `layout.gate` returns `False` for such a file and `export` discards the answer, so the arm stands down silently. ⛔ **The tests' "every member read and gated" ranges over fixtures with ZERO such members.** ⚠️ **A sharing archive is built to leave the machine, so a leak is irreversible.** Photo, PDF and audio metadata carry names as a matter of course. Holding `SK-06` open costs one row. ⭐ **Order 0: it jumps every row, because step `4.4` and `M4` wait on it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **No non-UTF-8 member reaches a sharing archive UNJUDGED.** Every such member is gated, refused by name with a remedy, or is from a population the framework itself produced from gated text. The taker names that population and asserts it. ⚠️ **Which shape it takes is the taker's to argue, and `SKILL.md` states it before code (§9).**
+2. ⛔ **A `FND-04`-derived corpus with a real narration clip still exports for sharing**, or its refusal names the clip and the remedy. A byte gate that refuses real audio is the cost `SK-06/3` named. It is not a fix.
+3. ⛔ **PLANTED** (Rulings 124, 348): the register's `cover.bin` above is refused, or judged and reported. Restore the discarded answer and the test goes RED.
+4. ⭐ **`SK-06/4` is read first:** a root holding a virtual environment or build output widens this population.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A notice alone.** A line saying *N files were not read* reports the gap and does not close it. ⛔ **An owner-archive change:** owner archives stay on the owner's machines.
+
+⭐ **Surface: `src/studyforge/skills/personalarchive/` and its tests.**
+
+[the mint](#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)
+
+#### ⭐ CLOSED — PO ROUND 74
+
+⭐ **Merged at `4d3c742`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `4d3c742` is RECEIVED.** ⭐ **Every non-UTF-8 member of a sharing archive is judged and a match refused by name; `SK-06` closes on it.**
+
+### W135 — A citation of a tracked document written as a bare filename is invisible to the one instrument that checks citations
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W135.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`CTO-59/2`. A document may cite a frozen record, a row file or a ruling section by BARE FILENAME, and `check_pointers` — the one instrument in this repository that checks citations — cannot see that citation at all, so it can neither resolve it nor report it missing.**
+
+⭐ **RULING 285(b), quoted rather than paraphrased** (Ruling 195) — [round 59's record](handoffs/CTO-2026-09-11-round59.md#ruling-285-cto-round-59-a-citation-of-a-frozen-record-is-a-pointer-and-a-failed-reading-is-closed-by-a-signature-rather-than-by-a-handler):
+
+> ⭐ **(b) THE POINTER.** ⛔ **A document that cites a frozen record, a row file or a ruling
+> section cites it as a RESOLVING POINTER, not as a bare filename.** … ⛔ **Scoped
+> deliberately: it binds a citation OF A TRACKED DOCUMENT, and never a test name, a symbol
+> or a sha.**
+
+### ⛔ THE POPULATION, MEASURED AT `51dee3b` — AND IT IS 147, NOT 1
+
+⛔ **PRINTED BEFORE ANY REMEDY, because the remedy the ruling's instance suggests is unperformable over the population the instance belongs to** (Rulings 123/128/140):
+
+```text
+handoffs/*.md carrying ZERO markdown pointers   -> 147 of 183
+  the routed instance, handoffs/W115.md            488 lines, 0 pointers
+  the largest                                    4915 lines, 0 pointers
+  of the 147, records this office may EDIT       ->   2  (handoffs/README.md, and any
+                                                         handoff of the CURRENT wave)
+rows/*.md carrying NO ANCHORED pointer          ->  33 of 83
+rows/*.md carrying NO pointer at all            ->   0 of 83
+```
+
+⭐ **The developer's `33 of 80` reproduces EXACTLY on the numerator; only the denominator moved, by this round's three mints.** ⛔ **And the handoff figure is the one that decides the row's shape: `handoffs/W115.md` is not an outlier, it is `1` of `147`.**
+
+### ⛔ SO IT IS NOT A SWEEP, AND REFUSING THE SWEEP IS THIS ROW'S FIRST ACT
+
+⛔ **145 of the 147 are FROZEN RECORDS. Rulings 106 and 174 say a record is annotated beneath and never edited, so adding a pointer to one is forbidden by the same convention set this row would land in.** ⚠️ **And a `Finding` over 147 files is Ruling 245's own measured refutation — *"a notice whose first wave fires 25 times is a notice nobody reads twice"* — at six times the width that produced the ruling.**
+
+⭐ **THE ROW IS A RULE AT AUTHORING TIME PLUS ONE BOUNDED LIVE POPULATION, and never a back-fill.**
+
+### ⛔ AND THE ROW-FILE HALF IS ALREADY `W88`'s — NAMED HERE SO THE TWO DO NOT COLLIDE
+
+⛔ **Ruling 244(a): one subject has one id.** ⭐ **[`W88`](#w88-the-thin-row-files-gain-an-anchored-pointer-and-four-lose-a-dangling-deictic) is *the thin row files gain an ANCHORED pointer*, minted round 35 with its own measured population of `20` and its own gate, and `33 of 83` is that population re-measured rather than a new one.** ⚠️ **So this row does NOT own the 33 row files.** ⛔ **What it owes them is the RULE they will be written against, which is why it is placed after `W88` and not instead of it — and if a dispatcher pairs them, `W88` is the sweep and this is the clause it satisfies.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The rule lands in `docs/conventions/agent-protocol.md`**, which is where a handoff's format lives: ⛔ **a citation of a TRACKED DOCUMENT is written as a resolving markdown pointer, with an anchor where the citation is to a section.** ⚠️ **A test name, a symbol, a sha and a command are NOT citations of a document and are explicitly out** (Ruling 285(b)'s own scoping).
+2. ⛔ **The instrument binds NEW documents only, and the exemption is STRUCTURAL rather than a filter a reader must remember** — ⭐ **the form `check_rulings_reach` uses: name the subject directory, so the frozen population is excluded by construction.** ⚠️ **An exemption list of 145 filenames is a second copy of the tree and goes stale on the next handoff.**
+3. ⭐ **Asserted in BOTH directions** (R12): a new handoff citing a record by bare filename is a finding; the same handoff with the pointer is green; ⛔ **and a handoff citing a test name, a symbol or a sha is NOT a finding — the negative control is the part that stops this rule eating the six-section contract it sits beside.**
+4. ⛔ **`check_handoffs` already exists and owns the six-section contract (`W25`), so this is an ARM of it and not a thirteenth check** — ⚠️ **unless the taker measures that `tools/quality/handoffs/` is at R11's ceiling, in which case the split decision is named in the handoff rather than taken silently.**
+5. ⭐ **The printed figure carries its denominator** (Ruling 48): *`n` of `m` new handoffs cite a tracked document without a pointer*, never a bare `n`.
+
+### ⭐ IT JUMPS NOBODY, AND SAYING SO IS THE HONEST CELL
+
+⛔ **This row is placed LAST in `## Next rows` and invokes no Ruling 75 exception.** ⭐ **The ground is the reviewer's own, accepted rather than argued around: `FLOOR_EXIT=0` is HONEST today, nothing is broken, and the two records `handoffs/W115.md` names do exist — the reviewer resolved both by hand.** ⚠️ **What is lost is machine-checkability of future citations, which is a cost that accrues rather than a defect that bites, and a row that claims otherwise to buy a place in the queue is the thing Ruling 75 exists to expose.**
+
+⚠️ **ONE SURFACE NOTE FOR THE DISPATCHER: this row writes `docs/conventions/agent-protocol.md` and [`W134`](rows/W134.md) writes `docs/conventions/*.md`** — ⛔ **ONE OWNER or two waves (check 4's sub-step).**
+
+[the mint argument and this round's three mints](#the-three-mints-and-one-of-them-is-wider-than-it-was-routed)
+
+#### ⭐ CLOSED — PO ROUND 74
+
+⭐ **Merged at `2bfbcb7`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2bfbcb7` is RECEIVED.** ⭐ **A new task or office handoff citing a tracked document by bare filename is a floor finding, pinned at `4d3c742`, the tree the rule landed in.**

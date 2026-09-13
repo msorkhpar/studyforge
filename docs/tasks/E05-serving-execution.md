@@ -103,12 +103,12 @@ one instance. A stale discovery cache is detected rather than trusted.
 
 > ~~Serves the Java corpus discovered at startup with no configured paths.~~
 
-⛔ **A reading no framework office can take: that sibling has no manifest and no archive at its pin (`OPS-05/1`; R20, Ruling 173).** ⭐ **Framework half: the restated first clause.** ⛔ **The Java half is RE-HOMED to `OPS-03` (`M6`, integration side), `W77`'s shape — the one disposition `SK-03` and `OPS-05` also take.**
+⛔ **A reading no framework office can take: that sibling has no manifest and no archive at its pin (`OPS-05/1`; R20, Ruling 173).** ⭐ **Framework half: the restated first clause.** ⛔ **The Java half is RE-HOMED to `OPS-03` (`M9` since PO round 74, integration side), `W77`'s shape — the one disposition `SK-03` and `OPS-05` also take.**
 
 ---
 
 ### SF-20 — Command runner
-**Milestone** **M5** · **Depends on** SF-02, TC-01 · **Team** pair
+**Milestone** **M5** · **Depends on** SF-02, TC-00 · **Team** pair
 **Owns** `execute/`
 **Context** ~45k — `CS/tools/study/runner.py`, `CS/tests/test_runner.py`
 
@@ -139,6 +139,8 @@ whole reproducibility claim all rest on it.
 ⛔ **The socket is never mounted into the serving process** (§8.3, rule 2). The
 runner reaches into the toolchain container from outside it. Not behind a flag,
 not "only locally".
+
+⛔ **PO round 74 — *"execute inside the toolchain container when it is up"* now names the RUNNER container, `TC-00`, which is up with no editor** (user direction; spec §8.1, amended). ⭐ **The edge is `TC-00`, re-pointed from `TC-01` (`PO-72/2`'s edge). The page's Run and the reader's terminal command (`SF-44`) go through this one runner, which is why they agree.** ⭐ **The terminal command takes this contract's two modes as they stand — the runner container when it is up, the host otherwise — ruled by the register as reversible** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
 
 **Acceptance.** A failing compile stops before tests run. A timeout kills the
 process group and emits the timeout exit line. Output containing a home path is
@@ -275,6 +277,8 @@ Also writes the embedded editor's task file so the IDE's build task follows
 whichever practice the reader has open — which is why the page and the terminal
 never disagree about what "build" means.
 
+⛔ **PO round 74 — SPLIT: the paragraph above and the Acceptance's *"The editor's task follows the open practice"* move to `SF-24` at `M7`, with the editor** (user direction). ⭐ **Run and Submit stay here at `M5`: they need the runner, not the editor.**
+
 **Acceptance.** Run streams program output. Submit streams grader output and,
 on success, completes the practice. Run never completes a practice. A stopped
 run is recorded as stopped. Output is gated on the wire. The editor's task
@@ -309,3 +313,21 @@ survives — noise is an annoyance, a swallowed stack trace is a lie.
 verdict. A compile error survives filtering intact. A stack trace survives
 intact. The filter is selectable per toolchain, and an unknown toolchain passes
 output through unfiltered rather than guessing.
+
+---
+
+### SF-44 — The terminal command
+**Milestone** **M5** · **Depends on** SF-20, SF-23, TC-00 · **Team** pair
+**Owns** one `studyforge` verb under `cli/`, named by its taker
+**Context** ~30k — spec §7 and §8.3, `SF-20` and `SF-23` outputs
+
+⭐ **Minted PO round 74 from the user's direction, 2026-09-12:** *"Client still can run things in their terminal update the file and run them by a command which then will be run against that unit test associated with the file if there is any."* ⛔ **No row covered it: `SF-20` starts processes and has no verb, and `SF-22` is a served route.**
+
+**Definition.** The reader edits a unit's file in their own editor and runs one command naming it. The command resolves the file to its unit's exercise in the generated unit document (§7: `main_path`, `test_path`, `run_command`, `test_command`) and hands the command that document names to `SF-20`, streaming its output.
+
+- ⭐ **A file with an associated test runs that test**, and the exit code says whether it passed.
+- ⛔ **A file with no associated test is not a failure** (§7's three states, C5): the command says so and exits `0`. ⚠️ **Whether it then runs the program is the taker's to state before code.**
+- ⛔ **Nothing the reader types becomes a command** (§8.3, rule 3): the argument selects a file, and the command comes from disk.
+- ⛔ **The Docker socket is never mounted into a serving process (§8.3), and nothing leaves the machine.** ⭐ **Its mode is `SF-20`'s: the runner container when it is up, the host otherwise, with identical observable behaviour (§8.3, rule 4) — ruled by the register, reversible until this row is taken.** ⚠️ **Whether a passing run records a practice pass is the taker's to state before code** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+
+**Acceptance.** Over a corpus with a graded, an ungraded and a reading-only unit: a file with a test runs it, and a failing test exits non-zero; a file with no test exits `0` and says there is none; an argument that is no unit's file is refused by name; every output line is gated (R7); no command is ever read from the argument — asserted.

@@ -25,32 +25,34 @@ original failure has introduced a regression that will surface as a silent
 misbehaviour — an extension that never loads, a tool that is missing only in
 the terminal, a volume the server cannot write. Read §8.1 first.
 
-⭐ **This epic is the head of the execution track (M5), and nothing before M5
-needs it.** A corpus reaches the whole reading floor — narrated, navigable,
+⭐ **This epic is the head of the execution track (`TC-00`, M5), and nothing
+before it needs it.** A corpus reaches the whole reading floor — narrated, navigable,
 offline — without a container ever starting (spec §11.0), so putting a Docker
 image in front of somebody converting a book was the wrong shape.
 
 ⚠️ **It briefly sat at M0–M2 on the theory that `SK-07` could not render a
 compose file without `TC-05`.** True, and resolved the other way: onboarding
-split, and `SK-09` — the execution half — lives here at M5 with the contract it
-needs. `SK-07` at M2 generates the reading floor's artifacts and asks for no
+split, and `SK-09` — the execution half — lives with the contract it
+needs, at M7 since PO round 74. `SK-07` at M2 generates the reading floor's artifacts and asks for no
 container.
 
 ⭐ **It still depends on nothing in the framework**, so under a two-agent split
 it remains work the framework agent can pull forward whenever its own critical
 path is blocked. What changed is that nothing *waits* for it.
 
+⛔ **REORDERED PO round 74 — user direction, 2026-09-12:** *"We can even move the code-server to when after we are a framework! Because that functionallity is needed mostly for when exercises are in the picture."* ⭐ **So `TC-00`, the runner image, stays at `M5` and CREATES `TC/`; `TC-01`…`TC-06` add the code-server image to it at `M7`.** ⛔ **§8.1's measured list binds that image unchanged when it lands** (spec §8.1, amended).
+
 ---
 
-### TC-00 — Minimal pinned build image ⛔ UNBLOCKS EX-00
+### TC-00 — The runner image ⛔ UNBLOCKS EX-00 AND SF-44
 **Milestone** **M5** · **Depends on** — · **Team** solo
-**Owns** `TC/docker/minimal/`
+**Owns** `TC/` — it creates the repository — and the runner image in `TC/docker/minimal/`
 **Context** ~15k — spec R15, EX-00
 
 **Definition.** A deliberately small image containing **only a pinned JDK and
 Maven**, with no IDE, no extensions and no other toolchain. It exists because
 `EX-00` is an M0 gate that must run builds, and R15 says a step whose result
-depends on installed tooling runs in a container — while the real image is M5.
+depends on installed tooling runs in a container — while the editor's image is M7.
 
 ⚠️ **This is not an early draft of TC-01 and must not grow into one.** Its only
 consumers are EX-00 and EX-02's gate runs. When TC-02 lands the pinned selection
@@ -61,6 +63,14 @@ never do is become a second place where a JDK version is chosen.
 of E08 from a wall-clock measurement, and a number measured on somebody's host
 JDK cannot carry that decision.
 
+⛔ **RE-SCOPED PO round 74 — user direction, 2026-09-12:** *"We can still have a dockerfile to run code in Java, Kotlin, Python, and Nodejs and maybe even shell and sql using an in memory database or whatver that course requires without the need of having the code-server to be deployed or shown in the web to client."*
+
+- ⭐ **The runtime list is the user's REQUIREMENT, recorded here and not narrowed:** Java, Kotlin, Python, Node.js, and possibly shell and SQL against an in-memory database — ⛔ **or whatever the course requires.**
+- ⛔ **R1: the framework knows no course, so the runtimes a corpus gets are DECLARED in its manifest, and this image builds the declared set from pinned versions.** ⚠️ **The manifest key is a contract change at spec §4, which this row's taker proposes before code (§9); it is not designed here.**
+- ⛔ **No IDE, no extensions, never served to a browser.** The *"only a pinned JDK and Maven"* sentence above is superseded by the list; *"must not grow into TC-01"* stands.
+- ⭐ **It CREATES `TC/`, and `TC-01` declares it** — the edge half of [`W156`](rows/W156.md). ⚠️ **`TC-02` selects the editor's toolchains from THESE pins at `M7`, so a version is still chosen in one place.**
+- ⚠️ **The Acceptance's *"the Java repository"* reads a consumer corpus** ([`W83`](rows/W83.md)), **and that corpus is `M9`'s.**
+
 **Acceptance.** `mvn -o test` runs against the Java repository inside it. The
 JDK and Maven versions are pinned by digest, not by tag. The image tag is
 recorded where EX-00's report can name it. It contains no toolchain EX-00 does
@@ -69,7 +79,7 @@ not use.
 ---
 
 ### TC-01 — Extract the image into its own repository
-**Milestone** **M5** · **Depends on** — · **Team** pair
+**Milestone** **M7** · **Depends on** TC-00 · **Team** pair
 **Owns** `TC/` — the repository, `Dockerfile`, `entrypoint.sh`, `seed/`
 **Context** ~45k — spec §8.1, `CSD/docker/code-server/` (all of it)
 
@@ -92,10 +102,12 @@ fails the build when an id is removed. CodeSignal is not modified.
 
 **Out of scope.** Parameterisation (TC-02) and any compose file.
 
+⛔ **PO round 74:** `TC/` exists from `TC-00`, so *"stand up `code-server-toolchain` as a repository"* now reads *add the code-server image to it*, at `M7` (the user's direction, above).
+
 ---
 
 ### TC-02 — Toolchain selection and pinning
-**Milestone** **M5** · **Depends on** TC-01 · **Team** pair
+**Milestone** **M7** · **Depends on** TC-01 · **Team** pair
 **Owns** the image's build-argument surface
 **Context** ~35k — TC-01 output
 
@@ -113,6 +125,8 @@ Verification stays: every toolchain selected is checked for presence and
 version at build time, and the build fails rather than shipping an image whose
 contents do not match its arguments.
 
+⚠️ **PO round 74: the runner's pins come first (`TC-00`, `M5`). This row selects the editor's toolchains FROM them and never chooses a second version.**
+
 **Acceptance.** A Java+Maven-only build produces a working image measurably
 smaller than the full one. A full build still produces today's image. Selecting
 a toolchain that is not pinned fails with a clear message. Every selected
@@ -121,7 +135,7 @@ toolchain reports its version at build time.
 ---
 
 ### TC-03 — Cache-priming contract
-**Milestone** **M5** · **Depends on** TC-01 · **Team** pair
+**Milestone** **M7** · **Depends on** TC-01 · **Team** pair
 **Owns** `TC/prime/` — the contract, and the Gradle and Maven warmers
 **Context** ~40k — spec §8.1, `CSD/docker/code-server/prime/`
 
@@ -164,7 +178,7 @@ the stated reason.
 ---
 
 ### TC-04 — Workbench lockdown extension
-**Milestone** **M5** · **Depends on** TC-01 · **Team** solo
+**Milestone** **M7** · **Depends on** TC-01 · **Team** solo
 **Owns** `TC/lockdown/`
 **Context** ~30k — `CSD/docker/code-server/lockdown/`, `CSD/docker-compose.yml` workbench settings
 
@@ -188,7 +202,7 @@ does in CodeSignal today.
 ---
 
 ### TC-05 — Compose and mount contract
-**Milestone** **M5** · **Depends on** TC-02, TC-03 · **Team** solo
+**Milestone** **M7** · **Depends on** TC-02, TC-03 · **Team** solo
 **Owns** `TC/docs/consuming.md`, `TC/consuming.json`, and a reference compose fragment
 **Context** ~35k — `CSD/docker-compose.yml` code-server service, spec §8.1
 
@@ -230,7 +244,7 @@ other input** — demonstrated by SK-07 doing exactly that, not asserted.
 ---
 
 ### TC-06 — Versioning and consumer pinning
-**Milestone** **M5** · **Depends on** TC-02 · **Team** solo
+**Milestone** **M7** · **Depends on** TC-02 · **Team** solo
 **Owns** the image's release and tagging scheme
 **Context** ~20k — TC-01…TC-03 outputs
 

@@ -117,7 +117,7 @@ the carried ruling above.
 ---
 
 ### SF-24 — Practice panel
-**Milestone** **M5** · **Depends on** SF-22, SF-23 · **Team** pair
+**Milestone** **M7** · **Depends on** SF-22, SF-23 · **Team** pair
 **Owns** `render/page/practice.py`, `render/assets/practice.{js,css}`
 **Context** ~50k — SF-22 output, TC-05 consuming document
 
@@ -141,3 +141,5 @@ Three behaviours that are honesty requirements rather than polish:
 toolchain container. A panel with no container shows the stated message and
 remedy. An advisory grader is visibly labelled. A unit with no exercise renders
 with no practice affordance. Fully keyboard accessible.
+
+⛔ **PO round 74 — `M7`, with the browser editor it embeds** (user direction, 2026-09-12: *"that functionallity is needed mostly for when exercises are in the picture"*). ⭐ **It gains `SF-22`'s editor clause: the IDE's build task follows the open practice.**

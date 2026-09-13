@@ -37,8 +37,9 @@ moved the furniture.
 **small** source, so the framework reaches a complete, useful state early and the
 166-unit Java tutorial becomes a consumer like any other. Concretely:
 **M0–M4 are the reading floor** — a narrated, navigable, offline site, which is
-the *whole product* for prose material — and **M5 onward is the execution
-track**, which a corpus enters only if its material is runnable (spec §11.0).
+the *whole product* for prose material — and **M5 and M7 are the execution
+track**, which a corpus enters only if its material is runnable (spec §11.0) — ⛔ **after
+`M6` and `M8`, by the user's order of 2026-09-12** (§ *Reordered*, below).
 Narration now comes **before** serving, because R8's floor is `file://` and a
 reader needs no server. `EX-00` and all of E12 left M0; no milestone is named
 after a corpus any more.
@@ -84,16 +85,18 @@ number it wrote twice is Ruling 150's mechanism one table down.**
 | **M3** | It speaks | Narration with highlight sync, and an honest media footprint |
 | **M4** | It is served | An origin, an API, and a record of practice passes |
 
-⭐ **A prose corpus is finished at M4.** Everything below is the **execution
-track**, entered only by material that is actually runnable (spec §11.0). A
-corpus with no graders that stops here is complete, not short.
+⭐ **A prose corpus is finished at M4**, and a corpus with no graders that stops there is
+complete, not short. ⛔ **Below, the ORDER OF WORK is the user's (2026-09-12), not the ids':**
+the first corpus reads and proves the framework, then the execution track (spec §11.0),
+then the Java corpus re-validates (§ *Reordered*, below).
 
 | | Milestone | What works when it lands |
 |---|---|---|
-| **M5** | It runs code | Run and Submit against a pinned toolchain |
-| **M6** | The Java corpus reads | 166 units, narrated and navigable |
-| **M7** | The Java corpus has practices | Real exercises with proven graders |
-| **M8** | **It is a framework** | A further, unnamed source converted by the skills alone |
+| **M6** | The first corpus reads | `ISO-8583` is a narrated, navigable, offline study site |
+| **M8** | **It is a framework** | `ISO-8583` converted by the skills alone, and the findings log written |
+| **M5** | It runs code | A reader runs a unit's test from their terminal; Run and Submit from the page |
+| **M7** | It has practices | The browser editor and the practice panel |
+| **M9** | The Java corpus re-validates | `Claude-senior-java-engineer` converted under §12's rules, practices included |
 
 **M2 is the biggest single jump in value** — it is the first state you would
 actually use, and for a prose corpus it is most of the way to done. **M1 is the
@@ -322,7 +325,7 @@ that never existed.** ⚠️ **`SF-42` is the act `M3`'s *Done when* is waiting 
 
 ⭐ **`SF-37`–`SF-40` and `SF-43` join `SF-28`'s step because they ARE `SF-28`, split
 ([`W197`](rows/W197.md)); the in-step edges are the epic's, as above.** ⛔ **`SF-41` is
-NOT here — it is `M7`, step `7.6`, after `OPS-06`.**
+NOT here — it is `M9`, step `9.7`, after `OPS-06`.**
 - **4.4** — SK-03, SK-06
 
 ⚠️ **M4 is a serial bottleneck wearing a milestone's name.** SF-19a is one task
@@ -331,78 +334,103 @@ a second agent does not help. Plan around it rather than discovering it.
 
 ---
 
-⛔ **Everything below is the execution track, and a corpus enters it only if its
-material is runnable** (spec §11.0, §7's three states). A corpus with no graders
-that stops after M4 is **complete**, not short.
+### ⛔ REORDERED 2026-09-12 — `M4` → `M6` → `M8` → `M5` → `M7` → `M9` (user direction, PO round 74)
 
-### M5 — It runs code
-> **Done when:** a reader edits a workspace and gets real output from Run and a
-> real verdict from Submit.
+⭐ **The user's words:** *"M6 M8 M5 M7 is the order I want also we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework ( now if it worked M5 and M7 should be finished then) and then apply it to java-senior project to revalidate being a framework."* ⭐ **And for the editor:** *"We can even move the code-server to when after we are a framework!"* ⭐ **Spec §8.1 and §12, amended, quote both whole.**
 
-- **5.1** — TC-00, TC-01, SF-20
-- **5.2** — TC-02, TC-03, TC-04, SF-29
-- **5.3** — TC-05, TC-06
-- **5.4** — SK-09, SF-22
-- **5.5** — SF-24
+⛔ **What the words decide, and this document follows:**
 
-### M6 — The Java corpus reads
-> **Done when:** the 166-unit Java tutorial is a working, narrated study site.
+1. ⭐ **The sections below run in the decided order, not by id.** Milestone and step ids are KEPT: the user named the order by them, every record cites them, and an id resolves where a position does not.
+2. ⭐ **`ISO-8583` is the corpus of `M6` and `M8`; `Claude-senior-java-engineer` comes last.** ⛔ **ISO has no runnable material (Q18), so `M5` and `M7` are proved on the `FND-04` fixtures and ISO passes them with zero exercises (§7, C5).**
+3. ⭐ **The Java re-validation is a MILESTONE, `M9`, not `M8`'s second finish line:** it follows `M5` and `M7`, and a milestone is a gate with a close run (Ruling 97), not a line held open across two others.
 
-- **6.1** — JS-01, JS-02
-- **6.2** — JS-03, JS-04
-- **6.3** — JS-05, JS-06
-- **6.4** — OPS-01, OPS-02
-- **6.5** — OPS-03
+⭐ **The user's go-ahead for the ISO track is given (2026-09-12), on its integration branch only.** ⚠️ **Ruled by the register as reversible, where the words do not decide:** `M5` and `M7` proved on the fixtures, and the terminal command taking `SF-20`'s two modes. ⛔ **One question stays the user's** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)): frozen records rewritten in place. ⛔ **No milestone after `M6` may start until it closes (clause 2 above).**
 
-⚠️ **This is a consumer, not the framework.** It is the largest and most
-demanding source available, which makes it a good proving ground and a bad
-starting point — everything it needs, it needs *because of what it is*, and a
-framework shaped around it would be a Java tutorial generator.
+### M6 — The first corpus reads
+> **Done when:** `ISO-8583-jPOS-tutorial` opens offline over `file://`, narrated,
+> navigable, with read marks recorded — minus what the source genuinely lacks,
+> stated positively.
 
-⭐ **By the time this milestone starts, the framework is finished and proven.**
-These tasks are the source-specific reading plus whatever `SK-07` could not
-generate — and every one of the latter is a **finding** (R19), not work to be
-quietly absorbed.
-
-### M7 — The Java corpus has practices
-> **Done when:** gate-clearing exercises ship with authoritative graders, and
-> the coverage report says honestly how many.
-
-- **7.1** — EX-00  *(needs TC-00's pinned image)*
-- **7.2** — EX-01
-- **7.3** — EX-02, EX-03
-- **7.4** — EX-04
-- **7.5** — EX-05, SK-04, OPS-04
-- **7.6** — OPS-06, OPS-07, **SF-41**
-- **7.7** — QA-01, QA-02
-
-⛔ **EX-00 still gates all of E08**, and it is still a one-agent-day spike whose
-negative result is a success. It moved out of M0 because the exercise strategy is
-no longer on the first delivery's path — but it remains the **first thing** done
-whenever E08 starts, for the original reason: it moves the largest unknown to the
-front rather than discovering it at the end.
-
-⚠️ **E08 is Java-specific and depends on the Java adapter** — `EX-01` on `JS-04`'s
-pairings, `EX-02` on `OPS-01`'s image. It cannot precede M6, which is why
-practices are a milestone of *this consumer* rather than of the framework.
+⭐ **The ISO track's first finish line (Q18), delivered by the corpus.** ⛔ **Its rows are the track's delivery plan in `ISO/`, owned by PO-Integration, not an epic here** — which is why the capability index prints no `M6`. ⭐ **Every framework capability it uses is `M0`–`M4`'s, and each gap it meets is a finding (R19).**
 
 ### M8 — It is a framework
-> **Done when:** a further, unnamed repository has been converted **by the skills
-> alone**, and the findings that produced are written down.
+> **Done when:** `ISO-8583` has been converted **by the skills alone**, and the
+> findings that produced are written down.
 
 - **8.1** — QA-04
 
 ⭐ **The deliverable is the findings log, not the site** (spec §12). ⛔ Whoever
-integrates does not modify `studyforge` — findings, not patches.
+integrates does not modify `studyforge` — findings, not patches. ⭐ **The ISO track's
+second finish line (Q18).**
+
+---
+
+⛔ **Everything below `M8` is the execution track, and a corpus enters it only if its
+material is runnable** (spec §11.0, §7's three states). A corpus with no graders
+that stops after M4 is **complete**, not short.
+
+### M5 — It runs code
+> **Done when:** a reader edits a unit's file, runs one command from their
+> terminal, and the unit's test runs against it through the runner — a file with
+> no test is not a failure — and Run and Submit from the page give real output and
+> a real verdict.
+
+- **5.1** — TC-00, SF-20
+- **5.2** — SF-29, SF-22, **SF-44**
+
+⭐ **The browser editor is not here** — the user: *"that functionallity is needed mostly
+for when exercises are in the picture."* ⭐ **`TC-00` is the runner image and creates `TC/`;
+`SF-44` is the terminal command** ([`E12`](E12-toolchain-image.md), [`E05`](E05-serving-execution.md)).
+
+### M7 — It has practices
+> **Done when:** a practice opens in the page's panel with the embedded editor, Run
+> and Submit work from it, and only a passing Submit completes the practice.
+
+- **7.1** — TC-01
+- **7.2** — TC-02, TC-03, TC-04
+- **7.3** — TC-05, TC-06
+- **7.4** — SK-09, SF-24
+- **7.5** — QA-02
+
+⭐ **The code-server image lands here, after the framework milestone, and §8.1's measured
+list binds it.** ⚠️ **Proved on the fixtures: the first real corpus with graders is `M9`'s.**
+
+### M9 — The Java corpus re-validates
+> **Done when:** `Claude-senior-java-engineer` is a narrated study site with
+> gate-clearing exercises, converted under §12's rules, and the findings that
+> produced are written down.
+
+- **9.1** — JS-01, JS-02, EX-00  *(needs TC-00's pinned image)*
+- **9.2** — JS-03, JS-04
+- **9.3** — JS-05, JS-06, EX-01
+- **9.4** — OPS-01, OPS-02, EX-02, EX-03
+- **9.5** — OPS-03, EX-04
+- **9.6** — EX-05, SK-04, OPS-04
+- **9.7** — OPS-06, OPS-07, **SF-41**
+- **9.8** — QA-01, **QA-05**
+
+⚠️ **This is a consumer, not the framework.** It is the largest and most
+demanding source available, which makes it a good proving ground and a bad
+starting point — everything it needs, it needs *because of what it is*.
+
+⛔ **EX-00 still gates all of E08**, and it is still a one-agent-day spike whose
+negative result is a success — ⭐ **the first thing done whenever E08 starts.** ⚠️ **E08
+is Java-specific and depends on the Java adapter** — `EX-01` on `JS-04`'s pairings,
+`EX-02` on `OPS-01`'s image — ⛔ **which is why it moved here with the adapter.**
+
+⛔ **The no-patch rule holds for the whole of `M9`** (spec §12, amended). ⚠️ **`OPS-07` and
+`SF-41` are framework rows inside it, and every commit they move the pin across is listed.**
 
 **Critical path.** ⛔ **DERIVED, NOT TYPED (PO round 64, `W206`): the longest chain of
-*waits on* edges in the generated [`../capability-index.md`](../capability-index.md).**
-⚠️ **The line that stood here was a SPINE and not a path — `SF-28` does not wait on
-`SF-19a`, and `SF-22` does not wait on `SF-28`.** ⭐ **The longest chain to `QA-04` is TIED, so one
-representative is shown; the ties differ only in their first two links and at `EX-02`/`EX-03`:**
+*waits on* edges in the generated [`../capability-index.md`](../capability-index.md), re-derived
+PO round 74.** ⭐ **It is TIED, so one representative is shown; the ties differ in their first
+two links, at `EX-02`/`EX-03`, and in their last two, which may be `OPS-06` → `SF-41`:**
 
 SF-01 → SF-05 → SF-25 → SK-02 → SK-07 → JS-01 → JS-02 → JS-04 → EX-01 → EX-02 →
-EX-04 → OPS-04 → QA-01 → QA-04.
+EX-04 → OPS-04 → QA-01 → QA-05.
+
+⚠️ **After `SK-07` it runs through `M9` alone: no `M6`, `M8`, `M5` or `M7` row lies on it.
+The milestone gates in between are not edges, so they do not appear in it.**
 
 ⭐ **`M3`'s own gate chain:** SF-01 → SF-03 → SF-04 → SF-13 → SF-14 →
 SF-28 → SF-40 → **SF-42**. ⚠️ **An `M3` task waits on two `M4` tasks, both merged.**
@@ -418,14 +446,14 @@ SF-28 → SF-40 → **SF-42**. ⚠️ **An `M3` task waits on two `M4` tasks, bo
 | E02 | [Content pipeline](E02-content-pipeline.md) | SF-06…10 | archive, Markdown, gate, overlay, unit document |
 | E03 | [Rendering](E03-rendering.md) | SF-11…15, SF-27, SF-34 | assets, page, contents, index, navigation, page chrome |
 | E04 | [Narration](E04-narration.md) | SF-16…18, SF-32 | speakable, synthesis, player sync, media footprint |
-| E05 | [Serving & execution](E05-serving-execution.md) | SF-19a/b, SF-20…22, SF-29, SF-30 | API, runner, progress, reader state, Run/Submit |
+| E05 | [Serving & execution](E05-serving-execution.md) | SF-19a/b, SF-20…22, SF-29, SF-30, **SF-44** | API, runner, progress, reader state, Run/Submit, **the terminal command** |
 | E06 | [Exercise contract](E06-exercise-contract.md) | SF-23…24 | workspace, trust, practice panel |
 | E07 | [Java adapter](E07-java-adapter.md) | JS-01…06 | curriculum, lessons, pairing, emission, audit |
 | E08 | [Java exercises](E08-java-exercises.md) | **EX-00**, EX-01…05 | blanking, the two gates, emission, coverage |
 | E09 | [Delivery](E09-delivery.md) | OPS-01…07, SF-28 | compose, build pipeline, guarantees, docs — **mostly SK-07's output** |
-| E10 | [Validation & QA](E10-validation-qa.md) | SF-25, SF-26, QA-01…04 | validate CLI, harness, acceptance, **the second source** |
+| E10 | [Validation & QA](E10-validation-qa.md) | SF-25, SF-26, QA-01…05 | validate CLI, harness, acceptance, **the second source**, **the re-validation** |
 | E11 | [Skills & authoring](E11-skills-authoring.md) | SK-01…09 | **the product** (R16, R19) |
-| E12 | [Toolchain image](E12-toolchain-image.md) | TC-00…06 | shared code-server repo (§8.1) |
+| E12 | [Toolchain image](E12-toolchain-image.md) | TC-00…06 | the runner image, then the shared code-server repo (§8.1) |
 | E13 | [Narration service](E13-narration-service.md) | NS-01…06 | shared synthesis repo (§8.2) |
 
 Future work: [v2-backlog.md](v2-backlog.md).
@@ -467,7 +495,7 @@ lives in the **integration catalogue** in this repository, which it also grows.
    Previously prose. ⛔ A consumer never reads a Dockerfile to work out how to
    run something; that is the first step toward forking it (R18).
 
-⛔ **During M8 the integration agent does not modify `studyforge`.** Findings,
+⛔ **During M8 and M9 the integration agent does not modify `studyforge`.** Findings,
 not patches. See spec §12.
 
 ---

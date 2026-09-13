@@ -59,10 +59,15 @@ and its class pairings.
 finding against a skill** (R19), not work to be repeated. Record it; do not
 absorb it.
 
+⛔ **PO round 74 — this epic is `M9`, the re-validation** (user direction, 2026-09-12:
+*"…and then apply it to java-senior project to revalidate being a framework"*). ⭐ **This
+corpus now comes LAST: after `ISO-8583` proves the framework (`M8`) and the execution track
+is finished (`M5`, `M7`)** — [`README.md`](README.md) § M9.
+
 ---
 
 ### JS-01 — Corpus manifest and placement
-**Milestone** **M6** · **Depends on** SF-02, SF-03, SK-07 · **Team** solo
+**Milestone** **M9** · **Depends on** SF-02, SF-03, SK-07 · **Team** solo
 **Owns** `JS/ingest/corpus.py`, `JS/corpus.json`
 **Context** ~25k — spec §4–§5, `JS/README.md` curriculum section
 
@@ -133,7 +138,7 @@ check that a machine makes.**
 ---
 
 ### JS-02 — Curriculum parser
-**Milestone** **M6** · **Depends on** JS-01 · **Team** pair
+**Milestone** **M9** · **Depends on** JS-01 · **Team** pair
 **Owns** `JS/ingest/curriculum.py`
 **Context** ~40k — `JS/README.md`, a sample of module `README.md` files
 
@@ -164,7 +169,7 @@ name. Ordering matches the README top to bottom.
 ---
 
 ### JS-03 — Lesson reader
-**Milestone** **M6** · **Depends on** SF-07, JS-02 · **Team** solo
+**Milestone** **M9** · **Depends on** SF-07, JS-02 · **Team** solo
 **Owns** `JS/ingest/lessons.py`
 **Context** ~35k — SF-07 output, a sample of `JS/**/README_*.md`
 
@@ -191,7 +196,7 @@ line. Heading structure is preserved. No lesson yields zero blocks.
 ---
 
 ### JS-04 — Source pairing
-**Milestone** **M6** · **Depends on** JS-02 · **Team** pair
+**Milestone** **M9** · **Depends on** JS-02 · **Team** pair
 **Owns** `JS/ingest/sources.py`
 **Context** ~40k — `JS/*/src/`, spec §7 attachment rules
 
@@ -232,7 +237,7 @@ method-selection signal is exposed for EX-01.
 ---
 
 ### JS-05 — Archive emission
-**Milestone** **M6** · **Depends on** JS-03, JS-04, SF-06, SF-25 · **Team** pair
+**Milestone** **M9** · **Depends on** JS-03, JS-04, SF-06, SF-25 · **Team** pair
 **Owns** `JS/ingest/emit.py`
 **Context** ~45k — SF-06 and SF-25 outputs, JS-03/JS-04 outputs
 
@@ -262,7 +267,7 @@ it does.
 ---
 
 ### JS-06 — Ingest audit
-**Milestone** **M6** · **Depends on** JS-05 · **Team** solo
+**Milestone** **M9** · **Depends on** JS-05 · **Team** solo
 **Owns** `JS/ingest/audit.py`
 **Context** ~25k — JS-02…JS-05 outputs
 
