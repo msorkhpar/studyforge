@@ -20592,3 +20592,132 @@ AUTHORED AND UNPAINTED                                                 1
 #### ⭐ CLOSED — PO ROUND 69
 
 ⭐ **Merged at `a8742c1`, TERMINAL by predicate `C`; the office's gates at `10956af` and the coordinator's disclosure at `17f6d95`, RECEIVED from the merge body. All four settling clauses met ([its handoff](handoffs/W225.md)).**
+
+## PO round 70 — W106, W107 and SK-03 closed, W230, SK-06 and W103 named, two mints
+
+⛔ **Three merges re-derived on the first-parent chain of `release/m0-foundations`, past round 69's merge `4cb39e8`:** `8c24fb7` (`W106`), `a82db50` (`W107`), `71ae733` (`SK-03`). ⭐ **`corroborate`, HOST, role `wt/po`, before any register edit: exit 1, refuting exactly those three (the expectation), with `W230`'s branch printed as dispatched and unnamed.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                               merge^2   branch head  ahead  checked out
+fix/W106-marker-sweep-reader   92abb010  92abb010     0      NOWHERE
+fix/W107-anchor-home           92e460aa  92e460aa     0      NOWHERE
+feat/SK-03-build-and-serve     adffd0f6  adffd0f6     0      NOWHERE
+```
+
+⭐ **All three are TERMINAL.** ⭐ **`SK-03` is an EPIC TASK, so it closes by the In flight removal plus this record. `W106` and `W107` close under the four edits.** ⭐ **Ruling 97's gate at each of `8c24fb7`, `a82db50` and `71ae733` is the coordinator's guarded release-tip reading (guard 0, floor GREEN 0, suite GREEN 0, porcelain 0), RECEIVED from the merge bodies and by relay.** ⚠️ **The fourth edit for `W106`: `bijection.py` and `test_register.py` cite `rows/W106.md` from code, which is `W174`'s class. That is `PO-70/1`, a rider.**
+
+### ⭐ 2 — `SK-03` CLOSES; STEP `4.4` AND `M4` STAY OPEN
+
+⭐ **`SK-03` at `71ae733`: every `E11` clause of the framework half is met by a named test and a plant that turned it RED ([its handoff](handoffs/SK-03.md)). The Java half belongs to `OPS-03`.** ⛔ **Membership, `README.md`: `4.4` is `SK-03` and `SK-06`.** ⚠️ **`SK-06` is in flight, cut at `71ae733`, so `4.4` and `M4` stay OPEN. What remains is `SK-06` merged, then `4.4`'s close run at one ref, then `M4`'s. `W230` carries the one clause of `M4`'s promise that was found false.**
+
+### ⭐ 3 — PLACEMENT
+
+⭐ **`W230` RATIFIED:** it was order 0, cut at `8c24fb7`, before `SK-03` merged. So `SK-03/2`'s seam is a rider on its row. ⭐ **`SK-06` RATIFIED:** it is the open step's one undispatched member, and both its edges are merged (`SK-03` at `71ae733`, `SF-21` in closed step `4.1`). ⭐ **`W103` RATIFIED:** `W88` and `W120` (orders 1–2) write `docs/tasks/rows/`, which this round writes. `W103`'s surface (`FND-04`'s annotation and a convention clause) meets no other in-flight row. ⚠️ **Its owner cell read `PO`, and round 69 skipped it on that ground. The cell named whose kind of edit it was at the mint; it was never a capability limit, so it now reads `framework agent`.** ⛔ **Any edit it needs on `BOARD.md` or `docs/tasks/rows/` stays the register's, asked for in its handoff.**
+
+⭐ **The split condition on `render/page/navigation.py` is DISCHARGED and its Standing decisions cell RETIRED.** Verified at `71ae733`: `page.anchors` holds *what may be linked to* (anchors, outline) and `page.navigation` holds *where the page points* (trail, bar). That is `SF-15/5`'s seam, and both files are under the ceiling. ⭐ **`W231` is NOT free:** `W106` released `docs/conventions/`, but `W103` in flight holds it now.
+
+### ⭐ 4 — THE FINDINGS
+
+⭐ **Minted:** [`W232`](rows/W232.md) (`W107/4`) and [`W233`](rows/W233.md) (`SK-03/5`, one owner with `W230`), each jumping nobody. ⭐ **Riders:** `W106/1` and `W106/2` → [`W231`](rows/W231.md); `SK-03/2` → [`W230`](rows/W230.md); `W107/1` → [`W204`](rows/W204.md) (a witness); `SK-03/7` → [`W229`](rows/W229.md); `SK-03/8` → [`W50`](rows/W50.md); `PO-70/1` → [`W174`](rows/W174.md). ⭐ **Sentences, no row:** `SK-03/1` → `E11` § `SK-03`; `SK-03/3`'s constant → `E05` § `SF-22`. **Disposed:** `W106/3`, `W106/4`, `W107/3` (recorded at the closes below); `W106/5` (a surviving plant named in its docstring and handoff and accepted, `W105/3`'s form); `W106/6` (office hygiene, relayed; `W232` is why it matters); `W107/2` (P5 is killed by `test_acceptance` and `test_navigation`, accepted); `W107/5` (Ruling 106: names, not pointers); `W107/6` (the preamble was amended); `SK-03/3`'s first half (two library reads outside `verbs`, disclosed and admitted by `test_thin`'s closed import set; re-opened when a second skill re-derives either); `SK-03/4` (`W224/5`'s ground: `W202` answer 4 names the page as where a missing clip is said); `SK-03/6` (excluding documents is `source_names`' stated design, with `SKILL.md` as the far end of a pointer; re-opened by a ruling that a `SKILL.md` is framework source for R1).
+
+⛔ **`PO-68/2` is unchanged and relayed to the user.**
+
+### W106 — The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W106.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **ONE VOCABULARY HAS THREE READERS, AND THE ONLY ONE WITH NO CODE BEHIND IT IS THE ONE THAT OPENS EVERY WAVE.** ⭐ **The finding marker's spelling is ruled — Ruling 65, square brackets INSIDE BACKTICKS — and three separate things read it.**
+
+⚠️ **MEASURED by the PO at `7559398`, PO worktree, the three readers printed side by side rather than described:**
+
+```text
+reader                                          population          shipped?
+review-rubric.md §8a   `\[(local|structural)\]`  ONE handoff          ⛔ no
+delivery-flow.md       `\[structural\]`          the whole tree       ⛔ no
+contract.py            `\[(?:local|structural|   ONE handoff, and     ⭐ YES
+  _MARKERS_ON_LINE      none)\]`                 own-line aware
+```
+
+⛔ **ALL THREE AGREE ON THE SPELLING, AND THAT IS THE PART THAT WAS MIS-REPORTED.** ⚠️ **It was RECEIVED that the shipped reader *"is neither of them"*; measured, it is byte-identical to Ruling 65's spelling and differs only in VOCABULARY — it admits the third marker — and in POPULATION.** ⭐ **So the defect was never a three-way disagreement about spelling, and what remains is structural.**
+
+### ⛔ THE POPULATION IS WIDER THAN THREE, AND `delivery-flow.md` WAS NOT THE LONE DISSENTER
+
+⛔ **The reading above is quoted at `7559398` and is still true AT THAT REF — it is the CLAIM it supported that was too narrow.** ⭐ **`CTO-50/1`, `RECEIVED` from the CTO on `dd9ab1a` and `MEASURED` again by the PO at `1c5e913` in the PO worktree, the whole population printed rather than the delta:**
+
+```text
+site                                      form            state at 1c5e913
+tools/quality/handoffs/contract.py:63      ruled           ⭐ THE AUTHORITY (Ruling 193)
+docs/conventions/review-rubric.md §8a      ruled           ⭐ agrees
+docs/conventions/delivery-flow.md:121      ruled           ⭐ FIXED round 39
+docs/conventions/agent-protocol.md:697     ⛔ WEAK          ⛔ STILL OPEN — this row's
+docs/tasks/rows/W103.md                    ⛔ WEAK          ⭐ FIXED round 40, and it
+                                                              attributed itself to
+                                                              delivery-flow.md, now false
+docs/conventions/review-rubric.md:2561-2   ruled + weak     ⭐ DELIBERATE: the pair
+                                                              MEASURES the over-count,
+                                                              so the weak form is a CONTROL
+⛔ this row's own table above                weak           ⭐ a measurement at its ref,
+                                                              superseded by this section
+```
+
+⚠️ **`agent-protocol.md:697` is the MILD form — escaped brackets, no backticks — so it over-counts by the same small delta rather than by 44,821** — ⛔ **but it sits in the same directory, instructs the same reader, and is the one site in this population that is still open.** ⭐ **So the row's subject is unchanged and its population is `2` convention documents plus the shipped reader, not `1`.**
+
+⛔ **AND THE TWO SITES THAT ARE NOT FINDINGS ARE NAMED SO THE ROW CANNOT OVER-REACH:** ⭐ **the rubric's `2561`/`2562` pair spells BOTH forms ON PURPOSE, because the delta between them IS the mentions reading** — ⚠️ **a row that "fixed" that pair would destroy the instrument that measures this defect** (Ruling 185's form: narrow the population, never widen the predicate).
+
+### ⛔ WHAT REMAINS, AND IT IS NOT THE SPELLING
+
+> ⭐ **The repository-wide sweep — the one the PO runs to open a wave — has NO
+> SHIPPED INSTRUMENT.** ⛔ **It exists only as a command typed inside a convention
+> document, so the only thing keeping it correct is that somebody re-reads it.**
+
+⚠️ **AND IT WENT WRONG EXACTLY THAT WAY, twice in one document:** ⛔ **the fenced copy dropped the backticks and counted every prose MENTION as a finding; the prose copy dropped the BACKSLASHES as well, making `[structural]` a grep CHARACTER CLASS that matched 44,821 lines across every handoff in the tree.** ⭐ **Nobody had run the second one — it was read as documentation of the first — which is `W49`'s class arriving in a convention document.**
+
+⚠️ **AND THE ERROR WAS NOT A CONSTANT, which is the argument against living with it:** ⛔ **the over-count was `7` at two refs and `9` at the tip, and it GREW inside the wave that called it stable**, because records quote the marker while explaining this very defect. ⭐ **A constant offset can be subtracted; a growing one cannot.**
+
+### ⭐ WHAT SETTLES IT
+
+⛔ **The repository-wide sweep becomes a reader in `tools/quality/handoffs/`, over `marker_lines`' own vocabulary**, so the tree has ONE home for what the marker is and the wave-open check CALLS it instead of re-spelling it. ⚠️ **`delivery-flow.md` then names the command rather than carrying a pattern**, which is the same move Ruling 150 makes for counts: the document points at the instrument and the instrument holds the fact.
+
+⛔ **TWO COSTS, STATED RATHER THAN DISCOVERED.** ⭐ **First, the sweep's answer includes MENTIONS by construction — the rubric's own *"the marker cannot be quoted in prose"* clause — so the shipped reader must report the LINES and not only a count, because the triage is a human reading a list.** ⚠️ **Second, the fix must not become a list of accepted shapes: Ruling 65 records four attempts that failed exactly that way, and a fifth accepted shape is the mistake rather than the remedy.**
+
+### ⛔ THE HALF THAT IS THE CTO'S AND IS NOT THIS ROW'S TO ASSUME
+
+⚠️ **Does Ruling 65's spelling bind EVERY reader of the marker, or only §8a's per-handoff counter?** ⭐ **Ruling 65 is the CTO's mint and a clause widening its scope is theirs** — ⛔ **and it matters to this row, because a repository-wide reader is a reader the original clause never named.** ⚠️ **The direction is not in doubt and the row is not blocked on it: all three existing readers already spell it the same way.**
+
+[round 39's mint](#1-the-delivery-flowmd-spelling-defect-reconciled-fixed-and-the-delta-is-not-what-it-was-called)
+
+#### ⭐ CLOSED — PO ROUND 70
+
+⭐ **Merged at `8c24fb7`, TERMINAL by predicate `C`. The office's gates at `92abb01` and the coordinator's disclosure at `bb35581` are RECEIVED from the merge body.** ⛔ **`W106/3`: the half headed *the CTO's* above was already ruled, because Ruling 193 binds every reader.** ⛔ **`W106/4`: every line number above is stale at `17f6d95`, and `delivery-flow.md` already typed the ruled form there ([its handoff](handoffs/W106.md)).**
+
+### W107 — `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W107.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **TWO PACKAGES NOW COMPOSE A PAGE'S ANCHORS, AND THE SHARED-NAME RULE GIVES THE NAME TO NEITHER OF THEM.** ⭐ **`RECEIVED` from Developer 1 as `SF-15/1`, who found it, named the right home, and DECLINED the edit for a stated reason.**
+
+⚠️ **RECEIVED, and the developer's own measurement at `c18df98c`:** `render/index/disclosure.py` owns `FRAGMENT` and `anchor(key)`, and that function's own comment says *"a producer that spelled `"#" + key` would be a second definition of this page's anchors."* ⛔ **`SF-15`'s branch IS that second producer, and it had no choice: `render.index` imports `render.page`, so the reverse import is a cycle.** ⭐ **The cycle is MEASURED, not inferred — every module in `render/index/` imports `studyforge.render.page`.**
+
+### ⭐ THE HOME IS ALREADY DECIDED, BY A ROW THAT CLOSED
+
+⛔ **`W76`'s answer governs and this row does not re-argue it:** *what more than one renderer needs is a sibling package.* ⭐ **`render.markup` EXISTS and was created for exactly this case — three peers needed `escape`** — ⚠️ **so this is a move into an established seam rather than a new design question, which is what makes the row small.**
+
+### ⛔ WHY IT WAS RIGHT NOT TO TAKE IT INSIDE `SF-15`
+
+⚠️ **Moving the name takes it off `render.index.__all__`, and a package's public surface is ANOTHER TASK'S CONTRACT.** ⭐ **Ruling 143 would not license it, the developer said so, and that judgement is why this is the PO's to place rather than theirs to have taken.** ⛔ **It is also why the row exists at all instead of being a line in somebody's diff.**
+
+### ⛔ RULING 190(b) IS THE TRAP ON THIS ONE
+
+⚠️ **Removing a name from `__all__` is the MIRROR of widening a mapping: every distant test that iterates that surface has been edited at a distance.** ⭐ **So the author enumerates, before the diff, every test that reads `render.index.__all__` or imports the name through it** — ⛔ **and a red in one of those is a reading to record, not a surface to quietly re-add a re-export to.**
+
+### ⭐ WHAT SETTLES IT
+
+⛔ **`FRAGMENT` and the anchor composer live in `render.markup`, with both producers importing them from there**, and `render.index` no longer publishes them. ⚠️ **The assertion that makes it stick is the one the comment already asks for: no module outside `render.markup` composes an anchor from a literal.** ⭐ **That is a tree property, so it can be a check rather than a convention.**
+
+[round 39's mint](#3-three-structural-findings-merged-unrouted-and-that-is-the-finding-about-the-process)
+
+#### ⭐ CLOSED — PO ROUND 70
+
+⭐ **Merged at `a82db50`, TERMINAL by predicate `C`. The office's gates at `92e460a` and the coordinator's disclosure at `8c24fb7` are RECEIVED from the merge body.** ⭐ **The split condition on `render/page/navigation.py` is discharged by this merge.** ⛔ **`W107/3`: at `a8742c1`, `render.index` defined the composer and no module under `src/` called it. Both composing producers were in `render.page` ([its handoff](handoffs/W107.md)).**

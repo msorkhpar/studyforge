@@ -58,9 +58,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SK-03` | Developer 3 | `feat/SK-03-build-and-serve` @ `wt/dev3` | 0 @ `a55303f` | in-progress |
-| `W106` | Developer 1 | `fix/W106-marker-sweep-reader` @ `wt/dev1` | 0 @ `17f6d95` | in-progress |
-| `W107` | Developer 2 | `fix/W107-anchor-home` @ `wt/dev2` | 0 @ `a8742c1` | in-progress |
+| `W230` | Developer 1 | `fix/W230-serve-every-corpus` @ `wt/dev1` | 0 @ `8c24fb7` | in-progress |
+| `SK-06` | Developer 2 | `feat/SK-06-personal-archive` @ `wt/dev2` | 0 @ `71ae733` | in-progress |
+| `W103` | Developer 3 | `fix/W103-live-disposition` @ `wt/dev3` | 0 @ `71ae733` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -77,8 +77,8 @@ SEVERAL ROW IDS.**
 
 ⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names.**
 ⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
-⛔ **`SF-19b`, `W105` and `W225` LEFT at their merges `a55303f`, `17f6d95` and `a8742c1` — every branch absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`SK-03`, `W106` AND `W107` ARE NAMED, each carrier CONFIRMED** (`PO-61/4`) — ⭐ **[placement ratified](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints)**; ⛔ **[`W230`](rows/W230.md) heads the next free slot.** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
+⛔ **`W106`, `W107` and `SK-03` LEFT at their merges `8c24fb7`, `a82db50` and `71ae733` — every branch absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W230`, `SK-06` AND `W103` ARE NAMED, each carrier CONFIRMED** (`PO-61/4`) — ⭐ **[placement ratified](BOARD-ARCHIVE.md#po-round-70-w106-w107-and-sk-03-closed-w230-sk-06-and-w103-named-two-mints)**; ⛔ **`W88` and `W120` are held while a register round writes `docs/tasks/rows/`.** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
 
 ## Next rows — placed, not yet taken
 
@@ -88,10 +88,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 0 | `W230` | ⛔ **`SF-19b`'s two-corpora clause is false for PAGES, and `SK-03` in flight wraps the verb** | [69](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | 1 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
 | 2 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
-| 3 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
 | 4 | `W108`, `W109` | ⭐ **round 39's remaining mints** | round 39 |
 | 5 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
 | 6 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
@@ -117,7 +115,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 32 | `W219`–`W223` | ⭐ **round 65's mints, each jumping nobody** | 65 |
 | 33 | `W226` | ⭐ **its held half is disclosed on every run, so it jumps nobody** | 66 |
 | 34 | `W227`–`W229` | ⭐ **round 67's mints, each jumping nobody** | 67 |
-| 35 | `W231` | ⭐ **round 69's mint, jumping nobody** — ⛔ **one owner with `W106`** | 69 |
+| 35 | `W231` | ⭐ **round 69's mint, jumping nobody** — ⛔ **one owner with `W103` in flight, which holds `docs/conventions/`** | 69 |
+| 36 | `W232`, `W233` | ⭐ **round 70's mints, each jumping nobody** — ⛔ **`W233` one owner with `W230` in flight** | [70](BOARD-ARCHIVE.md#po-round-70-w106-w107-and-sk-03-closed-w230-sk-06-and-w103-named-two-mints) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -127,7 +126,7 @@ classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-
 ⚠️ **`W88`, `W120` and `W160` all write `docs/tasks/rows/`: ONE OWNER or two waves, never two
 takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.** ⛔ **`W135`,
 `W136`, `W141`, `W149`, `W153`, `W154`, `W157`, `W159`, `W160`, `W161`, `W164`, `W165`,
-`W168`, `W169`, `W171`, `W179`, `W180`, `W229` and [`W231`](rows/W231.md) name `docs/conventions/`, as `W106` in flight does — ⭐ ONE constraint, not a
+`W168`, `W169`, `W171`, `W179`, `W180`, `W229` and [`W231`](rows/W231.md) name `docs/conventions/`, as `W103` in flight does — ⭐ ONE constraint, not a
 row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
 `W158`, `W162`, `W163` name `docker/dev/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
@@ -248,11 +247,11 @@ else.**
 | W100 | A `## Scheduled` cell declares no state, so the one instrument that reads states cannot read it | framework agent | ✅ done — `6d5aeed` | [`rows/W100.md`](rows/W100.md) |
 | W101 | Check 4's sub-step compares `Owns` to a diff, and `Owns` is brace expansion and directory prefixes | framework agent | `todo` — `CTO-48/12`, before the next parallel pair | [`rows/W101.md`](rows/W101.md) |
 | W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | ✅ done — Ruling 184(c), `4e8ba86` | [`rows/W102.md`](rows/W102.md) |
-| W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
+| W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | framework agent | in-progress — Ruling 194's half | [`rows/W103.md`](rows/W103.md) |
 | W104 | The lint notice names no subject, and `ruff format` formats Markdown as well as Python | framework agent | `todo` — not `W38`'s subject | [`rows/W104.md`](rows/W104.md) |
 | W105 | The region census has no authorable population, so a region the templates emit and nothing paints is unsayable | framework agent | ✅ done — `17f6d95` | [`rows/W105.md`](rows/W105.md) |
-| W106 | The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies | framework agent | in-progress — Ruling 103's class | [`rows/W106.md`](rows/W106.md) |
-| W107 | `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither | framework agent | in-progress — `SF-15/1` | [`rows/W107.md`](rows/W107.md) |
+| W106 | The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies | framework agent | ✅ done — `8c24fb7` | [`rows/W106.md`](rows/W106.md) |
+| W107 | `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither | framework agent | ✅ done — `a82db50` | [`rows/W107.md`](rows/W107.md) |
 | W108 | No fixture crosses a module boundary inside one section, so a renderer can pass the clause and be wrong | framework agent | `todo` — `SF-15/6`, before `SF-27` | [`rows/W108.md`](rows/W108.md) |
 | W109 | Every consumer that reads `origin` from a document instead of the parser is a second reader of a growing field | framework agent | `todo` — `W95/3` | [`rows/W109.md`](rows/W109.md) |
 | W110 | `corroborate`'s live-checkout arm discharges a branch git already knows is SPENT, so a leaked worktree keeps a stale row green | framework agent | ✅ done — `923a970` | [`rows/W110.md`](rows/W110.md) |
@@ -375,8 +374,10 @@ else.**
 | W227 | Nothing runs the non-destructive check on a real build, so spec §11.2 item 11 has an instrument only its own tests invoke | framework agent | `todo` — `OPS-05/2` | [`rows/W227.md`](rows/W227.md) |
 | W228 | Ruling 173's population reads `E09` as integration WHOLE, so a framework row homed there escapes the consumer-corpus class — `OPS-05` did | framework agent | `todo` — `PO-67/2` + `OPS-05/1` | [`rows/W228.md`](rows/W228.md) |
 | W229 | `W143`'s plant procedure gives no plant a fresh bytecode cache, so two same-size plants can read one `.pyc` | framework agent | `todo` — `OPS-05/7` | [`rows/W229.md`](rows/W229.md) |
-| W230 | One instance serving several corpora exists in `serve/` and a reader cannot reach it — the verb never builds it and the static mount refuses a nested corpus | framework agent | `todo` — `SF-19b/2` + `SF-19b/3` | [`rows/W230.md`](rows/W230.md) |
+| W230 | One instance serving several corpora exists in `serve/` and a reader cannot reach it — the verb never builds it and the static mount refuses a nested corpus | framework agent | in-progress — `SF-19b/2` + `SF-19b/3` | [`rows/W230.md`](rows/W230.md) |
 | W231 | Two fenced commands in `review-rubric.md` read a population the tree no longer means — Ruling 192's literal authorable sweep and Ruling 290's `:local` inspect | framework agent | `todo` — `W105/2` + `W225/1` | [`rows/W231.md`](rows/W231.md) |
+| W232 | `test_progress.py` walks the repository's DISK for the reader's store, so a copy under the git-ignored `.scratch/` Ruling 139 prescribes reddens a correct tree | framework agent | `todo` — `W107/4` | [`rows/W232.md`](rows/W232.md) |
+| W233 | `test_serve_process.py` reads a line and then calls `communicate()`, so buffered lines are dropped and its assertions hold by reading only the last one | framework agent | `todo` — `SK-03/5` | [`rows/W233.md`](rows/W233.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -405,7 +406,6 @@ here; the argument is in the record.**
 |---|---|
 | **`ONBOARDING.md` does not enter the repository** — not tracked, not corrected into the tree, and not deleted, because it is untracked and therefore not repository state | [record](BOARD-ARCHIVE.md#onboardingmd-ruled-it-does-not-enter-the-repository) |
 | ⭐ **`.claude/settings.json` IS tracked, and it is R18 with a machine behind it** — it DENIES `Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS `Bash(git merge:*)`. ⛔ **The opposite call to `ONBOARDING.md`'s, and the distinction is not tracking: that is the user's own notes, this is a PROJECT RULE** | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
-| ⛔ **A row that touches `render/page/navigation.py` SPLITS IT, at the seam named in [`handoffs/SF-15.md`](handoffs/SF-15.md)** — the condition binds the NEXT row, never the row that left the file where it is. ⭐ **No count here: the count is the floor's and goes stale on the next edit** (Ruling 150's form) | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
 | ⛔ **Same form for `tools/quality/board/register.py`** — the next row touching it splits it, and R11's reading comes from `tools.quality` rather than from this cell. ⭐ **It INHERITS the condition `tools/quality/board/__init__.py` carried, which `W129`/`W130` PERFORMED and DISCHARGED** | [record](BOARD-ARCHIVE.md#po-round-47-the-first-nine-closes-under-ruling-270-the-wall-measured-gone-on-my-own-tree-and-the-empty-population-inhabited) |
 | ⛔ **Same form for `tools/quality/board/verdict.py`, a THIRD member inside `tools/quality/board/`** — the next row touching it splits it at a seam its taker NAMES before cutting. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](BOARD-ARCHIVE.md#w166-the-standing-split-condition-toolsqualityboardverdictpy-is-owed-third-member-inside-one-package) |
 | ⛔ **Same form for `tests/visual/test_host_environment.py`, and it is a FOURTH member** — ruled [CTO round 62 §5](BOARD-ARCHIVE.md#w128-a-committed-verdict-may-not-depend-on-the-hosts-environment-ruling-225s-other-half-in-testsvisual), against the 600-line TEST ceiling, and the office disclosed it unprompted with its seam. ⚠️ **No count here** (Ruling 150's form, Ruling 261) | [record](handoffs/CTO-2026-09-11-round62.md#5-fixw128-visual-env-verdicts-the-acceptance-is-a-pair-of-readings-and-i-took-both-at-both-refs) |
