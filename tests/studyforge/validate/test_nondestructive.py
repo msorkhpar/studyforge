@@ -89,6 +89,21 @@ def test_a_rebuild_replacing_only_its_own_output_harms_nothing(tmp_path, name):
     assert report.ok and report.unchecked == (), report.lines()
 
 
+def test_a_rebuild_over_stale_prior_output_passes_only_because_of_the_footprint(tmp_path):
+    """⛔ A deterministic rebuild changes no byte, so it cannot show the footprint matters.
+
+    ⭐ Stale prior output does: the page differs from what the build writes now,
+    the rebuild replaces it, and only the footprint makes that a pass.
+    """
+    root = a_corpus(tmp_path, "depth1")
+    write_site(root, root)
+    page = root / "index.html"
+    page.write_bytes(page.read_bytes() + b"<!-- an older build -->\n")
+    report = build(root)
+    assert page.read_bytes().endswith(b"<!-- an older build -->\n") is False
+    assert report.ok and report.unchecked == (), report.lines()
+
+
 def test_a_rebuild_without_the_footprint_reports_its_own_prior_output(tmp_path):
     """⭐ The footprint is what licenses a rebuild — shown by withholding it."""
     root = a_corpus(tmp_path, "depth1")
@@ -371,6 +386,33 @@ def test_the_module_spells_no_declared_edit_from_any_committed_manifest():
     for value in spelled:
         assert value not in text, value
         assert value not in constants, value
+
+
+def test_the_module_compares_nothing_against_a_string_literal():
+    """⛔ Structural R1: an exception spelled for a name no fixture declares.
+
+    ⚠️ What this cannot see: a literal hoisted into a module constant first and
+    compared by NAME. The source-name sweep and the behavioural test above are
+    the other two layers; none of the three is complete alone.
+    """
+    literal = []
+    for node in ast.walk(ast.parse(module_text())):
+        if isinstance(node, ast.Compare):
+            operands = [node.left, *node.comparators]
+            for operand in operands:
+                values = (
+                    operand.elts
+                    if isinstance(operand, ast.Tuple | ast.Set | ast.List)
+                    else [operand]
+                )
+                literal += [
+                    v.value
+                    for v in values
+                    if isinstance(v, ast.Constant) and isinstance(v.value, str)
+                ]
+        if isinstance(node, ast.MatchValue) and isinstance(node.value, ast.Constant):
+            literal.append(node.value.value)
+    assert literal == []
 
 
 def test_every_rule_is_emitted_by_a_test_here():
