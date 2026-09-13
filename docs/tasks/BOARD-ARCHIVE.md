@@ -20474,3 +20474,121 @@ feat/SF-39-serve-verb          5421c38   5421c38      0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 68
 
 ⭐ **Merged at `d7c9d4d`, TERMINAL by predicate `C`; the office's gates at `f08d251` and the coordinator's disclosure at `de05aac`, RECEIVED from the merge body.**
+
+## PO round 69 — step 4.3 closed, SF-19b, W105 and W225 closed, two mints
+
+⛔ **Three merges re-derived on the first-parent chain of `release/m0-foundations`, past round 68's merge `6beb745`:** `a55303f` (`SF-19b`), `17f6d95` (`W105`), `a8742c1` (`W225`). ⭐ **`corroborate`, HOST, role `wt/po`, before any register edit: exit 1, refuting `SF-19b` and `W105` — the expectation — and `W225`, which merged after this round's first merge of the release tip; the tip was merged in again before any edit.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                               merge^2   branch head  ahead  checked out
+feat/SF-19b-serving-state      723f7ab8  723f7ab8     0      NOWHERE
+fix/W105-authorable-census     4e232128  4e232128     0      NOWHERE
+fix/W225-image-identity        10956af0  10956af0     0      wt/dev2
+```
+
+⭐ **All three TERMINAL.** ⭐ **`SF-19b` is an EPIC TASK: the In flight removal plus this record; `W105` and `W225` close under the four edits.** ⭐ **Ruling 97's gate at each of `a55303f`, `17f6d95` and `a8742c1` is the coordinator's guarded release-tip reading (guard 0, floor GREEN 0, suite GREEN 0), RECEIVED — confirmed to this round by relay.**
+
+### ⭐ 2 — `SF-19b` CLOSES, AND STEP `4.3` WITH IT
+
+⭐ **`SF-19b` at `a55303f`: every `E05` clause, as round 68 split it, is met by a named test and a plant that turned it RED ([its handoff](handoffs/SF-19b.md)); the Java half is `OPS-03`'s.** ⚠️ **The two-corpora clause is met for content and state and FALSE for a nested corpus's pages (`SF-19b/2`) — met as written, since the clause is the API's and the static mount is `SF-19a`'s — and carried by [`W230`](rows/W230.md), by name.**
+
+⛔ **Membership, `README.md`:** `SF-19b`, `SF-28`, `SF-37`, `SF-38`, `SF-39`, `SF-40`, `SF-43`. ⭐ **Every one merged on the first-parent chain of `a55303f`:** `c7791c2` (`SF-28`, remaining half), `0160d71` (`SF-37`), `6199164` + `d2943d4` (`SF-38`), `caf7317` (`SF-39`), `2a88504` (`SF-40`), `34782d0` (`SF-43`), `a55303f` (`SF-19b`). ⭐ **`4.1` and `4.2` closed first, so the ordering holds: `4.3` closes at `a55303f`.** ⚠️ **`M4` stays OPEN on `4.4`: `SK-03` in flight, `SK-06` waiting on it.**
+
+### ⭐ 3 — PLACEMENT
+
+⭐ **RATIFIED: `SK-03` in Developer 3's slot, cut at `a55303f`, every edge merged — `PO-68/1` discharged. `W106` in Developer 1's slot, cut at `17f6d95`:** no open-step row could take it (`4.3` all merged, `SK-06` waits on `SK-03`); `W88` and `W103` are PO-owned and `W120` shares `docs/tasks/rows/` with every register round, so `W106` was the head a developer can take. ⚠️ **`W106`'s readings are at `7559398` and `1c5e913`: re-measured at dispatch** (Ruling 214). ⭐ **RATIFIED: `W107` in Developer 2's slot, cut at `a8742c1`:** `W230` did not exist there, `W108` is rightly held (a new `FND-04` fixture moves censuses `SK-03` reads in flight) and so is `W109` (its check's shape is open); `W107`'s `render/` surface meets none of `SK-03`, `W106`, `W230`. ⭐ **[`W230`](rows/W230.md) heads the next free slot.**
+
+### ⭐ 4 — THE FINDINGS
+
+⭐ **Minted:** [`W230`](rows/W230.md) (`SF-19b/2` + `SF-19b/3`, order 0 — `M4`'s own promise, false in one configuration, with `SK-03` wrapping the verb), [`W231`](rows/W231.md) (`W105/2` + `W225/1`, jumping nobody; one owner with `W106`). ⭐ **Rider:** `PO-69/2` → [`W174`](rows/W174.md). ⭐ **A sentence, no row:** `SF-19b/5` → `E11` § `SK-06`. **Disposed:** `SF-19b/1` (round 68's split); `SF-19b/4` (cost named; re-opened by a measured reading, `SF-19a/3`'s form); `W105/1` (fixed in its diff, surface disclosed); `W105/3` (a surviving plant named in its handoff, accepted — `OPS-05/4`'s form); `W105/4` (recorded at the close below); `W105/5` + `W225/5` (a shared compose project: a removed container fails a run LOUDLY and never green, and no instruction runs `--remove-orphans`; re-opened by one that does); `W225/2` (the record stands, Ruling 106); `W225/3` (host disk, cost named); `W225/4` (same checkout only, disclosed).
+
+⛔ **`PO-68/2`:** ⭐ **the placement is the register's and is done — `OPS-03` holds the three Java halves at `M6`.** ⛔ **Who carries consumer 1 is the user's: the register cannot staff an integration office, and nothing before `M6` waits on it.**
+
+### W105 — The region census has no authorable population, so a region the templates emit and nothing paints is unsayable
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W105.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RULING 192 IS THE AUTHORITY AND THIS ROW IS ITS ENFORCEMENT END.** ⭐ **The clause: a census derived from what the tree EMITS owes a second population — what the tree can AUTHOR — asserted as a SUBSET, `authorable ⊆ recognisable`, and NEVER as the equality.** ⚠️ **The ruling landed in [`../../conventions/review-rubric.md`](../conventions/review-rubric.md) §4c beneath Ruling 124; the instrument is framework code and is this row.**
+
+⚠️ **MEASURED by the PO at `7559398`, PO worktree, every population PRINTED IN FULL before any scalar, and narrowed to the element the clause's own subject names:**
+
+```text
+AUTHORABLE, nav-scoped, f-strings RESOLVED                          5
+   "Between units"   render/templates/between-units.html
+   "Breadcrumb"      render/templates/breadcrumb.html
+   "Outline"         render/templates/outline.html
+   "Units"           render/container/listing.py   LIST_LABEL = "Units"
+   "Contents"        render/index/disclosure.py    LIST_LABEL = "Contents"
+
+PAINTED, nav-scoped, every stylesheet in render/assets/                4
+   Between units · Contents · Outline · Units
+
+REGION_MARKERS, tests/…/pageassets/test_chrome.py:85                   5
+   body · header · main#content · footer#player
+   section[data-section="practices-pending"]
+   ⛔ not ONE of the five is a nav[aria-label=…]
+
+AUTHORED AND UNPAINTED                                                 1
+   ⛔ nav[aria-label="Breadcrumb"]
+      absent from every stylesheet AND absent from REGION_MARKERS,
+      so NEITHER instrument can report it
+```
+
+### ⛔ THE DEVELOPER'S TELL, AND IT IS RULING 192 CLAUSE (c)
+
+> ⭐ **If declaring the missing row REDS `declared − emitted`, the population you
+> built is the EMITTED SET wearing a totality claim.** ⛔ **A check whose own
+> failure mode is *the thing I added is not in the list I derived from the list*
+> cannot answer the question the census exists to ask.**
+
+⛔ **THE TRAP IS CONCRETE AND THIS ROW MUST NAME IT, because the received measurement fell into it.** ⚠️ **Two of the authored labels are COMPOSED — `aria-label="{LIST_LABEL}"` in `render/container/listing.py` and `render/index/disclosure.py`** — ⭐ **so a literal `grep` over `src/` sees neither value.** ⛔ **A developer who builds the authorable population from literals reads `4` authorable against `4` painted, concludes the totality holds, and ships a GREEN CHECK over the one region that is actually missing.** ⚠️ **The true reading is `5` against `4`.**
+
+⭐ **SO THE AUTHORABLE POPULATION IS DERIVED FROM THE EMITTERS' RESOLVED VALUES AND NEVER FROM A LITERAL SWEEP.** ⛔ **That sentence is worth more to this row than the count it corrects, and it is the one clause a reviewer should check first.**
+
+### ⛔ RULING 190(b) BINDS THIS ROW BEFORE IT IS BUILT
+
+⚠️ **This row ADDS A MEMBER TO A DERIVED POPULATION, which is exactly Ruling 190(b)'s mirror case: every distant test that ITERATES that population has been edited at a distance, and such a test can go red FOR BEING WRONG rather than for being broken.** ⭐ **So the author enumerates, before the diff, every test that iterates the region census — and a red there is a reading to be recorded, not a harness to be narrowed back.** ⛔ **`W98`'s own `1 failed` is the precedent for what that looks like and for why it must not be "fixed".**
+
+### ⭐ WHAT SETTLES IT
+
+⛔ **The census asserts `authorable ⊆ recognisable` over `nav[aria-label=…]`, with the authorable side read from the emitters' RESOLVED values**, and the assertion FAILS today by naming `nav[aria-label="Breadcrumb"]`. ⚠️ **The fix to the failure is a painter, a marker, or a declared exemption — whichever is right is the developer's to argue** — ⭐ **but the check must be able to SAY IT, and today nothing in the tree can.**
+
+⚠️ **IT IS BEHIND `W36`, and the reason is `W98`'s reason: the browser checks are dark in the pinned image, so a widened census that cannot run is a larger silence rather than a smaller one.** ⛔ **`W36` now gates TWO rows, and that is recorded as a reading rather than used as an argument to promote it.**
+
+[round 39's mint](#4-ruling-192s-enforcement-instrument-the-populations-re-measured-and-one-received-figure-does-not-reproduce)
+
+#### ⭐ CLOSED — PO ROUND 69
+
+⭐ **Merged at `17f6d95`, TERMINAL by predicate `C`; the office's gates at `4e23212` and the coordinator's disclosure at `a55303f`, RECEIVED from the merge body.** ⛔ **`W105/4`: the `REGION_MARKERS` count above (`5`) is STALE — the merge body reads `7`, the read-mark and narration-gap sections added, still no `nav` — and so is *behind `W36`*: the browser checks ran pinned.** ⭐ **The nav figures, `5` against `4`, reproduce.**
+
+### W225 — One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211`
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W225.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **ONE IMAGE TAG, `studyforge/dev:local`, SERVES EVERY CHECKOUT, SO A PINNED READING CAN RUN IN ANOTHER CHECKOUT'S IMAGE.** ⭐ **`W211/2`: `docker/dev/compose.yaml`'s `image:` plus `docker/dev/check`'s `run --build`; the coordinator measured the race twice in wave 19.** ⚠️ **`W211`'s own *For dependents* tells an office to build under its own tag BY HAND — the correct form lives in a sentence.**
+
+### ⛔ WHY IT IS ORDER 0
+
+1. ⛔ **EVERY CLOSE STANDS ON A PINNED READING** (Ruling 97), and every row self-certifies on its own — ⚠️ **a reading of the wrong image is a green gate about a different environment.**
+2. ⛔ **THE GUARD AGAINST IT GOES BLIND WHERE THE RACE STAYS LIVE.** ⭐ **`command -v studyforge` tells a pre-`W211` image from a post-`W211` one and nothing else.** ⚠️ **Since `W211` an image differs by its `Dockerfile` and its BAKED entry-point table (`pyproject.toml`), so two checkouts past `f382a4a` both read `0` while a branch touching either file races undetected.**
+
+⭐ **It jumps every `W` row but [`W224`](#w224-a-build-into-any-out-but-the-corpus-root-ships-a-player-that-plays-nothing-and-names-no-gap-because-no-pass-copies-a-clip); the dispatch bound is untouched.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A `check` RUN EXECUTES AN IMAGE WHOSE IDENTITY DIFFERS WHENEVER ITS BUILD INPUTS DIFFER**, so two checkouts with different inputs cannot run each other's. ⛔ **No checkout PATH in a tag, label or log (R7)** — ⭐ **an identity derived from the inputs' CONTENT satisfies both.**
+2. ⛔ **PLANTED** (Rulings 124, 348): ⭐ **two builds from differing inputs, each run reading its own; the fixed tag restored turns it RED.**
+3. ⭐ **EVERY RUN PRINTS THE IDENTITY IT RAN**, so a hand-back quotes it instead of a guard.
+4. ⭐ **`W211/3` RIDES HERE, because the files do:** a plain `docker build docker/dev` exits `1` without `--build-context project=.`. ⛔ **Either a hand build works, or the first sentence a reader meets says how.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A PER-OFFICE TAG CONVENTION IN A BRIEF** — ⭐ **that is the defect, one document along.** ⛔ **A tag naming a worktree.**
+
+[the mint](#po-round-66-wave-19-closed-wave-20-named-sf-388-answered-from-the-users-own-answers-three-mints)
+
+#### ⭐ CLOSED — PO ROUND 69
+
+⭐ **Merged at `a8742c1`, TERMINAL by predicate `C`; the office's gates at `10956af` and the coordinator's disclosure at `17f6d95`, RECEIVED from the merge body. All four settling clauses met ([its handoff](handoffs/W225.md)).**

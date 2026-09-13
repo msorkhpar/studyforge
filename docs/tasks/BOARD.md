@@ -45,6 +45,7 @@ one does.**
 | **M4** — it is served | ⏳ **OPEN** — steps `4.1`–`4.4` are [`README.md`](README.md)'s | — | [the open](BOARD-ARCHIVE.md#m3-step-36-and-m3-close-at-1ede082) |
 | **M4 step 4.1** | ✅ CLOSED | `77e47e5` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
+| **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -57,9 +58,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W225` | Developer 2 | `fix/W225-image-identity` @ `wt/dev2` | 0 @ `d7c9d4d` | in-progress |
-| `W105` | Developer 1 | `fix/W105-authorable-census` @ `wt/dev1` | 0 @ `caf7317` | in-progress |
-| `SF-19b` | Developer 3 | `feat/SF-19b-serving-state` @ `wt/dev3` | 0 @ `171366c` | in-progress |
+| `SK-03` | Developer 3 | `feat/SK-03-build-and-serve` @ `wt/dev3` | 0 @ `a55303f` | in-progress |
+| `W106` | Developer 1 | `fix/W106-marker-sweep-reader` @ `wt/dev1` | 0 @ `17f6d95` | in-progress |
+| `W107` | Developer 2 | `fix/W107-anchor-home` @ `wt/dev2` | 0 @ `a8742c1` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -76,8 +77,8 @@ SEVERAL ROW IDS.**
 
 ⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names.**
 ⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
-⛔ **`W224` and `SF-39` LEFT at their merges `d7c9d4d` and `caf7317` — both branches absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W225` AND `W105` ARE NAMED, each carrier CONFIRMED** (`PO-61/4`) — ⭐ **[placement ratified at `caf7317`](BOARD-ARCHIVE.md#po-round-68-w80-and-w81-disposed-with-ops-05s-w224-closed-sk-03-made-dispatchable)**; ⛔ **`SK-03` takes the next free slot once PO round 68 merges.** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
+⛔ **`SF-19b`, `W105` and `W225` LEFT at their merges `a55303f`, `17f6d95` and `a8742c1` — every branch absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`SK-03`, `W106` AND `W107` ARE NAMED, each carrier CONFIRMED** (`PO-61/4`) — ⭐ **[placement ratified](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints)**; ⛔ **[`W230`](rows/W230.md) heads the next free slot.** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
 
 ## Next rows — placed, not yet taken
 
@@ -87,10 +88,11 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
+| 0 | `W230` | ⛔ **`SF-19b`'s two-corpora clause is false for PAGES, and `SK-03` in flight wraps the verb** | [69](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | 1 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
 | 2 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
 | 3 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
-| 4 | `W106`–`W109` | ⭐ **round 39's remaining mints** | round 39 |
+| 4 | `W108`, `W109` | ⭐ **round 39's remaining mints** | round 39 |
 | 5 | `W116` → `W117` → `W118` | ⭐ **round 42's remaining mints, jumping nobody** | round 42 |
 | 6 | `W125` | ⛔ **it owes a DESIGN DECISION before it owes code** — Ruling 231(c), and it jumps nobody | round 43 |
 | 7 | `W135` | ⭐ **nothing is broken and the floor is honest, so it jumps nobody** — Ruling 285(b) | round 46 |
@@ -115,6 +117,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 32 | `W219`–`W223` | ⭐ **round 65's mints, each jumping nobody** | 65 |
 | 33 | `W226` | ⭐ **its held half is disclosed on every run, so it jumps nobody** | 66 |
 | 34 | `W227`–`W229` | ⭐ **round 67's mints, each jumping nobody** | 67 |
+| 35 | `W231` | ⭐ **round 69's mint, jumping nobody** — ⛔ **one owner with `W106`** | 69 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -124,17 +127,17 @@ classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-
 ⚠️ **`W88`, `W120` and `W160` all write `docs/tasks/rows/`: ONE OWNER or two waves, never two
 takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.** ⛔ **`W135`,
 `W136`, `W141`, `W149`, `W153`, `W154`, `W157`, `W159`, `W160`, `W161`, `W164`, `W165`,
-`W168`, `W169`, `W171`, `W179`, `W180` and `W229` name `docs/conventions/` — ⭐ ONE constraint, not a
+`W168`, `W169`, `W171`, `W179`, `W180`, `W229` and [`W231`](rows/W231.md) name `docs/conventions/`, as `W106` in flight does — ⭐ ONE constraint, not a
 row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
-`W158`, `W162`, `W163`, [`W225`](rows/W225.md) name `docker/dev/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
+`W158`, `W162`, `W163` name `docker/dev/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
 `board/corroborate.py` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
 name — ⛔ so `W153`'s and `W176`'s declared surfaces are stale against their own subject.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
-closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did.**
+closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did; `W225` left the `docker/dev/` set at its close.**
 
 ## The register — every `W` row
 
@@ -247,9 +250,9 @@ else.**
 | W102 | Check 3's pattern is case-sensitive, and the house style writes `RULING <n>` | framework agent | ✅ done — Ruling 184(c), `4e8ba86` | [`rows/W102.md`](rows/W102.md) |
 | W103 | A finding's disposition lives only in a frozen record, so `FND-04`'s reads `OPEN` after `SF-09` closed it | PO | `todo` | [`rows/W103.md`](rows/W103.md) |
 | W104 | The lint notice names no subject, and `ruff format` formats Markdown as well as Python | framework agent | `todo` — not `W38`'s subject | [`rows/W104.md`](rows/W104.md) |
-| W105 | The region census has no authorable population, so a region the templates emit and nothing paints is unsayable | framework agent | in-progress — Ruling 192 | [`rows/W105.md`](rows/W105.md) |
-| W106 | The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies | framework agent | `todo` — Ruling 103's class | [`rows/W106.md`](rows/W106.md) |
-| W107 | `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither | framework agent | `todo` — `SF-15/1` | [`rows/W107.md`](rows/W107.md) |
+| W105 | The region census has no authorable population, so a region the templates emit and nothing paints is unsayable | framework agent | ✅ done — `17f6d95` | [`rows/W105.md`](rows/W105.md) |
+| W106 | The repository-wide marker sweep has no shipped reader, so one vocabulary has three copies | framework agent | in-progress — Ruling 103's class | [`rows/W106.md`](rows/W106.md) |
+| W107 | `FRAGMENT` and `anchor()` are composed in two packages, and the shared-name rule gives them to neither | framework agent | in-progress — `SF-15/1` | [`rows/W107.md`](rows/W107.md) |
 | W108 | No fixture crosses a module boundary inside one section, so a renderer can pass the clause and be wrong | framework agent | `todo` — `SF-15/6`, before `SF-27` | [`rows/W108.md`](rows/W108.md) |
 | W109 | Every consumer that reads `origin` from a document instead of the parser is a second reader of a growing field | framework agent | `todo` — `W95/3` | [`rows/W109.md`](rows/W109.md) |
 | W110 | `corroborate`'s live-checkout arm discharges a branch git already knows is SPENT, so a leaked worktree keeps a stale row green | framework agent | ✅ done — `923a970` | [`rows/W110.md`](rows/W110.md) |
@@ -367,11 +370,13 @@ else.**
 | W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | framework agent | `todo` — `SF-42/1` | [`rows/W222.md`](rows/W222.md) |
 | W223 | `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing | framework agent | `todo` — `SF-42/2` + `W212/3` | [`rows/W223.md`](rows/W223.md) |
 | W224 | A build into any `--out` but the corpus root ships a player that plays nothing and names no gap, because no pass copies a clip | framework agent | ✅ done — `d7c9d4d` | [`rows/W224.md`](rows/W224.md) |
-| W225 | One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211` | framework agent | in-progress — `W211/2` + `W211/3` | [`rows/W225.md`](rows/W225.md) |
+| W225 | One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211` | framework agent | ✅ done — `a8742c1` | [`rows/W225.md`](rows/W225.md) |
 | W226 | The narration record cannot locate every clip it wrote, so a removed unit's clips and a re-worded passage's old clip are beyond the only prune | framework agent | `todo` — `W218/1` + `W218/2` | [`rows/W226.md`](rows/W226.md) |
 | W227 | Nothing runs the non-destructive check on a real build, so spec §11.2 item 11 has an instrument only its own tests invoke | framework agent | `todo` — `OPS-05/2` | [`rows/W227.md`](rows/W227.md) |
 | W228 | Ruling 173's population reads `E09` as integration WHOLE, so a framework row homed there escapes the consumer-corpus class — `OPS-05` did | framework agent | `todo` — `PO-67/2` + `OPS-05/1` | [`rows/W228.md`](rows/W228.md) |
 | W229 | `W143`'s plant procedure gives no plant a fresh bytecode cache, so two same-size plants can read one `.pyc` | framework agent | `todo` — `OPS-05/7` | [`rows/W229.md`](rows/W229.md) |
+| W230 | One instance serving several corpora exists in `serve/` and a reader cannot reach it — the verb never builds it and the static mount refuses a nested corpus | framework agent | `todo` — `SF-19b/2` + `SF-19b/3` | [`rows/W230.md`](rows/W230.md) |
+| W231 | Two fenced commands in `review-rubric.md` read a population the tree no longer means — Ruling 192's literal authorable sweep and Ruling 290's `:local` inspect | framework agent | `todo` — `W105/2` + `W225/1` | [`rows/W231.md`](rows/W231.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
