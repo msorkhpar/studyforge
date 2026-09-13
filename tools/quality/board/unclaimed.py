@@ -139,9 +139,16 @@ def office(branch: str) -> bool:
 
 
 def unnamed(
-    rows: tuple[Observation, ...], live: dict[str, str], graph: Graph, declaration: Declaration
+    rows: tuple[Observation, ...],
+    live: dict[str, str],
+    graph: Graph,
+    declaration: Declaration,
+    carriers: frozenset[str] = frozenset(),
 ) -> tuple[list[str], int]:
     """Report the other direction: work git can see that the board does not name.
+
+    ⭐ **`W153`: `carriers` are the ones `dispatch.judge` ACCEPTED**, and each is claimed
+    exactly as a row's branch is. ⛔ With none, every line reads as it did before `W153`.
 
     ⛔ **The measured failure was BIDIRECTIONAL** — stale rows present and live
     rows absent, in the same table — ⚠️ **and a check that only read the rows the
@@ -196,7 +203,7 @@ def unnamed(
     because removing a branch from the GATE must never remove it from the INSTRUMENT**
     (Ruling 206(ii): reporting a worktree you did not cut is never wrong).
     """
-    claimed = {name for row in rows for name in tokens(row.checkout)}
+    claimed = {name for row in rows for name in tokens(row.checkout)} | carriers
     counts = {branch: graph.ahead(branch) for branch in live if branch != graph.release}
     unread = sorted(Path(live[b]).name for b, n in counts.items() if n is None)
     # ⛔ `W132`, Ruling 265: the office exemption is taken out of the POPULATION before

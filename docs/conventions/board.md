@@ -445,6 +445,44 @@ module's own `unnamed()` docstring, which resolves at read time and cannot be on
 ⛔ **One of them is Ruling 264(c)'s GATE, and its population is LIVE CHECKOUTS: a branch no
 worktree holds is read on the line BELOW it, never on it.**
 
+#### ⛔ `W153` — a CARRIER is DECLARED on its own branch, so the gate can read a dispatch the register has not recorded
+
+⚠️ **The gate took its names from the In flight table alone, and only a register round writes
+that table.** So a wave with no register round (`PO-50/7`) was blind by construction, and a
+carrier at `0` ahead landed on Ruling 130's line instead (PO round 52). ⭐ **Measured at
+`5f772d9`, role `wt/dev3`, HOST, before any edit: of 3 carriers dispatched since the last
+round, 1 was on the gate and 2 were on the `BY CONSTRUCTION` line.**
+
+⛔ **THE CONTRACT: the office that cuts a carrier declares its rows in the same invocation.**
+
+```sh
+git switch -c fix/W153-slug <ref> && git config branch.fix/W153-slug.description W153
+```
+
+⚠️ **This is shared config on purpose**: the key belongs to that branch alone, and it is never
+`user.*`. `git branch -D` deletes the key along with the branch.
+
+| the declaration | what `corroborate` does |
+|---|---|
+| on a branch an In flight row claims | ⭐ **never read**: the row answers, and the count is printed |
+| every id names an OPEN register row the table carries nowhere | accepted: it counts as claimed, exactly like a row's branch |
+| no id, an unknown id, a closed row, or an id the table carries elsewhere | ⛔ **REFUSED with its reason, and the branch stays gated** |
+| `git config` did not read | ⛔ nothing is taken off, and the line says so |
+
+⛔ **The exit code does not move, and with no description every line reads as before.**
+
+| candidate home | ⛔ why not |
+|---|---|
+| the In flight table | unwritable in a wave with no register round: the defect itself |
+| a tracked file | needs a commit, so unreadable at `0` ahead, and collides with `docs/tasks/` writers |
+| the branch name | carries no row id: `fix/INT06-9-highlight-languages` carried `W243` |
+| ⭐ **the branch description** | **TAKEN**: needs no commit, every worktree reads it, and it is deleted with its branch |
+
+⛔ **NOT A THIRD COPY.** A description is read only where no row claims the branch, and an id
+the table carries elsewhere is refused, so wherever the table speaks it is the only home. The
+register never edits a description. ⛔ **`inflight.py` may never read one** (`W125`, Ruling
+231(c)): a table generated from a declaration would assert git against itself.
+
 #### ⛔ RULING 265 (CTO round 58) — the `UNNAMED` arm exempts the OFFICE-BRANCH PATTERN, not `0` ahead
 
 ⚠️ **A checkout with NO commit is invisible to every git instrument BY CONSTRUCTION
