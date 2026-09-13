@@ -227,7 +227,7 @@ def test_the_heading_the_reader_scans_for_carries_the_derived_check_count():
 
 
 def test_every_rule_id_has_a_row_and_no_row_invents_one():
-    named = vocabulary_under(document("validate.md"), "The twenty-three rule ids")
+    named = vocabulary_under(document("validate.md"), f"The {_spelled(len(rule_ids()))} rule ids")
     shipped = rule_ids()
     assert named - shipped == set(), (
         f"validate.md names {sorted(named - shipped)}, which nothing emits"
@@ -247,7 +247,7 @@ def test_the_heading_the_reader_scans_for_carries_the_derived_rule_id_count():
 
 def _spelled(number: int) -> str:
     """Spell a count the way a heading spells it."""
-    return {12: "twelve", 23: "twenty-three"}[number]
+    return {12: "twelve", 23: "twenty-three", 29: "twenty-nine"}[number]
 
 
 def test_the_exit_codes_are_the_ones_the_command_returns():

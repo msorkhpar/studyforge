@@ -82,10 +82,13 @@ catch nothing.
 
 ---
 
-## The twenty-three rule ids
+## The twenty-nine rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
-than by matching on message text.
+than by matching on message text. ⚠️ **The last six are not emitted by
+`studyforge validate <root>`**: they come from the non-destructive check a build
+is wrapped in — `snapshot` before it, `check_untouched` after — which reports in
+the same shape.
 
 | Rule id | Fires when |
 |---|---|
@@ -112,6 +115,12 @@ than by matching on message text.
 | `origin-missing` | a unit's declared `origin` file is not present |
 | `origin-section-missing` | an `origin` names a section its file does not carry |
 | `origin-section-ambiguous` | an `origin` names a section its file carries more than once |
+| `modified` | after a build: a file that already existed changed, and `permitted_edits` does not declare it |
+| `deleted` | after a build: a file that already existed is gone |
+| `moved` | after a build: a file that already existed is gone and its exact bytes appear at a new path |
+| `not-additive` | after a build: a declared edit is not exactly its declared line inserted after its anchor, with every other line kept |
+| `forbidden-edit` | after a build: the root ignore file, version-control configuration, or a file your `content` includes changed or was created — however declared |
+| `nothing-compared` | after a build (unchecked, not a finding): the before-snapshot held no file, so nothing was compared |
 
 ---
 
