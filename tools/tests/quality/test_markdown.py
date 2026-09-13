@@ -24,11 +24,13 @@ import pytest
 
 from tools.quality.markdown import (
     Pointer,
+    code_spans,
     heading_slugs,
     pointers,
     prose_lines,
     slug,
     strip_code_spans,
+    strip_links,
 )
 
 MEASURED_MENTIONS = [
@@ -154,3 +156,24 @@ def test_a_pointer_splits_its_target_into_path_and_anchor():
     assert Pointer("d.md", 1, "a/b.md#sec").anchor == "sec"
     assert Pointer("d.md", 1, "#sec").path_part == ""
     assert Pointer("d.md", 1, "a/b.md").anchor == ""
+
+
+def test_strip_links_blanks_a_link_and_keeps_columns():
+    line = "see [`rows/W1.md`](../rows/W1.md) and `W2.md`"
+    stripped = strip_links(line)
+    assert len(stripped) == len(line)
+    assert "W1.md" not in stripped
+    assert stripped.endswith("`W2.md`")
+
+
+def test_strip_links_leaves_a_backticked_link_alone_as_pointers_does():
+    line = "a mention: `[x](y.md)`"
+    assert strip_links(line) == line
+    assert pointers("d.md", line) == []
+
+
+def test_code_spans_hands_back_each_body_with_its_columns():
+    line = "run `sed -n 1p a.md` on `b.md`"
+    spans = code_spans(line)
+    assert [body for _start, _end, body in spans] == ["sed -n 1p a.md", "b.md"]
+    assert all(line[start:end].startswith("`") for start, end, _body in spans)

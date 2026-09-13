@@ -62,7 +62,7 @@ from tools.quality.config import (
     TEST_LINE_CEILING,
 )
 from tools.quality.docstrings import check_docstrings
-from tools.quality.handoffs import check_handoffs
+from tools.quality.handoffs import check_handoffs, handoff_citations
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
 from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
@@ -227,12 +227,18 @@ CHECKS = (
 #: `0 findings` reads as a clean bill unless the population is printed beside
 #: it. ⛔ **Ruling 191, and Ruling 48 one row over: `0 = 0` is not a result.**
 #: ⚠️ It sits beside `board_state` because it reads the same register.
+#:
+#: ⭐ **`handoff_citations` is the eighth** (`W135`): `check_handoffs`'s
+#: bare-citation arm binds only handoffs absent from a pinned ref, a population
+#: that is empty on the tree that minted it, so its `n of m` is printed beside
+#: the existence census rather than left to a green exit.
 NOTICES = (
     approach_notice,
     pointer_coverage,
     collision_census,
     board_state,
     handoff_existence,
+    handoff_citations,
     rulings_notice,
     reach_notice,
     lint_notice,

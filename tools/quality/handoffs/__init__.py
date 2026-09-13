@@ -69,6 +69,13 @@ gate two is what gave a record a scope. ⛔ **Elsewhere a marker is a record's
 PROSE** and is not read. ⚠️ **Three arms are refused explicitly, each against a
 measurement** — the six sections, *marks no finding*, and `[none]` beside a real
 finding — ⭐ and `records.py` carries every figure and every argument.
+
+## ⛔ And a NEW handoff cites a tracked document as a POINTER (`W135`)
+
+⭐ **An arm, not a thirteenth check**: Ruling 285(b)'s bare-filename rule binds
+the task and office handoffs absent from the tree at a pinned ref, so the frozen
+records are excluded by that ref rather than by a list. `citing.py` carries the
+argument and the figures; `handoff_citations` prints `n of m`.
 """
 
 from __future__ import annotations
@@ -77,6 +84,7 @@ import re
 from pathlib import Path
 
 from tools.quality import config
+from tools.quality.handoffs.citing import citation_findings, citation_lines, frozen_documents
 from tools.quality.handoffs.contract import (
     FINDING_MARKERS,
     LEGACY_GLOBAL_MAX,
@@ -107,8 +115,10 @@ __all__ = [
     "SECTIONS",
     "TASK_HANDOFF",
     "TASK_ID",
+    "bound_handoffs",
     "check_handoffs",
     "declared_kind",
+    "handoff_citations",
     "marker_lines",
     "record_scopes",
 ]
@@ -331,4 +341,27 @@ def check_handoffs(root: Path) -> list[Finding]:
             findings.extend(_check_office_identity(relative, text, ids))
         findings.extend(check_sections(relative, text))
         findings.extend(check_markers(relative, text, ids or [kind]))
+    findings.extend(citation_findings(root, bound_handoffs(root), frozen_documents(root)))
     return findings
+
+
+def bound_handoffs(root: Path) -> list[tuple[str, str]]:
+    """`(relative, text)` for every task and office handoff — the citation arm's population.
+
+    ⛔ One definition read by the finding AND the notice, so the two can never
+    describe different walks (`pointers.py`'s rule).
+    """
+    directory = root / HANDOFF_DIR
+    if not directory.is_dir():
+        return []
+    bound: list[tuple[str, str]] = []
+    for path in sorted(directory.rglob("*.md")):
+        text = config.read_text(path)
+        if text is not None and declared_kind(text)[0] in (TASK_HANDOFF, OFFICE_HANDOFF):
+            bound.append((config.relative(path, root), text))
+    return bound
+
+
+def handoff_citations(root: Path) -> list[str]:
+    """`W135`'s figure with its denominator, printed every run (Ruling 48)."""
+    return citation_lines(root, bound_handoffs(root), frozen_documents(root))
