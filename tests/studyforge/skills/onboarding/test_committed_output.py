@@ -106,7 +106,7 @@ def test_without_the_plan_the_same_build_reads_as_unclassified(tmp_path, monkeyp
     # off reports the build's output, so the clean run above is a measurement.
     root = _onboarded(tmp_path)
     write_site(root, root)
-    monkeypatch.setattr(source.classification, "_generated_output", lambda root, found: frozenset())
+    monkeypatch.setattr(source.enumeration, "_generated_output", lambda root, found: frozenset())
 
     unclassified = _findings(validate(root), RULE_UNCLASSIFIED)
 
@@ -120,7 +120,7 @@ def test_a_corpus_with_no_generated_output_validates_as_it_did_before(tmp_path, 
     root = _onboarded(tmp_path)
     assert source_files(root).generated == ()
     recognised = validate(root).lines()
-    monkeypatch.setattr(source.classification, "_generated_output", lambda root, found: frozenset())
+    monkeypatch.setattr(source.enumeration, "_generated_output", lambda root, found: frozenset())
 
     assert validate(root).lines() == recognised
 
