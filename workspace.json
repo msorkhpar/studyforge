@@ -23,7 +23,7 @@
       "name": "ISO-8583-jPOS-tutorial",
       "where": "sibling",
       "status": "present",
-      "commit": "8afdd5be2e9cb79b378494626c6d1aedee868831"
+      "commit": "366c124574b2a63a046e80145540bae77bc0ddc2"
     },
     {
       "name": "Claude-SPARQL-tutorial",

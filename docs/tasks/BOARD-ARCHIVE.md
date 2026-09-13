@@ -23203,3 +23203,70 @@ fix/W256-handwritten-seam-recorded  b1a78b60  b1a78b60     0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 80
 
 ⭐ **Merged at `c8ca605`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8ca605` is RECEIVED.** ⭐ **`SK-07`'s install record marks the scaffold's hand-written module as a person's, with no digest, and a regenerate neither re-records nor writes it; every generated file still reads as hand-edited when its bytes differ.** ⚠️ **Each finding's disposition is this round's § 6.**
+
+### ⭐ 7 — `W164` CLOSED, `W165` NAMED, AND THE ISO PIN ADVANCED TO `366c124`
+
+⭐ **`2fe2afb` (`W164`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after the pinned run at `73718c7` had finished, and host `corroborate` REFUTED `W164` as absorbed, a GATE at a register branch (Ruling 279). The close is taken here, as § 4 and § 6 did, and the reading of record moves again.** Reversible.
+
+```text
+                                       merge^2   branch head  ahead  checked out
+fix/W164-gated-census-from-the-runner  daed323c  daed323c     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W164.md`.** ⭐ **Carrier, confirmed against git:** [`W165`](rows/W165.md), Developer 1, `fix/W165-gated-cost-carries-spread` @ `wt/dev1`, cut `2fe2afb`, declared `W165`, NAMED; order 13, after `W164` on one surface. ⚠️ **`PO-80/2` carries over:** `W165` writes `review-rubric.md` beside `W171`'s `board.md`, disjoint files.
+
+| finding | became |
+|---|---|
+| `W164/1` | accepted: the frozen witness's line numbers moved, same shape at `d05d856`; left unedited (Ruling 106) |
+| `W164/2` | accepted, recorded: under pytest 9.0.2 a skip raised in a fixture reports at each test, so Ruling 142's folding holds only where a location and a reason repeat. ⭐ The clause beside Ruling 142 is its home. No row |
+| `W164/3` | accepted, recorded: a missed spelling makes a gate census a LOWER bound where Ruling 280's notice is an upper one. No row |
+| `W164/4` | accepted, cost named: inside the pinned image the docker tests skip on the recursion guard's reason, and a census taken there filters on it |
+| `W164`, the command | ⭐ **confirmed:** `python3 -m tools.quality.gated` is a command, in neither `CHECKS` nor `NOTICES`, as `W154`'s reading is |
+
+⭐ **ISO integration round 10 merged at ISO `366c124`: `ISO-09` and `ISO-10` taken**, reading framework `d05d856`; `INT-09/5` discharged by `W254`. ⭐ **The pin advanced to `366c124` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, `wt/po`: exit `1` before, naming `ISO-8583-jPOS-tutorial` alone; exit `0` after. ⭐ **Round 11 is dispatched on `c8ca605`** for the one-step re-pin (`W256/3`).
+
+⚠️ **`INT-10/1`, `/2`, `/4`–`/8` and `/13` are RECEIVED and NOT minted: each owes a re-measure (Ruling 214) before a mint, and that is round 81's.** ⚠️ `INT-10/4` is a surviving plant, so it is measured first. `INT-10/13` is [`W90`](rows/W90.md)'s family. `INT-10/3`, `/9`–`/12` are not framework rows.
+
+### W164 — A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W164.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A GATE IS NOT ONLY WHERE IT IS CALLED: A FIXTURE PROPAGATES IT, AND `grep` CANNOT SEE PROPAGATION.** ⭐ **So a census of a gated population taken with `grep` is an UNDER-count, and the under-count is silent.**
+
+### ⛔ THE WITNESS, from `grep -n` at `0564997`, role `wt/po`, environment HOST
+
+```text
+tests/docker/test_dev_image.py:503   @pytest.fixture(scope="session")
+tests/docker/test_dev_image.py:504   def dev_image() -> str:
+tests/docker/test_dev_image.py:506       docker = require_docker_run()   ⭐ the gate, called ONCE
+tests/docker/test_dev_image.py:515   def test_the_image_builds(dev_image):          ⛔ calls nothing
+tests/docker/test_dev_image.py:521   def test_the_image_runs_python_314(dev_image): ⛔ calls nothing
+
+call sites in that file   4        gated tests in that file   5
+```
+
+⚠️ **The office that first counted this grepped for the helper's name and reported EIGHT where the answer is ten.** ⭐ **The error is not carelessness: it is the instrument, and the instrument is the one every office reaches for.**
+
+### ⛔ WHY IT IS NOT ONE FILE'S PROBLEM
+
+⭐ **The same shape reaches every census this project takes with `grep`** — a marker sweep, a citation sweep, a surface declaration — ⛔ **wherever the thing being counted can be inherited rather than written.** ⚠️ **`W133`'s defect is the same family one spelling over: a predicate whose pass condition is satisfiable by exactly one way of writing the thing.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A CENSUS OF A GATED POPULATION IS TAKEN FROM THE RUNNER, NOT FROM `grep`** — ⭐ **`pytest -rs` with the gate unset names every skipped test and its reason, and that reading sees propagation because the runner resolves fixtures.**
+2. ⚠️ **AND WHERE `grep` IS THE ONLY INSTRUMENT AVAILABLE, IT REPORTS ITS FIGURE AS A LOWER BOUND AND NAMES THE SPELLING IT CANNOT SEE** (Ruling 280's form, which already says this for citations and does not say it for gates).
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a directly-gated test is counted, AND a fixture-gated test is counted.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A BAN ON `grep`.** ⭐ **It is the right instrument for a great many of these and its failure mode here is measured rather than assumed.** ⛔ **AND NOT A CHANGE TO THE FIXTURE** — ⚠️ **a session fixture that gates once is the correct design; the defect is in how it is COUNTED.**
+
+### ⭐ SURFACE
+
+⛔ **`docs/conventions/review-rubric.md`'s census clauses, and whichever instrument takes a gated census.** ⚠️ **It may name `docs/conventions/`, a SHARED constraint whose members are listed ONCE in the board's *Next rows* note** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `2fe2afb`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2fe2afb` is RECEIVED.** ⭐ **A gated census is taken from the runner's own skip report by `python3 -m tools.quality.gated`, never by `grep`, and its clause stands beside Ruling 142 in `review-rubric.md`.** ⚠️ **Each finding's disposition is this round's § 7.**
