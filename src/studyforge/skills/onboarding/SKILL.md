@@ -126,7 +126,8 @@ right — the same rule the adapter skill is written against.
 **Consumer-side modules:** `ingest`
 
 ⛔ **That line is a declaration, read by a check, and it is the only thing that
-exempts a commanded module from having to resolve in this repository.** ⭐ **The
+exempts a commanded module from having to resolve in this repository.** Its
+spelling is declared in `docs/conventions/commanded-pages.md`. ⭐ **The
 corpus repository owns `ingest`** — `SK-02`'s scaffold writes it into the
 material's own tree, so it is importable where this skill is *pointed* and
 nowhere here. ⚠️ **Every other `python3 -m` form on this page is the framework's
