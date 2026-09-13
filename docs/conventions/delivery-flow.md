@@ -25,9 +25,29 @@ is recorded on the board. Silently expanding one is not (`agent-protocol.md`).
 |---|---|---|---|
 | Release | `release/<milestone>` — e.g. `release/m0-foundations` | `main` | `main`, when the milestone closes |
 | Task | `feat/<TASK-ID>-<short-slug>` — e.g. `feat/FND-01-scaffolding` | the release branch | the release branch, **after review** |
-| Non-code | `chore/<slug>` — e.g. `chore/po-board` | `main` | `main` |
+| Non-code | `chore/<slug>` — work that is not an office's round ([below](#office-round-branches)) | `main` | `main` |
+| Office round | `chore/<office>-round<n>` — e.g. `chore/po-round74` | the release branch | the release branch |
 | Fix | `fix/<slug>` — a correction to merged work, not a new task | the release branch | the release branch, **after review** |
 | Integration | `release/studyforge-integration`, in the corpus repository | that repository's default | that repository only. **Never into `studyforge`** |
+
+### Office round branches
+
+⛔ **An office's commits go on `chore/<office>-round<n>` and on no other branch** (`W136`):
+the WHOLE name, `<office>` one of `po` and `cto`, `<n>` ASCII digits. ⭐ Ruling 265 exempts
+such a branch from Ruling 264(c)'s gate because no register row will ever name it, and
+`OFFICE` in `tools/quality/board/unclaimed.py` is this spelling, matched whole. ⛔ **Not a
+prefix, and not a list of accepted shapes** (Ruling 65): `chore/cto-round34-rubric` is a
+topic branch, and the gate naming it once it carries unmerged work is the true answer.
+
+⚠️ **Recorded exceptions.** A `chore/` branch cut before this was written keeps its name. ⛔
+It is not renamed or deleted: that is the user's call, not an office's. List them with:
+
+```bash
+git branch --list 'chore/*' --format='%(refname:short)' | grep -vxE 'chore/(cto|po)-round[0-9]+'
+```
+
+⭐ At `2bfbcb7` none carried a commit ahead of the release branch or was checked out, so the
+gate read none of them. ⛔ One that gains unmerged work is named like any other branch.
 
 ⛔ **Nothing is ever pushed to any remote. Everything stays in local
 repositories.** This is a standing user decision and it is permanent — ⛔ **no

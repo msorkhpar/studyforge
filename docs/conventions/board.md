@@ -466,6 +466,10 @@ recorder.** ⭐ **That is decidable from the NAME, the prefix is ANCHORED — `s
 never `in`, or `fix/W99-po-round-guard` would be exempt — and the exemption is PRINTED with
 its count and its reason**, because a gate that hides a rule is unreadable.
 
+⚠️ **`W136` replaced the prefix with the WHOLE name, because the anchored prefix exempted
+topic branches such as `chore/cto-round34-rubric`:** ⭐ the spelling is
+[the office round-branch convention](delivery-flow.md#office-round-branches).
+
 ⚠️ **The DETACHED checkout is still in NONE of those lines, and that is NOT absorbed here:**
 ⛔ **`wt/po-int` has no `branch refs/heads/…` line for `worktree list --porcelain` to
 report, so the instrument never sees it.** ⭐ **That hole is `PO-44/5`'s and `W125`'s with
