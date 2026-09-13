@@ -151,9 +151,20 @@ the deliverable, and the level vocabulary is always one of them: §4 rules the
 names are the corpus's own, and this skill cannot know them.
 
 ⛔ **A field the draft fills is filled with a value `SF-02` accepts.** `source`
-is the slug of the surveyed directory's resolved name and `variants` is
-`["prose"]`, both asked about; no include glob matches the curriculum record —
-a directory whose wildcard would catch it is listed file by file.
+is the slug of the curriculum record's title and `variants` is `["prose"]`,
+both asked about; no include glob matches the curriculum record — a directory
+whose wildcard would catch it is listed file by file.
+
+⛔ **`source` never depends on the directory surveyed (`W249`).** A worktree, a
+clone and an archive of one commit draft one `source`. Nothing is read from
+git, and never a remote URL.
+
+⭐ **The draft proposes the `not_material` globs; the reasons stay yours
+(`W240/3`).** Only a file an include reads is proposed for `exclude`. Every
+other file `validate` will classify gets a glob with `"why": null`, and so do
+the record and the root's furniture. Nothing onboarding recorded writing is
+proposed, so no glob collides with `SK-07`'s. Give each reason to `promote`
+in `reasons`, keyed by its glob.
 
 ---
 

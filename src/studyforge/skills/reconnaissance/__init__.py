@@ -59,6 +59,7 @@ does **not** generalise.
 | `duplication` | is any of this material here twice |
 | `regions` | is a file the record links cut into sub-file units |
 | `capability` | is anything runnable, does a grader ship with it |
+| `furniture` | what the draft reads nowhere, as `not_material` globs with open reasons |
 | `proposal` | the draft manifest, and every field it had to choose |
 | `survey` | one pass, joining all of them |
 | `report` | what was measured, and what is still open |

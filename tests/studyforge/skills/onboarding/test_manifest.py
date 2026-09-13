@@ -181,6 +181,23 @@ def test_a_persons_block_alone_is_carried_and_raises_the_version_it_needs():
     assert document["corpus_api"] == NOT_MATERIAL_API
 
 
+def test_a_reason_the_survey_left_open_is_paired_from_the_reasons_a_person_gave():
+    # ⭐ W249: reconnaissance drafts the glob with `why: None`; the reason is a
+    # person's (W240/3), handed over keyed by the glob. A written reason is kept.
+    opened = {"glob": "LICENSE", "why": None}
+    document = promote(_with_notes(corpora.NOTES, opened), reasons={"LICENSE": WHY})
+
+    assert document["content"]["not_material"] == [corpora.NOTES, {"glob": "LICENSE", "why": WHY}]
+    assert parse(render(document)).content.why_not_material("LICENSE") == WHY
+
+
+def test_every_open_reason_is_named_at_once_and_none_is_invented():
+    opened = [{"glob": "LICENSE", "why": None}, {"glob": "notes/**", "why": None}]
+    with pytest.raises(PromotionRefused) as refused:
+        promote(_with_notes(*opened), reasons={"LICENSE": "too short"})
+    assert "2 not_material glob(s) have no reason: ['LICENSE', 'notes/**']" in str(refused.value)
+
+
 def test_without_a_drafted_block_the_content_is_exactly_what_it_was():
     # ⭐ The unplanted control: no drafted block, and an empty one, both emit
     # the generated globs alone and stay at the draft's version without them.
