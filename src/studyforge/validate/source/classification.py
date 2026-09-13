@@ -79,13 +79,24 @@ RULE_CONTESTED = "contested"
 #: output — a different fact, and one a script filters on separately.
 RULE_IGNORE_DECLARATION = "ignore-declaration"
 
-#: Directories a source scan never descends into, at any depth.
+#: ⛔ A repository's store nested inside the corpus — a vendored repository or
+#: a submodule checkout — refused by name, never skipped and never scanned
+#: (`W259`). Its own rule id, because the fix is not a `content` pattern.
+RULE_NESTED_REPOSITORY = "nested-repository"
+
+#: The name of a repository's store, a directory or a submodule's gitfile.
+REPOSITORY_STORE = ".git"
+
+#: What a source scan never enters, **at the corpus root only** (`W259`).
 #:
 #: ⛔ **These two are the framework's own and nobody else's.** `.studyforge` is
 #: this tool's, and `.git` holds the declaration this module now reads rather
-#: than guesses at. ⚠️ **The archive root is not here** (`W248`): it is skipped
-#: at the corpus root only, and `membership` refuses each file beneath it that
-#: is not an archive member. A source's own nested `archive/` is material.
+#: than guesses at. ⚠️ **Beneath the root neither is the framework's**: a
+#: nested `.studyforge` is material, and a nested `.git` is refused by name
+#: (`RULE_NESTED_REPOSITORY`). ⚠️ **The archive root is not here** (`W248`): it
+#: is skipped at the corpus root only, and `membership` refuses each file
+#: beneath it that is not an archive member. A source's own nested `archive/`
+#: is material.
 #: Two more names once sat here —
 #: `node_modules` and `__pycache__` — and they were the framework knowing about
 #: two ecosystems it was told nothing about (R1). A list of other people's
@@ -131,6 +142,16 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
                 "other would let a build overwrite the material. Narrow the 'include' "
                 "pattern, or move the material.",
             )
+    for store in scan.stores:
+        yield Finding(
+            RULE_NESTED_REPOSITORY,
+            walk.relative(store),
+            "is another repository's store inside this corpus — a vendored repository or "
+            "a submodule checkout. Its history is not material and is not read, and this "
+            "repository's ignore rules do not answer for another repository's files. It "
+            "is refused, not skipped: move that repository out of the corpus root, or "
+            "declare its directory as output in this repository's ignore rules.",
+        )
     if not scan.files:
         yield Unchecked(
             RULE_UNCLASSIFIED,
@@ -201,6 +222,9 @@ class Scan:
     #: ⛔ False when the plan refused: nothing was recognised, which is not
     #: the same as nothing having been generated.
     planned: bool = True
+    #: ⛔ Each nested repository store the repository does not declare as
+    #: output, refused by name (`W259`). Its contents are never in `files`.
+    stores: tuple[Path, ...] = ()
 
 
 def source_files(root: Path) -> Scan:
@@ -217,16 +241,23 @@ def source_files(root: Path) -> Scan:
     (R2: an archive is a shippable artifact on its own), and quietly scanning
     everything is worse than either, because it looks like a clean run.
     """
-    walked = _walk(root)
+    walked, stores = _walk(root)
     recognised = _generated_output(root, walked)
     generated = tuple(path for path in walked if recognised and path in recognised)
     candidates = [path for path in walked if not recognised or path not in recognised]
-    declared = repository_ignores(root, candidates)
+    declared = repository_ignores(root, candidates + stores)
     planned = recognised is not None
     if declared is None:
-        return Scan(tuple(candidates), consulted=False, generated=generated, planned=planned)
+        return Scan(
+            tuple(candidates),
+            consulted=False,
+            generated=generated,
+            planned=planned,
+            stores=tuple(stores),
+        )
     files = tuple(path for path in candidates if path not in declared)
-    return Scan(files, consulted=True, generated=generated, planned=planned)
+    refused = tuple(store for store in stores if store not in declared)
+    return Scan(files, consulted=True, generated=generated, planned=planned, stores=refused)
 
 
 def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
@@ -260,22 +291,31 @@ def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | N
     )
 
 
-def _walk(root: Path) -> list[Path]:
-    """Every file under `root` that is not the framework's own writing."""
+def _walk(root: Path) -> tuple[list[Path], list[Path]]:
+    """Every file under `root` that is not the framework's own writing, and every nested store.
+
+    ⛔ **`SKIP_DIRS` is asked of the first part only** (`W259`): a nested
+    `.studyforge` is walked like any directory. A nested `.git`, directory or
+    gitfile, is returned as a store and never entered.
+    """
     found: list[Path] = []
+    stores: set[Path] = set()
     for path in sorted(root.rglob("*")):
-        if not path.is_file():
-            continue
         parts = path.relative_to(root).parts
-        if any(part in SKIP_DIRS for part in parts[:-1]) or parts[0] in SKIP_DIRS:
+        if parts[0] in SKIP_DIRS:
             continue
         if len(parts) > 1 and parts[0] == ARCHIVE_DIRNAME:
             # ⛔ Not silent: `membership` accounts for every file here (`W248`).
             continue
+        if REPOSITORY_STORE in parts:
+            stores.add(root.joinpath(*parts[: parts.index(REPOSITORY_STORE) + 1]))
+            continue
+        if not path.is_file():
+            continue
         if len(parts) == 1 and parts[0] == "corpus.json":
             continue
         found.append(path)
-    return found
+    return found, sorted(stores)
 
 
 def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | None:

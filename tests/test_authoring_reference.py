@@ -256,6 +256,7 @@ def _spelled(number: int) -> str:
         29: "twenty-nine",
         30: "thirty",
         31: "thirty-one",
+        32: "thirty-two",
     }[number]
 
 
