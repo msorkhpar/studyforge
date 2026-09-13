@@ -24196,7 +24196,7 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 
 ⭐ **All six TERMINAL (Ruling 199). The coordinator's guarded release-tip reading at each merge is RECEIVED GREEN in the pinned image, with `last_pointer` exit `0` at `1aa2af0`, `c4f47df`, `e9ef42e` and `d869f6d`.** ⭐ **Ruling 314: the six moved bodies carried 12 relative pointers, and 12 were re-addressed.** ⭐ **`PO-86/1` is discharged: `W263` closes on `7400be3`'s reading.** ⚠️ **`W273` merged before round 86, which read it handed back; it closes here.** ⚠️ **Each close's findings were disposed in round 85's or round 86's § 3.**
 
-⚠️ **`PO-87/1` — `W283` and `W280` merged at `12e44ee` and `5e71e04` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled as `PO-86/1`: neither closed nor named in flight; each register cell carries its merge.** Reversible.
+⚠️ **`PO-87/1` — `W283`, `W280` and `W222` merged at `12e44ee`, `5e71e04` and `f4779c9` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled as `PO-86/1`: none closed and none named in flight; each register cell carries its merge.** Reversible.
 
 ### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
 
@@ -24206,7 +24206,6 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 | [`W279`](rows/W279.md) | Developer 2 | `fix/W279-vocabulary-defines-and-argues` @ none | `7400be3` | `W279`, NAMED, handed back; merges after this round |
 | [`W284`](rows/W284.md) | Developer 1 | `fix/W284-verdict-subject-form` @ `wt/dev1` | `c4f47df` | `W284`, NAMED, handed back; merges after this round |
 | [`W285`](rows/W285.md) | Developer 2 | `fix/W285-delivery-milestone-shape` @ `wt/dev2` | `e9ef42e` | `W285`, NAMED, handed back; merges after this round |
-| [`W222`](rows/W222.md) | Developer 1 | @ none, handed back | `2939022` | CONFIRMED; merges after `W280` |
 
 ⚠️ **`W282`, `W284` and `W285` were relayed `@ none`; `git worktree list` (Ruling 171, primary) reads them held by `wt/dev3`, `wt/dev1` and `wt/dev2`.** ⛔ **`W277` stays HELD by the coordinator.**
 

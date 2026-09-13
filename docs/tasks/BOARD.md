@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W222` | Developer 1 | `fix/W222-audio-dir-label` @ none | 1 @ `8517cf3` | in-review |
 | `W282` | Developer 3 | `fix/W282-validate-block-types-and-fields` @ `wt/dev3` | 2 @ `a6fd477` | in-review |
 | `W279` | Developer 2 | `fix/W279-vocabulary-defines-and-argues` @ none | 1 @ `ce0011d` | in-review |
 | `W284` | Developer 1 | `fix/W284-verdict-subject-form` @ `wt/dev1` | 1 @ `b5ef008` | in-review |
@@ -81,7 +80,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W263`, `W267`, `W271`, `W274`, `W275`, `W273` LEFT at `7400be3`, `3d41ba8`, `1aa2af0`, `c4f47df`, `e9ef42e`, `d869f6d`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W282`, `W279`, `W284`, `W285` NAMED, `W222` CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⭐ **`W282`, `W279`, `W284`, `W285` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -369,7 +368,7 @@ else.**
 | W219 | The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it | framework agent | `todo` — `W212/2` + `W212/4` | [`rows/W219.md`](rows/W219.md) |
 | W220 | `reconnaissance.record.read` quotes an EXISTING `path=` back in its refusal — a latent R7 echo the contained census can no longer reach | framework agent | `todo` — `W217/2` | [`rows/W220.md`](rows/W220.md) |
 | W221 | The whole suite still writes outside the checkout — temp, cache and browser dirs — and nothing owns or asserts it | framework agent | `todo` — `W217/3` | [`rows/W221.md`](rows/W221.md) |
-| W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | Developer 1 | in-review — `SF-42/1`, on `fix/W222-audio-dir-label` | [`rows/W222.md`](rows/W222.md) |
+| W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | Developer 1 | `todo` — `SF-42/1`; merged at `f4779c9`, closes on its reading (`PO-87/1`) | [`rows/W222.md`](rows/W222.md) |
 | W223 | `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing | framework agent | `todo` — `SF-42/2` + `W212/3` | [`rows/W223.md`](rows/W223.md) |
 | W224 | A build into any `--out` but the corpus root ships a player that plays nothing and names no gap, because no pass copies a clip | framework agent | ✅ done — `d7c9d4d` | [`rows/W224.md`](rows/W224.md) |
 | W225 | One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211` | framework agent | ✅ done — `a8742c1` | [`rows/W225.md`](rows/W225.md) |
