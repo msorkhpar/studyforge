@@ -62,6 +62,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 |---|---|---|---|---|
 | `W249` | Developer 2 | `fix/W249-source-and-not-material-globs` @ `wt/dev2` | 0 @ `5d9436d` | in-progress |
 | `W248` | Developer 1 | `fix/W248-archive-root-refuses-strays` @ `wt/dev1` | 0 @ `b9e68cc` | in-progress |
+| `W254` | Developer 2 | `fix/INT09-5-mirrored-unit-collision` @ `wt/dev2` | 0 @ `973fc67` | in-progress |
 | `W154` | Developer 3 | `fix/W154-capability-delivery-reading` @ `wt/dev3` | 0 @ `973fc67` | in-progress |
 <!-- /inflight -->
 
@@ -400,6 +401,7 @@ else.**
 | W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | framework agent | `todo` — `W153/3` | [`rows/W251.md`](rows/W251.md) |
 | W252 | `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered | framework agent | `todo` — `W250/2` | [`rows/W252.md`](rows/W252.md) |
 | W253 | `E12`'s `TC-01` still `Owns` `TC/` as its root after `TC-00` creates it, so two rows claim one creation | framework agent | `todo` — `W156/3` | [`rows/W253.md`](rows/W253.md) |
+| W254 | Under `sibling`, mirrored units in two containers place one page path, and `plan` and `build` exit `0` while the build replaces five pages | Developer 2 | in-progress — `INT-09/5`, on `fix/INT09-5-mirrored-unit-collision` | [`rows/W254.md`](rows/W254.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

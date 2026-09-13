@@ -22697,3 +22697,11 @@ all 50 open capability rows walked, 50 of 50, zero unreached, Owns taken from th
 #### ⭐ CLOSED — PO ROUND 78
 
 ⭐ **Merged at `973fc67`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `973fc67` is RECEIVED.** ⭐ **`check_owns_before_creator` fails the floor on a row that `Owns` inside a component it does not create unless its `Depends on` chain reaches that component's creator, placed in no later step. `creator_census` prints every member, its creator, and whether the component was read from a path or from epic prose, and a `Context` read is a second arm that never fails the floor.** ⭐ **The edge half is verified at `accceaf`, so nothing under `docs/tasks/` was touched.** ⚠️ **`W156/3` is [`W253`](rows/W253.md). Each finding's disposition is in this round's § 3.**
+
+## PO round 79 — the ISO round 9 blockers minted first, `W249` closed, and the ISO pin advanced to `8afdd5b`
+
+⭐ **Cut at `b09cedf`. `88a1f51` (`W249`) merged into this round at the coordinator's word, no rebase, and its release-tip reading arrived before this round's reading of record.**
+
+### ⛔ 1 — THE `M6` BLOCKER, MINTED FIRST
+
+⭐ **ISO integration round 9 (office `po-int`) merged at ISO `8afdd5b`: `ISO-07` and `ISO-08` taken, `ISO-06` partial on `W243/1`, and `ISO-09` stopped on `INT-09/5`.** ⭐ **RE-MEASURED here (Ruling 214)** at framework `b09cedf`, host, on a scratch `git archive` of ISO `8afdd5b` emitted by its own `python3 -m ingest`: `validate` exit `1` with 25 `duplicate-path`; `plan` exit `0`, 0 refusals, 55 unit-page creates over 50 distinct paths; `build` exit `0`, 50 unit pages, 5 `replace` lines. ⭐ **Minted [`W254`](rows/W254.md), order 0, IN FLIGHT** on Developer 2's `fix/INT09-5-mirrored-unit-collision`, dispatched ahead of the mint. ⛔ **RULING 75 IS INVOKED:** it jumps every `W` row because it is the critical path of `M6`, the open milestone by the user's order.
