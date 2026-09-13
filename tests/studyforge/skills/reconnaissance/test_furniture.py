@@ -12,8 +12,9 @@ import json
 
 import pytest
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import Classification, ManifestError, parse
-from studyforge.skills.onboarding import onboard
+from studyforge.skills.onboarding import RECORD_FILE, onboard
 from studyforge.skills.reconnaissance import survey
 from studyforge.skills.reconnaissance.furniture import propose
 from studyforge.validate.source import source_files
@@ -82,6 +83,18 @@ def test_onboarding_takes_the_draft_and_a_resurvey_proposes_nothing_onboarding_w
     judged = [path.relative_to(root).as_posix() for path in source_files(root).files]
     verdicts = {where: remade.manifest.content.classify(where) for where in judged}
     assert Classification.UNCLASSIFIED not in verdicts.values(), verdicts
+
+
+def test_an_onboarding_record_carrying_a_home_path_is_refused_as_itself(tmp_path):
+    # ⛔ R7, W7: the record is a list of paths, the shape a home directory arrives
+    # in, so it is gated before a field is read. ⚠️ A placeholder, split so the
+    # literal never sits in this file whole.
+    root = sources.furnished(tmp_path / "c")
+    record = root / RECORD_FILE
+    record.parent.mkdir(parents=True)
+    record.write_text(json.dumps({"files": [{"where": "/" + "home/jane/x"}]}), encoding="utf-8")
+    with pytest.raises(PersonalDataLeak):
+        propose(root, ["src/*.md"], [])
 
 
 # --------------------------------------------------------------------------

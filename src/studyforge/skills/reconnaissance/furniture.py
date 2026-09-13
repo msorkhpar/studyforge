@@ -38,7 +38,8 @@ Paths listed in onboarding's record are declared by `SK-07`'s own generated
 globs. A drafted glob equal to one of those is refused by `promote`, never
 resolved by precedence (`W239`), so a re-survey of an onboarded corpus must
 not propose them. ⚠️ An unreadable record reads as no footprint, and any
-collision that follows is refused by `promote` by name.
+collision that follows is refused by `promote` by name. ⛔ The record is a list
+of paths, so it is gated before a field is read (R7, W7), and a leak raises.
 
 ## ⛔ The reasons are a person's (`W240/3`)
 
@@ -53,6 +54,7 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
+from studyforge.archive.scrub import assert_clean
 from studyforge.skills.onboarding import RECORD_FILE
 from studyforge.validate.source import source_files
 
@@ -115,6 +117,7 @@ def _footprint(root: Path) -> frozenset[str]:
         document = json.loads((root / RECORD_FILE).read_text(encoding="utf-8"))
     except OSError, ValueError:
         return frozenset()
+    assert_clean(document, RECORD_FILE)
     files = document.get("files") if isinstance(document, dict) else None
     if not isinstance(files, list):
         return frozenset()
