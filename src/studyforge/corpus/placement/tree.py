@@ -66,12 +66,14 @@ class TreeProfile(Profile):
         """`…/units/unit-NN` — the extraction source's shape, kept."""
         return self.container_dir(address) / UNITS_DIRNAME / unit_name(ordinal)
 
-    def unit(self, address, ordinal, title, *, origin=None, label=None) -> UnitLocations:
+    def unit(
+        self, address, ordinal, title, *, origin=None, label=None, qualifier=None
+    ) -> UnitLocations:
         """Where one unit's artifacts go. ⚠️ `origin` is accepted and unused."""
         del origin
         base = self.unit_dir(address, ordinal)
         return UnitLocations(
-            page=base / unit_page_name(ordinal, title, label),
+            page=base / unit_page_name(ordinal, title, label, qualifier),
             audio=base / AUDIO_DIRNAME,
             images=base / IMAGES_DIRNAME,
             video=base / VIDEO_DIRNAME,

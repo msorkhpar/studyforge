@@ -30,11 +30,13 @@ first defect would make an integrator fix one problem per run against 166
 units, which is the same argument `validate.Report.of` makes about draining
 every check.
 
-## ⚠️ Two artifacts claiming one path appear as two lines, not one
+## ⛔ Two artifacts claiming one path are a REFUSAL (`INT09-5`)
 
-That collision is `validate`'s finding to raise — `duplicate-path` — and this
-module does not restate the rule. ⭐ It does not hide the fact either: sorting
-by path is what puts the pair next to each other, where a reader sees them.
+⚠️ This module once printed the pair as two `create` lines and exited 0 while
+`validate` refused the layout as `duplicate-path`, and a build then replaced one
+page with the other. ⭐ Placement is asked of the corpus (`placement.bind`): a
+colliding unit is named with its container, and what that cannot separate is
+one refusal per path, naming both claimants — the set `validate` reads.
 """
 
 from __future__ import annotations
@@ -55,6 +57,7 @@ from studyforge.corpus.placement import (
     IgnoreFile,
     PlacementError,
     Profile,
+    bind,
     profile_for,
 )
 from studyforge.narrate.speakable import SpeakableError
@@ -83,6 +86,13 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     profile = profile_for(manifest.placement)
     held, unreadable = _containers(root, manifest, profile)
     refusals += unreadable
+    profile = bind(profile, (container for _, container in held))
+    maps: dict[str, str] = {}
+    for where, container in held:
+        maps.setdefault(container.address.key, where)
+    refusals += [
+        Refusal(maps[c.second.container.address.key], c.message) for c in profile.collisions
+    ]
     clips, record, misrecorded = _recorded(root)
     refusals += misrecorded
     creations = _corpus_creations(profile)

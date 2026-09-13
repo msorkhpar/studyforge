@@ -17,6 +17,9 @@ PUBLIC_SURFACE = frozenset(
     {
         "ARCHIVE_DIRNAME",
         "ASSETS_DIRNAME",
+        "BoundProfile",
+        "Claimant",
+        "Collision",
         "AUDIO_DIRNAME",
         "CONTAINER_SUFFIX",
         "GENERATED_IGNORE_HOME",
@@ -46,6 +49,7 @@ PUBLIC_SURFACE = frozenset(
         "SiblingProfile",
         "TreeProfile",
         "UnitLocations",
+        "bind",
         "container_page_name",
         "identity",
         "is_container_page",
@@ -111,7 +115,7 @@ def test_the_package_never_touches_a_filesystem():
 
 
 def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
-    allowed = {"studyforge", "dataclasses", "json", "pathlib", "re", "__future__"}
+    allowed = {"studyforge", "collections", "dataclasses", "json", "pathlib", "re", "__future__"}
     offenders = [
         f"{path.name}: {name}"
         for path in package_modules()

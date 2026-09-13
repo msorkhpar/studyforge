@@ -50,6 +50,7 @@ from studyforge.corpus.placement import (
     PlacementError,
     Profile,
     UnitLocations,
+    bind,
     profile_for,
 )
 from studyforge.generate.footprint import Footprint, footprint_for
@@ -140,7 +141,15 @@ def read_corpus(root: Path | str) -> Corpus:
     root = Path(root)
     manifest = read_manifest(root)
     maps = containers(root, manifest)
-    profile = profile_for(manifest.placement)
+    profile = bind(profile_for(manifest.placement), (container for _, container in maps))
+    if profile.collisions:
+        # ⛔ Refused before anything is written, naming both claimants and the
+        # path (`INT09-5`): a build that ran would replace one page with another.
+        raise BuildError(
+            f"{len(profile.collisions)} generated path(s) are claimed by two artifacts, "
+            f"so a build would overwrite one with the other: "
+            + " ".join(collision.message for collision in profile.collisions)
+        )
     return Corpus(
         root=root,
         manifest=manifest,

@@ -64,13 +64,14 @@ from studyforge.contents.entries import Contents, Entry, Group
 from studyforge.contents.errors import ContentsError
 from studyforge.corpus.container import Container
 from studyforge.corpus.manifest import Manifest
-from studyforge.corpus.placement import PlacementError, Profile, profile_for
+from studyforge.corpus.placement import PlacementError, Profile, bind, profile_for
 
 
 def build(manifest: Manifest, containers: Iterable[Container]) -> Contents:
     """Return the corpus's stable contents — the same bytes on any machine (R10)."""
-    profile = profile_for(manifest.placement)
     held = _by_address(manifest, containers)
+    # ⛔ Bound to the corpus (`INT09-5`), so an entry's page is the page a build writes.
+    profile = bind(profile_for(manifest.placement), held.values())
     titles = _titles(held)
     return Contents(
         corpus=manifest.source,

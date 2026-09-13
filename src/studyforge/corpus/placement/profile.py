@@ -118,8 +118,14 @@ class Profile:
         *,
         origin: str | None = None,
         label: str | None = None,
+        qualifier: str | None = None,
     ) -> UnitLocations:
-        """Where one unit's artifacts go."""
+        """Where one unit's artifacts go.
+
+        ⚠️ `qualifier` is passed only by `bind`, for a unit whose placement
+        collides with another declared unit's, and belongs in every name the
+        unit's artifacts carry (`bound.py`).
+        """
         raise NotImplementedError
 
     def container(

@@ -52,12 +52,14 @@ class SiblingProfile(Profile):
     name = "sibling"
     describes = "each artifact beside the source file it was generated from"
 
-    def unit(self, address, ordinal, title, *, origin=None, label=None) -> UnitLocations:
+    def unit(
+        self, address, ordinal, title, *, origin=None, label=None, qualifier=None
+    ) -> UnitLocations:
         """Where one unit's artifacts go, beside its own source file."""
         directory = origin_directory(origin, address, "unit")
-        stem = unit_stem(ordinal, title, label)
+        stem = unit_stem(ordinal, title, label, qualifier)
         return UnitLocations(
-            page=directory / unit_page_name(ordinal, title, label),
+            page=directory / unit_page_name(ordinal, title, label, qualifier),
             audio=directory / f"{stem}.{AUDIO_DIRNAME}",
             images=directory / f"{stem}.{IMAGES_DIRNAME}",
             video=directory / f"{stem}.{VIDEO_DIRNAME}",

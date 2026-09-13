@@ -9,7 +9,8 @@ file its contract says it is.
 **How you use it.** `check_placement(walk)` and `check_origins_are_files(walk)`,
 yielding `Finding`s and `Unchecked`s like every other check.
 
-**Depends on.** `corpus.placement` for where things go, `validate.corpus`,
+**Depends on.** `corpus.placement` for where things go and for the set of
+paths claimed twice (`bind`), `validate.corpus`,
 `validate.report`.
 
 ## Placement is a pure function of one unit, so it cannot see a collision
@@ -20,6 +21,9 @@ of the corpus. Under `sibling` the directory an artifact lands in comes from
 the **origin**, not the address — so two units in *different* containers whose
 origins share a directory, with the same ordinal and the same title slug,
 compute the same page path, and neither call had any way to know.
+
+⭐ **`placement.bind` now separates the case above by naming each colliding unit
+with its container** (`INT09-5`), and what it cannot separate is the set below.
 
 ⛔ **So the check is the whole path set, not the addresses.** Two distinct
 titles can be one name, and that is invisible in the source and in the address.
@@ -66,14 +70,9 @@ from __future__ import annotations
 from collections.abc import Iterator
 from pathlib import PurePosixPath
 
-from studyforge.corpus.container.document import Container, Unit
+from studyforge.corpus.container.document import Container
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.corpus.placement import (
-    UNIT_MEDIA_DIRNAMES,
-    PlacementError,
-    Profile,
-    profile_for,
-)
+from studyforge.corpus.placement import PlacementError, Profile, bind, profile_for
 from studyforge.validate.corpus import Held, Walk
 from studyforge.validate.report import Finding, Unchecked
 
@@ -82,16 +81,14 @@ RULE_DUPLICATE_PATH = "duplicate-path"
 RULE_UNPLACEABLE = "unplaceable"
 RULE_ORIGIN_NOT_A_FILE = "origin-not-a-file"
 
-#: A `(path, what claimed it)` pair on its way into the set.
-Claim = tuple[str, str]
-
 
 def check_placement(walk: Walk) -> Iterator[Finding | Unchecked]:
     """Place the whole archive and refuse any path two artifacts claim.
 
-    ⛔ Every container **and** every unit, under the corpus's declared profile,
-    into one set: a check narrowed to addresses cannot see a `sibling`
-    collision, and a check narrowed to units cannot see a container page.
+    ⛔ **The set is `placement.bind`'s and not this module's** (`INT09-5`): `plan`
+    and a build read the same `collisions`, so none of the three can call a
+    layout clean that another refuses. A unit that cannot be placed at all is
+    reported here, by the call that raises.
     """
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return
@@ -102,64 +99,32 @@ def check_placement(walk: Walk) -> Iterator[Finding | Unchecked]:
         # the belt to that pair of braces rather than a live path.
         yield Finding(RULE_UNPLACEABLE, MANIFEST_FILENAME, str(error))
         return
-    claimed: dict[str, str] = {}
+    bound = bind(profile, (held.container for held in walk.containers))
     for held in walk.containers:
-        for item in _claims(held, profile):
-            if isinstance(item, Finding):
-                yield item
-                continue
-            path, what = item
-            first = claimed.get(path)
-            if first is None:
-                claimed[path] = f"{held.where}: {what}"
-            else:
-                yield _collision(held, what, path, first)
+        yield from _unplaceable(held, bound)
+    where = {id(held.container): held.where for held in walk.containers}
+    for collision in bound.collisions:
+        yield Finding(RULE_DUPLICATE_PATH, where[id(collision.second.container)], collision.message)
 
 
-def _collision(held: Held, what: str, path: str, first: str) -> Finding:
-    """Name both claimants and the one path, and say why nothing else saw it."""
-    return Finding(
-        RULE_DUPLICATE_PATH,
-        held.where,
-        f"{what} is placed at {path!r}, which {first} already claims. Placement is "
-        f"a pure function of one artifact, so both calls are individually correct "
-        f"and only the whole set shows the collision — one of these overwrites the "
-        f"other at build time.",
-    )
-
-
-def _claims(held: Held, profile: Profile) -> Iterator[Claim | Finding]:
-    """Every path one container and its declared units occupy."""
-    yield from _container_claims(held, profile)
-    for declared in held.container.units:
-        yield from _unit_claims(held, declared, profile)
-
-
-def _container_claims(held: Held, profile: Profile) -> Iterator[Claim | Finding]:
+def _unplaceable(held: Held, profile: Profile) -> Iterator[Finding]:
+    """Every artifact of one container that its profile cannot place at all."""
     container = held.container
     try:
-        locations = profile.container(container.address, container.titles, origin=container.origin)
+        profile.container(container.address, container.titles, origin=container.origin)
     except PlacementError as error:
         yield Finding(RULE_UNPLACEABLE, held.where, str(error))
-        return
-    yield (locations.page.as_posix(), "its container page")
-
-
-def _unit_claims(held: Held, declared: Unit, profile: Profile) -> Iterator[Claim | Finding]:
-    try:
-        where = profile.unit(
-            held.container.address,
-            declared.n,
-            declared.title,
-            origin=declared.origin,
-            label=declared.label,
-        )
-    except PlacementError as error:
-        yield Finding(RULE_UNPLACEABLE, held.where, f"unit {declared.n}: {error}")
-        return
-    yield (where.page.as_posix(), f"unit {declared.n}'s page")
-    for kind in UNIT_MEDIA_DIRNAMES:
-        yield (where.media_dir(kind).as_posix(), f"unit {declared.n}'s {kind} directory")
+    for declared in container.units:
+        try:
+            profile.unit(
+                container.address,
+                declared.n,
+                declared.title,
+                origin=declared.origin,
+                label=declared.label,
+            )
+        except PlacementError as error:
+            yield Finding(RULE_UNPLACEABLE, held.where, f"unit {declared.n}: {error}")
 
 
 def check_origins_are_files(walk: Walk) -> Iterator[Finding | Unchecked]:

@@ -45,11 +45,9 @@ from tests.support import repository_root
 # --------------------------------------------------------------------------
 
 
-def test_two_units_in_different_containers_may_claim_one_page(tmp_path):
-    # ⛔ **The defect this check exists for.** Two units, two *different*
-    # containers, two individually correct placement calls: same origin
-    # directory, same ordinal, same title slug — one page path. Placement is a
-    # pure function of one unit and had no way to know.
+def test_two_units_in_different_containers_sharing_a_directory_are_named_apart(tmp_path):
+    # ⭐ `INT09-5`: same origin directory, same ordinal, same title slug. This
+    # once claimed one page; `placement.bind` now names each by its container.
     root = corpora.two_containers(
         tmp_path / "c",
         placement="sibling",
@@ -58,9 +56,18 @@ def test_two_units_in_different_containers_may_claim_one_page(tmp_path):
         unit_origin="shared/one.md",
         second_unit_origin="shared/two.md",
     )
-    report = validate(root)
+    assert "duplicate-path" not in validate(root).rules
+
+
+def test_but_two_units_their_containers_cannot_separate_still_claim_one_page(tmp_path):
+    # ⛔ **The defect this check exists for**, where naming by container runs out:
+    # both containers share their deepest address segment.
+    report = validate(corpora.mirrored(tmp_path / "c", separable=False))
     assert "duplicate-path" in report.rules
-    assert "already claims" in "\n".join(f.message for f in report.findings)
+    said = "\n".join(f.message for f in report.findings)
+    assert "already claims" in said
+    assert "first/series unit 1's page" in said
+    assert "second/series unit 1's page" in said
 
 
 def test_and_the_same_corpus_with_one_title_changed_is_clean(tmp_path):
@@ -160,14 +167,7 @@ def test_a_media_directory_counts_as_a_claimed_path(tmp_path):
     # ⛔ Pages, media directories and container pages **together**. Two units
     # sharing an audio directory mix their clips, and no page path had to
     # collide for that to happen.
-    root = corpora.two_containers(
-        tmp_path / "c",
-        placement="sibling",
-        origin="a/README.md",
-        second_origin="b/README.md",
-        unit_origin="shared/one.md",
-        second_unit_origin="shared/two.md",
-    )
+    root = corpora.mirrored(tmp_path / "c", separable=False)
     claimed = "\n".join(f.message for f in validate(root).findings)
     assert "audio directory" in claimed
 

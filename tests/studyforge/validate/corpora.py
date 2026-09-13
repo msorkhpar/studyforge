@@ -180,3 +180,35 @@ def two_containers(
             },
         },
     )
+
+
+def mirrored(root: Path, *, separable: bool = True) -> Path:
+    """Two series whose units share ordinals and titles, every origin in `src/` (`INT09-5`).
+
+    ⚠️ `separable=False` gives both containers one deepest address segment, the one
+    datum placement names a colliding unit by, so their pages still share a path.
+    """
+    depth = 1 if separable else 2
+    manifest = {**MANIFEST, "placement": "sibling", "levels": ["group", "course"][-depth:]}
+    containers, documents = {}, {}
+    for letter, segment in (("a", "first"), ("b", "second")):
+        address = (segment,) if separable else (segment, "series")
+        key = "/".join(address)
+        units = [unit_entry(n, origin=f"src/{letter}{n}.md", title="Shared") for n in (1, 2)]
+        titles = [f"Group {letter}"] * (depth - 1) + [f"Series {letter}"]
+        containers[key] = container(
+            units, address=address, origin=f"src/{letter.upper()}.md", titles=titles
+        )
+        for n in (1, 2):
+            documents[f"{key}/raw/prose/unit-0{n}/lesson-1.json"] = {
+                "source": "demo",
+                "address": list(address),
+                "variant": "prose",
+                "unit": n,
+                "kind": "lesson",
+                "ordinal": 1,
+                "ingested": "2026-01-05",
+                "title": f"Shared {n}",
+                "blocks": BLOCKS,
+            }
+    return write(root, manifest=manifest, containers=containers, documents=documents)
