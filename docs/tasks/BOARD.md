@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W257` | Developer 3 | `fix/W257-emit-date-and-copy` @ `wt/dev3` | 2 @ `2406a6e` | in-progress |
 | `W256` | Developer 2 | `fix/W256-handwritten-seam-recorded` @ `wt/dev2` | 2 @ `84d933f` | in-progress |
 | `W164` | Developer 1 | `fix/W164-gated-census-from-the-runner` @ `wt/dev1` | 0 @ `d05d856` | in-progress |
 | `W171` | Developer 3 | `fix/W171-last-pointer-orphan` @ `wt/dev3` | 0 @ `d05d856` | in-progress |
@@ -79,8 +78,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W252`, `W161`, `W255`, `W254`, `W258` LEFT at `c8da50e`, `761c787`, `1fefe9c`, `d05d856`, `bce08dd`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W257`, `W256`, `W164`, `W171` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W252`, `W161`, `W255`, `W254`, `W258`, `W257` LEFT at `c8da50e`, `761c787`, `1fefe9c`, `d05d856`, `bce08dd`, `08aae9f`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W256`, `W164`, `W171` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -97,6 +96,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
+| 1 | `W265` | ⛔ **`M6`, Ruling 75 invoked; after `W256`** | [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
@@ -122,7 +122,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 40 | `W245`, `W246`, `W247` | ⭐ **round 75's mints, each jumping nobody** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 42 | `W251` | ⭐ **round 78's mint, jumping nobody** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
-| 45 | `W259` | ⭐ **round 79's mint, jumping nobody; after `W255`, one surface** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
+| 45 | `W259` | ⭐ **round 79's mint, jumping nobody; one surface with `W261`** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one of the `docs/conventions/` set** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 47 | `W261`–`W264` | ⭐ **round 80's mints, each jumping nobody; `W261` after `W259`, one surface** | [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked) |
 
@@ -406,7 +406,7 @@ else.**
 | W254 | Under `sibling`, mirrored units in two containers place one page path, and `plan` and `build` exit `0` while the build replaces five pages | Developer 2 | ✅ done — `d05d856` | [`rows/W254.md`](rows/W254.md) |
 | W255 | `check_completeness` says the source tree is absent from the declared origins alone, so a one-unit archive with a missing origin reads valid | Developer 1 | ✅ done — `1fefe9c` | [`rows/W255.md`](rows/W255.md) |
 | W256 | `SK-07`'s install record files the hand-written `read.py` under its stub's digest, so a person's edit reads as a hand-edit | Developer 2 | in-progress — `INT-09/1`, on `fix/W256-handwritten-seam-recorded` | [`rows/W256.md`](rows/W256.md) |
-| W257 | `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths | Developer 3 | in-progress — `INT-09/3` + `/7`, on `fix/W257-emit-date-and-copy` | [`rows/W257.md`](rows/W257.md) |
+| W257 | `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths | Developer 3 | ✅ done — `08aae9f` | [`rows/W257.md`](rows/W257.md) |
 | W258 | `archive.markdown` keeps a nested list line as literal text inside its parent item | Developer 1 | ✅ done — `bce08dd` | [`rows/W258.md`](rows/W258.md) |
 | W259 | `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently | framework agent | `todo` — `W248/1` | [`rows/W259.md`](rows/W259.md) |
 | W260 | No wave-close procedure tells a close to run the capability-delivery reading `W154` shipped | framework agent | `todo` — `W154/3` | [`rows/W260.md`](rows/W260.md) |
@@ -414,6 +414,7 @@ else.**
 | W262 | Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued | framework agent | `todo` — `W161/4` + `/5` | [`rows/W262.md`](rows/W262.md) |
 | W263 | `validate` and `check_blocks` never read a list item's shape, so a malformed item passes both | framework agent | `todo` — `W258/1` | [`rows/W263.md`](rows/W263.md) |
 | W264 | A `list` block records no first number, so an ordered list that starts past one loses its numbering | framework agent | `todo` — `W258/3` | [`rows/W264.md`](rows/W264.md) |
+| W265 | `Scaffold.write(regenerate=True)` refuses over an existing hand-written file, so a corpus cannot regenerate to inherit a fix | framework agent | `todo` — `W257/2` | [`rows/W265.md`](rows/W265.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

@@ -23113,3 +23113,50 @@ fix/W258-nested-list-not-flattened  c67e5687  c67e5687     0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 80
 
 ⭐ **Merged at `bce08dd`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `bce08dd` is RECEIVED.** ⭐ **A nested list is read as a nested list: a list item is a string, or its parts in reading order with whole nested `list` blocks, and the page and the narration carry it inside its parent item.** ⚠️ **Each finding's disposition is this round's § 4.**
+
+### ⭐ 5 — `W257` CLOSED MID-ROUND, AT THE COORDINATOR'S WORD
+
+⭐ **`08aae9f` (`W257`) merged into this round, no rebase; its guarded release-tip reading, GREEN in the pinned image, arrived before this round's reading of record.**
+
+```text
+                             merge^2   branch head  ahead  checked out
+fix/W257-emit-date-and-copy  2406a6e6  2406a6e6     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **The fourth edit:** [`W265`](rows/W265.md) cites the record; no live row cites `rows/W257.md`.
+
+| finding | became |
+|---|---|
+| `W257/1` `[structural]` | accepted, cost named: a document points at `CHECKS`, never at a count of rule ids (Ruling 150's form). No row |
+| `W257/2` `[structural]` | ⛔ **minted [`W265`](rows/W265.md), order 1. RULING 75 IS INVOKED:** `ISO` inherits `W257`'s fixes only by a regenerate, which this refusal blocks, so it is on `M6`'s path. After `W256`. Reversible |
+| `W257/3` | accepted, cost named: a force-tracked file inside an ignored directory is left out, and if it is material the emit fails loudly, never silently |
+| `W257/4`, `/7` | disposed at the close: fixed inside the diff, the `R7` leak with a planted RED |
+| `W257/5` `[structural]` | disposed at the close: `validate/source/classification.py`, its `__init__.py` and test taken outside the surface, disclosed. ⭐ Relayed to [`W259`](rows/W259.md)'s taker: re-read `classification.py` at `08aae9f` |
+| `W257/6` | accepted, relayed to the ISO track: regenerating the generated parts is integration's action, after `W265` |
+| `W257`, rider `W248/3` | ⭐ **confirmed:** dated in place with a printing command, not re-derived |
+
+### W257 — `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W257.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/3` and `/7`, ONE ROW because both are `SK-02`'s generated scaffold:**
+
+- ⛔ **`/3`:** the generated `emit` hands `ingested` to each document and not to `read.containers`, so a container map's `ingested` is the reader's own date and can disagree with its documents'.
+- ⛔ **`/7`:** the generated `test_emit` copies the corpus root excluding only `.git`, the archive, its staging directory and caches. A git-ignored scratch directory is copied too: one ISO run took over a minute.
+
+⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14).** ⭐ **RE-MEASURED by reading (Ruling 214)** at framework `b09cedf`: `skills/adapter/parts/adapter.py` renders `for container in read.containers(root):` with no date. `parts/suite.py`'s `NOT_COPIED` names those four patterns and nothing the repository ignores.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **In one `emit` run, every container map's `ingested` equals its documents'.** The taker names whether the date reaches the reader or is applied after it. ⛔ **Asserted over a generated scaffold, with a planted mismatch that goes RED.**
+2. ⛔ **The generated `test_emit` copies only what the repository does not ignore**, read through the one ignore reader (`W28`), never a second list. ⛔ **Planted with an ignored directory that must not arrive in the copy.**
+
+⭐ **Rider, PO round 79 — `W248/3`:** `SK-02`'s `SKILL.md` states check and rule-id counts dated at `f816454`, pinned as strings by `skills/adapter/test_init.py`. They were stale before `W248`; this row re-derives them or dates them in place (Ruling 106).
+
+⭐ **Surface:** `src/studyforge/skills/adapter/` and its tests. ⚠️ **A regenerated corpus inherits the fix, never a hand-edit (R19).** ⛔ **`M6` work, order 2; nothing in flight writes that surface.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `08aae9f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `08aae9f` is RECEIVED.** ⭐ **The generated `emit` dates every container with its run, and the generated `test_emit` copies only what the repository does not ignore, through one ignore reader.** ⚠️ **Each finding's disposition is this round's § 5.**
