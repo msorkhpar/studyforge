@@ -125,7 +125,7 @@
 | `JS-06` | Ingest audit | Java ingestion adapter | `JS-05` |
 | `OPS-01` | Java toolchain image | Delivery | `TC-03`, `TC-06` |
 | `OPS-02` | Narration deployment | Delivery | `NS-03` |
-| `OPS-03` | Compose and study server | Delivery | `OPS-01`, `OPS-02`, `SF-19b` |
+| `OPS-03` | Compose and study server | Delivery | `OPS-01`, `OPS-02`, `SF-19b`, `SK-03`, `OPS-05` |
 
 ## M7 — 13 capabilities
 

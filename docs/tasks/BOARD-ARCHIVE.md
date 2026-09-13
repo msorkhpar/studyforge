@@ -20375,3 +20375,102 @@ feat/SF-19a-serving-api       e4552e1b  e4552e1b     0      NOWHERE
 ### ⛔ 6 — THE MINTS, each argued on its own file
 
 [`W227`](rows/W227.md) (`OPS-05/2`), [`W228`](rows/W228.md) (`PO-67/2` + `OPS-05/1`), [`W229`](rows/W229.md) (`OPS-05/7`), each jumping nobody. ⭐ **Rider:** `OPS-05/5` → [`W215`](rows/W215.md). ⭐ **Sentences, no row:** `SF-21/1` → spec §R9's register; `SF-21/3` → `E11` § `SK-06`; `SF-21/4` → `E05` § `SF-22`. ⭐ **No convention owed:** `OPS-05/6` + `SF-19a/5` — Ruling 139 (`agent-protocol.md`) already homes a harness under `<worktree>/.scratch/` (`PO-67/3`). **Disposed:** `OPS-05/3` (spec §5: `permitted_edits` enumerates files a corpus MAY HAVE ADDED TO; nothing gives the framework the edit), `OPS-05/4` (a surviving plant named in its handoff, accepted), `OPS-05/8` (surface taken and disclosed), `SF-19a/2` (`SF-19b`'s brief), `SF-19a/3` (cost named; re-opened by a measured reading), `SF-19a/4` (disclosed RFC 9110 decisions; no document owes the embed-origin `frame-src` relaxation). ⭐ **Relayed:** `SF-19a/1` to `SF-19b`, whose discovery wiring meets it.
+
+## PO round 68 — W80 and W81 disposed with OPS-05's, W224 closed, SK-03 made dispatchable
+
+⛔ **One merge re-derived on the first-parent chain of `release/m0-foundations`, past this round's cut `de05aac`:** `d7c9d4d` (`W224`). ⭐ **`corroborate` at `d7c9d4d`, HOST, role `wt/po`, before any edit: exit 1, refuting exactly `W224` as TERMINAL — the expectation.**
+
+### ⛔ 1 — ONE DISPOSITION FOR THREE CLAUSES
+
+⭐ **`SF-19b`'s, `SK-03`'s and `OPS-05`'s Java-corpus clauses are SPLIT (Ruling 151): the framework halves restated over the `FND-04` fixtures (`OPS-05`'s AS DELIVERED, Ruling 166), the Java halves RE-HOMED to `OPS-03` (`M6`) — `W77`'s shape.**
+
+1. ⛔ **NOT AN INSTRUMENT:** Ruling 173 as amended by Ruling 312 refuses a stand-in for a clause naming the corpus, and the sibling at its pin has no manifest and no archive (`OPS-05/1`).
+2. ⛔ **NOT A REFUSAL:** `M6` is where that corpus is first built and served, and `OPS-03` already waited on `SF-19b`.
+3. ⭐ **`OPS-03` gains the edges `SK-03` and `OPS-05`; `docs/capability-index.md` is regenerated.** ⚠️ **`W82` (`SK-04`) and `W83` (`TC-00`) remain the class's open members, untouched.**
+
+### ⭐ 2 — CLOSES
+
+```text
+                               merge^2   branch head  ahead  checked out
+fix/W224-build-copies-clips    f08d251   f08d251      0      NOWHERE
+feat/SF-39-serve-verb          5421c38   5421c38      0      NOWHERE
+```
+
+⭐ **Both TERMINAL: `W224` closes at `d7c9d4d` (a `W` row — cell, stub, body moved below); `SF-39` at `caf7317` (an EPIC task — the In flight removal plus this record).** ⭐ **Ruling 97's gate at each ref is the coordinator's guarded release-tip reading (guard 0, floor GREEN 0, suite GREEN 0), RECEIVED.** ⛔ **Step `4.3` stays OPEN on `SF-19b`.** `W80`, `W81` close on their written dispositions.
+
+### ⭐ 3 — PLACEMENT: `W105` IN DEVELOPER 1'S SLOT RATIFIED AT `caf7317`
+
+⭐ **Skipping `W88`, `W120`, `W103` is right:** `W88` and `W103` are PO-owned in the register, and `W120` shares `docs/tasks/rows/` with `W88` and with every register round — one owner, the register's. ⭐ **At `caf7317` no capability row could take the slot:** every `SK-03` edge is merged there, `W81`'s disposition was not, and the dispatch bound binds only a slot an open-step row COULD have taken. ⛔ **This round removes that ground: once it merges, `SK-03` takes the NEXT free slot ahead of every `W` row** (`PO-68/1`).
+
+### ⭐ 4 — `W224`'S FINDINGS
+
+`W224/1` → rider on [`W226`](rows/W226.md) (dead record entries). `W224/2` → rider on [`W227`](rows/W227.md) (`Creation.narration` is what a non-destructive run must read). `W224/3` → [`W222`](rows/W222.md). `W224/4` → rider on [`W223`](rows/W223.md), with `SF-38/9`. `W224/5` disposed — answer 4 names the page as where a missing clip is said. `W224/6` disposed — disclosed.
+
+### W80 — `SF-19b`'s Acceptance names a consumer corpus by ROLE, and owes an instrument or a disposition
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W80.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`SF-19b` — `docs/tasks/E05-serving-execution.md:97`, and the clause is *"Serves the Java corpus discovered at startup with no configured paths"*.**
+
+⛔ **Ruling 173's class: an Acceptance clause that names a CONSUMER CORPUS BY ROLE is a reading taken inside a repository this framework may not cite (R20), so it owes either a framework-side INSTRUMENT or an explicit DISPOSITION — never silence.** ⭐ **The counted population is SEVEN clauses, and it was RE-DERIVED by the PO at `798956c` in the PO worktree, PINNED, with the rubric's own fenced instrument rather than a re-spelling: 7 rows out of 315 framework Acceptance clauses, the same seven and the same line numbers as the `8175d86` reading in [`../../conventions/review-rubric.md`](conventions/review-rubric.md) §4.** ⛔ **This row is one of the FIVE that are open.**
+
+⚠️ **Two of the seven are NOT rows and that is recorded rather than rediscovered:** `SF-03` (`E01`) and `QA-04` (`E10`) are clauses inside tasks that already have an id, and minting a second id for work the first already owns is `PO-34/7`'s register defect in reverse. ⛔ **They are answered by a disposition on their own task.**
+
+⭐ **What settles THIS row:** the clause is re-read at its address, and ONE of three is written into the epic — a framework-side instrument that can return `no`; the scale half re-homed onto the integration side (`W73`/`W77`'s shape); or a stated refusal. ⛔ **A clause that names no instrument which can return `no` is `W49`'s subject, and this row must not produce one.**
+
+[round 37's mint](#round-37-the-mint-arguments-and-the-corrections-the-cto-and-the-integration-channel-forced-mid-round)
+
+#### ⭐ CLOSED — PO ROUND 68
+
+⭐ **Disposition written PO round 68 in `E05` § `SF-19b`: SPLIT, framework half restated over the `FND-04` fixtures, Java half RE-HOMED to `OPS-03`.**
+
+### W81 — `SK-03`'s consumer-corpus Acceptance clause, the same class
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W81.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`SK-03` — `docs/tasks/E11-skills-authoring.md:571`, and the clause is *"Produces and serves the Java corpus end to end"*.**
+
+⛔ **Ruling 173's class: an Acceptance clause that names a CONSUMER CORPUS BY ROLE is a reading taken inside a repository this framework may not cite (R20), so it owes either a framework-side INSTRUMENT or an explicit DISPOSITION — never silence.** ⭐ **The counted population is SEVEN clauses, and it was RE-DERIVED by the PO at `798956c` in the PO worktree, PINNED, with the rubric's own fenced instrument rather than a re-spelling: 7 rows out of 315 framework Acceptance clauses, the same seven and the same line numbers as the `8175d86` reading in [`../../conventions/review-rubric.md`](conventions/review-rubric.md) §4.** ⛔ **This row is one of the FIVE that are open.**
+
+⚠️ **Two of the seven are NOT rows and that is recorded rather than rediscovered:** `SF-03` (`E01`) and `QA-04` (`E10`) are clauses inside tasks that already have an id, and minting a second id for work the first already owns is `PO-34/7`'s register defect in reverse. ⛔ **They are answered by a disposition on their own task.**
+
+⭐ **What settles THIS row:** the clause is re-read at its address, and ONE of three is written into the epic — a framework-side instrument that can return `no`; the scale half re-homed onto the integration side (`W73`/`W77`'s shape); or a stated refusal. ⛔ **A clause that names no instrument which can return `no` is `W49`'s subject, and this row must not produce one.**
+
+[round 37's mint](#round-37-the-mint-arguments-and-the-corrections-the-cto-and-the-integration-channel-forced-mid-round)
+
+#### ⭐ CLOSED — PO ROUND 68
+
+⭐ **Disposition written PO round 68 in `E11` § `SK-03`: SPLIT, framework half restated over the `FND-04` fixtures, Java half RE-HOMED to `OPS-03`.**
+
+### W224 — A build into any `--out` but the corpus root ships a player that plays nothing and names no gap, because no pass copies a clip
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W224.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A BUILD INTO ANY `--out` BUT THE CORPUS ROOT SHIPS A PLAYER THAT PLAYS NOTHING AND NAMES NO GAP.** ⭐ **`SF-38/8`, measured by `SF-38`'s build-half office on the host at `3937c65`, both `FND-04` fixtures: no emitted audio href resolves, the player is live, and no notice is shown.** ⛔ **The answer is written once, in [`E09`](E09-delivery.md#sf-388-where-a-built-pages-audio-lives-under-out-copied-there-by-the-build): the build copies the clips.**
+
+### ⛔ WHY IT IS ORDER 0
+
+1. ⛔ **IT BREAKS THE USER'S ANSWER 4 IN THE ONE STATE IT PROMISES WORKS**, and silently — *a page identical to a failed narration* is the defect answer 4 exists to remove.
+2. ⛔ **A COMMITTED TEST PINS THE BREAK AS A RULE:** `tests/studyforge/generate/test_narration.py::test_a_build_places_no_clip_under_its_output_root` cites `W193` answer 1 and answer 2 for it — ⚠️ **but `W193` answer 1 is a DELETION rule**, so the next office reads a defect as a decision.
+3. ⭐ **`SF-39` serves a built `--out`**, so `M4`'s close reads a narrated page through exactly this path.
+
+⭐ **It jumps every `W` row in the queue; the dispatch bound is untouched — capability rows take a slot first.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **EVERY AUDIO HREF A BUILT PAGE EMITS RESOLVES TO A FILE UNDER `--out`**, through `studyforge build <root> --out <elsewhere>`, both `FND-04` fixtures, narrated through a recording fake. ⭐ **Plant: the copy removed; the pass condition is the MOVED exit code** (Rulings 124, 348).
+2. ⛔ **THE COPY LANDS WHERE THE HREF POINTS BY ASKING PLACEMENT, NEVER COMPOSING** (R4; `SF-37`'s `media_dir` shape). ⚠️ **A labelled unit's directory is [`W222`](rows/W222.md)'s — read it.**
+3. ⛔ **`studyforge plan` ENUMERATES THE COPIES** and the build agrees path for path (Ruling 99; answer 2) — ⭐ **the record becomes a plan input.**
+4. ⛔ **AT `--out` = THE CORPUS ROOT NOTHING IS COPIED AND NO CLIP BESIDE THE MATERIAL ENTERS THE FOOTPRINT** — asserted by a rebuild leaving `narrate`'s clip bytes untouched.
+5. ⛔ **A CLIP ABSENT AT ITS SOURCE IS NOT COPIED AND THE PAGE NAMES THE GAP** (answer 4, row 3); `NOT_RECORDED` is still never a gap.
+6. ⛔ **`test_a_build_places_no_clip_under_its_output_root` IS CONVERTED, NOT DELETED** — to assert no clip is written beside the material and none under `--out` that no page addresses.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **AN HREF THAT CLIMBS OUT OF `--out` BACK TO THE CORPUS** — a served site cannot follow it. ⛔ **A build that synthesises** (answer 3), ⛔ **or a rebuild that deletes a copy the record no longer names** (answer 2; `W193` answer 1).
+
+[the answer's round](#po-round-66-wave-19-closed-wave-20-named-sf-388-answered-from-the-users-own-answers-three-mints)
+
+#### ⭐ CLOSED — PO ROUND 68
+
+⭐ **Merged at `d7c9d4d`, TERMINAL by predicate `C`; the office's gates at `f08d251` and the coordinator's disclosure at `de05aac`, RECEIVED from the merge body.**

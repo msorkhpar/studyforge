@@ -94,10 +94,16 @@ content here rather than bolted onto it.
 itself, with no configured paths — which is what lets one instance serve two
 corpora using different placement profiles.
 
-**Acceptance.** Serves the Java corpus discovered at startup with no configured
-paths. State responses never cache. N-segment addresses route correctly at
+**Acceptance.** Serves each `FND-04` fixture discovered at startup with no
+configured paths. State responses never cache. N-segment addresses route correctly at
 depth 1 and depth 2. Two corpora with different placement profiles serve from
 one instance. A stale discovery cache is detected rather than trusted.
+
+#### ⛔ Acceptance SPLIT by the PO, round 68 — `W80`, Ruling 151
+
+> ~~Serves the Java corpus discovered at startup with no configured paths.~~
+
+⛔ **A reading no framework office can take: that sibling has no manifest and no archive at its pin (`OPS-05/1`; R20, Ruling 173).** ⭐ **Framework half: the restated first clause.** ⛔ **The Java half is RE-HOMED to `OPS-03` (`M6`, integration side), `W77`'s shape — the one disposition `SK-03` and `OPS-05` also take.**
 
 ---
 
