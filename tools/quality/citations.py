@@ -128,8 +128,8 @@ that is open). ⭐ **Two edges, both MEASURED rather than reasoned:**
 * ⛔ **`N)` is ADMITTED, and that is a choice with a price on it.** ⭐ The house
   style wraps a parenthesised citation — `(Ruling` with `279)` beneath it — and a
   `\d{1,4}[.)]` breaker throws those away: MEASURED, two live sites,
-  `docs/tasks/handoffs/PO-2026-09-10-round25.md:173-174` and
-  `SESSION-2026-09-11-coordinator-2.md:34-35`, **both REAL citations**. ⚠️ So
+  `docs/tasks/handoffs/PO-2026-09-10-round25.md` and
+  `docs/tasks/handoffs/SESSION-2026-09-11-coordinator-2.md`, **both REAL citations**. ⚠️ So
   `Ruling\n3) a thing` reads `{3}`, an ordered item written with a bracket is not
   a boundary, and both halves are asserted in the mirror so the next editor
   cannot widen this by accident.
@@ -156,11 +156,11 @@ LANDING — is a property of what `reach.py` concludes and is declared there.**
 rather than guessed, and the WRAPPED citation that stood third among them was
 CLOSED by `W145` rather than dropped from the claim:**
 
-1. ⛔ **An EMPHASIS-INTERLEAVED citation reads UNREACHED** — `board.md:703`'s
+1. ⛔ **An EMPHASIS-INTERLEAVED citation reads UNREACHED** — `docs/conventions/board.md`'s
    `Rulings **15**, **62** and **68**`, whose digits sit inside `**` runs. ⭐ Not
    widened over: Ruling 185 forbids a taker widening a ruling's own words, and
    Ruling 280's are "the forms the house style writes" — this is ONE site of ten.
-2. ⛔ **`Rulings minted: 198-202`** (`review-rubric.md:292`) puts a word between
+2. ⛔ **`Rulings minted: 198-202`** (`docs/conventions/review-rubric.md`) puts a word between
    the plural and its members and reads UNREACHED.
 
 ⭐ **Consequence, carried by Ruling 280's SECOND arm and Ruling 281's audience
@@ -218,7 +218,7 @@ _BODY_TOKEN = re.compile(rf"(?P<member>{_MEMBER})|(?P<dash>[{_RANGE_DASHES}])")
 #: A line's BLOCKQUOTE MARKERS, split from the text they prefix. ⛔ Two lines
 #: share a block only when these are IDENTICAL — `>` text and plain text are two
 #: markdown blocks — and splitting them rather than testing for them is what lets
-#: a citation wrapped INSIDE a quote be read at all (`board.md:864`, measured).
+#: a citation wrapped INSIDE a quote be read at all (`docs/conventions/board.md`, measured).
 _QUOTE = re.compile(r"^(?P<quote>(?:[ \t]*>)*)(?P<body>.*)$")
 
 #: A line that OPENS a markdown block, so no citation reaches it from above.
@@ -232,8 +232,8 @@ _QUOTE = re.compile(r"^(?P<quote>(?:[ \t]*>)*)(?P<body>.*)$")
 #:   refuses it and costs NOTHING: measured over all 400 markdown files of this
 #:   tree, the reading loses nothing and gains nothing.
 #: * ⛔ `)` is DELIBERATELY ADMITTED, because the house style wraps `(Ruling\n279)`
-#:   — MEASURED, two live sites, `PO-2026-09-10-round25.md:173-174` and
-#:   `SESSION-2026-09-11-coordinator-2.md:34-35`, both REAL citations that a
+#:   — MEASURED, two live sites, `docs/tasks/handoffs/PO-2026-09-10-round25.md` and
+#:   `docs/tasks/handoffs/SESSION-2026-09-11-coordinator-2.md`, both REAL citations that a
 #:   `\d{1,4}[.)]` breaker would have thrown away.
 _OPENS = re.compile(r"[ \t]*(?:[#|]|[-*+][ \t]|\d{1,4}\.(?=[ \t]|$)|(?:-{3,}|\*{3,}|_{3,})[ \t]*$)")
 
