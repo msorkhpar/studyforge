@@ -9,6 +9,7 @@ from studyforge.corpus.manifest import Classification, parse
 from studyforge.skills.reconnaissance import assess, draft, find, survey, take
 from studyforge.skills.reconnaissance.proposal import slugify
 from tests.studyforge.skills.reconnaissance import sources
+from tests.support import git, run
 
 #: Shapes whose draft excludes nothing, so the whole draft goes to SF-02 as it
 #: stands. ⚠️ A draft's `exclude` is bare paths awaiting a person's reasons,
@@ -28,8 +29,11 @@ def propose(root):
 
 
 def accepted(proposal):
-    """Parse the draft with SF-02's own reader. ⛔ Its rules are never restated here."""
-    return parse(json.dumps(proposal))
+    """Parse the draft, its reasons given as a person would, with SF-02's own reader.
+
+    ⛔ Its rules are never restated here, and the reasons are the test's (W240/3).
+    """
+    return parse(json.dumps(sources.settled(proposal)))
 
 
 # --------------------------------------------------------------------------
@@ -146,10 +150,12 @@ def test_a_corpus_surveyed_as_dot_drafts_a_manifest_sf02_accepts(tmp_path, monke
     # ⛔ `survey('.')` is the documented call. Its unresolved name is empty,
     # and `variants: []` is refused, so every draft was unpromotable by hand.
     for build in EXCLUDES_NOTHING:
-        root = build(tmp_path / build.__name__)
+        # ⚠️ Named unlike any fixture's title, so the two sources cannot agree by chance.
+        root = build(tmp_path / f"checkout-{build.__name__}")
         monkeypatch.chdir(root)
         manifest = accepted(survey(".").proposal)
-        assert manifest.source == sf01_slugify(root.name), build.__name__
+        assert manifest.source == sf01_slugify(find(take(root)).title), build.__name__
+        assert manifest.source != sf01_slugify(root.name), build.__name__
 
 
 def test_a_directory_name_with_no_slug_still_drafts_an_accepted_source(tmp_path, monkeypatch):
@@ -180,7 +186,8 @@ def test_no_include_glob_matches_the_curriculum_record(tmp_path):
         manifest, _ = propose(root)
         content = accepted(manifest).content
         record = find(take(root))
-        assert content.classify(record.path.as_posix()) is not Classification.INCLUDED, (
+        # ⭐ W249: and it is proposed `not_material`, so it is no longer unclassified.
+        assert content.classify(record.path.as_posix()) is Classification.NOT_MATERIAL, (
             build.__name__
         )
         assert all(content.classify(t) is Classification.INCLUDED for t in record.order)
@@ -199,3 +206,49 @@ def test_a_corpus_with_no_curriculum_record_keeps_its_draft(tmp_path):
     (root / "README.md").unlink()
     manifest, _ = propose(root)
     assert manifest["content"] == {"include": ["src/*.md"], "exclude": []}
+
+
+# --------------------------------------------------------------------------
+# ⛔ W249: `source` does not depend on the name of the directory surveyed
+# --------------------------------------------------------------------------
+
+
+def _git(where, *arguments):
+    """Run git with a placeholder identity. ⛔ Relative paths only (R7)."""
+    identity = ["-c", "user.name=fixture", "-c", "user.email=fixture@example.invalid"]
+    result = run([git(), *identity, "-c", "commit.gpgsign=false", *arguments], cwd=where)
+    assert result.returncode == 0, result.stderr
+
+
+def test_two_differently_named_checkouts_of_one_repository_draft_one_proposal(
+    tmp_path, monkeypatch
+):
+    # ⛔ INT-07/1: a worktree named `int` drafted `int`, and a clone named after
+    # the repository drafted the repository's name. One corpus, one `source`.
+    origin = sources.furnished(tmp_path / "origin")
+    _git(origin, "init", "-q")
+    _git(origin, "add", "-A")
+    _git(origin, "commit", "-q", "-m", "fixture")
+    _git(tmp_path, "clone", "-q", "--no-hardlinks", "origin", "a-clone-named-like-a-repository")
+    _git(origin, "worktree", "add", "-q", "--detach", "../int")
+    clone, worktree = tmp_path / "a-clone-named-like-a-repository", tmp_path / "int"
+
+    drafted = [survey(clone).proposal, survey(worktree).proposal]
+    monkeypatch.chdir(worktree)
+    drafted.append(survey(".").proposal)
+
+    assert drafted[0] == drafted[1] == drafted[2]
+    assert drafted[0]["source"] == sf01_slugify(find(take(clone)).title) == "aggregated"
+    globs = [entry["glob"] for entry in drafted[0]["content"]["not_material"]]
+    assert globs == sources.FURNISHED_GLOBS
+    assert accepted(drafted[0]).source == "aggregated"
+
+
+def test_with_no_record_the_source_is_a_placeholder_whatever_the_directory(tmp_path):
+    names = ("int", "a-clone-named-like-a-repository")
+    drafted = []
+    for name in names:
+        root = sources.flat_prose(tmp_path / name)
+        (root / "README.md").unlink()
+        drafted.append(propose(root)[0]["source"])
+    assert drafted == ["corpus", "corpus"]

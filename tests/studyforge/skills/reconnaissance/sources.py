@@ -99,6 +99,58 @@ def aggregated(root: Path) -> Path:
     return write(root, files)
 
 
+def furnished(root: Path) -> Path:
+    """A recorded corpus with root furniture and notes beside one aggregate.
+
+    ⭐ **W249's shape, at the smallest size that sets it.** A licence, two git
+    declarations, a notes file at the root, a directory of notes and a hidden
+    file among the units: none is read by an include. The aggregate is.
+    """
+    return write(
+        aggregated(root),
+        {
+            "LICENSE": "Placeholder licence text.\n",
+            ".gitignore": "*.tmp\n",
+            ".gitattributes": "* text=auto\n",
+            "NOTES.md": "# Notes for whoever works here\n",
+            "notes/two.md": "# More about the material\n",
+            "notes/about/one.md": "# About the material\n",
+            "src/.keep": "",
+        },
+    )
+
+
+#: The globs `furnished` must draft. ⚠️ `src/.keep` stays exact: `src/` holds units.
+FURNISHED_GLOBS = [
+    ".gitattributes",
+    ".gitignore",
+    "LICENSE",
+    "NOTES.md",
+    "README.md",
+    "notes/**",
+    "src/.keep",
+]
+
+#: A reason as a PERSON would give it. ⛔ Test-owned: the skill never writes one.
+REASON = "a reason a person gave for this path, written by the test"
+
+
+def reasons(proposal: dict) -> dict[str, str]:
+    """The reasons mapping a person hands `promote`: one per excluded path and per glob."""
+    content = proposal["content"]
+    keys = [*content.get("exclude", []), *(e["glob"] for e in content.get("not_material", []))]
+    return dict.fromkeys(keys, REASON)
+
+
+def settled(proposal: dict) -> dict:
+    """The draft with every open reason filled as a person would, for SF-02 to judge."""
+    content = dict(proposal["content"])
+    content["exclude"] = [{"path": where, "why": REASON} for where in content.get("exclude", [])]
+    if "not_material" in content:
+        content["not_material"] = [{**e, "why": REASON} for e in content["not_material"]]
+    return {**proposal, "content": content}
+
+
 def copied_heading_tree(root: Path) -> Path:
     """A curriculum whose second half reproduces another document's heading tree.
 
