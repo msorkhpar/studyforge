@@ -15,10 +15,10 @@ stays runnable as `python3 -m studyforge.<stage>` with the dispatcher absent.
 
 ## ⛔ A verb is registered here only when it can be RUN
 
-⭐ `serve` and `reconcile` are named in this package's contract as commands the
-framework will have; they are **not** in `VERBS`, because registering a verb
-against a callable that does not exist yet makes an installed command that
-fails on first invocation. ⚠️ That is the state `pyproject.toml` refused for
+⭐ `reconcile` is named in this package's contract as a command the framework
+will have; it is **not** in `VERBS`, because registering a verb against a
+callable that does not exist yet makes an installed command that fails on
+first invocation. ⚠️ That is the state `pyproject.toml` refused for
 the whole command and the reasoning does not change one level down.
 
 ⛔ **The table is the population the authoring checks derive from.** A fenced
@@ -34,6 +34,7 @@ from dataclasses import dataclass
 
 from studyforge.cli.narrate.cli import main as narrate_main
 from studyforge.cli.plan.cli import main as plan_main
+from studyforge.cli.serve import main as serve_main
 from studyforge.cli.site.cli import main as build_main
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.cli import main as validate_main
@@ -55,8 +56,9 @@ class Verb:
 
 
 #: ⛔ **The registered table.** Ordered as a reader meets them: check the
-#: archive, ask what a build would write, narrate it, then write it. ⭐ `narrate`
-#: precedes `build` because clips are a build's INPUT (`E09` § W202 answer 3).
+#: archive, ask what a build would write, narrate it, write it, then serve it.
+#: ⭐ `narrate` precedes `build` because clips are a build's INPUT (`E09` § W202
+#: answer 3), and `serve` follows `build` because it serves what a build wrote.
 VERBS: Mapping[str, Verb] = {
     verb.name: verb
     for verb in (
@@ -64,6 +66,7 @@ VERBS: Mapping[str, Verb] = {
         Verb("plan", "say what a build would write, before it writes it", plan_main),
         Verb("narrate", "synthesise a corpus's clips from a narration service", narrate_main),
         Verb("build", "write the site for one corpus into a directory you name", build_main),
+        Verb("serve", "serve a built site on loopback, adding the content API", serve_main),
     )
 }
 
