@@ -128,3 +128,20 @@ def test_a_prune_that_held_an_entry_exits_one_and_a_clean_one_zero(tmp_path):
     assert printed[-1].endswith("1 clip(s) deleted, 1 record entries removed, 0 held")
     assert prune_exit_code(done) == OK
     assert prune_exit_code(Pruned(held=(("x", "why"),))) == INVALID
+
+
+@pytest.mark.parametrize("health", [UP, DOWN])
+def test_the_superseded_count_is_printed_on_every_run_zero_included(health):
+    from studyforge.cli.narrate.report import SUPERSEDED
+
+    assert f"superseded clips  0 {SUPERSEDED}" in lines(Narrated(health=health), "corpus")
+
+
+def test_a_cleared_superseded_clip_is_named_in_the_prune_report():
+    from studyforge.cli.narrate.report import prune_lines
+    from studyforge.narrate.synth import Superseded
+
+    cleared = (("u.s.b1", Superseded("u.s.b1-aaaaaaaa.mp3", "unit/audio")),)
+    assert "forget u.s.b1  superseded u.s.b1-aaaaaaaa.mp3" in prune_lines(
+        Pruned(cleared=cleared), "c"
+    )

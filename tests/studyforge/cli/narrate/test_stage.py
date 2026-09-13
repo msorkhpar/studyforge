@@ -22,7 +22,7 @@ from studyforge.generate import BuildError
 from studyforge.generate.declarations import read_corpus
 from studyforge.narrate.client import NarrateClient
 from studyforge.narrate.synth import StateError, state_file
-from tests.studyforge.cli.narrate.plant import narrated, plant_dead_entry
+from tests.studyforge.cli.narrate.plant import narrated, plant_dead_entry, reword
 from tests.studyforge.cli.narrate.service import (
     BASE,
     FMT,
@@ -212,6 +212,15 @@ def test_a_planted_dead_entry_moves_the_disclosed_count_from_zero_to_one(tmp_pat
     dead, _ = plant_dead_entry(root)
 
     assert run(root, FakeService()).dead == (dead,)
+
+
+def test_a_reworded_passage_moves_the_superseded_count_from_zero_to_one(tmp_path):
+    # ⛔ W226: the kept clip is disclosed, read off the record when the run returns.
+    root = narrated(tmp_path)
+    assert run(root, FakeService()).superseded == (), "the control: a clean corpus discloses none"
+    reword(root)
+
+    assert len(run(root, FakeService()).superseded) == 1
 
 
 def test_the_disclosure_is_owed_when_the_service_is_absent_too(tmp_path):

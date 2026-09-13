@@ -43,10 +43,12 @@ from studyforge.narrate.synth.incremental import (
     synthesise,
     wanted_name,
 )
+from studyforge.narrate.synth.location import Superseded, located
 from studyforge.narrate.synth.record import (
     Clip,
     Conditions,
     State,
+    StateError,
     read_state,
     state_file,
 )
@@ -202,14 +204,112 @@ def test_a_wording_change_synthesises_exactly_the_changed_segment(tmp_path):
     assert outcome.reasons == {"u2": WORDS_MOVED}
 
 
-def test_the_superseded_clip_is_left_alone_and_the_new_one_joins_it(tmp_path):
-    # ⚠️ Nothing is collected at either end (`NS-05`). Asserted so the next
-    # reader meets it here rather than on a disk that keeps growing.
+def named_by_record(root: Path, state: Path) -> set:
+    """Every clip the record names — entries and superseded — located from the record alone."""
+    named = set()
+    for clip in read_state(state).clips.values():
+        named.add(located(root, clip.where, clip.filename))
+        named.update(located(root, item.where, item.filename) for item in clip.superseded)
+    return named
+
+
+def test_a_rewording_keeps_the_old_clip_and_the_record_still_names_every_clip(tmp_path):
+    # ⛔ W226 clause 4 (answer 2): nothing is deleted. ⛔ W218/2: measured at
+    # `9421b02` as 3 clips on disk against 2 named; now the record names all 3.
     into, state = first_pass(tmp_path)
     edited = (UNITS[0], unit("u2", "the second sentence, reworded"))
     client, _recorder, _into, _state = build(tmp_path, *job("u2"))
     synthesise(edited, client=client, conditions=conditions(), into=into, state=state)
-    assert len(list(into.glob(f"*.{FMT}"))) == 3
+
+    on_disk = set(into.glob(f"*.{FMT}"))
+    assert len(on_disk) == 3
+    assert on_disk == named_by_record(tmp_path, state)
+    assert read_state(state).clips["u2"].superseded == (
+        Superseded(wanted_name(UNITS[1], conditions()), "audio"),
+    )
+
+
+def test_every_recorded_clip_is_a_file_located_from_the_record_alone(tmp_path):
+    # ⛔ W226 clause 2: no placement is asked; the record says where.
+    _into, state = first_pass(tmp_path)
+    named = named_by_record(tmp_path, state)
+    assert len(named) == len(UNITS)
+    assert all(path is not None and path.is_file() for path in named)
+
+
+def test_rewording_back_makes_the_earlier_clip_current_again(tmp_path):
+    into, state = first_pass(tmp_path)
+    edited = (UNITS[0], unit("u2", "the second sentence, reworded"))
+    for words in (edited, UNITS):
+        client, _recorder, _into, _state = build(tmp_path, *job("u2"))
+        synthesise(words, client=client, conditions=conditions(), into=into, state=state)
+
+    assert read_state(state).clips["u2"].superseded == (
+        Superseded(wanted_name(edited[1], conditions()), "audio"),
+    )
+    assert set(into.glob(f"*.{FMT}")) == named_by_record(tmp_path, state)
+
+
+def test_a_unit_whose_directory_moved_supersedes_its_clips_in_the_old_one(tmp_path):
+    # ⛔ W218/1 at the pass: a renumbered or renamed unit's old clips stay named.
+    into, state = first_pass(tmp_path)
+    moved = tmp_path / "renamed" / "audio"
+    client, _recorder, _into, _state = build(tmp_path, *job("u1", "u2"))
+    synthesise(UNITS, client=client, conditions=conditions(), into=moved, state=state)
+
+    after = read_state(state)
+    assert {clip.where for clip in after.clips.values()} == {"renamed/audio"}
+    assert {item.where for clip in after.clips.values() for item in clip.superseded} == {"audio"}
+    assert set(into.glob(f"*.{FMT}")) | set(moved.glob(f"*.{FMT}")) == named_by_record(
+        tmp_path, state
+    )
+
+
+def as_version_1(state: Path) -> None:
+    """Rewrite the record as a version-1 writer left it: no directories."""
+    document = json.loads(state.read_text(encoding="utf-8"))
+    document["narration_api"] = 1
+    for entry in document["clips"].values():
+        entry.pop("where", None)
+    state.write_text(json.dumps(document), encoding="utf-8")
+
+
+def test_a_version_1_record_gains_its_directories_and_nothing_is_requested(tmp_path):
+    into, state = first_pass(tmp_path)
+    as_version_1(state)
+
+    client, recorder, _into, _state = build(tmp_path)
+    synthesise(UNITS, client=client, conditions=conditions(), into=into, state=state)
+
+    assert recorder.sent == []
+    after = read_state(state)
+    assert sorted(after.clips) == ["u1", "u2"]
+    assert {clip.where for clip in after.clips.values()} == {"audio"}
+    assert json.loads(state.read_text(encoding="utf-8"))["narration_api"] == 2
+
+
+def test_a_version_1_entry_no_run_can_place_is_kept_and_not_dropped(tmp_path):
+    # ⛔ The MUST-NOT: an entry the run cannot place stays, unlocated, by name.
+    into, state = first_pass(tmp_path)
+    as_version_1(state)
+
+    client, _recorder, _into, _state = build(tmp_path)
+    synthesise(UNITS[:1], client=client, conditions=conditions(), into=into, state=state)
+
+    after = read_state(state)
+    assert sorted(after.clips) == ["u1", "u2"]
+    assert (after.clips["u1"].where, after.clips["u2"].where) == ("audio", None)
+
+
+def test_an_audio_directory_outside_the_corpus_root_is_refused_before_any_request(tmp_path):
+    client, recorder, _into, state = build(tmp_path / "corpus", *job("u1", "u2"))
+
+    with pytest.raises(StateError):
+        synthesise(
+            UNITS, client=client, conditions=conditions(), into=tmp_path / "elsewhere", state=state
+        )
+
+    assert recorder.sent == []
 
 
 def test_a_unit_added_to_a_synthesised_corpus_is_the_only_one_asked_for(tmp_path):

@@ -38,7 +38,12 @@ def code_constants(path: Path) -> set[str]:
 
 
 def test_the_package_has_the_three_modules_the_seam_names():
-    assert [path.name for path in MODULES] == ["__init__.py", "incremental.py", "record.py"]
+    assert [path.name for path in MODULES] == [
+        "__init__.py",
+        "incremental.py",
+        "location.py",
+        "record.py",
+    ]
 
 
 def test_everything_the_package_exports_is_reachable_by_that_name():
@@ -49,6 +54,7 @@ def test_everything_the_package_exports_is_reachable_by_that_name():
     # `corpus/placement/__init__.py` is the precedent. Asserted as a set.
     assert set(synth.__all__) == {name for name in dir(synth) if not name.startswith("_")} - {
         "incremental",
+        "location",
         "record",
         "studyforge",
     }
@@ -58,7 +64,8 @@ def test_narration_api_is_registered_in_the_one_tuple():
     # ⛔ `CONTRACT_FIELDS`' own convention: a task that versions a new contract
     # registers it in the same commit, or `check` refuses the name outright.
     assert "narration_api" in CONTRACT_FIELDS
-    assert synth.KNOWN_NARRATION_API == frozenset({synth.NARRATION_API})
+    # ⛔ W226: version 1 still reads, so an existing record is never refused for its age.
+    assert synth.KNOWN_NARRATION_API == frozenset({1, synth.NARRATION_API})
 
 
 def test_no_module_in_the_package_names_version_control_or_an_exclusion_file():
@@ -72,7 +79,7 @@ def test_no_module_in_the_package_names_version_control_or_an_exclusion_file():
 
 def test_that_scan_reads_the_package_and_would_see_the_word():
     # ⭐ The positive control: the population is non-empty and the pattern fires.
-    assert len(MODULES) == 3
+    assert len(MODULES) == 4
     assert re.search(r"(?i)\bignore\b", "an ignore file")
 
 

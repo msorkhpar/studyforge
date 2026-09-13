@@ -16,12 +16,26 @@ import shutil
 import pytest
 
 from studyforge.cli.narrate import cli
-from studyforge.cli.narrate.prune import NOT_ITS_CLIP, UNDECLARED, prune_corpus
+from studyforge.cli.narrate.prune import (
+    NOT_A_FILE,
+    NOT_ITS_CLIP,
+    STILL_NAMES,
+    UNDECLARED,
+    prune_corpus,
+)
 from studyforge.cli.site.cli import main as build_main
 from studyforge.generate.declarations import read_corpus
 from studyforge.narrate.synth import read_state, state_file
 from studyforge.validate.report import INVALID, OK
-from tests.studyforge.cli.narrate.plant import PLANTED, narrated, plant_dead_entry, record_of
+from tests.studyforge.cli.narrate.plant import (
+    PLANTED,
+    narrated,
+    plant_dead_entry,
+    record_of,
+    reword,
+    unlocate,
+    write_record,
+)
 from tests.studyforge.cli.narrate.service import FMT, VOICE, FakeService, files, speech_ids
 from tests.studyforge.generate.corpora import BOTH, an_output
 from tests.support import repository_root
@@ -119,16 +133,58 @@ def test_an_entry_naming_a_file_that_is_not_its_own_clip_is_held_and_the_file_su
     assert dead in recorded(root)
 
 
-def test_an_entry_of_a_unit_no_longer_declared_is_held_with_its_entry(tmp_path):
-    # ⚠️ The record carries no directory, so this clip cannot be located by rule.
+def test_an_entry_of_a_unit_no_longer_declared_is_reached_through_its_recorded_directory(tmp_path):
+    # ⛔ W226 clause 3 (W218/1): the record carries the directory, so the held count is 0.
     root = narrated(tmp_path)
-    dead, _ = plant_dead_entry(root, token="depth-one--unit-09", clip=False)
+    dead, clip = plant_dead_entry(root, token="depth-one--unit-09")
+    assert clip.is_file(), "the plant is not on disk; the reading is vacuous"
+
+    pruned = prune_corpus(root)
+
+    assert (pruned.deleted, pruned.forgotten, pruned.held) == ((clip,), (dead,), ())
+    assert not clip.exists() and dead not in recorded(root)
+
+
+def test_a_version_1_entry_of_a_unit_no_longer_declared_is_still_held_and_kept(tmp_path):
+    # ⛔ The MUST-NOT: an entry no record can place is kept by name, never dropped.
+    root = narrated(tmp_path)
+    dead, clip = plant_dead_entry(root, token="depth-one--unit-09")
+    unlocate(root)
     before = files(root)
 
     pruned = prune_corpus(root)
 
     assert pruned.held == ((dead, UNDECLARED),)
-    assert files(root) == before
+    assert files(root) == before and dead in recorded(root)
+
+
+def test_a_reworded_passages_old_clip_is_the_one_clip_a_prune_deletes(tmp_path, monkeypatch):
+    # ⛔ W226 clauses 1, 3 and 4 through the recording fake: narrate keeps the
+    # old clip and names it; `--prune` deletes exactly it, and nothing is held.
+    root = narrated(tmp_path)
+    reword(root)
+    before = files(root)
+    monkeypatch.setattr(cli, "over_http", FakeService())
+
+    code, printed = invoke(str(root), "--voice", VOICE)
+
+    assert code == OK
+    narrated_after = files(root)
+    assert set(before) <= set(narrated_after), "narrate deleted a file"
+    assert "superseded clips  1 " in printed
+    [(speech_id, old)] = [
+        (key, item)
+        for key, clip in read_state(state_file(root)).clips.items()
+        for item in clip.superseded
+    ]
+    old_clip = root / old.where / old.filename
+    assert relative(root, old_clip) in before, "the superseded clip is not the one narrated first"
+
+    pruned = prune_corpus(root)
+
+    assert (pruned.deleted, pruned.held, pruned.cleared) == ((old_clip,), (), ((speech_id, old),))
+    assert sorted(set(narrated_after) - set(files(root))) == [relative(root, old_clip)]
+    assert not any(clip.superseded for clip in read_state(state_file(root)).clips.values())
 
 
 def test_a_second_prune_writes_nothing(tmp_path):
@@ -227,6 +283,7 @@ def test_nothing_in_the_framework_calls_the_prune_or_the_removal_but_their_owner
     owners = {
         "prune_corpus": {"src/studyforge/cli/narrate/cli.py"},
         "forget": {"src/studyforge/cli/narrate/prune.py"},
+        "forget_superseded": {"src/studyforge/cli/narrate/prune.py"},
     }
     scanned = sorted((repository_root() / "src").rglob("*.py"))
     assert len(scanned) > 50, f"only {len(scanned)} modules scanned"
@@ -260,3 +317,21 @@ def test_an_entry_whose_id_and_filename_climb_out_of_the_audio_directory_is_held
 
     assert pruned.held == ((dead, NOT_ITS_CLIP),)
     assert files(root) == before
+
+
+def test_a_dead_entry_whose_superseded_clip_is_held_is_kept_with_it(tmp_path):
+    # ⛔ Files first, then the record: an entry still naming a held clip is not forgotten.
+    root = narrated(tmp_path)
+    dead, clip = plant_dead_entry(root)
+    document = record_of(root)
+    kept = f"{dead}-00000000.{FMT}"
+    document["clips"][dead]["superseded"] = [
+        {"filename": kept, "where": document["clips"][dead]["where"]}
+    ]
+    write_record(root, document)
+    (clip.parent / kept).mkdir()
+
+    pruned = prune_corpus(root)
+
+    assert set(pruned.held) == {(dead, NOT_A_FILE), (dead, STILL_NAMES)}
+    assert not clip.exists() and dead in recorded(root)
