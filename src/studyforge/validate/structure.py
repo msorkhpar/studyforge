@@ -8,7 +8,7 @@ against its own digest and counts.
 **How you use it.** Each function takes the `Walk` and yields `Finding`s.
 `checks()` is the list, in the order a report reads best.
 
-**Depends on.** `archive.blocks`, `archive.document`, `corpus.container`,
+**Depends on.** `archive.blocks`, `archive.document`, `validate.blocks`, `corpus.container`,
 `corpus.placement`, `validate.corpus`, `validate.report`.
 
 ⛔ **Every check yields; none raises.** One run reports every problem (R6).
@@ -28,6 +28,7 @@ from studyforge.archive.blocks import counts_of
 from studyforge.archive.document import content_sha256
 from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.describe import describe
+from studyforge.validate.blocks import check_list_blocks
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding, Unchecked
 
@@ -260,5 +261,6 @@ CHECKS = (
     check_document_identity,
     check_digests,
     check_counts,
+    check_list_blocks,
     check_units_have_content,
 )

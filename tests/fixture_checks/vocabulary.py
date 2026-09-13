@@ -24,6 +24,7 @@ from pathlib import Path
 
 from studyforge.archive.blocks import (
     BLOCK_FIELDS,
+    BLOCK_OPTIONAL,
     BLOCK_TYPES,
     CONTAINER_TYPES,
     COUNT_KEYS,
@@ -39,6 +40,7 @@ from studyforge.corpus.manifest import KNOWN_CORPUS_API
 __all__ = [
     "ARCHIVE_FILE",
     "BLOCK_FIELDS",
+    "BLOCK_OPTIONAL",
     "BLOCK_TYPES",
     "CONTAINER_APIS",
     "CONTAINER_TYPES",

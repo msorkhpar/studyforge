@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The thirteen checks
+## The fourteen checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -68,15 +68,16 @@ checker check* is this table and nothing else.
 | 5 | `check_document_identity` | does each document agree with where it sits — address, unit, kind, ordinal, filename? |
 | 6 | `check_digests` | does each `content_sha256` match the blocks it covers? |
 | 7 | `check_counts` | do the per-type block counts match the blocks? |
-| 8 | `check_units_have_content` | is any unit carrying no blocks at all? |
-| 9 | `check_placement` | does every path the placement profile would produce come out unique and legal? |
-| 10 | `check_origins_are_files` | does every declared `origin` name a file that exists? |
-| 11 | `check_archive_members` | is every file beneath `archive/` a member an adapter's layout places there, or a stray nothing reads? |
-| 12 | `check_unclassified` | does every file in your repository match one of the three `content` states? |
-| 13 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
+| 8 | `check_list_blocks` | is every `list` block the shape spec §6 admits — its keys, each item a string or an array of strings and whole lists, and `start` an integer? |
+| 9 | `check_units_have_content` | is any unit carrying no blocks at all? |
+| 10 | `check_placement` | does every path the placement profile would produce come out unique and legal? |
+| 11 | `check_origins_are_files` | does every declared `origin` name a file that exists? |
+| 12 | `check_archive_members` | is every file beneath `archive/` a member an adapter's layout places there, or a stray nothing reads? |
+| 13 | `check_unclassified` | does every file in your repository match one of the three `content` states? |
+| 14 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
 
-**Checks 1–8 are about the archive alone**, 9 and 10 about placement, 11 about
-what else sits beneath the archive root, and 12 and 13 about your source
+**Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 about
+what else sits beneath the archive root, and 13 and 14 about your source
 repository. **The last two are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
@@ -96,7 +97,7 @@ the same shape.
 |---|---|
 | `manifest` | `corpus.json` is missing, malformed, or declares a `corpus_api` this build does not read |
 | `container` | a container map is missing, malformed, or declares an unknown `container_api` |
-| `document` | a unit document is missing, malformed, or declares an unknown `raw_api` |
+| `document` | a unit document is missing, malformed — a `list` block spec §6 does not admit included — or declares an unknown `raw_api` |
 | `unreadable` | a file that must be read cannot be |
 | `no-archive` | no container map sits beneath `archive/` — it is absent, or present and empty — so there is no archive to call valid |
 | `archive-stray` | a file sits beneath `archive/` and is not a container map, a document under its map's variant, or a declared unit's own file — so nothing would read it |
