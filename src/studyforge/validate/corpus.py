@@ -154,7 +154,7 @@ def _no_archive(walk: Walk) -> Finding:
     input whose absence is itself a validated fact, like the source tree an
     archive ships without (R2). The archive is not such an input: it is what
     `validate` judges, so "valid" over no archive is a verdict with no subject.
-    ISO-8583 measured exactly that at exit 0.
+    An integration measured exactly that at exit 0 (`INT-06/5`).
     """
     state = "holds no container map" if (walk.root / ARCHIVE_DIRNAME).is_dir() else "is absent"
     return Finding(

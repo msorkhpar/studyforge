@@ -82,7 +82,7 @@ catch nothing.
 
 ---
 
-## The twenty-nine rule ids
+## The thirty rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **The last six are not emitted by
@@ -96,6 +96,7 @@ the same shape.
 | `container` | a container map is missing, malformed, or declares an unknown `container_api` |
 | `document` | a unit document is missing, malformed, or declares an unknown `raw_api` |
 | `unreadable` | a file that must be read cannot be |
+| `no-archive` | no container map sits beneath `archive/` — it is absent, or present and empty — so there is no archive to call valid |
 | `personal-data` | a string in a document carries personal data |
 | `address-directory` | a container map's address does not match its directory |
 | `duplicate-address` | two containers claim one address |

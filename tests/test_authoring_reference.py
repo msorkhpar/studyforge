@@ -247,7 +247,7 @@ def test_the_heading_the_reader_scans_for_carries_the_derived_rule_id_count():
 
 def _spelled(number: int) -> str:
     """Spell a count the way a heading spells it."""
-    return {12: "twelve", 23: "twenty-three", 29: "twenty-nine"}[number]
+    return {12: "twelve", 23: "twenty-three", 29: "twenty-nine", 30: "thirty"}[number]
 
 
 def test_the_exit_codes_are_the_ones_the_command_returns():
