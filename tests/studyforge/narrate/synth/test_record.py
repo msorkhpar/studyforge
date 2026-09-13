@@ -13,7 +13,7 @@ import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.placement.profile import GENERATED_ROOT
-from studyforge.narrate.client import Health, NarrationError
+from studyforge.narrate.answers import Health, NarrationError
 from studyforge.narrate.speakable.naming import digest_of
 from studyforge.narrate.synth import record as record_module
 from studyforge.narrate.synth.location import Superseded
@@ -40,7 +40,13 @@ HOME = "/" + "home/jane"
 
 
 def conditions(**moved) -> Conditions:
-    settings = {"voice": VOICE, "fmt": FMT, "provides": 2, "chunk_chars": 320}
+    settings = {
+        "voice": VOICE,
+        "fmt": FMT,
+        "provides": 2,
+        "chunk_chars": 320,
+        "engine_model": "kokoro",
+    }
     settings.update(moved)
     return Conditions(**settings)
 
@@ -119,7 +125,13 @@ def test_the_record_carries_no_clock_and_exactly_the_fields_the_office_chose():
     document = json.loads(render_state(one_clip(), conditions()))
     assert list(document) == ["narration_api", "conditions", "clips"]
     assert document["narration_api"] == NARRATION_API
-    assert list(document["conditions"]) == ["voice", "format", "provides", "chunk_chars"]
+    assert list(document["conditions"]) == [
+        "voice",
+        "format",
+        "provides",
+        "chunk_chars",
+        "engine_model",
+    ]
     assert list(document["clips"]["u1"]) == [
         "filename",
         "where",
@@ -170,6 +182,8 @@ def test_the_fingerprint_moves_with_every_recorded_condition_and_with_nothing_el
     assert conditions(fmt="opus").fingerprint != base
     assert conditions(provides=3).fingerprint != base
     assert conditions(chunk_chars=512).fingerprint != base
+    # ⛔ W223: the deployment's model is a condition, so a new one moves it.
+    assert conditions(engine_model="kokoro-v1.1").fingerprint != base
     assert conditions().fingerprint == base
 
 
@@ -182,9 +196,9 @@ def test_a_record_that_cannot_say_what_a_clip_was_made_under_is_refused(missing)
 def test_conditions_are_read_off_a_probe_and_not_from_a_constant():
     # ⛔ `chunk_chars` is a deployment setting and part of the content address
     # (`NS-02`), so it is read from health rather than assumed.
-    health = Health(reachable=True, detail="up", provides=2, chunk_chars=777)
+    health = Health(reachable=True, detail="up", provides=2, chunk_chars=777, engine_model="m2")
     read = Conditions.of(health, voice=VOICE, fmt=FMT)
-    assert (read.chunk_chars, read.provides) == (777, 2)
+    assert (read.chunk_chars, read.provides, read.engine_model) == (777, 2, "m2")
     with pytest.raises(TypeError):
         Conditions.of({"chunk_chars": 777}, voice=VOICE, fmt=FMT)
 
@@ -267,7 +281,13 @@ def test_forget_with_nothing_to_remove_writes_nothing(tmp_path):
 
 
 @pytest.mark.parametrize(
-    "broken", [[], {"voice": "", "format": FMT}, {"voice": VOICE, "format": FMT, "provides": "2"}]
+    "broken",
+    [
+        [],
+        {"voice": "", "format": FMT},
+        {"voice": VOICE, "format": FMT, "provides": "2"},
+        {"voice": VOICE, "format": FMT, "engine_model": 7},
+    ],
 )
 def test_forget_refuses_a_record_whose_conditions_it_cannot_carry_over(tmp_path, broken):
     record = state_file(tmp_path)
@@ -352,3 +372,21 @@ def test_forget_superseded_removes_only_the_named_clip_and_otherwise_writes_noth
     before = path.read_bytes()
     assert forget_superseded(path, [("u1", first)]) == ()
     assert path.read_bytes() == before
+
+
+# --------------------------------------------------------------------------
+# ⛔ W223: the conditions gained `engine_model`, and an older record still reads
+# --------------------------------------------------------------------------
+
+
+def test_a_record_whose_conditions_name_no_model_reads_whole_and_forget_carries_them(tmp_path):
+    # ⛔ The MUST-NOT: an older record is neither refused nor shortened. Its
+    # top-level conditions are exactly what the writer before `W223` rendered.
+    older = {key: value for key, value in conditions().document().items() if key != "engine_model"}
+    entry = {"filename": "u1-aaaaaaaa.mp3", "where": "audio", "conditions": "f", "engine": "k"}
+    clips = {"u1": entry, "u2": {**entry, "filename": "u2-bbbbbbbb.mp3"}}
+    path = _written(tmp_path, {"narration_api": 2, "conditions": older, "clips": clips})
+
+    assert sorted(read_state(path).clips) == ["u1", "u2"]
+    assert forget(path, ["u2"]) == ("u2",)
+    assert json.loads(path.read_text("utf-8"))["conditions"] == {**older, "engine_model": None}

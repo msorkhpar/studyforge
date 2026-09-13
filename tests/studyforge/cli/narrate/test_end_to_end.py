@@ -23,9 +23,9 @@ import os
 
 import pytest
 
-from studyforge.cli.narrate import cli
 from studyforge.cli.narrate.cli import main
-from studyforge.narrate.client import over_http
+from studyforge.narrate import wire
+from studyforge.narrate.wire import over_http
 from studyforge.validate.report import OK
 from tests.studyforge.cli.narrate.service import (
     HEALTH,
@@ -64,7 +64,9 @@ def test_a_fixture_corpus_is_narrated_end_to_end_and_its_clips_are_on_disk(
     root = a_corpus(tmp_path, name)
     before = files(root)
     out = io.StringIO()
-    monkeypatch.setattr(cli, "over_http", Recording(over_http))
+    # ⭐ `main` imports the transport when it runs (`W223`), so the wire's own
+    # attribute is the one to replace.
+    monkeypatch.setattr(wire, "over_http", Recording(over_http))
 
     code = main([str(root), "--voice", VOICE, "--service", url], out=out)
 
@@ -77,7 +79,7 @@ def test_a_fixture_corpus_is_narrated_end_to_end_and_its_clips_are_on_disk(
 
     settled = files(root)
     again = Recording(over_http)
-    monkeypatch.setattr(cli, "over_http", again)
+    monkeypatch.setattr(wire, "over_http", again)
     code = main([str(root), "--voice", VOICE, "--service", url], out=io.StringIO())
 
     assert code == OK

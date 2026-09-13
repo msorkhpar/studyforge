@@ -20,11 +20,16 @@ already rules it so, and a build probes once for a whole corpus rather than once
 per unit. Handing the answer in is what lets an unchanged re-run make **zero**
 requests, which is the half of the acceptance a report cannot be trusted for.
 
-**Depends on.** `archive.scrub`, `version`, `narrate.client`,
+**Depends on.** `archive.scrub`, `version`, `narrate.answers`,
 `narrate.speakable` and `corpus.placement`. ⭐ The last one is the difference
 from `narrate/client.py`, which is asserted **not** to import it: the client
 must not know where a study site keeps its audio, and this package is the caller
 that asks the policy on its behalf (R4, `NS-05`'s *For dependents*).
+
+⛔ **Not on `narrate.client` and not on `narrate.wire`** (`W223`, `SF-38/9`). A
+build reads this package, and a build never synthesises: the pass takes any
+`answers.Narrator`, and a fresh interpreter importing `studyforge.generate` or
+`cli/plan` is asserted to load no wire.
 
 ## ⛔ WHY A FILENAME IS NOT ENOUGH, AND WHY THIS CONTRACT EXISTS
 
@@ -43,12 +48,13 @@ while every clip on disk is stale (Ruling 351, `NS-04/4`'s residual).
 | `format` | in the name's suffix, and recorded so a change is one comparison |
 | `provides` | the service's promise. A bump may change what synthesis means |
 | `chunk_chars` | ⛔ part of the content address and a **deployment** setting (`NS-02`) |
+| `engine_model` | ⛔ part of the content address, read off `/healthz` (`W223`, `SF-42/2`) |
 
-⚠️ **`engine` and `engine_model` are recorded and are NOT compared.** They are
-*what made that file* — on a cache hit, the **first** synthesis's rather than
-what is deployed (`NS-05`) — so comparing them would re-synthesise a whole corpus
-against a fact no probe can report. They are provenance, for a person reading the
-record.
+⚠️ **A clip's own `engine` and `engine_model` are recorded and are NOT compared.**
+They are *what made that file* — on a cache hit, the **first** synthesis's rather
+than what is deployed (`NS-05`) — so they are provenance, for a person reading the
+record. ⛔ **The deployment's `engine_model` is a different fact**: `/healthz`
+reports it, the service's address is taken over it, and so it is a condition.
 
 ## ⛔ WHERE IT LIVES, AND WHY IT IS NOT DERIVED STATE
 
