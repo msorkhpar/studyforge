@@ -21690,11 +21690,11 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 |---|---|---|---|
 | `INT-06/1` | [`W239`](rows/W239.md) | 0, IN FLIGHT | `skills/onboarding/`, shared with `W242` |
 | `INT-06/5`, `/6` | [`W241`](rows/W241.md) | 0, IN FLIGHT | `validate/`, `cli/plan/`, `corpus/placement/`, `skills/adapter/`, shared with `W242` |
-| `INT-06/9` | [`W243`](rows/W243.md) | 0 | `render/pageassets/`, alone |
+| `INT-06/9` | [`W243`](rows/W243.md) | 0, IN FLIGHT | `render/pageassets/`, alone |
 | `INT-06/2`, `/3` | [`W240`](rows/W240.md) | 1 | `skills/reconnaissance/`, after `W238` or as its successor |
 | `INT-06/7`, `/8` | [`W242`](rows/W242.md) | 2 | after `W239` and `W241` |
 
-⭐ **`W239` and `W241` are in flight, first and second; `W243` can start at once and collides with neither, nor with anything else in flight.** `INT-06/4`, `/10` and `/11` are ISO's own.
+⭐ **`W239`, `W241` and `W243` are in flight, first to third, on three owners whose surfaces do not meet.** `W240` waits for `W238`'s merge. ⛔ **`W242` is ONE row, ruled: ISO's §11.3 settles `/7` and `/8` in one line over one `sibling` placement. It waits for BOTH `W239` (`skills/onboarding/`) and `W241` (`corpus/placement/`, `cli/plan/`) to merge, and is unassigned until then.** `INT-06/4`, `/10` and `/11` are ISO's own.
 
 ⛔ **THE GROUND EVERY ONE OF THESE ROWS POINTS AT, WRITTEN ONCE:** ⭐ **they are `M6` work, not `M8`'s.** ⛔ **During `M6` the framework is fixed from findings, and §12's no-patch rule binds the integrator of `M8` and of `M9` (spec §12, amended round 74, item 4).** ⚠️ **`M8`'s run re-reads these same skills, so each fix lands in `src/` and its tests. It is never a hand-edit to a generated artifact, which that run would inherit (R19).** ⛔ **RULING 75 IS INVOKED FOR ALL FIVE, AND DECLARED HERE:** ⭐ **they jump every `W` row, at orders 0–2, because the user's order makes `M6` the open milestone and ISO its proof, and `ISO-04` waits on `W239`.**
 
@@ -21704,8 +21704,9 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 - `W238`: Developer 2, cut `3483ced`; handed back GREEN at `5c61536`, held by no checkout, and merging after this round (Ruling 279).
 - `W239`: Developer 2, `fix/INT06-1-promote-not-material` @ `wt/dev2`, cut `baefd6c`. ⚠️ **The branch does not carry the row id: the row names the branch so git corroborates it, and the coordinator reconciles the id.**
 - `W241`: Developer 1, `fix/INT06-5-6-one-archive-root` @ `wt/dev1`, cut `baefd6c`; the branch names the row's findings, not its id, as `W239`'s does.
+- `W243`: Developer 3, `fix/INT06-9-highlight-languages` @ `wt/dev3`, cut `baefd6c`. ⛔ **No network fetch: a grammar that needs a download is a finding for the user.**
 - `W141`: Developer 1, cut `2fdef9d`; handed back GREEN at `4e4f6bb`, held by no checkout, and merging after this round (Ruling 279). `W136`'s merge released `docs/conventions/`, and `W141` holds it for `W149`, `W153`, `W154`, `W161`, `W164` and `W165`: one owner, several waves.
-- `W162`: Developer 3, cut `8a13f4f`. `W163` follows it, one owner of `tests/docker/`.
+- `W162`: Developer 3, cut `8a13f4f`; handed back GREEN at `5b70ce1`, held by no checkout, and merging after this round, subject to § 6. `W163` follows it, one owner of `tests/docker/`, and imports its gate from the new `tests/docker/devgate.py`.
 
 ⭐ **`M6`'s delivery is IN FLIGHT on the ISO track:** round 6 merged, and [`W73`](rows/W73.md)'s integration-side row is carried by that round, which names no studyforge branch. ⭐ **`PO-74/9` is settled by the coordinator:** a linked worktree on a task branch, merged in ISO's main checkout, which never leaves its branch.
 
@@ -21743,8 +21744,19 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 | `W141/1` | recorded, for its close: the row's surface named `board.md`, and the `RULED ROUND` headings are `review-rubric.md`'s |
 | `W141/3`, `/4` | riders on [`W231`](rows/W231.md): round 58 or 59 for Rulings 277–278, and round 61's opening prose still saying *seven* |
 | `W141/5`, `/6` | accepted, cost named: *say it and it is checked* reads clause counts only, and the survivor is caught by the fixture, both declared |
+| `W162/1`, `/2` | disposed at its close: the population re-measured at 12 (dated, Ruling 310(b)), and `tests/docker/devgate.py` forced by the 600-line ceiling |
+| `W162/3` | recorded for Ruling 333's office: its *14 passed* could only have covered the static half |
+| `W162/4` | accepted, cost named: *pulls nothing* rests on every step reading CACHED, and no office can cut the daemon's network |
+| `W162/5`, `/6` | riders on [`W163`](rows/W163.md), the next `tests/docker/` owner: nothing asserts the identity caller keeps `builds_fresh=True`, and the two identity checks reach no permitted environment |
+| `W162/7` | ⛔ **RULED, reversible: a DEFAULT run does not touch the docker daemon** (§ 6); the coordinator relays it to the user too |
 
-⚠️ **Held for the user:** frozen records rewritten in place (round 74's question), `W136/1`, and `PO-74/5`.
+### ⛔ 6 — `W162/7`: A DEFAULT RUN DOES NOT TOUCH THE DOCKER DAEMON
+
+⛔ **Ruled by the register as REVERSIBLE, and the user may overturn it.** ⭐ **[`W162`](rows/W162.md)'s own row names what it must not become: a DEFAULT-ON GATE.** As handed back, a default host pytest run starts one `--network none` container per session, and its live gate test commits and removes an image. ⛔ **That writes to the daemon's image store, which every office's pinned run reads at the same time, in a run nobody asked to touch it.** ⭐ **So the daemon arm stands behind `STUDYFORGE_DOCKER_TESTS` (Ruling 333), and a default run skips it with its reason. `W162` merges once that holds, or once the user rules otherwise.**
+
+⭐ **RECEIVED, because it is the figure Ruling 333 named as unmeasured:** with the flag set on a warm cache, the 10 gated checks read GREEN in 711.53 s of wall time.
+
+⚠️ **Held for the user:** frozen records rewritten in place (round 74's question), `W136/1`, `PO-74/5`, and `W162/7` (§ 6).
 
 ### W237 — `W233`'s read-then-`communicate()` defect is live in three more process tests, and `tests.support.ProcessOutput` is now the one reader
 
