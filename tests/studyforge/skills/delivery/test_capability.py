@@ -7,7 +7,7 @@ import re
 import pytest
 
 from studyforge.skills.delivery import Index, IndexRefused, read_epic, read_sequence
-from studyforge.skills.delivery.capability import BANNER, EMPTY
+from studyforge.skills.delivery.capability import BANNER, EMPTY, MILESTONE_ID
 from tests.studyforge.skills.delivery import plans
 
 
@@ -212,9 +212,59 @@ def test_every_milestone_section_holds_exactly_the_capabilities_at_it():
 def test_the_live_sections_print_in_the_order_the_task_index_declares():
     # ⭐ Re-derived by a second walk over the rendered headings, not over the
     # sequence object the renderer iterated.
-    printed = re.findall(r"^## (M[0-9]) — ", plans.live_index().render(), re.M)
+    printed = re.findall(rf"^## ({MILESTONE_ID}) — ", plans.live_index().render(), re.M)
     assert tuple(printed) == plans.live_sequence().milestones
 
 
 def test_no_capability_in_the_live_index_lost_its_area():
     assert all(capability.area for capability in plans.live_index().capabilities)
+
+
+# --- W247: a milestone id of any width is read, and only a dash cancels ------
+
+#: ⛔ `M10` declared BEFORE `M9`: neither a lexical sort (`M1`, `M10`, `M2`, `M9`)
+#: nor a numeric one (`M1`, `M2`, `M9`, `M10`) reproduces the declared order.
+WIDE_SEQUENCE = "### M1 — One\n### M2 — Two\n### M10 — Ten\n### M9 — Nine\n"
+
+WIDE_EPIC = """# E12 — Wide ids
+
+### SF-40 — Lands at ten
+**Milestone** **M10** · **Depends on** — · **Team** solo
+
+### SF-41 — Lands at nine
+**Milestone** M9 · **Depends on** SF-40 · **Team** solo
+"""
+
+
+def wide_index() -> Index:
+    return Index.of((read_epic("E12.md", WIDE_EPIC),), read_sequence("README.md", WIDE_SEQUENCE))
+
+
+def test_a_row_at_m10_is_a_capability_at_m10_and_never_cancelled():
+    epic = read_epic("E12.md", WIDE_EPIC)
+    assert epic.cancelled == ()
+    assert [(c.id, c.milestone) for c in epic.capabilities] == [("SF-40", "M10"), ("SF-41", "M9")]
+
+
+def test_an_m10_section_is_declared_in_the_order():
+    assert read_sequence("README.md", WIDE_SEQUENCE).milestones == ("M1", "M2", "M10", "M9")
+
+
+@pytest.mark.parametrize("unreadable", ["Mx", "TBD", "m10", "M10a"])
+def test_a_milestone_that_is_neither_an_id_nor_a_dash_is_refused_by_name(unreadable):
+    text = (
+        f"# E12 — Wide ids\n\n### SF-42 — Unreadable\n**Milestone** {unreadable} · **Team** solo\n"
+    )
+    with pytest.raises(IndexRefused, match=r"E12\.md line 3: SF-42 .*never counted as cancelled"):
+        read_epic("E12.md", text)
+
+
+def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
+    index = wide_index()
+    assert index.milestones == ("M1", "M2", "M10", "M9")
+    assert index.milestones not in (tuple(sorted(index.milestones)), ("M1", "M2", "M9", "M10"))
+    assert index.later("M9", than="M10") and index.later("M10", than="M2")
+    assert not index.later("M10", than="M9")
+    assert [c.id for c in index.after("M10")] == ["SF-41"]
+    rendered = index.render()
+    assert rendered.index("## M2 — ") < rendered.index("## M10 — ") < rendered.index("## M9 — ")
