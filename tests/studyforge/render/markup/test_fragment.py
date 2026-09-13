@@ -163,9 +163,9 @@ PLANTED_COMPOSERS = (
     'href = "#".join((index, key))\n',
     'href = "#%s" % key\n',
     'href = "{}#{}".format(index, key)\n',
-    'href = chr(0x23) + key\n',
+    "href = chr(0x23) + key\n",
     'HASH = "\\x23"\n',
-    'SKIP = \'<a href="#main">\'\n',
+    "SKIP = '<a href=\"#main\">'\n",
     'href = "#".strip() + key\n',
 )
 

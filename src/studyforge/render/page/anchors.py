@@ -82,7 +82,6 @@ SECTION_PREFIX = "s-"
 BLOCK_INFIX = "-b"
 
 
-
 def section_anchor(key: object) -> str:
     """Return the DOM id of a whole section: `practice-java` -> `s-practice-java`."""
     return SECTION_PREFIX + _slug(key, "a section key")
@@ -109,18 +108,14 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
     for section in sections:
         key = section.get("key")
         if len(sections) > 1:
-            out.append(
-                (1, str(section.get("heading") or key or ""), anchor(section_anchor(key)))
-            )
+            out.append((1, str(section.get("heading") or key or ""), anchor(section_anchor(key))))
         for position, block in enumerate(section.get("blocks") or ()):
             if not isinstance(block, dict) or block.get("type") != "heading":
                 continue
             level = heading_level(block)
             if level > OUTLINE_MAX_LEVEL:
                 continue
-            out.append(
-                (level, str(block.get("text") or ""), anchor(block_anchor(key, position)))
-            )
+            out.append((level, str(block.get("text") or ""), anchor(block_anchor(key, position))))
     return tuple(out)
 
 
