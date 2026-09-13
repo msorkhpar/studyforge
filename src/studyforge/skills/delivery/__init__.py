@@ -10,7 +10,7 @@ procedure. This package is what the skill *calls*:
 
     from studyforge.skills.delivery import Backlog, capability_index, concentration
 
-    print(capability_index(documents))        # the index a planner reads
+    print(capability_index(documents, order)) # the index, in the declared order
     plan = Backlog(...).checked(index)        # the plan, checked against it
     print("\n".join(plan.lines()))            # the durable artifact
 
@@ -35,7 +35,7 @@ text, so the caller names the documents.
 
 | Module | ⛔ What it will not let a plan say |
 |---|---|
-| `capability` | that a capability lands somewhere the epic documents do not say |
+| `capability` | that a capability lands where the epics do not say, or that ids sort to the order |
 | `task` | that a task ends in a layer, or that a clause is decided by nobody |
 | `terminal` | that a corpus finishes somewhere, while leaving later capabilities unaccounted for |
 | `backlog` | that a milestone waits on framework work it has not declared a gate for |
@@ -67,7 +67,9 @@ from studyforge.skills.delivery.capability import (
     Epic,
     Index,
     IndexRefused,
+    Sequence,
     read_epic,
+    read_sequence,
 )
 from studyforge.skills.delivery.export import (
     FIELDS,
@@ -103,14 +105,18 @@ from studyforge.skills.delivery.task import Acceptance, PlanRefused, Task
 from studyforge.skills.delivery.terminal import Terminal, TerminalRefused, Unused
 
 
-def capability_index(documents: Iterable[tuple[str, str]]) -> str:
-    """Render the capability index from `(name, text)` pairs of epic documents.
+def capability_index(documents: Iterable[tuple[str, str]], order: tuple[str, str]) -> str:
+    """Render the capability index from epic documents and the one declaring their order.
 
-    ⭐ The one call the procedure's first step makes. ⛔ The caller names the
-    documents — this package does not know where a plan lives, and the next
-    repository's does not live where this one's does.
+    `documents` are `(name, text)` pairs of epic documents; `order` is the one
+    `(name, text)` pair whose `### M<n> — <name>` sections declare the order
+    milestones run in. ⭐ The one call the procedure's first step makes.
+    ⛔ The caller names both — this package does not know where a plan lives,
+    and the next repository's does not live where this one's does.
     """
-    return Index.of(read_epic(name, text) for name, text in documents).render()
+    name, text = order
+    epics = (read_epic(epic, body) for epic, body in documents)
+    return Index.of(epics, read_sequence(name, text)).render()
 
 
 __all__ = [
@@ -142,6 +148,7 @@ __all__ = [
     "Question",
     "QuestionRefused",
     "RiskRefused",
+    "Sequence",
     "Task",
     "Terminal",
     "TerminalRefused",
@@ -151,4 +158,5 @@ __all__ = [
     "export",
     "numbered",
     "read_epic",
+    "read_sequence",
 ]

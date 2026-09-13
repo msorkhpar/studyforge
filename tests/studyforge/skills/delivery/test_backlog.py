@@ -55,6 +55,23 @@ def test_a_milestone_reaching_past_its_declared_gate_is_refused_by_capability():
         plan.checked(plans.index())
 
 
+def test_the_gate_is_compared_in_the_declared_order_and_never_by_id():
+    # ⛔ W238. The fixture runs `M6` before `M5`. By id `M5` < `M6`, so a gate
+    # of `M6` would wrongly admit a task waiting on `SF-20`, which lands at `M5`
+    # — AFTER the gate. And the other way round, a gate of `M5` admits it.
+    def gated(gate: str) -> Backlog:
+        waits = (plans.reading_task("C-01", depends_on=("SF-20",)),)
+        return Backlog(
+            corpus="a corpus",
+            milestones=(milestone(gated_by=gate, tasks=waits),),
+            terminal=plans.terminal(),
+        )
+
+    with pytest.raises(PlanRefused, match="gated by M6, .* waits on SF-20, which lands at M5"):
+        gated("M6").checked(plans.index())
+    assert gated("M5").checked(plans.index())
+
+
 def test_a_milestone_that_waits_on_nothing_outside_needs_no_gate():
     # ⭐ The declaration is owed where the reach is, never everywhere.
     plan = Backlog(

@@ -130,7 +130,9 @@ a two-level corpus.
 ⭐ **A corpus with no graders is complete at the reading floor, not short**
 (§11.0, C5). ⛔ Report *"no runnable code, no graders"* as a **finished
 verdict** with its evidence, never as a blank section — the difference decides
-whether the corpus is planned to M4 or to M8.
+whether the corpus finishes at the reading floor or enters the execution track.
+⚠️ Neither is a milestone id read as a position: the order milestones run in is
+the one the capability index prints, not the order their ids sort to.
 
 ### 8. Hand over the proposal **and** the questions
 

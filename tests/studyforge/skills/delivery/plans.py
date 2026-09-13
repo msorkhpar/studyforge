@@ -17,10 +17,12 @@ from studyforge.skills.delivery import (
     Backlog,
     Index,
     Milestone,
+    Sequence,
     Task,
     Terminal,
     Unused,
     read_epic,
+    read_sequence,
 )
 
 #: Two epic documents in the shape this repository writes them, small enough
@@ -54,9 +56,36 @@ EPIC_TWO = """# E05 — Serving and execution
 """
 
 
+#: The document that declares the order milestones run in. ⛔ **Deliberately
+#: NOT id order:** `M6` runs before `M5`, and it carries no capability, so an
+#: index that sorted by id — or dropped an empty milestone — reads it wrong.
+#: The decoy heading names milestones and is not a milestone section.
+SEQUENCE = """# A task index
+
+### M1 — One page renders
+
+### M2 — A corpus is readable
+
+### ⛔ REORDERED — `M2` → `M6` → `M5`
+
+### M6 — A gate with no framework rows
+
+### M5 — It runs code
+"""
+
+
+def sequence() -> Sequence:
+    """The fixture's declared order: M1, M2, M6, M5."""
+    return read_sequence("README.md", SEQUENCE)
+
+
 def index() -> Index:
-    """The two-epic index: three capabilities at M1, M2 and M5, one cancelled."""
-    return Index.of((read_epic("E01.md", EPIC_ONE), read_epic("E05.md", EPIC_TWO)))
+    """The two-epic index: capabilities at M1, M2 and M5, none at M6, one cancelled."""
+    return Index.of((read_epic("E01.md", EPIC_ONE), read_epic("E05.md", EPIC_TWO)), sequence())
+
+
+def _tasks() -> Path:
+    return Path(__file__).resolve().parents[4] / "docs/tasks"
 
 
 def live_epics() -> list[tuple[str, str]]:
@@ -66,8 +95,17 @@ def live_epics() -> list[tuple[str, str]]:
     small one: a parser that only ever meets its own fixture has been tested
     against the shape somebody imagined.
     """
-    root = Path(__file__).resolve().parents[4]
-    return [(p.name, p.read_text("utf-8")) for p in sorted((root / "docs/tasks").glob("E*.md"))]
+    return [(p.name, p.read_text("utf-8")) for p in sorted(_tasks().glob("E*.md"))]
+
+
+def live_sequence() -> Sequence:
+    """This repository's own declared milestone order, read from its task index."""
+    return read_sequence("README.md", (_tasks() / "README.md").read_text("utf-8"))
+
+
+def live_index() -> Index:
+    """This repository's own index, in its own declared order."""
+    return Index.of((read_epic(name, text) for name, text in live_epics()), live_sequence())
 
 
 def terminal() -> Terminal:
