@@ -111,7 +111,7 @@ def recorded(plan: object) -> bool:
 
 
 def narration_states(code: int | None, said: str, *, has_record: bool) -> tuple[PartialState, ...]:
-    """The narration states, from the narration run's exit code and report.
+    """Return the narration states, from the narration run's exit code and report.
 
     `code` is `None` when no narration was asked for. ⛔ A run that did not
     finish is reported, never raised: the build that follows still reads.
@@ -124,7 +124,7 @@ def narration_states(code: int | None, said: str, *, has_record: bool) -> tuple[
 
 
 def exercise_states(declared: bool, namespaces: Iterable[str]) -> tuple[PartialState, ...]:
-    """The exercise states, from the manifest's flag and what the serving process offers."""
+    """Return the exercise states, from the manifest flag and what the server offers."""
     if not declared:
         return (NO_EXERCISES,)
     if EXECUTION_NAMESPACE not in set(namespaces):

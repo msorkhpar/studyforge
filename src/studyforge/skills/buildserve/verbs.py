@@ -33,23 +33,23 @@ class NotAVerb(ValueError):
 
 
 def validate(corpus: str) -> list[str]:
-    """The arguments that validate one corpus."""
+    """Return the arguments that validate one corpus."""
     return ["validate", corpus]
 
 
 def narrate(corpus: str, voice: str, service: str | None = None) -> list[str]:
-    """The arguments that narrate one corpus in `voice`, from `service` when one is named."""
+    """Return the arguments that narrate one corpus in `voice`, from `service` if named."""
     asked = ["narrate", corpus, "--voice", voice]
     return asked + ([] if service is None else ["--service", service])
 
 
 def build(corpus: str, site: str) -> list[str]:
-    """The arguments that build one corpus into `site`."""
+    """Return the arguments that build one corpus into `site`."""
     return ["build", corpus, "--out", site]
 
 
 def serve(corpus: str, site: str, port: int | None = None) -> list[str]:
-    """The arguments that serve the site `build` wrote, on `port` when one is named."""
+    """Return the arguments that serve the site `build` wrote, on `port` if named."""
     return ["serve", corpus, "--site", site] + ([] if port is None else ["--port", str(port)])
 
 
