@@ -22190,7 +22190,7 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 
 ## PO round 77 — `W239` and `W243` closed, `W242` and `W153` named, and `W162/8` folded into the held `W162/7`
 
-⭐ **Merged after round 76's cut at `1e70007` and not closed by it: `0e65df9` (`W239`) and `5f772d9` (`W243`). This round is cut at `6cdab6d`, which carries both.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+⭐ **Merged after round 76's cut at `1e70007` and not closed by it: `0e65df9` (`W239`) and `5f772d9` (`W243`). This round is cut at `6cdab6d`, which carries both; `828b37f` (`W162`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
 
 ### ⭐ 1 — CLOSES
 
@@ -22198,15 +22198,14 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
                                   merge^2   branch head  ahead  checked out
 fix/INT06-1-promote-not-material  dbf98ede  dbf98ede     0      NOWHERE
 fix/INT06-9-highlight-languages   d41fe017  d41fe017     0      NOWHERE
+fix/W162-docker-gate-ground       b1a3178b  b1a3178b     0      NOWHERE
 ```
 
-⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W242.md` re-pointed for `W239`. `W243` has no live inbound citation. ⚠️ **`handoffs/PO-2026-09-13-round75.md` cites both row files; it is a record, and the stubs resolve.**
-
-⚠️ **`W162` merged at `828b37f`, after this round's cut. Its close waits on the coordinator's reading, so its In flight cell reads `0 @ b1a3178`, held by no checkout, and `corroborate` refutes it until the close.**
+⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W242.md` re-pointed for `W239`. `W243` and `W162` have no live inbound citation. ⚠️ **`handoffs/PO-2026-09-13-round75.md` cites the `W239` and `W243` row files, and `handoffs/W162.md` cites its own; they are records, and the stubs resolve.**
 
 ### ⭐ 2 — RULED, REVERSIBLE
 
-1. ⛔ **`W162/8`, folded into the held `W162/7`.** With `STUDYFORGE_DOCKER_TESTS` set, a cold image cache SKIPS the gated image checks and never builds. The flag permits the daemon, not the network. ⭐ **A separate value that permits a build is the user's to ask for, in the same held question.**
+1. ⛔ **`W162/8`, folded into the held `W162/7`.** With `STUDYFORGE_DOCKER_TESTS` set, a cold image cache SKIPS the gated image checks and never builds. The flag permits the daemon, not the network. ⭐ **A separate value that permits a build is the user's to ask for, in the same held question.** ⭐ **`W162/7`'s ruled half is PROVED at `828b37f` (§ 3); the question itself stays held.**
 2. ⭐ **Round 76's id ruling holds at both merges.** At `0e65df9`, `handoffs/W239.md` declares `task handoff — W239`, its title names `W239`, and its findings are `W239/1`–`/4`. At `5f772d9`, `handoffs/W243.md` does the same for `W243`, with findings `W243/1`–`/5`.
 
 ### ⭐ 3 — WHAT EACH FINDING BECAME
@@ -22214,13 +22213,19 @@ fix/INT06-9-highlight-languages   d41fe017  d41fe017     0      NOWHERE
 | finding | became |
 |---|---|
 | `W162/8` | ⛔ **ruled, § 2.1**, and folded into the held `W162/7` |
-| the `W162` amendment | ⭐ **RECEIVED:** a default run makes no docker call. A recording fake `docker` on `PATH` sees none for the gate or for all of `tests/docker/`, and a planted probe turns it RED. It settles the half round 75 ruled; the question stays held |
+| the `W162` amendment | ⭐ **RECEIVED:** a default run makes no docker call. A recording fake `docker` on `PATH` sees none for the gate or for all of `tests/docker/`, and a planted probe turns it RED. It PROVES `W162/7` as round 75 ruled it; the question stays held |
+| `W151/5` | ⭐ **rider on [`W232`](rows/W232.md), not a mint:** a tree copy under `.scratch/` turns the suite RED, which is that row's subject exactly |
+| `W151/1` | disposed at the close: a surface widening, disclosed |
+| `W151/2`, `W151/3` | accepted, cost named: a noun joins the check only with its source, so `W116/3`'s test figures stay outside it |
+| `W151/4` | accepted, cost named: `W145/2`'s declared gap, inherited by every line-joining reader and not widened |
 | the `W243` close | ⭐ **recorded at the close below:** `ISO-06`'s *"XML highlighted"* waits on `W243/1`, the user's Prism download |
 | the `W239` and `W243` handoffs | ⭐ **verified, § 2.2** |
 
-⭐ **Carriers, each confirmed against git:** [`W242`](rows/W242.md), Developer 1, `fix/W242-sibling-ignore-home` @ `wt/dev1`, cut `5f772d9`, order 2 now that `W239` and `W241` have merged; it collides with nothing in flight. [`W153`](rows/W153.md), Developer 3, `fix/W153-unnamed-arm-register-blind` @ `wt/dev3`, cut `5f772d9`, by board order (order 11). Its surface is `tools/quality/board/corroborate.py`, its tests and `docs/conventions/board.md`, and no other member of either set is in flight. ⭐ **`W151` is still in flight at `wt/dev2`.** ⛔ **`W163` waits for `W162`'s close: one owner of `tests/docker/`.**
+⭐ **Carriers, each confirmed against git:** [`W242`](rows/W242.md), Developer 1, `fix/W242-sibling-ignore-home` @ `wt/dev1`, cut `5f772d9`, order 2 now that `W239` and `W241` have merged; it collides with nothing in flight. [`W153`](rows/W153.md), Developer 3, `fix/W153-unnamed-arm-register-blind` @ `wt/dev3`, cut `5f772d9`, by board order (order 11). Its surface is `tools/quality/board/corroborate.py`, its tests and `docs/conventions/board.md`, and no other member of either set is in flight. [`W163`](rows/W163.md), Developer 2, `fix/W163-visual-reasoning` @ `wt/dev2`, cut `828b37f`, after `W162` merged: the `STUDYFORGE_VISUAL` block of `docker/dev/compose.yaml`, plus riders `W162/5` and `/6` in `tests/docker/`. ⚠️ **Its merge moves the dev image identity.** ⚠️ **`W151` merged at `579e1df` after this round's merge of `828b37f`. It closes on the coordinator's reading, and `corroborate` refutes it until then.**
 
-⭐ **The ISO track:** integration round 7 has not merged into ISO. ISO's `release/studyforge-integration` still reads `0d970fd`, so the pin stays there and its advance waits for round 78.
+⭐ **The ISO track:** integration round 7 merged into ISO at `ab9e765`, and `ISO-04` is TAKEN. ⭐ **RECEIVED:** its re-read at `5f772d9` DISCHARGES `INT-06/1`, `/2`, `/3`, `/5`, `/6` and `/9`'s fallback, each with a plant. ⭐ **The pin advanced to `ab9e765` (`W244`'s cadence), the ISO line alone (`PO-76/1`).** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`.
+
+⭐ **Mints, ahead of every `W` row:** [`W250`](rows/W250.md) (`INT-07/3`, order 1: `ISO-07` and `ISO-08` wait on it) and [`W249`](rows/W249.md) (`INT-07/1` + `/2`, order 2), one owner of `skills/reconnaissance/`. `INT-07/4` is `W242`'s, in flight; `INT-07/5` is `W243/1`, held for the user.
 
 ⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7`, now with `W162/8`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
 
@@ -22270,3 +22275,44 @@ fix/INT06-9-highlight-languages   d41fe017  d41fe017     0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 77
 
 ⭐ **Merged at `5f772d9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5f772d9` is RECEIVED.** ⭐ **The highlighter's grammars are declared in the vendored bundle's header and checked against what it defines. A fence in an undeclared language renders as the declared plain fallback, and says so.** ⛔ **`ISO-06`'s *"XML fences highlighted"* waits on `W243/1`, the user's Prism 1.30.0 download (Scheduled, `pending`). Until then an XML fence renders plain, with its note.**
+
+### W162 — Ten gated assertions no routine environment reaches, and the skip's own stated ground is false whenever the image is already built
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W162.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **TEN COMMITTED ASSERTIONS CERTIFY THE PINNED IMAGE AND NO ROUTINE ENVIRONMENT REACHES ONE OF THEM.** ⭐ **Routed by `CTO round 67` §8 item 5 as the residual Ruling 332 deliberately left, and it reached no row for a round.**
+
+### ⛔ THE POPULATION, role `wt/po`, ref `0564997`, environment HOST, `STUDYFORGE_DOCKER_TESTS` UNSET
+
+```text
+python3 -m pytest --collect-only -q tests/docker/     113 collected
+python3 -m pytest -q -rs tests/docker/                 96 passed, 17 skipped
+gated skips, weighted by their [n] groups                            10
+  test_dev_image.py 5 · test_dev_check_timeout.py 4 · test_dev_provenance.py 1
+```
+
+⚠️ **`CTO round 67` measured NINE at `7420c34` and was right there: `test_dev_image.py` is byte-identical at both refs, and `W152` merged the tenth.** ⭐ **DATED, not wrong** (Ruling 310(b)).
+
+### ⛔ WHY THE GATE'S OWN GROUND IS THE DEFECT, AND IT IS THE PART RULING 332 COULD NOT SEE
+
+⭐ **The skip reason reads *"the build needs network; a test run must not"*.** ⛔ **It is FALSE in the ordinary case: with the image already built the mode starts a container and builds nothing, and a peer session measured the ten GREEN on a warm cache with the network untouched.** ⚠️ **That reading is RECEIVED, not taken here — Ruling 332 forbids this office to set the flag, and the round that would verify it is the round the ruling binds.** ⭐ **What IS taken here is everything but the verdict: the denominator, the without-flag half and the gated set all reproduce.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE SKIP REASON SAYS WHAT IS ACTUALLY TRUE** — ⭐ *this run would build the image, and a build needs network* — ⚠️ **so the gate can distinguish a COLD from a WARM cache instead of refusing both on one sentence.**
+2. ⭐ **AN ENVIRONMENT THAT REACHES THE TEN, NAMED.** ⛔ **Ten assertions nobody runs are ten assertions nobody has proved can fail** (Ruling 191's shape, `W24`'s clause).
+3. ⚠️ **RULING 332 IS THE CTO's AND IS NOT TOUCHED BY THIS ROW.** ⭐ **The row surfaces the ground; the rubric is amended by the office that owns it, or it is not amended.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A DEFAULT-ON GATE.** ⭐ **A suite that reaches the network by default is the thing the reason was written to prevent, and it is right about the cold case.** ⛔ **AND NOT A DELETION OF THE TEN** — ⚠️ **an unreachable assertion is a routing problem, not a wrong assertion.**
+
+### ⭐ SURFACE
+
+⛔ **`tests/docker/test_dev_image.py`'s gate helper and the skip reasons that quote it.** ⚠️ **Shares `tests/docker/` with `W163`: ONE OWNER or two waves** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `828b37f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `828b37f` is RECEIVED.** ⭐ **The docker gate's skip reason says what is true. A default run makes NO docker call and says the cache was not probed. With `STUDYFORGE_DOCKER_TESTS` set, the gate tells a cold cache from a warm one from `docker/dev/check`'s own identity, and never builds.** ⭐ **`W162/7` is PROVED: a recording fake `docker` on `PATH` sees no call for the gate or for all of `tests/docker/`, and a planted probe turns it RED.** ⚠️ **`W162/8` is ruled in this round's § 2.1. `W162/5` and `/6` ride on [`W163`](rows/W163.md).**
