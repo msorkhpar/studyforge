@@ -11,7 +11,7 @@ imports a consumer, and a consumer never imports past this seam.
     studyforge plan <corpus>        what would be written, before it is
     studyforge narrate <corpus> --voice <voice>
     studyforge build <corpus> --out <directory>
-    studyforge serve <corpus> --site <directory>
+    studyforge serve <root>         every built corpus under it
     studyforge reconcile <corpus>   artifacts whose source is gone
 
 `main(argv) -> int` is the installed command, and `VERBS` is the table it

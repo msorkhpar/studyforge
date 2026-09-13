@@ -14,8 +14,8 @@ import threading
 import pytest
 
 from studyforge.progress import store_dir
-from studyforge.serve.discovery import DiscoveryRefused
-from studyforge.serve.instance import make_instance
+from studyforge.serve.discovery import DiscoveryRefused, discover
+from studyforge.serve.instance import instance_of, make_instance
 from tests.studyforge.generate.corpora import BOTH
 from tests.studyforge.serve.built import a_workspace, record, source_of, unit_keys
 from tests.studyforge.serve.serving import fetch
@@ -117,3 +117,22 @@ def test_state_ignores_the_query_and_refuses_every_write(tmp_path):
 def test_a_root_with_no_corpus_is_refused_before_a_socket_exists(tmp_path):
     with pytest.raises(DiscoveryRefused):
         make_instance(tmp_path, port=0)
+
+
+def test_an_instance_of_one_discovery_serves_every_corpus_it_found(tmp_path):
+    # ⭐ The half the verb calls (`W230`): the same wiring as `make_instance`, from a
+    # discovery already taken, and nothing is re-scanned to build it.
+    workspace = a_workspace(tmp_path)
+    discovered = discover(workspace)
+    server = instance_of(discovered, port=0)
+    thread = threading.Thread(target=server.serve_forever, daemon=True)
+    thread.start()
+    try:
+        corpora = [c["corpus"] for c in body(server, "/api/v1/state/")["corpora"]]
+        assert corpora == sorted(served.source for served in discovered.corpora)
+        assert len(corpora) == len(BOTH)
+        assert fetch(server, "/depth1/.studyforge/assets/page.css")[0] == 200
+    finally:
+        server.shutdown()
+        server.server_close()
+        thread.join(timeout=5)

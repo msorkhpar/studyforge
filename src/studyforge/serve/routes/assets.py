@@ -16,9 +16,13 @@ directory's name, `serve.caching`, `serve.response`.
 
 1. split on `/` **before** decoding, so `%2f` cannot manufacture a separator;
 2. decode each segment, then refuse `.`, `..`, a separator, a backslash or a NUL;
-3. refuse a dot-prefixed segment — ⭐ **except the build's own generated directory
-   as the first segment**, because every page a build writes links into it and a
-   blanket dotfile rule would serve a site with no stylesheet;
+3. refuse a dot-prefixed segment — ⭐ **except the build's own generated directory,
+   as the first segment or beside a `corpus.json`**, because every page a build
+   writes links into it and a blanket dotfile rule would serve a site with no
+   stylesheet. ⛔ **Beside a manifest, not "at any depth"** (`W230`, `SF-19b/2`): a
+   root holding several corpora puts each one's generated directory one level
+   down, and the manifest on disk is what says a corpus is there — no mount list is
+   configured, and any other nested dot-directory is still refused;
 4. `resolve()` (following symlinks) and require the result inside the root and a
    regular file.
 
@@ -41,6 +45,7 @@ from pathlib import Path
 from urllib.parse import unquote
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.corpus.manifest.document import MANIFEST_FILENAME
 from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
@@ -55,7 +60,7 @@ MAX_PATH = 1024
 #: The file a directory request resolves to.
 INDEX_FILENAME = "index.html"
 
-#: The one dot-prefixed name served, and only as the first segment.
+#: The one dot-prefixed name served: first, or where a corpus manifest sits beside it.
 EXPOSED_DOT_DIRECTORY = GENERATED_ROOT
 
 #: Largest text the gate reads. ⛔ Above it a file is refused, not served ungated.
@@ -130,7 +135,7 @@ def resolve(root: Path, url_path: str) -> Path | None:
             return None
         if segment in (".", "..") or any(c in segment for c in "/\\\x00"):
             return None
-        if segment.startswith(".") and not (not segments and segment == EXPOSED_DOT_DIRECTORY):
+        if segment.startswith(".") and not _exposed(base, segments, segment):
             return None
         segments.append(segment)
     target = base.joinpath(*segments)
@@ -145,6 +150,17 @@ def resolve(root: Path, url_path: str) -> Path | None:
     if in_a_progress_store(real):
         return None
     return real
+
+
+def _exposed(base: Path, above: list[str], segment: str) -> bool:
+    """Say whether a dot-prefixed segment is a generated directory the mount serves.
+
+    ⭐ The served root's own, or one whose parent holds a corpus manifest. ⛔ The
+    progress store inside it is still refused, on the resolved path, by `resolve`.
+    """
+    if segment != EXPOSED_DOT_DIRECTORY:
+        return False
+    return not above or base.joinpath(*above, MANIFEST_FILENAME).is_file()
 
 
 def in_a_progress_store(path: Path) -> bool:
