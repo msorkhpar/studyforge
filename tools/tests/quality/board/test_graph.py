@@ -39,7 +39,7 @@ from pathlib import Path
 from tools.quality.board.graph import MERGE_IDIOM, Graph
 from tools.workspace import git
 
-from .conftest import AUTHOR, RELEASE, commit
+from .conftest import AUTHOR, RELEASE, _branch_then_merge, commit
 
 #: ⭐ Every branch the fixture cuts, with the shape each exists to inhabit. ⛔ The
 #: POPULATION IS PRINTED as the test's own assertion, never implied by spot checks.
@@ -176,6 +176,41 @@ def test_planted_shape_B_is_a_PREFIX_test_until_the_match_is_EXACT(repository: P
     assert any("fix/W4" in subject for subject in subjects), "⛔ the SUBSTRING would match"
     assert graph.named("fix/W4") == "", "⭐ the EXACT prefix does not"
     assert graph.named("fix/W40") != ""
+
+
+def test_W274_the_PARENTHESISED_subject_form_names_its_branch_and_stays_EXACT(
+    repository: Path,
+) -> None:
+    """⛔ `W274` clauses 1 and 3: merges are written `Merge <branch> (<rows>): <line>`.
+
+    ⚠️ **The colon-only idiom named none of them.** ⭐ The EXACT half is re-planted in the
+    new form: `chore/cto-round39` is merged, and `chore/cto-round3` is a branch it absorbs
+    nothing of, so a prefix would name it and the boundary does not.
+    """
+    _branch_then_merge(
+        repository, "fix/Wparen", "Merge fix/Wparen (W9): a row carried (CTO: APPROVE)"
+    )
+    _branch_then_merge(
+        repository, "chore/cto-round39", "Merge chore/cto-round39 (CTO-39): a round recorded"
+    )
+    assert git(repository, "branch", "chore/cto-round3").returncode == 0
+    graph = Graph.read(repository, RELEASE)
+    assert graph.named("fix/Wparen") != "", "⛔ the form merges carry must be named"
+    assert graph.named("chore/cto-round39") != ""
+    assert graph.named("chore/cto-round3") == "", "⛔ more branch never reads as this branch"
+    assert graph.named("fix/W40") != "", "⭐ and the colon form still reads (clause 3's other form)"
+    assert graph.named("fix/W4") == ""
+
+
+def test_W274_a_PARENTHESISED_name_never_becomes_the_GATE(repository: Path) -> None:
+    """⛔ `W274` clause 2: shape `C` stays the gate — a named branch whose tip moved is not."""
+    _branch_then_merge(repository, "fix/Wparenmoved", "Merge fix/Wparenmoved (W8): then continued")
+    assert git(repository, "checkout", "-q", "fix/Wparenmoved").returncode == 0
+    commit(repository, "paren-moved-again.txt")
+    assert git(repository, "checkout", "-q", RELEASE).returncode == 0
+    graph = Graph.read(repository, RELEASE)
+    assert graph.named("fix/Wparenmoved") != "", "⛔ born vacuous: the printed shape must name it"
+    assert graph.terminal("fix/Wparenmoved") == "", "⛔ and the gate must not follow the name"
 
 
 def test_planted_C_carries_its_OWN_merge_ref_and_never_borrows_B_s(repository: Path) -> None:
