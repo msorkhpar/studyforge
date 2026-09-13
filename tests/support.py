@@ -14,9 +14,12 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import re
+import selectors
 import shutil
 import subprocess
+import time
 from pathlib import Path
 from types import ModuleType
 
@@ -253,3 +256,55 @@ def shapes_agree(row: dict) -> bool:
     `why`, so a divergence is declared with a reason rather than discovered.
     """
     return (row["gate"] == "refuse") == (row["scrub"] == "rewrite") == (row["quality"] == "report")
+
+
+class ProcessOutput:
+    """The ONE reader of a child process's `stdout` and `stderr` (`W233`).
+
+    ⛔ **Nothing else may read either pipe.** A text wrapper's `readline` reads
+    ahead into its own buffer, and `communicate()` then reads the raw pipe, so
+    lines already buffered are lost (`SK-03/5`). This reads the raw descriptors
+    with `os.read`, keeps every byte, and hands the lines out as a view: a line
+    `line()` returned is still in what `rest()` returns.
+
+    ⭐ **It waits on the stream, never on a clock.** A deadline bounds `select`;
+    nothing here sleeps.
+    """
+
+    def __init__(self, process: subprocess.Popen) -> None:
+        self._selector = selectors.DefaultSelector()
+        self._read = {"stdout": bytearray(), "stderr": bytearray()}
+        for name in self._read:
+            self._selector.register(getattr(process, name).fileno(), selectors.EVENT_READ, name)
+        self._handed = 0
+
+    def line(self, timeout: float) -> str:
+        """Return the next whole `stdout` line, or `""` at end of file or the deadline."""
+        deadline = time.monotonic() + timeout
+        while self._read["stdout"].count(b"\n") <= self._handed:
+            if not self._pump(deadline):
+                return ""
+        self._handed += 1
+        return self._read["stdout"].split(b"\n")[self._handed - 1].decode() + "\n"
+
+    def rest(self, timeout: float) -> tuple[str, str]:
+        """Read both streams to end of file; return ALL each printed, from its first byte."""
+        deadline = time.monotonic() + timeout
+        while self._selector.get_map():
+            if not self._pump(deadline):
+                raise TimeoutError(f"the process held its output open past {timeout}s")
+        self._selector.close()
+        return self._read["stdout"].decode(), self._read["stderr"].decode()
+
+    def _pump(self, deadline: float) -> bool:
+        """Read what is ready before `deadline`; `False` once nothing is open or time is up."""
+        remaining = deadline - time.monotonic()
+        if not self._selector.get_map() or remaining <= 0:
+            return False
+        for key, _ in self._selector.select(remaining):
+            chunk = os.read(key.fd, 65536)
+            if chunk:
+                self._read[key.data] += chunk
+            else:
+                self._selector.unregister(key.fd)
+        return True

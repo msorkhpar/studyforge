@@ -23,13 +23,15 @@ planted path have one. ⚠️ It is what makes `Link(href=None)` a **measured** 
 the second-to-last unit's `next` has nowhere to point, and the generated site is
 where a guessed href would dangle.
 
-## ⚠️ `PLANTED_SHAPE` exists because the fixtures do not contain the clause
+## ⭐ `depth2` crosses a module inside one section, and `crossings` says so apart
 
-⛔ **Measured, and `test_the_fixtures_between_them_cross_a_boundary_at_all`
-asserts it**: `depth1` crosses 0 container boundaries and `depth2` crosses 1 —
-and that one changes the section AND the module at the same time. ⭐ So the
-acceptance's *"across module and section boundaries"* has a half neither fixture
-can exercise, and the planted corpus is that half rather than a finding.
+⛔ **`W108`**: the fixtures used to cross ONE boundary between them, and it
+changed the section and the module at once — so a count of crossings read `1`
+and hid that the module-only case was absent. ⭐ `depth2` now carries
+`advanced/03-putting-it-together`, and `crossings` classes every boundary by the
+levels it changes, so each kind is counted under its own name and never summed.
+⚠️ `PLANTED_SHAPE` stays as the one module-only crossing under `tree` placement
+(`depth2` is `sibling`), which is a different href shape rather than a duplicate.
 """
 
 from __future__ import annotations
@@ -65,10 +67,6 @@ FIXTURES = {"depth1": depth1_unit_02, "depth2": depth2_unit_01}
 #: How a reference with a fragment splits. ⛔ Named so the link check has one
 #: spelling of *"the part a file is found by"*.
 FRAGMENT = "#"
-
-#: ⛔ **The shape NEITHER `FND-04` fixture has, measured rather than assumed** —
-#: two modules inside one section. See this module's docstring.
-PLANTED_SHAPE = (("one", "01-first"), ("one", "02-second"), ("two", "03-third"))
 
 
 @dataclass(frozen=True)
@@ -255,13 +253,10 @@ def a_site(name: str, root: Path) -> Site:
     return assemble(name, contents, placements(name, contents), FIXTURES[name]().document, root)
 
 
-#: ⛔ **The shape NEITHER `FND-04` fixture has, measured rather than assumed.**
-#: `depth1` declares one container and crosses nothing; `depth2` declares two,
-#: in two different sections, so its ONE crossing changes the section and the
-#: module **at the same time**. ⚠️ A renderer that got a both-levels change right
-#: and a module-only change wrong would pass the clause against the fixtures
-#: alone — so this corpus puts two modules inside one section, which is the
-#: boundary the acceptance names first and the fixtures do not contain.
+#: ⭐ **Two modules inside one section, under `tree` placement.** `SF-15`'s local
+#: discharge of `SF-15/6`, written when no fixture had the shape. ⚠️ Kept after
+#: `W108` because `depth2`, which now has it, is `sibling`: the two profiles
+#: address a neighbouring module with different hrefs.
 PLANTED_SHAPE = (("one", "01-first"), ("one", "02-second"), ("two", "03-third"))
 
 
@@ -327,6 +322,28 @@ def boundaries(site: Site) -> list[tuple[str, str]]:
         for before, after in zip(walked, walked[1:], strict=False)
         if ancestors(site.contents, before.key) != ancestors(site.contents, after.key)
     ]
+
+
+#: How a crossing's changed levels are joined into its kind, outermost first.
+LEVEL_JOIN = "+"
+
+
+def crossings(site: Site) -> dict[str, int]:
+    """Every boundary, counted under the container levels it changes.
+
+    ⛔ **Counted apart, never summed** (`W108`). A crossing that changes the
+    section and the module is kind `section+module`; one that changes the module
+    inside one section is kind `module`. ⚠️ A single total read `1` for a set
+    whose only crossing was the compound one, and that is what hid the gap. The
+    level words are the corpus's own (`Group.level`), not this module's.
+    """
+    found: dict[str, int] = {}
+    for before, after in boundaries(site):
+        was, now = ancestors(site.contents, before), ancestors(site.contents, after)
+        changed = [old.level for old, new in zip(was, now, strict=True) if old.key != new.key]
+        kind = LEVEL_JOIN.join(changed)
+        found[kind] = found.get(kind, 0) + 1
+    return found
 
 
 def depth_of(site: Site, key: str) -> tuple[str, ...]:

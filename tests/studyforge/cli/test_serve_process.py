@@ -4,31 +4,41 @@
 naming a real, listening socket called `docker.sock` in a harness-minted directory —
 a socket the process CAN reach — and afterwards that socket must have accepted
 nothing, and no descriptor the process held may name it.
+
+⛔ **One reader of the process's output** (`W233`): `tests.support.ProcessOutput`,
+from launch to exit. So every line the verb printed is asserted, not only the last.
 """
 
 from __future__ import annotations
 
+import ast
 import contextlib
+import inspect
 import os
 import re
-import selectors
 import shutil
 import signal
 import socket
 import subprocess
 import sys
+from dataclasses import dataclass
 from urllib.parse import quote
 
 import pytest
 
 from studyforge.cli.serve import STOPPED
+from studyforge.generate.declarations import read_corpus
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
 from tests.studyforge.cli.serving import NAMES, build, pages_of
+from tests.studyforge.serve.built import source_of
 from tests.studyforge.serve.serving import fetch
-from tests.support import repository_root
+from tests.support import ProcessOutput, repository_root
 
 LISTENING = re.compile(r"^serve http://127\.0\.0\.1:(\d+)/")
+
+#: One line of the verb's request log: the method, the path and the status.
+REQUEST = re.compile(r'^127\.0\.0\.1 "(\w+) (\S+) HTTP/1\.1" (\d{3}) ', re.M)
 
 
 class Address:
@@ -38,6 +48,24 @@ class Address:
         self.server_address = ("127.0.0.1", port)
 
 
+@dataclass
+class Running:
+    """A serving process, the address it printed, and the one reader of its output."""
+
+    process: subprocess.Popen
+    server: Address
+    output: ProcessOutput
+
+    def stopped(self, how: int = signal.SIGINT) -> tuple[int, str, str]:
+        """Signal the process; return `(exit code, stdout, stderr)`, each read to its end.
+
+        ⭐ `stdout` is everything the process printed, the listening line included.
+        """
+        self.process.send_signal(how)
+        stdout, stderr = self.output.rest(timeout=30)
+        return self.process.wait(timeout=30), stdout, stderr
+
+
 @contextlib.contextmanager
 def launched(root, site, environment=None):
     """`python3 -m studyforge.cli serve …` on port `0`; yield it once it is listening.
@@ -45,59 +73,79 @@ def launched(root, site, environment=None):
     ⭐ `site=None` is the no-configured-path form (`W230`): the root and a port only.
     """
     chosen = [] if site is None else ["--site", str(site)]
-    process = subprocess.Popen(  # noqa: S603 - fixed argv, no shell
+    with subprocess.Popen(  # noqa: S603 - fixed argv, no shell
         [sys.executable, "-m", "studyforge.cli", "serve", str(root), *chosen, "--port", "0"],
         cwd=repository_root(),
         env={**os.environ, "PYTHONPATH": "src", **(environment or {})},
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        text=True,
-    )
-    try:
-        with selectors.DefaultSelector() as selector:
-            selector.register(process.stdout, selectors.EVENT_READ)
-            ready = selector.select(timeout=30)
-        first = process.stdout.readline() if ready else ""
-        found = LISTENING.match(first)
-        if found is None:
-            process.kill()
-            _, stderr = process.communicate(timeout=10)
-            pytest.fail(f"the verb did not start listening: {first!r} {stderr[-400:]!r}")
-        yield process, Address(int(found.group(1)))
-    finally:
-        if process.poll() is None:
-            process.kill()
-            process.communicate(timeout=10)
+    ) as process:
+        output = ProcessOutput(process)
+        try:
+            first = output.line(timeout=30)
+            found = LISTENING.match(first)
+            if found is None:
+                process.kill()
+                _, stderr = output.rest(timeout=10)
+                pytest.fail(f"the verb did not start listening: {first!r} {stderr[-400:]!r}")
+            yield Running(process, Address(int(found.group(1))), output)
+        finally:
+            if process.poll() is None:
+                process.kill()
+                output.rest(timeout=10)
 
 
-def stopped(process, how=signal.SIGINT):
-    """Signal the process and return `(exit code, stdout, stderr)`."""
-    process.send_signal(how)
-    stdout, stderr = process.communicate(timeout=30)
-    return process.returncode, stdout, stderr
+def printed(running: Running, stdout: str, requested: list[str]) -> list[str]:
+    """Assert the lines around the ones a test reads; return the lines in between.
+
+    ⛔ The listening line FIRST, naming the port a caller read, and `stopped` LAST.
+    ⭐ Between them, one request line per path fetched, in order, each answered `200`.
+    """
+    lines = stdout.splitlines()
+    assert lines, "the process printed nothing, so there is no transcript to read"
+    found = LISTENING.match(lines[0])
+    assert found, f"the first line printed is not the listening line: {lines[0]!r}"
+    assert int(found.group(1)) == running.server.server_address[1]
+    assert lines[-1] == STOPPED
+    assert REQUEST.findall(stdout) == [("GET", path, "200") for path in requested]
+    return lines[1:-1]
 
 
 @pytest.mark.parametrize("name", NAMES)
 def test_the_installed_command_serves_each_fixture_and_stops_on_interrupt(name, tmp_path):
     root, site = build(name, tmp_path)
-    with launched(root, site) as (process, server):
-        index = fetch(server, "/index.html")
-        toc = fetch(server, "/api/v1/content/toc")
-        code, stdout, stderr = stopped(process)
+    with launched(root, site) as running:
+        index = fetch(running.server, "/index.html")
+        toc = fetch(running.server, "/api/v1/content/toc")
+        code, stdout, stderr = running.stopped()
     assert (index[0], index[2]) == (200, (site / "index.html").read_bytes())
     assert toc[0] == 200
     assert code == OK, stderr[-400:]
-    assert stdout.splitlines()[-1] == STOPPED
+    printed(running, stdout, ["/index.html", "/api/v1/content/toc"])
     assert "Traceback" not in stdout + stderr
 
 
 def test_a_terminate_signal_stops_it_cleanly_too(tmp_path):
     root, site = build("depth1", tmp_path)
-    with launched(root, site) as (process, server):
-        assert fetch(server, "/index.html")[0] == 200
-        code, stdout, stderr = stopped(process, signal.SIGTERM)
+    with launched(root, site) as running:
+        assert fetch(running.server, "/index.html")[0] == 200
+        code, stdout, stderr = running.stopped(signal.SIGTERM)
     assert code == OK, stderr[-400:]
+    printed(running, stdout, ["/index.html"])
     assert "Traceback" not in stdout + stderr
+
+
+def test_the_reader_waits_on_the_stream_and_never_on_a_clock():
+    # ⛔ `W233`: a sleep standing in for the read passes whenever the machine is fast.
+    sources = {
+        "the reader": inspect.getsource(ProcessOutput),
+        "this module": inspect.getsource(sys.modules[__name__]),
+    }
+    for where, source in sources.items():
+        calls = [node.func for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Call)]
+        assert calls, f"{where} parsed to no calls, so the check read nothing"
+        named = [getattr(func, "attr", getattr(func, "id", "")) for func in calls]
+        assert "sleep" not in named, f"{where} sleeps"
 
 
 def decoy(tmp_path_factory) -> tuple[socket.socket, str]:
@@ -149,21 +197,26 @@ def test_the_serving_process_never_reaches_a_docker_socket_its_environment_names
     form, tmp_path, tmp_path_factory
 ):
     root, site = build("depth2", tmp_path, into=tmp_path / "root" / "depth2")
-    prefix = ""
+    prefix, corpus = "", root
     if form == "root":
         shutil.copytree(root, site, dirs_exist_ok=True)
         root, site, prefix = tmp_path / "root", None, "/depth2"
     unit = [page for page in pages_of(FIXTURES / "depth2") if page != "index.html"][0]
+    requested = [f"{prefix}/index.html", "/api/v1/content/toc", f"{prefix}/" + quote(unit)]
     listener, path = decoy(tmp_path_factory)
-    with listener, launched(root, site, {"DOCKER_HOST": f"unix://{path}"}) as (process, server):
-        assert fetch(server, f"{prefix}/index.html")[0] == 200
-        assert fetch(server, "/api/v1/content/toc")[0] == 200
-        assert fetch(server, f"{prefix}/" + quote(unit))[0] == 200
-        descriptors = f"/proc/{process.pid}/fd"
+    with listener, launched(root, site, {"DOCKER_HOST": f"unix://{path}"}) as running:
+        for each in requested:
+            assert fetch(running.server, each)[0] == 200
+        descriptors = f"/proc/{running.process.pid}/fd"
         assert os.path.isdir(descriptors), "no descriptor table to read, so the arm did not run"
         held = targets(descriptors)
-        code, _, stderr = stopped(process)
+        code, stdout, stderr = running.stopped()
         assert any(target.startswith("socket:") for target in held), "not even its listener"
         assert [target for target in held if "docker" in target] == []
         assert accepted(listener) == 0, "the serving process connected to the Docker socket"
     assert code == OK, stderr[-400:]
+    between = printed(running, stdout, requested)
+    if form == "root":
+        # ⭐ Printed straight after the listening line, so a reader that read ahead loses it.
+        port, index = running.server.server_address[1], read_corpus(corpus).shared.root_index
+        assert between[0] == f"corpus {source_of(corpus)} http://127.0.0.1:{port}{prefix}/{index}"

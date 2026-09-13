@@ -651,3 +651,5 @@ this a clean split rather than a filtering exercise.
 material and progress intact. An export marked for sharing contains no progress
 and no personal data — asserted, not inspected. Re-import into an existing
 corpus merges rather than clobbering, and says what it merged.
+
+⛔ **PO round 72 — `SK-06` merged at `ddede67` and is NOT closed.** The Acceptance above is unchanged. ⛔ **`SK-06/3`: a sharing archive carries a non-UTF-8 file with its contents ungated and unreported, so *no personal data — asserted* is not met. [`W235`](rows/W235.md) carries it, and `SK-06` closes on its merge.** ⚠️ **`SK-06/2`: read marks (`SF-30`) are not carried, so for a prose corpus *what the reader has completed* is empty. [`W236`](rows/W236.md) carries it, and it is not a gate** ([the close](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)).

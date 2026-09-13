@@ -21,19 +21,26 @@ in a notice), and the populations are asserted inhabited first (Ruling 48).
 
 from __future__ import annotations
 
+import ast
 from pathlib import Path
 
 from tests.support import repository_root
 from tools.quality.board import (
     BOARD,
+    BOARD_FRAME,
+    BOARD_PER_ROW,
     ROWS,
+    RULE_SIZE,
     RULE_UNOBSERVED,
     board_state,
     check_board,
 )
+from tools.quality.board.bijection import born_detail
+from tools.quality.board.bounds import allowance, size_findings
 from tools.quality.board.register import (
     duplicates_a_state,
     namings,
+    register,
     repeats_its_naming,
     row_order,
 )
@@ -200,3 +207,97 @@ def test_impossible_a_board_with_no_row_files_names_NEITHER(tmp_path: Path) -> N
     line = _rows_line(root)
     assert "0 repeat their own naming; 0 duplicate a state." in line
     assert f"0 detail files in {ROWS}/ holding 0 bytes" in board_state(root)[0]
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W144` — ONE PHRASE HAD NAMED TWO POPULATIONS: table LINES and the ID SET
+# --------------------------------------------------------------------------
+
+#: ⭐ The live board's own separating shape: ONE register line naming TWO ids (`W17 + W19`).
+TWO_IDS = f"| W17 + W19 | one commit, two ids | PO | ✅ done — `abc1234` | {born_detail('W17')} |\n"
+
+
+def _printed(root: Path) -> tuple[str, str]:
+    """`(the notice's board line, the size finding's message)` for the board at `root`.
+
+    ⛔ The size finding only speaks OVER its bound, so the message is read from the same
+    register with enough narrative appended to trip it — the population is unchanged.
+    """
+    text = (root / BOARD).read_text(encoding="utf-8")
+    over = text + "x" * (allowance(text)[0] + 1)
+    message = next(f.message for f in size_findings(over) if f.rule == RULE_SIZE)
+    return board_state(root)[0], message
+
+
+def test_a_MULTI_ID_line_prints_TWO_numbers_under_TWO_labels(tmp_path: Path) -> None:
+    """⛔ `W144` clause 3, the direction where the populations DIFFER.
+
+    ⭐ **Two lines naming three ids print `2 register lines` beside `224×3 register
+    ids`**, and the arithmetic is asserted unchanged: ⛔ **the denominator is the IDS**
+    (Ruling 271), so a "fix" that made the two agree by counting lines is RED here.
+    """
+    root = _tree(tmp_path, HEADER + CLOSED + TWO_IDS + FOOTER)
+    text = (root / BOARD).read_text(encoding="utf-8")
+    assert [len(ids) for _n, ids, _c in register(text)] == [1, 2], "⛔ born vacuous"
+    assert allowance(text) == (BOARD_FRAME + 3 * BOARD_PER_ROW, 3, 0, 0), "⛔ Ruling 271"
+    line, message = _printed(root)
+    assert "board: 2 register lines, 0 live, " in line
+    assert f"+ {BOARD_PER_ROW}×3 register ids + " in line, "⛔ Ruling 294: the INDEX word"
+    assert f"plus {BOARD_PER_ROW} for each of 3 register ids, plus " in message
+    assert "register rows" not in line + message, "⛔ the phrase that named BOTH"
+
+
+def test_NO_multi_id_line_prints_the_SAME_number_under_both_labels(tmp_path: Path) -> None:
+    """⭐ `W144` clause 3, the other direction: equal populations, and neither label lies."""
+    root = _tree(tmp_path, HEADER + CLOSED + LIVE + FOOTER, rows=("W2",))
+    text = (root / BOARD).read_text(encoding="utf-8")
+    assert [len(ids) for _n, ids, _c in register(text)] == [1, 1], "⛔ born vacuous"
+    line, message = _printed(root)
+    assert "board: 2 register lines, 1 live, " in line
+    assert f"+ {BOARD_PER_ROW}×2 register ids + " in line
+    assert f"plus {BOARD_PER_ROW} for each of 2 register ids, plus " in message
+
+
+def test_the_LIVE_notice_labels_its_two_counts_by_what_each_COUNTS() -> None:
+    """⭐ The live board, DERIVED: each printed number equals the population its label names."""
+    root = repository_root()
+    text = (root / BOARD).read_text(encoding="utf-8")
+    lines = register(text)
+    assert lines, "Ruling 48: an empty register satisfies both labels vacuously"
+    line = board_state(root)[0]
+    ids = len({identifier for _n, row_ids, _c in lines for identifier in row_ids})
+    assert f"board: {len(lines)} register lines, " in line
+    assert f"{BOARD_PER_ROW}×{ids} register ids " in line
+
+
+def test_no_PRINTED_string_in_the_board_package_says_register_rows() -> None:
+    """⛔ `W144` clause 1, over the SOURCE: `register rows` names neither population.
+
+    ⭐ **Docstrings and comments are prose about rows and are not read**; every other
+    string constant — every f-string fragment a finding or a notice can print — is.
+    ⚠️ The row allows the phrase for AT MOST ONE population; this asserts ZERO, the
+    stricter reading, because the phrase is the ambiguity and neither label needs it.
+    """
+    package = repository_root() / "tools" / "quality" / "board"
+    modules = sorted(package.glob("*.py"))
+    assert len(modules) >= 2, "⛔ born vacuous: the package was not found"
+    printed = []
+    for path in modules:
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        docstrings = {
+            id(node.body[0].value)
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Module | ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef)
+            and node.body
+            and isinstance(node.body[0], ast.Expr)
+            and isinstance(node.body[0].value, ast.Constant)
+        }
+        printed += [
+            f"{path.name}:{node.lineno}"
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Constant)
+            and isinstance(node.value, str)
+            and id(node) not in docstrings
+            and "register rows" in node.value
+        ]
+    assert printed == [], f"⛔ a printed string names a population `register rows`: {printed}"

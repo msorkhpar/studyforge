@@ -8,6 +8,7 @@ at run time, so the repository's hygiene sweep is never asked to except this fil
 from __future__ import annotations
 
 import hashlib
+import random
 import re
 import shutil
 import zipfile
@@ -35,6 +36,24 @@ COMMANDS = ["make test"]
 def planted_identity() -> str:
     """Return a home-path shape the R7 gate refuses, built so no file in the tree holds it."""
     return "/" + "home" + "/" + "jane" + "/notes"
+
+
+def binary_identity(encoding: str = "utf-8") -> bytes:
+    """Return the register's `cover.bin`: bytes that are not UTF-8, around a planted home path."""
+    return b"\x89\xff\xfe\x00" + f"{planted_identity()}/Pictures".encode(encoding) + b"\x00\xff"
+
+
+def clip_audio(speech_id: str) -> bytes:
+    """Return bytes shaped like a narration clip: an ID3 tag naming its encoder, then MPEG frames.
+
+    ⚠️ The frames' bodies are seeded noise, which is what compressed audio reads as. The
+    size is the mean of the real clips the run length was measured over (`W235`).
+    """
+    noise = random.Random(speech_id)
+    encoder = b"\x03Lavf61.7.100"
+    frame = b"TSSE" + len(encoder).to_bytes(4, "big") + b"\x00\x00" + encoder
+    tag = b"ID3\x04\x00\x00" + bytes((0, 0, 0, len(frame))) + frame
+    return tag + b"".join(b"\xff\xf3\x64\xc4" + noise.randbytes(424) for _ in range(300))
 
 
 def machine(where: Path, name: str, *, corpus: bool = True) -> Path:

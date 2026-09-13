@@ -108,7 +108,7 @@ one instance. A stale discovery cache is detected rather than trusted.
 ---
 
 ### SF-20 — Command runner
-**Milestone** **M5** · **Depends on** SF-02 · **Team** pair
+**Milestone** **M5** · **Depends on** SF-02, TC-01 · **Team** pair
 **Owns** `execute/`
 **Context** ~45k — `CS/tools/study/runner.py`, `CS/tests/test_runner.py`
 
@@ -172,6 +172,8 @@ successfully has demonstrated nothing about its tests, and the page's Run
 button must never be able to complete anything. The first pass is recorded once
 and never moves again — a later failure does not un-pass a practice, and a later
 pass does not make it newer.
+
+⚠️ **`SK-06/1` (PO round 72): `record_run` is the only public write, so an archive merge appends runs.** It costs up to two runs over the larger count and many locked writes. ⭐ **The next row touching `progress/`, or `V2-12`'s sync, exposes a locked merge and a reader for a document not on disk. The steps are `handoffs/SK-06.md` § For dependents** ([the close](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)).
 
 Every mutation is read-validate-modify-write under one lock, written to a
 temporary sibling and atomically replaced, so a crash leaves either the old

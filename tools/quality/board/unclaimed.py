@@ -1,10 +1,11 @@
 """The OTHER direction: what `git` can see that the board does not NAME.
 
 **What it does.** Reads every live checkout, ⛔ **every local branch NO checkout holds**, and
-every `trial/*` / `tmp-*` branch against the release branch, and prints ⭐ **eight readings NO
+every `trial/*` / `tmp-*` branch against the release branch, and prints ⭐ **nine readings NO
 BOARD CELL CARRIES** — the checkouts no row claims, the office round branches Ruling 265
 exempts, ⛔ **the `SPENT`-namespace branches `W170` exempts on Ruling 265's OWN ground**, the
-checkouts that are invisible to git by construction, the ones git could not count at all,
+checkouts that are invisible to git by construction, ⭐ **which of those the board DECLARES an
+office (`W125`)**, the ones git could not count at all,
 ⛔ **the UNMERGED branches HELD BY NO CHECKOUT**, the spent branches that are deletable, and
 the spent ones still checked out.
 
@@ -49,12 +50,13 @@ of the release branch, so this line names NOTHING today.** ⭐ **That is the cry
 the `ahead > 0` filter is SELF-RETIRING — a branch leaves this population the moment it
 merges — so the line speaks only while genuinely unmerged work is held by nobody.**
 
-**How you use it.** `unnamed(rows, live, graph)` returns `(lines, the count of checkouts
-git could not read)` — ⛔ **the count is RETURNED so `corroborate`'s fold can reach exit
+**How you use it.** `unnamed(rows, live, graph, declaration)` returns `(lines, the count of
+checkouts git could not read)` — ⛔ **the count is RETURNED so `corroborate`'s fold can reach exit
 `NOT_AUTHORITATIVE`** (Ruling 216) — and `spent(graph, live)` returns lines alone.
 
 **Depends on.** `board.observation` for the row type, `board.graph` for every git answer,
-`board.verdict` for `tokens`, and `pathlib`. ⛔ **Nothing here decides a verdict** and
+`board.verdict` for `tokens`, `board.offices` for the board's declared offices, and
+`pathlib`. ⛔ **Nothing here decides a verdict** and
 nothing here raises a `Finding`: these are NOTICES.
 
 ## ⛔ Why this is its own module, and the seam is the DIRECTION rather than a line count
@@ -82,6 +84,7 @@ from pathlib import Path
 
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import Observation
+from tools.quality.board.offices import Declaration, judged
 from tools.quality.board.verdict import tokens
 
 #: ⛔ Branch namespaces whose members are DELETED once they are ancestors of the
@@ -128,7 +131,7 @@ OFFICE = ("chore/cto-round", "chore/po-round")
 
 
 def unnamed(
-    rows: tuple[Observation, ...], live: dict[str, str], graph: Graph
+    rows: tuple[Observation, ...], live: dict[str, str], graph: Graph, declaration: Declaration
 ) -> tuple[list[str], int]:
     """Report the other direction: work git can see that the board does not name.
 
@@ -153,7 +156,7 @@ def unnamed(
     count is RETURNED so the caller's fold can reach exit `NOT_AUTHORITATIVE`**
     (Ruling 216).
 
-    ## ⛔ `W132`/Ruling 265, `W170` and the population row — SIX lines, each a DIFFERENT answer
+    ## ⛔ `W132`/Ruling 265, `W170`, `W125` and the population row — SEVEN lines, SEVEN answers
 
     | line | its population |
     |---|---|
@@ -167,7 +170,11 @@ def unnamed(
       ⛔ **the DIFFERENCE the exemption made, printed with its count** |
     | `invisible BY CONSTRUCTION` | ahead `== 0`, unclaimed — ⛔ **a `fix/W*` branch at `0`
       STAYS HERE and is still NAMED**, and so does a `SPENT` branch at `0`: ⚠️ **that one
-      was never in the gate's population, so this exemption removed NOTHING from it** |
+      was never in the gate's population, so this exemption removed NOTHING from it**. ⭐
+      **`W132/3`: `none.` at zero** |
+    | `office checkouts` | `W125`/`W96/5`: the ones the board's `<!-- offices -->` block
+      DECLARES, taken off the line above ALONE — ⛔ **ABSENT, UNREADABLE and EMPTY answer
+      nothing** (`offices.py`) |
     | `git COULD NOT COUNT` | `ahead()` returned `None` — a FAILED reading (`W115`) |
 
     ⚠️ **The DETACHED checkout is in NONE of the five, deliberately** — it has no branch
@@ -204,11 +211,13 @@ def unnamed(
         and not b.startswith(OFFICE)
         and not b.startswith(SPENT)
     )
-    blind = sorted(
-        Path(live[b]).name
+    blind = {
+        Path(live[b]).name: live[b]
         for b, n in counts.items()
         if n == 0 and b not in claimed and not b.startswith(OFFICE)
-    )
+    }
+    # ⛔ `W125`: the board's DECLARED offices leave THIS population and no other.
+    named, declared = judged(declaration, blind)
     # ⛔ The GATE's OTHER HALF: the same three exemptions over the branches no worktree holds.
     # ⭐ The exemptions are applied to the POPULATION before any `ahead()` runs (Ruling 185(b)),
     # which is also why this costs one git call per CANDIDATE and not one per local branch.
@@ -298,8 +307,12 @@ def unnamed(
     )
     lines.append(
         f"  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no "
-        f"row: {len(blind)}" + (f" — {' '.join(blind)}" if blind else "")
+        f"row: {len(named)} — {' '.join(named)}"
+        if named
+        else "  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no "
+        "row: none."
     )
+    lines.append(declared)
     lines.append(
         f"  ⛔ git COULD NOT COUNT *commits ahead* for {len(unread)} live checkout(s): "
         f"{' '.join(unread)} — ⚠️ a FAILED reading, and NOT the Ruling 130 exemption above: "

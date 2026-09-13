@@ -100,7 +100,7 @@
 
 | capability | what it is | area | waits on |
 |---|---|---|---|
-| `SF-20` | Command runner | Serving and execution | `SF-02` |
+| `SF-20` | Command runner | Serving and execution | `SF-02`, `TC-01` |
 | `SF-22` | Run and Submit | Serving and execution | `SF-19a`, `SF-19b`, `SF-20`, `SF-21`, `SF-12` |
 | `SF-29` | Run output filter | Serving and execution | `SF-20` |
 | `SF-24` | Practice panel | Exercise contract | `SF-22`, `SF-23` |

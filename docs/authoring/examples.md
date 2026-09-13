@@ -24,9 +24,9 @@ depth 1.
 |---|---|---|
 | Where | `tests/fixtures/depth1/` | `tests/fixtures/depth2/` |
 | `levels` | `["course"]` — depth **1** | `["section", "module"]` — depth **2** |
-| Containers | 1 | 2 |
-| Units | 3 | 5 |
-| Archive documents | 4 — one unit has two | 7 — of which 2 are practices |
+| Containers | 1 | 3 |
+| Units | 3 | 6 |
+| Archive documents | 4 — one unit has two | 8 — of which 2 are practices |
 | `variants` | `["prose"]` | `["java"]` |
 | `exercises` | **`false`** | `true` |
 | `placement` | `tree` | `sibling` |
@@ -170,7 +170,7 @@ knows what Maven is.
 Same values as the defaults; declaring them makes the policy visible in the
 one file a reviewer reads.
 
-**The tree**, one container of two:
+**The tree**, one container of three:
 
 ```
 tests/fixtures/depth2/
@@ -181,6 +181,7 @@ tests/fixtures/depth2/
   archive/basics/01-getting-started/raw/java/unit-02/lesson-1.json
   archive/basics/01-getting-started/raw/java/unit-03/lesson-1.json
   archive/advanced/02-going-further/...
+  archive/advanced/03-putting-it-together/...
 ```
 
 **The address is two directories deep** because `levels` has two entries, and
