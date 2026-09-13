@@ -13,12 +13,18 @@ from __future__ import annotations
 import ast
 from pathlib import Path
 
+import pytest
+
 from studyforge.validate import source
 from studyforge.validate.source import classification, completeness, enumeration, membership
 from tests.support import assert_package_contract, repository_root
 
 #: The package on disk, as the guard below walks it.
 PACKAGE = "src/studyforge/validate/source"
+
+
+#: ⭐ `W280`: the survey is the importer the surface guard below was written over.
+SURVEY = "src/studyforge/skills/reconnaissance/inventory.py"
 
 
 def modules() -> dict[str, str]:
@@ -137,3 +143,59 @@ def test_the_guard_above_would_notice(tmp_path):
         if isinstance(node, ast.ImportFrom) and node.module and "markdown" in node.module
     }
     assert imported == {"studyforge.archive.markdown"}
+
+
+def past_the_surface(text: str) -> set[str]:
+    """Each import in `text` past this package's `__all__`: a submodule, or a name off it."""
+    package = source.__name__
+    past: set[str] = set()
+    for node in ast.walk(ast.parse(text)):
+        if isinstance(node, ast.Import):
+            past |= {alias.name for alias in node.names if alias.name.startswith(f"{package}.")}
+        elif isinstance(node, ast.ImportFrom) and node.module and node.module.startswith(package):
+            if node.module != package:
+                past.add(node.module)
+            else:
+                past |= {
+                    f"{package}.{alias.name}"
+                    for alias in node.names
+                    if alias.name not in source.__all__
+                }
+    return past
+
+
+def test_W280_no_module_outside_the_package_imports_past_its_surface():
+    # ⛔ `W280` clause 2: a consumer under `src/` reads `__all__`, never a submodule. ⚠️ Tests
+    # are not swept: they name a submodule to monkeypatch a private, and say so.
+    root = repository_root()
+    found = {
+        path.relative_to(root).as_posix(): path.read_text(encoding="utf-8")
+        for path in sorted((root / "src").rglob("*.py"))
+        if not path.relative_to(root).as_posix().startswith(f"{PACKAGE}/")
+    }
+    importers = {where for where, text in found.items() if source.__name__ in text}
+    # ⭐ Inhabitation first: a sweep that found no importer would pass on nothing.
+    assert SURVEY in importers, sorted(importers)
+    assert {where: past_the_surface(found[where]) for where in importers} == dict.fromkeys(
+        importers, set()
+    )
+
+
+@pytest.mark.parametrize(
+    "planted",
+    [
+        "from studyforge.validate.source.classification import REPOSITORY_STORE\n",
+        "from studyforge.validate.source.enumeration import source_files\n",
+        "import studyforge.validate.source.enumeration\n",
+        "from studyforge.validate.source import enumeration\n",
+    ],
+)
+def test_W280_a_planted_import_past_all_is_named(planted):
+    # ⛔ `W280` clause 3, run negatively: the same expression that reads the tree clean names these.
+    assert past_the_surface(planted), planted
+
+
+def test_W280_the_store_name_imported_through_the_surface_reads_clean():
+    # ⭐ The control for the plants above: the import the survey now makes.
+    assert "REPOSITORY_STORE" in source.__all__
+    assert past_the_surface("from studyforge.validate.source import REPOSITORY_STORE\n") == set()

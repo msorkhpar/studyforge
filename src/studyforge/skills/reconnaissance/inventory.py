@@ -58,10 +58,12 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
-from studyforge.validate.source import RULE_NESTED_REPOSITORY, SKIP_DIRS, source_files
-
-# ⚠️ Not on `studyforge.validate.source`'s surface, so imported from its module (`W272/1`).
-from studyforge.validate.source.classification import REPOSITORY_STORE
+from studyforge.validate.source import (
+    REPOSITORY_STORE,
+    RULE_NESTED_REPOSITORY,
+    SKIP_DIRS,
+    source_files,
+)
 
 #: Suffixes this skill reads as teaching material. ⛔ Closed, and widened by a
 #: decision rather than by a file appearing.

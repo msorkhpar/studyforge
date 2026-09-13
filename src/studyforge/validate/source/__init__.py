@@ -72,6 +72,7 @@ from studyforge.validate.source.completeness import (
 )
 from studyforge.validate.source.enumeration import (
     IGNORE_TIMEOUT,
+    REPOSITORY_STORE,
     SKIP_DIRS,
     Scan,
     repository_ignores,
@@ -94,10 +95,12 @@ CHECKS = (check_archive_members, check_unclassified, check_completeness)
 #: contract failed. ⚠️ The rule ids are on it deliberately: a script that
 #: filters a report by rule needs the constant rather than the string, and
 #: that is what stopped `contested` and `ignore-declaration` being folded into
-#: `unclassified` in the first place.
+#: `unclassified` in the first place. ⭐ `REPOSITORY_STORE` is on it for the survey,
+#: which names the store `validate` refuses by the same name (`W280`).
 __all__ = [
     "CHECKS",
     "IGNORE_TIMEOUT",
+    "REPOSITORY_STORE",
     "RULE_ARCHIVE_STRAY",
     "RULE_CONTESTED",
     "RULE_IGNORE_DECLARATION",
