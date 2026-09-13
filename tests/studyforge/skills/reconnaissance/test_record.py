@@ -8,7 +8,12 @@ reading the document is a record (§6).
 
 from __future__ import annotations
 
-from studyforge.skills.reconnaissance import find, take
+import json
+
+import pytest
+
+from studyforge.corpus.manifest import Classification, parse
+from studyforge.skills.reconnaissance import find, survey, take
 from studyforge.skills.reconnaissance.record import observe
 from studyforge.skills.reconnaissance.report import Uncertainty
 from tests.studyforge.skills.reconnaissance import sources
@@ -198,3 +203,72 @@ def test_emphasis_inside_a_title_is_left_alone(tmp_path):
     (root / "README.md").write_text("# X\n\n1. [**Basic** setup](src/1.md)\n", encoding="utf-8")
     record, _ = read(root)
     assert record.entries[0].title == "**Basic** setup"
+
+
+# --------------------------------------------------------------------------
+# ⛔ a heading-form entry yields the ordinal its bullet-form twin yields (W252)
+# --------------------------------------------------------------------------
+
+
+def entries_of(root):
+    record, _ = read(root)
+    return [(e.target, e.title, e.ordinal, e.group, e.section) for e in record.entries]
+
+
+def test_a_heading_form_entry_yields_the_ordinal_its_bullet_form_twin_yields(tmp_path):
+    # ⚠️ W250/2, measured: a corpus's two heading-form entries read no ordinal.
+    headed = entries_of(sources.heading_entries(tmp_path / "h"))
+    assert headed == entries_of(sources.heading_entries(tmp_path / "b", heading=False))
+    assert [(entry[0], entry[2]) for entry in headed][2:4] == [("src/3.md", "3"), ("src/4.md", "4")]
+    assert [entry[3] for entry in headed] == ["A Numbered Course"] * 4 + ["Server"] * 2
+
+
+#: `(entry text, the ordinal it yields)`, written after a bullet and after hashes.
+TWINS = [
+    ("15. [T](src/1.md)", "15"),
+    ("1.5. [T](src/1.md)", "1.5"),
+    ("15 [T](src/1.md)", "15"),
+    ("15. [**T**](src/1.md) ##", "15"),
+    ("[15. T](src/1.md)", "15"),
+    ("[T](src/1.md)", None),
+    ("2024 notes on [T](src/1.md)", None),
+]
+
+
+@pytest.mark.parametrize("hashes", ["#", "###", "######"])
+@pytest.mark.parametrize(("text", "ordinal"), TWINS)
+def test_a_heading_yields_what_a_bullet_yields_and_nothing_more(tmp_path, hashes, text, ordinal):
+    # ⛔ Both ways: an ordinal where the bullet has one, and none where it has none.
+    root = sources.marker_ordinals(tmp_path / "c")
+    yielded = []
+    for marker in ("-", hashes):
+        (root / "README.md").write_text(f"Words.\n\n{marker} {text}\n", encoding="utf-8")
+        record, _ = read(root)
+        yielded.append((record.entries[0].ordinal, record.entries[0].title))
+    assert yielded == [(ordinal, "T"), (ordinal, "T")]
+
+
+def test_a_numbered_heading_that_links_a_file_of_regions_is_still_a_container(tmp_path):
+    # ⛔ W250's reading holds when the label carries an ordinal: its units are
+    # still the regions, and each keeps its own ordinal, never the label's.
+    root = sources.linked_regions(tmp_path / "c")
+    readme = root / "README.md"
+    text = readme.read_text(encoding="utf-8")
+    assert text.count("# [Test cases]") == 1
+    readme.write_text(text.replace("# [Test cases]", "# 4. [Test cases]"), encoding="utf-8")
+    record, _ = read(root)
+    assert record.groups == ["Fundamentals", "Server", "Test cases"]
+    assert [found.path for found in record.containers] == ["TestCases.md"]
+    assert [(e.ordinal, e.section) for e in record.entries if e.target == "TestCases.md"] == [
+        ("1", "1. Card issuance"),
+        ("2", "2. Accounts"),
+        ("3", "3. Payments"),
+    ]
+
+
+def test_sf02_accepts_the_draft_of_a_record_with_heading_form_entries(tmp_path):
+    headed = survey(sources.heading_entries(tmp_path / "h")).proposal
+    assert headed == survey(sources.heading_entries(tmp_path / "b", heading=False)).proposal
+    content = parse(json.dumps(sources.settled(headed))).content
+    assert content.classify("src/3.md") is Classification.INCLUDED
+    assert content.classify("README.md") is not Classification.INCLUDED

@@ -148,6 +148,19 @@ def test_the_archive_is_never_swept_as_source_material(tmp_path):
     assert scanned(root) == {"src/one.md"}
 
 
+def test_a_sources_own_nested_archive_directory_is_material_and_never_skipped(tmp_path):
+    # ⛔ `W241/2`: the scan skipped ANY `archive/`, so a source keeping its own
+    # lost it from every reading. Only the root beside `corpus.json` is skipped.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    (root / "src" / ARCHIVE_DIR).mkdir()
+    (root / "src" / ARCHIVE_DIR / "old.md").write_text("# Old\n", encoding="utf-8")
+    assert scanned(root) == {"src/one.md", f"src/{ARCHIVE_DIR}/old.md"}
+    report = validate(root)
+    assert f"src/{ARCHIVE_DIR}/old.md" in {
+        f.where for f in report.findings if f.rule == "unclassified"
+    }
+
+
 def test_the_manifest_itself_is_not_material(tmp_path):
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     assert "corpus.json" not in {p.name for p in source_files(root).files}
@@ -163,13 +176,15 @@ def test_the_generated_root_and_the_vcs_directory_are_skipped():
 # --------------------------------------------------------------------------
 
 
-def test_the_framework_names_only_its_own_three_directories():
+def test_the_framework_names_only_its_own_two_directories():
     # ⛔ **`SKIP_DIRS` was R1 in miniature.** Two of its five names were the
     # framework knowing about two ecosystems it was told nothing about, and a
     # list of other people's build directories is wrong for the first corpus
-    # that uses a third. These three are the framework's own: `archive` is
-    # R2's, `.studyforge` is this tool's, `.git` holds the declaration.
-    assert SKIP_DIRS == (ARCHIVE_DIR, ".git", ".studyforge")
+    # that uses a third. These two are the framework's own: `.studyforge` is
+    # this tool's, `.git` holds the declaration. ⚠️ The archive root left the
+    # list (`W248`): it is skipped at the corpus root only.
+    assert SKIP_DIRS == (".git", ".studyforge")
+    assert ARCHIVE_DIR not in SKIP_DIRS
     assert "node_modules" not in SKIP_DIRS
     assert "__pycache__" not in SKIP_DIRS
 

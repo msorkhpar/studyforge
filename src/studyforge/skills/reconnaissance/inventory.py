@@ -163,7 +163,7 @@ def observe(inventory: Inventory) -> Iterator[Observation | Uncertainty]:
                 f"{list(MATERIAL_SUFFIXES)}, so this skill did not read them"
             ),
             settles_it=(
-                "name them in the manifest's 'content.exclude' if they are not "
-                "material, or say which suffix should be read as material"
+                "the draft proposes a 'content.not_material' glob for each, with its "
+                "reason open; or say which suffix should be read as material"
             ),
         )

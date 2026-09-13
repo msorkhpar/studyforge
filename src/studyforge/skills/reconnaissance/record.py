@@ -256,11 +256,18 @@ def _split(line: str, title: str) -> tuple[str | None, str]:
     drops the entries written in the others, and ⛔ **all three occur in real
     material** — the third in every measured corpus. `SKILL.md`, appendix
     **A2**, holds the counts.
+
+    ⛔ **A heading's hashes stand where a bullet does** (W252): `## 15. [Title](x)`
+    yields exactly what `- 15. [Title](x)` yields, and a heading with no ordinal
+    yields none. ⚠️ Decided by `HEADING`, the test `grouping.shape` names a
+    heading-form entry by.
     """
     inside = ORDINAL.match(title.strip())
     if inside is not None:
         return inside.group("number"), _plain(inside.group("rest"))
-    outside = ORDINAL.match(BULLET_MARKER.sub("", line).strip())
+    heading = HEADING.match(line)
+    bare = heading.group("text") if heading is not None else BULLET_MARKER.sub("", line)
+    outside = ORDINAL.match(bare.strip())
     if outside is not None and outside.group("rest").lstrip().startswith("["):
         return outside.group("number"), _plain(title)
     return None, _plain(title)

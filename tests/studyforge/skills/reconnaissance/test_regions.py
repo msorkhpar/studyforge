@@ -91,9 +91,11 @@ def test_a_heading_linking_a_file_of_regions_is_a_container_not_a_unit(tmp_path)
 def test_a_linked_heading_inside_a_run_of_entries_stays_a_unit(tmp_path):
     # ⚠️ Its file has two subsections, so the shape alone would cut it.
     record = record_of(sources.linked_regions(tmp_path / "c"))
-    # ⚠️ Its ordinal is not asserted: a heading-form entry reads none (W250/2).
-    heading = [(e.target, e.group, e.section) for e in record.entries if e.target == "src/3.md"]
-    assert heading == [("src/3.md", "Fundamentals", None)]
+    # ⭐ A heading-form entry reads the ordinal its bullet twin reads (W252).
+    heading = [
+        (e.target, e.ordinal, e.group, e.section) for e in record.entries if e.target == "src/3.md"
+    ]
+    assert heading == [("src/3.md", "3", "Fundamentals", None)]
 
 
 def test_a_linked_heading_that_opens_entries_stays_an_entry(tmp_path):
@@ -126,7 +128,7 @@ def test_the_survey_proposes_the_regions_file_as_a_container(tmp_path):
 
 def test_sf02_accepts_the_draft_and_includes_the_regions_file_but_not_the_record(tmp_path):
     root = sources.linked_regions(tmp_path / "c")
-    content = parse(json.dumps(survey(root).proposal)).content
+    content = parse(json.dumps(sources.settled(survey(root).proposal))).content
     assert content.classify("TestCases.md") is Classification.INCLUDED
     assert content.classify("README.md") is not Classification.INCLUDED
 
@@ -144,4 +146,8 @@ def test_a_heading_that_links_nothing_is_unchanged(tmp_path):
     assert shaped(record) == shaped(record_of(control))
     assert record.groups == ["Fundamentals", "Server"] == record_of(control).groups
     assert record.containers == [] and record.uncut == []
-    assert survey(control).proposal["content"]["exclude"] == ["TestCases.md"]
+    # ⚠️ W249: an unlinked file no include reads is proposed `not_material`, not
+    # excluded; it is still not read, which is what this control holds.
+    content = survey(control).proposal["content"]
+    assert content["exclude"] == []
+    assert {"glob": "TestCases.md", "why": None} in content["not_material"]

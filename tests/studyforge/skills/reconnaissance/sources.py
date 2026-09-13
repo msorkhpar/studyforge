@@ -99,6 +99,58 @@ def aggregated(root: Path) -> Path:
     return write(root, files)
 
 
+def furnished(root: Path) -> Path:
+    """A recorded corpus with root furniture and notes beside one aggregate.
+
+    ⭐ **W249's shape, at the smallest size that sets it.** A licence, two git
+    declarations, a notes file at the root, a directory of notes and a hidden
+    file among the units: none is read by an include. The aggregate is.
+    """
+    return write(
+        aggregated(root),
+        {
+            "LICENSE": "Placeholder licence text.\n",
+            ".gitignore": "*.tmp\n",
+            ".gitattributes": "* text=auto\n",
+            "NOTES.md": "# Notes for whoever works here\n",
+            "notes/two.md": "# More about the material\n",
+            "notes/about/one.md": "# About the material\n",
+            "src/.keep": "",
+        },
+    )
+
+
+#: The globs `furnished` must draft. ⚠️ `src/.keep` stays exact: `src/` holds units.
+FURNISHED_GLOBS = [
+    ".gitattributes",
+    ".gitignore",
+    "LICENSE",
+    "NOTES.md",
+    "README.md",
+    "notes/**",
+    "src/.keep",
+]
+
+#: A reason as a PERSON would give it. ⛔ Test-owned: the skill never writes one.
+REASON = "a reason a person gave for this path, written by the test"
+
+
+def reasons(proposal: dict) -> dict[str, str]:
+    """The reasons mapping a person hands `promote`: one per excluded path and per glob."""
+    content = proposal["content"]
+    keys = [*content.get("exclude", []), *(e["glob"] for e in content.get("not_material", []))]
+    return dict.fromkeys(keys, REASON)
+
+
+def settled(proposal: dict) -> dict:
+    """The draft with every open reason filled as a person would, for SF-02 to judge."""
+    content = dict(proposal["content"])
+    content["exclude"] = [{"path": where, "why": REASON} for where in content.get("exclude", [])]
+    if "not_material" in content:
+        content["not_material"] = [{**e, "why": REASON} for e in content["not_material"]]
+    return {**proposal, "content": content}
+
+
 def copied_heading_tree(root: Path) -> Path:
     """A curriculum whose second half reproduces another document's heading tree.
 
@@ -150,6 +202,25 @@ def marker_ordinals(root: Path) -> Path:
     files = {f"src/{n}.md": unit(f"Chapter {n}") for n in (1, 2, 3)}
     files["README.md"] = "# Marker Ordinals\n\n" + "\n".join(
         f"{n}. [**Chapter {n}**](src/{n}.md)" for n in (1, 2, 3)
+    )
+    return write(root, files)
+
+
+def heading_entries(root: Path, heading: bool = True) -> Path:
+    """Marker-ordinal entries with two minority entries written as `## N. [Title](x)`.
+
+    ⭐ **W250/2's finding, at the smallest size that sets it.** Most entries
+    carry the ordinal as the list marker; two carry it outside the link after a
+    heading's hashes, under heading group labels. ⚠️ `heading=False` is the twin:
+    the same two entries after a bullet, the form whose ordinal was always read.
+    """
+    files = {f"src/{n}.md": unit(f"Chapter {n}") for n in (1, 2, 3, 4)}
+    files.update({f"src/s{n}.md": unit(f"Server {n}") for n in (1, 2)})
+    marker = "##" if heading else "-"
+    files["README.md"] = (
+        "# A Numbered Course\n\n1. [**Chapter 1**](src/1.md)\n\n2. [Chapter 2](src/2.md)\n\n"
+        f"{marker} 3. [**Chapter 3**](src/3.md)\n\n{marker} 4. [Chapter 4](src/4.md)\n\n"
+        "# Server\n\n1. [Server 1](src/s1.md)\n2. [Server 2](src/s2.md)\n"
     )
     return write(root, files)
 

@@ -68,6 +68,10 @@ only a person knows why.
 still has none, at once.** A corpus that excludes nothing needs no mapping and
 onboards unattended.
 
+⭐ **The same mapping settles a proposed `not_material` glob** (`W249`).
+Reconnaissance drafts each with `"why": null`; `promote` pairs it by glob and
+names every glob still open in one refusal. A reason already written is kept.
+
 ### 2. Ask what will be written, before anything is on disk
 
 ```

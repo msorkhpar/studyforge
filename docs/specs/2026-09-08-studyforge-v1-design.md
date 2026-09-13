@@ -904,6 +904,12 @@ available*: a clone that carries its own audio speaks with no synthesis service,
 no GPU and no network, and that is what R8 is for. A corpus that ignores its
 media asks every reader to stand up a service before they can hear anything.
 
+⭐ **A build's output is committed too: its pages, the root index, the asset bundle and
+`site.json`** (PO round 78, `W242/1`). The same argument holds: a clone that ignores its pages
+has no reading floor. ⛔ **So the only generated ignore rules are the media policy's, written
+inside the generated directory they are about and never in the root ignore file (R3).**
+⚠️ This dates Ruling 91's first half, which declared `sibling` output in `.gitignore`.
+
 ⛔ **The default has a ceiling, and crossing it is a decision, not an accident.**
 Narration is the largest thing this framework generates, and a corpus can
 outgrow what a git remote will take: CodeSignal reached **11.42 GiB of pack
@@ -953,6 +959,8 @@ corpus.json                                   the manifest (§4)
     raw/<variant>/unit-NN/lesson-M.json
     raw/<variant>/unit-NN/practice-M.json     optional
 ```
+
+⛔ **A file under the archive root that is not a member of this layout is refused by name (`archive-stray`), never skipped** (`W248`, amended PO round 79).
 
 ```json
 // container.json — generalises CodeSignal's course-map.json
