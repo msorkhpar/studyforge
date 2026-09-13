@@ -176,6 +176,28 @@ def test_an_unknown_extension_is_opaque_bytes(site):
     assert get(site, "/data.bin").header("Content-Type") == DEFAULT_CONTENT_TYPE
 
 
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/.studyforge/progress/progress.json",
+        "/.studyforge/%70rogress/progress.json",
+        "/.studyforge//progress/progress.json",
+        "/.studyforge/progress/",
+        "/.studyforge/assets/linked.json",
+    ],
+)
+def test_the_readers_progress_record_is_never_served_by_any_spelling(site, path):
+    record = site / ".studyforge" / "progress" / "progress.json"
+    record.parent.mkdir()
+    record.write_text('{"progress": 1}\n', encoding="utf-8")
+    (record.parent / "index.html").write_text("<p>x</p>\n", encoding="utf-8")
+    (site / ".studyforge" / "assets" / "linked.json").symlink_to(record)
+    request = Request("GET", path, {})
+    assert resolve(site, path) is None
+    assert serve(site, request, path).status == 404
+    assert route(site, nothing_private, request, path.lstrip("/")).status == 404
+
+
 def test_a_private_file_is_404_and_the_default_names_nothing_private(site):
     clip = (site / ".studyforge" / "clip.mp3").resolve()
     request = Request("GET", "/api/v1/assets/.studyforge/clip.mp3", {})

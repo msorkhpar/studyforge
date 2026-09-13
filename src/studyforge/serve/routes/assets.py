@@ -92,6 +92,13 @@ DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
 Private = Callable[[Path], bool]
 
+#: ⛔ **The reader's progress record, which is never content** (`SF-21/2`). It sits
+#: at `<generated root>/progress/` beside the pages a `tree` profile writes, so the
+#: static mount would otherwise serve it. Refused BY PATH, on the resolved file, so
+#: a symlink into it is refused too; the state namespace (`SF-19b`) is where the
+#: record is served. ⚠️ A hard link to it elsewhere under the root is not seen.
+PROGRESS_PREFIX = (GENERATED_ROOT, "progress")
+
 
 def nothing_private(path: Path) -> bool:
     """Treat no file under the root as private: the default until a store names one."""
@@ -102,7 +109,7 @@ def resolve(root: Path, url_path: str) -> Path | None:
     """Return the regular file under `root` that `url_path` names, or `None`."""
     try:
         base = Path(root).resolve(strict=True)
-    except (OSError, RuntimeError):
+    except OSError, RuntimeError:
         return None
     if not url_path.startswith("/") or len(url_path) > MAX_PATH or "\x00" in url_path:
         return None
@@ -124,9 +131,11 @@ def resolve(root: Path, url_path: str) -> Path | None:
         target = target / INDEX_FILENAME
     try:
         real = target.resolve(strict=True)
-    except (OSError, RuntimeError):
+    except OSError, RuntimeError:
         return None
     if base not in real.parents or not real.is_file():
+        return None
+    if real.relative_to(base).parts[: len(PROGRESS_PREFIX)] == PROGRESS_PREFIX:
         return None
     return real
 

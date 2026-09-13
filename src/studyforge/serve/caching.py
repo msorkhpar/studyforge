@@ -41,17 +41,17 @@ WHOLE = "whole"
 #: `parse_range`'s answer when the request must be refused with `416`.
 UNSATISFIABLE = "unsatisfiable"
 
-#: Hex digits of the digest kept in a strong tag. 128 bits: a collision between
-#: two versions of one document is not a practical event.
-ETAG_HEX = 32
-
 #: The range unit this server understands.
 BYTES = "bytes"
 
 
 def strong_etag(body: bytes) -> str:
-    """Return a quoted content hash: the same bytes give the same tag everywhere."""
-    return f'"{hashlib.sha256(body).hexdigest()[:ETAG_HEX]}"'
+    """Return a quoted content hash: the same bytes give the same tag everywhere.
+
+    ⛔ The whole digest, never a slice: exactly one framework module may truncate a
+    digest into a short name (`narrate.speakable.naming`), and a validator is not a name.
+    """
+    return f'"{hashlib.sha256(body).hexdigest()}"'
 
 
 def weak_etag(stat: os.stat_result) -> str:

@@ -103,9 +103,7 @@ class CorpusContent:
         if source is None:
             return None
         try:
-            document = build_unit(
-                source.directory, declared_practices=source.declared_practices
-            )
+            document = build_unit(source.directory, declared_practices=source.declared_practices)
         except NoMaterial:
             return None
         return render_unit(document)
@@ -145,7 +143,7 @@ def _document(request: Request, resource: str, extra: dict, text: str, read) -> 
         document = read(text)
     except PersonalDataLeak:
         return error(500, GATED)
-    except (ContentError, ValueError):
+    except ContentError, ValueError:
         return error(422, UNRECOGNISED)
     body = envelope({"resource": resource, **extra, "document": document})
     etag = strong_etag(body)
