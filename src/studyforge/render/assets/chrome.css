@@ -7,7 +7,8 @@
    NOT here: they belong to the tasks that render them, and each adds its own
    part beside this one." ⛔ This is that part, for the regions a page already
    emits — the masthead, the in-page outline, the between-pages bar, the
-   practice panel, a container's unit listing and the root index's tree. The
+   practice panel, a container's unit listing, the root index's tree and a unit
+   page's trail. The
    narration player and the progress controls stay out, because their markup is
    not here yet and a rule for an element nobody emits is the same defect one
    layer along (SF-11's finding 3).
@@ -220,6 +221,38 @@ body > section[data-section="practices-pending"] p {
   margin: 0;
   font-size: 0.92rem;
   color: var(--fg-soft);
+}
+
+/* --- region 9: the trail (SF-15) ---------------------------------------- */
+
+/* ⛔ Authored since `SF-15` and painted by nothing, so a trail shipped as a
+   numbered `<ol>` — and the census could not say so, because no golden emits
+   it (`SF-15/3`, `W105`). It reads as one quiet line under the masthead: the UI
+   face, a smaller size, no list markers. The page the reader is on is told
+   apart by WEIGHT as well as colour, because `aria-current` is the statement
+   and this is the reinforcement. ⚠️ The `›` between crumbs is markup
+   (`crumb-separator.html`), so a page with no stylesheet still reads as a
+   trail and nothing here draws one. */
+
+nav[aria-label="Breadcrumb"] {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+nav[aria-label="Breadcrumb"] ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav[aria-label="Breadcrumb"] li[aria-current="page"] {
+  font-weight: 600;
+  color: var(--fg);
 }
 
 /* --- regions 5 and 6: the two lists that ARE their pages --------------- */
