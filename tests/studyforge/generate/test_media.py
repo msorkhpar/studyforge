@@ -14,6 +14,7 @@ this pass has, and a branch no fixture reaches is a branch no plant can kill.
 
 from __future__ import annotations
 
+import hashlib
 import json
 from pathlib import Path, PurePosixPath
 
@@ -88,29 +89,49 @@ def built(tmp_path, root: Path):
 # --------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("name", BOTH)
-def test_every_unit_the_corpus_declares_gets_one_directory_per_media_kind(tmp_path, name):
-    written, out = built(tmp_path, FIXTURES / name)
-    corpus = read_corpus(FIXTURES / name)
+#: ⛔ W268: the depth1 figure's digest, measured on the output of `e556179`,
+#: before this row. A unit WITH media keeps its directory and its bytes.
+DIAGRAM = ".studyforge/depth-one/units/unit-02/images/diagram.svg"
+DIAGRAM_SHA256 = "ae70ec31fcb3903fb48c24c2db8d19d2097533af10e32bd41129665d8d9ac552"
 
+
+def declared_directories(corpus):
+    """Every media directory the corpus declares, unit by unit."""
     for _, container in corpus.maps:
         for unit in container.units:
             at = corpus.profile.unit(
                 container.address, unit.n, unit.title, origin=unit.origin, label=unit.label
             )
             assert len(at.directories) == len(UNIT_MEDIA_DIRNAMES)
-            for directory in at.directories:
-                assert (out / directory).is_dir(), f"{directory} was declared"
+            yield from at.directories
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_a_unit_gets_a_media_directory_only_for_a_kind_it_has_files_of(tmp_path, name):
+    # ⛔ W268, both ways over the population the plan declares: a directory a
+    # copy filled exists, and one nothing filled was never minted.
+    written, out = built(tmp_path, FIXTURES / name)
+    filled = {path.parent for path in written.media}
+    declared = list(declared_directories(read_corpus(FIXTURES / name)))
+
+    assert filled <= set(declared), "a copy landed outside every declared directory"
+    for directory in declared:
+        assert (out / directory).is_dir() == (directory in filled), directory
     assert written.refused == ()
 
 
-def test_a_unit_the_corpus_declares_and_nobody_built_still_gets_its_directories(tmp_path):
-    """⛔ The population is `studyforge plan`'s and `validate`'s, not *"what I found"*.
+def test_the_media_bearing_unit_keeps_its_directory_and_its_bytes(tmp_path):
+    written, out = built(tmp_path, FIXTURES / "depth1")
 
-    ⭐ Neither shipped fixture has a declared, unbuilt unit, so the two
-    populations agree on both of them and the distinction is invisible there —
-    the mechanism is removed here to make it visible, which is the same device
-    `with_a_unit_missing` was landed for.
+    assert [path.as_posix() for path in written.media] == [DIAGRAM]
+    assert hashlib.sha256((out / DIAGRAM).read_bytes()).hexdigest() == DIAGRAM_SHA256
+
+
+def test_a_unit_the_corpus_declares_and_nobody_built_gets_no_directories(tmp_path):
+    """⛔ W268: a declared unit with no material has no file to copy, so nothing is minted.
+
+    ⭐ It was the case `with_a_unit_missing` exposed for the old rule, when every
+    declared unit got four; it now shows the opposite.
     """
     root = with_a_unit_missing(tmp_path / "in", "depth1", "archive/depth-one/raw/prose/unit-02")
     corpus = read_corpus(root)
@@ -119,8 +140,36 @@ def test_a_unit_the_corpus_declares_and_nobody_built_still_gets_its_directories(
     _, out = built(tmp_path, root)
 
     at = corpus.profile.unit(corpus.maps[0][1].address, 2, "Reading a small graph")
-    for directory in at.directories:
-        assert (out / directory).is_dir()
+    assert [directory for directory in at.directories if (out / directory).exists()] == []
+
+
+def test_a_rebuild_over_an_old_output_removes_no_directory_already_there(tmp_path):
+    # ⛔ R3: the empty directories an earlier build minted stay exactly as they are.
+    out = an_output(tmp_path)
+    corpus = read_corpus(FIXTURES / "depth1")
+    declared = list(declared_directories(corpus))
+    for directory in declared:
+        (out / directory).mkdir(parents=True, exist_ok=True)
+
+    written = unit_media(corpus, out)
+
+    assert all((out / directory).is_dir() for directory in declared)
+    assert written.refused == ()
+    assert hashlib.sha256((out / DIAGRAM).read_bytes()).hexdigest() == DIAGRAM_SHA256
+
+
+def test_a_readers_file_where_a_filled_directory_belongs_is_named_and_nothing_copied(tmp_path):
+    out = an_output(tmp_path)
+    corpus = read_corpus(FIXTURES / "depth1")
+    at = corpus.profile.unit(corpus.maps[0][1].address, 2, "Reading a small graph")
+    (out / at.images).parent.mkdir(parents=True, exist_ok=True)
+    (out / at.images).write_bytes(b"a reader's own file")
+
+    written = unit_media(corpus, out)
+
+    assert at.images in written.refused
+    assert written.media == ()
+    assert (out / at.images).read_bytes() == b"a reader's own file"
 
 
 def test_a_readers_own_file_where_a_media_directory_belongs_is_named_not_crashed_into(tmp_path):

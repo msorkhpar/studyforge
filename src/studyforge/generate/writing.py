@@ -2,8 +2,8 @@ r"""The one place a build puts bytes on disk, and the one place it refuses to.
 
 **What it does.** Holds `Written` — what a pass put on disk and what it left
 alone — and the three calls every pass writes through: `place` for bytes a pass
-rendered, `copy` for a file it brings in from the archive, and `mint` for a
-directory the plan declares.
+rendered, `copy` for a file it brings in from the archive, `mint` for a directory the
+plan declares and a copy fills, and `stand` for one it declares and nothing fills.
 
 **How you use it.** `place(out, at, body, written, refused, replaced,
 footprint=…)`; `copy(out, at, source, written, refused, replaced,
@@ -265,11 +265,23 @@ def mint(out: Path, at: PurePosixPath, refused: list[PurePosixPath]) -> None:
     directory — so one that is already there is simply already there, and only a
     *file* sitting where a directory belongs is a refusal (R3).
     """
+    if stand(out, at, refused):
+        _under(out, at).mkdir(parents=True, exist_ok=True)
+
+
+def stand(out: Path, at: PurePosixPath, refused: list[PurePosixPath]) -> bool:
+    """Name a file standing where the directory `at` belongs, and create nothing.
+
+    ⭐ **`W268`: a directory nothing will be copied into is never minted**, since
+    git cannot track an empty one and a built checkout would differ from its
+    clone. ⛔ The R3 refusal is still owed there, so it is asked here. Returns
+    whether the way is clear. ⚠️ A directory already on disk is never removed.
+    """
     directory = _under(out, at)
     if directory.exists() and not directory.is_dir():
         refused.append(at)
-        return
-    directory.mkdir(parents=True, exist_ok=True)
+        return False
+    return True
 
 
 def same_root(out: Path, root: Path) -> bool:
