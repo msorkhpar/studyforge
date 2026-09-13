@@ -13,15 +13,20 @@ empty too.
 
 from __future__ import annotations
 
+import json
+import re
 import shutil
+from pathlib import Path
 
 import pytest
 
+from studyforge.cli.narrate.prune import prune_corpus
 from studyforge.cli.narrate.stage import narrate_corpus
-from studyforge.generate import BuildError
-from studyforge.generate.declarations import read_corpus
+from studyforge.generate import BuildError, write_site
+from studyforge.generate.declarations import read_corpus, unit_location
 from studyforge.narrate.client import NarrateClient
-from studyforge.narrate.synth import StateError, state_file
+from studyforge.narrate.synth import StateError, audio_dir, read_state, state_file
+from studyforge.render.page import AUDIO_ATTRIBUTE
 from tests.studyforge.cli.narrate.plant import narrated, plant_dead_entry, reword
 from tests.studyforge.cli.narrate.service import (
     BASE,
@@ -240,3 +245,93 @@ def test_a_walk_that_missed_a_declared_unit_names_it_and_deletes_nothing(tmp_pat
     assert done.unwalked == (missing.key,)
     assert done.dead, "every entry of the unit it missed looks dead to this walk"
     assert files(root) == before
+
+
+# --------------------------------------------------------------------------
+# ⛔ W222: ONE derivation of a unit's audio directory, its label included
+# --------------------------------------------------------------------------
+
+LABEL = "lab"
+HREF = re.compile(AUDIO_ATTRIBUTE + r'="([^"]*)"')
+
+
+def label_first_unit(root: Path) -> None:
+    """Give the sibling fixture's first declared unit a label, which moves its stem."""
+    path = sorted((root / "archive").rglob("container.json"))[0]
+    record = json.loads(path.read_text("utf-8"))
+    record["units"][0]["label"] = LABEL
+    path.write_text(json.dumps(record), "utf-8")
+
+
+def moved(root: Path) -> tuple[Path, Path, Path]:
+    """The labelled unit's audio directory without and with its label, and its page."""
+    corpus = read_corpus(root)
+    source = next(item for item in corpus.units if item.label == LABEL)
+    at = {
+        label: unit_location(
+            corpus,
+            source.container.address,
+            source.ordinal,
+            source.title,
+            origin=source.origin,
+            label=label,
+        )
+        for label in (None, LABEL)
+    }
+    assert at[None].audio != at[LABEL].audio, "the label moved nothing; this would be vacuous"
+    return audio_dir(root, at[None]), audio_dir(root, at[LABEL]), root / Path(str(at[LABEL].page))
+
+
+def test_a_labelled_sibling_units_page_links_the_clips_narrate_placed(tmp_path):
+    root = a_corpus(tmp_path, "depth2")
+    label_first_unit(root)
+    unlabelled, labelled, page = moved(root)
+
+    run(root, FakeService())
+
+    assert sorted(labelled.glob(f"*.{FMT}")) and not unlabelled.exists()
+    assert write_site(root, root).refused == ()
+    hrefs = {
+        path: [href for href in HREF.findall(path.read_text("utf-8")) if href]
+        for path in sorted(root.rglob("*.unit.html"))
+    }
+    assert hrefs.get(page), "the labelled unit's page plays nothing"
+    for path, found in hrefs.items():
+        for href in found:
+            assert (path.parent / href).is_file(), f"{path.name} links a clip it cannot reach"
+
+
+def test_clips_left_in_a_units_old_directory_are_superseded_and_only_a_prune_deletes_them(
+    tmp_path,
+):
+    root = a_corpus(tmp_path, "depth2")
+    run(root, FakeService())
+    label_first_unit(root)
+    old, new, _ = moved(root)
+    stranded = sorted(old.glob(f"*.{FMT}"))
+    assert stranded, "nothing was narrated in the old directory; this would be vacuous"
+    record = state_file(root).relative_to(root).as_posix()
+    before = files(root)
+    service = FakeService()
+
+    run(root, service)
+
+    after = files(root)
+    assert {path: after.get(path) for path in before if path != record} == {
+        path: value for path, value in before.items() if path != record
+    }, "narrate deleted or rewrote a file other than the record"
+    assert sorted(service.submitted) == clip_ids(stranded), "an unlabelled unit was re-requested"
+    superseded = {
+        root / item.where / item.filename
+        for clip in read_state(state_file(root)).clips.values()
+        for item in clip.superseded
+    }
+    assert superseded == set(stranded), "a clip in the old directory is orphaned"
+    assert [path.name for path in sorted(new.glob(f"*.{FMT}"))] == [p.name for p in stranded]
+
+    pruned = prune_corpus(root)
+
+    assert sorted(pruned.deleted) == stranded
+    assert not any(path.exists() for path in stranded)
+    assert all((new / path.name).is_file() for path in stranded)
+    assert not any(clip.superseded for clip in read_state(state_file(root)).clips.values())

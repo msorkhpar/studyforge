@@ -182,8 +182,8 @@ def playable_of_units(
     ⭐ The lower door, for a caller that has already walked the document. Most
     callers want `playable_of` above.
 
-    ⛔ `audio` is the directory those clips were placed in — ask the placement
-    policy for it (`synth.incremental.audio_dir`) and never compose one. When it
+    ⛔ `audio` is the directory those clips were placed in — the unit's placement
+    rooted by `synth.incremental.audio_dir` (`W222`), never composed. When it
     is `None` the disk is not consulted at all and a recorded clip is taken at
     its word, which keeps the pure path pure (R10).
 

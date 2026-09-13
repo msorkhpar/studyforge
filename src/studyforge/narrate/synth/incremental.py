@@ -29,7 +29,7 @@ from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, replace
 from pathlib import Path
 
-from studyforge.corpus.placement import AUDIO_DIRNAME, Profile
+from studyforge.corpus.placement import AUDIO_DIRNAME, UnitLocations
 from studyforge.describe import describe
 from studyforge.narrate.client import NarrateClient, place
 from studyforge.narrate.speakable.naming import clip_name
@@ -56,24 +56,20 @@ CONDITIONS_MOVED = "the conditions changed"
 CLIP_ABSENT = "the clip is not on disk"
 
 
-def audio_dir(
-    root: Path | str,
-    profile: Profile,
-    address: object,
-    ordinal: int,
-    title: str,
-    *,
-    origin: str | None = None,
-) -> Path:
-    """Ask the placement policy where one unit's clips go — ⛔ never composed here.
+def audio_dir(root: Path | str, locations: UnitLocations) -> Path:
+    """Return where one unit's clips go: its placement answer, rooted — ⛔ never composed here.
 
-    ⭐ This is the *"through the placement policy"* half of this row: a caller
-    that composed the media directory itself would be the second layout authority
-    R4 removes, and `NS-05/2` measures why that mistake is invisible under one of
+    ⛔ **`W222` (`SF-42/1`): `locations` is the ONE derivation**, the unit's
+    `generate.declarations.unit_location`, which takes what `unit_stem` takes,
+    the label included. `narrate`, the build's read and the page hold that one
+    answer, so no stem is spelled here and no argument of it can be dropped here.
+
+    ⭐ The *"through the placement policy"* half of `SF-17`: a caller that
+    composed the media directory itself would be the second layout authority R4
+    removes, and `NS-05/2` measures why that mistake is invisible under one of
     the two profiles.
     """
-    where = profile.unit(address, ordinal, title, origin=origin).media_dir(AUDIO_DIRNAME)
-    return Path(root) / Path(str(where))
+    return Path(root) / Path(str(locations.media_dir(AUDIO_DIRNAME)))
 
 
 def wanted_name(unit: SpeechUnit, conditions: Conditions) -> str:
