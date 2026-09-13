@@ -21663,3 +21663,287 @@ rows/*.md carrying NO pointer at all            ->   0 of 83
 #### ⭐ CLOSED — PO ROUND 74
 
 ⭐ **Merged at `2bfbcb7`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2bfbcb7` is RECEIVED.** ⭐ **A new task or office handoff citing a tracked document by bare filename is a floor finding, pinned at `4d3c742`, the tree the rule landed in.**
+
+## PO round 75 — W237, W136, W150 and W158 closed; the first corpus's `M6` blockers minted ahead of every `W` row
+
+⛔ **Four merges re-derived on the first-parent chain since round 74's `3483ced`:** `8a13f4f` (`W237`), `2fdef9d` (`W136`), `b3123f5` (`W150`), `baefd6c` (`W158`). ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's guarded release-tip readings, GREEN in the pinned image. `baefd6c` was merged into this round at the coordinator's word, after its reading.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                      merge^2   branch head  ahead  checked out
+fix/W237-process-tests-one-reader     0dd2201a  0dd2201a     0      NOWHERE
+fix/W136-office-branch-exemption      e76249a1  e76249a1     0      NOWHERE
+fix/W150-citation-path-resolves       7d024fc0  7d024fc0     0      NOWHERE
+fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
+```
+
+⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **`W237` was a named gap of `M4`'s close ([round 74](#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction), § 1). It is struck from that list, and the gaps that remain are `W90`, `W236` and the Java halves `OPS-03` carries.** ⚠️ **The list lives in a frozen record, so it is struck here and not there** (Ruling 106).
+
+⭐ **Ruling 201's fourth edit:** `rows/W141.md` and `rows/W204.md` re-pointed at the record. ⚠️ **`tools/quality/board/unclaimed.py` and its test cite `rows/W136.md` in docstrings, outside this surface. They belong to [`W174`](rows/W174.md)'s population, and the stub still resolves.**
+
+### ⛔ 2 — THE `M6` BLOCKERS, MINTED FIRST
+
+⭐ **The ISO integration round 6 (office `po-int`) ran the framework's skills at `3483ced` against the first real corpus and merged at ISO `0d970fd`.** ⛔ **Every framework gate held, and nothing in `M6` is takeable: `ISO-04`, the next row, stops on `INT-06/1`.** ⭐ **Each row quotes what ISO's `docs/studyforge/questions-for-framework.md` §11.3 says it must settle, RECEIVED. R20 is not at issue: a consumer reporting to its framework is §12's channel.**
+
+| finding (ISO §11.1) | row | order | surface, and its one owner |
+|---|---|---|---|
+| `INT-06/1` | [`W239`](rows/W239.md) | 0 | `skills/onboarding/`, shared with `W242` |
+| `INT-06/5`, `/6` | [`W241`](rows/W241.md) | 0 | `validate/`, `cli/plan/`, `corpus/placement/`, `skills/adapter/`, shared with `W242` |
+| `INT-06/9` | [`W243`](rows/W243.md) | 0 | `render/pageassets/`, alone |
+| `INT-06/2`, `/3` | [`W240`](rows/W240.md) | 1 | `skills/reconnaissance/`, after `W238` or as its successor |
+| `INT-06/7`, `/8` | [`W242`](rows/W242.md) | 2 | after `W239` and `W241` |
+
+⭐ **Three developers can start at once, on `W239`, `W241` and `W243`: none collides with another or with anything in flight.** `INT-06/4`, `/10` and `/11` are ISO's own.
+
+⛔ **THE GROUND EVERY ONE OF THESE ROWS POINTS AT, WRITTEN ONCE:** ⭐ **they are `M6` work, not `M8`'s.** ⛔ **During `M6` the framework is fixed from findings, and §12's no-patch rule binds the integrator of `M8` and of `M9` (spec §12, amended round 74, item 4).** ⚠️ **`M8`'s run re-reads these same skills, so each fix lands in `src/` and its tests. It is never a hand-edit to a generated artifact, which that run would inherit (R19).** ⛔ **RULING 75 IS INVOKED FOR ALL FIVE, AND DECLARED HERE:** ⭐ **they jump every `W` row, at orders 0–2, because the user's order makes `M6` the open milestone and ISO its proof, and `ISO-04` waits on `W239`.**
+
+### ⭐ 3 — IN FLIGHT
+
+⭐ **NAMED on the coordinator's confirmation, each read against git at `baefd6c`:**
+- `W238`: Developer 2, cut `3483ced`.
+- `W141`: Developer 1, cut `2fdef9d`. `W136`'s merge released `docs/conventions/`, and `W141` holds it for `W149`, `W153`, `W154`, `W161`, `W164` and `W165`: one owner, several waves.
+- `W162`: Developer 3, cut `8a13f4f`. `W163` follows it, one owner of `tests/docker/`.
+
+⭐ **`M6`'s delivery is IN FLIGHT on the ISO track:** round 6 merged, and [`W73`](rows/W73.md)'s integration-side row is carried by that round, which names no studyforge branch. ⭐ **`PO-74/9` is settled by the coordinator:** a linked worktree on a task branch, merged in ISO's main checkout, which never leaves its branch.
+
+### ⭐ 4 — THE ISO PIN, AND WHETHER THE FLOOR RUNS `verify`
+
+⭐ **Measured by the register on the HOST, main checkout at `b3123f5`: `python3 -m tools.workspace verify` exits `1` and names `ISO-8583-jPOS-tutorial` alone, whose HEAD is ISO round 6's merge.** ⛔ **Ruled here as REVERSIBLE, and carried by [`W244`](rows/W244.md):**
+
+1. ⭐ **The pin advances at each integration round's merge.** ⛔ **The Scheduled item's ground, *re-pinning pins a moving target*, is gone:** a merged round is a state its office verified, and what moves is the task branch, never the merge.
+2. ⭐ **The register advances it, in its first round after that merge**, with the workspace convention's two commits. ⚠️ **Between the merge and that round, `verify` exiting `1` on ISO alone is the declared `pending` shape, not a finding.**
+3. ⛔ **The floor does NOT run `verify`.** ⭐ **The floor's authoritative reading is the pinned container, where `verify` answers `2` (Ruling 216), so a floor arm would stand down in every reading of record.** ⭐ **`verify` stays a HOST reading, quoted by the coordinator at each merge.**
+
+### ⭐ 5 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `PO-74/5` | ⛔ **relayed to the user.** `CLAUDE.md` is every agent's session instructions, and changing it is the user's to authorize, never an office's on a relay. `README.md` (`PO-74/2`) was a plan document this office already writes |
+| coordinator: host `verify` exits `1` | [`W244`](rows/W244.md), minted; the cadence is § 4 |
+| `W136/1` | relayed to the user, held: 17 pre-convention `chore/*` branches |
+| `W136/2` | rider on [`W231`](rows/W231.md): the Non-code row's from and to, in `docs/conventions/` after `W141` |
+| `W136/3` | [`W245`](rows/W245.md), minted, jumping nobody |
+| `W136/4` | disposed: the gate is the true answer until a ruling adds the office, and `po-int` commits in ISO, never on a studyforge `chore/` branch |
+| `W150/1`, `W158/1`, `W237/2` | disposed at the close: surface widenings, disclosed |
+| `W150/2` | [`W246`](rows/W246.md), minted, jumping nobody |
+| `W150/3`, `/6` | riders on [`W246`](rows/W246.md): the INTEGER harm |
+| `W150/4` | accepted, cost named: declared gap 1 |
+| `W150/5` | ⭐ **TAKEN:** every `CS/` code path in `E00`–`E13` is rewritten under `CS/.pipeline/`. `tests/`, `pyproject.toml` and `tools/tts/` had moved with `tools/study/`, and each path resolves at CodeSignal's pin `49c11d5` |
+| `W158/2` | disposed at the close: the row's round-52 figures are dated, not wrong (Ruling 310(b)) |
+| `W158/3`, `/4`, `W237/1` | accepted, cost named: survivors, declared in their handoffs |
+| `W158/5`, `/6` | accepted, cost named: the line still prints under `-q`, and no skip reason carries a path at `7c7703c` |
+| `W237/3`, `/4` | recorded: outside the class, each named in its handoff |
+
+⚠️ **Held for the user:** frozen records rewritten in place (round 74's question), `W136/1`, and `PO-74/5`.
+
+### W237 — `W233`'s read-then-`communicate()` defect is live in three more process tests, and `tests.support.ProcessOutput` is now the one reader
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W237.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W233`'s DEFECT CLASS IS LIVE IN THREE MORE PROCESS TESTS, AND `tests.support.ProcessOutput` NOW EXISTS AS THE ONE READER.** ⭐ **`W233/2`, `W233/3`, `W233/4`, measured by `W233`'s office at `998ab1d`; the register read the paths at `c91d5de`.**
+
+| test | what it does | ⛔ today |
+|---|---|---|
+| `tests/studyforge/progress/test_lock.py` `test_a_second_process_waits_until_the_lock_is_released` | `readline`, then `communicate()`, then asserts on what `communicate()` returns (`held`) | holds only because the child blocks between its two lines |
+| `tests/studyforge/progress/test_store.py` `test_a_second_process_writing_during_an_update_loses_nothing` | `readline`, then `communicate()`; nothing reads the result | ⚠️ harmless today, and the same shape |
+| `tests/studyforge/skills/buildserve/test_main.py` | reads `stdout` to end of file before `stderr`; `LISTENING` and `Address` are copies of `test_serve_process.py`'s | a full `stderr` pipe blocks it until the watchdog |
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **All three read through `ProcessOutput`** ([`W233`'s handoff](handoffs/W233.md#for-dependents)): no `communicate()`, no pipe read before the other, and no second copy of `LISTENING` or `Address`.
+2. ⛔ **PLANTED** (Rulings 124, 348): suppress a line `test_lock.py`'s child prints before its last one, and the test turns RED.
+
+### ⛔ RULING 75 IS INVOKED, AND IT IS DECLARED HERE
+
+⭐ **It jumps every row but `W235`.** `M4`'s close run reads `tests/studyforge/progress/` as its evidence for *records practice passes*, and `test_lock.py` asserts on what `communicate()` returns: `W233`'s ground, one clause over. ⚠️ **Not a gate: a named gap of `M4`'s close until it merges.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A sleep, or a wait spelled another way** (`W233/5`, a rider on [`W37`](rows/W37.md)).
+
+[the mint](#po-round-73-w88-w120-w233-w125-and-w108-closed-w237-minted)
+
+#### ⭐ CLOSED — PO ROUND 75
+
+⭐ **Merged at `8a13f4f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `8a13f4f` is RECEIVED.** ⭐ **The three process tests read through `ProcessOutput`; `LISTENING` and `Address` have one home in `tests/studyforge/cli/serving.py`; a clock wait in any of the four reading scopes fails the guard.**
+
+### W136 — A pre-merge GATE's exemption is a SPELLING where its ruling's ground is a ROLE, so it flags 13 branches and silently exempts 3 it would flag
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W136.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RULING 264(c) MADE ONE PRINTED LINE THE PRE-MERGE GATE, AND RULING 265'S EXEMPTION FROM IT IS A SPELLING WHERE THE RULING'S OWN GROUND IS A ROLE.** ⭐ **The predicate is a two-element tuple of ANCHORED PREFIXES; the ground it cites is *no register row will EVER name this branch*. Those two are not the same set, and the gap is measurable in BOTH directions.**
+
+⚠️ **RULING 265 IS QUOTED FROM THE SHIPPED CONSTANT RATHER THAN PARAPHRASED** (Ruling 195) — `tools/quality/board/unclaimed.py`:
+
+> ⭐ **The predicate is NOT *this branch has no commits* but *NO REGISTER ROW WILL
+> EVER NAME THIS BRANCH*** — ⛔ **a property of the BRANCH NAMESPACE, decidable from
+> the name: the register names rows, rows are taken on `fix/W*` branches, and an
+> office's round branch is the vehicle for the register itself, so a row naming it
+> would be a row naming its own recorder.**
+
+## ⛔ MEASURED BY THE PO AT `428223c`, role `wt/po`, WITH THE SHIPPED PREDICATE — and it disagrees with a hand glob by three
+
+⭐ **The population is declared as a text count before the instrument is asked** (Ruling 281's companion clause), **and BOTH readings are printed because they differ** (Ruling 170(a)):
+
+```text
+git branch --list 'chore/*'                                                -> 76
+  MATCHED by the shipped OFFICE = ("chore/cto-round", "chore/po-round")    -> 63
+  NOT matched  — the LATENT population, and ROUND 60's FIGURE REPRODUCES   -> 13
+      chore/cto-rubric        chore/cto-rubric-edits    chore/cto-rulings-q1-q3
+      chore/handoff-correction  chore/po-board          chore/po-board-m0-update
+      chore/po-board-m1-mid   chore/po-board-r21        chore/po-board-round3
+      chore/po-graph-tripwire chore/po-m1-step11        chore/po-r7-recheck
+      chore/session-handoff
+  every one: 0 commits ahead of release/m0-foundations, checked out NOWHERE
+
+the SAME question asked with an ANCHORED hand glob, ^chore/(cto|po)-round[0-9]+$
+                                                                           -> 16
+  the THREE the SHIPPED PREFIX EXEMPTS AND THE ANCHORED FORM DOES NOT:
+      chore/cto-round17-close   chore/cto-round34-rubric   chore/cto-round49-annotation
+```
+
+⛔ **THE SECOND READING IS THE PART NO OFFICE HAS MEASURED, and it is the reason this is a row rather than a note.** ⭐ **Both `wt/dev1` and CTO round 60 measured the `13` and both DECLINED to widen, on the ground that *an office committing on a branch outside the round-branch namespace is the thing out of convention, and the gate flagging it is the TRUE answer*.** ⚠️ **That ground is correct AND the shipped predicate does not implement it: `chore/cto-round34-rubric` is a topic branch, not round 34's register vehicle, and a prefix match exempts it silently.**
+
+⛔ **SO THE GATE IS WRONG IN BOTH DIRECTIONS AT ONCE, WHICH IS RULING 225'S SHAPE — a defended property false as stated:** ⭐ **13 branches the exemption's ground covers are outside the glob, and 3 branches its ground would flag are inside it.** ⚠️ **`W132/2` is the first half; this row is both halves with the second measured.**
+
+## ⛔ WHY IT IS LATENT, STATED SO NOBODY PROMOTES IT ON URGENCY
+
+⭐ **MEASURED: all 16 read `0` commits ahead and none is checked out, and `unnamed()`'s population is LIVE CHECKOUTS rather than all branches — so not one of the 16 is in the gate's population today.** ⛔ **It becomes live the moment an office commits on one, which is exactly what `PO-45/8` measured happening to `chore/po-round44`: exempt at `0` ahead, named as *dispatched and UNNAMED* the moment it recorded anything.** ⚠️ **A gate that is silent until the first person does the out-of-convention thing is a gate that fires on the worst day.**
+
+## ⛔ WHAT THIS ROW MUST NOT BECOME
+
+⛔ **A WIDER GLOB.** ⭐ **Both offices refused that and both refusals are UPHELD: Ruling 185(b) forbids a taker widening a ruling's own words, and a `chore/` prefix would exempt every one of the 76 — including the three the ground would flag.** ⚠️ **A separator-and-prefix vocabulary is a list of accepted shapes wearing punctuation, which is the defect Ruling 65 names and Ruling 293 has just paid for a second time.**
+
+⭐ **THE TWO ADMISSIBLE SHAPES, and choosing between them is the row's first act rather than its author's:**
+
+1. ⛔ **A NAMING CONVENTION, written down** — an office's commits go on `chore/<office>-round<n>` and nowhere else — ⭐ **which makes the shipped prefix TRUE rather than approximately true, and turns the 16 into a one-time rename or a recorded exception.** ⚠️ **Its surface is `docs/conventions/`, which this row SHARES with [`W134`](rows/W134.md) and [`W135`](rows/W135.md): ONE OWNER or three waves (check 4's sub-step).**
+2. ⛔ **AN EXACT PREDICATE** — the round-branch spelling asserted as a whole name and not a prefix — ⭐ **which flags the 3 correctly and leaves the 13 flagged, so it discharges the over-exemption and NOT the hole.** ⚠️ **It is strictly smaller than (1) and does not replace it.**
+
+⛔ **A taker doing (2) alone must SAY that the 13 are still flagged**, or the row reads discharged on half its own measurement.
+
+## ⛔ RULING 75 IS MENTIONED IN ORDER TO DECLINE IT
+
+⭐ **This row (round 47) is placed LAST and jumps nobody.** ⛔ **The ground is the measurement rather than modesty: 16 of 16 at `0` ahead and none checked out, so the exposure is LATENT and its cost today is zero.** ⚠️ **If an office commits on one of the 16 before this row is taken, the cost stops being zero and the placement is re-argued — by the round that sees it, not by this file.**
+
+[the mint argument, and the reading that made it a row](#po-round-47-the-first-nine-closes-under-ruling-270-the-wall-measured-gone-on-my-own-tree-and-the-empty-population-inhabited)
+
+#### ⭐ CLOSED — PO ROUND 75
+
+⭐ **Merged at `2fdef9d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2fdef9d` is RECEIVED.** ⭐ **The exemption is the whole name `chore/(cto|po)-round<n>`, written once as a naming convention in [`delivery-flow.md`](../conventions/delivery-flow.md#office-round-branches); pre-convention branches are recorded exceptions, not renamed (`W136/1`, the user's).**
+
+### W150 — A citation into a file the document does not own, written as a BARE BASENAME, satisfies Ruling 163's letter and is strictly worse
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W150.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W78/3`, and the reviewing office ruled it gets its OWN ROW rather than a widening of Ruling 163.** ⭐ **Ruling 163 forbids a LINE-NUMBER citation into a file the document does not own. It says NOTHING about the PATH** — ⛔ **so a citation written as a BARE BASENAME satisfies Ruling 163's letter while being STRICTLY WORSE than what 163 forbids: an unverifiable integer AND an unresolvable path.**
+
+### ⛔ THE BAND, AS THE ROW THAT FOUND IT DECLARED IT
+
+```text
+band, measured by W78's taker and REPRODUCED INDEPENDENTLY by the reviewing office   36
+declared impurities, named by the taker, not discovered by the reviewer               2 fixture members
+                                                                                      1 parse gap
+⭐ THE LIVE POPULATION                                                                34
+⛔ THE POPULATION IS docs/tasks/E*.md HEAVY — a DIFFERENT SURFACE from W78's own.
+```
+
+⚠️ **RE-MEASURED AT DISPATCH, Ruling 214.** ⛔ **The figures above are quoted with the round that took them and are NOT this row's acceptance; a taker who inherits `34` rather than re-deriving it has inherited the defect this row is about.**
+
+### ⭐ WHY IT IS A CLASS AND NOT A WIDENING
+
+⛔ **Ruling 185(b): narrow the population, never widen the predicate.** ⭐ **Widening 163 to cover paths would put two different harms — *an integer that moves* and *a path that does not resolve* — behind one predicate with one message, and the second is already the POINTER FLOOR's subject on documents the floor can reach.** ⚠️ **The gap is exactly the documents it cannot: files a live document does not own.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A predicate that reads a citation's PATH as well as its integer**, and a pass condition naming both harms separately so a reader knows which one fired.
+2. ⭐ **THE REMEDY IS THE SAME SHAPE RULING 163 ALREADY NAMES — the command's own output shape**: a citation that a reader can RE-RUN beats one they must trust, and `W78`'s closed argument carries the reasoning at length.
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12), and the negative arm matters more here: ⚠️ **a citation that resolves must NOT be flagged, or the instrument produces 34 findings and one of them is real.**
+4. ⚠️ **THE DECLARED IMPURITIES ARE RE-DECLARED, not inherited** — ⭐ **a fixture member and a parse gap are legitimate non-members and the row SAYS so rather than forcing them into an arm** (Ruling 292).
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A REPAIR OF FROZEN RECORDS.** ⭐ **Ruling 201's fourth edit re-points citations in LIVE documents; a frozen record's citation is not repairable by anyone** (Rulings 106, 174). ⛔ **AND NOT A RE-OPENING OF `W78`** — ⚠️ **`W78` has CLOSED at `26f4a05`; this row starts from its band and owns the class it could not reach.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/citations.py` and its tests, plus whichever `docs/tasks/E*.md` the re-measured population names.** ⚠️ **Shares `tools/quality/citations.py` with `W151`, which is this round's other citation-adjacent mint — ONE OWNER or separate waves** (check 4's sub-step).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 75
+
+⭐ **Merged at `b3123f5`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `b3123f5` is RECEIVED.** ⭐ **Every `<path>:<line>` citation gets one verdict, PATH, INTEGER, OWN or REF, counted in a ninth floor notice. Its promotion to a check is [`W246`](rows/W246.md).**
+
+### W158 — The authoritative environment is structurally blind to the workspace assertions, so `green` names two different answers
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W158.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE AUTHORITATIVE ENVIRONMENT IS STRUCTURALLY BLIND TO THE WORKSPACE ASSERTIONS, AND ITS OUTPUT SAYS SO NOWHERE.** ⭐ **Ruled a row by the reviewing office as `CTO-66/11`, measured independently by two offices in the same wave before either saw the other's figure.**
+
+### ⛔ THE TWO ENVIRONMENTS ARE NOT SUPERSETS OF EACH OTHER
+
+⭐ **RECEIVED, and re-derived by the reviewing office before it received the coordinator's:**
+
+```text
+the host SKIPS 13 the pinned container RUNS
+the pinned container SKIPS 5 the host RUNS
+  the five: test_corpora.py (2) and test_knowledge_index.py (3)
+  the reason each gives: "is not checked out beside this repository"
+```
+
+⛔ **Ruling 40 makes the pinned container AUTHORITATIVE. ONLY THE CHECKOUT IS MOUNTED.** ⚠️ **So the authoritative environment cannot reach the sibling components at all, and the assertions it cannot reach are exactly the workspace / sibling / R18 ones — `CLAUDE.md`'s own container clause, and Ruling 216's *"the only environment that can SEE a stale pin is the one Ruling 40 does not make authoritative"*, arriving from the suite side as a skip count.**
+
+### ⭐ RE-DERIVED AT MINT BY THE REGISTER, IN BOTH ENVIRONMENTS, AT ITS OWN REF (Ruling 214)
+
+⛔ **`python3 -m pytest -q -rs`, once on the HOST and once through `docker/dev/check`, PO round 52's tree, role `wt/po`. Skip counts summed from each `SKIPPED [n]` — a LINE count and a TEST count are different instruments:**
+
+```text
+host skips        25        container skips   17        intersection   12
+host-only  13     tests/docker/test_dev_image.py:347 :460 · test_dev_image_browser.py ×5
+                  · tests/test_repository.py ×4 · tools/tests/quality/test_lint.py ×2
+container-only 5  tests/studyforge/corpus/placement/test_corpora.py:212 ×2
+                  · tests/test_knowledge_index.py:157 ×2, :192 ×1
+```
+
+⭐ **`13` and `5` — the reviewing office's figures exactly, reached without looking at them, and the FIVE the authoritative environment cannot reach are the workspace / sibling assertions and nothing else.** ⛔ **A taker who inherits these has inherited a reading; re-take them at dispatch.**
+
+### ⛔ THE HARM IS THAT `green` NAMES TWO DIFFERENT ANSWERS AND THE OUTPUT DOES NOT DISTINGUISH THEM
+
+⭐ **Ruling 191's own form: a pass over a population that was never reachable is not the same answer as a pass.** ⛔ **Today both print the same word, and a reader who quotes *green in the pinned container* has quoted a verdict with a hole in it whose size is nowhere in the reading.**
+
+### ⭐ `W147/5` IS ROUTED IN HERE BY THE REVIEWING OFFICE, AND IT IS THE SAME SUBJECT
+
+⛔ **Re-derived by the reviewer with `grep -n`, and the reporting office had UNDER-COUNTED it:**
+
+```text
+Path(BOARD_PATH)          tools/tests/quality/board/test_scheduled.py:131 , :210   ⛔ TWO sites
+repository_root() / BOARD  test_contradiction.py , test_register.py ,
+                           test_bounds.py , test_observation.py     ⭐ every other file
+⭐ the W147 diff ADDED ZERO relative sites — 2 before, 2 after
+```
+
+⚠️ **A verdict that depends on the process's working directory is Ruling 225's subject, and it belongs with the environment row rather than in an id of its own.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A GREEN RUN PRINTS THE POPULATION IT COULD NOT REACH — a COUNT and a REASON**, so the two meanings of `green` are told apart in the output rather than in a reader's memory.
+2. ⭐ **THE REASON IS DERIVED, NOT TYPED.** ⛔ **A hand-written list of five test ids is `W151`'s defect one directory over; the count comes from the skips the run actually produced.**
+3. ⛔ **THE TWO RELATIVE `Path(BOARD_PATH)` SITES ARE MOVED TO `repository_root() / BOARD`**, matching every sibling in the package, so no verdict in the package depends on the caller's cwd.
+4. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a run that reaches everything prints an EMPTY unreachable population and still prints it, and a run with siblings absent prints a NON-EMPTY one — ⚠️ **and the empty case is the arm a careless repair deletes, which is `W147`'s clause 3 exactly.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **MOUNTING THE SIBLINGS INTO THE PINNED IMAGE.** ⭐ **The isolation is DELIBERATE — the reviewer said so when ruling this a row — and R18 plus the workspace convention both rest on it.**
+⛔ **AND NOT A SECOND COPY OF *quote your environment*.** ⚠️ **That half was explicitly REFUSED as a row: `CLAUDE.md` states it and Ruling 326 now rules it, so a third copy would be the defect `W151` is about.**
+⛔ **AND NOT A FAILURE.** ⭐ **An unreachable population is a DISCLOSURE, not a red build** — Ruling 328's own distinction, and the population is host state the branch does not control.
+
+### ⭐ SURFACE
+
+⛔ **`tools/tests/quality/board/test_scheduled.py` for clause 3, and the run's own reporting surface — `docker/dev/check` and/or `tools/quality/report.py` — for clauses 1 and 2, per the decision this row owes first.** ⚠️ **`docker/dev/` IS `W152`'s declared surface and `W152` IS IN FLIGHT: ONE OWNER or two waves (check 4's sub-step), and this row does not dispatch beside it.**
+
+[the mint argument](#po-round-52-m3-step-31-closed-at-one-ref-with-both-merges-re-derived-32-opened-onto-a-fired-r21-trigger-and-one-dispatchable-row-two-live-dispatches-recorded-against-a-gate-that-reads-0-because-it-cannot-see-them-and-a-bound-landed-that-no-document-carried)
+
+#### ⭐ CLOSED — PO ROUND 75
+
+⭐ **Merged at `baefd6c`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `baefd6c` is RECEIVED.** ⭐ **Every pytest run prints the population its green does not cover: the skipped count and each reason, derived from pytest's own tally, printed at zero, never a failure.**

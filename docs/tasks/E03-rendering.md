@@ -106,7 +106,7 @@ page that does not exist is the one thing NEITHER policy catches** — and that 
 ### SF-11 — Page assets
 **Milestone** M1 · **Depends on** — · **Team** pair
 **Owns** `render/assets/`, `render/pageassets/`
-**Context** ~35k — `CS/tools/study/assets/*.{css,js}`, `CS/tools/study/pageassets.py`, `CS/tests/test_highlight.py`
+**Context** ~35k — `CS/.pipeline/tools/study/assets/*.{css,js}`, `CS/.pipeline/tools/study/pageassets.py`, `CS/.pipeline/tests/test_highlight.py`
 
 ⭐ **Budget corrected down.** The assets are *already* 22 real `.css`/`.js`
 files loaded by `pageassets.py` — R13 was satisfied here before this project
@@ -150,7 +150,7 @@ unedited.
 ### SF-12 — Templates and unit page renderer
 **Milestone** M1 · **Depends on** SF-10, SF-11 · **Team** team
 **Owns** `render/page/`, `render/templates/`
-**Context** ~110k — `CS/tools/study/html.py`, `CS/tools/study/templates/`, `CS/tests/test_html.py`, `CS/tests/test_templates.py`
+**Context** ~110k — `CS/.pipeline/tools/study/html.py`, `CS/.pipeline/tools/study/templates/`, `CS/.pipeline/tests/test_html.py`, `CS/.pipeline/tests/test_templates.py`
 
 ⚠️ **Budget corrected up, and R13 has live work here.** `git -C CodeSignal grep -n '^PLAYER = '` → `<path>/html.py:<n>:` is
 `PLAYER = """<footer id="player">` — triple-quoted markup, in this exact
@@ -233,7 +233,7 @@ vanish from the archive, it vanishes from the page.
 ### SF-13 — Table of contents
 **Milestone** M2 · **Depends on** SF-04, SF-05 · **Team** pair
 **Owns** `contents/`
-**Context** ~60k — `CS/tools/study/toc.py`
+**Context** ~60k — `CS/.pipeline/tools/study/toc.py`
 
 **Definition.** The site's contents **as data** — the primary artifact, of
 which HTML is one renderer. Two documents, and the split is the whole point:
@@ -295,7 +295,7 @@ the list form.** ⚠️ **The fixture is built by this task, not before it.**
 ### SF-14 — Root index renderer
 **Milestone** M2 · **Depends on** SF-13, SF-11 · **Team** team
 **Owns** `render/index/`
-**Context** ~80k — `CS/tools/study/index.py`, `CS/tests/test_index.py`
+**Context** ~80k — `CS/.pipeline/tools/study/index.py`, `CS/.pipeline/tests/test_index.py`
 
 **Subtasks.**
 (a) Arbitrary-depth nesting using **real disclosure elements** — they open,

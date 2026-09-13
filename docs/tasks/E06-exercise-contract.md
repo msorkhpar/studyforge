@@ -31,7 +31,7 @@ express the difference rather than assuming one answer.
 ### SF-23 — Exercise and workspace contract
 **Milestone** M1 · **Depends on** SF-09 · **Team** solo
 **Owns** `exercise/`
-**Context** ~35k — spec §7, `CS/tools/study/scaffold.py` — **the `workspace` and test-record helpers and the vocabulary only. Do not read the generators.**
+**Context** ~35k — spec §7, `CS/.pipeline/tools/study/scaffold.py` — **the `workspace` and test-record helpers and the vocabulary only. Do not read the generators.**
 
 **Definition.** An exercise declares a **workspace** — where the reader's code
 lives, where the grader lives, the command that runs their program, and the
