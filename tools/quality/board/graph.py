@@ -77,9 +77,13 @@ from pathlib import Path
 
 from tools.workspace import git
 
-#: ⭐ The verdict convention's merge idiom, `Merge <branch>: <line> (CTO: …)`, as an
-#: EXACT prefix rather than the substring the shipped `merge_of()` used (Ruling 199).
-MERGE_IDIOM = "Merge {branch}:"
+#: ⭐ The merge idiom, `Merge <branch>` then a BOUNDARY, as an EXACT branch rather than the
+#: substring the shipped `merge_of()` used (Ruling 199). ⛔ `W274`: both forms merges carry read —
+#: `Merge <branch>: <line>` and `Merge <branch> (<rows>): <line>` — and more branch never does.
+MERGE_IDIOM = "Merge {branch}"
+
+#: What may follow the branch in a subject that names it: a colon, a space, or nothing.
+BOUNDARY = (":", " ")
 
 
 @dataclass(frozen=True)
@@ -149,12 +153,14 @@ class Graph:
         """⭐ Shape `B`: the merge whose subject DECLARES this branch, or `""`.
 
         ⛔ **A corroborator that is PRINTED, never the gate** — and the match is an
-        EXACT prefix on `MERGE_IDIOM`, because the substring form read
-        `chore/cto-round3` as terminal off `Merge chore/cto-round39:`.
+        EXACT branch on `MERGE_IDIOM` then a `BOUNDARY`, because the substring form read
+        `chore/cto-round3` as terminal off `Merge chore/cto-round39:`, and ⚠️ the colon-only
+        prefix named no merge written `Merge <branch> (<rows>):` (`W274`).
         """
         idiom = MERGE_IDIOM.format(branch=branch)
         for ref, subject in self.subjects:
-            if subject.startswith(idiom):
+            rest = subject[len(idiom) :]
+            if subject.startswith(idiom) and (not rest or rest[0] in BOUNDARY):
                 return ref
         return ""
 
