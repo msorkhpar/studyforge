@@ -36,6 +36,14 @@ R3 names them, and this module refuses each **however declared**:
    `permitted_edits` is `[]` and its `README.md` is material, so the check
    holds it there structurally rather than by anyone remembering.
 
+   ⛔ **`W278`: content is a property of the file in its repository**, not of
+   the site's policy. **Repository-root documentation** — a root `README`,
+   `LICENSE`, `LICENCE` or `COPYING`, of any suffix — is content its readers
+   read whatever `content` classifies it as, so a corpus that declares its root
+   `README.md` `not_material` still may not declare an edit to it.
+   `reads_as_content` is the ONE predicate: this module refuses a declaration by
+   it, and `OPS-05` refuses a declared change by it.
+
 ## The reverse of every declared edit is recorded
 
 ⭐ An onboarding that cannot be undone is one nobody will run against a
@@ -76,6 +84,14 @@ VCS_DIRECTORIES = frozenset({".git", ".hg", ".svn"})
 #: directory is how a corpus ignores generated output instead.
 IGNORE_NAMES = frozenset({".gitignore", ".hgignore"})
 
+#: ⛔ `W278`: repository-root documentation, by exact stem and in any case. A file
+#: the repository's own readers read as its content, whatever the site calls it.
+ROOT_DOCUMENTATION = frozenset({"readme", "license", "licence", "copying"})
+
+#: Why `reads_as_content` reads a path as content: the corpus's policy, or the convention.
+BY_POLICY = "policy"
+BY_CONVENTION = "convention"
+
 
 @dataclass(frozen=True, slots=True)
 class Reversal:
@@ -110,6 +126,20 @@ class PermittedEdit:
         express.
         """
         return Reversal(self.path, "remove-line", self.content)
+
+
+def reads_as_content(path: str, content: ContentPolicy) -> str:
+    """Return why R3 reads `path` as content, `BY_POLICY` or `BY_CONVENTION`, or `""`.
+
+    ⛔ The ONE predicate for R3's third category (`W278`): the parser refuses a
+    declaration by it, and `OPS-05`'s check refuses a declared change by it.
+    """
+    if content.classify(path) in (Classification.INCLUDED, Classification.CONTESTED):
+        return BY_POLICY
+    parts = PurePosixPath(path).parts
+    if len(parts) == 1 and parts[0].split(".", 1)[0].lower() in ROOT_DOCUMENTATION:
+        return BY_CONVENTION
+    return ""
 
 
 def parse_edits(value: object, content: ContentPolicy) -> tuple[PermittedEdit, ...]:
@@ -196,8 +226,17 @@ def _reject_forbidden_target(edit: PermittedEdit, content: ContentPolicy) -> Non
     # holds; refusing the edit is the direction that cannot destroy material,
     # and reading it as "not included" would be this check going quiet on
     # exactly the file nobody has decided about.
-    if content.classify(edit.path) in (Classification.INCLUDED, Classification.CONTESTED):
+    reason = reads_as_content(edit.path, content)
+    if reason == BY_POLICY:
         raise ManifestError(
             "permitted_edits may never name a file the material's own reader depends on "
             "as content, and this corpus's 'content' includes it"
+        )
+    if reason == BY_CONVENTION:
+        # ⭐ Safe to name (W19): one path component whose stem is in this framework's
+        # own closed vocabulary, `ROOT_DOCUMENTATION`.
+        raise ManifestError(
+            f"permitted_edits may never name {path.name!r}: it is repository-root "
+            f"documentation, which the repository's own readers read as content whatever "
+            f"'content' classifies it as for the site (R3, W278)"
         )
