@@ -23777,3 +23777,113 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 83
 
 ⭐ **Merged at `9363462`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `9363462` is RECEIVED.** ⭐ **`completeness` reads the whole corpus root, so origins written against the wrong root are `origin-missing` beside a present source.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+## PO round 84 — `W264`, `W262` and `W251` closed
+
+⭐ **Cut at `d561230`, release after round 83's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W264`](#w264-a-list-block-records-no-first-number-so-an-ordered-list-that-starts-past-one-loses-its-numbering) | `63f034a` | none owed |
+| [`W262`](#w262-nothing-checks-that-an-in-flight-epic-task-subject-exists-in-its-epic-so-a-mistyped-task-id-reads-as-argued) | `56e2279` | none owed |
+| [`W251`](#w251-corroborate-accounts-for-no-detached-checkout-and-the-unnamed-arms-test-module-stands-at-its-r11-bound) | `9421b02` | none owed |
+
+⭐ **All three TERMINAL (Ruling 199). Ruling 97's gate is RECEIVED: the coordinator's guarded release-tip readings at `63f034a`, `56e2279` and `9421b02`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⭐ **Ruling 314: the three moved bodies carried 7 relative pointers, and 7 were re-addressed.** ⚠️ **Their findings were disposed in [round 83's record](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239).**
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W226`](rows/W226.md) | Developer 1 | `fix/W226-record-locates-every-clip` @ `wt/dev1` | `9421b02` | `W226`, NAMED |
+| [`W278`](rows/W278.md) | Developer 3 | `fix/W278-content-is-the-files-property` @ `wt/dev3` | `9421b02` | `W278`, NAMED |
+| [`W276`](rows/W276.md) | Developer 2 | `fix/W276-missing-clip-reads-missing` @ `wt/dev2` | `9421b02` | `W276`, NAMED |
+| [`W269`](rows/W269.md) | Developer 3 | @ none, handed back | `696b28d` | CONFIRMED |
+| [`W270`](rows/W270.md) | Developer 1 | @ none, handed back | `9363462` | CONFIRMED |
+| [`W272`](rows/W272.md) | Developer 3 | @ none, handed back | `8a2067a` | CONFIRMED |
+| [`W266`](rows/W266.md) | Developer 2 | @ none, handed back | `9363462` | CONFIRMED |
+
+⚠️ **`PO-84/1` — `W268` merged at `8eb03dc` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled: not closed and not named in flight; its register cell carries the merge.** Reversible.
+
+⛔ **`PO-84/2` — `W277` is HELD by the coordinator:** its surface is the `narrate-service` sibling repository, beyond the standing limit on editing a sibling. ⭐ **Recorded in its register cell; it is not placed or scheduled.**
+
+### ⭐ 3 — MINTS AND FINDINGS
+
+| finding | became |
+|---|---|
+| `W272/1` + `W266`'s R11 ruling | ⭐ **minted [`W280`](rows/W280.md)**, order 51. Re-measured by `git show`: `REPOSITORY_STORE` is outside `__all__` at `d561230` and on `355360e`; `1467aff` imports it from `classification.py`, which is 395 lines on `355360e` |
+| `W266/1`, `/4` | disposed with the diff: taken outside the surface, forced by pinned counts and walkthrough corpora, disclosed |
+| `W266/2` | accepted: ISO's archive reads 0 `included-unread` |
+| `W266/3` | ⭐ **ruled: confirmed.** A container `origin` places its page and reads nothing, so a section README only a container names is `included-unread` until the corpus declares it excluded or `not_material`. Re-read on `355360e`. Cost named: such a corpus adds one declaration. Reversible |
+| `W270/1` | accepted: the brief's pin premise corrected, ISO's pin at `f3b5239` is `c8ca605` |
+| `W270/2` | accepted: sequenced by the coordinator, `W270` after `W269`, the shared test path on a clean merge-tree |
+| `W270/3` | ⭐ **ruled:** ISO regenerates for the new pin test at its next integration round (the `W257` pattern), and a suite that runs a corpus's generated tests runs beside a sibling `studyforge` checkout; a container mounting only the corpus fails by name, which is the test doing its job. Relayed to ISO and to the coordinator. Reversible |
+| `W272/2` | accepted, cost named: one survey asks git twice until `W269`'s file can share one scan |
+| `W272/3` | accepted: the other skip names are asserted unchanged; the draft's `not_material` proposal speaks for them |
+| `W269/4` | ⚠️ **still held to `W269`'s close:** `W269` has not merged, so there is nothing to re-measure |
+
+⭐ **The ISO track is parked: `ISO-12` re-takes when `W226` merges and `ISO-14` when `W278` does. The pin stays `f3b5239`.**
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause.
+
+### W264 — A `list` block records no first number, so an ordered list that starts past one loses its numbering
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W264.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W258/3`: a `list` block records no first number, at the top level or nested.** ⭐ **RECEIVED from [`W258`](#w258-archivemarkdown-keeps-a-nested-list-line-as-literal-text-inside-its-parent-item)'s close at `bce08dd`**, unchanged by that row. ⭐ So an ordered list an author starts past one, as a step list continued after a code block, loses its numbering.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⚠️ **The taker first measures whether any committed corpus (ISO, the Java consumer) starts an ordered list past one**, and says so.
+2. ⛔ **An ordered list's first number is kept from the source to the page and the narration**, or refused by name. ⛔ A vocabulary change is a contract change: spec §6 is amended in the same diff (`W258`'s clause 2 form), and every list without one reads byte-identical.
+3. ⛔ **Asserted both ways (R12)** on a list starting past one, with the number planted away to RED.
+
+⭐ **Surface:** `src/studyforge/archive/markdown/`, `archive/blocks.py`, spec §6, and the page and narration readers of a `list` block, with their tests. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)
+
+#### ⭐ CLOSED — PO ROUND 84
+
+⭐ **Merged at `63f034a`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `63f034a` is RECEIVED.** ⭐ **An ordered list that starts past one keeps its first number as the `list` block's optional `start`, and a list starting at one is byte-identical.** ⚠️ **Its findings were disposed in round 83's § 3.**
+
+### W262 — Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W262.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W161/4`: nothing checks that an epic-task subject in the In-flight table exists in its epic.** ⭐ **RECEIVED from [`W161`](#w161-the-observation-table-admits-an-epic-task-and-no-instrument-says-where-such-a-rows-argument-lives-so-it-is-exempt-by-accident)'s close at `761c787`.** ⭐ So `NS-99` In-flight reads as an epic task whose argument is its epic, and no epic carries it: an arm that stands down silently.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **An epic-task subject no `docs/tasks/E*.md` defines is named by the floor**, with the epic its prefix points at.
+2. ⭐ **A subject its epic does define still reads clean**, and the parser still refuses no subject (`NS-01/2`).
+3. ⛔ **Asserted both ways (R12)**, with the lookup planted away to RED.
+4. ⚠️ **`W161/5`, a rider:** `tools/quality/board/bijection.py` is near its R11 ceiling. ⛔ **The taker splits it at a seam named before cutting**, never trims it.
+
+⭐ **Surface:** `tools/quality/board/` (`bijection.py` and the module it splits into) and its tests. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)
+
+#### ⭐ CLOSED — PO ROUND 84
+
+⭐ **Merged at `56e2279`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `56e2279` is RECEIVED.** ⭐ **An In-flight epic-task subject that its epic does not define is refused under `board-detail`, and the subject vocabulary moved to `tools/quality/board/vocabulary.py`.** ⚠️ **Its findings were disposed in round 83's § 3.**
+
+### W251 — `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W251.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W153/3`: `corroborate` accounts for no DETACHED checkout, so a live worktree with no branch is read by no arm.** ⭐ **RECEIVED from [`W153`](#w153-corroborates-dispatched-and-unnamed-arm-reads-its-names-from-the-register-so-a-wave-with-no-register-round-is-blind-by-construction)'s close at `947a007`:** a carrier is declared on its branch, a detached HEAD has none, and `Graph` does not report detached worktrees. ⚠️ **It is `W153`'s own third instance, which its repair did not reach.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A live detached checkout is NAMED by `corroborate`**, on a line that says what it is, or refused by name.
+2. ⛔ **Asserted both ways (R12):** a detached checkout is named, and a branch checkout reads as before.
+3. ⚠️ **`tools/tests/quality/board/test_unclaimed.py` stands at its R11 bound at `947a007`, so the SPLIT comes first** (Ruling 261).
+
+⭐ **Surface:** `tools/quality/board/unclaimed.py`, the worktree reader behind `Graph`, and their tests. ⚠️ **One owner or two waves with [`W176`](#w176-corroborates-refuted-line-prints-a-row-count-beside-row-subjects-and-names-neither-unit-so-3-stands-over-four-ids).**
+
+[the mint](#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242)
+
+#### ⭐ CLOSED — PO ROUND 84
+
+⭐ **Merged at `9421b02`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `9421b02` is RECEIVED.** ⭐ **`corroborate` names every live detached checkout on a notice line that never moves the exit, and the unnamed arm's test module is split.** ⚠️ **Its findings were disposed in round 83's § 3.**

@@ -60,12 +60,13 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W251` | Developer 2 | `fix/W251-detached-checkout-named` @ none | 2 @ `e468f0d` | in-review |
-| `W268` | Developer 1 | `fix/W268-no-empty-media-dirs` @ none | 1 @ `c496247` | in-review |
 | `W269` | Developer 3 | `fix/W269-survey-says-and-skips-covered` @ none | 2 @ `942ac5a` | in-review |
-| `W272` | Developer 3 | `fix/W272-survey-agrees-nested-dirs` @ `wt/dev3` | 0 @ `8a2067a` | in-progress |
-| `W266` | Developer 2 | `fix/W266-included-file-no-unit-reads` @ `wt/dev2` | 0 @ `9363462` | in-progress |
-| `W270` | Developer 1 | `fix/W270-pin-commit-exists` @ `wt/dev1` | 0 @ `9363462` | in-progress |
+| `W270` | Developer 1 | `fix/W270-pin-commit-exists` @ none | 1 @ `64954c2` | in-review |
+| `W272` | Developer 3 | `fix/W272-survey-agrees-nested-dirs` @ none | 2 @ `1467aff` | in-review |
+| `W266` | Developer 2 | `fix/W266-included-file-no-unit-reads` @ none | 2 @ `355360e` | in-review |
+| `W226` | Developer 1 | `fix/W226-record-locates-every-clip` @ `wt/dev1` | 0 @ `9421b02` | in-progress |
+| `W278` | Developer 3 | `fix/W278-content-is-the-files-property` @ `wt/dev3` | 0 @ `9421b02` | in-progress |
+| `W276` | Developer 2 | `fix/W276-missing-clip-reads-missing` @ `wt/dev2` | 1 @ `30fc9d0` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -81,8 +82,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W168`, `W265`, `W261` LEFT at `696b28d`, `543b362`, `9363462`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W268`, `W269`, `W266`, `W270`, `W272` NAMED, `W251` CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W264`, `W262`, `W251` LEFT at `63f034a`, `56e2279`, `9421b02`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W226`, `W278`, `W276` NAMED, `W269`, `W270`, `W272`, `W266` CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-84-w264-w262-and-w251-closed).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -99,7 +100,6 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W226`, `W278` | ⛔ **`M6`'s `ISO-12` and `ISO-14` gates, Ruling 75 invoked in each row; `W226` before `W222` and `W223`** | [83](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
@@ -127,7 +127,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 47 | `W263` | ⭐ **round 80's mint, jumping nobody** | [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked) |
 | 48 | `W267`, `W271`, `W273`, `W274` | ⭐ **round 81's mints, each jumping nobody** | [81](BOARD-ARCHIVE.md#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9) |
 | 49 | `W275` | ⭐ **round 82's mint, jumping nobody** | [82](BOARD-ARCHIVE.md#po-round-82-w247-and-w176-closed) |
-| 50 | `W276`, `W277`, `W279` | ⭐ **round 83's mints, each jumping nobody** | [83](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239) |
+| 50 | `W279` | ⭐ **round 83's mint, jumping nobody** | [83](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239) |
+| 51 | `W280` | ⭐ **round 84's mint, after `W266` and `W272`** | [84](BOARD-ARCHIVE.md#po-round-84-w264-w262-and-w251-closed) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -137,7 +138,7 @@ classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-
 ⚠️ **`W160` writes `docs/tasks/rows/`, and a REGISTER round writes it too: never beside one** (check 4's sub-step). ⛔ **`W157`, `W159`, `W160`,
 `W168`, `W169`, `W179`, `W180`, `W229`, [`W231`](rows/W231.md) and [`W260`](rows/W260.md) name `docs/conventions/` — ⭐ ONE
 owner or two waves.**
-⛔ **`W269`+`W272` write `skills/reconnaissance/`; `W183`+`W184` write `E04` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
+⛔ **`W269`+`W272` write `skills/reconnaissance/`; `W266`+[`W280`](rows/W280.md) `validate/source/`; `W183`+`W184` write `E04` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
 name — ⛔ so a row declaring `corroborate.py` for that arm names the wrong file.** ⛔ **`W173`+`W159` write `board/bounds.py` (whose size message reads `register ids`, `W144/4`), and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
@@ -377,7 +378,7 @@ else.**
 | W223 | `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing | framework agent | `todo` — `SF-42/2` + `W212/3` | [`rows/W223.md`](rows/W223.md) |
 | W224 | A build into any `--out` but the corpus root ships a player that plays nothing and names no gap, because no pass copies a clip | framework agent | ✅ done — `d7c9d4d` | [`rows/W224.md`](rows/W224.md) |
 | W225 | One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211` | framework agent | ✅ done — `a8742c1` | [`rows/W225.md`](rows/W225.md) |
-| W226 | The narration record cannot locate every clip it wrote, so a removed unit's clips and a re-worded passage's old clip are beyond the only prune | framework agent | `todo` — `W218/1` + `W218/2` | [`rows/W226.md`](rows/W226.md) |
+| W226 | The narration record cannot locate every clip it wrote, so a removed unit's clips and a re-worded passage's old clip are beyond the only prune | Developer 1 | in-progress — `W218/1` + `W218/2`, on `fix/W226-record-locates-every-clip` | [`rows/W226.md`](rows/W226.md) |
 | W227 | Nothing runs the non-destructive check on a real build, so spec §11.2 item 11 has an instrument only its own tests invoke | framework agent | `todo` — `OPS-05/2` | [`rows/W227.md`](rows/W227.md) |
 | W228 | Ruling 173's population reads `E09` as integration WHOLE, so a framework row homed there escapes the consumer-corpus class — `OPS-05` did | framework agent | `todo` — `PO-67/2` + `OPS-05/1` | [`rows/W228.md`](rows/W228.md) |
 | W229 | `W143`'s plant procedure gives no plant a fresh bytecode cache, so two same-size plants can read one `.pyc` | framework agent | `todo` — `OPS-05/7` | [`rows/W229.md`](rows/W229.md) |
@@ -402,7 +403,7 @@ else.**
 | W248 | A source's own `archive/` at its root is skipped silently, because the archive root takes a common name in the owner's namespace | Developer 1 | ✅ done — `a2ae2c4` | [`rows/W248.md`](rows/W248.md) |
 | W249 | `SK-01` drafts its `source` from the surveyed directory's name and no `not_material` globs, so the first corpus typed both by hand | Developer 2 | ✅ done — `88a1f51` | [`rows/W249.md`](rows/W249.md) |
 | W250 | `SK-01` reads a heading that links a file as a contents entry, so `F21`'s fourth container is never proposed and `ISO-07` stops | Developer 2 | ✅ done — `5d9436d` | [`rows/W250.md`](rows/W250.md) |
-| W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | Developer 2 | in-review — `W153/3`, on `fix/W251-detached-checkout-named` | [`rows/W251.md`](rows/W251.md) |
+| W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | Developer 2 | ✅ done — `9421b02` | [`rows/W251.md`](rows/W251.md) |
 | W252 | `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered | Developer 1 | ✅ done — `c8da50e` | [`rows/W252.md`](rows/W252.md) |
 | W253 | `E12`'s `TC-01` still `Owns` `TC/` as its root after `TC-00` creates it, so two rows claim one creation | framework agent | `todo` — `W156/3` | [`rows/W253.md`](rows/W253.md) |
 | W254 | Under `sibling`, mirrored units in two containers place one page path, and `plan` and `build` exit `0` while the build replaces five pages | Developer 2 | ✅ done — `d05d856` | [`rows/W254.md`](rows/W254.md) |
@@ -413,24 +414,25 @@ else.**
 | W259 | `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently | Developer 2 | ✅ done — `900a52f` | [`rows/W259.md`](rows/W259.md) |
 | W260 | No wave-close procedure tells a close to run the capability-delivery reading `W154` shipped | framework agent | `todo` — `W154/3` | [`rows/W260.md`](rows/W260.md) |
 | W261 | `completeness` reads presence only where the origins point, so origins written against the wrong root read `Unchecked` beside a present source | Developer 2 | ✅ done — `9363462` | [`rows/W261.md`](rows/W261.md) |
-| W262 | Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued | Developer 3 | `todo` — `W161/4` + `/5`; merged at `56e2279`, closes on its reading (`PO-83/1`) | [`rows/W262.md`](rows/W262.md) |
+| W262 | Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued | Developer 3 | ✅ done — `56e2279` | [`rows/W262.md`](rows/W262.md) |
 | W263 | `validate` and `check_blocks` never read a list item's shape, so a malformed item passes both | framework agent | `todo` — `W258/1` | [`rows/W263.md`](rows/W263.md) |
-| W264 | A `list` block records no first number, so an ordered list that starts past one loses its numbering | Developer 1 | `todo` — `W258/3`; merged at `63f034a`, closes on its reading (`PO-83/1`) | [`rows/W264.md`](rows/W264.md) |
+| W264 | A `list` block records no first number, so an ordered list that starts past one loses its numbering | Developer 1 | ✅ done — `63f034a` | [`rows/W264.md`](rows/W264.md) |
 | W265 | `Scaffold.write(regenerate=True)` refuses over an existing hand-written file that onboarding's regenerate keeps, and `SK-02`'s `SKILL.md` calls both safe | Developer 1 | ✅ done — `543b362` | [`rows/W265.md`](rows/W265.md) |
-| W266 | `validate` passes an included file no unit's origin names, so a corpus carrying material twice reads valid | Developer 2 | in-progress — `INT-10/4` + `INT-11/4`, on `fix/W266-included-file-no-unit-reads` | [`rows/W266.md`](rows/W266.md) |
+| W266 | `validate` passes an included file no unit's origin names, so a corpus carrying material twice reads valid | Developer 2 | in-review — `INT-10/4` + `INT-11/4`, on `fix/W266-included-file-no-unit-reads` | [`rows/W266.md`](rows/W266.md) |
 | W267 | `plan` says `create` for output already on disk and lists a `site.json` that `build` never writes | framework agent | `todo` — `INT-10/5` + `/6` | [`rows/W267.md`](rows/W267.md) |
-| W268 | `build` writes empty media directories for a unit with no media, which git cannot track | Developer 1 | in-review — `INT-10/7`, on `fix/W268-no-empty-media-dirs` | [`rows/W268.md`](rows/W268.md) |
+| W268 | `build` writes empty media directories for a unit with no media, which git cannot track | Developer 1 | `todo` — `INT-10/7`; merged at `8eb03dc`, closes on its reading (`PO-84/1`) | [`rows/W268.md`](rows/W268.md) |
 | W269 | The `not_material` proposal stands down silently without a `.git` and re-proposes files a declared glob covers | Developer 3 | in-review — `INT-10/1` + `/2`, on `fix/W269-survey-says-and-skips-covered` | [`rows/W269.md`](rows/W269.md) |
-| W270 | `pin.check_commit` accepts any 40-hex string, so a commit the framework checkout lacks is pinned | Developer 1 | in-progress — `INT-11/3`, on `fix/W270-pin-commit-exists` | [`rows/W270.md`](rows/W270.md) |
+| W270 | `pin.check_commit` accepts any 40-hex string, so a commit the framework checkout lacks is pinned | Developer 1 | in-review — `INT-11/3`, on `fix/W270-pin-commit-exists` | [`rows/W270.md`](rows/W270.md) |
 | W271 | The generated `test_emit` leaves out `.git` at any depth, so it reads clean where `validate` refuses `nested-repository` | framework agent | `todo` — `W259/1` | [`rows/W271.md`](rows/W271.md) |
-| W272 | Reconnaissance's inventory skips `.git`, `.studyforge` and dot-directories at any depth, unlike `validate` | Developer 3 | in-progress — `W259/4`, on `fix/W272-survey-agrees-nested-dirs` | [`rows/W272.md`](rows/W272.md) |
+| W272 | Reconnaissance's inventory skips `.git`, `.studyforge` and dot-directories at any depth, unlike `validate` | Developer 3 | in-review — `W259/4`, on `fix/W272-survey-agrees-nested-dirs` | [`rows/W272.md`](rows/W272.md) |
 | W273 | `approach.py`'s growth window reads CTO wave closes only, and none has merged since round 72, so the window cannot move | framework agent | `todo` — `W245/1` | [`rows/W273.md`](rows/W273.md) |
 | W274 | `graph.named` matches `Merge <branch>:`, and every recent merge subject is `Merge <branch> (…):`, so it names no merge | framework agent | `todo` — `W245/4` | [`rows/W274.md`](rows/W274.md) |
 | W275 | `creators.py`'s `_MILESTONE` reads `M[0-9]` with no boundary, so a malformed milestone line such as `M1x` reads as a milestone | framework agent | `todo` — `W247/1` | [`rows/W275.md`](rows/W275.md) |
-| W276 | `narration.js`'s `play()` rejection overwrites the `error` handler, so a clip missing at run time reads blocked and play stays enabled | framework agent | `todo` — `INT-12/2` | [`rows/W276.md`](rows/W276.md) |
-| W277 | `narrate-service`'s `consuming.json` declares neither the engine's start-up model download nor the phonemizer's spaCy fetch | framework agent | `todo` — `INT-12/5` | [`rows/W277.md`](rows/W277.md) |
-| W278 | R3's never-permitted content is decided by the manifest alone, so an edit to a `not_material` root `README.md` passes | framework agent | `todo` — `INT-13/1` | [`rows/W278.md`](rows/W278.md) |
+| W276 | `narration.js`'s `play()` rejection overwrites the `error` handler, so a clip missing at run time reads blocked and play stays enabled | Developer 2 | in-progress — `INT-12/2`, on `fix/W276-missing-clip-reads-missing` | [`rows/W276.md`](rows/W276.md) |
+| W277 | `narrate-service`'s `consuming.json` declares neither the engine's start-up model download nor the phonemizer's spaCy fetch | framework agent | `todo` — `INT-12/5`; ⛔ HELD by the coordinator, its surface a sibling repository (`PO-84/2`) | [`rows/W277.md`](rows/W277.md) |
+| W278 | R3's never-permitted content is decided by the manifest alone, so an edit to a `not_material` root `README.md` passes | Developer 3 | in-progress — `INT-13/1`, on `fix/W278-content-is-the-files-property` | [`rows/W278.md`](rows/W278.md) |
 | W279 | The board convention's subject vocabulary never says an epic must DEFINE an In-flight epic task, which `W262` checks | framework agent | `todo` — `W262/3` | [`rows/W279.md`](rows/W279.md) |
+| W280 | `validate/source` exports no store name, so the survey imports `REPOSITORY_STORE` past `__all__`, and `classification.py` stands at its R11 bound | framework agent | `todo` — `W272/1` + `W266` | [`rows/W280.md`](rows/W280.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
