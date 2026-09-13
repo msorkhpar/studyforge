@@ -17,7 +17,9 @@ import pytest
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.validate import validate
 from studyforge.validate.source import (
+    RULE_ARCHIVE_STRAY,
     RULE_CONTESTED,
+    RULE_NESTED_REPOSITORY,
     RULE_UNCLASSIFIED,
     SKIP_DIRS,
     classification,
@@ -345,3 +347,105 @@ def test_a_corpus_with_no_material_says_so_before_it_says_anything_else(tmp_path
     report = validate(corpora.one_unit(tmp_path / "c"))
     assert "unclassified" in {u.rule for u in report.unchecked}
     assert "ignore-declaration" not in {u.rule for u in report.unchecked}
+
+
+# --------------------------------------------------------------------------
+# ⛔ W259 — only the corpus root's own `.git` and `.studyforge` are skipped
+# --------------------------------------------------------------------------
+
+
+def plant(root, where, text="planted\n"):
+    """Write one file at `where` beneath the corpus root and return `where`."""
+    path = root / where
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+    return where
+
+
+def named(root, rule):
+    """Where `validate` reports a finding under `rule`, as it names them."""
+    return [f.where for f in validate(root).findings if f.rule == rule]
+
+
+@pytest.mark.parametrize("versioned", [False, True], ids=["export", "repository"])
+def test_a_nested_studyforge_directory_is_scanned_and_its_file_named(tmp_path, versioned):
+    # ⛔ **The row's harm.** The framework writes `.studyforge` at the corpus
+    # root only, so one beneath it is a source's own directory, and a scan that
+    # skipped the name at any depth lost it without a word.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    if versioned:
+        declared_output(root)
+    where = plant(root, "src/.studyforge/notes.md")
+    assert where in scanned(root)
+    assert where in named(root, RULE_UNCLASSIFIED)
+
+
+@pytest.mark.parametrize("versioned", [False, True], ids=["export", "repository"])
+def test_the_roots_own_studyforge_directory_reads_clean(tmp_path, versioned):
+    # ⭐ The other way (R12): the root's own is the framework's, and planting a
+    # file there changes nothing the report says.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    if versioned:
+        declared_output(root)
+    before = validate(root).findings
+    plant(root, ".studyforge/notes.md")
+    assert not {where for where in scanned(root) if where.startswith(".studyforge/")}
+    assert validate(root).findings == before
+
+
+@pytest.mark.parametrize("store", ["directory", "gitfile"])
+def test_a_nested_repository_store_is_refused_by_name_and_never_entered(tmp_path, store):
+    # ⛔ **Refused, never skipped and never scanned** (`W259`'s ruling). A
+    # vendored repository's objects are not prose, and a submodule's `.git` is
+    # a file, which the old walk scanned while it skipped the directory form.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    declared_output(root)
+    if store == "directory":
+        init_repository(root / "vendor" / "lib")
+    else:
+        plant(root, "vendor/lib/.git", "gitdir: ../../.git/modules/lib\n")
+    report = validate(root)
+    assert [f.where for f in report.findings if f.rule == RULE_NESTED_REPOSITORY] == [
+        "vendor/lib/.git"
+    ]
+    entered = [f for f in report.findings if ".git" in f.where.split("/")]
+    assert [f.rule for f in entered] == [RULE_NESTED_REPOSITORY]
+
+
+def test_a_nested_store_the_repository_declares_as_output_is_not_refused(tmp_path):
+    # ⭐ What is output is the corpus's declaration, for a store as for a file.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    init_repository(root / "vendor" / "lib")
+    declared_output(root)
+    assert named(root, RULE_NESTED_REPOSITORY) == ["vendor/lib/.git"], "the control"
+    declared_output(root, "vendor/")
+    assert named(root, RULE_NESTED_REPOSITORY) == []
+
+
+def test_a_nested_store_is_refused_where_no_declaration_can_be_read(tmp_path):
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    plant(root, "vendor/lib/.git/HEAD", "ref: refs/heads/main\n")
+    assert not source_files(root).consulted
+    assert named(root, RULE_NESTED_REPOSITORY) == ["vendor/lib/.git"]
+    assert "vendor/lib/.git/HEAD" not in scanned(root)
+
+
+def test_the_roots_own_repository_store_reads_clean(tmp_path):
+    # ⭐ Both forms at the root: a checkout's directory, and a linked worktree's gitfile.
+    versioned = corpora.one_unit(tmp_path / "versioned", source=corpora.SOURCE)
+    declared_output(versioned)
+    assert source_files(versioned).stores == ()
+    worktree = corpora.one_unit(tmp_path / "worktree", source=corpora.SOURCE)
+    plant(worktree, ".git", "gitdir: elsewhere\n")
+    assert source_files(worktree).stores == ()
+    assert ".git" not in scanned(worktree)
+
+
+def test_a_store_beneath_the_archive_root_stays_an_archive_stray(tmp_path):
+    # ⛔ `W248` keeps reading exactly as it did: beneath `archive/`, membership
+    # accounts for every file, and this check never sees it.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    declared_output(root)
+    where = plant(root, f"{ARCHIVE_DIR}/demo/.git/HEAD")
+    assert where in named(root, RULE_ARCHIVE_STRAY)
+    assert named(root, RULE_NESTED_REPOSITORY) == []

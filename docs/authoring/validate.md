@@ -84,7 +84,7 @@ catch nothing.
 
 ---
 
-## The thirty-one rule ids
+## The thirty-two rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **The last six are not emitted by
@@ -115,6 +115,7 @@ the same shape.
 | `unclassified` | a file matches none of `include`, `exclude` and `not_material` |
 | `contested` | a file matches `include` **and** `not_material` |
 | `ignore-declaration` | your repository's own declaration of what is generated output could not be read — it is not a git working tree, or git is absent — so everything beside the archive was scanned as material |
+| `nested-repository` | another repository's store — a `.git` directory or a submodule's `.git` file — sits beneath the corpus root and your repository does not declare it as output. Only the root's own `.git` and `.studyforge` are skipped; a nested `.studyforge` is scanned as material |
 | `short-read` | a source file was read, but not all of it |
 | `origin-missing` | a unit's declared `origin` file is not present |
 | `origin-section-missing` | an `origin` names a section its file does not carry |
