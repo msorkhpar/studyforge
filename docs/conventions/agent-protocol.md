@@ -309,6 +309,23 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
   whole point of adding it** — the alternative was an office declaring `survey`
   (*"nothing landed"*, false) or minting an id it does not own.
 
+#### ⛔ Ruling 285(b) (CTO round 59) — a handoff cites a TRACKED DOCUMENT as a resolving POINTER, and the floor binds every handoff written after the pin
+
+> ⛔ **(b) THE POINTER.** ⭐ **A document citing a frozen record, a row file or a ruling section
+> cites it as a RESOLVING POINTER, never as a bare filename.** … ⭐ **Scoped deliberately: it
+> binds a citation of a TRACKED DOCUMENT, never a test name, a symbol or a sha.**
+
+- ⛔ **Write the link, not the name** — `` [`BOARD.md`](../tasks/BOARD.md) `` — and anchor it
+  where the citation is to a section. ⚠️ **A test name, a symbol, a sha and a command are NOT
+  citations of a document**, and the floor never reads them.
+- ⭐ **Where the target is absent on your ref, the backticked NAME is right** (Ruling 308), and
+  the floor agrees: it fires only on a name that resolves to a markdown document git tracks.
+- ⛔ **It is an arm of `check_handoffs`, and it binds a task or office handoff ABSENT from the
+  tree at `citing.CITATION_PIN`.** ⭐ The frozen records are excluded by that REF, never by a
+  list of filenames, so they are not back-filled (Rulings 106, 174). ⛔ **The pin is not a
+  knob**: moving it to quiet a red handoff exempts that handoff; the repair is the link.
+- ⭐ **The floor prints `n of m new handoffs`** (Ruling 48), empty population included.
+
 #### ⛔ Ruling 176 (CTO round 45) — a new `DOCUMENT_KINDS` entry may be minted by any office ONLY IF it owes at least what the strictest existing kind owes
 
 > ⭐ **A kind that owes MORE, or the same, is a contract being EXTENDED, and may
