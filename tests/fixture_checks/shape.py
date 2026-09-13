@@ -17,12 +17,9 @@ that true by accident for as long as nobody added a key.
 
 from __future__ import annotations
 
-from studyforge.validate import blocks as list_shape
+from studyforge.validate import blocks as block_shapes
 from tests.fixture_checks.corpus import rendered
 from tests.fixture_checks.vocabulary import (
-    BLOCK_FIELDS,
-    BLOCK_OPTIONAL,
-    CONTAINER_TYPES,
     CORPUS_APIS,
     DOCUMENT_KEYS,
     OPTIONAL_KEYS,
@@ -59,28 +56,9 @@ def check_document_shape(path, document, where):
 def check_blocks(document, where):
     """Every block is a named type with its fields, then only the optional keys it names.
 
-    ⛔ **`W263`: a `list` block is read by `validate`'s own reader** (`validate.blocks`), called
-    through its module so the two can never disagree about an item, a nested list or `start`.
+    ⛔ **`W282`: read by `validate`'s own reader** (`validate.blocks.block_problems`), called
+    through its module, so the fixture check and `validate` decide a block's type, its keys,
+    a list's items and `start`, at every depth, through ONE function (`W263`).
     """
-    for index, block in enumerate(document["blocks"]):
-        kind = block.get("type")
-        fields = BLOCK_FIELDS.get(kind)
-        if fields is None:
-            yield "vocabulary", f"{where} block {index} has type {kind!r}"
-            continue
-        extra = tuple(block)[len(fields) :]
-        if kind == "list":
-            for at, what in list_shape.list_problems([block]):
-                yield "vocabulary", f"{where} block {index} ({kind}) {at} {what}"
-        elif tuple(block)[: len(fields)] != fields or extra != tuple(
-            key for key in BLOCK_OPTIONAL.get(kind, ()) if key in extra
-        ):
-            yield (
-                "vocabulary",
-                f"{where} block {index} ({kind}) has keys {list(block)}, expected {list(fields)}",
-            )
-        if kind in CONTAINER_TYPES:
-            yield from check_blocks(
-                {"blocks": block.get("blocks") or []},
-                f"{where} block {index} ({kind})",
-            )
+    for at, what in block_shapes.block_problems(document["blocks"]):
+        yield "vocabulary", f"{where} {at} {what}"
