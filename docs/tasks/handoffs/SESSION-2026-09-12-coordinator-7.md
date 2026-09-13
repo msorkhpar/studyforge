@@ -2,9 +2,9 @@
 
 **Kind:** session log
 
-**Release tip:** `release/m0-foundations` @ `171366c` when written. ⛔ **Floor and suite GREEN
-after every merge of waves 18, 19 and 20 so far, measured in the pinned image by the
-coordinator, and never red between merges.**
+**Release tip:** `release/m0-foundations` @ `4cb39e8` when written. ⛔ **Floor and suite GREEN
+after every merge of waves 18, 19 and 20, measured in the pinned image by the coordinator, and
+never red between merges.**
 
 ⭐ **A successor reads [the coordinator-6 log](SESSION-2026-09-12-coordinator-6.md) for the role,
 the absolute constraints, the merge discipline and the standing preamble — unchanged except as
@@ -13,37 +13,42 @@ below — then THIS FILE, then `docs/tasks/BOARD.md`, then the newest `PO-*` rou
 ## ⭐ WHAT CHANGED IN THE PROJECT
 
 - ⭐ **M3 CLOSED at `1ede082`** (PO round 65) on `SF-42`: `studyforge narrate` puts clips on disk.
-  The end-to-end leg is a HOST reading — the pinned image has no network.
-- ⭐ **M4 is OPEN.** Merged: `SF-38` (narrate → build plays clips or names the gap), `W218`
-  (`narrate --prune`), `W211` (the image installs the package), `SF-21` (progress store), `OPS-05`
-  (non-destructive check, partial: the Java corpus has no archive), `SF-19a` (serving API: content,
-  assets, security).
-- ⭐ **In flight at writing:** `W224` (the build copies clips into `--out`), `SF-39`
-  (`studyforge serve`), `SF-19b` (state, discovery, addressing), PO round 67.
+- ⭐ **M4 steps 4.1, 4.2 and 4.3 CLOSED** (PO rounds 67 and 69). Merged: `SF-38`, `W218`, `W211`,
+  `SF-21`, `OPS-05`, `SF-19a`, `W224`, `SF-39`, `SF-19b`, `W105`, `W225`. **M4 stays open on
+  step 4.4**, where `SK-03` is in flight.
+- ⭐ **In flight at writing:** `SK-03` (build-and-serve skill), `W106` (marker-sweep reader),
+  `W107` (anchor home). **Next free slot: `W230`** (order 0) — the multi-corpus serve instance is
+  unreachable; its brief is composed.
 
 ## ⛔ NEW IN THE DISCIPLINE
 
-1. ⛔ **THE IMAGE GUARD.** `docker/dev/check` rebuilds ONE shared tag from whichever worktree runs
-   it (`W211/2`, measured racing). Every pinned invocation starts with
-   `command -v studyforge >/dev/null; echo "IMAGE_GUARD=$?"`. ⚠️ **It only tells a pre-`W211`
-   image from a later one** — `W225` owns the real fix. ⛔ **When a row changes `docker/dev/`, hold
-   every office off `check` from its merge until each has rebased onto it.**
-2. ⛔ **PER-OFFICE SCRATCH DIRECTORIES.** Offices collided in the shared session scratchpad and
-   one ran another's plant script (`OPS-05/6`). The preamble now requires `<scratchpad>/<office>/`,
-   restores from per-file copies (never `git checkout --`), and a fresh bytecode cache per plant.
-3. ⭐ **A slot that frees mid-wave is refilled at once**, by the dispatch bound: capability rows
-   first, and a `W` row only where no capability row can take the slot.
+1. ⭐ **THE IMAGE IS NAMED BY ITS INPUTS NOW (`W225`).** `docker/dev/check` prints
+   `image studyforge/dev:inputs-<digest>`; quote that line with every reading, beside the
+   `command -v studyforge` IMAGE_GUARD. ⚠️ A branch cut before `W225` still uses the old shared tag
+   and races only other pre-`W225` branches. ⛔ **Never `docker compose down --remove-orphans`:**
+   every checkout shares one compose project (`W225/5`).
+2. ⛔ **RULING 139 FOR SCRATCH.** Offices collided in the shared session scratchpad (`OPS-05/6`);
+   an office's harness and capture files live under its OWN worktree's `.scratch/`.
+3. ⛔ **OFFICES STOP BEFORE THEIR OWN PINNED RUN FINISHES** — seen five times. Every brief now
+   says: wait on `^SUITE_EXIT=` at the START of a line (one wait matched its own expectation text),
+   and hand back only after the last run is read. ⭐ **If one stops anyway, send it one message.**
+4. ⭐ **A slot that frees mid-wave is refilled at once**, by the dispatch bound: capability rows
+   first; a `W` row only where no capability row can take it. The register confirms carriers by
+   message when it is mid-round.
+5. ⚠️ **Never put `&` inside a command already run in the background:** the chain detaches and no
+   completion notice arrives — watch its capture file for `^WRAPPER_EXIT=` instead.
 
-## ⚠️ OPEN AND WORTH A SUCCESSOR'S FIRST LOOK
+## ⚠️ OPEN, AND ONE IS THE USER'S
 
-- ⛔ **`SK-03` was NOT dispatched against `PO-66/2`:** E11 places the wrapping skills at M7 as
-  wrappers over entry points that already work, while its own section and the README say M4 step
-  4.4. PO round 67 was asked to settle it.
-- `W80`–`W83`: every Acceptance clause naming the Java corpus is unmeetable — measured, the corpus
-  has no archive.
+- ⛔ **USER QUESTION (`PO-68/2`, relayed):** the Java corpus (consumer 1) has no integration
+  office. Three of its readings — serve it, build-and-serve it, run the non-destructive check on
+  it — wait in `OPS-03` at M6; that repository has no `corpus.json` at its pin. Nothing before M6
+  is blocked.
+- `W226`: the narration record cannot locate every clip it wrote. `W223`: a model change requests
+  nothing. `W221`: the whole suite at uid 0 still writes outside the checkout.
 
 ## ⛔ THE NEXT ACTION
 
-Merge PO round 67 FIRST, then `W224`, `SF-39`, `SF-19b` as each hands back — corroborate before,
-guarded floor + suite after every merge. Refill each freed slot from M4's dispatchable rows, else
-the queue head (`W225` is order 0).
+Merge `SK-03`, `W106`, `W107` as each hands back — corroborate before, guarded floor + suite
+(with the printed identity) after every merge. Put `W230` into the first freed slot. When
+`SK-03` merges, the register closes step 4.4 and runs **M4's close** against its *Done when*.
