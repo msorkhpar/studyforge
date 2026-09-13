@@ -32,7 +32,7 @@ import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.corpus.manifest import MANIFEST_FILENAME, load, parse
+from studyforge.corpus.manifest import MANIFEST_FILENAME, RAISES, load, parse
 from studyforge.skills.personalarchive import record
 from studyforge.skills.personalarchive.layout import (
     MANIFEST_MEMBER,
@@ -130,6 +130,9 @@ def _same_corpus(root: Path, unpacked: Unpacked) -> int:
         theirs = parse(carried[MANIFEST_FILENAME].data.decode("utf-8"))
     except UnicodeDecodeError:
         raise ArchiveError(f"the archive's {MANIFEST_FILENAME} is not UTF-8 text") from None
+    except RAISES:
+        # ⛔ The manifest's own refusal is reported as it is, never wrapped (Ruling 58).
+        raise
     if theirs.source != unpacked.manifest["source"]:
         raise ArchiveError(f"the archive's {MANIFEST_FILENAME} is not the corpus it declares")
     here = root / MANIFEST_FILENAME
