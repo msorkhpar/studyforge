@@ -563,9 +563,15 @@ Handles the honest partial states rather than failing on them: no narration
 service, no toolchain container, no exercises. Each is a **known state with a
 stated consequence**, not an error (R6, R8).
 
-**Acceptance.** Produces and serves the Java corpus end to end. Produces a
+**Acceptance.** Produces and serves each `FND-04` fixture end to end. Produces a
 valid site for a corpus with zero exercises and no narration. Each partial
 state is reported with what is missing and what still works.
+
+#### ⛔ Acceptance SPLIT by the PO, round 68 — `W81`, Ruling 151
+
+> ~~Produces and serves the Java corpus end to end.~~
+
+⛔ **A reading no framework office can take: that sibling has no manifest and no archive at its pin (`OPS-05/1`; R20, Ruling 173).** ⭐ **Framework half: the restated first clause.** ⛔ **The Java half is RE-HOMED to `OPS-03` (`M6`, integration side), `W77`'s shape — the one disposition `SF-19b` and `OPS-05` also take.** ⭐ **With it written, `SK-03` is dispatchable when `SF-39` merges.**
 
 ---
 

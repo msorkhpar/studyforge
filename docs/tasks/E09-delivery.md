@@ -219,7 +219,7 @@ deletes no clip (answer 3; `W193` answer 1, whose *"only READS them"* is about t
 ⭐ **A copy under `--out` is the build's own output, enumerated by `studyforge plan`** (answer 2,
 R3). ⛔ **At `--out` = the corpus root nothing is copied.** ⚠️ **Cost, accepted: a second copy of
 the clips; a later `narrate` reaches the site by a REBUILD (answer 3's order); a copy the record
-no longer names is not deleted (answer 2).** ⭐ **Carried out by [`W224`](rows/W224.md).**
+no longer names is not deleted (answer 2).** ⭐ **Carried out by [`W224`](BOARD-ARCHIVE.md#w224-a-build-into-any-out-but-the-corpus-root-ships-a-player-that-plays-nothing-and-names-no-gap-because-no-pass-copies-a-clip), merged at `d7c9d4d`.**
 
 ---
 
@@ -270,7 +270,7 @@ corpus, so a change to it correctly invalidates only this corpus's audio.
 ---
 
 ### OPS-03 — Compose and study server
-**Milestone** **M6** · **Depends on** OPS-01, OPS-02, SF-19b · **Team** solo
+**Milestone** **M6** · **Depends on** OPS-01, OPS-02, SF-19b, SK-03, OPS-05 · **Team** solo
 **Owns** `JS/docker-compose.yml`
 **Context** ~30k — `TC/consuming.json` and `TC/docs/consuming.md`, the narration service's equivalent, SF-19b output  ⚠️ *not the extraction source (R20)*
 
@@ -303,7 +303,11 @@ because somebody opened a reading page is not a decision this file gets to make.
 **Acceptance.** One command serves the site. The server returns after a host
 restart. The editor container does not start unless asked. The port binds to
 loopback only — asserted. Files created in the container are owned by the host
-user.
+user. Serves the Java corpus discovered at startup with no configured paths.
+Produces and serves the Java corpus end to end through `SK-03`. That build
+passes the non-destructive check.
+
+⭐ **The last three clauses are RE-HOMED here by the PO, round 68 — the Java halves of `SF-19b` (`W80`), `SK-03` (`W81`) and `OPS-05` (`W228` item 3), split from framework rows because each is a reading inside this consumer (R20, Ruling 173).** ⛔ **So this row now waits on `SK-03` and `OPS-05` too.**
 
 ---
 
@@ -365,14 +369,20 @@ profile, and for the LMS "enhancing rather than restructuring", rests on it
 being true. Untested, it is an intention that erodes the first time a generator
 finds it convenient to rewrite a README.
 
-⭐ **CLOSED, PO round 67, at `77e47e5` — the Java-corpus clause below CARRIED, not met:** that sibling has no manifest at its pin (`OPS-05/1`), Ruling 173's class, and [`W228`](rows/W228.md) is why no instrument counted it. ⚠️ **Nothing runs the check on a real build: [`W227`](rows/W227.md).**
+⭐ **CLOSED, PO round 67, at `77e47e5`.** ⛔ **Its Java-corpus clause, carried then, is SPLIT PO round 68 (below)**; [`W228`](rows/W228.md) is why no instrument counted it. ⚠️ **Nothing runs the check on a real build: [`W227`](rows/W227.md).**
 
-**Acceptance.** Passes on a correct build of the Java corpus. **Fails, naming the
+**Acceptance.** **Fails, naming the
 file**, when a generator is deliberately made to touch an existing README.
 **Fails when a declared edit rewrites a line rather than adding one.** Fails when
 a corpus declares an edit to its root ignore file. Passes on a corpus whose
 `permitted_edits` is empty and which touches nothing. **Contains no reference to
 any corpus** — asserted (R1).
+
+#### ⛔ Acceptance SPLIT by the PO, round 68 — `W228` item 3, Ruling 151
+
+> ~~Passes on a correct build of the Java corpus.~~
+
+⛔ **Never met (`OPS-05/1`): that sibling has no manifest and no archive at its pin, so no framework office can take the reading (R20, Ruling 173).** ⭐ **Restated AS DELIVERED (Ruling 166): the clauses above, each tested and planted.** ⛔ **The Java half is RE-HOMED to `OPS-03`, with `SF-19b`'s and `SK-03`'s — one disposition for all three.**
 
 ---
 
@@ -626,7 +636,7 @@ above is a build's.**
 ⚠️ ***A player whose sources resolve* holds where `--out` is the corpus root, the only form its
 tests build; elsewhere it is false, answered in
 [§ SF-38/8](#sf-388-where-a-built-pages-audio-lives-under-out-copied-there-by-the-build) and
-carried by [`W224`](rows/W224.md).**
+carried by [`W224`](BOARD-ARCHIVE.md#w224-a-build-into-any-out-but-the-corpus-root-ships-a-player-that-plays-nothing-and-names-no-gap-because-no-pass-copies-a-clip), merged at `d7c9d4d`.**
 
 ---
 
