@@ -66,6 +66,7 @@ from tools.quality.handoffs import check_handoffs
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
 from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
+from tools.quality.locations import location_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
@@ -227,10 +228,15 @@ CHECKS = (
 #: `0 findings` reads as a clean bill unless the population is printed beside
 #: it. ⛔ **Ruling 191, and Ruling 48 one row over: `0 = 0` is not a result.**
 #: ⚠️ It sits beside `board_state` because it reads the same register.
+#:
+#: ⭐ **`location_notice` is the eighth** (`W150`): a `<path>:<line>` citation read for
+#: its PATH and its INTEGER, the two harms counted apart. ⚠️ It prints under the
+#: pointer census because both answer *does this address resolve* for a live document.
 NOTICES = (
     approach_notice,
     pointer_coverage,
     collision_census,
+    location_notice,
     board_state,
     handoff_existence,
     rulings_notice,

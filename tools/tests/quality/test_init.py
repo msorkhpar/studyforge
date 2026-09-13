@@ -13,6 +13,7 @@ from tools.quality.handoffs import check_handoffs
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
 from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
+from tools.quality.locations import location_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
 from tools.quality.pointers import check_pointers, pointer_coverage
@@ -58,6 +59,7 @@ def test_every_notice_is_registered():
         approach_notice,
         pointer_coverage,
         collision_census,
+        location_notice,
         board_state,
         handoff_existence,
         rulings_notice,
