@@ -7,7 +7,9 @@ accepts (R2), and no other agreement between an adapter and the framework
 exists.
 
 **How you use it.** `studyforge validate <archive>`. It exits non-zero and
-names what is wrong — by address, by file, by rule.
+names what is wrong — by address, by file, by rule. For a build:
+`check_untouched(snapshot(root, m), snapshot(root, m), m, footprint)` around it
+returns the same `Report` (`validate.nondestructive`, OPS-05).
 
 **Depends on.** `archive`, `corpus`, `address`. ⛔ Not on `render` or `serve`:
 validity is a property of the input, and a validator that needed the renderer
@@ -33,6 +35,7 @@ get.
 from __future__ import annotations
 
 from studyforge.validate.cli import UNUSABLE, main
+from studyforge.validate.nondestructive import Snapshot, check_untouched, snapshot
 from studyforge.validate.report import INVALID, OK, Finding, Report, Unchecked
 from studyforge.validate.run import CHECKS, validate
 
@@ -43,7 +46,10 @@ __all__ = [
     "UNUSABLE",
     "Finding",
     "Report",
+    "Snapshot",
     "Unchecked",
+    "check_untouched",
     "main",
+    "snapshot",
     "validate",
 ]
