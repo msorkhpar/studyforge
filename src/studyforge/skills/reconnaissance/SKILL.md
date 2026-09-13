@@ -140,6 +140,11 @@ the one the capability index prints, not the order their ids sort to.
 the deliverable, and the level vocabulary is always one of them: §4 rules the
 names are the corpus's own, and this skill cannot know them.
 
+⛔ **A field the draft fills is filled with a value `SF-02` accepts.** `source`
+is the slug of the surveyed directory's resolved name and `variants` is
+`["prose"]`, both asked about; no include glob matches the curriculum record —
+a directory whose wildcard would catch it is listed file by file.
+
 ---
 
 ## What this skill must never do
