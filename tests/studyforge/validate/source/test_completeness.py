@@ -225,13 +225,29 @@ def test_a_ROOT_level_origin_missing_beside_a_root_level_source_is_RED(tmp_path)
     assert validate(root).rules == ("origin-missing",)
 
 
-def test_DECLARED_an_origin_whose_top_directory_is_ABSENT_reads_the_tree_as_absent(tmp_path):
-    # ⚠️ Ruling 292: declared, not decided. FND-04's invalid fixtures declare `*.md` over
-    # their own `VIOLATION.md` beside origins under an absent directory, and stay one rule.
-    manifest = {**corpora.MANIFEST, "content": {"include": ["*.md"]}}
+def test_an_origin_whose_top_directory_is_ABSENT_beside_source_ELSEWHERE_is_RED(tmp_path):
+    # ⛔ `W261` clause 1, inverting `W255/3`'s declared gap: the origins name `src/`, which
+    # is absent, while the manifest's source sits under another top-level directory.
+    manifest = {**corpora.MANIFEST, "content": {"include": ["lessons/*.md"]}}
+    root = missing_origins(
+        tmp_path / "c", manifest=manifest, sources={"lessons/one.md": corpora.SOURCE}
+    )
+    assert not (root / "src").exists(), "⛔ born vacuous: the origins' top directory is ABSENT"
+    report = validate(root)
+    assert report.rules == ("origin-missing",)
+    assert report.exit_code == 1
+
+
+def test_a_ROOT_file_declared_NOT_MATERIAL_is_not_a_present_source(tmp_path):
+    # ⭐ `W261` clause 2's shape: FND-04's fixtures declare their `VIOLATION.md` not
+    # material, so the whole-root reading finds no source and adds no second rule.
+    note = {"glob": "NOTE.md", "why": "a note about the fixture, built for the test"}
+    content = {"include": ["src/*.md"], "not_material": [note]}
+    manifest = {**corpora.MANIFEST, "corpus_api": 2, "content": content}
     root = missing_origins(tmp_path / "c", manifest=manifest, sources={"NOTE.md": "# Note\n"})
     report = validate(root)
-    assert "origin-missing" not in report.rules
+    assert report.findings == ()
+    assert report.exit_code == 0
     assert "short-read" in {u.rule for u in report.unchecked}
 
 

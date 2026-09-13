@@ -30,6 +30,7 @@ from studyforge.archive.blocks import (
 )
 from studyforge.archive.document import DOCUMENT_KEYS, OPTIONAL_KEYS, RAW_API
 from studyforge.corpus.container.document import KNOWN_CONTAINER_API
+from studyforge.corpus.manifest import KNOWN_CORPUS_API
 
 #: ⭐ Declared because most of what this module offers is now **re-exported**
 #: rather than defined: the block vocabulary and the document's key order are
@@ -41,7 +42,7 @@ __all__ = [
     "BLOCK_TYPES",
     "CONTAINER_APIS",
     "CONTAINER_TYPES",
-    "CORPUS_API",
+    "CORPUS_APIS",
     "COUNT_KEYS",
     "DOCUMENT_KEYS",
     "FIXTURES",
@@ -114,12 +115,11 @@ INVALID_CORPORA = {
     "user-authoritative": "exercise-trust",
 }
 
-#: ⚠️ Still declared here, and deliberately: `corpus_api` is SF-02's and
-#: SF-06 collected what SF-06 owns. Routed as a finding rather than swept up in
-#: a diff about blocks. ⚠️ It is the version **these fixtures** declare, which
-#: is not the version the framework writes today — `studyforge`'s `CORPUS_API`
-#: is 2 — and that gap is a finding rather than this file's to close.
-CORPUS_API = 1
+#: ⛔ **The manifest versions a fixture may declare — a set, imported**, for
+#: `CONTAINER_APIS`'s reason below. ⭐ `W261`: six FND-04 invalid fixtures declare
+#: `corpus_api` 2, because only `content.not_material` (which 2 added) keeps their
+#: own `VIOLATION.md` out of both the source and `unclassified`.
+CORPUS_APIS = KNOWN_CORPUS_API
 
 #: ⛔ **The container-map versions a fixture may declare — a set, imported.**
 #: It was `CONTAINER_API = 1` while the framework's own constant moved to 2, so
