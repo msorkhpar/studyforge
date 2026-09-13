@@ -30,6 +30,13 @@ DRAFT = {
 }
 
 
+#: A `not_material` block a PERSON settled in the draft (INT06-1's shape): a
+#: directory of notes about the material, which no generator writes and so no
+#: generator can declare. ⚠️ Not written by `material` — a test that needs the
+#: file on disk writes it, so every other test's tree is unchanged.
+NOTES = {"glob": "notes/**", "why": "the integrator's notes about the material, never a unit"}
+
+
 def material(root: Path) -> Path:
     """Write the material, and nothing else — no manifest, no adapter, no tests."""
     root.mkdir(parents=True, exist_ok=True)

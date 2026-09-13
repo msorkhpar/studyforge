@@ -15,6 +15,7 @@ import pytest
 from studyforge.corpus.manifest import Classification, parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.skills.onboarding import artifacts
+from studyforge.skills.onboarding.manifest import PromotionRefused
 from studyforge.skills.onboarding.onboard import (
     INSTALLED_API,
     OnboardingRefused,
@@ -59,6 +60,33 @@ def test_the_adapters_globs_are_in_the_manifest_without_anybody_copying_them():
     assert {entry["glob"] for entry in artifacts.NOT_MATERIAL} <= globs, (
         "this skill's own output was not declared either"
     )
+
+
+def _notes_draft(*entries):
+    return corpora.draft(content={**corpora.DRAFT["content"], "not_material": list(entries)})
+
+
+def test_a_persons_not_material_block_survives_onboarding():
+    # ⛔ INT06-1, on the shape of the defect: a draft carrying a block, onboarded.
+    made = onboard(_notes_draft(corpora.NOTES), framework_commit=corpora.COMMIT)
+    manifest = parse(next(item.text for item in made.files if item.where == artifacts.MANIFEST))
+
+    assert corpora.NOTES in made.not_material
+    assert manifest.content.classify("notes/a.txt") is Classification.NOT_MATERIAL
+    assert {"ingest/**", "tests/ingest/**"} <= {
+        entry.glob for entry in manifest.content.not_material
+    }
+
+
+def test_a_drafted_glob_the_scaffold_also_generates_is_refused():
+    # ⚠️ Only the SECOND promotion can see this: the provisional pass has no
+    # scaffold yet, so a refusal here proves the check runs where it must.
+    mine = {"glob": "ingest/**", "why": "a person's reason for the adapter directory"}
+
+    with pytest.raises(PromotionRefused) as refused:
+        onboard(_notes_draft(mine), framework_commit=corpora.COMMIT)
+
+    assert "ingest/**" in str(refused.value) and "content.not_material[0]" in str(refused.value)
 
 
 def test_every_file_it_writes_is_declared_in_the_manifest_it_writes():

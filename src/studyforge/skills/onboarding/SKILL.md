@@ -184,6 +184,13 @@ declared path rather than a workaround — and it drops an empty
 survives: the rule is that this generator adds nothing, not that it discards
 what somebody declared.
 
+⛔ **That includes `content.not_material`** (`INT06-1`): the draft's entries are
+carried through as written, **merged** with the globs the onboarding generates.
+⛔ **A glob declared on both sides is refused, never resolved by precedence** —
+the refusal names the draft's entry and the generated side, every collision at
+once — because the manifest refuses a repeated glob as two audits, and a person
+retyping a generated declaration is the retyping R19 forbids.
+
 ⛔ **It never flips the media policy.** Generated media is committed by default;
 when a corpus crosses the footprint ceiling this skill says so in the onboarding
 report and names the two ways forward. **The manifest says what happens, and a

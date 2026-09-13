@@ -167,6 +167,80 @@ def test_two_generators_declaring_one_directory_is_merged_rather_than_refused():
     assert document["content"]["not_material"] == [GLOB]
 
 
+def _with_notes(*entries) -> dict:
+    return corpora.draft(content={**corpora.DRAFT["content"], "not_material": list(entries)})
+
+
+def test_a_not_material_block_a_person_declared_survives_merged_with_the_generated_globs():
+    # ⛔ INT06-1: the block was silently dropped, so a corpus's own declarations
+    # could not be generated. ⭐ The person's entries first, as written, then the
+    # generated ones in their sorted order.
+    other = {"glob": "tests/*.py", "why": "the generated checks this corpus carries"}
+
+    document = promote(_with_notes(corpora.NOTES), not_material=[other, GLOB])
+
+    assert document["content"]["not_material"] == [corpora.NOTES, GLOB, other]
+    assert document["corpus_api"] == NOT_MATERIAL_API
+    assert parse(render(document)).content.not_material[0].glob == corpora.NOTES["glob"]
+
+
+def test_a_persons_block_alone_is_carried_and_raises_the_version_it_needs():
+    # ⚠️ `onboard`'s provisional pass promotes with no generated globs at all.
+    document = promote(_with_notes(corpora.NOTES))
+
+    assert document["content"]["not_material"] == [corpora.NOTES]
+    assert document["corpus_api"] == NOT_MATERIAL_API
+
+
+def test_without_a_drafted_block_the_content_is_exactly_what_it_was():
+    # ⭐ The unplanted control: no drafted block, and an empty one, both emit
+    # the generated globs alone and stay at the draft's version without them.
+    for drafted in (corpora.DRAFT, _with_notes()):
+        assert promote(drafted)["content"] == {"include": ["src/*.md", "README.md"]}
+        assert promote(drafted)["corpus_api"] == 1
+        assert promote(drafted, not_material=[GLOB])["content"] == {
+            "include": ["src/*.md", "README.md"],
+            "not_material": [GLOB],
+        }
+
+
+def test_a_glob_the_draft_and_a_generator_both_declare_is_refused_naming_both_sides():
+    # ⛔ Never resolved by precedence: neither reason is kept over the other,
+    # because the manifest itself refuses a repeated glob as two audits.
+    mine = {"glob": GLOB["glob"], "why": "a person's reason for the same directory"}
+
+    with pytest.raises(PromotionRefused) as refused:
+        promote(_with_notes(corpora.NOTES, mine), not_material=[GLOB])
+
+    message = str(refused.value)
+    assert "content.not_material[1]" in message, "the draft's side is not named"
+    assert "generated" in message, "the generated side is not named"
+    assert GLOB["glob"] in message
+    assert corpora.NOTES["glob"] not in message, "a glob that does not collide was named"
+
+
+def test_a_collision_is_refused_even_when_both_sides_give_the_same_reason():
+    # ⚠️ Ruled (INT06-1): a person retyping a generated declaration is R19's
+    # retyping, and the manifest refuses the repeat whatever the reasons say.
+    with pytest.raises(PromotionRefused):
+        promote(_with_notes(GLOB), not_material=[GLOB])
+
+
+def test_every_collision_is_named_at_once():
+    second = {"glob": "tests/*.py", "why": "the generated checks this corpus carries"}
+
+    with pytest.raises(PromotionRefused) as refused:
+        promote(_with_notes(GLOB, second), not_material=[GLOB, second])
+
+    message = str(refused.value)
+    assert "content.not_material[0]" in message and "content.not_material[1]" in message
+
+
+def test_a_drafted_block_that_is_not_a_list_is_refused():
+    with pytest.raises(PromotionRefused):
+        promote(corpora.draft(content={"include": ["src/*.md"], "not_material": "notes/**"}))
+
+
 def test_a_key_no_manifest_carries_is_refused_by_name():
     with pytest.raises(PromotionRefused) as refused:
         promote({**corpora.DRAFT, "toolchain": "java"})
