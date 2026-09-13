@@ -60,10 +60,10 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W239` | Developer 2 | `fix/INT06-1-promote-not-material` @ none | 0 @ `dbf98ed` | in-progress |
-| `W243` | Developer 3 | `fix/INT06-9-highlight-languages` @ none | 3 @ `d41fe01` | in-progress |
-| `W162` | Developer 3 | `fix/W162-docker-gate-ground` @ `wt/dev3` | 6 @ `9d5ab15` | in-progress |
-| `W151` | Developer 2 | `fix/W151-docstring-counts` @ `wt/dev2` | 0 @ `1e70007` | in-progress |
+| `W162` | Developer 3 | `fix/W162-docker-gate-ground` @ none | 0 @ `b1a3178` | in-progress |
+| `W151` | Developer 2 | `fix/W151-docstring-counts` @ `wt/dev2` | 2 @ `8ea558c` | in-progress |
+| `W242` | Developer 1 | `fix/W242-sibling-ignore-home` @ `wt/dev1` | 0 @ `5f772d9` | in-progress |
+| `W153` | Developer 3 | `fix/W153-unnamed-arm-register-blind` @ `wt/dev3` | 0 @ `5f772d9` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -79,8 +79,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W238`, `W141`, `W241`, `W240` LEFT at `0618035`, `1e70007`, `7fceaf6`, `cf1252f`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W239`, `W243`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row); `W151` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended).** ⚠️ **[`W191`](rows/W191.md) unassigned; [`W242`](rows/W242.md) unassigned until `W239` merges.**
+⛔ **`W239`, `W243` LEFT at `0e65df9`, `5f772d9`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row); `W151` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended); `W242`, `W153` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -97,10 +97,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 2 | `W242` | ⛔ **`M6`: `W242` follows `W239`; `W241` has merged** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
-| 11 | `W149`, `W153`, `W154`, `W156` | ⭐ **each jumps nobody** | round 51 |
+| 11 | `W149`, `W154`, `W156` | ⭐ **each jumps nobody** | round 51 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
 | 13 | `W161`, `W163`–`W165`, `W168`, `W169`, `W171` | ⭐ **each jumps nobody** | round 54 |
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
@@ -132,14 +131,14 @@ classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-
 ⚠️ **`W160` writes `docs/tasks/rows/`, and a REGISTER round writes it too: never beside one** (check 4's sub-step). ⛔ **`W149`, `W153`, `W154`, `W157`, `W159`, `W160`, `W161`, `W164`, `W165`,
 `W168`, `W169`, `W171`, `W179`, `W180`, `W229` and [`W231`](rows/W231.md) name `docs/conventions/` — ⭐ ONE
 owner or two waves.**
-⛔ **`W162`, `W163` name `docker/dev/`; `W239`+`W242` write `skills/onboarding/`; `W242`, `W248` and `W210` write `cli/plan/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
+⛔ **`W162`, `W163` name `docker/dev/`; `W242`, `W248` and `W210` write `cli/plan/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
 `board/corroborate.py` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
 name — ⛔ so `W153`'s and `W176`'s declared surfaces are stale against their own subject.** ⛔ **`W173`+`W159` write `board/bounds.py` (whose size message reads `register ids`, `W144/4`), and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
-closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did; `W225` left the `docker/dev/` set at its close, `W144` the `bounds.py` set, `W150` the `citations.py` set, and `W238` the `skills/reconnaissance/` pair.**
+closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did; `W225` left the `docker/dev/` set at its close, `W144` the `bounds.py` set, `W150` the `citations.py` set, `W238` the `skills/reconnaissance/` pair, and `W239` the `skills/onboarding/` pair.**
 
 ## The register — every `W` row
 
@@ -300,7 +299,7 @@ else.**
 | W150 | A citation into a file the document does not own, written as a BARE BASENAME, satisfies Ruling 163's letter and is strictly worse | Developer 2 | ✅ done — `b3123f5` | [`rows/W150.md`](rows/W150.md) |
 | W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | Developer 2 | in-progress — on `fix/W151-docstring-counts` | [`rows/W151.md`](rows/W151.md) |
 | W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [`rows/W152.md`](rows/W152.md) |
-| W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | framework agent | `todo` | [`rows/W153.md`](rows/W153.md) |
+| W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | Developer 3 | in-progress — on `fix/W153-unnamed-arm-register-blind` | [`rows/W153.md`](rows/W153.md) |
 | W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | framework agent | `todo` | [`rows/W154.md`](rows/W154.md) |
 | W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | ✅ done — `0011d5d` | [`rows/W155.md`](rows/W155.md) |
 | W156 | A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge | framework agent | `todo` — its edge half landed with round 74's reorder | [`rows/W156.md`](rows/W156.md) |
@@ -386,11 +385,11 @@ else.**
 | W236 | A personal archive carries grader passes and no read marks, so a prose corpus's whole record of completion cannot enter one | framework agent | `todo` — `SK-06/2` | [`rows/W236.md`](rows/W236.md) |
 | W237 | `W233`'s read-then-`communicate()` defect is live in three more process tests, and `tests.support.ProcessOutput` is now the one reader | Developer 1 | ✅ done — `8a13f4f` | [`rows/W237.md`](rows/W237.md) |
 | W238 | The capability index orders milestones by their ids, so the order the user decided prints wrong | Developer 2 | ✅ done — `0618035` | [`rows/W238.md`](rows/W238.md) |
-| W239 | `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops | Developer 2 | in-progress — `INT-06/1`, on `fix/INT06-1-promote-not-material` | [`rows/W239.md`](rows/W239.md) |
+| W239 | `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops | Developer 2 | ✅ done — `0e65df9` | [`rows/W239.md`](rows/W239.md) |
 | W240 | `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit | Developer 2 | ✅ done — `cf1252f` | [`rows/W240.md`](rows/W240.md) |
 | W241 | `validate` reports `valid` with no archive, and `plan` announces an archive root that `validate`, the build and the adapter layout do not read | Developer 1 | ✅ done — `7fceaf6` | [`rows/W241.md`](rows/W241.md) |
-| W242 | For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified | framework agent | `todo` — `INT-06/7` + `/8`, one row, after `W239` and `W241` merge | [`rows/W242.md`](rows/W242.md) |
-| W243 | The vendored highlighter lacks grammars a real corpus's fences use, and nothing declares the fallback | Developer 3 | in-progress — `INT-06/9`, on `fix/INT06-9-highlight-languages` | [`rows/W243.md`](rows/W243.md) |
+| W242 | For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified | Developer 1 | in-progress — `INT-06/7` + `/8`, on `fix/W242-sibling-ignore-home` | [`rows/W242.md`](rows/W242.md) |
+| W243 | The vendored highlighter lacks grammars a real corpus's fences use, and nothing declares the fallback | Developer 3 | ✅ done — `5f772d9` | [`rows/W243.md`](rows/W243.md) |
 | W244 | The ISO pin goes stale at every integration merge, and no row owned its advance or named the cadence | PO | ✅ done — PO round 76 | [`rows/W244.md`](rows/W244.md) |
 | W245 | `approach.py` reads a wave close off a prefix, the shape `W136` replaced with a whole name | framework agent | `todo` — `W136/3` | [`rows/W245.md`](rows/W245.md) |
 | W246 | The location notice's PATH harm is still a notice, and its promotion to a check is owed at zero | framework agent | `todo` — `W150/2` | [`rows/W246.md`](rows/W246.md) |

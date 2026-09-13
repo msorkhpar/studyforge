@@ -22187,3 +22187,86 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 #### ⭐ CLOSED — PO ROUND 76
 
 ⭐ **Merged at `cf1252f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `cf1252f` is RECEIVED.** ⭐ **`SK-01`'s survey drafts a `source` (the slug of the resolved directory name) and `variants` that `SF-02` accepts, and its include globs never match the curriculum record.** ⚠️ **The fourth container is `F21`'s question, not the glob defect (`W240/1`); the record's `not_material` reason is a person's (`W240/3`). Both are in § 3.**
+
+## PO round 77 — `W239` and `W243` closed, `W242` and `W153` named, and `W162/8` folded into the held `W162/7`
+
+⭐ **Merged after round 76's cut at `1e70007` and not closed by it: `0e65df9` (`W239`) and `5f772d9` (`W243`). This round is cut at `6cdab6d`, which carries both.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                  merge^2   branch head  ahead  checked out
+fix/INT06-1-promote-not-material  dbf98ede  dbf98ede     0      NOWHERE
+fix/INT06-9-highlight-languages   d41fe017  d41fe017     0      NOWHERE
+```
+
+⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W242.md` re-pointed for `W239`. `W243` has no live inbound citation. ⚠️ **`handoffs/PO-2026-09-13-round75.md` cites both row files; it is a record, and the stubs resolve.**
+
+⚠️ **`W162` merged at `828b37f`, after this round's cut. Its close waits on the coordinator's reading, so its In flight cell reads `0 @ b1a3178`, held by no checkout, and `corroborate` refutes it until the close.**
+
+### ⭐ 2 — RULED, REVERSIBLE
+
+1. ⛔ **`W162/8`, folded into the held `W162/7`.** With `STUDYFORGE_DOCKER_TESTS` set, a cold image cache SKIPS the gated image checks and never builds. The flag permits the daemon, not the network. ⭐ **A separate value that permits a build is the user's to ask for, in the same held question.**
+2. ⭐ **Round 76's id ruling holds at both merges.** At `0e65df9`, `handoffs/W239.md` declares `task handoff — W239`, its title names `W239`, and its findings are `W239/1`–`/4`. At `5f772d9`, `handoffs/W243.md` does the same for `W243`, with findings `W243/1`–`/5`.
+
+### ⭐ 3 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `W162/8` | ⛔ **ruled, § 2.1**, and folded into the held `W162/7` |
+| the `W162` amendment | ⭐ **RECEIVED:** a default run makes no docker call. A recording fake `docker` on `PATH` sees none for the gate or for all of `tests/docker/`, and a planted probe turns it RED. It settles the half round 75 ruled; the question stays held |
+| the `W243` close | ⭐ **recorded at the close below:** `ISO-06`'s *"XML highlighted"* waits on `W243/1`, the user's Prism download |
+| the `W239` and `W243` handoffs | ⭐ **verified, § 2.2** |
+
+⭐ **Carriers, each confirmed against git:** [`W242`](rows/W242.md), Developer 1, `fix/W242-sibling-ignore-home` @ `wt/dev1`, cut `5f772d9`, order 2 now that `W239` and `W241` have merged; it collides with nothing in flight. [`W153`](rows/W153.md), Developer 3, `fix/W153-unnamed-arm-register-blind` @ `wt/dev3`, cut `5f772d9`, by board order (order 11). Its surface is `tools/quality/board/corroborate.py`, its tests and `docs/conventions/board.md`, and no other member of either set is in flight. ⭐ **`W151` is still in flight at `wt/dev2`.** ⛔ **`W163` waits for `W162`'s close: one owner of `tests/docker/`.**
+
+⭐ **The ISO track:** integration round 7 has not merged into ISO. ISO's `release/studyforge-integration` still reads `0d970fd`, so the pin stays there and its advance waits for round 78.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7`, now with `W162/8`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
+
+### W239 — `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W239.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/1`: `SK-07`'s `promote` drops a draft's `content.not_material`, although its SKILL says a person's block survives.** ⭐ **RECEIVED from the ISO integration round 6, run at framework `3483ced` and merged at ISO `0d970fd`** (its `docs/studyforge/questions-for-framework.md` §11.1): *"So F18's ruled declarations cannot be generated: 24 `[unclassified]`. Blocks `ISO-04`."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> `promote` carries a draft's `content.not_material` through, merged with the generated globs.
+> A collision between the two is refused, never resolved by precedence.
+
+⛔ **Asserted both ways (R12):** a draft's block survives `promote`, and a colliding glob is refused by name.
+
+### ⭐ WHY IT IS FIRST
+
+⭐ **`ISO-04` is `M6`'s next takeable row and waits on this alone** (ISO §11.4). ⛔ **`M6` work, not `M8`'s, and never a hand-edit to a generated `corpus.json`** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/` and its tests. ⚠️ **One owner with [`W242`](rows/W242.md).**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `0e65df9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `0e65df9` is RECEIVED.** ⭐ **`promote` carries a draft's `content.not_material` through, merged with the generated globs, and refuses a colliding glob by naming both sides.** ⚠️ **`W239/4`: two GENERATORS declaring one glob still resolve by first-wins. That is the rider already on [`W242`](rows/W242.md) (`INT06-1/4`).**
+
+### W243 — The vendored highlighter lacks grammars a real corpus's fences use, and nothing declares the fallback
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W243.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/9`: the vendored highlighter has no grammar for several fence languages a real corpus uses, so an acceptance clause that says *highlighted* is unmeetable.** ⭐ **RECEIVED from the ISO integration round 6 (framework `3483ced`, ISO `0d970fd`, §11.1, against `Q7` and `SF-11`):** *"half holds: `prism.js` has no `xml`, `json`, `properties` or `gherkin` grammar. ISO-06's "XML fences highlighted" is unmeetable."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> which fence languages the vendored bundle highlights, or a declared plain-text fallback.
+
+⛔ **The taker chooses and says which:** widen a vendored, licensed asset, or declare the highlighted set and its fallback where a corpus can read it. ⛔ **Asserted both ways:** a declared language is highlighted, and an undeclared one falls back as declared.
+
+⭐ **Blocks `ISO-06`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/render/assets/` and the fence-language selection in `render/pageassets/`, with their tests. ⛔ **No network fetch: a grammar that needs a download is a finding for the user, never a fetch.** ⭐ **Collides with nothing in flight.**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `5f772d9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5f772d9` is RECEIVED.** ⭐ **The highlighter's grammars are declared in the vendored bundle's header and checked against what it defines. A fence in an undeclared language renders as the declared plain fallback, and says so.** ⛔ **`ISO-06`'s *"XML fences highlighted"* waits on `W243/1`, the user's Prism 1.30.0 download (Scheduled, `pending`). Until then an XML fence renders plain, with its note.**
