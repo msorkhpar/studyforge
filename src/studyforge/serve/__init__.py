@@ -26,5 +26,8 @@ rules out.
 extraction pays that debt during the port, not after: it arrives as focused
 modules or it does not arrive.
 
-**Skeleton at FND-01.** Filled by SF-19a, SF-19b, SF-22 (E05).
+**Filled by SF-19a**: `app` (the loopback server and its seams), `security`,
+`caching`, `response`, `routes.content` and `routes.assets`. SF-19b (state,
+addressing, discovery) and SF-22 (run) register their namespaces through
+`app.make_server(namespaces=...)` — see `app`'s docstring for the seams.
 """

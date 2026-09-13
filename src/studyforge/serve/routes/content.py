@@ -1,0 +1,153 @@
+r"""The content namespace: what a unit *is*, as JSON, with strong validators.
+
+**What it does.** Answers `/api/v1/content/toc` with the corpus's contents document
+and `/api/v1/content/units/<key>` with one unit's served document, each inside the
+API envelope, each with a strong ETag and `Cache-Control: no-cache`, and each
+answered `304` when `If-None-Match` names the current tag.
+
+**How you use it.** `route(source, request, rest)`, where `source` is any
+`ContentSource`. `CorpusContent(corpus)` is the one this row ships: it builds each
+document from a corpus's declarations on request.
+
+**Depends on.** `contents.document`, `unit.builder`, `unit.served`, `archive.scrub`,
+`serve.caching`, `serve.response`. ⛔ Not on `render`: HTML is one renderer over
+this data, and changing a template must not be able to break it.
+
+## ⛔ `ContentSource` is the seam, and addressing is not this module's
+
+⭐ **A unit is looked up by its whole key, exactly** — the string the contents
+document joins on — so no part of the URL is ever split, decoded or used as a path,
+and there is no traversal surface here at all. ⚠️ The N-segment routing a reader
+types, and discovering the corpus from a root, are `SF-19b`'s (`serve/addressing.py`);
+it plugs in by supplying a `ContentSource` or by mapping its addresses onto keys.
+
+## ⭐ Why a document is built on request and not held
+
+Content is reproducible, so a cache would be correct only until the archive
+changed underneath it — and the strong tag is then the thing that lies. Built on
+request, the tag is always over the bytes being served, which is the whole
+guarantee a `304` makes.
+
+## ⛔ Every document is gated on the way out
+
+A unit passes `unit.served.parse` (version, shape and the personal-data gate — the
+trust boundary that module names the server as a consumer of); the contents
+document passes `assert_clean`. A failure answers with a fixed message: `422` for a
+shape this build does not recognise, `500` for personal data.
+"""
+
+from __future__ import annotations
+
+import json
+from typing import Protocol
+
+from studyforge.archive.scrub import PersonalDataLeak, assert_clean
+from studyforge.contents import document as contents_document
+from studyforge.serve.caching import not_modified, strong_etag
+from studyforge.serve.response import JSON_TYPE, Request, Response, envelope, error
+from studyforge.unit import served
+from studyforge.unit.builder import NoMaterial, build_unit
+from studyforge.unit.builder import render as render_unit
+from studyforge.unit.errors import ContentError
+
+#: Content revalidates every time and is re-sent only when its bytes changed.
+CONTENT_CACHE = "no-cache"
+
+TOC = "toc"
+UNITS = "units/"
+
+NO_SUCH_CONTENT = "no such content"
+NO_SUCH_UNIT = "no such unit"
+NOT_MATERIAL = "this unit is declared but has no material"
+UNRECOGNISED = "content failed validation"
+GATED = "content failed the personal-data gate"
+
+
+class ContentSource(Protocol):
+    """Where the content namespace's documents come from."""
+
+    def toc(self) -> str:
+        """Return the contents document's text."""
+        ...
+
+    def unit(self, key: str) -> str | None:
+        """Return the unit document's text, or `None` when `key` has no material."""
+        ...
+
+    def declares(self, key: str) -> bool:
+        """Say whether the corpus declares a unit at `key`, with material or without."""
+        ...
+
+
+class CorpusContent:
+    """A `ContentSource` over a corpus's declarations, as `generate.read_corpus` returns them.
+
+    ⚠️ Duck-typed on `contents`, `units` (each with `key`, `directory` and
+    `declared_practices`) and `absent`, so this package does not reach into the
+    build pipeline for a type.
+    """
+
+    def __init__(self, corpus: object) -> None:
+        """Index the corpus's units by key; nothing is built until a request asks."""
+        self._corpus = corpus
+        self._units = {source.key: source for source in corpus.units}
+        self._absent = frozenset(corpus.absent)
+
+    def toc(self) -> str:
+        """Return the contents document, rendered by its one serialiser."""
+        return contents_document.render(self._corpus.contents)
+
+    def unit(self, key: str) -> str | None:
+        """Build and render one unit's document, or `None` when it has no material."""
+        source = self._units.get(key)
+        if source is None:
+            return None
+        try:
+            document = build_unit(source.directory, declared_practices=source.declared_practices)
+        except NoMaterial:
+            return None
+        return render_unit(document)
+
+    def declares(self, key: str) -> bool:
+        """Say whether `key` is a declared unit of this corpus."""
+        return key in self._units or key in self._absent
+
+
+def route(source: ContentSource, request: Request, rest: str) -> Response:
+    """Answer one request under `/api/v1/content/`; `rest` is the path after it."""
+    if rest == TOC:
+        return _document(request, "toc", {}, source.toc(), _toc)
+    if rest.startswith(UNITS):
+        key = rest[len(UNITS) :]
+        text = source.unit(key)
+        if text is None:
+            return error(404, NOT_MATERIAL if source.declares(key) else NO_SUCH_UNIT)
+        return _document(request, "unit", {"key": key}, text, _unit)
+    return error(404, NO_SUCH_CONTENT)
+
+
+def _toc(text: str) -> object:
+    """Gate the contents document and return its value."""
+    assert_clean(text, contents_document.TOC_FILENAME)
+    return json.loads(text)
+
+
+def _unit(text: str) -> object:
+    """Read a unit document back through its own trust boundary."""
+    return served.parse(text, served.UNIT_FILENAME)
+
+
+def _document(request: Request, resource: str, extra: dict, text: str, read) -> Response:
+    """Wrap one gated document in the envelope and answer `200` or `304`."""
+    try:
+        document = read(text)
+    except PersonalDataLeak:
+        return error(500, GATED)
+    except ContentError, ValueError:
+        return error(422, UNRECOGNISED)
+    body = envelope({"resource": resource, **extra, "document": document})
+    etag = strong_etag(body)
+    validators = (("ETag", etag), ("Cache-Control", CONTENT_CACHE))
+    if not_modified(request.headers.get("If-None-Match"), etag):
+        return Response(304, validators)
+    return Response(200, (("Content-Type", JSON_TYPE), *validators), body)
