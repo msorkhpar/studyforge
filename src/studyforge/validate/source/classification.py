@@ -303,7 +303,13 @@ def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | 
     git = shutil.which("git")
     if git is None:
         return None
-    payload = "\0".join(path.relative_to(root).as_posix() for path in candidates)
+    try:
+        names = [path.relative_to(root).as_posix() for path in candidates]
+    except ValueError:
+        # ⛔ R7: `relative_to`'s own message quotes both paths, and `root` is the
+        # one input guaranteed to carry a home directory (`W257`, the census).
+        raise ValueError("a candidate is not beneath the root it was asked about") from None
+    payload = "\0".join(names)
     try:
         result = subprocess.run(  # noqa: S603 - fixed argv, no shell
             [git, "check-ignore", "--stdin", "-z"],
