@@ -106,6 +106,12 @@ the `invisible … BY CONSTRUCTION` line alone.** ⛔ **The exit code does not m
 `inflight.py` generates the table's git halves and leaves the ROW↔BRANCH half asserted, so
 every arm here still has an assertion to refute (`handoffs/W125.md`).
 
+## ⛔ `W153` — a carrier the register has not recorded yet is DECLARED on its own branch
+
+⭐ **`dispatch.py` reads each branch's git description and hands `unclaimed.py` the carriers
+it accepts.** ⛔ **Only where no row claims the branch, only for OPEN register rows, and the
+exit code does not move.** The contract is `docs/conventions/board.md`'s, under `W153`.
+
 """
 
 from __future__ import annotations
@@ -114,7 +120,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from tools.quality.board import offices
+from tools.quality.board import dispatch, offices
 from tools.quality.board.contradiction import observation_reading
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import (
@@ -216,8 +222,11 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     # ⛔ `PO-46/14`, and it goes BEFORE the other-direction lines so the rows are read before
     # the branches. ⭐ Only over a population that READ: a refused table returned above.
     lines.extend(_fold_lines(refuted_rows, unanswerable_rows, table))
-    unread_lines, unread = unnamed(table.rows, live, graph, offices.read(text))
+    # ⛔ `W153`: the carriers a branch description declares, read only where no row speaks.
+    carriers, declared = dispatch.judge(dispatch.read(root), graph.heads(), table.rows, text)
+    unread_lines, unread = unnamed(table.rows, live, graph, offices.read(text), carriers)
     lines.extend(unread_lines)
+    lines.extend(declared)
     lines.extend(spent(graph, live))
     lines.append(
         f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git, "
