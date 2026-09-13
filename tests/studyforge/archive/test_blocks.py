@@ -13,12 +13,14 @@ and a path allow-list is a list of files nobody re-examines.
 """
 
 import ast
+import json
 from pathlib import Path
 
 import pytest
 
 from studyforge.archive.blocks import (
     BLOCK_FIELDS,
+    BLOCK_OPTIONAL,
     BLOCK_TYPES,
     BLOCKS,
     BY_NAME,
@@ -30,10 +32,11 @@ from studyforge.archive.blocks import (
     Layout,
     counts_of,
     item_parts,
+    list_start,
     read_layout,
     walk,
 )
-from studyforge.archive.document import VIDEO_KEYS
+from studyforge.archive.document import VIDEO_KEYS, content_sha256
 from studyforge.archive.errors import ArchiveError
 from tests.fixture_checks import archive_documents, coverage
 from tests.support import imports_module, repository_root
@@ -421,3 +424,29 @@ def test_a_nested_list_is_not_a_block_in_reading_order():
     block = {"type": "list", "ordered": False, "items": [["a", {"type": "list", "items": []}]]}
     assert counts_of([block])["lists"] == 1
     assert list(walk([block])) == [block]
+
+
+def test_start_is_the_one_optional_key_and_only_a_list_carries_it():
+    # ⛔ W264: an optional key sits after a block's fields, so the fields keep
+    # their order and a block without it is unchanged.
+    assert BLOCK_OPTIONAL == {name: (("start",) if name == "list" else ()) for name in BLOCK_TYPES}
+
+
+@pytest.mark.parametrize(
+    ("block", "start"),
+    [({}, 1), ({"start": 3}, 3), ({"start": 0}, 0), ({"start": True}, 1), ({"start": "3"}, 1)],
+)
+def test_a_lists_start_is_one_unless_it_records_a_number(block, start):
+    assert list_start({"type": "list", "ordered": True, "items": [], **block}) == start
+
+
+def test_a_committed_ordered_list_with_no_start_keeps_its_documents_digest():
+    # ⛔ W264: the fixture's recorded digest was taken before `start` existed.
+    path = repository_root() / (
+        "tests/fixtures/depth2/archive/basics/01-getting-started/raw/java/unit-01/lesson-1.json"
+    )
+    document = json.loads(path.read_text(encoding="utf-8"))
+    lists = [block for block in walk(document["blocks"]) if block["type"] == "list"]
+    assert any(block["ordered"] for block in lists), "the fixture holds no ordered list"
+    assert all("start" not in block for block in lists)
+    assert document["content_sha256"] == content_sha256(document["blocks"])

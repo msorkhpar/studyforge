@@ -50,6 +50,10 @@ ORDERED = re.compile(r"^ {0,3}\d+[.)] (.*)$")
 NESTED_UNORDERED = re.compile(r"^ *[-*] (.*)$")
 NESTED_ORDERED = re.compile(r"^ *\d+[.)] (.*)$")
 
+#: ⭐ The number an ordered marker carries, at any indent (`W264`). Asked only of
+#: a line one of the ordered patterns above already matched.
+ORDERED_NUMBER = re.compile(r"^ *(\d+)[.)] ")
+
 #: ⚠️ Checked BEFORE the list, because `- - -` is a valid thematic break AND
 #: looks like a list item whose text is `- -`; CommonMark gives the break
 #: priority. A table's separator row carries pipes, so it can never match.

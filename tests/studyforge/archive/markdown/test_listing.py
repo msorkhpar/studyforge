@@ -7,6 +7,7 @@ from collections import Counter
 
 import pytest
 
+from studyforge.archive.document import content_sha256
 from studyforge.archive.markdown import MarkdownError, parse
 from studyforge.archive.markdown.listing import read_list
 
@@ -261,3 +262,47 @@ def test_read_list_returns_several_blocks_and_where_it_stopped():
     made, index = read_list(lines, 0)
     assert made == [{"type": "list", "ordered": False, "items": ["one", "two"]}]
     assert index == 2
+
+
+# --------------------------------------------------------------------------
+# ⛔ W264: an ordered list keeps the number it starts at
+# --------------------------------------------------------------------------
+
+#: A document with lists that all start at one, nested included.
+UNNUMBERED = (
+    "Steps:\n\n1. one\n2. two\n\n```\ncode\n```\n\n- a\n  1. nested one\n  2. nested two\n- b\n"
+)
+
+#: ⛔ Its `content_sha256`, measured at `8f59ed9` before `W264` existed. A pin and
+#: not a recomputation, so a reader that starts writing `start: 1` goes RED here.
+UNNUMBERED_SHA256 = "baa69df8565b52a2968439bba753bad0e838a80ffd52ba48f10990fb9fffbc5a"
+
+
+def test_a_list_that_starts_at_one_reads_byte_identical_to_before():
+    assert content_sha256(parse(UNNUMBERED)) == UNNUMBERED_SHA256
+
+
+@pytest.mark.parametrize("marker", [".", ")"])
+def test_an_ordered_list_that_starts_past_one_keeps_its_number(marker):
+    assert blocks(f"3{marker} three\n4{marker} four\n") == [
+        {"type": "list", "ordered": True, "items": ["three", "four"], "start": 3}
+    ]
+
+
+def test_a_step_list_continued_after_a_code_block_keeps_its_number():
+    made = blocks("1. one\n\n```\nx\n```\n\n2. two\n3. three\n")
+    assert [block.get("start") for block in made] == [None, None, 2]
+    assert made[2]["items"] == ["two", "three"]
+
+
+def test_a_nested_ordered_list_keeps_its_number():
+    nested = blocks("- a\n  5. five\n  6. six\n")[0]["items"][0][1]
+    assert nested == {"type": "list", "ordered": True, "items": ["five", "six"], "start": 5}
+
+
+def test_zero_is_a_number_an_author_can_start_at():
+    assert blocks("0. zero\n")[0]["start"] == 0
+
+
+def test_an_unordered_list_never_carries_a_start():
+    assert "start" not in blocks("- a\n- b\n")[0]

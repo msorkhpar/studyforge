@@ -27,6 +27,14 @@ applied again, and an unnested list is byte-identical to what it always was.
 file continues an item with a paragraph **after** its nested list and then
 opens a second one. A single text-and-list pair would have to refuse that file,
 which reads today, or fold the paragraph ahead of the list it follows.
+
+## ⛔ An ordered list keeps the number it starts at (`W264`)
+
+⭐ An author who continues a step list after a code block writes `2.`, and the
+reader used to record only that the list was ordered, so the page and the
+narration started again at one. The first marker's number is now `start`,
+written only when it is not `1` (`archive.blocks.list_start`), so every list
+that starts at one reads byte-identical.
 """
 
 from __future__ import annotations
@@ -74,6 +82,7 @@ def _read(lines: list[str], start: int, floor: int | None):
     list.
     """
     ordered = bool(patterns.NESTED_ORDERED.match(lines[start]))
+    number = patterns.ORDERED_NUMBER.match(lines[start]) if ordered else None
     # ⛔ Where THIS list starts. A marker indented deeper than its own first
     # item opens a NESTED list under the item above; a sibling is a marker at
     # the list's own indent, not any marker at all.
@@ -161,7 +170,10 @@ def _read(lines: list[str], start: int, floor: int | None):
                 open_para = True
                 continue
         break
-    return {"type": "list", "ordered": ordered, "items": items}, attached, index
+    block: dict = {"type": "list", "ordered": ordered, "items": items}
+    if number is not None and int(number.group(1)) != 1:
+        block["start"] = int(number.group(1))
+    return block, attached, index
 
 
 def _nest(items: list, nested: dict) -> None:

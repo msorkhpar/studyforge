@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
+from studyforge.archive.markdown import parse
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.narrate.speakable.naming import SUB_MARKER
 from studyforge.narrate.speakable.records import SpeakableError
@@ -134,6 +135,18 @@ def test_a_nested_list_is_spoken_inside_its_parent_items_clip():
         (f"{UNIT}.shared.b1.{marker}1", "Version: First, zero. Second, one. then more"),
         (f"{UNIT}.shared.b1.{marker}2", "b"),
     ]
+
+
+def test_an_ordered_list_counts_aloud_from_the_number_its_author_started_at():
+    # ⛔ W264, from the source: the continued step list says "Second", not "First".
+    continued = parse("1. one\n\n```\nx\n```\n\n2. two\n3. three\n")[2]
+    assert [words for _id, words in said([continued])] == ["Second, two", "Third, three"]
+
+
+def test_a_nested_ordered_list_counts_aloud_from_its_own_start():
+    nested = {"type": "list", "ordered": True, "items": ["x"], "start": 4}
+    block = {"type": "list", "ordered": False, "items": [["a:", nested]]}
+    assert said([block])[0][1] == "a: Fourth, x"
 
 
 @pytest.mark.parametrize(("position", "word"), [(1, "First"), (20, "Twentieth"), (21, "Item 21")])
