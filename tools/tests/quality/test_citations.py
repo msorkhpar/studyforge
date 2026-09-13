@@ -211,11 +211,11 @@ def test_a_five_digit_number_is_outside_the_population():
 
 
 def test_the_declared_gaps_read_UNREACHED_and_that_is_the_claim():
-    # ⛔ Ruling 258: a declared-gaps list is a CLOSED CLAIM, so each of the two
+    # ⛔ Ruling 258: a declared-gaps list is a CLOSED CLAIM, so each gap
     # this module declares is a test rather than a sentence. ⭐ Ruling 185 is why
     # they are gaps and not features: Ruling 280's words are "the forms the house
     # style writes", and widening past them is the taker's, not the ruling's.
-    # ⚠️ A THIRD stood here — `Rulings 106 and\n174` read `{106}` — until `W145`
+    # ⚠️ Another stood here — `Rulings 106 and\n174` read `{106}` — until `W145`
     # CLOSED it. The assertion MOVED to the group below rather than being
     # deleted, because a gap that is closed and a gap that is forgotten leave
     # the same hole in the list.
@@ -281,7 +281,7 @@ def test_an_ORDERED_ITEM_at_ANY_number_is_a_boundary_and_never_a_citation():
     # *only a list starting at one interrupts a paragraph* — which is true of a
     # PARAGRAPH and false between two adjacent list ITEMS, where every number
     # starts one. ⭐ 0 live instances, so it was LATENT; refused anyway, and
-    # MEASURED to cost nothing: over all 400 markdown files of this tree the
+    # MEASURED to cost nothing: over every markdown file of this tree the
     # widened breaker loses nothing and gains nothing.
     probe = _fresh_probe()
     assert cited_numbers(f"1. This is a Ruling\n2. {probe} things") == set()

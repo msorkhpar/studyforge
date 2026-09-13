@@ -123,7 +123,7 @@ that is open). ⭐ **Two edges, both MEASURED rather than reasoned:**
   a citation between two adjacent list ITEMS — `1. …a Ruling` over
   `2. 7136 things` read `{2}`, with `Ruling\n10.` and the same shape at every
   other number behind it. ⭐ **0 live instances, so it was LATENT — and it is
-  refused anyway, at a measured cost of NOTHING: over all 400 markdown files of
+  refused anyway, at a measured cost of NOTHING: over every markdown file of
   this tree the widened breaker loses nothing and gains nothing.**
 * ⛔ **`N)` is ADMITTED, and that is a choice with a price on it.** ⭐ The house
   style wraps a parenthesised citation — `(Ruling` with `279)` beneath it — and a
@@ -144,15 +144,15 @@ in `docs/conventions/` leave both of their lines balanced.**
 ⭐ **MEASURED at `fc56011`, role `wt/dev2`, pinned image, over the eight documents
 `reach._conventions(root)` names: the block reading GAINS `{166}` and LOSES
 nothing** — exactly the citation a re-wrap had unmade, and no invention anywhere
-else in that corpus. ⚠️ **Over all 398 markdown files of the tree it gains 36 and
-loses 0**, and every gain read back as a real citation.
+else in that corpus. ⚠️ **Over all 398 markdown files of the tree at `fc56011` it gains 36
+and loses 0**, and every gain read back as a real citation.
 
 ## ⛔ WHAT THIS CANNOT SEE, DECLARED — because an incomplete gaps list is worse than none
 
-⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Two of the three
-gaps are the GRAMMAR's and live here; the third — that a CITATION is not a
-LANDING — is a property of what `reach.py` concludes and is declared there.**
-⚠️ **These two were MEASURED at `428223c` while repairing the spelling hole
+⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **The GRAMMAR's
+gaps live here; the gap that a CITATION is not a LANDING is a property of
+what `reach.py` concludes and is declared there.**
+⚠️ **These were MEASURED at `428223c` while repairing the spelling hole
 rather than guessed, and the WRAPPED citation that stood third among them was
 CLOSED by `W145` rather than dropped from the claim:**
 
@@ -229,7 +229,7 @@ _QUOTE = re.compile(r"^(?P<quote>(?:[ \t]*>)*)(?P<body>.*)$")
 #: * ⛔ `1[.)]` — CommonMark's *only a list starting at one interrupts a
 #:   paragraph* — INVENTED a citation between two adjacent list items:
 #:   `1. …a Ruling` over `2. 7136 things` read `{2}`. ⭐ Widening to `\d{1,4}\.`
-#:   refuses it and costs NOTHING: measured over all 400 markdown files of this
+#:   refuses it and costs NOTHING: measured over every markdown file of this
 #:   tree, the reading loses nothing and gains nothing.
 #: * ⛔ `)` is DELIBERATELY ADMITTED, because the house style wraps `(Ruling\n279)`
 #:   — MEASURED, two live sites, `docs/tasks/handoffs/PO-2026-09-10-round25.md` and
