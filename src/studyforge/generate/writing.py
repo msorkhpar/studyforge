@@ -51,8 +51,8 @@ hand"* is not a question it can ask. A hand-edited copy of a page the build
 wrote is INSIDE the footprint and IS overwritten. ⭐ That is the decision and
 not an oversight, and R19 already ruled it the right one: a hand-edit to a
 generated artifact is *a finding, not a fix* — customisation enters as manifest
-data, and every placement profile already puts those pages in the corpus's own
-ignore lines, so the edit was never tracked either.
+data, and the page is regenerated and committed again (`W242`), so the diff of
+the next build is where the lost edit shows.
 
 ⛔ **It follows that a file somebody put at a named path before any build ever
 ran is replaced too**, on the FIRST build, with no prior output in existence.

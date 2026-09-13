@@ -114,7 +114,7 @@ python3 -m studyforge.cli.plan tests/fixtures/depth1
 ```
 
 Its last line is the summary: `plan: 20 path(s) to create, 0 file(s) to edit,
-5 ignore line(s), 0 refusal(s)`. **Zero files to edit** — that is
+0 ignore line(s), 0 refusal(s)`. **Zero files to edit** — that is
 `permitted_edits: []` read back to you.
 
 ---

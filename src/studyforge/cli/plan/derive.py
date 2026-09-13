@@ -52,6 +52,7 @@ from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.corpus.placement import (
     AUDIO_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
+    IgnoreFile,
     PlacementError,
     Profile,
     profile_for,
@@ -92,6 +93,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
         refusals += failed
         units += len(container.units)
     media = MediaProjection(manifest.media, units, bytes_per_unit)
+    ignore = _ignore_file(profile, media, refusals)
     return Plan(
         source=manifest.source,
         title=manifest.title,
@@ -100,10 +102,27 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
         read_files=(MANIFEST_FILENAME, *(where for where, _ in held), *record),
         creations=tuple(sorted(creations, key=lambda creation: creation.path)),
         edits=manifest.permitted_edits,
-        ignore=profile.ignore_lines(media=media.ignored),
+        ignore=() if ignore is None else ignore.lines,
         media=media,
         refusals=tuple(refusals),
+        ignore_home=None if ignore is None else ignore.home.as_posix(),
     )
+
+
+def _ignore_file(
+    profile: Profile, media: MediaProjection, refusals: list[Refusal]
+) -> IgnoreFile | None:
+    """Return the ignore file the media policy requires, or record why none may hold it.
+
+    ⛔ **Asked of the profile, and its home is printed with every line**
+    (`INT-06/8`): a rule with no named file is a rule somebody pastes into the
+    root ignore file, which R3 forbids however declared.
+    """
+    try:
+        return profile.ignore_file(media=media.ignored)
+    except PlacementError as error:
+        refusals.append(Refusal(MANIFEST_FILENAME, str(error)))
+        return None
 
 
 def _unplannable(refusals: list[Refusal]) -> Plan:

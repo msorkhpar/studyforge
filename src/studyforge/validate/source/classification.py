@@ -9,7 +9,8 @@ both.
 on its own, for a caller that wants the list rather than the verdict.
 
 **Depends on.** `corpus.manifest` for the classification, `corpus.placement`, `validate.corpus`,
-`validate.report`, and `git` on the path. ⛔ **Nothing in this package's other
+`validate.report`, `cli.plan` for what a build writes (deferred, `_generated_output` says why),
+and `git` on the path. ⛔ **Nothing in this package's other
 half** — the two checks share no name.
 
 ## ⛔ What counts as material is the corpus's declaration, not this file's guess
@@ -32,6 +33,18 @@ mandatory `why` exists to prevent, reached from the other side.
 files, then 91, then 96 within one day, so a framework carrying its own
 exclusion list is a framework that is wrong again tomorrow. The declaration
 moves with the corpus because it belongs to the corpus.
+
+## ⛔ A build's own output is recognised from the plan, not ignored and not declared
+
+⭐ **A build's pages and media are committed** (§5, `W242`), so git no longer
+declares them output. `studyforge plan` already enumerates them from this
+corpus's declarations, so the scan asks it: a planned file is recognised by
+its exact path, and everything under a planned directory is recognised with it
+(`INT-06/7`). ⚠️ No glob. The manifest refuses a leading-wildcard
+`not_material` glob, because its correctness depends on which files happen not
+to exist. A placed path doesn't. ⛔ A planned path the manifest includes as
+material is `contested`, never resolved by precedence. A plan that refused
+recognises nothing, and the report says so.
 
 ⛔ **A root that is not a git working tree gets the old walk and an
 `Unchecked`** (`ignore-declaration`), never a guess. Same rule as the absent
@@ -103,6 +116,20 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
     if walk.manifest is None:  # pragma: no cover - the walk stops without one
         return
     scan = source_files(walk.root)
+    for path in scan.generated:
+        where = walk.relative(path)
+        if walk.manifest.content.classify(where) in (
+            Classification.INCLUDED,
+            Classification.CONTESTED,
+        ):
+            yield Finding(
+                RULE_CONTESTED,
+                where,
+                "a build writes this path, and the manifest includes it as material. "
+                "Neither is guessed: one would read generated output as the material, the "
+                "other would let a build overwrite the material. Narrow the 'include' "
+                "pattern, or move the material.",
+            )
     if not scan.files:
         yield Unchecked(
             RULE_UNCLASSIFIED,
@@ -110,6 +137,14 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
             "no source material is present beside the archive, so there is nothing to classify",
         )
         return
+    if not scan.planned:
+        yield Unchecked(
+            RULE_UNCLASSIFIED,
+            ".",
+            "`studyforge plan` refused this corpus, so what a build writes here could not be "
+            "told from material. This corpus's own generated pages and media, if any, are "
+            "reported below as unclassified rather than recognised. Run the plan to see why.",
+        )
     if not scan.consulted:
         # ⛔ The walk stands and the report says so. A half-applied ignore rule
         # is the half-present source tree this package's docstring refuses.
@@ -158,6 +193,13 @@ class Scan:
 
     files: tuple[Path, ...]
     consulted: bool
+    #: ⭐ The files a build of this corpus writes, recognised by the plan and
+    #: therefore not in `files`. Carried rather than dropped, so an instrument
+    #: can print the population it judged (`W242`).
+    generated: tuple[Path, ...] = ()
+    #: ⛔ False when the plan refused: nothing was recognised, which is not
+    #: the same as nothing having been generated.
+    planned: bool = True
 
 
 def source_files(root: Path) -> Scan:
@@ -175,10 +217,46 @@ def source_files(root: Path) -> Scan:
     everything is worse than either, because it looks like a clean run.
     """
     walked = _walk(root)
-    declared = _declared_output(root, walked)
+    recognised = _generated_output(root, walked)
+    generated = tuple(path for path in walked if recognised and path in recognised)
+    candidates = [path for path in walked if not recognised or path not in recognised]
+    declared = _declared_output(root, candidates)
+    planned = recognised is not None
     if declared is None:
-        return Scan(tuple(walked), consulted=False)
-    return Scan(tuple(path for path in walked if path not in declared), consulted=True)
+        return Scan(tuple(candidates), consulted=False, generated=generated, planned=planned)
+    files = tuple(path for path in candidates if path not in declared)
+    return Scan(files, consulted=True, generated=generated, planned=planned)
+
+
+def _generated_output(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
+    """Which of `candidates` a build of this corpus writes, by the plan's own enumeration.
+
+    ⛔ **The plan's answer, never a list here** (Ruling 99, `W242`). A plan line
+    ending in `/` is a directory whose contents a build or `narrate` fill, and
+    every other line is a file — the plan's printed distinction, which
+    `generate.footprint` reads the same way. ⚠️ Unlike a footprint, a unit's
+    audio directory IS a prefix here: narrate's clips are generated media
+    whoever wrote them.
+
+    ⛔ **`None` when the plan refused.** An incomplete enumeration recognises
+    nothing, and the caller says so.
+
+    ⚠️ **The import is deferred, for `generate.footprint`'s reason:** `cli`
+    imports the dispatcher, which imports this package. The enumeration living
+    inside a command is `W202` item 5's finding.
+    """
+    from studyforge.cli.plan import plan_for
+
+    plan = plan_for(root)
+    if plan.refusals:
+        return None
+    files = {root / path for path in plan.paths if not path.endswith("/")}
+    directories = [root / path.rstrip("/") for path in plan.paths if path.endswith("/")]
+    return frozenset(
+        path
+        for path in candidates
+        if path in files or any(path.is_relative_to(directory) for directory in directories)
+    )
 
 
 def _walk(root: Path) -> list[Path]:

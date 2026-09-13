@@ -1,8 +1,8 @@
 r"""The documents an onboarding writes into a corpus, and how each is classified.
 
-**What it does.** Renders the R3-safe ignore rule, the generated
-non-destructive check, and the reader's documentation — and declares, for every
-path this skill occupies, the `content.not_material` glob that classifies it.
+**What it does.** Renders the generated non-destructive check and the reader's
+documentation — and declares, for every path this skill occupies, the
+`content.not_material` glob that classifies it.
 
 **How you use it.** Through `onboard`, which composes these with the adapter's
 scaffold. Every renderer is a pure function from data to text, so the whole
@@ -19,11 +19,13 @@ unrequested, in the one repository where R3 is absolute (`W15`). ⭐ So any rule
 this skill needs for a generated directory goes in a `.gitignore` written
 *inside* that directory, which needs no edit to anything that already exists.
 
-⛔ **And nothing here ignores generated media.** `SF-32`'s verdict is that media
-is committed by default; when a corpus outgrows that, the report says so and
-names the two ways forward. **The manifest says what happens, and a person
-changes the manifest** — a skill that silently flipped the policy would be
-deciding a corpus's git history for it.
+⛔ **And nothing is ignored that the media policy does not say to.** `SF-32`'s
+verdict is that media is committed by default, and so is every page a build
+writes (`W242`); when a corpus outgrows that, the report says so and names the
+two ways forward. **The manifest says what happens, and a person changes the
+manifest** — a skill that silently flipped the policy would be deciding a
+corpus's git history for it. ⭐ What a build commits is recognised by
+`validate`, which asks the plan; nothing about it is declared here.
 
 ## ⭐ Coverage is asserted, not the list
 

@@ -63,6 +63,10 @@ ROOT_INDEX_FILENAME = "index.html"
 #: stale one is detected and the scan wins (§5).
 SITE_CACHE_FILENAME = "site.json"
 
+#: The ignore file a profile's media rules live in. ⛔ Only ever inside a
+#: directory this framework generates, never at the repository root (R3).
+IGNORE_FILENAME = ".gitignore"
+
 #: Directory names that appear in generated hrefs, in the reader's own tree and
 #: in a scan. ⛔ Named constants because those three must agree, and because
 #: eight modules each carrying their own `"audio"` is how the extraction source
