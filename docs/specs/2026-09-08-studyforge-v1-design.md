@@ -1299,7 +1299,7 @@ And what the *compose* side gets right, which stays per-project:
 2. ⭐ **The reader runs a unit's test from their own terminal** (`SF-44`, `M5`). ⛔ **A file with no test is not a failure** (§7, C5).
 3. ⭐ **This section's image, the editor, lands at `M7`, and every measured property above binds it then.** ⛔ **§8.3 is untouched: the Docker socket is never mounted into the serving process.**
 
-⚠️ **Not decided by the direction, and asked of the user:** whether the terminal command runs in the runner image or on the host by default, and whether graded Submit still needs the container.
+⭐ **Ruled by the register as reversible, because the words do not decide it:** the terminal command and graded Submit both take `SF-20`'s two modes as §8.3 already states them — the runner container when it is up, the host otherwise, with identical observable behaviour.
 
 ### 8.2 The narration service — its own repository
 

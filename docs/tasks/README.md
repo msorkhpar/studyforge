@@ -344,7 +344,7 @@ a second agent does not help. Plan around it rather than discovering it.
 2. ⭐ **`ISO-8583` is the corpus of `M6` and `M8`; `Claude-senior-java-engineer` comes last.** ⛔ **ISO has no runnable material (Q18), so `M5` and `M7` are proved on the `FND-04` fixtures and ISO passes them with zero exercises (§7, C5).**
 3. ⭐ **The Java re-validation is a MILESTONE, `M9`, not `M8`'s second finish line:** it follows `M5` and `M7`, and a milestone is a gate with a close run (Ruling 97), not a line held open across two others.
 
-⚠️ **Not decided by the words, and asked of the user** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)): the integration office for `M6`; whether the terminal command runs in the runner image or on the host; frozen records rewritten in place. ⛔ **Until an ISO office is dispatched, `M6` has no dispatchable row, and no later milestone may start (clause 2 above).**
+⭐ **The user's go-ahead for the ISO track is given (2026-09-12), on its integration branch only.** ⚠️ **Ruled by the register as reversible, where the words do not decide:** `M5` and `M7` proved on the fixtures, and the terminal command taking `SF-20`'s two modes. ⛔ **One question stays the user's** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)): frozen records rewritten in place. ⛔ **No milestone after `M6` may start until it closes (clause 2 above).**
 
 ### M6 — The first corpus reads
 > **Done when:** `ISO-8583-jPOS-tutorial` opens offline over `file://`, narrated,

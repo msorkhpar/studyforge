@@ -21410,7 +21410,7 @@ MODULE-ONLY crossing, inside one section                     ⛔ 0 in either fix
 
 ## PO round 74 — M4 closed at `4d3c742`, and the order after it is M6, M8, M5, M7, then M9 (user direction)
 
-⛔ **Two merges re-derived on the first-parent chain since round 73's `0dd9fa4`:** `7b2e5d0` (`W144`), `4d3c742` (`W235`). ⭐ **Ruling 97's gate at each is RECEIVED: `W144`'s office reading at `af91feb` from its merge body, and the coordinator's guarded release-tip reading of `4d3c742`, GREEN in the pinned image. `4d3c742` was merged into this round at the coordinator's word, after that reading.**
+⛔ **Three merges re-derived on the first-parent chain since round 73's `0dd9fa4`:** `7b2e5d0` (`W144`), `4d3c742` (`W235`), `2bfbcb7` (`W135`). ⭐ **Ruling 97's gate at each is RECEIVED: `W144`'s office reading at `af91feb` from its merge body, and the coordinator's guarded release-tip readings of `4d3c742` and `2bfbcb7`, GREEN in the pinned image. Both tips were merged into this round at the coordinator's word, after those readings.**
 
 ### ⭐ 1 — CLOSES
 
@@ -21418,13 +21418,14 @@ MODULE-ONLY crossing, inside one section                     ⛔ 0 in either fix
                                       merge^2   branch head  ahead  checked out
 fix/W144-population-labels            af91feb9  af91feb9     0      NOWHERE
 fix/W235-sharing-gates-every-member   33cd2cee  33cd2cee     0      NOWHERE
+fix/W135-citation-pointer-rule        8e274114  8e274114     0      NOWHERE
 ```
 
-⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **`SK-06` CLOSES on `W235`: `SK-06/3`'s clause is met by the tests and eleven plants in [its handoff](handoffs/W235.md).**
+⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **`SK-06` CLOSES on `W235`: `SK-06/3`'s clause is met by the tests and eleven plants in [its handoff](handoffs/W235.md).**
 
 ⛔ **Step `4.4` and `M4`, at `4d3c742`.** Membership as round 72 declared it (`README.md` § M4, twelve tasks), each on the first-parent chain. ⭐ **Since `fc668f2` the chain gained `W233`, `W108`, `W125`, `W144` and `W235`, none a member.** ⭐ ***Done when*, re-taken HOST at `e261e29`, whose tree equals `4d3c742`, each a pytest exit:** an origin (the four `tests/studyforge/cli/test_serve*.py`) `0`; an API (`tests/studyforge/serve/`) `0`; records practice passes (`tests/studyforge/progress/`, `serve/routes/`, and `skills/personalarchive/`) `0`. ⭐ **All three true: `4.4` and `M4` CLOSE.** ⚠️ **Gaps named (Ruling 213), none a gate:** [`W90`](rows/W90.md), the index links no container page; [`W237`](rows/W237.md), in flight, three process tests read then `communicate()`; [`W236`](rows/W236.md), no read marks in a personal archive; the Java halves of `SF-19b`, `SK-03` and `OPS-05`, carried by `OPS-03`, now `M9`.
 
-⭐ **What opens is `M6`, next by the user's order.** ⛔ **Its rows are the ISO track's, so no capability row is dispatchable until the user answers question 1 (§ 5), and every developer slot goes to `W` rows meanwhile (`PO-74/8`).**
+⭐ **What opens is `M6`, next by the user's order.** ⭐ **Its rows are the ISO track's, and the user's go-ahead (2026-09-12) makes them dispatchable on this round's merge, on that repository's integration branch only (§ 5).** ⛔ **No framework capability row is dispatchable until `M6` and `M8` close, so every developer slot goes to `W` rows meanwhile (`PO-74/8`).**
 
 ### ⛔ 2 — THE ORDER, AS APPLIED
 
@@ -21472,7 +21473,7 @@ fix/W235-sharing-gates-every-member   33cd2cee  33cd2cee     0      NOWHERE
 
 ### ⭐ 3 — IN FLIGHT
 
-⭐ **`W237` (Developer 1, cut `0dd9fa4`, order 1), `W150` (Developer 2, cut `79db35b`) NAMED on the coordinator's confirmation; `W135` (Developer 3) re-pins to `4d3c742`.** ⭐ **`W150` at order 11 RATIFIED:** `W149`, `W153` and `W154` are held by `docs/conventions/` or the register, and `W151` shares `citations.py`. ⚠️ **`W156`'s *waits on `TC-01`* is REFUTED by the reorder:** its edge half landed here and its predicate names `tools/quality/`, which `W150` does not write.
+⭐ **NAMED on the coordinator's confirmation:** `W150` (Developer 2, cut `79db35b`); `W237` (cut `0dd9fa4`, order 1, handed back GREEN and held by no checkout, merging after this round); `W136` (Developer 1, cut `2bfbcb7`, order 8); `W158` (Developer 3, cut `2bfbcb7`, order 12). ⭐ **`W136` RATIFIED:** `W135`'s merge released `docs/conventions/`, and it heads what is free. ⭐ **`W158` RATIFIED:** `W141` and the rows of orders 11–12 that name `docs/conventions/` collide with `W136`, `W151` waits on `W150`'s `citations.py`, and nobody in flight holds `docker/dev/`. ⭐ **`W150` at order 11 RATIFIED:** `W149`, `W153` and `W154` are held by `docs/conventions/` or the register, and `W151` shares `citations.py`. ⚠️ **`W156`'s *waits on `TC-01`* is REFUTED by the reorder:** its edge half landed here and its predicate names `tools/quality/`, which `W150` does not write.
 
 ### ⭐ 4 — WHAT EACH FINDING BECAME
 
@@ -21482,14 +21483,14 @@ fix/W235-sharing-gates-every-member   33cd2cee  33cd2cee     0      NOWHERE
 | `W144/3` | disposed: a disclosed widening, one label in each of two tests that parse it |
 | `W144/4` | carried into the board's collision paragraph |
 | `W144/5`, `/6` | disposed at the close |
-| `W135/1` | recorded, and read at `W135`'s close |
-| `W135/2`, `/6` | carried by `W135`'s re-pin and its ancestor test; the survivor is the row's |
+| `W135/1` | disposed at the close: the rule was built to a ref, recorded in its handoff |
+| `W135/2`, `/6` | disposed at the close: the re-pin to `4d3c742` holds every earlier handoff inside the pin, the ancestor test shipped, and the survivor is declared |
 | `W135/3` | accepted, cost named: a register record is not a bound kind, and this round writes pointers anyway |
 | `W135/4` | rider on [`W150`](rows/W150.md): whether a pointer resolves is its subject |
 | `W135/5` | accepted, cost named; the coordinator's instruction to offices is the mitigation |
 | `W125/6`, `/7` | received: coordinator hygiene |
 | `PO-73/3` | relayed to the user |
-| `PO-73/4` | ⭐ **no rule now:** this round merged `4d3c742` and carried nothing. ⚠️ **If `W135` bounds handoffs by its pin's ancestry, a carry lands in a commit other than the original merge; measured at `W135`'s close** |
+| `PO-73/4` | ⭐ **no rule:** `W135`'s pin is the tree it landed in, so a handoff merged before it is inside the pin, and one merged after was judged at its own merge; a byte-identical carry adds nothing either arm has not read. This round merged its tips and carried nothing |
 | `W235/1` | rider on [`W226`](rows/W226.md): what the narration record holds, one `narrate/` owner |
 | `W235/2` | accepted, cost named: the survivor is stated in the skill |
 | `W235/3` | recorded: the refusal is correct under R7 |
@@ -21497,9 +21498,23 @@ fix/W235-sharing-gates-every-member   33cd2cee  33cd2cee     0      NOWHERE
 | `W235/5` | accepted, cost named: one test's reach |
 | `PO-74/1`, `/3` | [`W238`](rows/W238.md), minted, jumping nobody |
 
-### ⚠️ 5 — FOR THE USER
+### ⭐ 5 — THE USER'S GO-AHEAD, THE REVERSIBLE RULINGS, AND THE ONE QUESTION
 
-⭐ **The four questions are in [this round's record](handoffs/PO-2026-09-12-round74.md), and the register chooses none of them.**
+⭐ **The user, 2026-09-12, relayed by the coordinator:** *"finish the current milestone and then contine from the given order we talked about"* — ⭐ **read as the go-ahead for the ISO track, within the coordinator's limits:** its existing integration branch only, a linked worktree, nothing pushed or destroyed, CodeSignal and the Java corpus untouched, and §12's no-patch rule.
+
+⭐ **Ruled by the register as REVERSIBLE, where the words do not decide:** `M5` and `M7` are proved on the `FND-04` fixtures, with the Java rows in `M9` (headers move back if the user says otherwise); the terminal command and graded Submit take `SF-20`'s two modes as §8.3 states them (`SF-44` is untaken). ⛔ **The one question left is the user's, and it is in [this round's record](handoffs/PO-2026-09-12-round74.md): frozen records rewritten in place, against Ruling 106.**
+
+⭐ **The FIRST dispatchable `M6` work, for the coordinator:**
+
+| | |
+|---|---|
+| **Office** | PO-Integration — ⛔ **findings, not patches** (§12) |
+| **Repository** | `ISO/`, branch `release/studyforge-integration` at `76e689c` (its round 5), in a linked worktree. ⛔ **The workspace pin stays `a941517`** (Scheduled) |
+| **The framework** | read-only, at this round's merge |
+| **The rows** | ISO's own plan on that branch carries `M6` as its C1–C4, `ISO-04`…`ISO-17`; `ISO-16` asserts the reading floor, `M6`'s *Done when* |
+| **First** | ⭐ **(1)** re-take the plan against the release tip: its readings are of `798956c`, its C1–C4 gates (framework `M2`, `M3`, `M4`) are all closed now, and its `Q1`, `Q6` and `Q10` answers are re-read, not inherited. ⭐ **(2)** `ISO-04`: ratify and commit `corpus.json` — one new file, `permitted_edits` `[]`, `exercises` `false` |
+| **Also on the board** | [`W73`](rows/W73.md), INTEGRATION side, in progress since ISO's round 5 |
+| ⚠️ **Before dispatch** | **that branch is checked out in ISO's main checkout, so git refuses a linked worktree on it until that checkout leaves it** — the coordinator's to arrange; the register touches neither (`PO-74/9`) |
 
 ### W144 — One phrase, two populations — the notice counts table LINES and the bound counts the ID SET, and both say *register rows*
 
@@ -21589,3 +21604,62 @@ FND-04 depth1 / depth2: non-UTF-8 material members   0 / 0
 #### ⭐ CLOSED — PO ROUND 74
 
 ⭐ **Merged at `4d3c742`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `4d3c742` is RECEIVED.** ⭐ **Every non-UTF-8 member of a sharing archive is judged and a match refused by name; `SK-06` closes on it.**
+
+### W135 — A citation of a tracked document written as a bare filename is invisible to the one instrument that checks citations
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W135.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`CTO-59/2`. A document may cite a frozen record, a row file or a ruling section by BARE FILENAME, and `check_pointers` — the one instrument in this repository that checks citations — cannot see that citation at all, so it can neither resolve it nor report it missing.**
+
+⭐ **RULING 285(b), quoted rather than paraphrased** (Ruling 195) — [round 59's record](handoffs/CTO-2026-09-11-round59.md#ruling-285-cto-round-59-a-citation-of-a-frozen-record-is-a-pointer-and-a-failed-reading-is-closed-by-a-signature-rather-than-by-a-handler):
+
+> ⭐ **(b) THE POINTER.** ⛔ **A document that cites a frozen record, a row file or a ruling
+> section cites it as a RESOLVING POINTER, not as a bare filename.** … ⛔ **Scoped
+> deliberately: it binds a citation OF A TRACKED DOCUMENT, and never a test name, a symbol
+> or a sha.**
+
+### ⛔ THE POPULATION, MEASURED AT `51dee3b` — AND IT IS 147, NOT 1
+
+⛔ **PRINTED BEFORE ANY REMEDY, because the remedy the ruling's instance suggests is unperformable over the population the instance belongs to** (Rulings 123/128/140):
+
+```text
+handoffs/*.md carrying ZERO markdown pointers   -> 147 of 183
+  the routed instance, handoffs/W115.md            488 lines, 0 pointers
+  the largest                                    4915 lines, 0 pointers
+  of the 147, records this office may EDIT       ->   2  (handoffs/README.md, and any
+                                                         handoff of the CURRENT wave)
+rows/*.md carrying NO ANCHORED pointer          ->  33 of 83
+rows/*.md carrying NO pointer at all            ->   0 of 83
+```
+
+⭐ **The developer's `33 of 80` reproduces EXACTLY on the numerator; only the denominator moved, by this round's three mints.** ⛔ **And the handoff figure is the one that decides the row's shape: `handoffs/W115.md` is not an outlier, it is `1` of `147`.**
+
+### ⛔ SO IT IS NOT A SWEEP, AND REFUSING THE SWEEP IS THIS ROW'S FIRST ACT
+
+⛔ **145 of the 147 are FROZEN RECORDS. Rulings 106 and 174 say a record is annotated beneath and never edited, so adding a pointer to one is forbidden by the same convention set this row would land in.** ⚠️ **And a `Finding` over 147 files is Ruling 245's own measured refutation — *"a notice whose first wave fires 25 times is a notice nobody reads twice"* — at six times the width that produced the ruling.**
+
+⭐ **THE ROW IS A RULE AT AUTHORING TIME PLUS ONE BOUNDED LIVE POPULATION, and never a back-fill.**
+
+### ⛔ AND THE ROW-FILE HALF IS ALREADY `W88`'s — NAMED HERE SO THE TWO DO NOT COLLIDE
+
+⛔ **Ruling 244(a): one subject has one id.** ⭐ **[`W88`](#w88-the-thin-row-files-gain-an-anchored-pointer-and-four-lose-a-dangling-deictic) is *the thin row files gain an ANCHORED pointer*, minted round 35 with its own measured population of `20` and its own gate, and `33 of 83` is that population re-measured rather than a new one.** ⚠️ **So this row does NOT own the 33 row files.** ⛔ **What it owes them is the RULE they will be written against, which is why it is placed after `W88` and not instead of it — and if a dispatcher pairs them, `W88` is the sweep and this is the clause it satisfies.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The rule lands in `docs/conventions/agent-protocol.md`**, which is where a handoff's format lives: ⛔ **a citation of a TRACKED DOCUMENT is written as a resolving markdown pointer, with an anchor where the citation is to a section.** ⚠️ **A test name, a symbol, a sha and a command are NOT citations of a document and are explicitly out** (Ruling 285(b)'s own scoping).
+2. ⛔ **The instrument binds NEW documents only, and the exemption is STRUCTURAL rather than a filter a reader must remember** — ⭐ **the form `check_rulings_reach` uses: name the subject directory, so the frozen population is excluded by construction.** ⚠️ **An exemption list of 145 filenames is a second copy of the tree and goes stale on the next handoff.**
+3. ⭐ **Asserted in BOTH directions** (R12): a new handoff citing a record by bare filename is a finding; the same handoff with the pointer is green; ⛔ **and a handoff citing a test name, a symbol or a sha is NOT a finding — the negative control is the part that stops this rule eating the six-section contract it sits beside.**
+4. ⛔ **`check_handoffs` already exists and owns the six-section contract (`W25`), so this is an ARM of it and not a thirteenth check** — ⚠️ **unless the taker measures that `tools/quality/handoffs/` is at R11's ceiling, in which case the split decision is named in the handoff rather than taken silently.**
+5. ⭐ **The printed figure carries its denominator** (Ruling 48): *`n` of `m` new handoffs cite a tracked document without a pointer*, never a bare `n`.
+
+### ⭐ IT JUMPS NOBODY, AND SAYING SO IS THE HONEST CELL
+
+⛔ **This row is placed LAST in `## Next rows` and invokes no Ruling 75 exception.** ⭐ **The ground is the reviewer's own, accepted rather than argued around: `FLOOR_EXIT=0` is HONEST today, nothing is broken, and the two records `handoffs/W115.md` names do exist — the reviewer resolved both by hand.** ⚠️ **What is lost is machine-checkability of future citations, which is a cost that accrues rather than a defect that bites, and a row that claims otherwise to buy a place in the queue is the thing Ruling 75 exists to expose.**
+
+⚠️ **ONE SURFACE NOTE FOR THE DISPATCHER: this row writes `docs/conventions/agent-protocol.md` and [`W134`](rows/W134.md) writes `docs/conventions/*.md`** — ⛔ **ONE OWNER or two waves (check 4's sub-step).**
+
+[the mint argument and this round's three mints](#the-three-mints-and-one-of-them-is-wider-than-it-was-routed)
+
+#### ⭐ CLOSED — PO ROUND 74
+
+⭐ **Merged at `2bfbcb7`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2bfbcb7` is RECEIVED.** ⭐ **A new task or office handoff citing a tracked document by bare filename is a floor finding, pinned at `4d3c742`, the tree the rule landed in.**

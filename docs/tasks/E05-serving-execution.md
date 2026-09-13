@@ -140,7 +140,7 @@ whole reproducibility claim all rest on it.
 runner reaches into the toolchain container from outside it. Not behind a flag,
 not "only locally".
 
-⛔ **PO round 74 — *"execute inside the toolchain container when it is up"* now names the RUNNER container, `TC-00`, which is up with no editor** (user direction; spec §8.1, amended). ⭐ **The edge is `TC-00`, re-pointed from `TC-01` (`PO-72/2`'s edge). The page's Run and the reader's terminal command (`SF-44`) go through this one runner, which is why they agree.** ⛔ **Which mode the terminal command takes by default is the user's question** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+⛔ **PO round 74 — *"execute inside the toolchain container when it is up"* now names the RUNNER container, `TC-00`, which is up with no editor** (user direction; spec §8.1, amended). ⭐ **The edge is `TC-00`, re-pointed from `TC-01` (`PO-72/2`'s edge). The page's Run and the reader's terminal command (`SF-44`) go through this one runner, which is why they agree.** ⭐ **The terminal command takes this contract's two modes as they stand — the runner container when it is up, the host otherwise — ruled by the register as reversible** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
 
 **Acceptance.** A failing compile stops before tests run. A timeout kills the
 process group and emits the timeout exit line. Output containing a home path is
@@ -328,6 +328,6 @@ output through unfiltered rather than guessing.
 - ⭐ **A file with an associated test runs that test**, and the exit code says whether it passed.
 - ⛔ **A file with no associated test is not a failure** (§7's three states, C5): the command says so and exits `0`. ⚠️ **Whether it then runs the program is the taker's to state before code.**
 - ⛔ **Nothing the reader types becomes a command** (§8.3, rule 3): the argument selects a file, and the command comes from disk.
-- ⛔ **The Docker socket is never mounted into a serving process (§8.3), and nothing leaves the machine.** ⚠️ **Runner image or host by default, and whether a passing run records a practice pass, are NOT decided by the direction** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+- ⛔ **The Docker socket is never mounted into a serving process (§8.3), and nothing leaves the machine.** ⭐ **Its mode is `SF-20`'s: the runner container when it is up, the host otherwise, with identical observable behaviour (§8.3, rule 4) — ruled by the register, reversible until this row is taken.** ⚠️ **Whether a passing run records a practice pass is the taker's to state before code** ([the record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
 
 **Acceptance.** Over a corpus with a graded, an ungraded and a reading-only unit: a file with a test runs it, and a failing test exits non-zero; a file with no test exits `0` and says there is none; an argument that is no unit's file is refused by name; every output line is gated (R7); no command is ever read from the argument — asserted.
