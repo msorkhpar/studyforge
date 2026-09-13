@@ -57,22 +57,18 @@ all must be: a half-present source is exactly where a short read hides, and a
 per-file skip would discount precisely the file that went missing.
 
 ⛔ **"The source tree is absent" is CHECKED, never inferred from the origins
-(`W255`).** When **no** origin is on disk, `_source_beside` reads the disk
-where the origins point: each origin's top-level directory, walked whole, or
-the root's own files for an origin at the root. A file there that the
-manifest's own `content` declares as source (included, excluded or contested)
-means the source IS present, and every unit is refused `origin-missing`.
-⚠️ A one-unit archive has only one origin, so without this reading one missing
-origin read valid beside the whole source. ⭐ Only when no such file is there
-is the tree absent, and every source-dependent claim is reported `Unchecked`,
-loudly and counted (R6's sibling). It asks no git and no plan, so a copy with
-no repository reads the same.
-
-⚠️ **Declared, not decided (Ruling 292):** an origin whose top-level directory
-is absent reads the tree as absent, and a test asserts that. The whole root is
-not read, because a manifest may declare as source a file that sits beside
-an archive shipped alone (every FND-04 invalid fixture declares `*.md` over its
-own `VIOLATION.md`).
+(`W255`, `W261`).** When **no** origin is on disk, `_source_beside` reads the
+WHOLE corpus root, skipping only the framework's own writing at the root
+(`NOT_SOURCE`). A file anywhere under it that the manifest's own `content`
+declares as source (included, excluded or contested) means the source IS
+present, and every unit is refused `origin-missing`. ⚠️ A one-unit archive has
+only one origin, and origins written against the wrong root name a top-level
+directory that is absent, so a reading anchored where the origins point read
+both valid beside the whole source. ⭐ Only when no such file is there is the
+tree absent, and every source-dependent claim is reported `Unchecked`, loudly
+and counted (R6's sibling). A file declared `not_material`, or not declared at
+all, is not a present source. It asks no git and no plan, so a copy with no
+repository reads the same.
 
 ⭐ The alternative — failing whenever the source is absent — was rejected
 because an archive is a shippable artifact on its own, and `validate` is the
@@ -128,13 +124,13 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
             "no container map declares an 'origin', so there is no source file to count against",
         )
         return
-    if not present and not _source_beside(walk, [origin[1] for origin in origins]):
+    if not present and not _source_beside(walk):
         yield Unchecked(
             RULE_SHORT_READ,
             ".",
-            f"none of the {len(origins)} declared origin file(s) is present, and no file in "
-            f"a top-level directory those origins name is source the manifest's 'content' "
-            f"declares, so the source tree is absent and no unit's completeness was checked",
+            f"none of the {len(origins)} declared origin file(s) is present, and no file under "
+            f"the corpus root is source the manifest's 'content' declares, so the source tree "
+            f"is absent and no unit's completeness was checked",
         )
         return
     if not present:
@@ -164,38 +160,33 @@ def check_completeness(walk: Walk) -> Iterator[Finding | Unchecked]:
         yield from _compare(where, path, section, recorded)
 
 
-def _source_beside(walk: Walk, origins: list[Path]) -> bool:
-    """Whether a file where the origins point is source that the manifest's `content` declares.
+def _source_beside(walk: Walk) -> bool:
+    """Whether any file under the corpus root is source that the manifest's `content` declares.
 
-    ⛔ **Read from the disk, never inferred from the origins** (`W255`): an origin
-    only says WHERE to look, as its top-level directory. ⭐ Each file is asked of the
-    manifest's own declaration, and never of git or of the plan. It stops at the
-    first file declared.
+    ⛔ **Read from the disk, never inferred from the origins** (`W255`), ⭐ **and over the
+    WHOLE root** (`W261`): an origin that is not on disk says nothing about where the
+    source is. Each file is asked of the manifest's own declaration, and never of git or
+    of the plan. It stops at the first file declared.
     """
     assert walk.manifest is not None
     content = walk.manifest.content
-    for path in _where_origins_point(walk, origins):
+    for path in _files_under_root(walk):
         if content.classify(path.relative_to(walk.root).as_posix()) in SOURCE_STATES:
             return True
     return False
 
 
-def _where_origins_point(walk: Walk, origins: list[Path]) -> Iterator[Path]:
-    """Every file in a top-level directory an origin names, and the root's own for a root one."""
-    tops = sorted({origin.relative_to(walk.root).parts[0] for origin in origins})
-    for top in tops:
-        if top in NOT_SOURCE:
+def _files_under_root(walk: Walk) -> Iterator[Path]:
+    """Every file under the corpus root, in sorted order, beside the framework's own at the root."""
+    for top in sorted(walk.root.iterdir()):
+        if top.name in NOT_SOURCE:
             continue
-        where = walk.root / top
-        if where.is_dir():
-            for directory, _, files in os.walk(where):
+        if top.is_file():
+            yield top
+        elif top.is_dir():
+            for directory, subdirectories, files in os.walk(top):
+                subdirectories.sort()
                 yield from (Path(directory) / name for name in sorted(files))
-    if any(len(origin.relative_to(walk.root).parts) == 1 for origin in origins):
-        yield from (
-            path
-            for path in sorted(walk.root.iterdir())
-            if path.is_file() and path.name not in NOT_SOURCE
-        )
 
 
 def _compare(where: str, path: Path, section: str | None, in_archive: int) -> Iterator[Finding]:

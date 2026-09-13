@@ -21,7 +21,7 @@ from tests.fixture_checks.corpus import rendered
 from tests.fixture_checks.vocabulary import (
     BLOCK_FIELDS,
     CONTAINER_TYPES,
-    CORPUS_API,
+    CORPUS_APIS,
     DOCUMENT_KEYS,
     OPTIONAL_KEYS,
     RAW_API,
@@ -30,7 +30,7 @@ from tests.fixture_checks.vocabulary import (
 
 def check_manifest(manifest):
     """`corpus.json`: the version it declares and the fields it must carry."""
-    if manifest.get("corpus_api") != CORPUS_API:
+    if manifest.get("corpus_api") not in CORPUS_APIS:
         yield "corpus-api", f"corpus.json declares corpus_api {manifest.get('corpus_api')!r}"
     for key in ("source", "title", "levels", "variants", "placement"):
         if not manifest.get(key):

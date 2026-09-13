@@ -1,5 +1,5 @@
 {
-  "corpus_api": 1,
+  "corpus_api": 2,
   "source": "invalid-demo",
   "title": "Invalid Demo",
   "levels": [
@@ -12,9 +12,15 @@
   "placement": "tree",
   "content": {
     "include": [
-      "*.md"
+      "solo/*.md"
     ],
-    "exclude": []
+    "exclude": [],
+    "not_material": [
+      {
+        "glob": "VIOLATION.md",
+        "why": "the fixture's note on the one rule it breaks, about the corpus and never its source"
+      }
+    ]
   },
   "permitted_edits": []
 }
