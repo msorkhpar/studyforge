@@ -24181,7 +24181,7 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 
 ## PO round 87 — `W263`, `W267`, `W271`, `W274`, `W275` and `W273` closed
 
-⭐ **Cut at `92b57fd`, release after round 86's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+⭐ **Cut at `92b57fd`, release after round 86's merge, and re-based onto `7771751` under the mid-round rule, so the four mid-round closes' handoffs are in its tree.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
 
 ### ⭐ 1 — CLOSES
 
