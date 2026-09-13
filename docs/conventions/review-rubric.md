@@ -498,7 +498,7 @@ own checkout's wrapper, invoked by its absolute path from inside a trial worktre
 measures YOUR tree under the trial's name, and every figure reads plausible. ⚠️ The
 witness, `CTO-67/11`: the suite count matched the base and would have filed a false
 finding. Only the floor's rulings figure disagreed. The argument is
-[the row](../tasks/rows/W168.md).
+[the row](../tasks/BOARD-ARCHIVE.md#w168-a-trial-merge-run-through-the-reviewers-own-wrapper-measures-the-reviewers-own-tree-and-reads-like-a-correct-run).
 
 ```bash
 # ⛔ Taken on the HOST, after the merge: the merge commit exists in the trial tree only.
