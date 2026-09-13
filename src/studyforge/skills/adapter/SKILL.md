@@ -222,6 +222,14 @@ cannot judge whether the archive is the material. What goes with it:
   same rule, `write_files`, so the two paths cannot disagree (`W265`).
 - ⛔ **Never write into the source repository beyond the archive** (R3), and
   never beyond what `permitted_edits` declares.
+- ⛔ **`permitted_edits` may never name** the repository's root ignore file, any
+  version-control configuration, or a file R3 reads as content — **repository-root
+  documentation included, whatever `content` classifies it as** (`W278`). ⭐ The
+  one predicate is `studyforge.corpus.manifest.edits.reads_as_content`, the stems
+  it reads as root documentation are `studyforge.corpus.manifest.edits.ROOT_DOCUMENTATION`,
+  and all three are refused by `studyforge.corpus.manifest.edits.parse_edits`.
+  ⛔ Read the names there: this skill keeps no copy, and a manifest declaring one
+  is refused by name when it loads.
 - ⛔ **Never derive an address, an ordinal or a reading order.** §6 rules them
   recorded. If nothing records one, that is reconnaissance's open question
   coming back, and it is answered there.

@@ -102,6 +102,14 @@ rewritten). ⭐ **`git status` afterwards shows additions and nothing else** —
 plus whatever the manifest's own `permitted_edits` declares, which is the only
 form an edit may take and is checked by a test this skill generates.
 
+⛔ **`permitted_edits` may never name** the repository's root ignore file, any
+version-control configuration, or a file R3 reads as content — **repository-root
+documentation included, whatever `content` classifies it as** (`W278`). ⭐ The one
+predicate is `studyforge.corpus.manifest.edits.reads_as_content`, the stems it reads
+as root documentation are `studyforge.corpus.manifest.edits.ROOT_DOCUMENTATION`, and
+all three are refused by `studyforge.corpus.manifest.edits.parse_edits`. ⛔ Read the
+names there: this skill keeps no copy, and a draft declaring one is refused by name.
+
 ⛔ **On a corpus already onboarded, pass `existing=` the text of its `corpus.json`**
 (`W283`). A re-survey drafts no glob the manifest already covers (`W269`), so the
 manifest is where those globs come from: each `not_material` glob it declares is kept
