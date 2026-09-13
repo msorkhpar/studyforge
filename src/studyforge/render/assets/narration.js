@@ -234,11 +234,18 @@
      clip that is not on disk had already put the reason on screen, and would
      wipe it: the reader would be shown silence with no explanation, which is the
      exact failure R6 is here to prevent. `begin` clears the status before it
-     starts, so there is nothing left for a success to clear. */
+     starts, so there is nothing left for a success to clear.
+
+     ⛔ **`W276`: a clip that is not on disk fires `error` AND rejects `play()`, in
+     either order.** The rejection stands down when the passage it started is no
+     longer playable, so an `error` that arrived first keeps its sentence; one that
+     arrives second overwrites the blocked one on its own. */
   function start() {
     var started = audio.play();
+    var index = at;
     if (started && started.catch) {
       started.catch(function () {
+        if (index !== -1 && !playable[index]) { return; }
         /* ⚠️ A known state with a stated remedy, not an error: the browser
            refused to start audio without a gesture it recognised. */
         say(BLOCKED);
