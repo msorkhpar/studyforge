@@ -98,6 +98,7 @@ CONTRACT_FIELDS = (
     "site_api",
     "toc_api",
     "narration_api",
+    "progress_api",
 )
 
 
