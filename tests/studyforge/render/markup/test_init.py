@@ -12,7 +12,7 @@ import ast
 from types import ModuleType
 
 from studyforge.render import markup
-from studyforge.render.markup import text
+from studyforge.render.markup import fragment, text
 from tests.support import assert_package_contract, repository_root
 
 #: Where the sweep below looks. ⛔ `src/` only: a mirror test's subject **is**
@@ -60,6 +60,11 @@ def test_the_package_states_its_contract():
     assert_package_contract(markup, "studyforge.render.markup")
 
 
+#: Every module whose public names ARE the surface. ⛔ Derived from the package
+#: table's modules, and a module added without a row here fails the test below.
+MODULES = (fragment, text)
+
+
 def test_the_public_surface_is_exactly_the_module_s_public_names():
     # ⭐ Derived on both sides rather than typed on one: a name added to `text`
     # and forgotten on `__all__` fails here instead of being discovered by the
@@ -68,10 +73,11 @@ def test_the_public_surface_is_exactly_the_module_s_public_names():
     # namespace carries besides its own names; neither is a surface.
     public = {
         name
-        for name, value in vars(text).items()
+        for module in MODULES
+        for name, value in vars(module).items()
         if not name.startswith("_") and not isinstance(value, ModuleType) and name != "annotations"
     }
-    assert public, "the sweep found no public name at all in text.py"
+    assert public, "the sweep found no public name at all in the package's modules"
     assert set(markup.__all__) == public, sorted(set(markup.__all__) ^ public)
 
 
@@ -79,7 +85,9 @@ def test_every_exported_name_is_the_module_s_own_object():
     # ⛔ Identity, not spelling. A re-export that had been re-bound somewhere on
     # the way would compare equal by name and be a different function.
     for name in markup.__all__:
-        assert getattr(markup, name) is getattr(text, name), name
+        owners = [module for module in MODULES if hasattr(module, name)]
+        assert len(owners) == 1, (name, owners)
+        assert getattr(markup, name) is getattr(owners[0], name), name
 
 
 def test_the_framework_defines_each_primitive_exactly_once():

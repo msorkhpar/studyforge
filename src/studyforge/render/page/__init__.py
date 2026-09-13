@@ -62,7 +62,8 @@ that is not this framework's own structure comes out of the document.
 | `blocks.figure` | what does the reader look at rather than read? |
 | `blocks.verbatim` | ⛔ which block types bypass escaping — `html`, and nothing else |
 | `section` | what wraps one section, and what sits above it? |
-| `navigation` | where does this page point — into itself, back, forward, up? |
+| `anchors` | what on this page may be linked to, and the outline that links to it? |
+| `navigation` | where does this page point — back, forward, up — and where is the reader? |
 | `assets` | where does this page reach, relative to itself? |
 | `document` | what is written, in what order, out of which templates? |
 | `errors` | `PageError`, the only exception any of it raises |
