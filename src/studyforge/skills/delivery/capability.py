@@ -45,7 +45,7 @@ new kind of subsection, and the entry nobody adds is the row that vanishes.
 
 ⛔ **A row whose milestone is a dash is CANCELLED and is not a capability**,
 and it is counted rather than dropped silently: a generator that quietly
-discards input is one nobody can check.
+discards input is one nobody can check. ⛔ **Only a dash cancels** (W247).
 
 ## ⛔ Milestones run in a DECLARED order, which is not the order ids sort to
 
@@ -85,13 +85,14 @@ _ANY_HEADING = re.compile(r"^###\s+\S")
 #: The declaration line that makes a heading a task.
 _DECLARATION = re.compile(r"^\*\*Milestone\*\*")
 
-#: The milestone inside it, allowing the bold that some rows carry.
-_MILESTONE = re.compile(r"^\*\*Milestone\*\*\s*\**\s*(M[0-9])\b")
+#: ⛔ THE milestone id, any width (W247): a one-digit shape read `M10` as cancelled.
+MILESTONE_ID = r"M[0-9]+"
 
-#: A milestone's own section in the document that declares the order:
-#: `### M6 — The first corpus reads`. ⛔ The id shape is `_MILESTONE`'s, so the
-#: two cannot disagree about what a milestone id is.
-_SECTION = re.compile(r"^###\s+(M[0-9])\s+—\s+\S")
+#: The milestone inside it — an id, or the dash that cancels — allowing the bold.
+_MILESTONE = re.compile(rf"^\*\*Milestone\*\*\s*\**\s*({MILESTONE_ID}\b|—)")
+
+#: A milestone's own section in the order document: `### M6 — The first corpus reads`.
+_SECTION = re.compile(rf"^###\s+({MILESTONE_ID})\s+—\s+\S")
 
 #: What a task waits on, up to the next field.
 _DEPENDS = re.compile(r"\*\*Depends on\*\*\s*(.*?)(?:·|$)")
@@ -251,6 +252,11 @@ def read_epic(name: str, text: str) -> Epic:
             )
         milestone = _MILESTONE.match(declaration)
         if milestone is None:
+            raise IndexRefused(
+                f"{name} line {position + 1}: {heading.group(1)} declares a milestone that is "
+                "neither `M<n>` nor a dash — refused, never counted as cancelled (W247)"
+            )
+        if milestone.group(1) == "—":
             cancelled.append(heading.group(1))
             continue
         found.append(
