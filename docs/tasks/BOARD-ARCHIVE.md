@@ -22187,3 +22187,175 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 #### ⭐ CLOSED — PO ROUND 76
 
 ⭐ **Merged at `cf1252f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `cf1252f` is RECEIVED.** ⭐ **`SK-01`'s survey drafts a `source` (the slug of the resolved directory name) and `variants` that `SF-02` accepts, and its include globs never match the curriculum record.** ⚠️ **The fourth container is `F21`'s question, not the glob defect (`W240/1`); the record's `not_material` reason is a person's (`W240/3`). Both are in § 3.**
+
+## PO round 77 — `W239` and `W243` closed, `W242` and `W153` named, and `W162/8` folded into the held `W162/7`
+
+⭐ **Merged after round 76's cut at `1e70007` and not closed by it: `0e65df9` (`W239`) and `5f772d9` (`W243`). This round is cut at `6cdab6d`, which carries both; `828b37f` (`W162`) and `579e1df` (`W151`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                  merge^2   branch head  ahead  checked out
+fix/INT06-1-promote-not-material  dbf98ede  dbf98ede     0      NOWHERE
+fix/INT06-9-highlight-languages   d41fe017  d41fe017     0      NOWHERE
+fix/W162-docker-gate-ground       b1a3178b  b1a3178b     0      NOWHERE
+fix/W151-docstring-counts         8ea558c6  8ea558c6     0      NOWHERE
+```
+
+⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W242.md` re-pointed for `W239`, `rows/W216.md` for `W151`. `W243` and `W162` have no live inbound citation. ⚠️ **`handoffs/PO-2026-09-13-round75.md` cites the `W239` and `W243` row files, and `handoffs/W162.md`, `handoffs/W151.md` and two older records cite theirs; they are records, and the stubs resolve.**
+
+### ⭐ 2 — RULED, REVERSIBLE
+
+1. ⛔ **`W162/8`, folded into the held `W162/7`.** With `STUDYFORGE_DOCKER_TESTS` set, a cold image cache SKIPS the gated image checks and never builds. The flag permits the daemon, not the network. ⭐ **A separate value that permits a build is the user's to ask for, in the same held question.** ⭐ **`W162/7`'s ruled half is PROVED at `828b37f` (§ 3); the question itself stays held.**
+2. ⭐ **Round 76's id ruling holds at both merges.** At `0e65df9`, `handoffs/W239.md` declares `task handoff — W239`, its title names `W239`, and its findings are `W239/1`–`/4`. At `5f772d9`, `handoffs/W243.md` does the same for `W243`, with findings `W243/1`–`/5`.
+
+### ⭐ 3 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `W162/8` | ⛔ **ruled, § 2.1**, and folded into the held `W162/7` |
+| the `W162` amendment | ⭐ **RECEIVED:** a default run makes no docker call. A recording fake `docker` on `PATH` sees none for the gate or for all of `tests/docker/`, and a planted probe turns it RED. It PROVES `W162/7` as round 75 ruled it; the question stays held |
+| `W151/5` | ⭐ **rider on [`W232`](rows/W232.md), not a mint:** a tree copy under `.scratch/` turns the suite RED, which is that row's subject exactly |
+| `W151/1` | disposed at the close: a surface widening, disclosed |
+| `W151/2`, `W151/3` | accepted, cost named: a noun joins the check only with its source, so `W116/3`'s test figures stay outside it |
+| `W151/4` | accepted, cost named: `W145/2`'s declared gap, inherited by every line-joining reader and not widened |
+| the `W243` close | ⭐ **recorded at the close below:** `ISO-06`'s *"XML highlighted"* waits on `W243/1`, the user's Prism download |
+| the `W239` and `W243` handoffs | ⭐ **verified, § 2.2** |
+
+⭐ **Carriers, each confirmed against git:** [`W242`](rows/W242.md), Developer 1, `fix/W242-sibling-ignore-home` @ `wt/dev1`, cut `5f772d9`, order 2 now that `W239` and `W241` have merged; it collides with nothing in flight. [`W153`](rows/W153.md), Developer 3, `fix/W153-unnamed-arm-register-blind` @ `wt/dev3`, cut `5f772d9`, by board order (order 11). Its surface is `tools/quality/board/corroborate.py`, its tests and `docs/conventions/board.md`, and no other member of either set is in flight. [`W163`](rows/W163.md), Developer 2, `fix/W163-visual-reasoning` @ `wt/dev2`, cut `828b37f`, after `W162` merged: the `STUDYFORGE_VISUAL` block of `docker/dev/compose.yaml`, plus riders `W162/5` and `/6` in `tests/docker/`. ⚠️ **Its merge moves the dev image identity.**
+
+⭐ **The ISO track:** integration round 7 merged into ISO at `ab9e765`, and `ISO-04` is TAKEN. ⭐ **RECEIVED:** its re-read at `5f772d9` DISCHARGES `INT-06/1`, `/2`, `/3`, `/5`, `/6` and `/9`'s fallback, each with a plant. ⭐ **The pin advanced to `ab9e765` (`W244`'s cadence), the ISO line alone (`PO-76/1`).** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`.
+
+⭐ **Mints, ahead of every `W` row:** [`W250`](rows/W250.md) (`INT-07/3`, order 1: `ISO-07` and `ISO-08` wait on it) and [`W249`](rows/W249.md) (`INT-07/1` + `/2`, order 2), one owner of `skills/reconnaissance/`. `INT-07/4` is `W242`'s, in flight; `INT-07/5` is `W243/1`, held for the user.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7`, now with `W162/8`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
+
+### W239 — `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W239.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/1`: `SK-07`'s `promote` drops a draft's `content.not_material`, although its SKILL says a person's block survives.** ⭐ **RECEIVED from the ISO integration round 6, run at framework `3483ced` and merged at ISO `0d970fd`** (its `docs/studyforge/questions-for-framework.md` §11.1): *"So F18's ruled declarations cannot be generated: 24 `[unclassified]`. Blocks `ISO-04`."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> `promote` carries a draft's `content.not_material` through, merged with the generated globs.
+> A collision between the two is refused, never resolved by precedence.
+
+⛔ **Asserted both ways (R12):** a draft's block survives `promote`, and a colliding glob is refused by name.
+
+### ⭐ WHY IT IS FIRST
+
+⭐ **`ISO-04` is `M6`'s next takeable row and waits on this alone** (ISO §11.4). ⛔ **`M6` work, not `M8`'s, and never a hand-edit to a generated `corpus.json`** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/` and its tests. ⚠️ **One owner with [`W242`](rows/W242.md).**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `0e65df9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `0e65df9` is RECEIVED.** ⭐ **`promote` carries a draft's `content.not_material` through, merged with the generated globs, and refuses a colliding glob by naming both sides.** ⚠️ **`W239/4`: two GENERATORS declaring one glob still resolve by first-wins. That is the rider already on [`W242`](rows/W242.md) (`INT06-1/4`).**
+
+### W243 — The vendored highlighter lacks grammars a real corpus's fences use, and nothing declares the fallback
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W243.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/9`: the vendored highlighter has no grammar for several fence languages a real corpus uses, so an acceptance clause that says *highlighted* is unmeetable.** ⭐ **RECEIVED from the ISO integration round 6 (framework `3483ced`, ISO `0d970fd`, §11.1, against `Q7` and `SF-11`):** *"half holds: `prism.js` has no `xml`, `json`, `properties` or `gherkin` grammar. ISO-06's "XML fences highlighted" is unmeetable."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> which fence languages the vendored bundle highlights, or a declared plain-text fallback.
+
+⛔ **The taker chooses and says which:** widen a vendored, licensed asset, or declare the highlighted set and its fallback where a corpus can read it. ⛔ **Asserted both ways:** a declared language is highlighted, and an undeclared one falls back as declared.
+
+⭐ **Blocks `ISO-06`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/render/assets/` and the fence-language selection in `render/pageassets/`, with their tests. ⛔ **No network fetch: a grammar that needs a download is a finding for the user, never a fetch.** ⭐ **Collides with nothing in flight.**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `5f772d9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5f772d9` is RECEIVED.** ⭐ **The highlighter's grammars are declared in the vendored bundle's header and checked against what it defines. A fence in an undeclared language renders as the declared plain fallback, and says so.** ⛔ **`ISO-06`'s *"XML fences highlighted"* waits on `W243/1`, the user's Prism 1.30.0 download (Scheduled, `pending`). Until then an XML fence renders plain, with its note.**
+
+### W162 — Ten gated assertions no routine environment reaches, and the skip's own stated ground is false whenever the image is already built
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W162.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **TEN COMMITTED ASSERTIONS CERTIFY THE PINNED IMAGE AND NO ROUTINE ENVIRONMENT REACHES ONE OF THEM.** ⭐ **Routed by `CTO round 67` §8 item 5 as the residual Ruling 332 deliberately left, and it reached no row for a round.**
+
+### ⛔ THE POPULATION, role `wt/po`, ref `0564997`, environment HOST, `STUDYFORGE_DOCKER_TESTS` UNSET
+
+```text
+python3 -m pytest --collect-only -q tests/docker/     113 collected
+python3 -m pytest -q -rs tests/docker/                 96 passed, 17 skipped
+gated skips, weighted by their [n] groups                            10
+  test_dev_image.py 5 · test_dev_check_timeout.py 4 · test_dev_provenance.py 1
+```
+
+⚠️ **`CTO round 67` measured NINE at `7420c34` and was right there: `test_dev_image.py` is byte-identical at both refs, and `W152` merged the tenth.** ⭐ **DATED, not wrong** (Ruling 310(b)).
+
+### ⛔ WHY THE GATE'S OWN GROUND IS THE DEFECT, AND IT IS THE PART RULING 332 COULD NOT SEE
+
+⭐ **The skip reason reads *"the build needs network; a test run must not"*.** ⛔ **It is FALSE in the ordinary case: with the image already built the mode starts a container and builds nothing, and a peer session measured the ten GREEN on a warm cache with the network untouched.** ⚠️ **That reading is RECEIVED, not taken here — Ruling 332 forbids this office to set the flag, and the round that would verify it is the round the ruling binds.** ⭐ **What IS taken here is everything but the verdict: the denominator, the without-flag half and the gated set all reproduce.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE SKIP REASON SAYS WHAT IS ACTUALLY TRUE** — ⭐ *this run would build the image, and a build needs network* — ⚠️ **so the gate can distinguish a COLD from a WARM cache instead of refusing both on one sentence.**
+2. ⭐ **AN ENVIRONMENT THAT REACHES THE TEN, NAMED.** ⛔ **Ten assertions nobody runs are ten assertions nobody has proved can fail** (Ruling 191's shape, `W24`'s clause).
+3. ⚠️ **RULING 332 IS THE CTO's AND IS NOT TOUCHED BY THIS ROW.** ⭐ **The row surfaces the ground; the rubric is amended by the office that owns it, or it is not amended.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A DEFAULT-ON GATE.** ⭐ **A suite that reaches the network by default is the thing the reason was written to prevent, and it is right about the cold case.** ⛔ **AND NOT A DELETION OF THE TEN** — ⚠️ **an unreachable assertion is a routing problem, not a wrong assertion.**
+
+### ⭐ SURFACE
+
+⛔ **`tests/docker/test_dev_image.py`'s gate helper and the skip reasons that quote it.** ⚠️ **Shares `tests/docker/` with `W163`: ONE OWNER or two waves** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `828b37f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `828b37f` is RECEIVED.** ⭐ **The docker gate's skip reason says what is true. A default run makes NO docker call and says the cache was not probed. With `STUDYFORGE_DOCKER_TESTS` set, the gate tells a cold cache from a warm one from `docker/dev/check`'s own identity, and never builds.** ⭐ **`W162/7` is PROVED: a recording fake `docker` on `PATH` sees no call for the gate or for all of `tests/docker/`, and a planted probe turns it RED.** ⚠️ **`W162/8` is ruled in this round's § 2.1. `W162/5` and `/6` ride on [`W163`](rows/W163.md).**
+
+### W151 — Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W151.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W145/1`. A COUNT TYPED INTO A DOCSTRING IS READ BY NOTHING, and the branch that DERIVED one numeral left three hand-typed copies of the same figure standing beside it.** ⭐ **The reviewing office added `CTO-65/10` to this row's population BY NAME.**
+
+### ⛔ THE POPULATION AS IT ARRIVED, from two rounds and two offices
+
+| witness | ⛔ the shape |
+|---|---|
+| `W145/1` | the reach notice's gap numeral is now DERIVED; **three docstring copies of the same count are still typed** |
+| `CTO-65/10` | **three shipped sites** state a markdown-file total that BOTH instruments contradict — ⚠️ the figure was a MAIN reading written beside a measurement taken in a worktree, quoted with no ref and no role (Ruling 277) |
+
+⭐ **The reviewing office's disposition placed the second inside the first: *"It joins `W145/1`'s own population — hand-typed counts in docstrings needing an instrument."*** ⚠️ **RE-MEASURED AT DISPATCH (Ruling 214): both figures above were true of their own refs and neither is this row's acceptance.**
+
+### ⭐ WHY IT IS ONE ROW AND NOT TWO
+
+⛔ **Both are the same defect: a SCALAR about a growing population, written in prose, inside a file that the population does not change.** ⭐ **That is Ruling 150's mechanism, which `CLAUDE.md` and `README.md` were both rewritten over, arriving in DOCSTRINGS — the one surface neither rewrite reached.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A closed check that REFUSES a bare count of a derived population in a docstring**, on the population it can decide, with the undecidable remainder DECLARED rather than forced into an arm (Ruling 292).
+2. ⭐ **OR THE NARROWER ANSWER, and a taker may reach it: the count is DERIVED at import or at test time from the same source the claim is about** — ⚠️ **which is what `W145` did for the one numeral it owned, and this row's job is to do it for the rest rather than to invent a second mechanism.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a docstring stating a derived count goes RED, and one stating the same fact as a PROPERTY passes.
+4. ⚠️ **`W69` is the neighbour and is NOT this row** — ⭐ **`W69` refuses a bare TASK-count literal; this row's subject is any count of a population the file does not own. A taker holding both should say which predicate answers which.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CORRECTION OF THE THREE NUMERALS.** ⭐ **Correcting `400` to `399` buys exactly one round — that is the reasoning `README.md` records for REFUSING to correct `87` and `89` to `91`, and this row exists because the correction is not the fix.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/citations.py`, `tools/quality/reach.py` and their tests.** ⚠️ **Shares `citations.py` with `W150` and `reach.py` carries a STANDING SPLIT condition (`W133/4`) — ⛔ **a taker who finds themselves trimming rather than splitting is in the wrong module** (Ruling 261).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+⭐ **Rider, PO round 72 — `W116/3`:** `tools/tests/quality/test_lint.py`'s figures (*25 bare*, *10 parenthesised*) are `a606033`'s, and `W116` read other figures at `a956b6c`. ⛔ **A witness, not a population change: a count in a test's prose that nothing re-derives** ([the round](#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close)).
+
+#### ⭐ CLOSED — PO ROUND 77
+
+⭐ **Merged at `579e1df`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `579e1df` is RECEIVED.** ⭐ **A bare count of a growing population typed into Python prose fails the floor: `check_derived_counts` refuses a figure before *"markdown files"* or *"declared gaps"* unless its own sentence names the ref it was measured at, and the eleventh notice, `count_census`, prints bare and dated counts apart.** ⚠️ **Only those two nouns are read (`W151/2`), and `W116/3`'s test figures stay outside them (`W151/3`). Each finding's disposition is in this round's § 3.**
