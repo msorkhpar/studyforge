@@ -21987,7 +21987,7 @@ fix/W141-stated-clause-count      4e4f6bb6  4e4f6bb6     0      NOWHERE
 fix/INT06-5-6-one-archive-root    401dbb47  401dbb47     0      wt/dev1
 ```
 
-⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⚠️ **`C` refutes a held branch too, so `W241` closes while `wt/dev1` holds it.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, `rows/W242.md` for `W241`, and the Scheduled ISO-pin cell for `W244`. ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
+⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⚠️ **`C` refutes a held branch too, so `W241` closes while `wt/dev1` holds it.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, `rows/W242.md` for `W241`. ⚠️ **The Scheduled ISO-pin cell keeps `rows/W244.md`: its stub resolves, and the anchor would take the cell over the board's row-width ceiling.** ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
 
 ### ⭐ 2 — RULED, REVERSIBLE
 
