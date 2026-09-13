@@ -183,16 +183,22 @@ class OpenPage:
         self.evaluate("document.body.focus(); document.body.blur();")
 
     def focused(self) -> dict:
-        """What has focus now: its tag, its href or class, and its focus outline."""
+        """What has focus now: its tag, its href or class, its focus outline, and where it is.
+
+        ⚠️ `at` is the element's position in document order, because a label is
+        not an identity: two links to one page carry one href (`W105`).
+        """
         return dict(
             self.evaluate(
                 "(() => { const e = document.activeElement;"
-                " if (!e || e === document.body) return {tag: 'BODY', label: '', outline: ''};"
+                " if (!e || e === document.body)"
+                "  return {tag: 'BODY', label: '', outline: '', at: -1};"
                 " const s = getComputedStyle(e);"
                 " return {tag: e.tagName,"
                 "  label: e.getAttribute('href') || e.className"
                 "    || e.textContent.trim().slice(0, 40),"
-                "  outline: s.outlineStyle + ' ' + s.outlineWidth + ' ' + s.outlineColor};"
+                "  outline: s.outlineStyle + ' ' + s.outlineWidth + ' ' + s.outlineColor,"
+                "  at: Array.prototype.indexOf.call(document.querySelectorAll('*'), e)};"
                 "})()"
             )  # type: ignore[arg-type]
         )
@@ -205,6 +211,10 @@ class OpenPage:
         count walks it two or three times — and an order compared against a list
         that has been traversed twice fails for a reason that has nothing to do
         with the order.
+
+        ⛔ **The wrap is the SAME ELEMENT coming round, never the same href**
+        (`W105`): a unit page's trail and its between-units bar both link the
+        index, and a mark of tag and href ended the walk at the second one.
         """
         self.focus_body()
         seen: list[dict] = []
@@ -212,7 +222,7 @@ class OpenPage:
         for index in range(steps):
             self.tab()
             here = self.focused()
-            mark = f"{here['tag']}|{here['label']}"
+            mark = f"{here['tag']}|{here['label']}|{here['at']}"
             if index == 0:
                 first = mark
             elif mark == first:

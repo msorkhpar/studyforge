@@ -64,8 +64,9 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.contents import order
 from studyforge.corpus.placement import relative_href
+from studyforge.generate.navigation import trail
 from studyforge.render import pageassets
-from studyforge.render.page import Link, Links, Placement, render
+from studyforge.render.page import Crumb, Link, Links, Placement, render
 from tests.studyforge.render.container import containers
 from tests.studyforge.render.index import indexes
 from tests.studyforge.render.page.sites import FIXTURES as UNIT_CASE_OF
@@ -261,7 +262,9 @@ def _unit_page(corpus: str) -> Built:
         kind=UNIT,
         page=_under(corpus, where.unit.page),
         assets=_under(corpus, where.shared.assets),
-        body=render(_outstanding(case.document), where, _bar(corpus, where)),
+        body=render(
+            _outstanding(case.document), where, _bar(corpus, where), _trail(corpus, case.document)
+        ),
     )
 
 
@@ -331,6 +334,30 @@ def _bar(corpus: str, where: Placement) -> Links:
         ),
         next=Link(None, walked[-1].title, key=walked[-1].key),
     )
+
+
+def _trail(corpus: str, document: dict) -> tuple[Crumb, ...]:
+    """The trail for one unit page, joined the way a build joins it.
+
+    ⛔ **`W105`.** The disposition table rules `nav[aria-label="Breadcrumb"]`, and
+    a harness that passes no trail can never open it — the reach check above
+    reds by name. ⭐ `generate.navigation.trail` is called rather than imitated,
+    and the index href is asked of `relative_href`, as `_bar`'s is.
+
+    ⚠️ The unit is found by its address and its title, and anything but exactly
+    one match is refused: a trail for the wrong unit would still paint.
+    """
+    contents = indexes.case(corpus).contents
+    within = "/".join(document["address"]) + "/"
+    keys = [
+        entry.key
+        for entry in order(contents)
+        if entry.key.startswith(within) and entry.title == document["title"]
+    ]
+    if len(keys) != 1:
+        raise LookupError(f"{corpus}: {len(keys)} units match this page, and one must")
+    where = UNIT_CASE_OF[corpus]().placement
+    return trail(contents, keys[0], relative_href(where.unit.page, where.shared.root_index))
 
 
 def _flatten_foreground(stylesheet: str) -> str:
