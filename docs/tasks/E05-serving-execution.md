@@ -260,6 +260,8 @@ line; the outcome is recorded.
 
 ⛔ **The page names a practice by `progress.practice_key`** (`SF-21/4`) — a pass recorded under any other spelling is one the page never reads.
 
+⚠️ **`SK-03/3`: no framework constant names the execution namespace, so `skills/buildserve/states.py` holds `EXECUTION_NAMESPACE = "run"` until this row registers `run`.** ⛔ **The constant moves into the framework with that registration, and the skill imports it from there.**
+
 **Two modes because Run and Submit are different acts.** Run shows the reader
 what their own program printed. Submit runs the grader, and only Submit can
 complete a practice. Collapsing them would let a program that compiles and

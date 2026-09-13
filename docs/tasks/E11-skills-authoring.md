@@ -552,6 +552,8 @@ validate, unit documents, pages, narration, contents, index, serve. A thin
 wrapper over **SF-28's** entry points — and if it cannot be thin, SF-28 drew its
 surface wrong and that is the finding.
 
+⚠️ **`SK-03/1`, corrected by the PO in round 70: *"from raw material … ingest"* cannot be one framework invocation, because ingest belongs to the corpus repository (`SK-07` step 5; R1, R2).** ⭐ **The one invocation starts from a corpus whose archive exists: validate, narrate, build, serve.** ⛔ **The sentence above is kept, and this one governs.**
+
 ⚠️ **It wraps the framework CLI, not a consumer's pipeline.** This task used to
 depend on `OPS-04` — a file in the Java repository — which is the exact hole
 `SF-28` was created to close: a source-agnostic skill wrapping one consumer's
