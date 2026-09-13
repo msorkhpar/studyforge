@@ -4,11 +4,13 @@
 `file://` cannot do — the API, the reader's progress, and Run/Submit — to a site
 that already works without it (R8).
 
-**How you use it.** `studyforge serve <corpus>`. The endpoint shapes are the
+**How you use it.** `studyforge serve <corpus-root> --site <dir> [--port N]`, or
+`instance.make_instance(root)`, which is given a root and nothing else. The endpoint shapes are the
 contract, and the reading page is a consumer of them: a second source that
 populates the same API gets the same site out.
 
-**Depends on.** `contents`, `unit`, `corpus`, `progress`, `execute`. ⛔ Not on
+**Depends on.** `contents`, `unit`, `corpus`, `generate` (its declarations reader only),
+`progress`, `execute`. ⛔ Not on
 `render` at request time — pages are built, not rendered per request.
 
 ⚠️ **Two namespaces with opposite caching rules.** Content is what a unit *is*:
@@ -27,7 +29,20 @@ extraction pays that debt during the port, not after: it arrives as focused
 modules or it does not arrive.
 
 **Filled by SF-19a**: `app` (the loopback server and its seams), `security`,
-`caching`, `response`, `routes.content` and `routes.assets`. SF-19b (state,
-addressing, discovery) and SF-22 (run) register their namespaces through
-`app.make_server(namespaces=...)` — see `app`'s docstring for the seams.
+`caching`, `response`, `routes.content` and `routes.assets`. **Filled by SF-19b**:
+`discovery` (a root in, every corpus under it found, no configured paths),
+`addressing` (N-segment unit addresses at each corpus's own depth), `routes.state`
+(never cached, derived from the filesystem on every request) and `instance`
+(`make_instance(root, port, log)`, the seam `studyforge serve` calls). SF-22 (run)
+registers its namespace through `app.make_server(namespaces=...)`.
+
+⚠️ `discovery` reads a corpus through `generate`'s `read_corpus`, the one reader of
+a corpus's declarations (`SF-19a/1`), which is why `generate` is named above.
 """
+
+from __future__ import annotations
+
+from studyforge.serve.discovery import RAISES
+
+#: ⛔ What `discovery.discover` and `instance.make_instance` let out (`W208`).
+__all__ = ["RAISES"]

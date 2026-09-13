@@ -9,6 +9,7 @@ import pytest
 from studyforge.generate import write_site
 from studyforge.serve.caching import weak_etag
 from studyforge.serve.response import Request
+from studyforge.serve.routes import assets as assets_module
 from studyforge.serve.routes.assets import (
     ASSET_CACHE,
     DEFAULT_CONTENT_TYPE,
@@ -203,3 +204,21 @@ def test_a_private_file_is_404_and_the_default_names_nothing_private(site):
     request = Request("GET", "/api/v1/assets/.studyforge/clip.mp3", {})
     assert route(site, lambda path: path == clip, request, ".studyforge/clip.mp3").status == 404
     assert route(site, nothing_private, request, ".studyforge/clip.mp3").status == 200
+
+
+def test_a_site_root_inside_a_corpus_generated_directory_never_serves_the_record(site):
+    # ⛔ `SF-39/4`: served from the corpus's generated directory, the store sits at the
+    # root's first level rather than its second, and no `private=` is passed here.
+    generated = site / ".studyforge"
+    record = generated / "progress" / "progress.json"
+    record.parent.mkdir(parents=True, exist_ok=True)
+    record.write_text('{"progress": 1}\n', encoding="utf-8")
+    control = generated / "elsewhere" / "progress.json"
+    control.parent.mkdir(parents=True)
+    control.write_text("{}\n", encoding="utf-8")
+    for path in ("/progress/progress.json", "/%70rogress/progress.json", "/progress/"):
+        assert assets_module.resolve(generated, path) is None, path
+        assert get(generated, path).status == 404, path
+    assert assets_module.resolve(generated, "/elsewhere/progress.json") == control.resolve()
+    assert assets_module.in_a_progress_store(record.resolve())
+    assert not assets_module.in_a_progress_store(control.resolve())

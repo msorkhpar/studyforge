@@ -42,6 +42,7 @@ from urllib.parse import unquote
 
 from studyforge.archive.scrub import PersonalDataLeak, assert_clean
 from studyforge.corpus.placement.profile import GENERATED_ROOT
+from studyforge.progress import store_dir
 from studyforge.serve.caching import UNSATISFIABLE, WHOLE, not_modified, parse_range, weak_etag
 from studyforge.serve.response import TEXT_TYPE, Request, Response
 
@@ -97,7 +98,13 @@ Private = Callable[[Path], bool]
 #: static mount would otherwise serve it. Refused BY PATH, on the resolved file, so
 #: a symlink into it is refused too; the state namespace (`SF-19b`) is where the
 #: record is served. ⚠️ A hard link to it elsewhere under the root is not seen.
-PROGRESS_PREFIX = (GENERATED_ROOT, "progress")
+#: ⛔ **Matched ANYWHERE in the resolved absolute path, never relative to the served
+#: root** (`SF-39/4`): a root that is a corpus's generated directory, or one holding
+#: several corpora, puts a store at a different depth, and no caller has to pass
+#: `private=` to keep it unserved.
+#: ⭐ **Derived from `progress.store_dir`, SF-21's one spelling** (`SF-19a/2`), so
+#: the store cannot move without this refusal moving with it.
+PROGRESS_PREFIX = store_dir(".").parts
 
 
 def nothing_private(path: Path) -> bool:
@@ -135,9 +142,15 @@ def resolve(root: Path, url_path: str) -> Path | None:
         return None
     if base not in real.parents or not real.is_file():
         return None
-    if real.relative_to(base).parts[: len(PROGRESS_PREFIX)] == PROGRESS_PREFIX:
+    if in_a_progress_store(real):
         return None
     return real
+
+
+def in_a_progress_store(path: Path) -> bool:
+    """Say whether `PROGRESS_PREFIX` occurs anywhere in a resolved path's parts."""
+    parts, width = path.parts, len(PROGRESS_PREFIX)
+    return any(parts[i : i + width] == PROGRESS_PREFIX for i in range(len(parts) - width + 1))
 
 
 def content_type_for(path: Path) -> str:

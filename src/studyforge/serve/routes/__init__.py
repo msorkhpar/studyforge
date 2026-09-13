@@ -1,7 +1,8 @@
 """The serving API's namespaces, one module each.
 
 **What it does.** Holds the routes `app` dispatches to by the first path segment
-after `/api/v1/`: `content` (what a unit *is*) and `assets` (the bytes).
+after `/api/v1/`: `content` (what a unit *is*), `assets` (the bytes) and `state` (what this machine
+has, never cached).
 
 **How you use it.** Each module exposes `route(..., request, rest)` returning a
 `serve.response.Response`; `app` binds the first arguments and registers it under
