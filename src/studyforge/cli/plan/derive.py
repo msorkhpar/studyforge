@@ -23,6 +23,14 @@ filed under is `narrate.playable`'s MISFILED, which no page addresses, so it is
 not named. ⚠️ An entry whose id no page produces any more cannot be told apart
 without opening the material, so it IS named — `W224`'s handoff records it.
 
+## ⛔ A path on disk is never a `create` (`W267`)
+
+⭐ Each named path is asked whether it is already at the corpus root, by
+`os.path.lexists` and never by opening it, so the plan still writes and reads
+nothing more (R3). Who writes a path the build does not is carried as data:
+the archive's adapter, `studyforge serve` for the discovery cache, and
+`studyforge narrate` for a clip beside the material.
+
 ## ⛔ Nothing raises
 
 Everything that goes wrong becomes a `Refusal`. A plan that stopped at the
@@ -41,7 +49,9 @@ path claimed twice is a refusal naming both claimants, and it is asked of
 
 from __future__ import annotations
 
+import os
 from collections.abc import Mapping
+from dataclasses import replace
 from pathlib import Path, PurePosixPath
 
 from studyforge.cli.plan.report import Creation, MediaProjection, Plan, Refusal
@@ -66,11 +76,13 @@ from studyforge.validate.corpus import Held, Walk
 from studyforge.validate.paths import RULE_DUPLICATE_PATH, check_placement
 from studyforge.validate.report import Finding
 
-#: What a clip's `create` line says about who writes it, and when a build does.
-CLIP_COPY = (
-    "`studyforge narrate` writes it beside the material; a build into any other "
-    "output copies it there"
-)
+#: What a clip's line says about when a build writes it.
+CLIP_COPY = "a build into any other output copies it there"
+
+#: ⭐ `W267`: who writes the paths a build into the corpus root does not.
+ADAPTER = "an adapter"
+SERVE = "`studyforge serve`"
+NARRATE = "`studyforge narrate`"
 
 
 def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
@@ -91,10 +103,11 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     refusals += _claimed_twice(root, manifest, held)
     clips, record, misrecorded = _recorded(root)
     refusals += misrecorded
-    creations = _corpus_creations(profile)
+    creations = _corpus_creations(root, profile)
     units = 0
     for where, container in held:
         made, failed = _container_creations(container, profile, where, clips)
+        made = [_on(root, creation) for creation in made]
         creations += made
         refusals += failed
         units += len(container.units)
@@ -259,7 +272,12 @@ def _token(container: Container, n: int) -> str | None:
         return None
 
 
-def _corpus_creations(profile: Profile) -> list[Creation]:
+def _on(root: Path, creation: Creation) -> Creation:
+    """Return `creation` saying whether its path is at `root` now, asked without opening it."""
+    return replace(creation, present=os.path.lexists(root / creation.path.rstrip("/")))
+
+
+def _corpus_creations(root: Path, profile: Profile) -> list[Creation]:
     """Return the four paths every corpus gets, whatever its addresses are.
 
     ⚠️ **The archive is one of them and it is not this build's output.** It is
@@ -267,15 +285,19 @@ def _corpus_creations(profile: Profile) -> list[Creation]:
     and its line says who writes it.
     """
     where = profile.corpus()
-    return [
+    made = [
         Creation(where.root_index.as_posix(), "the root index"),
         Creation(f"{where.assets.as_posix()}/", "the shared stylesheets, scripts and player"),
         Creation(
             f"{where.archive.as_posix()}/",
-            "the archive root — an adapter writes it (R2) and every build reads it",
+            "the archive root, which every build reads (R2)",
+            writer=ADAPTER,
         ),
-        Creation(where.site_cache.as_posix(), "the discovery cache, never the authority"),
+        Creation(
+            where.site_cache.as_posix(), "the discovery cache, never the authority", writer=SERVE
+        ),
     ]
+    return [_on(root, creation) for creation in made]
 
 
 def _container_creations(
@@ -309,12 +331,18 @@ def _container_creations(
                 f"{at.media_dir(kind).as_posix()}/",
                 f"{key} unit {unit.n}'s {kind}",
                 narration=kind == AUDIO_DIRNAME,
+                when_filled=True,
             )
             for kind in UNIT_MEDIA_DIRNAMES
         ]
         audio = at.media_dir(AUDIO_DIRNAME).as_posix()
         made += [
-            Creation(f"{audio}/{name}", f"{key} unit {unit.n}'s clip — {CLIP_COPY}", narration=True)
+            Creation(
+                f"{audio}/{name}",
+                f"{key} unit {unit.n}'s clip, which {CLIP_COPY}",
+                narration=True,
+                writer=NARRATE,
+            )
             for name in (clips.get(_token(container, unit.n) or "", ()) if clips else ())
         ]
     return made, failed

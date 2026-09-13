@@ -11,6 +11,7 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
+from studyforge.cli.plan.report import CREATION_VERBS
 from tests.support import repository_root
 
 FIXTURES = repository_root() / "tests" / "fixtures"
@@ -24,7 +25,8 @@ BOTH = ("depth1", "depth2")
 def planned(name: str, suffix: str = ".html") -> list[str]:
     """The paths `studyforge plan`'s committed golden says a build creates."""
     lines = (GOLDEN / f"{name}.plan.txt").read_text(encoding="utf-8").splitlines()
-    created = [line.split()[1] for line in lines if line.startswith("create ")]
+    # ⭐ `W267`: every path line, whatever its verb, which is the whole of `Plan.paths`.
+    created = [line.split()[1] for line in lines if line.split(" ", 1)[0] in CREATION_VERBS]
     return sorted(path for path in created if path.endswith(suffix))
 
 
