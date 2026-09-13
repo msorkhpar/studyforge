@@ -72,23 +72,59 @@ def test_nothing_on_disk_afterwards_is_a_path_the_plan_did_not_declare(tmp_path,
 
 
 @pytest.mark.parametrize("name", BOTH)
-def test_every_directory_the_plan_declared_is_a_directory_afterwards(tmp_path, name):
+def test_every_directory_the_build_makes_is_one_the_plan_declared_and_holds_a_file(tmp_path, name):
     """⛔ Ruling 99 over the plan's `create <dir>/` lines, which are the media ones.
 
-    ⭐ **`SF-28` could assert the `.html` half only**, and named the four
-    per-unit directories as the half it was leaving. This is that half: every
-    trailing-slash line in the golden, minus the two whose owner is not the
-    build — the archive, which the **adapter** writes (R2), and the discovery
-    cache's own directory.
+    ⭐ **W268 narrowed the other half**: a declared media directory is minted
+    only when a copy fills it. So every one on disk is declared, and none is
+    empty. ⚠️ `plan` still lists all four per unit; W267 makes it agree.
     """
-    write_site(FIXTURES / name, tmp_path)
+    written = write_site(FIXTURES / name, tmp_path)
     corpus = read_corpus(FIXTURES / name)
     archive = f"{corpus.shared.archive.as_posix()}/"
 
     directories = [path for path in planned(name, "/") if path != archive]
     assert directories, "the goldens declare directories; this is measuring nothing otherwise"
+    filled = {
+        directory
+        for directory in directories
+        if any(path.is_relative_to(directory.rstrip("/")) for path in written.paths)
+    }
+    assert {f"{path.parent.as_posix()}/" for path in written.media} <= filled
     for path in directories:
-        assert (tmp_path / path).is_dir(), f"{path} was declared and is not there"
+        assert (tmp_path / path).is_dir() == (path in filled), path
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_a_built_site_holds_no_empty_directory(tmp_path, name):
+    # ⛔ W268 clause 1, over the whole site: git cannot track an empty directory.
+    write_site(FIXTURES / name, tmp_path)
+
+    empty = [path for path in tmp_path.rglob("*") if path.is_dir() and not any(path.iterdir())]
+
+    assert empty == []
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_no_page_reaches_into_a_media_directory_the_build_did_not_make(tmp_path, name):
+    """⛔ W268: a unit with no media still loads offline, because nothing addresses one.
+
+    ⭐ Every `src`, `href` and `poster` a page emits into a media directory lands
+    in a directory that exists. ⚠️ Except a file the build NAMED missing, which
+    dangles with or without its directory and is `SF-37`'s, below.
+    """
+    written = write_site(FIXTURES / name, tmp_path)
+    missing = {(tmp_path / path).resolve() for path in written.missing}
+
+    reached = [
+        landing(page, reference)
+        for page in sorted(tmp_path.rglob("*.html"))
+        for reference in references_in(page.read_text(encoding="utf-8"))
+        if any(f"{kind}/" in reference for kind in UNIT_MEDIA_DIRNAMES)
+    ]
+    assert reached, "no page reaches into a media directory; this measures nothing"
+    unmade = [path for path in reached if path not in missing and not path.parent.is_dir()]
+    assert unmade == []
 
 
 @pytest.mark.parametrize("name", BOTH)

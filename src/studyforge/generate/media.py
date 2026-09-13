@@ -1,8 +1,8 @@
 r"""The files a page shows rather than says — put where the page looks for them.
 
-**What it does.** Mints the four media directories `studyforge plan` declares for
-every unit a corpus declares, and copies each file a built page references from
-the archive into the one the page addresses.
+**What it does.** Copies each file a built page references from the archive
+into the media directory the page addresses, minting that directory and no
+other: a kind a unit has no files of gets no directory (`W268`).
 
 **How you use it.** `write_media(root, into)` for a corpus root;
 `unit_media(corpus, into)` when the declarations have already been read;
@@ -48,14 +48,15 @@ anywhere. ⭐ **So the reference goes into `Written.missing` and the build carri
 on.** Stopping would refuse to build a corpus that is legally incomplete; and
 whether a build stops or drains is not this module's decision.
 
-## ⚠️ Every declared unit gets its directories, not every built one
+## ⛔ A unit gets a media directory only for a kind it has files of (`W268`)
 
-⛔ **The population is the plan's population** — `studyforge plan` mints the four
-directories from `container.units`, and so does `validate.paths`. A build that
-used the units it found material for would agree with both instruments on the
-two shipped fixtures and disagree with them on the first corpus with a declared,
-unbuilt unit. ⭐ Three instruments, one population, and the disagreement is
-therefore unrepresentable rather than unlikely.
+⚠️ **This pass used to mint all four directories for every declared unit**, so
+a corpus with no media got four empty directories per unit, and git cannot
+track an empty directory: a built checkout differed from its clone. ⭐ A
+directory is now minted only when a copy fills it. ⛔ **Every declared
+directory is still asked about** (`writing.stand`), so a reader's file standing
+where one belongs is named whether or not anything would fill it (R3), and a
+directory an earlier build left on disk is never removed.
 """
 
 from __future__ import annotations
@@ -73,7 +74,7 @@ from studyforge.corpus.placement import (
 )
 from studyforge.generate.declarations import BuildError, Corpus, UnitSource, read_corpus
 from studyforge.generate.declarations import unit_location as _unit_location
-from studyforge.generate.writing import Written, copy, mint
+from studyforge.generate.writing import Written, copy, mint, stand
 from studyforge.skills.adapter import Layout
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 from studyforge.unit.builder import build_unit
@@ -123,9 +124,7 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
     missing: list[PurePosixPath] = []
-    for at in _declared(corpus):
-        for directory in at.directories:
-            mint(out, directory, refused)
+    planned: list[tuple[PurePosixPath, Path]] = []
     for source in corpus.units:
         home = layout.unit_files(source.container.address, source.ordinal)
         document = build_unit(source.directory, declared_practices=source.declared_practices)
@@ -133,7 +132,17 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
             if not origin.is_file():
                 missing.append(target)
                 continue
-            copy(out, target, origin, written, refused, replaced, footprint=corpus.footprint)
+            planned.append((target, origin))
+    # ⛔ W268: minted only where a copy lands; every declared one is still asked.
+    filled = {target.parent for target, _ in planned}
+    for at in _declared(corpus):
+        for directory in at.directories:
+            (mint if directory in filled else stand)(out, directory, refused)
+    for target, origin in planned:
+        if target.parent in refused:
+            # ⭐ Already named: a reader's file stands where this directory belongs.
+            continue
+        copy(out, target, origin, written, refused, replaced, footprint=corpus.footprint)
     return Written(
         media=tuple(written),
         refused=tuple(refused),

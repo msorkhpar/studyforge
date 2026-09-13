@@ -8,7 +8,7 @@ from pathlib import Path, PurePosixPath
 import pytest
 
 from studyforge.generate import BuildError, Footprint, Written
-from studyforge.generate.writing import copy, mint, place, same_root
+from studyforge.generate.writing import copy, mint, place, same_root, stand
 
 A = PurePosixPath("one/a.html")
 B = PurePosixPath("two/b.html")
@@ -148,6 +148,27 @@ def test_a_directory_that_is_already_there_is_simply_already_there(tmp_path):
     mint(tmp_path, PurePosixPath("one/images"), refused)
 
     assert refused == []
+
+
+def test_stand_creates_nothing_and_refuses_nothing_on_a_clear_path(tmp_path):
+    # ⛔ W268: a declared directory nothing fills is asked about, never minted.
+    refused = []
+
+    assert stand(tmp_path, PurePosixPath("one/images"), refused) is True
+
+    assert not (tmp_path / "one").exists()
+    assert refused == []
+
+
+def test_stand_names_a_file_standing_where_a_directory_belongs(tmp_path):
+    (tmp_path / "one").mkdir()
+    (tmp_path / "one/images").write_bytes(b"a reader's own file")
+    refused = []
+
+    assert stand(tmp_path, PurePosixPath("one/images"), refused) is False
+
+    assert refused == [PurePosixPath("one/images")]
+    assert (tmp_path / "one/images").read_bytes() == b"a reader's own file"
 
 
 def test_every_writer_here_refuses_the_emission_census_own_filler(tmp_path, monkeypatch):
