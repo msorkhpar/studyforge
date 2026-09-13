@@ -156,8 +156,9 @@ BOARD_NARRATIVE_CEILING = 8192
 BOARD_ROW_CEILING = 600
 
 #: ⛔ The board's whole size is bounded as `BOARD_FRAME + BOARD_PER_ROW × register
-#: rows`. ⭐ **This is the bound that has no gap**, and it exists because the
-#: Ruling 140 plant found one in the other two before this shipped: 320 lines of
+#: ids` — the distinct ids, not the table lines (`W144`). ⭐ **This is the bound
+#: that has no gap**, and it exists because the Ruling 140 plant found one in the
+#: other two before this shipped: 320 lines of
 #: a round's narrative, pasted as one-cell table rows, moved the narrative count
 #: by ZERO and tripped the width rule ONCE.
 #:
@@ -269,7 +270,7 @@ def size_findings(text: str) -> list[Finding]:
                 1,
                 RULE_SIZE,
                 f"{size} bytes against {allowed} allowed — {BOARD_FRAME} of frame, plus "
-                f"{BOARD_PER_ROW} for each of {indexed} register rows, plus "
+                f"{BOARD_PER_ROW} for each of {indexed} register ids, plus "
                 f"{BOARD_PER_OBSERVATION_ROW} for each of {observations} delimited "
                 f"observation rows, plus {BOARD_PER_SCHEDULED_ROW} for each of {scheduled} "
                 f"delimited scheduled rows. ⛔ The board grew without indexing anything more. "
