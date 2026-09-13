@@ -126,6 +126,12 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "test_the_export_check_can_say_no": "collapsed",
         "test_the_ordering_check_can_say_no": "collapsed",
     },
+    # ⭐ `W225`: `check` is read through `joined()`; `compose.yaml` line by line, on
+    # that file's own lack of continuations.
+    "test_dev_image_identity.py": {
+        "check_lines": "collapsed",
+        "image_declarations": "no-continuations",
+    },
     # ⭐ And this module is inside its own population, which is the point: an
     # instrument exempt from the rule it enforces is the defect one level up.
     "test_dev_continuations.py": {
@@ -148,7 +154,7 @@ CLASSIFIED: dict[str, str] = {
 #: functions own two each. ⛔ Declared separately from `CLASSIFIED` on purpose: a
 #: second site added inside an ALREADY-classified function would otherwise enter
 #: the suite unexamined, which is the shape of every defect this module is about.
-DECOMPOSITION_SITES = 34
+DECOMPOSITION_SITES = 36
 
 #: ⛔ **THE ANCHORS THE `line-anchored` VERDICT RESTS ON, per file.** Each is a
 #: prefix some site above matches against the start of a (stripped) line. ⚠️ `#` is
