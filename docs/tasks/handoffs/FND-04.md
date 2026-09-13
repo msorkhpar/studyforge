@@ -438,3 +438,30 @@ key order is recomputed and checked there; nothing is maintained by hand. If
 you need a shape these fixtures do not carry, **add a fixture rather than
 bending one** — a downstream epic is already testing against the one you were
 about to edit.
+
+---
+
+## ⛔ Annotation, W103, taken at `71ae733` — finding 3 is closed elsewhere, finding 7 is addressed elsewhere
+
+⭐ **Ruling 106: appended beneath. Nothing above is edited**, and both `⚠️ OPEN`
+markers stand as they read when this task ended.
+
+- ⛔ **Finding 3 is CLOSED, by R21's register and not here.** The register in
+  [spec §2](../../specs/2026-09-08-studyforge-v1-design.md#2-governing-rules)
+  versions the authored overlay by `content_api` (`SF-09`). The row stopped
+  reading *unversioned — open* at `9486063`, and `SF-09` minted the key at its
+  merge, `9ce74c9`.
+- ⚠️ **Finding 7 is NOT closed by this annotation.** Its state is addressed where
+  it was routed: the R11 package clauses of
+  [`SF-12`](../E03-rendering.md#sf-12-templates-and-unit-page-renderer) and
+  [`SF-19a`](../E05-serving-execution.md#sf-19a-serving-api-content-assets-security),
+  and `unitdoc.py`'s port in row [`W5`](../rows/W5.md).
+- ⭐ **The rule this follows:** [a disposition that can still change is addressed
+  on the board](../../conventions/agent-protocol.md#a-disposition-that-can-still-change-is-addressed-on-the-board-never-held-in-a-record).
+
+```text
+reading at 71ae733, worktree, host
+grep -n "authored overlay |" docs/specs/2026-09-08-studyforge-v1-design.md  -> one row, content_api (SF-09)
+git merge-base --is-ancestor 9486063 71ae733                                -> exit 0
+git merge-base --is-ancestor 9ce74c9 71ae733                                -> exit 0
+```
