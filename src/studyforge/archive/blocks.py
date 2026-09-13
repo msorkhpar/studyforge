@@ -69,6 +69,9 @@ class BlockType:
     count_key: str
     fields: tuple[str, ...]
     holds_blocks: bool = False
+    #: Keys written only when they say something, AFTER `fields` (`W264`).
+    #: ⭐ A block without one is byte-identical to the same block before it existed.
+    optional: tuple[str, ...] = ()
 
 
 #: The vocabulary, in the order `counts` is written (R10). ⛔ Eleven rows, and
@@ -78,7 +81,7 @@ BLOCKS = (
     BlockType("para", "paras", ("type", "text")),
     BlockType("code", "code", ("type", "lang", "text")),
     BlockType("table", "tables", ("type", "headers", "rows")),
-    BlockType("list", "lists", ("type", "ordered", "items")),
+    BlockType("list", "lists", ("type", "ordered", "items"), optional=("start",)),
     BlockType("image", "images", ("type", "src", "alt", "width")),
     BlockType("video", "videos", ("type", "src", "title")),
     BlockType("rule", "rules", ("type",)),
@@ -130,6 +133,25 @@ def item_parts(item: object) -> list:
     may be is answered once.
     """
     return list(item) if isinstance(item, list) else [item]
+
+
+#: `block type -> the keys it may carry after its fields`, in order (`W264`).
+BLOCK_OPTIONAL = {block.name: block.optional for block in BLOCKS}
+
+
+def list_start(block: dict) -> int:
+    """Return the number an ordered `list` block's first item carries: its `start`, else 1.
+
+    ⛔ **What an ordered list records about its numbering (`W264`, spec §6).**
+    `start` is written only when the author's first marker is not `1`, so an
+    author who continues a step list after a code block with `2.` keeps `2`,
+    on the page and aloud. ⭐ A list starting at one carries no `start` and is
+    byte-identical to every list written before, and so is its document's
+    `content_sha256`. ⚠️ Not a `raw_api` change for that reason. Every consumer
+    reads the number through this function, so the default is answered once.
+    """
+    start = block.get("start")
+    return start if isinstance(start, int) and not isinstance(start, bool) else 1
 
 
 #: `block type -> its row`, for a consumer that has a type and wants the rest.

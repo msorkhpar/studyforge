@@ -88,7 +88,7 @@ translated into `SpeakableError` (Ruling 58).
 
 from __future__ import annotations
 
-from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, item_parts, walk
+from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, item_parts, list_start, walk
 from studyforge.archive.scrub import assert_clean
 from studyforge.narrate.speakable.naming import speech_id
 from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
@@ -263,7 +263,7 @@ def _items(
     for position, item in enumerate(items if isinstance(items, list) else []):
         words = _item_words(item, where)
         if ordered and words:
-            words = f"{ordinal_word(position + 1)}, {words}"
+            words = f"{ordinal_word(position + list_start(block))}, {words}"
         said += _emit(unit, section_key, path, words, "list", position)
     return said
 
@@ -291,7 +291,7 @@ def _item_words(item: object, where: str) -> str:
         for position, sub in enumerate(nested if isinstance(nested, list) else []):
             words = _item_words(sub, where)
             if part.get("ordered") and words:
-                words = f"{ordinal_word(position + 1)}, {words}"
+                words = f"{ordinal_word(position + list_start(part))}, {words}"
             said.append(words)
     joined = ""
     for words in (words.strip() for words in said):

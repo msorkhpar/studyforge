@@ -972,6 +972,8 @@ corpus.json                                   the manifest (§4)
 
 ⛔ **A list item is a string, or an array of its parts in reading order** (`W258`, amended from `INT-09/6`). The block vocabulary is `archive/blocks.py`'s eleven rows, and a `list` block keeps its three fields; what changed is what one of its `items` may be. ⭐ An item holding no nested list is a string, byte-identical to every list written before. An item holding one is an array of text strings and whole `list` blocks, in the order the author wrote them, and a nested `list`'s items follow the same rule. ⚠️ A nested list is never folded into its parent's text, and it is not a block in reading order: `counts` does not count it. ⭐ Not a `raw_api` change, because every document without a nested list reads exactly as it did.
 
+⛔ **An ordered list keeps the number it starts at** (`W264`, amended from `W258/3`). A `list` block may carry a fourth key, `start`, after its three fields: the first item's number, an integer, written only when the list is ordered and that number is not `1`. ⭐ The page opens the list at it and the narration counts from it, at the top level and nested. ⭐ A list that starts at one carries no `start` and is byte-identical to every list written before, so is its document's `content_sha256`. ⚠️ Not a `raw_api` change for that reason, and the key a block may carry beyond its fields is `archive/blocks.py`'s `optional`.
+
 ```json
 // container.json — generalises CodeSignal's course-map.json
 { "container_api": 1,

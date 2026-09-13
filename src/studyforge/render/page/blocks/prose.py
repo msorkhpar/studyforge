@@ -36,7 +36,7 @@ that names `quote` itself is the next `disclosure` waiting to be forgotten.*
 
 from __future__ import annotations
 
-from studyforge.archive.blocks import BLOCK_TYPES, item_parts
+from studyforge.archive.blocks import BLOCK_TYPES, item_parts, list_start
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page.anchors import block_anchor, heading_level
 from studyforge.render.page.narration import SILENT, Narration
@@ -112,7 +112,10 @@ def _list_element(block: dict, items: str) -> str:
     """Wrap rendered items in the list's own tag and the published class."""
     tag = "ol" if block.get("ordered") else "ul"
     klass = escape_attribute(class_for("list"))
-    return f'<{tag} class="{klass}">{items}</{tag}>'
+    # ⛔ W264: the number the author started at, and nothing when it is one.
+    start = list_start(block) if tag == "ol" else 1
+    first = f' start="{start}"' if start != 1 else ""
+    return f'<{tag} class="{klass}"{first}>{items}</{tag}>'
 
 
 def _item(item: object) -> str:

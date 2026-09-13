@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from studyforge.archive.markdown import parse
 from studyforge.render.page.blocks import prose
 from studyforge.render.pageassets import SURFACE_CLASSES, SURFACE_HOOKS
 
@@ -67,6 +68,29 @@ def test_a_nested_list_renders_as_a_list_inside_its_parent_item():
         f'<ul class="{klass}"><li>a<ol class="{klass}"><li>x</li><li>&lt;y&gt;</li></ol>b</li>'
         f"<li>c</li></ul>"
     )
+
+
+def test_an_ordered_list_opens_at_the_number_its_author_started_at():
+    # ⛔ W264, from the source: a step list continued after a code block.
+    klass = SURFACE_CLASSES["list"]
+    continued = parse("1. one\n\n```\nx\n```\n\n2. two\n")[2]
+    assert render(continued) == f'<ol class="{klass}" start="2"><li>two</li></ol>'
+    nested = {"type": "list", "ordered": True, "items": ["x"], "start": 4}
+    assert f'<ol class="{klass}" start="4"><li>x</li></ol>' in render(
+        {"type": "list", "ordered": False, "items": [["a", nested]]}
+    )
+
+
+@pytest.mark.parametrize(
+    "block",
+    [
+        {"type": "list", "ordered": True, "items": ["a"]},
+        {"type": "list", "ordered": True, "items": ["a"], "start": 1},
+        {"type": "list", "ordered": False, "items": ["a"], "start": 3},
+    ],
+)
+def test_a_list_starting_at_one_or_unordered_carries_no_start(block):
+    assert "start=" not in render(block)
 
 
 def test_a_table_scrolls_inside_its_own_box():
