@@ -25,10 +25,13 @@ from pathlib import Path
 
 import pytest
 
+import tests.docker.devgate as devgate
+import tests.docker.test_dev_image_identity as identity
 from tests.docker.devfiles import DEV, instructions, read
 from tests.docker.devgate import (
     ANNOUNCEMENT,
     COLD,
+    FRESH,
     INVOCATION,
     MARKER,
     NOT_PROBED,
@@ -92,7 +95,33 @@ def test_a_default_run_says_the_cache_was_not_probed_and_names_the_run_that_prob
 def test_a_check_that_builds_fresh_says_so_with_or_without_the_flag():
     for environ in ({}, FLAGGED):
         said = skip_reason(environ, "docker", unconsulted, builds_fresh=True)
-        assert said is not None and "FRESH" in said and "needs network" in said, said
+        assert said == FRESH and "needs network" in said, said
+        assert "No environment reaches it" in said and OPT_IN in said, said
+
+
+@pytest.mark.parametrize("differing", sorted(identity.PROBES))
+def test_the_identity_checks_skip_as_fresh_even_on_a_flagged_warm_cache(
+    tmp_path, monkeypatch, differing
+):
+    # ⛔ `W162/5`: a check that needs network must never read WARM. So on the most permissive
+    # environment the gate knows (flagged, a client, a warm cache) the identity checks must
+    # still skip as FRESH before their body runs. ⭐ No daemon is reached: the client is a
+    # name, the cache is faked, and the body's first acts are refusals.
+    monkeypatch.setenv(OPT_IN, "1")
+    monkeypatch.delenv(MARKER, raising=False)
+    monkeypatch.setattr(devgate, "tool_on_path", lambda name: "docker")
+    monkeypatch.setattr(devgate, "this_checkout", lambda docker: STATES[WARM])
+
+    def past_the_gate(*args, **kwargs):
+        raise AssertionError("an identity check ran past the gate on a warm cache")
+
+    monkeypatch.setattr(identity, "checkout", past_the_gate)
+    monkeypatch.setattr(identity, "run", past_the_gate)
+    with pytest.raises(pytest.skip.Exception) as raised:
+        identity.test_two_checkouts_with_different_inputs_each_run_their_own_image(
+            tmp_path, differing
+        )
+    assert str(raised.value) == FRESH, str(raised.value)
 
 
 def test_the_recursion_guard_answers_first():

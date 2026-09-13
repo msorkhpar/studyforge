@@ -58,6 +58,16 @@ NOT_PROBED = (
     f"call. {INVOCATION} probes it, and runs these checks when it reads warm"
 )
 
+#: ⛔ A FRESH-building check's reason, and it names the environment that would reach it
+#: (`W162/6`, `W163`). This gate refuses it before the flag is read, so NO environment
+#: does: it would need network to the package index, which a test run must not have.
+FRESH = (
+    "This check builds a FRESH image whatever the cache holds, and a build needs network; "
+    "a test run must not. No environment reaches it: this gate refuses it before "
+    f"{OPT_IN} is read, and it would need the HOST, a docker daemon, Compose and network "
+    "to the package index"
+)
+
 WARM, COLD, UNKNOWN = "warm", "cold", "unknown"
 
 
@@ -145,10 +155,7 @@ def skip_reason(
     if environ.get(MARKER) == "1":
         return "already inside the dev image; building it again would recurse"
     if builds_fresh:
-        return (
-            "This check builds a FRESH image whatever the cache holds, and a build needs "
-            "network; a test run must not"
-        )
+        return FRESH
     if environ.get(OPT_IN) != "1":
         return NOT_PROBED
     if docker is None:
