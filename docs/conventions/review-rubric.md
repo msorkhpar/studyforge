@@ -4472,7 +4472,7 @@ reviewer to look.
 executed for a reason outside the author's control. Record the condition, the
 reason, and what would unblock it, and route it to the plan.
 
-## ⛔ RULED ROUND 52 — four clauses, each one command and one pass condition
+## ⛔ RULED ROUND 52 — five clauses, each one command and one pass condition
 
 ⭐ **The reasoning is in [`../tasks/handoffs/CTO-2026-09-10-round52.md`](../tasks/handoffs/CTO-2026-09-10-round52.md) §4** (the growth governor's form: command, pass condition, measured row, pointer).
 
@@ -4623,6 +4623,10 @@ RULING'S OWN prose, where no instrument is watching.**
 row's subject is the one that MOVES IN THAT VERY WAVE — 5 → 7 by a sibling branch approved in
 the same record.** ⚠️ **So Ruling 263's `3` was right in MAGNITUDE and wrong in MEMBERSHIP, and
 a bare count could never have told the two apart.**
+
+## ⛔ RULED ROUND 59 — each clause one command and one pass condition
+
+⚠️ **Reasoning: [`docs/tasks/handoffs/CTO-2026-09-11-round59.md`](../tasks/handoffs/CTO-2026-09-11-round59.md).**
 
 ### ⛔ Ruling 277 — a COUNT IN A SHIPPED FILE states its UNIT and, if it is a historical reading, its REF
 
@@ -5090,7 +5094,7 @@ way and the question is entirely R7's.**
 
 ---
 
-## ⛔ RULED ROUND 61 — seven clauses, each one command and one pass condition
+## ⛔ RULED ROUND 61 — thirteen clauses, each one command and one pass condition
 
 ⚠️ **Reasoning: [`docs/tasks/handoffs/CTO-2026-09-11-round61.md`](../tasks/handoffs/CTO-2026-09-11-round61.md).**
 ⭐ **Rulings 297, 298, 299, 300, 301, 302 and 303 are stated here, because a ruling that lives
@@ -5521,6 +5525,10 @@ route a careful author still had into it.**
 where it was read.** ⛔ **Neither author was careless — one quoted a record, the other replayed
 a shipped predicate — which is why this is a clause and not a finding.**
 
+## ⛔ RULED ROUND 63 — each clause one command and one pass condition
+
+⚠️ **Reasoning: [`docs/tasks/handoffs/CTO-2026-09-11-round63.md`](../tasks/handoffs/CTO-2026-09-11-round63.md).**
+
 ### ⛔ Ruling 312 (CTO round 63) — an acceptance discharged by a harness in which the violation is UNREPRESENTABLE is proved of the HARNESS, and the taker REPORTS it rather than widening the row
 
 ```bash
@@ -5623,7 +5631,7 @@ is a trap re-sprung on the next task that reads the clause and believes it.**
 
 ---
 
-## ⛔ RULED ROUND 64 — two clauses, each one command and one pass condition
+## ⛔ RULED ROUND 64 — one clause, its command and its pass condition
 
 ### ⛔ Ruling 315 — a finding DECLINED on Ruling 11's three names the RULE IT WOULD BECOME, in a fixed spelling, because nothing in this repository ACCUMULATES INSTANCES
 
@@ -5698,6 +5706,10 @@ reading, and a control that can only return the pass reading is not a control).
 ⚠️ **The grep is scoped to `docs/tasks/handoffs/`, so this clause CANNOT count
 its own definition** — ⛔ the self-citation that got Ruling 121's grep demoted
 to a corroborator.
+
+## ⛔ RULED ROUND 65 — each clause one command and one pass condition
+
+⚠️ **Reasoning: [`docs/tasks/handoffs/CTO-2026-09-11-round65.md`](../tasks/handoffs/CTO-2026-09-11-round65.md).**
 
 ### ⛔ Ruling 316 — a RE-POINT at the archive record has TWO FORMS, and the fork is forced by a LINE BOUND rather than chosen
 

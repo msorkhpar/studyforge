@@ -26,6 +26,7 @@ from tools.quality.markdown import (
     Pointer,
     code_spans,
     heading_slugs,
+    headings,
     pointers,
     prose_lines,
     slug,
@@ -177,3 +178,9 @@ def test_code_spans_hands_back_each_body_with_its_columns():
     spans = code_spans(line)
     assert [body for _start, _end, body in spans] == ["sed -n 1p a.md", "b.md"]
     assert all(line[start:end].startswith("`") for start, end, _body in spans)
+
+
+def test_headings_carry_line_level_and_text_and_skip_fences():
+    # ⭐ `W141` needs the LEVEL a slug throws away; the fence rule is the parser's.
+    text = "# Top\n\n```sh\n## not a heading\n```\n\n### Child — two clauses ##\n"
+    assert headings(text) == [(1, 1, "Top"), (7, 3, "Child — two clauses")]
