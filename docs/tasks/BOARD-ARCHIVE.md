@@ -23482,3 +23482,146 @@ git log --first-parent --format=%s release/m0-foundations
 #### ⭐ CLOSED — PO ROUND 81
 
 ⭐ **Merged at `f2fd080`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `f2fd080` is RECEIVED.** ⭐ **`approach.py` reads a wave close off the WHOLE round branch name, with `unclaimed.OFFICE` imported, so a topic branch under the prefix is no close.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+## PO round 82 — `W247` and `W176` closed
+
+⭐ **Cut at `e556179`, release after round 81's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W247`](#w247-the-capability-index-reads-a-one-digit-milestone-id-so-a-row-in-m10-would-be-counted-as-cancelled) | `8f59ed9` | none owed |
+| [`W176`](#w176-corroborates-refuted-line-prints-a-row-count-beside-row-subjects-and-names-neither-unit-so-3-stands-over-four-ids) | `a942623` | [`W251`](rows/W251.md) and [`W274`](rows/W274.md) re-pointed; the test docstring is a rider on [`W174`](rows/W174.md) (`PO-82/1`) |
+
+⭐ **Both TERMINAL (Ruling 199). Ruling 97's gate is RECEIVED: the coordinator's guarded release-tip readings at `8f59ed9` and `a942623`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⭐ **Ruling 314: the two moved bodies carried 4 relative pointers, and 4 were re-addressed.** ⚠️ **No edit lands outside `docs/tasks/`, so no live carrier's diff is crossed (`PO-81/1`).**
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W262`](rows/W262.md) | Developer 3 | `fix/W262-epic-task-subject-defined` @ `wt/dev3` | `8f59ed9` | `W262`, NAMED |
+| [`W264`](rows/W264.md) | Developer 1 | `fix/W264-ordered-list-first-number` @ `wt/dev1` | `8f59ed9` | `W264`, NAMED |
+| [`W251`](rows/W251.md) | Developer 2 | `fix/W251-detached-checkout-named` @ `wt/dev2` | `a942623` | `W251`, NAMED |
+| [`W261`](rows/W261.md) | Developer 2 | `fix/W261-completeness-whole-root` @ none, handed back | `286f15d` | `W261`, CONFIRMED |
+| [`W265`](rows/W265.md) | Developer 1 | `fix/W265-scaffold-writers-agree` @ none, handed back | `eb8f4a7` | `W265`, CONFIRMED |
+
+⚠️ **`PO-82/2` — `W168` merged at `696b28d` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled: not closed and not named in flight; its register cell carries the merge, and it closes on its reading.** Reversible.
+
+### ⭐ 3 — MINTS AND FINDINGS
+
+| finding | became |
+|---|---|
+| `W247/1` | ⭐ **minted [`W275`](rows/W275.md)**, order 49. Re-measured at `e556179`: `**Milestone** M1x` matches `_MILESTONE` |
+| `W247/2` | accepted, cost named: `capability.py` stands at its R11 ceiling, and the floor refuses the next line, so its next row splits it |
+| `W247/3` | accepted: frozen records of past commands; no live instrument carries the pattern |
+| `W176/1`, `/2` | disposed at the close: clause 2 refuted at source; two modules taken outside the surface, disclosed |
+| `W176/3` | accepted, not edited: `board.md`'s `PO-46/14` paragraph is a ruled section (Ruling 106), and its `(N)` stands as a placeholder; the guarded prefixes are pinned by test |
+| `W176/4` | accepted, cost named: register Row cells naming more than one id at `e556179`: 0 |
+| `W168/1` | disposed with its diff: §0a is rubric text, corrected there |
+| `W168/2` | ⭐ **ruled: confirmed.** Ruling 203's §0a-iii block is a record and stays unedited; the `W168` clause governs any N-way reading taken from it. Reversible |
+| `W168/3` | accepted, recorded: Ruling 139 held after the slip; no row |
+| `W265/1` | ⭐ **confirmed: `W257/2` is settled by one rule, `write_files`** |
+| `W265/2` | accepted, cost named: no caller in this repository read the old return value |
+| `W265/3` | ⭐ **ruled: confirmed.** `onboard.py` and its test were taken under the row's own condition, disclosed. Reversible |
+| `PO-82/1` | a test docstring cites a closed row's stub; a rider on [`W174`](rows/W174.md), whose subject it is |
+| `PO-82/3` | ⚠️ **this office's round-81 personal-data sweep typed identity fragments into a local grep pattern.** Nothing reached a file, commit or message. From this round the sweep is built from `$USER`, `$(hostname)` and `$HOME` only (preamble line 8) |
+
+### ⭐ 4 — THE ISO TRACK
+
+⭐ **The pin stays `6e6dec9`; ISO integration round 12 is running and carries to its merge.**
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause.
+
+### W247 — The capability index reads a one-digit milestone id, so a row in `M10` would be counted as cancelled
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W247.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W238/1`, a SURVIVOR its office disclosed: `src/studyforge/skills/delivery/capability.py` reads a milestone with `_MILESTONE`, whose pattern is `M[0-9]\b`, so a row in `M10` is counted as cancelled, silently.** ⭐ **The register read the pattern at `W238`'s hand-back `5c61536`.** ⚠️ **`M9` is the last one-digit id, so the next milestone minted meets it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A milestone id of any width is read, or an id the pattern cannot read is refused by name. It is never counted as cancelled.**
+2. ⛔ **Asserted both ways with an `M10` fixture:** a control restoring the one-digit pattern turns RED.
+
+⭐ **It jumps nobody: no `M10` exists.** ⚠️ **Surface: `src/studyforge/skills/delivery/` and its tests, which is [`W238`](#w238-the-capability-index-orders-milestones-by-their-ids-so-the-order-the-user-decided-prints-wrong)'s until it merges: after it, one owner.**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 82
+
+⭐ **Merged at `8f59ed9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `8f59ed9` is RECEIVED.** ⭐ **`capability.py` reads a milestone id of any width, only a dash cancels, and anything else is refused by name; the regenerated index is byte-identical.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W176 — `corroborate`'s refuted line prints a ROW count beside row SUBJECTS and names neither unit, so `(3)` stands over four ids
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W176.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`corroborate`'s refuted line PRINTS A ROW COUNT BESIDE A LIST OF ROW *SUBJECTS*, AND NAMES NEITHER UNIT** — ⭐ **so a reader who counts the backticked ids gets FOUR against a scalar of THREE, and both numbers are correct about different things.**
+
+### ⛔ THE MECHANISM, READ AT SOURCE AND NOT INFERRED FROM THE OUTPUT
+
+⭐ **Role `wt/po`, ref `bec9d5c`, environment HOST — `grep -n tools/quality/board/corroborate.py`:**
+
+```text
+173:    refuted_rows: list[str] = []
+206:            refuted_rows.append(row.subject)      ⭐ ONE append per observation ROW
+207:    refuted, unanswerable = len(refuted_rows), len(unanswerable_rows)
+277:        f"  ⛔ rows REFUTED by git ({len(refuted)}): {' '.join(refuted)}"
+```
+
+⛔ **`len(refuted)` and `' '.join(refuted)` READ THE SAME LIST, so the scalar is a CORRECT row count.** ⚠️ **What the join prints is each row's whole `subject` cell, and one such cell is literally `` `NS-04` `NS-06` `` — one row, two ids, exactly as Ruling 218 permits.**
+
+⭐ **The parser already holds the other unit and the display does not use it** — `grep -n tools/quality/board/observation.py`:
+
+```text
+269:    subject = columns[roles["subject"]]
+273:        ids=tuple(identifiers(subject)),      ⭐ the ID tuple exists on every row
+```
+
+### ⛔ THE READING — four refs, two offices, and the SECOND diagnosis is the right one
+
+⭐ **The reviewer measured the output at three consecutive release tips (`CTO-71/11`), quoted exactly:**
+
+```text
+rows REFUTED by git (1): NS-04 NS-06
+                    (2): NS-04 NS-06 NS-05
+                    (3): NS-04 NS-06 NS-05 W167
+```
+
+⛔ **The register reproduced it at a FOURTH — role `wt/po`, ref `bec9d5c`, environment HOST, before any edit of that round:**
+
+```text
+python3 -m tools.quality.board.corroborate        CORR_EXIT=1
+  ⛔ rows REFUTED by git (3): `NS-04` `NS-06` `NS-05` `W167`
+```
+
+⚠️ **THE FIRST DIAGNOSIS OF THAT OUTPUT — *the line counts CELLS and labels them ROWS* — IS REFUTED BY THE SOURCE ABOVE, and the correction is recorded because it changes what the row is.** ⛔ **Scalar right, ids right, exit code right.** ⭐ **A LABELLING defect, not a population defect** (`CTO-72/3`).
+
+### ⭐ THE GROUND, QUOTED FROM ITS OPERATIVE CLAUSE
+
+⛔ **Ruling 224 — *"a printed count NAMES ITS UNIT; `N file(s) already formatted` is a DENOMINATOR, not a count of Python files"***, and ⛔ **Ruling 277 — *"a COUNT IN A SHIPPED FILE states its UNIT and, if it is a historical reading, its REF"***. ⚠️ **`corroborate.py` is a shipped file and this is a printed count, so both bind and neither has reached this line.**
+
+### ⭐ WHY IT WAS LATENT FOR THE WHOLE HISTORY OF THE REGISTER
+
+⛔ **Wave 10 is the FIRST wave in which one In flight cell carries two row ids.** ⭐ **Ruling 218 has permitted that since it was written and nothing had exercised it, so *row count* and *id count* were the same number on every prior board and the missing unit cost nothing.** ⚠️ **The exposure is the REGISTER's: it was created by a one-owner dispatch, not by the instrument changing, and what it exercised is a display that had never had to distinguish a row from the ids it names.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE LINE NAMES ITS UNIT.** ⭐ **A line printing both — *n rows across m ids* — is admissible and is the taker's call; a bare number beside a list whose length differs from it is not.**
+2. ⚠️ **THE SWEEP IS THE ROW, NOT THE LINE.** ⛔ **Every other printed count in `corroborate`'s output is re-read against Ruling 224 — the header's `n observation rows`, `n naming a` `W` `row id`, `n declaring a started state`, `n with a checkout`, and the summary's `n of m rows REFUTED` — and each is stated in the unit it is actually in, because some of them are correctly rows and at least one is correctly ids.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a fixture board with one cell naming two ids prints two numbers that DIFFER and says which is which, and a fixture board with one id per cell prints the same number under both units without the reader having to guess — ⭐ **and the second arm is what stops the fix being read as a rename.**
+4. ⛔ **THE EXIT CODE MAY NOT MOVE.** ⚠️ **`corroborate`'s exit is a GATE at the register's branch tip (Ruling 279) and its arms change case when they fire without moving it (Ruling 348); a fix that changes which boards exit `1` is a different row.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RULE THAT ONE CELL MAY NAME ONLY ONE ROW.** ⭐ **Ruling 218 and Ruling 274 both permit the bundling, [`../BOARD.md`](BOARD.md) says so in its own words, and forbidding it to spare a display line is the instrument deciding the process.** ⛔ **AND NOT A CHANGE OF POPULATION** — ⚠️ **the list is right; only its label is missing, and widening the row to the population would be Ruling 329's over-acceptance of a charge that has already been narrowed once.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/board/corroborate.py` and its tests.** ⚠️ **It shares the DIRECTORY `tools/quality/board/` with `W144`, `W159` and `W173`, which write `bounds.py`, and with the standing SPLIT conditions on `register.py` and `verdict.py` — ⭐ a different FILE in the same package, so this is check 4's sub-step at directory width and not at file width.**
+
+[the mint argument](#po-round-57-m3-step-33-closed-at-bec9d5c-34-refused-an-open-on-the-specs-own-sentence-w167-closed-under-ruling-201s-four-edits-six-mints-and-a-diagnosis-i-had-inherited-refuted-at-its-own-source)
+
+#### ⭐ CLOSED — PO ROUND 82
+
+⭐ **Merged at `a942623`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `a942623` is RECEIVED.** ⭐ **`corroborate`'s printed counts name their unit, `(n rows across m ids): …`, and the guarded prefixes are byte-stable.** ⚠️ **Each finding's disposition is this round's § 3.**
