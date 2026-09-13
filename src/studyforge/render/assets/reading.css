@@ -119,6 +119,9 @@ figure.code figcaption {
   border-bottom: 1px solid var(--rule);
 }
 figure.code figcaption .what { flex: 1 1 auto; }
+/* A language the vendored highlighter does not cover renders plain, and the
+   caption says so, so a plain block never looks like a broken highlighter. */
+figure.code figcaption .unhighlighted { flex: 0 0 auto; font-style: italic; }
 figure.code pre { margin: 0; padding: 1rem 1.1rem; overflow-x: auto; }
 figure.code code {
   background: none;
