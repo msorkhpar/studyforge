@@ -28,6 +28,7 @@ from tests.studyforge.skills.personalarchive.archiving import (
     KEY,
     OTHER_KEY,
     TIMES,
+    binary_identity,
     digest_of,
     entry,
     entry_of,
@@ -257,3 +258,23 @@ def test_a_refused_practice_is_reported_and_the_rest_is_imported(tmp_path):
     assert f"progress refused {KEY} " in said and entry(second) is None
     assert entry(second, OTHER_KEY) is not None and validated(second)[0] == OK
     assert record.store_path(second) not in said
+
+
+def test_a_sharing_archive_is_judged_on_import_as_on_export_and_an_owner_one_is_not(tmp_path):
+    root = machine(tmp_path, "a")
+    (root / "cover.bin").write_bytes(binary_identity())
+    owner = tmp_path / "owner.zip"
+    assert export(root, owner, kind=OWNER, stream=io.StringIO()) == 0
+
+    def as_sharing(carried):
+        changed = manifest_set(kind=SHARING, progress=False)(carried)
+        return {name: data for name, data in changed.items() if name != PROGRESS_MEMBER}
+
+    crafted = rewritten(owner, tmp_path / "crafted.zip", as_sharing)
+    here = machine(tmp_path, "b", corpus=False)
+    code, said = imported(crafted, here)
+    assert code == 1 and "'cover.bin' is not UTF-8 text" in said, said
+    assert tree(here) == {} and planted_identity() not in said
+    there = machine(tmp_path, "c", corpus=False)
+    assert imported(owner, there)[0] == 0
+    assert (there / "cover.bin").read_bytes() == binary_identity()
