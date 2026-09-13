@@ -16,8 +16,9 @@ by one string.
 
 **Depends on.** `address` for the parse and every key, `archive.scrub` for R7's
 gate on each contents document before it is decoded (W7), `contents` for that
-document's name, and `serve.routes.content` for the `ContentSource` seam. ⛔ No key is composed here:
-`Address.unit_key` spells it, and `parse_unit_key` reads it.
+document's name, and `serve.routes.content` for the `ContentSource` seam.
+⛔ No key is composed here: `Address.unit_key` spells it, and `parse_unit_key`
+reads it.
 
 ## ⛔ The depth is the corpus's, found by the first segment
 
