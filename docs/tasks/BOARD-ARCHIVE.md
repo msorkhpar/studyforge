@@ -21691,10 +21691,10 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 | `INT-06/1` | [`W239`](rows/W239.md) | 0, IN FLIGHT | `skills/onboarding/`, shared with `W242` |
 | `INT-06/5`, `/6` | [`W241`](rows/W241.md) | 0, IN FLIGHT | `validate/`, `cli/plan/`, `corpus/placement/`, `skills/adapter/`, shared with `W242` |
 | `INT-06/9` | [`W243`](rows/W243.md) | 0, IN FLIGHT | `render/pageassets/`, alone |
-| `INT-06/2`, `/3` | [`W240`](rows/W240.md) | 1 | `skills/reconnaissance/`, after `W238` or as its successor |
+| `INT-06/2`, `/3` | [`W240`](rows/W240.md) | 1, IN FLIGHT | `skills/reconnaissance/`, after `W238` or as its successor |
 | `INT-06/7`, `/8` | [`W242`](rows/W242.md) | 2 | after `W239` and `W241` |
 
-⭐ **`W239`, `W241` and `W243` are in flight, first to third, on three owners whose surfaces do not meet.** `W240` waits for `W238`'s merge. ⛔ **`W242` is ONE row, ruled: ISO's §11.3 settles `/7` and `/8` in one line over one `sibling` placement. It waits for BOTH `W239` (`skills/onboarding/`) and `W241` (`corpus/placement/`, `cli/plan/`) to merge, and is unassigned until then.** `INT-06/4`, `/10` and `/11` are ISO's own.
+⭐ **`W239`, `W241` and `W243` are in flight, first to third, on three owners whose surfaces do not meet.** `W240` is in flight beside `W238`, off the two files `W238` holds. ⛔ **`W242` is ONE row, ruled: ISO's §11.3 settles `/7` and `/8` in one line over one `sibling` placement. It waits for BOTH `W239` (`skills/onboarding/`) and `W241` (`corpus/placement/`, `cli/plan/`) to merge, and is unassigned until then.** `INT-06/4`, `/10` and `/11` are ISO's own.
 
 ⛔ **THE GROUND EVERY ONE OF THESE ROWS POINTS AT, WRITTEN ONCE:** ⭐ **they are `M6` work, not `M8`'s.** ⛔ **During `M6` the framework is fixed from findings, and §12's no-patch rule binds the integrator of `M8` and of `M9` (spec §12, amended round 74, item 4).** ⚠️ **`M8`'s run re-reads these same skills, so each fix lands in `src/` and its tests. It is never a hand-edit to a generated artifact, which that run would inherit (R19).** ⛔ **RULING 75 IS INVOKED FOR ALL FIVE, AND DECLARED HERE:** ⭐ **they jump every `W` row, at orders 0–2, because the user's order makes `M6` the open milestone and ISO its proof, and `ISO-04` waits on `W239`.**
 
@@ -21702,7 +21702,8 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 
 ⭐ **NAMED on the coordinator's confirmation, each read against git at `baefd6c`:**
 - `W238`: Developer 2, cut `3483ced`; handed back GREEN at `5c61536`, held by no checkout, and merging after this round (Ruling 279).
-- `W239`: Developer 2, `fix/INT06-1-promote-not-material` @ `wt/dev2`, cut `baefd6c`. ⚠️ **The branch does not carry the row id: the row names the branch so git corroborates it, and the coordinator reconciles the id.**
+- `W239`: Developer 2, `fix/INT06-1-promote-not-material` @ `wt/dev2`, cut `baefd6c`. ⚠️ **The branch does not carry the row id: the row names the branch so git corroborates it, and the coordinator reconciles the id.** ⭐ **Handed back GREEN at `d0c1329`, held by no checkout, and merging after this round.** ⛔ **`INT06-1/1`, ruled: the id is `W239`, and its handoff is renamed `docs/tasks/handoffs/W239.md` and declared a task handoff on the carrying branch BEFORE it merges, because the floor's handoff-existence check reads closed `W` rows.**
+- `W240`: Developer 2, `fix/INT06-2-3-survey-draft` @ `wt/dev2`, cut `baefd6c`, on `skills/reconnaissance/` except `SKILL.md` and `capability.py`, which `W238` holds.
 - `W241`: Developer 1, `fix/INT06-5-6-one-archive-root` @ `wt/dev1`, cut `baefd6c`; the branch names the row's findings, not its id, as `W239`'s does.
 - `W243`: Developer 3, `fix/INT06-9-highlight-languages` @ `wt/dev3`, cut `baefd6c`. ⛔ **No network fetch: a grammar that needs a download is a finding for the user.**
 - `W141`: Developer 1, cut `2fdef9d`; handed back GREEN at `4e4f6bb`, held by no checkout, and merging after this round (Ruling 279). `W136`'s merge released `docs/conventions/`, and `W141` holds it for `W149`, `W153`, `W154`, `W161`, `W164` and `W165`: one owner, several waves.
@@ -21749,6 +21750,10 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 | `W162/4` | accepted, cost named: *pulls nothing* rests on every step reading CACHED, and no office can cut the daemon's network |
 | `W162/5`, `/6` | riders on [`W163`](rows/W163.md), the next `tests/docker/` owner: nothing asserts the identity caller keeps `builds_fresh=True`, and the two identity checks reach no permitted environment |
 | `W162/7` | ⛔ **RULED, reversible: a DEFAULT run does not touch the docker daemon** (§ 6); the coordinator relays it to the user too |
+| `INT06-1/1` | ⛔ **RULED, reversible:** the row is `W239`, and its handoff is renamed to match before merge (§ 3) |
+| `INT06-1/2`, `/3` | recorded: ISO's 24 read 25 at `0d970fd` because round 6's own record is the extra file, and ISO never committed its settled draft |
+| `INT06-1/4` | rider on [`W242`](rows/W242.md), the next `skills/onboarding/` owner: `promote` still resolves two GENERATORS declaring one glob by first-wins precedence |
+| `INT-06/4` | ISO's plan, not the framework's: relayed by the coordinator to the ISO office's next round |
 
 ### ⛔ 6 — `W162/7`: A DEFAULT RUN DOES NOT TOUCH THE DOCKER DAEMON
 

@@ -61,7 +61,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
 | `W238` | Developer 2 | `fix/W238-milestone-sequence` @ none | 2 @ `5c61536` | in-progress |
-| `W239` | Developer 2 | `fix/INT06-1-promote-not-material` @ `wt/dev2` | 1 @ `d0c1329` | in-progress |
+| `W239` | Developer 2 | `fix/INT06-1-promote-not-material` @ none | 1 @ `d0c1329` | in-progress |
+| `W240` | Developer 2 | `fix/INT06-2-3-survey-draft` @ `wt/dev2` | 0 @ `baefd6c` | in-progress |
 | `W241` | Developer 1 | `fix/INT06-5-6-one-archive-root` @ `wt/dev1` | 0 @ `baefd6c` | in-progress |
 | `W243` | Developer 3 | `fix/INT06-9-highlight-languages` @ `wt/dev3` | 0 @ `baefd6c` | in-progress |
 | `W141` | Developer 1 | `fix/W141-stated-clause-count` @ none | 3 @ `4e4f6bb` | in-progress |
@@ -82,7 +83,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W237`, `W136`, `W150`, `W158` LEFT at `8a13f4f`, `2fdef9d`, `b3123f5`, `baefd6c`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W238`, `W239`, `W241`, `W243`, `W141`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⭐ **`W238`, `W239`, `W240`, `W241`, `W243`, `W141`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -99,7 +100,6 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W240` | ⛔ **`M6`: `ISO-04` names `INT-06/2` too. After `W238`, which holds `reconnaissance/`** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 2 | `W242`, `W244` | ⛔ **`M6`: `W242` follows `W239` and `W241`; ⭐ `W244` is the register's own, the ISO pin's cadence** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
@@ -389,7 +389,7 @@ else.**
 | W237 | `W233`'s read-then-`communicate()` defect is live in three more process tests, and `tests.support.ProcessOutput` is now the one reader | Developer 1 | ✅ done — `8a13f4f` | [`rows/W237.md`](rows/W237.md) |
 | W238 | The capability index orders milestones by their ids, so the order the user decided prints wrong | Developer 2 | in-progress — `PO-74/1` | [`rows/W238.md`](rows/W238.md) |
 | W239 | `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops | Developer 2 | in-progress — `INT-06/1`, on `fix/INT06-1-promote-not-material` | [`rows/W239.md`](rows/W239.md) |
-| W240 | `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit | framework agent | `todo` — `INT-06/2` + `/3`, after `W238` | [`rows/W240.md`](rows/W240.md) |
+| W240 | `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit | Developer 2 | in-progress — `INT-06/2` + `/3`, on `fix/INT06-2-3-survey-draft` | [`rows/W240.md`](rows/W240.md) |
 | W241 | `validate` reports `valid` with no archive, and `plan` announces an archive root that `validate`, the build and the adapter layout do not read | Developer 1 | in-progress — `INT-06/5` + `/6`, on `fix/INT06-5-6-one-archive-root` | [`rows/W241.md`](rows/W241.md) |
 | W242 | For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified | framework agent | `todo` — `INT-06/7` + `/8`, one row, after `W239` and `W241` merge | [`rows/W242.md`](rows/W242.md) |
 | W243 | The vendored highlighter lacks grammars a real corpus's fences use, and nothing declares the fallback | Developer 3 | in-progress — `INT-06/9`, on `fix/INT06-9-highlight-languages` | [`rows/W243.md`](rows/W243.md) |
