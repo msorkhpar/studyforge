@@ -57,6 +57,7 @@ does **not** generalise.
 | `inventory` | what is on disk, and what a filename implies |
 | `record` | which document records the curriculum, and what it says |
 | `duplication` | is any of this material here twice |
+| `regions` | is a file the record links cut into sub-file units |
 | `capability` | is anything runnable, does a grader ship with it |
 | `proposal` | the draft manifest, and every field it had to choose |
 | `survey` | one pass, joining all of them |

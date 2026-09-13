@@ -186,3 +186,43 @@ def record_beside_units(root: Path) -> Path:
         "- [3. Chapter 2](chapters/2.md)\n"
     )
     return write(root, files)
+
+
+#: A file cut into three top-level regions, two of them with a subsection.
+CASES = (
+    "# 1. Card issuance\n\n## 1.1 Activation\n\nText.\n\n"
+    "# 2. Accounts\n\nText.\n\n"
+    "# 3. Payments\n\n## 3.1 Clearing\n\nText.\n"
+)
+
+
+def linked_regions(
+    root: Path, link: bool = True, cases: str = CASES, linked_aggregate: bool = False
+) -> Path:
+    """A record whose last group label is a heading linking a file of regions.
+
+    ⭐ **W250's finding, at the smallest size that sets it.** Two groups under
+    unlinked headings, one unit written as a linked heading inside its run (the
+    minority form, and its file has subsections), then a heading that links a
+    file whose headings are regions, followed by a copy of that file's heading
+    tree. ⚠️ `link=False` is the control: the same heading, linking nothing.
+    `linked_aggregate` makes the second group's label a heading linking a
+    file of regions that DOES open entries.
+    """
+    files = {f"src/{n}.md": unit(f"Chapter {n}") for n in (1, 2)}
+    files["src/3.md"] = "# Chapter 3\n\n## Part one\n\nText.\n\n## Part two\n\nText.\n"
+    files.update({f"src/s{n}.md": unit(f"Server {n}") for n in (1, 2)})
+    server = "Server"
+    if linked_aggregate:
+        files["src/Server.md"] = files["src/s1.md"] + "\n" + files["src/s2.md"]
+        server = "[Server](src/Server.md)"
+    files["TestCases.md"] = cases
+    heading = "# [Test cases](TestCases.md)" if link else "# Test cases"
+    copy = "\n".join(line for line in cases.splitlines() if line.startswith("#"))
+    files["README.md"] = (
+        "# Fundamentals\n\n1. [Chapter 1](src/1.md)\n2. [Chapter 2](src/2.md)\n\n"
+        f"## 3. [Chapter 3](src/3.md)\n\n# {server}\n\n"
+        "1. [Server 1](src/s1.md)\n2. [Server 2](src/s2.md)\n\n"
+        f"{heading}\n\n{copy}\n"
+    )
+    return write(root, files)
