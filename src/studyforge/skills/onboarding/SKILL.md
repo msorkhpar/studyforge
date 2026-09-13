@@ -102,6 +102,12 @@ rewritten). ⭐ **`git status` afterwards shows additions and nothing else** —
 plus whatever the manifest's own `permitted_edits` declares, which is the only
 form an edit may take and is checked by a test this skill generates.
 
+⛔ **On a corpus already onboarded, pass `existing=` the text of its `corpus.json`**
+(`W283`). A re-survey drafts no glob the manifest already covers (`W269`), so the
+manifest is where those globs come from: each `not_material` glob it declares is kept
+byte for byte, in its order, with its reason. ⭐ `write(..., regenerate=True)` refuses by
+name, and writes nothing, when it would still drop one.
+
 What lands, and why each one exists:
 
 | what | why it is generated rather than typed |

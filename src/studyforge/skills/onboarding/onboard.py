@@ -39,6 +39,10 @@ pass has started to matter and this is a defect rather than an optimisation.
 reading step — and `hand_written` names it. Everything else is regenerable, so
 a hand-edit is a **finding against this skill** rather than a fix (R19), and
 `uninstall` refuses rather than destroying one silently.
+
+## ⛔ Re-onboarding keeps what the manifest on disk declares (`W283`)
+
+⭐ `existing` carries its text, and a regenerate that would drop a glob refuses by name.
 """
 
 from __future__ import annotations
@@ -48,6 +52,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import RAISES, Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import Written, plan_for, scaffold, write_files
@@ -79,6 +84,8 @@ class Onboarding:
     not_material: tuple[dict[str, str], ...]
     #: The framework commit the pin records, checked against the checkout at `write`.
     commit: str
+    #: ⭐ `W283`: the `not_material` globs a generator declares, re-derived on every run.
+    generated: tuple[str, ...] = ()
 
     @property
     def paths(self) -> tuple[str, ...]:
@@ -107,12 +114,36 @@ class Onboarding:
         nothing is written.
         """
         check_held(self.commit, framework_of(root))
+        if regenerate:
+            self._refuse_dropping(Path(root))
         return write_files(
             self.files,
             root,
             regenerate=regenerate,
             refused=lambda blocked: OnboardingRefused(_collision(blocked)),
         )
+
+    def _refuse_dropping(self, root: Path) -> None:
+        """Refuse, by name, a regenerate dropping or re-reasoning a person's glob (`W283`)."""
+        path = root / artifacts.MANIFEST
+        if not path.exists():
+            return
+        try:
+            text = path.read_text(encoding="utf-8")
+        except OSError, ValueError:
+            raise OnboardingRefused(_unreadable("is not UTF-8 text")) from None
+        writing = {(entry["glob"], entry["why"]) for entry in self.not_material}
+        dropped = [
+            entry["glob"]
+            for entry in _declared(text)
+            if entry["glob"] not in self.generated and (entry["glob"], entry["why"]) not in writing
+        ]
+        if dropped:
+            raise OnboardingRefused(
+                f"{len(dropped)} not_material glob(s) {artifacts.MANIFEST} declares would be "
+                f"dropped or given another reason by this regenerate: {dropped}. Nothing was "
+                f"written; pass existing=<its text> to onboard so they are kept as written"
+            )
 
     def lines(self) -> list[str]:
         """Return the report a person reads before anything is written."""
@@ -147,19 +178,25 @@ def onboard(
     framework_commit: str,
     reasons: Mapping[str, str] | None = None,
     skills: Sequence[str] = SKILLS,
+    existing: str | None = None,
 ) -> Onboarding:
     """Return everything a repository becomes, from reconnaissance's draft.
 
     `framework_commit` is the sibling checkout's recorded commit — the pin file
-    is where the workspace's own record of it lands (`FND-05a`).
+    is where the workspace's own record of it lands (`FND-05a`). `existing` is
+    the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
+    first onboarding passes nothing and is unchanged.
     """
-    provisional = parse(render(promote(draft, reasons=reasons)))
+    kept = _declared(existing) if existing is not None else ()
+    provisional = parse(render(promote(_carried(draft, kept), reasons=reasons)))
     made = scaffold(plan_for(provisional))
     declared = {
         "the adapter scaffold": made.not_material,
         "this skill's own files": artifacts.NOT_MATERIAL,
     }
-    document = promote(draft, not_material=declared, reasons=reasons)
+    generated = tuple(sorted({entry["glob"] for side in declared.values() for entry in side}))
+    persons = [entry for entry in kept if entry["glob"] not in generated]
+    document = promote(_carried(draft, persons), not_material=declared, reasons=reasons)
     manifest = parse(render(document))
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
@@ -180,7 +217,57 @@ def onboard(
         files=tuple(files),
         not_material=tuple(dict(entry) for entry in document["content"].get("not_material", ())),
         commit=framework_commit,
+        generated=generated,
     )
+
+
+def _declared(text: str) -> tuple[dict[str, str], ...]:
+    """Return every `not_material` entry a manifest's text declares, in order, as written.
+
+    ⛔ **Read by the manifest's own reader**, so R7's gate runs before a field is
+    read and a leak is refused as itself. An unreadable manifest is refused by
+    name: what it declares cannot be kept, so nothing may overwrite it.
+    """
+    try:
+        manifest = parse(text)
+    except PersonalDataLeak:
+        raise
+    except RAISES as error:
+        raise OnboardingRefused(_unreadable(f"does not parse: {error}")) from None
+    return tuple({"glob": entry.glob, "why": entry.why} for entry in manifest.content.not_material)
+
+
+def _unreadable(why: str) -> str:
+    """Say that the manifest on disk cannot be read, so its globs cannot be kept."""
+    return (
+        f"the existing {artifacts.MANIFEST} {why}, so the not_material globs it declares "
+        f"cannot be kept; nothing was written"
+    )
+
+
+def _carried(draft: object, kept: Sequence[Mapping[str, str]]) -> object:
+    """Return the draft with `kept` first in its `not_material`, each glob once (`W283`).
+
+    ⛔ **Never widened, narrowed or re-reasoned**: the entries go in byte for byte,
+    in the manifest's order. A drafted entry on a kept glob is dropped when its
+    reason is the same or open, and refused by name when it differs (no precedence).
+    """
+    content = draft.get("content") if isinstance(draft, dict) else None
+    drafted = content.get("not_material", []) if isinstance(content, dict) else None
+    if not kept or not isinstance(drafted, list):
+        return draft
+    why = {entry["glob"]: entry["why"] for entry in kept}
+    on_kept = [e for e in drafted if isinstance(e, dict) and isinstance(e.get("glob"), str)]
+    on_kept = [entry for entry in on_kept if entry["glob"] in why]
+    differing = sorted(e["glob"] for e in on_kept if e.get("why") not in (None, why[e["glob"]]))
+    if differing:
+        raise OnboardingRefused(
+            f"{len(differing)} not_material glob(s) the draft gives another reason than "
+            f"{artifacts.MANIFEST} does: {differing}. Never resolved by precedence: settle one"
+        )
+    fresh = [entry for entry in drafted if not any(entry is seen for seen in on_kept)]
+    carried = [dict(entry) for entry in kept] + fresh
+    return {**draft, "content": {**content, "not_material": carried}}
 
 
 def _ignore_file(manifest: Manifest) -> list[Written]:
