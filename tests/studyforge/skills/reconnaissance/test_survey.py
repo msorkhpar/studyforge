@@ -82,3 +82,10 @@ def test_reconnaissance_writes_nothing_into_the_source(tmp_path):
     survey(root)
     after = {p: p.stat().st_mtime_ns for p in sorted(root.rglob("*")) if p.is_file()}
     assert before == after, "reconnaissance touched the source"
+
+
+def test_a_survey_of_dot_names_the_directory_it_read(tmp_path, monkeypatch):
+    # ⚠️ W240: the report's header carried the unresolved name of `.`, empty.
+    root = sources.flat_prose(tmp_path / "named-course")
+    monkeypatch.chdir(root)
+    assert survey(".").root == "named-course"
