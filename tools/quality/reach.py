@@ -74,7 +74,7 @@ reading, not a bigger first one.**
 261 — a ceiling is not a budget — so the next edit was the SPLIT `W133`'s taker
 had already named: the citation grammar moved to `tools/quality/citations.py`,
 which owns the spellings, the two narrowings, the code-span exclusion, the BLOCK
-a citation may wrap inside, and two of the three declared gaps.** ⛔ **The seam
+a citation may wrap inside, and the grammar's declared gaps.** ⛔ **The seam
 runs ONE WAY: this module imports that one, and that one imports nothing back.**
 
 ## ⛔ Why `docs/conventions/` and nothing else
@@ -87,10 +87,10 @@ subject confined to `docs/conventions/` excludes all three structurally rather
 than by a filter a reader has to remember** — which is the same exemption shape
 `source_names` uses, and for the same reason.
 
-## ⛔ THE THIRD DECLARED GAP, which is this module's own
+## ⛔ THE DECLARED GAP THAT IS THIS MODULE'S OWN
 
-⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **Two of the three
-gaps belong to the grammar and are declared in `citations.py`; this one belongs
+⛔ **Ruling 258: a declared-gaps list is a CLOSED CLAIM.** ⭐ **The grammar's own
+gaps are declared in `citations.py`; this one belongs
 to what this module CONCLUDES, so it is declared here: a CITATION is not a
 LANDING.** ⚠️ A convention that merely *mentions* `Ruling N` in passing — inside
 a neighbouring ruling's prose, say — satisfies this exactly as a section that
