@@ -14,9 +14,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
+import tools.quality.board.graph as graph_names
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import read
-from tools.quality.board.verdict import Answer, claim, tokens, verdict
+from tools.quality.board.verdict import Answer, claim, subject_forms, tokens, verdict
 from tools.tests.quality.board.support import board
 
 from .conftest import RELEASE, unreadable
@@ -228,8 +231,31 @@ def test_a_branch_B_NAMES_and_C_does_not_is_NOT_REFUTED_and_says_so(repository: 
     """
     answer, printed = _judge(repository, "`fix/Wmoved`", "fix/Wmoved")
     assert answer is Answer.CORROBORATED
-    assert "DISAGREE: a merge subject declares `Merge fix/Wmoved:`" in printed
+    assert f"DISAGREE: a merge subject declares {subject_forms('fix/Wmoved')}" in printed
     assert "NOT a refutation" in printed
+
+
+@pytest.mark.parametrize("branch", ["fix/Wsilent", "fix/Wmoved"])
+def test_both_DISAGREE_sentences_name_the_subject_forms_graph_named_reads(
+    repository: Path, branch: str
+) -> None:
+    """⛔ `W284`: each sentence names `named()`'s forms from `graph`'s one definition."""
+    _answer, printed = _judge(repository, f"`{branch}`", branch)
+    [sentence] = [line for line in printed.splitlines() if "DISAGREE" in line]
+    idiom = graph_names.MERGE_IDIOM.format(branch=branch)
+    assert subject_forms(branch) in sentence
+    assert f"`{idiom}`" in sentence
+    assert all(repr(mark) in sentence for mark in graph_names.BOUNDARY)
+    assert f"`{idiom}:`" not in sentence, "the colon-only form is typed into the sentence again"
+
+
+def test_the_printed_forms_FOLLOW_the_definition_and_not_a_copy_of_it(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """⭐ A retyped literal equal to today's definition passes the test above; not this one."""
+    monkeypatch.setattr(graph_names, "MERGE_IDIOM", "Landed {branch}")
+    monkeypatch.setattr(graph_names, "BOUNDARY", (";",))
+    assert subject_forms("fix/Wx") == "`Landed fix/Wx` followed by ';' or nothing"
 
 
 def test_a_BARE_branch_and_a_FAST_FORWARDED_one_REACH_ONE_ARM_and_it_says_so(

@@ -101,6 +101,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 
+import tools.quality.board.graph as graph_names
 from tools.quality.board.cell import compared
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import Observation
@@ -284,6 +285,18 @@ def _unanswerable(branch: str, graph: Graph, live: dict[str, str]) -> tuple[str,
     )
 
 
+def subject_forms(branch: str) -> str:
+    """Name the merge subjects `graph.named` reads for `branch`, from its one definition.
+
+    ⛔ **`W284`: `graph.MERGE_IDIOM` and `graph.BOUNDARY` are read here at call time and
+    never retyped.** These sentences once typed the colon form alone, which named no merge
+    written `Merge <branch> (<rows>): <line>` after `W274` taught `named()` to read it.
+    """
+    idiom = graph_names.MERGE_IDIOM.format(branch=branch)
+    marks = " or ".join(repr(mark) for mark in graph_names.BOUNDARY)
+    return f"`{idiom}` followed by {marks} or nothing"
+
+
 def _shapes(branch: str, absorbed: str, named: str) -> str:
     """Print shape `C`, shape `B`, and ⛔ their DISAGREEMENT (Ruling 199)."""
     both = (
@@ -295,12 +308,12 @@ def _shapes(branch: str, absorbed: str, named: str) -> str:
     if absorbed:
         return (
             f"{both} — ⚠️ DISAGREE: absorbed by a merge whose subject does not declare "
-            f"`Merge {branch}:`. That is `B`'s false-NEGATIVE population (pre-convention "
+            f"{subject_forms(branch)}. That is `B`'s false-NEGATIVE population (pre-convention "
             f"history, 25 branches at `2d0cfe7`), and `C` is the gate."
         )
     return (
-        f"{both} — ⚠️ DISAGREE: a merge subject declares `Merge {branch}:` and the branch's "
-        f"TIP is absorbed by no merge. ⭐ Either the tip MOVED past its own merge, or the "
+        f"{both} — ⚠️ DISAGREE: a merge subject declares {subject_forms(branch)} and the "
+        f"branch's TIP is absorbed by no merge. ⭐ Either the tip MOVED past its own merge, or the "
         f"merge was a fast-forward. ⛔ `C` is the gate and this is NOT a refutation."
     )
 
