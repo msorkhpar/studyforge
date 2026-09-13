@@ -9,11 +9,17 @@ is asserted to carry a non-empty population with both derivations in it.
 from __future__ import annotations
 
 import json
+import re
+from pathlib import Path
+
+import pytest
 
 import tools.quality.creators as creators
 from tests.support import assert_package_contract, repository_root
 from tools.quality.creators import (
+    MILESTONE_ID,
     RULE_CREATOR,
+    RULE_MILESTONE,
     check_owns_before_creator,
     creator_census,
     graph,
@@ -249,6 +255,56 @@ def test_a_CANCELLED_row_is_not_read_and_a_wrapped_Owns_cell_is():
     assert "`version.py`" in row.owns
 
 
+# --- W275: a milestone id is whole, or the row is refused by name ------------------------------
+
+
+def declared_tree(tmp_path, declared: str) -> str:
+    """A plan whose TC-03 declares `declared` as its milestone; the epic text is returned."""
+    text = epic(
+        "E12",
+        "code-server-toolchain",
+        task("TC-01", "—", "`TC/`"),
+        task("TC-03", "TC-01", "`TC/prime/`").replace("**M5**", declared),
+    )
+    (tmp_path / "docs/tasks").mkdir(parents=True)
+    readme = sequence("- **5.1** — TC-01", "- **5.2** — TC-03")
+    (tmp_path / "docs/tasks/README.md").write_text(readme, encoding="utf-8")
+    (tmp_path / "workspace.json").write_text(json.dumps(WORKSPACE), encoding="utf-8")
+    (tmp_path / E12).write_text(text, encoding="utf-8")
+    return text
+
+
+@pytest.mark.parametrize("declared", ["**M1x**", "M1x", "**M10a**", "**Mx**", "**m10**", "TBD"])
+def test_a_milestone_that_is_not_a_WHOLE_id_is_REFUSED_by_name(tmp_path, declared):
+    text = declared_tree(tmp_path, declared)
+    findings = check_owns_before_creator(tmp_path)
+    assert [(finding.path, finding.rule) for finding in findings] == [(E12, RULE_MILESTONE)]
+    assert text.splitlines()[findings[0].line - 1].startswith("### TC-03")
+    assert "TC-03" in findings[0].message and declared.strip("*") not in findings[0].message
+    reading = read(tmp_path)
+    assert [row.id for row in reading.rows] == ["TC-01"], "refused, never read as a row"
+
+
+@pytest.mark.parametrize(
+    ("declared", "read_ids"),
+    [("**M1**", ["TC-01", "TC-03"]), ("**M10**", ["TC-01", "TC-03"]), ("M10", ["TC-01", "TC-03"])]
+    + [("—", ["TC-01"])],
+)
+def test_M1_and_M10_still_READ_and_the_dash_still_cancels_SILENTLY(tmp_path, declared, read_ids):
+    declared_tree(tmp_path, declared)
+    reading = read(tmp_path)
+    assert [row.id for row in reading.rows] == read_ids
+    assert reading.refused == ()
+    assert check_owns_before_creator(tmp_path) == []
+
+
+def test_the_shape_is_typed_ONCE_and_rows_still_hands_its_readers_only_rows():
+    assert re.fullmatch(MILESTONE_ID, "M10") and not re.fullmatch(MILESTONE_ID, "M1x")
+    assert Path(creators.__file__).read_text(encoding="utf-8").count("M[0-9]") == 1
+    text = epic("E12", "x", task("TC-01", "—", "`TC/`").replace("**M5**", "**M1x**"))
+    assert rows(E12, text) == [], "a refusal never raises out of `rows`"
+
+
 def test_an_UNREAD_tree_says_so_and_finds_nothing(tmp_path):
     assert read(tmp_path) is None
     assert check_owns_before_creator(tmp_path) == []
@@ -264,4 +320,5 @@ def test_the_live_plan_carries_a_population_with_both_derivations_and_is_sound()
     owners = [member for member in reading.members if member.arm == "Owns"]
     assert {member.derivation for member in owners} == {"path", "prose"}
     assert "code-server-toolchain" in reading.creators
+    assert reading.refused == ()
     assert check_owns_before_creator(repository_root()) == []

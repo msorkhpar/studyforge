@@ -28,6 +28,8 @@ and `read_text`, `markdown` for the code-span grammar, `report` for the answer.
   `narrate-service`). The creator is the claimant placed EARLIEST in the README's step lines,
   read in document order, which is the decided milestone order. Every other row owning inside
   the component is a MEMBER, a later root claimant included;
+- a MILESTONE is a whole `MILESTONE_ID` or the cancelling dash. ⛔ Else it is refused by name as
+  `milestone-id` (`W275`). `src/` cannot export the shape to `tools/`, so it is typed once, here;
 - the EDGE is the transitive closure of `Depends on`: `TC-05` reaches `TC-01` through `TC-02`;
 - ⛔ **an EARLIER-step creator with no edge is a finding as well.** The README's widened rule
   lets a later step START once an earlier one is saturated, so step order alone no longer
@@ -59,6 +61,7 @@ from tools.quality.markdown import code_spans, strip_code_spans
 from tools.quality.report import Finding
 
 RULE_CREATOR = "owns-before-creator"
+RULE_MILESTONE = "milestone-id"
 TASKS_DIR = "docs/tasks"
 SEQUENCE = f"{TASKS_DIR}/README.md"
 WORKSPACE = "workspace.json"
@@ -70,7 +73,15 @@ PROSE = "prose"
 
 _HEADING = re.compile(r"^###\s+([A-Z]{2,4}-[0-9]{1,3}[a-z]?)\s+—")
 _DECLARATION = re.compile(r"^\*\*Milestone\*\*")
-_MILESTONE = re.compile(r"^\*\*Milestone\*\*\s*\**\s*M[0-9]")
+#: ⛔ THE milestone id in `tools/`, whole and any width (`W275`): `M1x` once read as `M1`.
+MILESTONE_ID = r"M[0-9]+"
+#: The milestone a declaration carries — a whole id, or the dash that cancels — allowing the bold.
+_MILESTONE = re.compile(rf"^\*\*Milestone\*\*\s*\**\s*({MILESTONE_ID}\b|—)")
+#: It names the row and never quotes the declaration, as `W247` refuses in `capability.py`.
+_REFUSED = (
+    "{} declares a milestone that is neither a whole `M<digits>` id nor the dash that cancels, "
+    "so it is neither read as a row nor counted cancelled. Write the id whole (W275)"
+)
 _DEPENDS = re.compile(r"\*\*Depends on\*\*\s*(.*?)(?:·|$)")
 _STEP = re.compile(r"^- \*\*([0-9]+\.[0-9]+)\*\*\s+—\s+(.*)$")
 _LEGEND = re.compile(r"`([A-Za-z]+)/`\s*=\s*`([^`/]+)")
@@ -113,6 +124,7 @@ class Graph:
     steps: dict[str, str]
     creators: dict[str, Row]
     members: tuple[Member, ...]
+    refused: tuple[Finding, ...]
 
 
 def components(workspace: str) -> dict[str, str]:
@@ -150,14 +162,24 @@ def placement(sequence: str) -> dict[str, str]:
 
 def rows(document: str, text: str) -> list[Row]:
     """Every capability row in one epic document; a cancelled row (milestone `—`) is not one."""
+    return declarations(document, text)[0]
+
+
+def declarations(document: str, text: str) -> tuple[list[Row], list[Finding]]:
+    """Return one epic document's rows, and a finding per milestone it refuses (`W275`)."""
     lines = text.splitlines()
     found: list[Row] = []
+    refused: list[Finding] = []
     for position, line in enumerate(lines):
         heading = _HEADING.match(line)
         if heading is None:
             continue
         block = _block(lines, position)
-        if not block or not _MILESTONE.match(block[0]):
+        milestone = _MILESTONE.match(block[0]) if block else None
+        if block and milestone is None:
+            name = _REFUSED.format(heading.group(1))
+            refused.append(Finding(document, position + 1, RULE_MILESTONE, name))
+        if milestone is None or milestone.group(1) == "—":
             continue
         cells = dict.fromkeys((OWNS, CONTEXT), "")
         parts = _FIELD.split(" ".join(block))
@@ -175,7 +197,7 @@ def rows(document: str, text: str) -> list[Row]:
                 depends=tuple(name.strip() for name in waits if name.strip() not in ("", "—")),
             )
         )
-    return found
+    return found, refused
 
 
 def _block(lines: list[str], start: int) -> list[str]:
@@ -231,9 +253,12 @@ def graph(sequence: str, workspace: str, epics: dict[str, str]) -> Graph:
     order = {step: index for index, step in enumerate(dict.fromkeys(steps.values()))}
     everything: list[Row] = []
     owned: list[tuple[Row, dict[str, bool], str]] = []
+    refused: list[Finding] = []
     for document, text in epics.items():
         fallback = preamble_component(text, names)
-        for row in rows(document, text):
+        found, unreadable = declarations(document, text)
+        refused.extend(unreadable)
+        for row in found:
             everything.append(row)
             reached = resolve(row.owns, shorthand, names)
             if reached or code_spans(row.owns) or fallback is None:
@@ -263,7 +288,7 @@ def graph(sequence: str, workspace: str, epics: dict[str, str]) -> Graph:
                 continue
             verdict = _verdict(row, creator, rank, edges)
             members.append(Member(row, component, arm, how, creator, verdict))
-    return Graph(tuple(everything), len(epics), steps, creators, tuple(members))
+    return Graph(tuple(everything), len(epics), steps, creators, tuple(members), tuple(refused))
 
 
 def _closure(start: str, edges: dict[str, tuple[str, ...]]) -> set[str]:
@@ -308,11 +333,11 @@ def read(root: Path) -> Graph | None:
 
 
 def check_owns_before_creator(root: Path) -> list[Finding]:
-    """One finding per `Owns` member whose creator it cannot be shown to follow."""
+    """One finding per refused milestone, and per `Owns` member not shown to follow its creator."""
     plan = read(root)
     if plan is None:
         return []
-    return [
+    return list(plan.refused) + [
         Finding(
             member.row.document,
             member.row.line,
@@ -358,12 +383,15 @@ def creator_census(root: Path) -> list[str]:
 
 
 __all__ = [
+    "MILESTONE_ID",
     "RULE_CREATOR",
+    "RULE_MILESTONE",
     "Graph",
     "Member",
     "Row",
     "check_owns_before_creator",
     "creator_census",
+    "declarations",
     "graph",
     "placement",
     "read",
