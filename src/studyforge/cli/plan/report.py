@@ -80,6 +80,9 @@ class Refusal:
 
     where: str
     why: str
+    #: The `validate` rule this refusal is, when it is one. ⭐ A build reads it
+    #: to refuse a path two artifacts claim (`W254`) without parsing a sentence.
+    rule: str | None = None
 
     def line(self) -> str:
         """Render as one greppable line."""

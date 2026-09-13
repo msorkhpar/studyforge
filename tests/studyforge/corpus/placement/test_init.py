@@ -143,5 +143,5 @@ def test_the_worked_example_in_the_contract_is_the_api_that_exists():
     where = placement.profile_for("sibling").unit(
         address, 7, "Streams", origin="16-streams-api/README_4.4.1.md"
     )
-    assert str(where.page) == "16-streams-api/unit-07-streams.unit.html"
+    assert str(where.page) == "16-streams-api/basics.16-streams-api.unit-07-streams.unit.html"
     assert where.href("audio", "07.mp3").endswith("audio/07.mp3")

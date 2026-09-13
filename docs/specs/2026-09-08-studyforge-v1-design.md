@@ -861,9 +861,9 @@ Claude-senior-java-engineer/
     README.md                                    UNTOUCHED
     README_4.4.1.md                              UNTOUCHED
     streams-api.section.html                     module page
-    4.4.1-introduction-to-the-streams-api.unit.html
-    4.4.1-introduction-to-the-streams-api.audio/*.mp3
-    4.4.1-introduction-to-the-streams-api.practice/
+    basics.16-streams-api.4.4.1-introduction-to-the-streams-api.unit.html
+    basics.16-streams-api.4.4.1-introduction-to-the-streams-api.audio/*.mp3
+    basics.16-streams-api.4.4.1-introduction-to-the-streams-api.practice/
 ```
 
 ⛔ **AMENDED PO round 76 — the archive root is `archive/`, beside `corpus.json`, under
@@ -871,8 +871,16 @@ every profile** (`W241`, `INT-06/6`). ⚠️ **This example once read `.studyfor
 `plan` printed that root and nothing read it.** ⭐ **§6's `<archive-root>` is this directory.**
 
 **Every generated page carries a real name, never `index.html`.** Names come
-from the unit's own numbering and title, so they are unique, human-readable in
-a directory listing, and unambiguous to a scanner.
+from the unit's own numbering and title, so they are human-readable in a
+directory listing and unambiguous to a scanner.
+
+⛔ **AMENDED (`W254`): under `sibling`, a unit's page and media names begin with
+its container's address, dot-joined** (`basics.16-streams-api.` above, for a
+unit at `basics/16-streams-api`). ⚠️ **Numbering and title alone were not
+unique:** two containers whose series mirror each other in one directory gave
+two units one name. A slug carries no `.` and depth is uniform, so two
+containers never share a name. What one container still repeats (one label,
+one title) is refused by name, by `validate`, `plan` and a build.
 
 **Discovery replaces path inference.** At startup the server scans the source
 root for `*.unit.html` and `*.section.html`, reads each file's embedded

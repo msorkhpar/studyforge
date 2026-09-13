@@ -180,3 +180,58 @@ def two_containers(
             },
         },
     )
+
+
+def _lesson(address, n, title):
+    return {
+        "source": "demo",
+        "address": list(address),
+        "variant": "prose",
+        "unit": n,
+        "kind": "lesson",
+        "ordinal": 1,
+        "ingested": "2026-01-05",
+        "title": title,
+        "blocks": BLOCKS,
+    }
+
+
+def mirrored(root: Path) -> Path:
+    """Two containers whose units share ordinals and titles, every origin in `src/` (`W254`)."""
+    manifest = {**MANIFEST, "placement": "sibling"}
+    containers, documents = {}, {}
+    for letter, segment in (("a", "first"), ("b", "second")):
+        units = [unit_entry(n, origin=f"src/{letter}{n}.md", title="Shared") for n in (1, 2)]
+        containers[segment] = container(
+            units,
+            address=(segment,),
+            origin=f"src/{letter.upper()}.md",
+            titles=[f"Series {letter}"],
+        )
+        for n in (1, 2):
+            documents[f"{segment}/raw/prose/unit-0{n}/lesson-1.json"] = _lesson(
+                (segment,), n, f"Shared {n}"
+            )
+    return write(root, manifest=manifest, containers=containers, documents=documents)
+
+
+def repeated_label(root: Path) -> Path:
+    """One container whose two units record one label and one title, in one directory.
+
+    ⛔ The one collision a unit's container cannot separate under `sibling` (`W254`):
+    both units are named `first.1-shared`, so `validate`, `plan` and a build refuse it.
+    """
+    manifest = {**MANIFEST, "placement": "sibling"}
+    units = [
+        {"n": n, "title": "Shared", "practices": 0, "origin": f"src/a{n}.md", "label": "1"}
+        for n in (1, 2)
+    ]
+    return write(
+        root,
+        manifest=manifest,
+        containers={"first": container(units, address=("first",), origin="src/A.md")},
+        documents={
+            f"first/raw/prose/unit-0{n}/lesson-1.json": _lesson(("first",), n, "Shared")
+            for n in (1, 2)
+        },
+    )

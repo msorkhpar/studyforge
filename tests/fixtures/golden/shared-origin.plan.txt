@@ -5,16 +5,16 @@ create .studyforge/assets/  the shared stylesheets, scripts and player
 create .studyforge/site.json  the discovery cache, never the authority
 create archive/  the archive root — an adapter writes it (R2) and every build reads it
 create field-notes/field-notes.section.html  the page for container field-notes
-create field-notes/unit-01-taking-a-reading.audio/  field-notes unit 1's audio
-create field-notes/unit-01-taking-a-reading.images/  field-notes unit 1's images
-create field-notes/unit-01-taking-a-reading.practice/  field-notes unit 1's practice
-create field-notes/unit-01-taking-a-reading.unit.html  field-notes unit 1's page
-create field-notes/unit-01-taking-a-reading.video/  field-notes unit 1's video
-create field-notes/unit-02-writing-it-down.audio/  field-notes unit 2's audio
-create field-notes/unit-02-writing-it-down.images/  field-notes unit 2's images
-create field-notes/unit-02-writing-it-down.practice/  field-notes unit 2's practice
-create field-notes/unit-02-writing-it-down.unit.html  field-notes unit 2's page
-create field-notes/unit-02-writing-it-down.video/  field-notes unit 2's video
+create field-notes/field-notes.unit-01-taking-a-reading.audio/  field-notes unit 1's audio
+create field-notes/field-notes.unit-01-taking-a-reading.images/  field-notes unit 1's images
+create field-notes/field-notes.unit-01-taking-a-reading.practice/  field-notes unit 1's practice
+create field-notes/field-notes.unit-01-taking-a-reading.unit.html  field-notes unit 1's page
+create field-notes/field-notes.unit-01-taking-a-reading.video/  field-notes unit 1's video
+create field-notes/field-notes.unit-02-writing-it-down.audio/  field-notes unit 2's audio
+create field-notes/field-notes.unit-02-writing-it-down.images/  field-notes unit 2's images
+create field-notes/field-notes.unit-02-writing-it-down.practice/  field-notes unit 2's practice
+create field-notes/field-notes.unit-02-writing-it-down.unit.html  field-notes unit 2's page
+create field-notes/field-notes.unit-02-writing-it-down.video/  field-notes unit 2's video
 create index.html  the root index
 media commit 'auto'  generated media is committed under this policy
 media units 2  each gets one directory per kind: audio, images, video, practice

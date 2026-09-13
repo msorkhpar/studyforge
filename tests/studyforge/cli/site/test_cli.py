@@ -13,10 +13,13 @@ import shutil
 
 import pytest
 
+from studyforge.cli.plan import plan_for
 from studyforge.cli.site.cli import build_parser, main
+from studyforge.validate import validate
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES
+from tests.studyforge.validate import corpora
 from tests.support import repository_root
 
 
@@ -211,3 +214,48 @@ def test_the_catch_list_is_the_build_s_own_tuple_and_not_a_copy():
     source = (repository_root() / "src/studyforge/cli/site/cli.py").read_text("utf-8")
     assert "except RAISES as refusal:" in source
     assert "except BuildError" not in source and "except (BuildError" not in source
+
+
+# --------------------------------------------------------------------------
+# ⛔ `INT09-5`: validate, plan and a build agree about a collision
+# --------------------------------------------------------------------------
+
+
+def test_a_mirrored_series_builds_one_page_per_unit_and_every_instrument_agrees(tmp_path):
+    # ⚠️ `W254`, measured at `973fc67`: `validate` refused this layout while `plan`
+    # and a build exited 0, and the build replaced two of its four pages.
+    root = corpora.mirrored(tmp_path / "c")
+    out = tmp_path / "site"
+    out.mkdir()
+    assert validate(root).findings == ()
+    plan = plan_for(root)
+    assert (plan.exit_code, plan.refusals) == (OK, ())
+    code, printed = invoke(str(root), "--out", str(out))
+    pages = sorted(page.relative_to(out).as_posix() for page in out.rglob("*.unit.html"))
+    assert code == OK, printed
+    assert "replace " not in printed
+    assert pages == [
+        "src/first.unit-01-shared-1.unit.html",
+        "src/first.unit-02-shared-2.unit.html",
+        "src/second.unit-01-shared-1.unit.html",
+        "src/second.unit-02-shared-2.unit.html",
+    ]
+    assert pages == sorted(c.path for c in plan.creations if c.path.endswith(".unit.html"))
+
+
+def test_a_path_two_units_claim_is_refused_by_name_by_plan_and_build_and_nothing_is_written(
+    tmp_path,
+):
+    root = corpora.repeated_label(tmp_path / "c")
+    out = tmp_path / "site"
+    out.mkdir()
+    assert "duplicate-path" in validate(root).rules
+    plan = plan_for(root)
+    code, printed = invoke(str(root), "--out", str(out))
+    assert plan.exit_code == INVALID
+    assert code == INVALID
+    for said in ("\n".join(plan.lines()), printed):
+        assert "unit 2's page is placed at 'src/first.1-shared.unit.html'" in said
+        assert "unit 1's page already claims" in said
+    assert "build refused" in printed
+    assert list(out.iterdir()) == []

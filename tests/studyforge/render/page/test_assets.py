@@ -68,7 +68,7 @@ def test_a_sibling_placement_gives_a_different_shape_for_the_same_call():
         ),
         shared=profile.corpus(),
     )
-    assert where.media("images", "a.png") == "unit-01-a-unit.images/a.png"
+    assert where.media("images", "a.png") == "basics.01-getting-started.unit-01-a-unit.images/a.png"
 
 
 def test_only_the_filename_of_a_media_reference_survives():

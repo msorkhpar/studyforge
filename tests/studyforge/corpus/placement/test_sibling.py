@@ -8,6 +8,7 @@ import pytest
 
 from studyforge.address import Address
 from studyforge.corpus.placement import PlacementError, profile_for, unit_stem
+from studyforge.corpus.placement.names import contained_stem
 from studyforge.corpus.placement.sibling import SiblingProfile
 
 SIBLING = profile_for("sibling")
@@ -37,7 +38,7 @@ def test_the_page_is_beside_the_source_and_not_under_the_address():
 
 def test_every_artifact_of_one_unit_sorts_together_beside_its_page():
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN)
-    stem = unit_stem(7, TITLE)
+    stem = contained_stem(ADDRESS, 7, TITLE)
     assert where.page.name.startswith(stem)
     for directory in where.directories:
         assert directory.name.startswith(stem + ".")
@@ -64,15 +65,14 @@ def test_two_units_in_one_directory_never_produce_the_same_name():
     assert set(first.directories).isdisjoint(second.directories)
 
 
-def test_two_containers_sharing_a_directory_would_collide_and_that_is_findable():
-    # ⚠️ The one real collision risk, stated rather than hoped away: two
-    # CONTAINERS whose units land in one directory with the same ordinal. The
-    # Java corpus does not do this — one module directory per container — but
-    # nothing in this profile prevents it, so SF-25 owns the check and this
-    # pins the shape of what it must find.
+def test_two_containers_sharing_a_directory_are_named_apart_by_their_address():
+    # ⛔ `W254`. This test once pinned the collision: two CONTAINERS whose units
+    # land in one directory with one ordinal and title. A real corpus did it (a
+    # mirrored series), so every `sibling` name now carries its container's address.
     here = SIBLING.unit(ADDRESS, 7, "Streams", origin="shared/README_a.md")
     there = SIBLING.unit(Address.of("advanced", "17-x"), 7, "Streams", origin="shared/README_b.md")
-    assert here.page == there.page
+    assert here.page.parent == there.page.parent
+    assert set((here.page, *here.directories)).isdisjoint((there.page, *there.directories))
 
 
 @pytest.mark.parametrize("origin", [None, "", 7])
@@ -101,9 +101,10 @@ def test_the_worked_example_from_the_spec_is_reproduced_exactly():
     # is the answer SF-31's deferred golden was waiting on: the label is the
     # seam, and with it the shape matches the spec character for character.
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN, label="4.4.1")
-    assert str(where.page) == "16-streams-api/4.4.1-introduction-to-the-streams-api.unit.html"
-    assert str(where.audio) == "16-streams-api/4.4.1-introduction-to-the-streams-api.audio"
-    assert str(where.practice) == "16-streams-api/4.4.1-introduction-to-the-streams-api.practice"
+    stem = "16-streams-api/basics.16-streams-api.4.4.1-introduction-to-the-streams-api"
+    assert str(where.page) == f"{stem}.unit.html"
+    assert str(where.audio) == f"{stem}.audio"
+    assert str(where.practice) == f"{stem}.practice"
 
 
 def test_placing_the_same_unit_twice_gives_the_same_paths():
@@ -121,7 +122,7 @@ def test_the_media_globs_match_the_stems_this_profile_actually_mints():
     # the unit's own stem, so a corpus cannot enumerate them — one measured
     # build wrote 79 artifacts, 67 of them content-hash-named.
     where = SIBLING.unit(ADDRESS, 7, TITLE, origin=ORIGIN)
-    stem = unit_stem(7, TITLE)
+    stem = contained_stem(ADDRESS, 7, TITLE)
     for line in SIBLING.media_ignore_lines():
         assert line.startswith("*.") and line.endswith("/")
     kinds = [line[2:-1] for line in SIBLING.media_ignore_lines()]
@@ -130,3 +131,50 @@ def test_the_media_globs_match_the_stems_this_profile_actually_mints():
 
 def test_the_media_globs_are_unanchored_because_the_material_is():
     assert not [line for line in SIBLING.media_ignore_lines() if line.startswith("/")]
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W254`: every name carries the container's address
+# --------------------------------------------------------------------------
+
+
+def test_containers_whose_deepest_segments_match_are_still_named_apart():
+    # ⭐ The whole address, not its last segment: `a/x` and `b/x` share one name
+    # otherwise, which is not "by construction".
+    first = SIBLING.unit(Address.of("a", "x"), 1, "Shared", origin="src/a1.md")
+    second = SIBLING.unit(Address.of("b", "x"), 1, "Shared", origin="src/b1.md")
+    assert first.page != second.page
+
+
+@pytest.mark.parametrize("fixture", ["depth2", "shared-origin"])
+def test_a_name_differs_from_the_unit_stem_only_by_the_address_in_front(fixture):
+    # ⛔ The control for `W254`'s cost: every `sibling` name moves by exactly
+    # the address prefix, and nothing else about it changes.
+    from studyforge.corpus.container import parse
+    from studyforge.corpus.manifest import parse as parse_manifest
+    from tests.support import repository_root
+
+    root = repository_root() / "tests" / "fixtures" / fixture
+    manifest = parse_manifest((root / "corpus.json").read_text("utf-8"), "corpus.json")
+    assert manifest.placement == "sibling"
+    checked = 0
+    for path in sorted((root / "archive").rglob("container.json")):
+        held = parse(path.read_text("utf-8"), path.relative_to(root).as_posix(), manifest)
+        prefix = ".".join(held.address.segments) + "."
+        for unit in held.units:
+            where = SIBLING.unit(
+                held.address, unit.n, unit.title, origin=unit.origin, label=unit.label
+            )
+            stem = prefix + unit_stem(unit.n, unit.title, unit.label)
+            beside = PurePosixPath(unit.origin).parent
+            assert where.page == beside / f"{stem}.unit.html"
+            assert where.directories == tuple(
+                beside / f"{stem}.{kind}" for kind in ("audio", "images", "video", "practice")
+            )
+            checked += 1
+    assert checked > 0
+
+
+def test_a_unit_with_no_address_is_refused_rather_than_named_without_one():
+    with pytest.raises(PlacementError):
+        SIBLING.unit(None, 1, TITLE, origin=ORIGIN)

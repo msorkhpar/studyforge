@@ -76,14 +76,7 @@ def test_the_three_codes_are_three_different_numbers():
 
 
 def test_every_finding_is_printed_not_only_the_first(tmp_path):
-    root = corpora.two_containers(
-        tmp_path / "c",
-        placement="sibling",
-        origin="a/README.md",
-        second_origin="b/README.md",
-        unit_origin="shared/one.md",
-        second_unit_origin="shared/two.md",
-    )
+    root = corpora.repeated_label(tmp_path / "c")
     code, printed = invoke(str(root))
     assert code == INVALID
     assert printed.count("[duplicate-path]") > 1

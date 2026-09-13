@@ -10,7 +10,7 @@ block** every generated artifact embeds, which is what makes any of it safe.
     from studyforge.corpus.placement import identity, profile_for
 
     where = profile_for(manifest.placement).unit(address, 7, "Streams", origin=origin)
-    where.page          # 16-streams-api/unit-07-streams.unit.html
+    where.page          # 16-streams-api/basics.16-streams-api.unit-07-streams.unit.html
     where.href("audio/07.mp3")   # relative to the page (R8)
 
 **Depends on.** `studyforge.address` and `studyforge.version`. ⛔ **No

@@ -42,7 +42,7 @@ which routes that field to the archive contract.
 
 from __future__ import annotations
 
-from studyforge.address import require_ordinal, slugify, unit_name
+from studyforge.address import Address, require_ordinal, slugify, unit_name
 from studyforge.corpus.container.fields import (
     FILENAME_PERMITTED_DESCRIBED,
     is_filename_component,
@@ -102,6 +102,27 @@ def unit_stem(ordinal: int, title: str, label: str | None = None) -> str:
             f"given no name; titles are the corpus's, so this is a corpus defect"
         )
     return f"{label_of(ordinal, label)}-{slug}"
+
+
+def contained_stem(address: Address, ordinal: int, title: str, label: str | None = None) -> str:
+    """Return `<segment>.<segment>.<label>-<title-slug>`: the stem with its container in front.
+
+    ⛔ **`W254`, clause 1: a unit's name is a function of its own identity, and
+    its container is part of that identity.** Where many units share a
+    directory, `unit_stem` alone gives two containers' units one name as soon
+    as their ordinals and titles mirror. Measured on a real corpus: 5 pairs,
+    and a build that replaced 5 pages it had written in the same run.
+
+    ⭐ **Distinct containers never share a name, by construction.** An address
+    segment is a slug, and a slug carries no `.`. Every address in one corpus
+    has the same depth (§4), so the first `depth` dot-separated fields of a name
+    are its address. ⚠️ Two units of ONE container with the same label and the
+    same title still share a name, and `validate`'s `duplicate-path` refuses
+    that by name, as `plan` and a build do.
+    """
+    if not isinstance(address, Address):
+        raise PlacementError("a unit is named with its container's address, and none was given")
+    return ".".join(address.segments) + "." + unit_stem(ordinal, title, label)
 
 
 def label_of(ordinal: int, label: str | None = None) -> str:

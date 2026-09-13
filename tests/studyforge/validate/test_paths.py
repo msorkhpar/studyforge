@@ -45,11 +45,9 @@ from tests.support import repository_root
 # --------------------------------------------------------------------------
 
 
-def test_two_units_in_different_containers_may_claim_one_page(tmp_path):
-    # ⛔ **The defect this check exists for.** Two units, two *different*
-    # containers, two individually correct placement calls: same origin
-    # directory, same ordinal, same title slug — one page path. Placement is a
-    # pure function of one unit and had no way to know.
+def test_two_units_in_different_containers_sharing_a_directory_are_named_apart(tmp_path):
+    # ⭐ `W254`: same origin directory, same ordinal, same title slug. This once
+    # claimed one page; a `sibling` name now carries its container's address.
     root = corpora.two_containers(
         tmp_path / "c",
         placement="sibling",
@@ -58,9 +56,17 @@ def test_two_units_in_different_containers_may_claim_one_page(tmp_path):
         unit_origin="shared/one.md",
         second_unit_origin="shared/two.md",
     )
-    report = validate(root)
+    assert "duplicate-path" not in validate(root).rules
+
+
+def test_two_units_of_one_container_with_one_label_and_title_claim_one_page(tmp_path):
+    # ⛔ **The collision this check exists for**, where the container cannot
+    # separate two units: a label repeated inside one container.
+    report = validate(corpora.repeated_label(tmp_path / "c"))
     assert "duplicate-path" in report.rules
-    assert "already claims" in "\n".join(f.message for f in report.findings)
+    said = "\n".join(f.message for f in report.findings)
+    assert "unit 2's page is placed at 'src/first.1-shared.unit.html'" in said
+    assert "unit 1's page already claims" in said
 
 
 def test_and_the_same_corpus_with_one_title_changed_is_clean(tmp_path):
@@ -160,14 +166,7 @@ def test_a_media_directory_counts_as_a_claimed_path(tmp_path):
     # ⛔ Pages, media directories and container pages **together**. Two units
     # sharing an audio directory mix their clips, and no page path had to
     # collide for that to happen.
-    root = corpora.two_containers(
-        tmp_path / "c",
-        placement="sibling",
-        origin="a/README.md",
-        second_origin="b/README.md",
-        unit_origin="shared/one.md",
-        second_unit_origin="shared/two.md",
-    )
+    root = corpora.repeated_label(tmp_path / "c")
     claimed = "\n".join(f.message for f in validate(root).findings)
     assert "audio directory" in claimed
 
