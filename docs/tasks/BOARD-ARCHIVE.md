@@ -24051,3 +24051,130 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 85
 
 ⭐ **Merged at `e58c757`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `e58c757` is RECEIVED.** ⭐ **`validate` refuses by name an included file no unit's origin names, as `included-unread`.** ⚠️ **Each finding's disposition is round 84's or this round's § 3.**
+
+## PO round 86 — `W278`, `W276` and `W226` closed
+
+⭐ **Cut at `b2db6ef`, release after round 85's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W278`](#w278-r3s-never-permitted-content-is-decided-by-the-manifest-alone-so-an-edit-to-a-notmaterial-root-readmemd-passes) | `362fdf5`, fixed forward by `ac11e8b` | the board's M6 and ISO cells |
+| [`W276`](#w276-narrationjss-play-rejection-overwrites-the-error-handler-so-a-clip-missing-at-run-time-reads-blocked-and-play-stays-enabled) | `7425eb8` | none owed |
+| [`W226`](#w226-the-narration-record-cannot-locate-every-clip-it-wrote-so-a-removed-units-clips-and-a-re-worded-passages-old-clip-are-beyond-the-only-prune) | `2939022` | `E09-delivery.md`'s `W226` link; the board's `narrate/` set, M6 and ISO cells |
+
+⭐ **All three TERMINAL (Ruling 199). Ruling 97's gate is RECEIVED at `ac11e8b`, `7425eb8` and `2939022`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`, `last_pointer` exit `0` at each.** ⭐ **Ruling 314: the three moved bodies carried 11 relative pointers, and 11 were re-addressed.**
+
+⛔ **`PO-86/2` — THE RED INTERVAL `362fdf5` → `ac11e8b`.** `W278`'s merge read floor `1` and suite `1` on one finding, `handoff-bare-citation` at `docs/tasks/handoffs/W278.md:5`: its handoff cited `docs/tasks/rows/W278.md` in backticks, which was untracked at its base `9421b02` and became a tracked document when round 83 merged first. The coordinator's one-line `ac11e8b` linked the citation; `last_pointer 362fdf5..ac11e8b` exit `0`. ⭐ **`W278` closes on `ac11e8b`'s reading, never on `362fdf5`.**
+
+⭐ **`PO-85/2` — RULED: THE CONVENTION CHANGES, NOT THE FLOOR.** A handoff citing a row minted on an unmerged register branch goes RED either way (a link dangles at the office's base; a backticked path becomes a bare citation once the register lands first), and citing such a row by id alone is correct at both refs at no cost. ⭐ **The preamble now says so (its line 8).** ⛔ **The floor's bare-citation check stays as strict as it is**; a second occurrence after the preamble change mints a floor row. Reversible.
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W280`](rows/W280.md) | Developer 2 | `fix/W280-classification-split` @ `wt/dev2` | `ac11e8b` | `W280`, NAMED |
+| [`W283`](rows/W283.md) | Developer 3 | `fix/W283-reonboard-keeps-globs` @ `wt/dev3` | `ac11e8b` | `W283`, NAMED |
+| [`W222`](rows/W222.md) | Developer 1 | `fix/W222-audio-dir-label` @ `wt/dev1` | `2939022` | `W222`, NAMED |
+| [`W267`](rows/W267.md), [`W271`](rows/W271.md), [`W274`](rows/W274.md), [`W275`](rows/W275.md), [`W273`](rows/W273.md) | Developers 3, 1, 2, 1, 3 | @ none, handed back | as named | CONFIRMED |
+
+⚠️ **`PO-86/1` — `W263` merged at `7400be3` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled: not closed and not named in flight; its register cell carries the merge.** Reversible. ⛔ **`W277` stays HELD by the coordinator.** ⚠️ **`W226/2` stays carried: `W267` has not merged.**
+
+### ⭐ 3 — MINTS AND FINDINGS
+
+| finding | became |
+|---|---|
+| `W274/1` | accepted: no first-parent merge uses git's default subject |
+| `W274/2` | accepted: the witness is corrected by its taker's whole-history read; the frozen row is not edited |
+| `W274/3` | ⭐ **minted [`W284`](rows/W284.md)**, order 53. Re-measured at `b2db6ef`: `verdict.py` lines 298 and 302 quote `Merge {branch}:` |
+| `W275/1` | accepted, cost named: `creators.py` stands at 400 lines on `92cea74`, and the floor refuses the next; the next row there splits it at the parse |
+| `W275/2`, `/3` | ⭐ **minted [`W285`](rows/W285.md)**, order 53. Re-measured at `b2db6ef`: `delivery.py` types `M[0-9]+` inline at lines 91 and 94, and `creators.rows` skips a row whose milestone line fails with no signal, which `sibling_owned` reads |
+| `W273/1` | accepted, cost named: reachable only by a user decision to restore a CTO reviewer |
+| `W273/2` | accepted: `W245`'s handoff is a frozen record |
+
+⭐ **ISO round 14 is dispatched on framework `2939022`: a one-step re-pin and regenerate, then re-takes of `ISO-12` and `ISO-14`. Its brief keeps `corpus.json` byte-identical because `W283` has not merged. The pin stays `f3b5239`.**
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause; the coordinator's hold on `W277`.
+
+### W278 — R3's never-permitted content is decided by the manifest alone, so an edit to a `not_material` root `README.md` passes
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W278.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-13/1`: R3's never-permitted *"file the material's own reader depends on as content"* is decided by the manifest alone, as `content` INCLUDED or CONTESTED, so a corpus that declares its root `README.md` `not_material` may declare an edit to it.** ⭐ **RECEIVED from ISO round 13 (`ISO-14` clause 5). RE-MEASURED (Ruling 214) at `8a2067a`, role `wt/po`, HOST, in memory over `tests/fixtures/depth2/corpus.json`:** at `corpus_api` 2 and 3, `README.md` `not_material` with an `insert-line` edit parses and `_forbidden` returns empty. ⛔ **The plant survives.** The control, `README.md` included, is refused by name.
+
+### ⛔ THE RULING, confirmed by the register (reversible)
+
+⭐ **A repository file its own readers read as content is R3's never-permitted "content" whatever the manifest classifies it as for the site.** R3's category is a property of the file in its repository. ⛔ **`ISO-14` is not taken by striking clause 5.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DESIGN DECISION FIRST:** how the predicate is decided without naming any corpus (R1): repository-root documentation by convention, a `protected` declaration `permitted_edits` cannot override, or both.
+2. ⛔ **The manifest parser and `OPS-05`'s `_forbidden` agree**, one predicate.
+3. ⛔ **Asserted both ways (R12):** ISO's shape is refused by name; a declared additive edit to a non-content file still passes.
+
+⭐ **Surface:** `src/studyforge/corpus/manifest/edits.py`, `src/studyforge/validate/nondestructive.py`, spec R3 if the decision names a convention, and their tests. ⭐ **Ruling 75 invoked: placed at order 1, because `ISO-14` (`M6`) waits on it.**
+
+[the mint](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)
+
+#### ⭐ CLOSED — PO ROUND 86
+
+⭐ **Merged at `ac11e8b`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `ac11e8b` is RECEIVED.** ⭐ **Repository-root documentation (`README`, `LICENSE`, `LICENCE`, `COPYING`, exact stem, any case and suffix) is R3's never-permitted content through one predicate, `reads_as_content`, shared by the parser and `OPS-05`'s check; spec R3 amended.** ⚠️ **Its merge `362fdf5` measured RED (floor 1, suite 1, one `handoff-bare-citation`); the coordinator's one-line `ac11e8b` fixed it forward, and this close reads `ac11e8b`.** ⚠️ **Its findings were disposed in round 85's § 3.**
+
+### W276 — `narration.js`'s `play()` rejection overwrites the `error` handler, so a clip missing at run time reads blocked and play stays enabled
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W276.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-12/2`: a clip missing at run time shows the blocked sentence (*"press play once"*), never *"missing"*, and play stays enabled.** ⭐ **RECEIVED from ISO round 12 (Chrome over `file://`, with a control: a unit built with no clips shows `none` and disables play). RE-READ (Ruling 214) at `8a2067a`:** in `narration.js`, `start()`'s `play()` rejection handler says `BLOCKED` and runs after the `error` handler has said `MISSING`, so it overwrites that state.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A clip the page names and the disk lacks reads `missing`**, and play is disabled once no passage is playable.
+2. ⭐ **A browser refusing to start audio still reads the blocked sentence.**
+3. ⛔ **Asserted both ways (R12)** in the runtime test, by the order the two events arrive in.
+
+⭐ **Surface:** `src/studyforge/render/assets/narration.js` and its runtime test. ⭐ **Jumps nobody: no corpus ships clips yet.**
+
+[the mint](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)
+
+#### ⭐ CLOSED — PO ROUND 86
+
+⭐ **Merged at `7425eb8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `7425eb8` is RECEIVED.** ⭐ **A clip the page names and the disk lacks reads `missing`, and play is disabled once no passage is playable.** ⚠️ **Its findings were disposed in round 85's § 3.**
+
+### W226 — The narration record cannot locate every clip it wrote, so a removed unit's clips and a re-worded passage's old clip are beyond the only prune
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W226.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE NARRATION RECORD CANNOT LOCATE EVERY CLIP IT WROTE, SO THE COMMONEST DEAD CLIPS ARE BEYOND THE ONE PRUNE `W193` ALLOWS.** ⭐ **Two findings from [`W218`](#w218-w193s-rule-is-written-and-nothing-carries-it-out-dead-clips-count-against-a-shipped-ceiling-and-no-instrument-discloses-or-prunes-them)'s own office, against its own rule:**
+
+1. ⛔ **`W218/1` `[structural]`:** an entry carries a clip FILENAME and no directory, and a unit's audio directory is placement's answer to declarations that can change. ⚠️ **An entry of a unit REMOVED or RENUMBERED cannot be located, so `--prune` HOLDS it forever** — disclosed and counted, never deleted.
+2. ⛔ **`W218/2`:** `synthesise` overwrites an entry's filename when a passage is re-worded, ⚠️ **so the old-digest clip is left with NO entry naming it — outside the disclosure and the prune, still weighed by `SF-32/5`.** ⭐ **Read from `narrate/synth/incremental.py`, NOT RUN.**
+
+### ⛔ WHY IT IS A ROW AND NOT `OPS-07`'s
+
+⭐ **`OPS-07` (`M9`) names the re-worded clip, but its Definition is a reconcile over generated artifacts, and [`E09`](E09-delivery.md#w193-which-clips-may-be-deleted-none-by-a-build-none-unasked-by-narrate-and-a-prune-is-its-own-request) answer 3 puts clip deletion on a predicate over the DOCUMENT.** ⛔ **So the record's half is not `OPS-07`'s to add, and `W218`'s ground (`SF-32/5`) is live now.**
+
+⭐ **It jumps nobody: the held half is disclosed on every run, and the silent half is measured first.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`W218/2` MEASURED FIRST** — re-word a fixture passage through a recording fake and count clips on disk against entries. ⭐ **No orphan, and `/2` is disposed by that reading.**
+2. ⛔ **EVERY CLIP THE RECORD WROTE AND HAS NOT PRUNED IS LOCATABLE FROM THE RECORD ALONE**, never by re-deriving placement from declarations that have since moved.
+3. ⛔ **`--prune` REACHES A REMOVED UNIT'S ENTRY AND A SUPERSEDED CLIP** under answer 3's predicate — ⭐ **each planted, and the held count moves to `0`.**
+4. ⛔ **`narrate` STILL DELETES NOTHING AS IT NARRATES** (answer 2): a re-wording keeps the old clip until a prune.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A DISK SCAN FOR CLIPS NOBODY NAMES** (answer 3 refuses it), ⛔ **or a record migration that silently drops entries it cannot place.** ⚠️ **Surface `narrate/synth/`, with [`W222`](rows/W222.md) and [`W223`](rows/W223.md): ONE OWNER or two waves.**
+
+[the mint](#po-round-66-wave-19-closed-wave-20-named-sf-388-answered-from-the-users-own-answers-three-mints)
+
+⭐ **Rider, PO round 68 — `W224/1`:** `studyforge plan` lists copies for DEAD record entries the build never copies, so plan and build agree path for path only on a pruned record ([the round](#po-round-68-w80-and-w81-disposed-with-ops-05s-w224-closed-sk-03-made-dispatchable)).
+
+### ⛔ RULING 75 IS INVOKED, AND IT IS DECLARED HERE — PO round 83
+
+⭐ **Placed at order 1, ahead of every older row:** `INT-12/1` is the first reading on real material. One re-worded paragraph leaves its old clip on disk, named by no page and no record entry, and `--prune` deletes 0 over 55 pages, so `ISO-12` (`M6`) is NOT taken. ⭐ **Clause 1's measurement is that reading, RECEIVED with its control and plant, and RE-READ by code at `8a2067a`: `synthesise` overwrites the entry's filename and removes nothing.** ⚠️ **The `narrate/synth/` set runs `W226`, then [`W222`](rows/W222.md), then [`W223`](rows/W223.md), one owner** ([the round](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)).
+
+#### ⭐ CLOSED — PO ROUND 86
+
+⭐ **Merged at `2939022`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2939022` is RECEIVED.** ⭐ **The narration record names each clip's directory, and `--prune` reaches a removed unit's entry and a superseded clip.** ⚠️ **Its findings were disposed in round 85's § 3.**
