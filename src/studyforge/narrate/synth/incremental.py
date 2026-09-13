@@ -15,13 +15,18 @@ module's own report.
 and therefore no transport, which is the *"requests nothing"* half of the
 acceptance made a property of the shape rather than a promise.
 
+⛔ **Nothing is deleted, and nothing written goes unnamed** (`W226`, `E09` § W193
+answer 2). Every clip is recorded with the directory it was written into, and a
+clip a re-wording replaces stays on disk as the entry's `superseded` until a
+prune, so a prune can reach it without scanning a directory.
+
 **Depends on.** `synth.record` — one way, never the reverse.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterator, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from studyforge.corpus.placement import AUDIO_DIRNAME, Profile
@@ -29,7 +34,15 @@ from studyforge.describe import describe
 from studyforge.narrate.client import NarrateClient, place
 from studyforge.narrate.speakable.naming import clip_name
 from studyforge.narrate.speakable.records import SpeechUnit
-from studyforge.narrate.synth.record import Clip, Conditions, State, read_state, write_state
+from studyforge.narrate.synth.location import Superseded, located, order, root_of, where_of
+from studyforge.narrate.synth.record import (
+    Clip,
+    Conditions,
+    State,
+    StateError,
+    read_state,
+    write_state,
+)
 
 #: ⚠️ The service caps a request body at 4 MiB and this client does not split
 #: for you (`NS-05`). Counted in characters of speech, well under that cap once
@@ -171,8 +184,9 @@ def synthesise(
     """
     file = Path(state)
     known = read_state(file)
-    decided = plan(units, into=into, state=known, conditions=conditions)
-    recorded = dict(known.clips)
+    root, here = _placing(file, into)
+    recorded = _settled(dict(known.clips), units, root=root, into=Path(into), here=here)
+    decided = plan(units, into=into, state=State(recorded, known.present), conditions=conditions)
     written: list[Path] = []
     failed: list[tuple[str, str]] = []
     retryable: list[str] = []
@@ -191,6 +205,8 @@ def synthesise(
                     conditions=conditions.fingerprint,
                     engine=artifact.engine,
                     engine_model=artifact.engine_model,
+                    where=here,
+                    superseded=_carried(recorded.get(artifact.speech_id), artifact.filename, here),
                 )
                 if artifact.filename != wanted.get(artifact.speech_id):
                     unsettled.append(artifact.speech_id)
@@ -207,3 +223,57 @@ def synthesise(
         unsettled=tuple(unsettled),
         recorded=changed,
     )
+
+
+def _placing(file: Path, into: Path | str) -> tuple[Path, str]:
+    """Return the corpus root and `into` as the record spells it, refusing before any request.
+
+    ⛔ A directory the record cannot spell relative to its root is a clip nobody
+    could locate from the record, so it is refused rather than written (`W226`).
+    """
+    try:
+        root = root_of(file)
+        return root, where_of(into, root)
+    except ValueError:
+        raise StateError(
+            "the audio directory is not under the corpus root this record belongs to, "
+            "so its clips could not be located from the record; nothing was requested"
+        ) from None
+
+
+def _settled(
+    clips: dict[str, Clip], units: Sequence[SpeechUnit], *, root: Path, into: Path, here: str
+) -> dict[str, Clip]:
+    """Give each of these units' entries the directory its clip is actually in.
+
+    ⭐ A version-1 entry has none, and one of a unit whose directory moved has
+    the old one. ⛔ Only a clip found on disk in `into` moves an entry; one found
+    nowhere keeps what it had, so nothing is dropped and nothing is guessed. An
+    old copy still at the old directory becomes superseded rather than unnamed.
+    """
+    for unit in units:
+        clip = clips.get(unit.id) if isinstance(unit, SpeechUnit) else None
+        if clip is None or clip.where == here or not (into / clip.filename).is_file():
+            continue
+        superseded = set(clip.superseded)
+        old = located(root, clip.where, clip.filename)
+        if old is not None and old.is_file():
+            superseded.add(Superseded(clip.filename, clip.where))
+        clips[unit.id] = replace(clip, where=here, superseded=tuple(sorted(superseded, key=order)))
+    return clips
+
+
+def _carried(previous: Clip | None, filename: str, here: str) -> tuple[Superseded, ...]:
+    """Return what an entry supersedes once `filename` in `here` replaces `previous`.
+
+    ⛔ The replaced clip is named, never deleted (answer 2). ⭐ A clip written
+    again at a superseded name and directory is current, so it leaves the list.
+    """
+    if previous is None:
+        return ()
+    kept = set(previous.superseded)
+    moved = previous.filename != filename or (previous.where is not None and previous.where != here)
+    if moved:
+        kept.add(Superseded(previous.filename, previous.where))
+    kept.discard(Superseded(filename, here))
+    return tuple(sorted(kept, key=order))

@@ -51,7 +51,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.cli.narrate.disclosure import Walk, dead_entries
+from studyforge.cli.narrate.disclosure import Walk, dead_entries, superseded_clips
 from studyforge.corpus.placement import Profile
 from studyforge.generate.declarations import UnitSource, read_corpus
 from studyforge.narrate.client import Health, NarrateClient, NarrationError
@@ -83,6 +83,8 @@ class Narrated:
     dead: tuple[str, ...] = ()
     #: Declared units the walk had no material for — ⛔ non-empty means partial.
     unwalked: tuple[str, ...] = ()
+    #: ⭐ `W226`: clips the record names as superseded, counted when the run returns.
+    superseded: tuple[tuple[str, object], ...] = ()
 
     @property
     def written(self) -> tuple[Path, ...]:
@@ -163,12 +165,22 @@ def narrate_corpus(
     """
     work, walk = survey(root)
     record = state_file(root)
-    disclosed = {"dead": dead_entries(read_state(record), walk), "unwalked": walk.unwalked}
+
+    def disclosed() -> dict:
+        """Read the disclosure off the record as it stands when the run returns."""
+        state = read_state(record)
+        return {
+            "dead": dead_entries(state, walk),
+            "unwalked": walk.unwalked,
+            "superseded": superseded_clips(state),
+        }
+
+    disclosed()
     # ⛔ An unstated voice or format is refused here, before the probe is sent.
     Conditions(voice, fmt)
     health = client.probe()
     if not health.reachable:
-        return Narrated(health=health, **disclosed)
+        return Narrated(health=health, **disclosed())
     conditions = Conditions.of(health, voice=voice, fmt=fmt)
     done: list[tuple[str, Synthesis]] = []
     for unit in work:
@@ -181,6 +193,6 @@ def narrate_corpus(
         except StateError:
             raise
         except NarrationError as failure:
-            return Narrated(health=health, units=tuple(done), stopped=str(failure), **disclosed)
+            return Narrated(health=health, units=tuple(done), stopped=str(failure), **disclosed())
         done.append((unit.key, synthesis))
-    return Narrated(health=health, units=tuple(done), **disclosed)
+    return Narrated(health=health, units=tuple(done), **disclosed())

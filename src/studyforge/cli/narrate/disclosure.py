@@ -35,7 +35,7 @@ from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from studyforge.narrate.synth import State
+from studyforge.narrate.synth import State, Superseded
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,3 +60,16 @@ class Walk:
 def dead_entries(state: State, walk: Walk) -> tuple[str, ...]:
     """Return the record's speech ids that `walk` did not produce, sorted (R10)."""
     return tuple(sorted(key for key in state.clips if key not in walk.produced))
+
+
+def superseded_clips(state: State) -> tuple[tuple[str, Superseded], ...]:
+    """Return every clip an entry names as superseded, sorted (R10).
+
+    ⭐ `W226`: a re-wording keeps its old clip on disk until a prune, and this
+    is the count that says so — read off the record, never off the disk.
+    """
+    return tuple(
+        (speech_id, item)
+        for speech_id, clip in sorted(state.clips.items())
+        for item in clip.superseded
+    )

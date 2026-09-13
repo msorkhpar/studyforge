@@ -70,3 +70,26 @@ def plant_dead_entry(
     if clip:
         where.write_bytes(PLANTED)
     return dead_id, where
+
+
+#: The depth1 lesson and the words `reword` changes in it (`W226`).
+LESSON = "archive/depth-one/raw/prose/unit-01/lesson-1.json"
+WORDS = ("one breath", "a single breath")
+
+
+def reword(root: Path) -> None:
+    """Re-word one fixture paragraph in place, the way an author edits a lesson."""
+    lesson = root / LESSON
+    text = lesson.read_text(encoding="utf-8")
+    assert WORDS[0] in text, "the fixture paragraph moved; this re-wording would change nothing"
+    lesson.write_text(text.replace(*WORDS), encoding="utf-8")
+
+
+def unlocate(root: Path) -> None:
+    """Rewrite the record as a version-1 writer left it: no directories, nothing superseded."""
+    document = record_of(root)
+    document["narration_api"] = 1
+    for entry in document["clips"].values():
+        entry.pop("where", None)
+        entry.pop("superseded", None)
+    write_record(root, document)

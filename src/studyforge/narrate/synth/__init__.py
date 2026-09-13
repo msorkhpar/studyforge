@@ -75,7 +75,8 @@ than a trim — the same answer `narrate/speakable/` reached one row earlier, in
 this same package, for the same reason.
 
 ⚠️ The dependency runs one way: `incremental` imports `record`, never the
-reverse. The contract must be readable by something that is not the pass — a
+reverse, and both import `location` (`W226`), which imports neither. The
+contract must be readable by something that is not the pass — a
 report, a coverage tracker, a person — without dragging a client in.
 
 ## ⛔ ONE UNIT'S FAILURE DOES NOT COST ANOTHER ITS CLIP
@@ -101,18 +102,21 @@ from studyforge.narrate.synth.incremental import (
     synthesise,
     wanted_name,
 )
+from studyforge.narrate.synth.location import Superseded, located, root_of, where_of
 from studyforge.narrate.synth.record import (
     CLIP_KEYS,
     KNOWN_NARRATION_API,
     NARRATION_API,
     NARRATION_STATE_FILENAME,
     STATE_KEYS,
+    SUPERSEDED_KEY,
     WRITING_SUFFIX,
     Clip,
     Conditions,
     State,
     StateError,
     forget,
+    forget_superseded,
     read_state,
     render_state,
     state_file,
@@ -131,23 +135,29 @@ __all__ = [
     "NARRATION_STATE_FILENAME",
     "NO_RECORD",
     "STATE_KEYS",
+    "SUPERSEDED_KEY",
     "WORDS_MOVED",
     "WRITING_SUFFIX",
     "Clip",
     "Conditions",
     "Plan",
     "State",
+    "Superseded",
     "StateError",
     "Synthesis",
     "audio_dir",
     "batches",
     "forget",
+    "forget_superseded",
+    "located",
     "plan",
     "read_state",
     "render_state",
+    "root_of",
     "state_file",
     "synthesise",
     "the_one_file",
     "wanted_name",
+    "where_of",
     "write_state",
 ]

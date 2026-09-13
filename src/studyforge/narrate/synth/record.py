@@ -19,6 +19,14 @@ in the corpus** — hours, a service, and no message — so R9's refusal is spen
 **stopping**. That is the whole difference between derived state and a record of
 what happened.
 
+## ⛔ VERSION 2 LOCATES EVERY CLIP IT WROTE (`W226`)
+
+⭐ An entry records `where`, the directory its clip was written into relative to
+the corpus root, and `superseded`, every clip an earlier wording or directory
+wrote that no prune has removed yet. ⛔ **A version-1 record still reads**: its
+entries carry no directory until a run finds their clip, and an entry nobody
+can place stays in the record and is held by name, never dropped.
+
 ## ⛔ NOTHING HERE KNOWS WHERE A CORPUS KEEPS ITS AUDIO
 
 `state_file(root)` composes the record's own name against the placement
@@ -30,7 +38,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
@@ -38,14 +46,16 @@ from studyforge.corpus.placement import GENERATED_ROOT
 from studyforge.describe import describe
 from studyforge.narrate.client import Health, NarrationError
 from studyforge.narrate.speakable.naming import digest_of
+from studyforge.narrate.synth.location import Superseded, checked_where, order
 from studyforge.version import check
 
 ENCODING = "utf-8"
 
 #: R9's key for this contract. ⭐ Minted by `SF-17` (Ruling 351) and registered
 #: in `version.CONTRACT_FIELDS` in the same commit, per that tuple's convention.
-NARRATION_API = 1
-KNOWN_NARRATION_API = frozenset({NARRATION_API})
+NARRATION_API = 2
+#: ⛔ Version 1 still reads (`W226`): its entries are merely unlocated.
+KNOWN_NARRATION_API = frozenset({1, NARRATION_API})
 
 #: The record's own name. ⚠️ Its **directory** is the placement policy's
 #: `GENERATED_ROOT` and is never spelled here — one authority on layout (R4).
@@ -53,7 +63,10 @@ NARRATION_STATE_FILENAME = "narration.json"
 
 #: Fixed rather than sorted, so an unchanged corpus renders identical bytes (R10).
 STATE_KEYS = ("narration_api", "conditions", "clips")
-CLIP_KEYS = ("filename", "conditions", "engine", "engine_model")
+CLIP_KEYS = ("filename", "where", "conditions", "engine", "engine_model")
+
+#: Written after `CLIP_KEYS`, and only when an entry has superseded a clip.
+SUPERSEDED_KEY = "superseded"
 
 #: Appended while the record is being written. A torn `*.writing` file reads as
 #: absent; a record half-overwritten in place reads as *present and wrong*.
@@ -131,16 +144,26 @@ class Clip:
     conditions: str
     engine: str = ""
     engine_model: str = ""
+    #: The directory the clip was written into, relative to the corpus root.
+    where: str | None = None
+    #: Clips this entry wrote before, still on disk until a prune (`W226`).
+    superseded: tuple[Superseded, ...] = ()
 
     def document(self) -> dict[str, object]:
-        """Return this clip's entry, in `CLIP_KEYS` order."""
+        """Return this clip's entry, in `CLIP_KEYS` order, `superseded` only when it has any."""
         written = {
             "filename": self.filename,
+            "where": self.where,
             "conditions": self.conditions,
             "engine": self.engine,
             "engine_model": self.engine_model,
         }
-        return {key: written[key] for key in CLIP_KEYS}
+        document = {key: written[key] for key in CLIP_KEYS}
+        if self.superseded:
+            document[SUPERSEDED_KEY] = [
+                item.document() for item in sorted(self.superseded, key=order)
+            ]
+        return document
 
 
 @dataclass(frozen=True, slots=True)
@@ -222,8 +245,32 @@ def _clips_of(entries: object, where: str) -> dict[str, Clip]:
             conditions=fingerprint,
             engine=str(entry.get("engine", "")),
             engine_model=str(entry.get("engine_model", "")),
+            where=_directory_of(entry.get("where"), where),
+            superseded=_superseded_of(entry.get(SUPERSEDED_KEY, []), where),
         )
     return clips
+
+
+def _directory_of(value: object, where: str) -> str | None:
+    """Return a recorded directory, or refuse one that leaves the root — quoting nothing (R7)."""
+    if value is None:
+        return None
+    checked = checked_where(value)
+    if checked is None:
+        raise StateError(f"{where} records a clip directory that is not under the corpus root")
+    return checked
+
+
+def _superseded_of(value: object, where: str) -> tuple[Superseded, ...]:
+    """Return an entry's superseded clips, refusing a shape this build cannot locate."""
+    if not isinstance(value, list):
+        raise StateError(f"{where} records superseded clips that are {describe(value)}, not a list")
+    found: list[Superseded] = []
+    for item in value:
+        if not isinstance(item, dict) or not isinstance(item.get("filename"), str):
+            raise StateError(f"{where} records a superseded clip with no filename")
+        found.append(Superseded(item["filename"], _directory_of(item.get("where"), where)))
+    return tuple(sorted(set(found), key=order))
 
 
 def render_state(clips: Mapping[str, Clip], conditions: Conditions) -> str:
@@ -264,6 +311,35 @@ def forget(path: Path | str, speech_ids: Iterable[str]) -> tuple[str, ...]:
         return ()
     payload = json.loads(file.read_text(encoding=ENCODING))
     kept = {key: clip for key, clip in known.clips.items() if key not in removed}
+    write_state(file, kept, _conditions_of(payload.get("conditions")))
+    return removed
+
+
+def forget_superseded(
+    path: Path | str, cleared: Iterable[tuple[str, Superseded]]
+) -> tuple[tuple[str, Superseded], ...]:
+    """Remove the named superseded clips from their entries; return those removed.
+
+    ⛔ **`W226`'s removal, as small as `forget`**: it deletes no file and decides
+    nothing — the prune decides. ⭐ Here so the record keeps ONE writer. A clip
+    the record does not name is passed over, and nothing removed writes nothing.
+    """
+    file = the_one_file(path)
+    known = read_state(file)
+    named = {
+        (speech_id, item) for speech_id, clip in known.clips.items() for item in clip.superseded
+    }
+    removed = tuple(sorted(set(cleared) & named, key=lambda pair: (pair[0], order(pair[1]))))
+    if not removed:
+        return ()
+    payload = json.loads(file.read_text(encoding=ENCODING))
+    kept = {
+        speech_id: replace(
+            clip,
+            superseded=tuple(item for item in clip.superseded if (speech_id, item) not in removed),
+        )
+        for speech_id, clip in known.clips.items()
+    }
     write_state(file, kept, _conditions_of(payload.get("conditions")))
     return removed
 

@@ -49,6 +49,12 @@ UNSETTLED = "the service answered in another format; this unit will be asked for
 #: line is a disclosure that did not run rather than a corpus with none.
 DEAD = "record entries name a speech id this corpus did not produce; --prune deletes their clips"
 
+#: ⭐ `W226`: printed on every run, zero included, beside the dead count.
+SUPERSEDED = (
+    "clips an earlier wording or directory wrote are still named by the record; "
+    "--prune deletes them"
+)
+
 #: What a walk that missed declared units says, on either request.
 PARTIAL = (
     "declared units have no material, so this walk is partial and a prune refuses "
@@ -94,6 +100,7 @@ def lines(narrated: Narrated, root: str) -> list[str]:
 def _disclosure(narrated: Narrated) -> list[str]:
     """Return the dead-entry count and the units a partial walk missed — named, never paths."""
     out = [f"dead record  {len(narrated.dead)} {DEAD}"]
+    out.append(f"superseded clips  {len(narrated.superseded)} {SUPERSEDED}")
     if narrated.unwalked:
         out.append(f"partial walk  {PARTIAL}: {', '.join(narrated.unwalked)}")
     return out
@@ -113,6 +120,7 @@ def prune_lines(pruned: Pruned, root: str) -> list[str]:
     base = Path(root)
     out += [f"delete {path}" for path in sorted(_relative(item, base) for item in pruned.deleted)]
     out += [f"forget {speech_id}" for speech_id in pruned.forgotten]
+    out += [f"forget {speech_id}  superseded {item.filename}" for speech_id, item in pruned.cleared]
     out += [f"held {speech_id}  {why}" for speech_id, why in pruned.held]
     out.append(
         f"pruned {root}  {len(pruned.deleted)} clip(s) deleted, "

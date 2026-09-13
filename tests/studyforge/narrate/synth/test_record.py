@@ -16,6 +16,7 @@ from studyforge.corpus.placement.profile import GENERATED_ROOT
 from studyforge.narrate.client import Health, NarrationError
 from studyforge.narrate.speakable.naming import digest_of
 from studyforge.narrate.synth import record as record_module
+from studyforge.narrate.synth.location import Superseded
 from studyforge.narrate.synth.record import (
     NARRATION_API,
     NARRATION_STATE_FILENAME,
@@ -23,6 +24,7 @@ from studyforge.narrate.synth.record import (
     Conditions,
     StateError,
     forget,
+    forget_superseded,
     read_state,
     render_state,
     state_file,
@@ -68,7 +70,7 @@ def test_an_absent_record_is_a_state_and_not_a_failure(tmp_path):
         # Without it they passed on the clips check instead and a plant that
         # accepted every version left them green.
         pytest.param('{"narration_api": true, "clips": {}}', id="a-bool-is-not-a-version"),
-        pytest.param('{"narration_api": 2, "clips": {}}', id="a-version-this-build-cannot-speak"),
+        pytest.param('{"narration_api": 3, "clips": {}}', id="a-version-this-build-cannot-speak"),
         pytest.param(
             '{"narration_api": 1, "clips": {"u1": {"filename": "u1-a.mp3"}}}',
             id="a-clip-with-no-conditions",
@@ -87,7 +89,7 @@ def test_a_record_this_build_cannot_read_raises_rather_than_guessing(tmp_path, w
 def test_the_refusal_is_in_the_narration_family_and_names_the_file(tmp_path):
     path = state_file(tmp_path)
     path.parent.mkdir(parents=True)
-    path.write_text('{"narration_api": 2, "clips": {}}', encoding="utf-8")
+    path.write_text('{"narration_api": 3, "clips": {}}', encoding="utf-8")
     with pytest.raises(NarrationError) as refusal:
         read_state(path)
     assert NARRATION_STATE_FILENAME in str(refusal.value)
@@ -118,7 +120,13 @@ def test_the_record_carries_no_clock_and_exactly_the_fields_the_office_chose():
     assert list(document) == ["narration_api", "conditions", "clips"]
     assert document["narration_api"] == NARRATION_API
     assert list(document["conditions"]) == ["voice", "format", "provides", "chunk_chars"]
-    assert list(document["clips"]["u1"]) == ["filename", "conditions", "engine", "engine_model"]
+    assert list(document["clips"]["u1"]) == [
+        "filename",
+        "where",
+        "conditions",
+        "engine",
+        "engine_model",
+    ]
 
 
 def test_the_clips_are_ordered_by_id_so_two_runs_agree():
@@ -277,3 +285,70 @@ def test_forget_refuses_a_record_whose_conditions_it_cannot_carry_over(tmp_path,
 def test_forget_refuses_any_file_but_the_one_record(tmp_path):
     with pytest.raises(StateError):
         forget(tmp_path / "alpha", ["u1"])
+
+
+# --------------------------------------------------------------------------
+# ⛔ W226: version 2 locates every clip, and version 1 still reads
+# --------------------------------------------------------------------------
+
+
+def _written(tmp_path, document) -> Path:
+    path = state_file(tmp_path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(document), encoding="utf-8")
+    return path
+
+
+def test_a_version_1_record_still_reads_and_its_entries_are_unlocated(tmp_path):
+    # ⛔ The MUST-NOT: an existing record reads rather than being refused or dropped.
+    entry = {"filename": "u1-aaaaaaaa.mp3", "conditions": conditions().fingerprint}
+    path = _written(tmp_path, {"narration_api": 1, "clips": {"u1": entry}})
+
+    clip = read_state(path).clips["u1"]
+
+    assert (clip.filename, clip.where, clip.superseded) == ("u1-aaaaaaaa.mp3", None, ())
+
+
+@pytest.mark.parametrize("where", ["/abs/audio", "../audio", "a/../../b"])
+@pytest.mark.parametrize("place", ["entry", "superseded"])
+def test_a_recorded_directory_outside_the_root_is_refused_and_not_quoted(tmp_path, where, place):
+    entry = {"filename": "u1-aaaaaaaa.mp3", "where": "audio", "conditions": "f"}
+    if place == "entry":
+        entry["where"] = where
+    else:
+        entry["superseded"] = [{"filename": "u1-bbbbbbbb.mp3", "where": where}]
+    path = _written(tmp_path, {"narration_api": 2, "clips": {"u1": entry}})
+
+    with pytest.raises(StateError) as refused:
+        read_state(path)
+
+    assert where not in str(refused.value)
+
+
+def test_a_superseded_clip_round_trips_and_is_written_only_when_there_is_one(tmp_path):
+    fingerprint = conditions().fingerprint
+    old = Superseded("u1-aaaaaaaa.mp3", "audio")
+    clip = Clip("u1-bbbbbbbb.mp3", fingerprint, where="audio", superseded=(old,))
+    path = state_file(tmp_path)
+
+    write_state(path, {"u1": clip}, conditions())
+
+    assert read_state(path).clips["u1"] == clip
+    assert "superseded" not in json.loads(render_state(one_clip(), conditions()))["clips"]["u1"]
+    assert list(json.loads(render_state({"u1": clip}, conditions()))["clips"]["u1"])[-1] == (
+        "superseded"
+    )
+
+
+def test_forget_superseded_removes_only_the_named_clip_and_otherwise_writes_nothing(tmp_path):
+    fingerprint = conditions().fingerprint
+    first, second = Superseded("u1-aaaaaaaa.mp3", "audio"), Superseded("u1-cccccccc.mp3", "audio")
+    clip = Clip("u1-bbbbbbbb.mp3", fingerprint, where="audio", superseded=(first, second))
+    path = state_file(tmp_path)
+    write_state(path, {"u1": clip}, conditions())
+
+    assert forget_superseded(path, [("u1", first), ("u9", first)]) == (("u1", first),)
+    assert read_state(path).clips["u1"].superseded == (second,)
+    before = path.read_bytes()
+    assert forget_superseded(path, [("u1", first)]) == ()
+    assert path.read_bytes() == before
