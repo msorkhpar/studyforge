@@ -17,7 +17,7 @@ import pytest
 from studyforge.progress import lock as lock_module
 from studyforge.progress.errors import ProgressError
 from studyforge.progress.lock import LOCK_FILENAME, exclusive, supported
-from tests.support import repository_root
+from tests.support import ProcessOutput, repository_root
 
 #: Long enough for a child to start and take an unheld lock many times over.
 BLOCKED_FOR = 1.0
@@ -45,17 +45,19 @@ def test_a_second_process_waits_until_the_lock_is_released(tmp_path):
     with exclusive(path):
         child = subprocess.Popen(
             [sys.executable, "-c", CHILD, str(path)],
-            stdout=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
-            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             env=child_environment(),
         )
-        assert child.stdout.readline().strip() == "ready"
+        # ⛔ One reader, from launch to exit (`W237`): a line handed out here is still in `rest`.
+        output = ProcessOutput(child)
+        assert output.line(timeout=30) == "ready\n"
         with pytest.raises(subprocess.TimeoutExpired):
             child.wait(timeout=BLOCKED_FOR)
-    out, _ = child.communicate(timeout=30)
-    assert child.returncode == 0
-    assert out.strip() == "held"
+    stdout, stderr = output.rest(timeout=30)
+    assert child.wait(timeout=30) == 0, stderr[-400:]
+    assert stdout.splitlines() == ["ready", "held"], stderr[-400:]
 
 
 def test_a_second_thread_waits_too(tmp_path):

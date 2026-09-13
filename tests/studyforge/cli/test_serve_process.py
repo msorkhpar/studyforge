@@ -30,22 +30,13 @@ from studyforge.cli.serve import STOPPED
 from studyforge.generate.declarations import read_corpus
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
-from tests.studyforge.cli.serving import NAMES, build, pages_of
+from tests.studyforge.cli.serving import LISTENING, NAMES, Address, build, pages_of
 from tests.studyforge.serve.built import source_of
 from tests.studyforge.serve.serving import fetch
-from tests.support import ProcessOutput, repository_root
-
-LISTENING = re.compile(r"^serve http://127\.0\.0\.1:(\d+)/")
+from tests.support import ProcessOutput, repository_root, tracked_files
 
 #: One line of the verb's request log: the method, the path and the status.
 REQUEST = re.compile(r'^127\.0\.0\.1 "(\w+) (\S+) HTTP/1\.1" (\d{3}) ', re.M)
-
-
-class Address:
-    """What `fetch` reads off a server, for a server that lives in another process."""
-
-    def __init__(self, port: int) -> None:
-        self.server_address = ("127.0.0.1", port)
 
 
 @dataclass
@@ -135,17 +126,63 @@ def test_a_terminate_signal_stops_it_cleanly_too(tmp_path):
     assert "Traceback" not in stdout + stderr
 
 
+#: Every test that reads a running child's output (`W237`). `None` holds the whole module;
+#: names hold only those tests, because a neighbour shows a THREAD blocked with an `Event`.
+READERS = {
+    "tests/studyforge/cli/test_serve_process.py": None,
+    "tests/studyforge/skills/buildserve/test_main.py": None,
+    "tests/studyforge/progress/test_lock.py": (
+        "test_a_second_process_waits_until_the_lock_is_released",
+    ),
+    "tests/studyforge/progress/test_store.py": (
+        "test_a_second_process_writing_during_an_update_loses_nothing",
+    ),
+}
+
+#: A wait on a clock, each spelling `W233/5` and `W237` name, and the second reader.
+AROUND_THE_READER = frozenset({"sleep", "monotonic", "perf_counter", "Event", "communicate"})
+
+#: The one home of the listening line and the address (`W237`): a copy keeps passing alone.
+HOME = "tests/studyforge/cli/serving.py"
+DEFINED = re.compile(r"^(?:LISTENING\b|class Address\b)", re.M)
+
+
+def called(node: ast.AST) -> set[str]:
+    """The name of every call under `node`, as its last dotted part."""
+    calls = [each.func for each in ast.walk(node) if isinstance(each, ast.Call)]
+    return {getattr(func, "attr", getattr(func, "id", "")) for func in calls}
+
+
+def scopes() -> dict[str, ast.AST]:
+    """Each module or named test in `READERS`, parsed; a named test that is absent fails."""
+    found = {}
+    for relative, names in READERS.items():
+        tree = ast.parse((repository_root() / relative).read_text(encoding="utf-8"))
+        tests = {node.name: node for node in tree.body if isinstance(node, ast.FunctionDef)}
+        for name in names or [None]:
+            assert name is None or name in tests, f"{relative} has no {name}; nothing was read"
+            found[relative if name is None else f"{relative}::{name}"] = tests.get(name, tree)
+    return found
+
+
 def test_the_reader_waits_on_the_stream_and_never_on_a_clock():
     # ⛔ `W233`: a sleep standing in for the read passes whenever the machine is fast.
-    sources = {
-        "the reader": inspect.getsource(ProcessOutput),
-        "this module": inspect.getsource(sys.modules[__name__]),
-    }
-    for where, source in sources.items():
-        calls = [node.func for node in ast.walk(ast.parse(source)) if isinstance(node, ast.Call)]
-        assert calls, f"{where} parsed to no calls, so the check read nothing"
-        named = [getattr(func, "attr", getattr(func, "id", "")) for func in calls]
-        assert "sleep" not in named, f"{where} sleeps"
+    assert "sleep" not in called(ast.parse(inspect.getsource(ProcessOutput))), "the reader sleeps"
+    found = scopes()
+    assert len(found) == 4, f"the population is {sorted(found)}, not the four `W237` names"
+    for where, node in found.items():
+        named = called(node)
+        assert named, f"{where} parsed to no calls, so the check read nothing"
+        assert not named & AROUND_THE_READER, f"{where} calls {sorted(named & AROUND_THE_READER)}"
+        pipes = {each.attr for each in ast.walk(node) if isinstance(each, ast.Attribute)}
+        assert not pipes & {"stdout", "stderr"}, f"{where} touches a pipe around the reader"
+
+
+def test_the_listening_line_and_the_address_have_one_home():
+    modules = tracked_files(("tests/*.py",))
+    root = repository_root()
+    defined = [name for name in modules if DEFINED.search((root / name).read_text("utf-8"))]
+    assert defined == [HOME], f"defined in {defined} of {len(modules)} modules, not only {HOME}"
 
 
 def decoy(tmp_path_factory) -> tuple[socket.socket, str]:
