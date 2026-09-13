@@ -24178,3 +24178,193 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 86
 
 ⭐ **Merged at `2939022`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2939022` is RECEIVED.** ⭐ **The narration record names each clip's directory, and `--prune` reaches a removed unit's entry and a superseded clip.** ⚠️ **Its findings were disposed in round 85's § 3.**
+
+## PO round 87 — `W263`, `W267`, `W271`, `W274`, `W275` and `W273` closed
+
+⭐ **Cut at `92b57fd`, release after round 86's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W263`](#w263-validate-and-checkblocks-never-read-a-list-items-shape-so-a-malformed-item-passes-both) | `7400be3` | none owed: no live document cites its row file |
+| [`W267`](#w267-plan-says-create-for-output-already-on-disk-and-lists-a-sitejson-that-build-never-writes) | `3d41ba8` | none owed: no live document cites its row file |
+| [`W271`](#w271-the-generated-testemit-leaves-out-git-at-any-depth-so-it-reads-clean-where-validate-refuses-nested-repository) | `1aa2af0` | none owed: no live document cites its row file |
+| [`W274`](#w274-graphnamed-matches-merge-branch-and-every-recent-merge-subject-is-merge-branch-so-it-names-no-merge) | `c4f47df` | none owed: no live document cites its row file |
+| [`W275`](#w275-creatorspys-milestone-reads-m0-9-with-no-boundary-so-a-malformed-milestone-line-such-as-m1x-reads-as-a-milestone) | `e9ef42e` | none owed: no live document cites its row file |
+| [`W273`](#w273-approachpys-growth-window-reads-cto-wave-closes-only-and-none-has-merged-since-round-72-so-the-window-cannot-move) | `d869f6d` | none owed: no live document cites its row file |
+
+⭐ **All six TERMINAL (Ruling 199). The coordinator's guarded release-tip reading at each merge is RECEIVED GREEN in the pinned image, with `last_pointer` exit `0` at `1aa2af0`, `c4f47df`, `e9ef42e` and `d869f6d`.** ⭐ **Ruling 314: the six moved bodies carried 12 relative pointers, and 12 were re-addressed.** ⭐ **`PO-86/1` is discharged: `W263` closes on `7400be3`'s reading.** ⚠️ **`W273` merged before round 86, which read it handed back; it closes here.** ⚠️ **Each close's findings were disposed in round 85's or round 86's § 3.**
+
+⚠️ **`PO-87/1` — `W283` and `W280` merged at `12e44ee` and `5e71e04` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled as `PO-86/1`: neither closed nor named in flight; each register cell carries its merge.** Reversible.
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W282`](rows/W282.md) | Developer 3 | `fix/W282-validate-block-types-and-fields` @ `wt/dev3` | `7400be3` | `W282`, NAMED, handed back; merges after `W222` |
+| [`W279`](rows/W279.md) | Developer 2 | `fix/W279-vocabulary-defines-and-argues` @ none | `7400be3` | `W279`, NAMED, handed back; merges after this round |
+| [`W284`](rows/W284.md) | Developer 1 | `fix/W284-verdict-subject-form` @ `wt/dev1` | `c4f47df` | `W284`, NAMED, handed back; merges after this round |
+| [`W285`](rows/W285.md) | Developer 2 | `fix/W285-delivery-milestone-shape` @ `wt/dev2` | `e9ef42e` | `W285`, NAMED, handed back; merges after this round |
+| [`W222`](rows/W222.md) | Developer 1 | @ none, handed back | `2939022` | CONFIRMED; merges after `W280` |
+
+⚠️ **`W282`, `W284` and `W285` were relayed `@ none`; `git worktree list` (Ruling 171, primary) reads them held by `wt/dev3`, `wt/dev1` and `wt/dev2`.** ⛔ **`W277` stays HELD by the coordinator.**
+
+### ⭐ 3 — ISO ROUND 14, MERGED AT ISO `16841dc`
+
+⭐ **`workspace.json`'s ISO pin advances from `f3b5239` to `16841dc` (`W244`). `ISO-14` is TAKEN.** ⛔ **`ISO-12`: its clauses hold, and the commit of its generated narration is HELD FOR THE USER. It is not taken, and `ISO-13` and `ISO-15` wait on it.** Read from ISO `16841dc`'s `questions-for-framework.md` § 19; nothing was written into ISO.
+
+| finding | became |
+|---|---|
+| `INT-14/1` | ⭐ **minted [`W286`](rows/W286.md)**, order 54. Re-measured at `92b57fd`: `pin.framework_of` returns the corpus root's resolved parent joined with `studyforge` |
+| `INT-14/2` | accepted: ISO's own `verify.py`, fixed in ISO |
+| `INT-14/3` | ⭐ **ruled: `W276`'s clause 1 is met.** It disables play *once no passage is playable*, and the page learns a passage is unplayable only when that passage fails, so one press over a unit with passages still untried reads `missing` and stays enabled. A build with no clips states `none` at once. Reversible |
+| `INT-14/4` | ⭐ **minted [`W287`](rows/W287.md)**, order 54. Re-measured at `92b57fd`: `cli/plan/report.py` line 58 prints *"none is measurable until SF-32 (M3) generates media"*, and `M3` closed at `1ede082` |
+
+### ⭐ 4 — MINTS AND FINDINGS
+
+| finding | became |
+|---|---|
+| `W226/2` | ⭐ **minted [`W288`](rows/W288.md)**, order 54, now that `W267` has closed. Re-measured at `92b57fd`: `cli/plan/derive.py` `_recorded` reads each entry's `filename` and never its `where` |
+| `W282/1` | ⭐ **minted [`W289`](rows/W289.md)**, order 54. Re-measured at `92b57fd`: `archive/blocks.py` `counts_of` calls `.get` on every block |
+| `W222/2` | ⭐ **minted [`W290`](rows/W290.md)**, order 54. Re-measured on `8517cf3`: `unit_location(` is called in `cli/narrate/stage.py`, `generate/clips.py`, `generate/units.py` and `generate/containers.py` |
+| `W285/1` | accepted: the row's surface named the split, made before any addition |
+| `W285/2` | ⭐ **minted [`W291`](rows/W291.md)**, order 54. Re-measured at `92b57fd`: `board/delivery.py` lines 92 and 98 each type the capability-id shape |
+| `W283/1` | accepted, cost named: the test never writes, so it stays GREEN; a write from it would now be refused by name |
+| `W283/2` | accepted: classification is unchanged, only the carried reason |
+| `W283/3` | accepted: the row's clauses name `not_material` alone |
+| `W280/1`, `W222/3` | disposed with the diff: taken outside the surface, disclosed |
+| `W280/2` | accepted, `W204`'s family: a stale path in a docstring |
+| `W280/3` | accepted, cost named: the guard reads imports, and no caller reaches a submodule as an attribute today |
+| `W222/1` | accepted: the unused argument keeps `generate.clips`' call shape |
+| `W222/4` | accepted, `W224/3`'s family: the labelled unit's directory is the page's |
+| `W279/1` | accepted: outside the row's clauses |
+| `W282/2` | accepted: a different document kind |
+| `W282/3` | accepted: R7 |
+| `W284/1` | accepted, cost named: the end-of-subject arm has no named definition to follow |
+| `W284/2` | accepted: a historical literal, not a template |
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause; the coordinator's hold on `W277`; the commit of `ISO-12`'s generated narration, held at ISO `a5cd5f7`, on which `ISO-13` and `ISO-15` wait.
+
+### W263 — `validate` and `check_blocks` never read a list item's shape, so a malformed item passes both
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W263.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W258/1`: neither `studyforge validate` nor `tests/fixture_checks.check_blocks` reads a list item's shape.** ⭐ **RECEIVED from [`W258`](#w258-archivemarkdown-keeps-a-nested-list-line-as-literal-text-inside-its-parent-item)'s close at `bce08dd`:** an item that is neither a string nor an array of strings and `list` blocks passes both. ⭐ Spec §6 now says what an item may be, and the adapter's definition of done (R2) does not check it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`validate` refuses by name a `list` item that is not a string or an array of strings and whole `list` blocks**, at any depth, exit `1`.
+2. ⭐ **Every item §6 admits still reads clean**, and the test harness's fixture check agrees with `validate` through one reader, never a second copy.
+3. ⛔ **Asserted both ways (R12)**, with the shape check planted away to RED.
+
+⭐ **Surface:** `src/studyforge/validate/`'s block checks, `tests/fixture_checks.py`, and their tests. ⭐ **Jumps nobody: an adapter emitting through `archive.markdown` writes the admitted shapes.**
+
+[the mint](#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)
+
+⭐ **Rider, PO round 83 — `W264/2`, `/4`:** `tests/fixture_checks/shape.py` `check_blocks` compares a block's keys to its fields exactly, so a `list` carrying `W264`'s optional `start` reads as `vocabulary`; accept `BLOCK_OPTIONAL` after the fields. `validate` does not type-check `start` ([the round](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)).
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `7400be3`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `7400be3` is RECEIVED.** ⭐ **A `list` item that is not a string or an array of strings is refused by path at any depth, and the fixture check reads list blocks through the same reader.**
+
+### W267 — `plan` says `create` for output already on disk and lists a `site.json` that `build` never writes
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W267.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-10/5` and `/6`: `plan` says `create` for output already on disk, and lists `.studyforge/site.json`, which `build` never writes.** ⭐ **RE-MEASURED (Ruling 214), role `wt/po`, HOST, framework `19d18e5`, over ISO `6e6dec9`:** `plan` exit `0` prints `create archive/` and `create index.html` with both present; `build` exit `0` writes no `site.json` into the output or the corpus.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A path present on disk is never a `create`:** it is named as replaced or kept.
+2. ⛔ **`plan` lists nothing `build` does not write**, or names the verb that writes it.
+3. ⛔ **Asserted both ways (R12)** over a corpus with committed output and one without.
+
+⭐ **Surface:** `src/studyforge/cli/plan/` and its tests. ⚠️ **Read [`W268`](#w268-build-writes-empty-media-directories-for-a-unit-with-no-media-which-git-cannot-track): `plan` lists the media directories it removes.** ⭐ **Jumps nobody: ISO ruled its intersection a pre-build reading.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+⭐ **Rider, PO round 83 — `W268/1`:** after `W268`, `build` writes only the filled media directories while `plan` still lists all four per unit; the golden test compares `plan` with its golden, never with `build` ([the round](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)).
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `3d41ba8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `3d41ba8` is RECEIVED.** ⭐ **`plan` names a path on disk as replaced or kept, claims a media directory the build makes only when filled, and names the command that writes a path the build never does.**
+
+### W271 — The generated `test_emit` leaves out `.git` at any depth, so it reads clean where `validate` refuses `nested-repository`
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W271.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W259/1`: the generated `test_emit`'s `_left_out` leaves out `.git` at any depth, so `test_emit` reads clean on a corpus `validate` refuses as `nested-repository`.** ⭐ **RE-READ at `19d18e5`:** `skills/adapter/parts/suite.py` removes `REPOSITORY_STORE` in every directory, not only at the corpus root.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The copy leaves out the corpus root's own `.git` only**, as `validate` does since `W259`.
+2. ⛔ **Asserted both ways (R12):** a nested `.git` turns `test_emit` RED by name; the root's own reads clean.
+
+⭐ **Surface:** `src/studyforge/skills/adapter/` and its tests. ⚠️ **One owner with [`W265`](#w265-scaffoldwriteregeneratetrue-refuses-over-an-existing-hand-written-file-that-onboardings-regenerate-keeps-and-sk-02s-skillmd-calls-both-safe), after it.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `1aa2af0`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `1aa2af0` is RECEIVED.** ⭐ **The generated copy leaves out only the corpus root's own directories by `validate`'s rule, so a nested store turns `test_emit` RED by `validate`'s name.**
+
+### W274 — `graph.named` matches `Merge <branch>:`, and every recent merge subject is `Merge <branch> (…):`, so it names no merge
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W274.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W245/4`: `graph.py`'s `MERGE_IDIOM` is the exact prefix `Merge {branch}:`, and this project's merges are written `Merge <branch> (<rows>): <line>`, so `named()`, shape `B`, a printed corroborator, names no recent merge.** ⭐ **RE-MEASURED (Ruling 214) at `f2fd080`, role `wt/po`, HOST:** 0 of the last 40 first-parent merge subjects take the colon form, and 40 take the parenthesised form.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`named()` matches the subject form merges carry**, still exact on the branch: `chore/cto-round3` never reads `…round39`.
+2. ⭐ **The gate stays shape `C` (Ruling 199)**; only the printed corroborator changes.
+3. ⛔ **Asserted both ways (R12)** over both subject forms.
+
+⭐ **Surface:** `tools/quality/board/graph.py` and its test. ⚠️ **`corroborate` prints it: read [`W176`](#w176-corroborates-refuted-line-prints-a-row-count-beside-row-subjects-and-names-neither-unit-so-3-stands-over-four-ids), on the refuted line.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `c4f47df`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c4f47df` is RECEIVED.** ⭐ **`graph.named` names a merge in either subject form and stays exact on the branch; the gate stays shape `C`.**
+
+### W275 — `creators.py`'s `_MILESTONE` reads `M[0-9]` with no boundary, so a malformed milestone line such as `M1x` reads as a milestone
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W275.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W247/1`: `tools/quality/creators.py`'s `_MILESTONE` retypes the milestone shape as `M[0-9]` with no boundary, so an epic task's malformed milestone line reads as a milestone.** ⭐ **RECEIVED from `W247`'s close at `8f59ed9`; RE-MEASURED (Ruling 214) at `e556179`, role `wt/po`, HOST:** `**Milestone** M1x` matches, as do `M1` and `M10`; `Mx` does not.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A milestone line whose id is not a whole `M<digits>` is refused by name**, as `W247` refuses it in `capability.py`.
+2. ⭐ **`M1` and `M10` still read.**
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tools/quality/creators.py` and its test. ⚠️ `src/` cannot export the shape to `tools/`, so the pattern is kept once in `tools/`. ⭐ **Jumps nobody: no epic line reads `M1x` today.**
+
+[the mint](#po-round-82-w247-and-w176-closed)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `e9ef42e`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `e9ef42e` is RECEIVED.** ⭐ **A milestone line whose id is not a whole `M<digits>` is refused by name; `M1`, `M10` and the cancelling dash read as before.**
+
+### W273 — `approach.py`'s growth window reads CTO wave closes only, and none has merged since round 72, so the window cannot move
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W273.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W245/1`: `approach.py`'s `WAVE_CLOSE_OFFICE` is `cto`, so its three-wave growth window ends at the last CTO round merged, and no CTO reviewer exists (a user decision).** ⭐ **RECEIVED from `W245`'s close at `f2fd080`; RE-MEASURED (Ruling 214), role `wt/po`, HOST:** the last `Merge chore/cto-round` on release's first-parent line at `f2fd080` is round 72 (`2912a33`), and 8 PO rounds merged after it. ⛔ **The window cannot move, and nothing says so.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DESIGN DECISION FIRST:** which merge closes a wave once no CTO round does. ⚠️ `W245`'s taker declined it as a population change.
+2. ⛔ **A window whose end has not moved is printed with the ref it ends at**, never read as current.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tools/quality/approach.py` and its test. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `d869f6d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `d869f6d` is RECEIVED.** ⭐ **A wave closes at a `cto` round until `GROWTH_WAVES` register rounds merge after it, then at the register's rounds, and a window whose end has not moved is printed with the close it ends at.**
