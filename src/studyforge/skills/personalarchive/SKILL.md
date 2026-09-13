@@ -37,11 +37,50 @@ exceptions:
 
 ⛔ **The export refuses, and writes nothing, when:**
 - a file name or a text file carries a personal-data shape (R7);
+- for `sharing`, a file that is not text carries text with such a shape (below);
 - the corpus holds a symbolic link.
 
 The personal-data check is the one `studyforge validate` uses. For both kinds, it
 reads every file name and the contents of every UTF-8 file. For an `owner` file, it
-also reads the progress record.
+also reads the progress record. For a `sharing` file, it also judges every file
+that is not UTF-8 text, and a `material judged as bytes <n>` line says how many.
+
+#### ⛔ A file that is not text, in a sharing file
+
+A sharing file leaves your machines, so a leak in it cannot be taken back. Audio,
+images and PDFs carry names and paths in their metadata as a matter of course.
+
+⭐ **Every such file is judged. None is let through because of its name or where it
+sits.** The judgement reads the text the file's bytes carry: every run of at least
+**16** printable characters, read as single bytes and as UTF-16 in both byte
+orders. Each run goes through the same personal-data check as a text file. A shape
+refuses the export **by name**, and the refusal says what to do: remove the file,
+strip what it carries, or export `--for owner`.
+
+Why this shape, and not the other two:
+- **Not a trusted population.** A narration clip is made from checked text, but
+  nothing on disk proves that a file is such a clip. The narration record names
+  each clip and does not hold its bytes' digest, so any file can sit under a
+  clip's name. A clip is judged like every other file.
+- **Not a refusal of every file that is not text.** That refuses every real clip
+  and every image. The run length is why real audio passes: over a GiB of random
+  bytes, runs of 12 characters still misfired on a short tilde fragment or an
+  address-shaped one, and runs of 16 did not. The readings over real clips
+  and images are in `W235`'s handoff.
+
+⚠️ **What the judgement cannot see.** Each is a stated cost, not a promise:
+- a shape inside a run of fewer than 16 characters, such as a short path between
+  two zero bytes;
+- text inside a compressed stream: a PDF's streams, a PNG's compressed text, and
+  any zip-based file such as `.docx`, `.epub` or a wheel;
+- text in any other encoding.
+
+⚠️ **A corpus root holding a virtual environment or build output** (`SK-06/4`) is
+judged file by file. Compiled modules often carry build paths and addresses, so
+such a root is usually refused by name. Move the environment out of the root.
+
+⛔ **An `owner` file is unchanged.** It stays on your own machines, so a file that
+is not text is carried unread, as before.
 
 ### 2. Import
 
@@ -56,7 +95,7 @@ already hold the same corpus (a merge).
 - an unknown archive version;
 - a file whose digest does not match;
 - a path outside the corpus root, or inside `.git` or the progress store;
-- a personal-data shape;
+- a personal-data shape, judged as the export judges it for the archive's kind;
 - a progress record in a `sharing` file;
 - a corpus whose `source` differs from the archive's.
 
