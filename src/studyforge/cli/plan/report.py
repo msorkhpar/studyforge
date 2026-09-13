@@ -163,6 +163,10 @@ class Plan:
     ignore: tuple[str, ...]
     media: MediaProjection | None
     refusals: tuple[Refusal, ...] = ()
+    #: The file inside a generated directory that holds `ignore`, relative to
+    #: the corpus root. ⛔ Never the root ignore file (R3); None when `ignore`
+    #: is empty, which it is whenever media is committed (`W242`).
+    ignore_home: str | None = None
 
     @property
     def paths(self) -> tuple[str, ...]:
@@ -189,7 +193,7 @@ class Plan:
         out += [creation.line() for creation in self.creations]
         for edit in self.edits:
             out += edit_lines(edit)
-        out += [f"ignore {line}" for line in self.ignore]
+        out += [f"ignore {line}  in {self.ignore_home}" for line in self.ignore]
         out += self.media.lines() if self.media is not None else []
         out += [refusal.line() for refusal in self.refusals]
         out.append(self.summary())

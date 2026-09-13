@@ -94,6 +94,9 @@ NOT_MATERIAL_API = 2
 #: including the ones with no media at all.
 OPTIONAL_KEYS = ("media", "permitted_edits")
 
+#: Generated `not_material` entries: one sequence, or sequences keyed by producer.
+Declarations = Sequence[Mapping[str, str]] | Mapping[str, Sequence[Mapping[str, str]]]
+
 
 class PromotionRefused(ValueError):
     """A draft that will not become a manifest, and every reason at once.
@@ -107,14 +110,16 @@ class PromotionRefused(ValueError):
 def promote(
     draft: object,
     *,
-    not_material: Sequence[Mapping[str, str]] = (),
+    not_material: Declarations = (),
     reasons: Mapping[str, str] | None = None,
 ) -> dict:
     """Return the `corpus.json` document this draft becomes.
 
     `not_material` is the generated-file declaration, produced by whatever
-    generated the files — the adapter scaffold and this skill's own artifacts.
-    `reasons` maps an excluded path to why it is withheld.
+    generated the files — the adapter scaffold, this skill's own artifacts and
+    placement's committed output — either as one sequence or keyed by producer,
+    so a collision names both. `reasons` maps an excluded path to why it is
+    withheld.
 
     ⛔ The result is parsed before it is returned, so this function cannot emit
     a manifest the framework would not read back.
@@ -281,24 +286,40 @@ def _exclude_of(drafted: object, reasons: Mapping[str, str]) -> list[dict[str, s
     return entries
 
 
-def _not_material_of(entries: Sequence[Mapping[str, str]]) -> tuple[dict[str, str], ...]:
-    """Merge every producer's globs, keeping the first reason given for each.
+def _not_material_of(entries: Declarations) -> tuple[dict[str, str], ...]:
+    """Merge every producer's globs, refusing a glob two of them declare.
 
-    ⚠️ **Deduplicated on the glob**, because the manifest refuses a repeated one
-    outright — two reasons for one declaration is two audits with no record of
-    which held — and two generators legitimately writing into one directory is
-    an ordinary thing rather than an error.
+    ⛔ **Never resolved by precedence** (`INT06-1/4`, `W242`). The manifest
+    refuses a repeated glob as two audits, and keeping the first reason is
+    choosing one of them — which `_drafted_not_material` already refuses
+    between a draft and a generator. ⭐ Keyed by producer, a refusal names both
+    sides; a flat sequence is one producer and names the two positions. The
+    glob is not quoted: a caller's sequence may carry anything (R7).
     """
+    producers = entries.items() if isinstance(entries, Mapping) else (("not_material", entries),)
     merged: dict[str, str] = {}
-    for entry in entries:
-        glob = entry.get("glob")
-        why = entry.get("why")
-        if not isinstance(glob, str) or not isinstance(why, str):
-            raise PromotionRefused(
-                "every not_material entry is an object with a glob and a why; "
-                "Scaffold.not_material and this skill's own artifacts both produce them"
-            )
-        merged.setdefault(glob, why)
+    owner: dict[str, str] = {}
+    collisions: list[str] = []
+    for producer, declared in producers:
+        for index, entry in enumerate(declared):
+            glob = entry.get("glob")
+            why = entry.get("why")
+            if not isinstance(glob, str) or not isinstance(why, str):
+                raise PromotionRefused(
+                    "every not_material entry is an object with a glob and a why; "
+                    "Scaffold.not_material and this skill's own artifacts both produce them"
+                )
+            side = f"{producer}[{index}]"
+            if glob in owner:
+                collisions.append(f"{owner[glob]} and {side}")
+                continue
+            owner[glob] = side
+            merged[glob] = why
+    if collisions:
+        raise PromotionRefused(
+            f"{len(collisions)} not_material glob(s) are declared twice: {'; '.join(collisions)}. "
+            f"A collision is refused, never resolved by precedence: one producer owns a glob"
+        )
     return tuple({"glob": glob, "why": merged[glob]} for glob in sorted(merged))
 
 

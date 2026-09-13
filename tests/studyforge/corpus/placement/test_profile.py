@@ -19,12 +19,13 @@ from studyforge.corpus.placement import (
     ContainerLocations,
     PlacementError,
     Profile,
+    TreeProfile,
     origin_directory,
     profile_for,
     register,
     registered,
 )
-from tests.support import repository_root
+from tests.support import init_repository, is_ignored, repository_root
 
 ADDRESS = Address.of("basics", "16-streams-api")
 TITLE = "Introduction to the Streams API"
@@ -216,59 +217,90 @@ def test_an_origin_that_escapes_the_source_root_is_refused_without_being_quoted(
     assert "basics/16-streams-api" in str(raised.value)
 
 
-# --- the ignore lines (Ruling 91) -------------------------------------------
+# --- the ignore file and the committed output (Ruling 91, W242) -------------
+
+#: Paths no generated rule may ignore, at the root and below it: pages, the root
+#: index, the bundle, the discovery cache, a JSON document and the archive.
+#: ⛔ ISO-05's clause and §5's reading floor, as data a git answer is asked about.
+NEVER_IGNORED = (
+    "index.html",
+    "a.unit.html",
+    "d/e/a.unit.html",
+    "d/a.section.html",
+    f"{GENERATED_ROOT}/site.json",
+    f"{GENERATED_ROOT}/assets/page.css",
+    f"{GENERATED_ROOT}/d/units/unit-01/a.unit.html",
+    "d/x.json",
+    "archive/d/container.json",
+)
 
 
-def test_every_registered_profile_answers_with_ignore_lines():
+def test_every_registered_profile_answers_each_ignore_question():
     # ⛔ Enumerated over the registry, not over two names: a third profile that
     # placed media somewhere new and inherited a stale glob would report ignore
     # rules that ignore nothing.
     for name in registered():
-        assert profile_for(name).ignore_lines(media=False)
-        assert profile_for(name).media_ignore_lines()
+        profile = profile_for(name)
+        assert profile.media_ignore_lines()
+        assert profile.ignore_home() is None or isinstance(profile.ignore_home(), PurePosixPath)
 
 
-def test_the_base_profile_refuses_to_guess_a_media_glob():
+@pytest.mark.parametrize("question", ["media_ignore_lines", "ignore_home"])
+def test_the_base_profile_refuses_to_guess(question):
     class Bare(Profile):
         name = ""
 
     with pytest.raises(NotImplementedError):
-        Bare().media_ignore_lines()
+        getattr(Bare(), question)()
 
 
-def test_the_shared_lines_are_spelled_from_the_names_module_and_never_retyped():
-    from studyforge.corpus.placement import (
-        CONTAINER_SUFFIX,
-        ROOT_INDEX_FILENAME,
-        SHARED_IGNORE_LINES,
-        SITE_CACHE_FILENAME,
-        UNIT_SUFFIX,
-    )
-
-    assert f"/{ROOT_INDEX_FILENAME}" in SHARED_IGNORE_LINES
-    assert f"*{UNIT_SUFFIX}" in SHARED_IGNORE_LINES
-    assert f"*{CONTAINER_SUFFIX}" in SHARED_IGNORE_LINES
-    assert any(SITE_CACHE_FILENAME in line for line in SHARED_IGNORE_LINES)
+@pytest.mark.parametrize("name", registered())
+def test_with_media_committed_no_profile_ignores_anything(name):
+    # ⛔ W242: pages, the root index, the bundle and the cache are what a clone
+    # reads, so the only generated rules are the media policy's.
+    assert profile_for(name).ignore_lines(media=False) == ()
+    assert profile_for(name).ignore_file(media=False) is None
 
 
-def test_the_archive_is_absent_from_the_shared_lines():
-    # ⛔ It is the ingested record an adapter wrote (R2), and it is the one
-    # thing under the generated root a clone cannot rebuild without. That is
-    # why `/.studyforge/` is not one line.
-    from studyforge.corpus.placement import ARCHIVE_DIRNAME, SHARED_IGNORE_LINES
-
-    assert not [line for line in SHARED_IGNORE_LINES if ARCHIVE_DIRNAME in line]
+def test_an_ignore_home_is_inside_the_generated_root_and_never_the_repository_root():
+    homes = [profile_for(name).ignore_home() for name in registered()]
+    assert [home for home in homes if home is not None], "no profile has a home to check"
+    for home in homes:
+        assert home is None or (len(home.parts) >= 2 and home.parts[0] == GENERATED_ROOT)
 
 
-@pytest.mark.parametrize("name", ["tree", "sibling"])
-def test_media_is_left_out_unless_it_is_asked_for(name):
-    # ⭐ Generated media is committed by default (§5); the caller inverts the
-    # corpus's policy and this never reads a manifest.
-    profile = profile_for(name)
-    media = profile.media_ignore_lines()
-    assert profile.ignore_lines(media=False) == tuple(
-        line for line in profile.ignore_lines(media=True) if line not in media
-    )
+def test_a_profile_answering_the_root_ignore_file_as_its_home_is_refused():
+    # ⛔ R3, structurally: the guard does not trust a profile's own answer.
+    class Rooted(TreeProfile):
+        name = "rooted"
+
+        def ignore_home(self):
+            return PurePosixPath(".gitignore")
+
+    with pytest.raises(PlacementError):
+        Rooted().ignore_file(media=True)
+
+
+def test_sibling_media_that_is_not_committed_has_no_home_and_is_refused():
+    with pytest.raises(PlacementError) as raised:
+        profile_for("sibling").ignore_file(media=True)
+    assert "R3" in str(raised.value)
+
+
+@pytest.mark.parametrize("name", registered())
+def test_no_rule_a_profile_writes_ignores_a_page_json_or_the_archive(name, tmp_path):
+    """ISO-05's clause, asked of git rather than of a reviewer."""
+    wanted = profile_for(name).ignore_file(media=True) if profile_for(name).ignore_home() else None
+    repository = init_repository(tmp_path / name)
+    if wanted is not None:
+        home = repository / wanted.home
+        home.parent.mkdir(parents=True, exist_ok=True)
+        home.write_text(wanted.text(), encoding="utf-8")
+        # ⭐ The control: these rules do ignore something, so a clean answer
+        # below is a measurement rather than an empty file.
+        clip = profile_for(name).unit(ADDRESS, 1, TITLE, origin=ORIGIN).audio / "c.mp3"
+        assert is_ignored(clip.as_posix(), cwd=repository)
+    assert [path for path in NEVER_IGNORED if is_ignored(path, cwd=repository)] == []
 
 
 def test_the_two_shipped_profiles_do_not_ignore_media_the_same_way():

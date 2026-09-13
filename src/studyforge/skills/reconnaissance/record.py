@@ -61,10 +61,11 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterator
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from studyforge.skills.reconnaissance.inventory import Inventory
+from studyforge.skills.reconnaissance.regions import Regions, cut
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
 
 #: A Markdown link to a file: `[title](target)`. ⚠️ Deliberately permissive
@@ -104,6 +105,10 @@ class Entry:
     ordinal: str | None
     line: int
     group: str | None
+    #: The exact heading text opening this unit's region of `target`, or `None`
+    #: for a whole file (Ruling 92). ⚠️ A sectioned entry's `line` is the record
+    #: line of the heading that links `target`.
+    section: str | None = None
 
 
 @dataclass
@@ -117,6 +122,10 @@ class Record:
     groups: list[str]
     forms: dict[str, int]
     title: str = ""
+    #: Linked files proposed as containers of sub-file units (`regions`).
+    containers: list[Regions] = field(default_factory=list)
+    #: Linked files at a label's position NOT proposed as containers, with why.
+    uncut: list[Regions] = field(default_factory=list)
 
     @property
     def order(self) -> list[str]:
@@ -153,23 +162,48 @@ def read(path: Path, root: Path, targets: set[str]) -> Record | None:
     found = list(_entries(lines, here, targets, path.relative_to(root).as_posix()))
     if not found:
         return None
-    entries = found
     # ⛔ Imported here rather than at module scope: `grouping` needs this
     # module's `Entry` and its line patterns, so a top-level import would be a
     # cycle. ⚠️ One lazy import at one call site, stated, beats moving the
     # patterns to a third module nobody would look in.
-    from studyforge.skills.reconnaissance.grouping import forms, grouping
+    from studyforge.skills.reconnaissance.grouping import assign, choose, forms, shape
 
-    groups, labelled = grouping(lines, entries)
+    linked = {e.target: cut(root, e.target) for e in found if HEADING.match(lines[e.line - 1])}
+    labels, kept = choose(lines, found, frozenset(t for t, r in linked.items() if r.cut))
+    heads = {e.line: e for e in found} if labels else {}
+    containers = [heads[number] for number, _ in labels if number in heads]
+    entries = assign(kept, labels)
+    for head in containers:
+        for section in linked[head.target].sections:
+            ordinal, title = _split(section, section)
+            entries.append(Entry(head.target, title, ordinal, head.line, head.title, section))
+    # ⭐ Stable, so each container's regions keep file order at its label's line.
+    entries.sort(key=lambda entry: entry.line)
+    at = shape(lines[labels[0][0] - 1]) if labels else None
+    uncut = [
+        linked[e.target]
+        for e in entries
+        if e.target in linked
+        and not linked[e.target].cut
+        and shape(lines[e.line - 1]) == at
+        and not any(e.line < other.line < _next(labels, e.line) for other in entries)
+    ]
     return Record(
         path=path.relative_to(root),
-        first_line=entries[0].line,
-        last_line=entries[-1].line,
-        entries=labelled,
-        groups=groups,
-        forms=forms(lines, entries),
+        first_line=found[0].line,
+        last_line=found[-1].line,
+        entries=entries,
+        groups=[text for _, text in labels],
+        forms=forms(lines, kept),
         title=_document_title(lines),
+        containers=[linked[head.target] for head in containers],
+        uncut=uncut,
     )
+
+
+def _next(labels, line: int) -> float:
+    """Return the line of the first label below `line`, or infinity."""
+    return next((number for number, _ in labels if number > line), float("inf"))
 
 
 def _document_title(lines) -> str:
@@ -271,7 +305,33 @@ def observe(record: Record | None, inventory: Inventory) -> Iterator[Observation
     yield Observation(
         "entry shapes", ", ".join(f"{n} {shape}" for shape, n in sorted(record.forms.items()))
     )
+    cuts = [f"{found.path}: {len(found.sections)}" for found in record.containers]
+    yield Observation("containers whose units are regions of one file", f"{len(cuts)} {cuts[:4]}")
+    yield from _regions(record)
     yield from _drift(record, inventory)
+
+
+def _regions(record: Record) -> Iterator[Uncertainty]:
+    """Ask about every file a label's heading links, whether it was cut or not (W250)."""
+    where = "a heading where the group labels stand links it and opens no entry"
+    for found in record.containers:
+        yield Uncertainty(
+            question=f"is {found.path} a container of {len(found.sections)} units, one per region?",
+            why=f"{where}; its depth-{found.depth} headings open {list(found.sections[:3])}",
+            settles_it=(
+                "confirm, and each unit's origin is {path, section} with the heading's exact "
+                "text (Ruling 92); if the file is one unit, list it as an entry, not a heading"
+            ),
+        )
+    for found in record.uncut:
+        yield Uncertainty(
+            question=f"is {found.path} one unit, or a container this survey could not cut?",
+            why=f"{where}; it is read as one unit and not proposed as a container: {found.why}",
+            settles_it=(
+                "confirm it is one unit, or give its units headings that cut the whole "
+                "file, each occurring once (Ruling 92)"
+            ),
+        )
 
 
 def _drift(record: Record, inventory: Inventory) -> Iterator[Observation | Uncertainty]:

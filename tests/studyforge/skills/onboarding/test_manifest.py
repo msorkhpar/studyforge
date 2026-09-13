@@ -156,17 +156,6 @@ def test_no_reason_is_invented():
         promote(drafted, reasons={})
 
 
-def test_two_generators_declaring_one_directory_is_merged_rather_than_refused():
-    # ⚠️ The manifest refuses a repeated glob outright, so a promoter that
-    # passed duplicates through would fail on the ordinary case of the adapter
-    # and this skill both writing under `tests/`.
-    other = {"glob": GLOB["glob"], "why": "a second producer, same directory, different sentence"}
-
-    document = promote(corpora.DRAFT, not_material=[GLOB, other])
-
-    assert document["content"]["not_material"] == [GLOB]
-
-
 def _with_notes(*entries) -> dict:
     return corpora.draft(content={**corpora.DRAFT["content"], "not_material": list(entries)})
 
@@ -234,6 +223,41 @@ def test_every_collision_is_named_at_once():
 
     message = str(refused.value)
     assert "content.not_material[0]" in message and "content.not_material[1]" in message
+
+
+def test_two_generators_declaring_one_glob_are_refused_naming_both_sides():
+    # ⛔ INT06-1/4 (W242): keeping the first generator's reason was precedence
+    # between generators, which W239 refused between a draft and a generator.
+    other = {"glob": "tests/*.py", "why": "the generated checks this corpus carries"}
+    again = {**GLOB, "why": "a second generator's reason for the same directory"}
+
+    with pytest.raises(PromotionRefused) as refused:
+        promote(corpora.DRAFT, not_material={"the scaffold": [GLOB], "the skill": [other, again]})
+
+    message = str(refused.value)
+    assert "the scaffold[0]" in message and "the skill[1]" in message
+    assert "precedence" in message
+
+
+def test_a_collision_between_generators_is_refused_even_with_the_same_reason():
+    with pytest.raises(PromotionRefused):
+        promote(corpora.DRAFT, not_material={"one": [GLOB], "two": [GLOB]})
+
+
+def test_one_sequence_declaring_a_glob_twice_is_refused_naming_both_positions():
+    with pytest.raises(PromotionRefused) as refused:
+        promote(corpora.DRAFT, not_material=[GLOB, GLOB])
+
+    message = str(refused.value)
+    assert "not_material[0]" in message and "not_material[1]" in message
+
+
+def test_distinct_globs_from_several_generators_merge_in_sorted_order():
+    other = {"glob": "tests/*.py", "why": "the generated checks this corpus carries"}
+
+    document = promote(corpora.DRAFT, not_material={"b": [other], "a": [GLOB]})
+
+    assert document["content"]["not_material"] == [GLOB, other]
 
 
 def test_a_drafted_block_that_is_not_a_list_is_refused():

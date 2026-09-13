@@ -42,19 +42,25 @@ root nothing read, and a malformed map there validated clean.
 
 ⛔ **`SF-31`'s acceptance is that `studyforge plan` prints the ignore lines its
 profile requires**, and R1 forbids the caller reaching that by asking which
-profile it has. So the profile answers, and `ignore_lines` is the second
-capability on this contract.
+profile it has. So the profile answers — `ignore_file`, and `output_globs` for
+what is committed instead. `cli.plan` and `SK-07` are the callers.
 
-⚠️ **`SF-25` measured that the collision check needed no new capability and
-declined to invent one, on the rule that *a capability designed by somebody
-with no caller is a guess*.** ⭐ That argument is met here rather than
-sidestepped: `cli.plan` is the caller, it exists in the same commit, and
-without this it would have to hold a per-profile glob table — R1 in miniature.
+⛔ **A build's output is committed, and the only generated ignore rules are the
+media policy's** (`W242`, `INT-06/7` and `/8`). §5's *regenerable is not the same
+as available* holds for the page that plays a clip as much as for the clip: a
+clone that ignores its pages has no reading floor, and one that ignores only the
+bundle has pages that render unstyled with no error. ⚠️ The pages, the root
+index and the discovery cache were once ignored here, and under `sibling` those
+rules had no home R3 allows and matched `*.html` and `*.json`.
 
-⛔ **What is never ignored is the archive**, and it is not under
-`/{GENERATED_ROOT}/` at all (`INT-06/6`). The archive is the ingested record an
-adapter wrote (R2); a clone without it cannot rebuild anything, so it stays
-tracked while the assets and the discovery cache beside it do not.
+⛔ **The home is a `.gitignore` inside the generated directory the rules are
+about, never the repository root** (R3). A profile whose media no generated
+directory encloses has no home, and `ignore_file` raises rather than hand a
+caller rules nothing may hold.
+
+⭐ **What is committed is recognised instead, by `validate` asking the plan**
+for this corpus's own placed paths — exact paths from its declarations, never a
+glob a manifest would have to carry.
 """
 
 from __future__ import annotations
@@ -66,15 +72,15 @@ from studyforge.corpus.placement.errors import PlacementError
 from studyforge.corpus.placement.locations import (
     ContainerLocations,
     CorpusLocations,
+    IgnoreFile,
     UnitLocations,
 )
 from studyforge.corpus.placement.names import (
     ARCHIVE_DIRNAME,
     ASSETS_DIRNAME,
-    CONTAINER_SUFFIX,
+    IGNORE_FILENAME,
     ROOT_INDEX_FILENAME,
     SITE_CACHE_FILENAME,
-    UNIT_SUFFIX,
 )
 from studyforge.describe import describe
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
@@ -84,28 +90,10 @@ from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
 #: the whole point of `sibling`.
 GENERATED_ROOT = ".studyforge"
 
-#: The ignore lines every profile needs, whatever it does with pages.
-#:
-#: ⛔ **Spelled from `names`' own constants and never retyped.** Four places now
-#: have to agree about `.unit.html` — the writer, the scan, this, and whatever a
-#: corpus pastes into `.gitignore` — and a fourth spelling is how they stop.
-#:
-#: ⭐ **Anchored where a source file could collide, unanchored where it could
-#: not.** `/index.html` is one file at the root; a corpus's own `index.html`
-#: three directories down is left alone. The two page suffixes are unanchored
-#: on purpose: `sibling` puts pages anywhere the material is, and both suffixes
-#: are this framework's, minted so a scan can read them off a listing.
-#:
-#: ⛔ **The archive is absent from this list and that is the point.** It sits
-#: beside the generated root, not in it, and it is the one thing a clone cannot
-#: rebuild without.
-SHARED_IGNORE_LINES = (
-    f"/{ROOT_INDEX_FILENAME}",
-    f"/{GENERATED_ROOT}/{ASSETS_DIRNAME}/",
-    f"/{GENERATED_ROOT}/{SITE_CACHE_FILENAME}",
-    f"*{CONTAINER_SUFFIX}",
-    f"*{UNIT_SUFFIX}",
-)
+#: The ignore file inside the generated root, for a profile whose media lives
+#: below it. ⛔ Inside the directory the rules are about and never the
+#: repository root: that is the one mechanism R3 leaves.
+GENERATED_IGNORE_HOME = PurePosixPath(GENERATED_ROOT, IGNORE_FILENAME)
 
 
 class Profile:
@@ -150,23 +138,53 @@ class Profile:
         ⛔ Answered by every subclass, like `unit` and `container`, and for the
         same reason: a profile that puts media somewhere new and inherited a
         stale glob would report ignore rules that ignore nothing, which is the
-        one failure mode a dry-run exists to prevent.
+        one failure mode a dry-run exists to prevent. Written relative to
+        `ignore_home`'s directory, which is how git reads a nested ignore file.
+        """
+        raise NotImplementedError
+
+    def ignore_home(self) -> PurePosixPath | None:
+        """Return the ignore file this profile's media rules live in, or None.
+
+        ⛔ Answered by every subclass. A home is inside a directory this
+        framework generates. A profile whose media sits beside the material has
+        none, because the only file enclosing it is the root ignore file (R3).
         """
         raise NotImplementedError
 
     def ignore_lines(self, *, media: bool) -> tuple[str, ...]:
-        """Return the `.gitignore` lines a build under this profile requires.
+        """Return the ignore lines a build under this profile requires.
 
-        `media` says whether the generated media is to be ignored **too** — it
-        is the corpus's `media` policy inverted, and the caller passes it
-        rather than this method reading a manifest.
+        `media` says whether the generated media is to be ignored — it is the
+        corpus's `media` policy inverted, and the caller passes it rather than
+        this method reading a manifest.
 
-        ⛔ **Generated media is committed by default**, so the default answer
-        leaves it out. A framework that ignored a corpus's narration by
-        reflex would produce clones that are silent with no error, which is
-        the outcome §5's whole media policy exists to refuse.
+        ⛔ **Only media is ever ignored, and it is committed by default**, so
+        the default answer is empty. Pages, the root index, the bundle and the
+        discovery cache are what a clone reads (§5, `W242`).
         """
-        return SHARED_IGNORE_LINES + (self.media_ignore_lines() if media else ())
+        return self.media_ignore_lines() if media else ()
+
+    def ignore_file(self, *, media: bool) -> IgnoreFile | None:
+        """Return the ignore file a build requires, or None when it requires none.
+
+        ⛔ **Raises `PlacementError` when rules are required and no file may
+        hold them**, and refuses a home at the repository root (R3). A caller
+        handed rules with nowhere to put them pastes them into the root file.
+        """
+        lines = self.ignore_lines(media=media)
+        if not lines:
+            return None
+        home = self.ignore_home()
+        if home is None or len(home.parts) < 2:
+            raise PlacementError(
+                f"the corpus's media policy does not commit generated media, and placement "
+                f"{self.name!r} has no ignore file that may hold the rules: its media sits "
+                f"outside any directory this framework generates, and the repository's root "
+                f"ignore file is never edited (R3). Commit the media, or choose a placement "
+                f"whose media lives under {GENERATED_ROOT}/"
+            )
+        return IgnoreFile(home=home, lines=lines)
 
     def corpus(self) -> CorpusLocations:
         """Return the paths that exist once per corpus. ⛔ The same under every profile."""

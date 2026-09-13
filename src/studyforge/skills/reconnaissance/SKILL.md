@@ -77,6 +77,16 @@ lines, of which lines **313–674 (53.7%) are a structural copy of
 the corpus's addresses, titles, ordinals and grouping. `content.exclude` names
 files; this is not a file. So the answer is a region, not an exclusion.
 
+⛔ **A heading that links a file is not a unit by the link alone (W250).** Where
+it stands in the labels' shape and opens no entry, and the file it links is cut
+into regions by its headings, it is a group label whose units are those regions:
+each unit's `origin` is `{path, section}` (Ruling 92). A linked file that is one
+unit stays an entry, and the survey asks about it by name.
+
+> **Measured** at ISO `ab9e765`: read as an entry, `# [Test cases](TestCases.md)`
+> gave **39 units in 3 groups**. Read as a label, it gives **55 units in 4 groups**,
+> 17 of them regions of `TestCases.md`, one per top-level heading.
+
 ### 4. ⛔ Do not derive the reading order. Find the oracle, or ask.
 
 > **Measured.** A filename sort places **37 of 38** ISO units at the wrong

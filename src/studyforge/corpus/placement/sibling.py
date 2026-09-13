@@ -85,8 +85,20 @@ class SiblingProfile(Profile):
         has one git will now ignore. That is stated here rather than guarded
         against: the alternative is enumerating names that do not exist yet,
         which is the thing this ruling refused.
+
+        ⛔ **These lines have no home** (`ignore_home`), so they are only ever
+        refused by `ignore_file`, never written.
         """
         return tuple(f"*.{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
+
+    def ignore_home(self) -> None:
+        """None: no generated directory encloses media placed beside the material.
+
+        ⛔ The only file that does is the repository's root ignore file (R3). A
+        file inside each unit's media directory would work, and minting one is
+        a build's write this profile cannot make (`W242`).
+        """
+        return None
 
 
 SIBLING = register(SiblingProfile())

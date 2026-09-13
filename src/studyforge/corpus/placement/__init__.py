@@ -61,12 +61,12 @@ order a filesystem enumerates.
 
 | Module | Owns |
 |---|---|
-| `profile` | the `Profile` contract, the registry, `origin_directory`, the ignore lines |
+| `profile` | the `Profile` contract, the registry, `origin_directory`, the ignore file |
 | `tree` | the `tree` profile |
 | `sibling` | the `sibling` profile |
 | `names` | what every artifact is called, and why |
 | `identity` | the block an artifact embeds, and reading it back |
-| `locations` | the path sets a profile returns, and relative hrefs |
+| `locations` | the path sets and the ignore file a profile returns, and relative hrefs |
 | `errors` | `PlacementError`, the only exception any of it raises |
 """
 
@@ -85,6 +85,7 @@ from studyforge.corpus.placement.identity import (
 from studyforge.corpus.placement.locations import (
     ContainerLocations,
     CorpusLocations,
+    IgnoreFile,
     UnitLocations,
     relative_href,
 )
@@ -93,6 +94,7 @@ from studyforge.corpus.placement.names import (
     ASSETS_DIRNAME,
     AUDIO_DIRNAME,
     CONTAINER_SUFFIX,
+    IGNORE_FILENAME,
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
     ROOT_INDEX_FILENAME,
@@ -109,8 +111,8 @@ from studyforge.corpus.placement.names import (
     unit_stem,
 )
 from studyforge.corpus.placement.profile import (
+    GENERATED_IGNORE_HOME,
     GENERATED_ROOT,
-    SHARED_IGNORE_LINES,
     Profile,
     origin_directory,
     profile_for,
@@ -126,16 +128,17 @@ __all__ = [
     "ASSETS_DIRNAME",
     "AUDIO_DIRNAME",
     "CONTAINER_SUFFIX",
+    "GENERATED_IGNORE_HOME",
     "GENERATED_ROOT",
     "IDENTITY_API",
     "IDENTITY_ELEMENT_ID",
     "IDENTITY_KEYS",
+    "IGNORE_FILENAME",
     "IMAGES_DIRNAME",
     "KINDS",
     "KNOWN_IDENTITY_API",
     "PRACTICE_DIRNAME",
     "ROOT_INDEX_FILENAME",
-    "SHARED_IGNORE_LINES",
     "SIBLING",
     "SITE_CACHE_FILENAME",
     "TREE",
@@ -146,6 +149,7 @@ __all__ = [
     "ContainerLocations",
     "CorpusLocations",
     "Identity",
+    "IgnoreFile",
     "PlacementError",
     "Profile",
     "SiblingProfile",

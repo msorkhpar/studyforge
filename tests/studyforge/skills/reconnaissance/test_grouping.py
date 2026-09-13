@@ -27,11 +27,19 @@ def test_a_heading_and_a_bare_numbered_line_are_both_possible_labels():
     assert label("1. Java Fundamentals") == "Java Fundamentals"
 
 
-def test_a_line_carrying_a_link_is_an_entry_and_never_a_label():
-    # ⛔ The one syntactic test here, and it is about the corpus rather than
-    # about Markdown.
+def test_label_never_reads_a_line_carrying_a_link():
+    # ⚠️ W250: whether a linked HEADING is a label is decided by its position,
+    # in `choose` (`test_regions.py`), never by this syntactic reader.
     assert label("- [1. Chapter](src/1.md)") is None
     assert label("# [Test cases](TestCases.md)") is None
+
+
+def test_a_linked_heading_is_a_label_only_where_it_holds_regions_and_opens_nothing():
+    lines = ["# One", "- [a](x)", "# Two", "- [b](x)", "# [Cases](c.md)"]
+    cases = Entry(target="c.md", title="Cases", ordinal=None, line=5, group=None)
+    entries = [entry(2), entry(4), cases]
+    assert grouping(lines, entries, frozenset({"c.md"}))[0] == ["One", "Two", "Cases"]
+    assert grouping(lines, entries)[0] == ["One", "Two"]
 
 
 def test_two_lines_marked_the_same_way_have_the_same_shape():
