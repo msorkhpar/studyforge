@@ -1,43 +1,42 @@
-r"""The wire to the narration service: bytes out, bytes in, and reading what came back.
+r"""The wire to the narration service: bytes out, bytes in, and what can go wrong between.
 
 **What it does.** Defines one outbound request (`Sent`), one answer (`Received`),
 the transport shape between them, and `over_http`, the only place this framework
-opens a socket. It also reads an answer's body as a JSON object and refuses one
-it cannot read, with `UnreadableAnswer`.
+opens a socket. It also defines the refusals a service answer can raise:
+`ServiceUnavailable`, `ServiceRefused` and the decode error `UnreadableAnswer`.
 
 **How you use it.** `narrate.client` builds a `Sent` and hands it to a transport.
-A test hands in a recording transport instead. `decoded(answer, where)`,
-`object_of` and `field_of` read a body and raise `UnreadableAnswer`.
+A test hands in a recording transport instead. A reader of an answer's bytes
+raises `UnreadableAnswer` for one it cannot read.
 
-**Depends on.** `json`, `urllib`, `dataclasses`, `collections.abc` (standard
-library only), plus `archive.scrub` for the absence sentence, `describe`, and
-`narrate.answers` for the error family. ⛔ **Nothing on the build's side imports
-this module**, asserted over `sys.modules` in a fresh interpreter (`W223`).
+**Depends on.** `urllib`, `dataclasses`, `collections.abc` (standard library
+only), plus `archive.scrub` for the absence sentence and `narrate.answers` for
+the error family. ⛔ **Nothing on the build's side imports this module**,
+asserted over `sys.modules` in a fresh interpreter (`W223`).
 
 ## ⛔ THE DECODE ERROR IS THE WIRE'S (`W212/3`)
 
 ⭐ **Reading bytes as JSON is the same act for `/healthz` and for a job**, so the
-refusal is one class, raised here. ⚠️ `probe` used to catch a `ManifestError`
-around a health answer, which is not a manifest, and the name was another
-package's error family. ⛔ **Every arm around a service answer now names this
-module's classes.**
+refusal is one class, and it is defined here. ⚠️ `probe` used to catch a
+`ManifestError` around a health answer, which is not a manifest, and the name was
+another package's error family. ⛔ **Every arm around a service answer now names
+this module's classes.** ⭐ The JSON readers themselves are `narrate.client`'s:
+the module that decodes an answer is the one that calls the R7 gate (`W7`).
 """
 
 from __future__ import annotations
 
-import json
 import urllib.error
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass
 
 from studyforge.archive.scrub import scrub
-from studyforge.describe import describe
 from studyforge.narrate.answers import NarrationError
 
-ENCODING = "utf-8"
 JSON_MEDIA_TYPE = "application/json"
 AUDIO_ACCEPT = "audio/*"
+ENCODING = "utf-8"
 HTTP_OK = 200
 
 
@@ -100,26 +99,3 @@ def _absent(url: str, kind: str) -> str:
     """Say the service did not answer, ⛔ naming the failure's type and never it."""
     ending = "A corpus with no narration still reads (R6, R8); nothing was written."
     return scrub(f"the narration service did not answer at {url} ({kind}). {ending}")
-
-
-def decoded(answer: Received, where: str) -> dict[str, object]:
-    """Return `answer`'s body as a decoded JSON object, or raise `UnreadableAnswer`."""
-    try:
-        payload = json.loads(answer.body.decode(ENCODING))
-    except ValueError, UnicodeDecodeError:
-        raise UnreadableAnswer(f"{where} answered with a body that is not JSON") from None
-    return object_of(payload, where)
-
-
-def object_of(value: object, where: str) -> dict[str, object]:
-    """Return `value` as a decoded JSON object, or raise `UnreadableAnswer`."""
-    if not isinstance(value, dict):
-        raise UnreadableAnswer(f"{where} answered with {describe(value)}, not an object")
-    return value
-
-
-def field_of(payload: dict[str, object], what: str, where: str) -> object:
-    """Return the `what` key of a decoded object, or raise `UnreadableAnswer`."""
-    if what not in payload:
-        raise UnreadableAnswer(f"{where} answered without a '{what}' field")
-    return payload[what]

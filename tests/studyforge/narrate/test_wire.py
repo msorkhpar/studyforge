@@ -6,7 +6,8 @@ import lines as text, and could not see `import studyforge.generate` loading the
 HTTP client through `narrate.synth`'s own module-level import. ⭐ The positive
 control runs the same child over an importer that does load the wire.
 
-⚠️ The home-path material below is assembled at run time, as in `test_client.py`.
+⭐ Reading an answer's bytes is `narrate.client`'s and is tested in `test_client.py`
+(a health answer and a job body that are not JSON objects).
 """
 
 from __future__ import annotations
@@ -21,23 +22,12 @@ import pytest
 
 from studyforge.narrate import wire
 from studyforge.narrate.answers import NarrationError
-from studyforge.narrate.wire import (
-    Received,
-    ServiceRefused,
-    ServiceUnavailable,
-    UnreadableAnswer,
-    decoded,
-    field_of,
-    object_of,
-)
+from studyforge.narrate.wire import ServiceRefused, ServiceUnavailable, UnreadableAnswer
 from tests.support import imports_module, repository_root, run
 
 SOURCE = Path(inspect.getfile(wire))
 WIRE = "studyforge.narrate.wire"
 CLIENT = "studyforge.narrate.client"
-
-# ⛔ Assembled, never written as a literal.
-HOME = "/" + "home/jane"
 
 #: One import in a clean interpreter, then every `studyforge` module it loaded.
 CHILD = """
@@ -94,36 +84,12 @@ def test_every_refusal_about_a_service_answer_is_this_modules_and_a_narration_er
         assert issubclass(refusal, NarrationError), refusal
 
 
-@pytest.mark.parametrize("body", [b"<html>", b"\xff\xfe", b"[1, 2]", b'"text"'])
-def test_a_body_that_is_not_a_json_object_is_unreadable(body):
-    with pytest.raises(UnreadableAnswer):
-        decoded(Received(200, "text/html", body), "/healthz")
-
-
-def test_a_json_object_decodes_the_positive_control():
-    assert decoded(Received(200, "application/json", b'{"a": 1}'), "/healthz") == {"a": 1}
-
-
-def test_a_missing_field_is_unreadable_and_names_the_field_and_the_route():
-    with pytest.raises(UnreadableAnswer) as refused:
-        field_of({"provides": 3}, "engine_model", "/healthz")
-    assert "engine_model" in str(refused.value)
-    assert "/healthz" in str(refused.value)
-    assert field_of({"engine_model": "m"}, "engine_model", "/healthz") == "m"
-
-
-def test_a_value_that_is_not_an_object_is_refused_without_being_quoted():
-    with pytest.raises(UnreadableAnswer) as refused:
-        object_of([f"{HOME}/work"], "/v1/jobs")
-    assert "jane" not in str(refused.value)
-
-
 # --------------------------------------------------------------------------
 # ⛔ Standard library only, and the wire imports no client and no policy
 # --------------------------------------------------------------------------
 
 
-def test_the_module_imports_only_the_standard_library_and_three_framework_modules():
+def test_the_module_imports_only_the_standard_library_and_two_framework_modules():
     tree = ast.parse(SOURCE.read_text(encoding="utf-8"))
     imported = set()
     for node in ast.walk(tree):
@@ -135,9 +101,7 @@ def test_the_module_imports_only_the_standard_library_and_three_framework_module
         "__future__",
         "collections.abc",
         "dataclasses",
-        "json",
         "studyforge.archive.scrub",
-        "studyforge.describe",
         "studyforge.narrate.answers",
         "urllib.error",
         "urllib.request",

@@ -13,7 +13,9 @@ fine (R6, R8).
 
 **Depends on.** `json`, `re` (standard library), `archive.scrub` for the gate,
 `narrate.speakable` for the records and the one clip minter, `narrate.wire` for
-the request, the answer and reading it, and `narrate.answers` for the values.
+the request, the answer and the decode error, and `narrate.answers` for the values.
+⭐ The JSON readers stay here, beside this module's `assert_clean` calls, so the
+module that decodes a service answer is the module that calls the R7 gate (`W7`).
 ⛔ **Not on `corpus.placement`** — asserted, see R4.
 
 ## ⛔ THE POPULATION IS THE REQUESTS, AND EXACTLY ONE SEAM PRODUCES IT
@@ -69,9 +71,6 @@ from studyforge.narrate.wire import (
     ServiceUnavailable,
     Transport,
     UnreadableAnswer,
-    decoded,
-    field_of,
-    object_of,
     over_http,
 )
 
@@ -95,6 +94,29 @@ ARTIFACT_ID = re.compile(r"\A[0-9a-f]{16,128}\Z")
 
 #: What a clip's suffix may be, so a format from the wire cannot become a path.
 FORMAT_NAME = re.compile(r"\A[a-z0-9]{1,8}\Z")
+
+
+def _decoded(answer: Received, where: str) -> dict[str, object]:
+    """Return `answer`'s body as a decoded JSON object, or raise the wire's `UnreadableAnswer`."""
+    try:
+        payload = json.loads(answer.body.decode(ENCODING))
+    except ValueError, UnicodeDecodeError:
+        raise UnreadableAnswer(f"{where} answered with a body that is not JSON") from None
+    return _object(payload, where)
+
+
+def _object(value: object, where: str) -> dict[str, object]:
+    """Return `value` as a decoded JSON object, or raise `UnreadableAnswer`."""
+    if not isinstance(value, dict):
+        raise UnreadableAnswer(f"{where} answered with {describe(value)}, not an object")
+    return value
+
+
+def _field(payload: dict[str, object], key: str, where: str) -> object:
+    """Return one key of a decoded object, or raise `UnreadableAnswer`."""
+    if key not in payload:
+        raise UnreadableAnswer(f"{where} answered without a '{key}' field")
+    return payload[key]
 
 
 class NarrateClient:
@@ -161,9 +183,9 @@ class NarrateClient:
             answer = self._send("GET", HEALTH_PATH, accept=JSON_MEDIA_TYPE)
             if answer.status != HTTP_OK:
                 return Health(False, scrub(f"{HEALTH_PATH} answered {answer.status}"))
-            payload = decoded(answer, HEALTH_PATH)
-            chunk_chars = field_of(payload, "chunk_chars", HEALTH_PATH)
-            engine_model = field_of(payload, "engine_model", HEALTH_PATH)
+            payload = _decoded(answer, HEALTH_PATH)
+            chunk_chars = _field(payload, "chunk_chars", HEALTH_PATH)
+            engine_model = _field(payload, "engine_model", HEALTH_PATH)
         except ServiceUnavailable as absent:
             return Health(reachable=False, detail=str(absent))
         except UnreadableAnswer as unreadable:
@@ -194,20 +216,20 @@ class NarrateClient:
         answer = self._send("POST", JOBS_PATH, payload=payload, accept=JSON_MEDIA_TYPE)
         if answer.status != HTTP_OK:
             raise ServiceRefused(f"{JOBS_PATH} answered {answer.status}, not {HTTP_OK}")
-        return self._collect(units, decoded(answer, JOBS_PATH))
+        return self._collect(units, _decoded(answer, JOBS_PATH))
 
     def _collect(self, units: Sequence[SpeechUnit], manifest: dict[str, object]) -> Narration:
         """Fetch every produced segment and sort the rest into failed and retryable."""
-        entries = field_of(manifest, "segments", JOBS_PATH)
+        entries = _field(manifest, "segments", JOBS_PATH)
         if not isinstance(entries, list):
             raise UnreadableAnswer(f"{JOBS_PATH} answered with segments that are not a list")
         by_id = {unit.id: unit for unit in units}
         artifacts: list[Artifact] = []
         failed: list[tuple[str, str]] = []
         retryable: list[str] = []
-        for entry in (object_of(raw, JOBS_PATH) for raw in entries):
-            speech_id = str(field_of(entry, "id", JOBS_PATH))
-            status = str(field_of(entry, "status", JOBS_PATH))
+        for entry in (_object(raw, JOBS_PATH) for raw in entries):
+            speech_id = str(_field(entry, "id", JOBS_PATH))
+            status = str(_field(entry, "status", JOBS_PATH))
             if speech_id not in by_id:
                 raise UnreadableAnswer(f"{JOBS_PATH} answered about a segment nobody submitted")
             if status in PRODUCED:
@@ -227,8 +249,8 @@ class NarrateClient:
 
     def _artifact(self, unit: SpeechUnit, entry: dict[str, object]) -> Artifact:
         """Fetch one produced segment's audio and name it with the one minter."""
-        artifact_id = str(field_of(entry, "artifact_id", JOBS_PATH))
-        fmt = str(field_of(entry, "format", JOBS_PATH))
+        artifact_id = str(_field(entry, "artifact_id", JOBS_PATH))
+        fmt = str(_field(entry, "format", JOBS_PATH))
         if not ARTIFACT_ID.match(artifact_id):
             raise UnreadableAnswer(f"the artifact id for {unit.id} is not the published shape")
         if not FORMAT_NAME.match(fmt):
