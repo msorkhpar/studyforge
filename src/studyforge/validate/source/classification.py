@@ -1,8 +1,8 @@
 r"""What the corpus says each of its files is — material, output, or nothing.
 
 **What it does.** Enumerates the corpus root and refuses a file the manifest
-classifies as neither included nor excluded, and refuses one it classifies as
-both.
+classifies as neither included nor excluded, one it classifies as both, and
+one it INCLUDES that no unit's origin names (`W266`).
 
 **How you use it.** `check_unclassified(walk)`, yielding `Finding`s and
 `Unchecked`s like every other check. `source_files(root)` is the enumeration
@@ -83,6 +83,11 @@ RULE_IGNORE_DECLARATION = "ignore-declaration"
 #: a submodule checkout — refused by name, never skipped and never scanned
 #: (`W259`). Its own rule id, because the fix is not a `content` pattern.
 RULE_NESTED_REPOSITORY = "nested-repository"
+
+#: ⛔ `W266`: a file the manifest INCLUDES that no UNIT's `origin` names, so no unit reads it —
+#: an aggregate un-excluded, or a stray. ⚠️ A container's `origin` PLACES its page and reads
+#: nothing. Judged over this scan only, while a unit origin is on disk (`origin-missing`).
+RULE_INCLUDED_UNREAD = "included-unread"
 
 #: The name of a repository's store, a directory or a submodule's gitfile.
 REPOSITORY_STORE = ".git"
@@ -178,6 +183,7 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
             "installed. Every file beside the archive was scanned as material, so "
             "generated output is reported below as unclassified rather than skipped.",
         )
+    read = _read_by_origins(walk)
     for path in scan.files:
         where = walk.relative(path)
         classification = walk.manifest.content.classify(where)
@@ -200,6 +206,26 @@ def check_unclassified(walk: Walk) -> Iterator[Finding | Unchecked]:
                 "read the repository's own scaffolding aloud. Narrow one of the two "
                 "patterns, or move this file to 'exclude' with its reason.",
             )
+        elif classification is Classification.INCLUDED and read and path not in read:
+            yield Finding(
+                RULE_INCLUDED_UNREAD,
+                where,
+                "matches an 'include' pattern and no unit's 'origin' names it, so no unit reads "
+                "it: material the corpus carries twice or not at all (C2). Name it as a unit's "
+                "origin, or move it to 'exclude' with its reason.",
+            )
+
+
+def _read_by_origins(walk: Walk) -> frozenset[Path]:
+    """Every file a unit `origin` names; ⛔ EMPTY when that cannot be judged.
+
+    Empty when no named file is on disk (`origin-missing`'s answer) or a map did not parse.
+    """
+    maps = [held.container for held in walk.containers]
+    named = {walk.root / u.origin for c in maps for u in c.units if u.origin}
+    if any(item.container is None for item in walk.refused):
+        return frozenset()
+    return frozenset(named) if any(path.is_file() for path in named) else frozenset()
 
 
 @dataclass(frozen=True, slots=True)

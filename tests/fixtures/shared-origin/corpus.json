@@ -14,7 +14,12 @@
     "include": [
       "field-notes/*.md"
     ],
-    "exclude": []
+    "exclude": [
+      {
+        "path": "field-notes/README.md",
+        "why": "the container's own introduction: its origin places the container page, and no unit reads it"
+      }
+    ]
   },
   "permitted_edits": []
 }
