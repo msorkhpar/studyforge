@@ -25,6 +25,7 @@ from studyforge.corpus.placement import (
     registered,
 )
 from studyforge.render import index
+from studyforge.render.markup import anchor
 from studyforge.render.pageassets import SCRIPT_NAME, STYLESHEET_NAME, written_files
 from tests.studyforge.render.index.indexes import cases, planted, rows
 from tests.support import assert_package_contract, repository_root
@@ -258,7 +259,7 @@ def test_every_row_is_addressed_by_the_key_the_rest_of_the_framework_joins_on(ca
     # ⭐ Subtask (c)'s producer half: a deep link needs no table to consult.
     page = case.render().decode(index.ENCODING)
     for entry in toc.order(case.contents):
-        assert index.anchor(entry.key) == f"#{entry.key}"
+        assert anchor(entry.key) == f"#{entry.key}"
         assert page.count(f'id="{entry.key}"') == 1
 
 

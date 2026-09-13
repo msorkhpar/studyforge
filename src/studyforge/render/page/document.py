@@ -7,7 +7,7 @@ regions a particular page may or may not carry.
 text; `page.render` is the public entry point and turns it into bytes.
 
 **Depends on.** `render.templates` for the markup, `page.section`,
-`page.navigation`, `page.assets`, `corpus.placement.identity` for R4's block,
+`page.anchors`, `page.navigation`, `page.assets`, `corpus.placement.identity` for R4's block,
 and `page.errors`.
 
 ## ⛔ This module *is* the format (R10)
@@ -66,8 +66,8 @@ from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
+from studyforge.render.page import anchors, navigation
 from studyforge.render.page import mark as mark_region
-from studyforge.render.page import navigation
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
@@ -137,7 +137,7 @@ def compose(
             script=escape_attribute(placement.script()),
             meta=_region(meta(document)),
             breadcrumb=_region(navigation.breadcrumb(trail)),
-            outline=_region(navigation.outline(document)),
+            outline=_region(anchors.outline(document)),
             body=body,
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),

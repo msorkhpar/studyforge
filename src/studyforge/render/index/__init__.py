@@ -90,7 +90,6 @@ from studyforge.render.index.disclosure import (
     LIST_LABEL,
     NUMBERING_KIND,
     READABLE_ATTRIBUTE,
-    anchor,
 )
 from studyforge.render.index.document import EMPTY_SLOTS, SKELETON, compose
 from studyforge.render.index.entries import Document, Item, Section
@@ -115,7 +114,6 @@ __all__ = [
     "PageError",
     "Placement",
     "Section",
-    "anchor",
     "compose",
     "from_contents",
     "open_to",
