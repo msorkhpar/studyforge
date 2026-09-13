@@ -186,6 +186,12 @@ function keys() {
   });
 }
 
+let early = null;
+function sayingNow() {
+  return byId.status.querySelectorAll('[data-state]')
+    .filter(el => !el.hidden).map(el => el.getAttribute('data-state'));
+}
+
 const actions = {
   none() {},
   play() { byId.play.fire('click'); },
@@ -194,6 +200,17 @@ const actions = {
   previous() { byId.next.fire('click'); byId.previous.fire('click'); },
   ended() { byId.play.fire('click'); audio.fire('ended'); },
   error() { byId.play.fire('click'); audio.fire('error'); },
+  /* ⛔ `W276`: the two orders a missing clip's `error` and `play()` rejection arrive in.
+     The mid-scenario reading proves which one came first. */
+  errorThenRejection() {
+    byId.play.fire('click');
+    audio.fire('error');
+    early = sayingNow();
+  },
+  rejectionThenError() {
+    byId.play.fire('click');
+    setTimeout(function () { early = sayingNow(); audio.fire('error'); }, 0);
+  },
   clickSecond() { passages[1].fire('click', { target: passages[1] }); },
   clickLink() {
     const link = passages[1].append(new El('a'));
@@ -227,6 +244,7 @@ setTimeout(function () {
       .filter(el => !el.hidden).map(el => el.getAttribute('data-state')),
     disabled: ['previous', 'play', 'next', 'speed'].map(id => byId[id].disabled),
     scrolled: passages.map(el => el.scrolled),
+    early: early,
   }));
 }, 0);
 """
@@ -399,6 +417,33 @@ def test_a_browser_that_refuses_to_start_audio_is_a_stated_state_and_not_an_erro
     # once — and neither hidden nor treated as a failure.
     reading = run(tmp_path, action="play", blockAutoplay=True)
     assert reading["saying"] == ["blocked"]
+    assert reading["face"] == ["paused"]
+
+
+def test_W276_an_ERROR_before_the_REJECTION_keeps_missing_and_play_stays_enabled(tmp_path):
+    # ⛔ Clause 1 and 3, first order: the clip is not on disk, `error` arrives, and the
+    # rejection that follows must not replace *missing* with *press play once*.
+    reading = run(tmp_path, action="errorThenRejection", blockAutoplay=True)
+    assert reading["early"] == ["missing"], "⛔ born vacuous: the error must arrive first"
+    assert reading["saying"] == ["missing"]
+    assert reading["face"] == ["paused"]
+    assert reading["disabled"] == [False, False, False, False], "two passages still play"
+
+
+def test_W276_the_SAME_order_with_NO_passage_left_reads_none_and_disables_play(tmp_path):
+    # ⛔ Clause 1: play is disabled once no passage is playable, whichever event came last.
+    reading = run(tmp_path, action="errorThenRejection", blockAutoplay=True, passages=THREE[:1])
+    assert reading["early"] == ["none"]
+    assert reading["saying"] == ["none"]
+    assert reading["disabled"] == [True, True, True, True]
+
+
+def test_W276_a_REJECTION_before_the_ERROR_reads_blocked_then_missing(tmp_path):
+    # ⛔ Clause 3, the other order: the refusal is stated first, and the error that
+    # proves the clip is absent then replaces it.
+    reading = run(tmp_path, action="rejectionThenError", blockAutoplay=True)
+    assert reading["early"] == ["blocked"], "⛔ born vacuous: the rejection must arrive first"
+    assert reading["saying"] == ["missing"]
     assert reading["face"] == ["paused"]
 
 
