@@ -28,7 +28,7 @@ one does.**
 
 | Milestone | State | Ref | The close run |
 |---|---|---|---|
-| **M0** — foundations | ✅ CLOSED | — | [record](BOARD-ARCHIVE.md#m0-foundations) |
+| **M0** — foundations | ✅ CLOSED | `a7c114b` | [record](BOARD-ARCHIVE.md#m0-foundations) |
 | **M1** — the framework stands up | ✅ CLOSED | `2fe56a4` | [record](BOARD-ARCHIVE.md#m1s-close-run-at-2fe56a4-all-nine-true-at-one-ref-and-rows-18-were-re-taken-not-inherited) |
 | **M2** — a corpus is readable | ✅ CLOSED | `2d0cfe7` | [record](BOARD-ARCHIVE.md#m2s-close-run-at-2d0cfe7-nine-rows-the-fifteen-task-merges-re-derived-and-the-two-gaps-are-named-rather-than-absent) |
 | **M2 step 2.1** | ✅ CLOSED | `a00337b` | [record](BOARD-ARCHIVE.md#m2-step-21s-close-run-at-a00337b-all-five-re-taken-and-the-ref-moved-twice-underneath-it) |
@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 8 merged at `a71a290` and `ISO-05` is taken; ⭐ **`W242` and `W250` merged, so `ISO-07` and `ISO-08` wait on no `W` row; `ISO-06` waits on `W243/1`** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
+| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 9 merged at `8afdd5b`: `ISO-05`, `ISO-07` and `ISO-08` taken; ⛔ **`ISO-09` waits on [`W254`](rows/W254.md); `ISO-06`'s last clause on `W243/1`** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -60,9 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W249` | Developer 2 | `fix/W249-source-and-not-material-globs` @ `wt/dev2` | 0 @ `5d9436d` | in-progress |
-| `W248` | Developer 1 | `fix/W248-archive-root-refuses-strays` @ `wt/dev1` | 0 @ `b9e68cc` | in-progress |
-| `W154` | Developer 3 | `fix/W154-capability-delivery-reading` @ `wt/dev3` | 0 @ `973fc67` | in-progress |
+| `W254` | Developer 2 | `fix/INT09-5-mirrored-unit-collision` @ `wt/dev2` | 0 @ `973fc67` | in-progress |
+| `W161` | Developer 3 | `fix/W161-observation-subject-vocabulary` @ `wt/dev3` | 0 @ `a2ae2c4` | in-progress |
+| `W252` | Developer 1 | `fix/W252-heading-entry-ordinal` @ `wt/dev1` | 0 @ `88a1f51` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -78,8 +78,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W163`, `W153`, `W242`, `W250`, `W149`, `W156` LEFT at `accceaf`, `947a007`, `cbc0991`, `5d9436d`, `b9e68cc`, `973fc67`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W249`, `W248`, `W154` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W249`, `W248`, `W154` LEFT at `88a1f51`, `a2ae2c4`, `2ffd4a8`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W254`, `W252`, `W161` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -96,6 +96,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
+| 1 | `W255` | ⛔ **`M6`, Ruling 75 invoked** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
+| 2 | `W256`, `W257`, `W258` | ⛔ **`M6`, Ruling 75 invoked; three surfaces, none in flight** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
@@ -120,8 +122,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 38 | `W236` | ⭐ **round 72's mint, jumping nobody** | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 40 | `W245`, `W246`, `W247` | ⭐ **round 75's mints, each jumping nobody** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 42 | `W251` | ⭐ **round 78's mint, jumping nobody** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
-| 43 | `W252` | ⭐ **round 78's mint, jumping nobody; after `W249`, one owner** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
+| 45 | `W259` | ⭐ **round 79's mint, jumping nobody; after `W255`, one surface** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
+| 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one owner with `W161` on `docs/conventions/`** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -131,14 +134,14 @@ classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-
 ⚠️ **`W160` writes `docs/tasks/rows/`, and a REGISTER round writes it too: never beside one** (check 4's sub-step). ⛔ **`W157`, `W159`, `W160`, `W161`, `W164`, `W165`,
 `W168`, `W169`, `W171`, `W179`, `W180`, `W229` and [`W231`](rows/W231.md) name `docs/conventions/` — ⭐ ONE
 owner or two waves.**
-⛔ **`W249`+[`W252`](rows/W252.md) write `skills/reconnaissance/`; `W248`+`W210` write `cli/plan/`; `W183`+`W184` write `E04`; `W176`+[`W251`](rows/W251.md) DECLARE
+⛔ **`W254`+`W210` write `cli/plan/`; `W255`+[`W259`](rows/W259.md) write `validate/source/`; `W183`+`W184` write `E04`; `W176`+[`W251`](rows/W251.md) DECLARE
 `board/corroborate.py` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
 name — ⛔ so `W176`'s declared surface is stale against its own subject.** ⛔ **`W173`+`W159` write `board/bounds.py` (whose size message reads `register ids`, `W144/4`), and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
-closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did; `W225` left the `docker/dev/` set at its close, `W144` the `bounds.py` set, `W150` the `citations.py` set, `W238` the `skills/reconnaissance/` pair, `W239` the `skills/onboarding/` pair, and `W162` the `docker/dev/` pair.**
+closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did; `W225` left the `docker/dev/` set at its close, `W144` the `bounds.py` set, `W150` the `citations.py` set, `W238` and `W249` the `skills/reconnaissance/` pairs, `W239` the `skills/onboarding/` pair, and `W162` the `docker/dev/` pair.**
 
 ## The register — every `W` row
 
@@ -300,14 +303,14 @@ else.**
 | W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | Developer 2 | ✅ done — `579e1df` | [`rows/W151.md`](rows/W151.md) |
 | W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [`rows/W152.md`](rows/W152.md) |
 | W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | Developer 3 | ✅ done — `947a007` | [`rows/W153.md`](rows/W153.md) |
-| W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | Developer 3 | in-progress — on `fix/W154-capability-delivery-reading` | [`rows/W154.md`](rows/W154.md) |
+| W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | Developer 3 | ✅ done — `2ffd4a8` | [`rows/W154.md`](rows/W154.md) |
 | W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | ✅ done — `0011d5d` | [`rows/W155.md`](rows/W155.md) |
 | W156 | A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge | Developer 3 | ✅ done — `973fc67` | [`rows/W156.md`](rows/W156.md) |
 | W157 | The knowledge index goes stale on every merge, nothing owns the rebuild, and no instrument can fail on it | framework agent | `accepted` — ⛔ **WITHDRAWN PO round 61**, and the re-scope that preceded it was refuted by this round's own suite | [`rows/W157.md`](rows/W157.md) |
 | W158 | The authoritative environment is structurally blind to the workspace assertions, so `green` names two different answers | Developer 3 | ✅ done — `baefd6c` | [`rows/W158.md`](rows/W158.md) |
 | W159 | Most of the board's tables are UNDELIMITED — `Next rows` and `Standing decisions` among them: no instrument reads them and the size bound gives them no term | framework agent | `todo` — naming corrected `PO-56/8` | [`rows/W159.md`](rows/W159.md) |
 | W160 | A live row's SURFACE is checked by nothing, so check 4's sub-step is undecidable and its one answer is a hand-maintained paragraph | framework agent | `todo` | [`rows/W160.md`](rows/W160.md) |
-| W161 | The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident | framework agent | `todo` — `NS-01/2` | [`rows/W161.md`](rows/W161.md) |
+| W161 | The observation table admits an EPIC task and no instrument says where such a row's argument lives, so it is exempt by accident | Developer 3 | in-progress — `NS-01/2`, on `fix/W161-observation-subject-vocabulary` | [`rows/W161.md`](rows/W161.md) |
 | W162 | Ten gated assertions no routine environment reaches, and the skip's own stated ground is false whenever the image is already built | Developer 3 | ✅ done — `828b37f` | [`rows/W162.md`](rows/W162.md) |
 | W163 | `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which the row that fired its trigger landed beside and did not carry | Developer 2 | ✅ done — `accceaf` | [`rows/W163.md`](rows/W163.md) |
 | W164 | A gate is not only where it is CALLED — a fixture propagates it, so a gated census taken with `grep` under-counts silently | framework agent | `todo` | [`rows/W164.md`](rows/W164.md) |
@@ -394,12 +397,19 @@ else.**
 | W245 | `approach.py` reads a wave close off a prefix, the shape `W136` replaced with a whole name | framework agent | `todo` — `W136/3` | [`rows/W245.md`](rows/W245.md) |
 | W246 | The location notice's PATH harm is still a notice, and its promotion to a check is owed at zero | framework agent | `todo` — `W150/2` | [`rows/W246.md`](rows/W246.md) |
 | W247 | The capability index reads a one-digit milestone id, so a row in `M10` would be counted as cancelled | framework agent | `todo` — `W238/1` | [`rows/W247.md`](rows/W247.md) |
-| W248 | A source's own `archive/` at its root is skipped silently, because the archive root takes a common name in the owner's namespace | Developer 1 | in-progress — `W241/2`, on `fix/W248-archive-root-refuses-strays` | [`rows/W248.md`](rows/W248.md) |
-| W249 | `SK-01` drafts its `source` from the surveyed directory's name and no `not_material` globs, so the first corpus typed both by hand | Developer 2 | in-progress — `INT-07/1` + `/2`, on `fix/W249-source-and-not-material-globs` | [`rows/W249.md`](rows/W249.md) |
+| W248 | A source's own `archive/` at its root is skipped silently, because the archive root takes a common name in the owner's namespace | Developer 1 | ✅ done — `a2ae2c4` | [`rows/W248.md`](rows/W248.md) |
+| W249 | `SK-01` drafts its `source` from the surveyed directory's name and no `not_material` globs, so the first corpus typed both by hand | Developer 2 | ✅ done — `88a1f51` | [`rows/W249.md`](rows/W249.md) |
 | W250 | `SK-01` reads a heading that links a file as a contents entry, so `F21`'s fourth container is never proposed and `ISO-07` stops | Developer 2 | ✅ done — `5d9436d` | [`rows/W250.md`](rows/W250.md) |
 | W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | framework agent | `todo` — `W153/3` | [`rows/W251.md`](rows/W251.md) |
-| W252 | `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered | framework agent | `todo` — `W250/2` | [`rows/W252.md`](rows/W252.md) |
+| W252 | `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered | Developer 1 | in-progress — `W250/2`, on `fix/W252-heading-entry-ordinal` | [`rows/W252.md`](rows/W252.md) |
 | W253 | `E12`'s `TC-01` still `Owns` `TC/` as its root after `TC-00` creates it, so two rows claim one creation | framework agent | `todo` — `W156/3` | [`rows/W253.md`](rows/W253.md) |
+| W254 | Under `sibling`, mirrored units in two containers place one page path, and `plan` and `build` exit `0` while the build replaces five pages | Developer 2 | in-progress — `INT-09/5`, on `fix/INT09-5-mirrored-unit-collision` | [`rows/W254.md`](rows/W254.md) |
+| W255 | `check_completeness` says the source tree is absent from the declared origins alone, so a one-unit archive with a missing origin reads valid | framework agent | `todo` — `INT-09/4` | [`rows/W255.md`](rows/W255.md) |
+| W256 | `SK-07`'s install record files the hand-written `read.py` under its stub's digest, so a person's edit reads as a hand-edit | framework agent | `todo` — `INT-09/1` | [`rows/W256.md`](rows/W256.md) |
+| W257 | `SK-02`'s generated `emit` gives `read.containers` no `ingested`, and its `test_emit` copies ignored paths | framework agent | `todo` — `INT-09/3` + `/7` | [`rows/W257.md`](rows/W257.md) |
+| W258 | `archive.markdown` keeps a nested list line as literal text inside its parent item | framework agent | `todo` — `INT-09/6` | [`rows/W258.md`](rows/W258.md) |
+| W259 | `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently | framework agent | `todo` — `W248/1` | [`rows/W259.md`](rows/W259.md) |
+| W260 | No wave-close procedure tells a close to run the capability-delivery reading `W154` shipped | framework agent | `todo` — `W154/3` | [`rows/W260.md`](rows/W260.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -480,7 +490,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⭐ **integration round 8 merged at ISO `a71a290`, which is now the pin, and `ISO-05` is taken; `ISO-06` waits on `W243/1`** ([78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242)) |
+| **Status** | `in-progress` — ⭐ **integration round 9 merged at ISO `8afdd5b`, now the pin: `ISO-05`, `ISO-07`, `ISO-08` taken; `ISO-06` partial (`W243/1`); `ISO-09` blocked on `W254`; `ISO-10` waits on `ISO-09`** ([79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 

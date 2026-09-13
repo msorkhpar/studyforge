@@ -22697,3 +22697,203 @@ all 50 open capability rows walked, 50 of 50, zero unreached, Owns taken from th
 #### ⭐ CLOSED — PO ROUND 78
 
 ⭐ **Merged at `973fc67`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `973fc67` is RECEIVED.** ⭐ **`check_owns_before_creator` fails the floor on a row that `Owns` inside a component it does not create unless its `Depends on` chain reaches that component's creator, placed in no later step. `creator_census` prints every member, its creator, and whether the component was read from a path or from epic prose, and a `Context` read is a second arm that never fails the floor.** ⭐ **The edge half is verified at `accceaf`, so nothing under `docs/tasks/` was touched.** ⚠️ **`W156/3` is [`W253`](rows/W253.md). Each finding's disposition is in this round's § 3.**
+
+## PO round 79 — the ISO round 9 blockers minted first, `W249` closed, and the ISO pin advanced to `8afdd5b`
+
+⭐ **Cut at `b09cedf`. `88a1f51` (`W249`) merged into this round at the coordinator's word, no rebase, and its release-tip reading arrived before this round's reading of record.**
+
+### ⛔ 1 — THE `M6` BLOCKER, MINTED FIRST
+
+⭐ **ISO integration round 9 (office `po-int`) merged at ISO `8afdd5b`: `ISO-07` and `ISO-08` taken, `ISO-06` partial on `W243/1`, and `ISO-09` stopped on `INT-09/5`.** ⭐ **RE-MEASURED here (Ruling 214)** at framework `b09cedf`, host, on a scratch `git archive` of ISO `8afdd5b` emitted by its own `python3 -m ingest`: `validate` exit `1` with 25 `duplicate-path`; `plan` exit `0`, 0 refusals, 55 unit-page creates over 50 distinct paths; `build` exit `0`, 50 unit pages, 5 `replace` lines. ⭐ **Minted [`W254`](rows/W254.md), order 0, IN FLIGHT** on Developer 2's `fix/INT09-5-mirrored-unit-collision`, dispatched ahead of the mint. ⛔ **RULING 75 IS INVOKED:** it jumps every `W` row because it is the critical path of `M6`, the open milestone by the user's order.
+
+### ⭐ 2 — THE REST OF ISO ROUND 9, MINTED
+
+| finding (ISO §14.1) | became | order | surface |
+|---|---|---|---|
+| `INT-09/5` | [`W254`](rows/W254.md), § 1 | 0, IN FLIGHT | `corpus/placement/`, `cli/plan/`, `cli/site/` |
+| `INT-09/4` | [`W255`](rows/W255.md): re-measured, 16-unit copy, all origins missing reads `exit 0` beside 41 sources | 1 | `validate/source/completeness.py`, after `W248` |
+| `INT-09/1` | [`W256`](rows/W256.md): the recorded and on-disk digests of `read.py` differ at ISO `8afdd5b` | 2 | `skills/onboarding/` |
+| `INT-09/3`, `/7` | [`W257`](rows/W257.md), ONE row: both are `SK-02`'s generated scaffold, re-read at `b09cedf` | 2 | `skills/adapter/` |
+| `INT-09/6` | [`W258`](rows/W258.md): 25 indent-4 list lines in ISO `src/2.md` | 2 | `archive/markdown/` |
+| `INT-09/2`, `/8` | not rows: ISO's own, ruled in its `tasks.md` | — | — |
+| `INT-09/9` | not a row: the held `W243/1`, which now also holds `ISO-06`'s last clause | — | — |
+
+⛔ **RULING 75 IS INVOKED FOR ALL FIVE, on § 1's ground.** ⭐ **Reversible:** each is a placement in a queue.
+
+### ⭐ 3 — CLOSES
+
+```text
+                                        merge^2   branch head  ahead  checked out
+fix/W249-source-and-not-material-globs  52a7843a  52a7843a     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **Ruling 97's gate is RECEIVED: the coordinator's guarded release-tip reading at `88a1f51`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⭐ **The fourth edit:** [`W252`](rows/W252.md) named `W249` only as its one-owner predecessor, now in flight, so it needs none.
+
+### ⭐ 4 — RULED, REVERSIBLE
+
+1. ⛔ **`W254` DATES `cli/plan/derive.py`'s *"that collision is `validate`'s finding to raise"*:** a plan exiting `0` is a build's go signal, so the plan refuses by name and reuses `validate`'s enumeration. ⭐ **And a sibling unit's names carry its container:** no consumer commits a sibling page before `ISO-10`, so no committed reader pays for the rename.
+2. ⭐ **`INT-09/3` and `/7` are ONE row (`W257`)**, as `W249` carried `INT-07/1` and `/2`: one generated scaffold, one owner.
+3. ⭐ **`W249` closes in this round**: its reading arrived before this round's reading of record, and `88a1f51` is merged here.
+
+### ⭐ 5 — FINDINGS
+
+| finding | became |
+|---|---|
+| `W249/1` | disposed at the close: the surface widened to `skills/onboarding/manifest.py` and its `SKILL.md`, disclosed |
+| `W249/2` | disposed at the close: one assertion of `W250`'s control moved, the contract untouched |
+| `W249/3` | accepted, cost named: with no curriculum record, the draft's `title` falls back to the directory name. A title is reviewed display text, never a key the archive files under; `INT-07/1`'s harm was `source`, which is |
+| `W249/4` | accepted, cost named: ISO's re-survey drafts a `source` unlike its declared one and asks. ⭐ **Relayed to the next ISO read:** a re-survey never reads an existing `corpus.json` |
+| `W249/5` | accepted, cost named: a pre-existing `ingest/` or root `ONBOARDING.md` draws a glob `promote` refuses by name, and the integrator drops it |
+| `PO-79/1` | a witness in [`W255`](rows/W255.md): in a non-git scratch copy, `[unclassified]` says no source is present beside 41 `src/*.md` |
+| `W248/1`, `/3`–`/5` | received from the coordinator; ⚠️ **held to `W248`'s close**, whose reading has not arrived |
+
+⭐ **Carriers, confirmed against git:** [`W254`](rows/W254.md), Developer 2, `fix/INT09-5-mirrored-unit-collision` @ `wt/dev2`, cut `973fc67`, no description (`W153/4`: an `INT-` id is refused), NAMED here. [`W252`](rows/W252.md), Developer 1, `fix/W252-heading-entry-ordinal` @ `wt/dev1`, cut `88a1f51`, declared `W252`, NAMED here; `skills/reconnaissance/` is free with `W249` merged. [`W154`](rows/W154.md), Developer 3, confirmed. [`W248`](rows/W248.md) handed back and merging; it stays named until its reading arrives.
+
+⭐ **The ISO track:** round 9 merged at `8afdd5b`. `ISO-05`, `ISO-07` and `ISO-08` are taken; `ISO-06` is partial on `W243/1`; `ISO-09` is blocked on `W254`; `ISO-10` waits on `ISO-09`. ⭐ **The pin advanced to `8afdd5b` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, `wt/po`: exit `1` before, naming `ISO-8583-jPOS-tutorial` alone; exit `0` after.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, now also `ISO-06`'s last clause.
+
+### W249 — `SK-01` drafts its `source` from the surveyed directory's name and no `not_material` globs, so the first corpus typed both by hand
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W249.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-07/1` and `/2`: `SK-01`'s draft takes its `source` from the surveyed directory's name and drafts no `not_material` globs, so `ISO-04` supplied both by hand.** ⭐ **RECEIVED from ISO integration round 7 (framework `5f772d9`, ISO `ab9e765`, §12), relayed by the coordinator:** *"a worktree named `int` drafts `int`, and a clone named like the repository drafts `iso-8583-jpos-tutorial`"*; *"The draft lists `CLAUDE.md` and the `docs/studyforge/` files as bare `exclude` paths and says nothing for `README.md`, `LICENSE` or `.git*`. ISO typed the 6 `not_material` GLOBS by hand."*
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A draft's `source` does not depend on the name of the directory surveyed:** a worktree and a clone of one repository draft one `source`. The taker names what it derives from.
+2. ⛔ **The draft proposes the `not_material` globs** for what it excludes and for the root furniture it sees. ⭐ **The REASONS stay a person's** ([round 76 § 3](#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended), `W240/3`).
+3. ⛔ **Asserted both ways**, over two differently named checkouts of one fixture repository.
+
+⭐ **[`W240`](#w240-sk-01s-draft-carries-a-source-and-variants-that-sf-02-refuses-and-its-include-globs-make-the-curriculum-record-a-unit) settled `.` resolution, not this.** ⛔ **`M6` work, not `M8`'s: what the corpus typed is a hole in the skill (R19).**
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/` and its tests. ⚠️ **One owner with [`W250`](#w250-sk-01-reads-a-heading-that-links-a-file-as-a-contents-entry-so-f21s-fourth-container-is-never-proposed-and-iso-07-stops).**
+
+[the mint argument](#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627)
+
+#### ⭐ CLOSED — PO ROUND 79
+
+⭐ **Merged at `88a1f51`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `88a1f51` is RECEIVED.** ⭐ **`SK-01`'s draft `source` is the curriculum record's title slug and never the surveyed directory's name, asserted over two differently named checkouts. The draft proposes a `not_material` glob for each file no include reads, with every reason left open and paired by `promote`.** ⚠️ **Each finding's disposition is this round's § 5.**
+
+### ⭐ 6 — `W248` CLOSED MID-ROUND, AT THE COORDINATOR'S WORD
+
+⭐ **`a2ae2c4` (`W248`) merged into this round, no rebase; its guarded release-tip reading, GREEN in the pinned image, arrived before this round's reading of record.**
+
+```text
+                                      merge^2   branch head  ahead  checked out
+fix/W248-archive-root-refuses-strays  1a4d0fb6  1a4d0fb6     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **The fourth edit:** [`W255`](rows/W255.md) re-pointed; [`W254`](rows/W254.md)'s measured sentence about `W248`'s diff stands as dated.
+
+| finding | became |
+|---|---|
+| `W248/1` | ⭐ **minted [`W259`](rows/W259.md)**, jumping nobody, order 45 |
+| `W248/2` | disposed at the close: the two authoring documents and their test, forced by derived counts, disclosed |
+| `W248/3` | ⭐ **rider on [`W257`](rows/W257.md)**, whose surface it is |
+| `W248/4` | ⛔ **ruled: spec §6 amended in one sentence**, after the archive layout: a file under the archive root that is not a member is refused by name. Reversible |
+| `W248/5` | accepted, cost named: `W241/3` untouched; `membership` reads the default archive root only |
+
+⚠️ **`W161`, relayed as Developer 3's next carrier, is NOT named:** no `fix/W161-*` branch exists in git at this reading, and a carrier is named on confirmation (`PO-61/4`). ⚠️ **And it jumps `W255`–`W258`, minted after its dispatch:** the next free developer takes those first.
+
+### W248 — A source's own `archive/` at its root is skipped silently, because the archive root takes a common name in the owner's namespace
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W248.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W241/2`: the archive root `archive/` takes a common name in the corpus owner's namespace, and the source scan skips any `archive/` silently while the footprint excludes it.** ⭐ **So a source that already keeps its own `archive/` directory loses it from every reading, and nothing says so.** ⭐ **RECEIVED from `W241`'s office: no `archive` path is tracked in ISO at `0d970fd`, or at HEAD in the Java or SPARQL corpora, so no consumer is inside the harm today.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A file under the archive root that is not an archive member** (a `container.json`, or a lesson or practice document under `raw/`) **is refused by name, never skipped.**
+2. ⛔ **Asserted both ways (R12):** a planted `archive/notes.md` in a source turns `validate` RED and names the file; an adapter-written archive reads clean.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A move to `.studyforge/archive/`.** ⭐ **Round 76 ruled that the root stays, because `SK-02`'s published layout reads it.**
+
+⭐ **Surface:** `src/studyforge/validate/source/`, `cli/plan/`, and their tests. ⚠️ **`cli/plan/` is shared with [`W242`](#w242-for-a-sibling-corpus-the-generated-ignore-lines-have-no-committed-home-and-committed-media-stays-unclassified) and [`W210`](rows/W210.md): one owner or two waves.**
+
+[the mint argument](#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended)
+
+#### ⭐ CLOSED — PO ROUND 79
+
+⭐ **Merged at `a2ae2c4`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `a2ae2c4` is RECEIVED.** ⭐ **A file beneath the archive root that no reader reads is refused by name as `archive-stray`, never skipped, and an adapter-written archive reads clean.** ⚠️ **Each finding's disposition is this round's § 6.**
+
+### ⭐ 7 — `W154` CLOSED, AND THE READING OF RECORD MOVES
+
+⭐ **`2ffd4a8` (`W154`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after this office's first pinned run, at `b314d32`, had started. Host `corroborate` then REFUTED `W154` as absorbed, which is a GATE at a register branch (Ruling 279). So the close is taken here, and the reading of record is the pinned run after it, as round 78 did for `W156`.** Reversible.
+
+```text
+                                      merge^2   branch head  ahead  checked out
+fix/W154-capability-delivery-reading  e51c469d  e51c469d     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W154.md`.** ⭐ **Carrier confirmed against git:** [`W161`](rows/W161.md), Developer 3, `fix/W161-observation-subject-vocabulary` @ `wt/dev3`, cut `a2ae2c4`, declared `W161`, NAMED here; § 6's *not named* is dated by this. ⚠️ **It is order 13 and was dispatched before `W255`–`W258` were minted at orders 1–2, so the next free developer takes those first.**
+
+| finding | became |
+|---|---|
+| `W154/1` | disposed at the close: a surviving plant, fixed with a fixture and re-planted RED |
+| `W154/2` | ⛔ **ruled: `M0`'s Ref cell records `a7c114b`**, the close merge the record names at its 2026-09-09 entry, on release's first-parent line. Reversible |
+| `W154/3` | ⭐ **minted [`W260`](rows/W260.md)**, jumping nobody; `docs/conventions/` is `W161`'s in flight |
+| `W154/4` | accepted, cost named: `NS-05`'s area names the service and its `Owns` is in `studyforge`; the index lets `Owns` decide, so it reads in the framework column, which is right |
+| `W154/5` | accepted, cost named: `delivery.py` is born near its R11 ceiling; the approach notice sees it, and the next arm splits it |
+
+### W154 — Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W154.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **COMMITS-PER-CAPABILITY WENT BAD OVER THREE WAVES AND NOTHING MEASURES IT.** ⭐ **The reading was taken by a peer session, re-derived by the coordinator, and re-derived a third time by this office — which is three manual derivations of one figure and zero instruments.**
+
+### ⛔ THE READING THAT MINTED IT, AND WHY IT IS NOT THE ROW'S ACCEPTANCE
+
+```text
+capability population, generated docs/capability-index.md          91
+delivered                                                          41
+undelivered                                                        50
+three waves, 68 commits, 17 first-parent merges           ⛔ ZERO new capabilities
+src/**/*.py across all three waves                        ⛔ BYTE-IDENTICAL
+⚠️ RE-MEASURED AT DISPATCH (Ruling 214). A taker who inherits these has inherited the defect.
+```
+
+### ⚠️ ANNOTATION, PO ROUND 52 — THE READING ABOVE IS PARTLY A FALSE NEGATIVE, AND THE ROW IS NOT RE-MINTED
+
+⛔ **`src/**/*.py … BYTE-IDENTICAL` returns a FALSE NEGATIVE on any wave that ships a SIBLING COMPONENT.** ⭐ **RECEIVED from the coordinator, environment MAIN checkout, and it is a reading this row's own mint could not have taken:**
+
+```text
+src/**/*.py LINES:  428223c 25376 · 110504b 25376 · 82bff6d 25376 · 0fcb6b4 25376
+⛔ IDENTICAL ACROSS THE MERGE THAT DELIVERED A CAPABILITY — and that is CORRECT, not a defect.
+```
+
+⚠️ **`NS-01`'s `Owns` is a SIBLING REPOSITORY, so the deliverable is `125` tests and three routes in `../narrate-service` and studyforge receives two files.** ⛔ **Thirteen of the open rows deliver ZERO bytes into the tree this instrument measures — every `E12` and `E13` row — so `src/**/*.py` cannot see that class of capability at all.**
+
+⭐ **THE ROW IS NOT RE-MINTED AND ITS NAMING AND ACCEPTANCE ARE NOT WIDENED** (Ruling 311's direction, and Ruling 244's form: a rotted predicate is DATED, never silently replaced). ⛔ **The minting reading is TRUE of its own population — three waves of register work — and the correction is a CONSTRAINT ON THE INSTRUMENT THIS ROW ASKS FOR: it owes a SECOND COLUMN for component-owned capabilities, not a correction to the first.** ⚠️ **An instrument shipped without it would report a velocity collapse every time the project delivers a sibling, which is `W147`'s inversion — a check that goes red for the tree being right.**
+
+### ⛔ WHY IT IS NOT A BOARD CELL, AND THE REFUSAL IS THE BOARD'S OWN CONTRACT
+
+⚠️ **The request that produced this row asked for a standing per-wave READING on the register.** ⛔ **`BOARD.md`'s register says of itself: *"A cell in this table carries no measurement, no ref other than a merge ref, and no reasoning — those are the three things that go stale, and they have exactly one home each."*** ⭐ **A standing per-wave reading is a MEASUREMENT, and putting one on the board rebuilds precisely the defect `CLAUDE.md` was rewritten to remove: a live fact in a snapshot, kept freshly wrong.**
+
+⭐ **A POINTER RESOLVES AT READ TIME; A FIGURE DOES NOT. So the reading belongs in an instrument whose output IS its reading — which is what the floor's notices already are.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THIS ROW OWES A DESIGN DECISION BEFORE IT OWES CODE:** ⭐ **whose instrument prints it — the quality floor, `tools/quality/board/`, or a wave-close step in `docs/conventions/board.md`** — ⚠️ **and the answer is constrained, because a floor that reads the COMMIT GRAPH is a floor whose reading changes with no file changing.**
+2. ⭐ **THE POPULATION IS THE GENERATED INDEX'S** — `docs/capability-index.md` — ⛔ **never a hand-kept list, or the instrument inherits `W151`'s defect in its own first commit.**
+3. ⛔ **THE FALSE-POSITIVE CLASS IS DECLARED, NOT DISCOVERED:** ⚠️ **a capability id matches a merge subject for reasons OTHER than delivery — ruling prose carried in a roll-up subject is the measured instance, and two ids were false positives under a naive grep.** ⭐ **A predicate that cannot separate them prints a plausible number, which is the exact failure mode this row exists to stop.**
+4. ⚠️ **THE MILESTONE LEDGER IS THE STRONGER INSTRUMENT AND THE GREP IS THE WEAKER ONE.** ⛔ **Milestones CLOSE at named refs under Ruling 97; a subject grep merely agrees with them. A taker who builds only the grep has built the second-best reading and should say so.**
+5. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a wave that delivers a capability prints a different figure from one that delivers none.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A QUOTA, A TARGET OR A GATE.** ⭐ **The figure is a READING and this project's answer to *the register took the whole wave* is a PRECEDENCE PROPERTY, not a ratio** (`PO-51` §6, Q1). ⚠️ **An instrument that went red on a low figure would refuse correct waves — a wave spent on one large capability task has the worst possible ratio and is exactly what this project wants.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/` or `tools/quality/board/`, per the decision in clause 1, plus `docs/conventions/board.md` if the reading is a wave-close step.** ⚠️ **It names `docs/conventions/`, which is a SHARED constraint and not this row's alone —
+⛔ the members are listed ONCE, in the board's own *Next rows* note, and are not retyped here**
+(check 4's sub-step, and the board's closing rule: when a fact changes, exactly one file changes).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 79
+
+⭐ **Merged at `2ffd4a8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2ffd4a8` is RECEIVED.** ⭐ **Capability delivery between two named refs is printed by `python3 -m tools.quality.board.delivery`, never by the floor and never on the board. Its population is the generated index, and a roll-up subject citing an id is printed, not counted.** ⚠️ **Each finding's disposition is this round's § 7.**
