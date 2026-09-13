@@ -12,6 +12,8 @@ name `classification` directly because that is the module they are about.
 
 import json
 
+import pytest
+
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.validate import validate
 from studyforge.validate.source import (
@@ -319,10 +321,22 @@ def test_an_unexpected_answer_from_git_is_not_read_as_nothing_is_ignored(tmp_pat
     # (None), so `consulted` is truthful even for a corpus with no files.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     declared_output(root)
-    assert classification._declared_output(root, []) == frozenset()
+    assert classification.repository_ignores(root, []) == frozenset()
     outside = tmp_path / "not-a-repository"
     outside.mkdir()
-    assert classification._declared_output(outside, []) is None
+    assert classification.repository_ignores(outside, []) is None
+
+
+def test_a_candidate_outside_the_root_is_refused_naming_neither_path(tmp_path):
+    # ⛔ R7, reached when `W257` made the reader public: `relative_to`'s own
+    # message quotes the root, which is the input that carries a home directory.
+    root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
+    declared_output(root)
+    stray = tmp_path / "elsewhere" / "file.md"
+    with pytest.raises(ValueError) as refused:
+        classification.repository_ignores(root, [stray])
+    assert str(tmp_path) not in str(refused.value)
+    assert refused.value.__suppress_context__, "the chained message still quotes the root"
 
 
 def test_a_corpus_with_no_material_says_so_before_it_says_anything_else(tmp_path):

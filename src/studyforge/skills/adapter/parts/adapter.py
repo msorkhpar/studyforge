@@ -26,6 +26,14 @@ files are mine* gets the answer from the import list.
 tree, and the failure is then reported at the reader rather than at the writer.
 ⭐ So the generated emit builds the whole archive beside its destination and
 moves it only once every file exists.
+
+## ⛔ One run, one date — applied after the reader, never handed to it
+
+⚠️ **`INT-09/3`:** a container map once took the date `read` recorded while its
+documents took the run's, so one emission could disagree with itself. ⭐ The
+run's `ingested` now replaces each container's after `read` returns it, and
+`read`'s signature is unchanged: an adapter written before this keeps reading,
+and regenerating `emit` is the whole fix (R19).
 """
 
 from __future__ import annotations
@@ -71,7 +79,8 @@ def _emit(plan: Plan) -> str:
         does=(
             "Takes what `read` returned and writes every container map and every archive "
             "document at the paths `studyforge validate` walks. ⛔ Nothing reaches the "
-            "destination until every file has been built."
+            "destination until every file has been built, and every map and document of one "
+            "run carries that run's one `ingested`."
         ),
         uses="`emit(root, ingested='YYYY-MM-DD')` returns the paths it wrote, sorted.",
         depends=(
@@ -81,6 +90,7 @@ def _emit(plan: Plan) -> str:
         ),
         body=[
             "",
+            "import dataclasses",
             "import shutil",
             "from pathlib import Path",
             "",
@@ -122,7 +132,11 @@ def _emit(plan: Plan) -> str:
             "    if layout.staging.exists():",
             "        shutil.rmtree(layout.staging)",
             "    written = []",
-            "    for container in read.containers(root):",
+            "    for reading in read.containers(root):",
+            "        # ⛔ One run, one date (INT-09/3). The run's `ingested` is applied AFTER",
+            "        # `read`, never handed to it, so whatever date `read` recorded is replaced",
+            "        # and a map can never disagree with the documents beneath it.",
+            "        container = dataclasses.replace(reading, ingested=ingested)",
             "        written.append(_write(staging.container_map(container.address),",
             "                              render_map(container), staging))",
             "        for fields in read.documents(root, container):",
@@ -192,7 +206,7 @@ def _audit(plan: Plan) -> str:
             '    "this function can disagree with it."',
             ")",
             "",
-            "#: The rule id this module adds to `validate`'s twenty-two.",
+            "#: The rule id this module adds to the ones `validate` reports.",
             'RULE_SOURCE_COUNT = "source-count"',
             "",
             "",

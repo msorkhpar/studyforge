@@ -28,7 +28,18 @@ studyforge validate <corpus-root>   # 0, or a named list of what is wrong
 ⭐ Everything in this procedure exists to make that command reachable by
 somebody who has never read the framework's internals. **Measured at
 `f816454`:** `validate` runs **12 checks** — 8 about the archive alone, 2 about
-placement, 2 about the source — and can report **23 distinct rule ids**. It
+placement, 2 about the source — and can report **23 distinct rule ids**.
+⚠️ **Dated, and stale** (`W257`): both counts have grown since `f816454`. They
+stand as that reading and are not restated, because a count of files that keep
+moving is only freshly wrong in a document nothing re-measures (Ruling 163).
+⭐ The checks are `studyforge.validate.CHECKS`, and this prints their number at
+the ref you are reading:
+
+```
+python3 -c "import studyforge.validate as v; print(len(v.CHECKS), 'checks')"
+```
+
+⚠️ Rule ids have no public registry to count from (`W257/1`). `validate`
 reports every one of them in a single run, so there is never a reason to fix
 one problem per invocation.
 
@@ -236,6 +247,10 @@ corpus at all.
 | checks | **12** | 8 structure, 2 paths, 2 source |
 | rule ids | **23** | every distinct way one run can say *no* |
 | block types | **11** | the closed vocabulary a document body is made of |
+
+⚠️ **Dated, and stale** (`W257`): the checks and rule-ids rows are the reading
+at `f816454` and are not re-taken here. The fence under *The rule that governs
+every judgement below* prints the check count at the ref you are reading.
 
 ⭐ **The two halves are not substitutes.** The structure checks compare the
 archive against itself — a digest against the blocks it was taken from — and

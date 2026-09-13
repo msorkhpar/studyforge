@@ -28,9 +28,24 @@ working tree is a test people learn not to run — and R3's guarantee is about
 the source repository, so the suite that checks the guarantee must not be the
 thing that breaks it.
 
-⛔ **The archive is the one thing not copied.** A test that emitted over the
-last run's output would pass on a corpus this run can no longer produce, which
-is the failure a regression suite exists to catch.
+⛔ **The archive is not copied.** A test that emitted over the last run's output
+would pass on a corpus this run can no longer produce, which is the failure a
+regression suite exists to catch.
+
+## ⛔ Nor is anything the repository ignores, and the repository says which
+
+⚠️ **`INT-09/7`:** the copy once left out four fixed names, so a git-ignored
+scratch directory was copied whole, and one run took over a minute. ⭐ The copy
+now asks `studyforge.validate.source.repository_ignores` — the one ignore
+reader (`W28`) — once per directory, so an ignored directory is never walked.
+⛔ **No list is kept here.** Beyond the archive and its staging directory, which
+are this suite's own output, and `.git`, which git never answers for, what is
+left out is git's answer.
+
+⚠️ **Outside a git working tree, such as a `git archive` export, nothing is
+declared ignored.** An export holds only what was tracked, so every file in it
+is one the repository did not ignore. The copy takes everything but the archive
+and warns, because a copy that could not ask must not look like one that did.
 """
 
 from __future__ import annotations
@@ -115,10 +130,14 @@ def _test_emit(plan: Plan) -> str:
         ),
         body=[
             "",
+            "import json",
             "import shutil",
+            "import warnings",
             "from pathlib import Path",
             "",
+            "from studyforge.corpus.container import CONTAINER_FILENAME",
             "from studyforge.validate import validate",
+            "from studyforge.validate.source import repository_ignores",
             "",
             f"from {plan.package}.emit import emit",
             "",
@@ -128,20 +147,54 @@ def _test_emit(plan: Plan) -> str:
             "#: test that passed a moving date could not compare two runs byte for byte.",
             'INGESTED = "2026-01-01"',
             "",
-            "#: What a working copy of this corpus leaves behind. ⛔ The archive above all:",
-            "#: a test that read the last run's output would pass on a corpus this run can",
-            "#: no longer produce.",
-            "NOT_COPIED = shutil.ignore_patterns(",
-            f'    ".git", "{plan.archive_dir}", ".{plan.archive_dir}-staging",',
-            '    "__pycache__", ".pytest_cache",',
+            "#: What this suite's own emission writes at the corpus root, so a copy never",
+            "#: carries the last run's. ⛔ Not an ignore list: everything else a copy leaves",
+            "#: behind is the repository's own answer, read through `repository_ignores`.",
+            f'WRITTEN_HERE = ("{plan.archive_dir}", ".{plan.archive_dir}-staging")',
+            "",
+            "#: The repository's own store. Git answers for a working tree's files, never for",
+            "#: its database, so this is the one name that is not asked about.",
+            'REPOSITORY_STORE = ".git"',
+            "",
+            "#: Said, never assumed, when there is no ignore declaration to read.",
+            "UNDECLARED = (",
+            '    "this corpus root is not a git working tree (an export, say), so there is no "',
+            '    "ignore declaration to read and nothing was left out as ignored: the copy is "',
+            '    "every file but the archive. Run this suite in a working tree to copy less."',
             ")",
             "",
             "",
             "def _copy(tmp_path: Path) -> Path:",
-            '    """This corpus, minus its archive, somewhere the suite may write."""',
+            '    """This corpus, less its archive and what it ignores, where a test may write."""',
             '    where = tmp_path / "corpus"',
-            "    shutil.copytree(CORPUS_ROOT, where, ignore=NOT_COPIED)",
+            "    declared = repository_ignores(CORPUS_ROOT, []) is not None",
+            "    if not declared:",
+            "        warnings.warn(UNDECLARED, stacklevel=2)",
+            "",
+            "    def left_out(directory: str, names: list[str]) -> set[str]:",
+            "        return _left_out(Path(directory), names, declared=declared)",
+            "",
+            "    shutil.copytree(CORPUS_ROOT, where, ignore=left_out)",
             "    return where",
+            "",
+            "",
+            "def _left_out(here: Path, names: list[str], *, declared: bool) -> set[str]:",
+            '    """What one directory\'s copy skips: this suite\'s output, and what git ignores.',
+            "",
+            "    ⭐ Asked once per directory, so an ignored directory is never walked, let",
+            "    alone copied. ⛔ A repository that stops answering part-way refuses the",
+            "    copy: a copy that quietly took everything is the defect this replaced.",
+            '    """',
+            "    left = {name for name in names if name == REPOSITORY_STORE}",
+            "    if here == CORPUS_ROOT:",
+            "        left |= {name for name in names if name in WRITTEN_HERE}",
+            "    if not declared:",
+            "        return left",
+            "    asked = [here / name for name in names if name not in left]",
+            "    ignored = repository_ignores(CORPUS_ROOT, asked)",
+            "    if ignored is None:",
+            '        raise RuntimeError("git stopped answering part-way through the copy")',
+            "    return left | {path.name for path in ignored}",
             "",
             "",
             "def _emitted(root: Path) -> list:",
@@ -171,6 +224,23 @@ def _test_emit(plan: Plan) -> str:
             "    first = _emitted(root)",
             "    emit(root, ingested=INGESTED, replace=True)",
             '    assert _emitted(root) == first, "two runs of this adapter disagree"',
+            "",
+            "",
+            "def test_every_container_is_dated_with_its_documents(tmp_path):",
+            "    # ⛔ One run, one date (INT-09/3). `emit` applies the run's date after `read`,",
+            "    # so a container map can never carry a date its documents were not given.",
+            "    root = _copy(tmp_path)",
+            "    emit(root, ingested=INGESTED)",
+            f'    archive = root / "{plan.archive_dir}"',
+            "    maps = sorted(archive.rglob(CONTAINER_FILENAME))",
+            '    documents = [p for p in archive.rglob("*.json") if p.name != CONTAINER_FILENAME]',
+            '    assert maps and documents, "nothing to compare: no container map or no document"',
+            "    stray = {}",
+            "    for path in [*maps, *sorted(documents)]:",
+            '        when = json.loads(path.read_text(encoding="utf-8"))["ingested"]',
+            "        if when != INGESTED:",
+            "            stray[path.relative_to(root).as_posix()] = when",
+            '    assert not stray, f"dated otherwise than this run ({INGESTED}): {stray}"',
         ],
     )
 
