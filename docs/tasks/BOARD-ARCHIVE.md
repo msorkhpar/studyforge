@@ -22359,3 +22359,341 @@ gated skips, weighted by their [n] groups                            10
 #### ⭐ CLOSED — PO ROUND 77
 
 ⭐ **Merged at `579e1df`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `579e1df` is RECEIVED.** ⭐ **A bare count of a growing population typed into Python prose fails the floor: `check_derived_counts` refuses a figure before *"markdown files"* or *"declared gaps"* unless its own sentence names the ref it was measured at, and the eleventh notice, `count_census`, prints bare and dated counts apart.** ⚠️ **Only those two nouns are read (`W151/2`), and `W116/3`'s test figures stay outside them (`W151/3`). Each finding's disposition is in this round's § 3.**
+
+## PO round 78 — `W163` closed, `W250` named, and ISO round 8 pending on `W242`
+
+⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) `5d9436d` (`W250`, carrying `cbc0991`, `W242`) and `973fc67` (carrying `b9e68cc`, `W149`, and `W156`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each closed row is RECEIVED: the coordinator's release-tip readings at `accceaf`, `947a007`, `cbc0991`, `5d9436d`, `b9e68cc` and `973fc67`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; a second run, at `79a5669`, started before the `W242` and `W250` readings arrived. A third, at `37ec38a`, finished as `W156`'s reading arrived. The reading of record is the run after `W156`'s close.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                  merge^2   branch head  ahead  checked out
+fix/W163-visual-reasoning             0362b7d6  0362b7d6     0      NOWHERE
+fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
+fix/W242-sibling-ignore-home          1b39682d  1b39682d     0      NOWHERE
+fix/W250-linked-heading-not-an-entry  a6602c6b  a6602c6b     0      NOWHERE
+fix/W149-merge-subject-prose          be324640  be324640     0      NOWHERE
+fix/W156-owns-before-creator          a751316a  a751316a     0      NOWHERE
+```
+
+⭐ **All six TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W248.md` re-pointed for `W242`, `rows/W249.md` for `W250`; `E12` for `W156`; `W163`, `W153` and `W149` have none. ⚠️ **The four rows' own handoffs and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
+
+⚠️ **`docker/dev/` is an image build input, so this merge moved the dev image identity from `inputs-f1874d21…` to `inputs-f5bb0ced…`.** The change is comment lines only; no configuration line changed.
+
+### ⭐ 2 — RULED, REVERSIBLE
+
+1. ⛔ **`W163/2` is relayed to the user and folded into the held `W162/7` + `W162/8` question, not minted.** No environment reaches the two identity checks: the FRESH arm returns before the flag is read, and they need the host, a daemon, Compose and network to the package index. [Ruling 332](../conventions/review-rubric.md#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) and [Ruling 333](../conventions/review-rubric.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) forbid a taker from supplying that network, so a row would be one no office may take. ⭐ **They stay declared unmeasured in `devgate.FRESH`, which prints on every run.**
+2. ⭐ **`W153/2`, adopted by the coordinator, is RECORDED.** Every carrier is cut with `git config branch.<branch>.description W<n>`. A declared carrier leaves `corroborate`'s *dispatched and unnamed* gate before a register round names it, and the In flight table stays authoritative wherever it names a branch. ⭐ **The dispatch convention now points at [the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded):** one line under `delivery-flow.md`'s branch table, because a taker cutting a branch reads that table and not `corroborate`'s section. ⚠️ **The board does not repeat it: `board.md` carries the rule (Ruling 349), and the board's narrative is at its bound.**
+3. ⭐ **`W153` closes in this round, not round 79.** The message arrived before the reading of record, and `947a007` is merged here. Reversible.
+4. ⛔ **`W242/1` is CONFIRMED: a build's output is committed** — its pages, the root index, the asset bundle and `site.json`. §5 now says so in one sentence. ⭐ **The ground is §5's own:** *regenerable is not the same as available*, so a clone that ignores its pages has no reading floor (R8, §11.0). `ISO-05` also refuses any generated rule matching `*.html` or `*.json`. ⚠️ **This DATES the first half of [Ruling 91](../tasks/handoffs/CTO-2026-09-10-round26.md#ruling-91-f19-a-sibling-build-does-not-need-readmemd-rewritten-and-never-did), which declared `sibling` output in `.gitignore`.** Ruling 91's record stands unedited (Ruling 106), and its profile-switch half is untouched. ⭐ **Reversible:** no page is committed into ISO before `ISO-10`, and ISO round 8 (`ISO-05`) commits none.
+5. ⭐ **`W242` and `W250` close in this round too, at the coordinator's word.** `5d9436d` is merged here, and the reading of record follows it. Reversible.
+6. ⭐ **`W149` and `W156` close here too, at the coordinator's word.** Both are merged in this branch at `973fc67`, and the reading of record follows their closes. ⭐ **`W149/1` is ADOPTED by the coordinator:** every merge subject runs through `tools.quality.subject` before the merge. Reversible.
+
+### ⭐ 3 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `W163/1` | disposed at the close: two further stale clauses, the `W36` pointer and *"a green run that proved nothing"*, inside the row's one block. All four annotated in place |
+| `W163/2` | ⛔ **ruled, § 2.1**: relayed to the user, folded into the held `W162/7` + `W162/8` |
+| `W163/3` | accepted, cost named: the *"proved nothing"* annotation is REASONED from the harness line and the in-image browser check, not measured. Measuring it removes the pass-through, which changes configuration and builds another image, and that is the held `W162/8` question |
+| `W163/4` | accepted, cost named: `test_no_check_in_tests_docker_calls_docker_on_a_default_run` asserts the child session's exit BEFORE its docker-call record. It can go falsely RED and never falsely GREEN. In a run where `tests/docker/` is already RED, its docker-call half is unread, and the next owner of `tests/docker/` reads it from there |
+| `W153/1` | disposed at the close: the surface widened to `unclaimed.py`, where `W132`'s split moved the arm, disclosed |
+| `W153/2` | ⭐ **recorded, § 2.2**, with the convention pointer |
+| `W153/3` | ⭐ **minted [`W251`](rows/W251.md)**: a detached checkout is reached by no arm, and its test module must split first |
+| `W153/4` | accepted, cost named: only `W` ids are accepted, so an `INT-` or `NS-` carrier stays on the gate until the register names it. Blind in the safe direction |
+| `W153/5` | disposed at the close: a shadowing bug, found by a surviving plant and fixed in the diff |
+| `W242/1` | ⛔ **ruled, § 2.4: CONFIRMED**, and §5 amended. The two sentences outside its surface (`generate/writing.py`, `corpus/discovery/cache.py`) are disclosed |
+| `W242/2` | accepted: interleaved output is classified through the plan, the one enumeration of a build's output (Ruling 99), because the manifest refuses leading-wildcard globs |
+| `W242/3` | accepted, cost named: `validate` imports `cli.plan` late, the second site of the cycle `W202`'s item 5 named |
+| `W242/4` | accepted, cost named: `Scan.generated` carries the recognised population, and `validate`'s report prints no line for it. That line is the report owner's |
+| `W242/5` | accepted: `sibling` with `media.commit: never` is refused by name. No corpus in scope declares it |
+| `W242/6` | ⭐ **rider on [`W210`](rows/W210.md)**, whose surface it is |
+| `W242/7` | accepted, cost named: `progress/store.py` spells `.gitignore` a second time, a file name and not a policy |
+| `W242/8` | disposed: ISO's `short-read` findings come from the synthetic archive and are unchanged, not a regression |
+| `W242/9` | ⭐ **rider on [`W232`](rows/W232.md)**, its third witness |
+| `W250/1` | a witness, not a row: at ISO `ab9e765` six open questions in `duplication`'s structural report carry one identical `settle` text. ⭐ **Relayed through the coordinator to the next ISO read; minted only if it reproduces there** |
+| `W250/2` | ⭐ **minted [`W252`](rows/W252.md)**: a heading-form entry reads no ordinal. Same surface as `W249`, so one owner, after it |
+| `INT-08/4` | discharged: `ISO-10` waited on `W242/1`, CONFIRMED in § 2.4 |
+| `INT-08/6` | discharged: `ISO-07` and `ISO-08` needed `W250`, closed in this round at `5d9436d` |
+| `W149/1` | ⭐ **adopted by the coordinator, § 2.6** |
+| `W149/2` | accepted, cost named: a reading with no count is DECLARED and not decided, because a claim's tense is not decidable from the string |
+| `W149/3` | disposed at the close: the predicate is one submodule of `tools/quality/` with its mirror, inside the declared surface |
+| `W156/1` | DATED, not wrong (Ruling 310(b)): the row's open-row figure was true at its own ref, and the handoff's population table re-reads it at three refs |
+| `W156/2` | accepted, cost named: `OPS-03` is a second `Context` reader beside `SK-09`. The census prints `Context` reads as an arm that never fails the floor, so both are visible and neither is gated |
+| `W156/3` | ⭐ **minted [`W253`](rows/W253.md)**: `TC-01` still `Owns` `TC/` as a root after `TC-00` creates it |
+| `W156/4` | accepted, cost named: `FND-08` and `FND-09` sit in no step line. `M0` is closed, so no dispatch reads their membership |
+| `W156/5` | disposed at the close: `SK-09`'s `Context` is prose, and the census declares each member's derivation (clause 4) |
+
+⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** [`W249`](rows/W249.md), Developer 2, `fix/W249-source-and-not-material-globs` @ `wt/dev2`, cut `5d9436d`, declared by its branch description; it follows `W250` on `skills/reconnaissance/`. [`W154`](rows/W154.md), Developer 3, `fix/W154-capability-delivery-reading` @ `wt/dev3`, cut `973fc67`, order 11, declared by its branch description. [`W248`](rows/W248.md), Developer 1, `fix/W248-archive-root-refuses-strays` @ `wt/dev1`, cut `b9e68cc`, declared by its branch description. ⚠️ **It jumps board order as the only free framework surface serving `M6`, the coordinator's ground (Ruling 75); `W210`, which shares `cli/plan/`, is not in flight.** ⭐ **Mints, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42), [`W252`](rows/W252.md) (`W250/2`, order 43) and [`W253`](rows/W253.md) (`W156/3`, order 44).
+
+⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) was dispatched mid-round at `W242`'s merge, reading framework `cbc0991`. With `W242` merged, every framework blocker ISO round 6 found (`W239`–`W243`) is in. It merged into ISO at `a71a290`, and `ISO-05` is TAKEN; `ISO-06` was not, because its XML clause waits on `W243/1`. ⭐ **RECEIVED:** `INT-07/4` is discharged by `W242` at `cbc0991`, re-measured on a real `sibling` build with a planted control. ⭐ **The pin advanced to `a71a290` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, at `168a78e`, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8`, now with `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
+
+### W163 — `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which the row that fired its trigger landed beside and did not carry
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W163.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`docker/dev/compose.yaml`'s `STUDYFORGE_VISUAL` BLOCK ARGUES FROM TWO CLAUSES THAT ARE BOTH FALSE OF THE TREE, AND THE TRIGGER THAT WAS WAITING FOR AN OWNER FIRED WITHOUT BEING MET.** ⭐ **`W128/6`'s finding, and the conclusion the block reaches is still right — it is the REASONING that is stale.**
+
+### ⛔ THE READING, role `wt/po`, ref `0564997`, environment HOST
+
+```text
+git diff 3049de9^1 3049de9 -- docker/dev/compose.yaml
+  ⭐ the file's HEADER — the invocation block — rewritten by `W152`
+  ⛔ the STUDYFORGE_VISUAL block at :90–:115  UNTOUCHED
+```
+
+⚠️ **The `## Scheduled` item named its act as *whichever row next owns `docker/dev/**`*. `W152` was that row and it merged at `3049de9`, so the trigger FIRED — and the correction it was waiting for did not happen.** ⭐ **The cell now reads `fired` AND NOT MET, which is the state a firing-without-meeting needs; this row is what the firing did not carry.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE BLOCK'S REASONING MATCHES THE TREE**, clause by clause, or the clause is struck — ⭐ **and the DECISION (pass-through, deliberately not a default) is preserved, because it is correct.**
+2. ⚠️ **A REASON THAT WENT STALE UNDER A CORRECT DECISION IS ANNOTATED WITH WHAT MADE IT STALE**, not silently rewritten — ⭐ **a reader who trusted it should be able to see why.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHANGE TO WHAT THE COMPOSE FILE DOES.** ⭐ **`STUDYFORGE_VISUAL=required` as a default was tried, measured and refused, and that refusal stands.** ⛔ **AND NOT A SWEEP OF `docker/dev/`** — ⚠️ **the subject is one block and its two clauses.**
+
+### ⭐ SURFACE
+
+⛔ **`docker/dev/compose.yaml`'s `STUDYFORGE_VISUAL` block.** ⚠️ **Shares `docker/dev/` and `tests/docker/` with `W158` and `W162`: ONE OWNER or two waves for the set** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+⭐ **Riders, PO round 75 — `W162/5` and `/6`:** nothing asserts that the identity caller keeps `builds_fresh=True`, and nothing plants it; and the two identity checks are reached by no permitted environment. ⚠️ **The gate this row imports now lives in `tests/docker/devgate.py` (`W162`).**
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `accceaf`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `accceaf` is RECEIVED.** ⭐ **`compose.yaml`'s `STUDYFORGE_VISUAL` block matches the tree clause by clause. Each stale reason is annotated in place with what made it stale, and the pass-through decision and every configuration line are unchanged.** ⭐ **Riders discharged:** `W162/5` (the identity checks skip as `devgate.FRESH` even on a flagged warm cache, planted) and `W162/6` (`devgate.FRESH` names the environment they would need). ⚠️ **The merge moved the dev image identity to `inputs-f5bb0ced…`. Each finding's disposition is in this round's § 3.**
+
+### W153 — `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W153.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **Ruling 319(c)'s DURABLE REPAIR, ROUTED to this board by the reviewing office: `corroborate`'s `dispatched and UNNAMED` arm reads its names FROM THE REGISTER, so in a wave with no register round it has NO instrument-readable source and is blind BY CONSTRUCTION.**
+
+### ⛔ WHY THE BLINDNESS IS STANDING AND NOT AN ACCIDENT
+
+⭐ **`PO-50/7` ruled that a register round and `W78` can never share a wave, because both write `docs/tasks/rows/`.** ⛔ **So the no-register wave is a SHAPE this project will keep producing, and the arm's blindness RECURS every time it occurs** — ⚠️ **which is the difference between a gap and a defect.**
+
+### ⛔ A SECOND MECHANISM, MEASURED IN A WAVE THAT HAD A REGISTER ROUND — SO THE FIRST ONE IS NOT THE WHOLE OF IT
+
+⚠️ **PO round 52, ref `7420c34`, role `wt/po`, environment HOST, `corroborate` READ WHOLE:**
+
+```text
+  dispatched and unnamed: none.
+  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no row: 2 — dev1 dev2
+CORROBORATE_EXIT=0
+```
+
+⛔ **`W146` was in `wt/dev1` and `W152` in `wt/dev2`, both dispatched in wave 5, and the `In flight` table was EMPTY.** ⭐ **Both checkouts ARE in the reading — and they are in the WRONG ARM.**
+
+⚠️ **Ruling 130's *invisible by construction* arm was written for a checkout that has done nothing. It cannot tell that apart from a checkout that HAS BEEN HANDED A ROW and has not committed yet.** ⛔ **So a dispatched-and-unrecorded row is invisible to the gate for exactly as long as its taker has written no commit — which is the entire window in which recording it would have done any good.**
+
+⭐ **WHY THIS BELONGS HERE AND NOT IN A NEW ID: the mechanism is different — the wave HAD a register round and the arm was still blind — but the REPAIR is the same one this row already names, a dispatch declaration an instrument can read.** ⛔ **Two mechanisms, one subject, one remedy: a second id would split a repair that cannot be half-shipped.**
+
+⚠️ **AND IT SHARPENS CLAUSE 1's ACCEPTANCE: the declaration must be readable at `0` COMMITS AHEAD, because that is the state every dispatch begins in.**
+
+### ⚠️ A THIRD INSTANCE, ROUTED HERE BY PO ROUND 52 — A DETACHED HEAD HAS NO NAME TO MATCH
+
+⛔ **`git worktree list`, ref `7420c34`, role `wt/po`, environment HOST:**
+
+```text
+/tmp/…/scratchpad/trial146   8885055 (detached HEAD)
+```
+
+⭐ **`corroborate` reads `trial/tmp branches still checked out: none` — CORRECTLY, by its own predicate, because that arm matches BRANCH NAMES and a detached HEAD has none.** ⚠️ **So a live checkout an office is working in is accounted for by nothing, which is this row's subject a third time and not a fourth id.**
+
+### ⛔ THE TWO TEMPTING ANSWERS, REFUSED IN ADVANCE BY THE RULING ITSELF
+
+| the tempting answer | ⛔ why it is refused |
+|---|---|
+| extend Ruling 265's namespace exemption to `fix/*` | ⚠️ **it exempts the WHOLE POPULATION the gate exists to read** |
+| treat the exit code as advisory on a reviewer's judgement | ⛔ **the memory-discharged exemption Ruling 185(a) forbids** |
+
+⭐ **THE SHAPE OF THE REPAIR IS RULING 185(b)'S — NARROW THE POPULATION, NEVER WIDEN THE PREDICATE: the arm reads its names from the wave's DISPATCH, declared where an instrument can read it, so that `dispatched and UNNAMED` means *no office claims this branch* in EVERY wave and not only in waves the register happens to be open.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DISPATCH DECLARATION AN INSTRUMENT CAN READ**, and this row owes the DESIGN DECISION for where it lives before it owes code — ⭐ **the register is one candidate and is the one that fails; a wave-scoped declaration outside the register is another.**
+2. ⭐ **THE ARM'S MEANING IS UNCHANGED IN WAVES THAT HAVE A REGISTER.** ⚠️ **A repair that changed what the arm reports in the waves where it already works would be a regression wearing a fix.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): in a no-register wave the arm NAMES the wave's own dispatched branches and refutes none, and a genuinely unclaimed branch is still NAMED — ⚠️ **the second arm is the one a no-register fixture makes easy to leave untested.**
+4. ⚠️ **`W125` IS THE NEIGHBOUR AND THE TWO MUST BE READ TOGETHER** — ⭐ **`W125` owes a design decision about GENERATING the In-flight table, and a generated table that `corroborate` then asserts git against would leave the instrument asserting git against itself** (Ruling 231(c)). ⛔ **A taker of this row who has not read `W125`'s is about to re-derive it.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD COPY OF THE DISPATCH.** ⭐ **The In-flight table, the round record and a new declaration are three places one fact could live, and this board's closing rule is that when a fact changes, exactly ONE file changes.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/board/corroborate.py` and its tests, plus `docs/conventions/board.md` for the declaration's contract.** ⚠️ **`tools/quality/board/register.py` carries a STANDING SPLIT condition.** ⚠️ **It names `docs/conventions/`, which is a SHARED constraint and not this row's alone —
+⛔ the members are listed ONCE, in the board's own *Next rows* note, and are not retyped here**
+(check 4's sub-step, and the board's closing rule: when a fact changes, exactly one file changes).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `947a007`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `947a007` is RECEIVED.** ⭐ **`corroborate` reads a carrier's rows from its own branch description, so a carrier dispatched between register rounds, or at zero ahead, leaves the gate. The table stays authoritative wherever it names a branch, and the exit code is unchanged ([the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded)).** ⚠️ **A detached checkout is not reached: [`W251`](rows/W251.md). Each finding's disposition is in this round's § 3.**
+
+### W242 — For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W242.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/7` and `/8`: for a `sibling` corpus, the generated ignore lines have no committed home and committed media stays unclassified (`F19`, `Q21`).** ⭐ **RECEIVED from the ISO integration round 6 (framework `3483ced`, ISO `0d970fd`, §11.1):** *"still holds: sibling output is `[unclassified]`. Committed media (`auto`) stays unclassified even when plan's ignore lines are in place"*; *"plan's five `ignore` lines have no committed home here (root ignore file forbidden by R3, `src/` untouchable). ISO-05's "no rule matches `*.html`/`*.json`" conflicts with `*.unit.html` and `/.studyforge/site.json`."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> for `sibling`, where the generated ignore lines live when the root ignore file is R3-forbidden, and how committed media is classified.
+
+⛔ **Asserted both ways, over a `sibling` corpus whose root ignore file may not be edited.** ⚠️ **[`W15`](rows/W15.md) is this row's R3 ground, and [`W210`](rows/W210.md) spells the media policy a second time in `cli/plan/report.py`: the taker reads both.**
+
+### ⭐ ORDER AND OWNER
+
+⭐ **Order 2: it writes what [`W239`](#w239-sk-07s-promote-drops-a-drafts-contentnotmaterial-so-the-first-real-corpus-cannot-generate-its-ruled-declarations-and-iso-04-stops) (`skills/onboarding/`) and [`W241`](#w241-validate-reports-valid-with-no-archive-and-plan-announces-an-archive-root-that-validate-the-build-and-the-adapter-layout-do-not-read) (`cli/plan/`, `corpus/placement/`) write, so it follows both.** ⭐ **Blocks `ISO-05`, `ISO-12` and `ISO-13`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/corpus/placement/`, `corpus/media/`, `cli/plan/` and `skills/onboarding/`, with their tests.
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+⭐ **Rider, PO round 75 — `INT06-1/4`:** `promote` still resolves two GENERATORS declaring the same glob by first-wins precedence, which is what [`W239`](#w239-sk-07s-promote-drops-a-drafts-contentnotmaterial-so-the-first-real-corpus-cannot-generate-its-ruled-declarations-and-iso-04-stops) refused for a draft against a generator. ⚠️ **The same `skills/onboarding/` owner, after `W239` merges.**
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `cbc0991`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `cbc0991` is RECEIVED.** ⭐ **A build's output is committed and recognised through the plan. The only generated ignore rules are the media policy's, inside the generated root and never in the root ignore file, and a collision between two generators' globs is refused naming both (rider `INT06-1/4`).** ⭐ **RECEIVED, the ISO re-read:** nothing is `[unclassified]`, the plan prints no ignore line, and the root ignore file's digest is unchanged. ⚠️ **`W242/1` is ruled in this round's § 2.4. Each finding's disposition is in § 3.**
+
+### W250 — `SK-01` reads a heading that links a file as a contents entry, so `F21`'s fourth container is never proposed and `ISO-07` stops
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W250.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-07/3`: `SK-01`'s survey reads a heading that links a file as a contents entry, so it names 39 units in 3 groups and never proposes `F21`'s fourth container.** ⭐ **RECEIVED from ISO integration round 7 (framework `5f772d9`, ISO `ab9e765`, §12), relayed by the coordinator:** *"Still holds: 39 units in 3 groups, because `# [Test cases](TestCases.md)` reads as an entry."*
+
+⭐ **`F21` is ruled (Ruling 92): a unit's `origin` is `{path, section}`, so a unit may be a region of one file.** ⚠️ **The survey does not reach that ruling, and [`W240`](#w240-sk-01s-draft-carries-a-source-and-variants-that-sf-02-refuses-and-its-include-globs-make-the-curriculum-record-a-unit)'s close named it `F21`'s question (`W240/1`).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A heading is not made a unit entry by a link alone.** The taker says what such a heading is read as.
+2. ⛔ **A file whose headings are regions is proposed as a container of sub-file units, or the survey says by name why not.**
+3. ⛔ **Asserted both ways**, over a fixture shaped like the finding.
+
+⭐ **Blocks `ISO-07` and `ISO-08`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/` and its tests. ⚠️ **One owner with [`W249`](rows/W249.md).**
+
+[the mint](#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `5d9436d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5d9436d` is RECEIVED.** ⭐ **A heading that links a file is a group label whose units are that file's regions, so `F21`'s fourth container is proposed.** ⭐ **RECEIVED, the ISO re-read:** `TestCases.md` becomes a container of regions, which unblocks `ISO-07` and `ISO-08`. ⚠️ **[`W249`](rows/W249.md) follows on the same surface. `W250/1` and `/2`: this round's § 3.**
+
+### W149 — A merge subject's PROSE is re-derived against its record by nobody, and a subject cannot be annotated after it lands
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W149.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`SESSION-2026-09-11c/11`, accepted by the reviewing office as a real gap and filed to this board: a merge subject is read for its VERDICT TOKEN and its BRACKET, and its PROSE is re-derived against the record by nobody.** ⭐ **A merge subject cannot be annotated afterwards, so a false one enters the release UNCORRECTABLE.**
+
+### ⛔ THE LIVE WITNESSES — EVERY ONE THE REVIEWING OFFICE'S OWN, AND THE LAST TWO ARRIVED IN THE ROUND THAT MINTED THIS ROW
+
+| id | ⛔ what entered a subject |
+|---|---|
+| `CTO-65/8` | a subject stated a COUNT of the record's own recorded defects and the count was short of what the record held — ⚠️ **caught only because a branch happened to return** |
+| `CTO-65/12` | a section asserted an invariant about subjects THREE LINES ABOVE a subject that violated it |
+| `CTO-66/4` | ⭐ **THIRD, found by the reviewer inside the record that mints this row** — an office's own defect entry stated the very defect it was entered for, three lines below the correction |
+| `CTO-66/19` | ⭐ **FOURTH, and the first whose subject's AUTHOR was the office that minted this row** — a verdict subject composed in READING form (*"two branches reviewed"*) in the same record that ruled a subject's prose is re-derived by nobody, and unnoticed across three further commits |
+
+⭐ **The reviewing office's own words, ruling it onto this board: *"a merge subject is read for its verdict token and its bracket, and its PROSE is re-derived against the record by nobody — which is exactly how `CTO-65/8`'s wrong count would have entered the release. That is the same shape as `W78`'s whole row: a claim nothing re-measures."***
+
+### ⛔ THE FOURTH WITNESS IS THE STRONGEST ARGUMENT THIS ROW WILL EVER GET, AND IT IS NOT THIS OFFICE'S CLAIM
+
+⭐ **The reviewing office's own words, routing `CTO-66/19` here** (Ruling 195 — quoted, not paraphrased):
+
+> ⚠️ **I composed a verdict subject in READING form in the same record in which I minted `W149` and ruled that a subject's prose is re-derived by nobody.** ⛔ **It was wrong at the moment I wrote it and I did not notice across three further commits.** ⭐ **THE COORDINATOR CANNOT FIX IT AND SAID SO PLAINLY — they check the token and the bracket and do not re-derive the prose.** ⚠️ **So the one defect class `W149` exists for was, this round, caught by the office that has no instrument for it, against the office that had just ruled on it.**
+
+⛔ **The repair the reviewer reached without an instrument is ALSO the row's own best clause, and it terminates the regress: A SUBJECT STATED AS A PROPERTY IS TRUE AT EVERY REF; A SUBJECT STATED AS A READING IS TRUE AT ONE.** ⭐ **Both round-66 subjects were rewritten in property form — *every branch offered*, *every defect of my own* — and survived two further tip moves unchanged, which turns Ruling 320 from a diagnosis into a construction.**
+
+⚠️ **RECORDED BY THE ROUND-52 REGISTER, which is the office that owns `docs/tasks/` and therefore the only one that could perform the routing the reviewer asked for.**
+
+### ⭐ WHY THIS IS `W78` ONE LEVEL UP AND IS NOT `W78`
+
+⛔ **`W78` is a claim in a DOCUMENT that no instrument re-derives, and its remedy could be an instrument over documents.** ⚠️ **A merge subject is in the COMMIT GRAPH: it is immutable, it is not a file, no floor walks it, and no annotation can reach it.** ⭐ **So the remedy must run BEFORE the merge, which makes it a GATE and not a sweep — a different shape from `W78`'s, on a population `W78` cannot see.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A PRE-MERGE PREDICATE over the subject string, run by whoever composes it, with its pass condition stated in `docs/conventions/review-rubric.md`.** ⭐ **`CTO-63/6` already forbids a COUNT in a subject and `Ruling 320` already distinguishes a PROPERTY from a READING — this row gives those two an instrument instead of a memory.**
+2. ⭐ **THE POPULATION IS THE SUBJECT'S CLAIMS, ENUMERATED, and the pass condition is that every claim is a PROPERTY** — ⛔ **never *the office checked it*, which is the memory-discharged exemption Ruling 185(a) forbids.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a subject carrying a bare integer is REFUSED, and a subject stating the same fact as a property PASSES — ⚠️ **and the refusal arm is tested on a string built for the test, never on a real historical subject, because a historical subject is frozen and re-deriving one is not this row's business.**
+4. ⚠️ **THE VERDICT TOKEN AND BRACKET ARE ALREADY READ AND STAY READ.** ⭐ **This row ADDS a reader; it removes none.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **AN INSTRUMENT THAT EDITS OR PROPOSES SUBJECTS.** ⭐ **The subject is the merging office's sentence and stays theirs; the instrument REFUSES and says which clause refused.** ⛔ **AND NOT A SWEEP OF HISTORY** — ⚠️ **every past subject is frozen, no office may repair one, and a check that reports on them produces a backlog nobody is permitted to clear** (Rulings 106, 174).
+
+### ⭐ SURFACE
+
+⛔ **`docs/conventions/review-rubric.md` for the clause, and `tools/quality/` for the predicate if the decision puts one there.** ⚠️ **It names `docs/conventions/`, which is a SHARED constraint and not this row's alone —
+⛔ the members are listed ONCE, in the board's own *Next rows* note, and are not retyped here**
+(check 4's sub-step, and the board's closing rule: when a fact changes, exactly one file changes).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `b9e68cc`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `b9e68cc` is RECEIVED.** ⭐ **A merge subject's prose is read by a pre-merge predicate, `tools.quality.subject`, whose pass condition is in `docs/conventions/review-rubric.md`: a claim carrying a bare count is refused before the merge.** ⭐ **The coordinator runs it on every merge subject (`W149/1`).** ⚠️ **A reading with no count is declared, not decided (`W149/2`). Each finding's disposition is in this round's § 3.**
+
+### W156 — A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W156.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`TC-00` `Owns` a path INSIDE a component that does not exist, `TC-01` is the row that CREATES that component, the two sit in the SAME STEP, and the epic declares NO edge between them.** ⭐ **A dispatcher reading step 5.1 puts two developers on both at once and one of them has nowhere to write.**
+
+⭐ **PO round 74 — THE EDGE HALF IS SETTLED BY THE REORDER.** ⛔ **The user moved the editor to `M7`, so `TC-00` now CREATES `TC/` and `TC-01` declares `TC-00` (`E12`); the step named above and the reading below are the plan before that round.** ⭐ **The PREDICATE half, clause 2, stands, and so does this row** ([the record](#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+
+### ⛔ THE READING, TAKEN TWICE BY TWO OFFICES WITH TWO INSTRUMENTS
+
+```text
+all 50 open capability rows walked, 50 of 50, zero unreached, Owns taken from the epics only
+  ⛔ 10 rows Own inside a not-yet-created component and are NOT its creator
+  ⭐  9 of the 10 have an EARLIER-STEP creator AND a declared Depends on edge
+       TC-02 TC-03 TC-04 TC-05 TC-06 (creator TC-01, 5.1)
+       NS-02 NS-03 NS-04 NS-06       (creator NS-01, 3.1)
+  ⛔  1 of the 10 has its creator in the SAME step with NO declared edge:  TC-00
+  ⛔  0 rows have a LATER-step creator.
+⭐ THE GRAPH IS SOUND EVERYWHERE EXCEPT ONE ROW.
+```
+
+⚠️ **And `TC-00`'s epic entry says explicitly that it *"is not an early draft of `TC-01` and must not grow into one"*** — ⛔ **so the missing edge cannot be repaired by folding the two rows together, which is the first thing a taker will reach for.**
+
+### ⭐ WHY THIS IS THE PROJECT'S OWN NAMED COUNTER-EXAMPLE, RECURRING
+
+⛔ **`README.md` was CORRECTED on exactly this class: a step is a batch boundary and NOT a parallelism guarantee, and in-step edges are read off the epic and never inferred from step membership.** ⚠️ **The counter-example it names is `SK-07`/`SK-08` — a real in-step edge that step membership hid.** ⭐ **`TC-00`/`TC-01` is the SECOND instance, and this time the epic does not carry the edge either, so a dispatcher who obeys the corrected rule STILL misdispatches.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The edge is DECLARED where the corrected rule says edges live — in the epic's own `Depends on` line** — ⭐ **or `TC-00`'s `Owns` is re-pointed at a path that exists before `TC-01` runs, and the epic says which and why.**
+2. ⭐ **AN INSTRUMENT, NOT A CORRECTION.** ⛔ **Fixing one row buys one row; the walk above is a PREDICATE — *a row Owns inside a component it does not create, and its creator is not in an earlier step* — and it found this instance out of fifty. Shipping the predicate is the fix; shipping the edge alone is the symptom.**
+3. ⚠️ **THE SURFACE QUESTION IS OPEN AND IS THIS ROW'S TO ANSWER: is the predicate's input `Owns` ALONE?** ⭐ **`SK-09` is not a hit under `Owns` — its `Owns` is a `studyforge` surface — but its `Context` reads inside BOTH absent components, and it is the only row where that is true.**
+4. ⛔ **THE DERIVATION'S WEAK MEMBERS ARE DECLARED, NOT SMOOTHED** (Ruling 292): ⚠️ **for six of the ten the `Owns` cell carries no path root and the component was resolved from the epic's PREAMBLE PROSE rather than from a path. That is a weaker derivation and the instrument must SAY which members it read which way.**
+5. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): the nine sound rows stay SILENT and the one unsound row is NAMED.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RENUMBERING OF THE PLAN.** ⭐ **`README.md` records the refusal that settles this in advance: moving a task into a new step to protect a sentence is a fix that the next in-step edge undoes.** ⚠️ **Membership stays in `README.md`, the edge belongs in the epic, and state stays on the board.**
+
+### ⚠️ `CTO-66/12` — THE BUNDLE IS ACCEPTED, AND THE EDGE MAY LAND FIRST WITHOUT REOPENING THIS ROW
+
+⭐ **The reviewing office examined clause 2 (*"shipping the predicate is the fix; shipping the edge alone is the symptom"*) and ACCEPTED it, recording one note for the taker rather than a change:**
+
+> ⚠️ **the EDGE is a live misdispatch hazard and the PREDICATE is an instrument over fifty rows** — ⛔ **but the row's own SURFACE line saves it: `TC-00` is M5 and gates nothing in the open step.** ⭐ **So there is no urgency and the bundle is ACCEPTED — recorded only so a taker who finds the instrument large knows the edge may land first without re-opening the row.**
+
+⛔ **WRITTEN INTO THE ROW BY THE ROUND-52 REGISTER so a taker finds it here rather than in a frozen record** — ⚠️ **and it WIDENS NOTHING: clause 2 stands exactly as written, and this note only says the two halves may be SEQUENCED.**
+
+### ⭐ SURFACE
+
+⛔ **`docs/tasks/E12-toolchain-image.md` for the edge, and `tools/quality/` for the predicate.** ⚠️ **`TC-00` is M5 and gates nothing in the open step — ⭐ this row is a CORRECTNESS row against the plan's graph, not a dispatch blocker, and it jumps nobody.**
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `973fc67`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `973fc67` is RECEIVED.** ⭐ **`check_owns_before_creator` fails the floor on a row that `Owns` inside a component it does not create unless its `Depends on` chain reaches that component's creator, placed in no later step. `creator_census` prints every member, its creator, and whether the component was read from a path or from epic prose, and a `Context` read is a second arm that never fails the floor.** ⭐ **The edge half is verified at `accceaf`, so nothing under `docs/tasks/` was touched.** ⚠️ **`W156/3` is [`W253`](rows/W253.md). Each finding's disposition is in this round's § 3.**
