@@ -101,6 +101,30 @@ def test_without_the_declaration_the_same_corpus_reports_one_finding_per_generat
     )
 
 
+def _unclassified_notes(tmp_path, content):
+    """Onboard the material plus a notes file, and return what validate cannot classify."""
+    root = corpora.material(tmp_path / "corpus")
+    (root / "notes").mkdir()
+    (root / "notes/a.txt").write_text("what the integrator noticed\n", encoding="utf-8")
+    onboard(corpora.draft(content=content), framework_commit=corpora.COMMIT).write(root)
+    report = validate(root)
+    return [finding.where for finding in report.findings if finding.rule == "unclassified"]
+
+
+def test_a_persons_not_material_block_classifies_the_files_it_declares(tmp_path):
+    # ⛔ INT06-1 end to end: the draft's block reaches the written manifest, so
+    # `validate` finds nothing unclassified — and the control, the same tree and
+    # the same draft without the block, names the file. Without the control the
+    # first half could pass on a walk that never saw `notes/`.
+    content = dict(corpora.DRAFT["content"])
+
+    declared = _unclassified_notes(tmp_path / "with", {**content, "not_material": [corpora.NOTES]})
+    control = _unclassified_notes(tmp_path / "without", content)
+
+    assert not any("notes/a.txt" in where for where in declared), declared
+    assert any("notes/a.txt" in where for where in control), "the control saw no notes file"
+
+
 def test_nothing_it_emits_makes_the_framework_a_submodule(tmp_path):
     # ⛔ Clause 2. R18 was amended: nothing here is pushed to any remote, so a
     # submodule URL has no legal form.
