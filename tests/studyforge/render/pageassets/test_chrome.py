@@ -19,6 +19,11 @@ region element in `render/templates/`. A seventh region fails
 `test_the_region_table_is_total_over_what_the_tree_emits` on the day it appears,
 and the answer *"it is another task's"* is a row in the table rather than a
 silence.
+
+⛔ **And what the tree can AUTHOR, not only what it emits** (Ruling 192, `W105`):
+a `<nav>` a template or an emitter can write and no golden carries was invisible
+to that population — the trail was. `authoring.py` reads every authoring site's
+RESOLVED label, and `authorable ⊆ REGIONS` is asserted as a subset.
 """
 
 from __future__ import annotations
@@ -36,6 +41,7 @@ from studyforge.render.pageassets import (
 )
 from studyforge.render.pageassets.surface import _FORM_OF, ATTRIBUTE_FORM, KIND_FORM
 from tests.studyforge.render.page.pages import GOLDEN_DIR
+from tests.studyforge.render.pageassets import authoring
 
 #: The part under test.
 CHROME = "chrome.css"
@@ -65,6 +71,11 @@ REGIONS: dict[str, tuple[str, str]] = {
     'section[data-section="practices-pending"]': (
         CHROME_RULED,
         "region 4, the practice panel — note (a)",
+    ),
+    'nav[aria-label="Breadcrumb"]': (
+        CHROME_RULED,
+        "region 9, the unit page's trail — `SF-15`. ⛔ No committed golden emits it, "
+        "so it is here because the tree can AUTHOR it (Ruling 192, `W105`)",
     ),
     'nav[aria-label="Units"]': (CHROME_RULED, "region 5, a container's unit listing — `SF-27`"),
     'nav[aria-label="Contents"]': (
@@ -121,10 +132,9 @@ SKELETON_SLOTS = {
     # every slot below lands inside the one column `body` bounds
     "meta": "the masthead's second line — region 1",
     "breadcrumb": (
-        "`SF-15`'s trail. ⛔ NOT a row in `REGIONS`, and that is not an oversight: "
-        "`REGIONS` is asserted EQUAL to what the tree EMITS, and no committed golden "
-        "emits this region — so a row for it would fail `declared - emitted`. "
-        "⚠️ `chrome.css` therefore carries no rule for it — finding `SF-15/3`"
+        "region 9, `SF-15`'s trail. ⭐ A row in `REGIONS` since `W105`: the census "
+        "reads what the tree can AUTHOR, so a region no golden emits is no longer "
+        "invisible to it (`SF-15/3`, Ruling 192)"
     ),
     "outline": "region 2",
     "body": "the reading surface — `reading.css`, by the block vocabulary",
@@ -224,8 +234,49 @@ def test_the_region_table_is_total_over_what_the_tree_emits():
     assert emitted - declared == set(), (
         f"the tree emits regions this part does not answer for: {sorted(emitted - declared)}"
     )
-    assert declared - emitted == set(), (
-        f"this part answers for regions nothing emits: {sorted(declared - emitted)}"
+    # ⛔ `W105`, Ruling 192 (c): against EMITTED alone, declaring the trail — a
+    # region the tree authors and no golden emits — failed here. A stale row is
+    # still caught; a row the tree can author is not refused for being unrendered.
+    reachable = emitted | authoring.authorable()
+    assert declared - reachable == set(), (
+        f"this part answers for regions the tree can neither emit nor author: "
+        f"{sorted(declared - reachable)}"
+    )
+
+
+# --- Ruling 192: what the tree can AUTHOR, and never only what it emits ------
+
+
+def test_every_nav_the_tree_can_author_resolves_to_a_label():
+    # ⛔ `W105`. An authoring site whose label is not a value — a local, a call,
+    # a concatenation — is a region the census below cannot name, so it is a red
+    # check here rather than a site the sweep quietly dropped.
+    sites = authoring.sites()
+    assert sites, "no <nav> is authored anywhere under src/ — did the sweep move?"
+    unresolved = sorted(site.where for site in sites if not site.resolved)
+    assert unresolved == [], f"<nav> opened with a label nothing resolves: {unresolved}"
+
+
+def test_every_region_a_golden_emits_is_one_the_tree_can_author():
+    # ⭐ **The literal-sweep tell, as a test.** Two labels are composed from
+    # `LIST_LABEL`, so an authorable side built from literals misses both and
+    # still passes the subset below — over less. Every emitted region must be
+    # authorable, or the authorable side is the blind one.
+    missing = nav_regions_in_the_goldens() - authoring.authorable()
+    assert missing == set(), f"emitted and not authorable, so the sweep is blind: {sorted(missing)}"
+
+
+def test_every_region_the_tree_can_author_is_one_this_table_recognises():
+    # ⛔ **Ruling 192 (b): `authorable ⊆ recognisable`, a SUBSET and never the
+    # equality** — a row stated ahead of its renderer is legitimate, a region
+    # authored with no row is the only direction that can hide one.
+    authorable = authoring.authorable()
+    unrecognised = sorted(authorable - set(REGIONS))
+    assert unrecognised == [], (
+        f"the tree can author regions this part does not answer for: {unrecognised}\n"
+        f"  authorable: {sorted(authorable)}\n"
+        f"  painted:    {sorted(authoring.painted())}\n"
+        f"  declared:   {sorted(a for a in REGIONS if a.startswith('nav['))}"
     )
 
 
