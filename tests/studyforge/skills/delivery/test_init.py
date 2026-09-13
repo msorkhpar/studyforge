@@ -31,7 +31,9 @@ def test_the_procedure_ships_beside_the_package():
 
 
 def test_the_one_call_the_procedures_first_step_makes():
-    rendered = delivery.capability_index((("E01.md", plans.EPIC_ONE), ("E05.md", plans.EPIC_TWO)))
+    rendered = delivery.capability_index(
+        (("E01.md", plans.EPIC_ONE), ("E05.md", plans.EPIC_TWO)), ("README.md", plans.SEQUENCE)
+    )
     assert delivery.BANNER in rendered
     assert "`SF-01`" in rendered
 
