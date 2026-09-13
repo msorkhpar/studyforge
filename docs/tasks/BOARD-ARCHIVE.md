@@ -23887,3 +23887,167 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 84
 
 ⭐ **Merged at `9421b02`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `9421b02` is RECEIVED.** ⭐ **`corroborate` names every live detached checkout on a notice line that never moves the exit, and the unnamed arm's test module is split.** ⚠️ **Its findings were disposed in round 83's § 3.**
+
+## PO round 85 — `W268`, `W269`, `W270`, `W272` and `W266` closed
+
+⭐ **Cut at `fb89041`, release after round 84's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W268`](#w268-build-writes-empty-media-directories-for-a-unit-with-no-media-which-git-cannot-track) | `8eb03dc` | [`W267`](rows/W267.md) re-pointed |
+| [`W269`](#w269-the-notmaterial-proposal-stands-down-silently-without-a-git-and-re-proposes-files-a-declared-glob-covers) | `bdf6996` | the board's `skills/reconnaissance/` pair |
+| [`W270`](#w270-pincheckcommit-accepts-any-40-hex-string-so-a-commit-the-framework-checkout-lacks-is-pinned) | `6c07e9f` | none owed |
+| [`W272`](#w272-reconnaissances-inventory-skips-git-studyforge-and-dot-directories-at-any-depth-unlike-validate) | `ea30f2d` | the same pair |
+| [`W266`](#w266-validate-passes-an-included-file-no-units-origin-names-so-a-corpus-carrying-material-twice-reads-valid) | `e58c757` | the board's `validate/source/` pair |
+
+⭐ **All five TERMINAL (Ruling 199). Ruling 97's gate is RECEIVED: the coordinator's guarded release-tip readings at each merge, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`, `last_pointer` exit `0` at each.** ⭐ **Ruling 314: the five moved bodies carried 9 relative pointers, and 9 were re-addressed.**
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W274`](rows/W274.md) | Developer 2 | `fix/W274-named-matches-merge-subjects` @ `wt/dev2` | `e58c757` | `W274`, NAMED |
+| [`W273`](rows/W273.md) | Developer 3 | `fix/W273-wave-close-window` @ `wt/dev3` | `fb89041` | `W273`, NAMED |
+| [`W275`](rows/W275.md) | Developer 1 | `fix/W275-creators-milestone-whole-id` @ `wt/dev1` | `fb89041` | `W275`, NAMED |
+| [`W267`](rows/W267.md) | Developer 3 | @ none, handed back | `8eb03dc` | `W267`, NAMED |
+| [`W263`](rows/W263.md) | Developer 2 | @ none, handed back | `8eb03dc` | `W263`, NAMED |
+| [`W271`](rows/W271.md) | Developer 1 | @ none, handed back | `6c07e9f` | `W271`, NAMED |
+| [`W226`](rows/W226.md), [`W276`](rows/W276.md) | Developers 1 and 2 | @ none, handed back | `9421b02` | CONFIRMED |
+
+⚠️ **`PO-85/1` — `W278` merged at `362fdf5` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled: not closed and not named in flight; its register cell carries the merge.** Reversible. ⛔ **`W277` stays HELD by the coordinator (`PO-84/2`).**
+
+### ⭐ 3 — MINTS, PLACEMENT AND FINDINGS
+
+| finding | became |
+|---|---|
+| `W269/4` | ⭐ **minted [`W283`](rows/W283.md)**, order 52. Re-read at `fb89041`: `onboard()` writes the manifest from the draft plus generated-file declarations and reads no existing manifest |
+| `W278/1` | ⛔ **ruled: not unified.** Two readings for two classes keep every existing refusal's wording; cost named, one more line to read. Reversible |
+| `W278/2` | accepted, recorded: a stale test comment; the test holds for its own policy |
+| `W278/3` | ⭐ **minted [`W281`](rows/W281.md)**, order 52. Re-measured at `362fdf5`: neither skill names the convention |
+| `W278/4` | ⭐ **confirmed:** `INT-13/2` and `/3` stay `W227`'s riders |
+| `W226/1` | accepted: ISO commits no narration record, so nothing migrates |
+| `W226/2` | ⭐ **placed: carried to `W267`'s close as a rider, and minted as a `cli/plan/` row once `W226` and `W267` have both merged and it re-measures** (Ruling 214). Reversible |
+| `W226/3` | accepted, not taken: a clip digest is a second format change with no clause needing it |
+| `W226/4` | ⭐ **ruled: confirmed.** `cli/narrate/` was taken because clause 3 is the prune's, disclosed. Reversible |
+| `W263/1` | ⭐ **minted [`W282`](rows/W282.md)**, order 52. Re-measured at `fb89041`: `validate/` imports only `counts_of`; `BLOCK_TYPES` and `BLOCK_FIELDS` are read by the test harness alone |
+| `W263/2` | disposed with the diff: taken outside the surface, disclosed |
+| `W263/3` | accepted: the merge-tree against `fb89041` is clean |
+| `W263/4` | ⭐ **ruled: yes.** An email-shape sweep's local part starts with a letter or digit, so `+@pytest…` decorators do not match and a plant still fires. ⭐ **Relayed to the coordinator, who owns the preamble.** Reversible |
+| `W276/1` | accepted, cost named: not reproduced in a browser |
+| `W276/2` | accepted: a real engine's event order is a browser reading the image cannot take |
+| `W276/3` | accepted, recorded, no row: one unexplained clean host floor read, not reproduced, is not a measurement; a reproduction mints it |
+| `W267/1` | ⭐ **ruled: clause 2 is met.** `plan` names `claim` for every media directory rather than listing a directory `build` may not write, which is the clause's *names the verb*. Re-read on `13f3a7d`: only `generate/footprint.py` imports `cli.plan`, deferred; `cli/plan/` imports nothing from `generate`. No seam row. Reversible |
+| `W267/2` | disposed with the diff: taken outside the surface, disclosed |
+| `W267/3` | accepted: the stale docstring is still true of the paths |
+| `W271/1` | accepted: `validate` never reads the root's `.studyforge` as material, so the verdict cannot change |
+| `W271/2` | accepted, `W259/2`'s family: it refuses by naming git, never passes silently. The surviving plant P4 is that filter, kept on purpose |
+| `W271/3` | accepted, relayed to ISO with `W270/3`'s regenerate |
+
+⭐ **The ISO track is parked: `ISO-14` re-takes when `W278` closes, `ISO-12` when `W226` merges, and the next ISO round regenerates (`W270/3`, `W271/3`, `W283`). The pin stays `f3b5239`.**
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause.
+
+### W268 — `build` writes empty media directories for a unit with no media, which git cannot track
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W268.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-10/7`: `build` writes four empty media directories per unit for a corpus with no media, and git cannot track an empty directory, so a built checkout differs from its clone.** ⭐ **RE-MEASURED (Ruling 214), role `wt/po`, HOST, framework `19d18e5`, over ISO `6e6dec9`:** `build` exit `0`, 220 empty directories, 55 each of `audio`, `images`, `practice` and `video`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A unit with no media of a kind gets no directory for it.**
+2. ⭐ **A unit with media still gets its directory, and `plan` agrees with `build`.**
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** the build's site writer under `src/studyforge/` and its tests. ⚠️ **Read with [`W267`](rows/W267.md).** ⭐ **Jumps nobody: ISO's verifier admits an empty media directory.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 85
+
+⭐ **Merged at `8eb03dc`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `8eb03dc` is RECEIVED.** ⭐ **`build` creates a unit's media directory only when a file lands in it.** ⚠️ **Each finding's disposition is round 84's or this round's § 3.**
+
+### W269 — The `not_material` proposal stands down silently without a `.git` and re-proposes files a declared glob covers
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W269.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-10/1` and `/2`: `W249`'s `not_material` proposal stands down silently without a `.git`, and on an onboarded tree it re-proposes files a declared glob covers.** ⭐ **RE-MEASURED (Ruling 214), role `wt/po`, HOST, framework `19d18e5`, two copies of ISO `6e6dec9` inside an ignored directory:** no `.git`, 0 globs and no question; `git init`, 9 globs, three of them `tests/ingest/test_*.py`, which `corpus.json`'s `tests/ingest/**` covers.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A survey that cannot read git's ignore rules says so by name**, never proposes nothing in silence.
+2. ⛔ **A file an existing `not_material` glob covers is never re-proposed.**
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/furniture.py` and its tests. ⚠️ **One owner with [`W272`](rows/W272.md).** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 85
+
+⭐ **Merged at `bdf6996`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `bdf6996` is RECEIVED.** ⭐ **The survey names a proposal that stood down inside another repository's ignored directory, and proposes no glob a declared one covers.** ⚠️ **Each finding's disposition is round 84's or this round's § 3.**
+
+### W270 — `pin.check_commit` accepts any 40-hex string, so a commit the framework checkout lacks is pinned
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W270.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-11/3`: `SK-07`'s `pin.check_commit` accepts any 40-hex string, and the generated `test_framework_pin` checks its shape only, so a mistyped sha is pinned.** ⭐ **RE-MEASURED (Ruling 214), role `wt/po`, HOST, framework `19d18e5`:** a 40-hex string `git cat-file -e` refuses (exit `1`) is accepted; `not-a-sha` is refused.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A commit the framework checkout does not have is refused by name**, never quoted (R7).
+2. ⛔ **The generated pin test fails on such a pin**, not only on a malformed one.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/pin.py` and its tests. ⭐ **Jumps nobody: ISO caught it by diffing a dry run.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 85
+
+⭐ **Merged at `6c07e9f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `6c07e9f` is RECEIVED.** ⭐ **`pin.check_commit` asks the sibling framework checkout for the commit and refuses one it lacks by name, and the generated pin test does the same.** ⚠️ **Each finding's disposition is round 84's or this round's § 3.**
+
+### W272 — Reconnaissance's inventory skips `.git`, `.studyforge` and dot-directories at any depth, unlike `validate`
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W272.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W259/4`: reconnaissance's inventory skips `.git`, `.studyforge` and every dot-directory at ANY depth, so a source's nested `.studyforge/` is never surveyed while `validate` now scans it.** ⭐ **RE-READ at `19d18e5`:** `inventory.py` tests every part of `parts[:-1]` against `NOT_MATERIAL`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The survey and `validate` agree on what a nested `.studyforge` or `.git` is**, or the survey names the difference.
+2. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/inventory.py` and its tests. ⚠️ **One owner with [`W269`](rows/W269.md).** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 85
+
+⭐ **Merged at `ea30f2d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `ea30f2d` is RECEIVED.** ⭐ **The survey reads a nested `.studyforge` and names a nested `.git` as `validate` does.** ⚠️ **Each finding's disposition is round 84's or this round's § 3.**
+
+### W266 — `validate` passes an included file no unit's origin names, so a corpus carrying material twice reads valid
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W266.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-10/4`, standing again as `INT-11/4`: an INCLUDED file that no unit's origin names is never refused, so `validate` passes a corpus that carries material twice.** ⭐ **RECEIVED from ISO rounds 10 and 11; RE-MEASURED here (Ruling 214), role `wt/po`, HOST, framework `19d18e5`, over a `git archive` of ISO `6e6dec9`:** control `validate` exit `0`; `src/ISO.md` un-excluded, exit `0`; a fresh `src/zz-stray.md` no unit reads, exit `0`. ⛔ **Both plants survive.** Only ISO's hand-written reader catches the C2 regression.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A file the manifest includes and no unit's origin names is refused by name, exit `1`.**
+2. ⭐ **A file every unit reads, and a file the manifest excludes, still read clean.**
+3. ⛔ **Asserted both ways (R12):** ISO's shape (an aggregate un-excluded) goes RED, and its control stays GREEN.
+
+### ⛔ RULING 75 IS INVOKED, AND IT IS DECLARED HERE
+
+⭐ **Placed at order 1, ahead of every older row:** `validate` is an adapter's definition of done (R2), and the first corpus's C2 claim (`M6`) is held today by its own reader alone.
+
+⭐ **Surface:** `src/studyforge/validate/source/` and its tests. ⚠️ **One owner with [`W261`](#w261-completeness-reads-presence-only-where-the-origins-point-so-origins-written-against-the-wrong-root-read-unchecked-beside-a-present-source), after it: `W261` was taken first.**
+
+[the mint](#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)
+
+#### ⭐ CLOSED — PO ROUND 85
+
+⭐ **Merged at `e58c757`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `e58c757` is RECEIVED.** ⭐ **`validate` refuses by name an included file no unit's origin names, as `included-unread`.** ⚠️ **Each finding's disposition is round 84's or this round's § 3.**
