@@ -49,6 +49,7 @@ reused P3's `.pyc`. The rerun gave each plant a fresh bytecode cache
 | `[structural]` | OPS-05/5 | R3, third category | "A file the reader depends on as content" is decided by `content.include` alone. A file the reader embeds that `include` does not cover is not protected from a declaration, and the parser has the same gap. |
 | `[structural]` | OPS-05/6 | the shared session scratchpad, W143 | Offices write the same filenames into one scratchpad. My patch-then-run executed another office's `serve` plant script in this worktree. It did no harm only because its first read failed. That script also restores with `git checkout --`. |
 | `[structural]` | OPS-05/7 | agent-protocol W143 | A plant harness that re-imports without a fresh bytecode cache can read the previous plant's `.pyc` when two plants are the same size. |
+| `[local]` | OPS-05/8 | `docs/authoring/validate.md`, `tests/test_authoring_reference.py` | Both are outside this row's Owns, and taken for it. The rule-id census reads every `RULE_*` in the `validate` package, so the six build-check ids joined the reference for `studyforge validate`. Their rows say they come from the build check, and the heading count is now derived rather than typed. |
 
 **For dependents:** SF-41 and SK-07 call `snapshot` before the build and
 `check_untouched` after it, passing both snapshots the manifest (without it a
