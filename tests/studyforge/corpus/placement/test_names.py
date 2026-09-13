@@ -3,15 +3,18 @@
 from __future__ import annotations
 
 import ast
+import shutil
 from pathlib import Path
 from urllib.parse import quote
 
 import pytest
 
 from studyforge.address import slugify
-from studyforge.corpus.container import fields
+from studyforge.cli.plan import plan_for
+from studyforge.corpus.container import CONTAINER_FILENAME, fields
 from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.placement import (
+    ARCHIVE_DIRNAME,
     CONTAINER_SUFFIX,
     UNIT_SUFFIX,
     PlacementError,
@@ -24,6 +27,12 @@ from studyforge.corpus.placement import (
     unit_stem,
 )
 from studyforge.corpus.placement.names import ROOT_INDEX_FILENAME
+from studyforge.generate.declarations import containers, read_manifest
+from studyforge.skills.adapter import Layout
+from studyforge.validate import INVALID, validate
+from studyforge.validate.corpus import read as walk
+from tests.fixture_checks import FIXTURES
+from tests.support import repository_root
 
 TITLE = "Introduction to the Streams API"
 
@@ -272,3 +281,87 @@ def test_the_default_label_this_module_mints_is_itself_a_usable_component():
     # filename, so both answer the same predicate.
     for ordinal in (1, 9, 10, 99, 100):
         assert fields.is_filename_component(label_of(ordinal))
+
+
+# --------------------------------------------------------------------------
+# ⛔ the archive root: one spelling, and every reader reads it (`INT-06/6`)
+# --------------------------------------------------------------------------
+
+#: Every `src/` module holding a non-docstring literal with the archive root as a path
+#: segment, and how many. ⛔ The home holds one. ⚠️ The two others are the WORD, not the
+#: root: an argparse argument's name (`personalarchive.cli`) and a merge side's label
+#: (`personalarchive.merge`) — counted exactly, so a root spelled beside them still reds.
+ARCHIVE_SPELLINGS = {
+    "src/studyforge/corpus/placement/names.py": 1,
+    "src/studyforge/skills/personalarchive/cli.py": 2,
+    "src/studyforge/skills/personalarchive/merge.py": 2,
+}
+
+#: The corpora a plan, a walk and a build can all read.
+ARCHIVED = ("depth1", "depth2", "shared-origin")
+
+
+def archive_spellings() -> dict[str, int]:
+    """Count, per `src/` module, the literals naming the archive root as a path segment."""
+    found: dict[str, int] = {}
+    for path in sorted((repository_root() / "src").rglob("*.py")):
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        documented = (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)
+        docstrings = {
+            id(node.body[0].value)
+            for node in ast.walk(tree)
+            if isinstance(node, documented) and node.body and isinstance(node.body[0], ast.Expr)
+        }
+        hits = [
+            node
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Constant)
+            and isinstance(node.value, str)
+            and id(node) not in docstrings
+            and not any(character.isspace() for character in node.value)
+            and ARCHIVE_DIRNAME in node.value.split("/")
+        ]
+        if hits:
+            found[path.relative_to(repository_root()).as_posix()] = len(hits)
+    return found
+
+
+def test_the_archive_root_is_spelled_once_in_src():
+    # ⛔ `INT-06/6`: three constants and one composition let `plan` print a root
+    # `validate`, a build and the layout never read. The population is printed.
+    found = archive_spellings()
+    print(f"archive-root literals in src/: {sum(found.values())} in {len(found)} module(s)")
+    assert found == ARCHIVE_SPELLINGS, f"a second spelling, or one lost: {found}"
+
+
+def printed_archive_root(root: Path) -> str:
+    """The archive root `studyforge plan` prints for `root`, read off its own line."""
+    printed = [c.path for c in plan_for(root).creations if c.what.startswith("the archive root")]
+    assert len(printed) == 1, f"the plan printed {len(printed)} archive roots"
+    return printed[0]
+
+
+@pytest.mark.parametrize("name", ARCHIVED)
+def test_plan_validate_a_build_and_the_layout_read_the_one_root(name):
+    root = FIXTURES / name
+    printed = printed_archive_root(root)
+    read_by_validate = [held.where for held in walk(root).containers]
+    read_by_build = [where for where, _ in containers(root, read_manifest(root))]
+    assert read_by_validate, "validate read no container map, so agreement is vacuous"
+    assert read_by_validate == read_by_build
+    assert all(where.startswith(printed) for where in read_by_validate), (printed, read_by_build)
+    assert f"{Layout(root).archive.relative_to(root).as_posix()}/" == printed
+
+
+def test_a_broken_map_at_the_printed_root_is_not_valid(tmp_path):
+    # ⛔ ISO-8583's reproduction: a malformed map where the plan said the archive
+    # is, and `validate` exited 0 because it read somewhere else.
+    root = tmp_path / "corpus"
+    shutil.copytree(FIXTURES / "depth1", root)
+    planted = root / printed_archive_root(root) / "planted" / CONTAINER_FILENAME
+    planted.parent.mkdir(parents=True)
+    planted.write_text("{ not json", encoding="utf-8")
+    report = validate(root)
+    assert report.exit_code == INVALID
+    where = planted.relative_to(root).as_posix()
+    assert [f.where for f in report.findings if f.rule == "container"] == [where]

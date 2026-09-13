@@ -243,3 +243,50 @@ def test_the_poison_table_is_still_a_table(tmp_path):
         document["address"] = [poison]
         path.write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
         assert validate(root).exit_code == 1
+
+
+# --------------------------------------------------------------------------
+# ⛔ no archive is not a valid archive (`INT-06/5`)
+# --------------------------------------------------------------------------
+
+
+def test_a_corpus_with_no_archive_is_not_valid(tmp_path):
+    # ⛔ ISO-8583 read `valid: 0 finding(s)` and exit 0 here. The archive is what
+    # `validate` judges, so its absence is a Finding and never an Unchecked.
+    import io
+
+    from studyforge.validate import INVALID, main
+
+    root = corpora.write(tmp_path / "c")
+    report = validate(root)
+    assert "no-archive" in report.rules
+    assert not report.ok and report.exit_code == INVALID
+    assert not [item for item in report.unchecked if item.rule == "no-archive"]
+    assert main([str(root)], out=io.StringIO()) == INVALID
+
+
+def test_an_empty_archive_directory_is_not_valid_either(tmp_path):
+    from studyforge.corpus.placement import ARCHIVE_DIRNAME
+
+    root = corpora.write(tmp_path / "c")
+    (root / ARCHIVE_DIRNAME).mkdir()
+    report = validate(root)
+    assert [f.message for f in report.findings if f.rule == "no-archive"]
+    assert "holds no container map" in report.findings[0].message
+    assert not report.ok
+
+
+def test_a_present_archive_is_not_reported_absent_and_still_validates(tmp_path):
+    # ⭐ The other way: the finding fires on absence and nowhere else.
+    report = validate(corpora.one_unit(tmp_path / "c", source=corpora.SOURCE))
+    assert "no-archive" not in report.rules
+    assert report.ok, [f.line() for f in report.findings]
+
+
+def test_an_unchecked_claim_alone_still_does_not_move_the_exit():
+    # ⚠️ The report's own vocabulary is kept, not bent (`report.py`): an absent
+    # archive became a Finding, so an Unchecked still leaves a run valid.
+    from studyforge.validate import OK, Report, Unchecked
+
+    report = Report.of([Unchecked("source", ".", "no source tree beside the archive")])
+    assert report.ok and report.exit_code == OK

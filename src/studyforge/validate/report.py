@@ -26,7 +26,9 @@ walker.* The same shape, one epic over.
 `Finding` is where the design lives, not where a compromise does. It is an
 `Unchecked` only when the *absence of the input is itself a validated fact* —
 the whole source tree is absent, not half of it. A half-present input is a
-`Finding`, because that is where a short read hides.
+`Finding`, because that is where a short read hides. ⛔ So is an absent or
+empty **archive** (`no-archive`, `INT-06/5`): it is what this report judges, so
+its absence is not a validated fact but a verdict with no subject.
 
 ## Every failure, never just the first
 

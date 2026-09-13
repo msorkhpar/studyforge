@@ -14,8 +14,8 @@ import pytest
 from studyforge.cli.plan import plan_for
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES, profile_for
-from studyforge.validate.corpus import ARCHIVE_DIR
 from studyforge.validate.report import INVALID, OK
 from tests.emission import POISON
 from tests.fixture_checks import FIXTURES, VALID
@@ -152,9 +152,14 @@ def test_it_runs_on_a_repository_with_no_generated_output_present(name, tmp_path
     plan = plan_for(root)
     assert plan.exit_code == OK
     assert plan.paths
-    # Nothing it names exists before the run, and nothing exists after it.
+    # Nothing it names exists before the run, and nothing exists after it —
+    # ⛔ except the archive, which an adapter wrote (R2) and this plan read. Until
+    # `INT-06/6` this passed on the archive because the plan named a root nothing wrote.
+    archive = f"{ARCHIVE_DIR}/"
+    assert archive in plan.paths and (root / archive).is_dir()
     for path in plan.paths:
-        assert not (root / path).exists(), path
+        if path != archive:
+            assert not (root / path).exists(), path
 
 
 # --------------------------------------------------------------------------

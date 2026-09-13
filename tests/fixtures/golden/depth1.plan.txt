@@ -1,7 +1,6 @@
 plan depth1-demo  Depth One Demo
 placement tree  all output under one generated root, in directories that spell the address
 read corpus.json + 1 container.json  no file inside the source material was opened
-create .studyforge/archive/  the archive root — an adapter writes it (R2) and every build reads it
 create .studyforge/assets/  the shared stylesheets, scripts and player
 create .studyforge/depth-one/depth-one-demo.section.html  the page for container depth-one
 create .studyforge/depth-one/units/unit-01/audio/  depth-one unit 1's audio
@@ -20,6 +19,7 @@ create .studyforge/depth-one/units/unit-03/practice/  depth-one unit 3's practic
 create .studyforge/depth-one/units/unit-03/unit-03-asking-the-first-question.unit.html  depth-one unit 3's page
 create .studyforge/depth-one/units/unit-03/video/  depth-one unit 3's video
 create .studyforge/site.json  the discovery cache, never the authority
+create archive/  the archive root — an adapter writes it (R2) and every build reads it
 create index.html  the root index
 ignore /index.html
 ignore /.studyforge/assets/
