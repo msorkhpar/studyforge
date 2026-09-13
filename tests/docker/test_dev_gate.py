@@ -14,6 +14,7 @@ live half needs that base present and skips, saying so, when it is not.
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import uuid
 from pathlib import Path
@@ -48,6 +49,20 @@ STATES = {
 }
 
 
+#: An absolute path: a slash with no word, dot, colon, tilde or dash before it.
+ABSOLUTE = re.compile(r"(?<![\w.:~-])/[\w.-]")
+
+
+def carries_no_path(found: Cache) -> bool:
+    """Is the reason `found` produces free of any absolute path?
+
+    ⛔ `W158/6`: every skip reason prints on EVERY run, so a path in one is printed
+    unconditionally, and a path is somebody's machine (R7).
+    """
+    said = skip_reason({}, "docker", lambda: found, builds_fresh=False)
+    return said is not None and not ABSOLUTE.search(said)
+
+
 def unconsulted() -> Cache:
     raise AssertionError("the cache was probed where the answer does not depend on it")
 
@@ -69,6 +84,13 @@ def test_a_cold_cache_is_called_cold_and_says_the_build_needs_network():
     said = reason(COLD)
     assert said is not None and "COLD" in said and "needs network" in said, said
     assert "WARM" not in said, f"a cold cache offered as warm: {said}"
+
+
+def test_the_path_check_can_say_no():
+    assert all(carries_no_path(found) for found in STATES.values())
+    assert not carries_no_path(Cache(COLD, None, "no base under /srv/checkout")), (
+        "a path read clean"
+    )
 
 
 def test_an_unread_cache_claims_neither_state():
@@ -164,11 +186,13 @@ def test_an_absent_base_reads_cold_and_no_container_is_started(tmp_path, monkeyp
     found = probe(repository_root(), docker)
     assert found.state == COLD and found.image is None, found
     assert "run" not in log.read_text("utf-8").split(), "the probe started the absent base"
+    assert carries_no_path(found), found
 
 
 def test_a_daemon_that_does_not_answer_reads_unknown_rather_than_cold(tmp_path, monkeypatch):
     docker, _ = fake_docker(tmp_path, monkeypatch, "Cannot connect to the Docker daemon")
-    assert probe(repository_root(), docker).state == UNKNOWN
+    found = probe(repository_root(), docker)
+    assert found.state == UNKNOWN and carries_no_path(found), found
 
 
 # --- live: one scratch checkout, cold and then warm --------------------------
@@ -200,6 +224,7 @@ def test_one_scratch_checkout_reads_cold_then_warm_off_check_s_own_identity(tmp_
         assert committed.returncode == 0, committed.stderr[-500:]
         warm = probe(root, docker)
         assert warm.state == WARM and warm.image == cold.image, f"a present image read as {warm}"
+        assert carries_no_path(cold) and carries_no_path(warm), "a live reason carries a path"
     finally:
         run([docker, "rm", container], cwd=tmp_path)
         run([docker, "image", "rm", cold.image], cwd=tmp_path)
