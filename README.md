@@ -38,7 +38,8 @@ tested; one grown around a large source and later pointed at a small one has
 been fitted. So the plan's spine is the **reading floor** — narrated, navigable,
 offline, no server — which is a complete product for prose material and lands by
 M4. The execution track (containers, Run and Submit, graded practices) begins at
-M5, and a corpus enters it only if its material is actually runnable.
+M5 — after M6 and M8, by the user's order — and a corpus enters it only if its material is
+actually runnable.
 
 ## The workspace
 
@@ -56,8 +57,8 @@ machines:
   code-server-toolchain/       to be created (E12) — the embedded IDE image
   narrate-service/             to be created (E13) — batch speech synthesis
   CodeSignal/                  the extraction source; untouched in v1
-  Claude-senior-java-engineer/ consumer 1, built in v1
-  ISO-8583-jPOS-tutorial/      v2 adapter target
+  Claude-senior-java-engineer/ the re-validation corpus (M9)
+  ISO-8583-jPOS-tutorial/      the first corpus (M6, M8)
   Claude-SPARQL-tutorial/      v2 adapter target
 ```
 
@@ -68,24 +69,27 @@ machines:
 Ordered so each ends in something demonstrable, rather than nine layers that
 only become a product at the end.
 
-| | | Tasks |
-|---|---|---|
-| **M0** | Foundations | 5 |
-| **M1** | One page renders | 15 |
-| **M2** | **A corpus is readable** — first genuinely useful state | 12 |
-| **M3** | Narrated; media footprint known | 10 |
-| **M4** | Served, with an API and a pass record | 7 |
-| **M5** | Runs code — *execution track begins* | 12 |
-| **M6** | The Java corpus reads | 9 |
-| **M7** | The Java corpus has practices | 12 |
-| **M8** | **A further, unnamed source converted by the skills alone** | 1 |
+| | |
+|---|---|
+| **M0** | Foundations |
+| **M1** | One page renders |
+| **M2** | **A corpus is readable** — first genuinely useful state |
+| **M3** | Narrated; media footprint known |
+| **M4** | Served, with an API and a pass record |
+| **M6** | The first corpus, `ISO-8583`, reads |
+| **M8** | **It is a framework** — `ISO-8583` converted by the skills alone |
+| **M5** | Runs code from the reader's terminal — *execution track begins* |
+| **M7** | Has practices — the browser editor and the practice panel |
+| **M9** | The Java corpus re-validates the framework |
+
+⭐ **The order is the user's (2026-09-12), and the ids are kept** — [`docs/tasks/README.md`](docs/tasks/README.md).
+⛔ **Task counts are the generated [`docs/capability-index.md`](docs/capability-index.md)'s (Ruling 150).**
 
 ⭐ **A prose corpus is finished at M4** — the reading floor is a complete
 product, not a degraded one (spec §11.0).
 
-⭐ **M8 is the only milestone that tests the claim this project makes.**
-Everything before it is satisfied by a framework with two consumers it was
-designed against.
+⭐ **M8 tests the claim this project makes, on `ISO-8583`, and M9 tests it again on the
+Java corpus.**
 
 ## Two open items carried into implementation
 

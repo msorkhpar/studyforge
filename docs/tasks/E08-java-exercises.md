@@ -16,6 +16,10 @@ heading further down** — ⛔ **because an agent dispatched straight to `EX-01`
 opens this file well below the heading that would have told them** (Ruling 167,
 CTO round 42).
 
+⛔ **PO round 74 — this whole epic is `M9`.** ⭐ **It waits on the Java adapter (`EX-01` on
+`JS-04`), and the user placed that corpus last, as the re-validation** ([`README.md`](README.md)
+§ M9). ⚠️ **`TC-00` is still its image, and it lands earlier, at `M5`.**
+
 CodeSignal's scaffolder is 1,793 lines because it must *guess* at a grader it
 cannot see. Every assertion it invents is a judgement call, which is why its
 governing ruling forbids presenting any of them as authoritative.
@@ -71,7 +75,7 @@ this design exists to prevent.
 ---
 
 ### EX-00 — Exercise feasibility spike ⛔ BLOCKS ALL OF E08
-**Milestone** **M7** · **Depends on** TC-00 · **Team** pair
+**Milestone** **M9** · **Depends on** TC-00 · **Team** pair
 **Owns** a findings report; **no shipped code**
 **Context** ~40k — spec §7, a hand-picked sample of `JS` classes
 
@@ -137,7 +141,7 @@ spike, not a failed one.**
 ---
 
 ### EX-01 — Body-blanking transformer
-**Milestone** **M7** · **Depends on** JS-04, **EX-00** · **Team** pair
+**Milestone** **M9** · **Depends on** JS-04, **EX-00** · **Team** pair
 **Owns** `JS/exercise/blank.py`
 **Context** ~40k — a sample of `JS` implementation and test classes
 
@@ -179,7 +183,7 @@ git for every emitted exercise.
 ---
 
 ### EX-02 — Gate runner
-**Milestone** **M7** · **Depends on** EX-01, OPS-01 · **Team** pair
+**Milestone** **M9** · **Depends on** EX-01, OPS-01 · **Team** pair
 **Owns** `JS/exercise/gates.py`
 **Context** ~35k — spec §7, EX-01 and OPS-01 outputs
 
@@ -213,7 +217,7 @@ failure — they are different verdicts.
 ---
 
 ### EX-03 — Practice module and build wiring
-**Milestone** **M7** · **Depends on** EX-01 · **Team** solo
+**Milestone** **M9** · **Depends on** EX-01 · **Team** solo
 **Owns** `JS/practice/` and its build file
 **Context** ~25k — `JS/pom.xml`, a module `pom.xml`
 
@@ -233,7 +237,7 @@ The module builds offline against the primed cache (TC-03).
 ---
 
 ### EX-04 — Exercise emission
-**Milestone** **M7** · **Depends on** EX-02, EX-03, SF-23 · **Team** pair
+**Milestone** **M9** · **Depends on** EX-02, EX-03, SF-23 · **Team** pair
 **Owns** `JS/exercise/emit.py`
 **Context** ~40k — SF-23, EX-02, EX-03 outputs
 
@@ -260,7 +264,7 @@ present. A reading-only unit renders with no practice affordance (SF-24).
 ---
 
 ### EX-05 — Coverage report
-**Milestone** **M7** · **Depends on** EX-04 · **Team** solo
+**Milestone** **M9** · **Depends on** EX-04 · **Team** solo
 **Owns** `JS/exercise/report.py`
 **Context** ~20k — EX-02 and EX-04 outputs
 

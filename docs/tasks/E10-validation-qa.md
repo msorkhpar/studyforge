@@ -255,7 +255,7 @@ failure names the module, not the subsystem (R12).
 ---
 
 ### QA-01 — End-to-end acceptance
-**Milestone** **M7** · **Depends on** OPS-04 · **Team** pair
+**Milestone** **M9** · **Depends on** OPS-04 · **Team** pair
 **Owns** the acceptance record
 **Context** ~30k — spec §11
 
@@ -302,7 +302,7 @@ with what was looked at.
 ---
 
 ### QA-04 — The second source ⭐ THE ONLY TEST OF THE CLAIM
-**Milestone** **M8** · **Depends on** QA-01, SK-07 · **Team** team
+**Milestone** **M8** · **Depends on** SK-07 · **Team** team
 **Owns** the findings log
 **Context** ~40k — spec §12, R19
 
@@ -328,6 +328,8 @@ says that repo *inverts* CodeSignal's problem. An arbitrary source ships no
 graders. ⛔ **A source that yields zero exercises is a pass**, not a shortfall
 (§7's three states, C5). This is written down here so it is not re-litigated
 under deadline.
+
+⛔ **RE-SCOPED PO round 74 — user direction, 2026-09-12: the second source is `ISO-8583-jPOS-tutorial`, and it goes FIRST.** *"we were supposed to run it against ISO 8583 project first and if it worked and we are sure we are a framework … and then apply it to java-senior project to revalidate being a framework."* ⭐ **The user named it, so the anonymity above no longer holds for this row (spec §12, amended).** ⛔ **The edge on `QA-01` is REMOVED: `QA-01` reads the Java corpus at `M9`, after this row.** ⭐ **This row is the ISO track's second finish line (Q18); `M6`'s close is its first.** ⛔ **The no-patch rule binds for the whole of `M8`, unchanged.**
 
 **Acceptance.** The corpus reaches the Java corpus's floor — readable over
 `file://`, narrated, navigable, read marks recorded — minus what the source
@@ -372,3 +374,18 @@ that nothing can actually run.
 Verifies computed contrast for every palette token in both themes. Drives
 keyboard traversal. Runs a page with JavaScript disabled. Runs in CI without a
 display, or states plainly that it does not and what it needs.
+
+---
+
+### QA-05 — The re-validation on the Java corpus
+**Milestone** **M9** · **Depends on** QA-04, QA-01 · **Team** team
+**Owns** the re-validation findings log
+**Context** ~40k — spec §12, R19, `QA-04`'s findings log
+
+⭐ **Minted PO round 74 from the user's direction, 2026-09-12:** *"…and then apply it to java-senior project to revalidate being a framework."*
+
+**Definition.** `QA-04`'s exercise run a second time, on `Claude-senior-java-engineer`, after the execution track (`M5`, `M7`) is finished. ⭐ **It is the first corpus to exercise the terminal command, the editor and graded practices for real, because `ISO-8583` has no runnable material (Q18).**
+
+⛔ **Whoever integrates does not modify `studyforge`, for the whole of `M9`** — findings, not patches (§12). ⚠️ **`SF-41` and `OPS-07` are framework rows inside `M9`; every commit they move the framework pin across is listed against the finding that needed it (§12, bullet 1).**
+
+**Acceptance.** The corpus reaches §11.3's floor, produced by the skills, minus what the source genuinely lacks. The framework pin did not move, or every commit it moved across is accounted for. Every hand-edit is named as a defect in the skill that should have done it. ⛔ **A findings log that names nothing fails**, as `QA-04`'s does.
