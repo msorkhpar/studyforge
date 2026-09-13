@@ -20,6 +20,8 @@ that live beside the check that rests on them. ⛔ They import from
 merely used to re-export it by accident of one import line.
 """
 
+import json
+
 import pytest
 
 from studyforge.corpus.container import ContainerError
@@ -137,6 +139,124 @@ def test_a_half_present_source_tree_is_a_failure_and_not_a_discount(tmp_path):
         sources={"src/one.md": corpora.SOURCE},
     )
     assert "origin-missing" in validate(root).rules
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W255` — "the source tree is absent" is CHECKED against the tree
+# --------------------------------------------------------------------------
+
+#: A unit origin that names no file, beside a source that is present.
+MISSING = "src/missing.md"
+
+
+def missing_origins(root, *, units=(1,), sources=None, manifest=None):
+    """An archive whose every unit origin names no file, beside `sources`."""
+    return corpora.write(
+        root,
+        manifest=manifest,
+        containers={
+            "demo": corpora.container(
+                [corpora.unit_entry(n, origin=f"src/missing-{n}.md") for n in units]
+            )
+        },
+        documents={
+            f"demo/raw/prose/unit-0{n}/lesson-1.json": {
+                "source": "demo",
+                "address": ["demo"],
+                "variant": "prose",
+                "unit": n,
+                "kind": "lesson",
+                "ordinal": 1,
+                "ingested": "2026-01-05",
+                "title": f"Unit {n}",
+                "blocks": corpora.BLOCKS,
+            }
+            for n in units
+        },
+        sources=sources,
+    )
+
+
+def test_a_ONE_unit_archive_whose_origin_is_missing_BESIDE_a_present_source_is_RED(tmp_path):
+    # ⛔ Clause 4, the RED direction: ISO round 9's surviving plant, built for the test.
+    root = corpora.one_unit(tmp_path / "c", origin=MISSING)
+    (root / "src").mkdir()
+    (root / "src" / "one.md").write_text(corpora.SOURCE, encoding="utf-8")
+    report = validate(root)
+    assert report.rules == ("origin-missing",)
+    assert [finding.where for finding in report.findings] == ["demo/unit-01"]
+    assert report.exit_code == 1
+    assert "short-read" not in {u.rule for u in report.unchecked}
+
+
+def test_the_SAME_one_unit_archive_ALONE_is_unchecked_and_exits_0(tmp_path):
+    # ⭐ Clause 4's other direction, and clause 3: no source beside it stays `Unchecked` (R2).
+    report = validate(corpora.one_unit(tmp_path / "c", origin=MISSING))
+    assert report.findings == ()
+    assert report.exit_code == 0
+    [absent] = [u for u in report.unchecked if u.rule == "short-read"]
+    assert "the manifest's 'content' declares" in absent.why
+
+
+def test_EVERY_origin_missing_beside_a_present_source_names_EACH_unit(tmp_path):
+    # ⛔ Clause 2: one finding per unit, not one for the corpus.
+    root = missing_origins(tmp_path / "c", units=(1, 2), sources={"src/one.md": corpora.SOURCE})
+    report = validate(root)
+    assert report.rules == ("origin-missing",)
+    assert sorted(finding.where for finding in report.findings) == ["demo/unit-01", "demo/unit-02"]
+    assert "declares as source" in report.findings[0].message
+
+
+def test_a_file_the_manifest_does_NOT_declare_as_source_is_not_a_present_source(tmp_path):
+    # ⛔ Clause 1: presence is the manifest's declaration read against the disk. A file
+    # where the origins point that `content` does not declare is not the source.
+    root = missing_origins(tmp_path / "c", sources={"src/notes.txt": "not prose\n"})
+    report = validate(root)
+    assert "origin-missing" not in report.rules
+    assert "short-read" in {u.rule for u in report.unchecked}
+
+
+def test_a_ROOT_level_origin_missing_beside_a_root_level_source_is_RED(tmp_path):
+    # ⭐ A root origin points at the root's own files (ISO's `TestCases.md` shape).
+    manifest = {**corpora.MANIFEST, "content": {"include": ["*.md"]}}
+    root = corpora.one_unit(tmp_path / "c", origin="missing.md")
+    (root / "corpus.json").write_text(json.dumps(manifest), encoding="utf-8")
+    (root / "present.md").write_text(corpora.SOURCE, encoding="utf-8")
+    assert validate(root).rules == ("origin-missing",)
+
+
+def test_DECLARED_an_origin_whose_top_directory_is_ABSENT_reads_the_tree_as_absent(tmp_path):
+    # ⚠️ Ruling 292: declared, not decided. FND-04's invalid fixtures declare `*.md` over
+    # their own `VIOLATION.md` beside origins under an absent directory, and stay one rule.
+    manifest = {**corpora.MANIFEST, "content": {"include": ["*.md"]}}
+    root = missing_origins(tmp_path / "c", manifest=manifest, sources={"NOTE.md": "# Note\n"})
+    report = validate(root)
+    assert "origin-missing" not in report.rules
+    assert "short-read" in {u.rule for u in report.unchecked}
+
+
+def test_an_EXCLUDED_file_on_disk_is_a_present_source(tmp_path):
+    # ⭐ Withheld prose is still the source on disk: a whole-series aggregate alone reads RED.
+    manifest = {
+        **corpora.MANIFEST,
+        "content": {
+            "include": ["src/*.md"],
+            "exclude": [{"path": "src/whole.md", "why": "an aggregate, built for the test"}],
+        },
+    }
+    root = missing_origins(
+        tmp_path / "c", manifest=manifest, sources={"src/whole.md": corpora.SOURCE}
+    )
+    assert validate(root).rules == ("origin-missing",)
+
+
+def test_a_NESTED_source_directory_is_read(tmp_path):
+    # ⭐ The walk descends: a glob reaching a subdirectory finds its file.
+    manifest = {**corpora.MANIFEST, "content": {"include": ["src/**/*.md"]}}
+    root = missing_origins(
+        tmp_path / "c", manifest=manifest, sources={"src/part/one.md": corpora.SOURCE}
+    )
+    assert validate(root).rules == ("origin-missing",)
 
 
 # --------------------------------------------------------------------------
