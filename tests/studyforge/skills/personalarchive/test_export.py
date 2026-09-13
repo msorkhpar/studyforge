@@ -168,9 +168,7 @@ def test_version_control_bytecode_and_the_store_are_never_material_and_the_rest_
         for path in everything
         if not path.startswith((".git/", store_prefix)) and "__pycache__" not in path
     }
-    carried = {
-        carried.path for carried in material(root, record.store_path(root), kind=SHARING)
-    }
+    carried = {carried.path for carried in material(root, record.store_path(root), kind=SHARING)}
     assert carried == expected and "tools/run.sh" in carried
     assert any(path.startswith(store_prefix) for path in everything)
 
