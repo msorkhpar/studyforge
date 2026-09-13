@@ -6,12 +6,18 @@ written into a temporary directory, and its gate is a synthetic variable.** ⛔ 
 here names docker, and every census runs with a fake `docker` first on `PATH` that
 records any call. So a census that reached the daemon goes RED instead of silently
 passing (W162/7 holds the real question for the user).
+
+⭐ **`W165`'s cost block is asserted on SHAPE.** Its handwritten reports carry fixed
+`time` attributes, so no assertion reads a wall clock. The one report a real run writes is
+asserted only for its lines, never for its figures.
 """
 
 from __future__ import annotations
 
 import os
 import stat
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -19,7 +25,21 @@ import pytest
 import tools.quality.gated as gated_module
 from tests.support import assert_package_contract
 from tools.quality import CHECKS, NOTICES
-from tools.quality.gated import INHABITED, UNREAD, UNSEEN, main, render, take_census
+from tools.quality.gated import (
+    INHABITED,
+    SELECTION,
+    SPREAD,
+    UNREAD,
+    UNSEEN,
+    Cost,
+    cost_of,
+    main,
+    owed,
+    read_timings,
+    render,
+    render_cost,
+    take_census,
+)
 
 GATE = "W164_SYNTHETIC_GATE"
 REASON = "the synthetic gate is unset"
@@ -190,3 +210,113 @@ def test_a_COLLECTION_ERROR_exits_2_even_beside_a_skip(tmp_path):
     )
     assert broken.verdict == UNREAD
     assert "collection did not finish" in render(broken)[0]
+
+
+# --- W165: a cost figure over a gated population names its selection and spread --
+
+#: The witness's per-member figures (row W165, RECEIVED, host), one per synthetic member.
+WITNESS = {DIRECT: 1.09, INHERITED: 9.5, IN_A_CLASS: 34.7}
+UNGATED = "test_synthetic.py::test_ungated"
+
+
+def _report(path: Path, seconds: dict[str, float]) -> Path:
+    """A handwritten `xunit1` report: fixed times, and one test skipped for another reason."""
+    cases = []
+    for node, time in seconds.items():
+        file, *classes, name = node.split("::")
+        classname = ".".join(["test_synthetic", *classes])
+        attributes = f'file="{file}" classname="{classname}" name="{name}" time="{time}"'
+        cases.append(f"<testcase {attributes}/>")
+    cases.append(
+        '<testcase file="test_synthetic.py" classname="test_synthetic" '
+        'name="test_skipped_for_another_reason" time="0.1"><skipped message="x"/></testcase>'
+    )
+    path.write_text(f"<testsuites><testsuite>{''.join(cases)}</testsuite></testsuites>")
+    return path
+
+
+def _block(output: str) -> list[str]:
+    """The printed cost block, from its header to the end."""
+    lines = output.splitlines()
+    starts = [index for index, line in enumerate(lines) if line.startswith("cost of the gated")]
+    assert len(starts) == 1, output
+    return lines[starts[0] :]
+
+
+def test_a_figure_quoted_from_ONE_member_owes_its_spread_and_is_not_the_spread(census, tmp_path):
+    timings = read_timings(_report(tmp_path / "r.xml", {**WITNESS, UNGATED: 0.5}))
+    whole = cost_of(census, timings)
+    cheapest = Cost(((DIRECT, WITNESS[DIRECT]),), whole.gated)
+    assert owed(whole) == ()
+    assert owed(cheapest) == (SPREAD,)
+    [spread] = [line for line in render_cost(whole, "r.xml") if "spread over" in line]
+    assert f"min 1.090 s ({DIRECT})" in spread
+    assert f"max 34.700 s ({IN_A_CLASS})" in spread
+    # ⛔ The per-member ratio, never the witness's file-total "~160x".
+    assert spread.endswith("max/min 31.8x per member")
+
+
+def test_a_gated_figure_naming_only_its_DIRECTORY_owes_its_selection(census):
+    gated = tuple(test.node for test in census.tests)
+    assert owed(Cost((("tests/docker/", 1.05),), gated)) == (SELECTION, SPREAD)
+    assert owed(Cost((("test_synthetic.py", 45.29),), gated)) == (SPREAD,)
+    assert owed(Cost(tuple(WITNESS.items()), gated)) == ()
+
+
+def test_an_UNGATED_timing_owes_nothing_even_from_one_member_under_a_directory():
+    # ⛔ The row's MUST-NOT: the clause binds a GATED population, never every timing.
+    assert owed(Cost((("tests/", 292.73),), ())) == ()
+    assert owed(Cost(((UNGATED, 0.5),), ())) == ()
+
+
+def test_the_cost_block_names_every_gated_member_by_node_id_and_no_ungated_one(
+    corpus, tmp_path, capsys, monkeypatch
+):
+    root, environment = corpus
+    report = _report(tmp_path / "r.xml", {**WITNESS, UNGATED: 0.5})
+    monkeypatch.setattr(os, "environ", environment)
+    main(["--root", str(root), "--unset", GATE, "--reason", REASON, "--timings", str(report)])
+    block = _block(capsys.readouterr().out)
+    for node, seconds in WITNESS.items():
+        assert f"{seconds:.3f} s  {node}" in "\n".join(block)
+    assert sum("spread over 3 timed member(s): min" in line for line in block) == 1
+    assert not any(UNGATED in line or "SAMPLE" in line for line in block)
+    assert block[-1].endswith("1 ungated timing(s) in the report: outside this clause, not listed")
+
+
+def test_a_report_timing_SOME_members_is_printed_as_a_SAMPLE_naming_the_untimed(census):
+    cost = cost_of(census, {DIRECT: WITNESS[DIRECT]})
+    lines = render_cost(cost, "r.xml")
+    assert sum(line.strip().startswith("untimed") for line in lines) == 2
+    assert any(line.strip() == f"untimed  {IN_A_CLASS}" for line in lines)
+    assert lines[-1].endswith("a SAMPLE, not the population's cost: 1 of 3 gated member(s) timed")
+
+
+def test_the_exit_never_moves_on_a_cost_figure(corpus, tmp_path, capsys, monkeypatch):
+    root, environment = corpus
+    monkeypatch.setattr(os, "environ", environment)
+    unread = tmp_path / "not-a-report.xml"
+    unread.write_text("not xml", encoding="utf-8")
+    reports = [_report(tmp_path / "sample.xml", {DIRECT: 1.09}), unread]
+    base = ["--root", str(root), "--unset", GATE, "--reason", REASON]
+    assert [main([*base, "--timings", str(report)]) for report in reports] == [INHABITED] * 2
+    assert "cost: UNREAD" in capsys.readouterr().out
+
+
+def test_a_REAL_report_from_an_opened_synthetic_gate_is_costed_without_reaching_docker(
+    corpus, tmp_path, capsys, monkeypatch
+):
+    root, environment = corpus
+    report = tmp_path / "opened.xml"
+    command = [
+        sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", f"--rootdir={root}",
+        "-o", "junit_family=xunit1", f"--junitxml={report}", "test_synthetic.py",
+    ]  # fmt: skip
+    subprocess.run(command, cwd=root, env=environment, capture_output=True, check=False)
+    monkeypatch.setattr(os, "environ", environment)
+    main(["--root", str(root), "--unset", GATE, "--reason", REASON, "--timings", str(report)])
+    block = _block(capsys.readouterr().out)
+    for node in WITNESS:
+        assert any(line.endswith(f" s  {node}") for line in block), block
+    assert not any("untimed" in line or "SAMPLE" in line for line in block)
+    assert not (root / "DOCKER_CALLED").exists()
