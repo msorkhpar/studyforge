@@ -1451,3 +1451,26 @@ expect them cannot tell a consequence of its own move from a defect it inherited
 — ⛔ **and the one thing a closing office may NOT do is repair a pointer inside
 frozen archived bytes it did not move** (Ruling 106). ⭐ **Knowing which ten are
 YOURS is the whole of the difference, and only the clause can say so.**
+
+## ⛔ `W171` — an edit that removes a record section's LAST live pointer is reported over TWO refs, never on the floor
+
+⛔ **The pointer floor asserts that every pointer RESOLVES. A deleted pointer does not dangle, so
+it resolves vacuously, and the section it was the last route to is orphaned in silence**
+(`CTO-68/4`). ⭐ **Most record headings never acquire a pointer, so the predicate is LAST POINTER
+REMOVED, never HEADING UNREFERENCED**, and the unreferenced figure is printed as the denominator.
+
+```bash
+# the merging office, on the release checkout, right after each --no-ff merge:
+python3 -m tools.quality.board.last_pointer HEAD^1 HEAD
+# an office, on its own branch, before hand-back:
+python3 -m tools.quality.board.last_pointer "$(git merge-base release/m0-foundations HEAD)" HEAD
+```
+
+⛔ **Pass: exit `0`.** Exit `1` names each section and the pointer that was its last. Exit `2`
+read nothing and is never a pass (Ruling 191). ⭐ **The remedy is to RE-POINT from a live
+document: never delete the sentence, and never edit the record** (Ruling 201(b), Ruling 106).
+⛔ **It is not a ban on trimming**: the ask is that the pointer survives the trim.
+
+⭐ **What is a record, a live document and a moved pointer is decided and declared once, in
+[the command's docstring](../../tools/quality/board/last_pointer.py)**, and why it is a command
+rather than a floor arm is [the handoff](../tasks/handoffs/W171.md)'s design decision.
