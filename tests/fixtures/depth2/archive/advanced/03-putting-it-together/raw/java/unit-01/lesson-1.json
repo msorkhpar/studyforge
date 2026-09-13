@@ -1,0 +1,42 @@
+{
+  "raw_api": 1,
+  "source": "depth2-demo",
+  "address": [
+    "advanced",
+    "03-putting-it-together"
+  ],
+  "variant": "java",
+  "unit": 1,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "One small program",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "One small program"
+    },
+    {
+      "type": "para",
+      "text": "This module sits in the same section as the one before it, so reaching it changes the module and not the section."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "c822666975a5849dabcfe4171323444d7458b1f17fc95c7b218c22eaf9a3c1e2"
+}

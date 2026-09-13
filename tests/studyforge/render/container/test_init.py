@@ -94,7 +94,7 @@ def test_the_depth_one_fixture_renders_exactly_one_container_page():
     # literal this test would own.
     depth1 = fixture_cases("depth1")
     assert len(depth1) == 1
-    assert len(fixture_cases("depth2")) == 2
+    assert len(fixture_cases("depth2")) == 3
 
 
 def test_the_page_reaches_the_network_nowhere(case):

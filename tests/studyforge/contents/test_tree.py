@@ -28,7 +28,10 @@ def test_a_depth_two_corpus_builds_two_levels_from_the_same_code():
     built = fixture_contents("depth2")
     assert built.depth == 2
     assert [group.segment for group in built.groups] == ["advanced", "basics"]
-    assert [child.segment for child in built.groups[0].groups] == ["02-going-further"]
+    assert [child.segment for child in built.groups[0].groups] == [
+        "02-going-further",
+        "03-putting-it-together",
+    ]
     assert built.groups[0].entries == ()
 
 

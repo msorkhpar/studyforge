@@ -36,6 +36,7 @@ from tests.studyforge.render.page.sites import (
     a_site,
     ancestors,
     boundaries,
+    crossings,
     crumbs_on,
     dangling_in,
     depth_of,
@@ -116,14 +117,23 @@ def test_the_walk_crosses_a_container_boundary_and_the_fixture_has_one_to_cross(
         assert followed(by_key[before].page, slot(body, "next")) == by_key[after].page.as_posix()
 
 
-def test_the_fixtures_between_them_cross_a_boundary_at_all(tmp_path):
-    # ⛔ **The inhabitation row for the clause as a whole**, and it is the reading
-    # that says which half of *"module and section boundaries"* the fixtures
-    # actually contain. ⚠️ Measured: `depth1` 0 crossings, `depth2` 1 — and that
-    # one changes BOTH levels, which is why `PLANTED_SHAPE` exists.
-    counted = {name: len(boundaries(a_site(name, tmp_path / name))) for name in sorted(FIXTURES)}
-    assert sum(counted.values()) > 0, counted
-    assert counted == {"depth1": 0, "depth2": 1}, counted
+def test_the_fixtures_cross_each_kind_of_boundary_counted_apart(tmp_path):
+    # ⛔ **The inhabitation row for the clause as a whole, one count per kind**
+    # (`W108`). ⚠️ It used to be one total, `{"depth1": 0, "depth2": 1}`, and
+    # that `1` was the compound crossing alone — so the module-only half was
+    # absent and the total could not say so. ⭐ Measured after `W108`: `depth2`
+    # changes the module inside one section once and both levels once.
+    counted = {name: crossings(a_site(name, tmp_path / name)) for name in sorted(FIXTURES)}
+    assert counted == {"depth1": {}, "depth2": {"module": 1, "section+module": 1}}, counted
+
+
+def test_a_fixture_changes_module_without_changing_section(tmp_path):
+    # ⛔ **The presence half, stated by its own name.** A renderer that handles a
+    # both-levels change and mishandles a module change inside one section must
+    # meet this crossing in a fixture, not only in `PLANTED_SHAPE`.
+    counted = {name: crossings(a_site(name, tmp_path / name)) for name in sorted(FIXTURES)}
+    assert sum(found.get("module", 0) for found in counted.values()) > 0, counted
+    assert counted["depth2"].get("section+module", 0) > 0, "the compound control went missing"
 
 
 def test_the_walk_crosses_a_module_boundary_inside_one_section(tmp_path):

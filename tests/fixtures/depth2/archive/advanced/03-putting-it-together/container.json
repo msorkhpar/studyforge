@@ -1,0 +1,23 @@
+{
+  "container_api": 1,
+  "address": [
+    "advanced",
+    "03-putting-it-together"
+  ],
+  "titles": [
+    "Advanced",
+    "Putting It Together"
+  ],
+  "variant": "java",
+  "ingested": "2026-01-05",
+  "origin": "advanced/03-putting-it-together/README.md",
+  "note": "A second module in the section 'advanced', so the walk changes module without changing section (W108).",
+  "units": [
+    {
+      "n": 1,
+      "title": "One small program",
+      "practices": 0,
+      "origin": "advanced/03-putting-it-together/README_3.1.md"
+    }
+  ]
+}

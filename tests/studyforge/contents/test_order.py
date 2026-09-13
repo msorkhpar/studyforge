@@ -29,6 +29,7 @@ from tests.support import repository_root
 DEPTH2_ORDER = (
     "advanced/02-going-further/unit-01",
     "advanced/02-going-further/unit-02",
+    "advanced/03-putting-it-together/unit-01",
     "basics/01-getting-started/unit-01",
     "basics/01-getting-started/unit-02",
     "basics/01-getting-started/unit-03",
@@ -68,7 +69,7 @@ def test_the_first_unit_has_no_previous_and_the_last_has_no_next():
 
 def test_neighbours_report_where_the_unit_sits_in_the_whole_corpus():
     here = neighbours(fixture_contents("depth2"), DEPTH2_ORDER[2])
-    assert (here.position, here.total) == (3, 5)
+    assert (here.position, here.total) == (3, 6)
 
 
 def test_a_unit_this_corpus_does_not_declare_is_refused_not_answered_emptily():
@@ -76,7 +77,7 @@ def test_a_unit_this_corpus_does_not_declare_is_refused_not_answered_emptily():
     # rendered from the second is a page that quietly points nowhere.
     with pytest.raises(ContentsError) as raised:
         neighbours(fixture_contents("depth2"), "basics/01-getting-started/unit-09")
-    assert "declares 5 unit(s)" in str(raised.value)
+    assert "declares 6 unit(s)" in str(raised.value)
 
 
 def test_the_bar_a_middle_unit_gets_carries_all_three_slots_in_a_stated_order():

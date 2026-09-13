@@ -90,7 +90,7 @@ def test_the_two_fixtures_are_not_the_same_document():
 
 
 def test_every_declared_unit_of_both_fixtures_reaches_the_contents():
-    for name, expected in (("depth1", 3), ("depth2", 5)):
+    for name, expected in (("depth1", 3), ("depth2", 6)):
         declared = sum(len(container.units) for container in fixture_containers(name))
         assert declared == expected
         assert len(order(fixture_contents(name))) == declared
