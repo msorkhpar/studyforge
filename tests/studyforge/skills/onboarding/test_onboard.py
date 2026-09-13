@@ -24,6 +24,7 @@ from studyforge.skills.onboarding.onboard import (
 )
 from studyforge.skills.onboarding.pin import RECORD_FILE
 from tests.studyforge.skills.onboarding import corpora
+from tests.support import init_repository, is_ignored
 
 
 def _made(**changes):
@@ -236,3 +237,36 @@ def test_the_pin_is_refused_before_anything_is_planned():
         onboard(corpora.DRAFT, framework_commit="../studyforge")
 
     assert "commit" in str(refused.value)
+
+
+# --------------------------------------------------------------------------
+# ⛔ W242: a build's output is committed; ignore rules live in a file inside
+# the generated root, or nowhere
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("placement", ["tree", "sibling"])
+def test_with_media_committed_onboarding_writes_no_ignore_file(placement):
+    made = _made(placement=placement)
+
+    assert [where for where in made.paths if where.rsplit("/", 1)[-1] == ".gitignore"] == []
+
+
+def test_media_that_is_not_committed_is_ignored_from_inside_the_generated_root(tmp_path):
+    made = _made(media={"commit": "never"})
+    root = corpora.material(init_repository(tmp_path / "corpus"))
+    made.write(root)
+
+    homes = [where for where in made.paths if where.rsplit("/", 1)[-1] == ".gitignore"]
+    assert homes == [".studyforge/.gitignore"]
+    assert not (root / ".gitignore").exists()
+    assert is_ignored(".studyforge/course/units/unit-01/audio/c.mp3", cwd=root)
+    for kept in (".studyforge/course/units/unit-01/a.unit.html", ".studyforge/site.json"):
+        assert not is_ignored(kept, cwd=root), kept
+
+
+def test_media_that_is_not_committed_under_sibling_is_refused_before_anything_is_written():
+    with pytest.raises(OnboardingRefused) as refused:
+        _made(placement="sibling", media={"commit": "never"})
+
+    assert "R3" in str(refused.value)

@@ -90,14 +90,16 @@ def test_the_profile_declares_its_name_and_what_it_does():
     assert "one generated root" in TreeProfile.describes
 
 
-def test_the_media_globs_are_anchored_under_the_generated_root():
+def test_the_media_globs_are_scoped_under_the_generated_root_by_where_they_live():
     # ⛔ `audio`, `images`, `video` and `practice` are words a real repository
-    # uses for its own material; an unanchored `audio/` would tell git to
-    # ignore the corpus's own recordings. Under this profile every generated
-    # clip is below the generated root, so the anchor costs nothing.
+    # uses for its own material; an unanchored `audio/` in the root ignore file
+    # would tell git to ignore the corpus's own recordings. ⭐ W242: the lines
+    # live in `.studyforge/.gitignore`, so git applies them below it and nowhere
+    # else — the file's place is the anchor.
     lines = TREE.media_ignore_lines()
     assert lines
-    assert all(line.startswith(f"/{GENERATED_ROOT}/") and line.endswith("/") for line in lines)
+    assert all(not line.startswith("/") and line.endswith("/") for line in lines)
+    assert TREE.ignore_home().parts == (GENERATED_ROOT, ".gitignore")
 
 
 def test_there_is_one_media_glob_per_media_kind():

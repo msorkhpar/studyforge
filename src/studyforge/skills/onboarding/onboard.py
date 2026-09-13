@@ -50,6 +50,7 @@ from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest import Manifest, parse
+from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import Written, plan_for, scaffold
 from studyforge.skills.onboarding import artifacts
 from studyforge.skills.onboarding.manifest import promote, render
@@ -177,13 +178,17 @@ def onboard(
     """
     provisional = parse(render(promote(draft, reasons=reasons)))
     made = scaffold(plan_for(provisional))
-    declared = (*made.not_material, *artifacts.NOT_MATERIAL)
+    declared = {
+        "the adapter scaffold": made.not_material,
+        "this skill's own files": artifacts.NOT_MATERIAL,
+    }
     document = promote(draft, not_material=declared, reasons=reasons)
     manifest = parse(render(document))
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
         *made.files,
         *_pin_files(framework_commit, skills),
+        *_ignore_file(manifest),
         _own(artifacts.EDITS_TEST, artifacts.edits_test(manifest), "R3, with this corpus's edits"),
         _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),
         _own(
@@ -198,6 +203,22 @@ def onboard(
         files=tuple(files),
         not_material=tuple(dict(entry) for entry in document["content"].get("not_material", ())),
     )
+
+
+def _ignore_file(manifest: Manifest) -> list[Written]:
+    """Return the media policy's ignore file, inside the generated root, or nothing.
+
+    ⛔ **Asked of placement, never the root ignore file** (R3, `W242`). With
+    media committed there is no file at all. A placement with no home for the
+    rules the policy requires is refused here, before anything is written.
+    """
+    try:
+        wanted = profile_for(manifest.placement).ignore_file(media=not manifest.media.commits)
+    except PlacementError as error:
+        raise OnboardingRefused(str(error)) from None
+    if wanted is None:
+        return []
+    return [_own(wanted.home.as_posix(), wanted.text(), "the media policy's ignore rules (R3)")]
 
 
 def uninstall(root: Path | str) -> list[str]:

@@ -8,14 +8,20 @@ from __future__ import annotations
 
 import json
 import shutil
+from pathlib import PurePosixPath
 
 import pytest
 
 from studyforge.cli.plan import plan_for
 from studyforge.corpus.container import CONTAINER_FILENAME
-from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.manifest import COMMIT_MODES, MANIFEST_FILENAME
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
-from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES, profile_for
+from studyforge.corpus.placement import (
+    GENERATED_ROOT,
+    SITE_CACHE_FILENAME,
+    UNIT_MEDIA_DIRNAMES,
+    profile_for,
+)
 from studyforge.validate.report import INVALID, OK
 from tests.emission import POISON
 from tests.fixture_checks import FIXTURES, VALID
@@ -200,84 +206,104 @@ def test_adding_a_permitted_edit_changes_the_plan_and_nothing_else(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# ⛔ the ignore lines the profile requires (Ruling 91)
+# ⛔ the ignore file the profile requires (Ruling 91, W242)
 # --------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("name", VALID)
-def test_git_really_ignores_every_generated_page_the_plan_names(name, tmp_path):
-    """The ignore lines are asked of git, not of a reviewer.
+def _with_media(name, commit, tmp_path):
+    """The plan for a copy of one fixture under a stated media policy."""
+    root = copy_fixture(name, tmp_path / commit)
+    manifest = json.loads((root / MANIFEST_FILENAME).read_text("utf-8"))
+    manifest["media"] = {"commit": commit}
+    (root / MANIFEST_FILENAME).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return plan_for(root)
 
-    ⛔ **A framework that writes files into somebody's repository and does not
-    say where is asking the corpus to re-derive the framework's own layout.**
-    So the lines are written into a real `.gitignore` and every page the plan
-    names is put to `git check-ignore`.
+
+def _homed(plan, repository):
+    """Write the plan's lines into the file the plan names, and return the repository.
+
+    ⛔ **Where the plan says, never the root.** The tests this replaced wrote
+    the lines into a root `.gitignore`, which is the edit R3 forbids.
     """
-    repository = init_repository(tmp_path / name)
-    plan = plan_for(FIXTURES / name)
-    (repository / ".gitignore").write_text("\n".join(plan.ignore) + "\n", encoding="utf-8")
-    pages = [p for p in plan.paths if p.endswith(".html")]
-    assert pages
-    assert [p for p in pages if not is_ignored(p, cwd=repository)] == []
+    if plan.ignore_home is not None:
+        home = repository / plan.ignore_home
+        home.parent.mkdir(parents=True, exist_ok=True)
+        home.write_text("\n".join(plan.ignore) + "\n", encoding="utf-8")
+    return repository
+
+
+@pytest.mark.parametrize("commit", COMMIT_MODES)
+@pytest.mark.parametrize("name", VALID)
+def test_git_ignores_no_page_no_json_and_no_archive_under_any_media_policy(name, commit, tmp_path):
+    """ISO-05's clause, asked of git: no generated rule matches `*.html` or `*.json`.
+
+    ⛔ **Pages and the discovery cache are what a clone reads** (§5, `W242`),
+    so this holds under every policy, not only the default. ⚠️ The archive is
+    the ingested record an adapter wrote (R2); a clone without it rebuilds
+    nothing.
+    """
+    plan = _with_media(name, commit, tmp_path)
+    repository = _homed(plan, init_repository(tmp_path / f"{name}-repo"))
+    archive = next(p for p in plan.paths if p.rstrip("/").endswith(ARCHIVE_DIR))
+    kept = [p for p in plan.paths if p.endswith((".html", ".json"))]
+    kept += [f"{archive}some/container.json", f"{GENERATED_ROOT}/{SITE_CACHE_FILENAME}"]
+    assert [p for p in kept if p.endswith(".unit.html")], "no page was asked about"
+    assert [p for p in kept if is_ignored(p, cwd=repository)] == []
 
 
 @pytest.mark.parametrize("name", VALID)
-def test_the_archive_is_never_ignored(name, tmp_path):
-    # ⛔ It is the ingested record an adapter wrote (R2). A clone without it
-    # cannot rebuild anything, so it stays tracked while the assets and the
-    # discovery cache beside it do not.
-    repository = init_repository(tmp_path / name)
+def test_committed_media_is_not_ignored_and_needs_no_ignore_file(name, tmp_path):
+    # ⭐ Generated media is committed by default (§5), and every fixture takes
+    # that default. Ignoring it would produce clones that are silent with no
+    # error, which is the outcome the whole media policy refuses.
     plan = plan_for(FIXTURES / name)
-    (repository / ".gitignore").write_text("\n".join(plan.ignore) + "\n", encoding="utf-8")
-    archive = [p for p in plan.paths if p.rstrip("/").endswith(ARCHIVE_DIR)][0]
-    assert not is_ignored(f"{archive}some/container.json", cwd=repository)
-
-
-@pytest.mark.parametrize("name", VALID)
-def test_committed_media_is_not_ignored(name, tmp_path):
-    # ⭐ Generated media is committed by default (§5), and both FND-04 corpora
-    # take that default. Ignoring it would produce clones that are silent with
-    # no error, which is the outcome the whole media policy refuses.
-    repository = init_repository(tmp_path / name)
-    plan = plan_for(FIXTURES / name)
-    (repository / ".gitignore").write_text("\n".join(plan.ignore) + "\n", encoding="utf-8")
+    assert plan.ignore == () and plan.ignore_home is None
+    repository = _homed(plan, init_repository(tmp_path / name))
     clips = [f"{p}clip.mp3" for p in plan.paths if p.rstrip("/").endswith("audio")]
     assert clips
     assert [c for c in clips if is_ignored(c, cwd=repository)] == []
 
 
 @pytest.mark.parametrize("name", VALID)
-def test_a_corpus_that_does_not_commit_its_media_gets_the_lines_that_ignore_it(name, tmp_path):
-    root = copy_fixture(name, tmp_path)
-    manifest = json.loads((root / MANIFEST_FILENAME).read_text("utf-8"))
-    manifest["media"] = {"commit": "never"}
-    (root / MANIFEST_FILENAME).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-    plan = plan_for(root)
-    repository = init_repository(tmp_path / f"{name}-repo")
-    (repository / ".gitignore").write_text("\n".join(plan.ignore) + "\n", encoding="utf-8")
+def test_media_that_is_not_committed_is_ignored_from_its_home_or_refused(name, tmp_path):
+    plan = _with_media(name, "never", tmp_path)
     clips = [f"{p}clip.mp3" for p in plan.paths if p.rstrip("/").endswith("audio")]
+    assert clips
+    if plan.ignore_home is None:
+        # ⛔ No generated directory encloses this profile's media, and the root
+        # ignore file is R3's: refused, never printed homeless.
+        assert plan.ignore == ()
+        assert [refusal for refusal in plan.refusals if "R3" in refusal.why], plan.refusals
+        assert plan.exit_code == INVALID
+        return
+    assert plan.exit_code == OK
+    repository = _homed(plan, init_repository(tmp_path / f"{name}-repo"))
     assert [c for c in clips if not is_ignored(c, cwd=repository)] == []
 
 
-def test_two_profiles_that_commit_their_media_need_the_same_lines():
-    # ⭐ Not a defect and worth stating: what differs between the profiles is
-    # where the *media* goes, and the page suffixes are this framework's own,
-    # minted so a scan can read them off a listing whatever the profile.
-    # ⛔ Both FND-04 corpora commit their media, so the two plans agree here —
-    # and the test below is what shows they stop agreeing when they must.
-    assert plan_for(FIXTURES / "depth1").ignore == plan_for(FIXTURES / "depth2").ignore
-
-
-def test_the_two_profiles_require_different_lines_once_media_is_ignored(tmp_path):
+def test_both_outcomes_are_reached_across_the_fixtures(tmp_path):
     # ⛔ And `plan` reaches them without naming either profile: it asks.
-    lines = []
-    for name in VALID:
-        root = copy_fixture(name, tmp_path)
-        manifest = json.loads((root / MANIFEST_FILENAME).read_text("utf-8"))
-        manifest["media"] = {"commit": "never"}
-        (root / MANIFEST_FILENAME).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
-        lines.append(plan_for(root).ignore)
-    assert lines[0] != lines[1]
+    homeless = {_with_media(name, "never", tmp_path / name).ignore_home is None for name in VALID}
+    assert homeless == {True, False}
+
+
+def test_no_plan_names_anything_but_a_file_inside_the_generated_root(tmp_path):
+    homes = {
+        _with_media(name, commit, tmp_path / name).ignore_home
+        for name in VALID
+        for commit in COMMIT_MODES
+    }
+    assert None in homes and len(homes) > 1
+    outside = [h for h in homes if h is not None and PurePosixPath(h).parts[0] != GENERATED_ROOT]
+    assert outside == []
+
+
+def test_every_ignore_line_names_the_file_that_holds_it(tmp_path):
+    # ⛔ INT-06/8: plan printed lines and named no file to hold them.
+    plans = [_with_media(name, "never", tmp_path / name) for name in VALID]
+    lines = [line for plan in plans for line in plan.lines() if line.startswith("ignore ")]
+    assert lines
+    assert [line for line in lines if not line.endswith(f"  in {GENERATED_ROOT}/.gitignore")] == []
 
 
 # --------------------------------------------------------------------------

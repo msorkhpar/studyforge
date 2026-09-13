@@ -101,7 +101,9 @@ It reads the manifest alone — nothing is generated — and prints:
 
 - every path that will be **created**, with what it is;
 - every existing file that will be **edited**, and the declared reason;
-- the **ignore lines** your repository should carry;
+- the **ignore lines** the media policy requires, each with the file inside the
+  generated root that holds it — none while media is committed, because pages
+  and media are what a clone reads;
 - the **media policy** in force and the limits it will stop at;
 - a final line: `plan: N path(s) to create, N file(s) to edit, N ignore
   line(s), N refusal(s)`.

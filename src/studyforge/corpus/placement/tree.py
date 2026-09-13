@@ -44,7 +44,12 @@ from studyforge.corpus.placement.names import (
     container_page_name,
     unit_page_name,
 )
-from studyforge.corpus.placement.profile import GENERATED_ROOT, Profile, register
+from studyforge.corpus.placement.profile import (
+    GENERATED_IGNORE_HOME,
+    GENERATED_ROOT,
+    Profile,
+    register,
+)
 
 
 class TreeProfile(Profile):
@@ -79,16 +84,20 @@ class TreeProfile(Profile):
         return ContainerLocations(page=self.container_dir(address) / container_page_name(titles))
 
     def media_ignore_lines(self) -> tuple[str, ...]:
-        """`/.studyforge/**/audio/` and its three siblings.
+        """`**/audio/` and its three siblings, in the generated root's own ignore file.
 
-        ⛔ **Anchored under the generated root, and that is not tidiness.**
-        Every name here — `audio`, `images`, `video`, `practice` — is a word a
-        real repository uses for its own material; an unanchored `audio/`
-        would tell git to ignore the corpus's own recordings. Under this
-        profile every generated clip is below `.studyforge/`, so the anchor
-        costs nothing and the glob cannot reach out of it.
+        ⛔ **Scoped by where they live, and that is not tidiness.** Every name
+        here — `audio`, `images`, `video`, `practice` — is a word a real
+        repository uses for its own material; an unanchored `audio/` in the
+        root ignore file would tell git to ignore the corpus's own recordings.
+        These lines live in `ignore_home`, so git applies them below
+        `.studyforge/` and nowhere else.
         """
-        return tuple(f"/{GENERATED_ROOT}/**/{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
+        return tuple(f"**/{kind}/" for kind in UNIT_MEDIA_DIRNAMES)
+
+    def ignore_home(self) -> PurePosixPath:
+        """`.studyforge/.gitignore`: every clip this profile places is below the generated root."""
+        return GENERATED_IGNORE_HOME
 
 
 TREE = register(TreeProfile())

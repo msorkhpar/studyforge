@@ -32,8 +32,8 @@ authority, which is the scan, produces a new one. There is no reading of a
 stale `site.json` that could survive, because every field in it is derived.
 
 ⚠️ **Raising would be wrong twice over.** It contradicts §5's *"a stale cache is
-detected and the scan wins"*, and it turns a git-ignored, derived, rebuildable
-artifact into a hard failure — for a corpus whose only mistake was to have been
+detected and the scan wins"*, and it turns a derived, rebuildable artifact into
+a hard failure — for a corpus whose only mistake was to have been
 built by an older version of this framework.
 
 ⛔ **So this module uses `version.is_supported`, not `version.check`.** That

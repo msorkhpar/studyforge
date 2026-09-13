@@ -100,6 +100,26 @@ class CorpusLocations:
         return (self.assets, self.archive)
 
 
+#: The first line of every ignore file a profile answers with.
+IGNORE_HEADER = "# Written by studyforge from corpus.json's media policy. Regenerate, never edit."
+
+
+@dataclass(frozen=True, slots=True)
+class IgnoreFile:
+    """The ignore rules a build requires, and the file inside a generated directory holding them.
+
+    ⛔ `home` is never the repository's root ignore file (R3). `lines` are
+    relative to `home`'s own directory, which is how git reads a nested file.
+    """
+
+    home: PurePosixPath
+    lines: tuple[str, ...]
+
+    def text(self) -> str:
+        """Return the file's content: who wrote it, then one rule per line."""
+        return "".join(f"{line}\n" for line in (IGNORE_HEADER, *self.lines))
+
+
 def relative_href(from_page: PurePosixPath, to_target: PurePosixPath) -> str:
     """Return how a page at `from_page` addresses `to_target`.
 
