@@ -8,7 +8,7 @@ import json
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.skills.adapter.parts.suite import SUITE_PARTS
-from studyforge.validate.source import repository_ignores
+from studyforge.validate.source import SKIP_DIRS, repository_ignores, source_files
 from tests.studyforge.skills.adapter import corpora
 
 
@@ -58,7 +58,7 @@ def test_the_working_copy_asks_the_one_ignore_reader_and_keeps_no_list():
     # read through W28's one reader. A pattern list beside it is a second
     # reader that is wrong for the first scratch directory it does not name.
     text = files()["tests/ingest/test_emit.py"]
-    assert f"from studyforge.validate.source import {repository_ignores.__name__}" in text
+    assert repository_ignores.__name__ in _imported_from_validate_source(text)
     assert "repository_ignores(CORPUS_ROOT, asked)" in text
     assert "ignore_patterns" not in text
     assert "__pycache__" not in text and ".pytest_cache" not in text
@@ -91,3 +91,24 @@ def test_no_generated_test_finds_its_corpus_from_the_working_directory():
     for where, text in files().items():
         assert "Path.cwd()" not in text, f"{where} depends on where pytest was started"
         assert "Path(__file__).resolve().parents[2]" in text, where
+
+
+def _imported_from_validate_source(text: str) -> str:
+    """The generated module's one import line from `studyforge.validate.source`."""
+    [line] = [
+        line for line in text.splitlines() if line.startswith("from studyforge.validate.source")
+    ]
+    return line
+
+
+def test_the_copy_takes_validates_root_rule_and_types_no_store_name():
+    # ⛔ W271, one rule: what a copy leaves out by name is `validate`'s own `SKIP_DIRS`,
+    # at the corpus root only, and a nested store is `validate`'s own `source_files`
+    # answer. A name typed into the template would be a second copy that drifts.
+    text = files()["tests/ingest/test_emit.py"]
+    imported = _imported_from_validate_source(text)
+    assert "SKIP_DIRS" in imported and source_files.__name__ in imported
+    assert "source_files(CORPUS_ROOT).stores" in text
+    assert "if here == CORPUS_ROOT:" in text
+    typed = [name for name in SKIP_DIRS if f'"{name}"' in text or f"'{name}'" in text]
+    assert typed == [], f"the template types {typed} instead of asking validate"

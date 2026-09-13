@@ -39,8 +39,17 @@ scratch directory was copied whole, and one run took over a minute. ⭐ The copy
 now asks `studyforge.validate.source.repository_ignores` — the one ignore
 reader (`W28`) — once per directory, so an ignored directory is never walked.
 ⛔ **No list is kept here.** Beyond the archive and its staging directory, which
-are this suite's own output, and `.git`, which git never answers for, what is
-left out is git's answer.
+are this suite's own output, and `validate`'s own `SKIP_DIRS` at the corpus root,
+what is left out is git's answer.
+
+## ⛔ A nested repository reaches `validate`, which refuses it (`W271`)
+
+⚠️ **`W259/1`:** the copy once left out `.git` at any depth, so `test_emit` read
+clean on a corpus `validate` refuses as `nested-repository`. ⭐ `SKIP_DIRS` is now
+asked of the corpus root only, as `validate` asks it, and a nested store — named
+by `source_files(root).stores`, `validate`'s own answer — is copied as it is and
+never asked about. So `validate` sees it in the copy and the test fails by that
+rule's name. ⛔ No store name is typed here.
 
 ⚠️ **Outside a git working tree, such as a `git archive` export, nothing is
 declared ignored.** An export holds only what was tracked, so every file in it
@@ -137,7 +146,7 @@ def _test_emit(plan: Plan) -> str:
             "",
             "from studyforge.corpus.container import CONTAINER_FILENAME",
             "from studyforge.validate import validate",
-            "from studyforge.validate.source import repository_ignores",
+            "from studyforge.validate.source import SKIP_DIRS, repository_ignores, source_files",
             "",
             f"from {plan.package}.emit import emit",
             "",
@@ -152,9 +161,9 @@ def _test_emit(plan: Plan) -> str:
             "#: behind is the repository's own answer, read through `repository_ignores`.",
             f'WRITTEN_HERE = ("{plan.archive_dir}", ".{plan.archive_dir}-staging")',
             "",
-            "#: The repository's own store. Git answers for a working tree's files, never for",
-            "#: its database, so this is the one name that is not asked about.",
-            'REPOSITORY_STORE = ".git"',
+            "#: ⛔ What a copy leaves out by name is `validate`'s own `SKIP_DIRS`, and only at",
+            "#: the corpus root, as `validate` asks it (W259). A nested store is copied, so",
+            "#: `validate` refuses it by name in the copy (W271). No store name is typed here.",
             "",
             "#: Said, never assumed, when there is no ignore declaration to read.",
             "UNDECLARED = (",
@@ -170,27 +179,32 @@ def _test_emit(plan: Plan) -> str:
             "    declared = repository_ignores(CORPUS_ROOT, []) is not None",
             "    if not declared:",
             "        warnings.warn(UNDECLARED, stacklevel=2)",
+            "    stores = frozenset(source_files(CORPUS_ROOT).stores if declared else ())",
             "",
             "    def left_out(directory: str, names: list[str]) -> set[str]:",
-            "        return _left_out(Path(directory), names, declared=declared)",
+            "        return _left_out(Path(directory), names, declared=declared, stores=stores)",
             "",
             "    shutil.copytree(CORPUS_ROOT, where, ignore=left_out)",
             "    return where",
             "",
             "",
-            "def _left_out(here: Path, names: list[str], *, declared: bool) -> set[str]:",
+            "def _left_out(",
+            "    here: Path, names: list[str], *, declared: bool, stores: frozenset",
+            ") -> set[str]:",
             '    """What one directory\'s copy skips: this suite\'s output, and what git ignores.',
             "",
             "    ⭐ Asked once per directory, so an ignored directory is never walked, let",
             "    alone copied. ⛔ A repository that stops answering part-way refuses the",
             "    copy: a copy that quietly took everything is the defect this replaced.",
+            "    ⛔ A nested store `validate` refuses is copied and never asked about (W271).",
             '    """',
-            "    left = {name for name in names if name == REPOSITORY_STORE}",
+            "    left: set[str] = set()",
             "    if here == CORPUS_ROOT:",
-            "        left |= {name for name in names if name in WRITTEN_HERE}",
-            "    if not declared:",
+            "        left = {name for name in names if name in SKIP_DIRS or name in WRITTEN_HERE}",
+            "    if not declared or any(here.is_relative_to(store) for store in stores):",
             "        return left",
             "    asked = [here / name for name in names if name not in left]",
+            "    asked = [path for path in asked if path not in stores]",
             "    ignored = repository_ignores(CORPUS_ROOT, asked)",
             "    if ignored is None:",
             '        raise RuntimeError("git stopped answering part-way through the copy")',

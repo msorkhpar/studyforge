@@ -31,6 +31,7 @@ from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.validate import validate
+from studyforge.validate.source import RULE_NESTED_REPOSITORY
 from tests.studyforge.skills.adapter import corpora
 from tests.support import git, init_repository, repository_root, run
 
@@ -43,6 +44,9 @@ READER_DATE = "1999-12-31"
 
 #: The directory a repository ignores, planted where a copy must not take it.
 IGNORED = "scratch"
+
+#: Where a nested repository is planted, beneath the material (`W271`).
+NESTED = "src/vendored"
 
 #: Runs the GENERATED `test_emit`'s own `_copy` and prints what arrived and
 #: what it warned. ⭐ The generated code is exercised, never a copy of it.
@@ -266,6 +270,54 @@ def test_outside_a_working_tree_nothing_is_declared_ignored_and_the_copy_says_so
     assert f"{IGNORED}/deep/left.txt" in probe["copied"]
     assert not [p for p in probe["copied"] if p.startswith("archive/")]
     assert any("not a git working tree" in said for said in probe["said"]), probe["said"]
+
+
+def test_the_generated_copy_keeps_a_nested_store_and_leaves_out_only_the_roots_own(tmp_path):
+    # ⛔ W271 clause 1 (W259/1): `SKIP_DIRS` at the corpus root only, as `validate`
+    # asks it. A nested store is copied, so `validate` meets it in the copy.
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    _written(root, made)
+    init_repository(root)
+    init_repository(root / NESTED)
+
+    copied = set(_copied(root)["copied"])
+
+    assert f"{NESTED}/.git/HEAD" in copied, "a nested store was left out of the copy"
+    assert not [path for path in copied if path.startswith(".git/")], "the root's store was copied"
+
+
+def test_outside_a_working_tree_a_nested_store_is_copied_too(tmp_path):
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    _written(root, made)
+    init_repository(root / NESTED)
+
+    probe = _copied(root)
+
+    assert f"{NESTED}/.git/HEAD" in probe["copied"]
+    assert any("not a git working tree" in said for said in probe["said"]), probe["said"]
+
+
+def test_a_nested_store_turns_the_generated_test_emit_red_by_validates_own_rule(tmp_path):
+    # ⛔ W271 clause 2, both ways: the root's own store reads clean, and a nested
+    # one fails `test_emit` by `validate`'s rule name, never by a name typed here.
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    _written(root, made)
+    init_repository(root)
+    command = ["-m", "pytest", "tests/ingest/test_emit.py", "-q", "-p", "no:cacheprovider"]
+
+    clean = _run(root, command)
+    assert clean.returncode == 0, clean.stdout + clean.stderr
+
+    init_repository(root / NESTED)
+    refused = _run(root, command)
+
+    output = refused.stdout + refused.stderr
+    assert refused.returncode != 0, "test_emit read clean over a nested repository store"
+    assert RULE_NESTED_REPOSITORY in output, output
+    assert "test_what_this_adapter_emits_is_what_validate_accepts" in output
 
 
 def test_the_manifest_the_walkthrough_writes_is_the_one_the_plan_reads(tmp_path):
