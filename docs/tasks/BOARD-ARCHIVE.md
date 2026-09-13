@@ -22362,22 +22362,26 @@ gated skips, weighted by their [n] groups                            10
 
 ## PO round 78 — `W163` closed, `W250` named, and ISO round 8 pending on `W242`
 
-⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`.** ⭐ **Ruling 97's gate is RECEIVED: the coordinator's release-tip reading at `accceaf`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.**
+⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings at `accceaf` and `947a007`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; the reading of record is the run after this merge.**
 
 ### ⭐ 1 — CLOSES
 
 ```text
                                   merge^2   branch head  ahead  checked out
-fix/W163-visual-reasoning         0362b7d6  0362b7d6     0      NOWHERE
+fix/W163-visual-reasoning             0362b7d6  0362b7d6     0      NOWHERE
+fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
 ```
 
-⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **The fourth edit:** no live inbound citation. ⚠️ **`handoffs/W163.md` and round 77's record cite the row file; they are records, and the stub resolves.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
+⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** neither has a live inbound citation beyond its register row. ⚠️ **`handoffs/W163.md`, `handoffs/W153.md` and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
 
 ⚠️ **`docker/dev/` is an image build input, so this merge moved the dev image identity from `inputs-f1874d21…` to `inputs-f5bb0ced…`.** The change is comment lines only; no configuration line changed.
 
 ### ⭐ 2 — RULED, REVERSIBLE
 
 1. ⛔ **`W163/2` is relayed to the user and folded into the held `W162/7` + `W162/8` question, not minted.** No environment reaches the two identity checks: the FRESH arm returns before the flag is read, and they need the host, a daemon, Compose and network to the package index. [Ruling 332](../conventions/review-rubric.md#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) and [Ruling 333](../conventions/review-rubric.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) forbid a taker from supplying that network, so a row would be one no office may take. ⭐ **They stay declared unmeasured in `devgate.FRESH`, which prints on every run.**
+2. ⭐ **`W153/2`, adopted by the coordinator, is RECORDED.** Every carrier is cut with `git config branch.<branch>.description W<n>`. A declared carrier leaves `corroborate`'s *dispatched and unnamed* gate before a register round names it, and the In flight table stays authoritative wherever it names a branch. ⭐ **The dispatch convention now points at [the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded):** one line under `delivery-flow.md`'s branch table, because a taker cutting a branch reads that table and not `corroborate`'s section. The board's In flight section carries the same pointer.
+3. ⭐ **`W153` closes in this round, not round 79.** The message arrived before the reading of record, and `947a007` is merged here. Reversible.
+4. ⛔ **`W242/1` is CONFIRMED: a build's output is committed** — its pages, the root index, the asset bundle and `site.json`. §5 now says so in one sentence. ⭐ **The ground is §5's own:** *regenerable is not the same as available*, so a clone that ignores its pages has no reading floor (R8, §11.0). `ISO-05` also refuses any generated rule matching `*.html` or `*.json`. ⚠️ **This DATES the first half of [Ruling 91](../tasks/handoffs/CTO-2026-09-10-round26.md#ruling-91-f19-a-sibling-build-does-not-need-readmemd-rewritten-and-never-did), which declared `sibling` output in `.gitignore`.** Ruling 91's record stands unedited (Ruling 106), and its profile-switch half is untouched. ⭐ **Reversible:** no page is committed into ISO before `ISO-10`, and ISO round 8 (`ISO-05`) commits none.
 
 ### ⭐ 3 — WHAT EACH FINDING BECAME
 
@@ -22387,8 +22391,22 @@ fix/W163-visual-reasoning         0362b7d6  0362b7d6     0      NOWHERE
 | `W163/2` | ⛔ **ruled, § 2.1**: relayed to the user, folded into the held `W162/7` + `W162/8` |
 | `W163/3` | accepted, cost named: the *"proved nothing"* annotation is REASONED from the harness line and the in-image browser check, not measured. Measuring it removes the pass-through, which changes configuration and builds another image, and that is the held `W162/8` question |
 | `W163/4` | accepted, cost named: `test_no_check_in_tests_docker_calls_docker_on_a_default_run` asserts the child session's exit BEFORE its docker-call record. It can go falsely RED and never falsely GREEN. In a run where `tests/docker/` is already RED, its docker-call half is unread, and the next owner of `tests/docker/` reads it from there |
+| `W153/1` | disposed at the close: the surface widened to `unclaimed.py`, where `W132`'s split moved the arm, disclosed |
+| `W153/2` | ⭐ **recorded, § 2.2**, with the convention pointer |
+| `W153/3` | ⭐ **minted [`W251`](rows/W251.md)**: a detached checkout is reached by no arm, and its test module must split first |
+| `W153/4` | accepted, cost named: only `W` ids are accepted, so an `INT-` or `NS-` carrier stays on the gate until the register names it. Blind in the safe direction |
+| `W153/5` | disposed at the close: a shadowing bug, found by a surviving plant and fixed in the diff |
+| `W242/1` | ⛔ **ruled, § 2.4: CONFIRMED**, and §5 amended. The two sentences outside its surface (`generate/writing.py`, `corpus/discovery/cache.py`) are disclosed |
+| `W242/2` | accepted: interleaved output is classified through the plan, the one enumeration of a build's output (Ruling 99), because the manifest refuses leading-wildcard globs |
+| `W242/3` | accepted, cost named: `validate` imports `cli.plan` late, the second site of the cycle `W202`'s item 5 named |
+| `W242/4` | accepted, cost named: `Scan.generated` carries the recognised population, and `validate`'s report prints no line for it. That line is the report owner's |
+| `W242/5` | accepted: `sibling` with `media.commit: never` is refused by name. No corpus in scope declares it |
+| `W242/6` | ⭐ **rider on [`W210`](rows/W210.md)**, whose surface it is |
+| `W242/7` | accepted, cost named: `progress/store.py` spells `.gitignore` a second time, a file name and not a policy |
+| `W242/8` | disposed: ISO's `short-read` findings come from the synthetic archive and are unchanged, not a regression |
+| `W242/9` | ⭐ **rider on [`W232`](rows/W232.md)**, its third witness |
 
-⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** ⭐ **Still in flight, confirmed against git:** `W242` (Developer 1, `wt/dev1`, 2 ahead of `accceaf`) and `W153` (Developer 3, `wt/dev3`, 2 ahead).
+⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** ⭐ **Merged, reading not yet received:** `W242` at `cbc0991`, held by no checkout. ⭐ **Mint, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42).
 
 ⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) is NOT YET DISPATCHED. It dispatches at `W242`'s merge. The pin stays `ab9e765`. ⭐ **RECEIVED:** host `python3 -m tools.workspace verify` at `02c7626` exits `0`.
 
@@ -22430,3 +22448,73 @@ git diff 3049de9^1 3049de9 -- docker/dev/compose.yaml
 #### ⭐ CLOSED — PO ROUND 78
 
 ⭐ **Merged at `accceaf`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `accceaf` is RECEIVED.** ⭐ **`compose.yaml`'s `STUDYFORGE_VISUAL` block matches the tree clause by clause. Each stale reason is annotated in place with what made it stale, and the pass-through decision and every configuration line are unchanged.** ⭐ **Riders discharged:** `W162/5` (the identity checks skip as `devgate.FRESH` even on a flagged warm cache, planted) and `W162/6` (`devgate.FRESH` names the environment they would need). ⚠️ **The merge moved the dev image identity to `inputs-f5bb0ced…`. Each finding's disposition is in this round's § 3.**
+
+### W153 — `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W153.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **Ruling 319(c)'s DURABLE REPAIR, ROUTED to this board by the reviewing office: `corroborate`'s `dispatched and UNNAMED` arm reads its names FROM THE REGISTER, so in a wave with no register round it has NO instrument-readable source and is blind BY CONSTRUCTION.**
+
+### ⛔ WHY THE BLINDNESS IS STANDING AND NOT AN ACCIDENT
+
+⭐ **`PO-50/7` ruled that a register round and `W78` can never share a wave, because both write `docs/tasks/rows/`.** ⛔ **So the no-register wave is a SHAPE this project will keep producing, and the arm's blindness RECURS every time it occurs** — ⚠️ **which is the difference between a gap and a defect.**
+
+### ⛔ A SECOND MECHANISM, MEASURED IN A WAVE THAT HAD A REGISTER ROUND — SO THE FIRST ONE IS NOT THE WHOLE OF IT
+
+⚠️ **PO round 52, ref `7420c34`, role `wt/po`, environment HOST, `corroborate` READ WHOLE:**
+
+```text
+  dispatched and unnamed: none.
+  invisible to git BY CONSTRUCTION (Ruling 130), 0 commits ahead and named by no row: 2 — dev1 dev2
+CORROBORATE_EXIT=0
+```
+
+⛔ **`W146` was in `wt/dev1` and `W152` in `wt/dev2`, both dispatched in wave 5, and the `In flight` table was EMPTY.** ⭐ **Both checkouts ARE in the reading — and they are in the WRONG ARM.**
+
+⚠️ **Ruling 130's *invisible by construction* arm was written for a checkout that has done nothing. It cannot tell that apart from a checkout that HAS BEEN HANDED A ROW and has not committed yet.** ⛔ **So a dispatched-and-unrecorded row is invisible to the gate for exactly as long as its taker has written no commit — which is the entire window in which recording it would have done any good.**
+
+⭐ **WHY THIS BELONGS HERE AND NOT IN A NEW ID: the mechanism is different — the wave HAD a register round and the arm was still blind — but the REPAIR is the same one this row already names, a dispatch declaration an instrument can read.** ⛔ **Two mechanisms, one subject, one remedy: a second id would split a repair that cannot be half-shipped.**
+
+⚠️ **AND IT SHARPENS CLAUSE 1's ACCEPTANCE: the declaration must be readable at `0` COMMITS AHEAD, because that is the state every dispatch begins in.**
+
+### ⚠️ A THIRD INSTANCE, ROUTED HERE BY PO ROUND 52 — A DETACHED HEAD HAS NO NAME TO MATCH
+
+⛔ **`git worktree list`, ref `7420c34`, role `wt/po`, environment HOST:**
+
+```text
+/tmp/…/scratchpad/trial146   8885055 (detached HEAD)
+```
+
+⭐ **`corroborate` reads `trial/tmp branches still checked out: none` — CORRECTLY, by its own predicate, because that arm matches BRANCH NAMES and a detached HEAD has none.** ⚠️ **So a live checkout an office is working in is accounted for by nothing, which is this row's subject a third time and not a fourth id.**
+
+### ⛔ THE TWO TEMPTING ANSWERS, REFUSED IN ADVANCE BY THE RULING ITSELF
+
+| the tempting answer | ⛔ why it is refused |
+|---|---|
+| extend Ruling 265's namespace exemption to `fix/*` | ⚠️ **it exempts the WHOLE POPULATION the gate exists to read** |
+| treat the exit code as advisory on a reviewer's judgement | ⛔ **the memory-discharged exemption Ruling 185(a) forbids** |
+
+⭐ **THE SHAPE OF THE REPAIR IS RULING 185(b)'S — NARROW THE POPULATION, NEVER WIDEN THE PREDICATE: the arm reads its names from the wave's DISPATCH, declared where an instrument can read it, so that `dispatched and UNNAMED` means *no office claims this branch* in EVERY wave and not only in waves the register happens to be open.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DISPATCH DECLARATION AN INSTRUMENT CAN READ**, and this row owes the DESIGN DECISION for where it lives before it owes code — ⭐ **the register is one candidate and is the one that fails; a wave-scoped declaration outside the register is another.**
+2. ⭐ **THE ARM'S MEANING IS UNCHANGED IN WAVES THAT HAVE A REGISTER.** ⚠️ **A repair that changed what the arm reports in the waves where it already works would be a regression wearing a fix.**
+3. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): in a no-register wave the arm NAMES the wave's own dispatched branches and refutes none, and a genuinely unclaimed branch is still NAMED — ⚠️ **the second arm is the one a no-register fixture makes easy to leave untested.**
+4. ⚠️ **`W125` IS THE NEIGHBOUR AND THE TWO MUST BE READ TOGETHER** — ⭐ **`W125` owes a design decision about GENERATING the In-flight table, and a generated table that `corroborate` then asserts git against would leave the instrument asserting git against itself** (Ruling 231(c)). ⛔ **A taker of this row who has not read `W125`'s is about to re-derive it.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD COPY OF THE DISPATCH.** ⭐ **The In-flight table, the round record and a new declaration are three places one fact could live, and this board's closing rule is that when a fact changes, exactly ONE file changes.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/board/corroborate.py` and its tests, plus `docs/conventions/board.md` for the declaration's contract.** ⚠️ **`tools/quality/board/register.py` carries a STANDING SPLIT condition.** ⚠️ **It names `docs/conventions/`, which is a SHARED constraint and not this row's alone —
+⛔ the members are listed ONCE, in the board's own *Next rows* note, and are not retyped here**
+(check 4's sub-step, and the board's closing rule: when a fact changes, exactly one file changes).
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `947a007`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `947a007` is RECEIVED.** ⭐ **`corroborate` reads a carrier's rows from its own branch description, so a carrier dispatched between register rounds, or at zero ahead, leaves the gate. The table stays authoritative wherever it names a branch, and the exit code is unchanged ([the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded)).** ⚠️ **A detached checkout is not reached: [`W251`](rows/W251.md). Each finding's disposition is in this round's § 3.**

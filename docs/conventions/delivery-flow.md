@@ -30,6 +30,8 @@ is recorded on the board. Silently expanding one is not (`agent-protocol.md`).
 | Fix | `fix/<slug>` — a correction to merged work, not a new task | the release branch | the release branch, **after review** |
 | Integration | `release/studyforge-integration`, in the corpus repository | that repository's default | that repository only. **Never into `studyforge`** |
 
+⛔ **A carrier's rows are DECLARED at its cut, in the same invocation:** `git config branch.<branch>.description W<n>` ([the contract, `W153`](board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded)).
+
 ### Office round branches
 
 ⛔ **An office's commits go on `chore/<office>-round<n>` and on no other branch** (`W136`):
