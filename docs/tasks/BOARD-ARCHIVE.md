@@ -20226,3 +20226,113 @@ fix/W217-suite-outside-checkout    b118d44d  b118d44d     0      NOWHERE
 ### ⭐ CLOSED — PO ROUND 65
 
 ⭐ **CLOSED — `475370c`.** ⛔ **Clause 1:** every emission call runs inside `contained(...)`. **Clause 2:** the office's uid-0 reading moved RED → GREEN across the change. **Clause 3:** a planted fixed-path writer moved the suite exit 0 → 1 at both uids. **Clause 4:** the population is every audited write to any path. ⚠️ **The WHOLE suite outside the emission harness is [`W221`](rows/W221.md); `document_census` rides [`W216`](rows/W216.md).**
+
+## PO round 66 — wave 19 closed, wave 20 named, `SF-38/8` answered from the user's own answers, three mints
+
+⛔ **Wave 19's three merges re-derived on the first-parent chain of `f382a4a`, not received:** `18dc8e1` (`W218`), `d2943d4` (`SF-38` build half; read side `6199164`), `f382a4a` (`W211`). ⭐ **`corroborate` at `f382a4a`, HOST, role `wt/po`, before any edit: exit 1, refuting exactly those three as TERMINAL — the expectation written before it ran.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                              merge^2   branch head  ahead  checked out
+feat/W218-narrate-prune       a0746b97  a0746b97     0      NOWHERE
+feat/SF-38-build-narration    891b8081  891b8081     0      NOWHERE
+fix/W211-image-installs       bfb052f6  bfb052f6     0      NOWHERE
+```
+
+⭐ **All three TERMINAL.** ⛔ **`W218` and `W211` close under the four edits; `SF-38` is an EPIC TASK and its close is the In flight removal plus this record.**
+
+### ⛔ 2 — `SF-38`'s WHOLE Acceptance at `f382a4a`, both halves in
+
+| clause ([`E09`](E09-delivery.md)) | met by |
+|---|---|
+| no record → no player, no notice; a planted player turns it RED | `tests/studyforge/generate/test_narration.py`: `test_a_corpus_with_no_record_builds_pages_with_no_player_and_no_notice` (both fixtures), `test_the_no_record_arm_turns_red_on_a_planted_player` |
+| every clip on disk → a player whose sources resolve | `test_every_clip_on_disk_builds_a_player_whose_sources_resolve` — ⚠️ **built with the output root AT the corpus root, the only form any test builds** |
+| a promised clip absent → the page names the gap | `test_a_promised_clip_that_is_absent_builds_a_page_that_names_the_gap` (both fixtures) |
+| no module in `generate/` imports `narrate.client` or the request path | `tests/studyforge/generate/test_no_synthesis.py` — ⚠️ **by the letter; the TRANSITIVE load is `SF-38/9`, riding [`W223`](rows/W223.md)** |
+| no record still builds, exit `0` | `test_the_build_command_builds_a_corpus_with_no_record_exit_zero` |
+| independently invocable; unchanged pages not rewritten | `test_rerunning_narration_rewrites_only_the_page_whose_narration_moved` |
+| round 64's remainder 1–3 | `generate/narration.py` asks `playable_of` with `audio=` and gaps only `NOT_PLACED`/`MISFILED`/`NOT_ON_DISK`; `generate/units.py` passes it; asserted through `generate` |
+
+⭐ **`SF-38` CLOSES at `d2943d4`, MET AS WRITTEN, PREMISE ANNOTATED** (`W212`'s precedent, round 65). ⛔ **The second clause is FALSE for any `--out` but the corpus root (`SF-38/8`)** — ⚠️ **and its remedy is a COPY, which answer 3 keeps off the read side this row IS.** ⭐ **So the case is answered in [`E09`](E09-delivery.md#sf-388-where-a-built-pages-audio-lives-under-out-copied-there-by-the-build) and carried by [`W224`](rows/W224.md), by name, rather than holding a read-side row open for a write it may not make.**
+
+### ⭐ 3 — `SF-38/8` IS SETTLED, and not by the register's preference
+
+⛔ **The user's answers 1 and 4 remove two of the three remedies:** refusing every `--out` but the root empties answer 1 for a narrated corpus; a gap notice over clips that ARE on disk breaks answer 4's second row, which promises they PLAY. ⭐ **The third — the build copies the clips — breaks no answer: answer 3 already names the record and the clips inputs *exactly like the archive*, and `SF-37` shipped the archive's copy.** ⚠️ **What would re-open it: a reading of answer 1 under which a narrated corpus may be refused every output root but one. The register does not hold that reading; the coordinator may put it to the user.** ⭐ **Written once, [in `E09`](E09-delivery.md#sf-388-where-a-built-pages-audio-lives-under-out-copied-there-by-the-build).**
+
+### ⭐ 4 — WAVE 20 NAMED, PLACEMENT RATIFIED
+
+⭐ **`SF-19a` (Developer 1), `SF-21` (Developer 2), `OPS-05` (Developer 3), all at `f382a4a`, 0 ahead, carriers CONFIRMED by the coordinator** (`PO-61/4`; `git worktree list` PRIMARY, Ruling 171).
+
+⛔ **RATIFIED.** Every declared edge is merged: `SF-19a` ← `SF-10` (1.4); `SF-21` ← `SF-01` (1.1); `OPS-05` ← `SF-02` (1.1), `SF-03` (1.2) — [`E05`](E05-serving-execution.md) and [`E09`](E09-delivery.md) headers. ⭐ **With all three in flight, `4.1` and `4.2` are SATURATED, and `4.3`'s unmerged rows (`SF-19b`, `SF-39`) wait on `SF-19a`** — [`README.md`](README.md)'s step rule. ⛔ **Three capability rows in three slots: the dispatch bound displaces no `W` row this wave.**
+
+⭐ **NO EXPLICIT OPEN ACT.** ⛔ **The step rule reads MEMBERSHIP (`README.md`) and ROW STATE (this register); a step's state cell is a CLOSE's, and `M4`'s own open was round 65's.** ⚠️ **A step row appears in the milestone table when it closes, as `3.1`–`3.6` did.**
+
+⚠️ **One correction to the brief (`PO-66/2`):** ⛔ **`SK-03` does NOT wait** — its one declared edge, `SF-28`, is merged ([`E11`](E11-skills-authoring.md)), so it is dispatchable into `4.4` now and takes the NEXT free slot ahead of any `W` row. `SK-06` waits (`SK-03`, `SF-21`). [`W81`](rows/W81.md) stands open against `SK-03`'s Acceptance, not its dispatch.
+
+### ⛔ 5 — THE MINTS, each argued on its own file
+
+[`W224`](rows/W224.md) (`SF-38/8`, order 0), [`W225`](rows/W225.md) (`W211/2` + `W211/3`, order 0), [`W226`](rows/W226.md) (`W218/1` + `W218/2`, jumps nobody). ⭐ **Riders, no mint:** `SF-38/9` → [`W223`](rows/W223.md); `W211/1` → [`W75`](rows/W75.md), narrowed to its documentation half. ⭐ **A sentence, no row:** `W218/4` → [`E09`](E09-delivery.md#w193-which-clips-may-be-deleted-none-by-a-build-none-unasked-by-narrate-and-a-prune-is-its-own-request). **Disposed:** `W218/3`, `SF-38/11` (surface taken and disclosed — the preamble's rule); `SF-38/12` (answer 3: a `narrate` after a build is answered by a REBUILD, so no verb is owed); `W211/4` (a record and a past-tense quotation of what four checks read at the time — true as history); `W211/5` is [`W221`](rows/W221.md).
+
+### W218 — `W193`'s rule is written and nothing carries it out: dead clips count against a shipped ceiling and no instrument discloses or prunes them
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W218.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W193`'S RULE IS WRITTEN AND NOTHING CARRIES IT OUT.** ⭐ **The rule ([`E09`](E09-delivery.md#w193-which-clips-may-be-deleted-none-by-a-build-none-unasked-by-narrate-and-a-prune-is-its-own-request)): a build deletes no clip, `studyforge narrate` deletes none unasked, and a prune is its own explicit request.** ⚠️ **So a corpus whose dead clips cross `max_total_bytes` is REFUSED by a build, and its reader has no instrument but deleting files by hand.**
+
+### ⛔ WHY IT IS ORDER 0
+
+⭐ **`SF-32/5`: the media package weighs what is on disk, so clips no page addresses count against a shipped ceiling.** ⛔ **That ground raised `W193` (Ruling 75), and the rule changed WHO may delete, not the exposure — so the ground passes here.** ⚠️ **`SF-42` is, in wave 18, the first thing in this project that writes clips to disk.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE DISCLOSURE:** `studyforge narrate` reports how many record entries name a speech id the corpus as walked did not produce. ⭐ **Asserted by PLANTING such an entry into a fixture record; the pass condition is the moved count.**
+2. ⛔ **THE PRUNE IS ITS OWN REQUEST**, never a side effect of `narrate` or `build`; ⭐ **its spelling is the taker's to propose and name.** ⛔ **Its predicate is the rule's: an entry whose speech id is absent from the corpus over a walk of the WHOLE corpus. A partial walk REFUSES BY NAME — asserted as a reading of the DISK after a partial request, never the run's report.**
+3. ⛔ **IT DELETES ONLY WHAT THE RECORD NAMES**, and removes those entries. ⭐ **A foreign file beside the clips survives byte for byte** (answer 2's discrimination by PATH).
+4. ⛔ **R3 IS THE OUTER BOUND** — a generated clip is still a file in somebody's repository.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A PRUNE THAT DEFAULTS ON, OR A BUILD THAT PRUNES BEFORE WEIGHING MEDIA.** ⭐ **Either reverses the rule in a code branch, which is the act `W193` existed to prevent.**
+
+[the rule's round](#po-round-64-wave-17-closed-in-part-sf-38-held-open-on-its-own-acceptance-m3-given-step-36-and-the-clip-deletion-rule-written)
+
+### ⭐ CLOSED — PO ROUND 66
+
+⭐ **CLOSED — `18dc8e1`.** ⛔ **Clause 1:** `tests/studyforge/cli/narrate/test_stage.py::test_a_planted_dead_entry_moves_the_disclosed_count_from_zero_to_one`, both fixtures. **Clause 2:** `tests/studyforge/cli/narrate/test_prune.py` — never a side effect of `narrate` or `build`, and `test_a_prune_over_a_partial_walk_refuses_by_name_and_the_disk_is_unchanged` reads the DISK. ⚠️ **Premise annotated: no partial REQUEST exists; the partial walk asserted is a declared unit with no material, the only one the tree can produce (`W218/4`, now a sentence in [`E09`](E09-delivery.md#w193-which-clips-may-be-deleted-none-by-a-build-none-unasked-by-narrate-and-a-prune-is-its-own-request)).** **Clause 3:** the deletion set equals the plant, and `test_a_foreign_file_beside_the_clips_survives_byte_for_byte`. **Clause 4:** entries naming a file outside their own clip are HELD; `test_a_prune_requests_nothing_from_any_service`. ⚠️ **What it holds forever is [`W226`](rows/W226.md).**
+
+### W211 — The pinned image cannot install this package, so every reading about the INSTALLED command is host-only and no second office can reproduce one
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W211.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE PINNED DEV IMAGE CANNOT INSTALL THIS PACKAGE, SO THE ONE THING `SF-40` DELIVERED CANNOT BE EXERCISED IN THE AUTHORITATIVE ENVIRONMENT.** ⭐ **MEASURED by the register at `6ffba1e`, role `wt/po`, environment `docker/dev/check` (the pinned image):**
+
+```text
+command -v studyforge                                  -> nothing, and the shell answers 127
+python3 -c "import setuptools"                          -> ModuleNotFoundError
+pip install --no-build-isolation .   (from a COPY in /tmp, not the checkout)
+                                                        -> BackendUnavailable: Cannot import 'setuptools.build_meta'
+```
+
+⚠️ **The image installs `requirements.txt` and never this project, and it has no network to fetch a build backend with.**
+
+### ⛔ WHY IT IS WORSE THAN A MISSING CONVENIENCE
+
+1. ⛔ **EVERY READING ABOUT THE INSTALLED COMMAND IS HOST-ONLY.** ⭐ **[`W195`](#po-round-63-the-six-decisions-answered-and-homed-m3s-missing-act-given-a-row-and-a-build-command-verified-against-my-own-expectation-rather-than-against-the-coordinators-account)'s close is one, and it was taken on the host and SAID SO.** ⚠️ **A second office cannot reproduce it in the environment Ruling 40 makes authoritative** — ⛔ **which is exactly [`W112`](rows/W112.md)'s class, one level up: there the clause was a browser, here it is the product's own entry point.**
+2. ⛔ **THE SUITE CANNOT SEE THE VERB TABLE THE WAY A READER MEETS IT.** ⭐ **`tests/studyforge/cli/test_dispatch.py` asserts `pyproject.toml` and `VERBS` AGREE, which is a reading of two files** — ⚠️ **it is not a reading that typing `studyforge` runs anything.**
+3. ⚠️ **[`W75`](rows/W75.md) — *no document says how `studyforge` gets on the path* — is the same absence from the documentation side, and this row is its environment half.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`studyforge` IS ON THE PATH INSIDE `docker/dev/check`, OR THE IMAGE SAYS WHY NOT IN A SENTENCE A READER CAN ACT ON.** ⭐ **Either answer is acceptable; the current state — silent absence — is not.**
+2. ⚠️ **A BUILD BACKEND IS AN IMAGE INPUT AND IS PINNED LIKE EVERY OTHER ONE** (`W124`'s ground): ⛔ **an unpinned `setuptools` fetched at build time is the undeclared input this image already refuses for a font and a browser.**
+3. ⛔ **ASSERTED, NOT ARRANGED** (R12): ⭐ **a check that runs the installed command and reads its exit code, so the property cannot decay silently the way it arrived.**
+4. ⚠️ **IF THE ANSWER IS *the image deliberately does not install the project*, THAT IS A DECISION AND IT IS RECORDED** — ⛔ **because it makes every entry-point acceptance in this plan unmeetable in the authoritative environment, and the plan should say so out loud rather than discover it per row.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **`pip install -e .` INSIDE THE MOUNTED CHECKOUT.** ⭐ **That writes egg-info into the tree during a run, which is precisely the class [`W209`](#w209-testsemission-calls-every-public-writer-with-fillers-so-a-green-suite-writes-into-the-checkout-and-reports-nothing) just landed a detector for.**
+
+### ⭐ CLOSED — PO ROUND 66
+
+⭐ **CLOSED — `f382a4a`.** ⛔ **Clause 1:** `studyforge` is on the path inside `docker/dev/check` — `tests/docker/test_dev_image_command.py`'s in-image checks, and this round's own pinned run opened on `command -v studyforge`. **Clause 2:** `setuptools` pinned by version AND sha256, `--require-hashes`, uninstalled in the same step (plant: the uninstall removed → RED). **Clause 3:** the installed command is RUN and its exit read (`test_the_installed_entry_point_is_the_mounted_declaration` among them). **Clause 4:** not reached — the answer was *install*. ⭐ **Must-not met:** the install is at IMAGE BUILD against an empty `/workspace/src`, with only `pyproject.toml` and `README.md` bind-mounted — RECEIVED from the office; the suite's tree-state net is the reading. ⚠️ **`W211/1` → [`W75`](rows/W75.md); `W211/2` + `/3` → [`W225`](rows/W225.md).**

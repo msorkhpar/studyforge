@@ -55,9 +55,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W218` | Developer 1 | `feat/W218-narrate-prune` @ `wt/dev1` | 0 @ `1ede082` | in-progress |
-| `SF-38` | Developer 2 | `feat/SF-38-build-narration` @ `wt/dev2` | 0 @ `1ede082` | in-progress |
-| `W211` | Developer 3 | `fix/W211-image-installs` @ `wt/dev3` | 0 @ `1ede082` | in-progress |
+| `SF-19a` | Developer 1 | `feat/SF-19a-serving-api` @ `wt/dev1` | 0 @ `f382a4a` | in-progress |
+| `SF-21` | Developer 2 | `feat/SF-21-progress-store` @ `wt/dev2` | 0 @ `f382a4a` | in-progress |
+| `OPS-05` | Developer 3 | `feat/OPS-05-nondestructive` @ `wt/dev3` | 0 @ `f382a4a` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -74,8 +74,8 @@ SEVERAL ROW IDS.**
 
 ⛔ **Office checkouts are NOT named here: `corroborate` prints every checkout no row names.**
 ⭐ **`W96/5` is on [`W125`](rows/W125.md)** (`W100/4`).
-⛔ **Wave 18's three cells LEFT at its close — every branch absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **WAVE 19 IS NAMED, every carrier CONFIRMED by the coordinator** (`PO-61/4`). ⛔ **`SF-38`'s cell is its BUILD half — the remainder written under `SF-38` in [`E09`](E09-delivery.md).** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
+⛔ **Wave 19's three cells LEFT at its close — every branch absorbed on the first-parent chain** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION, never on the register's inference from a branch name** (`PO-61/4`). ⛔ **The branch is not renamed to match the id and need not be: Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **WAVE 20 IS NAMED, every carrier CONFIRMED by the coordinator** (`PO-61/4`) — ⭐ **three `M4` capability rows, [placement ratified](BOARD-ARCHIVE.md#po-round-66-wave-19-closed-wave-20-named-sf-388-answered-from-the-users-own-answers-three-mints).** ⚠️ **[`W191`](rows/W191.md) is still unassigned.**
 
 ## Next rows — placed, not yet taken
 
@@ -85,6 +85,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
+| 0 | `W224` | ⛔ **the user's answer 4 broken in the state it promises works, and a committed test pins the break as a rule** | [66](BOARD-ARCHIVE.md#po-round-66-wave-19-closed-wave-20-named-sf-388-answered-from-the-users-own-answers-three-mints) |
+| 0 | `W225` | ⛔ **every close stands on a pinned reading, and the guard against the image race is blind past `W211`** | 66 |
 | 1 | `W88` | ⛔ **its PREDICATE is falsified and its population GREW — re-measured at dispatch, Ruling 214** | [round 41](BOARD-ARCHIVE.md#round-41-the-queue-re-taken-and-the-coordinators-jump-against-my-placement-ratified) |
 | 2 | `W120` | ⛔ **Ruling 222, and it shares `docs/tasks/rows/` with `W88`** — one owner for both | round 42 |
 | 3 | `W103` | carries Ruling 194's disposition-liveness half by the CTO's round-50 disposition | round 40 |
@@ -111,6 +113,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 29 | `W214` | ⛔ **§9 INVERTED — a build reads media no adapter is told to write, and the second source is what §12 rests on** | 63 |
 | 31 | `W215`, `W216` | ⭐ **round 63's remaining mints, each jumping nobody** | 63 |
 | 32 | `W219`–`W223` | ⭐ **round 65's mints, each jumping nobody** | 65 |
+| 33 | `W226` | ⭐ **its held half is disclosed on every run, so it jumps nobody** | 66 |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -123,11 +126,11 @@ takers in one** (check 4's sub-step) — ⛔ **a REGISTER round writes it too.**
 `W168`, `W169`, `W171`, `W179` and `W180` name `docs/conventions/` — ⭐ ONE constraint, not a
 row each.**
 ⛔ **`W150`+`W151` write `tools/quality/citations.py`; `W144`+`W159` write `board/bounds.py`;
-`W158`, `W162`, `W163` name `docker/dev/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
+`W158`, `W162`, `W163`, [`W225`](rows/W225.md) name `docker/dev/`; `W183`+`W184` write `E04`; `W153`+`W176` DECLARE
 `board/corroborate.py` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
 name — ⛔ so `W153`'s and `W176`'s declared surfaces are stale against their own subject.** ⛔ **`W173`+`W144`+`W159` write `board/bounds.py`, and `W173`
-writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md) both write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
+writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/`, [`W224`](rows/W224.md)+[`W210`](rows/W210.md) both name `cli/plan/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
 closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did.**
@@ -214,7 +217,7 @@ else.**
 | W72 | `pinned` vs `tracked` in `workspace.json` | framework agent | `todo` — re-scoped round 34 | [`rows/W72.md`](rows/W72.md) |
 | W73 | `E11`'s delivery-skill comparison, re-pointed by its taker at the corpus they own | INTEGRATION side | in-progress — taken, re-pointed | [`rows/W73.md`](rows/W73.md) |
 | W74 | The sibling runnable-module check widens | framework agent | ✅ done — `a3efb12` | [`rows/W74.md`](rows/W74.md) |
-| W75 | No document says how `studyforge` gets on the path | framework agent | `todo` | [`rows/W75.md`](rows/W75.md) |
+| W75 | No document says how `studyforge` gets on the path | framework agent | `todo` — the pin's conversion landed with `W211`; the documentation half remains | [`rows/W75.md`](rows/W75.md) |
 | W76 | `render.page`'s five cross-package helpers are private and every renderer imports them | framework agent | ✅ done — `c3e2919` | [`rows/W76.md`](rows/W76.md) |
 | W77 | The corpus-scale comparison for `SF-14`, `SF-15` and `SF-27` | E09 | routed — folded into `E09`'s delivery, `W5`'s precedent | [`rows/W77.md`](rows/W77.md) |
 | W78 | Citations into files a live document does not own — a line number that moves, and a `rows/<ID>.md` a close DELETED | framework agent | ✅ done — `26f4a05` | [`rows/W78.md`](rows/W78.md) |
@@ -349,19 +352,22 @@ else.**
 | W208 | An `AddressError` escapes the container reader, so a wrong-depth container map CRASHES `studyforge plan` | framework agent | ✅ done — `6ffba1e` | [`rows/W208.md`](rows/W208.md) |
 | W209 | `tests/emission` calls every public writer with fillers, so a green suite writes into the checkout and reports nothing | framework agent | ✅ done — `869fd4c` | [`rows/W209.md`](rows/W209.md) |
 | W210 | The media policy is spelled twice — `cli/plan/report.py` re-derives what `ignore_lines` exists to be the one spelling of | framework agent | `todo` — `SF-32/4` | [`rows/W210.md`](rows/W210.md) |
-| W211 | The pinned image cannot install this package, so every reading about the INSTALLED command is host-only and no second office can reproduce one | framework agent | in-progress — `W195`'s close, taken by the register | [`rows/W211.md`](rows/W211.md) |
+| W211 | The pinned image cannot install this package, so every reading about the INSTALLED command is host-only and no second office can reproduce one | framework agent | ✅ done — `f382a4a` | [`rows/W211.md`](rows/W211.md) |
 | W212 | The `AddressError` leak `W208` fixed in `plan` reaches `studyforge build` too, and the justification beside the catch is false | framework agent | ✅ done — `419c805` | [`rows/W212.md`](rows/W212.md) |
 | W213 | The manifest reader's catch list is a retyped subset, correct only by a property of the reader that nothing asserts | framework agent | ✅ done — `419c805` | [`rows/W213.md`](rows/W213.md) |
 | W214 | A build can find archive media and NO ADAPTER IS INSTRUCTED TO PRODUCE ANY — §9 inverted, the artifact arrived first | framework agent | `todo` — `SF-37/2` | [`rows/W214.md`](rows/W214.md) |
 | W215 | A unit's `assets` and `attachments` are declared in the archive and read by nothing in `src/`, and spec C4 says what they are for | framework agent | `todo` — `SF-37/6` | [`rows/W215.md`](rows/W215.md) |
 | W216 | `tests/test_emission.py`'s coverage floor sits so far below its own census that it cannot fall, and the sweep is the R7 gate's population | framework agent | `todo` — `W209/5` | [`rows/W216.md`](rows/W216.md) |
 | W217 | The suite writes OUTSIDE the checkout, and `W209`'s detector is repository-scoped by construction so it cannot see it | framework agent | ✅ done — `475370c` | [`rows/W217.md`](rows/W217.md) |
-| W218 | `W193`'s rule is written and nothing carries it out: dead clips count against a shipped ceiling and no instrument discloses or prunes them | framework agent | in-progress — `W193`'s rule | [`rows/W218.md`](rows/W218.md) |
+| W218 | `W193`'s rule is written and nothing carries it out: dead clips count against a shipped ceiling and no instrument discloses or prunes them | framework agent | ✅ done — `18dc8e1` | [`rows/W218.md`](rows/W218.md) |
 | W219 | The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it | framework agent | `todo` — `W212/2` + `W212/4` | [`rows/W219.md`](rows/W219.md) |
 | W220 | `reconnaissance.record.read` quotes an EXISTING `path=` back in its refusal — a latent R7 echo the contained census can no longer reach | framework agent | `todo` — `W217/2` | [`rows/W220.md`](rows/W220.md) |
 | W221 | The whole suite still writes outside the checkout — temp, cache and browser dirs — and nothing owns or asserts it | framework agent | `todo` — `W217/3` | [`rows/W221.md`](rows/W221.md) |
 | W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | framework agent | `todo` — `SF-42/1` | [`rows/W222.md`](rows/W222.md) |
 | W223 | `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing | framework agent | `todo` — `SF-42/2` + `W212/3` | [`rows/W223.md`](rows/W223.md) |
+| W224 | A build into any `--out` but the corpus root ships a player that plays nothing and names no gap, because no pass copies a clip | framework agent | `todo` — `SF-38/8` | [`rows/W224.md`](rows/W224.md) |
+| W225 | One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211` | framework agent | `todo` — `W211/2` + `W211/3` | [`rows/W225.md`](rows/W225.md) |
+| W226 | The narration record cannot locate every clip it wrote, so a removed unit's clips and a re-worded passage's old clip are beyond the only prune | framework agent | `todo` — `W218/1` + `W218/2` | [`rows/W226.md`](rows/W226.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

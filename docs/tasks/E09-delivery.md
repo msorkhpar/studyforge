@@ -195,9 +195,31 @@ place of its own paragraph of reasoning.**
    the corpus as walked did not produce.**
 
 ⛔ **R3 is the outer bound: a generated clip is still a file in somebody's repository.**
-⭐ **Clauses 3 and 4 are carried out by [`W218`](rows/W218.md)**: `narrate` prints the
+⭐ **Clauses 3 and 4 are carried out by [`W218`](BOARD-ARCHIVE.md#w218-w193s-rule-is-written-and-nothing-carries-it-out-dead-clips-count-against-a-shipped-ceiling-and-no-instrument-discloses-or-prunes-them)**: `narrate` prints the
 dead-entry count on every run, and `--prune` in place of `--voice` is the prune. ⚠️ What it
-HOLDS rather than deletes is in [its handoff](handoffs/W218.md).
+HOLDS rather than deletes is in [its handoff](handoffs/W218.md), and reaching it is [`W226`](rows/W226.md).
+⛔ **A scope added to `narrate` or `reconcile` lands in `Walk.unwalked`, or `--prune` reads
+out-of-scope entries as dead** (`W218/4`: no partial REQUEST exists today; the partial walk
+asserted is a declared unit with no material).
+
+## ⛔ SF-38/8 — WHERE A BUILT PAGE'S AUDIO LIVES → UNDER `--out`, COPIED THERE BY THE BUILD
+
+⭐ **Answered by the register, PO round 66, FROM THE USER'S OWN ANSWERS 1 AND 4 — no new
+promise.** ⛔ **The defect (`SF-38/8`, host, `3937c65`, both `FND-04` fixtures): with `--out`
+anywhere but the corpus root, no audio href resolves, the player is live, and no gap is named.**
+
+| remedy | ⛔ what it breaks |
+|---|---|
+| refuse every `--out` but the corpus root | ⛔ **answer 1** — `--out` is the reader's choice of where a site goes; one permitted choice empties it |
+| the page names a gap | ⛔ **answer 4, row 2** — every clip IS on disk, and that row promises the audio PLAYS |
+| ⭐ **the build copies each clip its pages address into its own output** | ⭐ **nothing** — answer 3 names the record and clips inputs *exactly like the archive*, and `SF-37` copies the archive's media so every reference a built page emits resolves to a file the build wrote |
+
+⛔ **What stays true:** a build never synthesises, never writes beside the material, and
+deletes no clip (answer 3; `W193` answer 1, whose *"only READS them"* is about the ORIGINALS).
+⭐ **A copy under `--out` is the build's own output, enumerated by `studyforge plan`** (answer 2,
+R3). ⛔ **At `--out` = the corpus root nothing is copied.** ⚠️ **Cost, accepted: a second copy of
+the clips; a later `narrate` reaches the site by a REBUILD (answer 3's order); a copy the record
+no longer names is not deleted (answer 2).** ⭐ **Carried out by [`W224`](rows/W224.md).**
 
 ---
 
@@ -594,6 +616,15 @@ above is a build's.**
    `generate/writing.py` is `SF-43`'s and is not.**
 3. ⛔ **The three states are asserted THROUGH `generate`, over the `FND-04` fixtures** —
    ⭐ **the renderer tests that merged are that half and do not discharge this one.**
+
+#### ⭐ CLOSED PO ROUND 66 — `d2943d4`
+
+⭐ **Both halves in; the whole Acceptance is judged at `f382a4a` in
+[the record](BOARD-ARCHIVE.md#po-round-66-wave-19-closed-wave-20-named-sf-388-answered-from-the-users-own-answers-three-mints).**
+⚠️ ***A player whose sources resolve* holds where `--out` is the corpus root, the only form its
+tests build; elsewhere it is false, answered in
+[§ SF-38/8](#sf-388-where-a-built-pages-audio-lives-under-out-copied-there-by-the-build) and
+carried by [`W224`](rows/W224.md).**
 
 ---
 
