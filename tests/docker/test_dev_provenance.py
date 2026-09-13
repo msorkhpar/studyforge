@@ -56,7 +56,7 @@ from __future__ import annotations
 import re
 
 from tests.docker.devfiles import DEV, instructions, read
-from tests.docker.test_dev_image import require_docker_run
+from tests.docker.devgate import require_docker_run
 from tests.support import repository_root, run
 
 #: ⛔ buildx's own switch for "export no default attestations". Set by the

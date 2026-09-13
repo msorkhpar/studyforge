@@ -10,10 +10,10 @@ machine. These are the checks that would otherwise be a reviewer's memory.
 
 **Integration checks — opt-in.** They build the image and run the suite inside
 it. ⛔ They are gated on `STUDYFORGE_DOCKER_TESTS=1` and not on "is Docker
-reachable", because `docker build` needs the **network** and FND-03's own
-acceptance is that *running* the tests needs none. A suite that silently
-reached for a package index whenever a daemon happened to be up would refute
-the thing this task exists to establish.
+reachable", because a build on a COLD cache needs the **network** and FND-03's
+own acceptance is that *running* the tests needs none. ⭐ The gate and its
+reason live in `devgate.py` (`W162`): the reason tells a cold cache from a warm
+one and names the invocation that reaches these checks.
 
 ⛔ And they are gated a second time on not already being inside the image.
 Without that, the suite would build a container, run the suite, which would
@@ -29,7 +29,6 @@ from __future__ import annotations
 
 import os
 import py_compile
-import re
 import shutil
 import sys
 import tomllib
@@ -38,15 +37,8 @@ from pathlib import Path
 import pytest
 
 from tests.docker.devfiles import DEV, commands, instructions, read
+from tests.docker.devgate import MARKER, announced_image, require_docker_run
 from tests.support import repository_root, run, tool_on_path
-
-#: Set to "1" to build the image and run the suite inside it. Off by default —
-#: see the module docstring.
-OPT_IN = "STUDYFORGE_DOCKER_TESTS"
-
-#: Set inside the image itself, by the Dockerfile. Its only job is to stop the
-#: integration tests recursing.
-MARKER = "STUDYFORGE_DEV_CONTAINER"
 
 
 def pyproject() -> dict:
@@ -463,37 +455,6 @@ def test_the_formatter_excludes_nothing():
 
 
 # --- integration: it builds, and the suite passes inside it ----------------
-
-
-def require_docker_run() -> str:
-    """Skip unless this run is allowed to build and start containers."""
-    if os.environ.get(MARKER) == "1":
-        pytest.skip("already inside the dev image; building it again would recurse")
-    if os.environ.get(OPT_IN) != "1":
-        pytest.skip(
-            f"set {OPT_IN}=1 to build the dev image and run the suite inside it "
-            f"(the build needs network; a test run must not)"
-        )
-    docker = tool_on_path("docker")
-    if docker is None:
-        pytest.skip("docker is not installed")
-    return docker
-
-
-#: What `check` prints on stderr before it runs anything: the image, by its inputs (`W225`).
-ANNOUNCED = re.compile(r"^docker/dev/check: image (\S+:inputs-[0-9a-f]{64})$", re.MULTILINE)
-
-
-def announced_images(stderr: str) -> list[str]:
-    """Every image name a `check` run printed, in the order printed."""
-    return ANNOUNCED.findall(stderr)
-
-
-def announced_image(stderr: str) -> str:
-    """The one image a `check` run printed; fails unless there is exactly one."""
-    found = set(announced_images(stderr))
-    assert len(found) == 1, f"check printed {len(found)} image name(s), not one: {sorted(found)}"
-    return found.pop()
 
 
 @pytest.fixture(scope="session")
