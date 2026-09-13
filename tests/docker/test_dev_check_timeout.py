@@ -68,7 +68,7 @@ import json
 import re
 
 from tests.docker.devfiles import DEV, instructions, read
-from tests.docker.test_dev_image import require_docker_run
+from tests.docker.devgate import require_docker_run
 from tests.support import repository_root, run
 
 #: The variable that overrides the bound. ⛔ Read on the host and deliberately

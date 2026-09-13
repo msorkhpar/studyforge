@@ -35,7 +35,7 @@ from pathlib import Path
 import pytest
 
 from tests.docker.devfiles import DEV, instructions, read
-from tests.docker.test_dev_image import announced_image, announced_images, require_docker_run
+from tests.docker.devgate import announced_image, announced_images, require_docker_run
 from tests.docker.test_dev_image_command import crossing, dockerfile
 from tests.docker.test_dev_provenance import joined
 from tests.support import repository_root, run
@@ -288,7 +288,7 @@ def last_line(output: str) -> str:
 
 @pytest.mark.parametrize("differing", sorted(PROBES))
 def test_two_checkouts_with_different_inputs_each_run_their_own_image(tmp_path, differing):
-    docker = require_docker_run()
+    docker = require_docker_run(builds_fresh=True)
     repository = f"studyforge-test/w225-{uuid.uuid4().hex[:12]}"
     try:
         first, second = tmp_path / "first", tmp_path / "second"
