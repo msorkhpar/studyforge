@@ -507,16 +507,16 @@ def test_an_empty_plan_reaches_no_batch_at_all():
     assert list(batches(())) == []
 
 
-def test_the_media_directory_comes_from_the_policy_and_differs_between_profiles(tmp_path):
+def test_the_media_directory_is_the_placement_answer_rooted_and_differs_between_profiles(tmp_path):
+    # W222: `audio_dir` roots the unit's one placement answer and composes nothing.
     address = Address(("course", "module"))
-    asked = {
-        name: audio_dir(tmp_path, profile_for(name), address, 1, "A unit", origin="src")
-        for name in ("tree", "sibling")
-    }
-    for name, answer in asked.items():
-        located = profile_for(name).unit(address, 1, "A unit", origin="src")
-        assert answer == tmp_path / Path(str(located.media_dir(AUDIO_DIRNAME)))
-    assert asked["tree"] != asked["sibling"]
+    for label in (None, "7b"):
+        asked = {}
+        for name in ("tree", "sibling"):
+            located = profile_for(name).unit(address, 1, "A unit", origin="src", label=label)
+            asked[name] = audio_dir(tmp_path, located)
+            assert asked[name] == tmp_path / Path(str(located.media_dir(AUDIO_DIRNAME)))
+        assert asked["tree"] != asked["sibling"]
 
 
 def test_a_plan_refuses_something_that_is_not_a_speech_unit(tmp_path):

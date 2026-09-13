@@ -67,11 +67,14 @@ def narrate(root: Path, *, only: set[str] | None = None) -> list[Path]:
         document = build_unit(source.directory, declared_practices=source.declared_practices)
         into = audio_dir(
             root,
-            corpus.profile,
-            source.container.address,
-            source.ordinal,
-            source.title,
-            origin=source.origin,
+            unit_location(
+                corpus,
+                source.container.address,
+                source.ordinal,
+                source.title,
+                origin=source.origin,
+                label=source.label,
+            ),
         )
         into.mkdir(parents=True, exist_ok=True)
         for unit in speakable_of(document).units:
@@ -207,9 +210,9 @@ def test_the_gap_partition_is_the_three_unkept_states_and_never_not_recorded():
     assert gaps(playing) == (("prose", (1,), None), ("prose", (2,), None), ("prose", (3,), None))
 
 
-def test_a_label_the_audio_writer_cannot_see_is_named_as_a_gap_not_a_dangling_link(tmp_path):
-    # SF-42/1: `audio_dir` takes no label, so `narrate` places a labelled sibling
-    # unit's clips where its page does not look. The page must not link them.
+def test_a_labelled_sibling_unit_plays_from_the_directory_its_page_links(tmp_path):
+    # W222 (SF-42/1): one derivation, so the writer, the build's read and the page
+    # agree on a labelled unit's audio directory, and its page links clips on disk.
     root = a_corpus(tmp_path, "depth2")
     path = sorted((root / "archive").rglob("container.json"))[0]
     record = json.loads(path.read_text("utf-8"))
@@ -217,32 +220,30 @@ def test_a_label_the_audio_writer_cannot_see_is_named_as_a_gap_not_a_dangling_li
     path.write_text(json.dumps(record), "utf-8")
     corpus = read_corpus(root)
     labelled = next(source for source in corpus.units if source.label)
-    looks = unit_location(
-        corpus,
-        labelled.container.address,
-        labelled.ordinal,
-        labelled.title,
-        origin=labelled.origin,
-        label=labelled.label,
-    ).media_dir("audio")
-    wrote = audio_dir(
-        root,
-        corpus.profile,
-        labelled.container.address,
-        labelled.ordinal,
-        labelled.title,
-        origin=labelled.origin,
-    )
-    assert wrote != root / looks, "the label moved nothing, so this test would pass vacuously"
+    at = {
+        label: unit_location(
+            corpus,
+            labelled.container.address,
+            labelled.ordinal,
+            labelled.title,
+            origin=labelled.origin,
+            label=label,
+        )
+        for label in (None, labelled.label)
+    }
+    assert at[None].audio != at["lab"].audio, "the label moved nothing; this would be vacuous"
     narrate(root)
 
     build(root)
 
-    for page, body in unit_pages(root).items():
-        for href in HREF.findall(body):
+    pages = unit_pages(root)
+    body = pages[root / Path(str(at["lab"].page))]
+    assert [href for href in HREF.findall(body) if href], "the labelled unit's page plays nothing"
+    assert GAP not in body, "the labelled unit's page names a gap over clips that are on disk"
+    for page, text in pages.items():
+        for href in HREF.findall(text):
             reachable = href == "" or (page.parent / href).is_file()
             assert reachable, f"{page.name} links a clip it cannot reach"
-    assert any(GAP in body for body in unit_pages(root).values())
 
 
 # --------------------------------------------------------------------------

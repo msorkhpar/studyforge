@@ -11,7 +11,7 @@ service for the ones that were not.
         units,
         client=client,
         conditions=conditions,
-        into=audio_dir(root, profile, address, ordinal, title),
+        into=audio_dir(root, locations),  # the unit's `unit_location`, label and all
         state=state_file(root),
     )
 

@@ -9,9 +9,10 @@ the directory `corpus.placement` names for that unit's audio.
 `Narrated`. ⭐ `client` is an argument so a test can hand in a recording
 transport; `cli.main` builds the real one.
 
-**Depends on.** `generate.declarations` for the corpus walk, `unit.builder` for
-each unit's served document, `narrate.speakable` for its speech units,
-`narrate.synth` for the pass and the placement question, `narrate.client`
+**Depends on.** `generate.declarations` for the corpus walk and `unit_location`,
+the one derivation of where a unit's artifacts go, which the page also asks
+(`W222`); `unit.builder` for each unit's served document, `narrate.speakable`
+for its speech units, `narrate.synth` for the pass, `narrate.client`
 for the client type, and `cli.narrate.disclosure` for the dead-entry count.
 ⛔ It names no source (R1) and composes no path (R4).
 
@@ -52,8 +53,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.cli.narrate.disclosure import Walk, dead_entries, superseded_clips
-from studyforge.corpus.placement import Profile
-from studyforge.generate.declarations import UnitSource, read_corpus
+from studyforge.generate.declarations import Corpus, UnitSource, read_corpus, unit_location
 from studyforge.narrate.client import Health, NarrateClient, NarrationError
 from studyforge.narrate.speakable import SpeechUnit, speakable_of
 from studyforge.narrate.synth import (
@@ -121,18 +121,18 @@ class UnitWork:
     into: Path
 
 
-def unit_work(root: Path | str, source: UnitSource, profile: Profile) -> UnitWork:
-    """Derive one declared unit's speech units and ask the policy for its audio directory."""
+def unit_work(root: Path | str, source: UnitSource, corpus: Corpus) -> UnitWork:
+    """Derive one declared unit's speech units and the audio directory its own page links."""
     document = build_unit(source.directory, declared_practices=source.declared_practices)
-    into = audio_dir(
-        root,
-        profile,
+    at = unit_location(
+        corpus,
         source.container.address,
         source.ordinal,
         source.title,
         origin=source.origin,
+        label=source.label,
     )
-    return UnitWork(source.key, speakable_of(document).units, into)
+    return UnitWork(source.key, speakable_of(document).units, audio_dir(root, at))
 
 
 def survey(root: Path | str) -> tuple[tuple[UnitWork, ...], Walk]:
@@ -141,7 +141,7 @@ def survey(root: Path | str) -> tuple[tuple[UnitWork, ...], Walk]:
     ⛔ The ONE walk `narrate` and `prune` share. No request and no write.
     """
     corpus = read_corpus(root)
-    work = tuple(unit_work(root, source, corpus.profile) for source in corpus.units)
+    work = tuple(unit_work(root, source, corpus) for source in corpus.units)
     walk = Walk(
         produced=frozenset(unit.id for item in work for unit in item.speech),
         audio={item.key: item.into for item in work},

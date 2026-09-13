@@ -33,14 +33,13 @@ recorded clip is taken at its word and a broken corpus renders as a working one.
 The gaps are `UNKEPT` only (`handoffs/SF-38.md`, *For dependents*):
 `NOT_RECORDED` is a unit nobody promised anything, never a gap.
 
-## Where the disk is probed, and `SF-42/1`
+## Where the disk is probed: the page's own directory (`W222`)
 
-`synth.audio_dir` is asked where `narrate` placed a unit's clips. It takes no
-`label`, and the `sibling` profile names a labelled unit's audio directory from
-it, so for such a unit the writer's directory and the one the page links
-differ. Then the disk is probed where the PAGE looks: every href a page emits
-must be answerable, and a clip placed somewhere the page cannot reach is a
-promise this page does not keep. The page names the gap; nothing is guessed.
+The disk is probed at `synth.audio_dir(root, at)`, where `at` is this page's own
+`unit_location`, the one derivation `narrate` places clips through as well. So a
+labelled unit's clips are where its page looks (`SF-42/1`), and every href a
+page emits is answerable. A clip that is not there is a gap the page names;
+nothing is guessed.
 
 ## What "does not rewrite" means here, against `SF-43`'s rebuild policy
 
@@ -56,7 +55,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
-from studyforge.corpus.placement import AUDIO_DIRNAME, UnitLocations
+from studyforge.corpus.placement import UnitLocations
 from studyforge.generate.declarations import BuildError, Corpus, UnitSource, read_corpus
 from studyforge.generate.writing import Written, place
 from studyforge.narrate.playable import MISFILED, NOT_ON_DISK, NOT_PLACED, Playable, playable_of
@@ -114,19 +113,11 @@ def narration_for(
 def heard(
     corpus: Corpus, source: UnitSource, at: UnitLocations, document: dict, state: State
 ) -> tuple[Path, Playable]:
-    """Return the directory one unit's clips were probed in, and what its page plays."""
-    wrote = audio_dir(
-        corpus.root,
-        corpus.profile,
-        source.container.address,
-        source.ordinal,
-        source.title,
-        origin=source.origin,
-    )
-    looks = corpus.root / Path(str(at.media_dir(AUDIO_DIRNAME)))
-    # `SF-42/1`: probe where the page's hrefs resolve, which is `wrote` unless a
-    # label moved the page's directory and not the writer's.
-    probed = wrote if wrote == looks else looks
+    """Return the directory one unit's clips were probed in, and what its page plays.
+
+    ⛔ `at` is the page's own placement, the one `narrate` wrote through (`W222`).
+    """
+    probed = audio_dir(corpus.root, at)
     return probed, playable_of(document, state, audio=probed)
 
 
