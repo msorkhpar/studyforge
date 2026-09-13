@@ -12,10 +12,10 @@ because a contributor without Docker is not the thing being certified.
 combination nobody has seen; it cannot be replaced by a regex of our own,
 because a regex of our own is exactly what it exists not to trust.
 
-⛔ **The framework knows no list of languages** (R1). What is highlightable is
-whatever grammars the vendored bundle carries, so the languages under test are
-read out of the bundle rather than written down — and vendoring a grammar
-without a sample fails here rather than going quietly untested.
+⛔ **The framework knows no corpus's languages** (R1). What is highlightable is
+what the bundle's header DECLARES, and this module DERIVES the grammars the
+bundle really carries and compares the two both ways (INT06-9). Vendoring a
+grammar without a sample fails here rather than going quietly untested.
 """
 
 from __future__ import annotations
@@ -28,7 +28,7 @@ import subprocess
 
 import pytest
 
-from studyforge.render.pageassets import text
+from studyforge.render.pageassets import PLAIN, highlighted_languages, text
 from tests.studyforge.render.pageassets.test_highlight import MEASURED_COMBINATIONS, resolve
 
 #: One sample per grammar the bundle vendors. ⚠️ A test fixture, not framework
@@ -177,8 +177,26 @@ def test_a_text_block_is_left_exactly_as_it_shipped(tmp_path, language):
 
 def test_a_language_nobody_vendored_a_grammar_for_is_left_alone(tmp_path):
     # ⛔ R1. A corpus in a language this build has never heard of must render,
-    # not fail — the renderer will happily emit `language-brainfuck`.
+    # not fail. The renderer asks for `plain` instead, and this is the library
+    # behaving safely even when a page names an unknown grammar.
     assert highlight(tmp_path, "x", "brainfuck")["known"] is False
+
+
+def test_the_declared_languages_are_exactly_the_grammars_the_bundle_carries(tmp_path):
+    # ⛔ INT06-9. The declaration is the header line, and this is the only
+    # instrument that reads what the bundle really defines. Declared but absent
+    # would ask for a grammar that is not there. Carried but undeclared would
+    # mark a highlighted block as a plain fallback.
+    carried = {name for names in vendored_grammars(tmp_path) for name in names}
+    declared = set(highlighted_languages())
+    assert sorted(declared - carried) == [], "declared, but the bundle has no such grammar"
+    assert sorted(carried - declared) == [], "carried by the bundle, but not declared"
+
+
+def test_the_plain_fallback_is_a_grammar_the_bundle_knows_and_it_colours_nothing(tmp_path):
+    out = highlight(tmp_path, "Given a card\nWhen it is swiped", PLAIN)
+    assert out["known"], f"the fallback `{PLAIN}` is not a grammar the bundle carries"
+    assert out["classes"] == [], "the plain fallback must emit no tokens"
 
 
 def test_the_comment_runs_to_the_end_of_the_line_and_no_further(tmp_path):

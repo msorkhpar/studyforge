@@ -5,12 +5,12 @@
    NO generated page changes and the archive stays clean text. With JS off,
    every block falls back to the single `--code-fg` it had before.
 
-   ⛔ A LANGUAGE WITH NO PRISM GRAMMAR IS LEFT ALONE, and so is `text`, whose
-   grammar is empty by design. A corpus in a language nobody vendored a
-   grammar for must render, not fail — and colouring a `text` block would
-   dress prose up as code. ⚠️ The framework knows no list of languages (R1):
-   what is highlightable is whatever grammars the vendored bundle carries,
-   and a code block's `lang` is the block's own attribute from the archive.
+   ⛔ A LANGUAGE WITH NO PRISM GRAMMAR RENDERS AS THE DECLARED `plain`
+   FALLBACK, and so is `text` left uncoloured, whose grammar is empty by
+   design. A corpus in a language nobody vendored a grammar for must render,
+   not fail, and its caption says it is plain text. ⚠️ The framework knows no
+   corpus's languages (R1): what is highlightable is the `Languages:` line of
+   the vendored bundle's header, checked against the grammars it carries.
 
    ⛔ ONE ELEMENT OFTEN CARRIES SEVERAL TOKEN CLASSES, and they can want
    different colours: Java's `@Override` is `annotation punctuation`,

@@ -33,6 +33,14 @@ render as "watch the video below" above nothing.
 letting the browser decide, turns every page open into a download of something
 the reader may never play.
 
+## ⛔ A fence language the bundle does not cover renders as the DECLARED plain fallback
+
+⚠️ The class asks for `pageassets.grammar_for(lang)`: the language itself when
+the vendored bundle declares it, `PLAIN` when it does not. ⭐ The caption keeps
+the language the archive recorded and adds a `code_fallback` note, so the page
+says which language fell back instead of looking like a broken highlighter. A
+fence with no language is unchanged: no class, and the caption `code`.
+
 ## ⭐ Highlighting happens in the browser, so the class here is the library's
 
 ⚠️ `language-<lang>` is Prism's own API — the vendored bundle reads it out of
@@ -49,12 +57,16 @@ from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page.assets import Placement, is_remote, media_kind
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
+from studyforge.render.pageassets import SURFACE_HOOKS, falls_back, grammar_for
 
 #: The block types this module answers for.
 RENDERS = ("code", "image", "video")
 
 #: What a code figure's caption says when the archive recorded no language.
 UNLABELLED_CODE = "code"
+
+#: What a code caption adds when its language renders as the plain fallback.
+FALLBACK_NOTE = "plain text"
 
 #: What a remote video's link says when the archive recorded no title.
 REMOTE_VIDEO_LABEL = "Watch this video on the original site"
@@ -100,9 +112,18 @@ def _code(block: dict, placement: Placement | None, audio: str) -> str:
         "code.html",
         audio=audio,
         caption=escape(language or UNLABELLED_CODE),
-        language=f' class="language-{escape_attribute(language.lower())}"' if language else "",
+        fallback=_fallback_note(language),
+        language=f' class="language-{escape_attribute(grammar_for(language))}"' if language else "",
         text=escape(block.get("text") or ""),
     )
+
+
+def _fallback_note(language: str) -> str:
+    """Return the caption's plain-text note, or `''` when the language is covered or absent."""
+    if not language or not falls_back(language):
+        return ""
+    klass = escape_attribute(SURFACE_HOOKS["code_fallback"])
+    return f'<span class="{klass}">{escape(FALLBACK_NOTE)}</span>'
 
 
 def _image(block: dict, placement: Placement | None, audio: str) -> str:

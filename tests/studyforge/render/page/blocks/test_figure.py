@@ -6,7 +6,11 @@ import pytest
 
 from studyforge.render.page.blocks import figure
 from studyforge.render.page.errors import PageError
+from studyforge.render.pageassets import PLAIN, SURFACE_HOOKS, highlighted_languages
 from tests.studyforge.render.page.pages import sample_placement
+
+#: The class a caption carries when its language fell back.
+FALLBACK_CLASS = SURFACE_HOOKS["code_fallback"]
 
 
 def render(block: dict) -> str:
@@ -33,6 +37,26 @@ def test_a_code_block_with_no_language_carries_no_class_and_a_plain_caption():
     markup = render({"type": "code", "lang": None, "text": "x"})
     assert "language-" not in markup
     assert f'<span class="what">{figure.UNLABELLED_CODE}</span>' in markup
+    assert FALLBACK_CLASS not in markup
+
+
+@pytest.mark.parametrize("language", sorted(highlighted_languages()))
+def test_a_declared_language_asks_for_its_grammar_and_carries_no_fallback_note(language):
+    markup = render({"type": "code", "lang": language, "text": "x"})
+    assert f'class="language-{language}"' in markup
+    assert FALLBACK_CLASS not in markup
+
+
+def test_an_undeclared_language_renders_as_the_declared_plain_fallback_and_says_so():
+    # ⛔ INT06-9. Never an error and never unmarked: the grammar asked for is the
+    # declared `plain`, the caption keeps the archive's language, and the note
+    # tells the reader this block is plain on purpose.
+    language = "X-" + "-".join(sorted(highlighted_languages()))
+    markup = render({"type": "code", "lang": language, "text": "Given a card"})
+    assert f'class="language-{PLAIN}"' in markup
+    assert f"language-{language.lower()}" not in markup
+    assert f'<span class="what">{language}</span>' in markup
+    assert f'<span class="{FALLBACK_CLASS}">{figure.FALLBACK_NOTE}</span>' in markup
 
 
 def test_the_copy_button_is_not_rendered_into_the_page():

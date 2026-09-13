@@ -100,6 +100,7 @@ _FORM_OF = {
     "table_scroll": CLASS_FORM,
     "copy_button": CLASS_FORM,
     "code_caption": CLASS_FORM,
+    "code_fallback": CLASS_FORM,
     "readable": ATTRIBUTE_FORM,
     "kind": ATTRIBUTE_FORM,
     "marked": ATTRIBUTE_FORM,
@@ -108,6 +109,8 @@ _FORM_OF = {
 }
 
 #: Wrappers, controls and states the surface styles that are not block types.
+#: ⭐ `code_fallback` marks a code caption whose language the vendored
+#: highlighter does not cover (`grammars`), so the reader sees why it is plain.
 #: ⛔ The scroll wrapper is not decoration: a table wider than the column must
 #: scroll inside its own box, or the page scrolls sideways and every paragraph
 #: with it.
@@ -147,6 +150,7 @@ SURFACE_HOOKS = {
     "table_scroll": "scroll",
     "copy_button": "copy",
     "code_caption": "what",
+    "code_fallback": "unhighlighted",
     "readable": "data-readable",
     "kind": "data-kind",
     "marked": "data-marked",

@@ -46,6 +46,7 @@ colour changes.
 | `source` | the directory, and reading one part exactly |
 | `bundle` | what goes into a page, in what order, under what name |
 | `vendored` | the two bundles this project did not write, and their licences |
+| `grammars` | which fence languages the vendored highlighter covers, and the plain fallback |
 | `surface` | the class names and `data-*` hooks the stylesheet targets |
 | `errors` | `AssetError`, the only exception any of it raises |
 
@@ -56,9 +57,10 @@ units that is roughly 60 MB of duplication for no reader-visible gain.
 ⛔ **Highlighting happens in the browser, never at build time.** Building spans
 into every page inflates all of them, puts a lexer's output permanently on
 disk, and would feed markup to the narration extractor. ⚠️ A language with no
-grammar is left alone rather than dressed up as code — and the framework knows
-no list of languages (R1): what is highlightable is whatever the vendored
-bundle carries.
+grammar renders as the DECLARED plain fallback, and its caption says so. The
+framework knows no corpus's languages (R1): what is highlightable is what the
+vendored bundle declares in its header, and a test checks that line against
+the grammars the bundle carries (`grammars`).
 """
 
 from __future__ import annotations
@@ -77,6 +79,12 @@ from studyforge.render.pageassets.bundle import (
     written_files,
 )
 from studyforge.render.pageassets.errors import AssetError
+from studyforge.render.pageassets.grammars import (
+    PLAIN,
+    falls_back,
+    grammar_for,
+    highlighted_languages,
+)
 from studyforge.render.pageassets.source import (
     ASSET_DIR,
     LICENCE_SUFFIX,
@@ -111,6 +119,7 @@ __all__ = [
     "JOIN",
     "LICENCE_SUFFIX",
     "PART_SUFFIXES",
+    "PLAIN",
     "SCRIPT_NAME",
     "SCRIPT_PARTS",
     "SPRITE_PART",
@@ -123,7 +132,10 @@ __all__ = [
     "AssetError",
     "class_for",
     "compose",
+    "falls_back",
+    "grammar_for",
     "header_of",
+    "highlighted_languages",
     "is_vendored",
     "licence_for",
     "licence_names",
