@@ -11,10 +11,20 @@ own body names `NAME(`. ⛔ **That figure is printed as a LOWER BOUND, and the l
 the spelling it cannot see**, which is a gate inherited through a fixture. This is
 Ruling 280's form, carried from citations to gates.
 
+`W165`: with `--timings REPORT` it also prints the COST of that population. The report
+is a JUnit report from a run this command did not take, because this command never opens
+a gate. Each gated member gets a line with its own seconds and its node id, and the block
+ends with min and max. ⛔ **A report that times only some members is printed as a SAMPLE,
+with the untimed members named.** A timing of an ungated test is outside the clause, and
+the block does not list it. `owed(Cost)` is the clause as a predicate: a figure over a
+gated population owes its SELECTION if it names only a directory, and its SPREAD if some
+gated member has no figure. ⛔ An ungated figure owes nothing.
+
 - Exit `0`: the census is inhabited, and the runner collected without error.
 - Exit `2`: no test was skipped, or the runner produced no report, or it did not finish
   collecting. ⛔ An empty population is never the pass reading (Ruling 191). A census
   over a collection that errored is a silent under-count.
+- ⛔ **A cost figure never moves the exit**, whether it is whole, a sample, or unread.
 
 **How you use it.**
 
@@ -23,7 +33,8 @@ Ruling 280's form, carried from citations to gates.
 
 `take_census(paths, ...)` returns the `Census` the command prints, and `render` gives
 the printed lines. The clause lives in `docs/conventions/review-rubric.md`, under the
-`W164` heading beside Ruling 142.
+`W164` heading beside Ruling 142. With a report, add `--timings <report.xml>`;
+`read_timings`, `cost_of` and `render_cost` give the cost block, under the `W165` heading.
 
 **Depends on.** `argparse`, `ast`, `os`, `re`, `subprocess`, `sys`, `tempfile`,
 `xml.etree.ElementTree`, `dataclasses` and `pathlib`. Pytest is run as a subprocess and
@@ -217,6 +228,94 @@ def render(census: Census) -> list[str]:
     return lines
 
 
+#: What a cost figure over a gated population can owe (`W165`).
+SELECTION = "selection"
+SPREAD = "spread"
+
+
+@dataclass(frozen=True)
+class Cost:
+    """A cost figure: each selection it names with its seconds, and the gated population.
+
+    `gated` is empty for a timing of an ungated population.
+    """
+
+    seconds: tuple[tuple[str, float], ...]
+    gated: tuple[str, ...]
+
+
+def _names_only_a_directory(selection: str) -> bool:
+    """Return whether a selection is neither a node id nor a `.py` file."""
+    return "::" not in selection and not selection.endswith(".py")
+
+
+def owed(cost: Cost) -> tuple[str, ...]:
+    """Return what `cost` still owes under `W165`. ⛔ An ungated figure owes nothing."""
+    if not cost.gated:
+        return ()
+    named = [selection for selection, _ in cost.seconds]
+    owes = []
+    if not named or any(_names_only_a_directory(selection) for selection in named):
+        owes.append(SELECTION)
+    if not set(cost.gated) <= set(named):
+        owes.append(SPREAD)
+    return tuple(owes)
+
+
+def read_timings(report: Path) -> dict[str, float] | None:
+    """Return every testcase the report RAN, node id to seconds, or `None` if unreadable."""
+    try:
+        root = ElementTree.parse(report).getroot()
+    except OSError, ElementTree.ParseError:
+        return None
+    timings: dict[str, float] = {}
+    for case in root.iter("testcase"):
+        if case.find("skipped") is not None:
+            continue
+        try:
+            seconds = float(case.get("time", ""))
+        except ValueError:
+            continue
+        node = _node_id(case.get("file", ""), case.get("classname", ""), case.get("name", ""))
+        timings[node] = seconds
+    return timings
+
+
+def cost_of(census: Census, timings: Mapping[str, float]) -> Cost:
+    """Return the census's gated members that `timings` ran, with their seconds."""
+    gated = tuple(test.node for test in census.tests)
+    return Cost(tuple((node, timings[node]) for node in gated if node in timings), gated)
+
+
+def render_cost(cost: Cost, source: str, ungated: int = 0) -> list[str]:
+    """Return the cost block: a line per gated member, then min and max, then any sample."""
+    lines = [
+        f"cost of the gated population, read from {source} "
+        "(a run this command did not take; the exit never moves on it):"
+    ]
+    timed = dict(cost.seconds)
+    for node in cost.gated:
+        figure = f"{timed[node]:.3f} s" if node in timed else "untimed"
+        lines.append(f"  {figure:>12}  {node}")
+    if cost.seconds:
+        low = min(cost.seconds, key=lambda pair: pair[1])
+        high = max(cost.seconds, key=lambda pair: pair[1])
+        spread = f"min {low[1]:.3f} s ({low[0]}) · max {high[1]:.3f} s ({high[0]})"
+        if low[1] > 0:
+            spread += f" · max/min {high[1] / low[1]:.1f}x per member"
+        lines.append(f"  spread over {len(cost.seconds)} timed member(s): {spread}")
+    if SPREAD in owed(cost):
+        lines.append(
+            f"  a SAMPLE, not the population's cost: {len(cost.seconds)} of "
+            f"{len(cost.gated)} gated member(s) timed"
+        )
+    if ungated:
+        lines.append(
+            f"  {ungated} ungated timing(s) in the report: outside this clause, not listed"
+        )
+    return lines
+
+
 def main(argv: list[str] | None = None) -> int:
     """Take the census over the given paths, print it, and return its verdict."""
     parser = argparse.ArgumentParser(
@@ -230,6 +329,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     parser.add_argument("--reason", help="keep only skips whose reason contains this text")
     parser.add_argument("--helper", help="the gate's helper, for the grep lower bound")
+    parser.add_argument("--timings", type=Path, help="a JUnit report to cost the population by")
     arguments = parser.parse_args(argv)
     census = take_census(
         arguments.paths,
@@ -239,6 +339,14 @@ def main(argv: list[str] | None = None) -> int:
         helper=arguments.helper,
     )
     print("\n".join(render(census)))
+    if arguments.timings is not None and census.tests:
+        timings = read_timings(arguments.timings)
+        if timings is None:
+            print(f"cost: UNREAD — {arguments.timings} is not a readable JUnit report")
+        else:
+            cost = cost_of(census, timings)
+            ungated = sum(1 for node in timings if node not in cost.gated)
+            print("\n".join(render_cost(cost, str(arguments.timings), ungated)))
     return census.verdict
 
 
