@@ -141,14 +141,18 @@ def board_state(root: Path) -> list[str]:
         key=row_order,
     )
     closed_on_disk = sorted((n for n in bodies if n in closed_ids), key=row_order)
+    # ⛔ `W144`: TWO populations, TWO labels. `register lines` counts table LINES and
+    # `register ids` counts the distinct ID SET the allowance is indexed to, so a
+    # `W17 + W19` line is one of the first and two of the second. ⭐ Neither is labelled
+    # `register rows`, the phrase that named both until the numbers disagreed.
     return [
-        f"board: {len(rows)} register rows, {len(live)} live, "
+        f"board: {len(rows)} register lines, {len(live)} live, "
         f"{len(on_disk)} detail files in {ROWS}/ holding {rows_bytes} bytes "
         f"(no bound — Ruling 183); "
         f"{narrative_bytes(text)} bytes narrative of {BOARD_NARRATIVE_CEILING}, "
         f"widest row {widest} of {BOARD_ROW_CEILING}, "
         f"{len(text.encode())} bytes total of {allowed} allowed "
-        f"({BOARD_FRAME} frame + {BOARD_PER_ROW}×{indexed} register "
+        f"({BOARD_FRAME} frame + {BOARD_PER_ROW}×{indexed} register ids "
         f"+ {BOARD_PER_OBSERVATION_ROW}×{observations} observation "
         f"+ {BOARD_PER_SCHEDULED_ROW}×{scheduled} scheduled).",
         f"closed rows with a detail file still in {ROWS}/ (Ruling 270, no bound): "

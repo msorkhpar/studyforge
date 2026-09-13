@@ -292,7 +292,7 @@ def test_impossible_board_with_no_register_rows(tmp_path: Path) -> None:
     """
     root = _tree(tmp_path, HEADER + FOOTER)
     assert check_board(root) == []
-    assert "0 register rows, 0 live" in board_state(root)[0]
+    assert "0 register lines, 0 live" in board_state(root)[0]
 
 
 @pytest.mark.parametrize("state", ["✅ done — `abc1234`", "done", "DONE at `abc1234`"])
@@ -546,7 +546,7 @@ def test_impossible_board_state_cannot_fire_on_an_EMPTY_register(tmp_path: Path)
     """
     root = _tree(tmp_path, HEADER + FOOTER)
     assert [f for f in check_board(root) if f.rule == RULE_STATE] == []
-    assert "0 register rows, 0 live" in board_state(root)[0]
+    assert "0 register lines, 0 live" in board_state(root)[0]
 
 
 def test_this_repository_has_a_board_with_a_DELIMITED_register() -> None:

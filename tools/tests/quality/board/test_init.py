@@ -81,7 +81,7 @@ def test_live_notice_names_every_bound_and_the_population() -> None:
     """
     line = board_state(repository_root())[0]
     assert line.startswith("board: ")
-    assert "register rows" in line and "live" in line and "detail files" in line
+    assert "register lines" in line and "live" in line and "detail files" in line
     assert str(BOARD_NARRATIVE_CEILING) in line
     assert str(BOARD_ROW_CEILING) in line
     for term in ("frame", "register", "observation", "scheduled"):
@@ -106,7 +106,7 @@ def test_live_board_has_a_detail_file_for_every_live_row() -> None:
     neither test alone closes both.**
     """
     counts, closed = board_state(repository_root())[:2]
-    live = int(counts.split(" register rows, ")[1].split(" live")[0])
+    live = int(counts.split(" register lines, ")[1].split(" live")[0])
     files = int(counts.split("live, ")[1].split(" detail files")[0])
     stubs = int(closed.split("; of those, ")[1].split(" are REDIRECT STUBS")[0])
     assert files == live + stubs, (

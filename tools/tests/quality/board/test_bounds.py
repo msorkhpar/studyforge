@@ -35,11 +35,14 @@ from tools.quality.board.register import is_closed, register
 from tools.quality.report import Finding
 
 from .support import REGISTER, REGISTER_END, rules
+from .test_bijection import CLOSED
 
-#: One closed register row, so the register is INHABITED: ⛔ `board-size`'s denominator is
-#: the ids the register names, and a bound measured against an empty register would be
-#: measuring the frame alone.
-CLOSED = "| W1 | a naming | PO | ✅ done — `abc1234` | [record](BOARD-ARCHIVE.md#w1) |\n"
+#: ⭐ `CLOSED` is one closed register row, so the register is INHABITED: ⛔ `board-size`'s
+#: denominator is the ids the register names, and a bound measured against an empty
+#: register would be measuring the frame alone. ⚠️ **`W144` (`W196/4`): this module
+#: carried its OWN copy with the archive-link Detail cell `W185` retired**, so it now
+#: reads `test_bijection.py`'s born-form fixture instead of a second home. ⭐ Every
+#: fixture here is 3 bytes shorter for it and no verdict moves.
 
 
 def _board(extra: str = "", register: str = CLOSED) -> str:
@@ -104,7 +107,7 @@ def test_the_size_bound_allows_the_frame_and_says_so() -> None:
     found = size_findings(_board("x" * (BOARD_FRAME + 1), register=""))
     assert rules(found) == [RULE_NARRATIVE, RULE_SIZE]
     message = next(finding.message for finding in found if finding.rule == RULE_SIZE)
-    assert f"{BOARD_FRAME} of frame, plus {BOARD_PER_ROW} for each of 0 register rows" in message
+    assert f"{BOARD_FRAME} of frame, plus {BOARD_PER_ROW} for each of 0 register ids" in message
     # ⛔ `W130`: the two new terms are printed with their OWN counts, and both read `0`
     # here. ⭐ A term printed only when inhabited is a term nobody can audit (Ruling 48).
     assert f"{BOARD_PER_OBSERVATION_ROW} for each of 0 delimited observation rows" in message
@@ -122,7 +125,7 @@ def test_the_denominator_is_the_IDS_the_register_NAMES_and_not_the_rows_it_carri
     two = "| W17 + W19 | one commit, two ids | PO | `todo` | [d](rows/W17.md) |\n"
     over = BOARD_FRAME + 2 * BOARD_PER_ROW + 1
     findings = size_findings(_board("x" * over, register=two))
-    assert "for each of 2 register rows" in (
+    assert "for each of 2 register ids" in (
         next(finding.message for finding in findings if finding.rule == RULE_SIZE)
     )
 
