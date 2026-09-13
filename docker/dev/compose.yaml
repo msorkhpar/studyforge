@@ -103,6 +103,12 @@ services:
     # reviewer who ran `STUDYFORGE_VISUAL=required docker/dev/check` would get
     # a green run that proved nothing, which is the most expensive way this
     # could be wrong.
+    # ⚠️ STALE IN PART, kept and annotated (`W163`): *"proved nothing"* was true
+    # while this image had no browser. `W36` pinned one into it, so a dropped
+    # demand still leaves the visual checks RUNNING in here, and the harness's
+    # summary line says the demand was unset. What such a run cannot prove is
+    # that an absent browser FAILS. The decision does not move: the caller's
+    # answer must cross.
     #
     # ⭐ **Pass-through, and deliberately NOT a default.** The bare-name form
     # takes the host's value and leaves the variable *unset* in here when the
@@ -118,6 +124,20 @@ services:
     # `../tasks/handoffs/W36.md`. ⭐ What keeps the browser honest instead is
     # `tests/docker/test_dev_image_browser.py`, which asserts from **inside**
     # this image that one arrived — the idiom the Node.js runtime already uses.
+    #
+    # ⛔ **STALE REASONS UNDER A CORRECT DECISION, kept and annotated** (`W163`,
+    # from `W128/6`). ⭐ The refusal stands on its FIRST reason alone: a default
+    # here changes what every reading is taken against, which is a property of
+    # this file and cannot go stale. ⚠️ The rest were true at `a0d7e88` (`W36/1`)
+    # and are not true since:
+    #   - *"turned test_discovery.py red … does not control this variable"*,
+    #     *"red … whenever the variable is set"* and *"the defect is the
+    #     harness's"*: `W128` gave that test `pinned_environment`
+    #     (`tests/visual/conftest.py`), which pins the variable off. Measured at
+    #     `828b37f` in this image: with `=required` the module passes, and with
+    #     the fixture removed it fails again.
+    #   - the pointer `../tasks/handoffs/W36.md` resolves nowhere from this
+    #     directory. The measurement is in `../../docs/tasks/handoffs/W36.md`.
     #
     # ⚠️ `STUDYFORGE_VISUAL_CAPTURES` is a path INSIDE the container. A host
     # path only resolves if it is under the bind mount, and nothing is written
