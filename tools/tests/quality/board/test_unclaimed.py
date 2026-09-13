@@ -16,7 +16,7 @@ a control drawn from the live tree is born vacuous exactly when a close run is t
 |---|---|
 | an office branch AHEAD `> 0` | ⭐ **exempt**, and PRINTED with its count and its reason |
 | a `fix/W*` branch at `0` ahead, no row | ⛔ **still NAMED**, on Ruling 130's own line |
-| a branch merely CONTAINING `po-round` | ⛔ **NOT exempt** — the prefix is ANCHORED |
+| a branch CONTAINING or PREFIXED by a round spelling | ⛔ **NOT exempt** — the WHOLE name |
 | ⚠️ a DETACHED checkout | ⛔ **in NONE of the five lines**, and that hole stays visible |
 
 ⚠️ **The office plant is AHEAD and never `0`-ahead, deliberately:** ⛔ **`0`-ahead was
@@ -195,8 +195,9 @@ def test_planted_a_fix_branch_at_ZERO_AHEAD_and_NAMED_BY_NO_ROW_IS_STILL_NAMED(
     assert "cto" not in blind, "⭐ and the office checkout is NOT counted here twice"
 
 
+@pytest.mark.parametrize("branch", ["fix/W99-po-round-guard", "chore/cto-round34-rubric"])
 def test_planted_a_branch_that_merely_CONTAINS_po_round_is_NOT_EXEMPT(
-    repository: Path,
+    repository: Path, branch: str
 ) -> None:
     """⛔ The plant is adversarial to the PATTERN rather than to the subject (Ruling 140).
 
@@ -206,17 +207,43 @@ def test_planted_a_branch_that_merely_CONTAINS_po_round_is_NOT_EXEMPT(
     `if branch in subject:` and `chore/cto-round3` therefore read TERMINAL off
     `Merge chore/cto-round39:`'s merge.
 
-    ⛔ **So the prefix is ANCHORED, and this is the reading that says so.**
+    ⛔ **`W136`: and a PREFIX exempts `chore/cto-round34-rubric`, a TOPIC branch
+    `rows/W136.md` measured inside it — so the match is the WHOLE name.**
     """
-    ahead = _plant(repository, "fix/W99-po-round-guard", "sneaky")
+    ahead = _plant(repository, branch, "sneaky")
     write_board(repository, "")
     _code, printed = _run(repository)
     dispatched = next(line for line in printed.split("\n") if "dispatched and" in line)
-    assert "UNNAMED by any row" in dispatched and "fix/W99-po-round-guard" in dispatched, (
+    assert "UNNAMED by any row" in dispatched and branch in dispatched, (
         f"⛔ THE DEFECT an anchored prefix prevents — {dispatched}; it is {ahead} ahead"
     )
     exemption = next(line for line in printed.split("\n") if "round branches" in line)
-    assert "fix/W99" not in exemption, f"⭐ and it is not on the exemption line — {exemption}"
+    assert branch not in exemption, f"⭐ and it is not on the exemption line — {exemption}"
+
+
+#: ⛔ `W136`: the ROW's own measured names, both directions. The False column is the plant
+#: target: a restored prefix, `\d`, a class or an office widened turns one True.
+WHOLE_NAME = {
+    "chore/po-round73": True,
+    "chore/cto-round9": True,
+    "chore/cto-round17-close": False,
+    "chore/cto-round49-annotation": False,
+    "chore/po-board-round3": False,
+    "chore/po-int-round2": False,
+    "chore/po-round": False,
+    "chore/po-round7a": False,
+    "chore/po-round\u0667": False,
+    "chore/po-round73\n": False,
+    "fix/W99-po-round-guard": False,
+}
+
+
+@pytest.mark.parametrize(("branch", "exempt"), sorted(WHOLE_NAME.items()))
+def test_the_OFFICE_exemption_is_the_WHOLE_NAME_and_never_a_prefix(
+    branch: str, exempt: bool
+) -> None:
+    """⛔ `W136`: exempt iff the whole name is `chore/<office>-round<n>` (`delivery-flow.md`)."""
+    assert unclaimed.office(branch) is exempt, f"{branch!r} must read exempt={exempt}"
 
 
 def test_the_DETACHED_checkout_is_in_NONE_of_the_FIVE_lines_and_that_hole_STAYS_VISIBLE(
@@ -535,7 +562,7 @@ def test_the_THREE_EXEMPTIONS_TRANSFER_to_the_new_population_and_fix_W_STILL_REA
     empty the population the gate exists to read, and that refusal has to hold on BOTH
     halves of the gate or it holds on neither.**
     """
-    for branch in ("chore/po-round99", "trial/round99", "fix/W99-adrift"):
+    for branch in ("chore/po-round99", "trial/round99", "fix/W99-adrift", "chore/po-round9-x"):
         assert git(repository, "checkout", "-q", "-b", branch).returncode == 0
         commit(repository, f"{branch.replace('/', '-')}.txt", "a round's record\n")
         assert git(repository, "checkout", "-q", RELEASE).returncode == 0
@@ -545,6 +572,7 @@ def test_the_THREE_EXEMPTIONS_TRANSFER_to_the_new_population_and_fix_W_STILL_REA
     _code, printed = _run(repository)
     adrift = _adrift(printed)
     assert "fix/W99-adrift" in adrift, f"⛔ Ruling 319's refusal did not hold here — {adrift}"
+    assert "chore/po-round9-x" in adrift, f"⛔ `W136`: a topic branch is not exempt — {adrift}"
     assert "chore/po-round99" not in adrift and "trial/round99" not in adrift, adrift
 
 
