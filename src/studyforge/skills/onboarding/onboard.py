@@ -48,7 +48,7 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
-from studyforge.corpus.manifest import Manifest, parse
+from studyforge.corpus.manifest import RAISES, Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import Written, plan_for, scaffold
 from studyforge.skills.onboarding import artifacts, record
@@ -252,7 +252,7 @@ def _stubs(root: Path) -> dict[str, str]:
     """Return the scaffold's hand-written stubs from the manifest on disk, or nothing."""
     try:
         made = scaffold(plan_for(parse((root / artifacts.MANIFEST).read_text(encoding="utf-8"))))
-    except OSError, ValueError:
+    except (OSError, ValueError, *RAISES):
         return {}
     return {item.where: item.text for item in made.files if not item.generated}
 

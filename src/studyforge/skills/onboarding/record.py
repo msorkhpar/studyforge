@@ -129,7 +129,7 @@ def changed(root: Path, listed: Sequence[dict]) -> list[str]:
         for entry in listed
         if not is_yours(entry)
         and (root / entry["where"]).exists()
-        and digest_of(root / entry["where"]) != entry.get("sha256")
+        and _digest_of(root / entry["where"]) != entry.get("sha256")
     )
 
 
@@ -143,18 +143,18 @@ def hand_edited(root: Path | str) -> list[str]:
     return changed(root, entries(root))
 
 
-def digest(text: str) -> str:
+def _digest(text: str) -> str:
     """Return the digest of what was written, so a hand-edit is visible rather than assumed."""
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def digest_of(path: Path) -> str:
+def _digest_of(path: Path) -> str:
     """Return the digest of what is on disk now."""
-    return digest(path.read_text(encoding="utf-8"))
+    return _digest(path.read_text(encoding="utf-8"))
 
 
 def _entry(item: Written) -> dict:
     """One record entry: a digest for a generated file, a mark for the person's."""
     if not item.generated:
         return {"where": item.where, HAND_WRITTEN: True}
-    return {"where": item.where, "sha256": digest(item.text)}
+    return {"where": item.where, "sha256": _digest(item.text)}

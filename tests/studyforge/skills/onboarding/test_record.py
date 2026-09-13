@@ -7,6 +7,7 @@ a regenerate — and every generated file whose bytes differ is still named.
 
 from __future__ import annotations
 
+import hashlib
 import importlib
 import json
 import os
@@ -23,7 +24,6 @@ from studyforge.skills.onboarding.record import (
     INSTALLED_API,
     READS,
     OnboardingRefused,
-    digest,
     hand_edited,
 )
 from tests.studyforge.skills.onboarding import corpora
@@ -177,7 +177,7 @@ def test_uninstall_still_reads_a_record_the_previous_shape_wrote(tmp_path):
     record = _record(root)
     for entry in _marked(record):
         entry.pop("hand_written")
-        entry["sha256"] = digest((root / entry["where"]).read_text(encoding="utf-8"))
+        entry["sha256"] = hashlib.sha256((root / entry["where"]).read_bytes()).hexdigest()
     (root / RECORD_FILE).write_text(json.dumps({**record, "installed_api": 1}), encoding="utf-8")
 
     uninstall(root)
