@@ -79,9 +79,15 @@ def test_a_fenced_marker_is_counted_as_not_read_rather_than_dropped(tmp_path):
 
 
 def test_the_labels_are_marker_lines_own_labels(tmp_path):
-    text = f"- W99/1 {MARK} a\nsaid {MARK} b\n| W99/2 | {MARK} | c |\n{MARK} {MARK}\n"
+    # ⚠️ The last four lines are where a line-START reading and `marker_lines` DISAGREE:
+    # a plant labelling by the first character survived this test without them.
+    text = (
+        f"- W99/1 {MARK} a\nsaid {MARK} b\n| W99/2 | {MARK} | c |\n{MARK} {MARK}\n"
+        f"- the review said {MARK} d\n| prose | {MARK} |\n{MARK} alone\n## W99/3 {MARK} e\n"
+    )
     handoff(tmp_path, text)
     expected = [(n, FINDING_LINE if own else IN_TEXT) for n, _l, own in marker_lines(text)]
+    assert [label for _n, label in expected[4:]] == [IN_TEXT, IN_TEXT, FINDING_LINE, FINDING_LINE]
     assert [(line.number, line.label) for line in sweep(tmp_path).lines] == expected
 
 
