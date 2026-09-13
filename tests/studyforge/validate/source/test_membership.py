@@ -111,7 +111,12 @@ def test_a_stray_is_never_read_as_material_even_when_the_manifest_includes_it(tm
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     (root / "corpus.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     where = plant(root, f"{ARCHIVE_DIRNAME}/notes.md")
+    report = validate(root)
     assert strays(root) == [where]
+    # ⛔ And the scan never reads beneath the root: without its skip, the plan's
+    # `archive/` line makes every file there generated output the manifest
+    # includes, which reads as `contested` (plant P7 survived without this).
+    assert [f.rule for f in report.findings] == [STRAY], [f.line() for f in report.findings]
 
 
 # --------------------------------------------------------------------------
