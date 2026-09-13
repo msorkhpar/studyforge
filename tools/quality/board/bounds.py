@@ -157,7 +157,8 @@ BOARD_ROW_CEILING = 600
 
 #: ⛔ The board's whole size is bounded as `BOARD_FRAME + BOARD_PER_ROW × register
 #: ids` — the distinct ids, not the table lines (`W144`). ⭐ **This is the bound
-#: that has no gap**, and it exists because the Ruling 140 plant found one in the other two before this shipped: 320 lines of
+#: that has no gap**, and it exists because the Ruling 140 plant found one in the
+#: other two before this shipped: 320 lines of
 #: a round's narrative, pasted as one-cell table rows, moved the narrative count
 #: by ZERO and tripped the width rule ONCE.
 #:
