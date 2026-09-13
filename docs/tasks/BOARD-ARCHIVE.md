@@ -22359,3 +22359,74 @@ gated skips, weighted by their [n] groups                            10
 #### ⭐ CLOSED — PO ROUND 77
 
 ⭐ **Merged at `579e1df`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `579e1df` is RECEIVED.** ⭐ **A bare count of a growing population typed into Python prose fails the floor: `check_derived_counts` refuses a figure before *"markdown files"* or *"declared gaps"* unless its own sentence names the ref it was measured at, and the eleventh notice, `count_census`, prints bare and dated counts apart.** ⚠️ **Only those two nouns are read (`W151/2`), and `W116/3`'s test figures stay outside them (`W151/3`). Each finding's disposition is in this round's § 3.**
+
+## PO round 78 — `W163` closed, `W250` named, and ISO round 8 pending on `W242`
+
+⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`.** ⭐ **Ruling 97's gate is RECEIVED: the coordinator's release-tip reading at `accceaf`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                  merge^2   branch head  ahead  checked out
+fix/W163-visual-reasoning         0362b7d6  0362b7d6     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **The fourth edit:** no live inbound citation. ⚠️ **`handoffs/W163.md` and round 77's record cite the row file; they are records, and the stub resolves.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
+
+⚠️ **`docker/dev/` is an image build input, so this merge moved the dev image identity from `inputs-f1874d21…` to `inputs-f5bb0ced…`.** The change is comment lines only; no configuration line changed.
+
+### ⭐ 2 — RULED, REVERSIBLE
+
+1. ⛔ **`W163/2` is relayed to the user and folded into the held `W162/7` + `W162/8` question, not minted.** No environment reaches the two identity checks: the FRESH arm returns before the flag is read, and they need the host, a daemon, Compose and network to the package index. [Ruling 332](../conventions/review-rubric.md#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) and [Ruling 333](../conventions/review-rubric.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) forbid a taker from supplying that network, so a row would be one no office may take. ⭐ **They stay declared unmeasured in `devgate.FRESH`, which prints on every run.**
+
+### ⭐ 3 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `W163/1` | disposed at the close: two further stale clauses, the `W36` pointer and *"a green run that proved nothing"*, inside the row's one block. All four annotated in place |
+| `W163/2` | ⛔ **ruled, § 2.1**: relayed to the user, folded into the held `W162/7` + `W162/8` |
+| `W163/3` | accepted, cost named: the *"proved nothing"* annotation is REASONED from the harness line and the in-image browser check, not measured. Measuring it removes the pass-through, which changes configuration and builds another image, and that is the held `W162/8` question |
+| `W163/4` | accepted, cost named: `test_no_check_in_tests_docker_calls_docker_on_a_default_run` asserts the child session's exit BEFORE its docker-call record. It can go falsely RED and never falsely GREEN. In a run where `tests/docker/` is already RED, its docker-call half is unread, and the next owner of `tests/docker/` reads it from there |
+
+⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** ⭐ **Still in flight, confirmed against git:** `W242` (Developer 1, `wt/dev1`, 2 ahead of `accceaf`) and `W153` (Developer 3, `wt/dev3`, 2 ahead).
+
+⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) is NOT YET DISPATCHED. It dispatches at `W242`'s merge. The pin stays `ab9e765`. ⭐ **RECEIVED:** host `python3 -m tools.workspace verify` at `02c7626` exits `0`.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8`, now with `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
+
+### W163 — `compose.yaml`'s `STUDYFORGE_VISUAL` reasoning, which the row that fired its trigger landed beside and did not carry
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W163.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`docker/dev/compose.yaml`'s `STUDYFORGE_VISUAL` BLOCK ARGUES FROM TWO CLAUSES THAT ARE BOTH FALSE OF THE TREE, AND THE TRIGGER THAT WAS WAITING FOR AN OWNER FIRED WITHOUT BEING MET.** ⭐ **`W128/6`'s finding, and the conclusion the block reaches is still right — it is the REASONING that is stale.**
+
+### ⛔ THE READING, role `wt/po`, ref `0564997`, environment HOST
+
+```text
+git diff 3049de9^1 3049de9 -- docker/dev/compose.yaml
+  ⭐ the file's HEADER — the invocation block — rewritten by `W152`
+  ⛔ the STUDYFORGE_VISUAL block at :90–:115  UNTOUCHED
+```
+
+⚠️ **The `## Scheduled` item named its act as *whichever row next owns `docker/dev/**`*. `W152` was that row and it merged at `3049de9`, so the trigger FIRED — and the correction it was waiting for did not happen.** ⭐ **The cell now reads `fired` AND NOT MET, which is the state a firing-without-meeting needs; this row is what the firing did not carry.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE BLOCK'S REASONING MATCHES THE TREE**, clause by clause, or the clause is struck — ⭐ **and the DECISION (pass-through, deliberately not a default) is preserved, because it is correct.**
+2. ⚠️ **A REASON THAT WENT STALE UNDER A CORRECT DECISION IS ANNOTATED WITH WHAT MADE IT STALE**, not silently rewritten — ⭐ **a reader who trusted it should be able to see why.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHANGE TO WHAT THE COMPOSE FILE DOES.** ⭐ **`STUDYFORGE_VISUAL=required` as a default was tried, measured and refused, and that refusal stands.** ⛔ **AND NOT A SWEEP OF `docker/dev/`** — ⚠️ **the subject is one block and its two clauses.**
+
+### ⭐ SURFACE
+
+⛔ **`docker/dev/compose.yaml`'s `STUDYFORGE_VISUAL` block.** ⚠️ **Shares `docker/dev/` and `tests/docker/` with `W158` and `W162`: ONE OWNER or two waves for the set** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+⭐ **Riders, PO round 75 — `W162/5` and `/6`:** nothing asserts that the identity caller keeps `builds_fresh=True`, and nothing plants it; and the two identity checks are reached by no permitted environment. ⚠️ **The gate this row imports now lives in `tests/docker/devgate.py` (`W162`).**
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `accceaf`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `accceaf` is RECEIVED.** ⭐ **`compose.yaml`'s `STUDYFORGE_VISUAL` block matches the tree clause by clause. Each stale reason is annotated in place with what made it stale, and the pass-through decision and every configuration line are unchanged.** ⭐ **Riders discharged:** `W162/5` (the identity checks skip as `devgate.FRESH` even on a flagged warm cache, planted) and `W162/6` (`devgate.FRESH` names the environment they would need). ⚠️ **The merge moved the dev image identity to `inputs-f5bb0ced…`. Each finding's disposition is in this round's § 3.**
