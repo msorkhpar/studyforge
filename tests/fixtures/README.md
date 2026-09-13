@@ -40,8 +40,8 @@ digests.
 | Shape it stands for | SPARQL, ISO-8583 — **2 of the 4** | Java-senior, CodeSignal | **two units, one source file** |
 | `levels` | `["course"]` — **1** | `["section","module"]` — **2** | `["guide"]` — **1** |
 | `container_api` | 1 — a whole-file `origin` | 1 — a whole-file `origin` | **2** — a **region** `origin` (Ruling 92) |
-| Containers | 1 | 2 | 1 |
-| Units | 3 (4 archive documents) | 5 (3 + 2) | 2 (2 archive documents) |
+| Containers | 1 | 3 — two of them in one section | 1 |
+| Units | 3 (4 archive documents) | 6 (3 + 2 + 1) | 2 (2 archive documents) |
 | Variants | 1 (`prose`) | 1 (`java`) | 1 (`prose`) |
 | Exercises | **zero** | 2 practices | **zero** |
 | Placement | `tree` | `sibling` | `sibling` |
@@ -122,6 +122,7 @@ belongs (R1).
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
 | `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
 | `advanced/02-going-further` 2 | a closing lesson, plus a fenced Maven POM | a container whose last unit has no exercise; fence awareness at depth 2 |
+| `advanced/03-putting-it-together` 1 | a heading and a para, in a second module of `advanced` | ⛔ **the set's only module change inside one section** (`W108`) — the walk's other crossing changes section and module at once, and a renderer can get that one right and this one wrong |
 
 `shared-origin`
 

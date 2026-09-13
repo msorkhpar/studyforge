@@ -147,7 +147,11 @@ def test_a_container_with_a_page_is_linked_and_one_without_is_only_listed():
         {name: relative_href(at.page, page) for name, page in above.items()},
     )
 
-    assert set(above) == {"basics/01-getting-started", "advanced/02-going-further"}
+    assert set(above) == {
+        "basics/01-getting-started",
+        "advanced/02-going-further",
+        "advanced/03-putting-it-together",
+    }
     assert [crumb.title for crumb in crumbs[1:-1]] == ["Advanced", "Going Further"]
     assert crumbs[1].href is None, "no container map is written at 'advanced'"
     assert crumbs[2].href == "going-further.section.html"

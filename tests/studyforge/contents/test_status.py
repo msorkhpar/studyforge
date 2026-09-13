@@ -36,6 +36,7 @@ HOME = "/" + "home/jane"
 DEPTH2_ORDER = (
     "advanced/02-going-further/unit-01",
     "advanced/02-going-further/unit-02",
+    "advanced/03-putting-it-together/unit-01",
     "basics/01-getting-started/unit-01",
     "basics/01-getting-started/unit-02",
     "basics/01-getting-started/unit-03",
@@ -67,7 +68,7 @@ def test_every_declared_unit_gets_a_row_whether_or_not_it_is_here():
     built = fixture_contents("depth2")
     local = status(built, present=DEPTH2_ORDER[:2])
     assert tuple(unit.key for unit in local.units) == DEPTH2_ORDER
-    assert [unit.present for unit in local.units] == [True, True, False, False, False]
+    assert [unit.present for unit in local.units] == [True, True, False, False, False, False]
 
 
 def test_the_rows_are_in_reading_order():
@@ -107,11 +108,11 @@ def test_a_scan_of_another_corpus_contributes_nothing():
 
 
 def test_units_declared_and_not_generated_are_reported_rather_than_dropped():
-    # ⭐ The short site made visible: 3 of 5 built, and the contents still say 5.
+    # ⭐ The short site made visible: 3 of 6 built, and the contents still say 6.
     built = fixture_contents("depth2")
     local = status(built, present=found(a_site(built, DEPTH2_ORDER[:3]), built.corpus))
     assert missing(built, local) == DEPTH2_ORDER[3:]
-    assert len(local.units) == 5
+    assert len(local.units) == 6
 
 
 def test_a_complete_build_is_missing_nothing():
