@@ -81,7 +81,8 @@ def _judged(module: str) -> list[str]:
 
 
 def test_the_population_is_the_whole_package():
-    assert {"__init__.py", "__main__.py", "cli.py", "run.py", "states.py"} <= set(modules())
+    expected = {"__init__.py", "__main__.py", "cli.py", "run.py", "states.py", "verbs.py"}
+    assert expected <= set(modules())
 
 
 def test_no_module_reaches_past_the_verbs():
@@ -89,10 +90,38 @@ def test_no_module_reaches_past_the_verbs():
         assert reaches_past_the_verbs(source) == [], name
 
 
-def test_every_verb_is_reached_through_the_one_table():
-    source = modules()["run.py"]
-    assert source.count('VERBS["serve"].run(') == 1
-    assert "VERBS[argv[0]].run(" in source
+#: The seam onto the verbs, and the skill's own parser — the two modules allowed a `--` flag.
+SEAM, OWN_PARSER = "verbs.py", "cli.py"
+
+
+def outside_the_seam(source: str) -> list[str]:
+    """Every reach into the verb table, and every verb flag spelled, in one module's source."""
+    found: list[str] = []
+    for node in ast.walk(ast.parse(source)):
+        if isinstance(node, ast.Name) and node.id == "VERBS":
+            found.append("VERBS")
+        elif isinstance(node, ast.alias) and node.name == "VERBS":
+            found.append("import VERBS")
+        elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+            if node.value.startswith("--"):
+                found.append(node.value)
+    return found
+
+
+def test_every_verb_is_reached_through_the_one_seam():
+    # ⛔ The coordinator's relay for `W230`: a verb whose arguments change is an
+    # edit to `verbs.py` alone, so no other module may reach the table or spell a flag.
+    for name, source in modules().items():
+        if name in (SEAM, OWN_PARSER):
+            continue
+        assert outside_the_seam(source) == [], name
+    assert outside_the_seam(modules()[SEAM]), "the seam reaches nothing; this check is vacuous"
+
+
+def test_a_planted_verb_flag_or_table_reach_outside_the_seam_is_caught():
+    assert outside_the_seam('argv = ["serve", corpus, "--site", site]\n') == ["--site"]
+    planted = "from studyforge.cli import VERBS\nVERBS\n"
+    assert outside_the_seam(planted) == ["import VERBS", "VERBS"]
 
 
 def test_a_planted_page_write_is_caught():

@@ -14,7 +14,9 @@ which is the procedure:
     from studyforge.skills.buildserve import build_and_serve
     build_and_serve(root, out, voice=None, port=0, started=on_listening)
 
-**Depends on.** `studyforge.cli` for the verb table, `cli.plan.plan_for` for
+**Depends on.** `studyforge.cli` for the verb table, reached only through this
+package's `verbs` module — the ONE seam that spells a verb's arguments, so a verb
+whose interface changes (`W230`) is one edit there — `cli.plan.plan_for` for
 whether a narration record exists, `cli.narrate.report` for the no-service
 sentence, `corpus.manifest` for whether exercises are declared, and
 `validate.report` for the exit codes. ⛔ Not on `generate/`, `serve/` or
