@@ -86,8 +86,19 @@ consider_namespace_packages = true
 # ⛔ `line-length` here and `tools.quality.config.LINE_LENGTH` must agree, or
 # the always-on checker and the optional one disagree about the same file.
 # `tools/tests/quality/test_config.py` asserts they do.
+#
+# ⛔ `target-version` is DECLARED, never inferred (`W116`, Ruling 210). Absent,
+# ruff infers it from `requires-python` — an input to R10's byte-for-byte claim
+# that nothing names. ⭐ `py314` is `requires-python`'s floor, the image's pinned
+# Python, and what the inference already resolved, so declaring it moves no byte.
+# ⚠️ It is the one declaration: top-level, so the formatter AND the linter read
+# it, and it keeps PEP 758's bare `except A, B:` wherever no name is bound.
+# `py313` was refused in `W196` (a Python this project does not run on).
+# `tests/test_repository.py` asserts it exists, follows `requires-python`, and is
+# what ruff resolves in every formatted directory.
 # ---------------------------------------------------------------------------
 [tool.ruff]
+target-version = "py314"
 line-length = 100
 src = ["src", "tools", "tests"]
 extend-exclude = ["tests/fixtures"]
