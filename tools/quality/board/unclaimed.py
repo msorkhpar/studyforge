@@ -80,6 +80,7 @@ gate.**
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from tools.quality.board.graph import Graph
@@ -109,7 +110,7 @@ from tools.quality.board.verdict import tokens
 #: `test_unclaimed.py` asserts that direction as its own reading.**
 SPENT = ("trial/", "tmp-")
 
-#: ⛔ **`W132`, Ruling 265: an OFFICE's own round branch, and the prefix is ANCHORED.**
+#: ⛔ **`W132`, Ruling 265: an OFFICE's own round branch — and `W136`: the WHOLE NAME.**
 #:
 #: ⭐ **The predicate is NOT *this branch has no commits* but *NO REGISTER ROW WILL EVER
 #: NAME THIS BRANCH*** — ⛔ **a property of the BRANCH NAMESPACE, decidable from the name:
@@ -122,12 +123,19 @@ SPENT = ("trial/", "tmp-")
 #: had written anything down yet:** `chore/po-round45` exempt at `6c4e3d0` at `0` ahead;
 #: `chore/po-round44` named as *dispatched and UNNAMED* at `b5b0577` after it committed.
 #:
-#: ⛔ **`startswith`, never `in`.** ⚠️ **`fix/W99-po-round-guard` CONTAINS `po-round` and is
-#: a developer's branch** — the same defect as `chore/cto-round3` reading terminal off
-#: `Merge chore/cto-round39:` one module over (Ruling 199). ⭐ **Ruling 185's form: the
-#: exemption is implemented in the POPULATION and PRINTED with its count and its reason,
-#: because Ruling 264(c) made this line a gate and a gate that hides a rule is unreadable.**
-OFFICE = ("chore/cto-round", "chore/po-round")
+#: ⛔ **`W136`: a whole-name match, never a prefix and never `in`.** ⚠️ **The anchored
+#: prefix exempted `chore/cto-round34-rubric`, a TOPIC branch the ground would flag, and
+#: `in` would exempt `fix/W99-po-round-guard`.** ⭐ **The spelling is the written naming
+#: convention in `docs/conventions/delivery-flow.md`, one spelling and not a vocabulary of
+#: separators (Ruling 65); a `chore/` branch outside it is out of convention and the gate
+#: naming it once it carries work is the TRUE answer.** ⛔ `[0-9]`, never `\d`, which
+#: admits every Unicode digit.
+OFFICE = re.compile(r"chore/(cto|po)-round[0-9]+")
+
+
+def office(branch: str) -> bool:
+    """Whether `branch` is an office round branch: `OFFICE` over the WHOLE name (`W136`)."""
+    return OFFICE.fullmatch(branch) is not None
 
 
 def unnamed(
@@ -165,7 +173,7 @@ def unnamed(
       GATE, ⭐ **and it now NAMES that population in its own text** |
     | ⛔ `UNMERGED and HELD BY NO CHECKOUT` | the SAME three exemptions over the branches
       `git worktree list` cannot see — ⭐ **the gate's other half, a NOTICE, never folded** |
-    | ⭐ `OFFICE round branches` | `chore/{cto,po}-round*`, ANY count — see `OFFICE` |
+    | ⭐ `OFFICE round branches` | `OFFICE` over the WHOLE name (`W136`), ANY count |
     | ⭐ `SPENT namespaces` | `W170`: `trial/*` / `tmp-*` that WOULD have been gated —
       ⛔ **the DIFFERENCE the exemption made, printed with its count** |
     | `invisible BY CONSTRUCTION` | ahead `== 0`, unclaimed — ⛔ **a `fix/W*` branch at `0`
@@ -193,7 +201,7 @@ def unnamed(
     unread = sorted(Path(live[b]).name for b, n in counts.items() if n is None)
     # ⛔ `W132`, Ruling 265: the office exemption is taken out of the POPULATION before
     # either arm reads it, and is then PRINTED with its count and its reason.
-    office = sorted(b for b in counts if b.startswith(OFFICE))
+    rounds = sorted(b for b in counts if office(b))
     # ⛔ `W170`, Ruling 265's OWN ground: the `SPENT` namespaces come out of the GATE's
     # population too — and this list is the DIFFERENCE, exactly what the gate would have
     # named and no longer does, so the exclusion is auditable rather than asserted.
@@ -208,13 +216,13 @@ def unnamed(
         if n is not None
         and n > 0
         and b not in claimed
-        and not b.startswith(OFFICE)
+        and not office(b)
         and not b.startswith(SPENT)
     )
     blind = {
         Path(live[b]).name: live[b]
         for b, n in counts.items()
-        if n == 0 and b not in claimed and not b.startswith(OFFICE)
+        if n == 0 and b not in claimed and not office(b)
     }
     # ⛔ `W125`: the board's DECLARED offices leave THIS population and no other.
     named, declared = judged(declaration, blind)
@@ -227,7 +235,7 @@ def unnamed(
         if b != graph.release
         and b not in live
         and b not in claimed
-        and not b.startswith(OFFICE)
+        and not office(b)
         and not b.startswith(SPENT)
     ]
     held_by_none = {b: graph.ahead(b) for b in candidates}
@@ -261,8 +269,8 @@ def unnamed(
         f"folding it would change every merge's disclosure and that is a ruling, not a detail."
         if adrift
         else f"  unmerged branches held by no checkout, named by no row: none. — ⭐ the same "
-        f"three exemptions as the gate above ({'|'.join(OFFICE)}*, {'|'.join(SPENT)}*, and any "
-        f"branch a row claims), over {len(candidates)} candidate branch(es)."
+        f"three exemptions as the gate above ({OFFICE.pattern} whole, {'|'.join(SPENT)}*, and "
+        f"any branch a row claims), over {len(candidates)} candidate branch(es)."
     )
     if unjudged:
         lines.append(
@@ -273,15 +281,15 @@ def unnamed(
         )
     lines.append(
         f"  ⭐ OFFICE round branches, EXEMPT by Ruling 265 REGARDLESS of commits ahead "
-        f"({len(office)}): "
-        + ", ".join(f"{b} +{counts[b]}" for b in office)
+        f"({len(rounds)}): "
+        + ", ".join(f"{b} +{counts[b]}" for b in rounds)
         + " — ⛔ the exemption is the BRANCH NAMESPACE and not emptiness: no register row "
         "will EVER name one of these, because a row naming an office's round branch would "
         "be a row naming its own recorder. ⚠️ Ruling 130's `0 ahead` form was right about "
         "the population and wrong about the reason, and an office branch stops being `0` "
         "ahead the moment it records anything (Ruling 264(c) made this line a GATE)."
-        if office
-        else f"  office round branches exempt by Ruling 265 ({'|'.join(OFFICE)}*): none."
+        if rounds
+        else f"  office round branches exempt by Ruling 265 ({OFFICE.pattern} whole): none."
     )
     # ⛔ `W170`. ⭐ APPENDED AFTER the office line deliberately: both carry the token
     # `Ruling 265`, and the office line's own readings select on it.

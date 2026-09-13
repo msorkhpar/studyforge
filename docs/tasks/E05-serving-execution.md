@@ -181,7 +181,7 @@ Every mutation is read-validate-modify-write under one lock, written to a
 temporary sibling and atomically replaced, so a crash leaves either the old
 file or the new one and never half of each.
 
-⚠️ **CodeSignal's lock is a `threading.Lock` (`progress.py:240`), which
+⚠️ **CodeSignal's lock is a `threading.Lock` (`git -C CodeSignal grep -n 'threading.Lock()' -- '*progress.py'` → `<path>/progress.py:<n>:`), which
 protects nothing against a second *process*.** That was safe there because one
 server owned the file. It is not safe here: `SK-06` imports and merges progress
 from outside the server, and `OPS-04` may run while the site is served. Use an

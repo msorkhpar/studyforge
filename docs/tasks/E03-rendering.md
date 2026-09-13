@@ -152,7 +152,7 @@ unedited.
 **Owns** `render/page/`, `render/templates/`
 **Context** ~110k — `CS/tools/study/html.py`, `CS/tools/study/templates/`, `CS/tests/test_html.py`, `CS/tests/test_templates.py`
 
-⚠️ **Budget corrected up, and R13 has live work here.** `html.py:1112` is
+⚠️ **Budget corrected up, and R13 has live work here.** `git -C CodeSignal grep -n '^PLAYER = '` → `<path>/html.py:<n>:` is
 `PLAYER = """<footer id="player">` — triple-quoted markup, in this exact
 module. R13 is not satisfied in the source; that literal must become a template
 during the port, not survive it.
@@ -614,7 +614,7 @@ voided at M1 and re-homed rather than dropped**, so it is discharged here: once
 the bar is populated, it must be distinguishable from body text without reference
 to colour alone. **A bar nobody can see is not a bar that passed.**
 
-**(d) `PO-22/6` — nothing defines *the column*.** `reading.css:38–41` states a
+**(d) `PO-22/6` — nothing defines *the column*.** `grep -n 'scanned rather than' src/studyforge/render/assets/reading.css` → `<n>:` states a
 deliberate decision: *"A figure, a table or a code block is scanned rather than
 read and takes the full column."* That decision is correct. But `body` carries
 `margin: 0; padding: 0 var(--gutter)` and **no `max-width`**, so at a 1280px

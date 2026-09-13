@@ -232,7 +232,7 @@ framework's age.
 **The deliverable, and every item is ruled:**
 
 1. ⛔ **`corpus_api` → `2`, and `KNOWN_CORPUS_API` speaks `{1, 2}`** —
-   `corpus/manifest/document.py:68`. ⚠️ **Not because old manifests break** —
+   `grep -n '^KNOWN_CORPUS_API' src/studyforge/corpus/manifest/document.py` → `<n>:KNOWN_CORPUS_API = …`. ⚠️ **Not because old manifests break** —
    they do not; `not_material` is optional and an absent key means an empty
    tuple — ⭐ **but because a manifest that USES it is unreadable to an older
    build, which is exactly what R9 versions.**
@@ -493,7 +493,7 @@ any consumer.
 ⭐ **Carried by the PO 2026-09-09, from CTO round 17 finding 12, so the next
 reader is not left inferring it from a diff.**
 
-⛔ **`SF-25`'s sibling-collision check found that `structure.py:109` branched on a
+⛔ **`SF-25`'s sibling-collision check found that `src/studyforge/validate/structure.py` branched on a
 placement profile *name*** — and `SF-03`'s own `ast` test, **in another
 package**, failed because of it. ⚠️ **Only the trial merge could see this**: each
 branch was correct alone, which is the only situation that defect occurs in.
