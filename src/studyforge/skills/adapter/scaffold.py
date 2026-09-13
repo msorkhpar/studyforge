@@ -23,9 +23,18 @@ corpus nobody has read yet.
 ⚠️ **R19: a hand-edit to a generated artifact is a finding, not a fix.** The
 rule has a mirror this module enforces: **the one hand-written module is never
 regenerated**, on any flag. `regenerate=True` rewrites the seven files the
-skill owns and refuses the eighth, so re-running the scaffold after the
-framework changes is a safe, ordinary thing to do — which is the only way R19's
-"regenerate rather than hand-edit" is advice anybody can follow.
+skill owns and leaves an existing eighth exactly as it is, so re-running the
+scaffold after the framework changes is a safe, ordinary thing to do — which
+is the only way R19's "regenerate rather than hand-edit" is advice anybody can
+follow. ⚠️ Refusing on it instead would refuse every regenerate after step 4,
+where that file always exists.
+
+## ⛔ Every writer of a generated set follows one rule (`W265`)
+
+⭐ `write_files` is that rule, and `Scaffold.write` and onboarding's `write`
+both call it. ⚠️ Two copies disagreed once (`W257/2`): this one refused the
+whole write and onboarding kept the file. Which file is kept comes from
+`Written.generated`, never from a name.
 
 ## ⛔ Every collision is reported, never the first one
 
@@ -44,6 +53,7 @@ shipped and `src/` may not import it. `tests` pins this number against
 
 from __future__ import annotations
 
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
@@ -134,25 +144,18 @@ class Scaffold:
         return tuple(item.where for item in self.files if item.length > ceiling)
 
     def write(self, root: Path | str, *, regenerate: bool = False) -> list[str]:
-        """Write every file under `root`, or write none of them.
+        """Write every file under `root`, or write none of them. Returns what was written.
 
         ⛔ Refuses if anything is in the way, naming all of it. With
-        `regenerate=True` the generated files are rewritten and the
-        hand-written one is still refused.
+        `regenerate=True` the generated files are rewritten and an existing
+        hand-written one is kept, untouched and unreported (`write_files`).
         """
-        root = Path(root)
-        blocked = [
-            item.where
-            for item in self.files
-            if (root / item.where).exists() and not (regenerate and item.generated)
-        ]
-        if blocked:
-            raise ScaffoldRefused(_collision(blocked, regenerate=regenerate))
-        for item in self.files:
-            path = root / item.where
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(item.text, encoding="utf-8")
-        return list(self.paths)
+        return write_files(
+            self.files,
+            root,
+            regenerate=regenerate,
+            refused=lambda blocked: ScaffoldRefused(_collision(blocked)),
+        )
 
     def lines(self) -> list[str]:
         """Return the report a person reads before anything is written."""
@@ -199,19 +202,46 @@ def scaffold(plan: Plan, parts: tuple[Part, ...] = PARTS) -> Scaffold:
     )
 
 
-def _collision(blocked: list[str], *, regenerate: bool) -> str:
-    """Say what is in the way, all of it, and what would let the write proceed."""
+def write_files(
+    files: Sequence[Written],
+    root: Path | str,
+    *,
+    regenerate: bool,
+    refused: Callable[[list[str]], Exception],
+) -> list[str]:
+    """Write `files` under `root`, or none of them, by the one rule. Returns what was written.
+
+    ⛔ Without `regenerate`, every existing path is in the way. With it, an
+    existing generated file is rewritten and an existing hand-written one is
+    kept — neither overwritten nor a collision (R19). ⭐ `refused` builds the
+    caller's own error from every blocked path, so each writer keeps its words.
+    """
+    root = Path(root)
+    present = [item for item in files if (root / item.where).exists()]
+    keep = {item.where for item in present if regenerate and not item.generated}
+    blocked = [item.where for item in present if not regenerate]
+    if blocked:
+        raise refused(blocked)
+    written = []
+    for item in files:
+        if item.where in keep:
+            continue
+        path = root / item.where
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(item.text, encoding="utf-8")
+        written.append(item.where)
+    return written
+
+
+def _collision(blocked: list[str]) -> str:
+    """Say what is in the way, all of it, and what would let the write proceed.
+
+    ⚠️ Only a first write collides: under `regenerate` nothing is in the way.
+    """
     which = "\n".join(f"  {where}" for where in blocked)
-    if regenerate:
-        return (
-            f"{len(blocked)} file(s) already exist and are not this skill's to rewrite:\n"
-            f"{which}\n"
-            "⛔ The module you write by hand is never regenerated. If the framework has "
-            "moved under it, the diff is a finding about this skill (R19), not a file to "
-            "overwrite."
-        )
     return (
         f"{len(blocked)} file(s) already exist:\n{which}\n"
-        "Pass regenerate=True to rewrite the generated ones. ⛔ A hand-edit to a generated "
-        "file is a finding, not a fix — customisation enters as manifest data (R19)."
+        "Pass regenerate=True to rewrite the generated ones and keep the one you wrote. "
+        "⛔ A hand-edit to a generated file is a finding, not a fix — customisation "
+        "enters as manifest data (R19)."
     )

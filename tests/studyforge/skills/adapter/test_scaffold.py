@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import compileall
 import json
+from dataclasses import replace
+from pathlib import PurePosixPath
 
 import pytest
 
@@ -69,29 +71,76 @@ def test_it_refuses_rather_than_overwriting_and_names_everything_in_the_way(tmp_
         assert where in message, f"{where} was in the way and was not named"
 
 
-def test_regenerate_rewrites_the_generated_files_and_still_refuses_the_written_one(tmp_path):
+def _generated_beside(scaffolded):
+    """A generated file in the hand-written module's own directory."""
+    package = PurePosixPath(scaffolded.hand_written[0]).parent
+    return next(
+        item.where
+        for item in scaffolded.files
+        if item.generated and PurePosixPath(item.where).parent == package
+    )
+
+
+def test_regenerate_rewrites_the_generated_files_and_keeps_the_one_that_is_yours(tmp_path):
+    # ⛔ W265: after step 4 the hand-written module always exists, so refusing
+    # on it would refuse every regenerate, and overwriting it is R19 broken.
     scaffolded = made()
     scaffolded.write(tmp_path)
     hand = tmp_path / scaffolded.hand_written[0]
-    hand.write_text(corpora.READ, encoding="utf-8")
-    generated = tmp_path / "ingest/emit.py"
+    hand.write_bytes(corpora.READ.encode("utf-8"))
+    before = hand.read_bytes()
+    generated = tmp_path / _generated_beside(scaffolded)
     generated.write_text("# edited by hand\n", encoding="utf-8")
 
+    written = scaffolded.write(tmp_path, regenerate=True)
+
+    assert hand.read_bytes() == before, "a regenerate rewrote the hand-written module"
+    assert "# edited by hand" not in generated.read_text(encoding="utf-8")
+    assert scaffolded.hand_written[0] not in written, "a regenerate reported writing it"
+    assert sorted(written) == sorted(set(scaffolded.paths) - set(scaffolded.hand_written))
+
+
+def test_the_kept_module_is_the_seam_the_scaffold_declares_and_not_a_name(tmp_path):
+    # ⛔ R1: which module is kept comes from `Written.generated`. Move the seam,
+    # and what a regenerate keeps must move with it.
+    moved = tuple(
+        part if part.generated else replace(part, where="{package}/elsewhere.py") for part in PARTS
+    )
+    scaffolded = scaffold(plan_for(parse(json.dumps(corpora.MANIFEST))), moved)
+    scaffolded.write(tmp_path)
+    assert scaffolded.hand_written == ("ingest/elsewhere.py",), "the seam did not move"
+    hand = tmp_path / scaffolded.hand_written[0]
+    hand.write_text("# mine\n", encoding="utf-8")
+
+    scaffolded.write(tmp_path, regenerate=True)
+
+    assert hand.read_text(encoding="utf-8") == "# mine\n"
+
+
+def test_a_first_scaffold_over_the_hand_written_module_alone_refuses_by_name(tmp_path):
+    scaffolded = made()
+    hand = tmp_path / scaffolded.hand_written[0]
+    hand.parent.mkdir(parents=True)
+    hand.write_text("# mine\n", encoding="utf-8")
+
     with pytest.raises(ScaffoldRefused) as refused:
-        scaffolded.write(tmp_path, regenerate=True)
+        scaffolded.write(tmp_path)
+
     assert scaffolded.hand_written[0] in str(refused.value)
-    assert hand.read_text(encoding="utf-8") == corpora.READ, "the hand-written module was rewritten"
-    assert generated.read_text(encoding="utf-8") == "# edited by hand\n"
+    assert [path for path in tmp_path.rglob("*") if path.is_file()] == [hand], "it wrote anyway"
 
 
-def test_regenerate_does_rewrite_when_only_generated_files_are_present(tmp_path):
+def test_regenerate_writes_the_stub_when_the_hand_written_module_is_absent(tmp_path):
     scaffolded = made()
     scaffolded.write(tmp_path)
     (tmp_path / scaffolded.hand_written[0]).unlink()
-    generated = tmp_path / "ingest/emit.py"
+    generated = tmp_path / _generated_beside(scaffolded)
     generated.write_text("# edited by hand\n", encoding="utf-8")
-    scaffolded.write(tmp_path, regenerate=True)
+
+    written = scaffolded.write(tmp_path, regenerate=True)
+
     assert "# edited by hand" not in generated.read_text(encoding="utf-8")
+    assert scaffolded.hand_written[0] in written
 
 
 def test_the_scaffold_declares_its_own_files_not_material(tmp_path):

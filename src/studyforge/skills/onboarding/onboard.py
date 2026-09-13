@@ -50,7 +50,7 @@ from pathlib import Path
 
 from studyforge.corpus.manifest import RAISES, Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
-from studyforge.skills.adapter import Written, plan_for, scaffold
+from studyforge.skills.adapter import Written, plan_for, scaffold, write_files
 from studyforge.skills.onboarding import artifacts, record
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.pin import (
@@ -94,37 +94,16 @@ class Onboarding:
 
         ⭐ **With `regenerate=True` the generated files are rewritten and an
         existing hand-written one is left exactly as it is** — neither
-        overwritten nor treated as a collision. ⚠️ That is the one place this
-        differs from `Scaffold.write`, and deliberately: after step 4 of the
-        procedure the hand-written file always exists, so refusing on it would
-        make *"regenerate rather than hand-edit"* advice nobody can follow
-        (R19), and overwriting it would destroy the one file that was a
-        person's.
+        overwritten nor treated as a collision. ⛔ That is `write_files`, the
+        rule `Scaffold.write` follows too (`W265`): two copies of it disagreed
+        once (`W257/2`), so there is one.
         """
-        root = Path(root)
-        keep = {
-            item.where
-            for item in self.files
-            if regenerate and not item.generated and (root / item.where).exists()
-        }
-        blocked = [
-            item.where
-            for item in self.files
-            if item.where not in keep
-            and (root / item.where).exists()
-            and not (regenerate and item.generated)
-        ]
-        if blocked:
-            raise OnboardingRefused(_collision(blocked, regenerate=regenerate))
-        written = []
-        for item in self.files:
-            if item.where in keep:
-                continue
-            path = root / item.where
-            path.parent.mkdir(parents=True, exist_ok=True)
-            path.write_text(item.text, encoding="utf-8")
-            written.append(item.where)
-        return written
+        return write_files(
+            self.files,
+            root,
+            regenerate=regenerate,
+            refused=lambda blocked: OnboardingRefused(_collision(blocked)),
+        )
 
     def lines(self) -> list[str]:
         """Return the report a person reads before anything is written."""
@@ -308,19 +287,15 @@ def _prune(root: Path, removed: Sequence[str]) -> None:
             path = path.parent
 
 
-def _collision(blocked: Sequence[str], *, regenerate: bool) -> str:
+def _collision(blocked: Sequence[str]) -> str:
     """Name every path in the way at once, and say which flag would move it.
 
     ⚠️ An integrator told about one existing file, who moves it, runs again and
     is told about the next has been given a guessing game — `validate`'s rule,
-    for `validate`'s reason.
+    for `validate`'s reason. Only a first write collides.
     """
-    tail = (
-        "a hand-written file that already exists is kept, never rewritten"
-        if regenerate
-        else "pass regenerate=True to rewrite the generated ones"
-    )
     return (
         f"{len(blocked)} path(s) already exist and generation is non-destructive "
-        f"(R3): {sorted(blocked)}. Nothing was written; {tail}"
+        f"(R3): {sorted(blocked)}. Nothing was written; pass regenerate=True to "
+        "rewrite the generated ones and keep the one that is yours"
     )

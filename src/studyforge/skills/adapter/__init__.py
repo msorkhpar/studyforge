@@ -41,7 +41,8 @@ adapter we already wrote*.
 ⭐ **Exactly one of the eight files is a person's to write, and this package
 names it** — `Scaffold.hand_written`. Every other file is regenerable, so a
 diff in one is a defect report about this skill rather than a local fix, and
-`write(..., regenerate=True)` rewrites the seven and still refuses the eighth.
+`write(..., regenerate=True)` rewrites the seven and keeps an existing eighth
+untouched — by `write_files`, the one rule onboarding's writer follows too.
 
 ⚠️ **What this deliberately does not decide is what is *material*.** The
 manifest's content policy is reconnaissance's answer and is settled before an
@@ -69,6 +70,7 @@ from studyforge.skills.adapter.scaffold import (
     ScaffoldRefused,
     Written,
     scaffold,
+    write_files,
 )
 
 #: ⛔ The package's whole public surface.
@@ -91,4 +93,5 @@ __all__ = [
     "document_name",
     "plan_for",
     "scaffold",
+    "write_files",
 ]
