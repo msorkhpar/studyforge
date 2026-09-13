@@ -237,9 +237,10 @@ def test_a_generated_directory_beside_a_manifest_resolves_and_nowhere_else(site)
         (store / "progress.json").write_text("{}\n", encoding="utf-8")
         (store / "index.html").write_text("<p>x</p>\n", encoding="utf-8")
     (corpus / "corpus.json").write_text("{}\n", encoding="utf-8")
-    assert resolve(site, "/corpus/.studyforge/assets/page.css") == (
-        corpus / ".studyforge" / "assets" / "page.css"
-    ).resolve()
+    assert (
+        resolve(site, "/corpus/.studyforge/assets/page.css")
+        == (corpus / ".studyforge" / "assets" / "page.css").resolve()
+    )
     assert resolve(site, "/corpus/%2Estudyforge/assets/page.css") is not None
     assert resolve(site, "/bare/.studyforge/assets/page.css") is None
     assert resolve(site, "/corpus/.git/config") is None
