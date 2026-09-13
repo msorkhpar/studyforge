@@ -12,6 +12,7 @@ import contextlib
 import os
 import re
 import selectors
+import shutil
 import signal
 import socket
 import subprocess
@@ -22,6 +23,7 @@ import pytest
 
 from studyforge.cli.serve import STOPPED
 from studyforge.validate.report import OK
+from tests.fixture_checks import FIXTURES
 from tests.studyforge.cli.serving import NAMES, build, pages_of
 from tests.studyforge.serve.serving import fetch
 from tests.support import repository_root
@@ -38,10 +40,13 @@ class Address:
 
 @contextlib.contextmanager
 def launched(root, site, environment=None):
-    """`python3 -m studyforge.cli serve …` on port `0`; yield it once it is listening."""
+    """`python3 -m studyforge.cli serve …` on port `0`; yield it once it is listening.
+
+    ⭐ `site=None` is the no-configured-path form (`W230`): the root and a port only.
+    """
+    chosen = [] if site is None else ["--site", str(site)]
     process = subprocess.Popen(  # noqa: S603 - fixed argv, no shell
-        [sys.executable, "-m", "studyforge.cli", "serve", str(root), "--site", str(site)]
-        + ["--port", "0"],
+        [sys.executable, "-m", "studyforge.cli", "serve", str(root), *chosen, "--port", "0"],
         cwd=repository_root(),
         env={**os.environ, "PYTHONPATH": "src", **(environment or {})},
         stdout=subprocess.PIPE,
@@ -139,16 +144,21 @@ def test_the_decoy_counts_a_connection_when_one_is_made(tmp_path_factory):
         assert accepted(listener) == 1
 
 
+@pytest.mark.parametrize("form", ["site", "root"])
 def test_the_serving_process_never_reaches_a_docker_socket_its_environment_names(
-    tmp_path, tmp_path_factory
+    form, tmp_path, tmp_path_factory
 ):
-    root, site = build("depth2", tmp_path)
-    unit = [page for page in pages_of(root) if page != "index.html"][0]
+    root, site = build("depth2", tmp_path, into=tmp_path / "root" / "depth2")
+    prefix = ""
+    if form == "root":
+        shutil.copytree(root, site, dirs_exist_ok=True)
+        root, site, prefix = tmp_path / "root", None, "/depth2"
+    unit = [page for page in pages_of(FIXTURES / "depth2") if page != "index.html"][0]
     listener, path = decoy(tmp_path_factory)
     with listener, launched(root, site, {"DOCKER_HOST": f"unix://{path}"}) as (process, server):
-        assert fetch(server, "/index.html")[0] == 200
+        assert fetch(server, f"{prefix}/index.html")[0] == 200
         assert fetch(server, "/api/v1/content/toc")[0] == 200
-        assert fetch(server, "/" + quote(unit))[0] == 200
+        assert fetch(server, f"{prefix}/" + quote(unit))[0] == 200
         descriptors = f"/proc/{process.pid}/fd"
         assert os.path.isdir(descriptors), "no descriptor table to read, so the arm did not run"
         held = targets(descriptors)

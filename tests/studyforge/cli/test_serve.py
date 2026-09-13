@@ -57,11 +57,13 @@ def test_the_parser_takes_a_root_a_site_and_a_port():
     assert parser.parse_args(["corpus", "--site", "site", "--port", "0"]).port == 0
 
 
-def test_the_site_is_required_and_has_no_default():
-    with pytest.raises(SystemExit):
-        build_parser().parse_args(["corpus"])
+def test_the_site_is_an_override_with_no_default_and_a_root_alone_parses():
+    # ⭐ `W230`: a root and nothing else is the no-configured-path form; `--site`
+    # names one built directory and is never filled in by convention.
+    assert build_parser().parse_args(["corpus"]).site is None
     site = [action for action in build_parser()._actions if action.dest == "site"]
-    assert site and "the corpus owner's decision" in (site[0].help or "")
+    assert site and site[0].default is None and not site[0].required
+    assert "the corpus owner's decision" in (site[0].help or "")
 
 
 @pytest.mark.parametrize("port", ["-1", "65536", "http"])

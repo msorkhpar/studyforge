@@ -222,3 +222,32 @@ def test_a_site_root_inside_a_corpus_generated_directory_never_serves_the_record
     assert assets_module.resolve(generated, "/elsewhere/progress.json") == control.resolve()
     assert assets_module.in_a_progress_store(record.resolve())
     assert not assets_module.in_a_progress_store(control.resolve())
+
+
+def test_a_generated_directory_beside_a_manifest_resolves_and_nowhere_else(site):
+    # ⭐ `W230`, `SF-19b/2`: a root holding several corpora puts each one's generated
+    # directory one level down. Beside a `corpus.json` it serves; the same tree with
+    # no manifest beside it is refused, and the store inside it is refused either way.
+    corpus, bare = site / "corpus", site / "bare"
+    for where in (corpus, bare):
+        (where / ".studyforge" / "assets").mkdir(parents=True)
+        (where / ".studyforge" / "assets" / "page.css").write_text("p{}\n", encoding="utf-8")
+        store = where / ".studyforge" / "progress"
+        store.mkdir()
+        (store / "progress.json").write_text("{}\n", encoding="utf-8")
+        (store / "index.html").write_text("<p>x</p>\n", encoding="utf-8")
+    (corpus / "corpus.json").write_text("{}\n", encoding="utf-8")
+    assert (
+        resolve(site, "/corpus/.studyforge/assets/page.css")
+        == (corpus / ".studyforge" / "assets" / "page.css").resolve()
+    )
+    assert resolve(site, "/corpus/%2Estudyforge/assets/page.css") is not None
+    assert resolve(site, "/bare/.studyforge/assets/page.css") is None
+    assert resolve(site, "/corpus/.git/config") is None
+    for path in (
+        "/corpus/.studyforge/progress/progress.json",
+        "/corpus/.studyforge/%70rogress/progress.json",
+        "/corpus/.studyforge/progress/",
+    ):
+        assert resolve(site, path) is None, path
+        assert get(site, path).status == 404, path

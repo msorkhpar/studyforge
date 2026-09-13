@@ -4,10 +4,10 @@
 `file://` cannot do — the API, the reader's progress, and Run/Submit — to a site
 that already works without it (R8).
 
-**How you use it.** `studyforge serve <corpus-root> --site <dir> [--port N]`, or
-`instance.make_instance(root)`, which is given a root and nothing else. The endpoint shapes are the
-contract, and the reading page is a consumer of them: a second source that
-populates the same API gets the same site out.
+**How you use it.** `studyforge serve <root> [--port N]`, which calls
+`instance`, or `instance.make_instance(root)` — each given a root and nothing
+else. The endpoint shapes are the contract, and the reading page is a consumer
+of them: a second source that populates the same API gets the same site out.
 
 **Depends on.** `contents`, `unit`, `corpus`, `generate` (its declarations reader only),
 `progress`, `execute`. ⛔ Not on

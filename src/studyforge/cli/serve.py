@@ -1,12 +1,16 @@
 r"""The `serve` verb: the CLI stage that starts what `studyforge.serve` built.
 
-**What it does.** Parses the arguments `studyforge serve` takes, reads the
-corpus's declarations, checks that the built site holds every page the corpus
-declares, binds `serve.app.make_server` on loopback and serves until it is
-stopped. Serving the bytes is `studyforge.serve`'s; ⛔ this module is its
-caller and never a second author of it.
+**What it does.** Parses the arguments `studyforge serve` takes, finds every
+corpus under the root it is given (`serve.discovery`), checks that each holds
+every page it declares, binds `serve.instance` on loopback and serves until it is
+stopped. Given `--site`, it serves that one built directory for the one corpus
+at the root instead. Serving the bytes is `studyforge.serve`'s; ⛔ this module is
+its caller and never a second author of it.
 
 **How you use it.**
+
+    studyforge build <corpus-root> --out <corpus-root>     # built in place, per corpus
+    studyforge serve <root> [--port N]                     # every corpus under <root>
 
     studyforge build <corpus-root> --out <directory>
     studyforge serve <corpus-root> --site <directory> [--port N]
@@ -15,23 +19,36 @@ caller and never a second author of it.
 `SIGTERM`) stops it and exits `0`. ⚠️ `started=` hands the bound server to a
 caller before serving begins, which is how a test stops the verb in-process.
 
-**Depends on.** `serve.app` and `serve.routes.content` for the server,
-`generate.declarations` for the corpus, `progress` for the store's one
-spelling, `validate` for the exit codes, and `argparse`. ⛔ Nothing here knows
-any source (R1).
+**Depends on.** `serve.instance` and `serve.discovery` for a root,
+`serve.app` and `serve.routes.content` for `--site`, `generate.declarations` for
+the corpus, `progress` for the store's one spelling, `validate` for the exit
+codes, and `argparse`. ⛔ Nothing here knows any source (R1).
+
+## ⛔ With no `--site`, NO CONFIGURED PATH (`W230`)
+
+⭐ **The root is the only input**: every `corpus.json` under it is a corpus, each
+is served from where it sits, and one instance answers them all — content, state
+and pages. ⛔ There is no list of mounts to give it: the manifests on disk are
+the list. Tested in `tests/studyforge/cli/test_serve_root.py`.
+
+⚠️ **`--site` stays, as an override for ONE corpus built somewhere else.** `build`
+takes `--out` with no default, so a site can live outside its corpus, and only a
+named directory reaches that. It names one directory for one corpus and adds no
+mount beside the root's.
 
 ## ⛔ The site is BUILT first, and it never needs this command
 
 ⭐ **R8: a built site opens over `file://` with no server.** A served origin
 adds the API; it is never a prerequisite for reading. So this verb serves what
-`studyforge build` wrote and writes nothing into it, and `--site` is required
-with no default for the reason `build`'s `--out` is: where a build writes is
-the corpus owner's decision. `tests/studyforge/cli/test_serve_floor.py` asserts
-the floor rather than assuming it.
+`studyforge build` wrote and writes nothing into it, and `--site` has no default
+for the reason `build`'s `--out` is: where a build writes is the corpus owner's
+decision. `tests/studyforge/cli/test_serve_floor.py` asserts the floor rather
+than assuming it.
 
-⛔ **Exit codes are `build`'s**: `0` served and stopped cleanly, `1` the corpus
-declares a page the site does not hold (nothing is bound), `2` the tool could
-not run — a missing directory, an unreadable corpus, a port it cannot listen on.
+⛔ **Exit codes are `build`'s**: `0` served and stopped cleanly, `1` a corpus
+declares a page nobody built (each named; nothing is bound), `2` the tool could
+not run — a missing directory, no servable corpus, an unreadable corpus, a port
+it cannot listen on.
 
 ## ⛔ The Docker socket is never mounted into, or reachable from, this process
 
@@ -54,10 +71,14 @@ import threading
 from collections.abc import Callable
 from pathlib import Path
 
+from studyforge.archive.scrub import scrub
 from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
 from studyforge.progress import store_dir
+from studyforge.serve import RAISES as REFUSED
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
+from studyforge.serve.discovery import discover
+from studyforge.serve.instance import instance_of
 from studyforge.serve.routes.content import CorpusContent
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
@@ -74,18 +95,24 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="studyforge serve",
         description=(
-            "Serve one corpus's built site on loopback, adding the content API. "
+            "Serve every built corpus under a root on loopback, adding the API. "
             "The site still opens without this command; stop it with Ctrl-C."
         ),
     )
-    parser.add_argument("root", help="the corpus root — the directory holding corpus.json")
+    parser.add_argument(
+        "root",
+        help=(
+            "a directory; every corpus.json under it is served where it sits. "
+            "With --site, the corpus root — the directory holding corpus.json"
+        ),
+    )
     parser.add_argument(
         "--site",
-        required=True,
+        default=None,
         metavar="DIR",
         help=(
-            "the directory `studyforge build --out` wrote. Required and with no "
-            "default: where generated output belongs is the corpus owner's decision"
+            "serve only this corpus, from the directory `studyforge build --out` wrote. "
+            "No default: where generated output belongs is the corpus owner's decision"
         ),
     )
     parser.add_argument(
@@ -112,6 +139,8 @@ def main(
         print(line, file=stream, flush=True)
 
     arguments = build_parser().parse_args(argv)
+    if arguments.site is None:
+        return _serve_root(arguments, say, started)
     root, site = Path(arguments.root), Path(arguments.site)
     for given, path in ((arguments.root, root), (arguments.site, site)):
         if not path.is_dir():
@@ -137,13 +166,57 @@ def main(
             log=say,
         )
     except OSError as refusal:
-        # ⚠️ `strerror` only: an `OSError`'s full text can carry a path (R7).
-        reason = refusal.strerror or type(refusal).__name__
-        say(f"port {arguments.port}: could not listen ({reason})")
-        return UNUSABLE
+        return _could_not_listen(arguments.port, refusal, say)
     host, port = server.server_address[:2]
     say(f"serve http://{host}:{port}/  site {arguments.site}  corpus {arguments.root}")
     return _serve(server, say, started)
+
+
+def _serve_root(
+    arguments: argparse.Namespace,
+    say: Callable[[str], None],
+    started: Callable[[ServingServer], None] | None,
+) -> int:
+    """Serve every corpus discovered under the root, with no configured path (`W230`)."""
+    if not Path(arguments.root).is_dir():
+        say(f"{arguments.root}: not a directory")
+        return UNUSABLE
+    try:
+        discovered = discover(arguments.root)
+    except REFUSED as refusal:
+        say(str(refusal))
+        return UNUSABLE
+    report = [scrub(line) for line in discovered.report]
+    unbuilt = sorted(
+        (served.relative / page).as_posix()
+        for served in discovered.corpora
+        for page in _unbuilt(served.corpus, served.root)
+    )
+    if unbuilt:
+        for line in (*report, *(f"unbuilt {page}  {NOT_BUILT}" for page in unbuilt)):
+            say(line)
+        return INVALID
+    try:
+        server = instance_of(discovered, port=arguments.port, log=say)
+    except OSError as refusal:
+        return _could_not_listen(arguments.port, refusal, say)
+    host, port = server.server_address[:2]
+    # ⭐ The listening line is FIRST, as in the `--site` form: a caller reads the port off it.
+    say(f"serve http://{host}:{port}/  root {arguments.root}")
+    for served in discovered.corpora:
+        index = served.href(served.corpus.shared.root_index)
+        say(f"corpus {served.source} http://{host}:{port}{index}")
+    for line in report:
+        say(line)
+    return _serve(server, say, started)
+
+
+def _could_not_listen(port: int, refusal: OSError, say: Callable[[str], None]) -> int:
+    """Report a port the server could not bind, and return `2`."""
+    # ⚠️ `strerror` only: an `OSError`'s full text can carry a path (R7).
+    reason = refusal.strerror or type(refusal).__name__
+    say(f"port {port}: could not listen ({reason})")
+    return UNUSABLE
 
 
 def _port(text: str) -> int:
