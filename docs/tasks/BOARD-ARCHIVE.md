@@ -22774,3 +22774,47 @@ fix/W249-source-and-not-material-globs  52a7843a  52a7843a     0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 79
 
 ⭐ **Merged at `88a1f51`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `88a1f51` is RECEIVED.** ⭐ **`SK-01`'s draft `source` is the curriculum record's title slug and never the surveyed directory's name, asserted over two differently named checkouts. The draft proposes a `not_material` glob for each file no include reads, with every reason left open and paired by `promote`.** ⚠️ **Each finding's disposition is this round's § 5.**
+
+### ⭐ 6 — `W248` CLOSED MID-ROUND, AT THE COORDINATOR'S WORD
+
+⭐ **`a2ae2c4` (`W248`) merged into this round, no rebase; its guarded release-tip reading, GREEN in the pinned image, arrived before this round's reading of record.**
+
+```text
+                                      merge^2   branch head  ahead  checked out
+fix/W248-archive-root-refuses-strays  1a4d0fb6  1a4d0fb6     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits.** ⭐ **The fourth edit:** [`W255`](rows/W255.md) re-pointed; [`W254`](rows/W254.md)'s measured sentence about `W248`'s diff stands as dated.
+
+| finding | became |
+|---|---|
+| `W248/1` | ⭐ **minted [`W259`](rows/W259.md)**, jumping nobody, order 45 |
+| `W248/2` | disposed at the close: the two authoring documents and their test, forced by derived counts, disclosed |
+| `W248/3` | ⭐ **rider on [`W257`](rows/W257.md)**, whose surface it is |
+| `W248/4` | ⛔ **ruled: spec §6 amended in one sentence**, after the archive layout: a file under the archive root that is not a member is refused by name. Reversible |
+| `W248/5` | accepted, cost named: `W241/3` untouched; `membership` reads the default archive root only |
+
+⚠️ **`W161`, relayed as Developer 3's next carrier, is NOT named:** no `fix/W161-*` branch exists in git at this reading, and a carrier is named on confirmation (`PO-61/4`). ⚠️ **And it jumps `W255`–`W258`, minted after its dispatch:** the next free developer takes those first.
+
+### W248 — A source's own `archive/` at its root is skipped silently, because the archive root takes a common name in the owner's namespace
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W248.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W241/2`: the archive root `archive/` takes a common name in the corpus owner's namespace, and the source scan skips any `archive/` silently while the footprint excludes it.** ⭐ **So a source that already keeps its own `archive/` directory loses it from every reading, and nothing says so.** ⭐ **RECEIVED from `W241`'s office: no `archive` path is tracked in ISO at `0d970fd`, or at HEAD in the Java or SPARQL corpora, so no consumer is inside the harm today.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A file under the archive root that is not an archive member** (a `container.json`, or a lesson or practice document under `raw/`) **is refused by name, never skipped.**
+2. ⛔ **Asserted both ways (R12):** a planted `archive/notes.md` in a source turns `validate` RED and names the file; an adapter-written archive reads clean.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A move to `.studyforge/archive/`.** ⭐ **Round 76 ruled that the root stays, because `SK-02`'s published layout reads it.**
+
+⭐ **Surface:** `src/studyforge/validate/source/`, `cli/plan/`, and their tests. ⚠️ **`cli/plan/` is shared with [`W242`](#w242-for-a-sibling-corpus-the-generated-ignore-lines-have-no-committed-home-and-committed-media-stays-unclassified) and [`W210`](rows/W210.md): one owner or two waves.**
+
+[the mint argument](#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended)
+
+#### ⭐ CLOSED — PO ROUND 79
+
+⭐ **Merged at `a2ae2c4`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `a2ae2c4` is RECEIVED.** ⭐ **A file beneath the archive root that no reader reads is refused by name as `archive-stray`, never skipped, and an adapter-written archive reads clean.** ⚠️ **Each finding's disposition is this round's § 6.**
