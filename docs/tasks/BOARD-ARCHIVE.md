@@ -24193,21 +24193,24 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 | [`W274`](#w274-graphnamed-matches-merge-branch-and-every-recent-merge-subject-is-merge-branch-so-it-names-no-merge) | `c4f47df` | none owed: no live document cites its row file |
 | [`W275`](#w275-creatorspys-milestone-reads-m0-9-with-no-boundary-so-a-malformed-milestone-line-such-as-m1x-reads-as-a-milestone) | `e9ef42e` | none owed: no live document cites its row file |
 | [`W273`](#w273-approachpys-growth-window-reads-cto-wave-closes-only-and-none-has-merged-since-round-72-so-the-window-cannot-move) | `d869f6d` | none owed: no live document cites its row file |
+| [`W283`](#w283-re-onboarding-from-a-re-surveys-draft-drops-the-persons-declared-notmaterial-globs-because-onboard-never-reads-the-existing-manifest) | `12e44ee` | none owed: no live document cites its row file |
+| [`W280`](#w280-validatesource-exports-no-store-name-so-the-survey-imports-repositorystore-past-all-and-classificationpy-stands-at-its-r11-bound) | `5e71e04` | none owed: no live document cites its row file |
+| [`W222`](#w222-narratesynthaudiodir-takes-no-label-so-a-labelled-units-clips-land-where-its-page-does-not-look) | `f4779c9` | the board's `narrate/` set |
+| [`W282`](#w282-validate-refuses-no-unknown-block-type-and-no-wrong-field-set-so-only-the-test-harnesss-checkblocks-catches-either) | `7771751` | none owed: no live document cites its row file |
 
-⭐ **All six TERMINAL (Ruling 199). The coordinator's guarded release-tip reading at each merge is RECEIVED GREEN in the pinned image, with `last_pointer` exit `0` at `1aa2af0`, `c4f47df`, `e9ef42e` and `d869f6d`.** ⭐ **Ruling 314: the six moved bodies carried 12 relative pointers, and 12 were re-addressed.** ⭐ **`PO-86/1` is discharged: `W263` closes on `7400be3`'s reading.** ⚠️ **`W273` merged before round 86, which read it handed back; it closes here.** ⚠️ **Each close's findings were disposed in round 85's or round 86's § 3.**
-
-⚠️ **`PO-87/1` — `W283`, `W280` and `W222` merged at `12e44ee`, `5e71e04` and `f4779c9` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled as `PO-86/1`: none closed and none named in flight; each register cell carries its merge.** Reversible.
+⭐ **All ten TERMINAL (Ruling 199). The coordinator's guarded release-tip reading at each merge is RECEIVED GREEN in the pinned image, with `last_pointer` exit `0` at `1aa2af0`, `c4f47df`, `e9ef42e` and `d869f6d`.** ⭐ **`W283`, `W280`, `W222` and `W282` merged during this round, and each tip reading reached it before its run of record (the mid-round rule); `last_pointer` exits `0` at `12e44ee`, `5e71e04`, `f4779c9` and `7771751`.** ⭐ **Ruling 314: the ten moved bodies carried 16 relative pointers, and 16 were re-addressed.** ⭐ **`PO-86/1` is discharged: `W263` closes on `7400be3`'s reading.** ⚠️ **`W273` merged before round 86, which read it handed back; it closes here.** ⚠️ **Each close's findings were disposed in round 85's or round 86's § 3.**
 
 ### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
 
 | row | owner | branch @ checkout | cut | declared |
 |---|---|---|---|---|
-| [`W282`](rows/W282.md) | Developer 3 | `fix/W282-validate-block-types-and-fields` @ `wt/dev3` | `7400be3` | `W282`, NAMED, handed back; merges after `W222` |
 | [`W279`](rows/W279.md) | Developer 2 | `fix/W279-vocabulary-defines-and-argues` @ none | `7400be3` | `W279`, NAMED, handed back; merges after this round |
-| [`W284`](rows/W284.md) | Developer 1 | `fix/W284-verdict-subject-form` @ `wt/dev1` | `c4f47df` | `W284`, NAMED, handed back; merges after this round |
+| [`W284`](rows/W284.md) | Developer 1 | `fix/W284-verdict-subject-form` @ none | `c4f47df` | `W284`, NAMED, handed back; merges after this round |
 | [`W285`](rows/W285.md) | Developer 2 | `fix/W285-delivery-milestone-shape` @ `wt/dev2` | `e9ef42e` | `W285`, NAMED, handed back; merges after this round |
+| [`W281`](rows/W281.md) | Developer 3 | `fix/W281-skills-name-root-documentation` @ `wt/dev3` | `12e44ee` | `W281`, NAMED, handed back; merges after this round |
+| [`W223`](rows/W223.md) | Developer 1 | `fix/W223-model-change-judged-fresh` @ `wt/dev1` | `f4779c9` | `W223`, NAMED |
 
-⚠️ **`W282`, `W284` and `W285` were relayed `@ none`; `git worktree list` (Ruling 171, primary) reads them held by `wt/dev3`, `wt/dev1` and `wt/dev2`.** ⛔ **`W277` stays HELD by the coordinator.**
+⚠️ **`W285` and `W281` were relayed `@ none`; `git worktree list` (Ruling 171, primary) reads them held by `wt/dev2` and `wt/dev3`.** ⛔ **`W277` stays HELD by the coordinator.**
 
 ### ⭐ 3 — ISO ROUND 14, MERGED AT ISO `16841dc`
 
@@ -24227,6 +24230,8 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 | `W226/2` | ⭐ **minted [`W288`](rows/W288.md)**, order 54, now that `W267` has closed. Re-measured at `92b57fd`: `cli/plan/derive.py` `_recorded` reads each entry's `filename` and never its `where` |
 | `W282/1` | ⭐ **minted [`W289`](rows/W289.md)**, order 54. Re-measured at `92b57fd`: `archive/blocks.py` `counts_of` calls `.get` on every block |
 | `W222/2` | ⭐ **minted [`W290`](rows/W290.md)**, order 54. Re-measured on `8517cf3`: `unit_location(` is called in `cli/narrate/stage.py`, `generate/clips.py`, `generate/units.py` and `generate/containers.py` |
+| `W281/1` | accepted, cost named: catching a lower-case name in prose would also read the verb *copying* as one |
+| `W281/2` | ⭐ **minted [`W292`](rows/W292.md)**, order 54. Re-measured on `feb4a57`: the test pins `ROOT_DOCUMENTATION` against `AUDITED_AGAINST` and names none of the other three |
 | `W285/1` | accepted: the row's surface named the split, made before any addition |
 | `W285/2` | ⭐ **minted [`W291`](rows/W291.md)**, order 54. Re-measured at `92b57fd`: `board/delivery.py` lines 92 and 98 each type the capability-id shape |
 | `W283/1` | accepted, cost named: the test never writes, so it stays GREEN; a write from it would now be refused by name |
@@ -24367,3 +24372,89 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 87
 
 ⭐ **Merged at `d869f6d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `d869f6d` is RECEIVED.** ⭐ **A wave closes at a `cto` round until `GROWTH_WAVES` register rounds merge after it, then at the register's rounds, and a window whose end has not moved is printed with the close it ends at.**
+
+### W283 — Re-onboarding from a re-survey's draft drops the person's declared `not_material` globs, because `onboard` never reads the existing manifest
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W283.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W269/4`: since `W269`, a re-survey of an onboarded corpus drafts no `not_material` glob its manifest already declares, and `onboard` writes `corpus.json` from that draft plus only the generated-file declarations, so re-onboarding from the draft drops the person's own globs.** ⭐ **RECEIVED from `W269`'s close at `bdf6996`. RE-READ (Ruling 214) at `fb89041`:** `onboard()` calls `promote(draft, not_material=declared)`, where `declared` is the adapter scaffold's and the skill's own files; no parameter carries the existing manifest, so nothing reads it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Re-onboarding keeps every `not_material` glob the existing manifest declares**, with its reason, or refuses by name.
+2. ⭐ **A first onboarding, with no manifest, is unchanged.**
+3. ⛔ **Asserted both ways (R12):** a declared glob survives a regenerate; the plant drops it and goes RED.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/` (`onboard.py`, `manifest.py`) and its tests. ⭐ **Jumps nobody: ISO regenerates at its next round and must keep its globs, so it is read with `W270/3`'s regenerate.**
+
+[the mint](#po-round-85-w268-w269-w270-w272-and-w266-closed)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `12e44ee` during this round, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `12e44ee` is RECEIVED, before this round's run of record.** ⭐ **Re-onboarding keeps every not_material glob the existing manifest declares, byte for byte with its reason, and a regenerate that would drop one refuses by name and writes nothing.** ⚠️ **Its findings were disposed in this round's § 4.**
+
+### W280 — `validate/source` exports no store name, so the survey imports `REPOSITORY_STORE` past `__all__`, and `classification.py` stands at its R11 bound
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W280.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W272/1`: `validate/source/` exports no repository-store name or predicate, so reconnaissance imports `REPOSITORY_STORE` from `classification.py`, past the package's `__all__` contract.** ⭐ **With it, `W266`'s ruling: `classification.py` stands at its R11 bound, so the next row there splits it first.** ⭐ **RE-MEASURED (Ruling 214), role `wt/po`, HOST, by `git show`:** `REPOSITORY_STORE` is in `__all__` neither at `d561230` nor on `W266`'s tip `355360e`; `W272`'s tip `1467aff` imports it from `classification.py`; `classification.py` is 395 lines on `W266`'s tip.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`classification.py` is split at a seam its taker names before cutting** (R11).
+2. ⛔ **The package exports the store name or a store predicate**, and reconnaissance imports it from the package.
+3. ⛔ **Asserted both ways (R12):** a planted import past `__all__` fails the package's surface test.
+
+⭐ **Surface:** `src/studyforge/validate/source/`, `src/studyforge/skills/reconnaissance/inventory.py`, and their tests. ⚠️ **After `W266` and `W272` merge.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-84-w264-w262-and-w251-closed)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `5e71e04` during this round, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5e71e04` is RECEIVED, before this round's run of record.** ⭐ **`validate/source` splits the root's enumeration out of `classification.py` and exports the repository store name, which the survey imports from the package and never from a submodule.** ⚠️ **Its findings were disposed in this round's § 4.**
+
+### W222 — `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W222.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`narrate.synth.audio_dir` TAKES NO `label`, BUT THE `sibling` PROFILE NAMES A UNIT'S AUDIO DIRECTORY FROM ITS LABEL.** ⭐ **`SF-42/1`: the build passes `label` to `unit_stem(ordinal, title, label)`; `narrate` places clips through `audio_dir`, which cannot.** ⚠️ **So a labelled unit's clips land where its page does not look.**
+
+### ⛔ WHY IT IS A ROW WHILE NOTHING IS RED
+
+1. ⭐ **No `FND-04` fixture carries a label**, so no test can fail today — ⛔ **which is the reason it will ship.**
+2. ⛔ **`SF-38`'s build half calls `audio_dir` THIS WAVE**, so writer and reader will agree with each other and both disagree with the page.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE derivation of a unit's audio directory**, taking what `unit_stem` takes, used by `narrate`, the build's read and the page.
+2. ⛔ **A labelled fixture unit under the `sibling` profile**, narrated through a recording fake, whose page's clip hrefs resolve to files on disk; the plant is the label dropped from one side.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SECOND SPELLING OF THE STEM** inside `narrate/`. ⭐ **That is the defect.**
+
+[the mint](#po-round-65-wave-18-closed-step-36-and-m3-closed-at-1ede082-wave-19-named-five-mints)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `f4779c9` during this round, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `f4779c9` is RECEIVED, before this round's run of record.** ⭐ **`narrate`, the build's read and the page take a unit's audio directory from one label-carrying derivation, so a labelled unit's page links clips that are on disk and clips left in its old directory are superseded rather than orphaned.** ⚠️ **Its findings were disposed in this round's § 4.**
+
+### W282 — `validate` refuses no unknown block type and no wrong field set, so only the test harness's `check_blocks` catches either
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W282.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W263/1`: `studyforge validate` refuses no unknown block type and no wrong field set; only the test harness's `check_blocks` does, so a corpus's archive with either reads valid.** ⭐ **RECEIVED from `W263`'s office at `2489215`. RE-MEASURED (Ruling 214) at `fb89041`, role `wt/po`, HOST, by `git grep`:** `validate/` imports only `counts_of` from `archive.blocks`, and `BLOCK_TYPES` and `BLOCK_FIELDS` are read by `tests/fixture_checks` alone.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`validate` refuses by name a block whose type is not in `BLOCK_TYPES`**, and one whose keys are not its fields plus `BLOCK_OPTIONAL`.
+2. ⭐ **Every committed fixture and ISO's archive still read valid.**
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/validate/structure.py` and its tests, with `docs/authoring/validate.md`'s counts. ⚠️ **After `W263` merges: it shares `validate.md`.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-85-w268-w269-w270-w272-and-w266-closed)
+
+#### ⭐ CLOSED — PO ROUND 87
+
+⭐ **Merged at `7771751` during this round, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `7771751` is RECEIVED, before this round's run of record.** ⭐ **`validate` refuses by name a block whose type is not in `BLOCK_TYPES` and one whose keys are not its fields then its optional keys, at any depth, through the one reader the fixture check calls.** ⚠️ **Its findings were disposed in this round's § 4.**
