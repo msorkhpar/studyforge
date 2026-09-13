@@ -791,8 +791,12 @@ when you are talking *about* the markers, and keep the backticks for the item
 being marked.
 
 ```bash
-grep -rn '\[structural\]' docs/tasks/handoffs/     # the triage list, before a wave
+python3 -m tools.quality.handoffs           # the triage list, before a wave (W106)
 ```
+
+⛔ **This document types no marker pattern: the reader holds the vocabulary.**
+It prints every line, a finding or in-text, and the floor refuses a weak
+pattern typed into a convention.
 
 ⛔ **A wave that begins with an untriaged `[structural]` finding is a wave that
 has decided to pay for it twice.**

@@ -64,6 +64,7 @@ from tools.quality.config import (
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
+from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
@@ -140,6 +141,11 @@ from tools.quality.style import check_style
 #: directory, so the three non-artifacts Ruling 212 enumerates — a handoff, the
 #: archive, the generated index — are excluded structurally rather than by a
 #: filter a reader has to remember.
+#:
+#: ⚠️ `check_marker_patterns` reads `docs/conventions/` for a marker PATTERN
+#: typed without its backticks (`W106`, Rulings 65 and 193). ⛔ Its exemption
+#: mechanism is a SEVENTH: a weak pattern sharing a fence with a ruled one is a
+#: CONTROL — the pair measures the mentions delta — and nothing else excuses one.
 CHECKS = (
     check_sizes,
     check_board,
@@ -150,6 +156,7 @@ CHECKS = (
     check_source_names,
     check_handoffs,
     check_handoff_existence,
+    check_marker_patterns,
     check_pointers,
     check_anchor_collisions,
     check_rulings_index,

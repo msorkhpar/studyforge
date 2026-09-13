@@ -11,6 +11,7 @@ from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
+from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
 from tools.quality.mirror import check_mirrors
 from tools.quality.personal_data import check_personal_data
@@ -39,6 +40,7 @@ def test_every_check_is_registered():
         check_source_names,
         check_handoffs,
         check_handoff_existence,
+        check_marker_patterns,
         check_pointers,
         check_anchor_collisions,
         check_rulings_index,
