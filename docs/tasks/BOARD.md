@@ -60,9 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W156` | Developer 3 | `fix/W156-owns-before-creator` @ `wt/dev3` | 0 @ `a751316` | in-progress |
 | `W249` | Developer 2 | `fix/W249-source-and-not-material-globs` @ `wt/dev2` | 0 @ `5d9436d` | in-progress |
 | `W248` | Developer 1 | `fix/W248-archive-root-refuses-strays` @ `wt/dev1` | 0 @ `b9e68cc` | in-progress |
+| `W154` | Developer 3 | `fix/W154-capability-delivery-reading` @ `wt/dev3` | 0 @ `973fc67` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -78,8 +78,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W163`, `W153`, `W242`, `W250`, `W149` LEFT at `accceaf`, `947a007`, `cbc0991`, `5d9436d`, `b9e68cc`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W156`, `W249`, `W248` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W163`, `W153`, `W242`, `W250`, `W149`, `W156` LEFT at `accceaf`, `947a007`, `cbc0991`, `5d9436d`, `b9e68cc`, `973fc67`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W249`, `W248`, `W154` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -98,7 +98,6 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 |---|---|---|---|
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
-| 11 | `W154` | ⭐ **each jumps nobody** | round 51 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
 | 13 | `W161`, `W164`, `W165`, `W168`, `W169`, `W171` | ⭐ **each jumps nobody** | round 54 |
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
@@ -122,13 +121,14 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 40 | `W245`, `W246`, `W247` | ⭐ **round 75's mints, each jumping nobody** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 42 | `W251` | ⭐ **round 78's mint, jumping nobody** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 43 | `W252` | ⭐ **round 78's mint, jumping nobody; after `W249`, one owner** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
+| 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
 PREDICTION** (243(c)) — ⭐ **only the row's own sentence decides which of Ruling 281's three
 classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written).**
 
-⚠️ **`W160` writes `docs/tasks/rows/`, and a REGISTER round writes it too: never beside one** (check 4's sub-step). ⛔ **`W154`, `W157`, `W159`, `W160`, `W161`, `W164`, `W165`,
+⚠️ **`W160` writes `docs/tasks/rows/`, and a REGISTER round writes it too: never beside one** (check 4's sub-step). ⛔ **`W157`, `W159`, `W160`, `W161`, `W164`, `W165`,
 `W168`, `W169`, `W171`, `W179`, `W180`, `W229` and [`W231`](rows/W231.md) name `docs/conventions/` — ⭐ ONE
 owner or two waves.**
 ⛔ **`W249`+[`W252`](rows/W252.md) write `skills/reconnaissance/`; `W248`+`W210` write `cli/plan/`; `W183`+`W184` write `E04`; `W176`+[`W251`](rows/W251.md) DECLARE
@@ -300,9 +300,9 @@ else.**
 | W151 | Hand-typed counts in docstrings have no instrument, and a derived-count claim and its three typed copies disagree | Developer 2 | ✅ done — `579e1df` | [`rows/W151.md`](rows/W151.md) |
 | W152 | `docker/dev/check` re-exports provenance on every run, so two offices read different shas for one identical environment | framework agent | ✅ done — `3049de9` | [`rows/W152.md`](rows/W152.md) |
 | W153 | `corroborate`'s `dispatched and UNNAMED` arm reads its names from the register, so a wave with no register round is blind by construction | Developer 3 | ✅ done — `947a007` | [`rows/W153.md`](rows/W153.md) |
-| W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | framework agent | `todo` | [`rows/W154.md`](rows/W154.md) |
+| W154 | Commits-per-capability has no instrument, and the register may not carry the reading because a register cell carries no measurement | Developer 3 | in-progress — on `fix/W154-capability-delivery-reading` | [`rows/W154.md`](rows/W154.md) |
 | W155 | R11's ceiling has an instrument and its APPROACH has none — the predicate is proximity × GROWTH, and proximity alone flags the ceiling working | framework agent | ✅ done — `0011d5d` | [`rows/W155.md`](rows/W155.md) |
-| W156 | A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge | Developer 3 | in-progress — its edge half landed with round 74's reorder, on `fix/W156-owns-before-creator` | [`rows/W156.md`](rows/W156.md) |
+| W156 | A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge | Developer 3 | ✅ done — `973fc67` | [`rows/W156.md`](rows/W156.md) |
 | W157 | The knowledge index goes stale on every merge, nothing owns the rebuild, and no instrument can fail on it | framework agent | `accepted` — ⛔ **WITHDRAWN PO round 61**, and the re-scope that preceded it was refuted by this round's own suite | [`rows/W157.md`](rows/W157.md) |
 | W158 | The authoritative environment is structurally blind to the workspace assertions, so `green` names two different answers | Developer 3 | ✅ done — `baefd6c` | [`rows/W158.md`](rows/W158.md) |
 | W159 | Most of the board's tables are UNDELIMITED — `Next rows` and `Standing decisions` among them: no instrument reads them and the size bound gives them no term | framework agent | `todo` — naming corrected `PO-56/8` | [`rows/W159.md`](rows/W159.md) |
@@ -399,6 +399,7 @@ else.**
 | W250 | `SK-01` reads a heading that links a file as a contents entry, so `F21`'s fourth container is never proposed and `ISO-07` stops | Developer 2 | ✅ done — `5d9436d` | [`rows/W250.md`](rows/W250.md) |
 | W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | framework agent | `todo` — `W153/3` | [`rows/W251.md`](rows/W251.md) |
 | W252 | `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered | framework agent | `todo` — `W250/2` | [`rows/W252.md`](rows/W252.md) |
+| W253 | `E12`'s `TC-01` still `Owns` `TC/` as its root after `TC-00` creates it, so two rows claim one creation | framework agent | `todo` — `W156/3` | [`rows/W253.md`](rows/W253.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

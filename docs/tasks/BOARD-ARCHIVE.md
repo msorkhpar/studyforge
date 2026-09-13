@@ -22362,7 +22362,7 @@ gated skips, weighted by their [n] groups                            10
 
 ## PO round 78 — `W163` closed, `W250` named, and ISO round 8 pending on `W242`
 
-⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) `5d9436d` (`W250`, carrying `cbc0991`, `W242`) and `973fc67` (carrying `b9e68cc`, `W149`, and `W156`'s merge) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each closed row is RECEIVED: the coordinator's release-tip readings at `accceaf`, `947a007`, `cbc0991`, `5d9436d` and `b9e68cc`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; a second run, at `79a5669`, started before the `W242` and `W250` readings arrived. The reading of record is the run after `973fc67`'s merge.**
+⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) `5d9436d` (`W250`, carrying `cbc0991`, `W242`) and `973fc67` (carrying `b9e68cc`, `W149`, and `W156`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each closed row is RECEIVED: the coordinator's release-tip readings at `accceaf`, `947a007`, `cbc0991`, `5d9436d`, `b9e68cc` and `973fc67`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; a second run, at `79a5669`, started before the `W242` and `W250` readings arrived. A third, at `37ec38a`, finished as `W156`'s reading arrived. The reading of record is the run after `W156`'s close.**
 
 ### ⭐ 1 — CLOSES
 
@@ -22373,9 +22373,10 @@ fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
 fix/W242-sibling-ignore-home          1b39682d  1b39682d     0      NOWHERE
 fix/W250-linked-heading-not-an-entry  a6602c6b  a6602c6b     0      NOWHERE
 fix/W149-merge-subject-prose          be324640  be324640     0      NOWHERE
+fix/W156-owns-before-creator          a751316a  a751316a     0      NOWHERE
 ```
 
-⭐ **All five TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W248.md` re-pointed for `W242`, `rows/W249.md` for `W250`; `W163`, `W153` and `W149` have none. ⚠️ **The four rows' own handoffs and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
+⭐ **All six TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W248.md` re-pointed for `W242`, `rows/W249.md` for `W250`; `E12` for `W156`; `W163`, `W153` and `W149` have none. ⚠️ **The four rows' own handoffs and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
 
 ⚠️ **`docker/dev/` is an image build input, so this merge moved the dev image identity from `inputs-f1874d21…` to `inputs-f5bb0ced…`.** The change is comment lines only; no configuration line changed.
 
@@ -22386,7 +22387,7 @@ fix/W149-merge-subject-prose          be324640  be324640     0      NOWHERE
 3. ⭐ **`W153` closes in this round, not round 79.** The message arrived before the reading of record, and `947a007` is merged here. Reversible.
 4. ⛔ **`W242/1` is CONFIRMED: a build's output is committed** — its pages, the root index, the asset bundle and `site.json`. §5 now says so in one sentence. ⭐ **The ground is §5's own:** *regenerable is not the same as available*, so a clone that ignores its pages has no reading floor (R8, §11.0). `ISO-05` also refuses any generated rule matching `*.html` or `*.json`. ⚠️ **This DATES the first half of [Ruling 91](../tasks/handoffs/CTO-2026-09-10-round26.md#ruling-91-f19-a-sibling-build-does-not-need-readmemd-rewritten-and-never-did), which declared `sibling` output in `.gitignore`.** Ruling 91's record stands unedited (Ruling 106), and its profile-switch half is untouched. ⭐ **Reversible:** no page is committed into ISO before `ISO-10`, and ISO round 8 (`ISO-05`) commits none.
 5. ⭐ **`W242` and `W250` close in this round too, at the coordinator's word.** `5d9436d` is merged here, and the reading of record follows it. Reversible.
-6. ⭐ **`W149` closes here too, and `W156` does not.** `973fc67` carries `W156`'s merge, whose reading had not arrived when the run of record was cut, so `W156` stays named and closes in round 79. ⭐ **`W149/1` is ADOPTED by the coordinator:** every merge subject runs through `tools.quality.subject` before the merge. Reversible.
+6. ⭐ **`W149` and `W156` close here too, at the coordinator's word.** Both are merged in this branch at `973fc67`, and the reading of record follows their closes. ⭐ **`W149/1` is ADOPTED by the coordinator:** every merge subject runs through `tools.quality.subject` before the merge. Reversible.
 
 ### ⭐ 3 — WHAT EACH FINDING BECAME
 
@@ -22417,10 +22418,15 @@ fix/W149-merge-subject-prose          be324640  be324640     0      NOWHERE
 | `W149/1` | ⭐ **adopted by the coordinator, § 2.6** |
 | `W149/2` | accepted, cost named: a reading with no count is DECLARED and not decided, because a claim's tense is not decidable from the string |
 | `W149/3` | disposed at the close: the predicate is one submodule of `tools/quality/` with its mirror, inside the declared surface |
+| `W156/1` | DATED, not wrong (Ruling 310(b)): the row's open-row figure was true at its own ref, and the handoff's population table re-reads it at three refs |
+| `W156/2` | accepted, cost named: `OPS-03` is a second `Context` reader beside `SK-09`. The census prints `Context` reads as an arm that never fails the floor, so both are visible and neither is gated |
+| `W156/3` | ⭐ **minted [`W253`](rows/W253.md)**: `TC-01` still `Owns` `TC/` as a root after `TC-00` creates it |
+| `W156/4` | accepted, cost named: `FND-08` and `FND-09` sit in no step line. `M0` is closed, so no dispatch reads their membership |
+| `W156/5` | disposed at the close: `SK-09`'s `Context` is prose, and the census declares each member's derivation (clause 4) |
 
-⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** [`W249`](rows/W249.md), Developer 2, `fix/W249-source-and-not-material-globs` @ `wt/dev2`, cut `5d9436d`, declared by its branch description; it follows `W250` on `skills/reconnaissance/`. [`W248`](rows/W248.md), Developer 1, `fix/W248-archive-root-refuses-strays` @ `wt/dev1`, cut `b9e68cc`, declared by its branch description. ⚠️ **It jumps board order as the only free framework surface serving `M6`, the coordinator's ground (Ruling 75); `W210`, which shares `cli/plan/`, is not in flight.** ⭐ **Mints, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42) and [`W252`](rows/W252.md) (`W250/2`, order 43).
+⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** [`W249`](rows/W249.md), Developer 2, `fix/W249-source-and-not-material-globs` @ `wt/dev2`, cut `5d9436d`, declared by its branch description; it follows `W250` on `skills/reconnaissance/`. [`W154`](rows/W154.md), Developer 3, `fix/W154-capability-delivery-reading` @ `wt/dev3`, cut `973fc67`, order 11, declared by its branch description. [`W248`](rows/W248.md), Developer 1, `fix/W248-archive-root-refuses-strays` @ `wt/dev1`, cut `b9e68cc`, declared by its branch description. ⚠️ **It jumps board order as the only free framework surface serving `M6`, the coordinator's ground (Ruling 75); `W210`, which shares `cli/plan/`, is not in flight.** ⭐ **Mints, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42), [`W252`](rows/W252.md) (`W250/2`, order 43) and [`W253`](rows/W253.md) (`W156/3`, order 44).
 
-⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) was dispatched mid-round at `W242`'s merge, reading framework `cbc0991`. With `W242` merged, every framework blocker ISO round 6 found (`W239`–`W243`) is in. It merged into ISO at `a71a290`, and `ISO-05` is TAKEN; `ISO-06` was not, because its XML clause waits on `W243/1`. ⭐ **RECEIVED:** `INT-07/4` is discharged by `W242` at `cbc0991`, re-measured on a real `sibling` build with a planted control. ⭐ **The pin advanced to `a71a290` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, at `168a78e`, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`. ⚠️ **`W156` merged at `973fc67`, and its reading had not arrived before the run of record. It closes in round 79, and `corroborate` refutes it until then.**
+⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) was dispatched mid-round at `W242`'s merge, reading framework `cbc0991`. With `W242` merged, every framework blocker ISO round 6 found (`W239`–`W243`) is in. It merged into ISO at `a71a290`, and `ISO-05` is TAKEN; `ISO-06` was not, because its XML clause waits on `W243/1`. ⭐ **RECEIVED:** `INT-07/4` is discharged by `W242` at `cbc0991`, re-measured on a real `sibling` build with a planted control. ⭐ **The pin advanced to `a71a290` (`W244`'s cadence), the ISO line alone.** Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, at `168a78e`, exit `1`, naming `ISO-8583-jPOS-tutorial` alone; after it, exit `0`.
 
 ⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8`, now with `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
 
@@ -22634,3 +22640,60 @@ CORROBORATE_EXIT=0
 #### ⭐ CLOSED — PO ROUND 78
 
 ⭐ **Merged at `b9e68cc`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `b9e68cc` is RECEIVED.** ⭐ **A merge subject's prose is read by a pre-merge predicate, `tools.quality.subject`, whose pass condition is in `docs/conventions/review-rubric.md`: a claim carrying a bare count is refused before the merge.** ⭐ **The coordinator runs it on every merge subject (`W149/1`).** ⚠️ **A reading with no count is declared, not decided (`W149/2`). Each finding's disposition is in this round's § 3.**
+
+### W156 — A row `Owns` inside a component it does not create, with its creator in the SAME step and no declared edge
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W156.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`TC-00` `Owns` a path INSIDE a component that does not exist, `TC-01` is the row that CREATES that component, the two sit in the SAME STEP, and the epic declares NO edge between them.** ⭐ **A dispatcher reading step 5.1 puts two developers on both at once and one of them has nowhere to write.**
+
+⭐ **PO round 74 — THE EDGE HALF IS SETTLED BY THE REORDER.** ⛔ **The user moved the editor to `M7`, so `TC-00` now CREATES `TC/` and `TC-01` declares `TC-00` (`E12`); the step named above and the reading below are the plan before that round.** ⭐ **The PREDICATE half, clause 2, stands, and so does this row** ([the record](#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+
+### ⛔ THE READING, TAKEN TWICE BY TWO OFFICES WITH TWO INSTRUMENTS
+
+```text
+all 50 open capability rows walked, 50 of 50, zero unreached, Owns taken from the epics only
+  ⛔ 10 rows Own inside a not-yet-created component and are NOT its creator
+  ⭐  9 of the 10 have an EARLIER-STEP creator AND a declared Depends on edge
+       TC-02 TC-03 TC-04 TC-05 TC-06 (creator TC-01, 5.1)
+       NS-02 NS-03 NS-04 NS-06       (creator NS-01, 3.1)
+  ⛔  1 of the 10 has its creator in the SAME step with NO declared edge:  TC-00
+  ⛔  0 rows have a LATER-step creator.
+⭐ THE GRAPH IS SOUND EVERYWHERE EXCEPT ONE ROW.
+```
+
+⚠️ **And `TC-00`'s epic entry says explicitly that it *"is not an early draft of `TC-01` and must not grow into one"*** — ⛔ **so the missing edge cannot be repaired by folding the two rows together, which is the first thing a taker will reach for.**
+
+### ⭐ WHY THIS IS THE PROJECT'S OWN NAMED COUNTER-EXAMPLE, RECURRING
+
+⛔ **`README.md` was CORRECTED on exactly this class: a step is a batch boundary and NOT a parallelism guarantee, and in-step edges are read off the epic and never inferred from step membership.** ⚠️ **The counter-example it names is `SK-07`/`SK-08` — a real in-step edge that step membership hid.** ⭐ **`TC-00`/`TC-01` is the SECOND instance, and this time the epic does not carry the edge either, so a dispatcher who obeys the corrected rule STILL misdispatches.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The edge is DECLARED where the corrected rule says edges live — in the epic's own `Depends on` line** — ⭐ **or `TC-00`'s `Owns` is re-pointed at a path that exists before `TC-01` runs, and the epic says which and why.**
+2. ⭐ **AN INSTRUMENT, NOT A CORRECTION.** ⛔ **Fixing one row buys one row; the walk above is a PREDICATE — *a row Owns inside a component it does not create, and its creator is not in an earlier step* — and it found this instance out of fifty. Shipping the predicate is the fix; shipping the edge alone is the symptom.**
+3. ⚠️ **THE SURFACE QUESTION IS OPEN AND IS THIS ROW'S TO ANSWER: is the predicate's input `Owns` ALONE?** ⭐ **`SK-09` is not a hit under `Owns` — its `Owns` is a `studyforge` surface — but its `Context` reads inside BOTH absent components, and it is the only row where that is true.**
+4. ⛔ **THE DERIVATION'S WEAK MEMBERS ARE DECLARED, NOT SMOOTHED** (Ruling 292): ⚠️ **for six of the ten the `Owns` cell carries no path root and the component was resolved from the epic's PREAMBLE PROSE rather than from a path. That is a weaker derivation and the instrument must SAY which members it read which way.**
+5. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): the nine sound rows stay SILENT and the one unsound row is NAMED.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RENUMBERING OF THE PLAN.** ⭐ **`README.md` records the refusal that settles this in advance: moving a task into a new step to protect a sentence is a fix that the next in-step edge undoes.** ⚠️ **Membership stays in `README.md`, the edge belongs in the epic, and state stays on the board.**
+
+### ⚠️ `CTO-66/12` — THE BUNDLE IS ACCEPTED, AND THE EDGE MAY LAND FIRST WITHOUT REOPENING THIS ROW
+
+⭐ **The reviewing office examined clause 2 (*"shipping the predicate is the fix; shipping the edge alone is the symptom"*) and ACCEPTED it, recording one note for the taker rather than a change:**
+
+> ⚠️ **the EDGE is a live misdispatch hazard and the PREDICATE is an instrument over fifty rows** — ⛔ **but the row's own SURFACE line saves it: `TC-00` is M5 and gates nothing in the open step.** ⭐ **So there is no urgency and the bundle is ACCEPTED — recorded only so a taker who finds the instrument large knows the edge may land first without re-opening the row.**
+
+⛔ **WRITTEN INTO THE ROW BY THE ROUND-52 REGISTER so a taker finds it here rather than in a frozen record** — ⚠️ **and it WIDENS NOTHING: clause 2 stands exactly as written, and this note only says the two halves may be SEQUENCED.**
+
+### ⭐ SURFACE
+
+⛔ **`docs/tasks/E12-toolchain-image.md` for the edge, and `tools/quality/` for the predicate.** ⚠️ **`TC-00` is M5 and gates nothing in the open step — ⭐ this row is a CORRECTNESS row against the plan's graph, not a dispatch blocker, and it jumps nobody.**
+
+[the mint argument](#po-round-51-the-registers-whole-share-measured-as-a-symptom-the-open-step-found-to-admit-exactly-one-row-and-that-rows-deferral-traced-to-an-r18-decision-that-had-already-landed-before-it-was-written)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `973fc67`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `973fc67` is RECEIVED.** ⭐ **`check_owns_before_creator` fails the floor on a row that `Owns` inside a component it does not create unless its `Depends on` chain reaches that component's creator, placed in no later step. `creator_census` prints every member, its creator, and whether the component was read from a path or from epic prose, and a `Context` read is a second arm that never fails the floor.** ⭐ **The edge half is verified at `accceaf`, so nothing under `docs/tasks/` was touched.** ⚠️ **`W156/3` is [`W253`](rows/W253.md). Each finding's disposition is in this round's § 3.**

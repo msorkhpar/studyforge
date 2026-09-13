@@ -68,7 +68,7 @@ JDK cannot carry that decision.
 - ⭐ **The runtime list is the user's REQUIREMENT, recorded here and not narrowed:** Java, Kotlin, Python, Node.js, and possibly shell and SQL against an in-memory database — ⛔ **or whatever the course requires.**
 - ⛔ **R1: the framework knows no course, so the runtimes a corpus gets are DECLARED in its manifest, and this image builds the declared set from pinned versions.** ⚠️ **The manifest key is a contract change at spec §4, which this row's taker proposes before code (§9); it is not designed here.**
 - ⛔ **No IDE, no extensions, never served to a browser.** The *"only a pinned JDK and Maven"* sentence above is superseded by the list; *"must not grow into TC-01"* stands.
-- ⭐ **It CREATES `TC/`, and `TC-01` declares it** — the edge half of [`W156`](rows/W156.md). ⚠️ **`TC-02` selects the editor's toolchains from THESE pins at `M7`, so a version is still chosen in one place.**
+- ⭐ **It CREATES `TC/`, and `TC-01` declares it** — the edge half of [`W156`](BOARD-ARCHIVE.md#w156-a-row-owns-inside-a-component-it-does-not-create-with-its-creator-in-the-same-step-and-no-declared-edge). ⚠️ **`TC-02` selects the editor's toolchains from THESE pins at `M7`, so a version is still chosen in one place.**
 - ⚠️ **The Acceptance's *"the Java repository"* reads a consumer corpus** ([`W83`](rows/W83.md)), **and that corpus is `M9`'s.**
 
 **Acceptance.** `mvn -o test` runs against the Java repository inside it. The
