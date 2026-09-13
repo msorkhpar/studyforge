@@ -462,6 +462,7 @@ on the builder.
 | discovery cache | `.studyforge/site.json` | `site_api` (Ruling 95) | `SF-04` — ⛔ **the one writer** |
 | narration regeneration state | `.studyforge/narration.json` (Ruling 351) | `narration_api` (Ruling 351) | `SF-17` — ⛔ **the one writer** (Ruling 330) |
 | progress record | `.studyforge/progress/progress.json` | `progress_api` | `SF-21` — ⛔ **the one writer**; transcribed PO round 67 (`SF-21/1`) |
+| personal archive manifest | `personal-archive.json`, a member of the archive file | `personal_archive_api` | `SK-06` — ⛔ **the one writer**; transcribed PO round 72 (`SK-06/5`) |
 | coverage report | ⛔ **open** | n/a — not read back | whatever produced the gap |
 | component consuming contract | `consuming.json` | `consuming_api` + `provides` | each component (`TC-05`, E13) |
 | **workspace pin file** | `workspace.json` | `workspace_api` | `FND-05a`; a row per component |
@@ -508,7 +509,7 @@ resolves at read time, instead of claiming what the component ships.**
 ⭐ **`workspace_api` is the eighth versioned contract and the first that lives
 outside `src/`** — which is why the register and the framework's own constant are
 not the same list. ⛔ **Ruled: this table is the register; `CONTRACT_FIELDS` is
-the framework's *subset* of it.** ⚠️ A contract the framework does not read is
+the framework's *subset* of it.** ⭐ **So a key entering `CONTRACT_FIELDS` owes its row here in the commit that mints it; `SF-21/1` and `SK-06/5` are the two that did not, and the register transcribed both.** ⚠️ A contract the framework does not read is
 still a contract — the pin file is read by `tools/`, and `R9` governs what is
 *written*, not what `src/` happens to import.
 
