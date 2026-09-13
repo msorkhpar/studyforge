@@ -855,7 +855,7 @@ reader knows and R3 forbids restructuring it:
 Claude-senior-java-engineer/
   index.html                                     generated root index
   .studyforge/assets/                            shared css, js, prism, plyr
-  .studyforge/archive/<address>/raw/java/unit-NN/lesson-1.json
+  archive/<address>/raw/java/unit-NN/lesson-1.json  the archive, beside corpus.json (§6)
   .studyforge/site.json                          discovery cache
   16-streams-api/
     README.md                                    UNTOUCHED
@@ -865,6 +865,10 @@ Claude-senior-java-engineer/
     4.4.1-introduction-to-the-streams-api.audio/*.mp3
     4.4.1-introduction-to-the-streams-api.practice/
 ```
+
+⛔ **AMENDED PO round 76 — the archive root is `archive/`, beside `corpus.json`, under
+every profile** (`W241`, `INT-06/6`). ⚠️ **This example once read `.studyforge/archive/`:
+`plan` printed that root and nothing read it.** ⭐ **§6's `<archive-root>` is this directory.**
 
 **Every generated page carries a real name, never `index.html`.** Names come
 from the unit's own numbering and title, so they are unique, human-readable in
