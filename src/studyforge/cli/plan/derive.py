@@ -1,15 +1,27 @@
 """One corpus root in, one `Plan` out — from the declarations and nothing else.
 
-**What it does.** Reads `corpus.json` and every container map beneath the
-archive, places each declared container and unit under the corpus's own
-profile, and collects the result.
+**What it does.** Reads `corpus.json`, every container map beneath the
+archive and the narration record when there is one, places each declared
+container and unit under the corpus's own profile, and collects the result.
 
 **How you use it.** `plan_for(root)`, or `plan_for(root, bytes_per_unit=N)` to
 project the media footprint at a rate.
 
 **Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement`,
-`cli.plan.report`, and `validate.corpus` for the archive directory's one
-spelling. ⛔ It opens two kinds of file and no others.
+`cli.plan.report`, `validate.corpus` for the archive directory's one
+spelling, and `narrate.synth` / `narrate.speakable` for the record and its
+clip names. ⛔ It opens three kinds of file and no others, and no unit document.
+
+## ⛔ The narration record is a plan input (`E09` § SF-38/8, `W224`)
+
+⭐ A build copies each clip a page addresses into any `--out` but the corpus
+root, so the plan names every copy: one `create` line per clip the record files
+under a declared unit, at that unit's audio directory — asked of placement.
+⛔ **The unit is read off the speech id's own unit token**, which the
+declarations can answer; an entry whose filename does not carry the id it is
+filed under is `narrate.playable`'s MISFILED, which no page addresses, so it is
+not named. ⚠️ An entry whose id no page produces any more cannot be told apart
+without opening the material, so it IS named — `W224`'s handoff records it.
 
 ## ⛔ Nothing raises
 
@@ -27,7 +39,8 @@ by path is what puts the pair next to each other, where a reader sees them.
 
 from __future__ import annotations
 
-from pathlib import Path
+from collections.abc import Mapping
+from pathlib import Path, PurePosixPath
 
 from studyforge.cli.plan.report import Creation, MediaProjection, Plan, Refusal
 from studyforge.corpus.container import CONTAINER_FILENAME, Container
@@ -37,12 +50,21 @@ from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.corpus.placement import (
+    AUDIO_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
     PlacementError,
     Profile,
     profile_for,
 )
+from studyforge.narrate.speakable import SEGMENT, SpeakableError, parse_clip_name, unit_token
+from studyforge.narrate.synth import StateError, read_state, state_file
 from studyforge.validate.corpus import ARCHIVE_DIR
+
+#: What a clip's `create` line says about who writes it, and when a build does.
+CLIP_COPY = (
+    "`studyforge narrate` writes it beside the material; a build into any other "
+    "output copies it there"
+)
 
 
 def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
@@ -60,10 +82,12 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     profile = profile_for(manifest.placement)
     held, unreadable = _containers(root, manifest)
     refusals += unreadable
+    clips, record, misrecorded = _recorded(root)
+    refusals += misrecorded
     creations = _corpus_creations(profile)
     units = 0
     for where, container in held:
-        made, failed = _container_creations(container, profile, where)
+        made, failed = _container_creations(container, profile, where, clips)
         creations += made
         refusals += failed
         units += len(container.units)
@@ -73,7 +97,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
         title=manifest.title,
         profile=profile.name,
         describes=profile.describes,
-        read_files=(MANIFEST_FILENAME, *(where for where, _ in held)),
+        read_files=(MANIFEST_FILENAME, *(where for where, _ in held), *record),
         creations=tuple(sorted(creations, key=lambda creation: creation.path)),
         edits=manifest.permitted_edits,
         ignore=profile.ignore_lines(media=media.ignored),
@@ -152,6 +176,48 @@ def _containers(
     return held, refusals
 
 
+def _recorded(root: Path) -> tuple[dict[str, tuple[str, ...]], tuple[str, ...], list[Refusal]]:
+    """Return the clip filenames the record files under each unit token, and what was read.
+
+    ⛔ Nothing raises: an unreadable record is a refusal, exactly as a container
+    map is. An absent record is the ordinary case and is not read.
+    """
+    file = state_file(root)
+    where = file.relative_to(root).as_posix()
+    try:
+        state = read_state(file)
+    except StateError as error:
+        return {}, (where,), [Refusal(where, str(error))]
+    if not state.present:
+        return {}, (), []
+    grouped: dict[str, set[str]] = {}
+    refusals: list[Refusal] = []
+    for speech_id, clip in state.clips.items():
+        name = clip.filename
+        if not name.strip():
+            continue
+        if PurePosixPath(name).name != name or name in (".", ".."):
+            # ⛔ The value is not echoed (R7). A copy of it would leave its unit's
+            # audio directory, and a page's href never would.
+            refusals.append(Refusal(where, "records a clip filename that is not one file name"))
+            continue
+        try:
+            filed, _ = parse_clip_name(PurePosixPath(name).stem)
+        except SpeakableError:
+            continue
+        if filed == speech_id:
+            grouped.setdefault(speech_id.split(SEGMENT, 1)[0], set()).add(name)
+    return {token: tuple(sorted(names)) for token, names in grouped.items()}, (where,), refusals
+
+
+def _token(container: Container, n: int) -> str | None:
+    """Return the unit token a declared unit's speech ids begin with, or None if it has none."""
+    try:
+        return unit_token(container.address.unit_key(n))
+    except SpeakableError:
+        return None
+
+
 def _corpus_creations(profile: Profile) -> list[Creation]:
     """Return the four paths every corpus gets, whatever its addresses are.
 
@@ -172,7 +238,7 @@ def _corpus_creations(profile: Profile) -> list[Creation]:
 
 
 def _container_creations(
-    container: Container, profile: Profile, where: str
+    container: Container, profile: Profile, where: str, clips: Mapping[str, tuple[str, ...]]
 ) -> tuple[list[Creation], list[Refusal]]:
     """Every path one container and its declared units occupy."""
     key = container.address.key
@@ -198,7 +264,16 @@ def _container_creations(
         # each profile — `UnitLocations.href`'s *ask, never compose* rule
         # arriving one layer up.
         made += [
-            Creation(f"{at.media_dir(kind).as_posix()}/", f"{key} unit {unit.n}'s {kind}")
+            Creation(
+                f"{at.media_dir(kind).as_posix()}/",
+                f"{key} unit {unit.n}'s {kind}",
+                narration=kind == AUDIO_DIRNAME,
+            )
             for kind in UNIT_MEDIA_DIRNAMES
+        ]
+        audio = at.media_dir(AUDIO_DIRNAME).as_posix()
+        made += [
+            Creation(f"{audio}/{name}", f"{key} unit {unit.n}'s clip — {CLIP_COPY}", narration=True)
+            for name in (clips.get(_token(container, unit.n) or "", ()) if clips else ())
         ]
     return made, failed

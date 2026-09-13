@@ -3,7 +3,8 @@ r"""Every page a reader navigates between, from one corpus root, in one pass.
 **What it does.** Reads the declarations once and runs three writers over them —
 the unit pages, the container pages, and the root index — then writes the shared
 stylesheet and script the three of them link, and puts each unit's media where
-its page looks for it.
+its page looks for it — narration clips included, under any output root but the
+corpus root (`generate.clips`).
 
 **How you use it.**
 
@@ -12,7 +13,7 @@ its page looks for it.
     written = write_site(corpus_root, output_root)
     written.pages      # every page, relative to the output root
     written.assets     # the shared bundle
-    written.media      # every file a page shows, copied out of the archive
+    written.media      # every file a page shows, copied out of the archive or narrate's
     written.replaced   # every path that held this build's own previous answer
     written.refused    # every other target on disk, left byte-for-byte alone
     written.missing    # every file the material names and the archive has not
@@ -63,6 +64,7 @@ from __future__ import annotations
 from pathlib import Path, PurePosixPath
 
 from studyforge.contents import status
+from studyforge.generate.clips import for_output, unit_clips
 from studyforge.generate.containers import container_pages
 from studyforge.generate.declarations import Corpus, read_corpus
 from studyforge.generate.media import unit_media
@@ -81,13 +83,14 @@ def write_site(root: Path | str, into: Path | str) -> Written:
     `units.write_pages` gives: where generated output goes is the corpus's
     decision and not the framework's, and no default may take it silently.
     """
-    corpus = read_corpus(root)
+    corpus = for_output(read_corpus(root), into)
     return (
         unit_pages(corpus, into)
         + container_pages(corpus, into)
         + root_index(corpus, into)
         + assets(corpus, into)
         + unit_media(corpus, into)
+        + unit_clips(corpus, into)
     )
 
 

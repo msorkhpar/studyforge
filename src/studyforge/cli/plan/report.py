@@ -58,6 +58,10 @@ class Creation:
 
     path: str
     what: str
+    #: ⭐ Whether the path is narration's: a unit's audio directory, or one clip
+    #: `studyforge narrate` wrote there that a build copies into another output.
+    #: ⛔ Carried as data so no reader recovers it from a directory's name.
+    narration: bool = False
 
     def line(self) -> str:
         """Render as one greppable line."""
@@ -179,7 +183,7 @@ class Plan:
         out = [
             f"plan {self.source}  {self.title}",
             f"placement {self.profile}  {self.describes}",
-            f"read {MANIFEST_FILENAME} + {len(self.read_files) - 1} {CONTAINER_FILENAME}"
+            f"read {MANIFEST_FILENAME} + {self._maps()} {CONTAINER_FILENAME}{self._others()}"
             f"  no file inside the source material was opened",
         ]
         out += [creation.line() for creation in self.creations]
@@ -190,6 +194,15 @@ class Plan:
         out += [refusal.line() for refusal in self.refusals]
         out.append(self.summary())
         return out
+
+    def _maps(self) -> int:
+        """How many container maps were read."""
+        return sum(1 for read in self.read_files[1:] if read.endswith(CONTAINER_FILENAME))
+
+    def _others(self) -> str:
+        """Every other file read, named: the narration record, when there is one."""
+        others = [read for read in self.read_files[1:] if not read.endswith(CONTAINER_FILENAME)]
+        return "".join(f" + {read}" for read in others)
 
     def summary(self) -> str:
         """One line naming every count. ⛔ Including the zeroes.
