@@ -15,12 +15,18 @@ import sys
 import pytest
 
 from studyforge import serve
+from studyforge.archive.scrub import PersonalDataLeak
+from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.serve import RAISES
+from studyforge.serve.discovery import DiscoveryRefused, discover
+from tests.studyforge.generate.corpora import a_corpus
+from tests.studyforge.serve.serving import LEAK
 from tests.support import assert_package_contract, repository_root, run
 
 PACKAGE = repository_root() / "src" / "studyforge" / "serve"
 
-#: The modules SF-19a wrote. ⭐ The scan must reach at least these — a scan whose
-#: population silently shrank would pass on nothing.
+#: The modules SF-19a and SF-19b wrote. ⭐ The scan must reach at least these — a
+#: scan whose population silently shrank would pass on nothing.
 THIS_ROW = frozenset(
     {
         "__init__.py",
@@ -31,6 +37,10 @@ THIS_ROW = frozenset(
         "routes/__init__.py",
         "routes/content.py",
         "routes/assets.py",
+        "addressing.py",
+        "discovery.py",
+        "instance.py",
+        "routes/state.py",
     }
 )
 
@@ -128,6 +138,34 @@ def package_modules() -> dict[str, str]:
 
 def test_states_its_contract():
     assert_package_contract(serve, "studyforge.serve")
+
+
+def no_corpus(root):
+    return root
+
+
+def a_leaking_manifest(root):
+    manifest = a_corpus(root, "depth1") / MANIFEST_FILENAME
+    document = json.loads(manifest.read_text(encoding="utf-8"))
+    document["title"] = LEAK
+    manifest.write_text(json.dumps(document), encoding="utf-8")
+    return root
+
+
+#: ⛔ `W208`: every member of `RAISES` reached from `discover` by a fixture.
+REACHES = {DiscoveryRefused: no_corpus, PersonalDataLeak: a_leaking_manifest}
+
+
+def test_every_member_of_raises_has_a_fixture_and_nothing_else_does():
+    assert set(REACHES) == set(RAISES)
+
+
+@pytest.mark.parametrize("member", RAISES, ids=lambda m: m.__name__)
+def test_each_member_of_raises_is_reached_from_discovery(tmp_path, member):
+    root = REACHES[member](tmp_path)
+    with pytest.raises(member) as raised:
+        discover(root)
+    assert str(tmp_path) not in str(raised.value)
 
 
 def test_the_scan_reaches_every_module_this_row_wrote():
