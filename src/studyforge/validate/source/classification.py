@@ -79,18 +79,19 @@ RULE_CONTESTED = "contested"
 #: output — a different fact, and one a script filters on separately.
 RULE_IGNORE_DECLARATION = "ignore-declaration"
 
-#: Directories a source scan never descends into. ⚠️ The archive is generated
-#: output living inside the corpus root; sweeping it would classify the
-#: adapter's own writing as unclassified material.
+#: Directories a source scan never descends into, at any depth.
 #:
-#: ⛔ **These three are the framework's own and nobody else's.** `archive` is
-#: R2's, `.studyforge` is this tool's, and `.git` holds the declaration this
-#: module now reads rather than guesses at. Two more names once sat here —
+#: ⛔ **These two are the framework's own and nobody else's.** `.studyforge` is
+#: this tool's, and `.git` holds the declaration this module now reads rather
+#: than guesses at. ⚠️ **The archive root is not here** (`W248`): it is skipped
+#: at the corpus root only, and `membership` refuses each file beneath it that
+#: is not an archive member. A source's own nested `archive/` is material.
+#: Two more names once sat here —
 #: `node_modules` and `__pycache__` — and they were the framework knowing about
 #: two ecosystems it was told nothing about (R1). A list of other people's
 #: build directories is wrong for the first corpus that uses a third ecosystem,
 #: and right for the second two only by luck.
-SKIP_DIRS = (ARCHIVE_DIRNAME, ".git", ".studyforge")
+SKIP_DIRS = (".git", ".studyforge")
 
 #: How long git is given to answer. ⚠️ A validator that hangs is worse than one
 #: that says it could not check.
@@ -267,6 +268,9 @@ def _walk(root: Path) -> list[Path]:
             continue
         parts = path.relative_to(root).parts
         if any(part in SKIP_DIRS for part in parts[:-1]) or parts[0] in SKIP_DIRS:
+            continue
+        if len(parts) > 1 and parts[0] == ARCHIVE_DIRNAME:
+            # ⛔ Not silent: `membership` accounts for every file here (`W248`).
             continue
         if len(parts) == 1 and parts[0] == "corpus.json":
             continue

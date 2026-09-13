@@ -210,7 +210,7 @@ signal. Without it a corpus drifts out of date with no symptom at all.
 
 ## Next
 
-- [What `validate` checks](validate.md) — the twelve checks your archive is
+- [What `validate` checks](validate.md) — the thirteen checks your archive is
   about to meet.
 - [Exercises](exercises.md) — the `exercise` key, and when to write no practice
   document at all.

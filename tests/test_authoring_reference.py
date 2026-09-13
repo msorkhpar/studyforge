@@ -212,7 +212,9 @@ def test_the_unit_record_the_reference_shows_is_the_shipped_record():
 
 
 def test_every_check_has_a_row_and_every_row_is_a_check():
-    named = vocabulary_under(document("validate.md"), "The twelve checks", column=1)
+    named = vocabulary_under(
+        document("validate.md"), f"The {_spelled(len(CHECKS))} checks", column=1
+    )
     shipped = {check.__name__ for check in CHECKS}
     assert named - shipped == set(), (
         f"validate.md names {sorted(named - shipped)}, which do not run"
@@ -247,7 +249,14 @@ def test_the_heading_the_reader_scans_for_carries_the_derived_rule_id_count():
 
 def _spelled(number: int) -> str:
     """Spell a count the way a heading spells it."""
-    return {12: "twelve", 23: "twenty-three", 29: "twenty-nine", 30: "thirty"}[number]
+    return {
+        12: "twelve",
+        13: "thirteen",
+        23: "twenty-three",
+        29: "twenty-nine",
+        30: "thirty",
+        31: "thirty-one",
+    }[number]
 
 
 def test_the_exit_codes_are_the_ones_the_command_returns():
