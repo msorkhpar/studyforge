@@ -27,7 +27,7 @@ R10 (reproducible), R11 (packages), R12 (tests).
 ### SF-06 — Archive document
 **Milestone** M1 · **Depends on** SF-01 · **Team** pair
 **Owns** `archive/document.py`, `archive/blocks.py`
-**Context** ~45k — `CS/tools/study/rawdoc.py`, `CS/tools/study/blocks.py`
+**Context** ~45k — `CS/.pipeline/tools/study/rawdoc.py`, `CS/.pipeline/tools/study/blocks.py`
 
 **Definition.** What an ingested unit *is* on disk (spec §6). Ports
 CodeSignal's archive document, widening its `path`/`course`/`unit` keys into one
@@ -91,7 +91,7 @@ appears**, not by a comment asking people not to write one.
 ### SF-07 — Block vocabulary and Markdown reader
 **Milestone** M1 · **Depends on** — · **Team** solo
 **Owns** `archive/markdown/`
-**Context** ~35k — `CS/tools/study/markdown.py`, `CS/tests/test_markdown.py`
+**Context** ~35k — `CS/.pipeline/tools/study/markdown.py`, `CS/.pipeline/tests/test_markdown.py`
 **Effort** ⚠️ **Reading is ~35k; the work is not.** The acceptance runs the parser
 over **166 real files** and, where it fails, names every file and construct —
 that triage is a computation with an unknown tail, not a read. Budget a second
@@ -244,7 +244,7 @@ is a **behaviour of the parser**, not a corpus count, and it is asserted on the
 ### SF-08 — Personal-data gate
 **Milestone** M1 · **Depends on** — · **Team** solo
 **Owns** `archive/scrub.py`
-**Context** ~20k — `CS/tools/study/scrub.py`, `CS/tests/test_scrub.py`
+**Context** ~20k — `CS/.pipeline/tools/study/scrub.py`, `CS/.pipeline/tests/test_scrub.py`
 
 **Definition.** R7's enforcement: `scrub` on the way in, `assert_clean` as the
 refusing gate at every disk and wire boundary. Home paths, account
@@ -364,7 +364,7 @@ ISO corpus's subject matter and the gate is not a content classifier.
 ### SF-09 — Authored overlay and section keys
 **Milestone** M1 · **Depends on** SF-06 · **Team** solo
 **Owns** `unit/content.py`, `unit/sections.py`
-**Context** ~25k — `CS/tools/study/content.py`
+**Context** ~25k — `CS/.pipeline/tools/study/content.py`
 
 **Definition.** The optional human judgement layer beside a unit, and the
 section-key vocabulary every downstream consumer keys off — `shared`,
@@ -388,7 +388,7 @@ keys are unique within a unit for a multi-variant corpus.
 ### SF-10 — Unit document builder
 **Milestone** M1 · **Depends on** SF-05, SF-06, SF-09 · **Team** team
 **Owns** `unit/builder/` (the package) **and `unit/served.py`**
-**Context** ~70k — `CS/tools/study/unitdoc.py`, plus SF-05/06/09 outputs
+**Context** ~70k — `CS/.pipeline/tools/study/unitdoc.py`, plus SF-05/06/09 outputs
 
 ⛔ **`unit/served.py` is a SIBLING of the builder package, not a child** — ruled
 in the survey and pre-approved: ⭐ **its consumers are the page generator, the

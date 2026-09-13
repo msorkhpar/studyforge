@@ -57,7 +57,7 @@ inferred from which row happened to dispatch first.**
 ### NS-01 — Extract the service into its own repository
 **Milestone** **M3** · **Depends on** — · **Team** pair
 **Owns** `narrate-service` — the repository, the HTTP surface, the Kokoro engine
-**Context** ~40k — spec §8.2, `CS/tools/tts/synth.py`, `CSD/docker-compose.yml` synthesis service
+**Context** ~40k — spec §8.2, `CS/.pipeline/tools/tts/synth.py`, `CSD/docker-compose.yml` synthesis service
 
 **Definition.** Stand up the repository and move synthesis behind an HTTP API
 of its own, rather than a client pointed at somebody else's container. Carries
@@ -154,7 +154,7 @@ voice is refused with a clear message rather than silently defaulted.
 ### NS-05 — Framework client
 **Milestone** **M3** · **Depends on** NS-02, SF-08 · **Team** solo
 **Owns** `narrate/client.py` in `studyforge`
-**Context** ~30k — NS-02 output, SF-08 output, `CS/tools/tts/synth.py`
+**Context** ~30k — NS-02 output, SF-08 output, `CS/.pipeline/tools/tts/synth.py`
 
 **Definition.** The framework's thin, standard-library client for the service.
 Submits batch jobs, fetches artifacts, and hands them to the placement policy —
@@ -178,7 +178,7 @@ no partial state. Standard library only.
 ### NS-06 — Agent-callable adapter
 **Milestone** **M3** · **Depends on** NS-02 · **Team** solo
 **Owns** the service's agent-facing surface
-**Context** ~25k — `CS/tools/tts/server.py`, NS-02 output
+**Context** ~25k — `CS/.pipeline/tools/tts/server.py`, NS-02 output
 
 **Definition.** An optional adapter letting an agent call synthesis directly,
 carried over from CodeSignal's existing tool server. Useful for one-off

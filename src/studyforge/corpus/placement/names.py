@@ -68,6 +68,9 @@ SITE_CACHE_FILENAME = "site.json"
 #: eight modules each carrying their own `"audio"` is how the extraction source
 #: came to have half a pipeline looking in the old place.
 ASSETS_DIRNAME = "assets"
+#: ⛔ **The archive root, and its ONE spelling (`INT-06/6`).** At the corpus root beside
+#: `corpus.json`, never under `.studyforge/`: `validate`, `plan`, a build and the adapter
+#: `Layout` all read it from here, and `test_names` fails on a second literal in `src/`.
 ARCHIVE_DIRNAME = "archive"
 UNITS_DIRNAME = "units"
 AUDIO_DIRNAME = "audio"

@@ -30,7 +30,7 @@ def a_placement(corpus: str = "demo") -> Placement:
         shared=CorpusLocations(
             root_index=PurePosixPath("index.html"),
             assets=PurePosixPath(".studyforge/assets"),
-            archive=PurePosixPath(".studyforge/archive"),
+            archive=PurePosixPath("archive"),
             site_cache=PurePosixPath(".studyforge/site.json"),
         ),
     )

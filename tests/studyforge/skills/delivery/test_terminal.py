@@ -22,6 +22,13 @@ def test_a_capability_delivered_later_and_not_accounted_for_is_named():
         Terminal(milestone="M2", evidence=("no graders",), unused=()).checked(plans.index())
 
 
+def test_a_corpus_finishing_at_an_empty_milestone_still_forgoes_what_runs_after_it():
+    # ⛔ W238: the fixture runs `M6` before `M5`, so `SF-20` is forgone at `M6`
+    # — which an index comparing ids would have called already reached.
+    with pytest.raises(TerminalRefused, match="SF-20"):
+        Terminal(milestone="M6", evidence=("no graders",), unused=()).checked(plans.index())
+
+
 def test_the_refusal_counts_what_is_missing_rather_than_stopping_at_the_first():
     index = plans.index()
     with pytest.raises(TerminalRefused, match="2 capabilities are unaccounted for"):

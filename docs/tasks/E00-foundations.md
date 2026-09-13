@@ -36,7 +36,7 @@ there.
 ### FND-01 — Repository scaffolding and quality floor
 **Milestone** M0 · **Depends on** — · **Team** pair
 **Owns** the `studyforge` repository skeleton
-**Context** ~30k — `../conventions/module-structure.md`, `CS/pyproject.toml`, `CS/tests/support.py`
+**Context** ~30k — `../conventions/module-structure.md`, `CS/.pipeline/pyproject.toml`, `CS/.pipeline/tests/support.py`
 
 **Definition.** The skeleton every other task builds inside, and the automated
 floor that keeps R11 and R12 true without anybody policing them. Establishes:
@@ -151,7 +151,7 @@ than in somebody's memory.
 ### FND-04 — Shared contract fixtures
 **Milestone** M0 · **Depends on** — · **Team** pair
 **Owns** `tests/fixtures/`
-**Context** ~35k — spec §4–§6, `CS/tests/fixtures/`
+**Context** ~35k — spec §4–§6, `CS/.pipeline/tests/fixtures/`
 
 **Definition.** Two synthetic corpora that every downstream task tests
 against, so twelve epics are not each inventing their own idea of valid input —

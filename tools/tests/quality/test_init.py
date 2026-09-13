@@ -7,6 +7,7 @@ from tests.support import assert_package_contract, repository_root
 from tools.quality import run_all
 from tools.quality.approach import approach_notice
 from tools.quality.board import board_state, check_board
+from tools.quality.clauses import check_clause_counts, clause_census
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs, handoff_citations
@@ -46,6 +47,7 @@ def test_every_check_is_registered():
         check_anchor_collisions,
         check_rulings_index,
         check_rulings_reach,
+        check_clause_counts,
     }
     assert quality.CHECKS, "Ruling 48: an empty registry satisfies set() == set()"
 
@@ -65,6 +67,7 @@ def test_every_notice_is_registered():
         handoff_citations,
         rulings_notice,
         reach_notice,
+        clause_census,
         lint_notice,
     }
 

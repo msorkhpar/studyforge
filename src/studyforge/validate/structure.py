@@ -9,7 +9,7 @@ against its own digest and counts.
 `checks()` is the list, in the order a report reads best.
 
 **Depends on.** `archive.blocks`, `archive.document`, `corpus.container`,
-`validate.corpus`, `validate.report`.
+`corpus.placement`, `validate.corpus`, `validate.report`.
 
 ⛔ **Every check yields; none raises.** One run reports every problem (R6).
 
@@ -26,8 +26,9 @@ from collections.abc import Iterator
 
 from studyforge.archive.blocks import counts_of
 from studyforge.archive.document import content_sha256
+from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.describe import describe
-from studyforge.validate.corpus import ARCHIVE_DIR, Unit, Walk
+from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding, Unchecked
 
 RULE_ADDRESS_DIRECTORY = "address-directory"
@@ -51,7 +52,7 @@ def check_address_matches_directory(walk: Walk) -> Iterator[Finding]:
     by something that did not know about the other.
     """
     for held in walk.containers:
-        on_disk = held.directory.relative_to(walk.root / ARCHIVE_DIR).as_posix()
+        on_disk = held.directory.relative_to(walk.root / ARCHIVE_DIRNAME).as_posix()
         if on_disk != held.container.address.key:
             yield Finding(
                 RULE_ADDRESS_DIRECTORY,

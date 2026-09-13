@@ -6,12 +6,12 @@ from pathlib import PurePosixPath
 
 import pytest
 
-from studyforge.corpus.placement import AUDIO_DIRNAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME, AUDIO_DIRNAME
 from studyforge.generate import Footprint, footprint_for, read_corpus, unit_location
 from studyforge.generate.footprint import of
 from tests.studyforge.generate.corpora import BOTH, GOLDEN, a_corpus
 
-ARCHIVE = PurePosixPath(".studyforge/archive")
+ARCHIVE = PurePosixPath(ARCHIVE_DIRNAME)
 
 
 def plan_lines(name: str) -> list[str]:

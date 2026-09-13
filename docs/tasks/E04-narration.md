@@ -146,7 +146,7 @@ every detail is behind that pointer:**
 ### SF-16 — Speakable contract
 **Milestone** **M3** · **Depends on** SF-10 · **Team** pair
 **Owns** `narrate/speakable/` — ⭐ **the DIRECTORY, and `W183`'s decision above is why**: this delivered as a package and the line said `speakable.py` until after it had.
-**Context** ~55k — `CS/tools/study/speakable.py`, `CS/tests/test_speakable.py`
+**Context** ~55k — `CS/.pipeline/tools/study/speakable.py`, `CS/.pipeline/tests/test_speakable.py`
 
 **Definition.** The single source of truth for both halves of narration: what
 is said, and what each spoken unit is called. Decides how each block type
@@ -243,7 +243,7 @@ report. The gate refuses a leaking string.
 ### SF-17 — Narration synthesis
 **Milestone** **M3** · **Depends on** SF-16, SF-03, NS-05 · **Team** solo
 **Owns** `narrate/synth/` — ⭐ **the DIRECTORY** (`W183`): delivered as a package at the R11 ceiling, one row after `SF-16` reached the same answer for the same reason.
-**Context** ~35k — `CS/tools/tts/`, `CS/tools/run_unit_audio.py`, OPS-02 output
+**Context** ~35k — `CS/.pipeline/tools/tts/`, `CS/.pipeline/tools/run_unit_audio.py`, OPS-02 output
 
 **Definition.** Turning speakable units into audio clips and placing them
 through the placement policy — for the Java corpus, beside the page that plays
@@ -388,7 +388,7 @@ verdict and nothing else.
 ### SF-18 — Player and highlight sync
 **Milestone** **M3** · **Depends on** SF-12, SF-16 · **Team** pair
 **Owns** `render/assets/narration.js`, `render/assets/narration.css`, and the narration renderer in `render/page/` — ⛔ **the third is `W183`'s COVERAGE direction and it was taken mid-delivery on written authorisation, disjointness measured at the time.** ⚠️ **`render/page/` as a whole is E03's**, and this is a NAMED surface inside it: the module that writes the `data-audio` attribute onto a unit, disjoint from E03's navigation module and from E05's mark control, which are named by their own rows. ⭐ **The attribute's CONSTANT is E03's and stays E03's** — this row writes it, it does not name it.
-**Context** ~45k — `CS/tools/study/assets/*.js`, `CS` design note 02
+**Context** ~45k — `CS/.pipeline/tools/study/assets/*.js`, `CS` design note 02
 
 **Definition.** The reading page's narration control: play and pause,
 per-clip advance, and a highlight tracking the currently-spoken unit at

@@ -25,7 +25,7 @@ R9 (versioned contracts), R10 (reproducible), R11 (packages).
 ### SF-01 — Logical address model
 **Milestone** M1 · **Depends on** — · **Team** solo
 **Owns** `address/`
-**Context** ~30k — spec §4, `CS/tools/study/layout.py` (names, `CourseRef`, `parse_key` only), `CS/tools/study/naming.py`
+**Context** ~30k — spec §4, `CS/.pipeline/tools/study/layout.py` (names, `CourseRef`, `parse_key` only), `CS/.pipeline/tools/study/naming.py`
 
 **Definition.** The identity primitive: an immutable N-segment address plus a
 unit ordinal. Widens CodeSignal's two-segment `CourseRef` to exactly
@@ -451,7 +451,7 @@ assumed. `origin_directory()` is unchanged for both shapes.
 ### SF-03 — Placement policy
 **Milestone** M1 · **Depends on** SF-01, SF-02 · **Team** pair
 **Owns** `corpus/placement/`
-**Context** ~40k — spec §5, `CS/tools/study/layout.py` (directories, media filenames)
+**Context** ~40k — spec §5, `CS/.pipeline/tools/study/layout.py` (directories, media filenames)
 
 **Definition.** The pluggable map from a logical address to physical locations,
 replacing CodeSignal's single prescribed tree. Two profiles ship:

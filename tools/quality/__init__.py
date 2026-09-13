@@ -53,6 +53,7 @@ from pathlib import Path
 
 from tools.quality.approach import approach_notice
 from tools.quality.board import board_state, check_board
+from tools.quality.clauses import check_clause_counts, clause_census
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.config import (
     LINE_LENGTH,
@@ -147,6 +148,10 @@ from tools.quality.style import check_style
 #: typed without its backticks (`W106`, Rulings 65 and 193). ⛔ Its exemption
 #: mechanism is a SEVENTH: a weak pattern sharing a fence with a ruled one is a
 #: CONTROL — the pair measures the mentions delta — and nothing else excuses one.
+#:
+#: ⚠️ `check_clause_counts` reads `docs/conventions/` for a heading that STATES a
+#: clause count (`W141`). ⛔ Its exemption mechanism is an EIGHTH: the heading's own
+#: silence — one that states no count is never read, so nothing is required of it.
 CHECKS = (
     check_sizes,
     check_board,
@@ -162,6 +167,7 @@ CHECKS = (
     check_anchor_collisions,
     check_rulings_index,
     check_rulings_reach,
+    check_clause_counts,
 )
 
 #: ⛔ **The second channel, and it exists because some of the floor's answers
@@ -237,6 +243,9 @@ CHECKS = (
 #: ⭐ **`location_notice` is the ninth** (`W150`): a `<path>:<line>` citation read for
 #: its PATH and its INTEGER, the two harms counted apart. ⚠️ It prints under the
 #: pointer census because both answer *does this address resolve* for a live document.
+#:
+#: ⭐ **`clause_census` is the tenth** (`W141`): every stated clause count printed
+#: beside the children it parents, so the check's green exit carries its population.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -247,6 +256,7 @@ NOTICES = (
     handoff_citations,
     rulings_notice,
     reach_notice,
+    clause_census,
     lint_notice,
 )
 

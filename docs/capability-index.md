@@ -6,7 +6,9 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**100 capabilities · 14 epic documents · 9 milestones · 1 cancelled row carried and not counted.**
+**100 capabilities · 14 epic documents · 10 milestones, 1 with no capability · 1 cancelled row carried and not counted.**
+
+⛔ **Milestones run in the order `README.md` declares, not the order their ids sort to:** `M0` → `M1` → `M2` → `M3` → `M4` → `M6` → `M8` → `M5` → `M7` → `M9`.
 
 ## M0 — 6 capabilities
 
@@ -96,6 +98,16 @@
 | `SK-03` | Build and serve | Skills and authoring kit | `SF-28`, `SF-37`, `SF-38`, `SF-39`, `SF-40` |
 | `SK-06` | Personal archive | Skills and authoring kit | `SK-03`, `SF-21` |
 
+## M6 — 0 capabilities
+
+⭐ **No epic document declares a capability at this milestone.** It is a gate in the declared order all the same, and a plan that waits on it waits here.
+
+## M8 — 1 capability
+
+| capability | what it is | area | waits on |
+|---|---|---|---|
+| `QA-04` | The second source | Validation and QA | `SK-07` |
+
 ## M5 — 5 capabilities
 
 | capability | what it is | area | waits on |
@@ -119,12 +131,6 @@
 | `TC-04` | Workbench lockdown extension | Toolchain image (shared repository) | `TC-01` |
 | `TC-05` | Compose and mount contract | Toolchain image (shared repository) | `TC-02`, `TC-03` |
 | `TC-06` | Versioning and consumer pinning | Toolchain image (shared repository) | `TC-02` |
-
-## M8 — 1 capability
-
-| capability | what it is | area | waits on |
-|---|---|---|---|
-| `QA-04` | The second source | Validation and QA | `SK-07` |
 
 ## M9 — 22 capabilities
 

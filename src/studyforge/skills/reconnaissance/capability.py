@@ -123,8 +123,8 @@ def observe(capability: Capability) -> Iterator[Observation | Uncertainty]:
     yield Observation("other source files", str(len(capability.source_files)))
     if not capability.runnable and not capability.graded:
         # ⭐ Stated as a finished answer. A blank section reads as "not looked
-        # at", and the difference decides whether a corpus is planned to M4 or
-        # to M8.
+        # at", and the difference decides whether a corpus finishes at the
+        # reading floor or enters the execution track.
         yield Observation("verdict", "no runnable code, no graders — complete at the reading floor")
         if capability.source_files:
             yield Uncertainty(

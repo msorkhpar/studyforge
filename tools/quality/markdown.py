@@ -6,7 +6,7 @@ written on them, and the anchors its headings answer to. ⛔ **It reads TEXT and
 answers questions about TEXT**; it opens no file and knows no repository root.
 
 **How you use it.** `prose_lines`, `strip_code_spans`, `pointers`, `slug`,
-`heading_bases` and `heading_slugs`. ⭐ `pointers.py` is the CHECK built on
+`headings`, `heading_bases` and `heading_slugs`. ⭐ `pointers.py` is the CHECK built on
 them, and four other modules — `citations`, `board.register`, `rulings.derive`,
 `collisions` — take the parser and nothing else.
 
@@ -253,6 +253,22 @@ def slug(heading: str) -> str:
     return _HYPHEN_RUN.sub("-", text).strip("-")
 
 
+def headings(text: str) -> list[tuple[int, int, str]]:
+    """`(line number, level, text)` for every ATX heading outside a ``` fence.
+
+    ⭐ **The one definition of what a heading is** — `heading_bases` is built on
+    it, and so is `W141`'s clause census, which needs the LEVEL a slug throws
+    away. ⛔ Fence-aware for `heading_slugs`'s reason: a `#` comment in a shell
+    transcript is not a heading.
+    """
+    found: list[tuple[int, int, str]] = []
+    for number, line in prose_lines(text):
+        match = _HEADING.match(line)
+        if match is not None:
+            found.append((number, len(match.group("hashes")), match.group("text")))
+    return found
+
+
 def heading_bases(text: str) -> list[str]:
     """Every heading's UNSUFFIXED slug, in document order, duplicates KEPT.
 
@@ -267,11 +283,8 @@ def heading_bases(text: str) -> list[str]:
     difference between them, and it is the difference `W140` needed removed.
     """
     bases: list[str] = []
-    for _number, line in prose_lines(text):
-        match = _HEADING.match(line)
-        if match is None:
-            continue
-        base = slug(match.group("text"))
+    for _number, _level, heading in headings(text):
+        base = slug(heading)
         if base:
             bases.append(base)
     return bases

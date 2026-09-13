@@ -17,7 +17,7 @@ from pathlib import Path
 import pytest
 
 from studyforge.skills import delivery
-from studyforge.skills.delivery import JIRA, Carrier, Index, concentration, export, read_epic
+from studyforge.skills.delivery import JIRA, Carrier, Index, concentration, export
 from tests.studyforge.skills.delivery import plans
 from tests.support import repository_root
 from tools.quality.source_names import KNOWN_SOURCES, named_sources
@@ -35,7 +35,17 @@ def index_document() -> str:
 
 
 def live_index() -> Index:
-    return Index.of(read_epic(name, text) for name, text in plans.live_epics())
+    return plans.live_index()
+
+
+def first_command() -> str:
+    """The procedure's step-1 command, read out of `SKILL.md` and never retyped."""
+    step = re.search(r"^### 1\..*?^```\n(.*?)^```", skill_document(), re.S | re.M)
+    assert step, "step 1 carries no command"
+    joined = step.group(1).replace("\\\n", "").strip()
+    opening = 'python3 -c "'
+    assert joined.startswith(opening) and joined.endswith('"'), joined
+    return joined[len(opening) : -1]
 
 
 # --- R19: the index is generated, and regenerating it changes no byte -------
@@ -58,8 +68,9 @@ def test_every_row_of_the_index_names_a_task_that_is_in_an_epic_document():
 
 
 def test_the_index_is_the_only_thing_a_planner_has_to_read_about_the_framework():
-    # ⭐ SK08-B, asserted as reachability: every milestone the epics declare has
-    # a section, so a planner asking "when does X land" never needs an epic.
+    # ⭐ SK08-B, asserted as reachability: every milestone the order declares
+    # has a section — an empty one too (W238) — so a planner asking "when does
+    # X land" never needs an epic.
     document = index_document()
     for milestone in live_index().milestones:
         assert f"## {milestone} — " in document
@@ -146,15 +157,11 @@ def test_the_procedure_offers_no_console_script_that_does_not_exist():
 
 def test_the_procedures_first_command_runs_and_prints_the_index():
     # ⛔ Ruling 123's live reading: the command a reader types first, typed.
-    command = (
-        "from pathlib import Path; "
-        "from studyforge.skills.delivery import capability_index; "
-        "print(capability_index((p.name, p.read_text('utf-8')) "
-        "for p in sorted(Path('docs/tasks').glob('E*.md'))))"
-    )
+    # ⭐ W238: read out of `SKILL.md` rather than retyped here, so the procedure
+    # and this test cannot drift apart with the test still green.
     root = repository_root()
     done = subprocess.run(  # noqa: S603
-        [sys.executable, "-c", command],
+        [sys.executable, "-c", first_command()],
         cwd=root,
         capture_output=True,
         text=True,
