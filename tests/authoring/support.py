@@ -282,6 +282,8 @@ PLACEHOLDER = re.compile(r"[<>]")
 #: The machine-readable line a page uses to declare a commanded module it does
 #: NOT own. ⛔ Ruling 156: the exemption is the DOCUMENT's, never a list in this
 #: file — `ingest` earns its exemption from `skills/onboarding/SKILL.md`.
+#: ⭐ The spelling is declared in `docs/conventions/commanded-pages.md`, and this
+#: pattern is its AUTHORITY (Ruling 103): if the two disagree, the document is wrong.
 DECLARES_CONSUMER_SIDE = re.compile(r"^\*\*Consumer-side modules:\*\*(.*)$", re.MULTILINE)
 
 
