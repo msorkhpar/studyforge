@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 11 merged at `6e6dec9`: `ISO-05`, `ISO-07`–`ISO-11` taken; ⛔ **`ISO-06`'s last clause on `W243/1`**; ⚠️ **`INT-10/4` is [`W266`](rows/W266.md)** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
+| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 13 merged at `f3b5239`: `ISO-05`, `ISO-07`–`ISO-11` taken; ⛔ **`ISO-12` waits on [`W226`](rows/W226.md), `ISO-14` on [`W278`](rows/W278.md), `ISO-06`'s last clause on `W243/1`** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -60,11 +60,12 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W261` | Developer 2 | `fix/W261-completeness-whole-root` @ none | 2 @ `2399d90` | in-review |
-| `W265` | Developer 1 | `fix/W265-scaffold-writers-agree` @ none | 2 @ `351d61e` | in-review |
-| `W262` | Developer 3 | `fix/W262-epic-task-subject-defined` @ `wt/dev3` | 2 @ `860ad92` | in-progress |
-| `W264` | Developer 1 | `fix/W264-ordered-list-first-number` @ `wt/dev1` | 0 @ `8f59ed9` | in-progress |
-| `W251` | Developer 2 | `fix/W251-detached-checkout-named` @ `wt/dev2` | 1 @ `b7efec0` | in-progress |
+| `W251` | Developer 2 | `fix/W251-detached-checkout-named` @ none | 2 @ `e468f0d` | in-review |
+| `W268` | Developer 1 | `fix/W268-no-empty-media-dirs` @ none | 1 @ `c496247` | in-review |
+| `W269` | Developer 3 | `fix/W269-survey-says-and-skips-covered` @ none | 2 @ `942ac5a` | in-review |
+| `W272` | Developer 3 | `fix/W272-survey-agrees-nested-dirs` @ `wt/dev3` | 0 @ `8a2067a` | in-progress |
+| `W266` | Developer 2 | `fix/W266-included-file-no-unit-reads` @ `wt/dev2` | 0 @ `9363462` | in-progress |
+| `W270` | Developer 1 | `fix/W270-pin-commit-exists` @ `wt/dev1` | 0 @ `9363462` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -80,8 +81,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W247`, `W176` LEFT at `8f59ed9`, `a942623`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W262`, `W264`, `W251` NAMED, `W261`, `W265` CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-82-w247-and-w176-closed).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W168`, `W265`, `W261` LEFT at `696b28d`, `543b362`, `9363462`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W268`, `W269`, `W266`, `W270`, `W272` NAMED, `W251` CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -98,7 +99,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W266` | ⛔ **`M6`'s C2 claim, Ruling 75 invoked; after `W261`, one surface** | [81](BOARD-ARCHIVE.md#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9) |
+| 1 | `W226`, `W278` | ⛔ **`M6`'s `ISO-12` and `ISO-14` gates, Ruling 75 invoked in each row; `W226` before `W222` and `W223`** | [83](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
@@ -115,7 +116,6 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 29 | `W214` | ⛔ **§9 INVERTED — a build reads media no adapter is told to write, and the second source is what §12 rests on** | 63 |
 | 31 | `W215`, `W216` | ⭐ **round 63's remaining mints, each jumping nobody** | 63 |
 | 32 | `W219`–`W223` | ⭐ **round 65's mints, each jumping nobody** | 65 |
-| 33 | `W226` | ⭐ **its held half is disclosed on every run, so it jumps nobody** | 66 |
 | 34 | `W227`–`W229` | ⭐ **round 67's mints, each jumping nobody** | 67 |
 | 35 | `W231` | ⭐ **round 69's mint, jumping nobody** — ⛔ **one owner with `W117` in flight, which holds `docs/conventions/`** | 69 |
 | 36 | `W232` | ⭐ **round 70's mints, each jumping nobody** | [70](BOARD-ARCHIVE.md#po-round-70-w106-w107-and-sk-03-closed-w230-sk-06-and-w103-named-two-mints) |
@@ -125,8 +125,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one of the `docs/conventions/` set** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 47 | `W263` | ⭐ **round 80's mint, jumping nobody** | [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked) |
-| 48 | `W267`–`W274` | ⭐ **round 81's mints, each jumping nobody** | [81](BOARD-ARCHIVE.md#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9) |
+| 48 | `W267`, `W271`, `W273`, `W274` | ⭐ **round 81's mints, each jumping nobody** | [81](BOARD-ARCHIVE.md#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9) |
 | 49 | `W275` | ⭐ **round 82's mint, jumping nobody** | [82](BOARD-ARCHIVE.md#po-round-82-w247-and-w176-closed) |
+| 50 | `W276`, `W277`, `W279` | ⭐ **round 83's mints, each jumping nobody** | [83](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -136,7 +137,7 @@ classes it is.** ⭐ **[The reading, with its ref](BOARD-ARCHIVE.md#po-round-51-
 ⚠️ **`W160` writes `docs/tasks/rows/`, and a REGISTER round writes it too: never beside one** (check 4's sub-step). ⛔ **`W157`, `W159`, `W160`,
 `W168`, `W169`, `W179`, `W180`, `W229`, [`W231`](rows/W231.md) and [`W260`](rows/W260.md) name `docs/conventions/` — ⭐ ONE
 owner or two waves.**
-⛔ **[`W266`](rows/W266.md)+[`W261`](rows/W261.md) write `validate/source/`; `W265`+`W271` `skills/adapter/`; `W269`+`W272` `skills/reconnaissance/`; `W183`+`W184` write `E04` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
+⛔ **`W269`+`W272` write `skills/reconnaissance/`; `W183`+`W184` write `E04` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
 name — ⛔ so a row declaring `corroborate.py` for that arm names the wrong file.** ⛔ **`W173`+`W159` write `board/bounds.py` (whose size message reads `register ids`, `W144/4`), and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
@@ -318,7 +319,7 @@ else.**
 | W165 | A cost figure over a GATED population carries its spread or only its sample, and one end of a 32x range decided a mode | Developer 1 | ✅ done — `286f15d` | [`rows/W165.md`](rows/W165.md) |
 | W166 | The standing SPLIT condition `tools/quality/board/verdict.py` is owed, third member inside one package | PO | ✅ done — PO round 55 | [`rows/W166.md`](rows/W166.md) |
 | W167 | The handoff check iterates the files that EXIST, so *the handoff is missing* is unreachable by construction | framework agent | ✅ done — `4bfd720` | [`rows/W167.md`](rows/W167.md) |
-| W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | Developer 3 | `todo` — `CTO-67/11`; merged at `696b28d`, closes on its reading (`PO-82/2`) | [`rows/W168.md`](rows/W168.md) |
+| W168 | A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run | Developer 3 | ✅ done — `696b28d` | [`rows/W168.md`](rows/W168.md) |
 | W169 | Ruling 96's line has no named checkout, and its instrument answers `none` in every office tree and `stale` in one | framework agent | `todo` — `CTO-67/3` | [`rows/W169.md`](rows/W169.md) |
 | W170 | A live `trial/*` branch reaches the ONE pre-merge gate line, on the ground Ruling 265 already exempted a namespace for | framework agent | ✅ done — `4d4c7c7` | [`rows/W170.md`](rows/W170.md) |
 | W171 | An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal | Developer 3 | ✅ done — `9ce9e24` | [`rows/W171.md`](rows/W171.md) |
@@ -401,7 +402,7 @@ else.**
 | W248 | A source's own `archive/` at its root is skipped silently, because the archive root takes a common name in the owner's namespace | Developer 1 | ✅ done — `a2ae2c4` | [`rows/W248.md`](rows/W248.md) |
 | W249 | `SK-01` drafts its `source` from the surveyed directory's name and no `not_material` globs, so the first corpus typed both by hand | Developer 2 | ✅ done — `88a1f51` | [`rows/W249.md`](rows/W249.md) |
 | W250 | `SK-01` reads a heading that links a file as a contents entry, so `F21`'s fourth container is never proposed and `ISO-07` stops | Developer 2 | ✅ done — `5d9436d` | [`rows/W250.md`](rows/W250.md) |
-| W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | Developer 2 | in-progress — `W153/3`, on `fix/W251-detached-checkout-named` | [`rows/W251.md`](rows/W251.md) |
+| W251 | `corroborate` accounts for no DETACHED checkout, and the unnamed arm's test module stands at its R11 bound | Developer 2 | in-review — `W153/3`, on `fix/W251-detached-checkout-named` | [`rows/W251.md`](rows/W251.md) |
 | W252 | `SK-01` reads no ordinal from a heading-form contents entry, so a numbered heading that links a file reads as unordered | Developer 1 | ✅ done — `c8da50e` | [`rows/W252.md`](rows/W252.md) |
 | W253 | `E12`'s `TC-01` still `Owns` `TC/` as its root after `TC-00` creates it, so two rows claim one creation | framework agent | `todo` — `W156/3` | [`rows/W253.md`](rows/W253.md) |
 | W254 | Under `sibling`, mirrored units in two containers place one page path, and `plan` and `build` exit `0` while the build replaces five pages | Developer 2 | ✅ done — `d05d856` | [`rows/W254.md`](rows/W254.md) |
@@ -411,21 +412,25 @@ else.**
 | W258 | `archive.markdown` keeps a nested list line as literal text inside its parent item | Developer 1 | ✅ done — `bce08dd` | [`rows/W258.md`](rows/W258.md) |
 | W259 | `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently | Developer 2 | ✅ done — `900a52f` | [`rows/W259.md`](rows/W259.md) |
 | W260 | No wave-close procedure tells a close to run the capability-delivery reading `W154` shipped | framework agent | `todo` — `W154/3` | [`rows/W260.md`](rows/W260.md) |
-| W261 | `completeness` reads presence only where the origins point, so origins written against the wrong root read `Unchecked` beside a present source | Developer 2 | in-review — `W255/2` + `/3`, on `fix/W261-completeness-whole-root` | [`rows/W261.md`](rows/W261.md) |
-| W262 | Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued | Developer 3 | in-progress — `W161/4` + `/5`, on `fix/W262-epic-task-subject-defined` | [`rows/W262.md`](rows/W262.md) |
+| W261 | `completeness` reads presence only where the origins point, so origins written against the wrong root read `Unchecked` beside a present source | Developer 2 | ✅ done — `9363462` | [`rows/W261.md`](rows/W261.md) |
+| W262 | Nothing checks that an In-flight epic-task subject exists in its epic, so a mistyped task id reads as argued | Developer 3 | `todo` — `W161/4` + `/5`; merged at `56e2279`, closes on its reading (`PO-83/1`) | [`rows/W262.md`](rows/W262.md) |
 | W263 | `validate` and `check_blocks` never read a list item's shape, so a malformed item passes both | framework agent | `todo` — `W258/1` | [`rows/W263.md`](rows/W263.md) |
-| W264 | A `list` block records no first number, so an ordered list that starts past one loses its numbering | Developer 1 | in-progress — `W258/3`, on `fix/W264-ordered-list-first-number` | [`rows/W264.md`](rows/W264.md) |
-| W265 | `Scaffold.write(regenerate=True)` refuses over an existing hand-written file that onboarding's regenerate keeps, and `SK-02`'s `SKILL.md` calls both safe | Developer 1 | in-review — `W257/2`, on `fix/W265-scaffold-writers-agree` | [`rows/W265.md`](rows/W265.md) |
-| W266 | `validate` passes an included file no unit's origin names, so a corpus carrying material twice reads valid | framework agent | `todo` — `INT-10/4` + `INT-11/4` | [`rows/W266.md`](rows/W266.md) |
+| W264 | A `list` block records no first number, so an ordered list that starts past one loses its numbering | Developer 1 | `todo` — `W258/3`; merged at `63f034a`, closes on its reading (`PO-83/1`) | [`rows/W264.md`](rows/W264.md) |
+| W265 | `Scaffold.write(regenerate=True)` refuses over an existing hand-written file that onboarding's regenerate keeps, and `SK-02`'s `SKILL.md` calls both safe | Developer 1 | ✅ done — `543b362` | [`rows/W265.md`](rows/W265.md) |
+| W266 | `validate` passes an included file no unit's origin names, so a corpus carrying material twice reads valid | Developer 2 | in-progress — `INT-10/4` + `INT-11/4`, on `fix/W266-included-file-no-unit-reads` | [`rows/W266.md`](rows/W266.md) |
 | W267 | `plan` says `create` for output already on disk and lists a `site.json` that `build` never writes | framework agent | `todo` — `INT-10/5` + `/6` | [`rows/W267.md`](rows/W267.md) |
-| W268 | `build` writes empty media directories for a unit with no media, which git cannot track | framework agent | `todo` — `INT-10/7` | [`rows/W268.md`](rows/W268.md) |
-| W269 | The `not_material` proposal stands down silently without a `.git` and re-proposes files a declared glob covers | framework agent | `todo` — `INT-10/1` + `/2` | [`rows/W269.md`](rows/W269.md) |
-| W270 | `pin.check_commit` accepts any 40-hex string, so a commit the framework checkout lacks is pinned | framework agent | `todo` — `INT-11/3` | [`rows/W270.md`](rows/W270.md) |
+| W268 | `build` writes empty media directories for a unit with no media, which git cannot track | Developer 1 | in-review — `INT-10/7`, on `fix/W268-no-empty-media-dirs` | [`rows/W268.md`](rows/W268.md) |
+| W269 | The `not_material` proposal stands down silently without a `.git` and re-proposes files a declared glob covers | Developer 3 | in-review — `INT-10/1` + `/2`, on `fix/W269-survey-says-and-skips-covered` | [`rows/W269.md`](rows/W269.md) |
+| W270 | `pin.check_commit` accepts any 40-hex string, so a commit the framework checkout lacks is pinned | Developer 1 | in-progress — `INT-11/3`, on `fix/W270-pin-commit-exists` | [`rows/W270.md`](rows/W270.md) |
 | W271 | The generated `test_emit` leaves out `.git` at any depth, so it reads clean where `validate` refuses `nested-repository` | framework agent | `todo` — `W259/1` | [`rows/W271.md`](rows/W271.md) |
-| W272 | Reconnaissance's inventory skips `.git`, `.studyforge` and dot-directories at any depth, unlike `validate` | framework agent | `todo` — `W259/4` | [`rows/W272.md`](rows/W272.md) |
+| W272 | Reconnaissance's inventory skips `.git`, `.studyforge` and dot-directories at any depth, unlike `validate` | Developer 3 | in-progress — `W259/4`, on `fix/W272-survey-agrees-nested-dirs` | [`rows/W272.md`](rows/W272.md) |
 | W273 | `approach.py`'s growth window reads CTO wave closes only, and none has merged since round 72, so the window cannot move | framework agent | `todo` — `W245/1` | [`rows/W273.md`](rows/W273.md) |
 | W274 | `graph.named` matches `Merge <branch>:`, and every recent merge subject is `Merge <branch> (…):`, so it names no merge | framework agent | `todo` — `W245/4` | [`rows/W274.md`](rows/W274.md) |
 | W275 | `creators.py`'s `_MILESTONE` reads `M[0-9]` with no boundary, so a malformed milestone line such as `M1x` reads as a milestone | framework agent | `todo` — `W247/1` | [`rows/W275.md`](rows/W275.md) |
+| W276 | `narration.js`'s `play()` rejection overwrites the `error` handler, so a clip missing at run time reads blocked and play stays enabled | framework agent | `todo` — `INT-12/2` | [`rows/W276.md`](rows/W276.md) |
+| W277 | `narrate-service`'s `consuming.json` declares neither the engine's start-up model download nor the phonemizer's spaCy fetch | framework agent | `todo` — `INT-12/5` | [`rows/W277.md`](rows/W277.md) |
+| W278 | R3's never-permitted content is decided by the manifest alone, so an edit to a `not_material` root `README.md` passes | framework agent | `todo` — `INT-13/1` | [`rows/W278.md`](rows/W278.md) |
+| W279 | The board convention's subject vocabulary never says an epic must DEFINE an In-flight epic task, which `W262` checks | framework agent | `todo` — `W262/3` | [`rows/W279.md`](rows/W279.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -506,7 +511,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⭐ **integration round 11 merged at ISO `6e6dec9`, now the pin: `ISO-05`, `ISO-07`–`ISO-11` taken; `ISO-06` partial (`W243/1`); `ISO-12` onward wait on framework narration** ([81](BOARD-ARCHIVE.md#po-round-81-w259-w171-and-w165-closed-int-104-minted-first-and-the-iso-pin-advanced-to-6e6dec9)) |
+| **Status** | `in-progress` — ⭐ **integration round 13 merged at ISO `f3b5239`, now the pin: `ISO-05`, `ISO-07`–`ISO-11` taken; `ISO-06` partial (`W243/1`); `ISO-12` waits on `W226`, `ISO-14` on `W278`** ([83](BOARD-ARCHIVE.md#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 

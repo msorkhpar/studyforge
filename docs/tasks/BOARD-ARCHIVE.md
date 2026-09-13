@@ -23625,3 +23625,155 @@ python3 -m tools.quality.board.corroborate        CORR_EXIT=1
 #### ⭐ CLOSED — PO ROUND 82
 
 ⭐ **Merged at `a942623`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `a942623` is RECEIVED.** ⭐ **`corroborate`'s printed counts name their unit, `(n rows across m ids): …`, and the guarded prefixes are byte-stable.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+## PO round 83 — `W168`, `W265` and `W261` closed, `W226` placed first, and the ISO pin advanced to `f3b5239`
+
+⭐ **Cut at `8a2067a`, release after round 82's merge.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W168`](#w168-a-trial-merge-run-through-the-reviewers-own-wrapper-measures-the-reviewers-own-tree-and-reads-like-a-correct-run) | `696b28d` | `review-rubric.md`'s `W168` link; no live carrier writes that file (`PO-81/1`) |
+| [`W265`](#w265-scaffoldwriteregeneratetrue-refuses-over-an-existing-hand-written-file-that-onboardings-regenerate-keeps-and-sk-02s-skillmd-calls-both-safe) | `543b362` | [`W271`](rows/W271.md) re-pointed |
+| [`W261`](#w261-completeness-reads-presence-only-where-the-origins-point-so-origins-written-against-the-wrong-root-read-unchecked-beside-a-present-source) | `9363462` | [`W266`](rows/W266.md) re-pointed; the board's `validate/source/` pair |
+
+⭐ **All three TERMINAL (Ruling 199). Ruling 97's gate is RECEIVED: the coordinator's guarded release-tip readings at `696b28d`, `543b362` and `9363462`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`, `last_pointer` exit `0` at each.** ⭐ **Ruling 314: the three moved bodies carried 6 relative pointers, and 6 were re-addressed.** ⚠️ **`W168/1`–`/3` and `W265/1`–`/3` were disposed in [round 82's record](#po-round-82-w247-and-w176-closed); they are not re-disposed.**
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W268`](rows/W268.md) | Developer 1 | `fix/W268-no-empty-media-dirs` @ none, handed back | `e556179` | `W268`, NAMED |
+| [`W269`](rows/W269.md) | Developer 3 | `fix/W269-survey-says-and-skips-covered` @ none, handed back | `696b28d` | `W269`, NAMED |
+| [`W272`](rows/W272.md) | Developer 3 | `fix/W272-survey-agrees-nested-dirs` @ `wt/dev3` | `8a2067a` | `W272`, NAMED |
+| [`W266`](rows/W266.md) | Developer 2 | `fix/W266-included-file-no-unit-reads` @ `wt/dev2` | `9363462` | `W266`, NAMED |
+| [`W270`](rows/W270.md) | Developer 1 | `fix/W270-pin-commit-exists` @ `wt/dev1` | `9363462` | `W270`, NAMED |
+| [`W251`](rows/W251.md) | Developer 2 | `fix/W251-detached-checkout-named` @ none, handed back | `a942623` | `W251`, CONFIRMED |
+
+⚠️ **`PO-83/1` — `W264` merged at `63f034a` and `W262` at `56e2279` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled: neither is closed nor named in flight; each register cell carries its merge.** ⛔ **Their findings are disposed below; their closes are the next round's.** Reversible.
+
+### ⭐ 3 — PLACEMENT, MINTS AND FINDINGS
+
+⭐ **`W226` IS RE-PLACED AT ORDER 1, Ruling 75 invoked and declared in its row.** `INT-12/1` is the first reading on real material that the held half blocks a corpus task: `ISO-12` (`M6`) is NOT taken. Re-read by code at `8a2067a`: `synthesise` overwrites an entry's filename and removes nothing, and `--prune` reaches only speech ids the walk no longer produces. ⭐ **The `narrate/synth/` set runs `W226`, then `W222`, then `W223`, one owner.** Reversible.
+
+⭐ **`INT-13/1` MINTED [`W278`](rows/W278.md) AT ORDER 1, and the coordinator's R3 ruling is CONFIRMED:** a repository file its own readers read as content is R3's never-permitted "content" whatever the manifest calls it for the site; how it is decided without naming a corpus is the row's design question; `ISO-14` is not taken by striking clause 5. ⭐ **Re-measured in memory over `tests/fixtures/depth2/corpus.json`:** at `corpus_api` 2 and 3 the plant parses and `_forbidden` returns empty; the control is refused by name. ⚠️ A first run at the fixture's `corpus_api` 1 refused both on api grounds and is void. Reversible.
+
+| finding | became |
+|---|---|
+| `INT-12/1` | ⭐ **`W226` re-placed at order 1**, above |
+| `INT-12/2` | ⭐ **minted [`W276`](rows/W276.md)**, order 50. Re-read at `8a2067a`: `start()`'s rejection handler writes `BLOCKED` after the `error` handler writes `MISSING` |
+| `INT-12/3` | ⛔ **ruled: ISO's task text is wrong, and the spec stands.** §8.2 puts voice selection on the consumer's side, not in the manifest, and `--voice` names it and the record keeps it. No row. Reversible |
+| `INT-12/4` | accepted: a fence speaks its caption and never its body (Ruling 93) |
+| `INT-12/5` | ⭐ **minted [`W277`](rows/W277.md)**, order 50. Re-measured at `narrate-service` `ce975b6`: neither `consuming.json` nor the `Dockerfile` names the download or the spaCy model |
+| `INT-12/6` | accepted, recorded: ISO's own verifier |
+| `INT-13/1` | ⭐ **minted [`W278`](rows/W278.md)**, order 1, above |
+| `INT-13/2` | ⭐ **a rider on [`W227`](rows/W227.md)**, its subject |
+| `INT-13/3` | ⭐ **a rider on [`W227`](rows/W227.md)**: re-read, `snapshot` walks every file under the root; harmless while a created path passes |
+| `W261/1`, `/2` | disposed at the close: surfaces taken outside, forced by pinned tests, disclosed |
+| `W261/3` | accepted: the plan's 59 `unclassified` are identical before and after |
+| `W261/4` | ⭐ **dated: the pin is advanced to `f3b5239`, and host `tools.workspace verify` exits `0`** |
+| `W264/1` | accepted: ISO's lists past one are all in `not_material` files |
+| `W264/2`, `/4` | ⭐ **a rider on [`W263`](rows/W263.md)** |
+| `W264/3` | accepted, relayed to `M8`: a defect in the Java material |
+| `W262/1`, `/2` | accepted |
+| `W262/3` | ⭐ **minted [`W279`](rows/W279.md)**, order 50, after `W262` |
+| `W262/4` | accepted: the seam is named for the next row that grows the module |
+| `W268/1` | ⭐ **a rider on [`W267`](rows/W267.md)**, which owns the agreement |
+| `W268/2` | accepted, cost named: the build names the missing reference `missing` |
+| `W268/3` | accepted, cost named: no build removes a directory (R3) |
+| `W251/1` | disposed with its diff |
+| `W251/2` | accepted, cost named: a temporary worktree is named only while it stands |
+| `W269/1`, `/2` | accepted, recorded: the frozen row's witness is corrected by its taker's re-measure (all 9 globs were covered; the silence reproduces only inside another repository's ignored directory, which clause 1 now names), not edited |
+| `W269/3` | ⭐ **ruled: confirmed.** `proposal.py` raises the question clause 1 names, and `SKILL.md` describes it; disclosed. Reversible |
+| `W269/4` | ⚠️ **held to `W269`'s close:** the re-survey behaviour it rests on is unmerged, so there is nothing at `8a2067a` to re-measure (Ruling 214) |
+| `W269/5` | accepted, cost named: an installed skill copy takes the new paragraph at its corpus's next onboarding |
+| `W269/6` | accepted: `W249`'s handoff is a frozen record and is not edited |
+
+### ⭐ 4 — THE ISO TRACK
+
+⭐ **ISO rounds 12 and 13 merged at `a4274c5` and `f3b5239`; the pin advanced from `6e6dec9` to `f3b5239`, the ISO line alone (`W244`).** `ISO-12` waits on `W226`; `ISO-14` on `W278`; `ISO-13` and `ISO-15` on `ISO-12`; `ISO-06` on `W243/1`.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause.
+
+### W168 — A trial merge run through the reviewer's OWN wrapper measures the reviewer's own tree and reads like a correct run
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W168.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A TRIAL MERGE MEASURED THROUGH THE REVIEWER'S OWN WRAPPER MEASURES THE REVIEWER'S OWN TREE, AND THE RUN LOOKS EXACTLY LIKE A CORRECT ONE.** ⭐ **`CTO-67/11`, disclosed by the office it happened to, and it would have produced a FALSE FINDING against a taker.**
+
+### ⛔ THE MECHANISM, AND IT IS THE SCRIPT'S OWN DESIGN
+
+⚠️ **`docker/dev/check` derives `ROOT` from where the SCRIPT sits, not from `cwd`.** ⛔ **So invoking `…/studyforge-wt/cto/docker/dev/check` from inside a trial worktree mounts the CTO's checkout, and every figure printed is the reviewer's tree wearing the trial's name.**
+
+```text
+RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
+  wrong invocation   5624 passed, 18 skipped   ⛔ identical to base — would have been
+                     reported as "the +11 does not reproduce"
+                     floor: 332 rulings from 54 records   ⛔ the reviewer's OWN mints,
+                     in a tree that does not have them
+  right invocation   5635 passed, 18 skipped   ⭐ +11, exactly as predicted
+                     floor: 329 rulings from 53 records
+```
+
+⭐ **WHAT SAVED IT WAS A SECOND INSTRUMENT OVER THE SAME TREE — the floor's rulings figure disagreeing with the tree the reviewer thought they were in.** ⛔ **The suite count alone was silent, and a reviewer who ran only the suite files the false finding.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A TRIAL MERGE IS MEASURED BY THE TRIAL TREE'S OWN WRAPPER** — ⭐ **a clause in the rubric, with the invocation written out, because the failure is an absolute path that reads plausible.**
+2. ⭐ **AND THE RUN DECLARES ONE FACT OF THE TRIAL TREE THAT THE REVIEWER'S OWN TREE CANNOT HAVE** — ⛔ **a positive discriminator, so *I measured the right tree* is asserted rather than assumed.** ⚠️ **This is the half that generalises: a wrapper can be fixed and a reviewer can still mount the wrong thing another way.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHANGE TO HOW `docker/dev/check` RESOLVES `ROOT`.** ⭐ **Deriving from the script is correct — it is what lets any cwd inside the tree work** — ⚠️ **and `W152` has just landed provenance stability in that file, so the last thing this row should do is re-open it.**
+
+### ⭐ SURFACE
+
+⛔ **`docs/conventions/review-rubric.md`'s trial-merge clauses.** ⚠️ **It names `docs/conventions/`, a SHARED constraint whose members are listed ONCE in the board's *Next rows* note** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 83
+
+⭐ **Merged at `696b28d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `696b28d` is RECEIVED.** ⭐ **A trial merge is measured by `tools.quality.trial` in the pinned image, never through the reviewer's own wrapper, and the rubric's §0a points at it.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W265 — `Scaffold.write(regenerate=True)` refuses over an existing hand-written file that onboarding's regenerate keeps, and `SK-02`'s `SKILL.md` calls both safe
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W265.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W257/2`: two writers of one generated set disagree about an existing hand-written module on a regenerate.** ⭐ **RECEIVED from [`W257`](#w257-sk-02s-generated-emit-gives-readcontainers-no-ingested-and-its-testemit-copies-ignored-paths)'s close at `08aae9f`, and RE-READ by the register at `cc5670f` (Ruling 214):** `skills/adapter/scaffold.py`'s `Scaffold.write(regenerate=True)` refuses the whole write, while `skills/onboarding/onboard.py`'s `write` keeps the file and says the difference is deliberate. ⚠️ **`SK-02`'s `SKILL.md` calls re-scaffolding *"ordinary, safe"*, which is true only of the onboarding path.** ⭐ A corpus regenerating through onboarding, ISO's path, is not blocked.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **One of two, and the taker names which:** `Scaffold.write(regenerate=True)` keeps an existing hand-written file as onboarding does, or `SKILL.md` says a regenerate goes through onboarding and why `Scaffold.write` refuses.
+2. ⭐ **A first scaffold over an existing file still refuses by name**, on both writers.
+3. ⛔ **Asserted both ways (R12):** the documented regenerate over an edited `read.py` leaves its bytes untouched, and the planted opposite goes RED.
+
+⭐ **Surface:** `src/studyforge/skills/adapter/` and its tests, and `skills/onboarding/` only if the two writers share one rule, disclosed. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)
+
+#### ⭐ CLOSED — PO ROUND 83
+
+⭐ **Merged at `543b362`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `543b362` is RECEIVED.** ⭐ **The scaffold writer and onboarding's regenerate share one rule, `write_files`, so a regenerate keeps a hand-written module in both.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W261 — `completeness` reads presence only where the origins point, so origins written against the wrong root read `Unchecked` beside a present source
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W261.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W255/2` and `/3`: `completeness` reads presence only where the origins point, so origins written against the wrong root still read `Unchecked` beside a present source.** ⭐ **RECEIVED from [`W255`](#w255-checkcompleteness-says-the-source-tree-is-absent-from-the-declared-origins-alone-so-a-one-unit-archive-with-a-missing-origin-reads-valid)'s close at `1fefe9c`**, which declared the gap with an assertion (Ruling 292). ⭐ A whole-root reading closes it, and turned four FND-04 invalid fixtures RED on a second rule, because each declares `include: ["*.md"]` over its own `VIOLATION.md`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **An origin whose top-level directory is absent, beside source the manifest classifies elsewhere under the root, is `origin-missing`, exit `1`.**
+2. ⭐ **The FND-04 invalid fixtures still fail on their own rule and only on it**, with their `include` narrowed so a `VIOLATION.md` is not source.
+3. ⭐ **No source anywhere beside the archive still reads `Unchecked`, exit `0`** (R2).
+4. ⛔ **Asserted both ways (R12):** `W255`'s declared-gap assertion is inverted, and the anchored reading planted back goes RED.
+
+⭐ **Surface:** `src/studyforge/validate/source/completeness.py`, `tests/fixtures/invalid/*/corpus.json`, and their tests. ⚠️ **One owner with [`W259`](#w259-validatesources-walk-skips-git-and-studyforge-at-any-depth-so-a-nested-studyforge-vanishes-silently) on `validate/source/`.** ⭐ **Jumps nobody: ISO's origins point at a present tree.**
+
+[the mint](#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)
+
+#### ⭐ CLOSED — PO ROUND 83
+
+⭐ **Merged at `9363462`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `9363462` is RECEIVED.** ⭐ **`completeness` reads the whole corpus root, so origins written against the wrong root are `origin-missing` beside a present source.** ⚠️ **Each finding's disposition is this round's § 3.**
