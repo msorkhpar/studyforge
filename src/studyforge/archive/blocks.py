@@ -109,6 +109,29 @@ COUNT_KEYS = {block.count_key: block.name for block in BLOCKS}
 #: `block type -> its keys, in order`.
 BLOCK_FIELDS = {block.name: block.fields for block in BLOCKS}
 
+
+def item_parts(item: object) -> list:
+    """Return one list item's parts in reading order: text strings and nested `list` blocks.
+
+    ⛔ **What a list item is (`W258`, spec §6).** A string when it holds no
+    nested list — every list written before `W258` is byte-identical — and
+    otherwise an ARRAY of its parts in the order the author wrote them: runs of
+    text, and whole `list` blocks, whose items follow this same rule. ⚠️ An
+    array and not `{"text", "list"}`, because material continues an item with a
+    paragraph AFTER its nested list and then opens another, and a pair could
+    only refuse that or reorder it.
+
+    ⭐ **Not a twelfth block type and not a `raw_api` change**: `list` keeps its
+    three fields and its count key, and a document with no nested list reads
+    exactly as it did. ⚠️ A nested list is part of its item, not a block in
+    reading order, so `counts_of` does not count it and `walk` does not yield
+    it; a consumer wanting every string walks the values, as `assert_clean`
+    does. Every consumer reads an item through this function, so what an item
+    may be is answered once.
+    """
+    return list(item) if isinstance(item, list) else [item]
+
+
 #: `block type -> its row`, for a consumer that has a type and wants the rest.
 BY_NAME = {block.name: block for block in BLOCKS}
 

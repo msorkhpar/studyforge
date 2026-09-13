@@ -88,7 +88,7 @@ translated into `SpeakableError` (Ruling 58).
 
 from __future__ import annotations
 
-from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, walk
+from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES, item_parts, walk
 from studyforge.archive.scrub import assert_clean
 from studyforge.narrate.speakable.naming import speech_id
 from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
@@ -261,11 +261,45 @@ def _items(
     items = block.get("items")
     said: list[SpeechUnit] = []
     for position, item in enumerate(items if isinstance(items, list) else []):
-        words = _spoken(item, where)
+        words = _item_words(item, where)
         if ordered and words:
             words = f"{ordinal_word(position + 1)}, {words}"
         said += _emit(unit, section_key, path, words, "list", position)
     return said
+
+
+#: What a sentence already ends with, so joining two parts adds no second stop.
+_STOPS = (".", ":", ";", ",", "!", "?")
+
+
+def _item_words(item: object, where: str) -> str:
+    """Return one item's words: its parts in reading order, a nested list item by item.
+
+    ⛔ **A nested list is spoken INSIDE its parent item's clip (`W258`)**, each of
+    its items numbered aloud when that list is ordered. ⭐ That keeps the speech-id
+    grammar as it is — a list's items are the only thing addressed below a block,
+    and one level of them — and the page puts the audio on the parent `<li>`,
+    which holds the nested list. ⚠️ A plain string item says exactly what it said
+    before, since it has one part.
+    """
+    said: list[str] = []
+    for part in item_parts(item):
+        if not isinstance(part, dict):
+            said.append(_spoken(part, where))
+            continue
+        nested = part.get("items")
+        for position, sub in enumerate(nested if isinstance(nested, list) else []):
+            words = _item_words(sub, where)
+            if part.get("ordered") and words:
+                words = f"{ordinal_word(position + 1)}, {words}"
+            said.append(words)
+    joined = ""
+    for words in (words.strip() for words in said):
+        if words:
+            joined = (
+                f"{joined}{' ' if joined.endswith(_STOPS) else '. '}{words}" if joined else words
+            )
+    return joined
 
 
 def _rows(

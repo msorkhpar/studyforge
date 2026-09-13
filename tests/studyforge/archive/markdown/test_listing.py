@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import re
+from collections import Counter
+
 import pytest
 
 from studyforge.archive.markdown import MarkdownError, parse
@@ -95,19 +98,141 @@ def test_a_continuation_line_that_starts_a_block_ends_the_list_instead():
     assert [block["type"] for block in blocks("- one\n## a heading\n")] == ["list", "heading"]
 
 
-def test_a_nested_item_folds_into_the_item_above_it():
-    # ⭐ The block model is flat, so the nesting is lost either way; folding
-    # keeps the words, splitting puts a paragraph where the material has a
-    # sub-item and shifts every block after it.
-    text = "1. **Centralized control**: one unit.\n\n   - *Core idea*: a single place.\n"
-    parsed = blocks(text)
-    assert parsed == [
+#: ⛔ `W258`'s two-level fixture: a nested list four spaces under each item, one
+#: unordered and one ordered, with a blank line between the parents.
+TWO_LEVEL = (
+    "- Version (1st digit):\n"
+    "    - 0: first\n"
+    "    - 1: second\n"
+    "\n"
+    "- Message Class:\n"
+    "    1. Reserved\n"
+    "    2. Authorization\n"
+)
+
+MARKER_WORD = re.compile(r"^(?:[-*]|\d+[.)])$")
+
+
+def strings_of(value) -> list[str]:
+    """Every string a block list carries, keys and flags aside."""
+    if isinstance(value, str):
+        return [value]
+    if isinstance(value, dict):
+        return [s for key, item in value.items() if key != "type" for s in strings_of(item)]
+    if isinstance(value, list):
+        return [s for item in value for s in strings_of(item)]
+    return []
+
+
+def words_of_source(text: str) -> Counter:
+    """The source's words with every list marker taken out — what must survive."""
+    return Counter(word for word in text.split() if not MARKER_WORD.match(word))
+
+
+def test_a_nested_list_is_read_as_a_nested_list():
+    # ⛔ W258 clause 1. An item holding a nested list is its parts in reading
+    # order — its text, then the whole nested `list` block.
+    assert blocks(TWO_LEVEL) == [
         {
             "type": "list",
-            "ordered": True,
-            "items": ["**Centralized control**: one unit. *Core idea*: a single place."],
+            "ordered": False,
+            "items": [
+                [
+                    "Version (1st digit):",
+                    {"type": "list", "ordered": False, "items": ["0: first", "1: second"]},
+                ],
+                [
+                    "Message Class:",
+                    {"type": "list", "ordered": True, "items": ["Reserved", "Authorization"]},
+                ],
+            ],
         }
     ]
+
+
+def test_no_nested_line_is_flattened_into_its_parents_text():
+    # ⛔ The defect as received: `- 0: first` kept as literal text in its parent.
+    for text in strings_of(blocks(TWO_LEVEL)):
+        assert not re.search(r"(?:^|\s)(?:[-*]|\d+[.)]) ", text), text
+
+
+def test_the_words_survive_the_nesting():
+    # ⛔ The digest property: structure is added, and not one word is lost.
+    parsed = blocks(TWO_LEVEL)
+    assert Counter(" ".join(strings_of(parsed)).split()) == words_of_source(TWO_LEVEL)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "- parent\n  - child\n",
+        "- parent\n    - child\n",
+        "- parent\n\n    - child\n",
+        "1. parent\n   - child\n",
+        "- parent\n        - child\n",
+    ],
+    ids=["indent-2", "indent-4", "after-a-blank", "under-an-ordered-item", "indent-8"],
+)
+def test_a_nested_list_is_read_at_any_indent_under_its_item(text):
+    parsed = blocks(text)
+    assert len(parsed) == 1
+    assert parsed[0]["items"] == [
+        ["parent", {"type": "list", "ordered": False, "items": ["child"]}]
+    ]
+
+
+def test_three_levels_are_the_same_rule_applied_again():
+    parsed = blocks("- a\n  - b\n    - c\n  - d\n- e\n")
+    inner = {"type": "list", "ordered": False, "items": ["c"]}
+    middle = {"type": "list", "ordered": False, "items": [["b", inner], "d"]}
+    assert parsed[0]["items"] == [["a", middle], "e"]
+
+
+def test_text_after_a_nested_list_is_a_part_after_it_and_a_second_list_follows():
+    # ⛔ Measured in a pinned corpus: a paragraph continues the item AFTER its
+    # nested list, and a second nested list follows. Folded into the item's
+    # text, the paragraph would move ahead of the list it was written after.
+    text = "4. Autoboxing:\n\n    - costs memory\n\n   **When to use:**\n    - primitives\n"
+    parsed = blocks(text)
+    assert parsed[0]["items"] == [
+        [
+            "Autoboxing:",
+            {"type": "list", "ordered": False, "items": ["costs memory"]},
+            "**When to use:**",
+            {"type": "list", "ordered": False, "items": ["primitives"]},
+        ]
+    ]
+    assert Counter(" ".join(strings_of(parsed)).split()) == words_of_source(text)
+
+
+def test_an_item_with_no_text_of_its_own_keeps_no_empty_part():
+    assert blocks("- \n  - child\n")[0]["items"] == [
+        [{"type": "list", "ordered": False, "items": ["child"]}]
+    ]
+
+
+def test_a_continuation_paragraph_under_a_nested_item_continues_that_item():
+    parsed = blocks("- parent\n    - child\n\n      more about child\n")
+    assert parsed[0]["items"] == [
+        ["parent", {"type": "list", "ordered": False, "items": ["child more about child"]}]
+    ]
+
+
+def test_a_fence_under_a_nested_item_still_follows_the_whole_list():
+    text = "1. Step\n   - sub\n\n     ```bash\n     make\n     ```\n2. Next\n"
+    parsed = blocks(text)
+    assert [block["type"] for block in parsed] == ["list", "code"]
+    assert parsed[0]["items"] == [
+        ["Step", {"type": "list", "ordered": False, "items": ["sub"]}],
+        "Next",
+    ]
+    assert parsed[1]["text"] == "make"
+
+
+def test_an_indented_marker_outside_any_list_is_still_not_a_list():
+    # ⚠️ Four spaces at the top level is an indented code block, not a list, and
+    # W258 widens the marker only inside a list.
+    assert blocks("prose\n\n    - not an item\n")[1]["type"] != "list"
 
 
 def test_an_indented_paragraph_under_an_item_folds_into_it_too():

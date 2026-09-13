@@ -44,6 +44,12 @@ UNORDERED = re.compile(r"^ {0,3}[-*] (.*)$")
 #: `)` as well as `.`: CommonMark allows both and authors use both.
 ORDERED = re.compile(r"^ {0,3}\d+[.)] (.*)$")
 
+#: ⛔ The same two markers at ANY indent, and only ever asked INSIDE a list
+#: (`W258`). Bounded at three, a nested item written four spaces under its
+#: parent matched nothing and folded into the parent as literal `- …` text.
+NESTED_UNORDERED = re.compile(r"^ *[-*] (.*)$")
+NESTED_ORDERED = re.compile(r"^ *\d+[.)] (.*)$")
+
 #: ⚠️ Checked BEFORE the list, because `- - -` is a valid thematic break AND
 #: looks like a list item whose text is `- -`; CommonMark gives the break
 #: priority. A table's separator row carries pipes, so it can never match.

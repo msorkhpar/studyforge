@@ -58,6 +58,17 @@ def test_a_list_item_is_inline_prose():
     assert "<strong>b</strong> &lt;x&gt;" in markup
 
 
+def test_a_nested_list_renders_as_a_list_inside_its_parent_item():
+    # ⛔ W258: never its parent's text, and its parts stay in reading order.
+    klass = SURFACE_CLASSES["list"]
+    nested = {"type": "list", "ordered": True, "items": ["x", "<y>"]}
+    block = {"type": "list", "ordered": False, "items": [["a", nested, "b"], "c"]}
+    assert render(block) == (
+        f'<ul class="{klass}"><li>a<ol class="{klass}"><li>x</li><li>&lt;y&gt;</li></ol>b</li>'
+        f"<li>c</li></ul>"
+    )
+
+
 def test_a_table_scrolls_inside_its_own_box():
     # ⛔ Without the wrapper the page scrolls sideways and every paragraph with it.
     markup = render({"type": "table", "headers": ["H"], "rows": [["a", "<b>"]]})

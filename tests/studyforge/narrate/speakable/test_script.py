@@ -124,6 +124,18 @@ def test_an_ordered_list_numbers_each_item_aloud_in_words():
     assert pairs[1][1].startswith("Second, ")
 
 
+def test_a_nested_list_is_spoken_inside_its_parent_items_clip():
+    # ⛔ W258: one unit per top-level item, as before, and the nested items are
+    # said in reading order inside it — numbered when that list is ordered.
+    marker = SUB_MARKER["list"]
+    nested = {"type": "list", "ordered": True, "items": ["zero", "one"]}
+    block = {"type": "list", "ordered": False, "items": [["Version:", nested, "then more"], "b"]}
+    assert said([block]) == [
+        (f"{UNIT}.shared.b1.{marker}1", "Version: First, zero. Second, one. then more"),
+        (f"{UNIT}.shared.b1.{marker}2", "b"),
+    ]
+
+
 @pytest.mark.parametrize(("position", "word"), [(1, "First"), (20, "Twentieth"), (21, "Item 21")])
 def test_an_ordinal_is_spelled_out_until_it_runs_out(position, word):
     assert ordinal_word(position) == word

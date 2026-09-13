@@ -962,6 +962,8 @@ corpus.json                                   the manifest (§4)
 
 ⛔ **A file under the archive root that is not a member of this layout is refused by name (`archive-stray`), never skipped** (`W248`, amended PO round 79).
 
+⛔ **A list item is a string, or an array of its parts in reading order** (`W258`, amended from `INT-09/6`). The block vocabulary is `archive/blocks.py`'s eleven rows, and a `list` block keeps its three fields; what changed is what one of its `items` may be. ⭐ An item holding no nested list is a string, byte-identical to every list written before. An item holding one is an array of text strings and whole `list` blocks, in the order the author wrote them, and a nested `list`'s items follow the same rule. ⚠️ A nested list is never folded into its parent's text, and it is not a block in reading order: `counts` does not count it. ⭐ Not a `raw_api` change, because every document without a nested list reads exactly as it did.
+
 ```json
 // container.json — generalises CodeSignal's course-map.json
 { "container_api": 1,
