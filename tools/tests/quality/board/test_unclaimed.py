@@ -17,7 +17,7 @@ a control drawn from the live tree is born vacuous exactly when a close run is t
 | an office branch AHEAD `> 0` | ⭐ **exempt**, and PRINTED with its count and its reason |
 | a `fix/W*` branch at `0` ahead, no row | ⛔ **still NAMED**, on Ruling 130's own line |
 | a branch CONTAINING or PREFIXED by a round spelling | ⛔ **NOT exempt** — the WHOLE name |
-| ⚠️ a DETACHED checkout | ⛔ **in NONE of the five lines**, and that hole stays visible |
+| ⚠️ a DETACHED checkout | ⭐ **NAMED on its OWN line** (`W251`), in none of the five |
 
 ⚠️ **The office plant is AHEAD and never `0`-ahead, deliberately:** ⛔ **`0`-ahead was
 ALREADY exempt under Ruling 130, so a `0`-ahead fixture would measure nothing** — which is
@@ -233,36 +233,34 @@ def test_the_OFFICE_exemption_is_the_WHOLE_NAME_and_never_a_prefix(
     assert unclaimed.office(branch) is exempt, f"{branch!r} must read exempt={exempt}"
 
 
-def test_the_DETACHED_checkout_is_in_NONE_of_the_FIVE_lines_and_that_hole_STAYS_VISIBLE(
+DETACHED = "  ⚠️ DETACHED checkouts, on no branch"
+
+
+def _detach(repository: Path, name: str) -> str:
+    tip = git(repository, "rev-parse", "--short=7", "HEAD").stdout.strip()
+    where = str(repository.parent / name)
+    assert git(repository, "worktree", "add", "-q", "--detach", where, tip).returncode == 0
+    return tip
+
+
+def test_the_DETACHED_checkout_is_NAMED_on_its_OWN_line_and_in_NONE_of_the_FIVE(
     repository: Path,
 ) -> None:
-    """⛔ `rows/W132.md` clause 3: widening this arm must not make a known hole harder to see.
+    """⛔ `W251`, clause 1 and 2's first arm: a live worktree with no branch is NAMED.
 
-    ⚠️ **A DETACHED checkout has no `branch refs/heads/…` line in
-    `worktree list --porcelain`, so `graph.checkouts()` never sees it and it appears in
-    NEITHER arm** (`PO-44/5`). ⭐ **That hole belongs to `W125` with `W96/5` and is NOT
-    silently absorbed here.**
-
-    ⛔ **This is a RECORDED NEGATIVE with a named population** (Ruling 191(c)'s form): the
-    detached checkout is asserted ABSENT from all five lines, and each exemption line
-    carries its OWN count so that neither Ruling 265's nor `W170`'s exemption SHRINKS
-    another line's number without saying where the branches went.
-
-    ⚠️ **`W170` added the FIFTH line, so this negative was WIDENED to cover it** — ⛔ **a
-    recorded negative that still names four lines after a fifth ships is a negative whose
-    population quietly stopped matching the instrument's.**
+    ⚠️ **It has no `branch refs/heads/…` line, so `checkouts()` never sees it** (`W153/3`).
+    ⭐ **It is named by basename and head on its OWN line**, stays out of the five lines
+    beside it (`rows/W132.md` clause 3), and ⛔ **the exit code does not move**.
     """
-    tip = git(repository, "rev-parse", "HEAD").stdout.strip()
-    assert (
-        git(
-            repository, "worktree", "add", "-q", "--detach", str(repository.parent / "poi"), tip
-        ).returncode
-        == 0
-    )
-    assert "poi" not in str(Graph.read(repository, RELEASE).checkouts()), "⛔ born vacuous"
     _plant(repository, "chore/po-round46", "po")
     write_board(repository, "")
-    _code, printed = _run(repository)
+    before, _printed = _run(repository)
+    tip = _detach(repository, "poi")
+    assert "poi" not in str(Graph.read(repository, RELEASE).checkouts()), "⛔ born vacuous"
+    code, printed = _run(repository)
+    assert code == before, "⛔ the detached line is a NOTICE and the exit code does not move"
+    lines = printed.split("\n")
+    assert f"{DETACHED} (1): poi@{tip} — " in printed, printed
     for label in (
         "dispatched and",
         "round branches",
@@ -270,9 +268,26 @@ def test_the_DETACHED_checkout_is_in_NONE_of_the_FIVE_lines_and_that_hole_STAYS_
         "BY CONSTRUCTION",
         "could not count",
     ):
-        line = next(line for line in printed.split("\n") if label in line)
-        assert "poi" not in line, f"⛔ the detached checkout must stay in NO arm — {line}"
-    assert "Ruling 265" in printed, "⭐ and the office line is there, carrying its own count"
+        line = next(line for line in lines if label in line)
+        assert "poi" not in line, f"⛔ the detached checkout must stay in NO other arm — {line}"
+
+
+def test_a_BRANCH_checkout_reads_EXACTLY_as_before_and_the_detached_line_reads_none(
+    repository: Path,
+) -> None:
+    """⭐ `W251`, clause 2's other arm: branch checkouts read the same bytes either way.
+
+    ⛔ **Every line but the detached one is compared whole** between a run with no detached
+    checkout and a run with one, so the new reader cannot move another line's population.
+    """
+    write_board(repository, "| `W42` | Dev | `held`, `feat/held` | 1 | in flight |\n")
+    code, printed = _run(repository)
+    assert "  detached checkouts, on no branch: none." in printed, printed
+    _detach(repository, "loose")
+    again, detached = _run(repository)
+    assert again == code
+    rest = [line for line in printed.split("\n") if "on no branch" not in line]
+    assert [line for line in detached.split("\n") if "on no branch" not in line] == rest
 
 
 # --------------------------------------------------------------------------

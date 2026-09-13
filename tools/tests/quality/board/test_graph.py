@@ -253,6 +253,9 @@ def test_checkouts_maps_a_branch_to_its_checkout_and_skips_a_detached_one(
         == 0
     )
     assert sorted(graph.checkouts()) == sorted(live), "a detached checkout has no branch row"
+    loose = {Path(where).name: head for where, head in graph.detached().items()}
+    tip = git(repository, "rev-parse", "--short=7", "HEAD").stdout.strip()
+    assert loose == {"loose": tip}, f"⭐ `W251`: the detached one is read, and ONLY it — {loose}"
 
 
 def test_existence_is_its_OWN_command_and_a_sha_is_not_a_branch(repository: Path) -> None:
