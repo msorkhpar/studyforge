@@ -3,11 +3,13 @@
 #     docker/dev/check                      the whole suite, in the container
 #     docker/dev/check python3 -m tools.quality      anything else, in it
 #
-# or directly, from anywhere — ⛔ **with the variable, or this build re-exports
-# moving provenance digests and the environment stops having one identifier**
-# (`W152`; the measurement and the ground are in `check`'s own block):
+# ⛔ **There is no direct form that is not `check`'s own.** What `check` runs is
+# below: with the attestation variable, or this build re-exports moving
+# provenance digests (`W152`; the ground is in `check`'s own block), and with the
+# identity `check` DERIVES from the build inputs, or `image:` refuses to resolve
+# (`W225`). ⚠️ A hand-typed identity is a name, not a derivation:
 #
-#     BUILDX_NO_DEFAULT_ATTESTATIONS=1 \
+#     STUDYFORGE_DEV_IDENTITY=<derived by check> BUILDX_NO_DEFAULT_ATTESTATIONS=1 \
 #         docker compose -f docker/dev/compose.yaml run --rm --build dev
 #
 # ⚠️ **The declarative form belongs in THIS file and is INERT here.**
@@ -48,7 +50,10 @@ services:
       # transfers only the paths a step names, so nothing else crosses.
       additional_contexts:
         project: ../..
-    image: studyforge/dev:local
+    # ⛔ **Named by its build inputs' CONTENT, never by one shared tag** (`W225`).
+    # `check` derives the identity and exports it; unset, this file refuses to
+    # start rather than fall back to a name two checkouts would share (`W211/2`).
+    image: "studyforge/dev:inputs-${STUDYFORGE_DEV_IDENTITY:?docker/dev/check derives this from the build inputs; run that}"
 
     # ⛔ The acceptance condition, enforced rather than asserted: **no network
     # access is required to run tests**. `none` means the container has no

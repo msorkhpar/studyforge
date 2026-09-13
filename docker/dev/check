@@ -5,6 +5,9 @@
 #     docker/dev/check python3 -m tools.quality   the quality floor alone
 #     docker/dev/check python3 -m pytest -k ruff  anything else
 #
+# ⭐ Every run first prints, on stderr, the image it runs — named by the CONTENT
+# of its build inputs (`W225`, the block below the attestation variable).
+#
 # ⭐ **Three variables cross into the container** (W36), declared once in
 # `compose.yaml`'s `environment:` block and set the ordinary way:
 #
@@ -107,6 +110,54 @@ export STUDYFORGE_UID STUDYFORGE_GID
 # AUTHORITATIVE. `tests/docker/test_dev_provenance.py` asserts all of this.
 BUILDX_NO_DEFAULT_ATTESTATIONS=1
 export BUILDX_NO_DEFAULT_ATTESTATIONS
+
+# ---------------------------------------------------------------------------
+# ⛔ **THE IMAGE IS NAMED BY ITS INPUTS, NEVER BY ONE SHARED TAG** (`W225`).
+#
+# ⚠️ **The defect.** `compose.yaml` once named `studyforge/dev:local` for every
+# checkout, and `--build` rewrote that tag from whichever checkout ran last — so
+# two checkouts running this at once could start a container from each other's
+# image (`W211/2`), and a reading of the wrong image is a green gate about a
+# different environment.
+#
+# ⭐ **The tag is `studyforge/dev:inputs-<IDENTITY>`**, IDENTITY a sha256 over the
+# CONTENT of every build input: each file in the build context (`docker/dev/`)
+# and each file the Dockerfile bind-mounts from the `project` context (`INPUTS`).
+# Inputs differing by one byte name different tags, so no build can overwrite the
+# tag another checkout runs; identical inputs name one tag, and either image is
+# the environment both declared. ⛔ No path enters it: the listing hashed carries
+# RELATIVE names only (R7).
+#
+# ⚠️ **Hashed inside the Dockerfile's own pinned base**, read off its `FROM` line,
+# because this file uses only `docker`, `id` and shell builtins — a host
+# `sha256sum` is `shasum` on macOS. The checkout is mounted READ-ONLY and the
+# container has no network.
+#
+# ⛔ **`INPUTS` is a CHECKED copy** of the Dockerfile's `from=project` mounts, and
+# the identity has no `${VAR:-…}` escape, for the attestation variable's reason:
+# `tests/docker/test_dev_image_identity.py` asserts both.
+INPUTS="pyproject.toml README.md"
+BASE=""
+while IFS= read -r line; do
+    case "$line" in
+        "FROM "*) BASE=${line#FROM }; BASE=${BASE%% *} ;;
+    esac
+done < "$ROOT/docker/dev/Dockerfile"
+# shellcheck disable=SC2016,SC2086  # the script is the container's; INPUTS splits
+STUDYFORGE_DEV_IDENTITY=$(docker run --rm --network none \
+    --user "$STUDYFORGE_UID:$STUDYFORGE_GID" \
+    --volume "$ROOT:/inputs:ro" --workdir /inputs "$BASE" \
+    sh -c 'set -eu; listing=$({ find docker/dev -type f | LC_ALL=C sort; printf "%s\n" "$@"; } | xargs -d "\n" sha256sum --); printf "%s\n" "$listing" | sha256sum' \
+    identity $INPUTS </dev/null)
+STUDYFORGE_DEV_IDENTITY=${STUDYFORGE_DEV_IDENTITY%% *}
+case "$STUDYFORGE_DEV_IDENTITY" in
+    *[!0-9a-f]* | "") echo "docker/dev/check: no identity derived from the build inputs" >&2; exit 1 ;;
+esac
+export STUDYFORGE_DEV_IDENTITY
+
+# ⭐ **Every run PRINTS the image it runs**, so a reading quotes an identity and
+# not a guard. ⚠️ On stderr, so a command's own stdout stays the command's.
+echo "docker/dev/check: image studyforge/dev:inputs-$STUDYFORGE_DEV_IDENTITY" >&2
 
 # ⚠️ A linked git worktree keeps its real git directory OUTSIDE the checkout —
 # `.git` is a file naming it, not a directory. Mounting only the checkout
