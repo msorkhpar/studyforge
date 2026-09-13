@@ -23160,3 +23160,46 @@ fix/W257-emit-date-and-copy  2406a6e6  2406a6e6     0      NOWHERE
 #### ⭐ CLOSED — PO ROUND 80
 
 ⭐ **Merged at `08aae9f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `08aae9f` is RECEIVED.** ⭐ **The generated `emit` dates every container with its run, and the generated `test_emit` copies only what the repository does not ignore, through one ignore reader.** ⚠️ **Each finding's disposition is this round's § 5.**
+
+### ⭐ 6 — `W256` CLOSED, `W259` NAMED, AND `W265` RE-PLACED
+
+⭐ **`c8ca605` (`W256`) merged into this round, no rebase, at the coordinator's word.** ⚠️ **Its message arrived after this office's pinned run at `31be5ed` had finished, and host `corroborate` REFUTED `W256` as absorbed, a GATE at a register branch (Ruling 279). So the close is taken here, and the reading of record is the pinned run after it, as § 4 did.** Reversible.
+
+```text
+                                    merge^2   branch head  ahead  checked out
+fix/W256-handwritten-seam-recorded  b1a78b60  b1a78b60     0      NOWHERE
+```
+
+⭐ **TERMINAL (Ruling 199); it closes under the four edits; no live row cites `rows/W256.md`.** ⭐ **Every framework row minted from ISO round 9, `W254`–`W258`, is now merged.**
+
+⭐ **Carrier, confirmed against git:** [`W259`](rows/W259.md), Developer 2, `fix/W259-nested-studyforge-scanned` @ `wt/dev2`, cut `08aae9f`, declared `W259`, NAMED.
+
+⛔ **`W265` IS RE-PLACED, AND § 5's RULING 75 IS WITHDRAWN.** ⭐ **Re-read at `cc5670f` on the coordinator's measurement:** onboarding's `write(regenerate=True)` keeps an existing hand-written module and says the difference is deliberate; only `Scaffold.write` refuses. ISO regenerates through onboarding, so `W257/2` is not on `M6`'s path. ⭐ **Ruled: `W265` stays minted, re-scoped to the two writers' disagreement, and placed at order 47, jumping nobody.** § 5's row is dated by this, not edited. Reversible.
+
+| finding | became |
+|---|---|
+| `W256/1` | accepted, relayed to the ISO integrator: ISO's own verifier reads a digest from every install-record entry (R20: not a framework row) |
+| `W256/2` | disposed at the close: the row's received clause is measured, the recorded digest was the stub's |
+| `W256/3` | accepted, cost named, relayed to the ISO track: a framework at ISO's old pin refuses an api-2 record by name, so ISO re-pins and regenerates in one step |
+| `W256/4` | accepted, cost named: the declared remainder. An absent person's module is written as the stub, as a first scaffold writes it |
+| `W256`, office rulings | ⭐ **confirmed:** no digest for the person's module; `installed_api` bumped to 2, disclosed in the diff; uninstall keeps an edited person's module; `OnboardingRefused` and `INSTALLED_API` moved into `record.py`, still exported |
+
+### W256 — `SK-07`'s install record files the hand-written `read.py` under its stub's digest, so a person's edit reads as a hand-edit
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W256.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-09/1`: `SK-07`'s install record files the one hand-written module, `ingest/read.py`, under its STUB's digest, and a regenerate keeps that digest.** ⭐ **Nothing marks the file as a person's, so a corpus cannot tell the one legitimate edit from a hand-edit to a generated file (R19).** ⭐ **RECEIVED from ISO integration round 9 (framework `5d9436d`, ISO `8afdd5b`, §14).** ⭐ **RE-MEASURED in part (Ruling 214):** at ISO `8afdd5b`, `.studyforge/installed.json` records `ingest/read.py` as `6adb328f…`, and the file's digest is `a92c6524…`. ⚠️ **That the recorded digest is the stub's is RECEIVED.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The record marks `read.py` as the person's module**, and a regenerate neither re-records its digest nor writes the file.
+2. ⛔ **Every other generated file still reads as hand-edited when its bytes differ from the record.**
+3. ⛔ **Asserted both ways (R12):** an edited `read.py` reads clean after a regenerate; an edited generated module is named.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/` and its tests; `skills/adapter/` only if the hand-written seam's name is declared there, disclosed. ⛔ **`M6` work, order 2; nothing in flight writes that surface.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 80
+
+⭐ **Merged at `c8ca605`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8ca605` is RECEIVED.** ⭐ **`SK-07`'s install record marks the scaffold's hand-written module as a person's, with no digest, and a regenerate neither re-records nor writes it; every generated file still reads as hand-edited when its bytes differ.** ⚠️ **Each finding's disposition is this round's § 6.**
