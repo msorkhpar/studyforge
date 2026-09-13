@@ -175,9 +175,13 @@ def manifest_set(**fields):
 
 
 def flipped(carried):
-    name = MATERIAL_PREFIX + "corpus.json"
+    # ⚠️ A byte inside a string no reader parses, so ONLY the digest can refuse it: the
+    # first version flipped a brace in `corpus.json`, and the manifest parser refused it
+    # with the digest check removed (plant P12 survived).
+    name = MATERIAL_PREFIX + CHANGED
     data = carried[name]
-    return {**carried, name: data[:-2] + bytes([data[-2] ^ 1]) + data[-1:]}
+    at = data.index(b'"', data.index(b":")) + 1
+    return {**carried, name: data[:at] + bytes([data[at] ^ 1]) + data[at + 1 :]}
 
 
 def undeclared(carried):
