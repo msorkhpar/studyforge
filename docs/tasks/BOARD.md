@@ -79,7 +79,6 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⭐ **A carrier is DECLARED at its cut, `git config branch.<branch>.description W<n>`, so it leaves the `dispatched and unnamed` gate before a register round names it; wherever this table names a branch, the table answers** ([the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded)).
 ⛔ **`W163`, `W153` LEFT at `accceaf`, `947a007`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
 ⭐ **`W242` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627); `W250`, `W156`, `W149` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
@@ -137,7 +136,7 @@ owner or two waves.**
 ⛔ **`W250`+`W249` write `skills/reconnaissance/`; `W242`, `W248` and `W210` write `cli/plan/`; `W183`+`W184` write `E04`; `W176`+[`W251`](rows/W251.md) DECLARE
 `board/corroborate.py` — ONE OWNER or two waves for each set.** ⚠️ **[`W190`](BOARD-ARCHIVE.md#w190-corroborates-dispatched-and-unnamed-arm-has-a-population-of-checkouts-so-a-branch-carrying-work-is-invisible-to-it-whenever-its-office-cleans-up-after-itself)
 declares `board/unclaimed.py`, which is where `W132`'s split actually MOVED the arm all three
-name — ⛔ so `W176`'s declared surface is stale against its own subject; `W153` took `unclaimed.py` at its close (`W153/1`), and `W251` declares it.** ⛔ **`W173`+`W159` write `board/bounds.py` (whose size message reads `register ids`, `W144/4`), and `W173`
+name — ⛔ so `W176`'s declared surface is stale against its own subject.** ⛔ **`W173`+`W159` write `board/bounds.py` (whose size message reads `register ids`, `W144/4`), and `W173`
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W222`](rows/W222.md)+[`W223`](rows/W223.md)+[`W226`](rows/W226.md) all write `narrate/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
