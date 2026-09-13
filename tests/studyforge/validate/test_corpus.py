@@ -9,7 +9,8 @@ reported a second time as an absence.
 
 import json
 
-from studyforge.validate.corpus import ARCHIVE_DIR, UNIT_DIR, read
+from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
+from studyforge.validate.corpus import UNIT_DIR, read
 from tests.studyforge.validate import corpora
 
 

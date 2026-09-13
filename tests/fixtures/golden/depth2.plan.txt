@@ -1,7 +1,6 @@
 plan depth2-demo  Depth Two Demo
 placement sibling  each artifact beside the source file it was generated from
 read corpus.json + 3 container.json  no file inside the source material was opened
-create .studyforge/archive/  the archive root — an adapter writes it (R2) and every build reads it
 create .studyforge/assets/  the shared stylesheets, scripts and player
 create .studyforge/site.json  the discovery cache, never the authority
 create advanced/02-going-further/going-further.section.html  the page for container advanced/02-going-further
@@ -21,6 +20,7 @@ create advanced/03-putting-it-together/unit-01-one-small-program.images/  advanc
 create advanced/03-putting-it-together/unit-01-one-small-program.practice/  advanced/03-putting-it-together unit 1's practice
 create advanced/03-putting-it-together/unit-01-one-small-program.unit.html  advanced/03-putting-it-together unit 1's page
 create advanced/03-putting-it-together/unit-01-one-small-program.video/  advanced/03-putting-it-together unit 1's video
+create archive/  the archive root — an adapter writes it (R2) and every build reads it
 create basics/01-getting-started/getting-started.section.html  the page for container basics/01-getting-started
 create basics/01-getting-started/unit-01-your-first-class.audio/  basics/01-getting-started unit 1's audio
 create basics/01-getting-started/unit-01-your-first-class.images/  basics/01-getting-started unit 1's images

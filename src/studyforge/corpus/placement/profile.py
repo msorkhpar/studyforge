@@ -32,6 +32,12 @@ honest difference: `sibling` exists so the reader's own directories gain a page
 beside the file they already know, not so a corpus's archive is scattered
 through it.
 
+⛔ **The archive is the one shared artifact NOT under the generated root**
+(`INT-06/6`). It is the adapter's output (R2), and `validate`, the adapter's
+definition of done, reads it at `names.ARCHIVE_DIRNAME` beside `corpus.json`.
+`corpus()` once composed `.studyforge/archive` from that name, so `plan` printed a
+root nothing read, and a malformed map there validated clean.
+
 ## Ignore lines are a profile's answer, not a caller's guess (Ruling 91)
 
 ⛔ **`SF-31`'s acceptance is that `studyforge plan` prints the ignore lines its
@@ -45,8 +51,8 @@ with no caller is a guess*.** ⭐ That argument is met here rather than
 sidestepped: `cli.plan` is the caller, it exists in the same commit, and
 without this it would have to hold a per-profile glob table — R1 in miniature.
 
-⛔ **What is never ignored is the archive**, and that is the whole reason
-`/{GENERATED_ROOT}/` is not one line. The archive is the ingested record an
+⛔ **What is never ignored is the archive**, and it is not under
+`/{GENERATED_ROOT}/` at all (`INT-06/6`). The archive is the ingested record an
 adapter wrote (R2); a clone without it cannot rebuild anything, so it stays
 tracked while the assets and the discovery cache beside it do not.
 """
@@ -91,7 +97,7 @@ GENERATED_ROOT = ".studyforge"
 #: are this framework's, minted so a scan can read them off a listing.
 #:
 #: ⛔ **The archive is absent from this list and that is the point.** It sits
-#: under the same generated root and it is the one thing there a clone cannot
+#: beside the generated root, not in it, and it is the one thing a clone cannot
 #: rebuild without.
 SHARED_IGNORE_LINES = (
     f"/{ROOT_INDEX_FILENAME}",
@@ -168,7 +174,7 @@ class Profile:
         return CorpusLocations(
             root_index=PurePosixPath(ROOT_INDEX_FILENAME),
             assets=generated / ASSETS_DIRNAME,
-            archive=generated / ARCHIVE_DIRNAME,
+            archive=PurePosixPath(ARCHIVE_DIRNAME),
             site_cache=generated / SITE_CACHE_FILENAME,
         )
 

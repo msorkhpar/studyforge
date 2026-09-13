@@ -12,8 +12,8 @@ name `classification` directly because that is the module they are about.
 
 import json
 
+from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.validate import validate
-from studyforge.validate.corpus import ARCHIVE_DIR
 from studyforge.validate.source import (
     RULE_CONTESTED,
     RULE_UNCLASSIFIED,

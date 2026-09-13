@@ -1,9 +1,9 @@
 plan shared-origin-demo  Shared Origin Demo
 placement sibling  each artifact beside the source file it was generated from
 read corpus.json + 1 container.json  no file inside the source material was opened
-create .studyforge/archive/  the archive root — an adapter writes it (R2) and every build reads it
 create .studyforge/assets/  the shared stylesheets, scripts and player
 create .studyforge/site.json  the discovery cache, never the authority
+create archive/  the archive root — an adapter writes it (R2) and every build reads it
 create field-notes/field-notes.section.html  the page for container field-notes
 create field-notes/unit-01-taking-a-reading.audio/  field-notes unit 1's audio
 create field-notes/unit-01-taking-a-reading.images/  field-notes unit 1's images

@@ -8,7 +8,7 @@ both.
 `Unchecked`s like every other check. `source_files(root)` is the enumeration
 on its own, for a caller that wants the list rather than the verdict.
 
-**Depends on.** `corpus.manifest` for the classification, `validate.corpus`,
+**Depends on.** `corpus.manifest` for the classification, `corpus.placement`, `validate.corpus`,
 `validate.report`, and `git` on the path. ⛔ **Nothing in this package's other
 half** — the two checks share no name.
 
@@ -48,7 +48,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from studyforge.corpus.manifest import Classification
-from studyforge.validate.corpus import ARCHIVE_DIR, Walk
+from studyforge.corpus.placement import ARCHIVE_DIRNAME
+from studyforge.validate.corpus import Walk
 from studyforge.validate.report import Finding, Unchecked
 
 RULE_UNCLASSIFIED = "unclassified"
@@ -76,7 +77,7 @@ RULE_IGNORE_DECLARATION = "ignore-declaration"
 #: two ecosystems it was told nothing about (R1). A list of other people's
 #: build directories is wrong for the first corpus that uses a third ecosystem,
 #: and right for the second two only by luck.
-SKIP_DIRS = (ARCHIVE_DIR, ".git", ".studyforge")
+SKIP_DIRS = (ARCHIVE_DIRNAME, ".git", ".studyforge")
 
 #: How long git is given to answer. ⚠️ A validator that hangs is worse than one
 #: that says it could not check.

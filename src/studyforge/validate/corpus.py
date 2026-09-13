@@ -47,16 +47,12 @@ from studyforge.corpus.container import parse as parse_container
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
+from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.validate.report import Finding
 
 #: A unit directory. ⚠️ Read from the *path*, so it still answers "which unit
 #: is this" for a file whose content was refused.
 UNIT_DIR = re.compile(r"^unit-(\d{2,})$")
-
-#: Where an adapter writes the archive, relative to the corpus root. ⚠️ A
-#: stand-in for `<archive-root>` (§6): the fixtures keep it a plain directory
-#: so they stay browsable, and a consumer takes the root as a parameter.
-ARCHIVE_DIR = "archive"
 
 #: The rules this module can report. ⭐ Named here so a test can assert the
 #: set of rule ids the tool speaks, rather than matching on message text.
@@ -65,6 +61,8 @@ RULE_MANIFEST = "manifest"
 RULE_CONTAINER = "container"
 RULE_DOCUMENT = "document"
 RULE_PERSONAL_DATA = "personal-data"
+#: ⛔ No container map beneath the archive root (`INT-06/5`): absent, or present and empty.
+RULE_NO_ARCHIVE = "no-archive"
 
 
 @dataclass(frozen=True, slots=True)
@@ -133,7 +131,10 @@ def read(root: Path) -> Walk:
     walk.manifest = _manifest(walk)
     if walk.manifest is None:
         return walk
-    for path in sorted((walk.root / ARCHIVE_DIR).rglob(CONTAINER_FILENAME)):
+    maps = sorted((walk.root / ARCHIVE_DIRNAME).rglob(CONTAINER_FILENAME))
+    if not maps:
+        walk.findings.append(_no_archive(walk))
+    for path in maps:
         held = _container(walk, path)
         if held is None:
             # ⛔ Its documents are not read, and saying so is not the same as
@@ -144,6 +145,24 @@ def read(root: Path) -> Walk:
         walk.containers.append(held)
         walk.units.extend(_documents(walk, held))
     return walk
+
+
+def _no_archive(walk: Walk) -> Finding:
+    """Refuse a corpus with no container map beneath its archive root (`INT-06/5`).
+
+    ⛔ **A `Finding`, never an `Unchecked`.** `report` keeps `Unchecked` for an
+    input whose absence is itself a validated fact, like the source tree an
+    archive ships without (R2). The archive is not such an input: it is what
+    `validate` judges, so "valid" over no archive is a verdict with no subject.
+    ISO-8583 measured exactly that at exit 0.
+    """
+    state = "holds no container map" if (walk.root / ARCHIVE_DIRNAME).is_dir() else "is absent"
+    return Finding(
+        RULE_NO_ARCHIVE,
+        f"{ARCHIVE_DIRNAME}/",
+        f"{state}, so there is no archive to judge. An adapter writes the archive here "
+        f"(R2), and a corpus is not valid until one is present.",
+    )
 
 
 def _manifest(walk: Walk) -> Manifest | None:
