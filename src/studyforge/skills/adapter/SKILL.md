@@ -217,8 +217,9 @@ cannot judge whether the archive is the material. What goes with it:
 
 - ⛔ **Never hand-edit a generated file.** Customisation enters as manifest data
   (R19). `write(..., regenerate=True)` rewrites the seven generated files and
-  **still refuses the one you wrote** — so re-scaffolding after the framework
-  moves is an ordinary, safe thing to do.
+  **keeps the one you wrote, untouched** — so re-scaffolding after the framework
+  moves is an ordinary, safe thing to do. ⭐ Onboarding's `write` follows the
+  same rule, `write_files`, so the two paths cannot disagree (`W265`).
 - ⛔ **Never write into the source repository beyond the archive** (R3), and
   never beyond what `permitted_edits` declares.
 - ⛔ **Never derive an address, an ordinal or a reading order.** §6 rules them

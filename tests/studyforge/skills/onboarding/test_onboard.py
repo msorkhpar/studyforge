@@ -13,7 +13,7 @@ import json
 import pytest
 
 from studyforge.corpus.manifest import Classification, parse
-from studyforge.skills.adapter import plan_for, scaffold
+from studyforge.skills.adapter import ScaffoldRefused, plan_for, scaffold
 from studyforge.skills.onboarding import artifacts
 from studyforge.skills.onboarding.manifest import PromotionRefused
 from studyforge.skills.onboarding.onboard import onboard, uninstall
@@ -135,9 +135,8 @@ def test_a_refusal_names_no_absolute_path(tmp_path):
 
 
 def test_regenerating_rewrites_the_generated_files_and_keeps_the_one_that_is_yours(tmp_path):
-    # ⭐ The difference from `Scaffold.write`, and it is deliberate: after step
-    # 4 the hand-written file always exists, so refusing on it would make
-    # "regenerate rather than hand-edit" advice nobody can follow (R19).
+    # ⭐ After step 4 the hand-written file always exists, so refusing on it
+    # would make "regenerate rather than hand-edit" advice nobody can follow (R19).
     root = corpora.material(tmp_path / "corpus")
     made = _made()
     made.write(root)
@@ -151,6 +150,48 @@ def test_regenerating_rewrites_the_generated_files_and_keeps_the_one_that_is_you
     assert "edited by hand" not in (root / artifacts.READER_DOC).read_text(encoding="utf-8")
     assert (root / made.hand_written[0]).read_text(encoding="utf-8") == "# mine\n"
     assert made.hand_written[0] not in written, "a regeneration reported writing somebody's file"
+
+
+def _both_writers(made):
+    """Onboarding's writer, and the scaffold's own, over one onboarding's plan."""
+    return {"onboarding": made, "scaffold": scaffold(plan_for(made.manifest))}
+
+
+@pytest.mark.parametrize("writer", ["onboarding", "scaffold"])
+def test_both_writers_keep_an_edited_hand_written_module_on_a_regenerate(tmp_path, writer):
+    # ⛔ W265 (`W257/2`): the two writers once disagreed on this fixture. One
+    # refused the whole write, the other kept the file.
+    root = corpora.material(tmp_path / "corpus")
+    made = _made()
+    made.write(root)
+    chosen = _both_writers(made)[writer]
+    assert chosen.hand_written == made.hand_written, "the two writers name different seams"
+    mine = root / made.hand_written[0]
+    mine.write_text("# mine\n", encoding="utf-8")
+    before = mine.read_bytes()
+
+    written = chosen.write(root, regenerate=True)
+
+    assert mine.read_bytes() == before, f"{writer}'s regenerate rewrote the person's module"
+    assert made.hand_written[0] not in written
+    expected = set(chosen.paths) - set(made.hand_written)
+    assert set(written) == expected, f"{writer} wrote {sorted(set(written) ^ expected)} otherwise"
+
+
+@pytest.mark.parametrize("writer", ["onboarding", "scaffold"])
+def test_both_writers_refuse_a_first_write_over_the_hand_written_module_by_name(tmp_path, writer):
+    root = corpora.material(tmp_path / "corpus")
+    made = _made()
+    mine = root / made.hand_written[0]
+    mine.parent.mkdir(parents=True)
+    mine.write_text("# mine\n", encoding="utf-8")
+
+    with pytest.raises((OnboardingRefused, ScaffoldRefused)) as refused:
+        _both_writers(made)[writer].write(root)
+
+    assert made.hand_written[0] in str(refused.value)
+    assert mine.read_text(encoding="utf-8") == "# mine\n"
+    assert not (root / "corpus.json").exists(), f"{writer} wrote something anyway"
 
 
 def test_running_it_twice_produces_the_same_bytes():
