@@ -28,7 +28,7 @@ from studyforge.archive.blocks import counts_of
 from studyforge.archive.document import content_sha256
 from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.describe import describe
-from studyforge.validate.blocks import check_list_blocks
+from studyforge.validate.blocks import check_block_shapes
 from studyforge.validate.corpus import Unit, Walk
 from studyforge.validate.report import Finding, Unchecked
 
@@ -159,9 +159,13 @@ def check_digests(walk: Walk) -> Iterator[Finding]:
 
 
 def check_counts(walk: Walk) -> Iterator[Finding]:
-    """Each document's `counts` matches the blocks it carries."""
+    """Each document's `counts` matches the blocks it carries.
+
+    ⛔ A block that is not an object counts as no type (`W282`): `check_block_shapes` names
+    it, and reading a type off it here raised instead of yielding (R6).
+    """
     for unit in walk.units:
-        blocks = unit.document.get("blocks") or []
+        blocks = [block for block in unit.document.get("blocks") or [] if isinstance(block, dict)]
         recorded = unit.document.get("counts")
         if recorded != counts_of(blocks):
             yield Finding(
@@ -261,6 +265,6 @@ CHECKS = (
     check_document_identity,
     check_digests,
     check_counts,
-    check_list_blocks,
+    check_block_shapes,
     check_units_have_content,
 )

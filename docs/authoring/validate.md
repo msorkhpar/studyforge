@@ -68,7 +68,7 @@ checker check* is this table and nothing else.
 | 5 | `check_document_identity` | does each document agree with where it sits — address, unit, kind, ordinal, filename? |
 | 6 | `check_digests` | does each `content_sha256` match the blocks it covers? |
 | 7 | `check_counts` | do the per-type block counts match the blocks? |
-| 8 | `check_list_blocks` | is every `list` block the shape spec §6 admits — its keys, each item a string or an array of strings and whole lists, and `start` an integer? |
+| 8 | `check_block_shapes` | is every block, at any depth, the shape spec §6 admits — an object of a known type, its fields then only its optional keys, and for a `list` each item a string or an array of strings and whole lists, and `start` an integer? |
 | 9 | `check_units_have_content` | is any unit carrying no blocks at all? |
 | 10 | `check_placement` | does every path the placement profile would produce come out unique and legal? |
 | 11 | `check_origins_are_files` | does every declared `origin` name a file that exists? |
@@ -97,7 +97,7 @@ the same shape.
 |---|---|
 | `manifest` | `corpus.json` is missing, malformed, or declares a `corpus_api` this build does not read |
 | `container` | a container map is missing, malformed, or declares an unknown `container_api` |
-| `document` | a unit document is missing, malformed — a `list` block spec §6 does not admit included — or declares an unknown `raw_api` |
+| `document` | a unit document is missing, malformed — a block spec §6 does not admit included: an unknown type, a wrong field set, or a malformed `list` — or declares an unknown `raw_api` |
 | `unreadable` | a file that must be read cannot be |
 | `no-archive` | no container map sits beneath `archive/` — it is absent, or present and empty — so there is no archive to call valid |
 | `archive-stray` | a file sits beneath `archive/` and is not a container map, a document under its map's variant, or a declared unit's own file — so nothing would read it |
