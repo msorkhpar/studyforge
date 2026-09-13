@@ -22362,7 +22362,7 @@ gated skips, weighted by their [n] groups                            10
 
 ## PO round 78 — `W163` closed, `W250` named, and ISO round 8 pending on `W242`
 
-⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings at `accceaf` and `947a007`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; the reading of record is the run after this merge.**
+⭐ **Merged after round 77's cut at `6cdab6d` and not closed by it: `accceaf` (`W163`). This round is cut at `accceaf`; `947a007` (`W153`) and `5d9436d` (`W250`, carrying `cbc0991`, `W242`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings at `accceaf`, `947a007`, `cbc0991` and `5d9436d`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`.** ⚠️ **This office's first pinned run, at `550434e`, started before the `W153` message arrived; a second run, at `79a5669`, started before the `W242` and `W250` readings arrived. The reading of record is the run after `5d9436d`'s merge.**
 
 ### ⭐ 1 — CLOSES
 
@@ -22370,9 +22370,11 @@ gated skips, weighted by their [n] groups                            10
                                   merge^2   branch head  ahead  checked out
 fix/W163-visual-reasoning             0362b7d6  0362b7d6     0      NOWHERE
 fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
+fix/W242-sibling-ignore-home          1b39682d  1b39682d     0      NOWHERE
+fix/W250-linked-heading-not-an-entry  a6602c6b  a6602c6b     0      NOWHERE
 ```
 
-⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** neither has a live inbound citation beyond its register row. ⚠️ **`handoffs/W163.md`, `handoffs/W153.md` and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
+⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W248.md` re-pointed for `W242`, `rows/W249.md` for `W250`; `W163` and `W153` have none. ⚠️ **The four rows' own handoffs and older records cite the row files; they are records, and the stubs resolve.** ⭐ **The Scheduled item on `compose.yaml`'s reasoning is `discharged` by this merge.**
 
 ⚠️ **`docker/dev/` is an image build input, so this merge moved the dev image identity from `inputs-f1874d21…` to `inputs-f5bb0ced…`.** The change is comment lines only; no configuration line changed.
 
@@ -22381,6 +22383,7 @@ fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
 1. ⛔ **`W163/2` is relayed to the user and folded into the held `W162/7` + `W162/8` question, not minted.** No environment reaches the two identity checks: the FRESH arm returns before the flag is read, and they need the host, a daemon, Compose and network to the package index. [Ruling 332](../conventions/review-rubric.md#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) and [Ruling 333](../conventions/review-rubric.md#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) forbid a taker from supplying that network, so a row would be one no office may take. ⭐ **They stay declared unmeasured in `devgate.FRESH`, which prints on every run.**
 2. ⭐ **`W153/2`, adopted by the coordinator, is RECORDED.** Every carrier is cut with `git config branch.<branch>.description W<n>`. A declared carrier leaves `corroborate`'s *dispatched and unnamed* gate before a register round names it, and the In flight table stays authoritative wherever it names a branch. ⭐ **The dispatch convention now points at [the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded):** one line under `delivery-flow.md`'s branch table, because a taker cutting a branch reads that table and not `corroborate`'s section. ⚠️ **The board does not repeat it: `board.md` carries the rule (Ruling 349), and the board's narrative is at its bound.**
 3. ⭐ **`W153` closes in this round, not round 79.** The message arrived before the reading of record, and `947a007` is merged here. Reversible.
+5. ⭐ **`W242` and `W250` close in this round too, at the coordinator's word.** `5d9436d` is merged here, and the reading of record follows it. Reversible.
 4. ⛔ **`W242/1` is CONFIRMED: a build's output is committed** — its pages, the root index, the asset bundle and `site.json`. §5 now says so in one sentence. ⭐ **The ground is §5's own:** *regenerable is not the same as available*, so a clone that ignores its pages has no reading floor (R8, §11.0). `ISO-05` also refuses any generated rule matching `*.html` or `*.json`. ⚠️ **This DATES the first half of [Ruling 91](../tasks/handoffs/CTO-2026-09-10-round26.md#ruling-91-f19-a-sibling-build-does-not-need-readmemd-rewritten-and-never-did), which declared `sibling` output in `.gitignore`.** Ruling 91's record stands unedited (Ruling 106), and its profile-switch half is untouched. ⭐ **Reversible:** no page is committed into ISO before `ISO-10`, and ISO round 8 (`ISO-05`) commits none.
 
 ### ⭐ 3 — WHAT EACH FINDING BECAME
@@ -22405,10 +22408,12 @@ fix/W153-unnamed-arm-register-blind   3c1f639e  3c1f639e     0      NOWHERE
 | `W242/7` | accepted, cost named: `progress/store.py` spells `.gitignore` a second time, a file name and not a policy |
 | `W242/8` | disposed: ISO's `short-read` findings come from the synthetic archive and are unchanged, not a regression |
 | `W242/9` | ⭐ **rider on [`W232`](rows/W232.md)**, its third witness |
+| `W250/1` | a witness, not a row: at ISO `ab9e765` six open questions in `duplication`'s structural report carry one identical `settle` text. ⭐ **Relayed through the coordinator to the next ISO read; minted only if it reproduces there** |
+| `W250/2` | ⭐ **minted [`W252`](rows/W252.md)**: a heading-form entry reads no ordinal. Same surface as `W249`, so one owner, after it |
 
-⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** ⭐ **Merged, reading not yet received:** `W242` at `cbc0991`, held by no checkout. ⭐ **Mint, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42).
+⭐ **Carrier, confirmed against git:** [`W250`](rows/W250.md), Developer 2, `fix/W250-linked-heading-not-an-entry` @ `wt/dev2`, cut `02c7626`, order 1, declared by its branch description. Its surface is `skills/reconnaissance/`, and nothing in flight writes it. ⭐ **[`W249`](rows/W249.md) is its successor, one owner, and is dispatched after `W250` merges.** [`W156`](rows/W156.md), Developer 3, `fix/W156-owns-before-creator` @ `wt/dev3`, cut `accceaf`, order 11, declared by its branch description. Its surface is a predicate in `tools/quality/`. The `E12` edge half landed with round 74's reorder; the taker verifies it and does not touch `docs/tasks/`. [`W149`](rows/W149.md), Developer 1, `fix/W149-merge-subject-prose` @ `wt/dev1`, cut `947a007`, order 11, declared by its branch description. Its surface is `docs/conventions/review-rubric.md` for the clause and `tools/quality/` for any predicate; `docs/conventions/` is free now that `W153` has merged. ⚠️ **`W149` and `W156` both name `tools/quality/`, in different modules.** [`W249`](rows/W249.md), Developer 2, `fix/W249-source-and-not-material-globs` @ `wt/dev2`, cut `5d9436d`, declared by its branch description; it follows `W250` on `skills/reconnaissance/`. ⭐ **Mints, jumping nobody:** [`W251`](rows/W251.md) (`W153/3`, order 42) and [`W252`](rows/W252.md) (`W250/2`, order 43).
 
-⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) is NOT YET DISPATCHED. It dispatches at `W242`'s merge. The pin stays `ab9e765`. ⭐ **RECEIVED:** host `python3 -m tools.workspace verify` at `02c7626` exits `0`.
+⭐ **The ISO track:** integration round 8 (office `po-int`, `ISO-05`) was dispatched mid-round at `W242`'s merge, reading framework `cbc0991`. With `W242` merged, every framework blocker ISO round 6 found (`W239`–`W243`) is in. The pin stays `ab9e765` and advances at that round's merge (`W244`). Host `python3 -m tools.workspace verify`, worktree `wt/po`, at `79a5669`: exit `0`.
 
 ⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8`, now with `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
 
@@ -22518,3 +22523,53 @@ CORROBORATE_EXIT=0
 #### ⭐ CLOSED — PO ROUND 78
 
 ⭐ **Merged at `947a007`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `947a007` is RECEIVED.** ⭐ **`corroborate` reads a carrier's rows from its own branch description, so a carrier dispatched between register rounds, or at zero ahead, leaves the gate. The table stays authoritative wherever it names a branch, and the exit code is unchanged ([the contract](../conventions/board.md#w153-a-carrier-is-declared-on-its-own-branch-so-the-gate-can-read-a-dispatch-the-register-has-not-recorded)).** ⚠️ **A detached checkout is not reached: [`W251`](rows/W251.md). Each finding's disposition is in this round's § 3.**
+
+### W242 — For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W242.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/7` and `/8`: for a `sibling` corpus, the generated ignore lines have no committed home and committed media stays unclassified (`F19`, `Q21`).** ⭐ **RECEIVED from the ISO integration round 6 (framework `3483ced`, ISO `0d970fd`, §11.1):** *"still holds: sibling output is `[unclassified]`. Committed media (`auto`) stays unclassified even when plan's ignore lines are in place"*; *"plan's five `ignore` lines have no committed home here (root ignore file forbidden by R3, `src/` untouchable). ISO-05's "no rule matches `*.html`/`*.json`" conflicts with `*.unit.html` and `/.studyforge/site.json`."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> for `sibling`, where the generated ignore lines live when the root ignore file is R3-forbidden, and how committed media is classified.
+
+⛔ **Asserted both ways, over a `sibling` corpus whose root ignore file may not be edited.** ⚠️ **[`W15`](rows/W15.md) is this row's R3 ground, and [`W210`](rows/W210.md) spells the media policy a second time in `cli/plan/report.py`: the taker reads both.**
+
+### ⭐ ORDER AND OWNER
+
+⭐ **Order 2: it writes what [`W239`](#w239-sk-07s-promote-drops-a-drafts-contentnotmaterial-so-the-first-real-corpus-cannot-generate-its-ruled-declarations-and-iso-04-stops) (`skills/onboarding/`) and [`W241`](#w241-validate-reports-valid-with-no-archive-and-plan-announces-an-archive-root-that-validate-the-build-and-the-adapter-layout-do-not-read) (`cli/plan/`, `corpus/placement/`) write, so it follows both.** ⭐ **Blocks `ISO-05`, `ISO-12` and `ISO-13`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/corpus/placement/`, `corpus/media/`, `cli/plan/` and `skills/onboarding/`, with their tests.
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+⭐ **Rider, PO round 75 — `INT06-1/4`:** `promote` still resolves two GENERATORS declaring the same glob by first-wins precedence, which is what [`W239`](#w239-sk-07s-promote-drops-a-drafts-contentnotmaterial-so-the-first-real-corpus-cannot-generate-its-ruled-declarations-and-iso-04-stops) refused for a draft against a generator. ⚠️ **The same `skills/onboarding/` owner, after `W239` merges.**
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `cbc0991`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `cbc0991` is RECEIVED.** ⭐ **A build's output is committed and recognised through the plan. The only generated ignore rules are the media policy's, inside the generated root and never in the root ignore file, and a collision between two generators' globs is refused naming both (rider `INT06-1/4`).** ⭐ **RECEIVED, the ISO re-read:** nothing is `[unclassified]`, the plan prints no ignore line, and the root ignore file's digest is unchanged. ⚠️ **`W242/1` is ruled in this round's § 2.4. Each finding's disposition is in § 3.**
+
+### W250 — `SK-01` reads a heading that links a file as a contents entry, so `F21`'s fourth container is never proposed and `ISO-07` stops
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W250.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-07/3`: `SK-01`'s survey reads a heading that links a file as a contents entry, so it names 39 units in 3 groups and never proposes `F21`'s fourth container.** ⭐ **RECEIVED from ISO integration round 7 (framework `5f772d9`, ISO `ab9e765`, §12), relayed by the coordinator:** *"Still holds: 39 units in 3 groups, because `# [Test cases](TestCases.md)` reads as an entry."*
+
+⭐ **`F21` is ruled (Ruling 92): a unit's `origin` is `{path, section}`, so a unit may be a region of one file.** ⚠️ **The survey does not reach that ruling, and [`W240`](#w240-sk-01s-draft-carries-a-source-and-variants-that-sf-02-refuses-and-its-include-globs-make-the-curriculum-record-a-unit)'s close named it `F21`'s question (`W240/1`).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A heading is not made a unit entry by a link alone.** The taker says what such a heading is read as.
+2. ⛔ **A file whose headings are regions is proposed as a container of sub-file units, or the survey says by name why not.**
+3. ⛔ **Asserted both ways**, over a fixture shaped like the finding.
+
+⭐ **Blocks `ISO-07` and `ISO-08`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)).
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/` and its tests. ⚠️ **One owner with [`W249`](rows/W249.md).**
+
+[the mint](#po-round-77-w239-and-w243-closed-w242-and-w153-named-and-w1628-folded-into-the-held-w1627)
+
+#### ⭐ CLOSED — PO ROUND 78
+
+⭐ **Merged at `5d9436d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `5d9436d` is RECEIVED.** ⭐ **A heading that links a file is a group label whose units are that file's regions, so `F21`'s fourth container is proposed.** ⭐ **RECEIVED, the ISO re-read:** `TestCases.md` becomes a container of regions, which unblocks `ISO-07` and `ISO-08`. ⚠️ **[`W249`](rows/W249.md) follows on the same surface. `W250/1` and `/2`: this round's § 3.**
