@@ -126,6 +126,9 @@ boundary read an *In flight* table as four duplicate register rows.**
 read CLEAN; it is `board-detail` now.** ⛔ **`0 findings` over a `W`-only population is
 not a claim about every row** (Ruling 48, Ruling 331), so `bijection_reading` prints it,
 the epic tasks outside it, and the residue — read, never refused (`NS-01/2`).
+⭐ **`W262`: an epic task owes no row file, and its EPIC must DEFINE it**, looked up in
+the tree read; one no epic defines is `board-detail`, naming the epics its prefix
+points at (`vocabulary.py` carries what is decided and declared).
 """
 
 from __future__ import annotations
@@ -146,7 +149,14 @@ from tools.quality.board.register import (
     state,
     table_lines,
 )
-from tools.quality.board.vocabulary import EPIC_HOME, EPIC_TASK, subjects
+from tools.quality.board.vocabulary import (
+    EPIC_HOME,
+    EPIC_TASK,
+    EPICS,
+    epic_definitions,
+    subjects,
+    undefined_epic_task,
+)
 from tools.quality.config import read_text, relative
 from tools.quality.report import Finding
 
@@ -179,13 +189,18 @@ def bijection_reading(root: Path, text: str) -> str:
     """
     ids = {identifier for _n, row_ids, _cell in register(text) for identifier in row_ids}
     vocabulary = subjects(text)
+    definitions = epic_definitions(root)
+    undefined = [i for _n, i in vocabulary.epic_rows if i not in definitions]
     return (
         f"bijection ({RULE_DETAIL}, {RULE_ORPHAN} — `W161`) over `W` ids ONLY: "
         f"{len(ids)} register ids and {len(vocabulary.w_rows)} observation `W` ids against "
         f"{len(rows_on_disk(root))} files in {ROWS}/; epic tasks OUTSIDE it by rule, "
         f"argued in {EPIC_HOME}: {' '.join(vocabulary.epic_tasks) or 'none'}; "
         f"observation subjects in NEITHER vocabulary, read and not judged: "
-        f"{' | '.join(vocabulary.unclassified) or 'none'}."
+        f"{' | '.join(vocabulary.unclassified) or 'none'}. "
+        f"Epic lookup (`W262`): {len(definitions)} task(s) defined in "
+        f"{len(set(definitions.values()))} {EPICS}; {len(undefined)} In-flight epic task(s) "
+        f"no epic defines{': ' + ' '.join(undefined) if undefined else ''}."
     )
 
 
@@ -310,6 +325,13 @@ def bijection_findings(root: Path, text: str) -> list[Finding]:
                     f"EPIC TASK's lives elsewhere, in {EPIC_HOME}.",
                 )
             )
+
+    # ⛔ `W262`: and an EPIC TASK's epic must DEFINE it, looked up in the tree at `root`.
+    definitions = epic_definitions(root)
+    for number, identifier in subjects(text).epic_rows:
+        if identifier not in definitions:
+            message = undefined_epic_task(identifier, definitions)
+            findings.append(Finding(BOARD, number, RULE_DETAIL, message))
 
     for identifier, path in on_disk.items():
         body = bodies[identifier]
