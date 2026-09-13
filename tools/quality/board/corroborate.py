@@ -99,6 +99,13 @@ forever, and Ruling 264(c) had just made that line the project's ONE pre-merge g
 ⭐ **The predicate, the measurement in both states, and the split this row took are all
 in `unclaimed.py`** — one home, not two.
 
+## ⛔ `W125` — the office exclusion is the BOARD's data, and the generator is its own command
+
+⭐ **`offices.py` reads the board's `<!-- offices -->` block, and `unclaimed.py` applies it to
+the `invisible … BY CONSTRUCTION` line alone.** ⛔ **The exit code does not move.**
+`inflight.py` generates the table's git halves and leaves the ROW↔BRANCH half asserted, so
+every arm here still has an assertion to refute (`handoffs/W125.md`).
+
 """
 
 from __future__ import annotations
@@ -107,6 +114,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from tools.quality.board import offices
 from tools.quality.board.contradiction import observation_reading
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import (
@@ -208,7 +216,7 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     # ⛔ `PO-46/14`, and it goes BEFORE the other-direction lines so the rows are read before
     # the branches. ⭐ Only over a population that READ: a refused table returned above.
     lines.extend(_fold_lines(refuted_rows, unanswerable_rows, table))
-    unread_lines, unread = unnamed(table.rows, live, graph)
+    unread_lines, unread = unnamed(table.rows, live, graph, offices.read(text))
     lines.extend(unread_lines)
     lines.extend(spent(graph, live))
     lines.append(
