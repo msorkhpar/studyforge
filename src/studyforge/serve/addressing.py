@@ -14,8 +14,9 @@ by one string.
     located.key        # 'basics/01-getting-started/unit-01' — the corpus's own key
     source = CorporaContent({"depth2-demo": CorpusContent(corpus)}, depths)
 
-**Depends on.** `address` for the parse and every key, and
-`serve.routes.content` for the `ContentSource` seam. ⛔ No key is composed here:
+**Depends on.** `address` for the parse and every key, `archive.scrub` for R7's
+gate on each contents document before it is decoded (W7), `contents` for that
+document's name, and `serve.routes.content` for the `ContentSource` seam. ⛔ No key is composed here:
 `Address.unit_key` spells it, and `parse_unit_key` reads it.
 
 ## ⛔ The depth is the corpus's, found by the first segment
@@ -45,6 +46,8 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 
 from studyforge.address import SEPARATOR, Address, AddressError, parse_unit_key
+from studyforge.archive.scrub import assert_clean
+from studyforge.contents import TOC_FILENAME
 from studyforge.serve.routes.content import ContentSource
 
 #: The key of the multi-corpus contents document's one list.
@@ -103,7 +106,7 @@ class CorporaContent:
     def toc(self) -> str:
         """Return every corpus's contents document, in one envelope-ready document."""
         listed = [
-            {"corpus": name, "contents": json.loads(source.toc())}
+            {"corpus": name, "contents": _decoded(source.toc())}
             for name, source in self._sources.items()
         ]
         return json.dumps({CORPORA: listed}, indent=2, ensure_ascii=False) + "\n"
@@ -117,3 +120,9 @@ class CorporaContent:
         """Say whether the corpus the key names declares that unit."""
         located = locate(key, self._depths)
         return located is not None and self._sources[located.corpus].declares(located.key)
+
+
+def _decoded(text: str) -> object:
+    """Gate one corpus's contents document, then decode it. ⛔ Never the other order (W7)."""
+    assert_clean(text, TOC_FILENAME)
+    return json.loads(text)

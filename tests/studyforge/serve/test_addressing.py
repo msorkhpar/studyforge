@@ -11,11 +11,12 @@ import json
 
 import pytest
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.generate.declarations import read_corpus
 from studyforge.serve.addressing import CORPORA, CorporaContent, locate
 from studyforge.serve.routes.content import CorpusContent
 from tests.studyforge.generate.corpora import BOTH, FIXTURES
-from tests.studyforge.serve.serving import FakeSource
+from tests.studyforge.serve.serving import LEAK, FakeSource
 
 
 def corpora():
@@ -129,3 +130,12 @@ def test_a_unit_is_served_by_its_corpus_qualified_key_and_by_no_other_spelling()
 def test_a_corpus_with_a_source_and_no_depth_is_refused():
     with pytest.raises(ValueError, match="both a content source and a depth"):
         CorporaContent({"lonely": FakeSource()}, {})
+
+
+def test_a_contents_document_carrying_personal_data_is_refused_before_it_is_decoded():
+    # ⛔ W7: this module decodes each corpus's contents document, so it gates each one.
+    leaking = FakeSource(toc=json.dumps({"title": LEAK}) + "\n")
+    source = CorporaContent({"leaking": leaking}, {"leaking": 1})
+    with pytest.raises(PersonalDataLeak) as refused:
+        source.toc()
+    assert LEAK not in str(refused.value)

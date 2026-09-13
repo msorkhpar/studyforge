@@ -53,6 +53,9 @@ hand-back, not here.
 
 ## Surprises
 
+- ⚠️ **The pinned suite caught what the host run did not**: `CorporaContent.toc` decoded
+  each corpus's contents document without `assert_clean`, so W7's gate-coverage test went
+  RED. The document is now gated before it is decoded, and a leak test covers it.
 - ⚠️ **Two plants survived and the code they exposed was removed.** One was a re-spelling
   check in `locate`: `parse_unit_key` already refuses every non-canonical key. The other
   was discovery's `private=` predicate, which `SF-39/4`'s resolver refusal made unreachable.
