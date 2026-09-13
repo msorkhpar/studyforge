@@ -1,4 +1,4 @@
-"""`W106`: the marker's repository-wide sweep, as a shipped reader and not a typed pattern.
+r"""`W106`: the marker's repository-wide sweep, as a shipped reader and not a typed pattern.
 
 **What it does.** Two readers over one vocabulary. `sweep(root)` is the wave-open
 triage list: every line under `HANDOFF_DIR` holding a marker, labelled by
@@ -30,8 +30,8 @@ read it — so the lines it skips are COUNTED and printed, never dropped silentl
 
 ## ⛔ WHAT A WEAK PATTERN IS, AND WHY THIS IS NOT A LIST OF ACCEPTED SHAPES
 
-⭐ **A pattern is a marker's bracket written ESCAPED** — `\\[`, a marker's name,
-`\\]` — and it is RULED when backticks flank it, because Ruling 65 puts the
+⭐ **A pattern is a marker's bracket written ESCAPED** — `\[`, a marker's name,
+`\]` — and it is RULED when backticks flank it, because Ruling 65 puts the
 backticks inside the marker. That is one property of one spelling, derived from
 the constant; ⛔ no shape is enumerated (Ruling 65 records four that failed).
 
@@ -115,7 +115,7 @@ class PatternSite:
 
 
 def _population(root: Path, directory: str) -> tuple[list[Path], str]:
-    """The tracked markdown documents under `directory`, and the walk that found them."""
+    """Return the tracked markdown documents under `directory` and their walk."""
     population = config.markdown_population(root)
     base = root / directory
     return [path for path in population.paths if base in path.parents], population.walk
@@ -167,7 +167,7 @@ def pattern_sites(root: Path, directory: str = CONVENTIONS_DIR) -> list[PatternS
 
 
 def check_marker_patterns(root: Path) -> list[Finding]:
-    """A weak marker pattern typed into a convention document, which is a finding."""
+    """Report each weak marker pattern typed into a convention document."""
     return [
         Finding(
             site.document,
@@ -182,7 +182,7 @@ def check_marker_patterns(root: Path) -> list[Finding]:
 
 
 def sweep_report(reading: Sweep, directory: str = HANDOFF_DIR) -> list[str]:
-    """The reading as printed lines: the summary first, then every line."""
+    """Format the reading as printed lines: the summary first, then every line."""
     summary = (
         f"marker sweep: {reading.marker} over {directory} ({reading.walk} walk) — "
         f"{reading.documents} documents read; {len(reading.lines)} lines hold the marker: "
