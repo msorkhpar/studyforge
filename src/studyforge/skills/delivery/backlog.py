@@ -159,7 +159,9 @@ class Backlog:
             )
         for name in reaches:
             lands = index.milestone_of(name)
-            if lands > milestone.gated_by:
+            # ⛔ In the index's declared sequence, never by id: `M5` lands after
+            # `M8` in a plan whose order is not the order its ids sort to.
+            if index.later(lands, than=milestone.gated_by):
                 raise PlanRefused(
                     f"a milestone is gated by {milestone.gated_by}, but one of its "
                     f"tasks waits on {name}, which lands at {lands}"

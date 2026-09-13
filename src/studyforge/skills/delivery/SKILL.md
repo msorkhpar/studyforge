@@ -33,13 +33,21 @@ It runs **in the target repository**, and its authority is `studyforge`.
 ```
 python3 -c "from pathlib import Path; \
   from studyforge.skills.delivery import capability_index; \
-  print(capability_index((p.name, p.read_text('utf-8')) \
-    for p in sorted(Path('docs/tasks').glob('E*.md'))))"
+  tasks = Path('docs/tasks'); \
+  print(capability_index(((p.name, p.read_text('utf-8')) \
+    for p in sorted(tasks.glob('E*.md'))), \
+    ('README.md', (tasks / 'README.md').read_text('utf-8'))))"
 ```
 
 ⛔ **The caller names the documents, and that is deliberate.** This package
 never goes looking for `docs/tasks/`: a framework module that knew where a
 plan lives would be a module the next repository has to be arranged around.
+
+⛔ **The second document declares the ORDER milestones run in**, by the order
+its `### M<n> — <name>` sections appear, and the index prints and compares
+milestones in that order — ⚠️ **never the order their ids sort to**, because a
+plan can be reordered without renaming a milestone. ⭐ A declared milestone no
+epic delivers anything at is printed and says so: it is still a gate.
 
 ⭐ **The index answers one question and it is the only question a planner has
 about the framework: *when does capability X become available?*** It is
@@ -104,6 +112,8 @@ the framework milestone that gates it, and a task's *depends on* may name a
 ⭐ **`Backlog` checks the declaration against the index**: if a task in a
 milestone uses a capability the index places later than the milestone's
 declared gate, that is a refusal with the capability named — never a note.
+⛔ **"Later" is the index's declared order** (step 1), never the order ids
+sort to.
 
 ### 5. Write acceptance the framework can evaluate — ⛔ never acceptance by opinion
 
