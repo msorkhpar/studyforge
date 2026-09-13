@@ -2,14 +2,34 @@
 
 from __future__ import annotations
 
-from studyforge.skills.reconnaissance import assess, draft, find, take
+import json
+
+from studyforge.address import slugify as sf01_slugify
+from studyforge.corpus.manifest import Classification, parse
+from studyforge.skills.reconnaissance import assess, draft, find, survey, take
 from studyforge.skills.reconnaissance.proposal import slugify
 from tests.studyforge.skills.reconnaissance import sources
+
+#: Shapes whose draft excludes nothing, so the whole draft goes to SF-02 as it
+#: stands. ⚠️ A draft's `exclude` is bare paths awaiting a person's reasons,
+#: which SK-07's `promote` pairs; that half is not this file's.
+EXCLUDES_NOTHING = (
+    sources.flat_prose,
+    sources.prefixed_groups,
+    sources.nested_sections,
+    sources.marker_ordinals,
+    sources.record_beside_units,
+)
 
 
 def propose(root):
     inventory = take(root)
     return draft(inventory, find(inventory), assess(inventory))
+
+
+def accepted(proposal):
+    """Parse the draft with SF-02's own reader. ⛔ Its rules are never restated here."""
+    return parse(json.dumps(proposal))
 
 
 # --------------------------------------------------------------------------
@@ -53,11 +73,11 @@ def test_the_title_comes_from_the_record_rather_than_a_filename(tmp_path):
     assert manifest["title"] == "A Prose Course"
 
 
-def test_variants_are_empty_until_something_says_otherwise(tmp_path):
+def test_one_variant_is_proposed_and_still_asked_about(tmp_path):
     # ⚠️ Three of the four designed shapes have one variant. Proposing two
-    # would be fitting the exception.
+    # would be fitting the exception, and proposing none is refused by SF-02.
     manifest, asked = propose(sources.flat_prose(tmp_path / "c"))
-    assert manifest["variants"] == []
+    assert len(manifest["variants"]) == 1
     assert any("one variant" in q.question for q in asked)
 
 
@@ -115,3 +135,67 @@ def test_more_ordinal_levels_than_this_skill_can_name_is_asked_about(tmp_path):
     # about a hierarchy that costs an entire ingestion.
     _, asked = propose(sources.over_deep_ordinals(tmp_path / "c"))
     assert any("container levels" in question.question for question in asked)
+
+
+# --------------------------------------------------------------------------
+# ⛔ W240: the draft of `survey('.')` is one SF-02 accepts
+# --------------------------------------------------------------------------
+
+
+def test_a_corpus_surveyed_as_dot_drafts_a_manifest_sf02_accepts(tmp_path, monkeypatch):
+    # ⛔ `survey('.')` is the documented call. Its unresolved name is empty,
+    # and `variants: []` is refused, so every draft was unpromotable by hand.
+    for build in EXCLUDES_NOTHING:
+        root = build(tmp_path / build.__name__)
+        monkeypatch.chdir(root)
+        manifest = accepted(survey(".").proposal)
+        assert manifest.source == sf01_slugify(root.name), build.__name__
+
+
+def test_a_directory_name_with_no_slug_still_drafts_an_accepted_source(tmp_path, monkeypatch):
+    root = sources.flat_prose(tmp_path / "\u65e5\u672c")
+    monkeypatch.chdir(root)
+    accepted(survey(".").proposal)
+
+
+def test_a_corpus_with_no_record_surveyed_as_dot_drafts_an_accepted_title(tmp_path, monkeypatch):
+    # ⚠️ With no record the title falls back to the directory's name, which
+    # is the same empty name `source` had.
+    root = sources.flat_prose(tmp_path / "c")
+    (root / "README.md").unlink()
+    monkeypatch.chdir(root)
+    accepted(survey(".").proposal)
+
+
+def test_the_source_slug_is_asked_about(tmp_path):
+    manifest, asked = propose(sources.flat_prose(tmp_path / "c"))
+    assert any(repr(manifest["source"]) in q.question for q in asked)
+
+
+def test_no_include_glob_matches_the_curriculum_record(tmp_path):
+    # ⛔ A record beside a unit it lists was caught by that unit's wildcard
+    # and read as a unit. SF-02's classifier judges; every listed unit stays in.
+    for build in EXCLUDES_NOTHING:
+        root = build(tmp_path / build.__name__)
+        manifest, _ = propose(root)
+        content = accepted(manifest).content
+        record = find(take(root))
+        assert content.classify(record.path.as_posix()) is not Classification.INCLUDED, (
+            build.__name__
+        )
+        assert all(content.classify(t) is Classification.INCLUDED for t in record.order)
+
+
+def test_a_record_no_wildcard_catches_keeps_directory_globs(tmp_path):
+    # ⭐ The fix lists files only where a wildcard would catch the record.
+    manifest, _ = propose(sources.flat_prose(tmp_path / "c"))
+    assert manifest["content"]["include"] == ["src/*.md"]
+    beside, _ = propose(sources.record_beside_units(tmp_path / "b"))
+    assert beside["content"]["include"] == ["chapters/*.md", "intro.md"]
+
+
+def test_a_corpus_with_no_curriculum_record_keeps_its_draft(tmp_path):
+    root = sources.flat_prose(tmp_path / "c")
+    (root / "README.md").unlink()
+    manifest, _ = propose(root)
+    assert manifest["content"] == {"include": ["src/*.md"], "exclude": []}

@@ -7,9 +7,15 @@ determine.
 **How you use it.** `draft(inventory, record, capability)` returns
 `(manifest, uncertainties)`.
 
-**Depends on.** `inventory`, `record`, `capability`, `report`. ⛔ Not on
-`corpus.manifest` — this writes a **draft for a person**, and a draft that had
-to satisfy the reader would be unable to leave a field open.
+**Depends on.** `inventory`, `record`, `capability`, `report`, and
+`studyforge.address` for what a slug is. ⛔ Not on `corpus.manifest` — this
+writes a **draft for a person**, and a draft that had to satisfy the reader
+would be unable to leave a field open.
+
+⚠️ **Open is not the same as refused.** A field this skill *does* fill is
+filled with a value the manifest reader accepts, and the question beside it
+says it was chosen. A `source` of `""` or `variants` of `[]` left nothing open:
+it made every draft unpromotable until a person retyped both (R19).
 
 ## ⛔ It proposes. It does not decide.
 
@@ -25,9 +31,13 @@ was made.
 
 Every default below is a measurement on real material rather than a taste:
 
-- **`variants` is `[]` until something says otherwise.** Three of the four
-  designed shapes have one variant. A skill that proposed two would be fitting
-  the exception.
+- **`variants` is one variant, `prose`, until something says otherwise.**
+  Three of the four designed shapes have one variant, and a skill that proposed
+  two would be fitting the exception. ⭐ The word is the one this framework's
+  own worked examples use (`docs/authoring/examples.md`), so four corpora do not
+  invent four words for it. ⛔ A filing key, never a language.
+- **`source` is the slug of the directory's resolved name.** `survey('.')` is
+  the documented call, and the unresolved name of `.` is empty.
 - **`exercises` follows `capability`**, and *false* is a complete answer.
 - **`placement` follows whether the material shares its directories with
   anything else.** `sibling` puts a page beside the file it was made from,
@@ -41,6 +51,7 @@ import re
 from collections.abc import Iterator
 from pathlib import PurePosixPath
 
+from studyforge.address import slugify as slug_of
 from studyforge.skills.reconnaissance.capability import Capability
 from studyforge.skills.reconnaissance.inventory import Inventory
 from studyforge.skills.reconnaissance.record import Record
@@ -56,6 +67,14 @@ from studyforge.skills.reconnaissance.report import Uncertainty
 FLAT_LEVEL = "course"
 GROUPED_LEVEL = "group"
 NESTED_LEVELS = ("section", "module")
+
+#: The one variant a draft proposes. ⚠️ A filing and presentation key and
+#: nothing more (§4): it never says what language a fence is or what runs.
+SINGLE_VARIANT = "prose"
+
+#: The `source` proposed when a directory's name has no slug at all — a name
+#: written entirely outside ASCII. ⚠️ Still proposed and still asked about.
+UNNAMED_SOURCE = "corpus"
 
 #: Everything a slug loses. ⛔ Not only accents — see `_collisions`.
 SLUG_STRIP = re.compile(r"[^a-z0-9]+")
@@ -79,10 +98,10 @@ def draft(
     include, exclude = _content(inventory, record)
     manifest = {
         "corpus_api": 1,
-        "source": inventory.root.name,
+        "source": _source(inventory),
         "title": _title(record, inventory),
         "levels": levels,
-        "variants": [],
+        "variants": [SINGLE_VARIANT],
         "exercises": capability.graded,
         "placement": _placement(inventory, capability),
         "content": {"include": include, "exclude": exclude},
@@ -161,6 +180,16 @@ def _group_is_in_ordinal(record: Record) -> bool:
     return bool(leading) and all(len(seen) == 1 for seen in leading.values())
 
 
+def _source(inventory: Inventory) -> str:
+    """Return a slug of the directory's **resolved** name.
+
+    ⛔ Resolved, because the root a person passes is usually `.`, whose own
+    name is empty. The slug rule is SF-01's (`studyforge.address.slugify`), so
+    what this proposes is what the manifest reader calls a slug.
+    """
+    return slug_of(inventory.root.resolve().name) or UNNAMED_SOURCE
+
+
 def _title(record: Record | None, inventory: Inventory) -> str:
     """Return the corpus's own name, taken from the record's own first heading.
 
@@ -169,11 +198,19 @@ def _title(record: Record | None, inventory: Inventory) -> str:
     """
     if record is not None and record.title:
         return record.title
-    return inventory.root.name
+    return inventory.root.resolve().name
 
 
 def _content(inventory: Inventory, record: Record | None) -> tuple[list[str], list[str]]:
-    """Return what to read and what to leave out, as patterns a person can check."""
+    """Return what to read and what to leave out, as patterns a person can check.
+
+    ⛔ **An include glob never matches the curriculum record.** The record sits
+    beside the units it lists often enough — a root `README.md` linking a root
+    chapter — and a directory wildcard over it makes the record a unit. So a
+    directory whose wildcard would catch the record is listed file by file.
+    ⚠️ The record is still not *declared* anything here; what it is stays a
+    person's question.
+    """
     if record is None:
         directories = sorted(
             {
@@ -183,14 +220,16 @@ def _content(inventory: Inventory, record: Record | None) -> tuple[list[str], li
         )
         return [f"{d}/*.md" if d != "." else "*.md" for d in directories], []
     listed = {PurePosixPath(target) for target in record.order}
-    patterns = sorted(
-        {
-            f"{p.parent.as_posix()}/*{p.suffix}" if p.parent.as_posix() != "." else f"*{p.suffix}"
-            for p in listed
-        }
-    )
+    patterns = sorted({_pattern(target, record.path) for target in listed})
     everything = {p.relative_to(inventory.root).as_posix() for p in inventory.material}
     return patterns, sorted(everything - set(record.order) - {record.path.as_posix()})
+
+
+def _pattern(target: PurePosixPath, record: PurePosixPath) -> str:
+    """Return the directory wildcard for `target`, or `target` itself if it would catch `record`."""
+    parent = target.parent.as_posix()
+    wildcard = f"{parent}/*{target.suffix}" if parent != "." else f"*{target.suffix}"
+    return target.as_posix() if PurePosixPath(record).full_match(wildcard) else wildcard
 
 
 def _placement(inventory: Inventory, capability: Capability) -> str:
@@ -211,11 +250,16 @@ def _choices(
         settles_it="replace them with the words this corpus uses for its own parts",
     )
     yield Uncertainty(
+        question=f"is {manifest['source']!r} the right source slug?",
+        why="derived from the name of the directory surveyed, which says nothing of the corpus",
+        settles_it="replace it with the slug this corpus is filed under, if it has one",
+    )
+    yield Uncertainty(
         question="is this one variant of the material, or several?",
         why="nothing in the tree distinguishes two renderings of the same unit",
         settles_it=(
             "name the variants if a unit exists in more than one form (a language, "
-            "a difficulty). ⭐ One is the common case and an empty list is correct for it"
+            f"a difficulty). ⭐ One is the common case, and {SINGLE_VARIANT!r} is its name"
         ),
     )
     yield Uncertainty(
