@@ -10,6 +10,7 @@ from tools.quality.board import board_state, check_board
 from tools.quality.clauses import check_clause_counts, clause_census
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.counts import check_derived_counts, count_census
+from tools.quality.creators import check_owns_before_creator, creator_census
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs, handoff_citations
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
@@ -50,6 +51,7 @@ def test_every_check_is_registered():
         check_rulings_reach,
         check_clause_counts,
         check_derived_counts,
+        check_owns_before_creator,
     }
     assert quality.CHECKS, "Ruling 48: an empty registry satisfies set() == set()"
 
@@ -71,6 +73,7 @@ def test_every_notice_is_registered():
         reach_notice,
         clause_census,
         count_census,
+        creator_census,
         lint_notice,
     }
 

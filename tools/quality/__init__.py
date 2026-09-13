@@ -63,6 +63,7 @@ from tools.quality.config import (
     TEST_LINE_CEILING,
 )
 from tools.quality.counts import check_derived_counts, count_census
+from tools.quality.creators import check_owns_before_creator, creator_census
 from tools.quality.docstrings import check_docstrings
 from tools.quality.handoffs import check_handoffs, handoff_citations
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
@@ -157,6 +158,10 @@ from tools.quality.style import check_style
 #: ⚠️ `check_derived_counts` reads the PROSE of the Python under `SCAN_ROOTS` for a bare
 #: count of a derived population (`W151`). ⛔ Its exemption mechanism is a NINTH: the
 #: ref a figure was measured at, written in the count's own sentence (Ruling 277).
+#:
+#: ⚠️ `check_owns_before_creator` reads the PLAN'S GRAPH (`W156`): a row owning inside a sibling
+#: component must reach that component's creator through its declared `Depends on` chain. ⛔ Its
+#: exemption mechanism is a TENTH: `workspace.json` pinning a component nobody creates `present`.
 CHECKS = (
     check_sizes,
     check_board,
@@ -174,6 +179,7 @@ CHECKS = (
     check_rulings_reach,
     check_clause_counts,
     check_derived_counts,
+    check_owns_before_creator,
 )
 
 #: ⛔ **The second channel, and it exists because some of the floor's answers
@@ -255,6 +261,9 @@ CHECKS = (
 #:
 #: ⭐ **`count_census` is the eleventh** (`W151`): every count of a derived population in
 #: Python prose, bare and dated apart, so that check's green exit carries its population.
+#:
+#: ⭐ **`creator_census` is the twelfth** (`W156`): every member, its creator, its verdict and
+#: whether its component was read from a path or from epic prose, so a green exit carries both.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -267,6 +276,7 @@ NOTICES = (
     reach_notice,
     clause_census,
     count_census,
+    creator_census,
     lint_notice,
 )
 
