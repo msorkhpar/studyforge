@@ -8,12 +8,13 @@ checks, the reader's documentation and the record that undoes all of it.
 **How you use it.** Through the skill document beside this file (`SKILL.md`),
 which is the procedure. This package is what the skill *calls*:
 
-    from studyforge.skills.onboarding import onboard, uninstall
+    from studyforge.skills.onboarding import hand_edited, onboard, uninstall
 
     made = onboard(draft, framework_commit=commit)
     print("\\n".join(made.lines()))     # what it will write, and why
     made.write(corpus_root)             # ⛔ refuses to overwrite anything
     uninstall(corpus_root)              # ⛔ refuses if any of it changed
+    hand_edited(corpus_root)            # generated files edited by hand, never yours
 
 **Depends on.** `corpus.manifest`, `skills.adapter` and `skills.reconnaissance`
 — the draft's producer, the contract it is promoted against, and the scaffold
@@ -75,13 +76,7 @@ from studyforge.skills.onboarding.manifest import (
     promote,
     render,
 )
-from studyforge.skills.onboarding.onboard import (
-    INSTALLED_API,
-    Onboarding,
-    OnboardingRefused,
-    onboard,
-    uninstall,
-)
+from studyforge.skills.onboarding.onboard import Onboarding, onboard, uninstall
 from studyforge.skills.onboarding.pin import (
     PIN_API,
     PIN_FILE,
@@ -94,6 +89,7 @@ from studyforge.skills.onboarding.pin import (
     stub,
     stub_paths,
 )
+from studyforge.skills.onboarding.record import INSTALLED_API, OnboardingRefused, hand_edited
 
 #: ⛔ The package's whole public surface.
 __all__ = [
@@ -114,6 +110,7 @@ __all__ = [
     "PinRefused",
     "PromotionRefused",
     "classified",
+    "hand_edited",
     "module",
     "onboard",
     "paths",

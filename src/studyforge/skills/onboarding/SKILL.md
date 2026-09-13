@@ -106,7 +106,7 @@ What lands, and why each one exists:
 | `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
 | `tests/` — two checks | R3's assertion with this corpus's declared edits baked in, and the pin-drift check |
 | `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations |
-| `.studyforge/installed.json` | what step 6 undoes, and the digest that proves nothing was hand-edited |
+| `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 
 ### 4. Write the one file that is a person's
 
@@ -116,6 +116,11 @@ python3 -m pytest tests -q          # ⛔ it fails, and the failure is the speci
 
 ⭐ **`made.hand_written` names it** — `ingest/read.py`, three functions. Every
 other file in the corpus is downstream of it and is generated.
+
+⭐ **The install record marks it `hand_written` and keeps no digest of it**, so
+a regenerate neither rewrites what you wrote nor records it (`INT-09/1`).
+⛔ `hand_edited(root)` names every **generated** file whose bytes differ from
+the record, and never yours: an empty list is R19 checked, not assumed.
 
 ### 5. Ingest, and let the machine say whether it worked
 
@@ -155,7 +160,7 @@ python3 -c "from studyforge.skills.onboarding import uninstall; \
 ⛔ **It removes exactly what it wrote, and refuses if any of it changed** —
 naming every changed file at once. ⭐ **A file you filled in is not silently
 destroyed**, which is why `ingest/read.py` is the usual reason a clean
-uninstall refuses.
+uninstall refuses: it is removed only while it is still the stub.
 
 ---
 
