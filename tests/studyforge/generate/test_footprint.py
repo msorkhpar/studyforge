@@ -6,6 +6,7 @@ from pathlib import PurePosixPath
 
 import pytest
 
+from studyforge.cli.plan.report import CREATION_VERBS
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, AUDIO_DIRNAME
 from studyforge.generate import Footprint, footprint_for, read_corpus, unit_location
 from studyforge.generate.footprint import of
@@ -22,7 +23,8 @@ def plan_lines(name: str) -> list[str]:
     what a footprint is made of.
     """
     lines = (GOLDEN / f"{name}.plan.txt").read_text(encoding="utf-8").splitlines()
-    return [line.split()[1] for line in lines if line.startswith("create ")]
+    # ⭐ `W267`: every path line, whatever its verb, which is the whole of `Plan.paths`.
+    return [line.split()[1] for line in lines if line.split(" ", 1)[0] in CREATION_VERBS]
 
 
 # --------------------------------------------------------------------------

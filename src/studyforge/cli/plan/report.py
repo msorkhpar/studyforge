@@ -15,9 +15,17 @@ one was found out.
 
 One fact per line, `<verb> <subject>  <detail>`, so a plan is greppable by verb
 and diffable by path. ⛔ **The verbs are a closed set** — `plan`, `placement`,
-`read`, `create`, `edit`, `ignore`, `media`, `refuse` — because the whole point
-is that a consumer can read this without a parser and a person can read it
-without a consumer.
+`read`, `create`, `replace`, `keep`, `claim`, `expect`, `edit`, `ignore`,
+`media`, `refuse` — because the whole point is that a consumer can read this
+without a parser and a person can read it without a consumer.
+
+## ⛔ A path's verb says who writes it and whether it is there (`W267`)
+
+A path on disk is never a `create`: the build writes it again (`replace`), or
+does not (`keep`). A path the build does not write is never a `create` either:
+a unit's media directory is `claim`ed, since a build creates it only when it
+copies a file into it (`W268`), and a path another command writes is `expect`ed,
+naming that command. ⭐ `Plan.paths` still names every path, whatever its verb.
 
 ⛔ **Creations are printed sorted by path** (R10), which `derive` does. Not
 grouped by container: the acceptance is a path-for-path diff against what a
@@ -52,6 +60,14 @@ UNPROJECTED = (
 )
 
 
+#: ⛔ `W267`: the verbs a named path is printed with, by who writes it and whether it is there.
+CREATE, REPLACE, KEEP, CLAIM, EXPECT = "create", "replace", "keep", "claim", "expect"
+CREATION_VERBS = (CREATE, REPLACE, KEEP, CLAIM, EXPECT)
+
+#: What a `claim` line says: `W268`'s rule, which a plan cannot decide without the unit documents.
+WHEN_FILLED = "a build creates it only when it copies a file into it"
+
+
 @dataclass(frozen=True, slots=True)
 class Creation:
     """One path a build will create, and what it is."""
@@ -62,10 +78,30 @@ class Creation:
     #: `studyforge narrate` wrote there that a build copies into another output.
     #: ⛔ Carried as data so no reader recovers it from a directory's name.
     narration: bool = False
+    #: ⭐ `W267`: the command that writes it when a build does not. Empty means a build does.
+    writer: str = ""
+    #: ⭐ `W267`, `W268`: a unit's media directory, made only when a file is copied into it.
+    when_filled: bool = False
+    #: ⭐ `W267`: whether the path was on disk at the corpus root when the plan was taken.
+    present: bool = False
+
+    @property
+    def verb(self) -> str:
+        """Return the line's verb: never `create` for a path on disk or one a build never writes."""
+        if self.when_filled:
+            return KEEP if self.present else CLAIM
+        if self.writer:
+            return KEEP if self.present else EXPECT
+        return REPLACE if self.present else CREATE
 
     def line(self) -> str:
-        """Render as one greppable line."""
-        return f"create {self.path}  {self.what}"
+        """Render as one greppable line, saying who writes a path a build does not."""
+        note = ""
+        if self.when_filled:
+            note = f" — {WHEN_FILLED}" if not self.present else " — a build never removes it"
+        elif self.writer:
+            note = f" — {self.writer} writes it; a build into this root does not"
+        return f"{self.verb} {self.path}  {self.what}{note}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -120,7 +156,8 @@ class MediaProjection:
             f"media commit {self.policy.commit!r}  generated media {committed} under this policy",
             # ⛔ The kinds are read from placement's own tuple, never retyped:
             # a fifth kind must not leave this sentence quietly listing four.
-            f"media units {self.units}  each gets one directory per kind: "
+            f"media units {self.units}  each may get one directory per kind, made only when "
+            f"a build copies a file into it: "
             f"{', '.join(UNIT_MEDIA_DIRNAMES)}",
         ]
         if not self.policy.has_limits:
@@ -219,9 +256,12 @@ class Plan:
         and *"this build edits nothing of yours"* is the single line a
         repository owner most wants stated.
         """
+        said = {verb: sum(1 for c in self.creations if c.verb == verb) for verb in CREATION_VERBS}
         return (
-            f"plan: {len(self.creations)} path(s) to create, {len(self.edits)} file(s) to "
-            f"edit, {len(self.ignore)} ignore line(s), {len(self.refusals)} refusal(s)"
+            f"plan: {said[CREATE]} path(s) to create, {said[REPLACE]} to replace, "
+            f"{said[KEEP]} to keep, {said[CLAIM]} claimed, {said[EXPECT]} expected from "
+            f"another command, {len(self.edits)} file(s) to edit, {len(self.ignore)} "
+            f"ignore line(s), {len(self.refusals)} refusal(s)"
         )
 
 

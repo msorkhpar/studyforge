@@ -2,40 +2,40 @@ plan depth2-demo  Depth Two Demo
 placement sibling  each artifact beside the source file it was generated from
 read corpus.json + 3 container.json  no file inside the source material was opened
 create .studyforge/assets/  the shared stylesheets, scripts and player
-create .studyforge/site.json  the discovery cache, never the authority
-create advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.audio/  advanced/02-going-further unit 1's audio
-create advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.images/  advanced/02-going-further unit 1's images
-create advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.practice/  advanced/02-going-further unit 1's practice
+expect .studyforge/site.json  the discovery cache, never the authority — `studyforge serve` writes it; a build into this root does not
+claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.audio/  advanced/02-going-further unit 1's audio — a build creates it only when it copies a file into it
+claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.images/  advanced/02-going-further unit 1's images — a build creates it only when it copies a file into it
+claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.practice/  advanced/02-going-further unit 1's practice — a build creates it only when it copies a file into it
 create advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html  advanced/02-going-further unit 1's page
-create advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.video/  advanced/02-going-further unit 1's video
-create advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.audio/  advanced/02-going-further unit 2's audio
-create advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.images/  advanced/02-going-further unit 2's images
-create advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.practice/  advanced/02-going-further unit 2's practice
+claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.video/  advanced/02-going-further unit 1's video — a build creates it only when it copies a file into it
+claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.audio/  advanced/02-going-further unit 2's audio — a build creates it only when it copies a file into it
+claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.images/  advanced/02-going-further unit 2's images — a build creates it only when it copies a file into it
+claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.practice/  advanced/02-going-further unit 2's practice — a build creates it only when it copies a file into it
 create advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.unit.html  advanced/02-going-further unit 2's page
-create advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.video/  advanced/02-going-further unit 2's video
+claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.video/  advanced/02-going-further unit 2's video — a build creates it only when it copies a file into it
 create advanced/02-going-further/going-further.section.html  the page for container advanced/02-going-further
-create advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.audio/  advanced/03-putting-it-together unit 1's audio
-create advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.images/  advanced/03-putting-it-together unit 1's images
-create advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.practice/  advanced/03-putting-it-together unit 1's practice
+claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.audio/  advanced/03-putting-it-together unit 1's audio — a build creates it only when it copies a file into it
+claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.images/  advanced/03-putting-it-together unit 1's images — a build creates it only when it copies a file into it
+claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.practice/  advanced/03-putting-it-together unit 1's practice — a build creates it only when it copies a file into it
 create advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.unit.html  advanced/03-putting-it-together unit 1's page
-create advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.video/  advanced/03-putting-it-together unit 1's video
+claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.video/  advanced/03-putting-it-together unit 1's video — a build creates it only when it copies a file into it
 create advanced/03-putting-it-together/putting-it-together.section.html  the page for container advanced/03-putting-it-together
-create archive/  the archive root — an adapter writes it (R2) and every build reads it
-create basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.audio/  basics/01-getting-started unit 1's audio
-create basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.images/  basics/01-getting-started unit 1's images
-create basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.practice/  basics/01-getting-started unit 1's practice
+keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
+claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.audio/  basics/01-getting-started unit 1's audio — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.images/  basics/01-getting-started unit 1's images — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.practice/  basics/01-getting-started unit 1's practice — a build creates it only when it copies a file into it
 create basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.unit.html  basics/01-getting-started unit 1's page
-create basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.video/  basics/01-getting-started unit 1's video
-create basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.audio/  basics/01-getting-started unit 2's audio
-create basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.images/  basics/01-getting-started unit 2's images
-create basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.practice/  basics/01-getting-started unit 2's practice
+claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.video/  basics/01-getting-started unit 1's video — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.audio/  basics/01-getting-started unit 2's audio — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.images/  basics/01-getting-started unit 2's images — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.practice/  basics/01-getting-started unit 2's practice — a build creates it only when it copies a file into it
 create basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.unit.html  basics/01-getting-started unit 2's page
-create basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.video/  basics/01-getting-started unit 2's video
-create basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.audio/  basics/01-getting-started unit 3's audio
-create basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.images/  basics/01-getting-started unit 3's images
-create basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.practice/  basics/01-getting-started unit 3's practice
+claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.video/  basics/01-getting-started unit 2's video — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.audio/  basics/01-getting-started unit 3's audio — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.images/  basics/01-getting-started unit 3's images — a build creates it only when it copies a file into it
+claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.practice/  basics/01-getting-started unit 3's practice — a build creates it only when it copies a file into it
 create basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.unit.html  basics/01-getting-started unit 3's page
-create basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.video/  basics/01-getting-started unit 3's video
+claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.video/  basics/01-getting-started unit 3's video — a build creates it only when it copies a file into it
 create basics/01-getting-started/getting-started.section.html  the page for container basics/01-getting-started
 create index.html  the root index
 edit pom.xml  insert-line after '<modules>'
@@ -43,8 +43,8 @@ edit pom.xml  adds '  <module>practice</module>'
 edit pom.xml  why Maven compiles only what sits on a source root (spec §7).
 edit pom.xml  undo remove-line '  <module>practice</module>' from pom.xml
 media commit 'auto'  generated media is committed under this policy
-media units 6  each gets one directory per kind: audio, images, video, practice
+media units 6  each may get one directory per kind, made only when a build copies a file into it: audio, images, video, practice
 media limit max_total_bytes 5000000000
 media limit max_file_bytes 104857600
 media footprint  not projected — a footprint is clips times bytes per clip, this run was given no rate, and none is measurable until SF-32 (M3) generates media. The unit count above is what IS known before the gigabytes exist.
-plan: 37 path(s) to create, 1 file(s) to edit, 0 ignore line(s), 0 refusal(s)
+plan: 11 path(s) to create, 0 to replace, 1 to keep, 24 claimed, 1 expected from another command, 1 file(s) to edit, 0 ignore line(s), 0 refusal(s)

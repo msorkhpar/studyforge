@@ -141,11 +141,12 @@ def test_plan_enumerates_every_copy_and_the_build_agrees_path_for_path(tmp_path,
     assert plan_main([str(root)], out=stream) == 0
     plan = plan_for(root)
     planned = sorted(c.path for c in plan.creations if c.narration and not c.path.endswith("/"))
-    printed = sorted(
-        line.split()[1]
-        for line in stream.getvalue().splitlines()
-        if line.startswith("create ") and line.split()[1] in planned
-    )
+    # ⛔ `W267`: a clip `narrate` wrote beside the material is on disk, so its line is
+    # never a `create`; it is kept, and the one removed above is expected from narrate.
+    said = {line.split()[1]: line.split()[0] for line in stream.getvalue().splitlines()}
+    printed = sorted(path for path in said if path in planned)
+    verbs = sorted(said[path] for path in printed)
+    assert verbs == sorted(["expect"] + ["keep"] * (len(printed) - 1))
 
     written = write_site(root, an_output(tmp_path))
     wrote = sorted(

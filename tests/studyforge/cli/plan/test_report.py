@@ -75,6 +75,10 @@ def test_every_verb_is_the_first_token_of_its_line():
         "placement",
         "read",
         "create",
+        "replace",
+        "keep",
+        "claim",
+        "expect",
         "edit",
         "ignore",
         "media",
@@ -180,6 +184,8 @@ def test_the_summary_prints_every_count_including_the_zeroes():
     # repository owner most wants stated.
     summary = a_plan().summary()
     assert "0 path(s) to create" in summary
+    for said in ("0 to replace", "0 to keep", "0 claimed", "0 expected from another command"):
+        assert said in summary
     assert "0 file(s) to edit" in summary
     assert "0 ignore line(s)" in summary
     assert "0 refusal(s)" in summary
@@ -226,3 +232,43 @@ def test_an_ignore_line_names_the_file_that_holds_it():
     # ignore file, which R3 forbids however declared.
     lines = a_plan(ignore=("**/audio/",), ignore_home=".studyforge/.gitignore").lines()
     assert "ignore **/audio/  in .studyforge/.gitignore" in lines
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W267`: a path's verb says who writes it and whether it is there
+# --------------------------------------------------------------------------
+
+
+def test_a_path_on_disk_is_never_a_create_and_is_named_as_replaced_or_kept():
+    assert Creation("index.html", "the root index", present=True).verb == "replace"
+    assert Creation("archive/", "the archive", writer="an adapter", present=True).verb == "keep"
+    assert Creation("u/audio/", "u's audio", when_filled=True, present=True).verb == "keep"
+
+
+def test_a_path_a_build_does_not_write_is_never_a_create_and_names_what_does():
+    expected = Creation("site.json", "the cache", writer="`studyforge serve`")
+    assert expected.verb == "expect"
+    assert expected.line() == (
+        "expect site.json  the cache — `studyforge serve` writes it; "
+        "a build into this root does not"
+    )
+    claimed = Creation("u/audio/", "u's audio", when_filled=True)
+    assert claimed.verb == "claim"
+    assert claimed.line().endswith("a build creates it only when it copies a file into it")
+
+
+def test_the_summary_counts_each_verb_it_printed():
+    creations = (
+        Creation("a", "one"),
+        Creation("b", "two", present=True),
+        Creation("c/", "three", when_filled=True),
+        Creation("d", "four", writer="x"),
+        Creation("e", "five", writer="x", present=True),
+    )
+    summary = a_plan(creations=creations).summary()
+    assert "1 path(s) to create, 1 to replace, 1 to keep, 1 claimed, 1 expected" in summary
+
+
+def test_the_media_units_line_says_a_directory_is_made_only_when_filled():
+    units = [line for line in MediaProjection(DEFAULT_MEDIA, 1).lines() if "units" in line][0]
+    assert "made only when a build copies a file into it" in units
