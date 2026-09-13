@@ -67,6 +67,17 @@ def test_the_emission_stages_before_it_moves():
     assert "layout.staging" in text
 
 
+def test_the_emission_dates_every_container_with_the_run_and_not_the_reader():
+    # ⛔ W257 (INT-09/3): the date is applied AFTER `read`, before the map is
+    # rendered, and the documents are read from the dated container.
+    text = files()["ingest/emit.py"]
+    dated = text.index("container = dataclasses.replace(reading, ingested=ingested)")
+    assert dated < text.index("render_map(container)")
+    assert dated < text.index("read.documents(root, container)")
+    assert "render_map(reading)" not in text
+    assert "twenty" not in files()["ingest/audit.py"], "a generated module restates a count"
+
+
 def test_the_emission_refuses_an_empty_archive():
     assert "An empty corpus is a silent failure" in files()["ingest/emit.py"]
 

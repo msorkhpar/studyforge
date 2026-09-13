@@ -60,6 +60,7 @@ from studyforge.validate.source.classification import (
     SKIP_DIRS,
     Scan,
     check_unclassified,
+    repository_ignores,
     source_files,
 )
 from studyforge.validate.source.completeness import (
@@ -104,5 +105,6 @@ __all__ = [
     "check_archive_members",
     "check_completeness",
     "check_unclassified",
+    "repository_ignores",
     "source_files",
 ]

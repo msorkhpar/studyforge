@@ -27,15 +27,41 @@ import os
 import subprocess
 import sys
 
+from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.validate import validate
 from tests.studyforge.skills.adapter import corpora
-from tests.support import repository_root
+from tests.support import git, init_repository, repository_root, run
 
 #: How long a subprocess is given. ⚠️ A bound rather than a hope: one that
 #: hangs turns a failing test into a stalled build.
 TIMEOUT = 180
+
+#: A date the hand-written reader records that is NOT the run's (`W257`).
+READER_DATE = "1999-12-31"
+
+#: The directory a repository ignores, planted where a copy must not take it.
+IGNORED = "scratch"
+
+#: Runs the GENERATED `test_emit`'s own `_copy` and prints what arrived and
+#: what it warned. ⭐ The generated code is exercised, never a copy of it.
+COPY_PROBE = "\n".join(
+    [
+        "import importlib.util, json, tempfile, warnings",
+        "from pathlib import Path",
+        'test_file = Path("tests/ingest/test_emit.py").resolve()',
+        'spec = importlib.util.spec_from_file_location("probe", test_file)',
+        "module = importlib.util.module_from_spec(spec)",
+        "spec.loader.exec_module(module)",
+        "with tempfile.TemporaryDirectory() as tmp, warnings.catch_warnings(record=True) as said:",
+        '    warnings.simplefilter("always")',
+        "    where = module._copy(Path(tmp))",
+        '    files = [p for p in where.rglob("*") if p.is_file()]',
+        "    copied = sorted(p.relative_to(where).as_posix() for p in files)",
+        '    print(json.dumps({"copied": copied, "said": [str(w.message) for w in said]}))',
+    ]
+)
 
 
 def _environment(root):
@@ -183,6 +209,65 @@ def test_nothing_reaches_the_target_path_when_an_emission_breaks_part_way(tmp_pa
     assert not (root / "archive").exists(), "a broken emission left an archive behind"
 
 
+def test_every_container_map_carries_the_runs_date_whatever_the_reader_recorded(tmp_path):
+    # ⛔ W257 clause 1 (INT-09/3), over a GENERATED emit. The reader records a
+    # date that is not the run's, so a map that kept it would disagree with the
+    # documents beneath it. The date is applied after the reader.
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    reader = corpora.READ.replace(f'INGESTED = "{corpora.INGESTED}"', f'INGESTED = "{READER_DATE}"')
+    assert reader != corpora.READ, "premise: the fixture reader no longer records its own date"
+    _written(root, made, reader)
+
+    ingested = _ingest(root)
+    assert ingested.returncode == 0, ingested.stdout + ingested.stderr
+    archive = root / "archive"
+    maps = sorted(archive.rglob(CONTAINER_FILENAME))
+    documents = sorted(p for p in archive.rglob("*.json") if p.name != CONTAINER_FILENAME)
+    assert maps and documents, "premise: nothing was emitted to compare"
+    assert {_dated(path) for path in maps} == {corpora.INGESTED}, "a map kept the reader's date"
+    assert {_dated(path) for path in documents} == {corpora.INGESTED}
+
+    # ⭐ And the generated suite's own dating test holds on the same corpus.
+    suite = _pytest(root)
+    assert suite.returncode == 0, suite.stdout + suite.stderr
+
+
+def test_the_generated_copy_leaves_out_a_directory_the_repository_ignores(tmp_path):
+    # ⛔ W257 clause 2 (INT-09/7). A working tree ignores `scratch/`, and the
+    # generated `test_emit` must not carry it into its copy, nor `.git`, nor the
+    # archive. ⭐ The answer is git's, through W28's one reader.
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    _written(root, made)
+    init_repository(root)
+    _plant_ignored(root)
+    premise = run([git(), "check-ignore", "-q", IGNORED], cwd=root)
+    assert premise.returncode == 0, "premise: the repository does not ignore the plant"
+
+    probe = _copied(root)
+    assert not [p for p in probe["copied"] if p.startswith(f"{IGNORED}/")], probe["copied"]
+    assert {"src/01.md", ".gitignore", "corpus.json"} <= set(probe["copied"])
+    assert not [p for p in probe["copied"] if p.startswith((".git/", "archive/"))]
+    assert probe["said"] == [], "a working tree's copy warned that it could not ask"
+
+
+def test_outside_a_working_tree_nothing_is_declared_ignored_and_the_copy_says_so(tmp_path):
+    # ⚠️ W257: a corpus that is not a git working tree (a `git archive` export)
+    # has no declaration to read. An export holds only what was tracked, so
+    # "ignored" means nothing there: the copy takes every file but the archive,
+    # and warns rather than looking like a copy that asked.
+    root = tmp_path / "corpus"
+    made = _scaffolded(root)
+    _written(root, made)
+    _plant_ignored(root)
+
+    probe = _copied(root)
+    assert f"{IGNORED}/deep/left.txt" in probe["copied"]
+    assert not [p for p in probe["copied"] if p.startswith("archive/")]
+    assert any("not a git working tree" in said for said in probe["said"]), probe["said"]
+
+
 def test_the_manifest_the_walkthrough_writes_is_the_one_the_plan_reads(tmp_path):
     # ⭐ A premise check: if the fixture stopped being a corpus this skill can
     # scaffold, every assertion above would pass for the wrong reason.
@@ -204,6 +289,28 @@ def _contents(root):
         and "archive" not in path.relative_to(root).parts[:1]
         and "__pycache__" not in path.parts
     }
+
+
+def _dated(path):
+    """The `ingested` one emitted JSON file carries."""
+    return json.loads(path.read_text(encoding="utf-8"))["ingested"]
+
+
+def _plant_ignored(root):
+    """Declare `IGNORED/` ignored, fill it, and leave a stale archive beside it."""
+    (root / ".gitignore").write_text(f"{IGNORED}/\n", encoding="utf-8")
+    deep = root / IGNORED / "deep"
+    deep.mkdir(parents=True)
+    (deep / "left.txt").write_text("never copied from a working tree\n", encoding="utf-8")
+    (root / "archive").mkdir()
+    (root / "archive" / "stale.json").write_text("{}\n", encoding="utf-8")
+
+
+def _copied(root):
+    """Run the generated `_copy` inside the corpus and return what it reported."""
+    result = _run(root, ["-c", COPY_PROBE])
+    assert result.returncode == 0, result.stdout + result.stderr
+    return json.loads(result.stdout)
 
 
 def _archive(root):

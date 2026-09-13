@@ -221,7 +221,7 @@ def source_files(root: Path) -> Scan:
     recognised = _generated_output(root, walked)
     generated = tuple(path for path in walked if recognised and path in recognised)
     candidates = [path for path in walked if not recognised or path not in recognised]
-    declared = _declared_output(root, candidates)
+    declared = repository_ignores(root, candidates)
     planned = recognised is not None
     if declared is None:
         return Scan(tuple(candidates), consulted=False, generated=generated, planned=planned)
@@ -278,8 +278,12 @@ def _walk(root: Path) -> list[Path]:
     return found
 
 
-def _declared_output(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
+def repository_ignores(root: Path, candidates: list[Path]) -> frozenset[Path] | None:
     """Which of `candidates` the repository declares as generated output.
+
+    ⭐ **Public because it is the ONE ignore reader (`W28`), and a second
+    caller imports it rather than keeping a list** (`W257`): the scaffolded
+    `test_emit` asks it which directories a working copy leaves behind.
 
     ⛔ **Git's own answer, never a reimplementation of it.** Ignore rules have
     precedence, negation, per-directory files, an index that makes a tracked

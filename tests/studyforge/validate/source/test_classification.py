@@ -319,10 +319,10 @@ def test_an_unexpected_answer_from_git_is_not_read_as_nothing_is_ignored(tmp_pat
     # (None), so `consulted` is truthful even for a corpus with no files.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
     declared_output(root)
-    assert classification._declared_output(root, []) == frozenset()
+    assert classification.repository_ignores(root, []) == frozenset()
     outside = tmp_path / "not-a-repository"
     outside.mkdir()
-    assert classification._declared_output(outside, []) is None
+    assert classification.repository_ignores(outside, []) is None
 
 
 def test_a_corpus_with_no_material_says_so_before_it_says_anything_else(tmp_path):
