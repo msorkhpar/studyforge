@@ -93,7 +93,7 @@
 | `SF-39` | `studyforge serve`, the CLI stage | Delivery | `SF-19a`, `SF-40` |
 | `SF-40` | The console entry point, and the caveat sweep | Delivery | `SF-28` |
 | `SF-43` | The rebuild, and the footprint it may replace | Delivery | `SF-28`, `SF-40` |
-| `SK-03` | Build and serve | Skills and authoring kit | `SF-28` |
+| `SK-03` | Build and serve | Skills and authoring kit | `SF-28`, `SF-37`, `SF-38`, `SF-39`, `SF-40` |
 | `SK-06` | Personal archive | Skills and authoring kit | `SK-03`, `SF-21` |
 
 ## M5 — 12 capabilities
