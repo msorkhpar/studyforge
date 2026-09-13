@@ -21976,7 +21976,7 @@ repository_root() / BOARD  test_contradiction.py , test_register.py ,
 
 ## PO round 76 — the round's closes, the ISO pin advanced to `0d970fd`, and spec §5 amended
 
-⭐ **Merges on the first-parent chain since round 75's `c47cbfa`: `0618035` (`W238`) and `1e70007` (`W141`); `7fceaf6` (`W241`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+⭐ **Merges on the first-parent chain since round 75's `c47cbfa`: `0618035` (`W238`) and `1e70007` (`W141`); `7fceaf6` (`W241`), `cf1252f` (`W240`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
 
 ### ⭐ 1 — CLOSES
 
@@ -21985,9 +21985,10 @@ repository_root() / BOARD  test_contradiction.py , test_register.py ,
 fix/W238-milestone-sequence       5c61536d  5c61536d     0      NOWHERE
 fix/W141-stated-clause-count      4e4f6bb6  4e4f6bb6     0      NOWHERE
 fix/INT06-5-6-one-archive-root    401dbb47  401dbb47     0      wt/dev1
+fix/INT06-2-3-survey-draft        2a34c129  2a34c129     0      NOWHERE
 ```
 
-⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⚠️ **`C` refutes a held branch too, so `W241` closes while `wt/dev1` holds it.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, `rows/W242.md` for `W241`. ⚠️ **The Scheduled ISO-pin cell keeps `rows/W244.md`: its stub resolves, and the anchor would take the cell over the board's row-width ceiling.** ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
+⭐ **All four TERMINAL (Ruling 199); each closes under the four edits.** ⚠️ **`C` refutes a held branch too, so `W241` closes while `wt/dev1` holds it.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, `rows/W242.md` for `W241`. ⚠️ **The Scheduled ISO-pin cell keeps `rows/W244.md`: its stub resolves, and the anchor would take the cell over the board's row-width ceiling.** ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
 
 ### ⭐ 2 — RULED, REVERSIBLE
 
@@ -22161,3 +22162,28 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 #### ⭐ CLOSED — PO ROUND 76
 
 ⭐ **Merged at `7fceaf6`, TERMINAL by predicate `C` (its branch is still held by `wt/dev1`, and `C` refutes regardless). The coordinator's guarded release-tip reading at `7fceaf6` is RECEIVED.** ⭐ **One archive root, `archive/` beside `corpus.json`, spelled once and read by `plan`, `validate`, a build and the adapter layout; an absent or empty archive is the finding `no-archive`, never `valid`.** ⛔ **Ruling 244(a), read by the office on `W51` and `W199`: NEITHER is discharged.** ⭐ **Settled:** the `archive` literal lives once, as `ARCHIVE_DIRNAME` on `corpus.placement.__all__`; `validate` and `plan` import it, and `skills.adapter.layout.ARCHIVE_DIR` is bound to it. ⚠️ **Not settled:** the `raw` name is still defined twice (`ARCHIVE_ROOT_NAME` in `validate/corpus.py`, `RAW_DIR` in `skills/adapter/layout.py`); `W199`'s `validate.__all__` clause is unmet and no test asserts that surface; and `ARCHIVE_DIR` is a second NAME for one value, which `W199`'s taker rules on.
+
+### W240 — `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W240.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/2` and `/3`: `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit.** ⭐ **RECEIVED from the ISO integration round 6 (framework `3483ced`, ISO `0d970fd`, §11.1):** *"`survey('.')` drafts `source: ""`; it drafts `variants: []` and calls that correct, and `SF-02` refuses both"*; *"the draft includes `*.md`, which makes `README.md` a unit, and it names 39 units in 3 groups, so the fourth container (Finding 46) is not proposed."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> SK-01 drafts a slug `source` from the resolved directory name, and a `variants` value `SF-02` accepts.
+> Its include globs never match the curriculum record.
+
+⛔ **Asserted both ways, over a survey of `.`.** ⚠️ **The fourth container is in §11.1 and not in §11.3's line: the taker says whether it follows from the include fix or stays a finding.**
+
+### ⭐ ORDER AND OWNER
+
+⭐ **Order 1: `ISO-04` names `/2` beside `/1`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/` and its tests. ⛔ **[`W238`](#w238-the-capability-index-orders-milestones-by-their-ids-so-the-order-the-user-decided-prints-wrong) holds `reconnaissance/SKILL.md` (rider `PO-74/3`) and `capability.py` until it merges, so this row works beside it and off both files.**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 76
+
+⭐ **Merged at `cf1252f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `cf1252f` is RECEIVED.** ⭐ **`SK-01`'s survey drafts a `source` (the slug of the resolved directory name) and `variants` that `SF-02` accepts, and its include globs never match the curriculum record.** ⚠️ **The fourth container is `F21`'s question, not the glob defect (`W240/1`); the record's `not_material` reason is a person's (`W240/3`). Both are in § 3.**

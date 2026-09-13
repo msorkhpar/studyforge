@@ -60,10 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W239` | Developer 2 | `fix/INT06-1-promote-not-material` @ none | 2 @ `dbf98ed` | in-progress |
-| `W240` | Developer 2 | `fix/INT06-2-3-survey-draft` @ none | 0 @ `2a34c12` | in-progress |
+| `W239` | Developer 2 | `fix/INT06-1-promote-not-material` @ none | 0 @ `dbf98ed` | in-progress |
 | `W243` | Developer 3 | `fix/INT06-9-highlight-languages` @ none | 3 @ `d41fe01` | in-progress |
-| `W162` | Developer 3 | `fix/W162-docker-gate-ground` @ `wt/dev3` | 5 @ `c95b852` | in-progress |
+| `W162` | Developer 3 | `fix/W162-docker-gate-ground` @ `wt/dev3` | 6 @ `9d5ab15` | in-progress |
 | `W151` | Developer 2 | `fix/W151-docstring-counts` @ `wt/dev2` | 0 @ `1e70007` | in-progress |
 <!-- /inflight -->
 
@@ -80,8 +79,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W238`, `W141`, `W241` LEFT at `0618035`, `1e70007`, `7fceaf6`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W239`, `W240`, `W243`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row); `W151` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended).** ⚠️ **[`W191`](rows/W191.md) unassigned; [`W242`](rows/W242.md) unassigned until `W239` merges.**
+⛔ **`W238`, `W141`, `W241`, `W240` LEFT at `0618035`, `1e70007`, `7fceaf6`, `cf1252f`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⭐ **`W239`, `W243`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row); `W151` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended).** ⚠️ **[`W191`](rows/W191.md) unassigned; [`W242`](rows/W242.md) unassigned until `W239` merges.**
 
 <!-- offices -->
 | Checkout |
@@ -388,7 +387,7 @@ else.**
 | W237 | `W233`'s read-then-`communicate()` defect is live in three more process tests, and `tests.support.ProcessOutput` is now the one reader | Developer 1 | ✅ done — `8a13f4f` | [`rows/W237.md`](rows/W237.md) |
 | W238 | The capability index orders milestones by their ids, so the order the user decided prints wrong | Developer 2 | ✅ done — `0618035` | [`rows/W238.md`](rows/W238.md) |
 | W239 | `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops | Developer 2 | in-progress — `INT-06/1`, on `fix/INT06-1-promote-not-material` | [`rows/W239.md`](rows/W239.md) |
-| W240 | `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit | Developer 2 | in-progress — `INT-06/2` + `/3`, on `fix/INT06-2-3-survey-draft` | [`rows/W240.md`](rows/W240.md) |
+| W240 | `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit | Developer 2 | ✅ done — `cf1252f` | [`rows/W240.md`](rows/W240.md) |
 | W241 | `validate` reports `valid` with no archive, and `plan` announces an archive root that `validate`, the build and the adapter layout do not read | Developer 1 | ✅ done — `7fceaf6` | [`rows/W241.md`](rows/W241.md) |
 | W242 | For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified | framework agent | `todo` — `INT-06/7` + `/8`, one row, after `W239` and `W241` merge | [`rows/W242.md`](rows/W242.md) |
 | W243 | The vendored highlighter lacks grammars a real corpus's fences use, and nothing declares the fallback | Developer 3 | in-progress — `INT-06/9`, on `fix/INT06-9-highlight-languages` | [`rows/W243.md`](rows/W243.md) |
