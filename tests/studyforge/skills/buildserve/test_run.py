@@ -1,0 +1,131 @@
+"""Mirror of `src/studyforge/skills/buildserve/run.py` (R12): the skill end to end.
+
+⛔ Every pass condition is a REAL REQUEST answered by the running site, over a loopback
+socket, and every site is written by `studyforge build` under `tmp_path`.
+"""
+
+from __future__ import annotations
+
+from urllib.parse import quote
+
+import pytest
+
+from studyforge.validate.cli import UNUSABLE
+from studyforge.validate.report import INVALID, OK
+from tests.fixture_checks import FIXTURES, VALID
+from tests.studyforge.cli.narrate.service import VOICE
+from tests.studyforge.cli.serving import floor, missing_media, pages_of
+from tests.studyforge.serve.serving import fetch
+from tests.studyforge.skills.buildserve.running import (
+    EXERCISED,
+    UNEXERCISED,
+    audio_references,
+    copied,
+    dead_service,
+    directory,
+    files_under,
+    narration_service,
+    partials,
+    reported_by_build,
+    run_once,
+    skill_running,
+    steps,
+)
+
+SERVED = ["step validate exit 0", "step build exit 0", "step serve exit 0"]
+
+
+def test_the_fixtures_inhabit_both_sides_of_the_exercise_flag():
+    # ⛔ A parametrisation over an empty side would pass by collecting nothing.
+    assert EXERCISED and UNEXERCISED
+
+
+@pytest.mark.parametrize("name", VALID)
+def test_each_fixture_is_validated_built_and_served_and_real_requests_are_answered(name, tmp_path):
+    root, out = FIXTURES / name, directory(tmp_path)
+    with skill_running(root, out) as running:
+        index = fetch(running.server, "/index.html")
+        toc = fetch(running.server, "/api/v1/content/toc")
+        pages = {page: fetch(running.server, "/" + quote(page))[0] for page in pages_of(root)}
+    said = running.said()
+    assert running.code == [OK], said
+    assert steps(said) == SERVED
+    assert (index[0], index[2]) == (200, (out / "index.html").read_bytes())
+    assert toc[0] == 200
+    assert pages and set(pages.values()) == {200}, pages
+    # ⛔ Contract 4's runtime arm: the site is exactly what the build said it wrote.
+    assert files_under(out) and files_under(out) == reported_by_build(said)
+
+
+@pytest.mark.parametrize("name", UNEXERCISED)
+def test_no_exercises_and_no_narration_is_a_valid_site_and_both_states_are_reported(name, tmp_path):
+    root, out = FIXTURES / name, directory(tmp_path)
+    with skill_running(root, out) as running:
+        status = fetch(running.server, "/index.html")[0]
+    said = running.said()
+    assert (running.code, status) == ([OK], 200), said
+    assert partials(said) == ["narration", "exercises"]
+    for state in partials(said):
+        assert f"works {state}  " in said and f"remedy {state}  " in said
+    reading = floor(out, missing_media(root, tmp_path))
+    assert reading.pages and reading.defects == [], reading.defects
+
+
+@pytest.mark.parametrize("name", EXERCISED)
+def test_exercises_with_no_execution_are_reported_as_no_toolchain_and_still_served(name, tmp_path):
+    with skill_running(FIXTURES / name, directory(tmp_path)) as running:
+        status = fetch(running.server, "/index.html")[0]
+    assert (running.code, status) == ([OK], 200), running.said()
+    assert partials(running.said()) == ["narration", "toolchain"]
+
+
+def test_an_absent_narration_service_is_reported_and_the_site_is_still_served(tmp_path):
+    root, out = copied("depth1", tmp_path), directory(tmp_path)
+    with skill_running(root, out, voice=VOICE, service=dead_service()) as running:
+        status = fetch(running.server, "/index.html")[0]
+    said = running.said()
+    assert (running.code, status) == ([OK], 200), said
+    assert "step narrate exit 2" in steps(said)
+    assert partials(said) == ["narration-service", "exercises"]
+    assert "Traceback" not in said
+
+
+def test_a_narrated_corpus_is_served_with_every_clip_its_pages_name(tmp_path):
+    root, out = copied("depth1", tmp_path), directory(tmp_path)
+    with narration_service() as (url, fake):
+        with skill_running(root, out, voice=VOICE, service=url) as running:
+            clips = audio_references(out)
+            answers = [fetch(running.server, "/" + quote(clip)) for clip in clips]
+    said = running.said()
+    assert running.code == [OK], said
+    assert fake.submitted, "the narration service was never asked for anything"
+    assert "step narrate exit 0" in steps(said)
+    assert partials(said) == ["exercises"]
+    assert clips, "no built page names a clip"
+    assert all(status == 200 and body[:3] == b"ID3" for status, _, body in answers)
+
+
+def test_a_corpus_that_does_not_validate_stops_before_anything_is_built(tmp_path):
+    out = directory(tmp_path)
+    code, said = run_once(FIXTURES / "invalid" / "ordinal-gap", out)
+    assert code == INVALID
+    assert steps(said) == [f"step validate exit {INVALID}"]
+    assert files_under(out) == set()
+    assert "partial " not in said
+
+
+def test_an_output_directory_that_does_not_exist_stops_at_build_and_serves_nothing(tmp_path):
+    absent = tmp_path / "absent"
+    code, said = run_once(FIXTURES / "depth1", absent)
+    assert code == UNUSABLE
+    assert steps(said) == ["step validate exit 0", f"step build exit {UNUSABLE}"]
+    assert not absent.exists()
+    assert "serve http" not in said
+
+
+def test_running_it_again_over_its_own_site_serves_again(tmp_path):
+    out = directory(tmp_path)
+    assert run_once(FIXTURES / "depth1", out)[0] == OK
+    code, said = run_once(FIXTURES / "depth1", out)
+    assert code == OK, said
+    assert steps(said) == SERVED
