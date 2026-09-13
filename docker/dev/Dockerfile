@@ -1,3 +1,7 @@
+# ⛔ Build by hand from the checkout root, naming the checkout as a context:
+# `docker build --build-context project=. docker/dev` (W211/3) — or run
+# `docker/dev/check`, which also names the image by its inputs (W225).
+#
 # The framework's own build environment (R15).
 #
 # What it is: the image in which `studyforge`'s tests, quality floor and lint

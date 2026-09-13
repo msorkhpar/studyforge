@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import os
 import py_compile
+import re
 import shutil
 import sys
 import tomllib
@@ -479,16 +480,32 @@ def require_docker_run() -> str:
     return docker
 
 
+#: What `check` prints on stderr before it runs anything: the image, by its inputs (`W225`).
+ANNOUNCED = re.compile(r"^docker/dev/check: image (\S+:inputs-[0-9a-f]{64})$", re.MULTILINE)
+
+
+def announced_images(stderr: str) -> list[str]:
+    """Every image name a `check` run printed, in the order printed."""
+    return ANNOUNCED.findall(stderr)
+
+
+def announced_image(stderr: str) -> str:
+    """The one image a `check` run printed; fails unless there is exactly one."""
+    found = set(announced_images(stderr))
+    assert len(found) == 1, f"check printed {len(found)} image name(s), not one: {sorted(found)}"
+    return found.pop()
+
+
 @pytest.fixture(scope="session")
 def dev_image() -> str:
-    """Build the image once for the whole session, and return its tag."""
-    docker = require_docker_run()
-    result = run(
-        [docker, "compose", "--file", f"{DEV}/compose.yaml", "build", "dev"],
-        cwd=repository_root(),
-    )
+    """Build the image once for the whole session through `check`, and return what it printed.
+
+    ⛔ Not `docker compose build`: the image is named by an identity only `check` derives.
+    """
+    require_docker_run()
+    result = run([f"./{DEV}/check", "true"], cwd=repository_root())
     assert result.returncode == 0, result.stdout + result.stderr
-    return "studyforge/dev:local"
+    return announced_image(result.stderr)
 
 
 def test_the_image_builds(dev_image):
