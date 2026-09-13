@@ -340,7 +340,7 @@ def test_LIVE_a_fixture_with_no_plant_reaches_only_EXIT_0_AND_1(repository: Path
     assert (good, spent) == (CORROBORATED, REFUTED), (good, spent)
     assert "NOT AUTHORITATIVE" not in good_printed and "NOT AUTHORITATIVE" not in spent_printed
     assert "live checkouts git could not count: none." in good_printed
-    assert "0 NOT ANSWERABLE and 0 live checkout(s) git could not count" in good_printed
+    assert "0 rows NOT ANSWERABLE and 0 live checkout(s) git could not count" in good_printed
 
 
 def test_planted_a_ROW_whose_branch_GIT_CANNOT_COUNT_exits_2_AND_NOT_1(
@@ -360,9 +360,10 @@ def test_planted_a_ROW_whose_branch_GIT_CANNOT_COUNT_exits_2_AND_NOT_1(
     assert code == NOT_AUTHORITATIVE
     assert code not in (CORROBORATED, REFUTED), "⛔ it must DIFFER from BOTH verdicts"
     assert "NOT ANSWERABLE: git could not count" in printed
-    assert "0 of 1 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
+    assert "0 of 1 rows REFUTED by git, 1 rows NOT ANSWERABLE" in printed
     # ⚠️ `is 0 ahead`, not `0 ahead`: the observation READING legitimately prints
-    # `3 with a checkout, 0 ahead` about the board's own cells, and that is a real count.
+    # `3 started rows with a checkout, 0 started rows ahead` about the board's own cells, and
+    # that is a real count.
     assert "is 0 ahead" not in printed, "⛔ THE DEFECT: a count git never gave"
     assert "is None commits ahead" not in printed, "⛔ nor the other site's spelling of it"
 
@@ -443,7 +444,7 @@ def test_a_row_REFUTED_and_a_row_UNANSWERABLE_in_ONE_BOARD_exits_2_and_not_1(
     )
     code, printed = _run(repository)
     assert code == NOT_AUTHORITATIVE
-    assert "1 of 2 rows REFUTED by git, 1 NOT ANSWERABLE" in printed
+    assert "1 of 2 rows REFUTED by git, 1 rows NOT ANSWERABLE" in printed
     assert "REFUTED: fix/Wmerged is TERMINAL" in printed, "⭐ the refutation is still PRINTED"
 
 
@@ -470,13 +471,13 @@ def test_planted_the_REFUTED_ROWS_are_NAMED_and_the_other_fold_prints_its_EMPTY_
     write_board(repository, "| `W42` | Dev | `wt/x`, `fix/Wmerged` | 1 | in flight |\n")
     code, printed = _run(repository)
     assert code == REFUTED
-    assert "  ⛔ rows REFUTED by git (1): `W42`" in printed, printed
+    assert "  ⛔ rows REFUTED by git (1 rows across 1 ids): `W42`" in printed, printed
     assert "  rows git could not answer about: none." in printed, (
         "⛔ the OTHER fold population owes its empty form in the same reading"
     )
     # ⭐ The subject is printed as the BOARD WROTE it, backticks included, because a reader
     # greps the board for what this line says.
-    assert "`W42`" in printed and "rows REFUTED by git (1): W42" not in printed
+    assert "`W42`" in printed and "rows REFUTED by git (1 rows across 1 ids): W42" not in printed
 
 
 def test_planted_NO_REFUTED_ROW_still_prints_the_LINE_which_is_the_whole_of_the_clause(
@@ -511,7 +512,7 @@ def test_planted_an_UNANSWERABLE_ROW_is_NAMED_on_its_OWN_line_and_NOT_on_the_ref
     write_board(repository, f"| `W42` | Dev | `wt/x`, `{branch}` | 0 | in flight |\n")
     code, printed = _run(repository)
     assert code == NOT_AUTHORITATIVE
-    assert "  ⛔ rows NOT ANSWERABLE (1): `W42`" in printed, printed
+    assert "  ⛔ rows NOT ANSWERABLE (1 rows across 1 ids): `W42`" in printed, printed
     assert "  rows refuted by git: none." in printed, (
         "⛔ a row git could not read is NOT a refuted row — that fold is `W115`'s whole subject"
     )

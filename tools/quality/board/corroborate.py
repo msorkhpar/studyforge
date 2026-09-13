@@ -112,6 +112,14 @@ every arm here still has an assertion to refute (`handoffs/W125.md`).
 it accepts.** ⛔ **Only where no row claims the branch, only for OPEN register rows, and the
 exit code does not move.** The contract is `docs/conventions/board.md`'s, under `W153`.
 
+## ⛔ `W176` — a printed count NAMES ITS UNIT (Ruling 224)
+
+⚠️ **One In-flight cell may name several ids (Rulings 218 and 274), so the fold lines print
+`(n rows across m ids)`: the list is ROWS as the board wrote them, and the backticked tokens
+are IDS.** ⭐ An id is either vocabulary the board declares — `register.identifiers` or
+`bijection.EPIC_TASK` — so a subject naming neither counts `0` ids and is still a row.
+⛔ **The labels moved; the population and the exit code did not.**
+
 """
 
 from __future__ import annotations
@@ -121,6 +129,7 @@ import sys
 from pathlib import Path
 
 from tools.quality.board import dispatch, offices
+from tools.quality.board.bijection import EPIC_TASK
 from tools.quality.board.contradiction import observation_reading
 from tools.quality.board.graph import Graph
 from tools.quality.board.observation import (
@@ -130,7 +139,7 @@ from tools.quality.board.observation import (
     asserted,
     read,
 )
-from tools.quality.board.register import BOARD
+from tools.quality.board.register import BOARD, identifiers
 from tools.quality.board.unclaimed import spent, unnamed
 from tools.quality.board.verdict import Answer, Verdict, claim, tokens, verdict
 
@@ -230,7 +239,7 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     lines.extend(spent(graph, live))
     lines.append(
         f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git, "
-        f"{unanswerable} NOT ANSWERABLE and {unread} live checkout(s) git could not "
+        f"{unanswerable} rows NOT ANSWERABLE and {unread} live checkout(s) git could not "
         f"count (Ruling 216's third answer)."
         if table.rows
         else f"corroborate: the {INFLIGHT_OPEN} block is DECLARED, READ, and carries no row — "
@@ -291,15 +300,21 @@ def _fold_lines(refuted: list[str], unanswerable: list[str], table: Table) -> li
         # no population at all is the `0 = 0` this whole idiom exists to refuse (Ruling 48).
         return []
     return [
-        f"  ⛔ rows REFUTED by git ({len(refuted)}): {' '.join(refuted)}"
+        f"  ⛔ rows REFUTED by git ({_units(refuted)}): {' '.join(refuted)}"
         if refuted
         else "  rows refuted by git: none.",
-        f"  ⛔ rows NOT ANSWERABLE ({len(unanswerable)}): {' '.join(unanswerable)} — ⚠️ git "
+        f"  ⛔ rows NOT ANSWERABLE ({_units(unanswerable)}): {' '.join(unanswerable)} — ⚠️ git "
         f"could not count, which is neither *the board is right* nor *the board is wrong* "
         f"(Ruling 216)"
         if unanswerable
         else "  rows git could not answer about: none.",
     ]
+
+
+def _units(subjects: list[str]) -> str:
+    """`W176`: `n rows across m ids` — ⛔ both units named, and equal when no cell bundles."""
+    ids = sum(len(identifiers(cell)) + len(EPIC_TASK.findall(cell)) for cell in subjects)
+    return f"{len(subjects)} rows across {ids} ids"
 
 
 def _refusal(table: Table) -> str | None:

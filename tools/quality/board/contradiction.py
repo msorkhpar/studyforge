@@ -250,12 +250,13 @@ def observation_reading(text: str) -> str:
     )
     return (
         f"observations ({table.locator}, Ruling 189(b), no git): {len(rows)} rows, "
-        f"{sum(1 for row in rows if row.ids)} naming a `W` row id, "
-        f"{sum(1 for row in rows if row.started)} declaring a started state, "
-        f"{sum(1 for row in rows if row.declared is None)} declaring NO state this "
+        f"{sum(1 for row in rows if row.ids)} rows naming a `W` row id, "
+        f"{sum(1 for row in rows if row.started)} rows declaring a started state, "
+        f"{sum(1 for row in rows if row.declared is None)} rows declaring NO state this "
         f"vocabulary carries (`W188`, printed not flagged), "
-        f"{sum(1 for row in rows if row.started and row.observes_a_checkout)} with a checkout, "
-        f"{sum(1 for row in rows if row.started and (row.commits or 0) > 0)} ahead; "
+        f"{sum(1 for row in rows if row.started and row.observes_a_checkout)} started rows "
+        f"with a checkout, "
+        f"{sum(1 for row in rows if row.started and (row.commits or 0) > 0)} started rows ahead; "
         f"{locator_reading(table)}; "
         f"register cells declaring a started state: {len(started)}"
         + (f" — {' '.join(sorted(started))}" if started else "")
