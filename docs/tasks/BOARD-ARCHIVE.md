@@ -23270,3 +23270,215 @@ call sites in that file   4        gated tests in that file   5
 #### ⭐ CLOSED — PO ROUND 80
 
 ⭐ **Merged at `2fe2afb`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2fe2afb` is RECEIVED.** ⭐ **A gated census is taken from the runner's own skip report by `python3 -m tools.quality.gated`, never by `grep`, and its clause stands beside Ruling 142 in `review-rubric.md`.** ⚠️ **Each finding's disposition is this round's § 7.**
+
+## PO round 81 — `W259`, `W171` and `W165` closed, `INT-10/4` minted first, and the ISO pin advanced to `6e6dec9`
+
+⭐ **Cut at `eb8f4a7`, release after round 80's merge; `286f15d` (`W165`) and `f2fd080` (`W245`) merged in at the coordinator's word.** ⛔ **Ruling 279: this round merges before any branch it newly names.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W259`](#w259-validatesources-walk-skips-git-and-studyforge-at-any-depth-so-a-nested-studyforge-vanishes-silently) | `900a52f` | [`W261`](rows/W261.md) re-pointed; the board's `validate/source/` pair |
+| [`W171`](#w171-an-edit-that-removes-a-documents-last-pointer-to-a-record-section-orphans-it-and-the-pointer-floor-is-tree-shaped-so-it-cannot-see-a-removal) | `9ce9e24` | `board.md`'s stub-sweep sentence re-pointed |
+| [`W165`](#w165-a-cost-figure-over-a-gated-population-carries-its-spread-or-only-its-sample-and-one-end-of-a-32x-range-decided-a-mode) | `286f15d` | `review-rubric.md`'s `W165` clause re-pointed |
+| [`W245`](#w245-approachpy-reads-a-wave-close-off-a-prefix-the-shape-w136-replaced-with-a-whole-name) | `f2fd080` | none owed: only its register cell cites the row |
+
+⭐ **All four TERMINAL (Ruling 199): `corroborate` read each tip absorbed on release's first-parent line.** ⭐ **Ruling 97's gate is RECEIVED for each: the coordinator's guarded release-tip reading at `900a52f`, `9ce9e24`, `286f15d` and `f2fd080`, GREEN in the pinned image `studyforge/dev:inputs-f5bb0ced…`, with `last_pointer` over each merge exit `0`.** ⭐ **Ruling 314: the four moved bodies carried 6 relative pointers, and 6 were re-addressed.**
+
+### ⭐ 2 — CARRIERS, CONFIRMED AGAINST GIT
+
+| row | owner | branch @ checkout | cut | declared |
+|---|---|---|---|---|
+| [`W176`](rows/W176.md) | Developer 2 | `fix/W176-refuted-line-names-units` @ none, handed back | `2fe2afb` | `W176`, NAMED |
+| [`W261`](rows/W261.md) | Developer 2 | `fix/W261-completeness-whole-root` @ `wt/dev2` | `286f15d` | `W261`, NAMED |
+| [`W168`](rows/W168.md) | Developer 3 | `fix/W168-trial-merge-own-wrapper` @ `wt/dev3` | `286f15d` | `W168`, NAMED |
+| [`W265`](rows/W265.md) | Developer 1 | `fix/W265-scaffold-writers-agree` @ `wt/dev1` | `eb8f4a7` | `W265`, NAMED |
+
+⚠️ **`PO-81/2` — `W247` merged at `8f59ed9` during this round, and no reading reached this round before its run of record.** ⭐ **Ruled: not closed and not named in flight; its register cell carries the merge, and it closes on its reading.** ⛔ **`W247/1`–`/3` are held to its close.** Reversible.
+
+### ⭐ 3 — MINTS AND FINDINGS
+
+⭐ **Every INT finding was RE-MEASURED before its mint (Ruling 214): role `wt/po`, environment HOST, framework `19d18e5`, over a `git archive` of ISO `6e6dec9` inside this checkout's ignored `.scratch/`.** The figures are in each row.
+
+| finding | became |
+|---|---|
+| `INT-10/4`, `INT-11/4` | ⭐ **minted [`W266`](rows/W266.md), order 1, Ruling 75 invoked and declared in the row.** Both plants survive: the aggregate un-excluded and a fresh stray file each read `validate` exit `0` |
+| `INT-10/8` | ⛔ **REFUTED AS STATED, not minted.** At `19d18e5` the one Plyr mount, `video-player.js`, sets `loadSprite: false`, `iconUrl: ''` and `blankVideo: ''`; `narration.js` mounts no player and names no URL; `test_no_network` asserts each option. The CDN strings in the vendored bundle are reached by no code path. ⭐ **Relayed to ISO: `ISO-12` does not wait on it.** Reversible |
+| `INT-10/5`, `/6` | ⭐ **minted [`W267`](rows/W267.md)**, order 48 |
+| `INT-10/7` | ⭐ **minted [`W268`](rows/W268.md)**, order 48 |
+| `INT-10/1`, `/2` | ⭐ **minted [`W269`](rows/W269.md)**, order 48; one surface, so one row |
+| `INT-10/13` | ⭐ **a rider on [`W90`](rows/W90.md)**, its family: 0 of 4 container pages linked |
+| `INT-11/3` | ⭐ **minted [`W270`](rows/W270.md)**, order 48 |
+| `W259/1` | ⭐ **minted [`W271`](rows/W271.md)**, order 48, after `W265` on `skills/adapter/` |
+| `W259/2` | accepted, cost named, no row: a corpus holding a submodule falls back to `ignore-declaration` and reads LOUDLY, and a nested repository is refused by name before its files are judged. Received, not re-measured |
+| `W259/3` | disposed at the close: taken outside the surface, forced by the derived rule-id count, disclosed |
+| `W259/4` | ⭐ **minted [`W272`](rows/W272.md)**, order 48, one owner with `W269` |
+| `W259/5` | accepted, relayed to ISO: its `.studyforge/**` glob matches only a nested one |
+| `W259`, the ruling | ⭐ **confirmed: a nested `.git` is refused by name, never scanned**, unless the repository declares it output. Reversible: drop the store branch and the rule id |
+| `W171/1` | disposed at the close |
+| `W171/2` | accepted: the frozen row's `727` stands; the predicate's denominator at `d912a4f` is the handoff's `760` |
+| `W171/3` | ⭐ **RE-POINTED from [`W174`](rows/W174.md)'s rider**, a live row on the fourth-edit subject. ⚠️ Not from a convention, because `W168` holds `docs/conventions/` |
+| `W171/4` | ⛔ **ruled: EXEMPT BY CLASS — a step-open or queue-placement record whose last live pointer was a board cell a close removed.** The close record the same table then points at supersedes it, and re-pointing each would grow a live document per closed state (`W185`). Named at `0564997..eb8f4a7`: `#m3-step-32-opens-…` and `#round-41-the-queue-re-taken-…`. Every other section is re-pointed. Reversible |
+| `W171/5` | ⭐ **confirmed: the procedure is the convention's, in `board.md`'s `W171` section, and not restated here.** This round ran it over its own merge-base |
+| `W171/6` | accepted, cost named: a `.py` docstring pointer and a same-range record gain are not read |
+| `W165/1` | ⭐ **confirmed: its own clause beside `W164`'s; Ruling 326 is not amended.** Reversible |
+| `W165/2` | ⭐ **confirmed: both halves bind a gated population only**, the row's MUST-NOT |
+| `W165/3` | accepted: the frozen witness is not edited; its `31.8x` is a lower bound on the per-member spread |
+| `W165/4` | accepted, cost named: a directory spelled `x.py` would be misread; none is tracked |
+| `W245/1` | ⭐ **minted [`W273`](rows/W273.md)**, order 48. Re-measured: the last CTO round on release's first-parent line is 72 (`2912a33`), and 8 PO rounds merged after it |
+| `W245/2` | accepted, recorded: `chore/po-round17` merged twice; history, no row |
+| `W245/3` | disposed at the close: the surviving plant is caught by a source-level test |
+| `W245/4` | ⭐ **minted [`W274`](rows/W274.md)**, order 48. Re-measured at `f2fd080`: 0 of the last 40 first-parent merge subjects take `Merge <branch>:`, and 40 take `Merge <branch> (…):` |
+| `PO-81/1` | ⚠️ **the fourth edits in `review-rubric.md` and `board.md` are one link each, beside `W168` in flight on `docs/conventions/`: accepted for this wave, disjoint lines.** Reversible |
+
+### ⭐ 4 — THE ISO TRACK
+
+⭐ **ISO integration round 11 merged at `6e6dec9`; the pin advanced from `366c124` to `6e6dec9`, the ISO line alone (`W244`).** `ISO-05` and `ISO-07`–`ISO-11` taken; `ISO-06` partial on `W243/1`; `ISO-12` onward wait on framework narration.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7` + `W162/8` + `W163/2`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/`; `W243/1`, which also holds `ISO-06`'s last clause.
+
+### W259 — `validate/source`'s walk skips `.git` and `.studyforge` at any depth, so a nested `.studyforge/` vanishes silently
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W259.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W248/1`: `validate/source/classification.py`'s `_walk` still skips `.git` and `.studyforge` at ANY depth, so a source's nested `.studyforge/` is lost from the scan without a word.** ⭐ **The family `W241/2` and `W248` settled for `archive/`.** ⭐ **RECEIVED from `W248`'s office at `1a4d0fb`, relayed by the coordinator.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Only the corpus root's own `.git` and `.studyforge` are skipped.** The same name nested inside a source is scanned, or refused by name, never skipped.
+2. ⛔ **Asserted both ways (R12):** a planted nested `.studyforge/notes.md` is named; the root's own reads clean.
+
+⭐ **Surface:** `src/studyforge/validate/source/` and its tests. ⚠️ **Shared with [`W261`](rows/W261.md): one owner or two waves.** ⭐ **[`W255`](#w255-checkcompleteness-says-the-source-tree-is-absent-from-the-declared-origins-alone-so-a-one-unit-archive-with-a-missing-origin-reads-valid) left it at `1fefe9c`.** ⭐ **Jumps nobody: no consumer tracks a nested `.studyforge/`.**
+
+[the mint](#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b)
+
+#### ⭐ CLOSED — PO ROUND 81
+
+⭐ **Merged at `900a52f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `900a52f` is RECEIVED.** ⭐ **Only the corpus root's own `.git` and `.studyforge` are skipped: a nested `.studyforge` is scanned as material, and a nested `.git` is refused by name as `nested-repository`.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W171 — An edit that removes a document's LAST pointer to a record section orphans it, and the pointer floor is tree-shaped so it cannot see a removal
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W171.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **AN EDIT THAT REMOVES A DOCUMENT'S LAST POINTER TO A RECORD SECTION ORPHANS THAT SECTION, AND NO INSTRUMENT CAN SAY SO.** ⭐ **The pointer floor asserts that every pointer RESOLVES; nothing asserts that a record a live document used to reach is still reachable, and a record may not be edited to re-point itself** (Ruling 106).
+
+### ⛔ THE WITNESS, and it is this row's own minting round
+
+⚠️ **`CTO-68/4`, and the office that caused it is the one recording it. PO round 53 rewrote `BOARD.md`'s `## R21` section under Ruling 330 and dropped a link in the trim:**
+
+```text
+role wt/po, environment HOST — inbound `BOARD-ARCHIVE.md#<anchor>` pointers over
+docs/ src/ tools/ tests/, taken at two refs and differenced
+
+  0564997 -> d912a4f   anchors that lost their LAST inbound pointer: 1
+    ⛔ r21-the-register-of-unlocated-contracts
+```
+
+⭐ **The section is R21's own founding argument — why the register exists and what each closed row cost — and the board's `## R21` was the only document that reached it.** ⛔ **The floor read `document pointers … 0 unresolved` on both sides of that edit, because nothing dangled: a pointer was DELETED, and a deleted pointer resolves vacuously.**
+
+### ⛔ THE POPULATION, MEASURED FIRST, BECAUSE THE OBVIOUS PREDICATE IS USELESS
+
+```text
+archive headings                                     884
+archive headings with NO inbound pointer at d912a4f  727
+```
+
+⚠️ **So *every record heading is reachable* is `0 = 727` and would fail on a correct tree from its first run** — ⛔ **Ruling 191's empty-population failure wearing the opposite sign, and Ruling 185(a)'s unsatisfiable-on-day-one defect.** ⭐ **A record section is written to be a destination for the pointer that cites it, and most sections never acquire one; that is not a defect.**
+
+### ⛔ SO THE SUBJECT IS A DIFF, NOT A TREE, AND THAT IS WHY THE FLOOR CANNOT SEE IT
+
+⭐ **The defect is a TRANSITION — a target that had exactly one inbound pointer and now has none — and it is only visible by comparing two refs.** ⛔ **Every arm of `tools/quality` is a predicate over ONE tree, by construction and for a stated reason: Ruling 80 forbids a floor verdict that depends on untracked state, and *which ref you came from* is exactly that.** ⚠️ **So this cannot be a floor arm, and a row that tries to make it one will rediscover Ruling 80 the expensive way.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DESIGN DECISION BEFORE CODE** (Ruling 231(c)'s form): ⭐ **where does a two-ref predicate live in this project?** ⚠️ **`corroborate` is the precedent — it reads git, it is NOT in `tools.quality.CHECKS`, and `corroborate.py`'s own docstring argues at length why the floor may not shell out. This belongs beside it or nowhere.**
+2. ⛔ **THE PREDICATE IS *LAST POINTER REMOVED*, never *heading unreferenced*** — ⭐ **the 727 above is why, and the figure is printed with the verdict so the denominator is visible** (Ruling 48, Ruling 128).
+3. ⛔ **THE REMEDY IS ALWAYS TO RE-POINT, NEVER TO DELETE THE SENTENCE** (Ruling 201(b)'s standing form) — ⚠️ **and never to edit the record, which is frozen** (Ruling 106, Ruling 174; Ruling 270 is the precedent for the pointer side yielding instead).
+4. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): an edit that drops the last pointer to a record section is REPORTED, and an edit that drops one of several is NOT — ⭐ **and the second arm is the one that decides whether this is usable or noise.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A FLOOR ARM.** ⭐ **See above: `W119` and `W142` are what a floor verdict reading state outside the tree costs, twice.** ⛔ **AND NOT A BAN ON TRIMMING** — ⚠️ **replacing an argument with its pointer is the board's own closing rule and is exactly what this round was doing; the ask is that the pointer SURVIVES the trim, not that the trim stops.**
+
+### ⭐ SURFACE
+
+⛔ **Wherever the two-ref predicate lands — `tools/quality/board/` beside `corroborate`, or a sibling — and `docs/conventions/board.md` for the clause.** ⚠️ **It names `docs/conventions/`, a SHARED constraint whose members are listed ONCE in the board's *Next rows* note; `W159`'s subject is the `Next rows` DELIMITER and does not reach this** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 81
+
+⭐ **Merged at `9ce9e24`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `9ce9e24` is RECEIVED.** ⭐ **`python3 -m tools.quality.board.last_pointer <since> [<until>]` reports a record section whose last live pointer an edit removed, over two refs and never on the floor; a pointer moved, or one of several removed, is not reported.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W165 — A cost figure over a GATED population carries its spread or only its sample, and one end of a 32x range decided a mode
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W165.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A COST FIGURE OVER A GATED POPULATION CARRIES ITS SPREAD, OR IT CARRIES ONLY ITS SAMPLE.** ⭐ **Nothing in a gate's name tells a reader which end of its distribution they sampled, and a single number quoted from one end decides whether a whole mode gets run.**
+
+### ⛔ THE WITNESS — one gate, three files, and the figures that were in circulation
+
+⚠️ **RECEIVED from a peer session, environment HOST, ref `0564997`; NOT re-taken here, because Ruling 332 forbids this office to set the flag** (Ruling 326: an environment and its taker are part of a reading):
+
+```text
+ 1 gated test  @  1.09 s each   tests/docker/test_dev_provenance.py
+ 4 gated tests @  9.5  s each   tests/docker/test_dev_check_timeout.py
+ 5 gated tests @ 34.7  s each   tests/docker/test_dev_image.py
+```
+
+⭐ **CORROBORATED WITHOUT A RUN, by arithmetic the relay carried both halves of:** `1×1.09 + 4×9.5 + 5×34.7 = 212.59 s` against a relayed directory marginal of `215.75 s` — **1.5% apart.**
+
+⛔ **AND THE HEADLINE THAT ACCOMPANIED IT IS AN INSTANCE OF THE DEFECT IT NAMES.** ⚠️ *"~160x spread"* is `5×34.7 / 1.09 = 159.2` — **a FILE-TOTAL ratio quoted against a table labelled per-test, where the spread is `34.7 / 1.09 = 31.8x`.** ⭐ **Off by 5×, by silently changing population mid-sentence. The clause survives its own author's arithmetic, and the arithmetic is why it is worth writing down.**
+
+### ⛔ WHY IT IS NOT PEDANTRY
+
+⚠️ **The figure that told three offices this mode was cheap was `14 passed in 1.05 s`, taken over a file holding ONE gated test — the cheapest member of a 32× distribution.** ⛔ **A reader deciding whether to run the mode was choosing on a sample nothing said was a sample.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A COST FIGURE NAMES ITS SELECTION** — the path or the node ids, not just the directory — ⭐ **and where the population is gated, it carries min/max or the per-member figures.**
+2. ⚠️ **RULING 326 SAYS THE ENVIRONMENT IS PART OF A READING. THE SELECTION IS TOO, and a directory is not a file.** ⭐ **Whether that lands as an amendment to 326 or as its own clause is the CTO's; this row surfaces the measurement.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A REQUIREMENT THAT EVERY TIMING CARRY A DISTRIBUTION.** ⭐ **The clause is about a GATED population — a set somebody is deciding whether to run at all** — ⚠️ **and widening it to every figure in the project would fire on correct work** (Ruling 179's cost).
+
+### ⭐ SURFACE
+
+⛔ **`docs/conventions/review-rubric.md`'s measurement clauses.** ⚠️ **It names `docs/conventions/`, a SHARED constraint whose members are listed ONCE in the board's *Next rows* note** (check 4's sub-step).
+
+[the mint argument](#the-nine-mints-and-five-of-them-are-cto-round-67s-own-routings-which-reached-no-row)
+
+#### ⭐ CLOSED — PO ROUND 81
+
+⭐ **Merged at `286f15d`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `286f15d` is RECEIVED.** ⭐ **A cost figure over a gated population names its selection and carries min and max per member, `python3 -m tools.quality.gated --timings` prints a partial report as a SAMPLE, and an ungated timing owes nothing.** ⚠️ **Each finding's disposition is this round's § 3.**
+
+### W245 — `approach.py` reads a wave close off a prefix, the shape `W136` replaced with a whole name
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W245.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W136/3`: `tools/quality/approach.py` reads a wave close off the PREFIX `Merge chore/cto-round`, which is the shape `W136` replaced with a whole name in `tools/quality/board/unclaimed.py`.**
+
+```text
+MEASURED by the register at baefd6c, HOST
+git log --first-parent --format=%s release/m0-foundations
+  subjects carrying the prefix                                    79
+  of those, naming a branch that is NOT a whole round name         6
+    chore/cto-round17-close (3)   chore/cto-round31-corrections
+    chore/cto-round34-rubric      chore/cto-round49-annotation
+```
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The predicate reads the WHOLE branch name, in one spelling with `OFFICE` in `unclaimed.py`: imported, never retyped.**
+2. ⚠️ **Whether those six are wave closes is the taker's to argue from the ruling that defines a close.** ⭐ **The moved figure is printed in the handoff, and it is never silenced by a list of names** (Ruling 65).
+3. ⛔ **Asserted both ways:** a topic branch inside the prefix is not a close, and a round branch is.
+
+⭐ **It jumps nobody.** ⭐ **Surface:** `tools/quality/approach.py` and its test.
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 81
+
+⭐ **Merged at `f2fd080`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `f2fd080` is RECEIVED.** ⭐ **`approach.py` reads a wave close off the WHOLE round branch name, with `unclaimed.OFFICE` imported, so a topic branch under the prefix is no close.** ⚠️ **Each finding's disposition is this round's § 3.**

@@ -160,7 +160,7 @@ board shipped with THREE bytes of headroom, so no wave could be opened without i
 sweep created a Ruling 270 stub for every closed row whose file a pre-270 close had DELETED,
 each carrying the anchor its own Detail cell already resolved, and then re-pointed every
 closed Detail cell at that stub.** ⚠️ **NO ARCHIVE SECTION WAS ORPHANED: the pointer moved
-from the board to the stub, it did not disappear** — ⭐ **which is [`W171`](../tasks/rows/W171.md)'s
+from the board to the stub, it did not disappear** — ⭐ **which is [`W171`](../tasks/BOARD-ARCHIVE.md#w171-an-edit-that-removes-a-documents-last-pointer-to-a-record-section-orphans-it-and-the-pointer-floor-is-tree-shaped-so-it-cannot-see-a-removal)'s
 subject, and the reason the sweep is stated here rather than left to be noticed.**
 
 ### ⛔ RULING 270 (CTO round 58) — A CLOSE REPLACES THE ROW FILE WITH A REDIRECT STUB, AND DOES NOT DELETE IT

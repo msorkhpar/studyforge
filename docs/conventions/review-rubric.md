@@ -1889,7 +1889,7 @@ only take the fixture, which are the tests a `grep` for the helper misses. The a
 ⛔ **Nothing in a gate's name tells a reader which end of its distribution they sampled.**
 ⚠️ The witness, RECEIVED from a host run at `0564997`: a figure taken over a file holding
 ONE gated test, the cheapest member of the distribution, told three offices the mode was
-cheap. The argument is [the row](../tasks/rows/W165.md).
+cheap. The argument is [the row](../tasks/BOARD-ARCHIVE.md#w165-a-cost-figure-over-a-gated-population-carries-its-spread-or-only-its-sample-and-one-end-of-a-32x-range-decided-a-mode).
 
 ```bash
 # ⛔ The report is from a run that OPENED the gate. This command never opens one, and its exit
