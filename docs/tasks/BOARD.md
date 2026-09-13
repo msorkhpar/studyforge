@@ -60,9 +60,10 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W238` | Developer 2 | `fix/W238-milestone-sequence` @ `wt/dev2` | 1 @ `3a88333` | in-progress |
-| `W141` | Developer 1 | `fix/W141-stated-clause-count` @ `wt/dev1` | 1 @ `2ed34d9` | in-progress |
-| `W162` | Developer 3 | `fix/W162-docker-gate-ground` @ `wt/dev3` | 0 @ `8a13f4f` | in-progress |
+| `W238` | Developer 2 | `fix/W238-milestone-sequence` @ none | 2 @ `5c61536` | in-progress |
+| `W239` | Developer 2 | `fix/INT06-1-promote-not-material` @ `wt/dev2` | 0 @ `baefd6c` | in-progress |
+| `W141` | Developer 1 | `fix/W141-stated-clause-count` @ `wt/dev1` | 3 @ `4e4f6bb` | in-progress |
+| `W162` | Developer 3 | `fix/W162-docker-gate-ground` @ `wt/dev3` | 4 @ `5b70ce1` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -79,7 +80,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W237`, `W136`, `W150`, `W158` LEFT at `8a13f4f`, `2fdef9d`, `b3123f5`, `baefd6c`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W238`, `W141`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⭐ **`W238`, `W239`, `W141`, `W162` NAMED, CONFIRMED, [ratified](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -96,7 +97,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 0 | `W239`, `W241`, `W243` | ⛔ **`M6`'s blockers on the first real corpus, Ruling 75 declared in the record: `ISO-04` waits on `W239`. Three owners** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
+| 0 | `W241`, `W243` | ⛔ **`M6`'s blockers on the first real corpus, Ruling 75 declared in the record; `W239`, which `ISO-04` waits on, is in flight. Two owners** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 1 | `W240` | ⛔ **`M6`: `ISO-04` names `INT-06/2` too. After `W238`, which holds `reconnaissance/`** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 2 | `W242`, `W244` | ⛔ **`M6`: `W242` follows `W239` and `W241`; ⭐ `W244` is the register's own, the ISO pin's cadence** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
@@ -122,7 +123,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 36 | `W232` | ⭐ **round 70's mints, each jumping nobody** | [70](BOARD-ARCHIVE.md#po-round-70-w106-w107-and-sk-03-closed-w230-sk-06-and-w103-named-two-mints) |
 | 37 | `W234` | ⭐ **round 71's mint, jumping nobody** | [71](BOARD-ARCHIVE.md#po-round-71-w230-and-w103-closed-w109-w116-and-w117-named-one-mint) |
 | 38 | `W236` | ⭐ **round 72's mint, jumping nobody** | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
-| 40 | `W245`, `W246` | ⭐ **round 75's mints, each jumping nobody** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
+| 40 | `W245`, `W246`, `W247` | ⭐ **round 75's mints, each jumping nobody** | [75](BOARD-ARCHIVE.md#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -386,7 +387,7 @@ else.**
 | W236 | A personal archive carries grader passes and no read marks, so a prose corpus's whole record of completion cannot enter one | framework agent | `todo` — `SK-06/2` | [`rows/W236.md`](rows/W236.md) |
 | W237 | `W233`'s read-then-`communicate()` defect is live in three more process tests, and `tests.support.ProcessOutput` is now the one reader | Developer 1 | ✅ done — `8a13f4f` | [`rows/W237.md`](rows/W237.md) |
 | W238 | The capability index orders milestones by their ids, so the order the user decided prints wrong | Developer 2 | in-progress — `PO-74/1` | [`rows/W238.md`](rows/W238.md) |
-| W239 | `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops | framework agent | `todo` — `INT-06/1`, order 0 | [`rows/W239.md`](rows/W239.md) |
+| W239 | `SK-07`'s `promote` drops a draft's `content.not_material`, so the first real corpus cannot generate its ruled declarations and `ISO-04` stops | Developer 2 | in-progress — `INT-06/1`, on `fix/INT06-1-promote-not-material` | [`rows/W239.md`](rows/W239.md) |
 | W240 | `SK-01`'s draft carries a `source` and `variants` that `SF-02` refuses, and its include globs make the curriculum record a unit | framework agent | `todo` — `INT-06/2` + `/3`, after `W238` | [`rows/W240.md`](rows/W240.md) |
 | W241 | `validate` reports `valid` with no archive, and `plan` announces an archive root that `validate`, the build and the adapter layout do not read | framework agent | `todo` — `INT-06/5` + `/6`, order 0 | [`rows/W241.md`](rows/W241.md) |
 | W242 | For a `sibling` corpus the generated ignore lines have no committed home, and committed media stays unclassified | framework agent | `todo` — `INT-06/7` + `/8` | [`rows/W242.md`](rows/W242.md) |
@@ -394,6 +395,7 @@ else.**
 | W244 | The ISO pin goes stale at every integration merge, and no row owned its advance or named the cadence | PO | `todo` — the coordinator's host `verify` reading | [`rows/W244.md`](rows/W244.md) |
 | W245 | `approach.py` reads a wave close off a prefix, the shape `W136` replaced with a whole name | framework agent | `todo` — `W136/3` | [`rows/W245.md`](rows/W245.md) |
 | W246 | The location notice's PATH harm is still a notice, and its promotion to a check is owed at zero | framework agent | `todo` — `W150/2` | [`rows/W246.md`](rows/W246.md) |
+| W247 | The capability index reads a one-digit milestone id, so a row in `M10` would be counted as cancelled | framework agent | `todo` — `W238/1` | [`rows/W247.md`](rows/W247.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

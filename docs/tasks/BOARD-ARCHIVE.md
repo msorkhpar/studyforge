@@ -21688,20 +21688,21 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 
 | finding (ISO §11.1) | row | order | surface, and its one owner |
 |---|---|---|---|
-| `INT-06/1` | [`W239`](rows/W239.md) | 0 | `skills/onboarding/`, shared with `W242` |
+| `INT-06/1` | [`W239`](rows/W239.md) | 0, IN FLIGHT | `skills/onboarding/`, shared with `W242` |
 | `INT-06/5`, `/6` | [`W241`](rows/W241.md) | 0 | `validate/`, `cli/plan/`, `corpus/placement/`, `skills/adapter/`, shared with `W242` |
 | `INT-06/9` | [`W243`](rows/W243.md) | 0 | `render/pageassets/`, alone |
 | `INT-06/2`, `/3` | [`W240`](rows/W240.md) | 1 | `skills/reconnaissance/`, after `W238` or as its successor |
 | `INT-06/7`, `/8` | [`W242`](rows/W242.md) | 2 | after `W239` and `W241` |
 
-⭐ **Three developers can start at once, on `W239`, `W241` and `W243`: none collides with another or with anything in flight.** `INT-06/4`, `/10` and `/11` are ISO's own.
+⭐ **`W239` is in flight; `W241` and `W243` can start at once, and neither collides with it, with each other, or with anything else in flight.** `INT-06/4`, `/10` and `/11` are ISO's own.
 
 ⛔ **THE GROUND EVERY ONE OF THESE ROWS POINTS AT, WRITTEN ONCE:** ⭐ **they are `M6` work, not `M8`'s.** ⛔ **During `M6` the framework is fixed from findings, and §12's no-patch rule binds the integrator of `M8` and of `M9` (spec §12, amended round 74, item 4).** ⚠️ **`M8`'s run re-reads these same skills, so each fix lands in `src/` and its tests. It is never a hand-edit to a generated artifact, which that run would inherit (R19).** ⛔ **RULING 75 IS INVOKED FOR ALL FIVE, AND DECLARED HERE:** ⭐ **they jump every `W` row, at orders 0–2, because the user's order makes `M6` the open milestone and ISO its proof, and `ISO-04` waits on `W239`.**
 
 ### ⭐ 3 — IN FLIGHT
 
 ⭐ **NAMED on the coordinator's confirmation, each read against git at `baefd6c`:**
-- `W238`: Developer 2, cut `3483ced`.
+- `W238`: Developer 2, cut `3483ced`; handed back GREEN at `5c61536`, held by no checkout, and merging after this round (Ruling 279).
+- `W239`: Developer 2, `fix/INT06-1-promote-not-material` @ `wt/dev2`, cut `baefd6c`. ⚠️ **The branch does not carry the row id: the row names the branch so git corroborates it, and the coordinator reconciles the id.**
 - `W141`: Developer 1, cut `2fdef9d`. `W136`'s merge released `docs/conventions/`, and `W141` holds it for `W149`, `W153`, `W154`, `W161`, `W164` and `W165`: one owner, several waves.
 - `W162`: Developer 3, cut `8a13f4f`. `W163` follows it, one owner of `tests/docker/`.
 
@@ -21734,6 +21735,10 @@ fix/W158-unreachable-population       7c7703c2  7c7703c2     0      NOWHERE
 | `W158/3`, `/4`, `W237/1` | accepted, cost named: survivors, declared in their handoffs |
 | `W158/5`, `/6` | accepted, cost named: the line still prints under `-q`, and no skip reason carries a path at `7c7703c` |
 | `W237/3`, `/4` | recorded: outside the class, each named in its handoff |
+| `W238/1` | [`W247`](rows/W247.md), minted, jumping nobody |
+| `W238/2` | ⭐ **TAKEN:** `docs/tasks/README.md` § M6 no longer says the index prints no `M6`, a sentence true before `W238` merges and after |
+| `W238/3`, `PO-74/2` | ⭐ **TAKEN:** the root `README.md` carries no count and no build state, only pointers (Ruling 150). ⚠️ **It is an image input, so the image identity moves** |
+| `W238/4` | relayed to the coordinator: ISO's `F32` quotes the old one-argument step-1 command |
 
 ⚠️ **Held for the user:** frozen records rewritten in place (round 74's question), `W136/1`, and `PO-74/5`.
 
