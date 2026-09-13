@@ -314,7 +314,7 @@ two*.**
 
 | Rule | Fires when | Why it is that and not a line count |
 |---|---|---|
-| `board-detail` | a live register row has no `rows/<ID>.md` — ⭐ **or has one that is a Ruling 270 REDIRECT STUB** | an argument with no home is an argument that goes back into the cell; ⛔ **and a LIVE row's argument is AMENDED, so it may not live in the archive either** |
+| `board-detail` | a live register row has no `rows/<ID>.md` — ⭐ **or has one that is a Ruling 270 REDIRECT STUB**, ⛔ **or an In-flight `W` subject has no `rows/<ID>.md`** (`W161`; an epic task owes none — see the subject vocabulary below) | an argument with no home is an argument that goes back into the cell; ⛔ **and a LIVE row's argument is AMENDED, so it may not live in the archive either** |
 | `board-orphan` | a `rows/<ID>.md` has no live register row — ⭐ **UNLESS its id has a CLOSED register row AND the file is a Ruling 270 REDIRECT STUB** | a file nobody is sent to; ⭐ **the bijection is asserted in BOTH directions, because one of the two always survives a careless edit.** ⛔ **The one exception is Ruling 270's, above: a close REPLACES the row file rather than deleting it, because frozen records point at row files and no office may repair a frozen pointer** |
 | `board-duplicate` | one id has two register rows | ⚠️ **the board once carried `W20` twice, as `todo` AND `done`, two rows apart** |
 | `board-narrative` | non-table bytes exceed `BOARD_NARRATIVE_CEILING` | ⭐ **invariant to the number of rows** — a new row is a table line and adds nothing to it |
@@ -376,6 +376,25 @@ inheriting a git dependency (ruled round 49, below).
   state** (`done`, `accepted`, `routed`), and the `todo` pairing is **PRINTED
   rather than flagged** (Ruling 179, Ruling 183's form). ⛔ **A notice whose first
   wave fires on work its author just did is a notice nobody reads twice.**
+
+### ⛔ `W161` — the In-flight table's SUBJECT VOCABULARY, and where each subject is argued
+
+⭐ **The observation table admits more than a `W` row, and this is the closed list of what a
+subject may be and where its argument lives:**
+
+| the subject | its form | ⛔ where its argument lives | what the bijection does |
+|---|---|---|---|
+| a **board row** | `W<digits>` | `rows/<ID>.md` | ⛔ **no row file is `board-detail`**, in the register AND in this table |
+| an **EPIC TASK** | `<PREFIX>-<digits>`, optional letter (`NS-03`, `SF-19b`) | ⭐ **its EPIC**, `docs/tasks/E<nn>-*.md` | ⭐ **owes NO row file**; a `rows/<ID>.md` for it is `board-orphan` — a second home |
+| anything else (`INT-09/5`) | neither form | ⚠️ **undeclared** | ⭐ **read and PRINTED by name, never refused** |
+
+⛔ **Two things this is NOT.** ⚠️ **Not a rule that every observation row owns a `rows/` file**
+— that gives a task's argument two homes, the defect `rows/` exists to prevent. ⛔ **And not a
+narrowing of the parser**: refusing a non-`W` subject re-opens `NS-01/2` as a build failure.
+⭐ **The `bijection` line of the `board:` notice names the population `board-detail` and
+`board-orphan` were over — `W` ids only — beside the epic tasks outside it and the residue**,
+so a clean run over a `W`-only population is not read as a claim about every row (Ruling 48's
+shape, Ruling 331's arriving form). Enforced in `../../tools/quality/board/bijection.py`.
 
 ### ⛔ May the floor shell out for clause (c)? NO, and the instrument is separate
 
