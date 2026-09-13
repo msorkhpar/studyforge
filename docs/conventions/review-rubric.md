@@ -257,7 +257,7 @@ does. A subject missing here is a finding, and adding a row is not a mint.**
 | **PLANTING a control, and restoring it** | [Ruling 123](#ruling-123-an-instrument-is-validated-by-planting-not-only-by-running) · [Ruling 140](#ruling-140-cto-round-38-ruling-123s-sharpening-a-plant-is-adversarial-to-the-search-term-not-to-the-subject) · [Ruling 191](#ruling-191-cto-round-49-a-control-owes-inhabitation-and-an-empty-population-returns-the-pass-reading-rather-than-no-reading) · [`W143`](#w143-a-plant-is-restored-from-a-copy-taken-before-it-per-file-and-never-with-git-checkout) · [Ruling 211](#ruling-211-git-checkout-ref-path-poisons-the-index-so-the-canonical-restore-puts-the-plant-back-and-a-plants-effect-is-printed-before-the-verdict) · [Ruling 287](#ruling-287-the-container-cannot-restore-and-a-restore-whose-exit-code-is-unread-is-not-a-restore) · [Ruling 291](#ruling-291-a-plant-whose-subject-is-dockerdev-may-not-run-through-dockerdevcheck) |
 | **running a mutant SWEEP** | [Ruling 70](#ruling-70-a-mutant-sweep-is-evidence-only-from-a-bytecode-cold-run-and-it-says-so) · [Ruling 131](#ruling-131-a-sweep-rows-tree-is-clean-not-merely-its-caches-and-there-are-two-ways-it-stops-being) · [Ruling 146](#ruling-146-cto-round-39-a-sweep-asserts-its-own-row-count-or-it-is-not-a-sweep) · [Ruling 76](#ruling-76-a-sweep-row-prints-its-exit-code-and-its-test-count-tail-and-they-must-agree) · [Ruling 83](#ruling-83-a-sweep-rows-tail-is-read-for-failed-error-and-the-skip-count) · [Ruling 162](#ruling-162-cto-round-42-a-sweep-row-records-its-failure-reason-and-the-real-lint-only-split-is-the-other-half-neither-is-sufficient-alone) · [Ruling 298](#ruling-298-a-skip-census-cannot-see-a-duplicate-whose-failure-mode-is-a-silent-substitution-so-a-duplication-sweep-is-taken-over-the-call-sites) |
 | **reading an EXIT CODE out of a pipeline** | [Ruling 241](#ruling-241-cto-round-55-the-warning-above-is-replaced-by-a-form-because-it-failed-three-offices-in-three-rounds) · [Ruling 76](#ruling-76-a-sweep-row-prints-its-exit-code-and-its-test-count-tail-and-they-must-agree) · [Ruling 287](#ruling-287-the-container-cannot-restore-and-a-restore-whose-exit-code-is-unread-is-not-a-restore) · [Ruling 348](#ruling-348-a-printed-arm-is-not-a-gate-until-its-firing-moves-the-exit-code) |
-| **reporting the SKIPS from a suite run** | [§4b-i](#4b-i-every-skip-is-read-and-the-run-says-green-or-red) · [Ruling 142](#ruling-142-cto-round-38-a-skip-census-parses-the-multiplicity-and-uniq-c-reads-29-where-the-answer-is-63) · [Ruling 275](#ruling-275-cto-round-58-a-skip-figure-is-quoted-n-groups-m-skips-whenever-the-two-differ) · [Ruling 108](#ruling-108-a-skip-set-is-a-property-of-the-checkout-so-name-the-checkout) · [Ruling 87](#ruling-87-a-skip-class-that-can-hide-a-subsystem-announces-itself-at-the-end-of-the-run) · [Ruling 332](#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) · [Ruling 333](#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) |
+| **reporting the SKIPS from a suite run, or taking a census of a GATED population** | [§4b-i](#4b-i-every-skip-is-read-and-the-run-says-green-or-red) · [Ruling 142](#ruling-142-cto-round-38-a-skip-census-parses-the-multiplicity-and-uniq-c-reads-29-where-the-answer-is-63) · [`W164`](#w164-a-census-of-a-gated-population-is-taken-from-the-runner-and-a-grep-census-is-a-lower-bound) · [Ruling 275](#ruling-275-cto-round-58-a-skip-figure-is-quoted-n-groups-m-skips-whenever-the-two-differ) · [Ruling 108](#ruling-108-a-skip-set-is-a-property-of-the-checkout-so-name-the-checkout) · [Ruling 87](#ruling-87-a-skip-class-that-can-hide-a-subsystem-announces-itself-at-the-end-of-the-run) · [Ruling 332](#ruling-332-a-committed-skip-whose-own-reason-forbids-the-condition-that-would-unskip-it-is-a-declaration-not-an-invitation-and-the-unreachable-assertions-are-rowed-rather-than-run) · [Ruling 333](#ruling-333-ruling-332-is-re-grounded-not-repealed-the-cost-belongs-to-the-test-never-to-the-mode-and-a-skip-reason-stating-a-worst-case-as-unconditional-is-the-defect) |
 | **R7 — personal data, and the author line** | [§1](#1-r7-no-personal-data-hard-fail) · [Ruling 144](#ruling-144-cto-round-39-r7-has-three-subjects-and-an-emitter-and-its-gate-are-read-as-a-pair) · [`CTO-56/15`](#cto-5615-an-inhabitation-control-for-a-personal-data-sweep-may-not-be-quoted-because-quoting-it-inhabits-what-the-sweep-forbids) · [Ruling 296](#ruling-296-a-placeholder-author-line-is-the-prescribed-form-and-a-uniform-history-bought-with-a-real-git-identity-is-an-r7-violation) · [Ruling 345](#ruling-345-ruling-296-names-a-placeholder-this-names-the-mechanism-and-forbids-the-one-that-reddens-the-floor) · [Ruling 336](#ruling-336-the-personal-data-gates-population-is-this-repository-a-component-owes-the-sweep-and-the-framework-gates-only-the-declaration) |
 | **writing or checking a HANDOFF** | [§8](#8-the-handoff-exists-and-is-in-the-right-format) · [C6](#c6-ruled-names-the-artifact-never-a-handoff) · [Ruling 346](#ruling-346-a-re-taken-row-may-carry-a-second-handoff-under-a-new-stem-pointing-back) |
 | **routing a FINDING, writing a DISPOSITION** | [§8a](#8a-structural-findings-are-routed-by-the-reviewer-in-the-review) · [Ruling 65](#ruling-65-the-markers-spelling-stated-because-it-was-never-written-down) · [Ruling 193](#ruling-193-cto-round-50-ruling-65-binds-every-reader-of-the-marker-and-the-shipped-constant-is-the-authority) · [Ruling 194](#ruling-194-cto-round-50-8as-counter-gains-the-pass-condition-8as-own-prose-already-obliges-one-disposition-per-structural-finding) · [Ruling 293](#ruling-293-8as-disposition-counter-constrains-an-adjacency-nobody-declared-the-population-is-narrowed-and-the-markers-spelling-is-not-touched) · [Ruling 307](#ruling-307-a-disposition-names-the-findings-id-a-disposition-written-as-a-description-is-not-one) · [Ruling 315](#ruling-315-a-finding-declined-on-ruling-11s-three-names-the-rule-it-would-become-in-a-fixed-spelling-because-nothing-in-this-repository-accumulates-instances) |
@@ -1856,6 +1856,33 @@ later at the reviewer instead of the author.
 
 ⭐ **So the host run is a convenience and never the verdict.** If the container
 cannot be run, the review is **Blocked**, not APPROVE.
+
+#### ⛔ `W164` — a census of a GATED population is taken from the RUNNER, and a `grep` census is a LOWER BOUND
+
+⛔ **A gate is not only where it is called: a fixture propagates it, and `grep` cannot see
+propagation.** ⭐ The runner resolves fixtures, so the census is taken from the runner.
+
+```bash
+# ⛔ The gate UNSET, the runner's own report read. Exit 2: an empty or unfinished population (Ruling 191).
+python3 -m tools.quality.gated --unset <GATE_VARIABLE> --reason <text of its skip reason> \
+    --helper <the gate's helper> <test paths>
+# ⭐ By hand, the same population is `python3 -m pytest -q -rs <paths>` with the gate unset,
+#    read with Ruling 142's multiplicity parse above.
+```
+
+- ⛔ **Pass condition:** the census counts a DIRECTLY-gated test AND a FIXTURE-gated test,
+  asserted both ways (R12) in `tools/tests/quality/test_gated.py` on a synthetic gate.
+- ⚠️ **Where `grep` is the only instrument, its figure is reported as a LOWER BOUND, and the
+  sentence names the spelling it cannot see: a gate inherited through a fixture.** This is
+  [Ruling 280](#ruling-280-a-citation-predicate-is-asserted-against-the-plural-and-range-spellings-this-project-actually-writes)'s
+  form, carried from citations to gates. The command prints its own `grep` line that way.
+- ⛔ **Not a ban on `grep`, and not a change to a fixture.** A session fixture that gates once
+  is the correct design; the defect is in the count.
+
+⭐ **Measured at `d05d856`, host:** over `tests/docker/test_dev_image.py` with the docker gate
+unset, the command names every test the `dev_image` fixture gates. It marks the tests that
+only take the fixture, which are the tests a `grep` for the helper misses. The argument is
+[the row](../tasks/rows/W164.md).
 
 #### ⛔ Ruling 275 (CTO round 58) — a skip figure is quoted `N groups / M skips` whenever the two differ
 
