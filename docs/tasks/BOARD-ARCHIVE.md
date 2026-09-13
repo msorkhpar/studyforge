@@ -20850,3 +20850,182 @@ legitimately open                                               : 1  (FND-04/7)
 #### ⭐ CLOSED — PO ROUND 71
 
 ⭐ **Merged at `a8c4738`, TERMINAL by predicate `C`. The office's gates at `810e038` and the coordinator's disclosure at `a956b6c` are RECEIVED from the merge body.** ⭐ **Two findings, one annotation, the form written once, and no sweep, as the scope clause above required.** ⛔ **`W103/1`: `FND-04/7` is closed by this round ([the round](#po-round-71-w230-and-w103-closed-w109-w116-and-w117-named-one-mint)).**
+
+## PO round 72 — SK-06 held open on SK-06/3, so step 4.4 and M4 do not close
+
+⛔ **Three merges re-derived on the first-parent chain of `release/m0-foundations`, and one before round 71's merge `fc668f2`:** `ddede67` (`SK-06`), `e9c7dcd` (`W109`), `e58213f` (`W117`), `b182a88` (`W116`). ⭐ **`corroborate`, HOST, role `wt/po`, at `fc668f2` before any edit: exit 1, refuting exactly `SK-06` and `W109` (the expectation; `W117` and `W116` merged later).** ⭐ **Ruling 97's gate at each merge is the coordinator's guarded release-tip reading (guard 0, floor GREEN 0, suite GREEN 0, porcelain 0), RECEIVED from the merge bodies.**
+
+### ⭐ 1 — PREDICATE `C`, RUN FOR EACH (Ruling 199)
+
+```text
+                                   merge^2   branch head  ahead  checked out
+feat/SK-06-personal-archive        16b5e661  16b5e661     0      NOWHERE
+fix/W109-origin-one-reader         9751722c  9751722c     0      NOWHERE
+fix/W117-consumer-side-contract    dbfa8345  dbfa8345     0      NOWHERE
+fix/W116-formatter-target          b3e243f2  b3e243f2     0      NOWHERE
+```
+
+⭐ **All four TERMINAL.** ⭐ **`W109`, `W117` and `W116` close under the four edits; the fourth has nothing to re-point, because only records cite their row files (`git grep` at `b182a88`).** ⛔ **`SK-06` is an EPIC TASK and does NOT close (§ 2).**
+
+### ⛔ 2 — `SK-06/3`: THE SHARING CLAUSE IS NOT MET, SO `SK-06` DOES NOT CLOSE
+
+⛔ **The clause:** *"An export marked for sharing contains no progress and no personal data — asserted, not inspected."*
+
+⭐ **MEASURED by the register at `fc668f2`, HOST, `depth1` copied under `.scratch/`:** no plant → exit 0; a file of non-UTF-8 bytes around a placeholder home path → **exit 0, and the archive member carries the path**; the same path as UTF-8 text → exit 1, no archive (the control). The export's output named no unread file. `depth1` and `depth2` carry **0** non-UTF-8 material members.
+
+| the case for *met with a named cost* | ⛔ why it does not hold |
+|---|---|
+| a byte gate would refuse real audio | ⭐ true, and it rules out ONE remedy, not the obligation. Refusing by name, or admitting only what the framework produced from gated text, is not a byte gate |
+| the survivor was disclosed | ⛔ disclosed to the register, not to the exporter. `export` discards `gate`'s answer, so the arm stands down silently — the preamble's own defect family |
+| the precedent `SF-19b` (met as written, carried by `W230`) | ⛔ that gap was pages the API clause did not name. This clause names *no personal data*, and the counterexample is inside it |
+| the tests assert every member | ⛔ over fixtures with ZERO non-UTF-8 members, so the assertion never met the class |
+
+⛔ **R7 is this project's hardest rule, and a sharing archive exists to leave the machine, so a leak cannot be recalled.** Image, PDF and audio metadata carry names as a matter of course. ⭐ **VERDICT: NOT MET.** ⛔ **`SK-06` is merged and not closed; its Acceptance is unchanged. [`W235`](rows/W235.md) carries the gap at order 0, and `SK-06` closes on its merge.** ⭐ **Every other `SK-06` clause is met, by the named tests and plants in [its handoff](handoffs/SK-06.md).**
+
+### ⛔ 3 — STEP `4.4` AND `M4`'S CLOSE RUN, AT `fc668f2`
+
+⛔ **Membership, pre-existing (Ruling 213):** `README.md` § M4, steps `4.1`–`4.4`: `SF-21`, `OPS-05`, `SF-19a`, `SF-19b`, `SF-28`, `SF-37`, `SF-38`, `SF-39`, `SF-40`, `SF-43`, `SK-03`, `SK-06`. **The rows below were authored at this close.**
+
+```text
+population declared before the loop: 12 tasks, membership from README.md § M4 (4.1-4.4)
+SF-21 4ed6938   OPS-05 77e47e5   SF-19a 171366c   SF-19b a55303f
+SF-28 c7791c2 (remaining half, as round 69 counted it)   SF-37 0160d71
+SF-38 6199164 + d2943d4   SF-39 caf7317   SF-40 2a88504   SF-43 34782d0
+SK-03 71ae733   SK-06 ddede67
+ROWS=12 asserted against 12; each on `git log --first-parent fc668f2`   [Ruling 146]
+```
+
+⛔ ***Done when:* *the site has an origin, an API, and records practice passes.*** HOST, role `wt/po`, HEAD `fc668f2`, every figure a pytest exit:
+
+| clause | reading | exit |
+|---|---|---|
+| an origin | `tests/studyforge/cli/test_serve.py`, `test_serve_process.py`, `test_serve_root.py`, `test_serve_floor.py` | 0 |
+| an API | `tests/studyforge/serve/` | 0 |
+| records practice passes | `tests/studyforge/progress/`, `tests/studyforge/serve/routes/` (the state route) | 0 |
+
+⭐ **All three clauses read true.** ⛔ **Step `4.4` does not close, because `SK-06` does not. So `M4` does not close. Its only blocking gap is `W235`.** ⚠️ **The gaps named (Ruling 213):**
+
+| gap | ⛔ what it does to the close |
+|---|---|
+| `SK-06/3` → [`W235`](rows/W235.md) | **BLOCKS** — § 2 |
+| `W90`: the index links no container page; `GROUP_KEYS` unchanged at `fc668f2` | ⭐ **NOT A GATE, RE-OWED:** a reading-floor gap, outside `M4`'s sentence and its membership. Its *by M4* was round 37's forecast (Ruling 213). ⭐ **Placed at order 3; named in every `M4` close run until it merges** |
+| `SK-03/5` → [`W233`](rows/W233.md), in flight | ⚠️ the *origin* reading includes `test_serve_process.py`, whose assertions read the last line; the clause's other three files carry it meanwhile |
+| `SK-06/2` → [`W236`](rows/W236.md) | not a gate: *practice passes* is `M4`'s word |
+| `OPS-05` and `SF-19b`'s Java halves | carried by `OPS-03` at `M6` (round 68) |
+
+⭐ **When `W235` merges, the next close run re-takes every row at its own ref and inherits none of these.** ⭐ **What opens then is `M5` step `5.1`: `TC-00`, `TC-01`, `SF-20`.** ⛔ **`TC-01` creates the sibling `code-server-toolchain` (`workspace.json`: `not-yet-created`), and `TC-00` writes inside it.** ⭐ **Creating it needs no user decision:** `docs/conventions/workspace.md` gives the creating commit to E12, and round 51 measured a hold on that very question as `PO-51/1`. ⚠️ **`TC-00` waits on `TC-01` ([`W156`](rows/W156.md)).** `TC-00`'s Acceptance reads the Java consumer repository and edits nothing there. ⚠️ **`SF-20` declares only `SF-02`, but its last clause needs a real toolchain container: an undeclared edge on `TC-01` (`PO-72/2`).**
+
+### ⭐ 4 — PLACEMENT, RATIFIED
+
+⭐ **`W108` (Developer 2, cut at `ddede67`):** held only while `SK-06` asserted every `FND-04` fixture, and `SK-06` merged there. ⭐ **`W125` (Developer 1, cut at `ddede67`):** `W88` and `W120` are the register's, `W118` is `PO`'s, and step `4.4` had no row left to dispatch. ⭐ **`W233` (Developer 3, cut at `fc668f2`, CONFIRMED by the coordinator):** ⛔ the premise that nearly all of orders 7–35 name `docs/conventions/` or `tools/quality/board/` is **refuted in part**, measured over their row files. ⭐ **The jump is ratified on `M4`'s close instead** (§ 3; Ruling 75, [`W233`](rows/W233.md)). ⚠️ **It handed back GREEN at `998ab1d` and is held by no checkout, so its cell keeps `wt/dev3` ([`W234`](rows/W234.md)'s subject).** ⭐ **`W135` (Developer 3, cut at `b182a88`, CONFIRMED):** order 7 heads what a developer can take — `W117` released `docs/conventions/`, and `W125` holds `tools/quality/board/`, which `W136` names. It was cut before `W235` was minted. ⭐ **`W235` heads the next free slot.**
+
+### ⛔ 5 — `W88` AND `W120`: ROUND 73
+
+⭐ **This round's weight is `M4`'s close and the refusal behind it, so it does not also take a register sweep.** ⛔ **Both are placed for round 73's brief, with populations re-measured at dispatch (Ruling 214).**
+
+### ⭐ 6 — THE FINDINGS
+
+⭐ **Minted:** [`W235`](rows/W235.md) (`SK-06/3`, order 0), [`W236`](rows/W236.md) (`SK-06/2`, jumping nobody). ⭐ **Riders:** `SK-06/6` + `W117/3` → [`W50`](rows/W50.md); `W116/2` → [`W204`](rows/W204.md); `W116/3` → [`W151`](rows/W151.md); `W116/4` → [`W231`](rows/W231.md); the close run → [`W90`](rows/W90.md). ⭐ **Sentences:** `SK-06/1` → `E05` § `SF-21`; `SK-06/3`, `SK-06/2` → `E11` § `SK-06`. ⭐ **At a rule:** `SK-06/5` → spec §2. The register is the list and `CONTRACT_FIELDS` is its subset. Every key in that tuple owes a row, written in the commit that mints the key. `SF-21/1` and `SK-06/5` are the two misses. **Disposed:** `SK-06/4` (the manifest's `content` block describes the SOURCE, so a corpus root has no material declaration; carried into `W235`'s clause 4); `W109/1` (recorded, re-measured); `W109/3` (latent; re-opened when a container's `origin` takes the region shape); `W109/4` (the templates read no `origin`; the surface named is `SK-01`'s, merged; re-opened when a template does); `W117/1` (a reading at its own ref, moved whole, Ruling 106); `W117/2` (the author-binding home is accepted as the taker's decision, which the row gave them); `W116/1` (sites, not rewrites: recorded); `W116/5` (expected, `W225`); `W116/6` (the office's own RED on markers, fixed in its branch). ⚠️ **The coordinator's correction in `b182a88`'s body (the disclosure at `e58213f` was one commit stale) is recorded there, and is the coordinator's.** ⛔ **`PO-72/1`:** `W148`, `W157` and `W202` stood in *Next rows* after they closed or were withdrawn; removed. ⛔ **`PO-68/2` is unchanged, and it is the user's.**
+
+### W109 — Every consumer that reads `origin` from a document instead of the parser is a second reader of a growing field
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W109.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A CONSUMER THAT READS `origin` OUT OF A DOCUMENT INSTEAD OF OUT OF THE PARSER IS A SECOND READER OF A FIELD WHOSE SHAPES WILL GROW AGAIN.** ⭐ **`RECEIVED` from Developer 2 as `W95/3`, who hit it as a hard red on their own fixture, fixed the one site correctly, and named the class rather than stopping at the site.**
+
+⚠️ **RECEIVED, and the developer's own measurement on `5336fff`:** `tests/…/corpus/placement/test_corpora.py:placed()` took `unit.get("origin")` straight out of the JSON and handed it to `profile.unit(...)`. ⛔ **Under `tree` that is harmless, because origin is unused. Under `sibling` it raised `PlacementError` on the FIRST fixture to use Ruling 92's object shape** — ⭐ **a corpus that places perfectly, refused by the test that checks placement.**
+
+⛔ **THE FIX WAS RIGHT AND IS NOT THIS ROW.** ⭐ **It went through `fields.optional_origin`, the map's ONE reader, rather than by teaching the helper the new shape** — ⚠️ **which is the difference between closing a hole and adding a second place for the shape to be known.**
+
+### ⛔ WHY THE CLASS IS WIDER THAN THE SITE
+
+> ⭐ **Any consumer that reads a field from a DOCUMENT rather than from the parser
+> has pinned that field's shape at the moment it was written.** ⛔ **`origin` has
+> already grown once — Ruling 92 made it an object, `F21` gave it
+> `{path, section}`** — ⚠️ **so the next growth finds every such reader again.**
+
+⭐ **AND THE FAILURE MODE IS THE EXPENSIVE ONE: it is not a wrong answer, it is a REFUSAL of valid input**, and it surfaces in a test rather than in the thing under test. ⛔ **A developer reading that red looks at placement, which is correct, before looking at the helper, which is not.**
+
+### ⭐ WHAT SETTLES IT
+
+⛔ **A sweep for every reader of `origin` that does not come through the parser, and each one either re-pointed at `fields.optional_origin` or declared by name as a WRITER.** ⚠️ **The developer's own post-fix reading is the starting population and must be RE-TAKEN rather than inherited:** the remaining hits were *"all writers — corpus builders, `to_document` assertions, a deliberate leak fixture — and none is a reader handed to placement."* ⭐ **That is a reading at one ref, and the row's job is to make it a standing property.**
+
+⚠️ **THE SHAPE OF THE CHECK IS THE OPEN QUESTION AND IT BELONGS TO THE AUTHOR.** ⛔ **A grep-shaped guard over `tests/` and `src/` is the obvious form and it is also `W37`'s class — a check that can pass for being unable to fail** — ⭐ **so the author owes an INHABITATION reading (Ruling 191): the guard fires on a planted second reader before it is trusted to be silent.**
+
+[round 39's mint](#3-three-structural-findings-merged-unrouted-and-that-is-the-finding-about-the-process)
+
+#### ⭐ CLOSED — PO ROUND 72
+
+⭐ **Merged at `e9c7dcd`, TERMINAL by predicate `C`. The office's gates at `9751722` and the coordinator's disclosure at `fc668f2` are RECEIVED from the merge body.** ⭐ **Re-measured, 14 sites; the one reader outside the parser already went through `optional_origin`, and every writer is declared by name, held by `test_origin_sites.py` with four live plants RED and six survivors stated.**
+
+### W117 — `**Consumer-side modules:**` is a contract named in ZERO convention documents, and both its sites are consumers
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W117.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W74/3`, ROUTED TO THE PO BY THE CTO IN TERMS at round 52: *their refusal to edit a convention document inside this row is correct. It is Ruling 65's spelling question and `W60`/`W106`'s class; the PO mints the row.***
+
+⭐ **THE READING, MEASURED BY THE CTO at the `W74` merge and RECEIVED by me** (Ruling 115):
+
+```text
+`**Consumer-side modules:**` under docs/conventions/   -> 0 hits
+the whole contract, and both sites are CONSUMERS of it:
+   src/studyforge/skills/onboarding/SKILL.md:141
+   tests/authoring/support.py:285
+```
+
+⛔ **A CONTRACT WHOSE ONLY TWO SITES ARE ITS OWN CONSUMERS IS NOT A CONTRACT — IT IS A COINCIDENCE THAT HAS HELD TWICE.** ⭐ **A third consumer has nothing to read, so it either re-derives the spelling or invents a second one, which is exactly how `W60`'s two copies of one vocabulary happened.**
+
+### ⛔ THE SHAPE, and it is NOT a rename
+
+⭐ **The spelling is DECLARED in a convention document and the two sites POINT at it**, in Ruling 103's order: ⛔ **a hand form is subordinate to the shipped check it duplicates, so whichever of the two sites is authoritative says so and the other cites it.** ⚠️ **Which document — `module-structure.md` or a skills-facing one — is the taker's first question and is not answered here, because it depends on whether the contract binds an AUTHOR or a BUILD.**
+
+⛔ **WHAT IT MUST NOT BECOME: a rename of either site.** ⭐ **Ruling 65's question is what the marker is CALLED, and the frozen-name rule the CTO wrote after its fifth refusal (round 52, `review-rubric.md`) binds anything a record already cites.** ⚠️ **Check before renaming; the population is two, so the check is cheap.**
+
+⭐ **RELATED AND DELIBERATELY NOT MERGED: `W60` (two copies of one vocabulary, unlinked) and `W106` (the repository-wide marker sweep has no shipped reader).** ⛔ **All three are the same disease and three different vocabularies; one row fixing all three would be a sweep nobody can review.**
+
+#### ⭐ CLOSED — PO ROUND 72
+
+⭐ **Merged at `e58213f`, TERMINAL by predicate `C`. The office's gates at `dbfa834` and the coordinator's disclosure at `e9c7dcd` are RECEIVED from the merge body.** ⭐ **Declared once in `docs/conventions/commanded-pages.md`, the reader named as the authority (Ruling 103), not a rename. `W117/1`: the cited line is 126, a reading at its own ref.**
+
+### W116 — The formatter's target is INFERRED, so an absent declaration made a style decision no document records
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W116.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RULING 210. THIS PROJECT NEVER CHOSE PEP 758 — IT INHERITED IT.** ⭐ **`pyproject.toml` declares `requires-python >= 3.14` and declares NO `target-version`, so `ruff format` INFERRED the target and started emitting the bare `except A, B:` form.** ⚠️ **An ABSENT DECLARATION made a style decision that no document records and no reviewer approved, which is Ruling 161's argument reaching the build configuration.**
+
+⛔ **AND UNDER R10 AN INFERRED FORMATTER TARGET IS AN UNDECLARED INPUT TO A BYTE-FOR-BYTE REPRODUCIBILITY CLAIM.** ⭐ **That, and not the style, is why this is a row.**
+
+### ⛔ THE REMEDY IS NOT WHAT WAS FIRST PROPOSED, and both halves are MEASURED
+
+⭐ **MEASURED BY THE CTO at round 52 and RECEIVED by me (Ruling 115 — not re-inhabited here):**
+
+```text
+ruff check --select ALL over the file  -> NOTHING about except / parens / PEP 758
+                                          (only unrelated TRY003 / EM102)
+pyproject.toml                         -> declares NO target-version
+ruff format --check --target-version py313 .  (the paren form planted)
+                                       -> 768 files already formatted, exit 0
+plant: except (ImportError, ValueError):  -> ruff format REWRITES it to the bare form
+```
+
+⛔ **SO THERE IS NO LINT RULE TO ENABLE: `--select ALL` fires none.** ⭐ **The remedy is a FORMATTER TARGET DECLARATION — one line in `pyproject.toml` — and the sites then normalise on the next `ruff format` run rather than being hand-edited.**
+
+### ⛔ THE POPULATION, WITH ITS REF, because the count as first briefed was the MERGE's
+
+```text
+2d0cfe7 (base)   23 lines in 21 files    ⭐ the PRE-EXISTING population
+the merge        24 lines in 22 files
+the one added by fix/W74-sibling-runnable: tests/authoring/support.py:336
+```
+
+⚠️ **`24 in 22` was quoted as *pre-existing, not this branch's* and one of the 24 WAS that branch's.** ⛔ **The disposition survived unchanged — the class is pre-existing and `W74` was not chargeable — but the number did not, and a count quoted without its ref is the defect four offices' briefs have now corrected.**
+
+### ⛔ WHAT THIS IS NOT
+
+⭐ **It is not `W38`** (the floor and `ruff` disagreeing BY RULE) and ⭐ **not `W104`** (the lint notice naming no subject). ⛔ **Both are about what the two instruments SAY; this is about an input neither of them declares.**
+
+⚠️ **AND THE READER-FACING HALF, recorded because it is the reason a style question is worth a row at all:** ⛔ **`except ImportError, ValueError:` is valid under BOTH Python 2 and Python 3.14 and means DIFFERENT THINGS — two exceptions under 3.14, one bound to a name under 2 — so a reader gets no syntax error and no signal.** ⭐ **R11/R13's justification is that a reader should not re-derive intent, and this text defeats it silently.** ⚠️ **The 3.14 half is MEASURED in the pinned image; the Python-2 half is REASONED and is not runnable there** (Ruling 115).
+
+#### ⭐ CLOSED — PO ROUND 72
+
+⭐ **Merged at `b182a88`, TERMINAL by predicate `C`. The office's gates at `b3e243f` and the coordinator's disclosure at `e58213f` are RECEIVED from the merge body.** ⭐ **`target-version = "py314"` declared once; no byte moves, because inference already resolved 3.14.** ⛔ **`W116/1`: the population to rewrite is empty under every target, and the `32 in 28` above counts sites, not rewrites.**
