@@ -28,6 +28,18 @@ from tests.fixture_checks import FIXTURES
 #: Both `FND-04` fixtures.
 NAMES = ("depth1", "depth2")
 
+#: The line a serving PROCESS prints once it listens, naming the port it chose. ⛔ One home
+#: (`W237`): the verb's process test and the `buildserve` skill's both import it from here.
+LISTENING = re.compile(r"^serve http://127\.0\.0\.1:(\d+)/")
+
+
+class Address:
+    """What `fetch` reads off a server, for a server that lives in another process."""
+
+    def __init__(self, port: int) -> None:
+        self.server_address = ("127.0.0.1", port)
+
+
 #: A reference to the serving origin: the API root as a ROOTED path (a host-qualified
 #: third-party `…/api/…` is not one), a loopback host, or the default port.
 SERVING_ORIGIN = re.compile(

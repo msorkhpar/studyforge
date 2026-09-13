@@ -23,7 +23,7 @@ from studyforge.progress import store as store_module
 from studyforge.progress.document import PROGRESS_FILENAME, next_entry, render
 from studyforge.progress.errors import ProgressError, ProgressFormatError
 from studyforge.progress.store import IGNORE_FILENAME, WRITING_SUFFIX, Progress
-from tests.support import repository_root
+from tests.support import ProcessOutput, repository_root
 
 T1 = "2026-09-12T10:00:00+00:00"
 T2 = "2026-09-12T11:00:00+00:00"
@@ -227,12 +227,14 @@ def test_a_second_process_writing_during_an_update_loses_nothing(tmp_path):
         # Read is done; now a second process tries to record before this one writes.
         child = subprocess.Popen(
             [sys.executable, "-c", SECOND_WRITER, str(tmp_path)],
-            stdout=subprocess.PIPE,
             stdin=subprocess.DEVNULL,
-            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             env=child_environment(),
         )
-        assert child.stdout.readline().strip() == "ready"
+        # ⛔ One reader, from launch to exit (`W237`): a line handed out here is still in `rest`.
+        output = ProcessOutput(child)
+        assert output.line(timeout=30) == "ready\n"
         try:
             child.wait(timeout=BLOCKED_FOR)
         except subprocess.TimeoutExpired:
@@ -241,11 +243,13 @@ def test_a_second_process_writing_during_an_update_loses_nothing(tmp_path):
         document["practices"][key] = next_entry(
             document["practices"].get(key), mode="test", exit_code=0, commands=COMMANDS, when=T1
         )
-        return child
+        return child, output
 
-    child = store._update(change)
-    child.communicate(timeout=60)
-    assert child.returncode == 0
+    child, output = store._update(change)
+    stdout, stderr = output.rest(timeout=60)
+    assert child.wait(timeout=60) == 0, stderr[-400:]
+    # ⭐ The child prints one line, so its last line is its only one: nothing may follow it.
+    assert stdout.splitlines() == ["ready"], stderr[-400:]
     entry = store.entry(ADDRESS, 1, SECTION)
     assert entry["runs"] == 2, "a lost update: the second process's record was overwritten"
     assert blocked == [True], "the second process was never made to wait"
