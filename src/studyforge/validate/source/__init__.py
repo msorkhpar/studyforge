@@ -18,6 +18,7 @@ to name is no longer the only place the rule could be broken.
 | module | what it answers |
 |---|---|
 | `classification` | ⭐ what the corpus says its files **are** — material, output, or neither |
+| `enumeration` | ⭐ what the corpus root **holds**, which `classification` judges (`W280`) |
 | `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
 | `membership` | ⭐ what sits beneath the archive root, which `classification` skips (`W248`) |
 
@@ -38,7 +39,9 @@ that needs tidying.
 
 ⭐ **Nothing crosses the seam.** No name defined in `classification` is read by
 `completeness` or the other way round; what they share is `Walk`, `Finding`
-and `Unchecked`, which every check in `validate` shares.
+and `Unchecked`, which every check in `validate` shares. ⚠️ `enumeration` is
+`classification`'s own walk, split out at R11's bound (`W280`): the one edge
+inside the package, and it points one way.
 
 ## ⚠️ What the split does NOT buy, said because a guarantee does not extend to what sits beside it
 
@@ -53,17 +56,12 @@ module they are about.
 from __future__ import annotations
 
 from studyforge.validate.source.classification import (
-    IGNORE_TIMEOUT,
     RULE_CONTESTED,
     RULE_IGNORE_DECLARATION,
     RULE_INCLUDED_UNREAD,
     RULE_NESTED_REPOSITORY,
     RULE_UNCLASSIFIED,
-    SKIP_DIRS,
-    Scan,
     check_unclassified,
-    repository_ignores,
-    source_files,
 )
 from studyforge.validate.source.completeness import (
     RULE_ORIGIN_MISSING,
@@ -71,6 +69,13 @@ from studyforge.validate.source.completeness import (
     RULE_SECTION_MISSING,
     RULE_SHORT_READ,
     check_completeness,
+)
+from studyforge.validate.source.enumeration import (
+    IGNORE_TIMEOUT,
+    SKIP_DIRS,
+    Scan,
+    repository_ignores,
+    source_files,
 )
 from studyforge.validate.source.membership import (
     RULE_ARCHIVE_STRAY,

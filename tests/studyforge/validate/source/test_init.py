@@ -14,7 +14,7 @@ import ast
 from pathlib import Path
 
 from studyforge.validate import source
-from studyforge.validate.source import classification, completeness, membership
+from studyforge.validate.source import classification, completeness, enumeration, membership
 from tests.support import assert_package_contract, repository_root
 
 #: The package on disk, as the guard below walks it.
@@ -72,7 +72,7 @@ def test_every_rule_id_the_package_can_emit_is_on_its_surface():
     # having been minted rather than folded into `unclassified`.
     declared = {
         name
-        for module in (classification, completeness, membership)
+        for module in (classification, completeness, enumeration, membership)
         for name in vars(module)
         if name.startswith("RULE_")
     }
@@ -84,16 +84,21 @@ def test_the_seam_holds_and_neither_half_imports_the_other():
     # ⛔ **The claim the package docstring makes, asserted rather than stated.**
     # If one half ever reaches for the other the seam has moved and the two
     # test modules stop naming what they cover.
-    halves = (classification, completeness, membership)
-    for module in halves:
+    # ⭐ `W280`: `classification` reads `enumeration`, the walk it judges, and that is the
+    # ONE edge inside the package. Nothing reads `classification`; `enumeration` reads none.
+    edges = {
+        classification: {enumeration},
+        completeness: set(),
+        enumeration: set(),
+        membership: set(),
+    }
+    for module, reads in edges.items():
         imported = {
             node.module
             for node in ast.walk(ast.parse(Path(module.__file__).read_text(encoding="utf-8")))
             if isinstance(node, ast.ImportFrom) and node.module
         }
-        for other in halves:
-            if other is not module:
-                assert other.__name__ not in imported, module.__name__
+        assert {other for other in edges if other.__name__ in imported} == reads, module.__name__
 
 
 def test_no_module_in_this_package_reaches_for_the_markdown_reader():
@@ -109,6 +114,7 @@ def test_no_module_in_this_package_reaches_for_the_markdown_reader():
         f"{PACKAGE}/__init__.py",
         f"{PACKAGE}/classification.py",
         f"{PACKAGE}/completeness.py",
+        f"{PACKAGE}/enumeration.py",
         f"{PACKAGE}/membership.py",
     }
     for where, text in found.items():
