@@ -29,6 +29,7 @@ from studyforge.archive.blocks import (
     STATEMENT_HEADING,
     Layout,
     counts_of,
+    item_parts,
     read_layout,
     walk,
 )
@@ -401,3 +402,22 @@ def test_the_real_practice_fixtures_are_laid_out():
     # so its floor is pinned rather than derived. ⛔ Never `> 0`.
     assert seen >= 3, seen
     assert read == coverage(asserting=()).swept
+
+
+def test_an_item_without_a_nested_list_is_its_one_string_part():
+    # ⛔ W258: an unnested item is unchanged, so every list before it reads alike.
+    assert item_parts("one") == ["one"]
+
+
+def test_an_item_with_a_nested_list_is_its_parts_in_reading_order():
+    nested = {"type": "list", "ordered": False, "items": ["x"]}
+    item = ["before", nested, "after"]
+    assert item_parts(item) == ["before", nested, "after"]
+    assert item_parts(item) is not item
+
+
+def test_a_nested_list_is_not_a_block_in_reading_order():
+    # ⚠️ It is part of its item: `counts` and `walk` see one list, not two.
+    block = {"type": "list", "ordered": False, "items": [["a", {"type": "list", "items": []}]]}
+    assert counts_of([block])["lists"] == 1
+    assert list(walk([block])) == [block]

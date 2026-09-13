@@ -36,7 +36,7 @@ that names `quote` itself is the next `disclosure` waiting to be forgotten.*
 
 from __future__ import annotations
 
-from studyforge.archive.blocks import BLOCK_TYPES
+from studyforge.archive.blocks import BLOCK_TYPES, item_parts
 from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page.anchors import block_anchor, heading_level
 from studyforge.render.page.narration import SILENT, Narration
@@ -101,13 +101,34 @@ def _listing(block, position, section, children, path, narration) -> str:
     highlight sit on the line being read rather than over the whole list.
     """
     del position, children
-    tag = "ol" if block.get("ordered") else "ul"
-    klass = escape_attribute(class_for("list"))
     items = "".join(
-        f"<li{narration.attribute(section, path, index)}>{inline(item)}</li>"
+        f"<li{narration.attribute(section, path, index)}>{_item(item)}</li>"
         for index, item in enumerate(block.get("items") or ())
     )
+    return _list_element(block, items)
+
+
+def _list_element(block: dict, items: str) -> str:
+    """Wrap rendered items in the list's own tag and the published class."""
+    tag = "ol" if block.get("ordered") else "ul"
+    klass = escape_attribute(class_for("list"))
     return f'<{tag} class="{klass}">{items}</{tag}>'
+
+
+def _item(item: object) -> str:
+    """One item's parts in reading order: text as inline prose, a nested list as a list.
+
+    ⛔ **A nested list is rendered as a nested list (`W258`)**, never as its
+    parent's text. ⚠️ Its items carry **no audio attribute**: a nested item is
+    spoken inside its parent item's clip (`narrate.speakable.script`), so the
+    highlight sits on the parent `<li>`, which holds the nested list.
+    """
+    return "".join(
+        _list_element(part, "".join(f"<li>{_item(sub)}</li>" for sub in part.get("items") or ()))
+        if isinstance(part, dict)
+        else inline(part)
+        for part in item_parts(item)
+    )
 
 
 def _table(block, position, section, children, path, narration) -> str:
