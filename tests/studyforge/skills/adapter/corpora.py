@@ -27,7 +27,15 @@ MANIFEST = {
     "variants": ["prose"],
     "exercises": False,
     "placement": "tree",
-    "content": {"include": ["src/*.md", "README.md"]},
+    "content": {
+        "include": ["src/*.md"],
+        "not_material": [
+            {
+                "glob": "README.md",
+                "why": "navigation that records the units; no unit reads it (W266)",
+            }
+        ],
+    },
     "permitted_edits": [],
 }
 
@@ -123,5 +131,6 @@ def write_manifest(root: Path, manifest: dict) -> None:
 def classify(root: Path, entries) -> None:
     """Declare the adapter's own files not material, from the scaffold's own globs."""
     manifest = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
-    manifest["content"]["not_material"] = [dict(entry) for entry in entries]
+    declared = manifest["content"].get("not_material", [])
+    manifest["content"]["not_material"] = [*declared, *(dict(entry) for entry in entries)]
     write_manifest(root, manifest)

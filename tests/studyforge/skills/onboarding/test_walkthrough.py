@@ -61,7 +61,7 @@ def _tree(root):
 def _onboarded(tmp_path):
     """Steps 1–4 of the procedure: material, onboarding, and the one file that is yours."""
     root = corpora.material(tmp_path / "corpus")
-    made = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT)
+    made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
     made.write(root)
     (root / made.hand_written[0]).write_text(adapter.READ, encoding="utf-8")
     return root, made
@@ -144,7 +144,7 @@ def test_the_repositorys_own_root_ignore_file_is_untouched(tmp_path):
     (root / ".gitignore").write_text("target/\n", encoding="utf-8")
     before = (root / ".gitignore").read_bytes()
 
-    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root)
+    onboard(corpora.SETTLED, framework_commit=corpora.COMMIT).write(root)
 
     assert (root / ".gitignore").read_bytes() == before
 
@@ -155,7 +155,7 @@ def test_afterwards_nothing_that_existed_has_changed(tmp_path):
     root = corpora.material(tmp_path / "corpus")
     before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
 
-    made = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT)
+    made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
     made.write(root)
 
     assert all(path.read_bytes() == text for path, text in before.items())
@@ -168,7 +168,7 @@ def test_re_running_it_changes_nothing(tmp_path):
     root, _ = _onboarded(tmp_path)
     before = {path: path.read_bytes() for path in root.rglob("*") if path.is_file()}
 
-    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root, regenerate=True)
+    onboard(corpora.SETTLED, framework_commit=corpora.COMMIT).write(root, regenerate=True)
 
     changed = [
         path.relative_to(root).as_posix()
@@ -183,7 +183,7 @@ def test_the_uninstall_returns_the_repository_to_its_prior_state(tmp_path):
     root = corpora.material(tmp_path / "corpus")
     before = _tree(root)
 
-    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(root)
+    onboard(corpora.SETTLED, framework_commit=corpora.COMMIT).write(root)
     removed = uninstall(root)
 
     assert _tree(root) == before
