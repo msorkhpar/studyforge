@@ -1,7 +1,7 @@
 """`W161` — the In-flight table's SUBJECT VOCABULARY, asserted in BOTH directions (R12).
 
 ⛔ **The contract is `docs/conventions/board.md`'s subject vocabulary; the code is
-`tools/quality/board/bijection.py`.** ⭐ **Every direction is planted:**
+`tools/quality/board/vocabulary.py`, judged in `bijection.py`.** ⭐ **Every direction is planted:**
 
 | the tree | ⛔ the expectation, written BEFORE the run |
 |---|---|
@@ -20,8 +20,8 @@ import pytest
 
 from tests.support import repository_root
 from tools.quality.board import RULE_DETAIL, RULE_ORPHAN, board_state, check_board
-from tools.quality.board.bijection import EPIC_TASK, subjects
 from tools.quality.board.observation import read
+from tools.quality.board.vocabulary import EPIC_TASK, subjects
 from tools.tests.quality.board.test_bijection import CLOSED, FOOTER, HEADER, _tree
 
 #: ⛔ The observation table, delimited, with ROWS spliced in. Written out so the reader
@@ -147,3 +147,28 @@ def test_live_board_md_declares_the_vocabulary_with_the_epic_as_home() -> None:
     assert heading in text
     section = text.split(heading, 1)[1].split("\n### ", 1)[0]
     assert "`rows/<ID>.md`" in section and "its EPIC" in section and "never refused" in section
+
+
+# --------------------------------------------------------------------------
+# `W161/5` — the split out of `bijection.py` was a PURE MOVE (`W262`)
+# --------------------------------------------------------------------------
+
+
+#: The modules the brief names as depending on `bijection`, and the package surface.
+IMPORTERS = ("observation", "notice", "bounds", "register", "unclaimed", "__init__")
+
+
+@pytest.mark.parametrize("name", ["EPIC_TASK", "EPIC_HOME", "subjects"])
+def test_every_moved_name_still_resolves_from_bijection_as_the_SAME_object(name: str) -> None:
+    import tools.quality.board.bijection as bijection
+    import tools.quality.board.vocabulary as vocabulary
+
+    assert getattr(bijection, name) is getattr(vocabulary, name)
+
+
+@pytest.mark.parametrize("module", IMPORTERS)
+def test_every_named_importer_still_imports(module: str) -> None:
+    import importlib
+
+    name = "tools.quality.board" + ("" if module == "__init__" else f".{module}")
+    assert importlib.import_module(name).__name__ == name

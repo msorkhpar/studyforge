@@ -11,11 +11,12 @@ called from `check_board`; `bijection_reading(root, text)` is the population it 
 over, printed by `board_state` (`W161`). ⛔ **It is handed the board's text rather than reading
 it**, so the four arms read one string and cannot disagree about what the file said.
 
-**Depends on.** `register` for the parsers and the frame, `observation` for the
-In-flight table's subjects, `config` for `relative`/`read_text`, and `report` for the
-answer. Nothing else. ⭐ **`rows_on_disk` is DEFINED here and `notice` imports it**
-(`W161`): the files on disk are this arm's other half, and the notice now prints this
-arm's reading, so the old direction of that import would have been a cycle.
+**Depends on.** `register` for the parsers and the frame, `vocabulary` for the
+In-flight table's subjects (moved there by `W262`, `W161/5`), `config` for
+`relative`/`read_text`, and `report` for the answer. Nothing else.
+⭐ **`rows_on_disk` is DEFINED here and `notice` imports it** (`W161`): the files on
+disk are this arm's other half, and the notice now prints this arm's reading, so the
+old direction of that import would have been a cycle.
 
 ## ⛔ Why this is its own module, and it is a STANDING DECISION rather than taste
 
@@ -130,11 +131,8 @@ the epic tasks outside it, and the residue — read, never refused (`NS-01/2`).
 from __future__ import annotations
 
 import posixpath
-import re
 from pathlib import Path
-from typing import NamedTuple
 
-from tools.quality.board.observation import read
 from tools.quality.board.register import (
     ARCHIVE,
     BOARD,
@@ -148,6 +146,7 @@ from tools.quality.board.register import (
     state,
     table_lines,
 )
+from tools.quality.board.vocabulary import EPIC_HOME, EPIC_TASK, subjects
 from tools.quality.config import read_text, relative
 from tools.quality.report import Finding
 
@@ -163,22 +162,6 @@ RULE_FRAME = "board-frame"
 #: one nobody re-measures is the one that goes stale.
 ROWS_FROM_BOARD = posixpath.relpath(ROWS, posixpath.dirname(BOARD))
 
-#: ⛔ `W161`: an EPIC TASK id as the In-flight table writes one — `NS-03`, `SF-19b` —
-#: and never a finding id, which continues past a `/` (`INT-09/5`). ⭐ The vocabulary
-#: this answers to is `docs/conventions/board.md`'s, and it is not restated here.
-EPIC_TASK = re.compile(r"(?<![\w/-])[A-Z]{2,}-\d+[a-z]?(?![\w/-])")
-
-#: Where an epic task's argument lives, as the messages and the reading spell it.
-EPIC_HOME = "its EPIC, docs/tasks/E<nn>-*.md"
-
-
-class Subjects(NamedTuple):
-    """The In-flight table's subjects, partitioned by the declared vocabulary."""
-
-    w_rows: tuple[tuple[int, str], ...]
-    epic_tasks: tuple[str, ...]
-    unclassified: tuple[str, ...]
-
 
 def rows_on_disk(root: Path) -> dict[str, Path]:
     """`{"W96": <path>}` for every row file beside the board, in sorted order (R10)."""
@@ -186,22 +169,6 @@ def rows_on_disk(root: Path) -> dict[str, Path]:
     if not directory.is_dir():
         return {}
     return {path.stem: path for path in sorted(directory.glob("*.md"))}
-
-
-def subjects(text: str) -> Subjects:
-    """Partition every observation row's subject: `W` ids, epic tasks, and the residue.
-
-    ⛔ **The residue is a subject naming NEITHER form, and it is READ and printed by
-    name, never refused** — the parser admits every subject (`NS-01/2`).
-    """
-    w_rows, epics, residue = [], [], []
-    for row in read(text).rows:
-        w_rows.extend((row.line, identifier) for identifier in row.ids)
-        found = EPIC_TASK.findall(row.subject)
-        epics.extend(found)
-        if not row.ids and not found:
-            residue.append(row.subject.strip())
-    return Subjects(tuple(w_rows), tuple(epics), tuple(residue))
 
 
 def bijection_reading(root: Path, text: str) -> str:
