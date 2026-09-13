@@ -43,6 +43,9 @@ named seam, which is what every standing split condition on the board says.
 at `+0` with one line of headroom is healthier than one at `+33` with twenty.
 It says only that the ceiling is holding the first and is about to be tested by
 the second.
+
+⭐ **`W273`: rounds of `WAVE_CLOSE_OFFICES` close waves in precedence**, so a
+window never mixes two offices, and its line names the close its waves END at.
 """
 
 from __future__ import annotations
@@ -66,13 +69,9 @@ NEAR_BAND = 60
 #: width produced a flag would not be a measurement.
 GROWTH_WAVES = 3
 
-#: Which office's round closes a wave here. ⛔ **`W245`: the merged branch is
-#: read WHOLE with `OFFICE`, imported from `board/unclaimed.py` and never
-#: retyped** (`W136`) — the prefix `Merge chore/cto-round` read
-#: `chore/cto-round34-rubric`, a TOPIC branch, as a close, and counted round 17
-#: four times. ⚠️ **`cto` is the population `W155` shipped over. No ruling names
-#: a close's office, so a widening to `po` is a finding (`W245/1`), not a fix.**
-WAVE_CLOSE_OFFICE = "cto"
+#: Which offices' rounds close a wave, in PRECEDENCE order (`W273`, `W245/1`).
+#: ⛔ The branch is read WHOLE with `OFFICE`, imported and never retyped (`W245`).
+WAVE_CLOSE_OFFICES = ("cto", "po")
 
 #: ⛔ The three classes the row requires be NAMED in the output, plus the
 #: suppression that is not a class. ⭐ `ANSWERED` is a module whose own
@@ -86,6 +85,31 @@ CLASS_ANSWERED = "answered — split condition"
 #: The prefix every line of this notice carries, so the block is greppable out
 #: of a floor run that prints six other notices.
 TAG = "size approach:"
+
+
+@dataclass(frozen=True)
+class Round:
+    """One office round on the first-parent line: its merge, its office, its branch."""
+
+    sha: str
+    office: str
+    branch: str
+
+
+@dataclass(frozen=True)
+class Window:
+    """The growth window, the close its waves END at, and other offices' rounds `after` it."""
+
+    base: str
+    head: str
+    end: str
+    office: str
+    after: tuple[str, ...] = ()
+
+    @property
+    def current(self) -> bool:
+        """Whether no other office's round has merged after the close the waves end at."""
+        return not self.after
 
 
 @dataclass(frozen=True, order=True)
@@ -178,18 +202,55 @@ def merged_branch(subject: str) -> str:
     return words[1].removesuffix(":")
 
 
+def round_office(subject: str) -> str:
+    """Return the office whose round branch a merge subject names, `OFFICE` WHOLE, or `""`."""
+    match = OFFICE.fullmatch(merged_branch(subject))
+    return match.group(1) if match else ""
+
+
 def closes_wave(subject: str) -> bool:
-    """Whether a first-parent merge subject closes a wave: `OFFICE` WHOLE, `WAVE_CLOSE_OFFICE`.
+    """Whether a first-parent merge subject can close a wave: a round of `WAVE_CLOSE_OFFICES`.
 
     ⛔ **`fullmatch`, never `startswith`** (`W136`, `W245`): a topic branch under
     the round prefix is not the round, and `chore/cto-round3` is not `…round39`.
+    Which office's rounds DO close is `closing_office`'s, read off the history.
     """
-    match = OFFICE.fullmatch(merged_branch(subject))
-    return match is not None and match.group(1) == WAVE_CLOSE_OFFICE
+    return round_office(subject) in WAVE_CLOSE_OFFICES
 
 
-def growth_window(root: Path, waves: int = GROWTH_WAVES) -> tuple[str, str] | None:
-    """Return the window's two endpoints as short refs, or `None` if it cannot be named.
+def rounds(told: str) -> list[Round]:
+    """Every office round in a `%h<TAB>%s` log, newest first, each ROUND once (`W245/2`)."""
+    seen: set[str] = set()
+    found: list[Round] = []
+    for line in told.split("\n"):
+        if line.count("\t") != 1:
+            continue
+        sha, subject = line.split("\t")
+        branch = merged_branch(subject)
+        if closes_wave(subject) and branch not in seen:
+            seen.add(branch)
+            found.append(Round(sha, round_office(subject), branch))
+    return found
+
+
+def closing_office(found: list[Round], waves: int = GROWTH_WAVES) -> str:
+    """Return the latest office with `waves` rounds merged after every earlier office's newest.
+
+    ⛔ **Precedence, so a window never mixes two offices' rounds** (`W273`).
+    """
+    for rank in range(len(WAVE_CLOSE_OFFICES) - 1, 0, -1):
+        mine = 0
+        for item in found:
+            if item.office in WAVE_CLOSE_OFFICES[:rank]:
+                break
+            mine += item.office == WAVE_CLOSE_OFFICES[rank]
+        if mine >= waves:
+            return WAVE_CLOSE_OFFICES[rank]
+    return WAVE_CLOSE_OFFICES[0]
+
+
+def growth_window(root: Path, waves: int = GROWTH_WAVES) -> Window | None:
+    """Return the window, its endpoints as short refs, or `None` if it cannot be named.
 
     ⛔ **`None` rather than a default span.** A growth figure with no window is
     not a reading, so a tree that is not a repository, a git that will not
@@ -200,14 +261,13 @@ def growth_window(root: Path, waves: int = GROWTH_WAVES) -> tuple[str, str] | No
     told = git(root, "log", "--first-parent", "--merges", "--format=%h%x09%s", "HEAD")
     if head.returncode != 0 or told.returncode != 0:
         return None
-    closes = [
-        line.split("\t")[0]
-        for line in told.stdout.split("\n")
-        if line.count("\t") == 1 and closes_wave(line.split("\t", 1)[1])
-    ]
+    found = rounds(told.stdout)
+    office = closing_office(found, waves)
+    closes = [item for item in found if item.office == office]
     if len(closes) < waves:
         return None
-    return closes[waves - 1], head.stdout.strip()
+    newer = tuple(item.branch for item in found[: found.index(closes[0])])
+    return Window(closes[waves - 1].sha, head.stdout.strip(), closes[0].sha, office, newer)
 
 
 def growth_over(root: Path, base: str, head: str) -> tuple[dict[str, int], set[str]] | None:
@@ -231,13 +291,11 @@ def growth_over(root: Path, base: str, head: str) -> tuple[dict[str, int], set[s
     return grown, set(added.stdout.split("\n")) - {""}
 
 
-def measured(
-    root: Path, waves: int = GROWTH_WAVES
-) -> tuple[list[Approach], tuple[str, str] | None]:
+def measured(root: Path, waves: int = GROWTH_WAVES) -> tuple[list[Approach], Window | None]:
     """Return the banded population with growth attached, and the window it was read over."""
     population = near_modules(root)
     window = growth_window(root, waves)
-    read = growth_over(root, *window) if window else None
+    read = growth_over(root, window.base, window.head) if window else None
     if read is None:
         return population, None
     grown, born = read
@@ -279,28 +337,44 @@ def approach_notice(root: Path) -> list[str]:
     return lines
 
 
-def _window_line(window: tuple[str, str] | None) -> str:
-    """Build the first line: the window's two endpoints quoted, or why there are none."""
+def _wave() -> str:
+    """Say what a wave close is, in the words both window lines share."""
+    return (
+        f"a wave being closed by a first-parent merge of an office round branch, "
+        f"`{OFFICE.pattern}` matched WHOLE and counted once per round, so a topic branch "
+        f"under that prefix is no close; offices in precedence "
+        f"{', then '.join(WAVE_CLOSE_OFFICES)}, a later office's rounds closing waves once "
+        f"{GROWTH_WAVES} of them merged after an earlier office's newest round"
+    )
+
+
+def _window_line(window: Window | None) -> str:
+    """Build the first line: the window, the close its waves end at, or why there is none."""
     if window is None:
         return (
             f"{TAG} NO GROWTH WINDOW — git could not name {GROWTH_WAVES} wave-closing "
-            f"merges (a `{WAVE_CLOSE_OFFICE}` round branch, `{OFFICE.pattern}` matched "
-            f"WHOLE) on this checkout's first-parent line. "
+            f"merges on this checkout's first-parent line, {_wave()}. "
             f"Growth is NOT reported and nothing is classified: a growth figure with no "
             f"window is not a reading. This is not a failure — the floor runs over trees "
             f"that are not this repository."
         )
-    base, head = window
+    span = f"{TAG} window {window.base}..{window.head}"
+    if window.current:
+        said = f"{span} — the last {GROWTH_WAVES} waves, ending at {window.end}"
+    else:
+        said = (
+            f"{span} — NOT the last {GROWTH_WAVES} waves: its waves END AT {window.end}, and "
+            f"{len(window.after)} round(s) of another office merged after it "
+            f"({', '.join(window.after)}), so it must not be read as current"
+        )
     return (
-        f"{TAG} window {base}..{head} — the last {GROWTH_WAVES} waves, a wave being a "
-        f"first-parent merge of a `{WAVE_CLOSE_OFFICE}` round branch, `{OFFICE.pattern}` "
-        f"matched WHOLE, so a topic branch under that prefix is no close. Growth is net "
+        f"{said}; `{window.office}` rounds close these waves, {_wave()}. Growth is net "
         f"lines between those two refs; a module BORN inside the window has growth equal "
         f"to its own size, which is not growth, and is classed apart for that reason."
     )
 
 
-def _census_line(population: list[Approach], scanned: int, window: tuple[str, str] | None) -> str:
+def _census_line(population: list[Approach], scanned: int, window: Window | None) -> str:
     """Build the counting line, which comes AFTER the population it counts."""
     if window is None:
         return (

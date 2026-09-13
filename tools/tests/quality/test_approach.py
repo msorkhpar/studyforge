@@ -37,7 +37,7 @@ from tools.quality.approach import (
     CLASS_STATIC,
     GROWTH_WAVES,
     NEAR_BAND,
-    WAVE_CLOSE_OFFICE,
+    WAVE_CLOSE_OFFICES,
     Approach,
     approach_notice,
     closes_wave,
@@ -73,20 +73,35 @@ def write(root: Path, relative: str, text: str) -> None:
     path.write_text(text, encoding="utf-8")
 
 
-def close_wave(root: Path, number: int) -> None:
-    """Land an empty merge whose subject closes a wave, as the release line does."""
-    run(root, "checkout", "-q", "-B", f"chore/cto-round{number}")
+def close_wave(root: Path, number: int, office: str = "po") -> None:
+    """Land an empty merge of an office round, as the release line does."""
+    branch = f"chore/{office}-round{number}"
+    run(root, "checkout", "-q", "-B", branch)
     run(root, "commit", "-q", "--allow-empty", "-m", f"round {number}")
     run(root, "checkout", "-q", "main")
-    run(
-        root,
-        "merge",
-        "--no-ff",
-        "-q",
-        "-m",
-        f"Merge chore/cto-round{number}: the wave measured green",
-        f"chore/cto-round{number}",
-    )
+    run(root, "merge", "--no-ff", "-q", "-m", f"{subject_of_round(branch)}", branch)
+
+
+def subject_of_round(branch: str) -> str:
+    """The merge subject `close_wave` lands for `branch`."""
+    return f"Merge {branch} (a round): the wave measured green"
+
+
+def history(tmp_path: Path, *closed: str) -> Path:
+    """A repository merging the `closed` rounds oldest first, each named like `"cto-round1"`."""
+    root = tmp_path / "history"
+    root.mkdir()
+    run(root.parent, "init", "-q", "-b", "main", str(root))
+    run(root, "commit", "-q", "--allow-empty", "-m", "the first commit")
+    for name in closed:
+        office, number = name.split("-round")
+        close_wave(root, int(number), office)
+    return root
+
+
+def subject(root: Path, ref: str) -> str:
+    """The subject of `ref` in `root`."""
+    return run(root, "log", "-1", "--format=%s", ref)
 
 
 def repository(tmp_path: Path) -> Path:
@@ -123,15 +138,13 @@ def test_the_window_names_two_endpoints(tmp_path):
     root = repository(tmp_path)
     window = growth_window(root)
     assert window is not None
-    base, head = window
+    base, head = window.base, window.head
     assert head == run(root, "rev-parse", "--short", "HEAD")
     assert base != head
     # ⛔ The window opens at the wave-closing merge `GROWTH_WAVES` back on the
     # first-parent line. Four waves closed here, so it opens at round 2 — and
     # the assertion is on the SUBJECT, because the subject is what picked it.
-    assert run(root, "log", "-1", "--format=%s", base) == (
-        f"Merge chore/cto-round{5 - GROWTH_WAVES}: the wave measured green"
-    )
+    assert subject(root, base) == subject_of_round(f"chore/po-round{5 - GROWTH_WAVES}")
 
 
 def test_an_ordinary_branch_merge_does_not_close_a_wave(tmp_path):
@@ -145,8 +158,8 @@ def test_an_ordinary_branch_merge_does_not_close_a_wave(tmp_path):
     run(root, "checkout", "-q", "main")
     run(root, "merge", "--no-ff", "-q", "-m", "Merge fix/W1: a branch, not a wave", "fix/W1")
     after = growth_window(root)
-    assert after[0] == before[0], "a branch merge slid the window"
-    assert after[1] != before[1], "HEAD did not move, so the fixture proved nothing"
+    assert after.base == before.base, "a branch merge slid the window"
+    assert after.head != before.head, "HEAD did not move, so the fixture proved nothing"
 
 
 def test_a_tree_with_too_few_waves_reports_no_window_rather_than_a_span(tmp_path):
@@ -292,8 +305,8 @@ def test_the_window_is_quoted_in_the_output(tmp_path):
     # ⛔ A growth figure with no window is not a reading, so the endpoints are
     # in the block a reader copies, not only in this module's docstring.
     root = repository(tmp_path)
-    base, head = growth_window(root)
-    assert any(f"window {base}..{head}" in line for line in approach_notice(root))
+    window = growth_window(root)
+    assert any(f"window {window.base}..{window.head}" in line for line in approach_notice(root))
 
 
 # --- what it must NOT become ------------------------------------------------
@@ -365,6 +378,9 @@ TOPIC = [
     "Merge fix/W99-cto-round-guard: a developer's branch",
     "Merge branch 'chore/cto-round5'",
     "Merge chore/cto-round: no number",
+    "Merge chore/po-round58-second: a topic branch under the register's prefix",
+    "Merge fix/W98-po-round-guard: a developer's branch",
+    "Merge branch 'chore/po-round5'",
 ]
 
 
@@ -375,17 +391,21 @@ def test_a_topic_branch_inside_the_prefix_is_not_a_close(subject):
 
 @pytest.mark.parametrize(
     "subject",
-    ["Merge chore/cto-round72: a merge order", "Merge chore/cto-round3 (CTO round 3): x"],
+    [
+        "Merge chore/cto-round72: a merge order",
+        "Merge chore/cto-round3 (CTO round 3): x",
+        "Merge chore/po-round84 (PO round 84): W264 closed",
+        "Merge chore/po-round58 (second): x",
+    ],
 )
 def test_a_round_branch_is_a_close(subject):
     assert closes_wave(subject), subject
 
 
-def test_the_population_is_cto_rounds_and_a_po_round_is_not_silently_added():
-    # ⚠️ `W245/1`: no ruling names a close's office. `W155` shipped over `cto`,
-    # and a widening is a population change that must go RED here, not pass.
-    assert WAVE_CLOSE_OFFICE == "cto"
-    assert not closes_wave("Merge chore/po-round79 (PO round 79): W249 closed")
+def test_the_offices_are_cto_then_the_register_in_precedence():
+    # ⭐ `W273`'s decision, argued in its handoff: `cto` is what `W155` shipped
+    # over, and `po` closes waves once no CTO round merges. Reordering is RED.
+    assert WAVE_CLOSE_OFFICES == ("cto", "po")
 
 
 def test_the_pattern_is_unclaimeds_office_imported_and_never_retyped(monkeypatch):
@@ -452,11 +472,89 @@ def test_a_topic_merge_under_the_prefix_does_not_slide_the_window(tmp_path):
     root = repository(tmp_path)
     before = growth_window(root)
     for n in range(GROWTH_WAVES):
-        run(root, "checkout", "-q", "-B", "chore/cto-round4-close")
+        run(root, "checkout", "-q", "-B", "chore/po-round4-close")
         run(root, "commit", "-q", "--allow-empty", "-m", f"topic {n}")
         run(root, "checkout", "-q", "main")
-        subject = f"Merge chore/cto-round4-close: ruling {n}"
-        run(root, "merge", "--no-ff", "-q", "-m", subject, "chore/cto-round4-close")
+        said = f"Merge chore/po-round4-close: ruling {n}"
+        run(root, "merge", "--no-ff", "-q", "-m", said, "chore/po-round4-close")
     after = growth_window(root)
-    assert after[0] == before[0], "a topic branch under the round prefix slid the window"
-    assert after[1] != before[1], "HEAD did not move, so the fixture proved nothing"
+    assert after.base == before.base, "a topic branch under the round prefix slid the window"
+    assert after.head != before.head, "HEAD did not move, so the fixture proved nothing"
+
+
+# --- `W273`: which merge closes a wave, and a window whose end has stopped ---
+
+
+def test_W245_1_register_rounds_after_the_last_cto_round_move_the_window(tmp_path):
+    # ⛔ The witness: `cto` rounds stopped and `po` rounds kept merging. Once
+    # `GROWTH_WAVES` of them have, the register's rounds close the waves.
+    root = history(
+        tmp_path,
+        "cto-round70",
+        "cto-round71",
+        "cto-round72",
+        "po-round58",
+        "po-round59",
+        "po-round60",
+    )
+    window = growth_window(root)
+    assert window.office == "po"
+    assert subject(root, window.base) == subject_of_round("chore/po-round58")
+    assert subject(root, window.end) == subject_of_round("chore/po-round60")
+    assert window.current
+
+
+def test_while_cto_rounds_merge_register_rounds_between_them_move_nothing(tmp_path):
+    # ⛔ The history BEFORE the change reads as `W155` read it: fewer than
+    # `GROWTH_WAVES` register rounds after the newest `cto` round, so the window
+    # is `cto`'s, and it is the window a `cto`-only rule names.
+    root = history(
+        tmp_path,
+        "cto-round1",
+        "po-round1",
+        "cto-round2",
+        "po-round2",
+        "cto-round3",
+        "po-round3",
+        "po-round4",
+    )
+    window = growth_window(root)
+    assert window.office == "cto"
+    assert subject(root, window.base) == subject_of_round("chore/cto-round1")
+    assert subject(root, window.end) == subject_of_round("chore/cto-round3")
+
+
+def test_a_round_merged_twice_is_one_close(tmp_path):
+    # ⛔ `W245/2`: `chore/po-round58` merged twice on the release line. A close
+    # counted per merge would read that round as two waves.
+    root = history(tmp_path, "po-round56", "po-round57", "po-round58", "po-round58")
+    window = growth_window(root)
+    assert subject(root, window.base) == subject_of_round("chore/po-round56")
+
+
+def test_a_window_whose_end_has_not_moved_is_printed_with_the_ref_it_ends_at(tmp_path):
+    # ⛔ Clause 2: rounds of another office merged after the close the waves end
+    # at, so the line names that ref and never reads as the last waves.
+    root = history(
+        tmp_path, "cto-round70", "cto-round71", "cto-round72", "po-round58", "po-round59"
+    )
+    window = growth_window(root)
+    assert subject(root, window.end) == subject_of_round("chore/cto-round72")
+    assert window.after == ("chore/po-round59", "chore/po-round58")
+    assert not window.current
+    line = approach_notice(root)[0]
+    assert f"NOT the last {GROWTH_WAVES} waves: its waves END AT {window.end}" in line
+    assert "chore/po-round59, chore/po-round58" in line
+    assert f"the last {GROWTH_WAVES} waves, ending at" not in line
+    # ⭐ A notice, however stale the window: never a finding, never an exit.
+    assert approach_notice in NOTICES and approach_notice not in CHECKS
+
+
+def test_a_current_window_is_printed_with_its_end_and_read_as_the_last_waves(tmp_path):
+    # ⭐ The other direction (R12): nothing merged after the newest close.
+    root = repository(tmp_path)
+    window = growth_window(root)
+    assert window.current and window.after == ()
+    line = approach_notice(root)[0]
+    assert f"the last {GROWTH_WAVES} waves, ending at {window.end}" in line
+    assert "NOT the last" not in line
