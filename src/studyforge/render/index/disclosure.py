@@ -1,12 +1,12 @@
 r"""The tree the root index exists to show, as real disclosure elements.
 
 **What it does.** Renders a corpus's hierarchy to any depth as nested
-`<details>`/`<summary>` elements with a row per unit, and mints the fragment
-another page deep-links a row by.
+`<details>`/`<summary>` elements with a row per unit, each carrying the id
+another page deep-links it by.
 
 **How you use it.** `disclosure.render(document)` returns the markup;
-`index.document` puts it in the page's body. `anchor(key)` is the fragment for
-a row — ⛔ **ask, never compose**.
+`index.document` puts it in the page's body. `render.markup.anchor(key)` is
+the fragment for a row — ⛔ **ask, never compose** (`W107`).
 
 **Depends on.** `entries`, `policy` for which levels start open, `render.markup`
 for the escaping and the href gate, and `render.page` for `PageError`.
@@ -60,14 +60,14 @@ that a user agent opens them. ⭐ Where one does not, the reader lands on the
 section holding the target — with every ancestor summary addressable, focusable
 and one keystroke from open — rather than on nothing. ⚠️ **What no policy here
 can rescue is a link to a key this corpus does not declare**; that is the
-producer's, and `anchor` exists so no producer spells one.
+producer's, and `render.markup.anchor` exists so no producer spells one.
 
 ## ⛔ Markup on one line, in code, and not in a template (R13)
 
 ⭐ `render/page/__init__.py` draws the line and this is on its far side: *"loop
 bodies and inline wrappers stay in code, because a file for a closing tag
 removes no duplication and adds a hop."* ⚠️ `container.listing` and
-`page.navigation.outline` render the same shape the same way.
+`page.anchors.outline` render the same shape the same way.
 
 ## ⭐ Not one class name is typed here
 
@@ -114,22 +114,9 @@ NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 #: What wraps the corpus's own word for a section's depth, for the same reason.
 LEVEL_KIND = SURFACE_HOOKS["level"]
 
-#: How a fragment is introduced. ⛔ Named so `anchor` is the one composer.
-FRAGMENT = "#"
-
 #: What separates the positions in a refusal's address. ⚠️ Positions, never
 #: keys: a key is a corpus's own text and this message reaches a build log (R7).
 POSITION_SEPARATOR = "."
-
-
-def anchor(key: str) -> str:
-    """Return the fragment that addresses the row `key` names, on this page.
-
-    ⛔ **Ask, never compose.** A producer that spelled `"#" + key` would be a
-    second definition of this page's anchors, correct until the day one of them
-    is escaped or prefixed and silently wrong from then on.
-    """
-    return f"{FRAGMENT}{key}"
 
 
 def render(document: Document) -> str:

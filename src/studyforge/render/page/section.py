@@ -11,7 +11,7 @@ narrated deck the archive filed against it — from the section record
     markup = section.render(document["sections"][0], placement)
 
 **Depends on.** `page.blocks` for the blocks, `page.assets` for where the deck's
-file sits, `page.navigation` for the wrapper's anchor, `render.templates` for
+file sits, `page.anchors` for the wrapper's anchor, `render.templates` for
 the markup, and `page.errors`.
 
 ## ⛔ The wrapper shows its heading only when the material carries none
@@ -56,10 +56,10 @@ from __future__ import annotations
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import blocks
+from studyforge.render.page.anchors import section_anchor
 from studyforge.render.page.assets import Placement
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
-from studyforge.render.page.navigation import section_anchor
 
 #: The unit media directory a section's own deck was placed in.
 DECK_KIND = "video"

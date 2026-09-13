@@ -1,18 +1,19 @@
-r"""How any renderer turns a string into safe page markup — escaping and the href gate.
+r"""How any renderer turns a string into safe page markup — escaping, the href gate, anchors.
 
 **What it does.** Holds the framework's one escaping routine, its one
-attribute-escaping routine, its one permitted-href decision and its one inline
-marker reader, so that every renderer under `render/` asks the same function the
-same question and gets the same answer.
+attribute-escaping routine, its one permitted-href decision, its one inline
+marker reader and its one fragment composer, so that every renderer under
+`render/` asks the same function the same question and gets the same answer.
 
 **How you use it.**
 
-    from studyforge.render.markup import escape, escape_attribute, inline, safe_href
+    from studyforge.render.markup import anchor, escape, escape_attribute, inline, safe_href
 
     escape("a < b")                 # 'a &lt; b'
     escape_attribute(value)         # additionally neutralises "'"
     inline("see `x` and **y**")     # the four markers become markup
     safe_href("javascript:x")       # None — render the words, not a link
+    anchor("s-java")                # '#s-java' — ask, never compose
 
 **Depends on.** `re`, and nothing else in this framework. ⛔ Not on `page`, not
 on `container`, not on `pageassets`: this package is what they all reach for, so
@@ -50,16 +51,19 @@ than promising it.
 | module | the question it answers |
 |---|---|
 | `text` | how does a string become safe page text — escaped, gated, inlined? |
+| `fragment` | how does a renderer address a place inside a page? |
 
-⚠️ **One module, and the package is still the right shape**: `__init__.py` is
-the contract a consumer reads (R17, `module-structure.md`), and a declared
-`__all__` is what Ruling 101's table asks a cross-package import about. ⛔ A
-bare module would have left the same question — *whose surface is this?* —
-unanswered one directory along.
+⭐ **`fragment` is here for the reason `text` is** (`W107`, `SF-15/1`):
+`render.index` and `render.page` both compose anchors, `render.index` imports
+`render.page`, and a composer on either one is a composer the other cannot reach
+without a cycle. ⛔ `__init__.py` is the contract a consumer reads (R17,
+`module-structure.md`), and a declared `__all__` is what Ruling 101's table asks
+a cross-package import about.
 """
 
 from __future__ import annotations
 
+from studyforge.render.markup.fragment import FRAGMENT, anchor
 from studyforge.render.markup.text import (
     SAFE_SCHEMES,
     SEGMENT_KINDS,
@@ -71,10 +75,12 @@ from studyforge.render.markup.text import (
 )
 
 #: ⛔ The package's whole public surface. A consumer that has to import
-#: `studyforge.render.markup.text` directly is a consumer this contract failed.
+#: a submodule of this package directly is a consumer this contract failed.
 __all__ = [
+    "FRAGMENT",
     "SAFE_SCHEMES",
     "SEGMENT_KINDS",
+    "anchor",
     "escape",
     "escape_attribute",
     "inline",

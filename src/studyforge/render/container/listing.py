@@ -53,7 +53,7 @@ cannot answer *"drop it"*.
 
 ⭐ `render/page/__init__.py` draws the line and this is on its far side: *"loop
 bodies and inline wrappers stay in code, because a file for a closing tag
-removes no duplication and adds a hop."* ⚠️ `navigation.outline` renders exactly
+removes no duplication and adds a hop."* ⚠️ `anchors.outline` renders exactly
 this shape — a `<nav>`, an `<ol>`, a row per entry — the same way.
 
 ## ⭐ Not one class name is typed here either

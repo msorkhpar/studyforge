@@ -17,10 +17,9 @@ from studyforge.render.index import (
     Item,
     PageError,
     Section,
-    anchor,
     disclosure,
 )
-from studyforge.render.markup import safe_href
+from studyforge.render.markup import anchor, safe_href
 from tests.studyforge.render.index.indexes import A_HOME_PATH, cases, planted, rows
 
 
