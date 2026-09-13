@@ -1,14 +1,17 @@
 """The docker gate's skip reason, read both ways (`W162`).
 
-⛔ **A reason that says WARM on a cold cache is the defect this row must not introduce, and
-one that says COLD on a warm cache is the defect it repairs.** So the pure half feeds
-`skip_reason` every state, and the live half makes ONE scratch checkout cold and then warm
-and requires `probe` to read each.
+⛔ **A DEFAULT RUN MAKES NO DOCKER CALL** (round 75's ruling on `W162/7`). A recording
+client first on `PATH` must see no call from the gate, and none from any check in
+`tests/docker/` run unflagged in a child session.
+
+⛔ **Flagged, a reason that says WARM on a cold cache is the defect this row must not
+introduce, and one that says COLD on a warm cache is the defect it repairs.** So the pure
+half feeds `skip_reason` every state, and the live half, flagged only, makes ONE scratch
+checkout cold and then warm and requires `probe` to read each.
 
 ⭐ **Nothing here builds or pulls.** The scratch checkout's inputs differ by one comment, so
 they name an image no daemon holds (cold); a throwaway image is then COMMITTED under that
-name from a never-started container of the pinned base (warm) and removed after. ⚠️ The
-live half needs that base present and skips, saying so, when it is not.
+name from a never-started container of the pinned base (warm) and removed after.
 """
 
 from __future__ import annotations
@@ -16,6 +19,7 @@ from __future__ import annotations
 import os
 import re
 import shutil
+import sys
 import uuid
 from pathlib import Path
 
@@ -27,6 +31,7 @@ from tests.docker.devgate import (
     COLD,
     INVOCATION,
     MARKER,
+    NOT_PROBED,
     OPT_IN,
     UNKNOWN,
     WARM,
@@ -34,7 +39,9 @@ from tests.docker.devgate import (
     announcement_prefix,
     base_image,
     probe,
+    require_docker_run,
     skip_reason,
+    this_checkout,
 )
 from tests.docker.test_dev_image_identity import hashed_inputs
 from tests.support import repository_root, run, tool_on_path
@@ -48,49 +55,122 @@ STATES = {
     UNKNOWN: Cache(UNKNOWN, None, "the docker daemon did not answer"),
 }
 
+FLAGGED = {OPT_IN: "1"}
 
 #: An absolute path: a slash with no word, dot, colon, tilde or dash before it.
 ABSOLUTE = re.compile(r"(?<![\w.:~-])/[\w.-]")
 
 
 def carries_no_path(found: Cache) -> bool:
-    """Is the reason `found` produces free of any absolute path?
+    """Are `found` and the flagged reason it produces free of any absolute path?
 
     ⛔ `W158/6`: every skip reason prints on EVERY run, so a path in one is printed
     unconditionally, and a path is somebody's machine (R7).
     """
-    said = skip_reason({}, "docker", lambda: found, builds_fresh=False)
-    return said is not None and not ABSOLUTE.search(said)
+    said = skip_reason(FLAGGED, "docker", lambda: found, builds_fresh=False) or ""
+    return not any(ABSOLUTE.search(text) for text in (found.why, said, NOT_PROBED))
 
 
 def unconsulted() -> Cache:
-    raise AssertionError("the cache was probed where the answer does not depend on it")
+    raise AssertionError("the daemon arm was reached where the answer does not depend on it")
 
 
-def reason(state: str, *, builds_fresh: bool = False) -> str | None:
-    return skip_reason({}, "docker", lambda: STATES[state], builds_fresh=builds_fresh)
+def reason(state: str) -> str | None:
+    return skip_reason(FLAGGED, "docker", lambda: STATES[state], builds_fresh=False)
 
 
-# --- the reason, one cache state at a time -----------------------------------
+# --- unflagged: the reason is true, and nothing asks the daemon ---------------
 
 
-def test_a_warm_cache_is_called_warm_and_names_the_environment_that_reaches_it():
-    said = reason(WARM)
-    assert said is not None and "WARM" in said and INVOCATION in said, said
-    assert "COLD" not in said and "needs network" not in said, f"warm refused as cold: {said}"
+@pytest.mark.parametrize("environ", [{}, {OPT_IN: "0"}])
+def test_a_default_run_says_the_cache_was_not_probed_and_names_the_run_that_probes(environ):
+    said = skip_reason(environ, "docker", unconsulted, builds_fresh=False)
+    assert said == NOT_PROBED and INVOCATION in said, said
+    assert "WARM" not in said and "COLD" not in said, f"an unprobed cache named a state: {said}"
 
 
-def test_a_cold_cache_is_called_cold_and_says_the_build_needs_network():
+def test_a_check_that_builds_fresh_says_so_with_or_without_the_flag():
+    for environ in ({}, FLAGGED):
+        said = skip_reason(environ, "docker", unconsulted, builds_fresh=True)
+        assert said is not None and "FRESH" in said and "needs network" in said, said
+
+
+def test_the_recursion_guard_answers_first():
+    said = skip_reason({MARKER: "1", **FLAGGED}, "docker", unconsulted, builds_fresh=False)
+    assert said is not None and "recurse" in said, said
+
+
+# --- a recording client: the default run never reaches it --------------------
+
+FAKE_DOCKER = """#!/bin/sh
+printf '%s\\n' "$*" >> "$W162_LOG"
+if [ "$1 $2" = "image inspect" ]; then echo "$W162_ANSWER" >&2; exit 1; fi
+exit 0
+"""
+
+
+def fake_docker(tmp_path: Path, monkeypatch, answer: str) -> tuple[str, Path]:
+    """A docker client first on `PATH` that logs every call and answers inspects with `answer`."""
+    client = tmp_path / "client"
+    client.mkdir()
+    docker = client / "docker"
+    docker.write_text(FAKE_DOCKER, "utf-8")
+    docker.chmod(0o755)
+    log = tmp_path / "calls.log"
+    log.touch()
+    monkeypatch.setenv("PATH", f"{client}{os.pathsep}{os.environ['PATH']}")
+    monkeypatch.setenv("W162_LOG", str(log))
+    monkeypatch.setenv("W162_ANSWER", answer)
+    return str(docker), log
+
+
+def subcommands(log: Path) -> list[str]:
+    """The first word of every recorded call: never its arguments, which carry paths."""
+    return [call.split()[0] for call in log.read_text("utf-8").split("\n") if call.strip()]
+
+
+@pytest.mark.parametrize("builds_fresh", [False, True])
+def test_the_gate_makes_no_docker_call_on_a_default_run(tmp_path, monkeypatch, builds_fresh):
+    _, log = fake_docker(tmp_path, monkeypatch, "Error: No such image: the-base")
+    monkeypatch.delenv(OPT_IN, raising=False)
+    monkeypatch.delenv(MARKER, raising=False)
+    this_checkout.cache_clear()
+    with pytest.raises(pytest.skip.Exception):
+        require_docker_run(builds_fresh=builds_fresh)
+    assert subcommands(log) == [], f"a default run called docker: {subcommands(log)}"
+
+
+def test_no_check_in_tests_docker_calls_docker_on_a_default_run(tmp_path, monkeypatch):
+    # ⛔ The whole directory, not the gate alone: a check that skipped the gate and asked
+    # the daemon itself is the same breach. ⚠️ Only the last line and the subcommands reach
+    # a message, because a session header carries the checkout path (R7).
+    _, log = fake_docker(tmp_path, monkeypatch, "Error: No such image: the-base")
+    monkeypatch.delenv(OPT_IN, raising=False)
+    monkeypatch.delenv(MARKER, raising=False)
+    me = (
+        "tests/docker/test_dev_gate.py::test_no_check_in_tests_docker_calls_docker_on_a_default_run"
+    )
+    child = [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"]
+    result = run(
+        [*child, f"--basetemp={tmp_path / 'child'}", "tests/docker/", "--deselect", me],
+        cwd=repository_root(),
+    )
+    last = result.stdout.strip().rpartition("\n")[2]
+    assert result.returncode == 0, f"the unflagged child session did not pass: {last}"
+    assert subcommands(log) == [], f"a default run called docker: {subcommands(log)}"
+
+
+# --- flagged: the reason names the probed state -------------------------------
+
+
+def test_a_flagged_warm_cache_runs_the_checks():
+    assert reason(WARM) is None, "a warm cache was refused"
+
+
+def test_a_flagged_cold_cache_is_called_cold_and_says_the_build_needs_network():
     said = reason(COLD)
     assert said is not None and "COLD" in said and "needs network" in said, said
     assert "WARM" not in said, f"a cold cache offered as warm: {said}"
-
-
-def test_the_path_check_can_say_no():
-    assert all(carries_no_path(found) for found in STATES.values())
-    assert not carries_no_path(Cache(COLD, None, "no base under /srv/checkout")), (
-        "a path read clean"
-    )
 
 
 def test_an_unread_cache_claims_neither_state():
@@ -98,28 +178,15 @@ def test_an_unread_cache_claims_neither_state():
     assert said is not None and "WARM" not in said and "COLD" not in said, said
 
 
-@pytest.mark.parametrize("builds_fresh", [False, True])
-@pytest.mark.parametrize("state", sorted(STATES))
-def test_no_cache_state_turns_the_gate_on_by_default(state, builds_fresh):
-    # ⛔ The row's MUST NOT: a warm cache is a reason to NAME the run, never to start it.
-    assert reason(state, builds_fresh=builds_fresh) is not None, f"{state} ran with {OPT_IN} unset"
+def test_the_flag_without_a_client_skips():
+    assert skip_reason(FLAGGED, None, unconsulted, builds_fresh=False) == "docker is not installed"
 
 
-def test_a_check_that_builds_fresh_needs_network_whatever_the_cache_holds():
-    said = skip_reason({}, "docker", unconsulted, builds_fresh=True)
-    assert said is not None and "FRESH" in said and "needs network" in said, said
-    assert "WARM" not in said, said
-
-
-def test_the_recursion_guard_answers_before_the_opt_in():
-    said = skip_reason({MARKER: "1", OPT_IN: "1"}, "docker", unconsulted, builds_fresh=False)
-    assert said is not None and "recurse" in said, said
-
-
-def test_the_opt_in_runs_where_docker_is_and_skips_where_it_is_not():
-    assert skip_reason({OPT_IN: "1"}, "docker", unconsulted, builds_fresh=False) is None
-    said = skip_reason({OPT_IN: "1"}, None, unconsulted, builds_fresh=False)
-    assert said == "docker is not installed", said
+def test_the_path_check_can_say_no():
+    assert all(carries_no_path(found) for found in STATES.values())
+    assert not carries_no_path(Cache(COLD, None, "no base under /srv/checkout")), (
+        "a path read clean"
+    )
 
 
 # --- the text the probe runs: `check`'s own, and none of it builds -----------
@@ -157,35 +224,11 @@ def test_the_base_is_the_one_from_line_and_a_second_reads_as_none():
     assert base_image(dockerfile + f"FROM {base}\n") is None, "two FROM lines read as one base"
 
 
-# --- a fake client: the base is inspected before anything can pull it --------
-
-FAKE_DOCKER = """#!/bin/sh
-printf '%s\\n' "$*" >> "$W162_LOG"
-if [ "$1 $2" = "image inspect" ]; then echo "$W162_ANSWER" >&2; exit 1; fi
-exit 0
-"""
-
-
-def fake_docker(tmp_path: Path, monkeypatch, answer: str) -> tuple[str, Path]:
-    """A docker client first on `PATH` that logs every call and answers inspects with `answer`."""
-    client = tmp_path / "client"
-    client.mkdir()
-    docker = client / "docker"
-    docker.write_text(FAKE_DOCKER, "utf-8")
-    docker.chmod(0o755)
-    log = tmp_path / "calls.log"
-    log.touch()
-    monkeypatch.setenv("PATH", f"{client}{os.pathsep}{os.environ['PATH']}")
-    monkeypatch.setenv("W162_LOG", str(log))
-    monkeypatch.setenv("W162_ANSWER", answer)
-    return str(docker), log
-
-
 def test_an_absent_base_reads_cold_and_no_container_is_started(tmp_path, monkeypatch):
     docker, log = fake_docker(tmp_path, monkeypatch, "Error: No such image: the-base")
     found = probe(repository_root(), docker)
     assert found.state == COLD and found.image is None, found
-    assert "run" not in log.read_text("utf-8").split(), "the probe started the absent base"
+    assert "run" not in subcommands(log), "the probe started the absent base"
     assert carries_no_path(found), found
 
 
@@ -195,13 +238,17 @@ def test_a_daemon_that_does_not_answer_reads_unknown_rather_than_cold(tmp_path, 
     assert found.state == UNKNOWN and carries_no_path(found), found
 
 
-# --- live: one scratch checkout, cold and then warm --------------------------
+# --- live, flagged only: one scratch checkout, cold and then warm -------------
 
 
 def test_one_scratch_checkout_reads_cold_then_warm_off_check_s_own_identity(tmp_path):
+    if os.environ.get(MARKER):
+        pytest.skip("inside the dev image, which has no docker client")
+    if os.environ.get(OPT_IN) != "1":
+        pytest.skip(f"{OPT_IN} is unset: this probe commits and removes an image, so it is flagged")
     docker = tool_on_path("docker")
-    if os.environ.get(MARKER) or docker is None:
-        pytest.skip("needs a docker client outside the dev image; the fake-client checks ran")
+    if docker is None:
+        pytest.skip("docker is not installed")
     base = base_image(read("Dockerfile"))
     assert base is not None
     if run([docker, "image", "inspect", base], cwd=tmp_path).returncode != 0:

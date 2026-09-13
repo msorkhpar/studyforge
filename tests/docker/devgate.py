@@ -4,19 +4,20 @@
 network; a test run must not"*, whatever the image cache held. ⭐ That is true of a COLD
 cache and false of a WARM one: with the image the build inputs name already present,
 `check`'s `--build` runs every step from cache (Ruling 333 moved the cost from the MODE
-to the TEST). So the reason now names the cache this run found.
+to the TEST). So the reason names what this run actually knows.
+
+⛔ **A DEFAULT RUN MAKES NO DOCKER CALL** (round 75's ruling on `W162/7`). Unset, the
+reason says the cache was NOT PROBED and names `INVOCATION`, the run that probes it: no
+container starts and no image is inspected. ⭐ Set, the gate probes. WARM runs the checks;
+COLD skips them, because a build needs network and a test run must not. A check that
+builds a FRESH image (`builds_fresh=True`) needs the network on any cache and says so
+without asking the daemon. Inside the image the recursion guard answers first.
 
 ⭐ **"Present" is read off `check`'s OWN identity, never a retyped tag.** `probe` runs
 `docker/dev/check` verbatim up to the line that prints the image, the same derivation and
 the same print, and asks the daemon for that name. ⛔ Nothing above that line builds
 (`test_dev_gate.py` asserts it), and the pinned base is inspected FIRST, because the
 derivation's `docker run` would pull an absent one.
-
-⛔ **Still OFF by default.** Unset, every cache state skips, and a warm reason names
-`INVOCATION`, the environment that reaches the checks, instead of running them. ⚠️ A check
-that builds a FRESH image (`builds_fresh=True`) needs the network on any cache and says so.
-A default HOST run pays one `--network none` container start per session to tell cold from
-warm; inside the image the recursion guard answers first and nothing starts.
 """
 
 from __future__ import annotations
@@ -33,7 +34,7 @@ import pytest
 from tests.docker.devfiles import DEV
 from tests.support import repository_root, run, tool_on_path
 
-#: Set to "1" to run the checks that start `check`. Off by default: see above.
+#: Set to "1" to let this run touch the docker daemon. Off by default: see above.
 OPT_IN = "STUDYFORGE_DOCKER_TESTS"
 
 #: Set inside the image by the Dockerfile. Its only job is to stop those checks recursing.
@@ -45,10 +46,16 @@ ANNOUNCEMENT = 'echo "docker/dev/check: image '
 #: What `check` prints on stderr before it runs anything: the image, by its inputs (`W225`).
 ANNOUNCED = re.compile(r"^docker/dev/check: image (\S+:inputs-[0-9a-f]{64})$", re.MULTILINE)
 
-#: ⭐ The environment that reaches the gated checks, named once.
+#: ⭐ The environment that probes the cache and reaches the gated checks, named once.
 INVOCATION = (
     f"{OPT_IN}=1 python3 -m pytest tests/docker/ on the HOST, with a docker daemon and "
     f"Compose, never through docker/dev/check, whose recursion guard skips them"
+)
+
+#: ⛔ The default run's reason: it says what is true without asking the daemon.
+NOT_PROBED = (
+    f"{OPT_IN} is unset, so the image cache was not probed: a default run makes no docker "
+    f"call. {INVOCATION} probes it, and runs these checks when it reads warm"
 )
 
 WARM, COLD, UNKNOWN = "warm", "cold", "unknown"
@@ -131,30 +138,30 @@ def skip_reason(
     *,
     builds_fresh: bool,
 ) -> str | None:
-    """Why a check that starts `check` must not run here, or None when it may."""
+    """Why a check that starts `check` must not run here, or None when it may.
+
+    ⛔ `cache` is called on the flagged path only: it is the daemon arm.
+    """
     if environ.get(MARKER) == "1":
         return "already inside the dev image; building it again would recurse"
-    if docker is None:
-        return "docker is not installed"
-    if environ.get(OPT_IN) == "1":
-        return None
     if builds_fresh:
         return (
-            f"{OPT_IN} is unset. This check builds a FRESH image whatever the cache holds, "
-            f"and a build needs network; a test run must not"
+            "This check builds a FRESH image whatever the cache holds, and a build needs "
+            "network; a test run must not"
         )
+    if environ.get(OPT_IN) != "1":
+        return NOT_PROBED
+    if docker is None:
+        return "docker is not installed"
     found = cache()
     if found.state == WARM:
-        return (
-            f"{OPT_IN} is unset. The image cache is WARM: {found.why}, so this check builds "
-            f"from cache and pulls nothing. It is reached by {INVOCATION}"
-        )
+        return None
     if found.state == COLD:
         return (
-            f"{OPT_IN} is unset. The image cache is COLD: {found.why}, and a build needs "
-            f"network; a test run must not"
+            f"{OPT_IN}=1 probed the image cache and it is COLD: {found.why}, and a build "
+            f"needs network; a test run must not. docker/dev/check warms it, outside a test run"
         )
-    return f"{OPT_IN} is unset, and the image cache could not be read: {found.why}"
+    return f"{OPT_IN}=1 could not read the image cache: {found.why}"
 
 
 @functools.cache
