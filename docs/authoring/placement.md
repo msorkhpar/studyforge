@@ -35,7 +35,7 @@ Under `tree`, everything lives under one generated root:
 index.html                                          the root index
 .studyforge/assets/                                 shared css and js
 .studyforge/site.json                               the discovery cache
-.studyforge/archive/<address>/...                   the archive
+archive/<address>/...                               the archive, beside corpus.json
 .studyforge/<address>/units/unit-NN/unit-NN-<title>.unit.html
 .studyforge/<address>/units/unit-NN/audio/
 .studyforge/<address>/units/unit-NN/images/

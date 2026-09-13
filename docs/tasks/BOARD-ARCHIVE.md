@@ -21976,7 +21976,7 @@ repository_root() / BOARD  test_contradiction.py , test_register.py ,
 
 ## PO round 76 — the round's closes, the ISO pin advanced to `0d970fd`, and spec §5 amended
 
-⭐ **Two merges on the first-parent chain since round 75's `c47cbfa`: `0618035` (`W238`) and `1e70007` (`W141`).** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+⭐ **Merges on the first-parent chain since round 75's `c47cbfa`: `0618035` (`W238`) and `1e70007` (`W141`); `7fceaf6` (`W241`) merged into this round at the coordinator's word, no rebase.** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
 
 ### ⭐ 1 — CLOSES
 
@@ -21984,9 +21984,10 @@ repository_root() / BOARD  test_contradiction.py , test_register.py ,
                                   merge^2   branch head  ahead  checked out
 fix/W238-milestone-sequence       5c61536d  5c61536d     0      NOWHERE
 fix/W141-stated-clause-count      4e4f6bb6  4e4f6bb6     0      NOWHERE
+fix/INT06-5-6-one-archive-root    401dbb47  401dbb47     0      wt/dev1
 ```
 
-⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, and the Scheduled ISO-pin cell for `W244`. ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
+⭐ **All three TERMINAL (Ruling 199); each closes under the four edits.** ⚠️ **`C` refutes a held branch too, so `W241` closes while `wt/dev1` holds it.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, `rows/W242.md` for `W241`, and the Scheduled ISO-pin cell for `W244`. ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
 
 ### ⭐ 2 — RULED, REVERSIBLE
 
@@ -22016,8 +22017,10 @@ fix/W141-stated-clause-count      4e4f6bb6  4e4f6bb6     0      NOWHERE
 | `W162/7` | ⛔ **held for the user**, as round 75 ruled (§ 6 there) |
 | `W136/2` | riders on [`W231`](rows/W231.md), carried forward |
 | `PO-76/1` | rider on [`W72`](rows/W72.md): `record` rewrites every `present` row, so *Advance* step 2 cannot move one component |
+| `PO-76/2` | ⭐ **TAKEN, with § 2.3:** [`placement.md`](../authoring/placement.md) still listed `.studyforge/archive/` under `tree` after `W241` |
+| `W241`'s `W51` and `W199` reading | riders on [`W51`](rows/W51.md) and [`W199`](rows/W199.md); neither is discharged |
 
-⭐ **Carriers:** none new. ⭐ **`M6`'s delivery continues in ISO integration round 7** (office `po-int`, `ISO-04` on the fixed framework). ⛔ **`W242` is unassigned until `W239` and `W241` merge**; `W162`'s daemon-flag amendment is Developer 3's.
+⭐ **Carriers:** [`W151`](rows/W151.md) NAMED on the coordinator's confirmation: Developer 2, `fix/W151-docstring-counts` @ `wt/dev2`, cut `1e70007`, by board order after `W150` merged; surface `tools/quality/citations.py` and `reach.py`, colliding with nothing in flight. ⭐ **`M6`'s delivery continues in ISO integration round 7** (office `po-int`, `ISO-04` on the fixed framework). ⛔ **`W242` is unassigned until `W239` merges** (`W241` has); `W162`'s daemon-flag amendment is Developer 3's.
 
 ⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
 
@@ -22131,3 +22134,30 @@ TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ st
 #### ⭐ CLOSED — PO ROUND 76
 
 ⭐ **Closed by the register in its own round, on `chore/po-round76`.** ⭐ **Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, exit `1`, naming `ISO-8583-jPOS-tutorial` alone (HEAD `0d970fde6287`, pin `a94151747cb0`); after it, exit `0`.** ⭐ **Only that component moved: `record` also moved the `self` row, and that line was not carried (`PO-76/1`).** ⭐ **[`workspace.md`](../conventions/workspace.md) § `pending` now reads the cadence.**
+
+### W241 — `validate` reports `valid` with no archive, and `plan` announces an archive root that `validate`, the build and the adapter layout do not read
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W241.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-06/5` and `/6`: `validate` reports `valid` with no archive at all, and `plan` announces an archive root nothing else reads.** ⭐ **RECEIVED from the ISO integration round 6 (framework `3483ced`, ISO `0d970fd`, §11.1):** *"exit 0 ("valid") with no archive at all. Unchecked claims do not move the exit, so ISO-09 clause 1 is reachable with an empty corpus"*; *"`plan` announces `.studyforge/archive/` as the archive root, but validate and the adapter layout read `archive/`. A malformed container there → validate exit 0."*
+
+### ⛔ WHAT SETTLES IT — ISO §11.3, quoted
+
+> `validate` on a corpus whose archive is absent or empty does not report `valid`, or an unchecked claim moves the exit.
+> one archive root, spelled once, read by `plan`, `validate`, `build` and the adapter layout.
+
+⛔ **Asserted both ways:** an absent and an empty archive each fail to read `valid`, and one root is read by all four.
+
+### ⚠️ THE SAME CONSTANTS HAVE TWO OLDER ROWS
+
+⭐ **The register read the spellings at `baefd6c`:** `ARCHIVE_DIR = "archive"` in both `src/studyforge/validate/corpus.py` and `src/studyforge/skills/adapter/layout.py`, and `GENERATED_ROOT = ".studyforge"` in `src/studyforge/corpus/placement/profile.py`. ⛔ **[`W51`](rows/W51.md) (`ARCHIVE_DIR` on no package surface) and [`W199`](rows/W199.md) (`archive`/`raw` minted twice) name them: the taker reads both first, and this row's close says whether either is discharged** (Ruling 244(a)).
+
+⭐ **Blocks `ISO-05`, `ISO-06` and `ISO-09`.** ⛔ **`M6` work, not `M8`'s** ([the ground](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 2).
+
+⭐ **Surface:** `src/studyforge/validate/`, `cli/plan/`, `corpus/placement/`, `skills/adapter/` and the build's archive read, with their tests. ⚠️ **One owner with [`W242`](rows/W242.md).**
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 76
+
+⭐ **Merged at `7fceaf6`, TERMINAL by predicate `C` (its branch is still held by `wt/dev1`, and `C` refutes regardless). The coordinator's guarded release-tip reading at `7fceaf6` is RECEIVED.** ⭐ **One archive root, `archive/` beside `corpus.json`, spelled once and read by `plan`, `validate`, a build and the adapter layout; an absent or empty archive is the finding `no-archive`, never `valid`.** ⛔ **Ruling 244(a), read by the office on `W51` and `W199`: NEITHER is discharged.** ⭐ **Settled:** the `archive` literal lives once, as `ARCHIVE_DIRNAME` on `corpus.placement.__all__`; `validate` and `plan` import it, and `skills.adapter.layout.ARCHIVE_DIR` is bound to it. ⚠️ **Not settled:** the `raw` name is still defined twice (`ARCHIVE_ROOT_NAME` in `validate/corpus.py`, `RAW_DIR` in `skills/adapter/layout.py`); `W199`'s `validate.__all__` clause is unmet and no test asserts that surface; and `ARCHIVE_DIR` is a second NAME for one value, which `W199`'s taker rules on.
