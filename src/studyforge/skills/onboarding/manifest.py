@@ -55,7 +55,10 @@ is that this generator adds nothing, not that it discards declarations.
 
 ⛔ **So does a drafted `content.not_material`** (`INT06-1`, measured: it was
 dropped, and a corpus's own declarations could not be generated). The draft's
-entries come first as written, then the generated globs. ⛔ **A glob on both
+entries come first as written, then the generated globs. ⭐ **An entry whose
+`why` is `None` is one reconnaissance proposed with its reason open** (`W249`):
+it is paired from `reasons`, keyed by its glob, and every glob still open is
+named in one refusal. ⛔ **A glob on both
 sides is refused, never resolved by precedence**: the manifest refuses a
 repeated glob as two audits, and keeping either reason would be choosing one.
 """
@@ -213,14 +216,19 @@ def _content_of(
     exclude = _exclude_of(drafted.get("exclude", []), reasons)
     if exclude:
         content["exclude"] = exclude
-    merged = [*_drafted_not_material(drafted, declared), *(dict(entry) for entry in declared)]
+    merged = [
+        *_drafted_not_material(drafted, declared, reasons),
+        *(dict(entry) for entry in declared),
+    ]
     if merged:
         content["not_material"] = merged
     return content
 
 
 def _drafted_not_material(
-    drafted: Mapping[str, object], declared: tuple[dict[str, str], ...]
+    drafted: Mapping[str, object],
+    declared: tuple[dict[str, str], ...],
+    reasons: Mapping[str, str],
 ) -> list[object]:
     """Return a person's `not_material` entries as written, refusing any glob also generated.
 
@@ -248,7 +256,34 @@ def _drafted_not_material(
             f"{'; '.join(collisions)}. A collision is refused, never resolved by precedence: "
             f"drop the draft's entry, since the generated declaration already covers it"
         )
-    return [dict(entry) if isinstance(entry, dict) else entry for entry in entries]
+    return _paired(entries, reasons)
+
+
+def _paired(entries: list[object], reasons: Mapping[str, str]) -> list[object]:
+    """Fill each open `why` from the reasons a person gave, naming every one still open.
+
+    ⛔ **Only an entry whose `why` is `None` is paired**: a reason already written
+    is a person's and is never replaced. ⭐ The globs are quoted, as excluded
+    paths are, because the refusal is useless without them.
+    """
+    out: list[object] = []
+    unreasoned: list[str] = []
+    for entry in entries:
+        if not isinstance(entry, dict) or entry.get("why", "") is not None:
+            out.append(dict(entry) if isinstance(entry, dict) else entry)
+            continue
+        why = reasons.get(str(entry.get("glob")))
+        if not isinstance(why, str) or len(why.strip()) < MIN_WHY_CHARS:
+            unreasoned.append(str(entry.get("glob")))
+            continue
+        out.append({**entry, "why": why})
+    if unreasoned:
+        raise PromotionRefused(
+            f"{len(unreasoned)} not_material glob(s) have no reason: {sorted(unreasoned)}. "
+            f"Pass a reasons mapping of at least {MIN_WHY_CHARS} characters for each, keyed "
+            f"by the glob; a generated reason is an audit nobody performed"
+        )
+    return out
 
 
 def _exclude_of(drafted: object, reasons: Mapping[str, str]) -> list[dict[str, str]]:
