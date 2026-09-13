@@ -580,7 +580,7 @@ depends on it and today's `0` is a reading, not a property (**Ruling 55**).
 
 `tools/quality/config.py` already holds `text_files()` (`:212`), `is_excluded()`
 (`:134`), `ignored_paths()` (`:178`), `relative()` (`:169`) and `read_text()`
-(`:252`); `report.py:18` holds `Finding(path, line, rule, message)`. ⭐ **Walk 1
+(`:252`); `grep -n '^class Finding' tools/quality/report.py` prints the `<n>:class Finding:` that holds `Finding(path, line, rule, message)`. ⭐ **Walk 1
 already runs on this seam.** ⚠️ **What is missing is one narrowing** — a
 `markdown_files(root)` beside `text_files` — ⛔ **plus the markdown parser, which
 is the only genuinely new code in this task.**
@@ -631,7 +631,7 @@ primitive; do not share the report.**
 
 | | |
 |---|---|
-| the helper | `archive_documents(*, asserting: Collection[str])`, `test_blocks.py:76` |
+| the helper | `archive_documents(*, asserting: Collection[str])`, `git grep -n 'def archive_documents('` → `<path>:<n>:def archive_documents(…` |
 | the rule | `{name for name, rule in INVALID_CORPORA.items() if rule in asserting}` |
 | the declaration | `INVALID_CORPORA`, `tests/fixture_checks/vocabulary.py:90`, **7 entries** |
 | pinned to disk by | `test_the_invalid_set_is_exactly_what_is_on_disk` |

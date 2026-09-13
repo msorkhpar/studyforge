@@ -151,7 +151,7 @@ def test_a_range_naming_more_than_the_cap_reads_only_its_endpoints():
 
 def test_a_BACKTICKED_citation_is_a_MENTION_and_never_a_reach():
     # ⛔ **THE READING THIS GRAMMAR LIVES OR DIES ON.** MEASURED at 428223c: the
-    # three backticked citations on `review-rubric.md:3989` are inside Ruling
+    # three backticked citations on `docs/conventions/review-rubric.md` are inside Ruling
     # 280's own text, and a span-blind widening reads 264–281 off that one line
     # — the ruling describing the defect satisfying the check that tests for it.
     assert cited_numbers("⛔ **`Rulings 264–278` all FAIL to match**") == set()
@@ -232,8 +232,8 @@ def test_a_citation_WRAPPED_across_a_line_break_is_still_a_citation():
     # a paragraph so `166` began the next line, and the citation was UNMADE with
     # no word changing — no word added, none removed, and a diff showing a
     # reflowed paragraph. ⭐ The first of these two is the live loss, quoted from
-    # `review-rubric.md:1824-1825`; the second is the gap `citations.py` used to
-    # declare, quoted from `board.md:115-116`. MEASURED at `fc56011`.
+    # `docs/conventions/review-rubric.md`; the second is the gap `citations.py` used to
+    # declare, quoted from `docs/conventions/board.md`. MEASURED at `fc56011`.
     assert cited_numbers("closed and therefore takes **Ruling\n166**'s disposition") == {166}
     assert cited_numbers("Rulings 106 and\n174 forbid editing") == {106, 174}
 
@@ -241,13 +241,13 @@ def test_a_citation_WRAPPED_across_a_line_break_is_still_a_citation():
 def test_the_number_below_the_break_may_be_INDENTED():
     # ⚠️ The member that separates the shape's population from a sweep anchored
     # on a leading digit (`W145`'s clause 6, where three offices read 7, 6 and 1
-    # and all three were right): `review-rubric.md:2549` continues with three
+    # and all three were right): `docs/conventions/review-rubric.md` continues with three
     # spaces. ⛔ `reach` is indifferent to indentation, so this grammar is too.
     assert cited_numbers("⚠️ Ruling\n   70 asks for same-size mutations") == {70}
 
 
 def test_a_wrap_INSIDE_a_blockquote_is_read_and_one_ACROSS_its_edge_is_not():
-    # ⭐ `board.md:864-865` writes a wrapped citation inside a `>` block, so the
+    # ⭐ `docs/conventions/board.md` writes a wrapped citation inside a `>` block, so the
     # marker is split off before the join — a rule that refused every quoted
     # line would have left the closed gap still open in one shape and called it
     # closed. ⛔ But quoted text and plain text are two markdown blocks, and a
@@ -292,8 +292,8 @@ def test_an_ORDERED_ITEM_at_ANY_number_is_a_boundary_and_never_a_citation():
 def test_a_BRACKETED_ordinal_is_ADMITTED_because_the_house_wraps_a_paren():
     # ⛔ **The other edge of the same boundary, declared rather than left silent.**
     # ⭐ MEASURED: this tree wraps a parenthesised citation — `(Ruling` with `279)`
-    # beneath it — at `PO-2026-09-10-round25.md:173-174` and
-    # `SESSION-2026-09-11-coordinator-2.md:34-35`, and BOTH are real citations a
+    # beneath it — in `docs/tasks/handoffs/PO-2026-09-10-round25.md` and
+    # `docs/tasks/handoffs/SESSION-2026-09-11-coordinator-2.md`, and BOTH are real citations a
     # `\d{1,4}[.)]` breaker would have thrown away. ⚠️ So `N)` is NOT a boundary,
     # and this is what stops the next editor widening it back for symmetry.
     assert cited_numbers("`PO-24/1`'s own control (Ruling\n  95) already showed this") == {95}
