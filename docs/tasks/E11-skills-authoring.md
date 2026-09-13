@@ -641,6 +641,8 @@ this a clean split rather than a filtering exercise.
 
 ⚠️ **`SF-21/3`: `SF-21` ships NO merge rule.** ⛔ **What two machines' `first_passed_at` and `runs` combine to is this row's decision, stated before code, and a merge writes through `progress`'s locked seam, never to the file.**
 
+⚠️ **`SF-19b/5`: the record keeps no history, so a hand-written `first_passed_at` reads as a real pass on the state route.** ⛔ **An import can carry one the same way; whether an imported pass is believed as recorded is this row's decision, stated with the merge rule.**
+
 **Acceptance.** A corpus exported and re-imported on another machine restores
 material and progress intact. An export marked for sharing contains no progress
 and no personal data — asserted, not inspected. Re-import into an existing
