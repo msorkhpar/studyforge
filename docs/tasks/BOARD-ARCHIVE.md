@@ -21973,3 +21973,161 @@ repository_root() / BOARD  test_contradiction.py , test_register.py ,
 #### ⭐ CLOSED — PO ROUND 75
 
 ⭐ **Merged at `baefd6c`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `baefd6c` is RECEIVED.** ⭐ **Every pytest run prints the population its green does not cover: the skipped count and each reason, derived from pytest's own tally, printed at zero, never a failure.**
+
+## PO round 76 — the round's closes, the ISO pin advanced to `0d970fd`, and spec §5 amended
+
+⭐ **Two merges on the first-parent chain since round 75's `c47cbfa`: `0618035` (`W238`) and `1e70007` (`W141`).** ⭐ **Ruling 97's gate at each is RECEIVED: the coordinator's release-tip readings, GREEN in the pinned image.**
+
+### ⭐ 1 — CLOSES
+
+```text
+                                  merge^2   branch head  ahead  checked out
+fix/W238-milestone-sequence       5c61536d  5c61536d     0      NOWHERE
+fix/W141-stated-clause-count      4e4f6bb6  4e4f6bb6     0      NOWHERE
+```
+
+⭐ **Both TERMINAL (Ruling 199); each closes under the four edits.** ⭐ **The fourth edit:** `rows/W240.md` and `rows/W247.md` re-pointed for `W238`, `rows/W246.md` for `W141`, and the Scheduled ISO-pin cell for `W244`. ⚠️ **`handoffs/W238.md` and `handoffs/W141.md` cite their row files; the stubs resolve.** ⭐ **[`W244`](#w244-the-iso-pin-goes-stale-at-every-integration-merge-and-no-row-owned-its-advance-or-named-the-cadence), the register's own row, closes in this round.**
+
+### ⭐ 2 — RULED, REVERSIBLE
+
+1. ⛔ **A row's id is the register's, never its branch's.** A carrier branch may be named for the findings it settles. Its handoff is still `docs/tasks/handoffs/W<n>.md`, declaring `task handoff — W<n>`, and the register mints `W<n>` before the dispatch. ⭐ **So the floor's `TASK_ID` never meets a finding id, and it is not widened.** Written once in [`agent-protocol.md`](../conventions/agent-protocol.md), beside the handoff template.
+2. ⭐ **The archive root stays `archive/`, beside `corpus.json`** (`W241/2`). Moving it to `.studyforge/archive/` would move `SK-02`'s published layout. ⭐ **It is reversible today:** no consumer tracks an `archive` path (`W241`'s reading at ISO `0d970fd` and at the Java and SPARQL HEADs; the register re-read ISO's root at `0d970fd`). ⛔ **The harm the finding names, a source's own `archive/` skipped silently, is [`W248`](rows/W248.md), minted.**
+3. ⭐ **Spec §5's worked example is amended to `archive/`** (`W241/1`), as round 74 amended §8.1 and §12.
+
+### ⭐ 3 — WHAT EACH FINDING BECAME
+
+| finding | became |
+|---|---|
+| `INT06-1/1`, `W239/1`, `W243/3`, `W240/6`, the `INT06-5-6` handoff | ⛔ **ruled, § 2.1**; each carrier renames its handoff before merge (round 75) |
+| `W241/1` (`INT06-5-6/1`) | ⭐ **TAKEN:** spec §5 amended |
+| `W241/2` (`INT06-5-6/2`) | ⛔ **ruled, § 2.2**; [`W248`](rows/W248.md) minted, jumping nobody |
+| `W241/3` (`INT06-5-6/3`) | rider on [`W199`](rows/W199.md): `Layout.archive_dir` and `Plan.archive_dir` are a second root by parameter |
+| `W241/4` (`INT06-5-6/4`) | disposed: `module-structure.md`'s `SF-31` measurement is dated, not wrong (Ruling 310(b)) |
+| `W241/5` (`INT06-5-6/5`) | accepted, cost named: the one-home scan reads `src/` by design |
+| `W241/6` | relayed to ISO round 7: ISO's own membership rule must admit a committed `archive/` |
+| `W243/1` (`INT06-9/1`) | ⛔ **held for the user**, and on the board's Scheduled table: the Prism 1.30.0 download. `ISO-06`'s *"XML highlighted"* waits on it |
+| `W243/2` (`INT06-9/2`) | disposed at its close: a surface widening, disclosed |
+| `W243/4` (`INT06-9/4`) | accepted, cost named: the node half runs in the pinned image, the reading of record, and fails there |
+| `W243/5` (`INT06-9/5`) | accepted, cost named: each page names its fallback, so no fallback is silent |
+| `W240/1` (`INT06-2-3/1`) | relayed to ISO round 7: `F21`'s question (a `TestCases.md` link entry), not the glob defect |
+| `W240/2` | disposed: by design |
+| `W240/3` (`INT06-2-3/3`) | ⛔ **ruled, reversible:** the record's `not_material` reason is a person's, as `W240/2` rules for exclusions. `ISO-04` enters it in the draft that `W239`'s `promote` carries, with no generated `why`. Relayed to ISO round 7 |
+| `W239/2`, `/3`, `/4` | as round 75 ruled them (`INT06-1/2`, `/3`, `/4`) |
+| `W162/7` | ⛔ **held for the user**, as round 75 ruled (§ 6 there) |
+| `W136/2` | riders on [`W231`](rows/W231.md), carried forward |
+| `PO-76/1` | rider on [`W72`](rows/W72.md): `record` rewrites every `present` row, so *Advance* step 2 cannot move one component |
+
+⭐ **Carriers:** none new. ⭐ **`M6`'s delivery continues in ISO integration round 7** (office `po-int`, `ISO-04` on the fixed framework). ⛔ **`W242` is unassigned until `W239` and `W241` merge**; `W162`'s daemon-flag amendment is Developer 3's.
+
+⚠️ **Held for the user:** frozen records rewritten in place; `W136/1`; `PO-74/5`; `W162/7`; the ignored `.idea/`, `tools/knowledge/` and `tools/tests/knowledge/` in the main checkout; `W243/1`.
+
+### W238 — The capability index orders milestones by their ids, so the order the user decided prints wrong
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W238.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`PO-74/1`. THE CAPABILITY INDEX ORDERS MILESTONES BY THEIR IDS, AND THE USER DECIDED AN ORDER THE IDS DO NOT SORT TO.** ⭐ **The order is `M4` → `M6` → `M8` → `M5` → `M7`, then `M9` ([`README.md`](README.md)), and the ids are kept because the user named the order by them.**
+
+```text
+MEASURED by the PO, round 74's branch, HOST
+src/studyforge/skills/delivery/capability.py
+  Index.milestones   sorted({c.milestone for c in self.capabilities})
+  Index.after(m)     c.milestone > milestone          (string order of ids)
+docs/capability-index.md, regenerated by the delivery skill's own command
+  sections print     M0 M1 M2 M3 M4 M5 M7 M8 M9
+  decided order      M0 M1 M2 M3 M4 M6 M8 M5 M7 M9
+  M6 is absent: its rows are the ISO track's, so no epic row declares it
+```
+
+### ⛔ WHY IT IS A ROW
+
+⭐ **A planner reads this index and nothing else (the delivery skill, step 1).** ⛔ **So it answers *when does X land?* in the wrong order, and `after("M6")` — what a corpus finishing at `M6` never uses — leaves out every `M5` capability.** ⚠️ **A corpus plan's `gated_by` check compares milestones the same way.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The index prints and compares milestones in a DECLARED sequence, not in id order.** ⚠️ **Where the sequence is declared is the taker's to argue: the package never goes looking for `docs/tasks/`.**
+2. ⭐ **A milestone with no framework rows is printed and says so:** `M6` is a real gate with zero capabilities.
+3. ⛔ **Asserted both ways, over a sequence that is not id order.** A control that sorts by id turns it RED.
+4. ⭐ **Rider `PO-74/3`:** `src/studyforge/skills/reconnaissance/SKILL.md` reads *"planned to M4 or to M8"*, as if `M8` ended the plan.
+
+⭐ **Surface: `src/studyforge/skills/delivery/`, `reconnaissance/SKILL.md`, their tests, and the regenerated `docs/capability-index.md`.**
+
+[the mint](#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction)
+
+#### ⭐ CLOSED — PO ROUND 76
+
+⭐ **Merged at `0618035`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `0618035` is RECEIVED.** ⭐ **The capability index prints and compares milestones in the order [`README.md`](README.md) declares; `M6` prints with zero capabilities, and `Index.later` is the one comparison.**
+
+### W141 — A `RULED ROUND N` heading states its own clause count and no instrument reads it, so two of three were wrong before the branch existed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W141.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W134/5`. A `RULED ROUND N` HEADING IN [`../../conventions/board.md`](../conventions/board.md) STATES ITS OWN CLAUSE COUNT IN PROSE, AND NO INSTRUMENT READS IT — so the number is free to be wrong, and it is.** ⭐ **This is Ruling 277's subject arriving through a heading rather than through a constant: a number is binding wherever it is written, and a number nothing re-derives is a number that drifts.**
+
+### ⛔ THE READING — RECEIVED FROM THE `W134` TAKER, RE-WORDED BY THEM AFTER THE REVIEWER REFUTED THEIR FIRST TEXT
+
+⚠️ **`RECEIVED`, not re-inhabited by this office** (Ruling 115): the finder is `wt/dev1` at two refs, counting a `##` heading's stated clause count against the `###` children it parents.
+
+```text
+BASE 270296d          RULED ROUND 52 says "four clauses"  -> parents 16   ⛔ wrong already
+                      RULED ROUND 60 says "nine clauses"  -> parents  9   ⭐ correct
+                      RULED ROUND 61 says "seven clauses" -> parents 13   ⛔ wrong already
+TIP  fix/W134-...     RULED ROUND 52  "four"              -> parents  5   ⛔ still wrong
+                      RULED ROUND 58  "three"             -> parents 14   ⛔ now wrong too
+                      RULED ROUND 60  "nine"              -> parents  9   ⭐ correct
+                      RULED ROUND 61  "seven"             -> parents 13   ⛔ unchanged
+```
+
+⛔ **TWO OF THE THREE WERE WRONG BEFORE THE BRANCH EXISTED, which is what makes this a house defect rather than one taker's mistake.** ⭐ **The taker's own insert re-parented eleven of round 52's children onto a later heading — it MOVED the error, it did not create it — and they disclosed that rather than leaving it.** ⚠️ **The disposition that routed this row ACCEPTED the branch's re-measurement OVER the reviewer's refutation** ([CTO round 62 §7](handoffs/CTO-2026-09-11-round62.md#7-dispositions-every-finding-in-the-wave-by-id-ruling-307)), so the text above is the one that survived an attack.
+
+### ⛔ WHY A HAND-CORRECTION IS THE WRONG REMEDY, IN THIS PROJECT'S OWN WORDS
+
+⭐ **The one-line fix is known and is NOT the row: a `## ⛔ RULED ROUND 59` heading above `### ⛔ Ruling 277` re-parents all eleven at once, because the children are already in round order.** ⛔ **But four hand-corrected numbers are four numbers that will be wrong again on the next insert, and this document's own preamble is the authority against that: a restructure with no instrument regrows.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **AN INSTRUMENT READS THE STATED COUNT AGAINST THE CHILDREN IT PARENTS**, over `docs/conventions/`, and reports the heading, the stated number and the counted number side by side. ⛔ **It reports the PAIR and never a bare verdict** (Ruling 128: the population before the scalar).
+2. ⛔ **THE PREDICATE IS THE HEADING'S OWN STATED NUMBER AND NOT A STYLE RULE.** ⚠️ **A heading that states no count is SILENT and is not a finding** — ⭐ **the rule is *say it and it is checked*, never *you must say it*, because the second is the gate Ruling 180 removed wearing a new hat.**
+3. ⛔ **THE `RULED ROUND 59` HEADING IS INSERTED IN THE SAME BRANCH**, so the instrument ships with its live population TRUE rather than with four known-red rows. ⚠️ **A check landing red on the document that defines it teaches a reviewer to ignore its output** (Ruling 185's form).
+4. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a planted heading whose stated count disagrees with its children must be FOUND and named, and a heading whose count agrees must read clean — ⭐ **and `RULED ROUND 60` at `nine`/`9` is the live agreeing case, so the negative arm has a real inhabitant and is not asserted against a fixture alone.**
+5. ⚠️ **THE NUMBER-WORD FORM IS THE POPULATION, NOT THE DIGIT FORM.** ⛔ **Every live instance spells it *"four clauses"*, *"nine clauses"*, *"seven clauses"* — so a predicate that reads only digits reads EMPTY on the whole live population and passes vacuously** (Ruling 48).
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RE-HEADING SWEEP OF `docs/conventions/`.** ⭐ **The taker's own first text proposed re-heading eleven sections and called it churn they would not do; the reviewer refuted the ground and the taker then measured that the fix is ONE inserted line.** ⚠️ **Both the original proposal and the original refusal were wrong, which is recorded here so the next reader does not re-derive either.**
+
+⭐ **SURFACE: [`../../conventions/board.md`](../conventions/board.md), one new heading, plus a check in `tools/quality/` and its test.** ⛔ **`docs/conventions/` is SHARED with [`W135`](rows/W135.md), [`W136`](#w136-a-pre-merge-gates-exemption-is-a-spelling-where-its-rulings-ground-is-a-role-so-it-flags-13-branches-and-silently-exempts-3-it-would-flag), [`W142`](rows/W142.md) and [`W143`](rows/W143.md) — ONE OWNER or several waves, never several takers in one** (check 4's sub-step).
+
+[the mint argument and this round's five mints](#the-five-mints-the-one-absorption-and-the-one-scheduled-item-that-is-not-a-row)
+
+#### ⭐ CLOSED — PO ROUND 76
+
+⭐ **Merged at `1e70007`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `1e70007` is RECEIVED.** ⭐ **A `RULED ROUND` heading's stated clause count is read against the direct children it parents: `check_clause_counts` fails the floor on a disagreement, and the tenth notice `clause_census` prints every pair. The headings are `review-rubric.md`'s, not `board.md`'s (`W141/1`).**
+
+### W244 — The ISO pin goes stale at every integration merge, and no row owned its advance or named the cadence
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W244.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **The `ISO-8583-jPOS-tutorial` pin goes stale at every integration merge, and host `python3 -m tools.workspace verify` exits `1` on it with no row owning the advance.** ⭐ **Measured by the register on the HOST, main checkout at `b3123f5`: exit `1`, one component named, `ISO-8583-jPOS-tutorial`, whose HEAD is ISO round 6's merge `0d970fd` against the pin `a941517`.**
+
+### ⭐ THE CADENCE, RULED ROUND 75 AS REVERSIBLE
+
+⭐ **The argument is [the record](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row), § 4.**
+
+1. ⭐ **The pin advances at each integration round's merge** on ISO's `release/studyforge-integration`.
+2. ⭐ **The register advances it, in its first round after that merge:** `python3 -m tools.workspace record`, then a `workspace.json` commit naming the ISO merge ([`workspace.md`](../conventions/workspace.md), *Advance*). ⛔ **`record` rewrites every present component, so a line other than ISO's that moves is a finding and is not carried.**
+3. ⛔ **The floor does not run `verify`.** ⭐ **It stays a HOST reading, quoted by the coordinator at each merge.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The first advance, to `0d970fd`, and host `verify` exits `0` at that round's tip.**
+2. ⛔ **`docs/conventions/workspace.md` § *`pending`*: its *deliberately NOT advanced* sentence is re-worded to the cadence.** ⚠️ **`docs/conventions/` is [`W141`](#w141-a-ruled-round-n-heading-states-its-own-clause-count-and-no-instrument-reads-it-so-two-of-three-were-wrong-before-the-branch-existed)'s while it is in flight, so that half waits for its merge.**
+
+⭐ **The Scheduled item *"The `ISO-8583-jPOS-tutorial` pin is NOT advanced"* is `expired` in round 75 and points here.**
+
+⭐ **Surface:** `workspace.json`, and that one clause of `docs/conventions/workspace.md`.
+
+[the mint](#po-round-75-w237-w136-w150-and-w158-closed-the-first-corpuss-m6-blockers-minted-ahead-of-every-w-row)
+
+#### ⭐ CLOSED — PO ROUND 76
+
+⭐ **Closed by the register in its own round, on `chore/po-round76`.** ⭐ **Host `python3 -m tools.workspace verify`, worktree `wt/po`: before the advance, exit `1`, naming `ISO-8583-jPOS-tutorial` alone (HEAD `0d970fde6287`, pin `a94151747cb0`); after it, exit `0`.** ⭐ **Only that component moved: `record` also moved the `self` row, and that line was not carried (`PO-76/1`).** ⭐ **[`workspace.md`](../conventions/workspace.md) § `pending` now reads the cadence.**
