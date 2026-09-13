@@ -52,7 +52,7 @@ def survey(root: Path | str) -> Survey:
     if found is not None:
         items += list(_unlabelled(found))
 
-    result = Survey.of(root.name, items)  # type: ignore[arg-type]
+    result = Survey.of(root.resolve().name, items)  # type: ignore[arg-type]
     result.proposal = manifest
     return result
 

@@ -166,3 +166,23 @@ def over_deep_ordinals(root: Path) -> Path:
             listing.append(f"- [{a}.{b}.1.1. Unit {a}.{b}]({target})")
     files["README.md"] = "\n".join(listing) + "\n"
     return write(root, files)
+
+
+def record_beside_units(root: Path) -> Path:
+    """A curriculum record at the root that lists a unit sitting beside it.
+
+    ⭐ **The shape that made the record a unit.** One unit shares the record's
+    directory, so a directory wildcard for that unit also matches the record.
+    """
+    files = {
+        "intro.md": unit("Introduction"),
+        "chapters/1.md": unit("Chapter 1"),
+        "chapters/2.md": unit("Chapter 2"),
+    }
+    files["README.md"] = (
+        "# Beside\n\n"
+        "- [1. Introduction](intro.md)\n"
+        "- [2. Chapter 1](chapters/1.md)\n"
+        "- [3. Chapter 2](chapters/2.md)\n"
+    )
+    return write(root, files)
