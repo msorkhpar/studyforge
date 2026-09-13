@@ -1148,6 +1148,27 @@ write framework code, and it would have had them write a fix and then review it,
 ⛔ **§12's rule applied to themselves.** ⭐ Neither was careless. The owner existed
 in nobody's field, so the board's reader supplied one from context.
 
+### ⛔ A disposition that can still CHANGE is ADDRESSED on the board, never held in a record
+
+⛔ **Quoted from [`W103`](../tasks/rows/W103.md), whose argument it is:**
+
+> ⭐ **A finding whose disposition can still CHANGE is recorded in the handoff and
+> ADDRESSED on the board.** ⛔ **The record keeps the finding and the reading; the
+> board keeps the state.**
+
+- ⚠️ **A disposition written in a handoff (`⚠️ OPEN`, `✅ RULED`) is true at that
+  record's ref and no later.** ⛔ **When it moves, the record is not edited**
+  (Ruling 106).
+- ⭐ **An annotation goes beneath instead.** It names the ref it was taken at and
+  the artifact that moved the state, and it **points** at where the live state is
+  held: a board row, or the Acceptance, epic clause or spec ruling a row names.
+  ⛔ **It does not copy the state**, because a copy in a record is the defect again.
+- ⛔ **This is not a sweep.** It binds when a moved disposition is found. It does not
+  re-open every marker in the project.
+
+⭐ **Worked reference:** [`FND-04`'s annotation](../tasks/handoffs/FND-04.md#annotation-w103-taken-at-71ae733-finding-3-is-closed-elsewhere-finding-7-is-addressed-elsewhere).
+Finding 3 had been closed by R21's register while its record still read `OPEN`.
+
 ### ⚠️ The known blind spot in all of the above, recorded rather than discovered later
 
 ⛔ **These clauses make a ruling arrive *faithfully*. None of them makes it
