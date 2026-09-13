@@ -49,7 +49,7 @@ def test_the_href_is_asked_for_and_never_composed():
     # is "relative to the page", not the literal string.
     assert unit("tree").href("audio", "07.mp3") == "audio/07.mp3"
     assert unit("sibling").href("audio", "07.mp3") == (
-        "unit-07-introduction-to-the-streams-api.audio/07.mp3"
+        "basics.16-streams-api.unit-07-introduction-to-the-streams-api.audio/07.mp3"
     )
 
 

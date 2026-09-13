@@ -30,13 +30,13 @@ first defect would make an integrator fix one problem per run against 166
 units, which is the same argument `validate.Report.of` makes about draining
 every check.
 
-## ⛔ Two artifacts claiming one path are a REFUSAL (`INT09-5`)
+## ⛔ Two artifacts claiming one path are a REFUSAL (`W254`)
 
-⚠️ This module once printed the pair as two `create` lines and exited 0 while
-`validate` refused the layout as `duplicate-path`, and a build then replaced one
-page with the other. ⭐ Placement is asked of the corpus (`placement.bind`): a
-colliding unit is named with its container, and what that cannot separate is
-one refusal per path, naming both claimants — the set `validate` reads.
+⚠️ This module once printed the pair as two `create` lines beside `0 refusal(s)`,
+deferring to `validate`, and a build then replaced one page with the other in
+the same run. A plan that exits `0` is the go signal for a build. ⭐ So each
+path claimed twice is a refusal naming both claimants, and it is asked of
+`validate`'s own `duplicate-path` enumeration, never of a second copy.
 """
 
 from __future__ import annotations
@@ -57,12 +57,14 @@ from studyforge.corpus.placement import (
     IgnoreFile,
     PlacementError,
     Profile,
-    bind,
     profile_for,
 )
 from studyforge.narrate.speakable import SpeakableError
 from studyforge.narrate.speakable.naming import SEGMENT, parse_clip_name, unit_token
 from studyforge.narrate.synth import StateError, read_state, state_file
+from studyforge.validate.corpus import Held, Walk
+from studyforge.validate.paths import RULE_DUPLICATE_PATH, check_placement
+from studyforge.validate.report import Finding
 
 #: What a clip's `create` line says about who writes it, and when a build does.
 CLIP_COPY = (
@@ -86,13 +88,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     profile = profile_for(manifest.placement)
     held, unreadable = _containers(root, manifest, profile)
     refusals += unreadable
-    profile = bind(profile, (container for _, container in held))
-    maps: dict[str, str] = {}
-    for where, container in held:
-        maps.setdefault(container.address.key, where)
-    refusals += [
-        Refusal(maps[c.second.container.address.key], c.message) for c in profile.collisions
-    ]
+    refusals += _claimed_twice(root, manifest, held)
     clips, record, misrecorded = _recorded(root)
     refusals += misrecorded
     creations = _corpus_creations(profile)
@@ -117,6 +113,22 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
         refusals=tuple(refusals),
         ignore_home=None if ignore is None else ignore.home.as_posix(),
     )
+
+
+def _claimed_twice(
+    root: Path, manifest: Manifest, held: list[tuple[str, Container]]
+) -> list[Refusal]:
+    """Return one refusal per path two artifacts claim, from `validate`'s one check."""
+    walk = Walk(
+        root=root,
+        manifest=manifest,
+        containers=[Held(where, (root / where).parent, container) for where, container in held],
+    )
+    return [
+        Refusal(item.where, item.message, rule=item.rule)
+        for item in check_placement(walk)
+        if isinstance(item, Finding) and item.rule == RULE_DUPLICATE_PATH
+    ]
 
 
 def _ignore_file(

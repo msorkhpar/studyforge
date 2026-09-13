@@ -42,7 +42,7 @@ which routes that field to the archive contract.
 
 from __future__ import annotations
 
-from studyforge.address import require_ordinal, slugify, unit_name
+from studyforge.address import Address, require_ordinal, slugify, unit_name
 from studyforge.corpus.container.fields import (
     FILENAME_PERMITTED_DESCRIBED,
     is_filename_component,
@@ -87,18 +87,12 @@ PRACTICE_DIRNAME = "practice"
 UNIT_MEDIA_DIRNAMES = (AUDIO_DIRNAME, IMAGES_DIRNAME, VIDEO_DIRNAME, PRACTICE_DIRNAME)
 
 
-def unit_stem(
-    ordinal: int, title: str, label: str | None = None, qualifier: str | None = None
-) -> str:
+def unit_stem(ordinal: int, title: str, label: str | None = None) -> str:
     """Return `<label>-<title-slug>` — the stem every artifact of one unit shares.
 
     ⭐ One stem for the page, its audio, its images, its video and its
     practice, so a reader looking at a directory sees them grouped, and so a
     rename is one decision rather than five.
-
-    ⚠️ `qualifier` goes in front, as `<qualifier>-<label>-<title-slug>`, and only
-    `placement.bind` passes one: the container's deepest address segment, for a
-    unit whose own name collides with another's (`bound.py` has the ruling).
     """
     require_ordinal(ordinal, "unit ordinal")
     slug = slugify(title)
@@ -107,16 +101,28 @@ def unit_stem(
             f"unit {ordinal} has a title that slugifies to nothing, so it can be "
             f"given no name; titles are the corpus's, so this is a corpus defect"
         )
-    stem = f"{label_of(ordinal, label)}-{slug}"
-    if qualifier is None:
-        return stem
-    if not isinstance(qualifier, str) or not is_filename_component(qualifier):
-        # ⛔ Described, never echoed (R7), exactly as a label is.
-        raise PlacementError(
-            "a unit qualifier becomes part of a filename, so it may carry only "
-            f"{FILENAME_PERMITTED_DESCRIBED}; the qualifier is not reproduced here (R7)"
-        )
-    return f"{qualifier}-{stem}"
+    return f"{label_of(ordinal, label)}-{slug}"
+
+
+def contained_stem(address: Address, ordinal: int, title: str, label: str | None = None) -> str:
+    """Return `<segment>.<segment>.<label>-<title-slug>`: the stem with its container in front.
+
+    ⛔ **`W254`, clause 1: a unit's name is a function of its own identity, and
+    its container is part of that identity.** Where many units share a
+    directory, `unit_stem` alone gives two containers' units one name as soon
+    as their ordinals and titles mirror. Measured on a real corpus: 5 pairs,
+    and a build that replaced 5 pages it had written in the same run.
+
+    ⭐ **Distinct containers never share a name, by construction.** An address
+    segment is a slug, and a slug carries no `.`. Every address in one corpus
+    has the same depth (§4), so the first `depth` dot-separated fields of a name
+    are its address. ⚠️ Two units of ONE container with the same label and the
+    same title still share a name, and `validate`'s `duplicate-path` refuses
+    that by name, as `plan` and a build do.
+    """
+    if not isinstance(address, Address):
+        raise PlacementError("a unit is named with its container's address, and none was given")
+    return ".".join(address.segments) + "." + unit_stem(ordinal, title, label)
 
 
 def label_of(ordinal: int, label: str | None = None) -> str:
@@ -163,11 +169,9 @@ def label_of(ordinal: int, label: str | None = None) -> str:
     return label
 
 
-def unit_page_name(
-    ordinal: int, title: str, label: str | None = None, qualifier: str | None = None
-) -> str:
+def unit_page_name(ordinal: int, title: str, label: str | None = None) -> str:
     """Return the filename of one unit's reading page."""
-    return unit_stem(ordinal, title, label, qualifier) + UNIT_SUFFIX
+    return unit_stem(ordinal, title, label) + UNIT_SUFFIX
 
 
 def container_page_name(titles: tuple[str, ...]) -> str:

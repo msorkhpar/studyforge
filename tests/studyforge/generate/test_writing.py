@@ -7,7 +7,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
-from studyforge.generate import Footprint, Written
+from studyforge.generate import BuildError, Footprint, Written
 from studyforge.generate.writing import copy, mint, place, same_root
 
 A = PurePosixPath("one/a.html")
@@ -449,3 +449,26 @@ def test_same_root_refuses_an_output_root_that_is_not_a_directory(tmp_path):
     with pytest.raises(BuildError, match="output root") as raised:
         same_root(tmp_path / "absent", tmp_path)
     assert str(tmp_path) not in str(raised.value)
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W254`, clause 3: one run never writes one path twice
+# --------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("writer", ["place", "copy"])
+def test_a_path_this_run_already_wrote_is_never_written_again(tmp_path, writer):
+    out = tmp_path / "out"
+    out.mkdir()
+    source = tmp_path / "second.bin"
+    source.write_bytes(b"second")
+    at = PurePosixPath("a/one.unit.html")
+    owned = Footprint(files=frozenset({at}))
+    written: list = []
+    place(out, at, b"first", written, [], [], footprint=owned)
+    with pytest.raises(BuildError, match="already wrote"):
+        if writer == "place":
+            place(out, at, b"second", written, [], [], footprint=owned)
+        else:
+            copy(out, at, source, written, [], [], footprint=owned)
+    assert (out / at).read_bytes() == b"first"

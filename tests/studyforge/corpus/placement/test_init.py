@@ -17,9 +17,6 @@ PUBLIC_SURFACE = frozenset(
     {
         "ARCHIVE_DIRNAME",
         "ASSETS_DIRNAME",
-        "BoundProfile",
-        "Claimant",
-        "Collision",
         "AUDIO_DIRNAME",
         "CONTAINER_SUFFIX",
         "GENERATED_IGNORE_HOME",
@@ -49,7 +46,6 @@ PUBLIC_SURFACE = frozenset(
         "SiblingProfile",
         "TreeProfile",
         "UnitLocations",
-        "bind",
         "container_page_name",
         "identity",
         "is_container_page",
@@ -115,7 +111,7 @@ def test_the_package_never_touches_a_filesystem():
 
 
 def test_the_package_imports_nothing_outside_the_standard_library_and_itself():
-    allowed = {"studyforge", "collections", "dataclasses", "json", "pathlib", "re", "__future__"}
+    allowed = {"studyforge", "dataclasses", "json", "pathlib", "re", "__future__"}
     offenders = [
         f"{path.name}: {name}"
         for path in package_modules()
@@ -147,5 +143,5 @@ def test_the_worked_example_in_the_contract_is_the_api_that_exists():
     where = placement.profile_for("sibling").unit(
         address, 7, "Streams", origin="16-streams-api/README_4.4.1.md"
     )
-    assert str(where.page) == "16-streams-api/unit-07-streams.unit.html"
+    assert str(where.page) == "16-streams-api/basics.16-streams-api.unit-07-streams.unit.html"
     assert where.href("audio", "07.mp3").endswith("audio/07.mp3")

@@ -10,7 +10,7 @@ block** every generated artifact embeds, which is what makes any of it safe.
     from studyforge.corpus.placement import identity, profile_for
 
     where = profile_for(manifest.placement).unit(address, 7, "Streams", origin=origin)
-    where.page          # 16-streams-api/unit-07-streams.unit.html
+    where.page          # 16-streams-api/basics.16-streams-api.unit-07-streams.unit.html
     where.href("audio/07.mp3")   # relative to the page (R8)
 
 **Depends on.** `studyforge.address` and `studyforge.version`. ⛔ **No
@@ -65,7 +65,6 @@ order a filesystem enumerates.
 | `tree` | the `tree` profile |
 | `sibling` | the `sibling` profile |
 | `names` | what every artifact is called, and why |
-| `bound` | a profile bound to one corpus: colliding units qualified, what remains refused |
 | `identity` | the block an artifact embeds, and reading it back |
 | `locations` | the path sets and the ignore file a profile returns, and relative hrefs |
 | `errors` | `PlacementError`, the only exception any of it raises |
@@ -74,7 +73,6 @@ order a filesystem enumerates.
 from __future__ import annotations
 
 from studyforge.corpus.placement import identity
-from studyforge.corpus.placement.bound import BoundProfile, Claimant, Collision, bind
 from studyforge.corpus.placement.errors import PlacementError
 from studyforge.corpus.placement.identity import (
     IDENTITY_API,
@@ -127,9 +125,6 @@ from studyforge.corpus.placement.tree import TREE, TreeProfile
 #: ⛔ The package's whole public surface.
 __all__ = [
     "ARCHIVE_DIRNAME",
-    "BoundProfile",
-    "Claimant",
-    "Collision",
     "ASSETS_DIRNAME",
     "AUDIO_DIRNAME",
     "CONTAINER_SUFFIX",
@@ -160,7 +155,6 @@ __all__ = [
     "SiblingProfile",
     "TreeProfile",
     "UnitLocations",
-    "bind",
     "container_page_name",
     "identity",
     "is_container_page",

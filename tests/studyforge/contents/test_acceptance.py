@@ -202,7 +202,9 @@ def test_a_same_directory_neighbour_survives_in_the_data_and_now_survives_on_the
     built = fixture_contents("depth2")
     key = "basics/01-getting-started/unit-01"
     slots = links(built, key)
-    assert slots["next"]["href"] == "unit-02-fields-and-constructors.unit.html"
+    assert slots["next"]["href"] == (
+        "basics.01-getting-started.unit-02-fields-and-constructors.unit.html"
+    )
     assert safe_href(slots["next"]["href"]) == slots["next"]["href"]
     page = compose_page(case.document, case.placement, a_bar(built, key))
     assert '<nav aria-label="Between units">' in page

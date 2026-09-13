@@ -175,6 +175,8 @@ def place(
     reach the write without answering *whose file is this*, and an omission is
     a `TypeError` at the call rather than a silent overwrite at a reader's.
     """
+    if at in written:
+        raise _written_twice(at)
     target = _under(out, at)
     if target.exists():
         if not _mine(target, at, footprint):
@@ -210,6 +212,8 @@ def copy(
     clock `copyfile` leaves. R10 is about the bytes, and both spellings agree
     about those.
     """
+    if at in written:
+        raise _written_twice(at)
     target = _under(out, at)
     if target.exists():
         if not _mine(target, at, footprint):
@@ -220,6 +224,23 @@ def copy(
     target.parent.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(source, target)
     written.append(at)
+
+
+def _written_twice(at: PurePosixPath) -> BuildError:
+    """Refuse a second write to one path in one run (`W254`, clause 3).
+
+    ⛔ **A file this run already wrote is never replaced by this run.** The
+    footprint allows replacing the build's own output from an EARLIER run.
+    Within one run, a second write at a path means two artifacts claim it, and
+    whichever came second would silently erase the first. ⚠️ `studyforge build`
+    refuses that from the plan before writing anything, so this line is the
+    backstop for every other caller of a pass.
+    """
+    return BuildError(
+        f"this run already wrote {at.as_posix()!r}, and a second artifact is placed at "
+        f"the same path; two artifacts claim one path, which `studyforge plan` refuses "
+        f"by name"
+    )
 
 
 def _mine(target: Path, at: PurePosixPath, footprint: Footprint) -> bool:

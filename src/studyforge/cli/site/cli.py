@@ -21,8 +21,10 @@ flag defers the decision to the person running the command**, which is the only
 form of "unanswered" a command can actually have.
 
 ⛔ **Exit codes are usable from a script** and mean one thing each: `0` the
-whole site was written, `1` something that is not this build's own output
-already existed and was left alone (R3), `2` the tool could not run at all.
+whole site was written, `1` a path was refused — something that is not this
+build's own output already existed and was left alone (R3), or the plan found
+a path two artifacts claim and nothing was written (`W254`) — `2` the tool
+could not run at all.
 ⚠️ The third is `validate`'s own, imported rather than respelled. ⭐ **A rebuild
 that replaced only its own previous answer exits `0`** — otherwise *edit a
 lesson, build again* would be a failure to every script that ran it.
@@ -33,9 +35,12 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from studyforge.cli.plan import plan_for
 from studyforge.cli.site.report import exit_code, lines
 from studyforge.generate import RAISES, write_site
 from studyforge.validate.cli import UNUSABLE
+from studyforge.validate.paths import RULE_DUPLICATE_PATH
+from studyforge.validate.report import INVALID
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -74,6 +79,18 @@ def main(argv: list[str] | None = None, out=None) -> int:
         # the corpus root must not leave a directory tree behind to clean up.
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
+    claimed = [r for r in plan_for(root).refusals if r.rule == RULE_DUPLICATE_PATH]
+    if claimed:
+        # ⛔ `W254`, clause 3: refused from the plan BEFORE anything is written,
+        # naming both claimants, never resolved by whichever is written last.
+        for refusal in claimed:
+            print(refusal.line(), file=stream)
+        print(
+            f"build refused: {len(claimed)} path(s) are claimed by two artifacts, "
+            f"so nothing was written",
+            file=stream,
+        )
+        return INVALID
     try:
         written = write_site(root, Path(arguments.out))
     except RAISES as refusal:
