@@ -9,7 +9,9 @@ ignore rules, and the optional tooling.
 
 from __future__ import annotations
 
+import re
 import tomllib
+from pathlib import Path
 
 import pytest
 
@@ -187,6 +189,75 @@ def test_ruff_format_is_clean_where_ruff_exists():
         cwd=repository_root(),
     )
     assert result.returncode == 0, result.stdout + result.stderr
+
+
+def declared_target() -> str:
+    """The formatter target `requires-python` implies, as ruff spells it (`py314`).
+
+    ⛔ Only a `>=3.N` floor is understood. Any other shape fails rather than guesses,
+    because a changed `requires-python` is a changed target that somebody must choose.
+    """
+    requires = pyproject()["project"]["requires-python"]
+    match = re.fullmatch(r">=3\.(\d+)", requires)
+    assert match, f"requires-python {requires!r} is not a `>=3.N` floor; choose a target by hand"
+    return f"py3{match.group(1)}"
+
+
+def test_the_formatter_target_is_declared_once_and_follows_requires_python():
+    # ⛔ `W116`, Ruling 210. Deleting the declaration leaves every ruff gate GREEN,
+    # because ruff then INFERS the same target from `requires-python` — so the
+    # inference is invisible to the format gate, and this is the check that sees it.
+    ruff_table = pyproject()["tool"]["ruff"]
+    assert ruff_table.get("target-version") == declared_target(), (
+        "[tool.ruff] target-version must be declared and equal requires-python's floor"
+    )
+    # ⚠️ A per-file override is a second target held more quietly (`W196`, refusal 2).
+    assert "per-file-target-version" not in ruff_table
+
+
+def test_every_formatted_directory_resolves_the_declared_target():
+    # ⛔ `W116`: the declaration counts only if every formatter run READS it. A
+    # `ruff.toml` or `.ruff.toml` anywhere on disk wins over `pyproject.toml` for its
+    # subtree, even untracked, so ruff itself is asked, once per directory the format
+    # gate formats. ⭐ Failures name the directory only, never ruff's absolute
+    # settings path (R7).
+    ruff = tool_on_path("ruff")
+    if ruff is None:
+        pytest.skip("ruff not installed; `pip install -e '.[lint]'` to enable this check")
+    root = repository_root()
+    excluded = tuple(f"{prefix}/" for prefix in pyproject()["tool"]["ruff"]["extend-exclude"])
+    first_in_directory: dict[str, str] = {}
+    for name in tracked_files(FORMAT_POPULATION):
+        if not name.startswith(excluded):
+            first_in_directory.setdefault(name.rpartition("/")[0] or ".", name)
+    assert first_in_directory, "no formatted directory to probe"
+    version = declared_target().removeprefix("py")
+    wanted = {
+        "formatter.unresolved_target_version": f"{version[0]}.{version[1:]}",
+        "linter.unresolved_target_version": f"{version[0]}.{version[1:]}",
+        "formatter.per_file_target_version": "{}",
+        "linter.per_file_target_version": "{}",
+    }
+    wrong = []
+    for directory, probe in sorted(first_in_directory.items()):
+        shown = run([ruff, "check", "--show-settings", "--", probe], cwd=root)
+        settings = dict(
+            line.strip().split(" = ", 1)
+            for line in shown.stdout.splitlines()
+            if line.strip().split(" = ", 1)[0] in wanted
+        )
+        path = re.search(r'^Settings path: "(.*)"$', shown.stdout, re.MULTILINE)
+        if (
+            shown.returncode != 0
+            or settings != wanted
+            or path is None
+            or Path(path.group(1)).resolve() != (root / "pyproject.toml").resolve()
+        ):
+            wrong.append(directory)
+    assert wrong == [], (
+        f"{len(wrong)} of {len(first_in_directory)} formatted directories do not resolve "
+        f"[tool.ruff] target-version from pyproject.toml: {wrong}"
+    )
 
 
 def test_the_format_population_covers_python_blocks_in_documents(tmp_path):
