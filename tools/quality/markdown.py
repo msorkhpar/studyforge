@@ -204,6 +204,32 @@ def strip_code_spans(line: str) -> str:
     return _CODE_SPAN.sub(lambda match: " " * len(match.group(0)), line)
 
 
+def code_spans(line: str) -> list[tuple[int, int, str]]:
+    """`(start, end, body)` for every inline code span on `line`, in column order.
+
+    ⭐ The same grammar `strip_code_spans` blanks, handed back rather than
+    blanked, so a caller that must tell one span from another — a bare path
+    from a command with spaces in it (`W135`) — reads the one definition.
+    """
+    return [
+        (match.start(), match.end(), match.group("body")) for match in _CODE_SPAN.finditer(line)
+    ]
+
+
+def strip_links(line: str) -> str:
+    """Blank every inline link — its text and its target — keeping columns.
+
+    ⛔ **The link is found exactly where `pointers` finds one**: on the
+    span-stripped line, so a link inside backticks is a mention and is left in
+    place. ⭐ Blanking the same columns of the original line is safe because
+    `strip_code_spans` keeps every column where it was.
+    """
+    characters = list(line)
+    for match in _LINK.finditer(strip_code_spans(line)):
+        characters[match.start() : match.end()] = " " * (match.end() - match.start())
+    return "".join(characters)
+
+
 def pointers(document: str, text: str) -> list[Pointer]:
     """Every link in `text` that names a path this repository owns."""
     found: list[Pointer] = []

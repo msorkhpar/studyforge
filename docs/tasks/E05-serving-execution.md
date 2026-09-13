@@ -108,7 +108,7 @@ one instance. A stale discovery cache is detected rather than trusted.
 ---
 
 ### SF-20 — Command runner
-**Milestone** **M5** · **Depends on** SF-02 · **Team** pair
+**Milestone** **M5** · **Depends on** SF-02, TC-01 · **Team** pair
 **Owns** `execute/`
 **Context** ~45k — `CS/tools/study/runner.py`, `CS/tests/test_runner.py`
 

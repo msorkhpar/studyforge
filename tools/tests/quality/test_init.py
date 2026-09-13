@@ -9,7 +9,7 @@ from tools.quality.approach import approach_notice
 from tools.quality.board import board_state, check_board
 from tools.quality.collisions import check_anchor_collisions, collision_census
 from tools.quality.docstrings import check_docstrings
-from tools.quality.handoffs import check_handoffs
+from tools.quality.handoffs import check_handoffs, handoff_citations
 from tools.quality.handoffs.existence import check_handoff_existence, handoff_existence
 from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
@@ -62,6 +62,7 @@ def test_every_notice_is_registered():
         location_notice,
         board_state,
         handoff_existence,
+        handoff_citations,
         rulings_notice,
         reach_notice,
         lint_notice,

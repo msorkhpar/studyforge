@@ -5,7 +5,7 @@
 - every member against the manifest;
 - every digest;
 - every path;
-- every name and UTF-8 text (R7);
+- every name and UTF-8 text, and for a sharing archive every file that is not text (R7);
 - that the corpus is the same one;
 - the progress record, through the store's own reader.
 
@@ -38,11 +38,13 @@ from studyforge.skills.personalarchive.layout import (
     MANIFEST_MEMBER,
     MATERIAL_PREFIX,
     PROGRESS_MEMBER,
+    SHARING,
     ArchiveError,
     Material,
     digest,
     gate,
     gate_name,
+    judge_bytes,
     read_manifest,
     refused_path,
     speaker,
@@ -87,7 +89,11 @@ def unpack(archive: Path, store: str) -> Unpacked:
         expected = {MANIFEST_MEMBER, *declared, *([PROGRESS_MEMBER] * manifest["progress"])}
         if len(set(names)) != len(names) or set(names) != expected:
             raise ArchiveError("the archive's members are not exactly what its manifest declares")
-        files = tuple(_checked(bundle, member, entry, store) for member, entry in declared.items())
+        sharing = manifest["kind"] == SHARING
+        files = tuple(
+            _checked(bundle, member, entry, store, sharing=sharing)
+            for member, entry in declared.items()
+        )
         progress = _text(bundle, PROGRESS_MEMBER, names) if manifest["progress"] else None
     return Unpacked(manifest, files, progress)
 
@@ -105,7 +111,9 @@ def _import(archive: Path, root: Path, say) -> int:
     return record.merge_into(root, depth, practices, say)
 
 
-def _checked(bundle: zipfile.ZipFile, member: str, entry: dict, store: str) -> Material:
+def _checked(
+    bundle: zipfile.ZipFile, member: str, entry: dict, store: str, *, sharing: bool
+) -> Material:
     """Return one declared material file once its path, size, digest and text are checked."""
     path = entry["path"]
     reason = refused_path(path, store)
@@ -117,7 +125,8 @@ def _checked(bundle: zipfile.ZipFile, member: str, entry: dict, store: str) -> M
     data = _read(bundle, member)
     if digest(data) != entry["sha256"]:
         raise ArchiveError(f"'{path}' does not match its recorded digest")
-    gate(path, data)
+    if not gate(path, data) and sharing:
+        judge_bytes(path, data)
     return Material(path, data, entry["executable"])
 
 
