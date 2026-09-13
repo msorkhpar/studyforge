@@ -554,6 +554,8 @@ surface wrong and that is the finding.
 
 ⚠️ **`SK-03/1`, corrected by the PO in round 70: *"from raw material … ingest"* cannot be one framework invocation, because ingest belongs to the corpus repository (`SK-07` step 5; R1, R2).** ⭐ **The one invocation starts from a corpus whose archive exists: validate, narrate, build, serve.** ⛔ **The sentence above is kept, and this one governs.**
 
+⚠️ **`W230/3`, PO round 71:** `handoffs/SK-03.md` says the verb does not serve the state route. ⭐ **Since `a956b6c` that holds only for the `--site` form; the root form serves state.**
+
 ⚠️ **It wraps the framework CLI, not a consumer's pipeline.** This task used to
 depend on `OPS-04` — a file in the Java repository — which is the exact hole
 `SF-28` was created to close: a source-agnostic skill wrapping one consumer's

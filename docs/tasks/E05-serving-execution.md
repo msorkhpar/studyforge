@@ -260,6 +260,8 @@ line; the outcome is recorded.
 
 ⛔ **The page names a practice by `progress.practice_key`** (`SF-21/4`) — a pass recorded under any other spelling is one the page never reads.
 
+⚠️ **PO round 71, from `W230`: register `run` in `serve.instance.instance_of`.** ⛔ **The verb calls `discover` and `instance_of` and never `make_instance`, so a route registered only in `make_instance` is not served** ([`handoffs/W230.md`](handoffs/W230.md)).
+
 ⚠️ **`SK-03/3`: no framework constant names the execution namespace, so `skills/buildserve/states.py` holds `EXECUTION_NAMESPACE = "run"` until this row registers `run`.** ⛔ **The constant moves into the framework with that registration, and the skill imports it from there.**
 
 **Two modes because Run and Submit are different acts.** Run shows the reader
