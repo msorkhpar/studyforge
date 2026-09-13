@@ -11,7 +11,8 @@ them — the banded population with growth attached, and the window it was taken
 over. Nothing here returns a `Finding` and nothing here moves an exit code.
 
 **Depends on.** `dataclasses`, `pathlib`, `tools.quality.config`,
-`tools.quality.size` and `tools.workspace.git`. Standard library and this
+`tools.quality.size`, `tools.quality.board.unclaimed` for `OFFICE`, and
+`tools.workspace.git`. Standard library and this
 repository's own tooling; the git calls degrade rather than fail.
 
 ## ⛔ THE PREDICATE IS PROXIMITY × GROWTH, AND PROXIMITY ALONE IS THE DEFECT
@@ -50,6 +51,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from tools.quality import config
+from tools.quality.board.unclaimed import OFFICE
 from tools.quality.size import count_lines, module_docstring, row_ids, size_exception_marker_line
 from tools.workspace import git
 
@@ -64,12 +66,13 @@ NEAR_BAND = 60
 #: width produced a flag would not be a measurement.
 GROWTH_WAVES = 3
 
-#: What closes a wave on the release branch's first-parent line. ⚠️ **A THIRD
-#: copy of this idiom under `tools/`** — `board/graph.py` holds `MERGE_IDIOM`
-#: and `board/unclaimed.py` holds `OFFICE` — and it is DECLARED here rather
-#: than imported because both of those sit on rows in flight this wave. ⛔ A
-#: shared constant is owed; it is REPORTED as a finding, not taken in this diff.
-WAVE_CLOSE_PREFIX = "Merge chore/cto-round"
+#: Which office's round closes a wave here. ⛔ **`W245`: the merged branch is
+#: read WHOLE with `OFFICE`, imported from `board/unclaimed.py` and never
+#: retyped** (`W136`) — the prefix `Merge chore/cto-round` read
+#: `chore/cto-round34-rubric`, a TOPIC branch, as a close, and counted round 17
+#: four times. ⚠️ **`cto` is the population `W155` shipped over. No ruling names
+#: a close's office, so a widening to `po` is a finding (`W245/1`), not a fix.**
+WAVE_CLOSE_OFFICE = "cto"
 
 #: ⛔ The three classes the row requires be NAMED in the output, plus the
 #: suppression that is not a class. ⭐ `ANSWERED` is a module whose own
@@ -167,6 +170,24 @@ def near_modules(root: Path, band: int = NEAR_BAND) -> list[Approach]:
     return sorted(found)
 
 
+def merged_branch(subject: str) -> str:
+    """Return the branch a `Merge <branch>:` or `Merge <branch> (…):` subject names, or `""`."""
+    words = subject.split(maxsplit=2)
+    if len(words) < 2 or words[0] != "Merge":
+        return ""
+    return words[1].removesuffix(":")
+
+
+def closes_wave(subject: str) -> bool:
+    """Whether a first-parent merge subject closes a wave: `OFFICE` WHOLE, `WAVE_CLOSE_OFFICE`.
+
+    ⛔ **`fullmatch`, never `startswith`** (`W136`, `W245`): a topic branch under
+    the round prefix is not the round, and `chore/cto-round3` is not `…round39`.
+    """
+    match = OFFICE.fullmatch(merged_branch(subject))
+    return match is not None and match.group(1) == WAVE_CLOSE_OFFICE
+
+
 def growth_window(root: Path, waves: int = GROWTH_WAVES) -> tuple[str, str] | None:
     """Return the window's two endpoints as short refs, or `None` if it cannot be named.
 
@@ -182,7 +203,7 @@ def growth_window(root: Path, waves: int = GROWTH_WAVES) -> tuple[str, str] | No
     closes = [
         line.split("\t")[0]
         for line in told.stdout.split("\n")
-        if line.count("\t") == 1 and line.split("\t", 1)[1].startswith(WAVE_CLOSE_PREFIX)
+        if line.count("\t") == 1 and closes_wave(line.split("\t", 1)[1])
     ]
     if len(closes) < waves:
         return None
@@ -263,7 +284,8 @@ def _window_line(window: tuple[str, str] | None) -> str:
     if window is None:
         return (
             f"{TAG} NO GROWTH WINDOW — git could not name {GROWTH_WAVES} wave-closing "
-            f"merges (`{WAVE_CLOSE_PREFIX}…`) on this checkout's first-parent line. "
+            f"merges (a `{WAVE_CLOSE_OFFICE}` round branch, `{OFFICE.pattern}` matched "
+            f"WHOLE) on this checkout's first-parent line. "
             f"Growth is NOT reported and nothing is classified: a growth figure with no "
             f"window is not a reading. This is not a failure — the floor runs over trees "
             f"that are not this repository."
@@ -271,7 +293,8 @@ def _window_line(window: tuple[str, str] | None) -> str:
     base, head = window
     return (
         f"{TAG} window {base}..{head} — the last {GROWTH_WAVES} waves, a wave being a "
-        f"first-parent merge whose subject begins `{WAVE_CLOSE_PREFIX}`. Growth is net "
+        f"first-parent merge of a `{WAVE_CLOSE_OFFICE}` round branch, `{OFFICE.pattern}` "
+        f"matched WHOLE, so a topic branch under that prefix is no close. Growth is net "
         f"lines between those two refs; a module BORN inside the window has growth equal "
         f"to its own size, which is not growth, and is classed apart for that reason."
     )
