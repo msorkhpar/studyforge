@@ -48,6 +48,11 @@ what this skill writes into the corpus's pin, and a relative sibling name is
 what it writes as the location — ⛔ **never an absolute path, which carries
 somebody's home directory** (R7).
 
+⛔ **The commit must be one that checkout holds** (`W270`). `write` asks the
+sibling named `studyforge` with a local `git cat-file -e`, and refuses by name,
+writing nothing, when the checkout is absent, is not a git checkout, or lacks
+the commit. The generated `test_framework_pin.py` asks the same question.
+
 ---
 
 ## Procedure

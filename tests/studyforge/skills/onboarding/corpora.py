@@ -10,11 +10,29 @@ this skill is what writes one, so its fixture has to stop before that.
 
 from __future__ import annotations
 
+import os
+import shutil
+import subprocess
 from pathlib import Path
 
-#: A recorded commit that is obviously not one anybody's checkout has.
-#: ⛔ A placeholder, never a real one from this machine (R7).
-COMMIT = "a" * 40
+from studyforge.skills.onboarding.pin import FRAMEWORK
+
+#: The one commit of the synthetic framework `framework_beside` makes (`W270`).
+#: ⭐ Deterministic: an empty tree, placeholder identities and a fixed date, so
+#: the sha is the same on every machine. ⛔ Never a real commit from this one (R7).
+COMMIT = "cdfb352da949393dd56a58ac37d1f43d5970d659"
+
+#: How the synthetic commit is made: no user or system config, placeholders only.
+SYNTHETIC_GIT = {
+    "GIT_CONFIG_GLOBAL": os.devnull,
+    "GIT_CONFIG_NOSYSTEM": "1",
+    "GIT_AUTHOR_NAME": "framework",
+    "GIT_AUTHOR_EMAIL": "framework@example.invalid",
+    "GIT_COMMITTER_NAME": "framework",
+    "GIT_COMMITTER_EMAIL": "framework@example.invalid",
+    "GIT_AUTHOR_DATE": "2000-01-01T00:00:00+0000",
+    "GIT_COMMITTER_DATE": "2000-01-01T00:00:00+0000",
+}
 
 #: What reconnaissance hands over: a draft, not a manifest. ⚠️ `corpus_api: 1`
 #: and no `not_material`, exactly as `proposal.draft` writes it.
@@ -37,9 +55,41 @@ DRAFT = {
 NOTES = {"glob": "notes/**", "why": "the integrator's notes about the material, never a unit"}
 
 
+def framework_beside(root: Path) -> Path:
+    """Make the synthetic framework checkout beside `root`, holding `COMMIT`, once.
+
+    ⭐ Where the pin looks (`pin.framework_of`): a sibling of the corpus root. A
+    test that means the checkout is absent simply never calls this.
+    """
+    framework = root.parent / FRAMEWORK
+    if (framework / ".git").exists():
+        return framework
+    git = shutil.which("git")
+    assert git is not None, "git is not installed; the pin cannot be checked without it"
+    framework.mkdir(parents=True, exist_ok=True)
+    env = {"PATH": os.environ.get("PATH", ""), "HOME": str(root.parent), **SYNTHETIC_GIT}
+
+    def run(*arguments: str, stdin: bytes = b"") -> str:
+        done = subprocess.run(
+            [git, "-C", str(framework), *arguments], input=stdin, capture_output=True, env=env
+        )
+        assert done.returncode == 0, done.stderr.decode()
+        return done.stdout.decode().strip()
+
+    run("init", "-q")
+    tree = run("hash-object", "-w", "-t", "tree", "--stdin")
+    made = run("commit-tree", tree, "-m", "a synthetic framework commit")
+    assert made == COMMIT, "the synthetic framework commit is not the pinned one"
+    return framework
+
+
 def material(root: Path) -> Path:
-    """Write the material, and nothing else — no manifest, no adapter, no tests."""
+    """Write the material, and nothing else — no manifest, no adapter, no tests.
+
+    ⚠️ Plus the framework checkout beside it (`W270`), which is outside `root`.
+    """
     root.mkdir(parents=True, exist_ok=True)
+    framework_beside(root)
     (root / "README.md").write_text(
         "# A Walkthrough Corpus\n\n- [1. First](src/01.md)\n- [2. Second](src/02.md)\n",
         encoding="utf-8",

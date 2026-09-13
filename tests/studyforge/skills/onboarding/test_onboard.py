@@ -269,6 +269,20 @@ def test_the_report_names_every_path_and_the_one_that_is_yours():
     assert "studyforge validate" in lines
 
 
+def test_a_write_whose_pin_the_framework_lacks_is_refused_and_writes_nothing(tmp_path):
+    # ⛔ W270: a well-formed sha is not enough; the checkout beside must hold it.
+    from studyforge.skills.onboarding.pin import PinRefused
+
+    root = corpora.material(tmp_path / "corpus")
+    before = sorted(path for path in root.rglob("*"))
+    made = onboard(corpora.DRAFT, framework_commit="b" * 40)
+
+    with pytest.raises(PinRefused, match="does not hold the pinned commit"):
+        made.write(root)
+
+    assert sorted(path for path in root.rglob("*")) == before
+
+
 def test_the_pin_is_refused_before_anything_is_planned():
     with pytest.raises(Exception) as refused:
         onboard(corpora.DRAFT, framework_commit="../studyforge")
