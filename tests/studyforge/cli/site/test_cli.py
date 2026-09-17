@@ -329,17 +329,19 @@ def test_W314_media_already_over_a_limit_refuses_the_build_and_writes_nothing(
     assert list(out.iterdir()) == []
 
 
-def test_W314_the_refusal_names_the_two_ways_forward(tmp_path):
-    # ⛔ A refusal with no way forward is a wall. The sentences are the
-    # verdict's own, so this reads them through the command rather than here.
+def test_W314_the_refusal_names_the_ways_forward_and_the_file_responsible(tmp_path):
+    # ⛔ A refusal with no way forward is a wall, and one that does not name the
+    # file responsible sends a person looking. Both sentences are the verdict's
+    # own, so this reads them through the command rather than writing them here.
     from studyforge.corpus.media import WAYS_FORWARD
 
-    root = a_corpus_with_clips(tmp_path, (60,), max_total_bytes=50, max_file_bytes=100)
+    root = a_corpus_with_clips(tmp_path, (60,), max_total_bytes=500, max_file_bytes=50)
     out = tmp_path / "site"
     out.mkdir()
     _, printed = invoke(str(root), "--out", str(out))
     for way in WAYS_FORWARD:
         assert way in printed
+    assert "clip-0.mp3" in printed
 
 
 def test_W314_media_this_build_wrote_over_a_limit_stops_it_after_the_site_is_written(tmp_path):
