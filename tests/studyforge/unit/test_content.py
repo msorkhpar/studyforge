@@ -95,6 +95,23 @@ def test_the_file_it_lives_in_has_one_spelling():
     assert CONTENT_FILENAME == "content.json"
 
 
+def test_the_contract_names_its_address_and_says_v1_applies_no_overlay():
+    """⛔ `W198`: R21 asks where a contract LIVES, and this one now answers twice.
+
+    ⭐ The `File` row is the contract's shape; the `Address` row is the one
+    thing that resolves it against a corpus, and it points at `Layout` rather
+    than repeating a path. ⚠️ Clause 4 is the other half: v1 locates an overlay
+    and applies none, said here rather than left to be inferred from an address
+    existing.
+    """
+    from studyforge.unit import content
+
+    contract = content.__doc__ or ""
+
+    assert "Layout.content" in contract
+    assert "unowned" in contract
+
+
 # --- the address is recorded, never derived --------------------------------
 
 

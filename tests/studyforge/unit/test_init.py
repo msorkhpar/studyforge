@@ -115,3 +115,35 @@ def test_the_contract_names_the_three_things_r21_requires():
     assert "content.json" in contract
     assert "content_api" in contract
     assert "person" in contract
+
+
+def test_the_contract_sends_a_reader_to_one_address_and_promises_no_application():
+    """⛔ `W198`: a located contract says where it sits in a real archive.
+
+    ⭐ Clause 1 — the address is named once, and this package points at that
+    name rather than keeping a second copy of the path. ⚠️ Clause 4 — v1
+    applies no overlay, and the contract SAYS so instead of leaving a reader
+    to infer a feature from an address.
+    """
+    contract = unit.__doc__ or ""
+
+    assert "Layout.content" in contract
+    assert "unowned" in contract
+
+
+def test_the_contract_does_not_import_the_layout_it_points_at():
+    """⛔ The arrow points one way: `Layout` imports this name, never the reverse.
+
+    ⚠️ A contract that resolved itself against an archive would be a second
+    authority on the archive's shape — which is the failure `W198` closes, not
+    one to reopen from the other end.
+    """
+    import ast
+
+    body = (Path(unit.__file__).parent / "content.py").read_text("utf-8")
+    imported = {
+        node.module or "" for node in ast.walk(ast.parse(body)) if isinstance(node, ast.ImportFrom)
+    }
+
+    assert "studyforge.address" in imported, "the module's real imports were read"
+    assert not any(name.startswith("studyforge.skills") for name in imported)

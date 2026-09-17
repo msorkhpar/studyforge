@@ -38,6 +38,13 @@ no-overlay path is never the one discovered late.
 **a person** and nothing else. R9's enumeration was written from the generating
 side and did not list the one document this framework only ever reads.
 
+⭐ **Where that file sits in a real archive is `skills.adapter.Layout.content`
+and nowhere else** (`W198`) — the contract owns the filename, placement owns
+the directory, and a consumer that joins its own is the second authority the
+row exists to remove. ⚠️ **Located is not applied: v1's build serves a unit
+from its archive documents alone**, so an overlay that exists is read by
+nothing a build runs, and that verb is still unowned.
+
 **Skeleton at FND-01.** `builder` is SF-10's.
 """
 
