@@ -161,9 +161,7 @@ def test_PLANT_a_real_browser_whose_removal_is_skipped_reddens_the_check(
 def test_a_browser_that_never_starts_leaves_no_profile_and_its_words_survive(
     dying_binary: str, launch_root: Path
 ) -> None:
-    _check_a_browser_that_never_starts_leaves_nothing_and_keeps_its_words(
-        dying_binary, launch_root
-    )
+    _check_a_browser_that_never_starts_leaves_nothing_and_keeps_its_words(dying_binary, launch_root)
 
 
 def test_PLANT_a_browser_that_never_starts_whose_removal_is_skipped_reddens_the_check(
