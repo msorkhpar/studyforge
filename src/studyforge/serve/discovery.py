@@ -60,7 +60,8 @@ from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.discovery import Discovery, Site, assemble, cache_path, scan
 from studyforge.corpus.discovery import scan_sha256 as digest_of
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.generate import BuildError, Corpus, read_corpus
+from studyforge.generate import RAISES as BUILD_RAISES
+from studyforge.generate import Corpus, read_corpus
 from studyforge.progress import Progress
 
 
@@ -162,7 +163,12 @@ def discover(root: Path | str) -> Discovered:
         named = (relative / MANIFEST_FILENAME).as_posix()
         try:
             corpus = read_corpus(manifest.parent)
-        except BuildError as fault:
+        except PersonalDataLeak:
+            raise  # ⛔ R7's refusal is never demoted to a skipped corpus (Ruling 58).
+        except BUILD_RAISES as fault:
+            # ⭐ What `generate` lets out is its `RAISES`, never a member retyped
+            # here (`W208`, `W213`); the leak above is this site's own arm, and
+            # `RAISES` is what it reaches when the corpus is merely unreadable.
             report.append(f"{named} is not served: {fault}")
             continue
         source = corpus.manifest.source
