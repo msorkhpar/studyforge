@@ -60,6 +60,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W309` | Developer 1 | `fix/W309-every-check-answers-for-its-empty-population` @ `wt/dev1` | 0 @ `17529ad` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -453,7 +454,7 @@ else.**
 | W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | ✅ done — `d3e36b5` | [`rows/W306.md`](rows/W306.md) |
 | W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | ✅ done — `d65bc2d` | [`rows/W307.md`](rows/W307.md) |
 | W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | ✅ done — `da02903` | [`rows/W308.md`](rows/W308.md) |
-| W309 | A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for | framework agent | `todo` — `W307/3` | [`rows/W309.md`](rows/W309.md) |
+| W309 | A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for | framework agent | in-progress — on `fix/W309-every-check-answers-for-its-empty-population` | [`rows/W309.md`](rows/W309.md) |
 | W310 | The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently | framework agent | ✅ done — `870ee8f` | [`rows/W310.md`](rows/W310.md) |
 <!-- /register -->
 
