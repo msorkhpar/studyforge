@@ -56,6 +56,7 @@ def test_no_test_module_here_is_outside_the_declared_clauses() -> None:
     in `ACCEPTANCE` is a check nobody agreed to and nobody reviews.
     """
     machinery = {
+        "test_browser",
         "test_init",
         "test_contrast_math",
         "test_discovery",
