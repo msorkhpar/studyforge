@@ -26150,3 +26150,61 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 98
 
 ⭐ **Merged at `da02903`, TERMINAL by predicate `C`.** ⛔ **The merge path now reads WHO WROTE the commits a merge introduces, and refuses one whose commits cross offices — while a person's own line is skipped before anything is counted.**
+
+## PO round 99
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W310` | dev1 | `ee894cc` | ⭐ **merged at `870ee8f`** — every `mergegate` gate GREEN on the MERGED tree |
+
+⭐ **ONE VOCABULARY, TWO POLICIES — Ruling 47's shape, and the property it was forbidden to spend is intact.** ⛔ **`tools/reserved_addresses.py` holds the reserved-address list and imports NOTHING; `tools.authorship` reads it as *this line is an OFFICE's*, the floor's R7 shape arm reads it as *this leaks nobody*.** ⭐ **They share a LIST and never a VERDICT.**
+
+⭐ **VERIFIED BY THIS REGISTER, NOT INHERITED:** the merge path's transitive import closure walked here and holding nothing forbidden; the surface the row's own and disjoint from the row deliberately not dispatched beside it; the carrier's author line a placeholder; three identity probes over the diff and the message absent; no home path present.
+
+### ⛔ `PO-99/1` — A CLAIM IN THE HANDOFF THAT THIS REGISTER MEASURED AND FOUND FALSE
+
+⚠️ **The handoff's Surprise 1 states the floor's grammar is *byte-for-byte the one it replaced*.** ⛔ **IT IS NOT.** ⭐ **The bare branch previously held a SINGLE LITERAL and now reads the whole shared list behind a new end-anchor.**
+
+⭐ **THE DIRECTION IS SAFE, WHICH IS WHY THIS CLOSES RATHER THAN SENDS BACK.** ⛔ **A real domain merely BEGINNING with a reserved name previously borrowed the exemption and no longer does — a hole CLOSED, not opened** — ⚠️ **and the delta measured over every tracked file is EMPTY IN BOTH DIRECTIONS, so no verdict on this tree moved.**
+
+⛔ **THE FINDING IS AGAINST THE CLAIM, NEVER THE CHANGE.** ⚠️ **A handoff is a DURABLE RECORD: the next office reads *byte-for-byte* as settled and will not re-measure it.** ⭐ **The office's own test names the widening half honestly; the summary sentence overstated what that test establishes, and the two readings the office did not take are the ones this register took.**
+
+### ⭐ WHAT THE OFFICE DISCLOSED WITHOUT BEING OBLIGED TO
+
+⛔ **THE PLANT CAUGHT A DEFECT LIVE IN THE OFFICE'S OWN IMPLEMENTATION, and nothing else would have.** ⚠️ **The floor took the vocabulary by NAME, which binds the tuple object at import — a SNAPSHOT — so every agreement test still passed while the floor had quietly stopped tracking the list it was meant to share.** ⭐ **Ruling 123 earned its keep as a MEASUREMENT rather than a maxim.**
+
+⛔ **AND ITS FIRST NEGATIVE CONTROL WAS RULING 337'S DEFECT IN MINIATURE:** ⚠️ **a claim about a module's imports established by SCANNING ITS TEXT, which failed against the module's own docstring.** ⭐ **Replaced with a parse, which is the property the claim actually is.**
+
+### W310 — The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W310.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE RESERVED-ADDRESS VOCABULARY NOW EXISTS TWICE AND THE TWO COPIES CAN DRIFT APART SILENTLY.**
+
+### ⭐ WHY IT IS A ROW AND NOT A ONE-LINE IMPORT
+
+⭐ **Raised as `W308/4` by the office that created the second copy, and it named the reason the obvious fix is refused.** ⛔ **`tools/authorship.py` holds `PLACEHOLDER_TLDS` and `PLACEHOLDER_DOMAINS`; the floor's shapes arm holds `ALLOWED_ADDRESS`. NEITHER MAY IMPORT THE OTHER.**
+
+⛔ **`mergegate.py`'s contract is that it imports neither `studyforge` nor `tools.quality`** — ⭐ **so a tree too broken to import is still one whose merge is REFUSED rather than one that crashes the gate.** ⚠️ **An import here would trade that property for tidiness, and the property is the reason the gate can be trusted on a broken tree.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **One vocabulary, expressed as DATA that both read**, with two policies over it — ⭐ Ruling 47's shape, cited rather than re-derived.
+2. ⛔ **`mergegate` STILL imports neither `studyforge` nor `tools.quality`** — ⚠️ **assert it, because that property is what this row must not spend.**
+3. ⛔ **Asserted both ways (R12):** the two agree on what is reserved, and a change to the vocabulary moves BOTH readings. ⭐ **PLANT the drift (Ruling 123) — a divergence nobody can produce is not a guarded one.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SHARED MODULE THAT PULLS `tools.quality` ONTO THE MERGE PATH.** ⭐ **The data may live anywhere both can read WITHOUT importing the other's package.**
+
+⛔ **AND NOT A WIDENING OF EITHER POLICY.** ⚠️ **`W308` refuses on office CROSSING, the floor refuses on personal-data SHAPE; they share a vocabulary, not a verdict.**
+
+[the mint](#po-round-98)
+
+#### ⭐ CLOSED — PO ROUND 99
+
+⭐ **Merged at `870ee8f`.** ⛔ **The reserved-address vocabulary is ONE list, held by a module that imports NOTHING and read by two policies that never meet** — ⚠️ **and the merge path importing neither the framework nor the floor is now ASSERTED by a named test with a control, rather than remembered.**
