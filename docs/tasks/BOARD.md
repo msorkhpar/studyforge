@@ -60,8 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W305` | Developer 1 | `fix/W305-office-identity-scoped` @ `wt/dev1` | 0 @ `b58a120` | in-progress |
-| `W306` | Developer 2 | `fix/W306-mint-runs-its-own-clause` @ `wt/dev2` | 0 @ `b58a120` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -78,7 +76,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W300`, `W303`, `W304` LEFT at `1d14e8a`, `544a165`, `fc176ae`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **They were [ratified](BOARD-ARCHIVE.md#po-round-92) in the round that named them, as the wave before them was [in round 91](BOARD-ARCHIVE.md#po-round-91).**
-⭐ **`W302` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-94); `W306` NAMED.** ⛔ **`tools/mergegate.py` is the merge path now — the scratchpad runner is superseded.**
+⭐ **`W305` and `W306` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-95); `W307`+`W308` NAMED.** ⛔ **The floor now REFUSES a row born without its argument pointer, running the clause rather than restating it.**
 
 <!-- offices -->
 | Checkout |
@@ -451,8 +449,10 @@ else.**
 | W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | ✅ done — `ecf0661` | [`rows/W302.md`](rows/W302.md) |
 | W303 | The renderer's `_RENDERERS` dispatch refuses a malformed block with a `KeyError` instead of by name, and reachability is unmeasured | framework agent | ✅ done — `544a165` | [`rows/W303.md`](rows/W303.md) |
 | W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | ✅ done — `fc176ae` | [`rows/W304.md`](rows/W304.md) |
-| W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | in-progress — on `fix/W305-office-identity-scoped` | [`rows/W305.md`](rows/W305.md) |
-| W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | in-progress — on `fix/W306-mint-runs-its-own-clause` | [`rows/W306.md`](rows/W306.md) |
+| W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | ✅ done — `6ce9409` | [`rows/W305.md`](rows/W305.md) |
+| W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | ✅ done — `d3e36b5` | [`rows/W306.md`](rows/W306.md) |
+| W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | `todo` — `W305/2` | [`rows/W307.md`](rows/W307.md) |
+| W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | `todo` — `W305/3` | [`rows/W308.md`](rows/W308.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
