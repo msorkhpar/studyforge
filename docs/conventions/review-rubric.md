@@ -36,8 +36,9 @@ DECISIONS, recorded here as the standard, and nothing derives them.**
 
 ⛔ **A USER DECISION, in force for every row: capability and tooling alike.**
 ⭐ **There is no CTO reviewer, no verdict bracket, no dispositions round and no
-accumulator run.** ⚠️ **The office that did the work certifies it, and the
-FLOOR and the SUITE are the gates.**
+accumulator run.** ⚠️ **The office that did the work certifies it, and the gates
+are EVERY ONE `tools.mergegate.GATES` declares — read by ONE command, so the set
+is never recited from memory.**
 
 | what a row merges on | who produces it |
 |---|---|
@@ -55,7 +56,7 @@ re-runs on the merged tree — so the office and the coordinator can no longer
 name different populations.
 
 ⛔ **SELF-CERTIFIED IS NOT A LOWER BAR. IT IS THE SAME BAR, SIGNED BY A
-DIFFERENT OFFICE.** ⚠️ Both readings are taken **at the ref that will merge**,
+DIFFERENT OFFICE.** ⚠️ Every reading is taken **at the ref that will merge**,
 each carries **ref + checkout ROLE + ENVIRONMENT**
 ([Ruling 238](#ruling-238-cto-round-55-ruling-147-gains-the-clause-a-reading-names-its-environment-by-that-environments-own-pins-never-by-an-image-tag-and-never-by-an-image-id),
 [Ruling 326](#ruling-326-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it)),
