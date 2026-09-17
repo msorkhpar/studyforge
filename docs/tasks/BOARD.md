@@ -60,10 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W181` + `W192` | Developer 1 | `fix/W181-W192-register-id-and-multi-id-spelling` @ `wt/dev1` | 1 @ `5130828` | in-review |
-| `W199` | Developer 2 | `fix/W199-archive-raw-minted-twice` @ `wt/dev2` | 0 @ `19c7224` | in-progress |
-| `W289` + `W290` | Developer 3 | `fix/W289-W290-block-guard-and-unit-location` @ `wt/dev3` | 1 @ `46c6acc` | in-review |
-| `W295` | framework agent | `fix/W295-vendor-prism-grammars` @ `wt/dev4` | 0 @ `19c7224` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -79,8 +75,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W279`, `W284`, `W285`, `W281`, `W223` LEFT at `2b8a4eb`, `35b2e81`, `620faf9`, `8328a4f`, `c8b2ae8`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⛔ **NO CARRIER IS NAMED, and that is a STATE rather than an omission: the in-flight table is EMPTY (`W111`, `W147`), and `wt/dev1`, `wt/dev2` and `wt/dev3` are TORN DOWN, so no absorbed branch is held by a checkout** ([ratified](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed)). ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W181`, `W192`, `W289`, `W290`, `W199`, `W295` LEFT at `bf05884`, `bf05884`, `b31e780`, `b31e780`, `416a5c2`, `a3987cf`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⛔ **NO CARRIER IS NAMED, and that is a STATE rather than an omission: every carrier this wave named has MERGED, and the in-flight table is EMPTY** (`W111`, `W147`) ([ratified](BOARD-ARCHIVE.md#po-round-90)). ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -124,6 +120,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 54 | `W286`–`W292` | ⭐ **round 87's mints, each jumping nobody** | [87](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed) |
 | 55 | `W293`, `W294` | ⭐ **round 88's mints, each jumping nobody** | [88](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed) |
 | 56 | `W296` | ⭐ **round 89's mint, jumping nobody** — ⛔ **`W295` is not here: it was DISPATCHED in this round, on the user's ruling, and its cell is in flight** | [89](BOARD-ARCHIVE.md#po-round-89) |
+| 57 | `W297`–`W301` | ⭐ **round 90's mints, each jumping nobody** | [90](BOARD-ARCHIVE.md#po-round-90) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -328,7 +325,7 @@ else.**
 | W178 | `narrate/__init__.py`'s *Depends on* names a package nothing imports and omits one this wave added | framework agent | `todo` — `NS-05/7` | [`rows/W178.md`](rows/W178.md) |
 | W179 | A new source file is outside the format gate's population until it is committed, so a green suite is not a reading of that gate | framework agent | `todo` — `NS-05/12` | [`rows/W179.md`](rows/W179.md) |
 | W180 | Ruling 349(a) binds the office CHECKING a removal and no rule binds the office MAKING one | framework agent | `todo` — `CTO-71/9` | [`rows/W180.md`](rows/W180.md) |
-| W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | `todo` — `CTO-71`'s `W167` review | [`rows/W181.md`](rows/W181.md) |
+| W181 | A register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one | framework agent | ✅ done — `bf05884` | [`rows/W181.md`](rows/W181.md) |
 | W182 | Spec §R9 still reads `open` for a contract Ruling 351 LOCATED, so a step is open on a fact its own authority contradicts | framework agent | ✅ done — `430363b` | [`rows/W182.md`](rows/W182.md) |
 | W183 | `E04`'s `Owns` lines were drafted without measurement — wrong in GRANULARITY and COVERAGE | framework agent | ✅ done — `7d77b0d` | [`rows/W183.md`](rows/W183.md) |
 | W184 | `narrate/__init__.py`'s `Depends on` is wrong a THIRD way, each time found by an office that cannot fix it | framework agent | `todo` `SF-17/3` | [`rows/W184.md`](rows/W184.md) |
@@ -339,14 +336,14 @@ else.**
 | W189 | `narrate-service` has produced no real audio and its `README` claims a measurement the repository does not hold | framework agent | ✅ done — `978fa1b` | [`rows/W189.md`](rows/W189.md) |
 | W190 | `corroborate`'s `dispatched and UNNAMED` arm has a population of CHECKOUTS, so a branch carrying work is invisible to it whenever its office cleans up after itself | framework agent | ✅ done — `c49f254` | [`rows/W190.md`](rows/W190.md) |
 | W191 | The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone | framework agent | `todo` — ⛔ **UNASSIGNED through four waves** | [`rows/W191.md`](rows/W191.md) |
-| W192 | Ruling 218's multi-id cell is readable in exactly ONE spelling, and the comma form observes the wrong row silently | framework agent | `todo` — `PO-59/7` | [`rows/W192.md`](rows/W192.md) |
+| W192 | Ruling 218's multi-id cell is readable in exactly ONE spelling, and the comma form observes the wrong row silently | framework agent | ✅ done — `bf05884` | [`rows/W192.md`](rows/W192.md) |
 | W193 | The narration record and its clips grow without bound and nothing prunes; pruning owes a RULE about which clips a build may delete | PO | ✅ done — PO round 64 | [`rows/W193.md`](rows/W193.md) |
 | W194 | `narrate-service`'s `docs/api.md` example manifest is schema-stale against the service's own live answer | framework agent | `todo` — `NS-07` F3, sibling | [`rows/W194.md`](rows/W194.md) |
 | W195 | There is no build pipeline: nothing walks a corpus and writes pages, so the reading floor cannot be PRODUCED by anything but a test | framework agent | ✅ done — `6ffba1e` | [`rows/W195.md`](rows/W195.md) |
 | W196 | Ruling 74 and Ruling 78's suite gate are JOINTLY UNSATISFIABLE — the formatter strips the parens the ruling requires | Developer 2 | ✅ done — `f1684e6` | [`rows/W196.md`](rows/W196.md) |
 | W197 | `SF-28` grew by accretion until it stopped being a row — one Definition, five acceptance additions, at least eight deliverables | PO | ✅ done — PO round 61 | [`rows/W197.md`](rows/W197.md) |
 | W198 | Nothing in `src/` declares where a unit's authored overlay sits in an archive, so no build can apply one | framework agent | `todo` — `W195/2` | [`rows/W198.md`](rows/W198.md) |
-| W199 | `archive`/`raw` are minted twice and neither `validate` name is on `validate.__all__` — Ruling 101's open deviation | framework agent | `todo` — `W195/1` | [`rows/W199.md`](rows/W199.md) |
+| W199 | `archive`/`raw` are minted twice and neither `validate` name is on `validate.__all__` — Ruling 101's open deviation | framework agent | ✅ done — `416a5c2` | [`rows/W199.md`](rows/W199.md) |
 | W200 | The root ignore file's bare `build/` silently ignores `src/studyforge/build/`, and `SF-28` will walk into it | framework agent | `todo` — `W195/7`, verified by the register | [`rows/W200.md`](rows/W200.md) |
 | W201 | The corpus walk is written three times and a test helper binds one constant twice | framework agent | `todo` — `W195/5`, `W195/3` | [`rows/W201.md`](rows/W201.md) |
 | W202 | Six decisions a build cannot ship without, every one of them defaulted today by whatever was convenient | PO + user | ✅ done — PO round 63 | [`rows/W202.md`](rows/W202.md) |
@@ -436,14 +433,19 @@ else.**
 | W286 | `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses | framework agent | `todo` — `INT-14/1` | [`rows/W286.md`](rows/W286.md) |
 | W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | `todo` — `INT-14/4` | [`rows/W287.md`](rows/W287.md) |
 | W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | `todo` — `W226/2` | [`rows/W288.md`](rows/W288.md) |
-| W289 | `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises `AttributeError` through the builder | framework agent | `todo` — `W282/1` | [`rows/W289.md`](rows/W289.md) |
-| W290 | `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable | framework agent | `todo` — `W222/2` | [`rows/W290.md`](rows/W290.md) |
+| W289 | `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises `AttributeError` through the builder | framework agent | ✅ done — `b31e780` | [`rows/W289.md`](rows/W289.md) |
+| W290 | `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable | framework agent | ✅ done — `b31e780` | [`rows/W290.md`](rows/W290.md) |
 | W291 | `board/delivery.py` types the capability-id shape inline, a second copy beside the plan parse's heading pattern | framework agent | `todo` — `W285/2` | [`rows/W291.md`](rows/W291.md) |
 | W292 | The never-editable skill test pins only `ROOT_DOCUMENTATION`, while the skills also point at `IGNORE_NAMES`, `VCS_NAMES` and `VCS_DIRECTORIES` | framework agent | `todo` — `W281/2` | [`rows/W292.md`](rows/W292.md) |
 | W293 | Every `studyforge.cli.*` import loads every verb eagerly, so the narrate verb's import sites moved outside `narrate/` and a lazy dispatcher is owed | framework agent | `todo` — `W223/1` | [`rows/W293.md`](rows/W293.md) |
 | W294 | The gate-coverage check reads the MODULE and not the value, so a decoded service answer is never gated | framework agent | `todo` — `W223/7` | [`rows/W294.md`](rows/W294.md) |
-| W295 | The vendored highlighter carries no `markup`, `json`, `properties` or `gherkin` grammar, so `ISO-06`'s *"XML fences highlighted"* is unmeetable | framework agent | in-progress — `W243/1`, the user's 2026-09-16 ruling, on `fix/W295-vendor-prism-grammars` | [`rows/W295.md`](rows/W295.md) |
+| W295 | The vendored highlighter carries no `markup`, `json`, `properties` or `gherkin` grammar, so `ISO-06`'s *"XML fences highlighted"* is unmeetable | framework agent | ✅ done — `a3987cf` | [`rows/W295.md`](rows/W295.md) |
 | W296 | A merge subject reaches a release branch unchecked, because no gate enforces `tools.quality.subject` — the register's own defect at `19c7224` | framework agent | `todo` — `PO-89/1` | [`rows/W296.md`](rows/W296.md) |
+| W297 | The same unguarded block read one function away: `read_layout` on a hand- or adapter-written document still raises where `build` now refuses by name | framework agent | `todo` — `W289/1` | [`rows/W297.md`](rows/W297.md) |
+| W298 | `UNITS_DIR` against `UNITS_DIRNAME` — the same defect one segment further, and it needs a different instrument | framework agent | `todo` — `W199/1` | [`rows/W298.md`](rows/W298.md) |
+| W299 | Five names another package takes from a `validate` module are on no surface, and one collides with a module name | framework agent | `todo` — `W199/2` | [`rows/W299.md`](rows/W299.md) |
+| W300 | The same producer-half deviation tree-wide, over a population measured small enough to close | framework agent | `todo` — `W199/3` | [`rows/W300.md`](rows/W300.md) |
+| W301 | The rubric's self-certification block files a suite reading under the floor's name and still exits `0` | framework agent | `todo` — `W295/6` | [`rows/W301.md`](rows/W301.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -510,7 +512,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
 | ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | `discharged` — ⭐ **`W163` at `accceaf`; `W152` had merged at `3049de9` without carrying it** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`; the conclusion stands and the reasoning does not** |
 | ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `discharged` — ⭐ **`W254` at `d05d856`, REFUSED BY NAME arm, [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
-| ⛔ **The Prism 1.30.0 grammars for `markup`, `json`, `properties` and `gherkin` are NOT vendored** | the user | ⭐ **`fired`** — ⛔ **THE USER RULED 2026-09-16: VENDOR them, NOT a build-time download.** Carried by [`W295`](rows/W295.md); ⚠️ the one fetch the ruling implies is the COORDINATOR's act, taken once and disclosed, never an office's | ⭐ **the trigger FIRED: the user answered** | ⭐ **`ISO-06`'s *"XML fences highlighted"* unblocks when `W295` lands; until then such a fence renders plain, as `W243` declares** |
+| ⛔ **The Prism 1.30.0 grammars for `markup`, `json`, `properties` and `gherkin` are NOT vendored** | the user | ⭐ **`discharged`** — ⛔ **the user RULED 2026-09-16 to vendor them, and [`W295`](rows/W295.md) LANDED at `a3987cf`** | ⭐ **the trigger fired and the act is done** | ⭐ **`ISO-06`'s framework half is discharged: `xml` and `markup` are both declared and both highlight. Whether that corpus TAGS its fences `xml` or `markup` is measurable only there (R20)** |
 <!-- /scheduled -->
 
 ---
