@@ -29,12 +29,19 @@ over the record `studyforge narrate` wrote; a corpus with no record renders
 `SILENT`, byte for byte the pre-narration page. A build never invokes synthesis
 (`W202` answer 3).
 
-⛔ **No authored overlay.** `unit.content` mints `CONTENT_FILENAME` and
-`skills.adapter.Layout` mints every other archive path, but **nothing in `src/`
-declares where a unit's overlay sits inside an archive** — so a unit that has
-one is built without it. ⭐ The hole is named here rather than guessed at: a
-path invented in this module would be a second authority on the archive's
-shape, and the adapter that wrote the file would not know about it.
+⛔ **No authored overlay.** A unit that has one is built without it: this
+module hands `build_unit` a unit's archive documents and nothing else.
+
+⚠️ **What changed under this sentence, and what did not** (`W198`). It used to
+say nothing in `src/` declared *where* an overlay sits, so this module could
+not have applied one even had it wanted to. ⭐ **That half is closed:
+`skills.adapter.Layout.content(address, unit)` is the address now**, so a
+build has somewhere to look. ⛔ **The verb is the half that remains and it is
+unowned** — reading the file, refusing its version, composing it over the
+archive's blocks and deciding what a conflict means are none of them decided,
+and this module will not decide them by being the first caller. ⭐ A path
+invented here would still be a second authority on the archive's shape; that
+is why the address is asked for rather than composed.
 """
 
 from __future__ import annotations

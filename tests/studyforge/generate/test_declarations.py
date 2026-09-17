@@ -172,26 +172,56 @@ def test_a_prose_corpus_builds_units_that_declare_zero_rather_than_nothing(tmp_p
 # ⚠️ A gap this package names rather than guesses at
 # --------------------------------------------------------------------------
 
+#: ⭐ The unit the `depth2` fixture gives an overlay, addressed the way a build
+#: addresses one. ⛔ Not a path: composing one here is the very thing `W198`
+#: removed from `src/`, and a test that did it would be the next consumer to
+#: invent a second place.
+OVERLAID = (["basics", "01-getting-started"], 1)
 
-def test_an_authored_overlay_is_not_applied_because_nothing_declares_where_it_sits(tmp_path):
-    """⚠️ The premise of the hole, asserted so it cannot close silently.
 
-    `unit.content` mints `content.json` and `skills.adapter.Layout` mints every
-    other archive path — but no module in `src/` says where a unit's overlay
-    lives inside an archive. ⭐ The harness knows, because it was written by
-    hand; the build cannot, so a unit with an overlay is built without it.
+def test_the_address_of_an_authored_overlay_is_asked_for_and_never_composed():
+    """⭐ `W198`'s inversion of the marker below, and the direction it now points.
 
-    ⛔ **When `Layout` grows that path, this test fails and is replaced by one
-    asserting the section is present** — it is a marker, not a guarantee.
+    ⛔ **This assertion used to read `not hasattr(Layout, "content")`** — the
+    premise that no module in `src/` said where an overlay sits, asserted so
+    the hole could not close silently. ⭐ It has closed, so the same fact is
+    asserted the other way round: the address exists, and it answers the file
+    the fixture actually carries.
+
+    ⚠️ The fixture is read through `is_file`, not through a path spelled here:
+    a literal compared against a literal agrees with itself, whereas a file
+    somebody else wrote does not.
+    """
+    from studyforge.skills.adapter import Layout
+    from studyforge.unit.content import CONTENT_FILENAME
+
+    layout = Layout(FIXTURES / "depth2")
+    address, unit = OVERLAID
+
+    overlay = layout.content(address, unit)
+
+    assert overlay.is_file(), "the fixture carries an overlay where Layout says one sits"
+    assert overlay == layout.unit_files(address, unit) / CONTENT_FILENAME
+    assert overlay.name == CONTENT_FILENAME
+
+
+def test_an_authored_overlay_is_still_not_applied_although_its_address_is_declared():
+    """⚠️ The half of the marker that has NOT closed, kept rather than deleted.
+
+    ⭐ `W198` clause 4: whether an overlay is applied is a separate question,
+    and v1's honest answer is *none is*. ⛔ So the build is still asserted to
+    serve the unit without its overlay, and this test fails the day something
+    applies one — which is when somebody must have decided what applying means.
+
+    ⚠️ The harness knows what the overlay says because it was written by hand;
+    `build_unit` is given the archive's documents and nothing else.
     """
     from studyforge.skills.adapter import Layout
     from studyforge.unit.builder import build_unit
     from tests.studyforge.render.page import pages as harness
 
     root = FIXTURES / "depth2"
-    overlay_holder = root / "archive/basics/01-getting-started/units/unit-01/content.json"
-    assert overlay_holder.is_file(), "the fixture carries an overlay"
-    assert not hasattr(Layout, "content"), "Layout now names the overlay; close this gap"
+    assert Layout(root).content(*OVERLAID).is_file(), "the build has somewhere to look"
 
     with_overlay = harness.depth2_unit_01().document
     built = next(
@@ -201,6 +231,24 @@ def test_an_authored_overlay_is_not_applied_because_nothing_declares_where_it_si
 
     assert [section["kind"] for section in with_overlay["sections"]][0] == "shared"
     assert "shared" not in [section["kind"] for section in without["sections"]]
+
+
+def test_this_package_says_the_address_is_declared_and_the_verb_is_not():
+    """⛔ `W198` clause 4 again, read against the prose a maintainer meets first.
+
+    ⚠️ The paragraph in `generate.units` claimed nothing in `src/` declared the
+    overlay's place. That is false now, and a false sentence beside a true test
+    is the failure this asserts against.
+    """
+    from studyforge.generate import units
+
+    prose = units.__doc__ or ""
+
+    assert "Layout.content" in prose
+    assert "unowned" in prose
+    assert "declares where a unit's overlay sits" not in prose, (
+        "the present-tense claim that the place is undeclared still stands"
+    )
 
 
 def test_nothing_under_tests_is_disturbed_by_a_copy(tmp_path):

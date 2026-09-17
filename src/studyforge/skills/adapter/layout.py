@@ -13,9 +13,10 @@ path §6 requires a writer to build at before it moves anything into place.
     layout.document(address, "prose", 3, "lesson", 2)
 
 **Depends on.** `address` (for `Address`, `unit_name` and `require_ordinal`)
-`corpus.container`/`corpus.manifest` for the two filenames they own, and
+`corpus.container`/`corpus.manifest` for the two filenames they own,
 `corpus.placement` for the archive root, the `raw/` segment and the `units/`
-segment.
+segment, and `unit.content` for the third filename — the authored overlay's,
+which `content` joins and never spells (`W198`).
 ⛔ Not on `validate`: this module says where to *write*, `validate` says
 whether what was written is right, and a writer that imported its own judge
 would be checking itself.
@@ -69,6 +70,7 @@ from studyforge.archive.document import KINDS
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, RAW_DIRNAME, UNITS_DIRNAME
+from studyforge.unit.content import CONTENT_FILENAME
 
 #: The archive root `validate`, `plan` and a build read: placement's one spelling,
 #: on this skill's surface. ⚠️ `Layout` still takes it as a field, and any other
@@ -172,8 +174,9 @@ class Layout:
 
         - an asset's or attachment's `local` path resolves against it — which
           is what lets a build find the file a lesson's `<img>` names;
-        - the authored overlay sits in it, as `<address>/units/unit-NN/
-          content.json` (§5's contract table).
+        - the authored overlay sits in it, and `content` below is the one
+          method that says where — ⛔ **this docstring does not spell it, and
+          `W198` is why: a second spelling is a second authority.**
 
         ⚠️ **This is stated here because it was stated nowhere in `src/`.** The
         two shipped fixtures both use the directory, the spec's contract table
@@ -182,6 +185,31 @@ class Layout:
         to remove.
         """
         return self.container_dir(address) / UNITS_DIR / unit_name(unit)
+
+    def content(self, address: Address | list | tuple, unit: int) -> Path:
+        """One unit's authored overlay — **the** address, so no consumer derives it.
+
+        ⛔ **`W198`: nothing in `src/` said where an overlay sits, so every
+        build that wanted one had to invent a place, and two builds would have
+        invented two.** `SF-37` landed the directory (`unit_files`); this is
+        the file, and it is the last half of R21's *located* for the one
+        contract this framework only ever reads.
+
+        ⭐ **Neither half is a literal here.** The directory is `UNITS_DIR`,
+        which is placement's; the filename is `unit.content`'s
+        `CONTENT_FILENAME`, which is the contract's own and is minted beside
+        `content_api`. ⛔ This method joins them and mints nothing, which is
+        what *named once* means: change the contract's filename and this
+        address follows, because there is nothing here to forget to change.
+
+        ⚠️ **Declaring where an overlay sits is not APPLYING one, and v1's
+        build applies none.** ⛔ A unit that carries an overlay is still built
+        from its archive documents alone — that verb is unowned and is not
+        this address's to answer (`W198`'s clause 4, `SF-37/3`). ⭐ Saying so
+        is the point: a reader who finds this method must not read it as the
+        feature.
+        """
+        return self.unit_files(address, unit) / CONTENT_FILENAME
 
     def document(
         self,

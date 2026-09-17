@@ -26,6 +26,7 @@ from studyforge.skills.adapter import (
     LayoutError,
     document_name,
 )
+from studyforge.unit.content import CONTENT_FILENAME
 from studyforge.validate.corpus import read as walk
 from tests.studyforge.skills.adapter import corpora
 
@@ -61,8 +62,9 @@ def test_a_units_own_directory_is_beside_raw_and_not_inside_any_variant(tmp_path
 
     ⭐ `unit_dir` is per *variant* and holds the archive documents; `unit_files`
     is per *unit* and holds what the unit owns — an asset's `local` path
-    resolves against it, and `<address>/units/unit-NN/content.json` is the
-    authored overlay §5's contract table names.
+    resolves against it, and the authored overlay `content` addresses sits in
+    it. ⛔ The overlay's own file is spelled by `content` and by nothing else,
+    here included (`W198`).
     """
     layout = Layout(tmp_path, "archive")
 
@@ -80,14 +82,68 @@ def test_the_two_shipped_fixtures_keep_their_material_where_unit_files_says():
     in `src/`** — both fixtures use the directory and every reader was composing
     it for itself. A literal compared against the same literal would agree with
     itself; these are files somebody else wrote.
+
+    ⭐ `depth2`'s is asked through `content`, which is this method plus the
+    contract's filename, so the one fixture pins both halves (`W198`). ⛔ The
+    filename is not spelled here either.
     """
     fixtures = Path(__file__).resolve().parents[3] / "fixtures"
 
     depth1 = Layout(fixtures / "depth1").unit_files(ADDRESS, 2)
-    depth2 = Layout(fixtures / "depth2").unit_files(Address(["basics", "01-getting-started"]), 1)
+    depth2 = Layout(fixtures / "depth2")
 
     assert (depth1 / "media" / "diagram.svg").is_file()
-    assert (depth2 / "content.json").is_file()
+    assert depth2.content(Address(["basics", "01-getting-started"]), 1).is_file()
+
+
+def test_the_overlays_address_is_this_layouts_to_answer_and_nobody_elses(tmp_path):
+    """⛔ `W198`: nothing in `src/` said where a unit's authored overlay sits.
+
+    ⭐ `SF-37` landed the directory and left the file, so a build still had to
+    invent one — and two builds would have invented two. This is the join, and
+    the point of it is that it is the ONLY join: the directory is `unit_files`'
+    answer, the filename is the contract's, and neither is respelled here.
+    """
+    layout = Layout(tmp_path, "archive")
+
+    overlay = layout.content(ADDRESS, 7)
+
+    assert overlay == layout.unit_files(ADDRESS, 7) / CONTENT_FILENAME
+    assert overlay.parent == layout.unit_files(ADDRESS, 7)
+    assert RAW_DIR not in overlay.parts, "an overlay belongs to the unit, not to a variant"
+
+
+def test_the_overlays_filename_is_the_contracts_and_is_not_a_second_literal_here():
+    """⭐ The `W198` counterpart of the segment test below, one level down.
+
+    ⛔ `ARCHIVE_DIR`, `RAW_DIR` and `UNITS_DIR` survive on this surface because
+    an adapter's vocabulary arrives through this package (R19). ⚠️ The overlay's
+    filename does NOT, and the reason is R21's producer column: **a person**
+    writes `content.json`, never an adapter, so this package has no author to
+    hand it to — what it has is one caller, `content`, and a name imported from
+    the module that mints it beside `content_api`.
+    """
+    from studyforge.skills.adapter import layout as module
+
+    body = Path(module.__file__).read_text(encoding="utf-8")
+
+    assert "from studyforge.unit.content import CONTENT_FILENAME" in body
+    assert CONTENT_FILENAME not in body, (
+        "the overlay's filename is spelled as a literal on this surface"
+    )
+
+
+def test_this_layout_locates_an_overlay_and_claims_nothing_about_applying_one():
+    """⚠️ `W198` clause 4, asserted against the prose rather than left to a reader.
+
+    ⛔ An address is not a feature. A maintainer who meets `content` must not
+    read it as *overlays work now*, so the docstring says the verb is unowned
+    and this fails if that sentence is edited away.
+    """
+    prose = Layout.content.__doc__ or ""
+
+    assert "unowned" in prose
+    assert "applies none" in prose
 
 
 def test_staging_is_beside_the_archive_and_never_inside_it(tmp_path):

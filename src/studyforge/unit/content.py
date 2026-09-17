@@ -16,8 +16,26 @@ package's `sections`, `trust` and `errors`.
 | | |
 |---|---|
 | **File** | `units/unit-NN/content.json`, beside the unit it overlays |
+| **Address** | ⭐ **`skills.adapter.Layout.content`** — ⛔ the one computed answer (`W198`) |
 | **Version key** | `content_api` — ⭐ **minted here**, see below |
 | **Producer** | **a person**, and nothing else ever writes it |
+
+⛔ **The `File` row is the CONTRACT's shape; the `Address` row is the only
+thing that resolves it against a corpus, and no caller may compose its own**
+(`W198`). ⭐ This module keeps `CONTENT_FILENAME` — the filename is the
+contract's, minted beside `content_api` above — and `Layout` joins it to the
+directory `UNITS_DIR` names, so the address has one spelling made of two
+pieces, each owned where it belongs. ⚠️ **The arrow points that way and not
+back:** `Layout` imports this name, this module imports no layout, because a
+contract that resolved itself against an archive would be a second authority
+on the archive's shape.
+
+⚠️ **v1 LOCATES this overlay and APPLIES none, and that is a statement rather
+than an omission** (`W198`'s clause 4). ⛔ A build reads a unit from its
+archive documents alone; a unit that ships an overlay is served without it,
+and the verb is unowned. ⭐ It is said here because this is where a reader
+asks — finding the address and inferring the feature is exactly the wrong
+inference to leave available.
 
 ⭐ **`content_api` is new, and R9's list did not have it.** R9 enumerates
 `corpus_api`, `container_api`, `raw_api`, `unit.json`'s `api` and the TOC
