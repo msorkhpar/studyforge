@@ -11,7 +11,7 @@ observation anywhere on the board to corroborate it** (Ruling 189(b)).
 `board_state(root)` is registered in `NOTICES` and prints the population every
 run, because a `0` with no denominator is `0 = 0` (Ruling 48).
 
-**Depends on.** ⭐ **the four ARMS and nothing else** — `bijection`, `bounds`,
+**Depends on.** ⭐ **the five ARMS and nothing else** — `bijection`, `born`, `bounds`,
 `contradiction` and `scheduled` — plus `notice` for the population, `register` and
 `observation` for the names it re-exports, `config` for the tree and `report` for the
 answer.
@@ -20,7 +20,7 @@ answer.
 discharge the standing SPLIT decision** (`docs/tasks/BOARD.md`, *Standing decisions*).
 ⚠️ **The bijection, the states and the frames were the one arm still living in the
 package SURFACE, for no reason but that they were there first** — ⭐ **they are
-`bijection.py` now, and `check_board` is one file read and the composition of four
+`bijection.py` now, and `check_board` is one file read and the composition of its
 arms.**
 
 ## ⛔ Why this exists, and the number is the argument
@@ -37,7 +37,7 @@ to the Log rather than into the tables. ⚠️ **A rule recorded only in prose h
 not landed** — this project's own most-repeated finding, committed by the
 document that governs the board.
 
-## ⭐ The four arms, and each one is a module rather than a paragraph of this one
+## ⭐ The arms, and each one is a module rather than a paragraph of this one
 
 ⛔ **`docs/tasks/BOARD.md` carries a standing decision that the next row touching
 this file SPLITS IT.** ⚠️ **`W100` was that row once and split two arms out;
@@ -55,6 +55,9 @@ it as NONE of those, because a surface composes.**
 | the observation table | `contradiction.py` | Ruling 189(b), a contradiction on one row |
 | ⭐ the `## Scheduled` table | `scheduled.py` | ⛔ **`W100`** — a trigger is an asserted
   state wearing another column name |
+| ⭐ the MINT, against its own clause | `born.py` | ⛔ **`W306`** — Ruling 244(e)'s own
+  command, RUN rather than restated; ⚠️ **the one arm whose subject is the row FILES
+  and not the board text** |
 
 ⚠️ **`notice.py` is the fifth and it forbids nothing**: it prints what there was to
 be wrong (Ruling 48), and `W96` split it off at the seam the CTO named.
@@ -111,6 +114,7 @@ from tools.quality.board.bijection import (
     RULE_STATE,
     bijection_findings,
 )
+from tools.quality.board.born import RULE_BORN, RULE_CLAUSE, born_findings
 from tools.quality.board.bounds import (
     BOARD_FRAME,
     BOARD_NARRATIVE_CEILING,
@@ -193,6 +197,8 @@ __all__ = [
     "REGISTER_OPEN",
     "ROWS",
     "ROW_FRAME",
+    "RULE_BORN",
+    "RULE_CLAUSE",
     "RULE_DETAIL",
     "RULE_DISAGREEMENT",
     "RULE_DUPLICATE",
@@ -215,6 +221,7 @@ __all__ = [
     "allowance",
     "bijection_findings",
     "board_state",
+    "born_findings",
     "check_board",
     "is_closed",
     "redirects_to_the_archive",
@@ -225,12 +232,12 @@ __all__ = [
 
 
 def check_board(root: Path) -> list[Finding]:
-    """Report every way this board has stopped being a register — ⛔ FOUR ARMS, composed.
+    """Report every way this board has stopped being a register — ⛔ FIVE ARMS, composed.
 
     ⭐ **This function decides nothing.** ⛔ **It reads the board ONCE and hands the same
-    string to every arm**, which is what stops two arms disagreeing about what the file
-    said — ⚠️ **the shape `size_findings` already refused for its denominator, applied to
-    the text itself.**
+    string to every arm that reads the board**, which is what stops two arms disagreeing
+    about what the file said — ⚠️ **the shape `size_findings` already refused for its
+    denominator, applied to the text itself.**
 
     | the arm | its module | what it reads the board as |
     |---|---|---|
@@ -238,6 +245,14 @@ def check_board(root: Path) -> list[Finding]:
     | the three size bounds | `bounds.py` | a FILE |
     | Ruling 189(b)'s four rules | `contradiction.py` | an OBSERVATION TABLE |
     | `W100`'s trigger rule | `scheduled.py` | a SCHEDULE |
+    | ⭐ `W306`'s mint clause | `born.py` | ⛔ **NOT AS THE BOARD AT ALL** — its subject
+      is the row FILES and Ruling 244(e)'s own command |
+
+    ⚠️ **`born.py` is reached only where a board EXISTS**, because of the early return
+    below. ⛔ That is deliberate and it is the floor's standing split, not a gap: over an
+    arbitrary root with no board this package asserts nothing, and the presence half is
+    `tools/tests/quality/board/`'s, which is the only place that knows the answer for
+    THIS repository should be yes.
     """
     text = read_text(root / BOARD)
     if text is None:
@@ -254,6 +269,10 @@ def check_board(root: Path) -> list[Finding]:
     # exception. ⭐ It takes the ROOT as well as the text, because the other half of the
     # bijection is on disk.
     findings = bijection_findings(root, text)
+    # ⛔ `W306` — Ruling 244(e)'s OWN command, RUN and branched on rather than restated.
+    # ⭐ It takes the ROOT and no text: its subject is the row FILES and the clause in
+    # `docs/conventions/board.md` that binds their mint, and neither is a board byte.
+    findings.extend(born_findings(root))
     # ⛔ The board as a FILE rather than as a register — `bounds.py`, and the
     # denominator is derived there rather than handed over (see `allowance`).
     findings.extend(size_findings(text))

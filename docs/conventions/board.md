@@ -266,6 +266,19 @@ grep -LE '\]\(\.\./(BOARD-ARCHIVE\.md|handoffs/[^)]*)#' ../tasks/rows/<ID>.md
 the address has to resolve to the argument, not to the document that contains
 it** — ⭐ **which is the property a pointer has and a restatement does not.**
 
+⭐ **MECHANISED BY RUNNING THE BLOCK ABOVE, never by restating it** (`W306`):
+[`born.py`](../../tools/quality/board/born.py) PARSES the pattern out of that fenced
+command at run time and branches on it, as an arm of the floor's board check.
+⛔ **So an amendment to the command above moves the instrument's verdict in the same
+commit** — ⚠️ **which is why no regular expression is typed into the instrument: a
+second spelling of a clause is free to disagree with the first, and the copy nobody
+re-measures is the one that rots.** ⭐ **A clause the instrument cannot READ is a
+FINDING and never a silence, because an empty population is not the pass reading
+(Ruling 191).** ⛔ **The rows this clause never bound are excluded BY NAME in the
+instrument and PRINTED in its reading** (Ruling 185's form) — ⚠️ **a gate that
+reddened the tree over one would BE the retroactive sweep the paragraph below says
+this clause is not.**
+
 ⭐ **The evidence that the clause costs nothing: the PO did it for all four of
 round 44's mints WITHOUT the clause.** ⚠️ **Without it, `W88`'s population grows by
 one per mint, and 8 of its 10 new members at round 56 were the minter's own** —

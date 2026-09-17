@@ -1,7 +1,7 @@
 """Mirror of `tools/quality/board/__init__.py` (R12) — ⛔ the SURFACE, and the COMPOSITION.
 
 ⛔ **This module's subject is what `__init__.py` still does after `W129`/`W130`/`W132`
-discharged the standing SPLIT decision: it reads the board ONCE and composes FOUR ARMS.**
+discharged the standing SPLIT decision: it reads the board ONCE and composes ITS ARMS.**
 ⭐ **It judges nothing itself, so there is nothing here to plant against** — ⚠️ **what is
 left to assert is that each arm is WIRED IN, which is a different claim from *the arm
 works* and is exactly the claim a split can silently break.**
@@ -14,6 +14,7 @@ works* and is exactly the claim a split can silently break.**
 | the three SIZE bounds | `test_bounds.py` (`W100`'s split) |
 | the observation table's four rules | `test_contradiction.py` |
 | the `## Scheduled` trigger rule | `test_scheduled.py` |
+| ⭐ `W306`'s mint clause, RUN rather than restated | `test_born.py` |
 | the notice's population lines | `test_notice.py` |
 
 ⚠️ **Each moved WITH its code and none was copied:** ⛔ **a reading with two homes is the
@@ -29,6 +30,10 @@ from tools.quality.board import (
     BOARD,
     BOARD_NARRATIVE_CEILING,
     BOARD_ROW_CEILING,
+    ROW_FRAME,
+    ROWS,
+    RULE_BORN,
+    RULE_CLAUSE,
     RULE_DETAIL,
     RULE_DISAGREEMENT,
     RULE_DUPLICATE,
@@ -45,6 +50,8 @@ from tools.quality.board import (
     board_state,
     check_board,
 )
+from tools.quality.board.born import CLAUSE, CLAUSE_SUBJECT, clause_pattern
+from tools.quality.config import read_text
 
 #: ⛔ **Every rule code the package declares, BY THE ARM THAT RAISES IT.** ⭐ Written out
 #: per arm rather than as one flat set, because the claim asserted below is *`check_board`
@@ -54,6 +61,7 @@ ARMS = {
     "bounds": {RULE_NARRATIVE, RULE_WIDTH, RULE_SIZE},
     "contradiction": {RULE_INFLIGHT, RULE_UNOBSERVED, RULE_DISAGREEMENT, RULE_UNREADABLE},
     "scheduled": {RULE_TRIGGER},
+    "born": {RULE_BORN, RULE_CLAUSE},
 }
 
 
@@ -152,8 +160,21 @@ def test_check_board_REACHES_ALL_FOUR_ARMS(tmp_path: Path) -> None:
         "| W2 | again | PO | `todo` | [d](rows/W2.md) |\n"
         "<!-- /register -->\n"
     )
-    (tmp_path / "docs" / "tasks").mkdir(parents=True)
+    (tmp_path / ROWS).mkdir(parents=True)
     (tmp_path / BOARD).write_text(board, encoding="utf-8")
+    # ⛔ born (`W306`): a row file minted with NO anchored pointer to its argument.
+    # ⭐ **The predicate it is judged by is READ from this repository's own convention
+    # rather than re-typed here**, so the plant cannot drift from the clause it exists
+    # to break — and a plant that drifts is adversarial to nothing (Ruling 140).
+    (tmp_path / ROWS / "W2.md").write_text(
+        f"# W2\n\n⛔ This file carries the ARGUMENT for board row `W2` {ROW_FRAME}\n",
+        encoding="utf-8",
+    )
+    (tmp_path / CLAUSE).parent.mkdir(parents=True)
+    pattern = clause_pattern(read_text(repository_root() / CLAUSE) or "")
+    (tmp_path / CLAUSE).write_text(
+        f"```bash\ngrep -LE '{pattern}' {CLAUSE_SUBJECT}<ID>.md\n```\n", encoding="utf-8"
+    )
     raised = {finding.rule for finding in check_board(tmp_path)}
     assert raised, "⛔ born vacuous: the plant raised nothing at all"
     silent = [arm for arm, codes in sorted(ARMS.items()) if not codes & raised]

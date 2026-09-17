@@ -14,8 +14,9 @@ notice can print that arm's population without an import cycle.
 **Depends on.** `register` for the parsers and the locations, ⭐ **`bounds` for the
 five size bounds and `W130`'s three-term `allowance`**, `observation` for
 Ruling 189(b)'s population, `scheduled` for `W100`'s, `bijection` for the files on
-disk and `W161`'s population, and `config` for the tree.
-Nothing else.
+disk and `W161`'s population, ⭐ **`born` for `W306`'s — the row files the MINT
+clause was run over, and the ones excluded from it BY NAME** — and `config` for the
+tree. Nothing else.
 
 ## ⛔ Why this is its own module, and it is an R11 reading rather than taste
 
@@ -37,6 +38,7 @@ from collections.abc import Callable
 from pathlib import Path
 
 from tools.quality.board.bijection import bijection_reading, rows_on_disk
+from tools.quality.board.born import born_reading
 from tools.quality.board.bounds import (
     BOARD_FRAME,
     BOARD_NARRATIVE_CEILING,
@@ -97,6 +99,11 @@ def board_state(root: Path) -> list[str]:
     prose and not as a STATE on the day the column landed** (Ruling 191) — ⭐ **and
     both marker numbers with their units: the lines that ARE a declaration, and the
     lines that merely MENTION the marker inside a cell** (Ruling 224).
+
+    ⭐ **And `W306`'s line, which prints an EXEMPTION rather than a bound.** ⛔ **The
+    rows Ruling 244(e)'s mint clause never bound are excluded BY NAME inside `born.py`
+    and NAMED here** (Ruling 185's form) — ⚠️ **an exemption nobody prints is an
+    exemption nobody re-reads, and the day its population empties, the line says so.**
 
     ⛔ **A cutoff appearing in this function is the signal a gate has been
     rebuilt.** ⭐ **The contract all three readings answer to is
@@ -160,6 +167,7 @@ def board_state(root: Path) -> list[str]:
         + "; ".join(_fault_reading(name, bodies, named, holds) for name, holds in faults)
         + ".",
         bijection_reading(root, text),
+        born_reading(root),
         observation_reading(text),
         scheduled_reading(text),
     ]
