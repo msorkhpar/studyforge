@@ -141,7 +141,6 @@ def main(argv: list[str] | None = None, out=None) -> int:
     return exit_code(written)
 
 
-
 def media_stop(media: MediaProjection | None, *, measured: bool) -> str:
     """Return the report a build stops on, or an empty string when the media is committable.
 

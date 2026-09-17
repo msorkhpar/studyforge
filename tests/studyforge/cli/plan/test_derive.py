@@ -7,26 +7,22 @@ a plan derived from a real corpus says.
 from __future__ import annotations
 
 import json
-import re
 import shutil
-from pathlib import PurePosixPath
 
 import pytest
 
-from studyforge.cli.plan import UNPROJECTED, plan_for
+from studyforge.cli.plan import plan_for
 from studyforge.corpus.container import CONTAINER_FILENAME
-from studyforge.corpus.manifest import COMMIT_MODES, MANIFEST_FILENAME
+from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.corpus.placement import (
-    GENERATED_ROOT,
-    SITE_CACHE_FILENAME,
     UNIT_MEDIA_DIRNAMES,
     profile_for,
 )
 from studyforge.validate.report import INVALID, OK
 from tests.emission import POISON
 from tests.fixture_checks import FIXTURES, VALID
-from tests.support import init_repository, is_ignored, repository_root
+from tests.support import repository_root
 
 
 def copy_fixture(name: str, tmp_path):

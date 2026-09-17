@@ -59,8 +59,8 @@ import os
 from dataclasses import replace
 from pathlib import Path
 
-from studyforge.cli.plan.recorded import Recorded, read_record
 from studyforge.cli.plan.media import MediaProjection
+from studyforge.cli.plan.recorded import Recorded, read_record
 from studyforge.cli.plan.report import Creation, Plan, Refusal
 from studyforge.corpus.container import CONTAINER_FILENAME, Container
 from studyforge.corpus.container import RAISES as CONTAINER_RAISES

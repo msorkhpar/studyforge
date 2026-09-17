@@ -6,11 +6,6 @@ tested without a corpus root and the derivation is tested without a renderer.
 
 from __future__ import annotations
 
-import re
-from pathlib import PurePosixPath
-
-import pytest
-
 from studyforge.cli.plan.media import MediaProjection
 from studyforge.cli.plan.report import (
     Creation,

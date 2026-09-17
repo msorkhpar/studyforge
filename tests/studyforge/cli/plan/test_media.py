@@ -38,7 +38,6 @@ from tests.fixture_checks import FIXTURES, VALID
 from tests.studyforge.cli.plan.test_derive import copy_fixture
 from tests.support import init_repository, is_ignored
 
-
 # --------------------------------------------------------------------------
 # ⛔ the ignore file the profile requires (Ruling 91, W242)
 # --------------------------------------------------------------------------
@@ -399,9 +398,7 @@ def test_W287_a_measurement_is_printed_with_its_verdict_in_both_directions():
     assert fits.startswith("media footprint  fits — measured 30 byte(s) in 2 file(s)")
     assert exceeds.startswith("media footprint  EXCEEDS — measured 60 byte(s) in 3 file(s)")
     assert "max_total_bytes crossed" in exceeds and "u/audio/c1.mp3" in exceeds
-    assert empty.endswith(
-        f"measured — 0 byte(s) in 0 file(s) {MEASURED_OVER}; {NOTHING_ON_DISK}"
-    )
+    assert empty.endswith(f"measured — 0 byte(s) in 0 file(s) {MEASURED_OVER}; {NOTHING_ON_DISK}")
 
 
 def test_W287_a_refused_reading_says_why_and_is_never_printed_as_zero():
@@ -451,8 +448,6 @@ def test_media_is_ignored_only_when_the_policy_does_not_commit_it():
     assert MediaProjection(DEFAULT_MEDIA, 1).ignored is False
     assert MediaProjection(MediaPolicy("always", 1, 1), 1).ignored is False
     assert MediaProjection(MediaPolicy("never", 1, 1), 1).ignored is True
-
-
 
 
 def test_the_media_units_line_says_a_directory_is_made_only_when_filled():

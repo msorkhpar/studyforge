@@ -42,8 +42,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.cli.plan.media import MediaProjection
+from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME, PermittedEdit
 from studyforge.validate.report import INVALID, OK
 
