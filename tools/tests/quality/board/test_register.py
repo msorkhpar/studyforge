@@ -207,6 +207,12 @@ def test_identifiers_reads_a_two_id_row_and_refuses_a_header() -> None:
     assert identifiers("# | Row | Owner") == []
 
 
+def test_identifiers_reads_BOTH_declared_spellings_of_a_multi_id_cell() -> None:
+    """⛔ `W192`: `` `W20`, `W21` `` read as ONE id here, and it was the LAST."""
+    assert identifiers("`W20`, `W21`") == ["W20", "W21"]
+    assert identifiers("`W20` + `W21`") == identifiers("`W20`, `W21`")
+
+
 def test_table_lines_and_narrative_bytes_partition_the_file() -> None:
     """⭐ Every byte is one or the other, which is what makes the bound a bound."""
     text = "prose\n| a | b |\nmore prose\n"

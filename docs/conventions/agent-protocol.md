@@ -301,6 +301,9 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
   admission. A new kind is one entry in `DOCUMENT_KINDS`.
 - ⭐ **A handoff for two tasks declares both** — `**Kind:** task handoff — W17,
   W19` — and its title names both. The filename must begin with the first.
+  ⭐ **`+` and `,` are ONE grammar and read the same here as they do on the
+  board** ([`board.md`](board.md), Ruling 218's multi-id cell); ⛔ **any other
+  joiner is REFUSED with the part in the finding, never quietly split** (`W192`).
 - ⛔ **A row's id is the register's, never its branch's** ([PO round 76](../tasks/BOARD-ARCHIVE.md#po-round-76-the-rounds-closes-the-iso-pin-advanced-to-0d970fd-and-spec-5-amended)). A carrier branch may be named for the findings it settles; its handoff is
   still `<TASK-ID>.md`, declaring `task handoff — <TASK-ID>`, with the `W` id the register
   minted before the dispatch. ⭐ **So the floor's `TASK_ID` never meets a finding id.**

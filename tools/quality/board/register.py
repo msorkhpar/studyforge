@@ -14,7 +14,7 @@ module named for them and the only one that spends them** — ⛔ **this one is 
 PARSER, and a derivation for a number it never reads is the *fact in the wrong
 home* shape the rule codes above already earned.**
 
-**Depends on.** `re` and `pointers.strip_code_spans`. Nothing else, ever.
+**Depends on.** `re`, `pointers.strip_code_spans`, and `ids` for Ruling 218's grammar (`W192`).
 
 ## ⛔ Two defects live here, and both shipped before they were caught
 
@@ -38,6 +38,7 @@ finding.**
 import re
 from collections.abc import Iterable
 
+from tools.quality.ids import row_ids
 from tools.quality.pointers import strip_code_spans
 
 #: ⛔ The register itself. ⭐ One file, NAMED here rather than discovered, because
@@ -183,17 +184,13 @@ def state(cell: str, words: Iterable[str] = STATES) -> str | None:
 
 
 def identifiers(cell: str) -> list[str]:
-    """Return every `W`-row id a register's first cell names.
+    """Return every `W`-row id a cell names, under Ruling 218's ONE grammar.
 
-    ⚠️ A cell may name two — `W17 + W19` are one commit and one row — so this
-    returns a list. ⛔ A cell naming none is a header or a separator and is not
-    a register row.
+    ⛔ **The grammar is `tools/quality/ids.py`'s and is not respelled here**
+    (`W192`): this reader took `+`, the handoff reader took `,`, and
+    `` `W20`, `W21` `` read as ONE id here — the LAST, silently, at exit `0`.
     """
-    found = []
-    for token in cell.replace("*", "").replace("`", "").replace("+", " ").split():
-        if len(token) > 1 and token[0] == "W" and token[1:].isdigit():
-            found.append(token)
-    return found
+    return row_ids(cell)
 
 
 def register(text: str) -> list[tuple[int, list[str], str]]:

@@ -86,6 +86,29 @@ remaining 6 is a row where writing one would have been wrong.**
 ⛔ **`HANDOFF_OWED_FROM` IS A PIN, NOT A KNOB.** ⚠️ Raising it to turn a red arm
 green is the one move it must never be used for; the repair for a red arm is the
 handoff, or not declaring the row closed.
+
+## ⛔ `W181` — AN ID THE PIN CANNOT ORDER IS REPORTED, NEVER RAISED
+
+⚠️ **This module ordered a closed row by slicing the leading character off its id
+and calling `int()` on the rest.** ⛔ **`int()` RAISES, and it raised INSIDE A
+FLOOR CHECK** — so a register id the pin could not order would have been a
+traceback where the contract is a finding, and the whole tree would have read as
+unreadable rather than one arm going red.
+
+⭐ **`ids.order` returns `None` instead**, so such a row is EXCLUDED from the
+owed population, REPORTED by name under `RULE_UNORDERABLE`, and NAMED in the
+notice beside the populations it sits outside.
+
+⛔ **AND THE SHAPE IS ASSERTED WHERE IT IS PARSED, which is the OTHER half and
+not the same one** (`W181`'s second clause): `register.identifiers` can only ever
+return `ids.ROW_ID`, so this module's arithmetic is safe BY A STATED PROPERTY
+rather than by luck. ⚠️ **The consequence is that the reporting arm is
+UNREACHABLE from `check_handoff_existence` on any board the parser reads** —
+⭐ **which is why the judging half is `findings_for` and `lines_for`, PURE
+FUNCTIONS OF THE ROWS THEY ARE HANDED** (`module-structure.md`: a gate that is
+part of a contract is a pure function of its input). ⛔ **An arm asserted only
+through a walk that cannot produce its input is a check that could not fire,
+which is the exact defect this module exists to close.**
 """
 
 from __future__ import annotations
@@ -102,9 +125,16 @@ from tools.quality.board.register import (
     is_closed,
 )
 from tools.quality.handoffs import HANDOFF_DIR, TASK_HANDOFF, declared_kind
+from tools.quality.ids import ROW_ID, order
 from tools.quality.report import Finding
 
 RULE_MISSING = "handoff-missing"
+
+#: ⛔ **`W181`: a closed register id this arm cannot ORDER against the pin.**
+#: ⭐ It is a finding with the id IN it and never a traceback, and it is a rule
+#: of its own because the remedy is a different one: the id is not the
+#: register's shape, so no handoff can discharge it.
+RULE_UNORDERABLE = "handoff-row-id"
 
 #: ⛔ The pinned legacy bound: a row numbered at or below this is NOT held to
 #: the existence contract. ⭐ **Pinned from a MEASUREMENT and not from a
@@ -182,10 +212,28 @@ def closed_rows(text: str) -> list[tuple[int, str, str]]:
     return rows
 
 
+def unorderable(rows: list[tuple[int, str, str]]) -> list[tuple[int, str]]:
+    """`(line, id)` for every row id the pin cannot ORDER — ⛔ reported, never raised.
+
+    ⭐ **The population the two narrowings cannot speak about**: a bound is an
+    ordering, and an id outside the register's shape has no place in one.
+    """
+    return [(line, identifier) for line, identifier, _owner in rows if order(identifier) is None]
+
+
 def owing(rows: list[tuple[int, str, str]]) -> list[tuple[int, str, str]]:
-    """Return the closed rows that OWE a task handoff, after both narrowings."""
+    """Return the closed rows that OWE a task handoff, after both narrowings.
+
+    ⛔ **A row the pin cannot ORDER is EXCLUDED here and REPORTED by
+    `findings_for`** (`W181`) — ⚠️ it is not silently owed and not silently
+    excused, and it is never an `int()` raised out of a floor check.
+    """
     return [
-        row for row in rows if int(row[1][1:]) > HANDOFF_OWED_FROM and row[2] not in OFFICE_OWNERS
+        row
+        for row in rows
+        if (number := order(row[1])) is not None
+        and number > HANDOFF_OWED_FROM
+        and row[2] not in OFFICE_OWNERS
     ]
 
 
@@ -195,18 +243,28 @@ def _board(root: Path) -> str | None:
     return config.read_text(path) if path.is_file() else None
 
 
-def existence_findings(root: Path, declared: set[str]) -> list[Finding]:
-    """Every closed row that owes a task handoff and has none.
+def findings_for(rows: list[tuple[int, str, str]], declared: set[str]) -> list[Finding]:
+    """Every closed row that owes a task handoff and has none, and every id that will not order.
 
-    ⛔ The finding is raised against `BOARD.md`, on the register row's own line,
-    because the remedy is one of two things and neither is a file that exists:
-    write the handoff, or stop declaring the row closed.
+    ⛔ **A PURE FUNCTION OF THE ROWS IT IS HANDED**, which is what makes `W181`'s
+    arm reachable at all: the parser cannot hand `check_handoff_existence` a
+    malformed id, so an arm asserted only through that walk could never fire.
     """
-    text = _board(root)
-    if text is None:
-        return []
-    findings = []
-    for line, identifier, _owner in owing(closed_rows(text)):
+    findings = [
+        Finding(
+            BOARD,
+            line,
+            RULE_UNORDERABLE,
+            f"the register declares {identifier!r} CLOSED and it is not a row id: the "
+            f"register's own shape is `{ROW_ID.pattern}` (`docs/conventions/board.md`), "
+            f"and this arm ORDERS every closed row against the pinned bound "
+            f"W{HANDOFF_OWED_FROM}. ⛔ Reported and never raised: an id the pin cannot "
+            f"order is a FINDING with the id in it, not a traceback out of a floor check "
+            f"that takes every other reading down with it. ⭐ Spell the id `W<digits>`.",
+        )
+        for line, identifier in unorderable(rows)
+    ]
+    for line, identifier, _owner in owing(rows):
         if identifier in declared:
             continue
         findings.append(
@@ -224,6 +282,51 @@ def existence_findings(root: Path, declared: set[str]) -> list[Finding]:
     return findings
 
 
+def existence_findings(root: Path, declared: set[str]) -> list[Finding]:
+    """Every closed row that owes a task handoff and has none.
+
+    ⛔ The finding is raised against `BOARD.md`, on the register row's own line,
+    because the remedy is one of two things and neither is a file that exists:
+    write the handoff, or stop declaring the row closed.
+    """
+    text = _board(root)
+    return [] if text is None else findings_for(closed_rows(text), declared)
+
+
+def lines_for(rows: list[tuple[int, str, str]], declared: set[str]) -> list[str]:
+    """The population `rows` carry — ⛔ a pure function of them, as `findings_for` is.
+
+    ⚠️ **`W181`'s unorderable population is NAMED here even when it is empty**,
+    for the same reason the owed one is: this arm's denominators are empty on the
+    tree that minted it, and `0 = 0` reads as a clean bill unless it says so.
+    """
+    above = [row for row in rows if (n := order(row[1])) is not None and n > HANDOFF_OWED_FROM]
+    offices = [row for row in above if row[2] in OFFICE_OWNERS]
+    owed = owing(rows)
+    missing = [row[1] for row in owed if row[1] not in declared]
+    legacy = [
+        row[1]
+        for row in rows
+        if (n := order(row[1])) is not None
+        and n <= HANDOFF_OWED_FROM
+        and row[1] not in declared
+        and row[2] not in OFFICE_OWNERS
+    ]
+    unread = [identifier for _line, identifier in unorderable(rows)]
+    empty = " — the population is EMPTY, so this is 0 = 0 and not a clean bill" if not owed else ""
+    return [
+        f"handoff existence: {len(missing)} of {len(owed)} closed register rows owe a task "
+        f"handoff and lack one{empty}. Population: {len(rows)} closed rows, "
+        f"{len(above)} above the pinned bound W{HANDOFF_OWED_FROM}, "
+        f"{len(offices)} of those excluded as an office round "
+        f"({', '.join(sorted(OFFICE_OWNERS))}). "
+        f"Below the bound and NOT chased (Rulings 106, 193): {len(legacy)}"
+        + (f" — {' '.join(sorted(legacy, key=lambda name: order(name) or 0))}." if legacy else ".")
+        + " Closed ids this arm cannot ORDER (`W181`): "
+        + (f"{len(unread)} — {' '.join(unread)}." if unread else "none."),
+    ]
+
+
 def existence_lines(root: Path, declared: set[str]) -> list[str]:
     """Print the population this arm read, whether or not anything is wrong.
 
@@ -234,28 +337,7 @@ def existence_lines(root: Path, declared: set[str]) -> list[str]:
     text = _board(root)
     if text is None:
         return [f"handoff existence: no {BOARD} in this checkout, so no row can owe one."]
-    closed = closed_rows(text)
-    above = [row for row in closed if int(row[1][1:]) > HANDOFF_OWED_FROM]
-    offices = [row for row in above if row[2] in OFFICE_OWNERS]
-    owed = owing(closed)
-    missing = [row[1] for row in owed if row[1] not in declared]
-    legacy = [
-        row[1]
-        for row in closed
-        if int(row[1][1:]) <= HANDOFF_OWED_FROM
-        and row[1] not in declared
-        and row[2] not in OFFICE_OWNERS
-    ]
-    empty = " — the population is EMPTY, so this is 0 = 0 and not a clean bill" if not owed else ""
-    return [
-        f"handoff existence: {len(missing)} of {len(owed)} closed register rows owe a task "
-        f"handoff and lack one{empty}. Population: {len(closed)} closed rows, "
-        f"{len(above)} above the pinned bound W{HANDOFF_OWED_FROM}, "
-        f"{len(offices)} of those excluded as an office round "
-        f"({', '.join(sorted(OFFICE_OWNERS))}). "
-        f"Below the bound and NOT chased (Rulings 106, 193): {len(legacy)}"
-        + (f" — {' '.join(sorted(legacy, key=lambda name: int(name[1:])))}." if legacy else "."),
-    ]
+    return lines_for(closed_rows(text), declared)
 
 
 def check_handoff_existence(root: Path) -> list[Finding]:
