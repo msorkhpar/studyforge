@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W302` | Developer 1 | `fix/W302-merge-path-image-reading` @ `wt/dev1` | 0 @ `d35262f` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -77,7 +76,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W300`, `W303`, `W304` LEFT at `1d14e8a`, `544a165`, `fc176ae`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **They were [ratified](BOARD-ARCHIVE.md#po-round-92) in the round that named them, as the wave before them was [in round 91](BOARD-ARCHIVE.md#po-round-91).**
-⭐ **`W305` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-93).** ⛔ **`W302`'s COLLISION IS DISCHARGED — `W300` has landed — and it is dispatched in a FOLLOW-UP rather than here: a carrier cut AFTER this merge cannot be given an as-of before it exists, which is `PO-93/1` itself.** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⭐ **`W302` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-94); `W306` NAMED.** ⛔ **`tools/mergegate.py` is the merge path now — the scratchpad runner is superseded.**
 
 <!-- offices -->
 | Checkout |
@@ -137,7 +136,7 @@ name — ⛔ so a row declaring `corroborate.py` for that arm names the wrong fi
 writes `docs/tasks/BOARD.md`, which a REGISTER round writes too.** ⛔ **[`W207`](rows/W207.md) joins the `E04` set; [`W216`](rows/W216.md)+[`W221`](rows/W221.md) both name the test harness, and [`W210`](rows/W210.md)+[`W287`](rows/W287.md)+[`W288`](rows/W288.md) write `cli/plan/` — ONE OWNER or two waves; and [`W214`](rows/W214.md)+[`W215`](rows/W215.md) are two ends of ONE seam, so a taker of either reads the other.** ⚠️ **This paragraph ranges
 over DECLARED surfaces, so a row declaring none is asserted for or is invisible** (Ruling 331,
 `PO-54/3`). ⭐ **The `pointers.py` and `handoffs/` sets left it when `W35`, `W148` and `W172`
-closed; the `cli/plan/` and emission-harness pairs when `W213` and `W217` did, and `W224`+`W210` when `W224` did; `W225` left the `docker/dev/` set at its close, `W144` the `bounds.py` set, `W150` the `citations.py` set, `W238` and `W249` the `skills/reconnaissance/` pairs, `W239` the `skills/onboarding/` pair, `W162` the `docker/dev/` pair, `W254` the `cli/plan/` pair, `W255` the first `validate/source/` pair and `W222` the `narrate/` pair.**
+closed.**
 
 ## The register — every `W` row
 
@@ -447,10 +446,11 @@ else.**
 | W299 | Five names another package takes from a `validate` module are on no surface, and one collides with a module name | framework agent | ✅ done — `528ba15` | [`rows/W299.md`](rows/W299.md) |
 | W300 | The same producer-half deviation tree-wide, over a population measured small enough to close | framework agent | ✅ done — `1d14e8a` | [`rows/W300.md`](rows/W300.md) |
 | W301 | The rubric's self-certification block files a suite reading under the floor's name and still exits `0` | framework agent | ✅ done — `3191905` | [`rows/W301.md`](rows/W301.md) |
-| W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | in-progress — on `fix/W302-merge-path-image-reading` | [`rows/W302.md`](rows/W302.md) |
+| W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | ✅ done — `ecf0661` | [`rows/W302.md`](rows/W302.md) |
 | W303 | The renderer's `_RENDERERS` dispatch refuses a malformed block with a `KeyError` instead of by name, and reachability is unmeasured | framework agent | ✅ done — `544a165` | [`rows/W303.md`](rows/W303.md) |
 | W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | ✅ done — `fc176ae` | [`rows/W304.md`](rows/W304.md) |
 | W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | `todo` — `W303/1` | [`rows/W305.md`](rows/W305.md) |
+| W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | `todo` — `PO-94` | [`rows/W306.md`](rows/W306.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
