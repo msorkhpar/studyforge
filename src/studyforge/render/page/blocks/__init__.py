@@ -14,7 +14,8 @@ that hold other blocks.
 published because a test asserts what it is, not because a caller branches on it.
 
 **Depends on.** `archive.blocks` for the vocabulary, the three renderer modules,
-and `page.errors`. ⛔ The keys are the archive's and are never retyped here.
+`page.errors`, and `describe` to name a type this cannot use without quoting it.
+⛔ The keys are the archive's and are never retyped here.
 
 ## ⛔ Every block type is answered for, or this package will not import
 
@@ -27,6 +28,29 @@ the same reason and against the same list.
 ⛔ **And no type is claimed twice.** Two renderers for one type is a mapping
 whose answer depends on module import order, which is exactly the class of thing
 R10 forbids.
+
+## ⛔ A type that is not a NAME is refused here, never used as a key
+
+⚠️ **`RENDERERS.get(block_type)` cannot be *asked* about an unhashable value.**
+A block whose `type` arrived as a JSON array or object raised a bare
+`TypeError` out of this dispatcher instead of refusing — and `W303` measured
+that **reachable**: `archive.document.parse` and `unit.served.parse` both accept
+such a block, and `serve.routes.content` is the door it arrives by. ⭐ So the
+type is checked for being a **name** before it is used as a key, and the refusal
+**describes** what came instead rather than quoting it (R7) — a block's own
+fields are a corpus's material and can carry anything.
+
+⛔ **The two guards above are different inputs, and neither subsumes the
+other.** `isinstance(block, dict)` catches a block that is not an object;
+this one catches an object whose `type` is not a name.
+
+⭐ **What `W303` deliberately did NOT add is a guard inside `prose` or
+`figure`.** Their `_RENDERERS[block["type"]]` is unreachable with a bad key,
+**measured**: a renderer is entered only for a type this mapping already
+matched, so the key is present by the time it is indexed. ⚠️ A second guard
+there would be a second place the same guarantee is made, and the package's
+test asserts the property that keeps the first one sufficient — that no module
+declares a type its own dispatch cannot answer.
 
 ## ⛔ `RAW_TYPES` is derived from the module, never typed here
 
@@ -67,6 +91,7 @@ the one thing `narrate.speakable` exists to prevent.
 from __future__ import annotations
 
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
+from studyforge.describe import describe
 from studyforge.render.page.blocks import figure, prose, verbatim
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
@@ -151,6 +176,15 @@ def render_one(
     if not isinstance(block, dict):
         raise PageError(f"a block is an object; block {position} of this section is not")
     block_type = block.get("type")
+    # ⛔ W303: a type that is not a name cannot be looked up at all — an
+    # unhashable one makes `RENDERERS.get` raise `TypeError`, which escaped this
+    # dispatcher as an interpreter error rather than a page's refusal.
+    if not isinstance(block_type, str):
+        raise PageError(
+            f"block {position} of this section declares no usable block type; a "
+            f"type is one of the archive's names {list(BLOCK_TYPES)}, and this "
+            f"block carries {describe(block_type)}"
+        )
     renderer = RENDERERS.get(block_type)
     if renderer is None:
         raise PageError(
