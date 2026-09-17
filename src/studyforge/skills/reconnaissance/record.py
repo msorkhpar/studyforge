@@ -64,6 +64,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from studyforge.skills.reconnaissance.errors import inside_root
 from studyforge.skills.reconnaissance.inventory import Inventory
 from studyforge.skills.reconnaissance.regions import Regions, cut
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
@@ -153,7 +154,21 @@ def find(inventory: Inventory) -> Record | None:
 
 
 def read(path: Path, root: Path, targets: set[str]) -> Record | None:
-    """Read one candidate document, or return `None` if it records nothing."""
+    """Read one candidate document, or return `None` if it records nothing.
+
+    ⛔ **A `path` outside `root` is refused before anything is taken apart**
+    (`W220`). Three expressions below read `path` relative to `root`, and the
+    standard library's own failure for that writes **both** absolute paths into
+    its message — a home directory in a refusal is personal data (R7), and
+    `W217/2` measured this function doing it. ⭐ `errors.inside_root` carries
+    the test and the sentence, so the message lives once.
+
+    ⚠️ **Before the read, not after it, and that is a behaviour change on one
+    edge:** an unreadable path outside the root used to be a quiet `None`. It
+    is a caller mistake either way and R6 wants it loud. ⛔ What a *successful*
+    read returns is untouched.
+    """
+    inside_root(path, root)
     try:
         lines = path.read_text(encoding="utf-8").splitlines()
     except OSError, UnicodeDecodeError:  # pragma: no cover - reported by the walk

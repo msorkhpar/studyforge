@@ -14,6 +14,8 @@ import pytest
 
 from studyforge.corpus.manifest import Classification, parse
 from studyforge.skills.reconnaissance import find, survey, take
+from studyforge.skills.reconnaissance import record as record_module
+from studyforge.skills.reconnaissance.errors import ReconnaissanceRefused
 from studyforge.skills.reconnaissance.record import observe
 from studyforge.skills.reconnaissance.report import Uncertainty
 from tests.studyforge.skills.reconnaissance import sources
@@ -272,3 +274,58 @@ def test_sf02_accepts_the_draft_of_a_record_with_heading_form_entries(tmp_path):
     content = parse(json.dumps(sources.settled(headed))).content
     assert content.classify("src/3.md") is Classification.INCLUDED
     assert content.classify("README.md") is not Classification.INCLUDED
+
+
+# --------------------------------------------------------------------------
+# ⛔ a document outside the root is refused, and the refusal names no path
+# --------------------------------------------------------------------------
+
+
+def test_a_document_outside_the_root_is_refused_without_reproducing_its_path(tmp_path):
+    # ⛔ `W220`, from `W217/2`. The refusal used to be the standard library's,
+    # and `Path.relative_to` writes BOTH absolute paths into its message — one
+    # of them under a home directory, which is personal data (R7).
+    #
+    # ⚠️ **The poisoned document EXISTS**, and that is the whole point: the
+    # branch fires only after the read succeeds, so the containment that stops
+    # the emission census from ever minting such a directory is also what makes
+    # this latent and invisible there. The poison is minted inside this test's
+    # own temporary directory and named after a fabricated person.
+    root = sources.flat_prose(tmp_path / "c")
+    elsewhere = tmp_path / "Jane-Doe" / "material"
+    elsewhere.mkdir(parents=True)
+    document = elsewhere / "README.md"
+    document.write_text("# Somebody else's tree\n\n- [1. One](src/01.md)\n", encoding="utf-8")
+    assert document.is_file()
+
+    with pytest.raises(ReconnaissanceRefused) as refused:
+        record_module.read(document, root, {"src/01.md"})
+
+    message = str(refused.value)
+    for poison in ("Jane-Doe", str(document), str(elsewhere), str(tmp_path), str(root)):
+        assert poison not in message, f"the refusal reproduced {poison!r}"
+    # ⭐ Silent about the value, loud about the fault and the way out (R6).
+    assert "not inside" in message
+    assert "inventory.root" in message
+    # ⛔ Never `raise ... from`: `__cause__` would carry the standard library's
+    # message, with both paths in it, into every traceback this one appears in.
+    assert refused.value.__cause__ is None
+
+
+def test_the_root_handed_in_as_its_own_document_is_refused_too(tmp_path):
+    # ⚠️ Why the test is on `path.parent`: here `path.relative_to(root)` would
+    # answer `.` and raise nothing, while the parent is above the root.
+    root = sources.flat_prose(tmp_path / "c")
+    with pytest.raises(ReconnaissanceRefused):
+        record_module.read(root, root, set())
+
+
+def test_a_document_inside_the_root_still_returns_the_record_it_did_before(tmp_path):
+    # ⛔ The guard is on the refusal path only: what a successful read returns
+    # is untouched.
+    root = sources.flat_prose(tmp_path / "c")
+    targets = {f"src/{n:02d}.md" for n in range(1, 20)}
+    found = record_module.read(root / "README.md", root, targets)
+    assert found.path.as_posix() == "README.md"
+    assert len(found.entries) == 19
+    assert found.title == "A Prose Course"
