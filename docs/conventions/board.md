@@ -321,6 +321,50 @@ true at the ref it was taken at, forever; a REGISTER is true NOW or it is wrong*
 ⚠️ **and Ruling 97 was never the right instrument for a document every agent opens
 as the CURRENT state, which is what a board is FOR.**
 
+#### ⛔ `W302` — the merge path READS BOTH ENVIRONMENTS on the MERGED TREE, and a runner in one office's scratchpad is not a gate
+
+⛔ **Ruling 231(b) above puts the freshness check IN THE MERGE PATH rather than in a habit.
+This is the same clause, for the thing the floor cannot answer at all.** ⚠️ **The defect it
+closes is measured and it is this register's own: a release tip was certified on a HOST
+floor that printed, in its own output, that it carried no lint signal and that the two
+gates in `tests/test_repository.py` had SKIPPED rather than passed — and the wave merged.**
+⭐ **The sentence was there, in full, both times, and a printed warning is not a gate** —
+[`W296`](../tasks/rows/W296.md)'s family exactly.
+
+```bash
+python3 -m tools.mergegate <branch> --body <body-file>
+# ⛔ exit 0 merged · 1 a gate refused and NOTHING was committed · 2 nothing was read
+```
+
+⛔ **It stages with `--no-commit` and reads the MERGED tree, never `HEAD`** — ⚠️ most of
+that tip's deviations ARRIVED WITH CARRIERS, so a `HEAD`-side reading would have passed
+every one of them. ⭐ **A red reading ends in `git merge --abort`, and the restore is then
+VERIFIED BY READING the tree** rather than by the abort's own exit code
+([Ruling 287](review-rubric.md#ruling-287-the-container-cannot-restore-and-a-restore-whose-exit-code-is-unread-is-not-a-restore)).
+
+⛔ **THE PAIR IS THE UNIT AND NEITHER ENVIRONMENT MAY BE SWAPPED FOR THE OTHER.** ⭐ The
+host cannot answer the `ruff` enforcement
+([Ruling 78](review-rubric.md#ruling-78-the-floor-prints-the-lint-state-including-its-absence))
+or any in-image assertion; the pinned image cannot reach the sibling and workspace ones,
+because it mounts only the checkout. ⚠️ **A gate that swapped one for the other would trade
+a blind spot rather than close it**
+([Ruling 326](review-rubric.md#ruling-326-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it)).
+⛔ **What each environment REACHES is a property of the host and not of the branch, so it
+is a DISCLOSURE and never gated here**
+([Ruling 328](review-rubric.md#ruling-328-a-gates-predicate-ranges-over-state-the-branch-controls-a-property-over-host-state-is-a-disclosure-and-never-a-gate));
+the suite already prints it.
+
+⛔ **It is a COMMAND and not a floor check, and that is forced rather than chosen:** a floor
+check may not read a branch position
+([Ruling 80](review-rubric.md#2e-ruling-80-a-floor-checks-verdict-may-not-depend-on-untracked-state)),
+and one that shelled into git and found nothing would return the PASS reading from an empty
+population
+([Ruling 191](review-rubric.md#ruling-191-cto-round-49-a-control-owes-inhabitation-and-an-empty-population-returns-the-pass-reading-rather-than-no-reading)).
+⭐ **WHAT IT IS NOT: a second copy of the lint rules.** `tests/test_repository.py` already
+fails the build wherever `ruff` exists; this RUNS that and BRANCHES ON ITS EXIT. ⛔ **And it
+reads the tree being merged, NEVER history** — a report over landed tips is a backlog no
+office may clear.
+
 ### ⛔ Ruling 174 — Ruling 106's freeze attaches when material BECOMES a record, not while it is being moved into one
 
 > ⭐ **Re-addressing a link inside material that is being moved into
