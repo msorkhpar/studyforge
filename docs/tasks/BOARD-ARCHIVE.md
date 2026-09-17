@@ -26230,3 +26230,58 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 ### ⭐ IN FLIGHT
 
 ⭐ **`W309` dispatched at `ca53edc` to Developer 1, the user's first item this wave; the ISO milestone follows its close.**
+
+## PO round 101
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W309` | dev1 | `b19d75e` | ⭐ **merged at `52ff6bc`** — every `mergegate` gate GREEN on the MERGED tree |
+
+⭐ **EVERY CHECK IN `CHECKS` IS ANSWERED FOR, AND A NEW ONE CANNOT LAND UNANSWERED.** ⛔ **Checks whose own notice already prints the denominator are REGISTERED beside it; the rest have their population EXTRACTED into one named function that the check and `vacuity_notice` both call.** ⭐ **The notice is SILENT over an inhabited tree — this repository included — and one line naming only the empty populations otherwise; never a finding.**
+
+⭐ **VERIFIED BY THIS REGISTER, NOT INHERITED:** the surface the row's own, touching neither the board, the archive, the rows nor the closed identity arm; every commit authored by the `dev1` placeholder; identity and home-path probes over the diff and the messages absent; each extraction moving the check's own skip condition UNCHANGED, read diff by diff; the tests read against the handoff's prose.
+
+### ⛔ `PO-101/1` — ONE SENTENCE IN THE HANDOFF NAMES THE WRONG GATE
+
+⚠️ **Decision 2 says registering a pairing *"lets the FLOOR refuse an unanswered new check"*.** ⛔ **The floor refuses nothing here: `vacuity_notice` is a NOTICE, and what fails on an unanswered check is the SUITE — `test_every_check_is_answered_for`.** ⭐ **The module's own comment in `CHECKS` says it correctly, and the office's hand-back scoped every other claim to exactly what its tests establish.** ⚠️ **Closed rather than sent back: the behaviour is right and the suite is a merge gate, so the refusal is real — only its NAME is wrong, and a handoff is the durable record the next office reads.**
+
+### ⭐ FINDINGS, DISPOSED OF
+
+| id | disposition |
+|---|---|
+| `W309/1` `[local]` | ⭐ **accepted as a finding, no row** — a docstring ordinal in `personal_data/__init__.py` off by one; it rides the next row that owns that package |
+| `W309/2` `[local]` | ⭐ **a cost knowingly taken** — the notice re-walks populations its checks walked; caching is refused for `W307/2`'s reason |
+
+### W309 — A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W309.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W307` PROVED ONE CHECK COULD RETURN A CLEAN VERDICT HAVING COMPARED NOTHING. NOTHING ESTABLISHES THAT THE OTHERS CANNOT.**
+
+### ⭐ WHY IT IS A ROW AND NOT A SWEEP SOMEBODY DOES ONCE
+
+⭐ **Raised as `W307/3` by the office that had just closed the instance**, against `tools/quality/__init__.py`'s `CHECKS`. ⛔ **`check_personal_data` was not special — it was merely the check with NO NOTICE AT ALL, which is why its silence was the one that got noticed.**
+
+⚠️ **THE CLASS, STATED ONCE: a check whose population can be EMPTY, or whose comparison set can be EMPTY, returns the same verdict as one that compared and found nothing.** ⭐ **Ruling 191 names it — *an empty population is never a pass* — and this wave has now met it in `W296`, `W301`, `W302` and `W307`.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every check in `CHECKS` is ANSWERED FOR: either its verdict cannot be vacuous, or it DISCLOSES when it was.** ⭐ **The answer may be *"this one cannot"*, argued — a sweep that finds nothing is a reading, not a failure.**
+2. ⛔ **Asserted both ways (R12):** a check with an empty population discloses it; one with an inhabited population does not claim to be vacuous.
+3. ⚠️ **It must NOT become a second notice per check, printed always.** ⛔ **The floor's output is read by every agent at session start; noise there is a cost paid on every run.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A FAILURE FOR ANY CHECK THAT LEGITIMATELY FINDS NOTHING.** ⭐ **`W307`'s own shape is the precedent: an unarmed arm is CORRECT in the image, so it is a NOTICE and never a finding.**
+
+⛔ **AND NOT A REWRITE OF `W307`'s ARM.** ⭐ **That one is closed and its disclosure landed; this row is about the ones nobody has looked at.**
+
+[the mint](#po-round-97)
+
+#### ⭐ CLOSED — PO ROUND 101
+
+⭐ **Merged at `52ff6bc`.** ⛔ **Every floor check answers for the run where it compared nothing — registered beside a notice that already says so, or disclosed by one notice that is SILENT while every population is inhabited.**
