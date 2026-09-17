@@ -24913,3 +24913,33 @@ tools/quality/handoffs/…             handoff-title  demanded `# W188 + W183 �
 #### ⭐ CLOSED — PO ROUND 90
 
 ⭐ **Merged at `a3987cf`, TERMINAL by predicate `C`, on the user's ruling of 2026-09-16 to VENDOR rather than download.** ⭐ **`prism.js` is re-vendored at 1.30.0, unmodified apart from its header, with a control asserting the committed body is byte-identical to the recorded concatenation.** ⛔ **The ORDER is measured and asserted, not described: `markup` must precede `javascript`, because with markup last an inlined script body stays bare, the tags still highlight, and NOTHING reports an error.** ⚠️ **One contract change is disclosed: `HEADER_CHARS` widens, because at this many declared names the declaration lines no longer fit.** ⚠️ **`W295/1` is STALE rather than open — it reports that no row file exists and the Scheduled cell reads `pending`, both true at its cut and both answered by round 89 merging beneath it.** ⛔ **Its handoff needed a fix-forward at `e331189`: `PO-90/1`.**
+
+## PO round 91
+
+⭐ **Cut at `5fca2ea`, the release tip after PO round 90 and the pin advance.** ⚠️ **THE HEADING CARRIES NO CLOSE LIST, DELIBERATELY** — pointers minted here resolve to `#po-round-91`.
+
+### ⛔ 1 — `PO-91/1`, THIS OFFICE'S OWN DEFECT: a pin left stale by the round that closed its task
+
+⛔ **PO round 89 CLOSED `ISO-12` and did NOT advance `workspace.json`'s ISO pin.** ⭐ **`W244`'s mechanism is that the pin advances at each integration round's merge**, and integration round 15 moved ISO's HEAD when `ISO-12` landed. ⚠️ **So the release tip read RED on `tools.workspace verify` while the floor, the suite, `last_pointer` and `corroborate` all read GREEN** — a gate that fails alone and for a true reason, which is the best case of a bad case.
+
+⭐ **Advancing a pin ASSERTS the new HEAD is intended, and it is:** the user ruled on 2026-09-16 that `ISO-12`'s generated narration be committed, and the coordinator VERIFIED that commit — clips and record tracked, tree clean, the repository's own `verify.py` exit `0`, `origin/main` unmoved — before closing the task. ⭐ **Advanced at `5fca2ea`.**
+
+⛔ **THE LESSON, and it is the second of its family this wave:** a register round that CLOSES an integration task must advance that component's pin IN THE SAME ROUND. ⚠️ **Round 87 did exactly that for integration round 14; round 89 did not for round 15, and nothing but `workspace verify` could tell.**
+
+### ⭐ 2 — CLOSES
+
+⛔ **NONE.** ⭐ Round 90 closed this wave's six rows; this round opens the next.
+
+### ⭐ 3 — DISPATCH
+
+| carrier | office | rows |
+|---|---|---|
+| `fix/W297-W301-read-path-guard-and-rubric-block` | Developer 1 | `W297`, `W301` |
+| `fix/W298-units-dirname-single-minter` | Developer 2 | `W298` |
+| `fix/W299-validate-surface-names` | Developer 3 | `W299` |
+
+⛔ **`W300` IS HELD, and the ground is a COLLISION rather than a priority:** it closes the producer-half deviation **tree-wide**, so it would touch the very package surfaces `W298` and `W299` are changing in this wave. ⭐ **Two branches sharing a file need two different exemptions to merge, and the cheaper answer is to sequence them.** ⚠️ **It is dispatchable the moment those two land.**
+
+⚠️ **`W90`, `W118` and `W198` sit AHEAD in the queue and are again NOT dispatched** (Ruling 75 requires this be said): ⛔ **none is a developer row** — a `toc_api` design decision, a PO row by its own text, and a row owing a contract decision. ⭐ **The *slot no open-step row can fill* case, unchanged.**
+
+⭐ **The `W278` trap does NOT apply to this wave and that was checked rather than assumed:** every row file these carriers will cite already exists at `5fca2ea`, so no citation of theirs can become a bare citation when this round merges.
