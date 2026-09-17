@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W287` + `W288` | Developer 2 | `fix/W287-W288-plan-reads-the-narration-it-can-see` @ `wt/dev2` | 0 @ `b8f8d00` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -77,7 +76,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W300`, `W303`, `W304` LEFT at `1d14e8a`, `544a165`, `fc176ae`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **They were [ratified](BOARD-ARCHIVE.md#po-round-92) in the round that named them, as the wave before them was [in round 91](BOARD-ARCHIVE.md#po-round-91).**
-⭐ **`W309` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-101), after `W310` [closed](BOARD-ARCHIVE.md#po-round-99).** ⛔ **Every floor check now answers for the run where it compared nothing, silently when its population is inhabited.**
+⭐ **`W287` + `W288` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-102), after `W309` [closed](BOARD-ARCHIVE.md#po-round-101) and `W310` [closed](BOARD-ARCHIVE.md#po-round-99).** ⛔ **`plan` measures the narration on disk and names a copy only where the record locates it.**
 
 <!-- offices -->
 | Checkout |
@@ -122,6 +121,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 55 | `W293`, `W294` | ⭐ **round 88's mints, each jumping nobody** | [88](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed) |
 | 56 | `W296` | ⭐ **round 89's mint, jumping nobody** — ⛔ **`W295` is not here: it was DISPATCHED in this round, on the user's ruling, and its cell is in flight** | [89](BOARD-ARCHIVE.md#po-round-89) |
 | 57 | `W297`–`W301` | ⭐ **round 90's mints, each jumping nobody** | [90](BOARD-ARCHIVE.md#po-round-90) |
+| 58 | `W311` | ⭐ **round 102's mint, jumping nobody** | [102](BOARD-ARCHIVE.md#po-round-102) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -432,8 +432,8 @@ else.**
 | W284 | `verdict.py`'s `DISAGREE` sentences describe a declaring merge subject as `Merge {branch}:`, a form no recent merge uses | Developer 1 | ✅ done — `35b2e81` | [`rows/W284.md`](rows/W284.md) |
 | W285 | `delivery.py` retypes the milestone shape inline, and `sibling_owned` reads a row list that skips a refused row in silence | Developer 2 | ✅ done — `620faf9` | [`rows/W285.md`](rows/W285.md) |
 | W286 | `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses | framework agent | `todo` — `INT-14/1` | [`rows/W286.md`](rows/W286.md) |
-| W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | in-progress — on `fix/W287-W288-plan-reads-the-narration-it-can-see` | [`rows/W287.md`](rows/W287.md) |
-| W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | in-progress — on `fix/W287-W288-plan-reads-the-narration-it-can-see` | [`rows/W288.md`](rows/W288.md) |
+| W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | ✅ done — `0fce84a` | [`rows/W287.md`](rows/W287.md) |
+| W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | ✅ done — `0fce84a` | [`rows/W288.md`](rows/W288.md) |
 | W289 | `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises `AttributeError` through the builder | framework agent | ✅ done — `b31e780` | [`rows/W289.md`](rows/W289.md) |
 | W290 | `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable | framework agent | ✅ done — `b31e780` | [`rows/W290.md`](rows/W290.md) |
 | W291 | `board/delivery.py` types the capability-id shape inline, a second copy beside the plan parse's heading pattern | framework agent | `todo` — `W285/2` | [`rows/W291.md`](rows/W291.md) |
@@ -455,6 +455,7 @@ else.**
 | W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | ✅ done — `d65bc2d` | [`rows/W307.md`](rows/W307.md) |
 | W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | ✅ done — `da02903` | [`rows/W308.md`](rows/W308.md) |
 | W309 | A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for | framework agent | ✅ done — `52ff6bc` | [`rows/W309.md`](rows/W309.md) |
+| W311 | The media footprint weighs only the declared units' media directories, so a clip the narration record locates anywhere else is on disk, committed and never weighed | framework agent | `todo` — `W287/3` | [`rows/W311.md`](rows/W311.md) |
 | W310 | The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently | framework agent | ✅ done — `870ee8f` | [`rows/W310.md`](rows/W310.md) |
 <!-- /register -->
 
