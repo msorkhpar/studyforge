@@ -23,9 +23,10 @@ NOT taken are NAMED in the reading, never silently dropped: *nothing was printed
 `docs/conventions/board.md`, beside Ruling 231(b).
 
 **Depends on.** `argparse`, `dataclasses`, `pathlib`, `subprocess` and `sys` — the standard
-library — and `git` on the path. The gates it RUNS are subprocesses named in `GATES`; this
-module imports neither `studyforge` nor `tools.quality`, so a tree too broken to import is
-still one whose merge is refused rather than one that crashes the gate.
+library — `git` on the path, and `tools.authorship` for the one question this file does not
+answer. The gates it RUNS are subprocesses named in `GATES`; this module imports neither
+`studyforge` nor `tools.quality`, so a tree too broken to import is still one whose merge is
+refused rather than one that crashes the gate.
 
 ## ⛔ WHY IT IS A COMMAND AND NOT A FLOOR CHECK — the wall `W296` met
 
@@ -65,6 +66,14 @@ suite already prints it (`report.unreachable_population`), and nothing here read
   backlog over frozen tips is one no office may clear (`subject.py`'s own clause).
 - ⛔ **A GATE THAT COMMITS ANYTHING ON A RED READING.** `--no-commit` is what makes the
   refusal free: there is no commit to undo, and `--abort` restores exactly.
+
+## ⛔ WHO WROTE IT IS READ TOO, AND IT IS A SEPARATE MODULE (`W308`)
+
+⭐ **`tools/authorship.py` answers *who wrote the commits this merge introduces*; this file
+answers *what the tree that merge produces reads*** — the seam is that question, and the
+argument lives THERE rather than in two copies (Ruling 261: a SPLIT, never a trim).
+⚠️ It runs BEFORE the merge is staged, so its refusal leaves no tree to restore, which is
+why `Outcome.verdict` answers it first and never consults `restored`.
 """
 
 from __future__ import annotations
@@ -75,6 +84,8 @@ import sys
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+
+from tools.authorship import Authorship, read_authorship, render_authorship
 
 #: Exit codes. ⛔ `UNREAD` is a third state and is never a pass (Ruling 191): a run that
 #: staged nothing, read no gate, or could not verify its own restore lands here.
@@ -153,6 +164,8 @@ class Outcome:
     tip_before: str = ""
     tip_after: str = ""
     restored: bool | None = None
+    #: ⭐ `W308`: who wrote the commits this merge introduces, read BEFORE anything is staged.
+    authorship: Authorship = Authorship()
 
     @property
     def red(self) -> tuple[Reading, ...]:
@@ -162,6 +175,10 @@ class Outcome:
     @property
     def verdict(self) -> int:
         """Return the exit code: merged, refused, or unread when nothing was read."""
+        # ⛔ `W308` FIRST, and it needs no `restored`: the authorship gate runs before the
+        #    merge is staged, so a refusal here leaves a tree nothing ever touched.
+        if self.authorship.crossed:
+            return REFUSED
         if self.unread or not self.readings:
             return UNREAD
         if self.red:
@@ -244,6 +261,14 @@ def stage_and_read(
             ),
             tip_before=tip,
         )
+    # ⛔ `W308`, and it is read BEFORE the merge is staged: a carrier whose commits are not
+    #    the office's own is refused while there is still nothing to abort. ⭐ The population
+    #    is `HEAD..branch` — what this merge INTRODUCES — so no landed commit is ever judged.
+    author = read_authorship(root, branch)
+    if author.unread:
+        return Outcome(unread=author.unread, tip_before=tip)
+    if author.crossed:
+        return Outcome(authorship=author, tip_before=tip)
     merged, _ = _git(root, "merge", "--no-ff", "--no-commit", branch)
     if merged != 0:
         _git(root, "merge", "--abort")
@@ -265,10 +290,11 @@ def stage_and_read(
                     f"{later.name} [{later.environment}]" for later in gates[index + 1 :]
                 ),
                 tip_before=tip,
+                authorship=author,
             )
             _git(root, "merge", "--abort")
             return _verify_restore(root, outcome)
-    return Outcome(readings=tuple(readings), tip_before=tip)
+    return Outcome(readings=tuple(readings), tip_before=tip, authorship=author)
 
 
 def _verify_restore(root: Path, outcome: Outcome) -> Outcome:
@@ -282,6 +308,7 @@ def _verify_restore(root: Path, outcome: Outcome) -> Outcome:
         tip_before=outcome.tip_before,
         tip_after=after,
         restored=restored,
+        authorship=outcome.authorship,
     )
 
 
@@ -295,7 +322,13 @@ def render(outcome: Outcome) -> list[str]:
     """Return the lines the command prints: what was read, in which environment, then why."""
     if outcome.unread:
         return [f"⛔ UNREAD: {outcome.unread}, so no merge was gated (exit 2)"]
-    lines = [f"merge gate: {len(outcome.readings)} gate(s) read on the MERGED tree, never on HEAD"]
+    # ⭐ `W308`: WHO WROTE IT, with its population, BEFORE any gate's reading (Ruling 191(a)).
+    lines = render_authorship(outcome.authorship)
+    if outcome.authorship.crossed:
+        return lines
+    lines.append(
+        f"merge gate: {len(outcome.readings)} gate(s) read on the MERGED tree, never on HEAD"
+    )
     for reading in outcome.readings:
         state = "GREEN" if reading.green else "⛔ RED  "
         lines.append(

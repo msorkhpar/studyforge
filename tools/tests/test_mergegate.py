@@ -43,6 +43,16 @@ _IDENTITY = ("-c", "user.name=test", "-c", "user.email=test@example.invalid")
 #: discriminator between reading the merge and reading `HEAD`.
 BRANCH_FILE = "from-the-branch.txt"
 
+#: ⛔ `W308`: a FABRICATED stand-in for a real, configured MACHINE identity — the shape a
+#: REGISTER round's own commits carry. It names nobody, and its domain carries NO DOT, so the
+#: floor's own email shape cannot match it (R7). ⭐ The standing ruling PERMITS this on a
+#: local commit, so the gate never refuses it.
+_MACHINE = ("-c", "user.name=Jane Doe", "-c", "user.email=jane.doe@workstation")
+
+#: ⛔ A SECOND office. The `release` fixture's own commits are `test <test@example.invalid>`,
+#: so one of these on `branch` is TWO office identities in one merge — the row's subject.
+_OTHER_OFFICE = ("-c", "user.name=dev9", "-c", "user.email=dev9@example.invalid")
+
 
 def _git(cwd: Path, *arguments: str) -> str:
     result = run([git(), *_IDENTITY, "-c", "commit.gpgsign=false", *arguments], cwd=cwd)
@@ -55,6 +65,14 @@ def _commit(cwd: Path, name: str, body: str = "") -> str:
     _git(cwd, "add", name)
     _git(cwd, "commit", "-q", "-m", name)
     return _git(cwd, "rev-parse", "HEAD")
+
+
+def _commit_as(cwd: Path, identity: tuple[str, ...], name: str) -> None:
+    """Commit `name` under `identity`, passed PER INVOCATION and configured nowhere."""
+    (cwd / name).write_text(f"{name}\n", encoding="utf-8")
+    _git(cwd, "add", name)
+    result = run([git(), *identity, "-c", "commit.gpgsign=false", "commit", "-q", "-m", name], cwd)
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 @pytest.fixture
@@ -106,6 +124,10 @@ def test_it_is_a_COMMAND_and_not_a_floor_check():
 def test_it_reads_NO_HISTORY(tmp_path):
     # ⛔ Clause 4: the gate reads the tree being merged, never landed tips. A report over
     #    frozen tips is a backlog no office may clear.
+    # ⚠️ `W308`'s authorship read is BOUNDED to `HEAD..<branch>` and lives in
+    #    `tools/authorship.py`, so THIS file stays clear of every history verb below. ⛔ The
+    #    bound is not claimed by grepping the sibling — it is asserted BEHAVIOURALLY, by a
+    #    plant, in `test_W308_a_foreign_author_line_ALREADY_LANDED_does_not_refuse`.
     source = (repository_root() / "tools/mergegate.py").read_text(encoding="utf-8")
     for verb in ('"log"', '"rev-list"', '"shortlog"', '"blame"'):
         assert verb not in source, f"the gate reads history through {verb}"
@@ -316,6 +338,87 @@ def test_a_refusal_NAMES_THE_GATE_and_says_nothing_was_committed(release):
     assert "⛔ REFUSED: probe [host]" in printed
     assert "nothing was committed" in printed
     assert "⭐ RESTORED" in printed
+
+
+# --- `W308`: WHO WROTE the commits this merge introduces --------------------------------
+
+
+def _plant_a_second_office(release: Path) -> None:
+    """Put one commit by a SECOND office on `branch`, and go back to the release tip."""
+    _git(release, "checkout", "-q", "branch")
+    _commit_as(release, _OTHER_OFFICE, "planted.txt")
+    _git(release, "checkout", "-q", "release")
+
+
+def test_W308_a_SECOND_OFFICE_on_the_carrier_is_REFUSED_BEFORE_anything_is_staged(release):
+    # ⛔ The refusal is free: no merge was staged, so there is no tree to restore and no
+    #    gate was spent. ⭐ The population is asserted INHABITED first (Ruling 191).
+    _plant_a_second_office(release)
+    outcome = stage_and_read(release, "branch", _green, ONE_GATE)
+    assert outcome.authorship.population == 2, "the plant did not take"
+    assert outcome.authorship.offices == 2
+    assert outcome.verdict == REFUSED
+    assert len(outcome.authorship.crossed) == 1
+    assert outcome.readings == (), "a gate was run after authorship had already refused"
+    assert not (release / BRANCH_FILE).exists(), "a merge was staged over a refused carrier"
+    assert _git(release, "status", "--porcelain", "--untracked-files=no") == ""
+
+
+def test_W308_the_refusal_NAMES_THE_COMMIT_and_never_the_identity(release):
+    _plant_a_second_office(release)
+    outcome = stage_and_read(release, "branch", _green, ONE_GATE)
+    printed = "\n".join(render(outcome))
+    assert outcome.authorship.crossed[0] in printed
+    # ⚠️ The identifying halves — both offices' names — must not appear. ⭐ The reserved
+    #    DOMAIN does, in the generic remedy template `<office>@example.invalid`, which is a
+    #    form rather than anybody's address.
+    for value in ("dev9", "test@"):
+        assert value not in printed, "the merge gate printed the author line it refused"
+
+
+def test_W308_a_REGISTER_merge_under_a_REAL_identity_PASSES(release):
+    # ⛔ THE DIRECTION THAT MUST NOT INVERT, and the one the first form of this gate got
+    #    wrong: a round branch's own commits are the coordinator's, under the machine's real
+    #    identity, which the standing ruling PERMITS because nothing is ever pushed.
+    #    ⚠️ Refusing this would wedge the merge path — the repair for `mergegate` could not
+    #    itself be merged through `mergegate`.
+    _git(release, "checkout", "-q", "-b", "chore/round")
+    _commit_as(release, _MACHINE, "round.txt")
+    _git(release, "checkout", "-q", "release")
+    outcome = stage_and_read(release, "chore/round", _green, ONE_GATE)
+    assert outcome.authorship.population == 1, "the round is empty, so its green says nothing"
+    assert outcome.authorship.offices == 0, "a person's line was counted as an office's"
+    assert outcome.verdict == MERGED
+    _git(release, "merge", "--abort")
+
+
+def test_W308_a_second_office_ALREADY_LANDED_does_not_refuse(release):
+    # ⛔ The gate is not a report over landed tips: a backlog no office may clear.
+    _commit_as(release, _OTHER_OFFICE, "landed.txt")
+    outcome = stage_and_read(release, "branch", _green, ONE_GATE)
+    assert outcome.authorship.population == 1, "the release line entered the population"
+    assert outcome.verdict == MERGED
+    _git(release, "merge", "--abort")
+
+
+def test_W308_a_branch_that_INTRODUCES_NOTHING_is_UNREAD_and_never_MERGED(release):
+    # ⛔ Ruling 191: a gate that read no commit must not return the pass code.
+    _git(release, "checkout", "-q", "-b", "nothing-new")
+    _git(release, "checkout", "-q", "release")
+    outcome = stage_and_read(release, "nothing-new", _green, ONE_GATE)
+    assert outcome.verdict == UNREAD
+    assert "introduces no commit" in render(outcome)[0]
+    assert not (release / BRANCH_FILE).exists()
+
+
+def test_W308_a_GREEN_run_still_PRINTS_what_authorship_read(release):
+    # ⛔ FND-07's rule: "nothing was printed" and "there was nothing to say" must not be the
+    #    same line. A silent authorship gate is indistinguishable from an absent one.
+    outcome = stage_and_read(release, "branch", _green, ONE_GATE)
+    printed = "\n".join(render(outcome))
+    assert "authorship: 1 commit(s)" in printed
+    assert "ONE OFFICE AT MOST" in printed
+    _git(release, "merge", "--abort")
 
 
 # --- the command -----------------------------------------------------------------------
