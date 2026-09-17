@@ -1,4 +1,4 @@
-r"""The files a page shows rather than says — put where the page looks for them.
+r"""The files a page shows or hands over — put where the page looks for them.
 
 **What it does.** Copies each file a built page references from the archive
 into the media directory the page addresses, minting that directory and no
@@ -48,11 +48,22 @@ anywhere. ⭐ **So the reference goes into `Written.missing` and the build carri
 on.** Stopping would refuse to build a corpus that is legally incomplete; and
 whether a build stops or drains is not this module's decision.
 
+## ⛔ An ATTACHMENT is copied because the page LINKS it (`W215`)
+
+⚠️ Spec C4's companion files — a dataset a lesson loads, a notebook — are
+declared in the archive and shown by no block. ⭐ They are copied on exactly the
+same ground as every other file here: **the page emitted a reference to them**,
+`render.page.section` linked them, and this pass follows what a page emits. ⛔
+The order matters and is Ruling 99's: `studyforge plan` declares the directory,
+the renderer emits the link, and this copies into it — a copy with no plan line
+breaks the agreement, and bytes no page links are a footprint `SF-32` weighs and
+a reader can never reach.
+
 ## ⛔ A unit gets a media directory only for a kind it has files of (`W268`)
 
-⚠️ **This pass used to mint all four directories for every declared unit**, so
-a corpus with no media got four empty directories per unit, and git cannot
-track an empty directory: a built checkout differed from its clone. ⭐ A
+⚠️ **This pass used to mint every declared directory for every declared unit**,
+so a corpus with no media got one empty directory per kind per unit, and git
+cannot track an empty directory: a built checkout differed from its clone. ⭐ A
 directory is now minted only when a copy fills it. ⛔ **Every declared
 directory is still asked about** (`writing.stand`), so a reader's file standing
 where one belongs is named whether or not anything would fill it (R3), and a
@@ -67,6 +78,7 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.archive.blocks import BLOCK_FIELDS, walk
 from studyforge.corpus.placement import (
+    ATTACHMENTS_DIRNAME,
     IMAGES_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
     VIDEO_DIRNAME,
@@ -177,6 +189,28 @@ def references(document: dict) -> Iterator[Reference]:
                 continue
             yield Reference(_kind(str(block.get("type"))), block.get("src"))
         yield from _deck(section.get("video"))
+        yield from _attachments(section.get("attachments"))
+
+
+def _attachments(attachments: object) -> Iterator[Reference]:
+    """Yield every companion file this section's page links (`W215`, spec C4).
+
+    ⛔ **`local` and never `remote`**: `remote` is the address the source served,
+    kept so a re-fetch is possible from the document alone, and nothing on the
+    page reaches for one — the rule `DECK_KEYS` states one function along.
+
+    ⚠️ **A `local` that is not a location inside the source is REFUSED here
+    rather than skipped**, because `render.page.section` refuses it too: an
+    attachment is a file the archive says it fetched, so the two halves have to
+    agree about which files exist. ⛔ A remote `src` on a BLOCK is the different
+    case and is skipped above — there the page renders a link the reader chooses
+    to follow, and there is nothing on disk to place.
+    """
+    if not isinstance(attachments, list):
+        return
+    for entry in attachments:
+        if isinstance(entry, dict):
+            yield Reference(ATTACHMENTS_DIRNAME, entry.get("local"))
 
 
 def _deck(video: object) -> Iterator[Reference]:

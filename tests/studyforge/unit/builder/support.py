@@ -46,7 +46,26 @@ EXERCISE = {
 }
 
 
-def lesson(ordinal: int = 1, *, title: str = "A lesson", video: dict | None = None) -> dict:
+#: ⭐ `W215`: one declared companion file, in the archive's own entry shape
+#: (`archive.document.MEDIA_ENTRY_KEYS`). ⚠️ `remote` is provenance and must
+#: never reach a page, so it is a value here rather than `None`.
+ATTACHMENT = {
+    "remote": "https://example.invalid/small-graph.ttl",
+    "local": "media/small-graph.ttl",
+    "sha256": "0" * 64,
+    "bytes": 103,
+    "content_type": "text/turtle",
+    "kind": "dataset",
+}
+
+
+def lesson(
+    ordinal: int = 1,
+    *,
+    title: str = "A lesson",
+    video: dict | None = None,
+    attachments: list | None = None,
+) -> dict:
     """One valid lesson document."""
     return archive_document(
         source="demo",
@@ -59,6 +78,7 @@ def lesson(ordinal: int = 1, *, title: str = "A lesson", video: dict | None = No
         title=title,
         blocks=list(LESSON_BLOCKS),
         video=video,
+        attachments=attachments,
     )
 
 

@@ -17,6 +17,7 @@ PUBLIC_SURFACE = frozenset(
     {
         "ARCHIVE_DIRNAME",
         "ASSETS_DIRNAME",
+        "ATTACHMENTS_DIRNAME",
         "AUDIO_DIRNAME",
         "CONTAINER_SUFFIX",
         "GENERATED_IGNORE_HOME",

@@ -1,8 +1,9 @@
 """`sibling` — artifacts land beside the source file they were generated from.
 
-**What it does.** Places a unit's page, audio, images, video and practice in the
-directory holding that unit's `origin`, named from its container's address and
-the unit's own stem (`names.contained_stem`).
+**What it does.** Places a unit's page and every kind of its own files — audio,
+images, video, practice and attachments — in the directory holding that unit's
+`origin`, named from its container's address and the unit's own stem
+(`names.contained_stem`).
 
 **How you use it.** `profile_for("sibling")`.
 
@@ -29,8 +30,8 @@ moves, by exactly that prefix and nothing else.
 
 ⛔ **Many units share one directory here**, so `audio/` cannot be a
 subdirectory the way it is under `tree` — twenty units would collide in one
-folder and no clip could be told from another. Each unit's media sits in
-`<stem>.audio/`, `<stem>.images/`, `<stem>.video/` and `<stem>.practice/`, so
+folder and no clip could be told from another. Each unit's media sits in its own
+`<stem>.<kind>/` — `<stem>.audio/` and one directory per further kind — so
 every artifact of one unit sorts together beside its page and beside its
 source, and a reader deleting a unit deletes one contiguous run of names.
 
@@ -44,6 +45,7 @@ from __future__ import annotations
 
 from studyforge.corpus.placement.locations import ContainerLocations, UnitLocations
 from studyforge.corpus.placement.names import (
+    ATTACHMENTS_DIRNAME,
     AUDIO_DIRNAME,
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
@@ -72,6 +74,7 @@ class SiblingProfile(Profile):
             images=directory / f"{stem}.{IMAGES_DIRNAME}",
             video=directory / f"{stem}.{VIDEO_DIRNAME}",
             practice=directory / f"{stem}.{PRACTICE_DIRNAME}",
+            attachments=directory / f"{stem}.{ATTACHMENTS_DIRNAME}",
         )
 
     def container(self, address, titles, *, origin=None) -> ContainerLocations:
@@ -81,7 +84,7 @@ class SiblingProfile(Profile):
         )
 
     def media_ignore_lines(self) -> tuple[str, ...]:
-        """`*.audio/` and its three siblings, unanchored because the material is.
+        """`*.audio/` and its siblings, one per kind, unanchored because the material is.
 
         ⭐ **This is Ruling 91's cheapest half.** Under this profile the
         generated names are the unit's own stem, so a corpus cannot enumerate

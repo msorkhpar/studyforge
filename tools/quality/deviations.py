@@ -72,6 +72,7 @@ DECLARED: dict[str, Declaration] = {
                 "BLOCK_TYPES",
                 "CONTAINER_TYPES",
                 "KINDS",
+                "MEDIA_ENTRY_KEYS",
                 "PersonalDataLeak",
                 "VIDEO_KEYS",
                 "assert_clean",

@@ -7,7 +7,7 @@ import json
 import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.unit.builder import build, render
+from studyforge.unit.builder import API, build, render
 from studyforge.unit.builder.material import of
 from studyforge.unit.errors import ContentError
 from studyforge.unit.served import UNIT_FILENAME, load, parse
@@ -28,7 +28,7 @@ def test_a_document_this_build_wrote_reads_back_unchanged():
 def test_load_reads_it_from_disk(tmp_path):
     path = tmp_path / UNIT_FILENAME
     path.write_text(render(document()), encoding="utf-8")
-    assert load(path)["api"] == 1
+    assert load(path)["api"] == API
 
 
 # --------------------------------------------------------------------------
@@ -36,12 +36,16 @@ def test_load_reads_it_from_disk(tmp_path):
 # --------------------------------------------------------------------------
 
 
-def test_an_older_api_is_refused_rather_than_read():
+@pytest.mark.parametrize("older", [0, API - 1])
+def test_an_older_api_is_refused_rather_than_read(older):
     # ⛔ "Written before sections carried a video" and "this unit has no video"
     # are different answers; a reader that conflated them would render a unit
     # as silent because the build that wrote it did not know about audio.
+    # ⚠️ `API - 1` is the shipped predecessor — `W215` bumped this contract for
+    # `attachments`, and a document written under the version before it is
+    # refused rather than migrated (R9).
     stale = document()
-    stale["api"] = 0
+    stale["api"] = older
     with pytest.raises(ContentError):
         parse(json.dumps(stale))
 

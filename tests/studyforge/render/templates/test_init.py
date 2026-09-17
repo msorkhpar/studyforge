@@ -37,6 +37,7 @@ ONE_LINE = (
 #: this must be every template on disk, and the test below asserts it — so a new
 #: template cannot be added without somebody deciding which kind it is.
 MULTI_LINE = (
+    "attachments.html",
     "page.html",
     "section.html",
     "pending-practices.html",

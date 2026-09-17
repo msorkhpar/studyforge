@@ -111,6 +111,40 @@ bytes apart from `ingested`*.
 
 ---
 
+## `assets` and `attachments` — the files a unit comes with
+
+**Both are lists, both are always written, and an empty one is `[]`.** "Absent"
+and "empty" are then not two states a reader has to tell apart.
+
+**One entry vocabulary, not two.** An entry is
+`remote local sha256 bytes content_type kind`, and `remote` is `null` for a file
+your adapter produced itself. `local` is the file's path **inside that unit's
+own archive directory** — `<address>/units/unit-NN/` — so `media/diagram.svg`
+means `<address>/units/unit-02/media/diagram.svg`.
+
+**They differ in what they are for, and that decides where each reaches the
+reader:**
+
+| | What it is | What the site does with it |
+|---|---|---|
+| `assets` | a file a **block already names** — an `image`'s or a `video`'s `src` | the page **shows** it, through that block, and the build places it beside the page |
+| `attachments` | a companion file **no block names** — a dataset a lesson loads, a notebook, a sample document (C4) | the page **links** it for download, and the build copies it into the attachments directory the placement profile gives that unit |
+
+**So an attachment is declared once and lands three times:** `studyforge plan`
+names the directory it will occupy, the unit page carries the link, and the
+build copies the file into it. A file listed under `assets` that no block names
+is a file nothing will reach — list that one under `attachments` instead.
+
+**Neither list is a `content` declaration, and neither belongs in one.**
+`corpus.json`'s `content` classifies **your source material** — whether a file's
+prose is read into the archive — and these files are already *in* the archive,
+written by your adapter. Their placed copies are the build's own output, which
+R3 tells from your material by path. So an attachment needs no `content.include`
+entry, adding one would claim its prose is ingested, and no build touches your
+original in order to place one.
+
+---
+
 ## `blocks` — the vocabulary is closed at eleven types
 
 **A unit's body is a sequence of typed blocks. There are eleven types and that

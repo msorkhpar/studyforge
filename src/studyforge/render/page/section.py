@@ -1,8 +1,8 @@
 r"""What wraps one section of a unit, and what sits above it.
 
-**What it does.** Renders one served section — its wrapper, its blocks, and the
-narrated deck the archive filed against it — from the section record
-`unit.builder.parts` writes.
+**What it does.** Renders one served section — its wrapper, its blocks, the
+narrated deck the archive filed against it, and the companion files it declares
+— from the section record `unit.builder.parts` writes.
 
 **How you use it.**
 
@@ -37,6 +37,24 @@ character, and take it away again the day they changed it back.
 page carries that key verbatim, so the player at M3, progress at M5 and an
 in-page link all address the same thing, and none of them has to read a heading.
 
+## ⛔ The attachments are LINKS and sit after the section (`W215`, spec C4)
+
+⚠️ **A dataset a lesson loads, a notebook, a sample document** — files a unit
+references that are neither prose nor inline media. ⭐ Spec C4: *"the page links
+them for download rather than rendering them"*, so this region is a list of
+links and never a figure, and it sits **after** the material because a reader
+takes a file away once they know what it is for.
+
+⛔ **Only `attachments`, never `assets`.** An asset is a file some block already
+names, and the page reaches it through that block's own `src`; linking those
+here would offer the reader the diagram they are already looking at
+(`archive.document.MEDIA_ENTRY_KEYS`).
+
+⚠️ **The href is asked of placement, exactly as a figure's is**, so the link
+resolves relative to the page over `file://` with no server (R8) — and the file
+it names is the one `generate.media` copies, because that pass copies what a
+page emits.
+
 ## ⭐ The deck sits above the section, not inside it
 
 ⚠️ The unit's own video is the whole lesson in one narrated deck, so it reads as
@@ -53,16 +71,24 @@ open, which is the one thing R8 forbids outright.
 
 from __future__ import annotations
 
+from studyforge.corpus.placement import ATTACHMENTS_DIRNAME
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import blocks
 from studyforge.render.page.anchors import section_anchor
-from studyforge.render.page.assets import Placement
+from studyforge.render.page.assets import Placement, filename
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 
 #: The unit media directory a section's own deck was placed in.
 DECK_KIND = "video"
+
+#: The region listing the files this section's material comes with.
+ATTACHMENTS_TEMPLATE = "attachments.html"
+
+#: What separates two links in that region. ⚠️ Real output: the region's own
+#: template is page-shaped, so its list reads as a list in the source too.
+ITEM_JOIN = "\n"
 
 
 def render(section: dict, placement: Placement, narration: Narration = SILENT) -> str:
@@ -89,7 +115,48 @@ def render(section: dict, placement: Placement, narration: Narration = SILENT) -
         body=body,
     )
     deck = _deck(section.get("video"), placement)
-    return f"{deck}{blocks.JOIN}{wrapper}" if deck else wrapper
+    files = _attachments(section.get("attachments"), placement)
+    return blocks.JOIN.join(part for part in (deck, wrapper, files) if part)
+
+
+def _attachments(attachments: object, placement: Placement) -> str:
+    """Return the links to this section's companion files, or `''` when it has none.
+
+    ⛔ **No empty region, ever.** A heading over an empty list reads as *"the
+    files are missing"*, where a unit with no companion files simply has none —
+    the same distinction `narration_gap` and `pending` are each built around.
+
+    ⚠️ **A malformed entry is refused rather than dropped**, through the one gate
+    every file reference on this page passes: an attachment that names no usable
+    file is a link to nothing, and silently emitting no link would leave a
+    reader told about a dataset that never appears.
+    """
+    if not isinstance(attachments, list):
+        return ""
+    entries = [entry for entry in attachments if isinstance(entry, dict)]
+    if not entries:
+        return ""
+    items = ITEM_JOIN.join(_link(entry, placement) for entry in entries)
+    return templates.fill(ATTACHMENTS_TEMPLATE, items=items)
+
+
+def _link(entry: dict, placement: Placement) -> str:
+    """One companion file, addressed relative to the page and named by its own filename.
+
+    ⭐ **The link's text is the file's name and nothing this framework wrote**
+    (R1): a corpus's own `dataset.ttl` says more to its reader than any sentence
+    invented here, and inventing one would be a sentence every corpus lived with.
+
+    ⛔ **The label is taken from the REFERENCE and never read back out of the
+    href** — that would be inferring what a thing is called from where it was
+    put, which is R4's own argument about paths. ⭐ Both come from `local`
+    through the one gate, so a reference this page refuses is refused before
+    either half of the link exists.
+    """
+    source = entry.get("local")
+    href = placement.media(ATTACHMENTS_DIRNAME, source)
+    label = filename(source)
+    return f'<li><a href="{escape_attribute(href)}" download>{escape(label)}</a></li>'
 
 
 def _heading(section: dict, contents: list) -> str:
