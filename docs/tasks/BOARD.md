@@ -60,9 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W300` | Developer 1 | `fix/W300-producer-half-deviation-tree-wide` @ `wt/dev1` | 0 @ `2827409` | in-progress |
-| `W303` | Developer 2 | `fix/W303-renderer-block-dispatch-refusal` @ `wt/dev2` | 0 @ `2827409` | in-progress |
-| `W304` | Developer 3 | `fix/W304-rubric-floor-snippet-pipeline-exit` @ `wt/dev3` | 0 @ `2827409` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -78,8 +75,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W297`, `W301`, `W298`, `W299` LEFT at `3191905`, `3191905`, `68d1ad9`, `528ba15`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **All four were [ratified](BOARD-ARCHIVE.md#po-round-91) in the round that named them.**
-⭐ **`W300`, `W303`, `W304` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-92).** ⛔ **`W302` is HELD on a COLLISION and not a priority: it and `W300` would both work `tools/quality/`** — ⚠️ **the same ground `W300` itself was held on, applied to the row this office minted about its OWN defect.** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W300`, `W303`, `W304` LEFT at `1d14e8a`, `544a165`, `fc176ae`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **They were [ratified](BOARD-ARCHIVE.md#po-round-92) in the round that named them, as the wave before them was [in round 91](BOARD-ARCHIVE.md#po-round-91).**
+⭐ **`W305` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-93).** ⛔ **`W302`'s COLLISION IS DISCHARGED — `W300` has landed — and it is dispatched in a FOLLOW-UP rather than here: a carrier cut AFTER this merge cannot be given an as-of before it exists, which is `PO-93/1` itself.** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -447,11 +444,12 @@ else.**
 | W297 | The same unguarded block read one function away: `read_layout` on a hand- or adapter-written document still raises where `build` now refuses by name | framework agent | ✅ done — `3191905` | [`rows/W297.md`](rows/W297.md) |
 | W298 | `UNITS_DIR` against `UNITS_DIRNAME` — the same defect one segment further, and it needs a different instrument | framework agent | ✅ done — `68d1ad9` | [`rows/W298.md`](rows/W298.md) |
 | W299 | Five names another package takes from a `validate` module are on no surface, and one collides with a module name | framework agent | ✅ done — `528ba15` | [`rows/W299.md`](rows/W299.md) |
-| W300 | The same producer-half deviation tree-wide, over a population measured small enough to close | framework agent | in-progress — on `fix/W300-producer-half-deviation-tree-wide` | [`rows/W300.md`](rows/W300.md) |
+| W300 | The same producer-half deviation tree-wide, over a population measured small enough to close | framework agent | ✅ done — `1d14e8a` | [`rows/W300.md`](rows/W300.md) |
 | W301 | The rubric's self-certification block files a suite reading under the floor's name and still exits `0` | framework agent | ✅ done — `3191905` | [`rows/W301.md`](rows/W301.md) |
 | W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | `todo` — `PO-92/1` | [`rows/W302.md`](rows/W302.md) |
-| W303 | The renderer's `_RENDERERS` dispatch refuses a malformed block with a `KeyError` instead of by name, and reachability is unmeasured | framework agent | `todo` — `W297/1` | [`rows/W303.md`](rows/W303.md) |
-| W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | `todo` — `W301/1` | [`rows/W304.md`](rows/W304.md) |
+| W303 | The renderer's `_RENDERERS` dispatch refuses a malformed block with a `KeyError` instead of by name, and reachability is unmeasured | framework agent | ✅ done — `544a165` | [`rows/W303.md`](rows/W303.md) |
+| W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | ✅ done — `fc176ae` | [`rows/W304.md`](rows/W304.md) |
+| W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | `todo` — `W303/1` | [`rows/W305.md`](rows/W305.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
