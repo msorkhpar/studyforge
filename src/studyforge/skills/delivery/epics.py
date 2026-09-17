@@ -2,7 +2,10 @@ r"""Reading epic documents, and the document that declares the order they run in
 
 **What it does.** Turns markdown into the data `capability` indexes: one
 `Epic` per document, one `Sequence` for the declared milestone order. It is
-handed text and gives back data, so the caller names the documents.
+handed text and gives back data, so the caller names the documents. ⭐ Each
+capability carries its `Owns` cell **verbatim** and each epic its preamble,
+which is everything any document says about whose work a row is (`W92`) —
+⛔ carried, never read: the reading is `components`'.
 
 **How you use it.**
 
@@ -56,6 +59,13 @@ document say*; `capability` answers *when does capability X land*. ⚠️ They w
 one module until the collect-then-enumerate form had to grow both of this
 one's loops, at which point that module stood at R11's ceiling exactly — and
 R11's remedy is a split at a named seam, never a trim.
+
+⭐ **`W92` cut the same module at the SAME line and named the halves the other
+way round** — its `capability` was this reading and its `index` was the index.
+⚠️ **One cut, two namings, and the two were collapsed rather than stacked**
+(`W92b`): this file is the reading half under `W94`'s name, and `components` is
+the second READER on this side of that one cut — the pin document's, not the
+epics'. ⛔ **Nothing was cut a third time to avoid deciding.**
 """
 
 from __future__ import annotations
@@ -93,6 +103,11 @@ _DEPENDS = re.compile(r"\*\*Depends on\*\*\s*(.*?)(?:·|$)")
 
 #: The epic's own title: `# E05 — Serving and execution`.
 _AREA = re.compile(r"^#\s+(E[0-9]{2})\s+—\s+(.+?)\s*$")
+
+#: The `Owns` cell, which runs to the next declared field or the end of the
+#: block. ⛔ Kept VERBATIM and never interpreted here (`W92`): what it means
+#: about a row's side is `components`' reading, and this module has no opinion.
+_OWNS = re.compile(r"\*\*Owns\*\*\s*(.*?)(?:\*\*Context\*\*|$)", re.S)
 
 #: The decoration this project writes into headings. A capability's name stops
 #: at the first one — `Delivery planning ⭐ THE PRODUCT OWNER…` names a
@@ -138,13 +153,31 @@ def _dependencies(line: str) -> tuple[str, ...]:
     return tuple(name for name in names if name and name != "—")
 
 
-def _declaration(lines: list[str], start: int) -> str | None:
-    """Find the declaration line following the heading at `start`, if any."""
-    for line in lines[start + 1 : start + 1 + _LOOKAHEAD]:
+def _block(lines: list[str], start: int) -> list[str]:
+    """Return the declaration following the heading at `start`, and the lines under it.
+
+    ⚠️ The declaration is not one line (`W92`). `**Milestone**` opens it and
+    `**Owns**` usually sits on the next, so a walk that read only the first
+    line could never see the cell that says whose work the row is.
+    """
+    for offset, line in enumerate(lines[start + 1 : start + 1 + _LOOKAHEAD], start + 1):
         if not line.strip():
             continue
-        return line if _DECLARATION.match(line) else None
-    return None
+        if not _DECLARATION.match(line):
+            return []
+        block: list[str] = []
+        for following in lines[offset:]:
+            if not following.strip():
+                break
+            block.append(following)
+        return block
+    return []
+
+
+def _owns(block: list[str]) -> str:
+    """Take the `Owns` cell verbatim, or the empty string when the row declares none."""
+    match = _OWNS.search(" ".join(block))
+    return match.group(1).strip() if match else ""
 
 
 def read_sequence(name: str, text: str) -> Sequence:
@@ -190,9 +223,10 @@ def read_epic(name: str, text: str) -> Epic:
     for position, line in enumerate(lines):
         if not _ANY_HEADING.match(line):
             continue
-        declaration = _declaration(lines, position)
-        if declaration is None:
+        block = _block(lines, position)
+        if not block:
             continue
+        declaration = block[0]
         heading = _HEADING.match(line)
         if heading is None:
             refusals.append(
@@ -218,11 +252,18 @@ def read_epic(name: str, text: str) -> Epic:
                 area=area,
                 epic=epic,
                 depends_on=_dependencies(declaration),
+                owns=_owns(block),
             )
         )
     if refusals:
         raise IndexRefused(one_or_all(refusals))
-    return Epic(epic=epic, area=area, capabilities=tuple(found), cancelled=tuple(cancelled))
+    return Epic(
+        epic=epic,
+        area=area,
+        capabilities=tuple(found),
+        cancelled=tuple(cancelled),
+        preamble=text.split("\n### ", 1)[0],
+    )
 
 
 def read_epics(documents: Iterable[tuple[str, str]]) -> tuple[Epic, ...]:

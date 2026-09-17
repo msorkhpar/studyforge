@@ -36,7 +36,8 @@ python3 -c "from pathlib import Path; \
   tasks = Path('docs/tasks'); \
   print(capability_index(((p.name, p.read_text('utf-8')) \
     for p in sorted(tasks.glob('E*.md'))), \
-    ('README.md', (tasks / 'README.md').read_text('utf-8'))))"
+    ('README.md', (tasks / 'README.md').read_text('utf-8')), \
+    Path('workspace.json').read_text('utf-8')))"
 ```
 
 ⛔ **The caller names the documents, and that is deliberate.** This package
@@ -48,6 +49,14 @@ its `### M<n> — <name>` sections appear, and the index prints and compares
 milestones in that order — ⚠️ **never the order their ids sort to**, because a
 plan can be reordered without renaming a milestone. ⭐ A declared milestone no
 epic delivers anything at is printed and says so: it is still a gate.
+
+⛔ **The third argument is the workspace's pin document**, and it is what lets
+the index carry a `delivered in` column: a capability whose `Owns` reaches a
+component pinned somewhere else is ⭐ **not this framework's to deliver**, and
+one whose `Owns` names no path at all is ⚠️ **undeclared** — nothing in the
+documents says. ⛔ Neither is a capability this corpus explains away in step 3
+(`W92`), and the statement there refuses a `why` for one. ⭐ **No component is
+ever named in what is rendered** (R1); the distinction is structural.
 
 ⭐ **The index answers one question and it is the only question a planner has
 about the framework: *when does capability X become available?*** It is
@@ -83,6 +92,13 @@ not short (§7's three states, C5).
 ⛔ **`Terminal` refuses a milestone it has no evidence for, and refuses to be
 built against an index whose later capabilities it has not accounted for.**
 The coverage is checked against the index, not against the planner's memory.
+
+⛔ **The table covers only the capabilities the index places on THIS side.**
+⭐ A capability delivered inside a component pinned somewhere else, and one
+the documents place nowhere at all, come back on the checked statement and are
+rendered by side — named and counted, with no `why`. ⚠️ **Writing a `why` for
+one of them is refused** (`W92`): this corpus may be the very thing that
+delivers it, so *"it never reaches it"* is a sentence with no true form.
 
 ### 3. Cut the backlog — ⛔ each task ends in something demonstrable
 

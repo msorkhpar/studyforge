@@ -15,6 +15,7 @@ from pathlib import Path
 from studyforge.skills.delivery import (
     Acceptance,
     Backlog,
+    Components,
     Index,
     Milestone,
     Sequence,
@@ -34,11 +35,15 @@ Prose the walk must not read as a task.
 
 ### SF-01 — Logical address model
 **Milestone** M1 · **Depends on** — · **Team** solo
+**Owns** `address/`
+**Context** ~10k
 
 Definition.
 
 ### SF-02 — Corpus manifest ⭐ SHOUTING THAT IS NOT PART OF THE NAME
 **Milestone** **M2** (step 2.1) · **Depends on** SF-01 · **Team** pair
+**Owns** `corpus/manifest/`
+**Context** ~10k
 
 Definition.
 
@@ -51,6 +56,8 @@ EPIC_TWO = """# E05 — Serving and execution
 
 ### SF-20 — Command runner
 **Milestone** **M5** · **Depends on** SF-02 · **Team** solo
+**Owns** `execute/`
+**Context** ~10k
 
 ### SF-99 — ⛔ CANCELLED 2026-09-10
 **Milestone** — · **Depends on** — · **Team** —
@@ -75,8 +82,39 @@ SEQUENCE = """# A task index
 """
 
 
-#: ⛔ `M10` declared BEFORE `M9`: neither a lexical sort (`M1`, `M10`, `M2`, `M9`)
-#: nor a numeric one (`M1`, `M2`, `M9`, `M10`) reproduces the declared order.
+#: A pin document declaring one component that is not this one, and the epic
+#: that owns inside it. ⭐ `W92`'s distinction APPLIES over this pair.
+PINS = """{
+  "workspace_api": 1,
+  "components": [
+    {"name": "here", "where": "self", "status": "present"},
+    {"name": "elsewhere-component", "where": "sibling", "status": "present"}
+  ]
+}"""
+
+#: ⛔ And a pin document that declares nothing but this repository, which is
+#: the document set where the distinction does NOT apply.
+NO_PINS = """{
+  "workspace_api": 1,
+  "components": [{"name": "here", "where": "self", "status": "present"}]
+}"""
+
+EPIC_ELSEWHERE = """# E12 — A shared component
+
+### TC-00 — The runner image
+**Milestone** M5 · **Depends on** — · **Team** solo
+**Owns** `elsewhere-component/docker/` — the image
+**Context** ~10k
+
+### TC-01 — A row that declares no path at all
+**Milestone** M5 · **Depends on** TC-00 · **Team** solo
+**Owns** the release record
+**Context** ~5k
+"""
+
+
+#: ⛔ `M10` declared BEFORE `M9`: neither a lexical sort (`M1`, `M10`, `M2`,
+#: `M9`) nor a numeric one reproduces the declared order (`W247`).
 WIDE_SEQUENCE = "### M1 — One\n### M2 — Two\n### M10 — Ten\n### M9 — Nine\n"
 
 #: The epic that goes with it: two-digit milestone ids, read as ids (`W247`).
@@ -84,9 +122,11 @@ WIDE_EPIC = """# E12 — Wide ids
 
 ### SF-40 — Lands at ten
 **Milestone** **M10** · **Depends on** — · **Team** solo
+**Owns** `wide/ten.py`
 
 ### SF-41 — Lands at nine
 **Milestone** M9 · **Depends on** SF-40 · **Team** solo
+**Owns** `wide/nine.py`
 """
 
 
@@ -95,14 +135,40 @@ def sequence() -> Sequence:
     return read_sequence("README.md", SEQUENCE)
 
 
+def components() -> Components:
+    """The declaration under which one fixture epic is delivered elsewhere."""
+    return Components.read(PINS, SEQUENCE)
+
+
 def index() -> Index:
     """The two-epic index: capabilities at M1, M2 and M5, none at M6, one cancelled."""
-    return Index.of((read_epic("E01.md", EPIC_ONE), read_epic("E05.md", EPIC_TWO)), sequence())
+    return Index.of(
+        (read_epic("E01.md", EPIC_ONE), read_epic("E05.md", EPIC_TWO)),
+        sequence(),
+        Components.none(),
+    )
+
+
+def sided_index() -> Index:
+    """A three-epic index over a workspace that pins a component somewhere else."""
+    return Index.of(
+        (
+            read_epic("E01.md", EPIC_ONE),
+            read_epic("E05.md", EPIC_TWO),
+            read_epic("E12.md", EPIC_ELSEWHERE),
+        ),
+        sequence(),
+        components(),
+    )
 
 
 def wide_index() -> Index:
     """The `W247` index: milestone ids of two digits, in their declared order."""
-    return Index.of((read_epic("E12.md", WIDE_EPIC),), read_sequence("README.md", WIDE_SEQUENCE))
+    return Index.of(
+        (read_epic("E12.md", WIDE_EPIC),),
+        read_sequence("README.md", WIDE_SEQUENCE),
+        Components.none(),
+    )
 
 
 def _tasks() -> Path:
@@ -124,9 +190,19 @@ def live_sequence() -> Sequence:
     return read_sequence("README.md", (_tasks() / "README.md").read_text("utf-8"))
 
 
+def live_pins() -> str:
+    """This repository's own workspace pin document, as text."""
+    return (_tasks().parents[1] / "workspace.json").read_text("utf-8")
+
+
+def live_components() -> Components:
+    """The components this repository pins, and the shorthand its task index declares."""
+    return Components.read(live_pins(), (_tasks() / "README.md").read_text("utf-8"))
+
+
 def live_index() -> Index:
     """This repository's own index, in its own declared order."""
-    return Index.of(read_epics(live_epics()), live_sequence())
+    return Index.of(read_epics(live_epics()), live_sequence(), live_components())
 
 
 def terminal() -> Terminal:

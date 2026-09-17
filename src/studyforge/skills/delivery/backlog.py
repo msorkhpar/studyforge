@@ -41,7 +41,7 @@ computed — and the same walk is what refuses a cycle.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from studyforge.skills.delivery.capability import Index
 from studyforge.skills.delivery.finding import Finding
@@ -141,8 +141,13 @@ class Backlog:
         that raised would refuse on the first offending task of the first
         offending milestone, and the reader would learn how many more there are
         only by fixing that one and running the whole plan again.
+
+        ⭐ Returns a plan carrying the CHECKED terminal statement, which is
+        where the capabilities that are not this framework's to deliver come
+        back from the index (`W92`). ⛔ Dropping the return would render a
+        statement that had been checked and then thrown away.
         """
-        self.terminal.checked(index)
+        terminal = self.terminal.checked(index)
         known = frozenset(capability.id for capability in index.capabilities)
         order = {milestone.id: position for position, milestone in enumerate(self.milestones)}
         refusals: list[str] = []
@@ -153,7 +158,7 @@ class Backlog:
         if refusals:
             raise PlanRefused(one_or_all(refusals))
         self.critical_path()
-        return self
+        return replace(self, terminal=terminal)
 
     def _check_framework(
         self, index: Index, milestone: Milestone, task: Task, known: frozenset[str]

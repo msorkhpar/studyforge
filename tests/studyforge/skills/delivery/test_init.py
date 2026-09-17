@@ -32,10 +32,38 @@ def test_the_procedure_ships_beside_the_package():
 
 def test_the_one_call_the_procedures_first_step_makes():
     rendered = delivery.capability_index(
-        (("E01.md", plans.EPIC_ONE), ("E05.md", plans.EPIC_TWO)), ("README.md", plans.SEQUENCE)
+        (("E01.md", plans.EPIC_ONE), ("E05.md", plans.EPIC_TWO)),
+        ("README.md", plans.SEQUENCE),
+        plans.NO_PINS,
     )
     assert delivery.BANNER in rendered
     assert "`SF-01`" in rendered
+
+
+def test_the_pin_document_is_required_rather_than_defaulted():
+    # ⛔ `W92`: an index that defaulted to *everything is this framework's*
+    # would state the thing the row was filed about, and state it silently.
+    # ⭐ A plan with no component but itself says so by passing a document
+    # that pins none, exactly as `concentration(outside=())` requires.
+    import inspect
+
+    parameters = inspect.signature(delivery.capability_index).parameters
+    assert parameters["pins"].default is inspect.Parameter.empty
+
+
+def test_the_pin_document_is_what_places_a_row_on_the_other_side():
+    # ⭐ Same documents, two pin declarations: the only thing that can make a
+    # row *not this framework's* is a component declared somewhere else.
+    documents = (("E12.md", plans.EPIC_ELSEWHERE),)
+    order = ("README.md", plans.SEQUENCE)
+
+    def placed(pins: str) -> set[str]:
+        rows = delivery.capability_index(documents, order, pins).splitlines()
+        return {row for row in rows if row.startswith("| `TC-00`")}
+
+    assert placed(plans.NO_PINS) != placed(plans.PINS)
+    assert all(delivery.HERE in row for row in placed(plans.NO_PINS))
+    assert all(delivery.ELSEWHERE in row for row in placed(plans.PINS))
 
 
 #: ⛔ What a module that had gone looking for documents would have to reach

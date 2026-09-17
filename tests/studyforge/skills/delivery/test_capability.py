@@ -1,7 +1,9 @@
 """Mirror of `src/studyforge/skills/delivery/capability.py` (R12).
 
 ⚠️ The tests over the markdown parse moved to `test_epics.py` when `W94` split
-that half out; what stays here is the index over what the parse produced.
+that half out; what stays here is the index over what the parse produced —
+⭐ including **which side delivers a row** (`W92`). What READS a side out of
+the pin document is asserted next door, in `test_components.py`.
 """
 
 from __future__ import annotations
@@ -10,7 +12,18 @@ import re
 
 import pytest
 
-from studyforge.skills.delivery import Index, IndexRefused, read_epic, read_sequence
+from studyforge.skills.delivery import (
+    ELSEWHERE,
+    HERE,
+    SIDE_COLUMN,
+    SIDES,
+    UNDECLARED,
+    Components,
+    Index,
+    IndexRefused,
+    read_epic,
+    read_sequence,
+)
 from studyforge.skills.delivery.capability import BANNER, EMPTY
 from studyforge.skills.delivery.epics import MILESTONE_ID
 from tests.studyforge.skills.delivery import plans
@@ -22,7 +35,7 @@ def test_the_bold_some_rows_put_round_their_milestone_does_not_hide_it():
 
 def test_an_index_of_no_epics_is_refused():
     with pytest.raises(IndexRefused, match="silence"):
-        Index.of((), plans.sequence())
+        Index.of((), plans.sequence(), Components.none())
 
 
 def test_a_capability_declared_twice_is_refused_and_both_epics_are_named():
@@ -30,6 +43,7 @@ def test_a_capability_declared_twice_is_refused_and_both_epics_are_named():
         Index.of(
             (read_epic("E01.md", plans.EPIC_ONE), read_epic("E02.md", plans.EPIC_ONE)),
             plans.sequence(),
+            Components.none(),
         )
 
 
@@ -112,7 +126,9 @@ def test_a_capability_at_a_milestone_the_order_omits_is_refused():
     omitting = read_sequence("README.md", "### M1 — One\n### M2 — Two\n")
     with pytest.raises(IndexRefused, match="SF-20 lands at M5, which README.md does not declare"):
         Index.of(
-            (read_epic("E01.md", plans.EPIC_ONE), read_epic("E05.md", plans.EPIC_TWO)), omitting
+            (read_epic("E01.md", plans.EPIC_ONE), read_epic("E05.md", plans.EPIC_TWO)),
+            omitting,
+            Components.none(),
         )
 
 
@@ -143,6 +159,7 @@ def test_every_capability_that_cannot_be_placed_is_named_not_the_first():
         Index.of(
             (read_epic("E20.md", MISPLACED), read_epic("E21.md", MISPLACED_AGAIN)),
             read_sequence("README.md", "### M1 — One\n"),
+            Components.none(),
         )
     message = str(refused.value)
     assert "4 refusals" in message
@@ -158,6 +175,7 @@ def test_one_misplaced_capability_reads_exactly_as_it_did():
         Index.of(
             (read_epic("E05.md", plans.EPIC_TWO),),
             read_sequence("README.md", "### M1 — One\n### M2 — Two\n"),
+            Components.none(),
         )
     assert str(refused.value) == (
         "SF-20 lands at M5, which README.md does not declare, so it has no place in the order"
@@ -229,3 +247,103 @@ def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
     assert [c.id for c in index.after("M10")] == ["SF-41"]
     rendered = index.render()
     assert rendered.index("## M2 — ") < rendered.index("## M10 — ") < rendered.index("## M9 — ")
+
+
+# --- W92: the index can say NOT THIS SIDE, and it is READ, never judged ------
+
+
+def test_no_side_the_index_reports_is_outside_the_closed_vocabulary():
+    # ⛔ Ruling 185: a narrowed population, never a widened predicate. Every
+    # value that reaches a row comes out of `SIDES`.
+    assert set(plans.sided_index().sides.values()) <= set(SIDES)
+    assert set(plans.live_index().sides.values()) <= set(SIDES)
+
+
+def test_a_row_owning_inside_a_pinned_component_is_not_this_frameworks():
+    assert plans.sided_index().sides["TC-00"] == ELSEWHERE
+
+
+def test_a_row_owning_a_path_that_reaches_no_component_is_this_frameworks():
+    assert plans.sided_index().sides["SF-01"] == HERE
+
+
+def test_a_row_that_names_no_path_at_all_is_undeclared_and_is_never_guessed():
+    # ⛔ The hole is printed rather than smoothed into a confident value: a
+    # `why` written against a guess is the defect `W92` reports, one layer on.
+    assert plans.sided_index().sides["TC-01"] == UNDECLARED
+
+
+def test_an_epics_preamble_places_a_row_whose_own_cell_names_no_path():
+    # ⭐ The weak derivation, and it is the one that carries the shared
+    # components: their prose rows own "the job API", not a path.
+    text = plans.EPIC_ELSEWHERE.replace(
+        "# E12 — A shared component",
+        "# E12 — A shared component\n\nIt becomes **`elsewhere-component`**, its own repository.",
+    )
+    index = Index.of((read_epic("E12.md", text),), plans.sequence(), plans.components())
+    assert index.sides["TC-01"] == ELSEWHERE
+
+
+def test_a_workspace_that_pins_nothing_but_itself_places_every_row_here():
+    epics = (read_epic("E12.md", plans.EPIC_ELSEWHERE),)
+    index = Index.of(epics, plans.sequence(), Components.none())
+    assert set(index.sides.values()) == {HERE, UNDECLARED}
+    assert index.sides["TC-00"] == HERE
+
+
+def test_asking_for_a_side_outside_the_vocabulary_is_refused():
+    with pytest.raises(IndexRefused, match="no such side"):
+        plans.sided_index().on("somebody else's")
+
+
+def test_the_three_sides_partition_the_index():
+    index = plans.live_index()
+    counted = sum(len(index.on(side)) for side in SIDES)
+    assert counted == len(index.capabilities)
+
+
+# --- the column appears when the distinction applies, and not when it does not
+
+
+def test_the_column_is_rendered_when_at_least_one_row_is_not_this_frameworks():
+    index = plans.sided_index()
+    assert index.distinguishes
+    rendered = index.render()
+    assert f"| capability | what it is | area | {SIDE_COLUMN} | waits on |" in rendered
+    assert f"| `TC-00` | The runner image | A shared component | {ELSEWHERE} |" in rendered
+
+
+def test_the_column_is_absent_when_no_row_is_delivered_anywhere_else():
+    # ⭐ A column that would say the same thing in every row says nothing. A
+    # plan where the distinction does not apply renders what it always did.
+    index = plans.index()
+    assert not index.distinguishes
+    rendered = index.render()
+    assert "| capability | what it is | area | waits on |" in rendered
+    assert SIDE_COLUMN not in rendered
+    assert HERE not in rendered
+
+
+def test_the_legend_is_printed_only_beside_a_table_that_carries_the_column():
+    assert SIDE_COLUMN in plans.sided_index().render()
+    assert "READ, never judged" in plans.sided_index().render()
+    assert "READ, never judged" not in plans.index().render()
+
+
+def test_no_component_is_ever_NAMED_in_what_the_index_renders():
+    # ⛔ R1 in the direction that is easy to miss: the pin document's names are
+    # READ and never printed. The distinction a planner needs is structural.
+    index = plans.live_index()
+    rendered = index.render()
+    assert index.components.names, "the live workspace pins no component, so this checks nothing"
+    for name in index.components.names:
+        assert name not in rendered, name
+
+
+def test_the_split_by_side_the_document_prints_is_derived_too():
+    index = plans.live_index()
+    assert (
+        f"**Of those capabilities, {len(index.on(HERE))} are this framework's to deliver, "
+        f"{len(index.on(ELSEWHERE))} are delivered inside a component pinned somewhere "
+        f"else, and {len(index.on(UNDECLARED))} declare no path at all.**"
+    ) in index.render()

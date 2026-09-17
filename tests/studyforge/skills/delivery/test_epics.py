@@ -170,3 +170,31 @@ def test_the_live_epic_documents_all_read():
     # ⭐ Over the real population as well as the invented one: a parser that
     # only ever meets its own fixture has met the shape somebody imagined.
     assert len(read_epics(plans.live_epics())) == len(plans.live_epics())
+
+
+# --- W92: the `Owns` cell is read VERBATIM, and nothing here interprets it ---
+
+
+def test_the_owns_cell_is_carried_onto_the_capability_it_declares():
+    # ⭐ It is the only thing any document says about whose work a row is, and
+    # a walk that read only the declaration line could never see it.
+    epic = read_epic("E01.md", plans.EPIC_ONE)
+    assert [c.owns for c in epic.capabilities] == ["`address/`", "`corpus/manifest/`"]
+
+
+def test_a_row_that_declares_no_owns_cell_carries_an_empty_one_and_is_not_refused():
+    text = "# E09 — Delivery\n\n### SF-90 — A row with no Owns\n**Milestone** M1 · **Team** solo\n"
+    assert read_epic("E09.md", text).capabilities[0].owns == ""
+
+
+def test_this_module_forms_no_opinion_about_the_side_a_row_is_delivered_on():
+    # ⛔ The seam, asserted rather than described: this module carries the cell
+    # and `components` reads it. A Capability has no side to ask for.
+    epic = read_epic("E01.md", plans.EPIC_ONE)
+    assert not hasattr(epic.capabilities[0], "side")
+
+
+def test_the_epics_preamble_is_carried_so_a_component_can_be_read_off_it():
+    epic = read_epic("E01.md", plans.EPIC_ONE)
+    assert epic.preamble.startswith("# E01 — Core contracts")
+    assert "### SF-01" not in epic.preamble

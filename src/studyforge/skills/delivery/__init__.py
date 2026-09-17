@@ -10,9 +10,9 @@ procedure. This package is what the skill *calls*:
 
     from studyforge.skills.delivery import Backlog, capability_index, concentration
 
-    print(capability_index(documents, order)) # the index, in the declared order
-    plan = Backlog(...).checked(index)        # the plan, checked against it
-    print("\n".join(plan.lines()))            # the durable artifact
+    print(capability_index(documents, order, pins))  # the index, in the declared order
+    plan = Backlog(...).checked(index)               # the plan, checked against it
+    print("\n".join(plan.lines()))                   # the durable artifact
 
 **Depends on.** The standard library. ⛔ Not on `corpus`, `archive` or
 `validate` — a planner reasons about *work*, not about a corpus's contents —
@@ -36,10 +36,11 @@ text, so the caller names the documents.
 | Module | ⛔ What it will not let a plan say |
 |---|---|
 | `epics` | that a row is unreadable, or that thirteen documents are worth one refusal |
-| `capability` | that a capability lands where the epics do not say, or that ids sort to the order |
+| `components` | that a side is guessed, or that a fourth value joins the three that are read |
+| `capability` | that ids sort to the order, or that a row nobody delivers here is ours to explain |
 | `refusal` | ⭐ nothing — it is the FORM the rest take once they found several (Ruling 188) |
 | `task` | that a task ends in a layer, or that a clause is decided by nobody |
-| `terminal` | that a corpus finishes somewhere, while leaving later capabilities unaccounted for |
+| `terminal` | that a corpus finishes somewhere, leaving later rows of THIS side unaccounted for |
 | `backlog` | that a milestone waits on framework work it has not declared a gate for |
 | `question` | that a question is open with no way to re-run it, or a stale answer acted on |
 | `finding` | that a claim is neither measured here nor received from somebody |
@@ -70,6 +71,14 @@ from studyforge.skills.delivery.capability import (
     Index,
     IndexRefused,
     Sequence,
+)
+from studyforge.skills.delivery.components import (
+    ELSEWHERE,
+    HERE,
+    SIDE_COLUMN,
+    SIDES,
+    UNDECLARED,
+    Components,
 )
 from studyforge.skills.delivery.epics import read_epic, read_epics, read_sequence
 from studyforge.skills.delivery.export import (
@@ -107,35 +116,50 @@ from studyforge.skills.delivery.task import Acceptance, PlanRefused, Task
 from studyforge.skills.delivery.terminal import Terminal, TerminalRefused, Unused
 
 
-def capability_index(documents: Iterable[tuple[str, str]], order: tuple[str, str]) -> str:
-    """Render the capability index from epic documents and the one declaring their order.
+def capability_index(
+    documents: Iterable[tuple[str, str]], order: tuple[str, str], pins: str
+) -> str:
+    """Render the index from epic documents, their declared order, and the workspace pins.
 
     `documents` are `(name, text)` pairs of epic documents; `order` is the one
     `(name, text)` pair whose `### M<n> — <name>` sections declare the order
-    milestones run in. ⭐ The one call the procedure's first step makes.
-    ⛔ The caller names both — this package does not know where a plan lives,
-    and the next repository's does not live where this one's does.
+    milestones run in; `pins` is the TEXT of the document pinning this
+    workspace's components, which is what lets the index say ⭐ *not this
+    side* (`W92`). ⭐ The one call the procedure's first step makes.
+    ⛔ The caller names them all — this package does not know where a plan
+    lives, and the next repository's does not live where this one's does.
+    ⛔ `pins` is required and never defaulted: a plan with no component but
+    itself says so by passing a document that pins none, and one that never
+    considered the question must not render like one that did.
     """
     name, text = order
-    return Index.of(read_epics(documents), read_sequence(name, text)).render()
+    return Index.of(
+        read_epics(documents), read_sequence(name, text), Components.read(pins, text)
+    ).render()
 
 
 __all__ = [
     "BANNER",
+    "ELSEWHERE",
     "FIELDS",
     "GITHUB",
+    "HERE",
     "INSIDE",
     "JIRA",
     "MARKERS",
     "NEGATIVE_OPENING",
     "OUTSIDE",
     "PROFILES",
+    "SIDES",
+    "SIDE_COLUMN",
+    "UNDECLARED",
     "Acceptance",
     "Answer",
     "Backlog",
     "Capability",
     "Carrier",
     "Claim",
+    "Components",
     "Concentration",
     "Epic",
     "ExportRefused",
