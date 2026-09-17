@@ -1,9 +1,11 @@
-r"""What sits beneath the archive root that the archive does not account for.
+r"""What the archive root holds and does not account for, and what it accounts for and has not.
 
 **What it does.** Refuses, by name, every file beneath the archive root that is
-not an archive member (`W248`, `W241/2`). `classification` never scans beneath
-the root, so this check is the other half of that skip: every file there is a
-member or a finding, and none is silently lost.
+not an archive member (`W248`, `W241/2`), and every file a document declares
+that the archive does not hold where the declaration says (`W214`).
+`classification` never scans beneath the root, so the first check is the other
+half of that skip: every file there is a member or a finding, and none is
+silently lost.
 
 **How you use it.** `check_archive_members(walk)` and `check_declared_files(walk)`,
 yielding `Finding`s like every other check. `archive_members(walk)` returns the
