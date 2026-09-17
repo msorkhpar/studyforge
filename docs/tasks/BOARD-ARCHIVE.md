@@ -24658,3 +24658,258 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 | `INT-15/3` | ⛔ **Two branches record the SAME round with CONTRADICTORY outcomes.** `int/round14-repin-iso12-iso14` is left in place and unmerged; a later reader who merges it would silently rewrite round 14's record. ⚠️ **Named here so the trap is not re-discovered** |
 
 ⛔ **AND A CORRECTION THIS ROUND OWES, because the register propagated it:** ⭐ **`ISO-13` is unblocked — its clause *"the audio is committed"* now holds.** ⛔ **`ISO-15` IS NOT: its gate is `SK-07`'s reader documentation, and `ISO-12` was never its blocker.** ⚠️ **Round 87's held item and this round's own first draft both said *"`ISO-13` and `ISO-15` wait on it"*, and the second half was FALSE — measured by the office against `ISO-15`'s own clauses.**
+
+## PO round 90
+
+⭐ **Cut at `e331189`, the release tip after this wave's four carrier merges and one fix-forward.** ⚠️ **THE HEADING CARRIES NO CLOSE LIST, DELIBERATELY** — every pointer this round mints resolves to `#po-round-90`, and a heading naming its closes would move that anchor each time one landed.
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W181`](#w181-a-register-id-that-is-not-wdigits-crashes-the-floor-instead-of-reporting-and-only-the-register-can-create-one) | `bf05884` | none owed: its only live citation was the register this round rewrites |
+| [`W192`](#w192-ruling-218s-multi-id-cell-is-readable-in-exactly-one-spelling-and-the-comma-form-observes-the-wrong-row-silently) | `bf05884` | none owed: its only live citation was the register this round rewrites |
+| [`W289`](#w289-archiveblockscountsof-reads-get-off-every-block-so-a-non-object-block-raises-through-the-archive-builder) | `b31e780` | none owed: its only live citation was the register this round rewrites |
+| [`W290`](#w290-unitlocations-callers-each-spell-its-arguments-out-of-a-unitsource-so-dropping-a-units-label-stays-writable) | `b31e780` | none owed: its only live citation was the register this round rewrites |
+| [`W199`](#w199-archive-and-raw-are-minted-twice-and-neither-validate-name-is-on-validateall) | `416a5c2` | none owed: its only live citation was the register this round rewrites |
+| [`W295`](#w295-the-vendored-highlighter-carries-no-markup-json-properties-or-gherkin-grammar-so-iso-06s-clause-is-unmeetable) | `a3987cf` | none owed: its only live citation was the register this round rewrites |
+
+⭐ **All six TERMINAL (Ruling 199), each absorbed on `release/m0-foundations`'s first-parent line.** ⭐ **`last_pointer` exits `0` at every merge of the wave.** ⭐ **Ruling 314: the six moved bodies carried fourteen relative pointers, every one re-addressed and every rewritten target verified to RESOLVE from `docs/tasks/` rather than merely rewritten.** ⚠️ **One of them was a BARE SIBLING LINK (`](W133.md)`), which a targeted find-and-replace would have left pointing at a file that does not exist; the move is done by path normalisation for that reason.**
+
+### ⭐ 2 — CARRIERS
+
+⛔ **NONE, and EMPTY IS A STATE** (`W111`, `W147`). ⭐ **Every carrier this wave named has merged.** ⛔ **`W277` stays HELD by the coordinator.**
+
+### ⭐ 3 — MINTS
+
+| finding | row | order | surface |
+|---|---|---|---|
+| `W289/1` | [`W297`](rows/W297.md) | 57 | `archive/blocks.py`, `archive/document.py` |
+| `W199/1` | [`W298`](rows/W298.md) | 57 | `corpus/placement/`, `skills/adapter/layout.py` |
+| `W199/2` | [`W299`](rows/W299.md) | 57 | `validate/` |
+| `W199/3` | [`W300`](rows/W300.md) | 57 | `tools/quality/` |
+| `W295/6` | [`W301`](rows/W301.md) | 57 | `docs/conventions/review-rubric.md` |
+
+### ⭐ 4 — FINDINGS ACCEPTED, EACH WITH ITS COST NAMED
+
+| finding | disposition |
+|---|---|
+| `W192/2` | ⭐ **Accepted.** The `Next rows` table carries en-dash ranges, and a range MEANS several rows while reading as two. ⛔ Latent by construction: that table sits outside every delimiter and no instrument reads it. ⭐ `W192` already made `board.md` state that a range is not a multi-id cell |
+| `W295/2` | ⭐ **Accepted in the STANDING SPLIT-CONDITION form:** `HEADER_CHARS` is one window answering a per-bundle question. ⛔ **The next row touching `vendored.py` makes it per-bundle** |
+| `W199/4`, `W199/5`, `W290/2`, `W295/3`, `W295/4`, `W295/5` | ⭐ **Accepted `[local]`**, each naming a cost rather than a defect — bound re-exports kept because retiring them reaches every generated adapter; `W241/3`'s untouched rider; `Profile.unit`'s correct placement API, recorded so nobody "finishes the job" on a contract three subclasses implement; a token colour filed on one grammar's evidence; `ISO-06` discharged framework-side with the corpus half measurable only there (R20); and `W243/5` still standing |
+
+### ⚠️ 5 — NEGATIVE RESULTS, recorded because the MEASURING is the lesson
+
+⛔ **Each row was DISCHARGED; what was wrong was the ROW'S OWN COUNT, and each was found by the office that had to satisfy it.**
+
+| finding | the reading |
+|---|---|
+| `W181/1` | The row named three `int()` sites; there were FOUR — the notice's own sort key would have raised on the same input |
+| `W290/1` | The row named four call sites; there were SIX. ⭐ **Two reach the derivation through an import alias, and an alias defeats a grep for the bare name** — the row's own instrument printed both lines without either being counted |
+| `W199/6` | ⚠️ Restoring a plant from a per-file copy can leave a stale `__pycache__` when the planted text is the SAME LENGTH and the restore lands in the same mtime second — pytest then reads the PLANT. ⛔ `W143` says restore from a copy; it does not say clear the caches |
+| `W295/1` | ⭐ **STALE, not open.** It reports that no `rows/W295.md` exists and that the Scheduled cell reads `pending`; both were true at its cut of `19c7224` and both were answered by PO round 89 merging beneath it |
+
+### ⛔ 6 — THE RULING THIS ROUND OWES: `W199`'s CLAUSE 3
+
+⭐ **The office REPORTED the clause and did not rewrite it, which is the protocol's required move and is recorded here as CORRECT.** ⛔ **Clause 3 read *"whatever survives is on `validate.__all__`"* and presupposed the surviving name stays in `validate`. Nothing survives there to export.** ⚠️ **Re-exporting placement's names from `validate` would mint a second import path for one value — the exact shape the row's own *what it must not become* refuses.**
+
+⭐ **RULED: clause 3 is MET IN PURPOSE by clause 4**, which gave that surface a closed instrument for the first time. ⭐ **The minter is `corpus.placement`, neither site the row named, because the adapter may not import its own judge and the opposite direction closes a cycle through `validate/source/membership.py`.**
+
+### ⛔ 7 — `PO-90/1`, THIS OFFICE'S OWN DEFECT, AND IT IS THE SECOND OF ITS FAMILY
+
+⛔ **`W295`'s merge turned the release floor RED**, on a `handoff-bare-citation` of `rows/W295.md`. ⭐ **The office's own reading was HONEST: at its cut of `19c7224` that path did not exist, so the citation was to an untracked file and the floor passed. PO round 89 then created the row and merged first, and the identical line became a defect.**
+
+⛔ **THE COORDINATOR'S MISS, stated plainly: the bare-citation pre-check was run over the PREVIOUS wave's branches and was NOT re-run over this wave's carriers**, though the W278 precedent that taught it is recorded and was known. ⭐ **Remedied by the precedent's own form — a minimal commit on release at `e331189` changing ONLY the cited line.** ⚠️ **The finding's SENTENCE is left standing and is not edited: a record is true at the ref it was taken at (Ruling 106).**
+
+### W181 — a register id that is not `W<digits>` crashes the floor instead of reporting, and only the register can create one
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W181.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A REGISTER ID THAT IS NOT `W<digits>` CRASHES THE FLOOR INSTEAD OF REPORTING.** ⭐ **`tools/quality/handoffs/existence.py` slices the leading character off a row id and calls `int()` on the rest, at THREE sites — role `wt/po`, ref `bec9d5c`, environment HOST, `grep -n`:**
+
+```text
+188:        row for row in rows if int(row[1][1:]) > HANDOFF_OWED_FROM and row[2] not in OFFICE_OWNERS
+238:    above = [row for row in closed if int(row[1][1:]) > HANDOFF_OWED_FROM]
+245:        if int(row[1][1:]) <= HANDOFF_OWED_FROM
+```
+
+⚠️ **`int()` on a non-numeric tail raises, and it raises inside a FLOOR CHECK** — ⛔ **so the failure mode is a traceback where the contract is a finding, and the whole tree goes unreadable rather than one arm going red.**
+
+### ⭐ THE READING IS THE REVIEWER'S AND IT IS A NEGATIVE
+
+⛔ **`CTO-71`'s `W167` review tested the construction it most doubted against the real population: `172` of `172` register ids and `76` of `76` closed ids are `W<digits>`, so it cannot raise today.** ⚠️ **Filed `[local]` and LATENT, routed as a row candidate and not a gate.**
+
+### ⛔ WHY I MINTED IT RATHER THAN DECLINING IT, AND THE DECLINE WAS AVAILABLE
+
+⭐ **The ground for declining looked strong and I am recording it so the next office does not re-derive it as new:** ⛔ **Ruling 68 — *an id space has exactly one minter* — and that minter is the register.** ⚠️ **So the crashing input can only be created by my own act, and an assurance from me that I will never mint a non-`W` id would close it at zero cost.**
+
+⛔ **THAT ASSURANCE IS A MEMORY.** ⭐ **In the same round I minted `W177` on the principle that a rule living only in a description the caller may not read is a rule that lands on nothing, and `NS-06/3`'s disposition says in as many words that such a rule *needs a row and not a memory*.** ⚠️ **Applying the principle to another office and exempting myself from it is the defect, not the row.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE INSTRUMENT REPORTS INSTEAD OF RAISING.** ⭐ **A register id the pin cannot order is a FINDING with the id in it — which is the shipped behaviour for every other unreadable board input — and never a traceback out of a floor check.**
+2. ⚠️ **OR THE ID SHAPE IS ASSERTED WHERE IT IS PARSED, and the two are not exclusive.** ⛔ **If `W<digits>` is a contract of the register rather than an accident of it, the parser is where that is said, and then this module's `int()` is safe BY A STATED PROPERTY rather than by luck.**
+3. ⛔ **THE CHOICE BETWEEN THEM IS A DESIGN DECISION AND IT COMES FIRST** (Ruling 231(c)'s form) — ⚠️ **because *is `W<digits>` the register's contract?* is a question about the BOARD, and answering it inside a handoff checker would put a board contract in the wrong module.**
+4. ⛔ **ASSERTED IN BOTH DIRECTIONS** (R12): a synthetic register carrying a non-`W` id produces a FINDING and a `0` exit path that is not a crash, and a normal register produces the same output it does today — ⭐ **and the second arm matters because this row must not move the numbers `W167` just landed.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHANGE TO `W167`'s PIN, ITS DENOMINATOR OR ITS NARROWINGS.** ⭐ **That row was reviewed on four measured legs and its arm's empty population is deliberate; this row touches how a MALFORMED id is handled and nothing else.** ⛔ **AND NOT A NEW ID SCHEME** — ⚠️ **`W99` is a reserved sentinel and the series has gaps on purpose; a row that arrives to harden a parser and leaves having renumbered the register has done the one thing Ruling 68 exists to prevent.**
+
+### ⭐ SURFACE
+
+⛔ **`tools/quality/handoffs/existence.py` and its tests.** ⛔ **IT SHARES THE PACKAGE `tools/quality/handoffs/` WITH `W172`, WHICH IS IN FLIGHT IN WAVE 11** — ⚠️ **`W172` re-predicates `check_markers` in `contract.py`, a DIFFERENT FILE, so this is directory width rather than file width — ⭐ ONE OWNER or two waves** (check 4's sub-step).
+
+[the mint argument](#po-round-57-m3-step-33-closed-at-bec9d5c-34-refused-an-open-on-the-specs-own-sentence-w167-closed-under-ruling-201s-four-edits-six-mints-and-a-diagnosis-i-had-inherited-refuted-at-its-own-source)
+
+#### ⭐ CLOSED — PO ROUND 90
+
+⭐ **Merged at `bf05884`, TERMINAL by predicate `C`.** ⭐ **`ids.order` returns `None` rather than raising, so an unorderable id is EXCLUDED and REPORTED under `handoff-row-id`; and the shape is a stated property where it is parsed, asserted over planted garbage.** ⚠️ **Because the parser therefore cannot construct that arm's input, the judging half was split into pure functions and the arm asserted through those — an arm reachable only through a walk that cannot produce its input is the very defect `W167` exists to close.** ⛔ **`W181/1` is a NEGATIVE RESULT against this row: it named three `int()` sites and there were FOUR. All four landed.**
+
+### W192 — Ruling 218's multi-id cell is readable in exactly ONE spelling, and the comma form observes the wrong row silently
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W192.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **RULING 218 SAYS A CELL MAY NAME SEVERAL ROW IDS, AND THE INSTRUMENT READS EXACTLY ONE SPELLING OF THAT.** ⭐ **MEASURED at `35bf14e`, role `wt/po`, HOST, `observations()` over a synthetic table — the figures stay because they ARE this row's subject:**
+
+```text
+`W14` + `W18`     parses as TWO ids     ⭐ the form the board happens to use
+`W20`, `W21`      parses as ONE id      ⛔ and it takes the LAST
+```
+
+⛔ **SO A COMMA-FORM CELL SILENTLY OBSERVES THE WRONG ROW.** ⚠️ **Not the second-best row and not no row — the wrong one, with no notice and exit `0`.**
+
+### ⛔ WIDENED PO ROUND 60 — IT IS NOT ONE INSTRUMENT, IT IS THREE, AND NO TWO AGREE
+
+⛔ **MEASURED at `chore/po-round60`'s tip, role `wt/po`, HOST, read back from a capture file — the spellings ARE this row's subject:**
+
+```text
+tools/quality/handoffs/existence.py  declared_kind  'W188 + W183'  -> ONE id
+tools/quality/handoffs/existence.py  declared_kind  'W188, W183'   -> TWO ids
+tools/quality/board/observation.py   observations   `W14` + `W18`  -> TWO ids
+tools/quality/board/observation.py   observations   `W20`, `W21`   -> ONE id, the LAST
+tools/quality/handoffs/…             handoff-title  demanded `# W188 + W183 — handoff`
+```
+
+⛔ **THE TWO READERS ARE EXACT INVERSES, AND THE TITLE CHECK SIDES WITH THE ONE THE `Kind` LINE REFUSES.** ⭐ **Closing `W183` and `W189` in PO round 60 required writing BOTH spellings into one file** — ⚠️ **the comma form on the `Kind` line and the `+` form in the title — and no instrument can see the disagreement.** ⛔ **So the grammar this row declares is REPOSITORY-WIDE and not `observation.py`'s alone; a fix that lands in one module leaves the other two silently wrong.**
+
+### ⛔ THE FAMILY THIS BELONGS TO
+
+⭐ **AN INSTRUMENT EXITING `0` HAS TOLD YOU NOTHING FAILED, NOT THAT EVERYTHING WAS CHECKED.** ⛔ **`W133`'s class exactly — a check whose pass condition is satisfiable by one undeclared spelling** ([`W133`](rows/W133.md)). ⚠️ **Enumerated once, in [`../handoffs/PO-2026-09-12-round60.md`](handoffs/PO-2026-09-12-round60.md).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **EITHER THE GRAMMAR IS DECLARED AND THE READER READS ALL OF IT, OR THE UNDECLARED FORMS ARE REFUSED LOUDLY.** ⭐ **Both are acceptable; silence on an unread form is not.**
+2. ⛔ **THE DECLARATION IS A CONVENTION'S, NOT A DOCSTRING'S** — [`../../conventions/board.md`](../conventions/board.md) carries Ruling 218 and is where a reader looks.
+3. ⛔ **VALIDATE BY PLANTING, IN BOTH FORMS** (Rulings 124, 348): ⭐ **a `+` cell and a comma cell naming the same two ids must produce the same observation, or the comma cell must move an exit code.** ⚠️ **Asserting only the form that already works is how this defect survived being written down.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SILENT WIDENING.** ⭐ **Accepting the comma form without an assertion over it re-creates the same defect one spelling further out** — ⚠️ **the next author writes `` `W20` and `W21` `` and the instrument takes the last again.** ⛔ **AND NOT A RULING** — the freeze is in force, and the grammar belongs beside Ruling 218 rather than beside a new number.
+
+⭐ **Addressed, PO round 73 ([`W88`](#po-round-73-w88-w120-w233-w125-and-w108-closed-w237-minted)):** [the mint](handoffs/PO-2026-09-12-round60.md#the-family-stated-once-here-because-four-rows-point-at-this-section)
+
+#### ⭐ CLOSED — PO ROUND 90
+
+⭐ **Merged at `bf05884`, TERMINAL by predicate `C`.** ⭐ **The grammar lives ONCE, in `tools/quality/ids.py`, imported by both packages so neither owns it; `register.identifiers` delegates to it, so the register parser, the in-flight parser, `dispatch` and `corroborate` all inherit one reading, and `declared_kind` splits with it instead of on a comma.** ⛔ **`W192/1` is a NEGATIVE RESULT: the row grounded its clause on `board.md` carrying Ruling 218, which it did not. The conclusion held; the stated reason was untrue when written.** ⚠️ **`W192/2` stays open and is ACCEPTED in round 90: the `Next rows` table carries en-dash ranges that no instrument reads.**
+
+### W199 — `archive` and `raw` are minted twice and neither `validate` name is on `validate.__all__`
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W199.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`archive` AND `raw` ARE MINTED TWICE — in `validate/corpus.py` AND in `skills/adapter/layout.py` — AND NEITHER `validate` NAME IS ON `validate.__all__`.** ⭐ **Found by Developer 3 while scoping `E09`** (`W195/1`).
+
+⛔ **IT IS RULING 101'S OWN OPEN DEVIATION**, ⚠️ **which is what makes it a row rather than a tidy-up: the rule exists, the deviation is inside the tree the rule governs, and no instrument reads it.**
+
+⭐ **THE TWO HALVES ARE ONE DEFECT AND SHOULD NOT BE SPLIT:** ⛔ **a name minted twice is survivable while both copies are on a surface a reader can find; a name minted twice where one copy is OFF the package surface is a fork nobody can see.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE MINTER FOR EACH NAME**, and the other site IMPORTS it — ⭐ **the direction is the taker's call, made out loud, because `validate` and `skills/adapter` are different layers and the wrong direction creates a dependency the module structure forbids.**
+2. ⛔ **IF THE TWO MEANINGS ARE GENUINELY DIFFERENT, THEY GET DIFFERENT NAMES** — ⚠️ **and that is a finding worth more than the fix, because it means two layers have been using one word for two things.**
+3. ⛔ **WHATEVER SURVIVES IS ON `validate.__all__`** — Ruling 101's requirement, and the half that has no instrument today.
+4. ⛔ **AN ARM ASSERTS THE SURFACE** (R12): ⭐ **the check is a closed one over the package's own exports, not a spot assertion about these two names, or the next name off the surface is invisible again.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A RE-EXPORT THAT SATISFIES `__all__` AND LEAVES TWO DEFINITIONS.** ⭐ **That makes the fork harder to see, not easier.**
+
+⭐ **Addressed, PO round 73 ([`W88`](#po-round-73-w88-w120-w233-w125-and-w108-closed-w237-minted)):** [the mint](handoffs/PO-2026-09-12-round60.md#e09-is-scoped-and-the-scoping-changed-the-plan)
+
+⭐ **Rider, PO round 76 — `W241/3`:** `Layout.archive_dir` and `Plan.archive_dir` still accept a directory `validate` never reads, which is a second archive root by parameter. ⚠️ **It is loud since `W241` (`no-archive`), and it is not removed.**
+
+⭐ **Rider, PO round 76 — `W241`'s close** ([the reading](#w241-validate-reports-valid-with-no-archive-and-plan-announces-an-archive-root-that-validate-the-build-and-the-adapter-layout-do-not-read)): ⛔ **Ruling 244(a), read by the office on `W51` and `W199`: NEITHER is discharged.** ⭐ **Settled:** the `archive` literal lives once, as `ARCHIVE_DIRNAME` on `corpus.placement.__all__`; `validate` and `plan` import it, and `skills.adapter.layout.ARCHIVE_DIR` is bound to it. ⚠️ **Not settled:** the `raw` name is still defined twice (`ARCHIVE_ROOT_NAME` in `validate/corpus.py`, `RAW_DIR` in `skills/adapter/layout.py`); `W199`'s `validate.__all__` clause is unmet and no test asserts that surface; and `ARCHIVE_DIR` is a second NAME for one value, which `W199`'s taker rules on.
+
+#### ⭐ CLOSED — PO ROUND 90
+
+⭐ **Merged at `416a5c2`, TERMINAL by predicate `C`.** ⭐ **The single minter is `corpus.placement` — NEITHER site this row named — and the direction was argued out loud as the row required: the adapter `Layout` may not import its own judge, and the opposite direction closes a cycle through `validate/source/membership.py`.** ⭐ **`validate` gains a CLOSED instrument over its own package surface for the first time, with the off-surface set declared rather than exempted.** ⛔ **Clause 3 was REPORTED, NOT REWRITTEN, and round 90 rules it MET IN PURPOSE by clause 4:** it presupposed the surviving name stays in `validate`, and nothing survives there to export.
+
+### W289 — `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises through the archive builder
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W289.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W282/1`: `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises `AttributeError` through the archive builder.** ⭐ **RECEIVED from `W282`'s office at `a6fd477`, whose branch makes `check_counts` filter first while the builder still calls it unfiltered. RE-MEASURED (Ruling 214) at `92b57fd`, by `git show`:** `src/studyforge/archive/blocks.py` `counts_of` computes `block.get("type")` for every block.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A non-object block reaches no `.get`:** it is refused by name, never raised as `AttributeError`.
+2. ⛔ **Asserted both ways (R12)** through the builder.
+
+⭐ **Surface:** `src/studyforge/archive/blocks.py` and its tests. ⚠️ **`W282` merged at `7771751`.** ⭐ **Jumps nobody: `archive.markdown` writes only objects.**
+
+[the mint](#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)
+
+#### ⭐ CLOSED — PO ROUND 90
+
+⭐ **Merged at `b31e780`, TERMINAL by predicate `C`.** ⭐ **`counts_of` now refuses a non-object block BY NAME, in `validate/blocks.py`'s own words, and `build` passes its own `where` so the refusal names the document too.** ⚠️ **`validate`'s `check_counts` filter is untouched: it must DRAIN, not raise (R6).** ⭐ **Asserted through the builder and directly — `ArchiveError` is a `ValueError`, so an escaping `AttributeError` FAILS the test rather than passing it.** ⛔ **`W289/1` STAYS OPEN and is minted as [`W297`](rows/W297.md): the same unguarded read one function away.**
+
+### W290 — `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W290.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W222/2`: `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable and is caught only by a RED test.** ⭐ **RECEIVED from `W222`'s office at `8517cf3`. RE-MEASURED (Ruling 214) on `8517cf3`, by `git grep`:** `unit_location(` is called in `cli/narrate/stage.py`, `generate/clips.py`, `generate/units.py` and `generate/containers.py`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **One call takes the unit's source**, so no call site spells the label.
+2. ⛔ **Asserted both ways (R12):** a planted call that drops the label goes RED by name.
+
+⭐ **Surface:** `src/studyforge/generate/declarations.py`, its callers above, and their tests. ⚠️ **`W222` merged at `f4779c9`.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)
+
+#### ⭐ CLOSED — PO ROUND 90
+
+⭐ **Merged at `b31e780`, TERMINAL by predicate `C`.** ⭐ **`unit_location` takes the `UnitSource` whole, and `declared_location` serves the callers that walk DECLARATIONS rather than material; both feed one private body, now the only place naming address, ordinal, title, origin and label together.** ⭐ **The old spelling is a `TypeError` — unwritable rather than merely RED.** ⛔ **`W290/1` is a NEGATIVE RESULT: the row named four call sites and there were SIX, two reached through an import alias that defeats a grep for the bare name. All six landed, and the MEASURING FORM is what carries forward.**
+
+### W295 — the vendored highlighter carries no markup, json, properties or gherkin grammar, so ISO-06's clause is unmeetable
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W295.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W243/1`: the vendored highlighter carries no grammar for `markup`, `json`, `properties` or `gherkin`, so `ISO-06`'s acceptance clause *"XML fences highlighted"* is UNMEETABLE and such a fence renders plain.** ⭐ **HELD FOR THE USER since [`W243`](#w243-the-vendored-highlighter-lacks-grammars-a-real-corpuss-fences-use-and-nothing-declares-the-fallback) closed at `5f772d9`, because the remedy needed a network act and no office fetches.**
+
+⭐ **DECIDED BY THE USER, 2026-09-16: VENDOR the grammars into the repository — NOT a build-time download.** ⛔ **So the build stays offline and R8 is untouched.** ⚠️ **The one fetch the decision implies is the COORDINATOR's act, performed once and disclosed in the round record, never an office's.**
+
+⭐ **RE-MEASURED (Ruling 214) at `19c7224`, role `wt/po`, HOST, by `sed -n` over the vendoring header:** `Components: core clike javascript java kotlin python sql.` and the `Languages:` line names `clike java javascript js kotlin kt kts plain plaintext py python sql text txt` — none of the four.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`prism.js` is re-vendored at 1.30.0 carrying the four grammars, UNMODIFIED apart from its header** — the no-edit rule is [`vendored.py`](../../src/studyforge/render/pageassets/vendored.py)'s and this row does not relax it.
+2. ⛔ **The header's `Components:` and `Languages:` lines state the new truth**, and its recorded reproduce command still reproduces exactly what the file contains.
+3. ⭐ **`test_highlight_grammars.py` passes BOTH WAYS unchanged** — a name declared but absent is RED, a grammar carried but undeclared is RED. ⚠️ **If that test must change to admit this bundle, that is a FINDING to argue, never a silent edit.**
+4. ⛔ **A language still not carried renders as the DECLARED plain fallback.** That behaviour must not regress.
+5. ⛔ **Asserted both ways (R12), and R8 re-checked:** the added grammars introduce no network path.
+
+### ⚠️ ORDERING IS LOAD-BEARING AND IS NOT A STYLE CHOICE
+
+⛔ **`markup` must be concatenated BEFORE `javascript`.** ⭐ Prism's javascript component attaches inlined-script support behind a `Prism.languages.markup &&` guard, so markup loading later leaves that support silently unattached — ⚠️ **green tests, wrong page.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A HAND-EDITED BUNDLE.** ⭐ An edited vendored file cannot be re-vendored without losing the edit, and nothing records that it was made.
+
+[the mint](#po-round-89)
+
+#### ⭐ CLOSED — PO ROUND 90
+
+⭐ **Merged at `a3987cf`, TERMINAL by predicate `C`, on the user's ruling of 2026-09-16 to VENDOR rather than download.** ⭐ **`prism.js` is re-vendored at 1.30.0, unmodified apart from its header, with a control asserting the committed body is byte-identical to the recorded concatenation.** ⛔ **The ORDER is measured and asserted, not described: `markup` must precede `javascript`, because with markup last an inlined script body stays bare, the tags still highlight, and NOTHING reports an error.** ⚠️ **One contract change is disclosed: `HEADER_CHARS` widens, because at this many declared names the declaration lines no longer fit.** ⚠️ **`W295/1` is STALE rather than open — it reports that no row file exists and the Scheduled cell reads `pending`, both true at its cut and both answered by round 89 merging beneath it.** ⛔ **Its handoff needed a fix-forward at `e331189`: `PO-90/1`.**
