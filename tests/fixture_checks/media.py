@@ -6,7 +6,17 @@ entry against the file it names.
 **How you use it.** `check_media(container_dir, document, where)` yields
 `(rule_id, message)`.
 
-**Depends on.** `digests` for the byte digest. Nothing else.
+**Depends on.** `digests` for the byte digest, and the two modules that OWN
+the segments of a unit's own directory — `corpus.placement` for `units/` and
+`address` for the `unit-NN` padding.
+
+⚠️ **Those two imports are `W214`.** This module composed the directory from a
+literal and a format string, which made it a second spelling of the one
+`skills.adapter.Layout.unit_files` computes — and a fixture check that agreed
+with itself about where media lives is the reading `validate` could not
+contradict. ⭐ `studyforge validate` now asks the same question of any corpus
+(`media-missing`); this half stays because these fixtures are checked without
+it.
 
 ⭐ **`media_skipped` is a third state, not a missing one.** The marker exists
 precisely so a capture that named its media and never fetched it can be told
@@ -17,6 +27,9 @@ reporting.
 
 from __future__ import annotations
 
+from studyforge.address import unit_name
+from studyforge.corpus.placement import UNITS_DIRNAME
+
 from tests.fixture_checks.digests import sha256_of_bytes
 
 
@@ -24,7 +37,7 @@ def check_media(container_dir, document, where):
     """Every declared local file is on disk with the digest recorded for it."""
     if document.get("media_skipped"):
         return
-    unit_root = container_dir / "units" / f"unit-{document['unit']:02d}"
+    unit_root = container_dir / UNITS_DIRNAME / unit_name(document["unit"])
     for entry in list(document["assets"]) + list(document["attachments"]):
         local = entry.get("local") or ""
         if not local:

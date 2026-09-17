@@ -57,9 +57,11 @@ from __future__ import annotations
 from studyforge.skills.adapter.layout import (
     ARCHIVE_DIR,
     RAW_DIR,
+    TREE_ROOT,
     UNITS_DIR,
     Layout,
     LayoutError,
+    archive_tree,
     document_name,
 )
 from studyforge.skills.adapter.parts import PARTS, Part
@@ -81,6 +83,7 @@ __all__ = [
     "PARTS",
     "RAW_DIR",
     "SOURCE_LINE_CEILING",
+    "TREE_ROOT",
     "UNITS_DIR",
     "Layout",
     "LayoutError",
@@ -90,6 +93,7 @@ __all__ = [
     "Scaffold",
     "ScaffoldRefused",
     "Written",
+    "archive_tree",
     "document_name",
     "plan_for",
     "scaffold",

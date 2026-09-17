@@ -21,9 +21,11 @@ from studyforge.corpus.placement import (
 from studyforge.skills.adapter import (
     ARCHIVE_DIR,
     RAW_DIR,
+    TREE_ROOT,
     UNITS_DIR,
     Layout,
     LayoutError,
+    archive_tree,
     document_name,
 )
 from studyforge.validate.corpus import read as walk
@@ -215,3 +217,69 @@ def _write(path: Path, text: str) -> None:
     """Write one file, making its directory — what the generated `emit` does."""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(text, encoding="utf-8")
+
+
+# --------------------------------------------------------------------------
+# ⛔ W214 — the drawn tree IS the layout, at values it was not drawn at
+# --------------------------------------------------------------------------
+
+#: A second set of values, chosen to share nothing with the ones the tree is
+#: drawn at: a two-level address, another variant, a two-digit unit, a practice.
+#: ⛔ Substituted back in here so the comparison is against `Layout` computing
+#: something it has not computed before — a tree re-rendered at its own drawing
+#: values would agree with itself.
+OTHER = Address(["basics", "01-getting-started"])
+OTHER_VARIANT = "java"
+OTHER_UNIT = 12
+OTHER_ORDINAL = 3
+
+
+def filled(line: str, root) -> str:
+    """Return one drawn line with every placeholder replaced by a real value."""
+    for token, value in (
+        ("<corpus-root>", str(root)),
+        ("<address>", OTHER.key),
+        ("<variant>", OTHER_VARIANT),
+        ("unit-NN", unit_name(OTHER_UNIT)),
+        ("<kind>-N.json", document_name("practice", OTHER_ORDINAL)),
+    ):
+        line = line.replace(token, value)
+    return line.rstrip("/")
+
+
+def test_the_drawn_tree_is_the_four_places_layout_computes(tmp_path):
+    """⛔ R19's whole point: a page shows this, so the page cannot retype it.
+
+    ⭐ Non-circular by construction — the tree is drawn at one address, one
+    variant and unit 1, and this fills it at two levels, another variant, unit
+    12 and a practice, then asks `Layout` for the same four paths.
+    """
+    layout = Layout(tmp_path)
+    assert [filled(line, tmp_path) for line in archive_tree().splitlines()] == [
+        str(layout.manifest),
+        str(layout.container_map(OTHER)),
+        str(layout.document(OTHER, OTHER_VARIANT, OTHER_UNIT, "practice", OTHER_ORDINAL)),
+        str(layout.unit_files(OTHER, OTHER_UNIT)),
+    ]
+
+
+def test_the_tree_draws_a_units_own_directory_and_it_is_not_inside_any_variant():
+    # ⛔ The line `W214` found missing from every page that draws this tree.
+    home = archive_tree().splitlines()[-1]
+    assert home.endswith(f"{UNITS_DIR}/unit-NN/"), home
+    assert f"/{RAW_DIR}/" not in home, "a unit's own files were drawn inside a variant"
+
+
+def test_the_drawing_replaces_a_whole_segment_and_never_part_of_one():
+    # ⚠️ The three segments `corpus.placement` owns must survive the
+    # substitution untouched, whatever the tree was drawn at.
+    drawn = archive_tree()
+    for segment in (ARCHIVE_DIRNAME, RAW_DIRNAME, UNITS_DIRNAME):
+        assert f"/{segment}/" in drawn, f"the drawn tree lost {segment!r}"
+    assert drawn.count(TREE_ROOT) == len(drawn.splitlines())
+
+
+def test_the_tree_is_rooted_at_the_placeholder_it_publishes():
+    # ⛔ A reader substitutes their own root for this token, so it is a name
+    # rather than a string each caller re-types.
+    assert all(line.startswith(f"{TREE_ROOT}/") for line in archive_tree().splitlines())
