@@ -2,8 +2,8 @@
 
 **What it does.** Holds the argument parsing, the corpus walk, the report and
 the exit code for `studyforge narrate`. Synthesis itself is `narrate.synth`'s
-and the wire is `narrate.client`'s; this package is their caller — ⛔ never a
-second author of either.
+the client is `narrate.client`'s and the wire `narrate.wire`'s; this package is
+their caller — ⛔ never a second author of any of them.
 
 **How you use it.**
 
@@ -16,7 +16,8 @@ second author of either.
 handed in.
 
 **Depends on.** `generate.declarations`, `unit.builder`, `narrate.speakable`,
-`narrate.synth`, `narrate.client`, and `validate` for the exit codes.
+`narrate.synth`, `narrate.answers`, `narrate.client`, `narrate.wire`, and
+`validate` for the exit codes.
 ⛔ Nothing here knows any source (R1).
 
 ⭐ **`E09` § W202 answer 3 is this package's reason to exist**: a build never

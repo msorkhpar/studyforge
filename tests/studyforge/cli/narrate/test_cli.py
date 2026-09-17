@@ -12,9 +12,9 @@ import socket
 
 import pytest
 
-from studyforge.cli.narrate import cli
 from studyforge.cli.narrate.cli import DEFAULT_FORMAT, DEFAULT_SERVICE, build_parser, main
 from studyforge.cli.narrate.report import NO_SERVICE
+from studyforge.narrate import wire
 from studyforge.narrate.synth import state_file
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
@@ -71,7 +71,7 @@ def test_the_default_service_is_loopback_only():
 def test_it_narrates_a_corpus_and_exits_zero(tmp_path, monkeypatch):
     root = a_corpus(tmp_path, "depth1")
     before = files(root)
-    monkeypatch.setattr(cli, "over_http", FakeService())
+    monkeypatch.setattr(wire, "over_http", FakeService())
 
     code, printed = invoke(str(root), "--voice", VOICE)
 
@@ -84,10 +84,10 @@ def test_it_narrates_a_corpus_and_exits_zero(tmp_path, monkeypatch):
 
 def test_a_rerun_through_the_entry_point_requests_nothing(tmp_path, monkeypatch):
     root = a_corpus(tmp_path, "depth1")
-    monkeypatch.setattr(cli, "over_http", FakeService())
+    monkeypatch.setattr(wire, "over_http", FakeService())
     invoke(str(root), "--voice", VOICE)
     again = FakeService()
-    monkeypatch.setattr(cli, "over_http", again)
+    monkeypatch.setattr(wire, "over_http", again)
 
     code, _ = invoke(str(root), "--voice", VOICE)
 
@@ -98,7 +98,7 @@ def test_a_rerun_through_the_entry_point_requests_nothing(tmp_path, monkeypatch)
 def test_a_segment_the_service_could_not_synthesise_exits_one(tmp_path, monkeypatch):
     root = a_corpus(tmp_path, "depth1")
     lost = speech_ids(root)[0]
-    monkeypatch.setattr(cli, "over_http", FakeService(failing={lost}))
+    monkeypatch.setattr(wire, "over_http", FakeService(failing={lost}))
 
     code, printed = invoke(str(root), "--voice", VOICE)
 
@@ -131,7 +131,7 @@ def test_an_unreadable_corpus_exits_two_without_a_request(tmp_path, monkeypatch)
     root = a_corpus(tmp_path, "depth1")
     (root / "corpus.json").write_text("{", encoding="utf-8")
     service = FakeService()
-    monkeypatch.setattr(cli, "over_http", service)
+    monkeypatch.setattr(wire, "over_http", service)
 
     code, printed = invoke(str(root), "--voice", VOICE)
 
@@ -147,7 +147,7 @@ def test_an_unreadable_record_exits_two_without_a_request(tmp_path, monkeypatch)
     record.parent.mkdir(parents=True, exist_ok=True)
     record.write_text("[]", encoding="utf-8")
     service = FakeService()
-    monkeypatch.setattr(cli, "over_http", service)
+    monkeypatch.setattr(wire, "over_http", service)
 
     code, _ = invoke(str(root), "--voice", VOICE)
 

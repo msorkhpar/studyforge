@@ -18,7 +18,7 @@ from studyforge.cli.narrate.report import (
     prune_lines,
 )
 from studyforge.cli.narrate.stage import Narrated
-from studyforge.narrate.client import Health
+from studyforge.narrate.answers import Health
 from studyforge.narrate.synth import Synthesis
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK

@@ -9,7 +9,7 @@ the exit code.
 ⭐ The dispatcher registers this same callable as the `narrate` verb.
 
 **Depends on.** `cli.narrate.stage`, `cli.narrate.prune`, `cli.narrate.report`, `narrate.client` for
-the client and its one socket-opening transport, `validate.cli` for `UNUSABLE`,
+the client, `narrate.wire` for its one socket-opening transport, `validate.cli` for `UNUSABLE`,
 and `argparse`.
 
 ## ⛔ `--voice` is REQUIRED and has NO DEFAULT
@@ -43,7 +43,6 @@ from pathlib import Path
 from studyforge.cli.narrate.prune import prune_corpus
 from studyforge.cli.narrate.report import exit_code, lines, prune_exit_code, prune_lines
 from studyforge.cli.narrate.stage import narrate_corpus
-from studyforge.narrate.client import NarrateClient, over_http
 from studyforge.narrate.speakable import SpeakableError
 from studyforge.narrate.synth import StateError
 from studyforge.validate.cli import UNUSABLE
@@ -114,6 +113,12 @@ def main(argv: list[str] | None = None, out=None) -> int:
             pruned = prune_corpus(root)
             report, code = prune_lines(pruned, arguments.root), prune_exit_code(pruned)
         else:
+            # ⛔ Imported HERE and never at module level (`W223`, `W224/4`): the
+            # dispatcher imports every verb, so a module-level import put the HTTP
+            # client in every `studyforge.cli.*` import, `cli/plan` included.
+            from studyforge.narrate.client import NarrateClient
+            from studyforge.narrate.wire import over_http
+
             client = NarrateClient(
                 arguments.service, voice=arguments.voice, fmt=arguments.fmt, transport=over_http
             )

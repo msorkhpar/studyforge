@@ -127,6 +127,30 @@ def test_a_provides_bump_asks_for_every_clip_again(tmp_path):
     assert sorted(bumped.submitted) == speech_ids(root)
 
 
+def test_an_unchanged_model_asks_for_nothing(tmp_path):
+    # ⛔ W223, the first way (R12): the SAME model reported again is no change.
+    root = a_corpus(tmp_path, "depth1")
+    run(root, FakeService(engine_model="kokoro"))
+    before = files(root)
+    same = FakeService(engine_model="kokoro")
+    run(root, same)
+    assert same.submitted == []
+    assert same.requests == [HEALTH]
+    assert files(root) == before
+
+
+def test_a_model_change_asks_for_every_clip_again(tmp_path):
+    # ⛔ W223 clause 1 (`SF-42/2`): `engine_model` is in the service's content
+    # address and `/healthz` reports it. Asserted over the ids the transport was
+    # handed, never over the report.
+    root = a_corpus(tmp_path, "depth1")
+    run(root, FakeService(engine_model="kokoro"))
+    changed = FakeService(engine_model="kokoro-v1.1")
+    run(root, changed)
+    assert speech_ids(root), "the corpus declares no speech; the reading would be vacuous"
+    assert sorted(changed.submitted) == speech_ids(root)
+
+
 # --------------------------------------------------------------------------
 # ⛔ refusals: an absent service, an unreadable record, an unreadable corpus
 # --------------------------------------------------------------------------

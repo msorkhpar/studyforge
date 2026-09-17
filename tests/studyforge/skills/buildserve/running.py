@@ -20,7 +20,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 from studyforge.corpus.manifest import MANIFEST_FILENAME, load
-from studyforge.narrate.client import Sent
+from studyforge.narrate.wire import Sent
 from studyforge.skills.buildserve import build_and_serve
 from tests.fixture_checks import FIXTURES, VALID
 from tests.studyforge.cli.narrate.service import FakeService

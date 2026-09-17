@@ -12,8 +12,10 @@ transport; `cli.main` builds the real one.
 **Depends on.** `generate.declarations` for the corpus walk and `unit_location`,
 the one derivation of where a unit's artifacts go, which the page also asks
 (`W222`); `unit.builder` for each unit's served document, `narrate.speakable`
-for its speech units, `narrate.synth` for the pass, `narrate.client`
-for the client type, and `cli.narrate.disclosure` for the dead-entry count.
+for its speech units, `narrate.synth` for the pass, `narrate.answers`
+for the client's shape, and `cli.narrate.disclosure` for the dead-entry count.
+⛔ Not `narrate.client` or `narrate.wire`: the dispatcher imports this module
+for every verb, so the client is `cli.main`'s to import when it runs (`W223`).
 ⛔ It names no source (R1) and composes no path (R4).
 
 ## ⛔ `probe()` is called HERE, exactly once, and never per unit
@@ -54,7 +56,7 @@ from pathlib import Path
 
 from studyforge.cli.narrate.disclosure import Walk, dead_entries, superseded_clips
 from studyforge.generate.declarations import Corpus, UnitSource, read_corpus, unit_location
-from studyforge.narrate.client import Health, NarrateClient, NarrationError
+from studyforge.narrate.answers import Health, NarrationError, Narrator
 from studyforge.narrate.speakable import SpeechUnit, speakable_of
 from studyforge.narrate.synth import (
     Conditions,
@@ -152,7 +154,7 @@ def survey(root: Path | str) -> tuple[tuple[UnitWork, ...], Walk]:
 
 def narrate_corpus(
     root: Path | str,
-    client: NarrateClient,
+    client: Narrator,
     *,
     voice: str,
     fmt: str,

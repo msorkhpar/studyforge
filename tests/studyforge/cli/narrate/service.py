@@ -17,8 +17,8 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 from studyforge.generate.declarations import read_corpus
-from studyforge.narrate.client import Received, Sent, ServiceUnavailable
 from studyforge.narrate.speakable import parse_clip_name, speakable_of
+from studyforge.narrate.wire import Received, Sent, ServiceUnavailable
 from studyforge.unit.builder import build_unit
 
 BASE = "http://127.0.0.1:8870"
@@ -65,11 +65,21 @@ def audio_for(speech_id: str) -> bytes:
 class FakeService(Recording):
     """Answers `/healthz`, `/v1/jobs` and `/v1/artifacts/<id>` as `narrate-service` does."""
 
-    def __init__(self, *, reachable=True, provides=3, chunk_chars=1800, jobs=None, failing=()):
+    def __init__(
+        self,
+        *,
+        reachable=True,
+        provides=3,
+        chunk_chars=1800,
+        engine_model="fake",
+        jobs=None,
+        failing=(),
+    ):
         super().__init__()
         self.reachable = reachable
         self.provides = provides
         self.chunk_chars = chunk_chars
+        self.engine_model = engine_model
         self.jobs = jobs
         self.failing = frozenset(failing)
         self._audio: dict[str, bytes] = {}
@@ -79,7 +89,12 @@ class FakeService(Recording):
             raise ServiceUnavailable("the narration service did not answer (ConnectionRefused)")
         path = urlsplit(sent.url).path
         if path == "/healthz":
-            health = {"status": "ok", "provides": self.provides, "chunk_chars": self.chunk_chars}
+            health = {
+                "status": "ok",
+                "provides": self.provides,
+                "chunk_chars": self.chunk_chars,
+                "engine_model": self.engine_model,
+            }
             return as_json(health)
         if path == "/v1/jobs":
             if self.jobs is not None:
@@ -107,7 +122,7 @@ class FakeService(Recording):
                     "artifact_id": key,
                     "format": payload.get("format", FMT),
                     "engine": "fake",
-                    "engine_model": "fake",
+                    "engine_model": self.engine_model,
                 }
             )
         voice, fmt = payload.get("voice"), payload.get("format")

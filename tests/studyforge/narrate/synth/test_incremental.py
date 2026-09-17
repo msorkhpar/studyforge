@@ -29,8 +29,9 @@ import pytest
 from studyforge.address.address import Address
 from studyforge.corpus.placement.names import AUDIO_DIRNAME
 from studyforge.corpus.placement.profile import profile_for
-from studyforge.narrate.client import NarrateClient, NarrationError, Received, Sent
-from studyforge.narrate.speakable.naming import parse_clip_name
+from studyforge.narrate.answers import NarrationError
+from studyforge.narrate.client import NarrateClient
+from studyforge.narrate.speakable.naming import digest_of, parse_clip_name
 from studyforge.narrate.speakable.records import SpeechUnit
 from studyforge.narrate.synth.incremental import (
     CLIP_ABSENT,
@@ -52,6 +53,7 @@ from studyforge.narrate.synth.record import (
     read_state,
     state_file,
 )
+from studyforge.narrate.wire import Received, Sent
 
 BASE = "http://127.0.0.1:8870"
 VOICE = "am_liam"
@@ -70,7 +72,13 @@ UNITS = (unit("u1", "the first sentence"), unit("u2", "the second sentence"))
 
 
 def conditions(**moved) -> Conditions:
-    settings = {"voice": VOICE, "fmt": FMT, "provides": 2, "chunk_chars": 320}
+    settings = {
+        "voice": VOICE,
+        "fmt": FMT,
+        "provides": 2,
+        "chunk_chars": 320,
+        "engine_model": "kokoro",
+    }
     settings.update(moved)
     return Conditions(**settings)
 
@@ -301,6 +309,27 @@ def test_a_version_1_entry_no_run_can_place_is_kept_and_not_dropped(tmp_path):
     assert (after.clips["u1"].where, after.clips["u2"].where) == ("audio", None)
 
 
+def test_a_record_from_before_the_model_was_a_condition_is_stale_and_drops_nothing(tmp_path):
+    # ⛔ W223's MUST-NOT: an older record reads, never as current, and loses no
+    # entry. Its fingerprints are rewritten exactly as the writer before `W223`
+    # took them: over the conditions document with no `engine_model` key.
+    third = unit("u3", "a third sentence")
+    into, state = first_pass(tmp_path, units=(*UNITS, third))
+    document = json.loads(state.read_text(encoding="utf-8"))
+    older = {key: value for key, value in document["conditions"].items() if key != "engine_model"}
+    document["conditions"] = older
+    for entry_of in document["clips"].values():
+        entry_of["conditions"] = digest_of(json.dumps(older, sort_keys=True, ensure_ascii=False))
+    state.write_text(json.dumps(document), encoding="utf-8")
+
+    client, recorder, _into, _state = build(tmp_path, *job("u1", "u2"))
+    outcome = synthesise(UNITS, client=client, conditions=conditions(), into=into, state=state)
+
+    assert recorder.submitted == ["u1", "u2"]
+    assert outcome.reasons == {"u1": CONDITIONS_MOVED, "u2": CONDITIONS_MOVED}
+    assert sorted(read_state(state).clips) == ["u1", "u2", "u3"]
+
+
 def test_an_audio_directory_outside_the_corpus_root_is_refused_before_any_request(tmp_path):
     client, recorder, _into, state = build(tmp_path / "corpus", *job("u1", "u2"))
 
@@ -332,6 +361,7 @@ def test_a_unit_added_to_a_synthesised_corpus_is_the_only_one_asked_for(tmp_path
         pytest.param({"voice": "af_heart"}, id="voice"),
         pytest.param({"provides": 3}, id="provides"),
         pytest.param({"chunk_chars": 512}, id="chunk_chars"),
+        pytest.param({"engine_model": "kokoro-v1.1"}, id="engine_model"),
     ],
 )
 def test_a_condition_moving_makes_every_clip_stale_though_no_filename_moves(tmp_path, moved):

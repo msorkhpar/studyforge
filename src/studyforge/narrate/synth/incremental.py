@@ -31,7 +31,7 @@ from pathlib import Path
 
 from studyforge.corpus.placement import AUDIO_DIRNAME, UnitLocations
 from studyforge.describe import describe
-from studyforge.narrate.client import NarrateClient, place
+from studyforge.narrate.answers import Narrator, place
 from studyforge.narrate.speakable.naming import clip_name
 from studyforge.narrate.speakable.records import SpeechUnit
 from studyforge.narrate.synth.location import Superseded, located, order, root_of, where_of
@@ -165,7 +165,7 @@ class Synthesis:
 def synthesise(
     units: Sequence[SpeechUnit],
     *,
-    client: NarrateClient,
+    client: Narrator,
     conditions: Conditions,
     into: Path | str,
     state: Path | str,

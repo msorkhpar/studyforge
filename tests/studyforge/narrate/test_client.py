@@ -1,4 +1,4 @@
-"""The framework's narration client (NS-05, R7, R4, R6, R8).
+"""The framework's narration client (NS-05, R7, R4, R6, R8, W223).
 
 ⛔ **The acceptance clause this file exists for is asserted over the REQUESTS,
 not over the output and not over the exception.** `Recorder` collects every
@@ -11,6 +11,9 @@ replaced, so the population becomes *every socket this process would open* and
 not merely *every request the seam produced*. Its own positive control is
 `test_the_socket_guard_fires_on_a_clean_run` — without that, a guard that could
 never fire would prove the same nothing.
+
+⭐ Placing clips is `answers.place` and is tested in `test_answers.py`; reading
+an answer's bytes is the wire's and is tested in `test_wire.py` (`W223`).
 
 ⚠️ **The home-path and token material below is assembled at run time**, the same
 trick `tests/studyforge/archive/test_scrub.py` uses and for the same reason: this
@@ -27,27 +30,19 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.address.address import Address
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.corpus.placement.names import AUDIO_DIRNAME
-from studyforge.corpus.placement.profile import profile_for
 from studyforge.narrate import client as client_module
-from studyforge.narrate.client import (
-    ARTIFACT_PATH,
-    HEALTH_PATH,
-    JOBS_PATH,
-    ManifestError,
-    NarrateClient,
-    NarrationError,
+from studyforge.narrate import wire
+from studyforge.narrate.client import ARTIFACT_PATH, HEALTH_PATH, JOBS_PATH, NarrateClient
+from studyforge.narrate.speakable.records import SpeechUnit
+from studyforge.narrate.wire import (
     Received,
     Sent,
     ServiceRefused,
     ServiceUnavailable,
+    UnreadableAnswer,
     over_http,
-    place,
 )
-from studyforge.narrate.speakable.naming import clip_name
-from studyforge.narrate.speakable.records import SpeakableError, SpeechUnit
 from tests.support import imports_module
 
 BASE = "http://127.0.0.1:8870"
@@ -63,6 +58,9 @@ LEAKS = (HOME, BEARER, HOSTNAME, EMAIL)
 ADDRESS_A = "a" * 64
 ADDRESS_B = "b" * 64
 AUDIO = b"ID3\x04\x00\x00\x00\x00\x00\x00mp3 bytes"
+
+#: What `/healthz` answers here: every field the probe requires.
+HEALTHY = {"status": "ok", "provides": 2, "chunk_chars": 1800, "engine_model": "kokoro"}
 
 
 def unit(identifier: str, said: str) -> SpeechUnit:
@@ -261,24 +259,34 @@ def test_the_socket_guard_fires_on_a_clean_run(monkeypatch):
     assert opened, "the guard saw nothing here, so its silence above proves nothing"
 
 
+def test_the_real_transport_reports_absence_in_a_scrubbed_printable_sentence(monkeypatch):
+    """⛔ The message names the failure's TYPE, and the URL it prints is scrubbed."""
+    socket_guard(monkeypatch)
+    leaking = Sent("GET", f"{BASE}/x{HOME}/y", None, "application/json", 1.0)
+    with pytest.raises(ServiceUnavailable) as absent:
+        over_http(leaking)
+    assert "R6, R8" in str(absent.value)
+    assert "jane" not in str(absent.value)
+
+
 # --------------------------------------------------------------------------
 # ⛔ Ruling 58, and the refusal's own words
 # --------------------------------------------------------------------------
 
 
-def test_a_leak_is_not_translated_into_this_modules_error_family():
-    assert not issubclass(PersonalDataLeak, NarrationError)
-    assert not issubclass(SpeakableError, NarrationError)
+def except_arms(function: ast.AST) -> list[str]:
+    """Every `except` arm's type under `function`, as written."""
+    return [
+        "bare" if handler.type is None else ast.unparse(handler.type)
+        for handler in ast.walk(function)
+        if isinstance(handler, ast.ExceptHandler)
+    ]
 
 
 def test_no_arm_of_this_module_catches_a_leak_or_swallows_everything():
     """⛔ Ruling 58's own instrument, run over this module rather than the tree."""
-    tree = ast.parse(SOURCE.read_text(encoding="utf-8"))
-    caught = [
-        "bare" if handler.type is None else ast.unparse(handler.type)
-        for handler in ast.walk(tree)
-        if isinstance(handler, ast.ExceptHandler)
-    ]
+    caught = except_arms(ast.parse(SOURCE.read_text(encoding="utf-8")))
+    assert caught, "the scan found no arm, so the checks below read nothing"
     assert "bare" not in caught
     for arm in caught:
         assert "PersonalDataLeak" not in arm
@@ -307,7 +315,7 @@ def test_a_clean_segment_is_sent_verbatim_and_is_never_rewritten():
 # --------------------------------------------------------------------------
 
 
-def test_the_module_imports_only_the_standard_library_and_two_framework_modules():
+def test_the_module_imports_only_the_standard_library_and_the_framework_modules_it_names():
     tree = ast.parse(SOURCE.read_text(encoding="utf-8"))
     imported = set()
     for node in ast.walk(tree):
@@ -318,16 +326,14 @@ def test_the_module_imports_only_the_standard_library_and_two_framework_modules(
     assert imported == {
         "__future__",
         "collections.abc",
-        "dataclasses",
         "json",
-        "pathlib",
         "re",
         "studyforge.archive.scrub",
         "studyforge.describe",
+        "studyforge.narrate.answers",
         "studyforge.narrate.speakable.naming",
         "studyforge.narrate.speakable.records",
-        "urllib.error",
-        "urllib.request",
+        "studyforge.narrate.wire",
     }
 
 
@@ -339,56 +345,6 @@ def test_the_client_does_not_import_the_placement_policy():
         "studyforge.corpus.placement.profile",
     ):
         assert not imports_module(SOURCE, module)
-
-
-def test_place_has_no_default_destination():
-    assert inspect.signature(place).parameters["into"].default is inspect.Parameter.empty
-
-
-# --------------------------------------------------------------------------
-# ⭐ Artifacts are placed THROUGH the policy — driven by both profiles
-# --------------------------------------------------------------------------
-
-
-def narrated(spoken: SpeechUnit):
-    recorder = one_clean_job(spoken)
-    return NarrateClient(BASE, transport=recorder).narrate([spoken])
-
-
-@pytest.mark.parametrize("profile_name", ["tree", "sibling"])
-def test_artifacts_are_placed_where_the_policy_says_and_nowhere_else(tmp_path, profile_name):
-    spoken = unit("unit-01.1.b1", "A spoken paragraph.")
-    locations = profile_for(profile_name).unit(
-        Address(("java", "basics")), 1, "Meaningful Names", origin="doc/lesson.md"
-    )
-    into = tmp_path / locations.media_dir(AUDIO_DIRNAME)
-    written = place(narrated(spoken), into)
-    # ⚠️ MEASURED: a client that composed `parent / "audio"` for itself is a
-    # NO-OP under `tree`, whose audio directory is literally `<unit>/audio` — so
-    # only the `sibling` arm can discriminate that defect, and this test is
-    # parametrized rather than written once for that reason.
-    assert written[0].parent == into
-    assert written == (into / f"{clip_name(spoken)}.mp3",)
-    assert written[0].read_bytes() == AUDIO
-
-
-def test_the_two_profiles_put_the_same_clip_in_different_places(tmp_path):
-    """⭐ Same client, same artifact, no code change — the policy moved it."""
-    spoken = unit("unit-01.1.b1", "A spoken paragraph.")
-    where = []
-    for profile_name in ("tree", "sibling"):
-        locations = profile_for(profile_name).unit(
-            Address(("java",)), 1, "Meaningful Names", origin="doc/lesson.md"
-        )
-        root = tmp_path / profile_name
-        where.append(place(narrated(spoken), root / locations.media_dir(AUDIO_DIRNAME))[0])
-    assert where[0].relative_to(tmp_path / "tree") != where[1].relative_to(tmp_path / "sibling")
-
-
-def test_placing_leaves_no_partial_file_behind(tmp_path):
-    spoken = unit("unit-01.1.b1", "A spoken paragraph.")
-    place(narrated(spoken), tmp_path / "audio")
-    assert [item.name for item in (tmp_path / "audio").iterdir()] == [f"{clip_name(spoken)}.mp3"]
 
 
 # --------------------------------------------------------------------------
@@ -403,14 +359,31 @@ def test_probe_reports_an_absent_service_without_raising():
     assert "nothing answered" in health.detail
 
 
-def test_probe_reports_a_reachable_service_and_its_deployment_chunk_budget():
-    answer = as_json({"status": "ok", "provides": 2, "chunk_chars": 1800, "formats": ["mp3"]})
+def test_probe_reports_a_reachable_service_and_its_deployment_settings():
+    answer = as_json({**HEALTHY, "formats": ["mp3"]})
     health = NarrateClient(BASE, transport=Recorder(answer)).probe()
     assert (health.reachable, health.provides, health.chunk_chars) == (True, 2, 1800)
 
 
+@pytest.mark.parametrize("model", ["kokoro", "kokoro-v1.1"])
+def test_probe_reads_the_deployments_model_off_healthz_and_composes_none(model):
+    # ⛔ W223 clause 1: `engine_model` is what `/healthz` reports, read verbatim.
+    health = NarrateClient(BASE, transport=Recorder(as_json({**HEALTHY, "engine_model": model})))
+    assert health.probe().engine_model == model
+
+
+@pytest.mark.parametrize("missing", ["chunk_chars", "engine_model"])
+def test_a_health_answer_without_a_content_address_setting_is_unreadable(missing):
+    # ⛔ Not a guess: an answer that cannot say what clips are made under is not
+    # a deployment this run may record conditions from.
+    partial = {key: value for key, value in HEALTHY.items() if key != missing}
+    health = NarrateClient(BASE, transport=Recorder(as_json(partial))).probe()
+    assert health.reachable is False
+    assert missing in health.detail
+
+
 def test_probe_reads_health_and_asks_for_nothing_else():
-    recorder = Recorder(as_json({"provides": 2, "chunk_chars": 1800}))
+    recorder = Recorder(as_json(HEALTHY))
     NarrateClient(BASE, transport=recorder).probe()
     assert [(item.method, item.url) for item in recorder.sent] == [("GET", BASE + HEALTH_PATH)]
 
@@ -418,6 +391,20 @@ def test_probe_reads_health_and_asks_for_nothing_else():
 def test_an_unreadable_health_answer_is_still_not_a_crash():
     health = NarrateClient(BASE, transport=Recorder(Received(200, "text/html", b"<p>"))).probe()
     assert health.reachable is False
+
+
+def test_probe_catches_only_the_wires_own_refusals():
+    # ⛔ W212/3: a health answer is not a manifest, and the decode error is the
+    # wire's. Every arm `probe` holds names a class `narrate.wire` defines.
+    method = next(
+        node
+        for node in ast.walk(ast.parse(SOURCE.read_text(encoding="utf-8")))
+        if isinstance(node, ast.FunctionDef) and node.name == "probe"
+    )
+    arms = except_arms(method)
+    assert sorted(arms) == ["ServiceUnavailable", "UnreadableAnswer"]
+    assert all(getattr(wire, arm).__module__ == wire.__name__ for arm in arms)
+    assert not hasattr(client_module, "ManifestError")
 
 
 def test_a_service_that_dies_mid_batch_writes_nothing(tmp_path):
@@ -432,16 +419,6 @@ def test_a_service_that_dies_mid_batch_writes_nothing(tmp_path):
         NarrateClient(BASE, transport=recorder).narrate(units)
     assert len(recorder.sent) == 3, "the run did reach the second fetch"
     assert list(tmp_path.iterdir()) == []
-
-
-def test_the_real_transport_reports_absence_in_a_scrubbed_printable_sentence(monkeypatch):
-    """⛔ The message names the failure's TYPE, and the URL it prints is scrubbed."""
-    socket_guard(monkeypatch)
-    leaking = Sent("GET", f"{BASE}/x{HOME}/y", None, "application/json", 1.0)
-    with pytest.raises(ServiceUnavailable) as absent:
-        over_http(leaking)
-    assert "R6, R8" in str(absent.value)
-    assert "jane" not in str(absent.value)
 
 
 # --------------------------------------------------------------------------
@@ -483,7 +460,7 @@ def test_the_manifests_own_url_is_never_followed():
 def test_an_artifact_id_that_is_not_the_published_shape_is_refused(artifact_id):
     spoken = unit("s1", "First.")
     recorder = Recorder(as_json(manifest(entry("s1", artifact_id))))
-    with pytest.raises(ManifestError):
+    with pytest.raises(UnreadableAnswer):
         NarrateClient(BASE, transport=recorder).narrate([spoken])
     assert len(recorder.sent) == 1
 
@@ -492,25 +469,25 @@ def test_a_format_that_is_not_a_usable_suffix_is_refused():
     spoken = unit("s1", "First.")
     bad = entry("s1", ADDRESS_A)
     bad["format"] = "../mp3"
-    with pytest.raises(ManifestError):
+    with pytest.raises(UnreadableAnswer):
         NarrateClient(BASE, transport=Recorder(as_json(manifest(bad)))).narrate([spoken])
 
 
 def test_a_manifest_about_a_segment_nobody_submitted_is_refused():
     recorder = Recorder(as_json(manifest(entry("s9", ADDRESS_A))))
-    with pytest.raises(ManifestError):
+    with pytest.raises(UnreadableAnswer):
         NarrateClient(BASE, transport=recorder).narrate([unit("s1", "First.")])
 
 
-def test_a_job_that_is_not_two_hundred_is_a_refusal_and_not_a_manifest():
+def test_a_job_that_is_not_two_hundred_is_a_refusal_and_not_an_unreadable_answer():
     recorder = Recorder(as_json({"error": "body must be JSON"}, status=400))
     with pytest.raises(ServiceRefused):
         NarrateClient(BASE, transport=recorder).narrate([unit("s1", "First.")])
 
 
-def test_a_body_that_is_not_json_is_a_manifest_error():
+def test_a_job_body_that_is_not_json_is_unreadable():
     recorder = Recorder(Received(200, "text/html", b"<html>"))
-    with pytest.raises(ManifestError):
+    with pytest.raises(UnreadableAnswer):
         NarrateClient(BASE, transport=recorder).narrate([unit("s1", "First.")])
 
 

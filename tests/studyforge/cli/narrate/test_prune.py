@@ -25,6 +25,7 @@ from studyforge.cli.narrate.prune import (
 )
 from studyforge.cli.site.cli import main as build_main
 from studyforge.generate.declarations import read_corpus
+from studyforge.narrate import wire
 from studyforge.narrate.synth import read_state, state_file
 from studyforge.validate.report import INVALID, OK
 from tests.studyforge.cli.narrate.plant import (
@@ -164,7 +165,7 @@ def test_a_reworded_passages_old_clip_is_the_one_clip_a_prune_deletes(tmp_path, 
     root = narrated(tmp_path)
     reword(root)
     before = files(root)
-    monkeypatch.setattr(cli, "over_http", FakeService())
+    monkeypatch.setattr(wire, "over_http", FakeService())
 
     code, printed = invoke(str(root), "--voice", VOICE)
 
@@ -232,7 +233,7 @@ def test_narrating_without_prune_deletes_no_clip_and_discloses_the_plant(tmp_pat
     root = narrated(tmp_path)
     dead, clip = plant_dead_entry(root)
     before = files(root)
-    monkeypatch.setattr(cli, "over_http", FakeService())
+    monkeypatch.setattr(wire, "over_http", FakeService())
 
     code, printed = invoke(str(root), "--voice", VOICE)
 
@@ -261,7 +262,7 @@ def test_a_prune_requests_nothing_from_any_service(tmp_path, monkeypatch):
     root = narrated(tmp_path)
     plant_dead_entry(root)
     service = FakeService()
-    monkeypatch.setattr(cli, "over_http", service)
+    monkeypatch.setattr(wire, "over_http", service)
 
     code, _ = invoke(str(root), "--prune")
     assert code == OK

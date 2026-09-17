@@ -27,6 +27,16 @@ wrote that no prune has removed yet. ⛔ **A version-1 record still reads**: its
 entries carry no directory until a run finds their clip, and an entry nobody
 can place stays in the record and is held by name, never dropped.
 
+## ⛔ THE CONDITIONS GAINED `engine_model`, AND AN OLDER RECORD STILL READS (`W223`)
+
+⭐ **No version bump: every entry's keys are unchanged**, and the top-level
+`conditions` object gained one key, which `_conditions_of` reads as absent. ⛔ **A
+record written before it reads, and every clip in it is judged STALE, never
+current**: its fingerprints were taken over conditions that named no model, so
+they cannot equal one that does. The next run asks for every clip once, with the
+reason *the conditions changed*, and drops no entry. ⚠️ That is the correct cost,
+not a regression: the old record cannot say which model made its clips.
+
 ## ⛔ NOTHING HERE KNOWS WHERE A CORPUS KEEPS ITS AUDIO
 
 `state_file(root)` composes the record's own name against the placement
@@ -44,7 +54,7 @@ from pathlib import Path
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.placement import GENERATED_ROOT
 from studyforge.describe import describe
-from studyforge.narrate.client import Health, NarrationError
+from studyforge.narrate.answers import Health, NarrationError
 from studyforge.narrate.speakable.naming import digest_of
 from studyforge.narrate.synth.location import Superseded, checked_where, order
 from studyforge.version import check
@@ -94,6 +104,8 @@ class Conditions:
     fmt: str
     provides: int | None = None
     chunk_chars: int | None = None
+    #: ⛔ `W223`: the deployment's model as `/healthz` reports it, never a guess.
+    engine_model: str | None = None
 
     def __post_init__(self) -> None:
         """Refuse an unstated voice or format, naming which one is missing."""
@@ -110,7 +122,7 @@ class Conditions:
         """Read the deployment's half off a `probe()` and pair it with the asked-for half."""
         if not isinstance(health, Health):
             raise TypeError(f"conditions are read from a Health, got {describe(health)}")
-        return cls(voice, fmt, health.provides, health.chunk_chars)
+        return cls(voice, fmt, health.provides, health.chunk_chars, health.engine_model)
 
     def document(self) -> dict[str, object]:
         """Return the conditions as the object the record carries."""
@@ -119,6 +131,7 @@ class Conditions:
             "format": self.fmt,
             "provides": self.provides,
             "chunk_chars": self.chunk_chars,
+            "engine_model": self.engine_model,
         }
 
     @property
@@ -353,8 +366,13 @@ def _conditions_of(document: object) -> Conditions:
     for value in (provides, chunk_chars):
         if value is not None and (not isinstance(value, int) or isinstance(value, bool)):
             raise StateError(f"{where} records a deployment condition that is not an int")
+    engine_model = document.get("engine_model")
+    if engine_model is not None and not isinstance(engine_model, str):
+        raise StateError(f"{where} records an engine model that is not a str")
     try:
-        return Conditions(document.get("voice"), document.get("format"), provides, chunk_chars)
+        return Conditions(
+            document.get("voice"), document.get("format"), provides, chunk_chars, engine_model
+        )
     except ValueError:
         raise StateError(f"{where} records conditions with no voice or no format") from None
 
