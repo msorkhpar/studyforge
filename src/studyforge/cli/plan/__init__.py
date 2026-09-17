@@ -65,6 +65,7 @@ that reads a corpus root.
 | Module | Owns |
 |---|---|
 | `report` | what a plan is, and how each line renders |
+| `media` | the `media` lines: the policy, the footprint and the verdict on it |
 | `derive` | one corpus root in, one `Plan` out |
 | `recorded` | the narration record: which clips a build copies, which are superseded |
 | `cli` | the arguments, the stream and the exit code |
@@ -74,10 +75,9 @@ from __future__ import annotations
 
 from studyforge.cli.plan.cli import build_parser, main
 from studyforge.cli.plan.derive import plan_for
+from studyforge.cli.plan.media import UNPROJECTED, MediaProjection
 from studyforge.cli.plan.report import (
-    UNPROJECTED,
     Creation,
-    MediaProjection,
     Plan,
     Refusal,
     SupersededClip,

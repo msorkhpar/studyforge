@@ -7,9 +7,9 @@ renders each as one greppable line.
 **How you use it.** `derive.plan_for` builds these; `cli.main` prints
 `Plan.lines()`; `SK-07` and `OPS-05` read `Plan.paths` rather than the text.
 
-**Depends on.** `corpus.manifest` for the two policy records it reports, and
-`corpus.media` for what a measured footprint is and the verdict on it. ⛔ No
-filesystem: this module knows what a plan says, never how one was found out —
+**Depends on.** `corpus.manifest` for the edit record it reports, and
+`cli.plan.media` for the `media` lines, which are their own module since `W314`.
+⛔ No filesystem: this module knows what a plan says, never how one was found out —
 `derive` takes the reading and hands it here.
 
 ## The line format, and why it is shaped like this
@@ -42,38 +42,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from studyforge.cli.plan.media import MediaProjection
 from studyforge.corpus.container import CONTAINER_FILENAME
-from studyforge.corpus.manifest import MANIFEST_FILENAME, MediaPolicy, PermittedEdit
-from studyforge.corpus.media import MediaFootprint, verdict_for
-from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
+from studyforge.corpus.manifest import MANIFEST_FILENAME, PermittedEdit
 from studyforge.validate.report import INVALID, OK
-
-#: What the footprint line says when there is neither a reading of the disk nor a rate.
-#:
-#: ⚠️ **Stated once, as a value, because it is the honest answer and not a
-#: placeholder.** ⛔ **A number invented here would be a guess wearing a
-#: measurement's clothes**, in the one report a person reads to decide whether
-#: to let this tool near a repository they care about. ⭐ A footprint is either
-#: MEASURED — the bytes on disk, which `derive` reads for every corpus whose
-#: policy weighs its media — or PROJECTED from a rate the person supplied.
-#: ⛔ `W287`: this sentence once named a closed task as the future owner of the
-#: measurement; it names no task, because nothing is owed.
-UNPROJECTED = (
-    "not stated — this run took no reading of the disk and was given no rate, so "
-    "there is no number to weigh. A footprint is measured from the media on disk, "
-    "or projected with --bytes-per-unit; the unit count above is known without either."
-)
-
-#: What the measured footprint line says the reading covered. ⛔ The population
-#: is `corpus.media.measure`'s, and this sentence names it rather than widening it.
-MEASURED_OVER = "on disk under the declared units' media directories"
-
-#: What a measured line adds when the reading found nothing: why, and what fills it.
-NOTHING_ON_DISK = (
-    "nothing is there yet — `studyforge narrate` writes the clips there, "
-    "and --bytes-per-unit projects a footprint before it does"
-)
-
 
 #: ⛔ `W267`: the verbs a named path is printed with, by who writes it and whether it is there.
 CREATE, REPLACE, KEEP, CLAIM, EXPECT = "create", "replace", "keep", "claim", "expect"
@@ -151,6 +123,10 @@ class Refusal:
     under `sibling` has no plan at all, so the exit code says so — an
     integrator who reads a short plan as a small one is exactly the reader
     this command exists for.
+
+    ⛔ **`W314`: a limit the measured media crossed is a refusal too**, one per
+    crossing, at `corpus.json` — the file a person edits to answer it (§5). The
+    corpus as it stands cannot be committed as planned, so the plan exits `1`.
     """
 
     where: str
@@ -162,93 +138,6 @@ class Refusal:
     def line(self) -> str:
         """Render as one greppable line."""
         return f"refuse {self.where}  {self.why}"
-
-
-@dataclass(frozen=True, slots=True)
-class MediaProjection:
-    """What this corpus's generated media will weigh, against what it may."""
-
-    policy: MediaPolicy
-    units: int
-    bytes_per_unit: int | None = None
-    #: ⭐ `W287`: what the declared units' media weighs on disk, read by `derive`.
-    measured: MediaFootprint | None = None
-    #: Why the disk could not be read, when a reading was attempted and refused.
-    unmeasured: str = ""
-
-    @property
-    def total(self) -> int | None:
-        """The projected total, or None when no rate was supplied."""
-        return None if self.bytes_per_unit is None else self.bytes_per_unit * self.units
-
-    @property
-    def ignored(self) -> bool:
-        """Whether the ignore lines must cover generated media.
-
-        ⛔ **The inverse of the policy, and never a default of this module's.**
-        Generated media is committed by default (§5), so a framework that
-        ignored a corpus's narration by reflex would produce clones that are
-        silent with no error — the outcome the whole media policy refuses.
-        """
-        return not self.policy.commits
-
-    def lines(self) -> list[str]:
-        """Return every `media` line, in a stated order."""
-        committed = "is committed" if self.policy.commits else "is NOT committed"
-        out = [
-            f"media commit {self.policy.commit!r}  generated media {committed} under this policy",
-            # ⛔ The kinds are read from placement's own tuple, never retyped:
-            # a fifth kind must not leave this sentence quietly listing four.
-            f"media units {self.units}  each may get one directory per kind, made only when "
-            f"a build copies a file into it: "
-            f"{', '.join(UNIT_MEDIA_DIRNAMES)}",
-        ]
-        if not self.policy.has_limits:
-            out.append(f"media limits  not consulted: only 'auto' weighs {self.policy.commit!r}")
-            return out
-        out.append(f"media limit max_total_bytes {self.policy.max_total_bytes}")
-        out.append(f"media limit max_file_bytes {self.policy.max_file_bytes}")
-        out += [f"media footprint  {said}" for said in self._footprints()]
-        return out
-
-    def _footprints(self) -> list[str]:
-        """Return the projection, the measurement, or the honest absence of both.
-
-        ⛔ **A rate never hides a reading.** A person who asks *"would 200 MB a
-        unit fit?"* gets the projection first, and the bytes already on disk
-        still get their own line: a projection that fits beside a disk that
-        does not would otherwise be the one line that overclaims.
-        """
-        said = [] if self.total is None else [self._projection(self.total)]
-        if self.measured is not None:
-            said.append(self._measurement(self.measured))
-        elif self.unmeasured:
-            said.append(f"not measured — {self.unmeasured}")
-        return said or [UNPROJECTED]
-
-    def _measurement(self, footprint: MediaFootprint) -> str:
-        """Return what the disk weighs and the policy's verdict — ⛔ asked, never re-derived."""
-        reading = f"{footprint.total_bytes} byte(s) in {footprint.count} file(s) {MEASURED_OVER}"
-        if not footprint.count:
-            return f"measured — {reading}; {NOTHING_ON_DISK}"
-        crossings = verdict_for(self.policy, footprint).crossings
-        if crossings:
-            crossed = "; ".join(crossing.sentence() for crossing in crossings)
-            return f"EXCEEDS — measured {reading}: {crossed}. Crossing a limit is a decision (§5)."
-        return f"fits — measured {reading}, within every limit corpus.json declares"
-
-    def _projection(self, total: int) -> str:
-        """Return the projection at the supplied rate and its verdict."""
-        projected = (
-            f"{total} byte(s) projected from {self.units} unit(s) at {self.bytes_per_unit} each"
-        )
-        if total > self.policy.max_total_bytes:
-            return (
-                f"EXCEEDS max_total_bytes — {projected}, against a limit of "
-                f"{self.policy.max_total_bytes}. Crossing it is a decision (§5), so it is "
-                f"reported here rather than at a push that has already become impossible."
-            )
-        return f"fits — {projected}, within {self.policy.max_total_bytes}"
 
 
 @dataclass(frozen=True, slots=True)
@@ -287,7 +176,10 @@ class Plan:
 
     @property
     def exit_code(self) -> int:
-        """`0` when the whole corpus could be planned, `1` when any of it could not."""
+        """`0` when the whole corpus could be planned, `1` when any of it could not.
+
+        ⛔ A crossed media limit is among `refusals` (`W314`), so it exits `1` here.
+        """
         return INVALID if self.refusals else OK
 
     def lines(self) -> list[str]:
