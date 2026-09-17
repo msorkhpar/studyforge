@@ -24943,3 +24943,284 @@ tools/quality/handoffs/…             handoff-title  demanded `# W188 + W183 �
 ⚠️ **`W90`, `W118` and `W198` sit AHEAD in the queue and are again NOT dispatched** (Ruling 75 requires this be said): ⛔ **none is a developer row** — a `toc_api` design decision, a PO row by its own text, and a row owing a contract decision. ⭐ **The *slot no open-step row can fill* case, unchanged.**
 
 ⭐ **The `W278` trap does NOT apply to this wave and that was checked rather than assumed:** every row file these carriers will cite already exists at `5fca2ea`, so no citation of theirs can become a bare citation when this round merges.
+
+## PO round 92
+
+⛔ **Only what is MEASURED is written here.** ⭐ **All three offices have handed back and all three
+carriers have merged** — `W299` at `528ba15`, `W298` at `68d1ad9`, `W297`+`W301` at `3191905`.
+⚠️ **The closing measurement of record is the reading at the LAST of those, and it supersedes the
+`cb2446e` table below, which is kept because the fix-forward is its own commit and was measured
+there** (Ruling 106: a record is annotated, never rewritten).
+
+### ⛔ `PO-92/1` — THIS OFFICE CERTIFIED A RELEASE TIP THE AUTHORITATIVE ENVIRONMENT REFUSED
+
+⛔ **MEASURED at `aa7c035`, role main checkout, PINNED IMAGE via `docker/dev/check`:**
+`tests/test_repository.py` RED, exit `1`, on its `ruff` lint and `ruff` format gates.
+⭐ **Same file, same ref, HOST: GREEN, exit `0`** — the gates are named `_where_ruff_exists` and
+SKIP where `ruff` is absent.
+
+⛔ **AND THE HOST FLOOR HAD ALREADY SAID SO, IN ITS OWN OUTPUT, IN THE RUN THAT CERTIFIED THE TIP:**
+*"ruff is NOT installed … the two gates in `tests/test_repository.py` skipped rather than passed"*,
+followed by *"`python3 -m pytest` is a SEPARATE gate and can be RED at this same ref"*.
+⚠️ **So this is NOT a blind spot.** ⭐ **`tools/quality/lint.py:37` calls that notice *"visibility of
+absence"* and it WORKED.** ⛔ **What failed is downstream: the sentence was printed, in full, and
+read past — [`W296`](rows/W296.md)'s family exactly.**
+
+#### ⭐ THE POPULATION, NAMED RATHER THAN COUNTED, AND WHERE IT CAME FROM
+
+| site | origin, by blame |
+|---|---|
+| `src/studyforge/generate/declarations.py:236` | `46c6acc` — `W289`+`W290`, THIS WAVE |
+| `tools/quality/handoffs/existence.py:297` | `5130828e` — `W181`+`W192`, THIS WAVE |
+| `tools/quality/ids.py:121` | `5130828e` — `W181`+`W192`, THIS WAVE |
+| `tests/studyforge/generate/test_clips.py:113` | `4602a35e` — `W224`, OLDER |
+
+⚠️ **The asymmetry is the sharper half.** ⛔ **The fourth was not introduced-and-missed: NOTHING HAD
+LOOKED.** ⭐ **The last complete in-image lint reading on record is PO round 53 at `be0285f`, over
+`917` files; the same instrument now sees `1507`.**
+
+#### ⭐ FIXED FORWARD at `cb2446e`
+
+Imperative mood on the three docstring first lines; `ruff format` applied its OWN output to the
+fourth site. ⛔ **The row is not the fix — the tip being green again is why the row is about the
+GATE.**
+
+### ⭐ THE MEASUREMENT OF RECORD at `cb2446e`, each instrument with its environment named
+
+| instrument | environment | reading |
+|---|---|---|
+| `python3 -m tools.quality` | HOST | GREEN, exit `0` |
+| `python3 -m pytest` | HOST | GREEN, exit `0` |
+| `tests/test_repository.py` | ⭐ **pinned image** | GREEN, exit `0` |
+| `ruff check .` / `ruff format --check .` | ⭐ **pinned image** | GREEN, exit `0` / exit `0` |
+| `tests/docker` + `tests/visual` | ⭐ **pinned image** | GREEN, exit `0` |
+| `board.corroborate` | HOST | GREEN, exit `0` — `0 of 3` refuted, gate lines all `none` |
+| `board.last_pointer aa7c035 cb2446e` | HOST | GREEN, exit `0` — no pointer lost, no section orphaned |
+
+⛔ **STILL OWED: the FULL in-image suite at `cb2446e`.** ⚠️ **Deferred deliberately — three offices
+were running their own docker suites, and contention lands the wall clock on the bound rather than
+on the run.**
+
+### ⛔ THE MINT — `W302`
+
+⭐ **Argument drafted at `scratchpad/W302-draft.md`; pointers verified to resolve from
+`docs/tasks/rows/`.** ⛔ **The merge path takes NO in-image reading, so a documented, announced
+hazard is re-entered round after round.** ⚠️ **DISTINCT from [`W301`](rows/W301.md)**, which is
+the rubric's block filing a suite reading under the floor's name — fixing that leaves this open.
+
+⛔ **Neither environment is a superset of the other:** the host carries no lint signal and says so;
+the image cannot exercise the docker-build assertions (they skip as *"already inside the dev
+image"*). ⭐ **The PAIR is the unit, and clause 1b says so.**
+
+### ⭐ THE REPAIR ALREADY MADE — `GATE 4` in both merge runners
+
+⛔ **The in-image lint enforcement now runs on the MERGED tree** (`git merge --no-ff --no-commit`),
+aborting via `git merge --abort` on RED. ⭐ **Merged tree, never `HEAD`** — most of today's
+population arrived WITH CARRIERS, and a `HEAD` reading would have passed every one of them.
+⚠️ **VALIDATED BY PLANTING (Ruling 123), not only by parsing.** ⛔ **MEASURED at `cb2446e`:** a
+throwaway `trial/` branch carrying one reverted docstring was put through `carrier-merge.sh`.
+
+```text
+CORR_EXIT=0        MERGE_TREE=CLEAN        SUBJECT_EXIT=0
+LINT_ENFORCEMENT_EXIT=1   -> RUNNER_EXIT=8, merge aborted, tip restored to cb2446e
+```
+
+⛔ **EVERY PRE-EXISTING GATE PASSED THE PLANT THROUGH.** ⭐ **`GATE 4` is the only thing in the merge
+path that refused it — so it is not redundant with corroborate, the trial merge or the subject
+check, and a `HEAD`-side reading would have missed it entirely.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W299` | dev3 | `089207a` | ⭐ **merged at `528ba15`** — corroborate expectation written first and matched, `MERGE_TREE=CLEAN`, `SUBJECT_EXIT=0`, `LINT_ENFORCEMENT_EXIT=0` |
+| `W298` | dev2 | `7e4db80` | ⭐ **merged at `68d1ad9`** — expectation written FIRST and matched exactly (`CORR_EXIT=1`, `refuted={W299}`), `MERGE_TREE=CLEAN`, `SUBJECT_EXIT=0`, `LINT_ENFORCEMENT_EXIT=0` |
+| `W297`, `W301` | dev1 | `05725c9` | ⏳ verified, awaiting merge — `MERGE_TREE=CLEAN` at `68d1ad9`, no overlap |
+
+⭐ **Each carrier verified independently before its merge:** placeholder commit identity, every
+changed file inside its R11 ceiling, handoff declaring its `**Kind:**` and carrying every field the
+protocol names, every handoff pointer resolving against the BRANCH tree, R7 scan clean over added
+lines, and no overlap with the fix-forward's files.
+
+#### ⛔ A RULING `W299` OWED, AND TOOK — `headings` is EXPORTED, shadowing its own module
+
+⭐ **Argued out loud, as the row required, on measured precedent already standing across `src/`;
+the binding rebinds the package attribute and never touches `sys.modules`.** ⛔ **BOTH renames would
+have reached into `skills.reconnaissance` and `corpus.container` — precisely the collision `W300` is
+held for.** ⚠️ **Cost stated, not hidden: `import a.b.c as x` binds the CALLABLE, not the module.**
+
+### ⛔ THE FINDING THAT CHANGES `W300`'S DISPATCH — `W299/1`
+
+⛔ **Ruling 101's two remedies are IN TENSION.** ⭐ **The sweep grips a name only while some package
+still takes it from a module — so fixing a taker's spelling REMOVES the name from the only
+instrument holding it on the surface.** ⚠️ **`W300` must land a surface pin BEFORE any spelling is
+fixed, or the fix silently releases what the sweep was holding and no gate goes red.**
+⛔ **`W300`'s brief carries this, or the row repeats `W298/3`'s shape: an instrument that passes
+while the thing it guards is gone.**
+
+### ⭐ FINDINGS RECEIVED THIS ROUND
+
+| finding | disposition |
+|---|---|
+| `W298/5`, `W299/5` | ⭐ **DISCHARGED at `cb2446e`.** Both name the wave's inherited lint RED. ⛔ **Three offices found it independently, which is the corroboration `W302` rests on.** |
+| `W298/1` `[structural]` | ⚠️ **`UNITS` minted in BOTH `serve/routes/content.py` and `state.py`** — invisible to `W298`'s instrument because that literal carries its separator. ⭐ `W300`'s neighbourhood |
+| `W299/3` `[structural]` | ⭐ on-surface names still imported by submodule spelling — **`W300`'s population** |
+| `W298/4` `[structural]` | `W199/3` still open, one package smaller |
+| `W298/3` `[local]` | ⚠️ the mint scan is **blind to a value change** at the one home — measured by a plant that stayed GREEN while behavioural pins went RED. ⛔ **Recorded so nobody mistakes it for a value guard** |
+| `W298/2`, `W299/2`, `W299/4` | `[local]`, each naming a cost rather than a defect |
+
+### ⛔ `W301` WAS WORSE THAN ITS ROW STATED — and the office measured it before editing
+
+⛔ **The row said the block redirects a bare `docker/dev/check` into a FLOOR reading.** ⚠️ **dev1's
+first test against the unedited rubric returned the floor's command as an EMPTY LIST and the
+suite's as bare `pytest`.** ⭐ **So the block named NEITHER gate correctly** — worse than filing one
+reading under the other's name. ⛔ **Both lines now name their command explicitly, and the
+invocations are asserted in `tests/docker/` against `docker/dev/check`'s own header, so the rubric
+can no longer drift from the wrapper it documents.**
+
+⭐ **`W297` likewise re-measured before changing anything:** at `5fca2ea`, `read_layout` raised
+`AttributeError` on a hand-written practice, `parse` ACCEPTED that document, and `build` refused the
+identical blocks by name. ⛔ **The row's diagnosis was exact.** ⭐ **The guard went in at
+`_objects()`, taken BEFORE the layout is read rather than at the fence — guarding `tail[0]` alone
+would have left every other position silently unread and then refused for the wrong reason.**
+
+⚠️ **`parse` took clause 2's second option, and it was FORCED, not chosen:** `validate` imports
+`archive`, so `parse` cannot ask `validate.blocks` without the archive depending on its own
+consumer.
+
+### ⛔ THE MINTS THIS ROUND — three, and two of them are today's family
+
+| finding | row | why a row |
+|---|---|---|
+| `PO-92/1` | `W302` | ⛔ **the merge path takes no in-image reading; the floor's warning is printed and nothing branches on it.** Draft at `scratchpad/W302-draft.md` |
+| `W297/1` `[structural]` | `W303` | ⚠️ **RE-MEASURED BY THIS OFFICE AT `68d1ad9`, AND THE FINDING'S SHAPE IS NOT WHAT THE REPORT SAID.** ⛔ **The renderer's ENTRY IS GUARDED:** `render/page/blocks/__init__.py:151` carries `if not isinstance(block, dict):` immediately above the `block.get("type")` at `:153`. ⭐ **What is unguarded is a DIFFERENT KIND:** `figure.py:94` and `prose.py:64` index `_RENDERERS[block["type"]]`, which raises **`KeyError`** on a missing or unknown type rather than refusing BY NAME as `build` now does. ⚠️ **dev1 said plainly it did not measure reachability, and it was right not to claim it** — ⛔ **the row owes that measurement, and owes it from SERVED-unit documents** |
+| `W301/1` `[structural]` | `W304` | ⛔ **CONFIRMED BY THIS OFFICE at [`review-rubric.md:2843`](../conventions/review-rubric.md):** `python3 -m tools.quality \| tail -4; echo "FLOOR_EXIT=$?"` reads **`tail`'s** status, so it prints `0` for a RED floor. ⚠️ **Breaks Ruling 241's FORM on the page that teaches it**, and is the THIRD member of this round's family with `W296` and `W302`. ⛔ **THE ROW MUST EXEMPT LINE `2810` BY NAME** — that snippet does the same thing deliberately and carries `# ⛔ this is tail's exit` as its own warning. ⚠️ **An office told to fix "the `$?`-after-pipeline sites" would delete the example that exists to teach the defect** |
+
+⭐ **`W297/2` and `W301/2` accepted `[local]`, each with its cost named:** `test_blocks.py` sits near
+R11's test ceiling and the natural split is its own section, not taken because it is outside dev1's
+surface; and no instrument binds the rubric's OTHER `docker/dev/check` invocations, deliberately not
+widened per *"minimal and surgical"*.
+
+⚠️ **Two judgement calls dev1 flagged, both correct:** the read-path tests went in a NEW module
+because appending left `test_blocks.py` near its ceiling and Ruling 261 makes the answer a split;
+and registering the new `tests/docker/` module in that directory's closed reader register was the
+register working as designed, not scope creep. ⭐ **And one thing that LOOKED like a planted defect
+— `except TypeError, json.JSONDecodeError:` — is valid PEP 758 on the pinned Python; recorded so the
+next office does not stop on it.**
+
+### ⚠️ A COORDINATOR PROCESS NOTE — my instrument, not the office's work
+
+⛔ **I nearly failed `W298` on a handoff "missing a section".** ⭐ **The protocol's six sections are
+BOLD INLINE FIELDS (`**Status:**`), not `##` headings** — my `grep '^## '` measured the wrong thing,
+and the office's claim was correct. ⚠️ **Counted against the real grammar, both handoffs carry
+`**Kind:**` and every named field.** ⛔ **Same failure shape as the rest of this round: a reading
+taken with the wrong instrument is not a finding.**
+
+### ⏳ STILL HELD
+
+| row | state |
+|---|---|
+| `W300` | ⭐ **THE COLLISION IS DISCHARGED — `W298` and `W299` have both landed.** ⛔ **DISPATCHED this round**, and ⚠️ **its brief carries `W299/1`'s ordering constraint: the surface pin lands BEFORE any taker spelling is fixed** |
+| `W302` | ⛔ **HELD on a COLLISION, and not on priority** — ⚠️ **it and `W300` would both work `tools/quality/`.** ⭐ **This is the same ground `W300` itself was held on last round, applied to the row this office minted about its own defect** — ⛔ **a register that exempts its own row from its own rule is worse than one that has no rule.** ⭐ **Dispatchable once `W300` lands** |
+| `W90`, `W118`, `W198` | ⚠️ not developer-dispatchable — `W90` is a `toc_api` design question owned by PO, `W118` is a PO row by its own text, `W198` owes a contract decision |
+
+### ⭐ FOR THE USER — NOTHING, AND THAT IS A MEASURED ANSWER RATHER THAN AN ASSUMED ONE
+
+⛔ **MEASURED at `3191905`: the board carries NO `FOR THE USER` entry and no held-for-user cell.**
+⭐ **Round 89 struck the two the user decided on 2026-09-16 — `ISO-12`'s narration commit and
+`W243/1`'s Prism grammars — and nothing has replaced them.** ⚠️ **`W90`, `W118` and `W198` are
+OFFICE decisions, owned by PO and the framework agent, not the user's** — ⛔ **so none of them
+escalates.**
+
+⭐ **All three offices resolved their own judgement calls this wave** — `W299`'s `headings` ruling,
+`W298`'s binding ground in `tree.py`'s existing contract, and `W297`'s FORCED clause-2 option —
+⛔ **none asked for a decision and none needed one.** ⚠️ **The one irreversible act available this
+wave, a push, was never taken and never will be** (standing instruction).
+
+### W297 — the same unguarded block read one function away: read_layout still raises where build now refuses by name
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W297.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W289/1`: the same unguarded block read ONE FUNCTION AWAY from the one `W289` closed.** `blocks._sections` reads `tail[0].get("type")` unguarded, and `archive.document.parse` checks the key set and the version but NEVER a block's SHAPE — ⭐ **so `read_layout` on a hand-written or adapter-written document still raises `AttributeError` where `build` now refuses by name.** ⭐ **RECEIVED from `W289`'s office, measured at `19c7224` and re-confirmed still true on its own branch.**
+
+### ⛔ WHY IT IS A ROW AND NOT A WIDENING OF `W289`
+
+⭐ **`W289`'s clause named `counts_of`, and its office refused to take the wider change outside that clause** — ⛔ **which is the working agreement, not timidity.** ⚠️ **`build` can no longer PRODUCE such a document; this row is about the READER, which meets documents `build` never wrote.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A non-object block reaches no `.get` on the READ path either** — refused by name, naming the document.
+2. ⛔ **`parse` checks a block's shape**, or says in its own docstring why shape is not its question and where it is asked instead.
+3. ⛔ **Asserted both ways (R12), through `read_layout`** over a hand-written document, not only through `build`.
+
+[the mint](#po-round-90)
+
+#### ⭐ CLOSED — PO ROUND 92
+
+⭐ **Merged at `3191905`, TERMINAL by predicate `C`.** ⭐ **`_objects()` refuses a non-object top-level block BY NAME, `counts_of` reads through it so `build` keeps `W289`'s refusal, and `read_layout` takes its blocks through it BEFORE the layout is read rather than at the fence.** ⚠️ **`parse` took clause 2's second option, and it was FORCED: `validate` imports `archive`, so `parse` cannot ask `validate.blocks` without the archive depending on its own consumer.**
+
+### W298 — UNITS_DIR against UNITS_DIRNAME, the same defect one segment further, and it needs a different instrument
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W298.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W199/1`: `UNITS_DIR` (the adapter layout) and `UNITS_DIRNAME` (placement) are the SAME DEFECT one segment further than the one `W199` closed.** ⭐ **RECEIVED from `W199`'s office, which named it rather than taking it, because that row's clauses named two segments.**
+
+### ⚠️ IT CANNOT BE CLOSED BY `W199`'S INSTRUMENT, AND THAT IS WHY IT IS A ROW
+
+⛔ **The spelled-once scan that worked for `raw` would misread this one:** ⭐ **`units` appears as a path-segment literal in several `src/` modules, mostly as a JSON KEY**, and a key is not a mint. ⚠️ **So this row owes a DIFFERENT instrument, and choosing it is the work.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE MINTER for the units directory name**, the other site importing it, the direction argued out loud as `W199`'s was.
+2. ⛔ **An instrument that distinguishes a MINT from a JSON KEY**, or a stated reason why the distinction is not needed.
+3. ⛔ **Whatever survives is on its package's declared surface** (Ruling 101), asserted by a CLOSED check.
+
+[the mint](#po-round-90)
+
+#### ⭐ CLOSED — PO ROUND 92
+
+⭐ **Merged at `68d1ad9`, TERMINAL by predicate `C`.** ⭐ **`UNITS_DIR` now binds `UNITS_DIRNAME`, as `ARCHIVE_DIR` and `RAW_DIR` already did, so the segment has ONE minter.** ⛔ **The direction is MEASURED, not preferred: the opposite raises `ImportError` on a partially initialized `studyforge.corpus.placement`, a direct cycle needing no third package.** ⚠️ **The instrument counts what a literal is USED AS, so a JSON key, an error label and a URL prefix are not red.**
+
+### W299 — five names another package takes from a validate module are on no surface, and one collides with a module name
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W299.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W199/2`: five names another package takes from a `validate` module are on NO SURFACE** — `Held`, `Walk`, `RULE_DUPLICATE_PATH`, `check_placement` and `headings`. ⭐ **RECEIVED from `W199`'s office, and VISIBLE for the first time because that row gave `validate` a closed surface instrument; they are DECLARED off-surface rather than exempted.**
+
+### ⛔ ONE OF THE FIVE NEEDS A RULING, NOT A LINE
+
+⚠️ **`headings` the FUNCTION collides with `validate.headings` the MODULE.** ⛔ **Exporting it is a NAMING DECISION and not an edit** — ⭐ **and a row that pretends otherwise would be closed by whichever spelling its taker happened to prefer.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Each of the five is either ON the surface or has a stated reason to be off it**, recorded where the declaration lives.
+2. ⛔ **The collision is RULED** — renamed, qualified, or deliberately left with its ground written down.
+3. ⛔ **Asserted (R12) by the closed check `W199` shipped**, never by a spot assertion about these names.
+
+[the mint](#po-round-90)
+
+#### ⭐ CLOSED — PO ROUND 92
+
+⭐ **Merged at `528ba15`, TERMINAL by predicate `C`.** ⭐ **Every name another package takes is on `studyforge.validate.__all__`; `OFF_SURFACE` is kept as a DECLARED-EMPTY set so the next off-surface name is named in the failure; and a whole-surface pin joins the sweep, because the sweep grips a name only while some package still takes it from a module.** ⛔ **RULED: `headings` is exported AS `headings`, shadowing its own module — both renames would have reached outside the row.**
+
+### W301 — the rubric's self-certification block files a suite reading under the floor's name and still exits 0
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W301.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W295/6`: THE RUBRIC'S OWN SELF-CERTIFICATION BLOCK FILES A READING UNDER THE WRONG GATE'S NAME, AND STILL EXITS `0`.** ⭐ **It redirects a BARE `docker/dev/check` into a floor reading — but the wrapper's no-argument case sets `python3 -m pytest`.** ⚠️ **Followed literally it runs the SUITE TWICE, records one run as the FLOOR, and reports success.** ⭐ **RECEIVED from `W295`'s office, which ran the floor as the wrapper documents it and said so.**
+
+### ⛔ WHY THIS IS THE WORST CLASS OF DEFECT A GATE CAN HAVE
+
+⭐ **It does not FAIL. It PASSES THE WRONG THING** — ⛔ **Ruling 191's family, and the rubric says so about other checks in its own words.** ⚠️ **Every office that followed the block literally has filed a suite reading as a floor reading, and no instrument can tell afterwards.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The block NAMES the command for each gate explicitly**, so neither reading can be produced by the wrapper's default.
+2. ⚠️ **The scope of the wrong readings is STATED, not chased** — ⛔ **a report over frozen records is a backlog no office may clear**, so the remedy is forward-looking.
+3. ⛔ **The two magic invocations agree with `docker/dev/check`'s own documented contract**, asserted where the contract lives.
+
+[the mint](#po-round-90)
+
+#### ⭐ CLOSED — PO ROUND 92
+
+⭐ **Merged at `3191905`, TERMINAL by predicate `C`.** ⛔ **WORSE than the row stated: the office's first test against the unedited rubric returned the floor's command as an EMPTY LIST and the suite's as bare `pytest`, so the block named NEITHER gate correctly.** ⭐ **Both lines now name their command explicitly, and the invocations are asserted in `tests/docker/` against `docker/dev/check`'s own header.**
