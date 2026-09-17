@@ -1,27 +1,30 @@
 r"""The consumer-facing capability index — when does capability X become available.
 
 **What it does.** Holds the one map a planner needs about the framework —
-every capability, the milestone that delivers it, and what it waits on — and
-renders that map as a document. The document is **generated**: a reviewer
-regenerates it and gets identical bytes. ⭐ The markdown is read next door, in
-`epics`; this module is the index over what that reading produced.
+every capability, the milestone that delivers it, what it waits on, and
+⭐ **which side delivers it at all** — and renders that map as a document. The
+document is **generated**: a reviewer regenerates it and gets identical bytes.
+⭐ Both readings happen next door: the markdown in `epics`, the pin document
+in `components`. This module is the index over what they produced.
 
 **How you use it.**
 
-    from studyforge.skills.delivery import Index, read_epics, read_sequence
+    from studyforge.skills.delivery import Components, Index, read_epics, read_sequence
 
     sequence = read_sequence("README.md", task_index_text)
-    index = Index.of(read_epics(documents), sequence)
+    components = Components.read(pins, task_index_text)  # both are TEXT
+    index = Index.of(read_epics(documents), sequence, components)
     index.milestone_of("SK-07")     # when a capability lands
     index.after("M4")               # everything a corpus finishing at M4 forgoes
     index.later("M5", than="M8")    # ⛔ in the declared order, never by id
+    index.sides["JS-01"]            # ⭐ which side delivers it
     index.render()                  # the document
 
-**Depends on.** `dataclasses` and this package's `refusal`. ⛔ Nothing else,
-ever — and in particular **not the filesystem**: this module is handed data
-and gives back text, so the caller names the documents. A module that went
-looking for `docs/tasks/` would be a framework module that knows where a plan
-lives, and the next repository's plan does not live there.
+**Depends on.** `dataclasses` and this package's `components` and `refusal`.
+⛔ Nothing else, ever — and in particular **not the filesystem**: this module
+is handed data and gives back text, so the caller names the documents. A
+module that went looking for `docs/tasks/` would be a framework module that
+knows where a plan lives, and the next repository's plan does not live there.
 
 ## ⛔ Why this exists at all, measured on the filing side
 
@@ -54,12 +57,22 @@ walk gathers and the refusal is raised once, after it** — and a single
 violation reads exactly as it read before, so nothing that was already right
 moved.
 
+## ⭐ A column that would say the same thing in every row says nothing (`W92`)
+
+⛔ So the side column is rendered only when at least one row is not `HERE`. A
+plan whose pin document declares nothing beyond itself renders exactly the
+four columns it rendered before — the distinction does not apply there, and a
+fifth column of one repeated value is a column nobody reads. ⚠️ What the three
+values MEAN, and why the column exists at all, is `components`'.
+
 ## ⚠️ This module names no source and reads no source
 
 ⛔ R1: it indexes whatever documents it is given. R20: it never sends a reader
 to a path inside the extraction source, and the document it renders carries no
 such path — because the whole point of the index is that a consumer stops
-having to go and look.
+having to go and look. ⛔ **And no component is ever NAMED in what it
+renders**, which is the same rule one layer on: the pin document's names are
+read by `components` and never printed here.
 """
 
 from __future__ import annotations
@@ -67,6 +80,14 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+from studyforge.skills.delivery.components import (
+    ELSEWHERE,
+    HERE,
+    SIDE_COLUMN,
+    SIDES,
+    UNDECLARED,
+    Components,
+)
 from studyforge.skills.delivery.refusal import one_or_all
 
 #: The banner the rendered document opens with. ⛔ A generated document that
@@ -94,11 +115,20 @@ class Capability:
     area: str
     epic: str
     depends_on: tuple[str, ...]
+    #: ⛔ The `Owns` cell VERBATIM, as `epics` read it, and never interpreted
+    #: here: what it says about a row's side is `components`' reading (`W92`).
+    owns: str = ""
 
-    def row(self) -> str:
-        """Render as one row of the index's table."""
+    def row(self, delivered: str | None) -> str:
+        """Render as one row of the index's table, with `delivered` or without it.
+
+        ⛔ `delivered` is passed and never defaulted — `None` is *this table
+        has no side column*, which is a decision the index takes over the whole
+        population, not one a row may take for itself.
+        """
         waits = ", ".join(f"`{name}`" for name in self.depends_on) or "—"
-        return f"| `{self.id}` | {self.what} | {self.area} | {waits} |"
+        side = "" if delivered is None else f" {delivered} |"
+        return f"| `{self.id}` | {self.what} | {self.area} |{side} {waits} |"
 
 
 @dataclass(frozen=True, slots=True)
@@ -109,6 +139,9 @@ class Epic:
     area: str
     capabilities: tuple[Capability, ...]
     cancelled: tuple[str, ...]
+    #: Everything before the first task heading, carried so `components` can
+    #: read the component an epic's prose rows are delivered inside (`W92`).
+    preamble: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -125,13 +158,17 @@ class Index:
 
     epics: tuple[Epic, ...]
     sequence: Sequence
+    components: Components
 
     @classmethod
-    def of(cls, epics: Iterable[Epic], sequence: Sequence) -> Index:
+    def of(cls, epics: Iterable[Epic], sequence: Sequence, components: Components) -> Index:
         """Build an index, ⛔ naming EVERY duplicate id and EVERY unplaceable one.
 
         ⛔ `sequence` is required: an index with no declared order would fall
         back to id order without saying so, which is the defect it removes.
+        ⛔ `components` is required for the same kind of reason: an index that
+        defaulted to *everything is this framework's* would state the thing
+        `W92` was filed about, and state it silently.
 
         ⛔ **Ruling 188:** the walk gathers and refuses once. Epics carrying
         four misplaced capabilities are refused with four reasons, because
@@ -157,7 +194,7 @@ class Index:
                 seen.setdefault(capability.id, epic.epic)
         if refusals:
             raise IndexRefused(one_or_all(refusals))
-        return cls(gathered, sequence)
+        return cls(gathered, sequence, components)
 
     @property
     def capabilities(self) -> tuple[Capability, ...]:
@@ -173,6 +210,27 @@ class Index:
     def milestones(self) -> tuple[str, ...]:
         """Every declared milestone, in the declared order — ⛔ empty ones included."""
         return self.sequence.milestones
+
+    @property
+    def sides(self) -> dict[str, str]:
+        """Each capability id mapped to the side that delivers it — ⛔ a value in `SIDES`."""
+        return {
+            capability.id: self.components.side(capability.owns, epic.preamble)
+            for epic in self.epics
+            for capability in epic.capabilities
+        }
+
+    @property
+    def distinguishes(self) -> bool:
+        """Report whether any row is not this framework's, which is when the column is printed."""
+        return any(side != HERE for side in self.sides.values())
+
+    def on(self, side: str) -> tuple[Capability, ...]:
+        """Every capability delivered on `side`. ⛔ Refuses a value outside `SIDES`."""
+        if side not in SIDES:
+            raise IndexRefused(f"no such side — the vocabulary is {SIDES}")
+        sides = self.sides
+        return tuple(c for c in self.capabilities if sides[c.id] == side)
 
     def milestone_of(self, task: str) -> str:
         """When `task` lands. ⛔ Refuses an id the index does not carry."""
@@ -203,13 +261,18 @@ class Index:
         """Every capability delivered strictly later than `milestone`.
 
         ⭐ This is what a corpus that finishes at `milestone` will never use,
-        and it is the population a terminal statement has to account for.
+        and it is the population a terminal statement has to account for —
+        ⛔ **once it has been split by side**, because the ones this framework
+        does not deliver are not this corpus's to explain away.
         """
         self._position(milestone)
         return tuple(c for c in self.capabilities if self.later(c.milestone, than=milestone))
 
     def render(self) -> str:
         """Render the index as a document, byte-identical on every regeneration."""
+        column = self.distinguishes
+        sides = self.sides
+        heading = f"| capability | what it is | area | {SIDE_COLUMN} | waits on |"
         out = [
             "# The capability index",
             "",
@@ -228,6 +291,8 @@ class Index:
             f"order their ids sort to:** {' → '.join(f'`{m}`' for m in self.milestones)}.",
             "",
         ]
+        if column:
+            out += [self._legend(), ""]
         for milestone in self.milestones:
             delivered = self.at(milestone)
             counted = "capability" if len(delivered) == 1 else "capabilities"
@@ -236,19 +301,37 @@ class Index:
                 out += [EMPTY, ""]
                 continue
             out += [
-                "| capability | what it is | area | waits on |",
-                "|---|---|---|---|",
-                *(c.row() for c in delivered),
+                heading if column else "| capability | what it is | area | waits on |",
+                "|---|---|---|---|---|" if column else "|---|---|---|---|",
+                *(c.row(sides[c.id] if column else None) for c in delivered),
                 "",
             ]
         return "\n".join(out)
+
+    def _legend(self) -> str:
+        """Say what the side column's three values mean, since a reader meets them there."""
+        return (
+            f"⛔ **`{SIDE_COLUMN}` is READ, never judged:** `{HERE}` is a row whose `Owns` "
+            f"names a path here; `{ELSEWHERE}` is one whose `Owns` — or whose epic's "
+            f"preamble — reaches a component this workspace pins somewhere else; "
+            f"`{UNDECLARED}` is a row that names no path at all, so ⚠️ **nothing in the "
+            "documents says**. ⛔ A corpus states nothing about the last two (`W92`)."
+        )
 
     def _derivation(self) -> str:
         """Derive the coverage line — ⛔ never a literal somebody typed."""
         dropped = len(self.cancelled)
         empty = sum(1 for milestone in self.milestones if not self.at(milestone))
-        return (
+        counted = (
             f"**{len(self.capabilities)} capabilities · {len(self.epics)} epic documents · "
             f"{len(self.milestones)} milestones, {empty} with no capability · {dropped} "
             f"cancelled {'row' if dropped == 1 else 'rows'} carried and not counted.**"
+        )
+        if not self.distinguishes:
+            return counted
+        return (
+            f"{counted}\n\n**Of those capabilities, {len(self.on(HERE))} are this "
+            f"framework's to deliver, {len(self.on(ELSEWHERE))} are delivered inside a "
+            f"component pinned somewhere else, and {len(self.on(UNDECLARED))} declare no "
+            "path at all.**"
         )

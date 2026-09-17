@@ -82,3 +82,83 @@ def test_the_table_carries_one_row_per_capability_forgone():
     statement = plans.terminal().checked(index)
     rows = [line for line in statement.lines() if line.startswith("| `")]
     assert len(rows) == len(index.after("M2")) == len(statement.unused)
+
+
+# --- W92: the population narrows to THIS side, and the rest are sayable -----
+
+
+def sided() -> Terminal:
+    """A corpus finishing at M2 over the index that carries a second side."""
+    return Terminal(
+        milestone="M2",
+        evidence=("0 runnable units", "0 graders anywhere in the repository"),
+        unused=(Unused("SF-20", "no unit asks the reader to run anything"),),
+    )
+
+
+def test_a_capability_delivered_elsewhere_needs_no_why_and_the_statement_passes():
+    # ⛔ THE ROW. `TC-00` lands after M2 and is not this framework's to
+    # deliver, so a statement that does not explain it away is complete.
+    statement = sided().checked(plans.sided_index())
+    assert statement.elsewhere == ("TC-00",)
+    assert {item.capability for item in statement.unused} == {"SF-20"}
+
+
+def test_a_capability_no_document_places_needs_no_why_either():
+    assert sided().checked(plans.sided_index()).undeclared == ("TC-01",)
+
+
+def test_writing_a_why_for_a_capability_delivered_elsewhere_is_refused():
+    # ⛔ The false sentence stops being WRITABLE rather than merely
+    # discouraged: this corpus may be the very thing that delivers it.
+    unused = (
+        Unused("SF-20", "no unit asks the reader to run anything"),
+        Unused("TC-00", "this corpus never builds an image"),
+    )
+    with pytest.raises(TerminalRefused, match="TC-00"):
+        Terminal(milestone="M2", evidence=("no graders",), unused=unused).checked(
+            plans.sided_index()
+        )
+
+
+def test_writing_a_why_for_an_undeclared_capability_is_refused_too():
+    unused = (
+        Unused("SF-20", "no unit asks the reader to run anything"),
+        Unused("TC-01", "this corpus never reaches the release record"),
+    )
+    with pytest.raises(TerminalRefused, match="not this framework's to deliver"):
+        Terminal(milestone="M2", evidence=("no graders",), unused=unused).checked(
+            plans.sided_index()
+        )
+
+
+def test_a_capability_of_this_side_is_still_unaccounted_for_when_it_is_missing():
+    # ⛔ The narrowing did not weaken the coverage test: the negative control
+    # for every assertion above.
+    with pytest.raises(TerminalRefused, match="SF-20"):
+        Terminal(milestone="M2", evidence=("no graders",), unused=()).checked(plans.sided_index())
+
+
+def test_the_statement_renders_the_other_two_populations_named_and_counted():
+    document = "\n".join(sided().checked(plans.sided_index()).lines())
+    assert "1 more are NOT this framework's to deliver" in document
+    assert "1 more declare no path in any document" in document
+    assert "  - `TC-00`" in document and "  - `TC-01`" in document
+
+
+def test_a_statement_over_an_index_with_one_side_renders_neither_extra_section():
+    # ⭐ Asserted both ways: where the distinction does not apply, the
+    # statement is exactly the statement it always was.
+    statement = plans.terminal().checked(plans.index())
+    assert statement.elsewhere == () and statement.undeclared == ()
+    document = "\n".join(statement.lines())
+    assert "NOT this framework's" not in document
+    assert "declare no path" not in document
+
+
+def test_the_checked_statement_is_what_the_plan_carries_and_not_the_one_declared():
+    # ⛔ A statement checked and then thrown away would render nothing about
+    # either population, which is the defect arriving one call later.
+    plan = plans.backlog(terminal=sided()).checked(plans.sided_index())
+    assert plan.terminal.elsewhere == ("TC-00",)
+    assert "NOT this framework's" in "\n".join(plan.lines())
