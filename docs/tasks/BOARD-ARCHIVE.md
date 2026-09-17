@@ -25580,3 +25580,133 @@ naming the wrong COMMAND for a gate; this row is a snippet reading the wrong EXI
 #### ⭐ CLOSED — PO ROUND 93
 
 ⭐ **Merged at `fc176ae`, TERMINAL by predicate `C`.** ⛔ **THE ROW'S CENTRAL CLAIM IS FALSE and the register rules it so — see the annotation carried in the body above.** ⭐ **The office DECLINED the remedy; had it complied, one of Ruling 241's two forms would now be gone.** ⭐ **What discharges the row instead is better than the clause asked for: `FORM 1` now says INSIDE its own fence that its two lines are one form and `pipefail` is load-bearing, a test binds BOTH forms by TEXT THEY CARRY rather than by line number, and the teaching line's exemption is now a PROPERTY it carries.**
+
+## PO round 94
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W302` | dev1 | `ecf2206` | ⭐ **merged at `ecf0661`** — expectation written first, `MERGE_TREE=CLEAN`, `SUBJECT_EXIT=0`, and ⛔ **`GATE 4` read the PINNED IMAGE on the MERGED tree before any commit existed, exit `0`** |
+
+#### ⛔ THE ROW'S OWN CLAUSE 1b WAS REFUTED BY ITS TAKER, AND THE CONCLUSION SURVIVED
+
+⛔ **Clause 1b cited `tests/docker` and `tests/visual` as the half the image cannot reach.** ⚠️ **At the taker's ref NEITHER is: `tests/docker` is unreachable in both routine environments and `tests/visual` RUNS in both.** ⭐ **The conclusion it was offered for — neither environment is a superset of the other — was RE-MEASURED and stands, the host-only half being the sibling/workspace assertions** (`W302/1`).
+
+#### ⭐ THE ROW'S SUBJECT CAUGHT THE TAKER'S OWN DIFF TWICE, BOTH TIMES HOST-GREEN AND IMAGE-RED
+
+⛔ **First a format deviation the host floor read clean; then the owed suite gate, because `tools.mergegate` shells to `git commit` and THE PINNED IMAGE CONFIGURES NO GIT IDENTITY** — the host passed only because the shared config had one. ⭐ **The gate now asks git for a committer before staging and names its absence** (`W302/6`).
+
+### ⛔ THIS OFFICE'S OWN DEFECTS THIS ROUND
+
+#### ⛔ `PO-94/1` — the merge runner was given an expectation naming the WRONG MOMENT
+
+⛔ **`carrier-merge.sh` takes its corroborate reading BEFORE the merge (Ruling 231(b)), so its argument names the PRE-merge state.** ⚠️ **This office passed `W302` — the POST-merge set — and the runner ABORTED at exit `7` with nothing merged.** ⭐ **THE RUNNER WAS RIGHT; the argument was changed, not the instrument.** ⭐ **The rule, from this wave's own precedent: the pre-merge set is the carriers already merged SINCE THE LAST ROUND CLOSED, so the FIRST carrier after a round always reads `{none}`.**
+
+#### ⛔ `PO-94/2` — two hand-rolled instruments, both wrong, judging a correct handoff
+
+⛔ **The office claimed six handoff sections. This register counted BOLD INLINE FIELDS and found one, then nearly recorded a defect.** ⚠️ **On `W298` the same misjudgement ran the OTHER way — `##` headings counted where the field was inline.** ⭐ **The CONTROL settled it: `W300`'s handoff, which passed its own round, also carries exactly one bold field, and all three handoffs carry the same six `##` sections.** ⛔ **THE CHECKER IS THE AUTHORITY; a pattern invented at the moment of judging is not.**
+
+#### ⚠️ `PO-94/3` — a claim this office made and then disproved, recorded rather than buried
+
+⛔ **It asserted board line 140 held a dispatch precondition for `W210` existing nowhere else.** ⚠️ **FALSE: line 137 carries `W210`'s LIVE `cli/plan/` constraint with `W287` and `W288`, all three live.** ⭐ **Line 140's `W224`+`W210` clause is only a DISCHARGE record for a pair that cannot recur, `W224` being closed — so it trims with the rest of the ledger.**
+
+### ⭐ THE MINT — `W306`
+
+⭐ **Drafted, frame verified, and born with an anchored pointer** (Ruling 244(e)).
+
+⛔ **A CHECK THAT VERIFIES THE POINTERS *PRESENT* CAN NEVER SEE THE POINTER THAT IS *ABSENT*.** ⭐ **Measured this round: `W305` was minted WITHOUT the anchored pointer Ruling 244(e) requires, while round 93's record truthfully reported *"pointers verified TO RESOLVE"* — both true at once, because a resolution check has nothing to resolve.** ⚠️ **`W296`'s family, and Ruling 191's *empty population is never a pass*.** ⭐ **Discharged for `W305` at `93a7795`; the ROW is that the mint path must RUN the clause's own `grep -L`, whose pass condition is a SILENCE.**
+
+### ⛔ `W73` IS EXEMPT AND WAS DELIBERATELY NOT SWEPT
+
+⭐ **MEASURED: of `101` live rows, `W73` is now the only one carrying no anchored pointer.** ⛔ **It was minted in round 33 and Ruling 244(e) landed at CTO round 56; the ruling binds THE MINT and says in terms it is *not a retroactive sweep of `rows/`*.** ⚠️ **That backlog is `W88`'s.**
+
+### ⭐ THE MEASUREMENT OF RECORD at `ecf0661`, each instrument with its environment named
+
+| instrument | environment | reading |
+|---|---|---|
+| `python3 -m tools.quality` | HOST | ⭐ GREEN, exit `0` |
+| `python3 -m pytest` | HOST | ⭐ GREEN, exit `0` |
+| `tests/test_repository.py` | ⭐ **pinned image, on the MERGED tree** | ⭐ GREEN, exit `0` — ⛔ **`GATE 4`, taken before the merge commit existed** |
+| `board.last_pointer 93a7795 ecf0661` | HOST | ⭐ GREEN, exit `0` — no section orphaned |
+| `board.corroborate` | HOST | exit `1`, refuting exactly `W302` — ⭐ **the correct disclosure state for a carrier merged and not yet closed** |
+| `tools.workspace verify` | HOST | ⭐ GREEN, exit `0` |
+
+### ⛔ THE IN-FLIGHT TABLE IS EMPTY, AND THAT IS A STATE
+
+⭐ **`W111`, `W147`: EMPTY IS A STATE.** ⛔ **A carrier is cut AFTER the register merges, so naming one here would be `PO-93/1` again — a reading this round cannot yet take.**
+
+### ⭐ BRANCHES PRUNED — merged, and their checkouts measured clean
+
+⭐ **`fix/W303-…`, `fix/W304-…`, `fix/W302-…`, `chore/po-round93`.** ⛔ **PRUNE SAFETY IS TWO MEASUREMENTS: each an ancestor of the release tip, AND every worktree clean with an empty stash list.** ⚠️ **Ancestry alone says nothing about a dirty checkout.**
+
+### W302 — a release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W302.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A RELEASE TIP IS CERTIFIED ON A HOST FLOOR THAT SAYS, IN ITS OWN OUTPUT, THAT IT CANNOT CERTIFY IT — AND NOTHING BRANCHES ON THE SENTENCE.** ⚠️ **THIS ROW IS NOT ABOUT BLINDNESS, AND AN EARLIER DRAFT OF IT THAT SAID SO WAS WRONG ON THE MEASUREMENT.** ⭐ **The floor is not silent and not ambiguous: it prints that the two gates SKIPPED RATHER THAN PASSED, and that the separate suite gate CAN BE RED AT THIS SAME REF.** ⛔ **It was printed, it was read past, and the wave merged. That is [`W296`](rows/W296.md)'s family exactly — running a check whose exit nothing reads is indistinguishable from not running it — and the office that did it is the register's own.**
+
+### ⛔ THE MEASUREMENT IS THIS ROW'S SUBJECT, AND IT IS THE REGISTER'S OWN DEFECT
+
+⛔ **MEASURED at `aa7c035` — the release tip this office had certified GREEN — role main checkout, PINNED IMAGE via `docker/dev/check`:**
+
+```text
+python3 -m pytest tests/test_repository.py -q
+  FAILED test_ruff_lint_is_clean_where_ruff_exists
+  FAILED test_ruff_format_is_clean_where_ruff_exists
+  exit 1
+```
+
+⭐ **The same tip, same instrument, on the HOST: exit 0.** ⛔ **The two tests are named `_where_ruff_exists` and the host has no `ruff`, so they SKIP rather than fail.** ⛔ **AND THE HOST FLOOR SAID SO, VERBATIM, IN THE RUN THAT CERTIFIED THE TIP:**
+
+```text
+lint: ruff is NOT installed, so this run carries no lint signal at all. `ruff check .` and
+`ruff format --check .` did not run, and the two gates in tests/test_repository.py skipped
+rather than passed
+scope: the floor only — `python3 -m pytest` is a SEPARATE gate and can be RED at this same
+ref (format and lint are enforced in tests/test_repository.py, Ruling 78)
+```
+
+⭐ **`tools/quality/lint.py:37` calls this notice *"visibility of absence"*, and it WORKS — the absence was visible.** ⛔ **What failed is downstream of it: a human-readable warning is not a gate, and this office read past two sentences that named the exact failure that then happened.**
+
+⛔ **The population the image refused, named rather than counted:** `src/studyforge/generate/declarations.py:236`, `tools/quality/handoffs/existence.py:297` and `tools/quality/ids.py:121` (docstring mood), and `tests/studyforge/generate/test_clips.py:113` (formatter deviation).
+
+⚠️ **THREE of the four were planted by THIS WAVE'S OWN CARRIER MERGES, measured by blame:** `5130828e` (`W181`+`W192`) and `46c6acc` (`W289`+`W290`). ⭐ **The fourth traces to `4602a35e` (`W224`) and is OLDER — and that asymmetry is the sharper half of the finding: it was not introduced and missed, NOTHING HAD LOOKED.** ⛔ **The last complete in-image lint reading on record is PO round 53 at `be0285f`, over `917` files; the same instrument now sees `1507`.**
+
+### ⛔ IT IS A RECURRENCE, AND THAT IS THE ARGUMENT
+
+⛔ **This is the THIRD recorded instance of one failure mode, and the prior two are already in this repository's own documents:**
+
+| instance | the reading | where it is recorded |
+|---|---|---|
+| `FND-08` | ⛔ *"run the floor, then commit"* — four `ruff` `D401` errors passed the floor, caught only by a test | [`../../conventions/review-rubric.md`](../conventions/review-rubric.md), `tools/quality/lint.py` |
+| `SF-12` | ⛔ host run green, while the image caught findings AND unformatted files the host did not | [`../../conventions/review-rubric.md`](../conventions/review-rubric.md) |
+| this row | ⛔ host floor and host suite both GREEN at `aa7c035`; the image refused the tip | this file |
+
+⭐ **The rubric already says it in as many words — *"host blind to the in-image and `ruff` assertions"* — and the floor prints its own warning on every host run.** ⛔ **A hazard that is documented in the conventions, announced by the instrument in plain prose, and re-entered three times is not an awareness problem, and no further documentation will fix it.** ⚠️ **Every remedy of the form *"the coordinator should read the lint line"* is REFUTED IN ADVANCE by this row's own evidence: the line was there, in full, both times.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A merge to a release branch cannot be certified on host readings alone** — the in-image enforcement is READ, and its exit BRANCHED ON, before the merge rather than after it.
+1b. ⛔ **AND NOT ON IMAGE READINGS ALONE EITHER — NEITHER ENVIRONMENT IS A SUPERSET OF THE OTHER.** ⭐ **MEASURED at the same tip, pinned image, `tests/docker` and `tests/visual`: GREEN at exit `0`, with skips reading *"already inside the dev image; building it again would recurse"* and *"inside the dev image, which has no docker client"*.** ⚠️ **So the host run carries no lint signal — and says so — while the image cannot exercise the docker-build assertions at all.** ⛔ **A gate that swaps one environment for the other trades a blind spot rather than closing it; the pair is the unit.**
+2. ⚠️ **WHERE the gate lives is the taker's call and must be argued out loud.** ⛔ **The floor may not read branch positions (Ruling 80) and may not shell into git, so a naive *"add it to `CHECKS`"* is refused by an existing ruling** — the same wall [`W296`](rows/W296.md) met. ⭐ **The merge path is the candidate that survives both.**
+3. ⛔ **Asserted both ways (R12):** a tree carrying a `ruff` deviation is REFUSED by the gate, and a clean tree passes it.
+4. ⚠️ **It must not punish the frozen past.** ⛔ **Every tip between PO round 53 and `aa7c035` was unmeasured, and a report over landed tips is a backlog no office may clear.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SECOND COPY OF THE LINT RULES, OR A CHECK THAT RE-IMPLEMENTS `ruff`.** ⭐ `tests/test_repository.py` already fails the build wherever `ruff` exists (Ruling 78); this row makes the merge path RUN that, never restate it.
+
+⛔ **AND IT IS NOT [`W301`](rows/W301.md).** ⭐ **`W301` is the rubric's self-certification block filing a SUITE reading under the FLOOR's name.** ⚠️ **This row is that no release merge reads the image at all.** ⛔ **Fixing `W301`'s block leaves this open: a correctly-named pair of host readings is still blind.**
+
+### ⭐ THE TIP WAS RESTORED BEFORE THIS ROW WAS WRITTEN
+
+⭐ **Fixed forward on `release/m0-foundations`: three docstring first lines into imperative mood, and `ruff format` applied its OWN output to the fourth site.** ⛔ **The row is NOT the fix — the tip being green again is why the row is about the GATE and not about four docstrings.**
+
+[the mint](#po-round-92)
+
+#### ⭐ CLOSED — PO ROUND 94
+
+⭐ **Merged at `ecf0661`, TERMINAL by predicate `C`.** ⛔ **The row asked the merge path to READ the pinned image and BRANCH on its exit, and `tools/mergegate.py` is that gate as a TREE ARTIFACT rather than one office's scratchpad habit.** ⚠️ **Its own merge was gated by the scratchpad runner deliberately: gating an uncertified artifact's merge with that artifact is circular.**
