@@ -26285,3 +26285,67 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 101
 
 ⭐ **Merged at `52ff6bc`.** ⛔ **Every floor check answers for the run where it compared nothing — registered beside a notice that already says so, or disclosed by one notice that is SILENT while every population is inhabited.**
+
+## PO round 102
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W287` + `W288` | dev2 | `83fd13e` | ⭐ **merged at `0fce84a`** — every `mergegate` gate GREEN on the MERGED tree |
+
+⭐ **`studyforge plan` NOW MEASURES THE NARRATION ON DISK** through `corpus.media`'s own measurement and gives the verdict against the manifest's limits; a rate adds a projection and never replaces the reading. ⛔ **A clip is a copy only where the record's `where` IS its unit's audio directory, and a superseded clip is its own line, never a path a build owns.**
+
+⭐ **VERIFIED BY THIS REGISTER ON THE REAL CORPUS, NOT RECEIVED:** `plan` run READ-ONLY against the ISO corpus from exported source at `b8f8d00` and at the carrier — ⛔ **before, the stale *until SF-32 (M3)* sentence; after, a measured footprint that FITS, whose file and byte totals equal the ISO round-15 record's independent blob sum exactly**, with that corpus's porcelain empty afterwards. ⭐ Also: surface `cli/plan/`, its tests and the plan goldens only; author the `dev2` placeholder; identity and home-path probes absent; the split at a named seam (`recorded.py`); tests read against the handoff's decisions.
+
+⚠️ **A DECLARED NARROWING, ACCEPTED:** a version-1 record entry (no `where`) is no longer named as a copy, so a rebuild into the same `--out` REFUSES BY NAME rather than replaces until `studyforge narrate` records its directory. ⭐ **R3's direction — decline rather than guess — and the only narrated corpus writes version 2.**
+
+### ⭐ FINDINGS, DISPOSED OF
+
+| id | disposition |
+|---|---|
+| `W287/1` `[structural]` | ⭐ **accepted, disclosed in `recorded.py`** — a dead speech id filed in its own unit's directory is indistinguishable without opening unit documents; `narrate --prune` resolves it |
+| `W287/2` `[local]` | ⭐ **rider on `W311`** — `corpus/media`'s docstrings still say `plan` only projects; same package |
+| `W287/3` `[structural]` | ⭐ **BECOMES [`W311`](rows/W311.md)** — VERIFIED by reading `footprint.measure`: it walks the declared units' directories only |
+| `W287/4` `[local]` | ⭐ **accepted, no row** — `generate/clips.py`'s section predates `where`, true but incomplete; rides the next row owning that module |
+
+### W287 — `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W287.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-14/4`: `studyforge plan`'s media report says nothing is measurable *"until SF-32 (M3) generates media"*, on a corpus with clips on disk, though `SF-32` and `M3` are closed.** ⭐ **RECEIVED from ISO round 14 at ISO `16841dc`, over 1970 clips on disk. RE-MEASURED (Ruling 214) at `92b57fd`, by `git grep`:** `src/studyforge/cli/plan/report.py` line 58 prints the sentence, and its comment at line 48 names `SF-32` (M3) as future.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The report never prints a closed task as pending:** it measures what is on disk, or says why it does not.
+2. ⛔ **Asserted both ways (R12)** over a corpus with clips on disk and one without.
+
+⭐ **Surface:** `src/studyforge/cli/plan/report.py` and its tests. ⚠️ **One owner with [`W288`](rows/W288.md) and [`W210`](rows/W210.md), all `cli/plan/`, or two waves.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)
+
+#### ⭐ CLOSED — PO ROUND 102
+
+⭐ **Merged at `0fce84a`, with W288 on one carrier.**
+
+### W288 — `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W288.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W226/2`, with `W224/1`'s rider: `plan` lists copies for dead narration-record entries by filename and names no superseded clip, because it never reads the directory [`W226`](#w226-the-narration-record-cannot-locate-every-clip-it-wrote-so-a-removed-units-clips-and-a-re-worded-passages-old-clip-are-beyond-the-only-prune) now records.** ⭐ **RECEIVED from `W226`'s office at `a9fe5ec`, carried until `W267` closed. RE-MEASURED (Ruling 214) at `92b57fd`, by `git show`:** `src/studyforge/cli/plan/derive.py` `_recorded` groups each entry's `filename` by speech id and never reads its `where`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`plan` lists a copy only for an entry the build copies**, located from the record, never by re-deriving placement.
+2. ⛔ **A superseded clip is named as superseded**, never as a copy.
+3. ⛔ **Asserted both ways (R12)** over a record carrying a dead and a superseded entry.
+
+⭐ **Surface:** `src/studyforge/cli/plan/derive.py` and its tests. ⚠️ **One owner with [`W287`](rows/W287.md) and [`W210`](rows/W210.md), all `cli/plan/`, or two waves.** ⭐ **Jumps nobody: `plan` writes nothing.**
+
+[the mint](#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)
+
+#### ⭐ CLOSED — PO ROUND 102
+
+⭐ **Merged at `0fce84a`, with W287 on one carrier.**
