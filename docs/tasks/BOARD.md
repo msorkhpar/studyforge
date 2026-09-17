@@ -60,6 +60,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W302` | Developer 1 | `fix/W302-merge-path-image-reading` @ `wt/dev1` | 0 @ `d35262f` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -446,7 +447,7 @@ else.**
 | W299 | Five names another package takes from a `validate` module are on no surface, and one collides with a module name | framework agent | ✅ done — `528ba15` | [`rows/W299.md`](rows/W299.md) |
 | W300 | The same producer-half deviation tree-wide, over a population measured small enough to close | framework agent | ✅ done — `1d14e8a` | [`rows/W300.md`](rows/W300.md) |
 | W301 | The rubric's self-certification block files a suite reading under the floor's name and still exits `0` | framework agent | ✅ done — `3191905` | [`rows/W301.md`](rows/W301.md) |
-| W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | `todo` — `PO-92/1` | [`rows/W302.md`](rows/W302.md) |
+| W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | in-progress — on `fix/W302-merge-path-image-reading` | [`rows/W302.md`](rows/W302.md) |
 | W303 | The renderer's `_RENDERERS` dispatch refuses a malformed block with a `KeyError` instead of by name, and reachability is unmeasured | framework agent | ✅ done — `544a165` | [`rows/W303.md`](rows/W303.md) |
 | W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | ✅ done — `fc176ae` | [`rows/W304.md`](rows/W304.md) |
 | W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | `todo` — `W303/1` | [`rows/W305.md`](rows/W305.md) |
