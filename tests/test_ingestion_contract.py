@@ -123,6 +123,29 @@ def test_the_skill_names_the_directory_the_placement_package_owns():
         assert segment in segments(drawn_fence()), f"the skill's tree lost {segment!r}"
 
 
+def test_the_step_that_draws_the_tree_writes_no_archive_path_in_prose():
+    """⛔ The row's *must not become*: a prose path is a retype waiting to diverge.
+
+    ⭐ The fence is computed and asserted; a sentence beside it is neither. So
+    the step may NAME the two directories `corpus.placement` owns — it has to,
+    to say what they are for — and may not spell a path through them.
+    """
+    prose = "\n".join(
+        line for line in section(text(SKILL), SKILL_STEP).splitlines() if "```" not in line
+    )
+    for segment in (RAW_DIRNAME, UNITS_DIRNAME):
+        assert segment in prose, f"the step no longer says what {segment!r} is for"
+    outside = prose.replace(drawn_fence(), "")
+    assert drawn_fence() not in outside, "the fence was not found to remove; the reader is blind"
+    for through in (f"{ARCHIVE_DIRNAME}/", f"/{RAW_DIRNAME}/", f"/{UNITS_DIRNAME}/"):
+        assert through not in outside, (
+            f"step 3's prose spells a path through {through!r}; the fence is the only drawing"
+        )
+    # ⛔ And the reader would see one: the sentence this row deleted, restored.
+    planted = outside + f"\n`<address>/{UNITS_DIRNAME}/unit-02/media/diagram.svg`\n"
+    assert f"/{UNITS_DIRNAME}/" in planted
+
+
 # --- and the spec's contract names nothing it leaves out -------------------
 
 

@@ -115,12 +115,15 @@ looks fine.
 variant.** `raw/` is per *variant* and holds documents; this one is per *unit*
 and holds everything a unit owns that is not a document:
 
-- **every `assets` and `attachments` entry's `local` resolves against it** — so
-  `"local": "media/diagram.svg"` on unit 2 means
-  `<address>/units/unit-02/media/diagram.svg`, and that is the file the built
-  page's `<img>` reaches for;
+- **every `assets` and `attachments` entry's `local` resolves against it** — a
+  `"local": "media/diagram.svg"` is that file *inside the fourth line's
+  directory*, and it is what the built page's `<img>` reaches for;
 - the authored overlay sits in it as `content.json`, which is a person's file
   and not yours.
+
+⛔ **Neither is written out here as a whole path, deliberately.** The fence
+above is the only drawing, and it is computed; a path spelled twice is a path
+that diverges once.
 
 ⛔ **Ask `Layout.unit_files(address, unit)` for the directory; never join it.**
 A variant in that path, or `unit-2/` for `unit-02/`, puts the file where no
