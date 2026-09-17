@@ -76,6 +76,13 @@ ASSETS_DIRNAME = "assets"
 #: `corpus.json`, never under `.studyforge/`: `validate`, `plan`, a build and the adapter
 #: `Layout` all read it from here, and `test_names` fails on a second literal in `src/`.
 ARCHIVE_DIRNAME = "archive"
+#: ⛔ **The directory under a container that holds its documents, by variant, and
+#: its ONE spelling (`W199`).** §6's layout is `<archive-root>/<address>/raw/<variant>/
+#: unit-NN/`: `validate` walks it and the adapter `Layout` writes it, so it was minted
+#: twice — `ARCHIVE_ROOT_NAME` in `validate.corpus` and `RAW_DIR` in the adapter layout,
+#: neither on a package surface. ⚠️ One variant per container (SF-05), so this is a
+#: single directory and not a search.
+RAW_DIRNAME = "raw"
 UNITS_DIRNAME = "units"
 AUDIO_DIRNAME = "audio"
 IMAGES_DIRNAME = "images"

@@ -16,6 +16,7 @@ from studyforge.corpus.container.errors import ContainerError
 from studyforge.corpus.placement import (
     ARCHIVE_DIRNAME,
     CONTAINER_SUFFIX,
+    RAW_DIRNAME,
     UNIT_SUFFIX,
     PlacementError,
     container_page_name,
@@ -284,7 +285,8 @@ def test_the_default_label_this_module_mints_is_itself_a_usable_component():
 
 
 # --------------------------------------------------------------------------
-# ⛔ the archive root: one spelling, and every reader reads it (`INT-06/6`)
+# ⛔ the archive segments: one spelling each, and every reader reads it
+#    (`INT-06/6` for the root, `W199` for `raw/`)
 # --------------------------------------------------------------------------
 
 #: Every `src/` module holding a non-docstring literal with the archive root as a path
@@ -297,12 +299,19 @@ ARCHIVE_SPELLINGS = {
     "src/studyforge/skills/personalarchive/merge.py": 2,
 }
 
+#: Every `src/` module holding a non-docstring literal with the `raw/` segment as a path
+#: segment, and how many. ⛔ **One home, and no second site at all** (`W199`): the segment
+#: was minted twice — `ARCHIVE_ROOT_NAME` in `validate.corpus`, off that package's surface,
+#: and `RAW_DIR` in the adapter `Layout` — so the archive's writer and its reader each held
+#: their own copy of the one directory they must agree about.
+RAW_SPELLINGS = {"src/studyforge/corpus/placement/names.py": 1}
+
 #: The corpora a plan, a walk and a build can all read.
 ARCHIVED = ("depth1", "depth2", "shared-origin")
 
 
-def archive_spellings() -> dict[str, int]:
-    """Count, per `src/` module, the literals naming the archive root as a path segment."""
+def segment_spellings(segment: str) -> dict[str, int]:
+    """Count, per `src/` module, the literals naming `segment` as a path segment."""
     found: dict[str, int] = {}
     for path in sorted((repository_root() / "src").rglob("*.py")):
         tree = ast.parse(path.read_text(encoding="utf-8"))
@@ -319,7 +328,7 @@ def archive_spellings() -> dict[str, int]:
             and isinstance(node.value, str)
             and id(node) not in docstrings
             and not any(character.isspace() for character in node.value)
-            and ARCHIVE_DIRNAME in node.value.split("/")
+            and segment in node.value.split("/")
         ]
         if hits:
             found[path.relative_to(repository_root()).as_posix()] = len(hits)
@@ -329,9 +338,18 @@ def archive_spellings() -> dict[str, int]:
 def test_the_archive_root_is_spelled_once_in_src():
     # ⛔ `INT-06/6`: three constants and one composition let `plan` print a root
     # `validate`, a build and the layout never read. The population is printed.
-    found = archive_spellings()
+    found = segment_spellings(ARCHIVE_DIRNAME)
     print(f"archive-root literals in src/: {sum(found.values())} in {len(found)} module(s)")
     assert found == ARCHIVE_SPELLINGS, f"a second spelling, or one lost: {found}"
+
+
+def test_the_raw_segment_is_spelled_once_in_src():
+    # ⛔ `W199`: two constants, in the two modules that must agree — the walk
+    # `validate` runs and the layout an adapter writes to. ⭐ Neither compared
+    # itself against the other, so the fork was invisible until a reader counted.
+    found = segment_spellings(RAW_DIRNAME)
+    print(f"raw-segment literals in src/: {sum(found.values())} in {len(found)} module(s)")
+    assert found == RAW_SPELLINGS, f"a second spelling, or one lost: {found}"
 
 
 def printed_archive_root(root: Path) -> str:

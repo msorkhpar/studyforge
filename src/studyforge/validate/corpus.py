@@ -47,7 +47,7 @@ from studyforge.corpus.container import parse as parse_container
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
-from studyforge.corpus.placement import ARCHIVE_DIRNAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME, RAW_DIRNAME
 from studyforge.validate.report import Finding
 
 #: A unit directory. ⚠️ Read from the *path*, so it still answers "which unit
@@ -200,7 +200,7 @@ def _container(walk: Walk, path: Path) -> Held | None:
 
 
 def _documents(walk: Walk, held: Held) -> list[Unit]:
-    raw = held.directory / ARCHIVE_ROOT_NAME / held.container.variant
+    raw = held.directory / RAW_DIRNAME / held.container.variant
     found: list[Unit] = []
     for path in sorted(raw.rglob("*.json")):
         where = walk.relative(path)
@@ -242,10 +242,3 @@ def _text(walk: Walk, path: Path, rule: str) -> str | None:
     except UnicodeDecodeError:
         walk.findings.append(Finding(RULE_UNREADABLE, walk.relative(path), "is not UTF-8 text"))
     return None
-
-
-#: The directory under a container that holds its archive documents, by
-#: variant. ⚠️ One variant per container (SF-05), so this is a single
-#: directory and not a search — a map promising a variant the archive does not
-#: hold is the half-state that shape removed.
-ARCHIVE_ROOT_NAME = "raw"
