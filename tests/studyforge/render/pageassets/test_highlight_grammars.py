@@ -49,6 +49,29 @@ SAMPLES = {
     ),
     "python": ('@dec\ndef f(a, b=3):\n    """doc"""\n    return [x * 2 for x in range(10)]'),
     "sql": "SELECT a.id, COUNT(*) AS n FROM t a WHERE x > 1 -- c\nGROUP BY a.id;",
+    "markup": (
+        '<?xml version="1.0"?>\n'
+        "<!-- the field table -->\n"
+        '<config xmlns:iso="urn:iso" iso:id="1">\n'
+        '  <field name="pan">&amp;</field>\n'
+        "</config>"
+    ),
+    "xml": '<!DOCTYPE cfg SYSTEM "cfg.dtd">\n<cfg>\n  <![CDATA[raw <b>]]>\n</cfg>',
+    "json": '{"name": "iso", "fields": [1, -2.5e3, true, null], "ok": false}',
+    "properties": "# the listener\nhost.port = 8583\nlog.level: debug",
+    "gherkin": (
+        "@wip\n"
+        "Feature: Card authorisation\n"
+        "  Scenario Outline: Swipe\n"
+        '    Given a card "<pan>"\n'
+        "    # the note\n"
+        "    When it is swiped\n"
+        "    Then the reply is 0000\n"
+        '    """\n    a doc string\n    """\n'
+        "    Examples:\n"
+        "      | pan | mti |\n"
+        "      | 411 | 0100 |"
+    ),
 }
 
 #: Grammars that are empty by design. ⛔ `text` must be RECOGNISED and produce
@@ -180,6 +203,33 @@ def test_a_language_nobody_vendored_a_grammar_for_is_left_alone(tmp_path):
     # not fail. The renderer asks for `plain` instead, and this is the library
     # behaving safely even when a page names an unknown grammar.
     assert highlight(tmp_path, "x", "brainfuck")["known"] is False
+
+
+def test_the_bundle_concatenates_markup_before_javascript(tmp_path):
+    # ⛔ THE CONCATENATION ORDER IS LOAD-BEARING AND IT FAILS SILENTLY (`W295`).
+    # `javascript` attaches inlined `<script>` support behind
+    # `Prism.languages.markup &&`, so a bundle carrying markup AFTER javascript
+    # highlights the tags, leaves the script body bare, and reports nothing.
+    # ⭐ Measured both ways when the four grammars were vendored: markup first
+    # emits the keyword below; markup last emits only `tag` and `punctuation`.
+    out = highlight(tmp_path, "<p>\n  <script>var a = 1;</script>\n</p>", "markup")
+    assert "token tag" in out["html"], "the markup grammar did not run at all"
+    assert "token keyword" in out["html"], (
+        "the JavaScript inside <script> was not tokenised, so markup is "
+        "concatenated after javascript in prism.js and the guard was false"
+    )
+
+
+@pytest.mark.parametrize("language", ["markup", "xml"])
+def test_an_xml_fence_is_highlighted_rather_than_rendering_plain(tmp_path, language):
+    # ⛔ ISO-06's *"XML fences highlighted"*, which `W243/1` left unmeetable
+    # until these grammars were vendored. Both halves, because either alone
+    # passes while the reader sees plain text: the bundle DECLARES the
+    # language, and running it over real XML actually emits tokens.
+    assert language in highlighted_languages()
+    out = highlight(tmp_path, '<config id="1"><field name="pan"/></config>', language)
+    assert out["known"], f"`{language}` is declared but the bundle carries no grammar"
+    assert "tag" in out["classes"], f"a `{language}` fence emitted no tag token"
 
 
 def test_the_declared_languages_are_exactly_the_grammars_the_bundle_carries(tmp_path):

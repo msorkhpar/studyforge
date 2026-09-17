@@ -5,6 +5,7 @@ from __future__ import annotations
 import pytest
 
 from studyforge.render.pageassets import (
+    HEADER_CHARS,
     HEADER_MARKERS,
     VENDORED,
     AssetError,
@@ -54,7 +55,10 @@ def test_the_header_names_the_licence_file_beside_it(bundle):
 def test_the_header_is_read_as_characters_because_a_bundle_is_one_line():
     # ⚠️ A minified bundle is a single enormous line, so "the first five lines"
     # would be the whole file. Proved rather than remembered.
-    assert "\n" not in text("plyr.js")[600:5000]
+    # ⛔ Bounded by the CONSTANT and not by a literal of its own (`W295`): the
+    # window moved once, and a magic number here would have gone quietly stale
+    # while still passing.
+    assert "\n" not in text("plyr.js")[HEADER_CHARS:5000]
 
 
 @pytest.mark.parametrize("name", ["reading.css", "palette.css", "copy-code.js"])
@@ -68,5 +72,5 @@ def test_the_vendored_set_is_exactly_what_the_headers_claim():
     # ⭐ Both lists derived independently: the mapping above, and the files
     # that actually carry a vendoring header. A bundle added to the directory
     # without being registered fails here.
-    claimed = {name for name in names() if "VENDORED, UNMODIFIED" in text(name)[:600]}
+    claimed = {name for name in names() if "VENDORED, UNMODIFIED" in text(name)[:HEADER_CHARS]}
     assert claimed == set(VENDORED)
