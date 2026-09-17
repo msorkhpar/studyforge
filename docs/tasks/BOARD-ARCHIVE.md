@@ -25224,3 +25224,359 @@ wave, a push, was never taken and never will be** (standing instruction).
 #### ⭐ CLOSED — PO ROUND 92
 
 ⭐ **Merged at `3191905`, TERMINAL by predicate `C`.** ⛔ **WORSE than the row stated: the office's first test against the unedited rubric returned the floor's command as an EMPTY LIST and the suite's as bare `pytest`, so the block named NEITHER gate correctly.** ⭐ **Both lines now name their command explicitly, and the invocations are asserted in `tests/docker/` against `docker/dev/check`'s own header.**
+
+## PO round 93
+
+⛔ **Only what is MEASURED is written here.** ⏳ **`W300` and `W304` are OUT; their dispositions are
+placeholders and carry no verdict.**
+
+### ⛔ TWO DEFECTS OF THIS OFFICE'S OWN, BOTH INSIDE ROUND 92's OWN WORK
+
+#### ⛔ `PO-93/1` — the in-flight cells asserted a reading at a ref those branches never existed at
+
+⛔ **Ruling 246 and `PO-30/2` make a commits-ahead cell a READING WITH AN AS-OF, not a state.**
+⚠️ **Round 92 wrote `0 @ 3191905` while composing the round** — ⛔ **but a carrier is cut AFTER the
+register merges, so those branches did not exist at that ref and the cell named a reading nobody
+took.** ⭐ **They were cut at `2827409` and were `0` ahead of it.** ⭐ **Corrected at `4969141`.**
+
+⚠️ **The general shape, worth more than the instance: a round that WRITES its in-flight table before
+it MERGES is writing a reading it cannot yet take.**
+
+#### ⛔ `PO-93/2` — the round's own rewrite orphaned the previous round's record
+
+⛔ **`W171` and Ruling 201(b): a record section may not lose its LAST pointer from a live document.**
+⚠️ **Round 92 rewrote the board sentence naming the previous wave's rows so it named this wave's —
+and that sentence carried the ONLY live pointer at `#po-round-91`.** ⭐ **Corrected at `867ceee` by
+RE-POINTING from a live document; the record itself was not touched.**
+
+⛔ **WHY THE FLOOR DID NOT CATCH IT: `last_pointer` is a SEPARATE two-ref instrument the floor does
+not carry.** ⚠️ **This office ran the floor before committing and not `last_pointer`.**
+⛔ **AND THE FIRST VERIFICATION OF THE FIX WAS WORTHLESS:** it ran `last_pointer` BEFORE the commit,
+and that instrument reads **two git objects, never the working tree** — so it measured the tree
+without the fix and correctly reported the orphan still present. ⭐ **Re-run at `867ceee`: exit `0`.**
+
+#### ⛔ `PO-93/3` — THIS OFFICE MINTED A ROW ON A LINE-SCOPED GREP AND DISPATCHED A BRIEF TO "FIX" CORRECT CODE
+
+⛔ **`W304`'s central claim is FALSE, and the register wrote *"CONFIRMED BY THIS OFFICE"* on it.**
+⭐ **MEASURED now, by reading the FENCE instead of the line:**
+
+```sh
+# ⛔ FORM 1 — the pipeline is made to carry its own exit code:
+set -o pipefail
+python3 -m tools.quality | tail -4; echo "FLOOR_EXIT=$?"
+```
+
+⛔ **`set -o pipefail` is the line DIRECTLY ABOVE the accused one, in the SAME FENCE, under a comment
+that says the pipeline is made to carry its own exit code.** ⚠️ **The snippet is not innocent — it is
+the CANONICAL CORRECT FORM, and the line naming it as such is the one this office quoted past.**
+
+⛔ **AND THE ROW ARGUED ITS OWN REFUTATION WITHOUT SEEING IT:** it said the fix would be
+*"CONFORMANCE, not invention"* because the rubric uses the file-redirect form *"elsewhere"* —
+⭐ **that *elsewhere* is `FORM 2`, four lines below, in the SAME FENCE.**
+
+⚠️ **THE COST WAS NEARLY REAL:** implementing the brief would have DELETED one of the two forms
+Ruling 241 mints. ⭐ **Only the office declining the remedy prevented it.**
+
+⛔ **`W304/2` names the propagation and it is the durable lesson: the detached quotation travelled
+FINDING → ROW → BRIEF with nobody re-reading the fence.** ⚠️ **Three offices and this register
+handled it; the block was never opened.**
+
+⭐ **AND THE BY-NUMBER EXEMPTION FAILED EXACTLY AS AN INSTRUMENT-FREE CITATION DOES:** the brief
+exempted the teaching line BY NUMBER, and the numbers had already moved by seventeen when the office
+looked, so it pointed at neighbouring prose. ⛔ **The office replaced it with an exemption by a
+PROPERTY the line carries.** ⚠️ **That is the general repair, and it condemns the register's habit of
+citing line numbers as evidence.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W303` | dev2 | `1644c87` | ⭐ **merged at `544a165`** — expectation written first and matched (`CORR_EXIT=0`, `refuted={none}`), `MERGE_TREE=CLEAN`, `SUBJECT_EXIT=0`, `LINT_ENFORCEMENT_EXIT=0` |
+| `W300` | dev1 | `4dea108` | ⏳ **verified, awaiting merge** — both gates GREEN at its own ref (floor exit `0` carrying a REAL lint signal, suite exit `0`), `MERGE_TREE=CLEAN`, no real identity in any commit, ordering legible in history: pin `d2798e3`, sweep `628d1c8` |
+| `W304` | dev3 | `2c7d0db` | ⭐ **merged at `fc176ae`** — expectation written first and matched (`CORR_EXIT=1`, `refuted={W303}`), `MERGE_TREE=CLEAN`, `SUBJECT_EXIT=0`, `LINT_ENFORCEMENT_EXIT=0` |
+
+#### ⭐ `W303` ANSWERED ITS OWN QUESTION FIRST, AND THE ANSWER WAS "NO"
+
+⛔ **The row's named lines are NOT REACHABLE and got NO GUARD.** ⭐ **`section.py` holds the sole call
+to `render_all`; `render_one` refuses a non-`dict` and then refuses an unknown type BY NAME before
+dispatching, so a renderer is entered only for a type already matched.** ⚠️ **Measured from a
+document BOTH `archive.document.parse` and `unit.served.parse` accept: the entry gave `PageError`;
+only calling the renderers directly, behind that door, gave `KeyError`.**
+
+⭐ **THIS IS THE RESULT THE BRIEF ASKED FOR, NOT A FAILURE** — ⛔ **and an office that added a guard
+anyway would have made the framework worse by one more place the same guarantee is claimed.**
+
+⭐ **BUT ONE MEMBER OF THE SAME DISPATCH WAS REACHABLE AND IS FIXED:** a block whose `type` is
+UNHASHABLE — ordinary JSON, a list where a string belongs — raised a bare `TypeError` one line ABOVE
+the named lines, confirmed end to end. ⭐ **It now refuses by name, DESCRIBING the value rather than
+quoting it, which is `R7` applied to a value the framework did not author.**
+
+#### ⭐ `W300` ALSO PARTLY REFUTED ITS OWN PREMISE, AND CORRECTED ITS OWN COUNT
+
+⛔ **`W199/3` said the same producer-half deviation exists in several packages.** ⭐ **MEASURED: the
+pin arm finds ZERO — nothing in this tree takes an undeclared name straight from a package.**
+⚠️ **Every deviation is in the MODULE SPELLING.** ⭐ **So the pin fails nothing today and is a guard
+for the future, which is why its NON-VACUITY is pinned in the mirror rather than left as an
+empty-list assertion** — ⛔ **`W181`'s lesson applied without being told.**
+
+⛔ **AND THE ROW'S COUNT WAS WRONG AGAIN: the population is `44` pairs across `7` packages, not the
+`19` across `5` the row named.** ⚠️ **Three packages declaring NO `__all__` at all hold most of it
+and were counted by neither prior reading.**
+
+⛔ **THAT IS THE THIRD ROW THIS WAVE WHOSE COUNT WAS CORRECTED BY THE OFFICE THAT HAD TO SATISFY IT**
+— `W181/1`, `W290/1`, now `W300/2`. ⭐ **The register should stop treating a row's count as a
+measurement and start treating it as a claim the office will check.**
+
+### ⛔ A RULING `W304` OWES — the row is REFUTED, and what landed is worth more than what was asked
+
+⛔ **THE REGISTER RULES `W304`'s CENTRAL CLAUSE UNMEETABLE BECAUSE ITS PREMISE IS FALSE**, confirmed
+by this office reading the fence whole. ⭐ **The row is CLOSED on that ruling, not on its remedy —
+which was never performed and must never be.**
+
+⚠️ **The row's body is ANNOTATED with its refutation BEFORE it moves to the record (Ruling 270), so
+the archive does not freeze a false claim.** ⛔ **The claim is not deleted and the sentence is not
+rewritten** (Ruling 106's shape, applied one step early while the row is still live).
+
+⭐ **WHAT DISCHARGES THE ROW INSTEAD, and it is a better outcome than the clause asked for:**
+
+1. ⭐ **`FORM 1` now states INSIDE its own fence that its two lines are ONE FORM and that
+   `pipefail` is load-bearing** — ⛔ **so the next reader cannot detach them the way this office did.**
+2. ⭐ **A test binds BOTH exit-code forms by TEXT THEY CARRY, never by line number.** ⚠️ **That is the
+   general repair for `PO-93/3`, not a local patch.**
+3. ⭐ **The teaching line's exemption is now a PROPERTY it carries rather than its number**, and the
+   test fails if someone deletes the wrongness. ⛔ **Byte-unchanged, verified: it appears in no diff
+   hunk.**
+4. ⭐ **The annotation carries the plant table and a pointer to the round that measured `pipefail`
+   admissible here** — ⚠️ **a round which PREDICTED IN WRITING that the next office would be told it
+   was a bashism.** ⛔ **This board row is that prediction coming true, and the record now says so.**
+
+⛔ **THE OFFICE DECLINED THE REMEDY AND EDITED NEITHER ROW, BOARD NOR RECORD.** ⭐ **That is the
+protocol's required move; the disposition is the register's and the register is taking it.**
+⚠️ **Had the office complied instead, one of Ruling 241's two forms would now be gone.**
+
+### ⭐ FINDINGS RECEIVED THIS ROUND
+
+| finding | disposition |
+|---|---|
+| `W303/1` | ⭐ **Becomes [`W305`](rows/W305.md)** — and its measurement is the row's best evidence, better than the register's own |
+| `W304/1` `[structural]` | ⭐ **RULED above: the row's premise is false; disposition taken by the register** |
+| `W304/2` `[structural]` | ⛔ **The detached quotation propagated FINDING → ROW → BRIEF with nobody re-reading the fence.** ⚠️ **This is `PO-93/3`'s general form and the register owns it** |
+| `W303/2` `[local]` | a module's declared types are checked against the package's vocabulary but NOT against its own renderers, so a module can import cleanly and fail at render time. ⭐ Bound by a test where it was found |
+| `W304/3` `[local]` | ⚠️ **measured evidence AGAINST a document-wide rule:** a restore loop reading `$?` after a pipe inside a command substitution is CORRECT as written, and the population is larger than one |
+| `W303/3`, `W304/4` | `[local]`, each naming a cost rather than a defect |
+
+### ⛔ THE MINT — `W305`, and an office found it independently and measured it better
+
+⭐ **Drafted at `scratchpad/W305-draft.md`; frame verified by import, pointers verified, claim
+narrowed after measurement.** ⛔ **A FLOOR CHECK READS MUTABLE SHARED STATE THAT OFFICES WRITE, so
+the floor's verdict on an UNCHANGED TREE depends on who is working.**
+
+⭐ **`W303/1`, dev2's reading, is the row's best evidence:** the shared identity changed FOUR TIMES
+during one row; `dev1` matches **439** tracked lines, `dev2` **328**, `dev3` **179**; and the control
+is that its floor read GREEN only because the value happened to be `Developer One`, matching **0**.
+⛔ **`identity.py`'s own docstring asserts this cannot happen — *"inside the dev image … git has no
+identity"* — which is FALSE while a repo-local identity sits in the mounted checkout.**
+
+⚠️ **THE PROVENANCE CONSEQUENCE IS LATENT, NOT OBSERVED, AND THE ROW SAYS SO:** measured over
+`aa7c035..867ceee`, every coordinator commit is the coordinator's and each office's commits carry
+its own placeholder. ⛔ **An earlier draft claimed the mis-attribution as fact; it was checked and
+did not happen.**
+
+⛔ **THE OBVIOUS REMEDY IS AN `R7` LEAK:** unsetting the shared value while an office is live makes
+its next commit fall through to the machine's REAL global identity. ⭐ **So the repair is only safe
+when NO office holds a checkout, and this round asserts that ordering rather than assuming it.**
+
+### ⏳ STILL HELD
+
+| row | state |
+|---|---|
+| `W302` | ⛔ **HELD until `W300` lands** — they would both work `tools/quality/`. ⚠️ **Its brief is deliberately unwritten: where its gate can live depends on what `W300` actually puts there** |
+| `W90`, `W118`, `W198` | ⚠️ not developer-dispatchable — office decisions, not the user's |
+
+### ⭐ THE MEASUREMENT OF RECORD at `1d14e8a`, each instrument with its environment named
+
+| instrument | environment | reading |
+|---|---|---|
+| `python3 -m tools.quality` | HOST | ⭐ GREEN, exit `0` — no finding of any rule |
+| `python3 -m pytest` | HOST | ⭐ GREEN, exit `0` |
+| `python3 -m tools.quality` | ⭐ **pinned image** | ⭐ GREEN, exit `0` — ⛔ **and it carries a REAL LINT SIGNAL: `ruff check` clean, `ruff format --check` clean** |
+| `python3 -m pytest` | ⭐ **pinned image** | ⭐ GREEN, exit `0` — ⛔ **the first COMPLETE in-image suite since `3191905`** |
+| `board.last_pointer aa7c035 1d14e8a` | HOST | ⭐ GREEN, exit `0` — no section orphaned |
+| `board.corroborate` | HOST | exit `1`, refuting exactly `W300` `W303` `W304` — ⭐ **the correct disclosure state for carriers merged and not yet closed; this round closes them** |
+| `tools.workspace verify` | HOST | ⭐ GREEN, exit `0` |
+
+⛔ **THE IMAGE LINT LINE IS THE ONE `PO-92/1` WAS ABOUT, AND IT NOW READS CLEAN.** ⭐ **The wave that
+began with a release tip the authoritative environment REFUSED ends with that environment carrying a
+real signal and passing.**
+
+### ⛔ THE IN-FLIGHT TABLE IS EMPTY, AND THAT IS `PO-93/1`'s REPAIR RATHER THAN AN OMISSION
+
+⭐ **EMPTY IS A STATE** (`W111`, `W147`). ⛔ **`W302` is dispatchable — its collision with `W300` is
+discharged — but its carrier cannot exist until AFTER this register merge, so any as-of written for
+it here would be a reading at a ref that does not exist.** ⚠️ **That is exactly the defect
+`PO-93/1` names, and the round that names it will not commit it.**
+
+⭐ **The dispatch and its in-flight row land in a FOLLOW-UP whose as-of is a reading actually taken.**
+
+### W300 — the same producer-half deviation tree-wide, over a population measured small enough to close
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W300.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W199/3`: tree-wide, the SAME producer-half deviation exists in several packages** — a name minted in one place and taken from another without reaching a declared surface. ⭐ **RECEIVED from `W199`'s office, which MEASURED the population and found it small enough to close rather than merely naming it.**
+
+### ⭐ WHY IT IS WORTH A ROW: A SWEEP SOMEBODY REPEATS IS NOT A GATE
+
+⛔ **Ruling 101 exists and the deviations sit inside the tree it governs, and NO INSTRUMENT READS THEM.** ⚠️ **That is the same shape `W199` itself closed for one package.** ⭐ **A `tools/quality` check turns a sweep into a BUILD FAILURE, which is the only form that survives the next contributor.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A check over the tree, not a list** — every package's producer half is read from the package itself.
+2. ⛔ **The population is CLOSED at the ref it is taken at**, and a new deviation is RED rather than invisible.
+3. ⛔ **An exemption is DECLARED with its ground**, never silent.
+
+[the mint](#po-round-90)
+
+#### ⭐ CLOSED — PO ROUND 93
+
+⭐ **Merged at `1d14e8a`, TERMINAL by predicate `C`.** ⭐ **The pin landed FIRST and the sweep second, and the ordering is legible in history rather than only in prose — `W299/1` required it, because the sweep grips a name only while some package still takes it from a module.** ⛔ **The row's premise is PARTLY REFUTED: the pin arm matches NOTHING today, so it guards the future and its non-vacuity is pinned rather than asserted over an empty list.** ⚠️ **And the row's count was wrong — the population is larger than it named, in packages that declare no surface at all.**
+
+### W303 — the renderer's _RENDERERS dispatch refuses a malformed block with a KeyError instead of by name, and reachability is unmeasured
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W303.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE RENDERER REFUSES A MALFORMED BLOCK WITH A `KeyError` INSTEAD OF BY NAME, ONE LAYER OUT FROM WHERE [`W297`](rows/W297.md) JUST CLOSED IT.**
+
+### ⚠️ THE REPORT SAID SOMETHING STRONGER THAN THE TREE SUPPORTS, AND THE ROW IS THE WEAKER, TRUE VERSION
+
+⛔ **MEASURED by the register at `68d1ad9`, role main checkout, HOST.** ⭐ **`W297/1` reported that
+the renderer *"reads blocks unguarded too"*. It does not, at its entry:**
+
+```text
+src/studyforge/render/page/blocks/__init__.py:151    if not isinstance(block, dict):
+src/studyforge/render/page/blocks/__init__.py:153    block_type = block.get("type")
+```
+
+⭐ **That guard is real and it is in the right place.** ⛔ **What is unguarded is a DIFFERENT KIND of
+failure, one layer in:**
+
+```text
+src/studyforge/render/page/blocks/figure.py:94   return _RENDERERS[block["type"]](block, …)
+src/studyforge/render/page/blocks/prose.py:64    return _RENDERERS[block["type"]](block, …)
+```
+
+⚠️ **A block whose `type` is absent or unknown raises `KeyError` there** — ⛔ **not the by-name
+refusal `build` now gives, and not the `AttributeError` `W297` fixed.** ⭐ **So this is `W297`'s
+FAMILY, not `W297`'s defect, and saying so precisely is the point of minting it separately.**
+
+### ⛔ WHAT THIS ROW OWES BEFORE IT CHANGES ANYTHING — and it is the whole reason it is a row
+
+⛔ **REACHABILITY IS NOT MEASURED, AND THE OFFICE THAT FOUND THIS SAID SO PLAINLY.** ⚠️ **dev1 wrote
+that the renderer is *"fed by served-unit documents, so reachability is a separate question I did
+not measure"*.** ⭐ **That is the correct move under the protocol and it is recorded as correct.**
+
+⛔ **This row MEASURES it first:** can a document that `archive.document.parse` ACCEPTS reach
+`figure.py:94` or `prose.py:64` with a block that has no usable `type`? ⚠️ **If it cannot, the
+honest outcome is to CLOSE THIS ROW AS NOT REACHABLE and say where the barrier is** — ⛔ **that is a
+result, not a failure, and it is cheaper than a guard nobody needed.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Reachability MEASURED from a document `parse` accepts**, at the branch's own ref, and the
+   reading recorded either way.
+2. ⛔ **IF reachable:** the refusal names the block and its position, as `build` does — ⭐ **never a
+   bare `KeyError` escaping into a render.**
+3. ⛔ **Asserted both ways (R12):** a block with an absent or unknown `type` is refused by name, and
+   a well-formed document renders unchanged.
+4. ⚠️ **The guard at `__init__.py:151` STAYS.** ⛔ **It is not redundant with anything this row adds
+   and must not be "unified" away** — it catches a non-`dict`, which is a different input.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD PLACE THE SAME GUARANTEE IS MADE.** ⚠️ **[`W297`](rows/W297.md) already had to name all three
+places the archive's guarantee is made, because `validate` imports `archive` and `parse` therefore
+cannot ask `validate.blocks` without the archive depending on its own consumer.** ⭐ **Read that
+argument before adding a fourth.**
+
+⛔ **AND NOT A SWEEP OVER EVERY `[...]` INDEX IN `render/`.** ⭐ The population is the `_RENDERERS`
+dispatch, named above.
+
+[the mint](#po-round-92)
+
+#### ⭐ CLOSED — PO ROUND 93
+
+⭐ **Merged at `544a165`, TERMINAL by predicate `C`.** ⭐ **The row's named lines are NOT REACHABLE and got NO GUARD — the entry refuses a non-`dict` and then refuses an unknown type BY NAME before dispatching.** ⛔ **That is the RESULT the row asked for, not a failure.** ⭐ **But a sibling in the same dispatch WAS reachable: an UNHASHABLE `type` raised a bare `TypeError` one line above, and it now refuses by name, DESCRIBING the value rather than quoting it (`R7`).**
+
+### W304 — a floor snippet in the rubric reads $? after a pipeline, so it prints 0 for a RED floor on the page that teaches Ruling 241
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W304.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A FLOOR SNIPPET IN THE REVIEW RUBRIC READS `$?` AFTER A PIPELINE, SO IT REPORTS `tail`'s STATUS AND PRINTS `0` FOR A RED FLOOR — ON THE PAGE THAT TEACHES RULING 241's FORM.**
+
+### ⛔ THE MEASUREMENT IS THIS ROW'S SUBJECT
+
+⛔ **MEASURED by the register at `68d1ad9`, role main checkout, HOST, in
+[`../../conventions/review-rubric.md`](../conventions/review-rubric.md):**
+
+```text
+2843:  python3 -m tools.quality | tail -4; echo "FLOOR_EXIT=$?"
+```
+
+⚠️ **`$?` there is `tail`'s.** ⛔ **`tail` succeeds whatever the floor did, so this snippet prints
+`FLOOR_EXIT=0` for a floor that went RED** — ⭐ **a green certification about a red gate, which is
+Ruling 191's family and `W296`'s and [`W302`](rows/W302.md)'s.**
+
+### ⛔ THE ROW'S SHARPEST CLAUSE: LINE `2810` IS NOT A DEFECT AND MUST NOT BE "FIXED"
+
+⛔ **The SAME construction appears deliberately, as a WARNING, thirty-odd lines above:**
+
+```text
+2810:  out=$(python3 -m pytest -q "$F" 2>&1 | tail -1); code=$?   # ⛔ this is tail's exit
+```
+
+⭐ **That one is teaching material and it is CORRECT AS WRITTEN — it exists to show the reader the
+trap.** ⚠️ **An office dispatched against *"the `$?`-after-pipeline sites in the rubric"* would
+delete the example that exists to teach the defect, and the page would get WORSE while every gate
+stayed green.** ⛔ **So the population is named by LINE, never by grep, and `2810` is exempt BY NAME.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The snippet at `2843` reports the FLOOR's status**, by whatever form Ruling 241 already
+   blesses — ⭐ **`python3 -m tools.quality > f.txt 2>&1; echo "FLOOR_EXIT=$?"` is the shape the
+   rubric itself uses elsewhere, so this is conformance and not invention.**
+2. ⛔ **Line `2810` is UNCHANGED**, and the row's own record says why.
+3. ⛔ **Asserted both ways (R12):** the corrected snippet reports non-zero when the floor is RED, and
+   zero when it is clean. ⭐ **Plant a RED floor to demonstrate it (Ruling 123) — a snippet that is
+   only read is not validated.**
+4. ⚠️ **The population is MEASURED, not inherited from this row.** ⛔ **Other `docker/dev/check`
+   invocations in the rubric are bound by no instrument (`W301/2`, accepted `[local]` and
+   deliberately not widened) — ⭐ if this row widens that, it says so out loud and takes the cost.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A LINT RULE OVER SHELL SNIPPETS IN PROSE.** ⭐ The rubric deliberately contains WRONG snippets as
+warnings; a checker that cannot tell a warning from an instruction would refuse the document for
+teaching.
+
+⛔ **AND NOT A SECOND SPELLING OF [`W301`](rows/W301.md).** ⭐ **`W301` is the self-certification block
+naming the wrong COMMAND for a gate; this row is a snippet reading the wrong EXIT for one.**
+⚠️ **They share a page and a family, not a defect.**
+
+[the mint](#po-round-92)
+
+### ⛔ ANNOTATION — THIS ROW'S CENTRAL CLAIM IS FALSE, RECORDED HERE BEFORE THE BODY MOVES
+
+⛔ **MEASURED by the office dispatched against this row, and CONFIRMED INDEPENDENTLY by the register: the accused snippet sits inside Ruling 241's `FORM 1`, with `set -o pipefail` on the line DIRECTLY ABOVE IT, IN THE SAME FENCE, under a comment saying the pipeline is made to carry its own exit code.**
+
+⭐ **The claim above is NOT deleted and NOT rewritten.** ⚠️ **It is ANNOTATED, so the record carries the charge AND its refutation** — Ruling 106's shape, applied one step early while the row is still a live document.
+
+⛔ **THE CHARGE CAME FROM THE DETACHMENT.** ⭐ **The line was quoted apart from the line that binds it, and that detachment travelled FINDING → ROW → BRIEF with nobody re-opening the fence.** ⚠️ **The control proves the mechanism: `FORM 1` entire reports the FLOOR's status; only the excerpt ALONE reproduces the false green.**
+
+⛔ **AND THE ROW CITED ITS OWN REFUTATION WITHOUT SEEING IT:** it argued the change would be *"CONFORMANCE, not invention"* because the rubric uses the file-redirect form *"elsewhere"*. ⭐ **That *elsewhere* is `FORM 2` — four lines below, in the SAME FENCE.**
+
+⛔ **IMPLEMENTING THIS ROW WOULD HAVE DELETED ONE OF THE TWO FORMS RULING 241 MINTS.** ⭐ **The office declined the remedy, and that refusal is the only reason the rubric still carries both.**
+
+⚠️ **`PO-93/3` names this as the register's own defect: a row minted on a line-scoped grep, and a brief dispatched to "fix" correct code.**
+
+#### ⭐ CLOSED — PO ROUND 93
+
+⭐ **Merged at `fc176ae`, TERMINAL by predicate `C`.** ⛔ **THE ROW'S CENTRAL CLAIM IS FALSE and the register rules it so — see the annotation carried in the body above.** ⭐ **The office DECLINED the remedy; had it complied, one of Ruling 241's two forms would now be gone.** ⭐ **What discharges the row instead is better than the clause asked for: `FORM 1` now says INSIDE its own fence that its two lines are one form and `pipefail` is load-bearing, a test binds BOTH forms by TEXT THEY CARRY rather than by line number, and the teaching line's exemption is now a PROPERTY it carries.**
