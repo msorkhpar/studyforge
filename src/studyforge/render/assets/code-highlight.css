@@ -30,24 +30,55 @@
    how this rule came to be written down. */
 
 /* Containers Prism nests other tokens inside. They must not paint, or they
-   would override the child that carries the meaning. Weakest, deliberately. */
+   would override the child that carries the meaning. Weakest, deliberately.
+
+   ⚠️ Gherkin's `feature` and `scenario` wrap a keyword and a title, and its
+   two table halves wrap their cells, so all four are containers of exactly
+   that kind. `important` is the title text itself, which reads as prose and
+   not as a painted token. `script` and `language-javascript` wrap the
+   JavaScript inside an HTML `<script>` element -- the same shape as
+   `language-regex`, which was already here. */
 figure.code .token.expression,
 figure.code .token.parameter,
 figure.code .token.decorator,
-figure.code .token.language-regex { color: inherit; }
+figure.code .token.language-regex,
+figure.code .token.language-javascript,
+figure.code .token.script,
+figure.code .token.feature,
+figure.code .token.scenario,
+figure.code .token.important,
+figure.code .token.table-head,
+figure.code .token.table-body { color: inherit; }
 
+/* ⛔ A prolog, a doctype and a CDATA marker are STRUCTURAL NOISE, and they
+   are filed here rather than under comment on purpose: Prism's own themes
+   colour them as comments, and this file's standing rule is that nothing
+   takes the comment colour and its italics unless it IS a comment. */
 figure.code .token.punctuation,
 figure.code .token.operator,
 figure.code .token.template-punctuation,
 figure.code .token.interpolation-punctuation,
 figure.code .token.regex-delimiter,
-figure.code .token.regex-flags { color: var(--tok-punct); }
+figure.code .token.regex-flags,
+figure.code .token.prolog,
+figure.code .token.doctype,
+figure.code .token.cdata { color: var(--tok-punct); }
 
+/* ⭐ The names a document DECLARES read as types: an element name, an
+   attribute name, a JSON property, a properties key, a Gherkin placeholder
+   or table heading. Their VALUES are filed under string, below. */
 figure.code .token.class-name,
 figure.code .token.builtin,
 figure.code .token.annotation,
 figure.code .token.generics,
-figure.code .token.namespace { color: var(--tok-type); }
+figure.code .token.namespace,
+figure.code .token.tag,
+figure.code .token.attr-name,
+figure.code .token.doctype-tag,
+figure.code .token.name,
+figure.code .token.property,
+figure.code .token.key,
+figure.code .token.variable { color: var(--tok-type); }
 
 figure.code .token.function,
 figure.code .token.function-variable { color: var(--tok-function); }
@@ -63,11 +94,17 @@ figure.code .token.singleline,
 figure.code .token.multiline,
 figure.code .token.char,
 figure.code .token.regex,
-figure.code .token.regex-source { color: var(--tok-string); }
+figure.code .token.regex-source,
+figure.code .token.attr-value,
+figure.code .token.value,
+figure.code .token.entity { color: var(--tok-string); }
 
+/* ⭐ A Gherkin step keyword -- Given, When, Then -- is Prism's `atrule`, and
+   it is a keyword in every sense the reader cares about. */
 figure.code .token.keyword,
 figure.code .token.boolean,
-figure.code .token.import { color: var(--tok-keyword); font-weight: 600; }
+figure.code .token.import,
+figure.code .token.atrule { color: var(--tok-keyword); font-weight: 600; }
 
 figure.code .token.comment { color: var(--tok-comment); font-style: italic; }
 
