@@ -6,9 +6,12 @@ How a task is picked up, worked, and handed on. Applies to every task in
 ## ⛔ TWO STANDING USER DECISIONS, and they change how a task ENDS
 
 ⛔ **NO REVIEWING OFFICE, NO VERDICT. EVERY ROW IS SELF-CERTIFIED BY THE OFFICE
-THAT DID THE WORK.** ⭐ **The FLOOR and the SUITE are the gates:** both green **at
-the ref that will merge**, each reading carrying **ref + checkout ROLE +
-ENVIRONMENT**, and the **expectation written BEFORE the command**. ⚠️ Then the
+THAT DID THE WORK.** ⭐ **EVERY DECLARED GATE is green at the ref that will
+merge, read by ONE command with ONE exit code**, each reading carrying **ref +
+checkout ROLE + ENVIRONMENT**, and the **expectation written BEFORE the
+command**. ⛔ **Do not enumerate the gates from memory** (`W191`): a two-item
+list is satisfiable by halves, and the floor can exit `0` while the suite does
+not at one ref (Ruling 78). ⚠️ Then the
 coordinator's release-tip measurement, after the merge. ⛔ **Self-certified is
 not a lower bar; it is the same bar signed by a different office** — the runnable
 block is in
