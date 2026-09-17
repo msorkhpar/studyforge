@@ -83,6 +83,16 @@ ARCHIVE_DIRNAME = "archive"
 #: neither on a package surface. ⚠️ One variant per container (SF-05), so this is a
 #: single directory and not a search.
 RAW_DIRNAME = "raw"
+#: ⛔ **The directory holding what one unit OWNS — its media, its attachments and the
+#: authored overlay — and its ONE spelling (`W298`).** ⚠️ It names a segment in TWO trees
+#: and they are required to agree: the archive's `<address>/units/unit-NN/`, which
+#: `skills.adapter.Layout.unit_files` writes and both `validate.source.membership` and a
+#: build read, and the generated site's, which `tree` places. ⭐ `tree`'s own contract is
+#: that the shape below a container is identical segment for segment, *so every href a
+#: page holds to its own media is unchanged* — so a second spelling breaks a stated
+#: invariant with nothing failing, which is why it is minted here and imported there.
+#: ⛔ Counted by MINT and not by literal: `"units"` is also a JSON key, so the
+#: spelled-once scan the other two segments use would red modules that mint nothing.
 UNITS_DIRNAME = "units"
 AUDIO_DIRNAME = "audio"
 IMAGES_DIRNAME = "images"

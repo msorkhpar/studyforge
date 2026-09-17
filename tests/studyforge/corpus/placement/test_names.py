@@ -18,6 +18,7 @@ from studyforge.corpus.placement import (
     CONTAINER_SUFFIX,
     RAW_DIRNAME,
     UNIT_SUFFIX,
+    UNITS_DIRNAME,
     PlacementError,
     container_page_name,
     is_container_page,
@@ -306,6 +307,36 @@ ARCHIVE_SPELLINGS = {
 #: their own copy of the one directory they must agree about.
 RAW_SPELLINGS = {"src/studyforge/corpus/placement/names.py": 1}
 
+#: Every `src/` module that MINTS the `units/` segment — a name bound to the bare literal
+#: and joined into a path. ⛔ **One home** (`W298`): it was minted here and again as
+#: `UNITS_DIR` in the adapter `Layout`, so the archive's writer and the site's placer each
+#: held a private copy of a segment their own contracts require to agree.
+UNITS_MINTS = {"src/studyforge/corpus/placement/names.py": ("UNITS_DIRNAME",)}
+
+#: ⛔ **Every `src/` module that SPELLS `units` and mints no directory at all** — the
+#: population a spelled-once scan would have read as defects. ⭐ Declared so the
+#: discriminator is asserted to EXCLUDE something rather than merely to agree:
+#:
+#: - a JSON **key**, in `contents/entries.py`, `contents/status.py` and
+#:   `corpus/container/document.py` — `container.json` and the contents document both
+#:   carry a `"units"` array;
+#: - an error message's **label**, in `render/index/entries.py`;
+#: - a **URL** prefix, in the two `serve/routes` modules, which is `units/` with its
+#:   separator and names a route rather than a directory.
+#:
+#: ⚠️ Asserted as a SUBSET, not an equality: a new JSON key naming `units` is ordinary
+#: work, and a census that red on one would teach the next office to edit the census.
+UNITS_SPELT_BUT_NOT_MINTED = frozenset(
+    {
+        "src/studyforge/contents/entries.py",
+        "src/studyforge/contents/status.py",
+        "src/studyforge/corpus/container/document.py",
+        "src/studyforge/render/index/entries.py",
+        "src/studyforge/serve/routes/content.py",
+        "src/studyforge/serve/routes/state.py",
+    }
+)
+
 #: The corpora a plan, a walk and a build can all read.
 ARCHIVED = ("depth1", "depth2", "shared-origin")
 
@@ -333,6 +364,109 @@ def segment_spellings(segment: str) -> dict[str, int]:
         if hits:
             found[path.relative_to(repository_root()).as_posix()] = len(hits)
     return found
+
+
+def path_segment_mints(segment: str) -> dict[str, tuple[str, ...]]:
+    """Every `src/` MINT of `segment` as a directory name, by module.
+
+    ⛔ **A mint is not a literal, and `W298` is the row that needed the
+    difference.** `segment_spellings` above counts literals, which is right for
+    `archive` and `raw` and wrong for `units`: that word is also a JSON key, an
+    error label and a URL prefix, so counting literals reds six modules that
+    mint no directory at all.
+
+    ⭐ **What counts as a mint**, each arm being a way a directory name is
+    actually created:
+
+    - a module-level name bound to the **bare** segment, where that name is
+      joined into a path — `x / NAME`, `x.joinpath(NAME)` — **anywhere in
+      `src/`**. ⚠️ Cross-module on purpose: `UNITS_DIRNAME` is bound in
+      `names.py` and joined in `tree.py`, so a per-module rule would see the
+      home as a key and miss it;
+    - the bare segment used directly as a join operand, `x / "units"`.
+
+    ⛔ **A BINDING is deliberately not a mint.** `UNITS_DIR = UNITS_DIRNAME`
+    binds a value it does not create, which is the shape `W199` ruled keeps an
+    adapter's vocabulary on its own surface (R19); `UNITS_DIR = "units"` creates
+    a second one, and only the second is counted.
+
+    ⚠️ **Its limit, stated rather than found later:** it reads `pathlib` joins,
+    which is what this framework uses. A segment composed with `os.path.join` or
+    `"/".join` would not be seen, and neither would one assembled inside an
+    f-string.
+    """
+    modules = {
+        path: ast.parse(path.read_text(encoding="utf-8"))
+        for path in sorted((repository_root() / "src").rglob("*.py"))
+    }
+    assert modules, "no src/ module was parsed, so this instrument answers nothing"
+
+    bound: dict[str, Path] = {}
+    for path, tree in modules.items():
+        for node in tree.body:
+            if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.Constant):
+                continue
+            if node.value.value != segment:
+                continue
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    bound[target.id] = path
+
+    def joined_operands(node: ast.AST):
+        """Every operand of a `/` join and every argument of a `.joinpath(...)`."""
+        if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Div):
+            yield from (node.left, node.right)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+            if node.func.attr == "joinpath":
+                yield from node.args
+
+    found: dict[str, list[str]] = {}
+    for path, tree in modules.items():
+        for node in ast.walk(tree):
+            for operand in joined_operands(node):
+                name = None
+                if isinstance(operand, ast.Name) and operand.id in bound:
+                    name, where = operand.id, bound[operand.id]
+                elif isinstance(operand, ast.Attribute) and operand.attr in bound:
+                    name, where = operand.attr, bound[operand.attr]
+                elif isinstance(operand, ast.Constant) and operand.value == segment:
+                    name, where = f"{segment!r} (a bare literal)", path
+                if name is None:
+                    continue
+                at = where.relative_to(repository_root()).as_posix()
+                if name not in found.setdefault(at, []):
+                    found[at].append(name)
+    return {at: tuple(sorted(names_)) for at, names_ in sorted(found.items())}
+
+
+def test_the_units_segment_is_minted_once_in_src():
+    # ⛔ `W298`, received as `W199/1`. `UNITS_DIR` in the adapter `Layout` and
+    # `UNITS_DIRNAME` here held one value twice: the archive's writer and the
+    # generated site's placer each kept a private copy of a segment `tree`'s own
+    # contract says must agree segment for segment.
+    found = path_segment_mints(UNITS_DIRNAME)
+    print(f"units mints in src/: {sum(len(n) for n in found.values())} in {len(found)} module(s)")
+    assert found == UNITS_MINTS, f"a second mint, or the one home lost: {found}"
+
+
+def test_the_mint_instrument_tells_a_directory_name_from_a_json_key():
+    # ⛔ **The clause `W298` owes, asserted rather than claimed.** `W199` closed
+    # `raw` with a spelled-once scan and that instrument does NOT transfer: run
+    # over `units` it reads a JSON key, an error label and a URL prefix as
+    # defects. ⭐ This asserts the discriminator both ways — the scan still SEES
+    # every one of those modules, and counts none of them as a mint.
+    literals = segment_spellings(UNITS_DIRNAME)
+    mints = path_segment_mints(UNITS_DIRNAME)
+
+    unseen = sorted(UNITS_SPELT_BUT_NOT_MINTED - set(literals))
+    assert unseen == [], f"the scan no longer sees these at all, so it proves nothing: {unseen}"
+    miscounted = sorted(UNITS_SPELT_BUT_NOT_MINTED & set(mints))
+    assert miscounted == [], f"a key, a label or a URL was counted as a mint: {miscounted}"
+
+    # ⭐ Non-vacuity (Ruling 146): a discriminator that excludes nothing is
+    # passing by finding nothing, and would pass if both arms were dead.
+    assert len(literals) > len(mints), "the instrument excluded nothing; it is not discriminating"
+    print(f"units: {len(literals)} module(s) spell it, {len(mints)} mint it")
 
 
 def test_the_archive_root_is_spelled_once_in_src():

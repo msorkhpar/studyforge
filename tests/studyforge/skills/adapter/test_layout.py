@@ -12,7 +12,12 @@ from studyforge.archive.document import render as render_document
 from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
 from studyforge.corpus.container import render as render_map
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.corpus.placement import ARCHIVE_DIRNAME, RAW_DIRNAME
+from studyforge.corpus.placement import (
+    ARCHIVE_DIRNAME,
+    RAW_DIRNAME,
+    UNITS_DIRNAME,
+    profile_for,
+)
 from studyforge.skills.adapter import (
     ARCHIVE_DIR,
     RAW_DIR,
@@ -126,7 +131,8 @@ def test_the_segment_names_on_this_surface_are_placements_and_not_a_second_value
     # ⛔ `W199`: `archive` and `raw` were each minted twice, and one copy of each
     # was off every package surface — `validate.corpus` held the `raw` one, so
     # the archive's reader and its writer each kept a private copy of the one
-    # directory they must agree about. ⭐ Both names SURVIVE here, because an
+    # directory they must agree about. ⛔ `W298`: `units` was the third, minted
+    # here and in placement. ⭐ All three names SURVIVE here, because an
     # adapter's whole vocabulary arrives through this package (R19); what they
     # may never be again is a second VALUE.
     # ⚠️ That there is no second LITERAL is a claim about `src/`, and it is
@@ -134,6 +140,31 @@ def test_the_segment_names_on_this_surface_are_placements_and_not_a_second_value
     # test_names.py`. This asserts what this surface hands an adapter author.
     assert ARCHIVE_DIR == ARCHIVE_DIRNAME
     assert RAW_DIR == RAW_DIRNAME
+    assert UNITS_DIR == UNITS_DIRNAME
+
+
+def test_the_archive_and_the_site_agree_on_where_a_units_own_files_sit(tmp_path):
+    """⭐ The cross-TREE pin `W298` adds, and it is the reason the two names bind.
+
+    ⛔ `UNITS_DIR` names a segment in the **archive**, which an adapter writes
+    and `validate.source.membership` reads; `UNITS_DIRNAME` names one in the
+    **generated site**, which `tree` places. They are two different trees, so
+    binding them is a claim — and this is the claim, stated by `tree`'s own
+    contract: the shape below a container is identical segment for segment,
+    *so every href a page holds to its own media is unchanged*.
+
+    ⚠️ A build depends on it in both directions at once: `generate.media` asks
+    `Layout.unit_files` where a unit's media IS and placement where it GOES.
+    ⛔ Asserted on the paths the two producers build, never on the constant —
+    a constant compared against itself agrees whatever it says.
+    """
+    archive = Layout(tmp_path, ARCHIVE_DIR).unit_files(ADDRESS, 7)
+    site = profile_for("tree").unit_dir(ADDRESS, 7)
+
+    assert archive.parent.name == site.parent.name, (
+        "the archive and the site disagree on the segment a unit's own files sit under"
+    )
+    assert archive.name == site.name == unit_name(7)
 
 
 def test_what_this_layout_writes_is_what_validate_reads(tmp_path):
