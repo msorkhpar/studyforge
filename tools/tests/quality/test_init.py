@@ -18,7 +18,7 @@ from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
 from tools.quality.locations import location_notice
 from tools.quality.mirror import check_mirrors
-from tools.quality.personal_data import check_personal_data
+from tools.quality.personal_data import check_personal_data, identity_notice
 from tools.quality.pointers import check_pointers, pointer_coverage
 from tools.quality.reach import check_rulings_reach, reach_notice
 from tools.quality.rulings import check_rulings_index, rulings_notice
@@ -77,6 +77,7 @@ def test_every_notice_is_registered():
         count_census,
         creator_census,
         surface_census,
+        identity_notice,
         lint_notice,
     }
 
@@ -101,6 +102,22 @@ def test_the_lint_notice_prints_last():
     # line — `quality floor:` — and a reader who finds it three lines above
     # that, under a pointer census, has to be told the two are related.
     assert quality.NOTICES[-1] is lint_notice
+
+
+def test_the_identity_notice_prints_directly_above_the_lint_notice():
+    # ⛔ Order, not just membership (`W307`). Both of these qualify the VERDICT
+    # line — `quality floor:` — rather than any one check's own output, so they
+    # belong together where the reader meets that verdict. A disclosure the
+    # reader has already scrolled past discloses nothing.
+    assert quality.NOTICES.index(identity_notice) == quality.NOTICES.index(lint_notice) - 1
+
+
+def test_the_identity_notice_cannot_change_the_exit_code(tmp_path):
+    # ⛔ `W307`'s hard half, and what that row must NOT become: an UNARMED arm is
+    # CORRECT inside the pinned image, which configures no git identity by
+    # design, so this channel reports the state and never fails on it.
+    assert identity_notice not in quality.CHECKS
+    assert [line for line in quality.run_notices(tmp_path) if line.startswith("personal data")]
 
 
 def test_the_lint_notice_cannot_change_the_exit_code(tmp_path):
