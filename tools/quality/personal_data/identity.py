@@ -14,6 +14,17 @@ who happened to be working.
 **How you use it.** `check_identifiers(repo_root)`. `identifiers()` returns
 `{what it is: the value}` for the machine it runs on; `check_identifiers`
 accepts an override so the mechanism can be tested with fabricated values.
+⭐ `identity_notice(repo_root)` is registered in `tools.quality.NOTICES` and
+prints WHICH arms had a value to compare — **labels only, never values**.
+
+⛔ **The arm DISCLOSES whether it was armed, and that is `W307`.** ⚠️ An arm
+that derives nothing compares against nothing, and the floor printed the same
+clean line it prints when a real identifier WAS derived and found in no tracked
+file. ⛔ **Those two readings are indistinguishable and only one of them is a
+guarantee** — `FND-07`: *nothing printed* and *there was nothing to say* must
+not be the same line. ⭐ **It is a NOTICE and never a failure:** an unarmed arm
+is CORRECT inside the pinned image, which has no passwd entry and configures no
+git identity by design.
 
 **Depends on.** `getpass`, `socket`, `os` and `config`; `git` if it happens to
 be installed — its absence narrows the sweep and never fails it.
@@ -104,6 +115,23 @@ GENERIC_IDENTIFIERS = frozenset(
 #: and set nowhere** — `git -c user.name=… -c user.email=… commit` — which is
 #: Ruling 345's clause and the only form that never enters a shared slot.
 IDENTITY_SCOPES = ("--global", "--system")
+
+
+#: ⛔ **Every arm `identifiers()` can return, and what each derives FROM**
+#: (`W307`). ⭐ **This is the DENOMINATOR the floor prints**, and Ruling 48's
+#: reason: an arm that derived nothing was never compared, so a tree clean of it
+#: is not a guarantee about it. ⚠️ **A census, never a second derivation** —
+#: `identity_notice` reports the keys `identifiers()` actually returned and
+#: re-reads no scope of its own, so the two cannot disagree. ⛔ A label derived
+#: and missing from here is PRINTED as drift rather than dropped.
+IDENTIFIER_LABELS = (
+    ("account name", "the passwd entry"),
+    ("hostname", "the network name"),
+    ("short hostname", "the network name, up to its first dot"),
+    ("home directory", "$HOME, and only one carrying an account name"),
+    ("git author name", "git user.name"),
+    ("git author email", "git user.email"),
+)
 
 
 def _usable(value: str | None) -> str | None:
@@ -242,3 +270,65 @@ def check_identifiers(root: Path, values: dict[str, str] | None = None) -> list[
                     )
                     break
     return findings
+
+
+def _census(armed: list[str], unarmed: list[str], known: list[str]) -> str:
+    """Build the line carrying which arms armed, which did not, and the denominator."""
+    head = (
+        f"personal data (R7, W307): the identifier arm derived {len(armed)} of "
+        f"{len(known)} identifier(s) on this machine — "
+    )
+    head += f"ARMED: {', '.join(armed)}." if armed else "ARMED: NONE, so NOTHING was compared."
+    if unarmed:
+        return (
+            f"{head} NOT ARMED, and nothing was compared for these: "
+            f"{', '.join(unarmed)} — a clean floor is NOT a guarantee about any of "
+            f"them (FND-07)."
+        )
+    return f"{head} NOT ARMED: none — every arm had a value to compare."
+
+
+def _standing_clause() -> str:
+    """Build the line saying what an unarmed arm means, and why it is not a failure."""
+    return (
+        f"  ⛔ Labels only, never values (R7) — printing one would be the leak this check "
+        f"exists to prevent. ⭐ An UNARMED arm is CORRECT in the pinned image, which has "
+        f"no passwd entry and configures no git identity, so this is a NOTICE and never a "
+        f"failure. ⚠️ The git arm reads {' and '.join(IDENTITY_SCOPES)} ONLY (W305), so an "
+        f"identity in a repository's own config arms nothing here. ⭐ check_shapes sweeps "
+        f"every tracked file regardless and is unaffected by any of this."
+    )
+
+
+def identity_notice(root: Path) -> list[str]:
+    """Report which identifier arms had a value to compare, by label and never by value.
+
+    ⛔ **A NOTICE, never a check** (`W307`). An arm that derives nothing is
+    CORRECT inside the pinned image — no passwd entry, and no git identity at
+    either scope `IDENTITY_SCOPES` names — so this may not fail a build, and it
+    is registered in `NOTICES` alone.
+
+    ⛔ **It reports what `identifiers()` returned and derives nothing of its
+    own.** A second, independent reading could disagree with the one the check
+    actually used, and then the disclosure would be about a different run than
+    the verdict.
+
+    ⚠️ `root` is taken for the `NOTICES` signature and deliberately unread: what
+    arms is a property of the MACHINE, never of the tree being swept.
+    """
+    derived = identifiers()
+    sources = dict(IDENTIFIER_LABELS)
+    known = [label for label, _ in IDENTIFIER_LABELS]
+    armed = [label for label in known if label in derived]
+    unarmed = [label for label in known if label not in derived]
+
+    lines = [_census(armed, unarmed, known), _standing_clause()]
+    for label in unarmed:
+        lines.append(f"    NOT ARMED — {label}: nothing usable from {sources[label]}.")
+    drift = sorted(label for label in derived if label not in sources)
+    if drift:
+        lines.append(
+            f"    ⛔ DERIVED and absent from IDENTIFIER_LABELS, so this census is STALE "
+            f"and its denominator UNDERSTATES the arm: {', '.join(drift)}."
+        )
+    return lines

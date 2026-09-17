@@ -71,7 +71,7 @@ from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
 from tools.quality.locations import location_notice
 from tools.quality.mirror import check_mirrors
-from tools.quality.personal_data import check_personal_data
+from tools.quality.personal_data import check_personal_data, identity_notice
 from tools.quality.pointers import check_pointers, pointer_coverage
 from tools.quality.reach import check_rulings_reach, reach_notice
 from tools.quality.report import Finding, format_findings
@@ -283,6 +283,21 @@ CHECKS = (
 #: assigned, and a red run for a condition nobody may clear is a red run that gets muted.
 #: ⚠️ It also prints what the check is NOT — a surface is read by NAME, never by value
 #: (`W298/3`) — so nobody retires a behavioural pin because this one is green.
+#:
+#: ⭐ **`identity_notice` is the fourteenth, and it is `W307`.** ⛔ The floor said
+#: NOTHING about R7's identifier arm, so a green run read as *no identifier
+#: leaked* when it can mean *nothing was compared* — inside the pinned image the
+#: git arm derives nothing at all, `W305` having narrowed it to scopes that image
+#: does not carry. ⚠️ **Ruling 78's shape, arriving for an ARM rather than for a
+#: tool**, and `FND-07`'s rule: *nothing printed* and *there was nothing to say*
+#: must not be the same line. ⭐ So the run names WHICH arms armed and which did
+#: not, with the denominator (Ruling 48), **by label and never by value** —
+#: printing the value would be the leak the check exists to prevent. ⛔ **A notice
+#: and never a finding:** an unarmed arm is CORRECT in the image, which
+#: configures no git identity by design, and a red run for a condition nobody may
+#: be failed for is a red run that gets muted.
+#: ⚠️ **It prints immediately above `lint_notice`** because both qualify the
+#: VERDICT line rather than any one check's output.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -297,6 +312,7 @@ NOTICES = (
     count_census,
     creator_census,
     surface_census,
+    identity_notice,
     lint_notice,
 )
 

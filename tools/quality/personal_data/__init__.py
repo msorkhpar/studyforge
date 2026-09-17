@@ -28,7 +28,9 @@ reached 406 lines against R11's 400 and split along the seam it already had:
 
 - `shapes` — the patterns, and the tree sweep. Where a new rule goes.
 - `registry` — the bounded exception, and what keeps it bounded.
-- `identity` — this machine's own values, derived and discarded.
+- `identity` — this machine's own values, derived and discarded. ⭐ It also
+  carries `identity_notice`, which DISCLOSES which of its arms had a value to
+  compare at all, by label and never by value (`W307`).
 
 ⛔ **A finding names the shape, never the match.** A refusal that quotes the
 leak has only relocated it into a build log.
@@ -40,10 +42,12 @@ from pathlib import Path
 
 from tools.quality.personal_data.identity import (
     GENERIC_IDENTIFIERS,
+    IDENTIFIER_LABELS,
     MIN_IDENTIFIER_CHARS,
     RULE_IDENTIFIER,
     check_identifiers,
     identifiers,
+    identity_notice,
 )
 from tools.quality.personal_data.registry import RULE_REGISTRY, check_registry
 from tools.quality.personal_data.shapes import (
@@ -59,6 +63,7 @@ from tools.quality.report import Finding
 __all__ = [
     "ALLOWED_ADDRESS",
     "GENERIC_IDENTIFIERS",
+    "IDENTIFIER_LABELS",
     "MIN_IDENTIFIER_CHARS",
     "RULE_IDENTIFIER",
     "RULE_REGISTRY",
@@ -70,6 +75,7 @@ __all__ = [
     "check_registry",
     "check_shapes",
     "identifiers",
+    "identity_notice",
     "shape_matches",
 ]
 
