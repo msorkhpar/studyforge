@@ -27,13 +27,20 @@ from tools.quality.report import Finding
 RULE = "contract"
 
 
+def contract_modules(root: Path) -> list[Path]:
+    """Every non-test module under the scan roots — this check's population (`W309`)."""
+    return [
+        path
+        for path in config.python_files(root)
+        if not config.is_test_file(config.relative(path, root))
+    ]
+
+
 def check_docstrings(root: Path) -> list[Finding]:
     """Every non-test module missing a module docstring of real substance."""
     findings: list[Finding] = []
-    for path in config.python_files(root):
+    for path in contract_modules(root):
         relative = config.relative(path, root)
-        if config.is_test_file(relative):
-            continue
         text = path.read_text(encoding="utf-8")
         try:
             docstring = ast.get_docstring(ast.parse(text, filename=str(path)))

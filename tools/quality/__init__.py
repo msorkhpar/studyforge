@@ -80,9 +80,11 @@ from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
 from tools.quality.surfaces import check_producer_half, surface_census
+from tools.quality.vacuity import vacuity_notice
 
 #: Every check, in the order their findings are reported. Adding a check means
-#: adding it here and nowhere else.
+#: adding it here — ⛔ and answering, in `vacuity.py`, for the run where it compared
+#: nothing (`W309`, Ruling 191); `test_vacuity.py` fails until that is done.
 #:
 #: ⚠️ `check_personal_data` is the only one that reads the WHOLE tree rather
 #: than the Python files under `SCAN_ROOTS`. R7 has been violated in this
@@ -298,6 +300,15 @@ CHECKS = (
 #: be failed for is a red run that gets muted.
 #: ⚠️ **It prints immediately above `lint_notice`** because both qualify the
 #: VERDICT line rather than any one check's output.
+#:
+#: ⭐ **`vacuity_notice` is the fifteenth, and it is `W309`** — `W307`'s question
+#: asked of every check. ⛔ **SILENT when every population it names is inhabited**,
+#: and ONE line naming each empty one otherwise: a disclosure printed on every
+#: green run is the noise the row forbids, and `0 = 0` read as a clean bill only
+#: arises where a population is empty (Rulings 48, 191). ⚠️ The checks whose own
+#: notice already prints their denominator are registered beside it in
+#: `vacuity.DISCLOSED_BY` and not re-printed. It sits above `identity_notice`, with
+#: the other lines that qualify the verdict.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -312,6 +323,7 @@ NOTICES = (
     count_census,
     creator_census,
     surface_census,
+    vacuity_notice,
     identity_notice,
     lint_notice,
 )

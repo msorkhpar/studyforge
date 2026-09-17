@@ -143,9 +143,14 @@ def _is_marker(inner: str) -> bool:
     return any(re.search(rf"\b{re.escape(name)}\b", inner) for name in NAMES)
 
 
+def convention_documents(root: Path, directory: str = CONVENTIONS_DIR) -> list[Path]:
+    """Return the documents `pattern_sites` reads — the pattern check's population (`W309`)."""
+    return _population(root, directory)[0]
+
+
 def pattern_sites(root: Path, directory: str = CONVENTIONS_DIR) -> list[PatternSite]:
     """Every marker pattern typed under `directory`: ruled, weak, or a control."""
-    paths, _walk = _population(root, directory)
+    paths = convention_documents(root, directory)
     sites: list[PatternSite] = []
     for path in paths:
         relative = config.relative(path, root)

@@ -26,6 +26,7 @@ from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
 from tools.quality.surfaces import check_producer_half, surface_census
+from tools.quality.vacuity import vacuity_notice
 
 
 def test_states_its_contract():
@@ -77,6 +78,7 @@ def test_every_notice_is_registered():
         count_census,
         creator_census,
         surface_census,
+        vacuity_notice,
         identity_notice,
         lint_notice,
     }
@@ -110,6 +112,12 @@ def test_the_identity_notice_prints_directly_above_the_lint_notice():
     # belong together where the reader meets that verdict. A disclosure the
     # reader has already scrolled past discloses nothing.
     assert quality.NOTICES.index(identity_notice) == quality.NOTICES.index(lint_notice) - 1
+
+
+def test_the_vacuity_notice_prints_directly_above_the_identity_notice():
+    # ⭐ `W309`: the three lines that qualify the VERDICT rather than one check's
+    # output sit together, where the reader meets `quality floor:`.
+    assert quality.NOTICES.index(vacuity_notice) == quality.NOTICES.index(identity_notice) - 1
 
 
 def test_the_identity_notice_cannot_change_the_exit_code(tmp_path):

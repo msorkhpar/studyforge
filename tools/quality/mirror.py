@@ -65,15 +65,28 @@ def mirror_for(relative_path: str) -> str | None:
     return None
 
 
-def check_mirrors(root: Path) -> list[Finding]:
-    """Every source module whose mirrored test module is missing."""
-    findings: list[Finding] = []
+def mirrored(root: Path) -> list[tuple[str, str]]:
+    """Return `(module, the test it owes)` for every module R12 binds — this check's population.
+
+    ⛔ One definition read by the check AND by `vacuity`'s disclosure (`W309`), so
+    the two can never describe different walks.
+    """
+    found: list[tuple[str, str]] = []
     for path in config.python_files(root):
         relative = config.relative(path, root)
         if config.is_test_file(relative):
             continue
         expected = mirror_for(relative)
-        if expected is None or (root / expected).is_file():
+        if expected is not None:
+            found.append((relative, expected))
+    return found
+
+
+def check_mirrors(root: Path) -> list[Finding]:
+    """Every source module whose mirrored test module is missing."""
+    findings: list[Finding] = []
+    for relative, expected in mirrored(root):
+        if (root / expected).is_file():
             continue
         findings.append(
             Finding(

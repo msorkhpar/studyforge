@@ -113,13 +113,23 @@ def named_sources(text: str) -> list[tuple[int, str, str]]:
     return found
 
 
+def framework_modules(root: Path) -> list[Path]:
+    """Every module under `FRAMEWORK_ROOT` — this check's population (`W309`).
+
+    ⚠️ Narrower than `SCAN_ROOTS` by design, so it is the one a tree can leave
+    EMPTY while every other Python check is inhabited (`W307/3`).
+    """
+    prefix = FRAMEWORK_ROOT + "/"
+    return [
+        path for path in config.python_files(root) if config.relative(path, root).startswith(prefix)
+    ]
+
+
 def check_source_names(root: Path) -> list[Finding]:
     """Every place framework source names a corpus this workspace knows (R1)."""
     findings: list[Finding] = []
-    for path in config.python_files(root):
+    for path in framework_modules(root):
         relative = config.relative(path, root)
-        if not relative.startswith(FRAMEWORK_ROOT + "/"):
-            continue
         text = path.read_text(encoding="utf-8", errors="replace")
         for number, corpus, why in named_sources(text):
             findings.append(
