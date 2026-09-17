@@ -120,8 +120,7 @@ def bound_lines(block: list[str]) -> list[tuple[int, str]]:
     return [
         (index, line)
         for index, line in enumerate(block)
-        if reads_exit_after_pipeline(line)
-        and any(PIPEFAIL in earlier for earlier in block[:index])
+        if reads_exit_after_pipeline(line) and any(PIPEFAIL in earlier for earlier in block[:index])
     ]
 
 
