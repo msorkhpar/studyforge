@@ -150,9 +150,7 @@ def test_a_cycle_through_the_plans_own_tasks_is_refused():
     )
     with pytest.raises(PlanRefused) as refused:
         plan.critical_path()
-    assert str(refused.value) == (
-        "2 tasks depend on themselves, through this plan's own tasks"
-    )
+    assert str(refused.value) == ("2 tasks depend on themselves, through this plan's own tasks")
 
 
 def test_one_task_on_a_cycle_reads_exactly_as_it_did():
@@ -241,8 +239,7 @@ def test_one_contradiction_reads_exactly_as_it_did():
     with pytest.raises(PlanRefused) as refused:
         plan.checked(plans.index())
     assert str(refused.value) == (
-        "a task waits on something that is neither in this plan nor a "
-        "capability the index carries"
+        "a task waits on something that is neither in this plan nor a capability the index carries"
     )
 
 

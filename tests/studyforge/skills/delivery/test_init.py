@@ -341,22 +341,22 @@ def test_the_walk_clears_the_planted_refusals_once_they_gather(tmp_path):
     planted.mkdir()
     (planted / "planted.py").write_text(
         PLANT.replace(
-            '''    for item in items:
+            """    for item in items:
         if item:
-            raise PlantRefused("the first witness")''',
-            '''    found = [item for item in items if item]
+            raise PlantRefused("the first witness")""",
+            """    found = [item for item in items if item]
     if found:
-        raise PlantRefused("every one of them")''',
+        raise PlantRefused("every one of them")""",
         ).replace(
-            '''def refuses_once(item):
+            """def refuses_once(item):
     if item:
         raise PlantRefused("by the caller's loop")
 
 
 def drives(items):
     for item in items:
-        refuses_once(item)''',
-            '''def reasons(item):
+        refuses_once(item)""",
+            """def reasons(item):
     return ["by the caller's loop"] if item else []
 
 
@@ -365,7 +365,7 @@ def drives(items):
     for item in items:
         found += reasons(item)
     if found:
-        raise PlantRefused("every one of them")''',
+        raise PlantRefused("every one of them")""",
         ),
         "utf-8",
     )
