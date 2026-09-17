@@ -38,15 +38,24 @@ still retyping**, and a second source pays it again. This skill writes them.
 You need three things, and nothing else:
 
 1. the repository of material, on disk;
-2. this framework, **checked out beside it** — ⛔ **never a submodule**
-   (R18, amended: nothing in this project is pushed to any remote, so a
-   submodule URL has no legal form) and never vendored, never copied;
+2. this framework, **checked out beside that repository's main checkout** —
+   which is the repository itself unless it is a linked worktree (`W286`) —
+   ⛔ **never a submodule** (R18, amended: nothing in this project is pushed to
+   any remote, so a submodule URL has no legal form) and never vendored,
+   never copied;
 3. reconnaissance's draft (`SK-01`), which is a `dict` and not yet a manifest.
 
 ⛔ **The framework is a sibling checkout at a recorded commit.** The commit is
 what this skill writes into the corpus's pin, and a relative sibling name is
 what it writes as the location — ⛔ **never an absolute path, which carries
 somebody's home directory** (R7).
+
+⛔ **Pass `root=` to `onboard`, and every generated document addresses the
+framework where the pin resolves it** (`W321`): `../studyforge` from a corpus
+that is its own main checkout, one `../` deeper from a linked worktree. ⚠️ **A
+document composed without `root` and written into a worktree is refused by
+name**, because its first fenced command would run `git checkout --detach`
+against whatever stands beside the worktree.
 
 ⛔ **The commit must be one that checkout holds** (`W270`). `write` asks the
 sibling named `studyforge` with a local `git cat-file -e`, and refuses by name,

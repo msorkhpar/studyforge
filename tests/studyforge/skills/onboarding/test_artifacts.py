@@ -317,3 +317,81 @@ def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
     for text in (first, third):
         assert_clean(text, artifacts.READER_DOC)
         assert str(tmp_path) not in text
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W321` — the document addresses the framework where the PIN resolves it
+# --------------------------------------------------------------------------
+
+
+def _worktree_clone(tmp_path):
+    """A corpus that IS a linked worktree, with the framework beside its MAIN checkout.
+
+    ⛔ Nothing beside the worktree itself — which is why a document addressing
+    `../studyforge` from here reaches a directory that is not the framework.
+    """
+    root = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
+    (tmp_path / FRAMEWORK / "src").symlink_to(repository_root() / "src")
+    bin_dir = tmp_path / "bin"
+    bin_dir.mkdir()
+    (bin_dir / "python3").symlink_to(sys.executable)
+    return root, bin_dir
+
+
+def _written(root):
+    """Onboard `root`, naming it, and return the reader document that was written."""
+    made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
+    made.write(root)
+    (root / made.hand_written[0]).write_text(adapter.READ, encoding="utf-8")
+    return made, (root / artifacts.READER_DOC).read_text(encoding="utf-8")
+
+
+def test_every_command_runs_as_written_from_a_corpus_that_is_a_linked_worktree(tmp_path):
+    # ⛔ The bar `W313` set, on the shape that broke: every fenced line is
+    # EXECUTED from the worktree, and the ascent is the pin's own.
+    root, bin_dir = _worktree_clone(tmp_path)
+    made, text = _written(root)
+
+    ran = _run_as_written(root, text, bin_dir)
+
+    assert made.framework == f"../../{FRAMEWORK}"
+    assert f"git -C ../../{FRAMEWORK} checkout --detach {corpora.COMMIT}" in text
+    assert len(ran) == len(_fenced(text)) > 1
+    assert [(line, code) for line, code, _ in ran if code != 0] == [], ran
+    assert str(tmp_path) not in text and "/home/" not in text
+
+
+def test_the_address_this_document_used_to_carry_does_not_run_from_that_worktree(tmp_path):
+    # ⛔ The negative control, run negatively: the same document addressed
+    # relative to the CORPUS ROOT — what was printed before this row — reaches
+    # a directory beside the worktree, and its commands fail there.
+    root, bin_dir = _worktree_clone(tmp_path)
+    made, _ = _written(root)
+
+    stale = artifacts.reader_document(made.manifest, made.hand_written, commit=corpora.COMMIT)
+
+    assert f"git -C ../{FRAMEWORK} checkout --detach" in stale
+    assert not (root.parent / FRAMEWORK).exists(), "nothing stands beside the worktree"
+    assert [(line, code) for line, code, _ in _run_as_written(root, stale, bin_dir) if code != 0]
+
+
+def test_a_corpus_that_is_its_own_main_checkout_reads_exactly_as_it_did(tmp_path):
+    # ⭐ Both ways (R12), and `W313`'s clause 2 is not broken by this row: the
+    # fresh clone's document still says `../studyforge` and still runs.
+    root, bin_dir = _fresh_clone(tmp_path)
+    _made, text = _written(root)
+
+    assert f"git -C ../{FRAMEWORK} checkout --detach {corpora.COMMIT}" in text
+    assert all(code == 0 for _, code, _ in _run_as_written(root, text, bin_dir))
+
+
+def test_the_document_says_what_the_address_is_relative_to_without_a_second_answer(tmp_path):
+    # ⛔ Clause 2: the sentence beside the fence describes the LAYOUT, and the
+    # address itself is `pin.framework_from`'s one answer — never a caveat
+    # telling the reader to re-read a printed `../studyforge` from elsewhere.
+    root, _bin = _worktree_clone(tmp_path)
+    _made, text = _written(root)
+
+    assert "beside this repository's main checkout" in text
+    assert f"it is `../../{FRAMEWORK}` from this" in text
+    assert text.count(f"../{FRAMEWORK}") == text.count(f"../../{FRAMEWORK}")

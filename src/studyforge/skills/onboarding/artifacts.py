@@ -48,10 +48,10 @@ from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.skills.adapter import plan_for
 from studyforge.skills.onboarding.compose import module
 from studyforge.skills.onboarding.pin import (
-    FRAMEWORK,
     PIN_DIR,
     PIN_FILE,
     RECORD_FILE,
+    SIBLING,
     SKILLS,
     stub_paths,
 )
@@ -170,6 +170,7 @@ def reader_document(
     *,
     commit: str,
     standing: Standing | None = None,
+    framework: str = SIBLING,
 ) -> str:
     """Return what a reader is told: the declarations, where the corpus stands, how to run it.
 
@@ -179,6 +180,8 @@ def reader_document(
     not read rather than printing a number somebody later finds was invented.
     ⛔ **Every fenced line runs as written** from a fresh clone beside the
     framework at `commit` (R18 as amended), and a test executes each one.
+    ⛔ **`framework` is `pin.framework_from`'s one answer** for the corpus this
+    is written into (`W321`); this module derives no address of its own.
     """
     lines = [
         f"# {manifest.title}",
@@ -201,7 +204,7 @@ def reader_document(
         [
             *lines,
             *_stands(standing),
-            *_running(manifest, commit),
+            *_running(manifest, commit, framework),
             *_products(manifest),
             *_yours(hand_written),
             *_touches(manifest),
@@ -253,17 +256,22 @@ def _stands(standing: Standing | None) -> list[str]:
     ]
 
 
-def _running(manifest: Manifest, commit: str) -> list[str]:
-    """Give the commands that run from a fresh clone beside the framework at `commit`."""
-    framework = f"../{FRAMEWORK}"
+def _running(manifest: Manifest, commit: str, framework: str) -> list[str]:
+    """Give the commands that run from a fresh clone beside the framework at `commit`.
+
+    ⛔ **`framework` is where the pin resolves it, said from this corpus's root**
+    (`W321`), so the fence is not read from one place and the pin from another.
+    """
     run = f"PYTHONPATH={framework}/src python3 -m"
     return [
         "## Running it from a fresh clone",
         "",
-        "The framework is a sibling checkout, never a submodule and never installed: clone",
-        f"it beside this repository as `{framework}`, then run these from this repository's",
-        "root. They pin the framework, ingest with this corpus's adapter, check the",
-        "archive, and say what a build would write before building:",
+        "The framework is a checkout beside this repository's main checkout —",
+        "this repository itself unless it is a linked worktree — never a submodule",
+        f"and never installed. Clone it there; it is `{framework}` from this",
+        "repository's root, and these run from there. They pin the framework,",
+        "ingest with this corpus's adapter, check the archive, and say what a",
+        "build would write before building:",
         "",
         "```",
         f"git -C {framework} checkout --detach {commit}",

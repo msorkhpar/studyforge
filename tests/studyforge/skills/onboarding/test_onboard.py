@@ -390,3 +390,59 @@ def test_a_manifest_that_does_not_parse_is_refused_by_name_rather_than_overwritt
         _made().write(root, regenerate=True)
 
     assert (root / "corpus.json").read_text(encoding="utf-8") == "{}\n"
+
+
+# --------------------------------------------------------------------------
+# ⛔ W321: what is written addresses the framework where the pin resolves it
+# --------------------------------------------------------------------------
+
+
+def test_a_document_composed_for_a_main_checkout_is_refused_by_a_linked_worktree(tmp_path):
+    # ⛔ The hazard itself: `../studyforge` from a worktree is not the framework
+    # the pin checked, and the first fenced command would detach whatever is.
+    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
+    before = sorted(path for path in worktree.rglob("*"))
+
+    with pytest.raises(OnboardingRefused, match="address the framework as"):
+        onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
+
+    assert sorted(path for path in worktree.rglob("*")) == before
+
+
+def test_the_same_document_composed_for_that_worktree_is_written(tmp_path):
+    # ⭐ The other way (R12): named its root, the same call writes, and every
+    # generated document carries the deeper ascent.
+    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
+
+    written = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT, root=worktree).write(worktree)
+
+    assert artifacts.READER_DOC in written
+    for where in (artifacts.READER_DOC, ".studyforge/skills/adapter.md"):
+        text = (worktree / where).read_text(encoding="utf-8")
+        assert "../../studyforge" in text
+        assert "../studyforge" not in text.replace("../../studyforge", "<framework>")
+
+
+def test_a_main_checkout_is_unrefused_and_its_address_is_unchanged(tmp_path):
+    # ⛔ The control for the refusal above: the guard fires on the disagreement
+    # and not on being asked, and a corpus that is its own main checkout reads
+    # exactly what it read before this row.
+    root = corpora.material(tmp_path / "corpus")
+
+    made = onboard(corpora.DRAFT, framework_commit=corpora.COMMIT)
+    made.write(root)
+
+    assert made.framework == "../studyforge"
+    assert "git -C ../studyforge checkout --detach" in (
+        (root / artifacts.READER_DOC).read_text(encoding="utf-8")
+    )
+
+
+def test_the_refusal_names_both_addresses_and_neither_is_a_path(tmp_path):
+    worktree = corpora.material(corpora.linked_worktree(tmp_path), framework=False)
+
+    with pytest.raises(OnboardingRefused) as refused:
+        onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
+
+    assert "'../studyforge'" in str(refused.value) and "'../../studyforge'" in str(refused.value)
+    assert str(tmp_path) not in str(refused.value)
