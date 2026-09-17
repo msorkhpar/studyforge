@@ -120,7 +120,7 @@ def _surface(init: Path) -> frozenset[str] | None:
     """
     try:
         tree = ast.parse(init.read_text(encoding="utf-8"))
-    except (OSError, SyntaxError):
+    except OSError, SyntaxError:
         return None
     for node in tree.body:
         if not isinstance(node, ast.Assign):
@@ -129,7 +129,7 @@ def _surface(init: Path) -> frozenset[str] | None:
             if isinstance(target, ast.Name) and target.id == "__all__":
                 try:
                     return frozenset(ast.literal_eval(node.value))
-                except (TypeError, ValueError):
+                except TypeError, ValueError:
                     return None
     return None
 
@@ -183,7 +183,7 @@ def reaches(root: Path) -> list[Reach]:
             continue
         try:
             tree = ast.parse(path.read_text(encoding="utf-8"))
-        except (OSError, SyntaxError):
+        except OSError, SyntaxError:
             continue
         importer = ".".join(path.relative_to(source).parts[:-1])
         for node in ast.walk(tree):

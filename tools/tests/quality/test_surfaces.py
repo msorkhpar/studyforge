@@ -135,9 +135,7 @@ def test_an_UNDECLARED_module_spelled_deviation_is_a_finding(tmp_path):
 
 def test_and_a_DECLARED_one_is_not(tmp_path, monkeypatch):
     _tree(tmp_path, owner_all="[]", importer="from studyforge.owner.thing import VALUE")
-    monkeypatch.setitem(
-        DECLARED, "studyforge.owner", Declaration("a ground", frozenset({"VALUE"}))
-    )
+    monkeypatch.setitem(DECLARED, "studyforge.owner", Declaration("a ground", frozenset({"VALUE"})))
     assert check_producer_half(tmp_path) == []
 
 
