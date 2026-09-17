@@ -245,7 +245,11 @@ def stage_and_read(
             #    not taken are NAMED below, never silently dropped.
             outcome = Outcome(
                 readings=tuple(readings),
-                not_taken=tuple(later.name for later in gates[index + 1 :]),
+                # ⛔ WITH its environment: two gates share the name `suite`, so a bare name
+                #    leaves the reader unable to say WHICH one went unread (Ruling 326).
+                not_taken=tuple(
+                    f"{later.name} [{later.environment}]" for later in gates[index + 1 :]
+                ),
                 tip_before=tip,
             )
             _git(root, "merge", "--abort")

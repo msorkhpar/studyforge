@@ -194,7 +194,9 @@ def test_a_RED_gate_STOPS_the_run_and_the_gates_NOT_TAKEN_are_NAMED(release):
     )
     outcome = stage_and_read(release, "branch", refuse_the_first, gates)
     assert taken == ["first"], "a gate after the refusal was still taken"
-    assert outcome.not_taken == ("second",)
+    # ⛔ The untaken gate carries its ENVIRONMENT: the shipped GATES hold two gates named
+    #    `suite`, so a bare name cannot say which reading was not taken (Ruling 326).
+    assert outcome.not_taken == (f"second [{HOST}]",)
     assert outcome.verdict == REFUSED
     assert "NOT TAKEN" in "\n".join(render(outcome))
     assert _git(release, "status", "--porcelain", "--untracked-files=no") == ""
