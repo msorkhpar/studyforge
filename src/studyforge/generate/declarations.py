@@ -233,7 +233,7 @@ def _place(
     origin: str | None,
     label: str | None,
 ) -> UnitLocations:
-    """The ONE spelling of the question, because the page and its container both ask.
+    """Answer the question in ONE spelling, because the page and its container both ask.
 
     ⛔ Two calls composing the same arguments differently would put an anchor on
     a container page that points beside the file the build wrote, and nothing

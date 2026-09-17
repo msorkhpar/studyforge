@@ -294,7 +294,7 @@ def existence_findings(root: Path, declared: set[str]) -> list[Finding]:
 
 
 def lines_for(rows: list[tuple[int, str, str]], declared: set[str]) -> list[str]:
-    """The population `rows` carry — ⛔ a pure function of them, as `findings_for` is.
+    """Return the population `rows` carry — ⛔ a pure function of them, as `findings_for` is.
 
     ⚠️ **`W181`'s unorderable population is NAMED here even when it is empty**,
     for the same reason the owed one is: this arm's denominators are empty on the

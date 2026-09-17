@@ -118,7 +118,7 @@ def is_row_id(text: str) -> bool:
 
 
 def order(identifier: str) -> int | None:
-    """The number a row id is ORDERED by, or `None` when `identifier` is not one.
+    """Return the number a row id is ORDERED by, or `None` when `identifier` is not one.
 
     ⛔ **`None`, never a raise** (`W181`): the caller is a floor check, and a
     traceback out of one takes the whole tree's reading down where the contract
