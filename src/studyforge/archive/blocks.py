@@ -194,6 +194,27 @@ def counts_of(blocks: list, where: str = "blocks") -> dict[str, int]:
     }
 
 
+def _objects(blocks: list, where: str) -> Iterator[dict]:
+    """Each top-level block, refusing BY NAME anything that is not an object.
+
+    ⛔ **The one place this refusal is spelled** (`W289`, widened to the read
+    path by `W297`). `counts_of` reads it on the way IN, through `build`;
+    `read_layout` reads it on the way OUT, over a document that was parsed off
+    disk and never built here. ⚠️ **Two doors, one sentence** — a second copy
+    is the defect this module's own docstring has now named four times.
+
+    ⭐ **A generator rather than a check beside a loop**, so a caller cannot
+    take the blocks without taking the refusal: there is no unguarded way to
+    iterate them, which is exactly what `W297` found missing one function away.
+    """
+    for index, block in enumerate(blocks):
+        if not isinstance(block, dict):
+            raise ArchiveError(
+                f"{where}[{index}] is {describe(block)}; a block is an object with a type"
+            )
+        yield block
+
+
 def _types_of(blocks: list, where: str) -> list:
     """Each top-level block's `type`, refusing by name anything that is not an object.
 
@@ -201,14 +222,7 @@ def _types_of(blocks: list, where: str) -> list:
     counts are taken over that, so no block is reached twice and a refusal
     cannot depend on which count key was being tallied when it was reached.
     """
-    held = []
-    for index, block in enumerate(blocks):
-        if not isinstance(block, dict):
-            raise ArchiveError(
-                f"{where}[{index}] is {describe(block)}; a block is an object with a type"
-            )
-        held.append(block.get("type"))
-    return held
+    return [block.get("type") for block in _objects(blocks, where)]
 
 
 def walk(blocks: list) -> Iterator[dict]:
@@ -282,10 +296,25 @@ def read_layout(document: dict, where: str) -> Layout | None:
     occur inside the lesson section; statement headings are not floored, which
     is why the lesson heading is searched for from the front and the
     starting-code heading only after it.
+
+    ## ⛔ A non-object block is refused BY NAME here too (`W297`)
+
+    ⚠️ **`W289` closed this on the BUILD path and left it open one function
+    away.** `_sections` read `tail[0].get("type")` unguarded, so a hand-written
+    or adapter-written practice raised `AttributeError` — a Python error naming
+    a TYPE — where `build` had already learned to name the BLOCK and the FILE.
+    ⛔ **And `build` is not the door such a document arrives by**: it is parsed
+    off disk, and `parse` reads the key set and the version, never a shape.
+
+    ⭐ **Guarded BEFORE the layout is read, not at the fence.** Only `tail[0]`
+    crashed — but `_is_h2` merely returns False for a non-object, so guarding
+    the one read that raised would leave every other position silently unread
+    and the document refused for the WRONG reason (`module-structure.md`: a
+    guarantee does not extend to what sits beside it).
     """
     if document.get("kind") != "practice":
         return None
-    blocks = document.get("blocks") or []
+    blocks = list(_objects(document.get("blocks") or [], f"{where} blocks"))
     parts = _sections(blocks)
     if parts is None:
         raise ArchiveError(
@@ -304,7 +333,13 @@ def read_layout(document: dict, where: str) -> Layout | None:
 
 
 def _sections(blocks: list) -> tuple[list, str | None, list, dict] | None:
-    """Return `(statement, lesson title, lesson, code)`, or `None` if not laid out."""
+    """Return `(statement, lesson title, lesson, code)`, or `None` if not laid out.
+
+    ⛔ **Every block reaching here is an object**, because `read_layout` takes
+    them through `_objects`, which refuses anything else by name. ⚠️ That is a
+    PRECONDITION rather than a habit: it is what makes `tail[0].get` below safe,
+    and a caller reaching this function by another route reintroduces `W297`.
+    """
     if not blocks or not _is_h2(blocks[0], STATEMENT_HEADING):
         return None
     lesson_at = next(

@@ -66,13 +66,30 @@ part of the claim comes from memory:**
 #    line with NOTHING in between, so no pipeline eats the exit code.
 git rev-parse HEAD; git status --porcelain | head    # the REF, and it is clean
 git rev-parse --git-common-dir                       # the ROLE: which checkout
-./docker/dev/check > "$CAP/floor.txt" 2>&1
+# ⛔ `W301`: EACH GATE NAMES ITS OWN COMMAND. A BARE `docker/dev/check` runs the
+#    image's own `CMD` — `python3 -m pytest` — so a bare call redirected into
+#    `floor.txt` is the SUITE filed under the FLOOR's name, and it still exits 0.
+./docker/dev/check python3 -m tools.quality > "$CAP/floor.txt" 2>&1
 FLOOR_EXIT=$?
-{ ./docker/dev/check pytest -ra > "$CAP/suite.txt" 2>&1; } ; SUITE_EXIT=$?
+{ ./docker/dev/check python3 -m pytest -ra > "$CAP/suite.txt" 2>&1; } ; SUITE_EXIT=$?
 # ⛔ The record is composed AFTER these files exist and is READ FROM THEM.
 grep -H -E 'passed|failed|error|skipped' "$CAP/suite.txt" | tail -3
 echo "FLOOR_EXIT=$FLOOR_EXIT SUITE_EXIT=$SUITE_EXIT"
 ```
+
+⛔ **THE SCOPE OF THE READINGS THIS BLOCK ALREADY CORRUPTED — STATED, NOT
+CHASED** (`W301`). ⚠️ **Until this edit the floor line was a BARE
+`./docker/dev/check`**, whose no-argument case is the image's own `CMD`,
+`python3 -m pytest`. ⛔ **So every `FLOOR_EXIT` produced by pasting this block
+is a SUITE reading wearing the floor's name** — and because both gates exit `0`
+whenever the suite is green, nothing downstream ever showed it. ⭐ **The remedy
+is forward-looking on purpose: a frozen record is never edited after the fact,
+so a report over past handoffs would be a backlog no office could ever clear.**
+⛔ **What a reader does instead: a `FLOOR_EXIT` quoted in a record written
+before this edit is NOT evidence the floor ran**, and any floor claim that still
+matters is RE-TAKEN at the current ref with the named command above.
+⚠️ **The suite line moved too** — it read `./docker/dev/check pytest -ra`, and
+`python3 -m pytest` is the form the wrapper's own header documents.
 
 ⛔ **Pass = `FLOOR_EXIT=0` and `SUITE_EXIT=0`, both quoted with the ref, the
 role and the environment's own PINS** (never an image tag, never an image id —

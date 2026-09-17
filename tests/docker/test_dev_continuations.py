@@ -132,6 +132,19 @@ CLASSIFIED_BY_MODULE: dict[str, dict[str, str]] = {
         "check_lines": "collapsed",
         "image_declarations": "no-continuations",
     },
+    # ⭐ `W301`: the rubric's obliged block is read against `check`'s own contract.
+    # ⚠️ `obliged_block` reads `docs/conventions/review-rubric.md` and no
+    # `docker/dev/` text at all; `default_command` rests on the SAME `set --` anchor
+    # `test_dev_check_timeout.py` already declares, because it reads the same line for
+    # the same reason. ⛔ The third is `per-physical-line` and NOT `line-anchored`:
+    # its subject is a line of `check`'s HEADER, and a comment is not a construct the
+    # file's grammar pins to the start of a logical line — so it owes the verdict that
+    # carries an exact count instead of one that would rest on an anchor.
+    "test_dev_check_rubric_form.py": {
+        "obliged_block": "not-dev-text",
+        "default_command": "line-anchored",
+        "test_the_wrapper_still_documents_the_bare_form_as_the_whole_suite": "per-physical-line",
+    },
     # ⭐ `W162`: the gate reads the one `FROM` and cuts `check` at its image print.
     "devgate.py": {
         "announcement_prefix": "line-anchored",
@@ -159,7 +172,7 @@ CLASSIFIED: dict[str, str] = {
 #: functions own two each. ⛔ Declared separately from `CLASSIFIED` on purpose: a
 #: second site added inside an ALREADY-classified function would otherwise enter
 #: the suite unexamined, which is the shape of every defect this module is about.
-DECOMPOSITION_SITES = 38
+DECOMPOSITION_SITES = 41
 
 #: ⛔ **THE ANCHORS THE `line-anchored` VERDICT RESTS ON, per file.** Each is a
 #: prefix some site above matches against the start of a (stripped) line. ⚠️ `#` is
