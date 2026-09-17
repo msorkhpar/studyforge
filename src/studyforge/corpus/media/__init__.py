@@ -15,7 +15,8 @@ limit, the file responsible and the ways forward.
     require_committable(verdict)     # where it must stop
 
 **Depends on.** `corpus.manifest` for the policy, `corpus.placement` for the
-locations and the ignore lines, and the standard library. ⛔ Nothing
+locations and the ignore lines, `narrate.synth` for the narration record the
+footprint reads, and the standard library. ⛔ Nothing
 source-specific and no host named anywhere (R1).
 
 ## ⛔ Committed by default, and the default has a ceiling
@@ -41,14 +42,22 @@ touching a page, because §5 rules delivery orthogonal to placement.
 | Module | Owns |
 |---|---|
 | `footprint` | the walk and the reading — `MediaFile`, `MediaFootprint`, `measure` |
+| `recorded` | the clips the narration record locates, which the reading also weighs (`W311`) |
 | `verdict` | the decision — `Crossing`, `MediaVerdict`, `verdict_for`, `ignore_lines` |
 | `errors` | `MediaError`, the only exception raised here |
 
 ⛔ **The projection and the measurement are different numbers and are kept
-apart.** `studyforge plan` reports a *projected* footprint before the bytes
-exist, so the question is asked before the gigabytes are on disk
-(`cli/plan/report.py`); this package reports the *measured* one, which is the
-only number a commit decision may rest on.
+apart.** A *projected* footprint is `cli/plan/report.py`'s, taken at a rate
+before the bytes exist, so the question can be asked before the gigabytes are
+on disk; the *measured* one is this package's, and it is the only number a
+commit decision may rest on. ⭐ **`studyforge plan` prints both** (`W287`): the
+measured line is `measure` and `verdict_for` asked from here, never a second
+measurement, so the plan reads whatever population this package weighs.
+
+⛔ **The population is wider than the declared units' media directories**
+(`W311`): the declared units' media directories, and every
+clip the narration record locates under the corpus root. A recorded clip that
+cannot be located is named in `MediaFootprint.unweighed`, never dropped.
 """
 
 from __future__ import annotations
