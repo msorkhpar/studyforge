@@ -2855,9 +2855,11 @@ instruments that print two things which have to agree.
 #### ⛔ Ruling 241 (CTO round 55) — the WARNING above is REPLACED BY A FORM, because it failed three offices in three rounds
 
 ```sh
-# ⛔ FORM 1 — the pipeline is made to carry its own exit code:
+# ⛔ FORM 1 — the pipeline is made to carry its own exit code. ⛔ THE TWO LINES
+#    BELOW ARE ONE FORM: `pipefail` is LOAD-BEARING, and a reader who quotes the
+#    second of them ALONE has re-derived the defect this ruling exists to stop.
 set -o pipefail
-python3 -m tools.quality | tail -4; echo "FLOOR_EXIT=$?"
+python3 -m tools.quality | tail -4; echo "FLOOR_EXIT=$?"   # ⛔ bound by the line above
 
 # ⛔ FORM 2 — the output goes to a FILE and `$?` is read on the NEXT line,
 #    with NOTHING in between:
@@ -2869,6 +2871,34 @@ tail -4 /tmp/out.txt
 ⛔ **Pass: a record that quotes an exit code NAMES which of the two forms produced
 it.** ⛔ **An exit code printed beside a pipeline is read as UNVERIFIED until the
 form is named** — ⚠️ **it is not a wrong reading, it is not a reading at all.**
+
+⛔ **FORM 1's TWO LINES ARE ONE FORM, AND THE PIPELINE LINE QUOTED ALONE IS THE
+DEFECT ITSELF.** ⭐ **MEASURED in the pinned image with the expectation written
+first (Ruling 123), against a floor made RED by a plant:**
+
+| the reading | `FLOOR_EXIT` |
+|---|---|
+| FORM 1 entire, floor clean | ⭐ **`0`** |
+| FORM 1 entire, floor RED | ⭐ **`1` — the FLOOR's status, and not `tail`'s** |
+| ⛔ the pipeline line ALONE, `pipefail` dropped, floor RED | ⛔ **`0`** |
+
+⚠️ **The third row is why the binding is now stated inside the fence.** ⛔ **A row
+was opened against FORM 1 on the strength of that third reading — the pipeline line
+quoted without the line that binds it — and the charge is REFUTED at this ref**
+([`W304`](../tasks/rows/W304.md)). ⭐ **`set -o pipefail` is a valid form HERE and
+was measured to be, four ways, in
+[round 58's record](../tasks/handoffs/CTO-2026-09-11-round58.md#1a-measured-set-o-pipefail-is-a-valid-ruling-241-form-in-this-image-contrary-to-the-usual-belief-about-dash)**
+— ⚠️ **it is not a bashism in this image: `dash` has carried `pipefail` since
+`0.5.12`, and the next office to be told otherwise should read that record before
+filing the row a second time.**
+
+⛔ **THE INSTRUMENT: `tests/test_rubric_exit_code_forms.py`**, which reads THIS block
+and the counter-example above it and fails if FORM 1's pipeline ever loses its
+binding, or if the counter-example loses the comment that marks it as one.
+⭐ **It is bounded to the two blocks this ruling owns and is deliberately NOT a lint
+rule over shell snippets in prose** — ⚠️ **this document contains WRONG snippets on
+purpose, as warnings, and a checker that could not tell a warning from an
+instruction would refuse the document for teaching.**
 
 ⭐ **The block above is NOT deleted: it is the evidence that produced this form,
 and a record is annotated beneath rather than edited** (Ruling 106, Ruling 242(e)).
