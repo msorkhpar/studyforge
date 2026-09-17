@@ -60,6 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W311` | Developer 1 | `fix/W311-footprint-weighs-every-located-clip` @ `wt/dev1` | 0 @ `0fce84a` | in-progress |
+| `W293` | Developer 2 | `fix/W293-verbs-resolve-on-dispatch` @ `wt/dev2` | 0 @ `0fce84a` | in-progress |
+| `W286` | Developer 3 | `fix/W286-pin-finds-framework-from-a-worktree` @ `wt/dev3` | 0 @ `0fce84a` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -431,14 +434,14 @@ else.**
 | W283 | Re-onboarding from a re-survey's draft drops the person's declared `not_material` globs, because `onboard` never reads the existing manifest | Developer 3 | ✅ done — `12e44ee` | [`rows/W283.md`](rows/W283.md) |
 | W284 | `verdict.py`'s `DISAGREE` sentences describe a declaring merge subject as `Merge {branch}:`, a form no recent merge uses | Developer 1 | ✅ done — `35b2e81` | [`rows/W284.md`](rows/W284.md) |
 | W285 | `delivery.py` retypes the milestone shape inline, and `sibling_owned` reads a row list that skips a refused row in silence | Developer 2 | ✅ done — `620faf9` | [`rows/W285.md`](rows/W285.md) |
-| W286 | `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses | framework agent | `todo` — `INT-14/1` | [`rows/W286.md`](rows/W286.md) |
+| W286 | `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses | framework agent | in-progress — on `fix/W286-pin-finds-framework-from-a-worktree` | [`rows/W286.md`](rows/W286.md) |
 | W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | ✅ done — `0fce84a` | [`rows/W287.md`](rows/W287.md) |
 | W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | ✅ done — `0fce84a` | [`rows/W288.md`](rows/W288.md) |
 | W289 | `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises `AttributeError` through the builder | framework agent | ✅ done — `b31e780` | [`rows/W289.md`](rows/W289.md) |
 | W290 | `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable | framework agent | ✅ done — `b31e780` | [`rows/W290.md`](rows/W290.md) |
 | W291 | `board/delivery.py` types the capability-id shape inline, a second copy beside the plan parse's heading pattern | framework agent | `todo` — `W285/2` | [`rows/W291.md`](rows/W291.md) |
 | W292 | The never-editable skill test pins only `ROOT_DOCUMENTATION`, while the skills also point at `IGNORE_NAMES`, `VCS_NAMES` and `VCS_DIRECTORIES` | framework agent | `todo` — `W281/2` | [`rows/W292.md`](rows/W292.md) |
-| W293 | Every `studyforge.cli.*` import loads every verb eagerly, so the narrate verb's import sites moved outside `narrate/` and a lazy dispatcher is owed | framework agent | `todo` — `W223/1` | [`rows/W293.md`](rows/W293.md) |
+| W293 | Every `studyforge.cli.*` import loads every verb eagerly, so the narrate verb's import sites moved outside `narrate/` and a lazy dispatcher is owed | framework agent | in-progress — on `fix/W293-verbs-resolve-on-dispatch` | [`rows/W293.md`](rows/W293.md) |
 | W294 | The gate-coverage check reads the MODULE and not the value, so a decoded service answer is never gated | framework agent | `todo` — `W223/7` | [`rows/W294.md`](rows/W294.md) |
 | W295 | The vendored highlighter carries no `markup`, `json`, `properties` or `gherkin` grammar, so `ISO-06`'s *"XML fences highlighted"* is unmeetable | framework agent | ✅ done — `a3987cf` | [`rows/W295.md`](rows/W295.md) |
 | W296 | A merge subject reaches a release branch unchecked, because no gate enforces `tools.quality.subject` — the register's own defect at `19c7224` | framework agent | `todo` — `PO-89/1` | [`rows/W296.md`](rows/W296.md) |
@@ -455,7 +458,7 @@ else.**
 | W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | ✅ done — `d65bc2d` | [`rows/W307.md`](rows/W307.md) |
 | W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | ✅ done — `da02903` | [`rows/W308.md`](rows/W308.md) |
 | W309 | A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for | framework agent | ✅ done — `52ff6bc` | [`rows/W309.md`](rows/W309.md) |
-| W311 | The media footprint weighs only the declared units' media directories, so a clip the narration record locates anywhere else is on disk, committed and never weighed | framework agent | `todo` — `W287/3` | [`rows/W311.md`](rows/W311.md) |
+| W311 | The media footprint weighs only the declared units' media directories, so a clip the narration record locates anywhere else is on disk, committed and never weighed | framework agent | in-progress — on `fix/W311-footprint-weighs-every-located-clip` | [`rows/W311.md`](rows/W311.md) |
 | W310 | The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently | framework agent | ✅ done — `870ee8f` | [`rows/W310.md`](rows/W310.md) |
 <!-- /register -->
 
