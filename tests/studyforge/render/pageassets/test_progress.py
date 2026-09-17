@@ -29,7 +29,7 @@ all.
 from __future__ import annotations
 
 import re
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import pytest
 
@@ -42,11 +42,15 @@ from studyforge.render.pageassets import (
     script,
     text,
 )
-from tests.support import repository_root
+from tests.support import git, init_repository, repository_root, run, tracked_files
 
 #: The part that owns the store, and the one part that uses it.
 STORE = "study-progress.js"
 CONSUMER = "read-mark.js"
+
+#: Where the store sits, repo-relative — derived from the published `ASSET_DIR`
+#: and never typed, so a move of the asset directory moves this with it.
+ASSET_PATH = (ASSET_DIR / STORE).relative_to(repository_root()).as_posix()
 
 #: Where the store publishes itself, and the first thing that reaches INTO it.
 #: ⛔ Two markers and not one: a single marker naming the name would be found in
@@ -96,6 +100,57 @@ def uncommented(name: str) -> str:
     a violation of the rule it states.
     """
     return re.sub(r"/\*.*?\*/", "", text(name), flags=re.DOTALL)
+
+
+def tracked_copies(name: str, root: Path | None = None) -> list[str]:
+    """Every file **git tracks** under `root` whose basename is `name`, repo-relative.
+
+    ⛔ **The population is the TREE, not the disk** (`W232`). ⭐ The form is
+    `W148`'s and Ruling 153's, and the query itself is the one in
+    `tests/support.py` that `ruff`'s denominator and the coverage gate already
+    ask — a fourth walk with its own idea of what this repository contains is
+    exactly what that consolidation exists to prevent.
+
+    ⚠️ **What it replaces, and why the replacement is not a bigger exclusion
+    list.** The walk here read the disk from the repository root and excluded
+    `.git` by name, so a copy of a tree under the git-ignored `.scratch/` —
+    where Ruling 139 sends every office's harness, and where the pinned image
+    then mounts it — turned this suite RED on a tree with nothing wrong in it
+    (measured three times: `W107/4`, `W151/5`, `W242/9`). ⛔ An exemption for
+    `.scratch` by name would have been the same defect waiting for the next
+    ignored directory; the tracked set has no names in it at all.
+
+    ⚠️ **The blindness, said here rather than discovered later.** `git ls-files`
+    reads the **index**, so a copy written and not yet `git add`ed is invisible.
+    ⭐ That is correct for the question this asks — *does this repository hold a
+    second copy* — whose answer is about what the repository contains, and which
+    becomes true the moment the copy is added.
+
+    ⭐ `root` is a parameter for Ruling 11's reason, exactly as it is on every
+    other caller of the shared query: the two plants below are made in a
+    throwaway repository, where a copy can be tracked or ignored on purpose,
+    rather than written into the tree this file is measuring.
+    """
+    return sorted(
+        found for found in tracked_files(("*.js",), root) if PurePosixPath(found).name == name
+    )
+
+
+def planted_repository(where: Path) -> Path:
+    """A throwaway repository holding the store where this one holds it.
+
+    ⚠️ The ignore declaration is written rather than copied: what the plants
+    below are about is that an **ignored** directory does not reach the
+    population, and a fixture that inherited this repository's `.gitignore`
+    would prove that for this repository's spelling of the rule alone.
+    """
+    repository = init_repository(where)
+    (repository / ".gitignore").write_text(".scratch/\n", encoding="utf-8")
+    inside = repository / ASSET_PATH
+    inside.parent.mkdir(parents=True, exist_ok=True)
+    inside.write_text("// the store, where it belongs\n", encoding="utf-8")
+    assert run([git(), "add", "-A"], cwd=repository).returncode == 0
+    return repository
 
 
 # --- the population is real -------------------------------------------------
@@ -262,12 +317,36 @@ def test_no_python_module_anywhere_can_read_the_readers_store():
 def test_the_store_and_its_consumer_are_reachable_from_the_asset_directory_only():
     # ⚠️ The pair is data, so nothing imports it; this is what says so, and what
     # would catch a copy of either part arriving somewhere a build also reads.
-    found = sorted(
-        path.relative_to(repository_root()).as_posix()
-        for path in repository_root().rglob(STORE)
-        if ".git" not in path.parts
-    )
-    assert found == [(ASSET_DIR / STORE).relative_to(repository_root()).as_posix()]
+    assert tracked_copies(STORE) == [ASSET_PATH]
+
+
+def test_a_copy_under_the_ignored_scratch_directory_is_not_in_the_population(tmp_path):
+    # ⭐ `W232`'s first plant, the one the row was opened for: an office copies a
+    # tree under `.scratch/`, exactly as Ruling 139 tells it to, and the check
+    # above stays GREEN because the copy is not in the tree.
+    repository = planted_repository(tmp_path / "tree")
+    harness = repository / ".scratch/src/studyforge/render/assets"
+    harness.mkdir(parents=True)
+    (harness / STORE).write_text("// an office's harness copy\n", encoding="utf-8")
+    # ⛔ First that the plant is REAL and the disk form would have read it — the
+    # control this row exists because the previous form did not have.
+    on_disk = sorted(path.relative_to(repository).as_posix() for path in repository.rglob(STORE))
+    assert on_disk == sorted([ASSET_PATH, (harness / STORE).relative_to(repository).as_posix()])
+    assert tracked_copies(STORE, repository) == [ASSET_PATH]
+
+
+def test_a_tracked_copy_outside_the_asset_directory_is_still_in_the_population(tmp_path):
+    # ⭐ The other direction, so the clause above cannot pass by the population
+    # having stopped seeing anything: a second copy that IS in the tree still
+    # turns the check RED, which is the whole point of the check.
+    repository = planted_repository(tmp_path / "tree")
+    stray = repository / "docs" / STORE
+    stray.parent.mkdir(parents=True, exist_ok=True)
+    stray.write_text("// a second copy a build would also read\n", encoding="utf-8")
+    assert run([git(), "add", "-A"], cwd=repository).returncode == 0
+    found = tracked_copies(STORE, repository)
+    assert found == sorted([ASSET_PATH, stray.relative_to(repository).as_posix()])
+    assert found != [ASSET_PATH], "the assertion above this pair would not have failed"
 
 
 def test_the_store_is_asked_for_and_the_control_region_is_not_built_in_script():
