@@ -89,15 +89,52 @@ made.write(corpus_root)  # ⛔ refuses rather than overwriting anything
 is the only thing that knows the layout, and the reason is measured: the tree
 is five joins deep and four of them fail *silently* when they are wrong.
 
+**There are four places an adapter writes, and this is all of them:**
+
 ```text
 <corpus-root>/corpus.json
 <corpus-root>/archive/<address>/container.json
-<corpus-root>/archive/<address>/raw/<variant>/unit-NN/lesson-N.json
+<corpus-root>/archive/<address>/raw/<variant>/unit-NN/<kind>-N.json
+<corpus-root>/archive/<address>/units/unit-NN/
+```
+
+⭐ **That tree is `Layout`'s own arithmetic, not a drawing of it**, and this
+prints it at the ref you are reading:
+
+```
+python3 -c "from studyforge.skills.adapter import archive_tree; print(archive_tree())"
 ```
 
 ⚠️ `unit-3/` instead of `unit-03/` produces a tree `validate` reports as *unit
 missing* — at the reader, not at the writer, and only after everything else
 looks fine.
+
+#### ⛔ The fourth line is the one adapters get wrong, and nothing used to say it
+
+⭐ **A unit's OWN files go in `units/unit-NN/`, beside `raw/` and never inside a
+variant.** `raw/` is per *variant* and holds documents; this one is per *unit*
+and holds everything a unit owns that is not a document:
+
+- **every `assets` and `attachments` entry's `local` resolves against it** — a
+  `"local": "media/diagram.svg"` is that file *inside the fourth line's
+  directory*, and it is what the built page's `<img>` reaches for;
+- the authored overlay sits in it as `content.json`, which is a person's file
+  and not yours.
+
+⛔ **Neither is written out here as a whole path, deliberately.** The fence
+above is the only drawing, and it is computed; a path spelled twice is a path
+that diverges once.
+
+⛔ **Ask `Layout.unit_files(address, unit)` for the directory; never join it.**
+A variant in that path, or `unit-2/` for `unit-02/`, puts the file where no
+build looks: **every media-bearing page then renders a broken glyph** and
+nothing else fails at all.
+
+⚠️ **`validate` has an opinion about this now** (`media-missing`): a declared
+asset or attachment the archive does not hold where the entry says is named and
+refused, so the disagreement surfaces at you rather than at a reader. ⭐ A
+capture that named its media and deliberately did not fetch it says so with
+`media_skipped`, and that is a state rather than a shortfall.
 
 ### 4. ⛔ Run the generated tests **before** you write a line, and read the failure
 

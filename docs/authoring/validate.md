@@ -54,7 +54,7 @@ pretend to be.
 
 ---
 
-## The fourteen checks
+## The fifteen checks
 
 **One list, in the order a report reads best.** The answer to *what does the
 checker check* is this table and nothing else.
@@ -73,19 +73,21 @@ checker check* is this table and nothing else.
 | 10 | `check_placement` | does every path the placement profile would produce come out unique and legal? |
 | 11 | `check_origins_are_files` | does every declared `origin` name a file that exists? |
 | 12 | `check_archive_members` | is every file beneath `archive/` a member an adapter's layout places there, or a stray nothing reads? |
-| 13 | `check_unclassified` | does every file in your repository match one of the three `content` states? |
-| 14 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
+| 13 | `check_declared_files` | does the archive hold every `assets` and `attachments` entry where that entry says it does? |
+| 14 | `check_unclassified` | does every file in your repository match one of the three `content` states? |
+| 15 | `check_completeness` | did the reader actually read each source file, or stop short of it? |
 
-**Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 about
-what else sits beneath the archive root, and 13 and 14 about your source
-repository. **The last two are the ones that cannot be
+**Checks 1–9 are about the archive alone**, 10 and 11 about placement, 12 and
+13 about the archive root's own files — what sits there unaccounted for, and
+what the archive accounts for and does not hold — and 14 and 15 about your
+source repository. **The last two are the ones that cannot be
 made by recounting the parser's own output** — a completeness check that
 recounted what the parser produced would agree with itself by construction and
 catch nothing.
 
 ---
 
-## The thirty-three rule ids
+## The thirty-four rule ids
 
 **Every finding carries one**, so a script can filter a report by rule rather
 than by matching on message text. ⚠️ **The last six are not emitted by
@@ -101,6 +103,7 @@ the same shape.
 | `unreadable` | a file that must be read cannot be |
 | `no-archive` | no container map sits beneath `archive/` — it is absent, or present and empty — so there is no archive to call valid |
 | `archive-stray` | a file sits beneath `archive/` and is not a container map, a document under its map's variant, or a declared unit's own file — so nothing would read it |
+| `media-missing` | a document declares an `assets` or `attachments` entry and the archive does not hold that file where the entry says — absent, put somewhere no build looks, or named by a `local` that is no path at all. Where a `local` resolves is stated once, in [archive.md](archive.md). A capture that named its media and deliberately did not fetch it declares `media_skipped` and is exempt |
 | `personal-data` | a string in a document carries personal data |
 | `address-directory` | a container map's address does not match its directory |
 | `duplicate-address` | two containers claim one address |

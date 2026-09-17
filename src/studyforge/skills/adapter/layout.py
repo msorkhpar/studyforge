@@ -12,6 +12,10 @@ path §6 requires a writer to build at before it moves anything into place.
     layout.container_map(address)                     # .../container.json
     layout.document(address, "prose", 3, "lesson", 2)
 
+`archive_tree()` is the same arithmetic drawn for a reader — the four places an
+adapter writes, with the values replaced by placeholders — so a page shows the
+layout instead of retyping it (`W214`).
+
 **Depends on.** `address` (for `Address`, `unit_name` and `require_ordinal`)
 `corpus.container`/`corpus.manifest` for the two filenames they own,
 `corpus.placement` for the archive root, the `raw/` segment and the `units/`
@@ -241,6 +245,64 @@ def document_name(kind: str, ordinal: int) -> str:
     if kind not in KINDS:
         raise LayoutError(f"kind must be one of {list(KINDS)}")
     return f"{kind}-{require_ordinal(ordinal)}{DOCUMENT_SUFFIX}"
+
+
+#: What the drawn tree calls the corpus root. ⛔ One segment, so the drawing
+#: joins with `/` and never has to know what a reader's own root looks like.
+TREE_ROOT = "<corpus-root>"
+
+#: The values the tree is COMPUTED at before it is shown. ⚠️ They are real —
+#: `Address` refuses `<address>` and `unit_name` refuses a placeholder — so the
+#: drawing is this module's own arithmetic and then a substitution, rather than
+#: a picture of it somebody keeps in step by hand (R19).
+_DRAWN_ADDRESS = Address(["a"])
+_DRAWN_VARIANT = "v"
+_DRAWN_UNIT = 1
+_DRAWN_ORDINAL = 1
+
+#: What a reader is shown where the tree was drawn at a value. ⛔ Keyed by PATH
+#: SEGMENT and applied one segment at a time, never as a text replace: a
+#: replace would be free to rewrite a character inside `archive`, `raw` or
+#: `units`, which are the three segments `corpus.placement` owns and this
+#: drawing must reproduce untouched.
+_SHOWN_AS = {
+    _DRAWN_ADDRESS.key: "<address>",
+    _DRAWN_VARIANT: "<variant>",
+    unit_name(_DRAWN_UNIT): "unit-NN",
+    document_name(KINDS[0], _DRAWN_ORDINAL): "<kind>-N.json",
+}
+
+
+def archive_tree() -> str:
+    """Return the four places an adapter writes, drawn as a page shows them.
+
+    ⛔ **Every line is a path this module computed**, so a page that draws this
+    tree is not a second spelling of the layout and cannot drift from it
+    (`W214`, R19). ⚠️ The line a skill was missing is the last one: a unit's
+    **own** files — each asset's and attachment's `local`, and the authored
+    overlay — sit beside `raw/`, never inside a variant, and an adapter that
+    wrote them anywhere else produced a page whose every figure is a broken
+    glyph while `validate` said nothing.
+
+    ⭐ `<address>` stands for however many slugs the corpus declares levels,
+    joined by `/`; the tree is drawn at one and the shape is the same at three.
+    """
+    layout = Layout(Path(TREE_ROOT))
+    address, unit = _DRAWN_ADDRESS, _DRAWN_UNIT
+    return "\n".join(
+        (
+            _shown(layout.manifest),
+            _shown(layout.container_map(address)),
+            _shown(layout.document(address, _DRAWN_VARIANT, unit, KINDS[0], _DRAWN_ORDINAL)),
+            _shown(layout.unit_files(address, unit)) + "/",
+        )
+    )
+
+
+def _shown(path: Path) -> str:
+    """Return one computed path with each drawn value replaced by its placeholder."""
+    inside = path.relative_to(Path(TREE_ROOT)).parts
+    return "/".join((TREE_ROOT, *(_SHOWN_AS.get(part, part) for part in inside)))
 
 
 def _address(address: Address | list | tuple) -> Address:

@@ -1,8 +1,13 @@
-"""Mirror of `src/studyforge/validate/source/membership.py` (R12, `W248`).
+"""Mirror of `src/studyforge/validate/source/membership.py` (R12, `W248`, `W214`).
 
 ⛔ **A stray beneath the archive root is refused by name, never skipped.** Both
 ways: a planted file turns `validate` RED and names itself, and an archive
 laid out by SK-02's own `Layout` reads clean.
+
+⛔ **And the other direction (`W214`): a file the archive DECLARES and does not
+hold is refused by name too.** Both ways again — declared media written where
+`Layout.unit_files` puts it passes, and media that is absent, written inside a
+variant, or named by no path at all is refused.
 """
 
 from __future__ import annotations
@@ -21,7 +26,11 @@ from studyforge.corpus.placement import ARCHIVE_DIRNAME
 from studyforge.skills.adapter import Layout
 from studyforge.validate import validate
 from studyforge.validate.corpus import read
-from studyforge.validate.source import RULE_ARCHIVE_STRAY, archive_members
+from studyforge.validate.source import (
+    RULE_ARCHIVE_STRAY,
+    RULE_MEDIA_MISSING,
+    archive_members,
+)
 from tests.studyforge.validate import corpora
 from tests.support import repository_root
 
@@ -168,3 +177,127 @@ def test_an_archive_laid_out_by_the_adapter_layout_reads_clean(tmp_path):
 def test_the_shipped_archives_hold_no_stray(name):
     # ⭐ Files somebody else wrote, including `units/` media and an overlay.
     assert strays(repository_root() / "tests/fixtures" / name) == []
+
+
+# --------------------------------------------------------------------------
+# ⛔ W214 — a declared file the archive does not hold is refused by name
+# --------------------------------------------------------------------------
+
+
+#: One entry of `assets` or `attachments`, whose `local` is the only half a
+#: page addresses. ⚠️ The digest and the byte count are not this check's
+#: question and are fabricated here.
+def entry(local, kind="image"):
+    """One media entry naming `local`."""
+    return {
+        "remote": None,
+        "local": local,
+        "sha256": "0" * 64,
+        "bytes": 7,
+        "content_type": "image/svg+xml",
+        "kind": kind,
+    }
+
+
+def declaring(root: Path, **overrides) -> Path:
+    """The smallest corpus whose one document declares a media entry."""
+    return corpora.one_unit(root, source=corpora.SOURCE, **overrides)
+
+
+def missing(root: Path) -> list[str]:
+    """Every `media-missing` message `validate` reports, as it words them."""
+    return [f.message for f in validate(root).findings if f.rule == RULE_MEDIA_MISSING]
+
+
+def test_declared_media_written_where_the_layout_says_reads_clean(tmp_path):
+    # ⭐ The passing half, and it uses `Layout` rather than a typed path: the
+    # check and the writer agree because both asked the same module.
+    root = declaring(
+        tmp_path / "c",
+        assets=[entry("media/diagram.svg")],
+        attachments=[entry("media/small-graph.ttl", kind="dataset")],
+    )
+    home = Layout(root).unit_files(ADDRESS, 1)
+    _write(home / "media" / "diagram.svg", "<svg/>\n")
+    _write(home / "media" / "small-graph.ttl", "@prefix x: <x:> .\n")
+    report = validate(root)
+    assert report.ok, [f.line() for f in report.findings]
+
+
+def test_a_declared_asset_that_was_never_written_is_named_and_refused(tmp_path):
+    root = declaring(tmp_path / "c", assets=[entry("media/diagram.svg")])
+    report = validate(root)
+    assert not report.ok
+    assert [f.rule for f in report.findings] == [RULE_MEDIA_MISSING]
+    assert "media/diagram.svg" in missing(root)[0]
+    assert "units/unit-01/media/diagram.svg" in missing(root)[0]
+
+
+def test_a_declared_attachment_that_was_never_written_is_refused_too(tmp_path):
+    # ⛔ One entry vocabulary, not two: the lists differ in what a page DOES
+    # with them, never in what they hold, so one check covers both.
+    root = declaring(tmp_path / "c", attachments=[entry("data/set.csv", kind="dataset")])
+    assert [f.rule for f in validate(root).findings] == [RULE_MEDIA_MISSING]
+    assert "data/set.csv" in missing(root)[0]
+
+
+def test_media_written_inside_the_variant_is_refused_where_it_is_and_where_it_is_not(tmp_path):
+    """⛔ The `W214` defect exactly: an adapter that wrote media under `raw/`.
+
+    ⭐ Two findings, and they are two different true statements: the file that
+    is there is read by nothing, and the file that was declared is not there.
+    ⚠️ Before this check the first was the only one, and a stray beside a
+    document is easy to read as untidiness rather than as a broken page.
+    """
+    root = declaring(tmp_path / "c", assets=[entry("media/diagram.svg")])
+    _write(
+        Layout(root).unit_dir(ADDRESS, "prose", 1) / "media" / "diagram.svg",
+        "<svg/>\n",
+    )
+    assert set(validate(root).rules) == {RULE_MEDIA_MISSING, STRAY}
+
+
+def test_an_entry_naming_no_file_is_refused_rather_than_skipped(tmp_path):
+    # ⛔ The build refuses this one outright — `a media block names the file it
+    # shows, and this one names nothing` — so `validate` may not pass it.
+    root = declaring(tmp_path / "c", assets=[{**entry("media/x.svg"), "local": "  "}])
+    assert [f.rule for f in validate(root).findings] == [RULE_MEDIA_MISSING]
+    assert "names no file" in missing(root)[0]
+
+
+def test_a_local_that_is_not_a_location_inside_the_unit_is_refused_without_quoting_it(tmp_path):
+    # ⛔ R7: every shape refused here is a candidate home directory, so the
+    # refusal names the fault and never the value. ⚠️ Fabricated, and it leaves
+    # the source root, which is what `sourcepath` refuses it for.
+    escaping = "../../elsewhere/diagram.svg"
+    root = declaring(tmp_path / "c", assets=[entry(escaping)])
+    said = missing(root)
+    assert [f.rule for f in validate(root).findings] == [RULE_MEDIA_MISSING]
+    assert escaping not in said[0], "a refusal quoted the value it refused (R7)"
+    assert "leaving the source root" in said[0]
+
+
+def test_media_skipped_is_a_state_and_not_a_shortfall(tmp_path):
+    # ⭐ `archive.document`: an ingest that named its media and deliberately did
+    # not fetch it. The marker is IN the document, so nothing is inferred.
+    root = declaring(
+        tmp_path / "c",
+        assets=[entry("media/diagram.svg")],
+        media_skipped=True,
+    )
+    assert validate(root).ok
+
+
+def test_a_document_that_disagrees_with_its_directory_is_not_judged_twice(tmp_path):
+    # ⛔ `identity` already refuses the disagreement. Resolving a file against a
+    # directory derived from it would report one defect under two rules.
+    root = declaring(tmp_path / "c", assets=[entry("media/diagram.svg")], unit=2)
+    assert set(validate(root).rules) == {"identity", "unit-missing"}
+
+
+@pytest.mark.parametrize("name", ["depth1", "depth2", "shared-origin"])
+def test_the_shipped_archives_hold_every_file_they_declare(name):
+    # ⭐ Files somebody else wrote: `depth1` declares an asset and an
+    # attachment, and `depth2`'s third unit declares `media_skipped`.
+    report = validate(repository_root() / "tests/fixtures" / name)
+    assert RULE_MEDIA_MISSING not in report.rules, [f.line() for f in report.findings]
