@@ -79,6 +79,7 @@ from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
+from tools.quality.surfaces import check_producer_half, surface_census
 
 #: Every check, in the order their findings are reported. Adding a check means
 #: adding it here and nowhere else.
@@ -162,6 +163,15 @@ from tools.quality.style import check_style
 #: ⚠️ `check_owns_before_creator` reads the PLAN'S GRAPH (`W156`): a row owning inside a sibling
 #: component must reach that component's creator through its declared `Depends on` chain. ⛔ Its
 #: exemption mechanism is a TENTH: `workspace.json` pinning a component nobody creates `present`.
+#:
+#: ⚠️ `check_producer_half` reads the IMPORTS under `src/studyforge` and asks Ruling 101's
+#: producer-half question of each: is the name this package takes on the OWNER's `__all__`
+#: (`W199/3`, `W300`)? ⛔ Its exemption mechanism is an ELEVENTH distinct one and it is the
+#: REMEDY ITSELF — a name is excused by being exported, which is what the ruling asks for,
+#: so there is no way to excuse one that is not also a way to fix it. ⭐ It binds BOTH
+#: import spellings, and that is `W299/1`: a sweep defined over submodule imports alone
+#: releases a name the moment somebody corrects the spelling, so the pin has to be the
+#: half that does not depend on a consumer.
 CHECKS = (
     check_sizes,
     check_board,
@@ -180,6 +190,7 @@ CHECKS = (
     check_clause_counts,
     check_derived_counts,
     check_owns_before_creator,
+    check_producer_half,
 )
 
 #: ⛔ **The second channel, and it exists because some of the floor's answers
@@ -264,6 +275,14 @@ CHECKS = (
 #:
 #: ⭐ **`creator_census` is the twelfth** (`W156`): every member, its creator, its verdict and
 #: whether its component was read from a path or from epic prose, so a green exit carries both.
+#:
+#: ⭐ **`surface_census` is the thirteenth** (`W300`): the packages walked, the deviations
+#: `surfaces.DECLARED` excuses with the ground of each, and Ruling 101's FIRST row — a name
+#: that IS exported and is taken by the submodule spelling. ⛔ **That last population is
+#: printed and failed nowhere**, for FND-07's reason: it is landed code no office has been
+#: assigned, and a red run for a condition nobody may clear is a red run that gets muted.
+#: ⚠️ It also prints what the check is NOT — a surface is read by NAME, never by value
+#: (`W298/3`) — so nobody retires a behavioural pin because this one is green.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -277,6 +296,7 @@ NOTICES = (
     clause_census,
     count_census,
     creator_census,
+    surface_census,
     lint_notice,
 )
 

@@ -25,6 +25,7 @@ from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
+from tools.quality.surfaces import check_producer_half, surface_census
 
 
 def test_states_its_contract():
@@ -52,6 +53,7 @@ def test_every_check_is_registered():
         check_clause_counts,
         check_derived_counts,
         check_owns_before_creator,
+        check_producer_half,
     }
     assert quality.CHECKS, "Ruling 48: an empty registry satisfies set() == set()"
 
@@ -74,6 +76,7 @@ def test_every_notice_is_registered():
         clause_census,
         count_census,
         creator_census,
+        surface_census,
         lint_notice,
     }
 
