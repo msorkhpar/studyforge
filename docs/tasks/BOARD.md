@@ -60,6 +60,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W307` | Developer 1 | `fix/W307-floor-discloses-the-armed-arm` @ `wt/dev1` | 0 @ `69a178d` | in-progress |
+| `W308` | Developer 2 | `fix/W308-merge-path-reads-authorship` @ `wt/dev2` | 0 @ `69a178d` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -451,8 +453,8 @@ else.**
 | W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | ✅ done — `fc176ae` | [`rows/W304.md`](rows/W304.md) |
 | W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | ✅ done — `6ce9409` | [`rows/W305.md`](rows/W305.md) |
 | W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | ✅ done — `d3e36b5` | [`rows/W306.md`](rows/W306.md) |
-| W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | `todo` — `W305/2` | [`rows/W307.md`](rows/W307.md) |
-| W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | `todo` — `W305/3` | [`rows/W308.md`](rows/W308.md) |
+| W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | in-progress — on `fix/W307-floor-discloses-the-armed-arm` | [`rows/W307.md`](rows/W307.md) |
+| W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | in-progress — on `fix/W308-merge-path-reads-authorship` | [`rows/W308.md`](rows/W308.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
