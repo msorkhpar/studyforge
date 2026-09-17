@@ -146,6 +146,20 @@ def test_no_reader_reproduces_a_field_it_refused(found):
     assert found.leaks == [], "\n" + found.report()
 
 
+def test_no_reader_writes_anywhere_the_harness_does_not_own(found):
+    # ⛔ `W217/5`, the other half of `W217`'s reading arriving here. A document
+    # reader is a parser, and *it writes nothing* was a property nobody had
+    # measured until this census ran inside the same containment the
+    # per-callable sweep already used. An escape is refused as well as
+    # reported, so this failing never leaves the file behind.
+    #
+    # ⚠️ No inhabitance floor beside it, deliberately — Ruling 191 asks for one
+    # where the population exists, and a reader that parses is not expected to
+    # produce a refused write. What keeps this arm from being vacuous is the
+    # plant below, which drives a real write through this exact machinery.
+    assert found.contained.escapes == [], "\n" + found.report()
+
+
 def test_the_probe_reaches_the_documents_it_claims_to(found):
     # ⚠️ A check reports its coverage. A walk that found no fields would pass
     # the test above forever.
@@ -219,6 +233,26 @@ def test_the_probe_catches_a_reader_that_quotes_a_field():
     assert [leak.where for leak in found.leaks] == [".title", ".title"]
     for name, value in POISONS:
         assert value not in found.report(), name
+
+
+def test_the_containment_catches_a_reader_that_writes_where_it_chooses(tmp_path):
+    # ⛔ Ruling 11, and the plant the arm above is worth nothing without: a
+    # reader that writes to a path of its own choosing is reported by name, and
+    # the write does not land. ⚠️ The path is one the test mints, so what is
+    # demonstrated is the containment refusing rather than the checkout's luck.
+    target = tmp_path / "written-by-a-reader"
+
+    def writes(document):
+        target.write_text("", encoding="utf-8")
+        return document
+
+    found = document_census([Reader("invented", writes, {"title": "fine"})])
+    assert found.contained.escapes, found.report()
+    assert {escape.where for escape in found.contained.escapes} == {"invented"}
+    assert not target.exists()
+    # ⭐ And it is in the report the failure prints, in the same words the
+    # per-callable census uses, so the two read alike when either goes red.
+    assert "write(s) aimed outside anything the harness owns" in found.report()
 
 
 def test_the_walk_sees_keys_as_well_as_values():

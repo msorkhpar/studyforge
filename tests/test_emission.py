@@ -1,11 +1,20 @@
 """§1f as a build failure: no refusal in `studyforge` reproduces what it refused.
 
 The machinery is `tests/emission/`; this module is what fails the suite on it.
+
+⛔ **Its coverage claim is measured against the package on disk** (`W216`). The
+sweep records which modules it reached; that record is compared with what `src/`
+ships — ⭐ never with a bound somebody typed on a day that has since passed,
+which is a guard that reads as one and cannot fall.
 """
 
 from __future__ import annotations
 
+import ast
 import contextlib
+import importlib
+import inspect
+from collections.abc import Iterable, Mapping
 from pathlib import Path
 
 import pytest
@@ -20,15 +29,15 @@ from tests.emission import (
 )
 from tests.support import repository_root
 
-#: ⭐ A floor on **coverage**, not on defects. It can only be broken by the
-#: probe reaching less of the tree than it does today — a package that stops
-#: importing, a walk that silently returns nothing — and it is a lower bound
-#: rather than an exact count so that adding a module is not a failing test.
-#: ⚠️ Measured 2026-09-09 on this branch: 184 parameter probes across 134
-#: public callables, plus 46 path probes.
-LEAST_PARAMETERS_PROBED = 150
-LEAST_CALLABLES_PROBED = 110
-LEAST_PATHS_PROBED = 30
+#: The package the sweep covers. ⭐ Named once: the walk under test imports it,
+#: and the population that walk is measured against is read off the directory
+#: of the same name under `src/`.
+PACKAGE = "studyforge"
+
+
+def package_root() -> Path:
+    """The directory the package's modules are read from, found from this file."""
+    return repository_root() / "src" / PACKAGE
 
 
 @pytest.fixture(scope="module")
@@ -37,7 +46,13 @@ def found():
     # Every call the census makes now runs in a directory the harness mints and
     # can write nowhere else (`tests/emission/containment.py`, `W217`) — which
     # also keeps `SF-17/11`'s relative `Path("alpha")` out of the checkout.
-    return census("studyforge")
+    return census(PACKAGE)
+
+
+@pytest.fixture(scope="module")
+def defined():
+    """What the package ships, read off disk — the census's population."""
+    return defined_on_disk(package_root(), PACKAGE)
 
 
 # --------------------------------------------------------------------------
@@ -77,16 +92,147 @@ def test_the_containment_saw_the_writers_it_contains(found):
 
 
 # --------------------------------------------------------------------------
-# What the check can see — reported, so it cannot overstate itself
+# What the check can see — measured against the tree, never against a figure
 # --------------------------------------------------------------------------
 
 
-def test_the_check_reaches_the_tree_it_claims_to_check(found):
-    # ⚠️ Ruling 13, condition 1: a check reports its coverage. A probe that
-    # reached nothing would pass both tests above forever.
-    assert found.probed >= LEAST_PARAMETERS_PROBED, found.report()
-    assert found.callables >= LEAST_CALLABLES_PROBED, found.report()
-    assert found.path_probes >= LEAST_PATHS_PROBED, found.report()
+def defined_on_disk(root: Path, package: str) -> dict[str, list[str]]:
+    """`module name -> the public functions and classes its SOURCE defines`.
+
+    ⛔ **A different instrument from the walk it measures, and that is the
+    whole of why it can fail.** The sweep finds its population by importing and
+    introspecting; this one parses the files. A package that drops out of the
+    walk, or a walk that silently returns less of the tree, moves one and not
+    the other — ⭐ where a floor typed on a past day moves with neither, which
+    is how three of them came to sit several times under what they guarded
+    (`W209/5`, and `W151`'s family).
+
+    ⚠️ **Definitions only.** A name a package's `__init__` re-exports is an
+    import here and not a `def` — the same exclusion `public_callables` makes,
+    for the same reason.
+    """
+    found: dict[str, list[str]] = {}
+    for path in sorted(root.rglob("*.py")):
+        parts = list(path.relative_to(root).parts)
+        parts = parts[:-1] if parts[-1] == "__init__.py" else [*parts[:-1], parts[-1][:-3]]
+        tree = ast.parse(path.read_text(encoding="utf-8"))
+        found[".".join([package, *parts])] = [
+            node.name
+            for node in tree.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+            and not node.name.startswith("_")
+        ]
+    return found
+
+
+def owing_a_probe(defined: Mapping[str, list[str]]) -> set[str]:
+    """Every module that defines something the sweep is obliged to reach.
+
+    ⭐ **One exclusion, and it is `public_callables`' own rather than a list
+    kept here.** An exception class formats what it is handed, and what it is
+    handed is the subject of every other probe in this file; a module that
+    defines nothing else owes nothing. ⚠️ Asked of the imported object, so this
+    tracks that rule instead of restating it as a naming convention that would
+    then be free to disagree with it.
+    """
+    return {
+        name
+        for name, names in defined.items()
+        if any(not _is_exception(getattr(importlib.import_module(name), n, None)) for n in names)
+    }
+
+
+def _is_exception(obj: object) -> bool:
+    return inspect.isclass(obj) and issubclass(obj, BaseException)
+
+
+def unwalked(walked: Mapping[str, int], shipped: Iterable[str]) -> list[str]:
+    """Modules the package ships that the sweep never reached at all."""
+    return sorted(set(shipped) - set(walked))
+
+
+def unprobed(walked: Mapping[str, int], owed: Iterable[str]) -> list[str]:
+    """Modules that owe a probe and had none — walked, and nothing found in them."""
+    return sorted(name for name in owed if not walked.get(name))
+
+
+def test_the_sweep_reaches_every_module_the_package_ships(found, defined):
+    # ⛔ **W216: the floor is the tree.** This is the assertion the three typed
+    # lower bounds used to stand in for, and the difference is that it cannot
+    # be satisfied by a sweep that has quietly narrowed: a package that stops
+    # being walked is named here the moment it stops, whatever the totals say.
+    #
+    # ⚠️ Ruling 191, and it is the first line for a reason: the population is
+    # asserted inhabited, so a derivation that found no modules — an empty
+    # directory, a rename nobody followed — fails instead of passing vacuously.
+    assert defined, f"no module read from {package_root().name}; there is no population"
+    assert unwalked(found.walked, defined) == [], found.report()
+    # ⭐ Both directions: the sweep reaching something the tree does not ship
+    # is a walk that has lost its subject just as much as the other way round.
+    assert sorted(found.walked) == sorted(defined), found.report()
+
+
+def test_every_module_that_defines_a_callable_has_one_probed(found, defined):
+    # ⛔ The reach, one grain finer than the module list. A walk can arrive at
+    # every module and still find nothing in them — `public_callables` yielding
+    # nothing is exactly the silent shrink the old floors were there to catch,
+    # and at their level it would have had to lose most of the tree to show.
+    owed = owing_a_probe(defined)
+    assert owed, "no module defines a public callable; there is nothing to probe"
+    assert unprobed(found.walked, owed) == [], found.report()
+
+
+def test_the_sweep_probed_parameters_and_paths_of_what_it_walked(found):
+    # ⚠️ Ruling 13, condition 1: a check reports its coverage. ⭐ Inhabitance
+    # only (Ruling 191) — what each arm probes *per callable* is asserted
+    # exactly, below, on callables whose arithmetic is knowable, rather than
+    # against a whole-tree total nobody can derive without taking the census
+    # a second time.
+    assert found.callables > 0, found.report()
+    assert found.probed > 0, found.report()
+    assert found.path_probes > 0, found.report()
+    # ⛔ And the reach is in the report, not only in the assertion: a guard
+    # whose failure message omits what failed sends the next reader back to
+    # measure it by hand, which is where a typed figure comes from.
+    assert f"walked {len(found.walked)} module(s)" in found.report()
+
+
+def test_a_module_that_leaves_the_sweeps_reach_turns_this_red(found, defined):
+    # ⛔ Ruling 11 and Ruling 124. The guard is watched failing, and it is
+    # driven through the same comparison the live assertion makes rather than
+    # through a re-implementation of it. The module dropped is taken from the
+    # derived population, so nothing here is a name typed by hand either.
+    dropped = sorted(defined)[0]
+    narrowed = {name: probed for name, probed in found.walked.items() if name != dropped}
+    assert unwalked(narrowed, defined) == [dropped]
+    assert unwalked(found.walked, defined) == []
+
+
+def test_a_module_the_walk_finds_nothing_in_turns_this_red(found, defined):
+    # ⛔ The other plant: the module is still walked, and every callable in it
+    # has left the sweep's reach. That is the shape a broken `public_callables`
+    # takes, and the shape a floor on the total cannot see.
+    owed = owing_a_probe(defined)
+    silenced = sorted(owed)[0]
+    assert unprobed({**found.walked, silenced: 0}, owed) == [silenced]
+    assert unprobed(found.walked, owed) == []
+
+
+def test_a_module_added_to_the_tree_is_owed_a_probe_at_once(tmp_path):
+    # ⭐ The other half of "derived": the population is read off the tree, so a
+    # module nobody has told this file about is an obligation the moment it
+    # lands — where a typed floor buys silence until somebody remembers it.
+    # ⚠️ Planted in a copy the test mints; never in the checkout (`W143`).
+    root = tmp_path / PACKAGE
+    (root / "deeper").mkdir(parents=True)
+    (root / "__init__.py").write_text('"""A package."""\n', encoding="utf-8")
+    (root / "deeper" / "__init__.py").write_text('"""A package."""\n', encoding="utf-8")
+    (root / "deeper" / "later.py").write_text(
+        "def arrives(value: str) -> None:\n    raise ValueError(value)\n", encoding="utf-8"
+    )
+    defined = defined_on_disk(root, PACKAGE)
+    assert defined[f"{PACKAGE}.deeper.later"] == ["arrives"]
+    assert unwalked({}, defined) == [PACKAGE, f"{PACKAGE}.deeper", f"{PACKAGE}.deeper.later"]
 
 
 def test_an_unreached_probe_still_had_its_message_searched(found):
@@ -141,6 +287,33 @@ def test_a_label_parameter_is_not_poisoned_at_all():
         raise ValueError(f"{where} declares something unusable")
 
     assert probe_callable(name_the_record, "a module invented inside a test").echoes == []
+
+
+def test_each_data_parameter_is_probed_alone_and_then_all_of_them_together():
+    # ⭐ **What replaces a typed floor on the parameter total** (`W216`): the
+    # arithmetic asserted where it is knowable exactly. Two data parameters are
+    # two single probes plus the all-at-once pass; `what` is a label and is not
+    # probed at all. ⛔ An arm that stopped making the combination would fail
+    # here by one, where a whole-tree lower bound could lose a third of the
+    # census and still read green.
+    def refuse(first: str, second: str, what: str = "a field") -> None:
+        raise ValueError(f"{what} is not acceptable")
+
+    found = probe_callable(refuse, "a callable invented inside a test")
+    assert found.callables == 1
+    assert found.probed == 3
+    assert found.path_probes == 0
+
+
+def test_every_path_parameter_is_handed_an_absolute_path_of_its_own():
+    # ⭐ The same, for the path arm: one probe per path parameter, and the
+    # `str` beside them is the string arm's and not this one's.
+    def accept(one: Path, two: Path, note: str) -> None:
+        return None
+
+    found = probe_callable(accept, "a callable invented inside a test")
+    assert found.path_probes == 2
+    assert found.probed == 1
 
 
 def test_the_fix_this_check_guards_is_the_one_that_is_in_place():

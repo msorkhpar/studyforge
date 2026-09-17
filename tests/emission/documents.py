@@ -6,8 +6,9 @@ at a time**, and reports every field whose refusal reproduces what it refused.
 **How you use it.** `document_census(readers)` where each reader is a
 `Reader(name, call, document)`. `leaves(document)` is the walk on its own.
 
-**Depends on.** `copy`, `dataclasses`, and this package's `probe` for the
-poison values. Nothing from `studyforge` — the readers are handed in.
+**Depends on.** `copy`, `dataclasses`, this package's `probe` for the poison
+values and its `containment` for the directory each reader runs in. Nothing
+from `studyforge` — the readers are handed in.
 
 ## ⛔ Why the per-callable probe could not reach these
 
@@ -49,7 +50,8 @@ import copy
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass, field
 
-from tests.emission.probe import POISON
+from tests.emission.containment import Tally, contained
+from tests.emission.probe import POISON, POISON_ROOT
 
 #: An absolute path carrying no personal data at all. ⛔ Assembled, like every
 #: poison here, so the repository's own R7 sweep is not asked for an exception.
@@ -94,13 +96,23 @@ class DocumentCensus:
     leaks: list[Leak] = field(default_factory=list)
     accepted: int = 0
 
+    #: ⛔ What the containment saw while the readers ran (`W217/5`). A reader
+    #: is a parser and is expected to write nothing — ⭐ which is a claim, and
+    #: this is the instrument that makes it one instead of an assumption.
+    contained: Tally = field(default_factory=Tally)
+
     def report(self) -> str:
         """A one-screen summary, printed into any failure this causes."""
         lines = [
             f"poisoned {self.fields} field(s) across {self.probed} probe(s)",
             f"{len(self.leaks)} refusal(s) reproduce the value they refused",
             f"{self.accepted} probe(s) were accepted — that field refuses nothing",
+            f"{self.contained.landed} write(s) landed in directories the harness minted; "
+            f"{self.contained.refused} refused inside the poison's namespace; "
+            f"{self.contained.spawns} process start(s) refused",
+            f"{len(self.contained.escapes)} write(s) aimed outside anything the harness owns",
         ]
+        lines += [f"  - {escape}" for escape in sorted(self.contained.escapes)]
         lines += [f"  - {leak}" for leak in sorted(self.leaks)]
         return "\n".join(lines)
 
@@ -161,19 +173,26 @@ def _split(step: str) -> tuple[str | None, int | None]:
 
 
 def document_census(readers: list[Reader]) -> DocumentCensus:
-    """Poison every field of every reader's document, one at a time."""
+    """Poison every field of every reader's document, one at a time.
+
+    ⛔ **Every reader runs inside the containment** (`W217/5`): a directory the
+    harness mints, with every write aimed anywhere else refused and counted.
+    ⚠️ Once per reader rather than once per probe — the containment is what the
+    call may touch, and that does not change between two fields of one document.
+    """
     found = DocumentCensus()
     for reader in readers:
         sites = list(leaves(reader.document, ""))
         found.fields += len(sites)
-        for where, _original in sites:
-            for name, poison in POISONS:
-                found.probed += 1
-                raised = _refusal(reader, where, poison)
-                if raised is None:
-                    found.accepted += 1
-                elif poison in str(raised):
-                    found.leaks.append(Leak(reader.name, where, name, str(raised)))
+        with contained(found.contained, reader.name, POISON_ROOT):
+            for where, _original in sites:
+                for name, poison in POISONS:
+                    found.probed += 1
+                    raised = _refusal(reader, where, poison)
+                    if raised is None:
+                        found.accepted += 1
+                    elif poison in str(raised):
+                        found.leaks.append(Leak(reader.name, where, name, str(raised)))
     return found
 
 

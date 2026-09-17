@@ -113,6 +113,13 @@ class Census:
     path_echoes: list[Echo] = field(default_factory=list)
     contained: Tally = field(default_factory=Tally)
 
+    #: ⛔ **The reach, recorded rather than counted**: every module the walk
+    #: imported, mapped to the number of public callables probed in it. ⭐ A
+    #: count says the sweep was large; this says *which* of the tree it arrived
+    #: at — the only form in which a coverage claim can be checked against the
+    #: package on disk rather than against a figure somebody typed.
+    walked: dict[str, int] = field(default_factory=dict)
+
     def report(self) -> str:
         """A one-screen summary, printed into any failure this check causes."""
         lines = [
@@ -123,6 +130,9 @@ class Census:
             f"{self.accepted} probe(s) were accepted — a callable with no refusal "
             f"on that parameter emits nothing",
             f"{len(self.unreached)} probe(s) crashed before any refusal ran (coverage)",
+            f"walked {len(self.walked)} module(s), "
+            f"{sum(1 for probed in self.walked.values() if probed)} of which had a "
+            f"public callable probed",
             f"{self.contained.landed} write(s) landed in directories the harness minted; "
             f"{self.contained.refused} refused inside the poison's namespace; "
             f"{self.contained.spawns} process start(s) refused",
@@ -268,8 +278,14 @@ def census(package_name: str) -> Census:
     """Probe every public callable of `package_name` and report what it emits."""
     found = Census()
     for module in modules(package_name):
+        before = found.callables
         for name, obj in public_callables(module):
             probe_callable(obj, f"{module.__name__}.{name}", into=found)
+        # ⛔ Recorded for every module, including the ones that define no public
+        # callable: *walked and found nothing* and *never walked at all* are
+        # different failures, and a mapping that dropped the first would make
+        # them arrive as the same one.
+        found.walked[module.__name__] = found.callables - before
     return found
 
 

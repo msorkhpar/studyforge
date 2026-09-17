@@ -47,8 +47,9 @@ with one bad field, is not probed — the framework has roughly forty-five such
 `{value!r}` sites left and they are recorded as a finding in
 `docs/tasks/handoffs/W1-W2.md`, not held here. ⛔ **A check that overstated its
 coverage would be worse than this one**; `Census.report` prints what it
-reached, and a lower bound on that count is asserted so a refactor cannot
-quietly shrink it to nothing.
+reached, and `Census.walked` names it — ⭐ **asserted against the modules the
+package ships on disk, so the coverage claim is measured against the tree and
+never against a figure typed on a day that has passed** (`W216`).
 """
 
 from __future__ import annotations
