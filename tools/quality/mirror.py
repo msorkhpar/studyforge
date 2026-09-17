@@ -66,7 +66,7 @@ def mirror_for(relative_path: str) -> str | None:
 
 
 def mirrored(root: Path) -> list[tuple[str, str]]:
-    """`(module, the test it owes)` for every source module R12 binds — this check's population.
+    """Return `(module, the test it owes)` for every module R12 binds — this check's population.
 
     ⛔ One definition read by the check AND by `vacuity`'s disclosure (`W309`), so
     the two can never describe different walks.
