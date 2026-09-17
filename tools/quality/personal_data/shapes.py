@@ -207,13 +207,20 @@ def shape_matches(text: str) -> list[tuple[int, str]]:
     return found
 
 
+def swept_files(root: Path) -> list[Path]:
+    """Every text file outside the registered directories — this arm's population (`W309`)."""
+    return [
+        path
+        for path in config.text_files(root)
+        if not config.is_sanctioned_personal_data(config.relative(path, root))
+    ]
+
+
 def check_shapes(root: Path) -> list[Finding]:
     """Every personal-data shape in the tree, outside the registered directories."""
     findings: list[Finding] = []
-    for path in config.text_files(root):
+    for path in swept_files(root):
         relative = config.relative(path, root)
-        if config.is_sanctioned_personal_data(relative):
-            continue
         text = config.read_text(path)
         if text is None:
             continue

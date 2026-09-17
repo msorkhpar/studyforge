@@ -28,6 +28,19 @@ from tools.quality.report import Finding
 RULE_REGISTRY = "personal-data-registry"
 
 
+def judged_directories(root: Path) -> list[str]:
+    """Return the registered directories whose fixture area exists — this arm's population.
+
+    ⚠️ Over a tree with no fixture area this is EMPTY and the arm compares nothing,
+    which `vacuity` discloses (`W309`); it is never a finding, for the reason below.
+    """
+    return [
+        directory
+        for directory in config.SANCTIONED_PERSONAL_DATA_DIRS
+        if (root / directory).parent.is_dir()
+    ]
+
+
 def check_registry(root: Path) -> list[Finding]:
     """Every registered negative-fixture directory exists and declares itself.
 
@@ -43,10 +56,8 @@ def check_registry(root: Path) -> list[Finding]:
     be run on anything but the real root.
     """
     findings: list[Finding] = []
-    for directory in config.SANCTIONED_PERSONAL_DATA_DIRS:
+    for directory in judged_directories(root):
         path = root / directory
-        if not path.parent.is_dir():
-            continue
         if not path.is_dir():
             findings.append(
                 Finding(
