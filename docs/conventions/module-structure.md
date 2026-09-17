@@ -406,10 +406,31 @@ dropped a member, and one of those crashed a shipped command.
    names the tuple: the different arm comes FIRST (`except PersonalDataLeak:`),
    then `except RAISES`. Under Ruling 58 that first arm re-raises or files its
    own rule; it never translates.
-3. ⚠️ **Enforced for `corpus.container` and `corpus.manifest`** by
-   `tests/studyforge/corpus/test_init.py`'s sweep. It reads the handler's
-   NAME only, so `RAISES[:1]` passes the sweep, and each caller's behavioural
-   tests are what catch a narrowed tuple.
+3. ⛔ **Enforced by [`../../tests/test_raises_convention.py`](../../tests/test_raises_convention.py), whose population is DERIVED** (`W219`)
+   from every module that exports a tuple and from the public routines of each
+   that can raise one of its own members — so the next exporter is inside the
+   sweep with no edit there, and `progress.store_dir`, which raises nothing, is
+   not. ⭐ **A handler names the tuple only by naming it WHOLE**: a bare
+   `RAISES`, `*RAISES` in a tuple literal, or a module-level alias built from
+   one of those (`REFUSED = (*RAISES, ContentError)`, then `except REFUSED`).
+   ⚠️ **`RAISES[:1]` reads as naming nothing**, in a handler or in an alias —
+   four such plants survived the name-reading sweep this replaces (`W212/2`),
+   and re-planting one is now how the instrument is checked.
+4. ⛔ **The sweep's reach floor is keyed on the SUBJECT, never on a site's
+   `path:function`.** ⚠️ The floor that pinned names read `W313`'s declared
+   split — a reader moved between two modules — as a LOST site while the reach
+   had in fact grown. ⭐ **So a caller may be moved and renamed freely; what may
+   not fall is how many callers catch each package's tuple**, and a shortfall
+   prints the whole population, so the count never hides which site went.
+   ⛔ **Removing a catch site lowers the floor deliberately, or it goes red.**
+5. ⛔ **`archive` is EXEMPT and owes no tuple**, because both exceptions its
+   readers let out are its own — `ArchiveError` in `archive.errors`,
+   `PersonalDataLeak` in `archive.scrub` — so a caller imports them from the
+   package it is already calling and has no second package's paragraph to
+   retype, which is the failure `W208` measured. ⚠️ **The exemption is checked,
+   not asserted**: `test_archive_lets_out_only_exceptions_it_defines_itself`
+   turns red the day a caller catches another package's exception around an
+   archive reader, which is the day the exemption expires.
 
 ## Markup, CSS and JS (R13)
 
