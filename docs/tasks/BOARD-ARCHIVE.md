@@ -26349,3 +26349,43 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 102
 
 ⭐ **Merged at `0fce84a`, with W287 on one carrier.**
+
+## PO round 103
+
+⛔ **Only what is MEASURED is written here.** ⭐ **No row closes; three are minted; the ISO pin advances.**
+
+### ⭐ ISO ROUND 16 RECORDED — verified by this register, NOT received
+
+| reading | result |
+|---|---|
+| merge | ISO `f2da5dc`, `--no-ff` of `int/round16-repin-iso06-iso13` from `509583f`; both checkouts clean |
+| framework pin in the corpus | `0fce84a` |
+| author and committer over `509583f..f2da5dc` | ⭐ **the `po-int` placeholder on every commit, the merge included** |
+| identity and home-path probes over added lines and messages | absent |
+| protected material (`README.md`, `TestCases.md`, `LICENSE`, `.gitignore`, `src/*.md`) | ⭐ **no diff** |
+| the held round-14 branch | ⭐ **not merged** (`INT-15/3`) |
+| the corpus's own `verify.py`, re-run here | GREEN, exit `0` |
+
+⭐ **`ISO-06` TAKEN** — the XML clause held since `W243/1`, read on `W295`'s vendored grammar in a headless browser over `file://` with a plant that removes the grammar and reddens it. ⭐ **`ISO-13` TAKEN** — `plan` (`W287`) measures the committed narration inside the limits; the prediction band is missed and written up as `INT-16/1`, which the task's own clause allows. ⛔ **`ISO-15` NOT TAKEN** — see `W313`.
+
+⭐ **The pin in `workspace.json` advances to `f2da5dc`** (`W244`: the pin advances at each integration round's merge).
+
+### ⭐ MINTS
+
+| row | from | why now |
+|---|---|---|
+| [`W313`](rows/W313.md) | `INT-16/2` + `INT-16/3`, RE-MEASURED: the generator takes the manifest alone | ⛔ **`M6` cannot close without it; its planned home `OPS-06` is `M9`. Placed at order 1 under Ruling 75, the jump named in its cell** |
+| [`W312`](rows/W312.md) | `PO-103/1`, MEASURED by this register | ⛔ **the temp filesystem filled from leaked browser profiles and every shell stopped, this register's and the offices'; `W221`'s narrow measured instance** |
+| [`W314`](rows/W314.md) | `INT-16/4`, `plan`'s half RE-MEASURED by reading its exit code | ⛔ **spec §5's *stops and says so* is enforced nowhere; queued behind `W311`, which rewrites the measurement it reads** |
+
+### ⛔ `PO-103/1` — THE ENVIRONMENT STOPPED THE WAVE, AND THE CAUSE WAS OUR OWN SUITE
+
+⚠️ **Every Bash call in the coordinator and in the offices exited `1` with no output**; commands launched another way ran and read `EDQUOT` on the temp filesystem. ⭐ **Measured cause: leaked `studyforge-visual-*` browser profiles from suite and merge-gate runs.** ⛔ **Freed by deleting only profiles older than twenty minutes and held open by no process; one office's work was lost mid-row and re-dispatched as a continuation; the offices were told to re-run anything that failed in the window rather than record it.**
+
+### ⭐ FINDINGS RELAYED, NOT MINTED
+
+| id | disposition |
+|---|---|
+| `INT-16/1` | ⭐ **the corpus's own** — its reconnaissance estimate, not a framework defect |
+| `INT-16/3`'s *fresh recursive clone* | ⚠️ **`ISO-15`'s clause predates R18's no-submodules amendment; this register READS it as *a fresh clone beside the framework checked out at the pinned commit*, reversibly, and `W313` settles to that reading** |
+| `INT-16/5` | ⛔ **the USER's** — the corpus's own `CLAUDE.md` still teaches the retired code-graph tool, and additive-only protects that file |
