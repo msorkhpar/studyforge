@@ -4,6 +4,13 @@
 hostname, home directory, git author — and reports any tracked file that
 carries one.
 
+⛔ **The git arm reads the GLOBAL and SYSTEM scopes ONLY, never a scope an
+office can write** (`W305`; the argument is on `IDENTITY_SCOPES` below).
+⭐ **The machine's real git identity sits in the user's own global file; a value
+in `.git/config` is a working convention this repository sets for itself** — and
+reading the second made this check's verdict on an unchanged tree a function of
+who happened to be working.
+
 **How you use it.** `check_identifiers(repo_root)`. `identifiers()` returns
 `{what it is: the value}` for the machine it runs on; `check_identifiers`
 accepts an override so the mechanism can be tested with fabricated values.
@@ -74,6 +81,31 @@ GENERIC_IDENTIFIERS = frozenset(
 )
 
 
+#: ⛔ **The git scopes this module reads, in precedence order, and the only ones**
+#: (`W305`). ⚠️ **`--local` and `--worktree` are deliberately absent**, and the
+#: argument is whose datum each scope holds:
+#:
+#: - ⭐ **Global and system are the MACHINE's.** `~/.gitconfig` is where a real
+#:   name and address actually sit, so R7's git arm keeps its subject and keeps
+#:   firing. ⛔ Emptying this tuple would be the weakening this must never
+#:   become, and `identifiers()` would then be blind to the one scope that holds
+#:   the datum.
+#: - ⛔ **Local and worktree are the REPOSITORY's.** Every office holding a
+#:   linked worktree shares one `.git/config` while `extensions.worktreeConfig`
+#:   is unset, and a placeholder written there is indistinguishable from a real
+#:   name to this check — four characters against `MIN_IDENTIFIER_CHARS`. So
+#:   reading it reported this repository's own checkout vocabulary as a leak, in
+#:   documents nobody had touched (Ruling 345).
+#:
+#: ⭐ **The mirror image of `board/dispatch.py`, which reads `--local` and
+#: refuses the global file for the same reason read the other way round:** a
+#: branch description is the repository's own dispatch, an identity is the
+#: machine's. ⛔ **An office's own author line is therefore passed PER INVOCATION
+#: and set nowhere** — `git -c user.name=… -c user.email=… commit` — which is
+#: Ruling 345's clause and the only form that never enters a shared slot.
+IDENTITY_SCOPES = ("--global", "--system")
+
+
 def _usable(value: str | None) -> str | None:
     """`value` if it is specific enough to be evidence, else None."""
     if not value:
@@ -84,22 +116,33 @@ def _usable(value: str | None) -> str | None:
     return value
 
 
-def _git_config(key: str) -> str | None:
-    """One git config value, or None when git is absent or has nothing to say."""
+def _git_identity(key: str) -> str | None:
+    """`key` as the MACHINE has it, or None when no scope this reads has it.
+
+    ⛔ **Every scope is named on the command line** (`IDENTITY_SCOPES`), so no
+    reading can fall through to the repository the process happens to be
+    standing in. ⚠️ Asked scope by scope rather than with one bare `--get`,
+    because git's own precedence puts `--local` first and that is exactly the
+    answer this must not take.
+    """
     git = shutil.which("git")
     if git is None:
         return None
-    try:
-        result = subprocess.run(  # noqa: S603 - fixed argv, no shell
-            [git, "config", "--get", key],
-            capture_output=True,
-            text=True,
-            check=False,
-            timeout=10,
-        )
-    except OSError, subprocess.SubprocessError:
-        return None
-    return result.stdout.strip() if result.returncode == 0 else None
+    for scope in IDENTITY_SCOPES:
+        try:
+            result = subprocess.run(  # noqa: S603 - fixed argv, no shell
+                [git, "config", scope, "--get", key],
+                capture_output=True,
+                text=True,
+                check=False,
+                timeout=10,
+            )
+        except OSError, subprocess.SubprocessError:
+            return None
+        # ⛔ Exit 1 is *this scope has nothing*, never a failure: ask the next.
+        if result.returncode == 0 and result.stdout.strip():
+            return result.stdout.strip()
+    return None
 
 
 def identifiers() -> dict[str, str]:
@@ -111,10 +154,18 @@ def identifiers() -> dict[str, str]:
     has to hold it.
 
     ⚠️ It is legitimately empty in some environments. Inside the dev image
-    there is no passwd entry, `HOME` is `/tmp`, and git has no identity, so
-    this half of the check has nothing to compare and quietly does nothing —
-    which is correct, because a leak originates on the machine that has those
-    values, not in the container. `check_shapes` runs everywhere regardless.
+    there is no passwd entry and no global git file, so this half of the check
+    has nothing to compare and quietly does nothing — which is correct, because
+    a leak originates on the machine that has those values, not in the
+    container. `check_shapes` runs everywhere regardless.
+
+    ⛔ **What that paragraph used to say — *"git has no identity"* in there —
+    was FALSE, and `W305` is the row that measured it.** ⚠️ `docker/dev/check`
+    mounts the git common directory into the image so a linked worktree can
+    answer git at all, so a repository-scoped identity was readable from inside
+    the container off that mount. ⭐ **It is true again now, and by
+    construction rather than by luck: `IDENTITY_SCOPES` names no scope that
+    mount carries.**
     """
     found: dict[str, str] = {}
 
@@ -142,7 +193,7 @@ def identifiers() -> dict[str, str]:
         found["home directory"] = home.rstrip("/")
 
     for label, key in (("git author name", "user.name"), ("git author email", "user.email")):
-        usable = _usable(_git_config(key))
+        usable = _usable(_git_identity(key))
         if usable:
             found[label] = usable
 
