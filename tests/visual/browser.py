@@ -10,8 +10,23 @@ tab and returns the session id every later call is addressed with.
 `browser.events` accumulates everything the browser volunteered; `browser.wait`
 blocks for one.
 
-**Depends on.** `json`, `os`, `subprocess`, `tempfile`, `time`, `pathlib` — the
-standard library, and nothing else.
+**Depends on.** `json`, `os`, `shutil`, `subprocess`, `tempfile`, `time`,
+`pathlib` — the standard library, and nothing else.
+
+## ⛔ `W312` — a launch leaves nothing behind, and its last words outlive it
+
+⛔ **Every launch makes a fresh profile under the system temp directory, and
+until `W312` nothing ever removed one.** A profile carries the browser's own
+caches, the temp filesystem is quota-limited, and when it filled every shell on
+the host exited `1` with no output. ⭐ **`close()` now removes the profile, and
+so does a launch that fails part-way** — `__init__` hands whatever it had
+already opened to `close()` before re-raising.
+
+⭐ **The diagnostics are read BEFORE the directory goes.** `browser.log` lives
+inside the profile, so `close()` reads its tail once the browser has stopped
+writing, keeps it, and `diagnostics()` answers from that copy afterwards. ⛔ A
+cleanup that deleted the only evidence of why a launch failed would trade one
+silent failure for another.
 
 ## ⛔ Why the pipe and not a WebSocket, and why no driver library
 
@@ -37,6 +52,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 import subprocess
 import tempfile
 import time
@@ -83,8 +99,29 @@ CALL_TIMEOUT = 30.0
 LAST_INHERITED_FD = 4
 
 
+#: Attempts `_remove_profile` makes before it reports the profile as left behind.
+#: ⚠️ A browser's helper processes can still be writing into the profile for a
+#: moment after the main process has exited, so one pass can race them.
+REMOVAL_ATTEMPTS = 20
+
+
 class BrowserError(RuntimeError):
     """The browser refused a call, died, or never answered."""
+
+
+def _remove_profile(profile: str) -> None:
+    """Remove one launch's profile, retrying past a helper that is still writing.
+
+    ⛔ Raises `BrowserError` when the directory survives every attempt, so a
+    profile left behind is a failure somebody reads rather than a quota that
+    fills in silence (`W312`).
+    """
+    for _attempt in range(REMOVAL_ATTEMPTS):
+        shutil.rmtree(profile, ignore_errors=True)
+        if not os.path.lexists(profile):
+            return
+        time.sleep(0.05)
+    raise BrowserError(f"the browser profile survived {REMOVAL_ATTEMPTS} removals: {profile}")
 
 
 def _place_pipe_on_three_and_four(reader: int, writer: int):
@@ -122,42 +159,69 @@ class Browser:
     """One headless browser process and the protocol connection to it."""
 
     def __init__(self, binary: str) -> None:
-        """Launch `binary` headless with a throwaway profile."""
+        """Launch `binary` headless with a throwaway profile.
+
+        ⛔ **A launch that fails part-way leaves nothing behind** (`W312`): the
+        profile exists from the first line, so every later step runs under a
+        handler that gives what was opened to `close()` and re-raises.
+        """
         self.binary = binary
-        self._reader, writer_end = os.pipe()
-        reader_end, self._writer = os.pipe()
-        os.set_inheritable(reader_end, True)
-        os.set_inheritable(writer_end, True)
         # ⛔ A fresh profile per launch, under the system temp directory: a
         # shared profile carries state between runs, which is the failure R10
         # is about wearing a different hat.
         self._profile = tempfile.mkdtemp(prefix="studyforge-visual-")
-        argv = [
-            binary,
-            *LAUNCH_FLAGS,
-            f"--window-size={VIEWPORT[0]},{VIEWPORT[1]}",
-            f"--user-data-dir={self._profile}",
-            "about:blank",
-        ]
-        # ⛔ The browser's own diagnostics are kept, not discarded. A protocol
-        # pipe that closes says only "the browser went away"; the reason is on
-        # its stderr, and a harness that threw that away would report every
-        # launch failure with the same unhelpful sentence. ⭐ It is also how the
-        # `dash` defect above was found in one run instead of an afternoon.
-        self._log = open(Path(self._profile) / "browser.log", "w+b")  # noqa: SIM115
-        self._process = subprocess.Popen(  # noqa: S603 - fixed argv, no user input
-            argv,
-            close_fds=False,
-            preexec_fn=_place_pipe_on_three_and_four(reader_end, writer_end),  # noqa: PLW1509
-            stdout=subprocess.DEVNULL,
-            stderr=self._log,
-        )
-        os.close(reader_end)
-        os.close(writer_end)
+        self._reader: int | None = None
+        self._writer: int | None = None
+        self._log = None
+        self._process: subprocess.Popen | None = None
+        #: The log's tail, kept by `close()` before the profile holding it goes.
+        self._last_words = ""
+        self._closed = False
         self._buffer = b""
         self._next_id = 0
         #: Every event the browser volunteered, oldest first. Callers clear it.
         self.events: list[dict] = []
+        try:
+            self._launch(binary)
+        except BaseException:
+            self.close()
+            raise
+
+    def _launch(self, binary: str) -> None:
+        """Open the pipe and the log, and start the browser on them."""
+        self._reader, writer_end = os.pipe()
+        try:
+            reader_end, self._writer = os.pipe()
+        except BaseException:
+            os.close(writer_end)
+            raise
+        try:
+            os.set_inheritable(reader_end, True)
+            os.set_inheritable(writer_end, True)
+            argv = [
+                binary,
+                *LAUNCH_FLAGS,
+                f"--window-size={VIEWPORT[0]},{VIEWPORT[1]}",
+                f"--user-data-dir={self._profile}",
+                "about:blank",
+            ]
+            # ⛔ The browser's own diagnostics are kept, not discarded. A
+            # protocol pipe that closes says only "the browser went away"; the
+            # reason is on its stderr, and a harness that threw that away would
+            # report every launch failure with the same unhelpful sentence.
+            # ⭐ It is also how the `dash` defect above was found in one run
+            # instead of an afternoon.
+            self._log = open(Path(self._profile) / "browser.log", "w+b")  # noqa: SIM115
+            self._process = subprocess.Popen(  # noqa: S603 - fixed argv, no user input
+                argv,
+                close_fds=False,
+                preexec_fn=_place_pipe_on_three_and_four(reader_end, writer_end),  # noqa: PLW1509
+                stdout=subprocess.DEVNULL,
+                stderr=self._log,
+            )
+        finally:
+            os.close(reader_end)
+            os.close(writer_end)
 
     # --- the protocol ------------------------------------------------------
 
@@ -215,7 +279,16 @@ class Browser:
         return json.loads(line)
 
     def diagnostics(self) -> str:
-        """The tail of whatever the browser wrote to its standard error."""
+        """The tail of whatever the browser wrote to its standard error.
+
+        ⭐ Once closed, the tail `close()` read before removing the profile.
+        """
+        if self._log is None or self._log.closed:
+            return self._last_words
+        return self._read_log()
+
+    def _read_log(self) -> str:
+        """Read the tail of the open log."""
         try:
             self._log.flush()
             self._log.seek(0)
@@ -223,22 +296,42 @@ class Browser:
         except OSError, ValueError:  # pragma: no cover - the log is already gone
             return ""
 
+    def _keep_last_words(self) -> None:
+        """Copy the log's tail out of the profile, so removing it loses nothing."""
+        self._last_words = self._read_log()
+
     # --- lifetime ----------------------------------------------------------
 
     def close(self) -> None:
-        """Stop the browser, whatever state it is in."""
-        for closing in (self._writer, self._reader):
-            try:
-                os.close(closing)
-            except OSError:  # pragma: no cover - already closed
-                pass
-        self._log.close()
-        self._process.terminate()
+        """Stop the browser, whatever state it is in, and remove its profile.
+
+        ⛔ **Order is the point** (`W312`): the browser is stopped first so its
+        last words are written, they are read second, and only then does the
+        directory holding them go. ⭐ Safe on a half-made launch and safe twice.
+        """
+        if self._closed:
+            return
+        self._closed = True
         try:
-            self._process.wait(timeout=10)
-        except subprocess.TimeoutExpired:  # pragma: no cover - a wedged browser
-            self._process.kill()
-            self._process.wait(timeout=10)
+            for closing in (self._writer, self._reader):
+                if closing is None:
+                    continue
+                try:
+                    os.close(closing)
+                except OSError:  # pragma: no cover - already closed
+                    pass
+            if self._process is not None:
+                self._process.terminate()
+                try:
+                    self._process.wait(timeout=10)
+                except subprocess.TimeoutExpired:  # pragma: no cover - a wedged browser
+                    self._process.kill()
+                    self._process.wait(timeout=10)
+            if self._log is not None:
+                self._keep_last_words()
+                self._log.close()
+        finally:
+            _remove_profile(self._profile)
 
     def __enter__(self) -> Browser:
         """Return self, so a caller can use `with Browser(...) as browser:`."""
