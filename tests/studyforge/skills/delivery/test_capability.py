@@ -1,4 +1,8 @@
-"""Mirror of `src/studyforge/skills/delivery/capability.py` (R12)."""
+"""Mirror of `src/studyforge/skills/delivery/capability.py` (R12).
+
+⚠️ The tests over the markdown parse moved to `test_epics.py` when `W94` split
+that half out; what stays here is the index over what the parse produced.
+"""
 
 from __future__ import annotations
 
@@ -7,43 +11,13 @@ import re
 import pytest
 
 from studyforge.skills.delivery import Index, IndexRefused, read_epic, read_sequence
-from studyforge.skills.delivery.capability import BANNER, EMPTY, MILESTONE_ID
+from studyforge.skills.delivery.capability import BANNER, EMPTY
+from studyforge.skills.delivery.epics import MILESTONE_ID
 from tests.studyforge.skills.delivery import plans
-
-
-def test_a_heading_is_a_task_only_when_the_next_line_declares_a_milestone():
-    # ⛔ The rule is adjacency, never a list of headings to skip. E01's carried
-    # ruling is a `###` heading and is not a capability.
-    epic = read_epic("E01.md", plans.EPIC_ONE)
-    assert [c.id for c in epic.capabilities] == ["SF-01", "SF-02"]
-
-
-def test_the_shouting_in_a_heading_is_not_part_of_the_capabilitys_name():
-    epic = read_epic("E01.md", plans.EPIC_ONE)
-    assert epic.capabilities[1].what == "Corpus manifest"
-
-
-def test_a_row_that_declares_no_milestone_is_cancelled_and_is_counted():
-    # ⛔ A generator that quietly discards input is one nobody can check.
-    epic = read_epic("E05.md", plans.EPIC_TWO)
-    assert epic.cancelled == ("SF-99",)
-    assert [c.id for c in epic.capabilities] == ["SF-20"]
 
 
 def test_the_bold_some_rows_put_round_their_milestone_does_not_hide_it():
     assert plans.index().milestone_of("SF-02") == "M2"
-
-
-def test_a_task_heading_with_no_id_is_refused_rather_than_skipped():
-    # ⚠️ Skipping it would be the same silence the adjacency rule exists to
-    # avoid, arriving one line later.
-    with pytest.raises(IndexRefused, match="carries no id"):
-        read_epic("E09.md", "# E09 — Delivery\n\n### Something\n**Milestone** M1\n")
-
-
-def test_a_document_with_no_area_title_is_refused():
-    with pytest.raises(IndexRefused, match="no `# E<nn>"):
-        read_epic("stray.md", "### SF-01 — A thing\n**Milestone** M1\n")
 
 
 def test_an_index_of_no_epics_is_refused():
@@ -134,34 +108,60 @@ def test_the_document_prints_the_order_it_was_given_and_names_its_source():
     assert "`M1` → `M2` → `M6` → `M5`" in plans.index().render()
 
 
-def test_a_heading_that_names_milestones_but_is_not_a_section_declares_nothing():
-    # ⭐ The fixture's `### ⛔ REORDERED — `M2` → `M6` → `M5`` is prose.
-    assert read_sequence("README.md", "### ⛔ REORDERED — `M5`\n### M1 — One\n").milestones == (
-        "M1",
-    )
-
-
-def test_a_document_declaring_no_milestone_is_refused():
-    with pytest.raises(IndexRefused, match="declares no order"):
-        read_sequence("README.md", "# A task index\n\n#### M1 — Too deep to be a section\n")
-
-
-def test_a_milestone_declared_twice_is_refused_because_its_place_is_ambiguous():
-    with pytest.raises(IndexRefused, match="M1 declared twice"):
-        read_sequence("README.md", "### M1 — One\n### M2 — Two\n### M1 — One again\n")
-
-
-def test_the_order_document_is_cited_by_a_bare_filename_only():
-    with pytest.raises(IndexRefused, match="bare filename"):
-        read_sequence("docs/tasks/README.md", plans.SEQUENCE)
-
-
 def test_a_capability_at_a_milestone_the_order_omits_is_refused():
     omitting = read_sequence("README.md", "### M1 — One\n### M2 — Two\n")
     with pytest.raises(IndexRefused, match="SF-20 lands at M5, which README.md does not declare"):
         Index.of(
             (read_epic("E01.md", plans.EPIC_ONE), read_epic("E05.md", plans.EPIC_TWO)), omitting
         )
+
+
+# --- W94 / Ruling 188: `of` names every capability it cannot place -----------
+
+#: An epic placing two capabilities at milestones the order does not declare.
+MISPLACED = """# E20 — Misplaced
+
+### SF-60 — Lands nowhere
+**Milestone** M7 · **Team** solo
+
+### SF-61 — Also lands nowhere
+**Milestone** M8 · **Team** solo
+"""
+
+#: And a second one repeating an id from the first. ⛔ Four reasons in all.
+MISPLACED_AGAIN = """# E21 — Misplaced again
+
+### SF-60 — The same id
+**Milestone** M7 · **Team** solo
+"""
+
+
+def test_every_capability_that_cannot_be_placed_is_named_not_the_first():
+    # ⛔ The row's founding argument: fixing the one that was named and
+    # re-running told the reader about the next one, four runs deep.
+    with pytest.raises(IndexRefused) as refused:
+        Index.of(
+            (read_epic("E20.md", MISPLACED), read_epic("E21.md", MISPLACED_AGAIN)),
+            read_sequence("README.md", "### M1 — One\n"),
+        )
+    message = str(refused.value)
+    assert "4 refusals" in message
+    assert "SF-60 lands at M7" in message
+    assert "SF-61 lands at M8" in message
+    assert "SF-60 is declared twice — in E20 and in E21" in message
+
+
+def test_one_misplaced_capability_reads_exactly_as_it_did():
+    # ⭐ The other direction (R12): a single violation keeps its own sentence,
+    # with no count and no preamble in front of it.
+    with pytest.raises(IndexRefused) as refused:
+        Index.of(
+            (read_epic("E05.md", plans.EPIC_TWO),),
+            read_sequence("README.md", "### M1 — One\n### M2 — Two\n"),
+        )
+    assert str(refused.value) == (
+        "SF-20 lands at M5, which README.md does not declare, so it has no place in the order"
+    )
 
 
 # --- the live population, because a parser tested only on its own fixture has
@@ -220,47 +220,8 @@ def test_no_capability_in_the_live_index_lost_its_area():
     assert all(capability.area for capability in plans.live_index().capabilities)
 
 
-# --- W247: a milestone id of any width is read, and only a dash cancels ------
-
-#: ⛔ `M10` declared BEFORE `M9`: neither a lexical sort (`M1`, `M10`, `M2`, `M9`)
-#: nor a numeric one (`M1`, `M2`, `M9`, `M10`) reproduces the declared order.
-WIDE_SEQUENCE = "### M1 — One\n### M2 — Two\n### M10 — Ten\n### M9 — Nine\n"
-
-WIDE_EPIC = """# E12 — Wide ids
-
-### SF-40 — Lands at ten
-**Milestone** **M10** · **Depends on** — · **Team** solo
-
-### SF-41 — Lands at nine
-**Milestone** M9 · **Depends on** SF-40 · **Team** solo
-"""
-
-
-def wide_index() -> Index:
-    return Index.of((read_epic("E12.md", WIDE_EPIC),), read_sequence("README.md", WIDE_SEQUENCE))
-
-
-def test_a_row_at_m10_is_a_capability_at_m10_and_never_cancelled():
-    epic = read_epic("E12.md", WIDE_EPIC)
-    assert epic.cancelled == ()
-    assert [(c.id, c.milestone) for c in epic.capabilities] == [("SF-40", "M10"), ("SF-41", "M9")]
-
-
-def test_an_m10_section_is_declared_in_the_order():
-    assert read_sequence("README.md", WIDE_SEQUENCE).milestones == ("M1", "M2", "M10", "M9")
-
-
-@pytest.mark.parametrize("unreadable", ["Mx", "TBD", "m10", "M10a"])
-def test_a_milestone_that_is_neither_an_id_nor_a_dash_is_refused_by_name(unreadable):
-    text = (
-        f"# E12 — Wide ids\n\n### SF-42 — Unreadable\n**Milestone** {unreadable} · **Team** solo\n"
-    )
-    with pytest.raises(IndexRefused, match=r"E12\.md line 3: SF-42 .*never counted as cancelled"):
-        read_epic("E12.md", text)
-
-
 def test_m10_keeps_its_declared_place_and_is_not_sorted_after_m1():
-    index = wide_index()
+    index = plans.wide_index()
     assert index.milestones == ("M1", "M2", "M10", "M9")
     assert index.milestones not in (tuple(sorted(index.milestones)), ("M1", "M2", "M9", "M10"))
     assert index.later("M9", than="M10") and index.later("M10", than="M2")

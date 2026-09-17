@@ -16,8 +16,8 @@ durable artifact an integration works from.
     print("\n".join(plan.lines()))
 
 **Depends on.** `dataclasses` and this package's `capability`, `task`,
-`terminal`, `question` and `finding`. ⛔ Not the filesystem, and not any
-source.
+`terminal`, `question`, `finding` and `refusal`. ⛔ Not the filesystem, and not
+any source.
 
 ## ⛔ A corpus milestone DECLARES the framework milestone that gates it
 
@@ -46,6 +46,7 @@ from dataclasses import dataclass, field
 from studyforge.skills.delivery.capability import Index
 from studyforge.skills.delivery.finding import Finding
 from studyforge.skills.delivery.question import Question, numbered
+from studyforge.skills.delivery.refusal import one_or_all
 from studyforge.skills.delivery.task import PlanRefused, Task
 from studyforge.skills.delivery.terminal import Terminal
 
@@ -133,73 +134,119 @@ class Backlog:
         raise PlanRefused("no such task in this plan")
 
     def checked(self, index: Index) -> Backlog:
-        """Refuse a plan the index contradicts, naming what contradicts it."""
+        """Refuse a plan the index contradicts, ⛔ naming EVERYTHING that contradicts it.
+
+        ⛔ **Ruling 188** (`W94`). The two checks below give back their reasons
+        rather than raising, because the loop that drives them is here: a check
+        that raised would refuse on the first offending task of the first
+        offending milestone, and the reader would learn how many more there are
+        only by fixing that one and running the whole plan again.
+        """
         self.terminal.checked(index)
         known = frozenset(capability.id for capability in index.capabilities)
         order = {milestone.id: position for position, milestone in enumerate(self.milestones)}
+        refusals: list[str] = []
         for milestone in self.milestones:
             for task in milestone.tasks:
-                self._check_framework(index, milestone, task, known)
-                self._check_corpus(order, milestone, task, known)
+                refusals += self._check_framework(index, milestone, task, known)
+                refusals += self._check_corpus(order, milestone, task, known)
+        if refusals:
+            raise PlanRefused(one_or_all(refusals))
         self.critical_path()
         return self
 
     def _check_framework(
         self, index: Index, milestone: Milestone, task: Task, known: frozenset[str]
-    ) -> None:
-        """⛔ A milestone reaching a capability later than its declared gate."""
+    ) -> list[str]:
+        """⛔ Every capability this milestone reaches later than its declared gate."""
         reaches = task.framework_dependencies(known)
         if not reaches:
-            return
+            return []
         if milestone.gated_by is None:
-            raise PlanRefused(
+            return [
                 f"a milestone declares no framework gate and one of its tasks waits on "
                 f"{', '.join(reaches)}. ⛔ A corpus milestone silently gated on "
                 "framework work is a plan that slips for an unwritten reason"
-            )
+            ]
+        found: list[str] = []
         for name in reaches:
             lands = index.milestone_of(name)
             # ⛔ In the index's declared sequence, never by id: `M5` lands after
             # `M8` in a plan whose order is not the order its ids sort to.
             if index.later(lands, than=milestone.gated_by):
-                raise PlanRefused(
+                found.append(
                     f"a milestone is gated by {milestone.gated_by}, but one of its "
                     f"tasks waits on {name}, which lands at {lands}"
                 )
+        return found
 
     def _check_corpus(
         self, order: dict[str, int], milestone: Milestone, task: Task, known: frozenset[str]
-    ) -> None:
-        """⛔ A dependency on a task this plan does not carry, or carries later."""
+    ) -> list[str]:
+        """⛔ Every dependency this plan does not carry, or carries later."""
+        found: list[str] = []
         for name in task.corpus_dependencies(known):
             try:
                 where = self._milestone_of(name)
             except PlanRefused:
-                raise PlanRefused(
+                found.append(
                     "a task waits on something that is neither in this plan nor a "
                     "capability the index carries"
-                ) from None
+                )
+                continue
             if order[where] > order[milestone.id]:
-                raise PlanRefused("a task waits on a task in a later milestone of this same plan")
+                found.append("a task waits on a task in a later milestone of this same plan")
+        return found
+
+    def _cyclic(self) -> tuple[str, ...]:
+        """Every task that reaches itself through this plan's own tasks.
+
+        ⭐ Derived by closing each task's dependencies over the plan until
+        nothing grows, so the answer is the WHOLE population rather than
+        whichever cycle a depth-first walk happened to enter first.
+        """
+        by_id = {task.id: task for task in self.tasks}
+        reach = {
+            name: {waits_on for waits_on in task.depends_on if waits_on in by_id}
+            for name, task in by_id.items()
+        }
+        grew = True
+        while grew:
+            grew = False
+            for name, seen in reach.items():
+                wider = seen.union(*(reach[waits_on] for waits_on in seen)) if seen else seen
+                if wider != seen:
+                    reach[name] = wider
+                    grew = True
+        return tuple(sorted(name for name in by_id if name in reach[name]))
 
     def critical_path(self) -> tuple[str, ...]:
-        """Derive the heaviest chain of this plan's own tasks, ⛔ refusing a cycle."""
+        """Derive the heaviest chain of this plan's own tasks, ⛔ refusing every cycle.
+
+        ⛔ **The cycles are refused before the walk, all of them at once**
+        (Ruling 188, `W94`): a guard inside the walk raises on the first cycle
+        it enters and says nothing about the rest. ⭐ The walk below is
+        therefore over a graph already known to be acyclic, which is why it
+        carries no cycle guard of its own.
+        """
+        cyclic = self._cyclic()
+        if cyclic:
+            several = len(cyclic) > 1
+            raise PlanRefused(
+                f"{f'{len(cyclic)} tasks depend' if several else 'a task depends'} on "
+                f"{'themselves' if several else 'itself'}, through this plan's own tasks"
+            )
         by_id = {task.id: task for task in self.tasks}
         depth: dict[str, tuple[int, tuple[str, ...]]] = {}
-        walking: set[str] = set()
 
         def walk(name: str) -> tuple[int, tuple[str, ...]]:
             if name in depth:
                 return depth[name]
-            if name in walking:
-                raise PlanRefused("a task depends on itself, through this plan's own tasks")
-            walking.add(name)
             task = by_id[name]
             best: tuple[int, tuple[str, ...]] = (0, ())
             for waits_on in task.depends_on:
                 if waits_on in by_id:
                     best = max(best, walk(waits_on))
-            walking.discard(name)
             depth[name] = (best[0] + task.effort, (*best[1], name))
             return depth[name]
 

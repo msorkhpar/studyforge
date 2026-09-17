@@ -133,6 +133,8 @@ def test_the_critical_path_is_the_heaviest_chain_and_not_the_longest():
 
 
 def test_a_cycle_through_the_plans_own_tasks_is_refused():
+    # ⛔ `W94`: BOTH tasks are on this cycle, so both are counted. A guard
+    # inside the walk raised on whichever one it entered first.
     plan = plans.backlog(
         milestones=(
             Milestone(
@@ -146,8 +148,99 @@ def test_a_cycle_through_the_plans_own_tasks_is_refused():
             ),
         )
     )
-    with pytest.raises(PlanRefused, match="depends on itself"):
+    with pytest.raises(PlanRefused) as refused:
         plan.critical_path()
+    assert str(refused.value) == ("2 tasks depend on themselves, through this plan's own tasks")
+
+
+def test_one_task_on_a_cycle_reads_exactly_as_it_did():
+    # ⭐ The other direction (R12): the singular sentence did not move.
+    plan = plans.backlog(
+        milestones=(
+            Milestone("C1", "first", (plans.reading_task("C-01", depends_on=("C-01",)),), None),
+        )
+    )
+    with pytest.raises(PlanRefused) as refused:
+        plan.critical_path()
+    assert str(refused.value) == "a task depends on itself, through this plan's own tasks"
+
+
+def test_every_cycle_is_counted_and_not_only_the_one_the_walk_entered_first():
+    # ⛔ Two DISJOINT cycles: a depth-first guard reports the first it reaches
+    # and the reader never learns the second one is there.
+    plan = plans.backlog(
+        milestones=(
+            Milestone(
+                "C1",
+                "first",
+                (
+                    plans.reading_task("C-01", depends_on=("C-02",)),
+                    plans.reading_task("C-02", depends_on=("C-01",)),
+                    plans.reading_task("C-03", depends_on=("C-04",)),
+                    plans.reading_task("C-04", depends_on=("C-03",)),
+                    plans.reading_task("C-05"),
+                ),
+                None,
+            ),
+        )
+    )
+    with pytest.raises(PlanRefused, match="4 tasks depend on themselves"):
+        plan.critical_path()
+
+
+# --- W94 / Ruling 188: `checked` names every contradiction it found ----------
+
+
+def test_every_contradiction_in_a_plan_is_named_not_the_first():
+    # ⛔ The row's founding argument, in the surface an integrator actually
+    # hits: four things are wrong and one run says so.
+    plan = Backlog(
+        corpus="a corpus",
+        milestones=(
+            Milestone(
+                "C1",
+                "first",
+                (
+                    plans.reading_task("C-01", depends_on=("SF-01",)),
+                    plans.reading_task("C-02", depends_on=("C-99",)),
+                ),
+                None,
+            ),
+            Milestone(
+                "C2",
+                "second",
+                (
+                    plans.reading_task("C-03", depends_on=("SF-20",)),
+                    plans.reading_task("C-04", depends_on=("C-05",)),
+                ),
+                "M1",
+            ),
+            Milestone("C3", "third", (plans.reading_task("C-05"),), "M1"),
+        ),
+        terminal=plans.terminal(),
+    )
+    with pytest.raises(PlanRefused) as refused:
+        plan.checked(plans.index())
+    message = str(refused.value)
+    assert "4 refusals" in message
+    assert "declares no framework gate" in message
+    assert "neither in this plan nor a capability" in message
+    assert "waits on SF-20, which lands at M5" in message
+    assert "waits on a task in a later milestone" in message
+
+
+def test_one_contradiction_reads_exactly_as_it_did():
+    # ⭐ The other direction (R12): no count and no preamble over one reason.
+    plan = Backlog(
+        corpus="a corpus",
+        milestones=(milestone(tasks=(plans.reading_task("C-01", depends_on=("C-99",)),)),),
+        terminal=plans.terminal(),
+    )
+    with pytest.raises(PlanRefused) as refused:
+        plan.checked(plans.index())
+    assert str(refused.value) == (
+        "a task waits on something that is neither in this plan nor a capability the index carries"
+    )
 
 
 def test_a_framework_dependency_is_not_walked_into_the_critical_path():

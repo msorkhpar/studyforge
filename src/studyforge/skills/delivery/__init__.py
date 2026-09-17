@@ -35,7 +35,9 @@ text, so the caller names the documents.
 
 | Module | ⛔ What it will not let a plan say |
 |---|---|
+| `epics` | that a row is unreadable, or that thirteen documents are worth one refusal |
 | `capability` | that a capability lands where the epics do not say, or that ids sort to the order |
+| `refusal` | ⭐ nothing — it is the FORM the rest take once they found several (Ruling 188) |
 | `task` | that a task ends in a layer, or that a clause is decided by nobody |
 | `terminal` | that a corpus finishes somewhere, while leaving later capabilities unaccounted for |
 | `backlog` | that a milestone waits on framework work it has not declared a gate for |
@@ -68,9 +70,8 @@ from studyforge.skills.delivery.capability import (
     Index,
     IndexRefused,
     Sequence,
-    read_epic,
-    read_sequence,
 )
+from studyforge.skills.delivery.epics import read_epic, read_epics, read_sequence
 from studyforge.skills.delivery.export import (
     FIELDS,
     GITHUB,
@@ -93,6 +94,7 @@ from studyforge.skills.delivery.question import (
     QuestionRefused,
     numbered,
 )
+from studyforge.skills.delivery.refusal import one_or_all
 from studyforge.skills.delivery.risk import (
     INSIDE,
     OUTSIDE,
@@ -115,8 +117,7 @@ def capability_index(documents: Iterable[tuple[str, str]], order: tuple[str, str
     and the next repository's does not live where this one's does.
     """
     name, text = order
-    epics = (read_epic(epic, body) for epic, body in documents)
-    return Index.of(epics, read_sequence(name, text)).render()
+    return Index.of(read_epics(documents), read_sequence(name, text)).render()
 
 
 __all__ = [
@@ -157,6 +158,8 @@ __all__ = [
     "concentration",
     "export",
     "numbered",
+    "one_or_all",
     "read_epic",
+    "read_epics",
     "read_sequence",
 ]
