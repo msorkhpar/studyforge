@@ -103,7 +103,7 @@ the same shape.
 | `unreadable` | a file that must be read cannot be |
 | `no-archive` | no container map sits beneath `archive/` — it is absent, or present and empty — so there is no archive to call valid |
 | `archive-stray` | a file sits beneath `archive/` and is not a container map, a document under its map's variant, or a declared unit's own file — so nothing would read it |
-| `media-missing` | a document declares an `assets` or `attachments` entry and the archive does not hold that file where the entry says — absent, put somewhere no build looks, or named by a `local` that is no path at all. A unit's own files sit at `<address>/units/unit-NN/`, beside `raw/` and never inside a variant. A capture that named its media and deliberately did not fetch it declares `media_skipped` and is exempt |
+| `media-missing` | a document declares an `assets` or `attachments` entry and the archive does not hold that file where the entry says — absent, put somewhere no build looks, or named by a `local` that is no path at all. Where a `local` resolves is stated once, in [archive.md](archive.md). A capture that named its media and deliberately did not fetch it declares `media_skipped` and is exempt |
 | `personal-data` | a string in a document carries personal data |
 | `address-directory` | a container map's address does not match its directory |
 | `duplicate-address` | two containers claim one address |
