@@ -8,8 +8,10 @@ documentation — and declares, for every path this skill occupies, the
 scaffold. Every renderer is a pure function from data to text, so the whole
 file set can be read back before anything is on disk.
 
-**Depends on.** `studyforge.corpus.manifest` for what a manifest says, plus
-this package's `compose` and `pin`. ⛔ No I/O, and nothing source-specific (R1).
+**Depends on.** `studyforge.corpus.manifest` for what a manifest says,
+`skills.adapter` for the adapter's package name, plus this package's `compose`,
+`pin` and `standing` (whose `Standing` a caller reads and hands in). ⛔ No I/O,
+and nothing source-specific (R1).
 
 ## ⛔ An ignore rule goes inside the directory it is about
 
@@ -43,14 +45,17 @@ from collections.abc import Mapping, Sequence
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
+from studyforge.skills.adapter import plan_for
 from studyforge.skills.onboarding.compose import module
 from studyforge.skills.onboarding.pin import (
+    FRAMEWORK,
     PIN_DIR,
     PIN_FILE,
     RECORD_FILE,
     SKILLS,
     stub_paths,
 )
+from studyforge.skills.onboarding.standing import Standing
 
 #: The manifest's filename, re-exported so a reader of `onboard` does not have
 #: to know which module owns it.
@@ -159,19 +164,28 @@ def edits_test(manifest: Manifest) -> str:
     )
 
 
-def reader_document(manifest: Manifest, hand_written: Sequence[str] = ()) -> str:
-    """Return what a reader is told, read off this corpus's own declarations.
+def reader_document(
+    manifest: Manifest,
+    hand_written: Sequence[str] = (),
+    *,
+    commit: str,
+    standing: Standing | None = None,
+) -> str:
+    """Return what a reader is told: the declarations, where the corpus stands, how to run it.
 
-    ⚠️ **Composed line by line rather than filled into one markup blob** (R13),
-    and it says what is *not yet* knowable as plainly as what is: at onboarding
-    time nothing has been ingested, so a unit count printed here would be a
-    number somebody later discovers was invented.
+    ⚠️ **Composed line by line rather than filled into one markup blob** (R13).
+    ⛔ **Every figure comes from `standing`**, which `standing.standing_of` reads
+    through the build's own readers; with none, the document says the state was
+    not read rather than printing a number somebody later finds was invented.
+    ⛔ **Every fenced line runs as written** from a fresh clone beside the
+    framework at `commit` (R18 as amended), and a test executes each one.
     """
     lines = [
         f"# {manifest.title}",
         "",
         "This repository was onboarded by `studyforge`. Everything below is",
-        "generated from `corpus.json` — edit the manifest, not this file (R19).",
+        "generated from `corpus.json` and from what the build reads — edit the",
+        "manifest, not this file (R19).",
         "",
         "## What this corpus declares",
         "",
@@ -182,14 +196,92 @@ def reader_document(manifest: Manifest, hand_written: Sequence[str] = ()) -> str
         f"- graded practices: {'yes' if manifest.exercises else 'no'}",
         f"- media: {'committed to git' if manifest.media.commits else 'not committed'}",
         "",
-        "## What is not known yet",
+    ]
+    return "\n".join(
+        [
+            *lines,
+            *_stands(standing),
+            *_running(manifest, commit),
+            *_products(manifest),
+            *_yours(hand_written),
+            *_touches(manifest),
+        ]
+    )
+
+
+def _stands(standing: Standing | None) -> list[str]:
+    """Say where the corpus stands, from the build's own reading, or plainly why not."""
+    lines = ["## Where it stands", ""]
+    if standing is None:
+        return lines + [
+            "Not read: this document was generated without the corpus root, so",
+            "how many units there are, how many are narrated and whether any needs",
+            "a container are not stated here. Regenerating with the root states them.",
+            "",
+        ]
+    if standing.refused:
+        return lines + [
+            "Not known: the corpus could not be read the way a build reads it, so",
+            "none of its figures are stated. The build's refusal was:",
+            "",
+            f"> {' '.join(standing.refused.split())}",
+            "",
+        ]
+    if not standing.read:
+        return lines + [
+            "Nothing has been ingested: there is no archive yet, so how many units",
+            "there are, how many are narrated and whether any needs a container are",
+            "questions the archive and the narration record answer, not the manifest.",
+            "",
+        ]
+    units = standing.units
+    needing = units - standing.reading_only
+    return lines + [
+        "Read from the archive and the narration record, the way a build reads them:",
         "",
-        "Nothing has been ingested, so how many units this corpus has and how",
-        "many carry narration are questions the archive answers rather than the",
-        "manifest. Run the adapter, then `studyforge validate`.",
+        f"- units: {standing.declared} declared, {units} with material",
+        f"- narrated: {standing.narrated} of {units}"
+        + ("" if standing.recorded else " (there is no narration record yet)"),
+        f"- reading-only: {standing.reading_only} of {units}",
+        "- container: "
+        + (
+            f"needed, because {needing} unit(s) declare a graded practice"
+            if standing.container
+            else "none needed, because no unit declares a graded practice"
+        ),
         "",
     ]
-    return "\n".join([*lines, *_products(manifest), *_yours(hand_written), *_touches(manifest)])
+
+
+def _running(manifest: Manifest, commit: str) -> list[str]:
+    """Give the commands that run from a fresh clone beside the framework at `commit`."""
+    framework = f"../{FRAMEWORK}"
+    run = f"PYTHONPATH={framework}/src python3 -m"
+    return [
+        "## Running it from a fresh clone",
+        "",
+        "The framework is a sibling checkout, never a submodule and never installed: clone",
+        f"it beside this repository as `{framework}`, then run these from this repository's",
+        "root. They pin the framework, ingest with this corpus's adapter, check the",
+        "archive, and say what a build would write before building:",
+        "",
+        "```",
+        f"git -C {framework} checkout --detach {commit}",
+        f"{run} {plan_for(manifest).package} .",
+        f"{run} studyforge.cli validate .",
+        f"{run} studyforge.cli plan .",
+        f"{run} studyforge.cli build . --out .",
+        "```",
+        "",
+        "The adapter stamps today's date as `ingested`; pass a date after `.` to",
+        "reproduce an earlier archive byte for byte. Narration needs a running",
+        "narration service, so it is not run here; its options are:",
+        "",
+        "```",
+        f"{run} studyforge.cli narrate --help",
+        "```",
+        "",
+    ]
 
 
 def _products(manifest: Manifest) -> list[str]:

@@ -76,7 +76,7 @@ from studyforge.skills.onboarding.manifest import (
     promote,
     render,
 )
-from studyforge.skills.onboarding.onboard import Onboarding, onboard, uninstall
+from studyforge.skills.onboarding.onboard import Onboarding, onboard
 from studyforge.skills.onboarding.pin import (
     PIN_API,
     PIN_FILE,
@@ -90,6 +90,7 @@ from studyforge.skills.onboarding.pin import (
     stub_paths,
 )
 from studyforge.skills.onboarding.record import INSTALLED_API, OnboardingRefused, hand_edited
+from studyforge.skills.onboarding.removal import uninstall
 
 #: ⛔ The package's whole public surface.
 __all__ = [

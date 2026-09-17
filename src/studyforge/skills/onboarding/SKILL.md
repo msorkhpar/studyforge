@@ -93,7 +93,7 @@ a time has been given a guessing game.
 
 ```
 python3 -c "from studyforge.skills.onboarding import onboard; \
-  onboard(draft, framework_commit=commit).write('.')"
+  onboard(draft, framework_commit=commit, root='.').write('.')"
 ```
 
 ⛔ **It refuses rather than overwriting, and names every collision at once**
@@ -124,7 +124,7 @@ What lands, and why each one exists:
 | the adapter package and its suite | `SK-02`'s scaffold, wired in — seven generated files and one that is yours |
 | `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
 | `tests/` — two checks | R3's assertion with this corpus's declared edits baked in, and the pin-drift check |
-| `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations |
+| `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations — and, when `onboard` is given `root=`, where the corpus stands as a build reads it, with commands that run from a fresh clone (`W313`) |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 
 ### 4. Write the one file that is a person's
@@ -150,6 +150,11 @@ studyforge validate .
 
 ⭐ **Exit 0 is the whole agreement.** ⛔ Not a shape somebody agreed looked
 right — the same rule the adapter skill is written against.
+
+⛔ **Run step 3 again afterwards** (`W313`). `ONBOARDING.md` states how many
+units this corpus has, how many are narrated and whether any needs a container,
+read from the archive and the narration record at `root=`; before ingest it says
+so rather than printing a figure, and after ingest only a regeneration moves it.
 
 **Consumer-side modules:** `ingest`
 

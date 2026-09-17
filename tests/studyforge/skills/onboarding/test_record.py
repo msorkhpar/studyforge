@@ -18,7 +18,7 @@ import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.skills.adapter import PARTS, scaffold
-from studyforge.skills.onboarding.onboard import onboard, uninstall
+from studyforge.skills.onboarding.onboard import onboard
 from studyforge.skills.onboarding.pin import RECORD_FILE
 from studyforge.skills.onboarding.record import (
     INSTALLED_API,
@@ -26,6 +26,7 @@ from studyforge.skills.onboarding.record import (
     OnboardingRefused,
     hand_edited,
 )
+from studyforge.skills.onboarding.removal import uninstall
 from tests.studyforge.skills.onboarding import corpora
 
 
