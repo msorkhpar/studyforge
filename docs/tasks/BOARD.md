@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 14 merged at `16841dc`, now the pin: `ISO-05`, `ISO-07`–`ISO-11`, `ISO-14` taken; ⭐ **BOTH of its held clauses were DECIDED BY THE USER 2026-09-16** — `ISO-12` is TAKEN at ISO `509583f` — committed, never pushed, and `ISO-06`'s last clause (`W243/1`) resolves by VENDORING, carried by [`W295`](rows/W295.md) | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
+| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; ⭐ **ISO round 16 merged at `f2da5dc`, now the pin: `ISO-06` and `ISO-13` TAKEN**, `ISO-05`, `ISO-07`–`ISO-12`, `ISO-14` taken before it. ⛔ **`ISO-15` NOT taken, on the framework's reader document — [`W313`](rows/W313.md), placed on `M6`'s path**; `ISO-16`, `ISO-17` follow it ([103](BOARD-ARCHIVE.md#po-round-103)) | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -96,6 +96,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
+| 1 | `W313` | ⛔ **JUMPS every older `todo` row (Ruling 75): `M6` cannot close without it — `ISO-15` is refused on it, and its only planned home, `OPS-06`, is `M9`** | [103](BOARD-ARCHIVE.md#po-round-103) |
+| 2 | `W312` | ⛔ **JUMPS every older `todo` row (Ruling 75), `W221` included, of which it is the measured narrow instance: a full temp filesystem stopped every office's shell this wave** | [103](BOARD-ARCHIVE.md#po-round-103) |
+| 2 | `W314` | ⛔ **JUMPS every older `todo` row (Ruling 75): a spec §5 guarantee the first corpus's footprint row relies on is unenforced — after `W311`, which rewrites the measurement it reads** | [103](BOARD-ARCHIVE.md#po-round-103) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
@@ -459,6 +462,9 @@ else.**
 | W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | ✅ done — `da02903` | [`rows/W308.md`](rows/W308.md) |
 | W309 | A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for | framework agent | ✅ done — `52ff6bc` | [`rows/W309.md`](rows/W309.md) |
 | W311 | The media footprint weighs only the declared units' media directories, so a clip the narration record locates anywhere else is on disk, committed and never weighed | framework agent | in-progress — on `fix/W311-footprint-weighs-every-located-clip` | [`rows/W311.md`](rows/W311.md) |
+| W312 | The visual harness creates a browser profile under the system temp directory per launch and never removes it, so suite runs fill a quota-limited temp filesystem and every shell on the host stops working | framework agent | `todo` — `PO-103/1` | [`rows/W312.md`](rows/W312.md) |
+| W313 | The generated reader document is read from the manifest alone, so after ingest and narration it still says nothing has been ingested, and the one command it gives does not run as written | framework agent | `todo` — `INT-16/2` + `INT-16/3` | [`rows/W313.md`](rows/W313.md) |
+| W314 | A corpus whose measured media crosses its declared limits is reported EXCEEDS and planned and built with exit 0, where spec §5 says it stops and says so | framework agent | `todo` — `INT-16/4` | [`rows/W314.md`](rows/W314.md) |
 | W310 | The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently | framework agent | ✅ done — `870ee8f` | [`rows/W310.md`](rows/W310.md) |
 <!-- /register -->
 
@@ -540,7 +546,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⭐ **`ISO-12` TAKEN at ISO `509583f` on the user's 2026-09-16 ruling: its generated narration is committed and never pushed, and the repository's own verification exits `0`.** ⭐ **`ISO-13` unblocks.** ⛔ **`ISO-15` does NOT: its gate is `SK-07`'s reader documentation, and `ISO-12` was never its blocker** (`INT-15`'s correction). `ISO-06` partial (`W243/1`, carried by [`W295`](rows/W295.md)) ([89](BOARD-ARCHIVE.md#po-round-89)) |
+| **Status** | `in-progress` — ⭐ **round 16 merged at ISO `f2da5dc`, re-pinned to framework `0fce84a`: `ISO-06` TAKEN (the XML clause read on `W295`'s vendored grammar, [89](BOARD-ARCHIVE.md#po-round-89)'s held clause) and `ISO-13` TAKEN (the footprint measured by `plan` inside the limits).** ⛔ **`ISO-15` NOT taken: `INT-16/2` + `INT-16/3`, carried by [`W313`](rows/W313.md).** ⭐ [103](BOARD-ARCHIVE.md#po-round-103) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 
