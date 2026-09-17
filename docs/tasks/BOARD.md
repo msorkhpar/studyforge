@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W308` | Developer 2 | `fix/W308-merge-path-reads-authorship` @ `wt/dev2` | 1 @ `69a178d` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -77,7 +76,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W300`, `W303`, `W304` LEFT at `1d14e8a`, `544a165`, `fc176ae`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **They were [ratified](BOARD-ARCHIVE.md#po-round-92) in the round that named them, as the wave before them was [in round 91](BOARD-ARCHIVE.md#po-round-91).**
-⭐ **`W307` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-97); `W309` NAMED.** ⛔ **`W308` is SENT BACK: its gate would refuse this register's own merges.**
+⭐ **`W308` CLOSED, [ratified](BOARD-ARCHIVE.md#po-round-98); `W310` NAMED.** ⛔ **The merge path now refuses a merge whose commits CROSS OFFICES, and skips a person's own line before anything is counted.**
 
 <!-- offices -->
 | Checkout |
@@ -453,8 +452,9 @@ else.**
 | W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | ✅ done — `6ce9409` | [`rows/W305.md`](rows/W305.md) |
 | W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | ✅ done — `d3e36b5` | [`rows/W306.md`](rows/W306.md) |
 | W307 | The floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared | framework agent | ✅ done — `d65bc2d` | [`rows/W307.md`](rows/W307.md) |
-| W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | in-progress — on `fix/W308-merge-path-reads-authorship` | [`rows/W308.md`](rows/W308.md) |
+| W308 | No instrument reads authorship, so the provenance half of the shared-identity defect is unguarded | framework agent | ✅ done — `da02903` | [`rows/W308.md`](rows/W308.md) |
 | W309 | A check whose population or comparison set can be empty returns the same verdict as one that compared and found nothing, and only one arm has been answered for | framework agent | `todo` — `W307/3` | [`rows/W309.md`](rows/W309.md) |
+| W310 | The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently | framework agent | `todo` — `W308/4` | [`rows/W310.md`](rows/W310.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
