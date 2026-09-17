@@ -9,7 +9,8 @@ returns the exit code.
 cannot disagree about what the command does.
 
 **Depends on.** `generate.write_site` and its `RAISES`, `cli.site.report`,
-`validate.cli` for `UNUSABLE`, and `argparse`.
+`cli.plan` for the plan and the media measurement it takes, `corpus.media` for
+`require_committable`, `validate.cli` for `UNUSABLE`, and `argparse`.
 
 ## ⛔ `--out` is REQUIRED and has NO DEFAULT
 
@@ -23,11 +24,30 @@ form of "unanswered" a command can actually have.
 ⛔ **Exit codes are usable from a script** and mean one thing each: `0` the
 whole site was written, `1` a path was refused — something that is not this
 build's own output already existed and was left alone (R3), or the plan found
-a path two artifacts claim and nothing was written (`W254`) — `2` the tool
-could not run at all.
+a path two artifacts claim and nothing was written (`W254`), or the corpus's
+media crosses a limit `corpus.json` declares (`W314`) — `2` the tool could not
+run at all.
 ⚠️ The third is `validate`'s own, imported rather than respelled. ⭐ **A rebuild
 that replaced only its own previous answer exits `0`** — otherwise *edit a
 lesson, build again* would be a failure to every script that ran it.
+
+## ⛔ A crossed media limit stops the build and says so (`W314`, §5)
+
+⭐ **Asked twice, of the one measurement and the one verdict** — `plan_for`'s
+`MediaProjection.verdict`, stopped on by `corpus.media.require_committable`,
+whose report names the number, the limit and the ways forward:
+
+- **before anything is written**: media already on disk over a limit refuses
+  the build, and nothing is written;
+- **after the site is written**: a build into the corpus root copies media into
+  the units' directories, and those bytes are weighable only once they exist —
+  ⛔ predicting them would be a second measurement. So the build re-measures,
+  and a crossing exits `1` with the report. ⚠️ A build never commits; the
+  non-zero exit is the stop, and it lands before anything is committed.
+
+⛔ **`always` and `never` are never refused**: `verdict_for` weighs nothing for
+them. A reading that could not be taken after the build is said, and exits `1`,
+never silently passed.
 """
 
 from __future__ import annotations
@@ -35,12 +55,16 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from studyforge.cli.plan import plan_for
+from studyforge.cli.plan import MediaProjection, plan_for
 from studyforge.cli.site.report import exit_code, lines
+from studyforge.corpus.media import MediaError, require_committable
 from studyforge.generate import RAISES, write_site
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.paths import RULE_DUPLICATE_PATH
 from studyforge.validate.report import INVALID
+
+#: What a stopped build says it stopped on, before its consequence (`W314`).
+OVER = "the corpus's generated media is not committable under corpus.json's media policy"
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -79,7 +103,8 @@ def main(argv: list[str] | None = None, out=None) -> int:
         # the corpus root must not leave a directory tree behind to clean up.
         print(f"{arguments.root}: not a directory", file=stream)
         return UNUSABLE
-    claimed = [r for r in plan_for(root).refusals if r.rule == RULE_DUPLICATE_PATH]
+    plan = plan_for(root)
+    claimed = [r for r in plan.refusals if r.rule == RULE_DUPLICATE_PATH]
     if claimed:
         # ⛔ `W254`, clause 3: refused from the plan BEFORE anything is written,
         # naming both claimants, never resolved by whichever is written last.
@@ -90,6 +115,11 @@ def main(argv: list[str] | None = None, out=None) -> int:
             f"so nothing was written",
             file=stream,
         )
+        return INVALID
+    crossed = media_stop(plan.media, measured=False)
+    if crossed:
+        print(crossed, file=stream)
+        print(f"build refused: {OVER}, so nothing was written", file=stream)
         return INVALID
     try:
         written = write_site(root, Path(arguments.out))
@@ -103,4 +133,30 @@ def main(argv: list[str] | None = None, out=None) -> int:
         return UNUSABLE
     for line in lines(written, arguments.root, arguments.out):
         print(line, file=stream)
+    crossed = media_stop(plan_for(root).media, measured=True)
+    if crossed:
+        print(crossed, file=stream)
+        print(f"build stopped: after this build, {OVER}; commit nothing yet", file=stream)
+        return INVALID
     return exit_code(written)
+
+
+
+def media_stop(media: MediaProjection | None, *, measured: bool) -> str:
+    """Return the report a build stops on, or an empty string when the media is committable.
+
+    ⛔ **The verdict is `corpus.media`'s, asked through the plan**, never re-derived.
+    `measured` says whether a reading that could not be taken is a stop: before a
+    build it is not — the build's own reader refuses the same record with its own
+    exit code — and after one it is, because nothing may pass unweighed.
+    """
+    if media is None:
+        return ""
+    verdict = media.verdict
+    if verdict is None:
+        return f"media footprint  not measured — {media.unmeasured}" if measured else ""
+    try:
+        require_committable(verdict)
+    except MediaError as refusal:
+        return str(refusal)
+    return ""

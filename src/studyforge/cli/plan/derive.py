@@ -22,10 +22,12 @@ the paths, never among them.
 
 ## ⛔ The footprint is MEASURED, never guessed (`W287`)
 
-⭐ For a policy that weighs its media, the declared units' media directories are
-weighed by `corpus.media.measure`, the one measurement a commit decision rests
-on, which stats files and opens none. ⛔ A reading that is refused is said, with
-its reason, rather than printed as zero.
+⭐ For a policy that weighs its media, the declared units' media directories and
+every clip the narration record locates are weighed by `corpus.media.measure`,
+the one measurement a commit decision rests on, which stats files and opens
+none. ⛔ A reading that is refused is said, with its reason, rather than printed
+as zero. ⛔ **A limit the reading crosses is a refusal** (`W314`, §5 *stops and
+says so*), asked of `corpus.media.verdict_for` through `MediaProjection`.
 
 ## ⛔ A path on disk is never a `create` (`W267`)
 
@@ -58,7 +60,8 @@ from dataclasses import replace
 from pathlib import Path
 
 from studyforge.cli.plan.recorded import Recorded, read_record
-from studyforge.cli.plan.report import Creation, MediaProjection, Plan, Refusal
+from studyforge.cli.plan.media import MediaProjection
+from studyforge.cli.plan.report import Creation, Plan, Refusal
 from studyforge.corpus.container import CONTAINER_FILENAME, Container
 from studyforge.corpus.container import RAISES as CONTAINER_RAISES
 from studyforge.corpus.container import parse as parse_container
@@ -116,6 +119,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     measured, unmeasured = _measured(root, manifest, placed)
     units = sum(len(container.units) for _, container in held)
     media = MediaProjection(manifest.media, units, bytes_per_unit, measured, unmeasured)
+    refusals += [Refusal(MANIFEST_FILENAME, said) for said in media.crossed()]
     named = {creation.path for creation in creations}
     ignore = _ignore_file(profile, media, refusals)
     return Plan(
@@ -137,7 +141,7 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
 def _measured(
     root: Path, manifest: Manifest, placed: list[UnitLocations]
 ) -> tuple[MediaFootprint | None, str]:
-    """Weigh the declared units' media on disk, or say why not. ⛔ Nothing raises.
+    """Weigh the corpus's generated media on disk, or say why not. ⛔ Nothing raises.
 
     ⭐ Only for a policy that weighs its media: `always` and `never` are decisions
     already taken, and `corpus.media.verdict_for` walks no disk for them either.

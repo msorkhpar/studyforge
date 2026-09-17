@@ -138,3 +138,46 @@ def test_the_plan_says_which_profile_it_used_and_what_that_profile_does():
 def test_the_rate_reaches_the_projection_through_the_command_line():
     _, printed = invoke(str(FIXTURES / "depth2"), "--bytes-per-unit", "1")
     assert "media footprint  fits" in printed
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W314` — a crossed limit reaches the exit code, through `main`
+# --------------------------------------------------------------------------
+
+
+def a_corpus_with_clips(tmp_path, sizes, **limits):
+    """A depth1 copy declaring `limits`, with clips of `sizes` bytes in its first unit."""
+    import json
+    import shutil
+
+    from studyforge.corpus.manifest import MANIFEST_FILENAME
+    from studyforge.corpus.placement import AUDIO_DIRNAME
+    from studyforge.generate import read_corpus, unit_location
+
+    root = tmp_path / "corpus"
+    shutil.copytree(FIXTURES / "depth1", root)
+    manifest = json.loads((root / MANIFEST_FILENAME).read_text("utf-8"))
+    manifest["media"] = {"commit": "auto", **limits}
+    (root / MANIFEST_FILENAME).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    corpus = read_corpus(root)
+    audio = root / str(unit_location(corpus, corpus.units[0]).media_dir(AUDIO_DIRNAME))
+    audio.mkdir(parents=True)
+    for n, size in enumerate(sizes):
+        (audio / f"clip-{n}.mp3").write_bytes(b"x" * size)
+    return root
+
+
+def test_W314_a_corpus_over_a_limit_exits_one_and_names_the_number_and_the_limit(tmp_path):
+    root = a_corpus_with_clips(tmp_path, (10, 20, 30), max_total_bytes=50, max_file_bytes=100)
+    code, printed = invoke(str(root))
+    assert code == INVALID
+    assert "media footprint  EXCEEDS" in printed
+    assert "max_total_bytes crossed: 60 byte(s) against a limit of 50" in printed
+    assert printed.rstrip().endswith("1 refusal(s)")
+
+
+def test_W314_a_corpus_inside_its_limits_still_exits_zero(tmp_path):
+    root = a_corpus_with_clips(tmp_path, (10, 20, 30), max_total_bytes=500, max_file_bytes=100)
+    code, printed = invoke(str(root))
+    assert code == OK
+    assert "media footprint  fits" in printed

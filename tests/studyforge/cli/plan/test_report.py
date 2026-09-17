@@ -11,19 +11,15 @@ from pathlib import PurePosixPath
 
 import pytest
 
+from studyforge.cli.plan.media import MediaProjection
 from studyforge.cli.plan.report import (
-    NOTHING_ON_DISK,
-    UNPROJECTED,
     Creation,
-    MediaProjection,
     Plan,
     Refusal,
     SupersededClip,
     edit_lines,
 )
-from studyforge.corpus.manifest import DEFAULT_MEDIA, MediaPolicy, PermittedEdit
-from studyforge.corpus.media import MediaFile, MediaFootprint
-from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
+from studyforge.corpus.manifest import DEFAULT_MEDIA, PermittedEdit
 from studyforge.validate.report import INVALID, OK
 
 EDIT = PermittedEdit(
@@ -119,108 +115,6 @@ def test_the_undo_line_reproduces_the_line_being_removed():
     # Finding `SF-31/1`; asserted here so a later fix cannot silently
     # re-introduce the unreadable form.
     assert "a str" not in edit_lines(EDIT)[3]
-
-
-# --------------------------------------------------------------------------
-# ⛔ the media projection, and whether it fits
-# --------------------------------------------------------------------------
-
-
-def test_with_no_rate_the_footprint_says_it_is_unprojected_and_why():
-    lines = MediaProjection(DEFAULT_MEDIA, 5).lines()
-    assert any(UNPROJECTED in line for line in lines)
-
-
-#: A task or milestone id, as `W287` found one printed as a future owner.
-TASK_ID = re.compile(r"\b(?:[A-Z]{1,4}-\d+|M\d+)\b")
-
-
-def weighing(*sizes: int) -> MediaFootprint:
-    """A measured footprint of `sizes`, as `corpus.media.measure` would return one."""
-    return MediaFootprint(
-        tuple(MediaFile(PurePosixPath(f"u/audio/c{n}.mp3"), size) for n, size in enumerate(sizes))
-    )
-
-
-def test_W287_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement():
-    # ⛔ `INT-14/4`: the sentence named a closed task as future on a corpus with
-    # clips on disk. Every form the line can take is read, not only the constant.
-    policy = MediaPolicy("auto", 50, 25)
-    projections = (
-        MediaProjection(policy, 5),
-        MediaProjection(policy, 5, measured=weighing()),
-        MediaProjection(policy, 5, measured=weighing(10)),
-        MediaProjection(policy, 5, measured=weighing(40, 40)),
-        MediaProjection(policy, 5, bytes_per_unit=1, measured=weighing(10)),
-        MediaProjection(policy, 5, unmeasured="the corpus root is not a directory"),
-    )
-    said = [line for p in projections for line in p.lines() if line.startswith("media footprint")]
-    assert len(said) == len(projections) + 1
-    assert [line for line in said if TASK_ID.search(line)] == []
-    assert not TASK_ID.search(UNPROJECTED) and not TASK_ID.search(NOTHING_ON_DISK)
-
-
-def test_W287_a_measurement_is_printed_with_its_verdict_in_both_directions():
-    policy = MediaPolicy("auto", 50, 25)
-    fits = MediaProjection(policy, 1, measured=weighing(10, 20)).lines()[-1]
-    exceeds = MediaProjection(policy, 1, measured=weighing(10, 30, 20)).lines()[-1]
-    empty = MediaProjection(policy, 1, measured=weighing()).lines()[-1]
-    assert fits.startswith("media footprint  fits — measured 30 byte(s) in 2 file(s)")
-    assert exceeds.startswith("media footprint  EXCEEDS — measured 60 byte(s) in 3 file(s)")
-    assert "max_total_bytes crossed" in exceeds and "u/audio/c1.mp3" in exceeds
-    assert empty.endswith(
-        f"measured — 0 byte(s) in 0 file(s) on disk under the declared "
-        f"units' media directories; {NOTHING_ON_DISK}"
-    )
-
-
-def test_W287_a_refused_reading_says_why_and_is_never_printed_as_zero():
-    line = MediaProjection(DEFAULT_MEDIA, 1, unmeasured="no root").lines()[-1]
-    assert line == "media footprint  not measured — no root"
-
-
-def test_a_rate_that_fits_says_so_with_both_numbers():
-    projection = MediaProjection(MediaPolicy("auto", 1000, 100), units=4, bytes_per_unit=200)
-    footprint = [line for line in projection.lines() if line.startswith("media footprint")][0]
-    assert projection.total == 800
-    assert "fits" in footprint and "800" in footprint and "1000" in footprint
-
-
-def test_a_rate_that_does_not_fit_names_the_number_and_the_limit_it_crossed():
-    projection = MediaProjection(MediaPolicy("auto", 1000, 100), units=4, bytes_per_unit=400)
-    footprint = [line for line in projection.lines() if line.startswith("media footprint")][0]
-    assert "EXCEEDS max_total_bytes" in footprint
-    assert "1600" in footprint and "1000" in footprint
-
-
-def test_the_unit_count_is_reported_even_when_the_footprint_is_not():
-    # ⭐ "Will this corpus's audio fit in git?" has a knowable half before the
-    # gigabytes exist, and it is printed rather than withheld with the rest.
-    lines = MediaProjection(DEFAULT_MEDIA, 17).lines()
-    assert any(line.startswith("media units 17") for line in lines)
-
-
-def test_the_media_kinds_come_from_placements_own_tuple():
-    # ⛔ Never retyped: a fifth kind must not leave this sentence listing four.
-    units = [line for line in MediaProjection(DEFAULT_MEDIA, 1).lines() if "units" in line][0]
-    for kind in UNIT_MEDIA_DIRNAMES:
-        assert kind in units
-
-
-@pytest.mark.parametrize("commit", ["always", "never"])
-def test_only_auto_consults_the_limits_and_the_others_say_so(commit):
-    lines = MediaProjection(MediaPolicy(commit, 1, 1), 3).lines()
-    assert any("not consulted" in line for line in lines)
-    assert not any(line.startswith("media limit ") for line in lines)
-
-
-def test_media_is_ignored_only_when_the_policy_does_not_commit_it():
-    # ⛔ Generated media is committed by DEFAULT (§5). A framework that ignored
-    # a corpus's narration by reflex produces clones that are silent with no
-    # error, which is the outcome the whole policy exists to refuse.
-    assert MediaProjection(DEFAULT_MEDIA, 1).ignored is False
-    assert MediaProjection(MediaPolicy("always", 1, 1), 1).ignored is False
-    assert MediaProjection(MediaPolicy("never", 1, 1), 1).ignored is True
 
 
 # --------------------------------------------------------------------------
@@ -329,8 +223,3 @@ def test_the_summary_counts_each_verb_it_printed():
     )
     summary = a_plan(creations=creations).summary()
     assert "1 path(s) to create, 1 to replace, 1 to keep, 1 claimed, 1 expected" in summary
-
-
-def test_the_media_units_line_says_a_directory_is_made_only_when_filled():
-    units = [line for line in MediaProjection(DEFAULT_MEDIA, 1).lines() if "units" in line][0]
-    assert "made only when a build copies a file into it" in units
