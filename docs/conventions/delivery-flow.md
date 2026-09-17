@@ -11,7 +11,7 @@ board, and the channel between the two product owners.
 |---|---|
 | **PO-Framework** | task assignment, priority, task modification, status truth, `../tasks/BOARD.md` |
 | **CTO** | ⛔ **STOOD DOWN — a USER DECISION. There is no reviewing office.** ⭐ Its technical rulings STAND, in `review-rubric.md` and in the frozen records; ⚠️ nothing is reviewed by it any more |
-| **Developer** | one task at a time, on one branch — ⛔ **and CERTIFIES it: floor and suite green at the ref that merges** |
+| **Developer** | one task at a time, on one branch — ⛔ **and CERTIFIES it: every declared gate green at the ref that merges, read by ONE command** |
 | **Coordinator** | opens waves, dispatches rows, merges them, and takes the **release-tip measurement** afterwards |
 | **PO-Integration** | one corpus repository, and the findings it produces |
 
@@ -102,10 +102,13 @@ pasted command output in a review.
 
 ⛔ **Nothing merges to a release branch uncertified, and the office that did the
 work is the office that certifies it** — capability rows and tooling rows alike.
-⭐ **The FLOOR and the SUITE are the gates**, both green **at the ref that will
-merge**, each reading carrying **ref + checkout ROLE + ENVIRONMENT**, and the
-expectation written **before** the command. ⚠️ **Then the coordinator's
-release-tip measurement, after the merge.**
+⭐ **EVERY DECLARED GATE is green at the ref that will merge — read by ONE
+command with ONE exit code**, each reading carrying **ref + checkout ROLE +
+ENVIRONMENT**, and the expectation written **before** the command. ⛔ **WHICH
+gates those are is not enumerated here** (`W191`): a list written in prose is
+one an office can satisfy by halves, and the floor can exit `0` while the suite
+does not at one ref (Ruling 78). ⚠️ **Then the coordinator's release-tip
+measurement, after the merge.**
 
 ⛔ **SELF-CERTIFIED IS NOT A LOWER BAR; IT IS THE SAME BAR SIGNED BY A DIFFERENT
 OFFICE.** ⭐ **The runnable form is in
@@ -220,7 +223,7 @@ now has TWO outcomes and neither is a verdict string:**
 
 | outcome | what it means | who says it |
 |---|---|---|
-| ⭐ **certified** | ⛔ floor and suite **green at the ref that will merge**, both readings quoted with ref + ROLE + ENVIRONMENT | ⭐ the office that did the work |
+| ⭐ **certified** | ⛔ **every declared gate green at the ref that will merge**, the certification block quoted WHOLE, with ref + ROLE + ENVIRONMENT | ⭐ the office that did the work |
 | ⛔ **not certified** | ⛔ either gate is red, or a reading is missing, or it was taken at another ref | ⭐ the same office, saying so |
 
 ⚠️ **What the vocabulary meant, retained because the merges in the record carry
@@ -257,8 +260,8 @@ lines under it.** ⭐ **`board.md` is that sentence with a check behind it.**
 - **Transitions:** `todo` → `in-progress` when assigned and started ·
   → `in-review` when the developer presents the package above with their
   certification ·
-  → `done` **only** on the owning office's **certification** — floor and suite
-  green at the ref that merges — **and** the merge to the release branch ·
+  → `done` **only** on the owning office's **certification** — every declared
+  gate green at the ref that merges — **and** the merge to the release branch ·
   → `blocked` at any time, and a `blocked` row must name a **precise unblocking
   condition**, not a symptom.
 - ⛔ **`done` never means "the code is written".** It means reviewed, merged, and

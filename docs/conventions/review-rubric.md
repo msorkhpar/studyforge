@@ -36,45 +36,54 @@ DECISIONS, recorded here as the standard, and nothing derives them.**
 
 ⛔ **A USER DECISION, in force for every row: capability and tooling alike.**
 ⭐ **There is no CTO reviewer, no verdict bracket, no dispositions round and no
-accumulator run.** ⚠️ **The office that did the work certifies it, and the
-FLOOR and the SUITE are the gates.**
+accumulator run.** ⚠️ **The office that did the work certifies it, and the gates
+are EVERY ONE `tools.mergegate.GATES` declares — read by ONE command, so the set
+is never recited from memory.**
 
 | what a row merges on | who produces it |
 |---|---|
-| ⛔ **the floor green at the ref that will merge** | ⭐ the office that did the work |
-| ⛔ **the suite green at that same ref** | ⭐ the office that did the work |
+| ⛔ **EVERY DECLARED GATE green at the ref that will merge — ONE command, ONE exit code** | ⭐ the office that did the work |
 | ⭐ **the coordinator's release-tip measurement** | ⭐ the coordinator, after the merge |
 
+⛔ **THE TWO ROWS THAT STOOD HERE WERE A LIST, AND A LIST IS SATISFIABLE BY
+HALVES** (`W191`). ⚠️ **The floor can exit `0` while the suite exits non-zero at
+one ref** — format and lint enforcement live in the suite (Ruling 78) — ⛔ **so
+an office that ran the floor, read `0` and inferred the rest satisfied the WORDS
+*floor + suite green*, which since the reviewing office went IS the merge
+condition.** ⭐ **One command with one exit code has no half to read**, and the
+gates it runs are `tools.mergegate.GATES` — the declaration the merge itself
+re-runs on the merged tree — so the office and the coordinator can no longer
+name different populations.
+
 ⛔ **SELF-CERTIFIED IS NOT A LOWER BAR. IT IS THE SAME BAR, SIGNED BY A
-DIFFERENT OFFICE.** ⚠️ Both readings are taken **at the ref that will merge**,
+DIFFERENT OFFICE.** ⚠️ Every reading is taken **at the ref that will merge**,
 each carries **ref + checkout ROLE + ENVIRONMENT**
 ([Ruling 238](#ruling-238-cto-round-55-ruling-147-gains-the-clause-a-reading-names-its-environment-by-that-environments-own-pins-never-by-an-image-tag-and-never-by-an-image-id),
 [Ruling 326](#ruling-326-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it)),
 and **the expectation is written BEFORE the command**. ⭐ **What is dropped is a
 second office's round trip. No reading is dropped, and no section below is.**
 
-⭐ **THE OBLIGED ARTIFACT** (Ruling 160's (b)): the row's handoff carries both
-readings **in the author's own name**, so the coordinator's release-tip
-measurement CHECKS a stated claim rather than being the only reading anyone
-took. ⛔ **This block is what a handoff pastes, and it is a command so that no
-part of the claim comes from memory:**
+⭐ **THE OBLIGED ARTIFACT** (Ruling 160's (b)): the row's record carries the
+certification block **whole, in the author's own name**, so the coordinator's
+release-tip measurement CHECKS a stated claim rather than being the only reading
+anyone took. ⛔ **This is what a record pastes, and it is ONE command so that no
+part of the claim comes from memory and no part of it can be left out:**
 
 ```bash
-# ⛔ RUN AT THE REF THAT WILL MERGE, from your own checkout, in the pinned
-#    image. Write the expectation ABOVE the block before you run it.
+# ⛔ RUN AT THE REF THAT WILL MERGE, from your own checkout, ON THE HOST — it
+#    starts the pinned image itself, per gate. Write the expectation ABOVE the
+#    block before you run it.
 # ⛔ Ruling 241's FORM: the output goes to a FILE and `$?` is read on the NEXT
 #    line with NOTHING in between, so no pipeline eats the exit code.
-git rev-parse HEAD; git status --porcelain | head    # the REF, and it is clean
-git rev-parse --git-common-dir                       # the ROLE: which checkout
-# ⛔ `W301`: EACH GATE NAMES ITS OWN COMMAND. A BARE `docker/dev/check` runs the
-#    image's own `CMD` — `python3 -m pytest` — so a bare call redirected into
-#    `floor.txt` is the SUITE filed under the FLOOR's name, and it still exits 0.
-./docker/dev/check python3 -m tools.quality > "$CAP/floor.txt" 2>&1
-FLOOR_EXIT=$?
-{ ./docker/dev/check python3 -m pytest -ra > "$CAP/suite.txt" 2>&1; } ; SUITE_EXIT=$?
-# ⛔ The record is composed AFTER these files exist and is READ FROM THEM.
-grep -H -E 'passed|failed|error|skipped' "$CAP/suite.txt" | tail -3
-echo "FLOOR_EXIT=$FLOOR_EXIT SUITE_EXIT=$SUITE_EXIT"
+# ⛔ EACH GATE STILL NAMES ITS OWN COMMAND (`W301`) — and the commands are no
+#    longer TYPED HERE, which is why that defect cannot come back: they are read
+#    from `tools.mergegate.GATES`, the list the merge gate itself runs.
+python3 -m tools.quality.certify > "$CAP/certification.txt" 2>&1
+CERTIFY_EXIT=$?
+# ⛔ The record is composed AFTER this file exists and is READ FROM IT — and the
+#    block is pasted UNEDITED, because the checker below reads its own grammar.
+cat "$CAP/certification.txt"
+python3 -m tools.quality.certify --check "$CAP/certification.txt"
 ```
 
 ⛔ **THE SCOPE OF THE READINGS THIS BLOCK ALREADY CORRUPTED — STATED, NOT
@@ -90,12 +99,28 @@ before this edit is NOT evidence the floor ran**, and any floor claim that still
 matters is RE-TAKEN at the current ref with the named command above.
 ⚠️ **The suite line moved too** — it read `./docker/dev/check pytest -ra`, and
 `python3 -m pytest` is the form the wrapper's own header documents.
+⭐ **And `W191` removed the class rather than the instance: no gate's command is
+typed into this document at all now**, so the next respelling of one cannot
+happen here.
 
-⛔ **Pass = `FLOOR_EXIT=0` and `SUITE_EXIT=0`, both quoted with the ref, the
-role and the environment's own PINS** (never an image tag, never an image id —
-[Ruling 290](#ruling-290-ruling-238d-gains-the-clause-the-image-is-held-constant-by-pins-in-the-same-invocation-and-an-image-id-can-never-discharge-it)).
-⚠️ **A killed run is not a reading.** ⭐ **A red gate stops the merge; there is
-no office left to appeal to, which is the point.**
+⛔ **Pass = `CERTIFY_EXIT=0` and the block quoted whole**, carrying the ref, the
+role and a line per declared gate naming ITS OWN environment
+([Ruling 326](#ruling-326-a-reading-is-quoted-with-its-environment-or-it-is-not-a-measurement-and-green-names-the-environment-that-produced-it)),
+whose pins are `docker/dev/`'s and never an image tag or an image id
+([Ruling 290](#ruling-290-ruling-238d-gains-the-clause-the-image-is-held-constant-by-pins-in-the-same-invocation-and-an-image-id-can-never-discharge-it)).
+⚠️ **A killed run is not a reading**, and `⛔ UNREAD` — exit `2` — is never a
+pass (Ruling 191). ⭐ **A red gate stops the merge; there is no office left to
+appeal to, which is the point.**
+
+⛔ **WHAT `--check` READS, AND WHAT NO INSTRUMENT CAN** (`W191`, stated rather
+than implied). ⭐ **It reads whether the claim is WHOLE**: every declared gate
+present, each green, with the ref — so a record that ran one gate and claimed
+both is caught, because the block it would have to paste is one it cannot
+produce. ⛔ **It CANNOT read that a command was run.** ⚠️ **The instrument that
+catches a FABRICATED line is `tools.mergegate`**, which re-runs this same
+declaration on the merged tree and refuses the merge — ⭐ **and the cost, named
+because it is real, is that this catch lands at merge time on the coordinator's
+clock rather than at the claim.**
 
 ### ⛔ RUN EVERY GATE. STOP TRANSCRIBING READINGS INTO PROSE. (a USER DECISION)
 
@@ -190,7 +215,7 @@ the authority — the section is.**
 | **8** | ⛔ The **HANDOFF** exists and is in format; **structural findings routed**, one **disposition** per finding | [§8](#8-the-handoff-exists-and-is-in-the-right-format) | ⭐ the counter's pass condition is met |
 | **9** | ⛔ The task's **ACCEPTANCE** was actually **run**, clause by clause | [§9](#9-the-tasks-acceptance-conditions-were-actually-run) | ⭐ a decomposition, never a total |
 | **10** | ⛔ **SCOPE** — build configuration is behaviour; a distant test felt an import change | [§10](#10-scope) | ⭐ an out-of-`Owns` test edit meets Ruling 143's three |
-| **C** | ⛔ **CERTIFY**: paste both readings, at the ref that will merge, and say what you MOVED versus what you WROTE | [the block above](#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified) | ⭐ `FLOOR_EXIT=0`, `SUITE_EXIT=0`, each with ref + ROLE + ENVIRONMENT |
+| **C** | ⛔ **CERTIFY**: run the ONE command at the ref that will merge, paste its block whole, and say what you MOVED versus what you WROTE | [the block above](#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified) | ⭐ `CERTIFY_EXIT=0`, every declared gate on its own line with ref + ROLE + ENVIRONMENT |
 
 ⛔ **WHICH ROWS HAVE A POPULATION, AND WHAT MOVED VERSUS WHAT WAS WRITTEN** —
 ⭐ a self-certifying office owes both, and neither may come from memory:
