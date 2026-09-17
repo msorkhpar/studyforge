@@ -26208,3 +26208,25 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 99
 
 ⭐ **Merged at `870ee8f`.** ⛔ **The reserved-address vocabulary is ONE list, held by a module that imports NOTHING and read by two policies that never meet** — ⚠️ **and the merge path importing neither the framework nor the floor is now ASSERTED by a named test with a control, rather than remembered.**
+
+## PO round 100
+
+⛔ **Only what is MEASURED is written here.** ⭐ **No row closes and none is minted.**
+
+### ⭐ THE USER RETIRED A STANDING DECISION, AND THE ROUND CARRIES OUT THEIR TERMS EXACTLY
+
+⭐ **Direction, 2026-09-17: *track `ONBOARDING.md` after removing the retired-tool line and the usage profile*.** ⛔ **This overrides [the 2026-09-09 ruling](#onboardingmd-ruled-it-does-not-enter-the-repository), which stays standing as the record; the board's cell is RETIRED IN PLACE.**
+
+⭐ **REMOVED:** the whole *How We Use Claude* section — one person's work-type percentages, top commands and MCP servers over a scanned window — and the *Skills to Know About* section, whose one entry taught the retired code-graph tool as the project standard. ⚠️ **Two sentences of the embedded instruction block referred ONLY to that removed profile (*"list all the work types"*, *"the stats are … personal usage data"*) and to the removed section (*"including skills"*); they went with it, because a reference to removed content is not content.** ⛔ **Nothing else was edited.** ⭐ **Afterwards the document names no code-graph tool and carries no usage figure — grep for both reads nothing.**
+
+### ⛔ `PO-100/1` — WHAT STAYS FALSE IN THE TRACKED DOCUMENT, ROUTED TO THE USER AND NOT CORRECTED
+
+⚠️ **The 2026-09-09 ruling named three false statements and one disqualifier, and the user's direction addressed none of them, so this register did not either:** *"nothing implemented yet"*; *"composes them as submodules"* (R18 as amended — no submodules); *"Ask a teammate for clone URLs"* (nothing is pushed anywhere); and ⛔ **the embedded `<!-- INSTRUCTION FOR CLAUDE -->` block, now at the repository root, addressed to agents and authored by nobody here.** ⭐ **Routed to the user as a decision, because the file is tracked on their terms.**
+
+### ⛔ `PO-100/2` — TRACKING THE FILE TURNED THE FLOOR RED ON A HANDOFF THAT NEVER MEANT IT
+
+⭐ **Measured on the round branch with the file staged: `check_handoffs`'s bare-citation arm fired twice on `W249`'s handoff.** ⚠️ **The arm resolves a bare name from the ROOT (Ruling 285(b)), and `W249` wrote `ONBOARDING.md` meaning the reader document the onboarding skill GENERATES INSIDE A CORPUS — `artifacts.READER_DOC` — not this repository's file.** ⛔ **Linking it would have written a false pointer.** ⭐ **Repaired by naming the constant it meant, which is a symbol and not a document citation; `W249`'s handoff is absent from `CITATION_PIN`, so it is a record the arm binds and an edit may repair.** ⚠️ **No row: the resolver did what its ruling says — a bare name that resolves IS a finding, and the repair is the office's wording.**
+
+### ⭐ IN FLIGHT
+
+⭐ **`W309` dispatched at `ca53edc` to Developer 1, the user's first item this wave; the ISO milestone follows its close.**
