@@ -51,6 +51,7 @@ def test_both_checks_are_reachable_through_the_package():
     for name in (
         "CHECKS",
         "check_archive_members",
+        "check_declared_files",
         "check_unclassified",
         "check_completeness",
         "source_files",
@@ -62,9 +63,12 @@ def test_the_checks_run_in_the_order_the_report_reads_best():
     # ⛔ The order, not the membership: what the files *are* is reported before
     # what one of them *contains*, and `validate.run` splices this tuple in as
     # it stands.
-    # ⭐ The archive root first (`W248`): a stray there is not material beside it.
+    # ⭐ The archive root first (`W248`): a stray there is not material beside it,
+    # and what the archive DECLARES and does not hold is the same question from
+    # the other end (`W214`), so the two sit together and before the material.
     assert source.CHECKS == (
         source.check_archive_members,
+        source.check_declared_files,
         source.check_unclassified,
         source.check_completeness,
     )

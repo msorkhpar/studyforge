@@ -20,7 +20,7 @@ to name is no longer the only place the rule could be broken.
 | `classification` | ⭐ what the corpus says its files **are** — material, output, or neither |
 | `enumeration` | ⭐ what the corpus root **holds**, which `classification` judges (`W280`) |
 | `completeness` | ⭐ what one file **contains**, counted without the parser that read it |
-| `membership` | ⭐ what sits beneath the archive root, which `classification` skips (`W248`) |
+| `membership` | ⭐ what the archive root holds, and what the archive declares and does not hold |
 
 ## ⛔ Why the seam is here, and it was measured rather than chosen
 
@@ -80,15 +80,23 @@ from studyforge.validate.source.enumeration import (
 )
 from studyforge.validate.source.membership import (
     RULE_ARCHIVE_STRAY,
+    RULE_MEDIA_MISSING,
     archive_members,
     check_archive_members,
+    check_declared_files,
 )
 
-#: The three checks, in the order a report reads best — what the archive root
-#: holds, then what the files beside it **are**, then what one **contains**.
+#: The four checks, in the order a report reads best — what the archive root
+#: holds, then what the archive SAYS it holds and does not, then what the files
+#: beside it **are**, then what one **contains**.
 #: ⛔ `validate.run` splices this tuple into its own, so the order here is the
 #: order in the report.
-CHECKS = (check_archive_members, check_unclassified, check_completeness)
+CHECKS = (
+    check_archive_members,
+    check_declared_files,
+    check_unclassified,
+    check_completeness,
+)
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.validate.source.completeness` directly is a consumer this
@@ -105,6 +113,7 @@ __all__ = [
     "RULE_CONTESTED",
     "RULE_IGNORE_DECLARATION",
     "RULE_INCLUDED_UNREAD",
+    "RULE_MEDIA_MISSING",
     "RULE_NESTED_REPOSITORY",
     "RULE_ORIGIN_MISSING",
     "RULE_SECTION_AMBIGUOUS",
@@ -116,6 +125,7 @@ __all__ = [
     "archive_members",
     "check_archive_members",
     "check_completeness",
+    "check_declared_files",
     "check_unclassified",
     "repository_ignores",
     "source_files",
