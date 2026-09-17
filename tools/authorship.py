@@ -11,13 +11,18 @@ Ruling 345's clause 5 — prove absence with a null check, never by printing the
 `author_is_placeholder(line)` is the predicate that says whether a line is an OFFICE's —
 the ONE function here that ever sees a value. `tools.mergegate` is the only caller.
 
-**Depends on.** `dataclasses`, `pathlib` and `subprocess` — the standard library — and
-`git` on the path. ⛔ It imports neither `studyforge` nor `tools.quality`, for the reason
-`tools/mergegate.py` gives: a tree too broken to import must still be one whose merge is
-REFUSED rather than one that crashes the gate. ⚠️ `tools.quality.personal_data.shapes`
-holds this repository's other reserved-address pattern and is deliberately NOT imported —
-that is a FLOOR package, and importing it would put the floor on the merge path's import
-graph. ⭐ The duplication is named in `docs/tasks/handoffs/W308.md` rather than hidden.
+**Depends on.** `dataclasses`, `pathlib` and `subprocess` — the standard library — `git` on
+the path, and `tools.reserved_addresses` for WHICH addresses identify nobody. ⛔ It imports
+neither `studyforge` nor `tools.quality`, for the reason `tools/mergegate.py` gives: a tree
+too broken to import must still be one whose merge is REFUSED rather than one that crashes
+the gate. ⚠️ `tools.quality.personal_data.shapes` exempts the SAME addresses from R7's shape
+arm and is still deliberately NOT imported — that is a FLOOR package, and importing it would
+put the floor on the merge path's import graph.
+
+⭐ **`W310` closed that duplication from the other side.** Both readers now take ONE
+vocabulary from a module that reads NEITHER of them, so the list is shared while the two
+verdicts stay apart: this file counts OFFICES, the floor exempts a SHAPE. ⛔ A change that
+made either accept what the other accepts would be that row built wrong.
 
 ## ⛔ THE RULE IS *ONE OFFICE PER MERGE*, AND NOT *EVERY LINE IS A PLACEHOLDER*
 
@@ -75,12 +80,7 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
-#: Addresses that are unreachable BY CONSTRUCTION and therefore identify nobody: RFC 6761's
-#: reserved TLDs and RFC 2606's documentation domains. ⭐ An address of this shape is an
-#: OFFICE's; anything else is a person's, and a person's line is never refused. ⛔ A property
-#: of the ADDRESS, never a roster of offices — the contract above says why that is the design.
-PLACEHOLDER_TLDS = ("invalid", "test", "example", "localhost")
-PLACEHOLDER_DOMAINS = ("example.com", "example.net", "example.org")
+from tools.reserved_addresses import is_reserved
 
 
 def author_is_placeholder(line: str) -> bool:
@@ -90,19 +90,17 @@ def author_is_placeholder(line: str) -> bool:
     author line, and it returns a BOOLEAN: nothing it reads reaches a caller, a message or
     a log. ⚠️ A line with no bracketed address is NOT an office's — it is read as a
     person's, and a person's line is never what this gate refuses.
+
+    ⭐ **The LIST is shared and the VERDICT is not** (`W310`). This function owns the whole
+    of what an office's line MEANS here — parse the address, and refuse to read a malformed
+    one as anybody's — while *which domains identify nobody* is one vocabulary that the
+    floor's R7 arm reads too. ⛔ Neither side may import the other, so both read that.
     """
     _, _, rest = line.partition("<")
     address, closed, _ = rest.partition(">")
     if not closed:
         return False
-    domain = address.rpartition("@")[2].strip().lower()
-    if not domain:
-        return False
-    if domain in PLACEHOLDER_DOMAINS or domain in PLACEHOLDER_TLDS:
-        return True
-    return any(
-        domain.endswith(f".{reserved}") for reserved in (*PLACEHOLDER_TLDS, *PLACEHOLDER_DOMAINS)
-    )
+    return is_reserved(address.rpartition("@")[2])
 
 
 @dataclass(frozen=True)

@@ -14,6 +14,7 @@ from pathlib import Path
 
 import pytest
 
+import tools.reserved_addresses as reserved
 from tests.support import (
     imports_module,
     init_repository,
@@ -25,6 +26,7 @@ from tools.quality.personal_data.shapes import (
     ALLOWED_ADDRESS,
     SHAPES,
     article,
+    build_allowed_address,
     check_shapes,
     shape_matches,
 )
@@ -181,6 +183,27 @@ def test_a_binary_file_is_skipped_rather_than_crashing(tmp_path):
 def test_the_allow_list_is_a_pattern_not_a_list_of_people():
     assert ALLOWED_ADDRESS.search("@example.invalid")
     assert not ALLOWED_ADDRESS.search("@gmail.com")
+
+
+def test_the_allow_list_is_DERIVED_from_the_shared_vocabulary_and_never_typed():
+    # ⛔ `W310`: one vocabulary, two policies. The shipped constant must BE what
+    #    the builder returns, or somebody has re-typed the list here and the two
+    #    halves can drift again. ⭐ The cross-side plant is in
+    #    `tools/tests/test_reserved_addresses.py`; this is this arm's half.
+    assert ALLOWED_ADDRESS.pattern == build_allowed_address().pattern
+    vocabulary = (*reserved.RESERVED_TLDS, *reserved.RESERVED_DOMAINS)
+    assert vocabulary, "the vocabulary is empty, so every assertion below is free"
+    for token in vocabulary:
+        assert ALLOWED_ADDRESS.search("@host." + token), token
+
+
+def test_a_real_domain_merely_BEGINNING_with_a_reserved_name_is_still_a_finding():
+    # ⛔ Why the bare branch of the exemption is anchored at the end of the
+    #    domain. Without that anchor an address at a domain somebody really owns
+    #    is exempted by its FIRST label alone, which would be a hole rather than
+    #    a placeholder. ⚠️ Assembled, never written whole — it is a real shape.
+    assert not ALLOWED_ADDRESS.search("@" + "example" + ".elsewhere.co.uk")
+    assert shape_matches("someone@" + "example" + ".elsewhere.co.uk") == [(1, "email address")]
 
 
 #: The files in this repository whose *subject* is the personal-data patterns.

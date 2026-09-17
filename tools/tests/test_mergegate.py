@@ -14,6 +14,7 @@ MERGED tree rather than `HEAD`, and a red reading leaves the tree exactly where 
 
 from __future__ import annotations
 
+import ast
 import os
 import stat
 from pathlib import Path
@@ -507,3 +508,62 @@ def test_the_BOARD_convention_writes_out_the_invocation_and_names_the_pair():
     text = (repository_root() / "docs/conventions/board.md").read_text(encoding="utf-8")
     assert "`W302`" in text, "the board convention carries no W302 clause"
     assert "python3 -m tools.mergegate" in text
+
+
+# --- W310: the property the shared vocabulary must NOT spend ---------------------------
+
+
+def _local_imports(path: Path) -> set[str]:
+    """Every repository-local module name the file at `path` imports."""
+    names: set[str] = set()
+    for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
+        if isinstance(node, ast.ImportFrom) and node.module:
+            # ⚠️ `from tools.quality import config` names the PACKAGE and the SUBMODULE,
+            #    and reading only the first would walk past whatever `config` imports.
+            names.add(node.module)
+            names |= {f"{node.module}.{alias.name}" for alias in node.names}
+        elif isinstance(node, ast.Import):
+            names |= {alias.name for alias in node.names}
+    return {name for name in names if name.split(".")[0] in ("studyforge", "tools")}
+
+
+def _import_closure(root: Path, module: str) -> set[str]:
+    """Every repository-local module reachable from `module`, transitively."""
+    seen: set[str] = set()
+    pending = [module]
+    while pending:
+        name = pending.pop()
+        if name in seen:
+            continue
+        seen.add(name)
+        stem = root / name.replace(".", "/")
+        for candidate in (stem.with_suffix(".py"), stem / "__init__.py"):
+            if candidate.is_file():
+                pending.extend(_local_imports(candidate))
+                break
+    return seen - {module}
+
+
+def test_W310_the_MERGE_PATH_imports_NEITHER_the_framework_NOR_the_floor():
+    # ⛔ THE PROPERTY `W310` MUST NOT SPEND, asserted so it stops being a habit. The merge
+    #    gate reaching `tools.quality` would mean a tree too broken to import CRASHES the
+    #    gate instead of having its merge REFUSED — and the shared vocabulary is exactly
+    #    the kind of tidiness that would have traded it away.
+    closure = _import_closure(repository_root(), "tools.mergegate")
+    # ⛔ Ruling 191: an empty closure satisfies the real assertion for free.
+    assert {"tools.authorship", "tools.reserved_addresses"} <= closure, closure
+    forbidden = sorted(
+        name
+        for name in closure
+        if name == "studyforge" or name.startswith(("studyforge.", "tools.quality"))
+    )
+    assert forbidden == [], forbidden
+
+
+def test_W310_the_walker_above_CAN_SEE_a_forbidden_import_when_there_is_one():
+    # ⛔ Ruling 123's row 3. A walker that found nothing anywhere would return the passing
+    #    reading for free, so it is pointed at the OTHER reader of the same vocabulary —
+    #    a `tools.quality` module, whose closure must hold what the merge path's must not.
+    closure = _import_closure(repository_root(), "tools.quality.personal_data.shapes")
+    assert "tools.reserved_addresses" in closure, closure
+    assert [name for name in closure if name.startswith("tools.quality")], closure

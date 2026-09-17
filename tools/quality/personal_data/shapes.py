@@ -9,8 +9,10 @@ directories.
 for one string. ⭐ **Adding a rule is one entry in `SHAPES`** and the sweep is
 already tree-wide, so a new shape reaches every file the moment it exists.
 
-**Depends on.** `config` for the tree and the registry, and `re`. Nothing else,
-and deliberately nothing that holds a value.
+**Depends on.** `config` for the tree and the registry, `re`, and
+`tools.reserved_addresses` for WHICH addresses are unreachable by construction
+(`W310` — one vocabulary, two policies). ⛔ Still deliberately nothing that
+holds a value: that module names reserved domains, never anybody's address.
 
 ⛔ **Every rule here is a shape, never a literal.** This module can be read by
 anybody without learning anything about anyone — which is the property that
@@ -22,6 +24,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+from tools import reserved_addresses
 from tools.quality import config
 from tools.quality.report import Finding
 
@@ -127,18 +130,54 @@ SHAPES = (
     ),
 )
 
-#: Addresses that are unreachable by construction, and therefore identify
-#: nobody: RFC 2606's reserved TLDs, the `example.*` domains, `localhost`, and
-#: the attribution trailer this project's commits carry. ⛔ Deliberately tiny.
-#: An address at a real domain is a leak even if the author believes nobody
-#: owns it.
-ALLOWED_ADDRESS = re.compile(
-    r"@(?:localhost|noreply\.[A-Za-z0-9.\-]+"
-    r"|(?:[A-Za-z0-9.\-]+\.)?example\.(?:com|org|net)"
-    r"|[A-Za-z0-9.\-]*\.(?:invalid|test|example|localhost)"
-    r"|anthropic\.com)\b",
-    re.IGNORECASE,
-)
+#: ⛔ **THIS SWEEP'S OWN CLAUSE, and deliberately NOT part of the shared
+#: vocabulary.** The attribution trailer this project's commits carry sits at a
+#: REAL domain, reachable by anybody: it is exempt because every commit here
+#: carries it, never because it identifies nobody. ⚠️ Moving it into
+#: `tools.reserved_addresses` would tell the MERGE PATH that a real domain is an
+#: office's line, which is the widening `W310` must not become.
+ATTRIBUTION_ADDRESS = r"(?:noreply\.[A-Za-z0-9.\-]+|anthropic\.com)\b"
+
+
+def build_allowed_address() -> re.Pattern[str]:
+    """Build the address exemption, reading the shared vocabulary at CALL time.
+
+    ⛔ **A function rather than a literal so the vocabulary can be PLANTED**
+    (Ruling 123): `tools/tests/test_reserved_addresses.py` moves the shared list
+    and asserts THIS reading moves with it, which is the guard that a divergence
+    nobody can produce would not be. ⭐ `ALLOWED_ADDRESS` is what this returns,
+    and the mirror asserts the two agree — the constant is DERIVED, never typed.
+
+    ⛔ **THE GRAMMAR BELOW IS THIS SWEEP'S OWN AND IS UNCHANGED** — `W310` shares
+    the LIST, not the matching. ⭐ Three branches, as before: a bare reserved
+    name, a documentation domain under an optional subdomain, and a reserved TLD
+    after a dot. ⚠️ Only the bare branch is anchored at the end of the domain,
+    and it must be: without that, a real domain merely BEGINNING with a reserved
+    name would borrow the exemption.
+
+    ⛔ **THE VOCABULARY IS READ THROUGH ITS MODULE, NEVER BOUND BY NAME**, and
+    that is not a style: `from … import RESERVED_TLDS` binds the TUPLE OBJECT at
+    import time, so this arm would read a SNAPSHOT and stop tracking the list it
+    is supposed to share. ⭐ The plant caught exactly that — it is what a plant
+    is for, and the defect was live in this function before it fired.
+    """
+    tlds = reserved_addresses.alternation(reserved_addresses.RESERVED_TLDS)
+    domains = reserved_addresses.alternation(reserved_addresses.RESERVED_DOMAINS)
+    return re.compile(
+        rf"@(?:{ATTRIBUTION_ADDRESS}"
+        rf"|(?:{tlds})(?![A-Za-z0-9.\-])"
+        rf"|(?:[A-Za-z0-9.\-]+\.)?(?:{domains})\b"
+        rf"|[A-Za-z0-9.\-]*\.(?:{tlds})\b)",
+        re.IGNORECASE,
+    )
+
+
+#: Addresses this sweep does not report: the ones unreachable by construction —
+#: RFC 6761's reserved TLDs and RFC 2606's documentation domains, read from the
+#: ONE vocabulary `tools.authorship` reads — and this project's own attribution
+#: trailer. ⛔ Deliberately tiny. An address at a real domain is a leak even if
+#: the author believes nobody owns it.
+ALLOWED_ADDRESS = build_allowed_address()
 
 #: An identifier this short, or this generic, matches too much to be evidence
 #: of anything. ⚠️ A machine whose account is called `root` or `ubuntu` would
