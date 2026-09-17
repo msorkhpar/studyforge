@@ -15,6 +15,7 @@ from pathlib import Path
 import pytest
 
 import tools.quality.creators as creators
+import tools.quality.plan_parse as plan_parse
 from tests.support import assert_package_contract, repository_root
 from tools.quality.creators import (
     MILESTONE_ID,
@@ -23,7 +24,6 @@ from tools.quality.creators import (
     check_owns_before_creator,
     creator_census,
     graph,
-    placement,
     read,
     rows,
 )
@@ -230,31 +230,6 @@ def test_a_CONTEXT_read_prints_and_never_fails(tmp_path):
     assert "Context path inside code-server-toolchain" in line and "never a finding" in line
 
 
-# --- the parse -----------------------------------------------------------------------------
-
-
-def test_placement_blanks_parentheses_and_spans_and_the_FIRST_step_line_wins():
-    steps = placement(
-        "- **5.1** — TC-00, **SF-20** · `SF-99`\n"
-        "- **9.1** — JS-01, EX-00  *(needs TC-00's pinned image)*\n"
-        "- **9.2** — TC-00\n"
-        "- ⭐ **alongside 1.4** — **FND-08**\n"
-    )
-    assert steps == {"TC-00": "5.1", "SF-20": "5.1", "JS-01": "9.1", "EX-00": "9.1"}
-
-
-def test_a_CANCELLED_row_is_not_read_and_a_wrapped_Owns_cell_is():
-    text = (
-        "### FND-05b — cancelled\n**Milestone** — · **Depends on** — · **Team** —\n"
-        "**Owns** — **Context** —\n\n"
-        "### SF-35 — wrapped\n**Milestone** **M2** · **Depends on** SF-02, *SF-05* · **Team** x\n"
-        "**Owns** `corpus/manifest/content/`, and `KNOWN` in\n`version.py`\n**Context** ~5k\n"
-    )
-    [row] = rows("E01.md", text)
-    assert (row.id, row.depends, row.context) == ("SF-35", ("SF-02", "SF-05"), "~5k")
-    assert "`version.py`" in row.owns
-
-
 # --- W275: a milestone id is whole, or the row is refused by name ------------------------------
 
 
@@ -300,7 +275,8 @@ def test_M1_and_M10_still_READ_and_the_dash_still_cancels_SILENTLY(tmp_path, dec
 
 def test_the_shape_is_typed_ONCE_and_rows_still_hands_its_readers_only_rows():
     assert re.fullmatch(MILESTONE_ID, "M10") and not re.fullmatch(MILESTONE_ID, "M1x")
-    assert Path(creators.__file__).read_text(encoding="utf-8").count("M[0-9]") == 1
+    assert Path(plan_parse.__file__).read_text(encoding="utf-8").count("M[0-9]") == 1
+    assert Path(creators.__file__).read_text(encoding="utf-8").count("M[0-9]") == 0
     text = epic("E12", "x", task("TC-01", "—", "`TC/`").replace("**M5**", "**M1x**"))
     assert rows(E12, text) == [], "a refusal never raises out of `rows`"
 
@@ -322,3 +298,18 @@ def test_the_live_plan_carries_a_population_with_both_derivations_and_is_sound()
     assert "code-server-toolchain" in reading.creators
     assert reading.refused == ()
     assert check_owns_before_creator(repository_root()) == []
+
+
+# --- W285: the parse split out, and every importer keeps working ------------------------------
+
+
+def test_W285_every_parse_name_creators_carried_still_resolves_as_the_SAME_object():
+    # ⛔ `W285`: `board/delivery.py`, `last_pointer.py` and the floor import these from `creators`.
+    moved = ("MILESTONE_ID", "RULE_MILESTONE", "SEQUENCE", "TASKS_DIR", "WORKSPACE", "Row")
+    for name in (*moved, "aliases", "components", "declarations", "placement"):
+        assert getattr(creators, name) is getattr(plan_parse, name), name
+    for name in ("preamble_component", "resolve", "rows"):
+        assert getattr(creators, name) is getattr(plan_parse, name), name
+    judged = ("RULE_CREATOR", "Graph", "Member", "graph", "read", "creator_census")
+    for name in (*judged, "check_owns_before_creator"):
+        assert name in vars(creators) and name not in vars(plan_parse), name

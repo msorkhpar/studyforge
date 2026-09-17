@@ -39,6 +39,7 @@ from tools.quality.board.delivery import (
     sibling_owned,
 )
 from tools.quality.config import read_text
+from tools.quality.creators import MILESTONE_ID, RULE_MILESTONE
 from tools.workspace import git
 
 RELEASE = "release/m0-foundations"
@@ -268,10 +269,10 @@ def test_a_SIBLING_capability_is_its_OWN_column(repository: Path) -> None:
 def test_a_sibling_read_from_the_epic_PREAMBLE_is_still_a_sibling() -> None:
     """⚠️ `W156`'s weak derivation: an `Owns` cell with no code span, its preamble naming one."""
     epics = {"docs/tasks/E13.md": EPICS["docs/tasks/E13-narration.md"] + task("NS-02", "the API")}
-    assert sibling_owned(README, WORKSPACE, epics) == {
-        "NS-01": "narrate-service",
-        "NS-02": "narrate-service",
-    }
+    assert sibling_owned(README, WORKSPACE, epics) == (
+        {"NS-01": "narrate-service", "NS-02": "narrate-service"},
+        (),
+    )
 
 
 def test_a_plan_whose_sibling_column_CANNOT_be_read_is_UNREAD_and_not_all_framework(
@@ -346,3 +347,52 @@ def test_the_command_line_prints_the_population_BEFORE_either_arm(
     assert code == READ
     assert printed.index("population:") < printed.index("ledger (") < printed.index("merge subj")
     assert str(repository) not in printed, "⛔ R7: no absolute path in a reading"
+
+
+# `W285`: one milestone shape, and a row `creators` refuses is NAMED in the sibling column.
+
+
+def test_W285_the_milestone_shape_is_creators_and_never_typed_here() -> None:
+    """⛔ Clause 1. Plant: a pattern typed inline again → RED."""
+    source = Path(delivery.__file__).read_text(encoding="utf-8")
+    assert "M[0-9]" not in source
+    assert delivery._SECTION.pattern == f"^## ({MILESTONE_ID}) "
+    assert f"({MILESTONE_ID})" in delivery._CLOSED.pattern
+
+
+def malformed(repository: Path) -> str:
+    """Commit `NS-01`'s milestone as `M0x` on top of `wave2`, and return the epic's path."""
+    name = "docs/tasks/E13-narration.md"
+    text = EPICS[name].replace("**M0**", "**M0x**")
+    write(repository, {name: text}, "a malformed milestone")
+    return name
+
+
+def test_W285_a_row_creators_REFUSES_is_NAMED_in_the_sibling_column_never_skipped(
+    repository: Path,
+) -> None:
+    """⛔ Clause 2. Plant: the refusals dropped from `read` → RED."""
+    epic = malformed(repository)
+    reading = read(repository, "base", "HEAD")
+    assert "NS-01" not in reading.siblings
+    [reason] = [reason for reason in reading.unread if RULE_MILESTONE in reason]
+    assert reason.startswith(f"the sibling column: {epic}:") and "NS-01" in reason
+    assert reading.exit == UNREAD
+    assert reading.ledger is not None and reading.subject is not None, "the other arms still read"
+    assert any("NOT READ" in line and "NS-01" in line for line in render(reading))
+
+
+def test_W285_sibling_owned_returns_the_refusal_beside_the_column() -> None:
+    """⛔ Clause 2, the pure function. Plant: a refused row skipped in silence → RED."""
+    bad = EPICS["docs/tasks/E13-narration.md"].replace("**M0**", "**M1x**")
+    owned, refused = sibling_owned(README, WORKSPACE, {"docs/tasks/E13.md": bad})
+    assert owned == {}
+    assert len(refused) == 1 and "NS-01" in refused[0] and RULE_MILESTONE in refused[0]
+
+
+def test_W285_control_a_WHOLE_milestone_reads_clean_and_names_nothing(repository: Path) -> None:
+    """⭐ Clause 3's other direction: the same plan with `M0` whole refuses nothing."""
+    reading = read(repository, "base", "wave2")
+    assert reading.exit == READ
+    assert not [reason for reason in reading.unread if RULE_MILESTONE in reason]
+    assert sibling_owned(README, WORKSPACE, EPICS)[1] == ()

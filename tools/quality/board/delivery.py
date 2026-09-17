@@ -19,7 +19,8 @@ ref that does not resolve, an index that is absent, not generated, or disagrees 
 stated total, a plan whose sibling column cannot be read, or a board with no milestone table.
 
 **Depends on.** `argparse`, `re`, `sys`, `dataclasses` and `pathlib`; `tools.workspace.git` for
-the refs; `creators` for the `Owns` grammar (`W156`); `unclaimed.OFFICE` for a round's branch;
+the refs; `creators` for the `Owns` grammar (`W156`), the milestone shape and the rows it refuses
+(`W285`); `unclaimed.OFFICE` for a round's branch;
 `markdown.code_spans`.
 
 ## ⭐ THE DESIGN DECISION (clause 1): a command in `tools/quality/board/`, never the floor
@@ -44,7 +45,9 @@ reading on any checkout, and the reading carries its own refs.
 - a subject DELIVERS an id named in its header, `Merge <branch>` and a `(…)` group directly
   after it, when the branch is not an office round's. The group is cut at a spaced dash;
 - a ledger DELIVERS every capability of a milestone its table reads `✅ CLOSED`. The milestone
-  lands in the range when its close ref is in `since..until`.
+  lands in the range when its close ref is in `since..until`;
+- ⛔ a row whose milestone `creators` refuses (`milestone-id`, `W275`) is in NEITHER column. It
+  is named as a NOT READ reason of the sibling column, exit `2`, never skipped (`W285`).
 
 ⚠️ **Declared false positives (clause 3):** an id in a subject's prose; an id anywhere in an
 office round's roll-up subject (`chore/po-round<n>`, a suffix included); an id after a spaced
@@ -68,14 +71,15 @@ from pathlib import Path
 
 from tools.quality.board.unclaimed import OFFICE
 from tools.quality.creators import (
+    MILESTONE_ID,
     SEQUENCE,
     TASKS_DIR,
     WORKSPACE,
     aliases,
     components,
+    declarations,
     preamble_component,
     resolve,
-    rows,
 )
 from tools.quality.markdown import code_spans
 from tools.workspace import git
@@ -88,10 +92,13 @@ RETIRED = "⛔ RETIRED"
 #: Exit codes: `0` both readings taken, `2` one could not be. ⛔ There is no `1`.
 READ, UNREAD = 0, 2
 
-_SECTION = re.compile(r"^## (M[0-9]+) ")
+#: ⛔ The milestone shape is `creators.MILESTONE_ID`, never typed here (`W285`).
+_SECTION = re.compile(rf"^## ({MILESTONE_ID}) ")
 _INDEX_ROW = re.compile(r"^\| `([A-Z]{2,4}-[0-9]{1,3}[a-z]?)` \| ([^|]*)\|")
 _STATED = re.compile(r"^\*\*([0-9]+) capabilities\b", re.MULTILINE)
-_CLOSED = re.compile(r"^\| \*\*(M[0-9]+)\*\* — [^|]*\| ✅ CLOSED \| (?:`([0-9a-f]{7,40})`|—) \|")
+_CLOSED = re.compile(
+    rf"^\| \*\*({MILESTONE_ID})\*\* — [^|]*\| ✅ CLOSED \| (?:`([0-9a-f]{{7,40}})`|—) \|"
+)
 _MILESTONES = re.compile(r"^## Milestones\s*$", re.MULTILINE)
 _HEADER = re.compile(r"^Merge\s+([^\s:(]+):?(?:\s+\(([^)]*)\))?")
 _SPACED_DASH = re.compile(r"\s+(?:--|—|–)\s+")
@@ -159,20 +166,28 @@ def population(text: str | None) -> Population | str:
     return Population(milestone, frozenset(retired))
 
 
-def sibling_owned(sequence: str, workspace: str, epics: dict[str, str]) -> dict[str, str]:
-    """Each capability whose `Owns` reaches a sibling component, mapped to that component."""
+def sibling_owned(
+    sequence: str, workspace: str, epics: dict[str, str]
+) -> tuple[dict[str, str], tuple[str, ...]]:
+    """Each capability whose `Owns` reaches a sibling component, and each row `creators` refused.
+
+    ⛔ A refused row is in neither column, so it is NAMED here, never skipped in silence (`W285`).
+    """
     names = set(components(workspace))
     shorthand = aliases(sequence, names)
     owned: dict[str, str] = {}
+    refused: list[str] = []
     for document, text in sorted(epics.items()):
         fallback = preamble_component(text, names)
-        for row in rows(document, text):
+        found, unreadable = declarations(document, text)
+        refused += [f"{f.path}:{f.line} [{f.rule}] {f.message}" for f in unreadable]
+        for row in found:
             reached = resolve(row.owns, shorthand, names)
             if not reached and not code_spans(row.owns) and fallback is not None:
                 reached = {fallback: False}
             if reached:
                 owned[row.id] = sorted(reached)[0]
-    return owned
+    return owned, tuple(refused)
 
 
 def delivered_by(subject: str, known: set[str]) -> tuple[set[str], set[str]]:
@@ -285,7 +300,8 @@ def read(root: Path, since: str, until: str = "HEAD") -> Reading:
     if sequence is None or workspace is None or not components(workspace):
         unread.append(f"the sibling column: no {SEQUENCE} or no component in {WORKSPACE}")
     else:
-        siblings = sibling_owned(sequence, workspace, graph.epics())
+        siblings, refused = sibling_owned(sequence, workspace, graph.epics())
+        unread += [f"the sibling column: {reason}" for reason in refused]
     ledger = ledger_arm(graph.show(BOARD), found, graph)
     if isinstance(ledger, str):
         unread.append(ledger)
