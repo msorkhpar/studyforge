@@ -9,9 +9,22 @@ cannot come to disagree with a stage about what an argument means.
 registers as `studyforge`, and `python3 -m studyforge.cli`. `VERBS` is the
 registered table, read by the authoring checks rather than re-listed by them.
 
-**Depends on.** each stage's `cli` module, and `argparse` for nothing but the
-usage text. ⛔ No stage imports this one — the direction is one-way, so a stage
-stays runnable as `python3 -m studyforge.<stage>` with the dispatcher absent.
+**Depends on.** `validate.cli` for `UNUSABLE`. Each stage's `cli` module is
+imported by a loader function here, and only when its verb is dispatched.
+⛔ No stage imports this one — the direction is one-way, so a stage stays
+runnable as `python3 -m studyforge.<stage>` with the dispatcher absent.
+
+## ⛔ A verb is resolved when it is DISPATCHED, not when this module loads
+
+⭐ `import studyforge.cli.<anything>` runs this package, so a module-level import
+of every verb's entry point made importing one verb load all of them (`W223/1`).
+⭐ A `Verb` carries a `load` function, a plain import statement in a body, and
+`Verb.run` calls it when read. ⚠️ It is an IMPORT STATEMENT and never a module
+reached by name: `tests/harness/test_isolation.py` refuses `importlib` in
+framework source (R1). ⚠️ `validate.cli` is loaded with this module regardless,
+because `UNUSABLE` is imported from it. ⛔ **A loader registers nothing: `VERBS`
+is the only place a verb is named** (`SF-40`), and `run` is the same callable
+object the verb's module defines.
 
 ## ⛔ A verb is registered here only when it can be RUN
 
@@ -32,12 +45,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 
-from studyforge.cli.narrate.cli import main as narrate_main
-from studyforge.cli.plan.cli import main as plan_main
-from studyforge.cli.serve import main as serve_main
-from studyforge.cli.site.cli import main as build_main
 from studyforge.validate.cli import UNUSABLE
-from studyforge.validate.cli import main as validate_main
 
 #: The command a user types. ⛔ One name, and `pyproject.toml` registers this
 #: same spelling — `tests/studyforge/cli/test_dispatch.py` asserts they agree,
@@ -48,11 +56,49 @@ PROGRAM = "studyforge"
 
 @dataclass(frozen=True)
 class Verb:
-    """One registered subcommand: what it is called, what it does, what runs it."""
+    """One registered subcommand: what it is called, what it does, what runs it.
+
+    `load` imports the verb's module and returns its entry point.
+    """
 
     name: str
     summary: str
-    run: Callable[..., int]
+    load: Callable[[], Callable[..., int]]
+
+    @property
+    def run(self) -> Callable[..., int]:
+        """The verb's entry point, imported now rather than when `VERBS` was built."""
+        return self.load()
+
+
+def _validate() -> Callable[..., int]:
+    from studyforge.validate.cli import main
+
+    return main
+
+
+def _plan() -> Callable[..., int]:
+    from studyforge.cli.plan.cli import main
+
+    return main
+
+
+def _narrate() -> Callable[..., int]:
+    from studyforge.cli.narrate.cli import main
+
+    return main
+
+
+def _build() -> Callable[..., int]:
+    from studyforge.cli.site.cli import main
+
+    return main
+
+
+def _serve() -> Callable[..., int]:
+    from studyforge.cli.serve import main
+
+    return main
 
 
 #: ⛔ **The registered table.** Ordered as a reader meets them: check the
@@ -62,11 +108,11 @@ class Verb:
 VERBS: Mapping[str, Verb] = {
     verb.name: verb
     for verb in (
-        Verb("validate", "decide whether a corpus's archive is valid", validate_main),
-        Verb("plan", "say what a build would write, before it writes it", plan_main),
-        Verb("narrate", "synthesise a corpus's clips from a narration service", narrate_main),
-        Verb("build", "write the site for one corpus into a directory you name", build_main),
-        Verb("serve", "serve a built site on loopback, adding the content API", serve_main),
+        Verb("validate", "decide whether a corpus's archive is valid", _validate),
+        Verb("plan", "say what a build would write, before it writes it", _plan),
+        Verb("narrate", "synthesise a corpus's clips from a narration service", _narrate),
+        Verb("build", "write the site for one corpus into a directory you name", _build),
+        Verb("serve", "serve a built site on loopback, adding the content API", _serve),
     )
 }
 

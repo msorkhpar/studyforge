@@ -60,11 +60,12 @@ def test_importing_the_build_or_the_plan_loads_no_wire_in_a_fresh_interpreter(im
     assert [name for name in (WIRE, CLIENT) if name in loaded] == []
 
 
-def test_the_plan_reaches_the_narrate_verb_through_the_dispatcher():
-    # ⚠️ MEASURED: `cli/plan` has TWO routes to the client, `narrate.synth` and
-    # the dispatcher, which imports every verb. This pins the second route as
-    # inhabited, so the absence above covers it rather than missing it.
-    assert "studyforge.cli.narrate.stage" in loaded_by("studyforge.cli.plan")
+def test_the_plan_no_longer_reaches_the_narrate_verb_through_the_dispatcher():
+    # ⚠️ MEASURED by `W223`: `cli/plan` had TWO routes to the client,
+    # `narrate.synth` and the dispatcher, which imported every verb. ⭐ `W293`
+    # resolves a verb when it is dispatched, so the second route is closed; this
+    # pins it closed, and `tests/studyforge/cli/test_dispatch.py` owns the clause.
+    assert "studyforge.cli.narrate.stage" not in loaded_by("studyforge.cli.plan")
 
 
 @pytest.mark.parametrize("importer", [CLIENT, WIRE])
