@@ -342,12 +342,19 @@ def markdown_population(root: Path) -> DocumentPopulation:
     ⛔ Measured before deciding, on `2926dc2`: 8 markdown files under
     `tests/fixtures/` carrying **0 pointers between them**, so including them
     costs no migration today and closes the hole before one is written.
+
+    ⚠️ **AND THE NARROWING COUNTS WHAT IT NARROWS OFF** (`W315`, for `W232/5`):
+    the difference between the two lists is free on the line below and rides
+    out as `DocumentPopulation.unread`, so a notice quoting this walk can say
+    what it did not read. ⛔ **A count and never a second walk** — FND-08's
+    acceptance forbids one, and `report.unread_caveat` carries the argument.
     """
     documents = [path for path in text_files(root) if path.suffix == ".md"]
     tracked = tracked_paths(root)
     if tracked is None:
         return DocumentPopulation(tuple(documents), DISK_WALK)
-    return DocumentPopulation(tuple(path for path in documents if path in tracked), TRACKED_WALK)
+    read = tuple(path for path in documents if path in tracked)
+    return DocumentPopulation(read, TRACKED_WALK, len(documents) - len(read))
 
 
 def markdown_files(root: Path) -> list[Path]:

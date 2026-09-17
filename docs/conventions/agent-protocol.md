@@ -326,6 +326,14 @@ reviewer's memory** (Ruling 49). Two literals are load-bearing:
   citations of a document**, and the floor never reads them.
 - ⭐ **Where the target is absent on your ref, the backticked NAME is right** (Ruling 308), and
   the floor agrees: it fires only on a name that resolves to a markdown document git tracks.
+  ⛔ **WITH ONE EXCEPTION, AND IT IS YOUR OWN ROW** (`W315`): the register mints
+  `docs/tasks/rows/<ID>.md` in the round that merges your branch, so the name is green here and
+  the MERGE refuses it — measured, on `W313`'s refused merge and `W312`'s hand-back. ⭐ **Write
+  the pointer anyway.** `check_pointers` DEFERS a handoff's link to the row it is the handoff
+  FOR, so `docs/tasks/handoffs/<ID>.md` may link `../rows/<ID>.md` before that file exists, and
+  the same sentence is green on your branch and after the merge. ⚠️ **Any OTHER row minted in
+  the same round is cited by bare ID in prose — `W321` — and never by filename**; the deferral
+  is one pointer per handoff, read off the citing document's own name, and is not a list.
 - ⛔ **It is an arm of `check_handoffs`, and it binds a task or office handoff ABSENT from the
   tree at `citing.CITATION_PIN`.** ⭐ The frozen records are excluded by that REF, never by a
   list of filenames, so they are not back-filled (Rulings 106, 174). ⛔ **The pin is not a

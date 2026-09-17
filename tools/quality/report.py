@@ -9,7 +9,10 @@ by name).
 **How you use it.** A check returns `list[Finding]`; a caller renders them
 with `format_findings`. A walk that a figure will be quoted over returns a
 `DocumentPopulation`, and the notice quoting that figure names its `walk` and
-appends `WALK_CAVEAT[walk]` (`W148`). A test run's summary prints
+appends `WALK_CAVEAT[walk]` (`W148`) and `unread_caveat(population)` (`W315`,
+for `W232/5`) — ⛔ **the first says how the population was found, the second
+says what it did not find**, and a reader believing a green over an unstaged
+document needs the second. A test run's summary prints
 `unreachable_population(stats)` — the tests it skipped, counted and grouped by
 the reason each skip gave (`W158`).
 
@@ -45,10 +48,38 @@ WALK_CAVEAT = {
 
 @dataclass(frozen=True)
 class DocumentPopulation:
-    """The documents a figure is taken over, and which walk produced them."""
+    """The documents a figure is taken over, which walk produced them, and what it MISSED.
+
+    ⛔ **`unread` is the count of markdown documents on the disk that the walk
+    did NOT read**, and it is `0` by construction on `DISK_WALK`, where git
+    named no tracked set and nothing was narrowed away. ⭐ **It exists because
+    a narrowed population is silent about what it narrowed off** (`W232/5`):
+    an office running the floor over a handoff it has written but not staged
+    gets a green that the merge will not repeat, and no figure said so.
+    """
 
     paths: tuple[Path, ...]
     walk: str
+    unread: int = 0
+
+
+def unread_caveat(population: DocumentPopulation) -> str:
+    """Return the sentence a TRACKED figure owes about what its walk did NOT read.
+
+    ⛔ **Printed whether or not it fired** (Ruling 48): `0 documents unindexed`
+    is the reading an office needs before it believes a green over its own
+    work, and it is exactly the reading a fired-only sentence would never give.
+    ⚠️ **Empty on `DISK_WALK`**, where `WALK_CAVEAT` already says the
+    population carries untracked files and where a `0` here would claim git
+    had answered.
+    """
+    if population.walk != TRACKED_WALK:
+        return ""
+    return (
+        f" ⚠️ {population.unread} markdown documents in this working tree are absent from "
+        f"git's INDEX and were NOT read here (`W232/5`): a document written and not "
+        f"`git add`ed gets a reading the merge will not repeat."
+    )
 
 
 @dataclass(frozen=True, order=True)

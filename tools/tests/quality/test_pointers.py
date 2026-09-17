@@ -18,10 +18,16 @@ from __future__ import annotations
 
 from tests.support import git, init_repository, repository_root, run
 from tools.quality import config
+from tools.quality.board.register import ROWS
+from tools.quality.handoffs import HANDOFF_DIR, check_handoffs
 from tools.quality.pointers import (
+    HANDOFF_HOME,
+    ROW_HOME,
     RULE_ANCHOR,
     RULE_POINTER,
+    Pointer,
     check_pointers,
+    deferred_row,
     pointer_coverage,
     scan,
 )
@@ -350,3 +356,157 @@ def test_the_repository_has_no_pointer_into_an_ignored_tree():
     result = scan(repository_root())
     assert [finding for finding in result.findings if "git IGNORES" in finding.message] == []
     assert len(result.pointers) > 20
+
+
+# --- W315: a handoff's own row is DEFERRED, not dangling --------------------
+
+#: The citation wordings a handoff can give a register row, and nothing else is
+#: available: a pointer, or the bare name. ⛔ The row's clause 1 is that exactly
+#: ONE of these is green on BOTH trees, so both are asserted on both.
+POINTER_WORDING = "argued in [`W99`](../rows/W99.md)."
+BARE_WORDING = "argued in `../rows/W99.md`."
+
+#: A minimally-inhabited task handoff. ⚠️ Inhabited because the BARE arm reads
+#: only handoffs that DECLARE a bound kind, and the row's clause 3 asserts both
+#: arms over one document — a bare page would be read by one arm and not the
+#: other, which is the shape that cannot answer the question.
+HANDOFF = """# W99 — handoff
+
+**Kind:** task handoff — W99
+
+**Status:** done
+
+**What landed:** {citation}
+
+**Decisions:** one.
+
+**Surprises:** none worth the word.
+
+**Findings:**
+
+### 1. `[local]` a defect somewhere else
+
+**For dependents:** nothing.
+"""
+
+
+def handoff_tree(tmp_path, citation: str, *, row: bool, name: str = "W99.md"):
+    """A repository holding one TRACKED handoff, with or without the row it names.
+
+    ⭐ `row=False` is the DEVELOPER'S BRANCH — the register mints the row in the
+    round that merges it — and `row=True` is the MERGED TREE. ⛔ The two differ by
+    that one file and by nothing else, which is what makes the matrix legible.
+    """
+    init_repository(tmp_path)
+    write(tmp_path, f"{HANDOFF_DIR}/{name}", HANDOFF.format(citation=citation))
+    add(tmp_path, f"{HANDOFF_DIR}/{name}")
+    if row:
+        write(tmp_path, f"{ROWS}/W99.md", "# W99\n")
+        add(tmp_path, f"{ROWS}/W99.md")
+    return tmp_path
+
+
+def floor(root) -> list[str]:
+    """The rules BOTH citation arms report for a tree, sorted — the merge's verdict."""
+    return sorted({finding.rule for finding in check_pointers(root) + check_handoffs(root)})
+
+
+def test_the_pointer_to_a_handoffs_own_row_is_green_on_the_branch_and_on_the_merge(tmp_path):
+    # ⛔ The row's clause 1, the half that was RED before `W315`: the register
+    # writes the row in the round that merges this branch, so the target is
+    # absent HERE and present THERE, and the ONE wording must be correct in both.
+    assert floor(handoff_tree(tmp_path, POINTER_WORDING, row=False)) == []
+
+
+def test_the_same_pointer_is_green_once_the_register_has_written_the_row(tmp_path):
+    assert floor(handoff_tree(tmp_path, POINTER_WORDING, row=True)) == []
+
+
+def test_the_bare_name_is_green_on_the_branch_and_REFUSED_by_the_merge(tmp_path):
+    # ⛔ The other half of the contradiction, asserted rather than described: the
+    # bare arm cannot see a target the branch does not hold, and refuses the same
+    # sentence the moment the merge makes that target tracked. ⭐ So the bare
+    # wording is NOT an answer, and the pointer above is the only one there is.
+    assert floor(handoff_tree(tmp_path, BARE_WORDING, row=False)) == []
+    assert floor(handoff_tree(tmp_path, BARE_WORDING, row=True)) == ["handoff-bare-citation"]
+
+
+def test_a_handoff_linking_any_OTHER_absent_row_is_still_a_finding(tmp_path):
+    # ⛔ The deferral is ONE pointer per handoff and never a directory: the id is
+    # the citing document's own name, so a link to a row it is not the handoff
+    # for earns exactly what it earned before.
+    assert floor(handoff_tree(tmp_path, "see [`W98`](../rows/W98.md).", row=False)) == [
+        RULE_POINTER
+    ]
+
+
+def test_a_document_that_is_not_a_handoff_linking_an_absent_row_is_still_a_finding(tmp_path):
+    init_repository(tmp_path)
+    write(tmp_path, "docs/tasks/README.md", "see [`W99`](rows/W99.md).\n")
+    add(tmp_path, "docs/tasks/README.md")
+    assert [finding.rule for finding in check_pointers(tmp_path)] == [RULE_POINTER]
+
+
+def test_a_handoff_linking_an_absent_file_that_is_not_its_row_is_still_a_finding(tmp_path):
+    assert floor(handoff_tree(tmp_path, "see [`notes`](../rows/W99/notes.md).", row=False)) == [
+        RULE_POINTER
+    ]
+
+
+def test_a_handoff_whose_name_is_not_a_row_id_defers_nothing(tmp_path):
+    # ⚠️ `SESSION-2026-09-11.md` is a real handoff name in this tree; it names no
+    # register row, so the self-evidencing relation does not hold and the link is
+    # judged exactly as any other.
+    root = handoff_tree(tmp_path, "see [`W99`](../rows/W99.md).", row=False, name="SESSION-1.md")
+    assert [finding.rule for finding in check_pointers(root)] == [RULE_POINTER]
+
+
+def test_the_merged_tree_still_resolves_the_ANCHOR_of_a_deferred_pointer(tmp_path):
+    # ⛔ The deferral runs ONLY where the target is absent, so nothing about the
+    # anchor arm is weakened on the tree a reader actually reads.
+    root = handoff_tree(tmp_path, "see [`W99`](../rows/W99.md#nowhere).", row=True)
+    assert [finding.rule for finding in check_pointers(root)] == [RULE_ANCHOR]
+    assert deferred_row(Pointer(f"{HANDOFF_DIR}/W99.md", 1, "../rows/W99.md#nowhere")) == "W99"
+
+
+def test_the_predicate_reads_the_relation_and_not_a_list(tmp_path):
+    # ⭐ Both directions of `deferred_row` itself: the id comes off the citing
+    # document's own filename, so nothing is registered and nothing is remembered.
+    assert deferred_row(Pointer(f"{HANDOFF_DIR}/W315.md", 3, "../rows/W315.md")) == "W315"
+    assert deferred_row(Pointer(f"{HANDOFF_DIR}/W315.md", 3, "../rows/W316.md")) is None
+    assert deferred_row(Pointer(f"{HANDOFF_DIR}/x/W315.md", 3, "../rows/W315.md")) is None
+    assert deferred_row(Pointer("docs/tasks/README.md", 3, "rows/W315.md")) is None
+
+
+def test_the_two_directory_spellings_equal_the_modules_that_own_them():
+    # ⛔ The seam runs one way — both of those packages import this module — so
+    # the constants are written here and the equality is ASSERTED rather than
+    # expressed as an assignment (`citations.MAX_RANGE_SPAN`'s construction).
+    assert HANDOFF_HOME == HANDOFF_DIR
+    assert ROW_HOME == ROWS
+
+
+# --- W232/5: the walk says what it did not read -----------------------------
+
+
+def test_the_coverage_line_counts_the_documents_the_INDEX_does_not_hold(tmp_path):
+    # ⛔ The blind spot, CLOSED where a reader meets it: an office running the
+    # floor over a handoff it has written and not staged was told nothing, and
+    # read a green the merge did not repeat. ⭐ Ruling 48 — printed whether or
+    # not it fired, because `0 unindexed` is the reading that licenses belief.
+    root = repository(tmp_path)
+    unindexed = "markdown documents in this working tree are absent from git's INDEX"
+    assert f"0 {unindexed}" in pointer_coverage(root)[0]
+    write(root, "docs/unstaged.md", "# Written, not added\n")
+    line = pointer_coverage(root)[0]
+    assert f"1 {unindexed}" in line
+    assert "`git add`ed gets a reading the merge will not repeat" in line
+
+
+def test_a_tree_git_cannot_answer_for_claims_nothing_about_its_index(tmp_path):
+    # ⚠️ A `0` there would claim git had ANSWERED (Ruling 216's third answer),
+    # and `WALK_CAVEAT` already says that population carries untracked files.
+    write(tmp_path, "doc.md", "# D\n")
+    line = pointer_coverage(tmp_path)[0]
+    assert "absent from git's INDEX" not in line
+    assert "not reproducible from another checkout" in line
