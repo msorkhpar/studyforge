@@ -24458,3 +24458,139 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 87
 
 ⭐ **Merged at `7771751` during this round, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `7771751` is RECEIVED, before this round's run of record.** ⭐ **`validate` refuses by name a block whose type is not in `BLOCK_TYPES` and one whose keys are not its fields then its optional keys, at any depth, through the one reader the fixture check calls.** ⚠️ **Its findings were disposed in this round's § 4.**
+
+## PO round 88 — `W279`, `W284`, `W285`, `W281` and `W223` closed
+
+⭐ **Cut at `c8b2ae8`, the release tip after this wave's six merges.** ⛔ **Ruling 279 is satisfied trivially here: this round NAMES no carrier, and every row it closes had already merged when it was cut.**
+
+⚠️ **ONE DISCLOSURE BELONGS AT THE TOP OF THIS ROUND, because it is a property of the whole wave and not of any row.** ⛔ **The five carriers and round 87 were handed back GREEN in a PREVIOUS SESSION, and the offices' own gate readings travelled in a hand-back that lived in a session scratchpad OUTSIDE this repository. That hand-back did not survive.** ⭐ **So every merge body in this wave quotes NO office reading and says so in those words, and the coordinator took its OWN floor, suite and `corroborate` readings instead. The record written at that session's close attests the branches were handed back GREEN; an attestation is not a reading, and it is not treated as one here.**
+
+### ⭐ 1 — CLOSES
+
+| row | merge | ⭐ the fourth edit |
+|---|---|---|
+| [`W279`](#w279-the-board-conventions-subject-vocabulary-never-says-an-epic-must-define-an-in-flight-epic-task-which-w262-checks) | `2b8a4eb` | none owed: its only live citation was the register this round rewrites |
+| [`W284`](#w284-verdictpys-disagree-sentences-describe-a-declaring-merge-subject-as-merge-branch-a-form-no-recent-merge-uses) | `35b2e81` | none owed: its only live citation was the register this round rewrites |
+| [`W285`](#w285-deliverypy-retypes-the-milestone-shape-inline-and-siblingowned-reads-a-row-list-that-skips-a-refused-row-in-silence) | `620faf9` | none owed: its only live citation was the register this round rewrites |
+| [`W281`](#w281-the-adapter-and-onboarding-skills-say-what-permittededits-may-name-and-never-state-that-root-documentation-is-never-editable) | `8328a4f` | none owed: its only live citation was the register this round rewrites |
+| [`W223`](#w223-enginemodel-is-in-the-services-cache-key-and-in-neither-health-nor-conditions-so-a-model-change-requests-nothing) | `c8b2ae8` | ⭐ **the Standing decision RETIRED** (`W223/5`) |
+
+⭐ **All five TERMINAL (Ruling 199), each absorbed on `release/m0-foundations`'s first-parent line.** ⭐ **`last_pointer` exits `0` at `6e4d10a`, `2b8a4eb`, `35b2e81`, `620faf9`, `8328a4f` and `c8b2ae8` — every merge of the wave, register round included.** ⭐ **Ruling 314: the five moved bodies carried 6 relative pointers, and 6 were re-addressed.** ⚠️ **`W279`, `W284`, `W285` and `W281`'s findings were disposed in round 87's § 4; `W223`'s are disposed in § 3 below.**
+
+### ⭐ 2 — CARRIERS
+
+⛔ **NONE, and EMPTY IS A STATE** (`W111`, `W147`). ⭐ **The in-flight table is empty, and `wt/dev1`, `wt/dev2` and `wt/dev3` were TORN DOWN after their branches were absorbed — each read 0 ahead of the release tip and clean before removal — so no absorbed branch is held by a checkout and Ruling 264's arm fires on nothing.** ⛔ **`W277` stays HELD by the coordinator.**
+
+### ⭐ 3 — `W223`'S FINDINGS, DISPOSED
+
+| finding | became |
+|---|---|
+| `W223/1` | ⭐ **minted [`W293`](rows/W293.md)**, order 55. Re-measured at `c8b2ae8`: `cli/dispatch.py` lines 35 to 38 bind every verb's entry point at module level |
+| `W223/2` | accepted, cost named: `synth/record.py` sits just under R11's bound, and the next row touching it splits it — the same condition `client.py` carried and this round retires |
+| `W223/3` | accepted: `test_no_synthesis.py` still reads source text, and the instrument that can see an import is `test_wire.py`'s fresh-interpreter check |
+| `W223/4` | accepted, `W204`'s family: two docstrings name `narrate.client` where the boundary is now `narrate.wire` too |
+| `W223/5` | ⭐ **EXECUTED IN THIS ROUND, not scheduled.** The standing `narrate/client.py` wire-seam split condition is DISCHARGED by `W223` and RETIRED in place on the board, because the record cites that cell |
+| `W223/6` | accepted, and its limit stated: a `narrate-service` whose `/healthz` names no model now reads unreachable, and this was NOT measured against a live service — the office had no network |
+| `W223/7` | ⭐ **minted [`W294`](rows/W294.md)**, order 55. Re-measured at `c8b2ae8`: `tests/gate_coverage/tell.py` resolves a module's calls through `ast` against that module's own imports, and never the value |
+
+⛔ **Every `[structural]` finding is ruled, scheduled or accepted before the next wave opens, and all three of `W223`'s are: `/1` and `/7` are rows, `/5` is performed here.**
+
+
+### W279 — the board convention's subject vocabulary never says an epic must DEFINE an In-flight epic task, which `W262` checks
+
+⛔ **`W262/3`: `docs/conventions/board.md`'s subject vocabulary says an In-flight epic task is argued in its EPIC, never that the epic must DEFINE it, and its `board-detail` row omits that half, which `W262` now checks.** ⭐ **RECEIVED from `W262`'s office at `a2b7d0d`.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The vocabulary states both halves:** an epic task subject is defined in its epic, and argued there.
+2. ⭐ **The `board-detail` row names the check `W262` shipped**, pointed at, never restated.
+
+⭐ **Surface:** `docs/conventions/board.md`, one of the `docs/conventions/` set. ⚠️ **After `W262` merges.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-83-w168-w265-and-w261-closed-w226-placed-first-and-the-iso-pin-advanced-to-f3b5239)
+
+#### ⭐ CLOSED — PO ROUND 88
+
+⭐ **Merged at `2b8a4eb`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `2b8a4eb` is RECEIVED GREEN.** ⭐ **The subject vocabulary now states BOTH halves — an epic task is DEFINED in its epic and ARGUED there — and the `board-detail` row names the check `W262` shipped, pointed at rather than restated.** ⚠️ **`W279/1` was disposed in round 87's § 4.**
+
+### W284 — `verdict.py`'s `DISAGREE` sentences describe a declaring merge subject as `Merge {branch}:`, a form no recent merge uses
+
+⛔ **`W274/3`: `verdict.py`'s two `DISAGREE` sentences still describe a declaring merge subject as `Merge {branch}:`, the colon form `W274` found no recent merge uses, so the sentence a reader acts on names a shape they will not find.** ⭐ **RECEIVED from `W274`'s office at `30f269d`. RE-MEASURED (Ruling 214) at `b2db6ef`, by `git grep`:** `tools/quality/board/verdict.py` lines 298 and 302 quote `Merge {branch}:`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Both sentences name the subject forms `graph.named` reads**, from its one definition, never retyped.
+2. ⛔ **Asserted:** a test pins the sentence to that definition.
+
+⭐ **Surface:** `tools/quality/board/verdict.py` and its test. ⚠️ **After `W274` merges.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-86-w278-w276-and-w226-closed)
+
+#### ⭐ CLOSED — PO ROUND 88
+
+⭐ **Merged at `35b2e81`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `35b2e81` is RECEIVED GREEN.** ⭐ **Both `DISAGREE` sentences name the subject forms `graph.named` reads, taken from `graph`'s one definition at call time, and the colon-only form is typed nowhere in `tools/`.** ⚠️ **`W284/1` and `/2` were disposed in round 87's § 4.**
+
+### W285 — `delivery.py` retypes the milestone shape inline, and `sibling_owned` reads a row list that skips a refused row in silence
+
+⛔ **`W275/2` and `/3`: `board/delivery.py` types the milestone shape `M[0-9]+` inline, a second copy beside `creators.MILESTONE_ID`, and its `sibling_owned` reads `creators.rows`, which skips a row whose milestone line fails with no signal of its own.** ⭐ **RECEIVED from `W275`'s office at `92cea74`. RE-MEASURED (Ruling 214) at `b2db6ef`, by `git show`:** `delivery.py` lines 91 and 94 type `M[0-9]+`; `creators.rows` `continue`s past a block whose first line fails `_MILESTONE`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`delivery.py` takes the milestone shape from `creators`**, one definition.
+2. ⛔ **A row `creators.rows` refuses is named where `sibling_owned` reads**, never skipped in silence.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tools/quality/board/delivery.py`, `tools/quality/creators.py` (which stands at its R11 bound, so it splits first) and their tests. ⚠️ **After `W275` merges.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-86-w278-w276-and-w226-closed)
+
+#### ⭐ CLOSED — PO ROUND 88
+
+⭐ **Merged at `620faf9`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `620faf9` is RECEIVED GREEN.** ⭐ **`delivery.py` takes the milestone shape from `creators`, which split at the parse/judge seam in a commit of its own before any addition, and a row `creators.rows` refuses is NAMED where `sibling_owned` reads rather than skipped in silence.** ⚠️ **`W285/1` was accepted and `W285/2` minted [`W291`](rows/W291.md), both in round 87's § 4.**
+
+### W281 — the adapter and onboarding skills say what `permitted_edits` may name and never state that root documentation is never editable
+
+⛔ **`W278/3`: the adapter and onboarding skills tell an integrator what `permitted_edits` may name, and neither states `W278`'s convention that repository-root documentation (`README`, `LICENSE`, `LICENCE`, `COPYING`) is never editable, so an integrator learns it only from a refusal (R19).** ⭐ **RECEIVED from `W278`'s office at `0ef3847`. RE-MEASURED (Ruling 214) at `W278`'s merge `362fdf5`, by `git show`:** `reads_as_content` exists in `corpus/manifest/edits.py`; the adapter `SKILL.md` names `permitted_edits` once and the onboarding `SKILL.md` twice, and neither names the convention (the one pattern hit reads *copying*, unrelated).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Both skills state what `permitted_edits` may never name, root documentation included**, pointing at `reads_as_content` rather than restating its list.
+2. ⛔ **Asserted:** a test fails when a skill's never-editable list drifts from the predicate.
+
+⭐ **Surface:** `src/studyforge/skills/adapter/SKILL.md`, `src/studyforge/skills/onboarding/SKILL.md`, and a test. ⚠️ **After `W278` closes.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-85-w268-w269-w270-w272-and-w266-closed)
+
+#### ⭐ CLOSED — PO ROUND 88
+
+⭐ **Merged at `8328a4f`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `8328a4f` is RECEIVED GREEN.** ⭐ **Both skills state what `permitted_edits` may never name, root documentation included, pointing at `reads_as_content` and `ROOT_DOCUMENTATION` by dotted path and typing no name; the pin lives in the test.** ⚠️ **`W281/1` was accepted and `W281/2` minted [`W292`](rows/W292.md), both in round 87's § 4.**
+
+### W223 — `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing
+
+⛔ **A MODEL CHANGE IS JUDGED FRESH.** ⭐ **`SF-42/2`: `engine_model` is part of the service's content address (`consuming.json`, `api.cache.over`) and is reported on `/healthz` — the register read it there, host, PO round 65 — but neither `Health` (`NS-05`) nor `Conditions` (`SF-17`) carries it.** ⚠️ **After a model change every recorded clip is judged current, and a re-run requests nothing when it should request everything.**
+
+### ⛔ WHY IT IS A ROW
+
+1. ⛔ **IT IS SILENT AND IT IS WRONG AUDIO**, not missing audio: a reader hears the old voice with every instrument green.
+2. ⭐ **A `provides` bump already re-requests every clip, asserted by `SF-42`** — so the machinery exists and one field is outside it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`Health` carries `engine_model` and `Conditions` includes it**, so a change re-requests every clip — asserted through a recording transport over the ids submitted, never the report.
+2. ⭐ **`W212/3` RIDES HERE, because the file does:** `narrate/client.probe` catches `ManifestError` around decoding a service answer, borrowing another package's error family. ⛔ **The next row touching `narrate/client.py` splits it at the WIRE SEAM** (Standing decisions) — ⭐ **this is that row, and the decode error belongs to the wire side.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A STUDYFORGE-SIDE GUESS AT THE SERVICE'S CACHE KEY.** ⭐ **The key is the service's; this row reads what `/healthz` reports.** R20: nothing here learns a path inside the sibling.
+
+[the mint](#po-round-65-wave-18-closed-step-36-and-m3-closed-at-1ede082-wave-19-named-five-mints)
+
+### ⭐ `SF-38/9` RIDES HERE, PO ROUND 66 — the split is its remedy
+
+⛔ **`import studyforge.generate` loads `narrate.client`, through `narrate.synth.incremental`'s module-level import;** ⚠️ **`tests/studyforge/generate/test_no_synthesis.py` reads SOURCE TEXT and cannot see it.** No request is made. ⭐ **Clause 3: after the wire-seam split, importing `studyforge.generate` does not load the wire module — asserted in a fresh interpreter over `sys.modules`, never source text; the module-level import restored turns it RED.**
+
+⭐ **Rider, PO round 68 — `W224/4`:** `cli/plan` now loads the HTTP client module at import, `SF-38/9`'s class; the wire-seam split answers both ([the round](#po-round-68-w80-and-w81-disposed-with-ops-05s-w224-closed-sk-03-made-dispatchable)).
+
+#### ⭐ CLOSED — PO ROUND 88
+
+⭐ **Merged at `c8b2ae8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8b2ae8` is RECEIVED GREEN.** ⭐ **`Health` carries `engine_model` and `Conditions` includes it, so a model change re-requests every clip, asserted through a recording transport over the ids submitted rather than the report.** ⭐ **`narrate/client.py` SPLIT at the wire seam, which DISCHARGES the standing condition this round retires, and `W212/3`'s borrowed error family goes with it: the decode error is the wire's and the JSON readers stay beside the client's R7 gate.** ⭐ **`SF-38/9` and `W224/4` ride closed: importing `studyforge.generate` or `cli/plan` loads no wire, asserted in a fresh interpreter over `sys.modules`.** ⚠️ **Its findings are disposed in this round's § 3.**

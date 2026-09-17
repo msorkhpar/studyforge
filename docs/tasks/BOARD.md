@@ -60,11 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W279` | Developer 2 | `fix/W279-vocabulary-defines-and-argues` @ none | 1 @ `ce0011d` | in-review |
-| `W284` | Developer 1 | `fix/W284-verdict-subject-form` @ none | 1 @ `b5ef008` | in-review |
-| `W285` | Developer 2 | `fix/W285-delivery-milestone-shape` @ `wt/dev2` | 4 @ `f2b4a5c` | in-review |
-| `W281` | Developer 3 | `fix/W281-skills-name-root-documentation` @ `wt/dev3` | 2 @ `feb4a57` | in-review |
-| `W223` | Developer 1 | `fix/W223-model-change-judged-fresh` @ `wt/dev1` | 0 @ `f4779c9` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -80,8 +75,8 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W263`, `W267`, `W271`, `W274`, `W275`, `W273`, `W283`, `W280`, `W222`, `W282` LEFT at `7400be3`, `3d41ba8`, `1aa2af0`, `c4f47df`, `e9ef42e`, `d869f6d`, `12e44ee`, `5e71e04`, `f4779c9`, `7771751`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⭐ **`W279`, `W284`, `W285`, `W281`, `W223` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed).** ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⛔ **`W279`, `W284`, `W285`, `W281`, `W223` LEFT at `2b8a4eb`, `35b2e81`, `620faf9`, `8328a4f`, `c8b2ae8`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⛔ **NO CARRIER IS NAMED, and that is a STATE rather than an omission: the in-flight table is EMPTY (`W111`, `W147`), and `wt/dev1`, `wt/dev2` and `wt/dev3` are TORN DOWN, so no absorbed branch is held by a checkout** ([ratified](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed)). ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -123,6 +118,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 44 | `W253` | ⭐ **round 78's mint, jumping nobody; `M7` work** | [78](BOARD-ARCHIVE.md#po-round-78-w163-closed-w250-named-and-iso-round-8-pending-on-w242) |
 | 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one of the `docs/conventions/` set** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 54 | `W286`–`W292` | ⭐ **round 87's mints, each jumping nobody** | [87](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed) |
+| 55 | `W293`, `W294` | ⭐ **round 88's mints, each jumping nobody** | [88](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -369,7 +365,7 @@ else.**
 | W220 | `reconnaissance.record.read` quotes an EXISTING `path=` back in its refusal — a latent R7 echo the contained census can no longer reach | framework agent | `todo` — `W217/2` | [`rows/W220.md`](rows/W220.md) |
 | W221 | The whole suite still writes outside the checkout — temp, cache and browser dirs — and nothing owns or asserts it | framework agent | `todo` — `W217/3` | [`rows/W221.md`](rows/W221.md) |
 | W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | Developer 1 | ✅ done — `f4779c9` | [`rows/W222.md`](rows/W222.md) |
-| W223 | `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing | Developer 1 | in-progress — `SF-42/2` + `W212/3`, on `fix/W223-model-change-judged-fresh` | [`rows/W223.md`](rows/W223.md) |
+| W223 | `engine_model` is in the service's cache key and in neither `Health` nor `Conditions`, so a model change requests nothing | Developer 1 | ✅ done — `c8b2ae8` | [`rows/W223.md`](rows/W223.md) |
 | W224 | A build into any `--out` but the corpus root ships a player that plays nothing and names no gap, because no pass copies a clip | framework agent | ✅ done — `d7c9d4d` | [`rows/W224.md`](rows/W224.md) |
 | W225 | One image tag serves every checkout, so a pinned reading can run in another checkout's image and the guard against it is blind past `W211` | framework agent | ✅ done — `a8742c1` | [`rows/W225.md`](rows/W225.md) |
 | W226 | The narration record cannot locate every clip it wrote, so a removed unit's clips and a re-worded passage's old clip are beyond the only prune | Developer 1 | ✅ done — `2939022` | [`rows/W226.md`](rows/W226.md) |
@@ -425,13 +421,13 @@ else.**
 | W276 | `narration.js`'s `play()` rejection overwrites the `error` handler, so a clip missing at run time reads blocked and play stays enabled | Developer 2 | ✅ done — `7425eb8` | [`rows/W276.md`](rows/W276.md) |
 | W277 | `narrate-service`'s `consuming.json` declares neither the engine's start-up model download nor the phonemizer's spaCy fetch | framework agent | `todo` — `INT-12/5`; ⛔ HELD by the coordinator, its surface a sibling repository (`PO-84/2`) | [`rows/W277.md`](rows/W277.md) |
 | W278 | R3's never-permitted content is decided by the manifest alone, so an edit to a `not_material` root `README.md` passes | Developer 3 | ✅ done — `ac11e8b` | [`rows/W278.md`](rows/W278.md) |
-| W279 | The board convention's subject vocabulary never says an epic must DEFINE an In-flight epic task, which `W262` checks | Developer 2 | in-review — `W262/3`, on `fix/W279-vocabulary-defines-and-argues` | [`rows/W279.md`](rows/W279.md) |
+| W279 | The board convention's subject vocabulary never says an epic must DEFINE an In-flight epic task, which `W262` checks | Developer 2 | ✅ done — `2b8a4eb` | [`rows/W279.md`](rows/W279.md) |
 | W280 | `validate/source` exports no store name, so the survey imports `REPOSITORY_STORE` past `__all__`, and `classification.py` stands at its R11 bound | Developer 2 | ✅ done — `5e71e04` | [`rows/W280.md`](rows/W280.md) |
-| W281 | The adapter and onboarding skills say what `permitted_edits` may name and never state that root documentation is never editable | Developer 3 | in-review — `W278/3`, on `fix/W281-skills-name-root-documentation` | [`rows/W281.md`](rows/W281.md) |
+| W281 | The adapter and onboarding skills say what `permitted_edits` may name and never state that root documentation is never editable | Developer 3 | ✅ done — `8328a4f` | [`rows/W281.md`](rows/W281.md) |
 | W282 | `validate` refuses no unknown block type and no wrong field set, so only the test harness's `check_blocks` catches either | Developer 3 | ✅ done — `7771751` | [`rows/W282.md`](rows/W282.md) |
 | W283 | Re-onboarding from a re-survey's draft drops the person's declared `not_material` globs, because `onboard` never reads the existing manifest | Developer 3 | ✅ done — `12e44ee` | [`rows/W283.md`](rows/W283.md) |
-| W284 | `verdict.py`'s `DISAGREE` sentences describe a declaring merge subject as `Merge {branch}:`, a form no recent merge uses | Developer 1 | in-review — `W274/3`, on `fix/W284-verdict-subject-form` | [`rows/W284.md`](rows/W284.md) |
-| W285 | `delivery.py` retypes the milestone shape inline, and `sibling_owned` reads a row list that skips a refused row in silence | Developer 2 | in-review — `W275/2` + `/3`, on `fix/W285-delivery-milestone-shape` | [`rows/W285.md`](rows/W285.md) |
+| W284 | `verdict.py`'s `DISAGREE` sentences describe a declaring merge subject as `Merge {branch}:`, a form no recent merge uses | Developer 1 | ✅ done — `35b2e81` | [`rows/W284.md`](rows/W284.md) |
+| W285 | `delivery.py` retypes the milestone shape inline, and `sibling_owned` reads a row list that skips a refused row in silence | Developer 2 | ✅ done — `620faf9` | [`rows/W285.md`](rows/W285.md) |
 | W286 | `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses | framework agent | `todo` — `INT-14/1` | [`rows/W286.md`](rows/W286.md) |
 | W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | `todo` — `INT-14/4` | [`rows/W287.md`](rows/W287.md) |
 | W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | `todo` — `W226/2` | [`rows/W288.md`](rows/W288.md) |
@@ -439,6 +435,8 @@ else.**
 | W290 | `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable | framework agent | `todo` — `W222/2` | [`rows/W290.md`](rows/W290.md) |
 | W291 | `board/delivery.py` types the capability-id shape inline, a second copy beside the plan parse's heading pattern | framework agent | `todo` — `W285/2` | [`rows/W291.md`](rows/W291.md) |
 | W292 | The never-editable skill test pins only `ROOT_DOCUMENTATION`, while the skills also point at `IGNORE_NAMES`, `VCS_NAMES` and `VCS_DIRECTORIES` | framework agent | `todo` — `W281/2` | [`rows/W292.md`](rows/W292.md) |
+| W293 | Every `studyforge.cli.*` import loads every verb eagerly, so the narrate verb's import sites moved outside `narrate/` and a lazy dispatcher is owed | framework agent | `todo` — `W223/1` | [`rows/W293.md`](rows/W293.md) |
+| W294 | The gate-coverage check reads the MODULE and not the value, so a decoded service answer is never gated | framework agent | `todo` — `W223/7` | [`rows/W294.md`](rows/W294.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -473,7 +471,7 @@ here; the argument is in the record.**
 | ⛔ **NO `W` ROW DISPATCHES INTO A WAVE WHERE AN OPEN-STEP ROW IS DISPATCHABLE AND UNDISPATCHED** — ⭐ **and a step whose rows are ALL MERGED is not a step with no dispatchable row, it is a step awaiting a CLOSE, so the register closes it and opens the next BEFORE any `W` row is placed into that wave** | [record](BOARD-ARCHIVE.md#the-dispatch-bound-landed-because-no-document-carried-it) |
 | ⭐ **AMENDED ROUND 53 — THAT BOUND IS PRIORITY, NOT EXCLUSIVITY: it binds a slot an open-step row COULD have taken, never a slot none can fill.** ⛔ **A wave leaving such a slot EMPTY has mis-read it, and the EMPTINESS is the finding** — ⚠️ **CORRECTED round 56: this cell also read *"a slot the open step cannot fill takes the queue head"*, which is in NO record and came from round 55's own handoff** (`PO-56/2`) | [record](BOARD-ARCHIVE.md#the-dispatch-bound-and-a-queue-it-cannot-be-dispatched-into-the-bound-is-priority-not-exclusivity) |
 | ⛔ **AMENDED ROUND 58 — the bound is UNTOUCHED; the POPULATION it ranges over widens to *every UNSATURATED step of the open milestone*** ([the step rule](README.md)) | [record](BOARD-ARCHIVE.md#po-round-58-the-register) |
-| ⛔ **Same form for `src/studyforge/narrate/client.py`, the FIRST in `src/`** — the next row touching it splits it at the WIRE SEAM, named before cutting. ⚠️ **No count here** (Ruling 150's form) | [record](BOARD-ARCHIVE.md#amendment-po-round-56s-re-take-at-b911f44-appended-and-never-an-edit-of-what-stands-above-ruling-106-ruling-324) |
+| ⛔ **RETIRED — `src/studyforge/narrate/client.py` SPLIT at the WIRE SEAM, so the condition is DISCHARGED and binds nobody.** ⭐ **Performed by [`W223`](BOARD-ARCHIVE.md#w223-enginemodel-is-in-the-services-cache-key-and-in-neither-health-nor-conditions-so-a-model-change-requests-nothing), which named the seam before cutting; retired IN PLACE rather than deleted, because the record cites this cell** | [record](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed) |
 | ⛔ **Same form for `tools/quality/reach.py`, and it is a THIRD member** — `W133/4` as the reviewer widened it. ⭐ **`W133`'s taker NAMED the seam — the citation grammar as a sibling module — and refused to cut it outside their surface.** ⚠️ **No count here** (Ruling 150's form; Ruling 261: the next edit is a SPLIT, not a trim) | [record](BOARD-ARCHIVE.md#w133-checkrulingsreachs-predicate-cannot-read-the-plural-comma-list-or-range-citation-form-and-a-checks-pass-condition-is-satisfiable-by-one-undeclared-spelling) |
 
 
