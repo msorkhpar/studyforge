@@ -26389,3 +26389,442 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 | `INT-16/1` | ⭐ **the corpus's own** — its reconnaissance estimate, not a framework defect |
 | `INT-16/3`'s *fresh recursive clone* | ⚠️ **`ISO-15`'s clause predates R18's no-submodules amendment; this register READS it as *a fresh clone beside the framework checked out at the pinned commit*, reversibly, and `W313` settles to that reading** |
 | `INT-16/5` | ⛔ **the USER's** — the corpus's own `CLAUDE.md` still teaches the retired code-graph tool, and additive-only protects that file |
+
+## PO round 104
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Thirteen rows close, one is RE-NAMED and does not, eight are minted, and the first corpus's own track reaches its last row.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+⛔ **Every one of these was verified by this register against the real behaviour, by exporting two refs and comparing, or by planting the defect and watching the new floor go RED.** ⚠️ **No office's account of its own work is a reading here** (Ruling 214).
+
+| row | office | merge | what this register measured, not received |
+|---|---|---|---|
+| `W286` | dev3 | `05a2991` | `framework_of` run on the real first corpus's linked worktree: it resolves beside the corpus's MAIN checkout, where before it resolved beside the worktree |
+| `W311` | dev1 | `5ee1317` | `plan` run READ-ONLY against the first corpus from exported source at both refs: the footprint's population now includes wherever the narration record locates a clip |
+| `W293` | dev2 | `b441e4e` | a fresh interpreter's `sys.modules` after importing the command: no verb module is loaded, `validate` excepted — ⛔ **that exception is `W293/3` and is minted below as `W320`** |
+| `W312` | dev4 | `c5c6356` | temp-directory census before and after a real browser test run: a closed browser leaves nothing behind, and the profile's log is read before the directory goes |
+| `W220` | dev4 | `31f45d5` | a document outside the source root: the refusal now names neither path, where before it printed both |
+| `W314` | dev1 | `f2d836f` | a fixture corpus planted over BOTH limit kinds, run through the real verbs at the pre-`W314` ref and at the tip: `plan` printed `EXCEEDS` and exited **0** before, and exits **1** now naming each crossed limit with its number; `build` refuses before writing, exit 1 |
+| `W313` | dev3 | `35f8f26` | the generated reader document over a fabricated ingested-and-narrated corpus: it states the real counts, and each command it prints is EXECUTED in its tests |
+| `W232` | dev3 | `883dae6` | a store copy planted under the git-ignored `.scratch/`: the census reads the TREE and stays GREEN, where the disk walk went RED |
+| `W215` | dev2 | `8bd302e` | a fixture built end to end: the declared attachment is linked with `download` and the file sits beside the page; the served unit contract is bumped `api` 1 → 2 |
+| `W292` | dev4 | `262f032` | a carve-out planted in `parse_edits` for the root ignore file, and another for version-control names: each PASSED the old test and each is named RED now. ⚠️ **This register's FIRST plant — adding a name to a vocabulary — proved nothing and was discarded: the constant is what both sides read, so the plant was self-consistent** |
+| `W214` | dev3 | `7015b47` | a declared attachment deleted from an archive: `studyforge validate` exits 1 naming a finding, where the same archive validated GREEN before |
+| `W216` | dev2 | `787b24d` | a hidden framework package planted on disk: it passed the old typed floor and is named RED by the derived census now |
+| `W57` | — | ⭐ **no carrier: the defect is GONE** | see below |
+
+### ⭐ `W57` — CLOSED BY MEASUREMENT, WITH NO CARRIER, AND THE REGISTER SAYS SO RATHER THAN CLAIMING THE WORK
+
+⛔ **This row said `render/page/text.py`'s `SAFE_SCHEMES` refuses a bare same-directory relative href.** ⭐ **RE-MEASURED by this register at `7015b47`, by calling the function:** `safe_href('unit02.html')` returns `'unit02.html'`; `'./a.html'` and `'../b.html'` likewise; `'javascript:x'` still returns `None`. ⭐ **The module now reads its two permitted forms out loud — an absolute href with a scheme in `SAFE_SCHEMES`, or a relative reference that is neither rooted nor protocol-relative.**
+
+⛔ **NO OFFICE TOOK THIS ROW.** ⭐ **It was discharged as a side effect of `SF-12`'s renderer package (`c9e7504`), which is where `safe_href` moved and where the relative form was written in.** ⚠️ **The register records that rather than dating the close to a carrier it never dispatched** — ⛔ **a row closed by measurement is closed by the measurement, and the discharging commit is named as a fact about the tree, not as this row's merge.**
+
+### ⭐ `W113` — RE-MEASURED AND STANDING, AND THE REGISTER'S OWN DRAFT WAS WRONG ABOUT IT
+
+⚠️ **This round's plan said `W57` and *most of `W113`* describe defects the code no longer has.** ⛔ **HALF OF THAT WAS FALSE, and it is recorded because an unmeasured disposal is exactly what this register exists to refuse.** ⭐ **RE-MEASURED at `7015b47` against the real primitive:**
+
+| call | reading |
+|---|---|
+| `Address('unit01')` | ⭐ **REFUSED by name** — *address segments must be a list or tuple of slugs, got a str* |
+| `Address(tuple('unit01'))` | ⛔ **ACCEPTED, and split into one segment per character** |
+| `Address(('unit01',))` | ⭐ accepted, one segment — the control |
+
+⛔ **So `W113`'s naming is TRUE AT THIS REF, word for word, and the row stays `todo` unchanged.** ⭐ **What had been fixed is the bare-`str` case, which the row never claimed; its actual claim is the `tuple(<str>)` one, and that stands.**
+
+### ⛔ `W198` — RE-NAMED, NOT CLOSED, AND THE DEFECT THAT CAUSED THE AMBIGUITY IS THIS REGISTER'S
+
+⭐ **The carrier merged at `1debe01`:** `Layout.content(address, unit)` declares a unit's authored overlay address in one place, and the premise test was INVERTED rather than deleted, which is the row's clause 3 met exactly as written.
+
+⛔ **THE ROW DOES NOT CLOSE, and its own PO-round-63 amendment said so before the round began:** *a declaration of location is not an application*. ⭐ **Its naming narrows to the verb — nothing APPLIES an authored overlay — and clause 4 stands: if v1 applies none, this row closes by SAYING SO in the contract, never by deleting the marker.**
+
+⛔ **`PO-104/1` — A BRIEF MAY NOT CONTRADICT THE ROW IT DISPATCHES.** ⚠️ **The brief this register wrote said in its clause 4 that the row closes; the row said it does not.** ⭐ **The office followed the brief and REPORTED the disagreement rather than resolving it silently, which is the only reason the round caught it (`W198/3`).** ⛔ **The row file is the authority and a brief's clauses are QUOTATIONS of it.** ⚠️ **Measured cost: one office-round of ambiguity, absorbed by the office.**
+
+⭐ **`W198/1` FIXED IN THE RE-NAMED ROW, and it was the register's own error:** the row's clause 2 sent the contract to *spec §R9's register, `corpus_api`'s family*, and ⛔ **both halves were wrong** — §R21 is *a contract is located before it is described* and carries the register of located contracts, and the overlay's family is `content_api`, beside which `unit/content.py` mints `CONTENT_FILENAME`. ⭐ **Re-measured against the spec and against the source before the correction was written.**
+
+⭐ **`W198/2` — ANSWERED HERE, NOT MINTED.** ⚠️ **The question was whether R21's register should gain an address column now that one contract has a computed address and the others do not.** ⛔ **NO.** ⭐ **R21 LOCATES a contract; `Layout` COMPUTES an address. A column here would be a second producer of the same fact** (Ruling 330's *one producer* clause, which is R21's own applied to its own register) — ⚠️ **and it would go stale the first time geography moved, in the one document that cannot be regenerated.**
+
+### ⭐ MINTS — eight, each from a finding this register RE-MEASURED
+
+| row | from | re-measured how |
+|---|---|---|
+| [`W315`](rows/W315.md) | `W232/5` + this register's own reading | ⛔ **the two citation arms contradict each other across a merge**: `W313`'s merge was REFUSED for a bare citation, and the same file rewritten to LINK the row turned its BRANCH floor RED because the link did not resolve there. ⭐ **JUMPS everything: it makes a correct branch unmergeable** |
+| [`W316`](rows/W316.md) | `W232/1` | by reading the source at `7015b47`: `repository_root().rglob(".gitmodules")`, excluding nothing — the last whole-disk walk in the suite |
+| [`W317`](rows/W317.md) | `W312/1` | by reading the source: `os.closerange` above `LAST_INHERITED_FD` closes `subprocess`'s exec-error pipe, so a missing binary surfaces as a protocol error and writes no log to diagnose |
+| [`W318`](rows/W318.md) | `W314/2` | the stop `W314` built measures the corpus root's declared directories; an `--out` INSIDE the root is in the git tree and outside that population. ⛔ **`W314` is narrower than §5 asks and this is the remainder, not a re-take** |
+| [`W319`](rows/W319.md) | `W220/1` | by reading the source: `inventory.py`'s `relative_to` sites are unguarded, safe only because `take()` is the one builder — ⚠️ **a property established by a caller and asserted by nobody** |
+| [`W320`](rows/W320.md) | `W293/3` | by reading `cli/dispatch.py` line 48: `from studyforge.validate.cli import UNUSABLE`. ⛔ **`W293`'s property holds for four verbs of five, and its test carries the fifth as an exemption** |
+| [`W321`](rows/W321.md) | `INT-17/2` | by reading `pin.py`: `PROCEDURE` addresses `../studyforge` from the CORPUS ROOT while `framework_of` asks git for the MAIN checkout. ⭐ **JUMPS everything: the first corpus is a worktree, and the document's first fenced command would detach the framework checkout's HEAD** |
+| [`W322`](rows/W322.md) | `W198/4`, `W198/5`, `W298/2` | `Layout` computes the overlay address in one place and three TEST sites spell it by hand — ⛔ **a test that invents the address is a build that invents it, one register over** |
+
+### ⭐ ISO ROUND 17 RECORDED — verified by this register, NOT received
+
+| reading | result |
+|---|---|
+| merge | ISO `67ee3e7`, of `int/round17-repin-iso15`; both checkouts clean |
+| framework pin in the corpus | `883dae6` |
+| the corpus's own `verify.py`, re-run here | GREEN, exit `0` |
+| the reader document, read here | states this corpus's real counts and that it is reading-only |
+| pages, clips, read marks and external links | read mechanically by this register against the built site |
+
+⭐ **`ISO-15` and `ISO-16` TAKEN**, and `ISO-16`'s `completion-report.md` asserts spec §11.2 items 10–14: this corpus is **COMPLETE at the reading floor, not short** — ⛔ **every unit reading-only is a PASS (§11.0, C5), and the execution track is skipped because the manifest declares no exercises, never because anything failed.**
+
+⭐ **The pin in `workspace.json` advances to `67ee3e7`** (`W244`).
+
+⛔ **`M6` DOES NOT CLOSE IN THIS ROUND, and the register says so rather than letting the corpus's own completion report be read as the milestone's.** ⭐ **The corpus is complete at the reading floor — that is `ISO-16`'s claim and it is taken.** ⚠️ **But C4, this track's finish line, names `ISO-17` — the findings distilled — as its last row, and `ISO-17` is not taken.** ⛔ **So the close run (Ruling 97: every clause re-taken at ONE ref) waits for round 18, and no clause of it is pre-taken here, because a clause taken at a different ref is not part of that run.**
+
+⚠️ **A DEFECT OF THIS REGISTER'S OWN, CAUGHT BEFORE THE MERGE AND RECORDED RATHER THAN QUIETLY FIXED.** ⛔ **The sentence above was written into this record while the pin advance itself was NOT in the commit** — the round's merge gate was already running on a tree whose `workspace.json` still held the previous pin. ⭐ **The gate was STOPPED, the staged merge aborted and the tree verified restored, the edit made, and the gate re-run.** ⚠️ **The cost was one gate run.** ⛔ **The lesson is narrow and worth keeping: a round record states what the round's own DIFF does, so every *advances*, *updates* and *fixes* in it is read against `git show --stat` before the gate is started, not after.**
+
+⚠️ **`INT-17/1`, and the register reads it as the office corrected it:** the round-17 brief named `W215` as landed when the dispatch was ONE COMMIT EARLY — `W215` merged at `8bd302e`, the next merge after the pin, while the round ran. ⛔ **The round pinned what it was told to pin and did not chase the branch, which is right.** ⭐ **Round 18's brief names its pin explicitly as the tip AS OF DISPATCH and says so in its own section, which is this register's answer to the residue.**
+
+### ⭐ FINDINGS RELAYED, NOT MINTED
+
+| id | disposition |
+|---|---|
+| `W232/2`, `W232/3` | ⭐ **riders on `W316`** — the same walk through a local alias, and the static instrument that cannot see one |
+| `W232/4` | ⭐ **accepted, no row** — the census's name is wider than what it reads; true and incomplete |
+| `W198/6` | ⭐ **FIXED IN THIS ROUND** — `E09-delivery.md` cited `W198` as *nothing declares where the overlay sits*, which the merge made false; the epic is the register's document |
+| `INT-17/3` | ⭐ **the corpus's own, and already fixed there** — its `verify.py` walked the whole disk, which is `W232`'s class; ⚠️ **round 18 is asked whether the two fixes are the same shape** |
+| `INT-16/5` | ⛔ **STILL THE USER's** — the first corpus's own `CLAUDE.md` teaches the retired code-graph tool, and that repository's additive-only rule protects the file |
+| `PO-100/1` | ⛔ **STILL THE USER's** — the tracked `ONBOARDING.md` carries three statements this register measured false and an embedded instruction block; removing them was not in the user's direction |
+
+### ⛔ `PO-104/2` — ONE SCRATCHPAD, FOUR OFFICES, AND A GATE READING WAS OVERWRITTEN
+
+⚠️ **The offices share one scratchpad directory, and one office's gate output was overwritten by another's** (`W314`'s caution). ⭐ **Gate readings are now taken per office, into per-office filenames.** ⛔ **No verdict was affected and the reason is structural rather than lucky: the merge gate re-runs every gate on the MERGED tree and never reads an office's file.**
+
+### ⛔ `PO-104/3` — SEVERAL MERGE RUNNERS WAITED ON THE SAME CONDITION
+
+⚠️ **The waiters matched finished wrapper shells as well as running gates, so three verified merges sat idle while nothing ran, and two runners could have started merges on one checkout at once.** ⭐ **Replaced with one sequential queue and a pattern anchored to the real process.** ⛔ **No merge was lost and no tree was corrupted; the cost was idle time, and it is recorded because the failure mode — a waiter that is satisfied by its own shell — is not one a gate can catch.**
+
+### W286 — `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W286.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-14/1`: `pin.framework_of` looks for the framework at `<corpus root>/../studyforge`, while `tools/workspace` finds the workspace through git's common directory, so a corpus in a linked worktree one level deeper, or in an export, has no such sibling and the regenerate and the generated pin test refuse there.** ⭐ **RECEIVED from ISO round 14 at ISO `16841dc`, whose office worked around it with a symlink outside every repository. RE-MEASURED (Ruling 214) at `92b57fd`, by `git show`:** `src/studyforge/skills/onboarding/pin.py` `framework_of` returns `Path(root).resolve().parent / FRAMEWORK`.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DESIGN DECISION FIRST:** where the pin finds the framework when the corpus is a linked worktree, without a second workspace resolver (`W127`'s defect), or a refusal that names where it looked.
+2. ⛔ **A corpus in a linked worktree pins, and its generated pin test reads clean, with no symlink.**
+3. ⛔ **Asserted both ways (R12):** the absent-commit control still refuses with `PinRefused`.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/pin.py`, the pin test it generates, and their tests. ⭐ **Jumps nobody: ISO's workaround stands outside every repository.**
+
+[the mint](#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `05a2991`.**
+
+### W311 — The media footprint weighs only the declared units' media directories, so a clip the narration record locates anywhere else is on disk, committed and never weighed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W311.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W287/3`: `corpus.media.footprint.measure` walks ONLY the declared units' media directories.** ⭐ **VERIFIED by this register by reading the code at `0fce84a`**, not measured on a corpus: a clip the narration record still locates elsewhere — a removed or relabelled unit's old directory, a superseded clip outside every declared directory — is on disk and committed under `auto`, and is never weighed.
+
+⚠️ **So a corpus can read UNDER a limit it has crossed on disk**, in the one number a commit decision rests on. ⭐ **Not on the ISO corpus's path: `plan` there reads no superseded clip.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The footprint weighs every clip the record locates under the corpus root**, or states by name what it did not weigh — never a silent under-count.
+2. ⛔ **Asserted both ways (R12)** over a corpus with a clip in a removed unit's directory, and one without.
+3. ⭐ **Rider, `W287/2`:** `corpus/media`'s docstrings saying `plan` only projects are corrected in the same row.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A second measurement in `cli/plan/`** — `W287` routed the plan through `corpus.media` precisely so there is one. ⛔ **Nor a re-derivation of placement**: the record locates, the footprint weighs.
+
+⭐ **Surface:** `src/studyforge/corpus/media/` and its tests. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-102)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `5ee1317`.**
+
+### W293 — Every `studyforge.cli.*` import loads every verb eagerly, so the narrate verb's import sites moved outside `narrate/` and a lazy dispatcher is owed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W293.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W223/1`: `cli/dispatch.py` binds every verb's entry point at MODULE LEVEL, so `import studyforge.cli.<anything>` runs the package and loads EVERY verb — the whole build, plan, serve and narrate surface — whatever the caller wanted.** ⭐ **RECEIVED from `W223`'s office at `0f9fdfe`, which took the narrate verb's import sites outside `narrate/` and named the general case beyond its surface. RE-MEASURED (Ruling 214) at `c8b2ae8`, role `wt/po`, HOST, by `grep -n`:** `src/studyforge/cli/dispatch.py` lines 35 to 38 import `narrate_main`, `plan_main`, `serve_main` and `build_main` at module level.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A verb is resolved when it is DISPATCHED, not when the package is imported**, so importing one verb's module loads one verb.
+2. ⛔ **`VERBS` stays the single table** (`SF-40`): laziness may not become a second place a verb is registered.
+3. ⛔ **Asserted both ways (R12), in a FRESH INTERPRETER over `sys.modules`** — the instrument `W223` already shipped in `test_wire.py` — never over source text, which `SF-38/9` proved cannot see an import.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A LAZY IMPORT INSIDE EACH VERB'S `main`.** ⭐ That moves the cost without removing the coupling, and leaves `dispatch` still naming every module.
+
+[the mint](#po-round-88-w279-w284-w285-w281-and-w223-closed)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `b441e4e`.**
+
+### W312 — The visual harness creates a browser profile under the system temp directory per launch and never removes it, so suite runs fill a quota-limited temp filesystem and every shell on the host stops working
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W312.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **MEASURED THIS WAVE, not received: `tests/visual/browser.py`'s `Browser.__init__` calls `tempfile.mkdtemp(prefix="studyforge-visual-")` for a throwaway browser profile, and `close()` stops the browser and NEVER removes that directory.** ⭐ **Each profile carries the browser's own caches and model stores, and dozens had accumulated from suite and merge-gate runs.** ⛔ **The temp filesystem is quota-limited: when it filled, EVERY shell command in the coordinator and in the offices exited `1` with no output**, and one office stopped mid-row. ⚠️ **Freed by hand; a sweep holds it meanwhile — a workaround, not a fix.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A browser launch leaves nothing behind once it is closed**, on the ordinary path AND when the launch or the test fails.
+2. ⛔ **Asserted both ways (R12):** a closed browser's profile is gone; a plant that skips the removal reddens the test.
+3. ⭐ **The diagnostics survive a failure**: the browser log inside the profile is what a failed launch is diagnosed from, so it is read or reported BEFORE the directory goes.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **`W221`'s whole-suite sweep** — that row stays open for every other writer. ⛔ **Nor a shared profile across launches**: a fresh profile per launch is R10's point, kept.
+
+⭐ **Surface:** `tests/visual/browser.py` and its tests.
+
+[the mint](#po-round-103)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `c5c6356`.**
+
+### W220 — `reconnaissance.record.read` quotes an EXISTING `path=` back in its refusal — a latent R7 echo the contained census can no longer reach
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W220.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`studyforge.skills.reconnaissance.record.read` QUOTES AN EXISTING `path=` BACK IN ITS REFUSAL.** ⭐ **`W217/2`, measured at uid 0 before `W217` landed: once the poison directory existed, the refusal reproduced it through a `relative_to` message.**
+
+### ⛔ WHY IT IS A ROW AND NOT A NOTE
+
+1. ⛔ **R7 IS ENGAGED.** ⭐ **A path under a home directory is personal data, and this refusal echoes it.**
+2. ⛔ **THE SWEEP CAN NO LONGER SEE IT, BY DESIGN.** ⭐ **`W217`'s containment means the poison directory never exists at any uid**, so the census never reaches the branch that fires only for an EXISTING path. ⚠️ **Latent, and invisible to the one instrument that would have caught it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The refusal describes the path without reproducing it** — [`W17`](rows/W17.md)'s one spelling, not a fifth.
+2. ⛔ **Asserted with a poisoned path that EXISTS**, minted inside the test's own temporary directory; the pass condition is the poison's absence from the message, and the plant is the message restored.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A HOLE CUT IN `W217`'S CONTAINMENT SO THE CENSUS REACHES IT.** ⭐ **The containment is correct; this is a behavioural test.**
+
+[the mint](#po-round-65-wave-18-closed-step-36-and-m3-closed-at-1ede082-wave-19-named-five-mints)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `31f45d5`.**
+
+### W314 — A corpus whose measured media crosses its declared limits is reported EXCEEDS and planned and built with exit 0, where spec §5 says it stops and says so
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W314.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-16/4`, RECEIVED from ISO round 16 at ISO `f2da5dc`:** with a planted limit crossed, `plan` reports `EXCEEDS` and exits `0` with no refusal, and `build` exits `0` saying nothing about media. ⭐ **RE-MEASURED for `plan` by reading `cli/plan/report.py` at `ae4b519`: its exit code is `INVALID if self.refusals else OK`, and a crossed limit is not a refusal.** ⚠️ **`build`'s half is RECEIVED, not re-measured.**
+
+⛔ **Spec §5: a corpus that crosses its limits *stops and says so*, naming the number and the limit — never silently keeps committing.** ⭐ **Nothing stops.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every verb that decides whether generated media is committed exits non-zero on a crossed limit and names the number and the limit**, or the register is told by a row why a verb is exempt.
+2. ⛔ **Asserted both ways (R12)** over a corpus inside its limits and one planted across each limit kind.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A silent switch to ignoring media** — §5 forbids it by name. ⛔ **Nor a second measurement**: the verdict is `corpus.media`'s, which [`W311`](rows/W311.md) is rewriting — ⚠️ **dispatch after `W311` lands.**
+
+⭐ **Surface:** the verbs' exit paths (`cli/plan/`, the build verb) and their tests.
+
+[the mint](#po-round-103)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `f2d836f`.**
+
+### W313 — The generated reader document is read from the manifest alone, so after ingest and narration it still says nothing has been ingested, and the one command it gives does not run as written
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W313.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`INT-16/2` + `INT-16/3`, RECEIVED from ISO round 16 at ISO `f2da5dc`, RE-MEASURED by this register:** the committed `ONBOARDING.md` there, generated by the onboarding skill's `artifacts.reader_document`, still says *nothing has been ingested* over a corpus that is ingested, validated and narrated — ⛔ **`reader_document(manifest, …)` takes the manifest and nothing else.** ⚠️ **Its only command is `studyforge validate` with no root, not on the path of a fresh clone, and it never says the framework must be checked out beside the corpus at the pinned commit.**
+
+⛔ **`ISO-15` (the first corpus's reader documentation) is REFUSED on this, and its only planned home is `OPS-06`, which is `M9`** — ⭐ **so `M6` cannot close without the framework half of it, which is this row.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The reader document states the corpus's ACTUAL state** — how many units, how many narrated, how many reading-only, whether any container is needed — read from what the build reads (the archive and the narration record), never typed, and saying plainly what it could not read.
+2. ⛔ **Every command it gives runs as written** from a fresh clone of the corpus beside the framework at the pinned commit (R18 as amended — no submodules), including how to run the adapter.
+3. ⛔ **Regeneration is idempotent** (a second run diffs empty) and the document passes `assert_clean` (R7).
+4. ⛔ **Asserted both ways (R12)** over a corpus before ingest and one after ingest and narration.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A hand edit to any corpus's generated file** (R19) — the corpus re-takes it by regeneration. ⛔ **Nor `OPS-06` itself**: the Java corpus's study section stays `M9`'s; this is the skill's template reading real state. ⛔ **Nor any corpus name in `src/`** (R1).
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/artifacts.py` and what feeds it. ⚠️ **`onboard.py` stood at 398/400 at `0fce84a` — any edit there is a split at a named seam, declared first — and `W286` holds `pin.py` in the same package: dispatch after it lands.**
+
+[the mint](#po-round-103)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `35f8f26`.**
+
+### W232 — `test_progress.py` walks the repository's DISK for the reader's store, so a copy under the git-ignored `.scratch/` Ruling 139 prescribes reddens a correct tree
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W232.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`tests/studyforge/render/pageassets/test_progress.py` WALKS THE DISK FROM THE REPOSITORY ROOT, SO A FILE UNDER THE GIT-IGNORED `.scratch/` TURNS A CORRECT TREE RED.** ⭐ **`W107/4`, measured by `W107`'s office. The register read the region at `71ae733`.**
+
+`test_the_store_and_its_consumer_are_reachable_from_the_asset_directory_only` collects `repository_root().rglob(STORE)` and excludes only `.git`. ⛔ **Ruling 139 sends every office's harness to `.scratch/` under its own worktree, and the pinned image mounts that checkout. So an office that copies `src/` there, as the rule allows, turns the pinned suite RED on a tree with nothing wrong.**
+
+### ⛔ WHY IT IS A ROW
+
+⭐ **It fails loudly and never reads green, so it jumps nobody.** ⚠️ **But the RED lands on the gate every row self-certifies on, and it blames the tree for an office following its own rule.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The population is the TREE, not the disk.** Read tracked files, or honour the ignore declaration (the forms of `W28`, `W35` and `W148`). The taker names which.
+2. ⛔ **Measure the rest of the population first:** every committed test that walks `repository_root()` rather than a tracked list.
+3. ⛔ **PLANTED** (Rulings 124, 348): a copy of the store under `.scratch/` stays GREEN, and a tracked copy outside the asset directory still turns it RED.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **An exemption for `.scratch` by name.** The next ignored directory would be the same defect.
+
+[the mint](#po-round-70-w106-w107-and-sk-03-closed-w230-sk-06-and-w103-named-two-mints)
+
+⭐ **Rider, PO round 77 — `W151/5`:** `W151`'s office measured it again: any tree copy under `.scratch/` turns the suite RED. ⛔ **A second witness of this row's subject, not a mint.**
+
+⭐ **Rider, PO round 78 — `W242/9`:** `W242`'s office measured it a third time: a copy of `src/` under `.scratch/` turns the suite RED through `test_progress.py`. ⛔ **A witness, not a mint.**
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `883dae6`.**
+
+### W215 — A unit's `assets` and `attachments` are declared in the archive and read by nothing in `src/`, and spec C4 says what they are for
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W215.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A UNIT'S `assets` AND `attachments` ARE DECLARED IN THE ARCHIVE AND READ BY NOTHING IN `src/`.** ⭐ **`SF-37/6`, measured while wiring the media copy.** ⚠️ **`depth1`'s `media/small-graph.ttl` is the live instance: the archive declares it, no renderer emits it, no plan line declares a directory for it, and therefore no build copies it.**
+
+⛔ **SPEC C4 SAYS WHAT IT IS FOR — *"the page links them for download"*** — ⭐ **so this is not an undecided feature, it is a decided one with no implementer.**
+
+### ⛔ WHY IT IS A ROW AND NOT A FINDING ON `SF-12`
+
+⭐ **The copy follows whatever a page emits, and no page emits these** — ⛔ **so the missing half is the RENDERER's and the missing declaration is the PLAN's, and neither is the media pass's.** ⚠️ **`SF-37` refused to invent a directory for a file nothing links, which is right: a build that copied unlinked files would be guessing at a layout no document states.**
+
+⛔ **AND THE SAME SEAM IS [`W214`](rows/W214.md)'s FROM THE OTHER END:** ⭐ **there an adapter is not told where to WRITE media; here the framework does not READ a kind of media it declares.** ⚠️ **Two rows, one seam, and neither closes the other.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A DECISION FIRST: does a v1 page link a unit's datasets, or is C4 deferred?** ⭐ **Either answer is legal; the current state — declared, unread, unmentioned — is the one that is not.**
+2. ⛔ **IF LINKED: the plan declares the directory, the renderer emits the link, and the media pass copies it** — ⚠️ **in that order, because `plan` and `build` agree PATH FOR PATH** (Ruling 99) **and a copy with no plan line breaks that agreement.**
+3. ⛔ **IF DEFERRED: the archive document says so where the field is defined, and `v2-backlog.md` carries it** — ⭐ **so the next office reading `assets` does not re-derive this row.**
+4. ⚠️ **EITHER WAY THE FIXTURE IS THE WITNESS**: ⛔ **`depth1` declares one today, so whichever answer wins is assertable at once and not at some later corpus.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A COPY WITH NO LINK.** ⭐ **Bytes in the output that no page references are a footprint `SF-32` must weigh and a reader can never reach.**
+
+### ⚠️ RIDER — `OPS-05/5`, PO round 67
+
+⛔ **R3's third category — *a file the reader depends on as content* — is decided by `content.include` alone, in the manifest parser and in `validate.nondestructive`.** ⭐ **The assets and attachments this row reads are the first such files outside `include`, so its settlement names whether they join that category, or says why not.**
+
+[the mint](#po-round-63-the-six-decisions-answered-and-homed-m3s-missing-act-given-a-row-and-a-build-command-verified-against-my-own-expectation-rather-than-against-the-coordinators-account)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `8bd302e`.**
+
+### W292 — The never-editable skill test pins only `ROOT_DOCUMENTATION`, while the skills also point at `IGNORE_NAMES`, `VCS_NAMES` and `VCS_DIRECTORIES`
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W292.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W281/2`: the skills' never-editable statement points at `IGNORE_NAMES`, `VCS_NAMES` and `VCS_DIRECTORIES` through `parse_edits`, and the test pins only `ROOT_DOCUMENTATION`, so a change to the other three reaches no skill test.** ⭐ **RECEIVED from `W281`'s office at `feb4a57`. RE-MEASURED (Ruling 214) on `feb4a57`, by `git grep`:** `tests/studyforge/skills/test_never_editable.py` pins `edits.ROOT_DOCUMENTATION` against `AUDITED_AGAINST` and names none of the other three.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every name the statement points at is pinned** from its one definition, never retyped.
+2. ⛔ **Asserted both ways (R12):** a planted change to one of the three goes RED by name.
+
+⭐ **Surface:** `tests/studyforge/skills/test_never_editable.py`. ⚠️ **After `W281` merges.** ⭐ **Jumps nobody.**
+
+[the mint](#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `262f032`.**
+
+### W214 — A build can find archive media and NO ADAPTER IS INSTRUCTED TO PRODUCE ANY — §9 inverted, the artifact arrived first
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W214.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A BUILD CAN NOW FIND ARCHIVE MEDIA AND NO ADAPTER IS INSTRUCTED TO PRODUCE ANY. THIS IS §9 INVERTED: THE ARTIFACT ARRIVED FIRST.** ⭐ **`SF-37/2`, raised by the office that shipped the media copy and explicitly refused as a patch: closing it is `skills/adapter/`'s.**
+
+⚠️ **`src/studyforge/skills/adapter/SKILL.md`'s tree is `raw/<variant>/unit-NN/lesson-N.json` and NO OTHER PATH.** ⛔ **Spec §6's ingestion contract enumerates `container.json` + `raw/<variant>/unit-NN/<kind>-M.json` and nothing else.** ⭐ **The location a build reads is nevertheless fixed by three shipped records — the spec's contract table, `FND-04`'s handoff item 11, and both fixtures — which is how `SF-37` could deliver at all.**
+
+### ⛔ WHY IT IS THE MOST EXPENSIVE OF THIS ROUND'S MINTS
+
+⭐ **R1 and §12: the second source is what this framework's extensibility claim rests on.** ⛔ **An adapter written against the skill will put media somewhere the build does not look, EVERY MEDIA-BEARING PAGE WILL RENDER A BROKEN GLYPH, AND NOTHING WILL FAIL** — ⚠️ **`validate` does not know the location either, so the archive passes.** ⭐ **The defect surfaces to a READER, which is the latest and most expensive place a location disagreement can surface.**
+
+⛔ **AND IT IS THE RULE §9 EXISTS FOR, MEASURED:** ⚠️ **a skill written after the thing it produces has been validated against exactly one source** — ⭐ **and here the skill was not written after, it was not written at all, while the consumer shipped.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`skills/adapter/SKILL.md` STATES WHERE A UNIT'S OWN FILES GO**, in the same tree it already draws, ⭐ **and it is DERIVED FROM `skills/adapter/layout.py` rather than retyped beside it** — ⚠️ **`SF-37` put `UNITS_DIR` and `Layout.unit_files` on that module for exactly this reason (R19: anything a second source would retype is a hole in the skills).**
+2. ⛔ **THE SPEC'S §6 CONTRACT AND THE SKILL AGREE, ASSERTED BY AN INSTRUMENT AND NOT BY READING** — ⭐ **`W16`'s class: the spec's canonical examples are hand-maintained copies of contracts the code owns.**
+3. ⛔ **`studyforge validate` HAS AN OPINION ABOUT A DECLARED MEDIA FILE THAT IS NOT WHERE THE ARCHIVE SAYS** — ⚠️ **or *the adapter's definition of done* (R2) does not cover the thing the build most recently started needing.**
+4. ⭐ **AND THE THIRD CONSUMER IS NAMED**: ⛔ **`SF-37/6` — `assets` and `attachments` are declared and read by nothing — is [`W215`](rows/W215.md), and both rows are about the same seam from opposite ends.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A PARAGRAPH IN THE SKILL THAT RESTATES A CONSTANT.** ⭐ **R19's test is whether a second adapter author needs to retype anything; a prose path is a retype waiting to diverge.**
+
+[the mint](#po-round-63-the-six-decisions-answered-and-homed-m3s-missing-act-given-a-row-and-a-build-command-verified-against-my-own-expectation-rather-than-against-the-coordinators-account)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `7015b47`.**
+
+### W216 — `tests/test_emission.py`'s coverage floor sits so far below its own census that it cannot fall, and the sweep is the R7 gate's population
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W216.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`tests/test_emission.py`'s COVERAGE FLOOR SITS SO FAR BELOW ITS OWN CENSUS THAT IT CANNOT FALL.** ⭐ **`W209/5`, measured by `W209`'s taker and deliberately left: raising it was not that row's subject.**
+
+⚠️ **The comment records the population as of 2026-09-09; the census read at `869fd4c` is several times each recorded figure, against floors that were set to the old ones.** ⛔ **NO FIGURE IS TRANSCRIBED HERE** (Ruling 150's form): ⭐ **the census is the row's subject and its taker re-measures it, at their own ref, with the instrument the file already ships.**
+
+### ⛔ WHY A FLOOR THAT CANNOT FALL IS WORSE THAN NO FLOOR
+
+1. ⛔ **IT READS AS A GUARD AND IS NOT ONE.** ⭐ **A reader meeting a numeric floor concludes the population is watched** — ⚠️ **and half of `src/` could stop being reachable by the emission sweep with the assertion still green.**
+2. ⛔ **IT IS THE FAMILY [`W49`](rows/W49.md) AND [`W37`](rows/W37.md) NAME** — ⭐ **a check whose pass condition cannot be violated** — ⚠️ **and it is the SECOND instance this wave, after `SF-40/1`.** ⛔ **The difference is that `SF-40/1`'s could never fire and this one merely will not: same reading, different mechanism, and this one is repairable by a number.**
+3. ⚠️ **THE SWEEP IS THE R7 GATE'S POPULATION.** ⭐ **`tests/emission` is how this project asserts no public callable emits personal data** — ⛔ **so a floor that stops tracking the population is a personal-data gate quietly narrowing.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **THE FLOOR IS DERIVED, NOT TYPED** — ⭐ **or, if a literal is genuinely wanted, it is re-derived by a check that fails when it drifts** — ⚠️ **because a hand-typed figure is [`W151`](#w151-hand-typed-counts-in-docstrings-have-no-instrument-and-a-derived-count-claim-and-its-three-typed-copies-disagree)'s subject and this is its third witness.**
+2. ⛔ **PLANT IT** (Rulings 124, 348): ⭐ **remove a package from the sweep's reach and require the arm to go RED.** ⚠️ **Without the plant this row ships a bigger number that is equally untested.**
+3. ⭐ **THE STALE COMMENT GOES WITH IT.** ⛔ **A dated census in prose beside a live one is [`W204`](rows/W204.md)'s ungated surface, and it is what let this drift for three days unseen.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A BIGGER LITERAL.** ⭐ **That buys one more drift cycle and reproduces the finding exactly.**
+
+### ⭐ AMENDED PO ROUND 65 — `W217/5` RIDES HERE
+
+⛔ **`tests/emission/documents.py`'s `document_census` calls readers UNCONTAINED**, outside `W217`'s `contained(...)`. ⭐ **Same harness, same owner:** wrapping it is one call, and the plant is `W217`'s — a reader writing to a fixed path must turn the suite RED.
+
+[the mint](#po-round-63-the-six-decisions-answered-and-homed-m3s-missing-act-given-a-row-and-a-build-command-verified-against-my-own-expectation-rather-than-against-the-coordinators-account)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **Merged at `787b24d`.**
+
+### W57 — `render/page/text.py`'s `SAFE_SCHEMES` refuses a bare same-directory relative href
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W57.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`render/page/text.py`'s `SAFE_SCHEMES` refuses a bare same-directory relative href**
+
+[round 30's mints](#w57-minted-safeschemes-refuses-a-bare-same-directory-relative-href-and-it-drops-6-of-13-navigation-slots-in-shipped-code)
+
+#### ⭐ CLOSED — PO ROUND 104
+
+⭐ **CLOSED BY MEASUREMENT, with no carrier: the defect is gone at `7015b47`, discharged by `SF-12`'s renderer package (`c9e7504`). The round record carries the reading.**

@@ -532,8 +532,9 @@ first non-test caller the page renderer has ever had** — its surface is
 | a rebuild policy | ⛔ **NOT THIS ROW'S TO INVENT** — `write_pages` writes over nothing and names what it refused; the decision is `W202`'s |
 
 ⚠️ **Three carries a taker should read before starting, and none is re-derived
-here:** [`W198`](rows/W198.md) — nothing in `src/` declares where a unit's
-authored overlay sits in an archive, so the build cannot apply one;
+here:** [`W198`](rows/W198.md) — `Layout.content(address, unit)` now declares
+where a unit's authored overlay sits, and **nothing applies one**, so the build
+has an address and no verb (re-named, PO round 104, `W198/6`);
 [`W201`](rows/W201.md) — the corpus walk is written three times and this row is
 the one that can collapse them; [`W200`](rows/W200.md) — the root ignore file's
 bare `build/` swallows a package named `build/`, which is why the package is
