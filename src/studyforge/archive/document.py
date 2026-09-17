@@ -261,6 +261,25 @@ def parse(text: str, where: str) -> dict:
     ⚠️ The check runs **after** the gate, deliberately: `archive.scrub` walks
     dict keys as well as values, so by the time a key can be named in a refusal
     it has already been swept.
+
+    ## ⛔ A block's SHAPE is not this function's question
+
+    ⚠️ **`parse` asks four things and no more**: is it JSON, is it a version
+    this build reads, is it clean (R7), and are its top-level keys ones this
+    format defines. ⛔ **It does not read a block's shape, and it may not** —
+    the full spec §6 reading is `validate.blocks`, and `validate` imports
+    `archive`, so asking it here would make the archive depend on its own
+    consumer.
+
+    ⭐ **So the guarantee is made in two places that are not this one**, and
+    `W297` closed the gap between them: `blocks.counts_of` refuses a non-object
+    top-level block by name on the way IN through `build`; `blocks.read_layout`
+    refuses it on the way OUT, so no reader of a parsed document reaches `.get`
+    on a string; and `validate.blocks.block_problems` is the full §6 reading a
+    corpus meets through `studyforge validate` (R2).
+
+    ⛔ **Said here deliberately**: a document that parses clean is the one a
+    caller most easily mistakes for a document that is WELL-FORMED.
     """
     try:
         document = json.loads(text)
