@@ -24594,3 +24594,67 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 88
 
 ⭐ **Merged at `c8b2ae8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8b2ae8` is RECEIVED GREEN.** ⭐ **`Health` carries `engine_model` and `Conditions` includes it, so a model change re-requests every clip, asserted through a recording transport over the ids submitted rather than the report.** ⭐ **`narrate/client.py` SPLIT at the wire seam, which DISCHARGES the standing condition this round retires, and `W212/3`'s borrowed error family goes with it: the decode error is the wire's and the JSON readers stay beside the client's R7 gate.** ⭐ **`SF-38/9` and `W224/4` ride closed: importing `studyforge.generate` or `cli/plan` loads no wire, asserted in a fresh interpreter over `sys.modules`.** ⚠️ **Its findings are disposed in this round's § 3.**
+
+## PO round 89
+
+⭐ **Cut at `19c7224`, the release tip after round 88.** ⚠️ **THE HEADING CARRIES NO CLOSE LIST, DELIBERATELY: every pointer minted in this round resolves to `#po-round-89`, and a heading naming its closes would move that anchor each time one landed.** ⛔ **The closes are § 5 below, appended as they land.**
+
+### ⭐ 1 — THE USER'S TWO RULINGS, 2026-09-16
+
+⛔ **Both were HELD FOR THE USER across rounds, and both gate `M6`, the open milestone.**
+
+| held item | ⭐ the ruling |
+|---|---|
+| `ISO-12`'s generated narration, held at ISO `a5cd5f7` | ⭐ **"Commit but never push."** It lands in the ISO repository's LOCAL history; `ISO-13` and `ISO-15` unblock. ⛔ Consistent with the standing rule that nothing in this project is ever pushed |
+| `W243/1`, the four Prism grammars | ⭐ **"Vendor the grammar into the repo"** — ⛔ **NOT a build-time download**, so the build stays offline and R8 is untouched. The Scheduled cell moves to `fired`; [`W295`](rows/W295.md) carries it |
+
+⚠️ **VENDORING IMPLIES ONE NETWORK FETCH, and the board rule is *no office fetches*.** ⭐ **So the acquisition was the COORDINATOR's act, performed once at `19c7224` by the header's own recorded reproduce command, and DISCLOSED here rather than delegated to an office.**
+
+### ⭐ 2 — MINTS
+
+| finding | row | order | surface |
+|---|---|---|---|
+| `W243/1`, on the user's ruling | [`W295`](rows/W295.md) | ⛔ **dispatched in this round, not queued** | `src/studyforge/render/assets/prism.js` and `render/pageassets/` |
+| `PO-89/1` | [`W296`](rows/W296.md) | 56 | the merge path, and ⚠️ **NOT `tools.quality.CHECKS`** — Ruling 80 forbids a floor check reading a branch position |
+
+### ⛔ 3 — `PO-89/1`, AND IT IS THIS OFFICE'S OWN DEFECT
+
+⛔ **A merge subject that `tools.quality.subject` REFUSED reached the release branch at `19c7224`.** ⭐ **The instrument ran and printed its refusal; the coordinator's inline merge branched on `corroborate`'s exit alone and never on the subject's, so a refused subject merged.**
+
+⚠️ **The carrier merges of the same wave used a runner that DID branch on it, and all five passed.** ⛔ **So the defect is neither the instrument nor the practice where it was mechanised — it is that the mechanisation was OPTIONAL, which is exactly what `W149`'s own record predicted when it said no gate enforces this.**
+
+⚠️ **AND IT RECURRED INSIDE THIS ROUND, at `ba49aa6`, in the very commit that minted the row** — the instrument refused the bare count `two`, was read, and was not branched on. ⭐ **That commit was UNMERGED, so it was amended; the difference between the instances is precisely the difference the remedy must exploit.**
+
+⛔ **Ruling 320 makes it unrecoverable rather than correctable: a landed subject is FROZEN and is not annotated.** ⭐ **`19c7224`'s subject stays wrong, it is named here, and the remedy is a gate before the merge — [`W296`](rows/W296.md).**
+
+### ⭐ 4 — DISPATCH
+
+⛔ **Five offices, each carrier DECLARED on its own branch (`W153/2`) before any work began.**
+
+| carrier | office | rows |
+|---|---|---|
+| `fix/W181-W192-register-id-and-multi-id-spelling` | Developer 1 | `W181`, `W192` — one owner because both touch `handoffs/existence.py` |
+| `fix/W199-archive-raw-minted-twice` | Developer 2 | `W199` |
+| `fix/W289-W290-block-guard-and-unit-location` | Developer 3 | `W289`, `W290` |
+| `fix/W295-vendor-prism-grammars` | framework agent | `W295`, on the user's ruling |
+| ISO `int/` round 15 | integration | `ISO-12`, on the user's ruling |
+
+⚠️ **`W90`, `W118` and `W198` sit AHEAD of these in the queue and were NOT dispatched, which Ruling 75 requires be said out loud:** ⛔ **none is a developer row.** ⭐ **`W90` is a `toc_api` design decision only the id space's owner may take; `W118` says in its own text that it is a PO row because its population is the closes; `W198` owes a CONTRACT decision before any code.** ⭐ **That is the *slot no open-step row can fill* case, and the bound is priority rather than exclusivity.**
+
+### ⭐ 5 — CLOSES
+
+⛔ **Appended as each dispatched carrier lands and is measured. Nothing is closed by dispatch.**
+
+#### ⭐ `ISO-12` — CLOSED, on the user's ruling, at ISO `509583f`
+
+⭐ **The generated narration is committed to `release/studyforge-integration` and NOT pushed.** ⛔ **VERIFIED BY THE COORDINATOR rather than received:** the clips and the narration record are tracked at the new HEAD, the tree is clean, the repository's own `docs/studyforge/verify.py` exits `0`, and `origin/main` still sits where it did — nothing was pushed, fetched or re-pointed.
+
+⭐ **Method: a CHERRY-PICK of the generated-output commit, not a merge of the held branch.** ⚠️ **The office's ground, and it is a good one:** merging `int/round14-repin-iso12-iso14` would have carried record commits that REWRITE round 14's record to say `ISO-12` was taken on 2026-09-13, when it was in fact HELD. ⛔ **Round 14's record is verified UNEDITED by this act** (Ruling 106: a record is annotated, never edited).
+
+| finding | outcome |
+|---|---|
+| `INT-15/1` | ⛔ **AN IDENTITY TRAP, and it fired.** `git cherry-pick` and `git merge` take identity from local config, and `git merge` has **no** `--author` flag — so a real address reached the log twice before the office caught it, discarded the bad merge, and remade both commits with the house placeholder. ⭐ **AUDITED INDEPENDENTLY BY THE COORDINATOR:** every commit this round added carries `po-int@example.invalid` in BOTH the author and the committer field, and no unreachable or reflog-held object from this round carries anything else. ⚠️ **The durable remedy is to export `GIT_AUTHOR_*` AND `GIT_COMMITTER_*`; the defect is invisible in a diff and in `git log --oneline`, and visible only in a format string that prints both fields** |
+| `INT-15/2` | ⚠️ **THE DECISION WAS ABOUT REACHABILITY, NOT DISK, AND NOBODY KNEW THAT WHEN IT WAS PUT.** ⛔ **Committing the audio added NO new objects** — every blob was already in the object store, written when the held branch was created, and `.git` measures the same before and after. ⭐ **So the question put to the user as *"shall this enter history"* was in truth *"shall these existing objects become reachable"*.** ⛔ **The bytes are reclaimable only by deleting the held branch and expiring the objects, which was NOT done and is not this round's to do** |
+| `INT-15/3` | ⛔ **Two branches record the SAME round with CONTRADICTORY outcomes.** `int/round14-repin-iso12-iso14` is left in place and unmerged; a later reader who merges it would silently rewrite round 14's record. ⚠️ **Named here so the trap is not re-discovered** |
+
+⛔ **AND A CORRECTION THIS ROUND OWES, because the register propagated it:** ⭐ **`ISO-13` is unblocked — its clause *"the audio is committed"* now holds.** ⛔ **`ISO-15` IS NOT: its gate is `SK-07`'s reader documentation, and `ISO-12` was never its blocker.** ⚠️ **Round 87's held item and this round's own first draft both said *"`ISO-13` and `ISO-15` wait on it"*, and the second half was FALSE — measured by the office against `ISO-15`'s own clauses.**

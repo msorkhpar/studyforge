@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 14 merged at `16841dc`, now the pin: `ISO-05`, `ISO-07`–`ISO-11`, `ISO-14` taken; ⛔ **`ISO-12`'s clauses hold and its generated narration's commit is HELD FOR THE USER; `ISO-06`'s last clause on `W243/1`** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
+| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; round 14 merged at `16841dc`, now the pin: `ISO-05`, `ISO-07`–`ISO-11`, `ISO-14` taken; ⭐ **BOTH of its held clauses were DECIDED BY THE USER 2026-09-16** — `ISO-12` is TAKEN at ISO `509583f` — committed, never pushed, and `ISO-06`'s last clause (`W243/1`) resolves by VENDORING, carried by [`W295`](rows/W295.md) | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -60,6 +60,10 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W181` + `W192` | Developer 1 | `fix/W181-W192-register-id-and-multi-id-spelling` @ `wt/dev1` | 1 @ `5130828` | in-review |
+| `W199` | Developer 2 | `fix/W199-archive-raw-minted-twice` @ `wt/dev2` | 0 @ `19c7224` | in-progress |
+| `W289` + `W290` | Developer 3 | `fix/W289-W290-block-guard-and-unit-location` @ `wt/dev3` | 1 @ `46c6acc` | in-review |
+| `W295` | framework agent | `fix/W295-vendor-prism-grammars` @ `wt/dev4` | 0 @ `19c7224` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -119,6 +123,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 46 | `W260` | ⭐ **round 79's mint, jumping nobody; one of the `docs/conventions/` set** | [79](BOARD-ARCHIVE.md#po-round-79-the-iso-round-9-blockers-minted-first-w249-closed-and-the-iso-pin-advanced-to-8afdd5b) |
 | 54 | `W286`–`W292` | ⭐ **round 87's mints, each jumping nobody** | [87](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed) |
 | 55 | `W293`, `W294` | ⭐ **round 88's mints, each jumping nobody** | [88](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed) |
+| 56 | `W296` | ⭐ **round 89's mint, jumping nobody** — ⛔ **`W295` is not here: it was DISPATCHED in this round, on the user's ruling, and its cell is in flight** | [89](BOARD-ARCHIVE.md#po-round-89) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -437,6 +442,8 @@ else.**
 | W292 | The never-editable skill test pins only `ROOT_DOCUMENTATION`, while the skills also point at `IGNORE_NAMES`, `VCS_NAMES` and `VCS_DIRECTORIES` | framework agent | `todo` — `W281/2` | [`rows/W292.md`](rows/W292.md) |
 | W293 | Every `studyforge.cli.*` import loads every verb eagerly, so the narrate verb's import sites moved outside `narrate/` and a lazy dispatcher is owed | framework agent | `todo` — `W223/1` | [`rows/W293.md`](rows/W293.md) |
 | W294 | The gate-coverage check reads the MODULE and not the value, so a decoded service answer is never gated | framework agent | `todo` — `W223/7` | [`rows/W294.md`](rows/W294.md) |
+| W295 | The vendored highlighter carries no `markup`, `json`, `properties` or `gherkin` grammar, so `ISO-06`'s *"XML fences highlighted"* is unmeetable | framework agent | in-progress — `W243/1`, the user's 2026-09-16 ruling, on `fix/W295-vendor-prism-grammars` | [`rows/W295.md`](rows/W295.md) |
+| W296 | A merge subject reaches a release branch unchecked, because no gate enforces `tools.quality.subject` — the register's own defect at `19c7224` | framework agent | `todo` — `PO-89/1` | [`rows/W296.md`](rows/W296.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -503,7 +510,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | ⛔ **A FOURTH row `blocked` on Ruling 270's wall before `W129` lands** | framework agent | `discharged` — ⭐ **`W129` at `94a3a4b`** | a MERGED row reaches `blocked` because a FROZEN record points at its detail file | ⛔ **Ruling 288 amended 282 and this cell** — ⭐ **[the discharge](BOARD-ARCHIVE.md#nine-closes-in-one-run-at-one-ref-the-plant-its-control-and-the-population-declared-first)** |
 | ⛔ **`docker/dev/compose.yaml`'s REASONING is stale while its DECISION stands** | framework agent | `discharged` — ⭐ **`W163` at `accceaf`; `W152` had merged at `3049de9` without carrying it** | ⛔ **whichever row next owns `docker/dev/**`** — that row landing is the act, the framework agent is the office | ⭐ **`W128/6`; the conclusion stands and the reasoning does not** |
 | ⛔ **`SF-03`'s placement acceptance is RENUMBERED from the archive's own unit ordinal — or REFUSED BY NAME** | framework agent | `discharged` — ⭐ **`W254` at `d05d856`, REFUSED BY NAME arm, [80](BOARD-ARCHIVE.md#po-round-80-w252-w161-w255-and-w254-closed-w256w258-named-and-w164-parked)** | ⛔ **whichever row next REOPENS `SF-03`'s placement acceptance** — that row landing is the act, the framework agent is the office | ⭐ **`W138/2`, ruled as Ruling 312** — [the argument](handoffs/CTO-2026-09-11-round63.md#3a-clause-4s-first-half-my-ruling-and-it-is-ruling-312) |
-| ⛔ **The Prism 1.30.0 grammars for `markup`, `json`, `properties` and `gherkin` are NOT downloaded** | the user | `pending` — ⛔ **HELD FOR THE USER (`W243/1`); no office fetches** | the user approves or declines the download | ⭐ **`ISO-06`'s *"XML fences highlighted"* waits on it; until then such a fence renders plain, as `W243` declares** |
+| ⛔ **The Prism 1.30.0 grammars for `markup`, `json`, `properties` and `gherkin` are NOT vendored** | the user | ⭐ **`fired`** — ⛔ **THE USER RULED 2026-09-16: VENDOR them, NOT a build-time download.** Carried by [`W295`](rows/W295.md); ⚠️ the one fetch the ruling implies is the COORDINATOR's act, taken once and disclosed, never an office's | ⭐ **the trigger FIRED: the user answered** | ⭐ **`ISO-06`'s *"XML fences highlighted"* unblocks when `W295` lands; until then such a fence renders plain, as `W243` declares** |
 <!-- /scheduled -->
 
 ---
@@ -517,7 +524,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⭐ **integration round 14 merged at ISO `16841dc`, now the pin: `ISO-05`, `ISO-07`–`ISO-11`, `ISO-14` taken; `ISO-06` partial (`W243/1`); `ISO-12`'s commit held for the user, and `ISO-13`, `ISO-15` wait on it** ([87](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed)) |
+| **Status** | `in-progress` — ⭐ **`ISO-12` TAKEN at ISO `509583f` on the user's 2026-09-16 ruling: its generated narration is committed and never pushed, and the repository's own verification exits `0`.** ⭐ **`ISO-13` unblocks.** ⛔ **`ISO-15` does NOT: its gate is `SK-07`'s reader documentation, and `ISO-12` was never its blocker** (`INT-15`'s correction). `ISO-06` partial (`W243/1`, carried by [`W295`](rows/W295.md)) ([89](BOARD-ARCHIVE.md#po-round-89)) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 
