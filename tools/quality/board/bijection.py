@@ -9,7 +9,9 @@ REDIRECT STUB.**
 **How you use it.** `bijection_findings(root, text)` returns the findings and is
 called from `check_board`; `bijection_reading(root, text)` is the population it was
 over, printed by `board_state` (`W161`). ⛔ **It is handed the board's text rather than reading
-it**, so the four arms read one string and cannot disagree about what the file said.
+it**, so every arm whose subject IS the board reads one string and cannot disagree about what
+the file said. ⚠️ **`born.py` is the one arm outside that**: its subject is the row FILES and
+the clause that binds their mint, and neither is a byte of the board.
 
 **Depends on.** `register` for the parsers and the frame, `vocabulary` for the
 In-flight table's subjects (moved there by `W262`, `W161/5`), `config` for
@@ -31,7 +33,7 @@ that had never been given a module:** ⛔ **every other arm reads the board as a
 FILE (`bounds.py`), as an OBSERVATION TABLE (`contradiction.py`) or as a SCHEDULE
 (`scheduled.py`); this one reads it as a REGISTER.** ⚠️ **It stayed in
 `__init__.py` only because it was there first** — ⭐ **and `__init__.py` is now what
-its name says: the package surface and the composition of four arms, nothing that
+its name says: the package surface and the composition of the arms, nothing that
 judges anything itself.**
 
 ## ⛔ Ruling 270 — a close REPLACES the row file with a stub, and the clause is NARROW
