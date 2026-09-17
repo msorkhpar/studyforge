@@ -25710,3 +25710,252 @@ ref (format and lint are enforced in tests/test_repository.py, Ruling 78)
 #### ⭐ CLOSED — PO ROUND 94
 
 ⭐ **Merged at `ecf0661`, TERMINAL by predicate `C`.** ⛔ **The row asked the merge path to READ the pinned image and BRANCH on its exit, and `tools/mergegate.py` is that gate as a TREE ARTIFACT rather than one office's scratchpad habit.** ⚠️ **Its own merge was gated by the scratchpad runner deliberately: gating an uncertified artifact's merge with that artifact is circular.**
+
+## PO round 95
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W305` | dev1 | `95143bc` | ⭐ **merged at `6ce9409`** — `mergegate`'s `3` gates GREEN on the MERGED tree |
+| `W306` | dev2 | `f24300e` | ⭐ **merged at `d3e36b5`** — the same `3` gates GREEN on the MERGED tree |
+
+⭐ **BOTH CARRIERS WERE MERGED BY `tools/mergegate.py`, the artifact `W302` delivered** — ⛔ **the first carrier merges taken by the tree instrument rather than by a runner in one office's scratchpad.**
+
+#### ⭐ `W305` — the identity is read only from scopes no office can write
+
+⭐ **`IDENTITY_SCOPES = ("--global", "--system")`, asked scope by scope so no read falls through to the checkout the process stands in.** ⛔ **The argument is WHOSE DATUM EACH SCOPE HOLDS:** global and system are the machine's, where a real identity sits, so the arm keeps its subject; local and worktree are the repository's working convention.
+
+⛔ **THE DIRECTION THAT MUST NOT WEAKEN IS CARRIED BY A TEST, NOT A CLAIM** — an identity in the global config is STILL READ and still refused, fronted by an INHABITATION GUARD so the pass cannot come from an empty population (Ruling 191, respected unprompted). ⚠️ **The narrowing is DECLARED: the arm can no longer see an identity existing ONLY in a repo-local config AND written into a tracked file. The `hostname` and `home directory` arms are untouched.**
+
+#### ⭐ `W306` — the mint path RUNS the clause instead of restating it
+
+⛔ **`board/born.py` is a FLOOR ARM, and the office ARGUED THE PLACEMENT rather than inheriting `W302`'s answer.** ⭐ **`W302`'s reasons do not reach it:** Ruling 80 bars a floor check from reading UNTRACKED state and R10 wants reproducibility over arbitrary roots — ⚠️ **this arm reads TRACKED FILES ONLY, with no git, branch, daemon or clock.** ⭐ **The decisive half: the floor is ALREADY in the merge path through `mergegate.py`'s `GATES`, so the mint path runs it without anyone remembering to.**
+
+⭐ **The predicate is PARSED OUT OF Ruling 244(e)'s OWN FENCED COMMAND at run time**, the fenced line identified by both its literals. ⛔ **VERIFIED BY THIS REGISTER: the only regular expression typed into the module is the EXTRACTOR; a test asserts no copy of the clause's pattern exists BY READING THE ARM'S OWN SOURCE; another proves the verdict MOVES when the clause moves.**
+
+⭐ **`W73` is excluded BY NAME, PRINTED in the notice, and asserted EXACTLY INHABITED IN BOTH DIRECTIONS** — ⛔ **so a name that outlives its reason REDDENS THE SUITE, and a row the clause did bind cannot be excused.**
+
+### ⭐ WHAT THE OFFICES DISCLOSED WITHOUT BEING OBLIGED TO
+
+⛔ **dev1's FIRST command printed the machine's configured identity into its own session transcript**, where Ruling 345 clause 5 wants a null check. ⭐ **The datum reached no file, no commit, no log and no outbound request; this register MEASURED the tree clean — placeholder authorship, zero occurrences in any diff or message, no absolute home path.** ⚠️ **This register did NOT read that transcript to confirm the rest, DELIBERATELY: reading it would re-expose the exact datum being checked for.** ⭐ **The office then encoded the lesson — `W305/4` refuses `--show-origin` as an optimisation BECAUSE it prints a home directory.**
+
+⛔ **dev2's FIRST commit was SUITE RED in the image on the two `ruff` gates, which do not run on the host, and it reported that rather than only its replacement** — ⭐ **`W302`'s lesson working in an office that never saw `aa7c035`.** ⭐ **It also corrected a design error of its own: the first draft raised a finding on any tree with row files and no conventions document, which would redden an ARBITRARY ROOT.**
+
+### ⛔ THIS OFFICE'S OWN DEFECT THIS ROUND
+
+#### ⛔ `PO-95/1` — the brief named one half of a hazard and was silent on the other
+
+⛔ **`W305`'s brief forbade WRITING or UNSETTING the shared identity in three places and said NOTHING about READING IT ALOUD.** ⚠️ **The office's first reflex on an identity row was to run the command that PRINTS the identity — which the brief had not thought to forbid.** ⭐ **The general shape, worth more than the instance: a brief that names a hazard's remedy has not thereby named the hazard's surface.**
+
+### ⭐ FINDINGS RECEIVED THIS ROUND
+
+| finding | disposition |
+|---|---|
+| `W305/1` `[structural]` | ⚠️ **The identity arm remains machine-dependent by design and is on no member of §2e's closed exception list.** ⭐ **The rubric owner's call, NOT this register's — routed, not ruled.** |
+| `W305/2` `[structural]` | ⭐ **BECOMES [`W307`](rows/W307.md)** — the sharpest of the four, and the direct residue of `W305`'s own remedy |
+| `W305/3` `[structural]` | ⭐ **BECOMES [`W308`](rows/W308.md)** — the office called it *"a row, not a patch"* and this register agrees |
+| `W305/4` `[local]` | ⚠️ **Up to four `git` processes per run instead of two.** ⛔ **`--show-origin` would collapse them and is REFUSED because it prints a home directory (R7).** ⭐ **A cost knowingly taken, not a defect.** |
+| `W306/1` `[structural]` | ⭐ **ANSWERED, not corrected:** the In-flight table WAS empty at `b58a120` because a carrier is cut AFTER the register merges and its as-of measured after it exists (`PO-93/1`'s repair). ⚠️ **The office read the board at its own cut point, before the dispatch landed at `a704c86`.** |
+| `W306/2` `[local]` | ⭐ **No edit owed** — the clause's measured paragraph is DATED and correctly so (Ruling 97). |
+| `W306/3` `[structural]` | ⭐ **DECLARED GAP, accepted as declared:** the arm judges every file under `rows/` where the bijection reads `W` ids only. ⚠️ **Named so the next round inherits it rather than discovering it.** |
+| `W306/4` `[local]` | ⭐ **`W73` remains `W88`'s backlog, by this row's own scope.** ⛔ **It is now the ONLY live row carrying no anchored pointer, and the new arm PRINTS that exemption rather than hiding it.** |
+
+### ⭐ THE MINTS — `W307` and `W308`, each born with an anchored pointer
+
+⛔ **AND THE ROUND'S OWN MINTS ARE THE NEW ARM'S FIRST REAL TEST:** `board-born` landed an hour before they were written, so a mint without its pointer would turn this round's own floor RED.
+
+### ⭐ THE MEASUREMENT OF RECORD at `d3e36b5`
+
+| instrument | environment | reading |
+|---|---|---|
+| `python3 -m tools.quality` | HOST | ⭐ GREEN, exit `0` — `quality floor: clean` |
+| floor + suite | ⭐ **pinned image, on the MERGED tree** | ⭐ GREEN, exit `0` each — ⛔ **`mergegate`'s gates, taken before either merge commit existed** |
+| `python3 -m pytest` | HOST | ⭐ GREEN, exit `0` |
+| `board.last_pointer 6ce9409 d3e36b5` | HOST | ⭐ GREEN, exit `0` |
+| `board.corroborate` | HOST | exit `1`, refuting exactly `W305` `W306` — ⭐ **the correct disclosure state for carriers merged and not yet closed** |
+| `tools.workspace verify` | HOST | ⭐ GREEN, exit `0` |
+
+### ⛔ THE IN-FLIGHT TABLE IS EMPTY, AND THAT IS A STATE
+
+⭐ **`W111`, `W147`.** ⛔ **A carrier is cut AFTER the register merges, so naming one here would be `PO-93/1` again.**
+
+### ⭐ BRANCHES PRUNED — merged, and their checkouts measured clean
+
+⭐ **`fix/W305-…`, `fix/W306-…`, `chore/po-round94`.** ⛔ **PRUNE SAFETY IS TWO MEASUREMENTS: ancestry AND a clean worktree with an empty stash list** — ⚠️ **both offices were detached to `d3e36b5` BEFORE any deletion.**
+
+### W305 — a floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W305.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A FLOOR CHECK READS MUTABLE SHARED STATE THAT DEVELOPER OFFICES WRITE, SO THE FLOOR'S VERDICT ON AN UNCHANGED TREE DEPENDS ON WHO IS WORKING.**
+
+### ⛔ THE MEASUREMENT IS THIS ROW'S SUBJECT
+
+⛔ **MEASURED at `4969141`, role main checkout, HOST.** ⭐ **The floor read GREEN with ZERO findings on
+this same content minutes earlier — in `wt/po` at `dfcdada`, and on release immediately before the
+commit that made `4969141`.** ⛔ **It then read RED with a large population of
+`[personal-data-identifier]` findings, in documents nobody had touched** — including archive lines
+written rounds ago.
+
+⛔ **THE TREE DID NOT CHANGE. THE CHECK'S INPUT DID.**
+
+```text
+tools/quality/personal_data/identity.py
+  identifiers() resolves, at RUN TIME:  ("git author name", "user.name"), ("git author email", "user.email")
+  MIN_IDENTIFIER_CHARS = 3 ;  GENERIC_IDENTIFIERS contains "dev" but NOT "dev1"/"dev2"/"dev3"
+  _usable("dev1") -> "dev1"
+```
+
+⭐ **So the check greps every tracked file for whatever `git config user.name` says at that instant.**
+
+### ⛔ WHY IT FIRES ON THIS REPOSITORY IN PARTICULAR — the collision is with the board's OWN vocabulary
+
+⛔ **The board, the conventions and the record are saturated with `wt/dev1`, `wt/dev2` and
+`wt/dev3`** — ⭐ **that is Ruling 171's checkout vocabulary and `corroborate` reads it as board
+DATA.** ⚠️ **So the moment an office's identity is `dev1`, every one of those strings is evidence of
+a personal-data leak to this check, and the floor reports a defect that does not exist.**
+
+### ⛔ AND THE STATE IS SHARED ACROSS WORKTREES, WHICH IS THE SECOND HALF
+
+⛔ **MEASURED: `git config --show-origin --get-all user.name` reported `file:.git/config` — the
+SHARED repository config, not a per-worktree one.** ⭐ **All four checkouts (`wt/dev1`, `wt/dev2`,
+`wt/dev3`, `wt/po`) reported the SAME identity at once.**
+
+### ⚠️ THE PROVENANCE CONSEQUENCE IS LATENT, NOT OBSERVED — and an earlier draft of this row said otherwise
+
+⛔ **THE MECHANISM IS MEASURED. THE CONSEQUENCE WAS CHECKED AND DID NOT HAPPEN.** ⭐ **MEASURED over
+`aa7c035..867ceee`: every coordinator commit is authored by the coordinator, and each office's
+commits carry that office's own placeholder** — `dev1` on `W297`+`W301`'s carrier, `dev2` on
+`W298`'s, `dev3` on `W299`'s. ⛔ **Nothing was mis-attributed.**
+
+⚠️ **Why not: each office committed while its own identity was the one set, and the coordinator's
+commits either preceded the writes or passed the identity explicitly per invocation.** ⭐ **That is
+TIMING, not a guard** — ⛔ **nothing in the tree prevents the collision; two offices committing
+across each other's config writes would produce it, and `W153/2`'s carrier declaration cannot see
+it.**
+
+⛔ **THE ROW MUST NOT CLAIM A MIS-ATTRIBUTION THAT DID NOT OCCUR.** ⭐ **The observed cost is the
+FLOOR's: a verdict on an unchanged tree that depends on who is working.** ⚠️ **The provenance cost
+is a RISK this row names so the next wave does not discover it the expensive way.**
+
+⚠️ **NO PRIVACY BREACH OCCURRED AND THE ROW MUST SAY SO:** every value involved is a placeholder
+(`devN@example.invalid`). ⛔ **The user's real identity lives only in the global `~/.gitconfig` and
+was never written into this repository.** ⭐ **This row is about INSTRUMENT INTEGRITY and PROVENANCE,
+not about a leak.**
+
+### ⭐ FOUND INDEPENDENTLY BY AN OFFICE, WITH A BETTER MEASUREMENT — `W303/1`
+
+⛔ **dev2 measured what this office only characterised.** ⭐ **The shared value changed FOUR TIMES
+during a single row**, as three offices overwrote each other. ⛔ **The population each identity
+matches, counted:**
+
+| identity | tracked lines it matches |
+|---|---|
+| `dev1` | **439** |
+| `dev2` | **328** |
+| `dev3` | **179** |
+
+⚠️ **And the control is the proof:** that office's floor read GREEN at its own ref only because the
+shared value happened at that moment to be `Developer One`, which matches **0** tracked lines —
+⛔ **while its baseline floor at the UNTOUCHED base ref read RED, exit `1`, with every finding from
+this one rule and none from any other.**
+
+⛔ **`identity.py`'s OWN DOCSTRING ASSERTS THIS CANNOT HAPPEN** — *"inside the dev image … git has no
+identity"*. ⚠️ **That is FALSE while a repo-local identity sits in the mounted checkout**, because
+`check_identifiers` reads `git config` INSIDE the container off that mount. ⭐ **A check whose
+docstring rules out its own failure mode is the sharpest part of this row.**
+
+### ⭐ THE CONTROL, RUN BY THIS OFFICE END TO END: `439` FINDINGS TO `0`, WITH NO CHANGE TO THE TREE
+
+⛔ **MEASURED, HOST, main checkout.** ⭐ **Same tree, two readings, one variable:**
+
+| reading | identity active | floor |
+|---|---|---|
+| at `4969141` | an office's, written into the shared config | ⛔ **RED, exit `1` — `439` `[personal-data-identifier]` findings** |
+| at `fc176ae`, after the repository-local override was REMOVED | the checkout's own | ⭐ **GREEN, exit `0` — `0` findings of that rule, `0` findings of ANY rule** |
+
+⚠️ **Nothing in `docs/`, `src/`, `tools/` or `tests/` was edited to close that gap.** ⛔ **The only
+thing that changed is a value in `.git/config`.** ⭐ **So the floor's verdict on an unchanged tree is
+a function of who is working, and that is the whole row.**
+
+⚠️ **A THIRD INDEPENDENT MEASUREMENT AGREES:** `W300/1` counts `dev1` in `128` tracked files and
+`dev1@example.invalid` in `14`, yielding `179` findings on documents that office never touched.
+⛔ **Three offices and this register reached the same defect by four different routes.**
+
+### ⛔ THE OBVIOUS REMEDY IS AN `R7` LEAK, AND THAT IS WHY NOBODY FIXED IT MID-WAVE
+
+⛔ **UNSETTING the shared value while an office is live makes that office's NEXT COMMIT fall through
+to the machine's REAL GLOBAL IDENTITY.** ⚠️ **That is precisely the leak `R7` exists to prevent, and
+it is the user's most absolute rule.** ⭐ **So the repair is only safe when NO office holds a
+checkout** — ⛔ **and any row that changes this must assert that ordering, not assume it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A floor reading is REPRODUCIBLE from the tree alone** — ⭐ two runs over one tree give one
+   verdict, whoever is working and whatever any office has configured.
+2. ⛔ **An office's identity is SCOPED so it cannot rename another office's commits** — ⚠️ per
+   worktree (`git config --worktree`) or per invocation (`git -c`), argued out loud either way.
+3. ⛔ **Asserted both ways (R12):** with an office identity set, the floor's verdict on an unchanged
+   tree is UNCHANGED; and a genuine identifier in a tracked file is still REFUSED. ⭐ **The second
+   direction is the one that must not be weakened — `R7` is the rule this project cares most about.**
+4. ⚠️ **The remedy must not be *"add `dev1` to `GENERIC_IDENTIFIERS`"*.** ⛔ **That hard-codes this
+   project's office names into a general-purpose leak detector and fails the next office named
+   anything else.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A WEAKENING OF THE PERSONAL-DATA CHECK.** ⭐ **It correctly holds `hostname` and
+`home directory`, which ARE the user's data, and those arms must keep firing.**
+
+⛔ **AND NOT A RULE THAT THE FLOOR MAY ONLY RUN WHEN NO OFFICE IS WORKING.** ⚠️ **That is a practice,
+and this wave has already measured what a practice is worth against a gate** — ⛔ **[`W296`](rows/W296.md)
+and [`W302`](#w302-a-release-tip-is-certified-on-a-host-floor-that-prints-in-its-own-output-that-it-cannot-certify-it-and-no-gate-in-the-merge-path-reads-the-image) are the same family: a signal whose exit nothing reads.**
+
+### ⭐ HOW IT WAS FOUND
+
+⛔ **By a coordinator reading that contradicted itself across minutes on one tree**, which is the
+only reason it was caught rather than believed. ⚠️ **A single RED reading would have been taken as a
+defect in the documents and "fixed" by editing files that were never wrong.**
+
+[the mint](#po-round-93)
+
+#### ⭐ CLOSED — PO ROUND 95
+
+⭐ **Merged at `6ce9409`, TERMINAL by predicate `C`.**
+
+### W306 — a check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W306.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A CHECK THAT VERIFIES THE POINTERS *PRESENT* CAN NEVER SEE THE POINTER THAT IS *ABSENT*, SO A ROW CAN BE BORN WITHOUT THE POINTER RULING 244(e) REQUIRES WHILE THE ROUND RECORD TRUTHFULLY REPORTS *"POINTERS VERIFIED"*.**
+
+### ⛔ THE MEASUREMENT IS THIS ROW'S SUBJECT
+
+⛔ **MEASURED at `93a7795`, HOST, main checkout, with Ruling 244(e)'s OWN command — `grep -LE`, whose pass condition is a SILENCE:** it NAMED `rows/W305.md` and was silent on `rows/W302.md`.
+
+⭐ **`W305` was minted in round 93. Ruling 244(e) landed at CTO round 56, so the clause BOUND that mint.** ⛔ **The pointer was absent anyway.**
+
+### ⭐ AND THE ROUND RECORD WAS NOT WRONG — WHICH IS THE WHOLE POINT
+
+⭐ **Round 93's record says *"frame verified by import, pointers verified, claim narrowed after measurement"*, and `W302`'s parallel entry gives the sense in full: *"pointers verified TO RESOLVE from `docs/tasks/rows/`."*** ⚠️ **`W305`'s links DO resolve. Nothing false was recorded.**
+
+⛔ **BOTH STATEMENTS ARE TRUE AT ONCE because a resolution check has nothing to resolve when the pointer is missing.** ⭐ **That is Ruling 191's *empty population is never a pass*, and `W296`'s family: a signal whose exit nothing reads.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The mint path RUNS Ruling 244(e)'s own command and BRANCHES on it** — ⭐ the clause already ships the instrument; this row does not re-derive it.
+2. ⛔ **Asserted both ways (R12):** a row minted without an anchored pointer is REFUSED, and a row born with one passes. ⭐ **PLANT it (Ruling 123).**
+3. ⚠️ **It must NOT become a retroactive sweep of `rows/`.** ⛔ **Ruling 244(e) says in terms that it binds the MINT and is not a sweep; `W73` predates the clause and that backlog is `W88`'s.** ⭐ **MEASURED: `W73` is the only live row now carrying no anchored pointer.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A SECOND SPELLING OF THE CLAUSE.** ⭐ **The command in `docs/conventions/board.md` is the authority; this row makes the mint path run it, never restate it.**
+
+[the mint](#po-round-94)
+
+#### ⭐ CLOSED — PO ROUND 95
+
+⭐ **Merged at `d3e36b5`, TERMINAL by predicate `C`.**
