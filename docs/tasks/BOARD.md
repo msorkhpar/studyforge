@@ -60,6 +60,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W287` + `W288` | Developer 2 | `fix/W287-W288-plan-reads-the-narration-it-can-see` @ `wt/dev2` | 0 @ `b8f8d00` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -431,8 +432,8 @@ else.**
 | W284 | `verdict.py`'s `DISAGREE` sentences describe a declaring merge subject as `Merge {branch}:`, a form no recent merge uses | Developer 1 | ✅ done — `35b2e81` | [`rows/W284.md`](rows/W284.md) |
 | W285 | `delivery.py` retypes the milestone shape inline, and `sibling_owned` reads a row list that skips a refused row in silence | Developer 2 | ✅ done — `620faf9` | [`rows/W285.md`](rows/W285.md) |
 | W286 | `pin.framework_of` looks for the framework beside the corpus root, where `tools/workspace` asks git, so a linked worktree's pin refuses | framework agent | `todo` — `INT-14/1` | [`rows/W286.md`](rows/W286.md) |
-| W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | `todo` — `INT-14/4` | [`rows/W287.md`](rows/W287.md) |
-| W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | `todo` — `W226/2` | [`rows/W288.md`](rows/W288.md) |
+| W287 | `plan`'s media report says nothing is measurable until `SF-32` (M3) generates media, and both are closed | framework agent | in-progress — on `fix/W287-W288-plan-reads-the-narration-it-can-see` | [`rows/W287.md`](rows/W287.md) |
+| W288 | `plan` lists copies for dead record entries by filename and names no superseded clip, because it never reads the recorded directory | framework agent | in-progress — on `fix/W287-W288-plan-reads-the-narration-it-can-see` | [`rows/W288.md`](rows/W288.md) |
 | W289 | `archive.blocks.counts_of` reads `.get` off every block, so a non-object block raises `AttributeError` through the builder | framework agent | ✅ done — `b31e780` | [`rows/W289.md`](rows/W289.md) |
 | W290 | `unit_location`'s callers each spell its arguments out of a `UnitSource`, so dropping a unit's label stays writable | framework agent | ✅ done — `b31e780` | [`rows/W290.md`](rows/W290.md) |
 | W291 | `board/delivery.py` types the capability-id shape inline, a second copy beside the plan parse's heading pattern | framework agent | `todo` — `W285/2` | [`rows/W291.md`](rows/W291.md) |
