@@ -61,6 +61,14 @@ def _commit(cwd: Path, name: str, body: str = "") -> str:
 def release(tmp_path: Path) -> Path:
     """A release checkout at a clean tip, with an unmerged `branch` adding one file."""
     root = init_repository(tmp_path / "release")
+    # ⛔ Configured in THIS THROWAWAY repository's OWN config, never in a shared one.
+    #    `tools.mergegate` runs `git merge` and `git commit` ITSELF, so a `-c` on the
+    #    test's own invocations cannot reach them. ⚠️ MEASURED: the pinned image configures
+    #    NO identity (`git config --get user.name` exits 1), so without this every merge
+    #    here passes on the host and fails in the image — this row's own defect, wearing a
+    #    test. ⭐ Both halves are placeholders and name nobody (R7).
+    _git(root, "config", "user.name", "test")
+    _git(root, "config", "user.email", "test@example.invalid")
     _git(root, "symbolic-ref", "HEAD", "refs/heads/release")
     _commit(root, "base.txt")
     _git(root, "checkout", "-q", "-b", "branch")
@@ -231,6 +239,29 @@ def test_a_DIRTY_tracked_tree_is_UNREAD_and_no_merge_is_attempted(release):
     outcome = stage_and_read(release, "branch", _green, ONE_GATE)
     assert outcome.verdict == UNREAD
     assert not (release / BRANCH_FILE).exists(), "a merge was staged over uncommitted work"
+
+
+def test_a_git_with_NO_COMMITTER_IDENTITY_is_UNREAD_and_NAMES_that(release, monkeypatch):
+    # ⛔ MEASURED: the pinned image configures NO identity at all, so a gate that did not ask
+    #    reported a mysterious staging failure instead of the cause. ⭐ Both ways, because a
+    #    synthesised control owes its own positive row (Ruling 191(c)).
+    real = mergegate_module._git
+
+    def without_identity(root, *arguments):
+        if arguments[:2] == ("var", "GIT_COMMITTER_IDENT"):
+            return 1, ""
+        return real(root, *arguments)
+
+    monkeypatch.setattr(mergegate_module, "_git", without_identity)
+    outcome = stage_and_read(release, "branch", _green, ONE_GATE)
+    assert outcome.verdict == UNREAD
+    assert "no committer identity" in render(outcome)[0]
+    assert not (release / BRANCH_FILE).exists(), "a merge was staged with no committer"
+
+    # ⭐ THE POSITIVE ROW: with git's own answer restored, the very same call proceeds.
+    monkeypatch.undo()
+    assert stage_and_read(release, "branch", _green, ONE_GATE).verdict == MERGED
+    _git(release, "merge", "--abort")
 
 
 def test_a_tree_git_cannot_read_is_UNREAD(tmp_path):

@@ -230,6 +230,20 @@ def stage_and_read(
             unread="the tracked tree is not clean, so a merge would carry uncommitted work",
             tip_before=tip,
         )
+    # ⛔ `git merge` and `git commit` BOTH need a committer, and the PINNED IMAGE CONFIGURES
+    #    NONE — measured: `git config --get user.name` exits 1 in there. ⚠️ Without this the
+    #    merge simply fails and the office is told "did not stage cleanly", which names the
+    #    wrong thing entirely. ⭐ Asked of GIT ITSELF rather than of one config key, so an
+    #    identity from the environment, a system file or a repository config all answer.
+    identified, _ = _git(root, "var", "GIT_COMMITTER_IDENT")
+    if identified != 0:
+        return Outcome(
+            unread=(
+                "git has no committer identity here, so it can neither merge nor commit — "
+                "pass one PER INVOCATION and set none: `git -c user.name=… -c user.email=…`"
+            ),
+            tip_before=tip,
+        )
     merged, _ = _git(root, "merge", "--no-ff", "--no-commit", branch)
     if merged != 0:
         _git(root, "merge", "--abort")
