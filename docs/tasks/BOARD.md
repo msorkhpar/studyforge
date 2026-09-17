@@ -60,9 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W181` + `W192` | Developer 1 | `fix/W181-W192-register-id-and-multi-id-spelling` @ `wt/dev1` | 0 @ `19c7224` | in-progress |
+| `W181` + `W192` | Developer 1 | `fix/W181-W192-register-id-and-multi-id-spelling` @ `wt/dev1` | 1 @ `5130828` | in-review |
 | `W199` | Developer 2 | `fix/W199-archive-raw-minted-twice` @ `wt/dev2` | 0 @ `19c7224` | in-progress |
-| `W289` + `W290` | Developer 3 | `fix/W289-W290-block-guard-and-unit-location` @ `wt/dev3` | 0 @ `19c7224` | in-progress |
+| `W289` + `W290` | Developer 3 | `fix/W289-W290-block-guard-and-unit-location` @ `wt/dev3` | 1 @ `46c6acc` | in-review |
 | `W295` | framework agent | `fix/W295-vendor-prism-grammars` @ `wt/dev4` | 0 @ `19c7224` | in-progress |
 <!-- /inflight -->
 
