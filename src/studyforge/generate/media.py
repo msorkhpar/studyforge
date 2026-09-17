@@ -72,8 +72,14 @@ from studyforge.corpus.placement import (
     VIDEO_DIRNAME,
     UnitLocations,
 )
-from studyforge.generate.declarations import BuildError, Corpus, UnitSource, read_corpus
-from studyforge.generate.declarations import unit_location as _unit_location
+from studyforge.generate.declarations import (
+    BuildError,
+    Corpus,
+    UnitSource,
+    declared_location,
+    read_corpus,
+    unit_location,
+)
 from studyforge.generate.writing import Written, copy, mint, stand
 from studyforge.skills.adapter import Layout
 from studyforge.sourcepath import SOURCE_PATH_DESCRIBED, source_path_fault
@@ -128,7 +134,7 @@ def unit_media(corpus: Corpus, into: Path | str) -> Written:
     for source in corpus.units:
         home = layout.unit_files(source.container.address, source.ordinal)
         document = build_unit(source.directory, declared_practices=source.declared_practices)
-        for target, origin in _copies(source, _placed(corpus, source), home, document):
+        for target, origin in _copies(source, unit_location(corpus, source), home, document):
             if not origin.is_file():
                 missing.append(target)
                 continue
@@ -217,26 +223,7 @@ def _declared(corpus: Corpus) -> Iterator[UnitLocations]:
     """Where every unit the corpus DECLARES puts its artifacts — material or not."""
     for _, container in corpus.maps:
         for unit in container.units:
-            yield _unit_location(
-                corpus,
-                container.address,
-                unit.n,
-                unit.title,
-                origin=unit.origin,
-                label=unit.label,
-            )
-
-
-def _placed(corpus: Corpus, source: UnitSource) -> UnitLocations:
-    """Where one unit with material puts its artifacts."""
-    return _unit_location(
-        corpus,
-        source.container.address,
-        source.ordinal,
-        source.title,
-        origin=source.origin,
-        label=source.label,
-    )
+            yield declared_location(corpus, container, unit)
 
 
 def _kind(block_type: str) -> str:

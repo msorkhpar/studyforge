@@ -90,14 +90,7 @@ def unit_clips(corpus: Corpus, into: Path | str) -> Written:
     replaced: list[PurePosixPath] = []
     missing: list[PurePosixPath] = []
     for source in corpus.units:
-        at = unit_location(
-            corpus,
-            source.container.address,
-            source.ordinal,
-            source.title,
-            origin=source.origin,
-            label=source.label,
-        )
+        at = unit_location(corpus, source)
         document = build_unit(source.directory, declared_practices=source.declared_practices)
         probed, playing = heard(corpus, source, at, document, state)
         audio = at.media_dir(AUDIO_DIRNAME)

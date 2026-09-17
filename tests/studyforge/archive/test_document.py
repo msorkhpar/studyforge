@@ -138,6 +138,20 @@ def test_the_key_order_is_what_reaches_disk():
     assert tuple(order) == DOCUMENT_KEYS
 
 
+def test_W289_a_non_object_block_is_refused_through_the_builder_and_never_raises():
+    # ⛔ `W282/1`, from the side `W282` could not reach: `check_counts` filters
+    # to object blocks first, and the builder calls `counts_of` unfiltered — so
+    # `AttributeError` used to travel out of `build`, naming a TYPE and never
+    # the block. ⭐ The positive direction first, or the refusal proves nothing.
+    assert build(**BASE)["counts"]["paras"] == 1
+
+    with pytest.raises(ArchiveError) as raised:
+        build(**{**BASE, "blocks": [*BLOCKS, "not an object"]})
+
+    assert "blocks[2]" in str(raised.value), "the refusal names which block"
+    assert "solo/unit-1/lesson-1" in str(raised.value), "and which document"
+
+
 def test_optional_keys_are_appended_after_the_digest():
     # ⛔ So adding one cannot disturb `content_sha256`, and a document written
     # before a key existed still renders what it always did.

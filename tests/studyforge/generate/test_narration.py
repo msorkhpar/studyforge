@@ -17,6 +17,7 @@ import io
 import json
 import os
 import re
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -65,17 +66,7 @@ def narrate(root: Path, *, only: set[str] | None = None) -> list[Path]:
         if only is not None and source.key not in only:
             continue
         document = build_unit(source.directory, declared_practices=source.declared_practices)
-        into = audio_dir(
-            root,
-            unit_location(
-                corpus,
-                source.container.address,
-                source.ordinal,
-                source.title,
-                origin=source.origin,
-                label=source.label,
-            ),
-        )
+        into = audio_dir(root, unit_location(corpus, source))
         into.mkdir(parents=True, exist_ok=True)
         for unit in speakable_of(document).units:
             name = wanted_name(unit, settings)
@@ -221,14 +212,7 @@ def test_a_labelled_sibling_unit_plays_from_the_directory_its_page_links(tmp_pat
     corpus = read_corpus(root)
     labelled = next(source for source in corpus.units if source.label)
     at = {
-        label: unit_location(
-            corpus,
-            labelled.container.address,
-            labelled.ordinal,
-            labelled.title,
-            origin=labelled.origin,
-            label=label,
-        )
+        label: unit_location(corpus, replace(labelled, label=label))
         for label in (None, labelled.label)
     }
     assert at[None].audio != at["lab"].audio, "the label moved nothing; this would be vacuous"

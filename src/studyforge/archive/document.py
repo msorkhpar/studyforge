@@ -199,7 +199,7 @@ def build(
         "video": video,
         "assets": list(assets or []),
         "attachments": list(attachments or []),
-        "counts": counts_of(blocks),
+        "counts": counts_of(blocks, f"{where} blocks"),
         "content_sha256": content_sha256(blocks),
     }
     if tuple(document) != DOCUMENT_KEYS:  # pragma: no cover - built above

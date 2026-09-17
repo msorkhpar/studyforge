@@ -111,15 +111,7 @@ def test_each_copy_lands_in_the_audio_directory_placement_names_for_its_unit(tmp
     root, _ = narrated(tmp_path, name)
     corpus = read_corpus(root)
     asked = {
-        unit_location(
-            corpus,
-            source.container.address,
-            source.ordinal,
-            source.title,
-            origin=source.origin,
-            label=source.label,
-        ).media_dir(AUDIO_DIRNAME)
-        for source in corpus.units
+        unit_location(corpus, source).media_dir(AUDIO_DIRNAME) for source in corpus.units
     }
 
     written = unit_clips(corpus, an_output(tmp_path))

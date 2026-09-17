@@ -31,6 +31,7 @@ def test_the_surface_is_what_the_package_exports_and_nothing_reaches_past_it():
         "bar",
         "container_pages",
         "containers",
+        "declared_location",
         "declared_practices",
         "footprint_for",
         "for_output",

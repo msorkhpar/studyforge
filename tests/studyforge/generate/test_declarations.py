@@ -2,13 +2,24 @@
 
 from __future__ import annotations
 
+import ast
+import inspect
 import shutil
+from dataclasses import replace
 
 import pytest
 
 from studyforge.corpus.manifest import parse as parse_manifest
-from studyforge.generate import BuildError, declared_practices, read_corpus, sources
+from studyforge.generate import (
+    BuildError,
+    declared_location,
+    declared_practices,
+    read_corpus,
+    sources,
+    unit_location,
+)
 from tests.studyforge.generate.corpora import FIXTURES, a_corpus, with_a_unit_missing
+from tests.support import repository_root
 
 # --------------------------------------------------------------------------
 # ⭐ the walk
@@ -235,3 +246,163 @@ def test_a_leak_travels_through_as_itself_and_never_as_a_BuildError(tmp_path, ta
     path.write_text(json.dumps(document), encoding="utf-8")
     with pytest.raises(PersonalDataLeak):
         read_corpus(root)
+
+
+# --------------------------------------------------------------------------
+# ⛔ W290 — a placement call takes the unit WHOLE, so no call site spells a label
+# --------------------------------------------------------------------------
+
+#: ⛔ The two derivations, and how many WHOLE objects each takes. A CLOSED set
+#: (`module-structure.md`): a third derivation is refused by this sweep rather
+#: than admitted to the tree in silence.
+DERIVATIONS = {"unit_location": 2, "declared_location": 3}
+
+#: The package every call to one of them lives in.
+FRAMEWORK = "src/studyforge"
+
+
+def callee(func) -> str:
+    """The name a call names, imported (`unit_location(…)`) or reached (`d.unit_location(…)`)."""
+    return func.attr if isinstance(func, ast.Attribute) else getattr(func, "id", "")
+
+
+def spelled_calls(source: str, where: str) -> list[str]:
+    """Every call to a derivation that spells a unit's fields instead of passing it whole."""
+    found = []
+    for node in ast.walk(ast.parse(source)):
+        if not isinstance(node, ast.Call):
+            continue
+        takes = DERIVATIONS.get(callee(node.func))
+        if takes is None or (len(node.args) == takes and not node.keywords):
+            continue
+        found.append(
+            f"{where}:{node.lineno} {callee(node.func)} is called with "
+            f"{len(node.args)} positional arguments and {[kw.arg for kw in node.keywords]}; "
+            f"it takes {takes} whole objects"
+        )
+    return found
+
+
+def framework_modules() -> list:
+    """Every module in the framework, as `(relative path, source)`."""
+    root = repository_root()
+    return [
+        (str(path.relative_to(root)), path.read_text(encoding="utf-8"))
+        for path in sorted((root / FRAMEWORK).rglob("*.py"))
+    ]
+
+
+def test_the_population_this_sweep_runs_over_is_inhabited():
+    # ⛔ Ruling 48: a derived-set assertion asserts inhabitation first, or a
+    # package that moved makes every check below pass over nothing.
+    assert framework_modules(), f"no module found under {FRAMEWORK} — did the package move?"
+
+
+def test_both_derivations_are_really_called_in_the_tree():
+    # ⭐ **The control, and without it this sweep rots into a green.** A sweep
+    # for calls that have been renamed away passes for ever and says nothing —
+    # and `declared_location` is new, so this is not hypothetical.
+    called = {
+        callee(node.func)
+        for _path, source in framework_modules()
+        for node in ast.walk(ast.parse(source))
+        if isinstance(node, ast.Call) and callee(node.func) in DERIVATIONS
+    }
+    assert called == set(DERIVATIONS), called
+
+
+@pytest.mark.parametrize("case", framework_modules(), ids=lambda case: case[0])
+def test_W290_no_call_site_spells_a_units_arguments_out_of_it(case):
+    where, source = case
+    assert spelled_calls(source, where) == []
+
+
+def test_W290_a_planted_call_that_drops_the_label_is_named_by_this_sweep():
+    # ⛔ The other direction, and what makes the sweep above an instrument
+    # rather than a wish: this is the OLD spelling with `label` dropped, which
+    # is exactly what stayed writable at four call sites until this row.
+    planted = (
+        "at = unit_location(corpus, source.container.address, source.ordinal,\n"
+        "                   source.title, origin=source.origin)\n"
+    )
+
+    named = spelled_calls(planted, "planted.py")
+
+    assert len(named) == 1, named
+    assert named[0].startswith("planted.py:1 unit_location"), named
+
+
+def test_W290_a_planted_declared_call_that_drops_the_label_is_named_too():
+    planted = "target = declared_location(corpus, container.address, unit.n, unit.title)\n"
+
+    named = spelled_calls(planted, "planted.py")
+
+    assert len(named) == 1, named
+    assert "declared_location" in named[0], named
+
+
+def test_W290_the_derivation_takes_the_source_whole_and_honours_its_label():
+    corpus = read_corpus(FIXTURES / "depth2")
+    source = corpus.units[0]
+
+    assert list(inspect.signature(unit_location).parameters) == ["corpus", "source"]
+    assert unit_location(corpus, source) == corpus.profile.unit(
+        source.container.address,
+        source.ordinal,
+        source.title,
+        origin=source.origin,
+        label=source.label,
+    )
+    # ⚠️ The label is read off the SOURCE, so moving it there moves the unit —
+    # which is the thing a call site could previously get wrong on its own.
+    relabelled = replace(source, label="lab")
+    assert relabelled.label != source.label, "the fixture already carries this label"
+    assert unit_location(corpus, relabelled) != unit_location(corpus, source)
+
+
+def test_W290_the_old_spelling_cannot_be_written_at_all():
+    # ⛔ *Unwritable*, not merely RED. The five arguments a call site used to
+    # compose are not parameters any more, so dropping one is a `TypeError` at
+    # the call rather than a page linking beside the file the build wrote.
+    corpus = read_corpus(FIXTURES / "depth2")
+    source = corpus.units[0]
+
+    with pytest.raises(TypeError):
+        unit_location(
+            corpus,
+            source.container.address,
+            source.ordinal,
+            source.title,
+            origin=source.origin,
+        )
+
+
+def test_W290_declared_location_takes_both_objects_whole_and_agrees_about_material():
+    # ⭐ The two spellings are one derivation, so a unit that HAS material is
+    # placed identically whether it is reached as a source or as a declaration.
+    # ⛔ A disagreement here is a container page anchored beside the real page.
+    corpus = read_corpus(FIXTURES / "depth2")
+    assert list(inspect.signature(declared_location).parameters) == [
+        "corpus",
+        "container",
+        "unit",
+    ]
+
+    seen = 0
+    for _where, container in corpus.maps:
+        for unit in container.units:
+            source = next(
+                (
+                    item
+                    for item in corpus.units
+                    if item.container.address == container.address and item.ordinal == unit.n
+                ),
+                None,
+            )
+            if source is None:
+                continue
+            assert declared_location(corpus, container, unit) == unit_location(corpus, source)
+            seen += 1
+    # ⛔ Ruling 48's denominator, not `> 0`: every unit with material was
+    # compared, rather than whichever one the walk reached first.
+    assert seen == len(corpus.units)

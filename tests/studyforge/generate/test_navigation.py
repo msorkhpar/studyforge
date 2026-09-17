@@ -132,14 +132,7 @@ def test_a_container_with_a_page_is_linked_and_one_without_is_only_listed():
 
     from studyforge.generate import unit_location
 
-    at = unit_location(
-        corpus,
-        unit.container.address,
-        unit.ordinal,
-        unit.title,
-        origin=unit.origin,
-        label=unit.label,
-    )
+    at = unit_location(corpus, unit)
     crumbs = trail(
         corpus.contents,
         key,

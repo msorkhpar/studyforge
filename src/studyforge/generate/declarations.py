@@ -5,7 +5,10 @@ archive, works out which declared units have material on disk, and builds the
 contents document the whole site is navigated by — all of it in memory.
 
 **How you use it.** `read_corpus(root)` for the lot; `sources(root)` when only
-the unit walk is wanted. `BuildError` is the only exception any of it raises,
+the unit walk is wanted; `unit_location(corpus, source)` and
+`declared_location(corpus, container, unit)` for where one unit's artifacts go
+— ⛔ each takes the unit **whole**, so no caller spells its label (`W290`).
+`BuildError` is the only exception any of it raises,
 **except** `PersonalDataLeak`, which travels through untranslated (Ruling 58) —
 the package's `RAISES` is the pair.
 
@@ -39,7 +42,7 @@ from pathlib import Path
 from studyforge.address import Address
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.contents import Contents, ContentsError, build, order
-from studyforge.corpus.container import CONTAINER_FILENAME, Container
+from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
 from studyforge.corpus.container import RAISES as CONTAINER_RAISES
 from studyforge.corpus.container import parse as parse_container
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
@@ -189,20 +192,53 @@ def _sources(
     return tuple(found)
 
 
-def unit_location(
+def unit_location(corpus: Corpus, source: UnitSource) -> UnitLocations:
+    """Where one unit WITH MATERIAL puts its artifacts, asked of the corpus's own profile.
+
+    ⛔ **It takes the unit WHOLE** (`W290`). Every caller used to spell five
+    arguments out of a `UnitSource` it already held, so *dropping* one — the
+    label — stayed writable at four call sites and was caught only by a RED
+    test. ⭐ There is nothing left to drop: the source carries its own
+    address, ordinal, title, origin and label, and this is the one place they
+    are read off it.
+    """
+    return _place(
+        corpus,
+        source.container.address,
+        source.ordinal,
+        source.title,
+        source.origin,
+        source.label,
+    )
+
+
+def declared_location(corpus: Corpus, container: Container, unit: Unit) -> UnitLocations:
+    """Where one unit its container DECLARES puts its artifacts — material or not.
+
+    ⛔ **The same derivation, asked of a DECLARATION rather than of material**
+    (`W290`). The container page links every unit it declares and the media
+    pass asks about every declared directory; neither has a `UnitSource` for a
+    unit this machine has no material for, because `_sources` skips those.
+    ⭐ Both arguments are whole objects, so no call site spells a label here
+    either — which is the property, not the signature.
+    """
+    return _place(corpus, container.address, unit.n, unit.title, unit.origin, unit.label)
+
+
+def _place(
     corpus: Corpus,
     address: Address,
     ordinal: int,
     title: str,
-    origin: str | None = None,
-    label: str | None = None,
+    origin: str | None,
+    label: str | None,
 ) -> UnitLocations:
-    """Where one declared unit's artifacts go, asked of the corpus's own profile.
+    """The ONE spelling of the question, because the page and its container both ask.
 
-    ⛔ **One spelling of the question, because two callers ask it**: the writer
-    that renders the page and the container page that links to it. Two calls
-    composing the same arguments differently would put an anchor on a container
-    page that points beside the file the build wrote, and nothing would raise.
+    ⛔ Two calls composing the same arguments differently would put an anchor on
+    a container page that points beside the file the build wrote, and nothing
+    would raise. ⭐ **This is the only body in the framework that names these
+    five**; both public spellings above read them off one object.
     """
     try:
         return corpus.profile.unit(address, ordinal, title, origin=origin, label=label)

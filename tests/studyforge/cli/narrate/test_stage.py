@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import re
 import shutil
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -291,17 +292,9 @@ def moved(root: Path) -> tuple[Path, Path, Path]:
     """The labelled unit's audio directory without and with its label, and its page."""
     corpus = read_corpus(root)
     source = next(item for item in corpus.units if item.label == LABEL)
-    at = {
-        label: unit_location(
-            corpus,
-            source.container.address,
-            source.ordinal,
-            source.title,
-            origin=source.origin,
-            label=label,
-        )
-        for label in (None, LABEL)
-    }
+    # ⭐ `W290`: the label is moved on the SOURCE, because that is where the one
+    # derivation reads it from — a call site cannot spell it any more.
+    at = {label: unit_location(corpus, replace(source, label=label)) for label in (None, LABEL)}
     assert at[None].audio != at[LABEL].audio, "the label moved nothing; this would be vacuous"
     return audio_dir(root, at[None]), audio_dir(root, at[LABEL]), root / Path(str(at[LABEL].page))
 
