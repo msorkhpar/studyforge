@@ -78,7 +78,7 @@ absorbed branch no row names.**
 SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
-⛔ **`W297`, `W301`, `W298`, `W299` LEFT at `3191905`, `3191905`, `68d1ad9`, `528ba15`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
+⛔ **`W297`, `W301`, `W298`, `W299` LEFT at `3191905`, `3191905`, `68d1ad9`, `528ba15`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.** ⭐ **All four were [ratified](BOARD-ARCHIVE.md#po-round-91) in the round that named them.**
 ⭐ **`W300`, `W303`, `W304` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-92).** ⛔ **`W302` is HELD on a COLLISION and not a priority: it and `W300` would both work `tools/quality/`** — ⚠️ **the same ground `W300` itself was held on, applied to the row this office minted about its OWN defect.** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
