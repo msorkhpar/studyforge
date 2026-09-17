@@ -1,8 +1,9 @@
 """What a corpus's generated media actually weighs, read off the disk.
 
 **What it does.** Walks the per-unit media directories a placement profile
-minted and records every file it finds there, with its size, keyed by its path
-relative to the corpus root.
+minted, and every clip the narration record locates under the corpus root, and
+records every file it finds, with its size, keyed by its path relative to the
+corpus root. A recorded clip it cannot locate is named in `unweighed`.
 
 **How you use it.** `measure(root, units)` where `units` are the
 `UnitLocations` placement answered with; `measure_directories(root, dirs)` for
@@ -14,16 +15,19 @@ a caller that already holds the directories.
     footprint.largest.path     # PurePosixPath('.../audio/u-1-s3-9ab1c2de.mp3')
 
 **Depends on.** `pathlib`, `studyforge.corpus.placement` for the kinds and the
-locations type, `studyforge.describe`, and this package's `errors`.
+locations type, `studyforge.describe`, and this package's `errors` and
+`recorded` (which reads the record through `narrate.synth`).
 
 ## ⛔ A measurement, never a projection
 
 ⭐ **This module opens no manifest, multiplies nothing by a rate, and predicts
-nothing.** `studyforge plan` projects a footprint *before* the bytes exist and
-says so in its own wording (`cli/plan/report.py`); this is the other half — the
-reading taken *after*, which is the one a commit decision may rest on. ⛔ The
-extraction source's push became impossible because the only number anybody had
-was an estimate that nobody had ever compared against a disk.
+nothing.** A projection at a rate is `cli/plan/report.py`'s, in its own
+wording; this is the reading of the disk, which is the one a commit decision may
+rest on. ⭐ **`studyforge plan` prints this reading too, by calling `measure`**
+(`W287`) — it takes no measurement of its own, so there is one number and not
+two that could disagree. ⛔ The extraction source's push became impossible
+because the only number anybody had was an estimate that nobody had ever
+compared against a disk.
 
 ## ⛔ The population is placement's tuple, never a list retyped here
 
@@ -34,6 +38,18 @@ directories come from `UnitLocations.directories`, which is derived from
 population is the property that makes the verdict mean anything**: a footprint
 that weighed less than the ignore rules covered would clear a limit by not
 looking.
+
+## ⛔ The declared directories are not the whole population (`W311`)
+
+⚠️ **A clip the narration record locates outside every declared directory** —
+a removed or relabelled unit's old directory, a superseded clip — is on disk
+and committed, and a walk over the declared directories never reaches it. ⭐ So
+the reading adds every clip `recorded.recorded_clips` locates and something is
+at, keyed exactly as the walk keys a file, so a clip both reach is counted once.
+⛔ **The record locates; placement is never re-derived here.** A recorded clip
+the record cannot locate, and that no walked directory holds under its name, is
+named in `MediaFootprint.unweighed` rather than dropped, and an unreadable
+record refuses the reading.
 
 ## ⚠️ An absent directory weighs nothing, and that is not a refusal
 
@@ -59,6 +75,7 @@ from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.media.errors import MediaError
+from studyforge.corpus.media.recorded import recorded_clips
 from studyforge.corpus.placement import UnitLocations
 from studyforge.describe import describe
 
@@ -80,6 +97,9 @@ class MediaFootprint:
     #: ⛔ Ordered by relative posix path, so two machines report the same
     #: footprint in the same order (R10).
     files: tuple[MediaFile, ...] = ()
+    #: ⛔ `W311`: one sentence per recorded clip this reading could not weigh,
+    #: naming its speech id and why. Empty when every located clip was weighed.
+    unweighed: tuple[str, ...] = ()
 
     @property
     def total_bytes(self) -> int:
@@ -133,7 +153,11 @@ def measure(root: Path | str, units: Iterable[UnitLocations]) -> MediaFootprint:
 def measure_directories(
     root: Path | str, directories: Iterable[PurePosixPath | str]
 ) -> MediaFootprint:
-    """Weigh every file under each of `directories`, relative to `root`.
+    """Weigh every file under each of `directories`, and every recorded clip, under `root`.
+
+    ⛔ **`W311`: the narration record's clips are weighed wherever it locates
+    them**, not only where `directories` reach, and a clip it cannot locate is
+    named in `unweighed`. Raises `MediaError` when the record cannot be read.
 
     ⛔ **A directory named twice is walked once**, and a file reached through
     two of them is counted once: the records are keyed by relative path, so a
@@ -146,7 +170,18 @@ def measure_directories(
         for path in _files_under(base / _relative(directory)):
             key = path.relative_to(base).as_posix()
             found[key] = MediaFile(PurePosixPath(key), path.stat().st_size)
-    return MediaFootprint(tuple(found[key] for key in sorted(found)))
+    walked = {PurePosixPath(key).name for key in found}
+    located, unlocated = recorded_clips(base)
+    for relative in located:
+        path = base / relative
+        if path.is_file():
+            found[relative.as_posix()] = MediaFile(relative, path.stat().st_size)
+    unweighed = tuple(
+        clip.sentence()
+        for clip in unlocated
+        if clip.filename is None or clip.filename not in walked
+    )
+    return MediaFootprint(tuple(found[key] for key in sorted(found)), unweighed)
 
 
 def _root(root: object) -> Path:

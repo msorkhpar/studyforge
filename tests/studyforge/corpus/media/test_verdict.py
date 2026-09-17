@@ -219,6 +219,17 @@ def test_a_verdict_reports_what_was_measured():
     assert "300 byte(s) in 2 file(s)" in verdict.report()
 
 
+def test_W311_what_the_reading_could_not_weigh_is_reported_by_name_and_only_then():
+    # ⛔ Both ways: a footprint that names an unweighed clip says so beside the
+    # total, and one that weighed everything prints no such line.
+    said = "u2-s1's clip u2-s1-bbbb.mp3: the narration record carries no directory for it"
+    named = MediaFootprint(footprint(100).files, (said,))
+    lines = MediaVerdict(DEFAULT_MEDIA, named).lines()
+    assert lines[1:] == ["media measured  100 byte(s) in 1 file(s)", f"media unweighed  {said}"]
+    weighed = MediaVerdict(DEFAULT_MEDIA, footprint(100)).lines()
+    assert not any("unweighed" in line for line in weighed)
+
+
 # --------------------------------------------------------------------------
 # The count limit — the one a corpus crosses while both byte limits are under
 # --------------------------------------------------------------------------

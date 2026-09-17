@@ -7,14 +7,17 @@ from pathlib import PurePosixPath
 import pytest
 
 from studyforge.address import Address
+from studyforge.corpus.manifest import MediaPolicy
 from studyforge.corpus.media import (
     MediaError,
     MediaFile,
     MediaFootprint,
     measure,
     measure_directories,
+    verdict_for,
 )
 from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES, profile_for
+from studyforge.narrate.synth import Clip, Conditions, Superseded, state_file, write_state
 
 ADDRESS = Address.of("basics", "01-getting-started")
 
@@ -190,3 +193,126 @@ def test_a_file_exactly_at_a_limit_is_not_over_it():
     # and "at least" differ by exactly one file at the boundary.
     footprint = MediaFootprint((MediaFile(PurePosixPath("a.mp3"), 100),))
     assert footprint.over(100) == ()
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W311` — every clip the narration record locates is weighed
+# --------------------------------------------------------------------------
+
+TREE = profile_for("tree")
+DECLARED = TREE.unit(ADDRESS, 1, "Getting started")
+#: A unit the corpus once declared and no longer does: its directory is still on disk.
+REMOVED = TREE.unit(Address.of("basics", "02-removed"), 2, "Removed")
+SETTINGS = Conditions(voice="voice-a", fmt="mp3", provides=3, chunk_chars=320)
+
+
+def narrated(root, clips):
+    """Record `clips` (speech id -> (filename, where, superseded)) as `narrate` would."""
+    write_state(
+        state_file(root),
+        {
+            speech_id: Clip(name, SETTINGS.fingerprint, where=where, superseded=older)
+            for speech_id, (name, where, older) in clips.items()
+        },
+        SETTINGS,
+    )
+
+
+def a_corpus(root, *, with_removed_unit):
+    """A declared unit's 100-byte clip, and optionally a removed unit's 900-byte one."""
+    clips = {"u1-s1": ("u1-s1-aaaa.mp3", DECLARED.audio.as_posix(), ())}
+    write(root, DECLARED.audio / "u1-s1-aaaa.mp3", 100)
+    if with_removed_unit:
+        clips["u2-s1"] = ("u2-s1-bbbb.mp3", REMOVED.audio.as_posix(), ())
+        write(root, REMOVED.audio / "u2-s1-bbbb.mp3", 900)
+    narrated(root, clips)
+    return root
+
+
+@pytest.mark.parametrize(
+    ("with_removed_unit", "total", "refuses"), [(True, 1000, True), (False, 100, False)]
+)
+def test_W311_a_clip_in_a_removed_units_directory_is_weighed_both_ways(
+    tmp_path, with_removed_unit, total, refuses
+):
+    # ⛔ The settling clause, both ways (R12): the removed unit's clip is on disk and
+    # committed, so it counts; without it, nothing is invented.
+    footprint = measure(a_corpus(tmp_path, with_removed_unit=with_removed_unit), [DECLARED])
+    assert footprint.total_bytes == total
+    assert footprint.unweighed == ()
+    policy = MediaPolicy(commit="auto", max_total_bytes=500, max_file_bytes=10_000)
+    assert verdict_for(policy, footprint).refuses is refuses
+
+
+def test_W311_a_superseded_clip_outside_every_declared_directory_is_weighed(tmp_path):
+    write(tmp_path, DECLARED.audio / "u1-s1-aaaa.mp3", 100)
+    write(tmp_path, REMOVED.audio / "u1-s1-old.mp3", 40)
+    older = (Superseded("u1-s1-old.mp3", REMOVED.audio.as_posix()),)
+    narrated(tmp_path, {"u1-s1": ("u1-s1-aaaa.mp3", DECLARED.audio.as_posix(), older)})
+    footprint = measure(tmp_path, [DECLARED])
+    assert [found.path for found in footprint.files] == [
+        DECLARED.audio / "u1-s1-aaaa.mp3",
+        REMOVED.audio / "u1-s1-old.mp3",
+    ]
+    assert footprint.count == 2  # ⛔ the declared clip both paths reach is counted once
+
+
+def test_W311_only_what_the_record_locates_is_added_and_an_absent_clip_weighs_nothing(tmp_path):
+    # ⭐ The record locates; the walk is not widened to guess. An unrecorded file in a
+    # removed unit's directory is not reached, and a recorded clip not on disk is not
+    # an under-count, so it is not named either.
+    write(tmp_path, REMOVED.audio / "unrecorded.mp3", 900)
+    narrated(tmp_path, {"u2-s1": ("u2-s1-gone.mp3", REMOVED.audio.as_posix(), ())})
+    footprint = measure(tmp_path, [DECLARED])
+    assert (footprint.total_bytes, footprint.unweighed) == (0, ())
+
+
+def test_W311_a_clip_the_record_cannot_locate_is_named_unless_a_weighed_directory_holds_it(
+    tmp_path,
+):
+    # ⛔ Never a silent under-count: a version-1 entry carries no directory.
+    write(tmp_path, DECLARED.audio / "u1-s1-aaaa.mp3", 100)
+    narrated(
+        tmp_path,
+        {"u1-s1": ("u1-s1-aaaa.mp3", None, ()), "u2-s1": ("u2-s1-bbbb.mp3", None, ())},
+    )
+    footprint = measure(tmp_path, [DECLARED])
+    assert footprint.total_bytes == 100
+    (said,) = footprint.unweighed
+    assert said.startswith("u2-s1's clip u2-s1-bbbb.mp3")
+
+
+def test_W311_an_unreadable_record_refuses_the_reading(tmp_path):
+    write(tmp_path, DECLARED.audio / "u1-s1-aaaa.mp3", 100)
+    state_file(tmp_path).write_text("{", encoding="utf-8")
+    with pytest.raises(MediaError, match="narration record cannot be read"):
+        measure(tmp_path, [DECLARED])
+
+
+def test_W311_plan_reads_the_widened_footprint_without_a_measurement_of_its_own(tmp_path):
+    # ⭐ `W287` routed `plan` through `measure`; the widening reaches it untouched.
+    import json
+    import shutil
+
+    from studyforge.cli.plan import plan_for
+    from studyforge.corpus.manifest import MANIFEST_FILENAME
+    from tests.fixture_checks import FIXTURES
+
+    root = tmp_path / "depth1"
+    shutil.copytree(FIXTURES / "depth1", root)
+    manifest = json.loads((root / MANIFEST_FILENAME).read_text("utf-8"))
+    manifest["media"] = {"commit": "auto", "max_total_bytes": 500}
+    (root / MANIFEST_FILENAME).write_text(json.dumps(manifest), encoding="utf-8")
+    gone = ".studyforge/units/a-unit-no-longer-declared/audio"
+    write(root, f"{gone}/u9-s1-cccc.mp3", 900)
+    narrated(root, {"u9-s1": ("u9-s1-cccc.mp3", gone, ())})
+    (said,) = footprint_lines(plan_for(root))
+    assert said.startswith("media footprint  EXCEEDS — measured 900 byte(s) in 1 file(s)"), said
+    narrated(root, {})
+    (said,) = footprint_lines(plan_for(root))
+    assert said.startswith("media footprint  measured — 0 byte(s) in 0 file(s)"), said
+
+
+def footprint_lines(plan):
+    """The plan's printed footprint lines."""
+    return [line for line in plan.lines() if line.startswith("media footprint")]

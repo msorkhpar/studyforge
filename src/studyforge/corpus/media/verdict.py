@@ -177,6 +177,9 @@ class MediaVerdict:
             f"media measured  {self.footprint.total_bytes} byte(s) in "
             f"{self.footprint.count} file(s)"
         )
+        # ⛔ `W311`: what the reading could not weigh is said by name, before any
+        # crossing, so a fitting total is never read as the whole corpus.
+        out.extend(f"media unweighed  {said}" for said in self.footprint.unweighed)
         if not self.refuses:
             return out
         out.extend(crossing.sentence() for crossing in self.crossings)
