@@ -43,11 +43,15 @@ _IDENTITY = ("-c", "user.name=test", "-c", "user.email=test@example.invalid")
 #: discriminator between reading the merge and reading `HEAD`.
 BRANCH_FILE = "from-the-branch.txt"
 
-#: ⛔ `W308`: a FABRICATED stand-in for a real, configured MACHINE identity. It names nobody,
-#: and its domain carries NO DOT, so the floor's own email shape cannot match it (R7).
-#: ⭐ The standing ruling PERMITS this on a local commit — what `W308` refuses is it on a
-#: CARRIER, where it means one office's work landing under another's name.
+#: ⛔ `W308`: a FABRICATED stand-in for a real, configured MACHINE identity — the shape a
+#: REGISTER round's own commits carry. It names nobody, and its domain carries NO DOT, so the
+#: floor's own email shape cannot match it (R7). ⭐ The standing ruling PERMITS this on a
+#: local commit, so the gate never refuses it.
 _MACHINE = ("-c", "user.name=Jane Doe", "-c", "user.email=jane.doe@workstation")
+
+#: ⛔ A SECOND office. The `release` fixture's own commits are `test <test@example.invalid>`,
+#: so one of these on `branch` is TWO office identities in one merge — the row's subject.
+_OTHER_OFFICE = ("-c", "user.name=dev9", "-c", "user.email=dev9@example.invalid")
 
 
 def _git(cwd: Path, *arguments: str) -> str:
@@ -339,40 +343,58 @@ def test_a_refusal_NAMES_THE_GATE_and_says_nothing_was_committed(release):
 # --- `W308`: WHO WROTE the commits this merge introduces --------------------------------
 
 
-def _plant_on_the_carrier(release: Path) -> None:
-    """Put one commit with a foreign author line on `branch`, and go back to the tip."""
+def _plant_a_second_office(release: Path) -> None:
+    """Put one commit by a SECOND office on `branch`, and go back to the release tip."""
     _git(release, "checkout", "-q", "branch")
-    _commit_as(release, _MACHINE, "planted.txt")
+    _commit_as(release, _OTHER_OFFICE, "planted.txt")
     _git(release, "checkout", "-q", "release")
 
 
-def test_W308_a_FOREIGN_author_line_on_the_carrier_is_REFUSED_BEFORE_anything_is_staged(release):
+def test_W308_a_SECOND_OFFICE_on_the_carrier_is_REFUSED_BEFORE_anything_is_staged(release):
     # ⛔ The refusal is free: no merge was staged, so there is no tree to restore and no
     #    gate was spent. ⭐ The population is asserted INHABITED first (Ruling 191).
-    _plant_on_the_carrier(release)
+    _plant_a_second_office(release)
     outcome = stage_and_read(release, "branch", _green, ONE_GATE)
     assert outcome.authorship.population == 2, "the plant did not take"
+    assert outcome.authorship.offices == 2
     assert outcome.verdict == REFUSED
-    assert len(outcome.authorship.foreign) == 1
+    assert len(outcome.authorship.crossed) == 1
     assert outcome.readings == (), "a gate was run after authorship had already refused"
     assert not (release / BRANCH_FILE).exists(), "a merge was staged over a refused carrier"
     assert _git(release, "status", "--porcelain", "--untracked-files=no") == ""
 
 
 def test_W308_the_refusal_NAMES_THE_COMMIT_and_never_the_identity(release):
-    _plant_on_the_carrier(release)
+    _plant_a_second_office(release)
     outcome = stage_and_read(release, "branch", _green, ONE_GATE)
     printed = "\n".join(render(outcome))
-    assert outcome.authorship.foreign[0] in printed
-    for value in ("Jane", "jane.doe", "workstation"):
+    assert outcome.authorship.crossed[0] in printed
+    # ⚠️ The identifying halves — both offices' names — must not appear. ⭐ The reserved
+    #    DOMAIN does, in the generic remedy template `<office>@example.invalid`, which is a
+    #    form rather than anybody's address.
+    for value in ("dev9", "test@"):
         assert value not in printed, "the merge gate printed the author line it refused"
 
 
-def test_W308_a_foreign_author_line_ALREADY_LANDED_does_not_refuse(release):
-    # ⛔ BOTH remaining clauses in one plant: the gate is not a report over landed tips, and
-    #    the user's own identity — permitted on a LOCAL commit, because nothing is ever
-    #    pushed — lives exactly there and must still merge.
-    _commit_as(release, _MACHINE, "landed.txt")
+def test_W308_a_REGISTER_merge_under_a_REAL_identity_PASSES(release):
+    # ⛔ THE DIRECTION THAT MUST NOT INVERT, and the one the first form of this gate got
+    #    wrong: a round branch's own commits are the coordinator's, under the machine's real
+    #    identity, which the standing ruling PERMITS because nothing is ever pushed.
+    #    ⚠️ Refusing this would wedge the merge path — the repair for `mergegate` could not
+    #    itself be merged through `mergegate`.
+    _git(release, "checkout", "-q", "-b", "chore/round")
+    _commit_as(release, _MACHINE, "round.txt")
+    _git(release, "checkout", "-q", "release")
+    outcome = stage_and_read(release, "chore/round", _green, ONE_GATE)
+    assert outcome.authorship.population == 1, "the round is empty, so its green says nothing"
+    assert outcome.authorship.offices == 0, "a person's line was counted as an office's"
+    assert outcome.verdict == MERGED
+    _git(release, "merge", "--abort")
+
+
+def test_W308_a_second_office_ALREADY_LANDED_does_not_refuse(release):
+    # ⛔ The gate is not a report over landed tips: a backlog no office may clear.
+    _commit_as(release, _OTHER_OFFICE, "landed.txt")
     outcome = stage_and_read(release, "branch", _green, ONE_GATE)
     assert outcome.authorship.population == 1, "the release line entered the population"
     assert outcome.verdict == MERGED
@@ -395,7 +417,7 @@ def test_W308_a_GREEN_run_still_PRINTS_what_authorship_read(release):
     outcome = stage_and_read(release, "branch", _green, ONE_GATE)
     printed = "\n".join(render(outcome))
     assert "authorship: 1 commit(s)" in printed
-    assert "PLACEHOLDER" in printed
+    assert "ONE OFFICE AT MOST" in printed
     _git(release, "merge", "--abort")
 
 

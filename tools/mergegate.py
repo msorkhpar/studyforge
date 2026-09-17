@@ -177,7 +177,7 @@ class Outcome:
         """Return the exit code: merged, refused, or unread when nothing was read."""
         # ⛔ `W308` FIRST, and it needs no `restored`: the authorship gate runs before the
         #    merge is staged, so a refusal here leaves a tree nothing ever touched.
-        if self.authorship.foreign:
+        if self.authorship.crossed:
             return REFUSED
         if self.unread or not self.readings:
             return UNREAD
@@ -267,7 +267,7 @@ def stage_and_read(
     author = read_authorship(root, branch)
     if author.unread:
         return Outcome(unread=author.unread, tip_before=tip)
-    if author.foreign:
+    if author.crossed:
         return Outcome(authorship=author, tip_before=tip)
     merged, _ = _git(root, "merge", "--no-ff", "--no-commit", branch)
     if merged != 0:
@@ -324,7 +324,7 @@ def render(outcome: Outcome) -> list[str]:
         return [f"⛔ UNREAD: {outcome.unread}, so no merge was gated (exit 2)"]
     # ⭐ `W308`: WHO WROTE IT, with its population, BEFORE any gate's reading (Ruling 191(a)).
     lines = render_authorship(outcome.authorship)
-    if outcome.authorship.foreign:
+    if outcome.authorship.crossed:
         return lines
     lines.append(
         f"merge gate: {len(outcome.readings)} gate(s) read on the MERGED tree, never on HEAD"

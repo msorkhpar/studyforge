@@ -5,9 +5,9 @@ test reads this machine's git identity, and none sets one: a linked worktree's `
 IS the shared common config while `extensions.worktreeConfig` is unset (Ruling 345), so an
 identity is passed PER INVOCATION with `-c` or it is not passed at all.
 
-⭐ **The row's two load-bearing properties are asserted by PLANTING** (Ruling 123): a
-foreign author line on the CARRIER is caught, and the same line ALREADY LANDED is not —
-which is one plant for the no-backlog clause and the standing ruling's direction at once.
+⭐ **The four directions are asserted by PLANTING** (Ruling 123): a SECOND OFFICE on the
+carrier is refused; a REGISTER round under a real identity passes; a coordinator fixup on an
+office's carrier passes; and a second office ALREADY LANDED is not read at all.
 """
 
 from __future__ import annotations
@@ -28,10 +28,13 @@ from tools.authorship import (
 #: An office's own line, in Ruling 345's prescribed per-invocation form.
 _OFFICE = ("-c", "user.name=dev9", "-c", "user.email=dev9@example.invalid")
 
-#: ⛔ A FABRICATED stand-in for a real, configured MACHINE identity. It names nobody, and
-#: its domain carries NO DOT — so the floor's own email shape cannot match it either, and
-#: this file stays clean under the very gate it is about (R7). ⭐ The only property under
-#: test is that the predicate does NOT call it a placeholder.
+#: ⛔ A SECOND office. Two of these on one branch is the defect the row exists for.
+_OTHER_OFFICE = ("-c", "user.name=dev8", "-c", "user.email=dev8@example.invalid")
+
+#: ⛔ A FABRICATED stand-in for a real, configured MACHINE identity — the shape a register
+#: round's own commits carry. It names nobody, and its domain carries NO DOT, so the floor's
+#: own email shape cannot match it and this file stays clean under the gate it is about (R7).
+#: ⭐ The standing ruling PERMITS this on a local commit, so it is never refused.
 _MACHINE = ("-c", "user.name=Jane Doe", "-c", "user.email=jane.doe@workstation")
 
 
@@ -59,6 +62,13 @@ def carrier(tmp_path: Path) -> Path:
     return root
 
 
+def _add_to_branch(carrier: Path, identity: tuple[str, ...], name: str) -> None:
+    """Put one commit under `identity` on `branch`, and return to the release tip."""
+    _git(carrier, _OFFICE, "checkout", "-q", "branch")
+    _commit(carrier, identity, name)
+    _git(carrier, _OFFICE, "checkout", "-q", "release")
+
+
 # --- the contract ----------------------------------------------------------------------
 
 
@@ -82,26 +92,24 @@ def test_states_its_contract():
         "x <x@thing.example>",
     ],
 )
-def test_an_address_unreachable_BY_CONSTRUCTION_is_a_placeholder(line):
+def test_an_address_unreachable_BY_CONSTRUCTION_is_an_OFFICE_line(line):
     assert author_is_placeholder(line) is True
 
 
 @pytest.mark.parametrize(
     "line",
     [
-        # ⭐ The MACHINE's shape — what the standing ruling permits on a local commit and
-        #    what this gate refuses on a carrier. Fabricated, and dotless by design.
+        # ⭐ The MACHINE's shape — a PERSON's line, which this gate never refuses.
         "Jane Doe <jane.doe@workstation>",
         "dev9 <dev9@buildhost>",
-        # ⛔ A malformed line is NOT admitted: the permissive reading of bad input is how a
-        #    gate becomes decorative.
+        # ⚠️ A malformed line is read as a person's, not as an office's.
         "dev9 dev9@example.invalid",
         "dev9 <>",
         "dev9 <@>",
         "",
     ],
 )
-def test_anything_else_is_NOT_a_placeholder(line):
+def test_anything_else_is_NOT_an_OFFICE_line(line):
     assert author_is_placeholder(line) is False
 
 
@@ -123,34 +131,59 @@ def test_the_predicate_is_a_PROPERTY_and_not_a_ROSTER_OF_OFFICES():
         assert office not in knowledge, f"an office name is hard-coded: {office}"
 
 
-# --- the population is what the merge INTRODUCES ----------------------------------------
+# --- the four directions, over what the merge INTRODUCES ---------------------------------
 
 
-def test_a_clean_carrier_is_INHABITED_and_carries_no_foreign_line(carrier):
+def test_ONE_office_on_the_carrier_is_INHABITED_and_passes(carrier):
     read = read_authorship(carrier, "branch")
     # ⛔ Ruling 191(a): the population is asserted BEFORE the verdict it qualifies.
     assert read.population == 1, "the control is empty, so its green says nothing"
-    assert read.foreign == ()
+    assert read.offices == 1
+    assert read.crossed == ()
     assert read.unread == ""
 
 
-def test_a_FOREIGN_author_line_ON_THE_CARRIER_is_caught(carrier):
-    _git(carrier, _OFFICE, "checkout", "-q", "branch")
-    _commit(carrier, _MACHINE, "planted.txt")
-    _git(carrier, _OFFICE, "checkout", "-q", "release")
+def test_a_SECOND_OFFICE_on_the_carrier_is_REFUSED(carrier):
+    # ⛔ THE ROW'S SUBJECT: one office's work landing under another office's name.
+    _add_to_branch(carrier, _OTHER_OFFICE, "planted.txt")
     read = read_authorship(carrier, "branch")
     assert read.population == 2, "the plant did not take"
-    assert len(read.foreign) == 1
+    assert read.offices == 2
+    assert len(read.crossed) == 1
 
 
-def test_a_FOREIGN_author_line_ALREADY_LANDED_is_NOT_read(carrier):
-    # ⛔ THE ROW'S OTHER HALF, and one plant settles both clauses: a gate over landed tips
-    #    is a backlog no office may clear, AND the user's own identity — which the standing
-    #    ruling permits on a LOCAL commit — sits exactly there and must still pass.
-    _commit(carrier, _MACHINE, "landed.txt")
+def test_a_REGISTER_round_under_a_REAL_identity_PASSES(carrier):
+    # ⛔ THE DIRECTION THAT MUST NOT INVERT. A round branch's own commits are the
+    #    coordinator's, under the machine's real identity, which the standing ruling PERMITS
+    #    because nothing is ever pushed. ⚠️ The first form of this gate refused exactly this
+    #    and would have wedged the merge path it lives on.
+    _git(carrier, _OFFICE, "checkout", "-q", "-b", "chore/round")
+    _commit(carrier, _MACHINE, "round-one.txt")
+    _commit(carrier, _MACHINE, "round-two.txt")
+    _git(carrier, _OFFICE, "checkout", "-q", "release")
+    read = read_authorship(carrier, "chore/round")
+    assert read.population == 2, "the round is empty, so its green says nothing"
+    assert read.offices == 0, "a person's line was counted as an office's"
+    assert read.crossed == ()
+
+
+def test_a_COORDINATOR_FIXUP_on_an_office_carrier_PASSES(carrier):
+    # ⭐ One office plus a person is still ONE office, so a real identity landing on a
+    #    carrier is never the refusal — the gate reads attribution, not authorship policy.
+    _add_to_branch(carrier, _MACHINE, "fixup.txt")
+    read = read_authorship(carrier, "branch")
+    assert read.population == 2
+    assert read.offices == 1
+    assert read.crossed == ()
+
+
+def test_a_SECOND_OFFICE_ALREADY_LANDED_is_NOT_read(carrier):
+    # ⛔ The gate is not a report over landed tips: a backlog no office may clear.
+    _commit(carrier, _OTHER_OFFICE, "landed.txt")
     read = read_authorship(carrier, "branch")
     assert read.population == 1, "the release line entered the population"
-    assert read.foreign == ()
+    assert read.offices == 1
+    assert read.crossed == ()
 
 
 def test_a_branch_that_INTRODUCES_NOTHING_is_UNREAD_and_never_a_clean_read(carrier):
@@ -159,7 +192,7 @@ def test_a_branch_that_INTRODUCES_NOTHING_is_UNREAD_and_never_a_clean_read(carri
     _git(carrier, _OFFICE, "checkout", "-q", "release")
     read = read_authorship(carrier, "nothing-new")
     assert read.population == 0
-    assert read.foreign == ()
+    assert read.crossed == ()
     assert "introduces no commit" in read.unread
 
 
@@ -175,13 +208,14 @@ def test_a_tree_git_cannot_answer_for_is_UNREAD(tmp_path):
 def test_the_refusal_NAMES_THE_COMMIT_and_NEVER_THE_IDENTITY(carrier):
     # ⛔ R7, and Ruling 345's clause 5: a refusal that quotes the value has only relocated
     #    it into a build log. The sha is the subject; the author line is not.
-    _git(carrier, _OFFICE, "checkout", "-q", "branch")
-    _commit(carrier, _MACHINE, "planted.txt")
-    _git(carrier, _OFFICE, "checkout", "-q", "release")
+    _add_to_branch(carrier, _OTHER_OFFICE, "planted.txt")
     read = read_authorship(carrier, "branch")
     printed = "\n".join(render_authorship(read))
-    assert read.foreign[0] in printed, "the refusal does not name which commit"
-    for value in ("Jane", "jane.doe", "workstation"):
+    assert read.crossed[0] in printed, "the refusal does not name which commit"
+    # ⚠️ The office NAMES are the identifying half and must not appear. ⭐ The reserved
+    #    DOMAIN does appear, in the generic remedy template `<office>@example.invalid` —
+    #    that is a form, identifies nobody by construction, and is the point of the line.
+    for value in ("dev8", "dev9"):
         assert value not in printed, "the refusal printed the author line it refused"
 
 
@@ -190,11 +224,13 @@ def test_the_POPULATION_is_printed_BEFORE_the_verdict(carrier):
     #    without this line, which is the defect the ruling exists for.
     lines = render_authorship(read_authorship(carrier, "branch"))
     assert lines[0].startswith("authorship: 1 commit(s)")
-    assert "PLACEHOLDER" in lines[1]
+    assert "ONE OFFICE AT MOST" in lines[1]
 
 
 def test_a_refusal_says_the_tree_was_NEVER_TOUCHED_and_names_the_per_invocation_remedy():
-    lines = "\n".join(render_authorship(Authorship(population=2, foreign=("abc123def456",))))
+    lines = "\n".join(
+        render_authorship(Authorship(population=2, offices=2, crossed=("abc123def456",)))
+    )
     assert "never touched" in lines
     # ⭐ The remedy is the mechanism Ruling 345 prescribes, not "set your git config".
     assert "PER INVOCATION" in lines
