@@ -14,7 +14,7 @@ path §6 requires a writer to build at before it moves anything into place.
 
 **Depends on.** `address` (for `Address`, `unit_name` and `require_ordinal`)
 `corpus.container`/`corpus.manifest` for the two filenames they own, and
-`corpus.placement` for the archive root.
+`corpus.placement` for the archive root and the `raw/` segment.
 ⛔ Not on `validate`: this module says where to *write*, `validate` says
 whether what was written is right, and a writer that imported its own judge
 would be checking itself.
@@ -27,19 +27,26 @@ lesson-2.json` is five joins, four of which are silent when wrong. An adapter
 that writes to `unit-3/` instead of `unit-03/` produces a tree `validate`
 reports as *unit missing*, at the reader rather than at the writer.
 
-## ⛔ `ARCHIVE_DIR` is imported; the `raw/` segment is still re-derived
+## ⛔ Both archive segments are IMPORTED; neither is a literal here
 
-⛔ **`ARCHIVE_DIR` is `corpus.placement.ARCHIVE_DIRNAME`, never a literal here**
-(`INT-06/6`). It was re-derived under Ruling 101's second row, and three
-spellings let `plan` print a root neither this module nor `validate` read.
-⚠️ The `raw/` segment is owned by `validate.corpus`, off its surface, so it is
-re-derived here **and pinned behaviourally**:
+⛔ **`ARCHIVE_DIR` is `corpus.placement.ARCHIVE_DIRNAME` and `RAW_DIR` is
+`corpus.placement.RAW_DIRNAME`, never a literal here** (`INT-06/6`, `W199`).
+Each was re-derived under Ruling 101's second row: three spellings of the
+archive root let `plan` print a root neither this module nor `validate` read,
+and `raw` was minted twice — here and in `validate.corpus`, off both surfaces —
+so the two writers of one segment could disagree with nothing failing.
+
+⭐ **The names below are BOUND RE-EXPORTS, not definitions.** An adapter's
+whole vocabulary arrives through this package (R19), so the skill keeps its
+own spelling on its own surface; what it may never keep is a second *value*.
+⛔ Two instruments hold that: `tests/studyforge/corpus/placement/test_names.py`
+fails on a second `archive` or `raw` literal anywhere in `src/`, and
 `tests/studyforge/skills/adapter/test_layout.py` lays out a tree with this
-module and asserts `validate` reads exactly the documents it wrote. ⛔ A
+module and asserts `validate` reads exactly the documents it wrote — ⚠️ a
 literal compared against the same literal would agree with itself.
 
-⚠️ `unit_name` is *not* re-derived. It is on `studyforge.address.__all__`, so
-the same ruling's other row applies and it is imported.
+⚠️ `unit_name` is *not* re-derived either. It is on
+`studyforge.address.__all__`, so the same ruling's other row applies.
 """
 
 from __future__ import annotations
@@ -51,23 +58,25 @@ from studyforge.address import Address, require_ordinal, unit_name
 from studyforge.archive.document import KINDS
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.corpus.placement import ARCHIVE_DIRNAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME, RAW_DIRNAME
 
 #: The archive root `validate`, `plan` and a build read: placement's one spelling,
 #: on this skill's surface. ⚠️ `Layout` still takes it as a field, and any other
 #: value writes where `validate` reads nothing, which it reports as `no-archive`.
 ARCHIVE_DIR = ARCHIVE_DIRNAME
 
-#: The directory under a container that holds its documents, by variant.
-#: ⚠️ One variant per container (SF-05), so this is one directory and not a
-#: search.
-RAW_DIR = "raw"
+#: The directory under a container that holds its documents, by variant:
+#: placement's one spelling, on this skill's surface (`W199`). ⚠️ One variant per
+#: container (SF-05), so this is one directory and not a search.
+RAW_DIR = RAW_DIRNAME
 
 #: The directory under a container that holds each unit's **own** files — the
 #: ones that belong to the unit rather than to one of its variants: its media,
-#: its attachments, and the authored overlay. ⚠️ Re-derived here on exactly the
-#: terms `ARCHIVE_DIR` and `RAW_DIR` are, and pinned behaviourally by the
-#: fixtures rather than by a literal compared against itself.
+#: its attachments, and the authored overlay. ⛔ **Still a literal, and still
+#: minted twice** — `corpus.placement.UNITS_DIRNAME` holds the same value, which
+#: is `W199/1` and is deliberately not fixed here (`W199` names two segments,
+#: not three). ⚠️ Pinned behaviourally by the fixtures rather than by a literal
+#: compared against itself.
 UNITS_DIR = "units"
 
 #: What a document file is called. ⛔ The `kind` half is a **closed set** —

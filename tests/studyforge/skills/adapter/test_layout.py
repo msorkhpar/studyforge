@@ -12,6 +12,7 @@ from studyforge.archive.document import render as render_document
 from studyforge.corpus.container import CONTAINER_FILENAME, Container, Unit
 from studyforge.corpus.container import render as render_map
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.placement import ARCHIVE_DIRNAME, RAW_DIRNAME
 from studyforge.skills.adapter import (
     ARCHIVE_DIR,
     RAW_DIR,
@@ -121,14 +122,29 @@ def test_a_report_never_carries_an_absolute_path(tmp_path):
     assert str(tmp_path) not in named
 
 
+def test_the_segment_names_on_this_surface_are_placements_and_not_a_second_value():
+    # ⛔ `W199`: `archive` and `raw` were each minted twice, and one copy of each
+    # was off every package surface — `validate.corpus` held the `raw` one, so
+    # the archive's reader and its writer each kept a private copy of the one
+    # directory they must agree about. ⭐ Both names SURVIVE here, because an
+    # adapter's whole vocabulary arrives through this package (R19); what they
+    # may never be again is a second VALUE.
+    # ⚠️ That there is no second LITERAL is a claim about `src/`, and it is
+    # asserted where the one home is, in `tests/studyforge/corpus/placement/
+    # test_names.py`. This asserts what this surface hands an adapter author.
+    assert ARCHIVE_DIR == ARCHIVE_DIRNAME
+    assert RAW_DIR == RAW_DIRNAME
+
+
 def test_what_this_layout_writes_is_what_validate_reads(tmp_path):
     """⛔ The pin for `ARCHIVE_DIR` and `RAW_DIR`, and it is behavioural.
 
-    ⚠️ Both names are owned by `validate.corpus`, which puts neither on a
-    package surface — Ruling 101's second row, so they are re-derived here.
-    ⛔ A test comparing this module's literal against the same literal would
-    agree with itself. This one lays out a real archive with `Layout` alone and
-    asserts that `validate`'s own walk finds the document it wrote.
+    ⭐ Both names are `corpus.placement`'s, on its surface and imported here
+    (`INT-06/6`, `W199`); each was once minted in two places at once. ⛔ A test
+    comparing this module's constant against the same constant would agree with
+    itself either way. This one lays out a real archive with `Layout` alone and
+    asserts that `validate`'s own walk finds the document it wrote — which is
+    the only instrument that would catch the two modules drifting apart.
     """
     corpora.write(tmp_path)
     layout = Layout(tmp_path, ARCHIVE_DIR)

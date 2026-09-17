@@ -29,6 +29,7 @@ PUBLIC_SURFACE = frozenset(
         "KINDS",
         "KNOWN_IDENTITY_API",
         "PRACTICE_DIRNAME",
+        "RAW_DIRNAME",
         "ROOT_INDEX_FILENAME",
         "SIBLING",
         "SITE_CACHE_FILENAME",
