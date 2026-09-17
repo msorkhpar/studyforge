@@ -43,8 +43,8 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         metavar="N",
         help=(
-            "project the media footprint at N bytes of generated media per unit; "
-            "without it the footprint reports itself unprojected and says why"
+            "also project the media footprint at N bytes of generated media per unit; "
+            "the media already on disk is measured with or without it"
         ),
     )
     return parser

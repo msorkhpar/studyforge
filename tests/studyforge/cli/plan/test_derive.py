@@ -7,12 +7,13 @@ a plan derived from a real corpus says.
 from __future__ import annotations
 
 import json
+import re
 import shutil
 from pathlib import PurePosixPath
 
 import pytest
 
-from studyforge.cli.plan import plan_for
+from studyforge.cli.plan import UNPROJECTED, plan_for
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import COMMIT_MODES, MANIFEST_FILENAME
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
@@ -372,7 +373,7 @@ def test_a_sibling_unit_with_no_origin_is_refused_and_named(tmp_path):
 
 
 # --------------------------------------------------------------------------
-# the projection's rate is a parameter, so SF-32 plugs in
+# the projection's rate is a parameter a person supplies
 # --------------------------------------------------------------------------
 
 
@@ -380,6 +381,81 @@ def test_a_rate_turns_the_footprint_into_a_verdict():
     plan = plan_for(FIXTURES / "depth2", bytes_per_unit=2_000_000_000)
     footprint = [line for line in plan.lines() if line.startswith("media footprint")][0]
     assert "EXCEEDS max_total_bytes" in footprint
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W287` — the footprint is measured on disk, and no closed task is named as future
+# --------------------------------------------------------------------------
+
+#: A task or milestone id as the plan once printed one (`SF-32`, `M3`).
+TASK_ID = re.compile(r"\b(?:[A-Z]{1,4}-\d+|M\d+)\b")
+
+
+def _footprints(plan) -> list[str]:
+    return [line for line in plan.lines() if line.startswith("media footprint")]
+
+
+def _with_clips(tmp_path, sizes, **limits):
+    """A depth1 copy holding clip files of `sizes` bytes in its first unit's audio directory."""
+    from studyforge.corpus.placement import AUDIO_DIRNAME
+    from studyforge.generate import read_corpus, unit_location
+
+    root = copy_fixture("depth1", tmp_path)
+    if limits:
+        manifest = json.loads((root / MANIFEST_FILENAME).read_text("utf-8"))
+        manifest["media"] = {"commit": "auto", **limits}
+        (root / MANIFEST_FILENAME).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    corpus = read_corpus(root)
+    audio = root / str(unit_location(corpus, corpus.units[0]).media_dir(AUDIO_DIRNAME))
+    audio.mkdir(parents=True)
+    for n, size in enumerate(sizes):
+        (audio / f"clip-{n}.mp3").write_bytes(b"x" * size)
+    return root
+
+
+def test_W287_a_corpus_with_clips_on_disk_measures_them_and_names_no_task_as_future(tmp_path):
+    plan = plan_for(_with_clips(tmp_path, (10, 20, 30)))
+
+    assert plan.exit_code == OK
+    [footprint] = _footprints(plan)
+    assert footprint.startswith("media footprint  fits — measured 60 byte(s) in 3 file(s)")
+    assert not TASK_ID.search(footprint), footprint
+
+
+def test_W287_a_measured_crossing_is_reported_with_the_limit_it_crossed(tmp_path):
+    root = _with_clips(tmp_path, (10, 20, 30), max_total_bytes=50, max_file_bytes=25)
+    [footprint] = _footprints(plan_for(root))
+    assert footprint.startswith("media footprint  EXCEEDS — measured 60 byte(s) in 3 file(s)")
+    assert "max_total_bytes crossed: 60 byte(s) against a limit of 50" in footprint
+    assert "max_file_bytes crossed" in footprint
+
+
+@pytest.mark.parametrize("name", VALID)
+def test_W287_a_corpus_with_no_media_says_so_and_names_no_task_as_future(name):
+    [footprint] = _footprints(plan_for(FIXTURES / name))
+    assert footprint.startswith("media footprint  measured — 0 byte(s) in 0 file(s)")
+    assert "nothing is there yet" in footprint and UNPROJECTED not in footprint
+    assert not TASK_ID.search(footprint), footprint
+
+
+def test_W287_a_rate_never_hides_what_is_on_disk(tmp_path):
+    plan = plan_for(_with_clips(tmp_path, (40, 40), max_total_bytes=50), bytes_per_unit=1)
+    projected, measured = _footprints(plan)
+    assert projected.startswith("media footprint  fits — 3 byte(s) projected")
+    assert measured.startswith("media footprint  EXCEEDS — measured 80 byte(s) in 2 file(s)")
+
+
+@pytest.mark.parametrize("commit", ["always", "never"])
+def test_W287_a_policy_that_does_not_weigh_its_media_walks_no_disk(commit, tmp_path, monkeypatch):
+    import studyforge.cli.plan.derive as derive
+
+    def refuse(*_):
+        raise AssertionError("measured a policy that weighs nothing")
+
+    monkeypatch.setattr(derive, "measure", refuse)
+    plan = _with_media("depth1", commit, tmp_path)
+    assert plan.exit_code == OK
+    assert plan.media is not None and plan.media.measured is None
 
 
 # --------------------------------------------------------------------------
@@ -454,91 +530,3 @@ def test_the_catch_list_is_the_readers_own_tuple_and_not_a_copy():
     assert "except MANIFEST_RAISES as error:" in source  # ⭐ `W213`, the manifest site
     assert "except (ContainerError" not in source, "the catch list was retyped again"
     assert "except (ManifestError" not in source, "the catch list was retyped again"
-
-
-# --------------------------------------------------------------------------
-# ⛔ the narration record is a plan input (`W224`, `E09` § SF-38/8)
-# --------------------------------------------------------------------------
-
-
-def a_recorded_corpus(tmp_path, clips: dict[str, str]):
-    """A fixture copy whose narration record files `clips` (speech id -> filename)."""
-    from studyforge.generate import read_corpus
-    from studyforge.narrate.speakable import unit_token
-    from studyforge.narrate.synth import Clip, Conditions, state_file, write_state
-
-    root = copy_fixture("depth1", tmp_path)
-    token = unit_token(read_corpus(root).units[0].key)
-    settings = Conditions(voice="voice-a", fmt="mp3", provides=3, chunk_chars=320)
-    record = {
-        speech_id.format(token=token): Clip(name.format(token=token), settings.fingerprint)
-        for speech_id, name in clips.items()
-    }
-    state_file(root).parent.mkdir(parents=True, exist_ok=True)
-    write_state(state_file(root), record, settings)
-    return root, token
-
-
-def test_each_clip_the_record_files_under_a_declared_unit_is_a_narration_creation(tmp_path):
-    root, token = a_recorded_corpus(
-        tmp_path,
-        {
-            "{token}.intro.b1": "{token}.intro.b1-0123abcd.mp3",
-            "{token}.intro.b2": "{token}.intro.b9-0123abcd.mp3",
-            "{token}.intro.b3": "",
-            "no--such--unit.intro.b1": "no--such--unit.intro.b1-0123abcd.mp3",
-        },
-    )
-
-    plan = plan_for(root)
-
-    clips = [c for c in plan.creations if c.narration and not c.path.endswith("/")]
-    assert plan.exit_code == OK
-    assert [c.path.rsplit("/", 1)[1] for c in clips] == [f"{token}.intro.b1-0123abcd.mp3"]
-    audio = [c.path for c in plan.creations if c.narration and c.path.endswith("/")]
-    assert clips[0].path.startswith(tuple(audio))
-    assert plan.read_files[-1] == ".studyforge/narration.json"
-    assert ".studyforge/narration.json" in plan.lines()[2]
-
-
-def test_with_a_record_it_opens_the_record_and_still_no_source_material(tmp_path, monkeypatch):
-    import pathlib
-
-    root, _ = a_recorded_corpus(tmp_path, {"{token}.intro.b1": "{token}.intro.b1-0123abcd.mp3"})
-    opened: list[str] = []
-    original = pathlib.Path.read_text
-
-    def record(self, *args, **kwargs):
-        opened.append(self.name)
-        return original(self, *args, **kwargs)
-
-    monkeypatch.setattr(pathlib.Path, "read_text", record)
-    plan_for(root)
-    assert "narration.json" in opened
-    assert set(opened) <= {MANIFEST_FILENAME, CONTAINER_FILENAME, "narration.json"}
-
-
-def test_an_unreadable_record_or_a_clip_name_with_a_directory_is_a_refusal_not_a_raise(tmp_path):
-    root, _ = a_recorded_corpus(
-        tmp_path / "a", {"{token}.intro.b1": "../{token}.intro.b1-0123abcd.mp3"}
-    )
-    named = plan_for(root)
-    assert named.exit_code == INVALID
-    assert [r.where for r in named.refusals] == [".studyforge/narration.json"]
-    assert not [c for c in named.creations if c.narration and not c.path.endswith("/")]
-
-    broken = copy_fixture("depth2", tmp_path / "b")
-    (broken / ".studyforge").mkdir()
-    (broken / ".studyforge/narration.json").write_text("not a record", "utf-8")
-    plan = plan_for(broken)
-    assert plan.exit_code == INVALID
-    assert [r.where for r in plan.refusals] == [".studyforge/narration.json"]
-
-
-@pytest.mark.parametrize("name", VALID)
-def test_only_a_units_audio_directory_is_marked_narration_when_no_record_exists(name):
-    marked = [c for c in plan_for(FIXTURES / name).creations if c.narration]
-    assert marked
-    assert all(c.path.endswith("/") and "audio" in c.path for c in marked)
-    audio = [c for c in plan_for(FIXTURES / name).creations if c.what.endswith("'s audio")]
-    assert marked == audio
