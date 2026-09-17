@@ -60,6 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W297` + `W301` | Developer 1 | `fix/W297-W301-read-path-guard-and-rubric-block` @ `wt/dev1` | 0 @ `5fca2ea` | in-progress |
+| `W298` | Developer 2 | `fix/W298-units-dirname-single-minter` @ `wt/dev2` | 0 @ `5fca2ea` | in-progress |
+| `W299` | Developer 3 | `fix/W299-validate-surface-names` @ `wt/dev3` | 0 @ `5fca2ea` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -76,7 +79,7 @@ SEVERAL ROW IDS.**
 
 ⭐ **Office checkouts are board DATA, declared below and read by `corroborate`** ([`W125`](BOARD-ARCHIVE.md#w125-the-in-flight-table-is-asserted-and-generating-it-naively-leaves-corroborate-asserting-git-against-itself)).
 ⛔ **`W181`, `W192`, `W289`, `W290`, `W199`, `W295` LEFT at `bf05884`, `bf05884`, `b31e780`, `b31e780`, `416a5c2`, `a3987cf`** (Ruling 199). ⭐ **A CARRIER IS NAMED ON CONFIRMATION** (`PO-61/4`); ⛔ **Ruling 189(c) reads the branch a ROW CLAIMS.**
-⛔ **NO CARRIER IS NAMED, and that is a STATE rather than an omission: every carrier this wave named has MERGED, and the in-flight table is EMPTY** (`W111`, `W147`) ([ratified](BOARD-ARCHIVE.md#po-round-90)). ⚠️ **[`W191`](rows/W191.md) unassigned.**
+⭐ **`W297`, `W301`, `W298`, `W299` NAMED, [ratified](BOARD-ARCHIVE.md#po-round-91).** ⛔ **`W300` is HELD on a COLLISION and not a priority: it would touch the surfaces `W298` and `W299` are changing.** ⚠️ **[`W191`](rows/W191.md) unassigned.**
 
 <!-- offices -->
 | Checkout |
@@ -441,11 +444,11 @@ else.**
 | W294 | The gate-coverage check reads the MODULE and not the value, so a decoded service answer is never gated | framework agent | `todo` — `W223/7` | [`rows/W294.md`](rows/W294.md) |
 | W295 | The vendored highlighter carries no `markup`, `json`, `properties` or `gherkin` grammar, so `ISO-06`'s *"XML fences highlighted"* is unmeetable | framework agent | ✅ done — `a3987cf` | [`rows/W295.md`](rows/W295.md) |
 | W296 | A merge subject reaches a release branch unchecked, because no gate enforces `tools.quality.subject` — the register's own defect at `19c7224` | framework agent | `todo` — `PO-89/1` | [`rows/W296.md`](rows/W296.md) |
-| W297 | The same unguarded block read one function away: `read_layout` on a hand- or adapter-written document still raises where `build` now refuses by name | framework agent | `todo` — `W289/1` | [`rows/W297.md`](rows/W297.md) |
-| W298 | `UNITS_DIR` against `UNITS_DIRNAME` — the same defect one segment further, and it needs a different instrument | framework agent | `todo` — `W199/1` | [`rows/W298.md`](rows/W298.md) |
-| W299 | Five names another package takes from a `validate` module are on no surface, and one collides with a module name | framework agent | `todo` — `W199/2` | [`rows/W299.md`](rows/W299.md) |
+| W297 | The same unguarded block read one function away: `read_layout` on a hand- or adapter-written document still raises where `build` now refuses by name | framework agent | in-progress — on `fix/W297-W301-read-path-guard-and-rubric-block` | [`rows/W297.md`](rows/W297.md) |
+| W298 | `UNITS_DIR` against `UNITS_DIRNAME` — the same defect one segment further, and it needs a different instrument | framework agent | in-progress — on `fix/W298-units-dirname-single-minter` | [`rows/W298.md`](rows/W298.md) |
+| W299 | Five names another package takes from a `validate` module are on no surface, and one collides with a module name | framework agent | in-progress — on `fix/W299-validate-surface-names` | [`rows/W299.md`](rows/W299.md) |
 | W300 | The same producer-half deviation tree-wide, over a population measured small enough to close | framework agent | `todo` — `W199/3` | [`rows/W300.md`](rows/W300.md) |
-| W301 | The rubric's self-certification block files a suite reading under the floor's name and still exits `0` | framework agent | `todo` — `W295/6` | [`rows/W301.md`](rows/W301.md) |
+| W301 | The rubric's self-certification block files a suite reading under the floor's name and still exits `0` | framework agent | in-progress — on `fix/W297-W301-read-path-guard-and-rubric-block` | [`rows/W301.md`](rows/W301.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
