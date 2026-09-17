@@ -17,6 +17,7 @@ from pathlib import Path
 import pytest
 
 import tools.authorship as authorship_module
+import tools.reserved_addresses as reserved
 from tests.support import assert_package_contract, git, init_repository, run
 from tools.authorship import (
     Authorship,
@@ -123,10 +124,9 @@ def test_the_predicate_is_a_PROPERTY_and_not_a_ROSTER_OF_OFFICES():
         assert author_is_placeholder(f"{name} <someone@example.invalid>") is True
         assert author_is_placeholder(f"{name} <someone@workstation>") is False
     # ⛔ And the DATA the predicate reads holds no office name, which is the half a grep
-    #    can legitimately answer: these two tuples are the whole of its knowledge.
-    knowledge = " ".join(
-        (*authorship_module.PLACEHOLDER_TLDS, *authorship_module.PLACEHOLDER_DOMAINS)
-    )
+    #    can legitimately answer. ⭐ `W310`: that data is now ONE vocabulary this module
+    #    shares with the floor's R7 arm, so this reads it where it lives.
+    knowledge = " ".join((*reserved.RESERVED_TLDS, *reserved.RESERVED_DOMAINS))
     for office in ("dev1", "dev2", "dev3", "dev404"):
         assert office not in knowledge, f"an office name is hard-coded: {office}"
 
