@@ -119,6 +119,32 @@ def material(root: Path, *, framework: bool = True) -> Path:
     return root
 
 
+def git(where: Path, *arguments: str) -> None:
+    """Run git in `where` with no user config and placeholder identities only (R7)."""
+    env = {"PATH": os.environ.get("PATH", ""), "HOME": str(where), **SYNTHETIC_GIT}
+    done = subprocess.run(
+        [shutil.which("git"), "-C", str(where), *arguments], capture_output=True, env=env
+    )
+    assert done.returncode == 0, done.stderr.decode()
+
+
+def linked_worktree(parent: Path, *, framework: bool = True, main: str = "corpus") -> Path:
+    """A corpus repository under `parent`, the framework beside it, and a worktree deeper.
+
+    ⛔ Nothing beside the worktree itself: no framework, and no symlink to one —
+    which is the shape `W286` resolves and `W321` addresses from.
+    """
+    checkout = parent / main
+    checkout.mkdir(parents=True)
+    if framework:
+        framework_beside(checkout)
+    git(checkout, "init", "-q")
+    git(checkout, "commit", "-q", "--allow-empty", "-m", "a synthetic corpus commit")
+    worktree = parent / f"{main}-worktrees" / "one"
+    git(checkout, "worktree", "add", "-q", str(worktree))
+    return worktree
+
+
 def draft(**changes) -> dict:
     """The draft with fields replaced, so a test says only what it varies."""
     return {**DRAFT, **changes}
