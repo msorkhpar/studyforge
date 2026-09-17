@@ -60,9 +60,9 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W300` | Developer 1 | `fix/W300-producer-half-deviation-tree-wide` @ `wt/dev1` | 0 @ `3191905` | in-progress |
-| `W303` | Developer 2 | `fix/W303-renderer-block-dispatch-refusal` @ `wt/dev2` | 0 @ `3191905` | in-progress |
-| `W304` | Developer 3 | `fix/W304-rubric-floor-snippet-pipeline-exit` @ `wt/dev3` | 0 @ `3191905` | in-progress |
+| `W300` | Developer 1 | `fix/W300-producer-half-deviation-tree-wide` @ `wt/dev1` | 0 @ `2827409` | in-progress |
+| `W303` | Developer 2 | `fix/W303-renderer-block-dispatch-refusal` @ `wt/dev2` | 0 @ `2827409` | in-progress |
+| `W304` | Developer 3 | `fix/W304-rubric-floor-snippet-pipeline-exit` @ `wt/dev3` | 0 @ `2827409` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
