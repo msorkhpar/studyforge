@@ -450,3 +450,68 @@ def test_a_committed_ordered_list_with_no_start_keeps_its_documents_digest():
     assert any(block["ordered"] for block in lists), "the fixture holds no ordered list"
     assert all("start" not in block for block in lists)
     assert document["content_sha256"] == content_sha256(document["blocks"])
+
+
+# --------------------------------------------------------------------------
+# ⛔ W289 — a block that is not an object is refused BY NAME, never `.get`-ed
+# --------------------------------------------------------------------------
+
+#: Everything `json.loads` can produce where a block belongs, but an object.
+#: ⛔ Closed on the *domain* rather than on taste (`module-structure.md`): JSON
+#: has six value kinds and five of them are here, so the shape nobody thought
+#: of cannot be the one that gets through.
+NOT_OBJECTS = ("a string", 7, 1.5, True, None, ["nested"])
+
+
+@pytest.mark.parametrize("block", NOT_OBJECTS)
+def test_W289_a_non_object_block_reaches_no_get_and_is_refused_by_name(block):
+    # ⛔ This used to raise `AttributeError`, which names a TYPE where the
+    # reader needs an INDEX. ⭐ `ArchiveError` is a `ValueError`, so an
+    # `AttributeError` escaping here FAILS this test rather than passing it —
+    # which is what makes the assertion an instrument and not a restatement.
+    with pytest.raises(ArchiveError) as raised:
+        counts_of([{"type": "para", "text": "one"}, block])
+
+    assert "blocks[1]" in str(raised.value), "the refusal names which block"
+    assert "a block is an object with a type" in str(raised.value)
+
+
+def test_W289_the_counts_of_a_document_of_objects_are_unchanged():
+    # ⭐ The positive direction. Without it the refusal above is satisfied by a
+    # `counts_of` that refuses everything.
+    counted = counts_of([{"type": "para", "text": "one"}, {"type": "rule"}])
+
+    assert tuple(counted) == EXPECTED_COUNT_KEYS
+    assert counted["paras"] == 1
+    assert counted["rules"] == 1
+
+
+def test_W289_the_refusal_describes_the_value_and_never_quotes_a_string():
+    # ⚠️ R7: a refusal names what a value IS, never what it SAYS — `describe`'s
+    # `SAFE_TO_QUOTE` is `(int,)`, so a block that is a string is *"a str"*.
+    words = "the material's own sentence"
+
+    with pytest.raises(ArchiveError) as raised:
+        counts_of([words])
+
+    assert words not in str(raised.value)
+    assert "a str" in str(raised.value)
+
+
+def test_W289_the_caller_names_the_document_the_refusal_belongs_to():
+    # ⭐ `where` is the document's own, spelled as `assert_clean`'s is, so the
+    # builder's refusal says which FILE as well as which block.
+    with pytest.raises(ArchiveError) as raised:
+        counts_of(["x"], "solo/unit-1/lesson-1 blocks")
+
+    assert "solo/unit-1/lesson-1 blocks[0]" in str(raised.value)
+
+
+def test_W289_a_non_object_block_inside_a_container_is_not_this_functions_business():
+    # ⚠️ The boundary, asserted so it is not read as an oversight: `counts_of`
+    # counts TOP-LEVEL blocks, so a malformed block inside a quote is
+    # `validate.blocks`'s to name and this function neither counts nor refuses
+    # it. ⛔ Widening it here would make `counts` disagree with what it means.
+    quote = {"type": "quote", "blocks": ["not an object"]}
+
+    assert counts_of([quote])["quotes"] == 1

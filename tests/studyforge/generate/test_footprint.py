@@ -8,7 +8,7 @@ import pytest
 
 from studyforge.cli.plan.report import CREATION_VERBS
 from studyforge.corpus.placement import ARCHIVE_DIRNAME, AUDIO_DIRNAME
-from studyforge.generate import Footprint, footprint_for, read_corpus, unit_location
+from studyforge.generate import Footprint, declared_location, footprint_for, read_corpus
 from studyforge.generate.footprint import of
 from tests.studyforge.generate.corpora import BOTH, GOLDEN, a_corpus
 
@@ -103,11 +103,7 @@ def test_the_derived_footprint_is_the_committed_plans_own_enumeration(tmp_path, 
 
     # ⭐ Which golden lines are a unit's audio directory is asked of placement
     # here, by a route of its own, against the plan's `narration` marking.
-    audio = [
-        unit_location(corpus, c.address, u.n, u.title, origin=u.origin, label=u.label)
-        for _, c in corpus.maps
-        for u in c.units
-    ]
+    audio = [declared_location(corpus, c, u) for _, c in corpus.maps for u in c.units]
     audio = [f"{at.media_dir(AUDIO_DIRNAME)}/" for at in audio]
     assert audio and set(audio) <= set(plan_lines(name))
     expected = of(plan_lines(name), excluding=corpus.shared.archive, narration=audio)

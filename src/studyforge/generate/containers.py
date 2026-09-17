@@ -36,7 +36,7 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.container import Container, Unit
 from studyforge.corpus.placement import ContainerLocations, PlacementError, relative_href
-from studyforge.generate.declarations import BuildError, Corpus, unit_location
+from studyforge.generate.declarations import BuildError, Corpus, declared_location
 from studyforge.generate.writing import Written, place
 from studyforge.render.container import Document, Item, PageError
 from studyforge.render.container import Placement as ContainerPlacement
@@ -124,7 +124,5 @@ def _document(corpus: Corpus, container: Container, at: ContainerLocations) -> D
 
 def _href(corpus: Corpus, container: Container, unit: Unit, at: ContainerLocations) -> str:
     """How this container's page addresses one of its units' pages."""
-    target = unit_location(
-        corpus, container.address, unit.n, unit.title, origin=unit.origin, label=unit.label
-    )
+    target = declared_location(corpus, container, unit)
     return relative_href(at.page, target.page)

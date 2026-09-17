@@ -10,9 +10,11 @@ archive document does not say outright.
 import. `counts_of(blocks)` for a document's `counts`, `walk(blocks)` to
 reach nested ones, `read_layout(document)` for a practice's parts.
 
-**Depends on.** `archive.errors`. ⛔ Not on `archive.document`, which imports
-*this*, and not on `archive.markdown`, which also imports this: the
-vocabulary is the leaf that both the reader and the format hang from.
+**Depends on.** `archive.errors`, and `describe` to name a block this
+vocabulary does not admit without quoting what it says (R7). ⛔ Not on
+`archive.document`, which imports *this*, and not on `archive.markdown`, which
+also imports this: the vocabulary is the leaf that both the reader and the
+format hang from.
 
 ## One list, and why it is a list of rows
 
@@ -53,6 +55,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 
 from studyforge.archive.errors import ArchiveError
+from studyforge.describe import describe
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,7 +161,7 @@ def list_start(block: dict) -> int:
 BY_NAME = {block.name: block for block in BLOCKS}
 
 
-def counts_of(blocks: list) -> dict[str, int]:
+def counts_of(blocks: list, where: str = "blocks") -> dict[str, int]:
     """One entry per count key — **always all of them**, including the zeroes.
 
     ⛔ A count that disappears when it is zero cannot be told from a count
@@ -169,11 +172,43 @@ def counts_of(blocks: list) -> dict[str, int]:
     and that is the inherited behaviour rather than an oversight: `counts`
     answers "how long is this document", and anything wanting the total walks
     `walk` deliberately.
+
+    ## ⛔ A block that is not an object is REFUSED BY NAME (`W289`)
+
+    ⚠️ **It used to reach `.get`**, so a non-object block left `AttributeError`
+    — a Python error naming a *type* — to travel out through
+    `archive.document.build`. ⛔ The one thing that message could not say is
+    the thing the reader needs: **which block**. ⭐ `validate` reached the same
+    defect from the other side and filtered to object blocks first (`W282`);
+    the builder has no such filter and needs none, because a document it must
+    refuse is refused rather than counted.
+
+    ⭐ `where` is the document's own, spelled as `assert_clean`'s is, and the
+    refusal names the index and **describes** the value rather than quoting
+    it (R7) — the same sentence `validate.blocks` yields for the same shape.
     """
+    types = _types_of(blocks, where)
     return {
-        key: sum(1 for block in blocks if block.get("type") == block_type)
+        key: sum(1 for kind in types if kind == block_type)
         for key, block_type in COUNT_KEYS.items()
     }
+
+
+def _types_of(blocks: list, where: str) -> list:
+    """Each top-level block's `type`, refusing by name anything that is not an object.
+
+    ⭐ One pass rather than eleven: the types are read once and the eleven
+    counts are taken over that, so no block is reached twice and a refusal
+    cannot depend on which count key was being tallied when it was reached.
+    """
+    held = []
+    for index, block in enumerate(blocks):
+        if not isinstance(block, dict):
+            raise ArchiveError(
+                f"{where}[{index}] is {describe(block)}; a block is an object with a type"
+            )
+        held.append(block.get("type"))
+    return held
 
 
 def walk(blocks: list) -> Iterator[dict]:

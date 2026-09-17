@@ -126,14 +126,7 @@ class UnitWork:
 def unit_work(root: Path | str, source: UnitSource, corpus: Corpus) -> UnitWork:
     """Derive one declared unit's speech units and the audio directory its own page links."""
     document = build_unit(source.directory, declared_practices=source.declared_practices)
-    at = unit_location(
-        corpus,
-        source.container.address,
-        source.ordinal,
-        source.title,
-        origin=source.origin,
-        label=source.label,
-    )
+    at = unit_location(corpus, source)
     return UnitWork(source.key, speakable_of(document).units, audio_dir(root, at))
 
 
