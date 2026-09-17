@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import ast
+import importlib
+import inspect
+import sys
 from pathlib import Path
 
 from studyforge import validate
@@ -12,22 +15,46 @@ from tests.support import assert_package_contract, repository_root
 PACKAGE = "studyforge.validate"
 
 #: ⛔ **Names another package takes out of a `validate` MODULE that are NOT on
-#: `studyforge.validate.__all__`** — Ruling 101's producer half, unmet, DECLARED so
-#: that the next one reds instead of joining them invisibly (`W199`).
+#: `studyforge.validate.__all__`** — Ruling 101's producer half. ⭐ **EMPTY since
+#: `W299`, and the emptiness is the claim:** every such name is now exported, so a
+#: name that leaves this surface REAPPEARS here and reds.
 #:
-#: ⚠️ **Declared is not exempt.** Each is a `W199` finding, and none is `W199`'s own
-#: subject: the two names that were — the `archive` root and the `raw/` segment — are
-#: minted once now, in `corpus.placement`, and reach this package as imports.
-#: ⛔ **Why they are not fixed here:** each is another package's vocabulary
-#: (`cli.plan`, `cli.site`, `skills.reconnaissance`), and `headings` collides with
-#: the module `validate.headings`, so exporting it needs a ruling rather than a line.
-OFF_SURFACE = {
-    ("studyforge.validate.corpus", "Held"),
-    ("studyforge.validate.corpus", "Walk"),
-    ("studyforge.validate.headings", "headings"),
-    ("studyforge.validate.paths", "RULE_DUPLICATE_PATH"),
-    ("studyforge.validate.paths", "check_placement"),
-}
+#: ⚠️ **It stays as a declared set rather than being folded into a `== set()`**, so
+#: the next off-surface name is named in the failure with its module, and so that
+#: re-opening it is a deliberate edit carrying a ground — never a quiet append.
+#: ⛔ **`W199`'s rule stands: adding an entry to quiet this is declaring a defect,
+#: not fixing one.**
+OFF_SURFACE: set[tuple[str, str]] = set()
+
+#: ⭐ **The whole public surface, spelled out** — the model is
+#: `tests/studyforge/corpus/placement/test_init.py`, which `W199` named as the
+#: instrument this package had none of. ⚠️ Duplicated from `__all__` on purpose.
+#:
+#: ⛔ **It is the half that does not depend on a CONSUMER.** The sweep below holds a
+#: name on this surface only while some package still takes it from a module here;
+#: fix those spellings to the package form and the sweep goes quiet about them.
+#: ⭐ This pin reds either way, so `W299`'s five cannot leave silently.
+PUBLIC_SURFACE = frozenset(
+    {
+        "CHECKS",
+        "INVALID",
+        "OK",
+        "RULE_DUPLICATE_PATH",
+        "UNUSABLE",
+        "Finding",
+        "Held",
+        "Report",
+        "Snapshot",
+        "Unchecked",
+        "Walk",
+        "check_placement",
+        "check_untouched",
+        "headings",
+        "main",
+        "snapshot",
+        "validate",
+    }
+)
 
 
 def surface_order(name: str) -> tuple[int, str]:
@@ -64,6 +91,39 @@ def taken_from_a_module() -> list[tuple[str, str, str]]:
 
 def test_states_its_contract():
     assert_package_contract(validate, "studyforge.validate")
+
+
+def test_the_public_surface_is_exactly_what_the_contract_says():
+    # ⛔ The pin that does not depend on a consumer's import SPELLING, so the
+    # five names `W299` put here cannot leave while the sweep below stays quiet.
+    assert set(validate.__all__) == PUBLIC_SURFACE
+    missing = sorted(name for name in PUBLIC_SURFACE if not hasattr(validate, name))
+    assert missing == [], "exported but absent: " + ", ".join(missing)
+
+
+def test_the_headings_export_shadows_its_module_without_hiding_it():
+    # ⛔ `W299`'s ruling, ASSERTED rather than argued. The surface exports the
+    # CALLABLE; the module keeps its name in `sys.modules` and every sibling it
+    # had, so shadowing costs a reader nothing they could previously reach.
+    assert inspect.isfunction(validate.headings), "the surface must export the callable"
+    module = importlib.import_module("studyforge.validate.headings")
+    assert inspect.ismodule(module), "the submodule must still be reachable as a module"
+    assert validate.headings is module.headings, "the export is a SECOND definition, not a binding"
+    for sibling in ("count_headings", "region", "Heading", "Region"):
+        assert hasattr(module, sibling), f"shadowing hid {sibling!r} on the module"
+
+
+def test_the_shadowing_binds_the_callable_in_the_as_form_too():
+    # ⚠️ **The wart, asserted because writing it down was not enough.** `import
+    # a.b.c as x` binds the PACKAGE ATTRIBUTE, which is the function — so the
+    # `as` form does NOT hand back the module. ⛔ This mirror's own first draft
+    # used it and broke; the assertion is what stops the next reader repeating it.
+    # ⭐ It is not a cost `W299` introduced: every shadowing package in `src/`
+    # already behaves this way, which is half the ground for the ruling.
+    import studyforge.validate.headings as bound
+
+    assert inspect.isfunction(bound), "the `as` form is expected to bind the callable"
+    assert sys.modules["studyforge.validate.headings"] is not bound
 
 
 def test_every_exported_name_resolves_and_is_declared_once():
