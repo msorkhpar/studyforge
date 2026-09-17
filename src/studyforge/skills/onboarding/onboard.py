@@ -1,19 +1,20 @@
 r"""One pass: a repository of material becomes a corpus, and nothing is retyped.
 
 **What it does.** Composes the manifest, the adapter's scaffold and this
-skill's own documents into one file set, writes it all or none of it, and can
-take it back out again.
+skill's own documents into one file set, and writes it all or none of it.
+`removal.uninstall` takes it back out again (split out at that seam, `W313`).
 
 **How you use it.**
 
     from studyforge.skills.onboarding import onboard
 
-    made = onboard(draft, framework_commit=commit)
+    made = onboard(draft, framework_commit=commit, root=corpus_root)
     print("\n".join(made.lines()))   # every path, and the one that is yours
     made.write(corpus_root)          # ⛔ refuses to overwrite anything
 
 **Depends on.** `corpus.manifest`, `skills.adapter` for the scaffold, this
-package's own renderers, and `record` for the install record. ⛔ Not on
+package's own renderers, `standing` for where the corpus at `root` stands, and
+`record` for the install record. ⛔ Not on
 `validate`: what this writes is a corpus, and the corpus's own generated tests
 are what call it.
 
@@ -70,6 +71,7 @@ from studyforge.skills.onboarding.pin import (
     stub_paths,
 )
 from studyforge.skills.onboarding.record import OnboardingRefused
+from studyforge.skills.onboarding.standing import Standing, standing_of
 
 #: Which step of `SKILL.md` writes this skill's own documents.
 STEP = 3
@@ -179,13 +181,15 @@ def onboard(
     reasons: Mapping[str, str] | None = None,
     skills: Sequence[str] = SKILLS,
     existing: str | None = None,
+    root: Path | str | None = None,
 ) -> Onboarding:
     """Return everything a repository becomes, from reconnaissance's draft.
 
     `framework_commit` is the sibling checkout's recorded commit — the pin file
     is where the workspace's own record of it lands (`FND-05a`). `existing` is
     the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
-    first onboarding passes nothing and is unchanged.
+    first onboarding passes nothing and is unchanged. `root` is the corpus the
+    reader's document reads its state from (`W313`); without it, it says so.
     """
     kept = _declared(existing) if existing is not None else ()
     provisional = parse(render(promote(_carried(draft, kept), reasons=reasons)))
@@ -207,8 +211,10 @@ def onboard(
         _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),
         _own(
             artifacts.READER_DOC,
-            artifacts.reader_document(manifest, made.hand_written),
-            "what a reader is told, from the declarations",
+            artifacts.reader_document(
+                manifest, made.hand_written, commit=framework_commit, standing=_standing(root)
+            ),
+            "what a reader is told, from the declarations and the build's reading",
         ),
     ]
     files.append(_own(RECORD_FILE, record.render(files), "what uninstall undoes, and its digests"))
@@ -219,6 +225,11 @@ def onboard(
         commit=framework_commit,
         generated=generated,
     )
+
+
+def _standing(root: Path | str | None) -> Standing | None:
+    """Return where the corpus at `root` stands, or None when no root was named."""
+    return None if root is None else standing_of(root)
 
 
 def _declared(text: str) -> tuple[dict[str, str], ...]:
@@ -286,73 +297,6 @@ def _ignore_file(manifest: Manifest) -> list[Written]:
     return [_own(wanted.home.as_posix(), wanted.text(), "the media policy's ignore rules (R3)")]
 
 
-def uninstall(root: Path | str) -> list[str]:
-    """Remove exactly what one onboarding wrote, and refuse if any of it changed.
-
-    ⛔ **A file somebody filled in is never silently destroyed.** The usual
-    reason a clean uninstall refuses is the adapter's reading step, which is the
-    one file that was a person's — and losing it to a tidy-up is the failure
-    this check exists for. ⭐ The record carries no digest for that file
-    (`INT-09/1`), so it is removed only while it is still the stub the written
-    manifest scaffolds.
-    """
-    root = Path(root)
-    entries = record.entries(root)
-    changed = record.changed(root, entries)
-    filled = _filled_in(root, entries, changed)
-    if changed or filled:
-        raise OnboardingRefused(_kept(changed, filled))
-    removed = []
-    for where in [*[entry["where"] for entry in entries], RECORD_FILE]:
-        path = root / where
-        if path.exists():
-            path.unlink()
-            removed.append(where)
-    _prune(root, removed)
-    return sorted(removed)
-
-
-def _filled_in(root: Path, entries: Sequence[dict], changed: Sequence[str]) -> list[str]:
-    """Every person's module on disk that is not the stub onboarding left there, sorted.
-
-    ⚠️ The stub is re-derived from the written manifest, which the scaffold
-    varies on and nothing else does. ⛔ If that manifest changed or cannot be
-    read, no stub can be derived, and every such module counts as filled in.
-    """
-    yours = [e["where"] for e in entries if record.is_yours(e) and (root / e["where"]).exists()]
-    stubs = {} if not yours or artifacts.MANIFEST in changed else _stubs(root)
-    return sorted(where for where in yours if _text(root / where) != stubs.get(where))
-
-
-def _stubs(root: Path) -> dict[str, str]:
-    """Return the scaffold's hand-written stubs from the manifest on disk, or nothing."""
-    try:
-        made = scaffold(plan_for(parse((root / artifacts.MANIFEST).read_text(encoding="utf-8"))))
-    except (OSError, ValueError, *RAISES):
-        return {}
-    return {item.where: item.text for item in made.files if not item.generated}
-
-
-def _text(path: Path) -> str | None:
-    """Return a file's text, or None when it is not UTF-8 (and so is not a stub)."""
-    try:
-        return path.read_text(encoding="utf-8")
-    except ValueError:
-        return None
-
-
-def _kept(changed: Sequence[str], filled: Sequence[str]) -> str:
-    """Name every file uninstall will not remove, and why, at once."""
-    parts = []
-    if changed:
-        parts.append(
-            f"{len(changed)} generated file(s) changed since onboarding wrote them: {changed}"
-        )
-    if filled:
-        parts.append(f"{len(filled)} file(s) of yours are no longer the stub: {filled}")
-    return f"{'; '.join(parts)}. Nothing was removed. Move what you want to keep, then run again"
-
-
 def _pin_files(commit: str, skills: Sequence[str]) -> list[Written]:
     """Return the pin, and one thin pointer per skill."""
     document = json.dumps(pin_document(commit, skills), indent=2) + "\n"
@@ -365,23 +309,6 @@ def _pin_files(commit: str, skills: Sequence[str]) -> list[Written]:
 def _own(where: str, text: str, why: str) -> Written:
     """One file this skill owns. ⭐ Always generated: none of them is a person's."""
     return Written(where=where, step=STEP, why=why, generated=True, text=text)
-
-
-def _prune(root: Path, removed: Sequence[str]) -> None:
-    """Remove the directories this onboarding created, deepest first, if they are empty.
-
-    ⛔ Only empty ones, and never `root` itself: a directory that still holds
-    something holds something this skill did not write.
-    """
-    candidates = sorted(
-        {(root / where).parent for where in removed},
-        key=lambda path: len(path.parts),
-        reverse=True,
-    )
-    for path in candidates:
-        while path != root and path.is_dir() and not any(path.iterdir()):
-            path.rmdir()
-            path = path.parent
 
 
 def _collision(blocked: Sequence[str]) -> str:
