@@ -26056,3 +26056,97 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 97
 
 ⭐ **Merged at `d65bc2d`, TERMINAL by predicate `C`.** ⛔ **The floor now names WHICH identifier arms had a value to compare, by label and never by value.**
+
+## PO round 98
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W308` | dev2 | `de27dd6` | ⭐ **merged at `da02903`** — `mergegate`'s `3` gates GREEN on the MERGED tree |
+
+⛔ **THIS ROW WAS SENT BACK ONCE, AND THE FIRST BUILD WOULD HAVE WEDGED THE MERGE PATH.** ⚠️ **Its rule was *every author line is a placeholder*, which refuses a PERSON's line — and a register round's own commits are exactly that.** ⭐ **MEASURED by the office on return: `4` of the last `12` first-parent merges introduce only person-authored commits, and the gate as built refused all four.** ⛔ **The deadlock was the point: once merged, the repair for `mergegate` could not have been merged THROUGH `mergegate`.**
+
+⭐ **THE SHIPPED RULE IS *ONE OFFICE PER MERGE*.** ⛔ **A non-placeholder line hits `continue` before `seen` or `opened_by` is touched, so a person's commits can neither be counted nor cross anything** — ⭐ **a register merge passes BY CONSTRUCTION, with no allow-list, no address and no branch name written anywhere, and the module still knows no office's name.**
+
+⭐ **VERIFIED BY THIS REGISTER, NOT INHERITED:** the refusal trigger read in full; the census RECOMPUTED independently and matching at `4` person-only, `6` one-office, `2` two-office of `12`; `offices` a COUNT and `crossed` a tuple of SHAS, so no field holds an author line; Ruling 191 held, a branch introducing no commit being `UNREAD` and never a pass.
+
+### ⛔ `W308/2` — RULED BY THIS REGISTER RATHER THAN DEFERRED
+
+⚠️ **The office asked whether the shape its gate now refuses is legitimate collaboration or the first measured mis-attributions, and deliberately did not decide.** ⛔ **It is NEITHER: both merges show ONE OFFICE UNDER TWO IDENTITY STRINGS.**
+
+⭐ **MEASURED:** `1d14e8a` carries three commits as `Developer One` then two as `dev1`; `fc176ae` carries `dev3`'s row work then two commits as `Developer One`. ⛔ **That is exactly what [`W305`](#w305-a-floor-check-reads-mutable-shared-state-that-offices-write-so-the-floors-verdict-on-an-unchanged-tree-depends-on-who-is-working) measured — the shared value changing repeatedly WITHIN a single row as offices overwrote each other.**
+
+⭐ **SO THE GATE IS RIGHT TO REFUSE THAT SHAPE, and those two merges are RETROACTIVE CONFIRMATION that this row's premise was real:** ⛔ **`W308` would have caught the defect `W305` found only by accident.** ⚠️ **No agreed form for cross-office fixups is owed, because no cross-office fixup occurred.** ⭐ **Nothing landed is reopened — the gate judges only what a merge INTRODUCES.**
+
+### ⭐ WHAT THE OFFICE DISCLOSED WITHOUT BEING OBLIGED TO
+
+⛔ **Its FIRST repair was ALSO wrong** — *"at most one distinct placeholder identity"* — ⭐ **and reading the real merges killed it before it shipped, two historical merges introducing commits under two distinct office identities each.** ⚠️ **Its stated lesson is the reusable one: A GATE ON A SHARED PATH OWES A READING OVER THE REAL POPULATION IT WILL JUDGE, not over the fixture its author happened to write.**
+
+### ⭐ FINDINGS RECEIVED THIS ROUND
+
+| finding | disposition |
+|---|---|
+| `W308/1` `[local]` | ⚠️ **`mergegate.py` reads `389` of R11's `400`, and the floor's approach notice will keep flagging it.** ⭐ **The NEXT SEAM IS NAMED in the handoff — the command half against the reading half — so the next office inherits it rather than finding it.** ⛔ **A second split in the same diff would have been unrequested scope, and the office was right to refuse it.** |
+| `W308/2` `[structural]` | ⭐ **RULED ABOVE.** |
+| `W308/3` `[local]` | ⭐ **A RECORDED NEGATIVE, accepted as one:** a carrier whose commits are ENTIRELY authored by one other office is not detectable, because nothing in the tree ties a branch to the office that owns it. ⚠️ **The gate closes the direction that actually occurs; Ruling 345's per-invocation form prevents the rest.** |
+| `W308/4` `[structural]` | ⭐ **BECOMES [`W310`](rows/W310.md)** — the reserved-address vocabulary now exists twice and can drift. |
+
+### ⭐ THE MINT — `W310`
+
+⛔ **`PLACEHOLDER_TLDS`/`PLACEHOLDER_DOMAINS` in `tools/authorship.py` and `ALLOWED_ADDRESS` in the floor's shapes arm now say the same thing in two places.** ⚠️ **NEITHER MAY IMPORT THE OTHER: `mergegate`'s contract forbids depending on `tools.quality`, so that a tree too broken to import still gets its merge REFUSED rather than crashing the gate.** ⭐ **Ruling 47's shape — one vocabulary as DATA, two policies — is the form that closes it.**
+
+### ⚠️ AN OBSERVATION THIS ROUND RECORDS AND DOES NOT ACT ON
+
+⛔ **`64` merged `chore/po-round*` branches stand in this repository, spanning rounds 17 to 92.** ⚠️ **They are not inert: one of them held `wt/po` on a SPENT round branch this wave, which put the checkout three commits behind and ABORTED a round transaction against a stale tree.** ⭐ **Recorded rather than swept — deleting them is its own decision and belongs to a round that argues it, not to this one.**
+
+### ⭐ THE MEASUREMENT OF RECORD at `da02903`
+
+| instrument | environment | reading |
+|---|---|---|
+| `python3 -m tools.quality` | HOST | ⭐ GREEN, exit `0` — `quality floor: clean` |
+| floor + suite | ⭐ **pinned image, on the MERGED tree** | ⭐ GREEN, exit `0` each |
+| `python3 -m pytest` | HOST | ⭐ GREEN, exit `0` |
+| `board.last_pointer 4433fff da02903` | HOST | ⭐ GREEN, exit `0` |
+| `board.corroborate` | HOST | exit `1`, refuting exactly `W308` — ⭐ correct for a carrier merged and not yet closed |
+| `tools.workspace verify` | HOST | ⭐ GREEN, exit `0` |
+
+### ⛔ THE IN-FLIGHT TABLE IS EMPTY, AND THAT IS A STATE
+
+⭐ **`W111`, `W147`.** ⛔ **A carrier is cut AFTER the register merges, so naming one here would be `PO-93/1` again.**
+
+### ⭐ BRANCHES PRUNED — merged, and their checkouts measured clean AT PRUNE TIME
+
+⭐ **`fix/W307-…` and `fix/W308-…`.** ⛔ **PRUNE SAFETY IS TWO MEASUREMENTS: ancestry AND a clean worktree with an empty stash** — ⚠️ **both offices were detached to `da02903` BEFORE any deletion.**
+
+### W308 — no instrument reads authorship, so the provenance half of the shared-identity defect is unguarded
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W308.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **NO INSTRUMENT IN THIS TREE READS AUTHORSHIP, SO THE PROVENANCE HALF OF THE SHARED-IDENTITY DEFECT IS UNGUARDED.**
+
+### ⭐ `W305` CLOSED THE FLOOR'S HALF AND SAID SO; THIS IS THE HALF IT LEFT
+
+⭐ **`W305` made the floor's verdict independent of who is working.** ⛔ **It did NOT stop two offices committing across each other's identity, and it could not: nothing in the tree reads a commit's author at all.** ⚠️ **Raised as `W305/3` by the office itself, which called it *"buildable and cheap, but a row, not a patch"*.**
+
+### ⭐ THE COST IS LATENT, NOT OBSERVED, AND THE ROW MUST SAY SO
+
+⛔ **MEASURED across this wave: every office commit carries its own placeholder and every coordinator commit its own identity. NOTHING WAS MIS-ATTRIBUTED.** ⚠️ **That is TIMING, not a guard** — ⭐ **each office committed while its own identity was the one set, and this row exists so the next wave does not discover the collision the expensive way.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **An author line outside the placeholder domain is REFUSED before a merge lands** — ⭐ **`tools/mergegate.py` already reads the MERGED tree and branches on gate exits; this is a gate, not a new instrument.**
+2. ⛔ **Asserted both ways (R12), and PLANTED (Ruling 123):** a carrier carrying a foreign author line is refused; a clean one passes.
+3. ⚠️ **The user's standing ruling is that a REAL git identity in a LOCAL commit is FINE here, because nothing is ever pushed.** ⛔ **So this row guards OFFICE ATTRIBUTION — one office's work landing under another's name — and must NOT be built into a rule that refuses the user's own identity.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A CHECK THAT READS `git log` FROM THE FLOOR.** ⭐ **Ruling 80: a floor check's verdict may not depend on untracked state, and history is exactly that.** ⚠️ **`W302` met this wall; the merge path is where a branch position may be read.**
+
+[the mint](#po-round-95)
+
+#### ⭐ CLOSED — PO ROUND 98
+
+⭐ **Merged at `da02903`, TERMINAL by predicate `C`.** ⛔ **The merge path now reads WHO WROTE the commits a merge introduces, and refuses one whose commits cross offices — while a person's own line is skipped before anything is counted.**
