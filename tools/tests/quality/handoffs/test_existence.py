@@ -23,12 +23,16 @@ from tools.quality.handoffs.existence import (
     HANDOFF_OWED_FROM,
     OFFICE_OWNERS,
     RULE_MISSING,
+    RULE_UNORDERABLE,
     check_handoff_existence,
     closed_rows,
     declared_task_ids,
     existence_lines,
+    findings_for,
     handoff_existence,
+    lines_for,
     owing,
+    unorderable,
 )
 from tools.tests.quality.handoffs.support import GOOD, write
 
@@ -282,3 +286,55 @@ def test_the_arm_is_registered_in_the_floor():
     # class of defect this whole module exists to close.
     assert check_handoff_existence in CHECKS
     assert handoff_existence in NOTICES
+
+
+# --- `W181`: an id the pin cannot ORDER is REPORTED, never raised -----------
+
+#: ⛔ A closed id outside the register's own shape. ⚠️ **The parser cannot produce
+#: one** — `identifiers` only ever returns `ROW_ID` — ⭐ **so the arm is reached
+#: through the PURE FUNCTIONS that take the rows, which is the only honest way to
+#: assert an arm whose input the walk in front of it cannot construct.**
+UNORDERABLE = "W20a"
+
+
+def test_a_closed_id_the_pin_cannot_order_is_a_FINDING_that_names_it():
+    findings = findings_for([(FIRST_ROW, UNORDERABLE, WORKING_OWNER)], set())
+    assert [finding.rule for finding in findings] == [RULE_UNORDERABLE]
+    assert UNORDERABLE in findings[0].message
+    assert (findings[0].path, findings[0].line) == (BOARD, FIRST_ROW)
+
+
+def test_and_the_ordering_sites_RETURN_where_they_used_to_RAISE():
+    # ⛔ `int(row[1][1:])` raised at three sites, inside a floor check — so the
+    # failure mode was a traceback where the contract is one arm going red.
+    rows = [(1, UNORDERABLE, WORKING_OWNER)]
+    assert owing(rows) == []
+    assert unorderable(rows) == [(1, UNORDERABLE)]
+    assert "cannot ORDER" in lines_for(rows, set())[0]
+
+
+def test_and_an_ORDERABLE_row_beside_it_is_judged_exactly_as_before():
+    # ⭐ The both-ways twin: the malformed row must neither take the arm down
+    # nor excuse the row one line under it.
+    rows = [(1, UNORDERABLE, WORKING_OWNER), (FIRST_ROW, ABOVE, WORKING_OWNER)]
+    assert owing(rows) == [(FIRST_ROW, ABOVE, WORKING_OWNER)]
+    assert sorted(finding.rule for finding in findings_for(rows, set())) == [
+        RULE_MISSING,
+        RULE_UNORDERABLE,
+    ]
+
+
+def test_the_notice_NAMES_every_id_it_could_not_order():
+    assert f"1 — {UNORDERABLE}." in lines_for([(1, UNORDERABLE, WORKING_OWNER)], set())[0]
+
+
+def test_and_says_none_rather_than_going_quiet_when_there_are_none(tmp_path):
+    # ⛔ Ruling 191 one population over: an empty one is PRINTED, never omitted.
+    board(tmp_path, row(ABOVE))
+    assert "cannot ORDER (`W181`): none." in existence_lines(tmp_path, set())[0]
+
+
+def test_the_LIVE_register_names_NO_id_this_arm_cannot_order():
+    """⭐ `W181`'s second arm: the shipped population reads exactly as it did."""
+    text = (repository_root() / BOARD).read_text(encoding="utf-8")
+    assert unorderable(closed_rows(text)) == []

@@ -10,7 +10,8 @@ it is.
 registered in `tools.quality.CHECKS`. `DOCUMENT_KINDS` is the registry of what
 may live in that directory, and a new kind of document is one entry.
 
-**Depends on.** `config` for the tree and `re`. Nothing else.
+**Depends on.** `config` for the tree, `re`, and `ids` for Ruling 218's multi-id
+cell grammar — ⛔ **which is DECLARED once and is not respelled here** (`W192`).
 
 ## ⛔ The binding is a declaration, never the filename
 
@@ -98,6 +99,7 @@ from tools.quality.handoffs.contract import (
     marker_lines,
 )
 from tools.quality.handoffs.records import RULING_RECORD, check_record, record_scopes
+from tools.quality.ids import parts
 from tools.quality.report import Finding
 
 __all__ = [
@@ -180,6 +182,14 @@ def declared_kind(text: str) -> tuple[str | None, list[str], int]:
 
     Returns `(None, [], 0)` when there is no declaration inside
     `DECLARATION_WINDOW`, which is what the check refuses.
+
+    ⛔ **The IDs are split by Ruling 218's grammar and NOT by a comma alone**
+    (`W192`). ⚠️ **This reader used to be the board's exact INVERSE**: it split
+    on `,` and read `W188 + W183` as ONE id, while `_check_identity` below
+    demanded that very spelling in the title — so closing two rows in one round
+    required writing BOTH spellings into one file and no instrument could see
+    it. ⭐ **Every part is still returned whatever its shape, because every part
+    of this line CLAIMS to be a task id and `TASK_ID` refuses the rest BY NAME.**
     """
     for number, line in enumerate(text.splitlines()[:DECLARATION_WINDOW], start=1):
         if not line.startswith(KIND_MARKER):
@@ -187,9 +197,7 @@ def declared_kind(text: str) -> tuple[str | None, list[str], int]:
         match = _DECLARATION.match(line)
         if match is None:
             return (None, [], number)
-        raw = match.group("ids") or ""
-        ids = [part.strip() for part in raw.split(",") if part.strip()]
-        return (match.group("kind"), ids, number)
+        return (match.group("kind"), parts(match.group("ids") or ""), number)
     return (None, [], 0)
 
 

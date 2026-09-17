@@ -94,6 +94,35 @@ hold as many `W`-shaped tables as it likes; exactly one of them is the register,
 and it SAYS SO.** ⛔ **An inferred boundary is a boundary that moves the moment
 somebody writes an ordinary table.**
 
+### ⛔ A cell may name SEVERAL rows, and there is ONE spelling of it — Ruling 218's multi-id cell
+
+⭐ **The separators are `+` and `,`, and that is the whole grammar.** ⛔ **Markup is
+not part of an id**, and the order the cell writes them in is the order they are read
+in — so `` `W17` + `W19` `` and `` `W17`, `W19` `` name the same two rows.
+
+⛔ **THE GRAMMAR HAS ONE HOME AND IT IS AN INSTRUMENT, NOT THIS PARAGRAPH:**
+`tools/quality/ids.py`. ⭐ **Every reader of a multi-id cell calls it** — the
+register's parser, the In-flight table's parser, and the `**Kind:**` line of a handoff
+([`agent-protocol.md`](agent-protocol.md)) — ⚠️ **so a cell cannot mean one thing to
+the board and another to the floor.**
+
+⛔ **THE DEFECT IT CLOSES, and it is why the spelling is DECLARED rather than left to
+each reader.** ⚠️ **The comma form parsed as ONE id and took the LAST, so a cell naming
+two rows silently observed the WRONG one — not the second-best row and not no row —
+with no notice and exit `0`.** ⭐ **A second reader was its exact INVERSE and refused
+the `+` form the handoff title check demanded**, so closing two rows in one round
+required writing BOTH spellings into one file and no instrument could see it.
+⛔ **Those readings are [`W192`](../tasks/rows/W192.md)'s and are quoted there with the
+refs they were taken at.**
+
+⚠️ **A JOINER THIS GRAMMAR DOES NOT DECLARE IS NOT A SEPARATOR, and the readers part
+there deliberately.** ⭐ **The board's readers still name EVERY id in such a cell and
+never take the last** — reading more than is declared is the direction that cannot be
+silently wrong — ⛔ **while a handoff's `**Kind:**` line REFUSES the part BY NAME,
+because every part of that line claims to be a task id.** ⛔ **And a RANGE is not a
+multi-id cell: no reader expands `` `W177`–`W181` ``, so a cell meaning five rows names
+five.**
+
 ## ⭐ How to add to the board, by the four things a PO actually does
 
 | You are | Do this | ⛔ Not this |

@@ -198,6 +198,24 @@ def test_a_handoff_for_two_tasks_is_representable(tmp_path):
     assert check_handoffs(tmp_path) == []
 
 
+def test_and_the_PLUS_spelling_of_that_declaration_reads_the_SAME_TWO(tmp_path):
+    # ⛔ `W192`: this reader split on `,` ALONE, so `— W98 + W99` was ONE id
+    # here — while the title check one function down demanded that very
+    # spelling. ⭐ Ruling 218's grammar is one grammar, in `ids.py`.
+    text = GOOD.replace("**Kind:** task handoff — W99", "**Kind:** task handoff — W98 + W99")
+    write(tmp_path, "W98-W99.md", text.replace("# W99 — handoff", "# W98 + W99 — handoff"))
+    assert check_handoffs(tmp_path) == []
+
+
+def test_and_an_UNDECLARED_JOINER_is_REFUSED_BY_NAME_rather_than_split(tmp_path):
+    # ⭐ The direction that keeps the widening from being SILENT: every part of
+    # this line CLAIMS to be a task id, so one the grammar does not read is
+    # refused with its text in the finding rather than quietly halved.
+    text = GOOD.replace("**Kind:** task handoff — W99", "**Kind:** task handoff — W98 and W99")
+    write(tmp_path, "W98-W99.md", text.replace("# W99 — handoff", "# W98 and W99 — handoff"))
+    assert rules(tmp_path) == ["handoff-filename", "handoff-kind"]
+
+
 def test_and_a_two_task_title_must_still_name_both(tmp_path):
     text = GOOD.replace("**Kind:** task handoff — W99", "**Kind:** task handoff — W98, W99")
     write(tmp_path, "W98-W99.md", text.replace("# W99 — handoff", "# W98 — handoff"))
