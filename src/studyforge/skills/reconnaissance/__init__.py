@@ -65,6 +65,7 @@ does **not** generalise.
 | `proposal` | the draft manifest, and every field it had to choose |
 | `survey` | one pass, joining all of them |
 | `report` | what was measured, and what is still open |
+| `errors` | the one refusal these passes raise, and what its message may not say |
 
 **Skeleton at FND-01.** Filled by SK-01 (E11).
 """
@@ -73,6 +74,7 @@ from __future__ import annotations
 
 from studyforge.skills.reconnaissance.capability import Capability, assess
 from studyforge.skills.reconnaissance.duplication import Aggregate, Structural
+from studyforge.skills.reconnaissance.errors import ReconnaissanceRefused
 from studyforge.skills.reconnaissance.inventory import Inventory, prefix_groups, take
 from studyforge.skills.reconnaissance.proposal import draft
 from studyforge.skills.reconnaissance.record import Entry, Record, find
@@ -87,6 +89,7 @@ __all__ = [
     "Entry",
     "Inventory",
     "Observation",
+    "ReconnaissanceRefused",
     "Record",
     "Structural",
     "Survey",
