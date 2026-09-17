@@ -79,6 +79,7 @@ from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
+from tools.quality.surfaces import check_producer_half
 
 #: Every check, in the order their findings are reported. Adding a check means
 #: adding it here and nowhere else.
@@ -162,6 +163,15 @@ from tools.quality.style import check_style
 #: ⚠️ `check_owns_before_creator` reads the PLAN'S GRAPH (`W156`): a row owning inside a sibling
 #: component must reach that component's creator through its declared `Depends on` chain. ⛔ Its
 #: exemption mechanism is a TENTH: `workspace.json` pinning a component nobody creates `present`.
+#:
+#: ⚠️ `check_producer_half` reads the IMPORTS under `src/studyforge` and asks Ruling 101's
+#: producer-half question of each: is the name this package takes on the OWNER's `__all__`
+#: (`W199/3`, `W300`)? ⛔ Its exemption mechanism is an ELEVENTH distinct one and it is the
+#: REMEDY ITSELF — a name is excused by being exported, which is what the ruling asks for,
+#: so there is no way to excuse one that is not also a way to fix it. ⭐ It binds BOTH
+#: import spellings, and that is `W299/1`: a sweep defined over submodule imports alone
+#: releases a name the moment somebody corrects the spelling, so the pin has to be the
+#: half that does not depend on a consumer.
 CHECKS = (
     check_sizes,
     check_board,
@@ -180,6 +190,7 @@ CHECKS = (
     check_clause_counts,
     check_derived_counts,
     check_owns_before_creator,
+    check_producer_half,
 )
 
 #: ⛔ **The second channel, and it exists because some of the floor's answers
