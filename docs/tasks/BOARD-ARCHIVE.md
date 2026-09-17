@@ -24594,3 +24594,53 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 #### ⭐ CLOSED — PO ROUND 88
 
 ⭐ **Merged at `c8b2ae8`, TERMINAL by predicate `C`. The coordinator's guarded release-tip reading at `c8b2ae8` is RECEIVED GREEN.** ⭐ **`Health` carries `engine_model` and `Conditions` includes it, so a model change re-requests every clip, asserted through a recording transport over the ids submitted rather than the report.** ⭐ **`narrate/client.py` SPLIT at the wire seam, which DISCHARGES the standing condition this round retires, and `W212/3`'s borrowed error family goes with it: the decode error is the wire's and the JSON readers stay beside the client's R7 gate.** ⭐ **`SF-38/9` and `W224/4` ride closed: importing `studyforge.generate` or `cli/plan` loads no wire, asserted in a fresh interpreter over `sys.modules`.** ⚠️ **Its findings are disposed in this round's § 3.**
+
+## PO round 89
+
+⭐ **Cut at `19c7224`, the release tip after round 88.** ⚠️ **THE HEADING CARRIES NO CLOSE LIST, DELIBERATELY: every pointer minted in this round resolves to `#po-round-89`, and a heading naming its closes would move that anchor each time one landed.** ⛔ **The closes are § 5 below, appended as they land.**
+
+### ⭐ 1 — THE USER'S TWO RULINGS, 2026-09-16
+
+⛔ **Both were HELD FOR THE USER across rounds, and both gate `M6`, the open milestone.**
+
+| held item | ⭐ the ruling |
+|---|---|
+| `ISO-12`'s generated narration, held at ISO `a5cd5f7` | ⭐ **"Commit but never push."** It lands in the ISO repository's LOCAL history; `ISO-13` and `ISO-15` unblock. ⛔ Consistent with the standing rule that nothing in this project is ever pushed |
+| `W243/1`, the four Prism grammars | ⭐ **"Vendor the grammar into the repo"** — ⛔ **NOT a build-time download**, so the build stays offline and R8 is untouched. The Scheduled cell moves to `fired`; [`W295`](rows/W295.md) carries it |
+
+⚠️ **VENDORING IMPLIES ONE NETWORK FETCH, and the board rule is *no office fetches*.** ⭐ **So the acquisition was the COORDINATOR's act, performed once at `19c7224` by the header's own recorded reproduce command, and DISCLOSED here rather than delegated to an office.**
+
+### ⭐ 2 — MINTS
+
+| finding | row | order | surface |
+|---|---|---|---|
+| `W243/1`, on the user's ruling | [`W295`](rows/W295.md) | ⛔ **dispatched in this round, not queued** | `src/studyforge/render/assets/prism.js` and `render/pageassets/` |
+| `PO-89/1` | [`W296`](rows/W296.md) | 56 | the merge path, and ⚠️ **NOT `tools.quality.CHECKS`** — Ruling 80 forbids a floor check reading a branch position |
+
+### ⛔ 3 — `PO-89/1`, AND IT IS THIS OFFICE'S OWN DEFECT
+
+⛔ **A merge subject that `tools.quality.subject` REFUSED reached the release branch at `19c7224`.** ⭐ **The instrument ran and printed its refusal; the coordinator's inline merge branched on `corroborate`'s exit alone and never on the subject's, so a refused subject merged.**
+
+⚠️ **The carrier merges of the same wave used a runner that DID branch on it, and all five passed.** ⛔ **So the defect is neither the instrument nor the practice where it was mechanised — it is that the mechanisation was OPTIONAL, which is exactly what `W149`'s own record predicted when it said no gate enforces this.**
+
+⚠️ **AND IT RECURRED INSIDE THIS ROUND, at `ba49aa6`, in the very commit that minted the row** — the instrument refused the bare count `two`, was read, and was not branched on. ⭐ **That commit was UNMERGED, so it was amended; the difference between the instances is precisely the difference the remedy must exploit.**
+
+⛔ **Ruling 320 makes it unrecoverable rather than correctable: a landed subject is FROZEN and is not annotated.** ⭐ **`19c7224`'s subject stays wrong, it is named here, and the remedy is a gate before the merge — [`W296`](rows/W296.md).**
+
+### ⭐ 4 — DISPATCH
+
+⛔ **Five offices, each carrier DECLARED on its own branch (`W153/2`) before any work began.**
+
+| carrier | office | rows |
+|---|---|---|
+| `fix/W181-W192-register-id-and-multi-id-spelling` | Developer 1 | `W181`, `W192` — one owner because both touch `handoffs/existence.py` |
+| `fix/W199-archive-raw-minted-twice` | Developer 2 | `W199` |
+| `fix/W289-W290-block-guard-and-unit-location` | Developer 3 | `W289`, `W290` |
+| `fix/W295-vendor-prism-grammars` | framework agent | `W295`, on the user's ruling |
+| ISO `int/` round 15 | integration | `ISO-12`, on the user's ruling |
+
+⚠️ **`W90`, `W118` and `W198` sit AHEAD of these in the queue and were NOT dispatched, which Ruling 75 requires be said out loud:** ⛔ **none is a developer row.** ⭐ **`W90` is a `toc_api` design decision only the id space's owner may take; `W118` says in its own text that it is a PO row because its population is the closes; `W198` owes a CONTRACT decision before any code.** ⭐ **That is the *slot no open-step row can fill* case, and the bound is priority rather than exclusivity.**
+
+### ⭐ 5 — CLOSES
+
+⛔ **PENDING: appended as each dispatched carrier lands and is measured. Nothing is closed by dispatch.**
