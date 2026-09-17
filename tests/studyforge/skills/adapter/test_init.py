@@ -25,6 +25,38 @@ VERB = "validate"
 SKILL = "src/studyforge/skills/adapter/SKILL.md"
 WHERE = "src/studyforge/skills/adapter"
 
+#: ⛔ **The package's whole public surface, spelled out.** ⚠️ Duplicated from
+#: `__all__` on purpose, following SF-01 and the pin `corpus.placement` already
+#: has: a check that walks `__all__` to test `__all__` agrees with itself, so a
+#: name silently LEAVING this surface was invisible to it.
+#: ⭐ `W298`'s clause 3 is why it exists — `UNITS_DIR` survives here as a
+#: BINDING of placement's spelling (`W199`'s rider: an adapter's whole
+#: vocabulary arrives through this package, R19), and a surviving name owes a
+#: CLOSED check rather than a spot assertion.
+PUBLIC_SURFACE = frozenset(
+    {
+        "ARCHIVE_DIR",
+        "FILLED_IN",
+        "PACKAGE",
+        "PARTS",
+        "RAW_DIR",
+        "SOURCE_LINE_CEILING",
+        "UNITS_DIR",
+        "Layout",
+        "LayoutError",
+        "Part",
+        "Plan",
+        "PlanError",
+        "Scaffold",
+        "ScaffoldRefused",
+        "Written",
+        "document_name",
+        "plan_for",
+        "scaffold",
+        "write_files",
+    }
+)
+
 
 def skill_text():
     """The skill document, which is the far end of every pointer in this package."""
@@ -121,3 +153,13 @@ def test_the_surface_is_exactly_what_it_declares():
     for name in adapter.__all__:
         assert hasattr(adapter, name), f"__all__ names {name!r}, which is not exported"
     assert len(set(adapter.__all__)) == len(adapter.__all__), "a name is exported twice"
+
+
+def test_the_public_surface_is_exactly_what_the_contract_says():
+    # ⛔ `W298` clause 3. ⚠️ The arm above walks `__all__`, so it answers
+    # "does every declared name resolve" and CANNOT answer "is every name that
+    # belongs here still declared" — dropping `UNITS_DIR` from `__all__` passes
+    # it. ⭐ This one is closed over a population declared outside `__all__`.
+    assert set(adapter.__all__) == PUBLIC_SURFACE
+    missing = sorted(name for name in PUBLIC_SURFACE if not hasattr(adapter, name))
+    assert missing == [], "exported but absent: " + ", ".join(missing)
