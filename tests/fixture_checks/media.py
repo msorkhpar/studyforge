@@ -29,7 +29,6 @@ from __future__ import annotations
 
 from studyforge.address import unit_name
 from studyforge.corpus.placement import UNITS_DIRNAME
-
 from tests.fixture_checks.digests import sha256_of_bytes
 
 

@@ -183,6 +183,7 @@ def test_the_shipped_archives_hold_no_stray(name):
 # ⛔ W214 — a declared file the archive does not hold is refused by name
 # --------------------------------------------------------------------------
 
+
 #: One entry of `assets` or `attachments`, whose `local` is the only half a
 #: page addresses. ⚠️ The digest and the byte count are not this check's
 #: question and are fabricated here.
