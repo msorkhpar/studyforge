@@ -24643,4 +24643,18 @@ RECEIVED, role wt/cto, CTO round 67 — both readings the reviewer's own
 
 ### ⭐ 5 — CLOSES
 
-⛔ **PENDING: appended as each dispatched carrier lands and is measured. Nothing is closed by dispatch.**
+⛔ **Appended as each dispatched carrier lands and is measured. Nothing is closed by dispatch.**
+
+#### ⭐ `ISO-12` — CLOSED, on the user's ruling, at ISO `509583f`
+
+⭐ **The generated narration is committed to `release/studyforge-integration` and NOT pushed.** ⛔ **VERIFIED BY THE COORDINATOR rather than received:** the clips and the narration record are tracked at the new HEAD, the tree is clean, the repository's own `docs/studyforge/verify.py` exits `0`, and `origin/main` still sits where it did — nothing was pushed, fetched or re-pointed.
+
+⭐ **Method: a CHERRY-PICK of the generated-output commit, not a merge of the held branch.** ⚠️ **The office's ground, and it is a good one:** merging `int/round14-repin-iso12-iso14` would have carried record commits that REWRITE round 14's record to say `ISO-12` was taken on 2026-09-13, when it was in fact HELD. ⛔ **Round 14's record is verified UNEDITED by this act** (Ruling 106: a record is annotated, never edited).
+
+| finding | outcome |
+|---|---|
+| `INT-15/1` | ⛔ **AN IDENTITY TRAP, and it fired.** `git cherry-pick` and `git merge` take identity from local config, and `git merge` has **no** `--author` flag — so a real address reached the log twice before the office caught it, discarded the bad merge, and remade both commits with the house placeholder. ⭐ **AUDITED INDEPENDENTLY BY THE COORDINATOR:** every commit this round added carries `po-int@example.invalid` in BOTH the author and the committer field, and no unreachable or reflog-held object from this round carries anything else. ⚠️ **The durable remedy is to export `GIT_AUTHOR_*` AND `GIT_COMMITTER_*`; the defect is invisible in a diff and in `git log --oneline`, and visible only in a format string that prints both fields** |
+| `INT-15/2` | ⚠️ **THE DECISION WAS ABOUT REACHABILITY, NOT DISK, AND NOBODY KNEW THAT WHEN IT WAS PUT.** ⛔ **Committing the audio added NO new objects** — every blob was already in the object store, written when the held branch was created, and `.git` measures the same before and after. ⭐ **So the question put to the user as *"shall this enter history"* was in truth *"shall these existing objects become reachable"*.** ⛔ **The bytes are reclaimable only by deleting the held branch and expiring the objects, which was NOT done and is not this round's to do** |
+| `INT-15/3` | ⛔ **Two branches record the SAME round with CONTRADICTORY outcomes.** `int/round14-repin-iso12-iso14` is left in place and unmerged; a later reader who merges it would silently rewrite round 14's record. ⚠️ **Named here so the trap is not re-discovered** |
+
+⛔ **AND A CORRECTION THIS ROUND OWES, because the register propagated it:** ⭐ **`ISO-13` is unblocked — its clause *"the audio is committed"* now holds.** ⛔ **`ISO-15` IS NOT: its gate is `SK-07`'s reader documentation, and `ISO-12` was never its blocker.** ⚠️ **Round 87's held item and this round's own first draft both said *"`ISO-13` and `ISO-15` wait on it"*, and the second half was FALSE — measured by the office against `ISO-15`'s own clauses.**
