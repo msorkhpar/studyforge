@@ -60,6 +60,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
+| `W305` | Developer 1 | `fix/W305-office-identity-scoped` @ `wt/dev1` | 0 @ `b58a120` | in-progress |
+| `W306` | Developer 2 | `fix/W306-mint-runs-its-own-clause` @ `wt/dev2` | 0 @ `b58a120` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -449,8 +451,8 @@ else.**
 | W302 | A release tip is certified on a host floor that prints, in its own output, that it cannot certify it — and no gate in the merge path reads the image | framework agent | ✅ done — `ecf0661` | [`rows/W302.md`](rows/W302.md) |
 | W303 | The renderer's `_RENDERERS` dispatch refuses a malformed block with a `KeyError` instead of by name, and reachability is unmeasured | framework agent | ✅ done — `544a165` | [`rows/W303.md`](rows/W303.md) |
 | W304 | A floor snippet in the rubric reads `$?` after a pipeline, so it prints `0` for a RED floor on the page that teaches Ruling 241 | framework agent | ✅ done — `fc176ae` | [`rows/W304.md`](rows/W304.md) |
-| W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | `todo` — `W303/1` | [`rows/W305.md`](rows/W305.md) |
-| W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | `todo` — `PO-94` | [`rows/W306.md`](rows/W306.md) |
+| W305 | A floor check reads mutable shared state that offices write, so the floor's verdict on an unchanged tree depends on who is working | framework agent | in-progress — on `fix/W305-office-identity-scoped` | [`rows/W305.md`](rows/W305.md) |
+| W306 | A check that verifies the pointers PRESENT cannot see the pointer that is ABSENT, so a row can be born without the pointer Ruling 244(e) requires | framework agent | in-progress — on `fix/W306-mint-runs-its-own-clause` | [`rows/W306.md`](rows/W306.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
