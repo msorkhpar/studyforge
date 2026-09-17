@@ -22,6 +22,7 @@ from studyforge.skills.delivery import (
     Terminal,
     Unused,
     read_epic,
+    read_epics,
     read_sequence,
 )
 
@@ -74,6 +75,21 @@ SEQUENCE = """# A task index
 """
 
 
+#: ⛔ `M10` declared BEFORE `M9`: neither a lexical sort (`M1`, `M10`, `M2`, `M9`)
+#: nor a numeric one (`M1`, `M2`, `M9`, `M10`) reproduces the declared order.
+WIDE_SEQUENCE = "### M1 — One\n### M2 — Two\n### M10 — Ten\n### M9 — Nine\n"
+
+#: The epic that goes with it: two-digit milestone ids, read as ids (`W247`).
+WIDE_EPIC = """# E12 — Wide ids
+
+### SF-40 — Lands at ten
+**Milestone** **M10** · **Depends on** — · **Team** solo
+
+### SF-41 — Lands at nine
+**Milestone** M9 · **Depends on** SF-40 · **Team** solo
+"""
+
+
 def sequence() -> Sequence:
     """The fixture's declared order: M1, M2, M6, M5."""
     return read_sequence("README.md", SEQUENCE)
@@ -82,6 +98,11 @@ def sequence() -> Sequence:
 def index() -> Index:
     """The two-epic index: capabilities at M1, M2 and M5, none at M6, one cancelled."""
     return Index.of((read_epic("E01.md", EPIC_ONE), read_epic("E05.md", EPIC_TWO)), sequence())
+
+
+def wide_index() -> Index:
+    """The `W247` index: milestone ids of two digits, in their declared order."""
+    return Index.of((read_epic("E12.md", WIDE_EPIC),), read_sequence("README.md", WIDE_SEQUENCE))
 
 
 def _tasks() -> Path:
@@ -105,7 +126,7 @@ def live_sequence() -> Sequence:
 
 def live_index() -> Index:
     """This repository's own index, in its own declared order."""
-    return Index.of((read_epic(name, text) for name, text in live_epics()), live_sequence())
+    return Index.of(read_epics(live_epics()), live_sequence())
 
 
 def terminal() -> Terminal:
