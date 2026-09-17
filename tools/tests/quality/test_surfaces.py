@@ -12,10 +12,15 @@ from pathlib import Path
 
 from tests.support import repository_root
 from tools.quality.surfaces import (
+    DECLARED,
+    RULE_DECLARATION,
+    RULE_REACHED_PAST,
     RULE_UNDECLARED,
+    Declaration,
     check_producer_half,
     packages,
     reaches,
+    surface_census,
 )
 
 #: The contract line every synthetic module carries, so the floor's own rules are met.
@@ -40,10 +45,12 @@ def _tree(root: Path, *, owner_all: str, importer: str) -> Path:
     return root
 
 
-# --- the real tree: the pin arm is clean, and it is NOT clean by reading nothing ------
+# --- the real tree: closed BOTH ways, and not clean by reading nothing ----------------
 
 
-def test_this_tree_shares_no_name_its_owner_does_not_declare():
+def test_this_trees_deviations_are_exactly_what_is_declared():
+    # ⛔ Closed at this ref, and the assertion is one line because both arms are in it:
+    # an UNDECLARED deviation reds, and a DECLARED one that is GONE reds too.
     findings = check_producer_half(repository_root())
     assert findings == [], "\n".join(str(finding) for finding in findings)
 
@@ -57,6 +64,14 @@ def test_and_the_walk_that_says_so_read_a_real_population():
     assert [reach for reach in found if not reach.module], "the pin arm binds nothing"
     assert [reach for reach in found if reach.module], "the sweep arm sees nothing"
     assert {reach.owner for reach in found} > {"studyforge.validate"}
+
+
+def test_every_declared_package_is_a_package_this_tree_actually_has():
+    # ⚠️ A declaration naming a package that does not exist excuses nothing and would
+    # never be read, so it could sit here forever saying something false.
+    known = packages(repository_root())
+    assert set(DECLARED) <= set(known)
+    assert DECLARED, "an empty declaration satisfies every comparison below vacuously"
 
 
 def test_the_pin_holds_a_name_whichever_spelling_a_consumer_uses():
@@ -75,7 +90,7 @@ def test_every_package_is_read_and_a_missing_surface_is_not_an_empty_one():
     assert any(surface is None for surface in read.values())
 
 
-# --- the synthetic tree: both ways ---------------------------------------------------
+# --- the PIN arm, both ways ----------------------------------------------------------
 
 
 def test_a_name_taken_from_a_package_that_does_not_export_it_is_a_finding(tmp_path):
@@ -105,6 +120,74 @@ def test_a_package_declaring_no_surface_at_all_is_reached_past(tmp_path):
         DOC + "from studyforge.owner import VALUE\n",
     )
     assert [f.rule for f in check_producer_half(tmp_path)] == [RULE_UNDECLARED]
+
+
+# --- the SWEEP arm, and the declaration that closes it, both ways ---------------------
+
+
+def test_an_UNDECLARED_module_spelled_deviation_is_a_finding(tmp_path):
+    _tree(tmp_path, owner_all="[]", importer="from studyforge.owner.thing import VALUE")
+    findings = check_producer_half(tmp_path)
+    assert [finding.rule for finding in findings] == [RULE_REACHED_PAST]
+    assert "studyforge.owner.thing" in findings[0].message
+    assert "declaring a defect" in findings[0].message
+
+
+def test_and_a_DECLARED_one_is_not(tmp_path, monkeypatch):
+    _tree(tmp_path, owner_all="[]", importer="from studyforge.owner.thing import VALUE")
+    monkeypatch.setitem(
+        DECLARED, "studyforge.owner", Declaration("a ground", frozenset({"VALUE"}))
+    )
+    assert check_producer_half(tmp_path) == []
+
+
+def test_a_DECLARED_deviation_that_is_GONE_reds_rather_than_lingering(tmp_path, monkeypatch):
+    # ⛔ What CLOSES the population at its ref: fixing a deviation deletes its own entry,
+    # so a declaration can never outlive the thing it excuses.
+    _tree(tmp_path, owner_all="[]", importer="pass")
+    monkeypatch.setitem(
+        DECLARED, "studyforge.owner", Declaration("a ground", frozenset({"DEPARTED"}))
+    )
+    findings = check_producer_half(tmp_path)
+    assert [finding.rule for finding in findings] == [RULE_DECLARATION]
+    assert findings[0].path == "src/studyforge/owner/__init__.py"
+    assert "DEPARTED" in findings[0].message and "Delete the entry" in findings[0].message
+
+
+def test_a_declaration_for_a_package_this_tree_lacks_is_not_read(tmp_path):
+    # ⚠️ Declared gap 6. Every synthetic tree above would carry this repository's whole
+    # declared population as stale findings if the arm did not skip an absent package.
+    _tree(tmp_path, owner_all="[]", importer="pass")
+    assert "studyforge.archive" in DECLARED
+    assert check_producer_half(tmp_path) == []
+
+
+def test_the_SPELLING_deviation_is_counted_and_never_failed():
+    # ⭐ Ruling 101's FIRST row on the real tree: `Held` IS exported by `validate` and is
+    # taken by the submodule spelling (`W299/3`). It is printed, and it is not a finding.
+    printed = "\n".join(surface_census(repository_root()))
+    assert "Held" in printed
+    assert not [f for f in check_producer_half(repository_root()) if "Held" in f.message]
+
+
+# --- the census ----------------------------------------------------------------------
+
+
+def test_the_census_carries_its_denominators_and_says_what_it_is_not():
+    lines = surface_census(repository_root())
+    assert lines[0].startswith("producer half (W199/3):")
+    assert "cross-package import(s) read" in lines[0]
+    # ⚠️ `W298/3`: an instrument that reads a NAME must not be mistaken for a value guard.
+    assert "never a VALUE" in lines[0]
+    printed = "\n".join(lines)
+    for owner in DECLARED:
+        assert owner in printed
+
+
+def test_the_census_says_so_on_a_tree_that_is_not_this_framework(tmp_path):
+    lines = surface_census(tmp_path)
+    assert len(lines) == 1 and "no src/studyforge" in lines[0]
+    assert "not a failure" in lines[0]
 
 
 # --- the shapes it must NOT fire on --------------------------------------------------
@@ -142,6 +225,16 @@ def test_a_package_reading_its_OWN_surface_is_not_reaching_past_one(tmp_path):
         tmp_path,
         "src/studyforge/owner/near.py",
         DOC + "from studyforge.owner import VALUE\n",
+    )
+    assert check_producer_half(tmp_path) == []
+
+
+def test_a_module_reading_its_OWN_packages_module_is_not_reaching_past_one(tmp_path):
+    _tree(tmp_path, owner_all="[]", importer="pass")
+    _write(
+        tmp_path,
+        "src/studyforge/owner/near.py",
+        DOC + "from studyforge.owner.thing import VALUE\n",
     )
     assert check_producer_half(tmp_path) == []
 

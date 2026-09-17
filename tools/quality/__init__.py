@@ -79,7 +79,7 @@ from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
-from tools.quality.surfaces import check_producer_half
+from tools.quality.surfaces import check_producer_half, surface_census
 
 #: Every check, in the order their findings are reported. Adding a check means
 #: adding it here and nowhere else.
@@ -275,6 +275,14 @@ CHECKS = (
 #:
 #: ⭐ **`creator_census` is the twelfth** (`W156`): every member, its creator, its verdict and
 #: whether its component was read from a path or from epic prose, so a green exit carries both.
+#:
+#: ⭐ **`surface_census` is the thirteenth** (`W300`): the packages walked, the deviations
+#: `surfaces.DECLARED` excuses with the ground of each, and Ruling 101's FIRST row — a name
+#: that IS exported and is taken by the submodule spelling. ⛔ **That last population is
+#: printed and failed nowhere**, for FND-07's reason: it is landed code no office has been
+#: assigned, and a red run for a condition nobody may clear is a red run that gets muted.
+#: ⚠️ It also prints what the check is NOT — a surface is read by NAME, never by value
+#: (`W298/3`) — so nobody retires a behavioural pin because this one is green.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -288,6 +296,7 @@ NOTICES = (
     clause_census,
     count_census,
     creator_census,
+    surface_census,
     lint_notice,
 )
 

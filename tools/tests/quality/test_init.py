@@ -25,7 +25,7 @@ from tools.quality.rulings import check_rulings_index, rulings_notice
 from tools.quality.size import check_sizes
 from tools.quality.source_names import check_source_names
 from tools.quality.style import check_style
-from tools.quality.surfaces import check_producer_half
+from tools.quality.surfaces import check_producer_half, surface_census
 
 
 def test_states_its_contract():
@@ -76,6 +76,7 @@ def test_every_notice_is_registered():
         clause_census,
         count_census,
         creator_census,
+        surface_census,
         lint_notice,
     }
 
