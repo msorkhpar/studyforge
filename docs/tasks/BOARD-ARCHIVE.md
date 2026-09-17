@@ -25959,3 +25959,100 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 95
 
 ⭐ **Merged at `d3e36b5`, TERMINAL by predicate `C`.**
+
+## PO round 97
+
+⛔ **Only what is MEASURED is written here.**
+
+### ⭐ CLOSES — verified by this office, NOT received
+
+| row | office | carrier | merge |
+|---|---|---|---|
+| `W307` | dev1 | `d40e8a1` | ⭐ **merged at `d65bc2d`** — `mergegate`'s `3` gates GREEN on the MERGED tree |
+
+⭐ **The delivered notice is LIVE and was read by this register on the host: it prints the armed and unarmed arms BY LABEL, with the denominator, and NEVER a value.** ⛔ **Verified twice over: by construction, and by executing `identifiers()` from the branch and printing ONLY its key set** — the one path that could have leaked is `drift`, which iterates a mapping keyed by label.
+
+### ⛔ THIS ROUND'S OWN DEFECT, AND IT IS THE ROW THIS REGISTER WROTE
+
+#### ⛔ `PO-97/1` — a row restated a POSSIBILITY as a QUANTITY nobody had measured
+
+⛔ **`W305/2` reported that the identifier arm CAN be unarmed. This register wrote `W307` saying it *"derives NOTHING"* and compares against an *"EMPTY SET"* inside the image.** ⚠️ **MEASURED by the office: two hostname arms DO derive there.** ⭐ **The body is ANNOTATED, never edited — the charge and its correction both stand in the record.**
+
+⚠️ **AND THE COST WAS NOT HYPOTHETICAL:** a notice built faithfully to the row's wording would have announced the arm UNARMED over a run where two arms had compared — ⛔ **the very confusion the row was minted to close.** ⭐ **The office refused the wording and measured instead, which is the third time this wave an office has corrected the row it was given.**
+
+### ⛔ `W308` IS SENT BACK, AND THE REASON IS A GATE THAT WOULD WEDGE THE MERGE PATH
+
+⛔ **`fix/W308-merge-path-reads-authorship` @ `6d9cc0b` WAS NOT MERGED.** ⚠️ **MEASURED on the branch, read-only: `author_is_placeholder` accepts only RFC-reserved addresses, and the population is `HEAD..<branch>` — so a REGISTER merge reads THIS REGISTER'S OWN round commit, authored with an identity the user's standing ruling permits because nothing is ever pushed.** ⛔ **`Outcome.verdict` tests `authorship.foreign` FIRST and returns `REFUSED` before staging. No register-branch exemption exists in the module or at its call site; both were checked.**
+
+⚠️ **THE DEADLOCK IS WHY THIS IS BLOCKING RATHER THAN A NIT: once merged, the repair for `mergegate` could not itself be merged through `mergegate`.**
+
+⭐ **It also fails the row's OWN settling clause, which its brief stated: *the user's own identity must pass, asserted explicitly with a fabricated stand-in*.** ⛔ **The office's error was reasoning rather than care — it argued that identity *"sits there and is never read"*, which holds for commits already ON the release line and not for a round commit INTRODUCED by its own merge.** ⚠️ **It validated against its own carrier, which is office-authored, and generalised.**
+
+⛔ **THE REPAIR MUST NOT BE AN ALLOW-LIST, AND MUST NOT BE THE REGISTER COMMITTING UNDER A PLACEHOLDER.** ⭐ **`W305` refused a roster because it fails the next name, and a gate that forces the coordinator off an identity the user's ruling PERMITS is the gate setting policy rather than reading it.**
+
+### ⭐ FINDINGS RECEIVED THIS ROUND
+
+| finding | disposition |
+|---|---|
+| `W307/1` `[structural]` | ⭐ **RULED, and against this register:** the row's premise overstated its measurement. ⛔ **The body is ANNOTATED before moving; see `PO-97/1`.** |
+| `W307/2` `[local]` | ⚠️ **`identifiers()` now runs TWICE per floor invocation, once in `run_notices` and once in `run_all`.** ⭐ **A cost KNOWINGLY TAKEN: caching is refused because the module's contract is that the values are kept NOWHERE.** |
+| `W307/3` `[structural]` | ⭐ **BECOMES [`W309`](rows/W309.md)** — the class of defect is not proved absent from the other checks. |
+
+### ⭐ THE MINT — `W309`
+
+⛔ **`W307` closed ONE arm's silence. Nothing establishes that the other checks do not have the same silence**, and `check_personal_data` was merely the one with no notice at all. ⭐ **Born with an anchored pointer, and judged by `board-born` — the arm `W306` landed two rounds ago.**
+
+### ⭐ THE MEASUREMENT OF RECORD at `d65bc2d`
+
+| instrument | environment | reading |
+|---|---|---|
+| `python3 -m tools.quality` | HOST | ⭐ GREEN, exit `0` — `quality floor: clean` |
+| floor + suite | ⭐ **pinned image, on the MERGED tree** | ⭐ GREEN, exit `0` each — `mergegate`'s gates, taken before the merge commit existed |
+| `python3 -m pytest` | HOST | ⭐ GREEN, exit `0` |
+| `board.last_pointer 2b9d0f2 d65bc2d` | HOST | ⭐ GREEN, exit `0` |
+| `board.corroborate` | HOST | exit `1`, refuting exactly `W307` — ⭐ the correct disclosure state for a carrier merged and not yet closed |
+| `tools.workspace verify` | HOST | ⭐ GREEN, exit `0` |
+
+### ⏳ STILL IN FLIGHT
+
+⛔ **`W308`, with its commits-ahead cell RE-MEASURED rather than left at the dispatch reading** — ⭐ Ruling 246: the cell is a READING WITH AN AS-OF, and a round that rewrites the table owes a fresh one.
+
+### W307 — the floor says nothing about whether the identity arm is ARMED, so a green run reads as nothing leaked when it can mean nothing was compared
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W307.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A GREEN FLOOR READS AS *NOTHING LEAKED* WHEN IT CAN MEAN *NOTHING WAS COMPARED*, AND NOTHING DISTINGUISHES THEM.**
+
+### ⛔ WHY IT IS A ROW AND NOT A NOTICE SOMEBODY ADDS
+
+⭐ **Raised as `W305/2` by the office that had just narrowed the arm, against `tools/quality/__init__.py`'s `NOTICES`.** ⛔ **After `W305`, the identity arm reads only `--global` and `--system`. In the pinned image it derives NOTHING — the image configures no git identity — so the arm compares against an empty set and the floor prints the same clean line it prints when a real identity was compared and found nowhere.**
+
+⚠️ **THIS IS RULING 78's SHAPE, THIRD INSTANCE THIS WAVE:** `aa7c035` was certified on a floor that PRINTED its own inability to certify; `W301` filed a suite reading under the floor's name; and now an arm that may be disarmed reports indistinguishably from one that ran.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The floor DISCLOSES whether the identity arm was armed** — ⭐ *nothing printed* and *there was nothing to say* must not be the same line (`FND-07`).
+2. ⛔ **Asserted both ways (R12):** with identifiers derived, the notice says so; with none derived, the notice says THAT, and neither reads as the other.
+3. ⚠️ **It must NOT re-arm the check by widening the scopes `W305` narrowed** — ⛔ that would undo a landed row to fix its disclosure.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A FAILURE.** ⭐ **An unarmed arm is CORRECT in the image and must stay GREEN; this row is about what the run SAYS, never about what it refuses.**
+
+[the mint](#po-round-95)
+
+#### ⛔ ANNOTATION — THIS ROW'S PREMISE OVERSTATED ITS OWN MEASUREMENT, RECORDED BEFORE THE BODY MOVED
+
+⛔ **The body above asserts that inside the pinned image the arm *"derives NOTHING"* and compares against an *"EMPTY SET"*.** ⚠️ **MEASURED by the taking office, in the image, with null checks only: the `hostname` and `short hostname` arms DO derive. It is the `git author name`, `git author email`, `account name` and `home directory` arms that do not.**
+
+⭐ **The claim above is NOT deleted and NOT rewritten** (Ruling 106's shape, `W304`'s worked example): the record carries the charge AND its correction.
+
+⭐ **THE DEFECT IS REAL AND THE REMEDY STANDS — only the extent was wrong.** ⛔ **And the office's sharper point is why this annotation matters rather than being bookkeeping: a notice built faithfully to this row's wording would have announced the identifier arm UNARMED over a run where TWO ARMS HAD IN FACT COMPARED** — ⚠️ **a fresh instance of the exact confusion the row exists to close.**
+
+⭐ **What the office built instead is disclosure PER ARM, which is strictly better than what was asked for**, and the delivered notice reads `6 of 6` on the host and `2 of 6` in the image.
+
+⛔ **`PO-97/1`: this register minted a row asserting a measurement it had not taken.** ⚠️ **`W305/2` reported that the arm *can* be unarmed; the leap to *"derives nothing"* was the register's own, and an office had to measure the image to refute it.** ⭐ **The general shape: a finding names a POSSIBILITY, and a row that restates it as a QUANTITY has added a claim nobody measured.**
+
+#### ⭐ CLOSED — PO ROUND 97
+
+⭐ **Merged at `d65bc2d`, TERMINAL by predicate `C`.** ⛔ **The floor now names WHICH identifier arms had a value to compare, by label and never by value.**
