@@ -99,13 +99,16 @@ def framework_beside(root: Path) -> Path:
     return framework
 
 
-def material(root: Path) -> Path:
+def material(root: Path, *, framework: bool = True) -> Path:
     """Write the material, and nothing else — no manifest, no adapter, no tests.
 
-    ⚠️ Plus the framework checkout beside it (`W270`), which is outside `root`.
+    ⚠️ Plus the framework checkout beside it (`W270`), which is outside `root` —
+    unless `framework` is false, for a root whose framework stands elsewhere,
+    such as beside the main checkout of a linked worktree (`W286`).
     """
     root.mkdir(parents=True, exist_ok=True)
-    framework_beside(root)
+    if framework:
+        framework_beside(root)
     (root / "README.md").write_text(
         "# A Walkthrough Corpus\n\n- [1. First](src/01.md)\n- [2. Second](src/02.md)\n",
         encoding="utf-8",

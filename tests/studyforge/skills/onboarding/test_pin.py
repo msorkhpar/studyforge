@@ -246,3 +246,149 @@ def test_the_generated_pin_test_fails_when_no_framework_is_beside_the_corpus(tmp
 
     with pytest.raises(AssertionError, match="no framework checkout"):
         _generated(root)()
+
+
+# --------------------------------------------------------------------------
+# ⛔ W286: a corpus in a LINKED WORKTREE finds the framework beside its main checkout
+# --------------------------------------------------------------------------
+
+
+def _git(where, *arguments):
+    """Run git in `where` with no user config and placeholder identities only (R7)."""
+    import os
+    import shutil
+
+    env = {"PATH": os.environ.get("PATH", ""), "HOME": str(where), **corpora.SYNTHETIC_GIT}
+    done = subprocess.run(
+        [shutil.which("git"), "-C", str(where), *arguments], capture_output=True, env=env
+    )
+    assert done.returncode == 0, done.stderr.decode()
+
+
+def _linked_worktree(tmp_path, *, framework=True):
+    """A corpus repository, the framework beside it, and a worktree one level deeper.
+
+    ⛔ Nothing beside the worktree itself: no framework, and no symlink to one.
+    """
+    main = tmp_path / "corpus"
+    main.mkdir()
+    if framework:
+        corpora.framework_beside(main)
+    _git(main, "init", "-q")
+    _git(main, "commit", "-q", "--allow-empty", "-m", "a synthetic corpus commit")
+    worktree = tmp_path / "corpus-worktrees" / "one"
+    _git(main, "worktree", "add", "-q", str(worktree))
+    return worktree
+
+
+def _no_symlink_anywhere(tmp_path):
+    assert not [path for path in tmp_path.rglob("*") if path.is_symlink()]
+
+
+def test_a_linked_worktree_looks_beside_its_main_checkout(tmp_path):
+    worktree = _linked_worktree(tmp_path)
+
+    assert pin.main_checkout(worktree) == (tmp_path / "corpus").resolve()
+    assert pin.framework_of(worktree) == tmp_path.resolve() / pin.FRAMEWORK
+    assert not (worktree.parent / pin.FRAMEWORK).exists()
+    assert pin.check_held(corpora.COMMIT, pin.framework_of(worktree)) == corpora.COMMIT
+    _no_symlink_anywhere(tmp_path)
+
+
+def test_a_main_checkout_still_looks_beside_itself(tmp_path):
+    worktree = _linked_worktree(tmp_path)
+    main = worktree.parent.parent / "corpus"
+
+    assert pin.main_checkout(main) == main.resolve()
+
+
+def test_a_directory_inside_a_repository_is_not_taken_for_its_checkout(tmp_path):
+    # ⛔ Only a checkout's TOP LEVEL is asked: an export copied into some other
+    # repository stands beside its own parent, never beside that repository.
+    worktree = _linked_worktree(tmp_path)
+    export = worktree / "export"
+    export.mkdir()
+
+    assert pin.framework_of(export) == worktree.resolve() / pin.FRAMEWORK
+
+
+def test_a_linked_worktree_with_no_framework_beside_its_main_checkout_is_refused(tmp_path):
+    worktree = _linked_worktree(tmp_path, framework=False)
+
+    with pytest.raises(pin.PinRefused) as refused:
+        pin.check_held(corpora.COMMIT, pin.framework_of(worktree))
+
+    assert "beside the corpus's main checkout" in str(refused.value)
+    assert str(tmp_path) not in str(refused.value)
+
+
+def test_a_commit_the_framework_lacks_is_still_refused_from_a_linked_worktree(tmp_path):
+    from studyforge.skills.onboarding import onboard
+
+    worktree = corpora.material(_linked_worktree(tmp_path), framework=False)
+
+    with pytest.raises(pin.PinRefused, match="does not hold the pinned commit"):
+        pin.check_held(LACKED, pin.framework_of(worktree))
+    with pytest.raises(pin.PinRefused, match="does not hold the pinned commit"):
+        onboard(corpora.DRAFT, framework_commit=LACKED).write(worktree)
+    assert not (worktree / pin.PIN_FILE).exists()
+
+
+def test_the_worktree_questions_are_local_and_never_fetch(tmp_path, monkeypatch):
+    worktree = _linked_worktree(tmp_path)
+    asked = []
+    real = subprocess.run
+
+    def spy(command, **kwargs):
+        asked.append((command, kwargs.get("env") or {}))
+        return real(command, **kwargs)
+
+    monkeypatch.setattr(pin.subprocess, "run", spy)
+    pin.check_held(corpora.COMMIT, pin.framework_of(worktree))
+
+    assert [command[3] for command, _ in asked] == ["rev-parse"] * 3 + ["cat-file"]
+    assert all(env.get("GIT_NO_LAZY_FETCH") == "1" for _, env in asked)
+
+
+def _onboarded_worktree(tmp_path):
+    from studyforge.skills.onboarding import onboard
+
+    worktree = corpora.material(_linked_worktree(tmp_path), framework=False)
+    onboard(corpora.DRAFT, framework_commit=corpora.COMMIT).write(worktree)
+    return worktree
+
+
+def test_the_generated_pin_test_passes_in_a_linked_worktree_with_no_symlink(tmp_path):
+    worktree = _onboarded_worktree(tmp_path)
+
+    _no_symlink_anywhere(tmp_path)
+    _generated(worktree)()
+
+
+def test_the_generated_pin_test_fails_in_a_linked_worktree_on_a_commit_the_framework_lacks(
+    tmp_path,
+):
+    worktree = _onboarded_worktree(tmp_path)
+    pinned = worktree / pin.PIN_FILE
+    document = json.loads(pinned.read_text(encoding="utf-8"))
+    pinned.write_text(json.dumps({**document, "commit": LACKED}), encoding="utf-8")
+
+    with pytest.raises(AssertionError, match="does not hold the pinned"):
+        _generated(worktree)()
+
+
+def test_the_generated_pin_test_fails_in_a_linked_worktree_with_no_framework(tmp_path):
+    import shutil
+
+    worktree = _onboarded_worktree(tmp_path)
+    shutil.rmtree(tmp_path / pin.FRAMEWORK)
+
+    with pytest.raises(AssertionError, match="beside its main checkout"):
+        _generated(worktree)()
+
+
+def test_the_generated_pin_test_carries_the_very_function_the_pin_uses():
+    # ⭐ One copy of the rule: the emitted check is `main_checkout`'s own source.
+    import inspect
+
+    assert inspect.getsource(pin.main_checkout) in pin.pin_test()
