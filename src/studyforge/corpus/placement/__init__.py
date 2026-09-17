@@ -92,6 +92,7 @@ from studyforge.corpus.placement.locations import (
 from studyforge.corpus.placement.names import (
     ARCHIVE_DIRNAME,
     ASSETS_DIRNAME,
+    ATTACHMENTS_DIRNAME,
     AUDIO_DIRNAME,
     CONTAINER_SUFFIX,
     IGNORE_FILENAME,
@@ -127,6 +128,7 @@ from studyforge.corpus.placement.tree import TREE, TreeProfile
 __all__ = [
     "ARCHIVE_DIRNAME",
     "ASSETS_DIRNAME",
+    "ATTACHMENTS_DIRNAME",
     "AUDIO_DIRNAME",
     "CONTAINER_SUFFIX",
     "GENERATED_IGNORE_HOME",

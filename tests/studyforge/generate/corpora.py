@@ -21,6 +21,17 @@ GOLDEN = FIXTURES / "golden"
 #: profile and the sibling profile without either being the default.
 BOTH = ("depth1", "depth2")
 
+#: The depth-1 fixture's one figure, as its `image` block names it — a path
+#: inside the ARCHIVE, which is what a document carries and never what a page
+#: emits. ⭐ Here rather than in one test module because the pass's mirror and
+#: `references`' mirror both build documents around it (`W215`).
+FIGURE = "media/diagram.svg"
+
+
+def image(src: str) -> dict:
+    """One `image` block naming `src`, with the fields the vocabulary gives it."""
+    return {"type": "image", "src": src, "alt": "a figure", "width": None}
+
 
 def planned(name: str, suffix: str = ".html") -> list[str]:
     """The paths `studyforge plan`'s committed golden says a build creates."""

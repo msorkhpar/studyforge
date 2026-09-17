@@ -91,9 +91,9 @@ def test_the_profile_declares_its_name_and_what_it_does():
 
 
 def test_the_media_globs_are_scoped_under_the_generated_root_by_where_they_live():
-    # ⛔ `audio`, `images`, `video` and `practice` are words a real repository
-    # uses for its own material; an unanchored `audio/` in the root ignore file
-    # would tell git to ignore the corpus's own recordings. ⭐ W242: the lines
+    # ⛔ Every media kind's directory name — `audio` first — is a word a real
+    # repository uses for its own material; an unanchored `audio/` in the root
+    # ignore file would tell git to ignore its own recordings. ⭐ W242: the lines
     # live in `.studyforge/.gitignore`, so git applies them below it and nowhere
     # else — the file's place is the anchor.
     lines = TREE.media_ignore_lines()

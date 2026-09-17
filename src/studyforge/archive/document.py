@@ -128,6 +128,21 @@ KNOWN_KEYS = frozenset(DOCUMENT_KEYS) | frozenset(OPTIONAL_KEYS)
 #: `("type", "src", "title")` — see `archive.blocks`.
 VIDEO_KEYS = ("src", "poster", "mime", "remote", "poster_remote")
 
+#: What ONE entry of `assets` or `attachments` says, in the order it is written
+#: — ⭐ **one entry vocabulary and not two** (`FND-04/4`). ⚠️ `local` is the
+#: file's path inside the unit's own archive directory and is the only half a
+#: page may address; `remote` is provenance, the address the source served, and
+#: is never rendered, exactly as a `video` record's is.
+#:
+#: ⛔ **The two lists differ in what they are FOR, not in what they hold**
+#: (`W215`, spec C4): an **asset** is a file some block already shows, so the
+#: page reaches it through that block's `src`; an **attachment** is a companion
+#: file no block names — a dataset a lesson loads, a notebook — and the page
+#: links it for download. ⭐ That is why the served section carries the
+#: attachments and not the assets: a page that linked its assets as well would
+#: offer the reader the diagram it is already looking at.
+MEDIA_ENTRY_KEYS = ("remote", "local", "sha256", "bytes", "content_type", "kind")
+
 #: What a unit's file may be. ⚠️ A practice is a lesson with a layout, not a
 #: different document.
 KINDS = ("lesson", "practice")

@@ -77,7 +77,7 @@ def test_every_directory_the_build_makes_is_one_the_plan_declared_and_holds_a_fi
 
     ⭐ **W268 narrowed the other half**: a declared media directory is minted
     only when a copy fills it. So every one on disk is declared, and none is
-    empty. ⚠️ `plan` still lists all four per unit; W267 makes it agree.
+    empty. ⚠️ `plan` still lists one per kind per unit; W267 makes it agree.
     """
     written = write_site(FIXTURES / name, tmp_path)
     corpus = read_corpus(FIXTURES / name)

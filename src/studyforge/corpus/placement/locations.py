@@ -46,11 +46,22 @@ class UnitLocations:
     images: PurePosixPath
     video: PurePosixPath
     practice: PurePosixPath
+    #: ⭐ `W215`: the files the page LINKS rather than shows — spec C4's
+    #: attachments. ⚠️ One field per kind, each named exactly as its directory
+    #: is, because `media_dir` asks for one by that name.
+    attachments: PurePosixPath
 
     @property
     def directories(self) -> tuple[PurePosixPath, ...]:
-        """The directories a build creates for this unit, in a stated order."""
-        return (self.audio, self.images, self.video, self.practice)
+        """The directories a build creates for this unit, in a stated order.
+
+        ⛔ **Asked kind by kind, never listed a second time** (`W215`). The
+        footprint weighs exactly these and a profile's ignore rules cover
+        exactly `UNIT_MEDIA_DIRNAMES`; a kind that reached one list and not the
+        other would be a limit cleared by not looking, which is the property
+        `corpus.media.footprint` says its verdict rests on.
+        """
+        return tuple(self.media_dir(kind) for kind in UNIT_MEDIA_DIRNAMES)
 
     def media_dir(self, kind: str) -> PurePosixPath:
         """Return the directory of one kind of this unit's media."""

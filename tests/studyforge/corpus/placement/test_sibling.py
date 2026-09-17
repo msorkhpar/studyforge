@@ -7,7 +7,12 @@ from pathlib import PurePosixPath
 import pytest
 
 from studyforge.address import Address
-from studyforge.corpus.placement import PlacementError, profile_for, unit_stem
+from studyforge.corpus.placement import (
+    UNIT_MEDIA_DIRNAMES,
+    PlacementError,
+    profile_for,
+    unit_stem,
+)
 from studyforge.corpus.placement.names import contained_stem
 from studyforge.corpus.placement.sibling import SiblingProfile
 
@@ -168,8 +173,10 @@ def test_a_name_differs_from_the_unit_stem_only_by_the_address_in_front(fixture)
             stem = prefix + unit_stem(unit.n, unit.title, unit.label)
             beside = PurePosixPath(unit.origin).parent
             assert where.page == beside / f"{stem}.unit.html"
+            # ⛔ The kinds are placement's own tuple, never retyped here: a
+            # fifth kind must not leave this control quietly checking four.
             assert where.directories == tuple(
-                beside / f"{stem}.{kind}" for kind in ("audio", "images", "video", "practice")
+                beside / f"{stem}.{kind}" for kind in UNIT_MEDIA_DIRNAMES
             )
             checked += 1
     assert checked > 0

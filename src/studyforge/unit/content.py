@@ -109,8 +109,11 @@ OVERLAY_KEYS = ("content_api", "address", "unit", "title", "sections")
 #: everything else here is required for the kinds that use it.
 SECTION_FIELDS = ("kind", "lang", "key", "heading", "blocks")
 
-#: ⛔ Derived by the builder, never written by an author.
-DERIVED_FIELDS = ("workspace", "video")
+#: ⛔ Derived by the builder, never written by an author. ⚠️ Each is already
+#: refused as an unknown key; naming it here is what makes the refusal say WHY,
+#: and `attachments` joined the day a page began to link them (`W215`): an
+#: authored list would name files no ingest fetched and no build copies.
+DERIVED_FIELDS = ("workspace", "video", "attachments")
 
 
 @dataclass(frozen=True, slots=True)

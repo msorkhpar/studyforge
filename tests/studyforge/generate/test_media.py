@@ -20,29 +20,22 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
-from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
-from studyforge.generate import (
-    BuildError,
-    Reference,
-    read_corpus,
-    references,
-    unit_media,
-    write_media,
-)
-from studyforge.generate.media import MEDIA_BLOCKS
+from studyforge.corpus.placement import ATTACHMENTS_DIRNAME, UNIT_MEDIA_DIRNAMES
+from studyforge.generate import BuildError, read_corpus, unit_media, write_media
 from studyforge.skills.adapter import Layout
 from tests.studyforge.generate.corpora import (
     BOTH,
+    FIGURE,
     FIXTURES,
     a_corpus,
     an_output,
+    image,
     with_a_unit_missing,
 )
 
 #: The depth-1 fixture's one media-bearing unit, and the document it is declared in.
 LESSON = "archive/depth-one/raw/prose/unit-02/lesson-1.json"
 ADDRESS = ["depth-one"]
-FIGURE = "media/diagram.svg"
 
 
 # --------------------------------------------------------------------------
@@ -50,13 +43,22 @@ FIGURE = "media/diagram.svg"
 # --------------------------------------------------------------------------
 
 
-def rewritten(root: Path, where: str, blocks: list, video: object = None) -> Path:
-    """Replace one archive document's blocks, and optionally file it a deck."""
+def rewritten(
+    root: Path, where: str, blocks: list, video: object = None, attachments: object = None
+) -> Path:
+    """Replace one archive document's blocks, and optionally its deck or its attachments.
+
+    ⚠️ **`attachments` left out leaves the document's own declaration standing**
+    — `depth1`'s unit 2 declares one (`W215`), and a case about BLOCK references
+    clears it rather than asserting around a file it is not about.
+    """
     path = root / where
     document = json.loads(path.read_text(encoding="utf-8"))
     document["blocks"] = blocks
     if video is not None:
         document["video"] = video
+    if attachments is not None:
+        document["attachments"] = attachments
     path.write_text(json.dumps(document, indent=2), encoding="utf-8")
     return root
 
@@ -74,10 +76,6 @@ def filed(root: Path, unit: int, name: str, body: bytes = b"<svg/>") -> Path:
     return at
 
 
-def image(src: str) -> dict:
-    return {"type": "image", "src": src, "alt": "a figure", "width": None}
-
-
 def built(tmp_path, root: Path):
     """Run the media pass alone over one corpus, into an output root of its own."""
     out = an_output(tmp_path)
@@ -93,6 +91,12 @@ def built(tmp_path, root: Path):
 #: before this row. A unit WITH media keeps its directory and its bytes.
 DIAGRAM = ".studyforge/depth-one/units/unit-02/images/diagram.svg"
 DIAGRAM_SHA256 = "ae70ec31fcb3903fb48c24c2db8d19d2097533af10e32bd41129665d8d9ac552"
+
+#: ⛔ `W215`: the same unit's ATTACHMENT — a file no block shows and the page
+#: links (spec C4). ⭐ The digest is the fixture's own, declared in
+#: `lesson-1.json` beside the file, so a copy that altered a byte is red here.
+DATASET = ".studyforge/depth-one/units/unit-02/attachments/small-graph.ttl"
+DATASET_SHA256 = "1b913eb93ff61fe705a3da8063b8d34150207994551abe8d7868e832d39a7544"
 
 
 def declared_directories(corpus):
@@ -123,8 +127,9 @@ def test_a_unit_gets_a_media_directory_only_for_a_kind_it_has_files_of(tmp_path,
 def test_the_media_bearing_unit_keeps_its_directory_and_its_bytes(tmp_path):
     written, out = built(tmp_path, FIXTURES / "depth1")
 
-    assert [path.as_posix() for path in written.media] == [DIAGRAM]
+    assert [path.as_posix() for path in written.media] == [DIAGRAM, DATASET]
     assert hashlib.sha256((out / DIAGRAM).read_bytes()).hexdigest() == DIAGRAM_SHA256
+    assert hashlib.sha256((out / DATASET).read_bytes()).hexdigest() == DATASET_SHA256
 
 
 def test_a_unit_the_corpus_declares_and_nobody_built_gets_no_directories(tmp_path):
@@ -168,7 +173,7 @@ def test_a_readers_file_where_a_filled_directory_belongs_is_named_and_nothing_co
     written = unit_media(corpus, out)
 
     assert at.images in written.refused
-    assert written.media == ()
+    assert [path for path in written.media if path.parent == at.images] == []
     assert (out / at.images).read_bytes() == b"a reader's own file"
 
 
@@ -195,7 +200,7 @@ def test_the_media_bearing_fixture_has_its_figure_copied_byte_for_byte(tmp_path)
     written, out = built(tmp_path, FIXTURES / "depth1")
 
     origin = FIXTURES / "depth1/archive/depth-one/units/unit-02/media/diagram.svg"
-    assert [path.name for path in written.media] == ["diagram.svg"]
+    assert [path.name for path in written.media] == ["diagram.svg", "small-graph.ttl"]
     assert (out / written.media[0]).read_bytes() == origin.read_bytes()
 
 
@@ -212,6 +217,30 @@ def test_the_copy_lands_exactly_where_the_unit_page_addresses_it(tmp_path):
     at = corpus.profile.unit(corpus.maps[0][1].address, 2, "Reading a small graph")
     landing = (out / at.page).parent / at.href("images", "diagram.svg")
     assert landing.is_file()
+
+
+def test_the_attachment_lands_exactly_where_the_unit_page_links_it(tmp_path):
+    """⛔ `W215`'s whole clause: the plan declares the directory, the page links
+    the file, and the copy lands on the link — resolved from the page's own
+    directory, which is what R8 makes the page address."""
+    _, out = built(tmp_path, FIXTURES / "depth1")
+    corpus = read_corpus(FIXTURES / "depth1")
+
+    at = corpus.profile.unit(corpus.maps[0][1].address, 2, "Reading a small graph")
+    landing = (out / at.page).parent / at.href(ATTACHMENTS_DIRNAME, "small-graph.ttl")
+    assert landing.is_file()
+    assert hashlib.sha256(landing.read_bytes()).hexdigest() == DATASET_SHA256
+
+
+def test_a_unit_that_declares_no_attachment_gets_neither_a_copy_nor_a_directory(tmp_path):
+    """⛔ The other way round (R12), on the two units of the same fixture that have none."""
+    written, out = built(tmp_path, FIXTURES / "depth1")
+    corpus = read_corpus(FIXTURES / "depth1")
+
+    for ordinal, title in ((1, "What a triple is"), (3, "Asking the first question")):
+        at = corpus.profile.unit(corpus.maps[0][1].address, ordinal, title)
+        assert not (out / at.attachments).exists()
+        assert [path for path in written.media if path.parent == at.attachments] == []
 
 
 def test_only_the_basename_survives_and_the_archive_directory_does_not(tmp_path):
@@ -303,6 +332,7 @@ def test_a_figure_inside_another_block_is_copied_too(tmp_path):
         root,
         LESSON,
         [{"type": "disclosure", "summary": "Look", "open": False, "blocks": [image(FIGURE)]}],
+        attachments=[],
     )
 
     written, _ = built(tmp_path, root)
@@ -314,7 +344,7 @@ def test_a_reference_that_points_off_this_machine_is_neither_copied_nor_named_mi
     """⭐ R8: a remote file is a link the reader chooses to follow, so there is
     nothing on disk to place — and nothing absent either."""
     root = a_corpus(tmp_path / "in", "depth1")
-    rewritten(root, LESSON, [image("https://example.invalid/remote.svg")])
+    rewritten(root, LESSON, [image("https://example.invalid/remote.svg")], attachments=[])
 
     written, _ = built(tmp_path, root)
 
@@ -336,6 +366,7 @@ def test_a_deck_and_its_poster_are_both_placed_among_the_units_video(tmp_path):
             "remote": None,
             "poster_remote": None,
         },
+        attachments=[],
     )
     filed(root, 2, "lesson.mp4", b"mp4")
     filed(root, 2, "lesson.png", b"png")
@@ -367,6 +398,7 @@ def test_a_poster_with_no_video_is_not_placed_because_no_page_reaches_for_it(tmp
             "remote": None,
             "poster_remote": None,
         },
+        attachments=[],
     )
     filed(root, 2, "lesson.png", b"png")
 
@@ -389,6 +421,7 @@ def test_one_file_named_twice_is_copied_once_and_is_not_its_own_refusal(tmp_path
             "remote": None,
             "poster_remote": None,
         },
+        attachments=[],
     )
     filed(root, 2, "lesson.mp4", b"mp4")
 
@@ -452,6 +485,38 @@ def test_a_reference_leaving_the_source_root_is_refused_without_being_quoted(tmp
     assert "a path leaving the source root" in str(raised.value)
 
 
+def test_an_attachment_that_leaves_the_source_root_is_refused_as_a_figure_would_be(tmp_path):
+    """⛔ `W215`: both halves refuse the same entry.
+
+    ⭐ `render.page.section` refuses a `local` that is not a location inside the
+    source, and so does this pass — an attachment is a file the archive says it
+    fetched, so the page and the copy have to agree about which files exist.
+    ⚠️ The value is never quoted (R7): every shape refused here is, by
+    construction, a candidate home path.
+    """
+    root = a_corpus(tmp_path / "in", "depth1")
+    rewritten(
+        root,
+        LESSON,
+        [image(FIGURE)],
+        attachments=[{"remote": None, "local": "../../../../secrets/data.ttl"}],
+    )
+
+    with pytest.raises(BuildError) as raised:
+        built(tmp_path, root)
+
+    assert "secrets" not in str(raised.value)
+    assert "a path leaving the source root" in str(raised.value)
+
+
+def test_an_attachment_that_names_no_file_is_refused_rather_than_silently_dropped(tmp_path):
+    root = a_corpus(tmp_path / "in", "depth1")
+    rewritten(root, LESSON, [image(FIGURE)], attachments=[{"remote": None, "local": "  "}])
+
+    with pytest.raises(BuildError):
+        built(tmp_path, root)
+
+
 def test_a_figure_that_names_nothing_is_refused_rather_than_placed_as_an_empty_box(tmp_path):
     root = a_corpus(tmp_path / "in", "depth1")
     rewritten(root, LESSON, [image("   ")])
@@ -461,55 +526,8 @@ def test_a_figure_that_names_nothing_is_refused_rather_than_placed_as_an_empty_b
 
 
 # --------------------------------------------------------------------------
-# ⭐ references — a reading of a document, and of no disk at all
+# ⭐ what the pass hands back
 # --------------------------------------------------------------------------
-
-
-def test_references_answers_from_the_document_and_touches_nothing(tmp_path):
-    document = {
-        "sections": [
-            {
-                "blocks": [image(FIGURE), {"type": "para", "text": "no file here"}],
-                "video": {"src": "media/deck.mp4", "poster": "media/deck.png"},
-            }
-        ]
-    }
-
-    found = list(references(document))
-
-    assert [(one.kind, one.source) for one in found] == [
-        ("images", FIGURE),
-        ("video", "media/deck.mp4"),
-        ("video", "media/deck.png"),
-    ]
-
-
-def test_a_section_that_is_not_an_object_is_skipped_rather_than_crashed_on():
-    assert list(references({"sections": [None, {"blocks": [image(FIGURE)]}]})) == [
-        Reference("images", FIGURE)
-    ]
-
-
-def test_every_block_type_the_vocabulary_gives_a_file_has_a_directory_to_go_in():
-    """⭐ The clause that makes the derivation worth having, and it is forward-looking.
-
-    ⛔ A twelfth block type carrying a `src` is a file a page will show, and
-    `archive.blocks` is where one would arrive. This is red the day one does and
-    no unit media directory holds it — which is a decision, not an oversight to
-    be discovered by a reader meeting a broken image.
-
-    ⚠️ **It does not distinguish the derivation from a hardcoded pair today**,
-    because the two agree at this ref — see the survivor recorded in this row's
-    handoff.
-    """
-    for name in MEDIA_BLOCKS:
-        found = list(references({"sections": [{"blocks": [{"type": name, "src": FIGURE}]}]}))
-        assert [one.source for one in found] == [FIGURE]
-        assert found[0].kind in UNIT_MEDIA_DIRNAMES
-
-
-def test_a_document_with_no_sections_reaches_for_nothing():
-    assert list(references({})) == []
 
 
 def test_the_pass_writes_relative_paths_a_caller_can_diff_against_the_plan(tmp_path):

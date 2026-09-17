@@ -11,11 +11,14 @@ import shutil
 
 import pytest
 
+from studyforge.address import Address
 from studyforge.cli.plan import plan_for
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.corpus.manifest import parse as parse_manifest
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.corpus.placement import (
+    ATTACHMENTS_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
     profile_for,
 )
@@ -81,17 +84,42 @@ def test_the_plan_names_every_path_a_build_must_write_and_no_other(name):
 
 
 @pytest.mark.parametrize("name", VALID)
-def test_the_arithmetic_is_one_page_per_container_and_five_paths_per_unit(name):
+def test_the_arithmetic_is_one_page_per_container_and_one_directory_per_media_kind(name):
     """The counting check, which shares no code with either derivation.
 
-    ⭐ One container page each, one page plus four media directories per unit,
-    plus the four a corpus gets once. A build that wrote a different number of
-    things would have to disagree with this and not merely with the sort order.
+    ⭐ One container page each, one page plus one media directory per KIND per
+    unit, plus the four a corpus gets once. A build that wrote a different
+    number of things would have to disagree with this and not merely with the
+    sort order. ⚠️ The kinds are counted from placement's own tuple and never
+    typed here: `W215` added a fifth, and a typed number would have been the
+    thing that went stale rather than the thing that caught it.
     """
     root = FIXTURES / name
     maps = sorted((root / ARCHIVE_DIR).rglob(CONTAINER_FILENAME))
     units = sum(len(json.loads(path.read_text("utf-8"))["units"]) for path in maps)
     assert len(plan_for(root).paths) == 4 + len(maps) + units * (1 + len(UNIT_MEDIA_DIRNAMES))
+
+
+def test_the_plan_declares_the_directory_an_attachment_is_copied_into():
+    """⛔ `W215` clause 1, Ruling 99: the plan names the path before a build writes it.
+
+    ⭐ `depth1`'s unit 2 declares one companion file; this asserts the plan
+    claims the directory that unit's page links into, by asking placement for
+    the same path `generate.media` copies to. ⚠️ That the directory is created
+    only when the copy fills it is `W268`'s clause, asserted in
+    `tests/studyforge/cli/plan/test_agreement.py` over every claimed path.
+    """
+    root = FIXTURES / "depth1"
+    plan = plan_for(root)
+    profile = profile_for(parse_manifest((root / "corpus.json").read_text("utf-8")).placement)
+    at = profile.unit(Address(("depth-one",)), 2, "Reading a small graph")
+
+    claimed = [
+        creation
+        for creation in plan.creations
+        if creation.path == f"{at.media_dir(ATTACHMENTS_DIRNAME).as_posix()}/"
+    ]
+    assert [creation.what for creation in claimed] == ["depth-one unit 2's attachments"]
 
 
 @pytest.mark.parametrize("name", VALID)

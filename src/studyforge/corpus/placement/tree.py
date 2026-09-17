@@ -10,7 +10,7 @@ that spell the address, with the extraction source's per-unit shape below that.
 ## What "reproduces the extraction source's shape" does and does not mean
 
 ⭐ **The shape below the container is identical, segment for segment** —
-`units/unit-NN/` with `audio/`, `images/` and `video/` inside it — so a later
+`units/unit-NN/` with one directory per media kind inside it — so a later
 migration moves a tree rather than re-deriving one, and every href a page holds
 to its own media is unchanged.
 
@@ -35,6 +35,7 @@ from pathlib import PurePosixPath
 from studyforge.address import Address, unit_name
 from studyforge.corpus.placement.locations import ContainerLocations, UnitLocations
 from studyforge.corpus.placement.names import (
+    ATTACHMENTS_DIRNAME,
     AUDIO_DIRNAME,
     IMAGES_DIRNAME,
     PRACTICE_DIRNAME,
@@ -76,6 +77,7 @@ class TreeProfile(Profile):
             images=base / IMAGES_DIRNAME,
             video=base / VIDEO_DIRNAME,
             practice=base / PRACTICE_DIRNAME,
+            attachments=base / ATTACHMENTS_DIRNAME,
         )
 
     def container(self, address, titles, *, origin=None) -> ContainerLocations:
@@ -84,11 +86,11 @@ class TreeProfile(Profile):
         return ContainerLocations(page=self.container_dir(address) / container_page_name(titles))
 
     def media_ignore_lines(self) -> tuple[str, ...]:
-        """`**/audio/` and its three siblings, in the generated root's own ignore file.
+        """`**/audio/` and its siblings, one per kind, in the generated root's own ignore file.
 
         ⛔ **Scoped by where they live, and that is not tidiness.** Every name
-        here — `audio`, `images`, `video`, `practice` — is a word a real
-        repository uses for its own material; an unanchored `audio/` in the
+        here — every kind, `audio` first — is a word a real repository uses
+        for its own material; an unanchored `audio/` in the
         root ignore file would tell git to ignore the corpus's own recordings.
         These lines live in `ignore_home`, so git applies them below
         `.studyforge/` and nowhere else.

@@ -141,6 +141,7 @@ def sample_placement() -> Placement:
             images=base / "images",
             video=base / "video",
             practice=base / "practice",
+            attachments=base / "attachments",
         ),
         shared=CorpusLocations(
             root_index=PurePosixPath("index.html"),

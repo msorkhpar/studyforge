@@ -67,9 +67,17 @@ from studyforge.unit.builder.material import Material
 from studyforge.unit.content import Overlay
 from studyforge.unit.errors import ContentError, describe
 
-#: 1 — the first shape of the served document. ⛔ Registered in the spec's R9
-#: table as `unit.json` / `api`, and bumped rather than widened.
-API = 1
+#: 2 — the served document's shape. ⛔ Registered in the spec's R9 table as
+#: `unit.json` / `api`, and bumped rather than widened.
+#:
+#: ⚠️ **`2` is `W215`: a section carries its `attachments`.** ⛔ Bumped rather
+#: than widened because `unit.served` refuses a shape it does not know, and the
+#: two answers it must not conflate are *"this document was written before
+#: sections carried attachments"* and *"this unit has no companion files"* —
+#: the argument `served` already makes about `video`, arriving for the second
+#: time. ⭐ Nothing under `src/` writes a `unit.json`, so what a bump refuses is
+#: a document some other tool wrote: it is refused, and never migrated (R9).
+API = 2
 
 #: The versions this build reads.
 KNOWN_API = frozenset({API})

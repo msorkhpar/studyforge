@@ -98,10 +98,24 @@ AUDIO_DIRNAME = "audio"
 IMAGES_DIRNAME = "images"
 VIDEO_DIRNAME = "video"
 PRACTICE_DIRNAME = "practice"
+#: ⛔ **The files a unit page LINKS rather than shows, and its ONE spelling
+#: (`W215`).** ⚠️ Spec C4's attachment class — a dataset a lesson loads, a
+#: notebook, a sample document — is neither prose nor inline media, so it is
+#: placed like media and reaches the reader as a download. ⭐ Spelled exactly as
+#: the archive document's own `attachments` key, so the field, the served
+#: section, this directory and the plan's line are one word rather than four
+#: that have to be kept in step.
+ATTACHMENTS_DIRNAME = "attachments"
 
 #: The per-unit directories a page addresses relatively (R8). Ordered, because
 #: `studyforge plan` lists them and R10 forbids depending on set iteration.
-UNIT_MEDIA_DIRNAMES = (AUDIO_DIRNAME, IMAGES_DIRNAME, VIDEO_DIRNAME, PRACTICE_DIRNAME)
+UNIT_MEDIA_DIRNAMES = (
+    AUDIO_DIRNAME,
+    IMAGES_DIRNAME,
+    VIDEO_DIRNAME,
+    PRACTICE_DIRNAME,
+    ATTACHMENTS_DIRNAME,
+)
 
 
 def unit_stem(ordinal: int, title: str, label: str | None = None) -> str:
