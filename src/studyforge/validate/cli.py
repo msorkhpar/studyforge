@@ -7,12 +7,21 @@ checks, prints the report and returns the exit code.
 ⭐ The dispatcher registers this same callable as the `validate` verb, so the
 two cannot disagree about what the command does.
 
-**Depends on.** `validate.run`, `validate.report`, and `argparse`.
+**Depends on.** `validate.run`, `validate.report`, `studyforge.exitcodes`, and
+`argparse`.
 
 ⛔ **Exit codes are usable from a script** and mean one thing each: `0` the
 archive is valid, `1` it is not, `2` the tool could not run at all. A script
 that cannot tell "invalid" from "you gave me a directory that does not exist"
 will treat one as the other, and CI will go green on a typo.
+
+⚠️ **`2` is DEFINED in `studyforge.exitcodes` and re-exported here** (`W320`).
+⭐ It is the one of the three that is not a verdict about an archive, and the
+dispatcher plus five modules under `cli/` already needed it; while it was
+defined here, importing the installed command loaded this verb. ⛔ Nothing was
+renumbered and this module's surface did not move: `from
+studyforge.validate.cli import UNUSABLE` and `from studyforge.validate import
+UNUSABLE` both still resolve, to the same object.
 """
 
 from __future__ import annotations
@@ -20,14 +29,14 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
+from studyforge.exitcodes import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from studyforge.validate.run import validate
 
-#: The tool could not run — not a verdict about any archive. ⛔ Deliberately
-#: distinct from `INVALID`: a missing directory is a mistake in the invocation,
-#: and reporting it as "invalid" teaches an adapter author to distrust the one
-#: signal they have.
-UNUSABLE = 2
+#: ⭐ Re-exported, not respelled: `UNUSABLE` above is the one object
+#: `studyforge.exitcodes` defines, and `studyforge.validate.__all__` carries it
+#: on. ⛔ A second `= 2` here would be a second definition to keep in step.
+__all__ = ["UNUSABLE", "build_parser", "main"]
 
 
 def build_parser() -> argparse.ArgumentParser:
