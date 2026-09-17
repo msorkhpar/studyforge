@@ -178,6 +178,28 @@ def test_a_RED_reading_commits_NOTHING_and_the_tree_is_restored_EXACTLY(release)
     assert not (release / BRANCH_FILE).exists(), "the merged content survived the abort"
 
 
+def test_a_RED_gate_STOPS_the_run_and_the_gates_NOT_TAKEN_are_NAMED(release):
+    # ⭐ A refusal is complete at the first red, so the rest is spent time that cannot
+    #    change the answer. ⛔ But an untaken gate is NAMED: a shorter list must never be
+    #    confusable with a list that all passed.
+    taken: list[str] = []
+
+    def refuse_the_first(gate: Gate, root: Path) -> int:
+        taken.append(gate.name)
+        return 1 if gate.name == "first" else 0
+
+    gates = (
+        Gate("first", IMAGE, ("true",), "the mirror's first gate"),
+        Gate("second", HOST, ("true",), "the mirror's second gate"),
+    )
+    outcome = stage_and_read(release, "branch", refuse_the_first, gates)
+    assert taken == ["first"], "a gate after the refusal was still taken"
+    assert outcome.not_taken == ("second",)
+    assert outcome.verdict == REFUSED
+    assert "NOT TAKEN" in "\n".join(render(outcome))
+    assert _git(release, "status", "--porcelain", "--untracked-files=no") == ""
+
+
 def test_ONE_red_gate_among_green_ones_still_refuses(release):
     def only_the_last_refuses(gate: Gate, root: Path) -> int:
         return 1 if gate.name == "second" else 0

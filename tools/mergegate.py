@@ -7,6 +7,12 @@ reading it runs `git merge --abort` and then VERIFIES the restore BY READING THE
 own exit code is not a restore (Rulings 205, 287). Exit `0` merged, `1` a gate refused and
 nothing was committed, `2` nothing was read.
 
+⭐ **It STOPS AT THE FIRST RED.** The merge is refused the moment one gate refuses, so a
+later gate cannot change the outcome — and a refusal that costs the office a whole second
+environment is a refusal somebody eventually works around. ⛔ The gates that were therefore
+NOT taken are NAMED in the reading, never silently dropped: *nothing was printed* and
+*there was nothing to say* must not be the same line (`FND-07`, Ruling 78's shape).
+
 **How you use it.** It IS the merge, so there is no way to take the merge without it:
 
     python3 -m tools.mergegate <branch> --body <file>
@@ -142,6 +148,7 @@ class Outcome:
     """What a run did: what it read, and whether the tree is where it started."""
 
     readings: tuple[Reading, ...] = ()
+    not_taken: tuple[str, ...] = ()
     unread: str = ""
     tip_before: str = ""
     tip_after: str = ""
@@ -228,12 +235,22 @@ def stage_and_read(
         _git(root, "merge", "--abort")
         return Outcome(unread=f"the merge of {branch} did not stage cleanly", tip_before=tip)
 
-    readings = tuple(Reading(gate, take(gate, root)) for gate in gates)
-    outcome = Outcome(readings=readings, tip_before=tip)
-    if not outcome.red:
-        return outcome
-    _git(root, "merge", "--abort")
-    return _verify_restore(root, outcome)
+    readings: list[Reading] = []
+    for index, gate in enumerate(gates):
+        readings.append(Reading(gate, take(gate, root)))
+        if not readings[-1].green:
+            # ⛔ STOP AT THE FIRST RED. The merge is refused already, so nothing a later
+            #    gate says can change the outcome — and a refusal that costs the office a
+            #    whole second environment is a refusal somebody works around. ⭐ The gates
+            #    not taken are NAMED below, never silently dropped.
+            outcome = Outcome(
+                readings=tuple(readings),
+                not_taken=tuple(later.name for later in gates[index + 1 :]),
+                tip_before=tip,
+            )
+            _git(root, "merge", "--abort")
+            return _verify_restore(root, outcome)
+    return Outcome(readings=tuple(readings), tip_before=tip)
 
 
 def _verify_restore(root: Path, outcome: Outcome) -> Outcome:
@@ -243,6 +260,7 @@ def _verify_restore(root: Path, outcome: Outcome) -> Outcome:
     restored = code == 0 and after == outcome.tip_before and clean == ""
     return Outcome(
         readings=outcome.readings,
+        not_taken=outcome.not_taken,
         tip_before=outcome.tip_before,
         tip_after=after,
         restored=restored,
@@ -259,10 +277,7 @@ def render(outcome: Outcome) -> list[str]:
     """Return the lines the command prints: what was read, in which environment, then why."""
     if outcome.unread:
         return [f"⛔ UNREAD: {outcome.unread}, so no merge was gated (exit 2)"]
-    lines = [
-        f"merge gate: {len(outcome.readings)} gate(s) read on the MERGED tree, "
-        f"never on HEAD"
-    ]
+    lines = [f"merge gate: {len(outcome.readings)} gate(s) read on the MERGED tree, never on HEAD"]
     for reading in outcome.readings:
         state = "GREEN" if reading.green else "⛔ RED  "
         lines.append(
@@ -274,6 +289,10 @@ def render(outcome: Outcome) -> list[str]:
         return lines
     refused = ", ".join(f"{r.gate.name} [{r.gate.environment}]" for r in outcome.red)
     lines.append(f"⛔ REFUSED: {refused} — nothing was committed, and the merge was aborted")
+    if outcome.not_taken:
+        lines.append(
+            f"⚠️ NOT TAKEN, because the merge was already refused: {', '.join(outcome.not_taken)}"
+        )
     if outcome.restored:
         lines.append(f"⭐ RESTORED: HEAD is back at {outcome.tip_before[:12]} and clean")
     else:
