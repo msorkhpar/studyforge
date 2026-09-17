@@ -20,5 +20,5 @@ media commit 'auto'  generated media is committed under this policy
 media units 2  each may get one directory per kind, made only when a build copies a file into it: audio, images, video, practice
 media limit max_total_bytes 5000000000
 media limit max_file_bytes 104857600
-media footprint  not projected — a footprint is clips times bytes per clip, this run was given no rate, and none is measurable until SF-32 (M3) generates media. The unit count above is what IS known before the gigabytes exist.
-plan: 5 path(s) to create, 0 to replace, 1 to keep, 8 claimed, 1 expected from another command, 0 file(s) to edit, 0 ignore line(s), 0 refusal(s)
+media footprint  measured — 0 byte(s) in 0 file(s) on disk under the declared units' media directories; nothing is there yet — `studyforge narrate` writes the clips there, and --bytes-per-unit projects a footprint before it does
+plan: 5 path(s) to create, 0 to replace, 1 to keep, 8 claimed, 1 expected from another command, 0 superseded clip(s) no build copies, 0 file(s) to edit, 0 ignore line(s), 0 refusal(s)

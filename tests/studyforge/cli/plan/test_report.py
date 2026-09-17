@@ -6,17 +6,23 @@ tested without a corpus root and the derivation is tested without a renderer.
 
 from __future__ import annotations
 
+import re
+from pathlib import PurePosixPath
+
 import pytest
 
 from studyforge.cli.plan.report import (
+    NOTHING_ON_DISK,
     UNPROJECTED,
     Creation,
     MediaProjection,
     Plan,
     Refusal,
+    SupersededClip,
     edit_lines,
 )
 from studyforge.corpus.manifest import DEFAULT_MEDIA, MediaPolicy, PermittedEdit
+from studyforge.corpus.media import MediaFile, MediaFootprint
 from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
 from studyforge.validate.report import INVALID, OK
 
@@ -63,6 +69,7 @@ def test_every_verb_is_the_first_token_of_its_line():
     # a line whose first token is something else is invisible to both.
     plan = a_plan(
         creations=(Creation("index.html", "the root index"),),
+        superseded=(SupersededClip("u/audio/old-0123abcd.mp3", "u.intro.b1"),),
         edits=(EDIT,),
         ignore=("*.unit.html",),
         media=MediaProjection(DEFAULT_MEDIA, 1),
@@ -79,6 +86,7 @@ def test_every_verb_is_the_first_token_of_its_line():
         "keep",
         "claim",
         "expect",
+        "superseded",
         "edit",
         "ignore",
         "media",
@@ -123,10 +131,52 @@ def test_with_no_rate_the_footprint_says_it_is_unprojected_and_why():
     assert any(UNPROJECTED in line for line in lines)
 
 
-def test_the_unprojected_sentence_names_who_owes_the_measurement():
-    # ⛔ A number invented here would be a guess wearing a measurement's
-    # clothes; naming the owner is what makes the gap actionable instead.
-    assert "SF-32" in UNPROJECTED
+#: A task or milestone id, as `W287` found one printed as a future owner.
+TASK_ID = re.compile(r"\b(?:[A-Z]{1,4}-\d+|M\d+)\b")
+
+
+def weighing(*sizes: int) -> MediaFootprint:
+    """A measured footprint of `sizes`, as `corpus.media.measure` would return one."""
+    return MediaFootprint(
+        tuple(MediaFile(PurePosixPath(f"u/audio/c{n}.mp3"), size) for n, size in enumerate(sizes))
+    )
+
+
+def test_W287_no_footprint_sentence_names_a_task_as_the_owner_of_the_measurement():
+    # ⛔ `INT-14/4`: the sentence named a closed task as future on a corpus with
+    # clips on disk. Every form the line can take is read, not only the constant.
+    policy = MediaPolicy("auto", 50, 25)
+    projections = (
+        MediaProjection(policy, 5),
+        MediaProjection(policy, 5, measured=weighing()),
+        MediaProjection(policy, 5, measured=weighing(10)),
+        MediaProjection(policy, 5, measured=weighing(40, 40)),
+        MediaProjection(policy, 5, bytes_per_unit=1, measured=weighing(10)),
+        MediaProjection(policy, 5, unmeasured="the corpus root is not a directory"),
+    )
+    said = [line for p in projections for line in p.lines() if line.startswith("media footprint")]
+    assert len(said) == len(projections) + 1
+    assert [line for line in said if TASK_ID.search(line)] == []
+    assert not TASK_ID.search(UNPROJECTED) and not TASK_ID.search(NOTHING_ON_DISK)
+
+
+def test_W287_a_measurement_is_printed_with_its_verdict_in_both_directions():
+    policy = MediaPolicy("auto", 50, 25)
+    fits = MediaProjection(policy, 1, measured=weighing(10, 20)).lines()[-1]
+    exceeds = MediaProjection(policy, 1, measured=weighing(10, 30, 20)).lines()[-1]
+    empty = MediaProjection(policy, 1, measured=weighing()).lines()[-1]
+    assert fits.startswith("media footprint  fits — measured 30 byte(s) in 2 file(s)")
+    assert exceeds.startswith("media footprint  EXCEEDS — measured 60 byte(s) in 3 file(s)")
+    assert "max_total_bytes crossed" in exceeds and "u/audio/c1.mp3" in exceeds
+    assert empty.endswith(
+        f"measured — 0 byte(s) in 0 file(s) on disk under the declared "
+        f"units' media directories; {NOTHING_ON_DISK}"
+    )
+
+
+def test_W287_a_refused_reading_says_why_and_is_never_printed_as_zero():
+    line = MediaProjection(DEFAULT_MEDIA, 1, unmeasured="no root").lines()[-1]
+    assert line == "media footprint  not measured — no root"
 
 
 def test_a_rate_that_fits_says_so_with_both_numbers():
@@ -255,6 +305,18 @@ def test_a_path_a_build_does_not_write_is_never_a_create_and_names_what_does():
     claimed = Creation("u/audio/", "u's audio", when_filled=True)
     assert claimed.verb == "claim"
     assert claimed.line().endswith("a build creates it only when it copies a file into it")
+
+
+def test_W288_a_superseded_clip_is_its_own_line_counted_and_never_a_path():
+    clip = SupersededClip("u/audio/u.intro.b1-0123abcd.mp3", "u.intro.b1")
+    copy = Creation("u/audio/u.intro.b1-feedbeef.mp3", "copy")
+    plan = a_plan(creations=(copy,), superseded=(clip,))
+    assert clip.line().startswith("superseded u/audio/u.intro.b1-0123abcd.mp3  u.intro.b1's ")
+    assert "no build copies it" in clip.line() and "--prune" in clip.line()
+    assert clip.line() in plan.lines()
+    assert plan.paths == ("u/audio/u.intro.b1-feedbeef.mp3",)
+    assert "1 superseded clip(s) no build copies" in plan.summary()
+    assert "0 superseded clip(s)" in a_plan().summary()
 
 
 def test_the_summary_counts_each_verb_it_printed():

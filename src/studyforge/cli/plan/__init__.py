@@ -2,8 +2,8 @@
 
 **What it does.** Reads one corpus's declarations and emits every path a build
 will create, every existing file it will edit and why, the ignore lines the
-declared placement profile requires, and the projected media footprint against
-the corpus's own limits.
+declared placement profile requires, and the media footprint — measured on
+disk, and projected when a rate is given — against the corpus's own limits.
 
 **How you use it.**
 
@@ -56,15 +56,17 @@ in whatever the plan gets pasted into.
 
 ## What is in the package
 
-⚠️ **Four modules rather than one file, and the shape is `validate/`'s.** The
-model that a plan *is*, the derivation that produces one, and the command that
-prints it are three concerns with three sets of tests, and the house already
-answered this question once for the other command that reads a corpus root.
+⚠️ **Modules rather than one file, and the shape is `validate/`'s.** The
+model that a plan *is*, the derivation that produces one, the narration record
+it reads, and the command that prints it are separate concerns with separate
+tests, and the house already answered this question once for the other command
+that reads a corpus root.
 
 | Module | Owns |
 |---|---|
 | `report` | what a plan is, and how each line renders |
 | `derive` | one corpus root in, one `Plan` out |
+| `recorded` | the narration record: which clips a build copies, which are superseded |
 | `cli` | the arguments, the stream and the exit code |
 """
 
@@ -78,6 +80,7 @@ from studyforge.cli.plan.report import (
     MediaProjection,
     Plan,
     Refusal,
+    SupersededClip,
     edit_lines,
 )
 
@@ -89,6 +92,7 @@ __all__ = [
     "MediaProjection",
     "Plan",
     "Refusal",
+    "SupersededClip",
     "build_parser",
     "edit_lines",
     "main",

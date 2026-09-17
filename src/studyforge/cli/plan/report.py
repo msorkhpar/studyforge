@@ -1,22 +1,23 @@
 """What a plan is, and how one line of it reads.
 
-**What it does.** Holds the four records a plan is made of — a creation, a
-refusal, the media projection, and the plan itself — and renders each as one
-greppable line.
+**What it does.** Holds the records a plan is made of — a creation, a
+superseded clip, a refusal, the media projection, and the plan itself — and
+renders each as one greppable line.
 
 **How you use it.** `derive.plan_for` builds these; `cli.main` prints
 `Plan.lines()`; `SK-07` and `OPS-05` read `Plan.paths` rather than the text.
 
 **Depends on.** `corpus.manifest` for the two policy records it reports, and
-nothing else. ⛔ No filesystem: this module knows what a plan says, never how
-one was found out.
+`corpus.media` for what a measured footprint is and the verdict on it. ⛔ No
+filesystem: this module knows what a plan says, never how one was found out —
+`derive` takes the reading and hands it here.
 
 ## The line format, and why it is shaped like this
 
 One fact per line, `<verb> <subject>  <detail>`, so a plan is greppable by verb
 and diffable by path. ⛔ **The verbs are a closed set** — `plan`, `placement`,
-`read`, `create`, `replace`, `keep`, `claim`, `expect`, `edit`, `ignore`,
-`media`, `refuse` — because the whole point is that a consumer can read this
+`read`, `create`, `replace`, `keep`, `claim`, `expect`, `superseded`, `edit`,
+`ignore`, `media`, `refuse` — because the whole point is that a consumer can read this
 without a parser and a person can read it without a consumer.
 
 ## ⛔ A path's verb says who writes it and whether it is there (`W267`)
@@ -26,6 +27,10 @@ does not (`keep`). A path the build does not write is never a `create` either:
 a unit's media directory is `claim`ed, since a build creates it only when it
 copies a file into it (`W268`), and a path another command writes is `expect`ed,
 naming that command. ⭐ `Plan.paths` still names every path, whatever its verb.
+
+⛔ **A superseded clip is none of those, and is not in `Plan.paths`** (`W288`): it
+is on disk, `studyforge narrate` wrote it, and no build ever copies or replaces
+it, so a build's footprint taken from `Plan.paths` must never own it.
 
 ⛔ **Creations are printed sorted by path** (R10), which `derive` does. Not
 grouped by container: the acceptance is a path-for-path diff against what a
@@ -39,24 +44,34 @@ from dataclasses import dataclass
 
 from studyforge.corpus.container import CONTAINER_FILENAME
 from studyforge.corpus.manifest import MANIFEST_FILENAME, MediaPolicy, PermittedEdit
+from studyforge.corpus.media import MediaFootprint, verdict_for
 from studyforge.corpus.placement import UNIT_MEDIA_DIRNAMES
 from studyforge.validate.report import INVALID, OK
 
-#: What the footprint line says when no rate was supplied.
+#: What the footprint line says when there is neither a reading of the disk nor a rate.
 #:
 #: ⚠️ **Stated once, as a value, because it is the honest answer and not a
-#: placeholder.** The projection is clips times bytes per clip; `SF-32` (M3)
-#: owns that measurement and no narration exists for any corpus yet.
-#:
-#: ⛔ **A number invented here would be a guess wearing a measurement's
-#: clothes**, in the one report a person reads to decide whether to let this
-#: tool near a repository they care about. ⭐ What *is* knowable before the
-#: gigabytes exist — how many units will each carry media — is counted and
-#: printed on the line above it.
+#: placeholder.** ⛔ **A number invented here would be a guess wearing a
+#: measurement's clothes**, in the one report a person reads to decide whether
+#: to let this tool near a repository they care about. ⭐ A footprint is either
+#: MEASURED — the bytes on disk, which `derive` reads for every corpus whose
+#: policy weighs its media — or PROJECTED from a rate the person supplied.
+#: ⛔ `W287`: this sentence once named a closed task as the future owner of the
+#: measurement; it names no task, because nothing is owed.
 UNPROJECTED = (
-    "not projected — a footprint is clips times bytes per clip, this run was "
-    "given no rate, and none is measurable until SF-32 (M3) generates media. "
-    "The unit count above is what IS known before the gigabytes exist."
+    "not stated — this run took no reading of the disk and was given no rate, so "
+    "there is no number to weigh. A footprint is measured from the media on disk, "
+    "or projected with --bytes-per-unit; the unit count above is known without either."
+)
+
+#: What the measured footprint line says the reading covered. ⛔ The population
+#: is `corpus.media.measure`'s, and this sentence names it rather than widening it.
+MEASURED_OVER = "on disk under the declared units' media directories"
+
+#: What a measured line adds when the reading found nothing: why, and what fills it.
+NOTHING_ON_DISK = (
+    "nothing is there yet — `studyforge narrate` writes the clips there, "
+    "and --bytes-per-unit projects a footprint before it does"
 )
 
 
@@ -66,6 +81,9 @@ CREATION_VERBS = (CREATE, REPLACE, KEEP, CLAIM, EXPECT)
 
 #: What a `claim` line says: `W268`'s rule, which a plan cannot decide without the unit documents.
 WHEN_FILLED = "a build creates it only when it copies a file into it"
+
+#: ⛔ `W288`: the verb a clip the record names as superseded is printed with, never a creation's.
+SUPERSEDED = "superseded"
 
 
 @dataclass(frozen=True, slots=True)
@@ -105,6 +123,27 @@ class Creation:
 
 
 @dataclass(frozen=True, slots=True)
+class SupersededClip:
+    """One clip an earlier wording or directory wrote, still at the corpus root (`W288`).
+
+    ⛔ **Never a `Creation`.** A build does not copy it into any output and does
+    not write it at the root, so it is named beside the paths, never among them.
+    """
+
+    #: Where the record locates it, relative to the corpus root.
+    path: str
+    #: The speech id whose entry names it.
+    speech_id: str
+
+    def line(self) -> str:
+        """Render as one greppable line, saying who removes it."""
+        return (
+            f"{SUPERSEDED} {self.path}  {self.speech_id}'s earlier clip — no build copies it; "
+            f"`studyforge narrate --prune` deletes it"
+        )
+
+
+@dataclass(frozen=True, slots=True)
 class Refusal:
     """One thing this plan could not work out, and why.
 
@@ -132,6 +171,10 @@ class MediaProjection:
     policy: MediaPolicy
     units: int
     bytes_per_unit: int | None = None
+    #: ⭐ `W287`: what the declared units' media weighs on disk, read by `derive`.
+    measured: MediaFootprint | None = None
+    #: Why the disk could not be read, when a reading was attempted and refused.
+    unmeasured: str = ""
 
     @property
     def total(self) -> int | None:
@@ -165,14 +208,37 @@ class MediaProjection:
             return out
         out.append(f"media limit max_total_bytes {self.policy.max_total_bytes}")
         out.append(f"media limit max_file_bytes {self.policy.max_file_bytes}")
-        out.append(f"media footprint  {self._footprint()}")
+        out += [f"media footprint  {said}" for said in self._footprints()]
         return out
 
-    def _footprint(self) -> str:
-        """Return the projection and its verdict, or the honest absence of one."""
-        total = self.total
-        if total is None:
-            return UNPROJECTED
+    def _footprints(self) -> list[str]:
+        """Return the projection, the measurement, or the honest absence of both.
+
+        ⛔ **A rate never hides a reading.** A person who asks *"would 200 MB a
+        unit fit?"* gets the projection first, and the bytes already on disk
+        still get their own line: a projection that fits beside a disk that
+        does not would otherwise be the one line that overclaims.
+        """
+        said = [] if self.total is None else [self._projection(self.total)]
+        if self.measured is not None:
+            said.append(self._measurement(self.measured))
+        elif self.unmeasured:
+            said.append(f"not measured — {self.unmeasured}")
+        return said or [UNPROJECTED]
+
+    def _measurement(self, footprint: MediaFootprint) -> str:
+        """Return what the disk weighs and the policy's verdict — ⛔ asked, never re-derived."""
+        reading = f"{footprint.total_bytes} byte(s) in {footprint.count} file(s) {MEASURED_OVER}"
+        if not footprint.count:
+            return f"measured — {reading}; {NOTHING_ON_DISK}"
+        crossings = verdict_for(self.policy, footprint).crossings
+        if crossings:
+            crossed = "; ".join(crossing.sentence() for crossing in crossings)
+            return f"EXCEEDS — measured {reading}: {crossed}. Crossing a limit is a decision (§5)."
+        return f"fits — measured {reading}, within every limit corpus.json declares"
+
+    def _projection(self, total: int) -> str:
+        """Return the projection at the supplied rate and its verdict."""
         projected = (
             f"{total} byte(s) projected from {self.units} unit(s) at {self.bytes_per_unit} each"
         )
@@ -207,6 +273,8 @@ class Plan:
     #: the corpus root. ⛔ Never the root ignore file (R3); None when `ignore`
     #: is empty, which it is whenever media is committed (`W242`).
     ignore_home: str | None = None
+    #: ⛔ `W288`: clips the record names as superseded. Never in `paths`.
+    superseded: tuple[SupersededClip, ...] = ()
 
     @property
     def paths(self) -> tuple[str, ...]:
@@ -231,6 +299,7 @@ class Plan:
             f"  no file inside the source material was opened",
         ]
         out += [creation.line() for creation in self.creations]
+        out += [clip.line() for clip in self.superseded]
         for edit in self.edits:
             out += edit_lines(edit)
         out += [f"ignore {line}  in {self.ignore_home}" for line in self.ignore]
@@ -260,8 +329,9 @@ class Plan:
         return (
             f"plan: {said[CREATE]} path(s) to create, {said[REPLACE]} to replace, "
             f"{said[KEEP]} to keep, {said[CLAIM]} claimed, {said[EXPECT]} expected from "
-            f"another command, {len(self.edits)} file(s) to edit, {len(self.ignore)} "
-            f"ignore line(s), {len(self.refusals)} refusal(s)"
+            f"another command, {len(self.superseded)} superseded clip(s) no build copies, "
+            f"{len(self.edits)} file(s) to edit, {len(self.ignore)} ignore line(s), "
+            f"{len(self.refusals)} refusal(s)"
         )
 
 

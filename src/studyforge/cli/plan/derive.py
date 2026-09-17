@@ -5,23 +5,27 @@ archive and the narration record when there is one, places each declared
 container and unit under the corpus's own profile, and collects the result.
 
 **How you use it.** `plan_for(root)`, or `plan_for(root, bytes_per_unit=N)` to
-project the media footprint at a rate.
+project the media footprint at a rate as well as measure it.
 
 **Depends on.** `corpus.manifest`, `corpus.container`, `corpus.placement` (which
 also says where the archive is: the plan reads maps from the root it prints,
-`INT-06/6`), `cli.plan.report`, and `narrate.synth` / `narrate.speakable` for
-the record and its clip names. ⛔ It opens three kinds of file and no others, and no unit document.
+`INT-06/6`), `corpus.media` for the reading of the disk, `cli.plan.report`,
+`cli.plan.recorded` for the narration record, and `narrate.speakable` for a
+unit's token. ⛔ It opens three kinds of file and no others, and no unit document.
 
-## ⛔ The narration record is a plan input (`E09` § SF-38/8, `W224`)
+## ⛔ The narration record is a plan input (`W224`, `W288`)
 
-⭐ A build copies each clip a page addresses into any `--out` but the corpus
-root, so the plan names every copy: one `create` line per clip the record files
-under a declared unit, at that unit's audio directory — asked of placement.
-⛔ **The unit is read off the speech id's own unit token**, which the
-declarations can answer; an entry whose filename does not carry the id it is
-filed under is `narrate.playable`'s MISFILED, which no page addresses, so it is
-not named. ⚠️ An entry whose id no page produces any more cannot be told apart
-without opening the material, so it IS named — `W224`'s handoff records it.
+⭐ `cli.plan.recorded` reads it and says which clips the record locates in each
+declared unit's audio directory; this module names one copy line per clip, at
+that directory — asked of placement — and names each superseded clip beside
+the paths, never among them.
+
+## ⛔ The footprint is MEASURED, never guessed (`W287`)
+
+⭐ For a policy that weighs its media, the declared units' media directories are
+weighed by `corpus.media.measure`, the one measurement a commit decision rests
+on, which stats files and opens none. ⛔ A reading that is refused is said, with
+its reason, rather than printed as zero.
 
 ## ⛔ A path on disk is never a `create` (`W267`)
 
@@ -50,10 +54,10 @@ path claimed twice is a refusal naming both claimants, and it is asked of
 from __future__ import annotations
 
 import os
-from collections.abc import Mapping
 from dataclasses import replace
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
+from studyforge.cli.plan.recorded import Recorded, read_record
 from studyforge.cli.plan.report import Creation, MediaProjection, Plan, Refusal
 from studyforge.corpus.container import CONTAINER_FILENAME, Container
 from studyforge.corpus.container import RAISES as CONTAINER_RAISES
@@ -61,17 +65,18 @@ from studyforge.corpus.container import parse as parse_container
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.corpus.manifest import RAISES as MANIFEST_RAISES
 from studyforge.corpus.manifest import parse as parse_manifest
+from studyforge.corpus.media import MediaError, MediaFootprint, measure
 from studyforge.corpus.placement import (
     AUDIO_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
     IgnoreFile,
     PlacementError,
     Profile,
+    UnitLocations,
     profile_for,
 )
 from studyforge.narrate.speakable import SpeakableError
-from studyforge.narrate.speakable.naming import SEGMENT, parse_clip_name, unit_token
-from studyforge.narrate.synth import StateError, read_state, state_file
+from studyforge.narrate.speakable.naming import unit_token
 from studyforge.validate.corpus import Held, Walk
 from studyforge.validate.paths import RULE_DUPLICATE_PATH, check_placement
 from studyforge.validate.report import Finding
@@ -89,9 +94,8 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     """Build the plan for the corpus rooted at `root`.
 
     `bytes_per_unit` is the media projection's rate. ⭐ **A parameter rather
-    than a constant**, so `SF-32`'s measurement plugs in without this contract
-    changing and so a person asking *"would 200 MB a unit still fit?"* can ask
-    it. ⛔ Absent, the footprint reports itself unprojected and says why.
+    than a constant**, so a person asking *"would 200 MB a unit still fit?"* can
+    ask it. ⛔ Absent or present, the media on disk is measured (`W287`).
     """
     root = Path(root)
     manifest, refusals = _manifest(root)
@@ -101,31 +105,49 @@ def plan_for(root: Path | str, *, bytes_per_unit: int | None = None) -> Plan:
     held, unreadable = _containers(root, manifest, profile)
     refusals += unreadable
     refusals += _claimed_twice(root, manifest, held)
-    clips, record, misrecorded = _recorded(root)
-    refusals += misrecorded
+    record = read_record(root)
+    refusals += record.refusals
     creations = _corpus_creations(root, profile)
-    units = 0
+    placed: list[UnitLocations] = []
     for where, container in held:
-        made, failed = _container_creations(container, profile, where, clips)
-        made = [_on(root, creation) for creation in made]
-        creations += made
+        made, failed = _container_creations(container, profile, where, record, placed)
+        creations += [_on(root, creation) for creation in made]
         refusals += failed
-        units += len(container.units)
-    media = MediaProjection(manifest.media, units, bytes_per_unit)
+    measured, unmeasured = _measured(root, manifest, placed)
+    units = sum(len(container.units) for _, container in held)
+    media = MediaProjection(manifest.media, units, bytes_per_unit, measured, unmeasured)
+    named = {creation.path for creation in creations}
     ignore = _ignore_file(profile, media, refusals)
     return Plan(
         source=manifest.source,
         title=manifest.title,
         profile=profile.name,
         describes=profile.describes,
-        read_files=(MANIFEST_FILENAME, *(where for where, _ in held), *record),
+        read_files=(MANIFEST_FILENAME, *(where for where, _ in held), *record.read),
         creations=tuple(sorted(creations, key=lambda creation: creation.path)),
         edits=manifest.permitted_edits,
         ignore=() if ignore is None else ignore.lines,
         media=media,
         refusals=tuple(refusals),
         ignore_home=None if ignore is None else ignore.home.as_posix(),
+        superseded=tuple(clip for clip in record.superseded if clip.path not in named),
     )
+
+
+def _measured(
+    root: Path, manifest: Manifest, placed: list[UnitLocations]
+) -> tuple[MediaFootprint | None, str]:
+    """Weigh the declared units' media on disk, or say why not. ⛔ Nothing raises.
+
+    ⭐ Only for a policy that weighs its media: `always` and `never` are decisions
+    already taken, and `corpus.media.verdict_for` walks no disk for them either.
+    """
+    if not manifest.media.has_limits:
+        return None, ""
+    try:
+        return measure(root, placed), ""
+    except MediaError as error:
+        return None, str(error)
 
 
 def _claimed_twice(
@@ -230,40 +252,6 @@ def _containers(
     return held, refusals
 
 
-def _recorded(root: Path) -> tuple[dict[str, tuple[str, ...]], tuple[str, ...], list[Refusal]]:
-    """Return the clip filenames the record files under each unit token, and what was read.
-
-    ⛔ Nothing raises: an unreadable record is a refusal, exactly as a container
-    map is. An absent record is the ordinary case and is not read.
-    """
-    file = state_file(root)
-    where = file.relative_to(root).as_posix()
-    try:
-        state = read_state(file)
-    except StateError as error:
-        return {}, (where,), [Refusal(where, str(error))]
-    if not state.present:
-        return {}, (), []
-    grouped: dict[str, set[str]] = {}
-    refusals: list[Refusal] = []
-    for speech_id, clip in state.clips.items():
-        name = clip.filename
-        if not name.strip():
-            continue
-        if PurePosixPath(name).name != name or name in (".", ".."):
-            # ⛔ The value is not echoed (R7). A copy of it would leave its unit's
-            # audio directory, and a page's href never would.
-            refusals.append(Refusal(where, "records a clip filename that is not one file name"))
-            continue
-        try:
-            filed, _ = parse_clip_name(PurePosixPath(name).stem)
-        except SpeakableError:
-            continue
-        if filed == speech_id:
-            grouped.setdefault(speech_id.split(SEGMENT, 1)[0], set()).add(name)
-    return {token: tuple(sorted(names)) for token, names in grouped.items()}, (where,), refusals
-
-
 def _token(container: Container, n: int) -> str | None:
     """Return the unit token a declared unit's speech ids begin with, or None if it has none."""
     try:
@@ -301,9 +289,13 @@ def _corpus_creations(root: Path, profile: Profile) -> list[Creation]:
 
 
 def _container_creations(
-    container: Container, profile: Profile, where: str, clips: Mapping[str, tuple[str, ...]]
+    container: Container,
+    profile: Profile,
+    where: str,
+    record: Recorded,
+    placed: list[UnitLocations],
 ) -> tuple[list[Creation], list[Refusal]]:
-    """Every path one container and its declared units occupy."""
+    """Every path one container and its declared units occupy; each unit placed is kept."""
     key = container.address.key
     made: list[Creation] = []
     failed: list[Refusal] = []
@@ -320,6 +312,7 @@ def _container_creations(
         except PlacementError as error:
             failed.append(Refusal(where, f"unit {unit.n}: {error}"))
             continue
+        placed.append(at)
         made.append(Creation(at.page.as_posix(), f"{key} unit {unit.n}'s page"))
         # ⛔ Asked by kind, never read back off the minted directory name.
         # `tree` calls it `audio` and `sibling` calls it `<stem>.audio`, so a
@@ -343,6 +336,6 @@ def _container_creations(
                 narration=True,
                 writer=NARRATE,
             )
-            for name in (clips.get(_token(container, unit.n) or "", ()) if clips else ())
+            for name in record.copies(_token(container, unit.n), audio)
         ]
     return made, failed
