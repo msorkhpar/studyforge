@@ -60,10 +60,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W92` | Developer 1 | `fix/W92-the-index-can-say-not-this-side` @ `wt/dev1` | 0 @ `883dae6` | in-progress |
-| `W191` | Developer 2 | `fix/W191-a-row-certifies-on-both-gates` @ `wt/dev2` | 2 @ `3b56ca0` | in-progress |
-| `W94` | Developer 3 | `fix/W94-a-refusal-names-its-population` @ `wt/dev3` | 3 @ `302f73d` | in-progress |
-| `W219` | Developer 4 | `fix/W219b-raises-sweep-survives-a-move` @ `wt/dev4` | 1 @ `358b9dc` | in-progress |
+| `W331` | Developer 3 | `fix/W331-the-non-destructive-check-reads-r3` @ `wt/dev3` | 1 @ `d8694a5` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -476,11 +473,11 @@ else.**
 | W323 | Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries | framework agent | ✅ done — `4650f5d` | [`rows/W323.md`](rows/W323.md) |
 | W324 | A reader on a unit page has no path to any other container; crossing a course means a trip through the index | framework agent | ✅ done — `9c74bba` | [`rows/W324.md`](rows/W324.md) |
 | W325 | The containers navigation is a card stacked in the reading column; the user asked for a LEFT RAIL | framework agent | ✅ done — `7027ee6` | [`rows/W325.md`](rows/W325.md) |
-| W326 | The rail sets the height of the masthead's row, so a unit page opens on a blank screen proportional to its course's size | framework agent | `in flight` | [`rows/W326.md`](rows/W326.md) |
-| W327 | The skills name no narration component and call the step optional, so a reader who follows them exactly builds a silent site | framework agent | `in flight` | [`rows/W327.md`](rows/W327.md) |
-| W328 | The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | framework agent | `todo` — user requirement | [`rows/W328.md`](rows/W328.md) |
-| W329 | The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material | framework agent | `in flight` | [`rows/W329.md`](rows/W329.md) |
-| W330 | The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong | framework agent | `in flight` | [`rows/W330.md`](rows/W330.md) |
+| W326 | The rail sets the height of the masthead's row, so a unit page opens on a blank screen proportional to its course's size | framework agent | ✅ done — `c79f485` | [`rows/W326.md`](rows/W326.md) |
+| W327 | The skills name no narration component and call the step optional, so a reader who follows them exactly builds a silent site | framework agent | ✅ done — `068a146` | [`rows/W327.md`](rows/W327.md) |
+| W328 | The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | framework agent | ✅ done — `74b20c2` | [`rows/W328.md`](rows/W328.md) |
+| W329 | The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material | framework agent | ✅ done — `05b7f70` | [`rows/W329.md`](rows/W329.md) |
+| W330 | The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong | framework agent | ✅ done — `ad2bbfa` | [`rows/W330.md`](rows/W330.md) |
 | W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | `todo` — clean run | [`rows/W331.md`](rows/W331.md) |
 | W332 | The reader's document states live counts that no verb refreshes | framework agent | `todo` — clean run | [`rows/W332.md`](rows/W332.md) |
 | W333 | The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout | framework agent | `todo` — `W328/7` | [`rows/W333.md`](rows/W333.md) |
