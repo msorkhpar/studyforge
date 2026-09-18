@@ -79,7 +79,7 @@ def table_rows(text: str) -> dict[str, dict[str, str]]:
             break
         table.append([cell.strip() for cell in line.strip().strip("|").split("|")])
     header, body = table[0], table[2:]
-    rows = [dict(zip(header, cells)) for cells in body]
+    rows = [dict(zip(header, cells, strict=True)) for cells in body]
     return {plain(row[SOURCE]): row for row in rows}
 
 
