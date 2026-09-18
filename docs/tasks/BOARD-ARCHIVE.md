@@ -27597,3 +27597,71 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ⭐ **MEASURED at `5e2c425`, over EVERY open row on the board: four carry a landed handoff on this branch** — `W26`, `W198`, `W320`, `W321` — ⛔ **and each carrier branch is an ancestor of the release tip.** ⚠️ **`W321` sat at ORDER 1 of *Next rows* and would have been re-dispatched: `PO-105/6` again, and the cell was the only thing wrong.**
 
 ⛔ **They are NOT closed here.** ⭐ **A close is verified against each row's own *what settles it*, never inferred from a handoff's existence (Ruling 214)** — ⚠️ **and `W26` is the ambiguous id the archive disambiguates, with a handoff predating its row's re-argument at round 73.** ⭐ **They are taken out of *Next rows* now so no office is sent at them, and each is closed or re-opened by name in the next round.**
+
+## PO round 111
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`PO-110/1` is settled by name: three rows carried and merged long ago CLOSE, and the fourth is found correctly open.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+⛔ **Each was verified against its own *what settles it* (Ruling 214), never inferred from its handoff's existence** — ⭐ **one by planting the defect.**
+
+### W26 — `W7`'s reader tell resolves the name's origin, not its spelling
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W26.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified at `5fc3201`:** the tell in `tests/gate_coverage/` walks each module's imports with `ast` and resolves a call's ORIGIN; its probes carry both shapes the narrowed spelling missed (`from json import load` + bare `load`, and an aliased module), and the gate-coverage suite is GREEN on the host. ⛔ **The archive recorded it merged in `c84ca2e` in wave 1; the register cell said *not started* from the day the board became a register.**
+
+⛔ **Ruling 57 — W7's reader tell resolves the *name's origin*, not its spelling.** `SF-10` narrowed `DECODES` from `("loads", "load")` to `("loads", "json.load")` to stop flagging `unit/builder/material.py`, which delegates to `archive.document.load` and decodes nothing. ⭐ **The direction is ratified; the spelling is not.** Replace the token match in `tests/test_gate_coverage.py` with an `ast` walk that maps each module's own imports to an origin and asks whether the call resolves to `json.load`/`json.loads`
+
+⚠️ **Measured 2026-09-10, with a control: the shipped narrowing misses two genuine ungated readers** — `from json import load` + bare `load(h)`, and `import json as j` + `j.load(h)` — **both of which the old spelling caught.** ⭐ **The tree is not yet inhabited by either** (`import json`, unaliased, is the only spelling in `src/`), which is why this is next rather than urgent. ⛔ **A false negative in an R7 *coverage* check is worse than a false positive**: the false positive is what produced this ruling; the false negative is silent. ⭐ **Prototyped in the trial merge: the import-resolving tell gets all eight probe shapes right — A–E and H readers, F and G delegation — and finds the same six readers in the tree, so there is no migration**
+
+⭐ **Addressed, PO round 73 ([`W88`](#po-round-73-w88-w120-w233-w125-and-w108-closed-w237-minted)):** [the mint](#ruled-2026-09-10-w26-was-minted-twice-and-an-id-space-gets-one-minter)
+
+### W320 — `UNUSABLE` lives in one verb's `cli` module, so importing the command still loads that verb
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W320.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified at `5fc3201` by PLANTING the defect:** an eager `import studyforge.validate.cli` added to `cli/dispatch.py` turns the fresh-interpreter test RED and NAMES the verb, from the package and from the dispatcher; unplanted it is GREEN, with no `HELD` exemption left. `UNUSABLE` is `2` before and after — moved, not renumbered.
+
+⛔ **`W293/3`: the dispatcher's exit-code constant `UNUSABLE` lives in `src/studyforge/validate/cli.py`, so importing the COMMAND still loads one verb — the very property `W293` exists to establish, defeated by a constant.** ⭐ **RECEIVED from `W293`'s office, which named it rather than widening its own row. RE-MEASURED (Ruling 214) by this register at `7015b47`, by reading the source:** `cli/dispatch.py` line 48 is `from studyforge.validate.cli import UNUSABLE`, and its own docstring declares the dependency in the open.
+
+⚠️ **What `W293` DID establish stands:** no verb is loaded when a verb is not dispatched, except this one. ⛔ **So the row's property is true of four verbs out of five and its own test has to hold `validate` exempt (`HELD`)** — an exemption that is a defect's shadow, not a design.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A shared exit-code module** that belongs to neither verb, so importing the command loads NO verb and the test's exemption goes away.
+2. ⛔ **`validate`'s own exit codes are unchanged** — this moves a definition, it does not renumber anything.
+3. ⛔ **Asserted both ways (R12):** the isolation test requires EVERY verb module absent after importing the command, with no `HELD` exemption; a planted eager import of any verb turns it RED by name.
+
+⭐ **Surface:** `src/studyforge/cli/dispatch.py`, `src/studyforge/validate/cli.py`, a new shared module, and `tests/harness/test_isolation.py`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-104)
+
+### W321 — The generated documents address the framework relative to the corpus root while the pin asks git, so a linked worktree's documents point elsewhere
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W321.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified at `5fc3201`:** `pin.py` is the only module that asks git where the framework is, and the onboarding suite asserts both corpus shapes — a main checkout reads exactly as before, a linked worktree's documents run as written — and asserts that the address the documents USED to carry does not run from that worktree. GREEN on the host.
+
+⛔ **`INT-17/2`: the generated documents and the generated pin now disagree about where the framework is, and only for a linked worktree.** ⭐ **`W286` made the PIN resolve `studyforge` beside the corpus's MAIN checkout. The three generated skill stubs still address `../studyforge/src/studyforge/skills/<name>/SKILL.md` and the reader document's fresh-clone fence still opens `git -C ../studyforge checkout --detach <pin>` — both relative to the CORPUS ROOT.** ⭐ **RECEIVED from ISO round 17 at ISO `67ee3e7`. RE-MEASURED (Ruling 214) by this register at `7015b47`, by reading the source:** `skills/onboarding/pin.py` holds `PROCEDURE = "../" + FRAMEWORK + "/src/studyforge/skills/{name}/SKILL.md"` while the same module's `framework_of` returns `main_checkout(root).parent / FRAMEWORK`.
+
+⛔ **THE HAZARD IS REAL AND THE OFFICE DID NOT WALK INTO IT.** ⚠️ **In a linked worktree those `../studyforge` addresses point at whatever sits beside the WORKTREE — which for the first corpus is a symlink to the framework's own main checkout, so running the document's first fenced command from the worktree would DETACH THE HEAD of the framework checkout this workspace works in.** ⭐ **It was not run there: `ISO-15`'s clause 3 was taken in a fresh clone with its own framework clone beside it, which is what the document says it describes.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The generated documents address the framework the way the PIN does**, or they say in ONE line that their `../studyforge` is relative to the MAIN checkout — one of the two, never both and never neither.
+2. ⛔ **No second workspace resolver** (`W127`'s defect): whatever the documents say comes from `pin.py`'s one answer.
+3. ⛔ **Asserted both ways (R12):** the regenerated documents read correctly for a corpus that IS a main checkout and for one that is a linked worktree, over a fabricated corpus of each shape.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/pin.py`, `artifacts.py`, `standing.py`, and their tests. ⛔ **JUMPS every older `todo` row (Ruling 75): the first corpus is a linked worktree, and a command that a generated document tells a reader to run can detach the HEAD of the framework this workspace is built in.**
+
+[the mint](#po-round-104)
+
+### ⭐ `W198` STAYS OPEN, AND ITS CELL WAS RIGHT
+
+⭐ **Its handoff on the release branch is for the ADDRESS half, which landed at `1debe01`; round 104 narrowed the row to the VERB, which nothing performs yet.** ⛔ **So a handoff's existence is not a close — the population `PO-110/1` measured over-counts by exactly this shape, and the register reads each row's own settling clause before closing it.** ⭐ It returns to *Next rows*.
+
+### ⛔ `PO-111/1` — HOW THREE MERGED ROWS STAYED `todo`
+
+⭐ **`W26` was recorded merged in the archive before the board became a register, and the migration carried its cell as *not started*.** ⭐ **`W320` and `W321` merged in the wave of round 104, and no later round closed them.** ⚠️ **Nothing reads a `todo` cell against the release branch** — ⛔ **the read that caught all three was a dispatch-time check, by hand.**

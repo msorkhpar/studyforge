@@ -111,7 +111,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 17 | `W177`–`W180` | ⭐ **round 57's mints, jumping nobody** | round 57 |
 | 18 | `W184`, `W186` | ⭐ **round 58's wave-12 mints, jump nobody** | 58 |
 | 19 | `W194` | ⭐ **round 60's mints, jumping nobody** | 60 |
-| 22 | `W200`, `W201` | ⭐ **round 60's `E09`-scoping mints, jumping nobody** | 60 |
+| 22 | `W198`, `W200`, `W201` | ⭐ **round 60's `E09`-scoping mints, jumping nobody** | 60 |
 | 24 | `W204` | ⭐ **round 60's mint, jumping nobody** | 60 |
 | 25 | `W205` | ⛔ **NOT DISPATCHABLE — it is a RULING and the freeze is in force; minted so the case is not lost** | 60 |
 | 28 | `W210` | ⭐ **both spellings are correct today, so it jumps nobody** — Ruling 285(b)'s ground | 62 |
@@ -179,7 +179,7 @@ else.**
 | W23 | Two personal-data shapes passed the gate clean | Developer 2 | ✅ done — `d178665` | [`rows/W23.md`](rows/W23.md) |
 | W24 | A derived-set assertion asserts inhabitation, or it is born vacuous | PO | ✅ done | [`rows/W24.md`](rows/W24.md) |
 | W25 | `tools/quality` gains a handoff check, because the six sections are a contract | Developer 2 | ✅ done — `2a272a5` | [`rows/W25.md`](rows/W25.md) |
-| W26 | `W7`'s reader tell resolves the name's origin, not its spelling | Developer 2 | `todo` — not started | [`rows/W26.md`](rows/W26.md) |
+| W26 | `W7`'s reader tell resolves the name's origin, not its spelling | Developer 2 | ✅ done — `c84ca2e` | [`rows/W26.md`](rows/W26.md) |
 | W27 | An R7 refusal is never translated into a package's error family | Developer 2 | ✅ done — `5c6c883` | [`rows/W27.md`](rows/W27.md) |
 | W28 | `source_files()` respects the repository's own ignore declaration | Developer 1 | ✅ done — `6d65902` | [`rows/W28.md`](rows/W28.md) |
 | W29 | One constant naming the three gated trees | Developer 2 | ✅ done — `4f2fbf8` | [`rows/W29.md`](rows/W29.md) |
@@ -472,8 +472,8 @@ else.**
 | W317 | The visual harness's `closerange` also closes subprocess's exec-error pipe, so a missing browser binary is not raised at launch | framework agent | `todo` — `W312/1` | [`rows/W317.md`](rows/W317.md) |
 | W318 | A build whose `--out` is a subdirectory of the corpus root writes media inside the git tree and outside the measured population | framework agent | `todo` — `W314/2` | [`rows/W318.md`](rows/W318.md) |
 | W319 | `Inventory`'s `relative_to` sites carry the two-path message `W220` removed from the refusal one level in | framework agent | `todo` — `W220/1` | [`rows/W319.md`](rows/W319.md) |
-| W320 | `UNUSABLE` lives in one verb's `cli` module, so importing the command still loads that verb | framework agent | `todo` — `W293/3` | [`rows/W320.md`](rows/W320.md) |
-| W321 | The generated documents address the framework relative to the corpus root while the pin asks git, so a linked worktree's documents point elsewhere | framework agent | `todo` — `INT-17/2` | [`rows/W321.md`](rows/W321.md) |
+| W320 | `UNUSABLE` lives in one verb's `cli` module, so importing the command still loads that verb | framework agent | ✅ done — `92d2427` | [`rows/W320.md`](rows/W320.md) |
+| W321 | The generated documents address the framework relative to the corpus root while the pin asks git, so a linked worktree's documents point elsewhere | framework agent | ✅ done — `9e8e9ed` | [`rows/W321.md`](rows/W321.md) |
 | W322 | `Layout` computes a unit's overlay address in one place and three test sites spell it by hand | framework agent | ✅ done — `3ff622d` | [`rows/W322.md`](rows/W322.md) |
 | W323 | Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries | framework agent | ✅ done — `4650f5d` | [`rows/W323.md`](rows/W323.md) |
 | W324 | A reader on a unit page has no path to any other container; crossing a course means a trip through the index | framework agent | ✅ done — `9c74bba` | [`rows/W324.md`](rows/W324.md) |
