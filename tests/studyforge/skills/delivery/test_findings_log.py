@@ -11,6 +11,7 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+from types import ModuleType
 
 import pytest
 
@@ -44,8 +45,8 @@ def rendered(*entries: Entry, run: str = "a conversion") -> str:
     return "\n".join(FindingsLog(run=run, entries=entries).lines()) + "\n"
 
 
-def skill(package: object) -> str:
-    return (Path(package.__file__).parent / "SKILL.md").read_text("utf-8")  # type: ignore[attr-defined]
+def skill(package: ModuleType) -> str:
+    return (Path(str(package.__file__)).parent / "SKILL.md").read_text("utf-8")
 
 
 def bare_fences(text: str) -> list[str]:
