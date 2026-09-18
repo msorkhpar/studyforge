@@ -48,8 +48,8 @@ one does.**
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 | **M6** — the first corpus reads (`ISO-8583`) | ✅ **CLOSED** — ⭐ **round 107**, re-taken against the REGENERATED corpus ⛔ **with the pages READ, which the withdrawn run never did.** ⚠️ **The eight escalations that blocked it are ruled or dissolved there.** | `77535e6` | [the close](BOARD-ARCHIVE.md#po-round-107) |
-| **M8** — it is a framework | ⏳ **OPEN — the next milestone by the user's order, and the board carried NO CELL FOR IT until round 108.** ⭐ Step 8.1 is `QA-04`, whose ⛔ **deliverable is the FINDINGS LOG, not the site** (spec §12). ⚠️ **The floor half is measured and green; what remains is the distillation** | — | [the open](BOARD-ARCHIVE.md#po-round-108) |
-| **M5** — it runs code | ⛔ **NOT STARTED.** A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [the plan](README.md) |
+| **M8** — it is a framework | ✅ **CLOSED** — ⭐ **round 109**: `QA-04` verified and merged; ⛔ **the deliverable is the FINDINGS LOG**, complete over all seven of the conversion's numbered findings. ⭐ **Both of the ISO track's finish lines are reached** | `671e052` | [the close](BOARD-ARCHIVE.md#po-round-109) |
+| **M5** — it runs code | ⛔ **NOT STARTED — NEXT by the user's order, and HELD on a question that is the user's: every task in it depends on `TC-00`, whose runtimes this host does not carry** ([109](BOARD-ARCHIVE.md#po-round-109)). A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [the plan](README.md) |
 | **M7** — it has practices | ⛔ **NOT STARTED.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
@@ -97,25 +97,22 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W328` | ⛔ **JUMPS every older `todo` row (Ruling 75): it is the outstanding half of a USER REQUIREMENT the user is coming back to look at** — the rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | [105](BOARD-ARCHIVE.md#po-round-105) |
-| 1 | `W331` | ⛔ **JUMPS every older `todo` row (Ruling 75): the check is GENERATED into every corpus this framework onboards, and it goes RED on a CORRECT re-build** — so every future ingestion meets it | [105](BOARD-ARCHIVE.md#po-round-105) |
-| 2 | `W332` | ⭐ **round 105's remaining mint, jumping nobody** | [105](BOARD-ARCHIVE.md#po-round-105) |
 | 1 | `W321` | ⛔ **JUMPS every older `todo` row (Ruling 75): the first corpus is a linked worktree, and a command a generated document tells a reader to run can detach the framework checkout's HEAD** | [104](BOARD-ARCHIVE.md#po-round-104) |
-| 2 | `W316`–`W320`, `W322` | ⭐ **round 104's remaining mints, each jumping nobody** | [104](BOARD-ARCHIVE.md#po-round-104) |
+| 2 | `W316`–`W320` | ⭐ **round 104's remaining mints, each jumping nobody** | [104](BOARD-ARCHIVE.md#po-round-104) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
 | 5 | `W118` | ⭐ **round 42's remaining mint, jumping nobody** | round 42 |
 | 12 | `W159`, `W160` | ⭐ **each jumps nobody** | round 52 |
 | 13 | `W169` | ⭐ **each jumps nobody** | round 54 |
 | 15 | `W173` | ⭐ **round 56's mint, jumping nobody** | round 56 |
 | 16 | `W174`, `W175` | ⭐ **round 56's re-take mints** | round 56 |
-| 17 | `W177`–`W181` | ⭐ **round 57's mints, jumping nobody** | round 57 |
+| 17 | `W177`–`W180` | ⭐ **round 57's mints, jumping nobody** | round 57 |
 | 18 | `W184`, `W186` | ⭐ **round 58's wave-12 mints, jump nobody** | 58 |
-| 19 | `W192`, `W194` | ⭐ **round 60's mints, jumping nobody** | 60 |
-| 22 | `W198`–`W201` | ⭐ **round 60's `E09`-scoping mints, jumping nobody** | 60 |
+| 19 | `W194` | ⭐ **round 60's mints, jumping nobody** | 60 |
+| 22 | `W198`, `W200`, `W201` | ⭐ **round 60's `E09`-scoping mints, jumping nobody** | 60 |
 | 24 | `W204` | ⭐ **round 60's mint, jumping nobody** | 60 |
 | 25 | `W205` | ⛔ **NOT DISPATCHABLE — it is a RULING and the freeze is in force; minted so the case is not lost** | 60 |
 | 28 | `W210` | ⭐ **both spellings are correct today, so it jumps nobody** — Ruling 285(b)'s ground | 62 |
-| 32 | `W219`, `W221` | ⭐ **round 65's remaining mints, each jumping nobody** — ⛔ **`W220` closed in 104** | 65 |
+| 32 | `W221` | ⭐ **round 65's remaining mints, each jumping nobody** — ⛔ **`W220` closed in 104** | 65 |
 | 34 | `W227`–`W229` | ⭐ **round 67's mints, each jumping nobody** | 67 |
 | 35 | `W231` | ⭐ **round 69's mint, jumping nobody** — ⛔ **one owner with `W117` in flight, which holds `docs/conventions/`** | 69 |
 | 37 | `W234` | ⭐ **round 71's mint, jumping nobody** | [71](BOARD-ARCHIVE.md#po-round-71-w230-and-w103-closed-w109-w116-and-w117-named-one-mint) |
@@ -126,7 +123,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 54 | `W291` | ⭐ **round 87's remaining mint, jumping nobody** — ⛔ **`W286`–`W290` and `W292` are closed** | [87](BOARD-ARCHIVE.md#po-round-87-w263-w267-w271-w274-w275-and-w273-closed) |
 | 55 | `W294` | ⭐ **round 88's remaining mint, jumping nobody** — ⛔ **`W293` closed in 104** | [88](BOARD-ARCHIVE.md#po-round-88-w279-w284-w285-w281-and-w223-closed) |
 | 56 | `W296` | ⭐ **round 89's mint, jumping nobody** — ⛔ **`W295` is not here: it was DISPATCHED in this round, on the user's ruling, and its cell is in flight** | [89](BOARD-ARCHIVE.md#po-round-89) |
-| 57 | `W297`–`W301` | ⭐ **round 90's mints, each jumping nobody** | [90](BOARD-ARCHIVE.md#po-round-90) |
+| 58 | `W334`–`W338` | ⭐ **round 106's mints, each jumping nobody** — ⛔ **placed at round 109, which found them unplaced** | [106](BOARD-ARCHIVE.md#po-round-106) |
+| 59 | `W339`–`W344` | ⭐ **round 107's mints, each jumping nobody** — ⛔ **placed at round 109, which found them unplaced** | [107](BOARD-ARCHIVE.md#po-round-107) |
+| 60 | `W345`–`W349` | ⭐ **round 109's mints from `QA-04`, each jumping nobody** | [109](BOARD-ARCHIVE.md#po-round-109) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -495,6 +494,11 @@ else.**
 | W342 | A regeneration promotes a superseded GENERATED glob to a person's, and nothing will ever drop it | framework agent | `todo` — `INT-19/3` | [`rows/W342.md`](rows/W342.md) |
 | W343 | The procedure pins a commit and runs against a moving working tree; the pin check asks whether the checkout HOLDS the commit, not whether it is AT it | framework agent | `todo` — `INT-19/7` | [`rows/W343.md`](rows/W343.md) |
 | W344 | R8's floor is evidenced indirectly by an integration round because the instrument that can open a `file://` URL lives where a corpus cannot reach it | framework agent | `todo` — `INT-19/6` | [`rows/W344.md`](rows/W344.md) |
+| W345 | The skills write Python packages into a corpus and generate no ignore rule for their bytecode, which carries an absolute home path | framework agent | `todo` — `QA-04/2` + `INT-19/4` | [`rows/W345.md`](rows/W345.md) |
+| W346 | No skill obliges a conversion to write a findings log, so a milestone's deliverable was produced by hand and two findings survived only in a transcript | framework agent | `todo` — `QA-04/4` | [`rows/W346.md`](rows/W346.md) |
+| W347 | Four framework decisions ruled at round 107 live only in the board archive, where a next source never reads | framework agent | `todo` — `QA-04/3` | [`rows/W347.md`](rows/W347.md) |
+| W348 | The second-source pin clause has one form, for a forced move, and none for a pin advanced deliberately as a round's point | framework agent | `todo` — `QA-04/5` | [`rows/W348.md`](rows/W348.md) |
+| W349 | No skill sizes narration before a manifest exists, so a planner commits a corpus on a hand figure, and the first one under-sized it | framework agent | `todo` — `QA-04/6` | [`rows/W349.md`](rows/W349.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -579,7 +583,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⛔ **`M6`'s close run is WITHDRAWN and the milestone is BLOCKED** (round 105): ⭐ **`Q5` is ruled — the out-of-scope container is OUT, FINAL — so the corpus is REGENERATED and the close re-takes against the rebuild.** ⚠️ **`ISO-17` remains the last row of C4** — [the withdrawal](BOARD-ARCHIVE.md#po-round-105) |
+| **Status** | `in-progress` — ⭐ **BOTH FINISH LINES REACHED: `M6` closed at round 107, `M8` at round 109 (Q18).** ⛔ **The corpus stays a consumer: a framework row a reader sees is carried by a framework office and the corpus is REGENERATED, never patched** — [109](BOARD-ARCHIVE.md#po-round-109) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 
