@@ -27495,3 +27495,76 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 | ⭐ *the findings that produced are written down* | ⛔ **THE GAP.** The integration catalogue exists and carries 22 entries — ⚠️ **and NOT ONE of the regeneration's findings.** ⭐ **This is `ISO-17`, *findings distilled*, and round 107 established it gates THIS milestone rather than `M6`** |
 
 ⛔ **So `M8` is not a build; it is a WRITE-DOWN, and the register says that plainly rather than letting the site's greenness be read as the milestone's.** ⚠️ **`QA-04`'s own words: an exercise that produces a working site and reports no findings has not been conducted honestly — the finding count is the YIELD.**
+
+## PO round 109
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`QA-04` is verified and merged, `M8` CLOSES, the two findings `QA-04` could not find are recovered and disposed of, and five rows are minted from what it found.**
+
+### ⭐ `QA-04` — VERIFIED BY THE REGISTER, NEVER RECEIVED (Ruling 214)
+
+⭐ **Carried by `wt/dev2` on `task/QA-04-the-findings-log`, merged at `671e052`.** ⛔ **The office's hand-back was self-certified; every reading below was re-taken by this register against git.**
+
+| the office's claim | the register's reading |
+|---|---|
+| the diff is additive and touches only the catalogue and its handoff | ⭐ **TRUE** — no line of the catalogue is removed |
+| the corpus's pin moved `7027ee6` → `aa4e256`, in the regeneration commit | ⭐ **TRUE** — read in the corpus's `.studyforge/pin.json` at ISO `a0f8a80` |
+| 43 commits across the range, 10 of them merges | ⭐ **TRUE** — `git rev-list --count`, with and without `--merges` |
+| nine closed rows have their merge inside the range | ⭐ **TRUE, and derived over EVERY closed row on the board**, not a list: `W322`, `W326`–`W333` |
+| the regeneration moved 8 files and the rebuild 1, and no page | ⭐ **TRUE** — both commits' file lists at ISO `a0f8a80` and `77535e6` |
+| 1,364 clips, 110,783,344 bytes | ⭐ **TRUE** — recounted from the tree at ISO `77535e6`, not from the commit body |
+| `INT-19/4` and `INT-19/5` appear in no ref | ⭐ **TRUE** — every hit of either string, in either repository, is `QA-04`'s own commit |
+
+**Gates on the office's tip:** floor and suite, host — GREEN, exit 0 each. ⭐ The merge's own, both environments, on the merged tree — GREEN.
+
+### ⛔ `QA-04/1` — THE TWO FINDINGS WERE NOT LOST; THIS REGISTER NEVER WROTE THEM DOWN
+
+⭐ **Recovered from the previous session's transcript** — ⛔ **the only place they existed, because the integration office's hand-back was a MESSAGE and this register recorded five of its seven numbered findings.**
+
+| finding | disposition |
+|---|---|
+| `INT-19/4` — bytecode left untracked under the generated packages after the step the skill commands; no ignore rule, because the root ignore file is a source file `W278` forbids `permitted_edits` to name | ⭐ **THE SAME HOLE AS `QA-04/2`, found independently a round apart** — ⛔ **minted once, as `W345`** |
+| `INT-19/5` — the register's brief said the excluded container had exactly one tracked mention; there are three, the other two in a source file and in the corpus's one hand-written module | ⛔ **A MISCOUNT IN THIS REGISTER'S OWN BRIEF, not a framework finding.** ⭐ **The settling condition held as stated — no GENERATED artifact names it — so nothing re-takes; the figure was wrong** (`PO-109/1`) |
+
+⛔ **So `QA-04`'s sort is complete over all seven**, and its catalogue section needs no amendment: the bytecode hole is already in it, refused as a hole. ⭐ **`W346` is the row that would have prevented this: a findings log the skill obliges holds every finding, not the ones a register transcribes.**
+
+### ⛔ `QA-04/5` — THE PIN CLAUSE IS DISCHARGED BY ITS INTENT, AND THE SECOND FORM IS A ROW
+
+⭐ **The register ACCEPTS `QA-04`'s accounting as discharging *the framework pin did not move, or every commit is accounted for*:** the advance was the declared point of a delivery round, not a move forced mid-run; ⭐ **the 43 commits are counted, the nine rows they deliver are listed, and the three a conversion finding forced — `W329`, `W331`, `W332` — are named.** ⛔ **This is the register's reading of an acceptance, not a ruling; the freeze is not touched.** ⭐ **The clause's second form lands in the epic as `W348`, before `QA-05` meets it.**
+
+### ⭐ THE OTHER FINDINGS
+
+| finding | disposition |
+|---|---|
+| `QA-04/2` | ⭐ **minted `W345`**, with `INT-19/4` |
+| `QA-04/3` | ⭐ **minted `W347`** — ⛔ **landing four decisions where a next source reads them is a ROW, not a ruling: each was ruled at round 107** |
+| `QA-04/4` | ⭐ **minted `W346`** |
+| `QA-04/6` | ⭐ **MEASURED: entry 16's range was landed by register round 20 (`a888d74`), and no skill computes a pre-manifest narration estimate.** ⛔ **So it was a hand figure, and the hole is that reconnaissance produces none — minted `W349`** |
+| `QA-04/7` | ⭐ **corroborates `W339`, still live at this ref.** No action |
+| `QA-04/8` | ⭐ **accepted as stated** — the wave merged ten rows and the pin range holds nine; ⛔ **a figure says which population it counts** |
+
+### ⛔ `M8` CLOSES
+
+⛔ **Its *Done when*: `ISO-8583` converted by the skills alone, and the findings that produced written down.** ⭐ **Each clause, at `671e052`:**
+
+| clause | reading |
+|---|---|
+| the floor, minus what the source lacks | ⭐ **measured at `M6`'s close, ISO `77535e6`, with the pages READ** — cited, not re-taken; nothing in the corpus has moved since |
+| whoever runs it does not modify `studyforge` | ⭐ **HELD** — round 108's reading, and `QA-04` re-read the conversion office's commit bodies |
+| the pin, or every commit accounted for | ⭐ **DISCHARGED** — above |
+| everything done by hand named as a defect | ⭐ **HELD** — the four hand-settled answers are `W341`; the hand-written region test is `W346`'s evidence |
+| the findings written down | ⭐ **`docs/integration-catalogue.md`**, entries 21–23 and the `QA-04` sort, **complete over all seven numbered findings** once `QA-04/1` is disposed of above |
+
+⭐ **No escalation on this track is unruled** — round 107 ruled or dissolved all eight. ⛔ **The rows `M8` produced are open and do not hold it**: its deliverable is the log, and a finding is its yield, not its shortfall. ⚠️ **By the user's standing decision, any of them that a reader sees becomes a framework change and the corpus is REGENERATED, never patched.**
+
+⭐ **Both of the ISO track's finish lines are now reached — `M6`'s and `M8`'s (Q18).**
+
+### ⭐ `M5` IS NEXT BY THE USER'S ORDER, AND IT IS HELD ON A QUESTION THAT IS THE USER'S
+
+⛔ **Every task in `M5` depends on `TC-00`**, the runner image. ⭐ **Its declared runtime set is the user's requirement — Java, Kotlin, Python, Node.js, and possibly shell and SQL.** ⚠️ **MEASURED on this host: a JDK image and Python images are present; no Maven, Node.js or Kotlin image or distribution is.** ⛔ **The standing constraint says an office takes no network action off this host**, so building `TC-00` as defined needs the user's word. ⭐ **Put to the user in this round; `M5` is not opened until it is answered** — an unruled escalation blocks its milestone.
+
+### ⛔ THIS REGISTER'S OWN DEFECTS
+
+- `PO-109/1` ⛔ **The register received seven numbered findings from the integration office and recorded five.** ⭐ **`INT-19/4` and `/5` survived only in a transcript.** ⚠️ **And its brief stated a count (`INT-19/5`) it had not taken.**
+- `PO-109/2` ⛔ **Round 108 says the catalogue *carries 22 entries*. MEASURED at `bb8730b`: 20.** ⚠️ **An uncounted figure, in the round whose subject was the catalogue.**
+- `PO-109/3` ⛔ **`QA-04` was dispatched and NO ROW OF THE IN-FLIGHT TABLE NAMED IT** — ⭐ **`corroborate`'s unnamed arm fired on `task/QA-04-the-findings-log` at `2402617`.** ⚠️ **`PO-105/5` again, on an epic task this time.**
+- `PO-109/4` ⛔ **The *Next rows* table carried closed rows — four of them at order 1.** ⭐ **Pruned here: a cell keyed by a row id whose row is closed is removed.**
