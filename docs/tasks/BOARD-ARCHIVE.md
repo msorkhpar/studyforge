@@ -26892,6 +26892,98 @@ The served-unit contract bumped its `api` and no consumer artifact changed. ⭐ 
 
 The first corpus's own verifier fixes a whole-disk walk by a name-based exemption where the framework's equivalent reads the tracked tree and names no directory. ⛔ **Narrower, and the corpus's to take.** ⚠️ **Also recorded: the framework's cleanliness check reads RED on that corpus's questions document at its own HEAD as well as after the round, and the only email-shaped string in it is an office's own PLACEHOLDER quoted inside an earlier finding's record.** ⛔ **Not a leak, and not fixed, because fixing it means rewriting a record** (Ruling 106).
 
+### ⭐ CLOSES — verified by this register, NOT received
+
+⛔ **Each was verified against real behaviour by this register, never accepted from an office's account** (Ruling 214). ⚠️ **Two of these landed on REBASED carriers after `PO-105/1` sent the first pair back, which is why a check against their ORIGINAL branch names reads `unmerged` — the register made exactly that misreading tonight and corrected it by looking for the subject rather than the branch.**
+
+### W94 — A shipped refusal names its first witness, not its population — 6 sites against 55 correct
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W94.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Its argument has CLOSED and moved to the record.**
+
+[the argument](#w94-a-shipped-refusal-names-its-first-witness-not-its-population-6-sites-against-55-correct)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `c0c5d73`. ⭐ VERIFIED BY BEHAVIOUR, not received: one reason reads exactly as it did before the row, and three come back as a counted list naming every one — so the refusal names its population.**
+
+### W191 — The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W191.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE FLOOR AND THE SUITE ARE TWO GATES AND THEY CAN DISAGREE AT ONE REF.** ⭐ **`python3 -m tools.quality` can exit `0` while `python3 -m pytest` exits non-zero on the same tree** — ⚠️ **because format enforcement lives in the SUITE (Ruling 78) and not in the floor.**
+
+⛔ **WHY IT IS A ROW NOW AND WAS NOT BEFORE.** ⭐ **Every row is SELF-CERTIFIED since the reviewing office was removed: the merge condition is the taker's own readings and nothing else.** ⛔ **So the phrase *"floor + suite GREEN"* is no longer a description of a habit — it is the whole gate — ⚠️ **and it is satisfiable by an office that ran the floor, read `0`, and inferred the rest.**
+
+### ⛔ THE FAMILY THIS BELONGS TO
+
+⭐ **AN INSTRUMENT EXITING `0` HAS TOLD YOU NOTHING FAILED, NOT THAT EVERYTHING WAS CHECKED.** ⛔ **The floor's `0` is a true statement about the floor's own population and says nothing whatever about the suite's.** ⚠️ **Enumerated once, in [`../handoffs/PO-2026-09-12-round60.md`](handoffs/PO-2026-09-12-round60.md).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **NAME THE DIVERGENCE, BY MEASUREMENT, BEFORE PROPOSING ANY FIX** — ⭐ **which checks are in the floor's population and not the suite's, and which in the suite's and not the floor's.** ⚠️ **The answer decides whether this is a MERGE of two populations or a DISCLOSURE that they differ, and guessing which has already cost a round elsewhere.**
+2. ⛔ **THE OFFICE-FACING ARTEFACT IS ONE COMMAND WITH ONE EXIT CODE**, or the defect survives the fix: ⭐ **an office that must run two things and remember to `&&` them is the office this row is about.**
+3. ⛔ **DO NOT MOVE RULING 78'S CHECK INTO THE FLOOR AS THE FIRST ACT.** ⚠️ **Ruling 78 put it in the suite for a reason and that reason is not re-derived here; if the fix requires overturning it, that is a decision to state out loud, not a side effect.**
+4. ⛔ **VALIDATE BY PLANTING** (Rulings 124, 348): ⭐ **plant a suite-only failure — a mis-formatted source file — and the pass condition is that the office-facing command MOVES its exit code, with the floor still reading `0` beside it.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD INSTRUMENT.** ⭐ **Two gates that disagree are not fixed by adding a third that agrees with neither.** ⛔ **AND NOT A DOCUMENT.** ⚠️ **A sentence in a convention telling offices to run both is exactly the artefact that has been in force this whole time; the defect is that it is a sentence.**
+
+⭐ **Addressed, PO round 73 ([`W88`](#po-round-73-w88-w120-w233-w125-and-w108-closed-w237-minted)):** [the mint](handoffs/PO-2026-09-12-round60.md#the-family-stated-once-here-because-four-rows-point-at-this-section)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `e1606e5`. ⭐ One command with one exit code, taken over every gate the merge re-runs.**
+
+### W92 — The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W92.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`F31` `[structural]`, from PO-Integration and UPHELD by the CTO with their own measurement. The capability index has NO FIELD separating a framework capability from an integration-side row**, so a corpus completing at the reading floor must write **13 false `why`s** — ⚠️ **including declaring `QA-04` *"The second source"* UNUSED, which IS that integration.**
+
+⭐ **MEASURED by the CTO: the index has exactly FOUR columns — `capability | what it is | area | waits on` — and NONE of them distinguishes framework from integration.** ⛔ **So the defect is not a wrong value in a field; it is the absence of the field, which is why no amount of care at generation time can avoid the false statement.**
+
+⭐ **This is Ruling 151's own distinction one layer down — *a reading taken inside a consumer repository is not a framework reading* — UNEXPRESSIBLE in the artifact generated from the documents that ruling sorted.**
+
+⛔ **IT IS LOAD-BEARING, and the reason is in `CLAUDE.md`:** that file names the **generated** `docs/capability-index.md` as the authority for ANY count, after Ruling 150 retired two disagreeing hand-written claims. ⚠️ **So a false field in the generated index is a false field in the one artifact the project tells every agent to trust for counts.**
+
+⛔ **`MEASURED` in the ISO repository by PO-Integration, `RECEIVED` by me through the coordinator, and NOT re-measured here** (Ruling 115) — ⚠️ **a claim about another repository is verified IN that repository and my worktree cannot reach theirs.** ⭐ **The four-column reading IS verifiable here and is this row's first act.**
+
+⭐ **WHAT SETTLES IT:** either the index gains a FIFTH column whose vocabulary is CLOSED and enumerated — ⛔ **a narrowed population, never a widened predicate** (Ruling 185) — or the project states that a reading-floor corpus writes `why` only for framework rows and the other 13 are structurally out of scope. ⚠️ **Either is acceptable; a field that FORCES a false statement is not.**
+
+[round 37's follow-up](#round-37-follow-up-three-rows-sat-in-flight-for-350-commits-q23-is-answered-and-rulings-187-and-188-get-ids)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `3166229` on the REBASED carrier, after `PO-105/1` sent the first one back. ⭐ VERIFIED BY MEASUREMENT: the index's vocabulary for a row this framework does not deliver is in use across the generated derivation, so the false `why`s the row named cannot be written.**
+
+### W219 — The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W219.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE `RAISES` CONVENTION HAS ONE ENFORCEMENT ARM, AND IT IS NARROW TWICE.** ⭐ **Raised by the office that wrote it (`W212/2`, `W212/4`), merged at `419c805`.**
+
+1. ⛔ **PREDICATE: it reads handler NAMES.** ⭐ **A handler catching `RAISES[:1]` passes the sweep; four plants did exactly that and SURVIVED it**, dying only on each caller's behavioural test. ⚠️ **A plant that survives is the reading this row exists for.**
+2. ⛔ **POPULATION: it ranges over `corpus.*` readers.** ⭐ **`archive/errors.py` says two exceptions travel through (`ArchiveError` plus the leak) and exports no tuple**, so the convention now written in `docs/conventions/module-structure.md` has a known non-conforming package outside its instrument.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A narrowed or sliced tuple FAILS the sweep** — asserted by re-planting `RAISES[:1]`; the pass condition is the MOVED exit code.
+2. ⛔ **`archive` exports `RAISES` and its callers consume it**, or the convention says why `archive` is exempt, in one sentence.
+3. ⭐ **The sweep's population is DERIVED from every package exporting `RAISES`**, never a typed list — or a new exporter is outside it again.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A LIST OF PACKAGES.** ⭐ **That is the retyped subset `W213` removed, one level up.**
+
+[the mint](#po-round-65-wave-18-closed-step-36-and-m3-closed-at-1ede082-wave-19-named-five-mints)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `d230762` on the REBASED carrier. ⭐ The floor is keyed on the package a catch names, so a declared split moves nothing by hand.**
+
 ### ⭐ MINTS — `W323`–`W332`, each from a MEASURED argument
 
 ⛔ **Four of these are USER REQUIREMENTS stated directly, not findings from an office**, and they are marked as such in their row files. ⭐ **Each row's argument lives once, in its own file; this record does not restate it.**

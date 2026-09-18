@@ -244,9 +244,9 @@ else.**
 | W89 | An R7 gate's false positive on ordinary source, narrowed in the gate and not in the source | framework agent | `todo` — Ruling 179 | [`rows/W89.md`](rows/W89.md) |
 | W90 | The root index can link no container page, and it is a `toc_api` question | PO | `todo` — a named gap of `M4`'s close, not a gate (round 72) | [`rows/W90.md`](rows/W90.md) |
 | W91 | The hand-maintained rulings index stops short of the live series, so a bare `(Ruling n)` resolves to nothing | Developer 2 | ✅ done — `8be7e86` | [`rows/W91.md`](rows/W91.md) |
-| W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | `todo` | [`rows/W92.md`](rows/W92.md) |
+| W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | ✅ done — `3166229` | [`rows/W92.md`](rows/W92.md) |
 | W93 | *Point the skill at a corpus* is not performable — no corpus-shaped input on the surface | framework agent | `todo` | [`rows/W93.md`](rows/W93.md) |
-| W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | `todo` — Ruling 188 | [`rows/W94.md`](rows/W94.md) |
+| W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | ✅ done — `c0c5d73` | [`rows/W94.md`](rows/W94.md) |
 | W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | ✅ done — `cfe0e0c` | [`rows/W95.md`](rows/W95.md) |
 | W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | ✅ done — `3432e9a` | [`rows/W96.md`](rows/W96.md) |
 | W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
@@ -342,7 +342,7 @@ else.**
 | W188 | The contradiction check SKIPS when no register cell declares a started state — the state a register leaves at every wave boundary | framework agent | ✅ done — `7d77b0d` | [`rows/W188.md`](rows/W188.md) |
 | W189 | `narrate-service` has produced no real audio and its `README` claims a measurement the repository does not hold | framework agent | ✅ done — `978fa1b` | [`rows/W189.md`](rows/W189.md) |
 | W190 | `corroborate`'s `dispatched and UNNAMED` arm has a population of CHECKOUTS, so a branch carrying work is invisible to it whenever its office cleans up after itself | framework agent | ✅ done — `c49f254` | [`rows/W190.md`](rows/W190.md) |
-| W191 | The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone | framework agent | `todo` — ⛔ **UNASSIGNED through four waves** | [`rows/W191.md`](rows/W191.md) |
+| W191 | The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone | framework agent | ✅ done — `e1606e5` | [`rows/W191.md`](rows/W191.md) |
 | W192 | Ruling 218's multi-id cell is readable in exactly ONE spelling, and the comma form observes the wrong row silently | framework agent | ✅ done — `bf05884` | [`rows/W192.md`](rows/W192.md) |
 | W193 | The narration record and its clips grow without bound and nothing prunes; pruning owes a RULE about which clips a build may delete | PO | ✅ done — PO round 64 | [`rows/W193.md`](rows/W193.md) |
 | W194 | `narrate-service`'s `docs/api.md` example manifest is schema-stale against the service's own live answer | framework agent | `todo` — `NS-07` F3, sibling | [`rows/W194.md`](rows/W194.md) |
@@ -370,7 +370,7 @@ else.**
 | W216 | `tests/test_emission.py`'s coverage floor sits so far below its own census that it cannot fall, and the sweep is the R7 gate's population | framework agent | ✅ done — `787b24d` | [`rows/W216.md`](rows/W216.md) |
 | W217 | The suite writes OUTSIDE the checkout, and `W209`'s detector is repository-scoped by construction so it cannot see it | framework agent | ✅ done — `475370c` | [`rows/W217.md`](rows/W217.md) |
 | W218 | `W193`'s rule is written and nothing carries it out: dead clips count against a shipped ceiling and no instrument discloses or prunes them | framework agent | ✅ done — `18dc8e1` | [`rows/W218.md`](rows/W218.md) |
-| W219 | The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it | framework agent | `todo` — `W212/2` + `W212/4` | [`rows/W219.md`](rows/W219.md) |
+| W219 | The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it | framework agent | ✅ done — `d230762` | [`rows/W219.md`](rows/W219.md) |
 | W220 | `reconnaissance.record.read` quotes an EXISTING `path=` back in its refusal — a latent R7 echo the contained census can no longer reach | framework agent | ✅ done — `31f45d5` | [`rows/W220.md`](rows/W220.md) |
 | W221 | The whole suite still writes outside the checkout — temp, cache and browser dirs — and nothing owns or asserts it | framework agent | `todo` — `W217/3` | [`rows/W221.md`](rows/W221.md) |
 | W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | Developer 1 | ✅ done — `f4779c9` | [`rows/W222.md`](rows/W222.md) |
