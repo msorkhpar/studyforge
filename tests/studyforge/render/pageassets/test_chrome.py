@@ -82,10 +82,10 @@ REGIONS: dict[str, tuple[str, str]] = {
         CHROME_RULED,
         "region 10, the rail that reaches the OTHER containers — `W324`. ⛔ A unit "
         "page carried three navs and not one href in any of them left its own "
-        "container, so the only crossing was back through the root index. ⚠️ Laid "
-        "out as a card in the one column and not beside it, because every chrome "
-        "region on this site resolves the reading surface's column and a side rail "
-        "is a different page shape",
+        "container, so the only crossing was back through the root index. ⭐ Laid "
+        "out BESIDE the reading column where a viewport has room for one, and as a "
+        "card in the column where it has not (`W325`) — so it is the one region "
+        "that does not resolve the reading surface's column at every width",
     ),
     'nav[aria-label="Contents"]': (
         CHROME_RULED,
@@ -388,7 +388,7 @@ def test_the_page_column_is_bounded_and_the_bound_is_a_palette_measure():
     assert "var(--measure)" in column, "the column's bound is not the reading measure's own token"
 
 
-def test_the_column_is_bounded_exactly_once_and_on_the_element_that_owns_the_measure():
+def test_the_column_is_bounded_only_ever_on_the_element_that_owns_the_measure():
     # ⛔ **A measured defect, pinned.** `--measure` is `80ch` and `ch` resolves
     # against the ELEMENT's own font, so the first draft of this file wrote the
     # same `max-width` on each region and produced THREE columns — 800px, 715.7px
@@ -396,8 +396,64 @@ def test_the_column_is_bounded_exactly_once_and_on_the_element_that_owns_the_mea
     # outline and the bar each set their own face and size. ⭐ `body` carries the
     # prose font, which is the font the measure was chosen in, so the number is
     # computed there and nowhere else.
+    #
+    # ⚠️ **`W325` NARROWED THIS CLAUSE AND ADDED ITS OTHER HALF — read the change
+    # before the assertion.** It asserted the bounding selectors were EXACTLY
+    # `["body"]`, which said two things at once: *the bound lives on `body`* —
+    # the defect above — and *there is exactly one of them*, which was true only
+    # while the page had one shape. ⛔ The rail beside the column is a second
+    # bound on the SAME element under a media query, and the defect this clause
+    # exists for is a bound on a DIFFERENT element. ⭐ So the subject is asserted
+    # instead, in both directions: every bounding selector's subject is `body`,
+    # and there is at least one, so a file that bounded nothing cannot pass.
     bounded = sorted(selector for selector, block in rules() if "max-width" in block)
-    assert bounded == ["body"], f"the column is bounded in more than one place: {bounded}"
+    assert bounded, "nothing in this part bounds a column at all"
+    astray = sorted(
+        selector for selector in bounded if selector != "body" and not selector.startswith("body:")
+    )
+    assert astray == [], f"the column is bounded on an element other than `body`: {astray}"
+
+
+# --- W325: the second shape, and the two tokens it paints -------------------
+
+
+def test_the_rail_beside_the_column_is_declared_under_exactly_one_threshold():
+    # ⛔ **One threshold, because the browser arm READS IT BACK.**
+    # `tests/visual/test_rail.py` takes its two viewport widths from this file
+    # rather than repeating the number, and asserts they straddle it — so a
+    # second `min-width` here would leave that arm judging one of two layouts
+    # twice with nothing saying so. ⚠️ A media query resolves `rem` against the
+    # INITIAL font size, never `html`'s, which is why the threshold is readable
+    # as a number at all.
+    thresholds = re.findall(r"@media\s*\(min-width:\s*([0-9.]+)rem\)", body())
+    assert len(thresholds) == 1, f"this part declares {len(thresholds)} width thresholds, not one"
+
+
+def test_the_two_shapes_are_one_markup_and_the_wide_one_is_asked_for_by_the_region():
+    # ⭐ `W325`: the rail moves beside the column on a wide viewport and folds
+    # back into it on a narrow one, over the SAME bytes. ⛔ The wide shape is
+    # conditioned on the page CARRYING the region — the root index carries none,
+    # and a grid declared unconditionally would give it an empty rail track.
+    wide = [
+        selector
+        for selector, block in rules()
+        if "grid-column" in block or "grid-template" in block
+    ]
+    assert wide, "nothing in this part lays the rail out beside the column"
+    assert all("body" in selector for selector in wide), wide
+    assert any(":has(" in selector for selector in wide), (
+        "the two-column page is declared unconditionally, so a page with no rail "
+        f"gets an empty track down its left: {wide}"
+    )
+
+
+@pytest.mark.parametrize("token", ("--rail", "--page-max"))
+def test_the_layout_tokens_this_file_left_unpainted_are_painted_now(token):
+    # ⛔ `W324/1` named both as *"defined for a layout and painted by nothing"*,
+    # and this file's own column note said `--page-max` "would never bite at any
+    # viewport" **against a bounded single column**. ⭐ There is a rail-and-content
+    # layout here now, which is the layout both were minted for.
+    assert f"var({token})" in body(), f"{token} is still unpainted"
 
 
 def test_the_running_measure_is_not_reopened_here():

@@ -35,6 +35,20 @@ the clause is kept anyway, because an equality between two live measurements is
 the stronger assertion on its own terms: it needs no figure to be re-measured
 when the pin is next moved forward.
 
+## ⛔ Why the column check now names a WIDTH, and what it excludes at one of them
+
+⚠️ **`W325` gave the page two shapes.** The containers rail sits BESIDE the
+reading column where a viewport has room for one and folds back INTO it where it
+has not — so *"every chrome region resolves the reading surface's column"* is
+true of every region at one width and of every region but that one at the other.
+
+⛔ **The answer is a width-scoped exclusion and never an unconditional one.** The
+wide check states its width instead of inheriting the launch window's, drops the
+rail by name, and the narrow check runs the same arithmetic over the population
+with **nothing** taken out. ⭐ So the region excluded at one width is compared at
+the other, which is what keeps the exclusion from being the silent hole `W98`
+was.
+
 ## ⭐ The one question this module still cannot ask — ⛔ THE GATE IS NOW OPEN
 
 ⚠️ **Nothing here asserts that the reading column is the measure the palette
@@ -65,7 +79,7 @@ import json
 import pytest
 
 from tests.visual import site
-from tests.visual.page import OpenPage
+from tests.visual.page import NARROW, WIDE, OpenPage
 
 #: Where the reading surface's column is read from. ⛔ `main#content` and not a
 #: number: it is the element `reading.css` and `chrome.css` agree is the column,
@@ -79,6 +93,16 @@ READING_SURFACE = "main#content"
 #: ⭐ Named here rather than filtered out by a rule, and asserted to be a member
 #: of the population, so it cannot become a silent hole if the table is rewritten.
 THE_COLUMN_ITSELF = "body"
+
+#: The one chrome-ruled region that is not compared against the reading surface
+#: **at the wide width**, and why. ⛔ `W325` put the containers rail BESIDE the
+#: column rather than above it, so at a viewport with room for one it resolves
+#: `--rail` and not the column — deliberately, and it is the only region that
+#: does. ⭐ **The exclusion is not a hole, because it is width-scoped:** the same
+#: region IS compared, with every other, at `NARROW`, where the rail folds back
+#: into the column. ⚠️ Named here rather than filtered by a rule, and asserted to
+#: be a member of the population, for `THE_COLUMN_ITSELF`'s reason.
+THE_RAIL_BESIDE_THE_COLUMN = 'nav[aria-label="Containers"]'
 
 #: How far two columns may differ and still be the same column, in CSS pixels.
 #: ⛔ **Not a font threshold**, which is why Ruling 236 permits it: both sides of
@@ -142,6 +166,11 @@ def test_the_region_population_is_inhabited_and_is_the_disposition_tables() -> N
     assert THE_COLUMN_ITSELF in regions, (
         f"{THE_COLUMN_ITSELF!r} is excluded from the column comparison as a region that "
         f"exists; it is not in {regions}, so the exclusion now hides nothing and says nothing"
+    )
+    assert THE_RAIL_BESIDE_THE_COLUMN in regions, (
+        f"{THE_RAIL_BESIDE_THE_COLUMN!r} is excluded from the WIDE column comparison as a "
+        f"region that exists; it is not in {regions}, so the exclusion hides nothing — and "
+        f"the narrow check below would then be asserting an equality over one region fewer"
     )
 
 
@@ -225,6 +254,27 @@ def test_the_census_notices_a_tree_with_no_chrome_in_it(
     )
 
 
+def _adrift(open_page: OpenPage, compared: tuple[str, ...], case: str) -> list[str]:
+    """Which of `compared` resolve a column other than the reading surface's.
+
+    ⭐ Lifted out of the clause it served so the wide reading and the narrow one
+    are the SAME arithmetic over two different populations — two copies of it
+    would be two chances to write the comparison differently by accident.
+    """
+    surface = _columns(open_page, (READING_SURFACE,))
+    assert surface, f"{case} has no {READING_SURFACE}, so there is nothing to compare against"
+    column = float(surface[0][1])
+    measured = _columns(open_page, compared)
+    assert measured, (
+        f"{case} carries no chrome region at all, so this check would pass over nothing"
+    )
+    return [
+        f"{selector} is {float(width):.2f}px against {READING_SURFACE}'s {column:.2f}px"
+        for selector, width in measured
+        if abs(float(width) - column) > SAME_COLUMN
+    ]
+
+
 @pytest.mark.parametrize("case", site.pages())
 def test_every_chrome_region_resolves_the_same_column_as_the_reading_surface(
     open_page: OpenPage, built_site: site.Site, case: str
@@ -235,24 +285,49 @@ def test_every_chrome_region_resolves_the_same_column_as_the_reading_surface(
     inherited font, so one correct declaration produces as many columns as there
     are fonts on the page. ⚠️ This is an equality between two live measurements
     and never a px figure from a file — see this module's docstring and Ruling 236.
+
+    ⛔ **`W325` took the containers rail OUT of this population and put the width
+    IN.** The rail is now beside the column at a wide viewport, so it resolves
+    `--rail` by design; the width is set here rather than inherited from the
+    launch window so that *"wide"* is a stated fact about this reading, and the
+    check below re-admits the rail at the narrow width, where it folds back in.
     """
+    open_page.resize(*WIDE)
+    open_page.open(built_site.url(case))
+    compared = tuple(
+        region
+        for region in site.chrome_regions()
+        if region not in (THE_COLUMN_ITSELF, THE_RAIL_BESIDE_THE_COLUMN)
+    )
+    adrift = _adrift(open_page, compared, case)
+    assert not adrift, (
+        f"{case} at {WIDE[0]}px: {len(adrift)} chrome region(s) resolving a column of "
+        "their own:\n  " + "\n  ".join(adrift[:REPORTED])
+    )
+
+
+@pytest.mark.parametrize("case", site.pages())
+def test_at_a_narrow_viewport_every_chrome_region_including_the_rail_is_the_column(
+    open_page: OpenPage, built_site: site.Site, case: str
+) -> None:
+    """⛔ `W325`'s degradation clause, and the other half of the exclusion above.
+
+    ⚠️ **A rail squeezed against prose is the failure this forbids**, and the
+    shape chosen instead is the card `W324` shipped — the region back in the one
+    column, above the reading surface. ⭐ So the assertion is not a new one: it is
+    the SAME equality, over the population with nothing taken out of it.
+
+    ⛔ **This is what stops the wide exclusion being a hole.** A rail excluded at
+    one width and never compared at any other is a region no column check reaches.
+    """
+    open_page.resize(*NARROW)
     open_page.open(built_site.url(case))
     compared = tuple(region for region in site.chrome_regions() if region != THE_COLUMN_ITSELF)
-    surface = _columns(open_page, (READING_SURFACE,))
-    assert surface, f"{case} has no {READING_SURFACE}, so there is nothing to compare against"
-    column = float(surface[0][1])
-    measured = _columns(open_page, compared)
-    assert measured, (
-        f"{case} carries no chrome region at all, so this check would pass over nothing"
-    )
-    adrift = [
-        f"{selector} is {float(width):.2f}px against {READING_SURFACE}'s {column:.2f}px"
-        for selector, width in measured
-        if abs(float(width) - column) > SAME_COLUMN
-    ]
+    assert THE_RAIL_BESIDE_THE_COLUMN in compared, compared
+    adrift = _adrift(open_page, compared, case)
     assert not adrift, (
-        f"{case}: {len(adrift)} chrome region(s) resolving a column of their own:\n  "
-        + "\n  ".join(adrift[:REPORTED])
+        f"{case} at {NARROW[0]}px: {len(adrift)} chrome region(s) resolving a column of "
+        "their own:\n  " + "\n  ".join(adrift[:REPORTED])
     )
 
 
@@ -266,8 +341,13 @@ def test_the_column_check_notices_a_region_given_a_measure_of_its_own(
     passes on that tree, which is the whole argument for this one.
     """
     broken = damaged_sites["column"]
-    compared = tuple(region for region in site.chrome_regions() if region != THE_COLUMN_ITSELF)
+    compared = tuple(
+        region
+        for region in site.chrome_regions()
+        if region not in (THE_COLUMN_ITSELF, THE_RAIL_BESIDE_THE_COLUMN)
+    )
     caught = {}
+    open_page.resize(*WIDE)
     for case in site.pages():
         open_page.open(broken.url(case))
         surface = _columns(open_page, (READING_SURFACE,))

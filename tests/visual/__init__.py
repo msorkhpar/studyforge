@@ -76,4 +76,10 @@ ACCEPTANCE = {
     #: resolves, and lands on the right page"* is a claim about a built SITE,
     #: and the four rows above are claims about one page at a time.
     "follows the rail from one container to a unit in another (W324)": "test_rail",
+    #: ⭐ `W325`'s clause, and it is a SEVENTH row for the reason the sixth was
+    #: one: *"a bar down the LEFT of the reading column, and something usable
+    #: where there is no room for one"* is a claim about the page's SHAPE at a
+    #: named width, which none of the rows above takes a width to answer.
+    "places that rail beside the reading column, and folds it back in when "
+    "there is no room (W325)": "test_rail",
 }
