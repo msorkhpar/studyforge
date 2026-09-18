@@ -9,10 +9,11 @@ cannot come to disagree with a stage about what an argument means.
 registers as `studyforge`, and `python3 -m studyforge.cli`. `VERBS` is the
 registered table, read by the authoring checks rather than re-listed by them.
 
-**Depends on.** `validate.cli` for `UNUSABLE`. Each stage's `cli` module is
-imported by a loader function here, and only when its verb is dispatched.
-⛔ No stage imports this one — the direction is one-way, so a stage stays
-runnable as `python3 -m studyforge.<stage>` with the dispatcher absent.
+**Depends on.** `studyforge.exitcodes` for `UNUSABLE` — a module that belongs to
+no stage and imports nothing. Each stage's `cli` module is imported by a loader
+function here, and only when its verb is dispatched. ⛔ No stage imports this
+one — the direction is one-way, so a stage stays runnable as
+`python3 -m studyforge.<stage>` with the dispatcher absent.
 
 ## ⛔ A verb is resolved when it is DISPATCHED, not when this module loads
 
@@ -21,10 +22,15 @@ of every verb's entry point made importing one verb load all of them (`W223/1`).
 ⭐ A `Verb` carries a `load` function, a plain import statement in a body, and
 `Verb.run` calls it when read. ⚠️ It is an IMPORT STATEMENT and never a module
 reached by name: `tests/harness/test_isolation.py` refuses `importlib` in
-framework source (R1). ⚠️ `validate.cli` is loaded with this module regardless,
-because `UNUSABLE` is imported from it. ⛔ **A loader registers nothing: `VERBS`
-is the only place a verb is named** (`SF-40`), and `run` is the same callable
-object the verb's module defines.
+framework source (R1). ⛔ **A loader registers nothing: `VERBS` is the only
+place a verb is named** (`SF-40`), and `run` is the same callable object the
+verb's module defines.
+
+⚠️ **`W293` left one verb loaded anyway and `W320` removed it.** `UNUSABLE` was
+imported from `validate.cli`, so importing the command loaded the validator —
+the property held for four verbs of five, and the mirror had to hold `validate`
+exempt. ⭐ The constant now lives in `studyforge.exitcodes`, which is no verb's,
+so **importing this module loads no verb at all** and the exemption is gone.
 
 ## ⛔ A verb is registered here only when it can be RUN
 
@@ -45,7 +51,7 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 
-from studyforge.validate.cli import UNUSABLE
+from studyforge.exitcodes import UNUSABLE
 
 #: The command a user types. ⛔ One name, and `pyproject.toml` registers this
 #: same spelling — `tests/studyforge/cli/test_dispatch.py` asserts they agree,
@@ -138,7 +144,7 @@ def usage() -> list[str]:
 def main(argv: list[str] | None = None, out=None) -> int:
     """Dispatch one verb and return its exit code, or say what the verbs are.
 
-    ⛔ `2` for no verb and for an unknown one, which is `validate`'s `UNUSABLE`
+    ⛔ `2` for no verb and for an unknown one, which is the shared `UNUSABLE`
     imported rather than respelled: the tool could not run, and that is not a
     verdict about anybody's corpus.
     """

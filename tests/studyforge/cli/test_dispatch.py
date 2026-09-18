@@ -8,6 +8,14 @@ declared, and a second list in a test is a second place.
 `sys.modules` in a FRESH interpreter (the instrument `W223` shipped in
 `tests/studyforge/narrate/test_wire.py`), never over source text, which cannot
 see an import (`SF-38/9`). The verb modules come from `VERBS`' own entry points.
+
+⛔ **`W320`: NO verb, and no exemption left.** `W293` held
+`studyforge.validate.cli` exempt because `UNUSABLE` was imported from it; the
+constant moved to `studyforge.exitcodes`, so the assertion is `[]` and
+`validate` is now one of the verbs the control dispatches. ⚠️ **That exemption
+was also this file's inhabitation reading** — the one module both instruments
+were known to see — so `SHARED` takes that role: it is imported from the
+dispatcher's own module body, and it is no verb.
 """
 
 from __future__ import annotations
@@ -20,7 +28,7 @@ import tomllib
 import pytest
 
 from studyforge.cli import PROGRAM, VERBS, main, usage
-from studyforge.validate.cli import UNUSABLE
+from studyforge.exitcodes import UNUSABLE
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
 from tests.support import repository_root, run
@@ -44,9 +52,11 @@ if sys.argv[3:]:
 print(json.dumps(sorted(name for name in sys.modules if name.startswith("studyforge."))))
 """
 
-#: ⚠️ The dispatcher's own `UNUSABLE` is `validate.cli`'s, imported rather than
-#: respelled, so that one verb module is loaded with the dispatcher by design.
-HELD = "studyforge.validate.cli"
+#: ⭐ The one module the dispatcher's body does import, and it is no verb
+#: (`W320`). ⛔ It is watched as the INHABITATION of the two instruments below:
+#: a finder that reports nothing has the same reading as a finder that is
+#: broken, and this is the module that tells them apart.
+SHARED = "studyforge.exitcodes"
 
 
 def loaded_by(importer: str, *dispatched: str) -> list[str]:
@@ -57,7 +67,7 @@ def loaded_by(importer: str, *dispatched: str) -> list[str]:
     return json.loads(result.stdout.strip().splitlines()[-1])
 
 
-#: Import one module in a clean interpreter, and print every verb module that
+#: Import one module in a clean interpreter, and print every WATCHED module that
 #: was imported while the dispatcher's own module body was on the stack.
 #: ⭐ A meta-path finder that finds nothing only watches; the import proceeds.
 THROUGH = """
@@ -79,10 +89,16 @@ print(json.dumps(sorted(seen)))
 """
 
 
-def loaded_through_the_dispatcher(importer: str) -> list[str]:
-    """The verb modules a fresh interpreter imports from the dispatcher's module body."""
+def loaded_through_the_dispatcher(importer: str, watched: list[str] | None = None) -> list[str]:
+    """Which of `watched` a fresh interpreter imports from the dispatcher's module body.
+
+    ⭐ `watched` defaults to every verb module. Passing `[SHARED]` instead is how
+    the same instrument is read for inhabitation rather than for the claim.
+    """
     root = repository_root()
-    verbs = json.dumps(sorted(module_of(name) for name in VERBS))
+    if watched is None:
+        watched = sorted(module_of(name) for name in VERBS)
+    verbs = json.dumps(sorted(watched))
     result = run([sys.executable, "-c", THROUGH, str(root / "src"), importer, verbs], root)
     assert result.returncode == 0, result.stderr
     return json.loads(result.stdout.strip().splitlines()[-1])
@@ -183,13 +199,18 @@ def test_the_usage_text_lists_every_registered_verb_with_its_summary():
 
 @pytest.mark.parametrize("importer", ["studyforge.cli", "studyforge.cli.dispatch"])
 def test_importing_the_command_loads_no_verb_in_a_fresh_interpreter(importer):
+    # ⛔ `W320`: EVERY verb, with nothing held exempt. ⭐ The two inhabitation
+    # readings are the dispatcher itself (the child got that far) and `SHARED`
+    # (its body really did import something), so an empty `eager` cannot be a
+    # child that imported nothing.
     loaded = loaded_by(importer)
     assert "studyforge.cli.dispatch" in loaded, "the child never reached the dispatcher"
+    assert SHARED in loaded, "the child loaded no shared exit code, so it read nothing"
     eager = [module_of(name) for name in VERBS if module_of(name) in loaded]
-    assert eager == [HELD], f"importing {importer} loaded verbs nobody dispatched: {eager}"
+    assert eager == [], f"importing {importer} loaded verbs nobody dispatched: {eager}"
 
 
-@pytest.mark.parametrize("name", sorted(set(VERBS) - {"validate"}))
+@pytest.mark.parametrize("name", sorted(VERBS))
 def test_dispatching_a_verb_loads_that_verb_in_the_same_instrument(name):
     # ⭐ The control, and the other half of the clause: the child that sees no
     # verb above sees this one arrive once `run` is read.
@@ -204,9 +225,12 @@ def test_importing_one_verbs_module_loads_no_other_verb_through_the_dispatcher(n
     # ⛔ The row's clause read per verb, over the verbs whose module runs this
     # package when imported: whatever else that module imports is its own
     # dependency, and none of it arrives by way of the dispatcher.
-    # ⭐ Inhabitation: `HELD` is imported from the dispatcher's body in every
-    # child, so an instrument that could not see that route would fail here.
-    assert loaded_through_the_dispatcher(module_of(name)) == [HELD]
+    # ⭐ Inhabitation (`W320`): the same finder, in the same child, is read for
+    # `SHARED` — which the dispatcher's body does import — so a watcher that
+    # could not see that route reds here instead of reporting the empty list
+    # below as a pass.
+    assert loaded_through_the_dispatcher(module_of(name), [SHARED]) == [SHARED]
+    assert loaded_through_the_dispatcher(module_of(name)) == []
 
 
 def test_importing_the_plan_no_longer_loads_the_narrate_verb():
