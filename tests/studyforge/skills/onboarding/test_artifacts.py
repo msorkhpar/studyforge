@@ -4,6 +4,11 @@
 clauses** (`W331`): they are in `test_nondestructive.py`, which runs the check
 rather than only parsing it.
 
+⚠️ **`W313`'s figure-by-figure clauses moved to `test_standing.py`** (`W332`):
+the document states no figure, so what is asserted here is that it states NONE
+of them, under a corpus whose state moved after it was written, and that the
+command it prints instead answers from the corpus as it is.
+
 ⭐ **The test that matters most here asserts coverage, not a list.** A seventh
 artifact added without a `content.not_material` glob is an `unclassified`
 finding in somebody else's repository, discovered by them; this asks the same
@@ -15,7 +20,6 @@ from __future__ import annotations
 import os
 import subprocess
 import sys
-from dataclasses import replace
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.cli.narrate.stage import narrate_corpus
@@ -27,6 +31,7 @@ from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.onboard import onboard
 from studyforge.skills.onboarding.pin import FRAMEWORK
 from studyforge.skills.onboarding.standing import Standing
+from studyforge.skills.onboarding.standing import lines as standing_lines
 from tests.studyforge.cli.narrate.service import BASE, FMT, VOICE, FakeService
 from tests.studyforge.skills.adapter import corpora as adapter
 from tests.studyforge.skills.onboarding import corpora
@@ -46,6 +51,11 @@ EDIT = {
 
 def _document(manifest, hand_written=(), **given):
     return artifacts.reader_document(manifest, hand_written, commit=corpora.COMMIT, **given)
+
+
+def _reader(made):
+    """The reader's document out of one `Onboarding`, without writing anything to disk."""
+    return next(file.text for file in made.files if file.where == artifacts.READER_DOC)
 
 
 def _manifest(**changes):
@@ -101,8 +111,7 @@ def test_the_reader_document_is_written_from_the_declarations_rather_than_invent
     assert "A Walkthrough Corpus" in text
     assert "course" in text
     assert "ingest/read.py" in text
-    assert "Not read" in text, "a unit count without a reading would be invented"
-    assert "units:" not in text
+    assert "units:" not in text, "a count here would be a fact nothing refreshes"
 
 
 def test_a_corpus_with_no_graders_is_told_it_is_complete_rather_than_short():
@@ -142,51 +151,46 @@ def test_every_reason_clears_the_minimum_the_manifest_enforces():
 
 
 # --------------------------------------------------------------------------
-# ⛔ `W313` — the document states what the build read, and nothing it did not
+# ⛔ `W332` — the document states no live count, it points at what answers
 # --------------------------------------------------------------------------
 
+#: Every figure `W313` used to freeze into this document. ⭐ A reading that
+#: produces all four, so the "none of them is here" clause has a control.
 READ = Standing(read=True, declared=3, units=2, narrated=1, reading_only=2, recorded=True)
+FIGURES = ("units:", "narrated:", "reading-only:", "container:")
 
 
-def test_a_reading_is_stated_figure_by_figure():
-    text = _document(_manifest(), standing=READ)
+def test_it_says_where_the_state_is_read_and_why_it_is_not_stated_here():
+    # ⛔ THE SECTION. ⚠️ The figures themselves are asserted absent where they
+    # used to appear — on an INGESTED corpus, in the row's own clause below —
+    # because before ingest even the old document printed none.
+    text = _document(_manifest(), ("ingest/read.py",))
 
-    assert "- units: 3 declared, 2 with material" in text
-    assert "- narrated: 1 of 2\n" in text
-    assert "- reading-only: 2 of 2" in text
-    assert "container: none needed" in text
-    assert "Nothing has been ingested" not in text and "Not read" not in text
-
-
-def test_a_unit_declaring_a_practice_is_stated_as_needing_a_container():
-    # ⛔ Both ways (R12): the same reading with one unit that is not reading-only.
-    text = _document(_manifest(), standing=replace(READ, reading_only=1))
-
-    assert "container: needed, because 1 unit(s) declare a graded practice" in text
-    assert "none needed" not in text
+    assert "## Where it stands" in text
+    assert "so it states no figure" in text
+    assert "narrating writes clips" in text
+    assert STANDS in text
 
 
-def test_a_corpus_with_no_narration_record_is_told_so_beside_the_zero():
-    silent = _document(_manifest(), standing=replace(READ, narrated=0, recorded=False))
-    recorded = _document(_manifest(), standing=replace(READ, narrated=0))
+def test_every_figure_this_document_no_longer_states_is_produced_by_the_renderer():
+    # ⛔ One producer (Ruling 330), and the CONTROL for `FIGURES`: a spelling
+    # that no renderer produces would make every "it is not in the document"
+    # clause pass over nothing. ⭐ Both sides read from the same tuple.
+    rendered = "\n".join(standing_lines(READ))
 
-    assert "- narrated: 0 of 2 (there is no narration record yet)" in silent
-    assert "no narration record" not in recorded
-
-
-def test_before_ingest_it_says_plainly_that_nothing_is_known_and_prints_no_figure():
-    text = _document(_manifest(), standing=Standing())
-
-    assert "Nothing has been ingested" in text
-    assert "units:" not in text and "narrated:" not in text
+    assert [figure for figure in FIGURES if figure not in rendered] == []
+    assert [figure for figure in FIGURES if figure in _document(_manifest())] == []
 
 
-def test_a_corpus_the_build_refuses_is_named_as_unread_with_the_refusal():
-    text = _document(_manifest(), standing=Standing(refused="the record\nis broken"))
+def test_the_document_is_the_same_whether_or_not_a_corpus_root_was_read(tmp_path):
+    # ⭐ The structural half: nothing in it is a reading, so a reading cannot
+    # date it. ⚠️ `root=` still moves the framework address (`W321`), so the
+    # corpus compared here is its own main checkout.
+    root, _bin = _fresh_clone(tmp_path)
+    with_root = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
+    without = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT)
 
-    assert "Not known" in text
-    assert "> the record is broken" in text
-    assert "units:" not in text
+    assert _reader(with_root) == _reader(without)
 
 
 def test_the_commands_carry_the_pin_the_framework_sibling_and_the_adapter_package():
@@ -255,31 +259,77 @@ def _narrate(root):
     narrate_corpus(root, client, voice=VOICE, fmt=FMT)
 
 
+#: The fence the document prints instead of a figure (`W332`). ⚠️ It is the
+#: LAST fenced line, after the ingest the fresh-clone section commands, so a
+#: reader working down the page reads a standing off the corpus they just built.
+STANDS = "python3 -m studyforge.skills.onboarding ."
+
+
+def _stood(results):
+    """What the standing command printed, out of everything the fences printed."""
+    return next(said for line, _code, said in results if STANDS in line)
+
+
+def _stand_alone(root, text, bin_dir):
+    """Run the standing fence, and only it, exactly as the document prints it."""
+    line = next(fenced for fenced in _fenced(text) if STANDS in fenced)
+    return _stood(_run_as_written(root, f"```\n{line}\n```", bin_dir))
+
+
 def test_every_command_runs_as_written_before_ingest_and_after_narration(tmp_path):
     # ⛔ Clauses 1, 2 and 4, over one fabricated corpus: every fenced line is
-    # EXECUTED from the corpus root, and the state is read before and after.
+    # EXECUTED from the corpus root. ⭐ `W332`: the standing fence is read three
+    # times off the SAME never-rewritten document — before the ingest the page
+    # commands, after it, and after a narration — and answers differently each
+    # time, which is the property a printed figure cannot have.
     root, bin_dir = _fresh_clone(tmp_path)
     made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
     made.write(root)
     (root / made.hand_written[0]).write_text(adapter.READ, encoding="utf-8")
     before = (root / artifacts.READER_DOC).read_text(encoding="utf-8")
 
+    unread = _stand_alone(root, before, bin_dir)
     ran = _run_as_written(root, before, bin_dir)
     _narrate(root)
-    after = _regenerate(root)
+    spoken = _stand_alone(root, before, bin_dir)
 
-    assert "Nothing has been ingested" in before
+    assert "Nothing has been ingested" in unread, "nothing is ingested yet"
     assert len(ran) == len(_fenced(before)) > 1
     assert [(line, code) for line, code, _ in ran if code != 0] == [], ran
-    assert "- units: 2 declared, 2 with material" in after
-    assert "- narrated: 2 of 2\n" in after
-    assert "- reading-only: 2 of 2" in after and "container: none needed" in after
-    assert all(code == 0 for _, code, _ in _run_as_written(root, after, bin_dir))
+    assert "- units: 2 declared, 2 with material" in _stood(ran)
+    assert "- narrated: 0 of 2 (there is no narration record yet)" in _stood(ran)
+    assert "- reading-only: 2 of 2" in _stood(ran)
+    assert "container: none needed" in _stood(ran)
+    assert "- narrated: 2 of 2\n" in spoken, "and the same document, unchanged, now says so"
+
+
+def test_the_document_that_was_written_before_narration_is_not_contradicted_by_it(tmp_path):
+    # ⛔ THE ROW, end to end and without a regeneration: the corpus is ingested,
+    # the document is written, narration moves the state — and the document
+    # says nothing that narration made untrue, while the command it prints
+    # answers from the corpus as it now is. ⭐ Both halves of clause 3.
+    root, bin_dir = _fresh_clone(tmp_path)
+    made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
+    made.write(root)
+    (root / made.hand_written[0]).write_text(adapter.READ, encoding="utf-8")
+    ingest = [line for line in _fenced(_regenerate(root)) if " -m ingest " in line]
+    _run_as_written(root, "```\n" + "\n".join(ingest) + "\n```", bin_dir)
+    text = (root / artifacts.READER_DOC).read_text(encoding="utf-8")
+    silent = _stood(_run_as_written(root, text, bin_dir))
+
+    _narrate(root)
+    spoken = _stood(_run_as_written(root, text, bin_dir))
+
+    assert (root / artifacts.READER_DOC).read_text(encoding="utf-8") == text
+    assert [figure for figure in FIGURES if figure in text] == []
+    assert "- narrated: 0 of 2 (there is no narration record yet)" in silent
+    assert "- narrated: 2 of 2\n" in spoken
 
 
 def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
-    # ⛔ Clause 3: a second run diffs empty, R7's gate passes, and the reading
-    # moves when — and only when — the corpus does.
+    # ⛔ Clause 3: a second run diffs empty and R7's gate passes. ⭐ `W332`
+    # strengthens the third reading: a regeneration AFTER narration is
+    # byte-identical too, because the document holds nothing that moved.
     root, bin_dir = _fresh_clone(tmp_path)
     made = onboard(corpora.SETTLED, framework_commit=corpora.COMMIT, root=root)
     made.write(root)
@@ -297,8 +347,7 @@ def test_regeneration_is_idempotent_clean_and_follows_the_state(tmp_path):
     assert first == second
     assert moved == []
     assert hand_edited(root) == []
-    assert "- narrated: 0 of 2 (there is no narration record yet)" in first
-    assert "- narrated: 2 of 2\n" in third
+    assert first == third, "a regeneration after narration moves nothing: there is no figure"
     for text in (first, third):
         assert_clean(text, artifacts.READER_DOC)
         assert str(tmp_path) not in text

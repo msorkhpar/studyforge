@@ -13,8 +13,7 @@ skill's own documents into one file set, and writes it all or none of it.
     made.write(corpus_root)          # ⛔ refuses to overwrite anything
 
 **Depends on.** `corpus.manifest`, `skills.adapter` for the scaffold, this
-package's own renderers, `standing` for where the corpus at `root` stands, and
-`record` for the install record. ⛔ Not on
+package's own renderers, and `record` for the install record. ⛔ Not on
 `validate`: what this writes is a corpus, and the corpus's own generated tests
 are what call it.
 
@@ -83,7 +82,6 @@ from studyforge.skills.onboarding.pin import (
     stub_paths,
 )
 from studyforge.skills.onboarding.record import OnboardingRefused
-from studyforge.skills.onboarding.standing import Standing, standing_of
 
 #: Which step of `SKILL.md` writes this skill's own documents.
 STEP = 3
@@ -244,11 +242,12 @@ def onboard(
     `framework_commit` is the sibling checkout's recorded commit — the pin file
     is where the workspace's own record of it lands (`FND-05a`). `existing` is
     the text of the `corpus.json` a re-onboarding finds on disk (`W283`); a
-    first onboarding passes nothing and is unchanged. `root` is the corpus the
-    reader's document reads its state from (`W313`) **and the root every
-    generated document addresses the framework from** (`W321`); without it, the
-    document says the state was not read and addresses the framework the way a
-    corpus that is its own main checkout does — which `write` then checks.
+    first onboarding passes nothing and is unchanged. `root` is **the root every
+    generated document addresses the framework from** (`W321`); without it, they
+    address it the way a corpus that is its own main checkout does — which
+    `write` then checks. ⛔ **The reader's document reads no state from it**
+    (`W332`): it states no figure, so there is none for a later `narrate` to
+    make untrue, and it is the same document with `root` and without.
     """
     framework = framework_from(root)
     kept = _declared(existing) if existing is not None else ()
@@ -275,10 +274,9 @@ def onboard(
                 manifest,
                 made.hand_written,
                 commit=framework_commit,
-                standing=_standing(root),
                 framework=framework,
             ),
-            "what a reader is told, from the declarations and the build's reading",
+            "what a reader is told, from the declarations, and where to read the state",
         ),
     ]
     files.append(_own(RECORD_FILE, record.render(files), "what uninstall undoes, and its digests"))
@@ -290,11 +288,6 @@ def onboard(
         generated=generated,
         framework=framework,
     )
-
-
-def _standing(root: Path | str | None) -> Standing | None:
-    """Return where the corpus at `root` stands, or None when no root was named."""
-    return None if root is None else standing_of(root)
 
 
 def _declared(text: str) -> tuple[dict[str, str], ...]:

@@ -6,9 +6,10 @@ material, how many a page would narrate, how many are reading-only, and whether
 any unit needs a container — or that nothing has been ingested, or why the
 corpus could not be read.
 
-**How you use it.** `standing_of(root)`, then hand the answer to
-`artifacts.reader_document(..., standing=...)`. `onboard(..., root=...)` does
-both. ⛔ Nothing raises for a corpus the build refuses: the refusal is the answer.
+**How you use it.** `standing_of(root)` reads it and `lines(standing)` renders
+it; `cli.main` is the two together, which is what
+`python3 -m studyforge.skills.onboarding <corpus-root>` runs.
+⛔ Nothing raises for a corpus the build refuses: the refusal is the answer.
 
 **Depends on.** `generate` for the declarations (`read_corpus`,
 `unit_location`), `narrate.synth` for the narration record (`read_state`) and
@@ -28,6 +29,19 @@ the calls `generate.narration.heard` and `recorded` make, asked of surfaces.
   `generate.declared_practices` reads it, is zero.
 - **container** — needed exactly when some unit declares a practice, because
   a graded practice runs in the pinned toolchain and a reading page never does.
+
+## ⛔ The figures are rendered HERE, and the reader's document only points here
+
+⚠️ **`W313` put these figures into `ONBOARDING.md` and nothing refreshed them.**
+⭐ `studyforge narrate` writes the narration record and a re-ingest rewrites the
+archive; neither rewrites a generated document, so the number a reader opened
+first could only be kept freshly wrong (`W332`, and Ruling 161's reading of the
+same property one level up).
+
+⭐ **So `lines` lives beside the reading that produces it**, the command prints
+what it renders, and `artifacts` prints the invocation instead of the answer.
+⛔ **One producer** (Ruling 330): there is exactly one place that turns a
+`Standing` into prose, and no document holds a second copy of its figures.
 """
 
 from __future__ import annotations
@@ -96,6 +110,45 @@ def standing_of(root: Path | str | None) -> Standing:
         reading_only=sum(1 for source in corpus.units if not source.declared_practices),
         recorded=state.present,
     )
+
+
+def lines(standing: Standing) -> list[str]:
+    """Render one `Standing` as a person reads it: its figures, or plainly why there are none.
+
+    ⛔ **The one place a figure becomes prose** (Ruling 330). ⚠️ Every line is
+    derived from the argument, so a reader that answered a constant would be
+    caught by the same clause that catches a wrong count. ⛔ **No path, no
+    identity, no hostname** (R7): a refusal names the record it could not read.
+    """
+    if standing.refused:
+        return [
+            "Not known: the corpus could not be read the way a build reads it, so",
+            "none of its figures are stated. The build's refusal was:",
+            "",
+            f"> {' '.join(standing.refused.split())}",
+        ]
+    if not standing.read:
+        return [
+            "Nothing has been ingested: there is no archive yet, so how many units",
+            "there are, how many are narrated and whether any needs a container are",
+            "questions the archive and the narration record answer, not the manifest.",
+        ]
+    units = standing.units
+    needing = units - standing.reading_only
+    return [
+        "Read from the archive and the narration record, the way a build reads them:",
+        "",
+        f"- units: {standing.declared} declared, {units} with material",
+        f"- narrated: {standing.narrated} of {units}"
+        + ("" if standing.recorded else " (there is no narration record yet)"),
+        f"- reading-only: {standing.reading_only} of {units}",
+        "- container: "
+        + (
+            f"needed, because {needing} unit(s) declare a graded practice"
+            if standing.container
+            else "none needed, because no unit declares a graded practice"
+        ),
+    ]
 
 
 def _document(source: UnitSource) -> dict:

@@ -3,18 +3,24 @@
 ⭐ Every figure is asserted against a corpus whose state the test MADE — ingested,
 narrated through the recording fake, a clip removed, a practice declared — and
 each clause both ways, so a reader that answered a constant would fail one side.
+
+⛔ **`W332` moved the RENDERING here too**, out of the reader's document, so
+there is one place a figure becomes prose (Ruling 330). The clauses below the
+rule assert that rendering; `test_artifacts.py` asserts the document holds none
+of it.
 """
 
 from __future__ import annotations
 
 import shutil
+from dataclasses import replace
 
 from studyforge.cli.narrate.stage import narrate_corpus
 from studyforge.generate import read_corpus, unit_location
 from studyforge.generate.narration import recorded
 from studyforge.narrate.client import NarrateClient
 from studyforge.narrate.synth import audio_dir, state_file
-from studyforge.skills.onboarding.standing import Standing, standing_of
+from studyforge.skills.onboarding.standing import Standing, lines, standing_of
 from tests.studyforge.cli.narrate.service import BASE, FMT, VOICE, FakeService
 from tests.studyforge.generate.corpora import a_corpus
 
@@ -108,3 +114,66 @@ def test_a_container_map_the_build_refuses_is_a_refusal_not_an_exception(tmp_pat
 
     assert not found.read and found.refused
     assert str(tmp_path) not in found.refused
+
+
+# --------------------------------------------------------------------------
+# ⛔ `W332` — the one place a figure becomes prose, and it is not a document
+# --------------------------------------------------------------------------
+
+READ = Standing(read=True, declared=3, units=2, narrated=1, reading_only=2, recorded=True)
+
+
+def test_a_reading_is_rendered_figure_by_figure():
+    said = "\n".join(lines(READ))
+
+    assert "- units: 3 declared, 2 with material" in said
+    assert "- narrated: 1 of 2\n" in said
+    assert "- reading-only: 2 of 2" in said
+    assert "container: none needed" in said
+    assert "Nothing has been ingested" not in said and "Not known" not in said
+
+
+def test_a_unit_declaring_a_practice_is_rendered_as_needing_a_container():
+    # ⛔ Both ways (R12): the same reading with one unit that is not reading-only.
+    said = "\n".join(lines(replace(READ, reading_only=1)))
+
+    assert "container: needed, because 1 unit(s) declare a graded practice" in said
+    assert "none needed" not in said
+
+
+def test_a_corpus_with_no_narration_record_is_told_so_beside_the_zero():
+    silent = "\n".join(lines(replace(READ, narrated=0, recorded=False)))
+    recorded_too = "\n".join(lines(replace(READ, narrated=0)))
+
+    assert "- narrated: 0 of 2 (there is no narration record yet)" in silent
+    assert "no narration record" not in recorded_too
+
+
+def test_before_ingest_it_says_plainly_that_nothing_is_known_and_renders_no_figure():
+    said = "\n".join(lines(Standing()))
+
+    assert "Nothing has been ingested" in said
+    assert "units:" not in said and "narrated:" not in said
+
+
+def test_a_corpus_the_build_refuses_is_rendered_as_unread_with_the_refusal():
+    said = "\n".join(lines(Standing(refused="the record\nis broken")))
+
+    assert "Not known" in said
+    assert "> the record is broken" in said
+    assert "units:" not in said
+
+
+def test_the_rendering_follows_a_corpus_that_moves_and_carries_no_path(tmp_path):
+    # ⭐ Both halves against a corpus the test MADE: the prose moves when the
+    # narration does, and neither half spells a path (R7).
+    root = a_corpus(tmp_path, "depth1")
+    before = "\n".join(lines(standing_of(root)))
+    _narrate(root)
+    after = "\n".join(lines(standing_of(root)))
+
+    assert "there is no narration record yet" in before
+    assert "there is no narration record yet" not in after
+    assert before != after
+    for said in (before, after):
+        assert str(tmp_path) not in said and "/home/" not in said
