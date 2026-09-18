@@ -530,9 +530,10 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
 
    ⭐ THE NUMBER IS DERIVED AND IT IS JOINED. `page.html` declares ten top-level
    positions inside `<body>` — the masthead, the reading surface, the script tag
-   and seven slots — so ten is the most grid items a page of this framework can
-   ever put in the reading column, and a rail spanning ten rows spans all of them
-   whatever the page carries. ⛔ The unit mirror reads this number back out of this file and
+   and seven slots — so ten is a CEILING on the grid items a page of this
+   framework can put in the reading column, and it is a generous one: the rail is
+   one of the ten and the script tag is never laid out. ⭐ A rail spanning ten
+   rows therefore spans every row, whatever the page carries. ⛔ The unit mirror reads this number back out of this file and
    asserts it against the skeleton's own count, so a slot added to `page.html` is
    a red check here rather than a rail that stops short of the page's last row.
    ⚠️ The trailing spanned rows are empty and size to nothing, except where the

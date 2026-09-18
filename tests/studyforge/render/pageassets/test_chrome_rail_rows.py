@@ -1,11 +1,11 @@
 """`W326`: the rail's row span, read against the page skeleton it has to cover.
 
 ⛔ **SPLIT OUT OF `test_chrome.py` AT A SEAM, AND THE SEAM IS NAMED** (Ruling
-261). Every check there is a claim about `chrome.css` and the regions the tree
-emits; the one below is a claim about TWO artifacts agreeing — the stylesheet's
-placement of the rail, and the number of top-level positions `page.html` puts in
-`<body>`. ⭐ Neither file can be read alone to answer it, which is why it did not
-grow onto a module whose subject is one of them.
+261). That module's SUBJECT is `chrome.css` and the regions the tree emits; the
+check below has no single subject — it is a claim about TWO artifacts agreeing,
+the stylesheet's placement of the rail and the number of top-level positions
+`page.html` puts in `<body>`. ⭐ Neither file can be read alone to answer it,
+which is why it did not grow onto a module that answers for one of them.
 
 ## ⛔ What shipped, and why a number is written in a stylesheet at all
 

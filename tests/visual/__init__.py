@@ -89,7 +89,7 @@ ACCEPTANCE = {
     #: in a real browser, over a page that opened on the height of the rail in
     #: blank. ⚠️ It runs in a module of its own because it needs a fixture no
     #: other clause here needs: a container with MANY units, which is the only
-    #: size of page this defect is visible on at all.
+    #: size of page this defect reads as a defect on rather than as spacing.
     "sizes the masthead's row by the masthead and not by the rail beside it "
     "(W326)": "test_rail_rows",
 }

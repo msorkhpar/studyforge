@@ -9,9 +9,10 @@ then the height of the rail in blank page.**
 
 ⚠️ **It shipped because every fixture was too small to show it.** The gap is
 exactly the rail's overhang past the masthead, so it scales with the number of
-units the open container declares; over the committed fixture corpora the rail
-is a few rows tall and the overhang is a few dozen pixels that no clause looked
-at. ⛔ **So this module WIDENS a fixture corpus** — one container carried out to
+units the open container declares — and the largest container in any committed
+fixture corpus declares three. ⚠️ At that size the overhang reads as spacing in a
+capture rather than as a defect, and no clause was taking the reading anyway.
+⛔ **So this module WIDENS a fixture corpus** — one container carried out to
 `UNITS` units — and takes its readings on a page inside that container, which is
 the one page whose disclosure is open and whose rail is therefore at full height.
 
