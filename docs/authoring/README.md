@@ -53,8 +53,9 @@ Six steps. Each links to the page that explains it.
 **Two complete corpora are worked through end to end**, in
 [Worked examples](examples.md): a two-level repository with runnable exercises,
 and a one-level flat set of prose with none. Both are in this repository, both
-run, and both are checked by the same test that checks every claim on these
-pages.
+run, and both are validated by the same suite that checks the rest of what is
+checkable here — see [If something here is wrong](#if-something-here-is-wrong)
+for what that is and what it is not.
 
 ---
 
@@ -95,8 +96,8 @@ the key lists, the vocabularies, the check names, the rule ids, the exit codes,
 the two worked examples, which are validated rather than described, and the two
 trees on [Placement](placement.md), which the placement code draws rather than
 this reference describing them. One of those that stops being true fails a test
-rather than misleading you, and no page here may name an instrument that does
-not read it.
+rather than misleading you, and this section may not name an instrument that
+does not read these pages.
 
 **The prose around them is not checked, and this page used to say it was.** The
 reasons, the figures quoted inside a sentence, the advice about what to do
