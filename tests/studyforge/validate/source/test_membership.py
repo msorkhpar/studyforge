@@ -36,6 +36,14 @@ from tests.support import repository_root
 
 STRAY = RULE_ARCHIVE_STRAY
 
+#: The one container every corpus in this module holds, and the variant it
+#: declares. ⛔ **Declared once, here, because every path below is asked of
+#: `Layout` at this address rather than spelled** (`W322`): the address and the
+#: variant are the corpus's own data, and the geography around them —
+#: `archive/`, `raw/`, `units/`, `unit-NN`, and each filename — is the layout's.
+ADDRESS = Address(["demo"])
+VARIANT = "prose"
+
 
 def strays(root: Path) -> list[str]:
     """The paths `validate` refuses as strays, as it names them."""
@@ -96,7 +104,9 @@ def test_a_json_file_beneath_the_variant_at_the_wrong_depth_reads_as_identity_on
     # ⚠️ The walk reads every `.json` beneath a map's variant, so this file is
     # read as a document and `identity` refuses it. One defect, one rule.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
-    good = root / ARCHIVE_DIRNAME / "demo/raw/prose/unit-01/lesson-1.json"
+    # ⭐ The document is asked of `Layout`; the place it is COPIED to is not a
+    # place any layout produces — that is the whole defect — so it stays spelled.
+    good = Layout(root).document(ADDRESS, VARIANT, 1, "lesson", 1)
     plant(root, f"{ARCHIVE_DIRNAME}/demo/raw/prose/lesson-2.json", good.read_text("utf-8"))
     report = validate(root)
     assert "identity" in report.rules
@@ -107,7 +117,7 @@ def test_nothing_beneath_a_map_that_did_not_parse_is_judged_twice(tmp_path):
     # ⛔ `run` already says no document there was read. A stray finding per
     # file would be N findings for one broken map.
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
-    (root / ARCHIVE_DIRNAME / "demo/container.json").write_text("{", encoding="utf-8")
+    Layout(root).container_map(ADDRESS).write_text("{", encoding="utf-8")
     plant(root, f"{ARCHIVE_DIRNAME}/demo/notes.md")
     report = validate(root)
     assert "container" in report.rules
@@ -118,7 +128,7 @@ def test_a_stray_is_never_read_as_material_even_when_the_manifest_includes_it(tm
     # ⛔ Refused, never resolved: no precedence lets `include` claim it.
     manifest = {**corpora.MANIFEST, "content": {"include": ["src/*.md", f"{ARCHIVE_DIRNAME}/*"]}}
     root = corpora.one_unit(tmp_path / "c", source=corpora.SOURCE)
-    (root / "corpus.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    Layout(root).manifest.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     where = plant(root, f"{ARCHIVE_DIRNAME}/notes.md")
     report = validate(root)
     assert strays(root) == [where]
@@ -131,8 +141,6 @@ def test_a_stray_is_never_read_as_material_even_when_the_manifest_includes_it(tm
 # --------------------------------------------------------------------------
 # ⭐ an adapter-written archive reads clean
 # --------------------------------------------------------------------------
-
-ADDRESS = Address(["demo"])
 
 
 def _write(path: Path, text: str) -> None:
@@ -148,7 +156,7 @@ def test_an_archive_laid_out_by_the_adapter_layout_reads_clean(tmp_path):
     container = Container(
         address=ADDRESS,
         titles=("Demo",),
-        variant="prose",
+        variant=VARIANT,
         ingested="2026-01-05",
         units=(Unit(n=1, title="Unit 1", practices=1, origin="src/one.md"),),
     )
@@ -157,7 +165,7 @@ def test_an_archive_laid_out_by_the_adapter_layout_reads_clean(tmp_path):
         document = build(
             source="demo",
             address=ADDRESS,
-            variant="prose",
+            variant=VARIANT,
             unit=1,
             kind=kind,
             ordinal=1,
@@ -165,9 +173,12 @@ def test_an_archive_laid_out_by_the_adapter_layout_reads_clean(tmp_path):
             title="Unit 1",
             blocks=corpora.BLOCKS,
         )
-        _write(layout.document(ADDRESS, "prose", 1, kind, 1), render_document(document))
+        _write(layout.document(ADDRESS, VARIANT, 1, kind, 1), render_document(document))
     _write(layout.unit_files(ADDRESS, 1) / "media" / "diagram.svg", "<svg/>\n")
-    _write(layout.unit_files(ADDRESS, 1) / "content.json", "{}\n")
+    # ⛔ `layout.content`, not the directory plus a typed filename (`W322`): the
+    # overlay's name is the contract's, and a test that spells it is a second
+    # producer of an address `src/` computes in one place.
+    _write(layout.content(ADDRESS, 1), "{}\n")
     report = validate(root)
     assert STRAY not in report.rules, [f.line() for f in report.findings]
     assert len(archive_members(read(root))) == 3
@@ -251,7 +262,7 @@ def test_media_written_inside_the_variant_is_refused_where_it_is_and_where_it_is
     """
     root = declaring(tmp_path / "c", assets=[entry("media/diagram.svg")])
     _write(
-        Layout(root).unit_dir(ADDRESS, "prose", 1) / "media" / "diagram.svg",
+        Layout(root).unit_dir(ADDRESS, VARIANT, 1) / "media" / "diagram.svg",
         "<svg/>\n",
     )
     assert set(validate(root).rules) == {RULE_MEDIA_MISSING, STRAY}

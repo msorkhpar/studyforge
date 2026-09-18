@@ -10,7 +10,18 @@ authored overlay against the unit directory holding it.
 in the package's `__init__` fans them out; nothing here reads a document it was
 not handed.
 
-**Depends on.** `vocabulary`, `corpus` and `personal_data`.
+**Depends on.** `vocabulary`, `corpus` and `personal_data` — and, for every
+archive address it needs, `skills.adapter.Layout`, the one place in `src/` that
+computes one.
+
+⛔ **No address here is composed from a literal** (`W322`, received from
+`W198/4`). The archive root, a container map's filename, a unit's own directory
+and the authored overlay's name are the layout's arithmetic, not this module's:
+each is asked for, and where a **glob** is wanted — a pattern being the one
+thing a layout does not produce — the pattern is derived from what the layout
+computed rather than retyped. ⚠️ A test that invents an address is a build that
+invents it, one register over: it passes while the constant happens to be what
+the test says, and goes silently wrong the day the constant moves.
 
 ⛔ **R4 is what this module is.** The framework never infers what a file *is*
 from where it sits — a generated artifact is locatable only by the identity it
@@ -26,6 +37,12 @@ because either alone passes a corpus that lost the other.
 
 from __future__ import annotations
 
+import re
+from pathlib import Path
+
+from studyforge.address import FIRST_ORDINAL, Address, AddressError, unit_name
+from studyforge.corpus.container import CONTAINER_FILENAME
+from studyforge.skills.adapter import Layout
 from tests.fixture_checks.corpus import archive_files, read_json
 from tests.fixture_checks.personal_data import check_personal_data
 from tests.fixture_checks.vocabulary import CONTAINER_APIS
@@ -36,11 +53,83 @@ OVERLAY_KINDS = ("shared", "lang", "practice")
 #: something it is not the author of.
 DERIVED_FIELDS = ("workspace", "video")
 
+#: The root and the address the shape **below a container directory** is
+#: computed at, before that shape is reparented or wildcarded. ⚠️ Both are real
+#: values and neither is a placeholder — `Address` refuses `<address>` — so what
+#: comes out is this build's own arithmetic rather than a picture of it somebody
+#: keeps in step by hand. ⭐ The trick is `Layout.archive_tree`'s, for the same
+#: reason it is there: a drawing computed from the layout cannot drift from it.
+#: ⛔ The root never reaches disk; only the part *below* the container is kept.
+SHAPE_ROOT = Path("shape")
+SHAPE_ADDRESS = Address(["a"])
+
+#: How an ordinal appears once `unit_name` has rendered it. ⛔ **The only thing
+#: this module knows about the unit-name shape, and it is deliberately not the
+#: shape:** a glob wants a pattern, and the pattern is `unit_name`'s own output
+#: with the digits it filled in replaced by a wildcard. Widen the padding, or
+#: rename the segment, and the pattern follows without an edit here.
+ORDINAL_DIGITS = re.compile(r"[0-9]+")
+
+
+def below_container(layout, path):
+    """`path`, as `layout` computed it, relative to the container directory above it."""
+    return path.relative_to(layout.container_dir(SHAPE_ADDRESS))
+
+
+def unit_files_in(container_dir, unit):
+    """One unit's own directory beneath `container_dir`, as `Layout.unit_files` shapes it.
+
+    ⛔ **Not composed here** (`W298/2`). A fixture check is handed the container
+    directory rather than the corpus root, so it cannot ask `Layout` for the
+    whole path — but the part it needs is the part *below* that directory, and
+    that part is the layout's to compute at any address at all.
+    """
+    layout = Layout(SHAPE_ROOT)
+    return container_dir / below_container(layout, layout.unit_files(SHAPE_ADDRESS, unit))
+
+
+def overlay_glob():
+    """The pattern matching every authored overlay beneath an archive root.
+
+    ⭐ **Three segments, none of them typed here:** `units/` is placement's,
+    `unit-NN` is `unit_name`'s, and the filename is the overlay contract's own
+    `CONTENT_FILENAME` — and `Layout.content` is the one place that joins them.
+    This takes that join and wildcards the ordinal, which is the single fact a
+    walk over *every* unit cannot get from a layout computed at one.
+    """
+    layout = Layout(SHAPE_ROOT)
+    shape = below_container(layout, layout.content(SHAPE_ADDRESS, FIRST_ORDINAL))
+    return ORDINAL_DIGITS.sub("*", shape.as_posix())
+
+
+def overlays_in(root):
+    """Every authored overlay beneath `root`'s archive, sorted.
+
+    ⚠️ **Read by the walk below and asserted separately**, because an empty
+    result is the failure that hides: a walk that finds nothing reports nothing
+    and reads as a corpus with no overlay to check.
+    """
+    return sorted(Layout(root).archive.rglob(overlay_glob()))
+
+
+def unit_named(unit):
+    """What `unit_name` calls `unit`, or `None` where it is not an ordinal at all.
+
+    ⛔ The padding is `unit_name`'s, never an `f"{...:02d}"` here. ⚠️ And a
+    refusal is a **finding**, not an exception: this module is handed documents
+    somebody else wrote, so an overlay declaring no unit at all must yield a
+    message rather than raise where the walk cannot report it.
+    """
+    try:
+        return unit_name(unit)
+    except AddressError:
+        return None
+
 
 def check_container(root, manifest, container_dir, container):
     """One `container.json`: its version, its address, its variant, its ordinals."""
-    archive_root = root / "archive"
-    where = str(container_dir.relative_to(root) / "container.json")
+    archive_root = Layout(root).archive
+    where = str(container_dir.relative_to(root) / CONTAINER_FILENAME)
     address = container.get("address")
 
     if container.get("container_api") not in CONTAINER_APIS:
@@ -127,7 +216,7 @@ def check_document_identity(document, where, container, manifest, filename):
 
 def check_overlays(root):
     """The authored overlay, where a unit has one. Its `sections` are verbatim."""
-    for path in sorted((root / "archive").rglob("units/unit-*/content.json")):
+    for path in overlays_in(root):
         where = str(path.relative_to(root))
         overlay = read_json(path)
         yield from check_personal_data(overlay, where)
@@ -136,7 +225,7 @@ def check_overlays(root):
             continue
         yield from check_overlay_sections(overlay, where)
         unit_dir = path.parent.name
-        if f"unit-{overlay.get('unit'):02d}" != unit_dir:
+        if unit_named(overlay.get("unit")) != unit_dir:
             yield (
                 "address-directory",
                 f"{where} declares unit {overlay.get('unit')!r} and sits in {unit_dir}",
