@@ -26857,6 +26857,8 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 
 `W92` and `W94` both own the same package, and both split the same module at their own declared seam. ⭐ **MEASURED: five conflicting files.** ⛔ **Neither office did anything wrong and neither could have seen it — the dispatch is the only place that could.** ⚠️ **The rule already existed in the wave's own shared brief — *surfaces are disjoint; keep them that way* — and the register broke it.** ⭐ **The remedy is a CHECK, not a resolution: before dispatch, the register reads the declared surfaces of every in-flight row against each other.**
 
+⭐ **THE CHECK WAS RUN THE SAME NIGHT AND IT CAUGHT ONE, WHICH IS THE ONLY EVIDENCE THAT IT WORKS.** ⛔ **MEASURED across the four rows then in flight: no two touched the same file.** ⚠️ **But the next two rows the register was about to dispatch — `W331` and `W332` — BOTH own `skills/onboarding/artifacts.py`, and so does `W329`, which was in flight there.** ⭐ **Three rows, one file.** ⛔ **So they are SEQUENCED behind `W329` rather than dispatched, and the register declined to start work it could have started** — ⚠️ **which is the cost the check exists to pay, and it is far smaller than the office-round of reconciliation it prevents.**
+
 ### ⛔ `PO-105/2` — FIVE BRIEFING DEFECTS IN ONE WAVE, ALL THIS REGISTER'S
 
 ⭐ **Every one was caught by an office reporting the discrepancy rather than working around it, which is the behaviour that works:**
