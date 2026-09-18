@@ -238,9 +238,7 @@ def test_a_name_differs_from_the_unit_stem_only_by_the_address_in_front(fixture)
             assert where.page == beside / f"{stem}.unit.html"
             # ⛔ The kinds are placement's own tuple, never retyped here: a
             # fifth kind must not leave this control quietly checking four.
-            assert where.directories == tuple(
-                beside / kind / stem for kind in UNIT_MEDIA_DIRNAMES
-            )
+            assert where.directories == tuple(beside / kind / stem for kind in UNIT_MEDIA_DIRNAMES)
             checked += 1
     assert checked > 0
 
