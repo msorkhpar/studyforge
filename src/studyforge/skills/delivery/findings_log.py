@@ -80,9 +80,7 @@ class Disposition:
     def __post_init__(self) -> None:
         """Refuse an answer outside the three, or a settled answer with no reason."""
         if self.answer not in ANSWERS:
-            raise LogRefused(
-                f"a disposition answers {QUESTION!r} with one of {', '.join(ANSWERS)}"
-            )
+            raise LogRefused(f"a disposition answers {QUESTION!r} with one of {', '.join(ANSWERS)}")
         if (self.answer == "open") == bool(self.why.strip()):
             raise LogRefused(
                 "an `open` disposition carries no reason, and a settled one carries "
