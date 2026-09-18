@@ -26884,6 +26884,16 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 
 ⭐ **The register's rule from it: A GEOMETRY READING IS QUOTED WITH WHICH BOX IT MEASURED, or it is not a reading.**
 
+### ⛔ `PO-105/5` — THE REGISTER RAN A WHOLE WAVE BEHIND THE OFFICES, AND THE BOARD IS THE INSTRUMENT
+
+⭐ **MEASURED: `W323`, `W324` and `W325` were briefed, carried, certified and MERGED before this register ever minted them.** ⛔ **For a whole evening the one document that is supposed to say what is open, in flight and assigned named none of it.**
+
+⚠️ **This is not bookkeeping.** ⭐ **`CLAUDE.md` sends every reader to the board for anything that moves, precisely because a fact written anywhere else can only be kept freshly wrong.** ⛔ **A board that lags the offices by a wave breaks that promise from the other end: it is not stale, it is EMPTY — and a reader cannot tell the difference between *nothing is in flight* and *the register has not caught up*.**
+
+⭐ **A second reading of the same lag, found the same night:** four rows sat at `todo` whose work was already on the release branch — and two of them read `unmerged` against their ORIGINAL branch names because they had landed on the rebased carriers `PO-105/1` sent them back as. ⛔ **The register made that misreading itself and corrected it by searching for the SUBJECT rather than the branch.** ⚠️ **So *is this row's branch merged* is not the question; *is this row's work on the release branch* is.**
+
+⛔ **The rule: a row is MINTED BEFORE IT IS DISPATCHED, not after it lands.** ⭐ **A brief may cite a row file; a row file may not wait on the brief that quotes it.**
+
 ### ⭐ `INT-18/3` — ANSWERED, NOT MINTED
 
 The served-unit contract bumped its `api` and no consumer artifact changed. ⭐ **RE-MEASURED here (Ruling 214): nothing under `src/` writes the document in question, no built page carries the field, and the declaration ALREADY SAYS SO in its own comment** — so what a bump refuses is a document some other tool wrote, refused and never migrated (R9). ⛔ **The question is answered where it asked to be answered, and there is nothing to mint.** ⚠️ **What was wrong was THIS REGISTER'S BRIEF, which predicted the bump would move every served document — `PO-105/2`'s class again.**
