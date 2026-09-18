@@ -590,7 +590,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 |---|---|
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
-| **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
+| **Branch** | ⛔ **The corpus `M6` and `M8` closed on is `rebuild/clean-run` (`77535e6`), a clean run from main — and the workspace pins THAT, round 113.** ⚠️ `release/studyforge-integration` carries the PRE-rebuild corpus, which still ingests the ruled-out container; it is left in place, unrewritten. ⭐ Each round on a task branch in a linked worktree (`PO-74/9`) |
 | **Status** | `in-progress` — ⭐ **BOTH FINISH LINES REACHED: `M6` closed at round 107, `M8` at round 109 (Q18).** ⛔ **The corpus stays a consumer: a framework row a reader sees is carried by a framework office and the corpus is REGENERATED, never patched** — [109](BOARD-ARCHIVE.md#po-round-109) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |

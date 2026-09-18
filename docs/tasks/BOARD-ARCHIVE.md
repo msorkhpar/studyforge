@@ -27696,3 +27696,19 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ### ⛔ `PO-112/1` — THE WORKSPACE'S ISO PIN TRAILED ITS INTEGRATION ROUND, AND `verify` WAS RED ON THE RELEASE TIP
 
 ⭐ **MEASURED at `064978e`: `python3 -m tools.workspace verify` exits 1** — the ISO checkout is on its integration branch at `c3eb94f`, clean, and the pin records `67ee3e7`, an ancestor four commits back. ⛔ **The scheduled item says the pin advances at each integration round's merge (`W244`), and ISO round 18's merge did not advance it.** ⭐ **Advanced here to `c3eb94f`**, which asserts that integration round's merge is intended — ⛔ **and it is: it is that round's merge on the track's own branch.** ⚠️ **Reported by `TC-00`'s office, which did not work around it.**
+
+## PO round 113
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Two of this register's own records are corrected, both caught by an office that stopped and reported instead of working around them.**
+
+### ⛔ `PO-113/1` — ROUND 112 PINNED THE SUPERSEDED CORPUS
+
+⭐ **`W339/1`, from `wt/dev4`, re-measured by this register:** round 112 advanced the workspace's ISO pin to `c3eb94f`, the tip of `release/studyforge-integration` — ⛔ **and at that ref `corpus.json` still INCLUDES `TestCases.md` and the archive still carries the `test-scenarios` container the user ruled OUT (`Q5`, FINAL).** ⭐ **At `77535e6`, the rebuild `M6` closed on, the include carries neither.** ⚠️ **So round 112 turned `verify` green by pinning the corpus the user's ruling retired** — ⛔ **it read the checkout's branch and never asked whether that branch was the one the milestone closed on.**
+
+⭐ **Corrected here:** the pin is `77535e6`, and the ISO main checkout is put AT it on a DETACHED HEAD — ⛔ **no branch is rewritten; `release/studyforge-integration` stays at `c3eb94f`, and a single switch reverses this.** ⚠️ **`rebuild/clean-run` itself is checked out in the track's linked worktree, which is why the main checkout cannot hold that branch.** ⭐ **Whether the integration branch is retired in favour of the rebuild is the integration track's decision, and it blocks nothing.**
+
+### ⛔ `PO-113/2` — ROUND 107'S `Q2` RESTED ON A FALSE MEASUREMENT
+
+⭐ **`W347/1`, from `wt/dev4`, re-measured by this register at `5fc3201`:** round 107 recorded *raw HTML is NOT in the shipped vocabulary*. ⛔ **It IS:** `html` is a row of `BLOCKS` in `archive/blocks.py`, `archive/markdown/leaf.py`'s `read_html` emits it, and `render/page/blocks/verbatim.py` renders it — ⭐ **the one block type that bypasses escaping, by declaration.**
+
+⭐ **`Q2` RESTATED against the tree:** raw HTML IS in the vocabulary as the `html` block and it STAYS; nothing is removed and `raw_api` does not change. ⛔ **This corrects a premise; it mints no ruling.** ⭐ **`W347`'s office lands it in the spec, with `W347/2` settled beside it: an adapter DECLARING a language default is corpus data, not a guess — `Q7` binds the renderer — and a usage example no longer teaches `java`.**
