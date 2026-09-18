@@ -163,6 +163,13 @@ rather than a list somebody remembers to extend, and names every one that
 would move. ⛔ **A reading that disagrees with a recorded answer is a question,
 never a rewrite.**
 
+⛔ **And a regenerate never takes a file of yours at a path a later framework
+generates** (`W353`). A generated path already on disk that
+`.studyforge/installed.json` does not list as generated is refused by name, and
+nothing is written — ⚠️ even when its bytes are what the framework would write,
+because adopting it would be silent. ⭐ Move each named file aside, regenerate,
+and keep what was yours outside the generated paths.
+
 What lands, and why each one exists:
 
 | what | why it is generated rather than typed |

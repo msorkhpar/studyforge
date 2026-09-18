@@ -17,7 +17,7 @@ from pathlib import PurePosixPath
 import pytest
 
 from studyforge.archive.scrub import PersonalDataLeak
-from studyforge.skills.adapter import PARTS, scaffold
+from studyforge.skills.adapter import PARTS, Written, scaffold
 from studyforge.skills.onboarding.onboard import onboard
 from studyforge.skills.onboarding.pin import RECORD_FILE
 from studyforge.skills.onboarding.record import (
@@ -203,30 +203,63 @@ def test_uninstall_keeps_the_persons_module_when_its_stub_cannot_be_derived(tmp_
 
 
 # --------------------------------------------------------------------------
-# ⛔ W345: a regenerate never claims an ignore file a person wrote
+# ⛔ W345, generalised by W353: a regenerate never claims a file a person wrote
 # --------------------------------------------------------------------------
+
+
+def _at(where):
+    """A generated file this regenerate would write at `where`."""
+    return Written(where=where, step=3, why="a fabricated file", generated=True, text="x\n")
 
 
 def test_an_ignore_file_the_record_does_not_list_is_refused_by_name(tmp_path):
     root, made = _written(tmp_path)
-    listed = [w for w in made.paths if w.endswith("/.gitignore")]
     (root / "notes").mkdir()
     (root / "notes/.gitignore").write_text("draft-*\n", encoding="utf-8")
 
     with pytest.raises(OnboardingRefused) as refused:
-        refuse_unrecorded(root, [*listed, "notes/.gitignore"], ".gitignore")
+        refuse_unrecorded(root, [*made.files, _at("notes/.gitignore")])
 
     assert "['notes/.gitignore']" in str(refused.value)
     assert str(tmp_path) not in str(refused.value)
 
 
-def test_the_ignore_files_the_record_lists_are_not_refused(tmp_path):
-    # ⭐ The other way: the record's own files, an absent path and a file of
-    # another name are all left to the regenerate.
+def test_a_file_of_any_other_name_the_record_does_not_list_is_refused_too(tmp_path):
+    # ⛔ W353 clause 1: not only ignore files.
     root, made = _written(tmp_path)
     (root / "notes").mkdir()
     (root / "notes/keep.txt").write_text("mine\n", encoding="utf-8")
-    listed = [w for w in made.paths if w.endswith("/.gitignore")]
 
-    assert listed, "the onboarding wrote no ignore file, so this reads nothing"
-    refuse_unrecorded(root, [*listed, "absent/.gitignore", "notes/keep.txt"], ".gitignore")
+    with pytest.raises(OnboardingRefused) as refused:
+        refuse_unrecorded(root, [*made.files, _at("notes/keep.txt")])
+
+    assert "['notes/keep.txt']" in str(refused.value)
+
+
+def test_the_files_the_record_lists_and_an_absent_path_are_not_refused(tmp_path):
+    # ⭐ The other way: the record's own files, and a path nobody has written.
+    root, made = _written(tmp_path)
+
+    assert made.files, "the onboarding wrote nothing, so this reads nothing"
+    refuse_unrecorded(root, [*made.files, _at("absent/.gitignore"), _at("absent/keep.txt")])
+
+
+def test_a_person_s_module_and_the_record_itself_are_never_refused(tmp_path):
+    # ⭐ `write_files` keeps an existing hand-written module, and the record
+    # never lists itself — neither is overwritten-and-claimed.
+    root, made = _written(tmp_path)
+    (root / made.hand_written[0]).write_text("# mine\n", encoding="utf-8")
+    assert RECORD_FILE not in {entry["where"] for entry in _record(root)["files"]}
+
+    refuse_unrecorded(root, made.files)
+
+
+def test_a_path_the_record_marks_as_the_person_s_is_not_claimed_as_generated(tmp_path):
+    # ⛔ Listed is not enough: the record must list it as GENERATED.
+    root, made = _written(tmp_path)
+    target = made.hand_written[0]
+
+    with pytest.raises(OnboardingRefused) as refused:
+        refuse_unrecorded(root, [_at(target)])
+
+    assert f"['{target}']" in str(refused.value)
