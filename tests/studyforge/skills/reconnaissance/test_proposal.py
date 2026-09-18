@@ -85,6 +85,14 @@ def test_one_variant_is_proposed_and_still_asked_about(tmp_path):
     assert any("one variant" in q.question for q in asked)
 
 
+def test_the_one_variant_is_the_framework_word_prose(tmp_path):
+    # ⛔ Spec §4 (`Q9`): a single-variant prose corpus declares `["prose"]`, the
+    # framework's word. ⚠️ Typed here and not read from `SINGLE_VARIANT`, so a
+    # rename of the constant is refused rather than followed.
+    manifest, _ = propose(sources.flat_prose(tmp_path / "c"))
+    assert manifest["variants"] == ["prose"]
+
+
 def test_exercises_follows_what_ships_with_the_material(tmp_path):
     assert propose(sources.flat_prose(tmp_path / "c"))[0]["exercises"] is False
     assert propose(sources.runnable(tmp_path / "c"))[0]["exercises"] is True

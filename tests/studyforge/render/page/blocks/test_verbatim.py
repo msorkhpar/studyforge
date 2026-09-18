@@ -5,6 +5,9 @@
 never a hand-built block dict: the promise spans two tasks, and a test that built
 `{"type": "para", …}` by hand would assert `SF-12` against `SF-12`'s own belief
 about what `SF-07` emits — and the belief is the thing that can be wrong.
+
+⭐ They hold spec §6's `Q2` statement: raw HTML is the `html` block, and it
+alone bypasses escaping.
 """
 
 from __future__ import annotations

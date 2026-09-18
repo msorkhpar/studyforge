@@ -8,7 +8,10 @@ loudly, anything it cannot represent without loss.
 **How you use it.**
 
     from studyforge.archive.markdown import parse, MarkdownError
-    blocks = parse(text, lang_default="java")
+    blocks = parse(text)
+
+A bare fence keeps no language unless the adapter passes `lang_default`: a
+default is a declaration the adapter owns, never a guess (spec §8.4, `Q7`).
 
 `BLOCK_TYPES` is the vocabulary and `CONTAINER_TYPES` names the two block types
 that hold other blocks, so a walker can recurse on them without knowing which
