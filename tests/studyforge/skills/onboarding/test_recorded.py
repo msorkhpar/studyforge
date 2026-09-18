@@ -6,6 +6,7 @@ import json
 
 import pytest
 
+from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.skills.onboarding.manifest import render
 from studyforge.skills.onboarding.recorded import GROWS, moved, refusal
 from tests.studyforge.skills.onboarding import corpora
@@ -92,3 +93,13 @@ def test_the_refusal_names_a_list_field_without_quoting_it():
     message = refusal(moved(RECORDED, after), RECORDED, after)
 
     assert "content.include" in message and "*.md" not in message
+
+
+def test_a_manifest_carrying_personal_data_raises_rather_than_being_compared():
+    # ⛔ R7's gate runs before a field is read: what this decodes, it gates, and
+    # a leak is refused as itself rather than named as a changed answer.
+    # ⚠️ A placeholder, split so the literal never sits in this file whole.
+    leaking = written(content={"include": ["/" + "home/jane/corpus/src/*.md"]})
+
+    with pytest.raises(PersonalDataLeak):
+        moved(RECORDED, leaking)

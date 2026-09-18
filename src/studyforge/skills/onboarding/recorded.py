@@ -7,6 +7,11 @@ is about to write, and names every recorded answer the two spell differently.
 order; `refusal(names, before, after)` is the sentence `write` raises with.
 ⛔ No I/O and nothing source-specific (R1): both arguments are text.
 
+**Depends on.** `archive.scrub` for R7's gate — what this decodes, it gates —
+and `corpus.manifest` for the filename a refusal names. ⛔ Not on the manifest's
+reader: this compares two documents rather than reading either, and a comparison
+that had to parse could not be run against a manifest the reader refuses.
+
 ## ⛔ A re-survey may not change an answer somebody already recorded
 
 ⚠️ **Measured on a clean run.** A survey of a corpus this framework had already
@@ -42,6 +47,9 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
+
+from studyforge.archive.scrub import assert_clean
+from studyforge.corpus.manifest import MANIFEST_FILENAME
 
 #: The `content` sub-field this module never compares, and who does. ⭐ Named
 #: once, because the reason it is excluded is a rule and not a taste.
@@ -100,14 +108,17 @@ def _at(name: str, document: Mapping[str, object]) -> object:
 def _document(text: str) -> dict[str, object]:
     """Return one manifest's fields, or nothing when its text is not an object.
 
-    ⚠️ **Never raises.** An unreadable manifest is refused, in the manifest's own
-    words, by the caller that reads it; this module would only be guessing at a
-    second reason.
+    ⛔ **What this decodes, it gates** (R7, `W7`): the fields are paths and
+    globs, and a leak raises as itself rather than being compared. ⚠️ Everything
+    else **never raises** — an unreadable manifest is refused, in the manifest's
+    own words, by the caller that reads it, and a second reason invented here
+    would name every field at once.
     """
     try:
         document = json.loads(text)
     except ValueError:
         return {}
+    assert_clean(document, MANIFEST_FILENAME)
     return document if isinstance(document, dict) else {}
 
 
