@@ -27464,3 +27464,34 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ⭐ **Two from the rulings, four from the regeneration**, and the regeneration's are the ones that matter for the next ingestion: ⛔ **a re-survey of an onboarded corpus flips four answers and cannot run unattended** (`W341`); ⛔ **a superseded generated glob is promoted to a person's and never dropped** (`W342`); ⛔ **the procedure pins a commit and runs against a moving tree** (`W343`); ⛔ **R8's floor is evidenced indirectly because the instrument that opens a `file://` URL lives where a corpus cannot reach it** (`W344`).
 
 ⚠️ **`W343` is this register's own doing:** the framework checkout moved from `aa4e256` to `19eea9a` **while the regeneration ran**, because this register merged round 106 into it. ⭐ **`git diff aa4e256 19eea9a -- src/` is EMPTY, so nothing needs re-taking** — ⛔ **but that is LUCK, not a property, and the row exists so it stops being luck.**
+
+## PO round 108
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M8` OPENS, and four milestones that the board never carried at all are given cells.**
+
+### ⛔ THE BOARD CARRIED NO CELL FOR FOUR OF ITS TEN MILESTONES, AND ONE OF THEM IS THE OPEN ONE
+
+⭐ **MEASURED at `bb8730b`: the milestone table held `M0`–`M4` and `M6`. `M5`, `M7`, `M8` and `M9` had NO ROW.**
+
+⛔ **So the moment `M6` closed, the board said NOTHING WAS OPEN** — ⚠️ **and a reader following `CLAUDE.md`'s instruction to open the board for *which milestone and step are open* would have concluded the project was finished.** ⭐ **Six milestones closed and four absent reads exactly like ten closed.**
+
+⚠️ **This is `PO-105/5` at milestone scale, and the same sentence applies: the board was not STALE, it was EMPTY** — ⛔ **and a reader cannot tell emptiness from completion.** ⭐ **The four cells are added here, each carrying its *Done when* from the plan, so the instrument answers the question it exists to answer.**
+
+⭐ **The order the cells sit in is the USER's, ruled 2026-09-12 and not the order the ids sort to:** `M6` → `M8` → `M5` → `M7` → `M9`.
+
+### ⭐ `M8` — IT IS A FRAMEWORK — IS OPEN
+
+⛔ **Its *Done when*:** `ISO-8583` converted **by the skills alone**, and the findings that produced written down. ⭐ **Step 8.1 is `QA-04`, and its deliverable is THE FINDINGS LOG, NOT THE SITE** (spec §12).
+
+⭐ **WHAT IS ALREADY MEASURED AND GREEN, from `M6`'s close at ISO `77535e6`:** the acceptance's floor half — *readable over `file://`, narrated, navigable, read marks recorded, minus what the source genuinely lacks*. ⛔ **That is taken and does not need re-taking.**
+
+⭐ **WHAT `QA-04` ALSO REQUIRES, and where each stands:**
+
+| requirement | state |
+|---|---|
+| ⛔ *whoever runs it does not modify `studyforge`* | ⭐ **HELD.** The regeneration office never touched the framework — its checkout was clean at hand-back. ⚠️ **The framework changed a great deal this wave, but by FRAMEWORK offices carrying register rows, which is the separation §12 asks for** |
+| ⛔ *everything done by hand is named as a defect in the skill that should have done it* | ⭐ **HELD.** The regeneration hand-settled four manifest answers and named it — minted as a row rather than absorbed |
+| ⛔ *the framework pin did not move, or every commit is accounted for* | ⚠️ **THE PIN MOVED**, `7027ee6` → `aa4e256`, deliberately and as the point of that round. ⛔ **The accounting is owed: what moved across, and against which finding** |
+| ⭐ *the findings that produced are written down* | ⛔ **THE GAP.** The integration catalogue exists and carries 22 entries — ⚠️ **and NOT ONE of the regeneration's findings.** ⭐ **This is `ISO-17`, *findings distilled*, and round 107 established it gates THIS milestone rather than `M6`** |
+
+⛔ **So `M8` is not a build; it is a WRITE-DOWN, and the register says that plainly rather than letting the site's greenness be read as the milestone's.** ⚠️ **`QA-04`'s own words: an exercise that produces a working site and reports no findings has not been conducted honestly — the finding count is the YIELD.**
