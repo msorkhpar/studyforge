@@ -1,0 +1,83 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 1,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Greeting",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Make `greet` in `practice/passes/greet.py` return the greeting for any name."
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "text": "greet(\"<who>\")  # returns \"Hello, <who>\"\n"
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: A test that passes"
+    },
+    {
+      "type": "para",
+      "text": "The file as shipped already satisfies its grader, so its test passes."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "text": "\"\"\"Greet someone by name.\"\"\"\n\n\ndef greet(who):\n    \"\"\"Return the greeting for `who`.\"\"\"\n    return f\"Hello, {who}\"\n\n\nif __name__ == \"__main__\":\n    print(greet(\"reader\"))\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 2,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "4a433e4e0a843d404911c51e9c45b66de7b80b5d62120d4a8f11bb8c0acbea23",
+  "starting_code": "\"\"\"Greet someone by name.\"\"\"\n\n\ndef greet(who):\n    \"\"\"Return the greeting for `who`.\"\"\"\n    return f\"Hello, {who}\"\n\n\nif __name__ == \"__main__\":\n    print(greet(\"reader\"))\n",
+  "exercise": {
+    "main_path": "practice/passes/greet.py",
+    "test_path": "practice/passes/check_greet.py",
+    "run_command": [
+      "python3",
+      "practice/passes/greet.py"
+    ],
+    "test_command": [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "practice/passes/check_greet.py"
+    ],
+    "provenance": "bundled",
+    "trust": "authoritative"
+  }
+}

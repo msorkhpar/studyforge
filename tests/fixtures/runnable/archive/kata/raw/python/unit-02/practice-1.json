@@ -1,0 +1,78 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 2,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Totals",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Make `total` in `practice/fails/total.py` count every price, then run its test."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: A test that fails"
+    },
+    {
+      "type": "para",
+      "text": "The file runs, and its grader says it is wrong until the first price is counted."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "text": "\"\"\"Add up a basket of prices.\"\"\"\n\n\ndef total(prices):\n    \"\"\"Return the sum of every price in `prices`.\"\"\"\n    return sum(prices[1:])\n\n\nif __name__ == \"__main__\":\n    print(total([1, 2, 3]))\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "6331dc1e8de890d86ce9566d5fcf96f795cf014f5434ef059307ed43bc55518c",
+  "starting_code": "\"\"\"Add up a basket of prices.\"\"\"\n\n\ndef total(prices):\n    \"\"\"Return the sum of every price in `prices`.\"\"\"\n    return sum(prices[1:])\n\n\nif __name__ == \"__main__\":\n    print(total([1, 2, 3]))\n",
+  "exercise": {
+    "main_path": "practice/fails/total.py",
+    "test_path": "practice/fails/check_total.py",
+    "run_command": [
+      "python3",
+      "practice/fails/total.py"
+    ],
+    "test_command": [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "practice/fails/check_total.py"
+    ],
+    "provenance": "bundled",
+    "trust": "authoritative"
+  }
+}

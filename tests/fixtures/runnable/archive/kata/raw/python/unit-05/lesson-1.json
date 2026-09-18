@@ -1,0 +1,41 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 5,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Reading on",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "Reading on"
+    },
+    {
+      "type": "para",
+      "text": "Nothing to run here. A unit that sets no work is complete when it has been read."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "90af64074766e5fdafb0ec0e92b68b76d056069eb27953fda15d735816856df5"
+}

@@ -1,0 +1,78 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 4,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Area",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Make `practice/broken/area.py` compile, then run its test."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: A file that does not compile"
+    },
+    {
+      "type": "para",
+      "text": "A `break` outside a loop is refused when the file is compiled, before any test can run."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "text": "\"\"\"Measure a rectangle.\"\"\"\n\n\ndef area(width, height):\n    \"\"\"Return the area of a `width` by `height` rectangle.\"\"\"\n    if width < 0 or height < 0:\n        break\n    return width * height\n\n\nif __name__ == \"__main__\":\n    print(area(2, 3))\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "c52ee1fb9e1543276ad6e6cd6a254c5e63f7d6c187885a1a6c30c2fff777a3aa",
+  "starting_code": "\"\"\"Measure a rectangle.\"\"\"\n\n\ndef area(width, height):\n    \"\"\"Return the area of a `width` by `height` rectangle.\"\"\"\n    if width < 0 or height < 0:\n        break\n    return width * height\n\n\nif __name__ == \"__main__\":\n    print(area(2, 3))\n",
+  "exercise": {
+    "main_path": "practice/broken/area.py",
+    "test_path": "practice/broken/check_area.py",
+    "run_command": [
+      "python3",
+      "practice/broken/area.py"
+    ],
+    "test_command": [
+      "python3",
+      "-m",
+      "pytest",
+      "-q",
+      "practice/broken/check_area.py"
+    ],
+    "provenance": "bundled",
+    "trust": "authoritative"
+  }
+}

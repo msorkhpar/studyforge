@@ -1,0 +1,41 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 3,
+  "kind": "lesson",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Hello",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 1,
+      "text": "Hello"
+    },
+    {
+      "type": "para",
+      "text": "A program with nothing to grade it. Run it and read what it prints."
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 1,
+    "paras": 1,
+    "code": 0,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "9a1cd03daf0e7d333bc8bb163aa0312389105ad493475857ac6c4475d9fdc1aa"
+}
