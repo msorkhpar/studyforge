@@ -27665,3 +27665,34 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ### ⛔ `PO-111/1` — HOW THREE MERGED ROWS STAYED `todo`
 
 ⭐ **`W26` was recorded merged in the archive before the board became a register, and the migration carried its cell as *not started*.** ⭐ **`W320` and `W321` merged in the wave of round 104, and no later round closed them.** ⚠️ **Nothing reads a `todo` cell against the release branch** — ⛔ **the read that caught all three was a dispatch-time check, by hand.**
+
+## PO round 112
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`TC-00`'s proposal is ruled and its stage 2 sent, three rows are minted from it, and the workspace's ISO pin is advanced to its integration round's merge.**
+
+### ⭐ `TC-00` — THE PROPOSAL, RULED
+
+⭐ **Stage 1 was read against git before it was ruled** (Ruling 214): two commits, the office's placeholder identity, the handoff alone; `TC-00/3`, `/5` and `/7` re-measured and TRUE. ⛔ **These are the register's decisions on an implementation, not rulings: the freeze is not touched.**
+
+| # | the register's decision on `TC-00`'s proposal | why |
+|---|---|---|
+| 1 | ⭐ **`runtimes` is ACCEPTED as the contract's shape** — optional sorted list over a closed vocabulary, names only, `java` required by `maven`/`gradle`/`kotlin`, refused with `exercises: false`, absent means none. ⛔ **It lands as its OWN row, `W350`, after `W339`+`W347` merge** (spec §4, `corpus/manifest/`, `corpus_api: 4`, `TC-00/2`'s top-level version entry, `TC-00/3`'s split). ⭐ **Reconnaissance drafts it: `W351`** (`TC-00/8`) | `TC-00` owns `TC/`; the spec is another office's surface this round |
+| 2 | ⭐ **`pins.json`, ONE file, at the component root — ACCEPTED**; no `ARG` carries a default | the epic forbids a second place a version is chosen |
+| 3 | ⭐ **Images by multi-arch digest; archives by a checksum RECORDED IN THE REPOSITORY; the build fetches none.** ⭐ **A second, independent source is REQUIRED where one exists; where none does (`S4`), ONE official host's published checksum is ADMISSIBLE**, recorded with its source and date and marked single-source | the user's ruling says *pinned by checksum*; the in-repo record is what makes the build tamper-evident from then on |
+| 4 | ⭐ **JDK: Temurin 25, the LTS** | the Java corpus compiles `--release 21`; ISO has no Java; an LTS is the pin a runner should hold |
+| 5 | ⭐ **Python: the official `python` image by digest, same Debian release as the base; pytest by `pip --require-hashes` from PyPI** | official registries, pinned |
+| 6 | ⭐ **`sqlite`: Debian's official archive through `snapshot.debian.org` at a pinned timestamp and package version** | official, signed and pinned; no second vendor binary to track |
+| 7 | ⭐ **`TC-00/4` ACCEPTED**: one generic, checksum-pinned Maven set warmed for the SMOKE project only. `S3` is the office's to measure; if the resolver has no trusted-checksums file, record each jar's hash in `pins.json` and verify after the warm | `TC-03` still owns corpus warming at `M7` |
+| 8 | ⭐ **`TC-00` is ACCEPTED at `M5` against its own smoke projects, `--network none`, both ways** — ⛔ **`mvn -o test` against the Java corpus is `M9`'s re-take (`W83`'s disposition)** | the epic's acceptance names `M9`'s corpus |
+| 9 | ⭐ **The `SF-20` seam ACCEPTED; the READER starts the container** through the documented command `SF-44` carries — ⛔ **`SF-20` probes and execs, never starts; not up means host mode** | the serving process gains no container lifecycle, which keeps §8.3's line bright |
+| 10 | ⭐ **amd64 and arm64 pinned; anything else refuses by name** | — |
+| 11 | ⛔ **Create the sibling and flip `workspace.json` in the SAME merge, and it merges promptly** (`TC-00/7`) | a sibling on disk with the file saying `not-yet-created` is RED everywhere |
+| 12 | ⭐ **`TC-00/5` minted as `W352`** — a fixture corpus with RUNNABLE units, which `SF-20` and `SF-44` need; ⭐ **`TC-00/6` carried into `SF-20`'s brief** (output relative to the source root in both modes) | `M5` must be provable on something |
+
+### ⭐ MINTS — `W350`–`W352`
+
+`W350` the `runtimes` key; `W351` reconnaissance drafts it; `W352` a fixture that can RUN, without which `M5` cannot be proved.
+
+### ⛔ `PO-112/1` — THE WORKSPACE'S ISO PIN TRAILED ITS INTEGRATION ROUND, AND `verify` WAS RED ON THE RELEASE TIP
+
+⭐ **MEASURED at `064978e`: `python3 -m tools.workspace verify` exits 1** — the ISO checkout is on its integration branch at `c3eb94f`, clean, and the pin records `67ee3e7`, an ancestor four commits back. ⛔ **The scheduled item says the pin advances at each integration round's merge (`W244`), and ISO round 18's merge did not advance it.** ⭐ **Advanced here to `c3eb94f`**, which asserts that integration round's merge is intended — ⛔ **and it is: it is that round's merge on the track's own branch.** ⚠️ **Reported by `TC-00`'s office, which did not work around it.**

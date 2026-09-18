@@ -129,6 +129,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 58 | `W334`–`W338` | ⭐ **round 106's mints, each jumping nobody** — ⛔ **placed at round 109, which found them unplaced** | [106](BOARD-ARCHIVE.md#po-round-106) |
 | 59 | `W340`–`W344` | ⭐ **round 107's mints, each jumping nobody** — ⛔ **placed at round 109, which found them unplaced** | [107](BOARD-ARCHIVE.md#po-round-107) |
 | 60 | `W348`, `W349` | ⭐ **round 109's mints from `QA-04`, each jumping nobody** — ⛔ **`W345`–`W347` dispatched at 110** | [109](BOARD-ARCHIVE.md#po-round-109) |
+| 61 | `W352` | ⛔ **JUMPS every older `todo` row (Ruling 75): `M5` — the open milestone — cannot be proved without it** | [112](BOARD-ARCHIVE.md#po-round-112) |
+| 62 | `W350`, `W351` | ⭐ **`M5`'s contract, after `W339`+`W347` free the spec; `W351` after `W350`** | [112](BOARD-ARCHIVE.md#po-round-112) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -502,6 +504,9 @@ else.**
 | W347 | Four framework decisions ruled at round 107 live only in the board archive, where a next source never reads | framework agent | `todo` — `QA-04/3` | [`rows/W347.md`](rows/W347.md) |
 | W348 | The second-source pin clause has one form, for a forced move, and none for a pin advanced deliberately as a round's point | framework agent | `todo` — `QA-04/5` | [`rows/W348.md`](rows/W348.md) |
 | W349 | No skill sizes narration before a manifest exists, so a planner commits a corpus on a hand figure, and the first one under-sized it | framework agent | `todo` — `QA-04/6` | [`rows/W349.md`](rows/W349.md) |
+| W350 | A corpus cannot declare the runtimes its material needs, so the runner image has nothing to read | framework agent | `todo` — `TC-00/1` + `/2` + `/3` | [`rows/W350.md`](rows/W350.md) |
+| W351 | Reconnaissance would not draft a corpus's runtimes, so every set would be typed by hand | framework agent | `todo` — `TC-00/8` | [`rows/W351.md`](rows/W351.md) |
+| W352 | The fixtures `M5` is proved on carry nothing that can run | framework agent | `todo` — `TC-00/5` | [`rows/W352.md`](rows/W352.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
