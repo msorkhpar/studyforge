@@ -210,6 +210,7 @@ def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():
             "script",
             "meta",
             "breadcrumb",
+            "rail",
             "outline",
             "body",
             "pending",

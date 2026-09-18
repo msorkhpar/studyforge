@@ -60,6 +60,8 @@ container it says it is.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from studyforge.address import AddressError
 from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
@@ -68,7 +70,8 @@ from studyforge.render.container import listing
 from studyforge.render.container.entries import Document
 from studyforge.render.container.placement import Placement
 from studyforge.render.markup import escape, escape_attribute, inline
-from studyforge.render.page import Links, PageError, between_units
+from studyforge.render.page import Links, PageError, RailContainer, between_units
+from studyforge.render.page import rail as rail_region
 
 #: The skeleton every page of this site is filled from — the unit page's own.
 SKELETON = "page.html"
@@ -94,11 +97,21 @@ TRAILING_NEWLINE = "\n"
 EMPTY_SLOTS = ("breadcrumb", "mark", "outline", "pending", "player")
 
 
-def compose(document: Document, placement: Placement, links: Links | None = None) -> str:
+def compose(
+    document: Document,
+    placement: Placement,
+    links: Links | None = None,
+    rail: Sequence[RailContainer] | None = None,
+) -> str:
     """Return one container page's exact text.
 
     ⛔ Pure: the same document and the same placement give byte-identical
     output, every run, on every machine (R10).
+
+    ⚠️ `rail` is the region that reaches the OTHER containers (`W324`), and it
+    is optional for the reason `links` is: only a caller holding the whole
+    contents document can name them. ⭐ It is taken from `render.page`'s
+    published surface, exactly as the bar is.
     """
     rows = listing.render(document.address, document.items)
     body = JOIN.join(part for part in (note(document), rows) if part)
@@ -113,6 +126,7 @@ def compose(document: Document, placement: Placement, links: Links | None = None
             meta=_region(meta(document)),
             body=body,
             nav=_region(between_units(links)),
+            rail=_region(rail_region(rail)),
             **dict.fromkeys(EMPTY_SLOTS, ""),
         )
         + TRAILING_NEWLINE

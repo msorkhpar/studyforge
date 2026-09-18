@@ -22,7 +22,7 @@ this task adds no template file and no asset. ⚠️ A second skeleton would be 
 second `<head>`, a second masthead and a second place a `<meta viewport>` has to
 be remembered — and the day one gains a region the other silently would not.
 
-⛔ **Eight of the skeleton's slots are empty here, and they are empty
+⛔ **Nine of the skeleton's slots are empty here, and they are empty
 explicitly.** `templates.fill` refuses a placeholder with no value **and** a
 value with no placeholder, so each one is passed `""` by name rather than
 omitted — which means the day the skeleton drops a slot this module fails by
@@ -47,6 +47,10 @@ whose reading it records (`SF-30`). ⭐ The marks themselves DO reach this page 
 as a state on the rows this tree already keys by unit key — but that is the
 shared script's work at read time, not a region this module fills |
 | `pending` | practices belong to a unit |
+| `rail` | ⛔ the rail exists to reach the OTHER containers from inside one
+(`W324`), and this page is inside none of them: its body already lists every
+container there is, so a rail here would be the same tree rendered twice on one
+page |
 | `player` | narration belongs to a unit (`SF-18`) |
 
 ## ⛔ The root index carries NO identity block, and that is not an omission
@@ -99,6 +103,7 @@ EMPTY_SLOTS = (
     "outline",
     "pending",
     "player",
+    "rail",
 )
 
 

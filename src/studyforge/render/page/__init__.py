@@ -64,6 +64,7 @@ that is not this framework's own structure comes out of the document.
 | `section` | what wraps one section, and what sits above it? |
 | `anchors` | what on this page may be linked to, and the outline that links to it? |
 | `navigation` | where does this page point — back, forward, up — and where is the reader? |
+| `rail` | which OTHER containers does this page reach, and which one is the reader in? |
 | `assets` | where does this page reach, relative to itself? |
 | `document` | what is written, in what order, out of which templates? |
 | `errors` | `PageError`, the only exception any of it raises |
@@ -116,6 +117,11 @@ page's bar rather than a primitive — `SF-15` owns the module, and `SF-27/3`'s
 trail also reaches `render` and `compose` as an argument, because a page that
 renders the region only when somebody calls the region's own function is a page
 whose chrome depends on which entry point a build used.
+
+⭐ **`RailContainer`, `RailUnit` and `rail` are here on it a third time**
+(`W324`), and `render.container` is why the function had to join them: a
+container page carries this region too, and it takes it from this surface rather
+than from inside the package — the shape `between_units` already has.
 """
 
 from __future__ import annotations
@@ -127,6 +133,8 @@ from studyforge.render.page.document import compose
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Link, Links, between_units, breadcrumb
+from studyforge.render.page.rail import RailContainer, RailUnit
+from studyforge.render.page.rail import render as rail
 
 #: What a page is written as. ⛔ Stated once: a page written as anything else is
 #: a page whose bytes depend on a locale, which R10 forbids.
@@ -144,9 +152,12 @@ __all__ = [
     "Narration",
     "PageError",
     "Placement",
+    "RailContainer",
+    "RailUnit",
     "between_units",
     "breadcrumb",
     "compose",
+    "rail",
     "render",
 ]
 
@@ -157,6 +168,7 @@ def render(
     links: Links | None = None,
     trail: Sequence[Crumb] | None = None,
     narration: Narration = SILENT,
+    rail: Sequence[RailContainer] | None = None,
 ) -> bytes:
     """Render one unit page.
 
@@ -169,4 +181,4 @@ def render(
     a corpus with no clips renders exactly as it did before narration existed,
     with no transport at all (R6, spec §11.0).
     """
-    return compose(document, placement, links, trail, narration).encode(ENCODING)
+    return compose(document, placement, links, trail, narration, rail).encode(ENCODING)
