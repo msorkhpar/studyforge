@@ -92,4 +92,14 @@ ACCEPTANCE = {
     #: size of page this defect reads as a defect on rather than as spacing.
     "sizes the masthead's row by the masthead and not by the rail beside it "
     "(W326)": "test_rail_rows",
+    #: ⭐ `W328`'s clause, and it is a NINTH row for the reason the eighth was not
+    #: a widening of the seventh: *"the rail is flush against the window's left
+    #: edge, stays there while the page scrolls, and scrolls itself when it is
+    #: taller than the window"* is a claim about the page against the WINDOW, and
+    #: not one row above takes a reading after scrolling anything.
+    #: ⚠️ It runs in a module of its own because it needs a fixture no other
+    #: clause here needs — a rail TALLER than the viewport, which is a bigger
+    #: corpus again than `test_rail_rows` widens one container to.
+    "pins that rail to the window's left edge, keeps it there while the page "
+    "scrolls, and lets a long one scroll itself (W328)": "test_rail_fixed",
 }
