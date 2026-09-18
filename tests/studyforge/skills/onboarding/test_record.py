@@ -25,6 +25,7 @@ from studyforge.skills.onboarding.record import (
     READS,
     OnboardingRefused,
     hand_edited,
+    refuse_unrecorded,
 )
 from studyforge.skills.onboarding.removal import uninstall
 from tests.studyforge.skills.onboarding import corpora
@@ -199,3 +200,33 @@ def test_uninstall_keeps_the_persons_module_when_its_stub_cannot_be_derived(tmp_
     assert "corpus.json" in str(refused.value)
     assert made.hand_written[0] in str(refused.value)
     assert (root / made.hand_written[0]).exists()
+
+
+# --------------------------------------------------------------------------
+# ⛔ W345: a regenerate never claims an ignore file a person wrote
+# --------------------------------------------------------------------------
+
+
+def test_an_ignore_file_the_record_does_not_list_is_refused_by_name(tmp_path):
+    root, made = _written(tmp_path)
+    listed = [w for w in made.paths if w.endswith("/.gitignore")]
+    (root / "notes").mkdir()
+    (root / "notes/.gitignore").write_text("draft-*\n", encoding="utf-8")
+
+    with pytest.raises(OnboardingRefused) as refused:
+        refuse_unrecorded(root, [*listed, "notes/.gitignore"], ".gitignore")
+
+    assert "['notes/.gitignore']" in str(refused.value)
+    assert str(tmp_path) not in str(refused.value)
+
+
+def test_the_ignore_files_the_record_lists_are_not_refused(tmp_path):
+    # ⭐ The other way: the record's own files, an absent path and a file of
+    # another name are all left to the regenerate.
+    root, made = _written(tmp_path)
+    (root / "notes").mkdir()
+    (root / "notes/keep.txt").write_text("mine\n", encoding="utf-8")
+    listed = [w for w in made.paths if w.endswith("/.gitignore")]
+
+    assert listed, "the onboarding wrote no ignore file, so this reads nothing"
+    refuse_unrecorded(root, [*listed, "absent/.gitignore", "notes/keep.txt"], ".gitignore")

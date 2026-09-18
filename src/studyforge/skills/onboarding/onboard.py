@@ -64,7 +64,14 @@ from pathlib import Path
 from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import RAISES, Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
-from studyforge.skills.adapter import Written, plan_for, scaffold, write_files
+from studyforge.skills.adapter import (
+    IGNORE_FILE,
+    Written,
+    ignore_files,
+    plan_for,
+    scaffold,
+    write_files,
+)
 from studyforge.skills.onboarding import artifacts, record, recorded
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.nondestructive import edits_test
@@ -140,6 +147,7 @@ class Onboarding:
         if regenerate:
             self._refuse_dropping(Path(root))
             self._refuse_changing(Path(root))
+            record.refuse_unrecorded(Path(root), self.paths, IGNORE_FILE)
         return write_files(
             self.files,
             root,
@@ -261,13 +269,17 @@ def onboard(
     persons = [entry for entry in kept if entry["glob"] not in generated]
     document = promote(_carried(draft, persons), not_material=declared, reasons=reasons)
     manifest = parse(render(document))
+    checks = [
+        _own(artifacts.EDITS_TEST, edits_test(manifest), "R3, with this corpus's edits"),
+        _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),
+    ]
     files = [
         _own(artifacts.MANIFEST, render(document), "the declaration that makes this a source"),
         *made.files,
         *_pin_files(framework_commit, skills, framework),
         *_ignore_file(manifest),
-        _own(artifacts.EDITS_TEST, edits_test(manifest), "R3, with this corpus's edits"),
-        _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),
+        *ignore_files(checks),
+        *checks,
         _own(
             artifacts.READER_DOC,
             artifacts.reader_document(

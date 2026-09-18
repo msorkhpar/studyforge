@@ -67,10 +67,15 @@ from studyforge.skills.adapter.layout import (
 from studyforge.skills.adapter.parts import PARTS, Part
 from studyforge.skills.adapter.plan import FILLED_IN, PACKAGE, Plan, PlanError, plan_for
 from studyforge.skills.adapter.scaffold import (
+    BYTECODE_RULES,
+    IGNORE_FILE,
     SOURCE_LINE_CEILING,
     Scaffold,
     ScaffoldRefused,
     Written,
+    bytecode_ignore,
+    bytecode_ignores,
+    ignore_files,
     scaffold,
     write_files,
 )
@@ -78,7 +83,9 @@ from studyforge.skills.adapter.scaffold import (
 #: ⛔ The package's whole public surface.
 __all__ = [
     "ARCHIVE_DIR",
+    "BYTECODE_RULES",
     "FILLED_IN",
+    "IGNORE_FILE",
     "PACKAGE",
     "PARTS",
     "RAW_DIR",
@@ -94,7 +101,10 @@ __all__ = [
     "ScaffoldRefused",
     "Written",
     "archive_tree",
+    "bytecode_ignore",
+    "bytecode_ignores",
     "document_name",
+    "ignore_files",
     "plan_for",
     "scaffold",
     "write_files",

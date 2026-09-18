@@ -44,6 +44,15 @@ unrequested, in the one repository where R3 is absolute (`W15`). ⭐ So any rule
 this skill needs for a generated directory goes in a `.gitignore` written
 *inside* that directory, which needs no edit to anything that already exists.
 
+⭐ **`W345` applies it to what this skill generates.** Every directory a
+generated Python module lands in gets its own `.gitignore` naming the bytecode
+running it writes — which can carry an absolute path (R7), and which nothing
+before this ignored, because a corpus's root ignore file is written for its own
+language. ⛔ **Derived from the `.py` paths, never listed**, and never at the
+root: a module there would need the root file, so the scaffold's
+`bytecode_ignores` places none. ⭐ One rule for both writers, so the adapter's
+directories and this skill's `tests/` cannot be given two different files.
+
 ⛔ **And nothing is ignored that the media policy does not say to.** `SF-32`'s
 verdict is that media is committed by default, and so is every page a build
 writes (`W242`); when a corpus outgrows that, the report says so and names the
@@ -68,7 +77,7 @@ from collections.abc import Mapping, Sequence
 from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
-from studyforge.skills.adapter import plan_for
+from studyforge.skills.adapter import bytecode_ignores, plan_for
 from studyforge.skills.onboarding.nondestructive import EDITS_TEST, TESTS_DIR
 from studyforge.skills.onboarding.pin import (
     PIN_DIR,
@@ -133,6 +142,7 @@ def paths(skills: Sequence[str] = SKILLS) -> tuple[str, ...]:
         MANIFEST,
         PIN_FILE,
         *stub_paths(skills),
+        *bytecode_ignores((EDITS_TEST, PIN_TEST)),
         EDITS_TEST,
         PIN_TEST,
         READER_DOC,

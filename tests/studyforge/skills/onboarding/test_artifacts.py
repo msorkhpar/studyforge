@@ -26,8 +26,10 @@ from studyforge.cli.narrate.stage import narrate_corpus
 from studyforge.corpus.manifest import MIN_WHY_CHARS, Classification, parse
 from studyforge.narrate.client import NarrateClient
 from studyforge.skills.adapter import plan_for
+from studyforge.skills.adapter.scaffold import BYTECODE_RULES, bytecode_ignore
 from studyforge.skills.onboarding import artifacts, hand_edited
 from studyforge.skills.onboarding.manifest import promote, render
+from studyforge.skills.onboarding.nondestructive import TESTS_DIR
 from studyforge.skills.onboarding.onboard import onboard
 from studyforge.skills.onboarding.pin import FRAMEWORK
 from studyforge.skills.onboarding.standing import Standing
@@ -99,10 +101,12 @@ def test_this_skill_never_writes_a_repository_root_ignore_file():
 def test_no_ignore_rule_this_skill_writes_reaches_the_archive():
     # ⛔ SF-32's verdict: generated media is committed by default, so an ignore
     # rule that swept it out would flip a corpus's policy without anybody
-    # declaring it. ⭐ This skill now writes no ignore rule at all, at any
-    # depth — the assertion is over every path it occupies, not one name.
+    # declaring it. ⭐ The one ignore file this skill's own paths carry is
+    # `W345`'s, inside `tests/`, and it names bytecode and nothing else.
     rules = [where for where in artifacts.paths() if where.rsplit("/", 1)[-1] == ".gitignore"]
-    assert not rules, f"this skill writes an ignore rule: {rules}"
+    assert rules == [f"{TESTS_DIR}/.gitignore"]
+    named = [line for line in bytecode_ignore().splitlines() if not line.startswith("#")]
+    assert named == list(BYTECODE_RULES) == ["__pycache__/", "*.py[co]"]
 
 
 def test_the_reader_document_is_written_from_the_declarations_rather_than_invented():
