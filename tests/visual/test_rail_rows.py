@@ -52,9 +52,11 @@ CORPUS = "depth2"
 #: How many units the widened container declares. ⚠️ **Not a round number for
 #: its own sake**: the rail has to end up TALLER than the masthead's row by more
 #: than a subpixel, or the defect and the repair read the same page. ⛔ That the
-#: fixture is big enough is ASSERTED rather than assumed — the clause about the
-#: rail running past the masthead is what says so, and it is the first thing to
-#: go red if a face ever makes the masthead the taller of the two.
+#: fixture is big enough is ASSERTED rather than assumed, in two places: the
+#: clause about the rail running past the masthead, and — the stronger of the
+#: two — the control at the foot of this module, which requires the regressed
+#: tree to differ from the repaired one by MORE than a subpixel and therefore
+#: goes red on a fixture too small to show the defect at all.
 UNITS = 16
 
 #: The region under test, spelled as `chrome.css` and `test_rail.py` spell it.
@@ -172,9 +174,7 @@ def _build(root: Path) -> WideCorpus:
 def _strip_rail(built: WideCorpus) -> None:
     """Cut the rail region out of every page of a built tree, in place."""
     for page in sorted(built.root.rglob("*.html")):
-        page.write_text(
-            RAIL_REGION.sub("", page.read_text(encoding="utf-8")), encoding="utf-8"
-        )
+        page.write_text(RAIL_REGION.sub("", page.read_text(encoding="utf-8")), encoding="utf-8")
 
 
 def _regress(built: WideCorpus) -> None:
