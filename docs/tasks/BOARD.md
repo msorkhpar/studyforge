@@ -481,6 +481,11 @@ else.**
 | W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | `todo` — clean run | [`rows/W331.md`](rows/W331.md) |
 | W332 | The reader's document states live counts that no verb refreshes | framework agent | `todo` — clean run | [`rows/W332.md`](rows/W332.md) |
 | W333 | The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout | framework agent | `todo` — `W328/7` | [`rows/W333.md`](rows/W333.md) |
+| W334 | R11 bounds a FILE and the instrument measures PYTHON, so no stylesheet or script is measured at all — and `chrome.css` is 748 lines against a 400 bound | framework agent | `todo` — `W333/6` | [`rows/W334.md`](rows/W334.md) |
+| W335 | The visual harness renders container pages without the rail the build gives them, so four modules judge a shape the product does not emit | framework agent | `todo` — `W333/2` | [`rows/W335.md`](rows/W335.md) |
+| W336 | The walkthrough discards the exit code of the step the skill commands, which is why two shipped defects survived a green suite | framework agent | `todo` — `W331/1` + `W329/4` | [`rows/W336.md`](rows/W336.md) |
+| W337 | A fourth site composes archive addresses and WALKS FIRST, so a moved constant errors instead of naming what moved | framework agent | `todo` — `W322/1` | [`rows/W337.md`](rows/W337.md) |
+| W338 | No committed fixture has a container big enough to exhibit a height-proportional defect, so two rows each built their own | framework agent | `todo` — `W326/2` + `W328/4` | [`rows/W338.md`](rows/W338.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
