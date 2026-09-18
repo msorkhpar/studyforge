@@ -506,8 +506,10 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
    column section above was written against, one viewport along. ⭐ The ceiling
    chosen is the one the palette ALREADY declares, so this row mints nothing:
    `96rem` is 1536px at the initial font size, and against the rail and the
-   gutters that leaves a reading column a little over half as wide again as the
-   widest single track `--measure` produces under any face this project ships.
+   gutters that leaves a reading column of 1224px — MEASURED, in this image's
+   browser, at a viewport past the ceiling, against the 800px the constant track
+   resolved to under the same face. ⚠️ A different prose face moves the second
+   number and not the first, so the ratio is not carried as a fact.
    ⚠️ `W325/2` said this ceiling *"does not bite under the face this image
    pins"*; that reading was taken against a bound whose other term was the
    measure, and it is DATED — `--page-max` is the only term now, so it bites at
