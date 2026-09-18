@@ -48,6 +48,10 @@ one does.**
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 | **M6** — the first corpus reads (`ISO-8583`) | ✅ **CLOSED** — ⭐ **round 107**, re-taken against the REGENERATED corpus ⛔ **with the pages READ, which the withdrawn run never did.** ⚠️ **The eight escalations that blocked it are ruled or dissolved there.** | `77535e6` | [the close](BOARD-ARCHIVE.md#po-round-107) |
+| **M8** — it is a framework | ⏳ **OPEN — the next milestone by the user's order, and the board carried NO CELL FOR IT until round 108.** ⭐ Step 8.1 is `QA-04`, whose ⛔ **deliverable is the FINDINGS LOG, not the site** (spec §12). ⚠️ **The floor half is measured and green; what remains is the distillation** | — | [the open](BOARD-ARCHIVE.md#po-round-108) |
+| **M5** — it runs code | ⛔ **NOT STARTED.** A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [the plan](README.md) |
+| **M7** — it has practices | ⛔ **NOT STARTED.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the plan](README.md) |
+| **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
