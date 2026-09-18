@@ -273,8 +273,10 @@ def test_the_rail_is_laid_out_at_its_full_height_and_is_not_clipped(
 
     ⭐ A rail given a height of its own would leave the masthead's row alone and
     the reading column where it belongs, and would hide every course past the
-    fold of a box nobody can scroll. ⚠️ So the repair is asserted to be a SPAN:
-    the rail runs past the masthead, and nothing of it is cut off.
+    fold of a box nobody can scroll. ⚠️ So the rail is asserted to be laid out
+    WHOLE and to run past the masthead — the shape a span produces and a height
+    cannot. ⭐ It is also what says this module's fixture is big enough to be
+    measuring anything at all.
     """
     open_page.resize(*WIDE)
     open_page.open(widened.url, scripts=False)
@@ -354,10 +356,13 @@ def test_at_the_narrow_width_the_rail_is_still_the_card_above_the_reading_surfac
         f"at {NARROW[0]}px the rail is {float(reading['width']):.2f}px against the column's "
         f"{float(reading['column']):.2f}px, so it has a measure of its own"
     )
-    masthead = next(iter(column(widened, NARROW)))
-    assert column(widened, NARROW)[masthead][1] == pytest.approx(
-        column(railless, NARROW)[masthead][1], abs=TOUCHING
-    ), "the masthead is a different height at the narrow width with the rail on the page"
+    railed = column(widened, NARROW)
+    alone = column(railless, NARROW)
+    masthead = next(iter(alone))
+    assert railed[masthead][1] == pytest.approx(alone[masthead][1], abs=TOUCHING), (
+        f"at {NARROW[0]}px the masthead is {railed[masthead][1]:.2f}px tall beside the "
+        f"region and {alone[masthead][1]:.2f}px tall without it"
+    )
 
 
 def test_both_wide_clauses_fail_on_a_tree_whose_placement_is_the_one_that_shipped(
