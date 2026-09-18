@@ -27416,3 +27416,51 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 
 ⭐ **Five of the ten came from a USER's own words**, and one from a user's QUESTION — *"Why did the skills missed it?"* — ⛔ **whose answer was that the skills named no narration component at all.**
 
+
+## PO round 107
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M6` CLOSES, eight escalations that blocked it are ruled or dissolved, and six rows are minted from the regeneration and the rulings.**
+
+### ⛔ `M6` CLOSES — RE-TAKEN AGAINST THE REGENERATED CORPUS, WITH THE PAGES READ
+
+⚠️ **The withdrawn run re-took every clause and every clause was true; it still did not count, because it COUNTED PAGES AND NEVER READ ONE.** ⭐ **This run reads them, and that half is written first because it is the half that was missing.**
+
+⭐ **WHAT IS ON THE PAGES, read by this register at ISO `77535e6`:**
+
+- ⛔ **38 units in 3 containers** — `iso-fundamentals` 16, `jpos-client` 11, `jpos-server` 11 — ⭐ **and EVERY TITLE is ISO-8583 or jPOS material**: message structure, MTIs, bitmaps, data elements, transaction flow, channel management, the TransactionManager, security, error handling.
+- ⛔ **THE OUT-OF-SCOPE CONTAINER IS GONE.** ⭐ **It appears in no generated artifact; the manifest declares it `not_material` and that is the only tracked mention in the generated half.**
+- ⭐ **The bodies are substantive teaching prose, not stubs** — sampled pages carry 4,279 and 7,542 characters of real material, correctly structured under their own headings.
+
+⭐ **THE MECHANICAL CLAUSES, each measured at the same ref:**
+
+| clause | reading |
+|---|---|
+| opens offline over `file://` | ⭐ **zero external references in any generated page**, and the read-mark clause below was taken by opening a real `file://` URL |
+| narrated | ⭐ **38 of 38** units carry `<audio>`; 1,364 clips on disk and in the record |
+| navigable | ⭐ **38 of 38** carry prev/next; **38 index deep links, 0 unresolved** |
+| read marks recorded | ⭐ **the control flips `aria-pressed` false → true, `studyforge.read.v1` carries the unit's own address, and the mark SURVIVES A RELOAD** |
+| minus what the source lacks, stated positively | ⭐ **the corpus states it needs no container BECAUSE no unit declares a graded practice** — ⛔ complete at the reading floor, not short (§11.0, C5) |
+
+⛔ **THE `ISO-17` GATE WAS A MIS-MAPPING BY THIS REGISTER, AND SAYING SO IS PART OF THE CLOSE.** ⭐ **MEASURED in the corpus's own plan: `C4` is gated on framework `M4`, which closed at `4d3c742`, and `C4` is the CORPUS TRACK's finish line — not `M6`'s.** ⚠️ **`ISO-16`, the row that asserts `M6`'s *Done when*, is TAKEN.** ⛔ **`ISO-17` — the findings distilled — is real work still owed on the integration track, and it gates that track rather than this milestone.**
+
+### ⛔ THE EIGHT ESCALATIONS THAT BLOCKED IT
+
+⭐ **The user's standing decision — an unruled escalation BLOCKS its milestone — is what held `M6` shut, and it was RIGHT to.** ⚠️ **This register had the argument for closing half-built before it checked.**
+
+| # | disposition |
+|---|---|
+| `Q8` | ⭐ **DISSOLVED.** It asked whether a corpus can reach the reading floor without `M4`; `M4` closed at `4d3c742` |
+| `Q4` | ⭐ **ANSWERED BY THE USER'S `Q5` RULING** — and it leaves a defect: the spec still lists this corpus's graders as the ruled-out file. ⛔ **Minted as `W339`, a correction rather than a further question** |
+| `Q3` | ⛔ **RULED BY THE USER: the curriculum index's title wins.** ⚠️ **13 of 38 units disagree with their file's own heading; the site already showed the index's titles, so this was a DECISION BY DEFAULT until now** — ⭐ **nothing in the site changes and it is now a decision** |
+| `Q2` | ⭐ **RULED — a correction to the record, which is what the question itself offered.** ⛔ **MEASURED: raw HTML is NOT in the shipped vocabulary and no corpus has produced a need for it, so it stays out.** ⚠️ **The thematic break DOES have other evidence — the Java corpus uses it ten times — so `C3` was never its whole case** |
+| `Q7` | ⭐ **RULED — a fence with no info string renders as PLAIN TEXT and the renderer never guesses.** ⛔ **A guess is a silent wrong highlight, which is worse than no highlight**, and it is 5 of 218 blocks |
+| `Q9` | ⭐ **RULED — the framework declares the convention, `["prose"]`, rather than each corpus inventing a word.** ⚠️ **Four corpora inventing four words is four different labels in one selector** |
+| `Q11` `Q12` | ⭐ **RULED — both belong in the MANIFEST**, on R19: anything a second source would have to retype is a hole in the skills. ⛔ **Minted as `W340`**, with `F6`'s half — a detection with nowhere to be written down cannot be checked |
+
+⛔ **RULING IS NOT SILENCE, AND THAT IS THE WHOLE POINT OF THE USER'S RULE.** ⚠️ **What it forbids is a recommendation becoming the decision by DEFAULT** — ⭐ **five of these are framework design and are ruled here explicitly, with their evidence; one changes what a reader sees and went to the user.**
+
+### ⭐ MINTS — `W339`–`W344`
+
+⭐ **Two from the rulings, four from the regeneration**, and the regeneration's are the ones that matter for the next ingestion: ⛔ **a re-survey of an onboarded corpus flips four answers and cannot run unattended** (`W341`); ⛔ **a superseded generated glob is promoted to a person's and never dropped** (`W342`); ⛔ **the procedure pins a commit and runs against a moving tree** (`W343`); ⛔ **R8's floor is evidenced indirectly because the instrument that opens a `file://` URL lives where a corpus cannot reach it** (`W344`).
+
+⚠️ **`W343` is this register's own doing:** the framework checkout moved from `aa4e256` to `19eea9a` **while the regeneration ran**, because this register merged round 106 into it. ⭐ **`git diff aa4e256 19eea9a -- src/` is EMPTY, so nothing needs re-taking** — ⛔ **but that is LUCK, not a property, and the row exists so it stops being luck.**

@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⛔ **BLOCKED, and its earlier close run is WITHDRAWN** — ⭐ **round 105**: the run re-took every clause and every clause was TRUE, ⛔ **but it counted pages and never read one**, which is how a container of out-of-scope material passed it. ⚠️ **`Q5` is now ruled: that container is OUT, so the corpus is REGENERATED and M6 re-takes against the rebuild — reading what is on the pages.** ⛔ **`ISO-17` is still C4's last row and still owed.** | — | [the withdrawal](BOARD-ARCHIVE.md#po-round-105) |
+| **M6** — the first corpus reads (`ISO-8583`) | ✅ **CLOSED** — ⭐ **round 107**, re-taken against the REGENERATED corpus ⛔ **with the pages READ, which the withdrawn run never did.** ⚠️ **The eight escalations that blocked it are ruled or dissolved there.** | `77535e6` | [the close](BOARD-ARCHIVE.md#po-round-107) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -485,6 +485,12 @@ else.**
 | W336 | The walkthrough discards the exit code of the step the skill commands, which is why two shipped defects survived a green suite | framework agent | `todo` — `W331/1` + `W329/4` | [`rows/W336.md`](rows/W336.md) |
 | W337 | A fourth site composes archive addresses and WALKS FIRST, so a moved constant errors instead of naming what moved | framework agent | `todo` — `W322/1` | [`rows/W337.md`](rows/W337.md) |
 | W338 | No committed fixture has a container big enough to exhibit a height-proportional defect, so two rows each built their own | framework agent | `todo` — `W326/2` + `W328/4` | [`rows/W338.md`](rows/W338.md) |
+| W339 | Spec §1 still lists this corpus's graders as the file the user ruled OUT, so a planner reads a corpus that has none as having them | framework agent | `todo` — `Q4` + `Q5` | [`rows/W339.md`](rows/W339.md) |
+| W340 | A corpus's curriculum location and its filename-prefix → container mapping live in adapter code, where the manifest cannot show them | framework agent | `todo` — `Q11` + `Q12` ruled | [`rows/W340.md`](rows/W340.md) |
+| W341 | A re-survey of an onboarded corpus reads none of the manifest's declarations, so it flips four answers and the guard has to refuse | framework agent | `todo` — `INT-19/1` + `INT-19/2` | [`rows/W341.md`](rows/W341.md) |
+| W342 | A regeneration promotes a superseded GENERATED glob to a person's, and nothing will ever drop it | framework agent | `todo` — `INT-19/3` | [`rows/W342.md`](rows/W342.md) |
+| W343 | The procedure pins a commit and runs against a moving working tree; the pin check asks whether the checkout HOLDS the commit, not whether it is AT it | framework agent | `todo` — `INT-19/7` | [`rows/W343.md`](rows/W343.md) |
+| W344 | R8's floor is evidenced indirectly by an integration round because the instrument that can open a `file://` URL lives where a corpus cannot reach it | framework agent | `todo` — `INT-19/6` | [`rows/W344.md`](rows/W344.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
