@@ -273,6 +273,7 @@ is declared done — never from memory afterwards.**
 ```python
 from pathlib import Path
 from studyforge.skills.delivery import LOG, Entry, FindingsLog
+
 log = FindingsLog(run="<what this run was>", entries=(Entry(finding), ...))
 Path(LOG).write_text("\n".join(log.lines()) + "\n", "utf-8")
 ```
