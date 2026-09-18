@@ -226,7 +226,10 @@ def test_a_run_writes_bytecode_so_it_is_never_run_in_the_tree(copy):
     # writes a cache beside the file it imported — which in the tree would be
     # an untracked file under the un-ignored fixture directory.
     env = {k: v for k, v in os.environ.items() if not k.startswith(("PYTEST", "PYTHONPATH"))}
+    # ⚠️ Both halves: the pinned image sets a cache PREFIX too, which would
+    # redirect the cache out of the copy and make this plant read nothing.
     env.pop("PYTHONDONTWRITEBYTECODE", None)
+    env.pop("PYTHONPYCACHEPREFIX", None)
     argv = [sys.executable, *exercise(1).test_command[1:]]
     subprocess.run(argv, cwd=copy, env=env, capture_output=True, timeout=120, check=True)
     assert list(copy.rglob("__pycache__"))
