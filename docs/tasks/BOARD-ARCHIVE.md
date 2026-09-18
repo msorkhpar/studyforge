@@ -27755,3 +27755,91 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ### ⭐ DISPATCHED — NAMED BEFORE IT RUNS
 
 ⭐ **`W352` on `wt/dev2`** — the runnable fixture `M5` cannot be proved without; its surface is `tests/fixtures/` alone, disjoint from every carrier in flight.
+
+## PO round 115
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`TC-00` lands and step 5.1 is half done; three rows close; two are minted; two carriers are named before they run.**
+
+### ⭐ `TC-00` — THE RUNNER IMAGE — DONE, merged at `e83f777`
+
+⭐ **Verified by this register against git AND against Docker, never received (Ruling 214):** one office identity in both repositories; the new component has NO remote; no personal data in any tracked file; every `FROM` is an argument with no default, filled as `image@digest` from `pins.json`, and a test refuses a digest that is really a tag. ⭐ **The component's Docker acceptance suite was RE-TAKEN BY THIS REGISTER under the shared container lock — GREEN — and it left no image behind.** ⭐ **`workspace verify` GREEN on the merged tree**: the sibling and its record landed in ONE merge (`TC-00/7`).
+
+⭐ **Findings carried, not minted:** `TC-00/6` (output relative to the source root in both modes) goes into `SF-20`'s brief; `TC-00/11` (enforce trusted checksums BEFORE a fetched plugin runs) goes to `TC-03` at `M7`; `TC-00/12` — `docker pull` and `pip` send their own agent strings, which carry tool versions and no identity — ⭐ **recorded as consistent with the user's pinned-pulls ruling.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W339 — Spec §1 still lists this corpus's graders as the file the user ruled OUT, so a planner reads a corpus that has none as having them
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W339.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING the defect on the tree merged with the release tip:** restoring the ruled-out graders to the spec's ISO cell turns the new corpus-table test RED, naming the row and the pinned manifest it contradicts; with the correction it is GREEN against the corrected ISO pin. Merged at `b553ec6`.
+
+⛔ **THE SPEC STILL NAMES THIS CORPUS'S GRADERS AS A FILE THE USER RULED OUT.** ⭐ **MEASURED at `19eea9a`: `docs/specs/2026-09-08-studyforge-v1-design.md` line 63 lists `ISO-8583-jPOS-tutorial`'s graders as *"prose scenarios in `TestCases.md`"*.**
+
+⚠️ **`Q5` is ruled and FINAL: that file is OUT** — it is declared `not_material` and the corpus is 38 units in 3 containers with **no graded practices at all.** ⛔ **So the spec's own table asserts a capability this corpus does not have and will not have.**
+
+⭐ **Why it is a row and not a typo:** ⚠️ **that table is what a planner reads to decide whether a corpus enters the execution track** (§7's three states, C5). ⛔ **A corpus listed as having graders is a corpus the plan expects to run them** — and this one is **complete at the reading floor, not short**, which is exactly the distinction `W327` shipped machinery to preserve.
+
+⚠️ **`Q4` asked whether that line was a claim or shorthand, and it was never ruled.** ⭐ **The user's `Q5` ruling answers it: it is now simply FALSE**, and this row is the correction rather than a further question.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The spec's table states what this corpus actually is** — ⭐ **no graders, complete at the reading floor** — and ⚠️ **the change is dated and attributed, not silently rewritten** (the spec is a record; Ruling 106's spirit applies).
+2. ⛔ **Anything else in the spec that reads the same claim is found and corrected in the same pass** — ⚠️ **one line was measured; a second is not ruled out.**
+3. ⛔ **Asserted (R12):** an instrument reads the spec's corpus table against the corpora this workspace pins, so a table row that contradicts a manifest is caught rather than read.
+
+⭐ **Surface:** `docs/specs/2026-09-08-studyforge-v1-design.md` and whatever instrument clause 3 needs. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-107)
+
+### W347 — Four framework decisions ruled at round 107 live only in the board archive, where a next source never reads
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W347.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge:** the four decisions each stated once in the spec — `Q2` on the premise round 113 corrected — and the `html` bypass held by an existing test that fixes `RAW_TYPES` to `{"html"}`. Merged at `b553ec6`, with `W339`.
+
+⛔ **`QA-04/3`: four framework decisions ruled at round 107 live ONLY in the board archive, where a next source never reads.**
+
+⭐ **The four:** a fence with no info string renders as plain text and the renderer never guesses (`Q7`); the framework declares `["prose"]` as the label for un-highlighted prose rather than each corpus inventing a word (`Q9`); raw HTML stays out of the vocabulary (`Q2`); the curriculum index's title wins where it disagrees with a file's own heading (`Q3`).
+
+⭐ **MEASURED at `QA-04`'s tip:** the prose label appears in no spec or convention, and the fence rule appears only in a source docstring. ⚠️ **This is the shape the integration catalogue's own header names — *a ruling is made, is correct, and never reaches the artifact it governs.***
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Each of the four is stated ONCE, in the artifact it governs** — the spec's content model or the convention a renderer and an adapter author read — ⭐ **and the archive record is cited, never copied.**
+2. ⚠️ **No second spelling is minted:** where a docstring already states one, it points at the landed statement.
+3. ⭐ **Asserted where a mechanism exists (R12)** — the fence and label behaviours already have renderer tests; the row confirms each cites the landed rule.
+
+⭐ **Surface:** `docs/specs/2026-09-08-studyforge-v1-design.md` and the renderer's convention. ⚠️ **Coordinate with `W339`, which also edits the spec.**
+
+[the mint](#po-round-109)
+
+### W346 — No skill obliges a conversion to write a findings log, so a milestone's deliverable was produced by hand and two findings survived only in a transcript
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W346.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by running the documented closing command BY HAND in an empty corpus:** it exits 1 naming the missing log, and exits 1 again on an empty log naming both gaps. The skills' suites GREEN on the tree merged with the release tip. Merged at `f7279f7`.
+
+⛔ **`QA-04/4`: no skill obliges a conversion to write a FINDINGS LOG, so `M8`'s entire deliverable was produced by hand, a milestone later, by an office reading commit bodies.**
+
+⭐ **The conversion named this itself:** the one test it hand-wrote opens by declaring itself *a finding rather than a fixture (R19)* and says what the skill could have generated instead — *the obligation, the findings log for this run.*
+
+⚠️ **The cost is measured, not hypothetical:** two of the conversion's seven numbered findings (`INT-19/4`, `INT-19/5`) existed ONLY in a hand-back message and were never written into any repository. ⛔ **`QA-04` could not find them in any ref, and the register recovered them from a session transcript** — [round 109](#po-round-109). ⭐ **A log the skill obliges would have held all seven.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The conversion procedure the skills document OBLIGES a findings log for the run**, at a location the skill names, before the run is declared done.
+2. ⭐ **Each finding carries a disposition slot** — the catalogue's admission question, *could a skill have generated this?*, is asked in the log, so the sort `QA-04` did by hand starts half done.
+3. ⛔ **Asserted (R12):** the generated procedure names the log, and a run that ends without one is refused or reported — ⚠️ **never silently green.**
+
+⭐ **Surface:** the adapter and onboarding skills' `SKILL.md`, and `src/studyforge/skills/delivery/SKILL.md`. ⚠️ **`QA-05` and `M9` are the next consumers.**
+
+[the mint](#po-round-109)
+
+### ⭐ MINTS — `W355`, `W356`
+
+⭐ From `W346`: the delivery skill never reaches a corpus (`W346/2`), and nothing generated into a corpus checks for the log (`W346/3`). ⚠️ `W346/1` and `/4` are local and recorded in its handoff.
+
+### ⭐ DISPATCHED — NAMED BEFORE THEY RUN
+
+`W350` on `wt/dev4` (the spec is free now `W339`+`W347` merged) and `W353` on `wt/dev1` (the onboarding package is free now `W345` merged). ⭐ **Surfaces read against each other and against `W352`'s `tests/fixtures/`: disjoint.**
