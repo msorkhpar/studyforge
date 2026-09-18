@@ -26828,3 +26828,82 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 104
 
 ⭐ **CLOSED BY MEASUREMENT, with no carrier: the defect is gone at `7015b47`, discharged by `SF-12`'s renderer package (`c9e7504`). The round record carries the reading.**
+
+## PO round 105
+
+⛔ **Only what is MEASURED is written here.** ⭐ **A milestone's close run is WITHDRAWN, two user rulings are recorded as decisions, ten rows are minted from a clean rebuild and a UX wave, and this register records five briefing defects of its own.**
+
+### ⛔ M6 DOES NOT CLOSE, AND ITS EARLIER CLOSE RUN IS WITHDRAWN BY THIS REGISTER
+
+⭐ **The close run taken at the first corpus's rebuild ref re-took every clause of M6 — opens offline over `file://`, narrated, navigable, read marks surviving a reload in a real browser — and EVERY CLAUSE WAS TRUE.** ⛔ **It still does not count, and the withdrawal is the finding.**
+
+⚠️ **It counted pages and never READ one.** ⛔ **That is precisely how a container of material the user never asked for passed a close run**, in the user's own words: *"The scnarions were not even in scpope!!!! We just wanted the iso-8583 covered."*
+
+⭐ **COUNTING IS NOT READING, and a close run that cannot speak to the subject matter is not a close run.** ⛔ **M6 re-takes against the REBUILT corpus, and the re-take reads what is on the pages.**
+
+### ⭐ TWO USER RULINGS, RECORDED AS DECISIONS RATHER THAN INHERITED
+
+⛔ **`Q5` is ruled (c): the out-of-scope container is OUT — FINAL.** The corpus drops it and is 38 units in 3 containers, which is the figure the plan carried before `Q5` was ever raised. ⭐ **It is removed by being declared `not_material` in the manifest and REGENERATED** — ⛔ **never by hand-editing generated files** (R19). ⚠️ **It moved several times in one conversation and every earlier reading is superseded by this one.** ⛔ **Arguments already made and NOT sufficient to reopen it:** that the corpus's `README.md` indexes it as a section; that it is legitimately on the corpus's own default branch and always was; that it arrived as a rename. ⭐ **None of those decides it. The user does, and the user said out.**
+
+⛔ **AN UNRULED ESCALATION BLOCKS ITS MILESTONE**, in the user's words: *"Block the milestone."* ⭐ **A recommendation may NEVER become the decision by silence.** ⚠️ **`Q5` was raised, nobody ruled it for many rounds, and the office's recommendation became the decision by default — and even though that recommendation turned out RIGHT, the process was wrong.** ⭐ **An office's escalation goes on the milestone as a BLOCKER the moment it is raised, and this binds every future corpus ingestion.**
+
+### ⛔ WHERE A FIX LANDS — THE USER'S STANDING DIRECTION
+
+> only in the original framework or the skills so that they will be used by the next ingestion projects
+
+⭐ **A corpus-visible defect becomes a FRAMEWORK ROW; the corpus is REGENERATED, never patched.** ⛔ **The test of a fix is the NEXT corpus, not this one.** ⚠️ **And the reason is the user's own plan:** *"In future we are not going to have you running the conversion! I will be the study forge as a whole."* ⛔ **So a gap this register papers over with a brief is a PRODUCT DEFECT, not a workaround** — which is the whole argument of `W327`.
+
+### ⛔ `PO-105/1` — THE REGISTER DISPATCHED TWO ROWS ONTO ONE PACKAGE
+
+`W92` and `W94` both own the same package, and both split the same module at their own declared seam. ⭐ **MEASURED: five conflicting files.** ⛔ **Neither office did anything wrong and neither could have seen it — the dispatch is the only place that could.** ⚠️ **The rule already existed in the wave's own shared brief — *surfaces are disjoint; keep them that way* — and the register broke it.** ⭐ **The remedy is a CHECK, not a resolution: before dispatch, the register reads the declared surfaces of every in-flight row against each other.**
+
+### ⛔ `PO-105/2` — FIVE BRIEFING DEFECTS IN ONE WAVE, ALL THIS REGISTER'S
+
+⭐ **Every one was caught by an office reporting the discrepancy rather than working around it, which is the behaviour that works:**
+
+| the defect | what the brief said | what was true |
+|---|---|---|
+| a row named as landed before it merged, twice running | the brief named the row as in the base | its merge was not an ancestor of the commit the brief pinned |
+| an archive asserted to declare media | the brief said this archive declares media | it declares none, so a new check had an EMPTY population and the office had to plant one (Ruling 191, applied to a brief's premise) |
+| the wrong file named as a row's surface, twice | the brief named a file | the subject was in another |
+| a network constraint that forbade the row's own mechanism | *take no network action* | ⭐ the office read that as covering the LOOPBACK call the row exists to make — the CORRECT reading of what was written, and one that would make the row impossible |
+
+⛔ **THE REMEDY IS MECHANICAL AND IT IS THE REGISTER'S: every factual claim in a brief — a ref, an ancestry, a file's existence, a population's size — is READ AGAINST GIT AND THE WORKSPACE before the brief is dispatched.** ⭐ **A brief is not prose about a row; it is a QUOTATION of it.** ⚠️ **A brief that forbids a class must name the boundary inside it: loopback to a pinned component of this workspace is allowed; anything off the host is not.**
+
+### ⛔ `PO-105/3` — A GATE CAN BE REDDENED BY A NEIGHBOUR, AND A RED READING IS RE-TAKEN BEFORE IT IS BELIEVED
+
+⭐ **Two instances, both measured, neither a defect in any tree.** One host suite went RED because a numbered temp directory was deleted mid-run by another process's cleanup; the register then STOPPED its own overnight sweeper, because the row that fixed the underlying leak at source had already landed and the sweeper had stopped being protection. ⛔ **One merge was REFUSED on a pinned-image suite that exited on a SIGNAL rather than on an assertion, with four offices' container suites on the machine at once.** ⚠️ **A signal is not a verdict.** ⭐ **The register's rule: ONE container gate at a time, and a RED reading whose exit code is a signal is re-taken before it is reported.**
+
+### ⛔ `PO-105/4` — THIS REGISTER CERTIFIED A ROW WITH THE REFUTING EVIDENCE IN FRONT OF IT
+
+`W325` was certified on a geometry probe this register RAN and MISREAD. ⭐ **The probe reported the rail's own height; the register read it as *the rail sits below the masthead* when what it said was that the rail was SETTING the grid row's height.** ⛔ **The clean rebuild found it in one look: roughly 870px of blank page down the reading column, on every unit page of the biggest course.**
+
+⛔ **THE ROOT CAUSE IS NOT THE MISREADING — it is that every visual fixture in this framework was too small to exhibit it.** ⭐ **The largest container in any committed fixture declares THREE units, at which size the defect reads as spacing rather than as a defect.** ⚠️ **Minted as `W326`, which builds a sixteen-unit corpus at test time; a COMMITTED one is `W326/2` and is nobody's yet.**
+
+⭐ **The register's rule from it: A GEOMETRY READING IS QUOTED WITH WHICH BOX IT MEASURED, or it is not a reading.**
+
+### ⭐ `INT-18/3` — ANSWERED, NOT MINTED
+
+The served-unit contract bumped its `api` and no consumer artifact changed. ⭐ **RE-MEASURED here (Ruling 214): nothing under `src/` writes the document in question, no built page carries the field, and the declaration ALREADY SAYS SO in its own comment** — so what a bump refuses is a document some other tool wrote, refused and never migrated (R9). ⛔ **The question is answered where it asked to be answered, and there is nothing to mint.** ⚠️ **What was wrong was THIS REGISTER'S BRIEF, which predicted the bump would move every served document — `PO-105/2`'s class again.**
+
+### ⭐ RELAYED, NOT MINTED
+
+The first corpus's own verifier fixes a whole-disk walk by a name-based exemption where the framework's equivalent reads the tracked tree and names no directory. ⛔ **Narrower, and the corpus's to take.** ⚠️ **Also recorded: the framework's cleanliness check reads RED on that corpus's questions document at its own HEAD as well as after the round, and the only email-shaped string in it is an office's own PLACEHOLDER quoted inside an earlier finding's record.** ⛔ **Not a leak, and not fixed, because fixing it means rewriting a record** (Ruling 106).
+
+### ⭐ MINTS — `W323`–`W332`, each from a MEASURED argument
+
+⛔ **Four of these are USER REQUIREMENTS stated directly, not findings from an office**, and they are marked as such in their row files. ⭐ **Each row's argument lives once, in its own file; this record does not restate it.**
+
+| row | why it exists |
+|---|---|
+| `W323` | ⛔ a user requirement: generated pages and audio landed loose beside their sources, so a corpus root held 34 generated entries |
+| `W324` | ⛔ a user requirement: a reader on a unit page had no path to any other container |
+| `W325` | ⛔ the PLACEMENT half of the same requirement — the region existed and was a card, not a rail |
+| `W326` | ⛔ `PO-105/4` above: the rail sized the masthead's row |
+| `W327` | ⛔ a user QUESTION — *"Why did the skills missed it?"* — and the answer was that the skills named no narration component at all |
+| `W328` | ⛔ a user requirement: the rail floats in from the viewport edge and scrolls away; the reading column is a constant rather than a function of the page |
+| `W329` | ⭐ **the most valuable row from the clean run**: the documented procedure cannot be run TWICE |
+| `W330` | ⛔ the authoring reference's placement trees were retyped, stale, and falsely claimed to be checked |
+| `W331` | ⛔ the GENERATED non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it |
+| `W332` | ⛔ the reader's document states live counts that no verb refreshes |
+

@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; ⭐ **ISO round 17 merged at `67ee3e7`, now the pin: `ISO-15` and `ISO-16` TAKEN**, and every earlier `ISO-*` row was taken before them. ⛔ **`ISO-17` — the findings distilled — is the only row left, and C4's own finish line names it, so this milestone DOES NOT CLOSE until it is taken.** ⭐ **Round 18 is dispatched for it.** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
+| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⛔ **BLOCKED, and its earlier close run is WITHDRAWN** — ⭐ **round 105**: the run re-took every clause and every clause was TRUE, ⛔ **but it counted pages and never read one**, which is how a container of out-of-scope material passed it. ⚠️ **`Q5` is now ruled: that container is OUT, so the corpus is REGENERATED and M6 re-takes against the rebuild — reading what is on the pages.** ⛔ **`ISO-17` is still C4's last row and still owed.** | — | [the withdrawal](BOARD-ARCHIVE.md#po-round-105) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -471,6 +471,16 @@ else.**
 | W320 | `UNUSABLE` lives in one verb's `cli` module, so importing the command still loads that verb | framework agent | `todo` — `W293/3` | [`rows/W320.md`](rows/W320.md) |
 | W321 | The generated documents address the framework relative to the corpus root while the pin asks git, so a linked worktree's documents point elsewhere | framework agent | `todo` — `INT-17/2` | [`rows/W321.md`](rows/W321.md) |
 | W322 | `Layout` computes a unit's overlay address in one place and three test sites spell it by hand | framework agent | `todo` — `W198/4`, `W198/5` | [`rows/W322.md`](rows/W322.md) |
+| W323 | Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries | framework agent | ✅ done — `4650f5d` | [`rows/W323.md`](rows/W323.md) |
+| W324 | A reader on a unit page has no path to any other container; crossing a course means a trip through the index | framework agent | ✅ done — `9c74bba` | [`rows/W324.md`](rows/W324.md) |
+| W325 | The containers navigation is a card stacked in the reading column; the user asked for a LEFT RAIL | framework agent | ✅ done — `7027ee6` | [`rows/W325.md`](rows/W325.md) |
+| W326 | The rail sets the height of the masthead's row, so a unit page opens on a blank screen proportional to its course's size | framework agent | `in flight` | [`rows/W326.md`](rows/W326.md) |
+| W327 | The skills name no narration component and call the step optional, so a reader who follows them exactly builds a silent site | framework agent | `in flight` | [`rows/W327.md`](rows/W327.md) |
+| W328 | The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | framework agent | `todo` — user requirement | [`rows/W328.md`](rows/W328.md) |
+| W329 | The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material | framework agent | `in flight` | [`rows/W329.md`](rows/W329.md) |
+| W330 | The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong | framework agent | `in flight` | [`rows/W330.md`](rows/W330.md) |
+| W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | `todo` — clean run | [`rows/W331.md`](rows/W331.md) |
+| W332 | The reader's document states live counts that no verb refreshes | framework agent | `todo` — clean run | [`rows/W332.md`](rows/W332.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -551,7 +561,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⭐ **round 17 merged at ISO `67ee3e7`, re-pinned to framework `883dae6`: `ISO-15` and `ISO-16` TAKEN, so `ISO-17` is the only row left.** ⛔ **`M6` does not close until it is** — [the round](BOARD-ARCHIVE.md#po-round-104) |
+| **Status** | `in-progress` — ⛔ **`M6`'s close run is WITHDRAWN and the milestone is BLOCKED** (round 105): ⭐ **`Q5` is ruled — the out-of-scope container is OUT, FINAL — so the corpus is REGENERATED and the close re-takes against the rebuild.** ⚠️ **`ISO-17` remains the last row of C4** — [the withdrawal](BOARD-ARCHIVE.md#po-round-105) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 
