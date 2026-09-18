@@ -255,6 +255,55 @@ naming every changed file at once. ⭐ **A file you filled in is not silently
 destroyed**, which is why `ingest/read.py` is the usual reason a clean
 uninstall refuses: it is removed only while it is still the stub.
 
+### 7. ⛔ Write the findings log — the run is not done until it exists
+
+⛔ **Exit 0 at step 5 says the archive is valid. It does not say what this run
+found, and a run that found things and wrote them nowhere is not done** (`W346`).
+⚠️ **Measured on the first conversion:** no step obliged a log, so its
+milestone's whole deliverable was rebuilt by hand a milestone later from commit
+bodies — ⛔ **and two of its seven numbered findings existed only in a hand-back
+message and were found in no ref at all.**
+
+⭐ **The log lives at `.studyforge/findings.md`**, the one place this procedure
+names for it, and `studyforge.skills.delivery.LOG` spells it. `.studyforge/` is
+this tool's directory and `validate` skips it, so writing the log never makes
+the corpus it describes invalid. ⛔ **It is written by the run, before the run
+is declared done — never from memory afterwards.**
+
+```python
+from pathlib import Path
+from studyforge.skills.delivery import LOG, Entry, FindingsLog
+log = FindingsLog(run="<what this run was>", entries=(Entry(finding), ...))
+Path(LOG).write_text("\n".join(log.lines()) + "\n", "utf-8")
+```
+
+- ⭐ **Every entry is a `Finding`** — the delivery skill's own record: a marker
+  and, per claim, measured here or received. **Everything done by hand in steps
+  1–6 is one**: a hand-settled manifest answer, a hand-edited generated file, a
+  test a generator should have written.
+- ⭐ **Every entry carries a disposition slot**: the question the integration
+  catalogue's admission rule turns on — *could a skill have generated this?* —
+  answered `yes` (a hole in a skill, R19, and which one), `no` (a candidate
+  catalogue entry, and why no generator could write it), or left `open`.
+  ⚠️ **`open` is allowed: the sort starts half done rather than finished**,
+  and the delivery skill's step 9 is where it is finished.
+- ⛔ **A run that found nothing says so with one `none` finding.** An empty log
+  and a missing one read the same, and only one of them is news.
+
+⛔ **Then close the run on it.** This exits non-zero, naming every gap at once,
+when there is no log, when it holds no finding, or when a finding has no slot —
+⛔ **a run without a log is refused, never silently green:**
+
+```
+python3 -c "from pathlib import Path; \
+  from studyforge.skills.delivery import LOG, closing; \
+  log = Path(LOG); \
+  print('\n'.join(closing(log.read_text('utf-8') if log.exists() else None)))"
+```
+
+⭐ It prints every finding with its answer, and how many are still `open` —
+⛔ **an unsorted log is reported as unsorted, never read as done.**
+
 ---
 
 ## ⛔ The escape hatch, because there always has to be one

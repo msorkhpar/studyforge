@@ -248,6 +248,14 @@ cannot judge whether the archive is the material. What goes with it:
   disk.** That diff is a **finding about this skill** (R19), and it is the only
   signal that the next corpus will need the same hand-edit.
 
+⛔ **And every one of those is WRITTEN, into the findings log, before the run is
+declared done — never carried only in a hand-back message** (`W346`). ⚠️ Two of
+the first conversion's seven numbered findings lived only in a message and were
+found in no ref afterwards. ⭐ **The log's place, its form and the command that
+refuses a run without one are the onboarding skill's step 7**; each entry asks
+*could a skill have generated this?*, and a diff against the scaffold answers
+`yes` by construction.
+
 ---
 
 ## What this skill must never do

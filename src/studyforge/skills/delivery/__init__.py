@@ -44,6 +44,7 @@ text, so the caller names the documents.
 | `backlog` | that a milestone waits on framework work it has not declared a gate for |
 | `question` | that a question is open with no way to re-run it, or a stale answer acted on |
 | `finding` | that a claim is neither measured here nor received from somebody |
+| `findings_log` | that a run closes with no log, or a finding in it with no disposition slot |
 | `export` | that a tracker column maps to a field the backlog does not carry |
 
 ## ⚠️ R1 holds here in the direction that is easy to miss
@@ -97,6 +98,16 @@ from studyforge.skills.delivery.finding import (
     Finding,
     FindingRefused,
 )
+from studyforge.skills.delivery.findings_log import (
+    ANSWERS,
+    LOG,
+    QUESTION,
+    Disposition,
+    Entry,
+    FindingsLog,
+    LogRefused,
+    closing,
+)
 from studyforge.skills.delivery.question import (
     Answer,
     Question,
@@ -139,6 +150,7 @@ def capability_index(
 
 
 __all__ = [
+    "ANSWERS",
     "BANNER",
     "ELSEWHERE",
     "FIELDS",
@@ -146,10 +158,12 @@ __all__ = [
     "HERE",
     "INSIDE",
     "JIRA",
+    "LOG",
     "MARKERS",
     "NEGATIVE_OPENING",
     "OUTSIDE",
     "PROFILES",
+    "QUESTION",
     "SIDES",
     "SIDE_COLUMN",
     "UNDECLARED",
@@ -161,12 +175,16 @@ __all__ = [
     "Claim",
     "Components",
     "Concentration",
+    "Disposition",
+    "Entry",
     "Epic",
     "ExportRefused",
     "Finding",
     "FindingRefused",
+    "FindingsLog",
     "Index",
     "IndexRefused",
+    "LogRefused",
     "Milestone",
     "PlanRefused",
     "Profile",
@@ -179,6 +197,7 @@ __all__ = [
     "TerminalRefused",
     "Unused",
     "capability_index",
+    "closing",
     "concentration",
     "export",
     "numbered",
