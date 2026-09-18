@@ -1,0 +1,50 @@
+{
+  "container_api": 1,
+  "address": [
+    "kata"
+  ],
+  "titles": [
+    "Kata"
+  ],
+  "variant": "python",
+  "ingested": "2026-01-05",
+  "origin": "kata/README.md",
+  "note": "Runnable units, one per shape a runner must tell apart: a test that passes, a test that fails, a file with no test, a file that does not compile, and a unit that sets no work.",
+  "units": [
+    {
+      "n": 1,
+      "title": "Greeting",
+      "practices": 1,
+      "origin": "kata/01-greeting.md",
+      "note": "Its test PASSES against the file as shipped."
+    },
+    {
+      "n": 2,
+      "title": "Totals",
+      "practices": 1,
+      "origin": "kata/02-totals.md",
+      "note": "Its file runs, and its test FAILS against the file as shipped."
+    },
+    {
+      "n": 3,
+      "title": "Hello",
+      "practices": 1,
+      "origin": "kata/03-hello.md",
+      "note": "A file and NO test: the practice is ungraded, which is not a failure."
+    },
+    {
+      "n": 4,
+      "title": "Area",
+      "practices": 1,
+      "origin": "kata/04-area.md",
+      "note": "Its file does not COMPILE, so the first failure ends the run before its test."
+    },
+    {
+      "n": 5,
+      "title": "Reading on",
+      "practices": 0,
+      "origin": "kata/05-reading.md",
+      "note": "Reading only: no practice document at all."
+    }
+  ]
+}

@@ -53,6 +53,7 @@ __all__ = [
     "OPTIONAL_KEYS",
     "RAW_API",
     "REQUIRED_TYPES",
+    "RUNNABLE",
     "UNIT_DIR",
     "VALID",
 ]
@@ -70,7 +71,18 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 #: also the set's only `container_api: 2` map, which is why the version check
 #: below reads a set: a whole-file `origin` and a region `origin` are two code
 #: paths and each needs an input, exactly as SF-10's two overlay shapes do.
-VALID = ("depth1", "depth2", "shared-origin")
+#:
+#: ⭐ **`runnable` is the fourth, and it is the only corpus whose units RUN**
+#: (`W352`): a test that passes, one that fails, a file with no test and a file
+#: that does not compile, each committed beside the archive. ⛔ It is an
+#: execution fixture, not a coverage corpus, and it is the one corpus in which
+#: graded practice is the majority — see `RUNNABLE`.
+VALID = ("depth1", "depth2", "shared-origin", "runnable")
+
+#: ⛔ **The execution fixture, named once.** Its graded units are its subject,
+#: so the rule that exactly one document in the set grades
+#: (`tests/fixtures/README.md`) is stated over every OTHER valid corpus.
+RUNNABLE = "runnable"
 
 #: ⛔ **Imported, never restated.** The archive document's key order, its
 #: optional keys, the eleven block types with their fields, the count keys and
@@ -99,6 +111,7 @@ REQUIRED_TYPES = {
     "depth1": tuple(t for t in BLOCK_FIELDS if t != "video"),
     "depth2": tuple(BLOCK_FIELDS),
     "shared-origin": ("heading", "para", "code"),
+    "runnable": ("heading", "para", "code"),
 }
 
 #: A `<tag>`-shaped run — what a parser scanning for raw HTML without tracking

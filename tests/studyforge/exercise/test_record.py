@@ -19,7 +19,7 @@ from studyforge.exercise import (
     to_document,
 )
 from studyforge.unit.errors import ContentError
-from tests.fixture_checks import excluded_by, fixture_paths
+from tests.fixture_checks import FIXTURES, RUNNABLE, excluded_by, fixture_paths
 from tests.support import repository_root
 
 WHERE = "basics/01-getting-started/unit-01/practice-1"
@@ -314,8 +314,15 @@ def test_exactly_one_valid_corpus_document_carries_an_exercise():
     # majority — see `tests/fixtures/README.md`. ⛔ The graded state is the
     # exception in real material, and a set in which it is the majority is a
     # set that will let a design fitted to the exception look correct.
+    # ⭐ `W352`: stated over every corpus but the execution fixture, whose
+    # graded units are its subject — `tests/test_fixture_runnable.py` pins
+    # which of its units grade, and that it carries an ungraded and a
+    # reading-only one beside them.
     valid = _carrying_an_exercise(asserting=ASSERTED)
-    assert len(valid) == 1, [p.name for p in valid]
+    runnable = FIXTURES / RUNNABLE
+    outside = [p for p in valid if runnable not in p.parents]
+    assert len(outside) == 1, [p.name for p in outside]
+    assert len(valid) > len(outside), "the execution fixture grades nothing"
 
 
 def test_every_other_exercise_in_the_tree_exists_to_be_refused():
@@ -330,7 +337,7 @@ def test_every_other_exercise_in_the_tree_exists_to_be_refused():
     # exactly what naming `exercise-trust` drops, so an eighth fixture cannot
     # land here silently and cannot be missed here either.
     assert {p.parts[p.parts.index("invalid") + 1] for p in others} == excluded_by(ASSERTED)
-    assert len(everything) == len(others) + 1
+    assert len(everything) == len(others) + len(_carrying_an_exercise(asserting=ASSERTED))
     for path in others:
         with pytest.raises(ExerciseError):
             of(json.loads(path.read_text(encoding="utf-8")), path.name)

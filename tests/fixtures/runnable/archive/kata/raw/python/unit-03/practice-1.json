@@ -1,0 +1,61 @@
+{
+  "raw_api": 1,
+  "source": "runnable-demo",
+  "address": [
+    "kata"
+  ],
+  "variant": "python",
+  "unit": 3,
+  "kind": "practice",
+  "ordinal": 1,
+  "ingested": "2026-01-05",
+  "title": "Hello",
+  "blocks": [
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Problem statement"
+    },
+    {
+      "type": "para",
+      "text": "Change the line `practice/untested/hello.py` prints. No test checks it."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Lesson: A file with no test"
+    },
+    {
+      "type": "para",
+      "text": "Nothing grades this file, and that is not a failure: run it and read it."
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "text": "Starting code"
+    },
+    {
+      "type": "code",
+      "lang": "python",
+      "text": "\"\"\"Say hello, with nothing to check that it did.\"\"\"\n\nif __name__ == \"__main__\":\n    print(\"Hello from a file with no test\")\n"
+    }
+  ],
+  "video": null,
+  "assets": [],
+  "attachments": [],
+  "counts": {
+    "headings": 3,
+    "paras": 2,
+    "code": 1,
+    "tables": 0,
+    "lists": 0,
+    "images": 0,
+    "videos": 0,
+    "rules": 0,
+    "quotes": 0,
+    "html": 0,
+    "disclosures": 0
+  },
+  "content_sha256": "9654aca0805a9205c366207bacee7ca648cc62378e13d6850894947abe43f86b",
+  "starting_code": "\"\"\"Say hello, with nothing to check that it did.\"\"\"\n\nif __name__ == \"__main__\":\n    print(\"Hello from a file with no test\")\n"
+}

@@ -1,0 +1,35 @@
+{
+  "corpus_api": 2,
+  "source": "runnable-demo",
+  "title": "Runnable Demo",
+  "levels": [
+    "course"
+  ],
+  "variants": [
+    "python"
+  ],
+  "exercises": true,
+  "placement": "sibling",
+  "content": {
+    "include": [
+      "kata/*.md"
+    ],
+    "exclude": [
+      {
+        "path": "kata/README.md",
+        "why": "the container's own introduction: its origin places the container page, and no unit reads it"
+      }
+    ],
+    "not_material": [
+      {
+        "glob": "practice/**",
+        "why": "the files a reader edits and the tests that grade them, named by each exercise record and never read as prose"
+      },
+      {
+        "glob": "pytest.ini",
+        "why": "the test runner's configuration for the practice workspace, never read as prose"
+      }
+    ]
+  },
+  "permitted_edits": []
+}

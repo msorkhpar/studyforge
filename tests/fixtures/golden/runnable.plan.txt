@@ -1,0 +1,44 @@
+plan runnable-demo  Runnable Demo
+placement sibling  each artifact in a study/ directory beside the source file it was generated from
+read corpus.json + 1 container.json  no file inside the source material was opened
+create .studyforge/assets/  the shared stylesheets, scripts and player
+expect .studyforge/site.json  the discovery cache, never the authority — `studyforge serve` writes it; a build into this root does not
+keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
+create index.html  the root index
+claim kata/study/attachments/kata.unit-01-greeting/  kata unit 1's attachments — a build creates it only when it copies a file into it
+claim kata/study/attachments/kata.unit-02-totals/  kata unit 2's attachments — a build creates it only when it copies a file into it
+claim kata/study/attachments/kata.unit-03-hello/  kata unit 3's attachments — a build creates it only when it copies a file into it
+claim kata/study/attachments/kata.unit-04-area/  kata unit 4's attachments — a build creates it only when it copies a file into it
+claim kata/study/attachments/kata.unit-05-reading-on/  kata unit 5's attachments — a build creates it only when it copies a file into it
+claim kata/study/audio/kata.unit-01-greeting/  kata unit 1's audio — a build creates it only when it copies a file into it
+claim kata/study/audio/kata.unit-02-totals/  kata unit 2's audio — a build creates it only when it copies a file into it
+claim kata/study/audio/kata.unit-03-hello/  kata unit 3's audio — a build creates it only when it copies a file into it
+claim kata/study/audio/kata.unit-04-area/  kata unit 4's audio — a build creates it only when it copies a file into it
+claim kata/study/audio/kata.unit-05-reading-on/  kata unit 5's audio — a build creates it only when it copies a file into it
+claim kata/study/images/kata.unit-01-greeting/  kata unit 1's images — a build creates it only when it copies a file into it
+claim kata/study/images/kata.unit-02-totals/  kata unit 2's images — a build creates it only when it copies a file into it
+claim kata/study/images/kata.unit-03-hello/  kata unit 3's images — a build creates it only when it copies a file into it
+claim kata/study/images/kata.unit-04-area/  kata unit 4's images — a build creates it only when it copies a file into it
+claim kata/study/images/kata.unit-05-reading-on/  kata unit 5's images — a build creates it only when it copies a file into it
+create kata/study/kata.section.html  the page for container kata
+create kata/study/kata.unit-01-greeting.unit.html  kata unit 1's page
+create kata/study/kata.unit-02-totals.unit.html  kata unit 2's page
+create kata/study/kata.unit-03-hello.unit.html  kata unit 3's page
+create kata/study/kata.unit-04-area.unit.html  kata unit 4's page
+create kata/study/kata.unit-05-reading-on.unit.html  kata unit 5's page
+claim kata/study/practice/kata.unit-01-greeting/  kata unit 1's practice — a build creates it only when it copies a file into it
+claim kata/study/practice/kata.unit-02-totals/  kata unit 2's practice — a build creates it only when it copies a file into it
+claim kata/study/practice/kata.unit-03-hello/  kata unit 3's practice — a build creates it only when it copies a file into it
+claim kata/study/practice/kata.unit-04-area/  kata unit 4's practice — a build creates it only when it copies a file into it
+claim kata/study/practice/kata.unit-05-reading-on/  kata unit 5's practice — a build creates it only when it copies a file into it
+claim kata/study/video/kata.unit-01-greeting/  kata unit 1's video — a build creates it only when it copies a file into it
+claim kata/study/video/kata.unit-02-totals/  kata unit 2's video — a build creates it only when it copies a file into it
+claim kata/study/video/kata.unit-03-hello/  kata unit 3's video — a build creates it only when it copies a file into it
+claim kata/study/video/kata.unit-04-area/  kata unit 4's video — a build creates it only when it copies a file into it
+claim kata/study/video/kata.unit-05-reading-on/  kata unit 5's video — a build creates it only when it copies a file into it
+media commit 'auto'  generated media is committed under this policy
+media units 5  each may get one directory per kind, made only when a build copies a file into it: audio, images, video, practice, attachments
+media limit max_total_bytes 5000000000
+media limit max_file_bytes 104857600
+media footprint  measured — 0 byte(s) in 0 file(s) on disk under the declared units' media directories and wherever the narration record locates a clip; nothing is there yet — `studyforge narrate` writes the clips there, and --bytes-per-unit projects a footprint before it does
+plan: 8 path(s) to create, 0 to replace, 1 to keep, 25 claimed, 1 expected from another command, 0 superseded clip(s) no build copies, 0 file(s) to edit, 0 ignore line(s), 0 refusal(s)
