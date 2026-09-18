@@ -595,6 +595,52 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
     padding-left: 0;
   }
 
+  /* ⛔ THE PAGE WITHOUT A RAIL STARTS WHERE THE PAGE WITH ONE STARTS, AND
+     `W333` IS WHY THAT SENTENCE IS HERE. The rule above gave up the left margin
+     on the two-column page and left the one-column page — the root index, whose
+     own body IS the tree — with the centred cap the column section declares.
+     ⭐ MEASURED at `6541eec`, scripts off, on this framework's own `depth2`
+     fixture built by `write_site`: `body`'s BORDER BOX left edge read 0 on a
+     unit page at 1280px, 1920px and 2560px, and 220px, 540px and 860px on the
+     index at the same three. ⛔ So a reader clicking a unit out of the index saw
+     the whole page slide to the left edge, and the wider they had opened the
+     window the further it slid — the same site, and nothing on either page tells
+     them that one of them is *the page with a rail*.
+
+     ⭐ THE ONE-COLUMN PAGE IS FLUSH LEFT TOO, WHICH IS THE USER'S OWN WORDS —
+     *"the left panel shou go all the way to the left side"* — CARRIED TO THE
+     PAGE THAT HAS NO PANEL. ⚠️ The other shape open was to re-centre the rail
+     page inside a wider bound; it is refused because it contradicts that
+     sentence, and because the flush edge is what this file ALREADY gives every
+     page below the threshold — measured at 720px, `body`'s left edge is 0 on
+     both page kinds. ⛔ So this row moves the one remaining centred shape onto
+     the one the rest of the file already had, rather than inventing a third.
+
+     ⛔ THE LEFT GUTTER SURVIVES HERE, AND IT IS THE DIFFERENCE BETWEEN THE TWO
+     RULES RATHER THAN AN OVERSIGHT. The rail page gives its gutter up because
+     the RAIL is what sits at the window's edge; a page with nothing to put there
+     would run its masthead into the screen. ⭐ The one-column page's content
+     therefore starts one gutter in at EVERY viewport, above the threshold and
+     below it, so that page does not move at all any more.
+
+     ⛔ NO GRID AND NO SECOND TRACK, AND THAT IS A DECISION RATHER THAN A
+     SHORTFALL. Indenting the index by `--rail` so its masthead lined up with a
+     unit page's would reserve an empty column on the one page that carries no
+     rail — exactly what the `:has()` condition above exists to prevent — and it
+     would make that page's own content jump from one gutter to a rail's width
+     plus one as the reader widened the window, which is this row's defect moved
+     from the click to the resize.
+
+     ⚠️ NOTHING ABOUT THE READING MEASURE IS DECIDED HERE, AND NO TOKEN IS
+     MINTED. The one-column page keeps the column section's measure-derived cap
+     and the two-column page keeps the rule above's `--page-max`, so the air to
+     the right of a paragraph is what it was on both page kinds. ⛔ Whether that
+     measure should rise is an open question that is not this file's to answer,
+     and a bound moved here would have answered it. */
+  body:not(:has(nav[aria-label="Containers"])) {
+    margin-left: 0;
+  }
+
   /* ⛔ Everything that is not the rail is the reading column, whatever arrives
      next: a slot added to `page.html` lands in the right track with no rule of
      its own, which is the half of this a per-region list would get wrong. */
