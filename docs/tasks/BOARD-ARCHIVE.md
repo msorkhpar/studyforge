@@ -27712,3 +27712,46 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ⭐ **`W347/1`, from `wt/dev4`, re-measured by this register at `5fc3201`:** round 107 recorded *raw HTML is NOT in the shipped vocabulary*. ⛔ **It IS:** `html` is a row of `BLOCKS` in `archive/blocks.py`, `archive/markdown/leaf.py`'s `read_html` emits it, and `render/page/blocks/verbatim.py` renders it — ⭐ **the one block type that bypasses escaping, by declaration.**
 
 ⭐ **`Q2` RESTATED against the tree:** raw HTML IS in the vocabulary as the `html` block and it STAYS; nothing is removed and `raw_api` does not change. ⛔ **This corrects a premise; it mints no ruling.** ⭐ **`W347`'s office lands it in the spec, with `W347/2` settled beside it: an adapter DECLARING a language default is corpus data, not a guess — `Q7` binds the renderer — and a usage example no longer teaches `java`.**
+
+## PO round 114
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`W345` closes, two rows are minted from its findings, and `W352` is named before it runs.**
+
+### ⭐ CLOSE — verified by this register, NOT received
+
+### W345 — The skills write Python packages into a corpus and generate no ignore rule for their bytecode, which carries an absolute home path
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W345.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING the defect:** with the scaffold's ignore generation disabled, the new tests go RED (eleven of them) across the onboarding and adapter suites; unplanted they pass. One office identity, every file within its R11 bound, no personal data in the diff. ⭐ Merged at `c73253e`, all three merge gates GREEN.
+
+⛔ **`QA-04/2`, and the same hole seen a round earlier as `INT-19/4`: the skills write Python packages into a corpus and generate NO ignore rule for the bytecode those packages produce — and that bytecode carries an absolute home path (R7).**
+
+⭐ **MEASURED on the first corpus at ISO `77535e6`:** its root ignore file is written for the HOST repository's own language and names no Python artifact, and no directory the skills generate carries an ignore file of its own. ⚠️ **Running the step the skill commands leaves `__pycache__/` untracked under the generated adapter and test packages** — `validate` stays green, because the manifest declares those trees, so ⛔ **no instrument notices.**
+
+⛔ **Why the obvious remedy is refused:** editing the corpus's ROOT ignore file is an edit to a source file, which R3 forbids unless the manifest declares it — ⚠️ **and `W278` forbids `permitted_edits` to name that file.** ⭐ **The generator's own docstring already states the right principle — *an ignore rule goes inside the directory it is about* — and catalogue entry 15 states the remedy with both directions to verify. The skill does not apply either to what it generates.**
+
+⭐ **The exposure reached no commit ONLY because the conversion office noticed and declined to stage it.** ⛔ **That is care, not a property, and the row exists so it becomes one.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every directory the skills generate that can hold Python carries its OWN ignore file** covering bytecode — ⭐ **a new file inside a generated directory, never an edit to a source file** (R3).
+2. ⛔ **Asserted both ways (R12):** after a generated package is imported, `git status` shows no bytecode under it; ⭐ **and the ignore file ignores nothing a person wrote.**
+3. ⛔ **A corpus already onboarded gets the file on regeneration**, and the generated non-destructive check does not read it as an undeclared edit.
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/artifacts.py` and whatever scaffolds the adapter package. ⚠️ **One owner with any in-flight row on `skills/onboarding/`.**
+
+[the mint](#po-round-109)
+
+### ⭐ `W345`'S FINDINGS
+
+| finding | disposition |
+|---|---|
+| `W345/1` — the adapter and onboarding `SKILL.md` count generated files, and the counts are now low | ⭐ **relayed to `W346`'s office, which holds those documents this wave**, with the remedy: point at the scaffold's own listing rather than type a count |
+| `W345/2` — a regeneration overwrites a person's file at any NEW generated path | ⭐ **minted `W353`** |
+| `W345/3` — the scaffold regenerating ALONE has no install record to consult | ⚠️ **recorded, not minted: the directories it writes are wholly generated, and `W353`'s guard is where it would land** |
+| `W345/4` — already-committed bytecode stays tracked and trips the generated R3 check intermittently | ⭐ **minted `W354`** |
+
+### ⭐ DISPATCHED — NAMED BEFORE IT RUNS
+
+⭐ **`W352` on `wt/dev2`** — the runnable fixture `M5` cannot be proved without; its surface is `tests/fixtures/` alone, disjoint from every carrier in flight.
