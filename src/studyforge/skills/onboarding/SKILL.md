@@ -125,6 +125,19 @@ manifest is where those globs come from: each `not_material` glob it declares is
 byte for byte, in its order, with its reason. ⭐ `write(..., regenerate=True)` refuses by
 name, and writes nothing, when it would still drop one.
 
+⛔ **And a second run of this whole procedure writes the SAME `corpus.json`, byte
+for byte, or refuses by name** (`W329`). ⚠️ **It did neither**: a re-survey read
+this framework's own generated half as the corpus's material, so it counted the
+scaffold's `tests/**/test_*.py` as graders and this skill wrote `exercises: true`
+— three lines below its own report printing `graded practices  no`, with no
+refusal — and `buildserve` then presents a corpus COMPLETE at the reading floor
+as unfinished (§7, C5). The archive a build had written moved `placement` the
+same way. ⭐ **`recorded.moved` compares every answer the manifest on disk
+records with the one about to be written**, over the manifest's own fields
+rather than a list somebody remembers to extend, and names every one that
+would move. ⛔ **A reading that disagrees with a recorded answer is a question,
+never a rewrite.**
+
 What lands, and why each one exists:
 
 | what | why it is generated rather than typed |
@@ -144,6 +157,14 @@ python3 -m pytest tests -q          # ⛔ it fails, and the failure is the speci
 
 ⭐ **`made.hand_written` names it** — `ingest/read.py`, three functions. Every
 other file in the corpus is downstream of it and is generated.
+
+⛔ **That command leaves the corpus valid, and this skill is what makes that
+true** (`W329`). ⚠️ **Measured**: it writes `tests/__pycache__/*.pyc`, the
+manifest this skill generated declared `tests/*.py`, and so the step this page
+commands left `studyforge validate` exiting 1 on bytecode. ⭐ **Settled as
+manifest data** — the generated glob is `tests/**`, which covers what the
+generated tests produce — **never by telling you to clean up after a step you
+were told to run.** `ingest/**` and `tests/ingest/**` always read this way.
 
 ⭐ **The install record marks it `hand_written` and keeps no digest of it**, so
 a regenerate neither rewrites what you wrote nor records it (`INT-09/1`).

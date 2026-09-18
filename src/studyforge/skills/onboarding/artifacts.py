@@ -80,7 +80,8 @@ WHY_PIN = (
 )
 WHY_TESTS = (
     "the checks onboarding generated to hold this corpus to R3 and to its "
-    "framework pin: code the corpus is audited with, not material."
+    "framework pin, and whatever running them writes beside them: code the "
+    "corpus is audited with, not material."
 )
 WHY_READER = (
     "the onboarding report, written from this corpus's own declarations and "
@@ -93,7 +94,15 @@ WHY_READER = (
 #: walk never offers for classification anyway.
 NOT_MATERIAL = (
     {"glob": f"{PIN_DIR}/**", "why": WHY_PIN},
-    {"glob": f"{TESTS_DIR}/*.py", "why": WHY_TESTS},
+    # ⛔ `W329`: the whole directory, never `tests/*.py`. `SKILL.md` step 4
+    # commands `python3 -m pytest tests`, which writes `tests/__pycache__/*.pyc`
+    # — and under the narrower glob that bytecode was `unclassified`, so the
+    # skill's own commanded step left the corpus failing `studyforge validate`.
+    # ⭐ Settled as manifest data: the generated glob covers what the generated
+    # tests produce, rather than telling an operator to clean up after a step
+    # this skill told them to run. ⚠️ `ingest/**` and `tests/ingest/**` already
+    # read this way; this directory was the one exception.
+    {"glob": f"{TESTS_DIR}/**", "why": WHY_TESTS},
     {"glob": READER_DOC, "why": WHY_READER},
 )
 

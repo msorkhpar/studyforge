@@ -44,6 +44,15 @@ a hand-edit is a **finding against this skill** rather than a fix (R19), and
 ## ⛔ Re-onboarding keeps what the manifest on disk declares (`W283`)
 
 ⭐ `existing` carries its text, and a regenerate that would drop a glob refuses by name.
+
+## ⛔ And it never changes an answer the corpus already records (`W329`)
+
+⚠️ **Measured**: a re-survey of an onboarded corpus read the framework's own
+generated checks as the corpus's graders and drafted `exercises: true`, which
+this skill wrote with no refusal — presenting a corpus COMPLETE at the reading
+floor as unfinished (C5). ⭐ `recorded.moved` compares the manifest on disk with
+the one about to be written, over the manifest's own fields, and a regenerate
+that would move one refuses by name and writes nothing.
 """
 
 from __future__ import annotations
@@ -57,7 +66,7 @@ from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import RAISES, Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import Written, plan_for, scaffold, write_files
-from studyforge.skills.onboarding import artifacts, record
+from studyforge.skills.onboarding import artifacts, record, recorded
 from studyforge.skills.onboarding.manifest import promote, render
 from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
@@ -131,6 +140,7 @@ class Onboarding:
         self._refuse_misaddressed(root)
         if regenerate:
             self._refuse_dropping(Path(root))
+            self._refuse_changing(Path(root))
         return write_files(
             self.files,
             root,
@@ -174,6 +184,23 @@ class Onboarding:
                 f"dropped or given another reason by this regenerate: {dropped}. Nothing was "
                 f"written; pass existing=<its text> to onboard so they are kept as written"
             )
+
+    def _refuse_changing(self, root: Path) -> None:
+        """Refuse, by name, a regenerate that would change an answer the manifest records.
+
+        ⛔ `W329`: a second run of the documented procedure writes the same
+        manifest or says which answer it cannot write, and `exercises` is the
+        one that was silently flipped. ⭐ The fields are the manifest's own, so
+        one added to the contract is compared the day it exists.
+        """
+        path = root / artifacts.MANIFEST
+        if not path.exists():
+            return
+        before = path.read_text(encoding="utf-8")
+        after = next(item.text for item in self.files if item.where == artifacts.MANIFEST)
+        changed = recorded.moved(before, after)
+        if changed:
+            raise OnboardingRefused(recorded.refusal(changed, before, after))
 
     def lines(self) -> list[str]:
         """Return the report a person reads before anything is written."""
