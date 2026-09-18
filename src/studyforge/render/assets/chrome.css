@@ -65,11 +65,21 @@
    meant to mean. ⚠️ The prose measure itself is untouched: `reading.css` still
    caps `main p, main li` at `--measure`, and that decision is not reopened.
 
-   ⛔ `--page-max` IS NOT USED, deliberately. It is `96rem`, which is an outer
-   edge for a rail-and-content layout; against a bounded single column it would
-   never bite at any viewport, and a token painted only so a check can say it is
-   painted is the `QA-03/2` defect committed on purpose. It stays unpainted, with
-   `--rail` and `--player-height`, for whoever builds that layout.
+   ⛔ THIS IS THE NARROW SHAPE, AND SINCE `W325` IT IS ONE OF TWO. The rule
+   below is what every viewport gets; a viewport wide enough for a rail AND this
+   measure beside it gets the two-column refinement at the foot of region 10,
+   which is written on `body` as well and bounds the SAME element. ⚠️ The bound
+   is still computed once and still on the element that carries the prose face —
+   that is `PO-22/6`'s decision and it is not reopened, only widened where there
+   is room for the rail.
+
+   ⭐ `--page-max` and `--rail` WERE UNPAINTED HERE AND ARE PAINTED NOW, both at
+   the foot of region 10 and nowhere else. The paragraph this replaces said
+   `--page-max` "is an outer edge for a rail-and-content layout; against a
+   bounded single column it would never bite at any viewport" — ⛔ **that reading
+   was right and it is DATED: there is a rail-and-content layout in this file
+   now.** ⚠️ What still holds of it is recorded where the declaration is, with
+   `W325/2`: the ceiling does not bite under the face this image pins.
 
    ⛔ `footer` is absent for the same kind of reason. The narration player is the
    only `<footer>` a page carries, it is `SF-18`'s at M3, and `--player-height`,
@@ -365,14 +375,17 @@ span[data-kind="level"] {
 /* --- region 10: the rail across containers (W324) ---------------------- */
 
 /* ⛔ The region that reaches the OTHER containers, on every unit page and every
-   container page. ⭐ IT IS LAID OUT AS A CARD IN THE COLUMN AND NOT AS A SIDE
-   RAIL, and that is a decision rather than a shortfall: every chrome region on
-   this site resolves the SAME column as the reading surface, asserted live in
-   `tests/visual/test_site.py`, and a region parked beside the column is a
-   two-column page — a layout `--rail` and `--page-max` are defined for and
-   which nothing here has ever painted. ⚠️ Turning this into a sticky rail moves
-   that assertion, those two tokens and `body`'s one bound together; doing half
-   of it is the full-bleed-islands defect wearing a third face.
+   container page. ⭐ THE RULES BELOW ARE THE CARD IN THE ONE COLUMN, which is
+   what a viewport with no room for a rail gets; the block after them moves the
+   same markup to the LEFT of the reading column where there is room (`W325`).
+   ⚠️ The card is not a fallback nobody looks at — it is the shape a phone and a
+   narrow window both get, and it is asserted at a named width.
+
+   ⭐ ONE SET OF BYTES, TWO LAYOUTS. Nothing below this line is conditional on
+   anything the renderer emits: the page is identical at both widths, `<details>`
+   is the disclosure at both, and the tab order is document order at both. ⛔ A
+   second markup for the wide case would be a second navigation, which is what
+   this row was told not to build.
 
    ⛔ NOT ONE CLASS AND NOT ONE COLOUR, as everywhere else in this part: the
    region is reached by its `aria-label` and its two `data-*` hooks, and every
@@ -450,6 +463,81 @@ nav[aria-label="Containers"] li[data-readable="false"] {
 
 nav[aria-label="Containers"] li[data-readable="false"]::before {
   content: "\2014 ";
+}
+
+/* --- region 10 beside the column: the left rail (W325) ------------------ */
+
+/* ⛔ THE USER'S WORDS WERE "there is no left navigation bar between courses".
+   `W324` built the navigation and left it in the column; this is the placement,
+   and it is the whole of what this block does.
+
+   ⛔ NO SCRIPT AND NO SECOND MARKUP. R8's floor is a file opened with no server
+   and no scripting, so a rail that needed either would not be one for this
+   product. This is three rules of CSS over the bytes `W324` already emits.
+
+   ⛔ `:has()` IS THE CONDITION, AND IT IS NOT A CONVENIENCE. The root index
+   carries no rail at all — `render.index.document` lists it in its table of
+   absences, because the index's own body already IS the tree — so a grid
+   declared unconditionally would give that page an empty `17rem` column down its
+   left and shift its contents off centre. ⭐ The two-column page is therefore
+   asked for by the page that HAS the region. ⚠️ And a browser that does not
+   understand `:has()` gets the card, which is the shape this file ships at a
+   narrow viewport anyway: the degradation is the same one, reached twice.
+
+   ⭐ THE READING COLUMN IS NOT TOUCHED, and the arithmetic is the column
+   section's own. `reset.css` sets `box-sizing: border-box`, so `body`'s two
+   gutters are inside its bound; the content TRACK is therefore written as the
+   measure plus the two gutters that were already inside it, and the rail plus
+   one gutter is added OUTSIDE that. ⛔ So `main` resolves the same width here as
+   it does in the one-column page, which is what keeps
+   `test_every_chrome_region_resolves_the_same_column_as_the_reading_surface` a
+   true statement about every region except the rail itself.
+
+   ⛔ `--page-max` IS PAINTED AND DOES NOT BITE UNDER THE FACE THIS IMAGE PINS —
+   said here rather than left for a reader to discover. ⭐ It is a real ceiling
+   rather than decoration because `--measure` is `80ch` and `ch` resolves against
+   the prose face, so the sum below is NOT a constant and a wide enough face
+   pushes it past `96rem`. ⚠️ Whether a ceiling no shipped face reaches earns its
+   declaration is the palette owner's question and is recorded as `W325/2`.
+
+   ⚠️ THE RAIL IS NOT STICKY, and that is a property of grid rather than a
+   preference: a grid item's containing block is its grid AREA, so `position:
+   sticky` on a one-row item sticks within that row and does nothing at all, and
+   an item spanning every row would have to know how many rows a page has.
+   Recorded as `W325/3` — a rail that scrolls with the page is still a rail.
+
+   ⚠️ `72rem` IS THE ONE THRESHOLD IN THIS FILE and the browser arm reads it back
+   rather than repeating it: a media query resolves `rem` against the initial
+   font size, so it is 1152px, and rail + measure + gutters is 1172px under this
+   image's face — the track shrinks the few pixels at the threshold itself and
+   nothing overflows, which is what `minmax(0, …)` is for. */
+
+@media (min-width: 72rem) {
+  body:has(nav[aria-label="Containers"]) {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, calc(var(--measure) + 2 * var(--gutter)));
+    column-gap: var(--gutter);
+    max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)));
+  }
+
+  /* ⛔ Everything that is not the rail is the reading column, whatever arrives
+     next: a slot added to `page.html` lands in the right track with no rule of
+     its own, which is the half of this a per-region list would get wrong. */
+  body:has(nav[aria-label="Containers"]) > * {
+    grid-column: 2;
+  }
+
+  /* ⚠️ EQUAL SPECIFICITY WITH THE RULE ABOVE, so ORDER decides it and this one
+     is second deliberately — the same argument this file's own loading note
+     makes about `reading.css`. ⭐ `align-self: start` because the row this item
+     sits in is the masthead's: a stretched card would draw its border at the
+     masthead's height with the course list spilling out below it. */
+  body > nav[aria-label="Containers"] {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: start;
+    margin: 0;
+  }
 }
 
 /* --- region 7: the read control, and the mark it sets ------------------ */

@@ -28,8 +28,9 @@ import pytest
 
 from studyforge.contents import order
 from studyforge.generate import read_corpus, unit_location, write_site
+from studyforge.render.pageassets import text as stylesheet
 from tests.support import repository_root
-from tests.visual.page import OpenPage
+from tests.visual.page import NARROW, WIDE, OpenPage
 
 #: The fixture corpus with more than one container. ⛔ `depth1` declares one, so
 #: it has no crossing at all — which is clause 4 and is asserted in
@@ -39,8 +40,29 @@ CORPUS = "depth2"
 #: The region under test, as `chrome.css` and the disposition table spell it.
 RAIL = 'nav[aria-label="Containers"]'
 
+#: What the rail is measured against. ⛔ The same element `test_site.py` calls
+#: the reading surface, spelled the same way, because *"beside the reading
+#: column"* is a claim about that element and no other.
+READING_SURFACE = "main#content"
+
 #: The whole region, for the control that removes it.
 RAIL_REGION = re.compile(r'<nav aria-label="Containers">.*?</nav>\n?', re.DOTALL)
+
+#: The stylesheet the two shapes live in, and the pattern that finds the one
+#: threshold between them. ⛔ **Read back, never retyped.** A breakpoint moved in
+#: `chrome.css` and not here would leave `WIDE` and `NARROW` on the same side of
+#: it, and every geometry check below would pass while judging one layout twice.
+LAYOUT_PART = "chrome.css"
+THRESHOLD = re.compile(r"@media\s*\(min-width:\s*([0-9.]+)rem\)")
+
+#: Pixels per `rem` **in a media query**. ⛔ Not `html`'s font size: a media
+#: query resolves `rem` against the document's INITIAL font size, so this is the
+#: browser default and is not a figure `reading.css` can move.
+ROOT_FONT = 16
+
+#: How far two edges may differ and still be touching, in CSS pixels — the same
+#: subpixel allowance `test_site.SAME_COLUMN` makes, and for the same reason.
+TOUCHING = 0.5
 
 
 @dataclass(frozen=True)
@@ -114,6 +136,166 @@ def crossings(page: OpenPage, from_url: str) -> list[dict]:
         if str(found["href"]).endswith(".unit.html")
         and not str(found["href"]).startswith(where + "/")
     ]
+
+
+def breakpoint_px() -> float:
+    """The one width `chrome.css` changes shape at, in CSS pixels.
+
+    ⛔ Refuses anything but exactly one threshold: two of them and *"wide"* and
+    *"narrow"* stop naming two layouts, which is a harness measuring one of them
+    twice and reporting two. The unit mirror asserts the same count, from the
+    other side — `tests/studyforge/render/pageassets/test_chrome.py`.
+    """
+    found = THRESHOLD.findall(stylesheet(LAYOUT_PART))
+    assert len(found) == 1, f"{LAYOUT_PART} declares {len(found)} width thresholds, not one"
+    return float(found[0]) * ROOT_FONT
+
+
+def box(page: OpenPage, selector: str) -> dict:
+    """The laid-out rectangle of the one element `selector` names.
+
+    ⛔ Read off the live layout and never off a declaration: which side of the
+    reading column a region ends up on is exactly the thing no assertion over a
+    stylesheet can see, which is `W98`'s whole argument one region along.
+    """
+    found = page.evaluate(
+        "(() => { const el = document.querySelector('" + selector + "');"
+        " if (!el) return null; const r = el.getBoundingClientRect();"
+        " return {left: r.left, right: r.right, top: r.top,"
+        "  bottom: r.bottom, width: r.width}; })()"
+    )
+    assert found is not None, f"the open page carries no {selector}"
+    return dict(found)  # type: ignore[arg-type]
+
+
+def test_the_two_widths_this_module_judges_at_straddle_the_stylesheets_threshold() -> None:
+    """⛔ Runs with no browser, and it is what makes the two widths mean anything.
+
+    ⚠️ `WIDE` and `NARROW` are stated in `page.py` — deliberately, so the harness
+    reads no stylesheet to decide what to open at. ⭐ This is the join: the
+    stated pair is asserted against the file's own threshold, so moving the
+    breakpoint reds HERE rather than silently collapsing both readings onto one
+    layout.
+    """
+    at = breakpoint_px()
+    assert NARROW[0] < at, f"the narrow viewport {NARROW[0]}px is not below the threshold {at}px"
+    assert at <= WIDE[0], f"the wide viewport {WIDE[0]}px is not at or above the threshold {at}px"
+
+
+def test_the_rail_is_beside_the_reading_column_at_the_wide_width(
+    open_page: OpenPage, built_corpus: BuiltCorpus, here: str
+) -> None:
+    """⛔ `W325`'s first clause: a bar down the LEFT, and the user's own words.
+
+    ⭐ **Opened with scripts DISABLED**, because R8's floor makes the layout's
+    scriptlessness part of the clause and not a separate one: a rail that is only
+    a rail once something has run is not one for a page opened from a file.
+
+    ⚠️ *"Down the left"* is asserted as three facts and not one, because each
+    alone has a passing shape that is not a rail: the rail ends before the column
+    begins (a full-width card above it does not), it starts level with the
+    masthead rather than below the prose, and the column is genuinely indented
+    past it rather than the rail hanging off the page.
+    """
+    open_page.resize(*WIDE)
+    open_page.open(built_corpus.url(here), scripts=False)
+    rail = box(open_page, RAIL)
+    column = box(open_page, READING_SURFACE)
+    masthead = box(open_page, "body > header")
+
+    assert rail["right"] <= column["left"] + TOUCHING, (
+        f"the rail spans {rail['left']:.2f}–{rail['right']:.2f}px and the reading column "
+        f"starts at {column['left']:.2f}px, so it is not to the left of it"
+    )
+    assert rail["top"] <= masthead["top"] + TOUCHING, (
+        f"the rail starts at {rail['top']:.2f}px and the masthead at "
+        f"{masthead['top']:.2f}px, so it hangs below the page's own top rather than "
+        "running down its left"
+    )
+    assert column["left"] >= rail["width"] > 0, (
+        f"the reading column starts at {column['left']:.2f}px and the rail is "
+        f"{rail['width']:.2f}px wide, so the column is not indented past it"
+    )
+
+
+def test_the_rail_folds_back_into_the_column_at_the_narrow_width(
+    open_page: OpenPage, built_corpus: BuiltCorpus, here: str
+) -> None:
+    """⛔ `W325`'s second clause, and the chosen degradation is NAMED.
+
+    ⭐ **The narrow shape is the card `W324` shipped** — the region in the one
+    column, above the reading surface, at the column's own width. ⚠️ A rail
+    squeezed against prose is the failure this forbids, and it is refused by the
+    width equality rather than by anybody's judgement of a screenshot.
+
+    ⛔ **This check and the one above are each other's control.** A stylesheet
+    that always stacked fails that one; a stylesheet that always railed fails
+    this one; no single layout passes both.
+    """
+    open_page.resize(*NARROW)
+    open_page.open(built_corpus.url(here), scripts=False)
+    rail = box(open_page, RAIL)
+    column = box(open_page, READING_SURFACE)
+
+    assert rail["bottom"] <= column["top"] + TOUCHING, (
+        f"at {NARROW[0]}px the rail ends at {rail['bottom']:.2f}px and the reading column "
+        f"starts at {column['top']:.2f}px, so it is still beside the prose rather than above it"
+    )
+    assert abs(rail["width"] - column["width"]) <= TOUCHING, (
+        f"at {NARROW[0]}px the rail is {rail['width']:.2f}px against the column's "
+        f"{column['width']:.2f}px, so it has a measure of its own"
+    )
+
+
+def test_the_crossing_still_resolves_at_the_narrow_width(
+    open_page: OpenPage, built_corpus: BuiltCorpus, here: str
+) -> None:
+    """⭐ `W324`'s clause re-taken in the shape `W325` added, rather than assumed.
+
+    ⚠️ The two layouts are one set of bytes, so this cannot fail while the wide
+    one passes — which is the claim, and a claim asserted is worth more than a
+    claim argued.
+    """
+    open_page.resize(*NARROW)
+    url = built_corpus.url(here)
+    open_page.open(url)
+    crossing = crossings(open_page, url)[0]
+
+    open_page.open(str(crossing["href"]))
+    landed = open_page.evaluate("document.querySelector('h1').textContent.trim()")
+
+    assert str(crossing["text"]).endswith(str(landed)), (crossing["text"], landed)
+
+
+def test_the_two_column_page_stays_inside_the_ceiling_the_palette_declares(
+    open_page: OpenPage, built_corpus: BuiltCorpus, here: str
+) -> None:
+    """⛔ `--page-max` is painted for this layout, and this is what it buys.
+
+    ⚠️ **It does not bite under the face this image pins** — stated in
+    `chrome.css` beside the declaration and recorded as `W325/2`. ⭐ What this
+    asserts is the property either term gives: at a viewport far wider than any
+    reader has, the page is bounded rather than full-bleed, and it is bounded no
+    wider than the ceiling the palette names.
+    """
+    open_page.resize(4 * WIDE[0], WIDE[1])
+    open_page.open(built_corpus.url(here), scripts=False)
+    ceiling = open_page.evaluate(
+        "(() => { const probe = document.createElement('div');"
+        " probe.style.cssText = 'width: var(--page-max); position: absolute; visibility: hidden';"
+        " document.body.appendChild(probe);"
+        " const width = probe.getBoundingClientRect().width;"
+        " probe.remove(); return width; })()"
+    )
+    page = box(open_page, "body")
+
+    assert float(ceiling) > 0, "the palette declares no --page-max, so nothing is ceiled"
+    assert page["width"] <= float(ceiling) + TOUCHING, (
+        f"the page is {page['width']:.2f}px against a declared ceiling of {float(ceiling):.2f}px"
+    )
+    assert page["width"] < 4 * WIDE[0], (
+        f"at {4 * WIDE[0]}px the page took the whole viewport, so nothing bounds it at all"
+    )
 
 
 def test_a_unit_page_offers_a_link_to_a_unit_in_another_container(
@@ -228,7 +410,16 @@ def test_the_checks_above_fail_on_a_tree_whose_rail_was_removed(
     """
     key = next(iter(railless_corpus.pages))
     url = railless_corpus.url(key)
+    open_page.resize(*WIDE)
     open_page.open(url)
 
     assert open_page.evaluate(f"document.querySelectorAll('{RAIL}').length") == 0
     assert crossings(open_page, url) == []
+    # ⛔ `W325`'s half of the same control: the two-column page is asked for by
+    # the page that CARRIES the region (`:has()`), so a tree with no rail must
+    # still be laid out in one column — otherwise every page without one, the
+    # root index first, gets an empty rail track down its left.
+    assert open_page.evaluate("getComputedStyle(document.body).display") != "grid", (
+        "a page with no rail is still laid out as a two-column grid, so the empty "
+        "track is a hole down the left of every page that carries no region"
+    )

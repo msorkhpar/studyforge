@@ -9,7 +9,9 @@ back every request the page issued.
 of `page.evaluate(...)`, `page.capture(path)`, `page.tab()`, `page.requests()`.
 One `OpenPage` per test; the fixtures in `conftest.py` build it.
 
-**Depends on.** `browser.Browser`, `base64`, `pathlib`, `time`. Nothing under
+**Depends on.** `browser.Browser` and `browser.VIEWPORT`, `base64`, `pathlib`,
+`time`. ⛔ The two named widths here are stated, never read out of a
+stylesheet — see `WIDE`. Nothing under
 `src/` — ⛔ a harness that imported the renderer to decide what a page should
 look like would be asserting the code against itself.
 
@@ -26,7 +28,19 @@ import base64
 import time
 from pathlib import Path
 
-from tests.visual.browser import Browser, BrowserError
+from tests.visual.browser import VIEWPORT, Browser, BrowserError
+
+#: The two viewports every LAYOUT clause in this package is judged at, as
+#: `(width, height)`. ⛔ **Both are stated here and neither is "whatever the
+#: window opened at"**: a reading about a breakpoint, taken at a width nobody
+#: named, is not a reading about a breakpoint. ⭐ `WIDE` is the launch viewport,
+#: so a check that sets no width runs at the wide one and this harness's default
+#: population is the two-column page (`W325`). ⚠️ Which side of `chrome.css`'s
+#: own threshold each falls on is asserted in `test_rail.py`, against the
+#: stylesheet, so a breakpoint moved there is a red check rather than two
+#: readings of one layout.
+WIDE = VIEWPORT
+NARROW = (720, VIEWPORT[1])
 
 #: The two colour schemes `palette.css` defines, named as the media feature
 #: spells them. ⛔ Both, always: the stylesheet's own docstring says *"a token
@@ -75,6 +89,22 @@ class OpenPage:
         self.browser.call("Page.navigate", {"url": url}, session=self.session)
         self.browser.wait("Page.loadEventFired", timeout=LOAD_TIMEOUT)
         self._settle()
+
+    def resize(self, width: int, height: int) -> None:
+        """Set this tab's viewport, for every later navigation in it.
+
+        ⛔ **Called BEFORE `open`, for the reason the colour scheme is an
+        argument to it** (this module's docstring): a media query re-evaluated
+        after the page has already been read is a reading about the page nobody
+        asked about. ⭐ The override rides the session, so one call covers every
+        open that follows — and each test gets a fresh tab, so nothing leaks
+        into the check after it.
+        """
+        self.browser.call(
+            "Emulation.setDeviceMetricsOverride",
+            {"width": width, "height": height, "deviceScaleFactor": 1, "mobile": False},
+            session=self.session,
+        )
 
     def _set_scripts(self, enabled: bool) -> None:
         """Turn page scripts on or off for every later navigation in this tab."""
