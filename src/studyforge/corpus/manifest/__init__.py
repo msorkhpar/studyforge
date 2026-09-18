@@ -2,8 +2,8 @@
 
 **What it does.** Owns the manifest: its version, the corpus's identity, the
 container levels that fix its depth, its variants, its placement profile, what
-counts as its content, whether it commits its media, and the enumerated set of
-existing files it may add to.
+counts as its content, whether it commits its media, the runtimes its material
+needs, and the enumerated set of existing files it may add to.
 
 **How you use it.** `load(path)` or `parse(text)`; then ask the `Manifest`.
 
@@ -14,6 +14,7 @@ existing files it may add to.
     manifest.parse_key("basics/01-intro") # an Address, checked against that depth
     manifest.content.classify("src/whole-series.md")  # Classification.EXCLUDED
     manifest.media.commits               # True — 'auto' commits
+    manifest.runtimes                    # () — absent means no runner (§7, C5)
     manifest.allows_edit_to("pom.xml")   # R3's declaration, asked not assumed
 
 **Depends on.** `studyforge.address`, `studyforge.version` for the R9 gate,
@@ -35,6 +36,8 @@ finding; it is never a hand-edit to generated output.
 | `content` | `include` / `exclude` / `not_material`, and `classify` (C2) |
 | `edits` | `permitted_edits`, the three targets R3 never permits, and the undo |
 | `media` | the commit mode and its limits; an absent key is a **stated** default |
+| `runtimes` | the closed vocabulary of runtimes, spelled once, and its refusals |
+| `fields` | the plain field rules `document` applies, one function per key |
 | `errors` | `ManifestError`, the only exception it raises, and R7's one phrase about a path |
 
 ⛔ **An unknown `corpus_api` is refused, never migrated at read time** (R9),
@@ -83,6 +86,12 @@ from studyforge.corpus.manifest.media import (
     MediaPolicy,
     parse_media,
 )
+from studyforge.corpus.manifest.runtimes import (
+    NO_RUNTIMES,
+    REQUIRES_JAVA,
+    RUNTIMES,
+    parse_runtimes,
+)
 
 #: ⛔ **What `parse`, `load` and `from_document` let out, as a tuple a caller
 #: catches** (`W213`), rather than the paragraph in `errors.py` it replaces.
@@ -90,7 +99,7 @@ from studyforge.corpus.manifest.media import (
 #:
 #: ⚠️ **`AddressError` is NOT a member, and that is measured, not forgotten.**
 #: `errors.py` names it as a pass-through of `Manifest.parse_key`, which no
-#: reader calls; `parse` translates SF-01's slug refusal in `_slug_of`. A
+#: reader calls; `parse` translates SF-01's slug refusal in `fields.slug_of`. A
 #: caller of `parse_key` catches `AddressError` itself.
 #:
 #: ⛔ **Adding a member costs a fixture**: `tests/studyforge/corpus/manifest/`
@@ -109,9 +118,12 @@ __all__ = [
     "MANIFEST_FILENAME",
     "MANIFEST_KEYS",
     "MIN_WHY_CHARS",
+    "NO_RUNTIMES",
     "PLACEMENT_PROFILES",
     "RAISES",
     "REQUIRED_KEYS",
+    "REQUIRES_JAVA",
+    "RUNTIMES",
     "Classification",
     "ContentPolicy",
     "Exclusion",
@@ -127,4 +139,5 @@ __all__ = [
     "parse_content",
     "parse_edits",
     "parse_media",
+    "parse_runtimes",
 ]

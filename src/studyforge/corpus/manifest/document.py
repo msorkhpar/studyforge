@@ -8,7 +8,7 @@ immutable `Manifest` carrying every declaration a corpus makes about itself.
 test needs to say can be said without a filesystem.
 
 **Depends on.** `studyforge.address` for what a slug is, and this package's
-`content`, `edits`, `media` and `errors`. ⛔ Nothing source-specific, ever
+`content`, `edits`, `media`, `runtimes` and `errors`. ⛔ Nothing source-specific, ever
 (R1) — `tests/studyforge/corpus/manifest/test_document.py` asserts that of the
 whole of `src/`, not just of this module.
 
@@ -48,12 +48,20 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from studyforge.address import Address, AddressError, parse_key, require_slug
+from studyforge.address import Address, parse_key
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest.content import ContentPolicy, parse_content
 from studyforge.corpus.manifest.edits import PermittedEdit, parse_edits
 from studyforge.corpus.manifest.errors import ManifestError
+from studyforge.corpus.manifest.fields import (
+    exercises_of,
+    levels_of,
+    slug_of,
+    title_of,
+    variants_of,
+)
 from studyforge.corpus.manifest.media import MediaPolicy, parse_media
+from studyforge.corpus.manifest.runtimes import NO_RUNTIMES, parse_runtimes
 from studyforge.describe import describe, describe_keys
 from studyforge.version import check as check_version
 
@@ -66,20 +74,20 @@ MANIFEST_FILENAME = "corpus.json"
 #: because something merely wanted to render a page rewrites the record of
 #: what was ingested.
 #:
-#: ⭐ **`2` added `content.not_material`** (Ruling 90) and ⭐ **`3` added
-#: `media.max_files`** (`W207`), and neither bump is about old manifests — both
-#: keys are optional and an absent one has a stated default, so every `1` still
-#: parses. ⛔ **A bump is about a manifest that *uses* the key being unreadable
-#: to an older build**, which reports an unknown key and blames the corpus for
-#: the framework's age. That is exactly what R9 versions, and the field and the
-#: bump therefore land in one commit.
+#: ⭐ **`2` added `content.not_material`** (Ruling 90), ⭐ **`3` added
+#: `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`), and no
+#: bump is about old manifests — each key is optional and an absent one has a
+#: stated default, so every `1` still parses. ⛔ **A bump is about a manifest
+#: that *uses* the key being unreadable to an older build**, which reports an
+#: unknown key and blames the corpus for the framework's age. That is exactly
+#: what R9 versions, and the field and the bump therefore land in one commit.
 #:
 #: ⚠️ **The accepted set is spelled out rather than derived from
 #: `CORPUS_API`.** A set built as `{1, CORPUS_API}` silently stops speaking
 #: `2` on the day somebody writes `3`, and the refusal for an unknown version
-#: has to stay exactly as sharp as it is for `4` today.
-CORPUS_API = 3
-KNOWN_CORPUS_API = frozenset({1, 2, 3})
+#: has to stay exactly as sharp as it is for `5` today.
+CORPUS_API = 4
+KNOWN_CORPUS_API = frozenset({1, 2, 3, 4})
 
 #: The `corpus_api` each key added after version 1 requires, keyed by the block
 #: it lives under and its name.
@@ -92,9 +100,14 @@ KNOWN_CORPUS_API = frozenset({1, 2, 3})
 #: map beside the first is the branch beside the branch this constant's own
 #: note warned about**: the gate would have been complete for one block and
 #: silently absent for the rest.
-KEY_VERSIONS = {
+#:
+#: ⛔ **A TOP-LEVEL key is keyed under the block `None`** (`TC-00/2`): the map
+#: read nested keys only, so a top-level key with no entry here would have
+#: parsed under any version.
+KEY_VERSIONS: dict[tuple[str | None, str], int] = {
     ("content", "not_material"): 2,
     ("media", "max_files"): 3,
+    (None, "runtimes"): 4,
 }
 
 #: The placement profiles that may be declared. ⚠️ **SF-03 owns the profiles;
@@ -111,6 +124,7 @@ MANIFEST_KEYS = (
     "levels",
     "variants",
     "exercises",
+    "runtimes",
     "placement",
     "content",
     "media",
@@ -143,6 +157,8 @@ class Manifest:
     content: ContentPolicy
     media: MediaPolicy
     permitted_edits: tuple[PermittedEdit, ...] = field(default=())
+    #: Sorted names from `runtimes.RUNTIMES`; empty is *no runner* (§7, C5).
+    runtimes: tuple[str, ...] = NO_RUNTIMES
     corpus_api: int = CORPUS_API
 
     @property
@@ -224,16 +240,20 @@ def from_document(document: dict, where: str = MANIFEST_FILENAME) -> Manifest:
 
     _check_key_versions(document, corpus_api, where)
     content = parse_content(document["content"])
+    exercises = exercises_of(document["exercises"], where)
     return Manifest(
-        source=_slug_of(document["source"], f"{where} 'source'"),
-        title=_title_of(document["title"], where),
-        levels=_labels_of(document["levels"], "levels", where),
-        variants=_slugs_of(document["variants"], "variants", where),
-        exercises=_flag_of(document["exercises"], "exercises", where),
+        source=slug_of(document["source"], f"{where} 'source'"),
+        title=title_of(document["title"], where),
+        levels=levels_of(document["levels"], where),
+        variants=variants_of(document["variants"], where),
+        exercises=exercises,
         placement=_placement_of(document["placement"], where),
         content=content,
         media=parse_media(document.get("media")),
         permitted_edits=parse_edits(document.get("permitted_edits"), content),
+        runtimes=parse_runtimes(
+            document.get("runtimes"), exercises=exercises, present="runtimes" in document
+        ),
         corpus_api=corpus_api,
     )
 
@@ -297,85 +317,17 @@ def _check_key_versions(document: dict, corpus_api: int, where: str) -> None:
     exactly like a decision.
     """
     for (block, key), needed in KEY_VERSIONS.items():
-        declared = document.get(block)
+        declared = document if block is None else document.get(block)
         if not isinstance(declared, dict) or key not in declared:
             continue
+        name = key if block is None else f"{block}.{key}"
         if corpus_api < needed:
             raise ManifestError(
-                f"{where} declares corpus_api {corpus_api} and uses '{block}.{key}', "
+                f"{where} declares corpus_api {corpus_api} and uses '{name}', "
                 f"which corpus_api {needed} added; declare corpus_api {needed}. The "
                 f"version is what tells an older build it cannot read this manifest, "
                 f"and it is not inferred from the keys present (R9)."
             )
-
-
-def _title_of(value: object, where: str) -> str:
-    """Return the corpus's human-readable name. ⚠️ A title, deliberately not a slug."""
-    if not isinstance(value, str) or not value.strip():
-        raise ManifestError(f"{where} 'title' must be a non-empty str, got {describe(value)}")
-    return value
-
-
-def _labels_of(value: object, key: str, where: str) -> tuple[str, ...]:
-    """`levels`: the container level labels, which fix the depth.
-
-    ⚠️ Labels, not slugs. §4 says `levels` supplies the display labels the
-    breadcrumb and index use — "Section › Module › Lesson" — so how they are
-    capitalised is the renderer's decision (R13) and not this module's to
-    constrain.
-    """
-    entries = _non_empty_list(value, key, where)
-    for position, entry in enumerate(entries, start=1):
-        if not isinstance(entry, str) or not entry.strip():
-            raise ManifestError(
-                f"{where} '{key}[{position - 1}]' must be a non-empty str, got {describe(entry)}"
-            )
-    return tuple(entries)
-
-
-def _slugs_of(value: object, key: str, where: str) -> tuple[str, ...]:
-    """`variants`: each already a slug, because each names an archive partition."""
-    entries = _non_empty_list(value, key, where)
-    for position, entry in enumerate(entries, start=1):
-        _slug_of(entry, f"{where} '{key}[{position - 1}]'")
-    return tuple(entries)
-
-
-def _slug_of(value: object, what: str) -> str:
-    """SF-01's slug rule, raised as this package's error.
-
-    ⛔ `errors.ManifestError` promises that reading a manifest raises one
-    type. SF-01 owns what a slug **is**, so the rule is imported rather than
-    restated — but a caller reading `corpus.json` should not have to know that
-    a bad `source` fails through a different package, so the refusal is
-    re-raised here with SF-01's message intact.
-
-    ⚠️ `Manifest.parse_key` deliberately does **not** do this: that is the
-    arity *comparison*, which SF-01 owns outright, and its `AddressError` is
-    the honest answer.
-    """
-    try:
-        return require_slug(value, what)
-    except AddressError as exc:
-        raise ManifestError(str(exc)) from None
-
-
-def _non_empty_list(value: object, key: str, where: str) -> list:
-    """Return a list with something in it, or refuse naming the key."""
-    if not isinstance(value, list) or not value:
-        raise ManifestError(f"{where} '{key}' must be a non-empty list, got {describe(value)}")
-    return value
-
-
-def _flag_of(value: object, key: str, where: str) -> bool:
-    """Return a real bool, and refuse anything that merely looks like one.
-
-    ⛔ Not `1`, not `"true"`. A manifest is hand-written, and a string that
-    looks like a flag is a mistake worth naming rather than coercing.
-    """
-    if not isinstance(value, bool):
-        raise ManifestError(f"{where} '{key}' must be true or false, got {describe(value)}")
-    return value
 
 
 def _placement_of(value: object, where: str) -> str:
