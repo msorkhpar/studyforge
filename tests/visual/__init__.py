@@ -82,4 +82,14 @@ ACCEPTANCE = {
     #: named width, which none of the rows above takes a width to answer.
     "places that rail beside the reading column, and folds it back in when "
     "there is no room (W325)": "test_rail",
+    #: ⭐ `W326`'s clause, and it is an EIGHTH row rather than a widening of the
+    #: seventh for the reason the seventh was not a widening of the sixth:
+    #: *"the rail sizes no row of the reading column"* is a claim about the page
+    #: BESIDE the rail, and the placement clause never looks there — it passed,
+    #: in a real browser, over a page that opened on the height of the rail in
+    #: blank. ⚠️ It runs in a module of its own because it needs a fixture no
+    #: other clause here needs: a container with MANY units, which is the only
+    #: size of page this defect reads as a defect on rather than as spacing.
+    "sizes the masthead's row by the masthead and not by the rail beside it "
+    "(W326)": "test_rail_rows",
 }

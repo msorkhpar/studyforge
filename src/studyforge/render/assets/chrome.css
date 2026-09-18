@@ -510,7 +510,37 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
    rather than repeating it: a media query resolves `rem` against the initial
    font size, so it is 1152px, and rail + measure + gutters is 1172px under this
    image's face — the track shrinks the few pixels at the threshold itself and
-   nothing overflows, which is what `minmax(0, …)` is for. */
+   nothing overflows, which is what `minmax(0, …)` is for.
+
+   ⛔ THE RAIL SPANS THE READING COLUMN'S ROWS, AND `W326` IS WHY THAT SENTENCE
+   IS HERE. It shipped as `grid-row: 1`, which put the rail in the MASTHEAD's row
+   — and a row is as tall as its tallest item, so the masthead's row was as tall
+   as the whole course list and every later element of the reading column began
+   at the rail's bottom edge. ⭐ A reader opened a unit, saw the title, and then
+   the height of the rail in blank page before the prose; it scaled with the
+   container's unit count, so the biggest course was the worst hit and no fixture
+   in this repository was large enough to show it.
+
+   ⛔ `1 / -1` IS NOT THE REPAIR, AND THAT IS MEASURED RATHER THAN ARGUED. A
+   negative row line counts back from the end of the EXPLICIT grid, and the
+   explicit grid here has COLUMNS ONLY — every row is implicit — so row line `-1`
+   IS row line `1`, the placement collapses to a one-row span, and the defect
+   survives unchanged. ⚠️ Nothing in CSS spells *every implicit row*, so the span
+   is a stated number.
+
+   ⭐ THE NUMBER IS DERIVED AND IT IS JOINED. `page.html` declares ten top-level
+   positions inside `<body>` — the masthead, the reading surface, the script tag
+   and seven slots — so ten is a CEILING on the grid items a page of this
+   framework can put in the reading column, and it is a generous one: the rail is
+   one of the ten and the script tag is never laid out. ⭐ A rail spanning ten
+   rows therefore spans every row, whatever the page carries. ⛔ The unit mirror
+   reads this number back out of this file and asserts it against the skeleton's
+   own count, so a slot added to `page.html` is a red check here rather than a
+   rail that stops short of the page's last row and sizes it on the way past.
+   ⚠️ The trailing spanned rows are empty and size to nothing, except where the
+   rail is TALLER than the prose beside it — there they take up its overhang,
+   which is the page growing to hold its own navigation and is what should
+   happen. */
 
 @media (min-width: 72rem) {
   body:has(nav[aria-label="Containers"]) {
@@ -529,12 +559,16 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
 
   /* ⚠️ EQUAL SPECIFICITY WITH THE RULE ABOVE, so ORDER decides it and this one
      is second deliberately — the same argument this file's own loading note
-     makes about `reading.css`. ⭐ `align-self: start` because the row this item
-     sits in is the masthead's: a stretched card would draw its border at the
-     masthead's height with the course list spilling out below it. */
+     makes about `reading.css`.
+
+     ⭐ `align-self: start` IS STILL RIGHT AND ITS OLD REASON IS DATED. It said
+     *"because the row this item sits in is the masthead's"*, which was true of
+     `W325`'s placement and is the placement `W326` removed. ⛔ The reason now is
+     the span: an item stretched down ten rows would draw its border to the
+     bottom of the page with the course list stranded at the top of it. */
   body > nav[aria-label="Containers"] {
     grid-column: 1;
-    grid-row: 1;
+    grid-row: 1 / span 10;
     align-self: start;
     margin: 0;
   }
