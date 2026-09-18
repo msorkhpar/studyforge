@@ -17,11 +17,18 @@ from tools.quality.source_names import named_sources
 PACKAGE = Path(buildserve.__file__).parent
 
 #: The framework modules the skill may take from. ⛔ A closed, positive set:
-#: the verb table, the plan, the no-service sentence, the manifest, the exit codes.
+#: the verb table, the plan, the no-service sentence, the narration component's
+#: own default address, the manifest, the exit codes.
+#:
+#: ⚠️ `cli.narrate.cli` is admitted for `DEFAULT_SERVICE` alone, and the argument
+#: is `NO_SERVICE`'s: a skill that told an operator to start a service on another
+#: port would be sending them where the verb never calls. ⛔ It buys the constant
+#: and nothing else — no client, no transport, no socket.
 ALLOWED = frozenset(
     {
         "studyforge.cli",
         "studyforge.cli.plan",
+        "studyforge.cli.narrate.cli",
         "studyforge.cli.narrate.report",
         "studyforge.corpus.manifest",
         "studyforge.validate.cli",
@@ -81,7 +88,15 @@ def _judged(module: str) -> list[str]:
 
 
 def test_the_population_is_the_whole_package():
-    expected = {"__init__.py", "__main__.py", "cli.py", "run.py", "states.py", "verbs.py"}
+    expected = {
+        "__init__.py",
+        "__main__.py",
+        "cli.py",
+        "narration.py",
+        "run.py",
+        "states.py",
+        "verbs.py",
+    }
     assert expected <= set(modules())
 
 

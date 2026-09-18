@@ -12,15 +12,16 @@ import pytest
 
 from studyforge.cli.narrate import report
 from studyforge.cli.plan import plan_for
-from studyforge.skills.buildserve import states
+from studyforge.skills.buildserve import narration, states
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
     KNOWN,
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
-    NO_NARRATION,
     NO_NARRATION_SERVICE,
     NO_TOOLCHAIN,
+    NOT_NARRATED,
+    NOTHING_TO_NARRATE,
     PartialState,
     exercise_states,
     narration_states,
@@ -75,9 +76,9 @@ def test_a_planned_clip_copy_is_a_record_and_an_audio_directory_is_not():
 @pytest.mark.parametrize(
     ("code", "said", "has_record", "expected"),
     [
-        (None, "", False, (NO_NARRATION,)),
+        (None, "", False, (NOT_NARRATED,)),
         (None, "", True, ()),
-        (OK, "", False, (NO_NARRATION,)),
+        (OK, "", False, (NOTHING_TO_NARRATE,)),
         (OK, "", True, ()),
         (UNUSABLE, f"refuse service  {report.NO_SERVICE}", False, (NO_NARRATION_SERVICE,)),
         (UNUSABLE, f"refuse service  {report.NO_SERVICE}", True, (NO_NARRATION_SERVICE,)),
@@ -87,6 +88,36 @@ def test_a_planned_clip_copy_is_a_record_and_an_audio_directory_is_not():
 )
 def test_the_narration_state_follows_the_narration_runs_answer(code, said, has_record, expected):
     assert narration_states(code, said, has_record=has_record) == expected
+
+
+def test_a_corpus_that_has_not_narrated_and_one_that_cannot_are_two_distinguishable_answers():
+    # ⛔ The row: today both read as one partial state. Asserted both ways, and on
+    # every field a reader sees — the name, the missing clause and the remedy.
+    has_not = narration_states(None, "", has_record=False)
+    cannot = narration_states(OK, "", has_record=False)
+    assert has_not == (NOT_NARRATED,) and cannot == (NOTHING_TO_NARRATE,)
+    assert has_not != cannot
+    assert NOT_NARRATED.name != NOTHING_TO_NARRATE.name
+    assert NOT_NARRATED.missing != NOTHING_TO_NARRATE.missing
+    assert NOT_NARRATED.remedy != NOTHING_TO_NARRATE.remedy
+
+
+def test_the_unfinished_one_names_the_component_and_the_finished_one_asks_for_nothing():
+    # ⭐ An operator following the skills is TOLD what provides narration, in the
+    # line they actually read, rather than being left to find out it exists.
+    assert narration.COMPONENT in NOT_NARRATED.remedy
+    assert narration.ADDRESS in NOT_NARRATED.remedy
+    assert narration.COMPONENT in NO_NARRATION_SERVICE.remedy
+    assert NOTHING_TO_NARRATE.remedy == NO_EXERCISES.remedy == "none needed"
+
+
+def test_only_the_finished_silent_state_reads_like_the_exercise_state():
+    # ⛔ The defect measured: a silent corpus reported beside `exercises`, whose
+    # whole point is that it IS finished. Only one of the two may read that way.
+    for finished in (NOTHING_TO_NARRATE, NO_EXERCISES):
+        assert finished.works.startswith("everything:") and "(C5)" in finished.works
+    assert not NOT_NARRATED.works.startswith("everything:")
+    assert "not yet known whether this corpus could speak" in NOT_NARRATED.missing
 
 
 def test_the_exercise_state_follows_the_manifest_and_the_serving_process():
