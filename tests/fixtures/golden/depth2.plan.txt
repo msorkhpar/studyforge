@@ -1,48 +1,48 @@
 plan depth2-demo  Depth Two Demo
-placement sibling  each artifact beside the source file it was generated from
+placement sibling  each artifact in a study/ directory beside the source file it was generated from
 read corpus.json + 3 container.json  no file inside the source material was opened
 create .studyforge/assets/  the shared stylesheets, scripts and player
 expect .studyforge/site.json  the discovery cache, never the authority — `studyforge serve` writes it; a build into this root does not
-claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.attachments/  advanced/02-going-further unit 1's attachments — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.audio/  advanced/02-going-further unit 1's audio — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.images/  advanced/02-going-further unit 1's images — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.practice/  advanced/02-going-further unit 1's practice — a build creates it only when it copies a file into it
-create advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html  advanced/02-going-further unit 1's page
-claim advanced/02-going-further/advanced.02-going-further.unit-01-composition-over-inheritance.video/  advanced/02-going-further unit 1's video — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.attachments/  advanced/02-going-further unit 2's attachments — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.audio/  advanced/02-going-further unit 2's audio — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.images/  advanced/02-going-further unit 2's images — a build creates it only when it copies a file into it
-claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.practice/  advanced/02-going-further unit 2's practice — a build creates it only when it copies a file into it
-create advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.unit.html  advanced/02-going-further unit 2's page
-claim advanced/02-going-further/advanced.02-going-further.unit-02-where-to-go-next.video/  advanced/02-going-further unit 2's video — a build creates it only when it copies a file into it
-create advanced/02-going-further/going-further.section.html  the page for container advanced/02-going-further
-claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.attachments/  advanced/03-putting-it-together unit 1's attachments — a build creates it only when it copies a file into it
-claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.audio/  advanced/03-putting-it-together unit 1's audio — a build creates it only when it copies a file into it
-claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.images/  advanced/03-putting-it-together unit 1's images — a build creates it only when it copies a file into it
-claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.practice/  advanced/03-putting-it-together unit 1's practice — a build creates it only when it copies a file into it
-create advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.unit.html  advanced/03-putting-it-together unit 1's page
-claim advanced/03-putting-it-together/advanced.03-putting-it-together.unit-01-one-small-program.video/  advanced/03-putting-it-together unit 1's video — a build creates it only when it copies a file into it
-create advanced/03-putting-it-together/putting-it-together.section.html  the page for container advanced/03-putting-it-together
+create advanced/02-going-further/study/advanced.02-going-further.unit-01-composition-over-inheritance.unit.html  advanced/02-going-further unit 1's page
+create advanced/02-going-further/study/advanced.02-going-further.unit-02-where-to-go-next.unit.html  advanced/02-going-further unit 2's page
+claim advanced/02-going-further/study/attachments/advanced.02-going-further.unit-01-composition-over-inheritance/  advanced/02-going-further unit 1's attachments — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/attachments/advanced.02-going-further.unit-02-where-to-go-next/  advanced/02-going-further unit 2's attachments — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/audio/advanced.02-going-further.unit-01-composition-over-inheritance/  advanced/02-going-further unit 1's audio — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/audio/advanced.02-going-further.unit-02-where-to-go-next/  advanced/02-going-further unit 2's audio — a build creates it only when it copies a file into it
+create advanced/02-going-further/study/going-further.section.html  the page for container advanced/02-going-further
+claim advanced/02-going-further/study/images/advanced.02-going-further.unit-01-composition-over-inheritance/  advanced/02-going-further unit 1's images — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/images/advanced.02-going-further.unit-02-where-to-go-next/  advanced/02-going-further unit 2's images — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/practice/advanced.02-going-further.unit-01-composition-over-inheritance/  advanced/02-going-further unit 1's practice — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/practice/advanced.02-going-further.unit-02-where-to-go-next/  advanced/02-going-further unit 2's practice — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/video/advanced.02-going-further.unit-01-composition-over-inheritance/  advanced/02-going-further unit 1's video — a build creates it only when it copies a file into it
+claim advanced/02-going-further/study/video/advanced.02-going-further.unit-02-where-to-go-next/  advanced/02-going-further unit 2's video — a build creates it only when it copies a file into it
+create advanced/03-putting-it-together/study/advanced.03-putting-it-together.unit-01-one-small-program.unit.html  advanced/03-putting-it-together unit 1's page
+claim advanced/03-putting-it-together/study/attachments/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's attachments — a build creates it only when it copies a file into it
+claim advanced/03-putting-it-together/study/audio/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's audio — a build creates it only when it copies a file into it
+claim advanced/03-putting-it-together/study/images/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's images — a build creates it only when it copies a file into it
+claim advanced/03-putting-it-together/study/practice/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's practice — a build creates it only when it copies a file into it
+create advanced/03-putting-it-together/study/putting-it-together.section.html  the page for container advanced/03-putting-it-together
+claim advanced/03-putting-it-together/study/video/advanced.03-putting-it-together.unit-01-one-small-program/  advanced/03-putting-it-together unit 1's video — a build creates it only when it copies a file into it
 keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
-claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.attachments/  basics/01-getting-started unit 1's attachments — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.audio/  basics/01-getting-started unit 1's audio — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.images/  basics/01-getting-started unit 1's images — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.practice/  basics/01-getting-started unit 1's practice — a build creates it only when it copies a file into it
-create basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.unit.html  basics/01-getting-started unit 1's page
-claim basics/01-getting-started/basics.01-getting-started.unit-01-your-first-class.video/  basics/01-getting-started unit 1's video — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.attachments/  basics/01-getting-started unit 2's attachments — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.audio/  basics/01-getting-started unit 2's audio — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.images/  basics/01-getting-started unit 2's images — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.practice/  basics/01-getting-started unit 2's practice — a build creates it only when it copies a file into it
-create basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.unit.html  basics/01-getting-started unit 2's page
-claim basics/01-getting-started/basics.01-getting-started.unit-02-fields-and-constructors.video/  basics/01-getting-started unit 2's video — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.attachments/  basics/01-getting-started unit 3's attachments — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.audio/  basics/01-getting-started unit 3's audio — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.images/  basics/01-getting-started unit 3's images — a build creates it only when it copies a file into it
-claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.practice/  basics/01-getting-started unit 3's practice — a build creates it only when it copies a file into it
-create basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.unit.html  basics/01-getting-started unit 3's page
-claim basics/01-getting-started/basics.01-getting-started.unit-03-watching-it-run.video/  basics/01-getting-started unit 3's video — a build creates it only when it copies a file into it
-create basics/01-getting-started/getting-started.section.html  the page for container basics/01-getting-started
+claim basics/01-getting-started/study/attachments/basics.01-getting-started.unit-01-your-first-class/  basics/01-getting-started unit 1's attachments — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/attachments/basics.01-getting-started.unit-02-fields-and-constructors/  basics/01-getting-started unit 2's attachments — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/attachments/basics.01-getting-started.unit-03-watching-it-run/  basics/01-getting-started unit 3's attachments — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/audio/basics.01-getting-started.unit-01-your-first-class/  basics/01-getting-started unit 1's audio — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/audio/basics.01-getting-started.unit-02-fields-and-constructors/  basics/01-getting-started unit 2's audio — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/audio/basics.01-getting-started.unit-03-watching-it-run/  basics/01-getting-started unit 3's audio — a build creates it only when it copies a file into it
+create basics/01-getting-started/study/basics.01-getting-started.unit-01-your-first-class.unit.html  basics/01-getting-started unit 1's page
+create basics/01-getting-started/study/basics.01-getting-started.unit-02-fields-and-constructors.unit.html  basics/01-getting-started unit 2's page
+create basics/01-getting-started/study/basics.01-getting-started.unit-03-watching-it-run.unit.html  basics/01-getting-started unit 3's page
+create basics/01-getting-started/study/getting-started.section.html  the page for container basics/01-getting-started
+claim basics/01-getting-started/study/images/basics.01-getting-started.unit-01-your-first-class/  basics/01-getting-started unit 1's images — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/images/basics.01-getting-started.unit-02-fields-and-constructors/  basics/01-getting-started unit 2's images — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/images/basics.01-getting-started.unit-03-watching-it-run/  basics/01-getting-started unit 3's images — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/practice/basics.01-getting-started.unit-01-your-first-class/  basics/01-getting-started unit 1's practice — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/practice/basics.01-getting-started.unit-02-fields-and-constructors/  basics/01-getting-started unit 2's practice — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/practice/basics.01-getting-started.unit-03-watching-it-run/  basics/01-getting-started unit 3's practice — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/video/basics.01-getting-started.unit-01-your-first-class/  basics/01-getting-started unit 1's video — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/video/basics.01-getting-started.unit-02-fields-and-constructors/  basics/01-getting-started unit 2's video — a build creates it only when it copies a file into it
+claim basics/01-getting-started/study/video/basics.01-getting-started.unit-03-watching-it-run/  basics/01-getting-started unit 3's video — a build creates it only when it copies a file into it
 create index.html  the root index
 edit pom.xml  insert-line after '<modules>'
 edit pom.xml  adds '  <module>practice</module>'

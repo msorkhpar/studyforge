@@ -319,7 +319,7 @@ def _container_creations(
         placed.append(at)
         made.append(Creation(at.page.as_posix(), f"{key} unit {unit.n}'s page"))
         # ⛔ Asked by kind, never read back off the minted directory name.
-        # `tree` calls it `audio` and `sibling` calls it `<stem>.audio`, so a
+        # `tree` calls it `audio` and `sibling` calls it `audio/<stem>`, so a
         # description taken from the name would say something different under
         # each profile — `UnitLocations.href`'s *ask, never compose* rule
         # arriving one layer up.

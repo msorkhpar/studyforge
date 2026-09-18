@@ -854,7 +854,8 @@ The single largest departure from CodeSignal, which prescribes one tree.
 locations. Two profiles ship in v1:
 
 - `tree` — CodeSignal's existing shape. All output under one generated root.
-- `sibling` — output lands **beside the source file it was generated from**.
+- `sibling` — output lands in a declared `study/` directory **beside the source
+  file it was generated from**.
 
 The Java repo uses `sibling`, because the material already has a layout the
 reader knows and R3 forbids restructuring it:
@@ -868,15 +869,26 @@ Claude-senior-java-engineer/
   16-streams-api/
     README.md                                    UNTOUCHED
     README_4.4.1.md                              UNTOUCHED
-    streams-api.section.html                     module page
-    basics.16-streams-api.4.4.1-introduction-to-the-streams-api.unit.html
-    basics.16-streams-api.4.4.1-introduction-to-the-streams-api.audio/*.mp3
-    basics.16-streams-api.4.4.1-introduction-to-the-streams-api.practice/
+    study/
+      streams-api.section.html                   module page
+      basics.16-streams-api.4.4.1-introduction-to-the-streams-api.unit.html
+      audio/basics.16-streams-api.4.4.1-introduction-to-the-streams-api/*.mp3
+      practice/basics.16-streams-api.4.4.1-introduction-to-the-streams-api/
 ```
 
 ⛔ **AMENDED PO round 76 — the archive root is `archive/`, beside `corpus.json`, under
 every profile** (`W241`, `INT-06/6`). ⚠️ **This example once read `.studyforge/archive/`:
 `plan` printed that root and nothing read it.** ⭐ **§6's `<archive-root>` is this directory.**
+
+⛔ **AMENDED (`W323`, a user requirement) — under `sibling` every generated
+artifact lands in a `study/` directory beside its source file, never loose in
+that directory.** ⚠️ **This example once put the page and a per-unit
+`<stem>.audio/` directly beside the `README`s**, which measured on the first
+corpus as 38 sources, 38 pages and 38 media directories interleaved in one
+listing, and put a page and a media directory at the **repository root** for
+every source file that sat there. ⭐ **The only generated file at the corpus
+root is `index.html`**; the media sits one directory per kind under `study/`,
+with the unit's stem below that, so a source directory gains exactly one name.
 
 **Every generated page carries a real name, never `index.html`.** Names come
 from the unit's own numbering and title, so they are human-readable in a

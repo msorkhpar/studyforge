@@ -10,8 +10,8 @@ block** every generated artifact embeds, which is what makes any of it safe.
     from studyforge.corpus.placement import identity, profile_for
 
     where = profile_for(manifest.placement).unit(address, 7, "Streams", origin=origin)
-    where.page          # 16-streams-api/basics.16-streams-api.unit-07-streams.unit.html
-    where.href("audio/07.mp3")   # relative to the page (R8)
+    where.page          # 16-streams-api/study/basics.16-streams-api.unit-07-streams.unit.html
+    where.href("audio", "07.mp3")   # relative to the page (R8)
 
 **Depends on.** `studyforge.address` and `studyforge.version`. ⛔ **No
 filesystem, no I/O.** This package answers "where would this go"; whether
@@ -38,7 +38,7 @@ the `file://` floor, or a fixed tree, breaking placement.
 | Profile | Pages go |
 |---|---|
 | `tree` | under one generated root, in directories spelling the address |
-| `sibling` | beside the source file they were generated from |
+| `sibling` | in a `study/` directory beside the source file they were generated from |
 
 ⚠️ `tree` is for material with no layout worth preserving; `sibling` is for a
 repository whose layout the reader already knows, which is what R3 requires.
@@ -101,6 +101,7 @@ from studyforge.corpus.placement.names import (
     RAW_DIRNAME,
     ROOT_INDEX_FILENAME,
     SITE_CACHE_FILENAME,
+    STUDY_DIRNAME,
     UNIT_MEDIA_DIRNAMES,
     UNIT_SUFFIX,
     UNITS_DIRNAME,
@@ -145,6 +146,7 @@ __all__ = [
     "ROOT_INDEX_FILENAME",
     "SIBLING",
     "SITE_CACHE_FILENAME",
+    "STUDY_DIRNAME",
     "TREE",
     "UNITS_DIRNAME",
     "UNIT_MEDIA_DIRNAMES",

@@ -107,6 +107,21 @@ PRACTICE_DIRNAME = "practice"
 #: that have to be kept in step.
 ATTACHMENTS_DIRNAME = "attachments"
 
+#: ⛔ **The subdirectory a generated artifact lands in when it is placed beside
+#: the material, and its ONE spelling (`W323`).** ⚠️ A profile that writes
+#: *into* the reader's own directories has to write somewhere in them, and
+#: "loose beside the source file" was that somewhere until this name existed:
+#: measured on the first corpus, one source directory held 38 sources, 38 pages
+#: and 38 media directories interleaved, and the repository root held a page and
+#: a media directory for every source file that sat there. ⭐ **One declared
+#: segment makes a source directory readable again** — its own files, plus one
+#: directory holding everything a build wrote from them — and it is what lets
+#: the root hold one generated file, the root index, and no other. ⛔ Not
+#: dot-prefixed, and that is the difference from `GENERATED_ROOT`: this holds
+#: the **pages a reader opens**, so hiding it would hide the product, while
+#: `.studyforge/` holds what a reader does not browse.
+STUDY_DIRNAME = "study"
+
 #: The per-unit directories a page addresses relatively (R8). Ordered, because
 #: `studyforge plan` lists them and R10 forbids depending on set iteration.
 UNIT_MEDIA_DIRNAMES = (

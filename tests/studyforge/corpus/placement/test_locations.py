@@ -39,17 +39,17 @@ def test_a_page_addresses_its_own_media_relative_to_itself(profile):
     # ⛔ R8: the page works over `file://` with no server and no rewriting.
     href = unit(profile).href("audio", "07.mp3")
     assert not href.startswith("/")
-    assert href.endswith("audio/07.mp3")
+    assert href.startswith("audio/") and href.endswith("/07.mp3")
 
 
 def test_the_href_is_asked_for_and_never_composed():
     # ⛔ The rule a renderer must follow. `audio/<clip>.mp3` is the `tree`
-    # shape; under `sibling` twenty units share a directory, so the same clip
-    # is `<stem>.audio/<clip>.mp3`. The invariant that survives every profile
-    # is "relative to the page", not the literal string.
+    # shape; under `sibling` many units share one `study/` directory, so the
+    # same clip is `audio/<stem>/<clip>.mp3` (`W323`). The invariant that
+    # survives every profile is "relative to the page", not the literal string.
     assert unit("tree").href("audio", "07.mp3") == "audio/07.mp3"
     assert unit("sibling").href("audio", "07.mp3") == (
-        "basics.16-streams-api.unit-07-introduction-to-the-streams-api.audio/07.mp3"
+        "audio/basics.16-streams-api.unit-07-introduction-to-the-streams-api/07.mp3"
     )
 
 

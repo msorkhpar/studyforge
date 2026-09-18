@@ -41,7 +41,7 @@ def carriers(markup: str) -> list[tuple[str, str]]:
 
 
 def test_a_filename_becomes_an_href_the_profile_chose():
-    # ⛔ R4: `audio/<clip>.mp3` is `tree`'s answer and `<stem>.audio/…` is
+    # ⛔ R4: `audio/<clip>.mp3` is `tree`'s answer and `audio/<stem>/…` is
     # `sibling`'s. Nothing here composes either — `Placement.media` is asked.
     placement = sample_placement()
     narration = Narration.of({("s", (0,), None): "a-11111111.mp3"}, placement)

@@ -1,22 +1,22 @@
 plan shared-origin-demo  Shared Origin Demo
-placement sibling  each artifact beside the source file it was generated from
+placement sibling  each artifact in a study/ directory beside the source file it was generated from
 read corpus.json + 1 container.json  no file inside the source material was opened
 create .studyforge/assets/  the shared stylesheets, scripts and player
 expect .studyforge/site.json  the discovery cache, never the authority — `studyforge serve` writes it; a build into this root does not
 keep archive/  the archive root, which every build reads (R2) — an adapter writes it; a build into this root does not
-create field-notes/field-notes.section.html  the page for container field-notes
-claim field-notes/field-notes.unit-01-taking-a-reading.attachments/  field-notes unit 1's attachments — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-01-taking-a-reading.audio/  field-notes unit 1's audio — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-01-taking-a-reading.images/  field-notes unit 1's images — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-01-taking-a-reading.practice/  field-notes unit 1's practice — a build creates it only when it copies a file into it
-create field-notes/field-notes.unit-01-taking-a-reading.unit.html  field-notes unit 1's page
-claim field-notes/field-notes.unit-01-taking-a-reading.video/  field-notes unit 1's video — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-02-writing-it-down.attachments/  field-notes unit 2's attachments — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-02-writing-it-down.audio/  field-notes unit 2's audio — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-02-writing-it-down.images/  field-notes unit 2's images — a build creates it only when it copies a file into it
-claim field-notes/field-notes.unit-02-writing-it-down.practice/  field-notes unit 2's practice — a build creates it only when it copies a file into it
-create field-notes/field-notes.unit-02-writing-it-down.unit.html  field-notes unit 2's page
-claim field-notes/field-notes.unit-02-writing-it-down.video/  field-notes unit 2's video — a build creates it only when it copies a file into it
+claim field-notes/study/attachments/field-notes.unit-01-taking-a-reading/  field-notes unit 1's attachments — a build creates it only when it copies a file into it
+claim field-notes/study/attachments/field-notes.unit-02-writing-it-down/  field-notes unit 2's attachments — a build creates it only when it copies a file into it
+claim field-notes/study/audio/field-notes.unit-01-taking-a-reading/  field-notes unit 1's audio — a build creates it only when it copies a file into it
+claim field-notes/study/audio/field-notes.unit-02-writing-it-down/  field-notes unit 2's audio — a build creates it only when it copies a file into it
+create field-notes/study/field-notes.section.html  the page for container field-notes
+create field-notes/study/field-notes.unit-01-taking-a-reading.unit.html  field-notes unit 1's page
+create field-notes/study/field-notes.unit-02-writing-it-down.unit.html  field-notes unit 2's page
+claim field-notes/study/images/field-notes.unit-01-taking-a-reading/  field-notes unit 1's images — a build creates it only when it copies a file into it
+claim field-notes/study/images/field-notes.unit-02-writing-it-down/  field-notes unit 2's images — a build creates it only when it copies a file into it
+claim field-notes/study/practice/field-notes.unit-01-taking-a-reading/  field-notes unit 1's practice — a build creates it only when it copies a file into it
+claim field-notes/study/practice/field-notes.unit-02-writing-it-down/  field-notes unit 2's practice — a build creates it only when it copies a file into it
+claim field-notes/study/video/field-notes.unit-01-taking-a-reading/  field-notes unit 1's video — a build creates it only when it copies a file into it
+claim field-notes/study/video/field-notes.unit-02-writing-it-down/  field-notes unit 2's video — a build creates it only when it copies a file into it
 create index.html  the root index
 media commit 'auto'  generated media is committed under this policy
 media units 2  each may get one directory per kind, made only when a build copies a file into it: audio, images, video, practice, attachments

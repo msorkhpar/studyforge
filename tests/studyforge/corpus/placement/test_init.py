@@ -34,6 +34,7 @@ PUBLIC_SURFACE = frozenset(
         "ROOT_INDEX_FILENAME",
         "SIBLING",
         "SITE_CACHE_FILENAME",
+        "STUDY_DIRNAME",
         "TREE",
         "UNITS_DIRNAME",
         "UNIT_MEDIA_DIRNAMES",
@@ -145,5 +146,10 @@ def test_the_worked_example_in_the_contract_is_the_api_that_exists():
     where = placement.profile_for("sibling").unit(
         address, 7, "Streams", origin="16-streams-api/README_4.4.1.md"
     )
-    assert str(where.page) == "16-streams-api/basics.16-streams-api.unit-07-streams.unit.html"
-    assert where.href("audio", "07.mp3").endswith("audio/07.mp3")
+    assert str(where.page) == (
+        "16-streams-api/study/basics.16-streams-api.unit-07-streams.unit.html"
+    )
+    # ⭐ The href is relative to the page and starts at the kind directory
+    # `study/` holds: the page and its media share one `study/` parent.
+    assert where.href("audio", "07.mp3").endswith("/07.mp3")
+    assert where.href("audio", "07.mp3").startswith("audio/")

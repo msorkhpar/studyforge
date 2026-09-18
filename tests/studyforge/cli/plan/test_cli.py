@@ -132,7 +132,7 @@ def test_every_path_the_golden_names_is_relative_to_the_corpus_root(name):
 
 def test_the_plan_says_which_profile_it_used_and_what_that_profile_does():
     _, printed = invoke(str(FIXTURES / "depth2"))
-    assert "placement sibling  each artifact beside the source file" in printed
+    assert "placement sibling  each artifact in a study/ directory beside" in printed
 
 
 def test_the_rate_reaches_the_projection_through_the_command_line():

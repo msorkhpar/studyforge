@@ -8,7 +8,7 @@
 
    ⛔ **Nothing here composes a clip path.** A passage carries its own source,
    emitted by the renderer from `corpus.placement`'s answer (R4) — `audio/x.mp3`
-   under the `tree` profile and `<stem>.audio/x.mp3` under `sibling`. ⚠️ A script
+   under the `tree` profile and `audio/<stem>/x.mp3` under `sibling`. ⚠️ A script
    that spelled either would be correct under one profile and silently wrong under
    the other, and the page would render both ways.
 
