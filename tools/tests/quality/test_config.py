@@ -241,6 +241,29 @@ def test_a_tree_git_cannot_answer_for_falls_back_and_SAYS_so(tmp_path):
     assert report.WALK_CAVEAT[report.TRACKED_WALK] == ""
 
 
+def test_the_population_counts_the_documents_the_INDEX_does_not_hold(tmp_path):
+    # ⛔ `W315`, for `W232/5`: the narrowing was silent about what it narrowed
+    # off, so an office running the floor over a handoff it had written and not
+    # staged read a green the merge did not repeat. ⭐ Both directions, and the
+    # count is the difference between the two lists this walk already has.
+    init_repository(tmp_path)
+    make(tmp_path, "docs/tracked.md")
+    track(tmp_path, "docs/tracked.md")
+    assert config.markdown_population(tmp_path).unread == 0
+    make(tmp_path, "docs/unstaged.md")
+    population = config.markdown_population(tmp_path)
+    assert population.unread == 1
+    assert [config.relative(path, tmp_path) for path in population.paths] == ["docs/tracked.md"]
+
+
+def test_a_tree_git_cannot_answer_for_counts_NO_unread_document(tmp_path):
+    # ⚠️ Nothing was narrowed away there, so a non-zero would be an invention:
+    # the disk walk read everything it found, and `WALK_CAVEAT` says so.
+    make(tmp_path, "docs/notes.md")
+    population = config.markdown_population(tmp_path)
+    assert (population.walk, population.unread) == (report.DISK_WALK, 0)
+
+
 def test_tracked_paths_reads_the_INDEX_and_not_the_disk(tmp_path):
     # ⚠️ `None` is never an empty set, and an empty index is never `None`:
     # a repository that genuinely tracks nothing ANSWERS, with nothing.

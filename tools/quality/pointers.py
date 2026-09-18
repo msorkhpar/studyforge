@@ -67,6 +67,48 @@ is what `PO-24/8` measured and why `W35` was queued last rather than ranked —
 ⛔ **and a `0` with no denominator would have been `0 = 0`, which is why the
 denominator is quoted with it.**
 
+## ⛔ A HANDOFF'S OWN ROW IS DEFERRED, NOT DANGLING (`W315`)
+
+⛔ **The floor had two arms reading a handoff's citation of a register row, and
+they CONTRADICTED each other across a merge.** ⚠️ A row is minted in the register
+round that merges the branch: absent from the developer's tree, present on the
+merged one. ⭐ **MEASURED at `787b24d`, role `wt/dev2`, HOST — one handoff, one
+citation, two wordings, two trees:**
+
+| The wording | branch, row absent | merged, row present |
+|---|---|---|
+| the pointer `[W99](../rows/W99.md)` | ⛔ RED `pointer` | GREEN |
+| the bare name in a code span | GREEN | ⛔ RED `handoff-bare-citation` |
+
+⛔ **So NO wording was green in both places, and a CORRECT branch was
+unmergeable** — measured twice in one evening, on `W313`'s refused merge and on
+`W312`'s hand-back.
+
+⭐ **THE LINK ARM IS THE ONE THAT MOVED, and the bare arm is untouched.** ⛔ The
+other repair — exempting `docs/tasks/rows/` from `handoffs.citing` — was REFUSED:
+it would make the bare name the only wording a handoff could use for the one
+document it cites most, which is exactly Ruling 163's harm (`W150`: a bare
+basename is invisible to every instrument) and the hole Ruling 285(b) was minted
+to close. ⚠️ **A reader of a handoff would lose the click, permanently, in every
+tree.**
+
+⛔ **THE DEFERRAL IS SELF-EVIDENCING AND IS NOT A LIST**: a handoff at
+`docs/tasks/handoffs/<ID>.md` may link `docs/tasks/rows/<ID>.md` while that file
+is absent, because the id is the citing document's OWN NAME. ⭐ Nothing is
+registered, nothing is remembered, and the next handoff needs no entry.
+
+⛔ **AND IT COSTS ONE POINTER PER HANDOFF, never a directory.** ⚠️ A handoff
+linking any OTHER absent row, a handoff linking an absent file that is not a row,
+and any other document linking an absent row are all findings exactly as before —
+and on the merged tree the row EXISTS, so the deferral never runs there and the
+anchor is resolved for real.
+
+⚠️ **Declared gap (Ruling 258): a handoff whose id names a row the register never
+mints keeps a deferred pointer forever.** ⛔ Nothing in the tree would catch it,
+because nothing binds a handoff's id to an existing row —
+`handoffs/existence.py` walks the other way, from a CLOSED row to the handoff it
+owes. ⭐ The exposure is one pointer, in a document the register reads by id.
+
 ## ⛔ The question this module's `0 unresolved` does NOT answer (`W140`)
 
 ⭐ **An anchor that names SIX headings resolves**, so nothing here reports it —
@@ -81,10 +123,12 @@ that imports this module and is imported back by nothing.
 
 from __future__ import annotations
 
+import posixpath
 from dataclasses import dataclass
 from pathlib import Path
 
 from tools.quality import config
+from tools.quality.ids import is_row_id
 from tools.quality.markdown import (
     Pointer,
     heading_bases,
@@ -94,7 +138,7 @@ from tools.quality.markdown import (
     slug,
     strip_code_spans,
 )
-from tools.quality.report import WALK_CAVEAT, Finding
+from tools.quality.report import WALK_CAVEAT, DocumentPopulation, Finding, unread_caveat
 
 #: ⭐ Re-exported so no importer moved when the parser did (`W148`). ⛔ Named
 #: explicitly rather than left implicit: `ruff` refuses an unused import, and a
@@ -102,11 +146,14 @@ from tools.quality.report import WALK_CAVEAT, Finding
 #: ⚠️ Spelling that comment's literal token here made `ruff` warn on every run
 #: about an invalid directive in a `#:` comment — measured, and reworded.
 __all__ = [
+    "HANDOFF_HOME",
+    "ROW_HOME",
     "RULE_ANCHOR",
     "RULE_POINTER",
     "Pointer",
     "Scan",
     "check_pointers",
+    "deferred_row",
     "heading_bases",
     "heading_slugs",
     "pointer_coverage",
@@ -121,6 +168,16 @@ __all__ = [
 RULE_POINTER = "pointer"
 RULE_ANCHOR = "anchor"
 
+#: ⛔ The two register directories the deferral is spelled over, WRITTEN here
+#: rather than imported, because the seam runs one way: `handoffs.HANDOFF_DIR`
+#: and `board.register.ROWS` are the homes of these spellings, and both of those
+#: packages import THIS module. ⭐ **So the equality is ASSERTED, in
+#: `tools/tests/quality/test_pointers.py`** — the same construction, and the same
+#: reason, as `citations.MAX_RANGE_SPAN` against `reach.REACH_WINDOW`. ⚠️ A
+#: reader who moves either directory has a red test, not a silent divergence.
+HANDOFF_HOME = "docs/tasks/handoffs"
+ROW_HOME = "docs/tasks/rows"
+
 
 @dataclass(frozen=True)
 class Scan:
@@ -129,12 +186,22 @@ class Scan:
     ⛔ `walk` is `report.TRACKED_WALK` or `report.DISK_WALK` and is carried
     rather than re-derived, so the denominator and the sentence naming how it
     was reached can never describe different walks (`W148`).
+
+    ⚠️ **The whole `population` is carried and `walk` READS it**, rather than the
+    walk being copied out: the notice now owes a second sentence about what the
+    walk did NOT read (`W315`, for `W232/5`), and two fields copied off one
+    object are two chances for a figure and its caveat to disagree.
     """
 
     files: int
     pointers: tuple[Pointer, ...]
     findings: tuple[Finding, ...]
-    walk: str
+    population: DocumentPopulation
+
+    @property
+    def walk(self) -> str:
+        """How this population was found — `report.TRACKED_WALK` or `DISK_WALK`."""
+        return self.population.walk
 
 
 def resolve_target(root: Path, document: Path, pointer: Pointer) -> Path | None:
@@ -155,6 +222,24 @@ def resolve_target(root: Path, document: Path, pointer: Pointer) -> Path | None:
     if candidate != root and root not in candidate.parents:
         return None
     return candidate
+
+
+def deferred_row(pointer: Pointer) -> str | None:
+    """Return the row id a handoff DEFERS by linking it, or `None` (`W315`).
+
+    ⛔ **A handoff may link its OWN row before that row is on this branch.** The
+    register mints the row in the round that merges the branch, so the target is
+    absent here and present on the merged tree — and the id is not taken from a
+    list, it is the citing document's own filename. ⚠️ **Public so the mirror can
+    assert the predicate directly**: every other wording of this citation is a
+    finding on one of the two trees, and that is the property under test.
+    """
+    home = posixpath.dirname(pointer.document)
+    identifier = posixpath.basename(pointer.document).removesuffix(".md")
+    if home != HANDOFF_HOME or not is_row_id(identifier):
+        return None
+    target = posixpath.normpath(posixpath.join(home, pointer.path_part))
+    return identifier if target == f"{ROW_HOME}/{identifier}.md" else None
 
 
 def _check(
@@ -188,6 +273,11 @@ def _check(
             f"in backticks if it is an example rather than a reference.",
         )
     if not target.exists():
+        # ⛔ `W315`: a handoff linking the row it is the handoff FOR is deferred
+        # to the register, not dangling — the merge writes that file, and every
+        # other wording of the citation is red on one of the two trees.
+        if deferred_row(pointer) is not None:
+            return None
         return Finding(
             pointer.document,
             pointer.line,
@@ -260,7 +350,7 @@ def scan(root: Path) -> Scan:
         for pointer in carried
         if (finding := _check(root, path, pointer, text, ignored)) is not None
     ]
-    return Scan(len(read), tuple(found), tuple(findings), population.walk)
+    return Scan(len(read), tuple(found), tuple(findings), population)
 
 
 def check_pointers(root: Path) -> list[Finding]:
@@ -283,4 +373,5 @@ def pointer_coverage(root: Path) -> list[str]:
         f"document pointers: {len(result.pointers)} read in {result.files} markdown "
         f"files ({result.walk} walk), {anchored} carrying an anchor, "
         f"{len(result.findings)} unresolved.{WALK_CAVEAT[result.walk]}"
+        f"{unread_caveat(result.population)}"
     ]

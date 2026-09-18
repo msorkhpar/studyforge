@@ -24,6 +24,7 @@ from tools.quality.report import (
     Finding,
     format_findings,
     unreachable_population,
+    unread_caveat,
 )
 
 
@@ -75,6 +76,28 @@ def test_a_population_carries_its_paths_and_the_walk_that_found_them():
     population = DocumentPopulation((Path("a.md"),), TRACKED_WALK)
     assert population.paths == (Path("a.md"),)
     assert population.walk == TRACKED_WALK
+    assert population.unread == 0
+
+
+# --- W315, for W232/5: what the walk did NOT read ---------------------------
+
+
+def test_a_tracked_figure_says_what_its_walk_did_not_read_whether_or_not_it_fired():
+    # ⛔ Ruling 48, and the reason the sentence is not fired-only: an office
+    # believing a green over its own unstaged handoff needs to read `0`, and a
+    # sentence that appears only when something was missed never gives it one.
+    quiet = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK))
+    loud = unread_caveat(DocumentPopulation((Path("a.md"),), TRACKED_WALK, 3))
+    assert "0 markdown documents" in quiet
+    assert "3 markdown documents" in loud
+    assert "`git add`ed gets a reading the merge will not repeat" in quiet
+
+
+def test_the_disk_walk_claims_NOTHING_about_an_index_git_never_answered_for():
+    # ⚠️ Ruling 216's third answer: a `0` here would say git had answered, and
+    # `WALK_CAVEAT[DISK_WALK]` already says what that population costs a reader.
+    assert unread_caveat(DocumentPopulation((Path("a.md"),), DISK_WALK)) == ""
+    assert WALK_CAVEAT[DISK_WALK] != ""
 
 
 # --- W158: the population a run could not reach -----------------------------
