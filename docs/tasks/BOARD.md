@@ -483,6 +483,7 @@ else.**
 | W330 | The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong | framework agent | `in flight` | [`rows/W330.md`](rows/W330.md) |
 | W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | `todo` — clean run | [`rows/W331.md`](rows/W331.md) |
 | W332 | The reader's document states live counts that no verb refreshes | framework agent | `todo` — clean run | [`rows/W332.md`](rows/W332.md) |
+| W333 | The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout | framework agent | `todo` — `W328/7` | [`rows/W333.md`](rows/W333.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -509,6 +510,10 @@ here; the argument is in the record.**
 
 | Decision | Argument |
 |---|---|
+| ⛔ **AN UNRULED ESCALATION BLOCKS ITS MILESTONE** — ⭐ **the user's words: *"Block the milestone."*** ⛔ **A recommendation may NEVER become the decision by silence**, and this binds every future corpus ingestion | [round 105](BOARD-ARCHIVE.md#po-round-105) |
+| ⛔ **A CORPUS-VISIBLE DEFECT BECOMES A FRAMEWORK ROW; THE CORPUS IS REGENERATED, NEVER PATCHED** — ⭐ the user's direction: *"only in the original framework or the skills so that they will be used by the next ingestion projects"*. ⛔ **The test of a fix is the NEXT corpus, not this one** | [round 105](BOARD-ARCHIVE.md#po-round-105) |
+| ⛔ **A ROW IS MINTED BEFORE IT IS DISPATCHED, NOT AFTER IT LANDS** — ⭐ and a dispatch READS AGAINST GIT whether the row is already done, because a `todo` cell proves nothing | [round 105](BOARD-ARCHIVE.md#po-round-105) |
+| ⭐ **OPEN, AND THE USER'S: should the reading measure RISE now the column is wider?** ⛔ **Not blocking** — ⚠️ **the current measure is the ARGUED default with a stated reason in `reading.css`, not a silence.** ⭐ **Measured at `74b20c2`: prose holds at 760 while the column reaches 1224, so the gap right of a paragraph is 464 where it was 40** | [round 105](BOARD-ARCHIVE.md#po-round-105) |
 | ⛔ **RETIRED BY THE USER 2026-09-17 — `ONBOARDING.md` IS TRACKED, after the retired tool's entries and the usage profile were removed** ([the round](BOARD-ARCHIVE.md#po-round-100)). ⭐ **It read *`ONBOARDING.md` does not enter the repository*; retired IN PLACE rather than deleted, because the record cites this cell** | [record](BOARD-ARCHIVE.md#onboardingmd-ruled-it-does-not-enter-the-repository) |
 | ⭐ **`.claude/settings.json` IS tracked, and it is R18 with a machine behind it** — it DENIES `Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS `Bash(git merge:*)`. ⛔ **It was the opposite call to `ONBOARDING.md`'s until the user retired that one, and the distinction was never tracking: this is a PROJECT RULE** | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
 | ⛔ **Same form for `tools/quality/board/register.py`** — the next row touching it splits it, and R11's reading comes from `tools.quality` rather than from this cell. ⭐ **It INHERITS the condition `tools/quality/board/__init__.py` carried, which `W129`/`W130` PERFORMED and DISCHARGED** | [record](BOARD-ARCHIVE.md#po-round-47-the-first-nine-closes-under-ruling-270-the-wall-measured-gone-on-my-own-tree-and-the-empty-population-inhabited) |
