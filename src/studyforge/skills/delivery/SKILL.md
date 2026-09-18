@@ -202,6 +202,26 @@ could generate is a hole in the skill** (R19) — filing *that* in the catalogue
 is the worst of the three, because it publishes a limit somebody is about to
 remove.
 
+⭐ **The sort starts from the run's findings log, never from commit bodies or a
+message** (`W346`). The conversion wrote it at `.studyforge/findings.md` —
+`LOG` — and every entry already carries, as its slot, the question the
+paragraph above turns on: *could a skill have generated this?* ⭐ **`yes`
+routes to a skill as a finding against a task, `no` is a candidate entry, and
+`open` is the sort still owed.**
+The shape a finished sort takes is the catalogue's own *`QA-04` sort* section:
+every finding, a verdict, and why — the refusals written beside the adoptions.
+
+```
+python3 -c "from pathlib import Path; \
+  from studyforge.skills.delivery import LOG, closing; \
+  log = Path(LOG); \
+  print('\n'.join(closing(log.read_text('utf-8') if log.exists() else None)))"
+```
+
+⛔ **No log is a refusal, not an empty sort.** A conversion that wrote none is
+not done, and the planner files that as the first finding rather than
+rebuilding the log from memory.
+
 ---
 
 ## ⛔ What this skill will not do
