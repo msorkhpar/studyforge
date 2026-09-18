@@ -37,7 +37,7 @@ was missing, and every run re-synthesised the lot.
 ## ⛔ FILENAMES IN, HREFS OUT — and `Placement` is asked exactly once
 
 ⚠️ **The caller supplies a *filename*, never a path.** `audio/<clip>.mp3` is the
-`tree` profile's answer and `<stem>.audio/<clip>.mp3` is `sibling`'s; a caller
+`tree` profile's answer and `audio/<stem>/<clip>.mp3` is `sibling`'s; a caller
 that composed either would be right under one profile and silently wrong under
 the other, with the page rendering identically both ways (R4).
 

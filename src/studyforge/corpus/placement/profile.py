@@ -54,9 +54,10 @@ index and the discovery cache were once ignored here, and under `sibling` those
 rules had no home R3 allows and matched `*.html` and `*.json`.
 
 ⛔ **The home is a `.gitignore` inside the generated directory the rules are
-about, never the repository root** (R3). A profile whose media no generated
-directory encloses has no home, and `ignore_file` raises rather than hand a
-caller rules nothing may hold.
+about, never the repository root** (R3). A profile whose media **no one**
+generated directory encloses has no home — whether nothing encloses it or one
+directory per source directory does (`W323`) — and `ignore_file` raises rather
+than hand a caller rules nothing may hold.
 
 ⭐ **What is committed is recognised instead, by `validate` asking the plan**
 for this corpus's own placed paths — exact paths from its declarations, never a
@@ -147,8 +148,9 @@ class Profile:
         """Return the ignore file this profile's media rules live in, or None.
 
         ⛔ Answered by every subclass. A home is inside a directory this
-        framework generates. A profile whose media sits beside the material has
-        none, because the only file enclosing it is the root ignore file (R3).
+        framework generates, and it is ONE file — so a profile whose media is
+        enclosed by one generated directory per source directory has none,
+        as much as one whose media is enclosed by nothing at all (`W323`).
         """
         raise NotImplementedError
 
@@ -179,10 +181,10 @@ class Profile:
         if home is None or len(home.parts) < 2:
             raise PlacementError(
                 f"the corpus's media policy does not commit generated media, and placement "
-                f"{self.name!r} has no ignore file that may hold the rules: its media sits "
-                f"outside any directory this framework generates, and the repository's root "
-                f"ignore file is never edited (R3). Commit the media, or choose a placement "
-                f"whose media lives under {GENERATED_ROOT}/"
+                f"{self.name!r} has no ignore file that may hold the rules: no single "
+                f"directory this framework generates encloses its media, and the repository's "
+                f"root ignore file is never edited (R3). Commit the media, or choose a "
+                f"placement whose media lives under {GENERATED_ROOT}/"
             )
         return IgnoreFile(home=home, lines=lines)
 

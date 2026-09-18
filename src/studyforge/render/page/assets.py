@@ -33,8 +33,8 @@ and this module never joins one.
 ## ⛔ Ask the profile; never compose the shape
 
 ⚠️ `audio/<clip>.mp3` is the `tree` profile's answer. Under `sibling` the same
-clip is `<stem>.audio/<clip>.mp3`, because twenty units share one directory
-there. ⛔ **The invariant that survives every profile is *relative to the page*,
+clip is `audio/<stem>/<clip>.mp3`, because many units share one `study/`
+directory there (`W323`). ⛔ **The invariant that survives every profile is *relative to the page*,
 not the literal string** — a renderer that spelled `audio/` would be correct
 under one profile and silently wrong under the other, and the page would render
 either way.

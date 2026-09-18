@@ -29,6 +29,7 @@ from studyforge.corpus.manifest import COMMIT_MODES, DEFAULT_MEDIA, MANIFEST_FIL
 from studyforge.corpus.media import MediaFile, MediaFootprint
 from studyforge.corpus.placement import ARCHIVE_DIRNAME as ARCHIVE_DIR
 from studyforge.corpus.placement import (
+    AUDIO_DIRNAME,
     GENERATED_ROOT,
     SITE_CACHE_FILENAME,
     UNIT_MEDIA_DIRNAMES,
@@ -50,6 +51,22 @@ def _with_media(name, commit, tmp_path):
     manifest["media"] = {"commit": commit}
     (root / MANIFEST_FILENAME).write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return plan_for(root)
+
+
+def _clips(plan):
+    """One clip in every audio directory the plan claims, whatever shape the profile gives it.
+
+    ⛔ **Asked by SEGMENT, never by the last one** (`W323`). `tree` ends an
+    audio directory at `audio/`; `sibling` continues below it with the unit's
+    stem, so a predicate on the final segment found every clip under one
+    profile and none under the other — and *found none* reads as *nothing to
+    ignore*, which is the one answer these two cases must never get for free.
+    """
+    return [
+        f"{path}clip.mp3"
+        for path in plan.paths
+        if path.endswith("/") and AUDIO_DIRNAME in PurePosixPath(path).parts
+    ]
 
 
 def _homed(plan, repository):
@@ -92,7 +109,7 @@ def test_committed_media_is_not_ignored_and_needs_no_ignore_file(name, tmp_path)
     plan = plan_for(FIXTURES / name)
     assert plan.ignore == () and plan.ignore_home is None
     repository = _homed(plan, init_repository(tmp_path / name))
-    clips = [f"{p}clip.mp3" for p in plan.paths if p.rstrip("/").endswith("audio")]
+    clips = _clips(plan)
     assert clips
     assert [c for c in clips if is_ignored(c, cwd=repository)] == []
 
@@ -100,11 +117,11 @@ def test_committed_media_is_not_ignored_and_needs_no_ignore_file(name, tmp_path)
 @pytest.mark.parametrize("name", VALID)
 def test_media_that_is_not_committed_is_ignored_from_its_home_or_refused(name, tmp_path):
     plan = _with_media(name, "never", tmp_path)
-    clips = [f"{p}clip.mp3" for p in plan.paths if p.rstrip("/").endswith("audio")]
+    clips = _clips(plan)
     assert clips
     if plan.ignore_home is None:
-        # ⛔ No generated directory encloses this profile's media, and the root
-        # ignore file is R3's: refused, never printed homeless.
+        # ⛔ No SINGLE generated directory encloses this profile's media, and
+        # the root ignore file is R3's: refused, never printed homeless.
         assert plan.ignore == ()
         assert [refusal for refusal in plan.refusals if "R3" in refusal.why], plan.refusals
         assert plan.exit_code == INVALID

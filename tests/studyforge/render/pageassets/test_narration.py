@@ -114,7 +114,7 @@ def test_the_player_reads_the_attribute_python_declares_and_not_a_copy_of_it():
 
 def test_the_player_composes_no_clip_path_of_its_own():
     # ⛔ R4, and it is the failure that renders both ways. `audio/<clip>.mp3` is
-    # the `tree` profile's answer and `<stem>.audio/<clip>.mp3` is `sibling`'s —
+    # the `tree` profile's answer and `audio/<stem>/<clip>.mp3` is `sibling`'s —
     # a script that spelled either would be correct under one and silently wrong
     # under the other, with the page rendering identically in both cases.
     body = uncommented(PART)

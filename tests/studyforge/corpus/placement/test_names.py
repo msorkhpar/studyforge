@@ -17,6 +17,7 @@ from studyforge.corpus.placement import (
     ARCHIVE_DIRNAME,
     CONTAINER_SUFFIX,
     RAW_DIRNAME,
+    STUDY_DIRNAME,
     UNIT_SUFFIX,
     UNITS_DIRNAME,
     PlacementError,
@@ -307,6 +308,13 @@ ARCHIVE_SPELLINGS = {
 #: their own copy of the one directory they must agree about.
 RAW_SPELLINGS = {"src/studyforge/corpus/placement/names.py": 1}
 
+#: Every `src/` module holding a non-docstring literal with the `study/` segment as a path
+#: segment, and how many. ⛔ **One home** (`W323`, clause 4): the segment is the geography
+#: of every artifact the `sibling` profile places, and a build, a test or a skill that
+#: composed a second copy of it would place files the plan does not declare — which is
+#: `W322`'s subject, and this row was required not to create a new instance of it.
+STUDY_SPELLINGS = {"src/studyforge/corpus/placement/names.py": 1}
+
 #: Every `src/` module that MINTS the `units/` segment — a name bound to the bare literal
 #: and joined into a path. ⛔ **One home** (`W298`): it was minted here and again as
 #: `UNITS_DIR` in the adapter `Layout`, so the archive's writer and the site's placer each
@@ -475,6 +483,15 @@ def test_the_archive_root_is_spelled_once_in_src():
     found = segment_spellings(ARCHIVE_DIRNAME)
     print(f"archive-root literals in src/: {sum(found.values())} in {len(found)} module(s)")
     assert found == ARCHIVE_SPELLINGS, f"a second spelling, or one lost: {found}"
+
+
+def test_the_declared_sibling_subdirectory_is_spelled_once_in_src():
+    # ⛔ `W323`, clause 4: the geography lives in ONE place. Every path under
+    # `sibling` carries this segment, and every consumer gets it by asking the
+    # profile — so `src/` holds the mint and not one further spelling.
+    found = segment_spellings(STUDY_DIRNAME)
+    print(f"study-segment literals in src/: {sum(found.values())} in {len(found)} module(s)")
+    assert found == STUDY_SPELLINGS, f"a second spelling, or one lost: {found}"
 
 
 def test_the_raw_segment_is_spelled_once_in_src():

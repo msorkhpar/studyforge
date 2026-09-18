@@ -46,9 +46,10 @@ Every default below is a measurement on real material rather than a taste:
   (`furniture`).
 - **`exercises` follows `capability`**, and *false* is a complete answer.
 - **`placement` follows whether the material shares its directories with
-  anything else.** `sibling` puts a page beside the file it was made from,
-  which is right when a reader already knows the layout (R3); `tree` is right
-  when the material is only prose and has no layout worth preserving.
+  anything else.** `sibling` puts a page in a `study/` directory beside the
+  file it was made from, which is right when a reader already knows the layout
+  (R3); `tree` is right when the material is only prose and has no layout worth
+  preserving.
 """
 
 from __future__ import annotations
@@ -295,9 +296,9 @@ def _choices(
             }"
         ),
         settles_it=(
-            "'sibling' puts each page beside the file it was made from, which is "
-            "right when a reader already knows the layout (R3); 'tree' puts "
-            "everything under one generated root"
+            "'sibling' puts each page in a 'study' directory beside the file it "
+            "was made from, which is right when a reader already knows the layout "
+            "(R3); 'tree' puts everything under one generated root"
         ),
     )
     if record is not None:

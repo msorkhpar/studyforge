@@ -12,9 +12,10 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.corpus.container.fields import optional_origin
+from studyforge.corpus.placement import IMAGES_DIRNAME
 from studyforge.generate import write_site
 from studyforge.skills.onboarding import onboard
 from studyforge.validate import source, validate
@@ -31,6 +32,17 @@ ROOT_IGNORE = "target/\n*.class\n"
 
 #: Why that file is not material, as the person drafting the manifest says it.
 WHY_ROOT_IGNORE = "the repository's own declaration to git, never material it teaches"
+
+
+def _is_media(where: str) -> bool:
+    """Whether a committed path is one of a unit's images.
+
+    ⛔ **Asked by SEGMENT, never as a name suffix** (`W323`). This read
+    `".images/" in where`, which was the `sibling` profile's shape until the
+    media moved under `study/<kind>/<stem>/` — and a predicate that matches
+    nothing turns both cases below green while judging no media at all.
+    """
+    return IMAGES_DIRNAME in PurePosixPath(where).parts
 
 
 def _digest(path: Path) -> str:
@@ -89,7 +101,7 @@ def test_a_sibling_build_classifies_every_page_and_media_file_it_commits(tmp_pat
     assert "index.html" in beside, population
     assert [p for p in beside if p.endswith(".unit.html")], population
     assert [p for p in beside if p.endswith(".section.html")], population
-    assert [p for p in beside if ".images/" in p], "no media file was committed, so none was judged"
+    assert [p for p in beside if _is_media(p)], "no media file was committed, so none was judged"
     assert scan.planned
     assert set(beside) <= _relative(root, scan.generated), population
     assert not set(beside) & _relative(root, scan.files), "generated output offered as material"
@@ -111,7 +123,7 @@ def test_without_the_plan_the_same_build_reads_as_unclassified(tmp_path, monkeyp
     unclassified = _findings(validate(root), RULE_UNCLASSIFIED)
 
     assert [where for _, where in unclassified if where.endswith(".unit.html")]
-    assert [where for _, where in unclassified if ".images/" in where]
+    assert [where for _, where in unclassified if _is_media(where)]
 
 
 def test_a_corpus_with_no_generated_output_validates_as_it_did_before(tmp_path, monkeypatch):

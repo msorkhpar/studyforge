@@ -65,7 +65,7 @@ def test_two_units_of_one_container_with_one_label_and_title_claim_one_page(tmp_
     report = validate(corpora.repeated_label(tmp_path / "c"))
     assert "duplicate-path" in report.rules
     said = "\n".join(f.message for f in report.findings)
-    assert "unit 2's page is placed at 'src/first.1-shared.unit.html'" in said
+    assert "unit 2's page is placed at 'src/study/first.1-shared.unit.html'" in said
     assert "unit 1's page already claims" in said
 
 

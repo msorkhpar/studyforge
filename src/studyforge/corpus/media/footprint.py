@@ -145,7 +145,7 @@ def measure(root: Path | str, units: Iterable[UnitLocations]) -> MediaFootprint:
     ⭐ Takes the locations placement already answered with, so this module has
     no opinion about where a profile puts media — under `tree` it is
     `.studyforge/units/<address>/audio/` and under `sibling` it is
-    `<stem>.audio/` beside the source, and the walk is the same walk.
+    `study/audio/<stem>/` beside the source, and the walk is the same walk.
     """
     return measure_directories(root, _directories(units))
 

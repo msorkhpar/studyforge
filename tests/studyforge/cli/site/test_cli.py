@@ -235,10 +235,10 @@ def test_a_mirrored_series_builds_one_page_per_unit_and_every_instrument_agrees(
     assert code == OK, printed
     assert "replace " not in printed
     assert pages == [
-        "src/first.unit-01-shared-1.unit.html",
-        "src/first.unit-02-shared-2.unit.html",
-        "src/second.unit-01-shared-1.unit.html",
-        "src/second.unit-02-shared-2.unit.html",
+        "src/study/first.unit-01-shared-1.unit.html",
+        "src/study/first.unit-02-shared-2.unit.html",
+        "src/study/second.unit-01-shared-1.unit.html",
+        "src/study/second.unit-02-shared-2.unit.html",
     ]
     assert pages == sorted(c.path for c in plan.creations if c.path.endswith(".unit.html"))
 
@@ -255,7 +255,7 @@ def test_a_path_two_units_claim_is_refused_by_name_by_plan_and_build_and_nothing
     assert plan.exit_code == INVALID
     assert code == INVALID
     for said in ("\n".join(plan.lines()), printed):
-        assert "unit 2's page is placed at 'src/first.1-shared.unit.html'" in said
+        assert "unit 2's page is placed at 'src/study/first.1-shared.unit.html'" in said
         assert "unit 1's page already claims" in said
     assert "build refused" in printed
     assert list(out.iterdir()) == []

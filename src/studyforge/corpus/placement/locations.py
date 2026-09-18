@@ -78,8 +78,8 @@ class UnitLocations:
         link with it.
 
         ⛔ **Ask, never compose.** `audio/<clip>.mp3` is the `tree` shape; under
-        `sibling` the same clip is `<stem>.audio/<clip>.mp3`, because twenty
-        units share one directory there. The invariant that survives every
+        `sibling` the same clip is `audio/<stem>/<clip>.mp3`, because many
+        units share one `study/` directory there. The invariant that survives every
         profile is "relative to the page", not the literal string — and a
         renderer that hardcoded the string would be correct under one profile
         and silently wrong under the other.
