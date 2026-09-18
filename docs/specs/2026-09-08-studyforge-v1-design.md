@@ -60,11 +60,22 @@ written here.
 |---|---|---|---|---|
 | `Claude-senior-java-engineer` | 2 — section → module | 166 | Maven multi-module | **168 test classes, authoritative** |
 | CodeSignal | 2 — path → course | 1,290 declared | Gradle + Python, dockerised | hidden upstream; local tests advisory only |
-| ISO-8583-jPOS-tutorial | **1** — group (fundamentals / server / client) | 38 (16 + 11 + 11) | no build file | prose scenarios in `TestCases.md` |
+| ISO-8583-jPOS-tutorial | **1** — group (fundamentals / server / client) | 38 (16 + 11 + 11) | no build file | **none** — amended below (`W339`) |
 | Claude-SPARQL-tutorial | **1** — course | 19 | **yes** — Docker: Fuseki + Jupyter | none, but **every lesson carries an exercise** |
 
 A contract that cannot express all four is wrong. A contract that requires
 special-casing any of them is wrong.
+
+⛔ **AMENDED 2026-09-18 (`W339`) — ISO's *Graders* cell read *"prose scenarios in
+`TestCases.md`"*, and that file is OUT by the user's ruling** (`Q5`, final,
+recorded at [PO round 105](../tasks/BOARD-ARCHIVE.md#po-round-105)). ⭐ **The
+corpus carries no graded practice at all, so it is complete at the reading
+floor, not short** (§11.0, C5). ⚠️ A planner reads this column to decide whether
+a corpus enters the execution track, which is why the cell is corrected here
+rather than left to a later reader: `tests/test_spec_corpus_table.py` reads the
+*Graders* column against the manifest each workspace-pinned corpus carries, and
+a row claiming graders for a corpus whose manifest says `exercises: false` is
+refused.
 
 ### What the two tutorials taught us
 
@@ -822,6 +833,13 @@ for exactly this reason: one list answered both *"can this be filed here?"* and
 *"can we generate a test for it?"*, so a language with no grader could not be
 filed at all. Three questions, three answers, none of them derived from another.
 
+⛔ **A single-variant prose corpus declares `variants: ["prose"]`: the word is the
+framework's, not each corpus's** (`Q9`, ruled at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107); landed by `W347`).
+⚠️ Every corpus must name at least one variant, and a word each corpus invents
+for the same case is a different label in the one variant selector. ⭐ The
+reconnaissance skill proposes it — `SINGLE_VARIANT` in
+`skills/reconnaissance/proposal.py` — and a person still confirms it.
+
 `permitted_edits` is R3's declaration: the complete, enumerated set of existing
 files this corpus may have added to, each with its insertion and its reason. An
 empty list is the normal case, and it is the one a purely additive source should
@@ -1054,6 +1072,12 @@ never a preference: one would be linked from the page and the other from the
 index, and the reader would be sent to two different places with nothing
 failing.
 
+⛔ **A title is not an address: where the curriculum index and a unit's own file
+disagree on the unit's TITLE, the curriculum index's title wins** (`Q3`, a user
+ruling recorded at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107); landed by `W347`). ⚠️ So the refusal above does not
+extend to titles, and the precedence is stated here rather than left as a
+constant inside one adapter's code.
+
 ⭐ **For a repository-shaped source this is a feature, not a formality.** R3
 guarantees the original file is never touched, so an `origin` pointing at it is
 a permanent, working link from every generated page back into the reader's own
@@ -1108,8 +1132,9 @@ ships a test. Recording those as "no exercise" would delete the exercise from
 the reader's material to satisfy a two-state model. They are presented as work,
 clearly marked as unchecked, and they never complete anything.
 
-Zero remains a **first-class outcome**, not a degraded one — ISO-8583 will have
-few or none, and that is correct.
+Zero remains a **first-class outcome**, not a degraded one — ISO-8583 has none
+(§1's table, amended by `W339`: it read *"few or none"* here), and that is
+correct.
 
 Each exercise declares a workspace — `main_path`, `test_path`, `run_command`,
 `test_command` — plus `provenance` (`bundled` | `generated` | `user`) and
@@ -1512,6 +1537,12 @@ else. Re-deriving them would be waste.
 - **Runner** — `docker exec` into the toolchain container when up, host `bash`
   otherwise; line-by-line streaming; one exit line; every line scrubbed.
 - **Progress** — see below: it is two records, not one.
+
+⛔ **A fence with no info string renders as plain text, and the renderer never
+guesses a language** (`Q7`, ruled at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107); landed by `W347`). ⚠️ A guess is a
+silent wrong highlight, which is worse than no highlight. ⭐ A `code` block
+whose `lang` is empty carries no highlighter class and the caption `code`
+(`render/page/blocks/figure.py`).
 
 ### 8.5 Progress is two records
 

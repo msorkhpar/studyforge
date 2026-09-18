@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import pytest
 
+from studyforge.archive.markdown import parse
 from studyforge.render.page.blocks import figure
 from studyforge.render.page.errors import PageError
 from studyforge.render.pageassets import PLAIN, SURFACE_HOOKS, highlighted_languages
@@ -33,11 +34,26 @@ def test_a_code_block_carries_the_library_class_the_highlighter_reads():
     assert 'class="language-java"' in markup
 
 
-def test_a_code_block_with_no_language_carries_no_class_and_a_plain_caption():
-    markup = render({"type": "code", "lang": None, "text": "x"})
+@pytest.mark.parametrize("empty", [None, "", "   "])
+def test_a_code_block_with_no_language_carries_no_class_and_a_plain_caption(empty):
+    # ⛔ Spec §8.4 (`Q7`): a fence with no info string renders as plain text and
+    # the renderer never guesses. Every empty spelling, because the reader
+    # writes `""` for a bare fence and a guard written for `None` alone passes.
+    markup = render({"type": "code", "lang": empty, "text": "x"})
     assert "language-" not in markup
     assert f'<span class="what">{figure.UNLABELLED_CODE}</span>' in markup
     assert FALLBACK_CLASS not in markup
+
+
+def test_a_bare_fence_read_from_markdown_renders_with_no_language_guessed():
+    # ⭐ Spec §8.4 (`Q7`), end to end: what the reader makes of a fence with no
+    # info string is what the renderer receives, so the rule is held on the
+    # pair and not on a block this test typed by hand.
+    (block,) = parse("```\n<channel/>\n```\n")
+    assert block["type"] == "code" and not block["lang"]
+    markup = render(block)
+    assert "language-" not in markup
+    assert f'<span class="what">{figure.UNLABELLED_CODE}</span>' in markup
 
 
 @pytest.mark.parametrize("language", sorted(highlighted_languages()))

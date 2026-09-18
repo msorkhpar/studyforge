@@ -39,7 +39,8 @@ the reader may never play.
 the vendored bundle declares it, `PLAIN` when it does not. ⭐ The caption keeps
 the language the archive recorded and adds a `code_fallback` note, so the page
 says which language fell back instead of looking like a broken highlighter. A
-fence with no language is unchanged: no class, and the caption `code`.
+fence with no language is unchanged: no class, and the caption `code`. ⛔ That
+is the spec's rule, stated once in §8.4 (`Q7`): the renderer never guesses.
 
 ## ⭐ Highlighting happens in the browser, so the class here is the library's
 

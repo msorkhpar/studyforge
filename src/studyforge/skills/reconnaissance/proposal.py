@@ -79,6 +79,8 @@ NESTED_LEVELS = ("section", "module")
 
 #: The one variant a draft proposes. ⚠️ A filing and presentation key and
 #: nothing more (§4): it never says what language a fence is or what runs.
+#: ⛔ The word is the framework's, stated once in spec §4 (`Q9`), not a
+#: placeholder a corpus replaces.
 SINGLE_VARIANT = "prose"
 
 #: The `source` proposed when there is no record, or its title has no slug —
