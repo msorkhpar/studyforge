@@ -65,7 +65,6 @@ from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import RAISES, Manifest, parse
 from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import (
-    IGNORE_FILE,
     Written,
     ignore_files,
     plan_for,
@@ -147,7 +146,7 @@ class Onboarding:
         if regenerate:
             self._refuse_dropping(Path(root))
             self._refuse_changing(Path(root))
-            record.refuse_unrecorded(Path(root), self.paths, IGNORE_FILE)
+            record.refuse_unrecorded(Path(root), self.files)
         return write_files(
             self.files,
             root,

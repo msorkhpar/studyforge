@@ -1,8 +1,9 @@
 r"""The install record: what one onboarding wrote, and which of it is a person's.
 
 **What it does.** Renders `.studyforge/installed.json` from a file set, reads
-one back through the personal-data gate, and names every generated file whose
-bytes no longer match what was written there.
+one back through the personal-data gate, names every generated file whose
+bytes no longer match what was written there, and refuses a regenerate that
+would take a file it does not claim (`W353`).
 
 **How you use it.**
 
@@ -36,7 +37,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Sequence
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.skills.adapter import Written
@@ -143,27 +144,45 @@ def hand_edited(root: Path | str) -> list[str]:
     return changed(root, entries(root))
 
 
-def refuse_unrecorded(root: Path, wheres: Sequence[str], name: str) -> None:
-    """Refuse, by name, a regenerate that would overwrite a `name` file no record lists.
+def refuse_unrecorded(root: Path, files: Sequence[Written]) -> None:
+    """Refuse, by name, a regenerate that would overwrite a file the record does not claim.
 
-    ⛔ **`W345`**: a regenerate gives an already-onboarded corpus files its first
-    run did not write. A file already at one of those paths that the install
-    record does not list was written by a person, and rewriting it would be the
-    edit R3 forbids — which the generated check could not then see, because the
-    record would claim it from that write on.
+    ⛔ **`W353`, generalising `W345`'s ignore-file guard to every generated
+    path.** A regenerate gives an already-onboarded corpus whatever files a
+    later framework added. A file already at one of those paths that the
+    install record does not list as generated is not known to be the
+    framework's, and rewriting it would be the edit R3 forbids — which the
+    generated check could not then see, because the record would claim it
+    from that write on.
+
+    ⚠️ **A record that predates a path is refused, never adopted** (`W353`
+    clause 2). The record lists every path its run wrote, so a path it does
+    not list was put there by something else; adopting it would overwrite
+    that file and record it in one silent step. ⭐ Moving one file aside is
+    the whole cost of refusing. ⛔ No record at all claims nothing.
+
+    ⭐ Not refused: the person's module (`write_files` never rewrites an
+    existing one), the record itself (it never lists itself), and an absent
+    path (there is nothing to lose).
     """
-    record = root / RECORD_FILE
-    listed = {entry["where"] for entry in entries(root)} if record.exists() else set()
+    present = (root / RECORD_FILE).exists()
+    listed = entries(root) if present else []
+    claimed = {entry["where"] for entry in listed if not is_yours(entry)}
     theirs = sorted(
-        where
-        for where in wheres
-        if PurePosixPath(where).name == name and where not in listed and (root / where).exists()
+        item.where
+        for item in files
+        if item.generated
+        and item.where != RECORD_FILE
+        and item.where not in claimed
+        and (root / item.where).exists()
     )
     if theirs:
         raise OnboardingRefused(
             f"{len(theirs)} file(s) this regenerate would write are already here and "
-            f"{RECORD_FILE} does not list them, so they are a person's: {theirs}. Nothing "
-            f"was written (R3); move each aside, regenerate, then carry its rules into place"
+            f"{RECORD_FILE} {'does not list them as generated' if present else 'is not here'}, "
+            f"so they are not known to be the framework's: {theirs}. Nothing was written "
+            f"(R3); move each aside, regenerate, then keep what was yours outside the "
+            f"generated paths"
         )
 
 
