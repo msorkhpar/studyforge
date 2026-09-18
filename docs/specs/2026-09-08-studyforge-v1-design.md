@@ -1012,6 +1012,8 @@ corpus.json                                   the manifest (§4)
 
 ⛔ **An ordered list keeps the number it starts at** (`W264`, amended from `W258/3`). A `list` block may carry a fourth key, `start`, after its three fields: the first item's number, an integer, written only when the list is ordered and that number is not `1`. ⭐ The page opens the list at it and the narration counts from it, at the top level and nested. ⭐ A list that starts at one carries no `start` and is byte-identical to every list written before, so is its document's `content_sha256`. ⚠️ Not a `raw_api` change for that reason, and the key a block may carry beyond its fields is `archive/blocks.py`'s `optional`.
 
+⛔ **Raw HTML IS in the vocabulary: it is the `html` block, the Markdown reader emits it for a run of block-level markup, and the page renders it VERBATIM — the one block type that bypasses escaping, by declaration and never by what its text looks like** (`Q2`, `W347`). ⭐ It stays: nothing is removed and `raw_api` does not change. ⚠️ The question was ruled at [PO round 107](../tasks/BOARD-ARCHIVE.md#po-round-107) on the premise that raw HTML was *not* in the shipped vocabulary; that premise was measured wrong, and the register corrected it in its round 113. A tag-shaped line the reader keeps as a `para` is still escaped (`render/page/blocks/verbatim.py`).
+
 ```json
 // container.json — generalises CodeSignal's course-map.json
 { "container_api": 1,
