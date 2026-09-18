@@ -225,12 +225,30 @@ REASON = "a reason a person gave for this glob, written by the test"
 #: `SKILL.md` step 4, as an agent executes it rather than as a reader reads it.
 STEP_FOUR = ("-m", "pytest", "tests", "-q")
 
+#: What the pinned image sets to keep bytecode out of the bind mount (`W30`).
+#: ⛔ Unset for the step-4 subprocess only, and only into pytest's `tmp_path`.
+BYTECODE_OFF = ("PYTHONDONTWRITEBYTECODE", "PYTHONPYCACHEPREFIX")
+
 
 def _run(root, *arguments):
-    """Run one of the procedure's own commands from inside the corpus."""
+    """Run one of the procedure's own commands from inside the corpus, as an operator does.
+
+    ⛔ **`BYTECODE_OFF` is unset here on purpose**, and the row turns on it: the
+    pinned image both forbids bytecode and redirects its cache out of the bind
+    mount (`W30`), so step 4 writes nothing beside the modules there — while the
+    interpreter an integrator runs writes `tests/__pycache__/*.pyc` into the
+    corpus, which is exactly the file the manifest has to classify. ⭐ Unsetting
+    both makes the two environments read the same, rather than making this
+    clause vacuous in one of them; `tests/docker/test_dev_image.py` unsets them
+    the same way for the same reason. ⚠️ **`W30`'s hazard is not reintroduced**:
+    `root` is under pytest's own `tmp_path` and never the bind-mounted checkout,
+    so nothing lands in anybody's working tree.
+    """
     environment = dict(os.environ)
     environment["PYTHONPATH"] = os.pathsep.join([str(root), str(repository_root() / "src")])
     environment.pop("PYTEST_ADDOPTS", None)
+    for name in BYTECODE_OFF:
+        environment.pop(name, None)
     return subprocess.run(
         [sys.executable, *arguments],
         cwd=root,
