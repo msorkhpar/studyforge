@@ -20,14 +20,19 @@ that only ever sees green cannot tell you the green means anything.
 
 from __future__ import annotations
 
+import json
 import os
 import subprocess
 import sys
+
+import pytest
 
 from studyforge.corpus.manifest import parse
 from studyforge.skills.adapter import plan_for, scaffold
 from studyforge.skills.onboarding import onboard, uninstall
 from studyforge.skills.onboarding.manifest import promote, render
+from studyforge.skills.onboarding.record import OnboardingRefused
+from studyforge.skills.reconnaissance import survey
 from studyforge.validate import validate
 from tests.studyforge.skills.adapter import corpora as adapter
 from tests.studyforge.skills.onboarding import corpora
@@ -208,3 +213,146 @@ def test_nothing_it_writes_carries_an_absolute_path(tmp_path):
     for item in made.files:
         assert str(tmp_path) not in item.text, item.where
         assert "/home/" not in item.text, item.where
+
+
+# --------------------------------------------------------------------------
+# ⛔ W329: the documented procedure runs a SECOND time, over its own result
+# --------------------------------------------------------------------------
+
+#: A reason as a PERSON gives it. ⛔ Test-owned: the skill never writes one.
+REASON = "a reason a person gave for this glob, written by the test"
+
+#: `SKILL.md` step 4, as an agent executes it rather than as a reader reads it.
+STEP_FOUR = ("-m", "pytest", "tests", "-q")
+
+#: What the pinned image sets to keep bytecode out of the bind mount (`W30`).
+#: ⛔ Unset for the step-4 subprocess only, and only into pytest's `tmp_path`.
+BYTECODE_OFF = ("PYTHONDONTWRITEBYTECODE", "PYTHONPYCACHEPREFIX")
+
+
+def _run(root, *arguments):
+    """Run one of the procedure's own commands from inside the corpus, as an operator does.
+
+    ⛔ **`BYTECODE_OFF` is unset here on purpose**, and the row turns on it: the
+    pinned image both forbids bytecode and redirects its cache out of the bind
+    mount (`W30`), so step 4 writes nothing beside the modules there — while the
+    interpreter an integrator runs writes `tests/__pycache__/*.pyc` into the
+    corpus, which is exactly the file the manifest has to classify. ⭐ Unsetting
+    both makes the two environments read the same, rather than making this
+    clause vacuous in one of them; `tests/docker/test_dev_image.py` unsets them
+    the same way for the same reason. ⚠️ **`W30`'s hazard is not reintroduced**:
+    `root` is under pytest's own `tmp_path` and never the bind-mounted checkout,
+    so nothing lands in anybody's working tree.
+    """
+    environment = dict(os.environ)
+    environment["PYTHONPATH"] = os.pathsep.join([str(root), str(repository_root() / "src")])
+    environment.pop("PYTEST_ADDOPTS", None)
+    for name in BYTECODE_OFF:
+        environment.pop(name, None)
+    return subprocess.run(
+        [sys.executable, *arguments],
+        cwd=root,
+        env=environment,
+        capture_output=True,
+        text=True,
+        timeout=TIMEOUT,
+        check=False,
+    )
+
+
+def _surveyed(root, existing=None):
+    """One pass of the documented procedure over `root`: survey, then onboard."""
+    found = survey(root)
+    proposal = found.proposal
+    globs = [entry["glob"] for entry in proposal["content"].get("not_material", ())]
+    return onboard(
+        proposal,
+        framework_commit=corpora.COMMIT,
+        reasons=dict.fromkeys([*proposal["content"].get("exclude", ()), *globs], REASON),
+        existing=existing,
+        root=root,
+    )
+
+
+def _first_run(tmp_path):
+    """Steps 1–5 of `SKILL.md`, driven by the survey rather than by a settled draft."""
+    root = corpora.material(tmp_path / "corpus")
+    corpora.git(root, "init", "-q")
+    made = _surveyed(root)
+    made.write(root)
+    (root / made.hand_written[0]).write_text(adapter.READ, encoding="utf-8")
+    _run(root, *STEP_FOUR)
+    assert _ingest(root).returncode == 0
+    return root, made
+
+
+def test_the_skills_own_step_four_leaves_the_corpus_valid(tmp_path):
+    # ⛔ Clause 4. `SKILL.md` step 4 writes `tests/__pycache__/*.pyc`, and the
+    # manifest the SAME skill generated declared `tests/*.py` — so the step this
+    # skill commands left `studyforge validate` exiting 1 on bytecode.
+    root, _ = _first_run(tmp_path)
+
+    assert list((root / "tests").glob("__pycache__/*.pyc")), "step 4 wrote no bytecode"
+    report = validate(root)
+
+    assert report.ok, "\n".join(str(finding) for finding in report.findings)
+
+
+def test_under_the_narrower_glob_that_same_bytecode_is_unclassified(tmp_path):
+    # ⭐ The control: without the widened declaration the findings come back, so
+    # the clause above is not passing on a walk that never saw `__pycache__`.
+    root, made = _first_run(tmp_path)
+    narrowed = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
+    for entry in narrowed["content"]["not_material"]:
+        entry["glob"] = "tests/*.py" if entry["glob"] == "tests/**" else entry["glob"]
+    (root / "corpus.json").write_text(render(narrowed), encoding="utf-8")
+
+    unclassified = [f.where for f in validate(root).findings if f.rule == "unclassified"]
+
+    assert unclassified and all(".pyc" in where for where in unclassified)
+
+
+def test_a_second_run_of_the_whole_procedure_writes_the_same_manifest(tmp_path):
+    # ⛔ Clause 5, and the second run is the test. Measured before this row: the
+    # re-survey counted the scaffold's own `tests/**/test_*.py` as graders and
+    # drafted `exercises: true`, which onboarding wrote with no refusal.
+    root, _ = _first_run(tmp_path)
+    before = (root / "corpus.json").read_bytes()
+
+    again = _surveyed(root, existing=before.decode())
+    again.write(root, regenerate=True)
+
+    assert (root / "corpus.json").read_bytes() == before
+    assert not again.manifest.exercises
+    assert "graded practices  no" in "\n".join(again.lines())
+
+
+def test_and_the_corpus_is_still_valid_after_that_second_run(tmp_path):
+    # ⭐ The other half of clause 5: regenerating does not cost the corpus the
+    # exit code the first run earned it.
+    root, _ = _first_run(tmp_path)
+
+    _surveyed(root, existing=(root / "corpus.json").read_text(encoding="utf-8")).write(
+        root, regenerate=True
+    )
+
+    assert validate(root).ok
+
+
+def test_a_run_that_would_flip_a_recorded_answer_refuses_by_name_and_writes_nothing(tmp_path):
+    # ⛔ Clause 3's other arm: where a reading genuinely wants to change a
+    # recorded answer, onboarding says so rather than writing it.
+    root, _ = _first_run(tmp_path)
+    before = (root / "corpus.json").read_bytes()
+    graded = onboard(
+        {**survey(root).proposal, "exercises": True},
+        framework_commit=corpora.COMMIT,
+        existing=before.decode(),
+        root=root,
+    )
+
+    with pytest.raises(OnboardingRefused) as refused:
+        graded.write(root, regenerate=True)
+
+    assert "exercises (False -> True)" in str(refused.value)
+    assert (root / "corpus.json").read_bytes() == before

@@ -12,9 +12,9 @@ declares, how many files those cover, and `stands_down`: why the proposal
 cannot be read as complete, by name, or `None` (`W269`).
 
 **Depends on.** `studyforge.validate.source.source_files` for the population,
-`studyforge.skills.onboarding.RECORD_FILE` for what onboarding wrote, and
-`studyforge.corpus.manifest.MANIFEST_FILENAME` for what the corpus declares.
-⛔ Nothing source-specific (R1): no file name is special here.
+`installed` for what onboarding wrote, and `studyforge.corpus.manifest`'s
+`MANIFEST_FILENAME` for what the corpus declares. ⛔ Nothing source-specific
+(R1): no file name is special here.
 
 ## ⛔ The population is validate's walk, never a list here
 
@@ -40,9 +40,10 @@ excluded or written by onboarding. Otherwise it is the file's exact path.
 Paths listed in onboarding's record are declared by `SK-07`'s own generated
 globs. A drafted glob equal to one of those is refused by `promote`, never
 resolved by precedence (`W239`), so a re-survey of an onboarded corpus must
-not propose them. ⚠️ An unreadable record reads as no footprint, and any
-collision that follows is refused by `promote` by name. ⛔ The record is a list
-of paths, so it is gated before a field is read (R7, W7), and a leak raises.
+not propose them. ⭐ **The record is `installed.generated`'s answer, the one
+instrument (`W329`)**, and every other pass in this skill now asks it too.
+⚠️ An unreadable record reads as no footprint, and any collision that follows
+is refused by `promote` by name.
 
 ## ⛔ A file a declared glob covers is never re-proposed (`W269`, `INT-10/2`)
 
@@ -73,7 +74,7 @@ from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.skills.onboarding import RECORD_FILE
+from studyforge.skills.reconnaissance.installed import generated
 from studyforge.validate.source import source_files
 
 #: What a proposed entry carries where its reason goes. ⛔ Never a string:
@@ -132,7 +133,7 @@ def propose(root: Path | str, include: Sequence[str], exclude: Iterable[str]) ->
     }
     declared = _declared(root)
     covered = {where for where in seen if any(PurePosixPath(where).full_match(g) for g in declared)}
-    occupied = read | covered | _footprint(root)
+    occupied = read | covered | generated(root)
     held = {parent.as_posix() for where in occupied for parent in PurePosixPath(where).parents}
     left = [where for where in seen if where not in occupied]
     globs = sorted({_glob(where, held) for where in left})
@@ -153,23 +154,6 @@ def _glob(where: str, held: set[str]) -> str:
         if directory not in held:
             return f"{directory}/**"
     return where
-
-
-def _footprint(root: Path) -> frozenset[str]:
-    """Every path onboarding's record says it wrote, or none if there is no readable record."""
-    try:
-        document = json.loads((root / RECORD_FILE).read_text(encoding="utf-8"))
-    except OSError, ValueError:
-        return frozenset()
-    assert_clean(document, RECORD_FILE)
-    files = document.get("files") if isinstance(document, dict) else None
-    if not isinstance(files, list):
-        return frozenset()
-    return frozenset(
-        entry["where"]
-        for entry in files
-        if isinstance(entry, dict) and isinstance(entry.get("where"), str)
-    )
 
 
 def _declared(root: Path) -> tuple[str, ...]:

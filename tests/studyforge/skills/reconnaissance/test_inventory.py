@@ -10,7 +10,7 @@ import pytest
 
 from studyforge.skills.reconnaissance import prefix_groups, take
 from studyforge.skills.reconnaissance.inventory import observe
-from studyforge.skills.reconnaissance.report import Uncertainty
+from studyforge.skills.reconnaissance.report import Observation, Uncertainty
 from studyforge.validate.source import RULE_NESTED_REPOSITORY, source_files
 from tests.studyforge.skills.reconnaissance import sources
 from tests.support import init_repository
@@ -147,3 +147,70 @@ def test_every_OTHER_dot_directory_is_still_skipped_at_any_depth_unchanged(tmp_p
     write(root, "src/node_modules/about.md")
     material = surveyed(take(root))
     assert not {".github/about.md", "src/.idea/about.md", "src/node_modules/about.md"} & material
+
+
+# --------------------------------------------------------------------------
+# ⛔ W329: what this framework wrote is set aside, not classified
+# --------------------------------------------------------------------------
+
+#: Onboarding's own footprint, in the two shapes the walk would otherwise
+#: classify: a document it reads as material, and code it reads as unrecognised.
+FOOTPRINT = {"ONBOARDING.md": "# Generated\n", "ingest/read.py": "def read(): pass\n"}
+
+
+def seen(inventory):
+    """Every path the walk classified, either way, relative and posix-spelled."""
+    return {
+        path.relative_to(inventory.root).as_posix()
+        for path in (*inventory.material, *inventory.unrecognised)
+    }
+
+
+def test_a_file_the_install_record_names_is_neither_material_nor_unrecognised(tmp_path):
+    root = sources.onboarded(sources.flat_prose(tmp_path / "c"), FOOTPRINT)
+
+    inventory = take(root)
+
+    assert seen(inventory).isdisjoint(FOOTPRINT)
+    assert inventory.generated == frozenset(FOOTPRINT)
+
+
+def test_the_same_files_unrecorded_ARE_classified_so_the_clause_above_measures_something(tmp_path):
+    # ⭐ The control. Without a record the identical tree is read as it always
+    # was, which is what a corpus nobody onboarded must keep getting.
+    root = sources.write(sources.flat_prose(tmp_path / "c"), FOOTPRINT)
+
+    inventory = take(root)
+
+    assert set(FOOTPRINT) <= seen(inventory)
+    assert inventory.generated == frozenset()
+
+
+def test_a_directory_holding_only_generated_files_is_not_reported_as_holding_material(tmp_path):
+    root = sources.onboarded(sources.flat_prose(tmp_path / "c"), FOOTPRINT)
+
+    held = {path.relative_to(root).as_posix() for path in take(root).directories}
+
+    assert "ingest" not in held
+    assert "src" in held, "the corpus's own directory was dropped with the framework's"
+
+
+def test_a_directory_the_framework_shares_with_the_corpus_is_still_reported(tmp_path):
+    # ⭐ The control: only a directory this framework wholly occupies is dropped.
+    root = sources.onboarded(sources.flat_prose(tmp_path / "c"), FOOTPRINT)
+    sources.write(root, {"ingest/mine.md": "# a person's note beside the adapter\n"})
+
+    held = {path.relative_to(root).as_posix() for path in take(root).directories}
+
+    assert "ingest" in held
+
+
+def test_the_survey_says_how_many_files_it_set_aside(tmp_path):
+    # ⛔ Said out loud: a reader comparing two surveys of one corpus needs to
+    # know which of them was reading this framework's own output.
+    root = sources.onboarded(sources.flat_prose(tmp_path / "c"), FOOTPRINT)
+
+    counted = [i for i in observe(take(root)) if isinstance(i, Observation)]
+    counted = [i for i in counted if "set aside" in i.what]
+
+    assert [i.measured for i in counted] == [str(len(FOOTPRINT))]
