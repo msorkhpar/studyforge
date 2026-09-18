@@ -6,15 +6,19 @@ entry against the file it names.
 **How you use it.** `check_media(container_dir, document, where)` yields
 `(rule_id, message)`.
 
-**Depends on.** `digests` for the byte digest, and the two modules that OWN
-the segments of a unit's own directory — `corpus.placement` for `units/` and
-`address` for the `unit-NN` padding.
+**Depends on.** `digests` for the byte digest, and `addresses` for the one
+question this module asks about geography: where a unit's own files sit.
 
-⚠️ **Those two imports are `W214`.** This module composed the directory from a
+⚠️ **`W214` first, then `W322`.** This module composed the directory from a
 literal and a format string, which made it a second spelling of the one
 `skills.adapter.Layout.unit_files` computes — and a fixture check that agreed
 with itself about where media lives is the reading `validate` could not
-contradict. ⭐ `studyforge validate` now asks the same question of any corpus
+contradict. `W214` replaced the literal with the two constants that own the
+segments. ⛔ **It was still a join, and a join is a producer**: two of them
+agree only for as long as nobody changes one. ⭐ `addresses.unit_files_in`
+asks the layout for the shape, and this module asks `addresses` — so the
+directory has one producer and this file is not it.
+⭐ `studyforge validate` now asks the same question of any corpus
 (`media-missing`); this half stays because these fixtures are checked without
 it.
 
@@ -27,8 +31,7 @@ reporting.
 
 from __future__ import annotations
 
-from studyforge.address import unit_name
-from studyforge.corpus.placement import UNITS_DIRNAME
+from tests.fixture_checks.addresses import unit_files_in
 from tests.fixture_checks.digests import sha256_of_bytes
 
 
@@ -36,7 +39,7 @@ def check_media(container_dir, document, where):
     """Every declared local file is on disk with the digest recorded for it."""
     if document.get("media_skipped"):
         return
-    unit_root = container_dir / UNITS_DIRNAME / unit_name(document["unit"])
+    unit_root = unit_files_in(container_dir, document["unit"])
     for entry in list(document["assets"]) + list(document["attachments"]):
         local = entry.get("local") or ""
         if not local:
