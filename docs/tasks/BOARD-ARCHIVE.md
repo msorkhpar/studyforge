@@ -27843,3 +27843,43 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ### ⭐ DISPATCHED — NAMED BEFORE THEY RUN
 
 `W350` on `wt/dev4` (the spec is free now `W339`+`W347` merged) and `W353` on `wt/dev1` (the onboarding package is free now `W345` merged). ⭐ **Surfaces read against each other and against `W352`'s `tests/fixtures/`: disjoint.**
+
+## PO round 116
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`W352` closes — `M5` has something to run — two rows are minted from it, and `SF-20` is named before it runs.**
+
+### ⭐ CLOSE — verified by this register, NOT received
+
+### W352 — The fixtures `M5` is proved on carry nothing that can run
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W352.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by RUNNING EVERY UNIT BY HAND** in a temp copy with no bytecode written: pytest exits 0, 1, 2 and 5 for the passing, failing, broken and untested units; the broken unit fails `compile()` while `ast.parse` accepts it — ⚠️ **deliberately, and `W358` is why it had to.** Merged at `df78fe6`, all three gates GREEN.
+
+⛔ **`TC-00/5`: `M5` is to be proved on the `FND-04` fixtures, and they carry nothing that can RUN.**
+
+⭐ **MEASURED at `064978e`:** `tests/fixtures/depth2/corpus.json` declares `exercises: true` and a container declares a practice — ⛔ **yet every tracked file in that fixture is JSON or Markdown.** ⚠️ **So `SF-20`'s acceptance — *both modes produce identical observable behaviour on the same practice, against a real container* — and `SF-44`'s terminal command have nothing to execute.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A committed fixture corpus with RUNNABLE units** — a source file and its test, a unit with a file and NO test (⭐ *a file with no test is not a failure*, `M5`'s *Done when*), and a unit that fails to compile (⭐ *the first failure ends the run*).
+2. ⭐ **It declares its `runtimes`** once `W350` lands, and uses a runtime `TC-00` pins.
+3. ⛔ **Asserted (R12):** the fixture validates, and its runnable shapes are present by construction.
+
+⭐ **Surface:** `tests/fixtures/`. ⛔ **Before `SF-20` is dispatched.**
+
+[the mint](#po-round-112)
+
+### ⭐ `W352`'S FINDINGS
+
+| finding | disposition |
+|---|---|
+| `W352/1` — the exercise record cannot express a file with no test | ⭐ **minted `W357`, and it JUMPS: `SF-44` cannot be taken without it** |
+| `W352/2` + `W352/5` — pytest collection and five `ast` walkers reach into `tests/fixtures/` | ⭐ **minted `W358`, one row: one cause** |
+| `W352/3` — a grader run writes bytecode beside what it imports | ⭐ **carried into `SF-20`'s brief as an acceptance clause** |
+| `W352/4` — the shared office rules named a merged row as in flight | ⭐ **fixed by the register in the rules file** |
+| `W352/6` — the fixture checker does not check a practice's section layout | ⚠️ **recorded in its handoff; local** |
+
+### ⭐ DISPATCHED — NAMED BEFORE IT RUNS
+
+⭐ **`SF-20` — the command runner — on `wt/dev2`**, `M5` step 5.1's second half. ⛔ **Its brief carries the ruled seam (round 112, row 9), `TC-00/6` and `W352/3` as acceptance clauses.** ⭐ **Surface `src/studyforge/execute/` — disjoint from `W350` (`corpus/manifest/`) and `W353` (`skills/onboarding/`).**
