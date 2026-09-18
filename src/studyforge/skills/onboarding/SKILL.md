@@ -111,6 +111,31 @@ rewritten). ⭐ **`git status` afterwards shows additions and nothing else** —
 plus whatever the manifest's own `permitted_edits` declares, which is the only
 form an edit may take and is checked by a test this skill generates.
 
+⛔ **That generated check answers R3, and not `git status`** (`W331`). ⚠️ **It
+answered `git status` until this row, and so it went RED on a CORRECT run**: a
+re-build replaces the pages an earlier build wrote, and `git add` turns a file
+that never existed into an `A ` entry rather than a `??` one — both read as
+*"an existing file changed"*. ⭐ **It went green the moment the work was
+committed, which is the proof it was measuring committing.** ⛔ **The verdict may
+not move between uncommitted, staged and committed**, so it now reads two things
+and neither is the tree's dirtiness:
+
+- ⭐ **what a build DECLARES it writes.** `studyforge plan` enumerates that from
+  this corpus's own declarations, before anything runs, and `reads_as_content`
+  below says which paths R3 reads as this corpus's content. A path in both that
+  `permitted_edits` does not declare is the breach — **stated by the plan, so
+  committing cannot answer it.**
+- ⭐ **the tree, through that same declaration.** Both status letters are read
+  and a rename's origin is taken from its own field; an ADDITION is never a
+  breach, and what is left must be named by the plan, by
+  `.studyforge/installed.json` (`W329`) or by `permitted_edits` — or sit inside
+  `.studyforge/`, which `studyforge.validate.source.SKIP_DIRS` already declares
+  is this tool's directory and never the corpus's material.
+
+⚠️ **What the second reading cannot do, said rather than implied:** a committed
+tree holds no record of what changed, so an undeclared rewrite nobody planned is
+invisible to it. ⭐ That is why the first reading exists and why it comes first.
+
 ⛔ **`permitted_edits` may never name** the repository's root ignore file, any
 version-control configuration, or a file R3 reads as content — **repository-root
 documentation included, whatever `content` classifies it as** (`W278`). ⭐ The one
@@ -145,7 +170,7 @@ What lands, and why each one exists:
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
 | the adapter package and its suite | `SK-02`'s scaffold, wired in — seven generated files and one that is yours |
 | `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
-| `tests/` — two checks | R3's assertion with this corpus's declared edits baked in, and the pin-drift check |
+| `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin-drift check |
 | `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations — and, when `onboard` is given `root=`, where the corpus stands as a build reads it, with commands that run from a fresh clone (`W313`) |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 

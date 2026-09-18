@@ -1,5 +1,9 @@
 """Mirror of `src/studyforge/skills/onboarding/artifacts.py` (R12).
 
+⚠️ **R3's generated check moved to `nondestructive` and so did its three
+clauses** (`W331`): they are in `test_nondestructive.py`, which runs the check
+rather than only parsing it.
+
 ⭐ **The test that matters most here asserts coverage, not a list.** A seventh
 artifact added without a `content.not_material` glob is an `unclassified`
 finding in somebody else's repository, discovered by them; this asks the same
@@ -8,7 +12,6 @@ question here, of every path the module says it writes.
 
 from __future__ import annotations
 
-import ast
 import os
 import subprocess
 import sys
@@ -90,24 +93,6 @@ def test_no_ignore_rule_this_skill_writes_reaches_the_archive():
     # depth — the assertion is over every path it occupies, not one name.
     rules = [where for where in artifacts.paths() if where.rsplit("/", 1)[-1] == ".gitignore"]
     assert not rules, f"this skill writes an ignore rule: {rules}"
-
-
-def test_the_generated_non_destructive_check_bakes_in_this_corpus_declared_edits():
-    text = artifacts.edits_test(_manifest(permitted_edits=[EDIT]))
-
-    assert "'pom.xml'" in text
-    ast.parse(text)
-
-
-def test_a_corpus_that_declares_no_edit_gets_a_check_that_permits_none():
-    text = artifacts.edits_test(_manifest())
-
-    assert "PERMITTED = []" in text
-
-
-def test_the_generated_checks_are_modules_that_parse():
-    for text in (artifacts.edits_test(_manifest()),):
-        ast.parse(text)
 
 
 def test_the_reader_document_is_written_from_the_declarations_rather_than_invented():

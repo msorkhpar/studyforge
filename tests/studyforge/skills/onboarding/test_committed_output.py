@@ -55,8 +55,13 @@ def _files(root: Path) -> set[str]:
     return {path.as_posix() for path in found if path.parts[0] != ".git"}
 
 
-def _onboarded(tmp_path: Path) -> Path:
-    """Material, an archive and a root ignore file under git, onboarded `sibling`."""
+def onboarded(tmp_path: Path) -> Path:
+    """Material, an archive and a root ignore file under git, onboarded `sibling`.
+
+    ⭐ **Public, and `test_nondestructive` takes it** (`W331`): the generated R3
+    check is asserted by being RUN, and this is the one fabricated corpus in
+    this package that a build writes output into. ⛔ Never a second copy of it.
+    """
     root = init_repository(tmp_path / "corpus")
     (root / ".gitignore").write_text(ROOT_IGNORE, encoding="utf-8")
     shutil.copytree(FIXTURES / SHAPE / "archive", root / "archive")
@@ -87,7 +92,7 @@ def _relative(root: Path, paths) -> set[str]:
 
 
 def test_a_sibling_build_classifies_every_page_and_media_file_it_commits(tmp_path):
-    root = _onboarded(tmp_path)
+    root = onboarded(tmp_path)
     ignore_before = _digest(root / ".gitignore")
     before = _files(root)
     unbuilt = validate(root)
@@ -116,7 +121,7 @@ def test_a_sibling_build_classifies_every_page_and_media_file_it_commits(tmp_pat
 def test_without_the_plan_the_same_build_reads_as_unclassified(tmp_path, monkeypatch):
     # ⛔ The negative control: the same tree with the plan's recognition turned
     # off reports the build's output, so the clean run above is a measurement.
-    root = _onboarded(tmp_path)
+    root = onboarded(tmp_path)
     write_site(root, root)
     monkeypatch.setattr(source.enumeration, "_generated_output", lambda root, found: frozenset())
 
@@ -129,7 +134,7 @@ def test_without_the_plan_the_same_build_reads_as_unclassified(tmp_path, monkeyp
 def test_a_corpus_with_no_generated_output_validates_as_it_did_before(tmp_path, monkeypatch):
     # ⛔ The control for "unchanged": before a build nothing is recognised, so
     # the report equals the one with recognition removed entirely.
-    root = _onboarded(tmp_path)
+    root = onboarded(tmp_path)
     assert source_files(root).generated == ()
     recognised = validate(root).lines()
     monkeypatch.setattr(source.enumeration, "_generated_output", lambda root, found: frozenset())
@@ -140,7 +145,7 @@ def test_a_corpus_with_no_generated_output_validates_as_it_did_before(tmp_path, 
 def test_a_planned_path_the_manifest_includes_is_contested_not_silently_generated(tmp_path):
     # ⛔ Never a precedence: a build would overwrite this file, and the manifest
     # says it is material.
-    root = _onboarded(tmp_path)
+    root = onboarded(tmp_path)
     document = json.loads((root / "corpus.json").read_text("utf-8"))
     document["content"]["include"].append("index.html")
     (root / "corpus.json").write_text(json.dumps(document, indent=2), encoding="utf-8")
