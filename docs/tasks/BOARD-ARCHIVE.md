@@ -27033,6 +27033,242 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 
 ⭐ **Merged at `fd2e4ed`, BEFORE this round dispatched an office to build it again — `PO-105/6`. ⭐ VERIFIED BY THIS REGISTER: the carrier is an ancestor of the release branch, `docs/tasks/handoffs/W315.md` is on it, and the deferral is in `tools/quality/pointers.py` — a handoff may link its OWN row before the register mints it, by the citing document's own filename and nothing else.**
 
+### ⛔ EIGHT OF THIS ROUND'S OWN MINTS CLOSE IN IT, AND THE FLOOR REFUSED THE SHORTCUT FIRST
+
+⚠️ **The register first set their state cells to done and LEFT their row files carrying their arguments**, reasoning that the state cell is the live fact and the archive move is bookkeeping. ⛔ **The floor refused the merge and it was RIGHT: `board-orphan`, eight times — *a file still carrying its FULL argument is a close that did not happen*.** ⭐ **Ruling 270's close is all four edits or none, and the instrument enforces exactly that.**
+
+### W323 — Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W323.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER REQUIREMENT, stated directly and not a finding from an office:**
+
+> the structure of the files are not clean. It was supposed to be next to the md files maybe in a
+> sub directory and audio files next to a subdirectory. Only one index.html outside in the root
+
+⭐ **MEASURED by this register on the first corpus, before the row:** the repository ROOT held **47** entries of which **34** were generated — a unit page and a per-unit `.audio/` directory, one pair per unit, dropped beside whichever source file they came from. `src/` held **120** entries: 38 `.md` sources, 38 `*.unit.html` pages loose beside them, and 38 separate `*.audio/` directories interleaved with them.
+
+⚠️ **Why it happened is one rule, and it is not a bug in any one verb:** a generated page was written as a SIBLING of its source file. ⛔ **So a source at the repository root put its page and its audio at the repository root** — the rule was applied correctly and the result is unreadable.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A unit's generated page lands in a DECLARED SUBDIRECTORY beside its source**, and generated audio under a declared subdirectory — ⭐ **the name is chosen once and declared once**, in `corpus/placement/`, where the geography lives.
+2. ⛔ **The only generated file at the corpus ROOT is `index.html`.**
+3. ⭐ **The geography stays in ONE place:** `corpus/placement/` owns the SITE tree and `skills/adapter/layout.py` the ARCHIVE tree, and no build, test or skill composes one of these paths from a literal — ⚠️ **this row may not create new instances of `W322`'s subject.**
+4. ⛔ **Asserted both ways (R12):** a built corpus lands where the declaration says and nowhere else, and a plant that writes outside the declared directories is caught by name.
+5. ⛔ **R3 still holds.** This changes where GENERATED files go and touches no source file.
+
+⛔ **MUST NOT BECOME a migration of an existing corpus's files.** ⭐ **The corpus is REGENERATED** — the generator changes, never a generated tree in another repository (R19).
+
+⭐ **Surface:** `src/studyforge/corpus/placement/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `4650f5d`.**
+
+### W324 — A reader on a unit page has no path to any other container; crossing a course means a trip through the index
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W324.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER REQUIREMENT:** *"there is no left navigation bar between courses"*.
+
+⭐ **MEASURED before the row:** a reader on a unit page of one container had **no** path to any other container. Crossing a course meant going back to the root index and down again. ⚠️ **Every page carried prev/next WITHIN its container and nothing across containers** — so the navigation was complete along one axis and absent along the other.
+
+⛔ **This row builds the REGION. Where it sits on the page is `W325`'s** — split deliberately at a named seam (Ruling 261), because a region that exists and a region that is placed fail differently and are asserted differently.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every page carries a region naming every container**, and the reader's own container is marked — ⭐ **`aria-current`, so the marking is in the accessibility tree and not only in paint.**
+2. ⛔ **The links RESOLVE over `file://`** — relative, no server, and a crossing actually lands on the named page.
+3. ⛔ **NO JAVASCRIPT.** The region works with scripting disabled entirely; ⭐ **the disclosure is a real `<details>`.**
+4. ⛔ **The region is ABSENT below two containers** — ⚠️ **a navigation between courses with one course is furniture, and its absence is a clause, not an omission.**
+5. ⛔ **Asserted both ways (R12)**, including the keyboard path.
+
+⭐ **Surface:** `src/studyforge/render/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `9c74bba`.**
+
+### W325 — The containers navigation is a card stacked in the reading column; the user asked for a LEFT RAIL
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W325.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **The PLACEMENT half of the same user requirement `W324` answers.** ⭐ **`W324` built the region; it landed as a CARD stacked in the reading column, and the user asked for a LEFT RAIL.**
+
+⚠️ **Why it is a separate row and not a follow-up:** a region that exists and a region that is placed are refuted by different evidence. ⛔ **The first is asserted by reading the document; the second only by GEOMETRY, in a real browser** — and nothing about the first can detect that the second is wrong.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **WIDE:** the region's right edge lies to the LEFT of the reading column's left edge, with a gutter between them — ⛔ **a rail, not a card.**
+2. ⭐ **NARROW:** the region and the column resolve the SAME edges, the region above the column — ⛔ **the degradation is CHOSEN and asserted, not left to whatever the cascade does.**
+3. ⛔ **No template, no renderer, no golden and no placement module changes** — ⭐ **the same page bytes, laid out differently**, which is what keeps R8's `file://` floor alive across it.
+4. ⛔ **The layout clauses are opened with SCRIPTING DISABLED**, so *no JavaScript* is part of the placement clause rather than a separate promise.
+
+⚠️ **THIS ROW SHIPPED A REGRESSION AND THE REGISTER CERTIFIED IT** — `PO-105/4`, and `W326` is the remedy. ⛔ **The certification read a geometry probe without recording WHICH BOX it measured.** ⭐ **The reading that would have caught it is in `W326`'s argument; the reason none of the fixtures could is there too.**
+
+⭐ **Surface:** `src/studyforge/render/assets/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `7027ee6`.**
+
+### W326 — The rail sets the height of the masthead's row, so a unit page opens on a blank screen proportional to its course's size
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W326.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER-VISIBLE REGRESSION IN `W325`, found on the REAL rebuilt corpus and not on a fixture.**
+
+⭐ **The mechanism:** the rail is placed at `grid-column: 1; grid-row: 1`, and the masthead is the only other item in row 1 — ⛔ **so row 1 is as tall as the RAIL**, and every later element of the reading column begins at the rail's bottom edge.
+
+⭐ **MEASURED in a real browser at `innerWidth` 2048, on a 16-unit container:**
+
+| element | top | bottom |
+|---|---|---|
+| the rail | 0 | **942** |
+| the page's `<h1>` | 36 | 73 |
+| the breadcrumb — the next thing in the reading column | **942** | 993 |
+
+⛔ **A reader opens a unit, sees the title, and then roughly 870px of nothing before the content.** ⚠️ **It scales with the container's unit count** (~420px on an 11-unit one), so it is worst on the biggest course. ⭐ **Every link works — a layout defect, not a broken page — and the NARROW case is correct.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The masthead's row is sized by the MASTHEAD**, not by the rail.
+2. ⛔ **The reading column's first element begins where it would with NO RAIL PRESENT** — ⭐ **asserted as a COMPARISON against the no-rail page, never against a typed number.**
+3. ⛔ **EVERY clause of `W324` and `W325` survives, RE-TAKEN and not assumed** (Ruling 214).
+4. ⛔ **Asserted both ways (R12) with a REAL BROWSER arm** at both widths — ⚠️ **and the wide arm uses a container with MANY units.**
+
+⛔ **THE ROOT CAUSE IS THE FIXTURES, NOT THE MISREADING.** ⭐ **Every visual fixture in this framework was too small to exhibit a rail taller than its content** — a three-entry rail beside a four-paragraph page cannot show it. ⚠️ **A row that fixes the CSS and leaves the fixtures small has settled the symptom.**
+
+⭐ **Surface:** `src/studyforge/render/assets/`, and the visual fixtures. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `c79f485`.**
+
+### W327 — The skills name no narration component and call the step optional, so a reader who follows them exactly builds a silent site
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W327.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER QUESTION ABOUT A DELIVERED CORPUS, and the second half of it is the row:** *"Why the rebuild didn't have the narration in it?"* then *"Why did the skills missed it?"*
+
+⭐ **MEASURED:** `narrate-service` was named in **ZERO** `SKILL.md` files in this framework, and `buildserve` called the narration step *optional*. ⛔ **So a reader who followed the skills exactly built a silent site and was told nothing was wrong.**
+
+⚠️ **The deeper half, and it is the one that makes this a row rather than a documentation fix:** the skills accepted silence as a legitimate finished state. ⛔ **A corpus that CANNOT speak and a corpus that HAS NOT been narrated were the same state**, so no instrument could tell a finished corpus from an unfinished one.
+
+⭐ **Why now:** *"In future we are not going to have you running the conversion! I will be the study forge as a whole."* ⛔ **A gap a coordinator papers over with a brief is a PRODUCT DEFECT.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The skills NAME what provides narration, where it answers, and how to have it** — ⭐ **without a reader needing to know this workspace's layout.**
+2. ⛔ **The two silences are DIFFERENT ANSWERS.** ⭐ *Cannot speak* reads as complete at the reading floor with **no remedy needed** (§11.0, C5); *has not been narrated* names the component and its address.
+3. ⛔ **The address is IMPORTED from the verb that owns it, never retyped**, and ⛔ **no route, header or field of that component's API is repeated.**
+4. ⛔ **The printed commands are EXECUTED, not string-matched** (`W313`'s bar).
+5. ⛔ **This skill starts no container** — ⭐ **a rule, not an omission.**
+
+⭐ **Surface:** `src/studyforge/skills/buildserve/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `068a146`.**
+
+### W328 — The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W328.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER REQUIREMENT, quoted, and it is TWO CLAUSES that must not swallow each other:**
+
+> the left panel shou go all the way to the left side and be fixed. the context panel should be
+> dynamic using more content of the page than longer scroll than needed.
+
+⭐ **MEASURED at `7027ee6`:** `body` becomes the grid at `min-width: 72rem` with `max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)))` — ⛔ **so the whole layout is CAPPED AND CENTRED, and the rail floats in from the viewport's edge on any wide screen.** The reading column is `minmax(0, calc(var(--measure) + 2 * var(--gutter)))`, a constant.
+
+⚠️ **What is ALREADY right and must not be "fixed":** `reading.css` bounds **running text alone** — a figure, a table and a code block already take the full column. ⛔ **So "use more of the page" does NOT mean removing the measure from prose:** 80 characters is at the top of the legible range, and widening it makes the page worse while barely shortening the scroll.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Flush left means the rail's left edge is the VIEWPORT's left edge**, not the centred layout's.
+2. ⛔ **Fixed means it does not scroll away** — ⚠️ **and a rail taller than the viewport must scroll ITSELF**, or a corpus with many containers loses its last entries with no way to reach them. ⭐ **That is the fixture to build.**
+3. ⛔ **Taking the rail out of flow must not orphan the reading column**, which still clears it at every width and still folds to one column below the breakpoint.
+4. ⛔ **The reading column's width becomes a function of the VIEWPORT rather than a constant** — ⚠️ **bounded still**, or the non-measure-bound elements span a whole 4K display.
+5. ⛔ **THE SCROLL CLAIM IS A MEASUREMENT.** ⭐ **`scrollHeight` for the same built page at the same viewport, before and after, in a real browser.** ⚠️ **If the number barely moves, SAY SO** — it would mean `W326`'s band was the whole of it, and that finding is worth more than a satisfying story.
+
+⭐ **Surface:** `src/studyforge/render/assets/`. ⛔ **Starts from `W326`'s merge, not the release tip** — measuring before that lands attributes `W326`'s defect here.
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `74b20c2`.**
+
+### W329 — The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W329.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE MOST VALUABLE ROW FROM THE CLEAN RUN, and the reason is who runs the skills next:** the user will run `studyforge` themselves, with no coordinator briefing each step, and every future corpus is ingested by the same procedure. ⭐ **This row decides whether the documented procedure can be run TWICE.** ⚠️ **Today it cannot.**
+
+⭐ **THREE READINGS, ONE ROOT CAUSE** — a skill reading a corpus that already carries the framework's own generated half, and mistaking that half for the corpus's own material. ⛔ **All three measured by the integration office on a real clean run:**
+
+1. ⛔ **`exercises` FLIPS TO TRUE SILENTLY, MISREPRESENTING A FINISHED CORPUS AS SHORT.** On the raw repository, reconnaissance measures *build files 0, graders 0*. Re-run on the ONBOARDED corpus — which is what a regeneration does — it counts **12 files that look like graders: the scaffold's own `tests/**/test_*.py`** — and drafts `exercises: true`. ⛔ **Onboarding writes it with no refusal, three lines below its own report printing `graded practices  no`.** ⚠️ **`buildserve` then reports the `toolchain` partial state instead of the `exercises` one — the spec's own C5 failure, a COMPLETE corpus presented as unfinished.**
+2. ⛔ **A re-survey re-proposes under `content.include` a file the manifest declares `not_material`.** Promoting that gives a `contested` manifest and `validate` exits 1. ⭐ **Same cause, cheaper symptom — it refuses instead of lying.**
+3. ⛔ **The skill's own commanded step invalidates the corpus.** Onboarding `SKILL.md` step 4 runs `python3 -m pytest tests`; that writes `tests/__pycache__/*.pyc`; the manifest the SAME skill generated declares `tests/*.py`, not `tests/**`, so that bytecode is `unclassified` and `validate` exits 1.
+
+⭐ **`W269` already protects exactly ONE field, `not_material`, against this class.** ⛔ **The rule it states for one field is the rule for all of them.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A skill does not read the framework's own generated consuming half as the corpus's material.**
+2. ⛔ **A second run of the documented procedure leaves a VALID corpus** — ⭐ **asserted end to end, by running it twice.**
+3. ⛔ **No field is silently widened on a re-run**; a disagreement REFUSES rather than overwrites.
+4. ⛔ **Asserted both ways (R12)**, with the double run as the case that fails today.
+
+⭐ **Surface:** `src/studyforge/skills/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `05b7f70`.**
+
+### W330 — The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W330.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`docs/authoring/placement.md` is step 3 of the six-step route an integrator follows** — where they learn what a build creates, **before** they write ignore rules or `permitted_edits`.
+
+⭐ **MEASURED at the pin:** its `sibling` fence still shows the PRE-`W323` layout — pages and media loose in the source directory, unprefixed names — and **all three lines are wrong**. The profile's table row still says *"beside the source file"* without naming the declared subdirectory. ⭐ **The `tree` fence on the same page is correct**, which is why nobody noticed.
+
+⛔ **THE WORSE HALF IS A FALSE CLAIM OF COVERAGE.** `docs/authoring/README.md` states:
+
+> Every factual claim on these pages is checked against the shipped code by
+> `tests/test_authoring_reference.py`.
+
+⛔ **MEASURED: that test reads `placement.md` ONCE, to assert the two profile NAMES match the registry. NOTHING reads the fences.** ⚠️ **So the claim of coverage is false for exactly the section a reader is most likely to ACT on** — ⭐ **the same failure the design spec records against itself at §4, arriving again in the consumer-facing documents.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The fences are COMPUTED from the types that own the geography, not retyped** — ⭐ **the adapter skill already does this with `archive_tree()`.** ⚠️ **A corrected literal does not settle this row: it goes stale the next time placement moves, which is exactly what happened.**
+2. ⛔ **The README's coverage sentence is TRUE, or it is NARROWED until it is** — ⭐ **one of the two, and say which and why.** ⛔ **A sentence claiming more than its instrument reads is the defect, whichever way it is settled.**
+3. ⛔ **Asserted both ways (R12):** a planted change to the placement geography turns the page's check RED.
+
+⭐ **Surface:** `docs/authoring/`, `tests/test_authoring_reference.py`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `ad2bbfa`.**
+
 ### ⭐ MINTS — `W323`–`W332`, each from a MEASURED argument
 
 ⛔ **Four of these are USER REQUIREMENTS stated directly, not findings from an office**, and they are marked as such in their row files. ⭐ **Each row's argument lives once, in its own file; this record does not restate it.**
