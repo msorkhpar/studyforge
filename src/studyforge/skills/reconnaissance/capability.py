@@ -5,7 +5,8 @@ the execution track at all — and answers *"no"* as a first-class result.
 
 **How you use it.** `assess(inventory)` returns a `Capability`.
 
-**Depends on.** `inventory`, `report`.
+**Depends on.** `inventory` — for the walk as well as for the tree (`W329`) —
+`report`, and `validate.source` for the directories a root never enters.
 
 ## ⭐ "No runnable code, no graders" is a complete answer, not a shortfall
 
@@ -29,15 +30,35 @@ admitted without anybody deciding.
 
 ⭐ The cost of the closed set is exactly one question to a person, and the
 question names what was looked for — which is also how the set grows.
+
+## ⛔ The framework's own generated checks are not this corpus's graders (`W329`)
+
+⚠️ **Measured on a clean run**: re-assessing a corpus this framework had already
+onboarded counted the *generated* `tests/**/test_*.py` as graders, so `graded`
+flipped from false to true, the *"no runnable code, no graders"* verdict
+disappeared, and the draft asked for `exercises: true` on a corpus whose own
+onboarding report printed `graded practices  no`. ⛔ **`buildserve` then reports
+the toolchain partial state instead of the exercises one, so a corpus that is
+COMPLETE at the reading floor is presented to its reader as unfinished** (C5).
+
+⭐ So this pass asks `inventory` rather than the disk, and both of `inventory`'s
+answers are instruments that already existed: `generated` is onboarding's own
+record of what it wrote, and `enumerated` is `source_files`, which stops where
+`validate` stops — outside the archive a build writes. ⛔ **There is no third
+test here, and no test of this module's own**: not a name, not a suffix, not a
+directory. A pass that recognised the framework's output by its spelling would
+be a second rule to keep in step with the first.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+from pathlib import PurePosixPath
 
-from studyforge.skills.reconnaissance.inventory import Inventory
+from studyforge.skills.reconnaissance.inventory import Inventory, enters
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
+from studyforge.validate.source import SKIP_DIRS
 
 #: Files that declare a build. ⛔ Closed; widened by a decision.
 BUILD_FILES = (
@@ -91,20 +112,33 @@ def assess(inventory: Inventory) -> Capability:
     ⚠️ **Not only the material**, deliberately: a build file is not teaching
     material and `inventory.material` will never contain one. This is the one
     question that has to look at the files reconnaissance otherwise ignores.
+
+    ⛔ **But never this framework's own output** (`W329`): `inventory.generated`
+    is onboarding's record of what it wrote, and a corpus's execution question
+    is about the corpus.
+
+    ⛔ **And it is `inventory`'s walk, not a second one** (`W329`). This pass
+    kept its own: it enumerated the tree itself and entered every directory
+    `inventory.NOT_MATERIAL` names, so `__pycache__` supplied graders — and
+    after a corpus had run the checks onboarding generated for it, the bytecode
+    of those checks flipped `graded` on a corpus with none. ⚠️ It also counted
+    the archive a build had written as the corpus's own source, which flipped
+    `placement`. Both stop at `inventory.enumerated`.
     """
     found = Capability()
-    for path in sorted(inventory.root.rglob("*")):
-        parts = path.relative_to(inventory.root).parts
-        if any(part.startswith(".") for part in parts):
+    for where in sorted(inventory.enumerated):
+        parts = PurePosixPath(where).parts
+        if parts[0] in SKIP_DIRS or not all(enters(part) for part in parts[:-1]):
             continue
-        if not path.is_file():
+        name = parts[-1]
+        if name.startswith(".") or where in inventory.generated:
             continue
-        where = path.relative_to(inventory.root).as_posix()
-        if path.name in BUILD_FILES:
+        suffix = PurePosixPath(where).suffix
+        if name in BUILD_FILES:
             found.build_files.append(where)
-        elif _is_test(where, path.name):
+        elif _is_test(where, name):
             found.test_files.append(where)
-        elif path.suffix and path.suffix not in (".md", ".markdown", ".rst", ".txt"):
+        elif suffix and suffix not in (".md", ".markdown", ".rst", ".txt"):
             found.source_files.append(where)
     return found
 

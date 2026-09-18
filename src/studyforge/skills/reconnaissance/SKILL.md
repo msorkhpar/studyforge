@@ -166,6 +166,25 @@ the record and the root's furniture. Nothing onboarding recorded writing is
 proposed, so no glob collides with `SK-07`'s. Give each reason to `promote`
 in `reasons`, keyed by its glob.
 
+### 9. ⛔ On a corpus this framework already onboarded, survey the corpus
+
+⚠️ **A second survey reads the framework's own consuming half back**, and the
+worst symptom is silent. ⭐ **Measured on a clean run:** the raw repository gave
+*"build files 0, graders 0"* and a draft of `exercises: false`; the same
+repository after onboarding gave **12 files that look like graders — the
+scaffold's own `tests/**/test_*.py`** — dropped the verdict line and drafted
+`exercises: true`. ⛔ **A COMPLETE corpus is then presented to its reader as
+unfinished** (§7, C5). The archive a build wrote flipped `placement` the same
+way, and the generated documents were re-proposed as this corpus's material.
+
+⭐ **`.studyforge/installed.json` names every file of it, and it is the one
+instrument** — `installed.generated` reads it, `inventory` sets those files
+aside, and every pass measures the corpus rather than the framework. ⛔ **Do
+not invent a second way to recognise a generated file**: not a name, not a
+suffix, not a directory. ⚠️ What a *build* writes is `validate`'s answer rather
+than the record's, and `inventory.enumerated` is `source_files` — so this survey
+stops exactly where `validate` stops.
+
 ⛔ **A re-survey never proposes again what the corpus already declares, and
 a proposal that stands down says so (`W269`).** A file a `not_material` glob
 in the root's own `corpus.json` covers is not proposed, and no directory glob

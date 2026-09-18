@@ -7,9 +7,24 @@ directory's filenames carry a prefix that partitions it.
 **How you use it.** `take(root)` returns an `Inventory`. `prefix_groups(names)`
 answers the filename question on its own.
 
-**Depends on.** `report`; `studyforge.validate.source` for what the corpus root's
+**Depends on.** `report`; `installed` for the framework's own generated half;
+`studyforge.validate.source` for what the corpus root's
 own directories are and which nested repository stores `validate` refuses; and
 the standard library.
+
+## ⛔ The framework's own generated half is never this corpus's material (`W329`)
+
+⚠️ **A corpus that has been onboarded carries `studyforge`'s output inside it**
+— an adapter package, two generated checks, a reader's document. ⛔ Read as
+material, that output makes a re-survey disagree with the first survey about the
+corpus, and the disagreement is silent. ⭐ **Two instruments say what is the
+framework's, and both already existed.** `installed.generated` reads the record
+onboarding wrote, which names every file it wrote; and `enumerated` is
+`source_files`, `validate`'s own population, which stops outside what a *build*
+writes — the archive above all, which onboarding never recorded because it did
+not write it. ⛔ This walk sets both aside, so every later pass measures the
+corpus rather than the framework. ⚠️ A corpus nobody onboarded has no record and
+no archive, so a first survey is unchanged.
 
 ## ⛔ A nested `.studyforge` or `.git` is what `validate` says it is (`W272`)
 
@@ -57,6 +72,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from studyforge.skills.reconnaissance.installed import INSTALL_RECORD, generated
 from studyforge.skills.reconnaissance.report import Observation, Uncertainty
 from studyforge.validate.source import (
     REPOSITORY_STORE,
@@ -102,6 +118,13 @@ class Inventory:
     unrecognised: list[Path] = field(default_factory=list)
     #: ⛔ `W272`: the nested repository stores `validate` refuses, never entered.
     stores: list[Path] = field(default_factory=list)
+    #: ⛔ `W329`: the framework's own output here, from onboarding's record —
+    #: set aside rather than classified, so no pass reads it as this corpus's.
+    generated: frozenset[str] = frozenset()
+    #: ⛔ `W329`: the files `validate` will classify here, `source_files`'s own
+    #: answer. ⭐ What a build writes — the archive above all — is outside it,
+    #: so this survey stops where `validate` stops (`W259`).
+    enumerated: frozenset[str] = frozenset()
 
     @property
     def depth(self) -> int:
@@ -119,25 +142,78 @@ class Inventory:
 
 
 def take(root: Path) -> Inventory:
-    """Walk `root` once, classifying every file as material or not."""
-    inventory = Inventory(root=Path(root))
-    for path in sorted(inventory.root.rglob("*")):
-        parts = path.relative_to(inventory.root).parts
-        if parts[0] in SKIP_DIRS or not all(_enters(part) for part in parts[:-1]):
+    """Walk `root` once, classifying every file as material or not.
+
+    ⛔ **A file this framework wrote is set aside, not classified** (`W329`):
+    reading it back as the corpus's material is what made a re-survey disagree
+    with the first survey about the corpus.
+    """
+    root = Path(root)
+    scan = source_files(root)
+    inventory = Inventory(
+        root=root,
+        generated=generated(root),
+        enumerated=frozenset(p.relative_to(root).as_posix() for p in scan.files),
+    )
+    reached: list[Path] = []
+    own: list[Path] = []
+    for path in sorted(root.rglob("*")):
+        parts = path.relative_to(root).parts
+        if parts[0] in SKIP_DIRS or not all(enters(part) for part in parts[:-1]):
             continue
         if path.is_dir():
-            if _enters(path.name):
+            if enters(path.name):
                 inventory.directories.append(path)
-        elif path.suffix.lower() in MATERIAL_SUFFIXES:
+            continue
+        reached.append(path)
+        if not _the_corpus_own(inventory, path):
+            continue
+        own.append(path)
+        if path.suffix.lower() in MATERIAL_SUFFIXES:
             inventory.material.append(path)
         elif not path.name.startswith("."):
             inventory.unrecognised.append(path)
-    inventory.stores = list(source_files(inventory.root).stores)
+    inventory.directories = _holding(inventory, reached, own)
+    inventory.stores = list(scan.stores)
     return inventory
 
 
-def _enters(name: str) -> bool:
-    """Whether the walk enters a directory of this name beneath the root (`W272`)."""
+def _the_corpus_own(inventory: Inventory, path: Path) -> bool:
+    """Whether `path` is the corpus's own file rather than this framework's (`W329`).
+
+    ⛔ Two instruments, both already in the tree, and neither invented here: the
+    install record names what onboarding wrote, and `source_files` names what
+    `validate` will classify — so a build's own output, the archive above all,
+    is outside it.
+    """
+    where = path.relative_to(inventory.root).as_posix()
+    return where not in inventory.generated and where in inventory.enumerated
+
+
+def _holding(inventory: Inventory, reached: list[Path], own: list[Path]) -> list[Path]:
+    """Drop a directory holding files, none of which is the corpus's own (`W329`).
+
+    ⚠️ A directory the walk found empty of files stays: it holds nothing of
+    anybody's, and a survey that hid it would be reporting a smaller tree than
+    the one on disk. ⭐ A dot-file is the corpus's own here even though it is
+    neither material nor unrecognised — a directory it occupies is somebody's.
+    """
+    kept = {parent for path in own for parent in path.parents}
+    holding = {parent for path in reached for parent in path.parents}
+    return [path for path in inventory.directories if path not in holding - kept]
+
+
+def enters(name: str) -> bool:
+    """Whether the walk enters a directory of this name beneath the root (`W272`).
+
+    ⭐ **Public because it is the skill's one walk rule** (`W329`). `capability`
+    walks the whole tree rather than the material and used to keep a second,
+    looser rule of its own: it entered `__pycache__`, `node_modules`, `build`
+    and `target`, so a directory this module has always called *never material*
+    supplied a corpus's graders. ⛔ Two walk rules over one tree disagree
+    eventually, and the disagreement is silent — `W259`'s argument, for the
+    same reason.
+    """
     if name == REPOSITORY_STORE:
         return False
     if name in SKIP_DIRS:
@@ -167,6 +243,12 @@ def observe(inventory: Inventory) -> Iterator[Observation | Uncertainty]:
     yield Observation("material files", str(len(inventory.material)))
     yield Observation("directories holding material", str(len(inventory.directories)))
     yield Observation("deepest nesting of a material file", str(inventory.depth))
+    # ⭐ `W329`: said out loud, because a reader comparing two surveys of one
+    # corpus needs to know which of them was reading the framework's own output.
+    yield Observation(
+        f"files set aside as this framework's own ({INSTALL_RECORD})",
+        str(len(inventory.generated)),
+    )
     yield Observation("nested repository stores validate refuses", str(len(inventory.stores)))
     if inventory.stores:
         names = [store.relative_to(inventory.root).as_posix() for store in inventory.stores]

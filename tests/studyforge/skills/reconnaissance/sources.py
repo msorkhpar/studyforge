@@ -10,7 +10,12 @@ checked out is a fixture that skips, and a skipped check is not evidence.
 
 from __future__ import annotations
 
+import hashlib
+import json
 from pathlib import Path
+
+from studyforge.skills.onboarding.record import INSTALLED_API
+from studyforge.skills.reconnaissance.installed import INSTALL_RECORD
 
 
 def write(root: Path, files: dict[str, str]) -> Path:
@@ -297,3 +302,25 @@ def linked_regions(
         f"{heading}\n\n{copy}\n"
     )
     return write(root, files)
+
+
+def onboarded(root: Path, generated: dict[str, str]) -> Path:
+    """Write `generated` into `root` and record it as this framework's own (`W329`).
+
+    ⭐ **The record is the one instrument**, so a fixture that means *"this file
+    is the framework's"* writes the same record onboarding writes — never a name
+    a test and the code agree on privately.
+    """
+    write(root, generated)
+    document = {
+        "installed_api": INSTALLED_API,
+        "files": [{"where": where, "sha256": _digest(text)} for where, text in generated.items()],
+    }
+    (root / INSTALL_RECORD).parent.mkdir(parents=True, exist_ok=True)
+    (root / INSTALL_RECORD).write_text(json.dumps(document, indent=2) + "\n", encoding="utf-8")
+    return root
+
+
+def _digest(text: str) -> str:
+    """The digest the record carries for one generated file."""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
