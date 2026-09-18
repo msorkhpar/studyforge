@@ -36,7 +36,9 @@ WHERE = "src/studyforge/skills/adapter"
 PUBLIC_SURFACE = frozenset(
     {
         "ARCHIVE_DIR",
+        "BYTECODE_RULES",
         "FILLED_IN",
+        "IGNORE_FILE",
         "PACKAGE",
         "PARTS",
         "RAW_DIR",
@@ -52,7 +54,10 @@ PUBLIC_SURFACE = frozenset(
         "ScaffoldRefused",
         "Written",
         "archive_tree",
+        "bytecode_ignore",
+        "bytecode_ignores",
         "document_name",
+        "ignore_files",
         "plan_for",
         "scaffold",
         "write_files",

@@ -18,6 +18,13 @@ from studyforge.skills.adapter import (
     plan_for,
     scaffold,
 )
+from studyforge.skills.adapter.parts import Part
+from studyforge.skills.adapter.scaffold import (
+    BYTECODE_RULES,
+    IGNORE_FILE,
+    bytecode_ignore,
+    bytecode_ignores,
+)
 from tests.studyforge.skills.adapter import corpora
 from tools.quality.config import SOURCE_LINE_CEILING as OWNED_CEILING
 
@@ -196,3 +203,72 @@ def test_the_report_says_what_done_is():
         "the scaffold's own report does not name its definition of done"
     )
     assert isinstance(made(), Scaffold)
+
+
+# --------------------------------------------------------------------------
+# ⛔ W345: every directory the scaffold puts Python in ignores its own bytecode
+# --------------------------------------------------------------------------
+
+
+def test_every_directory_holding_a_generated_module_carries_its_own_ignore_file():
+    # ⛔ Clause 1: derived from the modules, so the adapter's package and its
+    # tests' package each get one — and a scaffold run on its own gets them too.
+    scaffolded = made()
+    homes = {str(PurePosixPath(w).parent) for w in scaffolded.paths if w.endswith(".py")}
+
+    texts = {item.where: item.text for item in scaffolded.files}
+    assert homes == {"ingest", "tests/ingest"}
+    for home in homes:
+        assert texts[f"{home}/{IGNORE_FILE}"] == bytecode_ignore(), home
+
+
+def test_the_ignore_file_names_bytecode_and_nothing_else():
+    rules = [line for line in bytecode_ignore().splitlines() if not line.startswith("#")]
+    assert rules == list(BYTECODE_RULES) == ["__pycache__/", "*.py[co]"]
+
+
+def test_a_directory_with_no_module_gets_no_ignore_file():
+    # ⭐ The other way: derived, never listed — a directory holding no Python
+    # is given nothing, and neither is a non-module file in one.
+    assert bytecode_ignores(["notes/a.md", "data/b.json", "ingest/c.pyi"]) == ()
+    assert bytecode_ignores(["ingest/a.py", "ingest/b.py"]) == (f"ingest/{IGNORE_FILE}",)
+
+
+def test_a_module_at_the_repository_root_never_gets_the_root_ignore_file():
+    # ⛔ R3 and W278: the root ignore file is a source file, never generated.
+    assert bytecode_ignores(["setup.py"]) == ()
+    assert bytecode_ignores(["setup.py", "pkg/a.py"]) == (f"pkg/{IGNORE_FILE}",)
+
+
+def test_a_module_added_in_a_new_directory_gains_an_ignore_file_without_a_list():
+    # ⭐ Derived rather than listed: a part in a directory no part used before
+    # is given its ignore file with nobody editing a list of directories.
+    extra = Part(
+        where="{package}/extra/more.py",
+        step=6,
+        why="a planted module",
+        generated=True,
+        render=lambda plan: "x = 1\n",
+    )
+    scaffolded = scaffold(made().plan, (*PARTS, extra))
+
+    assert f"ingest/extra/{IGNORE_FILE}" in scaffolded.paths
+    assert f"ingest/extra/{IGNORE_FILE}" not in made().paths
+
+
+def test_each_ignore_file_is_built_at_the_first_step_that_puts_python_there():
+    steps = {item.where: item.step for item in made().files}
+
+    assert steps[f"ingest/{IGNORE_FILE}"] == min(
+        steps[w] for w in steps if w.startswith("ingest/") and w.endswith(".py")
+    )
+    assert steps[f"tests/ingest/{IGNORE_FILE}"] == min(
+        steps[w] for w in steps if w.startswith("tests/ingest/") and w.endswith(".py")
+    )
+
+
+def test_the_ignore_files_add_no_glob_the_manifest_must_carry():
+    # ⭐ They land in directories the scaffold already declares, so a corpus
+    # onboarded before W345 carries every glob they need.
+    without = Scaffold(plan=made().plan, files=made().files[: len(PARTS)])
+    assert made().not_material == without.not_material

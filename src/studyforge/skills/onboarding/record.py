@@ -36,7 +36,7 @@ from __future__ import annotations
 import hashlib
 import json
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import assert_clean
 from studyforge.skills.adapter import Written
@@ -141,6 +141,30 @@ def hand_edited(root: Path | str) -> list[str]:
     """
     root = Path(root)
     return changed(root, entries(root))
+
+
+def refuse_unrecorded(root: Path, wheres: Sequence[str], name: str) -> None:
+    """Refuse, by name, a regenerate that would overwrite a `name` file no record lists.
+
+    ⛔ **`W345`**: a regenerate gives an already-onboarded corpus files its first
+    run did not write. A file already at one of those paths that the install
+    record does not list was written by a person, and rewriting it would be the
+    edit R3 forbids — which the generated check could not then see, because the
+    record would claim it from that write on.
+    """
+    record = root / RECORD_FILE
+    listed = {entry["where"] for entry in entries(root)} if record.exists() else set()
+    theirs = sorted(
+        where
+        for where in wheres
+        if PurePosixPath(where).name == name and where not in listed and (root / where).exists()
+    )
+    if theirs:
+        raise OnboardingRefused(
+            f"{len(theirs)} file(s) this regenerate would write are already here and "
+            f"{RECORD_FILE} does not list them, so they are a person's: {theirs}. Nothing "
+            f"was written (R3); move each aside, regenerate, then carry its rules into place"
+        )
 
 
 def _digest(text: str) -> str:

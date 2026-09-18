@@ -13,9 +13,16 @@ from tests.studyforge.skills.adapter import corpora
 
 
 def files():
-    """The generated test tree, rendered for the walkthrough corpus."""
+    """The generated test modules, rendered for the walkthrough corpus.
+
+    ⚠️ Modules only: the directory also carries its bytecode ignore file (`W345`).
+    """
     made = scaffold(plan_for(parse(json.dumps(corpora.MANIFEST))))
-    return {item.where: item.text for item in made.files if item.where.startswith("tests/")}
+    return {
+        item.where: item.text
+        for item in made.files
+        if item.where.startswith("tests/") and item.where.endswith(".py")
+    }
 
 
 def test_the_three_tests_mirror_the_three_steps():

@@ -301,7 +301,10 @@ def test_the_skills_own_step_four_leaves_the_corpus_valid(tmp_path):
 def test_under_the_narrower_glob_that_same_bytecode_is_unclassified(tmp_path):
     # ⭐ The control: without the widened declaration the findings come back, so
     # the clause above is not passing on a walk that never saw `__pycache__`.
+    # ⚠️ `W345`'s ignore file is taken out too: with it, the walk never offers
+    # the bytecode at all, and this control would be measuring that instead.
     root, made = _first_run(tmp_path)
+    (root / "tests/.gitignore").unlink()
     narrowed = json.loads((root / "corpus.json").read_text(encoding="utf-8"))
     for entry in narrowed["content"]["not_material"]:
         entry["glob"] = "tests/*.py" if entry["glob"] == "tests/**" else entry["glob"]

@@ -14,6 +14,7 @@ import pytest
 
 from studyforge.corpus.manifest import Classification, parse
 from studyforge.skills.adapter import ScaffoldRefused, plan_for, scaffold
+from studyforge.skills.adapter.scaffold import bytecode_ignores
 from studyforge.skills.onboarding import artifacts
 from studyforge.skills.onboarding.manifest import PromotionRefused
 from studyforge.skills.onboarding.onboard import onboard
@@ -25,6 +26,12 @@ from tests.support import init_repository, is_ignored
 
 def _made(**changes):
     return onboard(corpora.draft(**changes), framework_commit=corpora.COMMIT)
+
+
+def _media_ignores(made):
+    """The ignore files the media policy asked for: every one but `W345`'s bytecode files."""
+    bytecode = bytecode_ignores(made.paths)
+    return [w for w in made.paths if w.rsplit("/", 1)[-1] == ".gitignore" and w not in bytecode]
 
 
 def test_re_scaffolding_from_the_written_manifest_changes_nothing():
@@ -254,7 +261,7 @@ def test_the_pin_is_refused_before_anything_is_planned():
 def test_with_media_committed_onboarding_writes_no_ignore_file(placement):
     made = _made(placement=placement)
 
-    assert [where for where in made.paths if where.rsplit("/", 1)[-1] == ".gitignore"] == []
+    assert _media_ignores(made) == []
 
 
 def test_media_that_is_not_committed_is_ignored_from_inside_the_generated_root(tmp_path):
@@ -262,8 +269,7 @@ def test_media_that_is_not_committed_is_ignored_from_inside_the_generated_root(t
     root = corpora.material(init_repository(tmp_path / "corpus"))
     made.write(root)
 
-    homes = [where for where in made.paths if where.rsplit("/", 1)[-1] == ".gitignore"]
-    assert homes == [".studyforge/.gitignore"]
+    assert _media_ignores(made) == [".studyforge/.gitignore"]
     assert not (root / ".gitignore").exists()
     assert is_ignored(".studyforge/course/units/unit-01/audio/c.mp3", cwd=root)
     for kept in (".studyforge/course/units/unit-01/a.unit.html", ".studyforge/site.json"):
