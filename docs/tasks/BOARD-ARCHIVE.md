@@ -26994,6 +26994,45 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 
 ⭐ **Merged at `d230762` on the REBASED carrier. ⭐ The floor is keyed on the package a catch names, so a declared split moves nothing by hand.**
 
+### ⛔ `PO-105/6` — THE REGISTER DISPATCHED A ROW THAT WAS ALREADY BUILT AND MERGED
+
+⭐ **THE SIXTH BRIEFING DEFECT OF THIS WAVE, AND THE WORST, BECAUSE THE REMEDY FOR IT WAS WRITTEN IN THIS SAME ROUND HOURS EARLIER.** ⛔ **`PO-105/2` says: *every factual claim in a brief — a ref, an ancestry, a file's existence, a population's size — is READ AGAINST GIT before the brief is dispatched.* ⚠️ The register then wrote a brief asserting IN THE PRESENT TENSE that `W315`'s defect existed, and dispatched an office to build what was already on the release branch.**
+
+⚠️ **What the register DID check was the SURFACE — that `tools/quality/citations.py` and `tools/quality/handoffs/` exist.** ⛔ **That is not the question.** ⭐ **The question a dispatch must ask is whether the ROW IS DONE, and two reads answer it: does a handoff for this row already exist at the release tip, and is the row's named branch already an ancestor of it.** ⚠️ **The register had ALSO just recorded that a board cell reading `todo` proves nothing** (`PO-105/5`) — and then trusted a `todo` cell.
+
+⭐ **THE OFFICE DID EXACTLY THE RIGHT THING AND IT IS WORTH NAMING.** ⛔ **It measured the row instead of implementing it, wrote NO code, made NO commit, and declined to overwrite the landed handoff because that is a RECORD and not a draft** (Ruling 106). ⭐ **It also took the four readings independently, in two real repositories built from the release tip differing by exactly one file, and DECLARED its noise rather than filtering it silently.** ⚠️ **Cost: one office-round. Cost had it complied: a second implementation of a shipped fix, over the top of the first.**
+
+⭐ **`W315/4`, and it was still costing something:** the dispatch template was teaching the PRE-`W315` rule — *the row file does not exist on this base, so this document may not link it* — which `fd2e4ed` retired and `docs/conventions/agent-protocol.md` contradicts. ⛔ **One already-merged handoff lost a resolving pointer to it.** ⚠️ **That handoff is a record and is NOT edited** (Ruling 106); ⭐ **the template is, and the correct rule now sits in the wave's shared hazards where every office reads it.**
+
+⭐ **`W315/5`:** the dispatch named a branch git already held, fully merged — ⛔ **so *check out a NEW branch* could not be followed literally.** ⚠️ **A dispatch that names a branch reads whether one exists, which is the same mechanical check.**
+
+### ⭐ A FIFTH CLOSE, TAKEN AFTER THE ROUND'S OTHERS
+
+### W315 — The floor's two citation arms contradict each other across a merge, so a handoff citing a row minted in the same round has no wording that is green in both
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W315.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W232/5`, with this register's own measurement beside it: the floor's two citation arms contradict each other across a merge, so no wording of a handoff's citation of a row minted in the same round is GREEN in both places it is read.** ⭐ **MEASURED BY THIS REGISTER, not received.** ⚠️ **The two arms:** a citation of a TRACKED document written as a bare backticked filename is a finding (Ruling 163, `W150`); a markdown link must RESOLVE. ⛔ **A row minted in a register round is untracked on a developer's branch and tracked on the merged tree, so:**
+
+- ⛔ **Linked** — `[`W313`](rows/W313.md)` — the target is absent on the branch, so the branch floor is RED; GREEN on the merged tree.
+- ⛔ **Named** — `` `rows/W313.md` `` — GREEN on the branch; the merged tree reads a bare citation of a tracked document, so the merge gate REFUSES.
+
+⭐ **BOTH READINGS TAKEN TONIGHT, on `W313`:** its merge was REFUSED by the floor on the MERGED tree for the bare citation, and the same file rewritten to link the row turned the BRANCH floor RED because the link did not resolve there. ⚠️ **Two offices hit it independently the same evening** — `W312`'s hand-back names it, and `W232/5` names its own instance: `W232`'s handoff was GREEN while untracked and RED the moment it was committed, because the arm walks the TRACKED documents and is therefore blind exactly while an office checks its own work.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE wording of a handoff's citation of a row is correct in both places**, or the two arms stop disagreeing — the arm that reads a bare citation must not fire on a target the tree will hold, or the arm that resolves links must read the register's minted ids.
+2. ⛔ **The tracked-only blind spot is closed or DECLARED** (`W232/5`): an office running the floor over the handoff it has just written must get the same verdict the merge will give.
+3. ⛔ **Asserted both ways (R12):** a handoff citing a row present in the tree, and one citing a row the register minted in the round that is merging it, each read on a BRANCH and on a MERGED tree.
+
+⭐ **Surface:** `tools/quality/citations.py`, `tools/quality/handoffs/`, and their tests. ⛔ **JUMPS every older `todo` row (Ruling 75): it is the only defect in the set that makes a CORRECT branch unmergeable, and it cost two hand-backs and one refused merge in a single evening.**
+
+[the mint](#po-round-104)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `fd2e4ed`, BEFORE this round dispatched an office to build it again — `PO-105/6`. ⭐ VERIFIED BY THIS REGISTER: the carrier is an ancestor of the release branch, `docs/tasks/handoffs/W315.md` is on it, and the deferral is in `tools/quality/pointers.py` — a handoff may link its OWN row before the register mints it, by the citing document's own filename and nothing else.**
+
 ### ⭐ MINTS — `W323`–`W332`, each from a MEASURED argument
 
 ⛔ **Four of these are USER REQUIREMENTS stated directly, not findings from an office**, and they are marked as such in their row files. ⭐ **Each row's argument lives once, in its own file; this record does not restate it.**
