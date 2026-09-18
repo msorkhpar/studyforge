@@ -65,8 +65,11 @@ corpus has exercises at all — and every one of those changes what gets
 scaffolded. Starting from the files means re-deriving what somebody already
 recorded, and disagreeing with it silently.
 
-⚠️ **The report names one file as yours and seven as generated.** Read that
-line before you agree to it: it is the whole shape of the work.
+⚠️ **The report names one file as yours and every other one as generated.**
+Read that listing before you agree to it: it is the whole shape of the work.
+⛔ **This page types no count of it** — the listing above is the count, at the
+ref you run it at, and a number written here went stale the moment the scaffold
+gained a file (`W345`).
 
 ### 2. Answer the execution question by reading it, not by deciding it
 
@@ -261,8 +264,8 @@ refuses a run without one are the onboarding skill's step 7**; each entry asks
 ## What this skill must never do
 
 - ⛔ **Never hand-edit a generated file.** Customisation enters as manifest data
-  (R19). `write(..., regenerate=True)` rewrites the seven generated files and
-  **keeps the one you wrote, untouched** — so re-scaffolding after the framework
+  (R19). `write(..., regenerate=True)` rewrites every generated file the
+  scaffold lists and **keeps the one you wrote, untouched** — so re-scaffolding after the framework
   moves is an ordinary, safe thing to do. ⭐ Onboarding's `write` follows the
   same rule, `write_files`, so the two paths cannot disagree (`W265`).
 - ⛔ **Never write into the source repository beyond the archive** (R3), and
@@ -352,7 +355,10 @@ not.
 
 ### A4 — what a scaffold is, and the one file that is yours
 
-**Eight files, seven generated:**
+⛔ **The whole file set, and how many there are, is the scaffold's own listing
+— step 1's fence — never this table.** ⭐ The table names the modules and what
+each is for; the scaffold also writes files that are not modules (`W345`), and a
+count typed here would undercount them.
 
 ```text
 <package>/__init__.py     the contract, and what done means
@@ -365,6 +371,6 @@ tests/<package>/test_emit.py    the whole obligation, in one assertion
 tests/<package>/test_audit.py   the count exists, and it agrees
 ```
 
-⭐ **The ratio is the point.** If a second source has to retype any of the
-seven, that is a hole in this skill and it is reported as one — never patched
+⭐ **The ratio is the point.** If a second source has to retype any generated
+file, that is a hole in this skill and it is reported as one — never patched
 locally (R19).

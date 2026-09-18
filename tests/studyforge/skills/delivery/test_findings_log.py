@@ -307,3 +307,25 @@ def test_the_procedures_closing_command_refuses_a_log_with_a_missing_slot(tmp_pa
     done = run_closing(tmp_path)
     assert done.returncode != 0
     assert "INT-19/1 carries no disposition slot" in done.stderr
+
+
+# --- W345/1: the scaffold's file count is its own listing's, never typed ----
+
+#: Typed counts of the scaffold's file set that `W345` made undercount.
+TYPED_COUNTS = re.compile(r"\b(?:seven|eight) (?:generated|files|as generated)\b", re.I)
+
+
+def test_no_skill_document_types_the_scaffolds_file_count():
+    for package in (adapter, onboarding):
+        assert not TYPED_COUNTS.findall(skill(package)), package.__name__
+
+
+def test_the_skill_documents_point_at_the_scaffolds_own_listing():
+    assert "the listing above is the count" in skill(adapter)
+    assert "`scaffold(...).lines()`" in skill(onboarding)
+
+
+def test_a_typed_count_is_caught():
+    # ⭐ The other direction: the pattern fires on the sentence it replaced.
+    assert TYPED_COUNTS.findall("The report names one file as yours and seven as generated.")
+    assert TYPED_COUNTS.findall("**Eight files, seven generated:**")

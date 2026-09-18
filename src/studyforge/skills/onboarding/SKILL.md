@@ -168,7 +168,7 @@ What lands, and why each one exists:
 | what | why it is generated rather than typed |
 |---|---|
 | `corpus.json` | the draft promoted, with **every generated file already declared `content.not_material`** |
-| the adapter package and its suite | `SK-02`'s scaffold, wired in — seven generated files and one that is yours |
+| the adapter package and its suite | `SK-02`'s scaffold, wired in — one file that is yours and every other one generated; ⛔ how many is the scaffold's own listing (`scaffold(...).lines()`, the adapter skill's step 1), never a number typed here (`W345`) |
 | `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
 | `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin-drift check |
 | `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
