@@ -51,12 +51,22 @@ def test_a_commit_is_recorded_exactly_when_the_component_exists():
         assert (component.commit is not None) == component.present, component.name
 
 
-def test_the_components_still_to_be_created_are_recorded_as_such():
-    # ⚠️ Not a list of names — that was the second copy. This asserts only that
-    # the register *can* and *does* say a component is owed, which is what
-    # E12 and E13 flip.
-    owed = [c.name for c in components() if not c.present]
-    assert owed, "no component is recorded as owed; if that is right, say so in the review"
+def test_the_register_can_still_say_a_component_is_owed(tmp_path):
+    # ⚠️ Not a list of names — that was the second copy. This used to assert
+    # that the LIVE file *can and does* say a component is owed, and its own
+    # message said to say so in the review when that stopped being true.
+    # ⭐ `TC-00` created `code-server-toolchain`, the last owed component, so
+    # the live file now owes none — the flip E12 and E13 were always meant to
+    # make, not a defect. ⛔ What must survive is the *can*: the next owed
+    # component is written the same way, so a `not-yet-created` row with no
+    # commit still reads, through the same contract, as owed.
+    row = {"name": "a-component", "where": "sibling", "status": "not-yet-created"}
+    live = json.loads((repository_root() / PIN_FILENAME).read_text(encoding="utf-8"))
+    live["components"].append(row)
+    (tmp_path / PIN_FILENAME).write_text(json.dumps(live), encoding="utf-8")
+    owed = [c.name for c in read(tmp_path) if not c.present]
+    assert "a-component" in owed
+    assert "not-yet-created" in STATUS
 
 
 def test_the_pin_file_carries_no_path_of_any_kind():
