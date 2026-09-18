@@ -171,7 +171,7 @@ What lands, and why each one exists:
 | the adapter package and its suite | `SK-02`'s scaffold, wired in — seven generated files and one that is yours |
 | `.studyforge/pin.json` and the skill stubs | the framework's commit, and thin pointers that carry it |
 | `tests/` — two checks | R3's assertion, read from what a build declares it writes and from the tree through that same declaration, with this corpus's edits baked in; and the pin-drift check |
-| `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations — and, when `onboard` is given `root=`, where the corpus stands as a build reads it, with commands that run from a fresh clone (`W313`) |
+| `ONBOARDING.md` | what a reader gets, read off the corpus's own declarations, with commands that run from a fresh clone (`W313`) — and **no live figure**: where the corpus stands is a command it prints, because nothing rewrites a generated document when narrating or re-ingesting moves the answer (`W332`) |
 | `.studyforge/installed.json` | what step 6 undoes, a digest per generated file, and the one module that is yours, marked `hand_written` with no digest |
 
 ### 4. Write the one file that is a person's
@@ -206,10 +206,24 @@ studyforge validate .
 ⭐ **Exit 0 is the whole agreement.** ⛔ Not a shape somebody agreed looked
 right — the same rule the adapter skill is written against.
 
-⛔ **Run step 3 again afterwards** (`W313`). `ONBOARDING.md` states how many
-units this corpus has, how many are narrated and whether any needs a container,
-read from the archive and the narration record at `root=`; before ingest it says
-so rather than printing a figure, and after ingest only a regeneration moves it.
+⛔ **Nothing here has to be regenerated afterwards, and that is `W332`'s fix.**
+`ONBOARDING.md` states **no** figure: how many units this corpus has, how many
+are narrated and whether any needs a container are read on demand, by the
+command that document prints, which reads the archive and the narration record
+as they are at the moment it is typed:
+
+```
+python3 -m studyforge.skills.onboarding .
+```
+
+⚠️ **`W313` put those figures INTO the document and nothing refreshed them.**
+⛔ Measured on the first corpus: it said *narrated: 0 of 38* while every unit
+page carried audio, because narrating writes the narration record and no verb
+rewrites a generated document. ⭐ **A count is a fact, and a fact in a generated
+document can only be kept freshly wrong; a pointer resolves when it is read**
+(Ruling 161). ⛔ **So the old instruction to re-run step 3 is GONE rather than
+repeated louder** — an instruction that has to be remembered after every
+narration is the defect, not the remedy.
 
 **Consumer-side modules:** `ingest`
 

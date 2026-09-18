@@ -8,10 +8,25 @@ scaffold. Every renderer is a pure function from data to text, so the whole
 file set can be read back before anything is on disk.
 
 **Depends on.** `studyforge.corpus.manifest` for what a manifest says,
-`skills.adapter` for the adapter's package name, plus this package's `pin`,
-`standing` (whose `Standing` a caller reads and hands in) and `nondestructive`
-(for where R3's generated check lands). ⛔ No I/O, and nothing source-specific
-(R1).
+`skills.adapter` for the adapter's package name, plus this package's `pin` and
+`nondestructive` (for where R3's generated check lands). ⛔ No I/O, and nothing
+source-specific (R1).
+
+## ⛔ This document states no live count, and that is `W332`'s whole fix
+
+⚠️ **`W313` made it state the corpus's real state, read through the build's own
+readers, and NOTHING REFRESHED IT.** ⛔ Measured on the first corpus: the
+document a reader opens first said *narrated: 0 of 38* while every unit page
+carried audio, because `studyforge narrate` writes the narration record and no
+verb rewrites a generated document.
+
+⭐ **A count is a fact, and a fact in a file that only a regeneration rewrites
+can only be kept freshly wrong** — the property this repository's own
+`CLAUDE.md` was rewritten over (Ruling 161). ⭐ **A POINTER resolves when it is
+read.** So this prints the invocation that reads the standing
+(`cli.main`, rendered by `standing.lines`) and never the standing itself, and
+`reader_document` is a pure function of the manifest: regenerating it after a
+narration changes nothing, because there was nothing to go stale.
 
 ## ⛔ R3's generated check is `nondestructive`'s, not this module's (`W331`)
 
@@ -63,7 +78,6 @@ from studyforge.skills.onboarding.pin import (
     SKILLS,
     stub_paths,
 )
-from studyforge.skills.onboarding.standing import Standing
 
 #: The manifest's filename, re-exported so a reader of `onboard` does not have
 #: to know which module owns it.
@@ -137,20 +151,21 @@ def reader_document(
     hand_written: Sequence[str] = (),
     *,
     commit: str,
-    standing: Standing | None = None,
     framework: str = SIBLING,
 ) -> str:
-    """Return what a reader is told: the declarations, where the corpus stands, how to run it.
+    """Return what a reader is told: the declarations, where to read the state, how to run it.
 
     ⚠️ **Composed line by line rather than filled into one markup blob** (R13).
-    ⛔ **Every figure comes from `standing`**, which `standing.standing_of` reads
-    through the build's own readers; with none, the document says the state was
-    not read rather than printing a number somebody later finds was invented.
+    ⛔ **It states no live figure** (`W332`): where the corpus stands moves after
+    this is written and nothing rewrites it, so the document prints the command
+    that reads it. ⭐ **A pure function of the manifest** — no root, no reading,
+    and nothing here that a later `studyforge narrate` can make untrue.
     ⛔ **Every fenced line runs as written** from a fresh clone beside the
     framework at `commit` (R18 as amended), and a test executes each one.
     ⛔ **`framework` is `pin.framework_from`'s one answer** for the corpus this
     is written into (`W321`); this module derives no address of its own.
     """
+    run = f"PYTHONPATH={framework}/src python3 -m"
     lines = [
         f"# {manifest.title}",
         "",
@@ -171,8 +186,8 @@ def reader_document(
     return "\n".join(
         [
             *lines,
-            *_stands(standing),
-            *_running(manifest, commit, framework),
+            *_running(manifest, commit, framework, run),
+            *_stands(run),
             *_products(manifest),
             *_yours(hand_written),
             *_touches(manifest),
@@ -180,57 +195,40 @@ def reader_document(
     )
 
 
-def _stands(standing: Standing | None) -> list[str]:
-    """Say where the corpus stands, from the build's own reading, or plainly why not."""
-    lines = ["## Where it stands", ""]
-    if standing is None:
-        return lines + [
-            "Not read: this document was generated without the corpus root, so",
-            "how many units there are, how many are narrated and whether any needs",
-            "a container are not stated here. Regenerating with the root states them.",
-            "",
-        ]
-    if standing.refused:
-        return lines + [
-            "Not known: the corpus could not be read the way a build reads it, so",
-            "none of its figures are stated. The build's refusal was:",
-            "",
-            f"> {' '.join(standing.refused.split())}",
-            "",
-        ]
-    if not standing.read:
-        return lines + [
-            "Nothing has been ingested: there is no archive yet, so how many units",
-            "there are, how many are narrated and whether any needs a container are",
-            "questions the archive and the narration record answer, not the manifest.",
-            "",
-        ]
-    units = standing.units
-    needing = units - standing.reading_only
-    return lines + [
-        "Read from the archive and the narration record, the way a build reads them:",
+def _stands(run: str) -> list[str]:
+    """Point at the command that reads the state, instead of freezing its answer here.
+
+    ⛔ **No figure** (`W332`). Narrating a corpus moves how many units are
+    narrated, and re-ingesting moves how many there are; neither rewrites this
+    file, so a number printed here would be right only until the next verb ran.
+    ⭐ The command below reads the corpus as it is at the moment it is typed.
+
+    ⚠️ **Placed AFTER the fresh-clone section**, which is where the reader is
+    told what the framework's address means; before it, this fence would be the
+    first place a `PYTHONPATH` appeared and nothing would have explained it.
+    """
+    return [
+        "## Where it stands",
         "",
-        f"- units: {standing.declared} declared, {units} with material",
-        f"- narrated: {standing.narrated} of {units}"
-        + ("" if standing.recorded else " (there is no narration record yet)"),
-        f"- reading-only: {standing.reading_only} of {units}",
-        "- container: "
-        + (
-            f"needed, because {needing} unit(s) declare a graded practice"
-            if standing.container
-            else "none needed, because no unit declares a graded practice"
-        ),
+        "How many units this corpus has, how many are narrated and whether any",
+        "needs a container are read from the archive and the narration record,",
+        "and they move whenever either does — narrating writes clips, ingesting",
+        "again rewrites the archive. Nothing rewrites this file when they move,",
+        "so it states no figure: this reads them as they are now.",
+        "",
+        "```",
+        f"{run} studyforge.skills.onboarding .",
+        "```",
         "",
     ]
 
 
-def _running(manifest: Manifest, commit: str, framework: str) -> list[str]:
+def _running(manifest: Manifest, commit: str, framework: str, run: str) -> list[str]:
     """Give the commands that run from a fresh clone beside the framework at `commit`.
 
     ⛔ **`framework` is where the pin resolves it, said from this corpus's root**
     (`W321`), so the fence is not read from one place and the pin from another.
     """
-    run = f"PYTHONPATH={framework}/src python3 -m"
     return [
         "## Running it from a fresh clone",
         "",
