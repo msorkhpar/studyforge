@@ -102,4 +102,15 @@ ACCEPTANCE = {
     #: corpus again than `test_rail_rows` widens one container to.
     "pins that rail to the window's left edge, keeps it there while the page "
     "scrolls, and lets a long one scroll itself (W328)": "test_rail_fixed",
+    #: ⭐ `W333`'s clause, and it is a TENTH row for a reason none of the nine
+    #: above share: every one of them reads ONE page. ⛔ *"A reader crossing
+    #: between a page with a rail and a page without one sees no jump in where
+    #: the content starts"* is a claim about a PAIR of pages at one viewport, and
+    #: each of the two was defensible alone — which is why the nine rows above
+    #: were all green over a site whose layout moved when the reader clicked.
+    #: ⚠️ It runs in a module of its own because it needs a fixture no other
+    #: clause here needs: a site BUILT by `write_site`, because only a real build
+    #: decides which page kinds carry a rail at all.
+    "starts a page with no rail where it starts a page with one, so the layout "
+    "does not move when a reader clicks (W333)": "test_page_start",
 }
