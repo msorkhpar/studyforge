@@ -26828,3 +26828,461 @@ defect in the documents and "fixed" by editing files that were never wrong.**
 #### ⭐ CLOSED — PO ROUND 104
 
 ⭐ **CLOSED BY MEASUREMENT, with no carrier: the defect is gone at `7015b47`, discharged by `SF-12`'s renderer package (`c9e7504`). The round record carries the reading.**
+
+## PO round 105
+
+⛔ **Only what is MEASURED is written here.** ⭐ **A milestone's close run is WITHDRAWN, two user rulings are recorded as decisions, ten rows are minted from a clean rebuild and a UX wave, and this register records five briefing defects of its own.**
+
+### ⛔ M6 DOES NOT CLOSE, AND ITS EARLIER CLOSE RUN IS WITHDRAWN BY THIS REGISTER
+
+⭐ **The close run taken at the first corpus's rebuild ref re-took every clause of M6 — opens offline over `file://`, narrated, navigable, read marks surviving a reload in a real browser — and EVERY CLAUSE WAS TRUE.** ⛔ **It still does not count, and the withdrawal is the finding.**
+
+⚠️ **It counted pages and never READ one.** ⛔ **That is precisely how a container of material the user never asked for passed a close run**, in the user's own words: *"The scnarions were not even in scpope!!!! We just wanted the iso-8583 covered."*
+
+⭐ **COUNTING IS NOT READING, and a close run that cannot speak to the subject matter is not a close run.** ⛔ **M6 re-takes against the REBUILT corpus, and the re-take reads what is on the pages.**
+
+### ⭐ TWO USER RULINGS, RECORDED AS DECISIONS RATHER THAN INHERITED
+
+⛔ **`Q5` is ruled (c): the out-of-scope container is OUT — FINAL.** The corpus drops it and is 38 units in 3 containers, which is the figure the plan carried before `Q5` was ever raised. ⭐ **It is removed by being declared `not_material` in the manifest and REGENERATED** — ⛔ **never by hand-editing generated files** (R19). ⚠️ **It moved several times in one conversation and every earlier reading is superseded by this one.** ⛔ **Arguments already made and NOT sufficient to reopen it:** that the corpus's `README.md` indexes it as a section; that it is legitimately on the corpus's own default branch and always was; that it arrived as a rename. ⭐ **None of those decides it. The user does, and the user said out.**
+
+⛔ **AN UNRULED ESCALATION BLOCKS ITS MILESTONE**, in the user's words: *"Block the milestone."* ⭐ **A recommendation may NEVER become the decision by silence.** ⚠️ **`Q5` was raised, nobody ruled it for many rounds, and the office's recommendation became the decision by default — and even though that recommendation turned out RIGHT, the process was wrong.** ⭐ **An office's escalation goes on the milestone as a BLOCKER the moment it is raised, and this binds every future corpus ingestion.**
+
+### ⛔ WHERE A FIX LANDS — THE USER'S STANDING DIRECTION
+
+> only in the original framework or the skills so that they will be used by the next ingestion projects
+
+⭐ **A corpus-visible defect becomes a FRAMEWORK ROW; the corpus is REGENERATED, never patched.** ⛔ **The test of a fix is the NEXT corpus, not this one.** ⚠️ **And the reason is the user's own plan:** *"In future we are not going to have you running the conversion! I will be the study forge as a whole."* ⛔ **So a gap this register papers over with a brief is a PRODUCT DEFECT, not a workaround** — which is the whole argument of `W327`.
+
+### ⛔ `PO-105/1` — THE REGISTER DISPATCHED TWO ROWS ONTO ONE PACKAGE
+
+`W92` and `W94` both own the same package, and both split the same module at their own declared seam. ⭐ **MEASURED: five conflicting files.** ⛔ **Neither office did anything wrong and neither could have seen it — the dispatch is the only place that could.** ⚠️ **The rule already existed in the wave's own shared brief — *surfaces are disjoint; keep them that way* — and the register broke it.** ⭐ **The remedy is a CHECK, not a resolution: before dispatch, the register reads the declared surfaces of every in-flight row against each other.**
+
+⭐ **THE CHECK WAS RUN THE SAME NIGHT AND IT CAUGHT ONE, WHICH IS THE ONLY EVIDENCE THAT IT WORKS.** ⛔ **MEASURED across the four rows then in flight: no two touched the same file.** ⚠️ **But the next two rows the register was about to dispatch — `W331` and `W332` — BOTH own `skills/onboarding/artifacts.py`, and so does `W329`, which was in flight there.** ⭐ **Three rows, one file.** ⛔ **So they are SEQUENCED behind `W329` rather than dispatched, and the register declined to start work it could have started** — ⚠️ **which is the cost the check exists to pay, and it is far smaller than the office-round of reconciliation it prevents.**
+
+### ⛔ `PO-105/2` — FIVE BRIEFING DEFECTS IN ONE WAVE, ALL THIS REGISTER'S
+
+⭐ **Every one was caught by an office reporting the discrepancy rather than working around it, which is the behaviour that works:**
+
+| the defect | what the brief said | what was true |
+|---|---|---|
+| a row named as landed before it merged, twice running | the brief named the row as in the base | its merge was not an ancestor of the commit the brief pinned |
+| an archive asserted to declare media | the brief said this archive declares media | it declares none, so a new check had an EMPTY population and the office had to plant one (Ruling 191, applied to a brief's premise) |
+| the wrong file named as a row's surface, twice | the brief named a file | the subject was in another |
+| a network constraint that forbade the row's own mechanism | *take no network action* | ⭐ the office read that as covering the LOOPBACK call the row exists to make — the CORRECT reading of what was written, and one that would make the row impossible |
+
+⛔ **THE REMEDY IS MECHANICAL AND IT IS THE REGISTER'S: every factual claim in a brief — a ref, an ancestry, a file's existence, a population's size — is READ AGAINST GIT AND THE WORKSPACE before the brief is dispatched.** ⭐ **A brief is not prose about a row; it is a QUOTATION of it.** ⚠️ **A brief that forbids a class must name the boundary inside it: loopback to a pinned component of this workspace is allowed; anything off the host is not.**
+
+### ⛔ `PO-105/3` — A GATE CAN BE REDDENED BY A NEIGHBOUR, AND A RED READING IS RE-TAKEN BEFORE IT IS BELIEVED
+
+⭐ **Two instances, both measured, neither a defect in any tree.** One host suite went RED because a numbered temp directory was deleted mid-run by another process's cleanup; the register then STOPPED its own overnight sweeper, because the row that fixed the underlying leak at source had already landed and the sweeper had stopped being protection. ⛔ **One merge was REFUSED on a pinned-image suite that exited on a SIGNAL rather than on an assertion, with four offices' container suites on the machine at once.** ⚠️ **A signal is not a verdict.** ⭐ **The register's rule: ONE container gate at a time, and a RED reading whose exit code is a signal is re-taken before it is reported.**
+
+### ⛔ `PO-105/4` — THIS REGISTER CERTIFIED A ROW WITH THE REFUTING EVIDENCE IN FRONT OF IT
+
+`W325` was certified on a geometry probe this register RAN and MISREAD. ⭐ **The probe reported the rail's own height; the register read it as *the rail sits below the masthead* when what it said was that the rail was SETTING the grid row's height.** ⛔ **The clean rebuild found it in one look: roughly 870px of blank page down the reading column, on every unit page of the biggest course.**
+
+⛔ **THE ROOT CAUSE IS NOT THE MISREADING — it is that every visual fixture in this framework was too small to exhibit it.** ⭐ **The largest container in any committed fixture declares THREE units, at which size the defect reads as spacing rather than as a defect.** ⚠️ **Minted as `W326`, which builds a sixteen-unit corpus at test time; a COMMITTED one is `W326/2` and is nobody's yet.**
+
+⭐ **The register's rule from it: A GEOMETRY READING IS QUOTED WITH WHICH BOX IT MEASURED, or it is not a reading.**
+
+### ⛔ `PO-105/5` — THE REGISTER RAN A WHOLE WAVE BEHIND THE OFFICES, AND THE BOARD IS THE INSTRUMENT
+
+⭐ **MEASURED: `W323`, `W324` and `W325` were briefed, carried, certified and MERGED before this register ever minted them.** ⛔ **For a whole evening the one document that is supposed to say what is open, in flight and assigned named none of it.**
+
+⚠️ **This is not bookkeeping.** ⭐ **`CLAUDE.md` sends every reader to the board for anything that moves, precisely because a fact written anywhere else can only be kept freshly wrong.** ⛔ **A board that lags the offices by a wave breaks that promise from the other end: it is not stale, it is EMPTY — and a reader cannot tell the difference between *nothing is in flight* and *the register has not caught up*.**
+
+⭐ **A second reading of the same lag, found the same night:** four rows sat at `todo` whose work was already on the release branch — and two of them read `unmerged` against their ORIGINAL branch names because they had landed on the rebased carriers `PO-105/1` sent them back as. ⛔ **The register made that misreading itself and corrected it by searching for the SUBJECT rather than the branch.** ⚠️ **So *is this row's branch merged* is not the question; *is this row's work on the release branch* is.**
+
+⛔ **The rule: a row is MINTED BEFORE IT IS DISPATCHED, not after it lands.** ⭐ **A brief may cite a row file; a row file may not wait on the brief that quotes it.**
+
+### ⭐ `INT-18/3` — ANSWERED, NOT MINTED
+
+The served-unit contract bumped its `api` and no consumer artifact changed. ⭐ **RE-MEASURED here (Ruling 214): nothing under `src/` writes the document in question, no built page carries the field, and the declaration ALREADY SAYS SO in its own comment** — so what a bump refuses is a document some other tool wrote, refused and never migrated (R9). ⛔ **The question is answered where it asked to be answered, and there is nothing to mint.** ⚠️ **What was wrong was THIS REGISTER'S BRIEF, which predicted the bump would move every served document — `PO-105/2`'s class again.**
+
+### ⭐ RELAYED, NOT MINTED
+
+The first corpus's own verifier fixes a whole-disk walk by a name-based exemption where the framework's equivalent reads the tracked tree and names no directory. ⛔ **Narrower, and the corpus's to take.** ⚠️ **Also recorded: the framework's cleanliness check reads RED on that corpus's questions document at its own HEAD as well as after the round, and the only email-shaped string in it is an office's own PLACEHOLDER quoted inside an earlier finding's record.** ⛔ **Not a leak, and not fixed, because fixing it means rewriting a record** (Ruling 106).
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+⛔ **Each was verified against real behaviour by this register, never accepted from an office's account** (Ruling 214). ⚠️ **Two of these landed on REBASED carriers after `PO-105/1` sent the first pair back, which is why a check against their ORIGINAL branch names reads `unmerged` — the register made exactly that misreading tonight and corrected it by looking for the subject rather than the branch.**
+
+### W94 — A shipped refusal names its first witness, not its population — 6 sites against 55 correct
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W94.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Its argument has CLOSED and moved to the record.**
+
+[the argument](#w94-a-shipped-refusal-names-its-first-witness-not-its-population-6-sites-against-55-correct)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `c0c5d73`. ⭐ VERIFIED BY BEHAVIOUR, not received: one reason reads exactly as it did before the row, and three come back as a counted list naming every one — so the refusal names its population.**
+
+### W191 — The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W191.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE FLOOR AND THE SUITE ARE TWO GATES AND THEY CAN DISAGREE AT ONE REF.** ⭐ **`python3 -m tools.quality` can exit `0` while `python3 -m pytest` exits non-zero on the same tree** — ⚠️ **because format enforcement lives in the SUITE (Ruling 78) and not in the floor.**
+
+⛔ **WHY IT IS A ROW NOW AND WAS NOT BEFORE.** ⭐ **Every row is SELF-CERTIFIED since the reviewing office was removed: the merge condition is the taker's own readings and nothing else.** ⛔ **So the phrase *"floor + suite GREEN"* is no longer a description of a habit — it is the whole gate — ⚠️ **and it is satisfiable by an office that ran the floor, read `0`, and inferred the rest.**
+
+### ⛔ THE FAMILY THIS BELONGS TO
+
+⭐ **AN INSTRUMENT EXITING `0` HAS TOLD YOU NOTHING FAILED, NOT THAT EVERYTHING WAS CHECKED.** ⛔ **The floor's `0` is a true statement about the floor's own population and says nothing whatever about the suite's.** ⚠️ **Enumerated once, in [`../handoffs/PO-2026-09-12-round60.md`](handoffs/PO-2026-09-12-round60.md).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **NAME THE DIVERGENCE, BY MEASUREMENT, BEFORE PROPOSING ANY FIX** — ⭐ **which checks are in the floor's population and not the suite's, and which in the suite's and not the floor's.** ⚠️ **The answer decides whether this is a MERGE of two populations or a DISCLOSURE that they differ, and guessing which has already cost a round elsewhere.**
+2. ⛔ **THE OFFICE-FACING ARTEFACT IS ONE COMMAND WITH ONE EXIT CODE**, or the defect survives the fix: ⭐ **an office that must run two things and remember to `&&` them is the office this row is about.**
+3. ⛔ **DO NOT MOVE RULING 78'S CHECK INTO THE FLOOR AS THE FIRST ACT.** ⚠️ **Ruling 78 put it in the suite for a reason and that reason is not re-derived here; if the fix requires overturning it, that is a decision to state out loud, not a side effect.**
+4. ⛔ **VALIDATE BY PLANTING** (Rulings 124, 348): ⭐ **plant a suite-only failure — a mis-formatted source file — and the pass condition is that the office-facing command MOVES its exit code, with the floor still reading `0` beside it.**
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A THIRD INSTRUMENT.** ⭐ **Two gates that disagree are not fixed by adding a third that agrees with neither.** ⛔ **AND NOT A DOCUMENT.** ⚠️ **A sentence in a convention telling offices to run both is exactly the artefact that has been in force this whole time; the defect is that it is a sentence.**
+
+⭐ **Addressed, PO round 73 ([`W88`](#po-round-73-w88-w120-w233-w125-and-w108-closed-w237-minted)):** [the mint](handoffs/PO-2026-09-12-round60.md#the-family-stated-once-here-because-four-rows-point-at-this-section)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `e1606e5`. ⭐ One command with one exit code, taken over every gate the merge re-runs.**
+
+### W92 — The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W92.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`F31` `[structural]`, from PO-Integration and UPHELD by the CTO with their own measurement. The capability index has NO FIELD separating a framework capability from an integration-side row**, so a corpus completing at the reading floor must write **13 false `why`s** — ⚠️ **including declaring `QA-04` *"The second source"* UNUSED, which IS that integration.**
+
+⭐ **MEASURED by the CTO: the index has exactly FOUR columns — `capability | what it is | area | waits on` — and NONE of them distinguishes framework from integration.** ⛔ **So the defect is not a wrong value in a field; it is the absence of the field, which is why no amount of care at generation time can avoid the false statement.**
+
+⭐ **This is Ruling 151's own distinction one layer down — *a reading taken inside a consumer repository is not a framework reading* — UNEXPRESSIBLE in the artifact generated from the documents that ruling sorted.**
+
+⛔ **IT IS LOAD-BEARING, and the reason is in `CLAUDE.md`:** that file names the **generated** `docs/capability-index.md` as the authority for ANY count, after Ruling 150 retired two disagreeing hand-written claims. ⚠️ **So a false field in the generated index is a false field in the one artifact the project tells every agent to trust for counts.**
+
+⛔ **`MEASURED` in the ISO repository by PO-Integration, `RECEIVED` by me through the coordinator, and NOT re-measured here** (Ruling 115) — ⚠️ **a claim about another repository is verified IN that repository and my worktree cannot reach theirs.** ⭐ **The four-column reading IS verifiable here and is this row's first act.**
+
+⭐ **WHAT SETTLES IT:** either the index gains a FIFTH column whose vocabulary is CLOSED and enumerated — ⛔ **a narrowed population, never a widened predicate** (Ruling 185) — or the project states that a reading-floor corpus writes `why` only for framework rows and the other 13 are structurally out of scope. ⚠️ **Either is acceptable; a field that FORCES a false statement is not.**
+
+[round 37's follow-up](#round-37-follow-up-three-rows-sat-in-flight-for-350-commits-q23-is-answered-and-rulings-187-and-188-get-ids)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `3166229` on the REBASED carrier, after `PO-105/1` sent the first one back. ⭐ VERIFIED BY MEASUREMENT: the index's vocabulary for a row this framework does not deliver is in use across the generated derivation, so the false `why`s the row named cannot be written.**
+
+### W219 — The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W219.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE `RAISES` CONVENTION HAS ONE ENFORCEMENT ARM, AND IT IS NARROW TWICE.** ⭐ **Raised by the office that wrote it (`W212/2`, `W212/4`), merged at `419c805`.**
+
+1. ⛔ **PREDICATE: it reads handler NAMES.** ⭐ **A handler catching `RAISES[:1]` passes the sweep; four plants did exactly that and SURVIVED it**, dying only on each caller's behavioural test. ⚠️ **A plant that survives is the reading this row exists for.**
+2. ⛔ **POPULATION: it ranges over `corpus.*` readers.** ⭐ **`archive/errors.py` says two exceptions travel through (`ArchiveError` plus the leak) and exports no tuple**, so the convention now written in `docs/conventions/module-structure.md` has a known non-conforming package outside its instrument.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A narrowed or sliced tuple FAILS the sweep** — asserted by re-planting `RAISES[:1]`; the pass condition is the MOVED exit code.
+2. ⛔ **`archive` exports `RAISES` and its callers consume it**, or the convention says why `archive` is exempt, in one sentence.
+3. ⭐ **The sweep's population is DERIVED from every package exporting `RAISES`**, never a typed list — or a new exporter is outside it again.
+
+### ⚠️ WHAT IT MUST NOT BECOME
+
+⛔ **A LIST OF PACKAGES.** ⭐ **That is the retyped subset `W213` removed, one level up.**
+
+[the mint](#po-round-65-wave-18-closed-step-36-and-m3-closed-at-1ede082-wave-19-named-five-mints)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `d230762` on the REBASED carrier. ⭐ The floor is keyed on the package a catch names, so a declared split moves nothing by hand.**
+
+### ⛔ `PO-105/6` — THE REGISTER DISPATCHED A ROW THAT WAS ALREADY BUILT AND MERGED
+
+⭐ **THE SIXTH BRIEFING DEFECT OF THIS WAVE, AND THE WORST, BECAUSE THE REMEDY FOR IT WAS WRITTEN IN THIS SAME ROUND HOURS EARLIER.** ⛔ **`PO-105/2` says: *every factual claim in a brief — a ref, an ancestry, a file's existence, a population's size — is READ AGAINST GIT before the brief is dispatched.* ⚠️ The register then wrote a brief asserting IN THE PRESENT TENSE that `W315`'s defect existed, and dispatched an office to build what was already on the release branch.**
+
+⚠️ **What the register DID check was the SURFACE — that `tools/quality/citations.py` and `tools/quality/handoffs/` exist.** ⛔ **That is not the question.** ⭐ **The question a dispatch must ask is whether the ROW IS DONE, and two reads answer it: does a handoff for this row already exist at the release tip, and is the row's named branch already an ancestor of it.** ⚠️ **The register had ALSO just recorded that a board cell reading `todo` proves nothing** (`PO-105/5`) — and then trusted a `todo` cell.
+
+⭐ **THE OFFICE DID EXACTLY THE RIGHT THING AND IT IS WORTH NAMING.** ⛔ **It measured the row instead of implementing it, wrote NO code, made NO commit, and declined to overwrite the landed handoff because that is a RECORD and not a draft** (Ruling 106). ⭐ **It also took the four readings independently, in two real repositories built from the release tip differing by exactly one file, and DECLARED its noise rather than filtering it silently.** ⚠️ **Cost: one office-round. Cost had it complied: a second implementation of a shipped fix, over the top of the first.**
+
+⭐ **`W315/4`, and it was still costing something:** the dispatch template was teaching the PRE-`W315` rule — *the row file does not exist on this base, so this document may not link it* — which `fd2e4ed` retired and `docs/conventions/agent-protocol.md` contradicts. ⛔ **One already-merged handoff lost a resolving pointer to it.** ⚠️ **That handoff is a record and is NOT edited** (Ruling 106); ⭐ **the template is, and the correct rule now sits in the wave's shared hazards where every office reads it.**
+
+⭐ **`W315/5`:** the dispatch named a branch git already held, fully merged — ⛔ **so *check out a NEW branch* could not be followed literally.** ⚠️ **A dispatch that names a branch reads whether one exists, which is the same mechanical check.**
+
+### ⭐ A FIFTH CLOSE, TAKEN AFTER THE ROUND'S OTHERS
+
+### W315 — The floor's two citation arms contradict each other across a merge, so a handoff citing a row minted in the same round has no wording that is green in both
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W315.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W232/5`, with this register's own measurement beside it: the floor's two citation arms contradict each other across a merge, so no wording of a handoff's citation of a row minted in the same round is GREEN in both places it is read.** ⭐ **MEASURED BY THIS REGISTER, not received.** ⚠️ **The two arms:** a citation of a TRACKED document written as a bare backticked filename is a finding (Ruling 163, `W150`); a markdown link must RESOLVE. ⛔ **A row minted in a register round is untracked on a developer's branch and tracked on the merged tree, so:**
+
+- ⛔ **Linked** — `[`W313`](rows/W313.md)` — the target is absent on the branch, so the branch floor is RED; GREEN on the merged tree.
+- ⛔ **Named** — `` `rows/W313.md` `` — GREEN on the branch; the merged tree reads a bare citation of a tracked document, so the merge gate REFUSES.
+
+⭐ **BOTH READINGS TAKEN TONIGHT, on `W313`:** its merge was REFUSED by the floor on the MERGED tree for the bare citation, and the same file rewritten to link the row turned the BRANCH floor RED because the link did not resolve there. ⚠️ **Two offices hit it independently the same evening** — `W312`'s hand-back names it, and `W232/5` names its own instance: `W232`'s handoff was GREEN while untracked and RED the moment it was committed, because the arm walks the TRACKED documents and is therefore blind exactly while an office checks its own work.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **ONE wording of a handoff's citation of a row is correct in both places**, or the two arms stop disagreeing — the arm that reads a bare citation must not fire on a target the tree will hold, or the arm that resolves links must read the register's minted ids.
+2. ⛔ **The tracked-only blind spot is closed or DECLARED** (`W232/5`): an office running the floor over the handoff it has just written must get the same verdict the merge will give.
+3. ⛔ **Asserted both ways (R12):** a handoff citing a row present in the tree, and one citing a row the register minted in the round that is merging it, each read on a BRANCH and on a MERGED tree.
+
+⭐ **Surface:** `tools/quality/citations.py`, `tools/quality/handoffs/`, and their tests. ⛔ **JUMPS every older `todo` row (Ruling 75): it is the only defect in the set that makes a CORRECT branch unmergeable, and it cost two hand-backs and one refused merge in a single evening.**
+
+[the mint](#po-round-104)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `fd2e4ed`, BEFORE this round dispatched an office to build it again — `PO-105/6`. ⭐ VERIFIED BY THIS REGISTER: the carrier is an ancestor of the release branch, `docs/tasks/handoffs/W315.md` is on it, and the deferral is in `tools/quality/pointers.py` — a handoff may link its OWN row before the register mints it, by the citing document's own filename and nothing else.**
+
+### ⛔ EIGHT OF THIS ROUND'S OWN MINTS CLOSE IN IT, AND THE FLOOR REFUSED THE SHORTCUT FIRST
+
+⚠️ **The register first set their state cells to done and LEFT their row files carrying their arguments**, reasoning that the state cell is the live fact and the archive move is bookkeeping. ⛔ **The floor refused the merge and it was RIGHT: `board-orphan`, eight times — *a file still carrying its FULL argument is a close that did not happen*.** ⭐ **Ruling 270's close is all four edits or none, and the instrument enforces exactly that.**
+
+### W323 — Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W323.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER REQUIREMENT, stated directly and not a finding from an office:**
+
+> the structure of the files are not clean. It was supposed to be next to the md files maybe in a
+> sub directory and audio files next to a subdirectory. Only one index.html outside in the root
+
+⭐ **MEASURED by this register on the first corpus, before the row:** the repository ROOT held **47** entries of which **34** were generated — a unit page and a per-unit `.audio/` directory, one pair per unit, dropped beside whichever source file they came from. `src/` held **120** entries: 38 `.md` sources, 38 `*.unit.html` pages loose beside them, and 38 separate `*.audio/` directories interleaved with them.
+
+⚠️ **Why it happened is one rule, and it is not a bug in any one verb:** a generated page was written as a SIBLING of its source file. ⛔ **So a source at the repository root put its page and its audio at the repository root** — the rule was applied correctly and the result is unreadable.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A unit's generated page lands in a DECLARED SUBDIRECTORY beside its source**, and generated audio under a declared subdirectory — ⭐ **the name is chosen once and declared once**, in `corpus/placement/`, where the geography lives.
+2. ⛔ **The only generated file at the corpus ROOT is `index.html`.**
+3. ⭐ **The geography stays in ONE place:** `corpus/placement/` owns the SITE tree and `skills/adapter/layout.py` the ARCHIVE tree, and no build, test or skill composes one of these paths from a literal — ⚠️ **this row may not create new instances of `W322`'s subject.**
+4. ⛔ **Asserted both ways (R12):** a built corpus lands where the declaration says and nowhere else, and a plant that writes outside the declared directories is caught by name.
+5. ⛔ **R3 still holds.** This changes where GENERATED files go and touches no source file.
+
+⛔ **MUST NOT BECOME a migration of an existing corpus's files.** ⭐ **The corpus is REGENERATED** — the generator changes, never a generated tree in another repository (R19).
+
+⭐ **Surface:** `src/studyforge/corpus/placement/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `4650f5d`.**
+
+### W324 — A reader on a unit page has no path to any other container; crossing a course means a trip through the index
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W324.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER REQUIREMENT:** *"there is no left navigation bar between courses"*.
+
+⭐ **MEASURED before the row:** a reader on a unit page of one container had **no** path to any other container. Crossing a course meant going back to the root index and down again. ⚠️ **Every page carried prev/next WITHIN its container and nothing across containers** — so the navigation was complete along one axis and absent along the other.
+
+⛔ **This row builds the REGION. Where it sits on the page is `W325`'s** — split deliberately at a named seam (Ruling 261), because a region that exists and a region that is placed fail differently and are asserted differently.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every page carries a region naming every container**, and the reader's own container is marked — ⭐ **`aria-current`, so the marking is in the accessibility tree and not only in paint.**
+2. ⛔ **The links RESOLVE over `file://`** — relative, no server, and a crossing actually lands on the named page.
+3. ⛔ **NO JAVASCRIPT.** The region works with scripting disabled entirely; ⭐ **the disclosure is a real `<details>`.**
+4. ⛔ **The region is ABSENT below two containers** — ⚠️ **a navigation between courses with one course is furniture, and its absence is a clause, not an omission.**
+5. ⛔ **Asserted both ways (R12)**, including the keyboard path.
+
+⭐ **Surface:** `src/studyforge/render/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `9c74bba`.**
+
+### W325 — The containers navigation is a card stacked in the reading column; the user asked for a LEFT RAIL
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W325.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **The PLACEMENT half of the same user requirement `W324` answers.** ⭐ **`W324` built the region; it landed as a CARD stacked in the reading column, and the user asked for a LEFT RAIL.**
+
+⚠️ **Why it is a separate row and not a follow-up:** a region that exists and a region that is placed are refuted by different evidence. ⛔ **The first is asserted by reading the document; the second only by GEOMETRY, in a real browser** — and nothing about the first can detect that the second is wrong.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **WIDE:** the region's right edge lies to the LEFT of the reading column's left edge, with a gutter between them — ⛔ **a rail, not a card.**
+2. ⭐ **NARROW:** the region and the column resolve the SAME edges, the region above the column — ⛔ **the degradation is CHOSEN and asserted, not left to whatever the cascade does.**
+3. ⛔ **No template, no renderer, no golden and no placement module changes** — ⭐ **the same page bytes, laid out differently**, which is what keeps R8's `file://` floor alive across it.
+4. ⛔ **The layout clauses are opened with SCRIPTING DISABLED**, so *no JavaScript* is part of the placement clause rather than a separate promise.
+
+⚠️ **THIS ROW SHIPPED A REGRESSION AND THE REGISTER CERTIFIED IT** — `PO-105/4`, and `W326` is the remedy. ⛔ **The certification read a geometry probe without recording WHICH BOX it measured.** ⭐ **The reading that would have caught it is in `W326`'s argument; the reason none of the fixtures could is there too.**
+
+⭐ **Surface:** `src/studyforge/render/assets/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `7027ee6`.**
+
+### W326 — The rail sets the height of the masthead's row, so a unit page opens on a blank screen proportional to its course's size
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W326.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER-VISIBLE REGRESSION IN `W325`, found on the REAL rebuilt corpus and not on a fixture.**
+
+⭐ **The mechanism:** the rail is placed at `grid-column: 1; grid-row: 1`, and the masthead is the only other item in row 1 — ⛔ **so row 1 is as tall as the RAIL**, and every later element of the reading column begins at the rail's bottom edge.
+
+⭐ **MEASURED in a real browser at `innerWidth` 2048, on a 16-unit container:**
+
+| element | top | bottom |
+|---|---|---|
+| the rail | 0 | **942** |
+| the page's `<h1>` | 36 | 73 |
+| the breadcrumb — the next thing in the reading column | **942** | 993 |
+
+⛔ **A reader opens a unit, sees the title, and then roughly 870px of nothing before the content.** ⚠️ **It scales with the container's unit count** (~420px on an 11-unit one), so it is worst on the biggest course. ⭐ **Every link works — a layout defect, not a broken page — and the NARROW case is correct.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The masthead's row is sized by the MASTHEAD**, not by the rail.
+2. ⛔ **The reading column's first element begins where it would with NO RAIL PRESENT** — ⭐ **asserted as a COMPARISON against the no-rail page, never against a typed number.**
+3. ⛔ **EVERY clause of `W324` and `W325` survives, RE-TAKEN and not assumed** (Ruling 214).
+4. ⛔ **Asserted both ways (R12) with a REAL BROWSER arm** at both widths — ⚠️ **and the wide arm uses a container with MANY units.**
+
+⛔ **THE ROOT CAUSE IS THE FIXTURES, NOT THE MISREADING.** ⭐ **Every visual fixture in this framework was too small to exhibit a rail taller than its content** — a three-entry rail beside a four-paragraph page cannot show it. ⚠️ **A row that fixes the CSS and leaves the fixtures small has settled the symptom.**
+
+⭐ **Surface:** `src/studyforge/render/assets/`, and the visual fixtures. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `c79f485`.**
+
+### W327 — The skills name no narration component and call the step optional, so a reader who follows them exactly builds a silent site
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W327.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER QUESTION ABOUT A DELIVERED CORPUS, and the second half of it is the row:** *"Why the rebuild didn't have the narration in it?"* then *"Why did the skills missed it?"*
+
+⭐ **MEASURED:** `narrate-service` was named in **ZERO** `SKILL.md` files in this framework, and `buildserve` called the narration step *optional*. ⛔ **So a reader who followed the skills exactly built a silent site and was told nothing was wrong.**
+
+⚠️ **The deeper half, and it is the one that makes this a row rather than a documentation fix:** the skills accepted silence as a legitimate finished state. ⛔ **A corpus that CANNOT speak and a corpus that HAS NOT been narrated were the same state**, so no instrument could tell a finished corpus from an unfinished one.
+
+⭐ **Why now:** *"In future we are not going to have you running the conversion! I will be the study forge as a whole."* ⛔ **A gap a coordinator papers over with a brief is a PRODUCT DEFECT.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The skills NAME what provides narration, where it answers, and how to have it** — ⭐ **without a reader needing to know this workspace's layout.**
+2. ⛔ **The two silences are DIFFERENT ANSWERS.** ⭐ *Cannot speak* reads as complete at the reading floor with **no remedy needed** (§11.0, C5); *has not been narrated* names the component and its address.
+3. ⛔ **The address is IMPORTED from the verb that owns it, never retyped**, and ⛔ **no route, header or field of that component's API is repeated.**
+4. ⛔ **The printed commands are EXECUTED, not string-matched** (`W313`'s bar).
+5. ⛔ **This skill starts no container** — ⭐ **a rule, not an omission.**
+
+⭐ **Surface:** `src/studyforge/skills/buildserve/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `068a146`.**
+
+### W328 — The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W328.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **A USER REQUIREMENT, quoted, and it is TWO CLAUSES that must not swallow each other:**
+
+> the left panel shou go all the way to the left side and be fixed. the context panel should be
+> dynamic using more content of the page than longer scroll than needed.
+
+⭐ **MEASURED at `7027ee6`:** `body` becomes the grid at `min-width: 72rem` with `max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)))` — ⛔ **so the whole layout is CAPPED AND CENTRED, and the rail floats in from the viewport's edge on any wide screen.** The reading column is `minmax(0, calc(var(--measure) + 2 * var(--gutter)))`, a constant.
+
+⚠️ **What is ALREADY right and must not be "fixed":** `reading.css` bounds **running text alone** — a figure, a table and a code block already take the full column. ⛔ **So "use more of the page" does NOT mean removing the measure from prose:** 80 characters is at the top of the legible range, and widening it makes the page worse while barely shortening the scroll.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Flush left means the rail's left edge is the VIEWPORT's left edge**, not the centred layout's.
+2. ⛔ **Fixed means it does not scroll away** — ⚠️ **and a rail taller than the viewport must scroll ITSELF**, or a corpus with many containers loses its last entries with no way to reach them. ⭐ **That is the fixture to build.**
+3. ⛔ **Taking the rail out of flow must not orphan the reading column**, which still clears it at every width and still folds to one column below the breakpoint.
+4. ⛔ **The reading column's width becomes a function of the VIEWPORT rather than a constant** — ⚠️ **bounded still**, or the non-measure-bound elements span a whole 4K display.
+5. ⛔ **THE SCROLL CLAIM IS A MEASUREMENT.** ⭐ **`scrollHeight` for the same built page at the same viewport, before and after, in a real browser.** ⚠️ **If the number barely moves, SAY SO** — it would mean `W326`'s band was the whole of it, and that finding is worth more than a satisfying story.
+
+⭐ **Surface:** `src/studyforge/render/assets/`. ⛔ **Starts from `W326`'s merge, not the release tip** — measuring before that lands attributes `W326`'s defect here.
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `74b20c2`.**
+
+### W329 — The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W329.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **THE MOST VALUABLE ROW FROM THE CLEAN RUN, and the reason is who runs the skills next:** the user will run `studyforge` themselves, with no coordinator briefing each step, and every future corpus is ingested by the same procedure. ⭐ **This row decides whether the documented procedure can be run TWICE.** ⚠️ **Today it cannot.**
+
+⭐ **THREE READINGS, ONE ROOT CAUSE** — a skill reading a corpus that already carries the framework's own generated half, and mistaking that half for the corpus's own material. ⛔ **All three measured by the integration office on a real clean run:**
+
+1. ⛔ **`exercises` FLIPS TO TRUE SILENTLY, MISREPRESENTING A FINISHED CORPUS AS SHORT.** On the raw repository, reconnaissance measures *build files 0, graders 0*. Re-run on the ONBOARDED corpus — which is what a regeneration does — it counts **12 files that look like graders: the scaffold's own `tests/**/test_*.py`** — and drafts `exercises: true`. ⛔ **Onboarding writes it with no refusal, three lines below its own report printing `graded practices  no`.** ⚠️ **`buildserve` then reports the `toolchain` partial state instead of the `exercises` one — the spec's own C5 failure, a COMPLETE corpus presented as unfinished.**
+2. ⛔ **A re-survey re-proposes under `content.include` a file the manifest declares `not_material`.** Promoting that gives a `contested` manifest and `validate` exits 1. ⭐ **Same cause, cheaper symptom — it refuses instead of lying.**
+3. ⛔ **The skill's own commanded step invalidates the corpus.** Onboarding `SKILL.md` step 4 runs `python3 -m pytest tests`; that writes `tests/__pycache__/*.pyc`; the manifest the SAME skill generated declares `tests/*.py`, not `tests/**`, so that bytecode is `unclassified` and `validate` exits 1.
+
+⭐ **`W269` already protects exactly ONE field, `not_material`, against this class.** ⛔ **The rule it states for one field is the rule for all of them.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A skill does not read the framework's own generated consuming half as the corpus's material.**
+2. ⛔ **A second run of the documented procedure leaves a VALID corpus** — ⭐ **asserted end to end, by running it twice.**
+3. ⛔ **No field is silently widened on a re-run**; a disagreement REFUSES rather than overwrites.
+4. ⛔ **Asserted both ways (R12)**, with the double run as the case that fails today.
+
+⭐ **Surface:** `src/studyforge/skills/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `05b7f70`.**
+
+### W330 — The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W330.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`docs/authoring/placement.md` is step 3 of the six-step route an integrator follows** — where they learn what a build creates, **before** they write ignore rules or `permitted_edits`.
+
+⭐ **MEASURED at the pin:** its `sibling` fence still shows the PRE-`W323` layout — pages and media loose in the source directory, unprefixed names — and **all three lines are wrong**. The profile's table row still says *"beside the source file"* without naming the declared subdirectory. ⭐ **The `tree` fence on the same page is correct**, which is why nobody noticed.
+
+⛔ **THE WORSE HALF IS A FALSE CLAIM OF COVERAGE.** `docs/authoring/README.md` states:
+
+> Every factual claim on these pages is checked against the shipped code by
+> `tests/test_authoring_reference.py`.
+
+⛔ **MEASURED: that test reads `placement.md` ONCE, to assert the two profile NAMES match the registry. NOTHING reads the fences.** ⚠️ **So the claim of coverage is false for exactly the section a reader is most likely to ACT on** — ⭐ **the same failure the design spec records against itself at §4, arriving again in the consumer-facing documents.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The fences are COMPUTED from the types that own the geography, not retyped** — ⭐ **the adapter skill already does this with `archive_tree()`.** ⚠️ **A corrected literal does not settle this row: it goes stale the next time placement moves, which is exactly what happened.**
+2. ⛔ **The README's coverage sentence is TRUE, or it is NARROWED until it is** — ⭐ **one of the two, and say which and why.** ⛔ **A sentence claiming more than its instrument reads is the defect, whichever way it is settled.**
+3. ⛔ **Asserted both ways (R12):** a planted change to the placement geography turns the page's check RED.
+
+⭐ **Surface:** `docs/authoring/`, `tests/test_authoring_reference.py`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 105
+
+⭐ **Merged at `ad2bbfa`.**
+
+### ⭐ MINTS — `W323`–`W332`, each from a MEASURED argument
+
+⛔ **Four of these are USER REQUIREMENTS stated directly, not findings from an office**, and they are marked as such in their row files. ⭐ **Each row's argument lives once, in its own file; this record does not restate it.**
+
+| row | why it exists |
+|---|---|
+| `W323` | ⛔ a user requirement: generated pages and audio landed loose beside their sources, so a corpus root held 34 generated entries |
+| `W324` | ⛔ a user requirement: a reader on a unit page had no path to any other container |
+| `W325` | ⛔ the PLACEMENT half of the same requirement — the region existed and was a card, not a rail |
+| `W326` | ⛔ `PO-105/4` above: the rail sized the masthead's row |
+| `W327` | ⛔ a user QUESTION — *"Why did the skills missed it?"* — and the answer was that the skills named no narration component at all |
+| `W328` | ⛔ a user requirement: the rail floats in from the viewport edge and scrolls away; the reading column is a constant rather than a function of the page |
+| `W329` | ⭐ **the most valuable row from the clean run**: the documented procedure cannot be run TWICE |
+| `W330` | ⛔ the authoring reference's placement trees were retyped, stale, and falsely claimed to be checked |
+| `W331` | ⛔ the GENERATED non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it |
+| `W332` | ⛔ the reader's document states live counts that no verb refreshes |
+

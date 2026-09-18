@@ -47,7 +47,7 @@ one does.**
 | **M4 step 4.2** | ✅ CLOSED | `171366c` | [record](BOARD-ARCHIVE.md#po-round-67-wave-20-closed-in-part-steps-41-and-42-closed-sk-03s-edge-corrected-three-mints) |
 | **M4 step 4.3** | ✅ CLOSED | `a55303f` | [record](BOARD-ARCHIVE.md#po-round-69-step-43-closed-sf-19b-w105-and-w225-closed-two-mints) |
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
-| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⏳ **OPEN** — its rows are the ISO track's; ⭐ **ISO round 17 merged at `67ee3e7`, now the pin: `ISO-15` and `ISO-16` TAKEN**, and every earlier `ISO-*` row was taken before them. ⛔ **`ISO-17` — the findings distilled — is the only row left, and C4's own finish line names it, so this milestone DOES NOT CLOSE until it is taken.** ⭐ **Round 18 is dispatched for it.** | — | [the open](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
+| **M6** — the first corpus reads (`ISO-8583`), next by the user's order | ⛔ **BLOCKED, and its earlier close run is WITHDRAWN** — ⭐ **round 105**: the run re-took every clause and every clause was TRUE, ⛔ **but it counted pages and never read one**, which is how a container of out-of-scope material passed it. ⚠️ **`Q5` is now ruled: that container is OUT, so the corpus is REGENERATED and M6 re-takes against the rebuild — reading what is on the pages.** ⛔ **`ISO-17` is still C4's last row and still owed.** | — | [the withdrawal](BOARD-ARCHIVE.md#po-round-105) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
 
@@ -60,10 +60,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W92` | Developer 1 | `fix/W92-the-index-can-say-not-this-side` @ `wt/dev1` | 0 @ `883dae6` | in-progress |
-| `W191` | Developer 2 | `fix/W191-a-row-certifies-on-both-gates` @ `wt/dev2` | 2 @ `3b56ca0` | in-progress |
-| `W94` | Developer 3 | `fix/W94-a-refusal-names-its-population` @ `wt/dev3` | 3 @ `302f73d` | in-progress |
-| `W219` | Developer 4 | `fix/W219b-raises-sweep-survives-a-move` @ `wt/dev4` | 1 @ `358b9dc` | in-progress |
+| `W331` | Developer 3 | `fix/W331-the-non-destructive-check-reads-r3` @ `wt/dev3` | 1 @ `d8694a5` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -97,7 +94,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
-| 1 | `W315` | ⛔ **JUMPS every older `todo` row (Ruling 75): it is the only defect in the set that makes a CORRECT branch unmergeable — one refused merge and two hand-backs in one evening** | [104](BOARD-ARCHIVE.md#po-round-104) |
+| 1 | `W328` | ⛔ **JUMPS every older `todo` row (Ruling 75): it is the outstanding half of a USER REQUIREMENT the user is coming back to look at** — the rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | [105](BOARD-ARCHIVE.md#po-round-105) |
+| 1 | `W331` | ⛔ **JUMPS every older `todo` row (Ruling 75): the check is GENERATED into every corpus this framework onboards, and it goes RED on a CORRECT re-build** — so every future ingestion meets it | [105](BOARD-ARCHIVE.md#po-round-105) |
+| 2 | `W332` | ⭐ **round 105's remaining mint, jumping nobody** | [105](BOARD-ARCHIVE.md#po-round-105) |
 | 1 | `W321` | ⛔ **JUMPS every older `todo` row (Ruling 75): the first corpus is a linked worktree, and a command a generated document tells a reader to run can detach the framework checkout's HEAD** | [104](BOARD-ARCHIVE.md#po-round-104) |
 | 2 | `W316`–`W320`, `W322` | ⭐ **round 104's remaining mints, each jumping nobody** | [104](BOARD-ARCHIVE.md#po-round-104) |
 | 3 | `W90` | ⛔ **a named gap of `M4`'s close, not a gate** — it jumps nobody older | [72](BOARD-ARCHIVE.md#po-round-72-sk-06-held-open-on-sk-063-so-step-44-and-m4-do-not-close) |
@@ -241,9 +240,9 @@ else.**
 | W89 | An R7 gate's false positive on ordinary source, narrowed in the gate and not in the source | framework agent | `todo` — Ruling 179 | [`rows/W89.md`](rows/W89.md) |
 | W90 | The root index can link no container page, and it is a `toc_api` question | PO | `todo` — a named gap of `M4`'s close, not a gate (round 72) | [`rows/W90.md`](rows/W90.md) |
 | W91 | The hand-maintained rulings index stops short of the live series, so a bare `(Ruling n)` resolves to nothing | Developer 2 | ✅ done — `8be7e86` | [`rows/W91.md`](rows/W91.md) |
-| W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | `todo` | [`rows/W92.md`](rows/W92.md) |
+| W92 | The capability index cannot say *not this side*, so a reading-floor corpus writes 13 false `why`s | framework agent | ✅ done — `3166229` | [`rows/W92.md`](rows/W92.md) |
 | W93 | *Point the skill at a corpus* is not performable — no corpus-shaped input on the surface | framework agent | `todo` | [`rows/W93.md`](rows/W93.md) |
-| W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | `todo` — Ruling 188 | [`rows/W94.md`](rows/W94.md) |
+| W94 | A shipped refusal names its first witness, not its population — 6 sites against 55 correct | framework agent | ✅ done — `c0c5d73` | [`rows/W94.md`](rows/W94.md) |
 | W95 | No fixture has two units sharing one source file, so `Q23`'s answer cannot be tested | framework agent | ✅ done — `cfe0e0c` | [`rows/W95.md`](rows/W95.md) |
 | W96 | A cell declaring a started state asserts a live checkout or a branch ahead of release | framework agent | ✅ done — `3432e9a` | [`rows/W96.md`](rows/W96.md) |
 | W97 | `\|clips\| == \|spoken units\|` — *both directions* proves surjectivity, not injectivity | framework agent | `todo` — Ruling 187, before `SF-16` | [`rows/W97.md`](rows/W97.md) |
@@ -339,7 +338,7 @@ else.**
 | W188 | The contradiction check SKIPS when no register cell declares a started state — the state a register leaves at every wave boundary | framework agent | ✅ done — `7d77b0d` | [`rows/W188.md`](rows/W188.md) |
 | W189 | `narrate-service` has produced no real audio and its `README` claims a measurement the repository does not hold | framework agent | ✅ done — `978fa1b` | [`rows/W189.md`](rows/W189.md) |
 | W190 | `corroborate`'s `dispatched and UNNAMED` arm has a population of CHECKOUTS, so a branch carrying work is invisible to it whenever its office cleans up after itself | framework agent | ✅ done — `c49f254` | [`rows/W190.md`](rows/W190.md) |
-| W191 | The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone | framework agent | `todo` — ⛔ **UNASSIGNED through four waves** | [`rows/W191.md`](rows/W191.md) |
+| W191 | The floor can be GREEN while the suite is RED at one ref, and every row now self-certifies on a phrase an office can satisfy by reading the floor alone | framework agent | ✅ done — `e1606e5` | [`rows/W191.md`](rows/W191.md) |
 | W192 | Ruling 218's multi-id cell is readable in exactly ONE spelling, and the comma form observes the wrong row silently | framework agent | ✅ done — `bf05884` | [`rows/W192.md`](rows/W192.md) |
 | W193 | The narration record and its clips grow without bound and nothing prunes; pruning owes a RULE about which clips a build may delete | PO | ✅ done — PO round 64 | [`rows/W193.md`](rows/W193.md) |
 | W194 | `narrate-service`'s `docs/api.md` example manifest is schema-stale against the service's own live answer | framework agent | `todo` — `NS-07` F3, sibling | [`rows/W194.md`](rows/W194.md) |
@@ -367,7 +366,7 @@ else.**
 | W216 | `tests/test_emission.py`'s coverage floor sits so far below its own census that it cannot fall, and the sweep is the R7 gate's population | framework agent | ✅ done — `787b24d` | [`rows/W216.md`](rows/W216.md) |
 | W217 | The suite writes OUTSIDE the checkout, and `W209`'s detector is repository-scoped by construction so it cannot see it | framework agent | ✅ done — `475370c` | [`rows/W217.md`](rows/W217.md) |
 | W218 | `W193`'s rule is written and nothing carries it out: dead clips count against a shipped ceiling and no instrument discloses or prunes them | framework agent | ✅ done — `18dc8e1` | [`rows/W218.md`](rows/W218.md) |
-| W219 | The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it | framework agent | `todo` — `W212/2` + `W212/4` | [`rows/W219.md`](rows/W219.md) |
+| W219 | The `RAISES` sweep reads handler names over `corpus.*` only, so a sliced tuple survives it and `archive` is outside it | framework agent | ✅ done — `d230762` | [`rows/W219.md`](rows/W219.md) |
 | W220 | `reconnaissance.record.read` quotes an EXISTING `path=` back in its refusal — a latent R7 echo the contained census can no longer reach | framework agent | ✅ done — `31f45d5` | [`rows/W220.md`](rows/W220.md) |
 | W221 | The whole suite still writes outside the checkout — temp, cache and browser dirs — and nothing owns or asserts it | framework agent | `todo` — `W217/3` | [`rows/W221.md`](rows/W221.md) |
 | W222 | `narrate.synth.audio_dir` takes no `label`, so a labelled unit's clips land where its page does not look | Developer 1 | ✅ done — `f4779c9` | [`rows/W222.md`](rows/W222.md) |
@@ -463,7 +462,7 @@ else.**
 | W313 | The generated reader document is read from the manifest alone, so after ingest and narration it still says nothing has been ingested, and the one command it gives does not run as written | framework agent | ✅ done — `35f8f26` | [`rows/W313.md`](rows/W313.md) |
 | W314 | A corpus whose measured media crosses its declared limits is reported EXCEEDS and planned and built with exit 0, where spec §5 says it stops and says so | framework agent | ✅ done — `f2d836f` | [`rows/W314.md`](rows/W314.md) |
 | W310 | The reserved-address vocabulary exists in the merge path and in the floor, and neither may import the other, so the two copies can drift apart silently | framework agent | ✅ done — `870ee8f` | [`rows/W310.md`](rows/W310.md) |
-| W315 | The floor's two citation arms contradict each other across a merge, so a handoff citing a row minted in the same round has no wording that is green in both | framework agent | `todo` — `W232/5` | [`rows/W315.md`](rows/W315.md) |
+| W315 | The floor's two citation arms contradict each other across a merge, so a handoff citing a row minted in the same round has no wording that is green in both | framework agent | ✅ done — `fd2e4ed` | [`rows/W315.md`](rows/W315.md) |
 | W316 | `test_no_gitmodules_anywhere_in_the_repository` walks the repository's disk and excludes nothing — the last whole-disk walk in the suite | framework agent | `todo` — `W232/1` | [`rows/W316.md`](rows/W316.md) |
 | W317 | The visual harness's `closerange` also closes subprocess's exec-error pipe, so a missing browser binary is not raised at launch | framework agent | `todo` — `W312/1` | [`rows/W317.md`](rows/W317.md) |
 | W318 | A build whose `--out` is a subdirectory of the corpus root writes media inside the git tree and outside the measured population | framework agent | `todo` — `W314/2` | [`rows/W318.md`](rows/W318.md) |
@@ -471,6 +470,17 @@ else.**
 | W320 | `UNUSABLE` lives in one verb's `cli` module, so importing the command still loads that verb | framework agent | `todo` — `W293/3` | [`rows/W320.md`](rows/W320.md) |
 | W321 | The generated documents address the framework relative to the corpus root while the pin asks git, so a linked worktree's documents point elsewhere | framework agent | `todo` — `INT-17/2` | [`rows/W321.md`](rows/W321.md) |
 | W322 | `Layout` computes a unit's overlay address in one place and three test sites spell it by hand | framework agent | `todo` — `W198/4`, `W198/5` | [`rows/W322.md`](rows/W322.md) |
+| W323 | Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries | framework agent | ✅ done — `4650f5d` | [`rows/W323.md`](rows/W323.md) |
+| W324 | A reader on a unit page has no path to any other container; crossing a course means a trip through the index | framework agent | ✅ done — `9c74bba` | [`rows/W324.md`](rows/W324.md) |
+| W325 | The containers navigation is a card stacked in the reading column; the user asked for a LEFT RAIL | framework agent | ✅ done — `7027ee6` | [`rows/W325.md`](rows/W325.md) |
+| W326 | The rail sets the height of the masthead's row, so a unit page opens on a blank screen proportional to its course's size | framework agent | ✅ done — `c79f485` | [`rows/W326.md`](rows/W326.md) |
+| W327 | The skills name no narration component and call the step optional, so a reader who follows them exactly builds a silent site | framework agent | ✅ done — `068a146` | [`rows/W327.md`](rows/W327.md) |
+| W328 | The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | framework agent | ✅ done — `74b20c2` | [`rows/W328.md`](rows/W328.md) |
+| W329 | The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material | framework agent | ✅ done — `05b7f70` | [`rows/W329.md`](rows/W329.md) |
+| W330 | The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong | framework agent | ✅ done — `ad2bbfa` | [`rows/W330.md`](rows/W330.md) |
+| W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | `todo` — clean run | [`rows/W331.md`](rows/W331.md) |
+| W332 | The reader's document states live counts that no verb refreshes | framework agent | `todo` — clean run | [`rows/W332.md`](rows/W332.md) |
+| W333 | The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout | framework agent | `todo` — `W328/7` | [`rows/W333.md`](rows/W333.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
@@ -497,6 +507,10 @@ here; the argument is in the record.**
 
 | Decision | Argument |
 |---|---|
+| ⛔ **AN UNRULED ESCALATION BLOCKS ITS MILESTONE** — ⭐ **the user's words: *"Block the milestone."*** ⛔ **A recommendation may NEVER become the decision by silence**, and this binds every future corpus ingestion | [round 105](BOARD-ARCHIVE.md#po-round-105) |
+| ⛔ **A CORPUS-VISIBLE DEFECT BECOMES A FRAMEWORK ROW; THE CORPUS IS REGENERATED, NEVER PATCHED** — ⭐ the user's direction: *"only in the original framework or the skills so that they will be used by the next ingestion projects"*. ⛔ **The test of a fix is the NEXT corpus, not this one** | [round 105](BOARD-ARCHIVE.md#po-round-105) |
+| ⛔ **A ROW IS MINTED BEFORE IT IS DISPATCHED, NOT AFTER IT LANDS** — ⭐ and a dispatch READS AGAINST GIT whether the row is already done, because a `todo` cell proves nothing | [round 105](BOARD-ARCHIVE.md#po-round-105) |
+| ⭐ **OPEN, AND THE USER'S: should the reading measure RISE now the column is wider?** ⛔ **Not blocking** — ⚠️ **the current measure is the ARGUED default with a stated reason in `reading.css`, not a silence.** ⭐ **Measured at `74b20c2`: prose holds at 760 while the column reaches 1224, so the gap right of a paragraph is 464 where it was 40** | [round 105](BOARD-ARCHIVE.md#po-round-105) |
 | ⛔ **RETIRED BY THE USER 2026-09-17 — `ONBOARDING.md` IS TRACKED, after the retired tool's entries and the usage profile were removed** ([the round](BOARD-ARCHIVE.md#po-round-100)). ⭐ **It read *`ONBOARDING.md` does not enter the repository*; retired IN PLACE rather than deleted, because the record cites this cell** | [record](BOARD-ARCHIVE.md#onboardingmd-ruled-it-does-not-enter-the-repository) |
 | ⭐ **`.claude/settings.json` IS tracked, and it is R18 with a machine behind it** — it DENIES `Bash(git push:*)`, `git remote add` and `git remote set-url`, and ALLOWS `Bash(git merge:*)`. ⛔ **It was the opposite call to `ONBOARDING.md`'s until the user retired that one, and the distinction was never tracking: this is a PROJECT RULE** | [record](BOARD-ARCHIVE.md#9-two-standing-module-conditions-recorded-without-their-counts) |
 | ⛔ **Same form for `tools/quality/board/register.py`** — the next row touching it splits it, and R11's reading comes from `tools.quality` rather than from this cell. ⭐ **It INHERITS the condition `tools/quality/board/__init__.py` carried, which `W129`/`W130` PERFORMED and DISCHARGED** | [record](BOARD-ARCHIVE.md#po-round-47-the-first-nine-closes-under-ruling-270-the-wall-measured-gone-on-my-own-tree-and-the-empty-population-inhabited) |
@@ -551,7 +565,7 @@ why that made it a PO edit rather than a developer's is in `W100`'s record.**
 | **Repository** | `ISO/` (`ISO-8583-jPOS-tutorial`) |
 | **Owner** | PO-Integration |
 | **Branch** | `release/studyforge-integration`; each round on a task branch in a linked worktree, merged in ISO's main checkout (`PO-74/9`, settled) |
-| **Status** | `in-progress` — ⭐ **round 17 merged at ISO `67ee3e7`, re-pinned to framework `883dae6`: `ISO-15` and `ISO-16` TAKEN, so `ISO-17` is the only row left.** ⛔ **`M6` does not close until it is** — [the round](BOARD-ARCHIVE.md#po-round-104) |
+| **Status** | `in-progress` — ⛔ **`M6`'s close run is WITHDRAWN and the milestone is BLOCKED** (round 105): ⭐ **`Q5` is ruled — the out-of-scope container is OUT, FINAL — so the corpus is REGENERATED and the close re-takes against the rebuild.** ⚠️ **`ISO-17` remains the last row of C4** — [the withdrawal](BOARD-ARCHIVE.md#po-round-105) |
 | **Closes when** | ⛔ **The track has TWO finish lines** — the corpus's (*is this a study site?*) and the exercise's (*is this framework extensible?*) — ⭐ **and asking for them as one is why it had none.** ⭐ **The corpus's is `M6`'s close and the exercise's `M8`'s (round 74).** [Q18, ruled](BOARD-ARCHIVE.md#q18-ruled-2026-09-10-the-track-has-two-finish-lines-and-that-is-why-it-had-none) |
 | **The channel** | `../conventions/delivery-flow.md`, non-negotiable. ⛔ **R20: a consumer's task never cites a path inside this repository** |
 
