@@ -97,6 +97,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 
 | Order | Row | Why it is here | Placed |
 |---|---|---|---|
+| 1 | `W328` | ⛔ **JUMPS every older `todo` row (Ruling 75): it is the outstanding half of a USER REQUIREMENT the user is coming back to look at** — the rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | [105](BOARD-ARCHIVE.md#po-round-105) |
+| 1 | `W331` | ⛔ **JUMPS every older `todo` row (Ruling 75): the check is GENERATED into every corpus this framework onboards, and it goes RED on a CORRECT re-build** — so every future ingestion meets it | [105](BOARD-ARCHIVE.md#po-round-105) |
+| 2 | `W332` | ⭐ **round 105's remaining mint, jumping nobody** | [105](BOARD-ARCHIVE.md#po-round-105) |
 | 1 | `W315` | ⛔ **JUMPS every older `todo` row (Ruling 75): it is the only defect in the set that makes a CORRECT branch unmergeable — one refused merge and two hand-backs in one evening** | [104](BOARD-ARCHIVE.md#po-round-104) |
 | 1 | `W321` | ⛔ **JUMPS every older `todo` row (Ruling 75): the first corpus is a linked worktree, and a command a generated document tells a reader to run can detach the framework checkout's HEAD** | [104](BOARD-ARCHIVE.md#po-round-104) |
 | 2 | `W316`–`W320`, `W322` | ⭐ **round 104's remaining mints, each jumping nobody** | [104](BOARD-ARCHIVE.md#po-round-104) |
