@@ -68,6 +68,7 @@ from studyforge.corpus.placement import PlacementError, profile_for
 from studyforge.skills.adapter import Written, plan_for, scaffold, write_files
 from studyforge.skills.onboarding import artifacts, record, recorded
 from studyforge.skills.onboarding.manifest import promote, render
+from studyforge.skills.onboarding.nondestructive import edits_test
 from studyforge.skills.onboarding.pin import (
     RECORD_FILE,
     SIBLING,
@@ -266,7 +267,7 @@ def onboard(
         *made.files,
         *_pin_files(framework_commit, skills, framework),
         *_ignore_file(manifest),
-        _own(artifacts.EDITS_TEST, artifacts.edits_test(manifest), "R3, with this corpus's edits"),
+        _own(artifacts.EDITS_TEST, edits_test(manifest), "R3, with this corpus's edits"),
         _own(artifacts.PIN_TEST, pin_test(skills), "the pin, and every stub that names it"),
         _own(
             artifacts.READER_DOC,

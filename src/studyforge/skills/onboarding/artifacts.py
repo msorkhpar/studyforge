@@ -1,17 +1,25 @@
 r"""The documents an onboarding writes into a corpus, and how each is classified.
 
-**What it does.** Renders the generated non-destructive check and the reader's
-documentation — and declares, for every path this skill occupies, the
-`content.not_material` glob that classifies it.
+**What it does.** Renders the reader's documentation — and declares, for every
+path this skill occupies, the `content.not_material` glob that classifies it.
 
 **How you use it.** Through `onboard`, which composes these with the adapter's
 scaffold. Every renderer is a pure function from data to text, so the whole
 file set can be read back before anything is on disk.
 
 **Depends on.** `studyforge.corpus.manifest` for what a manifest says,
-`skills.adapter` for the adapter's package name, plus this package's `compose`,
-`pin` and `standing` (whose `Standing` a caller reads and hands in). ⛔ No I/O,
-and nothing source-specific (R1).
+`skills.adapter` for the adapter's package name, plus this package's `pin`,
+`standing` (whose `Standing` a caller reads and hands in) and `nondestructive`
+(for where R3's generated check lands). ⛔ No I/O, and nothing source-specific
+(R1).
+
+## ⛔ R3's generated check is `nondestructive`'s, not this module's (`W331`)
+
+⚠️ **This module renders what a person reads; that one renders what a machine
+checks**, and the check moved there when it grew — `pin` already keeps its own
+generated check beside the document it is about. ⭐ `TESTS_DIR` and `EDITS_TEST`
+went with it, so the check and the directory it lands in cannot be moved apart,
+and the dependency runs one way.
 
 ## ⛔ An ignore rule goes inside the directory it is about
 
@@ -46,7 +54,7 @@ from pathlib import PurePosixPath
 
 from studyforge.corpus.manifest import MANIFEST_FILENAME, Manifest
 from studyforge.skills.adapter import plan_for
-from studyforge.skills.onboarding.compose import module
+from studyforge.skills.onboarding.nondestructive import EDITS_TEST, TESTS_DIR
 from studyforge.skills.onboarding.pin import (
     PIN_DIR,
     PIN_FILE,
@@ -61,11 +69,9 @@ from studyforge.skills.onboarding.standing import Standing
 #: to know which module owns it.
 MANIFEST = MANIFEST_FILENAME
 
-#: The corpus's own test directory, and the checks this skill generates into
-#: it. ⚠️ Deliberately **not** under the adapter's `tests/ingest/`: these assert
-#: things about the repository, not about the adapter.
-TESTS_DIR = "tests"
-EDITS_TEST = f"{TESTS_DIR}/test_non_destructive.py"
+#: The pin-drift check, beside R3's. ⚠️ Deliberately **not** under the
+#: adapter's `tests/ingest/`: it asserts something about the repository, not
+#: about the adapter. ⭐ `TESTS_DIR` and `EDITS_TEST` are `nondestructive`'s.
 PIN_TEST = f"{TESTS_DIR}/test_framework_pin.py"
 
 #: What a reader opens first.
@@ -124,53 +130,6 @@ def classified(where: str, entries: Sequence[Mapping[str, str]] = NOT_MATERIAL) 
     """Whether one path is covered by a glob this module declares."""
     candidate = PurePosixPath(where)
     return any(candidate.full_match(entry["glob"]) for entry in entries)
-
-
-def edits_test(manifest: Manifest) -> str:
-    """Return the non-destructive assertion, with this corpus's declared edits baked in (R3).
-
-    ⭐ **Generated, so it is not a hand-written per-corpus test.** What varies
-    between two corpora is exactly the declaration, and the declaration is data
-    the manifest already carries — which is why `OPS-05` asks the manifest
-    rather than knowing any corpus's exception.
-    """
-    permitted = sorted(edit.path for edit in manifest.permitted_edits)
-    return module(
-        summary="R3 for this corpus: generation adds, and edits only what was declared.",
-        imports=["import pathlib", "import shutil", "import subprocess", "", "import pytest"],
-        body=[
-            "#: Every path this corpus declared in permitted_edits, taken from",
-            "#: corpus.json. An edit to anything else is what this test catches.",
-            f"PERMITTED = {permitted!r}",
-            "",
-            "",
-            "def test_generation_is_non_destructive():",
-            '    """Nothing existing is changed that the manifest did not declare."""',
-            "    git = shutil.which('git')",
-            "    if git is None:",
-            "        pytest.skip('git is not installed, so the working tree cannot be read')",
-            "    root = pathlib.Path(__file__).resolve().parent.parent",
-            "    result = subprocess.run(",
-            "        [git, 'status', '--porcelain', '-z'],",
-            "        cwd=root,",
-            "        capture_output=True,",
-            "        text=True,",
-            "        check=False,",
-            "    )",
-            "    if result.returncode != 0:",
-            "        pytest.skip('not a git working tree, so there is nothing to compare with')",
-            "    changed = [",
-            "        entry[3:]",
-            "        for entry in result.stdout.split(chr(0))",
-            "        if entry and not entry.startswith('??')",
-            "    ]",
-            "    undeclared = sorted(set(changed) - set(PERMITTED))",
-            "    assert not undeclared, (",
-            "        'generation is additive (R3); these existing files changed and '",
-            "        'the manifest declares no edit to them: ' + repr(undeclared)",
-            "    )",
-        ],
-    )
 
 
 def reader_document(
