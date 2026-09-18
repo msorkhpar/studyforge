@@ -8,8 +8,9 @@ this machine has material for.
 only *where they went* is wanted — which is what the breadcrumb join needs.
 
 **Depends on.** `generate.declarations` for the corpus, `corpus.placement` for
-where a page goes and for the relative-href arithmetic, and `render.container`
-for the bytes. ⛔ It composes no path itself.
+where a page goes and for the relative-href arithmetic, `generate.navigation`
+for the rail that reaches the other containers, and `render.container` for the
+bytes. ⛔ It composes no path itself.
 
 ## ⛔ An unbuilt unit is listed WITHOUT a link, and that is a state not a fault
 
@@ -37,6 +38,7 @@ from pathlib import Path, PurePosixPath
 from studyforge.corpus.container import Container, Unit
 from studyforge.corpus.placement import ContainerLocations, PlacementError, relative_href
 from studyforge.generate.declarations import BuildError, Corpus, declared_location
+from studyforge.generate.navigation import rail
 from studyforge.generate.writing import Written, place
 from studyforge.render.container import Document, Item, PageError
 from studyforge.render.container import Placement as ContainerPlacement
@@ -50,13 +52,24 @@ def container_pages(corpus: Corpus, into: Path | str) -> Written:
     written: list[PurePosixPath] = []
     refused: list[PurePosixPath] = []
     replaced: list[PurePosixPath] = []
+    above = page_paths(corpus)
     for _, container in corpus.maps:
         at = _location(corpus, container)
         placement = ContainerPlacement(corpus=corpus.manifest.source, container=at, shared=shared)
         place(
             out,
             at.page,
-            render_container(_document(corpus, container, at), placement),
+            render_container(
+                _document(corpus, container, at),
+                placement,
+                rail=rail(
+                    corpus.contents,
+                    at.page,
+                    above,
+                    container=container.address.key,
+                    absent=corpus.absent,
+                ),
+            ),
             written,
             refused,
             replaced,

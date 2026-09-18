@@ -29,6 +29,7 @@ ONE_LINE = (
     "link-next.html",
     "link-previous.html",
     "outline.html",
+    "rail.html",
     "video.html",
     "video-link.html",
 )

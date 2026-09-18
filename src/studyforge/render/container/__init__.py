@@ -88,10 +88,12 @@ question, and `Item(href=None)` is how a caller says it already knows it is not.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
+
 from studyforge.render.container.document import KIND, compose
 from studyforge.render.container.entries import Document, Item
 from studyforge.render.container.placement import Placement
-from studyforge.render.page import ENCODING, Link, Links, PageError
+from studyforge.render.page import ENCODING, Link, Links, PageError, RailContainer, RailUnit
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.render.container.document` directly is a consumer this contract
@@ -105,12 +107,19 @@ __all__ = [
     "Links",
     "PageError",
     "Placement",
+    "RailContainer",
+    "RailUnit",
     "compose",
     "render",
 ]
 
 
-def render(document: Document, placement: Placement, links: Links | None = None) -> bytes:
+def render(
+    document: Document,
+    placement: Placement,
+    links: Links | None = None,
+    rail: Sequence[RailContainer] | None = None,
+) -> bytes:
     """Render one container page.
 
     ⭐ **Bytes, not text, and that is the contract.** What is compared against a
@@ -118,4 +127,4 @@ def render(document: Document, placement: Placement, links: Links | None = None)
     would leave the encoding to whoever wrote the file, and R10's guarantee
     would hold everywhere except the one step that matters.
     """
-    return compose(document, placement, links).encode(ENCODING)
+    return compose(document, placement, links, rail).encode(ENCODING)

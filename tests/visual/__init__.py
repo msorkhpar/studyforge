@@ -71,4 +71,9 @@ ACCEPTANCE = {
     "drives keyboard traversal": "test_keyboard",
     "runs a page with JavaScript disabled": "test_no_script",
     "opens over file:// and issues no network request (R8)": "test_offline",
+    #: ⭐ `W324`'s own clause, and it is a SIXTH row rather than a widening of
+    #: the keyboard one: *"a link to a unit in another container is present,
+    #: resolves, and lands on the right page"* is a claim about a built SITE,
+    #: and the four rows above are claims about one page at a time.
+    "follows the rail from one container to a unit in another (W324)": "test_rail",
 }

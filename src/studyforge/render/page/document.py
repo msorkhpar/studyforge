@@ -68,11 +68,13 @@ from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import anchors, navigation
 from studyforge.render.page import mark as mark_region
+from studyforge.render.page import rail as rail_region
 from studyforge.render.page import section as section_module
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
 from studyforge.render.page.navigation import Crumb, Links
+from studyforge.render.page.rail import RailContainer
 
 #: The skeleton every unit page is filled from.
 SKELETON = "page.html"
@@ -108,6 +110,7 @@ def compose(
     links: Links | None = None,
     trail: Sequence[Crumb] | None = None,
     narration: Narration = SILENT,
+    rail: Sequence[RailContainer] | None = None,
 ) -> str:
     """Return one unit page's exact text.
 
@@ -117,6 +120,11 @@ def compose(
     ⚠️ `trail` is optional for the reason `links` is: only something that has
     walked the corpus's hierarchy can build one, so a page renders without it
     exactly as it will once a build does — minus the region (`SF-15`).
+
+    ⚠️ `rail` is optional for exactly that reason too, and it is the region that
+    reaches the OTHER containers (`W324`): only a caller holding the whole
+    contents document can name them, and a corpus with one container renders
+    without it by design rather than by omission.
 
     ⭐ `narration` is optional for a third reason, and it is the one the player's
     gate below was designed around: a corpus whose clips have not been
@@ -137,6 +145,7 @@ def compose(
             script=escape_attribute(placement.script()),
             meta=_region(meta(document)),
             breadcrumb=_region(navigation.breadcrumb(trail)),
+            rail=_region(rail_region.render(rail)),
             outline=_region(anchors.outline(document)),
             body=body,
             pending=_region(pending(document)),

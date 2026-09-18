@@ -91,7 +91,7 @@ from studyforge.generate.declarations import (
 from studyforge.generate.footprint import Footprint, footprint_for
 from studyforge.generate.media import Reference, references, unit_media, write_media
 from studyforge.generate.narration import Renarrated, write_narration
-from studyforge.generate.navigation import ancestors, bar, index_href, trail
+from studyforge.generate.navigation import ancestors, bar, deepest, index_href, rail, trail
 from studyforge.generate.site import assets, root_index, write_site
 from studyforge.generate.units import unit_pages, write_pages
 from studyforge.generate.writing import Written
@@ -121,10 +121,12 @@ __all__ = [
     "containers",
     "declared_location",
     "declared_practices",
+    "deepest",
     "footprint_for",
     "for_output",
     "index_href",
     "page_paths",
+    "rail",
     "read_corpus",
     "read_manifest",
     "references",

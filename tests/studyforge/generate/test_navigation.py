@@ -8,11 +8,27 @@ join is checked against an independently written one rather than against itself.
 
 from __future__ import annotations
 
+import os
+import re
+from pathlib import Path, PurePosixPath
+
 import pytest
 
-from studyforge.generate import ancestors, bar, index_href, page_paths, read_corpus, trail
+from studyforge.contents import order
+from studyforge.generate import (
+    ancestors,
+    bar,
+    deepest,
+    index_href,
+    page_paths,
+    rail,
+    read_corpus,
+    trail,
+    unit_location,
+    write_site,
+)
 from studyforge.render.page import Crumb, Link
-from tests.studyforge.generate.corpora import BOTH, FIXTURES, with_a_unit_missing
+from tests.studyforge.generate.corpora import BOTH, FIXTURES, an_output, with_a_unit_missing
 
 
 def a_walk(name: str):
@@ -164,3 +180,145 @@ def test_the_trail_matches_the_stand_in_apart_from_the_hrefs_this_row_adds(tmp_p
         theirs = trail_for(corpus.contents, entry, to_index)
         assert [Crumb(c.level, c.title) for c in mine] == [Crumb(c.level, c.title) for c in theirs]
         assert all(crumb.href is None for crumb in theirs[1:])
+
+
+# --------------------------------------------------------------------------
+# ⭐ rail — the region that reaches the OTHER containers (`W324`)
+# --------------------------------------------------------------------------
+
+
+def a_rail(name: str, key: str):
+    """The rail one unit page of `name` carries, built the way `generate.units` builds it."""
+    corpus = read_corpus(FIXTURES / name)
+    source = next(unit for unit in corpus.units if unit.key == key)
+    at = unit_location(corpus, source)
+    return corpus, at, rail(
+        corpus.contents,
+        at.page,
+        page_paths(corpus),
+        container=source.container.address.key,
+        unit=source.key,
+        absent=corpus.absent,
+    )
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_the_containers_of_the_rail_are_exactly_the_containers_that_have_a_page(name):
+    """⛔ One row per container map and none above it — measured, not listed.
+
+    ⭐ `page_paths` is the build's own answer to *where does a container page
+    go*, so the rail's population and the pages a build writes cannot disagree.
+    """
+    corpus = read_corpus(FIXTURES / name)
+
+    assert {group.key for group in deepest(corpus.contents)} == set(page_paths(corpus))
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_the_rail_lists_every_declared_unit_of_every_container(name):
+    """⛔ Read off the contents document, so nothing re-derives what a corpus holds."""
+    corpus = read_corpus(FIXTURES / name)
+    walked = [entry.key for entry in order(corpus.contents)]
+    _, _, listed = a_rail(name, walked[0])
+
+    assert sum(len(container.units) for container in listed) == len(walked)
+
+
+def test_the_rail_marks_the_container_and_the_unit_the_reader_is_on():
+    corpus, _, listed = a_rail("depth2", "basics/01-getting-started/unit-01")
+
+    current = [container for container in listed if container.current]
+    assert [container.title for container in current] == ["Getting Started"]
+    assert [unit.title for unit in current[0].units if unit.current] == ["Your first class"]
+    assert not [
+        unit.title for container in listed if not container.current for unit in container.units
+        if unit.current
+    ], "a unit outside the reader's own container was marked current"
+
+
+def test_a_rail_asked_about_no_unit_marks_a_container_and_no_row_within_it():
+    """⭐ The container page's shape: the reader is in the course, on no lesson."""
+    corpus = read_corpus(FIXTURES / "depth2")
+    above = page_paths(corpus)
+    key = "advanced/02-going-further"
+    listed = rail(corpus.contents, above[key], above, container=key)
+
+    assert [container.title for container in listed if container.current] == ["Going Further"]
+    assert not [unit for container in listed for unit in container.units if unit.current]
+
+
+def test_every_href_the_rail_writes_lands_on_a_page_the_build_wrote(tmp_path):
+    """⛔ The crossing, end to end: the href is followed against the built tree."""
+    out = an_output(tmp_path)
+    write_site(FIXTURES / "depth2", out)
+    _, at, listed = a_rail("depth2", "basics/01-getting-started/unit-01")
+
+    for container in listed:
+        for href in [container.href, *(unit.href for unit in container.units)]:
+            if href is None:
+                continue
+            landed = (PurePosixPath(at.page).parent / href).as_posix()
+            assert (out / PurePosixPath(os.path.normpath(landed))).is_file(), href
+
+
+def test_a_built_unit_page_links_a_unit_in_another_container(tmp_path):
+    """⛔ **The row's founding measurement, inverted and asserted.**
+
+    Measured before this region: a unit page carried three `<nav>` elements and
+    not one href in any of them reached a page in another container, so the only
+    route from one course to another was back through the root index.
+    """
+    out = an_output(tmp_path)
+    write_site(FIXTURES / "depth2", out)
+    corpus = read_corpus(FIXTURES / "depth2")
+    source = next(unit for unit in corpus.units if unit.key == "basics/01-getting-started/unit-01")
+    page = out / str(unit_location(corpus, source).page)
+    body = page.read_text(encoding="utf-8")
+    region = re.search(r'<nav aria-label="Containers">.*?</nav>', body, re.S)
+
+    assert region, "the depth-2 corpus has three containers and its unit page carries no rail"
+    crossing = [
+        href
+        for href in re.findall(r'href="([^"]*)"', region.group(0))
+        if "advanced/" in href and href.endswith(".unit.html")
+    ]
+    assert crossing, region.group(0)
+    for href in crossing:
+        landed = os.path.normpath((page.parent / href).as_posix())
+        assert Path(landed).is_file(), href
+
+
+def test_a_one_container_corpus_gets_no_rail_region_on_its_pages(tmp_path):
+    """⛔ Clause 4, asserted on the artifact: a rail listing one course is noise."""
+    out = an_output(tmp_path)
+    write_site(FIXTURES / "depth1", out)
+    corpus = read_corpus(FIXTURES / "depth1")
+
+    assert len(deepest(corpus.contents)) == 1, "depth1 is the one-container fixture"
+    for page in sorted(out.rglob("*.html")):
+        assert 'aria-label="Containers"' not in page.read_text(encoding="utf-8"), page.name
+
+
+def test_a_unit_with_no_material_is_a_declared_absence_in_the_rail_too(tmp_path):
+    """⚠️ §7's third state: listed with no href, never pointed at a page nobody wrote."""
+    root = with_a_unit_missing(
+        tmp_path, "depth2", "archive/basics/01-getting-started/raw/java/unit-02"
+    )
+    corpus = read_corpus(root)
+    key = "basics/01-getting-started/unit-01"
+    source = next(unit for unit in corpus.units if unit.key == key)
+    at = unit_location(corpus, source)
+
+    listed = rail(
+        corpus.contents,
+        at.page,
+        page_paths(corpus),
+        container=source.container.address.key,
+        unit=key,
+        absent=corpus.absent,
+    )
+
+    absent = [
+        unit for container in listed for unit in container.units if unit.href is None
+    ]
+    assert [unit.title for unit in absent] == ["Fields and constructors"]

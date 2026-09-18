@@ -11,7 +11,8 @@ the bytes.
 decision this module does not take.
 
 **Depends on.** `generate.declarations` for the corpus, `generate.navigation`
-for the join, `generate.containers` for where a crumb points, `generate.writing`
+for the join — the bar, the trail and the rail across containers —
+`generate.containers` for where a crumb and a rail row point, `generate.writing`
 for R3, `generate.narration` for what each page plays, `unit.builder` for the
 document and `render.page` for the bytes. ⛔ It names no source (R1).
 
@@ -53,7 +54,7 @@ from studyforge.corpus.placement import relative_href
 from studyforge.generate.containers import page_paths
 from studyforge.generate.declarations import Corpus, read_corpus, unit_location
 from studyforge.generate.narration import narration_for, recorded
-from studyforge.generate.navigation import bar, index_href, trail
+from studyforge.generate.navigation import bar, index_href, rail, trail
 from studyforge.generate.writing import Written, place
 from studyforge.render.page import Placement, render
 from studyforge.unit.builder import build_unit
@@ -106,5 +107,13 @@ def unit_bodies(corpus: Corpus) -> Iterator[tuple[PurePosixPath, bytes]]:
                 {key: relative_href(at.page, page) for key, page in above.items()},
             ),
             narration_for(corpus, source, at, document, placement, state),
+            rail(
+                corpus.contents,
+                at.page,
+                above,
+                container=source.container.address.key,
+                unit=source.key,
+                absent=absent,
+            ),
         )
         yield at.page, body

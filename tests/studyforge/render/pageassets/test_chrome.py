@@ -78,6 +78,15 @@ REGIONS: dict[str, tuple[str, str]] = {
         "so it is here because the tree can AUTHOR it (Ruling 192, `W105`)",
     ),
     'nav[aria-label="Units"]': (CHROME_RULED, "region 5, a container's unit listing — `SF-27`"),
+    'nav[aria-label="Containers"]': (
+        CHROME_RULED,
+        "region 10, the rail that reaches the OTHER containers — `W324`. ⛔ A unit "
+        "page carried three navs and not one href in any of them left its own "
+        "container, so the only crossing was back through the root index. ⚠️ Laid "
+        "out as a card in the one column and not beside it, because every chrome "
+        "region on this site resolves the reading surface's column and a side rail "
+        "is a different page shape",
+    ),
     'nav[aria-label="Contents"]': (
         CHROME_RULED,
         "region 6, the root index's disclosure tree — `SF-14`",
@@ -146,6 +155,12 @@ SKELETON_SLOTS = {
     ),
     "player": "`SF-18`'s at M3 — the one DEFERRED row above",
     "nav": "region 3",
+    "rail": (
+        "region 10, `W324`'s rail across containers. ⭐ It arrived as a NEW SLOT, "
+        "which is the case this table's own comment said would show up here "
+        "immediately rather than waiting for a golden to emit it — and it did, for "
+        "the second time"
+    ),
 }
 
 #: Properties that tell a region apart from body text WITHOUT a colour. ⛔ M1's

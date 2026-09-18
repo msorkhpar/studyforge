@@ -7,8 +7,8 @@
    NOT here: they belong to the tasks that render them, and each adds its own
    part beside this one." ⛔ This is that part, for the regions a page already
    emits — the masthead, the in-page outline, the between-pages bar, the
-   practice panel, a container's unit listing, the root index's tree and a unit
-   page's trail. The
+   practice panel, a container's unit listing, the root index's tree, a unit
+   page's trail and the rail that reaches the other containers (W324). The
    narration player and the progress controls stay out, because their markup is
    not here yet and a rule for an element nobody emits is the same defect one
    layer along (SF-11's finding 3).
@@ -360,6 +360,96 @@ span[data-kind="level"] {
 span[data-kind="level"] {
   text-transform: lowercase;
   letter-spacing: 0.03em;
+}
+
+/* --- region 10: the rail across containers (W324) ---------------------- */
+
+/* ⛔ The region that reaches the OTHER containers, on every unit page and every
+   container page. ⭐ IT IS LAID OUT AS A CARD IN THE COLUMN AND NOT AS A SIDE
+   RAIL, and that is a decision rather than a shortfall: every chrome region on
+   this site resolves the SAME column as the reading surface, asserted live in
+   `tests/visual/test_site.py`, and a region parked beside the column is a
+   two-column page — a layout `--rail` and `--page-max` are defined for and
+   which nothing here has ever painted. ⚠️ Turning this into a sticky rail moves
+   that assertion, those two tokens and `body`'s one bound together; doing half
+   of it is the full-bleed-islands defect wearing a third face.
+
+   ⛔ NOT ONE CLASS AND NOT ONE COLOUR, as everywhere else in this part: the
+   region is reached by its `aria-label` and its two `data-*` hooks, and every
+   value is a `palette.css` token.
+
+   ⚠️ The current container and the current unit are told apart by WEIGHT as
+   well as by colour, because `aria-current` is the statement and this is the
+   reinforcement — the trail's rule one region along says the same. */
+
+nav[aria-label="Containers"] {
+  margin: 0 0 2rem;
+  padding: 0.9rem 1.15rem 1rem;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+nav[aria-label="Containers"] ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The units of one container are nested, so the depth carries the rule — the
+   root index's tree is drawn the same way and for the same reason. */
+nav[aria-label="Containers"] ol ol {
+  margin-left: 0.4rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--rule);
+}
+
+nav[aria-label="Containers"] summary {
+  padding: 0.35rem 0.2rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--fg);
+}
+
+nav[aria-label="Containers"] a {
+  display: block;
+  padding: 0.3rem 0.2rem;
+  text-decoration: none;
+  border-radius: 5px;
+}
+
+nav[aria-label="Containers"] a:hover {
+  background: var(--surface);
+  text-decoration: underline;
+}
+
+/* ⛔ The current container's mark reaches its OWN summary and never the rows
+   nested under it: `li[aria-current="true"]` encloses every unit of that
+   container, so an unscoped rule would print the whole open course in bold and
+   say "you are here" about eight rows at once. ⚠️ `--fg` rather than `--accent`,
+   as the trail's own current rule uses, so the contrast is the card's ordinary
+   text contrast and not a second ratio to keep in step. */
+nav[aria-label="Containers"] li[aria-current="true"] > details > summary,
+nav[aria-label="Containers"] li[aria-current="page"] {
+  font-weight: 700;
+  color: var(--fg);
+}
+
+/* ⛔ `data-readable="false"` is §7's third state — a unit this build has no page
+   for — and it must be legible as "listed, not openable" without colour: an
+   italic face and a leading mark. ⚠️ The mark is `content`, so it is decoration
+   a screen reader skips; the state itself is already in the attribute. */
+nav[aria-label="Containers"] li[data-readable="false"] {
+  padding: 0.3rem 0.2rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+nav[aria-label="Containers"] li[data-readable="false"]::before {
+  content: "\2014 ";
 }
 
 /* --- region 7: the read control, and the mark it sets ------------------ */
