@@ -75,9 +75,10 @@ to get a URL looks obviously fine and is measured wrong: on one real catalogue
 of 1,290 units, 157 of them — one in eight — are served at a slug their title
 does not produce. See [What an adapter must produce](archive.md).
 
-**4. You say where the output goes.** Under one generated root, or beside each
-source file it came from. It is a field in the manifest and nothing downstream
-cares which you chose. See [Placement](placement.md).
+**4. You say where the output goes.** Under one generated root, or in a
+`study/` directory beside each source file it came from. It is a field in the
+manifest and nothing downstream cares which you chose. See
+[Placement](placement.md), which draws every path each choice creates.
 
 **5. Personal data is refused, not scrubbed.** An absolute home path, an email,
 an account id — anything that reaches an archive document is a hard refusal
@@ -88,12 +89,21 @@ rewrite leaves nobody knowing the data was there.
 
 ## If something here is wrong
 
-**Every factual claim on these pages is checked against the shipped code by
-`tests/test_authoring_reference.py`** — the key lists, the vocabularies, the
-check names, the rule ids, the exit codes, and the two worked examples, which
-are validated rather than described. A claim that stops being true fails that
-test rather than misleading you.
+**The claims a machine can check are checked against the shipped code**, by
+`tests/test_authoring_reference.py` and `tests/test_authoring_geography.py` —
+the key lists, the vocabularies, the check names, the rule ids, the exit codes,
+the two worked examples, which are validated rather than described, and the two
+trees on [Placement](placement.md), which the placement code draws rather than
+this reference describing them. One of those that stops being true fails a test
+rather than misleading you, and no page here may name an instrument that does
+not read it.
 
-**What that test cannot check is whether the explanations are any good.** If
-you followed this and got stuck, the gap is a defect in this reference and is
-worth reporting as one.
+**The prose around them is not checked, and this page used to say it was.** The
+reasons, the figures quoted inside a sentence, the advice about what to do
+first — those are read by people. The sentence you are reading replaced one
+claiming *every factual claim on these pages* was checked, which was not true
+of the largest thing on these pages a reader acts on: the trees above were
+wrong about where a build puts a page, and nothing read them.
+
+**So if you followed this and got stuck, or found a sentence that is not
+true**, the gap is a defect in this reference and is worth reporting as one.
