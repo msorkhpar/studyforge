@@ -427,6 +427,98 @@ calls every public callable with a poisoned home path and fails the build on
 any refusal that echoes it — and it found all seventeen at once, in a package
 whose author had just written the rule down in its own docstring.
 
+### 21. The curriculum record's end is a **label**, and reading past it is silent
+
+⛔ **Adopted 2026-09-18 by `QA-04`, from the first corpus's clean conversion.**
+
+**Measured (ISO):** the record the adapter reads for reading order, titles,
+ordinals and grouping is **two documents in one file** — the curriculum for 38
+units, and below it an outline of a document the manifest declares
+`not_material`. ⛔ **The only thing that marks the boundary is a label.**
+
+⭐ **What makes it a trap rather than a parsing detail:** the **361 heading
+lines** below that label carry **no link into the material**. ⛔ **So a reader
+that ran on instead of stopping would fold all 361 into the last container,
+read ZERO extra units out of them, and report success** — the right unit count,
+the right three groups, `validate` clean, the adapter's own audit clean.
+
+⭐ **What an integrator needs to know:** ⛔ **the count is not the check.** Every
+instrument the framework offers agrees on 38 whether or not the reader stopped
+where the record stops, *because the failure adds no unit*. ⭐ **So the boundary
+is asserted DIRECTLY and in both directions** — the refusal fires the moment the
+anchor is gone, and does not fire on the record as it stands. ⚠️ **A refusal
+nobody has watched fire is a refusal nobody knows still works.**
+
+⚠️ **Why this is an entry and not a hole in a skill** (R19): ⛔ **the anchor is
+source-specific** — a label here, a horizontal rule in the next corpus, a
+front-matter key in the one after — ⭐ **so no generator can write this test, and
+filing it here hides nothing.** ⛔ **What a skill CAN generate is the
+OBLIGATION** to write the run's findings down, and that half is a hole, filed
+separately.
+
+⚠️ **Relation to entry 7.** Entry 7 is the same region seen from the
+*exclusion* side — *what do I drop*. ⭐ **This is the reader's side — *where do I
+stop*** — ⛔ **and unlike a bad exclusion, stopping in the wrong place raises
+nothing anywhere.**
+
+### 22. A framework wave's reach into a built corpus is decided by the **layer**, not the size — regenerate and diff
+
+⛔ **Adopted 2026-09-18 by `QA-04`, from the first corpus's regeneration.**
+
+⭐ **R19 means a fix reaches a corpus only by regeneration, so a planner has to
+price one.** ⛔ **The price is not proportional to how much framework landed.**
+
+**Measured (ISO):** a pin advanced across **nine closed rows**, three of which
+changed what a reader sees on every page. ⭐ **What the regeneration moved, in
+its two steps:**
+
+| step | what moved |
+|---|---|
+| regenerate the consuming half | ⭐ **8 files, every one of them the framework's own generated half** — the install record, the pin, three skill stubs, the reader's document, the manifest, the generated non-destructive check. ⛔ **Zero archive documents. Zero pages. Zero clips** |
+| rebuild the site on the advanced pin | ⭐ **1 file — the site stylesheet**, which is where the three rows a reader sees landed. ⛔ **The archive re-ingested BYTE FOR BYTE at its recorded date, and the build replaced every page it declares WITH THE SAME BYTES** |
+
+⭐ **What an integrator needs to know:** ⛔ **a regeneration is a DIFF, and the
+diff is the deliverable, not the site.** ⚠️ **Predict which artifacts should move
+BEFORE running it**, from which layer each row landed in — renderer, template,
+stylesheet, scaffold, generated document — ⛔ **and treat anything else that
+moves as unexplained and STOP.** ⭐ **A byte that moves for a reason nobody
+predicted is the whole signal a regeneration gives**, and a rebuild that is
+simply declared green throws it away.
+
+⚠️ **The corollary that costs real money:** ⛔ **re-synthesis is the expensive
+step and a regeneration does not imply it.** Narration is content-addressed, so
+a regeneration that does not move the speakable text writes **no clip at all**
+— ⭐ **but a row that DOES move that text re-narrates the whole corpus.** ⛔ **So
+that is the one change class worth looking for by name before advancing a pin**,
+and it is not visible from the row count.
+
+### 23. Size narration against a **measured** per-unit ratio — the pre-synthesis estimate is the weaker number
+
+⛔ **Adopted 2026-09-18 by `QA-04`, from the first corpus narrated end to end.**
+
+**Measured (ISO), counted on disk rather than taken from a report:** **38 of 38**
+units narrated → **1,364 clips**, **110,783,344 bytes**, at `mp3`, one voice,
+`chunk_chars` 1800. ⭐ **That is ≈36 clips and ≈2.8 MiB per unit of prose.**
+⚠️ **A second run with nothing changed wrote 0 clips**, so the cost is paid once
+per text, not once per build.
+
+⚠️ **This catalogue's own entry 16 records 21–83 MiB for the same corpus**, taken
+2026-09-10 — ⛔ **before a single clip existed.** ⭐ **The measurement lands above
+the top of that range, and this entry states both rather than quietly replacing
+one:** ⚠️ **why they disagree is NOT established here, and asserting a cause
+would be inventing one.**
+
+⭐ **Why this is a scoping fact and not something a skill already produces:**
+⛔ **`studyforge plan` prints a footprint for a corpus that already HAS a
+manifest.** ⚠️ **A planner deciding whether to commit to a corpus at all has no
+manifest yet** — ⭐ **what they have is a table of contents and a unit count, and
+what they need is a number to multiply it by.** ⛔ **That number is ≈2.8 MiB per
+unit, and it is a FLOOR on the disk a corpus costs, never a ceiling.**
+
+⛔ **The direction matters, and it is why the weaker number is the dangerous
+one:** the media limit is a **refusal** path. ⭐ **Under-sizing does not degrade
+the product — it stops the build.**
+
 ---
 
 ## ⛔ Decisions on contributions **not** adopted — 2026-09-10, check 6's second run, **amended by the third**
@@ -460,6 +552,39 @@ would be the defect this catalogue's entry 4 describes.**
 | ⭐ *The `F8` donation — a plausible short parse in real material* | ✅ **ADOPTED, and it is a fixture, not an entry** | ⛔ **A contents document listing 36 of 38 units as list items and 2 as headings: a parser written against the list form reads 36, emits 36, and raises nothing.** ⭐ **Carried as `W32` on the board with an owner and a trigger** — ⚠️ **a catalogue entry would have been the wrong destination for something a fixture can assert** |
 
 ---
+
+## ⛔ The `QA-04` sort — 2026-09-18, every finding the first conversion produced, and where each one went
+
+⭐ **`M8`'s deliverable is the findings log, and the log's hard part is the
+SORT.** ⛔ **A sort that puts everything in this catalogue has not been done;
+neither has one that puts nothing here.** ⚠️ **So every finding the conversion
+produced is dispositioned below against the *belongs / does not* table at the
+top of this file, including — especially — the refusals.**
+
+⛔ **THE RULE THAT DECIDES MOST OF THEM:** ⭐ ***anything a skill could generate is
+a hole in the skill (R19), and filing it here HIDES it.*** ⚠️ **Most of what a
+first conversion produces is exactly that**, which is why **13 of the 16 items
+below are refused** and the three that are admitted are the ones no generator
+could ever have written.
+
+| what the conversion found | verdict | why, against the admission rule |
+|---|---|---|
+| the generated non-destructive check reads working-tree state — RED on a correct re-build, satisfied by committing | ⛔ **REFUSED — hole, filed and CLOSED** (`W331`) | ⭐ **The check is GENERATED.** Filing it here would publish, as a durable limit, a defect the framework had already removed — ⛔ the one thing this catalogue must not do (its own `F18` precedent) |
+| a re-survey of an onboarded corpus flips four recorded answers and cannot run unattended | ⛔ **REFUSED — hole, filed** (`W341`) | ⭐ **Reconnaissance reading the manifest's own declarations is a SKILL's job**, so this is a hole with a row, not a truth about material |
+| one hand-added file under a declared `not_material` glob presents a corpus complete at the reading floor as unfinished | ⛔ **REFUSED — same hole, same row** (`W341`) | ⚠️ **Tempting, because it reads like a trap real material sets.** ⛔ **It is not: the framework can tell a person's file from its own and does not** |
+| a superseded GENERATED glob is promoted to a person's and nothing will ever drop it | ⛔ **REFUSED — hole, filed** (`W342`) | ⭐ **The manifest's own `content` handling decides this**; a corpus meets it only because the framework cannot recognise its own output across a version |
+| the procedure pins a commit and builds against a moving working tree; the pin check asks whether the checkout HOLDS the pin, not whether it is AT it | ⛔ **REFUSED — hole, filed** (`W343`) | ⭐ **The generated pin check is the framework's.** ⚠️ **The durable half — *a build reads the source its pin names*** — ⛔ **is a RULING the row must land, not an entry** |
+| `R8`'s floor is evidenced INDIRECTLY, because the only instrument that opens a `file://` URL lives where a corpus cannot reach it | ⛔ **REFUSED — hole, filed** (`W344`) | ⚠️ **The finding is true of the tool the office had and false of the framework's capability.** ⭐ **A catalogue entry would teach the next source to accept the weaker claim** |
+| the spec's corpus table still names this corpus's graders as a file the user ruled out | ⛔ **REFUSED — hole, filed** (`W339`) | ⭐ **A wrong line in the spec is a defect against a document**, and this catalogue is not where a spec is corrected |
+| a corpus's ADDRESS MODEL — where its curriculum lives, and its filename→container mapping — lives in adapter code where the manifest cannot show it | ⛔ **REFUSED — hole, filed** (`W340`) | ⚠️ **The sharpest refusal of the set, because the mapping IS this corpus's headline contribution to the design.** ⛔ **And that is precisely why it may not be filed here: *a constant a second corpus would have to retype* is R19's own definition of a hole** |
+| a fence with no info string; the label for un-highlighted prose; raw HTML; which title wins when the index and the file disagree | ⛔ **REFUSED — RULINGS** | ⭐ **The table at the top of this file excludes a ruling in its own words** — it belongs in the spec, an epic or a convention. ⚠️ **That they are ruled in a board archive and nowhere a next source reads is a FINDING, not an entry** |
+| a corpus that declares no graded practice is complete at the reading floor, not short | ⛔ **REFUSED — already carried** (entry 16) | ⛔ **A duplicate entry is the defect this catalogue exists to stop** |
+| the scaffold writes Python packages into a corpus and generates no ignore rule for their bytecode, which carries an absolute home path | ⛔ **REFUSED — hole, and NOT yet filed** | ⚠️ **Measured: the host repository's ignore file is written for the host's own language and knows nothing about Python.** ⭐ **Entry 15 ALREADY carries the remedy** — *an ignore rule goes inside the directory it is about, verified both ways* — ⛔ **so a second entry would hide that the skill does not apply its own principle to what it generates** |
+| narration is additive to the pages, asserted by stripping it; a second narrate run wrote 0 clips; a second run of the procedure leaves a valid corpus | ⛔ **REFUSED — not findings** | ⭐ **The framework working as designed.** ⚠️ **Recorded as a negative result in the log, which is what a negative result is for** |
+| the curriculum record is two documents in one file and only a label marks the boundary | ✅ **ADOPTED — entry 21** | ⭐ **The anchor is SOURCE-SPECIFIC, so no generator can write this test** — ⛔ **filing it hides nothing, and the next source meets the same class of boundary in a different spelling** |
+| what a regeneration across a whole framework wave actually moves | ✅ **ADOPTED — entry 22** | ⭐ **A scoping fact a planner needs before committing to a corpus**, and the framework being *right* does not remove it: it is the cost of R19, measured |
+| narration's real per-unit footprint, against the estimate this file already carried | ✅ **ADOPTED — entry 23** | ⭐ **`plan` answers this only once a manifest exists; a planner has no manifest yet.** ⛔ **And the media limit is a REFUSAL path, so the weaker number is the dangerous one** |
+| the adapter skill obliges no findings log, so `M8`'s own deliverable was produced by hand | ⛔ **REFUSED — hole, and NOT yet filed** | ⭐ **The conversion named this itself, in the docstring of the one test it hand-wrote.** ⛔ **A skill that could generate the obligation and does not is a hole by R19's plain reading** |
 
 ## Owed here, not yet written
 
