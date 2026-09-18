@@ -27568,3 +27568,32 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 - `PO-109/2` ⛔ **Round 108 says the catalogue *carries 22 entries*. MEASURED at `bb8730b`: 20.** ⚠️ **An uncounted figure, in the round whose subject was the catalogue.**
 - `PO-109/3` ⛔ **`QA-04` was dispatched and NO ROW OF THE IN-FLIGHT TABLE NAMED IT** — ⭐ **`corroborate`'s unnamed arm fired on `task/QA-04-the-findings-log` at `2402617`.** ⚠️ **`PO-105/5` again, on an epic task this time.**
 - `PO-109/4` ⛔ **The *Next rows* table carried closed rows — four of them at order 1.** ⭐ **Pruned here: a cell keyed by a row id whose row is closed is removed.**
+
+## PO round 110
+
+⛔ **Only what is MEASURED is written here.** ⭐ **The user rules the question that held `M5`, `M5` OPENS, four carriers are named BEFORE they run, and four rows the register never closed are found.**
+
+### ⭐ THE USER'S RULING — PINNED PULLS ARE ALLOWED (2026-09-18)
+
+⛔ **Asked by this register at round 109, answered by the user: *"Allow pinned pulls."*** ⭐ **An office may fetch official images and distributions from their OFFICIAL registries, pinned by digest (an image) or by checksum (an archive)** — ⛔ **no credentials, no personal data, a placeholder User-Agent.** ⚠️ **It extends to nothing else: every other network action off this host stays forbidden, and a pull that is not pinned, or comes from a mirror, is outside it.**
+
+### ⭐ `M5` — IT RUNS CODE — OPENS
+
+⭐ **Step 5.1 is `TC-00` and `SF-20`; `SF-20` depends on `TC-00`, so `TC-00` is dispatched ALONE and first.** ⛔ **`TC-00`'s runtime set is DECLARED by a corpus's manifest (R1), which is a contract change at spec §4 that its taker PROPOSES BEFORE CODE (§9)** — ⭐ **so the office's first hand-back is the proposal, and the register rules on it before an image is built.**
+
+### ⭐ DISPATCHED — AND NAMED HERE BEFORE THEY RUN (`PO-109/3`)
+
+| carrier | row | why now |
+|---|---|---|
+| `wt/dev1` | `TC-00` | ⭐ **`M5`'s only unblocked task** |
+| `wt/dev2` | `W345` | ⛔ **an R7 exposure the skills generate into every corpus** |
+| `wt/dev3` | `W346` | ⭐ **`QA-05` and `M9` are the next conversions, and each would hand-write its log again** |
+| `wt/dev4` | `W339` + `W347` | ⛔ **both edit the spec — ONE owner** |
+
+⭐ **Surfaces read against each other before dispatch:** `skills/onboarding/artifacts.py` (`W345`), the skills' `SKILL.md` documents (`W346`), the spec (`W339`, `W347`), and a new component plus `workspace.json` (`TC-00`) — ⛔ **no two carriers share a file.**
+
+### ⛔ `PO-110/1` — FOUR ROWS WERE CARRIED AND MERGED AND THE REGISTER NEVER CLOSED THEM
+
+⭐ **MEASURED at `5e2c425`, over EVERY open row on the board: four carry a landed handoff on this branch** — `W26`, `W198`, `W320`, `W321` — ⛔ **and each carrier branch is an ancestor of the release tip.** ⚠️ **`W321` sat at ORDER 1 of *Next rows* and would have been re-dispatched: `PO-105/6` again, and the cell was the only thing wrong.**
+
+⛔ **They are NOT closed here.** ⭐ **A close is verified against each row's own *what settles it*, never inferred from a handoff's existence (Ruling 214)** — ⚠️ **and `W26` is the ambiguous id the archive disambiguates, with a handoff predating its row's re-argument at round 73.** ⭐ **They are taken out of *Next rows* now so no office is sent at them, and each is closed or re-opened by name in the next round.**
