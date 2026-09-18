@@ -1,5 +1,5 @@
 {
-  "corpus_api": 2,
+  "corpus_api": 4,
   "source": "runnable-demo",
   "title": "Runnable Demo",
   "levels": [
@@ -9,6 +9,9 @@
     "python"
   ],
   "exercises": true,
+  "runtimes": [
+    "python"
+  ],
   "placement": "sibling",
   "content": {
     "include": [
