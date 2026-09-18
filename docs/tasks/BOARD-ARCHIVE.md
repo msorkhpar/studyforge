@@ -27286,3 +27286,133 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 | `W331` | ⛔ the GENERATED non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it |
 | `W332` | ⛔ the reader's document states live counts that no verb refreshes |
 
+
+## PO round 106
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Four rows close, five are minted from the wave's structural findings, and the first corpus is regenerated onto a framework ten rows newer than the one it was built from.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+⛔ **Each was verified against real behaviour** (Ruling 214) — ⭐ **two of them by planting the defect and reading both trees, one in a real browser, one against the real corpus.**
+
+### W322 — `Layout` computes a unit's overlay address in one place and three test sites spell it by hand
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W322.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W198/4` and `W198/5`, with `W298/2` beside them: `Layout` now computes a unit's overlay address in one place, and three test sites still SPELL it by hand — so the contract has one producer in `src/` and three in `tests/`.** ⭐ **RECEIVED from `W198`'s office, which removed the composition from `src/` and named the test-side copies rather than widening its own row. RE-MEASURED (Ruling 214) by this register at `7015b47`:**
+
+| site | what it respells |
+|---|---|
+| `tests/studyforge/validate/source/test_membership.py` | asks `Layout` for the directory and composes `"content.json"` itself — ⭐ **the remedy is one call, `layout.content(ADDRESS, 1)`** |
+| `tests/fixture_checks/addresses.py` | an `rglob` over `units/unit-*/content.json` respells the segment, the unit-name pattern AND the filename — ⚠️ **harder: a glob wants a pattern, so the remedy derives the pattern from the constants** |
+| `tests/fixture_checks/media.py` | `W298/2`'s unit-directory half of the same composition |
+
+⚠️ **Why this is a row and not tidiness:** the whole product of `W198`'s half was that a build cannot invent the address. ⛔ **A test that invents it is a build that invents it, one register over** — it passes while the constant is what the test happens to say, and goes silently wrong the day the constant moves.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **No test composes an archive path from a literal** — each asks the type that owns the geography, or derives its glob pattern from that type's constants.
+2. ⛔ **Asserted both ways (R12):** a planted change to `CONTENT_FILENAME` or to the units directory reaches every one of these sites, RED by name, rather than leaving them green against a stale spelling.
+
+⭐ **Surface:** `tests/studyforge/validate/source/test_membership.py`, `tests/fixture_checks/addresses.py`, `tests/fixture_checks/media.py`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-104)
+
+#### ⭐ CLOSED — PO ROUND 106
+
+⭐ **Merged at `3ff622d`. ⭐ VERIFIED BY THIS REGISTER BY PLANTING, BOTH WAYS: the constant naming every unit's document moved on the RELEASE branch left the fixture checks at 33 passed — nothing red — and the same plant on the carrier went RED BY NAME. ⛔ The walk is also asserted to FIND the overlay it ships, so a moved constant can no longer leave it walking an empty tree in silence.**
+
+### W331 — The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W331.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **The onboarding skill GENERATES `tests/test_non_destructive.py` into every corpus it scaffolds**, and that check reads `git status --porcelain` and treats every entry that is not `??` as a changed existing file. ⭐ **MEASURED twice on the clean rebuild, from two different sides:**
+
+1. ⛔ **The modification side, and it is the worse half.** After the narration pass the check went **RED naming 38 files** — the unit pages `studyforge plan` itself declares as *the build's own* and that `studyforge build` had just replaced. ⭐ **The tree behaving exactly correctly is the tree that fails.** ⚠️ **A re-build of a corpus whose pages are committed ALWAYS produces `M` entries, so this is red on every narration pass the framework supports.**
+2. ⛔ **The staging side.** A newly generated file that has been `git add`ed reports as `A `, not `??`, so staging a run's output turned the same check RED naming 103 files, **none of which was an edit to anything.** ⭐ **Reproduced minimally: staging one file fails it, unstaged passes, after the commit passes again.**
+
+⭐ **It goes green the moment the work is committed — which is the proof that it measures WORKING-TREE STATE and not R3.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The check answers R3's actual question: did generation move, rename or rewrite a file that is not its own declared output?** ⭐ **The corpus already knows what the build's own output is — `plan` declares it and the install record names the generated half.** ⛔ **Do not re-derive that.**
+2. ⛔ **Both status letters are read.** An `A` is a new file; an `M` on a declared output is the build replacing its own work; ⭐ **an `M` on anything else is the defect the check exists to catch.**
+3. ⛔ **The check is NOT satisfiable by committing.** ⚠️ **Its verdict may not depend on whether the work happens to be committed yet.**
+4. ⛔ **Asserted both ways (R12):** a real rewrite of a source file is caught, and a clean re-build is not.
+5. ⛔ **R19 — the check is GENERATED, so the fix is to the GENERATOR**, never to a corpus's copy.
+
+⭐ **Surface:** `src/studyforge/skills/` (the onboarding generator) and its tests. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 106
+
+⭐ **Merged at `36fbfa2`, after two refusals both recorded in its body. ⭐ VERIFIED INDEPENDENTLY: `git status --porcelain -z` emits a rename as TWO NUL fields, so the old parser reported a path that never existed and never named the file that MOVED — on the first verb R3 names.**
+
+### W332 — The reader's document states live counts that no verb refreshes
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W332.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **The reader's document states live counts that no verb refreshes.** ⭐ **A count is a fact, and a fact written into a document that nothing regenerates can only be kept freshly wrong** — the same property this repository's own `CLAUDE.md` was rewritten over (Ruling 161).
+
+⚠️ **Why it matters more in a CORPUS than it did here:** the corpus's reader is not an agent who can be told to check the board. ⛔ **They have one document, and if it says how many units there are, that number is the product's answer.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A count in a generated document is COMPUTED at generation, or it is not stated.** ⭐ **One producer** (Ruling 330).
+2. ⛔ **Asserted both ways (R12):** a change to the corpus's shape moves the number, and a plant that lets a stale number survive a regeneration is caught by name.
+3. ⛔ **R19 — this is the generator's defect**, and no corpus's copy is hand-edited to fix it.
+
+⭐ **Surface:** the generator of the reader's document, and its tests. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 106
+
+⭐ **Merged at `aa4e256`. ⭐ VERIFIED AGAINST THE REAL CORPUS: the command the document now names reports `narrated: 38 of 38` where the frozen document said 0 of 38. ⛔ And the register CONFIRMED the office's decisive reason — the reader's document is in NONE of the plan's creations and the plan declares zero edits, so refreshing it would have turned every corpus's own R3 check RED on an ordinary narration.**
+
+### W333 — The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W333.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⛔ **`W328/7`. `W328` made the TWO-COLUMN page flush left; the ONE-COLUMN page was left a centred constant.** ⭐ **So on a wide screen a reader crossing from the index to a unit sees the whole page jump: the index centred, the unit hard against the left edge.**
+
+⚠️ **Why it is a row and not tidiness:** ⛔ **the two shapes are the SAME SITE, and a reader does not know that one of them is *the page with a rail*.** ⭐ **What they see is a layout that moves when they click.**
+
+⭐ **MEASURED by this register at `74b20c2`, on the framework's own fixture:** with the rail present the body is flush left and its ceiling is the palette's page maximum; without one it keeps the older centred rule. ⛔ **Neither is wrong on its own; together they disagree.**
+
+⚠️ **NOBODY HAS RULED WHICH WAY IT GOES, and that is the point of minting it rather than choosing in a diff.** ⭐ **Two shapes are open:** the one-column page becomes flush left too, or the rail page re-centres within a wider bound. ⛔ **The first follows the user's stated requirement — *"go all the way to the left side"* — and the second contradicts it, so the first is the presumption and the row must say so if it departs from it.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A reader crossing between a page WITH a rail and a page WITHOUT one sees no jump in where the content starts** — ⭐ **asserted as a COMPARISON between the two pages at one viewport, never against a typed number.**
+2. ⛔ **Asserted at the wide AND the narrow width** (R12) — ⚠️ **below the threshold there is only one shape, and that must stay true.**
+3. ⛔ **`W328`'s and `W326`'s clauses are RE-TAKEN, not assumed** (Ruling 214).
+4. ⛔ **No token is minted unless it is needed**, and the bound is stated with what it was chosen against.
+
+⭐ **Surface:** `src/studyforge/render/assets/`. ⭐ **Jumps nobody.**
+
+[the mint](#po-round-105)
+
+#### ⭐ CLOSED — PO ROUND 106
+
+⭐ **Merged at `e6d79b3`. ⭐ VERIFIED BY THIS REGISTER IN A REAL BROWSER: the index and a unit page both start at 0 at 720, 1280, 1920 and 2560. The index read 220, 540 and 860 at the wide three before this row.**
+
+### ⭐ MINTS — `W334`–`W338`, and every one is a DEFECT IN AN INSTRUMENT
+
+⚠️ **This round mints nothing about the product and five things about how the product is MEASURED**, which is what a wave of this size leaves behind.
+
+| row | what it is |
+|---|---|
+| `W334` | ⛔ **R11 bounds a FILE and the instrument reads PYTHON.** ⭐ **MEASURED: no `.css`, `.js` or `.html` file is measured against any ceiling, and `chrome.css` is 748 lines against a 400 bound** — ⚠️ **nearly double, never named, and three rows landed in it this wave.** ⛔ **The row is not *split the stylesheet*; it is that R11 means two different things depending on who reads it** |
+| `W335` | ⛔ **The visual harness renders container pages WITHOUT the rail the build gives every one of them.** ⭐ **MEASURED on both sides by this register.** ⚠️ **`W326` existed because the fixtures were too SMALL; this is the same failure one step on — a fixture of the WRONG SHAPE, whose green says nothing about the product** |
+| `W336` | ⛔ **The walkthrough DISCARDS the exit code of the step the skill commands.** ⭐ **That is WHY two shipped defects survived a green suite — a generated check RED on every correct re-build, and a procedure that left an INVALID corpus.** ⚠️ **Those rows fixed what the silence hid; this one fixes the silence** |
+| `W337` | ⛔ **A FOURTH addressing site composes paths and WALKS FIRST**, so it decides what the checkers ever see — ⭐ **and a moved constant errors out of a path computation rather than naming what moved** |
+| `W338` | ⛔ **No committed fixture has a container big enough to exhibit a height-proportional defect**, so TWO rows in one wave each built their own with unshared builders. ⚠️ **This is the ROOT CAUSE of the regression this register certified in `PO-105/4`** — ⭐ **the misreading was mine; the reason no instrument caught it is here** |
+
+### ⛔ THE WAVE'S OWN SHAPE, RECORDED AS A NUMBER RATHER THAN A FEELING
+
+⭐ **Ten rows merged. Delivery did NOT move: 65 of 100 before and after.** ⛔ **That is honest rather than a stall — every row was a DEFECT FIX, and the capability count measures capability.** ⚠️ **Defect repair is never reported as delivery progress.**
+
+⭐ **Five of the ten came from a USER's own words**, and one from a user's QUESTION — *"Why did the skills missed it?"* — ⛔ **whose answer was that the skills named no narration component at all.**
+

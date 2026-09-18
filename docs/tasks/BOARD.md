@@ -60,7 +60,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W331` | Developer 3 | `fix/W331-the-non-destructive-check-reads-r3` @ `wt/dev3` | 1 @ `d8694a5` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -469,7 +468,7 @@ else.**
 | W319 | `Inventory`'s `relative_to` sites carry the two-path message `W220` removed from the refusal one level in | framework agent | `todo` — `W220/1` | [`rows/W319.md`](rows/W319.md) |
 | W320 | `UNUSABLE` lives in one verb's `cli` module, so importing the command still loads that verb | framework agent | `todo` — `W293/3` | [`rows/W320.md`](rows/W320.md) |
 | W321 | The generated documents address the framework relative to the corpus root while the pin asks git, so a linked worktree's documents point elsewhere | framework agent | `todo` — `INT-17/2` | [`rows/W321.md`](rows/W321.md) |
-| W322 | `Layout` computes a unit's overlay address in one place and three test sites spell it by hand | framework agent | `todo` — `W198/4`, `W198/5` | [`rows/W322.md`](rows/W322.md) |
+| W322 | `Layout` computes a unit's overlay address in one place and three test sites spell it by hand | framework agent | ✅ done — `3ff622d` | [`rows/W322.md`](rows/W322.md) |
 | W323 | Generated pages and audio are written loose beside their sources, so a corpus root holds 34 generated entries | framework agent | ✅ done — `4650f5d` | [`rows/W323.md`](rows/W323.md) |
 | W324 | A reader on a unit page has no path to any other container; crossing a course means a trip through the index | framework agent | ✅ done — `9c74bba` | [`rows/W324.md`](rows/W324.md) |
 | W325 | The containers navigation is a card stacked in the reading column; the user asked for a LEFT RAIL | framework agent | ✅ done — `7027ee6` | [`rows/W325.md`](rows/W325.md) |
@@ -478,9 +477,14 @@ else.**
 | W328 | The rail floats in from the viewport edge and scrolls away, and the reading column is a constant rather than a function of the page | framework agent | ✅ done — `74b20c2` | [`rows/W328.md`](rows/W328.md) |
 | W329 | The documented procedure cannot be run twice: a re-run reads the framework's own generated half as the corpus's material | framework agent | ✅ done — `05b7f70` | [`rows/W329.md`](rows/W329.md) |
 | W330 | The authoring reference's placement trees are retyped and stale, and the page claiming they are checked is wrong | framework agent | ✅ done — `ad2bbfa` | [`rows/W330.md`](rows/W330.md) |
-| W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | `todo` — clean run | [`rows/W331.md`](rows/W331.md) |
-| W332 | The reader's document states live counts that no verb refreshes | framework agent | `todo` — clean run | [`rows/W332.md`](rows/W332.md) |
-| W333 | The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout | framework agent | `todo` — `W328/7` | [`rows/W333.md`](rows/W333.md) |
+| W331 | The generated non-destructive check reads working-tree state, so a correct re-build fails it and a commit satisfies it | framework agent | ✅ done — `36fbfa2` | [`rows/W331.md`](rows/W331.md) |
+| W332 | The reader's document states live counts that no verb refreshes | framework agent | ✅ done — `aa4e256` | [`rows/W332.md`](rows/W332.md) |
+| W333 | The one-column page is a centred constant while the page with a rail is flush left, so crossing from the index to a unit moves the whole layout | framework agent | ✅ done — `e6d79b3` | [`rows/W333.md`](rows/W333.md) |
+| W334 | R11 bounds a FILE and the instrument measures PYTHON, so no stylesheet or script is measured at all — and `chrome.css` is 748 lines against a 400 bound | framework agent | `todo` — `W333/6` | [`rows/W334.md`](rows/W334.md) |
+| W335 | The visual harness renders container pages without the rail the build gives them, so four modules judge a shape the product does not emit | framework agent | `todo` — `W333/2` | [`rows/W335.md`](rows/W335.md) |
+| W336 | The walkthrough discards the exit code of the step the skill commands, which is why two shipped defects survived a green suite | framework agent | `todo` — `W331/1` + `W329/4` | [`rows/W336.md`](rows/W336.md) |
+| W337 | A fourth site composes archive addresses and WALKS FIRST, so a moved constant errors instead of naming what moved | framework agent | `todo` — `W322/1` | [`rows/W337.md`](rows/W337.md) |
+| W338 | No committed fixture has a container big enough to exhibit a height-proportional defect, so two rows each built their own | framework agent | `todo` — `W326/2` + `W328/4` | [`rows/W338.md`](rows/W338.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
