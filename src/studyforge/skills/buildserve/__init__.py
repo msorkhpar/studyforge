@@ -18,7 +18,8 @@ which is the procedure:
 package's `verbs` module — the ONE seam that spells a verb's arguments, so a verb
 whose interface changes (`W230`) is one edit there — `cli.plan.plan_for` for
 whether a narration record exists, `cli.narrate.report` for the no-service
-sentence, `corpus.manifest` for whether exercises are declared, and
+sentence, `cli.narrate.cli` for the loopback address the narration component
+publishes on, `corpus.manifest` for whether exercises are declared, and
 `validate.report` for the exit codes. ⛔ Not on `generate/`, `serve/` or
 `narrate/`, and not on any adapter (R1).
 
@@ -32,22 +33,33 @@ rather than patched here (E11 § SK-03).
 
 ## ⛔ A partial state is a known state with a stated consequence, never an error
 
-No narration record, no narration service, no exercises and no toolchain are
-each reported in `states` and never change the exit code (R6, R8). ⭐ A corpus
-with no graders is complete at the reading floor, not short (C5).
+Narration not run, nothing to narrate, no narration service, no exercises and no
+toolchain are each reported in `states` and never change the exit code (R6, R8).
+⭐ A corpus with no graders is complete at the reading floor, not short (C5).
+
+## ⛔ SILENT IS NOT ONE STATE, AND *NOT FINISHED* IS SAID OUT LOUD
+
+⚠️ A corpus that **has not** narrated and one that **cannot** are different
+answers, and reporting both as the same partial state told an operator a
+silent site was finished. ⭐ `states` separates them from the narration run's
+own answer, and `narration` carries what provides narration, where it answers,
+and the `provides` promise this framework's client was built against — so an
+operator is told narration exists, rather than left to find out.
 """
 
 from __future__ import annotations
 
+from studyforge.skills.buildserve import narration
 from studyforge.skills.buildserve.run import build_and_serve
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
     KNOWN,
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
-    NO_NARRATION,
     NO_NARRATION_SERVICE,
     NO_TOOLCHAIN,
+    NOT_NARRATED,
+    NOTHING_TO_NARRATE,
     PartialState,
     exercise_states,
     narration_states,
@@ -59,13 +71,15 @@ __all__ = [
     "EXECUTION_NAMESPACE",
     "KNOWN",
     "NARRATION_INCOMPLETE",
+    "NOTHING_TO_NARRATE",
+    "NOT_NARRATED",
     "NO_EXERCISES",
-    "NO_NARRATION",
     "NO_NARRATION_SERVICE",
     "NO_TOOLCHAIN",
     "PartialState",
     "build_and_serve",
     "exercise_states",
+    "narration",
     "narration_states",
     "recorded",
 ]
