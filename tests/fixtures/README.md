@@ -48,7 +48,7 @@ digests.
 | `permitted_edits` | `[]` — the normal case | one `pom.xml` insert (R3) | `[]` |
 | `media` in the manifest | **absent** — the default case | declared, `auto` + limits | **absent** |
 | Authored overlay | none | `basics/01-getting-started` unit 1 only | none |
-| Source material on disk | no | no | ⭐ **yes** — the only one |
+| Source material on disk | no | no | ⭐ **yes** |
 | Block types exercised | 10 of 11 (no `video`) | **11 of 11** | 3 — it is not a coverage corpus |
 
 `depth1` exists to keep the 1-level and no-exercise paths first-class from
@@ -85,9 +85,8 @@ argument about overlays applied one field along: a whole file and a *region* of
 one are two code paths, so the set carries `container_api` 1 and 2 rather than
 only the newest.
 
-⭐ **And it is the only corpus whose source material is committed beside its
-archive**, so it is the only one on which `validate` reports nothing
-`Unchecked`: the heading-count check (`short-read`) and the region checks
+⭐ **And its source material is committed beside its archive** — as
+`runnable/`'s is — so `validate` reports nothing `Unchecked` on it: the heading-count check (`short-read`) and the region checks
 (`origin-section-missing`, `origin-section-ambiguous`) actually run. ⚠️ The
 fenced block inside unit 1's region is load-bearing for that and is **depth 3**
 on purpose: a fence-blind count reads **6** headings in that file where there
@@ -101,6 +100,49 @@ did.
 two units, one file — and the corpus that provoked the question is named in
 `docs/tasks/E04-narration.md`, which is where a source-specific measurement
 belongs (R1).
+
+## ⛔ `runnable/` is the one corpus whose units RUN (`W352`)
+
+⭐ **It exists because `SF-20` (the runner) and `SF-44` (the terminal command)
+need something to execute**, and every other corpus here is JSON and Markdown:
+`depth2` declares practices, and nothing in it can run. ⛔ **It is an execution
+fixture, not a coverage corpus**, so it is required to exercise three block
+types and no more, exactly as `shared-origin/` is.
+
+One container, `kata`, five units, **one runtime — Python, graded by pytest**:
+
+| Unit | Shape | Its file | Its run command | Its test command |
+|---|---|---|---|---|
+| 1 | graded, the test **passes** | `practice/passes/greet.py` | succeeds | passes |
+| 2 | graded, the test **fails** | `practice/fails/total.py` | succeeds | fails |
+| 3 | **ungraded** — a file and **no test** | `practice/untested/hello.py` | succeeds | collects nothing |
+| 4 | graded, the file does **not compile** | `practice/broken/area.py` | a `SyntaxError` | errors at collection |
+| 5 | **none** — reading only | — | — | — |
+
+⛔ **Unit 4's error is `'break' outside loop`, which the COMPILER raises and the
+parser accepts.** A missing colon would be a parse error, and several walkers in
+this suite `ast.parse` every `.py` under `tests/`; `tests/test_fixture_runnable.py`
+pins both halves.
+
+⭐ *A file with no test is not a failure* (`M5`'s *Done when*) — unit 3. ⭐ *The
+first failure ends the run* (`SF-20`) — unit 4's run command fails, so a runner
+that honours it never reaches a grader that could only have errored.
+
+⛔ **Its graders are `check_*.py`, never `test_*.py`, and that is load-bearing.**
+This repository's pytest collects everything under `tests/`, so a grader under
+the default pattern would be run by the suite itself — and units 2 and 4 fail
+on purpose. The corpus's own `pytest.ini` declares the pattern (and turns off
+pytest's cache), so a run from the corpus root collects them.
+`tests/test_fixture_runnable.py` asserts both halves.
+
+⛔ **Never run anything in this directory.** The fixture tree is un-ignored
+(`!tests/fixtures/**`), so a grader run here leaves an untracked `__pycache__`.
+Copy the corpus somewhere a run may write, as `tests/test_fixture_runnable.py`
+does.
+
+⚠️ **It declares no `runtimes`**: that manifest key is `W350`'s and has not
+landed. The day it does, `tests/test_fixture_runnable.py` reds until the
+manifest declares `python`.
 
 ### What each unit is for
 
@@ -117,7 +159,7 @@ belongs (R1).
 
 | Unit | Carries | So that |
 |---|---|---|
-| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record in the set** | SF-10(b), a practice's three-section layout, and §7's **graded** state |
+| `basics/01-getting-started` 1 | a lesson, a practice, the authored overlay, and the **only `exercise` record outside `runnable/`** | SF-10(b), a practice's three-section layout, and §7's **graded** state |
 | `basics/01-getting-started` 2 | `table`, `rule`, no overlay | SF-10(a), the derived shape |
 | `basics/01-getting-started` 3 | a `video` block, a `video` record, `media_skipped` | media named and deliberately not fetched |
 | `advanced/02-going-further` 1 | a lesson, a practice with **no `exercise` key**, `url_slug` | a second container, SF-05's carried field, and §7's **ungraded** state |
@@ -133,8 +175,9 @@ belongs (R1).
 
 ## ⛔ §7's three exercise states are carried by the set, not by a flag
 
-⭐ **All three appear across these two corpora, and none of them is written
-down anywhere as a state.** There is no `state` field to set and none to
+⭐ **All three appear across `depth1` and `depth2` — and again inside
+`runnable/`, whose units 1–5 carry all three — and none of them is written down
+anywhere as a state.** There is no `state` field to set and none to
 forget — the state *is* which files exist (spec §7, C5, SF-23):
 
 | State | Where it is | How it appears |
@@ -152,6 +195,9 @@ something.
 ⛔ **Do not add an `exercise` to a second document to "improve coverage".** The
 graded state is the exception in real material, and a set in which it is the
 majority is a set that will let a design fitted to the exception look correct.
+⚠️ **`runnable/` is the one sanctioned exception, and it is stated rather than
+counted:** a runner's fixture must grade, so the rule the tests state is *"exactly
+one exercise that validates, outside `runnable/`"*.
 
 ⚠️ **One sanctioned second copy, and its licence is that it must fail.**
 `invalid/user-authoritative/` carries an `exercise` that records

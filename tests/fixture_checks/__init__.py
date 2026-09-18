@@ -111,6 +111,7 @@ from tests.fixture_checks.vocabulary import (
     MARKUP_SHAPED,
     OPTIONAL_KEYS,
     REQUIRED_TYPES,
+    RUNNABLE,
     VALID,
 )
 
@@ -127,6 +128,7 @@ __all__ = [
     "OPTIONAL_KEYS",
     "RAW",
     "REQUIRED_TYPES",
+    "RUNNABLE",
     "VALID",
     "Coverage",
     "all_blocks",
