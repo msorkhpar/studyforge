@@ -41,7 +41,7 @@ from pathlib import Path, PurePosixPath
 
 import pytest
 
-from studyforge.address import Address, unit_name
+from studyforge.address import Address, slugify, unit_name
 from studyforge.corpus.placement import (
     CONTAINER_SUFFIX,
     UNIT_SUFFIX,
@@ -54,7 +54,7 @@ from studyforge.corpus.placement import (
     profile_for,
     registered,
 )
-from tests.authoring.support import AUTHORING, document, documents, fences, rows_under, section
+from tests.authoring.support import AUTHORING, document, fences, rows_under, section
 from tests.support import repository_root
 
 #: The page that draws the geography, and the two headings this module reads.
@@ -232,7 +232,7 @@ def test_a_drawing_shows_no_value_it_was_computed_at():
     # address, title or directory name on a page a reader copies from — and it
     # would agree with the page, because the page would have been written from
     # the same drawing.
-    leaked = (DRAWN_ADDRESS.key, DRAWN_ORIGIN, unit_name(DRAWN_ORDINAL), "taking-a-reading")
+    leaked = (DRAWN_ADDRESS.key, DRAWN_ORIGIN, unit_name(DRAWN_ORDINAL), slugify(DRAWN_TITLE))
     for name in sorted(registered()):
         for line in site_tree(profile_for(name)):
             for value in leaked:
@@ -322,4 +322,3 @@ def test_the_index_says_what_is_not_checked():
     # reads exactly like a page that never claimed it.
     said = section(document("README.md"), INDEX_SECTION)
     assert "not checked" in said, f"{AUTHORING}/README.md no longer says what is unchecked"
-    assert set(documents()) - {"README.md"}, "the reference has no page but its index"

@@ -39,11 +39,12 @@ it places, for one container holding one unit. Nothing here is typed out: if a
 build would put a file somewhere else, these fences say somewhere else, and the
 test that reads this page fails until they do.
 
-Three substitutions, and the rest is literal: **`<address>`** is as many
-directories or name parts as your corpus declares levels — the shape is the
-same at one and at three; **`<title>`** is the slug of the unit's or the
-container's own title; **`<your-directory>`** is whatever directory your source
-file was in.
+Four substitutions, and every other character is literal: **`<address>`** is as
+many directories or name parts as your corpus declares levels — the shape is the
+same at one and at three; **`unit-NN`** is the unit's own numbering, its ordinal
+unless your adapter records a label; **`<title>`** is the slug of the unit's or
+the container's own title; **`<your-directory>`** is whatever directory your
+source file was in.
 
 Under `tree`, everything lives under one generated root:
 
