@@ -249,7 +249,7 @@ def test_the_corpus_own_word_for_a_depth_is_carried_and_never_this_frameworks():
 def test_a_container_that_names_no_level_gets_no_chip_and_no_stray_space():
     markup = rail((RailContainer(title="A", href="a.html"), RailContainer(title="B")))
     assert f'{SURFACE_HOOKS["level"]}"' not in markup
-    assert "<summary><a href=\"a.html\">A</a></summary>" in markup
+    assert '<summary><a href="a.html">A</a></summary>' in markup
 
 
 def test_a_unit_that_numbers_nothing_gets_no_chip_either():

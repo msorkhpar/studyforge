@@ -60,7 +60,6 @@ linked, which is `SF-14/3` made visible on the page instead of invisible.
 from __future__ import annotations
 
 from collections.abc import Mapping
-
 from pathlib import PurePosixPath
 
 from studyforge.contents import Contents, Entry, Group, links, order

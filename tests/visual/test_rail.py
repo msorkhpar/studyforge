@@ -7,8 +7,8 @@ judge a CROSSING: the page a rail row points at has to be on disk before
 asks `studyforge.generate.write_site` for the whole corpus and opens what it
 wrote.
 
-⛔ **Every path is asked of the build, never spelled here.** `unit_location` and
-`page_paths` are what own the geography; a literal `…/01-getting-started/…` in
+⛔ **Every path is asked of the build, never spelled here.** `unit_location` is
+what owns the geography of a unit page; a literal `…/01-getting-started/…` in
 this file would be a second answer to where a page goes, and it would go stale
 the day placement moves one.
 
@@ -26,9 +26,8 @@ from pathlib import Path
 
 import pytest
 
-from studyforge.address import parse_unit_key
 from studyforge.contents import order
-from studyforge.generate import page_paths, read_corpus, unit_location, write_site
+from studyforge.generate import read_corpus, unit_location, write_site
 from tests.support import repository_root
 from tests.visual.page import OpenPage
 
@@ -67,15 +66,10 @@ def _build(root: Path, *, without_rail: bool = False) -> BuiltCorpus:
     root.mkdir(parents=True, exist_ok=True)
     write_site(source, root)
     corpus = read_corpus(source)
-    pages = {
-        unit.key: root / str(unit_location(corpus, unit).page)
-        for unit in corpus.units
-    }
+    pages = {unit.key: root / str(unit_location(corpus, unit).page) for unit in corpus.units}
     if without_rail:
         for page in sorted(root.rglob("*.html")):
-            page.write_text(
-                RAIL_REGION.sub("", page.read_text(encoding="utf-8")), encoding="utf-8"
-            )
+            page.write_text(RAIL_REGION.sub("", page.read_text(encoding="utf-8")), encoding="utf-8")
     return BuiltCorpus(
         root=root,
         pages=pages,
@@ -117,9 +111,8 @@ def crossings(page: OpenPage, from_url: str) -> list[dict]:
             ".map(a => ({href: a.href, text: a.textContent.trim(),"
             " closed: !!a.closest('details:not([open])')}))"
         )  # type: ignore[arg-type]
-        if str(found["href"]).endswith(".unit.html") and not str(found["href"]).startswith(
-            where + "/"
-        )
+        if str(found["href"]).endswith(".unit.html")
+        and not str(found["href"]).startswith(where + "/")
     ]
 
 

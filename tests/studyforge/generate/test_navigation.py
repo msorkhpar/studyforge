@@ -192,13 +192,17 @@ def a_rail(name: str, key: str):
     corpus = read_corpus(FIXTURES / name)
     source = next(unit for unit in corpus.units if unit.key == key)
     at = unit_location(corpus, source)
-    return corpus, at, rail(
-        corpus.contents,
-        at.page,
-        page_paths(corpus),
-        container=source.container.address.key,
-        unit=source.key,
-        absent=corpus.absent,
+    return (
+        corpus,
+        at,
+        rail(
+            corpus.contents,
+            at.page,
+            page_paths(corpus),
+            container=source.container.address.key,
+            unit=source.key,
+            absent=corpus.absent,
+        ),
     )
 
 
@@ -231,7 +235,10 @@ def test_the_rail_marks_the_container_and_the_unit_the_reader_is_on():
     assert [container.title for container in current] == ["Getting Started"]
     assert [unit.title for unit in current[0].units if unit.current] == ["Your first class"]
     assert not [
-        unit.title for container in listed if not container.current for unit in container.units
+        unit.title
+        for container in listed
+        if not container.current
+        for unit in container.units
         if unit.current
     ], "a unit outside the reader's own container was marked current"
 
@@ -318,7 +325,5 @@ def test_a_unit_with_no_material_is_a_declared_absence_in_the_rail_too(tmp_path)
         absent=corpus.absent,
     )
 
-    absent = [
-        unit for container in listed for unit in container.units if unit.href is None
-    ]
+    absent = [unit for container in listed for unit in container.units if unit.href is None]
     assert [unit.title for unit in absent] == ["Fields and constructors"]
