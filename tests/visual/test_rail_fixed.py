@@ -36,7 +36,6 @@ track, no sticky — and the three settling clauses are asserted to FAIL on it.
 from __future__ import annotations
 
 import json
-import re
 import shutil
 from collections.abc import Iterator
 from dataclasses import dataclass
@@ -78,13 +77,11 @@ WIDER = (1920, WIDE[1])
 SHIPPED = (
     (
         "grid-template-columns: var(--rail) minmax(0, 1fr);",
-        "grid-template-columns: var(--rail) minmax(0, "
-        "calc(var(--measure) + 2 * var(--gutter)));",
+        "grid-template-columns: var(--rail) minmax(0, calc(var(--measure) + 2 * var(--gutter)));",
     ),
     (
         "max-width: var(--page-max);\n    margin-left: 0;\n    padding-left: 0;",
-        "max-width: min(var(--page-max), "
-        "calc(var(--rail) + var(--measure) + 5 * var(--gutter)));",
+        "max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)));",
     ),
     (
         "position: sticky;\n    top: 0;\n    max-height: 100vh;\n    overflow-y: auto;\n",
@@ -101,10 +98,10 @@ GEOMETRY = """
     const b = el.getBoundingClientRect();
     return {left: b.left, right: b.right, top: b.top, bottom: b.bottom,
             width: b.width, height: b.height}; };
-  const rail = document.querySelector('%(rail)s');
+  const rail = document.querySelector('<rail>');
   return {
     'body border box': at('body'),
-    'rail border box': at('%(rail)s'),
+    'rail border box': at('<rail>'),
     'main#content border box': at('main#content'),
     'rail scrollable content height': rail ? rail.scrollHeight : null,
     'rail padding box height': rail ? rail.clientHeight : null,
@@ -115,7 +112,7 @@ GEOMETRY = """
     'page scroll offset': window.scrollY,
   };
 })()
-""" % {"rail": RAIL}
+""".replace("<rail>", RAIL)
 
 
 @dataclass(frozen=True)
@@ -239,8 +236,7 @@ def geometry(open_page: OpenPage) -> Iterator[object]:
             # the page still at the top — measured, and it read `scrollY` 0 on a
             # page 1,000px longer than the window.
             open_page.evaluate(
-                "window.scrollTo({top: document.documentElement.scrollHeight,"
-                " behavior: 'instant'})"
+                "window.scrollTo({top: document.documentElement.scrollHeight, behavior: 'instant'})"
             )
         return dict(open_page.evaluate(GEOMETRY))  # type: ignore[arg-type]
 
@@ -406,9 +402,8 @@ def test_the_part_of_the_rail_past_the_fold_can_be_reached(
         float(read["last link border box bottom after scrolling"])
         <= float(read["rail border box bottom"]) + TOUCHING
     ), "the last link is still below the rail's border box after scrolling it to its end"
-    assert (
-        float(read["last link border box bottom after scrolling"])
-        > float(read["rail border box top"])
+    assert float(read["last link border box bottom after scrolling"]) > float(
+        read["rail border box top"]
     ), "the last link is above the rail's border box, so scrolling took it past the reader"
 
 
@@ -436,8 +431,7 @@ def test_the_reading_column_widens_with_the_window(geometry, tall: TallCorpus) -
         "a constant and the extra screen is margin"
     )
     assert wider["main#content border box"]["width"] > wider["window inner width"] / 2, (
-        "the reading surface takes less than half a wide window, so the page is not "
-        "using it"
+        "the reading surface takes less than half a wide window, so the page is not using it"
     )
 
 
@@ -538,8 +532,7 @@ def test_the_three_settling_clauses_fail_on_the_wide_shape_that_shipped(
     )
     assert (
         abs(
-            wider["main#content border box"]["width"]
-            - narrower["main#content border box"]["width"]
+            wider["main#content border box"]["width"] - narrower["main#content border box"]["width"]
         )
         <= TOUCHING
     ), (

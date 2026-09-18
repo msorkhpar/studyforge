@@ -40,7 +40,7 @@ import re
 
 import pytest
 
-from tests.studyforge.render.pageassets.test_chrome import body, rule_for, rules
+from tests.studyforge.render.pageassets.test_chrome import body, rules
 
 #: The rail, spelled as `chrome.css` spells it.
 RAIL = 'body > nav[aria-label="Containers"]'
