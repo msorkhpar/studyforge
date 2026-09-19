@@ -28,8 +28,8 @@ from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.serve import RAISES
 from studyforge.serve.discovery import DiscoveryRefused, discover
-from tests.studyforge.generate.corpora import a_corpus
 from tests.spawning import SPAWNING_MODULES, spawns
+from tests.studyforge.generate.corpora import a_corpus
 from tests.studyforge.serve.serving import LEAK
 from tests.support import assert_package_contract, repository_root, run
 
