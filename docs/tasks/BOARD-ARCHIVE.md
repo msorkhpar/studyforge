@@ -28228,3 +28228,186 @@ the register takes a full container reading before merge.**
 | `wt/dev2` | `W361` | ⭐ open, unblocked, disjoint — the runner's *only* sentence, with `SF-22/6` folded in |
 | `wt/dev3` | `W365` | ⭐ open, unblocked, disjoint — the file-only record taught where authors read |
 | `wt/dev4` | `W374` | ⛔ **`M5` waits on it** — the runner image holds only what is declared |
+
+## PO round 122
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`TC-01`'s proposal is ruled; its build waits on two things, one of them
+the user's; two open rows are named on idle carriers before they run.**
+
+### ⭐ `TC-01` STAGE 1 — THE PROPOSAL, RULED
+
+⭐ **Read against git** (`607afb9`, one document, one office identity, the floor GREEN). ⭐ **Rulings (reversible, the register's):**
+
+| question | ruling |
+|---|---|
+| answer 2 — how the editor gets its runtimes | ⭐ **ACCEPTED: it copies them out of the runner image** — so `pins.json` stays the ONE place a runtime version is chosen |
+| `TC-01/4` — editor pins inside `pins.json` would change every runner tag | ⭐ **a SEPARATE pins file for the editor**; the runner's tag inputs are untouched, so the tag `EX-00` records stays true |
+| `TC-01/6` — drop the entrypoint's `exec` mode | ⭐ **ACCEPTED** — a second place code runs, which also skips `fixuid` |
+| `TC-01/10` — *functionally identical to CodeSignal's* against §8.1's pins | ⭐ **the acceptance reads *the same toolchain set and properties, at the pins' versions*** |
+| `TC-01/1`, `/3`, `/9` | ⭐ the epic's owners are followed; no editor `docker run` line in the README (`TC-05`'s); the two throwaway reads are disclosed and accepted |
+| `TC-01/2` — `docker/minimal/plan.py` needs a change and is `W374`'s surface | ⭐ **stage 2 is dispatched after `W374` merges** |
+
+⛔ **The pulls stage 2 needs are of a KIND no ruling covers** — the code-server base, extensions from Open VSX, TypeScript from
+npm, one Debian package — ⭐ **each pinnable, none a runtime.** The user's round-110 ruling named runtimes, and the fonts needed
+their own ruling at round 118. ⛔ **So it is ASKED, not assumed — queued for the user; it blocks `TC-01`'s build alone.**
+
+### ⭐ NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev5` | `W366` | ⭐ the user's direction; `W364` landed |
+| `wt/dev6` | `W367` | ⭐ open, unblocked, disjoint (`tools/quality/`'s size check) |
+
+## PO round 123
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M5` CLOSES, on a runner image that holds only what it declares; five
+rows close, each verified by a plant; four are minted; four open rows are named on idle carriers before they run.**
+
+### ⭐ `M5` CLOSES AT `12b1abb`
+
+⭐ **Done when:** *a reader edits a unit's file, runs one command from their terminal, and the unit's test runs against it
+through the runner — a file with no test is not a failure — and Run and Submit from the page give real output and a real
+verdict.*
+
+| step | reading |
+|---|---|
+| 5.1 — `TC-00`, `SF-20` | ⛔ **re-opened in substance at round 121**: `TC-00`'s `python` image carried every runtime; ⭐ **`W374` found the cause (a bare `FROM scratch` stage served from BuildKit's cache) and fixed it at `12b1abb`** — the build now FAILS unless `/opt` holds exactly the declared set |
+| 5.2 — `SF-29`, `SF-22`, `SF-44` | ⭐ merged `2fb0164`, `51e8d57`, `23e14a1`, each planted both ways (round 121) |
+
+⭐ **The container reading of record, taken by this register at `12b1abb`:** the `python` runner image REBUILT from the fixed
+Dockerfile under the user's pinned-pulls ruling — ⭐ **inspected: `/opt` empty; `python3` and `pytest` present; no `java`,
+`mvn`, `gradle`, `kotlinc` or `node`** — and `execute`'s container acceptance plus the terminal command's container mode
+run against it: **GREEN, exit 0, no container left behind.** ⭐ `SF-29`'s Maven suite now SKIPS on it, naming the label —
+⛔ **the round-117 and round-121 readings that ran on the defective image are superseded by this one.**
+⭐ **This round is merged with `--full "M5 closes"`** (`W366/1`).
+
+### ⭐ THE PIN MOVES — `code-server-toolchain` to `2ea7f5a`
+
+⭐ **`W374/2`:** `workspace.json` pinned the sibling at `6a470a1`, the image with the defect. ⭐ **This register fast-forwarded
+the sibling's `main` to the fix and moves the pin to it here, the ref `M5` closes on.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W361 — The epic says the runner is the only package that starts a process, which is false, and nothing asserts it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W361.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `c53e9c4`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`SF-20/4`: the epic says `execute` is *the ONLY package permitted to start a process* — false today, and nothing asserts it.**
+
+⭐ **Measured by `SF-20`'s office:** `validate/source/enumeration` and `skills/onboarding` start `git`. ⭐ It narrowed `execute`'s own contract to *the only package that runs a corpus's commands*.
+
+⭐ **Folded in at round 121 — `SF-22/6`:** `E05` `SF-19a`'s *the package does not import a process-spawning library* is no longer true of `serve`, which now imports `execute` for Run and Submit; ⭐ **the settled sentence covers it, and the sweep asserts the narrowed property.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The epic's sentence says what is true** — narrowed to a corpus's commands, or kept whole with the other sites named as permitted exceptions; ⭐ **the row argues which.**
+2. ⛔ **Asserted (R12):** a sweep over `src/` finds process starts ONLY where the settled sentence permits them, and a planted one elsewhere is RED by name.
+
+⭐ **Surface:** `docs/tasks/E05-serving-execution.md`, a test sweeping `src/`.
+
+[the mint](#po-round-117)
+
+### W365 — The authoring guide and the exercise epic describe an ungraded unit only as one with no exercise, so an adapter author never learns the file-only record
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W365.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `3a0af87`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W357/3` + `W357/4`: the contract can now say *a file with no test*, and two places that teach or check it still cannot.**
+
+⭐ **Measured by `W357`'s office:** `docs/authoring/exercises.md` and `docs/tasks/E06-exercise-contract.md` describe an
+ungraded unit only as *no `exercise` key* — still true, and no longer complete, so an adapter author never learns the
+file-only record (`main_path` + `run_command`). ⚠️ And `tests/fixture_checks/exercise.py`'s `_rule_for` files ANY
+refusal of a record without `provenance` under the R5 rule `exercise-trust`, so a file-only record refused for its
+SHAPE would be named under the wrong rule.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Both documents describe the file-only record** as §7 now states it, and cite §7 rather than restating it.
+2. ⛔ **A file-only record refused for its shape is named under a shape rule**, never `exercise-trust` — asserted both ways (R12).
+
+⭐ **Surface:** `docs/authoring/exercises.md`, `docs/tasks/E06-exercise-contract.md`, `tests/fixture_checks/exercise.py` and its tests.
+
+[the mint](#po-round-120)
+
+### W366 — Every merge runs the whole suite in both environments whatever it changed, so a document-only round costs as much as a code change
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W366.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `63e1609`. Merged, every gate GREEN on the merged tree.
+
+⛔ **The user, 2026-09-19:** *"if the tests do not test anything in the docs what's the point of running the test? … the tests can be run more intelligently based on the git history or using tags targeting the changed files."* ⭐ **Measured at `23e14a1`:** of the last twenty merges to release, eight changed only `docs/`, and each paid a full suite in both environments.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The gate derives the changed paths from git** (the merge base against the tip) and selects the tests those paths can affect — ⭐ an import map built with the standard library (`ast`), transitively; ⭐ tests that read documents or walk the tree carry a marker and run whenever a document changes.
+2. ⛔ **Shared machinery selects EVERYTHING:** the conftests, `pyproject.toml`, `docker/dev/`, `tools/quality/`, `tools/gates.py`, `tests/fixtures/`.
+3. ⛔ **The reading SAYS what it selected and why** — a targeted GREEN is never printed as a full one.
+4. ⭐ **A full suite still runs at every milestone close and every Nth merge, and AUDITS the selection**: a failure the selection would have missed is RED by name.
+5. ⛔ **Asserted both ways (R12)**, including a planted hidden dependency the audit catches.
+
+⭐ **Surface:** `tools/gates.py`, `tools/mergegate.py`, a selection module under `tools/`, the conftests' markers, their tests. ⛔ **After `W364`.**
+
+[the mint](#po-round-121)
+
+### W367 — The size gate reads Python files only, so a stylesheet reached 748 lines and nothing failed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W367.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `54706a9`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W362-plan/1`: `FND-01`'s size gate reads `*.py` only, so `chrome.css` reached 748 lines and nothing failed** — `W362` split it at named seams, but nothing stops the next one.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **R11's ceiling reads every authored source file the framework ships** — stylesheets and scripts under `src/` as well as Python — with vendored third-party files excluded BY NAME.
+2. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tools/quality/` (the size check), its tests.
+
+[the mint](#po-round-121)
+
+### W374 — The runner image built for python carries every runtime, so a runtime that was not declared is present after all
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W374.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `12b1abb`. Merged, every gate GREEN on the merged tree.
+
+⛔ **The register's `M5` reading, round 121:** the runner image built with `--runtimes python` holds `/opt/java`, `/opt/maven`, `/opt/gradle`, `/opt/kotlinc` and `/opt/node`; the `java,maven` image holds exactly what it declares. ⛔ **`TC-00`'s acceptance says an undeclared runtime is ABSENT, and for `python` it is not** — found because `SF-29`'s Maven suite passed against the `python` image.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Every declared set builds an image holding exactly that set** — ⭐ `python` alone included, and the base's own tools named.
+2. ⛔ **Asserted both ways (R12), for EVERY runtime in the vocabulary**, by inspecting the built image — ⭐ a test that would have caught this.
+3. ⛔ **`test_quiet_image` refuses an image that does not declare `maven`**, rather than passing on whatever the image happens to hold.
+
+⭐ **Surface:** `code-server-toolchain` `docker/minimal/` and its tests; `tests/studyforge/execute/test_quiet_image.py`. ⛔ **`M5` closes on its merge.**
+
+[the mint](#po-round-121)
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `W361/1` | ⭐ **folds into `W373`** (the spec) |
+| `W361/2` + `W361/3` | minted `W375` |
+| `W365/1`, `W365/2` | ⭐ local — recorded in its handoff |
+| `W366/1` | ⭐ **adopted** — a milestone close merges with `--full`; the convention text routes to `W173` |
+| `W366/2`, `/3` | ⭐ recorded |
+| `W367/1`, `/2`, `/4` | minted `W376`, `W377`, `W378` |
+| `W367/3` | ⭐ local — fails safe |
+| `W374/1` | ⭐ **done here** — the `python` image rebuilt; its old tag is superseded |
+| `W374/3` | ⭐ **carried into `TC-01`'s stage-2 brief**: the editor must not select toolchains with a bare `FROM scratch` stage |
+
+### ⭐ NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev2` | `W368` | ⭐ the rail shows what the reader marked |
+| `wt/dev3` | `W370` | ⛔ **before `SF-24`** — one sanctioned way a page loads the run client |
+| `wt/dev5` | `W375` | ⭐ one process-start detector |
+| `wt/dev6` | `W371` | ⭐ a served site answers Run and Submit |
+
+⭐ **The USER ruled 2026-09-19: *"TC-01 is fine to pull the image and dependency. Offline rule is for pushing things not pulling!"*** ⭐ **`TC-01`'s stage 2 is UNBLOCKED** — pulls still pinned (R15) and sent with no identity; ⛔ nothing is ever pushed. ⭐ The user also approved a host `pytest-xdist` install (`W364/2`).

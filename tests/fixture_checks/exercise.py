@@ -31,11 +31,22 @@ reader wrote could declare itself the source's own and nothing raised. ⭐ A
 fixture whose corpus violates *no* rule reds `test_invalid_corpus_violates_
 exactly_its_one_rule`, which is why this is the failing-test form of the
 ruling rather than a line in a review.
+
+## ⛔ A record with no whole grader is refused for its shape (`W365`)
+
+⚠️ **Since `W357` a record may name a file and no grader**, so a record without
+`provenance` is no longer a record with a bad trust claim — it is either the
+ungraded shape or half a grader. ⛔ **Before `W365` any refusal of it was filed
+under `exercise-trust`**, because `unit.trust` refuses a missing provenance, so
+a file-only record refused for its shape was named under R5. ⭐ **R5 is asked
+only about a whole grader** — every one of `GRADER_KEYS` bar `DEFAULTED_KEYS`
+present — which is the only record `exercise.from_document` asks R5 about. The
+keys are the framework's, imported, never re-spelled here.
 """
 
 from __future__ import annotations
 
-from studyforge.exercise import ExerciseError, of
+from studyforge.exercise import DEFAULTED_KEYS, GRADER_KEYS, ExerciseError, of
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
 
@@ -51,10 +62,15 @@ def check_exercise(document, where):
 def _rule_for(document) -> str:
     """Which rule a refusal belongs to: R5's authority rule, or the record's shape."""
     exercise = document.get("exercise") if isinstance(document, dict) else None
-    if not isinstance(exercise, dict):
+    if not isinstance(exercise, dict) or not _names_a_whole_grader(exercise):
         return "exercise"
     try:
         check_test_record(exercise.get("provenance"), exercise.get("trust"))
     except ContentError:
         return "exercise-trust"
     return "exercise"
+
+
+def _names_a_whole_grader(exercise: dict) -> bool:
+    """Does the record carry every grader key it must? ⛔ Only then is R5 asked."""
+    return all(key in exercise for key in GRADER_KEYS if key not in DEFAULTED_KEYS)

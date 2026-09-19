@@ -9,7 +9,9 @@ double-clicking; the server adds an origin — and an origin is what lets a page
 call an API at all, since `file://` cannot.
 
 **The separation this epic must not blur.** The server may not start a process;
-only the runner may. That is asserted by test, not by convention, because a
+only the runner may — a Run or Submit is a command the server hands to
+`execute`, never a process it starts itself (`SF-22`). That is asserted by test,
+not by convention, because a
 server that can spawn is a server whose security posture has to be re-reasoned
 every time a route is added. Commands come from a generated document on disk
 and are handed over verbatim; **nothing a browser sends ever becomes a
@@ -71,8 +73,11 @@ module has not done the task. Read the source by section; do not load it whole.
 
 **Acceptance.** Serves a corpus's content and assets. Content responses
 revalidate correctly; conditional requests and ranges work. Cross-site and
-non-loopback requests are refused. **The package does not import a
-process-spawning library — asserted.** No module exceeds the size ceiling.
+non-loopback requests are refused. **No module of the package imports a
+process-spawning library — asserted.** ⭐ `SF-22/6`: since Run and Submit the
+package imports `execute`, which does, so the property is of `serve`'s own
+modules — it reaches a process only through the runner, and only from the run
+routes (`W361`). No module exceeds the size ceiling.
 
 ---
 
@@ -112,7 +117,15 @@ one instance. A stale discovery cache is detected rather than trusted.
 **Owns** `execute/`
 **Context** ~45k — `CS/.pipeline/tools/study/runner.py`, `CS/.pipeline/tests/test_runner.py`
 
-**Definition.** The **only** package permitted to start a process. Two modes,
+**Definition.** The **only** package that runs a corpus's commands, and the
+only package permitted to start a process — ⛔ **save two named sites, each of
+which asks the local `git` a fixed question about a source checkout and runs
+nothing a corpus supplies:** `validate/source/enumeration.py` (which of a
+source's files git ignores) and `skills/onboarding/pin.py` (whether a checkout
+holds the pinned commit). ⭐ **Any other package reaches a process only by
+handing a command to `execute`.** A sweep over `src/` asserts the closed list,
+and a process start planted anywhere else is refused by its module's name
+(`W361`, `SF-20/4`). Two modes,
 one contract: execute inside the toolchain container when it is up — so a run
 from the page and a run from the reader's own terminal use the same toolchain,
 daemon and caches, and therefore agree — and on the host otherwise. The mode is
