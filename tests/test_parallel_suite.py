@@ -12,6 +12,12 @@ compare is printed by that directory's own conftest, which a byte copy would not
 
 ⚠️ **The parallel arms need `pytest-xdist`**, which the pinned image carries and a host may
 not; there they SKIP with a reason that names it — a disclosure, never a pass (Ruling 328).
+
+⭐ **`W382`: a child imports the framework FROM THE CHECKOUT, on the host as in the image.**
+The image's editable install points at the mounted checkout's `src/`; the host installs
+nothing, so a child whose path held only the repository root could not import `studyforge`
+wherever the copied conftest reached `tests/visual/` — measured red under a bare `-n 2`.
+`_env` puts `src` and the root on the path in the order `pyproject.toml`'s `pythonpath` does.
 """
 
 from __future__ import annotations
@@ -67,23 +73,48 @@ def _child(tmp_path: Path, files: dict[str, str]) -> Path:
     return root
 
 
+def _env(**extra: str) -> dict[str, str]:
+    """A child's environment: the checkout's `src` and root importable, as the ini orders them."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith(("PYTEST_", "STUDYFORGE_"))}
+    env["PYTHONPATH"] = os.pathsep.join(str(repository_root() / p) for p in ("src", "."))
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
+    env.update(extra)
+    return env
+
+
 def _pytest(
     root: Path, form: str, target: tuple[str, ...] = (".",), **extra: str
 ) -> subprocess.CompletedProcess:
     """Run `target` under `root` in `form`, with this repository's `tools` importable."""
-    env = {k: v for k, v in os.environ.items() if not k.startswith(("PYTEST_", "STUDYFORGE_"))}
-    env["PYTHONPATH"] = str(repository_root())
-    env["PYTHONDONTWRITEBYTECODE"] = "1"
-    env.update(extra)
     return subprocess.run(
         [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *FORMS[form], *target],
         cwd=root,
-        env=env,
+        env=_env(**extra),
         capture_output=True,
         text=True,
         timeout=TIMEOUT,
         check=False,
     )
+
+
+# --- `W382`: where a child finds the framework --------------------------------------
+
+
+def test_a_CHILD_imports_the_framework_from_THIS_CHECKOUT_outside_it(tmp_path):
+    # ⭐ Run from a directory with no ini, as `_child` is: only the environment can place it.
+    probe = "import pathlib, studyforge; print(pathlib.Path(studyforge.__file__).resolve())"
+    result = subprocess.run(
+        [sys.executable, "-c", probe],
+        cwd=tmp_path,
+        env=_env(),
+        capture_output=True,
+        text=True,
+        timeout=TIMEOUT,
+        check=False,
+    )
+    assert result.returncode == 0, result.stderr
+    source = (repository_root() / "src").resolve()
+    assert Path(result.stdout.strip()).is_relative_to(source), result.stdout
 
 
 # --- the worker guard, read off the hooks themselves ----------------------------------
