@@ -3,15 +3,24 @@
 ⭐ **R5's acceptance is here**: a `bundled` + `authoritative` record is
 accepted, a `generated` + `authoritative` one is refused — in code, at the point
 the record is read, so no consumer has to remember to ask.
+
+⭐ **`W357`'s shape is here too**: a record may name a file and no grader, and
+the grader half is written whole or not at all.
 """
 
+import itertools
 import json
 from pathlib import Path
 
 import pytest
 
+from studyforge.archive.document import build, parse, render
+from studyforge.archive.errors import ArchiveError
 from studyforge.exercise import (
+    DEFAULTED_KEYS,
     EXERCISE_KEYS,
+    GRADER_KEYS,
+    REQUIRED_KEYS,
     Exercise,
     ExerciseError,
     from_document,
@@ -169,8 +178,12 @@ def test_a_record_missing_a_required_field_is_refused(missing):
 
 
 def test_the_refusal_says_what_to_write_instead():
+    # ⭐ `W357`: a half-written grader is told it may drop the grader whole,
+    # and a record with no file is told to write no key at all.
     message = refuse(from_document, record(test_command=None), WHERE)
-    assert "write no 'exercise' key at all" in message
+    assert "or none of them, for a file with no test" in message
+    message = refuse(from_document, record(main_path=None), WHERE)
+    assert "writes no 'exercise' key at all" in message
 
 
 def test_a_key_the_record_does_not_define_is_refused():
@@ -301,7 +314,11 @@ ASSERTED = {"exercise-trust"}
 
 
 def _carrying_an_exercise(*, asserting):
-    """Every archive document a sweep asserting `asserting` may read that grades."""
+    """Every archive document a sweep asserting `asserting` may read that carries a record.
+
+    ⚠️ Carries, not grades: since `W357` a record may name a file and no grader.
+    The only such record is in `runnable/`, which the rule below states apart.
+    """
     return [
         path
         for _where, path in fixture_paths(asserting=asserting, within="/raw/")
@@ -350,3 +367,137 @@ def test_the_frozen_record_is_not_a_validated_one():
     unchecked = Exercise("/etc/passwd", "x", ("sh",), ("sh",), "bundled", "authoritative")
     assert unchecked.main_path == "/etc/passwd"
     assert refuse(from_document, to_document(unchecked), WHERE)
+
+
+# --------------------------------------------------------------------------
+# ⭐ W357 — a file with no test is a record too
+# --------------------------------------------------------------------------
+
+#: The ungraded shape: the reader's file, and how it runs, and nothing else.
+UNGRADED = {key: RECORD[key] for key in REQUIRED_KEYS}
+
+
+def test_the_keys_split_into_the_file_and_the_grader_with_nothing_left_over():
+    # ⛔ The ungraded record is written in the graded record's own order, so
+    # adding a grader to one never reorders what was already on disk (R10).
+    assert tuple(k for k in EXERCISE_KEYS if k in REQUIRED_KEYS) == REQUIRED_KEYS
+    assert set(REQUIRED_KEYS) | set(GRADER_KEYS) == set(EXERCISE_KEYS)
+    assert not set(REQUIRED_KEYS) & set(GRADER_KEYS)
+    assert set(DEFAULTED_KEYS) <= set(GRADER_KEYS)
+
+
+def test_a_record_naming_a_file_and_no_grader_is_read():
+    exercise = from_document(UNGRADED, WHERE)
+    assert exercise.main_path == RECORD["main_path"]
+    assert exercise.run_command == tuple(RECORD["run_command"])
+    assert (exercise.test_path, exercise.test_command) == (None, None)
+    assert (exercise.provenance, exercise.trust) == (None, None)
+    assert exercise.graded is False
+    assert exercise.authoritative is False
+    # ⛔ The other way: the full record is the graded one.
+    assert from_document(RECORD, WHERE).graded is True
+
+
+def test_the_ungraded_record_round_trips_writing_only_its_own_keys():
+    exercise = from_document(UNGRADED, WHERE)
+    again = to_document(exercise)
+    assert tuple(again) == REQUIRED_KEYS
+    assert from_document(again, WHERE) == exercise
+
+
+def test_the_keys_written_follow_graded_never_which_values_are_none():
+    # ⛔ The dataclass is not validated, so one built with a stray provenance
+    # and no grader must not write half a grader to disk.
+    stray = Exercise("practice/hello.py", None, ("python3", "hello.py"), None, "bundled", None)
+    assert tuple(to_document(stray)) == REQUIRED_KEYS
+
+
+@pytest.mark.parametrize("missing", list(REQUIRED_KEYS))
+def test_a_file_record_missing_its_file_or_its_command_is_refused(missing):
+    # ⛔ Every record names the reader's file and how it runs; with no file, a
+    # practice writes no `exercise` key at all.
+    message = refuse(from_document, {k: v for k, v in UNGRADED.items() if k != missing}, WHERE)
+    assert missing in message
+
+
+GRADER_SUBSETS = [
+    subset
+    for size in range(1, len(GRADER_KEYS))
+    for subset in itertools.combinations(GRADER_KEYS, size)
+    if set(subset) != set(GRADER_KEYS) - set(DEFAULTED_KEYS)
+]
+
+
+@pytest.mark.parametrize("grader", GRADER_SUBSETS, ids="+".join)
+def test_a_grader_written_in_part_is_refused_naming_what_is_missing(grader):
+    # ⛔ The old refusal's purpose survives `W357`: half a grader is not a
+    # lesser exercise, and it may not pass for either shape.
+    message = refuse(from_document, {**UNGRADED, **{k: RECORD[k] for k in grader}}, WHERE)
+    for key in set(GRADER_KEYS) - set(grader) - set(DEFAULTED_KEYS):
+        assert key in message, key
+
+
+def test_the_whole_grader_but_trust_is_accepted_and_nothing_less():
+    # ⭐ The one partial set that is not partial: `trust` is defaulted.
+    whole = [k for k in GRADER_KEYS if k not in DEFAULTED_KEYS]
+    assert from_document({**UNGRADED, **{k: RECORD[k] for k in whole}}, WHERE).graded
+    assert refuse(from_document, {**UNGRADED, **{k: RECORD[k] for k in whole[:-1]}}, WHERE)
+
+
+@pytest.mark.parametrize("claim", [{"trust": "authoritative"}, {"provenance": "bundled"}])
+def test_a_trust_or_provenance_claim_with_no_grader_is_refused(claim):
+    # ⛔ Both are facts about a grader. Trust in a grader that does not exist is
+    # the claim R5 exists to stop.
+    assert refuse(from_document, {**UNGRADED, **claim}, WHERE)
+
+
+def test_r5_is_not_asked_about_a_record_with_no_grader(monkeypatch):
+    # ⭐ Delegation both ways: the owner is asked for a grader, never for none.
+    called = []
+
+    def refuses(provenance, trust=None):
+        called.append(provenance)
+        raise ContentError("the owning module said no")
+
+    monkeypatch.setattr("studyforge.exercise.record.check_test_record", refuses)
+    assert from_document(UNGRADED, WHERE).graded is False
+    assert called == []
+    assert refuse(from_document, RECORD, WHERE)
+    assert called == ["bundled"]
+
+
+@pytest.mark.parametrize(
+    "unsafe", [{"main_path": "/etc/passwd"}, {"run_command": "python3 hello.py; rm -rf ."}]
+)
+def test_the_file_record_meets_the_same_safety_as_the_graded_one(unsafe):
+    # ⛔ An ungraded file still reaches a runner's arguments and its command is
+    # still executed, so dropping the grader drops nothing from `safety`.
+    assert refuse(from_document, {**UNGRADED, **unsafe}, WHERE)
+
+
+def test_a_practice_naming_a_file_and_no_grader_is_read_through_of():
+    exercise = of({"kind": "practice", "blocks": [], "exercise": UNGRADED}, WHERE)
+    assert exercise is not None and exercise.graded is False
+    # ⛔ The kind rule is unchanged: a file record on a lesson is refused.
+    assert "'lesson'" in refuse(of, {"kind": "lesson", "exercise": UNGRADED}, WHERE)
+
+
+def test_the_archive_accepts_a_file_record_and_refuses_half_a_grader():
+    # ⭐ The archive's gate is this package's reader, so the new shape reaches
+    # disk through `build` and back through `parse` — and half a grader does not.
+    def practice(exercise):
+        return build(
+            source="example", address=["kata"], variant="python", unit=3,
+            kind="practice", ordinal=1, ingested="2026-01-05", title="Hello",
+            blocks=[{"type": "para", "text": "Change the line it prints."}],
+            exercise=exercise,
+        )  # fmt: skip
+
+    written = practice(UNGRADED)
+    assert written["exercise"] == UNGRADED
+    assert parse(render(written), "practice-1.json")["exercise"] == UNGRADED
+    half = {**UNGRADED, "test_path": RECORD["test_path"]}
+    with pytest.raises(ArchiveError, match="test_command"):
+        practice(half)
+    with pytest.raises(ArchiveError, match="test_command"):
+        parse(render({**written, "exercise": half}), "practice-1.json")
