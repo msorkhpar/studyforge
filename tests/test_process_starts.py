@@ -17,22 +17,28 @@ package reaches a process only by handing a command to `execute`.
 - **the exceptions ask `git`** — every process call in a named site hands an argv
   literal whose first element is the resolved `git`, and a planted other program
   is refused;
-- **the epic names the list** — `SF-20`'s section in `E05` names each site.
+- **the epic names the list** — `SF-20`'s section in `E05` names each site;
+- **the detector knows every standard-library way to start a process** (`W375`) —
+  each entry of each of its tables is planted under each spelling it can take and
+  fires, and a lookalike of each is planted and passes; `webbrowser` among them.
 
-⭐ The detector is `serve`'s own (`spawns`, whose plants cover every spelling it
-knows), imported rather than retyped, so one instrument answers both questions.
+⭐ The detector is ONE, `tests/spawning.py`'s `spawns`, shared with `serve`'s
+no-spawn test — so neither file's rename breaks the other, and one list answers
+both questions (`W375`, closing `W361/2` and `W361/3`).
 """
 
 from __future__ import annotations
 
 import ast
+import json
 import shutil
+import sys
 from pathlib import Path
 
 import pytest
 
-from tests.studyforge.serve.test_init import spawns
-from tests.support import repository_root
+from tests.spawning import SPAWNING_FROM, SPAWNING_MODULES, SPAWNING_OS, spawns
+from tests.support import repository_root, run
 
 SOURCE = repository_root() / "src" / "studyforge"
 EPIC = repository_root() / "docs" / "tasks" / "E05-serving-execution.md"
@@ -164,7 +170,9 @@ PLANTS = [
 
 
 @pytest.mark.parametrize("where", PLANTS)
-@pytest.mark.parametrize("spelling", ["import subprocess\n", "from os import system\n"])
+@pytest.mark.parametrize(
+    "spelling", ["import subprocess\n", "from os import system\n", "import webbrowser\n"]
+)
 def test_a_start_planted_outside_the_list_is_refused_by_name(tmp_path, where, spelling):
     root = a_copy(tmp_path)
     (root / where).write_text(spelling, encoding="utf-8")
@@ -193,3 +201,92 @@ def test_a_named_site_that_starts_another_program_is_refused(planted):
 
 def test_a_git_question_passes_the_git_check():
     assert not_git("import subprocess\nsubprocess.run([git, '-C', where, 'status'])\n") == []
+
+
+# --- the detector itself: each way to start a process, both ways (`W375`) --
+
+
+def module_spellings(module: str) -> list[str]:
+    """Every spelling of reaching `module` that the detector reads."""
+    return [
+        f"import {module}",
+        f"import {module} as renamed",
+        f"from {module} import anything",
+        f"__import__({module!r})",
+        f"import importlib\nimportlib.import_module({module!r})",
+    ]
+
+
+MODULE_PLANTS = [(m, s) for m in SPAWNING_MODULES for s in module_spellings(m)]
+OS_NAMES = sorted(SPAWNING_OS | {"execv", "execvpe", "spawnl", "spawnvp"})
+OS_PLANTS = [s for n in OS_NAMES for s in (f"from os import {n}", f"import os\nos.{n}('x')")]
+FROM_PLANTS = [
+    f"from {pkg} import {name}" for pkg, names in SPAWNING_FROM.items() for name in sorted(names)
+]
+
+
+@pytest.mark.parametrize(("module", "planted"), MODULE_PLANTS)
+def test_the_detector_fires_on_each_spawning_module_under_each_spelling(module, planted):
+    assert module in spawns(planted), planted
+
+
+@pytest.mark.parametrize("planted", OS_PLANTS + FROM_PLANTS)
+def test_the_detector_fires_on_each_spawning_name(planted):
+    assert spawns(planted), planted
+
+
+@pytest.mark.parametrize("module", SPAWNING_MODULES)
+def test_the_detector_passes_a_lookalike_of_each_spawning_module(module):
+    # ⭐ The other way: a longer name, the name only as a string, and its parent package.
+    lookalikes = [f"import {module}ish", f"NAME = {module!r}", f"from {module}ish import x"]
+    if "." in module:
+        lookalikes.append(f"import {module.rsplit('.', 1)[0]}")
+    assert [s for s in lookalikes if spawns(s)] == []
+
+
+@pytest.mark.parametrize(
+    "legitimate",
+    [
+        "import os.path",
+        "from os import stat_result",
+        "from os import environ, stat",
+        "import os\nos.stat('x')",
+        "import http.server",
+        "from asyncio import sleep",
+        "from concurrent.futures import ThreadPoolExecutor",
+        "execv = 1",
+    ],
+)
+def test_the_detector_passes_what_does_not_start_a_process(legitimate):
+    assert spawns(legitimate) == []
+
+
+@pytest.mark.parametrize(
+    "planted",
+    ["import multiprocessing.pool", "from multiprocessing import Process", "import webbrowser"],
+)
+def test_the_detector_fires_on_a_submodule_or_member_of_a_spawner(planted):
+    assert spawns(planted), planted
+
+
+def test_every_spawning_module_is_a_standard_library_module():
+    # ⭐ A typo in the table would plant and pass on a module nothing can import.
+    assert [m for m in SPAWNING_MODULES if m.split(".")[0] not in sys.stdlib_module_names] == []
+
+
+WEBBROWSER = """
+import json, sys
+before = "subprocess" in sys.modules
+import webbrowser
+print(json.dumps({"before": before, "after": "subprocess" in sys.modules}))
+"""
+
+
+def test_webbrowser_is_listed_because_importing_it_loads_subprocess():
+    # ⭐ `W361/3`, measured rather than asserted: a fresh interpreter has no
+    # `subprocess` until `webbrowser` is imported, and has it after.
+    result = run([sys.executable, "-I", "-c", WEBBROWSER], repository_root())
+    assert result.returncode == 0, result.stderr
+    assert json.loads(result.stdout.strip().splitlines()[-1]) == {"before": False, "after": True}
+    assert "webbrowser" in SPAWNING_MODULES
+    assert spawns("import webbrowser\nwebbrowser.open('x')") == ["webbrowser"]

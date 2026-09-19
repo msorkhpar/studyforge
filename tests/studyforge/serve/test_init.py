@@ -1,9 +1,11 @@
 """Mirror of `src/studyforge/serve/__init__.py` (R12) — and the package's no-spawn property.
 
 ⛔ **E05: "The package does not import a process-spawning library — asserted."**
-Three arms, each with its own plant: the source of every module is read (`spawns`),
-a fresh interpreter imports the package and reports what it loaded, and no module
-names the Docker socket or a Docker client (spec §8.3).
+Three arms: the source of every module is read (`spawns`), a fresh interpreter
+imports the package and reports which process libraries it loaded, and no module
+names the Docker socket or a Docker client (spec §8.3). ⭐ The first two arms read
+ONE list, `tests/spawning.py`'s (`W375`), whose plants live beside the tree-wide
+sweep that shares it.
 
 ⭐ **`SF-22` narrows the second arm, and says so rather than loosening it.** `serve`
 depends on `execute` — the runner, the one package that runs a corpus's commands —
@@ -26,6 +28,7 @@ from studyforge.archive.scrub import PersonalDataLeak
 from studyforge.corpus.manifest import MANIFEST_FILENAME
 from studyforge.serve import RAISES
 from studyforge.serve.discovery import DiscoveryRefused, discover
+from tests.spawning import SPAWNING_MODULES, spawns
 from tests.studyforge.generate.corpora import a_corpus
 from tests.studyforge.serve.serving import LEAK
 from tests.support import assert_package_contract, repository_root, run
@@ -57,63 +60,6 @@ THIS_ROW = frozenset(
 #: namespace and, split from it at its seam, what a started run is.
 EXECUTE = "studyforge.execute"
 RUNNER_IMPORTERS = frozenset({"routes/run.py", "routes/runs.py"})
-
-SPAWNING_MODULES = (
-    "subprocess",
-    "_posixsubprocess",
-    "multiprocessing",
-    "pty",
-    "asyncio.subprocess",
-    "concurrent.futures.process",
-)
-SPAWNING_OS = frozenset({"system", "popen", "fork", "forkpty", "posix_spawn", "posix_spawnp"})
-SPAWNING_FROM = {
-    "asyncio": frozenset({"create_subprocess_exec", "create_subprocess_shell", "subprocess"}),
-    "concurrent.futures": frozenset({"ProcessPoolExecutor", "process"}),
-}
-
-
-def _spawning_module(name: str) -> bool:
-    return any(name == module or name.startswith(module + ".") for module in SPAWNING_MODULES)
-
-
-def _spawning_os(name: str) -> bool:
-    return name in SPAWNING_OS or name.startswith(("exec", "spawn"))
-
-
-def _dynamic_import(node: ast.Call) -> str | None:
-    func = node.func
-    named = (isinstance(func, ast.Name) and func.id == "__import__") or (
-        isinstance(func, ast.Attribute) and func.attr == "import_module"
-    )
-    first = node.args[0] if node.args else None
-    if named and isinstance(first, ast.Constant) and isinstance(first.value, str):
-        return first.value
-    return None
-
-
-def spawns(source: str) -> list[str]:
-    """Every way `source` reaches a process-spawning library, by name."""
-    found: list[str] = []
-    for node in ast.walk(ast.parse(source)):
-        if isinstance(node, ast.Import):
-            found += [alias.name for alias in node.names if _spawning_module(alias.name)]
-        elif isinstance(node, ast.ImportFrom) and node.module:
-            if _spawning_module(node.module):
-                found.append(node.module)
-            elif node.module == "os":
-                found += [f"os.{a.name}" for a in node.names if _spawning_os(a.name)]
-            elif node.module in SPAWNING_FROM:
-                wanted = SPAWNING_FROM[node.module]
-                found += [f"{node.module}.{a.name}" for a in node.names if a.name in wanted]
-        elif isinstance(node, ast.Attribute) and isinstance(node.value, ast.Name):
-            if node.value.id == "os" and _spawning_os(node.attr):
-                found.append(f"os.{node.attr}")
-        elif isinstance(node, ast.Call):
-            name = _dynamic_import(node)
-            if name is not None and _spawning_module(name):
-                found.append(name)
-    return found
 
 
 def _docstrings(tree: ast.Module) -> set[int]:
@@ -193,46 +139,10 @@ def test_no_module_in_the_package_reaches_a_process_spawning_library():
     assert {name: hits for name, text in modules.items() if (hits := spawns(text))} == {}
 
 
-@pytest.mark.parametrize(
-    "planted",
-    [
-        "import subprocess",
-        "import subprocess as sp",
-        "from subprocess import run",
-        "import multiprocessing.pool",
-        "from multiprocessing import Process",
-        "import pty",
-        "from os import system",
-        "from os import execv",
-        "import os\nos.popen('x')",
-        "import os\nos.posix_spawn('x', [], {})",
-        "from asyncio import create_subprocess_exec",
-        "from concurrent.futures import ProcessPoolExecutor",
-        "__import__('subprocess')",
-        "import importlib\nimportlib.import_module('subprocess')",
-    ],
-)
-def test_the_detector_fires_on_every_planted_spelling(planted):
-    assert spawns(planted), planted
-
-
-@pytest.mark.parametrize(
-    "legitimate",
-    [
-        "import os.path",
-        "from os import stat_result",
-        "import http.server",
-        "import os\nos.stat('x')",
-    ],
-)
-def test_the_detector_passes_what_the_package_legitimately_imports(legitimate):
-    assert spawns(legitimate) == []
-
-
 CHILD = """
 import importlib, json, pkgutil, sys
 sys.path.insert(0, sys.argv[1])
-watched = ("subprocess", "_posixsubprocess", "multiprocessing", "pty")
+watched = json.loads(sys.argv[3])
 if sys.argv[2] == "runner-first":
     importlib.import_module("studyforge.execute")
 before = {name for name in watched if name in sys.modules}
@@ -247,7 +157,8 @@ print(json.dumps({"imported": len(names) + 1, "loaded": sorted(after - before)})
 
 def fresh_import(how: str) -> dict:
     """Import the whole package in a fresh interpreter; report what it loaded."""
-    argv = [sys.executable, "-c", CHILD, str(repository_root() / "src"), how]
+    watched = json.dumps(SPAWNING_MODULES)
+    argv = [sys.executable, "-c", CHILD, str(repository_root() / "src"), how, watched]
     result = run(argv, repository_root())
     assert result.returncode == 0, result.stderr
     reading = json.loads(result.stdout.strip().splitlines()[-1])
