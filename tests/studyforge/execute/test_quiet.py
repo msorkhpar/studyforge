@@ -392,3 +392,43 @@ FOOTER = (
 def test_every_footer_rule_drops_its_line_and_only_that(line):
     assert not Quiet(MAVEN).keeps(line)
     assert Quiet(dataclasses.replace(MAVEN, always_noise=())).keeps(line)
+
+
+# --- signal beats noise: a line that matches BOTH is kept ---------------------------------
+
+#: ⚠️ CONSTRUCTED lines, not captures: none of the real transcripts carries a line that
+#: matches both lists, which is why this clause needs its own input. Each line is checked
+#: below to match at least one `signal` AND one `noise` pattern of its toolchain.
+BOTH = [
+    pytest.param(
+        MAVEN, "[INFO] --- Tests run: 3, Failures: 1, Errors: 0, Skipped: 0 ---", id="mvn"
+    ),
+    pytest.param(
+        GRADLE, "warning: java.lang.IllegalStateException: config was not read", id="gr-warn"
+    ),
+    pytest.param(
+        GRADLE, "e: src/A.kt:5:9 see https://docs.gradle.org/current/userguide/x.html", id="gr-e"
+    ),
+    pytest.param(
+        GRADLE, "Consider enabling AssertionFailedError: expected 3 but was 2", id="gr-assert"
+    ),
+]
+
+
+def matches(patterns, line) -> bool:
+    import re
+
+    return any(re.search(pattern, line) for pattern in patterns)
+
+
+@pytest.mark.parametrize(("toolchain", "line"), BOTH)
+def test_a_line_matching_both_signal_and_noise_is_kept(toolchain, line):
+    assert matches(toolchain.signal, line) and matches(toolchain.noise, line)
+    assert not matches(toolchain.always_noise, line)
+    assert shown([line, exit_line(1)], toolchain) == [line, exit_line(1)]
+
+
+@pytest.mark.parametrize(("toolchain", "line"), BOTH)
+def test_without_the_signal_rule_the_same_line_would_be_dropped(toolchain, line):
+    """The other way: it is `signal`, checked before `noise`, that keeps it."""
+    assert shown([line, exit_line(1)], dataclasses.replace(toolchain, signal=())) == [exit_line(1)]
