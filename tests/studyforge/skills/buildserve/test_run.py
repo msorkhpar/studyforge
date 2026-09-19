@@ -10,11 +10,16 @@ from urllib.parse import quote
 
 import pytest
 
+import studyforge.cli.serve as serve_verb
+from studyforge.serve.routes.run import RUN, TEST
+from studyforge.skills.buildserve.states import EXECUTION_NAMESPACE
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
 from tests.fixture_checks import FIXTURES, VALID
 from tests.studyforge.cli.narrate.service import VOICE
 from tests.studyforge.cli.serving import floor, missing_media, pages_of
+from tests.studyforge.execute.runnable import fixture_copy
+from tests.studyforge.serve.routes.running import post, start_path
 from tests.studyforge.serve.serving import fetch
 from tests.studyforge.skills.buildserve.running import (
     EXERCISED,
@@ -72,11 +77,41 @@ def test_no_exercises_and_no_narration_is_a_valid_site_and_both_states_are_repor
 
 
 @pytest.mark.parametrize("name", EXERCISED)
-def test_exercises_with_no_execution_are_reported_as_no_toolchain_and_still_served(name, tmp_path):
+def test_an_exercised_corpus_is_served_with_execution_and_no_toolchain_state(name, tmp_path):
+    # ⭐ `W371`, closing `SF-22/2`: the skill serves `--site`, which now registers `run`.
+    with skill_running(FIXTURES / name, directory(tmp_path)) as running:
+        status = fetch(running.server, "/index.html")[0]
+        index = fetch(running.server, "/api/v1/run/")[0]
+    assert (running.code, status, index) == ([OK], 200, 200), running.said()
+    assert EXECUTION_NAMESPACE in running.server.namespaces
+    assert partials(running.said()) == ["narration"]
+
+
+@pytest.mark.parametrize("name", EXERCISED)
+def test_exercises_served_with_no_execution_are_still_reported_as_no_toolchain(
+    name, tmp_path, monkeypatch
+):
+    # ⛔ The other way: the state follows what the serving process OFFERS, so a serve
+    # that registers no `run` is still reported — and still serves the reading floor.
+    monkeypatch.setattr(serve_verb, "_execution", lambda *given: {})
     with skill_running(FIXTURES / name, directory(tmp_path)) as running:
         status = fetch(running.server, "/index.html")[0]
     assert (running.code, status) == ([OK], 200), running.said()
+    assert EXECUTION_NAMESPACE not in running.server.namespaces
     assert partials(running.said()) == ["narration", "toolchain"]
+
+
+def test_a_site_the_skill_serves_answers_run_and_submit(tmp_path):
+    # ⭐ The row's clause end to end: the runnable corpus, through the skill, in host mode.
+    root = fixture_copy(tmp_path)
+    with skill_running(root, directory(tmp_path)) as running:
+        ran = post(running.server, start_path(1, RUN))
+        submitted = post(running.server, start_path(1, TEST))
+    said = running.said()
+    assert running.code == [OK], said
+    assert "toolchain" not in partials(said)
+    assert (ran[0], ran[2].splitlines()) == (200, ["Hello, reader", "--- exit 0 ---"])
+    assert submitted[0] == 200 and any("1 passed" in line for line in submitted[2].splitlines())
 
 
 def test_an_absent_narration_service_is_reported_and_the_site_is_still_served(tmp_path):

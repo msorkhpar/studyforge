@@ -113,6 +113,12 @@ consequence (R6, R8):
 | `exercises` | the corpus declares no exercises | nothing to Run or Submit | everything: a corpus with no graders is complete, not short (C5) |
 | `toolchain` | exercises are declared and the site offers no execution | Run and Submit | practice pages read, and the reading floor |
 
+⭐ **A corpus that declares exercises is served with Run and Submit**: the
+`studyforge serve --site` this skill runs registers the run namespace (`W371`), so
+`toolchain` is printed only when the serving process offers no execution. A run's
+command is read from the corpus's own unit documents, and its outcome is recorded
+in the corpus's progress store, never in the site.
+
 ⭐ **The reading floor** is pages, navigation, contents and progress. The site
 also opens from its `index.html` with nothing running.
 

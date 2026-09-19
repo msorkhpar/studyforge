@@ -59,7 +59,8 @@ READING_FLOOR = (
 
 #: The namespace a serving process offers once it can run a reader's code. ⭐ The
 #: framework's own `serve.routes.run.NAMESPACE`, the name `serve.instance.instance_of`
-#: registers (`SK-03/3`, `SF-22`): this package holds no spelling of its own.
+#: registers and `studyforge serve --site` registers too (`SK-03/3`, `SF-22`, `W371`):
+#: this package holds no spelling of its own.
 EXECUTION_NAMESPACE = run.NAMESPACE
 
 
