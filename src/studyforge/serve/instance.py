@@ -3,8 +3,13 @@ r"""An instance: one served root, its corpora discovered, every namespace wired.
 **What it does.** `make_instance(root)` runs `discovery.discover`, hands
 discovery's report to `log` line by line, and returns `instance_of` the result:
 `app`'s bound, not-yet-serving server with the content namespace's source over
-every corpus found and the state namespace registered, whose static mount is the
-served root itself.
+every corpus found and the state and run namespaces registered, whose static
+mount is the served root itself.
+
+⭐ **`run` is registered HERE, in `instance_of`, and nowhere else** (`W230`): the
+`serve` verb calls `discover` and `instance_of` and never `make_instance`, so a
+namespace registered only in `make_instance` would never be served. It is the one
+writer namespace — its starts and its stop are `POST` (`SF-22`).
 ⛔ Every corpus's progress store is refused by `routes.assets` on any path.
 
 **How you use it.**
@@ -16,7 +21,8 @@ served root itself.
     server = instance_of(discovered, port=DEFAULT_PORT, log=print)
 
 **Depends on.** `serve.app`, `serve.discovery`, `serve.addressing`,
-`serve.routes.content`, `serve.routes.state`, and `archive.scrub` for the report.
+`serve.routes.content`, `serve.routes.state`, `serve.routes.run` and `.runs`, and
+`archive.scrub` for the report.
 
 ⭐ **This is the seam `studyforge serve` (`SF-39`, `W230`) calls**: a root and a
 port, and nothing else — no configured paths, no corpus named. ⚠️ The verb takes
@@ -35,7 +41,7 @@ from studyforge.archive.scrub import scrub
 from studyforge.serve.addressing import CorporaContent
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
 from studyforge.serve.discovery import Discovered, discover
-from studyforge.serve.routes import state
+from studyforge.serve.routes import run, runs, state
 from studyforge.serve.routes.content import CorpusContent
 
 
@@ -59,10 +65,15 @@ def instance_of(
 ) -> ServingServer:
     """Return a server wired to serve every corpus one discovery found, from its root."""
     sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
+    live = runs.Runs(discovered, sources)
     return make_server(
         discovered.root,
         CorporaContent(sources, discovered.depths),
         port=port,
-        namespaces={state.NAMESPACE: partial(state.route, discovered)},
+        namespaces={
+            state.NAMESPACE: partial(state.route, discovered),
+            run.NAMESPACE: partial(run.route, live),
+        },
         log=log,
+        writers=(run.NAMESPACE,),
     )

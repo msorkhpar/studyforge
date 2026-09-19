@@ -7,6 +7,7 @@ verb derives for each `FND-04` fixture, and the narrate report's own sentence.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 import pytest
 
@@ -125,6 +126,18 @@ def test_the_exercise_state_follows_the_manifest_and_the_serving_process():
     assert exercise_states(False, (EXECUTION_NAMESPACE,)) == (NO_EXERCISES,)
     assert exercise_states(True, ("content", "assets")) == (NO_TOOLCHAIN,)
     assert exercise_states(True, ("content", EXECUTION_NAMESPACE)) == ()
+
+
+def test_the_execution_namespace_is_the_frameworks_one_spelling_and_the_route_registers_it():
+    # ⭐ `SK-03/3`, closed by `SF-22`: the skill holds no spelling of its own — it is the
+    # run route's `NAMESPACE`, the very object `serve.instance.instance_of` registers.
+    from studyforge.serve import instance
+    from studyforge.serve.routes import run
+
+    assert EXECUTION_NAMESPACE is run.NAMESPACE
+    assert "run.NAMESPACE" in Path(instance.__file__).read_text(encoding="utf-8")
+    source = Path(states.__file__).read_text(encoding="utf-8")
+    assert f'EXECUTION_NAMESPACE = "{run.NAMESPACE}"' not in source
 
 
 def test_a_state_is_data_and_not_an_exception():

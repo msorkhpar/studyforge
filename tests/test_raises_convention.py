@@ -68,6 +68,10 @@ REACH = {
     "studyforge.corpus.container": 3,
     "studyforge.corpus.manifest": 7,
     "studyforge.generate": 3,
+    # ⚠️ `SF-22`: the run route's parse of a practice key is the first site naming
+    # `progress.RAISES`, and a subject with NO floor here fails the deleted-outright
+    # plant below, whatever the note above says of a new caller (`SF-22/5`).
+    "studyforge.progress": 1,
     "studyforge.serve": 1,
 }
 
