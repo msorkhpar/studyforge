@@ -47,7 +47,9 @@ a corpus's declarations (`SF-19a/1`), which is why `generate` is named above.
 
 from __future__ import annotations
 
-from studyforge.serve.discovery import RAISES
+from studyforge.serve.discovery import RAISES, Discovered, ServedCorpus
 
 #: ⛔ What `discovery.discover` and `instance.make_instance` let out (`W208`).
-__all__ = ["RAISES"]
+#: ⭐ `Discovered` and `ServedCorpus` are shared with `cli.serve`, whose `--site` form
+#: serves one corpus with Run and Submit (`W371`, Ruling 101's one-line remedy).
+__all__ = ["RAISES", "Discovered", "ServedCorpus"]

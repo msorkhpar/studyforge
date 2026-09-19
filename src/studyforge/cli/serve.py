@@ -4,8 +4,9 @@ r"""The `serve` verb: the CLI stage that starts what `studyforge.serve` built.
 corpus under the root it is given (`serve.discovery`), checks that each holds
 every page it declares, binds `serve.instance` on loopback and serves until it is
 stopped. Given `--site`, it serves that one built directory for the one corpus
-at the root instead — with Run and Submit, as the root form has them (`W371`). Serving the bytes is `studyforge.serve`'s; ⛔ this module is
-its caller and never a second author of it.
+at the root instead — with Run and Submit, as the root form has them (`W371`).
+Serving the bytes is `studyforge.serve`'s; ⛔ this module is its caller and never
+a second author of it.
 
 **How you use it.**
 
@@ -90,8 +91,9 @@ from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
 from studyforge.progress import store_dir
 from studyforge.serve import RAISES as REFUSED
+from studyforge.serve import Discovered, ServedCorpus
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
-from studyforge.serve.discovery import Discovered, ServedCorpus, discover
+from studyforge.serve.discovery import discover
 from studyforge.serve.instance import instance_of
 from studyforge.serve.routes import run, runs
 from studyforge.serve.routes.content import CorpusContent

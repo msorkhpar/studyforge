@@ -53,6 +53,16 @@ def recorded(root: Path, unit: int) -> dict | None:
     return Progress(root, depth).read()["practices"].get(key(unit))
 
 
+def test_the_served_corpus_types_are_on_the_serve_packages_surface_and_are_discoverys_own():
+    # ⭐ Ruling 101's one-line remedy, taken instead of a declared deviation (`W199`).
+    from studyforge import serve
+    from studyforge.serve import discovery
+
+    assert {"Discovered", "ServedCorpus"} <= set(serve.__all__)
+    assert serve.Discovered is discovery.Discovered
+    assert serve.ServedCorpus is discovery.ServedCorpus
+
+
 def test_the_site_form_registers_run_as_the_one_writer(corpus):
     root, site = corpus
     with verb_running([str(root), "--site", str(site), "--port", "0"]) as serving:
