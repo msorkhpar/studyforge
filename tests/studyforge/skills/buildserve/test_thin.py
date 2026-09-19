@@ -24,9 +24,15 @@ PACKAGE = Path(buildserve.__file__).parent
 #: is `NO_SERVICE`'s: a skill that told an operator to start a service on another
 #: port would be sending them where the verb never calls. ⛔ It buys the constant
 #: and nothing else — no client, no transport, no socket.
+#:
+#: ⚠️ `serve.routes.run` is admitted for `NAMESPACE` alone (`SK-03/3`, `SF-22`): the
+#: execution namespace's one spelling is the route's, and a skill that spelled it
+#: again would report `toolchain` against a server that offers it. ⛔ It buys the
+#: constant and nothing else — the skill never starts a run.
 ALLOWED = frozenset(
     {
         "studyforge.cli",
+        "studyforge.serve.routes.run",
         "studyforge.cli.plan",
         "studyforge.cli.narrate.cli",
         "studyforge.cli.narrate.report",

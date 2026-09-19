@@ -11,7 +11,8 @@ manifest's `exercises` flag, and the namespaces the serving process offers.
 `PartialState.lines()` is what the skill prints.
 
 **Depends on.** `cli.narrate.report.NO_SERVICE`, imported so the no-service
-sentence is never respelled, `validate.report.OK`, and this package's
+sentence is never respelled, `serve.routes.run.NAMESPACE` for the execution
+namespace's one spelling, `validate.report.OK`, and this package's
 `narration` for what provides narration and how to have it. ⛔ It reads answers
 and opens nothing.
 
@@ -45,6 +46,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from dataclasses import dataclass
 
+import studyforge.serve.routes.run as run
 from studyforge.cli.narrate.report import NO_SERVICE
 from studyforge.skills.buildserve import narration
 from studyforge.validate.report import OK
@@ -55,10 +57,10 @@ READING_FLOOR = (
     "from its index.html with nothing running"
 )
 
-#: The namespace a serving process offers once it can run a reader's code.
-#: ⚠️ No framework module names it yet: `SF-22` registers `run` beside `state`
-#: (`SF-19b`'s handoff), so this is the one spelling this package holds (`SK-03/2`).
-EXECUTION_NAMESPACE = "run"
+#: The namespace a serving process offers once it can run a reader's code. ⭐ The
+#: framework's own `serve.routes.run.NAMESPACE`, the name `serve.instance.instance_of`
+#: registers (`SK-03/3`, `SF-22`): this package holds no spelling of its own.
+EXECUTION_NAMESPACE = run.NAMESPACE
 
 
 @dataclass(frozen=True, slots=True)

@@ -23,8 +23,12 @@ and the Docker socket is never reachable from here (spec §8.3).
   content's caching rule with its own.
 - **`private=`** — a predicate over a resolved path; `SF-21`'s store names the
   reader's record through it, and it answers `404` on both mounts.
-- Only `GET` and `HEAD` are answered; every other method is `405` after the gate.
-  ⚠️ A namespace that needs a write widens `_Handler`'s verbs in its own row.
+- **`writers=`** — the registered namespaces that also answer `POST` (`SF-22`'s
+  `run`: starting a process is an act, and a `GET` that acted would run a grader
+  on a prefetch). ⛔ Content, assets and the static mount never do.
+- `GET` and `HEAD` are answered everywhere; `POST` only under a writer; every other
+  method, and a `POST` anywhere else, is `405` after the gate. ⛔ A `POST`'s body
+  is read and DISCARDED, never handed on: a `Request` has no field for it.
 
 ⛔ **An exception inside a route answers `500` with a fixed body** and logs only
 its type: an exception's text is where an absolute path reaches a browser (R7).
@@ -32,7 +36,10 @@ its type: an exception's text is where an absolute path reaches a browser (R7).
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+import select
+import socket
+import threading
+from collections.abc import Callable, Collection, Mapping
 from functools import partial
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -58,6 +65,13 @@ DEFAULT_PORT = 8765
 #: Streaming chunk for a file body.
 CHUNK = 64 * 1024
 
+#: Seconds between two looks at a streaming client's socket for a hang-up.
+HANGUP_POLL = 0.25
+
+#: The largest `POST` body drained before answering. ⚠️ Drained so the answer is
+#: not lost to a reset, and discarded: no route is ever handed it.
+MAX_DISCARDED = 64 * 1024
+
 #: The namespaces this row owns, which nothing registered later may replace.
 OWN_NAMESPACES = ("content", "assets")
 
@@ -78,6 +92,7 @@ class ServingServer(ThreadingHTTPServer):
         namespaces: Mapping[str, Route] | None = None,
         private: assets.Private = assets.nothing_private,
         log: Callable[[str], None] | None = None,
+        writers: Collection[str] = (),
     ) -> None:
         """Validate everything, then bind; a refused argument never leaves a socket open."""
         require_loopback(address[0])
@@ -88,6 +103,9 @@ class ServingServer(ThreadingHTTPServer):
         taken = sorted(set(extra) & set(OWN_NAMESPACES))
         if taken:
             raise ValueError(f"namespace already registered: {', '.join(taken)}")
+        stray = sorted(set(writers) - set(extra))
+        if stray:
+            raise ValueError(f"only a registered namespace may answer POST: {', '.join(stray)}")
         self.site_root = root
         self.private = private
         self.allowed_hosts = ALLOWED_HOSTS
@@ -96,6 +114,7 @@ class ServingServer(ThreadingHTTPServer):
             "assets": partial(assets.route, root, private),
             **extra,
         }
+        self.writers = frozenset(writers)
         self._log = log
         super().__init__(address, _Handler)
 
@@ -109,6 +128,13 @@ class ServingServer(ThreadingHTTPServer):
         import sys
 
         self.log(f"connection failed: {type(sys.exc_info()[1]).__name__}")
+
+    def writer(self, path: str) -> str | None:
+        """Return the writer namespace `path` is under, or `None`."""
+        if not path.startswith(API_PREFIX + "/"):
+            return None
+        name = path[len(API_PREFIX) + 1 :].partition("/")[0]
+        return name if name in self.writers else None
 
     def respond(self, request: Request) -> Response:
         """Dispatch one request that has already passed the gate."""
@@ -133,10 +159,17 @@ def make_server(
     namespaces: Mapping[str, Route] | None = None,
     private: assets.Private = assets.nothing_private,
     log: Callable[[str], None] | None = None,
+    writers: Collection[str] = (),
 ) -> ServingServer:
     """Build a bound, not-yet-serving server on `127.0.0.1`; `port=0` picks a free one."""
     return ServingServer(
-        ("127.0.0.1", port), site_root, source, namespaces=namespaces, private=private, log=log
+        ("127.0.0.1", port),
+        site_root,
+        source,
+        namespaces=namespaces,
+        private=private,
+        log=log,
+        writers=writers,
     )
 
 
@@ -172,6 +205,24 @@ class _Handler(BaseHTTPRequestHandler):
         if refused is not None:
             self._write(error(403, refused), close=True)
             return
+        self._dispatch()
+
+    do_HEAD = do_GET
+
+    def do_POST(self) -> None:
+        """Answer a `POST` under a writer namespace, after the gate; `405` anywhere else."""
+        path = urlsplit(self.path).path
+        refused = refusal(self.client_address[0], self.headers, self.server.allowed_hosts)
+        if refused is not None or self.server.writer(path) is None:
+            self._unsupported()
+            return
+        if not self._discard_body():
+            self._write(error(413, "a request body is never read here"), close=True)
+            return
+        self._dispatch()
+
+    def _dispatch(self) -> None:
+        """Hand the request to its route; an exception is a fixed `500`."""
         request = Request(self.command, urlsplit(self.path).path, self.headers)
         try:
             response = self.server.respond(request)
@@ -180,7 +231,17 @@ class _Handler(BaseHTTPRequestHandler):
             response = error(500, "internal error")
         self._write(response)
 
-    do_HEAD = do_GET
+    def _discard_body(self) -> bool:
+        """Read and drop a `POST` body of at most `MAX_DISCARDED` bytes; `False` if larger."""
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+        except ValueError:
+            return False
+        if length < 0 or length > MAX_DISCARDED:
+            return False
+        if length:
+            self.rfile.read(length)
+        return True
 
     def _unsupported(self) -> None:
         """Answer any other method `405`, after the same gate."""
@@ -189,10 +250,13 @@ class _Handler(BaseHTTPRequestHandler):
         headers = answer.headers if refused else (*answer.headers, ("Allow", "GET, HEAD"))
         self._write(Response(answer.status, headers, answer.body), close=True)
 
-    do_POST = do_PUT = do_DELETE = do_PATCH = do_OPTIONS = _unsupported
+    do_PUT = do_DELETE = do_PATCH = do_OPTIONS = _unsupported
 
     def _write(self, response: Response, close: bool = False) -> None:
-        """Send the status, every header, and the body or the file's span."""
+        """Send the status, every header, and the body, the file's span, or the stream."""
+        if response.stream is not None:
+            self._write_stream(response)
+            return
         self.send_response(response.status)
         for name, value in (*response.headers, *SECURITY_HEADERS):
             self.send_header(name, value)
@@ -208,6 +272,69 @@ class _Handler(BaseHTTPRequestHandler):
             self.wfile.write(response.body)
             return
         self._stream(response)
+
+    def _write_stream(self, response: Response) -> None:
+        """Send each chunk as it is produced; the body ends when the connection closes.
+
+        ⛔ The stream is closed whatever happens — a client that hung up closes it,
+        which is how a run the page abandoned is ended rather than left running.
+        """
+        stream = response.stream
+        assert stream is not None
+        done = threading.Event()
+        ending = threading.Lock()
+        watcher: threading.Thread | None = None
+        try:
+            self.send_response(response.status)
+            for name, value in (*response.headers, *SECURITY_HEADERS):
+                self.send_header(name, value)
+            self.send_header("Connection", "close")
+            self.end_headers()
+            self.close_connection = True
+            if self.command == "HEAD":
+                return
+            cancel = getattr(stream, "cancel", None)
+            if cancel is not None:
+                watching = (done, ending, cancel)
+                watcher = threading.Thread(target=self._watch, args=watching, daemon=True)
+                watcher.start()
+            for chunk in stream:
+                self.wfile.write(chunk)
+                self.wfile.flush()
+        except OSError as exc:
+            self.server.log(f"stream ended early: {type(exc).__name__}")
+        finally:
+            # ⛔ The watcher is JOINED before the stream is closed: a stream that ended on
+            # its own must never be cancelled by a look taken as the socket closed.
+            with ending:
+                done.set()
+            if watcher is not None:
+                watcher.join()
+            close = getattr(stream, "close", None)
+            if close is not None:
+                close()
+
+    def _watch(
+        self, done: threading.Event, ending: threading.Lock, cancel: Callable[[], object]
+    ) -> None:
+        """Call `cancel` if the client hangs up while the stream is still producing.
+
+        ⚠️ A stream blocked waiting for its next chunk writes nothing, so a write can
+        never discover the hang-up; the socket reading end-of-file is the only signal.
+        """
+        while not done.wait(HANGUP_POLL):
+            try:
+                readable, _, _ = select.select([self.connection], [], [], 0)
+                hung_up = bool(readable) and self.connection.recv(1, socket.MSG_PEEK) == b""
+            except OSError, ValueError:
+                hung_up = True
+            if hung_up:
+                with ending:
+                    if not done.is_set():
+                        cancel()
+                return
+            if readable:
+                return
 
     def _stream(self, response: Response) -> None:
         """Stream the inclusive span of a file without holding it in memory."""

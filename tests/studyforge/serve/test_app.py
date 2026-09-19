@@ -7,14 +7,16 @@ loopback exists in a container started with no network.
 
 from __future__ import annotations
 
+import http.client
 import json
+import threading
 
 import pytest
 
 from studyforge.generate import write_site
 from studyforge.generate.declarations import read_corpus
 from studyforge.serve.app import ServingServer, make_server
-from studyforge.serve.response import json_response
+from studyforge.serve.response import Response, json_response
 from studyforge.serve.routes.content import CorpusContent
 from studyforge.serve.security import REFUSED_HOST, REFUSED_ORIGIN, REFUSED_SITE, SECURITY_HEADERS
 from tests.studyforge.generate.corpora import FIXTURES
@@ -189,3 +191,114 @@ def test_a_private_file_is_404_on_both_mounts(site, source):
     with running(site, source, private=lambda path: path == record.resolve()) as server:
         assert fetch(server, "/.studyforge/clip.mp3")[0] == 404
         assert fetch(server, "/api/v1/assets/.studyforge/clip.mp3")[0] == 404
+
+
+# --- writers and streams (SF-22) ---------------------------------------------
+
+
+def echo(request, rest):
+    return json_response(200, {"method": request.method, "rest": rest})
+
+
+def test_post_reaches_a_writer_namespace_and_only_a_writer(site, source):
+    spaces = {"writer": echo, "reader": echo}
+    with running(site, source, namespaces=spaces, writers=("writer",)) as server:
+        written = fetch(server, "/api/v1/writer/x", method="POST")
+        read = fetch(server, "/api/v1/reader/x", method="POST")
+        content = fetch(server, "/api/v1/content/toc", method="POST")
+        static = fetch(server, "/index.html", method="POST")
+    assert (written[0], json.loads(written[2])["method"]) == (200, "POST")
+    assert [read[0], content[0], static[0]] == [405, 405, 405]
+
+
+def test_a_writer_must_be_a_registered_namespace_and_never_content(site, source):
+    with pytest.raises(ValueError, match="only a registered namespace"):
+        make_server(site, source, port=0, writers=("content",))
+    with pytest.raises(ValueError, match="only a registered namespace"):
+        make_server(site, source, port=0, namespaces={"a": echo}, writers=("b",))
+
+
+def test_a_post_body_is_drained_and_never_reaches_a_route(site, source):
+    seen = []
+
+    def writer(request, rest):
+        seen.append(request)
+        return json_response(200, {})
+
+    with running(site, source, namespaces={"w": writer}, writers=("w",)) as server:
+        small = _post(server, "/api/v1/w/x", b'{"command": ["rm"]}')
+        large = fetch(server, "/api/v1/w/x", {"Content-Length": str(10**6)}, method="POST")
+    assert small == 200 and large[0] == 413
+    assert len(seen) == 1 and not hasattr(seen[0], "body")
+
+
+class Chunks:
+    """One chunk, then a stream WAITING on its next one — the shape of a quiet run.
+
+    ⚠️ A stream that kept writing would find the hang-up by its own failed write;
+    only one that is waiting needs the watcher, so that is the one measured.
+    """
+
+    def __init__(self, waits: float):
+        self.waits = waits
+        self.sent = False
+        self.cancelled = threading.Event()
+        self.closed = threading.Event()
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if not self.sent:
+            self.sent = True
+            return b"tick\n"
+        self.cancelled.wait(self.waits)
+        raise StopIteration
+
+    def cancel(self):
+        self.cancelled.set()
+
+    def close(self):
+        self.closed.set()
+
+
+def serve_chunks(site, source, chunks):
+    def streaming(request, rest):
+        return Response(200, (("Content-Type", "text/plain"),), stream=chunks)
+
+    return running(site, source, namespaces={"s": streaming})
+
+
+def test_a_waiting_stream_is_cancelled_and_closed_when_the_client_hangs_up(site, source):
+    chunks = Chunks(waits=60)
+    with serve_chunks(site, source, chunks) as server:
+        connection = http.client.HTTPConnection(*server.server_address[:2], timeout=10)
+        connection.request("GET", "/api/v1/s/")
+        reply = connection.getresponse()
+        first = reply.readline()
+        headers = {k.lower(): v for k, v in reply.getheaders()}
+        reply.close()
+        connection.close()
+        assert chunks.cancelled.wait(10) and chunks.closed.wait(10)
+    assert first == b"tick\n"
+    assert headers["connection"] == "close" and "content-length" not in headers
+    assert_secured(headers)
+
+
+def test_a_stream_the_client_reads_to_its_end_is_closed_and_never_cancelled(site, source):
+    chunks = Chunks(waits=0.5)
+    with serve_chunks(site, source, chunks) as server:
+        status, _, body = fetch(server, "/api/v1/s/")
+    assert (status, body) == (200, b"tick\n")
+    assert chunks.closed.is_set() and not chunks.cancelled.is_set()
+
+
+def _post(server, path, body):
+    connection = http.client.HTTPConnection(*server.server_address[:2], timeout=10)
+    try:
+        connection.request("POST", path, body=body)
+        reply = connection.getresponse()
+        reply.read()
+        return reply.status
+    finally:
+        connection.close()

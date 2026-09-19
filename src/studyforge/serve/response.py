@@ -1,12 +1,26 @@
 r"""A route's answer as a value, so routes are tested without a socket.
 
 **What it does.** `Response` is what every route returns — a status, its headers,
-and either bytes or a span of one file to stream. `Request` is what a route is
-given. The helpers build the JSON envelope every API answer carries.
+and either bytes, a span of one file to stream, or a `stream` of chunks written
+as they are produced. `Request` is what a route is given. The helpers build the
+JSON envelope every API answer carries.
 
 **How you use it.** A route returns `json_response(200, {...})`,
-`error(404, "no such unit")`, or `Response(206, headers, file=path, span=(a, b))`.
-`app` writes it; nothing else touches the wire.
+`error(404, "no such unit")`, `Response(206, headers, file=path, span=(a, b))`,
+or `Response(200, headers, stream=chunks)`. `app` writes it; nothing else touches
+the wire.
+
+⭐ **A `stream` is written chunk by chunk and delimited by closing the connection**
+(`SF-22`: a run's output reaches the page line by line as the program writes it).
+⛔ `app` always closes a stream it was handed — finished, failed or abandoned by
+the client — so whatever the stream holds open (a run) ends with the response.
+⭐ A stream that also has `cancel()` has it called, from another thread, the moment
+the client hangs up: a stream waiting on its next chunk writes nothing, so no write
+would ever discover it.
+
+⛔ **`Request` carries no body and no query string, and that is structural**: a
+route cannot read what a client sent beyond its method, path and headers, so no
+client value has a field to arrive through (spec §8.3, rule 3).
 
 **Depends on.** `json`, `dataclasses` and `pathlib`.
 
@@ -18,7 +32,7 @@ body, so a caller logs the exception's *type* and answers with a fixed string.
 from __future__ import annotations
 
 import json
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -48,17 +62,20 @@ class Request:
 
 @dataclass(frozen=True, slots=True)
 class Response:
-    """One answer: bytes in `body`, or the inclusive `span` of `file` to stream."""
+    """One answer: bytes in `body`, the inclusive `span` of `file`, or a `stream` of chunks."""
 
     status: int
     headers: tuple[tuple[str, str], ...] = ()
     body: bytes = b""
     file: Path | None = None
     span: tuple[int, int] | None = None
+    stream: Iterator[bytes] | None = None
 
     @property
     def length(self) -> int:
-        """Return the number of body bytes this response sends."""
+        """Return the number of body bytes this response sends; a stream's is not known."""
+        if self.stream is not None:
+            return 0
         if self.file is None:
             return len(self.body)
         if self.span is None:

@@ -48,3 +48,7 @@ def test_an_error_carries_only_its_message():
     response = error(404, "no such unit")
     assert response.status == 404
     assert json.loads(response.body) == {"api": API_VERSION, "error": "no such unit"}
+
+
+def test_a_stream_response_has_no_length_to_state():
+    assert Response(200, stream=iter([b"a\n"])).length == 0

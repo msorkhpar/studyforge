@@ -33,8 +33,13 @@ modules or it does not arrive.
 `discovery` (a root in, every corpus under it found, no configured paths),
 `addressing` (N-segment unit addresses at each corpus's own depth), `routes.state`
 (never cached, derived from the filesystem on every request) and `instance`
-(`make_instance(root, port, log)`, the seam `studyforge serve` calls). SF-22 (run)
-registers its namespace through `app.make_server(namespaces=...)`.
+(`make_instance(root, port, log)`, the seam `studyforge serve` calls). **Filled by
+SF-22**: `routes.run` (Run and Submit), registered in `instance.instance_of` as the one
+namespace `app` answers `POST` under, and `app`'s streamed response.
+
+⛔ **`routes.run` is the one module here that imports `execute`** — the runner, which
+starts every process; no module of this package starts one or imports a library that
+does (asserted in `tests/studyforge/serve/test_init.py`).
 
 ⚠️ `discovery` reads a corpus through `generate`'s `read_corpus`, the one reader of
 a corpus's declarations (`SF-19a/1`), which is why `generate` is named above.
