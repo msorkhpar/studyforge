@@ -56,8 +56,8 @@ one only binds them together.
 from __future__ import annotations
 
 from collections.abc import Callable
-from functools import partial
 from dataclasses import dataclass
+from functools import partial
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import scrub

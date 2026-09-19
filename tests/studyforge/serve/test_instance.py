@@ -13,9 +13,9 @@ import threading
 
 import pytest
 
+from studyforge.generate import read_corpus, write_site
 from studyforge.progress import store_dir
 from studyforge.serve.discovery import DiscoveryRefused, discover
-from studyforge.generate import read_corpus, write_site
 from studyforge.serve.instance import (
     WRITERS,
     SiteCorpus,
@@ -26,9 +26,9 @@ from studyforge.serve.instance import (
 )
 from studyforge.serve.routes import run, state
 from studyforge.serve.routes.content import CorpusContent
+from tests.studyforge.cli.serving import digests
 from tests.studyforge.generate.corpora import BOTH
 from tests.studyforge.serve.built import a_workspace, record, source_of, unit_keys
-from tests.studyforge.cli.serving import digests
 from tests.studyforge.serve.serving import fetch
 
 
