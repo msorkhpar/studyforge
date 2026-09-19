@@ -8,24 +8,27 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 
 from studyforge.cli.narrate import report
 from studyforge.cli.plan import plan_for
+from studyforge.execute import CONTAINER, HOST
 from studyforge.skills.buildserve import narration, states
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
+    HOST_EXECUTION,
     KNOWN,
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
     NO_NARRATION_SERVICE,
-    NO_TOOLCHAIN,
     NOT_NARRATED,
     NOTHING_TO_NARRATE,
     PartialState,
     exercise_states,
     narration_states,
+    probe_for,
     recorded,
 )
 from studyforge.validate.cli import UNUSABLE
@@ -121,11 +124,74 @@ def test_only_the_finished_silent_state_reads_like_the_exercise_state():
     assert "not yet known whether this corpus could speak" in NOT_NARRATED.missing
 
 
-def test_the_exercise_state_follows_the_manifest_and_the_serving_process():
-    assert exercise_states(False, ()) == (NO_EXERCISES,)
-    assert exercise_states(False, (EXECUTION_NAMESPACE,)) == (NO_EXERCISES,)
-    assert exercise_states(True, ("content", "assets")) == (NO_TOOLCHAIN,)
-    assert exercise_states(True, ("content", EXECUTION_NAMESPACE)) == ()
+class Asked:
+    """A stand-in for `execute`'s probe: answers `mode`, and counts being asked."""
+
+    def __init__(self, mode: str) -> None:
+        self.answer, self.asked = mode, 0
+
+    def mode(self) -> str:
+        self.asked += 1
+        return self.answer
+
+
+def test_the_exercise_state_follows_the_manifest_the_serving_process_and_the_probe():
+    # ⭐ `W381` (a), both ways: offered execution on the HOST is `host`; in the
+    # runner container it is no state at all.
+    served = ("content", EXECUTION_NAMESPACE)
+    assert exercise_states(True, served, Asked(HOST)) == (HOST_EXECUTION,)
+    assert exercise_states(True, served, Asked(CONTAINER)) == ()
+    assert exercise_states(False, (), Asked(HOST)) == (NO_EXERCISES,)
+    assert exercise_states(False, served, Asked(HOST)) == (NO_EXERCISES,)
+
+
+def test_the_probe_is_asked_only_when_a_run_could_happen():
+    # ⛔ No exercises, or no execution offered: nothing runs, so where is moot.
+    for declared, offered in ((False, ("content", EXECUTION_NAMESPACE)), (True, ("content",))):
+        probe = Asked(HOST)
+        assert HOST_EXECUTION not in exercise_states(declared, offered, probe)
+        assert probe.asked == 0
+    probe = Asked(HOST)
+    exercise_states(True, (EXECUTION_NAMESPACE,), probe)
+    assert probe.asked == 1
+
+
+def test_the_host_state_says_what_the_ruling_says():
+    # ⭐ Round 125's wording: where it runs, what it lacks, that everything works,
+    # and the remedy names the runner container and the component's README.
+    assert HOST_EXECUTION.name == "host"
+    assert "execute on this host, without the runner's isolation" in HOST_EXECUTION.missing
+    assert HOST_EXECUTION.works.startswith("everything:")
+    assert "(C5)" not in HOST_EXECUTION.works, "host mode is not a finished state"
+    remedy = "start the runner container as code-server-toolchain's README documents"
+    assert HOST_EXECUTION.remedy == f"{remedy}, then serve again"
+    assert HOST_EXECUTION in KNOWN
+
+
+def test_the_probe_is_executes_own_and_asks_what_a_run_asks(tmp_path):
+    # ⛔ ONE definition, imported: the probe class is `execute`'s, and it names the
+    # container and root the served instance's runner is built from.
+    from studyforge.execute import ModeProbe, container_for
+    from studyforge.serve.routes.runs import runner_for
+
+    probe = probe_for(tmp_path, "some-corpus")
+    runner = runner_for(SimpleNamespace(root=tmp_path, source="some-corpus"))
+    assert type(probe) is ModeProbe and states.ModeProbe is ModeProbe
+    assert probe.container == runner.probe.container == container_for("some-corpus")
+    assert probe.source_root == runner.probe.source_root
+    source = Path(states.__file__).read_text(encoding="utf-8")
+    assert "docker" not in source.replace("`docker inspect`", ""), "a copied probe"
+
+
+def test_no_served_form_lacks_execution_so_the_toolchain_state_is_gone():
+    # ⭐ `W381` (b): the condition measured, then its consequence. Both forms of
+    # `serve` take their namespaces from `namespaces_of`, and it always offers `run`.
+    from studyforge.serve import Discovered, namespaces_of
+
+    assert EXECUTION_NAMESPACE in namespaces_of(Discovered(Path("."), (), ()), {})
+    assert "toolchain" not in {state.name for state in KNOWN}
+    assert not hasattr(states, "NO_TOOLCHAIN")
+    assert all("toolchain container" not in state.remedy for state in KNOWN)
 
 
 def test_the_execution_namespace_is_the_frameworks_one_spelling_and_the_route_registers_it():

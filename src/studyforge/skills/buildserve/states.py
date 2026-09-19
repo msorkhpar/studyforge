@@ -1,20 +1,25 @@
 """The honest partial states: each one says what is missing and what still works.
 
-**What it does.** Names the six states a site can be served in short of
+**What it does.** Names the states a site can be served in short of
 everything, and derives which of them hold from the verbs' own answers: the
 narration run's exit code and report, the plan's narration creations, the
-manifest's `exercises` flag, and the namespaces the serving process offers.
+manifest's `exercises` flag, the namespaces the serving process offers, and
+`execute`'s own answer to where a run would execute.
 
 **How you use it.** `narration_states(code, said, has_record=...)` and
-`exercise_states(declared, namespaces)` each return a tuple of `PartialState`;
+`exercise_states(declared, namespaces, probe)` each return a tuple of
+`PartialState`; `probe_for(root, source)` is the probe to hand the second;
 `recorded(plan)` answers whether a narration record names any clip.
 `PartialState.lines()` is what the skill prints.
 
 **Depends on.** `cli.narrate.report.NO_SERVICE`, imported so the no-service
 sentence is never respelled, `serve.routes.run.NAMESPACE` for the execution
 namespace's one spelling, `validate.report.OK`, and this package's
-`narration` for what provides narration and how to have it. ⛔ It reads answers
-and opens nothing.
+`narration` for what provides narration and how to have it, and
+`studyforge.execute` for `ModeProbe`, `container_for` and `HOST` — the one
+definition of where a run executes, imported and never copied (`W381`). ⛔ It
+reads answers and opens nothing; the one question it asks is that probe's, which
+reads (`docker inspect`) and never starts, stops or enters a container.
 
 ## ⛔ None of these is an error (R6, R8)
 
@@ -39,15 +44,31 @@ this module had to go and read:**
 ⛔ So a corpus that could narrate and did not is never reported as complete, and
 a corpus with nothing to narrate is never sent to start a service it does not
 need.
+
+## ⛔ WHERE A RUN EXECUTES IS A STATE OF ITS OWN (`W381`, ruled round 125)
+
+⭐ Every served form registers the `run` namespace (`serve.instance.namespaces_of`
+builds it for both), so a site that declares exercises always answers Run and
+Submit. ⚠️ **What varies is WHERE**: with no runner container up over this
+corpus, `execute` runs a reader's code on the host, without the runner's
+isolation. That is `host`, reported whenever the served instance offers
+execution and `execute`'s probe answers `HOST`.
+
+⛔ **The old `toolchain` state is gone**, by the ruling's own condition: it named a
+serving process that offers no execution, and no served form can now lack the
+namespace, so it described a state this skill no longer produces.
 """
 
 from __future__ import annotations
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from pathlib import Path
+from typing import Protocol
 
 import studyforge.serve.routes.run as run
 from studyforge.cli.narrate.report import NO_SERVICE
+from studyforge.execute import HOST, ModeProbe, container_for
 from studyforge.skills.buildserve import narration
 from studyforge.validate.report import OK
 
@@ -121,11 +142,13 @@ NO_EXERCISES = PartialState(
     "none needed",
 )
 
-NO_TOOLCHAIN = PartialState(
-    "toolchain",
-    "the serving process offers no execution, so Run and Submit are unavailable",
-    f"practice pages read; {READING_FLOOR}",
-    "none from this skill: execution arrives with a toolchain container",
+#: ⭐ `W381`: the ruled wording. ⛔ Not finished in the C5 sense — it has a remedy.
+HOST_EXECUTION = PartialState(
+    "host",
+    "no runner container is up over this corpus, so Run and Submit execute on this "
+    "host, without the runner's isolation",
+    f"everything: Run and Submit answer on this host; {READING_FLOOR}",
+    "start the runner container as code-server-toolchain's README documents, then serve again",
 )
 
 #: ⭐ Every state, in the order the skill prints them.
@@ -135,8 +158,26 @@ KNOWN = (
     NO_NARRATION_SERVICE,
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
-    NO_TOOLCHAIN,
+    HOST_EXECUTION,
 )
+
+
+class Probe(Protocol):
+    """What `exercise_states` asks: `execute`'s `ModeProbe`, or a test's stand-in."""
+
+    def mode(self) -> str:
+        """`CONTAINER` or `HOST`, as the next run would take it."""
+        ...
+
+
+def probe_for(root: Path | str, source: str) -> ModeProbe:
+    """Return `execute`'s own probe for corpus `source` at `root`.
+
+    ⭐ The same container name and root the served instance's runner is built
+    from (`serve.routes.runs.runner_for`), so the skill asks the question a run
+    asks. ⛔ Nothing is asked until `mode()`.
+    """
+    return ModeProbe(Path(root).absolute(), container_for(source))
 
 
 def recorded(plan: object) -> bool:
@@ -172,10 +213,17 @@ def narration_states(code: int | None, said: str, *, has_record: bool) -> tuple[
     return (NARRATION_INCOMPLETE,)
 
 
-def exercise_states(declared: bool, namespaces: Iterable[str]) -> tuple[PartialState, ...]:
-    """Return the exercise states, from the manifest flag and what the server offers."""
+def exercise_states(
+    declared: bool, namespaces: Iterable[str], probe: Probe
+) -> tuple[PartialState, ...]:
+    """Return the exercise states, from the manifest flag, the server and the probe.
+
+    ⭐ `host` holds when the served instance offers execution and the probe answers
+    `HOST`. ⛔ The probe is asked only then: a corpus with no exercises, or a
+    server offering no execution, runs nothing, so where it would run is moot.
+    """
     if not declared:
         return (NO_EXERCISES,)
-    if EXECUTION_NAMESPACE not in set(namespaces):
-        return (NO_TOOLCHAIN,)
+    if EXECUTION_NAMESPACE in set(namespaces) and probe.mode() == HOST:
+        return (HOST_EXECUTION,)
     return ()

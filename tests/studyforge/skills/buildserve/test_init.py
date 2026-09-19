@@ -119,7 +119,9 @@ def test_the_procedure_says_what_the_first_start_fetches_before_it_happens():
 def test_the_procedure_starts_no_container_and_says_so():
     # ⛔ Spec §8.3, and the skill's own *will not do* list carries it too.
     assert "§8.3" in narration_prose()
-    assert "start, stop or reach a container" in skill_text()
+    assert "start, stop or reach into a container" in skill_text()
+    # ⭐ `W381`: it ASKS whether the runner container is up, through execute's probe.
+    assert "only asks, through the framework's own\n  mode probe" in skill_text()
     assert "docker compose" not in skill_text().lower()
 
 

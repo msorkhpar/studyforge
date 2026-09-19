@@ -11,6 +11,8 @@ from urllib.parse import quote
 import pytest
 
 import studyforge.cli.serve as serve_verb
+import studyforge.skills.buildserve.run as skill_run
+from studyforge.execute import CONTAINER, HOST
 from studyforge.serve.routes.run import RUN, TEST
 from studyforge.skills.buildserve.states import EXECUTION_NAMESPACE
 from studyforge.validate.cli import UNUSABLE
@@ -38,6 +40,27 @@ from tests.studyforge.skills.buildserve.running import (
 )
 
 SERVED = ["step validate exit 0", "step build exit 0", "step serve exit 0"]
+
+#: ⭐ `W381`: what the skill prints for an exercised corpus, by what the probe answers.
+#: ⛔ `host` is a state of the SERVED SITE, so it is expected beside the narration state.
+BY_MODE = [(HOST, ["narration", "host"]), (CONTAINER, ["narration"])]
+
+
+class Answering:
+    """A `probe_for` stand-in: answers one mode, and counts what it was asked.
+
+    ⭐ Planted so the reported state follows the RULING and not this machine's
+    container list; the unplanted probe is measured by the run-and-submit test.
+    """
+
+    def __init__(self, answer: str) -> None:
+        """Remember the answer; nothing has been asked yet."""
+        self.answer, self.asked = answer, 0
+
+    def mode(self) -> str:
+        """Answer, and record that the question was put."""
+        self.asked += 1
+        return self.answer
 
 
 def test_the_fixtures_inhabit_both_sides_of_the_exercise_flag():
@@ -76,33 +99,45 @@ def test_no_exercises_and_no_narration_is_a_valid_site_and_both_states_are_repor
     assert reading.pages and reading.defects == [], reading.defects
 
 
+@pytest.mark.parametrize("mode, expected", BY_MODE)
 @pytest.mark.parametrize("name", EXERCISED)
-def test_an_exercised_corpus_is_served_with_execution_and_no_toolchain_state(name, tmp_path):
+def test_an_exercised_corpus_is_served_with_execution_and_says_where_a_run_executes(
+    name, mode, expected, tmp_path, monkeypatch
+):
     # ⭐ `W371`, closing `SF-22/2`: the skill serves `--site`, which now registers `run`.
+    # ⭐ `W381`'s ruling (a), both ways: execution is offered either way, so what the
+    # skill prints follows the probe alone — `host` on a `HOST` answer, and nothing on
+    # a `CONTAINER` one, because a run inside the runner is short of nothing.
+    probe = Answering(mode)
+    monkeypatch.setattr(skill_run, "probe_for", lambda *given: probe)
     with skill_running(FIXTURES / name, directory(tmp_path)) as running:
         status = fetch(running.server, "/index.html")[0]
         index = fetch(running.server, "/api/v1/run/")[0]
     assert (running.code, status, index) == ([OK], 200, 200), running.said()
     assert EXECUTION_NAMESPACE in running.server.namespaces
-    assert partials(running.said()) == ["narration"]
+    assert partials(running.said()) == expected
+    assert probe.asked == 1, "the probe was not asked exactly once for a served exercise"
 
 
 @pytest.mark.parametrize("name", EXERCISED)
-def test_exercises_served_with_no_execution_are_still_reported_as_no_toolchain(
-    name, tmp_path, monkeypatch
-):
-    # ⛔ The other way: the state follows what the serving process OFFERS, so a serve
-    # that registers no `run` is still reported — and still serves the reading floor.
+def test_exercises_served_with_no_execution_report_no_exercise_state(name, tmp_path, monkeypatch):
+    # ⛔ The other way: the state follows what the serving process OFFERS. `W381`'s
+    # ruling (b) retired `toolchain` — no served form can lack the `run` namespace — so
+    # a serve that registers none prints NO exercise state, and still serves the floor.
+    # ⛔ And where a run would execute is moot when none can, so the probe is not asked.
     # ⭐ `W386`: planted through the verb's named seam, and the plant must be REACHED.
     offered = []
+    probe = Answering(HOST)
     monkeypatch.setattr(serve_verb, "site_namespaces", lambda *given: offered.append(given) or {})
+    monkeypatch.setattr(skill_run, "probe_for", lambda *given: probe)
     with skill_running(FIXTURES / name, directory(tmp_path)) as running:
         status = fetch(running.server, "/index.html")[0]
     assert (running.code, status) == ([OK], 200), running.said()
     assert len(offered) == 1, "the serve never asked the seam what to register"
     assert EXECUTION_NAMESPACE not in running.server.namespaces
     assert not running.server.writers
-    assert partials(running.said()) == ["narration", "toolchain"]
+    assert partials(running.said()) == ["narration"]
+    assert probe.asked == 0, "the probe was asked although no run could happen"
 
 
 def test_the_seam_is_named_for_what_it_returns_and_the_private_name_is_gone():
@@ -114,13 +149,16 @@ def test_the_seam_is_named_for_what_it_returns_and_the_private_name_is_gone():
 
 def test_a_site_the_skill_serves_answers_run_and_submit(tmp_path):
     # ⭐ The row's clause end to end: the runnable corpus, through the skill, in host mode.
+    # ⭐ `W381`: the one reading taken with `execute`'s OWN probe and no plant. No runner
+    # container is mounted over a corpus this test copied under `tmp_path`, so the run
+    # below really does execute here — and the skill says so.
     root = fixture_copy(tmp_path)
     with skill_running(root, directory(tmp_path)) as running:
         ran = post(running.server, start_path(1, RUN))
         submitted = post(running.server, start_path(1, TEST))
     said = running.said()
     assert running.code == [OK], said
-    assert "toolchain" not in partials(said)
+    assert "host" in partials(said), said
     assert (ran[0], ran[2].splitlines()) == (200, ["Hello, reader", "--- exit 0 ---"])
     assert submitted[0] == 200 and any("1 passed" in line for line in submitted[2].splitlines())
 
