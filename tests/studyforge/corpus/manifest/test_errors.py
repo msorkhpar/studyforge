@@ -116,11 +116,12 @@ def test_a_refusal_over_a_closed_set_says_what_the_set_is():
     with pytest.raises(ManifestError) as raised:
         from_document({"corpus_api": 99})
     # ⚠️ The whole set, sorted; it grew to two when `content.not_material`
-    # landed and to three when `media.max_files` did. ⛔ Spelled out rather
+    # landed, to three when `media.max_files` did and to four when `runtimes`
+    # did. ⛔ Spelled out rather
     # than read from `KNOWN_CORPUS_API`: the point of the assertion is that the
     # refusal *names* the set, and one built from the set would say nothing
     # about what the message contains.
-    assert "[1, 2, 3]" in str(raised.value)
+    assert "[1, 2, 3, 4]" in str(raised.value)
 
 
 def test_it_can_be_caught_as_a_value_error_by_a_caller_that_does_not_import_it():

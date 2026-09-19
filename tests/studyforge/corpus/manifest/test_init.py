@@ -31,9 +31,12 @@ PUBLIC_SURFACE = frozenset(
         "MANIFEST_FILENAME",
         "MANIFEST_KEYS",
         "MIN_WHY_CHARS",
+        "NO_RUNTIMES",
         "PLACEMENT_PROFILES",
         "RAISES",
         "REQUIRED_KEYS",
+        "REQUIRES_JAVA",
+        "RUNTIMES",
         "Classification",
         "ContentPolicy",
         "Exclusion",
@@ -49,6 +52,7 @@ PUBLIC_SURFACE = frozenset(
         "parse_content",
         "parse_edits",
         "parse_media",
+        "parse_runtimes",
     }
 )
 
@@ -179,7 +183,7 @@ def test_the_population_is_not_silently_narrower_than_the_tuple():
 
 def test_address_error_is_not_a_member_because_parse_translates_it():
     # ⚠️ **The property `W208/1` found and nothing asserted**: a non-slug
-    # `source` is SF-01's refusal, re-raised as `ManifestError` in `_slug_of`.
+    # `source` is SF-01's refusal, re-raised as `ManifestError` in `slug_of`.
     # `parse_key` is the one call that lets `AddressError` out, and no reader
     # makes it — if that ever moves, this fails before a command crashes.
     with pytest.raises(manifest.ManifestError):

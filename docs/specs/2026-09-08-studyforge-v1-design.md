@@ -672,7 +672,7 @@ its halves cannot be swapped. v1 widens it from *exactly two* segments to
 
 ### The complete key list — ⛔ **the example above is an instance, not the contract**
 
-⚠️ **The example carries nine of ten keys and that is correct.** ⭐ **A canonical
+⚠️ **The example omits optional keys and that is correct.** ⭐ **A canonical
 example is a *realistic* manifest, and a realistic manifest omits the optional
 keys it does not need** — so the example is not where you learn what a manifest
 *may* carry. This list is. ⛔ **Without it `media` was unteachable from this
@@ -681,12 +681,13 @@ for the vocabulary found only one corpus's choices.
 
 | Key | | Notes |
 |---|---|---|
-| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90) and ⭐ **`3` added `media.max_files`** (`W207`); this build reads `1`, `2` and `3` |
+| `corpus_api` | **required** | R9's version key. An unknown value is refused, never migrated. ⭐ **`2` added `content.not_material`** (ruling 90), ⭐ **`3` added `media.max_files`** (`W207`) and ⭐ **`4` added `runtimes`** (`W350`); this build reads `1`, `2`, `3` and `4` |
 | `source` | **required** | ⛔ **A corpus id, not a fetch URL** (ruling 51) |
 | `title` | **required** | |
 | `levels` | **required** | Names the *container* levels and fixes the depth |
 | `variants` | **required** | ⛔ Filing and presentation only — never *runnable* |
 | `exercises` | **required** | §7's gate onto the execution track |
+| `runtimes` | *optional* | Names, never versions, from a closed vocabulary. ⛔ **Absent means none: no runner, complete at the reading floor** (§7, C5) |
 | `placement` | **required** | |
 | `content` | **required** | `include` is plain globs; every `exclude` and every `not_material` entry carries its `why` |
 | `media` | *optional* | Defaulted. ⛔ **A corpus with no media declares nothing** |
@@ -749,6 +750,29 @@ exclusion does.** An excluded file is material being withheld from the reader,
 and a withholding nobody has to explain is one nobody audits — the same argument
 `permitted_edits` already makes about an edit. So `include` is plain globs and
 every `exclude` entry carries its `why`.
+
+### `runtimes` — what a corpus's material needs to run (`W350`)
+
+⭐ **The shape is `TC-00`'s proposal as round 112 accepted it.** An optional
+list of names from a **closed** vocabulary — `gradle`, `java`, `kotlin`,
+`maven`, `node`, `python`, `shell`, `sqlite` — which agrees name for name with
+what `code-server-toolchain`'s pin file pins (§8.1). ⛔ **Names only, never
+versions**: the corpus says *which*, the pin file says *which version*, and a
+version here would be a second place one is chosen.
+
+- ⭐ **Order carries no meaning**; `Manifest.runtimes` holds the set sorted, so
+  two equal declarations are one value (R10). A repeated name is refused.
+- ⛔ **`maven`, `gradle` and `kotlin` are refused by name without `java`** in the
+  same list — nothing is inferred, the rule `corpus_api` follows.
+- ⛔ **Refused beside `exercises: false`**: it would declare a runner for a
+  corpus with nothing runnable (§7).
+- ⭐ **Absent means none, and none is complete.** The framework neither builds,
+  probes nor starts a container for such a corpus; `exercises: true` without
+  `runtimes` is an ungraded corpus's honest shape.
+- ⛔ **It is `corpus_api: 4`'s key, and a top-level one** — `KEY_VERSIONS` keys
+  it under no block (`TC-00/2`), so under `1`–`3` it is refused naming both
+  numbers rather than parsed. ⭐ **The vocabulary is spelled once**, in
+  `corpus/manifest/runtimes.py` (`TC-00/3`).
 
 ### ⛔ `content` has **three** states, and the third is `not_material` (ruling 90)
 

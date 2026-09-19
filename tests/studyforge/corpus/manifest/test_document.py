@@ -130,16 +130,16 @@ def test_the_same_key_is_right_at_one_depth_and_wrong_at_another():
 # --- R9: an unknown version is refused, never migrated ----------------------
 
 
-@pytest.mark.parametrize("api", [0, 4, 99, "1", 1.0, None, True])
+@pytest.mark.parametrize("api", [0, 5, 99, "1", 1.0, None, True])
 def test_an_unknown_corpus_api_is_refused(api):
-    # ⚠️ `4` is where `3` used to sit, which is where `2` used to sit. ⛔ Each
+    # ⚠️ `5` is where `4` used to sit, which is where `3` and `2` sat. ⛔ Each
     # widening of the known set moves this case up by one rather than dropping
     # it: the refusal one degree above the top of the range is the one that
     # goes quiet first.
     assert "corpus_api" in refusal(corpus_api=api)
 
 
-@pytest.mark.parametrize("api", [1, 2, 3])
+@pytest.mark.parametrize("api", [1, 2, 3, 4])
 def test_every_version_this_build_speaks_is_accepted(api):
     # ⭐ Literal numbers, never `KNOWN_CORPUS_API`: an assertion that reads the
     # set it is meant to pin passes whatever the set becomes.
@@ -151,7 +151,7 @@ def test_a_manifest_reports_the_version_it_declared_and_not_this_build_s():
     # one number this was true by coincidence, because the default and the
     # only legal value were the same number.
     assert manifest(corpus_api=1).corpus_api == 1
-    assert CORPUS_API == 3
+    assert CORPUS_API == 4
 
 
 #: A `content` block using the key that `corpus_api` 2 added.
@@ -209,7 +209,7 @@ def test_the_key_the_third_version_added_is_refused_under_every_earlier_one(api)
     assert "corpus_api 3" in message
 
 
-@pytest.mark.parametrize("api", [1, 2, 3])
+@pytest.mark.parametrize("api", [1, 2, 3, 4])
 def test_a_manifest_that_declares_no_count_ceiling_parses_at_every_version(api):
     # ⭐ **The backward-compatibility claim, both halves.** A manifest written
     # before this key existed carries no `media` block at all, and one that

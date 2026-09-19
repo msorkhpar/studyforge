@@ -54,16 +54,17 @@ below.
 
 ## Every key
 
-**Ten keys. Eight are required.**
+**Every key a manifest may carry. The ones marked required have no default.**
 
 | Key | | What it says |
 |---|---|---|
-| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1`, `2` and `3`; `2` added `content.not_material` and `3` added `media.max_files` |
+| `corpus_api` | **required** | Which version of this format the file speaks. An unknown value is **refused**, never quietly migrated. This build reads `1`, `2`, `3` and `4`; `2` added `content.not_material`, `3` added `media.max_files` and `4` added `runtimes` |
 | `source` | **required** | An id for the corpus — a short stable name. **Not a URL to fetch from** |
 | `title` | **required** | What the reader sees at the top of the site |
 | `levels` | **required** | Names your container levels, and by its length fixes the depth of every address |
 | `variants` | **required** | Filing and presentation only. A variant is *not* a thing that runs |
 | `exercises` | **required** | Whether this corpus is on the execution track at all. `false` is an answer |
+| `runtimes` | *optional* | Which runtimes your material's commands need, by name. Absent means none, and a corpus with none needs no runner |
 | `placement` | **required** | `tree` or `sibling` |
 | `content` | **required** | Which of your files are read in, which are deliberately not, and which are not prose at all |
 | `media` | *optional* | Whether generated narration is committed, and the limits past which the build stops. A corpus with no media declares nothing |
@@ -195,6 +196,38 @@ that are silent with no error — and it never silently keeps committing. The
 default ceilings are not arbitrary: one real corpus reached 11.42 GiB of packed
 history against a ~5 GB soft limit, with a single 150.9 MiB file against a hard
 100 MiB block, and found out when the push became impossible.
+
+---
+
+## `runtimes` — what your material needs to run
+
+**A list of names, never versions.** You say *which* runtimes a runner must
+carry; the runner image chooses *which version* of each, once, for every
+corpus. **Needs `corpus_api: 4`.**
+
+```json
+{ "exercises": true, "runtimes": ["java", "maven"] }
+```
+
+That is the fragment; the rest of the file is as above.
+
+| Name | |
+|---|---|
+| `java` | a JDK |
+| `maven`, `gradle`, `kotlin` | each **needs `java` in the same list** — nothing is inferred |
+| `node` | Node.js and its built-in test runner |
+| `python` | Python and pytest |
+| `shell` | `bash` |
+| `sqlite` | the SQLite engine — named for the engine, because *SQL* is a language |
+
+**Order does not matter**, and each name appears once. A name outside the list
+above is refused, and so is `runtimes` beside `exercises: false`: a corpus that
+sets no runnable work needs no runner.
+
+**Leave it out and your corpus declares no runtimes.** That is a complete
+answer, not a gap: the site reads, narrates and navigates with no container at
+all. `exercises: true` without `runtimes` is fine too — exercises nobody runs
+still need nothing to run them.
 
 ---
 
