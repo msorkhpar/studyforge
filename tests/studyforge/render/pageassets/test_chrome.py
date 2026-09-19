@@ -447,9 +447,7 @@ def test_the_column_is_bounded_only_ever_on_the_element_that_owns_the_measure():
     # running text, so it gives up the prose measure `reading.css` sets on every
     # `main li`), and is not counted as one.
     bounded = sorted(
-        selector
-        for selector, block in rules()
-        if re.search(r"max-width:\s*(?!\s|none\b)", block)
+        selector for selector, block in rules() if re.search(r"max-width:\s*(?!\s|none\b)", block)
     )
     assert bounded, "nothing in this part bounds a column at all"
     astray = sorted(

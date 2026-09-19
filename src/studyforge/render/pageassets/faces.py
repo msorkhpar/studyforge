@@ -187,7 +187,7 @@ def licence_for_face(name: str) -> str:
 
 
 def digest(content: bytes) -> str:
-    """The sha256 of `content`, as the pins record spells it."""
+    """Return the sha256 of `content`, as the pins record spells it."""
     return hashlib.sha256(content).hexdigest()
 
 

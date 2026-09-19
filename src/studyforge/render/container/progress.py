@@ -96,5 +96,5 @@ def finder() -> str:
 
 
 def units_phrase(number: int) -> str:
-    """The masthead's `11 units`, published for the container page's meta."""
+    """Return the masthead's `11 units`, published for the container page's meta."""
     return escape(_units(number))
