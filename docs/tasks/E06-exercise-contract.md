@@ -128,8 +128,11 @@ the carried ruling above.
 
 ### SF-24 — Practice panel
 **Milestone** **M7** · **Depends on** SF-22, SF-23 · **Team** pair
-**Owns** `render/page/practice.py`, `render/assets/practice.{js,css}`
-**Context** ~50k — SF-22 output, TC-05 consuming document
+**Owns** `render/page/practice.py`, `render/assets/practice.{js,css}`, and the
+served-page insertion of the run client in `serve/routes/assets.py` (`W384`)
+**Context** ~50k — SF-22 output, TC-05 consuming document, and
+[`E05` § how a served page loads the run client](E05-serving-execution.md#how-a-served-page-loads-the-run-client-one-way-w370-from-sf-221),
+which is the one statement of that insertion's rule
 
 **Definition.** The reader-facing exercise surface on a unit page: the
 statement, the embedded editor opened on the workspace, Run and Submit, and the
