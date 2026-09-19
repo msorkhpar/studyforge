@@ -36,6 +36,10 @@ query string, so a client-sent command has no field to arrive through.
 | `run` (Run) | the workspace's `run_command` | `run` | ⛔ never |
 | `test` (Submit) | the workspace's `test_command` | `test` | only when it exits `0` |
 
+⚠️ **A workspace need not name both** (`W357`: a file with no test carries `main_path` and
+`run_command` alone). A mode whose command the workspace does not name answers `409` and
+starts nothing — so Submit is offered exactly where a test is named.
+
 ⭐ The URL's mode words ARE `exercise.COMMANDS`, which are `progress.MODES` — one
 vocabulary from the data to the record, so a Run cannot be recorded as a Submit.
 
@@ -108,6 +112,7 @@ NO_SUCH_CORPUS = "no such corpus"
 NO_SUCH_MODE = "no such mode"
 NO_SUCH_PRACTICE = "no such practice"
 UNGRADED = "this practice has no workspace, so there is nothing to run"
+NO_SUCH_COMMAND = "this practice's workspace names no command for this mode"
 UNRECOGNISED = "the unit document failed validation"
 GATED = "the unit document failed the personal-data gate"
 REFUSED = "the unit document's command was refused by the runner"
@@ -172,7 +177,9 @@ def start(runs: Runs, rest: str) -> Response:
         return error(404, NO_SUCH_PRACTICE)
     if workspace is None:
         return error(409, UNGRADED)
-    argv = workspace[COMMAND_OF[mode]]
+    argv = workspace.get(COMMAND_OF[mode])
+    if argv is None:
+        return error(409, NO_SUCH_COMMAND)
     try:
         live = runs.claim(lambda: Live(name, key, mode, runs.runner(corpus).start([argv])))
     except RunRefused:

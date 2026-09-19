@@ -252,7 +252,7 @@ REFUSED = [
     (f"{SOURCE}/run/kata/unit-01/practice-python/extra", 404),
     (f"{SOURCE}/run/kata/unit-01/practice-java", 404),
     (f"{SOURCE}/run/kata/unit-05/practice-python", 404),
-    (f"{SOURCE}/run/kata/unit-03/practice-python", 409),
+    (f"{SOURCE}/test/kata/unit-03/practice-python", 409),
     ("another-corpus/run/{key}", 404),
 ]
 
@@ -266,6 +266,62 @@ def test_anything_but_a_declared_practice_and_mode_starts_nothing(root, path, st
     assert answer[0] == status
     assert spy.started == []
     assert entry(discovered.corpora[0], 1) is None
+
+
+class RunOnly:
+    """The corpus's own documents, except unit 1's workspace names no test (`W357`'s shape)."""
+
+    def __init__(self, source):
+        self.source = source
+
+    def unit(self, unit_key):
+        text = self.source.unit(unit_key)
+        if unit_key != "kata/unit-01":
+            return text
+        document = json.loads(text)
+        for section in document["sections"]:
+            if section["workspace"] is not None:
+                section["workspace"] = {
+                    name: value
+                    for name, value in section["workspace"].items()
+                    if name not in ("test_path", "test_command")
+                }
+        return json.dumps(document)
+
+    def declares(self, unit_key):
+        return self.source.declares(unit_key)
+
+    def toc(self):
+        return self.source.toc()
+
+
+def test_a_workspace_that_names_no_test_offers_run_and_refuses_submit(root):
+    # ⭐ `W357`: a file with no test carries `main_path` and `run_command` alone. Taken
+    # through a stand-in source because this base's archive reader refuses that record;
+    # the route reads the generated document either way.
+    spy = Spy()
+    runs, discovered = runs_over(root, runner=spy)
+    runs.sources[SOURCE] = RunOnly(runs.sources[SOURCE])
+    with serving(runs, discovered) as server:
+        submitted = post(server, start_path(1, run.TEST))
+        ran = post(server, start_path(1, run.RUN))
+    assert submitted[0] == 409 and run.NO_SUCH_COMMAND in submitted[2]
+    assert ran[0] == 200 and lines_of(ran[2]) == ["Hello, reader", EXIT_0]
+    assert spy.started == [[["python3", "practice/passes/greet.py"]]]
+    assert entry(discovered.corpora[0], 1)["last"]["mode"] == run.RUN
+
+
+def test_run_on_the_file_with_no_test_follows_whether_its_record_names_a_command(root):
+    # ⭐ Holds on both shapes of unit 3: no workspace at all (before `W357`), or a
+    # workspace naming only its run command (after) — Run starts exactly when it does.
+    spy = Spy()
+    runs, discovered = runs_over(root, runner=spy)
+    workspace = _workspace(runs, 3)
+    with serving(runs, discovered) as server:
+        status = post(server, start_path(3, run.RUN))[0]
+    named = workspace is not None and workspace.get("run_command") is not None
+    assert status == (200 if named else 409)
+    assert spy.started == ([[workspace["run_command"]]] if named else [])
 
 
 @pytest.mark.parametrize(
