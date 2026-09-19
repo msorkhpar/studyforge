@@ -282,6 +282,8 @@ class _Handler(BaseHTTPRequestHandler):
         stream = response.stream
         assert stream is not None
         done = threading.Event()
+        ending = threading.Lock()
+        watcher: threading.Thread | None = None
         try:
             self.send_response(response.status)
             for name, value in (*response.headers, *SECURITY_HEADERS):
@@ -293,19 +295,27 @@ class _Handler(BaseHTTPRequestHandler):
                 return
             cancel = getattr(stream, "cancel", None)
             if cancel is not None:
-                threading.Thread(target=self._watch, args=(done, cancel), daemon=True).start()
+                watcher = threading.Thread(target=self._watch, args=(done, ending, cancel), daemon=True)
+                watcher.start()
             for chunk in stream:
                 self.wfile.write(chunk)
                 self.wfile.flush()
         except OSError as exc:
             self.server.log(f"stream ended early: {type(exc).__name__}")
         finally:
-            done.set()
+            # ⛔ The watcher is JOINED before the stream is closed: a stream that ended on
+            # its own must never be cancelled by a look taken as the socket closed.
+            with ending:
+                done.set()
+            if watcher is not None:
+                watcher.join()
             close = getattr(stream, "close", None)
             if close is not None:
                 close()
 
-    def _watch(self, done: threading.Event, cancel: Callable[[], object]) -> None:
+    def _watch(
+        self, done: threading.Event, ending: threading.Lock, cancel: Callable[[], object]
+    ) -> None:
         """Call `cancel` if the client hangs up while the stream is still producing.
 
         ⚠️ A stream blocked waiting for its next chunk writes nothing, so a write can
@@ -314,11 +324,13 @@ class _Handler(BaseHTTPRequestHandler):
         while not done.wait(HANGUP_POLL):
             try:
                 readable, _, _ = select.select([self.connection], [], [], 0)
-                if readable and self.connection.recv(1, socket.MSG_PEEK) == b"":
-                    cancel()
-                    return
+                hung_up = bool(readable) and self.connection.recv(1, socket.MSG_PEEK) == b""
             except OSError, ValueError:
-                cancel()
+                hung_up = True
+            if hung_up:
+                with ending:
+                    if not done.is_set():
+                        cancel()
                 return
             if readable:
                 return
