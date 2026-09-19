@@ -17,6 +17,7 @@ from studyforge.address import Address
 from studyforge.render.container import Item, PageError
 from studyforge.render.container import listing as listing_module
 from studyforge.render.markup import safe_href
+from studyforge.render.pageassets import SURFACE_HOOKS
 
 #: The container every row below belongs to. ⛔ An `Address`, because the keys
 #: the rows carry are minted by `Address.unit_key` and never spelled here — a
@@ -124,10 +125,11 @@ def test_numbering_is_wrapped_and_its_trailing_space_goes_with_it():
     numbered = render((an_item(numbering="4.4.1", href=None),))
     assert '<span data-kind="numbering">4.4.1</span> Your first class' in numbered
     plain = render((an_item(numbering="", href=None),))
-    assert "data-kind" not in plain
-    assert plain.endswith(
-        f'<li id="{WHERE.unit_key(1)}" data-readable="false">Your first class</li></ol></nav>'
-    )
+    # ⭐ The only `data-kind` left is the hidden read words every row ends with (`W383`).
+    assert 'data-kind="numbering"' not in plain
+    said = f'<span data-kind="{SURFACE_HOOKS["read_state"]}" hidden>'
+    assert plain.count("data-kind") == plain.count(said) == 1
+    assert f'<li id="{WHERE.unit_key(1)}" data-readable="false">Your first class{said}' in plain
 
 
 def test_the_list_is_labelled_and_ordered():

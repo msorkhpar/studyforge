@@ -30,6 +30,7 @@ ONE_LINE = (
     "link-previous.html",
     "outline.html",
     "rail.html",
+    "read-state.html",
     "video.html",
     "video-link.html",
 )
