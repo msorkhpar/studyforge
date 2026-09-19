@@ -52,7 +52,9 @@ one does.**
 | **M5** — it runs code | ✅ **CLOSED — round 123**: step 5.2 merged and verified; ⭐ **the container reading re-taken by this register against a REBUILT `python` runner image that holds only `python` (`W374`)** | `12b1abb` | [the close](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.2** | ✅ CLOSED — `SF-29`, `SF-22`, `SF-44` | `12b1abb` | [record](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20`, ⭐ **the runner's acceptance taken by the register against the REAL runner image** | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
-| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ **Step 7.1 — `TC-01`, the editor image — stage 1's proposal RULED (round 122); ⭐ stage 2 DISPATCHED at round 123 — `W374` landed and the user allowed its pulls.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
+| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ **Step 7.1 CLOSED at round 124 (`TC-01`, the editor image); step 7.2 OPEN — `TC-02` first, then `TC-03`, then `TC-04`, SERIAL: all three write the sibling's `docker/editor/` build files.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
+| **M7 step 7.1** | ✅ CLOSED — `TC-01`, planted both ways; the sibling at `8914ac8` | `9bc688f` | [record](BOARD-ARCHIVE.md#po-round-124) |
+| **M7 step 7.2** | ⏳ OPEN — `TC-02` in flight; `TC-03`, `TC-04` queued behind it | — | [record](BOARD-ARCHIVE.md#po-round-124) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -66,11 +68,12 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W368` | Developer 2 | `fix/W368-the-rail-shows-what-the-reader-marked` @ `wt/dev2` | 0 @ `12b1abb` | in-progress |
-| `W370` | Developer 3 | `fix/W370-one-way-a-page-loads-the-run-client` @ `wt/dev3` | 0 @ `12b1abb` | in-progress |
-| `W375` | Developer 5 | `fix/W375-one-process-start-detector` @ `wt/dev5` | 0 @ `12b1abb` | in-progress |
-| `W371` | Developer 6 | `fix/W371-a-served-site-answers-run` @ `wt/dev6` | 0 @ `12b1abb` | in-progress |
-| `TC-01` | Developer 1 | `task/TC-01-the-editor-image` @ `wt/dev1` | 0 @ `fa30758` | in-progress |
+| `TC-02` | Developer 1 | `task/TC-02-toolchain-selection` @ `wt/dev1` | 0 @ `e23a9b0` | in-progress |
+| `W380` | Developer 2 | `fix/W380-the-site-form-registers-what-the-root-does` @ `wt/dev2` | 0 @ `e23a9b0` | in-progress |
+| `W384` | Developer 3 | `fix/W384-sf24-owns-inserting-the-client` @ `wt/dev3` | 0 @ `e23a9b0` | in-progress |
+| `W379` | Developer 4 | `fix/W379-the-runner-cache-collision-reversed` @ `wt/dev4` | 0 @ `e23a9b0` | in-progress |
+| `W382` | Developer 5 | `fix/W382-the-parallel-suite-imports-on-the-host` @ `wt/dev5` | 0 @ `e23a9b0` | in-progress |
+| `W383` | Developer 6 | `fix/W383-a-screen-reader-hears-what-is-read` @ `wt/dev6` | 0 @ `e23a9b0` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -143,7 +146,8 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 72 | `W365` | ⭐ **round 120's mint, jumping nobody** | [120](BOARD-ARCHIVE.md#po-round-120) |
 | 73 | `W366` | ⭐ **after `W364`, whose parallel gate it narrows further; the user's direction** | [121](BOARD-ARCHIVE.md#po-round-121) |
 | 74 | `W367`–`W373` | ⭐ **round 121's mints from `W362`, `SF-22` and `SF-44`, each jumping nobody; `W370` before `SF-24`** | [121](BOARD-ARCHIVE.md#po-round-121) |
-| 76 | `W375`–`W378` | ⭐ **round 123's mints, each jumping nobody** | [123](BOARD-ARCHIVE.md#po-round-123) |
+| 76 | `W375`–`W378` | ⭐ **round 123's mints, each jumping nobody** — ⛔ **`W375` closed in 124** | [123](BOARD-ARCHIVE.md#po-round-123) |
+| 77 | `W379`–`W384` | ⭐ **round 124's mints, each jumping nobody** — ⛔ **`W381` is a RULING and is argued before any code** | [124](BOARD-ARCHIVE.md#po-round-124) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -535,17 +539,23 @@ else.**
 | W365 | The authoring guide and the exercise epic describe an ungraded unit only as one with no exercise, so an adapter author never learns the file-only record | framework agent | ✅ done — `3a0af87` | [`rows/W365.md`](rows/W365.md) |
 | W366 | Every merge runs the whole suite in both environments whatever it changed, so a document-only round costs as much as a code change | framework agent | ✅ done — `63e1609` | [`rows/W366.md`](rows/W366.md) |
 | W367 | The size gate reads Python files only, so a stylesheet reached 748 lines and nothing failed | framework agent | ✅ done — `54706a9` | [`rows/W367.md`](rows/W367.md) |
-| W368 | The rail carries no unit key on its rows, so it cannot show which units the reader has marked read | framework agent | `todo` — `W362/1` | [`rows/W368.md`](rows/W368.md) |
+| W368 | The rail carries no unit key on its rows, so it cannot show which units the reader has marked read | framework agent | ✅ done — `8effe7a` | [`rows/W368.md`](rows/W368.md) |
 | W369 | The index keeps a one-column cap that leaves a wide window's right third empty, and a narration marker shows before anything plays | framework agent | `todo` — `W362/3` + the register's reading | [`rows/W369.md`](rows/W369.md) |
-| W370 | No page may name the API, so a practice panel has no sanctioned way to load the run client | framework agent | `todo` — `SF-22/1` | [`rows/W370.md`](rows/W370.md) |
-| W371 | The site verb never registers the run namespace, so the build-and-serve skill reports every exercised corpus as having no runner | framework agent | `todo` — `SF-22/2` | [`rows/W371.md`](rows/W371.md) |
+| W370 | No page may name the API, so a practice panel has no sanctioned way to load the run client | framework agent | ✅ done — `675e3d4` | [`rows/W370.md`](rows/W370.md) |
+| W371 | The site verb never registers the run namespace, so the build-and-serve skill reports every exercised corpus as having no runner | framework agent | ✅ done — `0f391da` | [`rows/W371.md`](rows/W371.md) |
 | W372 | No test starts a run through the served route in container mode, nor while checking that the serving process holds no Docker socket | framework agent | `todo` — `SF-22/3` | [`rows/W372.md`](rows/W372.md) |
 | W373 | Spec §8.5 and the runnable fixture's notes describe the grader path before the terminal command existed | framework agent | `todo` — `SF-44/3` + `SF-44/4` | [`rows/W373.md`](rows/W373.md) |
 | W374 | The runner image built for python carries every runtime, so a runtime that was not declared is present after all | framework agent | ✅ done — `12b1abb` | [`rows/W374.md`](rows/W374.md) |
-| W375 | The process-start sweep borrows its detector from a serve test, and the detector does not know a module that starts a browser | framework agent | `todo` — `W361/2` + `W361/3` | [`rows/W375.md`](rows/W375.md) |
+| W375 | The process-start sweep borrows its detector from a serve test, and the detector does not know a module that starts a browser | framework agent | ✅ done — `e23a9b0` | [`rows/W375.md`](rows/W375.md) |
 | W376 | The approach-to-ceiling notice still reads Python files only, so a stylesheet or script nearing its ceiling goes unwarned | framework agent | `todo` — `W367/1` | [`rows/W376.md`](rows/W376.md) |
 | W377 | A shipped skill document has no length ceiling, and the largest are close to the one source files carry | framework agent | `todo` — `W367/2` | [`rows/W377.md`](rows/W377.md) |
 | W378 | A build-and-serve pipe test missed its timeout once under the parallel pinned suite | framework agent | `todo` — `W367/4` | [`rows/W378.md`](rows/W378.md) |
+| W379 | A runner built for many runtimes after one built for python is served the python build's cache, and only its own check stops it | framework agent | `todo` — `TC-01/13` | [`rows/W379.md`](rows/W379.md) |
+| W380 | The instance module says the run namespace is registered in one place, which the site form made false, and the site form registers no state namespace | framework agent | `todo` — `W371/1` + `W371/2` | [`rows/W380.md`](rows/W380.md) |
+| W381 | The build-and-serve skill does not say where a run executes, so a site that runs a reader's code on the host reports no state for it | framework agent | `todo` — `W371/3` | [`rows/W381.md`](rows/W381.md) |
+| W382 | The parallel-suite test's workers cannot import the framework on the host, so the host cannot run its suite in parallel | framework agent | `todo` — `W364/2` | [`rows/W382.md`](rows/W382.md) |
+| W383 | A screen reader is not told which rail rows and listing entries the reader has marked read | framework agent | `todo` — `W368/2` | [`rows/W383.md`](rows/W383.md) |
+| W384 | The practice panel's task does not name inserting the run client into a served page, so its owner cannot find the one sanctioned way | framework agent | `todo` — `W370/1` | [`rows/W384.md`](rows/W384.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
