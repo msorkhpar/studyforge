@@ -6,11 +6,11 @@
 
 ⛔ **Derived from the epic documents, never transcribed from them.** A hand-edit here is a finding against the delivery skill (R19), not a fix — it is reverted by the next regeneration.
 
-**100 capabilities · 14 epic documents · 10 milestones, 1 with no capability · 1 cancelled row carried and not counted.**
+**100 capabilities · 14 epic documents · 12 milestones, 3 with no capability · 1 cancelled row carried and not counted.**
 
 **Of those capabilities, 56 are this framework's to deliver, 27 are delivered inside a component pinned somewhere else, and 17 declare no path at all.**
 
-⛔ **Milestones run in the order `README.md` declares, not the order their ids sort to:** `M0` → `M1` → `M2` → `M3` → `M4` → `M6` → `M8` → `M5` → `M7` → `M9`.
+⛔ **Milestones run in the order `README.md` declares, not the order their ids sort to:** `M0` → `M1` → `M2` → `M3` → `M4` → `M6` → `M8` → `M5` → `M7` → `M10` → `M11` → `M9`.
 
 ⛔ **`delivered in` is READ, never judged:** `this framework` is a row whose `Owns` names a path here; `⭐ not this framework` is one whose `Owns` — or whose epic's preamble — reaches a component this workspace pins somewhere else; `⚠️ undeclared` is a row that names no path at all, so ⚠️ **nothing in the documents says**. ⛔ A corpus states nothing about the last two (`W92`).
 
@@ -135,6 +135,14 @@
 | `TC-04` | Workbench lockdown extension | Toolchain image (shared repository) | ⭐ not this framework | `TC-01` |
 | `TC-05` | Compose and mount contract | Toolchain image (shared repository) | ⭐ not this framework | `TC-02`, `TC-03` |
 | `TC-06` | Versioning and consumer pinning | Toolchain image (shared repository) | ⭐ not this framework | `TC-02` |
+
+## M10 — 0 capabilities
+
+⭐ **No epic document declares a capability at this milestone.** It is a gate in the declared order all the same, and a plan that waits on it waits here.
+
+## M11 — 0 capabilities
+
+⭐ **No epic document declares a capability at this milestone.** It is a gate in the declared order all the same, and a plan that waits on it waits here.
 
 ## M9 — 22 capabilities
 
