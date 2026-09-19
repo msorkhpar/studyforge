@@ -49,9 +49,9 @@ one does.**
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 | **M6** — the first corpus reads (`ISO-8583`) | ✅ **CLOSED** — ⭐ **round 107**, re-taken against the REGENERATED corpus ⛔ **with the pages READ, which the withdrawn run never did.** ⚠️ **The eight escalations that blocked it are ruled or dissolved there.** | `77535e6` | [the close](BOARD-ARCHIVE.md#po-round-107) |
 | **M8** — it is a framework | ✅ **CLOSED** — ⭐ **round 109**: `QA-04` verified and merged; ⛔ **the deliverable is the FINDINGS LOG**, complete over all seven of the conversion's numbered findings. ⭐ **Both of the ISO track's finish lines are reached** | `671e052` | [the close](BOARD-ARCHIVE.md#po-round-109) |
-| **M5** — it runs code | ⏳ **OPEN — round 110, on the USER's ruling that pinned pulls are allowed.** ⭐ **Step 5.1 CLOSED at `b9aef83`** (round 117). ⭐ **Step 5.2 — `SF-29`, `SF-22`, `SF-44` — OPEN; all three dispatched (`SF-44` at round 120, `W357` having landed).** A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [the open](BOARD-ARCHIVE.md#po-round-110) |
+| **M5** — it runs code | ⏳ **OPEN — round 110.** ⭐ **Step 5.2's three tasks MERGED and verified** (round 121) and ⭐ **the container reading against a REAL Python runner image is GREEN** — ⛔ **but it found `TC-00`'s image carrying every runtime for `python`: `M5` closes on `W374`.** A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [round 121](BOARD-ARCHIVE.md#po-round-121) |
 | **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20`, ⭐ **the runner's acceptance taken by the register against the REAL runner image** | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
-| **M7** — it has practices | ⛔ **NOT STARTED.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the plan](README.md) |
+| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ **Step 7.1 — `TC-01`, the editor image — DISPATCHED, stage 1 (a proposal).** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -65,11 +65,10 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-22` | Developer 2 | `task/SF-22-run-and-submit` @ `wt/dev2` | 0 @ `b9aef83` | in-progress |
-| `SF-29` | Developer 3 | `task/SF-29-the-run-output-filter` @ `wt/dev3` | 0 @ `b9aef83` | in-progress |
-| `SF-44` | Developer 4 | `task/SF-44-the-terminal-command` @ `wt/dev4` | 0 @ `8f6c535` | in-progress |
-| `W362` | Developer 5 | `fix/W362-a-study-site-with-its-own-identity` @ `wt/dev5` | 0 @ `bb05107` | in-progress |
-| `W364` | Developer 6 | `fix/W364-the-suite-runs-in-parallel` @ `wt/dev6` | 0 @ `6c05538` | in-progress |
+| `TC-01` | Developer 1 | `task/TC-01-the-editor-image` @ `wt/dev1` | 0 @ `fa30758` | in-progress |
+| `W361` | Developer 2 | `fix/W361-only-the-runner-starts-a-corpus-command` @ `wt/dev2` | 0 @ `fa30758` | in-progress |
+| `W365` | Developer 3 | `fix/W365-the-guide-teaches-the-file-only-record` @ `wt/dev3` | 0 @ `fa30758` | in-progress |
+| `W374` | Developer 4 | `fix/W374-a-runner-image-holds-only-what-is-declared` @ `wt/dev4` | 0 @ `fa30758` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -140,6 +139,9 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 70 | `W363` | ⭐ **after `W362`, whose identity is its default** | [118](BOARD-ARCHIVE.md#po-round-118) |
 | 71 | `W364` | ⛔ **JUMPS every older `todo` row (Ruling 75), on the USER's direction of 2026-09-18: every gate queues behind the suite it speeds up** | [119](BOARD-ARCHIVE.md#po-round-119) |
 | 72 | `W365` | ⭐ **round 120's mint, jumping nobody** | [120](BOARD-ARCHIVE.md#po-round-120) |
+| 73 | `W366` | ⭐ **after `W364`, whose parallel gate it narrows further; the user's direction** | [121](BOARD-ARCHIVE.md#po-round-121) |
+| 74 | `W367`–`W373` | ⭐ **round 121's mints from `W362`, `SF-22` and `SF-44`, each jumping nobody; `W370` before `SF-24`** | [121](BOARD-ARCHIVE.md#po-round-121) |
+| 75 | `W374` | ⛔ **JUMPS every older `todo` row (Ruling 75): `M5` cannot close until the runner image holds only what is declared** | [121](BOARD-ARCHIVE.md#po-round-121) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -525,10 +527,19 @@ else.**
 | W359 | Onboarding raises a manifest's version for one key only, so every key a later version adds is refused on read-back | framework agent | `todo` — `W350/1` | [`rows/W359.md`](rows/W359.md) |
 | W360 | The runner image cannot be built without reaching the package index, so no office without network can take its reading | framework agent | `todo` — `SF-20/1` | [`rows/W360.md`](rows/W360.md) |
 | W361 | The epic says the runner is the only package that starts a process, which is false, and nothing asserts it | framework agent | `todo` — `SF-20/4` | [`rows/W361.md`](rows/W361.md) |
-| W362 | The generated study site wears the brief's first banned palette and two banned faces, so it reads as generic | framework agent | `todo` — user, 2026-09-18 | [`rows/W362.md`](rows/W362.md) |
+| W362 | The generated study site wears the brief's first banned palette and two banned faces, so it reads as generic | framework agent | ✅ done — `7c3bef3` | [`rows/W362.md`](rows/W362.md) |
 | W363 | A corpus cannot declare a theme drawn from its own subject, so every corpus wears the same identity | framework agent | `todo` — user, 2026-09-18 | [`rows/W363.md`](rows/W363.md) |
-| W364 | The suite runs on one core of a twenty-core host, so every gate and every merge waits on a serial run | framework agent | `todo` — user, 2026-09-18 | [`rows/W364.md`](rows/W364.md) |
+| W364 | The suite runs on one core of a twenty-core host, so every gate and every merge waits on a serial run | framework agent | ✅ done — `fa30758` | [`rows/W364.md`](rows/W364.md) |
 | W365 | The authoring guide and the exercise epic describe an ungraded unit only as one with no exercise, so an adapter author never learns the file-only record | framework agent | `todo` — `W357/3` + `W357/4` | [`rows/W365.md`](rows/W365.md) |
+| W366 | Every merge runs the whole suite in both environments whatever it changed, so a document-only round costs as much as a code change | framework agent | `todo` — user, 2026-09-19 | [`rows/W366.md`](rows/W366.md) |
+| W367 | The size gate reads Python files only, so a stylesheet reached 748 lines and nothing failed | framework agent | `todo` — `W362-plan/1` | [`rows/W367.md`](rows/W367.md) |
+| W368 | The rail carries no unit key on its rows, so it cannot show which units the reader has marked read | framework agent | `todo` — `W362/1` | [`rows/W368.md`](rows/W368.md) |
+| W369 | The index keeps a one-column cap that leaves a wide window's right third empty, and a narration marker shows before anything plays | framework agent | `todo` — `W362/3` + the register's reading | [`rows/W369.md`](rows/W369.md) |
+| W370 | No page may name the API, so a practice panel has no sanctioned way to load the run client | framework agent | `todo` — `SF-22/1` | [`rows/W370.md`](rows/W370.md) |
+| W371 | The site verb never registers the run namespace, so the build-and-serve skill reports every exercised corpus as having no runner | framework agent | `todo` — `SF-22/2` | [`rows/W371.md`](rows/W371.md) |
+| W372 | No test starts a run through the served route in container mode, nor while checking that the serving process holds no Docker socket | framework agent | `todo` — `SF-22/3` | [`rows/W372.md`](rows/W372.md) |
+| W373 | Spec §8.5 and the runnable fixture's notes describe the grader path before the terminal command existed | framework agent | `todo` — `SF-44/3` + `SF-44/4` | [`rows/W373.md`](rows/W373.md) |
+| W374 | The runner image built for python carries every runtime, so a runtime that was not declared is present after all | framework agent | `todo` — the register's M5 reading | [`rows/W374.md`](rows/W374.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

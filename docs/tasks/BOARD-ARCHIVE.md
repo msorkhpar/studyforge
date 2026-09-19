@@ -28104,3 +28104,127 @@ non-null `workspace` no longer means graded.
 | carrier | task | why now |
 |---|---|---|
 | `wt/dev4` | `SF-44` | ⭐ **every dependency measured landed at `8f6c535`** — `SF-20`, `SF-23`, `TC-00`, and `W357`, which it waited on |
+
+## PO round 121
+
+⛔ **Only what is MEASURED is written here.** ⭐ **One batched round, on the user's direction that merges stop costing the
+queue: five merges recorded, `M5` settled, two rows close, nine are minted, and `M7` opens with its first carrier named
+before it runs.**
+
+### ⭐ THE USER'S DIRECTIONS — 2026-09-19
+
+1. ⭐ **Agents must not sit blocked:** the shared container lock is for HEAVY jobs only — a pinned-image `pytest` run and an
+   image build; the pinned floor runs without it. ⭐ **And after `W364`, the guarded merge takes the lock ITSELF around its
+   image gates only** (`W364/1`: invoked with `STUDYFORGE_CONTAINER_LOCK` and ⛔ NO outer `flock`, which would deadlock it).
+2. ⭐ **Token economy:** offices grep large documents instead of reading them whole, keep gate output out of context, and a
+   new stage is a FRESH agent with a short handover — ⚠️ **the register resumed `W362`'s stage-1 agent for stage 2 and that
+   is what one office's half-million tokens bought.**
+3. ⭐ **Tests are selected by what changed** — minted `W366`.
+
+### ⚠️ `M5` STAYS OPEN — ITS READING IS GREEN AND IT FOUND A DEFECT IN STEP 5.1
+
+⭐ **Every task of step 5.2 is merged and verified** (`SF-29` `2fb0164`, `SF-22` `51e8d57`, `SF-44` `23e14a1`). ⭐ **The container reading of record:** this register built the `python` runner image from its pins under the user's pinned-pulls ruling and ran `execute`'s container acceptance and the terminal command's container mode against it — **GREEN, exit 0, every collected test reached, no container left behind.**
+
+⛔ **AND THE READING FOUND A DEFECT IN `TC-00`, which step 5.1 closed on.** ⚠️ **Measured:** the image built with `--runtimes python` (label `org.studyforge.runner.runtimes: python`) holds `/opt/java`, `/opt/maven`, `/opt/gradle`, `/opt/kotlinc` and `/opt/node` — EVERY runtime — while the `java,maven` image holds exactly `java` and `maven`. ⛔ **`TC-00`'s acceptance — *a runtime that was not declared is ABSENT from the image* — is FALSE for `python`**, and `SF-20`'s round-117 reading ran on such an image without seeing it. ⭐ **How it was found:** `SF-29`'s Maven image suite PASSED against the `python` image, which it cannot do honestly. ⭐ **Minted `W374`; `M5` closes on its merge, never around it.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W362 — The generated study site wears the brief's first banned palette and two banned faces, so it reads as generic
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W362.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Stage 1 (the plan) read by this register; its eight questions RULED:** D1 + D2 the surface widened to `pageassets/`,
+the index and container renderers, and the two documents that wrote the middle dot and the builder words; D3 the faces
+composed into the stylesheet as `data:` URIs, because Firefox refuses a `file://` font outside the document's own tree;
+D4 a 68-character measure (`PO-22/6` reopened for this row); D5 no *where it comes from* column until `W363`; D6 the plan's
+cut order; D7 one hue for *next* and the slip; D8 a vendored mono face. ⭐ **The faces were FETCHED BY THIS REGISTER under the
+user's round-118 ruling** — Charis 7.000 and Andika 7.000 (their archives' sha256 agree with GitHub's published digests;
+Reserved Font Names, so vendored UNMODIFIED), JetBrains Mono 2.304 (single-source) — with a placeholder User-Agent.
+⭐ **Verified before merge by PLANTING:** a raw colour, a banned face and a byte appended to a vendored font each turned
+render tests RED. ⭐ **The register READ the rendered index (light) and a unit page (dark) of the ISO corpus.** Merged at
+`7c3bef3`, every gate GREEN.
+
+⛔ **The user, 2026-09-18: the generated study site is "not bad but full of flaws and very generic".**
+
+⭐ **Measured by this register at `bb05107`, against [the UI design brief](../conventions/ui-design.md):** `palette.css`
+is a warm cream ground, a serif prose face and a terracotta accent — ⛔ **the FIRST palette §2 names as a tell** — and
+its UI stack names `Roboto` and `Arial`, ⛔ **two faces §2 bans by name**, as a system stack that §2 also bans.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A design plan BEFORE any code** (§1.1–§1.4): the subject every studyforge site shares and its own world;
+   named colours with roles; the typefaces and why; a wireframe; the one bold element — ⭐ **and the plan read
+   against every tell in §2, each revision stated.** ⭐ **The register reads the plan before the build starts.**
+2. ⛔ **Every tell in §2 is gone from every generated page** — palette, faces, card kit, pills, template chrome.
+3. ⭐ **The faces are vendored OFL files**, fetched once by the REGISTER under the user's round-118 ruling, each
+   pinned by sha256 with its licence beside it, loaded by relative `@font-face` — ⛔ **no network at read time (R8).**
+4. ⛔ **Both themes designed, or one committed to on purpose** (§3); ⭐ **contrast COMPUTED** and asserted by
+   `test_palette` — body ≥ 4.5:1, large ≥ 3:1, marks ≥ 3:1.
+5. ⛔ **The interaction and accessibility rules of §3 met on the page that exists** — skip link, `:focus-visible`,
+   `scroll-padding-top`, `theme-color`, reduced motion, no resting state behind an animation.
+6. ⛔ **Acceptance is a REAL generated page** (§1.5, §6): screenshots light, dark and at phone width, critiqued, and
+   the critique's fixes made — ⭐ **the rendered pages are the ones a corpus regenerates into, never a mock.**
+7. ⛔ **Asserted both ways (R12)** — a planted tell (a banned face, a raw colour, an unmet contrast) is RED by name.
+
+⭐ **Surface:** `src/studyforge/render/assets/` (stylesheets, the vendored faces and their licences), the page templates
+in `src/studyforge/render/templates/`, their tests. ⛔ **Keep every token NAME a stylesheet already paints with** —
+`SF-22` adds the page's execution client in parallel. ⛔ **Not the per-corpus theme: that is `W363`.**
+
+[the mint](#po-round-118)
+
+### W364 — The suite runs on one core of a twenty-core host, so every gate and every merge waits on a serial run
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W364.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **At one ref the serial run and three `-n auto` runs gave every test id the same outcome**, compared id by id; the
+pinned suite fell from about nine minutes to about three. ⭐ **Clause 6 added by this register mid-row** (the user's queue
+complaint): the gate holds the lock only around its image gates. ⭐ **Verified before merge by PLANTING:** taking no lock
+turned two gate tests RED; dropping `-n auto` turned one RED. Merged at `fa30758`, every gate GREEN.
+
+⛔ **The suite runs on ONE core of a twenty-core host.** ⭐ **Measured by this register at round 118's merge
+(`6c05538`):** the pinned-image suite took about nine minutes and the host suite about eight; every guarded merge
+takes both, and every office's container reading queues behind them on the one shared lock. ⭐ **The user directed
+the fix on 2026-09-18** ([round 119](#po-round-119)).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **`pytest-xdist` is a test-only dependency** — pinned in `docker/dev/requirements.txt` beside `pytest`, and in
+   `pyproject.toml`'s `test` extra — ⛔ **never a framework dependency** (standard library only in `src/`).
+2. ⛔ **NOTHING BREAKS, and that is MEASURED, not argued:** in the pinned image, the parallel run and the serial
+   run at ONE ref collect the SAME test ids and give each the SAME outcome — ⭐ **compared id by id, not by
+   count** — and three parallel runs in a row agree. ⚠️ **A test that is not parallel-safe is FIXED or MARKED
+   serial with its reason, never deleted.**
+3. ⛔ **The suite's own plugins still tell the truth in parallel:** the *unreachable population* line, the
+   *tree state* check and any session-scoped reading report the same verdicts as the serial run — ⭐ **and a
+   planted skip and a planted dirtied tree are still RED under `-n`.**
+4. ⭐ **The guarded merge's pinned-image suite gate runs in parallel**; ⛔ the host suite gate runs parallel only
+   where `xdist` is importable, and SAYS which it took — ⛔ **the register does not install anything on the host.**
+5. ⛔ **Asserted both ways (R12):** the gate's own tests cover both argv forms.
+
+⭐ **Surface:** `docker/dev/requirements.txt`, `pyproject.toml`, `tools/mergegate.py`, the root `conftest.py` and
+suite plugins, their tests, and any test found not parallel-safe. ⚠️ **Every change here reaches every office —
+the register takes a full container reading before merge.**
+
+[the mint](#po-round-119)
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `W362-plan/1`, `W362/1`, `W362/3` | minted `W367`, `W368`, `W369` |
+| `W362/2` | ⭐ **folds into `W363`** — manifest data |
+| `SF-22/1`, `/2`, `/3` | minted `W370` (⛔ before `SF-24`), `W371`, `W372` |
+| `SF-22/6` | ⭐ **folds into `W361`** |
+| `SF-44/3` + `SF-44/4` | minted `W373` |
+| `W364/1` | ⭐ **adopted** — the invocation above |
+| `W364/2` — a host `xdist` install | ⛔ **the USER's, queued for the morning**; the host gate stays serial and says so |
+| `W364/3` | routes to `W173` |
+
+### ⭐ `M7` OPENS — NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev1` | `TC-01` | ⭐ **`M7` step 7.1**, the editor image — ⛔ **stage 1, a proposal**; the register fetches under the pinned-pulls ruling |
+| `wt/dev2` | `W361` | ⭐ open, unblocked, disjoint — the runner's *only* sentence, with `SF-22/6` folded in |
+| `wt/dev3` | `W365` | ⭐ open, unblocked, disjoint — the file-only record taught where authors read |
+| `wt/dev4` | `W374` | ⛔ **`M5` waits on it** — the runner image holds only what is declared |
