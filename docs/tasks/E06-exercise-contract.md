@@ -50,8 +50,18 @@ encode** — there is no `state` field to set and none to forget:
 | State | How it appears | Common case |
 |---|---|---|
 | **none** | no `practice-M.json` at all | ISO: 38 units, no practice document written |
-| **ungraded** | a `practice-M.json` with blocks and **no `exercise` key** | SPARQL: 19 prompts, no workspace |
-| **graded** | the `exercise` key is present | the Java repo — the *exception* |
+| **ungraded** | a `practice-M.json` with blocks and **no `exercise` key**, or an `exercise` naming **a file and no grader** | SPARQL: 19 prompts, no workspace |
+| **graded** | the `exercise` names **a grader** | the Java repo — the *exception* |
+
+⭐ **Amended by `W357`: graded is the grader's presence, not the key's.** A
+record may carry `main_path` and `run_command` and nothing else, and that
+record is **ungraded** — a file the reader runs, which nothing checks. The
+grader half is written whole or not at all. ⛔ **The shapes and their refusals
+are §7's, in [*A file with no test*](../specs/2026-09-08-studyforge-v1-design.md#a-file-with-no-test-w357),
+and are not restated here**; the argument for one record rather than a second
+declaration is [`W357`'s handoff](handoffs/W357.md). ⚠️ The Definition and
+Acceptance below were written before it and speak of *the key*; read *the
+grader* wherever they mean the graded state.
 
 ⛔ **Read that table before designing anything.** A corpus that must declare its
 own emptiness is a contract fitted to the one source that ships 168 graders
