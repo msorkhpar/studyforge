@@ -32,7 +32,7 @@ report every ordinary corpus as unfinished forever.
 | State | What it is | Can complete a practice? |
 |---|---|---|
 | `none` | the unit teaches; it does not set work | — |
-| `ungraded` | a prompt the reader works, with nothing to check it | **no** |
+| `ungraded` | a prompt the reader works, or a file they run, with nothing to check it | **no** |
 | `graded` | a workspace plus a grader | only on a passing grader run |
 
 **`ungraded` is why three states and not two.** One surveyed tutorial ends all
@@ -48,8 +48,14 @@ marked clearly as unchecked, and they never complete anything.
 | State | What you write |
 |---|---|
 | `none` | **no practice document at all** |
-| `ungraded` | a `practice-M.json` with blocks and **no `exercise` key** |
-| `graded` | a `practice-M.json` whose `exercise` key is present |
+| `ungraded` | a `practice-M.json` with blocks and **no `exercise` key** — or an `exercise` that names **a file and no grader** |
+| `graded` | a `practice-M.json` whose `exercise` names **a grader** |
+
+**Graded is the grader's presence, not the key's.** An `exercise` may name the
+reader's file and how it runs, and nothing that checks it: that record is
+ungraded, the same as a practice with no key at all. The rule is §7's, in
+[*A file with no test*](../specs/2026-09-08-studyforge-v1-design.md#a-file-with-no-test-w357),
+and this page does not restate it.
 
 **So the common case is a corpus that writes nothing.** A design in which every
 corpus had to declare its emptiness would be a design fitted to the one
@@ -81,10 +87,37 @@ your build command is or where a grader came from.
 [`tests/fixtures/depth2/.../practice-1.json`](../../tests/fixtures/depth2/archive/basics/01-getting-started/raw/java/unit-01/practice-1.json)
 — fifteen keys, then `starting_code`, then `exercise`, in that order.
 
-**Six fields.** `main_path` and `test_path` are the workspace; `run_command`
+**Six fields, in two halves.** `main_path` and `test_path` are the workspace; `run_command`
 and `test_command` are how it is exercised; `provenance` says where the grader
 came from — `bundled`, `generated` or `user` — and `trust` is either
-`authoritative` or `advisory`.
+`authoritative` or `advisory`. **`main_path` and `run_command` are the file;
+the other four are the grader**, and the grader is written whole or not at all
+(`trust` alone may be left out, and is then defaulted from `provenance`).
+
+### A file with no test
+
+**When your material ships a file the reader runs but nothing that checks it**,
+write the file half and stop:
+
+```json
+{
+  "exercise": {
+    "main_path": "practice/untested/hello.py",
+    "run_command": ["python3", "practice/untested/hello.py"]
+  }
+}
+```
+
+**That record is ungraded.** The reader gets the file and Run; there is no
+Submit, and it completes nothing. The framework refuses a record in between:
+a grader written in part, and a `provenance` or `trust` beside no grader,
+because both are facts about a grader and there is none. The shapes and their
+refusals are §7's —
+[*A file with no test*](../specs/2026-09-08-studyforge-v1-design.md#a-file-with-no-test-w357).
+
+**If your prompts name no file at all, write no `exercise` key.** The record is
+for a file that exists; a practice that is only a prompt is still ungraded with
+nothing written.
 
 **`trust` is declared but never believed.** Your adapter writes what it claims,
 and the framework checks that claim against `provenance`. **A `generated`
@@ -113,8 +146,9 @@ answer?**
 - **It ships tests, or a runner, or an expected output you can diff.**
   `"exercises": true`, and write `exercise` keys where the graders exist.
 - **It sets work but checks nothing.** `"exercises": true`, practice documents
-  with prompts, **no `exercise` key**. The reader gets the work, marked as
-  unchecked.
+  with prompts, **no `exercise` key** — or, where the work is a file the reader
+  runs, an `exercise` naming that file and no grader. The reader gets the work,
+  marked as unchecked.
 - **It teaches and sets no work.** `"exercises": false`, no practice documents,
   and you are finished at the reading floor.
 
