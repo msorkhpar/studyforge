@@ -18,8 +18,8 @@ import pytest
 from studyforge.contents import found as present
 from studyforge.corpus.discovery import FRESH, STALE, UNVERIFIABLE
 from studyforge.corpus.manifest import MANIFEST_FILENAME
-from studyforge.generate.declarations import read_corpus
 from studyforge.generate import write_site
+from studyforge.generate.declarations import read_corpus
 from studyforge.serve.discovery import DiscoveryRefused, ServedCorpus, discover, manifests
 from tests.studyforge.generate.corpora import BOTH, FIXTURES
 from tests.studyforge.serve.built import (
