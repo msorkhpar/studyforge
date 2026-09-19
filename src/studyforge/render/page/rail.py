@@ -71,6 +71,12 @@ never derived from an href or a position here: a row handed none carries none.
 ⚠️ The mark itself is set at read time and emitted by nothing, so a built page
 is byte-identical whoever opens it (R10).
 
+⭐ **And a screen reader is told (`W383`)**: a keyed row carries, inside what it
+links, the words `templates/read-state.html` holds — the same file both lists
+fill — emitted `hidden` and shown by `progress-view.js` only on a row the store
+holds. ⛔ The tick stays decorative CSS and the words stay off the screen, so
+the visual mark is exactly what it was.
+
 ## ⛔ Not one class name is typed here either
 
 ⚠️ Every hook is an element, an `aria-label` or a `data-*` attribute — taken
@@ -105,6 +111,11 @@ KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 #: word for a container's depth.
 NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 LEVEL_KIND = SURFACE_HOOKS["level"]
+
+#: The words a read row says to assistive technology, and the kind that wraps
+#: them. ⛔ A file, not a string here (R13): both lists fill the same one.
+READ_STATE_TEMPLATE = "read-state.html"
+READ_STATE_KIND = SURFACE_HOOKS["read_state"]
 
 #: What the region says about the container the reader is inside, and about the
 #: unit they are reading. ⛔ Structure, never wording: neither names a language,
@@ -172,14 +183,15 @@ def render(containers: Sequence[RailContainer] | None) -> str:
     """
     if containers is None or len(containers) < RAIL_MINIMUM:
         return ""
-    rows = "".join(_container(container) for container in containers)
+    said = templates.fill(READ_STATE_TEMPLATE, kind=READ_STATE_KIND)
+    rows = "".join(_container(container, said) for container in containers)
     return templates.fill(RAIL_TEMPLATE, containers=rows)
 
 
-def _container(container: RailContainer) -> str:
+def _container(container: RailContainer, said: str) -> str:
     """Return one container as a disclosure holding the units under it."""
     summary = _body(_level(container), container.title)
-    units = "".join(_unit(unit) for unit in container.units)
+    units = "".join(_unit(unit, said) for unit in container.units)
     return (
         f"<li{CURRENT_CONTAINER if container.current else ''} "
         f"{_readable(container.href, container.current)}>"
@@ -189,9 +201,13 @@ def _container(container: RailContainer) -> str:
     )
 
 
-def _unit(unit: RailUnit) -> str:
-    """Return one unit's row, linked unless it is the page the reader is on."""
-    body = _body(_numbering(unit), unit.title)
+def _unit(unit: RailUnit, said: str) -> str:
+    """Return one unit's row, linked unless it is the page the reader is on.
+
+    ⭐ A keyed row ends with `said`, the hidden words a read row speaks; a row
+    with no key can never be marked, so it carries none (`W383`).
+    """
+    body = _body(_numbering(unit), unit.title) + (said if unit.key else "")
     return (
         f"<li{CURRENT_UNIT if unit.current else ''}{_key(unit.key)} "
         f"{_readable(unit.href, unit.current)}>"

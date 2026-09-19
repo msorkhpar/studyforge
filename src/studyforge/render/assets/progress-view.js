@@ -29,6 +29,14 @@
   var LISTS = 'nav[aria-label="Contents"] li[id], nav[aria-label="Units"] li[id]';
   var RAIL_UNITS = 'nav[aria-label="Containers"] li[data-unit]';
   var MARKED = 'data-marked';
+  /* The hidden words a read row speaks (`W383`): markup, shown or hidden here
+     from the store's answer, so a screen reader hears what the tick shows. */
+  var SAID = 'span[data-kind="read-state"]';
+
+  function say(row, read) {
+    var words = row.querySelector(SAID);
+    if (words) { words.hidden = !read; }
+  }
 
   var store = window.studyforge && window.studyforge.progress;
   var usable = !!(store && store.supported());
@@ -60,11 +68,9 @@
     if (!usable) { return; }
     var held = store.marks();
     railed.forEach(function (row) {
-      if (held.indexOf(row.getAttribute('data-unit')) !== -1) {
-        row.setAttribute(MARKED, 'true');
-      } else {
-        row.removeAttribute(MARKED);
-      }
+      var holds = held.indexOf(row.getAttribute('data-unit')) !== -1;
+      if (holds) { row.setAttribute(MARKED, 'true'); } else { row.removeAttribute(MARKED); }
+      say(row, holds);
     });
   }
   paintRail();
@@ -94,6 +100,7 @@
   if (!rows.length) { return; }
 
   var marks = usable ? store.marks() : [];
+  rows.forEach(function (row) { say(row, read(row)); });
 
   function readable(row) { return row.getAttribute('data-readable') === 'true'; }
   function read(row) { return marks.indexOf(row.id) !== -1; }
@@ -197,13 +204,23 @@
     if (status) { status.hidden = true; }
   }
 
+  /* ⚠️ A row's text without its read words: filtering for "read" must not
+     match every row the reader finished (`W383`). */
+  function searchable(row) {
+    var copy = row.cloneNode(true);
+    [].slice.call(copy.querySelectorAll(SAID)).forEach(function (words) {
+      words.parentNode.removeChild(words);
+    });
+    return copy.textContent;
+  }
+
   function narrow(query) {
     var wanted = query.trim().toLowerCase();
     if (!wanted) { restore(); return; }
     remember();
     var shown = 0;
     rows.forEach(function (row) {
-      var hit = row.textContent.toLowerCase().indexOf(wanted) !== -1;
+      var hit = searchable(row).toLowerCase().indexOf(wanted) !== -1;
       row.hidden = !hit;
       if (hit) { shown += 1; }
     });

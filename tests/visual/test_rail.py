@@ -129,9 +129,15 @@ def crossings(page: OpenPage, from_url: str) -> list[dict]:
     return [
         found
         for found in page.evaluate(
+            # ⭐ The link's own words, without the read words a screen reader
+            # is given on a marked row (`W383`): those are not what it names.
+            "(shown => "
             f"Array.from(document.querySelectorAll('{RAIL} a'))"
-            ".map(a => ({href: a.href, text: a.textContent.trim(),"
-            " closed: !!a.closest('details:not([open])')}))"
+            ".map(a => ({href: a.href, text: shown(a),"
+            " closed: !!a.closest('details:not([open])')})))"
+            "(a => { const c = a.cloneNode(true);"
+            " c.querySelectorAll('span[data-kind=\"read-state\"]').forEach(w => w.remove());"
+            " return c.textContent.trim(); })"
         )  # type: ignore[arg-type]
         if str(found["href"]).endswith(".unit.html")
         and not str(found["href"]).startswith(where + "/")

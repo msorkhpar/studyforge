@@ -119,4 +119,8 @@ ACCEPTANCE = {
     #: store the checks clear before and after, which no other clause touches.
     "shows in that rail which units the reader has marked read, on every page "
     "that carries it (W368)": "test_rail_marks",
+    #: ⭐ `W383`'s clause, in the same module because it is the same store and the
+    #: same press: the mark is SAID, not only drawn, in the rail and both lists.
+    "tells a screen reader which units are read, in the rail and in both lists, "
+    "and moves nothing on the screen (W383)": "test_rail_marks",
 }
