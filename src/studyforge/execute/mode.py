@@ -115,7 +115,7 @@ class ModeProbe:
         try:
             answer = subprocess.run(
                 [self.docker, "inspect", "--format", _INSPECT_FORMAT, "--", self.container],
-                stdin=subprocess.DEVNULL,
+                input="",
                 capture_output=True,
                 text=True,
                 encoding="utf-8",

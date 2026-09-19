@@ -118,10 +118,15 @@ KILL_BY_TOKEN = (
 
 
 def _pipe(argv: Sequence[str], **where: object) -> subprocess.Popen[str]:
-    """Start `argv` in its own session, stdout and stderr merged, line-buffered text."""
-    return subprocess.Popen(
+    """Start `argv` in its own session, stdout and stderr merged, line-buffered text.
+
+    ⭐ Its stdin is a pipe closed at once — end of input, as `/dev/null` would
+    give — so starting a run opens no file at all: `/dev/null` is opened for
+    WRITING by `DEVNULL`, and the emission census counts every such open.
+    """
+    process = subprocess.Popen(
         list(argv),
-        stdin=subprocess.DEVNULL,
+        stdin=subprocess.PIPE,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         start_new_session=True,
@@ -131,6 +136,9 @@ def _pipe(argv: Sequence[str], **where: object) -> subprocess.Popen[str]:
         bufsize=1,
         **where,  # type: ignore[arg-type]
     )
+    assert process.stdin is not None
+    process.stdin.close()
+    return process
 
 
 def _signal_group(process: subprocess.Popen[str], signum: int) -> None:
@@ -206,7 +214,7 @@ class ContainerLauncher:
                     self.marker,
                     signal.Signals(signum).name.removeprefix("SIG"),
                 ],
-                stdin=subprocess.DEVNULL,
+                input=b"",
                 capture_output=True,
                 timeout=KILL_TIMEOUT,
                 check=False,
