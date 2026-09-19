@@ -29,9 +29,15 @@ PACKAGE = Path(buildserve.__file__).parent
 #: execution namespace's one spelling is the route's, and a skill that spelled it
 #: again would report `toolchain` against a server that offers it. ⛔ It buys the
 #: constant and nothing else — the skill never starts a run.
+#:
+#: ⚠️ `execute` is admitted for `ModeProbe`, `container_for` and `HOST` alone (`W381`):
+#: where a run executes is ruled to be `execute`'s probe's answer, ONE definition, so
+#: the skill imports it rather than copying it. ⛔ The probe only reads (`docker
+#: inspect`); the skill never starts, stops or enters a container, and never a run.
 ALLOWED = frozenset(
     {
         "studyforge.cli",
+        "studyforge.execute",
         "studyforge.serve.routes.run",
         "studyforge.cli.plan",
         "studyforge.cli.narrate.cli",
