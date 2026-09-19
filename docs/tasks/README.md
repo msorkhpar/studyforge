@@ -96,6 +96,8 @@ then the Java corpus re-validates (§ *Reordered*, below).
 | **M8** | **It is a framework** | `ISO-8583` converted by the skills alone, and the findings log written |
 | **M5** | It runs code | A reader runs a unit's test from their terminal; Run and Submit from the page |
 | **M7** | It has practices | The browser editor and the practice panel |
+| **M10** | **Every corpus has practices** | Exercises authored for EVERY corpus — from its examples, its code, its tests, and by an LLM from its pages — each graded by tests of the main ask and every edge case |
+| **M11** | It is release-ready | Every repository cleaned for release: process history on an archive branch, a light board, an installable library, skills that stand alone |
 | **M9** | The Java corpus re-validates | `Claude-senior-java-engineer` converted under §12's rules, practices included |
 
 **M2 is the biggest single jump in value** — it is the first state you would
@@ -394,6 +396,33 @@ for when exercises are in the picture."* ⭐ **`TC-00` is the runner image and c
 
 ⭐ **The code-server image lands here, after the framework milestone, and §8.1's measured
 list binds it.** ⚠️ **Proved on the fixtures: the first real corpus with graders is `M9`'s.**
+
+### ⭐ REORDERED 2026-09-19 — `M7` → `M10` → `M11` → `M9` (user direction, PO round 125)
+
+⭐ **`M10` is ONE OF THE CORE IDEAS OF THIS PROJECT, in the user's words:** *"Bottom line we are building CodeSignal or
+LeetCode with the idea of LLM extracting the content from a given source and make it an enjoyable interactive easy to
+read and navigate website."* ⭐ **`M11` is the user's release-ready direction of 2026-09-18**, its six decisions ruled by
+the user on 2026-09-19. ⭐ **The argument, with the user's words whole, is [`W389`](rows/W389.md) and the round record.**
+
+### M10 — Every corpus has practices
+> **Done when:** a corpus's pages carry exercises authored for it — from the source's own examples, practice code and
+> tests where it has them, and by an LLM from the page's material where it has none — each a real-life task that states
+> the ask, graded by tests of the main ask and of every edge case, with the number of exercises per page following its
+> content, length and difficulty; ⛔ **nothing the source already has is lost**; ⭐ proved on `ISO-8583`.
+
+⭐ **The design principle, the user's:** the goal is to ACTIVATE the reader — to practise what they just learned in an
+interactive environment — ⛔ **without losing any existing material or example.** ⭐ **The honesty R5 protects survives as
+gates:** a generated test passes on a reference solution, fails on the starter, and each edge-case test fails on a planted
+incomplete solution — so a Submit reports the main ask and the edge cases it covered.
+⚠️ **Its steps and tasks are minted from [`W389`](rows/W389.md)'s proposal** (the spec amendment to R5, §7 and Q18's
+consequence, and a new epic), ruled by the register and shown to the user before any lands.
+
+### M11 — It is release-ready
+> **Done when:** a clean checkout of each repository's main installs and works; the process history (tooling, board,
+> archive, rows, handoffs) lives on an archive branch in the same repository; the board is light; the epics are
+> high-level design; and the next corpus needs only the README and the skills.
+
+⚠️ **Its steps are minted from the register's measured inventory and the user's six rulings of 2026-09-19.**
 
 ### M9 — The Java corpus re-validates
 > **Done when:** `Claude-senior-java-engineer` is a narrated study site with

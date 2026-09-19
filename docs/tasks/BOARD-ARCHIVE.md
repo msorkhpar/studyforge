@@ -28537,3 +28537,164 @@ does not write.
 | `wt/dev4` | `W379` | ⭐ the runner's own build, beside `TC-02` |
 | `wt/dev5` | `W382` | ⭐ the gates' host suite, parallel — the user approved the install |
 | `wt/dev6` | `W383` | ⭐ the read mark, for a screen reader |
+
+## PO round 125
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`TC-02` and five rows close, each verified by a plant; the toolchain pin
+moves to the sibling's merged `main`; `W381` is ruled; three rows are minted; six carriers are named before they run.**
+
+### ⭐ `TC-02` MERGED AT `6e951cc` — STEP 7.2 STAYS OPEN
+
+⭐ The editor image is built from a DECLARED runtime set: `build.py --runtimes <set>` builds on the runner for that set, and
+extensions, TypeScript, readline, `PATH`, `JAVA_HOME` and the seed follow it; an unpinned name is refused before Docker starts.
+⭐ The office read the acceptance on built images (java+maven works and is measurably smaller; the default is `TC-01`'s image;
+`TC-01/16` holds). ⭐ **Planted by this register:** `JAVA_HOME` exported for every set turns the selection tests RED in each set
+without java. ⛔ **Step 7.2 closes when `TC-03` and `TC-04` have merged.**
+
+### ⭐ THE PIN MOVES — `code-server-toolchain` to `196306e`
+
+⭐ The sibling's `main` was fast-forwarded to `W379`'s fix and `TC-02` merged into it; its own host suite GREEN on the result.
+`workspace.json` moves from `8914ac8`. ⚠️ `W379/2`: **every runner tag moves** — a runner image is rebuilt when a reading needs one.
+
+### ⭐ HOST `pytest-xdist` INSTALLED
+
+⭐ **After `W382` merged**, the register installed `pytest-xdist==3.8.0` and `execnet==2.1.1` (the pinned image's versions) into
+the host's user site, as the user approved on 2026-09-19. ⭐ The merge gate's host suite now takes its parallel form.
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W379 — A runner built for many runtimes after one built for python is served the python build's cache, and only its own check stops it
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W379.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `b858f9b`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`TC-01/13`: `W374`'s `WORKDIR /opt` fix does not stop the BuildKit cache collision it was written for; only the runner's own `/opt` guard does.** Measured at the sibling's `2ea7f5a`: with a `python`-only runner already built, building `--runtimes gradle,java,kotlin,node,python` served every `COPY --from=<stage> / /` of the runner stage from cache, and `/opt` held nothing. ⭐ The build then FAILED at its own check, so no wrong image was tagged — ⚠️ **but a reader's `docker/minimal/build.py` fails this way**, and the editor's `build.py` works around it with `--no-cache-filter runner`. ⭐ This is `W374`'s reading in reverse: a `-yes` selection served the `-no` twin's cache.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A runner build for any declared set, after a build for any other set, holds exactly its declared runtimes from a warm cache** — measured in both directions (small set then large, large then small).
+2. ⛔ **The fix is in `docker/minimal/`**, and the editor's workaround is left for the editor's owner to drop (a finding, not an edit).
+3. ⛔ **Asserted both ways (R12)**: the cache-order test is RED on the unfixed Dockerfile.
+
+⭐ **Surface:** the sibling `code-server-toolchain`'s `docker/minimal/` and its runner tests under `tests/`. ⛔ **Not** `docker/editor/` (`TC-02`'s).
+
+[the mint](#po-round-124)
+
+### W380 — The instance module says the run namespace is registered in one place, which the site form made false, and the site form registers no state namespace
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W380.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `8c757cd`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W371/1`: `src/studyforge/serve/instance.py`'s docstring says *"`run` is registered HERE, in `instance_of`, and nowhere else"***, which is false since `W371`: `cli/serve.py`'s `--site` form registers it too. ⛔ **`W371/2`: the `--site` form registers no `state` namespace** while the root form does, so a served site records a run's progress and cannot read it back through the state API.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **One place builds a served instance's namespaces for both forms** — or the docstring says truthfully where each form registers them; the row argues which.
+2. ⛔ **A site served with `--site` answers the state namespace as the root form does.**
+3. ⛔ **Each asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/serve/instance.py`, `src/studyforge/cli/serve.py`, their tests.
+
+[the mint](#po-round-124)
+
+### W382 — The parallel-suite test's workers cannot import the framework on the host, so the host cannot run its suite in parallel
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W382.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `42eec83`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W364/2`: installing `pytest-xdist` on the host broke `tests/test_parallel_suite.py`** — its `pytest -n` subprocess workers cannot import `studyforge`, which the host does not install as a package while the pinned image does. ⭐ The install was reverted (round 123). ⭐ **The user approved host `pytest-xdist` on 2026-09-19**, so the merge gate's host suite could run in parallel.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The parallel-suite test's subprocess imports the framework on the host exactly as in the pinned image** — from the checkout, never from an installed copy.
+2. ⛔ **Then host `pytest-xdist` is installed at the pinned image's `==` version, and the host suite runs parallel and GREEN** — measured by the office, and the install named in the hand-back.
+3. ⛔ **Asserted both ways (R12)**: the test is RED with the fix removed while xdist is importable.
+
+⭐ **Surface:** `tests/test_parallel_suite.py` (and a conftest line only if the row argues it); the host's user site for the install.
+
+[the mint](#po-round-124)
+
+### W383 — A screen reader is not told which rail rows and listing entries the reader has marked read
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W383.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `5938a5a`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W368/2`: the rail's read tick is decorative CSS `content`, as is the listings' read box**, so a screen reader is not told that a rail row or a listing entry is read.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Both regions tell assistive technology that a unit is read**, with one product string shared by both.
+2. ⛔ **The visual mark is unchanged**, and the string is announced only for a read unit.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** the rail's and the listings' markup and their script (`progress-view.js`), `render/assets/chrome.css` for a visually-hidden rule, their tests.
+
+[the mint](#po-round-124)
+
+### W384 — The practice panel's task does not name inserting the run client into a served page, so its owner cannot find the one sanctioned way
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W384.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `7e8c43c`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W370/1`: `SF-24` is defined in `E06`, and its *Owns* names only `render/…`** — not the served-page insertion of the run client in `serve/routes/assets.py` that `W370` made the one sanctioned way, and nothing in `E06` points at `E05`'s subsection that says so.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`E06` § `SF-24`'s *Owns* and *Context* name the insertion and link `E05`'s subsection** — one resolving link, no second copy of the rule.
+2. ⛔ **The floor stays GREEN** with the link resolving.
+
+⭐ **Surface:** `docs/tasks/E06-exercise-contract.md` § `SF-24` only.
+
+[the mint](#po-round-124)
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `W379/1` | ⭐ **folded into `TC-03`**: the editor's `--no-cache-filter runner` workaround goes, since `TC-03` writes `docker/editor/build.py` |
+| `W379/2` | ⭐ done here — the pin moves |
+| `W380/1` | minted `W386` |
+| `W380/2` | minted `W385` |
+| `W380/3` | ⭐ local — the `serve.__all__` exports stay while a test asserts them |
+| `W382/1` | ⭐ accepted — measured through a private user base, the form the host install takes |
+| `W382/2` | ⭐ done here — host xdist installed |
+| `W382/3` | ⭐ recorded — pip's own User-Agent carries no identity; the pins are `==` versions, as the image's are |
+| `W383/1` | ⭐ **accepted** — `chrome.css` may style only a published kind |
+| `W383/2` | ⭐ **carried to `QA-02`**: a real screen reader reads the rail and the lists once |
+| `W384/1` | ⭐ recorded — the insertion is `SF-24`'s to BUILD; the dispatch brief was wrong |
+| `TC-02/1`, `/3` | ⭐ local — recorded in its handoff |
+| `TC-02/2` | minted `W387` |
+
+### ⭐ `W381` RULED
+
+⭐ **RULED at round 125 by the register:** (a) **running a reader's code on the HOST is a partial state of its own** — the skill reports it whenever the served instance offers execution and `execute`'s own mode probe (ONE definition, never a copy) finds no runner container: *Run and Submit execute on this host, without the runner's isolation*; what works: everything; remedy: start the runner container as `code-server-toolchain`'s README documents, then serve again. (b) **`NO_TOOLCHAIN` keeps only a cause that can still occur** — if no served form can now lack the `run` namespace, the state and its test go; otherwise its remedy names that real cause, never *a toolchain container*.
+
+### ⭐ TWO MILESTONES MINTED — `M10` AND `M11`, ORDER `M7` → `M10` → `M11` → `M9`
+
+⭐ **`M10` — every corpus has practices — is the USER's direction of 2026-09-19 and, in the user's words, one of the core
+ideas of this project:** *"Bottom line we are building CodeSignal or LeetCode with the idea of LLM extracting the content from
+a given source and make it an enjoyable interactive easy to read and navigate website."* ⭐ The user's three messages are
+quoted whole in [`W389`](rows/W389.md). ⛔ **Nothing a source already has is lost**; its examples, code and tests are a basis
+for exercises, an LLM authors more from the pages, the count per page follows content, length and difficulty, and every
+exercise is graded on the main ask and every edge case. ⭐ **It reverses R5/§7's grader-only rule and Q18's consequence for
+ISO; the spec amendment is `W389`'s proposal, ruled here and shown to the user before it lands.**
+⭐ **`M11` — release-ready — is the user's direction of 2026-09-18**, first recorded only in the round-119 record; the user
+ruled its six open decisions on 2026-09-19 (archive BRANCH in the same repository; handoffs archived; epics kept as
+HIGH-LEVEL design only; merged branches may be pruned; the rubric and the Python floor left to the register).
+
+### ⭐ NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev1` | `TC-03` | ⭐ step 7.2's second task, serial after `TC-02`; the sibling in its own worktree |
+| `wt/dev2` | `W381` | ⭐ ruled above |
+| `wt/dev3` | `W385` + `W386` | ⭐ `W380`'s two follow-ups, one owner for `serve/` and `cli/serve.py` |
+| `wt/dev4` | `W387` | ⭐ the runner's `plan.py`, beside `TC-03` — disjoint files |
+| `wt/dev5` | `W388` + `W369` | ⛔ **the USER's direction** after reading the regenerated site — jumps every older row; `W376` waits |
+| `wt/dev7` | `W389` | ⛔ **the USER's direction**: exercises for every corpus — a proposal first |
+| `wt/dev6` | `W378` | ⭐ idle carrier; a gate that must not lie under the parallel suite |
