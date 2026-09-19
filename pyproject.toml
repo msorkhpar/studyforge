@@ -21,7 +21,7 @@ dependencies = []
 
 # Test-only and tooling-only. Never imported by anything under `src/`.
 [project.optional-dependencies]
-test = ["pytest>=8.0"]
+test = ["pytest>=8.0", "pytest-xdist>=3.8"]
 lint = ["ruff>=0.6"]
 
 # ⛔ The installed command, and SF-40 is this table's ONLY minter: nothing else

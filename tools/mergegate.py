@@ -23,10 +23,11 @@ NOT taken are NAMED in the reading, never silently dropped: *nothing was printed
 `docs/conventions/board.md`, beside Ruling 231(b).
 
 **Depends on.** `argparse`, `dataclasses`, `pathlib`, `subprocess` and `sys` — the standard
-library — `git` on the path, and `tools.authorship` for the one question this file does not
-answer. The gates it RUNS are subprocesses named in `GATES`; this module imports neither
-`studyforge` nor `tools.quality`, so a tree too broken to import is still one whose merge is
-refused rather than one that crashes the gate.
+library — `git` on the path, `tools.authorship` for the one question this file does not
+answer, and `tools.gates` for WHICH commands are the gates and whether each suite is taken
+serial or parallel (`W364`). The gates it RUNS are subprocesses named there; this module
+imports neither `studyforge` nor `tools.quality`, so a tree too broken to import is still one
+whose merge is refused rather than one that crashes the gate.
 
 ## ⛔ WHY IT IS A COMMAND AND NOT A FLOOR CHECK — the wall `W296` met
 
@@ -67,6 +68,16 @@ suite already prints it (`report.unreachable_population`), and nothing here read
 - ⛔ **A GATE THAT COMMITS ANYTHING ON A RED READING.** `--no-commit` is what makes the
   refusal free: there is no commit to undo, and `--abort` restores exactly.
 
+## ⛔ `W364` CLAUSE 6 — IT HOLDS THE SHARED CONTAINER LOCK ITSELF, AND ONLY FOR THE IMAGE
+
+⚠️ **Measured by the register:** a merge run wrapped WHOLE in the shared container lock held
+it through the HOST suite too — minutes of lock time that used no container, while every
+office's container reading queued behind it. ⭐ So when `STUDYFORGE_CONTAINER_LOCK` names a
+lock file, this command takes an exclusive `fcntl.flock` on it around the consecutive
+pinned-image gates ONLY and releases it before any host gate. ⛔ Unset, it locks nothing and
+behaves exactly as before. The path is read from the environment and written nowhere; the
+lock itself is `tools.gates.ContainerLock`, beside the form each gate is taken in.
+
 ## ⛔ WHO WROTE IT IS READ TOO, AND IT IS A SEPARATE MODULE (`W308`)
 
 ⭐ **`tools/authorship.py` answers *who wrote the commits this merge introduces*; this file
@@ -79,6 +90,7 @@ why `Outcome.verdict` answers it first and never consults `restored`.
 from __future__ import annotations
 
 import argparse
+import os
 import subprocess
 import sys
 from collections.abc import Callable, Sequence
@@ -87,54 +99,26 @@ from pathlib import Path
 
 from tools.authorship import Authorship, read_authorship, render_authorship
 
+# ⭐ `W364`: the gates, and the serial or parallel form each suite takes, are declared in
+#    `tools.gates` (a SPLIT, Ruling 261) and re-exported here, where every caller reads them.
+from tools.gates import GATES, HOST, IMAGE, LOCK_VARIABLE, ContainerLock, Gate, declared
+
+__all__ = [
+    "GATES",
+    "HOST",
+    "IMAGE",
+    "LOCK_VARIABLE",
+    "ContainerLock",
+    "Gate",
+    "declared",
+    "main",
+    "render",
+    "stage_and_read",
+]
+
 #: Exit codes. ⛔ `UNREAD` is a third state and is never a pass (Ruling 191): a run that
 #: staged nothing, read no gate, or could not verify its own restore lands here.
 MERGED, REFUSED, UNREAD = 0, 1, 2
-
-#: The two environments, named so every reading carries one (Ruling 326).
-IMAGE, HOST = "pinned image", "host"
-
-
-@dataclass(frozen=True)
-class Gate:
-    """One gate: the command, the environment it is taken in, and what only it can answer."""
-
-    name: str
-    environment: str
-    argv: tuple[str, ...]
-    answers: str
-
-
-#: ⛔ **EVERY ENTRY IS REQUIRED AND THE LIST IS THE UNIT.** ⭐ Each names what the OTHER
-#: environment cannot answer, so removing one is visibly removing a reading rather than
-#: tightening a command. ⚠️ The image entries run through `docker/dev/check`, which is the
-#: only spelling of the pinned environment this repository has.
-GATES = (
-    Gate(
-        name="floor",
-        environment=IMAGE,
-        argv=("docker/dev/check", "python3", "-m", "tools.quality"),
-        answers="the standard-library floor, taken where the linter actually exists",
-    ),
-    Gate(
-        name="suite",
-        environment=IMAGE,
-        argv=("docker/dev/check", "python3", "-m", "pytest", "-q"),
-        answers=(
-            "the `ruff` lint and format enforcement, which the host reports as SKIPPED "
-            "rather than passed, and every assertion about the image itself"
-        ),
-    ),
-    Gate(
-        name="suite",
-        environment=HOST,
-        argv=("python3", "-m", "pytest", "-q"),
-        answers=(
-            "the sibling and workspace assertions, which the pinned image cannot reach "
-            "because it mounts only the checkout (Ruling 248(a))"
-        ),
-    ),
-)
 
 #: What a gate's exit code is read through. ⛔ Injected so the mirror can assert both
 #: directions without a docker daemon; the default is the real thing.
@@ -222,7 +206,7 @@ def stage_and_read(
     root: Path,
     branch: str,
     runner: Runner | None = None,
-    gates: Sequence[Gate] = GATES,
+    gates: Sequence[Gate] | None = None,
 ) -> Outcome:
     """Stage the merge of `branch`, read every gate on the MERGED tree, and abort on red.
 
@@ -234,6 +218,9 @@ def stage_and_read(
     #    definition, so a mirror could never substitute a runner and every test would need a
     #    docker daemon to reach this code at all.
     take = run_gate if runner is None else runner
+    # ⭐ `W364`: unless told otherwise, the gates THIS host can take — the host suite is
+    #    parallel only where its own `python3` imports `xdist`, and the reading says so.
+    gates = declared() if gates is None else gates
     if not gates:
         return Outcome(unread="no gate is declared, so nothing was read")
     code, tip = _git(root, "rev-parse", "HEAD")
@@ -275,7 +262,27 @@ def stage_and_read(
         return Outcome(unread=f"the merge of {branch} did not stage cleanly", tip_before=tip)
 
     readings: list[Reading] = []
+    # ⭐ `W364` clause 6: held across consecutive IMAGE gates, released before a HOST gate
+    #    and on every way out of the loop — a red reading's early return included.
+    lock = ContainerLock(os.environ.get(LOCK_VARIABLE, ""))
+    try:
+        return _read_gates(root, gates, take, lock, readings, tip, author)
+    finally:
+        lock.hold(False)
+
+
+def _read_gates(
+    root: Path,
+    gates: Sequence[Gate],
+    take: Runner,
+    lock: ContainerLock,
+    readings: list[Reading],
+    tip: str,
+    author: Authorship,
+) -> Outcome:
+    """Take each gate in order, under the lock when it is an image gate; stop at the first red."""
     for index, gate in enumerate(gates):
+        lock.hold(gate.environment == IMAGE)
         readings.append(Reading(gate, take(gate, root)))
         if not readings[-1].green:
             # ⛔ STOP AT THE FIRST RED. The merge is refused already, so nothing a later
@@ -331,9 +338,10 @@ def render(outcome: Outcome) -> list[str]:
     )
     for reading in outcome.readings:
         state = "GREEN" if reading.green else "⛔ RED  "
+        form = f" ({reading.gate.form})" if reading.gate.form else ""
         lines.append(
             f"  {state}  exit {reading.exit_code}  {reading.gate.name} "
-            f"[{reading.gate.environment}] — {reading.gate.answers}"
+            f"[{reading.gate.environment}]{form} — {reading.gate.answers}"
         )
     if not outcome.red:
         lines.append("⭐ PASSED: every declared gate is green on the merged tree")

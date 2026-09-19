@@ -16,7 +16,7 @@
 # To refresh: run the resolver in the base image and paste the result —
 #
 #     docker run --rm python:3.14-slim \
-#       sh -c 'pip install -q "pytest>=8.0" "ruff>=0.6" && pip freeze'
+#       sh -c 'pip install -q "pytest>=8.0" "pytest-xdist>=3.8" "ruff>=0.6" && pip freeze'
 #
 # ⛔ Resolve it in the base image, never on a host: a host resolution picks up
 # whatever that machine already had.
@@ -27,6 +27,10 @@ iniconfig==2.3.0
 packaging==26.3
 pluggy==1.6.0
 Pygments==2.21.0
+# ⭐ `W364`: the suite runs on every core. `pytest-xdist` needs `execnet` and
+# `pytest`, and nothing else; both of its own requirements are pinned here.
+pytest-xdist==3.8.0
+execnet==2.1.1
 
 # --- the `lint` extra ---
 # ⭐ This line is what closes FND-01's one open acceptance clause. Lint was
