@@ -55,6 +55,15 @@ summary hooks need nothing: the controller's tally is every worker's reports.
 with its reason; its tests go to ONE worker in declaration order, beside the
 rest (`--dist loadgroup`, which a bare `-n` is promoted to below). ⭐ A test is
 never deleted for being unsafe in parallel: it is fixed, or it is named here.
+
+## ⛔ `W366` — the `reads_tree` marker, and where it comes from
+
+⭐ The merge gate selects tests by what a change can reach; a test that reads the working
+tree — a document, a sweep — is reached by ANY change, and carries `reads_tree`. ⛔ The
+marker is APPLIED here from `tools.treereaders.TreeReaders`, the very rule the selection uses,
+so the two cannot disagree; a test the rule misses is marked by hand with
+`pytest.mark.reads_tree`, which that rule reads too. `python3 -m pytest -m reads_tree` is
+what a document-only change runs.
 """
 
 from __future__ import annotations
@@ -99,6 +108,12 @@ def _on_worker(config: pytest.Config) -> bool:
     return hasattr(config, "workerinput")
 
 
+#: ⭐ `W366`: the marker every test that reads the working tree carries, and what it means.
+READS_TREE = "reads_tree"
+READS_TREE_MEANS = (
+    "reads the working tree (a document, a sweep), so the merge gate runs it on ANY change"
+)
+
 #: The key the controller hands each worker its distribution mode under (`W364`).
 DIST_KEY = "studyforge_dist"
 
@@ -115,6 +130,8 @@ def pytest_configure(config: pytest.Config) -> None:
     suffix each grouped id. ⭐ The controller therefore hands its mode to every
     worker (`pytest_configure_node`), and a worker promotes itself from that.
     """
+    # ⭐ `W366`, on the controller AND every worker: `--strict-markers` refuses an unregistered one.
+    config.addinivalue_line("markers", f"{READS_TREE}: {READS_TREE_MEANS}")
     if _on_worker(config):
         if config.workerinput.get(DIST_KEY) == "loadgroup":
             config.option.loadgroup = True
@@ -133,7 +150,14 @@ def pytest_configure_node(node) -> None:
 #    registered after this file, so without it the marks would land after that reading.
 @pytest.hookimpl(tryfirst=True)
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
-    """Put each `SERIAL` directory's tests in one `xdist_group`, when `xdist` is present."""
+    """Mark the tree readers (`W366`); put each `SERIAL` directory's tests in one group."""
+    from tools.treereaders import TreeReaders
+
+    readers = TreeReaders(_root())
+    for item in items:
+        relative, _, rest = item.nodeid.partition("::")
+        if readers.reads(relative, rest.split("::", 1)[0].split("[", 1)[0]):
+            item.add_marker(getattr(pytest.mark, READS_TREE))
     if not config.pluginmanager.hasplugin("xdist"):
         return
     for item in items:

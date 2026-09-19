@@ -10,8 +10,10 @@ declaration (the host suite serial). `suite_gate(environment, parallel)` builds 
 form, which is how the mirror asserts both argv shapes.
 
 **Depends on.** `dataclasses`, `fcntl`, `subprocess`, `typing` and `collections.abc` — the
-standard library. `ContainerLock` is `W364` clause 6: the shared container lock, taken by the
-merge gate around its pinned-image gates only (the argument is in `tools/mergegate.py`).
+standard library — and `tools.selection` for the SCOPE a suite gate takes (`W366`: `scoped`
+appends the selected test files to its argv, or nothing when the scope is full).
+`ContainerLock` is `W364` clause 6: the shared container lock, taken by the merge gate around
+its pinned-image gates only (the argument is in `tools/mergegate.py`).
 ⛔ Nothing from `studyforge` or `tools.quality`: it is on the merge path, whose property
 is that a tree too broken to import is REFUSED rather than crashing the gate (`W310`).
 
@@ -37,8 +39,10 @@ from __future__ import annotations
 import fcntl
 import subprocess
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TextIO
+
+from tools.selection import Scope, fraction
 
 #: The two environments, named so every reading carries one (Ruling 326).
 IMAGE, HOST = "pinned image", "host"
@@ -64,6 +68,10 @@ class Gate:
     answers: str
     #: ⭐ `W364`: SAID in every reading; empty for a gate that has only one form.
     form: str = ""
+    #: ⭐ `W366`: what a suite gate takes — `SELECTED n of m`, `FULL`, or `FULL, AUDITING`.
+    scope: str = ""
+    #: ⭐ `W366`: the selection a FULL run audits; None when this reading audits nothing.
+    audit: frozenset[str] | None = None
 
 
 #: What each environment's suite answers that the other cannot. ⛔ Every entry is required.
@@ -119,6 +127,26 @@ GATES = (FLOOR, suite_gate(IMAGE, parallel=True), suite_gate(HOST, parallel=Fals
 def declared(importable: Callable[[], bool] = xdist_importable) -> tuple[Gate, ...]:
     """Return `GATES` with the host suite in the form THIS host can take (`W364`)."""
     return (FLOOR, suite_gate(IMAGE, parallel=True), suite_gate(HOST, parallel=importable()))
+
+
+def scoped(gates: tuple[Gate, ...], scope: Scope) -> tuple[Gate, ...]:
+    """Return `gates` with every SUITE gate taking `scope` (`W366`); other gates unchanged.
+
+    ⛔ A targeted scope appends its test files to the argv; a full one appends NOTHING, so
+    `pytest` reads `testpaths` exactly as before. ⭐ The gate carries its scope as text, so a
+    targeted GREEN can never print as a full one.
+    """
+    if scope.full:
+        tag = "FULL, AUDITING the selection" if scope.audit else "FULL"
+        audit = frozenset(scope.tests) if scope.audit else None
+        return tuple(
+            replace(g, scope=tag, audit=audit) if g.name == "suite" else g for g in gates
+        )
+    tag = f"SELECTED {fraction(scope)}"
+    return tuple(
+        replace(g, argv=(*g.argv, *scope.tests), scope=tag) if g.name == "suite" else g
+        for g in gates
+    )
 
 
 #: ⛔ `W364` clause 6: the variable NAMING the shared container lock file. Unset: no lock.

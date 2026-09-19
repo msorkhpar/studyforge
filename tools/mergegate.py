@@ -17,6 +17,7 @@ NOT taken are NAMED in the reading, never silently dropped: *nothing was printed
 
     python3 -m tools.mergegate <branch> --body <file>
     python3 -m tools.mergegate <branch> --body <file> --stage-only
+    python3 -m tools.mergegate <branch> --body <file> --full "<why: a milestone close>"
 
 `stage_and_read(root, branch, runner)` returns the `Outcome` the command prints, and
 `render(outcome)` gives the printed lines. The clause lives in
@@ -25,9 +26,11 @@ NOT taken are NAMED in the reading, never silently dropped: *nothing was printed
 **Depends on.** `argparse`, `dataclasses`, `pathlib`, `subprocess` and `sys` — the standard
 library — `git` on the path, `tools.authorship` for the one question this file does not
 answer, and `tools.gates` for WHICH commands are the gates and whether each suite is taken
-serial or parallel (`W364`). The gates it RUNS are subprocesses named there; this module
-imports neither `studyforge` nor `tools.quality`, so a tree too broken to import is still one
-whose merge is refused rather than one that crashes the gate.
+serial or parallel (`W364`), `tools.selection` for WHICH TESTS a suite gate takes and
+`tools.mergereading` for what a reading is and prints (`W366`). The gates it RUNS are
+subprocesses named there; this module imports neither `studyforge` nor `tools.quality`, so a
+tree too broken to import is still one whose merge is refused rather than one that crashes
+the gate.
 
 ## ⛔ WHY IT IS A COMMAND AND NOT A FLOOR CHECK — the wall `W296` met
 
@@ -78,6 +81,15 @@ pinned-image gates ONLY and releases it before any host gate. ⛔ Unset, it lock
 behaves exactly as before. The path is read from the environment and written nowhere; the
 lock itself is `tools.gates.ContainerLock`, beside the form each gate is taken in.
 
+## ⛔ `W366` — THE SUITE TAKES WHAT THE CHANGE CAN REACH, AND A FULL RUN AUDITS THAT
+
+⭐ After staging, `tools.selection.decide` reads what the branch changed and scopes every SUITE
+gate: the test files those paths reach, or the full suite for shared machinery, an unknown
+kind of path, every `AUDIT_EVERY`-th merge, or `--full`. ⛔ The reading SAYS which — a
+targeted GREEN is never printed as a full one — and a full run that audits names every
+failure the selection would have missed. ⭐ To make that readable the real runner TEES the
+gate's stdout rather than letting it pass untouched. The floor is never scoped.
+
 ## ⛔ WHO WROTE IT IS READ TOO, AND IT IS A SEPARATE MODULE (`W308`)
 
 ⭐ **`tools/authorship.py` answers *who wrote the commits this merge introduces*; this file
@@ -94,82 +106,42 @@ import os
 import subprocess
 import sys
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass
+from dataclasses import replace
 from pathlib import Path
 
-from tools.authorship import Authorship, read_authorship, render_authorship
+from tools.authorship import Authorship, read_authorship
 
 # ⭐ `W364`: the gates, and the serial or parallel form each suite takes, are declared in
 #    `tools.gates` (a SPLIT, Ruling 261) and re-exported here, where every caller reads them.
-from tools.gates import GATES, HOST, IMAGE, LOCK_VARIABLE, ContainerLock, Gate, declared
+from tools.gates import GATES, HOST, IMAGE, LOCK_VARIABLE, ContainerLock, Gate, declared, scoped
+
+# ⭐ `W366`: what a run READ and how it prints live in `tools.mergereading` (a SPLIT, Ruling 261).
+from tools.mergereading import MERGED, REFUSED, UNREAD, Outcome, Reading, render
+from tools.selection import decide, describe, failed_ids
 
 __all__ = [
     "GATES",
     "HOST",
     "IMAGE",
     "LOCK_VARIABLE",
+    "MERGED",
+    "REFUSED",
+    "UNREAD",
     "ContainerLock",
     "Gate",
+    "Outcome",
+    "Reading",
     "declared",
     "main",
     "render",
     "stage_and_read",
 ]
 
-#: Exit codes. ⛔ `UNREAD` is a third state and is never a pass (Ruling 191): a run that
-#: staged nothing, read no gate, or could not verify its own restore lands here.
-MERGED, REFUSED, UNREAD = 0, 1, 2
-
 #: What a gate's exit code is read through. ⛔ Injected so the mirror can assert both
 #: directions without a docker daemon; the default is the real thing.
-Runner = Callable[[Gate, Path], int]
-
-
-@dataclass(frozen=True)
-class Reading:
-    """One gate's exit code, with the gate it came from."""
-
-    gate: Gate
-    exit_code: int
-
-    @property
-    def green(self) -> bool:
-        """Report whether this gate passed."""
-        return self.exit_code == 0
-
-
-@dataclass(frozen=True)
-class Outcome:
-    """What a run did: what it read, and whether the tree is where it started."""
-
-    readings: tuple[Reading, ...] = ()
-    not_taken: tuple[str, ...] = ()
-    unread: str = ""
-    tip_before: str = ""
-    tip_after: str = ""
-    restored: bool | None = None
-    #: ⭐ `W308`: who wrote the commits this merge introduces, read BEFORE anything is staged.
-    authorship: Authorship = Authorship()
-
-    @property
-    def red(self) -> tuple[Reading, ...]:
-        """Return every gate that refused, in the order they were taken."""
-        return tuple(reading for reading in self.readings if not reading.green)
-
-    @property
-    def verdict(self) -> int:
-        """Return the exit code: merged, refused, or unread when nothing was read."""
-        # ⛔ `W308` FIRST, and it needs no `restored`: the authorship gate runs before the
-        #    merge is staged, so a refusal here leaves a tree nothing ever touched.
-        if self.authorship.crossed:
-            return REFUSED
-        if self.unread or not self.readings:
-            return UNREAD
-        if self.red:
-            # ⛔ A refusal whose restore could not be VERIFIED is not a clean refusal:
-            #    the office is left at a tree nobody has described (Ruling 287).
-            return REFUSED if self.restored else UNREAD
-        return MERGED
+#: ⭐ `W366`: a runner MAY also return the test ids its output named as failed — the real
+#: one does, so a full run can AUDIT the selection; a bare exit code names none.
+Runner = Callable[[Gate, Path], int | tuple[int, tuple[str, ...]]]
 
 
 def _git(root: Path, *arguments: str) -> tuple[int, str]:
@@ -186,14 +158,36 @@ def _git(root: Path, *arguments: str) -> tuple[int, str]:
     return result.returncode, result.stdout.strip()
 
 
-def run_gate(gate: Gate, root: Path) -> int:
-    """Run one gate in `root` and return its exit code, letting its output through."""
+def run_gate(gate: Gate, root: Path, failed: list[str] | None = None) -> int:
+    """Run one gate in `root` and return its exit code, letting its output through.
+
+    ⭐ `W366`: given a `failed` list — a FULL run auditing the selection — stdout is TEED: each
+    line is printed as it arrives and every test id pytest's summary names as failed is
+    appended. Without one the gate runs exactly as it always has; stderr is never touched.
+    """
     try:
-        return subprocess.run(  # noqa: S603 - fixed argv from GATES, no shell
-            list(gate.argv), cwd=root, check=False
-        ).returncode
+        if failed is None:
+            return subprocess.run(  # noqa: S603 - fixed argv from GATES, no shell
+                list(gate.argv), cwd=root, check=False
+            ).returncode
+        with subprocess.Popen(  # noqa: S603 - fixed argv from GATES, no shell
+            list(gate.argv), cwd=root, stdout=subprocess.PIPE, text=True, errors="replace"
+        ) as process:
+            for line in process.stdout or ():
+                sys.stdout.write(line)
+                sys.stdout.flush()
+                failed.extend(failed_ids([line]))
+            return process.wait()
     except OSError:
         return UNREAD
+
+
+def _take(gate: Gate, root: Path) -> int | tuple[int, tuple[str, ...]]:
+    """The default runner: `run_gate`, teed only when the gate AUDITS a selection (`W366`)."""
+    if gate.audit is None:
+        return run_gate(gate, root)
+    failed: list[str] = []
+    return run_gate(gate, root, failed), tuple(failed)
 
 
 def tracked_changes(root: Path) -> str | None:
@@ -207,6 +201,7 @@ def stage_and_read(
     branch: str,
     runner: Runner | None = None,
     gates: Sequence[Gate] | None = None,
+    full: str = "",
 ) -> Outcome:
     """Stage the merge of `branch`, read every gate on the MERGED tree, and abort on red.
 
@@ -217,7 +212,7 @@ def stage_and_read(
     # ⛔ Resolved HERE and not as a default argument: a default binds the function object at
     #    definition, so a mirror could never substitute a runner and every test would need a
     #    docker daemon to reach this code at all.
-    take = run_gate if runner is None else runner
+    take = _take if runner is None else runner
     # ⭐ `W364`: unless told otherwise, the gates THIS host can take — the host suite is
     #    parallel only where its own `python3` imports `xdist`, and the reading says so.
     gates = declared() if gates is None else gates
@@ -261,14 +256,21 @@ def stage_and_read(
         _git(root, "merge", "--abort")
         return Outcome(unread=f"the merge of {branch} did not stage cleanly", tip_before=tip)
 
+    # ⭐ `W366`: read on the MERGED tree, so a test the target branch added since this one
+    #    was cut is in the import map. `full` names why the register asked for the whole suite.
+    suites = any(gate.name == "suite" for gate in gates)
+    scope = decide(root, branch, requested=full) if suites else None
+    gates = gates if scope is None else scoped(tuple(gates), scope)
+    said = () if scope is None else tuple(describe(scope))
     readings: list[Reading] = []
     # ⭐ `W364` clause 6: held across consecutive IMAGE gates, released before a HOST gate
     #    and on every way out of the loop — a red reading's early return included.
     lock = ContainerLock(os.environ.get(LOCK_VARIABLE, ""))
     try:
-        return _read_gates(root, gates, take, lock, readings, tip, author)
+        outcome = _read_gates(root, gates, take, lock, readings, tip, author)
     finally:
         lock.hold(False)
+    return replace(outcome, scope=said)
 
 
 def _read_gates(
@@ -283,7 +285,9 @@ def _read_gates(
     """Take each gate in order, under the lock when it is an image gate; stop at the first red."""
     for index, gate in enumerate(gates):
         lock.hold(gate.environment == IMAGE)
-        readings.append(Reading(gate, take(gate, root)))
+        taken = take(gate, root)
+        code, failed = taken if isinstance(taken, tuple) else (taken, ())
+        readings.append(Reading(gate, code, failed))
         if not readings[-1].green:
             # ⛔ STOP AT THE FIRST RED. The merge is refused already, so nothing a later
             #    gate says can change the outcome — and a refusal that costs the office a
@@ -309,58 +313,13 @@ def _verify_restore(root: Path, outcome: Outcome) -> Outcome:
     code, after = _git(root, "rev-parse", "HEAD")
     clean = tracked_changes(root)
     restored = code == 0 and after == outcome.tip_before and clean == ""
-    return Outcome(
-        readings=outcome.readings,
-        not_taken=outcome.not_taken,
-        tip_before=outcome.tip_before,
-        tip_after=after,
-        restored=restored,
-        authorship=outcome.authorship,
-    )
+    return replace(outcome, tip_after=after, restored=restored)
 
 
 def commit(root: Path, body: Path) -> int:
     """Commit the staged merge with `body` as its message, and return git's exit code."""
     code, _ = _git(root, "commit", "-F", str(body))
     return code
-
-
-def render(outcome: Outcome) -> list[str]:
-    """Return the lines the command prints: what was read, in which environment, then why."""
-    if outcome.unread:
-        return [f"⛔ UNREAD: {outcome.unread}, so no merge was gated (exit 2)"]
-    # ⭐ `W308`: WHO WROTE IT, with its population, BEFORE any gate's reading (Ruling 191(a)).
-    lines = render_authorship(outcome.authorship)
-    if outcome.authorship.crossed:
-        return lines
-    lines.append(
-        f"merge gate: {len(outcome.readings)} gate(s) read on the MERGED tree, never on HEAD"
-    )
-    for reading in outcome.readings:
-        state = "GREEN" if reading.green else "⛔ RED  "
-        form = f" ({reading.gate.form})" if reading.gate.form else ""
-        lines.append(
-            f"  {state}  exit {reading.exit_code}  {reading.gate.name} "
-            f"[{reading.gate.environment}]{form} — {reading.gate.answers}"
-        )
-    if not outcome.red:
-        lines.append("⭐ PASSED: every declared gate is green on the merged tree")
-        return lines
-    refused = ", ".join(f"{r.gate.name} [{r.gate.environment}]" for r in outcome.red)
-    lines.append(f"⛔ REFUSED: {refused} — nothing was committed, and the merge was aborted")
-    if outcome.not_taken:
-        lines.append(
-            f"⚠️ NOT TAKEN, because the merge was already refused: {', '.join(outcome.not_taken)}"
-        )
-    if outcome.restored:
-        lines.append(f"⭐ RESTORED: HEAD is back at {outcome.tip_before[:12]} and clean")
-    else:
-        reads = outcome.tip_after[:12] or "nothing"
-        lines.append(
-            f"⛔ THE RESTORE COULD NOT BE VERIFIED: HEAD reads {reads} against "
-            f"{outcome.tip_before[:12]}. Read the tree before anything else (exit 2)"
-        )
-    return lines
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -377,11 +336,17 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="leave a green merge STAGED rather than committing it",
     )
+    parser.add_argument(
+        "--full",
+        metavar="REASON",
+        default="",
+        help="take the FULL suite and audit the selection, saying why (a milestone close)",
+    )
     arguments = parser.parse_args(argv)
     if arguments.body is None and not arguments.stage_only:
         parser.error("--body is required unless --stage-only is given")
 
-    outcome = stage_and_read(arguments.root, arguments.branch)
+    outcome = stage_and_read(arguments.root, arguments.branch, full=arguments.full)
     print("\n".join(render(outcome)))
     if outcome.verdict != MERGED or arguments.stage_only:
         return outcome.verdict
