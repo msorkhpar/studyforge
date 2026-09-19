@@ -171,8 +171,7 @@ def test_the_merge_program_keeps_the_order_written_and_the_argv_verbatim():
     )
     merged = subprocess.run(
         ["sh", "-c", MERGE_STDERR, "sh", sys.executable, "-c", program],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
         text=True,
         check=True,
     )
@@ -182,7 +181,5 @@ def test_the_merge_program_keeps_the_order_written_and_the_argv_verbatim():
 
 def test_without_the_merge_program_stderr_takes_its_own_stream():
     program = "import sys; print('b', file=sys.stderr)"
-    apart = subprocess.run(
-        [sys.executable, "-c", program], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
-    )
+    apart = subprocess.run([sys.executable, "-c", program], capture_output=True, text=True)
     assert apart.stdout == "" and apart.stderr == "b\n"
