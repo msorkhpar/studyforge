@@ -200,6 +200,12 @@ def _forward_visual(terminalreporter, exitstatus: int, config: pytest.Config) ->
     """
     if not config.pluginmanager.hasplugin("dsession"):
         return
+    # ⚠️ MEASURED: a run whose ARGUMENT lies inside that directory loads its conftest on the
+    #    controller as an INITIAL one, and then the line was printed twice.
+    own = (_root() / VISUAL / "conftest.py").resolve()
+    for plugin in config.pluginmanager.get_plugins():
+        if Path(getattr(plugin, "__file__", None) or ".").resolve() == own:
+            return
     reached = any(
         str(getattr(report, "nodeid", "")).startswith(VISUAL)
         for reports in terminalreporter.stats.values()

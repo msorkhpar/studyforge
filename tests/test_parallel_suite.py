@@ -68,7 +68,7 @@ def _child(tmp_path: Path, files: dict[str, str]) -> Path:
 
 
 def _pytest(
-    root: Path, form: str, target: str = ".", **extra: str
+    root: Path, form: str, target: tuple[str, ...] = (".",), **extra: str
 ) -> subprocess.CompletedProcess:
     """Run `target` under `root` in `form`, with this repository's `tools` importable."""
     env = {k: v for k, v in os.environ.items() if not k.startswith(("PYTEST_", "STUDYFORGE_"))}
@@ -76,7 +76,7 @@ def _pytest(
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     env.update(extra)
     return subprocess.run(
-        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *FORMS[form], target],
+        [sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider", *FORMS[form], *target],
         cwd=root,
         env=env,
         capture_output=True,
@@ -159,14 +159,22 @@ def test_a_PLANTED_skip_is_disclosed_IDENTICALLY_in_both_forms(tmp_path):
     assert readings["parallel"] == readings["serial"], readings
 
 
+#: The two shapes a run reaches `tests/visual/` in. ⚠️ BOTH MEASURED in the pinned image:
+#: from `tests`, the controller never loads that conftest and the line was ABSENT under `-n`;
+#: from an argument INSIDE it, the conftest is an initial one there and the forward printed
+#: it a SECOND time.
+VISUAL_TARGETS = {
+    "from-the-suite-root": ("tests", "-k", "test_contrast_math"),
+    "from-inside-the-directory": ("tests/visual/test_contrast_math.py",),
+}
+
+
 @needs_xdist
-def test_the_VISUAL_harness_line_is_printed_IDENTICALLY_in_both_forms():
-    # ⚠️ MEASURED in the pinned image before the forward existed: under `-n` the line was
-    #    ABSENT, because the controller never loads `tests/visual/conftest.py`.
-    module = "tests/visual/test_contrast_math.py"
+@pytest.mark.parametrize("target", VISUAL_TARGETS.values(), ids=VISUAL_TARGETS)
+def test_the_VISUAL_harness_line_is_printed_ONCE_and_IDENTICALLY_in_both_forms(target):
     lines = {}
     for form in FORMS:
-        result = _pytest(repository_root(), form, target=module)
+        result = _pytest(repository_root(), form, target=target)
         assert result.returncode == 0, result.stdout + result.stderr
         lines[form] = [line for line in result.stdout.splitlines() if "visual harness:" in line]
     assert len(lines["serial"]) == 1, lines
@@ -177,7 +185,7 @@ def test_the_VISUAL_harness_line_is_printed_IDENTICALLY_in_both_forms():
 def test_the_CONTROL_a_run_that_reaches_NO_visual_test_prints_no_visual_line_in_either_form():
     lines = {}
     for form in FORMS:
-        result = _pytest(repository_root(), form, target="tools/tests/test_gates.py")
+        result = _pytest(repository_root(), form, target=("tools/tests/test_gates.py",))
         assert result.returncode == 0, result.stdout + result.stderr
         lines[form] = [line for line in result.stdout.splitlines() if "visual harness:" in line]
     assert lines == {"serial": [], "parallel": []}, lines

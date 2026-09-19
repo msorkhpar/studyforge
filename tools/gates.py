@@ -129,6 +129,7 @@ class ContainerLock:
     """An exclusive `flock` on the file `path` names, held only while an image gate runs."""
 
     def __init__(self, path: str) -> None:
+        """Name the lock file; an empty `path` is no lock at all, and nothing is opened."""
         self.path = path
         self.handle: TextIO | None = None
 
