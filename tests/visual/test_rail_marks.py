@@ -60,6 +60,12 @@ PRESS = (
 )
 
 
+#: The key the page's own read-mark control carries.
+CONTROL_KEY = (
+    "document.querySelector('section[data-section=\"read-mark\"]').getAttribute('data-unit')"
+)
+
+
 @dataclass(frozen=True)
 class Built:
     """One corpus on disk: each unit's page, its container, and each container's page."""
@@ -175,12 +181,8 @@ def test_the_rail_row_of_the_page_being_read_joins_the_control_and_follows_it_bo
 ) -> None:
     key = next(iter(built.pages))
     fresh.open(built.url(key))
-    assert (
-        fresh.evaluate(
-            "document.querySelector('section[data-section=\"read-mark\"]').getAttribute('data-unit')"
-        )
-        == key
-    ), "the rail's key and the read-mark control's key are not the same key"
+    control = fresh.evaluate(CONTROL_KEY)
+    assert control == key, "the rail's key and the read-mark control's key are not the same key"
 
     fresh.evaluate(PRESS)
     assert [row["key"] for row in rows(fresh) if row["marked"] and row["tick"] == TICK] == [key]
