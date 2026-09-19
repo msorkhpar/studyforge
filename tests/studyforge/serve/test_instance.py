@@ -15,9 +15,20 @@ import pytest
 
 from studyforge.progress import store_dir
 from studyforge.serve.discovery import DiscoveryRefused, discover
-from studyforge.serve.instance import instance_of, make_instance
+from studyforge.generate import read_corpus, write_site
+from studyforge.serve.instance import (
+    WRITERS,
+    SiteCorpus,
+    instance_of,
+    make_instance,
+    namespaces_of,
+    site_discovery,
+)
+from studyforge.serve.routes import run, state
+from studyforge.serve.routes.content import CorpusContent
 from tests.studyforge.generate.corpora import BOTH
 from tests.studyforge.serve.built import a_workspace, record, source_of, unit_keys
+from tests.studyforge.cli.serving import digests
 from tests.studyforge.serve.serving import fetch
 
 
@@ -136,3 +147,38 @@ def test_an_instance_of_one_discovery_serves_every_corpus_it_found(tmp_path):
         server.shutdown()
         server.server_close()
         thread.join(timeout=5)
+
+
+def test_the_root_form_registers_what_the_one_constructor_builds_and_its_writers(tmp_path):
+    discovered = discover(a_workspace(tmp_path))
+    sources = {served.source: CorpusContent(served.corpus) for served in discovered.corpora}
+    built = namespaces_of(discovered, sources)
+    assert set(built) == {state.NAMESPACE, run.NAMESPACE}
+    assert WRITERS == (run.NAMESPACE,)
+    server = instance_of(discovered, port=0)
+    try:
+        assert {state.NAMESPACE, run.NAMESPACE} <= set(server.namespaces)
+        assert server.writers == frozenset(WRITERS)
+    finally:
+        server.server_close()
+
+
+def test_a_site_discovery_scans_the_site_writes_nothing_and_reports_nothing(tmp_path):
+    root = a_workspace(tmp_path, ("depth1",)) / "depth1"
+    site = tmp_path / "elsewhere"
+    site.mkdir()
+    write_site(root, site)
+    corpus = read_corpus(root)
+    before = digests(site), digests(root)
+    discovered = site_discovery(corpus, root, site)
+    (served,) = discovered.corpora
+    assert (digests(site), digests(root)) == before
+    assert isinstance(served, SiteCorpus) and discovered.report == ()
+    assert (served.root, served.site, discovered.root) == (root, site, root)
+    assert served.progress().directory == store_dir(root)
+    scanned = served.rescan()
+    assert scanned.units and scanned == served.startup.site
+    # ⭐ The other way: the site emptied, the corpus root still built, and the scan finds nothing.
+    for artifact in scanned.units:
+        (site / artifact.path).unlink()
+    assert not served.rescan().units
