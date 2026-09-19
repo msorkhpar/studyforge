@@ -113,4 +113,10 @@ ACCEPTANCE = {
     #: decides which page kinds carry a rail at all.
     "starts a page with no rail where it starts a page with one, so the layout "
     "does not move when a reader clicks (W333)": "test_page_start",
+    #: ⭐ `W368`'s clause: *"a unit the reader marked read shows marked in the
+    #: rail on every page"* is a claim about the page AFTER a reader acts, and not
+    #: one row above presses anything. ⚠️ A module of its own because it needs a
+    #: store the checks clear before and after, which no other clause touches.
+    "shows in that rail which units the reader has marked read, on every page "
+    "that carries it (W368)": "test_rail_marks",
 }

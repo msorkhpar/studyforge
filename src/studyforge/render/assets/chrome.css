@@ -239,6 +239,18 @@ nav[aria-label="Containers"] li[data-readable="false"] {
   color: var(--muted);
 }
 
+/* ⭐ A unit the reader marked read ends its row with a tick (`W368`), in the
+   colour the listings' read box takes. ⚠️ `data-marked` is set at read time by
+   `progress-view.js` and emitted by no renderer (R10). */
+nav[aria-label="Containers"] li li[data-marked="true"] > a::after,
+nav[aria-label="Containers"] li li[data-marked="true"]:not(:has(> a))::after {
+  content: "\2713";
+  margin-left: auto;
+  padding-left: .4rem;
+  font-weight: 700;
+  color: var(--done);
+}
+
 /* --- the rail beside the column (W325, W326, W328, W333) ----------------- */
 
 /* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the

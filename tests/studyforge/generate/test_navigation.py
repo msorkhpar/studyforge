@@ -327,3 +327,13 @@ def test_a_unit_with_no_material_is_a_declared_absence_in_the_rail_too(tmp_path)
 
     absent = [unit for container in listed for unit in container.units if unit.href is None]
     assert [unit.title for unit in absent] == ["Fields and constructors"]
+
+
+@pytest.mark.parametrize("name", BOTH)
+def test_every_rail_unit_carries_the_key_the_contents_declares_for_it(name):
+    """⛔ `W368`: the key a read mark is stored under reaches every rail row."""
+    corpus = read_corpus(FIXTURES / name)
+    walked = [entry.key for entry in order(corpus.contents)]
+    _, _, listed = a_rail(name, walked[0])
+
+    assert [unit.key for container in listed for unit in container.units] == walked
