@@ -28411,3 +28411,129 @@ SHAPE would be named under the wrong rule.
 | `wt/dev6` | `W371` | ⭐ a served site answers Run and Submit |
 
 ⭐ **The USER ruled 2026-09-19: *"TC-01 is fine to pull the image and dependency. Offline rule is for pushing things not pulling!"*** ⭐ **`TC-01`'s stage 2 is UNBLOCKED** — pulls still pinned (R15) and sent with no identity; ⛔ nothing is ever pushed. ⭐ The user also approved a host `pytest-xdist` install (`W364/2`).
+
+## PO round 124
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M7` step 7.1 CLOSES on the editor image; four rows close, each
+verified by a plant; six are minted; step 7.2 opens with its order measured, and six carriers are named before they run.**
+
+### ⭐ `M7` STEP 7.1 CLOSES AT `9bc688f`
+
+⭐ **`TC-01`** — the editor image in the sibling's `docker/editor/`: code-server on the runner's own toolchains (copied out of
+the runner image, so `pins.json` stays the one place a runtime version is chosen), its extensions pinned in their own
+`editor-pins.json` and installed offline, and every toolchain found under `docker exec`, a login shell and an interactive
+one. ⭐ **Verified by this register with a plant before merge**; merged `9bc688f`, every gate GREEN on the merged tree.
+⭐ **Read through round 122's ruling 4:** the same toolchain set and measured properties, at the pins' versions.
+
+### ⭐ THE PIN MOVES — `code-server-toolchain` to `8914ac8`
+
+⭐ `workspace.json` pinned the sibling at `2ea7f5a` (`W374`'s fix). ⭐ **The sibling's `main` is at `8914ac8`, `TC-01`'s
+image, and the pin moves to it here.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W368 — The rail carries no unit key on its rows, so it cannot show which units the reader has marked read
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W368.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `8effe7a`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W362/1`: the rail cannot show read ticks, because `render/page/rail.py` emits no unit key on its rows** — so the reader's own progress shows on the index and container pages and nowhere in the rail.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The rail's rows carry the key the progress view reads**, and a marked unit shows marked in the rail on every page.
+2. ⛔ **Asserted both ways (R12)**, in the visual suite.
+
+⭐ **Surface:** `src/studyforge/render/page/rail.py`, `render/assets/progress-view.js`, their tests.
+
+[the mint](#po-round-121)
+
+### W370 — No page may name the API, so a practice panel has no sanctioned way to load the run client
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W370.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `675e3d4`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`SF-22/1`: the R8 floor check fails any built text naming `/api`, so no page can carry code that calls the API** — `SF-22` served its client from the run namespace instead. ⚠️ **`SF-24`'s panel must load it, and nothing says how.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **One sanctioned way a served page loads the run client**, decided and written where `SF-24` reads it — ⭐ and the offline floor still refuses a BUILT page that names the API.
+2. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tests/studyforge/cli/serving.py` (the floor check), `docs/tasks/E05-serving-execution.md`. ⛔ **Before `SF-24`.**
+
+[the mint](#po-round-121)
+
+### W371 — The site verb never registers the run namespace, so the build-and-serve skill reports every exercised corpus as having no runner
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W371.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `0f391da`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`SF-22/2`: `serve --site`, which the build-and-serve skill always uses, never registers `run`** — so the skill reports `toolchain` for every exercised corpus.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A site served for an exercised corpus answers Run and Submit**, and the skill's state says so.
+2. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/cli/serve.py` or the site path, `skills/buildserve/`, their tests.
+
+[the mint](#po-round-121)
+
+### W375 — The process-start sweep borrows its detector from a serve test, and the detector does not know a module that starts a browser
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W375.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `e23a9b0`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W361/2` + `W361/3`: `tests/test_process_starts.py` imports its `spawns` detector from `tests/studyforge/serve/test_init.py`** — so a rename there breaks the sweep at import — ⚠️ **and the detector does not know `webbrowser`**, which starts a process (no module in `src/` imports it today).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **One detector, in a shared test helper**, imported by both.
+2. ⛔ **It knows every standard-library way to start a process, `webbrowser` included** — asserted by a planted import of each, both ways (R12).
+
+⭐ **Surface:** a shared helper under `tests/`, `tests/test_process_starts.py`, `tests/studyforge/serve/test_init.py`.
+
+[the mint](#po-round-123)
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `TC-01/13` | minted `W379` |
+| `TC-01/16` | ⭐ **folded into `TC-02`**: under a selection, `JAVA_HOME` and each `PATH` entry name only a selected runtime — carried in `TC-02`'s brief |
+| `TC-01/8` | ⭐ recorded open — the live terminal's argv is measured when a workbench is driven (`TC-05` or `QA-02`) |
+| `TC-01/12`, `/14`, `/15` | ⭐ local — recorded in its handoff |
+| `W371/1` + `/2` | minted `W380` |
+| `W371/3` | minted `W381`, a ruling |
+| `W364/2` (host `pytest-xdist`) | minted `W382`; the install waits on it |
+| `W368/1` | ⭐ **accepted** — the two one-line edits outside the named surface were the smallest that meet the row |
+| `W368/2` | minted `W383` |
+| `W370/1` | minted `W384` — ⛔ **before `SF-24`** |
+| `W370/2` | ⭐ local — the rule in `E05` is the authority |
+| `W375/1`, `/2` | ⭐ local — nothing in `src/` uses either form today |
+| `W375/3` | ⭐ environment — the host temp quota; the offices' rules carry the clean-up |
+
+### ⭐ STEP 7.2 OPENS — THE ORDER IS MEASURED, NOT ASSUMED
+
+⭐ **Measured at the sibling's `8914ac8`:** `TC-02` (the build-argument surface), `TC-03` (`prime/` plus the warmers'
+build hooks) and `TC-04` (`lockdown/` plus its `.vsix` install and the installed-list check) each have to change the same
+three files: `docker/editor/Dockerfile`, `docker/editor/build.py` and `docker/editor/editor_plan.py`. ⛔ **So they run
+SERIALLY, one carrier at a time:** `TC-02` first, because `TC-03`'s Maven warmer needs Maven in the toolchain set, which
+`TC-02` adds; then `TC-03`; then `TC-04`. ⭐ **`W379` runs beside `TC-02`**: its surface is `docker/minimal/`, which `TC-02`
+does not write.
+
+### ⭐ NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev1` | `TC-02` | ⭐ step 7.2's first task; the sibling's work in its own worktree |
+| `wt/dev2` | `W380` | ⭐ a served site answers the state API |
+| `wt/dev3` | `W384` | ⛔ **before `SF-24`** |
+| `wt/dev4` | `W379` | ⭐ the runner's own build, beside `TC-02` |
+| `wt/dev5` | `W382` | ⭐ the gates' host suite, parallel — the user approved the install |
+| `wt/dev6` | `W383` | ⭐ the read mark, for a screen reader |
