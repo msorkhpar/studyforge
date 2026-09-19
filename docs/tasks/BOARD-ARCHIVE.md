@@ -27883,3 +27883,79 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 ### ⭐ DISPATCHED — NAMED BEFORE IT RUNS
 
 ⭐ **`SF-20` — the command runner — on `wt/dev2`**, `M5` step 5.1's second half. ⛔ **Its brief carries the ruled seam (round 112, row 9), `TC-00/6` and `W352/3` as acceptance clauses.** ⭐ **Surface `src/studyforge/execute/` — disjoint from `W350` (`corpus/manifest/`) and `W353` (`skills/onboarding/`).**
+
+## PO round 117
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`M5` STEP 5.1 CLOSES — the runner image and the runner, the second taken against the REAL image — two rows close, three are minted, and step 5.2 opens with four carriers named before they run.**
+
+### ⭐ `SF-20` — THE COMMAND RUNNER — DONE, merged at `b9aef83`
+
+⭐ **Verified by this register against git:** one office identity; product code calls only `docker exec` — ⛔ no run, start, build or socket mount; no personal data; merges cleanly.
+
+⚠️ **The office's container reading used a STAND-IN image** — its dispatch forbade the network, and building the runner needs PyPI (`SF-20/1`). ⭐ **So THIS REGISTER built the real `python` runner image from its pins, under the user's pinned-pulls ruling, and ran the runner's suite against it: GREEN, exit 0, every collected test reached, no container left behind, the image removed.** ⛔ **That — not the stand-in — is the acceptance reading of record.**
+
+⭐ **Findings:** `SF-20/1` minted `W360`; `SF-20/4` minted `W361`; `SF-20/3` is `W357`'s, now dispatched; `SF-20/2` (a registry metadata request during an offline attempt, carrying no identity) and `SF-20/6` (one read-only container run outside the lock) are recorded as disclosed; `SF-20/5` is local.
+
+### ⭐ `M5` STEP 5.1 CLOSES AT `b9aef83`
+
+| task | reading |
+|---|---|
+| `TC-00` | ⭐ merged `e83f777`; its Docker acceptance suite re-taken by this register under the lock (round 115) |
+| `SF-20` | ⭐ merged `b9aef83`; its acceptance re-taken by this register against the REAL runner image (above) |
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W353 — A regeneration overwrites a person's file at any newly generated path and then records it as generated
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W353.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING:** narrowing the guard back to ignore files alone turned five onboarding tests RED. ⚠️ **Its first merge was refused by a one-character edit made in the main checkout's IDE mid-gate — not by the tree; the re-take merged at `c18457d`, all gates GREEN.**
+
+⛔ **`W345/2`: a regeneration overwrites any newly-generated path a PERSON already has, then records it as generated — after which the generated R3 check can never see it.**
+
+⭐ **`W345` closed this for the `.gitignore` files it introduced, and only for them** (`record.refuse_unrecorded`). ⚠️ **The general case stands: every time a framework version adds a generated path, a corpus whose person already has a file there loses it silently.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A regeneration refuses, by name, to write any generated path that exists and the install record does not list** — not only ignore files.
+2. ⚠️ **A corpus whose install record predates a path is the decision this row must argue** — ⭐ refusing is safe and loud; adopting is silent. ⛔ **Never silent.**
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/skills/onboarding/record.py`, `onboard.py` (⚠️ near its R11 ceiling — a split at a named seam, never a trim).
+
+[the mint](#po-round-114)
+
+### W350 — A corpus cannot declare the runtimes its material needs, so the runner image has nothing to read
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W350.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING:** removing the key's version entry (`TC-00/2`'s trap) turned four manifest tests RED. Merged at `58017a1`, all gates GREEN; the runnable fixture declares `["python"]` at `corpus_api` 4.
+
+⛔ **`TC-00/1` + `TC-00/2` + `TC-00/3`: a corpus has no way to DECLARE the runtimes its material needs, so `TC-00`'s image has nothing to read and R1 forbids it knowing a course.**
+
+⭐ **The contract's shape was proposed by `TC-00`'s office and ACCEPTED by this register at [round 112](#po-round-112):** `runtimes`, an optional sorted list of names from a closed vocabulary (`gradle`, `java`, `kotlin`, `maven`, `node`, `python`, `shell`, `sqlite`); names only, never versions; `maven`, `gradle` and `kotlin` refused by name without `java`; refused beside `exercises: false`; absent means none — ⛔ **a corpus that declares none needs no runner and is complete at the reading floor (§7, C5).**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **Spec §4 carries the key**, and `corpus_api` rises to `4` — ⚠️ **`KEY_VERSIONS` reads nested keys only, so the new TOP-LEVEL key needs its own entry or it parses under `3`** (`TC-00/2`).
+2. ⭐ **The vocabulary is spelled ONCE**, in a new module under `corpus/manifest/` — ⛔ **`document.py` is near its R11 ceiling, so the key is a SPLIT at that seam, never a trim** (`TC-00/3`).
+3. ⛔ **Asserted both ways (R12):** each refusal fires by name, and every valid shape parses.
+
+⭐ **Surface:** `src/studyforge/corpus/manifest/`, spec §4. ⛔ **Waits for `W339`+`W347`, which hold the spec.**
+
+[the mint](#po-round-112)
+
+### ⭐ MINTS — `W359`–`W361`, and one fold
+
+`W359` (`W350/1`) onboarding raises a manifest's version for one key only; `W360` (`SF-20/1`) the runner image needs the network to build; `W361` (`SF-20/4`) the epic's *only package that starts a process* is false. ⭐ **`W350/4`** — a stale sentence in the fixtures README — **folds into `W358`**, which owns the fixtures' boundary.
+
+### ⭐ STEP 5.2 OPENS — DISPATCHED, AND NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev1` | `W351` | ⭐ `W350` landed; reconnaissance drafts the key |
+| `wt/dev2` | `SF-22` | ⭐ Run and Submit — every dependency measured done at `b9aef83` |
+| `wt/dev3` | `SF-29` | ⭐ the output filter, `SF-20`'s only dependent |
+| `wt/dev4` | `W357` | ⛔ **`SF-44` cannot be taken until the record can say a file has no test** |
+
+⭐ **Surfaces read against each other: `skills/reconnaissance/`, `serve/routes/run.py` + the page client, `execute/quiet.py`, `exercise/` + spec §7 — disjoint.**

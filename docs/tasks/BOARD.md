@@ -49,7 +49,8 @@ one does.**
 | **M4 step 4.4** | ✅ CLOSED | `4d3c742` | [record](BOARD-ARCHIVE.md#po-round-74-m4-closed-at-4d3c742-and-the-order-after-it-is-m6-m8-m5-m7-then-m9-user-direction) |
 | **M6** — the first corpus reads (`ISO-8583`) | ✅ **CLOSED** — ⭐ **round 107**, re-taken against the REGENERATED corpus ⛔ **with the pages READ, which the withdrawn run never did.** ⚠️ **The eight escalations that blocked it are ruled or dissolved there.** | `77535e6` | [the close](BOARD-ARCHIVE.md#po-round-107) |
 | **M8** — it is a framework | ✅ **CLOSED** — ⭐ **round 109**: `QA-04` verified and merged; ⛔ **the deliverable is the FINDINGS LOG**, complete over all seven of the conversion's numbered findings. ⭐ **Both of the ISO track's finish lines are reached** | `671e052` | [the close](BOARD-ARCHIVE.md#po-round-109) |
-| **M5** — it runs code | ⏳ **OPEN — round 110, on the USER's ruling that pinned pulls are allowed.** ⭐ Step 5.1: **`TC-00` DONE at `e83f777`** (round 115); ⭐ **`SF-20` DISPATCHED at 116**, against `W352`'s runnable fixture. A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [the open](BOARD-ARCHIVE.md#po-round-110) |
+| **M5** — it runs code | ⏳ **OPEN — round 110, on the USER's ruling that pinned pulls are allowed.** ⭐ **Step 5.1 CLOSED at `b9aef83`** (round 117). ⭐ **Step 5.2 — `SF-29`, `SF-22`, `SF-44` — OPEN; `SF-44` waits on `W357`.** A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [the open](BOARD-ARCHIVE.md#po-round-110) |
+| **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20`, ⭐ **the runner's acceptance taken by the register against the REAL runner image** | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
 | **M7** — it has practices | ⛔ **NOT STARTED.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
@@ -64,9 +65,10 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `SF-20` | Developer 2 | `task/SF-20-the-command-runner` @ `wt/dev2` | 0 @ `df78fe6` | in-progress |
-| `W350` | Developer 4 | `fix/W350-a-corpus-declares-its-runtimes` @ `wt/dev4` | 0 @ `f7279f7` | in-progress |
-| `W353` | Developer 1 | `fix/W353-a-regeneration-never-takes-a-persons-file` @ `wt/dev1` | 0 @ `f7279f7` | in-progress |
+| `W351` | Developer 1 | `fix/W351-reconnaissance-drafts-runtimes` @ `wt/dev1` | 0 @ `b9aef83` | in-progress |
+| `SF-22` | Developer 2 | `task/SF-22-run-and-submit` @ `wt/dev2` | 0 @ `b9aef83` | in-progress |
+| `SF-29` | Developer 3 | `task/SF-29-the-run-output-filter` @ `wt/dev3` | 0 @ `b9aef83` | in-progress |
+| `W357` | Developer 4 | `fix/W357-a-unit-can-have-a-file-and-no-test` @ `wt/dev4` | 0 @ `b9aef83` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -128,11 +130,11 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 58 | `W334`–`W338` | ⭐ **round 106's mints, each jumping nobody** — ⛔ **placed at round 109, which found them unplaced** | [106](BOARD-ARCHIVE.md#po-round-106) |
 | 59 | `W340`–`W344` | ⭐ **round 107's mints, each jumping nobody** — ⛔ **placed at round 109, which found them unplaced** | [107](BOARD-ARCHIVE.md#po-round-107) |
 | 60 | `W348`, `W349` | ⭐ **round 109's mints from `QA-04`, each jumping nobody** — ⛔ **`W345`–`W347` dispatched at 110** | [109](BOARD-ARCHIVE.md#po-round-109) |
-| 62 | `W351` | ⭐ **after `W350`, which is dispatched at 115** | [112](BOARD-ARCHIVE.md#po-round-112) |
 | 63 | `W354` | ⭐ **after `W353`, which is dispatched at 115** | [114](BOARD-ARCHIVE.md#po-round-114) |
 | 64 | `W355`, `W356` | ⭐ **round 115's mints from `W346`, each jumping nobody; `W356` after `W354`** | [115](BOARD-ARCHIVE.md#po-round-115) |
-| 65 | `W357` | ⛔ **JUMPS every older `todo` row (Ruling 75): `SF-44`, in the open milestone's step 5.2, cannot be taken until the contract can say a file has no test** | [116](BOARD-ARCHIVE.md#po-round-116) |
 | 66 | `W358` | ⭐ **round 116's mint, jumping nobody** | [116](BOARD-ARCHIVE.md#po-round-116) |
+| 67 | `W359` | ⭐ **round 117's mint; after `W354` — one owner for the onboarding package** | [117](BOARD-ARCHIVE.md#po-round-117) |
+| 68 | `W360`, `W361` | ⭐ **round 117's mints, each jumping nobody** | [117](BOARD-ARCHIVE.md#po-round-117) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -506,15 +508,18 @@ else.**
 | W347 | Four framework decisions ruled at round 107 live only in the board archive, where a next source never reads | framework agent | ✅ done — `b553ec6` | [`rows/W347.md`](rows/W347.md) |
 | W348 | The second-source pin clause has one form, for a forced move, and none for a pin advanced deliberately as a round's point | framework agent | `todo` — `QA-04/5` | [`rows/W348.md`](rows/W348.md) |
 | W349 | No skill sizes narration before a manifest exists, so a planner commits a corpus on a hand figure, and the first one under-sized it | framework agent | `todo` — `QA-04/6` | [`rows/W349.md`](rows/W349.md) |
-| W350 | A corpus cannot declare the runtimes its material needs, so the runner image has nothing to read | framework agent | `todo` — `TC-00/1` + `/2` + `/3` | [`rows/W350.md`](rows/W350.md) |
+| W350 | A corpus cannot declare the runtimes its material needs, so the runner image has nothing to read | framework agent | ✅ done — `58017a1` | [`rows/W350.md`](rows/W350.md) |
 | W351 | Reconnaissance would not draft a corpus's runtimes, so every set would be typed by hand | framework agent | `todo` — `TC-00/8` | [`rows/W351.md`](rows/W351.md) |
 | W352 | The fixtures `M5` is proved on carry nothing that can run | framework agent | ✅ done — `df78fe6` | [`rows/W352.md`](rows/W352.md) |
-| W353 | A regeneration overwrites a person's file at any newly generated path and then records it as generated | framework agent | `todo` — `W345/2` | [`rows/W353.md`](rows/W353.md) |
+| W353 | A regeneration overwrites a person's file at any newly generated path and then records it as generated | framework agent | ✅ done — `c18457d` | [`rows/W353.md`](rows/W353.md) |
 | W354 | An ignore rule does not untrack bytecode a corpus already committed, and the generated R3 check then fails on it intermittently | framework agent | `todo` — `W345/4` | [`rows/W354.md`](rows/W354.md) |
 | W355 | The delivery skill never reaches a corpus, so the step that sorts a conversion's findings is handed to no one | framework agent | `todo` — `W346/2` | [`rows/W355.md`](rows/W355.md) |
 | W356 | Nothing generated into a corpus checks that a conversion wrote its findings log | framework agent | `todo` — `W346/3` | [`rows/W356.md`](rows/W356.md) |
 | W357 | The exercise record requires a test path, so a file with no test — not a failure — cannot be expressed | framework agent | `todo` — `W352/1` | [`rows/W357.md`](rows/W357.md) |
 | W358 | This repository's own tests walk into the fixtures, so a fixture may only carry code that does not trip them | framework agent | `todo` — `W352/2` + `W352/5` | [`rows/W358.md`](rows/W358.md) |
+| W359 | Onboarding raises a manifest's version for one key only, so every key a later version adds is refused on read-back | framework agent | `todo` — `W350/1` | [`rows/W359.md`](rows/W359.md) |
+| W360 | The runner image cannot be built without reaching the package index, so no office without network can take its reading | framework agent | `todo` — `SF-20/1` | [`rows/W360.md`](rows/W360.md) |
+| W361 | The epic says the runner is the only package that starts a process, which is false, and nothing asserts it | framework agent | `todo` — `SF-20/4` | [`rows/W361.md`](rows/W361.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
