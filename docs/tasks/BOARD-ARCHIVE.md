@@ -28005,3 +28005,34 @@ cannot declare a theme drawn from its own subject. ⛔ **`W362` JUMPS every olde
 ⭐ **Surface read against step 5.2's:** `render/assets/` + `render/templates/` — ⚠️ **`SF-22` adds the page's execution
 client beside them, so `W362` keeps every token NAME a stylesheet already paints with** and declares any template it
 touches; the register merges whichever lands second onto the first.
+
+## PO round 119
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Two directions from the user, recorded; one row minted and named
+before it runs.** ⭐ **Nothing closes here** — `W351` and `W357` are verified and in their guarded merges, and close
+at the next round.
+
+### ⭐ THE USER'S DIRECTIONS — 2026-09-18
+
+1. ⭐ **A RELEASE-READY MILESTONE, AFTER `M7` AND BEFORE `M9`.** This repository and every sibling are cleaned for
+   release: ⭐ the background of the essential decisions is KEPT; temporary agent-to-agent communication goes; the
+   board becomes a light register a project manager would keep; tooling that exists only to build the framework
+   moves to its own branch unless a skill uses it; the rest is an installable library; the images are built and
+   installed locally and used by tag. ⭐ **`M9` then consumes studyforge as its README and its skills, and little
+   else.** ⛔ **Publishing to registries is LATER and needs its own ruling.** ⚠️ **The milestone is MINTED in
+   `README.md` when its plan is written — from a measured inventory, and taken to the user before anything is
+   removed.**
+2. ⭐ **THE GATES GET FASTER.** ⛔ **An office no longer runs the full pinned-image suite**: it runs the host floor,
+   the host suite, the pinned floor, and the pinned suite over its OWN tests — ⭐ **the guarded merge's full reading
+   in both environments is the one that decides, and it is unchanged.** ⭐ **And the suite runs in parallel —
+   `W364`.**
+
+⚠️ **The user's question, answered by reading `docker/dev/check`:** the image is NOT rebuilt per run — it is named
+by the content of its inputs and built once; each run is a throwaway container over the checkout mounted as a
+volume. ⭐ **The cost is the serial suite and the one lock, not the container.**
+
+### ⭐ MINT — `W364`, NAMED BEFORE IT RUNS
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev6` | `W364` | ⭐ **the user's direction**; every gate and merge queues behind the serial suite |
