@@ -255,9 +255,7 @@ def check_authored_sizes(root: Path) -> list[Finding]:
                     path=relative,
                     line=1,
                     rule=RULE,
-                    message=(
-                        f"{lines} lines, ceiling {config.SOURCE_LINE_CEILING}. {SPLIT_ONLY}"
-                    ),
+                    message=(f"{lines} lines, ceiling {config.SOURCE_LINE_CEILING}. {SPLIT_ONLY}"),
                 )
             )
     return findings
