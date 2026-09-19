@@ -113,8 +113,7 @@ def test_the_MARKER_by_hand_on_the_module_takes_the_WHOLE_file(tmp_path):
 
 def test_the_MARKER_by_hand_on_one_test_takes_that_test(tmp_path):
     source = (
-        "import pytest\n@pytest.mark.reads_tree\ndef test_a():\n    pass\n"
-        "def test_b():\n    pass\n"
+        "import pytest\n@pytest.mark.reads_tree\ndef test_a():\n    pass\ndef test_b():\n    pass\n"
     )
     assert _nodes(tmp_path, source) == {"test_a"}
 

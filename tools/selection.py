@@ -137,7 +137,7 @@ def document(path: str) -> bool:
 
 
 def _package_modules(root: Path, path: str) -> set[str]:
-    """The modules of the package directory holding the non-Python `path`, or none."""
+    """Return the modules of the package directory holding the non-Python `path`, or none."""
     directory = root / path.rpartition("/")[0]
     if not path.startswith("src/") or not (directory / "__init__.py").is_file():
         return set()

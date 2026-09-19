@@ -76,7 +76,7 @@ def names_a_token(text: str) -> bool:
 
 
 def _segment(lines: list[str], node: ast.stmt) -> str:
-    """The source of `node`, its decorators included."""
+    """Return the source of `node`, its decorators included."""
     first = min([node.lineno, *(d.lineno for d in getattr(node, "decorator_list", ()))])
     return "\n".join(lines[first - 1 : node.end_lineno or node.lineno])
 
@@ -89,7 +89,7 @@ def _referenced(node: ast.AST) -> set[str]:
 
 
 def _absolute_from(node: ast.Import | ast.ImportFrom, module: str, path: str) -> str:
-    """The module a `from … import` names, resolved; `""` for a plain `import`."""
+    """Return the module a `from … import` names, resolved; `""` for a plain `import`."""
     if not isinstance(node, ast.ImportFrom):
         return ""
     return absolute(node, module, path.endswith("__init__.py"))
@@ -106,7 +106,7 @@ def _collectable(node: ast.stmt, lines: list[str]) -> bool:
 
 
 def _targets(node: ast.stmt) -> set[str]:
-    """The names a top-level definition or assignment binds."""
+    """Return the names a top-level definition or assignment binds."""
     if isinstance(node, _DEFINITIONS):
         return {node.name}
     targets = node.targets if isinstance(node, ast.Assign) else [node.target]
@@ -147,7 +147,7 @@ class TreeReaders:
         try:
             source = (self.root / path).read_text(encoding="utf-8")
             tree = ast.parse(source)
-        except (OSError, SyntaxError, UnicodeDecodeError, ValueError):
+        except OSError, SyntaxError, UnicodeDecodeError, ValueError:
             return frozenset({WHOLE})
         lines = source.splitlines()
         self._collected[path] = frozenset(
@@ -189,7 +189,7 @@ class TreeReaders:
         return frozenset(tainted & local)
 
     def _from_conftests(self, path: str) -> frozenset[str]:
-        """The tainted names of every conftest above `path` (a fixture reaches by name)."""
+        """Return the tainted names of every conftest above `path` (fixtures reach by name)."""
         found: set[str] = set()
         parts = path.split("/")[:-1]
         for depth in range(len(parts) + 1):
@@ -199,7 +199,7 @@ class TreeReaders:
         return frozenset(found)
 
     def _from_helpers(self, path: str, tree: ast.Module) -> set[str]:
-        """The names `path` imports from a `tests.` helper module that reads the tree."""
+        """Return the names `path` imports from a `tests.` helper that reads the tree."""
         module = module_of(path)
         found: set[str] = set()
         for node in tree.body:
@@ -213,8 +213,10 @@ class TreeReaders:
                 # ⭐ BY NAME: `from helper import a` is tainted when `a` is, or the module is.
                 bound = alias.asname or alias.name.split(".")[0]
                 whole = isinstance(node, ast.Import) or WHOLE in read
-                if (read and whole) or alias.name in read or self._helper_reads(
-                    f"{_absolute_from(node, module, path)}.{alias.name}"
+                if (
+                    (read and whole)
+                    or alias.name in read
+                    or self._helper_reads(f"{_absolute_from(node, module, path)}.{alias.name}")
                 ):
                     found.add(bound)
         return found

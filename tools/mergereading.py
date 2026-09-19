@@ -8,7 +8,8 @@ selection would have MISSED, RED by name.
 
 **How you use it.** Through `tools.mergegate`, which re-exports every name here:
 
-    print("\n".join(render(stage_and_read(root, branch))))
+    for line in render(stage_and_read(root, branch)):
+        print(line)
 
 **Depends on.** `dataclasses` — the standard library — `tools.authorship` for who wrote the
 commits, `tools.gates` for the `Gate` a reading came from, and `tools.selection` for the
@@ -32,6 +33,7 @@ from tools.selection import missed as outside_selection
 #: Exit codes. ⛔ `UNREAD` is a third state and is never a pass (Ruling 191): a run that
 #: staged nothing, read no gate, or could not verify its own restore lands here.
 MERGED, REFUSED, UNREAD = 0, 1, 2
+
 
 @dataclass(frozen=True)
 class Reading:

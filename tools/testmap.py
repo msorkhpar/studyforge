@@ -47,6 +47,7 @@ LOCAL = ("studyforge", "tools", "tests")
 #: ⛔ Never parsed as modules: fixture corpora are data, and shared machinery besides.
 NOT_MODULES = ("tests/fixtures/",)
 
+
 def module_of(path: str) -> str:
     """Return the dotted module a repository-relative `path` is, or `""` when it is none."""
     if not path.endswith(".py") or path.startswith(NOT_MODULES):
@@ -64,8 +65,10 @@ def module_of(path: str) -> str:
 def is_test_file(path: str) -> bool:
     """Report whether `path` is a file pytest collects under this repository's `testpaths`."""
     name = path.rsplit("/", 1)[-1]
-    return path.startswith(("tests/", "tools/tests/")) and name.startswith("test_") and (
-        name.endswith(".py")
+    return (
+        path.startswith(("tests/", "tools/tests/"))
+        and name.startswith("test_")
+        and (name.endswith(".py"))
     )
 
 
@@ -78,7 +81,7 @@ def _parse(path: Path) -> ast.Module | None:
     """Parse `path`, or return None when it cannot be read or is not valid Python."""
     try:
         return ast.parse(path.read_text(encoding="utf-8"))
-    except (OSError, SyntaxError, UnicodeDecodeError, ValueError):
+    except OSError, SyntaxError, UnicodeDecodeError, ValueError:
         return None
 
 
@@ -98,9 +101,7 @@ def _with_parents(names: Iterable[str]) -> set[str]:
     }
 
 
-def imports(
-    tree: ast.Module, module: str, package: bool, known: frozenset[str] | None
-) -> set[str]:
+def imports(tree: ast.Module, module: str, package: bool, known: frozenset[str] | None) -> set[str]:
     """Return every repository-local module name `tree` reaches (see the docstring).
 
     ⭐ `known=None` keeps EVERY `from a import b` as a candidate `a.b` and reads no string:

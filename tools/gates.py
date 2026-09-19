@@ -139,9 +139,7 @@ def scoped(gates: tuple[Gate, ...], scope: Scope) -> tuple[Gate, ...]:
     if scope.full:
         tag = "FULL, AUDITING the selection" if scope.audit else "FULL"
         audit = frozenset(scope.tests) if scope.audit else None
-        return tuple(
-            replace(g, scope=tag, audit=audit) if g.name == "suite" else g for g in gates
-        )
+        return tuple(replace(g, scope=tag, audit=audit) if g.name == "suite" else g for g in gates)
     tag = f"SELECTED {fraction(scope)}"
     return tuple(
         replace(g, argv=(*g.argv, *scope.tests), scope=tag) if g.name == "suite" else g

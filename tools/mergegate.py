@@ -183,7 +183,7 @@ def run_gate(gate: Gate, root: Path, failed: list[str] | None = None) -> int:
 
 
 def _take(gate: Gate, root: Path) -> int | tuple[int, tuple[str, ...]]:
-    """The default runner: `run_gate`, teed only when the gate AUDITS a selection (`W366`)."""
+    """Run `gate` the default way: `run_gate`, teed only when it AUDITS a selection (`W366`)."""
     if gate.audit is None:
         return run_gate(gate, root)
     failed: list[str] = []
