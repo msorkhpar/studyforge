@@ -28228,3 +28228,32 @@ the register takes a full container reading before merge.**
 | `wt/dev2` | `W361` | ⭐ open, unblocked, disjoint — the runner's *only* sentence, with `SF-22/6` folded in |
 | `wt/dev3` | `W365` | ⭐ open, unblocked, disjoint — the file-only record taught where authors read |
 | `wt/dev4` | `W374` | ⛔ **`M5` waits on it** — the runner image holds only what is declared |
+
+## PO round 122
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`TC-01`'s proposal is ruled; its build waits on two things, one of them
+the user's; two open rows are named on idle carriers before they run.**
+
+### ⭐ `TC-01` STAGE 1 — THE PROPOSAL, RULED
+
+⭐ **Read against git** (`607afb9`, one document, one office identity, the floor GREEN). ⭐ **Rulings (reversible, the register's):**
+
+| question | ruling |
+|---|---|
+| answer 2 — how the editor gets its runtimes | ⭐ **ACCEPTED: it copies them out of the runner image** — so `pins.json` stays the ONE place a runtime version is chosen |
+| `TC-01/4` — editor pins inside `pins.json` would change every runner tag | ⭐ **a SEPARATE pins file for the editor**; the runner's tag inputs are untouched, so the tag `EX-00` records stays true |
+| `TC-01/6` — drop the entrypoint's `exec` mode | ⭐ **ACCEPTED** — a second place code runs, which also skips `fixuid` |
+| `TC-01/10` — *functionally identical to CodeSignal's* against §8.1's pins | ⭐ **the acceptance reads *the same toolchain set and properties, at the pins' versions*** |
+| `TC-01/1`, `/3`, `/9` | ⭐ the epic's owners are followed; no editor `docker run` line in the README (`TC-05`'s); the two throwaway reads are disclosed and accepted |
+| `TC-01/2` — `docker/minimal/plan.py` needs a change and is `W374`'s surface | ⭐ **stage 2 is dispatched after `W374` merges** |
+
+⛔ **The pulls stage 2 needs are of a KIND no ruling covers** — the code-server base, extensions from Open VSX, TypeScript from
+npm, one Debian package — ⭐ **each pinnable, none a runtime.** The user's round-110 ruling named runtimes, and the fonts needed
+their own ruling at round 118. ⛔ **So it is ASKED, not assumed — queued for the user; it blocks `TC-01`'s build alone.**
+
+### ⭐ NAMED BEFORE THEY RUN
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev5` | `W366` | ⭐ the user's direction; `W364` landed |
+| `wt/dev6` | `W367` | ⭐ open, unblocked, disjoint (`tools/quality/`'s size check) |

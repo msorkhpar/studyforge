@@ -51,7 +51,7 @@ one does.**
 | **M8** — it is a framework | ✅ **CLOSED** — ⭐ **round 109**: `QA-04` verified and merged; ⛔ **the deliverable is the FINDINGS LOG**, complete over all seven of the conversion's numbered findings. ⭐ **Both of the ISO track's finish lines are reached** | `671e052` | [the close](BOARD-ARCHIVE.md#po-round-109) |
 | **M5** — it runs code | ⏳ **OPEN — round 110.** ⭐ **Step 5.2's three tasks MERGED and verified** (round 121) and ⭐ **the container reading against a REAL Python runner image is GREEN** — ⛔ **but it found `TC-00`'s image carrying every runtime for `python`: `M5` closes on `W374`.** A reader edits a unit's file, runs one command, and the unit's test runs against it through the runner — ⭐ a file with no test is not a failure — and Run and Submit give real output | — | [round 121](BOARD-ARCHIVE.md#po-round-121) |
 | **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20`, ⭐ **the runner's acceptance taken by the register against the REAL runner image** | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
-| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ **Step 7.1 — `TC-01`, the editor image — DISPATCHED, stage 1 (a proposal).** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
+| **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ **Step 7.1 — `TC-01`, the editor image — stage 1's proposal RULED (round 122); ⛔ stage 2 waits on `W374` AND on the user's ruling on its pulls.** A practice opens in the page's panel with the embedded editor, Run and Submit work from it, and ⭐ **only a PASSING Submit completes the practice** | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
 
 ⛔ **Ruling 97 binds every one of those refs** ([`../conventions/board.md`](../conventions/board.md)).
@@ -69,6 +69,8 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | `W361` | Developer 2 | `fix/W361-only-the-runner-starts-a-corpus-command` @ `wt/dev2` | 0 @ `fa30758` | in-progress |
 | `W365` | Developer 3 | `fix/W365-the-guide-teaches-the-file-only-record` @ `wt/dev3` | 0 @ `fa30758` | in-progress |
 | `W374` | Developer 4 | `fix/W374-a-runner-image-holds-only-what-is-declared` @ `wt/dev4` | 0 @ `fa30758` | in-progress |
+| `W366` | Developer 5 | `fix/W366-the-gate-selects-tests-by-what-changed` @ `wt/dev5` | 0 @ `17bf311` | in-progress |
+| `W367` | Developer 6 | `fix/W367-the-size-gate-reads-every-authored-file` @ `wt/dev6` | 0 @ `17bf311` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
