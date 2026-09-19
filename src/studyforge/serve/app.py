@@ -295,7 +295,8 @@ class _Handler(BaseHTTPRequestHandler):
                 return
             cancel = getattr(stream, "cancel", None)
             if cancel is not None:
-                watcher = threading.Thread(target=self._watch, args=(done, ending, cancel), daemon=True)
+                watching = (done, ending, cancel)
+                watcher = threading.Thread(target=self._watch, args=watching, daemon=True)
                 watcher.start()
             for chunk in stream:
                 self.wfile.write(chunk)
