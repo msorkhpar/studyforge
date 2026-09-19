@@ -36,7 +36,6 @@ SKELETON = "page.html"
 CHOICES = ("system", "light", "dark")
 
 
-
 def boot() -> str:
     """The skeleton's one inline script, as written."""
     found = re.findall(r"<script>(.*?)</script>", templates.template(SKELETON).template)

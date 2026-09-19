@@ -86,7 +86,8 @@ PLAYER = "footer#player"
 
 #: Every box this module compares, in one reading. ⛔ Border boxes in viewport
 #: coordinates, named for what they are.
-BOXES = """
+BOXES = (
+    """
 (() => {
   const at = s => { const el = document.querySelector(s); if (!el) return null;
     const b = el.getBoundingClientRect();
@@ -99,9 +100,12 @@ BOXES = """
           surface: at('<surface>'), player: at('<player>'), header: at('body > header'),
           controls: controls, window: window.innerWidth};
 })()
-""".replace("<rail>", RAIL).replace("<outline>", OUTLINE).replace("<about>", ABOUT).replace(
-    "<surface>", SURFACE
-).replace("<player>", PLAYER)
+""".replace("<rail>", RAIL)
+    .replace("<outline>", OUTLINE)
+    .replace("<about>", ABOUT)
+    .replace("<surface>", SURFACE)
+    .replace("<player>", PLAYER)
+)
 
 #: The longest line of running prose on the page, in characters, measured by
 #: laying one paragraph's text out a word at a time. ⛔ Not `--measure` read back
@@ -477,9 +481,7 @@ def test_nothing_is_lit_before_the_reader_starts_narration(
     assert int(open_page.evaluate(SPEAKING)) == 0  # type: ignore[arg-type]
 
 
-def test_pressing_play_is_what_lights_a_passage(
-    open_page: OpenPage, built_site: site.Site
-) -> None:
+def test_pressing_play_is_what_lights_a_passage(open_page: OpenPage, built_site: site.Site) -> None:
     """⭐ The other way: the highlight exists and a press is what reaches it."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE))
@@ -487,9 +489,7 @@ def test_pressing_play_is_what_lights_a_passage(
     assert int(open_page.evaluate(SPEAKING)) == 1  # type: ignore[arg-type]
 
 
-def test_the_masthead_prints_no_bare_kind_label(
-    open_page: OpenPage, built_site: site.Site
-) -> None:
+def test_the_masthead_prints_no_bare_kind_label(open_page: OpenPage, built_site: site.Site) -> None:
     """⛔ `W388` clause 5: nothing under the title but the title and its trail."""
     open_page.resize(*WIDER)
     open_page.open(built_site.url(UNIT_PAGE))

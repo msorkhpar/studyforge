@@ -213,9 +213,7 @@ def test_the_trail_matches_the_stand_in_apart_from_the_hrefs_this_row_adds(tmp_p
         theirs = trail_for(corpus.contents, entry, to_index)
         # ⭐ `W388`: the stand-in predates naming each level once, so a crumb
         # repeating the one before it is set aside on its side of the comparison.
-        theirs = tuple(
-            c for i, c in enumerate(theirs) if i == 0 or c.title != theirs[i - 1].title
-        )
+        theirs = tuple(c for i, c in enumerate(theirs) if i == 0 or c.title != theirs[i - 1].title)
         assert [Crumb(c.level, c.title) for c in mine] == [Crumb(c.level, c.title) for c in theirs]
         assert all(crumb.href is None for crumb in theirs[1:])
 
