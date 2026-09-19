@@ -70,6 +70,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 | `SF-29` | Developer 3 | `task/SF-29-the-run-output-filter` @ `wt/dev3` | 0 @ `b9aef83` | in-progress |
 | `W357` | Developer 4 | `fix/W357-a-unit-can-have-a-file-and-no-test` @ `wt/dev4` | 0 @ `b9aef83` | in-progress |
 | `W362` | Developer 5 | `fix/W362-a-study-site-with-its-own-identity` @ `wt/dev5` | 0 @ `bb05107` | in-progress |
+| `W364` | Developer 6 | `fix/W364-the-suite-runs-in-parallel` @ `wt/dev6` | 0 @ `6c05538` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -138,6 +139,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 68 | `W360`, `W361` | ⭐ **round 117's mints, each jumping nobody** | [117](BOARD-ARCHIVE.md#po-round-117) |
 | 69 | `W362` | ⛔ **JUMPS every older `todo` row (Ruling 75), on the USER's direction of 2026-09-18** | [118](BOARD-ARCHIVE.md#po-round-118) |
 | 70 | `W363` | ⭐ **after `W362`, whose identity is its default** | [118](BOARD-ARCHIVE.md#po-round-118) |
+| 71 | `W364` | ⛔ **JUMPS every older `todo` row (Ruling 75), on the USER's direction of 2026-09-18: every gate queues behind the suite it speeds up** | [119](BOARD-ARCHIVE.md#po-round-119) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -525,6 +527,7 @@ else.**
 | W361 | The epic says the runner is the only package that starts a process, which is false, and nothing asserts it | framework agent | `todo` — `SF-20/4` | [`rows/W361.md`](rows/W361.md) |
 | W362 | The generated study site wears the brief's first banned palette and two banned faces, so it reads as generic | framework agent | `todo` — user, 2026-09-18 | [`rows/W362.md`](rows/W362.md) |
 | W363 | A corpus cannot declare a theme drawn from its own subject, so every corpus wears the same identity | framework agent | `todo` — user, 2026-09-18 | [`rows/W363.md`](rows/W363.md) |
+| W364 | The suite runs on one core of a twenty-core host, so every gate and every merge waits on a serial run | framework agent | `todo` — user, 2026-09-18 | [`rows/W364.md`](rows/W364.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
