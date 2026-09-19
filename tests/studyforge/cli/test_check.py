@@ -10,6 +10,8 @@ verb only hands it a command.
 
 from __future__ import annotations
 
+import shlex
+
 import pytest
 
 from studyforge.address import Address
@@ -128,7 +130,7 @@ def test_a_passing_test_run_records_a_practice_pass_under_the_pages_key(root):
     entry = practice_entry(root, PASSING)
     assert entry is not None and entry["first_passed_at"] is not None
     assert entry["last"]["mode"] == "test" and entry["last"]["passed"] is True
-    assert entry["last"]["commands"] == [" ".join(record(PASSING).test_command)]
+    assert entry["last"]["commands"] == [shlex.join(record(PASSING).test_command)]
 
 
 @pytest.mark.parametrize("unit", [FAILING, BROKEN])
@@ -291,3 +293,19 @@ def test_a_unit_that_cannot_be_read_is_unusable_and_nothing_runs(root):
     assert checked.code == UNUSABLE
     assert checked.handed.built == [] and checked.handed.started == []
     assert str(root) not in checked.text
+
+
+def test_the_recorded_command_reads_back_to_its_argv_even_with_a_space(root):
+    # ⚠️ A record cannot carry whitespace today (`exercise.safety`), so the recording is
+    # driven directly: the spelling must survive the argument that needs quoting.
+    from studyforge.cli.check import _practices, _record
+    from studyforge.generate.declarations import read_corpus
+
+    corpus = read_corpus(root)
+    practice = next(p for p in _practices(corpus) if p.unit.ordinal == PASSING)
+    argv = ("python3", "-c", "print('two words')")
+    _record(practice, corpus, argv, 0, lambda line: None)
+    [spelled] = practice_entry(root, PASSING)["last"]["commands"]
+    assert tuple(shlex.split(spelled)) == argv
+    # The other way: a plain join would not read back.
+    assert tuple(shlex.split(" ".join(argv))) != argv

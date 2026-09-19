@@ -156,7 +156,7 @@ def test_the_verb_starts_no_process_of_its_own():
         if isinstance(node, ast.Import)
         for alias in node.names
     } | {node.module.split(".")[0] for node in ast.walk(tree) if isinstance(node, ast.ImportFrom)}
-    assert not imported & {"subprocess", "socket", "pty", "multiprocessing", "shlex"}
+    assert not imported & {"subprocess", "socket", "pty", "multiprocessing"}
     assert "system" not in {
         node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute)
     }

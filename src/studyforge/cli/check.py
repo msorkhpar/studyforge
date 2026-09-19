@@ -63,6 +63,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import shlex
 from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -248,7 +249,8 @@ def _record(
             practice.section,
             mode=MODE_TEST,
             exit_code=verdict,
-            commands=[" ".join(command)],
+            # ⭐ `shlex.join`, the spelling `SF-22` records: it reads back to the argv.
+            commands=[shlex.join(command)],
             when=when,
         )
     except UNRECORDED as refusal:
