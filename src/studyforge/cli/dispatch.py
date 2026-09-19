@@ -107,8 +107,15 @@ def _serve() -> Callable[..., int]:
     return main
 
 
+def _check() -> Callable[..., int]:
+    from studyforge.cli.check import main
+
+    return main
+
+
 #: ⛔ **The registered table.** Ordered as a reader meets them: check the
-#: archive, ask what a build would write, narrate it, write it, then serve it.
+#: archive, ask what a build would write, narrate it, write it, serve it, then
+#: check a unit's file the reader edited (`SF-44`).
 #: ⭐ `narrate` precedes `build` because clips are a build's INPUT (`E09` § W202
 #: answer 3), and `serve` follows `build` because it serves what a build wrote.
 VERBS: Mapping[str, Verb] = {
@@ -119,6 +126,7 @@ VERBS: Mapping[str, Verb] = {
         Verb("narrate", "synthesise a corpus's clips from a narration service", _narrate),
         Verb("build", "write the site for one corpus into a directory you name", _build),
         Verb("serve", "serve a built site on loopback, adding the content API", _serve),
+        Verb("check", "run the test for a unit's file you edited, or its program if none", _check),
     )
 }
 

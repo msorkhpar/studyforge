@@ -1,4 +1,4 @@
-"""The framework's entry points: build, serve, plan, reconcile, validate.
+"""The framework's entry points: build, serve, plan, reconcile, validate, check.
 
 **What it does.** The command line is the framework's public surface. A corpus
 is configuration passed to these commands; it is never a caller of framework
@@ -13,6 +13,7 @@ imports a consumer, and a consumer never imports past this seam.
     studyforge build <corpus> --out <directory>
     studyforge serve <root>         every built corpus under it
     studyforge reconcile <corpus>   artifacts whose source is gone
+    studyforge check <file>         the test for a unit's file the reader edited
 
 `main(argv) -> int` is the installed command, and `VERBS` is the table it
 dispatches on.
@@ -27,9 +28,9 @@ and R3 is only credible if that question can be asked without taking the risk.
 inside one corpus is a framework with one consumer (R19); what a corpus
 contributes is its configuration.
 
-⛔ **Five of the six verbs above are REGISTERED and one is not.**
-`validate`, `plan`, `narrate`, `build` and `serve` are in `dispatch.VERBS` and
-run today. ⚠️ `reconcile` is named here as the shape the command line will
+⛔ **Every verb above but one is REGISTERED.**
+`validate`, `plan`, `narrate`, `build`, `serve` and `check` are in
+`dispatch.VERBS` and run today. ⚠️ `reconcile` is named here as the shape the command line will
 have — `OPS-07` builds it — and is deliberately absent from the table, because
 a verb registered against a callable that does not exist yet makes an installed
 command that fails on first invocation. ⚠️ `serve` is one module, `cli.serve`,
