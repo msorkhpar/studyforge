@@ -577,3 +577,19 @@ def test_it_is_a_file_on_disk_and_not_a_string_in_python():
     # R13, at the one place a stylesheet could still have arrived as a literal.
     assert (ASSET_DIR / CHROME).is_file()
     assert text(CHROME) == (ASSET_DIR / CHROME).read_bytes().decode("utf-8")
+
+
+# --- the read words, off the screen and in the accessibility tree (`W383`) --
+
+READ_STATE = f'span[{SURFACE_HOOKS["kind"]}="{SURFACE_HOOKS["read_state"]}"]'
+
+
+def test_the_read_words_are_kept_off_the_screen_but_not_out_of_the_tree():
+    # ⭐ The visual mark is the tick; the words are for assistive technology.
+    rule = rule_for(READ_STATE)
+    assert rule is not None, "no rule keeps the read words off the screen"
+    for declaration in ("position: absolute", "width: 1px", "height: 1px", "clip-path: inset(50%)"):
+        assert declaration in rule
+    # ⛔ The other way: nothing here removes them from what a screen reader reads.
+    for hiding in ("display", "visibility", "content"):
+        assert hiding not in rule, f"{hiding} would take the words away from a screen reader"

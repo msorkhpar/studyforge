@@ -85,6 +85,7 @@ third state.
 
 from __future__ import annotations
 
+from studyforge.render import templates
 from studyforge.render.index import policy
 from studyforge.render.index.entries import Document, Item, Section
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
@@ -110,6 +111,12 @@ KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 #: What wraps a unit's numbering, so a stylesheet can reach it without the
 #: numbering being glued to the title in one string.
 NUMBERING_KIND = SURFACE_HOOKS["numbering"]
+
+#: The words a read row says to assistive technology, and the kind that wraps
+#: them (`W383`). ⛔ One file for the rail and both lists (R13): emitted hidden,
+#: shown by `progress-view.js` on a row the store holds, never drawn on screen.
+READ_STATE_TEMPLATE = "read-state.html"
+READ_STATE_KIND = SURFACE_HOOKS["read_state"]
 
 #: What wraps the corpus's own word for a section's depth, for the same reason.
 LEVEL_KIND = SURFACE_HOOKS["level"]
@@ -170,7 +177,7 @@ def _tally(section: Section) -> str:
 
 def _item(item: Item, at: tuple[int, ...]) -> str:
     """Return one unit's row: linked when it reads, plainly listed when it does not."""
-    body = f"{_numbering(item)}{inline(item.title)}"
+    body = f"{_numbering(item)}{inline(item.title)}{_read_state()}"
     where = f'id="{escape_attribute(item.key)}"'
     if item.href is None:
         return f'<li {where} {READABLE_ATTRIBUTE}="false">{body}</li>'
@@ -211,3 +218,8 @@ def _numbering(item: Item) -> str:
     if not item.numbering:
         return ""
     return f'<span {KIND_ATTRIBUTE}="{NUMBERING_KIND}">{escape(item.numbering)}</span> '
+
+
+def _read_state() -> str:
+    """Return the hidden words a read row speaks, from the one template all three regions fill."""
+    return templates.fill(READ_STATE_TEMPLATE, kind=READ_STATE_KIND)

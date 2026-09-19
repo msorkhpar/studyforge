@@ -73,6 +73,7 @@ third state the two part company with nothing to notice.
 from __future__ import annotations
 
 from studyforge.address import Address
+from studyforge.render import templates
 from studyforge.render.container.entries import Item
 from studyforge.render.markup import escape, escape_attribute, inline, safe_href
 from studyforge.render.page import PageError
@@ -99,6 +100,12 @@ KIND_ATTRIBUTE = SURFACE_HOOKS["kind"]
 #: numbering being glued to the title in one string.
 NUMBERING_KIND = SURFACE_HOOKS["numbering"]
 
+#: The words a read row says to assistive technology, and the kind that wraps
+#: them (`W383`). ⛔ One file for the rail and both lists (R13): emitted hidden,
+#: shown by `progress-view.js` on a row the store holds, never drawn on screen.
+READ_STATE_TEMPLATE = "read-state.html"
+READ_STATE_KIND = SURFACE_HOOKS["read_state"]
+
 
 def render(address: Address, items: tuple[Item, ...]) -> str:
     """Return the container's units as one ordered list, in declared order.
@@ -118,7 +125,7 @@ def render(address: Address, items: tuple[Item, ...]) -> str:
 
 def _row(address: Address, position: int, item: Item) -> str:
     """Return one unit's row: linked when it has a page, plain when it has not."""
-    body = f"{_numbering(item)}{inline(item.title)}"
+    body = f"{_numbering(item)}{inline(item.title)}{_read_state()}"
     where = f'id="{escape_attribute(address.unit_key(position))}"'
     if item.href is None:
         return f'<li {where} {READABLE_ATTRIBUTE}="false">{body}</li>'
@@ -151,3 +158,8 @@ def _numbering(item: Item) -> str:
     if not item.numbering:
         return ""
     return f'<span {KIND_ATTRIBUTE}="{NUMBERING_KIND}">{escape(item.numbering)}</span> '
+
+
+def _read_state() -> str:
+    """Return the hidden words a read row speaks, from the one template all three regions fill."""
+    return templates.fill(READ_STATE_TEMPLATE, kind=READ_STATE_KIND)

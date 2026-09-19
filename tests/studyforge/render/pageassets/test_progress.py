@@ -370,3 +370,34 @@ def test_the_region_the_script_looks_for_is_the_region_the_page_emits():
     assert hook, "the consumer names no region"
     attribute, value = re.match(r'section\[([\w-]+)="([^"]+)"\]', hook.group(1)).groups()
     assert f'{attribute}="{value}"' in emitted.read_text(encoding="utf-8")
+
+
+# --- the read words the rail and the lists speak (`W383`) --------------------
+
+#: The page script that shows them, and the one template that holds them.
+VIEW = "progress-view.js"
+SAID_TEMPLATE = Path(repository_root() / "src/studyforge/render/templates/read-state.html")
+
+
+def test_the_view_reaches_the_read_words_by_the_published_hook():
+    # ⛔ A selector and a template that disagree would show nothing and fail nothing.
+    hook = f'span[{SURFACE_HOOKS["kind"]}="{SURFACE_HOOKS["read_state"]}"]'
+    assert hook in uncommented(VIEW)
+    assert "${kind}" in SAID_TEMPLATE.read_text(encoding="utf-8")
+
+
+def test_the_view_shows_the_read_words_and_never_types_them():
+    # ⛔ Every word a reader hears is markup (R13): the script only toggles
+    # `hidden`, so the string lives once, in the template both regions fill.
+    words = re.sub(r"<[^>]+>", "", SAID_TEMPLATE.read_text(encoding="utf-8")).strip(" ,\n")
+    assert words, "the template holds no words"
+    body = uncommented(VIEW)
+    assert words not in body
+    assert ".hidden = !read" in body
+
+
+def test_the_filter_does_not_match_a_row_by_its_read_words():
+    # ⚠️ Filtering for the word would otherwise match every row already read.
+    body = uncommented(VIEW)
+    assert "searchable(row)" in body
+    assert "row.textContent" not in body

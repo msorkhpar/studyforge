@@ -9,9 +9,11 @@ being absent.
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 
 import pytest
 
+from studyforge.render import templates
 from studyforge.render.page import RailContainer, RailUnit, rail
 from studyforge.render.pageassets import SURFACE_HOOKS
 
@@ -323,3 +325,60 @@ def test_a_container_declaring_no_units_yet_is_still_a_row():
     # ⚠️ An empty deepest group is legal and is not the same as an absent one.
     markup = rail((RailContainer(title="Empty", href="e.html"), TWO[1]))
     assert "Empty" in markup
+
+
+# --- a screen reader hears what the tick shows (`W383`) ----------------------
+
+#: The hidden words, as the one template holds them, filled the way every region fills them.
+SAID = templates.fill("read-state.html", kind=SURFACE_HOOKS["read_state"])
+
+
+def test_a_keyed_row_carries_the_read_words_hidden_inside_what_it_links():
+    # ⛔ Hidden as emitted: the page is byte-identical whoever opens it (R10),
+    # and only `progress-view.js` may show the words, on a row the store holds.
+    markup = rail((TWO[0], replace(TWO[1], units=(replace(TWO[1].units[0], key="b/unit-01"),))))
+    linked = r'<a href="\.\./advanced/unit-01\.unit\.html">.*?Composition'
+    assert re.search(linked + re.escape(SAID) + "</a>", markup)
+    assert f'{SURFACE_HOOKS["kind"]}="{SURFACE_HOOKS["read_state"]}" hidden>' in SAID
+
+
+def test_the_current_row_carries_the_words_in_the_row_itself():
+    unit = replace(TWO[0].units[0], key="a/unit-01")
+    markup = rail((replace(TWO[0], units=(unit,)), TWO[1]))
+    assert f"Your first class{SAID}</li>" in markup
+
+
+def test_a_row_with_no_key_can_never_be_marked_and_carries_no_words():
+    # ⭐ The other way: every row of `TWO` is keyless.
+    assert SAID not in rail(TWO)
+    assert SURFACE_HOOKS["read_state"] not in rail(TWO)
+
+
+def test_the_rail_and_both_lists_say_it_with_the_one_string():
+    # ⛔ One product string for both regions: a second spelling would be a rail
+    # and a list that tell a screen-reader user two different things.
+    from studyforge.address import Address
+    from studyforge.render.container import Item as ContainerItem
+    from studyforge.render.container import listing
+    from studyforge.render.index import Document, Section, disclosure
+    from studyforge.render.index import Item as IndexItem
+
+    keyed = replace(TWO[1].units[0], key="b/unit-01")
+    listed = listing.render(Address(("b",)), (ContainerItem("1", "Composition", "u.html"),))
+    index = disclosure.render(
+        Document(
+            title="A Corpus",
+            levels=("module",),
+            sections=(
+                Section(
+                    level="module",
+                    key="b",
+                    title="B",
+                    items=(IndexItem(key="b/unit-01", numbering="1", title="Composition"),),
+                ),
+            ),
+        )
+    )
+    for markup in (rail((TWO[0], replace(TWO[1], units=(keyed,)))), listed, index):
+        assert markup.count(SAID) == 1
+        assert "marked read" not in markup.replace(SAID, "")

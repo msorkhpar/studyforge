@@ -106,6 +106,7 @@ _FORM_OF = {
     "marked": ATTRIBUTE_FORM,
     "numbering": KIND_FORM,
     "level": KIND_FORM,
+    "read_state": KIND_FORM,
 }
 
 #: Wrappers, controls and states the surface styles that are not block types.
@@ -146,6 +147,12 @@ _FORM_OF = {
 #: rule for `numbering` or `level` names the element too — `chrome.css` uses
 #: `span[data-kind="numbering"]` — because a corpus may call a section kind
 #: anything, including one of these words.
+#:
+#: ⭐ **`read_state` wraps the words that tell assistive technology a row is
+#: read** (`W383`). The rail and both lists emit it hidden on every row, from
+#: one template, and `progress-view.js` shows it on the rows the store holds —
+#: so a built page stays byte-identical whoever opens it (R10). `chrome.css`
+#: keeps it off the screen: the tick is the visual mark, the words are not.
 SURFACE_HOOKS = {
     "table_scroll": "scroll",
     "copy_button": "copy",
@@ -156,6 +163,7 @@ SURFACE_HOOKS = {
     "marked": "data-marked",
     "numbering": "numbering",
     "level": "level",
+    "read_state": "read-state",
 }
 
 #: `hook -> the class its element carries`, for the hooks that are classes.

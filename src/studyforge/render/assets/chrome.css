@@ -251,6 +251,22 @@ nav[aria-label="Containers"] li li[data-marked="true"]:not(:has(> a))::after {
   color: var(--done);
 }
 
+/* ⭐ The words a read row says to assistive technology (`W383`), in the rail
+   and in both lists: kept in the accessibility tree and off the screen, so the
+   tick above and the listings' box stay the only visual mark. ⚠️ `hidden` on
+   an unread row still removes them; this rule sets no `display`. */
+span[data-kind="read-state"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 /* --- the rail beside the column (W325, W326, W328, W333) ----------------- */
 
 /* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the
