@@ -34,13 +34,24 @@ WATCHDOG = 120
 FLOOD = 4 * 65536
 
 #: A stand-in for the skill that fills `stderr` BEFORE it prints its listening line.
+#:
+#: ⛔ **`W378`: it BLOCKS `SIGINT` before it listens and TAKES it with `sigwait`.** A Python
+#: handler followed by `signal.pause()` lost the signal whenever it landed after the
+#: interpreter's last signal check and before `pause()` entered the kernel: the handler's flag
+#: was set, `pause()` then waited for a second signal that never came, and the reading ran out
+#: its output timeout. A loaded parallel suite preempts the child in exactly that window. A
+#: blocked signal stays PENDING until `sigwait` takes it, so no arrival time can lose it.
+#: A second argument HOLDS it after it listens until one byte arrives on `stdin`.
 FLOODING = """
-import signal, sys
-signal.signal(signal.SIGINT, lambda *_: (print("stopped", flush=True), sys.exit(0)))
+import os, signal, sys
+signal.pthread_sigmask(signal.SIG_BLOCK, {signal.SIGINT})
 sys.stderr.write("x" * int(sys.argv[1]))
 sys.stderr.flush()
 print("serve http://127.0.0.1:9/  flooded", flush=True)
-signal.pause()
+if sys.argv[2:]:
+    os.read(0, 1)
+signal.sigwait({signal.SIGINT})
+print("stopped", flush=True)
 """
 
 
@@ -79,6 +90,9 @@ def served(argv: list[str]) -> Iterator[Served]:
             result = Served(int(found.group(1)))
             yield result
             process.send_signal(signal.SIGINT)
+            # ⭐ `W378`: 60 s is what a child is given to END once told to — the skill's shutdown,
+            # or the stand-in waking from `sigwait` — on a machine the parallel suite loads. It
+            # is a backstop, never a wait for work: neither child has work left to do here.
             result.said, result.errors = output.rest(timeout=60)
             result.code = process.wait(timeout=60)
         finally:
@@ -108,3 +122,49 @@ def test_a_child_that_fills_its_stderr_pipe_before_it_listens_does_not_block_the
     assert session.code == 0, session.errors[-400:]
     assert (len(session.errors), set(session.errors)) == (FLOOD, {"x"})
     assert session.said.splitlines() == ["serve http://127.0.0.1:9/  flooded", "stopped"]
+
+
+@contextlib.contextmanager
+def held() -> Iterator[tuple[subprocess.Popen, ProcessOutput]]:
+    """The stand-in, HELD after it listens until a byte arrives on its `stdin`."""
+    argv = [sys.executable, "-c", FLOODING, "0", "hold"]
+    pipes = {"stdout": subprocess.PIPE, "stderr": subprocess.PIPE}
+    with subprocess.Popen(argv, stdin=subprocess.PIPE, **pipes) as process:  # noqa: S603
+        output = ProcessOutput(process)
+        try:
+            assert output.line(timeout=WATCHDOG) == "serve http://127.0.0.1:9/  flooded\n"
+            yield process, output
+        finally:
+            if process.poll() is None:
+                process.kill()
+                output.rest(timeout=10)
+
+
+def blocked_and_pending(pid: int) -> tuple[bool, bool]:
+    """Whether `SIGINT` is in the process's blocked mask, and in its pending set, per `/proc`."""
+    fields = dict(line.split(":\t", 1) for line in open(f"/proc/{pid}/status").read().splitlines())
+    bit = 1 << (signal.SIGINT - 1)
+    return bool(int(fields["SigBlk"], 16) & bit), bool(int(fields["ShdPnd"], 16) & bit)
+
+
+def test_an_interrupt_that_lands_before_the_stand_in_waits_for_it_still_stops_it():
+    # ⛔ `W378`: the signal is sent while the stand-in is held short of `sigwait`, where the
+    # handler-and-`pause()` stand-in could lose it. It is read back as BLOCKED and PENDING —
+    # `kill` queues it before it returns — and it is then taken, not lost.
+    with held() as (process, output):
+        process.send_signal(signal.SIGINT)
+        assert blocked_and_pending(process.pid) == (True, True)
+        process.stdin.write(b"!")
+        process.stdin.close()
+        said, _ = output.rest(timeout=60)
+        assert (process.wait(timeout=60), said.splitlines()[-1]) == (0, "stopped")
+
+
+def test_the_stand_in_released_without_an_interrupt_does_not_stop():
+    # ⛔ The other way: releasing the hold alone does not end it, so the stop above is the signal's.
+    with held() as (process, output):
+        process.stdin.write(b"!")
+        process.stdin.close()
+        with pytest.raises(TimeoutError):
+            output.rest(timeout=1)
+        assert process.poll() is None
