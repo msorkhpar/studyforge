@@ -223,7 +223,7 @@ def _check(
 
 
 def _verdict(last: str, returncode: int | None) -> int | str:
-    """The run's verdict as the progress store spells it, read off its one exit line."""
+    """Return the run's verdict as the progress store spells it, read off its one exit line."""
     for word in (EXIT_TIMEOUT, EXIT_STOPPED):
         if last == spell_exit(word):
             return word
@@ -291,7 +291,7 @@ def _names(practice: Practice, root: Path, given: str) -> bool:
 
 
 def _relative_spellings(root: Path, given: str) -> Iterator[PurePosixPath]:
-    """The argument as a path under `root`, spelled as written and with links resolved."""
+    """Return the argument as a path under `root`, spelled as written and with links resolved."""
     pairs = (
         (Path(os.path.abspath(root)), Path(os.path.abspath(given))),
         (root.resolve(), Path(given).resolve()),
@@ -302,7 +302,7 @@ def _relative_spellings(root: Path, given: str) -> Iterator[PurePosixPath]:
 
 
 def _corpus_root(given: str, named: str | None) -> Path | None:
-    """The named corpus root, or the nearest directory above the file holding a manifest."""
+    """Return the named corpus root, or the nearest directory above the file holding a manifest."""
     if named is not None:
         root = Path(named)
         return root if (root / MANIFEST).is_file() else None
