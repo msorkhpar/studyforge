@@ -50,6 +50,8 @@ corpus's own progress store, which `state` reads, and the site is scanned where
 it is built (`serve.instance.site_discovery`); ⛔ nothing is written into the
 site, and no discovery cache is written into the corpus root. Tested in
 `tests/studyforge/cli/test_serve_site_run.py` and `test_serve_site_state.py`.
+⭐ `site_namespaces` is where the verb takes them, and the one name a test
+replaces to serve a site that offers no execution (`W386`).
 
 ## ⛔ The site is BUILT first, and it never needs this command
 
@@ -174,7 +176,7 @@ def main(
             say(f"unbuilt {page}  {NOT_BUILT}")
         return INVALID
     content = CorpusContent(corpus)
-    namespaces = _execution(site_discovery(corpus, root, site), content)
+    namespaces = site_namespaces(site_discovery(corpus, root, site), content)
     try:
         server = make_server(
             site,
@@ -264,13 +266,15 @@ def _unbuilt(corpus: object, site: Path) -> list[str]:
     return sorted(str(page) for page in pages if not (site / page).is_file())
 
 
-def _execution(discovered: Discovered, content: CorpusContent) -> dict:
+def site_namespaces(discovered: Discovered, content: CorpusContent) -> dict:
     """Return the `--site` form's namespaces: the root form's constructor, over one corpus.
 
     ⭐ `serve.instance.namespaces_of` builds them in both forms (`W380`) — `state`, and
     `run` with the progress it records — and `WRITERS` names which of them write.
-    ⚠️ The name is `W371`'s, kept because the build-and-serve skill's test replaces
-    this seam to serve a site with no execution (`W380/1`).
+    ⭐ **This is the verb's one NAMED SEAM for what a `--site` serve registers**
+    (`W386`, closing `W380/1`): the build-and-serve skill's test replaces it to serve
+    a site with no execution, and the verb registers as writers only the members of
+    `WRITERS` it returned.
     """
     return namespaces_of(discovered, {served.source: content for served in discovered.corpora})
 

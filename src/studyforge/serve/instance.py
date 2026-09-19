@@ -38,13 +38,15 @@ directory, which is what the static mount serves — so a practice recorded by a
 run is believed, and its pages are named, exactly as the root form names them.
 ⛔ Scanning the corpus root instead would report every page absent and every
 record a disagreement. The progress store and the unit documents stay the
-corpus root's; ⛔ the startup scan judges no cache, so nothing is written into
-the site or the corpus root.
+corpus root's: `site_discovery` gives its one `ServedCorpus` the corpus root as
+`root` and the site as `scan_root` (`W385`, closing `W380/2`), so no subclass
+overrides a scan. ⛔ The startup scan judges no cache, so nothing is written
+into the site or the corpus root.
 
 **Depends on.** `serve.app`, `serve.discovery`, `serve.addressing`,
 `serve.routes.content`, `serve.routes.state`, `serve.routes.run` and `.runs`, and
-`archive.scrub` for the report, and `corpus.discovery`'s scan for a site built
-elsewhere.
+`archive.scrub` for the report, and `corpus.discovery`'s startup scan for a site
+built elsewhere.
 
 ⭐ **This is the seam `studyforge serve` (`SF-39`, `W230`) calls**: a root and a
 port, and nothing else — no configured paths, no corpus named. ⚠️ The verb takes
@@ -56,12 +58,11 @@ one only binds them together.
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
 from functools import partial
 from pathlib import Path, PurePosixPath
 
 from studyforge.archive.scrub import scrub
-from studyforge.corpus.discovery import Site, assemble, scan
+from studyforge.corpus.discovery import assemble
 from studyforge.corpus.discovery import scan_sha256 as digest_of
 from studyforge.generate import Corpus
 from studyforge.serve.addressing import CorporaContent
@@ -117,22 +118,12 @@ def namespaces_of(discovered: Discovered, sources: dict[str, CorpusContent]) -> 
     }
 
 
-@dataclass(frozen=True, slots=True)
-class SiteCorpus(ServedCorpus):
-    """A corpus served from a site built somewhere else, which is where it is scanned."""
-
-    site: Path
-
-    def rescan(self) -> Site:
-        """Scan the served site again. ⛔ Never the corpus root, which holds no page."""
-        return scan(self.site, {self.source: self.depth})
-
-
 def site_discovery(corpus: Corpus, root: Path, site: Path) -> Discovered:
     """Return the one-corpus discovery of `corpus` at `root`, served from `site`.
 
     ⭐ It reports nothing, and its startup scan judges no cache, so nothing is written.
     """
     startup = assemble(site, {corpus.manifest.source: corpus.manifest.depth})
-    served = SiteCorpus(corpus, root, PurePosixPath("."), startup, digest_of(startup.site), site)
+    relative, digest = PurePosixPath("."), digest_of(startup.site)
+    served = ServedCorpus(corpus, root, relative, startup, digest, scan_root=site)
     return Discovered(root, (served,), ())
