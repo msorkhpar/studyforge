@@ -93,12 +93,23 @@ def test_exercises_served_with_no_execution_are_still_reported_as_no_toolchain(
 ):
     # ⛔ The other way: the state follows what the serving process OFFERS, so a serve
     # that registers no `run` is still reported — and still serves the reading floor.
-    monkeypatch.setattr(serve_verb, "_execution", lambda *given: {})
+    # ⭐ `W386`: planted through the verb's named seam, and the plant must be REACHED.
+    offered = []
+    monkeypatch.setattr(serve_verb, "site_namespaces", lambda *given: offered.append(given) or {})
     with skill_running(FIXTURES / name, directory(tmp_path)) as running:
         status = fetch(running.server, "/index.html")[0]
     assert (running.code, status) == ([OK], 200), running.said()
+    assert len(offered) == 1, "the serve never asked the seam what to register"
     assert EXECUTION_NAMESPACE not in running.server.namespaces
+    assert not running.server.writers
     assert partials(running.said()) == ["narration", "toolchain"]
+
+
+def test_the_seam_is_named_for_what_it_returns_and_the_private_name_is_gone():
+    # ⭐ `W386`, closing `W380/1`: the seam returns `state` as well as `run`, so it is
+    # named for the namespaces, and a plant at the old private name binds nothing.
+    assert callable(serve_verb.site_namespaces)
+    assert not hasattr(serve_verb, "_execution")
 
 
 def test_a_site_the_skill_serves_answers_run_and_submit(tmp_path):

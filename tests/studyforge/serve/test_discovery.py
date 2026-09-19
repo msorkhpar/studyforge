@@ -18,8 +18,9 @@ import pytest
 from studyforge.contents import found as present
 from studyforge.corpus.discovery import FRESH, STALE, UNVERIFIABLE
 from studyforge.corpus.manifest import MANIFEST_FILENAME
+from studyforge.generate import write_site
 from studyforge.generate.declarations import read_corpus
-from studyforge.serve.discovery import DiscoveryRefused, discover, manifests
+from studyforge.serve.discovery import DiscoveryRefused, ServedCorpus, discover, manifests
 from tests.studyforge.generate.corpora import BOTH, FIXTURES
 from tests.studyforge.serve.built import (
     a_workspace,
@@ -154,3 +155,22 @@ def test_rescan_reads_the_tree_now_and_never_the_startup_scan(tmp_path):
         page.unlink()
     assert key in present(served.startup.site, served.source)
     assert key not in present(served.rescan(), served.source)
+
+
+def test_a_discovered_corpus_is_scanned_at_its_root_unless_a_scan_root_is_given(tmp_path):
+    # ⭐ `W385`, closing `W380/2`: where the record lives and where pages are scanned are
+    # two fields, and the second defaults to the first.
+    root = a_workspace(tmp_path, ("depth1",)) / "depth1"
+    served = discover(root).corpora[0]
+    assert served.scan_root == served.root == root
+    assert present(served.rescan(), served.source)
+    # ⭐ The other way: a site built elsewhere is scanned THERE, and the root is not read.
+    site = tmp_path / "elsewhere"
+    site.mkdir()
+    fields = (served.corpus, root, served.relative, served.startup, served.digest)
+    elsewhere = ServedCorpus(*fields, scan_root=site)
+    assert (elsewhere.root, elsewhere.scan_root) == (root, site)
+    assert not present(elsewhere.rescan(), elsewhere.source)
+    write_site(root, site)
+    assert present(elsewhere.rescan(), elsewhere.source) == present(served.rescan(), served.source)
+    assert elsewhere.progress().directory == served.progress().directory
