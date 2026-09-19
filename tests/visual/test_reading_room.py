@@ -17,15 +17,25 @@ reading — the palette that shipped, a button stretched to its row, the narrow
 measure, an aside left in the column — which it must reject by name. ⚠️ A check
 that has only ever seen the repaired page has not been shown to notice anything.
 
-## ⛔ Why the contrast band has a CEILING as well as a floor
+## ⛔ Why the band has a FLOOR as well as a ceiling, and why stage 1's was wrong
 
-⚠️ **The page this row was opened over cleared WCAG AA everywhere and was
-painful to read**: near-white text on a dark green board is about 15:1, and the
-brief's own instruction is to *compute contrast* rather than to maximise it.
-⭐ So the clause is a BAND — at or above AA's 4.5:1 for body text, and not far
-above it — and the row's words are *"within WCAG AA for body text and not far
-above it"*. ⛔ Both bounds are refuted: a planted 1:1 reading and a planted
-black-on-white reading are each caught by the same function.
+⚠️ **Stage 1 answered the row with one band of 4.5:1–9.0:1 for every ink, and
+the user read the result and called it "too dim and maybe too warm".** ⭐ Stage 2
+sets the bands from the USER'S OWN route-planner page, the one they said this
+site is worse than: its body ink measures 12.14:1, its quieter ink 8.33:1 and
+its faintest 5.59:1, on a ground that is neither white nor black. ⛔ So each ink
+has its own band around the reading of the ink it corresponds to, the ceiling
+stays (near-black ink on near-white paper is the other failure), and BOTH bounds
+are refuted here: a planted 1:1 reading, a planted black-on-white reading, and
+the two palettes that actually shipped.
+
+## ⛔ The reader chooses the theme, and this module reads both of them
+
+⚠️ **The user, 2026-09-19: *"have the both dark and light themes in studyforge as
+well"*.** The palette has carried both since `W362`; until stage 2 nothing on
+the page could ask for one. ⭐ The readings below drive the real control in a
+real browser: choosing dark on a light system paints the dark ground and
+survives a reload, and with nothing stored the system setting still wins.
 """
 
 from __future__ import annotations
@@ -54,11 +64,12 @@ WIDER = (1600, WIDE[1])
 #: — the subpixel allowance every layout module here makes.
 TOUCHING = 0.5
 
-#: The band body text sits in. ⛔ The floor is WCAG AA for body text; the ceiling
-#: is this row's *"and not far above it"*, and it is what the shipped palette
-#: broke. ⚠️ Both are contrast ratios and neither is a colour.
-AA = 4.5
-CEILING = 9.0
+#: `token -> (floor, ceiling)` for each ink that carries running text. ⛔ The
+#: bounds are the user's own reference page's three readings with room either
+#: side — see this module's docstring — and NOT WCAG AA, which stage 1 used as
+#: the floor and shipped a page the user called dim. ⚠️ Every bound is a
+#: contrast ratio and none of them is a colour.
+BANDS = {"--fg": (10.0, 14.0), "--fg-soft": (6.5, 10.0), "--muted": (4.5, 7.0)}
 
 #: How long a line of running prose may be, in characters. ⛔ The row asks for a
 #: measure *argued from line length in characters*: below this a wide window is
@@ -132,16 +143,19 @@ SPEAKING = "document.querySelectorAll('[data-speaking]').length"
 
 
 def outside_the_band(ratios: dict[str, float]) -> list[str]:
-    """Which body-text ratios are below AA or far above it, as sentences.
+    """Which inks are outside the band named after them, as sentences.
 
-    ⛔ One function for both bounds: a check that only ever asserted the floor is
-    the check the shipped palette passed while being painful to read.
+    ⛔ One function for both bounds and for all three inks: a check that only
+    ever asserted a floor is the check `W362`'s palette passed while being
+    painful to read, and a check that only ever asserted a ceiling is the one
+    stage 1's passed while being too dim to read.
     """
-    return [
-        f"{name} is {ratio:.2f}:1"
-        for name, ratio in sorted(ratios.items())
-        if ratio < AA or ratio > CEILING
-    ]
+    astray = []
+    for token, ratio in sorted(ratios.items()):
+        floor, ceiling = BANDS[token]
+        if ratio < floor or ratio > ceiling:
+            astray.append(f"{token} is {ratio:.2f}:1, outside {floor}:1–{ceiling}:1")
+    return astray
 
 
 def extreme(colour: str) -> bool:
@@ -211,15 +225,11 @@ def test_body_text_sits_in_the_band_this_row_asks_for(
     open_page.open(built_site.url(case), scheme=scheme)
     resolved = theme.resolve(open_page)
     ratios = {
-        f"{ink} on {ground}": contrast.ratio(
-            contrast.parse(resolved[ink]), contrast.parse(resolved[ground])
-        )
-        for ink, ground in (("--fg", "--bg"), ("--fg-soft", "--bg"), ("--muted", "--bg"))
+        ink: contrast.ratio(contrast.parse(resolved[ink]), contrast.parse(resolved["--bg"]))
+        for ink in BANDS
     }
     astray = outside_the_band(ratios)
-    assert not astray, (
-        f"{case} in {scheme}: body text outside {AA}:1–{CEILING}:1 — " + ", ".join(astray)
-    )
+    assert not astray, f"{case} in {scheme}: " + ", ".join(astray)
 
 
 @pytest.mark.parametrize("scheme", SCHEMES)
@@ -237,13 +247,15 @@ def test_the_ink_is_never_pure_black_or_pure_white(
 def test_the_band_catches_a_reading_at_either_bound() -> None:
     """⛔ Both ways, and both bounds: the shipped palette failed the ceiling.
 
-    ⭐ 15.3:1 is near-white chalk on the green board this row replaced, and 1:1
-    is the harness's own `contrast` damage; each is caught by the same function,
-    and a reading inside the band is not.
+    ⭐ 15.3:1 is near-white chalk on the green board this row was opened over,
+    7.33:1 is stage 1's own body ink — the reading the user called dim — and 1:1
+    is the harness's own `contrast` damage. Each is caught by the same function,
+    and the user's own reference page's three readings are not.
     """
-    assert outside_the_band({"shipped": 15.3}) == ["shipped is 15.30:1"]
-    assert outside_the_band({"flattened": 1.0}) == ["flattened is 1.00:1"]
-    assert outside_the_band({"this row": 7.3}) == []
+    assert outside_the_band({"--fg": 15.3}) == ["--fg is 15.30:1, outside 10.0:1–14.0:1"]
+    assert outside_the_band({"--fg": 7.33}) == ["--fg is 7.33:1, outside 10.0:1–14.0:1"]
+    assert outside_the_band({"--fg": 1.0}) == ["--fg is 1.00:1, outside 10.0:1–14.0:1"]
+    assert outside_the_band({"--fg": 12.1, "--fg-soft": 8.3, "--muted": 5.6}) == []
 
 
 def test_a_planted_pure_ink_is_caught() -> None:
@@ -270,7 +282,27 @@ def test_the_first_page_carries_the_rail(open_page: OpenPage, built_site: site.S
         f"{reading['rail']['right']:.2f}px and the list starts at "
         f"{reading['surface']['left']:.2f}px"
     )
-    assert beside(reading["rail"], reading["surface"])
+    # ⚠️ Beside the CONTENT COLUMN, which is the masthead and the list together
+    # — not beside the list alone. The index's rail is as tall as the courses it
+    # names, and the list starts below a masthead that now also carries the
+    # theme control, so on a short corpus the two boxes need not overlap at all
+    # while the rail is exactly where the user asked for it. ⛔ The reading that
+    # compared it with the list alone passed on the height of a heading.
+    column = {
+        "top": reading["header"]["top"],
+        "bottom": reading["surface"]["bottom"],
+    }
+    assert beside(reading["rail"], column)
+    assert reading["rail"]["top"] <= reading["header"]["top"] + TOUCHING, (
+        "the rail starts below the masthead rather than beside it"
+    )
+
+
+def test_the_rail_beside_reading_catches_a_rail_under_the_content() -> None:
+    """⭐ The other way: a rail pushed below the column is not beside it."""
+    column = {"top": 0.0, "bottom": 700.0}
+    assert beside({"top": 0.0, "bottom": 151.0}, column)
+    assert not beside({"top": 720.0, "bottom": 860.0}, column)
 
 
 def test_the_rail_on_the_first_page_reaches_the_other_containers(

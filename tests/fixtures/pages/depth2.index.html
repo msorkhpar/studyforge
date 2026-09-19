@@ -3,14 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f1e7">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a2825">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f1f5f9">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+<script>try{var d=JSON.parse(localStorage.getItem("studyforge.display.v1"));var t=d&&d.version===1&&d.display&&d.display.theme;if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
 <title>Depth Two Demo</title>
 <link rel="stylesheet" href=".studyforge/assets/page.css">
 </head>
 <body>
 <a href="#content">Skip to the content</a>
 <header>
+<div role="group" aria-label="Theme" data-section="theme" hidden>
+<button type="button" data-theme-choice="system" aria-pressed="true">System</button>
+<button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+<button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+</div>
 <h1>Depth Two Demo</h1>
 </header>
 <section aria-label="About this site"><p>A study site made from the material below. Read each unit in order, and tick it off when you finish it.</p><section><h2>How to use it</h2><ol><li>Open the unit named under Up next.</li><li>At the foot of the unit, press Mark as read. The next unit takes its place here.</li><li>Your marks are kept in this browser on this machine, not in the repository. Clearing its site data clears them.</li></ol></section><section><h2>How it is ordered</h2><p>In the order the author arranged the material: each group from top to bottom, and the groups in the order they are listed.</p></section></section>

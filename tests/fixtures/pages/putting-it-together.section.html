@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f1e7">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#2a2825">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#f1f5f9">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
+<script>try{var d=JSON.parse(localStorage.getItem("studyforge.display.v1"));var t=d&&d.version===1&&d.display&&d.display.theme;if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
 <title>Putting It Together</title>
 <link rel="stylesheet" href="../../../.studyforge/assets/page.css">
 <script type="application/json" id="studyforge-identity">{"identity_api":1,"corpus":"depth2-demo","address":["advanced","03-putting-it-together"],"kind":"container","variant":"java"}</script>
@@ -12,6 +13,11 @@
 <body>
 <a href="#content">Skip to the content</a>
 <header>
+<div role="group" aria-label="Theme" data-section="theme" hidden>
+<button type="button" data-theme-choice="system" aria-pressed="true">System</button>
+<button type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+<button type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+</div>
 <h1>Putting It Together</h1>
 <p>1 unit in this module</p>
 </header>

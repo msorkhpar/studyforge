@@ -166,14 +166,34 @@ def test_the_page_reaches_the_network_nowhere(case):
 
 
 def test_the_page_carries_no_script_of_its_own(case):
-    # ⛔ E03's acceptance: "works with JavaScript disabled". The strongest form
-    # available — the page has no script to disable. The one `<script>` is the
-    # skeleton's shared bundle, linked by `src` like every other page's.
+    # ⛔ E03's acceptance: "works with JavaScript disabled". Neither script is
+    # the INDEX's: both come from the skeleton every page kind shares, and the
+    # page renders and reads with both disabled.
+    #
+    # ⚠️ `W388` stage 2 added the SECOND one, and it is the head boot that
+    # applies the reader's stored theme before the first paint. A deferred part
+    # cannot do that — it runs after the page is painted — so the boot is
+    # inline, synchronous and in the head by necessity, not by preference. It
+    # names no URL, carries no event handler, and what it does when scripting
+    # is off is exactly what this page did before it existed: follow
+    # `prefers-color-scheme`.
     page = case.render().decode(index.ENCODING)
     scripts = _SCRIPTS.findall(page)
-    assert len(scripts) == 1, f"{case.name} carries {len(scripts)} script tags: {scripts}"
-    assert f'src="{case.placement.script()}"' in scripts[0]
+    assert len(scripts) == 2, f"{case.name} carries {len(scripts)} script tags: {scripts}"
+    assert f'src="{case.placement.script()}"' in scripts[1]
+    assert scripts[0] == "", f"{case.name}'s boot carries attributes: {scripts[0]}"
     assert _HANDLER.search(page) is None, f"{case.name} carries an inline event handler"
+
+
+def test_the_head_boot_names_no_address_and_is_the_only_inline_script(case):
+    # ⭐ The other way (R12): the boot is what it claims to be. It reaches no
+    # URL — `test_the_page_reaches_no_network` reads the whole page for that —
+    # and there is exactly one inline script, so nothing else has crept in
+    # behind it.
+    page = case.render().decode(index.ENCODING)
+    inline = re.findall(r"<script>(.*?)</script>", page, flags=re.DOTALL)
+    assert len(inline) == 1, f"{case.name} carries {len(inline)} inline scripts"
+    assert "://" not in inline[0] and "src" not in inline[0]
 
 
 def test_the_disclosures_are_real_elements_a_browser_opens_without_a_script(case):

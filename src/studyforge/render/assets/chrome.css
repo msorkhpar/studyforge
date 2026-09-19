@@ -11,8 +11,9 @@
      progress, strip and filter.
    - `onward.css`: WHERE THE READER GOES NEXT — the between-pages bar and the
      Up next slip, the one bold element.
-   - `notes.css`: WHAT THE PAGE TELLS THE READER — the index's explanation, the
-     practices note and the read control.
+   - `notes.css`: WHAT THE PAGE TELLS THE READER AND WHAT IT OFFERS THEM — the
+     index's explanation, the practices note, the read control and the theme
+     control.
 
    ⛔ NOT ONE COLOUR AND NOT ONE CLASS in any of the four. Every value is a
    `palette.css` token and every region is reached by element, `aria-label` or

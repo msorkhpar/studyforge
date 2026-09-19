@@ -104,10 +104,17 @@ STYLE_PARTS = (
 #: rather than left to the alphabet like every other entry here. It sits before
 #: `read-mark.js` because that part's LAST-ness is the property being kept, and
 #: after `video-player.js` so the two media parts read together.
+#:
+#: ⭐ `theme.js` (`W388` stage 2) reads and writes the store's DISPLAY record,
+#: so it follows `study-progress.js` for the same reason `progress-view.js`
+#: does; it sits before `read-mark.js` because that part's LAST-ness is the
+#: property being kept. ⚠️ It is not what stops the page flashing the wrong
+#: theme — a deferred part cannot be — and `page.html`'s head boot is.
 SCRIPT_PARTS = (
     "prism.js",
     "plyr.js",
     "study-progress.js",
+    "theme.js",
     "copy-code.js",
     "video-player.js",
     "narration.js",

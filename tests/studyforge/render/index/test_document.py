@@ -69,7 +69,12 @@ def test_a_title_the_corpus_wrote_is_escaped_on_its_way_into_the_head():
     )
     page = render(document, placement_for("depth1")).decode("utf-8")
     assert "<title>A &amp; B &lt;script&gt;</title>" in page
-    assert "<script>" not in page
+    # ⚠️ Since `W388` stage 2 the skeleton carries a `<script>` of its own in
+    # the head — the boot that applies the reader's theme before the first
+    # paint — so the check is that the corpus's own one did not survive: the
+    # only opening tag on the page is the boot's, and it is the skeleton's.
+    assert page.count("<script>") == 1
+    assert "localStorage" in page.split("<script>")[1].split("</script>")[0]
     assert isinstance(placement_for("depth1"), Placement)
 
 

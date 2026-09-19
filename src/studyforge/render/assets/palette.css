@@ -5,22 +5,34 @@
    is editing this file. `test_palette` asserts that no other authored part
    contains a raw colour, and recomputes every contrast pair below.
 
-   ⭐ THE LOOK IS PAPER FOR HOURS OF READING (`W388`, the user's own words:
-   colours to read for hours "without feeling pain in my eyes or brain"). It
-   supersedes the palette half of `W362`'s exercise book — the green board,
-   the near-white chalk and the red margin rule.
-   - Light is a warm off-white paper with a soft warm-grey ink; dark is a warm
-     charcoal with a parchment-grey ink. ⛔ Text is never pure black on light
-     and never pure white on dark.
-   - ⛔ MODERATE CONTRAST, MEASURED: body text sits at about 7.3:1 in both
-     themes, above WCAG AA's 4.5:1 and deliberately not far above it; the
-     secondary inks step down to about 5.9 and 5:1. `test_identity` holds body
-     text inside that band, both ways, and every figure is in `W388`'s handoff.
-   - ⛔ NOTHING SATURATED AT REST. The rules are neutral hairlines (the margin
-     rule is one of them now), and the one accent is a muted ink blue that means
-     only "next" or "you are here". The one filled area of it on any page is the
-     Up next slip (`--sign`); everywhere else the accent is a line, a ring or a
-     word. `test_identity` bounds the chroma of every at-rest line and accent.
+   ⭐ THE LOOK IS A ROAD SIGN ON COOL SLATE (`W388` stage 2). The user read the
+   first repaint and said the colours were "boring", "too dim and maybe too
+   warm", and worse than two pages of their own. Those two pages are the brief:
+   a route planner (asphalt ground, lane-paint ink, warning-yellow accent) and a
+   documentation site carrying BOTH themes on the slate scale. ⛔ This
+   supersedes the warm paper of stage 1 and the green board of `W362`.
+   - ⛔ COOL NEUTRALS, NEVER WARM. Every ground and every ink is on the slate
+     scale: blue is the strongest channel, red the weakest. `test_identity`
+     bounds the warmth of every ground and ink and catches stage 1's parchment.
+   - ⛔ CRISP, NOT DIM. Body text is about 12:1 in both themes, which is what
+     the user's own route planner measures (12.14:1), and each quieter ink sits
+     in a band taken from that same page (8.33:1 and 5.59:1). ⛔ Text is still
+     never pure white on dark and never pure black on light: the route planner
+     honours both and so does this.
+   - ⛔ NO GREEN ANYWHERE (the user, 2026-09-19: "I am not a fan of green"). The
+     guide-sign green of the route planner and the emerald of the documentation
+     site are the two things NOT taken from them. `test_identity` reads the hue
+     of every token and refuses a saturated green, both ways. What green used to
+     mean — done, passed, settled — is now the slate ink itself: the road behind
+     you is solid, the road ahead is dashed.
+   - ⭐ ONE LIVE ACCENT, AND IT IS ALLOWED TO BE LOUD. The route planner's
+     warning yellow `#ffc933` by night and a deep amber by day. It means *next*,
+     *here* and *speaking* and nothing else, and it is a mark, a line, a ring or
+     a word — never a ground under running text. ⛔ Stage 1 bounded the accent's
+     CHROMA from above and that is the half the user rejected; the bound is now
+     a FLOOR, and a washed-out accent is what the check catches.
+   - ⭐ Sky blue is the interactive ink: the focus ring, a type name in code.
+     ⛔ Structure stays neutral — the margin rule and every hairline are slate.
 
    ⛔ THE ROLE NAMES ARE THE BRIEF'S, THE TOKEN NAMES ARE KEPT. Other parts
    (and `SF-22`'s execution client) paint with the names below, so a role is
@@ -28,10 +40,12 @@
    `--bg`, raised `--surface`/`--panel`, ink `--fg`, ink-soft `--fg-soft`,
    ink-faint `--muted`, rule `--rule`, next `--accent`, sign `--sign`.
 
-   ⛔ BOTH THEMES, EVERY COLOUR TOKEN. Dark is keyed on the reader's system
-   unless the page says otherwise: `[data-theme="light"]` opts out of it, and
-   `[data-theme="dark"]` opts in. No control sets either yet; the guards are
-   here so a later one needs no second palette. */
+   ⛔ BOTH THEMES, EVERY COLOUR TOKEN, AND THE READER CHOOSES. Dark is keyed on
+   the reader's system until they say otherwise: `[data-theme="light"]` opts out
+   of it and `[data-theme="dark"]` opts in, and since `W388` stage 2 the page
+   carries a control that writes one of them and remembers the choice
+   (`theme.js`, the boot in `page.html`). A reader who has chosen nothing still
+   follows the system. */
 
 :root {
   color-scheme: light dark;
@@ -66,88 +80,88 @@
   --dur-fill: 350ms;
   --ease: cubic-bezier(.2, .7, .2, 1);
 
-  --bg: #f6f1e7;
-  --surface: #faf6ee;
-  --surface-2: #ede6d9;
-  --fg: #534e46;
-  --fg-soft: #625c53;
-  --muted: #6b6459;
-  --rule: #ddd4c4;
-  --rule-strong: #8f8574;
+  --bg: #f1f5f9;
+  --surface: #f8fafc;
+  --surface-2: #e2e8f0;
+  --fg: #22304a;
+  --fg-soft: #445366;
+  --muted: #556477;
+  --rule: #dbe3ec;
+  --rule-strong: #64748b;
 
-  --accent: #46618c;
-  --accent-soft: #e9e4da;
-  --practice: #5a554c;
-  --practice-soft: #ede6d9;
+  --accent: #a64d07;
+  --accent-soft: #fdeec9;
+  --practice: #334155;
+  --practice-soft: #e2e8f0;
 
-  --sign: #4b638a;
-  --sign-ink: #faf6ee;
-  --margin: #ddd4c4;
-  --done: #625c53;
+  --sign: #92400e;
+  --sign-ink: #fef3c7;
+  --margin: #dbe3ec;
+  --done: #334155;
 
-  --code-bg: #efe8dc;
-  --code-fg: #4f4a42;
+  --code-bg: #e8eef5;
+  --code-fg: #22304a;
 
   /* Syntax, as a pen case of inks. Prism's token classes map onto these in
      code-highlight.css, and the ORDER of the groups there is the mapping. */
-  --tok-comment: #6e675c;
-  --tok-string: #4f6a35;
-  --tok-keyword: #4a453e;
-  --tok-number: #8a4d25;
-  --tok-type: #46618c;
-  --tok-function: #6d4a7e;
-  --tok-punct: #655f55;
+  --tok-comment: #556477;
+  --tok-string: #854d0e;
+  --tok-keyword: #6d28d9;
+  --tok-number: #0e7490;
+  --tok-type: #0369a1;
+  --tok-function: #4338ca;
+  --tok-punct: #475569;
 
-  --hl-bg: #efe0b4;
-  --hl-bar: #46618c;
-  --hl-fg: #4a453e;
-  --hl-code: rgba(222, 196, 120, .22);
+  --hl-bg: #fdeec9;
+  --hl-bar: #a64d07;
+  --hl-fg: #22304a;
+  --hl-code: rgba(166, 77, 7, .14);
 
-  --panel: #faf6ee;
-  --shadow: 0 -1px 0 #ddd4c4;
-  --focus: #46618c;
+  --panel: #f8fafc;
+  --shadow: 0 -1px 0 #dbe3ec;
+  --focus: #0369a1;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #2a2825;
-    --surface: #302e2a;
-    --surface-2: #37342f;
-    --fg: #bdb6a8;
-    --fg-soft: #aba395;
-    --muted: #a59d8f;
-    --rule: #45413a;
-    --rule-strong: #807869;
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-2: #273548;
+    --fg: #d2dbe6;
+    --fg-soft: #aab7c9;
+    --muted: #8f9eb4;
+    --rule: #27354a;
+    --rule-strong: #6e7f96;
 
-    --accent: #9fb2d2;
-    --accent-soft: #37342f;
-    --practice: #b0a89a;
-    --practice-soft: #37342f;
+    --accent: #ffc933;
+    --accent-soft: #3a2e14;
+    --practice: #cbd5e1;
+    --practice-soft: #1e293b;
 
-    --sign: #9fb2d2;
-    --sign-ink: #2a2825;
-    --margin: #45413a;
-    --done: #aba395;
+    --sign: #ffc933;
+    --sign-ink: #0f172a;
+    --margin: #27354a;
+    --done: #cbd5e1;
 
-    --code-bg: #242220;
-    --code-fg: #bab3a5;
+    --code-bg: #0b1120;
+    --code-fg: #cbd5e1;
 
-    --tok-comment: #948c7e;
-    --tok-string: #a3bf8a;
-    --tok-keyword: #c2bbad;
-    --tok-number: #d0a57f;
-    --tok-type: #9fb2d2;
-    --tok-function: #bda6d4;
-    --tok-punct: #a39b8d;
+    --tok-comment: #8296b0;
+    --tok-string: #fcd34d;
+    --tok-keyword: #c4b5fd;
+    --tok-number: #67e8f9;
+    --tok-type: #7dd3fc;
+    --tok-function: #a5b4fc;
+    --tok-punct: #94a3b8;
 
-    --hl-bg: #4a4330;
-    --hl-bar: #9fb2d2;
-    --hl-fg: #cfc8b9;
-    --hl-code: rgba(222, 196, 120, .10);
+    --hl-bg: #3a2e14;
+    --hl-bar: #ffc933;
+    --hl-fg: #f1f5f9;
+    --hl-code: rgba(255, 201, 51, .12);
 
-    --panel: #302e2a;
-    --shadow: 0 -1px 0 #45413a;
-    --focus: #9fb2d2;
+    --panel: #1e293b;
+    --shadow: 0 -1px 0 #27354a;
+    --focus: #38bdf8;
   }
 }
 
@@ -155,38 +169,38 @@
    says. `test_palette` holds the two dark blocks equal. */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #2a2825;
-  --surface: #302e2a;
-  --surface-2: #37342f;
-  --fg: #bdb6a8;
-  --fg-soft: #aba395;
-  --muted: #a59d8f;
-  --rule: #45413a;
-  --rule-strong: #807869;
-  --accent: #9fb2d2;
-  --accent-soft: #37342f;
-  --practice: #b0a89a;
-  --practice-soft: #37342f;
-  --sign: #9fb2d2;
-  --sign-ink: #2a2825;
-  --margin: #45413a;
-  --done: #aba395;
-  --code-bg: #242220;
-  --code-fg: #bab3a5;
-  --tok-comment: #948c7e;
-  --tok-string: #a3bf8a;
-  --tok-keyword: #c2bbad;
-  --tok-number: #d0a57f;
-  --tok-type: #9fb2d2;
-  --tok-function: #bda6d4;
-  --tok-punct: #a39b8d;
-  --hl-bg: #4a4330;
-  --hl-bar: #9fb2d2;
-  --hl-fg: #cfc8b9;
-  --hl-code: rgba(222, 196, 120, .10);
-  --panel: #302e2a;
-  --shadow: 0 -1px 0 #45413a;
-  --focus: #9fb2d2;
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --surface-2: #273548;
+  --fg: #d2dbe6;
+  --fg-soft: #aab7c9;
+  --muted: #8f9eb4;
+  --rule: #27354a;
+  --rule-strong: #6e7f96;
+  --accent: #ffc933;
+  --accent-soft: #3a2e14;
+  --practice: #cbd5e1;
+  --practice-soft: #1e293b;
+  --sign: #ffc933;
+  --sign-ink: #0f172a;
+  --margin: #27354a;
+  --done: #cbd5e1;
+  --code-bg: #0b1120;
+  --code-fg: #cbd5e1;
+  --tok-comment: #8296b0;
+  --tok-string: #fcd34d;
+  --tok-keyword: #c4b5fd;
+  --tok-number: #67e8f9;
+  --tok-type: #7dd3fc;
+  --tok-function: #a5b4fc;
+  --tok-punct: #94a3b8;
+  --hl-bg: #3a2e14;
+  --hl-bar: #ffc933;
+  --hl-fg: #f1f5f9;
+  --hl-code: rgba(255, 201, 51, .12);
+  --panel: #1e293b;
+  --shadow: 0 -1px 0 #27354a;
+  --focus: #38bdf8;
 }
 
 :root[data-theme="light"] { color-scheme: light; }

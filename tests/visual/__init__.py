@@ -133,4 +133,11 @@ ACCEPTANCE = {
     "keeps the reading inside a contrast band in both themes, the rail on every "
     "page, the transport the width of the content with its controls unchanged, "
     "and the page's secondary block beside the reading (W388, W369)": "test_reading_room",
+    #: ⭐ `W388` stage 2's second clause, the user's own: *"have the both dark
+    #: and light themes in studyforge as well"*. ⛔ A module of its own for the
+    #: reason `test_rail_marks` is one — it needs a store cleared before and
+    #: after every reading — and because what it reads is a page CHANGING under
+    #: a press and surviving a reload, which no other row here does.
+    "lets the reader choose light, dark or their system's setting on every page "
+    "kind, and remembers it across a reload (W388)": "test_theme_choice",
 }
