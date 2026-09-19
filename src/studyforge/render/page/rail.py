@@ -54,14 +54,22 @@ nothing anywhere says so. ⛔ A row with no anchor is visibly not openable and
 costs the reader nothing but a trip through the root index, which is where they
 were before this region existed.
 
-## ⛔ Not one `id` is emitted here, and that is a joining constraint not a taste
+## ⛔ Not one `id` is emitted here — a unit row carries its key as `data-unit`
 
 ⚠️ **A container page already carries `id="<unit key>"` on every row of its own
 listing** (`render.container.listing`), and `read-mark.js` resolves a mark with
 `document.getElementById(key)`. ⭐ A rail that keyed its rows the same way would
 put two elements under one id on that page, and the mark would light whichever
-one the document happened to hold first. ⛔ So the rail is not deep-linkable and
-carries no marks; the two lists that ARE their pages keep both.
+one the document happened to hold first. ⛔ So the rail is not deep-linkable.
+
+⭐ **It still shows what the reader marked (`W368`)**: a unit row carries its key
+in `data-unit` — the attribute the read-mark control already carries, which is a
+**script** hook and so is spelled here rather than published
+(`render.page.mark` says why) — and `progress-view.js` sets the published
+`data-marked` on the rows the store holds. ⛔ The key arrives from the caller,
+never derived from an href or a position here: a row handed none carries none.
+⚠️ The mark itself is set at read time and emitted by nothing, so a built page
+is byte-identical whoever opens it (R10).
 
 ## ⛔ Not one class name is typed here either
 
@@ -111,6 +119,11 @@ CURRENT_UNIT = ' aria-current="page"'
 #: opens one summary, and a reader staying in this one is shown where they are.
 OPEN = " open"
 
+#: The attribute a unit row carries its key in. ⛔ A script hook, the same
+#: spelling `render/templates/read-mark.html` emits and `progress-view.js`
+#: reads; not in `SURFACE_HOOKS`, because no stylesheet rule targets a key.
+UNIT_ATTRIBUTE = "data-unit"
+
 #: How many containers earn a rail — see this module's docstring.
 RAIL_MINIMUM = 2
 
@@ -123,12 +136,16 @@ class RailUnit:
     the same as `current`, which is *this is the page you are reading*. Both
     render without an anchor and the two say opposite things about whether the
     unit can be read, so the row declares which.
+
+    ⭐ `key` is the unit's key, which is what a read mark is stored under; `''`
+    emits no key and the row can then never show a mark (`W368`).
     """
 
     title: str
     numbering: str = ""
     href: str | None = None
     current: bool = False
+    key: str = ""
 
 
 @dataclass(frozen=True, slots=True)
@@ -176,7 +193,8 @@ def _unit(unit: RailUnit) -> str:
     """Return one unit's row, linked unless it is the page the reader is on."""
     body = _body(_numbering(unit), unit.title)
     return (
-        f"<li{CURRENT_UNIT if unit.current else ''} {_readable(unit.href, unit.current)}>"
+        f"<li{CURRENT_UNIT if unit.current else ''}{_key(unit.key)} "
+        f"{_readable(unit.href, unit.current)}>"
         f"{_link(body, unit.href, unit.current)}</li>"
     )
 
@@ -194,6 +212,13 @@ def _link(body: str, href: str | None, current: bool) -> str:
     if target is None:
         return body
     return f'<a href="{escape_attribute(target)}">{body}</a>'
+
+
+def _key(key: str) -> str:
+    """Return the attribute carrying a unit's key and its leading space, or `''`."""
+    if not key:
+        return ""
+    return f' {UNIT_ATTRIBUTE}="{escape_attribute(key)}"'
 
 
 def _readable(href: str | None, current: bool) -> str:

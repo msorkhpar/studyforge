@@ -225,6 +225,7 @@ def _rail_container(
                 numbering=entry.numbering,
                 href=None if entry.key in absent else relative_href(from_page, entry.page),
                 current=bool(unit) and entry.key == unit,
+                key=entry.key,
             )
             for entry in group.entries
         ),

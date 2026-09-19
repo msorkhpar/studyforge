@@ -235,6 +235,54 @@ def test_the_rail_emits_no_id_so_a_container_pages_own_listing_keeps_its_keys():
     assert "id=" not in rail(TWO)
 
 
+# --------------------------------------------------------------------------
+# ⭐ `W368` — a unit row carries the key a read mark is stored under
+# --------------------------------------------------------------------------
+
+KEYED = (
+    RailContainer(
+        title="Getting started",
+        href="a.section.html",
+        units=(
+            RailUnit(title="Your first class", key="basics/unit-01", current=True),
+            RailUnit(title="Fields", href="u2.unit.html", key="basics/unit-02"),
+        ),
+    ),
+    RailContainer(title="Going further", href="b.section.html"),
+)
+
+
+def test_a_unit_row_handed_a_key_carries_it_in_the_attribute_the_script_reads():
+    markup = rail(KEYED)
+    assert re.findall(r'data-unit="([^"]*)"', markup) == ["basics/unit-01", "basics/unit-02"]
+
+
+def test_a_unit_row_handed_no_key_carries_none_so_the_rows_above_are_not_the_default():
+    # ⛔ The other way round: `TWO` hands no key, and a key the rail made up
+    # (from an href, a title, a position) would be a mark on the wrong unit.
+    assert "data-unit" not in rail(TWO)
+
+
+def test_a_container_row_never_carries_a_unit_key():
+    # ⭐ Document order is container, its two units, the second container.
+    keyed = [at for at, row in enumerate(rows(rail(KEYED))) if "data-unit" in row]
+    assert keyed == [1, 2]
+
+
+def test_a_key_is_escaped_as_an_attribute_value():
+    hostile = (
+        RailContainer(title="A", href="a.html", units=(RailUnit(title="U", key='a"b<c'),)),
+        TWO[1],
+    )
+    markup = rail(hostile)
+    assert 'data-unit="a&quot;b&lt;c"' in markup
+    assert 'a"b' not in markup
+
+
+def test_a_keyed_rail_still_emits_no_id():
+    assert "id=" not in rail(KEYED).replace("data-unit=", "")
+
+
 def test_a_title_carrying_markup_is_escaped_rather_than_emitted():
     markup = rail((RailContainer(title="<b>bold</b>", href="a.html"), TWO[1]))
     assert "<b>bold</b>" not in markup

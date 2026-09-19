@@ -8,8 +8,9 @@
    hides or shows what is already there. Nothing here composes a sentence.
 
    ⛔ **Joined by the unit key and nothing else**, as `read-mark.js` is: a row
-   on the index or a container page carries its key as its `id`, and the store
-   holds keys. Nothing here derives a key from an href or a position.
+   on the index or a container page carries its key as its `id`, a rail row
+   carries it as `data-unit` (`W368`), and the store holds keys. Nothing here
+   derives a key from an href or a position.
 
    ⭐ **Progressive enhancement.** With no script the slip names the first unit
    (the renderer wrote that), the progress region and the filter stay hidden,
@@ -26,6 +27,11 @@
   var WIDE = '(min-width: 72rem)';
   var STEP = 'aria-current';
   var LISTS = 'nav[aria-label="Contents"] li[id], nav[aria-label="Units"] li[id]';
+  var RAIL_UNITS = 'nav[aria-label="Containers"] li[data-unit]';
+  var MARKED = 'data-marked';
+
+  var store = window.studyforge && window.studyforge.progress;
+  var usable = !!(store && store.supported());
 
   /* --- the rail folds on a narrow screen ---------------------------------- */
 
@@ -43,8 +49,33 @@
      the button: moving it would take the reader somewhere they did not ask to
      go. ⚠️ Here and not in `read-mark.js`, which must never reach for scrolling
      (a mark is an explicit act and nothing about scrolling may infer one). */
+  /* --- the rail shows what the reader marked (`W368`) --------------------- */
+
+  /* ⭐ On every page that carries a rail, a row whose key the store holds is
+     marked, and one it does not hold is cleared — so an unmark shows too.
+     ⛔ `data-marked` is set here at read time and emitted by no renderer (R10);
+     with no working store the rail shows no marks rather than wrong ones. */
+  var railed = [].slice.call(document.querySelectorAll(RAIL_UNITS));
+  function paintRail() {
+    if (!usable) { return; }
+    var held = store.marks();
+    railed.forEach(function (row) {
+      if (held.indexOf(row.getAttribute('data-unit')) !== -1) {
+        row.setAttribute(MARKED, 'true');
+      } else {
+        row.removeAttribute(MARKED);
+      }
+    });
+  }
+  paintRail();
+
   var control = document.querySelector('section[data-section="read-mark"] button');
   var onward = document.querySelector('nav[aria-label="Between units"] a[rel="next"]');
+  if (control && railed.length) {
+    /* ⚠️ After the turn, for the reason given below: the store's answer is
+       written by `read-mark.js`'s listener, which runs after this one. */
+    control.addEventListener('click', function () { window.setTimeout(paintRail, 0); });
+  }
   if (control && onward && onward.scrollIntoView) {
     /* ⚠️ Read after the turn: `read-mark.js` is composed after this file, so
        its own listener — the one that asks the store and sets `aria-pressed` —
@@ -62,8 +93,6 @@
   var rows = [].slice.call(document.querySelectorAll(LISTS));
   if (!rows.length) { return; }
 
-  var store = window.studyforge && window.studyforge.progress;
-  var usable = !!(store && store.supported());
   var marks = usable ? store.marks() : [];
 
   function readable(row) { return row.getAttribute('data-readable') === 'true'; }
