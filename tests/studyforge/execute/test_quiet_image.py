@@ -49,7 +49,10 @@ def declared_runtimes(image: str) -> str | None:
     template = f'{{{{index .Config.Labels "{RUNTIMES_LABEL}"}}}}'
     inspected = subprocess.run(
         ["docker", "image", "inspect", "--format", template, image],
-        stdin=subprocess.DEVNULL, capture_output=True, text=True, check=False,
+        stdin=subprocess.DEVNULL,
+        capture_output=True,
+        text=True,
+        check=False,
     )
     label = inspected.stdout.strip()
     return label if inspected.returncode == 0 and label and label != "<no value>" else None
