@@ -8,6 +8,10 @@ Ruling 114's cases are the `--- a deferral ---` block. ⚠️ Its fixtures are
 pairs that differ ONLY in where a line breaks, because that is the whole
 defect: the reader made the visible reason a function of the author's return
 key. A fixture that changed the wording too would have proved nothing.
+
+`W367`'s cases are the `--- authored stylesheets, scripts and templates ---`
+block: the ceiling stops an authored non-Python file under `src/`, and lets a
+vendored one through only by its exact path.
 """
 
 from __future__ import annotations
@@ -16,7 +20,11 @@ from pathlib import Path
 
 from tools.quality import config
 from tools.quality.size import (
+    AUTHORED_SUFFIXES,
     BOTH_FORMS,
+    SPLIT_ONLY,
+    VENDORED,
+    authored_files,
     check_sizes,
     count_lines,
     module_docstring,
@@ -310,6 +318,88 @@ def test_every_size_remedy_offers_both_forms(tmp_path):
     ]
     for finding in findings:
         assert BOTH_FORMS in finding.message
+
+
+# --- authored stylesheets, scripts and templates (W367) ---------------------
+
+
+def lines_of(count: int) -> str:
+    """A text of exactly `count` physical lines, in no particular language."""
+    return "".join(f"/* {number} */\n" for number in range(count))
+
+
+def test_an_authored_file_over_the_ceiling_fails_in_every_authored_language(tmp_path):
+    for suffix in AUTHORED_SUFFIXES:
+        write_module(
+            tmp_path, f"src/studyforge/assets/big{suffix}", lines_of(config.SOURCE_LINE_CEILING + 1)
+        )
+    findings = check_sizes(tmp_path)
+    assert sorted(finding.path for finding in findings) == sorted(
+        f"src/studyforge/assets/big{suffix}" for suffix in AUTHORED_SUFFIXES
+    )
+    for finding in findings:
+        assert finding.rule == "size"
+        assert SPLIT_ONLY in finding.message
+
+
+def test_an_authored_file_at_the_ceiling_passes(tmp_path):
+    for suffix in AUTHORED_SUFFIXES:
+        write_module(
+            tmp_path, f"src/studyforge/assets/full{suffix}", lines_of(config.SOURCE_LINE_CEILING)
+        )
+    assert check_sizes(tmp_path) == []
+
+
+def test_a_vendored_file_is_excluded_by_its_path_and_only_by_its_path(tmp_path):
+    oversized = lines_of(config.SOURCE_LINE_CEILING + 50)
+    for vendored in VENDORED:
+        write_module(tmp_path, vendored, oversized)
+    assert check_sizes(tmp_path) == []
+    # ⛔ The same basename anywhere else is authored, and is read.
+    elsewhere = [f"src/studyforge/other/{Path(vendored).name}" for vendored in VENDORED]
+    for path in elsewhere:
+        write_module(tmp_path, path, oversized)
+    assert sorted(finding.path for finding in check_sizes(tmp_path)) == sorted(elsewhere)
+
+
+def test_the_authored_walk_reads_src_only_and_not_documents(tmp_path):
+    oversized = lines_of(config.SOURCE_LINE_CEILING + 1)
+    write_module(tmp_path, "src/studyforge/skills/big/SKILL.md", oversized)
+    write_module(tmp_path, "tools/big.css", oversized)
+    write_module(tmp_path, "src/studyforge/assets/big.css", oversized)
+    assert [finding.path for finding in check_sizes(tmp_path)] == ["src/studyforge/assets/big.css"]
+
+
+def test_a_size_exception_comment_does_not_open_the_gate_for_a_stylesheet(tmp_path):
+    text = f"/* {config.SIZE_EXCEPTION_MARKER} a long and entirely sincere reason */\n"
+    write_module(
+        tmp_path,
+        "src/studyforge/assets/claimed.css",
+        text + lines_of(config.SOURCE_LINE_CEILING),
+    )
+    assert [finding.path for finding in check_sizes(tmp_path)] == [
+        "src/studyforge/assets/claimed.css"
+    ]
+
+
+def test_every_vendored_exclusion_names_a_file_the_tree_holds_and_its_licence():
+    root = Path(__file__).resolve().parents[3]
+    for vendored, reason in VENDORED.items():
+        assert (root / vendored).is_file(), f"{vendored} is excluded but does not exist"
+        licence = next(word for word in reason.split() if word.endswith(".LICENSE"))
+        assert (root / vendored).with_name(licence).is_file(), f"{vendored}: no {licence}"
+
+
+def test_the_authored_walk_reads_every_shipped_non_vendored_file():
+    root = Path(__file__).resolve().parents[3]
+    shipped = {
+        config.relative(path, root)
+        for path in (root / "src").rglob("*")
+        if path.is_file() and path.suffix in AUTHORED_SUFFIXES
+    }
+    read = {config.relative(path, root) for path in authored_files(root)}
+    assert read == shipped - set(VENDORED)
+    assert read, "the walk read nothing, so every assertion above is vacuous"
 
 
 # --- the tree itself --------------------------------------------------------
