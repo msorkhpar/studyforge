@@ -16,6 +16,12 @@ line by line and ending with exactly one exit line.
 
 `handle.stop()` ends a run from another thread. A refused input raises
 `RunRefused`; a command that runs and fails is output, never an exception.
+For the page, filter the stream down to what the reader asked for:
+
+    from studyforge.execute import filter_lines, select
+
+    for line in filter_lines(handle.lines(), select(manifest.runtimes)):
+        ...
 
 **Depends on.** The standard library, `studyforge.exercise` for what a command
 and a path may be, and `studyforge.archive`'s `scrub` for R7. ⛔ Not on `serve`:
@@ -28,6 +34,7 @@ web-facing process ends up holding the socket that spec §8.3 forbids it.
 | `handle` | `RunHandle`: the sequence, the stream, the exit line, stop and timeout |
 | `mode` | `ModeProbe`: is the runner container up over this root, cached briefly |
 | `output` | `LineGate`: every line relative to the source root, then scrubbed |
+| `quiet` | the output filter: the declared build tool's own lines go, a failure never |
 | `commands` | what the runner will start, checked before any process exists |
 | `errors` | `RunRefused`, the one exception |
 
@@ -49,8 +56,13 @@ agree. `runner`'s docstring is the table.
 ⚠️ **Reproducibility comes from the image, not the host** (R15). Host mode is
 the honest fallback, not an equal: it runs whatever toolchain the host has.
 
-⚠️ **Raw build output is not reader output.** Filtering it down to what the
-reader asked for is `SF-29`'s, on top of this stream.
+⚠️ **Raw build output is not reader output.** `quiet` filters it down to what
+the reader asked for, on top of this stream and after `LineGate` (`SF-29`): the
+one build tool a corpus declares in `runtimes` loses its banners, timings and
+help footers, and every other line survives unedited, including every error,
+every stack frame and the exit line. An undeclared, unknown or ambiguous
+toolchain passes through unfiltered. ⛔ The page filters; a reader's own
+terminal (`SF-44`) does not.
 """
 
 from __future__ import annotations
@@ -67,6 +79,7 @@ from studyforge.execute.errors import RunRefused
 from studyforge.execute.handle import EXIT_STOPPED, EXIT_TIMEOUT, RunHandle, exit_line
 from studyforge.execute.mode import CONTAINER, HOST, MODES, WORKDIR_IN_CONTAINER, ModeProbe
 from studyforge.execute.output import LineGate
+from studyforge.execute.quiet import TOOLCHAINS, Quiet, Toolchain, filter_lines, select
 from studyforge.execute.runner import RUN_ENVIRONMENT, Runner
 
 __all__ = [
@@ -78,15 +91,20 @@ __all__ = [
     "MODES",
     "ROOT_DIR",
     "RUN_ENVIRONMENT",
+    "TOOLCHAINS",
     "WORKDIR_IN_CONTAINER",
     "LineGate",
     "ModeProbe",
+    "Quiet",
     "RunHandle",
     "RunRefused",
     "Runner",
+    "Toolchain",
     "container_for",
     "exit_line",
+    "filter_lines",
     "require_commands",
     "require_container",
     "require_workdir",
+    "select",
 ]
