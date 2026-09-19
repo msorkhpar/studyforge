@@ -27959,3 +27959,49 @@ The first corpus's own verifier fixes a whole-disk walk by a name-based exemptio
 | `wt/dev4` | `W357` | ⛔ **`SF-44` cannot be taken until the record can say a file has no test** |
 
 ⭐ **Surfaces read against each other: `skills/reconnaissance/`, `serve/routes/run.py` + the page client, `execute/quiet.py`, `exercise/` + spec §7 — disjoint.**
+
+## PO round 118
+
+⛔ **Only what is MEASURED is written here.** ⭐ **The user directs a redesign of the generated study site against a
+design brief, and rules its two open questions; the brief is CARRIED into this repository, two rows are minted, and
+the first is named on its carrier before it runs.** ⭐ **Nothing closes; step 5.2's four carriers are still running.**
+
+### ⭐ THE USER'S DIRECTION AND RULINGS — 2026-09-18
+
+⭐ **The direction:** apply the extraction source's UI design brief — palette, faces, layout, interaction — to this
+framework's generated site, which the user called *"not bad but full of flaws and very generic"*.
+
+⭐ **Measured against the brief at `bb05107`:** `palette.css` is a warm cream ground, a serif prose face and a
+terracotta accent — ⛔ **the first palette the brief's §2 names as a tell** — and the UI stack names `Roboto` and
+`Arial`, two faces §2 bans by name.
+
+⭐ **Ruled by the user, asked because each is theirs:**
+
+| question | ruling |
+|---|---|
+| where the identity comes from | ⭐ **BOTH, in two rows** — the framework's own identity first (`W362`), then a per-corpus theme drawn from each corpus's subject (`W363`) |
+| how the faces arrive | ⭐ **PINNED FONT PULLS ALLOWED** — SIL OFL files fetched once from upstream, each pinned by sha256 with its licence, vendored and loaded by relative `@font-face`; ⛔ **the register fetches, offices stay offline, no identity is sent** |
+
+⚠️ **The ruling extends round 110's pinned-pulls ruling to fonts and to nothing else.** ⛔ **It is recorded as the
+user's, not minted as a numbered ruling** — the mint freeze stands.
+
+### ⭐ THE BRIEF IS CARRIED, NOT CITED (R20)
+
+⚠️ **The brief sits UNTRACKED in the sibling**, so a citation of it would resolve at no ref at all. ⭐ **It is carried
+whole into [`../conventions/ui-design.md`](../conventions/ui-design.md)**, under a head that says how it lands here.
+
+### ⭐ MINTS — `W362`, `W363`
+
+`W362` (the user) the site wears the brief's first banned palette and two banned faces; `W363` (the user) a corpus
+cannot declare a theme drawn from its own subject. ⛔ **`W362` JUMPS every older `todo` row on the user's direction;
+`W363` follows it.**
+
+### ⭐ NAMED BEFORE IT RUNS
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev5` | `W362` | ⭐ **the user's direction**; ⛔ **a plan first, read by this register, then the faces fetched, then the build** |
+
+⭐ **Surface read against step 5.2's:** `render/assets/` + `render/templates/` — ⚠️ **`SF-22` adds the page's execution
+client beside them, so `W362` keeps every token NAME a stylesheet already paints with** and declares any template it
+touches; the register merges whichever lands second onto the first.
