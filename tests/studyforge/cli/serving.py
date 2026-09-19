@@ -22,6 +22,7 @@ from studyforge.generate import write_site
 from studyforge.generate.declarations import read_corpus
 from studyforge.serve.app import DEFAULT_PORT, ServingServer
 from studyforge.serve.response import API_ROOT
+from studyforge.serve.routes.run import CLIENT, CLIENT_FILE, NAMESPACE
 from studyforge.validate.report import OK
 from tests.fixture_checks import FIXTURES
 
@@ -46,6 +47,15 @@ SERVING_ORIGIN = re.compile(
     rf"(?<![\w.\-]){re.escape(API_ROOT)}(?![\w\-])"
     r"|\b127\.0\.0\.1\b|\blocalhost\b|\[::1\]"
     rf"|:{DEFAULT_PORT}\b"
+)
+
+#: ⛔ `W370`: the run client, by its served path's tail or by its file's name. ⭐ **The one
+#: sanctioned way a page gets it is the SERVING PROCESS adding it to the page it answers**
+#: (`E05` § `SF-22`), so a BUILT text that names it is loading it some other way — and a
+#: relative `api/v1/…` resolved against `location.origin` would pass `SERVING_ORIGIN`.
+RUN_CLIENT_NAMES = (f"{NAMESPACE}/{CLIENT}", CLIENT_FILE.name)
+RUN_CLIENT = re.compile(
+    r"(?<![\w.\-])(?:" + "|".join(map(re.escape, RUN_CLIENT_NAMES)) + r")(?![\w\-])"
 )
 
 REFERENCE = re.compile(r"""(?:src|href)\s*=\s*["']([^"']*)["']""")
@@ -138,8 +148,10 @@ def floor(site: Path, missing: frozenset[str] = frozenset()) -> Floor:
 
     ⛔ Two ways to need a server and both are read: a page or script that NAMES the
     serving origin, and a reference that resolves to no file — a rooted path needs an
-    origin to mean anything. ⚠️ `missing` is the build's own report of material the
-    archive lacks, and is the only allowance.
+    origin to mean anything. ⛔ A third is read because it is the one a panel would reach
+    for (`W370`): a built text naming the run client, which only the server adds.
+    ⚠️ `missing` is the build's own report of material the archive lacks, and is the
+    only allowance.
     """
     reading = Floor()
     base = site.resolve()
@@ -152,6 +164,10 @@ def floor(site: Path, missing: frozenset[str] = frozenset()) -> Floor:
         reading.defects += [
             f"{where} names the serving origin: {match.group(0)}"
             for match in SERVING_ORIGIN.finditer(text)
+        ]
+        reading.defects += [
+            f"{where} loads the run client itself: {match.group(0)}"
+            for match in RUN_CLIENT.finditer(text)
         ]
         if path.suffix != ".html":
             continue
