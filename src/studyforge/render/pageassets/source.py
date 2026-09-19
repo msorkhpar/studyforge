@@ -2,7 +2,8 @@ r"""The asset directory: the page's CSS and JS as files, read exactly.
 
 **What it does.** Finds the parts on disk and returns their exact text.
 
-**How you use it.** `text("palette.css")`, `names()`.
+**How you use it.** `text("palette.css")`, `names()`; `data(name)` and
+`font_names()` for the vendored faces (`W362`).
 
 **Depends on.** `errors` and `pathlib`.
 
@@ -37,6 +38,11 @@ ASSET_DIR = Path(__file__).resolve().parent.parent / "assets"
 #: than fetched, so `.svg` belongs here.
 PART_SUFFIXES = (".css", ".js", ".svg")
 
+#: A vendored face (`W362`). ⛔ Never a part: it is binary, it is never
+#: composed as text, and `faces` is the one reader of it — it arrives in the
+#: page stylesheet as base64, so no page ever requests a font file (R8).
+FONT_SUFFIX = ".woff2"
+
 #: A vendored dependency's licence sits in the same directory, because it
 #: belongs beside the code it covers — but nothing composes it into a page,
 #: so it is not a part.
@@ -63,6 +69,32 @@ def text(name: str) -> str:
         raise AssetError(f"cannot read the page asset {name!r}: {error.strerror}") from None
     except UnicodeDecodeError:
         raise AssetError(f"the page asset {name!r} is not valid UTF-8") from None
+
+
+def data(name: str) -> bytes:
+    """Return the named vendored face's exact bytes — `data("Charis-Regular.woff2")`.
+
+    ⛔ Only a `FONT_SUFFIX` file: a part is text and is read with `text`, and a
+    reader that took any name would be a second way into the directory.
+    """
+    if "/" in name or "\\" in name or not name.endswith(FONT_SUFFIX):
+        raise AssetError(f"a face must be one {FONT_SUFFIX} file in the asset directory")
+    try:
+        return (ASSET_DIR / name).read_bytes()
+    except OSError as error:
+        # ⛔ `error.strerror`, never `error`: it would carry the absolute path (R7).
+        raise AssetError(f"cannot read a vendored face: {error.strerror}") from None
+
+
+def font_names() -> tuple[str, ...]:
+    """Every vendored face on disk, sorted (R10: never directory order)."""
+    return tuple(
+        sorted(
+            path.name
+            for path in ASSET_DIR.iterdir()
+            if path.is_file() and path.suffix == FONT_SUFFIX
+        )
+    )
 
 
 def names() -> tuple[str, ...]:

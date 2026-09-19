@@ -142,7 +142,10 @@ def test_a_rail_with_no_current_anything_marks_nothing():
 def test_the_current_container_opens_and_the_others_stay_closed():
     # ⚠️ Structure, not styling: `open` is what makes the reader's own course
     # visible on arrival, and the others one keystroke away.
-    markup = rail(TWO)
+    # ⚠️ Read inside the fold (`W362`): `rail.html` wraps the whole list in one
+    # `<details open>` that the page script closes on a narrow screen, and that
+    # outer one is not a container.
+    markup = rail(TWO).split("<summary>Course contents</summary>", 1)[1]
     assert markup.count("<details open>") == 1
     assert markup.count("<details>") == len(TWO) - 1
 

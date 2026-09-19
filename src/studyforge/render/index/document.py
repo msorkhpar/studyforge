@@ -78,8 +78,9 @@ one newline — never a conditional newline somewhere else.
 from __future__ import annotations
 
 from studyforge.render import templates
+from studyforge.render.container import progress
 from studyforge.render.index import disclosure
-from studyforge.render.index.entries import Document
+from studyforge.render.index.entries import Document, Section
 from studyforge.render.index.placement import Placement
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import PageError
@@ -121,7 +122,7 @@ def compose(document: Document, placement: Placement) -> str:
                 heading=escape(document.title),
                 stylesheet=escape_attribute(placement.stylesheet()),
                 script=escape_attribute(placement.script()),
-                body=disclosure.render(document),
+                body=head(document) + disclosure.render(document),
                 **dict.fromkeys(EMPTY_SLOTS, ""),
             )
             + TRAILING_NEWLINE
@@ -134,3 +135,59 @@ def compose(document: Document, placement: Placement) -> str:
         # (Ruling 58), so a leak is never logged as one more page that did not
         # render.
         raise PageError(f"the root index cannot be composed: {error}") from None
+
+
+#: What the index says about the site, before any of the material (`W362`,
+#: the plan's §6). ⛔ **About the SITE, never the material** (R1): how to use
+#: it and how it is ordered are this framework's facts. ⚠️ Where the material
+#: comes from is the corpus's, so that column waits for `W363`'s manifest data
+#: rather than being guessed (the register's D5).
+LEDE = (
+    "<p>A study site made from the material below. Read each unit in order, "
+    "and tick it off when you finish it.</p>"
+)
+
+ABOUT = (
+    f'<section aria-label="About this site">{LEDE}'
+    "<section><h2>How to use it</h2><ol>"
+    "<li>Open the unit named under Up next.</li>"
+    "<li>At the foot of the unit, press Mark as read. The next unit takes its "
+    "place here.</li>"
+    "<li>Your marks are kept in this browser on this machine, not in the "
+    "repository. Clearing its site data clears them.</li>"
+    "</ol></section>"
+    "<section><h2>How it is ordered</h2>"
+    "<p>In the order the author arranged the material: each group from top to "
+    "bottom, and the groups in the order they are listed.</p>"
+    "</section></section>"
+)
+
+
+def leaves(sections: tuple[Section, ...]) -> list[Section]:
+    """Every group that holds units directly, in reading order — the strip's segments."""
+    found: list[Section] = []
+    for section in sections:
+        if section.items:
+            found.append(section)
+        found += leaves(section.sections)
+    return found
+
+
+def head(document: Document) -> str:
+    """Return what comes above the tree: the lede, the about columns, progress, Up next."""
+    everything = [
+        item for section in document.sections for item in disclosure.readable_items(section)
+    ]
+    segments = [
+        (group.key, group.title, len([item for item in group.items if item.href is not None]))
+        for group in leaves(document.sections)
+    ]
+    segments = [segment for segment in segments if segment[2]]
+    first = everything[0] if everything else None
+    parts = (
+        ABOUT,
+        progress.line(len(everything), progress.strip(segments)),
+        progress.up_next(first.title, first.href) if first else "",
+        progress.finder(),
+    )
+    return "".join(f"{part}\n" for part in parts if part)

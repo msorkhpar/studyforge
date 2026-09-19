@@ -1,9 +1,18 @@
-/* The whole reset. Three declarations, and each earns its place.
+/* The whole reset. Each declaration earns its place.
 
    ⛔ Not a normalising library. A study page is prose, a few figures and a
-   table; the browser's own defaults are already right for almost all of it,
-   and a 10 KB reset shipped to every page would be nine of those kilobytes
-   undoing things this page never does. */
+   table; the browser's own defaults are already right for almost all of it.
+
+   ⭐ `scroll-padding` (`W362`, the brief's §3): nothing sticks to the top, but
+   the narration player sticks to the bottom, so a passage or a control scrolled
+   to by the keyboard stops above it rather than under it. */
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+[hidden] { display: none !important; }
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 1.5rem;
+  scroll-padding-bottom: calc(var(--player-height) + 1rem);
+}
+button, select, summary, a { touch-action: manipulation; }

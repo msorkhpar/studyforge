@@ -12,6 +12,14 @@
    nothing. */
 
 (function () {
+  /* ⛔ The fallback names the key THIS machine uses (`W362`, K4): it said
+     "Press ⌘C" to every reader, which is wrong everywhere but a Mac. */
+  function copyKey() {
+    var platform = (navigator.userAgentData && navigator.userAgentData.platform) ||
+      navigator.platform || '';
+    return /mac|iphone|ipad/i.test(platform) ? '\u2318C' : 'Ctrl+C';
+  }
+
   var figures = [].slice.call(document.querySelectorAll('figure.code'));
   if (!figures.length) { return; }
 
@@ -42,16 +50,16 @@
     var button = document.createElement('button');
     button.type = 'button';
     button.className = 'copy';
-    button.textContent = 'Copy';
+    button.textContent = 'Copy code';
     caption.appendChild(button);
 
     button.addEventListener('click', function () {
       copy(code.textContent).then(function () {
         button.textContent = 'Copied';
       }, function () {
-        button.textContent = 'Press ⌘C';
+        button.textContent = 'Select it and press ' + copyKey();
       });
-      window.setTimeout(function () { button.textContent = 'Copy'; }, 2000);
+      window.setTimeout(function () { button.textContent = 'Copy code'; }, 2000);
     });
   });
 }());

@@ -18,6 +18,11 @@ from tests.visual.page import SCHEMES, OpenPage
 #: The one scheme a request is allowed to use.
 LOCAL = "file:"
 
+#: ⭐ `W362`: the faces arrive inside the stylesheet as `data:` URIs (the
+#: register's D3), and a `data:` URI is bytes the page already holds — the
+#: browser reports it as a request, but nothing leaves the machine.
+EMBEDDED = "data:"
+
 
 @pytest.mark.parametrize("case", site.pages())
 @pytest.mark.parametrize("scheme", SCHEMES)
@@ -33,7 +38,7 @@ def test_a_page_opened_from_a_file_asks_for_nothing_but_files(
     open_page.open(built_site.url(case), scheme=scheme)
     requests = open_page.requests()
     assert requests, "the browser recorded no request at all, not even for the page itself"
-    remote = [url for url in requests if not url.startswith(LOCAL)]
+    remote = [url for url in requests if not url.startswith((LOCAL, EMBEDDED))]
     assert not remote, f"{case} in {scheme} reached the network: {remote}"
 
 
@@ -82,7 +87,7 @@ def test_a_page_that_reaches_a_remote_host_is_caught(
     """
     broken = damaged_sites["network"]
     open_page.open(broken.url("depth2-unit-01"))
-    remote = [url for url in open_page.requests() if not url.startswith(LOCAL)]
+    remote = [url for url in open_page.requests() if not url.startswith((LOCAL, EMBEDDED))]
     assert remote, (
         "a page carrying an <img> pointed at a remote host recorded no remote request — "
         "this harness cannot see an R8 violation"

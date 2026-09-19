@@ -46,6 +46,12 @@ from tests.studyforge.render.pageassets import authoring
 #: The part under test.
 CHROME = "chrome.css"
 
+#: ⭐ `W362` split the part at named seams for R11: `chrome.css` is where things
+#: are, `lists.css` what the reader navigates, `onward.css` where they go
+#: next, `notes.css` what the page tells them. Every claim below is about the
+#: four together, read as one part.
+CHROME_PARTS = (CHROME, "lists.css", "onward.css", "notes.css")
+
 #: Who answers for a region. ⛔ Three values and no fourth: a region that fits
 #: none of them is a region whose owner nobody decided, which is the exact state
 #: `QA-03/2` found four palette tokens in.
@@ -91,6 +97,26 @@ REGIONS: dict[str, tuple[str, str]] = {
         CHROME_RULED,
         "region 6, the root index's disclosure tree — `SF-14`",
     ),
+    'section[aria-label="About this site"]': (
+        CHROME_RULED,
+        "region 12, the root index's plain explanation and its short columns — "
+        "`W362`. ⚠️ Not a `<nav>` and not in a template, so the census reaches it "
+        "through the index renderer's own markup",
+    ),
+    'section[aria-label="Progress"]': (
+        CHROME_RULED,
+        "region 13, the progress line and the segmented strip on the index and a "
+        "container page — `W362`",
+    ),
+    'form[role="search"]': (
+        CHROME_RULED,
+        "region 14, the index's filter and its expand and collapse controls — `W362`",
+    ),
+    'nav[aria-label="Up next"]': (
+        CHROME_RULED,
+        "region 11, the Up next slip on the root index and a container page — "
+        "`W362`. ⭐ The one filled area of `--sign` on the page",
+    ),
     'section[data-section="read-mark"]': (
         CHROME_RULED,
         "region 7, the reader's own mark-as-read control — `SF-30`. ⚠️ It ships "
@@ -127,6 +153,9 @@ REGION_MARKERS = {
     'section[data-section="practices-pending"]': r'<section data-section="practices-pending"',
     'section[data-section="read-mark"]': r'<section data-section="read-mark"',
     'section[data-section="narration-gap"]': r'<section data-section="narration-gap"',
+    'section[aria-label="About this site"]': r'<section aria-label="About this site"',
+    'section[aria-label="Progress"]': r'<section aria-label="Progress"',
+    'form[role="search"]': r'<form role="search"',
 }
 
 #: The page skeleton's slots, and why each is or is not this part's. ⛔ Asserted
@@ -184,7 +213,8 @@ ONCE_OWNERLESS = ("--accent-soft", "--practice", "--practice-soft", "--surface-2
 
 def body() -> str:
     """`chrome.css` with its comments removed — the rules, and nothing about them."""
-    return re.sub(r"/\*.*?\*/", "", text(CHROME), flags=re.DOTALL)
+    joined = "\n".join(text(part) for part in CHROME_PARTS)
+    return re.sub(r"/\*.*?\*/", "", joined, flags=re.DOTALL)
 
 
 def rules() -> list[tuple[str, str]]:
@@ -218,8 +248,15 @@ def nav_regions_in_the_goldens() -> set[str]:
 
 
 def region_elements_in_the_templates() -> set[str]:
-    """Every framework-typed region element `render/templates/` emits."""
+    """Every framework-typed region element `render/templates/` or a golden emits.
+
+    ⚠️ The goldens as well since `W362`: the index's head and the progress
+    region are written by the index and container renderers, not by a template.
+    """
     markup = "\n".join(templates.template(name).template for name in templates.names())
+    markup += "\n".join(
+        path.read_bytes().decode("utf-8") for path in sorted(GOLDEN_DIR.glob("*.html"))
+    )
     return {anchor for anchor, marker in REGION_MARKERS.items() if re.search(marker, markup)}
 
 
@@ -406,7 +443,14 @@ def test_the_column_is_bounded_only_ever_on_the_element_that_owns_the_measure():
     # exists for is a bound on a DIFFERENT element. ⭐ So the subject is asserted
     # instead, in both directions: every bounding selector's subject is `body`,
     # and there is at least one, so a file that bounded nothing cannot pass.
-    bounded = sorted(selector for selector, block in rules() if "max-width" in block)
+    # ⚠️ `max-width: none` is the ABSENCE of a bound (`W362`: a list row is not
+    # running text, so it gives up the prose measure `reading.css` sets on every
+    # `main li`), and is not counted as one.
+    bounded = sorted(
+        selector
+        for selector, block in rules()
+        if re.search(r"max-width:\s*(?!\s|none\b)", block)
+    )
     assert bounded, "nothing in this part bounds a column at all"
     astray = sorted(
         selector for selector in bounded if selector != "body" and not selector.startswith("body:")

@@ -16,6 +16,7 @@ from studyforge.render.pageassets import (
     names,
     text,
 )
+from studyforge.render.pageassets.faces import ARCHIVES
 
 
 @pytest.mark.parametrize("bundle", sorted(VENDORED))
@@ -35,7 +36,9 @@ def test_every_vendored_bundle_ships_its_licence_beside_it(bundle):
 def test_no_licence_sits_there_covering_nothing():
     # The other direction: a licence whose bundle was removed is a claim about
     # code that is no longer shipped.
-    covered = set(VENDORED.values())
+    # ⭐ Since `W362` the faces' licences are the other population: each sits
+    # beside the faces of its archive (`pageassets.faces.ARCHIVES`).
+    covered = set(VENDORED.values()) | {archive.licence for archive in ARCHIVES}
     assert set(licence_names()) == covered
 
 

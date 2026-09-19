@@ -38,6 +38,7 @@ composed, so no derived copy of the sprite is committed beside it.
 
 from __future__ import annotations
 
+from studyforge.render.pageassets import faces
 from studyforge.render.pageassets.source import text
 
 #: The stylesheet, weakest first. ⚠️ Vendored `plyr.css` comes after the
@@ -54,6 +55,10 @@ from studyforge.render.pageassets.source import text
 #: the last rule wins. It comes *before* the highlight part because the
 #: highlight refines the inside of a code block, which no chrome rule reaches.
 #:
+#: ⭐ `lists.css`, `onward.css` and `notes.css` follow `chrome.css` directly:
+#: the four are one part split at named seams for R11 (`W362`; `chrome.css`
+#: names them), and they share its position's argument.
+#:
 #: ⛔ `narration.css` sits after `code-highlight.css` and before the vendored
 #: parts, and both halves of that are meaning too. It comes *after* the
 #: highlight because the narration highlight washes over the inside of a code
@@ -67,6 +72,9 @@ STYLE_PARTS = (
     "focus.css",
     "reading.css",
     "chrome.css",
+    "lists.css",
+    "onward.css",
+    "notes.css",
     "code-highlight.css",
     "narration.css",
     "plyr.css",
@@ -87,6 +95,10 @@ STYLE_PARTS = (
 #: instead of shipping a feature that is quietly absent — and it is **LAST**, so
 #: a throw of its own reaches no other part.
 #:
+#: ⭐ `progress-view.js` (`W362`) reads the store too, so it follows
+#: `study-progress.js`; it sits before `read-mark.js` because that part's
+#: LAST-ness is the property being kept.
+#:
 #: ⭐ `narration.js` needs no library and defines nothing anybody else reads, so
 #: its position is not load-bearing the way the two above are — but it is stated
 #: rather than left to the alphabet like every other entry here. It sits before
@@ -99,6 +111,7 @@ SCRIPT_PARTS = (
     "copy-code.js",
     "video-player.js",
     "narration.js",
+    "progress-view.js",
     "read-mark.js",
 )
 
@@ -116,8 +129,13 @@ JOIN = "\n"
 
 
 def stylesheet() -> str:
-    """Return the whole page stylesheet, composed in `STYLE_PARTS` order."""
-    return compose(STYLE_PARTS)
+    """Return the whole page stylesheet: the embedded faces, then `STYLE_PARTS` in order.
+
+    ⭐ The faces come first because an `@font-face` rule is order-free and the
+    parts after it are not; putting the one block that cannot conflict ahead of
+    everything keeps "the order is meaning" true of the parts alone (`W362`).
+    """
+    return faces.rules() + JOIN + compose(STYLE_PARTS)
 
 
 def script() -> str:

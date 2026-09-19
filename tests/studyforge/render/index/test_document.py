@@ -76,9 +76,12 @@ def test_the_masthead_has_no_second_line_and_that_is_a_decision():
     # ⚠️ A `meta` line would be this framework's sentence about a corpus, and
     # there is no corpus datum to put there the tree does not already say (R1).
     assert "meta" in EMPTY_SLOTS
+    # ⚠️ Read inside the masthead: since `W362` the index's BODY opens with a
+    # paragraph about the site, which is not a second line of the masthead.
     page = case("depth1").render().decode("utf-8")
-    assert "<h1>" in page
-    assert page.count("<p>") == 0
+    masthead = page.split("<header>", 1)[1].split("</header>", 1)[0]
+    assert "<h1>" in masthead
+    assert masthead.count("<p>") == 0
 
 
 def test_a_skeleton_this_module_cannot_fill_raises_this_packages_own_error(monkeypatch):
@@ -93,3 +96,26 @@ def test_a_skeleton_this_module_cannot_fill_raises_this_packages_own_error(monke
 def test_composing_twice_gives_the_same_text(monkeypatch):
     for built in cases():
         assert compose(built.document, built.placement) == compose(built.document, built.placement)
+
+
+def test_the_body_opens_with_what_the_site_is_then_progress_then_up_next():
+    # ⭐ `W362`, the plan's §6: the reader's first need on the index is what this
+    # is and where to pick up, before the tree.
+    page = case("depth2").render().decode("utf-8")
+    body = page.split('<main id="content">', 1)[1]
+    order = [
+        body.index('<section aria-label="About this site">'),
+        body.index('<section aria-label="Progress" hidden>'),
+        body.index('<nav aria-label="Up next">'),
+        body.index('<form role="search"'),
+        body.index('<nav aria-label="Contents">'),
+    ]
+    assert order == sorted(order)
+
+
+def test_the_index_does_not_guess_where_the_material_comes_from():
+    # ⛔ The register's D5: that column is the corpus's fact and waits for
+    # `W363`'s manifest data; the framework never invents it.
+    page = case("depth1").render().decode("utf-8")
+    assert "How to use it" in page and "How it is ordered" in page
+    assert "Where it comes from" not in page
