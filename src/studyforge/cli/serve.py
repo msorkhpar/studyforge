@@ -4,7 +4,8 @@ r"""The `serve` verb: the CLI stage that starts what `studyforge.serve` built.
 corpus under the root it is given (`serve.discovery`), checks that each holds
 every page it declares, binds `serve.instance` on loopback and serves until it is
 stopped. Given `--site`, it serves that one built directory for the one corpus
-at the root instead — with Run and Submit, as the root form has them (`W371`).
+at the root instead — with state, Run and Submit, as the root form has them
+(`W371`, `W380`).
 Serving the bytes is `studyforge.serve`'s; ⛔ this module is its caller and never
 a second author of it.
 
@@ -20,9 +21,9 @@ a second author of it.
 `SIGTERM`) stops it and exits `0`. ⚠️ `started=` hands the bound server to a
 caller before serving begins, which is how a test stops the verb in-process.
 
-**Depends on.** `serve.instance` and `serve.discovery` for a root,
-`serve.app`, `serve.routes.content`, `serve.routes.run` and `.runs`, and
-`corpus.discovery`'s scan for `--site`, `generate.declarations` for
+**Depends on.** `serve.instance` and `serve.discovery` for a root, and
+`serve.instance`'s namespaces and one-corpus discovery, `serve.app` and
+`serve.routes.content` for `--site`, `generate.declarations` for
 the corpus, `progress` for the store's one spelling, `validate` for the exit
 codes, and `argparse`. ⛔ Nothing here knows any source (R1).
 
@@ -38,15 +39,17 @@ takes `--out` with no default, so a site can live outside its corpus, and only a
 named directory reaches that. It names one directory for one corpus and adds no
 mount beside the root's.
 
-## ⛔ `--site` answers Run and Submit (`W371`, closing `SF-22/2`)
+## ⛔ `--site` answers state, Run and Submit (`W371`, `W380`)
 
-⭐ **The `run` namespace is registered in both forms**, as the one writer: the
-build-and-serve skill always serves `--site`, and a site served for an exercised
-corpus that offered no execution was reported `toolchain` although the root form
-ran it. A run's command is read from the corpus's unit documents and its outcome
-is recorded in the corpus's own progress store; ⛔ nothing is written into the
+⭐ **Both forms take their namespaces from ONE constructor,
+`serve.instance.namespaces_of`**, and their writers from its `WRITERS`: the
+build-and-serve skill always serves `--site`, and a site that registered `run`
+but not `state` recorded a run's progress it could not read back. A run's command
+is read from the corpus's unit documents and its outcome is recorded in the
+corpus's own progress store, which `state` reads, and the site is scanned where
+it is built (`serve.instance.site_discovery`); ⛔ nothing is written into the
 site, and no discovery cache is written into the corpus root. Tested in
-`tests/studyforge/cli/test_serve_site_run.py`.
+`tests/studyforge/cli/test_serve_site_run.py` and `test_serve_site_state.py`.
 
 ## ⛔ The site is BUILT first, and it never needs this command
 
@@ -81,21 +84,17 @@ import argparse
 import signal
 import threading
 from collections.abc import Callable
-from functools import partial
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 from studyforge.archive.scrub import scrub
-from studyforge.corpus.discovery import assemble
-from studyforge.corpus.discovery import scan_sha256 as digest_of
 from studyforge.generate import RAISES
 from studyforge.generate.declarations import read_corpus
 from studyforge.progress import store_dir
 from studyforge.serve import RAISES as REFUSED
-from studyforge.serve import Discovered, ServedCorpus
+from studyforge.serve import WRITERS, Discovered, namespaces_of, site_discovery
 from studyforge.serve.app import DEFAULT_PORT, ServingServer, make_server
 from studyforge.serve.discovery import discover
 from studyforge.serve.instance import instance_of
-from studyforge.serve.routes import run, runs
 from studyforge.serve.routes.content import CorpusContent
 from studyforge.validate.cli import UNUSABLE
 from studyforge.validate.report import INVALID, OK
@@ -175,16 +174,16 @@ def main(
             say(f"unbuilt {page}  {NOT_BUILT}")
         return INVALID
     content = CorpusContent(corpus)
-    execution = _execution(corpus, root, content)
+    namespaces = _execution(site_discovery(corpus, root, site), content)
     try:
         server = make_server(
             site,
             content,
             port=arguments.port,
-            namespaces=execution,
+            namespaces=namespaces,
             private=_inside(store_dir(root)),
             log=say,
-            writers=tuple(execution),
+            writers=tuple(name for name in WRITERS if name in namespaces),
         )
     except OSError as refusal:
         return _could_not_listen(arguments.port, refusal, say)
@@ -265,27 +264,15 @@ def _unbuilt(corpus: object, site: Path) -> list[str]:
     return sorted(str(page) for page in pages if not (site / page).is_file())
 
 
-def _execution(corpus: object, root: Path, content: CorpusContent) -> dict:
-    """Return the run namespace over the one corpus `--site` serves (`W371`).
+def _execution(discovered: Discovered, content: CorpusContent) -> dict:
+    """Return the `--site` form's namespaces: the root form's constructor, over one corpus.
 
-    ⭐ Every namespace returned is a writer — `run` is the one — so the caller
-    registers exactly these as writers and spells none of its own.
-
-    ⭐ **The root form's wiring, over one corpus**: `serve.instance.instance_of`
-    registers `run` over every corpus a discovery found, and this registers it
-    over the corpus at `root`, whose unit documents `content` reads. A run's
-    command is read from those documents and its outcome is recorded in the
-    corpus's own progress store — never in the site.
-
-    ⛔ **No cache is judged, so nothing is written into the corpus root**: the
-    scan here only gives the served corpus its startup reading, and `--site`
-    serves a site that may sit anywhere, over a corpus it must not touch.
+    ⭐ `serve.instance.namespaces_of` builds them in both forms (`W380`) — `state`, and
+    `run` with the progress it records — and `WRITERS` names which of them write.
+    ⚠️ The name is `W371`'s, kept because the build-and-serve skill's test replaces
+    this seam to serve a site with no execution (`W380/1`).
     """
-    depths = {corpus.manifest.source: corpus.manifest.depth}
-    startup = assemble(root, depths)
-    served = ServedCorpus(corpus, root, PurePosixPath("."), startup, digest_of(startup.site))
-    live = runs.Runs(Discovered(root, (served,), ()), {served.source: content})
-    return {run.NAMESPACE: partial(run.route, live)}
+    return namespaces_of(discovered, {served.source: content for served in discovered.corpora})
 
 
 def _inside(directory: Path) -> Callable[[Path], bool]:
