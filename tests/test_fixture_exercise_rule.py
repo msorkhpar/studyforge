@@ -110,8 +110,9 @@ def test_each_document_cites_section_7_for_the_file_only_record(text):
 
 
 def test_the_guide_shows_the_file_only_record_and_it_reads_as_ungraded():
-    shown = [block["exercise"] for block in json_fences(document("exercises.md"))
-             if "exercise" in block]
+    shown = [
+        block["exercise"] for block in json_fences(document("exercises.md")) if "exercise" in block
+    ]
     file_only = [record for record in shown if set(record) == set(REQUIRED_KEYS)]
     assert len(file_only) == 1, shown
     assert from_document(file_only[0], "exercises.md").graded is False
