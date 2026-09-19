@@ -184,16 +184,18 @@ def identity(document: dict, placement: Placement) -> str:
 
 
 def meta(document: dict) -> str:
-    """Return the masthead's quieter second line: the variant this page is in.
+    """Return the masthead's quieter second line — which a unit page no longer has.
 
-    ⛔ **The address slugs are gone from it** (`W362`, M2 and M3). They were the
-    builder's identifiers (`01-getting-started`), joined by middle dots, and
-    the trail above the title already names every container by its title. ⭐ The
-    variant stays: it is the corpus's own word for which version of the unit
-    this is (`java`, `prose`), and R1 keeps the framework from judging it.
+    ⛔ **The address slugs went first** (`W362`, M2 and M3): builder identifiers
+    joined by middle dots, while the trail above the title already names every
+    container by its title. ⛔ **The variant went next** (`W388`): shown alone
+    under the title it was a bare kind word (`prose`, `java`) that tells a
+    reader nothing the page does not, which is the brief's label that stops
+    being true. ⭐ It is still the page's, in R4's identity block and the served
+    document; it is just not printed as a line of its own.
     """
-    variant = document.get("variant")
-    return f"<p>{escape(variant)}</p>" if variant else ""
+    del document
+    return ""
 
 
 def pending(document: dict) -> str:

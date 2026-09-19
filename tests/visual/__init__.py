@@ -123,4 +123,14 @@ ACCEPTANCE = {
     #: same press: the mark is SAID, not only drawn, in the rail and both lists.
     "tells a screen reader which units are read, in the rail and in both lists, "
     "and moves nothing on the screen (W383)": "test_rail_marks",
+    #: ⭐ `W388`'s clause, and `W369`'s with it: *"a palette somebody can read
+    #: for hours, the rail on the first page too, a transport that spans the
+    #: content without growing its buttons, and a reading column with its
+    #: secondary block beside it"*. ⛔ It is a row of its own because every one
+    #: of the claims is a LIVE reading of a laid-out page under a stated width
+    #: and a stated theme — the contrast row above reads a floor and never a
+    #: ceiling, and not one row above reads a line of prose in characters.
+    "keeps the reading inside a contrast band in both themes, the rail on every "
+    "page, the transport the width of the content with its controls unchanged, "
+    "and the page's secondary block beside the reading (W388, W369)": "test_reading_room",
 }

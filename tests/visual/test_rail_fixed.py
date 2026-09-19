@@ -84,8 +84,13 @@ SHIPPED = (
         "max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)));",
     ),
     (
-        "position: sticky;\n    top: 0;\n    max-height: 100vh;\n    overflow-y: auto;\n",
-        "",
+        # ⚠️ The rail's own block, named by `grid-column: 1`: since `W388` the
+        # aside in column 3 sticks and scrolls by the same four declarations,
+        # and a pattern that matched both would rewrite a region this row is
+        # not about — and the control then asserts nothing about the rail.
+        "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n"
+        "    position: sticky;\n    top: 0;\n    max-height: 100vh;\n    overflow-y: auto;\n",
+        "grid-column: 1;\n    grid-row: 1 / span 10;\n    align-self: start;\n",
     ),
 )
 

@@ -311,9 +311,17 @@ def test_the_transport_is_unhidden_once_there_is_something_to_play(tmp_path):
     assert run(tmp_path)["hidden"] is False
 
 
-def test_the_first_passage_is_lit_before_anything_is_pressed(tmp_path):
-    # ⭐ The reader can see where narration will start without starting it.
-    assert run(tmp_path)["speaking"] == ["true", None, None]
+def test_nothing_is_lit_before_anything_is_pressed(tmp_path):
+    # ⛔ `W369` clause 2: a marker beside the first heading before anything
+    # played read as narration already under way. The transport's own line says
+    # where it will start; the page lights nothing until the reader starts it.
+    assert run(tmp_path)["speaking"] == [None, None, None]
+
+
+def test_pressing_play_is_what_lights_the_first_passage(tmp_path):
+    # ⭐ The other way (R12): the same reading after a press is lit, so the one
+    # above is not a highlight that never lights at all.
+    assert run(tmp_path, action="play")["speaking"] == ["true", None, None]
 
 
 def test_it_says_nothing_when_there_is_nothing_to_say(tmp_path):
@@ -375,7 +383,7 @@ def test_clicking_a_link_inside_a_passage_is_the_link_s_and_not_the_narrator_s(t
     # ⚠️ A reader following a footnote must not also start audio.
     reading = run(tmp_path, action="clickLink")
     assert reading["plays"] == 0
-    assert reading["speaking"] == ["true", None, None]
+    assert reading["speaking"] == [None, None, None]
 
 
 def test_the_speed_control_reaches_the_audio(tmp_path):

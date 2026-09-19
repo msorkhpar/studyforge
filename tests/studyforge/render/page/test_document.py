@@ -63,14 +63,23 @@ def test_a_document_that_cannot_identify_itself_is_refused_as_a_page_error():
         compose(variant="Not A Slug")
 
 
-def test_the_masthead_names_the_variant_and_no_builder_slug():
+def test_the_masthead_prints_no_bare_kind_label_and_no_builder_slug():
     # ⛔ `W362`: the address slugs joined by middle dots were builder words
-    # (M2, M3); the trail names every container by its title. The variant is
-    # the corpus's own word and stays (R1).
+    # (M2, M3). ⛔ `W388` clause 5: the variant alone under the title was a bare
+    # kind word; the masthead is the trail and the title, and nothing else.
     page = compose()
-    assert "<p>prose</p>" in page
+    masthead = page.split("<header>", 1)[1].split("</header>", 1)[0]
+    assert "<p>" not in masthead
+    assert "prose" not in masthead
     assert "·" not in page
     assert "depth-one ·" not in page
+
+
+def test_the_variant_is_still_the_page_s_own_in_its_identity_block():
+    # ⭐ The other way: the variant is not lost, only no longer printed alone.
+    page = compose()
+    head = page.split("<body>", 1)[0]
+    assert "prose" in head
 
 
 def test_a_document_with_no_title_is_refused():

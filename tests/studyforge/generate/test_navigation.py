@@ -115,8 +115,41 @@ def test_the_trail_runs_corpus_then_every_container_then_the_unit(name):
         crumbs = trail(corpus.contents, key, index_href(corpus.contents, key))
         assert crumbs[0].title == corpus.contents.title
         assert crumbs[0].href.endswith("index.html")
-        assert len(crumbs) == 2 + len(ancestors(corpus.contents, key))
+        assert len(crumbs) == 2 + len(named_once(corpus.contents, key))
         assert crumbs[-1].href is None, "the last crumb is the page the reader is on"
+
+
+def named_once(contents, key):
+    """The groups above `key` a trail prints: each one whose title is not the crumb before it.
+
+    ⛔ `W388` clause 5 — the trail names each level once. Derived from the
+    contents document here, so the expectation is not the code's own loop.
+    """
+    kept, before = [], contents.title
+    for group in ancestors(contents, key):
+        if group.title != before:
+            kept.append(group)
+        before = group.title
+    return kept
+
+
+def test_the_trail_names_each_level_once():
+    # ⭐ depth1's one group carries the corpus's own title, which is the ISO
+    # corpus's shape: the title is printed once, as the root crumb.
+    corpus, walked = a_walk("depth1")
+    for key in walked:
+        titles = [crumb.title for crumb in trail(corpus.contents, key, "index.html")]
+        assert titles.count(corpus.contents.title) == 1, titles
+        assert all(a != b for a, b in zip(titles, titles[1:], strict=False)), titles
+
+
+def test_a_group_with_a_title_of_its_own_is_still_named():
+    # ⭐ The other way (R12): depth2's groups are titled apart from the corpus,
+    # so every one of them is still a crumb.
+    corpus, walked = a_walk("depth2")
+    for key in walked:
+        crumbs = trail(corpus.contents, key, "index.html")
+        assert len(crumbs) == 2 + len(ancestors(corpus.contents, key))
 
 
 @pytest.mark.parametrize("name", BOTH)
@@ -126,7 +159,7 @@ def test_every_label_comes_out_of_the_contents_document(name):
 
     for key in walked:
         crumbs = trail(corpus.contents, key, index_href(corpus.contents, key))
-        groups = ancestors(corpus.contents, key)
+        groups = named_once(corpus.contents, key)
         assert [crumb.level for crumb in crumbs[1:-1]] == [group.level for group in groups]
         assert [crumb.title for crumb in crumbs[1:-1]] == [group.title for group in groups]
         assert set(crumb.level for crumb in crumbs[1:-1]) <= set(corpus.manifest.levels)
@@ -178,6 +211,11 @@ def test_the_trail_matches_the_stand_in_apart_from_the_hrefs_this_row_adds(tmp_p
         to_index = index_href(corpus.contents, entry.key)
         mine = trail(corpus.contents, entry.key, to_index)
         theirs = trail_for(corpus.contents, entry, to_index)
+        # ⭐ `W388`: the stand-in predates naming each level once, so a crumb
+        # repeating the one before it is set aside on its side of the comparison.
+        theirs = tuple(
+            c for i, c in enumerate(theirs) if i == 0 or c.title != theirs[i - 1].title
+        )
         assert [Crumb(c.level, c.title) for c in mine] == [Crumb(c.level, c.title) for c in theirs]
         assert all(crumb.href is None for crumb in theirs[1:])
 

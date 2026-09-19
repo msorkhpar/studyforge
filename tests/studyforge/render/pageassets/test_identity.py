@@ -219,6 +219,84 @@ def test_every_pair_the_design_paints_clears_its_floor(theme, foreground, backgr
     )
 
 
+# --- `W388`: a palette somebody can read for hours ----------------------------
+
+#: The band body text sits in, as ratios. ⛔ The floor is WCAG AA; the CEILING is
+#: `W388`'s *"and not far above it"*, and it is the half the shipped palette
+#: broke — near-white chalk on a dark green board cleared AA three times over and
+#: was what the user called "super tiring".
+BAND = (4.5, 9.0)
+
+#: The inks that carry running text, against the ground they are read on.
+BODY_TEXT = (("--fg", "--bg"), ("--fg-soft", "--bg"), ("--muted", "--bg"))
+
+#: What the palette may paint a line or an accent with AT REST, as chroma — the
+#: spread between the strongest and weakest sRGB channel, scaled to 0–1. ⛔ A
+#: ratio cannot say this: a saturated rule and a grey one can have the same
+#: luminance, and the tiring one is the saturated one.
+RULE_CHROMA = 0.12
+ACCENT_CHROMA = 0.30
+
+#: `token -> the chroma it may not exceed`. ⛔ Rules and marks are structure and
+#: are neutral; the one accent may carry colour, and not much.
+AT_REST = {
+    "--rule": RULE_CHROMA,
+    "--rule-strong": RULE_CHROMA,
+    "--margin": RULE_CHROMA,
+    "--accent": ACCENT_CHROMA,
+    "--sign": ACCENT_CHROMA,
+    "--focus": ACCENT_CHROMA,
+    "--hl-bar": ACCENT_CHROMA,
+}
+
+
+def chroma(colour: str) -> float:
+    """How far from neutral a hex colour is, as the spread of its sRGB channels."""
+    body = colour.lstrip("#")
+    channels = [int(body[at : at + 2], 16) for at in (0, 2, 4)]
+    return (max(channels) - min(channels)) / 255
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+@pytest.mark.parametrize(("ink", "ground"), BODY_TEXT)
+def test_body_text_is_inside_the_band_and_not_far_above_it(theme, ink, ground):
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    ratio = contrast(values[ink], values[ground])
+    assert BAND[0] <= ratio <= BAND[1], (
+        f"{theme}: {ink} on {ground} is {ratio:.2f}:1, outside {BAND[0]}:1–{BAND[1]}:1"
+    )
+
+
+def test_the_palette_that_shipped_is_caught_by_the_same_band():
+    # ⭐ Both ways, and it is the actual palette this row replaced: `W362`'s
+    # chalk on its green board, and its near-black ink on the cool paper.
+    assert contrast("#eef0e8", "#26322c") > BAND[1]
+    assert contrast("#1b2236", "#f1f5f2") > BAND[1]
+
+
+@pytest.mark.parametrize("theme", ["light", "dark"])
+def test_no_line_or_accent_is_saturated_at_rest(theme):
+    light, dark, _ = blocks()
+    values = dict(light, **dark) if theme == "dark" else light
+    loud = {
+        token: f"{chroma(values[token]):.3f} > {bound}"
+        for token, bound in AT_REST.items()
+        if chroma(values[token]) > bound
+    }
+    assert loud == {}, f"{theme}: {loud}"
+
+
+def test_the_saturated_rule_and_accent_that_shipped_are_caught():
+    # ⭐ The red margin rule and the washable-blue accent `W388` supersedes,
+    # in both themes, each against the bound its role carries.
+    assert chroma("#cf8f98") > RULE_CHROMA
+    assert chroma("#8a5257") > RULE_CHROMA
+    assert chroma("#23449a") > ACCENT_CHROMA
+    assert chroma("#a9c8ff") > ACCENT_CHROMA
+    assert chroma("#ddd4c4") <= RULE_CHROMA
+
+
 def test_a_planted_pair_below_its_floor_is_caught():
     # ⭐ The same arithmetic on a pair that fails: pencil grey on the chrome
     # ground at the old warm-grey value.

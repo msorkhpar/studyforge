@@ -67,6 +67,7 @@ from studyforge.contents import order
 from studyforge.corpus.placement import relative_href
 from studyforge.generate.navigation import rail, trail
 from studyforge.render import pageassets
+from studyforge.render.index import render as render_index
 from studyforge.render.page import Crumb, Link, Links, Placement, RailContainer, render
 from tests.studyforge.render.container import containers
 from tests.studyforge.render.index import indexes
@@ -268,6 +269,9 @@ def _unit_page(corpus: str) -> Built:
             where,
             _bar(corpus, where),
             _trail(corpus, case.document),
+            # ⭐ `W388`: the transport is on the page, so its width and its
+            # buttons are something this harness can measure.
+            narration=case.narration,
             rail=_rail(corpus, where, case.document),
         ),
     )
@@ -288,15 +292,29 @@ def _container_pages(corpus: str) -> tuple[Built, ...]:
 
 
 def _index_page(corpus: str) -> Built:
-    """One corpus's root index, as its own fixture builder renders it."""
+    """One corpus's root index, with the rail a build hands it (`W388`).
+
+    ⛔ The rail is `generate.navigation.rail`'s, addressed from the index and
+    joined to the container pages this tree writes — `_rail`'s argument, from
+    the one page that is inside no container.
+    """
     case = indexes.case(corpus)
+    root = case.placement.shared.root_index
     return Built(
         name=f"{case.name}-{INDEX}",
         kind=INDEX,
-        page=_under(corpus, case.placement.shared.root_index),
+        page=_under(corpus, root),
         assets=_under(corpus, case.placement.shared.assets),
-        body=case.render(),
+        body=render_index(case.document, case.placement, rail(case.contents, root, _above(corpus))),
     )
+
+
+def _above(corpus: str) -> dict[str, PurePosixPath]:
+    """Where each container page of one corpus lands, by the container's address key."""
+    return {
+        case.document.address.key: case.placement.container.page
+        for case in containers.fixture_cases(corpus)
+    }
 
 
 def _under(corpus: str, path: PurePosixPath) -> PurePosixPath:
@@ -356,11 +374,7 @@ def _rail(corpus: str, where: Placement, document: dict) -> tuple[RailContainer,
     contents = indexes.case(corpus).contents
     key = _unit_key(corpus, document)
     address, _ = parse_unit_key(key, len(contents.levels))
-    above = {
-        case.document.address.key: case.placement.container.page
-        for case in containers.fixture_cases(corpus)
-    }
-    return rail(contents, where.unit.page, above, container=address.key, unit=key)
+    return rail(contents, where.unit.page, _above(corpus), container=address.key, unit=key)
 
 
 def _unit_key(corpus: str, document: dict) -> str:

@@ -31,12 +31,13 @@
    the narrow shape; the wide shape at the foot of this file bounds the same
    element.
 
-   ⭐ THE MARGIN RULE (`W362`, the plan's §3 and §7). An exercise book prints a
-   pale line down every page: left of it is the reader's (the course, their
-   ticks, where the narration is), right of it is the work. It is drawn once,
-   by one pseudo-element on `body`, with no markup. ⚠️ It is structure, never a
+   ⭐ THE MARGIN RULE (`W362`, the plan's §3 and §7). A pale line down every
+   page: left of it is the reader's (the course, their ticks, where the
+   narration is), right of it is the work. It is drawn once, by one
+   pseudo-element on `body`, with no markup. ⚠️ It is structure, never a
    signal — `--margin` sits below 3:1 on purpose, because nothing is told apart
-   by it alone. The left padding gives the text room to its right. */
+   by it alone, and since `W388` it is a neutral hairline, not a red one. The
+   left padding gives the text room to its right. */
 
 body {
   max-width: calc(var(--measure) + 4 * var(--gutter));
@@ -282,7 +283,16 @@ span[data-kind="read-state"] {
    `overflow-y: auto` as one decision: a long course list scrolls itself.
 
    ⭐ The margin rule moves to the rail's right edge, between the reader's
-   column and the work. `72rem` is the one threshold in these parts. */
+   column and the work. `72rem` is the one threshold in these parts.
+
+   ⭐ THE ASIDE (`W388` clause 4, folding `W369` clause 1): a page with a
+   secondary block — a unit's outline, the index's explanation — gives it a
+   third column, `--aside`, on the far side of the reading column, so a wide
+   window's room holds it and the list or the prose starts at the top. ⛔ No
+   second threshold: at `72rem` the prose column is a little narrower than
+   `--measure` and reaches it as the window widens, and below `72rem` the block
+   is back in the one column above the content. The block is the page's own
+   aside: it is sticky and scrolls itself, as the rail does. */
 
 @media (min-width: 72rem) {
   body:has(nav[aria-label="Containers"]) {
@@ -292,6 +302,10 @@ span[data-kind="read-state"] {
     max-width: var(--page-max);
     margin-left: 0;
     padding-left: 0;
+  }
+
+  body:has(nav[aria-label="Containers"]):has(> nav[aria-label="Outline"], > section[aria-label="About this site"]) {
+    grid-template-columns: var(--rail) minmax(0, 1fr) var(--aside);
   }
 
   body:has(nav[aria-label="Containers"])::before {
@@ -321,6 +335,19 @@ span[data-kind="read-state"] {
     border-left: 0;
     border-start-start-radius: 0;
     border-end-start-radius: 0;
+  }
+
+  body:has(nav[aria-label="Containers"]) > nav[aria-label="Outline"],
+  body:has(nav[aria-label="Containers"]) > section[aria-label="About this site"] {
+    grid-column: 3;
+    grid-row: 1 / span 10;
+    align-self: start;
+    position: sticky;
+    top: 0;
+    max-height: 100vh;
+    overflow-y: auto;
+    margin: 0;
+    padding: 2rem 0 2rem;
   }
 
   /* The fold is a narrow-width device: beside the column the list is always

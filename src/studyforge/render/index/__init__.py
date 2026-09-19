@@ -84,6 +84,8 @@ level on top of the reader, with no branch on which corpus it is (R1).
 
 from __future__ import annotations
 
+import typing
+
 from studyforge.render.index.assemble import from_contents
 from studyforge.render.index.disclosure import (
     LEVEL_KIND,
@@ -96,6 +98,11 @@ from studyforge.render.index.entries import Document, Item, Section
 from studyforge.render.index.placement import Placement
 from studyforge.render.index.policy import VISIBLE_ROW_BUDGET, open_to, row_counts, visible_rows
 from studyforge.render.page import ENCODING, PageError
+
+if typing.TYPE_CHECKING:  # ⛔ Annotation-only: neither name joins this surface.
+    from collections.abc import Sequence
+
+    from studyforge.render.page import RailContainer
 
 #: ⛔ The package's whole public surface. A consumer that has to import
 #: `studyforge.render.index.disclosure` directly is a consumer this contract
@@ -123,12 +130,16 @@ __all__ = [
 ]
 
 
-def render(document: Document, placement: Placement) -> bytes:
-    """Render the root index.
+def render(
+    document: Document,
+    placement: Placement,
+    rail: Sequence[RailContainer] | None = None,
+) -> bytes:
+    """Render the root index, with the rail across containers when one is handed in (`W388`).
 
     ⭐ **Bytes, not text, and that is the contract.** What is compared against a
     golden file, written to disk and served is a byte string; handing back text
     would leave the encoding to whoever wrote the file, and R10's guarantee
     would hold everywhere except the one step that matters.
     """
-    return compose(document, placement).encode(ENCODING)
+    return compose(document, placement, rail).encode(ENCODING)
