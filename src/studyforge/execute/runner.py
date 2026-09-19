@@ -1,0 +1,265 @@
+"""`Runner` — start a corpus's commands in the runner container when it is up, else on the host.
+
+**What it does.** Checks the commands, asks which mode this run takes, and
+returns a `RunHandle` streaming the run — the same argv, in the same directory
+relative to the source root, in either mode.
+
+**How you use it.**
+
+    runner = Runner(source_root, container_for(source))
+    handle = runner.start([exercise.run_command, exercise.test_command])
+    for line in handle.lines(): ...
+
+`container=None` runs on the host, always.
+
+**Depends on.** `subprocess` and `os` — ⭐ `execute` is the only package that
+runs a corpus's commands — plus `commands`, `mode`, `output` and `handle`
+beside it.
+
+## The two modes, one contract
+
+| | container | host |
+|---|---|---|
+| how | `docker exec -w /work/<cwd> <c> sh -c MERGE_STDERR sh <argv…>` | `<argv…>` in `<cwd>` |
+| the argv | ⭐ **verbatim**, never parsed | ⭐ **verbatim**, never parsed |
+| environment | `RUN_ENVIRONMENT`, with `-e` | the host's, plus `RUN_ENVIRONMENT` |
+| output | `/work` made relative, then scrubbed | the root made relative, then scrubbed |
+| stop, timeout | the run's tree by its token, then the client | the command's process group |
+
+⛔ **The runner never starts, stops or builds a container** (round 112's
+ruling on `TC-00`'s answer 6): the reader starts it, and a stop here ends the
+RUN's processes inside it, never the container. ⛔ **No socket is mounted
+anywhere** (spec §8.3): the host's `docker` CLI reaches in from outside.
+
+## ⭐ `RUN_ENVIRONMENT` — decided here, the same in both modes
+
+- `PYTHONDONTWRITEBYTECODE=1` (`W352/3`): a grader imports the file under test,
+  and Python would write `__pycache__/` beside it — into the reader's tree,
+  which a run must leave as it found it.
+- `PYTHONUNBUFFERED=1`: a Python program writing to a pipe buffers its output
+  in blocks, so "line by line as the process writes it" would arrive in lumps,
+  and stdout and stderr would interleave differently from a terminal.
+
+⚠️ **Both reach a Python program only.** A JVM or a Node build that writes a
+cache into the tree is not stopped by them, and that is `W353`'s class and a
+corpus's ignore rules, not this module's.
+
+## Why stderr is joined INSIDE the container
+
+⚠️ **Measured, not assumed:** `docker exec` without a terminal carries stdout
+and stderr as two streams, and the client writes each to its own descriptor —
+so a program's `out, err, out` arrived here as `out, out, err`, and the host's
+single pipe did not. ⭐ So the join happens where the program runs: `sh -c
+MERGE_STDERR sh <argv…>` points the program's stderr at its stdout and then
+`exec`s it — the argv as positional arguments, verbatim, and the same process
+(the run token and the kill reach it unchanged). ⛔ A terminal (`-t`) would
+also join them, and would change line endings, colour and width — a different
+program's output, not the same one.
+
+## Why a run token inside the container
+
+⚠️ **`docker exec` forwards no signal**: killing the local client leaves the
+command running inside the container (the extraction source recorded exactly
+this and let a bare `pytest` finish on its own). ⭐ So each run carries
+`STUDYFORGE_RUN=<a fresh random token>` in its environment, every child inherits
+it, and a stop or timeout runs `KILL_BY_TOKEN` inside the container — a fixed
+`sh` program of this module's, taking the token and a signal name as arguments,
+never text a client sent — which signals every process carrying that token.
+That is the container's process group: the same set, found the only way a
+process outside the container can find it.
+"""
+
+from __future__ import annotations
+
+import os
+import signal
+import subprocess
+import uuid
+from collections.abc import Iterable, Sequence
+from pathlib import Path
+
+from studyforge.execute.commands import (
+    ROOT_DIR,
+    require_commands,
+    require_container,
+    require_workdir,
+)
+from studyforge.execute.handle import RunHandle
+from studyforge.execute.mode import CONTAINER, DOCKER, WORKDIR_IN_CONTAINER, ModeProbe
+from studyforge.execute.output import LineGate
+
+#: What every run's environment carries, in both modes.
+RUN_ENVIRONMENT = {"PYTHONDONTWRITEBYTECODE": "1", "PYTHONUNBUFFERED": "1"}
+
+#: The variable that marks a run's processes inside the container.
+RUN_TOKEN = "STUDYFORGE_RUN"
+
+#: Hard ceiling on one run, in seconds: generous for a cold first build.
+DEFAULT_TIMEOUT = 600.0
+
+#: Seconds between `SIGTERM` and `SIGKILL`.
+GRACE = 5.0
+
+#: How long the in-container kill may take before it is abandoned.
+KILL_TIMEOUT = 10.0
+
+#: Run `"$@"` with its stderr joined to its stdout INSIDE the container. ⛔ Fixed
+#: text: the argv arrives as positional arguments and `exec "$@"` hands it on
+#: verbatim — nothing is interpolated, quoted or split.
+MERGE_STDERR = 'exec "$@" 2>&1'
+
+#: Signal every process whose environment carries `$1` (`NAME=token`) with `$2`.
+#: ⛔ Fixed text: its only inputs are this module's token and a signal name.
+KILL_BY_TOKEN = (
+    "for p in /proc/[0-9]*; do "
+    'if tr "\\000" "\\n" < "$p/environ" 2>/dev/null | grep -qxF -- "$1"; then '
+    'kill -s "$2" "${p#/proc/}" 2>/dev/null; fi; done; exit 0'
+)
+
+
+def _pipe(argv: Sequence[str], **where: object) -> subprocess.Popen[str]:
+    """Start `argv` in its own session, stdout and stderr merged, line-buffered text."""
+    return subprocess.Popen(
+        list(argv),
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        start_new_session=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+        bufsize=1,
+        **where,  # type: ignore[arg-type]
+    )
+
+
+def _signal_group(process: subprocess.Popen[str], signum: int) -> None:
+    """Signal the group `process` leads. Gone already is not an error."""
+    try:
+        os.killpg(process.pid, signum)
+    except ProcessLookupError, PermissionError:
+        pass
+
+
+class HostLauncher:
+    """Run the argv on the host, in `<source root>/<cwd>`."""
+
+    def __init__(self, source_root: Path, cwd: str) -> None:
+        """Run in `<source root>/<cwd>` with the host environment plus `RUN_ENVIRONMENT`."""
+        self.directory = source_root / cwd
+        self.environment = {**os.environ, **RUN_ENVIRONMENT}
+
+    def spawn(self, argv: Sequence[str]) -> subprocess.Popen[str]:
+        """Start `argv` on the host, in its own session."""
+        return _pipe(argv, cwd=self.directory, env=self.environment)
+
+    def signal(self, process: subprocess.Popen[str], signum: int) -> None:
+        """Signal the command's process group."""
+        _signal_group(process, signum)
+
+
+class ContainerLauncher:
+    """Run the argv inside the runner container, in `/work/<cwd>`, marked by a token."""
+
+    def __init__(self, container: str, cwd: str, docker: str = DOCKER) -> None:
+        """Run in `/work/<cwd>` inside `container`, every process marked with a fresh token."""
+        self.container = container
+        self.docker = docker
+        self.workdir = WORKDIR_IN_CONTAINER if cwd == ROOT_DIR else f"{WORKDIR_IN_CONTAINER}/{cwd}"
+        self.marker = f"{RUN_TOKEN}={uuid.uuid4().hex}"
+
+    def spawn(self, argv: Sequence[str]) -> subprocess.Popen[str]:
+        """Start `argv` inside the container through `docker exec`, verbatim."""
+        environment = [
+            part for key, value in RUN_ENVIRONMENT.items() for part in ("-e", f"{key}={value}")
+        ]
+        return _pipe(
+            [
+                self.docker,
+                "exec",
+                "-w",
+                self.workdir,
+                *environment,
+                "-e",
+                self.marker,
+                self.container,
+                "sh",
+                "-c",
+                MERGE_STDERR,
+                "sh",
+                *argv,
+            ]
+        )
+
+    def signal(self, process: subprocess.Popen[str], signum: int) -> None:
+        """Signal the run's tree inside the container first, then the local client."""
+        try:
+            subprocess.run(
+                [
+                    self.docker,
+                    "exec",
+                    self.container,
+                    "sh",
+                    "-c",
+                    KILL_BY_TOKEN,
+                    "sh",
+                    self.marker,
+                    signal.Signals(signum).name.removeprefix("SIG"),
+                ],
+                stdin=subprocess.DEVNULL,
+                capture_output=True,
+                timeout=KILL_TIMEOUT,
+                check=False,
+            )
+        except OSError, subprocess.SubprocessError:
+            pass
+        _signal_group(process, signum)
+
+
+class Runner:
+    """Start a source root's commands; the only way the framework runs one."""
+
+    def __init__(
+        self,
+        source_root: Path,
+        container: str | None = None,
+        *,
+        docker: str = DOCKER,
+        timeout: float = DEFAULT_TIMEOUT,
+        grace: float = GRACE,
+        probe: ModeProbe | None = None,
+    ) -> None:
+        """Check the container name; the mode is asked per run, through `probe`."""
+        self.source_root = Path(source_root).absolute()
+        self.container = None if container is None else require_container(container)
+        self.docker = docker
+        self.timeout = timeout
+        self.grace = grace
+        self.probe = probe or ModeProbe(self.source_root, self.container, docker=docker)
+
+    def mode(self) -> str:
+        """`CONTAINER` or `HOST`, as the next run would take it."""
+        return self.probe.mode()
+
+    def start(self, commands: object, cwd: object = ROOT_DIR) -> RunHandle:
+        """Run `commands` in order from `cwd`; the first is started before this returns.
+
+        ⛔ `commands` is argv lists from a generated document on disk. It is
+        checked (`commands.require_commands`) and never composed, split or
+        quoted here.
+        """
+        checked = require_commands(commands)
+        directory = require_workdir(cwd)
+        mode = self.mode()
+        if mode == CONTAINER:
+            assert self.container is not None
+            launcher: HostLauncher | ContainerLauncher = ContainerLauncher(
+                self.container, directory, self.docker
+            )
+            roots: Iterable[str] = (WORKDIR_IN_CONTAINER,)
+        else:
+            launcher = HostLauncher(self.source_root, directory)
+            roots = (str(self.source_root), str(self.source_root.resolve()))
+        return RunHandle(
+            checked, launcher, LineGate(roots), mode=mode, timeout=self.timeout, grace=self.grace
+        )
