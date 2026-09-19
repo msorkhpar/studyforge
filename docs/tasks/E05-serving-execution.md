@@ -297,6 +297,34 @@ on success, completes the practice. Run never completes a practice. A stopped
 run is recorded as stopped. Output is gated on the wire. The editor's task
 follows the open practice.
 
+#### ⛔ How a served page loads the run client — ONE way (`W370`, from `SF-22/1`)
+
+⭐ **The serving process adds the client to the page it answers; a built page
+never loads it.** When an instance registers the run namespace, the static route
+answering a site `.html` page inserts exactly one
+`<script src="/api/v1/run/client.js" defer></script>` into the bytes it serves,
+and the file on disk is untouched. ⭐ **The built page's own script — `SF-24`'s
+panel — only reads `window.studyforge.run`**, after `DOMContentLoaded`: absent,
+or `available()` false, is the `file://` floor, and the panel draws no Run and
+no Submit. ⛔ **It names no API path, no client file and no origin**, and
+neither does any other built text.
+
+⚠️ **Why this way and no other.** Every alternative puts the client's address
+into the build: a `<script src="/api/…">` is a rooted reference that names the
+API; a relative `api/v1/…` resolved against `location.origin` names no origin
+and still loads it; a copy of the client in the site names the API on every
+line. ⭐ Only the server knows it is a server, so only the server says so.
+
+⛔ **Enforced by R8's floor**
+([`tests/studyforge/cli/serving.py`](../../tests/studyforge/cli/serving.py)):
+a built text that names the client — its served path's tail or its file's name
+— is a defect, beside a text that names the serving origin; both directions are
+asserted in
+[`tests/studyforge/cli/test_serve_floor.py`](../../tests/studyforge/cli/test_serve_floor.py).
+⚠️ **The insertion itself is not built yet**: it lands with its first consumer,
+`SF-24`, with the served page's validator taken over the served bytes rather
+than the file's.
+
 ---
 
 ### SF-29 — Run output filter

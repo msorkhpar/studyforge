@@ -102,3 +102,54 @@ def test_the_verb_is_what_these_sites_are_served_by():
     from studyforge.cli import VERBS
 
     assert VERBS["serve"].run is main
+
+
+
+#: ⛔ `W370`: ways a BUILT text could load the run client itself, and whether this check is
+#: the ONLY one that sees it. The rooted ones also name the origin; the relative one and
+#: the bare file name name none, and before `W370` the floor read them green.
+SCRIPT = ".studyforge/assets/page.js"
+CLIENT_PLANTS = [
+    ("index.html", '<script src="/api/v1/run/client.js" defer></script>', False),
+    (SCRIPT, "s.src = location.origin + '/api/v1/' + 'run/client.js';", False),
+    (SCRIPT, "s.src = new URL('api/v1/run/client.js', location.origin);", True),
+    (SCRIPT, "s.src = base + 'run-client.js';", True),
+]
+
+
+@pytest.mark.parametrize(("where", "planted", "alone"), CLIENT_PLANTS)
+def test_a_built_page_that_loads_the_run_client_itself_is_a_floor_defect(
+    tmp_path, where, planted, alone
+):
+    _, site = build("depth1", tmp_path)
+    target = site / where
+    target.write_text(target.read_text(encoding="utf-8") + planted, encoding="utf-8")
+    defects = floor(site).defects
+    said = f"{where} loads the run client itself"
+    assert any(d.startswith(said) for d in defects), defects
+    assert all(d.startswith(said) for d in defects) == alone, defects
+
+
+def test_the_client_lookalikes_are_not_the_run_client(tmp_path):
+    # ⭐ The other half (R12): a path that merely resembles the client's must read green,
+    # or the check refuses names it never meant.
+    _, site = build("depth1", tmp_path)
+    script = site / ".studyforge" / "assets" / "page.js"
+    script.write_text(
+        script.read_text(encoding="utf-8")
+        + '"prerun/client.js"; "run/client.json"; "run/client.jsx"; "my-run-client.js";',
+        encoding="utf-8",
+    )
+    assert floor(site).defects == []
+
+
+def test_the_floor_names_the_client_the_run_namespace_serves():
+    # ⛔ Derived from the route, so neither the served path nor the file can move without
+    # the floor following.
+    from studyforge.serve.response import API_PREFIX
+    from studyforge.serve.routes.run import CLIENT, CLIENT_FILE, NAMESPACE
+    from tests.studyforge.cli.serving import RUN_CLIENT
+
+    assert CLIENT_FILE.is_file()
+    assert RUN_CLIENT.search(f"{API_PREFIX}/{NAMESPACE}/{CLIENT}")
+    assert RUN_CLIENT.fullmatch(CLIENT_FILE.name)
