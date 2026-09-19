@@ -7,10 +7,10 @@ determine.
 **How you use it.** `draft(inventory, record, capability)` returns
 `(manifest, uncertainties)`.
 
-**Depends on.** `inventory`, `record`, `capability`, `furniture`, `report`,
-and `studyforge.address` for what a slug is. ⛔ Not on `corpus.manifest` — this
-writes a **draft for a person**, and a draft that had to satisfy the reader
-would be unable to leave a field open.
+**Depends on.** `inventory`, `record`, `capability`, `furniture`, `runtimes`,
+`report`, and `studyforge.address` for what a slug is. ⛔ Not on
+`corpus.manifest`'s reader — this writes a **draft for a person**, and a draft
+that had to satisfy the reader would be unable to leave a field open.
 
 ⚠️ **Open is not the same as refused.** A field this skill *does* fill is
 filled with a value the manifest reader accepts, and the question beside it
@@ -45,6 +45,9 @@ Every default below is a measurement on real material rather than a taste:
   leaves unread is proposed as a `not_material` glob with its reason open
   (`furniture`).
 - **`exercises` follows `capability`**, and *false* is a complete answer.
+- **`runtimes` follows what the material evidences** (`W351`), only beside
+  `exercises: true`, and the draft then declares `corpus_api` 4 so it reads
+  back. ⛔ Prose gets no key; `runtimes` holds the evidence and the rule.
 - **`placement` follows whether the material shares its directories with
   anything else.** `sibling` puts a page in a `study/` directory beside the
   file it was made from, which is right when a reader already knows the layout
@@ -65,6 +68,7 @@ from studyforge.skills.reconnaissance.furniture import Furniture, propose
 from studyforge.skills.reconnaissance.inventory import Inventory
 from studyforge.skills.reconnaissance.record import Record
 from studyforge.skills.reconnaissance.report import Uncertainty
+from studyforge.skills.reconnaissance.runtimes import propose as evidenced
 
 #: What this skill calls the levels it found, pending a person naming them.
 #: ⚠️ **Measured conventions rather than invented placeholders**: of the four
@@ -108,20 +112,23 @@ def draft(
     levels = _levels(record, open_questions)
     include, exclude = _content(inventory, record)
     furniture = propose(inventory.root, include, exclude)
+    runtimes = evidenced(capability)
     content: dict[str, object] = {"include": include, "exclude": exclude}
     if furniture.entries:
         content["not_material"] = [dict(entry) for entry in furniture.entries]
     manifest = {
-        "corpus_api": NOT_MATERIAL_API if furniture.entries else 1,
+        "corpus_api": max(NOT_MATERIAL_API if furniture.entries else 1, runtimes.api),
         "source": _source(record),
         "title": _title(record, inventory),
         "levels": levels,
         "variants": [SINGLE_VARIANT],
         "exercises": capability.graded,
+        **({"runtimes": list(runtimes.names)} if runtimes.names else {}),
         "placement": _placement(inventory, capability),
         "content": content,
     }
     open_questions += list(_choices(manifest, inventory, record, capability))
+    open_questions += list(runtimes.questions())
     open_questions += list(_unread(furniture))
     return manifest, open_questions
 

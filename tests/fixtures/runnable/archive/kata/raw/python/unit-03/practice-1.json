@@ -57,5 +57,12 @@
     "disclosures": 0
   },
   "content_sha256": "9654aca0805a9205c366207bacee7ca648cc62378e13d6850894947abe43f86b",
-  "starting_code": "\"\"\"Say hello, with nothing to check that it did.\"\"\"\n\nif __name__ == \"__main__\":\n    print(\"Hello from a file with no test\")\n"
+  "starting_code": "\"\"\"Say hello, with nothing to check that it did.\"\"\"\n\nif __name__ == \"__main__\":\n    print(\"Hello from a file with no test\")\n",
+  "exercise": {
+    "main_path": "practice/untested/hello.py",
+    "run_command": [
+      "python3",
+      "practice/untested/hello.py"
+    ]
+  }
 }

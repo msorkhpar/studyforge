@@ -144,6 +144,13 @@ whether the corpus finishes at the reading floor or enters the execution track.
 ⚠️ Neither is a milestone id read as a position: the order milestones run in is
 the one the capability index prints, not the order their ids sort to.
 
+⭐ **A graded corpus's draft declares the `runtimes` its material evidences**
+(`W351`) — a build file or a source suffix, each from a closed map, and `java`
+beside any name that runs on a JVM. ⛔ **Never a runtime nothing evidences**,
+never the key for prose, and never beside `exercises: false`: evidence there is
+one question instead. A draft carrying the key declares `corpus_api` 4, the
+version the reader requires for it, and every drafted runtime is asked about.
+
 ### 8. Hand over the proposal **and** the questions
 
 ⛔ Never present the draft manifest alone. The questions are the other half of

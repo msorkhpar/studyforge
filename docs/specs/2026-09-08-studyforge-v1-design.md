@@ -1167,6 +1167,14 @@ Each exercise declares a workspace — `main_path`, `test_path`, `run_command`,
 `trust` (`authoritative` | `advisory`). The framework refuses to render a
 `generated` grader as authoritative (R5).
 
+⛔ **AMENDED by `W357` — an ungraded unit may name its file.** `main_path` and
+`run_command` are the file and how it runs, and every record carries them.
+`test_path`, `test_command`, `provenance` and `trust` are the **grader**, written
+whole — `trust` alone may be omitted, and defaults from `provenance` — or not at
+all. A record with no grader is the **ungraded** state, and it is how the reader's
+terminal command (`SF-44`) resolves a file that nothing checks. See
+[*A file with no test*](#a-file-with-no-test-w357) below.
+
 ### Where that declaration lives
 
 ⛔ **It is an `exercise` object inside the practice archive document** —
@@ -1197,7 +1205,8 @@ Four reasons, and the third is the one that decided it:
   it, which R19 forbids.
 - ⭐ **§7's three states fall out of the structure, with no flag to remember.**
   **none** — there is no `practice-M.json`. **ungraded** — a `practice-M.json`
-  with blocks and **no `exercise` key**. **graded** — the key is present. So the
+  with blocks and **no `exercise` key** (or, since `W357`, a record naming a
+  file and no grader). **graded** — the record names a grader. So the
   common case is a corpus that writes nothing: ISO is `none` for all 38 units and
   writes no practice document at all; SPARQL is `ungraded` for all 19 and writes
   a prompt with no workspace. ⛔ A design in which every corpus must declare its
@@ -1211,6 +1220,39 @@ the framework checks the claim against `provenance` and refuses the combination
 R5 exists to prevent. `EX-04` writes the same key for a generated grader that
 cleared both gates — the same document, because a generated grader is still
 archive content — and it may only ever write `advisory`.
+
+### A file with no test (`W357`)
+
+⭐ **One record, two shapes, and nothing in between:**
+
+```json
+"exercise": {
+  "main_path": "practice/untested/hello.py",
+  "run_command": ["python3", "practice/untested/hello.py"] }
+```
+
+| The record carries | State | Can complete a practice? |
+|---|---|---|
+| `main_path`, `run_command` | **ungraded** — a file, and nothing checks it | **no** |
+| those, plus the whole grader | **graded** | only on a passing grader run |
+
+- ⭐ **Graded is the grader's presence, not the key's.** Before `W357` the key's
+  presence was the graded state. Now the record's `test_path` is. It is still
+  read off the structure, with no flag to set.
+- ⛔ **Half a grader is refused**, naming what is missing, and so is a
+  `provenance` or `trust` with no grader. Both are facts about a grader, and
+  trust in a grader that does not exist is the claim R5 exists to stop.
+- ⭐ **The practice with no `exercise` key stays valid and stays ungraded.**
+  A corpus whose prompts name no file (the 19 SPARQL lessons) still writes
+  nothing.
+- ⭐ **Why a record and not a second declaration.** The unit document's
+  `workspace` is this record, so the file reaches the one place Run and the
+  terminal command already read. That needs no new key in the archive document
+  and none in the unit document. The argument is in
+  [`W357`'s handoff](../tasks/handoffs/W357.md).
+- ⭐ **Not a `raw_api` change.** Every document valid before is valid now and
+  means what it meant, and an older build refuses the new shape rather than
+  misreading it. That is the test §6 applies to `list.start`.
 
 **Run and Submit are different acts.** Run executes the reader's program so
 they can see what it printed. Only a `test` run can complete a practice. This

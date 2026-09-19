@@ -17,8 +17,17 @@ archive document or `None`; `completes_practice(state, command, passed=...)`.
 | State | How it appears | The designed shape that is this |
 |---|---|---|
 | **none** | no `practice-M.json` at all | one shape: 38 units, none written |
-| **ungraded** | a practice document, **no `exercise` key** | a second: 19 prompts, no workspace |
-| **graded** | the `exercise` key is present | the first consumer — the **exception** |
+| **ungraded** | a practice document, **no grader** in it | a second: 19 prompts, no workspace |
+| **graded** | the `exercise` record names a grader | the first consumer — the **exception** |
+
+⭐ **Ungraded is written two ways**: a practice document with **no `exercise`
+key**, or one whose record names a file and **no grader** (`W357`).
+
+⭐ **`W357`: an ungraded unit may name its file.** The record then carries
+`main_path` and `run_command` and no grader half, so a reader's file resolves to
+its unit whether or not anything checks it. ⚠️ **So the graded state is the
+grader's presence, not the key's** — `GRADER_KEY` below — and a consumer that
+asks whether the `exercise` key exists is asking the pre-`W357` question.
 
 ⚠️ **The three shapes are named in `docs/tasks/E06-exercise-contract.md`, which
 holds this table with its corpora attached.** ⛔ Not here: R1 binds framework
@@ -67,9 +76,15 @@ RUN = "run"
 TEST = "test"
 COMMANDS = (RUN, TEST)
 
-#: ⛔ The key whose presence *is* the graded state. Named once, here, so that
-#: `archive.document` and this module cannot come to spell it differently.
+#: The key a practice document carries its exercise record under. Named once,
+#: here, so that `archive.document` and this module cannot come to spell it
+#: differently.
 EXERCISE_KEY = "exercise"
+
+#: ⛔ The record field whose presence *is* the graded state (`W357`). The grader
+#: half of a record is written whole or not at all (`record`), so for any record
+#: the reader accepts, this one field answers for all of it.
+GRADER_KEY = "test_path"
 
 
 def state_of(document: object) -> str:
@@ -78,10 +93,17 @@ def state_of(document: object) -> str:
     `document` is the decoded practice archive document, or `None` when the
     unit has no practice document at all — which is the common case and the
     reason this function takes `None` rather than refusing it.
+
+    ⚠️ **A record that names a file and no grader is `UNGRADED`** (`W357`), and
+    so is a value that is not a record at all: this answers on the completion
+    path, never validates, and the conservative answer is the one that
+    completes nothing. `archive.document.parse` is where a malformed record is
+    refused.
     """
     if document is None:
         return NONE
-    if isinstance(document, dict) and EXERCISE_KEY in document:
+    record = document.get(EXERCISE_KEY) if isinstance(document, dict) else None
+    if isinstance(record, dict) and GRADER_KEY in record:
         return GRADED
     return UNGRADED
 

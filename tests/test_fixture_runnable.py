@@ -8,7 +8,7 @@ shape BEHAVES as it is named when its own declared commands are run:
 |---|---|---|---|
 | 1 | a file and a test that passes | succeeds | passes |
 | 2 | a file and a test that fails | succeeds | fails |
-| 3 | a file and NO test — ungraded | succeeds | collects nothing |
+| 3 | a file and NO test — ungraded, its record names the file (`W357`) | succeeds | none declared |
 | 4 | a file that does not compile | fails | errors at collection |
 | 5 | no practice at all — reading only | — | — |
 
@@ -147,13 +147,31 @@ def test_the_ungraded_unit_has_a_file_and_no_grader():
     # file must be there for a runner to be handed, and nothing may grade it.
     folder = ROOT / "practice" / SHAPES[3][1]
     assert [p.name for p in folder.iterdir()] == ["hello.py"]
-    assert exercise(3) is None
+    # ⭐ `W357`: the record names that file and how it runs, and no grader.
+    record = exercise(3)
+    assert record.main_path == "practice/untested/hello.py"
+    assert (ROOT / record.main_path).is_file()
+    assert record.graded is False
+    assert (record.test_path, record.test_command, record.provenance) == (None, None, None)
+
+
+def test_every_unit_with_a_file_names_it_and_only_the_graded_ones_name_a_grader():
+    # ⭐ What `SF-44` resolves a reader's file through: every unit whose
+    # practice has a file carries a record naming it, graded or not. ⛔ The
+    # other way: the record's `graded` is exactly the unit's state.
+    named = {unit: exercise(unit) for unit, (_s, folder) in SHAPES.items() if folder}
+    assert all(record is not None for record in named.values())
+    assert {unit: record.graded for unit, record in named.items()} == {
+        unit: SHAPES[unit][0] == GRADED for unit in named
+    }
+    assert exercise(5) is None
 
 
 def test_one_runtime_and_it_is_python():
     for unit in BEHAVES:
         record = exercise(unit)
         assert record.run_command[0] == record.test_command[0] == "python3", unit
+    assert exercise(3).run_command[0] == "python3"
 
 
 def test_the_runtimes_key_is_not_invented_before_w350_lands():
@@ -214,7 +232,10 @@ def test_every_practice_starts_from_the_file_as_shipped():
 
 def test_the_unit_with_no_test_runs_and_collects_nothing(copy):
     folder = f"practice/{SHAPES[3][1]}"
-    assert run(["python3", f"{folder}/hello.py"], copy).returncode == PASSED
+    # ⭐ `W357`: its OWN declared run command, read from its record.
+    ran = run(exercise(3).run_command, copy)
+    assert ran.returncode == PASSED, ran.stderr
+    assert "Hello from a file with no test" in ran.stdout
     assert run(["python3", "-m", "pytest", "-q", folder], copy).returncode == COLLECTED_NOTHING
     # ⛔ Not vacuous: the same command over a graded unit's folder DOES collect.
     passes = f"practice/{SHAPES[1][1]}"

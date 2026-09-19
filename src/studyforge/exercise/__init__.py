@@ -11,6 +11,7 @@ state it is in before rendering anything that implies a grade.
     state_of(None)                       # 'none' — the unit sets no work
     state_of(practice_document)          # 'ungraded' or 'graded'
     exercise = of(practice_document, where)   # an Exercise, or None
+    exercise.graded                      # False: a file, and nothing checks it
     completes_practice(state, "test", passed=True)
 
 **Depends on.** `unit.trust`, which owns R5's rule and whose own contract says
@@ -27,10 +28,12 @@ real teaching content: one surveyed corpus has an exercise in every one of its
 
 ⭐ **The three states are read off the structure and there is no `state` field**
 — none to set, none to forget. **none** is no practice document at all;
-**ungraded** is a practice document with no `exercise` key; **graded** is the
-key being present. ⛔ A corpus that must declare its own emptiness is a contract
-fitted to the one source that ships 168 graders (§11.0), and the common case
-here writes nothing.
+**ungraded** is a practice document with no grader in it; **graded** is a
+record that names one. ⭐ **An ungraded unit may still name its file** (`W357`):
+its record carries `main_path` and `run_command` and no grader half, so a
+reader's file resolves to its unit whether or not anything checks it.
+⛔ A corpus that must declare its own emptiness is a contract fitted to the one
+source that ships 168 graders (§11.0), and the common case here writes nothing.
 
 ⛔ **Nothing generated is presented as more authoritative than it is** (R5). A
 grader written by us against a hidden upstream grader is `advisory`. A grader
@@ -64,6 +67,8 @@ from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.record import (
     DEFAULTED_KEYS,
     EXERCISE_KEYS,
+    GRADER_KEYS,
+    REQUIRED_KEYS,
     Exercise,
     from_document,
     of,
@@ -81,6 +86,7 @@ from studyforge.exercise.states import (
     COMMANDS,
     EXERCISE_KEY,
     GRADED,
+    GRADER_KEY,
     NONE,
     RUN,
     STATES,
@@ -101,8 +107,11 @@ __all__ = [
     "EXERCISE_KEY",
     "EXERCISE_KEYS",
     "GRADED",
+    "GRADER_KEY",
+    "GRADER_KEYS",
     "NONE",
     "PATH_PERMITTED",
+    "REQUIRED_KEYS",
     "RUN",
     "SAFE_ARGUMENT",
     "SAFE_SEGMENT",
