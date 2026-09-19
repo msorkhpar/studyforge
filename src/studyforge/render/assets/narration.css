@@ -47,40 +47,46 @@ footer#player {
   min-height: var(--player-height);
   box-sizing: border-box;
   margin-top: 2.5rem;
-  padding: 0 0 1rem;
+  padding: 0 0 .55rem;
   background: var(--panel);
   box-shadow: var(--shadow);
   font-family: var(--font-ui);
-  font-size: 0.9rem;
+  font-size: .92rem;
   color: var(--fg);
 }
 
+/* ⭐ ONE ROW (`W362`, N1): the transport was 140px tall on a laptop and 188px
+   on a phone, a fifth of the screen held over the text for the whole visit. */
 footer#player > div:last-of-type {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 0.75rem;
-  padding-top: 0.85rem;
+  gap: .4rem .6rem;
+  padding: .55rem .75rem 0;
 }
 
-/* The keyboard sentence: a full-width line under the controls rather than one
-   more thing competing with them for the row. */
+/* The keyboard sentence is for keyboard readers, so it shows while focus is in
+   the transport and never on a touch screen, where it cannot apply (N3). */
 footer#player p {
+  display: none;
   flex-basis: 100%;
-  margin: 0.15rem 0 0;
-  font-size: 0.8rem;
+  margin: 0;
+  font-size: .82rem;
   color: var(--muted);
+}
+
+@media (hover: hover) {
+  footer#player:focus-within p { display: block; }
 }
 
 /* --- progress through the unit ------------------------------------------- */
 
 /* ⛔ The width comes from `--progress`, which `narration.js` sets and nothing
-   else reads, so the script states a number and this file draws it. The
-   fallback is `0%`: a page whose script never ran shows an empty bar rather
-   than a full one. */
+   else reads. The fallback is `0%`: a page whose script never ran shows an
+   empty bar rather than a full one. */
 
 #track {
-  height: 0.3rem;
+  height: 3px;
   background: var(--surface-2);
   overflow: hidden;
 }
@@ -93,7 +99,7 @@ footer#player p {
 
 @media (prefers-reduced-motion: no-preference) {
   #fill {
-    transition: width 0.2s linear;
+    transition: width var(--dur-fill) var(--ease);
   }
 }
 
@@ -105,8 +111,8 @@ footer#player select {
   color: var(--fg);
   background: var(--surface);
   border: 1px solid var(--rule-strong);
-  border-radius: 0.25rem;
-  padding: 0.35rem 0.7rem;
+  border-radius: var(--radius-control);
+  padding: .3rem .65rem;
   cursor: pointer;
 }
 
@@ -116,26 +122,56 @@ footer#player select:hover:enabled {
 }
 
 /* ⛔ A disabled control is dimmed AND says so through the attribute, never
-   through colour alone: a reader who cannot tell the two greys apart still gets
-   the cursor and the button's own disabled semantics from the browser. */
+   through colour alone. */
 footer#player button:disabled,
 footer#player select:disabled {
-  opacity: 0.55;
+  opacity: .55;
   cursor: not-allowed;
 }
 
-#play {
-  font-weight: 600;
+/* ⭐ Play is the primary control: ink on the button's ground, first in weight.
+   Previous and next are glyph buttons whose names are their `aria-label`s. */
+footer#player #play {
+  order: -1;
+  font-weight: 700;
+  color: var(--bg);
+  background: var(--fg);
+  border-color: var(--fg);
+}
+
+footer#player #play:hover:enabled { background: var(--fg-soft); }
+
+#previous,
+#next {
+  min-width: 2.25rem;
+  font-weight: 700;
 }
 
 /* --- what is playing, and what is wrong ---------------------------------- */
 
 #where {
   color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 22rem;
 }
 
-#where:not(:empty) + #counter::before {
-  content: " · ";
+#where,
+#counter { display: inline-block; vertical-align: bottom; }
+
+/* ⛔ No glyph joins the two (the middle-dot tell, N4): a gap does. */
+#where:not(:empty) + #counter { margin-left: .6rem; }
+
+/* On a phone the transport keeps to one row: the section's title goes, the
+   passage count stays. */
+@media (max-width: 40rem) {
+  #where { display: none; }
+  #where:not(:empty) + #counter { margin-left: 0; }
+  footer#player > div:last-of-type { gap: .4rem; padding-left: .5rem; padding-right: .5rem; }
+  footer#player button,
+  footer#player select { padding: .3rem .5rem; }
+  footer#player select { width: 4.25rem; }
 }
 
 #counter {
@@ -144,13 +180,11 @@ footer#player select:disabled {
 }
 
 /* ⛔ Every sentence in here is markup (`templates/player.html`) and the script
-   only unhides one. ⚠️ The region itself is hidden when there is nothing to
-   say — by the script, because "all my children are hidden" is not a state CSS
-   can ask about without `:has`, and a transport with nothing to say must not
-   reserve a gap that reads as a message that failed to appear. */
+   only unhides one; the region itself is hidden when there is nothing to say. */
 #status {
   flex-basis: 100%;
-  color: var(--accent);
+  color: var(--fg);
+  font-weight: 700;
 }
 
 /* --- the promise the record made and the disk did not keep ---------------- */
@@ -173,18 +207,20 @@ footer#player select:disabled {
 
 section[data-section="narration-gap"] {
   margin-top: 2.5rem;
-  padding: 0.85rem 1rem;
+  padding: .75rem 1rem;
   background: var(--panel);
-  border-left: 0.2rem solid var(--accent);
+  border-top: 1px solid var(--rule);
   font-family: var(--font-ui);
-  font-size: 0.9rem;
+  font-size: .92rem;
   color: var(--fg);
 }
 
+/* ⛔ No coloured stripe down its edge (the brief's tell, N7): a feint rule
+   above and the transport's own ground say it is the transport speaking. */
 section[data-section="narration-gap"] h2 {
-  margin: 0 0 0.35rem;
+  margin: 0 0 .35rem;
   font-size: 1rem;
-  color: var(--accent);
+  color: var(--fg);
 }
 
 section[data-section="narration-gap"] p {
@@ -194,25 +230,28 @@ section[data-section="narration-gap"] p {
 
 /* --- the highlight ------------------------------------------------------- */
 
-/* ⛔ Speech-unit granularity, which is the whole of why this needs no timing
-   data: the lit passage is the passage whose clip is loaded. The wash is drawn
-   with `box-shadow` rather than padding so lighting a paragraph does not move
-   the paragraph — a highlight that reflowed the page would make the text jump
-   away from the reader on every advance. */
+/* ⛔ Speech-unit granularity: the lit passage is the passage whose clip is
+   loaded. ⭐ AT REST it is a short highlighter mark in the margin beside the
+   passage, not a wash (`W362`, C3): a resting page must not look as though
+   something is selected. The wash — the highlighter swiped across the line —
+   appears only while narration is playing, which the play button's own face
+   says. Both are drawn with `box-shadow` so lighting a passage never moves it. */
 
 [data-speaking] {
+  box-shadow: -.8rem 0 0 -.55rem var(--hl-bar);
+}
+
+:root:has(#play [data-state="playing"]:not([hidden])) [data-speaking] {
   background: var(--hl-bg);
   color: var(--hl-fg);
-  box-shadow: 0 0 0 0.3rem var(--hl-bg);
-  border-radius: 0.15rem;
+  box-shadow: 0 0 0 .3rem var(--hl-bg);
+  border-radius: var(--radius-tight);
 }
 
 /* ⚠️ A code block inside a lit passage keeps its own ground AND its own text
-   colours — the seven syntax tokens were measured against `--code-bg`, and
-   repainting either half would invalidate every one of those ratios. It takes a
-   wash over the top instead, which is exactly what `--hl-code` is for. ⛔ So no
-   `color` is set here, and the wash is a `background-image` so the ground
-   underneath it is still the one the numbers were taken against. */
+   colours — the seven syntax tokens were measured against `--code-bg`. It takes
+   a wash laid over the top instead, as a `background-image`, so the ground the
+   numbers were taken against stays underneath. */
 [data-speaking] pre,
 [data-speaking] code {
   background-image: linear-gradient(var(--hl-code), var(--hl-code));

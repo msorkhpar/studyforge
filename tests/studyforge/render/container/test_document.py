@@ -107,20 +107,26 @@ def test_the_identity_refusal_does_not_reproduce_what_it_refused():
     assert poison not in str(raised.value)
 
 
-def test_the_masthead_names_the_level_then_the_address_then_the_variant():
-    # ⚠️ `level` is the CORPUS's word for this depth (`levels[-1]`), never this
-    # framework's own (R1).
-    assert document_module.meta(a_document()) == (
-        "<p>module · basics · 01-getting-started · java</p>"
-    )
+def test_the_masthead_says_how_many_units_the_container_holds_in_the_corpus_word():
+    # ⛔ `W362` (M1–M3, CP1): the address slugs and the variant joined by middle
+    # dots told a reader nothing. ⭐ The count is a fact about the site, and the
+    # depth keeps the CORPUS's word for it (R1).
+    assert document_module.meta(a_document()) == "<p>1 unit in this module</p>"
 
 
-def test_a_corpus_that_names_no_level_still_gets_a_masthead():
-    assert document_module.meta(a_document(level="")) == "<p>basics · 01-getting-started · java</p>"
+def test_a_corpus_that_names_no_level_gets_the_count_alone():
+    assert document_module.meta(a_document(level="")) == "<p>1 unit</p>"
 
 
 def test_the_masthead_escapes_what_the_corpus_wrote():
     assert "&lt;b&gt;" in document_module.meta(a_document(level="<b>"))
+
+
+def test_the_masthead_carries_no_builder_slug_and_no_middle_dot():
+    line = document_module.meta(a_document())
+    assert "·" not in line
+    assert "01-getting-started" not in line
+    assert "java" not in line
 
 
 @pytest.mark.parametrize("said", [None, "", "   ", 7])

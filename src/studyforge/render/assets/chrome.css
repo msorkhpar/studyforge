@@ -1,409 +1,177 @@
-/* The page's chrome: the regions around the reading surface, and the column
-   that bounds both.
+/* The page's frame: the column, the margin rule, the masthead and trail, and
+   the rail that reaches the other containers, at both widths.
 
-   ⭐ THE SCOPE IS THE LIST `reading.css` DISOWNS, minus the regions whose
-   markup does not exist yet. `reading.css` says of itself: "Masthead,
-   navigation rail, narration player, progress controls and practice panels are
-   NOT here: they belong to the tasks that render them, and each adds its own
-   part beside this one." ⛔ This is that part, for the regions a page already
-   emits — the masthead, the in-page outline, the between-pages bar, the
-   practice panel, a container's unit listing, the root index's tree, a unit
-   page's trail and the rail that reaches the other containers (W324). The
-   narration player and the progress controls stay out, because their markup is
-   not here yet and a rule for an element nobody emits is the same defect one
-   layer along (SF-11's finding 3).
+   ⭐ ONE OF FOUR CHROME PARTS SINCE `W362`, SPLIT AT SEAMS BY JOB. This file
+   was 748 lines against R11's 400 with no justification in it. It divides by
+   what each part answers:
+   - `chrome.css` (this): WHERE THINGS ARE — the column, the rail beside it or
+     folded above it, the masthead and trail, the skip link, the margin rule.
+   - `lists.css`: WHAT THE READER NAVIGATES AND WHERE THEY ARE IN IT — the
+     outline, the unit and contents lists with their tick boxes, the index's
+     progress, strip and filter.
+   - `onward.css`: WHERE THE READER GOES NEXT — the between-pages bar and the
+     Up next slip, the one bold element.
+   - `notes.css`: WHAT THE PAGE TELLS THE READER — the index's explanation, the
+     practices note and the read control.
 
-   ⛔ NOT ONE COLOUR AND NOT ONE MEASURE IS DEFINED HERE. Every value is a
-   `palette.css` token, and the palette defines every colour token in both
-   themes — so "rules in both themes" is a property of the vocabulary rather
-   than a second block of declarations to keep in step. A raw hex here would be
-   a colour that cannot follow the reader's theme, and `test_palette` fails it.
-
-   ⛔ NOT ONE CLASS NAME IS TARGETED HERE EITHER, and that is the whole reason
-   this part could be written a milestone after the markup it styles. Every
-   region is reached by element, `aria-label` or `data-*` attribute — exactly
-   what the three renderers emit — so no page changes, nothing is re-rendered,
-   and no class joins the published markup contract. The attribute spellings
-   come from `pageassets.SURFACE_HOOKS`, which is the one place they are
-   written down.
-
-   ⚠️ `data-kind` IS OVERLOADED AND THE SELECTORS ARE SCOPED FOR IT.
-   `section.html` carries `data-kind="<the section's kind>"`, whose value comes
-   out of a corpus, and the numbering and level hooks are values of the same
-   attribute on a `<span>`. So every rule for a hook names the element too —
-   `span[data-kind="numbering"]`, never `[data-kind="numbering"]` — because a
-   corpus is free to call a section kind whatever it likes, including one of
-   these words.
+   ⛔ NOT ONE COLOUR AND NOT ONE CLASS in any of the four. Every value is a
+   `palette.css` token and every region is reached by element, `aria-label` or
+   a published `data-*` hook, so no class joins the markup contract.
 
    ⚠️ Loaded after `reading.css` and before `code-highlight.css`: two rules of
-   equal specificity mean the last one wins, and the page column below
-   deliberately refines what `reading.css` already sets on `body`. */
+   equal specificity mean the last one wins, and the page column below refines
+   what `reading.css` sets on `body`. */
 
 /* --- the column (PO-22/6) ------------------------------------------------ */
 
-/* ⛔ The missing half of `reading.css:38-41`, which rules that "a figure, a
-   table or a code block is scanned rather than read and takes the full
-   column." That decision is right and is not reopened here. What was missing
-   is THE COLUMN: `body` carries a gutter and no `max-width`, so on a 1280px
-   viewport "the full column" was the full viewport, and the page read as a
-   narrow measure with full-bleed islands beside it.
+/* ⛔ ONE BOUND, ON `body`, IN THE PROSE MEASURE. `ch` resolves against the
+   element's own font, so a bound written on each region gave each region a
+   different column. `body` carries the prose face the measure is chosen in.
+   Four gutters leave the measure plus one gutter of air either side. This is
+   the narrow shape; the wide shape at the foot of this file bounds the same
+   element.
 
-   ⛔ ONE BOUND, COMPUTED ONCE, ON `body` — and that is a measurement rather
-   than a preference. `--measure` is `80ch`, and `ch` resolves against the
-   ELEMENT's own font, so the same `max-width` written on each region gave three
-   different columns: measured in Chrome 149 at a 1280px viewport, the masthead
-   came out 800px, the outline 715.7px and the between-pages bar 680.3px,
-   because each of them sets its own face and size. ⚠️ A page whose regions
-   disagree about where the column ends is the full-bleed-islands defect wearing
-   the other face. `body` carries the prose font, which is the font the measure
-   was chosen in, so the number is right there and nowhere else.
-
-   ⭐ The arithmetic: `reset.css` sets `box-sizing: border-box`, so `body`'s own
-   two gutters are INSIDE this number. Four gutters therefore leave a content
-   box of `--measure` plus one gutter of air either side — a figure a little
-   wider than the running text, which is what "takes the full column" was always
-   meant to mean. ⚠️ The prose measure itself is untouched: `reading.css` still
-   caps `main p, main li` at `--measure`, and that decision is not reopened.
-
-   ⛔ THIS IS THE NARROW SHAPE, AND SINCE `W325` IT IS ONE OF TWO. The rule
-   below is what every viewport gets; a viewport wide enough for a rail AND this
-   measure beside it gets the two-column refinement at the foot of region 10,
-   which is written on `body` as well and bounds the SAME element. ⚠️ The bound
-   is still computed once and still on the element that carries the prose face —
-   that is `PO-22/6`'s decision and it is not reopened, only widened where there
-   is room for the rail.
-
-   ⭐ `--page-max` and `--rail` WERE UNPAINTED HERE AND ARE PAINTED NOW, both at
-   the foot of region 10 and nowhere else. The paragraph this replaces said
-   `--page-max` "is an outer edge for a rail-and-content layout; against a
-   bounded single column it would never bite at any viewport" — ⛔ **that reading
-   was right and it is DATED: there is a rail-and-content layout in this file
-   now.** ⚠️ What still holds of it is recorded where the declaration is, with
-   `W325/2`: the ceiling does not bite under the face this image pins.
-
-   ⛔ `footer` is absent for the same kind of reason. The narration player is the
-   only `<footer>` a page carries, it is `SF-18`'s at M3, and `--player-height`,
-   `--panel` and `--shadow` are defined and waiting for it. Laying out a region
-   whose design has not been decided would be deciding it. */
+   ⭐ THE MARGIN RULE (`W362`, the plan's §3 and §7). An exercise book prints a
+   pale line down every page: left of it is the reader's (the course, their
+   ticks, where the narration is), right of it is the work. It is drawn once,
+   by one pseudo-element on `body`, with no markup. ⚠️ It is structure, never a
+   signal — `--margin` sits below 3:1 on purpose, because nothing is told apart
+   by it alone. The left padding gives the text room to its right. */
 
 body {
   max-width: calc(var(--measure) + 4 * var(--gutter));
   margin-left: auto;
   margin-right: auto;
+  position: relative;
+  min-height: 100vh;
+  padding-left: calc(var(--gutter) + .75rem);
 }
 
-/* --- region 1: the masthead --------------------------------------------- */
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: .75rem;
+  width: 2px;
+  background: var(--margin);
+  pointer-events: none;
+}
 
-/* Every page kind carries this: the unit page, the container page and the root
-   index all fill the skeleton's `heading` and all but the index fill `meta`. */
+/* --- the skip link --------------------------------------------------------- */
+
+/* ⭐ The first focusable element on every page, out of sight until the
+   keyboard reaches it (the brief's §3). `page.html` writes it; it is reached by
+   what it is — a link to the content — and needs no hook of its own. */
+body > a[href="#content"] {
+  position: absolute;
+  left: 1.5rem;
+  top: -4rem;
+  z-index: 2;
+  padding: .4rem .8rem;
+  background: var(--surface);
+  color: var(--fg);
+  font-family: var(--font-ui);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius-control);
+}
+body > a[href="#content"]:focus-visible { top: .75rem; }
+
+/* --- the masthead and the trail ------------------------------------------ */
+
+/* ⭐ The trail sits ABOVE the title (`W362`, M5): where the page is comes
+   before what it is called. Then the title, heavy; then one quiet line. No
+   rule under it and no capitals: the brief's eyebrow tell is gone. */
 
 body > header {
-  padding: 2.25rem 0 1rem;
-  margin-bottom: 1.75rem;
-  border-bottom: 1px solid var(--rule);
+  padding: 2rem 0 .5rem;
+  margin-bottom: 1.25rem;
 }
 
-body > header h1 {
-  margin: 0 0 0.3rem;
-}
+body > header h1 { margin: 0 0 .35rem; }
 
-/* The quieter second line: where the unit sits, in which variant. ⚠️ It is a
-   `<p>`, so it inherits the prose face and the prose size from `reading.css`
-   and would otherwise read as the page's first sentence. */
 body > header p {
   margin: 0;
   font-family: var(--font-ui);
-  font-size: 0.8rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: .95rem;
   color: var(--muted);
 }
 
-/* --- region 2: the in-page outline -------------------------------------- */
-
-/* ⚠️ A card above the content rather than a rail beside it. A sticky side rail
-   is a layout this part cannot verify — `tests/visual/` has no browser in the
-   pinned image (QA-03/1) — and an unverifiable layout is a worse answer than a
-   plain one. `--rail` is still defined for whoever builds it. */
-
-nav[aria-label="Outline"] {
-  margin: 0 0 2rem;
-  padding: 0.9rem 1.15rem 1rem;
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
-  font-family: var(--font-ui);
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-nav[aria-label="Outline"] > p {
-  margin: 0 0 0.5rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-nav[aria-label="Outline"] ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-nav[aria-label="Outline"] li {
-  margin: 0.15rem 0;
-}
-
-/* ⭐ The nesting is the `data-level` the renderer already emits, so the rail
-   needs no nested lists and the outline cannot disagree with the headings it
-   was derived from. `navigation.OUTLINE_MAX_LEVEL` is 3. */
-nav[aria-label="Outline"] li[data-level="2"] {
-  padding-left: 1rem;
-}
-
-nav[aria-label="Outline"] li[data-level="3"] {
-  padding-left: 2rem;
-  font-size: 0.9rem;
-}
-
-/* --- region 3: the between-pages bar ----------------------------------- */
-
-/* ⛔ M1's close condition 8, re-homed here: the bar must be distinguishable
-   from body text WITHOUT REFERENCE TO COLOUR ALONE. So it is told apart by a
-   rule above it, a different face, a smaller size, a heavier weight, tracking
-   and a row layout — six cues, none of them a colour. A reader who cannot
-   tell accent from body text still sees a bar. */
-
-nav[aria-label="Between units"] {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem 1.5rem;
-  align-items: baseline;
-  justify-content: space-between;
-  margin: 3rem 0 2.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--rule-strong);
-  font-family: var(--font-ui);
-  font-size: 0.9rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-/* ⚠️ The slot that points up at the index is the quietest of the three: it is
-   where the reader came from, not where they are going. */
-nav[aria-label="Between units"] a[rel="up"] {
-  font-weight: 400;
-  color: var(--muted);
-}
-
-/* --- region 4: the practice panel -------------------------------------- */
-
-/* ⛔ This panel exists because without it the page lies by omission: a unit
-   whose practices were never ingested renders exactly like a unit that has
-   none. So it must not read as more prose — it is a panel, with its own ground
-   and its own edge, and the edge is heavier on one side so it is still a panel
-   with colour off. */
-
-body > section[data-section="practices-pending"] {
-  margin: 2.5rem 0;
-  padding: 1rem 1.15rem;
-  background: var(--practice-soft);
-  border: 1px solid var(--practice);
-  border-left-width: 4px;
-  border-radius: 8px;
-  font-family: var(--font-ui);
-}
-
-body > section[data-section="practices-pending"] h2 {
-  margin: 0 0 0.25rem;
-  font-size: 1rem;
-  letter-spacing: 0.01em;
-  color: var(--practice);
-}
-
-/* ⚠️ No `max-width` here, and the absence is deliberate: `reading.css` caps
-   `main p`, and this panel sits OUTSIDE `<main>`, so there is nothing to undo.
-   A `max-width: none` would have read as a bound on the column it is not. */
-body > section[data-section="practices-pending"] p {
-  margin: 0;
-  font-size: 0.92rem;
-  color: var(--fg-soft);
-}
-
-/* --- region 9: the trail (SF-15) ---------------------------------------- */
-
-/* ⛔ Authored since `SF-15` and painted by nothing, so a trail shipped as a
-   numbered `<ol>` — and the census could not say so, because no golden emits
-   it (`SF-15/3`, `W105`). It reads as one quiet line under the masthead: the UI
-   face, a smaller size, no list markers. The page the reader is on is told
-   apart by WEIGHT as well as colour, because `aria-current` is the statement
-   and this is the reinforcement. ⚠️ The `›` between crumbs is markup
-   (`crumb-separator.html`), so a page with no stylesheet still reads as a
-   trail and nothing here draws one. */
-
+/* ⛔ One quiet line, the page it is on told apart by WEIGHT as well as colour.
+   The `›` between crumbs is markup, so a page with no stylesheet still reads
+   as a trail. ⚠️ A long first crumb (a corpus title) is cut with an ellipsis;
+   its full text is still the link's text for assistive technology. */
 nav[aria-label="Breadcrumb"] {
-  margin: 0 0 1.5rem;
+  margin: 0 0 .75rem;
   font-family: var(--font-ui);
-  font-size: 0.85rem;
+  font-size: .9rem;
   color: var(--muted);
 }
 
 nav[aria-label="Breadcrumb"] ol {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.25rem 0.5rem;
+  gap: .4rem;
   margin: 0;
   padding: 0;
   list-style: none;
+  white-space: nowrap;
 }
+
+/* The trail keeps to one line: the first crumb (the whole corpus's title)
+   gives way with an ellipsis before the page's own name does. */
+nav[aria-label="Breadcrumb"] li { flex: 0 0 auto; }
+nav[aria-label="Breadcrumb"] li:first-child {
+  flex: 0 1 auto;
+  min-width: 3rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+nav[aria-label="Breadcrumb"] li[aria-current="page"] { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+
+nav[aria-label="Breadcrumb"] a { color: inherit; text-decoration: none; }
+nav[aria-label="Breadcrumb"] a:hover { text-decoration: underline; }
 
 nav[aria-label="Breadcrumb"] li[aria-current="page"] {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--fg);
 }
 
-/* --- regions 5 and 6: the two lists that ARE their pages --------------- */
-
-/* ⛔ Ruling 164's content side. A container page is its unit list and the root
-   index is its tree: these are not chrome the reader can do without, so they
-   are laid out as rows to be scanned and clicked rather than as prose. */
-
-nav[aria-label="Units"],
-nav[aria-label="Contents"] {
-  margin: 1.5rem 0 0;
-  font-family: var(--font-ui);
-  font-size: 0.98rem;
+/* On a phone the trail's last crumb is the title printed right under it, so
+   the line gives it up rather than cutting both it and the way back short. */
+@media (max-width: 40rem) {
+  nav[aria-label="Breadcrumb"] li[aria-current="page"] { display: none; }
 }
 
-nav[aria-label="Units"] ol,
-nav[aria-label="Contents"] ol {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
+/* ⛔ The corpus's level word (`group`, `module`) is not shown in the trail or
+   the rail: indentation already says the depth, and a word that tells the
+   reader nothing is the brief's "label that stops being true". It stays in the
+   markup (R1: the corpus's own word), and the index's tree keeps it. */
+nav[aria-label="Breadcrumb"] span[data-kind="level"],
+nav[aria-label="Containers"] span[data-kind="level"] { display: none; }
 
-nav[aria-label="Units"] li > a,
-nav[aria-label="Contents"] li > a {
-  display: block;
-  padding: 0.6rem 0.3rem;
-  text-decoration: none;
-  border-radius: 5px;
-}
+/* --- the rail across containers (W324), in the column -------------------- */
 
-nav[aria-label="Units"] li > a:hover,
-nav[aria-label="Contents"] li > a:hover {
-  background: var(--surface-2);
-  text-decoration: underline;
-}
-
-/* ⛔ `data-readable="false"` is §7's third state — a unit this build has no
-   page for — and it must be legible as "listed, not openable" without colour:
-   no pointer affordance, an italic face and a leading mark. ⚠️ The mark is
-   `content`, so it is decoration a screen reader skips; the state itself is
-   already in the attribute, which is what assistive technology reads. */
-nav[aria-label="Units"] li[data-readable="false"],
-nav[aria-label="Contents"] li[data-readable="false"] {
-  padding: 0.6rem 0.3rem;
-  font-style: italic;
-  color: var(--muted);
-}
-
-nav[aria-label="Units"] li[data-readable="false"]::before,
-nav[aria-label="Contents"] li[data-readable="false"]::before {
-  content: "— ";
-}
-
-/* The unit listing is a stack of rows, so each row gets a hairline. */
-nav[aria-label="Units"] li {
-  border-top: 1px solid var(--rule);
-}
-
-nav[aria-label="Units"] li:last-child {
-  border-bottom: 1px solid var(--rule);
-}
-
-/* The index's tree is nested, so the depth carries the rule instead. ⚠️ The
-   `<details>` here carry NO class, so `reading.css`'s `details.disclosure`
-   never reaches them and the two disclosure looks stay separate on purpose. */
-nav[aria-label="Contents"] ol ol {
-  margin-left: 0.4rem;
-  padding-left: 1rem;
-  border-left: 1px solid var(--rule);
-}
-
-nav[aria-label="Contents"] details {
-  margin: 0.2rem 0;
-}
-
-nav[aria-label="Contents"] summary {
-  padding: 0.45rem 0.3rem;
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--fg);
-}
-
-/* --- the two hooks both lists spell --------------------------------- */
-
-/* ⭐ `data-kind="numbering"` is the unit's reader-facing ordinal and
-   `data-kind="level"` is the corpus's own word for a depth. Both are the
-   corpus's text, both sit beside a title, and both have to be findable without
-   being glued to it — so they are set as a chip: tabular figures so ordinals
-   line up down a column, and a ground of their own so the title still reads as
-   the title. ⚠️ Scoped to `span`, because `data-kind` is also on `<section>`
-   with a corpus-supplied value. */
-
-span[data-kind="numbering"],
-span[data-kind="level"] {
-  display: inline-block;
-  padding: 0.05em 0.4em;
-  border-radius: 4px;
-  background: var(--accent-soft);
-  color: var(--accent);
-  font-size: 0.82em;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
-}
-
-span[data-kind="level"] {
-  text-transform: lowercase;
-  letter-spacing: 0.03em;
-}
-
-/* --- region 10: the rail across containers (W324) ---------------------- */
-
-/* ⛔ The region that reaches the OTHER containers, on every unit page and every
-   container page. ⭐ THE RULES BELOW ARE THE CARD IN THE ONE COLUMN, which is
-   what a viewport with no room for a rail gets; the block after them moves the
-   same markup to the LEFT of the reading column where there is room (`W325`).
-   ⚠️ The card is not a fallback nobody looks at — it is the shape a phone and a
-   narrow window both get, and it is asserted at a named width.
-
-   ⭐ ONE SET OF BYTES, TWO LAYOUTS. Nothing below this line is conditional on
-   anything the renderer emits: the page is identical at both widths, `<details>`
-   is the disclosure at both, and the tab order is document order at both. ⛔ A
-   second markup for the wide case would be a second navigation, which is what
-   this row was told not to build.
-
-   ⛔ NOT ONE CLASS AND NOT ONE COLOUR, as everywhere else in this part: the
-   region is reached by its `aria-label` and its two `data-*` hooks, and every
-   value is a `palette.css` token.
-
-   ⚠️ The current container and the current unit are told apart by WEIGHT as
-   well as by colour, because `aria-current` is the statement and this is the
-   reinforcement — the trail's rule one region along says the same. */
+/* ⛔ A plain list on the ground, not a card. At a narrow width it is folded
+   into one line — `rail.html` wraps it in one `<details>`, which the page
+   script closes below the threshold and leaves open with no script (the floor
+   is today's open list). ⭐ Units are rows on one feint line, ordinals in a
+   fixed column; the current unit has the accent's wash. ⚠️ The rail does not
+   also mark the next unit: the Up next slip at the foot of the page names it,
+   and a second marker here would be chrome competing with the one bold
+   element. */
 
 nav[aria-label="Containers"] {
-  margin: 0 0 2rem;
-  padding: 0.9rem 1.15rem 1rem;
-  background: var(--surface-2);
-  border: 1px solid var(--rule);
-  border-radius: 10px;
+  margin: 0 0 1.5rem;
   font-family: var(--font-ui);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: .92rem;
+  line-height: 1.4;
+}
+
+nav[aria-label="Containers"] > details > summary {
+  padding: .4rem 0;
+  font-weight: 700;
+  color: var(--fg);
+  cursor: pointer;
 }
 
 nav[aria-label="Containers"] ol {
@@ -412,178 +180,81 @@ nav[aria-label="Containers"] ol {
   list-style: none;
 }
 
-/* The units of one container are nested, so the depth carries the rule — the
-   root index's tree is drawn the same way and for the same reason. */
 nav[aria-label="Containers"] ol ol {
-  margin-left: 0.4rem;
-  padding-left: 1rem;
+  margin: .1rem 0 .5rem .45rem;
+  padding-left: .9rem;
   border-left: 1px solid var(--rule);
 }
 
-nav[aria-label="Containers"] summary {
-  padding: 0.35rem 0.2rem;
-  font-weight: 600;
-  cursor: pointer;
+nav[aria-label="Containers"] li details > summary {
+  padding: .35rem 0;
+  font-weight: 700;
   color: var(--fg);
+  cursor: pointer;
 }
 
-nav[aria-label="Containers"] a {
-  display: block;
-  padding: 0.3rem 0.2rem;
+/* ⭐ The summary's link is inline, so the disclosure mark sits on the title's
+   own line (R2: it stood alone above it and read as a stray glyph). */
+nav[aria-label="Containers"] summary a { display: inline; color: inherit; text-decoration: none; }
+nav[aria-label="Containers"] summary a:hover { text-decoration: underline; }
+
+nav[aria-label="Containers"] li li > a,
+nav[aria-label="Containers"] li li[aria-current="page"],
+nav[aria-label="Containers"] li li[data-readable="false"] {
+  display: flex;
+  padding: .28rem .4rem .28rem 0;
+  color: var(--fg-soft);
   text-decoration: none;
-  border-radius: 5px;
+  border-radius: var(--radius-tight);
 }
 
-nav[aria-label="Containers"] a:hover {
-  background: var(--surface);
-  text-decoration: underline;
+nav[aria-label="Containers"] li li > a:hover { color: var(--fg); background: var(--surface-2); }
+
+nav[aria-label="Containers"] span[data-kind="numbering"] {
+  flex: 0 0 1.8rem;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding-right: .55rem;
 }
 
 /* ⛔ The current container's mark reaches its OWN summary and never the rows
-   nested under it: `li[aria-current="true"]` encloses every unit of that
-   container, so an unscoped rule would print the whole open course in bold and
-   say "you are here" about eight rows at once. ⚠️ `--fg` rather than `--accent`,
-   as the trail's own current rule uses, so the contrast is the card's ordinary
-   text contrast and not a second ratio to keep in step. */
+   nested under it. The current unit is told apart by weight AND by the wash;
+   `aria-current` is the statement and this is the reinforcement. */
 nav[aria-label="Containers"] li[aria-current="true"] > details > summary,
 nav[aria-label="Containers"] li[aria-current="page"] {
   font-weight: 700;
   color: var(--fg);
 }
 
-/* ⛔ `data-readable="false"` is §7's third state — a unit this build has no page
-   for — and it must be legible as "listed, not openable" without colour: an
-   italic face and a leading mark. ⚠️ The mark is `content`, so it is decoration
-   a screen reader skips; the state itself is already in the attribute. */
+nav[aria-label="Containers"] li li[aria-current="page"] {
+  background: var(--accent-soft);
+  box-shadow: inset 2px 0 0 var(--accent);
+}
+
+/* ⛔ `data-readable="false"` is §7's third state — listed, not openable — and
+   is legible without colour: italic, and no pointer affordance. */
 nav[aria-label="Containers"] li[data-readable="false"] {
-  padding: 0.3rem 0.2rem;
   font-style: italic;
   color: var(--muted);
 }
 
-nav[aria-label="Containers"] li[data-readable="false"]::before {
-  content: "\2014 ";
-}
+/* --- the rail beside the column (W325, W326, W328, W333) ----------------- */
 
-/* --- region 10 beside the column: the left rail (W325) ------------------ */
+/* ⛔ THE USER'S WORDS: a left bar, flush to the window's edge, fixed while the
+   page scrolls. ⭐ Three rules of CSS over the same bytes, asked for by the
+   page that HAS the region (`:has()`), so the root index gets no empty track.
+   The reading column is what is left of the viewport (`1fr`), bounded by
+   `--page-max`; the prose inside it keeps `--measure` (`reading.css`).
 
-/* ⛔ THE USER'S WORDS WERE "there is no left navigation bar between courses".
-   `W324` built the navigation and left it in the column; this is the placement,
-   and it is the whole of what this block does.
+   ⛔ The rail spans ten rows because `page.html` declares ten top-level
+   positions inside `<body>`: a negative line would count from the end of the
+   EXPLICIT grid, which has columns only. The unit mirror reads this number
+   back against the skeleton. Sticky and not fixed, with `max-height: 100vh` and
+   `overflow-y: auto` as one decision: a long course list scrolls itself.
 
-   ⛔ NO SCRIPT AND NO SECOND MARKUP. R8's floor is a file opened with no server
-   and no scripting, so a rail that needed either would not be one for this
-   product. This is three rules of CSS over the bytes `W324` already emits.
-
-   ⛔ `:has()` IS THE CONDITION, AND IT IS NOT A CONVENIENCE. The root index
-   carries no rail at all — `render.index.document` lists it in its table of
-   absences, because the index's own body already IS the tree — so a grid
-   declared unconditionally would give that page an empty `17rem` column down its
-   left and shift its contents off centre. ⭐ The two-column page is therefore
-   asked for by the page that HAS the region. ⚠️ And a browser that does not
-   understand `:has()` gets the card, which is the shape this file ships at a
-   narrow viewport anyway: the degradation is the same one, reached twice.
-
-   ⛔ THE READING COLUMN IS A FUNCTION OF THE VIEWPORT, AND `W328` IS WHY THAT
-   SENTENCE IS HERE. The second track shipped as
-   `minmax(0, calc(var(--measure) + 2 * var(--gutter)))` — a CONSTANT — so the
-   whole layout resolved one width and the page centred itself inside any
-   monitor wider than it, whatever room the reader had. ⭐ It is `minmax(0, 1fr)`
-   now: the reading column is what is left of the viewport once the rail and the
-   gutters are taken off it, which is the user's second clause — *"the context
-   panel should be dynamic using more content of the page"*.
-
-   ⚠️ THE RUNNING MEASURE IS NOT REOPENED BY THAT, and the distinction is the
-   whole of why this is safe. `reading.css` caps `main p, main li`, `hr`,
-   `blockquote` and `details.disclosure` at `--measure`, and 80 characters is
-   already at the top of the legible range — widening prose would make the page
-   worse and the scroll barely shorter. ⭐ What widens is the half `reading.css`
-   itself calls *"scanned rather than read"*: the figure, the table and the code
-   block, which were the elements squeezed into a laptop's column on a desktop.
-
-   ⛔ `--page-max` IS THE BOUND, AND IT BITES NOW. An unbounded column puts a
-   code block across a whole 4K display, which is the full-bleed defect the
-   column section above was written against, one viewport along. ⭐ The ceiling
-   chosen is the one the palette ALREADY declares, so this row mints nothing:
-   `96rem` is 1536px at the initial font size, and against the rail and the
-   gutters that leaves a reading column of 1224px — MEASURED, in this image's
-   browser, at a viewport past the ceiling, against the 800px the constant track
-   resolved to under the same face. ⚠️ A different prose face moves the second
-   number and not the first, so the ratio is not carried as a fact.
-   ⚠️ `W325/2` said this ceiling *"does not bite under the face this image
-   pins"*; that reading was taken against a bound whose other term was the
-   measure, and it is DATED — `--page-max` is the only term now, so it bites at
-   every viewport past it.
-
-   ⛔ THE RAIL IS FLUSH AGAINST THE VIEWPORT'S LEFT EDGE, WHICH IS WHY `body`
-   GIVES UP ITS LEFT MARGIN AND ITS LEFT GUTTER HERE. ⭐ The user's words were
-   *"the left panel shou go all the way to the left side and be fixed"*. What
-   floated it in was the centred cap above, not anything the rail itself did.
-   ⚠️ `margin-left: 0` against the inherited `margin-right: auto` is what
-   left-aligns the page, and `padding-left: 0` gives up the gutter `reading.css`
-   puts on every `body`; the RIGHT gutter is untouched, so the reading column
-   keeps its air. ⛔ The rail's own left border and its two left corners go with
-   it — a bordered, rounded edge at x=0 is a card touching the screen rather
-   than a rail running down it.
-
-   ⛔ THE RAIL IS STICKY, AND THE OBJECTION THAT SAID IT COULD NOT BE IS DATED
-   RATHER THAN WRONG. The paragraph this replaces said *"a grid item's
-   containing block is its grid AREA, so `position: sticky` on a one-row item
-   sticks within that row and does nothing at all, and an item spanning every
-   row would have to know how many rows a page has"* — recorded as `W325/3`.
-   ⭐ Both halves were true; `W326` then gave the item the span, so the area it
-   may travel down is the page, and `top: 0` is a rail that stays at the top of
-   the window however far the reader scrolls. ⚠️ Sticky and not `fixed`: a fixed
-   rail leaves the grid, and the reading column would slide under it.
-
-   ⛔ A RAIL TALLER THAN THE WINDOW SCROLLS ITSELF, AND THE TWO DECLARATIONS
-   THAT DO IT ARE ONE DECISION. `max-height: 100vh` is what stops a long course
-   list running off the bottom of a rail that no longer moves, and
-   `overflow-y: auto` is what makes the part past the fold reachable. ⚠️ Neither
-   is any use alone — the height without the overflow CLIPS the list, and the
-   overflow without the height never applies — so a later edit that drops one of
-   them silently loses a corpus's last containers. ⭐ No committed fixture is
-   large enough to show that: the biggest container in any of them declares
-   three units, which is `W326/2` one row earlier. The browser arm therefore
-   builds a corpus whose rail is TALLER than the window it is opened in.
-
-   ⚠️ `72rem` IS THE ONE THRESHOLD IN THIS FILE and the browser arm reads it back
-   rather than repeating it: a media query resolves `rem` against the initial
-   font size, so it is 1152px. ⭐ Nothing can overflow at the threshold itself
-   now that the second track is a FRACTION rather than a stated measure — `1fr`
-   takes what is left and cannot ask for more — and `minmax(0, …)` stays because
-   it is what keeps a wide code block from pushing that track past its share.
-
-   ⛔ THE RAIL SPANS THE READING COLUMN'S ROWS, AND `W326` IS WHY THAT SENTENCE
-   IS HERE. It shipped as `grid-row: 1`, which put the rail in the MASTHEAD's row
-   — and a row is as tall as its tallest item, so the masthead's row was as tall
-   as the whole course list and every later element of the reading column began
-   at the rail's bottom edge. ⭐ A reader opened a unit, saw the title, and then
-   the height of the rail in blank page before the prose; it scaled with the
-   container's unit count, so the biggest course was the worst hit and no fixture
-   in this repository was large enough to show it.
-
-   ⛔ `1 / -1` IS NOT THE REPAIR, AND THAT IS MEASURED RATHER THAN ARGUED. A
-   negative row line counts back from the end of the EXPLICIT grid, and the
-   explicit grid here has COLUMNS ONLY — every row is implicit — so row line `-1`
-   IS row line `1`, the placement collapses to a one-row span, and the defect
-   survives unchanged. ⚠️ Nothing in CSS spells *every implicit row*, so the span
-   is a stated number.
-
-   ⭐ THE NUMBER IS DERIVED AND IT IS JOINED. `page.html` declares ten top-level
-   positions inside `<body>` — the masthead, the reading surface, the script tag
-   and seven slots — so ten is a CEILING on the grid items a page of this
-   framework can put in the reading column, and it is a generous one: the rail is
-   one of the ten and the script tag is never laid out. ⭐ A rail spanning ten
-   rows therefore spans every row, whatever the page carries. ⛔ The unit mirror
-   reads this number back out of this file and asserts it against the skeleton's
-   own count, so a slot added to `page.html` is a red check here rather than a
-   rail that stops short of the page's last row and sizes it on the way past.
-   ⚠️ The trailing spanned rows are empty and size to nothing, except where the
-   rail is TALLER than the prose beside it — there they take up its overhang,
-   which is the page growing to hold its own navigation and is what should
-   happen. ⭐ `W328` bounds that overhang at the window's own height, so the
-   most a short page can grow by is one screen. */
+   ⭐ The margin rule moves to the rail's right edge, between the reader's
+   column and the work. `72rem` is the one threshold in these parts. */
 
 @media (min-width: 72rem) {
   body:has(nav[aria-label="Containers"]) {
@@ -595,74 +266,20 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
     padding-left: 0;
   }
 
-  /* ⛔ THE PAGE WITHOUT A RAIL STARTS WHERE THE PAGE WITH ONE STARTS, AND
-     `W333` IS WHY THAT SENTENCE IS HERE. The rule above gave up the left margin
-     on the two-column page and left the one-column page — the root index, whose
-     own body IS the tree — with the centred cap the column section declares.
-     ⭐ MEASURED at `6541eec`, scripts off, on this framework's own `depth2`
-     fixture built by `write_site`: `body`'s BORDER BOX left edge read 0 on a
-     unit page at 1280px, 1920px and 2560px, and 220px, 540px and 860px on the
-     index at the same three. ⛔ So a reader clicking a unit out of the index saw
-     the whole page slide to the left edge, and the wider they had opened the
-     window the further it slid — the same site, and nothing on either page tells
-     them that one of them is *the page with a rail*.
+  body:has(nav[aria-label="Containers"])::before {
+    left: calc(var(--rail) + var(--gutter) / 2 - 1px);
+  }
 
-     ⭐ THE ONE-COLUMN PAGE IS FLUSH LEFT TOO, WHICH IS THE USER'S OWN WORDS —
-     *"the left panel shou go all the way to the left side"* — CARRIED TO THE
-     PAGE THAT HAS NO PANEL. ⚠️ The other shape open was to re-centre the rail
-     page inside a wider bound; it is refused because it contradicts that
-     sentence, and because the flush edge is what this file ALREADY gives every
-     page below the threshold — measured at 720px, `body`'s left edge is 0 on
-     both page kinds. ⛔ So this row moves the one remaining centred shape onto
-     the one the rest of the file already had, rather than inventing a third.
-
-     ⛔ THE LEFT GUTTER SURVIVES HERE, AND IT IS THE DIFFERENCE BETWEEN THE TWO
-     RULES RATHER THAN AN OVERSIGHT. The rail page gives its gutter up because
-     the RAIL is what sits at the window's edge; a page with nothing to put there
-     would run its masthead into the screen. ⭐ The one-column page's content
-     therefore starts one gutter in at EVERY viewport, above the threshold and
-     below it, so that page does not move at all any more.
-
-     ⛔ NO GRID AND NO SECOND TRACK, AND THAT IS A DECISION RATHER THAN A
-     SHORTFALL. Indenting the index by `--rail` so its masthead lined up with a
-     unit page's would reserve an empty column on the one page that carries no
-     rail — exactly what the `:has()` condition above exists to prevent — and it
-     would make that page's own content jump from one gutter to a rail's width
-     plus one as the reader widened the window, which is this row's defect moved
-     from the click to the resize.
-
-     ⚠️ NOTHING ABOUT THE READING MEASURE IS DECIDED HERE, AND NO TOKEN IS
-     MINTED. The one-column page keeps the column section's measure-derived cap
-     and the two-column page keeps the rule above's `--page-max`, so the air to
-     the right of a paragraph is what it was on both page kinds. ⛔ Whether that
-     measure should rise is an open question that is not this file's to answer,
-     and a bound moved here would have answered it. */
+  /* ⛔ The page without a rail starts where the page with one starts (`W333`):
+     flush left, keeping its own gutter. */
   body:not(:has(nav[aria-label="Containers"])) {
     margin-left: 0;
   }
 
-  /* ⛔ Everything that is not the rail is the reading column, whatever arrives
-     next: a slot added to `page.html` lands in the right track with no rule of
-     its own, which is the half of this a per-region list would get wrong. */
   body:has(nav[aria-label="Containers"]) > * {
     grid-column: 2;
   }
 
-  /* ⚠️ EQUAL SPECIFICITY WITH THE RULE ABOVE, so ORDER decides it and this one
-     is second deliberately — the same argument this file's own loading note
-     makes about `reading.css`.
-
-     ⭐ `align-self: start` IS STILL RIGHT AND ITS OLD REASON IS DATED. It said
-     *"because the row this item sits in is the masthead's"*, which was true of
-     `W325`'s placement and is the placement `W326` removed. ⛔ The reason now is
-     the span: an item stretched down ten rows would draw its border to the
-     bottom of the page with the course list stranded at the top of it.
-
-     ⛔ `align-self: start` AND `max-height` ARE NOT THE SAME DECLARATION SAID
-     TWICE. The first says where in its area the rail sits, the second says how
-     much of the window it may take; a rail without the first is a border drawn
-     to the foot of the page, and a rail without the second loses its last
-     containers off the bottom of the screen. */
   body > nav[aria-label="Containers"] {
     grid-column: 1;
     grid-row: 1 / span 10;
@@ -672,77 +289,13 @@ nav[aria-label="Containers"] li[data-readable="false"]::before {
     max-height: 100vh;
     overflow-y: auto;
     margin: 0;
+    padding: 1.5rem .5rem 2rem var(--gutter);
     border-left: 0;
     border-start-start-radius: 0;
     border-end-start-radius: 0;
   }
+
+  /* The fold is a narrow-width device: beside the column the list is always
+     shown, and the page script reopens it if the window widens. */
+  nav[aria-label="Containers"] > details > summary { display: none; }
 }
-
-/* --- region 7: the read control, and the mark it sets ------------------ */
-
-/* ⛔ The reader's own record (`SF-30`), set to read as an ACT and not as more
-   prose: a panel with the page's UI face, a button that looks like one, and the
-   sentence about where the mark lives quiet underneath. ⚠️ The region ships
-   `hidden` and `read-mark.js` unhides it only once it has a working store, so
-   nothing here rules the scriptless case — `[hidden]` is the user agent's, and a
-   control that cannot work is not shown rather than shown greyed out. ⛔ `body >`
-   scopes every selector, as the practice panel's do, because `data-section` is
-   OVERLOADED: `section.html` carries a corpus's own key in it (R1). */
-
-body > section[data-section="read-mark"] {
-  margin: 2.5rem 0 1.5rem;
-  padding: 1rem 1.15rem;
-  background: var(--surface);
-  border-top: 1px solid var(--rule);
-  border-radius: 8px;
-  font-family: var(--font-ui);
-}
-
-body > section[data-section="read-mark"] button {
-  font: inherit;
-  padding: 0.4em 0.95em;
-  background: var(--bg);
-  color: var(--fg);
-  border: 1px solid var(--rule-strong);
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-/* ⚠️ The state is told apart by its border and its weight as well as by its
-   colour, because the two labels are the authoritative statement and this is the
-   reinforcement — not the other way round. */
-body > section[data-section="read-mark"][data-marked="true"] button {
-  border-color: var(--accent);
-  color: var(--accent);
-  font-weight: 600;
-}
-
-body > section[data-section="read-mark"] p {
-  margin: 0.7rem 0 0;
-  font-size: 0.92rem;
-  color: var(--muted);
-}
-
-body > section[data-section="read-mark"] p:first-child {
-  margin: 0;
-}
-
-/* ⛔ The mark, surfaced on the two lists that ARE their pages. ⭐ A GLYPH and not
-   a colour: a row nobody can tell apart without seeing colour is a row that is
-   not marked for everybody. ⚠️ `data-marked` is set at read time and emitted by
-   no renderer — the mark is the reader's own, and the generated page is
-   byte-identical whoever opens it (R10). */
-nav[aria-label="Contents"] li[data-marked="true"]::after,
-nav[aria-label="Units"] li[data-marked="true"]::after {
-  content: " \2713";
-  color: var(--accent);
-  font-weight: 700;
-}
-
-/* --- what the reader asked for ---------------------------------------- */
-
-/* ⚠️ `reading.css` already flattens animation under `prefers-reduced-motion`.
-   The one thing it cannot know about is the smooth scroll `reset.css` sets,
-   which it also already undoes. Nothing here adds motion, so nothing here
-   needs undoing — stated rather than left as an absence somebody has to
-   re-derive. */

@@ -115,8 +115,9 @@ def test_the_skeletons_positions_are_read_and_not_a_list_kept_beside_it():
     # OWN, by name, so a slot renamed is a red check rather than a number that
     # still adds up. ⚠️ Every slot `page.html` declares at body level is a
     # placeholder of it — asserted as a subset, because `header`, `main` and
-    # `script` are elements and are positions without being slots.
+    # `script` are elements and are positions without being slots — and so is
+    # the skip link, `a`, the first focusable element on every page (`W362`).
     slots = templates.placeholders("page.html")
     positions = set(skeleton_body_positions())
     assert positions & slots, "no position here is a slot of the skeleton, so this reads nothing"
-    assert (positions - slots) <= {"header", "main", "script"}, sorted(positions - slots)
+    assert (positions - slots) <= {"a", "header", "main", "script"}, sorted(positions - slots)

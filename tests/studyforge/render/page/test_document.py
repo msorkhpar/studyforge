@@ -63,8 +63,14 @@ def test_a_document_that_cannot_identify_itself_is_refused_as_a_page_error():
         compose(variant="Not A Slug")
 
 
-def test_the_masthead_names_where_the_unit_sits():
-    assert "<p>depth-one · prose</p>" in compose()
+def test_the_masthead_names_the_variant_and_no_builder_slug():
+    # ⛔ `W362`: the address slugs joined by middle dots were builder words
+    # (M2, M3); the trail names every container by its title. The variant is
+    # the corpus's own word and stays (R1).
+    page = compose()
+    assert "<p>prose</p>" in page
+    assert "·" not in page
+    assert "depth-one ·" not in page
 
 
 def test_a_document_with_no_title_is_refused():
@@ -80,13 +86,20 @@ def test_a_document_with_no_sections_is_refused():
 
 
 def test_a_complete_unit_shows_no_pending_panel():
-    assert "More to come" not in compose()
+    assert "Practices still to come" not in compose()
 
 
 def test_a_short_unit_says_so_with_both_counts():
     markup = document_module.pending(a_document(practices={"declared": 3, "archived": 1}))
-    assert "1 of 3 archived" in markup
-    assert "2 to come" in markup
+    assert "1 practice is here, 2 still to come." in markup
+    # ⛔ `W362` (P2): no builder word and no middle dot in what the reader reads.
+    assert "archived" not in markup
+    assert "·" not in markup
+
+
+def test_the_count_agrees_with_its_number():
+    markup = document_module.pending(a_document(practices={"declared": 4, "archived": 2}))
+    assert "2 practices are here, 2 still to come." in markup
 
 
 def test_a_unit_nothing_declared_a_count_for_is_also_outstanding():

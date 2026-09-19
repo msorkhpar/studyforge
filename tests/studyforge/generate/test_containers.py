@@ -29,7 +29,9 @@ def a_page(tmp_path, name: str, which: int = 0) -> tuple[str, str]:
 
 
 def hrefs_in(body: str) -> list[str]:
-    return re.findall(r'href="([^"]*)"', body)
+    # ⚠️ An in-page fragment is not a page the build writes: since `W362` every
+    # page opens with a skip link to its own `#content`.
+    return [href for href in re.findall(r'href="([^"]*)"', body) if not href.startswith("#")]
 
 
 # --------------------------------------------------------------------------
@@ -73,7 +75,9 @@ def test_a_container_is_called_by_the_corpus_own_deepest_word(tmp_path):
 
     identity = re.search(r"<h1>[^<]*</h1>\s*<p>([^<]*)</p>", body)
     assert identity is not None, "the page carries R4's identity line"
-    assert identity.group(1).split(" ")[0] == "module"
+    # ⚠️ `W362`: the line is a sentence now (`2 units in this module`), so the
+    # corpus's word is found in it rather than read off its front.
+    assert re.search(r"\bmodule\b", identity.group(1))
     assert "section" not in identity.group(1)
 
 

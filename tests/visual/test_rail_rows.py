@@ -86,6 +86,7 @@ COLUMN = """
   const label = el => el.tagName + '[' + (el.getAttribute('aria-label') || el.id || '') + ']';
   return Array.from(document.body.children)
     .filter(el => getComputedStyle(el).display !== 'none')
+    .filter(el => getComputedStyle(el).position !== 'absolute')
     .filter(el => el.getAttribute('aria-label') !== 'Containers')
     .map(el => { const box = el.getBoundingClientRect();
       return [label(el), box.top, box.height]; });

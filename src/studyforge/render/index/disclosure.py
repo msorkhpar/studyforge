@@ -140,9 +140,32 @@ def _section(section: Section, at: tuple[int, ...], opened: int) -> str:
     state = " open" if len(at) <= opened else ""
     return (
         f'<li><details id="{escape_attribute(section.key)}"{state}>'
-        f"<summary>{_level(section)}{inline(section.title)}</summary>"
+        f"<summary>{_level(section)}{inline(section.title)}{_tally(section)}</summary>"
         f"<ol>{children}</ol></details></li>"
     )
+
+
+def readable_items(section: Section) -> list[Item]:
+    """Every unit under `section`, at any depth, that has a page — in reading order."""
+    found: list[Item] = []
+    for child in section.sections:
+        found += readable_items(child)
+    found += [item for item in section.items if item.href is not None]
+    return found
+
+
+def _tally(section: Section) -> str:
+    """Return the group's own `0 of N read`, hidden until the page script fills it.
+
+    ⭐ `W362`: each group says how far through it the reader is, right-aligned
+    on its own summary. ⛔ The words are here; `progress-view.js` writes the
+    number only, and with no script it stays hidden, because the marks are the
+    browser's.
+    """
+    total = len(readable_items(section))
+    if not total:
+        return ""
+    return f" <small hidden><b>0</b> of {total} read</small>"
 
 
 def _item(item: Item, at: tuple[int, ...]) -> str:

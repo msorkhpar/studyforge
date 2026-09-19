@@ -16,7 +16,10 @@ from tests.visual.page import SCHEMES, OpenPage
 
 #: How many presses a traversal takes before giving up. Comfortably more than
 #: the fixture pages need, so a page that grew a control still passes.
-PRESSES = 40
+#: ⚠️ Raised from 40 by `W362`: the index gained a skip link, a progress strip,
+#: an Up next slip and a filter with two buttons ahead of its tree, and every
+#: one of them is a Tab stop the walk has to pass before it reaches the rows.
+PRESSES = 80
 
 
 def _links_in_the_chrome(page: OpenPage) -> list[str]:
@@ -50,6 +53,10 @@ def _closed_disclosures(page: OpenPage) -> list[str]:
         page.evaluate(
             "Array.from(document.querySelectorAll("
             "'nav[aria-label] details:not([open]) > summary'))"
+            # ⚠️ Only a summary the reader can SEE (`W362`): the index now opens
+            # just the group holding the next unit, so a closed group inside a
+            # closed group is reached by opening its parent first, not by Tab.
+            ".filter(s => s.checkVisibility())"
             ".map(s => s.textContent.trim().slice(0, 40))"
         )  # type: ignore[arg-type]
     )

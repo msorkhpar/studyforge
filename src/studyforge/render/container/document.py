@@ -66,7 +66,7 @@ from studyforge.address import AddressError
 from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
-from studyforge.render.container import listing
+from studyforge.render.container import listing, progress
 from studyforge.render.container.entries import Document
 from studyforge.render.container.placement import Placement
 from studyforge.render.markup import escape, escape_attribute, inline
@@ -83,9 +83,6 @@ KIND = "container"
 
 #: What separates two regions of the body, and what closes an optional region.
 JOIN = "\n"
-
-#: What separates the parts of the masthead's second line.
-META_SEPARATOR = " · "
 
 #: Every page ends in exactly one newline. ⚠️ Appended here rather than left as
 #: a trailing blank line in the template, because the loader strips one trailing
@@ -114,7 +111,13 @@ def compose(
     published surface, exactly as the bar is.
     """
     rows = listing.render(document.address, document.items)
-    body = JOIN.join(part for part in (note(document), rows) if part)
+    readable = [item for item in document.items if item.href is not None]
+    first = readable[0] if readable else None
+    where = (
+        progress.line(len(readable)),
+        progress.up_next(first.title, first.href) if first else "",
+    )
+    body = JOIN.join(part for part in (note(document), *where, rows) if part)
     return (
         templates.fill(
             SKELETON,
@@ -157,16 +160,18 @@ def identity(document: Document, placement: Placement) -> str:
 
 
 def meta(document: Document) -> str:
-    """Return the masthead's quieter second line: what this is, where it sits, in which variant.
+    """Return the masthead's quieter second line: `11 units in this module`.
 
-    ⚠️ Assembled from the record's own fields and from no wording of this
-    framework's own — `level` is the corpus's word for this depth,
-    `manifest.levels[-1]`, and a sentence typed here would be one every corpus
-    had to live with (R1).
+    ⛔ **Not the address slugs and the variant joined by middle dots** (`W362`,
+    M1–M3, CP1): those were the builder's identifiers. ⭐ The count is a fact
+    about the site, and the depth is named in the corpus's OWN word for it —
+    `level`, `manifest.levels[-1]` — never this framework's (R1). A corpus that
+    names its levels with nothing gets the count alone.
     """
-    parts = [document.level, *document.address.segments, document.variant]
-    line = META_SEPARATOR.join(escape(part) for part in parts if part)
-    return f"<p>{line}</p>" if line else ""
+    count = progress.units_phrase(len(document.items))
+    if not document.level:
+        return f"<p>{count}</p>"
+    return f"<p>{count} in this {escape(document.level)}</p>"
 
 
 def note(document: Document) -> str:

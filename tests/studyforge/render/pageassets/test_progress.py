@@ -296,7 +296,9 @@ def test_the_marked_hook_is_taken_from_the_published_contract():
     # ⛔ `chrome.css` draws the marked state, so the spelling is published rather
     # than agreed by coincidence between a script and a stylesheet.
     assert SURFACE_HOOKS["marked"] in uncommented(CONSUMER)
-    assert SURFACE_HOOKS["marked"] in text("chrome.css")
+    # ⭐ `W362` moved the drawing of a marked row into `lists.css`, one of the
+    # three chrome parts split from `chrome.css` at named seams.
+    assert SURFACE_HOOKS["marked"] in text("lists.css")
 
 
 def test_no_python_module_anywhere_can_read_the_readers_store():

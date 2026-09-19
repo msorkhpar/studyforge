@@ -27,7 +27,7 @@ RAW_COLOUR_EXEMPTIONS = {"video-player.css": {"#000", "#fff"}}
 #: Custom properties a SCRIPT sets and a stylesheet reads, which are therefore
 #: not the palette's to define. ⛔ By prefix and stated one at a time, so the
 #: exemption cannot quietly widen into "any token nobody defined".
-SET_BY_SCRIPT = ("--plyr", "--progress")
+SET_BY_SCRIPT = ("--plyr", "--progress", "--read", "--units")
 
 COLOUR = re.compile(r"#[0-9a-fA-F]{3,8}\b|\brgba?\([^)]*\)")
 DEFINED = re.compile(r"^\s*(--[\w-]+)\s*:", re.MULTILINE)

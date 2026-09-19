@@ -375,7 +375,9 @@ def test_the_readers_own_container_is_open_and_another_is_not(
     """
     open_page.open(built_corpus.url(here))
     states = open_page.evaluate(
-        f"Array.from(document.querySelectorAll('{RAIL} details')).map(d => d.open)"
+        # ⚠️ `li details`: since `W362` the whole rail sits inside one fold
+        # (`rail.html`), which is not a container and is open at this width.
+        f"Array.from(document.querySelectorAll('{RAIL} li details')).map(d => d.open)"
     )
 
     assert list(states).count(True) == 1, states

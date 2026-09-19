@@ -138,6 +138,25 @@ LEDGER: dict[str, tuple[str, str | None, str]] = {
         "`chrome.css` deferred (SF-18, SF-12/3)",
     ),
     "--focus": (STRUCTURAL, None, "the focus ring; `test_keyboard` asserts it is visible"),
+    "--sign": (
+        SURFACE,
+        None,
+        "the Up next slip's ground — the ONE filled area of the sign colour on a page "
+        "(`W362`); `--sign-ink` is the text measured against it",
+    ),
+    "--sign-ink": (MEASURED, "--sign", "the Up next slip's words and its tab (`W362`)"),
+    "--margin": (
+        STRUCTURAL,
+        None,
+        "the pale margin rule down every page (`W362`); structure, never a signal, and "
+        "no text sits on it",
+    ),
+    "--done": (
+        STRUCTURAL,
+        None,
+        "a read unit's solid tick box (`W362`); a mark, taken at 3:1 against `--bg` by "
+        "`test_identity`",
+    ),
 }
 
 

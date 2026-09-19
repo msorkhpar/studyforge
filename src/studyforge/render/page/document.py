@@ -94,9 +94,6 @@ NARRATION_GAP_TEMPLATE = "narration-gap.html"
 #: What separates two rendered sections, and what closes an optional region.
 JOIN = "\n"
 
-#: What separates the parts of the masthead's second line.
-META_SEPARATOR = " · "
-
 #: Every page ends in exactly one newline. ⚠️ Appended here rather than left as
 #: a trailing blank line in `page.html`, because the loader strips one trailing
 #: newline so an editor cannot silently lengthen an inline template — and a file
@@ -187,15 +184,16 @@ def identity(document: dict, placement: Placement) -> str:
 
 
 def meta(document: dict) -> str:
-    """Return the masthead's quieter second line: where the unit sits, in which variant.
+    """Return the masthead's quieter second line: the variant this page is in.
 
-    ⚠️ Assembled from the document's own recorded fields and from no wording of
-    this framework's own — a corpus's material names itself, and a sentence
-    typed here would be one every corpus had to live with (R1).
+    ⛔ **The address slugs are gone from it** (`W362`, M2 and M3). They were the
+    builder's identifiers (`01-getting-started`), joined by middle dots, and
+    the trail above the title already names every container by its title. ⭐ The
+    variant stays: it is the corpus's own word for which version of the unit
+    this is (`java`, `prose`), and R1 keeps the framework from judging it.
     """
-    parts = [*(document.get("address") or ()), document.get("variant")]
-    line = META_SEPARATOR.join(escape(part) for part in parts if part)
-    return f"<p>{line}</p>" if line else ""
+    variant = document.get("variant")
+    return f"<p>{escape(variant)}</p>" if variant else ""
 
 
 def pending(document: dict) -> str:
@@ -216,12 +214,21 @@ def pending(document: dict) -> str:
         return ""
     if declared is None:
         count = (
-            f"{archived} archived. Nothing declared how many this unit has, "
-            f"so it cannot be called finished."
+            f"{_practices(archived)} here. The material does not say how many this "
+            f"unit has, so it cannot be called finished."
         )
     else:
-        count = f"{archived} of {declared} archived{META_SEPARATOR}{declared - archived} to come."
+        count = f"{_practices(archived)} here, {declared - archived} still to come."
     return templates.fill(PENDING_TEMPLATE, count=escape(count))
+
+
+def _practices(number: int) -> str:
+    """`1 practice is` or `3 practices are`, in the reader's words (`W362`, P2).
+
+    ⛔ Not `archived`: that is the builder's word for how the material reached
+    this page, and a reader was never told what it meant.
+    """
+    return f"{number} practice is" if number == 1 else f"{number} practices are"
 
 
 def player(body: str, narration: Narration = SILENT) -> str:
