@@ -12,6 +12,7 @@ discovery reported (R6).
     discovered.corpora                 # `ServedCorpus`, sorted by where each sits
     discovered.report                  # every line, relative paths only (R7)
     served.rescan()                    # the scan again — what a state request reads
+    served.scan_root                   # where it scans: its root unless a site is elsewhere
 
 **Depends on.** `corpus.manifest` for the file's name, `corpus.discovery` for the
 scan, the verdict and the cache, `generate` for `read_corpus` and `Corpus`
@@ -36,6 +37,15 @@ fresh — that verdict is kept, reported and served. ⭐ **The startup `Site` is
 only as its digest**: a state request calls `rescan` and compares, so a tree that
 changed after startup reads `stale` and the answer is the new scan's. ⛔ No field
 here hands a caller the startup scan's artifacts to answer from.
+
+## ⛔ Where the record lives and where the pages are scanned are TWO paths (`W385`)
+
+⭐ **`root` is where a corpus's manifest, unit documents and progress store live;
+`scan_root` is where its pages are scanned, and it defaults to `root`.** A corpus
+built in place is scanned where it sits, so every corpus `discover` finds leaves
+it unset. ⛔ **A site `build --out` wrote elsewhere is scanned THERE**, never in
+the corpus root, which holds no page: the `--site` form names it
+(`serve.instance.site_discovery`), and no subclass overrides `rescan` to say so.
 
 ## ⛔ Two corpora with one `source` refuse the instance
 
@@ -79,13 +89,22 @@ RAISES = (DiscoveryRefused, PersonalDataLeak)
 
 @dataclass(frozen=True, slots=True)
 class ServedCorpus:
-    """One corpus an instance serves: its declarations, where it sits, how it started."""
+    """One corpus an instance serves: its declarations, where it sits, how it started.
+
+    ⭐ `scan_root` is where its pages are scanned; given as `None` it is `root` (`W385`).
+    """
 
     corpus: Corpus
     root: Path
     relative: PurePosixPath
     startup: Discovery
     digest: str
+    scan_root: Path | None = None
+
+    def __post_init__(self) -> None:
+        """Default the scan root to the corpus root, so the field is always a path."""
+        if self.scan_root is None:
+            object.__setattr__(self, "scan_root", self.root)
 
     @property
     def source(self) -> str:
@@ -108,8 +127,8 @@ class ServedCorpus:
         return self.startup.verdict
 
     def rescan(self) -> Site:
-        """Scan the corpus root again. ⛔ What every state request reads."""
-        return scan(self.root, {self.source: self.depth})
+        """Scan the pages again, at `scan_root`. ⛔ What every state request reads."""
+        return scan(self.scan_root, {self.source: self.depth})
 
     def progress(self) -> Progress:
         """Return the corpus's progress store, bound to its depth; nothing is read yet."""

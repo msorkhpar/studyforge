@@ -15,10 +15,9 @@ import pytest
 
 from studyforge.generate import read_corpus, write_site
 from studyforge.progress import store_dir
-from studyforge.serve.discovery import DiscoveryRefused, discover
+from studyforge.serve.discovery import DiscoveryRefused, ServedCorpus, discover
 from studyforge.serve.instance import (
     WRITERS,
-    SiteCorpus,
     instance_of,
     make_instance,
     namespaces_of,
@@ -173,8 +172,9 @@ def test_a_site_discovery_scans_the_site_writes_nothing_and_reports_nothing(tmp_
     discovered = site_discovery(corpus, root, site)
     (served,) = discovered.corpora
     assert (digests(site), digests(root)) == before
-    assert isinstance(served, SiteCorpus) and discovered.report == ()
-    assert (served.root, served.site, discovered.root) == (root, site, root)
+    # ⭐ `W385`: the plain `ServedCorpus`, its record at the root and its scan at the site.
+    assert type(served) is ServedCorpus and discovered.report == ()
+    assert (served.root, served.scan_root, discovered.root) == (root, site, root)
     assert served.progress().directory == store_dir(root)
     scanned = served.rescan()
     assert scanned.units and scanned == served.startup.site
