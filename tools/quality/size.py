@@ -48,6 +48,18 @@ a SPLIT at a named seam and not a trim, so the row that instruments the
 approach takes its own advice rather than buying an exception from the check
 it is extending.** The seam is the question asked: this module answers *"is
 this file over the line"* and that one answers *"is it heading for it"*.
+
+## ⛔ The ceiling reads every AUTHORED source file under `src/` (`W367`)
+
+⚠️ **It used to read `*.py` only, so `chrome.css` reached 748 lines and nothing
+failed** (`W362-plan/1`). ⭐ **`AUTHORED_SUFFIXES` names the other languages the
+framework ships as source** — stylesheets, scripts and page templates — and
+`authored_files` walks `src/` for them. ⛔ **A vendored third-party file is
+excluded BY ITS PATH in `VENDORED`, each with its reason**, never by suffix or
+directory: a directory exclusion would let the next authored file placed beside
+a vendored one pass unread. ⚠️ **Such a file has no `Size exception:` opt-out**,
+because it has no docstring for one to live in; the remedy is the one `W362`
+took for `chrome.css` — a split at a named seam.
 """
 
 from __future__ import annotations
@@ -73,6 +85,37 @@ BOTH_FORMS = (
     f"`{config.SIZE_EXCEPTION_MARKER} <TASK-ID> splits this module`, plus why "
     "not in this task, which the named row retires by deleting the line. The "
     "task id goes on the marker line, where the wave-open sweep reads it."
+)
+
+#: The non-Python source languages the framework ships, read under `src/` only.
+#: ⛔ Markdown is NOT here: a `SKILL.md` is a document the framework ships, not a
+#: module, and R11 is a ceiling on modules.
+AUTHORED_SUFFIXES = (".css", ".js", ".html")
+
+#: The one scan root for `AUTHORED_SUFFIXES`: `W367` names the files the
+#: framework SHIPS, and only `src/` is shipped.
+AUTHORED_ROOT = "src"
+
+#: Third-party files, excluded by repository-relative PATH, each with its reason.
+#: ⛔ A path, never a basename: a `prism.js` anywhere else is authored.
+VENDORED = {
+    "src/studyforge/render/assets/prism.js": (
+        "Prism, vendored minified third-party code under prism.LICENSE"
+    ),
+    "src/studyforge/render/assets/plyr.js": (
+        "Plyr, vendored minified third-party code under plyr.LICENSE"
+    ),
+    "src/studyforge/render/assets/plyr.css": (
+        "Plyr's stylesheet, vendored minified third-party code under plyr.LICENSE"
+    ),
+}
+
+#: The remedy for an authored non-Python file: it has no docstring to carry an
+#: exception, so the one form open to it is the split.
+SPLIT_ONLY = (
+    "A stylesheet, script or template has no docstring to carry a "
+    f"`{config.SIZE_EXCEPTION_MARKER}` line, so the remedy is a split at a named "
+    "seam, as W362 split chrome.css."
 )
 
 
@@ -178,8 +221,52 @@ def row_ids(text: str | None) -> list[str]:
     return seen
 
 
+def authored_files(root: Path) -> list[Path]:
+    """Every authored non-Python source file under `src/`, sorted.
+
+    Vendored files are left out by their path in `VENDORED`; everything else
+    carrying one of `AUTHORED_SUFFIXES` is read.
+    """
+    directory = root / AUTHORED_ROOT
+    if not directory.is_dir():
+        return []
+    found: list[Path] = []
+    for path in directory.rglob("*"):
+        relative = config.relative(path, root)
+        if (
+            path.is_file()
+            and path.suffix in AUTHORED_SUFFIXES
+            and relative not in VENDORED
+            and not config.is_excluded(relative)
+        ):
+            found.append(path)
+    return sorted(found)
+
+
+def check_authored_sizes(root: Path) -> list[Finding]:
+    """Every authored non-Python file under `src/` over the source ceiling."""
+    findings: list[Finding] = []
+    for path in authored_files(root):
+        relative = config.relative(path, root)
+        lines = count_lines(path.read_text(encoding="utf-8"))
+        if lines > config.SOURCE_LINE_CEILING:
+            findings.append(
+                Finding(
+                    path=relative,
+                    line=1,
+                    rule=RULE,
+                    message=(f"{lines} lines, ceiling {config.SOURCE_LINE_CEILING}. {SPLIT_ONLY}"),
+                )
+            )
+    return findings
+
+
 def check_sizes(root: Path) -> list[Finding]:
-    """Every module over its ceiling without an adequate justification."""
+    """Every module over its ceiling without an adequate justification.
+
+    ⭐ Python first, then the authored stylesheets, scripts and templates
+    (`check_authored_sizes`), so the one entry in `CHECKS` reads them all.
+    """
     findings: list[Finding] = []
     for path in config.python_files(root):
         relative = config.relative(path, root)
@@ -233,4 +320,5 @@ def check_sizes(root: Path) -> list[Finding]:
                     ),
                 )
             )
+    findings.extend(check_authored_sizes(root))
     return findings
