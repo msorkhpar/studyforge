@@ -28036,3 +28036,71 @@ volume. ⭐ **The cost is the serial suite and the one lock, not the container.*
 | carrier | task | why now |
 |---|---|---|
 | `wt/dev6` | `W364` | ⭐ **the user's direction**; every gate and merge queues behind the serial suite |
+
+## PO round 120
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Two rows close, each verified by a plant; one is minted and one
+finding folds; the last task of `M5` step 5.2 is named on its carrier before it runs.**
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W351 — Reconnaissance would not draft a corpus's runtimes, so every set would be typed by hand
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W351.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** in a scratch copy: dropping the version raise turned three runtimes tests RED;
+drafting runtimes beside no grader turned two RED; unplanted, the reconnaissance suite is GREEN. ⭐ **Merged at
+`e8f2857`, every gate GREEN on the merged tree.**
+
+⛔ **`TC-00/8`: reconnaissance drafts `exercises` and would not draft `runtimes`, so every corpus's runtime set would be typed by hand — R19's own definition of a hole.**
+
+⭐ **The key is `W350`'s.** This row makes the reconnaissance skill DRAFT it from what the material carries (build files, source languages), beside where it already drafts `exercises`, ⛔ **never guessing a runtime nothing in the material evidences.**
+
+### ⛔ WHAT SETTLES IT
+
+1. ⭐ **The drafted manifest carries `runtimes`** for a corpus whose material evidences them, and omits it for prose.
+2. ⛔ **Asserted both ways (R12)** over fabricated corpora of each shape.
+
+⭐ **Surface:** `src/studyforge/skills/reconnaissance/`. ⛔ **After `W350`.**
+
+[the mint](#po-round-112)
+
+### W357 — The exercise record requires a test path, so a file with no test — not a failure — cannot be expressed
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W357.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Clause 1 decided by the office before code:** an ungraded unit names its file in the SAME §7 `exercise` record,
+with `main_path` and `run_command` only; the grader fields come together or not at all; `raw_api` stays `1`.
+⭐ **Verified before merge by PLANTING:** `graded` answering true for every record turned exercise, fixture and runner
+tests RED; dropping unit 3's `main_path` turned others RED; unplanted, GREEN in the office's own worktree. ⭐ **Merged
+at `8f6c535`, every gate GREEN on the merged tree.** ⚠️ **`W357/1` was relayed to `SF-22`'s office BEFORE merge**: a
+non-null `workspace` no longer means graded.
+
+⛔ **`W352/1`: the §7 `exercise` record REQUIRES a `test_path`, so it cannot express *a file with no test* — the very state `M5`'s *Done when* says is not a failure.**
+
+⭐ **Measured by `W352`'s office while building the runnable fixture:** its ungraded unit therefore has no `main_path` either. ⚠️ **So how `SF-44` — the reader's terminal command — maps a file the reader edited to an UNGRADED unit is written nowhere**, and its taker would have to invent it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The contract says how an ungraded unit names its file** — a record with a `main_path` and no `test_path`, or a separate declaration; ⭐ **the row argues which, before `SF-44` is dispatched.**
+2. ⛔ **It is a contract change, so it lands where contracts go** (§7, and the version rule that governs a record), ⭐ **and `tests/fixtures/runnable/` expresses its untested unit through it.**
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/exercise/`, spec §7. ⛔ **Before `SF-44`.**
+
+[the mint](#po-round-116)
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `W351/1` — the capability survey does not recognise the runnable fixture's `check_*.py` graders, so a re-survey disagrees with its manifest | ⭐ **FOLDS into `W358`**: the graders are named `check_*.py` only to escape this repository's own collection, which `W358` removes |
+| `W351/2` — a hand-added `runtimes` below version 4 is still refused | ⭐ **`W359`'s**, already minted |
+| `W357/2` — `tests/studyforge/execute/runnable.py` read outside the surface | ⭐ **local**, forced by a red test and declared |
+| `W357/3` + `W357/4` — the authoring guide and `E06` describe *ungraded* only as *no exercise key*; a fixture-check rule files a shape refusal under the trust rule | ⭐ **minted `W365`** |
+
+### ⭐ NAMED BEFORE IT RUNS
+
+| carrier | task | why now |
+|---|---|---|
+| `wt/dev4` | `SF-44` | ⭐ **every dependency measured landed at `8f6c535`** — `SF-20`, `SF-23`, `TC-00`, and `W357`, which it waited on |
