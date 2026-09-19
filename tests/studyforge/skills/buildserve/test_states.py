@@ -163,10 +163,8 @@ def test_the_host_state_says_what_the_ruling_says():
     assert "execute on this host, without the runner's isolation" in HOST_EXECUTION.missing
     assert HOST_EXECUTION.works.startswith("everything:")
     assert "(C5)" not in HOST_EXECUTION.works, "host mode is not a finished state"
-    assert HOST_EXECUTION.remedy == (
-        "start the runner container as code-server-toolchain's README documents, "
-        "then serve again"
-    )
+    remedy = "start the runner container as code-server-toolchain's README documents"
+    assert HOST_EXECUTION.remedy == f"{remedy}, then serve again"
     assert HOST_EXECUTION in KNOWN
 
 
