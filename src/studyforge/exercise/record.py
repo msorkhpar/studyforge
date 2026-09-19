@@ -31,12 +31,26 @@ graded state, so a key in the wrong place is a grader the reader will never be
 offered and the corpus would validate green — the exact failure §7's structure
 was chosen to make impossible.
 
-⛔ **Every field is required except `trust`.** The key's presence means graded,
-and graded means "a workspace plus a grader" — a record missing `test_command`
-is not a lesser exercise, it is an ungraded one wearing the graded key. ⚠️
-`trust` is the one exception, defaulted from `provenance` by `unit.trust`,
+⛔ **A record is one of two shapes, and nothing in between** (`W357`):
+
+| Shape | Carries | State |
+|---|---|---|
+| a file and how it runs | `REQUIRED_KEYS` — `main_path`, `run_command` | **ungraded** |
+| that, plus a grader | every key in `EXERCISE_KEYS` | **graded** |
+
+⭐ **Why a file with no test is a record and not a second declaration** is argued
+in `W357`'s handoff: the unit document's `workspace` is this record, so the
+reader's file reaches the one place every consumer already reads, with no new
+key in the archive or the unit document.
+
+⛔ **The grader half is written whole or not at all.** A record carrying
+`test_path` and no `test_command` is not a lesser exercise; it is a grader
+somebody half wrote, and it is refused, naming what is missing. ⚠️ `trust` is
+the one key a grader may omit, defaulted from `provenance` by `unit.trust`,
 which ruled that a field an author must fill in to say the obvious is a field
-an author fills in wrongly.
+an author fills in wrongly. ⛔ **With no grader, `provenance` and `trust` are
+refused too**: both are facts about a grader, and a claim of trust in a grader
+that does not exist is the claim R5 exists to stop.
 
 ## ⛔ Unknown keys are refused
 
@@ -56,7 +70,7 @@ from dataclasses import dataclass
 from studyforge.describe import describe_keys
 from studyforge.exercise.errors import ExerciseError
 from studyforge.exercise.safety import require_command, require_path
-from studyforge.exercise.states import EXERCISE_KEY
+from studyforge.exercise.states import EXERCISE_KEY, GRADER_KEY
 from studyforge.unit.errors import ContentError
 from studyforge.unit.trust import check_test_record
 
@@ -72,35 +86,55 @@ EXERCISE_KEYS = (
     "trust",
 )
 
-#: The keys a document need not carry. ⚠️ Exactly one, and `unit.trust` owns
-#: the reason.
+#: The keys every record carries: the reader's file, and how it runs. ⭐ Also
+#: the whole of an ungraded record, in `EXERCISE_KEYS` order (`W357`).
+REQUIRED_KEYS = ("main_path", "run_command")
+
+#: The grader half: written whole, or not at all. ⛔ `GRADER_KEY` first, because
+#: its presence is the graded state (`states`).
+GRADER_KEYS = (GRADER_KEY, "test_command", "provenance", "trust")
+
+#: The keys a grader need not carry. ⚠️ Exactly one, and `unit.trust` owns the
+#: reason.
 DEFAULTED_KEYS = ("trust",)
 
 
 @dataclass(frozen=True, slots=True)
 class Exercise:
-    """One graded exercise: where the work lives, how it runs, and what it claims."""
+    """One exercise: where the work lives, how it runs, and — if graded — what checks it.
+
+    ⚠️ **The four grader fields are `None` together, or set together** (`W357`),
+    which is what `from_document` guarantees. ⛔ The dataclass itself does not:
+    it is frozen, not validated, so a caller that constructs one asks
+    `from_document(to_document(...))` before believing it.
+    """
 
     main_path: str
-    test_path: str
+    test_path: str | None
     run_command: tuple[str, ...]
-    test_command: tuple[str, ...]
-    provenance: str
-    trust: str
+    test_command: tuple[str, ...] | None
+    provenance: str | None
+    trust: str | None
+
+    @property
+    def graded(self) -> bool:
+        """Does anything check this file? ⭐ The same question `states.state_of` asks."""
+        return self.test_path is not None
 
     @property
     def authoritative(self) -> bool:
-        """Is this the source's own grader? ⛔ Never true for a generated one (R5)."""
+        """Is this the source's own grader? ⛔ Never true for a generated one (R5), or none."""
         return self.trust == "authoritative"
 
 
 def of(document: object, where: str) -> Exercise | None:
     """Return the exercise a practice document carries, or `None` if it carries none.
 
-    ⚠️ `None` is the **ungraded** answer and it is not a failure — it is two of
-    the three states and the common one. A caller wanting to tell the three
-    apart asks `states.state_of`, which also answers for a document that does
-    not exist.
+    ⚠️ `None` is not a failure: it is a unit that names no file, which is the
+    common case. ⛔ **An `Exercise` is not the graded answer either** — one whose
+    `graded` is false names a file nothing checks (`W357`). A caller wanting
+    the three states asks `states.state_of`, which also answers for a document
+    that does not exist.
     """
     if not isinstance(document, dict) or EXERCISE_KEY not in document:
         return None
@@ -122,11 +156,15 @@ def from_document(value: object, where: str) -> Exercise:
         )
     _require_known_keys(value, where)
     _require_present(value, where)
+    main_path = require_path(value.get("main_path"), "main_path", where)
+    run_command = require_command(value.get("run_command"), "run_command", where)
+    if GRADER_KEY not in value:
+        return Exercise(main_path, None, run_command, None, None, None)
     provenance, trust = _trust(value, where)
     return Exercise(
-        main_path=require_path(value.get("main_path"), "main_path", where),
+        main_path=main_path,
         test_path=require_path(value.get("test_path"), "test_path", where),
-        run_command=require_command(value.get("run_command"), "run_command", where),
+        run_command=run_command,
         test_command=require_command(value.get("test_command"), "test_command", where),
         provenance=provenance,
         trust=trust,
@@ -136,26 +174,24 @@ def from_document(value: object, where: str) -> Exercise:
 def to_document(exercise: Exercise) -> dict:
     """Return the record as the decoded object, in `EXERCISE_KEYS` order.
 
-    ⭐ `trust` is always written, even where it is the default. A defaulted
-    field that disappears when it is obvious cannot be told from one nobody
-    wrote — the same argument the archive's `counts` makes — and the record
-    that reaches disk should say what the framework decided it means.
+    ⭐ A graded record writes every key, `trust` included even where it is the
+    default. A defaulted field that disappears when it is obvious cannot be
+    told from one nobody wrote — the same argument the archive's `counts`
+    makes — and the record that reaches disk should say what the framework
+    decided it means. ⛔ An ungraded one writes `REQUIRED_KEYS` and nothing
+    else: the keys are chosen by `graded`, never by which values happen to be
+    `None`, so an unvalidated `Exercise` cannot write half a grader.
     """
-    document = {
+    values = {
         "main_path": exercise.main_path,
         "test_path": exercise.test_path,
         "run_command": list(exercise.run_command),
-        "test_command": list(exercise.test_command),
+        "test_command": list(exercise.test_command or ()),
         "provenance": exercise.provenance,
         "trust": exercise.trust,
     }
-    if tuple(document) != EXERCISE_KEYS:  # pragma: no cover - built above
-        raise ExerciseError(
-            f"built the keys {list(document)}; the format is {list(EXERCISE_KEYS)}. "
-            f"Raised rather than asserted: `python -O` elides an assert, and the "
-            f"key ORDER is what reaches disk."
-        )
-    return document
+    keys = EXERCISE_KEYS if exercise.graded else REQUIRED_KEYS
+    return {key: values[key] for key in keys}
 
 
 def _require_known_keys(value: dict, where: str) -> None:
@@ -171,14 +207,23 @@ def _require_known_keys(value: dict, where: str) -> None:
 
 
 def _require_present(value: dict, where: str) -> None:
-    """Refuse a record missing a field the graded state promises."""
-    missing = [key for key in EXERCISE_KEYS if key not in DEFAULTED_KEYS and key not in value]
+    """Refuse a record with no file, and a grader written in part."""
+    missing = [key for key in REQUIRED_KEYS if key not in value]
     if missing:
         raise ExerciseError(
-            f"{where}: 'exercise' is missing {missing}. The key's presence is what "
-            f"makes a practice graded, so a record without a workspace and a "
-            f"grader is an ungraded exercise wearing the graded key — write no "
-            f"'exercise' key at all for that."
+            f"{where}: 'exercise' is missing {missing}. Every record names the "
+            f"reader's file and how it runs; a practice that names no file "
+            f"writes no 'exercise' key at all."
+        )
+    if not any(key in value for key in GRADER_KEYS):
+        return
+    missing = [key for key in GRADER_KEYS if key not in DEFAULTED_KEYS and key not in value]
+    if missing:
+        raise ExerciseError(
+            f"{where}: 'exercise' names part of a grader and is missing {missing}. "
+            f"A grader is {list(GRADER_KEYS)}, written whole with only 'trust' "
+            f"defaulted — or none of them, for a file with no test, which is "
+            f"§7's ungraded state."
         )
 
 

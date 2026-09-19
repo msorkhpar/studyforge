@@ -9,12 +9,14 @@ import pytest
 from studyforge.exercise import (
     COMMANDS,
     GRADED,
+    GRADER_KEY,
     NONE,
     RUN,
     STATES,
     TEST,
     UNGRADED,
     completes_practice,
+    from_document,
     state_of,
 )
 
@@ -47,7 +49,7 @@ def test_a_practice_document_with_no_exercise_key_is_ungraded():
     assert state_of({"kind": "practice", "blocks": PROMPT}) == UNGRADED
 
 
-def test_a_practice_document_carrying_the_key_is_graded():
+def test_a_practice_document_whose_record_names_a_grader_is_graded():
     assert state_of({"kind": "practice", "blocks": PROMPT, "exercise": RECORD}) == GRADED
 
 
@@ -58,6 +60,32 @@ def test_the_state_is_not_a_field_anybody_writes():
     document = {"kind": "practice", "blocks": PROMPT, "exercise": RECORD}
     assert "state" not in document
     assert state_of(document) == GRADED
+
+
+def test_a_practice_whose_record_names_a_file_and_no_grader_is_ungraded():
+    # ⭐ `W357`: the unit names its file, and nothing checks it. ⛔ The key's
+    # presence is no longer the graded state; the grader's is.
+    record = {"main_path": RECORD["main_path"], "run_command": RECORD["run_command"]}
+    assert state_of({"kind": "practice", "blocks": PROMPT, "exercise": record}) == UNGRADED
+    with_grader = {**record, GRADER_KEY: RECORD[GRADER_KEY]}
+    assert state_of({"kind": "practice", "blocks": PROMPT, "exercise": with_grader}) == GRADED
+
+
+def test_the_state_and_the_record_answer_graded_alike():
+    # ⭐ One question, asked two ways: `state_of` on the document and
+    # `Exercise.graded` on the record it holds.
+    for record in (RECORD, {k: RECORD[k] for k in ("main_path", "run_command")}):
+        document = {"kind": "practice", "blocks": PROMPT, "exercise": record}
+        assert (state_of(document) == GRADED) is from_document(record, "here").graded
+
+
+@pytest.mark.parametrize("value", [None, [], "exercise", 7, True])
+def test_a_record_that_is_not_an_object_is_never_graded(value):
+    # ⛔ `state_of` answers on the completion path and does not validate, so
+    # anything it cannot read as a grader completes nothing. `parse` refuses it.
+    document = {"kind": "practice", "blocks": PROMPT, "exercise": value}
+    assert state_of(document) == UNGRADED
+    assert completes_practice(state_of(document), TEST, passed=True) is False
 
 
 def test_the_three_states_are_three_names():
@@ -78,6 +106,10 @@ def test_an_ungraded_exercise_cannot_complete_a_practice():
     # ⛔ E06's named acceptance. An ungraded exercise has nothing that could
     # pass; a reader works it and it completes nothing.
     assert completes_practice(UNGRADED, TEST, passed=True) is False
+    # ⭐ `W357`: including one that names its file.
+    record = {"main_path": RECORD["main_path"], "run_command": RECORD["run_command"]}
+    named = state_of({"kind": "practice", "blocks": PROMPT, "exercise": record})
+    assert completes_practice(named, TEST, passed=True) is False
 
 
 def test_a_unit_with_no_exercise_cannot_complete_a_practice():
