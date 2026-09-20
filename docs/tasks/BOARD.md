@@ -71,13 +71,7 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `W402` | Developer 1 | `fix/W402-verify-refuses-a-dirty-component` @ `wt/dev1` | 0 @ `778e618` | in-progress |
-| `W403` | Developer 2 | `fix/W403-a-cross-repo-task-declares-both-halves` @ `wt/dev2` | 0 @ `778e618` | in-progress |
-| `W404` | Developer 3 | `fix/W404-a-siblings-contract-is-read-at-the-pin` @ `wt/dev3` | 0 @ `778e618` | in-progress |
-| `SK-09` | Developer 4 | `feat/SK-09-execution-onboarding` @ `wt/dev4` | 0 @ `778e618` | in-progress |
-| `SF-24` | Developer 5 | `feat/SF-24-practice-panel` @ `wt/dev5` | 0 @ `778e618` | in-progress |
-| `W407` | Developer 6 | `fix/W407-a-unit-page-states-its-title-once` @ `wt/dev6` | 0 @ `778e618` | in-progress |
-| `W405` | Developer 7 | `fix/W405-the-office-rules-name-the-voting-gate` @ `wt/dev7` | 0 @ `778e618` | in-progress |
+| `SF-24` | Developer 5 | `feat/SF-24-practice-panel` @ `wt/dev5` | 0 @ `3a48a44` | in-progress — RETAKE at the release tip |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -158,6 +152,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 81 | `W390`–`W396` | ⭐ **round 126's mints, each jumping nobody** — ⛔ **`W394` is a RULING and is argued before any code** | [126](BOARD-ARCHIVE.md#po-round-126) |
 | 82 | `W397`–`W401` | ⛔ **`W397` and `W399` JUMP every older `todo` row (Ruling 75): a stylesheet change cannot pass its own gate until they land** | [127](BOARD-ARCHIVE.md#po-round-127) |
 | 83 | `W402`–`W411` | ⛔ **`W402`–`W404` JUMP every older `todo` row (Ruling 75): a seam that no instrument reads is how `TC-05` closed on a reading nobody could take** | [128](BOARD-ARCHIVE.md#po-round-128) |
+| 84 | `W412`–`W421` | ⛔ **`W415` and `W419` JUMP every older `todo` row (Ruling 75): both make a GATE lie, and a lying gate spends every office after it** | [130](BOARD-ARCHIVE.md#po-round-130) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -583,16 +578,26 @@ else.**
 | W399 | A stylesheet change forces the full suite, which no longer finishes inside the gate's own bound | framework agent | ✅ done — REFUTED by `81bcdb40` | [`rows/W399.md`](rows/W399.md) |
 | W400 | The toolchain epic credits the wrong task with demonstrating the compose contract, and the spec's bind ordering describes one project's shape | framework agent | ✅ done — `b18b3170` | [`rows/W400.md`](rows/W400.md) |
 | W401 | The runner image declares no run shape, so a consumer of it must re-derive from prose what the editor states as data | framework agent | ✅ done — `77b22dab` | [`rows/W401.md`](rows/W401.md) |
-| W402 | `workspace verify` reads HEAD against the pin and is blind to a DIRTY checkout | framework agent | `todo` — the register, 2026-09-20 | [`rows/W402.md`](rows/W402.md) |
-| W403 | A cross-repo task is recorded MERGED on its framework half, its sibling half unread | framework agent | `todo` — the register, 2026-09-20 | [`rows/W403.md`](rows/W403.md) |
-| W404 | The framework reads the sibling's WORKING TREE, not the pinned ref, so a reading is local | framework agent | `todo` — the register, 2026-09-20 | [`rows/W404.md`](rows/W404.md) |
-| W405 | The office rules name no VOTING lint gate, so an office is green on arms that cannot fail | framework agent | `todo` — `W398/4` + `W398/3` | [`rows/W405.md`](rows/W405.md) |
+| W402 | `workspace verify` reads HEAD against the pin and is blind to a DIRTY checkout | framework agent | ✅ done — `5e5a0d56` | [`rows/W402.md`](rows/W402.md) |
+| W403 | A cross-repo task is recorded MERGED on its framework half, its sibling half unread | framework agent | ✅ done — `07d98525` | [`rows/W403.md`](rows/W403.md) |
+| W404 | The framework reads the sibling's WORKING TREE, not the pinned ref, so a reading is local | framework agent | ✅ done — `f961d7fe` | [`rows/W404.md`](rows/W404.md) |
+| W405 | The office rules name no VOTING lint gate, so an office is green on arms that cannot fail | framework agent | ✅ done — `fbb6ca48` | [`rows/W405.md`](rows/W405.md) |
 | W406 | Only the checkout is mounted, so every visual clause reads the fixture and never a corpus | framework agent | `todo` — `W388/15` | [`rows/W406.md`](rows/W406.md) |
-| W407 | Every unit page prints the corpus's own top heading, so the title reads twice | framework agent | `todo` — `W388/17` | [`rows/W407.md`](rows/W407.md) |
+| W407 | Every unit page prints the corpus's own top heading, so the title reads twice | framework agent | ✅ done — `0ccda3f0` | [`rows/W407.md`](rows/W407.md) |
 | W408 | A load-dependent defect is invisible at `-n auto` and reads as another module's flake | framework agent | `todo` — `W388/20` + `W388/19` | [`rows/W408.md`](rows/W408.md) |
 | W409 | The image teardown leaves the runner image the run created beneath the editor | framework agent | `todo` — `TC-06/1` | [`rows/W409.md`](rows/W409.md) |
 | W410 | `consuming/consuming.py` stands at 399 lines against R11's 400 | framework agent | `todo` — `TC-06/5` | [`rows/W410.md`](rows/W410.md) |
 | W411 | The framework records no `provides` it generates against, so a bump is refused by nobody | framework agent | `todo` — `TC-06/3` | [`rows/W411.md`](rows/W411.md) |
+| W412 | A component's LINKED WORKTREES are invisible, so a clean main checkout beside a mid-merge worktree reads green | framework agent | `todo` — `W402/3` | [`rows/W412.md`](rows/W412.md) |
+| W413 | Nothing in the tree can see whether the office rules name the voting gate; delete the section and the floor stays green | framework agent | `todo` — `W405/3` | [`rows/W413.md`](rows/W413.md) |
+| W414 | An office kills by PATTERN, so a sweep reaches another office's run in another worktree | framework agent | `todo` — `W403/8` | [`rows/W414.md`](rows/W414.md) |
+| W415 | A gate reading taken while the shared tmpfs is near full is untrustworthy in BOTH directions | framework agent | `todo` — `W407/5` | [`rows/W415.md`](rows/W415.md) |
+| W416 | The embedded editor is not delivered: nothing in the framework knows where a running editor is | framework agent | `todo` — `SF-24/1` | [`rows/W416.md`](rows/W416.md) |
+| W417 | The practice panel's keyboard behaviour is read in no browser, because the harness opens `file://` | framework agent | `todo` — `SF-24/5` | [`rows/W417.md`](rows/W417.md) |
+| W418 | `ports[0].per_project` carries no `env_var`, so two corpora on one host collide on the published port | framework agent | `todo` — `SK-09/4` | [`rows/W418.md`](rows/W418.md) |
+| W419 | A visual test monkeypatches `tempfile.tempdir` process-wide, so it can refuse any row under `-n auto` | framework agent | `todo` — `W404/6` | [`rows/W419.md`](rows/W419.md) |
+| W420 | The rubric types the DISK form of `ruff` while the arm that votes runs over `git ls-files` | framework agent | `todo` — `W405/5` | [`rows/W420.md`](rows/W420.md) |
+| W421 | `CodeSignal` carries two untracked files on no ref, in the repository R20 keeps untouched | the user | `todo` — `W402/1` — USER | [`rows/W421.md`](rows/W421.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
