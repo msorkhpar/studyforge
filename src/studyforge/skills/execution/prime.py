@@ -70,8 +70,17 @@ BUILD_FILES: dict[str, tuple[str, ...]] = {
     "python": ("pyproject.toml", "requirements.txt", "setup.cfg", "setup.py"),
 }
 
-#: A language's own source suffixes. ⛔ A *language's*, never a corpus's.
-LANGUAGES: dict[str, tuple[str, ...]] = {
+#: The source suffixes a declared **runtime** writes, by that runtime's name.
+#: ⛔ **Keyed on `corpus.json`'s `runtimes`, never on its `variants`** — and the
+#: distinction is the defect §4 records: a single module-level map that answered
+#: both *"can this be filed here?"* and *"can we run it?"* left eight SQL
+#: courses unfileable. ⭐ `runtimes` is the declaration that IS about running
+#: (§7), so a map keyed on it derives nothing from a filing key.
+#:
+#: ⚠️ **It is `SOURCE_SUFFIXES` and not `LANGUAGES` for that reason**, and
+#: `tests/studyforge/corpus/manifest/test_document.py` holds the name: the
+#: spelling it refuses is the spelling the original defect had.
+SOURCE_SUFFIXES: dict[str, tuple[str, ...]] = {
     "java": (".java",),
     "kotlin": (".kt",),
     "node": (".js", ".mjs", ".cjs", ".ts"),
@@ -232,7 +241,7 @@ def _specimens(
     """One real source and one real test per declared language, or a reason."""
     found = []
     for runtime in declared:
-        suffixes = LANGUAGES.get(runtime)
+        suffixes = SOURCE_SUFFIXES.get(runtime)
         if not suffixes:
             continue
         candidates = [
