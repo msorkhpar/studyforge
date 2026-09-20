@@ -55,7 +55,7 @@ one does.**
 | **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ Step 7.1 CLOSED (124); step 7.2 OPEN and SERIAL — `TC-02` → `TC-03` → `TC-04`, one set of build files | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
 | **M7 step 7.1** | ✅ CLOSED — `TC-01` | `9bc688f` | [record](BOARD-ARCHIVE.md#po-round-124) |
 | **M7 step 7.2** | ✅ CLOSED — `TC-02`, `TC-03`, `TC-04` | `04ce050` | [record](BOARD-ARCHIVE.md#po-round-126) |
-| **M7 step 7.3** | ⏳ OPEN — `TC-05` merged; `TC-06` in flight | — | [record](BOARD-ARCHIVE.md#po-round-127) |
+| **M7 step 7.3** | ✅ CLOSED — `TC-05` + `TC-06` | `4c8490b4` | [record](BOARD-ARCHIVE.md#po-round-128) |
 | **M10** — every corpus has practices | ⛔ **NOT STARTED — after `M7`.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; planned by [`W389`](rows/W389.md) | — | [the plan](README.md) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
@@ -71,13 +71,6 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `TC-06` | Developer 1 | `task/TC-06-versioning-and-pinning` @ `wt/dev1` | 0 @ `5c32726a` | in-progress |
-| `W397` | Developer 2 | `fix/W397-the-visual-harness-closes-what-it-opens` @ `wt/dev2` | 0 @ `5c32726a` | in-progress |
-| `W398` | Developer 3 | `fix/W398-a-cleanup-cannot-reach-a-live-run` @ `wt/dev3` | 0 @ `5c32726a` | in-progress |
-| `W399` | Developer 4 | `fix/W399-the-gate-reads-a-css-change-without-hanging` @ `wt/dev4` | 0 @ `5c32726a` | in-progress |
-| `W400` | Developer 6 | `fix/W400-the-epic-and-the-spec-say-what-was-measured` @ `wt/dev6` | 0 @ `5c32726a` | in-progress |
-| `W401` | Developer 7 | `fix/W401-the-runner-declares-its-run-shape` @ `wt/dev7` | 0 @ `5c32726a` | in-progress |
-| `W388` + `W369` | Developer 5 | `fix/W388-a-palette-for-hours-of-reading` @ `wt/dev5` | 0 @ `8c757cd` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -157,6 +150,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 80 | `W389` | ⛔ **JUMPS every older `todo` row (Ruling 75), on the USER's direction of 2026-09-19** — a PROPOSAL stage first | [125](BOARD-ARCHIVE.md#po-round-125) |
 | 81 | `W390`–`W396` | ⭐ **round 126's mints, each jumping nobody** — ⛔ **`W394` is a RULING and is argued before any code** | [126](BOARD-ARCHIVE.md#po-round-126) |
 | 82 | `W397`–`W401` | ⛔ **`W397` and `W399` JUMP every older `todo` row (Ruling 75): a stylesheet change cannot pass its own gate until they land** | [127](BOARD-ARCHIVE.md#po-round-127) |
+| 83 | `W402`–`W411` | ⛔ **`W402`–`W404` JUMP every older `todo` row (Ruling 75): a seam that no instrument reads is how `TC-05` closed on a reading nobody could take** | [128](BOARD-ARCHIVE.md#po-round-128) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -549,7 +543,7 @@ else.**
 | W366 | Every merge runs the whole suite in both environments whatever it changed, so a document-only round costs as much as a code change | framework agent | ✅ done — `63e1609` | [`rows/W366.md`](rows/W366.md) |
 | W367 | The size gate reads Python files only, so a stylesheet reached 748 lines and nothing failed | framework agent | ✅ done — `54706a9` | [`rows/W367.md`](rows/W367.md) |
 | W368 | The rail carries no unit key on its rows, so it cannot show which units the reader has marked read | framework agent | ✅ done — `8effe7a` | [`rows/W368.md`](rows/W368.md) |
-| W369 | The index keeps a one-column cap that leaves a wide window's right third empty, and a narration marker shows before anything plays | framework agent | `todo` — `W362/3` + the register's reading | [`rows/W369.md`](rows/W369.md) |
+| W369 | The index keeps a one-column cap that leaves a wide window's right third empty, and a narration marker shows before anything plays | framework agent | ✅ done — `f377f64d` | [`rows/W369.md`](rows/W369.md) |
 | W370 | No page may name the API, so a practice panel has no sanctioned way to load the run client | framework agent | ✅ done — `675e3d4` | [`rows/W370.md`](rows/W370.md) |
 | W371 | The site verb never registers the run namespace, so the build-and-serve skill reports every exercised corpus as having no runner | framework agent | ✅ done — `0f391da` | [`rows/W371.md`](rows/W371.md) |
 | W372 | No test starts a run through the served route in container mode, nor while checking that the serving process holds no Docker socket | framework agent | `todo` — `SF-22/3` | [`rows/W372.md`](rows/W372.md) |
@@ -568,7 +562,7 @@ else.**
 | W385 | A served corpus scans for pages where its record lives, so a site built elsewhere needs a subclass to be found | framework agent | ✅ done — `af4ed70` | [`rows/W385.md`](rows/W385.md) |
 | W386 | The build-and-serve skill's test plants through a private function of the serve verb, so that function cannot be renamed | framework agent | ✅ done — `af4ed70` | [`rows/W386.md`](rows/W386.md) |
 | W387 | The runner's build refuses an unpinned runtime without naming it, while the editor's names it | framework agent | ✅ done — `c1a0898` | [`rows/W387.md`](rows/W387.md) |
-| W388 | The study site's colours tire a reader within minutes, the index has no rail, and the text column wastes a wide window | framework agent | `todo` — user, 2026-09-19 | [`rows/W388.md`](rows/W388.md) |
+| W388 | The study site's colours tire a reader within minutes, the index has no rail, and the text column wastes a wide window | framework agent | ✅ done — `f377f64d` | [`rows/W388.md`](rows/W388.md) |
 | W389 | A corpus whose source ships no graders gets no exercises, so a reader of most sources can never practise | framework agent | ✅ done — `301f901` | [`rows/W389.md`](rows/W389.md) |
 | W390 | The runner carries no warm cache for a corpus, so a graded run in it would download what the editor already holds | framework agent | ✅ done — `bb27e80` | [`rows/W390.md`](rows/W390.md) |
 | W391 | Four sibling test modules each keep their own copy of the build-inputs helper, so one new input is four edits | framework agent | ✅ done — `31527ab` | [`rows/W391.md`](rows/W391.md) |
@@ -577,11 +571,21 @@ else.**
 | W394 | A framework stylesheet may not name a corpus's languages, so per-language colour in code is refused until it is ruled | framework agent | `todo` — `W388/9` | [`rows/W394.md`](rows/W394.md) |
 | W395 | A row's clause can quote a state another row's ruling removes in the same round, and neither row says so | framework agent | ✅ done — `ead47a6` | [`rows/W395.md`](rows/W395.md) |
 | W396 | An office's merge of the release branch carries the register's identity, because only its commits are told to carry the office's | framework agent | ✅ done — `ead47a6` | [`rows/W396.md`](rows/W396.md) |
-| W397 | The visual harness opens a page per check and closes none, so the whole directory exhausts the pinned image and hangs | framework agent | `todo` — the register, 2026-09-19 | [`rows/W397.md`](rows/W397.md) |
-| W398 | An office's temp-directory cleanup can delete the directory a running gate is using, and it refused a merge | framework agent | `todo` — the register, 2026-09-19 | [`rows/W398.md`](rows/W398.md) |
-| W399 | A stylesheet change forces the full suite, which no longer finishes inside the gate's own bound | framework agent | `todo` — the register, 2026-09-19 | [`rows/W399.md`](rows/W399.md) |
-| W400 | The toolchain epic credits the wrong task with demonstrating the compose contract, and the spec's bind ordering describes one project's shape | framework agent | `todo` — `TC-05/2` + `TC-05/5` | [`rows/W400.md`](rows/W400.md) |
-| W401 | The runner image declares no run shape, so a consumer of it must re-derive from prose what the editor states as data | framework agent | `todo` — `TC-05/3` | [`rows/W401.md`](rows/W401.md) |
+| W397 | The visual harness opens a page per check and closes none, so the whole directory exhausts the pinned image and hangs | framework agent | ✅ done — `81bcdb40` | [`rows/W397.md`](rows/W397.md) |
+| W398 | An office's temp-directory cleanup can delete the directory a running gate is using, and it refused a merge | framework agent | ✅ done — `8a8e8a28` | [`rows/W398.md`](rows/W398.md) |
+| W399 | A stylesheet change forces the full suite, which no longer finishes inside the gate's own bound | framework agent | ✅ done — REFUTED by `81bcdb40` | [`rows/W399.md`](rows/W399.md) |
+| W400 | The toolchain epic credits the wrong task with demonstrating the compose contract, and the spec's bind ordering describes one project's shape | framework agent | ✅ done — `b18b3170` | [`rows/W400.md`](rows/W400.md) |
+| W401 | The runner image declares no run shape, so a consumer of it must re-derive from prose what the editor states as data | framework agent | ✅ done — `77b22dab` | [`rows/W401.md`](rows/W401.md) |
+| W402 | `workspace verify` reads HEAD against the pin and is blind to a DIRTY checkout | framework agent | `todo` — the register, 2026-09-20 | [`rows/W402.md`](rows/W402.md) |
+| W403 | A cross-repo task is recorded MERGED on its framework half, its sibling half unread | framework agent | `todo` — the register, 2026-09-20 | [`rows/W403.md`](rows/W403.md) |
+| W404 | The framework reads the sibling's WORKING TREE, not the pinned ref, so a reading is local | framework agent | `todo` — the register, 2026-09-20 | [`rows/W404.md`](rows/W404.md) |
+| W405 | The office rules name no VOTING lint gate, so an office is green on arms that cannot fail | framework agent | `todo` — `W398/4` + `W398/3` | [`rows/W405.md`](rows/W405.md) |
+| W406 | Only the checkout is mounted, so every visual clause reads the fixture and never a corpus | framework agent | `todo` — `W388/15` | [`rows/W406.md`](rows/W406.md) |
+| W407 | Every unit page prints the corpus's own top heading, so the title reads twice | framework agent | `todo` — `W388/17` | [`rows/W407.md`](rows/W407.md) |
+| W408 | A load-dependent defect is invisible at `-n auto` and reads as another module's flake | framework agent | `todo` — `W388/20` + `W388/19` | [`rows/W408.md`](rows/W408.md) |
+| W409 | The image teardown leaves the runner image the run created beneath the editor | framework agent | `todo` — `TC-06/1` | [`rows/W409.md`](rows/W409.md) |
+| W410 | `consuming/consuming.py` stands at 399 lines against R11's 400 | framework agent | `todo` — `TC-06/5` | [`rows/W410.md`](rows/W410.md) |
+| W411 | The framework records no `provides` it generates against, so a bump is refused by nobody | framework agent | `todo` — `TC-06/3` | [`rows/W411.md`](rows/W411.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the

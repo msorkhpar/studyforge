@@ -29050,3 +29050,212 @@ stage 4 (the user's *centre the shell above a ceiling*) runs after `W397`.
 | `wt/dev6` | `W400` | ⭐ two document corrections `TC-05` measured |
 | `wt/dev7` | `W401` | ⭐ the runner's own run shape, before `M10` needs it |
 | `wt/dev5` | `W388` | ⚠️ **in flight** — stage 4 after `W397` |
+
+## PO round 128
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`TC-06` merges and STEP 7.3 CLOSES; seven rows close, one of them REFUTED
+rather than done; the pin moves to a sibling that finally carries the contract; ten rows are minted, three of them on a defect
+this register created and then measured in its own work.**
+
+### ⭐ STEP 7.3 CLOSED AT `4c8490b4` — AND THE READING THAT CLOSES IT IS NOT THE MERGE
+
+⭐ A consumer can pin an editor tag and know what it promises, what may change inside it, what forces a new name and what to
+re-verify when the number moves. ⛔ **The convergence is the part worth reading:** `W401` and `TC-06` both added to ONE
+contract, both bumped `provides` 1 → 2 for DIFFERENT changes, and neither branch contained the other; and `W401` carried no
+release entry because the release notes are `TC-06`'s own invention, so a naive merge yields a contract that ⚠️ **its own
+`findings()` refuses.** ⭐ The office resolved it on a LANDED FACT and not a preference: `W401`'s framework half records 2 as
+the promise it was built against, so a 3 would refuse against a consumer that has already shipped. ⭐ **`moves_every_tag` is
+MEASURED on four refs** rather than reasoned about.
+
+⛔ **The closing reading is the SKIP CLEARING.** Before the pin moved, the framework's check against the real contract skipped
+with *promises 1; this was built against 2*. After it: `17 passed, 0 skipped — this run reached every test it collected`.
+⭐ **A row is not closed by its merge; it is closed by the reading its merge makes possible.**
+
+### ⛔ THE SEAM DEFECT — `TC-05` WAS RECORDED MERGED ON A READING NOBODY COULD TAKE
+
+⛔ **Measured by this register, 2026-09-20, and found first by `W401`'s office and again by `TC-06`'s.** The sibling's `main`
+CHECKOUT sat in an ABANDONED CONFLICTED MERGE of `TC-05`: `MERGE_HEAD` present, `README.md` left `UU`, every file staged and
+none committed. ⭐ **So `consuming.json` — `TC-05`'s entire deliverable and the seam's whole definition (R2) — existed on NO
+committed ref.** ⚠️ The framework reads the sibling's WORKING TREE, so it READ AS PRESENT while being absent from every ref,
+and ⛔ **round 127 then moved the pin to a ref with no contract and recorded the task merged.**
+
+⛔ **`python3 -m tools.workspace verify` read GREEN, exit 0, through all of it** — it compares HEAD to the pin and says nothing
+about a dirty checkout. ⭐ **Minted `W402`, `W403` and `W404`, all three JUMPING every older row**: the instrument's blindness
+matters more than the instance.
+
+⚠️ **AND THE REGISTER REPEATED `W398`'s OWN DEFECT WHILE MERGING THE ROW THAT FIXES IT.** It took the repairing fast-forward
+while a merge gate was running against that sibling, and reverted within the minute. ⛔ **A shared component is moved BETWEEN
+gates, never during one.** ⭐ Recorded because a register that hides its own is worth nothing.
+
+### ⛔ `W388` — NOT A STYLESHEET ROW: THE HEAD BOOT WAS DESTROYING THE READER'S MARKS
+
+⛔ **The gate refused `W388` three times on a check in ANOTHER row's module, and every refusal was right.** Stage 2's boot read
+the display record from `localStorage` in the `<head>`; a document that binds that area before the previous page's write has
+been committed keeps a snapshot WITHOUT it for its whole life, and the reader's next *Mark as read* rewrites the record from
+the stale set — ⭐ **destroying the earlier mark.** ⚠️ **No readiness condition could have fixed it**: nothing waits out a
+snapshot already taken, so a settling delay would have hidden DATA LOSS behind a green.
+
+⭐ **The clause is an ORDER and not a duration**: the browser records `document.readyState` at the FIRST touch of each storage
+area, and the durable store's first touch may not be `loading`. ⛔ **Refuted both ways, and it refuses to be vacuous in both
+directions.** ⚠️ **The register's own error is recorded with it:** it claimed `W397` and `W388` were one defect on a HOST-only
+reading of 12 of 12 green, and the pinned image refused the very next merge. ⛔ **One environment is not a measurement when
+the two are already known to disagree.**
+
+### ⭐ `W399` CLOSES REFUTED, NOT DONE — AND NO OFFICE SPENT A ROUND ON IT
+
+⛔ Its premise was *the full suite no longer finishes inside the gate's own bound*. ⭐ **Measured after `W397`: the full pinned
+suite runs in about two to three minutes against a thirty-minute default.** The breach was the HANG and never the scope, so
+`W397` removed the row's subject. ⚠️ **Refuted is a close and not a failure** (Ruling 97): the row was true when written.
+
+### ⭐ CLOSES — verified by this register, NOT received
+
+### W369 — The index keeps a one-column cap that leaves a wide window's right third empty, and a narration marker shows before anything plays
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W369.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `f377f64d`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`W362/3`: the index keeps `W333`'s one-column cap, so a wide window leaves its right third empty** — the brief's §3 says use width when there is room. ⚠️ **And the register's reading of the dark unit page: a narration marker shows beside the first heading before anything plays** (the plan's own flaw list named the highlight at rest).
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A wide window uses its width** for secondary facts beside the list, the prose measure untouched.
+2. ⛔ **Nothing narration-related is lit before narration starts.**
+3. ⛔ **Asserted in the visual suite, both ways (R12).**
+
+⭐ **Surface:** `src/studyforge/render/assets/`, the index renderer, their tests.
+
+[the mint](#po-round-121)
+
+### W388 — The study site's colours tire a reader within minutes, the index has no rail, and the text column wastes a wide window
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W388.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `f377f64d`. Merged, every gate GREEN on the merged tree.
+
+⛔ **The USER, 2026-09-19, reading the regenerated ISO site:** *"Much better but the colors are super tiring. It should be a set of colors that I can read the document for hours without feeling pain in my eyes or brain — pick a better set of colors. Also keep left menu even in the first page. The narration at bottom also might be better to be 100% width but not the buttons to become big! Also the content itself is very limited in width."* ⭐ **This supersedes the palette half of round 118's identity ruling** (the green board, near-white text and red margin rule). ⚠️ **The register's own reading of the same page:** the breadcrumb repeats the corpus title, and a bare kind label (*prose*) sits under the page title.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A palette for hours of reading, both themes**: moderate contrast (text never pure white on dark, never pure black on light), a warm off-white paper by day, a soft dark by night, no saturated rule or accent at rest — its contrast measured and stated, within WCAG AA for body text and not far above it.
+2. ⛔ **The rail shows on the index page too.**
+3. ⛔ **The narration bar spans the content's full width; its buttons keep their size.**
+4. ⛔ **The reading column uses a wide window** — a wider measure than today, argued from line length in characters, and the page's secondary blocks use the room beside it (folds `W369`'s clause 1).
+5. ⛔ **The breadcrumb names each level once, and no bare kind label shows under the title.**
+6. ⛔ **Asserted in the visual suite, both ways (R12)**, and the ISO site regenerated for the user to look at before the row closes.
+
+⭐ **Surface:** `src/studyforge/render/assets/` (palette, chrome, reading, narration stylesheets), the index and page renderers, `generate/navigation.py` if the rail needs it, their tests and the visual suite.
+
+[the mint](#po-round-125)
+
+### W397 — The visual harness opens a page per check and closes none, so the whole directory exhausts the pinned image and hangs
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W397.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `81bcdb40`. Merged, every gate GREEN on the merged tree.
+
+⛔ **Measured by the register, 2026-09-19, on the merged tree in the pinned image:** the whole `tests/visual` directory HANGS there. ⭐ **The container held 190 processes, dozens of them Chrome renderers**, at 0.1% CPU: the harness keeps ONE browser per session and opens a PAGE per check, closing none, so renderers accumulate until the image cannot start another and a worker waits forever on a browser that never answers. ⛔ **The same two modules pass ALONE in that image in seconds**, so the tests are sound and the harness is not.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A check's page is CLOSED when the check ends** — the fixture that opens one owns its closing, asserted by a count of live targets across many checks.
+2. ⛔ **The whole `tests/visual` directory runs to completion in the PINNED IMAGE**, parallel and serial, inside the gate's bound — the reading that closes this row.
+3. ⛔ **A browser that stops answering FAILS the check rather than hanging it** (a bound on the wait, named).
+4. ⛔ **Asserted both ways (R12)**: the leaking form is RED.
+
+⭐ **Surface:** `tests/visual/browser.py`, `tests/visual/conftest.py`, `tests/visual/page.py` and the harness's own tests. ⛔ **Not** `render/assets/` (`W388` is there).
+
+[the mint](#po-round-127)
+
+### W398 — An office's temp-directory cleanup can delete the directory a running gate is using, and it refused a merge
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W398.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `8a8e8a28`. Merged, every gate GREEN on the merged tree.
+
+⛔ **Measured by the register, 2026-09-19:** a guarded merge was REFUSED because `/tmp/pytest-of-…/pytest-…/popen-gw4` vanished mid-run — an office cleared *stale* pytest temp directories while a gate was using one. ⭐ The office rules already say *never one in use*, ⚠️ **and the rule is unenforceable by eye**: an age test cannot see a live run.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A cleanup cannot reach a directory a live run owns** — by a private temp root per run, a lock, or a liveness test; whichever is argued, the office rules say it in one command.
+2. ⛔ **Asserted both ways (R12)** where the instrument allows it.
+
+⭐ **Surface:** `docs/conventions/agent-protocol.md`, and the conftest's temp-root arrangement if the row argues one.
+
+[the mint](#po-round-127)
+
+### W400 — The toolchain epic credits the wrong task with demonstrating the compose contract, and the spec's bind ordering describes one project's shape
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W400.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `b18b3170`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`TC-05/2`:** `E12` § `TC-05`'s Acceptance says sufficiency is *demonstrated by `SK-07` doing exactly that*; `SK-07` generates the reading floor and ⭐ **`SK-09` is the execution half that renders a compose file** — and `SK-09` already depends on `TC-05`. ⛔ **`TC-05/5`:** spec §8.1's bind-ordering bullet describes a two-service project; the general form now lives in the component's contract.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **`E12` names `SK-09`**, and `SK-09`'s own Acceptance carries the demonstration.
+2. ⛔ **The spec's bullet states the general form** and cites where the contract holds it.
+3. ⭐ **Both are document corrections**: no code, and the floor stays GREEN.
+
+⭐ **Surface:** `docs/tasks/E12-toolchain-image.md`, `docs/tasks/E11-skills-authoring.md` § `SK-09`, `docs/specs/2026-09-08-studyforge-v1-design.md` §8.1.
+
+[the mint](#po-round-127)
+
+### W401 — The runner image declares no run shape, so a consumer of it must re-derive from prose what the editor states as data
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W401.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `77b22dab`. Merged, every gate GREEN on the merged tree.
+
+⛔ **`TC-05/3`: the RUNNER image declares no run shape.** `TC-05` gave the editor a `consuming.json` a consumer renders a compose file from; the runner's shape is prose in the sibling's README, so the framework must re-derive it — ⚠️ and `SF-20`'s container mode already reads that README's `docker run` line by parsing it.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **The runner declares its run shape as DATA**, in the same form the editor's contract uses, with `docker_socket: false` and its reason.
+2. ⛔ **The framework reads the declaration rather than parsing prose**, or the row says why that half waits for `SK-09`.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** the sibling's `docker/minimal/` declaration and its tests; `tests/studyforge/execute/container.py`'s reader only if the row argues it. ⛔ **Not** `docker/editor/` (`TC-06`'s).
+
+[the mint](#po-round-127)
+
+### W399 — A stylesheet change forces the full suite, which no longer finishes inside the gate's own bound
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W399.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **Verified before merge by PLANTING** — see its merge body at `81bcdb40`. Merged, every gate GREEN on the merged tree.
+
+⛔ **Measured by the register, 2026-09-19:** a merge whose diff touches a stylesheet is scoped FULL (*a kind the selection cannot scope*), and the FULL pinned suite no longer finishes — twice at the 30-minute default and once at 60 minutes. ⚠️ **`W397` is the hang; this row is the GATE's shape around it**: which tests a stylesheet can reach, and what the bound is once they run.
+
+### ⛔ WHAT SETTLES IT
+
+1. ⛔ **A stylesheet change is SCOPED to what it can reach** — the visual and render populations — or the FULL suite's bound is argued from a measurement and stated.
+2. ⛔ **The reading that closes this row is a merge of a stylesheet-only change passing inside the bound**, after `W397`.
+3. ⛔ **Asserted both ways (R12).**
+
+⭐ **Surface:** `tools/gates.py`, `tools/mergegate.py`'s selection, `docker/dev/check`'s bound if the row argues it, and their tests. ⚠️ **After `W397`.**
+
+[the mint](#po-round-127)
+
+### ⭐ FINDINGS RULED
+
+| finding | ruling |
+|---|---|
+| `TC-06/6`, and the register's own | minted `W402`, `W403`, `W404` |
+| `W398/3` + `W398/4` | minted `W405` — the office rules name the VOTING gate |
+| `W388/15` | minted `W406` |
+| `W388/17` | minted `W407` — ⛔ a FRAMEWORK row; the corpus is regenerated |
+| `W388/19` + `W388/20` | minted `W408`; ⭐ `W388/12`'s *closed as noise* is SUPERSEDED |
+| `TC-06/1` | minted `W409` |
+| `TC-06/5` | minted `W410` — near the ceiling and the seam is named |
+| `TC-06/3` | minted `W411`; ⭐ the number to record is 2 |
+| `TC-06/2` | ⭐ CLOSED by the convergence, to the instruction it wrote itself |
+| `TC-06/4` | ⭐ local — release notes are keyed by `provides`, and a later id is GAINED, never renumbered |
+| `W397/1`, `/2`, `W400/1`, `/2`, `W401/1`, `/2`, `W401/6`, `W388/14`, `/16`, `/18` | ⭐ local — recorded in their handoffs |
+| `W397/4` | ⚠️ offered as a hypothesis and NOT claimed by its office; the register over-claimed it and the record says so |
+| `W401/3`, `/4`, `/5` | ⭐ answered by this round: the sibling converged and the pin moved |
+
+### ⭐ NOTHING IS IN FLIGHT
+
+⛔ **The In flight table is EMPTY, and empty is a state** (`W111`, `W147`). Every carrier of round 127 handed back and merged.
