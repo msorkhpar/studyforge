@@ -1,4 +1,4 @@
-"""The skills: reconnaissance, adapter authoring, onboarding, build-and-serve, export.
+"""The skills: reconnaissance, adapter, onboarding, execution, build-and-serve, export.
 
 **What it does.** Holds whatever executable support the authoring and
 conversion skills need. ⭐ **The product is a set of skills, not a bespoke
