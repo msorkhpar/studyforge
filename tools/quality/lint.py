@@ -7,7 +7,10 @@ at all. ⛔ It is a NOTICE, never a check: it cannot fail a build, and the exit
 code of `python3 -m tools.quality` is identical with it and without it.
 
 **How you use it.** `lint_notice(root)` is registered in `tools.quality.NOTICES`
-and prints above `quality floor:`. Nothing else calls it.
+and prints above `quality floor:`. Nothing else calls it. `lint_scope()` is the
+other half (`W393`): one line saying whether THIS run had a lint signal at all,
+printed by `tools/quality/__main__.py` **below** the verdict, where an office
+reads. ⛔ It runs nothing — `shutil.which` is the whole probe.
 
 **Depends on.** `json`, `re`, `shutil` and `subprocess` — the standard library,
 and ⛔ **never ruff**. Absence is detected with `shutil.which`; a tool that is
@@ -46,6 +49,21 @@ the defect Ruling 78 exists to close — the reader would still have `quality
 floor: clean` and no way to know that half the instrument was switched off. So
 the absent line is the **longest** of the three: it names both commands that
 did not run, the two gates that skipped, the install, and the image.
+
+## ⛔ `W393`: the absent line was ABOVE the verdict, so it was read first
+
+⚠️ **Measured twice in one wave** (`W388/5`): an office ran the host gates,
+read `quality floor: clean`, and handed back GREEN with `ruff format --check`
+unclean — and the merge gate then read it RED. ⛔ **The absence notice was
+printing the whole time.** It was above the verdict, which is the right place
+for a line about *lint* and the wrong place for the one fact that decides
+whether a green may be handed back at all.
+
+⭐ **So the fact prints twice, in two registers**: the long notice above, which
+explains, and `lint_scope()` below the verdict, which is short, names the one
+command that supplies the signal, and is the last line an office copies. ⛔ The
+exit code is untouched in both directions — Ruling 77 still forbids a floor
+whose verdict depends on `pip install`.
 
 ## ⚠️ What is deliberately never printed
 
@@ -91,6 +109,12 @@ IMAGE = "docker/dev/check"
 #: The module that *enforces* what this only reports (Ruling 78). Named in the
 #: absent line because the two gates there are what skipped.
 GATES = "tests/test_repository.py"
+
+#: ⛔ **The ONE command that GIVES the missing signal**, spelled whole (`W393`).
+#: ⚠️ `IMAGE` on its own is a wrapper and not a gate: an office told only *"use
+#: the image"* still has to choose what to run inside it, and an office that
+#: guesses gets back the host's answer.
+FLOOR_IN_IMAGE = f"{IMAGE} python3 -m tools.quality"
 
 #: Seconds before an invocation is abandoned. ⚠️ A notice may never hang the
 #: floor: the floor's job is to reach a verdict, and this cannot be allowed to
@@ -262,3 +286,39 @@ def lint_notice(root: Path) -> list[str]:
         return [_present(version, _check_state(executable, root), _format_state(executable, root))]
     except _Unrunnable as reason:
         return [_unrunnable(version, str(reason))]
+
+
+def lint_scope() -> str:
+    """Return what the floor's LAST line owes about lint on THIS run (`W393`).
+
+    ⛔ **A qualifier on the VERDICT, so it prints BELOW the verdict** — the
+    same argument `W187/5` made for the scope line it sits beside, applied to
+    the half of the instrument that can be switched off. ⚠️ `lint_notice`
+    prints its line *above* `quality floor:`, which is the right place for a
+    line qualifying **lint** and the wrong place for the one fact an office
+    acts on: that this run had no lint signal at all. A reader meeting that
+    line before the verdict has scrolled past it by the time there is a
+    verdict to misread, and `W388/5` measured that twice in one wave.
+
+    ⛔ **Installed-or-not is the whole question, and it is asked with
+    `shutil.which` alone.** ⭐ Nothing here runs the tool: the notice above has
+    already run it, and a last line that ran it again would double the floor's
+    lint cost to say something the cheaper probe already settles.
+
+    ⭐ **Neither branch claims a verdict, so both are true in all four of
+    `lint_notice`'s states** — including the fourth, where the tool is
+    installed and would not answer: this line says only that it is installed
+    and points at the notice, which is where that state is reported.
+    """
+    if _which(TOOL) is None:
+        return (
+            f"lint scope: this run has NO LINT SIGNAL — {TOOL} is not installed here, so "
+            f"`{CHECK_SHOWN}` and `{FORMAT_SHOWN}` did not run and nothing above is a verdict "
+            f"on either. A green floor here is NOT lint-clean, and {GATES} skipped rather "
+            f"than passed: take the signal with `{FLOOR_IN_IMAGE}` before handing this tree "
+            f"back (Ruling 78)."
+        )
+    return (
+        f"lint scope: {TOOL} is installed here, so this run HAS a lint signal — it is the "
+        f"`lint:` line above, which is a notice and never this verdict (Ruling 78)."
+    )

@@ -27,6 +27,18 @@ qualifier above the verdict is a qualifier the reader has already scrolled past;
 verdict*. ⭐ **The last line an office copies is now the one that names the other
 gate** — and `format_findings` is untouched, so the verdict token it produces is
 still exactly `quality floor: clean`.
+
+## ⛔ `W393` — and the TAIL is now two lines, lint LAST
+
+⚠️ **`W187/5`'s fix was not enough on its own, measured twice in one wave**
+(`W388/5`): `SCOPE` says the suite is a separate gate, but it says the same
+words whether this run had a lint verdict or none at all, so an office on a
+host without `ruff` read a tail that was true and learned nothing from it.
+⭐ **`lint_scope()` is the line that differs between those two runs**, and it
+prints after `SCOPE` because the state it reports — *no lint signal here* — is
+the one an office was measured to act on wrongly. ⛔ **Both stay BELOW the
+verdict**, which is all `W187/5` asked, and neither touches the exit code
+(Ruling 77).
 """
 
 from __future__ import annotations
@@ -36,9 +48,9 @@ import sys
 from pathlib import Path
 
 from tools.quality import format_findings, run_all, run_notices
-from tools.quality.lint import GATES
+from tools.quality.lint import GATES, lint_scope
 
-#: ⛔ The gate this run is NOT. Printed last, on every run, clean or not — see
+#: ⛔ The gate this run is NOT. Printed in the tail, on every run, clean or not — see
 #: the module docstring. ⚠️ It names `tests/test_repository.py` through
 #: `lint.GATES` rather than re-typing it, so the two cannot drift.
 SCOPE = (
@@ -72,6 +84,10 @@ def main(argv: list[str] | None = None) -> int:
     # ⛔ Below the verdict, never above it (`W187/5`). A qualifier above the
     # line it qualifies is one the reader has already scrolled past.
     print(SCOPE)
+    # ⛔ LAST, on every run (`W393`): whether this run had a lint signal at all
+    # is the tail's only sentence that differs between two hosts, and it is the
+    # one an office was measured to get wrong. ⚠️ Printed, never counted.
+    print(lint_scope())
     return 1 if findings else 0
 
 
