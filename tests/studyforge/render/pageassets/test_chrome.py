@@ -200,6 +200,7 @@ SKELETON_SLOTS = {
     ),
 }
 
+
 def body() -> str:
     """`chrome.css` with its comments removed — the rules, and nothing about them."""
     joined = "\n".join(text(part) for part in CHROME_PARTS)
