@@ -227,6 +227,7 @@ def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():
         {
             "title",
             "heading",
+            "headingattributes",
             "identity",
             "stylesheet",
             "script",
@@ -241,3 +242,119 @@ def test_every_slot_the_skeleton_declares_is_filled_by_the_composer():
             "nav",
         }
     )
+
+
+# --------------------------------------------------------------------------
+# W407 — a unit page states its title once
+# --------------------------------------------------------------------------
+
+
+def heading_of(page: str) -> str:
+    """The page's `<h1>`, tag and all."""
+    start = page.index("<h1")
+    return page[start : page.index("</h1>", start) + len("</h1>")]
+
+
+def with_material(*blocks, title: str = "Testing") -> dict:
+    """A served document whose one section opens with `blocks`."""
+    return a_document(
+        title=title,
+        sections=[
+            {
+                "key": "prose",
+                "kind": "lesson",
+                "heading": title,
+                "blocks": list(blocks),
+                "video": None,
+                "workspace": None,
+            }
+        ],
+    )
+
+
+def test_a_page_whose_material_restates_the_title_in_other_words_says_it_once():
+    # ⭐ **`W388/17`, as the ISO corpus carries it**: the unit is titled `Testing`
+    # and its material opens with `10. Testing in jPOS Client Implementation`.
+    document = with_material(
+        {"type": "heading", "level": 1, "text": "10. Testing in jPOS Client"},
+        {"type": "para", "text": "p"},
+    )
+    page = document_module.compose(document, sample_placement())
+    assert page.count("10. Testing in jPOS Client") == 1
+    assert "<h1" in heading_of(page) and "10. Testing in jPOS Client" in heading_of(page)
+
+
+def test_a_page_whose_material_restates_the_title_in_its_own_words_says_it_once():
+    # ⭐ **The same defect as this repository's `depth1` fixture carries it**: the
+    # heading is at level 2 and says exactly the unit's title.
+    document = with_material(
+        {"type": "heading", "level": 2, "text": "Testing"},
+        {"type": "para", "text": "p"},
+    )
+    page = document_module.compose(document, sample_placement())
+    assert page.count(">Testing</h") == 1
+    assert heading_of(page).endswith(">Testing</h1>")
+
+
+def test_a_page_whose_material_states_no_title_is_headed_by_the_units():
+    # ⛔ The common case for an authored corpus, and it is unchanged: nothing was
+    # promoted, so nothing is withheld and the `<h1>` is the unit's own name.
+    document = with_material({"type": "para", "text": "first"})
+    page = document_module.compose(document, sample_placement())
+    assert heading_of(page) == "<h1>Testing</h1>"
+    assert ">first</p>" in page
+
+
+def test_a_leading_heading_that_says_something_else_is_not_taken_off_the_page():
+    # ⛔ *"A source whose opening heading differs from the unit title carries real
+    # content that must not vanish."* ⚠️ It has a PEER at its own level, so it
+    # names a part of the material rather than the whole of it.
+    document = with_material(
+        {"type": "heading", "level": 2, "text": "Before you start"},
+        {"type": "para", "text": "p"},
+        {"type": "heading", "level": 2, "text": "After you start"},
+    )
+    page = document_module.compose(document, sample_placement())
+    assert heading_of(page) == "<h1>Testing</h1>"
+    assert ">Before you start</h2>" in page
+
+
+def test_the_promoted_heading_keeps_its_anchor():
+    # ⭐ What makes this a MOVE rather than a deletion: a link or a bookmark into
+    # the page lands where it always did.
+    document = with_material({"type": "heading", "level": 1, "text": "10. Testing"})
+    page = document_module.compose(document, sample_placement())
+    assert '<h1 id="prose-b0"' in page
+
+
+def test_the_promoted_heading_keeps_its_clip_and_brings_the_transport():
+    # ⛔ Every clip the walker mints reaches exactly one element — so a heading
+    # the page moved must carry the audio it carried in the body, or the corpus
+    # has a file on disk that nothing can ever play.
+    document = with_material({"type": "heading", "level": 1, "text": "10. Testing"})
+    narration = Narration.of({("prose", (0,), None): "a-11111111.mp3"}, sample_placement())
+    page = document_module.compose(document, sample_placement(), narration=narration)
+    assert AUDIO_ATTRIBUTE in heading_of(page)
+    assert '<footer id="player"' in page, "the page's only passage is its heading"
+
+
+def test_a_page_with_no_promoted_heading_carries_no_heading_attributes():
+    assert document_module.heading_attributes(with_material({"type": "para", "text": "p"})) == ""
+
+
+def test_the_tab_and_the_identity_still_name_the_unit_and_not_the_material():
+    # ⛔ The `<h1>` names the PAGE; the title names the UNIT, and the contents,
+    # the trail and the bar between units all use the latter.
+    document = with_material({"type": "heading", "level": 1, "text": "10. Testing"})
+    page = document_module.compose(document, sample_placement())
+    assert "<title>Testing</title>" in page
+    assert 'data-label="Testing"' in page
+    assert "10. Testing" not in page[: page.index("<body>")]
+
+
+def test_the_promoted_heading_is_inline_prose_and_is_escaped():
+    # ⚠️ It is material and carries the archive's inline markers, exactly as the
+    # same block would have carried them in the body.
+    document = with_material({"type": "heading", "level": 1, "text": "`x` <y>"})
+    page = document_module.compose(document, sample_placement())
+    assert "<code>x</code> &lt;y&gt;" in heading_of(page)

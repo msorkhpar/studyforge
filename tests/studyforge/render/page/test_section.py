@@ -205,3 +205,60 @@ def test_an_attachments_filename_is_escaped():
     markup = render(headed(attachments=[attachment('media/a&b".ttl')]))
     assert "a&amp;b&quot;.ttl</a>" in markup
     assert 'href="attachments/a&amp;b&quot;.ttl"' in markup
+
+
+# --------------------------------------------------------------------------
+# W407 — the section that opens the page withholds the block the page prints
+# --------------------------------------------------------------------------
+
+
+def opening(**overrides) -> dict:
+    """A lesson section whose material opens with its own title heading."""
+    return headed(
+        key="prose",
+        kind="lesson",
+        heading="Testing",
+        blocks=[
+            {"type": "heading", "level": 1, "text": "10. Testing"},
+            {"type": "para", "text": "first"},
+            {"type": "heading", "level": 2, "text": "10.1 Unit"},
+        ],
+        **overrides,
+    )
+
+
+def test_the_opening_section_withholds_the_block_the_page_is_headed_by():
+    markup = section_module.render(opening(), sample_placement(), heads_page=True)
+    assert "10. Testing" not in markup
+    assert "10.1 Unit" in markup
+    assert ">first</p>" in markup
+
+
+def test_a_section_that_was_not_told_prints_every_block_it_has():
+    # ⛔ The default is the conservative answer: only `page.document` holds the
+    # whole page, so a caller that says nothing gets all of its material.
+    markup = render(opening())
+    assert "10. Testing" in markup
+    assert "10.1 Unit" in markup
+
+
+def test_withholding_renumbers_nothing():
+    # ⛔ **The defect this is written against.** A position is a block's address:
+    # a DOM id is minted from it and a clip is filed under it. Dropping the block
+    # from the list instead of from the output would shift every position after
+    # it by one, and the page would ask for the audio of the paragraph before the
+    # one it is showing.
+    kept = render(opening())
+    withheld = section_module.render(opening(), sample_placement(), heads_page=True)
+    assert 'id="prose-b2"' in kept
+    assert 'id="prose-b2"' in withheld
+    assert 'id="prose-b1"' not in withheld
+
+
+def test_a_withheld_heading_leaves_the_section_labelled_by_the_page():
+    # ⚠️ The wrapper still carries `data-label`, and the material still carries a
+    # heading — so the recorded heading is not printed a second time under the
+    # `<h1>` that now says it.
+    markup = section_module.render(opening(), sample_placement(), heads_page=True)
+    assert 'data-label="Testing"' in markup
+    assert "<h2>Testing</h2>" not in markup

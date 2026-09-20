@@ -41,7 +41,6 @@
      page has: markup and script cannot import one another. */
   var PLAYER = 'player';
   var NARRATOR = 'narrator';
-  var CONTENT = 'content';
 
   /* What a narrated passage carries. ⛔ `data-audio` is `render/page/assets.py`'s
      `AUDIO_ATTRIBUTE`, named there one milestone before its writer so the two
@@ -79,8 +78,17 @@
   var audio = document.getElementById(NARRATOR);
   if (!player || !audio) { return; }
 
-  var scope = document.getElementById(CONTENT) || document;
-  var passages = [].slice.call(scope.querySelectorAll('[' + SOURCE + ']'));
+  /* ⛔ THE WHOLE DOCUMENT, NOT `#content` (`W407`). A unit page is headed by its
+     material's own opening heading, and that heading sits in the `<header>`
+     above the content — it is a narrated passage like every other one. Scoped to
+     `#content` the transport skipped the first passage of every page while the
+     page still carried its attribute and `speakable` still minted its clip: a
+     clip on disk that nothing could ever play. ⭐ `querySelectorAll` answers in
+     document order, so the heading is still passage one. ⚠️ Nothing outside the
+     heading and the content carries `data-audio` — `render/page/document.py` is
+     the one composer of this skeleton and fills the attribute in exactly those
+     two places. */
+  var passages = [].slice.call(document.querySelectorAll('[' + SOURCE + ']'));
   if (!passages.length) { return; }
 
   var track = document.getElementById('track');

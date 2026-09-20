@@ -91,7 +91,11 @@ TRAILING_NEWLINE = "\n"
 
 #: The skeleton slots a container page has nothing to put in. ⛔ Named and
 #: passed rather than omitted — see this module's docstring.
-EMPTY_SLOTS = ("breadcrumb", "mark", "outline", "pending", "player")
+#:
+#: ⚠️ `headingattributes` is one of them: the unit page promotes its material's own
+#: opening heading into the `<h1>` and anchors it there (`W407`), and a page
+#: whose heading is a name rather than a block has no anchor to carry.
+EMPTY_SLOTS = ("breadcrumb", "headingattributes", "mark", "outline", "pending", "player")
 
 
 def compose(

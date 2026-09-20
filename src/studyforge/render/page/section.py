@@ -18,8 +18,10 @@ the markup, and `page.errors`.
 
 ⚠️ **A section's `heading` is usually the archive document's title, and the
 document's own first block is usually a heading saying the same words.**
-Emitting both puts the sentence on the page twice, under the unit's `<h1>` which
-is often a third copy. ⛔ **But a section whose material has no heading at all —
+Emitting both puts the sentence on the page twice. ⚠️ **The third copy that used
+to sit above them both is gone** (`W407`): the page's `<h1>` is now that same
+opening heading, moved, so the count this paragraph is about is two and not
+three. ⛔ **But a section whose material has no heading at all —
 an authored `shared` section, typically — would otherwise reach the reader as an
 unlabelled run of prose they cannot locate from the outline.**
 
@@ -29,6 +31,25 @@ to `data-label`. ⚠️ Comparing the *words* instead — *"emit it unless it ma
 the first block"* — would put the heading back the day an author changed one
 character, and take it away again the day they changed it back.
 
+
+## ⛔ The section that OPENS the page does not print the title the page prints
+
+⚠️ **`heads_page` is the one thing this module cannot work out for itself**, and
+it is deliberately an instruction rather than a question this module re-answers.
+A document states what it is in its first heading and the page states what it is
+in its `<h1>`; `page.anchors.title_heading` rules whether those are one
+statement, `page.document` prints it — and this module withholds it, or the
+title reads twice, which is `W388/17` on every page of a rebuilt corpus. ⛔ Two
+modules deciding it independently is two chances to disagree, and the page that
+results either says its title twice or does not say it at all.
+
+⛔ **Withheld from the OUTPUT and never from the walk.** The block keeps its
+position, so every anchor and every clip after it is addressed exactly as before
+— see `blocks.render_all`'s `omit` for what renumbering would cost.
+
+⭐ **Only the opening section.** A later section's first heading sits nowhere
+near the page's title and is that section's own name, which is what separates it
+from the section above it.
 
 ## ⛔ The section's identity is `data-section`, and it is the key, not the title
 
@@ -75,7 +96,7 @@ from studyforge.corpus.placement import ATTACHMENTS_DIRNAME
 from studyforge.render import templates
 from studyforge.render.markup import escape, escape_attribute
 from studyforge.render.page import blocks
-from studyforge.render.page.anchors import section_anchor
+from studyforge.render.page.anchors import TITLE_POSITION, section_anchor
 from studyforge.render.page.assets import Placement, filename
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
@@ -91,7 +112,13 @@ ATTACHMENTS_TEMPLATE = "attachments.html"
 ITEM_JOIN = "\n"
 
 
-def render(section: dict, placement: Placement, narration: Narration = SILENT) -> str:
+def render(
+    section: dict,
+    placement: Placement,
+    narration: Narration = SILENT,
+    *,
+    heads_page: bool = False,
+) -> str:
     """Render one section: its deck, when it has one, then the section itself.
 
     ⚠️ **The section's own key is what a clip is addressed under**, which is the
@@ -99,12 +126,20 @@ def render(section: dict, placement: Placement, narration: Narration = SILENT) -
     heading: *"the page carries that key verbatim, so the player at M3, progress
     at M5 and an in-page link all address the same thing"*. ⛔ Narration is
     looked up under that key and never under a title.
+
+    ⚠️ `heads_page` says this section's first block is what the page is already
+    headed by, so this render withholds it. Its default is the conservative
+    answer: a caller that says nothing gets every block of its material. ⭐ Only
+    `page.document` knows, because only it holds the whole page.
     """
     if not isinstance(section, dict):
         raise PageError("a served section is an object, and this one is not")
     key = section.get("key")
     contents = list(section.get("blocks") or ())
-    body = blocks.render_all(contents, placement=placement, section=key, narration=narration)
+    withheld = (TITLE_POSITION,) if heads_page else ()
+    body = blocks.render_all(
+        contents, placement=placement, section=key, narration=narration, omit=withheld
+    )
     wrapper = templates.fill(
         "section.html",
         id=escape_attribute(section_anchor(key)),
@@ -166,6 +201,11 @@ def _heading(section: dict, contents: list) -> str:
     the only test, so a section whose first block is an `h4` counts as headed
     just as much as one whose first block is an `h2`: the reader can see where
     they are either way, which is the whole question.
+
+    ⚠️ **The WHOLE material is asked, including a block `heads_page` withheld.**
+    A section whose one heading was promoted into the page's `<h1>` is headed —
+    by the page — so printing the recorded heading here would put the sentence
+    back under the heading that was moved out of its way.
     """
     if any(isinstance(block, dict) and block.get("type") == "heading" for block in contents):
         return ""
