@@ -35,6 +35,30 @@ directory. ⭐ **So the deadline is asserted DIRECTLY instead** — `select` is
 wrapped in a recorder and the bounds it was handed are read back — and THAT
 check has a plant: the old blocking `_receive`, against a browser that answers
 at once, reaches the recorder never.
+
+## ⛔ `W397/3` — a count nobody could decide, and why it was LOAD-dependent
+
+⛔ **The first version of this module polled every count through a five-second
+settling window, and that window was a GUESS about the machine rather than a
+fact about the browser.** ⚠️ **MEASURED, pinned image, this module beside
+`test_offline.py` under 24 competing processes: 2 of 6 runs RED**, always
+`assert 1 == 5` — the launch tab plus the FOUR tabs the leak plant had just
+closed and which the browser had not yet destroyed. ⛔ **It refused another
+office's merge on a full-suite run whose own surface was nowhere near this one.**
+
+⭐ **The mechanism is `Target.closeTarget`, which is answered when the browser
+has ACCEPTED the close and not when the tab is gone** — MEASURED at 10-13 ms
+idle and 26-100 ms under load. ⛔ **So the baseline `before` was read while the
+previous check's tabs were still dying, and the number it got depended on how
+busy the machine was.** ⚠️ **It was never the deadline**: no bound was
+approached and no `BrowserError` was raised, so the reading kills that
+hypothesis rather than confirming it.
+
+⭐ **The repair is a READINESS CONDITION in the harness, not a retry here:**
+`close_page` now waits for the browser's own `Target.targetDestroyed`, so every
+count taken afterwards is correct by construction. ⛔ **Every settling window in
+this module is therefore GONE**, and `_live` reads once and believes it — a
+check that needed a window would be a check nobody can decide.
 """
 
 from __future__ import annotations
@@ -57,11 +81,6 @@ from tests.visual.page import OpenPage
 #: open cannot tell "closed" from "never opened a second".
 OPENS = 4
 
-#: Seconds the live-target count may take to settle after a tab is closed.
-#: ⚠️ `Target.closeTarget` is answered when the browser has ACCEPTED the close,
-#: and the target leaves the listing a moment later.
-SETTLE = 5.0
-
 #: The bound the silent-browser checks run under, in seconds. ⛔ Small on
 #: purpose: the claim is that the harness gives up at a bound it was told, and
 #: a check that took the real 30s to say so would be one nobody runs.
@@ -72,14 +91,14 @@ BOUND = 0.5
 PATIENCE = 10.0
 
 
-def _live(browser: Browser, expecting: int) -> int:
-    """The count of live page targets, once it has settled or `SETTLE` has passed."""
-    deadline = time.monotonic() + SETTLE
-    count = len(browser.live_pages())
-    while count != expecting and time.monotonic() < deadline:
-        time.sleep(0.05)
-        count = len(browser.live_pages())
-    return count
+def _live(browser: Browser) -> int:
+    """How many page targets the browser holds open, read once and believed.
+
+    ⛔ **No polling and no settling window, and that is the POINT of `W397/3`**
+    — see this module's docstring. A count that had to be waited for would be a
+    count nobody can decide, which is what refused another office's merge.
+    """
+    return len(browser.live_pages())
 
 
 @pytest.fixture
@@ -107,11 +126,11 @@ def _check_opening_and_closing_many_tabs_leaves_the_count_where_it_started(
     browser: Browser,
 ) -> None:
     """Open `OPENS` tabs one at a time, closing each — the live count must not grow."""
-    before = len(browser.live_pages())
+    before = _live(browser)
     for _each in range(OPENS):
         with OpenPage(browser):
             pass
-    after = _live(browser, expecting=before)
+    after = _live(browser)
     assert after == before, f"{after - before} tab(s) outlived the checks that opened them"
 
 
@@ -133,6 +152,10 @@ def test_PLANT_a_close_that_closes_nothing_reddens_the_check(
         with pytest.raises(AssertionError, match="outlived the checks"):
             _check_opening_and_closing_many_tabs_leaves_the_count_where_it_started(browser)
     finally:
+        # ⛔ `close_page` WAITS (`W397/3`), so this hands the next check a count
+        # it can decide. ⚠️ Before that wait existed, these four closes were
+        # still in flight when the next check read its baseline — MEASURED as
+        # `assert 1 == 5`, and it is what refused another office's merge.
         monkeypatch.undo()
         for session in opened:
             browser.close_page(session)
@@ -140,18 +163,133 @@ def test_PLANT_a_close_that_closes_nothing_reddens_the_check(
 
 def test_a_tab_is_closed_even_when_the_check_that_held_it_raised(browser: Browser) -> None:
     """⛔ The run whose tab must not leak is exactly the run that failed."""
-    before = len(browser.live_pages())
+    before = _live(browser)
     with pytest.raises(RuntimeError, match="the check failed"), OpenPage(browser):
         raise RuntimeError("the check failed")
-    assert _live(browser, expecting=before) == before, "a failed check left its tab open"
+    assert _live(browser) == before, "a failed check left its tab open"
 
 
 def test_closing_a_tab_twice_is_harmless(browser: Browser) -> None:
-    before = len(browser.live_pages())
+    before = _live(browser)
     page = OpenPage(browser)
     page.close()
     page.close()
-    assert _live(browser, expecting=before) == before, "closing twice left the count wrong"
+    assert _live(browser) == before, "closing twice left the count wrong"
+
+
+# --- clause 3 of W397/3: close() returns only once the tab is really gone -----
+
+
+def _check_a_closed_tab_is_gone_the_instant_close_returns(browser: Browser) -> None:
+    """Read the count with NO settling window — it must already be right.
+
+    ⛔ **This is the check the flake was hiding.** `Target.closeTarget` is
+    answered when the browser has ACCEPTED the close, so before `W397/3` the
+    tabs were still listed here and the count depended on how busy the machine
+    was.
+    """
+    before = _live(browser)
+    pages = [OpenPage(browser) for _each in range(OPENS)]
+    assert _live(browser) == before + OPENS, "the tabs this check opened are not all live"
+    for page in pages:
+        page.close()
+    after = _live(browser)
+    leaked = after - before
+    assert after == before, f"{leaked} tab(s) were still live the instant close() returned"
+
+
+def test_a_closed_tab_is_gone_before_close_returns(browser: Browser) -> None:
+    _check_a_closed_tab_is_gone_the_instant_close_returns(browser)
+
+
+def test_close_waits_for_the_browsers_own_word_that_the_tab_is_gone(browser: Browser) -> None:
+    """⭐ The mechanism, not only its effect: the browser SAID the target died."""
+    page = OpenPage(browser)
+    target = browser._targets[page.session]
+    page.close()
+    assert any(browser._destroys(event, target) for event in browser.events), (
+        "close() returned without the browser reporting the target destroyed"
+    )
+
+
+# --- and the plant, against a SCRIPTED browser rather than a raced one -------
+
+#: The one session and target the scripted browser below holds.
+SCRIPTED_SESSION = "scripted-session"
+SCRIPTED_TARGET = "scripted-target"
+
+
+class _ScriptedBrowser(Browser):
+    """A browser whose destruction timing is DECIDED here, never raced.
+
+    ⛔ **Why the plant for this clause may not use the real browser, and this
+    is a correction of my own first attempt.** The racing form's tell is that
+    a closed tab is *briefly* still listed — so a plant against the real
+    browser asks whether the harness's read wins a race with Chrome's
+    teardown. ⚠️ **MEASURED: it does not always.** Under 24 competing
+    processes the read slows down too, so BOTH sides of that margin scale with
+    load and the plant went green — `DID NOT RAISE` — in 1 of 10 runs. ⛔ **A
+    plant that is itself a race is the same defect as the one being repaired,
+    pointing the other way.**
+
+    ⭐ **Scripted instead**, modelling what the real browser was measured to
+    do: `closeTarget` is answered at once and queues the destruction, and the
+    target leaves the listing only when that event is delivered. ⚠️ It is the
+    FAKE arm in `test_browser.py`'s sense — additional, never a substitute:
+    the two checks above are the real browser's.
+    """
+
+    def __init__(self) -> None:  # noqa: D107 - no launch: there is no process here
+        self._closed = False
+        self._discovering = True
+        self._targets = {SCRIPTED_SESSION: SCRIPTED_TARGET}
+        self.events: list[dict] = []
+        self.live = [SCRIPTED_TARGET]
+        self.undelivered: list[dict] = []
+
+    def call(self, method: str, params: dict | None = None, session: str | None = None) -> dict:
+        """Answer the three calls `close_page` and `live_pages` make."""
+        given = params or {}
+        if method == "Target.closeTarget":
+            self.undelivered.append(
+                {"method": "Target.targetDestroyed", "params": {"targetId": given["targetId"]}}
+            )
+            return {"success": True}
+        if method == "Target.getTargets":
+            return {"targetInfos": [{"targetId": t, "type": "page"} for t in self.live]}
+        return {}
+
+    def _receive(self, deadline: float, complaint: str) -> dict:
+        """Deliver one queued event — and only THEN is its target gone."""
+        if not self.undelivered:
+            raise BrowserError(complaint)
+        event = self.undelivered.pop(0)
+        self.live.remove(event["params"]["targetId"])
+        return event
+
+
+def test_a_scripted_close_that_waits_leaves_nothing_listed() -> None:
+    """⭐ The green way: `close_page` returns and the target is already gone."""
+    scripted = _ScriptedBrowser()
+    scripted.close_page(SCRIPTED_SESSION)
+    assert scripted.live_pages() == [], "the waited close left the target listed"
+    assert scripted.undelivered == [], "the destruction was never collected"
+
+
+def test_PLANT_a_scripted_close_that_does_not_wait_leaves_the_target_listed(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """⛔ The racing form — the one that refused another office's merge — goes red.
+
+    ⭐ **Deterministic in both directions**, because the destruction is
+    delivered by this test and not by a machine under load.
+    """
+    scripted = _ScriptedBrowser()
+    monkeypatch.setattr(Browser, "_await_destroyed", lambda _self, _target: None)
+    scripted.close_page(SCRIPTED_SESSION)
+    assert scripted.live_pages() == [SCRIPTED_TARGET], (
+        "a close that skipped the wait still emptied the listing, so the wait is doing nothing"
+    )
 
 
 # --- clause 1, at the seam a check actually meets: the fixture ---------------
@@ -159,24 +297,24 @@ def test_closing_a_tab_twice_is_harmless(browser: Browser) -> None:
 
 def test_the_open_page_fixture_closes_the_tab_it_opened(browser: Browser) -> None:
     """⭐ The fixture's own generator, driven here, so its teardown is measured."""
-    before = len(browser.live_pages())
+    before = _live(browser)
     handing_over = conftest.one_tab_per_check(browser)
     page = next(handing_over)
     assert isinstance(page, OpenPage)
-    assert _live(browser, expecting=before + 1) == before + 1, "the fixture opened no tab"
+    assert _live(browser) == before + 1, "the fixture opened no tab"
     with pytest.raises(StopIteration):
         next(handing_over)
-    assert _live(browser, expecting=before) == before, "the fixture left its tab open"
+    assert _live(browser) == before, "the fixture left its tab open"
 
 
 def test_the_open_page_fixture_closes_the_tab_when_the_check_raised(browser: Browser) -> None:
     """⛔ A check that raises is torn down THROUGH the fixture, and still pays."""
-    before = len(browser.live_pages())
+    before = _live(browser)
     handing_over = conftest.one_tab_per_check(browser)
     next(handing_over)
     with pytest.raises(RuntimeError, match="the check failed"):
         handing_over.throw(RuntimeError("the check failed"))
-    assert _live(browser, expecting=before) == before, "a raising check left the fixture's tab"
+    assert _live(browser) == before, "a raising check left the fixture's tab"
 
 
 # --- clause 3: a browser that stops answering fails, inside a named bound -----

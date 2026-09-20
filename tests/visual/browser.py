@@ -199,6 +199,8 @@ class Browser:
         self._next_id = 0
         #: The target behind each attached session, so `close_page` can close it.
         self._targets: dict[str, str] = {}
+        #: Whether the browser has been asked to announce target lifetimes.
+        self._discovering = False
         #: Every event the browser volunteered, oldest first. Callers clear it.
         self.events: list[dict] = []
         try:
@@ -290,6 +292,7 @@ class Browser:
         operating-system processes, not a handle, and a session that opens one
         per check and closes none ends where the register found this one.
         """
+        self._discover_targets()
         target = self.call("Target.createTarget", {"url": "about:blank"})["targetId"]
         attached = self.call("Target.attachToTarget", {"targetId": target, "flatten": True})
         session = attached["sessionId"]
@@ -297,12 +300,60 @@ class Browser:
         return session
 
     def close_page(self, session: str) -> None:
-        """Close the tab `session` addresses. Safe twice, and safe after `close()`."""
+        """Close the tab `session` addresses, and RETURN ONLY ONCE IT IS GONE.
+
+        ⛔ **Waiting is the whole of `W397/3`, and it is not tidiness.**
+        `Target.closeTarget` is answered when the browser has ACCEPTED the
+        close, not when the tab is destroyed — ⚠️ **MEASURED in the pinned
+        image: the target is still listed for 10-13 ms on an idle machine and
+        for 26-100 ms under 24 competing processes.** ⛔ So a caller that read
+        `Target.getTargets` after this returned read a count that included tabs
+        the browser was still destroying, and the number it got depended on how
+        busy the machine was. ⭐ Waiting for the browser's OWN
+        `Target.targetDestroyed` makes every count taken afterwards correct by
+        construction, rather than correct when the machine happens to be quiet.
+
+        ⭐ Safe twice, and safe after `close()`.
+        """
         if self._closed:
             return
         target = self._targets.pop(session, None)
         if target is not None:
             self.call("Target.closeTarget", {"targetId": target})
+            self._await_destroyed(target)
+
+    def _discover_targets(self) -> None:
+        """Ask the browser to announce target lifetimes. Once per browser.
+
+        ⛔ `Target.targetDestroyed` is not emitted until discovery is on, so
+        this is what makes `close_page`'s wait possible at all.
+        """
+        if not self._discovering:
+            self.call("Target.setDiscoverTargets", {"discover": True})
+            self._discovering = True
+
+    @staticmethod
+    def _destroys(event: dict, target: str) -> bool:
+        """Report whether `event` is the browser saying `target` is gone."""
+        return (
+            event.get("method") == "Target.targetDestroyed"
+            and event.get("params", {}).get("targetId") == target
+        )
+
+    def _await_destroyed(self, target: str) -> None:
+        """Block until the browser reports `target` destroyed, or give up at the bound."""
+        if any(self._destroys(event, target) for event in self.events):
+            return
+        complaint = f"the closed tab was not destroyed in {CALL_TIMEOUT:.0f}s"
+        deadline = time.monotonic() + CALL_TIMEOUT
+        while time.monotonic() < deadline:
+            received = self._receive(deadline, complaint)
+            if "method" not in received:
+                continue
+            self.events.append(received)
+            if self._destroys(received, target):
+                return
+        raise BrowserError(complaint)
 
     def live_pages(self) -> list[str]:
         """The id of every page target the browser still holds open.
