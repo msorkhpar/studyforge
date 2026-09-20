@@ -14,7 +14,7 @@ reading and the floor may not shell out to git (`board.md`, ruled round 50).
 
 **Depends on.** `board.register` and `board.verdict` for the board's cell grammar and its
 three answers, `board.observation` for the vocabulary of a cell that declares NOTHING, and
-`tools.workspace` for the pin file plus the four git readings it already defines.
+`tools.workspace` for the pin file and its git readings.
 
 ## ⛔ The defect, measured by the register on 2026-09-20 (`BOARD-ARCHIVE.md`, PO round 128)
 
@@ -22,11 +22,10 @@ three answers, `board.observation` for the vocabulary of a cell that declares NO
 sibling's `main` checkout sat in an ABANDONED CONFLICTED MERGE** — `MERGE_HEAD` present,
 every file staged, none committed. ⛔ **So `consuming.json`, that task's entire deliverable
 and the seam's whole definition (R2), existed on NO COMMITTED REF** — and the task was
-recorded MERGED, and step 7.3 recorded it, on a reading nobody could have taken.
-
-⭐ **A cross-repo task has two halves and the register read one.** ⛔ **The remedy is not a
-habit:** an undeclared half cannot be read, and a half read off a working tree is not a
-reading anything else gets back.
+recorded MERGED, and step 7.3 recorded it, on a reading nobody could have taken. ⭐ **A
+cross-repo task has two halves and the register read one.** ⛔ **The remedy is not a habit:**
+an undeclared half cannot be read, and a half read off a working tree is not a reading
+anything else gets back.
 
 ## ⛔ Why the sibling half is read at the PIN and never at `HEAD`
 

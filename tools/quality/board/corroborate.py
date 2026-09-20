@@ -123,13 +123,11 @@ are IDS.** ⭐ An id is either vocabulary the board declares — `register.ident
 ## ⛔ `W403` — the CROSS-REPO arm, and the exit code DOES move
 
 ⚠️ **Measured 2026-09-20: `TC-05` was recorded MERGED, and step 7.3 recorded it, while its
-deliverable sat in a sibling's ABANDONED CONFLICTED MERGE and existed on NO COMMITTED REF.**
-⛔ **Every reading this command takes is about THIS repository**, so the framework half
-merging was the whole of what it could see — half a reading, printed as a close. ⭐ **So
-`docs/tasks/CROSSREPO.md` DECLARES both halves and `crossrepo.py` reads the sibling's AT
-THAT COMPONENT'S PIN**, never at a working tree. ⛔ **A component this run cannot see exits
-`NOT_AUTHORITATIVE`**: shelling into an absent sibling and returning green is the PASS
-reading from an empty population (Ruling 191) — ⚠️ every run inside the image (`FND-03`).
+deliverable sat in a sibling's ABANDONED CONFLICTED MERGE, on NO COMMITTED REF.** ⛔ **Every
+reading this command takes is about THIS repository**, so the framework half merging was the
+whole of what it could see. ⭐ **So `docs/tasks/CROSSREPO.md` DECLARES both halves and
+`crossrepo.py` reads the sibling's AT THAT COMPONENT'S PIN.** ⛔ **A component this run
+cannot see exits `NOT_AUTHORITATIVE`** (Ruling 191) — ⚠️ every run inside the image.
 
 """
 
@@ -180,8 +178,7 @@ def corroborate(
     which case it was** (`W111`, `PO-40/4`).
 
     ⛔ **`workspace` is where the sibling components are** (`W403`): `None` computes it from
-    the MAIN checkout's `--git-common-dir`, exactly as `tools.workspace` does, so a linked
-    worktree reaches them and a synthesised tree can be pointed anywhere.
+    the MAIN checkout's `--git-common-dir`, as `tools.workspace` does.
     """
     board = root / BOARD
     if not board.is_file():
