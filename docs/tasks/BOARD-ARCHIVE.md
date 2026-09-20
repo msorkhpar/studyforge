@@ -29642,3 +29642,58 @@ hiding them would answer the gate and lose the question.**
 hook installed on this machine (`graphify`), which wrote `graphify-out/` into that component and made `verify` name it.**
 ⭐ **Same class as the IDE directory and cleared the same way** — ⛔ **and worth the user knowing, because that hook will
 write there on every future commit to that repository.**
+
+---
+
+## PO round 132
+
+⛔ **Only what is MEASURED is written here.** ⭐ **`W421` CLOSES on the user's ruling; `W425` is minted from a defect the register caused by serving the site it had just regenerated; and the machine's knowledge-graph tooling is gone, which is why this round exists at all.**
+
+### ⭐ `W421` CLOSED — THE USER RULED, AND THE RULING WAS *DELETE*
+
+⛔ **`CodeSignal`'s two untracked files are removed.** They were a matched pair, identified before the ruling rather than guessed at: `.pipeline/docs/ui-design-prompt.md` is a design brief for agents whose closing example is *"a page tracking progress through an ordered course list became a road route: lane markings, stops, junctions, an exit sign, highway-sign type"*, and `study/course-plan.html` is titled **CodeSignal Study Route** and carries that vocabulary — 18 *route*, 9 *junction*, 3 *exit sign*, 2 *lane*. ⚠️ **Written seven minutes apart on 2026-09-18**, the evening of the UI identity ruling that sent this project's redesign to that brief.
+
+⭐ **The register did NOT decide it**, and the three reasons stand as recorded in `W421`: R20 keeps that repository untouched in v1, untracked means the deletion is unrecoverable, and provenance could not be established from here. ⛔ **The user was given the identification and the three dispositions and chose deletion.** ⭐ **`CodeSignal` now reads ZERO porcelain lines — exactly its pinned state.**
+
+### ⛔ `W425` — THE REGISTER RED A GATE BY SERVING THE SITE IT HAD JUST REGENERATED
+
+⚠️ **Measured within a minute of starting the preview server for the user:** `studyforge serve` writes `.studyforge/site.json` into the corpus root and nothing ignores it, so `W402`'s `verify` refuses the workspace. ⛔ **It is a DISCOVERY CACHE whose own line calls it unverifiable — the scan is the authority either way — so the cost of the refusal buys nothing.**
+
+⭐ **NOT cleared with a local exclude, and the distinction is the one this register drew all day:** an IDE directory and a machine's hook output are local artifacts and were excluded locally; ⛔ **this is the FRAMEWORK writing into EVERY corpus**, so hiding it on one host would hide the defect and teach a gate to lie — `W415`'s subject, committed on purpose. ⭐ **R19's shape: the fix belongs in the SKILL that generates a corpus, never in a hand-added line per corpus.**
+
+### ⚠️ THE MACHINE'S KNOWLEDGE-GRAPH TOOLING IS GONE — user instruction, 2026-09-20
+
+⭐ **`graphify` is uninstalled**: the package, both binaries, the `post-commit`/`post-checkout` hooks in four repositories, ~321 MB of `graphify-out/` across five, and its three stale lines in the machine's own agent configuration. ⛔ **This matters to the project because `CLAUDE.md` says there is NO code-graph or index tool here and no document may name one** — and the machine's configuration had been telling every agent that one was routine under `studyforge`.
+
+⛔ **Its uninstaller DELETED A TRACKED FILE, `CodeSignal/.gitattributes`, whose whole content was one graphify merge-driver line.** ⭐ **Restored by the register the same minute** (R20), and it is inert now.
+
+⭐ **`tools/knowledge/` is also gone** — untracked bytecode of R14's index tool, WITHDRAWN IN PLACE since 2026-09-12, whose source had already been removed. ⚠️ **The configuration line naming `python3 -m tools.knowledge bridge` as routine had outlived the module by eight days.**
+
+### ⛔ GATES, THIS ROUND
+
+| gate | reading |
+|---|---|
+| `python3 -m tools.workspace verify` | ⛔ **RED, exit 1, ONE named component** — `ISO-8583-jPOS-tutorial`, and the whole cause is `W425` above |
+| `python3 -m tools.quality.board.corroborate` | see the merge body |
+
+⭐ **`CodeSignal` and `narrate-service` are both GONE from that refusal.** ⚠️ **Nothing is left in it that is not a minted row.**
+
+### W421 — `CodeSignal` carries two untracked files on no ref, in the repository R20 keeps untouched
+
+⛔ **The body below is the row's argument MOVED WHOLE from `rows/W421.md` (Ruling 270); the file it came from is now a redirect stub.**
+
+⭐ **CLOSED BY THE USER'S RULING, not by an office and not by this register** — the disposition it asked for was *delete*, and both files are gone. ⚠️ **Its handoff is [`handoffs/W421.md`](handoffs/W421.md), which carries the identification made before the ruling.**
+
+⛔ **`W402/1`, and this row is the USER's to settle — not the register's.** The moment `W402` landed, `python3 -m tools.workspace verify` began refusing this workspace by name: `CodeSignal` carries **two** paths untracked and not ignored, `.pipeline/docs/ui-design-prompt.md` and `study/course-plan.html`, both dated the evening of the UI identity ruling.
+
+⛔ **The register will not decide it, and the reasons are three:** R20 keeps that repository untouched in v1; the files are UNTRACKED, so deleting them is unrecoverable; and their provenance cannot be established from here — they may be the user's, an earlier agent's, or CodeSignal's own.
+
+⚠️ **It is NOT hidden behind a local exclude, deliberately.** ⭐ **Hiding it would answer the gate and lose the question**, and the register would then be running a gate it had taught to lie — which is `W415`'s defect committed on purpose.
+
+### ⛔ WHAT SETTLES IT
+
+⭐ **One of: the files are removed; they are moved out of that repository; or that repository's own ignore rules cover them.** ⛔ **Until then the refusal is DISCLOSED with its named cause in every round**, and `verify` is read as RED-with-a-known-population rather than as GREEN.
+
+⚠️ **`narrate-service`'s untracked `.idea/` is NOT part of this row**: it is an IDE artifact with no provenance question, and the register clears it with a LOCAL exclude that moves no ref and changes no tracked file.
+
+[the mint](#po-round-130)
