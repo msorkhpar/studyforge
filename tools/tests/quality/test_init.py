@@ -18,6 +18,7 @@ from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
 from tools.quality.locations import location_notice
 from tools.quality.mirror import check_mirrors
+from tools.quality.palettes import check_rejected_palettes, palette_census
 from tools.quality.personal_data import check_personal_data, identity_notice
 from tools.quality.pointers import check_pointers, pointer_coverage
 from tools.quality.reach import check_rulings_reach, reach_notice
@@ -55,6 +56,7 @@ def test_every_check_is_registered():
         check_derived_counts,
         check_owns_before_creator,
         check_producer_half,
+        check_rejected_palettes,
     }
     assert quality.CHECKS, "Ruling 48: an empty registry satisfies set() == set()"
 
@@ -78,6 +80,7 @@ def test_every_notice_is_registered():
         count_census,
         creator_census,
         surface_census,
+        palette_census,
         vacuity_notice,
         identity_notice,
         lint_notice,

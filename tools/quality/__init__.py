@@ -71,6 +71,7 @@ from tools.quality.handoffs.sweep import check_marker_patterns
 from tools.quality.lint import lint_notice
 from tools.quality.locations import location_notice
 from tools.quality.mirror import check_mirrors
+from tools.quality.palettes import check_rejected_palettes, palette_census
 from tools.quality.personal_data import check_personal_data, identity_notice
 from tools.quality.pointers import check_pointers, pointer_coverage
 from tools.quality.reach import check_rulings_reach, reach_notice
@@ -174,6 +175,16 @@ from tools.quality.vacuity import vacuity_notice
 #: import spellings, and that is `W299/1`: a sweep defined over submodule imports alone
 #: releases a name the moment somebody corrects the spelling, so the pin has to be the
 #: half that does not depend on a consumer.
+#:
+#: ⚠️ `check_rejected_palettes` reads a CONVENTION'S TABLE over the stylesheets
+#: this framework ships (`W392`): the identities `docs/conventions/ui-design.md`
+#: §2 rejects, written as bands over hue, chroma and light. ⛔ Its exemption
+#: mechanism is a TWELFTH distinct one and it is the DOCUMENT ITSELF — an
+#: identity stops being refused only when its row leaves that table, which is
+#: the same edit as changing the rule, so the instrument and the convention
+#: cannot come apart. ⚠️ It reads COLOUR only: a serif display face, the card
+#: kit and a pill tag are §2 tells no hue can see, and `palette_census` says so
+#: on every run, because a green here would otherwise read as *§2 is met*.
 CHECKS = (
     check_sizes,
     check_board,
@@ -193,6 +204,7 @@ CHECKS = (
     check_derived_counts,
     check_owns_before_creator,
     check_producer_half,
+    check_rejected_palettes,
 )
 
 #: ⛔ **The second channel, and it exists because some of the floor's answers
@@ -309,6 +321,11 @@ CHECKS = (
 #: notice already prints their denominator are registered beside it in
 #: `vacuity.DISCLOSED_BY` and not re-printed. It sits above `identity_notice`, with
 #: the other lines that qualify the verdict.
+#: ⭐ **`palette_census` is the sixteenth** (`W392`): the rejected identities read
+#: out of the UI convention, the themes they were read over, and the sentence
+#: that keeps a green line from being read as *§2 is met*. ⛔ Printed on every
+#: run, clean or not — Ruling 48: `0 shipped` is `0 = 0` until it says out of
+#: what.
 NOTICES = (
     approach_notice,
     pointer_coverage,
@@ -323,6 +340,7 @@ NOTICES = (
     count_census,
     creator_census,
     surface_census,
+    palette_census,
     vacuity_notice,
     identity_notice,
     lint_notice,

@@ -67,6 +67,41 @@ office; wherever it says *the verdict*, read it as the two gate readings.**
   something and recorded why, follow it and cite it. Where you think it is
   wrong, say so in the handoff — do not quietly diverge.
 
+### ⛔ A `git merge` IS a commit, and it carries the OFFICE's identity
+
+⛔ **Every commit an office makes carries that office's line, set PER INVOCATION
+on the command** — Ruling 345's mechanism, in the review rubric — ⛔ **and a
+MERGE COMMIT is a commit.** ⭐ **Spelled out, because the short form is the one
+that got skipped:**
+
+```bash
+git -c user.name=<office> -c user.email=<office>@example.invalid \
+    merge --no-ff -m '<why this branch takes the release tip>' <the branch merged in>
+```
+
+⚠️ **Measured by the register, 2026-09-19 (`W396`):** an office took the release
+branch into its own with a plain `git merge`, so that ONE commit carried the
+identity of whoever ran it while every other commit on the branch carried the
+office's placeholder. ⛔ **Nothing is pushed, so the harm is not disclosure** —
+the standing user ruling permits a real identity on a local commit — ⭐ **the
+harm is that the branch then answers *who made this* in two voices, and an
+office's history stops being readable as that office's.**
+
+⛔ **`git config user.name` stays forbidden in every checkout** (Ruling 345): a
+linked worktree's `--local` IS the shared common config here, so the
+per-invocation form is not a preference, it is the only form that cannot reach
+another office's run.
+
+⭐ **The gate READS this and does not enforce it.** `tools/authorship.py`
+discloses a branch whose introduced commits carry two KINDS of identity, and
+`tools.mergegate` prints that line beside its verdict. ⛔ **A disclosure and
+never a refusal**, for the reason that module's own table gives: a coordinator's
+fix-up on an office's carrier is the same shape and is legitimate, so a gate
+that refused the mix would refuse correct branches — and every branch already
+carrying one, for a defect no office could clear from its own tree. ⚠️ **What the
+gate still REFUSES is unchanged: two distinct OFFICE identities among the
+commits one merge introduces.**
+
 ### ⛔ Ruling 268 (CTO round 58) — a grant of a decision ON A READING is decided BY THE READING, never by the row's menu of remedies
 
 ⭐ **A row that offers two remedies and says the choice is the taker's has granted a DECISION,
