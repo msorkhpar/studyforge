@@ -61,6 +61,11 @@ def test_no_test_module_here_is_outside_the_declared_clauses() -> None:
         "test_contrast_math",
         "test_discovery",
         "test_host_environment",
+        #: ⭐ `W397`: the harness's own lifetime — that a check's tab is closed
+        #: when the check ends, and that a silent browser fails rather than
+        #: hangs. ⛔ Machinery and not a clause: it asserts nothing about any
+        #: page this repository renders, which is what `ACCEPTANCE` is a map of.
+        "test_page_lifetime",
         "test_site",
     }
     declared = set(ACCEPTANCE.values()) | machinery

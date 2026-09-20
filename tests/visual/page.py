@@ -5,9 +5,21 @@ clauses are written in: open a `file://` URL under a chosen colour scheme with
 scripts on or off, evaluate an expression, capture a PNG, press a key, and read
 back every request the page issued.
 
-**How you use it.** `page = OpenPage(browser)`, then `page.open(url)`, then any
-of `page.evaluate(...)`, `page.capture(path)`, `page.tab()`, `page.requests()`.
-One `OpenPage` per test; the fixtures in `conftest.py` build it.
+**How you use it.** `with OpenPage(browser) as page:`, then `page.open(url)`,
+then any of `page.evaluate(...)`, `page.capture(path)`, `page.tab()`,
+`page.requests()`. One `OpenPage` per test; the fixtures in `conftest.py` build
+it, and close it.
+
+## ⛔ `W397` — the object that opened the tab closes it
+
+⛔ **This had no `close`, and the tab outlived the check that opened it.** A tab
+is a set of operating-system processes; the `browser` fixture is session-scoped
+and this one is per check, so a session's tabs accumulated until the pinned
+image could start no more renderers and the whole directory hung — ⚠️ **190
+processes, dozens of them Chrome renderers, at 0.1% CPU**. ⭐ **`close()` closes
+the target, `__exit__` calls it, and `conftest.py`'s fixture is the wrapper that
+makes every check pay it.** ⛔ A caller that builds one outside the fixture —
+`test_contrast.py`'s module-scoped reading does — owns the same closing.
 
 **Depends on.** `browser.Browser` and `browser.VIEWPORT`, `base64`, `pathlib`,
 `time`. ⛔ The two named widths here are stated, never read out of a
@@ -64,9 +76,37 @@ class OpenPage:
         """Attach a fresh tab and enable the domains every reading needs."""
         self.browser = browser
         self.session = browser.page()
-        for domain in ("Page", "Runtime", "Network", "DOM"):
-            browser.call(f"{domain}.enable", session=self.session)
+        self._open = True
+        try:
+            for domain in ("Page", "Runtime", "Network", "DOM"):
+                browser.call(f"{domain}.enable", session=self.session)
+        except BaseException:
+            # ⛔ A tab that fails half-way through setup is still a tab (`W397`).
+            self.close()
+            raise
         self._scripts = True
+
+    # --- lifetime ----------------------------------------------------------
+
+    def close(self) -> None:
+        """Close this tab. Safe twice, and safe once the browser itself has gone.
+
+        ⛔ **`W397`.** Closing the TARGET and not merely detaching the session:
+        a detached tab keeps its renderer, so a harness that only detached would
+        accumulate exactly what this closes.
+        """
+        if not self._open:
+            return
+        self._open = False
+        self.browser.close_page(self.session)
+
+    def __enter__(self) -> OpenPage:
+        """Return self, so a caller can use `with OpenPage(browser) as page:`."""
+        return self
+
+    def __exit__(self, *_exception: object) -> None:
+        """Close the tab on the way out, including on failure."""
+        self.close()
 
     # --- opening -----------------------------------------------------------
 

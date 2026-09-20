@@ -28,6 +28,23 @@ writing, keeps it, and `diagnostics()` answers from that copy afterwards. ⛔ A
 cleanup that deleted the only evidence of why a launch failed would trade one
 silent failure for another.
 
+## ⛔ `W397` — a tab is closed by whoever opened it, and a silent browser fails
+
+⛔ **Two defects, one symptom.** `page()` opened a tab per check and nothing ever
+closed one, so a session's tabs accumulated as operating-system processes until
+the image could start no more renderers. ⚠️ **MEASURED by the register in the
+pinned image: 190 processes, dozens of them Chrome renderers, at 0.1% CPU.**
+⭐ `page()` now records the target behind each session and `close_page()` closes
+it; `live_pages()` is how a check counts what is still open.
+
+⛔ **And the wait had no floor under it.** `call` computed a deadline and looped
+on it, but the loop body blocked in `os.read` on a live pipe — so a browser that
+was UP AND SILENT was never given up on, and `"no answer in 30s"` was
+unreachable. ⭐ `_receive` now waits with `select` until the SAME deadline, so a
+browser that stops answering FAILS the check instead of hanging the suite.
+⚠️ `docker/dev/check`'s outer bound stays where it is: it catches a hang
+anywhere, and this catches this one with a verdict attached.
+
 ## ⛔ Why the pipe and not a WebSocket, and why no driver library
 
 ⭐ **The transport is the whole reason this file is short.** `--remote-debugging-port`
@@ -52,6 +69,7 @@ from __future__ import annotations
 
 import json
 import os
+import select
 import shutil
 import subprocess
 import tempfile
@@ -179,6 +197,8 @@ class Browser:
         self._closed = False
         self._buffer = b""
         self._next_id = 0
+        #: The target behind each attached session, so `close_page` can close it.
+        self._targets: dict[str, str] = {}
         #: Every event the browser volunteered, oldest first. Callers clear it.
         self.events: list[dict] = []
         try:
@@ -233,41 +253,83 @@ class Browser:
         if session is not None:
             message["sessionId"] = session
         os.write(self._writer, json.dumps(message).encode("utf-8") + b"\0")
+        complaint = f"{method}: no answer in {CALL_TIMEOUT:.0f}s"
         deadline = time.monotonic() + CALL_TIMEOUT
         while time.monotonic() < deadline:
-            received = self._receive()
+            received = self._receive(deadline, complaint)
             if received.get("id") == wanted:
                 if "error" in received:
                     raise BrowserError(f"{method}: {received['error']}")
                 return received.get("result", {})
             if "method" in received:
                 self.events.append(received)
-        raise BrowserError(f"{method}: no answer in {CALL_TIMEOUT:.0f}s")
+        raise BrowserError(complaint)
 
     def wait(self, method: str, timeout: float = CALL_TIMEOUT) -> dict:
         """Return the first queued or incoming event named `method`."""
         for event in self.events:
             if event.get("method") == method:
                 return event
+        complaint = f"no {method} in {timeout:.0f}s"
         deadline = time.monotonic() + timeout
         while time.monotonic() < deadline:
-            received = self._receive()
+            received = self._receive(deadline, complaint)
             if "method" not in received:
                 continue
             self.events.append(received)
             if received["method"] == method:
                 return received
-        raise BrowserError(f"no {method} in {timeout:.0f}s")
+        raise BrowserError(complaint)
+
+    # --- tabs --------------------------------------------------------------
 
     def page(self) -> str:
-        """Open a tab, attach to it, and return the session id calls are addressed with."""
+        """Open a tab, attach to it, and return the session id calls are addressed with.
+
+        ⛔ **Whoever calls this owns `close_page`** (`W397`). A tab is a set of
+        operating-system processes, not a handle, and a session that opens one
+        per check and closes none ends where the register found this one.
+        """
         target = self.call("Target.createTarget", {"url": "about:blank"})["targetId"]
         attached = self.call("Target.attachToTarget", {"targetId": target, "flatten": True})
-        return attached["sessionId"]
+        session = attached["sessionId"]
+        self._targets[session] = target
+        return session
 
-    def _receive(self) -> dict:
-        """Read one NUL-delimited message, blocking until the browser sends it."""
+    def close_page(self, session: str) -> None:
+        """Close the tab `session` addresses. Safe twice, and safe after `close()`."""
+        if self._closed:
+            return
+        target = self._targets.pop(session, None)
+        if target is not None:
+            self.call("Target.closeTarget", {"targetId": target})
+
+    def live_pages(self) -> list[str]:
+        """The id of every page target the browser still holds open.
+
+        ⭐ Asked of the BROWSER rather than of this object's bookkeeping, so a
+        count taken over many checks measures the processes and not the
+        intention (`W397`).
+        """
+        targets = self.call("Target.getTargets")["targetInfos"]
+        return [info["targetId"] for info in targets if info.get("type") == "page"]
+
+    def _receive(self, deadline: float, complaint: str) -> dict:
+        """Read one NUL-delimited message, giving up at `deadline`.
+
+        ⛔ **The bound is on the READ, not only on the loop around it** (`W397`).
+        This blocked in `os.read` on a live pipe, so a browser that was up and
+        silent was waited on forever and every caller's deadline was dead code.
+        ⭐ `select` waits until the same instant the caller named, and `complaint`
+        is the caller's own sentence so the failure says what was waited for.
+        """
         while b"\0" not in self._buffer:
+            remaining = deadline - time.monotonic()
+            if remaining <= 0 or not select.select([self._reader], [], [], remaining)[0]:
+                raise BrowserError(
+                    f"{complaint} — {self.binary} is running and silent. "
+                    f"Its own last words: {self.diagnostics()!r}"
+                )
             chunk = os.read(self._reader, 1 << 16)
             if not chunk:
                 raise BrowserError(
@@ -312,6 +374,7 @@ class Browser:
         if self._closed:
             return
         self._closed = True
+        self._targets.clear()
         try:
             for closing in (self._writer, self._reader):
                 if closing is None:
