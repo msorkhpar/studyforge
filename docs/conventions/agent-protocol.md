@@ -135,6 +135,68 @@ measured three serve-CLI tests going RED under one: they bind a Unix socket insi
 temp root, and the longer path exceeded what `sun_path` can hold. ⛔ A liveness test
 costs nothing and moves no path.
 
+### ⛔ `W398/4` — the lint gate that VOTES is not the one an office reaches first
+
+⛔ **These rules named no VOTING lint gate, so an office could hand back GREEN on two arms
+that cannot fail. This names it.** ⭐ **The lint arm that can refuse a merge is
+`tests/test_repository.py::test_ruff_lint_is_clean_where_ruff_exists`, it lives inside the
+SUITE gate, and an office whose row adds or edits Python takes it directly while working:**
+
+```bash
+docker/dev/check python3 -m pytest -q tests/test_repository.py
+```
+
+⛔ **THE TWO ARMS AN OFFICE REACHES FIRST, AND NEITHER OF THEM CAN REFUSE A MERGE:**
+
+| what gets taken | why it cannot fail a build |
+|---|---|
+| `python3 -m tools.quality`'s `lint:` line | ⛔ a NOTICE. [Ruling 78](review-rubric.md#ruling-78-the-floor-prints-the-lint-state-including-its-absence) puts lint and format ENFORCEMENT in the suite; [Ruling 77](review-rubric.md#ruling-77-ruling-31-does-not-reach-ruff-and-toolsquality-keeps-its-independence) keeps the floor's exit code independent of whether ruff is installed at all; and [Ruling 88](review-rubric.md#ruling-88-the-floor-and-ruff-are-two-checks-and-a-review-that-runs-one-runs-half) is that the floor and ruff are TWO checks, neither a subset of the other |
+| `ruff format --check` | ⛔ it reads FORMATTING, which is a different question over a different population — `tests/test_repository.py` declares one population per arm and says why. ⚠️ **Measured at this row's ref, pinned image: one unused import in a tracked `.py` leaves the floor and the format arm at exit `0` and takes the lint arm to exit `1`** |
+
+⚠️ **Measured by the register, 2026-09-19:** a guarded merge was REFUSED, exit 1, on a
+missing docstring — with both of those arms green on the office's own tree. ⭐ **Neither
+could have caught it, and neither is broken**: they answer a different question, and a
+green from a gate that cannot vote is not a lint reading at all.
+
+⛔ **THIS IS NOT A GATE AND IT DOES NOT REPLACE THE CERTIFICATION.** ⭐ **What a row merges
+on is every gate `tools.mergegate.GATES` declares, read by the ONE command the rubric's
+[certification block](review-rubric.md#there-is-no-reviewing-office-and-no-verdict-every-row-is-self-certified)
+gives** — ⚠️ **and no gate's command is typed into any document, because the one that was
+got respelled and a pasted reading wore the other gate's name** (`W301`). ⭐ **The line
+above is a SUBSET of a declared gate, taken early on purpose: it costs seconds where the
+suite costs minutes, and it is the arm that was missing.**
+
+#### ⛔ A refusal names ONE TEST, and the gates after it were never TAKEN
+
+⛔ **The lint arm is a SINGLE test, so a refusal relayed as a failing test name is ONE
+name however many findings stand behind it** — and pytest's own summary line elides the
+rest with `- ...`. ⭐ **Every finding is in the assertion MESSAGE, so the message is read
+WHOLE and so is every file the row touched.** ⚠️ **Measured at this row's ref, pinned
+image: three lint findings planted across two tracked files produce ONE failing test,
+whose message names all three.** ⛔ **An office that repairs the headline and re-runs
+buys one further refusal per finding it did not read, and spends a merge gate on each.**
+
+⛔ **And `tools.mergegate` STOPS AT THE FIRST RED GATE** — deliberately, so a refusal does
+not cost the office a second environment — ⭐ **so the gates it lists as NOT TAKEN are
+unread, and unread is never green** (Ruling 191). ⚠️ **A repair is followed by re-taking
+the WHOLE certification, never by re-taking the one arm that spoke.**
+
+#### ⛔ `W398/3` — a reading is taken against a tree NOTHING ELSE IS WRITING
+
+⛔ **A pinned reading taken against a checkout another run is mutating is NOT a reading**,
+and it has no exit code worth reporting. ⚠️ **It is the cleanup defect above, one level
+up:** the register took a repairing fast-forward in a sibling component while a merge gate
+was running against that sibling, and reverted within the minute. ⭐ **A shared component
+is moved BETWEEN gates, never during one.**
+
+- ⛔ **Your gates run in YOUR worktree, and nothing writes to it while one is running** —
+  not an editor, not a second gate of your own, not a cleanup.
+- ⛔ **Never move, checkout, reset, merge or clean a sibling component** under the
+  workspace while any gate anywhere can be running; another office's gate may be reading
+  it. ⭐ A row that needs a sibling in a particular state builds a synthetic fixture in
+  `mktemp -d`.
+- ⚠️ **A reading whose tree moved under it is RE-TAKEN, never explained.**
+
 ### ⛔ Ruling 268 (CTO round 58) — a grant of a decision ON A READING is decided BY THE READING, never by the row's menu of remedies
 
 ⭐ **A row that offers two remedies and says the choice is the taker's has granted a DECISION,
