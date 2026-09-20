@@ -54,6 +54,26 @@
   var MARKS_KEY = 'studyforge.read.v1';
   var DISPLAY_KEY = 'studyforge.display.v1';
 
+  /* ⛔ THE BOOT CACHE, AND IT IS A DIFFERENT STORAGE AREA ON PURPOSE — `W388`
+     stage 5. ⚠️ `page.html` carries a synchronous boot in the `<head>` so a
+     reader who chose a theme is not shown the other one for a frame. That boot
+     ran against `localStorage`, and it is the EARLIEST a document can touch
+     that area: a document that binds it before the previous page's write has
+     been committed keeps a snapshot WITHOUT that write, for its whole life.
+     ⛔ Measured on one host at `-n 16`: a mark written on one page was missing
+     on the next in 14 of 35 runs; with the boot not touching `localStorage`,
+     0 of 10. ⛔ And it is not cosmetic — the reader then marks the page they
+     are on, `writeMarks` composes the record from the stale set, and the
+     earlier mark is gone.
+
+     ⭐ So what the boot reads is a CACHE in `sessionStorage`, whose area is
+     separate: touching it binds nothing the marks live in. ⛔ It is never an
+     authority — the display record above is — and nothing here reads it back.
+     ⚠️ The key is composed rather than written whole, so a caller names a
+     preference and never a key. */
+  var BOOT_PREFIX = 'studyforge.boot.';
+  var BOOT_SUFFIX = '.v1';
+
   /* The shape inside a record. ⚠️ Versioned in the body as well, because a
      browser can hold a key this build wrote and a key a later build wrote,
      and a reader whose two machines disagree is the normal case. */
@@ -84,6 +104,41 @@
   }
 
   var backed = backing();
+
+  /* The same probe against the session area. ⚠️ Probed separately: a browser
+     can refuse one and allow the other, and a refused cache costs a frame of
+     flash while a refused store costs the reader their marks. */
+  function sessioned() {
+    try {
+      var store = window.sessionStorage;
+      var probe = BOOT_PREFIX + 'probe';
+      store.setItem(probe, '1');
+      store.removeItem(probe);
+      return store;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  var cached = sessioned();
+
+  /* ⛔ What the head boot may act on, kept for one preference. A value of
+     `null` REMOVES it, because an absent cache and a cached word must not be
+     two answers to one question: the boot acts on what it finds or on nothing.
+     ⭐ Returns whether it took, the way `keep` does. */
+  function cache(name, value) {
+    if (!cached) { return false; }
+    try {
+      if (value === null) {
+        cached.removeItem(BOOT_PREFIX + name + BOOT_SUFFIX);
+      } else {
+        cached.setItem(BOOT_PREFIX + name + BOOT_SUFFIX, value);
+      }
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 
   /* One record, or null when there is nothing this can use. ⛔ Every way of
      being unusable lands here and returns the same thing, so a caller never
@@ -210,6 +265,7 @@
     unmark: unmark,
     preferences: preferences,
     preference: preference,
-    prefer: prefer
+    prefer: prefer,
+    cache: cache
   };
 }());

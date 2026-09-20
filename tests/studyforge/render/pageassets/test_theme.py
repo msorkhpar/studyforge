@@ -43,6 +43,19 @@ def boot() -> str:
     return found[0]
 
 
+def code(part: str) -> str:
+    """`part`'s source with every block comment taken out.
+
+    ⛔ **A clause about what a part DOES must not read what it SAYS.**
+    `test_the_part_reads_the_store_through_its_published_name` refuses the name
+    `localStorage` in this part — and `W388` stage 5 gave the part a docstring
+    that has to name it, because the defect it records is that the head boot
+    touched it. ⚠️ Without this the file could only be made green by leaving the
+    measurement unwritten, which is the wrong thing to trade.
+    """
+    return re.sub(r"/\*.*?\*/", "", text(part), flags=re.S)
+
+
 def declared(part: str, name: str) -> str:
     """The value `part` assigns to the `var` called `name`."""
     found = re.search(rf"var {re.escape(name)} = (.+?);", text(part))
@@ -50,49 +63,94 @@ def declared(part: str, name: str) -> str:
     return found.group(1).strip()
 
 
+#: The boot exactly as `W388` stage 2 shipped it, and what `W388` stage 5
+#: measured it costing. ⛔ **It read the display record out of `localStorage` in
+#: the `<head>`** — the document's first touch of that area, far earlier than
+#: any build before it — and a document that binds the area before the previous
+#: document's write has committed keeps a snapshot without it, for its whole
+#: life. ⚠️ Measured on the host at `-n 16`: a mark written on one page was
+#: missing on the next in 14 of 35 runs with this boot, 0 of 10 with the same
+#: branch and the boot not touching `localStorage`, 0 of 10 on the release tip.
+#: ⛔ The reader then marks the page they are on and the earlier mark is
+#: DESTROYED, because the new record is composed from the stale set.
+#: ⭐ It is kept here as the thing every clause below is refuted against.
+BOOT_THAT_LOST_MARKS = (
+    'try{var d=JSON.parse(localStorage.getItem("studyforge.display.v1"));'
+    "var t=d&&d.version===1&&d.display&&d.display.theme;"
+    'if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}'
+    "catch(e){}"
+)
+
+
 def missing(script: str) -> list[str]:
-    """Which of the store's three spellings `script` does not carry, by name.
+    """Which of the mirror's spellings `script` does not carry, by name.
 
     ⛔ ONE function, used by the reading and by its refutation: a check written
     twice is a check that can pass in one spelling and fail in the other.
+
+    ⚠️ **The boot no longer spells the DISPLAY record's key, and that is `W388`
+    stage 5.** What it spells is the boot CACHE the store keeps in
+    `sessionStorage` — a different storage area, so reading it binds nothing the
+    marks live in. ⛔ The key is COMPOSED by the store from a prefix, the
+    preference's name and a suffix, and it is composed the same way here rather
+    than written out, so a store that renames any of the three reds this.
     """
-    key = declared(STORE, "DISPLAY_KEY").strip("'\"")
-    field = declared(STORE, "DISPLAY_FIELD").strip("'\"")
-    version = declared(STORE, "RECORD_VERSION")
+    key = (
+        declared(STORE, "BOOT_PREFIX").strip("'\"")
+        + declared(PART, "PREFERENCE").strip("'\"")
+        + declared(STORE, "BOOT_SUFFIX").strip("'\"")
+    )
     return [
         name
-        for name, tell in (
-            ("key", f'"{key}"'),
-            ("field", f"d.{field}."),
-            ("version", f"=== {version}"),
-        )
-        if tell not in script.replace("===", "=== ").replace("===  ", "=== ")
+        for name, tell in (("key", f'"{key}"'), ("area", "sessionStorage"))
+        if tell not in script
     ]
 
 
-# --- the boot finds the record the store writes ------------------------------
+# --- the boot finds the mirror the part writes -------------------------------
 
 
-def test_the_boot_spells_the_store_s_key_field_and_version_exactly():
-    # ⛔ The one thing this module exists for. Each value is read from the
-    # STORE's source and looked for in the boot, so neither side is retyped.
+def test_the_boot_spells_the_mirror_exactly_as_the_part_that_writes_it():
+    # ⛔ The one thing this module exists for. The key is read from `theme.js`'s
+    # source and looked for in the boot, so neither side is retyped.
     assert missing(boot()) == []
 
 
 @pytest.mark.parametrize(
     ("planted", "said"),
     (
-        (("studyforge.display.v1", "studyforge.display.v2"), "key"),
-        ((".display.theme", ".displays.theme"), "field"),
-        (("version===1", "version===2"), "version"),
+        (("studyforge.boot.theme.v1", "studyforge.boot.theme.v2"), "key"),
+        (("sessionStorage", "localStorage"), "area"),
     ),
 )
-def test_a_boot_that_misspells_any_of_the_three_is_caught_by_name(planted, said):
-    # ⭐ The other way (R12), through the SAME function: each of the three
-    # changed by one character, and the one that moved is the one reported.
+def test_a_boot_that_misspells_the_mirror_is_caught_by_name(planted, said):
+    # ⭐ The other way (R12), through the SAME function: each spelling changed by
+    # one token, and the one that moved is the one reported.
     written = boot()
     assert planted[0] in written, written
     assert missing(written.replace(*planted)) == [said]
+
+
+def test_the_boot_never_touches_the_store_the_reader_s_MARKS_live_in():
+    # ⛔ **`W388` STAGE 5's SETTLING CLAUSE, and it is a measured defect rather
+    # than a style rule.** The `<head>` is the earliest a document can touch
+    # `localStorage`, and a snapshot taken there can be older than the write the
+    # previous page made — permanently, for that document. ⚠️ The theme is worth
+    # one frame of flash on the first page of a tab; it is not worth a reader's
+    # marks. ⭐ The mirror lives in a DIFFERENT storage area, which is the whole
+    # of the repair.
+    assert "localStorage" not in boot(), (
+        "the head boot binds the durable store before the page is parsed, which "
+        "is what cost a mark in 14 of 35 measured runs"
+    )
+
+
+def test_the_boot_that_shipped_is_caught_by_that_clause():
+    # ⭐ The other way, against the exact text that shipped rather than an
+    # impression of it: a clause that has only ever seen the repair has not been
+    # shown to notice the defect it exists for (Ruling 70).
+    assert "localStorage" in BOOT_THAT_LOST_MARKS
+    assert missing(BOOT_THAT_LOST_MARKS) == ["key", "area"]
 
 
 def test_the_boot_writes_the_attribute_the_palette_guards_on():
@@ -126,7 +184,7 @@ def test_the_boot_reaches_nothing_and_handles_no_event():
 
 
 def test_the_boot_survives_a_browser_that_refuses_site_data():
-    # ⚠️ Reading `localStorage` THROWS on the property access in a private
+    # ⚠️ Reading `sessionStorage` THROWS on the property access in a private
     # window or with site data blocked — not on the read — so the whole of it
     # is inside one `try`. Without that the page would stop before its title.
     written = boot()
@@ -145,9 +203,35 @@ def test_the_part_follows_the_store_and_precedes_its_last_consumer():
 def test_the_part_reads_the_store_through_its_published_name():
     # ⛔ One implementation of the store, asked questions by this part — never a
     # second reader of `localStorage`.
-    body = text(PART)
+    body = code(PART)
     assert "window.studyforge.progress" in body
     assert "localStorage" not in body
+
+
+def test_the_part_keeps_the_boot_cache_through_the_store_and_clears_it_for_system():
+    # ⛔ **The cache is never an authority** (`W388` stage 5). The durable answer
+    # stays in the display record, which only this part reads; what is cached is
+    # the one string the head boot may act on. ⚠️ *System* caches `null` rather
+    # than the word, because an absent cache and a cached *system* must not be
+    # two answers to one question — the boot acts on `light` and `dark` alone.
+    # ⛔ Through the STORE, so `test_progress`'s clause that one part touches the
+    # browser's storage stays true of a different area too.
+    body = code(PART)
+    assert "store.cache(" in body and "sessionStorage" not in body
+    assert "null" in body[body.index("function remember(") : body.index("function paint(")]
+
+
+def test_the_cache_is_written_from_the_paint_so_it_can_never_lag_the_page():
+    # ⭐ Written inside `paint`, which is the ONE place the attribute is set, so
+    # the frame the boot will restore is the frame the reader is looking at.
+    # ⛔ Cached from `choose` instead it would be right for a press and wrong for
+    # the load that follows it.
+    body = code(PART)
+    painting = body[body.index("function paint(") : body.index("function choose(")]
+    assert "remember(choice)" in painting, (
+        "the boot cache is not kept from the page's own paint, so a load and a "
+        "press can leave the boot restoring a theme the reader is not looking at"
+    )
 
 
 @pytest.mark.parametrize("choice", CHOICES)

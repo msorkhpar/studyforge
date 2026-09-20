@@ -33,9 +33,37 @@
    so it runs after the first paint — applying the stored theme here would show
    every reader the wrong page for a frame. `page.html` carries a tiny
    synchronous boot in `<head>` that sets `data-theme` before anything is
-   painted. ⚠️ That boot spells the store's key, version and field a second
-   time, because it must run before any bundle exists; `test_theme` holds the
-   two spellings equal, both ways.
+   painted.
+
+   ⛔ **AND THAT BOOT READS `sessionStorage`, NEVER `localStorage`, WHICH IS
+   `W388` STAGE 5 AND IS A MEASURED DEFECT RATHER THAN A PREFERENCE.** The boot
+   as stage 2 shipped it read the display record out of `localStorage` in the
+   `<head>` — the document's FIRST touch of that area, far earlier than any
+   build before it. ⚠️ Measured on this host at `-n 16`: with that boot, a mark
+   written on one page and read on the next was MISSING in 14 of 35 runs; with
+   the same branch and the boot not touching `localStorage`, 0 of 10; on the
+   release tip, which carries no boot at all, 0 of 10. ⛔ A document that binds
+   the area before the previous document's write has been committed gets a
+   snapshot WITHOUT it, and that snapshot is what it keeps: the value was still
+   missing a second later. ⛔ **The harm is not cosmetic** — the reader then
+   presses *Mark as read* on that page, `writeMarks` composes the new record
+   from the stale set, and the earlier mark is destroyed. A record reading
+   `{"version":1,"read":[]}` after two marks is what the measurement caught.
+
+   ⭐ **So the boot reads a CACHE in `sessionStorage`, which is a different
+   storage area and binds nothing in `localStorage`.** ⛔ The cache is the
+   STORE's — `progress.cache(name, value)` — because one part touches the
+   browser's storage and that does not stop being true because the area is a
+   different one. This part asks for it from its own paint, by which time the
+   bundle has long since bound the durable area. ⚠️ `sessionStorage` is per tab,
+   so the FIRST page opened in a new tab has no cache and paints the system
+   scheme for one frame before this part corrects it; every navigation after it
+   is flash-free. ⛔ That one frame is the price of not losing a reader's marks,
+   and it is stated rather than hidden. ⭐ The durable answer is still the
+   display record, which this part alone reads; the cache is never an authority
+   and nothing reads it back. ⚠️ The boot spells the cache's key a second time,
+   because it must run before any bundle exists; `test_theme` holds the two
+   spellings equal, both ways, and refuses a boot that names `localStorage`.
 
    ⭐ **The words a reader sees are in `page.html`** (R13): this file toggles
    `hidden` and `aria-pressed` and types nothing.
@@ -71,6 +99,7 @@
   var EVERY = 'all';
   var NONE = 'not all';
 
+
   var store = window.studyforge.progress;
   var root = document.documentElement;
 
@@ -92,12 +121,22 @@
     return held === LIGHT || held === DARK ? held : SYSTEM;
   }
 
+  /* ⛔ The cache the head boot reads, kept in step with every paint and kept by
+     the STORE rather than by this part. ⚠️ One part touches the browser's
+     storage (`test_progress` asserts it), and that does not stop being true
+     because the area is a different one. ⭐ *System* caches NOTHING: an absent
+     cache and a cached word must not be two answers to one question. */
+  function remember(choice) {
+    store.cache(PREFERENCE, choice === SYSTEM ? null : choice);
+  }
+
   function paint(choice) {
     if (choice === SYSTEM) {
       root.removeAttribute(THEME);
     } else {
       root.setAttribute(THEME, choice);
     }
+    remember(choice);
     colours.forEach(function (carried) {
       if (choice === SYSTEM) {
         carried.meta.setAttribute('media', carried.media);

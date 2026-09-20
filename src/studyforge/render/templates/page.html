@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f1f5f9">
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
-<script>try{var d=JSON.parse(localStorage.getItem("studyforge.display.v1"));var t=d&&d.version===1&&d.display&&d.display.theme;if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
+<script>try{var t=sessionStorage.getItem("studyforge.boot.theme.v1");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}</script>
 <title>${title}</title>
 <link rel="stylesheet" href="${stylesheet}">
 ${identity}</head>

@@ -74,7 +74,10 @@ def test_a_title_the_corpus_wrote_is_escaped_on_its_way_into_the_head():
     # paint — so the check is that the corpus's own one did not survive: the
     # only opening tag on the page is the boot's, and it is the skeleton's.
     assert page.count("<script>") == 1
-    assert "localStorage" in page.split("<script>")[1].split("</script>")[0]
+    # ⚠️ Since `W388` stage 5 the boot reads `sessionStorage` and never
+    # `localStorage`: binding the durable store in the `<head>` cost a reader
+    # their marks, measured. The tell is the boot's own, whatever area it reads.
+    assert "data-theme" in page.split("<script>")[1].split("</script>")[0]
     assert isinstance(placement_for("depth1"), Placement)
 
 
