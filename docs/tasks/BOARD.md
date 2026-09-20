@@ -51,10 +51,11 @@ one does.**
 | **M8** — it is a framework | ✅ **CLOSED** — ⭐ **round 109**: `QA-04` verified and merged; ⛔ **the deliverable is the FINDINGS LOG**, complete over all seven of the conversion's numbered findings. ⭐ **Both of the ISO track's finish lines are reached** | `671e052` | [the close](BOARD-ARCHIVE.md#po-round-109) |
 | **M5** — it runs code | ✅ **CLOSED — round 123**: step 5.2 merged and verified; ⭐ **the container reading re-taken by this register against a REBUILT `python` runner image that holds only `python` (`W374`)** | `12b1abb` | [the close](BOARD-ARCHIVE.md#po-round-123) |
 | **M5 step 5.2** | ✅ CLOSED — `SF-29`, `SF-22`, `SF-44` | `12b1abb` | [record](BOARD-ARCHIVE.md#po-round-123) |
-| **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20`, ⭐ **the runner's acceptance taken by the register against the REAL runner image** | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
+| **M5 step 5.1** | ✅ CLOSED — `TC-00` + `SF-20` | `b9aef83` | [record](BOARD-ARCHIVE.md#po-round-117) |
 | **M7** — it has practices | ⏳ **OPEN — round 121.** ⭐ Step 7.1 CLOSED (124); step 7.2 OPEN and SERIAL — `TC-02` → `TC-03` → `TC-04`, one set of build files | — | [the open](BOARD-ARCHIVE.md#po-round-121) |
-| **M7 step 7.1** | ✅ CLOSED — `TC-01`, planted both ways; the sibling at `8914ac8` | `9bc688f` | [record](BOARD-ARCHIVE.md#po-round-124) |
-| **M7 step 7.2** | ⏳ OPEN — `TC-02` merged (round 125); `TC-03` in flight; `TC-04` queued behind it | — | [record](BOARD-ARCHIVE.md#po-round-125) |
+| **M7 step 7.1** | ✅ CLOSED — `TC-01` | `9bc688f` | [record](BOARD-ARCHIVE.md#po-round-124) |
+| **M7 step 7.2** | ✅ CLOSED — `TC-02`, `TC-03`, `TC-04` | `04ce050` | [record](BOARD-ARCHIVE.md#po-round-126) |
+| **M7 step 7.3** | ⏳ OPEN — `TC-05` in flight; `TC-06` behind it (one set of contract files) | — | [record](BOARD-ARCHIVE.md#po-round-126) |
 | **M10** — every corpus has practices | ⛔ **NOT STARTED — after `M7`.** ⭐ **A CORE IDEA of the project (user, 2026-09-19)**; planned by [`W389`](rows/W389.md) | — | [the plan](README.md) |
 | **M11** — it is release-ready | ⛔ **NOT STARTED — after `M10`** (user, 2026-09-18; ruled 2026-09-19) | — | [the plan](README.md) |
 | **M9** — the Java corpus re-validates | ⛔ **NOT STARTED, and it holds 21 of the 35 undelivered capabilities.** `Claude-senior-java-engineer` converted under §12's rules, with gate-clearing exercises, and the findings written down | — | [the plan](README.md) |
@@ -70,13 +71,13 @@ PRIMARY.** ⭐ **[Why](BOARD-ARCHIVE.md#po-round-44-w98-closed-w126-and-w127-min
 <!-- inflight -->
 | Row | Owner | Checkout | Commits ahead | State |
 |---|---|---|---|---|
-| `TC-03` | Developer 1 | `task/TC-03-cache-priming` @ `wt/dev1` | 0 @ `8c757cd` | in-progress |
-| `W381` | Developer 2 | `fix/W381-the-skill-says-where-a-run-executes` @ `wt/dev2` | 0 @ `8c757cd` | in-progress |
-| `W385` + `W386` | Developer 3 | `fix/W385-a-served-corpus-scans-where-its-pages-are` @ `wt/dev3` | 0 @ `8c757cd` | in-progress |
-| `W387` | Developer 4 | `fix/W387-the-runner-names-an-unpinned-runtime` @ `wt/dev4` | 0 @ `8c757cd` | in-progress |
+| `TC-05` | Developer 1 | `task/TC-05-compose-and-mount` @ `wt/dev1` | 0 @ `04ce050` | in-progress |
+| `W393` | Developer 2 | `fix/W393-an-office-sees-its-lint-signal` @ `wt/dev2` | 0 @ `04ce050` | in-progress |
+| `W392` + `W395` + `W396` | Developer 3 | `fix/W392-the-conventions-say-what-was-learned` @ `wt/dev3` | 0 @ `04ce050` | in-progress |
+| `W390` | Developer 4 | `fix/W390-the-runner-warms-a-corpus-cache` @ `wt/dev4` | 0 @ `04ce050` | in-progress |
+| `W391` | Developer 6 | `fix/W391-the-inputs-helper-lives-once` @ `wt/dev6` | 0 @ `04ce050` | in-progress |
+| `W389` | Developer 7 | `task/W389-exercises-authored-for-every-corpus` @ `wt/dev7` | 0 @ `04ce050` | in-progress |
 | `W388` + `W369` | Developer 5 | `fix/W388-a-palette-for-hours-of-reading` @ `wt/dev5` | 0 @ `8c757cd` | in-progress |
-| `W378` | Developer 6 | `fix/W378-the-pipe-test-bound-is-argued` @ `wt/dev6` | 0 @ `8c757cd` | in-progress |
-| `W389` | Developer 7 | `task/W389-exercises-authored-for-every-corpus` @ `wt/dev7` | 0 @ `8c757cd` | in-progress |
 <!-- /inflight -->
 
 ⭐ **EMPTY IS A STATE** (`W111`, `W147`).
@@ -154,6 +155,7 @@ outcome.** ⛔ **Ruling 75 governs a row that jumps an older one, and it is
 | 78 | `W385`–`W387` | ⭐ **round 125's mints, each jumping nobody** | [125](BOARD-ARCHIVE.md#po-round-125) |
 | 79 | `W388` | ⛔ **JUMPS every older `todo` row (Ruling 75), on the USER's direction of 2026-09-19** — carried with `W369` | [125](BOARD-ARCHIVE.md#po-round-125) |
 | 80 | `W389` | ⛔ **JUMPS every older `todo` row (Ruling 75), on the USER's direction of 2026-09-19** — a PROPOSAL stage first | [125](BOARD-ARCHIVE.md#po-round-125) |
+| 81 | `W390`–`W396` | ⭐ **round 126's mints, each jumping nobody** — ⛔ **`W394` is a RULING and is argued before any code** | [126](BOARD-ARCHIVE.md#po-round-126) |
 
 ⛔ **THE CELLS ARE KEYED BY ROW ID AND NOT BY ORDINAL** — ⭐ **an id resolves; a position does
 not.** ⛔ **A cell here carries no census of the jumps, no COUNT, no measurement and no
@@ -555,18 +557,25 @@ else.**
 | W375 | The process-start sweep borrows its detector from a serve test, and the detector does not know a module that starts a browser | framework agent | ✅ done — `e23a9b0` | [`rows/W375.md`](rows/W375.md) |
 | W376 | The approach-to-ceiling notice still reads Python files only, so a stylesheet or script nearing its ceiling goes unwarned | framework agent | `todo` — `W367/1` | [`rows/W376.md`](rows/W376.md) |
 | W377 | A shipped skill document has no length ceiling, and the largest are close to the one source files carry | framework agent | `todo` — `W367/2` | [`rows/W377.md`](rows/W377.md) |
-| W378 | A build-and-serve pipe test missed its timeout once under the parallel pinned suite | framework agent | `todo` — `W367/4` | [`rows/W378.md`](rows/W378.md) |
+| W378 | A build-and-serve pipe test missed its timeout once under the parallel pinned suite | framework agent | ✅ done — `85b6340` | [`rows/W378.md`](rows/W378.md) |
 | W379 | A runner built for many runtimes after one built for python is served the python build's cache, and only its own check stops it | framework agent | ✅ done — `b858f9b` | [`rows/W379.md`](rows/W379.md) |
 | W380 | The instance module says the run namespace is registered in one place, which the site form made false, and the site form registers no state namespace | framework agent | ✅ done — `8c757cd` | [`rows/W380.md`](rows/W380.md) |
-| W381 | The build-and-serve skill does not say where a run executes, so a site that runs a reader's code on the host reports no state for it | framework agent | `todo` — `W371/3` | [`rows/W381.md`](rows/W381.md) |
+| W381 | The build-and-serve skill does not say where a run executes, so a site that runs a reader's code on the host reports no state for it | framework agent | ✅ done — `780b4bb` | [`rows/W381.md`](rows/W381.md) |
 | W382 | The parallel-suite test's workers cannot import the framework on the host, so the host cannot run its suite in parallel | framework agent | ✅ done — `42eec83` | [`rows/W382.md`](rows/W382.md) |
 | W383 | A screen reader is not told which rail rows and listing entries the reader has marked read | framework agent | ✅ done — `5938a5a` | [`rows/W383.md`](rows/W383.md) |
 | W384 | The practice panel's task does not name inserting the run client into a served page, so its owner cannot find the one sanctioned way | framework agent | ✅ done — `7e8c43c` | [`rows/W384.md`](rows/W384.md) |
-| W385 | A served corpus scans for pages where its record lives, so a site built elsewhere needs a subclass to be found | framework agent | `todo` — `W380/2` | [`rows/W385.md`](rows/W385.md) |
-| W386 | The build-and-serve skill's test plants through a private function of the serve verb, so that function cannot be renamed | framework agent | `todo` — `W380/1` | [`rows/W386.md`](rows/W386.md) |
-| W387 | The runner's build refuses an unpinned runtime without naming it, while the editor's names it | framework agent | `todo` — `TC-02/2` | [`rows/W387.md`](rows/W387.md) |
+| W385 | A served corpus scans for pages where its record lives, so a site built elsewhere needs a subclass to be found | framework agent | ✅ done — `af4ed70` | [`rows/W385.md`](rows/W385.md) |
+| W386 | The build-and-serve skill's test plants through a private function of the serve verb, so that function cannot be renamed | framework agent | ✅ done — `af4ed70` | [`rows/W386.md`](rows/W386.md) |
+| W387 | The runner's build refuses an unpinned runtime without naming it, while the editor's names it | framework agent | ✅ done — `c1a0898` | [`rows/W387.md`](rows/W387.md) |
 | W388 | The study site's colours tire a reader within minutes, the index has no rail, and the text column wastes a wide window | framework agent | `todo` — user, 2026-09-19 | [`rows/W388.md`](rows/W388.md) |
 | W389 | A corpus whose source ships no graders gets no exercises, so a reader of most sources can never practise | framework agent | `todo` — user, 2026-09-19 | [`rows/W389.md`](rows/W389.md) |
+| W390 | The runner carries no warm cache for a corpus, so a graded run in it would download what the editor already holds | framework agent | `todo` — `TC-03/2` + `W389/2` | [`rows/W390.md`](rows/W390.md) |
+| W391 | Four sibling test modules each keep their own copy of the build-inputs helper, so one new input is four edits | framework agent | `todo` — `TC-04/3` | [`rows/W391.md`](rows/W391.md) |
+| W392 | The UI convention's rejected-palette table is asserted nowhere, and a palette it already rejected was shipped | framework agent | `todo` — `W388/4` | [`rows/W392.md`](rows/W392.md) |
+| W393 | An office that runs the host gates gets no lint or format signal at all, and a formatting failure reaches the merge gate | framework agent | `todo` — `W388/5` | [`rows/W393.md`](rows/W393.md) |
+| W394 | A framework stylesheet may not name a corpus's languages, so per-language colour in code is refused until it is ruled | framework agent | `todo` — `W388/9` | [`rows/W394.md`](rows/W394.md) |
+| W395 | A row's clause can quote a state another row's ruling removes in the same round, and neither row says so | framework agent | `todo` — `W381/2` | [`rows/W395.md`](rows/W395.md) |
+| W396 | An office's merge of the release branch carries the register's identity, because only its commits are told to carry the office's | framework agent | `todo` — the register, 2026-09-19 | [`rows/W396.md`](rows/W396.md) |
 <!-- /register -->
 
 ⛔ **`W19` has no row of its own: `W17` and `W19` are ONE COMMIT, ruled, and the
