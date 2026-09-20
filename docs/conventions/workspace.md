@@ -91,6 +91,54 @@ python3 -m tools.workspace verify
 | a recorded commit is **absent locally** | the pin points at nothing | the checkout is present and looks fine |
 | a component's `HEAD` **moved unrecorded** | the pin is stale | ⛔ every recorded commit still resolves, so a naive check passes and a build "reproduces" a different workspace |
 
+### ⛔ And a THIRD question, because a pin can only ever record a COMMIT
+
+⚠️ **Measured 2026-09-20 ([`W402`](../tasks/rows/W402.md)).** A sibling's checkout
+sat in an **abandoned conflicted merge** — a merge head present, one path left
+unmerged, a whole task's files staged and none committed — and `verify` read
+**exit 0** throughout. ⛔ It compared that component's `HEAD` to the pin and said
+nothing at all about the working tree, so the component satisfied R18 **while
+carrying work that exists on no ref**.
+
+⭐ **So `verify` now asks a second kind of question of every `sibling` row**, and
+it is not a third direction of the two above: *is this checkout holding anything
+besides the commit recorded?* ⛔ **Each state is named separately, because each
+is a different repair** — an unfinished merge is finished or aborted, a
+conflicted path is resolved, a staged file is committed or reset, an untracked
+file is added or ignored:
+
+| what the tree carries | what `verify` says |
+|---|---|
+| an unfinished merge, rebase, cherry-pick or revert | the operation, by the marker git left behind |
+| a **conflicted** path | how many, and which |
+| a path **staged and not committed** | how many, and which |
+| a tracked path **modified and not staged** | how many, and which |
+| a path **untracked and not ignored** | how many, and which |
+
+⛔ **The exit code contract is UNCHANGED**: this is exit **1**, beside the pin
+findings and never instead of them — ⚠️ a checkout can be off its pin *and*
+dirty, and both are printed. ⭐ **No new code was added**, so anything reading
+`0`, `1`, `2` reads the same three answers it did before.
+
+⭐ **Ignored files are not dirt; untracked-but-not-ignored is.** ⚠️ `.scratch/`,
+`__pycache__/` and the generated study artifacts are what an ignore file is
+*for*, and a checkout full of them is a working checkout. ⛔ A module nobody
+added is the half of *"work on no ref"* that carries the most and that nothing
+else sees. ⭐ So the population is exactly what `git status` reports by default,
+and the decision stays in each component's own ignore file, where it already
+lives — **a component that reds for editor noise is repaired by one line
+there**, never by widening this check.
+
+#### ⚠️ `studyforge`'s own row is exempt from this question too
+
+⭐ **The same asymmetry ancestry already is.** The `self` row cannot be checked
+for **equality** because the file is inside the commit; it is not checked for
+**dirt** because it is the tree the reader is standing in and editing — and
+`record` itself writes an uncommitted pin file, so the normal working state
+would make a check that runs every round permanently red. ⛔ **A sibling is the
+checkout nobody is looking at**, which is exactly where the blindness was
+measured.
+
 ### ⛔ Host-verified, and the image refuses rather than answering
 
 ⚠️ **Run it on the host.** The pinned image mounts exactly one directory
@@ -242,6 +290,14 @@ next round, `WS_EXIT=1` with exactly ONE component named, and that component is
 `ISO-8583-jPOS-tutorial`.** ⚠️ **A SECOND name, or any other exit code, is a finding
 and not this declaration** — ⭐ **which is what makes a standing red a known hole
 wearing a tick rather than a red nobody reads.**
+
+⛔ **AMENDED by [`W402`](../tasks/rows/W402.md), and the amendment is NARROW: the
+declaration above is about the PIN, and `verify` now also reads each sibling's
+WORKING TREE.** ⚠️ **So a name in the output that carries a working-tree state —
+an unfinished operation, a conflicted, staged, modified or untracked path — is
+NOT a second pin disagreement and does not refute the declaration; it is its own
+finding, repaired in the component it names.** ⭐ **The pin clause is unchanged:
+one name, `ISO-8583-jPOS-tutorial`, and that name saying HEAD moved.**
 
 ⚠️ **MEASURED by me at `6c4e3d0`, role `wt/dev1`, on the HOST (the pinned container
 cannot see a sibling and answers `2`): `WS_EXIT=1`, HEAD `76e689c6a535`, pin

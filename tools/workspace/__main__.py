@@ -1,8 +1,10 @@
 """Command-line entry point for the pin file: `python3 -m tools.workspace`.
 
 **What it does.** `verify` exits **0** when every recorded component is checked
-out at the commit the pin file names, and **1** naming the component when it is
-not. `record` rewrites the commits from what is checked out now.
+out at the commit the pin file names **and nothing else**, and **1** naming the
+component when it is not — a sibling whose working tree carries work that is on
+no ref is exit **1** too, with the state named (`W402`). `record` rewrites the
+commits from what is checked out now.
 
 **How you use it.** `python3 -m tools.workspace verify` from the repository
 root; `--workspace PATH` overrides where the siblings are looked for.

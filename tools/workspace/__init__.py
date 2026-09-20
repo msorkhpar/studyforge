@@ -62,6 +62,8 @@ import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
+from tools.workspace.checkout import uncommitted
+
 #: The pin file's name, at the repository root.
 PIN_FILENAME = "workspace.json"
 
@@ -269,6 +271,12 @@ def verify(workspace_root: Path, repository_root: Path) -> list[str]:
     that reproduced it would reproduce the wrong thing. ⚠️ Neither has a
     symptom — that is why this exists and why both are asserted rather than
     described.
+
+    ⛔ **And a third question, which is not a direction of the first two**
+    (`W402`): a sibling's **working tree**. A pin records a commit, so a
+    checkout mid-merge, or holding a task's files staged and uncommitted, is at
+    the commit recorded and still unreproducible — `checkout.uncommitted` names
+    each such state, and the module beside this one argues why `self` is exempt.
     """
     workspace_root = Path(workspace_root)
     repository_root = Path(repository_root)
@@ -290,6 +298,23 @@ def verify(workspace_root: Path, repository_root: Path) -> list[str]:
         if head is None:
             findings.append(f"{component.name}: no checkout found beside this repository")
             continue
+        if component.where == "sibling":
+            # ⛔ **The working tree, which a commit cannot carry** (`W402`).
+            # Everything above reads `HEAD`, so a sibling in an abandoned merge
+            # with a task's files staged and none committed reads green while
+            # holding work that exists on no ref. ⭐ Reported in ADDITION to the
+            # pin comparison, never instead of it: they are two questions, and a
+            # checkout can be wrong in both at once.
+            #
+            # ⚠️ **`self` is exempt, and it is the same asymmetry ancestry is.**
+            # The `self` row cannot be checked for equality because the file is
+            # inside the commit; it is not checked for dirt because it is the
+            # tree the reader is standing in and editing — an uncommitted pin
+            # file is the normal working state (`record` writes one), so failing
+            # on it would make a check that runs every round permanently red.
+            # ⭐ A sibling is the checkout nobody is looking at, which is exactly
+            # where the blindness was measured.
+            findings.extend(f"{component.name}: {said}" for said in uncommitted(directory, git))
         if not holds(directory, component.commit):
             findings.append(
                 f"{component.name}: the recorded commit {component.commit[:12]} "
