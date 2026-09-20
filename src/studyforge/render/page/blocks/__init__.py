@@ -90,6 +90,8 @@ the one thing `narrate.speakable` exists to prevent.
 
 from __future__ import annotations
 
+from collections.abc import Container
+
 from studyforge.archive.blocks import BLOCK_TYPES, CONTAINER_TYPES
 from studyforge.describe import describe
 from studyforge.render.page.blocks import figure, prose, verbatim
@@ -149,17 +151,27 @@ def render_all(
     section: str = "",
     path: tuple[int, ...] = (),
     narration: Narration = SILENT,
+    omit: Container[int] = (),
 ) -> str:
     """Render a run of blocks in reading order, joined by `JOIN`.
 
     `path` is the address of the run's *container*, so a top-level run is `()`
     and a quote's children are the quote's own path.
+
+    ⛔ **`omit` withholds a block from the OUTPUT and renumbers NOTHING.** A
+    position is a block's address — a clip is filed under it and a DOM id is
+    minted from it — so a caller that dropped the block from the list instead
+    would shift every position after it by one, and the page would ask for the
+    audio of the paragraph before the one it is showing. ⚠️ That is the defect
+    `narrate.speakable` exists to prevent, arriving through the back door of a
+    list comprehension, so the skip is here and the walk is untouched.
     """
     return JOIN.join(
         render_one(
             block, position, placement=placement, section=section, path=path, narration=narration
         )
         for position, block in enumerate(blocks or ())
+        if position not in omit
     )
 
 

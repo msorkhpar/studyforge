@@ -588,6 +588,53 @@ the table carries elsewhere is refused, so wherever the table speaks it is the o
 register never edits a description. ⛔ **`inflight.py` may never read one** (`W125`, Ruling
 231(c)): a table generated from a declaration would assert git against itself.
 
+#### ⛔ `W403` — A CROSS-REPO TASK DECLARES BOTH HALVES, AND THE SIBLING HALF IS READ AT THE PIN
+
+⚠️ **MEASURED by the register, 2026-09-20 (PO round 128).** `TC-05`'s framework half merged in
+round 127 and its handoff landed here, while the sibling's `main` checkout sat in an
+ABANDONED CONFLICTED MERGE — ⛔ **so `consuming.json`, that task's entire deliverable, existed
+on NO COMMITTED REF, and the task was recorded MERGED, and step 7.3 recorded it, on a reading
+nobody could have taken.** ⭐ **A cross-repo task has two halves and the register read one.**
+
+⛔ **THE CONTRACT: a task whose work lands in a sibling component DECLARES BOTH HALVES, in
+[`../tasks/CROSSREPO.md`](../tasks/CROSSREPO.md), BEFORE it may be recorded merged.**
+
+```
+<!-- crossrepo -->
+| Task | Component | Framework half | Sibling half |
+|---|---|---|---|
+| `TC-05` | `code-server-toolchain` | `5c32726a` | `72c3931` |
+<!-- /crossrepo -->
+```
+
+⭐ **The four roles are read from the HEADER and never from a position**, as the observation
+table's are, so the columns may be renamed or reordered. ⛔ **A cell declares its value as a
+CODE SPAN**, and `none`, `—` or a blank cell declares NOTHING — which is a refusal and not an
+empty column.
+
+| what the declaration says | ⛔ what `corroborate` answers |
+|---|---|
+| both halves declared, each REACHED by its ref | ⭐ CORROBORATED |
+| a row declaring one half, no component, or no task | ⛔ REFUTED — *a task naming a sibling declares BOTH halves* |
+| a framework half the release branch does not reach | ⛔ REFUTED, naming that half |
+| a sibling half the component holds no commit for | ⛔ REFUTED — ⭐ `TC-05`'s own reading |
+| a sibling half the component's PINNED commit does not reach | ⛔ REFUTED, naming the component |
+| the component absent, or its pin unholdable | ⚠️ NOT ANSWERABLE, exit `2` — ⛔ **never a pass** |
+| no `<!-- crossrepo -->` block at all | ⚠️ NOT ANSWERABLE — ⛔ a DECLARED and EMPTY block is the other answer |
+
+⛔ **THE SIBLING HALF IS READ AT THE PIN IN `workspace.json`, NEVER AT A WORKING TREE.**
+⚠️ **`python3 -m tools.workspace verify` read GREEN, exit `0`, through the whole defect**: it
+compares `HEAD` to the pin and says nothing about the tree around it. ⭐ **The pin is the only
+ref that is a fact about the PROJECT rather than about one disk at one minute**, and
+`test_crossrepo.py` plants the two against each other over one component: a half reachable
+from `HEAD` and not from the pin is REFUTED, and advancing only the pin turns the same row
+green.
+
+⚠️ **Why the declaration is a FILE beside the board rather than a block inside it, and it is
+MEASURED: at `778e618a` the board is 112,337 bytes against 112,416 allowed — 79 bytes — and
+Ruling 271 refuses raising that term.** ⭐ The instrument is `tools/quality/board/crossrepo.py`
+and the argument is [`../tasks/rows/W403.md`](../tasks/rows/W403.md).
+
 #### ⛔ RULING 265 (CTO round 58) — the `UNNAMED` arm exempts the OFFICE-BRANCH PATTERN, not `0` ahead
 
 ⚠️ **A checkout with NO commit is invisible to every git instrument BY CONSTRUCTION

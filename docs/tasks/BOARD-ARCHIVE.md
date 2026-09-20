@@ -29259,3 +29259,76 @@ suite runs in about two to three minutes against a thirty-minute default.** The 
 ### ⭐ NOTHING IS IN FLIGHT
 
 ⛔ **The In flight table is EMPTY, and empty is a state** (`W111`, `W147`). Every carrier of round 127 handed back and merged.
+
+---
+
+## PO round 129
+
+⛔ **Only what is MEASURED is written here.** ⭐ **Nothing closes. Seven carriers are named BEFORE they run, all cut at
+one ref; `M7` step 7.4 opens; the seam cluster `W402`–`W404` takes three of the seven under Ruling 75.**
+
+### ⭐ THE REF EVERY CARRIER WAS CUT AT
+
+⭐ **`778e618a`**, the release tip round 128 left. ⛔ **All seven worktrees were verified merged into it before they were
+repurposed** — `task/TC-06-versioning-and-pinning`, `fix/W397…`, `fix/W398…`, `fix/W399…`, `fix/W388…`, `fix/W400…`,
+`fix/W401…`, each read by `git merge-base --is-ancestor`, each MERGED. ⚠️ **No branch was discarded unmerged.**
+
+### ⭐ THE CARRIERS, NAMED BEFORE THEY RUN (`PO-61/4`)
+
+| Row | Carrier | Checkout |
+|---|---|---|
+| `W402` | `fix/W402-verify-refuses-a-dirty-component` | `wt/dev1` |
+| `W403` | `fix/W403-a-cross-repo-task-declares-both-halves` | `wt/dev2` |
+| `W404` | `fix/W404-a-siblings-contract-is-read-at-the-pin` | `wt/dev3` |
+| `SK-09` | `feat/SK-09-execution-onboarding` | `wt/dev4` |
+| `SF-24` | `feat/SF-24-practice-panel` | `wt/dev5` |
+| `W407` | `fix/W407-a-unit-page-states-its-title-once` | `wt/dev6` |
+| `W405` | `fix/W405-the-office-rules-name-the-voting-gate` | `wt/dev7` |
+
+⛔ **`SK-09` and `SF-24` are EPIC TASKS and are not `W` rows.** ⭐ They are admitted to the in-flight table on the board's
+own clause, and their argument is their epic — `E11` and `E06` — never a row file.
+
+### ⭐ `M7` STEP 7.4 OPENS — `SK-09` + `SF-24`
+
+⭐ **Both dependencies are landed and were read, not inherited:** `SK-07` and `TC-05` for `SK-09`; `SF-22` and `SF-23`
+for `SF-24`. ⛔ **`AX-09` (`M10`, `E14`) is held OUT of `SF-24`'s brief by name** — a later row on an owned surface, not
+a re-scope of this one.
+
+### ⛔ THREE COLLISIONS PRE-EMPTED IN THE BRIEFS, RATHER THAN DISCOVERED AT MERGE
+
+1. ⛔ **`W402` and `W404` share `tools/workspace/`.** ⭐ Each is told to land its logic in a NEW module inside the package —
+   a checkout-state module and a pinned-ref reader — and to touch `__init__.py`/`__main__.py` as little as it can.
+   ⚠️ **`tools/workspace/__init__.py` measures 339 lines against R11's 400 at `778e618a`**, so the split serves R11
+   as well as the collision.
+2. ⛔ **`W403` and `W405` share `docs/conventions/agent-protocol.md`.** ⭐ `W405` OWNS it this wave; `W403` is sent to
+   `docs/conventions/board.md` — the register's own structural contract — and told that disagreeing is a FINDING, not
+   an edit taken to find out.
+3. ⛔ **`W404`, `SK-09` and `W407` each want a sibling or a corpus in a particular state.** ⭐ Every one of them is told to
+   build synthetic repositories in `mktemp -d` and, for `W407`, to build the site to a temp directory with
+   `--out`. ⚠️ **A shared component is moved between gates, never during one** — the defect this register committed in
+   round 127 while merging the row that fixes it.
+
+### ⭐ THE LESSONS OF ROUND 127–128 ARE IN EVERY BRIEF, NOT ONLY IN THE RECORD
+
+⭐ The voting gate is NAMED (`docker/dev/check python3 -m pytest -q tests/test_repository.py`) and the floor's `lint:`
+line is stated as a NOTICE that Rulings 77 and 78 forbid from failing a build. ⭐ A refusal names ONE finding because the
+gate stops at the first, so the file is read whole. ⭐ `python3 -m tools.pytesttemp` is the only sweep, and
+`find … -mmin +15 -delete` is named OUT. ⭐ A load-dependent defect is invisible at `-n auto`. ⭐ A plant can itself be a
+race, and a substitution that coincides with the fixture proves nothing. ⛔ **`W405` exists to move the first of these
+out of a brief and into the office rules, where the next office finds it without a register to hand it over.**
+
+### ⛔ GATES, THIS ROUND
+
+| gate | reading |
+|---|---|
+| `python3 -m tools.quality.board.corroborate` | ⭐ **GREEN**, exit `0`, at `778e618a` before dispatch |
+| `python3 -m tools.workspace verify` | ⭐ **GREEN**, exit `0`, at `778e618a` before dispatch |
+
+⚠️ **The second of those is the gate `W402` exists to correct**, and it read GREEN here against a clean sibling — which
+is the reading `W402`'s own acceptance requires to stay GREEN.
+
+### ⭐ WHAT IS NOT IN THIS WAVE, AND WHY
+
+⭐ `W406`, `W408`, `W409`, `W410`, `W411` stay `todo`: seven worktrees, seven carriers. ⛔ **`W406` is named in `W407`'s
+and `SF-24`'s briefs as the reason a corpus-visible defect survived every gate**, so a finding either office produces
+about a corpus-reading gate lands against it rather than in an unaddressed handoff.

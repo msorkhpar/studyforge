@@ -165,3 +165,20 @@ def test_W303_no_module_declares_a_type_its_own_dispatch_cannot_answer():
 def test_an_empty_run_of_blocks_renders_as_nothing():
     assert blocks.render_all(None, section="shared") == ""
     assert blocks.render_all([], section="shared") == ""
+
+
+def test_omit_withholds_a_block_from_the_output_and_renumbers_nothing():
+    # ⛔ `W407`: the page's own heading is withheld from the body it was promoted
+    # out of. A caller that sliced the list instead would shift every position
+    # after it, and a position is what a clip is filed under.
+    run = [
+        {"type": "heading", "level": 1, "text": "Title"},
+        {"type": "para", "text": "first"},
+        {"type": "heading", "level": 2, "text": "Next"},
+    ]
+    whole = blocks.render_all(run, section="java")
+    without = blocks.render_all(run, section="java", omit=(0,))
+    assert 'id="java-b0"' in whole
+    assert "Title" not in without
+    assert 'id="java-b2"' in without and 'id="java-b2"' in whole
+    assert blocks.render_all(run, section="java", omit=()) == whole

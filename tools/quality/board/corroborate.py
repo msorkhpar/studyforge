@@ -120,6 +120,15 @@ are IDS.** ⭐ An id is either vocabulary the board declares — `register.ident
 `bijection.EPIC_TASK` — so a subject naming neither counts `0` ids and is still a row.
 ⛔ **The labels moved; the population and the exit code did not.**
 
+## ⛔ `W403` — the CROSS-REPO arm, and the exit code DOES move
+
+⚠️ **Measured 2026-09-20: `TC-05` was recorded MERGED, and step 7.3 recorded it, while its
+deliverable sat in a sibling's ABANDONED CONFLICTED MERGE, on NO COMMITTED REF.** ⛔ **Every
+reading this command takes is about THIS repository**, so the framework half merging was the
+whole of what it could see. ⭐ **So `docs/tasks/CROSSREPO.md` DECLARES both halves and
+`crossrepo.py` reads the sibling's AT THAT COMPONENT'S PIN.** ⛔ **A component this run
+cannot see exits `NOT_AUTHORITATIVE`** (Ruling 191) — ⚠️ every run inside the image.
+
 """
 
 from __future__ import annotations
@@ -128,7 +137,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from tools.quality.board import dispatch, offices
+from tools.quality.board import crossrepo, dispatch, offices
 from tools.quality.board.bijection import EPIC_TASK
 from tools.quality.board.contradiction import observation_reading
 from tools.quality.board.graph import Graph
@@ -156,7 +165,9 @@ REFUTED = 1
 NOT_AUTHORITATIVE = 2
 
 
-def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
+def corroborate(
+    root: Path, release: str = RELEASE, workspace: Path | None = None
+) -> tuple[list[str], int]:
     """Every asserted row against git, as printed steps and one exit code.
 
     ⛔ **The population is printed in full before any verdict** (Ruling 128), and
@@ -165,6 +176,9 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     a board declaring no table at all does too. ⭐ **Only a DECLARED and READABLE
     block with no rows in it means *nothing is in flight*, and the verdict says
     which case it was** (`W111`, `PO-40/4`).
+
+    ⛔ **`workspace` is where the sibling components are** (`W403`): `None` computes it from
+    the MAIN checkout's `--git-common-dir`, as `tools.workspace` does.
     """
     board = root / BOARD
     if not board.is_file():
@@ -237,6 +251,10 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
     lines.extend(unread_lines)
     lines.extend(declared)
     lines.extend(spent(graph, live))
+    # ⛔ `W403`: the CROSS-REPO arm — a task whose other half lands in a sibling is read at
+    # that component's PIN, because the framework half merging is HALF a reading.
+    across = crossrepo.judge(root, crossrepo.read_declaration(root), release, workspace)
+    lines.extend(across.lines)
     lines.append(
         f"corroborate: {refuted} of {len(table.rows)} rows REFUTED by git, "
         f"{unanswerable} rows NOT ANSWERABLE and {unread} live checkout(s) git could not "
@@ -257,7 +275,16 @@ def corroborate(root: Path, release: str = RELEASE) -> tuple[list[str], int]:
             f"state). ⚠️ The coerced form folded these onto a number and exited 0 or 1."
         )
         return lines, NOT_AUTHORITATIVE
-    return lines, REFUTED if refuted else CORROBORATED
+    # ⛔ `W403`: Ruling 216's DOMINANCE again, with its OWN sentence so the row-side
+    # populations above keep the four closing sentences they are asserted on.
+    if across.answer is Answer.NOT_ANSWERABLE:
+        lines.append(
+            f"corroborate: NOT AUTHORITATIVE — exit {NOT_AUTHORITATIVE}. ⛔ A DECLARED "
+            f"cross-repo half has NO reading at all, and the sibling half of a task is not "
+            f"read off this repository (`W403`)."
+        )
+        return lines, NOT_AUTHORITATIVE
+    return lines, REFUTED if refuted or across.answer is Answer.REFUTED else CORROBORATED
 
 
 def _fold_lines(refuted: list[str], unanswerable: list[str], table: Table) -> list[str]:
@@ -353,8 +380,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Corroborate the board's asserted states.")
     parser.add_argument("--root", default=".", help="the checkout to read")
     parser.add_argument("--release", default=RELEASE, help="the branch cells count against")
+    parser.add_argument(
+        "--workspace",
+        default=None,
+        help="where the sibling components are (default: computed from --root)",
+    )
     arguments = parser.parse_args(argv)
-    lines, code = corroborate(Path(arguments.root), arguments.release)
+    workspace = Path(arguments.workspace) if arguments.workspace else None
+    lines, code = corroborate(Path(arguments.root), arguments.release, workspace)
     for line in lines:
         print(line)
     return code

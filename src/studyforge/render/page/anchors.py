@@ -49,6 +49,63 @@ would be the speech-id scheme under another name, arriving one milestone before
 the task that owns it, and its agreement with `SF-16` would be a coincidence
 nothing checks.
 
+## ⛔ The page is headed by the material's own title when the material states one
+
+⚠️ **A source document states what it is in its first line**, and a unit page
+states what it is in its `<h1>` — so a page that emits both prints the title
+twice, which is what a reader sees first and `W388/17` reported on every page of
+a rebuilt corpus. ⭐ **The resolution is that the two are ONE statement**: when
+the page's opening section begins with a heading that is that material's own
+title, that block **is** the page's heading, and the body does not print it a
+second time.
+
+⛔ **Promoted, never dropped.** *"Drop the first `<h1>`"* is the wrong rule, and
+the reason was measured on a real corpus rather than reasoned about: a unit whose
+page title is one word opens with a numbered sentence that contains that word
+and says more — it **restates the title and is not the same words** — so a rule that
+only compared text would not have fixed it, and a rule that deleted the block
+would have taken the material's own numbering off the page. ⭐ Moving it keeps
+every word, keeps its anchor, and leaves the `<h2>`s beneath it at the level the
+document wrote them, so the page's outline becomes the document's own outline
+instead of a flattened copy.
+
+## ⛔ A TITLE DOMINATES ITS MATERIAL, AND THAT — NOT ITS LEVEL — IS THE TEST
+
+⛔ **A level test was written first and it was WRONG, measured on a built site.**
+One corpus writes its document titles at level 1 in **25** of its documents and
+at level **2** in the other **13**, with each document's sub-sections one level
+below its own opener. ⚠️ A rule keyed on level 1 left those thirteen pages
+reading their title twice, and the pages were rebuilt and counted before the
+rule was rewritten — which is the only reason it was caught.
+
+⭐ **What every one of those openers has in common is not a level: it is that
+NOTHING ELSE IN THE MATERIAL STANDS AT ITS LEVEL.** A title dominates the
+document under it; a section heading has siblings. ⛔ So the test is: the first
+block is a heading, and no other heading in that section's material is at the
+same level.
+
+⚠️ **Measured on the declared level and never on the rendered one.** The rendered
+level is clamped to `h2..h6`, so a level-1 opener and its level-2 sections all
+render as `<h2>` and would look like peers to a test that asked the clamp — and
+the rule would refuse exactly the documents it exists for.
+
+⭐ **The second clause is a heading that says the unit's title in the unit's own
+words**, whether or not it has peers — because a page cannot print the same
+sentence twice and call the second one content.
+
+⚠️ **The textual clause is safe here in a way it would not be under deletion,**
+and that is the whole reason `page.section` once refused one: promoting a
+heading whose words are already the title changes nothing a reader can see,
+while deleting it removes a line. ⛔ And an author who edits one character of a
+heading that has peers gets it back in the body, which is correct — it now says
+something the page's title does not.
+
+⛔ **Positional, always.** A heading further down is content, whatever its level
+and whatever its words; a section's material that opens with no heading loses
+nothing, because there is nothing to move; and only the section that OPENS the
+page is asked, because a later section's first heading is that section's own
+name.
+
 ## The outline stops at level 3
 
 ⚠️ Level 4 and below are sub-points within a topic. Listing them turns a rail
@@ -66,6 +123,12 @@ from studyforge.render.page.errors import PageError
 
 #: Deepest heading level that earns a line in the outline.
 OUTLINE_MAX_LEVEL = 3
+
+#: Where in its section the block a page is headed by sits. ⛔ Always the first,
+#: by `title_heading`'s own rule — spelled here, where that rule lives, so the
+#: body that withholds the block, the anchor minted from it and the clip filed
+#: under it cannot be addressed by three different numbers.
+TITLE_POSITION = 0
 
 #: The markup of the outline's region. ⛔ **A file, not an f-string** (R13, and
 #: `SF-34`): the wrapper carries a product string — the word `Contents` and an
@@ -105,11 +168,18 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
     """
     sections = list(document.get("sections") or ())
     out: list[tuple[int, str, str]] = []
-    for section in sections:
+    promoted = title_heading(document)
+    for index, section in enumerate(sections):
         key = section.get("key")
         if len(sections) > 1:
             out.append((1, str(section.get("heading") or key or ""), anchor(section_anchor(key))))
         for position, block in enumerate(section.get("blocks") or ()):
+            # ⛔ The block the page is HEADED by is not a line in the page's own
+            # contents: a list whose first entry is the title above it says
+            # nothing, and the entry would point at the heading a reader is
+            # already looking at.
+            if index == 0 and position == 0 and block is promoted:
+                continue
             if not isinstance(block, dict) or block.get("type") != "heading":
                 continue
             level = heading_level(block)
@@ -117,6 +187,95 @@ def entries(document: dict) -> tuple[tuple[int, str, str], ...]:
                 continue
             out.append((level, str(block.get("text") or ""), anchor(block_anchor(key, position))))
     return tuple(out)
+
+
+def title_heading(document: dict) -> dict | None:
+    """Return the block this page is headed by, or `None` when the material states none.
+
+    ⭐ **The opening section's first block, when that block is the material's own
+    title** — because it dominates the material, or because it says the unit's
+    title in the unit's own words. See this module's docstring for the built site
+    that put both clauses there and threw out a third.
+
+    ⚠️ The **block itself** is returned rather than its text, because two
+    consumers act on it — the heading the page prints and the body that must not
+    print it again — and an identity is the one thing they cannot disagree about.
+    """
+    if not isinstance(document, dict):
+        return None
+    sections = document.get("sections")
+    if not isinstance(sections, list) or not sections:
+        return None
+    opening = _leading_heading(sections[0])
+    if opening is None:
+        return None
+    if _dominates(opening, sections[0]):
+        return opening
+    return opening if _says(opening.get("text"), document.get("title")) else None
+
+
+def _dominates(opening: dict, section: dict) -> bool:
+    """Whether nothing else in this material stands at the opening heading's level.
+
+    ⛔ **The DECLARED level, never the rendered one** — see this module's
+    docstring. ⚠️ Counted over the section's own run of blocks, which is the run
+    the outline walks; a heading nested inside a quote is not a peer of the
+    document's title any more than it is a line in the contents.
+    """
+    level = _declared_level(opening)
+    peers = sum(
+        1
+        for block in section.get("blocks") or ()
+        if isinstance(block, dict)
+        and block.get("type") == "heading"
+        and _declared_level(block) == level
+    )
+    return peers == 1
+
+
+def _leading_heading(section: object) -> dict | None:
+    """Return the heading a section's material opens with, or `None` when it opens otherwise."""
+    if not isinstance(section, dict):
+        return None
+    blocks = section.get("blocks")
+    if not isinstance(blocks, list) or not blocks:
+        return None
+    first = blocks[0]
+    if not isinstance(first, dict) or first.get("type") != "heading":
+        return None
+    # ⛔ A heading with nothing in it is not a title, whatever it dominates:
+    # promoting one would leave the page with a blank `<h1>` and the unit's own
+    # name nowhere on it. It stays in the body, where an empty heading has always
+    # rendered as an empty heading.
+    text = first.get("text")
+    return first if isinstance(text, str) and text.strip() else None
+
+
+def _says(text: object, title: object) -> bool:
+    """Whether a heading says the unit's title, ignoring the space around it.
+
+    ⛔ **Nothing cleverer than stripping.** A comparison that folded case,
+    punctuation or numbering would start deciding that two different sentences
+    are one, and the level clause above is what catches a restatement whose words
+    genuinely differ.
+    """
+    if not isinstance(text, str) or not isinstance(title, str):
+        return False
+    return text.strip() == title.strip() and bool(text.strip())
+
+
+def _declared_level(block: dict) -> int | None:
+    """Return the level the material wrote, or `None` when it wrote nothing usable.
+
+    ⛔ **Not `heading_level`.** That one clamps to the range a *rendered* heading
+    may take, and its floor is 2 — so a level-1 opener and the level-2 sections
+    beneath it come back identical, and every document written that way would
+    look like a run of peers.
+    """
+    level = block.get("level")
+    if isinstance(level, bool) or not isinstance(level, int):
+        return None
+    return level
 
 
 def heading_level(block: dict) -> int:

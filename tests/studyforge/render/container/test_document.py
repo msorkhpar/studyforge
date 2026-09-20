@@ -71,8 +71,13 @@ def test_the_empty_slots_are_the_ones_a_container_page_has_no_answer_for():
     # a read mark is a UNIT's — a container is read by reading what is under it.
     # ⚠️ The marks themselves DO reach this page, as a state on the rows, which is
     # why each row now carries the unit key a mark is filed under.
+    # ⭐ **And a third time, as designed**: `W407` added `headingattributes`, because a
+    # unit page's `<h1>` now carries the anchor of the heading it was promoted
+    # from — and a container page is headed by a NAME, which has no block and so
+    # no anchor to carry.
     assert document_module.EMPTY_SLOTS == (
         "breadcrumb",
+        "headingattributes",
         "mark",
         "outline",
         "pending",
