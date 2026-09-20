@@ -371,6 +371,14 @@ second finish line (Q18).**
 material is runnable** (spec §11.0, §7's three states). A corpus with no graders
 that stops after M4 is **complete**, not short.
 
+⛔ **DATED 2026-09-19 (`W389`, user direction) — that holds up to `M9` and is superseded at
+`M10`.** ⭐ **The gate is the MATERIAL, not what the source packaged:** a corpus enters the
+execution track when its subject admits a checkable coding task, because the exercises are
+[authored at ingestion](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389).
+⭐ **Material that admits no coding task gets the quiz shape, which needs no container and
+so sits on the reading floor.** ⛔ **Stopping short of the track is still a PASS**; a reader
+with nothing to practise is not.
+
 ### M5 — It runs code
 > **Done when:** a reader edits a unit's file, runs one command from their
 > terminal, and the unit's test runs against it through the runner — a file with
@@ -414,8 +422,33 @@ the user on 2026-09-19. ⭐ **The argument, with the user's words whole, is [`W3
 interactive environment — ⛔ **without losing any existing material or example.** ⭐ **The honesty R5 protects survives as
 gates:** a generated test passes on a reference solution, fails on the starter, and each edge-case test fails on a planted
 incomplete solution — so a Submit reports the main ask and the edge cases it covered.
-⚠️ **Its steps and tasks are minted from [`W389`](rows/W389.md)'s proposal** (the spec amendment to R5, §7 and Q18's
-consequence, and a new epic), ruled by the register and shown to the user before any lands.
+
+- **10.1** — AX-00, AX-01, AX-05
+- **10.2** — AX-02, AX-03, AX-04, AX-06
+- **10.3** — AX-07, AX-08, AX-09, AX-10
+- **10.4** — the ISO rows, owned by the integration agent in the corpus repository: re-onboard the corpus so it can
+  declare a runtime set and carry exercises; then the **pilot**; then the rest of its pages
+- **10.5** — AX-11
+
+⭐ **The tasks are [`E14`](E14-authored-exercises.md), and the spec amendment they are built on is LANDED** (spec §1's
+table note, C5, R5, §7's new subsection and its two-gates scoping, §11.0, §11.2 #14, §12) — ⛔ **not a task here.**
+⚠️ **In-step edges are read off the epic**, and 10.1 and 10.3 each carry some: `AX-00` → `AX-05`, and
+`AX-07` → `AX-08` → `AX-10`.
+
+⛔ **The pilot is the user's one review** (the user's ruling, 2026-09-19): **three pages**, one per container, chosen as
+the densest, go to the user once. The shape and the per-page counts are approved there, and **every remaining page then
+runs on the gates alone**, with no further review. ⚠️ **A second review is not a safety net; it is the plan failing to
+have decided.**
+
+⭐ **§9 holds:** the authoring skill (10.3) lands before the corpus material it produces (10.4).
+
+⚠️ **The runner's per-corpus warm cache is [`W390`](rows/W390.md), a board row, not a task here.** Every page of the
+first corpus leans on a third-party artifact, and a graded run is offline — so 10.4 waits on that row's outcome and
+never re-derives it.
+
+⭐ **The user's four answers, 2026-09-19, are ruled and closed:** the quiz shape is in this milestone rather than a v2
+backlog; the reference solution is always available to the reader; an authored grader is labelled in a learner's words;
+and the pilot is reviewed once. ⛔ **The record, with the user's words whole, is [`W389`](rows/W389.md).**
 
 ### M11 — It is release-ready
 > **Done when:** a clean checkout of each repository's main installs and works; the process history (tooling, board,
@@ -484,6 +517,7 @@ SF-28 → SF-40 → **SF-42**. ⚠️ **An `M3` task waits on two `M4` tasks, bo
 | E11 | [Skills & authoring](E11-skills-authoring.md) | SK-01…09 | **the product** (R16, R19) |
 | E12 | [Toolchain image](E12-toolchain-image.md) | TC-00…06 | the runner image, then the shared code-server repo (§8.1) |
 | E13 | [Narration service](E13-narration-service.md) | NS-01…06 | shared synthesis repo (§8.2) |
+| E14 | [Authored exercises](E14-authored-exercises.md) | AX-00…11 | **exercises for every corpus** — the record's cases, the authoring gates, the bundle, the quiz shape, the skill, the panel |
 
 Future work: [v2-backlog.md](v2-backlog.md).
 
@@ -498,8 +532,13 @@ judgement.
 
 | | Owns | Epics |
 |---|---|---|
-| **Framework agent** | `studyforge`, `code-server-toolchain`, `narrate-service` | E00–E06, E10, E11, E12, E13 |
+| **Framework agent** | `studyforge`, `code-server-toolchain`, `narrate-service` | E00–E06, E10, E11, E12, E13, **E14** |
 | **Integration agent** | a corpus repository | E07, E08, and what survives of E09 |
+
+⭐ **`E14` is the framework agent's, and the split it implies is the one that already
+exists:** the skill and its gates are built here, and the **corpus's authored exercises
+are the integration agent's to produce with them** — step 10.4, in the corpus repository,
+never by patching this one.
 
 ⭐ **The skills belong to the framework agent, not the integrator.** That is what
 makes the integrator's job small: supply the source-specific reading, and report

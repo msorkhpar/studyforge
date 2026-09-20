@@ -303,6 +303,41 @@ it if a row waits a third wave with the trace in place** — at that point the
 board *has* decided, visibly, and the question becomes whether it decided well,
 which is a different question and a better one to have.
 
+### ⛔ A round that mints one row whose clause QUOTES what another of the same round may remove says so in BOTH ROWS
+
+⛔ **Measured, `W381/2`:** two rows minted in ONE round contradicted each other —
+one row's clause kept a test of a state the other row's ruling removed. ⚠️ **Both
+were dispatchable, both were correct against the tree they were written on, and
+the collision surfaced only when the second office ran the first's tests.**
+
+⛔ **The rule.** When a round mints a row whose clause QUOTES, KEEPS or ASSERTS
+something another row of the SAME round may remove, rename or rule away, then
+either:
+
+- ⭐ **both rows say so** — each naming the other by id and what of it it
+  depends on, in the row's own argument, so the office that opens either one
+  meets the collision before it writes a line; **or**
+- ⭐ **the register ORDERS them** — the later row's **When** cell names the
+  earlier as what it waits for, exactly as Ruling 75's jump is recorded in a
+  cell.
+
+⛔ **One or the other, and never neither.** ⚠️ **Never *neither* is the whole
+clause**: the defect is not that two rows touched one subject, it is that the
+round knew and the rows did not say.
+
+⛔ **BOTH rows, and not just the one that removes.** ⭐ **An office reads ITS
+row.** A note written only on the row that removes is invisible to the office
+whose clause is about to be removed underneath it, and that office is the one
+that loses the work — which is exactly which way round `W381/2` went.
+
+⚠️ **Why this is a note and not a mechanism.** ⛔ Whether one row's clause quotes
+another's subject is a reading of two arguments, and no instrument in this
+repository reads a clause for what it depends on. ⭐ **The round is the only
+place both rows are in one head at one time** — which is why the obligation
+lands on the round rather than on the offices, and why it costs half a sentence
+at mint and a wasted office-round if it is skipped. ⭐ **This round is its
+reading:** [round 126](../tasks/BOARD-ARCHIVE.md#po-round-126).
+
 ## The two-PO channel
 
 The framework and an integration are run by two product owners. The seam between

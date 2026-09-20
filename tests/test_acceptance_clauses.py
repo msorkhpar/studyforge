@@ -74,7 +74,23 @@ MARKER = "**Acceptance.**"
 #: `E08` and what survives of `E09` (`CLAUDE.md`, *Two agents*). ⛔ Ruling 151
 #: binds a **framework** task's Acceptance — an integration row's clause is
 #: read inside a consumer repository because that is where its work happens.
-FRAMEWORK_EPICS = ("E00", "E01", "E02", "E03", "E04", "E05", "E06", "E10", "E11", "E12", "E13")
+#: ⭐ `E14` joins the framework side with `W389`: the authoring skill, its gates and
+#: the record they write are this framework's, and only the corpus's own authored
+#: material is the integration agent's (`README.md`, *Working as two agents*).
+FRAMEWORK_EPICS = (
+    "E00",
+    "E01",
+    "E02",
+    "E03",
+    "E04",
+    "E05",
+    "E06",
+    "E10",
+    "E11",
+    "E12",
+    "E13",
+    "E14",
+)
 INTEGRATION_EPICS = ("E07", "E08", "E09")
 
 #: The consumer corpora, named by ROLE rather than by path (R20). ⛔ The

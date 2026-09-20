@@ -26,6 +26,7 @@ from tools.quality.handoffs import handoff_citations
 from tools.quality.handoffs.existence import handoff_existence
 from tools.quality.handoffs.sweep import pattern_sites
 from tools.quality.mirror import check_mirrors
+from tools.quality.palettes import palette_census
 from tools.quality.personal_data import identity_notice
 from tools.quality.personal_data.identity import check_identifiers
 from tools.quality.personal_data.registry import check_registry
@@ -54,6 +55,7 @@ EMPTY_READINGS = {
     count_census: "in the prose of 0 Python files",
     creator_census: "not read, no",
     surface_census: "no package was read",
+    palette_census: "0 rejected identities",
 }
 
 #: The function that ACTUALLY iterates each population, so a test can assert the

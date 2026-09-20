@@ -111,13 +111,18 @@ consequence (R6, R8):
 | `narration-service` | `--voice` given and no service answered | new clips | the reading floor, and clips recorded earlier |
 | `narration-incomplete` | the narration run placed only some clips | the clips it did not place | the reading floor, and every clip it placed |
 | `exercises` | the corpus declares no exercises | nothing to Run or Submit | everything: a corpus with no graders is complete, not short (C5) |
-| `toolchain` | exercises are declared and the site offers no execution | Run and Submit | practice pages read, and the reading floor |
+| `host` | exercises are declared, the site offers execution, and no runner container is up over this corpus | the runner's isolation: Run and Submit execute on this host, with whatever toolchain it has | everything |
 
 ⭐ **A corpus that declares exercises is served with Run and Submit**: the
-`studyforge serve --site` this skill runs registers the run namespace (`W371`), so
-`toolchain` is printed only when the serving process offers no execution. A run's
-command is read from the corpus's own unit documents, and its outcome is recorded
-in the corpus's progress store, never in the site.
+`studyforge serve --site` this skill runs registers the run namespace (`W371`).
+⚠️ **What the skill reports is WHERE a run executes** (`W381`): it asks the
+framework's own mode probe whether the corpus's runner container is up over the
+corpus root. When it is not, `host` is printed: a reader's code runs on this host,
+without the runner's isolation. Its `remedy` line says what to do: start the runner
+container as `code-server-toolchain`'s README documents, then serve again. The probe's
+answer is taken once, when the site starts listening. A run's command is read from
+the corpus's own unit documents, and its outcome is recorded in the corpus's
+progress store, never in the site.
 
 ⭐ **The reading floor** is pages, navigation, contents and progress. The site
 also opens from its `index.html` with nothing running.
@@ -144,7 +149,9 @@ verb gave a verdict against the corpus, and `2` means it could not run.
 
 - write, copy or edit a file itself — `studyforge build` writes the site;
 - open a socket itself — `studyforge serve` and `studyforge narrate` do;
-- start, stop or reach a container — ⛔ spec §8.3 keeps the Docker socket out of
-  the serving process, so the narration component is yours to start;
+- start, stop or reach into a container. It only asks, through the framework's own
+  mode probe, whether the runner container is up. ⛔ Spec §8.3 keeps the Docker socket
+  out of the serving process, so the narration component and the runner container
+  are yours to start;
 - name, detect or branch on any source (R1);
 - turn a partial state into a failure, or a failure into a partial state.

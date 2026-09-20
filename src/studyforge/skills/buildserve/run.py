@@ -20,7 +20,8 @@ which is how a test sends a real request and stops it.
 
 ⭐ This module opens no file and no socket, and names no verb flag: every argument
 list comes from `verbs`, so a verb whose interface changes (`W230`) is one edit
-there. It reads the plan and the manifest only to know which partial state holds.
+there. It reads the plan and the manifest only to know which partial state holds, and
+hands `states` the probe that says where a run would execute (`W381`).
 """
 
 from __future__ import annotations
@@ -33,7 +34,12 @@ from pathlib import Path
 from studyforge.cli.plan import plan_for
 from studyforge.corpus.manifest import MANIFEST_FILENAME, load
 from studyforge.skills.buildserve import verbs
-from studyforge.skills.buildserve.states import exercise_states, narration_states, recorded
+from studyforge.skills.buildserve.states import (
+    exercise_states,
+    narration_states,
+    probe_for,
+    recorded,
+)
 from studyforge.validate.report import OK
 
 
@@ -65,11 +71,12 @@ def build_and_serve(
     if code != OK:
         return code
     states = narration_states(narrated, said, has_record=recorded(plan_for(Path(corpus))))
-    declared = load(Path(corpus) / MANIFEST_FILENAME).exercises
+    manifest = load(Path(corpus) / MANIFEST_FILENAME)
+    probe = probe_for(corpus, manifest.source)
 
     def listening(server: object) -> None:
         offered = getattr(server, "namespaces", {})
-        for state in states + exercise_states(declared, offered):
+        for state in states + exercise_states(manifest.exercises, offered, probe):
             for line in state.lines():
                 say(line)
         if started is not None:

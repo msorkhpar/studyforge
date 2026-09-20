@@ -59,6 +59,7 @@ from tools.quality.handoffs.sweep import (
     convention_documents,
 )
 from tools.quality.mirror import check_mirrors, mirrored
+from tools.quality.palettes import check_rejected_palettes, palette_census
 from tools.quality.personal_data import check_personal_data, identity_notice
 from tools.quality.personal_data.registry import judged_directories
 from tools.quality.personal_data.shapes import swept_files
@@ -93,6 +94,7 @@ DISCLOSED_BY: tuple[tuple[Check, Notice], ...] = (
     (check_derived_counts, count_census),
     (check_owns_before_creator, creator_census),
     (check_producer_half, surface_census),
+    (check_rejected_palettes, palette_census),
 )
 
 

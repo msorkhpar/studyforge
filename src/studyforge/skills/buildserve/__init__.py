@@ -33,8 +33,9 @@ rather than patched here (E11 § SK-03).
 
 ## ⛔ A partial state is a known state with a stated consequence, never an error
 
-Narration not run, nothing to narrate, no narration service, no exercises and no
-toolchain are each reported in `states` and never change the exit code (R6, R8).
+Narration not run, nothing to narrate, no narration service, no exercises and a
+run that would execute on the host are each reported in `states` and never change
+the exit code (R6, R8).
 ⭐ A corpus with no graders is complete at the reading floor, not short (C5).
 
 ## ⛔ SILENT IS NOT ONE STATE, AND *NOT FINISHED* IS SAID OUT LOUD
@@ -53,33 +54,35 @@ from studyforge.skills.buildserve import narration
 from studyforge.skills.buildserve.run import build_and_serve
 from studyforge.skills.buildserve.states import (
     EXECUTION_NAMESPACE,
+    HOST_EXECUTION,
     KNOWN,
     NARRATION_INCOMPLETE,
     NO_EXERCISES,
     NO_NARRATION_SERVICE,
-    NO_TOOLCHAIN,
     NOT_NARRATED,
     NOTHING_TO_NARRATE,
     PartialState,
     exercise_states,
     narration_states,
+    probe_for,
     recorded,
 )
 
 #: ⛔ The package's whole public surface.
 __all__ = [
     "EXECUTION_NAMESPACE",
+    "HOST_EXECUTION",
     "KNOWN",
     "NARRATION_INCOMPLETE",
     "NOTHING_TO_NARRATE",
     "NOT_NARRATED",
     "NO_EXERCISES",
     "NO_NARRATION_SERVICE",
-    "NO_TOOLCHAIN",
     "PartialState",
     "build_and_serve",
     "exercise_states",
     "narration",
     "narration_states",
+    "probe_for",
     "recorded",
 ]

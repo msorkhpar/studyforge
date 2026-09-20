@@ -15,6 +15,15 @@ satisfy the schema. Only a graded exercise can complete a practice.
 a pair failing a gate ships nothing rather than something weak. A unit with no
 exercise renders as a clean reading page, not a broken practice page.
 
+⛔ **RE-SCOPED 2026-09-19 (`W389`, user direction): zero is NAMED, never silent.** ⭐ **The
+contract property above is unchanged** — a unit with no exercise still renders as a clean
+reading page, and a gate that refuses still ships nothing rather than something weak.
+⚠️ **What changed is what zero MEANS.** From `M10` an exercise is authored for material the
+source did not grade, so zero is a reading the gates produced and the coverage report names
+the gate that produced it — ⛔ **never a default nobody tried to move**
+([`E14`](E14-authored-exercises.md), [spec
+§7](../specs/2026-09-08-studyforge-v1-design.md#exercises-authored-for-every-corpus-w389)).
+
 **R5 — nothing generated is presented as more authoritative than it is.** The
 vocabulary is deliberately small and deliberately enforced in code, not in
 review: provenance is `bundled`, `generated` or `user`; trust is
@@ -49,7 +58,7 @@ encode** — there is no `state` field to set and none to forget:
 
 | State | How it appears | Common case |
 |---|---|---|
-| **none** | no `practice-M.json` at all | ISO: 38 units, no practice document written |
+| **none** | no `practice-M.json` at all | ISO: 38 units, no practice document written — ⚠️ **dated by `W389`: a reading of the corpus as its source ships it, and `M10` re-ingests it with exercises authored for it** |
 | **ungraded** | a `practice-M.json` with blocks and **no `exercise` key**, or an `exercise` naming **a file and no grader** | SPARQL: 19 prompts, no workspace |
 | **graded** | the `exercise` names **a grader** | the Java repo — the *exception* |
 
@@ -124,6 +133,13 @@ the carried ruling above.
    belongs to the task already opening practice documents. Digest recomputation
    is part of the work, not a follow-up.
 
+⭐ **GROWN by `W389`, and NOT re-opened.** ⛔ **Nothing above changes.** The record gains
+`cases`, `report`, `origin` and an exercise `kind` at
+[`AX-00`](E14-authored-exercises.md#ax-00-cases-kinds-and-origin-in-the-exercise-record),
+in a module beside this one and in `W357`'s shape: structural, no flag, no `raw_api` bump,
+every older document still valid. ⚠️ **The known-key ruling above binds that task too** —
+a misspelled new key is a refusal, for exactly the reason a misspelled `exercise` is.
+
 ---
 
 ### SF-24 — Practice panel
@@ -156,3 +172,13 @@ remedy. An advisory grader is visibly labelled. A unit with no exercise renders
 with no practice affordance. Fully keyboard accessible.
 
 ⛔ **PO round 74 — `M7`, with the browser editor it embeds** (user direction, 2026-09-12: *"that functionallity is needed mostly for when exercises are in the picture"*). ⭐ **It gains `SF-22`'s editor clause: the IDE's build task follows the open practice.**
+
+⭐ **EXTENDED by `W389` at `M10`, on this same surface, by
+[`AX-09`](E14-authored-exercises.md#ax-09-the-practice-panel-the-breakdown-the-reference-and-the-label)** —
+⛔ **a later row on an owned surface, not a re-scope of this one.** Three additions, each
+the user's ruling of 2026-09-19: the Submit breakdown (*main ask ✓*, *edge cases n/m*, each
+failed case named); the reference solution, **always available** and never gated behind a
+pass; and the label, **worded for a learner**, which is this row's *"an advisory grader is
+labelled"* made concrete — ⛔ **R5's `provenance` and `trust` never reach the page.**
+⚠️ **A quiz renders in this panel with no editor, no Run and no Submit** — ⛔ **not disabled
+ones**, by this row's own rule about a dead button.
