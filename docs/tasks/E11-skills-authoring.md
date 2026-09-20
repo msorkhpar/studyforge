@@ -540,6 +540,13 @@ gets nothing from this skill and no error** — asserted. Re-running changes
 nothing. The compose file honours §8.1's four rulings, each asserted rather than
 remembered.
 
+⭐ **This rendering IS `TC-05`'s sufficiency demonstration** (`TC-05/2`, `W400`):
+[`E12`](E12-toolchain-image.md#tc-05-compose-and-mount-contract) says
+`consuming.json` is sufficient to generate a working compose file with no other
+input, and this skill is where that is demonstrated rather than asserted.
+⛔ **So a key this renderer needs and the component's contract does not carry is
+a finding against `TC-05`, never a value hand-written here** (R19).
+
 ⛔ **PO round 74 — `M7`, with `TC-05` and the editor it composes** (user direction). ⭐ **The runtime set a corpus declares reaches the runner at `M5` through `TC-00` and `SF-44`; this row later renders the editor's compose file and prime project from that same declaration.**
 
 ---

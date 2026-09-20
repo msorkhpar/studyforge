@@ -212,7 +212,7 @@ template to copy and adapt, never an included file, because the mount list is
 exactly the part that must differ per project.
 
 ⭐ **The prose is for a person; a machine-readable twin is for the onboarding
-skill.** R19 says the consuming half of a corpus is *generated*, and `SK-07`
+skill.** R19 says the consuming half of a corpus is *generated*, and `SK-09`
 cannot render a compose file from prose. So this task also publishes
 `consuming.json`: the image tag, the ports, the required mounts and their
 read-only flags, the uid/gid expectation, the environment variables and which
@@ -239,7 +239,15 @@ The four rulings a consumer inherits, each with its failure recorded:
 with only its own compose file. Each of the four rulings is stated with its
 failure mode. The reference fragment is marked as a template, not an include.
 **`consuming.json` is sufficient to generate a working compose file with no
-other input** — demonstrated by SK-07 doing exactly that, not asserted.
+other input** — demonstrated by `SK-09` doing exactly that, not asserted.
+
+⚠️ **`TC-05/2`, corrected 2026-09-19 (`W400`): this clause — and the sentence
+above it that says why `consuming.json` exists at all — named `SK-07` from their
+first writing, and `SK-07` renders no compose file.** ⭐ **`SK-07` generates
+the reading floor's artifacts; `SK-09` is the execution half that renders the
+compose file, and it already depends on this task.** ⛔ **The demonstration is
+owed by [`SK-09`](E11-skills-authoring.md#sk-09-execution-onboarding), whose own
+Acceptance carries it.**
 
 ---
 
