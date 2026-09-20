@@ -167,6 +167,11 @@ SKELETON_SLOTS = {
     "script": "the link to `page.js`; nothing is painted",
     "identity": "R4's JSON block; it is data and is never shown",
     "heading": "the masthead's `<h1>` — region 1",
+    "headingattributes": (
+        "the anchor and the clip the `<h1>` carries when the material's own "
+        "opening heading was promoted into it (`W407`); it is addressing and "
+        "narration, and nothing is painted"
+    ),
     # every slot below lands inside the one column `body` bounds
     "meta": "the masthead's second line — region 1",
     "breadcrumb": (

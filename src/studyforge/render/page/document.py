@@ -35,6 +35,22 @@ them) and the **regions themselves**, each of which is *optional and gated on
 something*. When this file crosses R11's 400 it divides into `document.py` and
 `regions.py` along that line, and not elsewhere.
 
+## ⛔ The page's heading is the MATERIAL's when the material has one (`W407`)
+
+⚠️ **A source document states what it is in its first heading**, and this page
+states what it is in its `<h1>` — and printing both is the title read twice,
+which `W388/17` measured on **every** page of a rebuilt corpus. ⭐ So the two are
+one statement: `page.anchors.title_heading` names the block, this module prints
+it as the page's heading, and `page.section` withholds it from the body.
+
+⛔ **The unit's own title still names the unit everywhere else** — the `<title>`,
+R4's identity block, the trail, the contents and the bar between units. ⚠️ Those
+name the *unit*, which is a fact about the corpus; the `<h1>` names the *page*,
+and when the material has written that line already there is no reason to write
+a second one over it. ⭐ A unit whose material states no title is headed by the
+unit's title exactly as before, and that is the common case for an authored
+corpus.
+
 ## ⛔ The player is *derived*, not declared — and that is the answer to a real tension
 
 ⚠️ **`SF-12` lands at M1 and the ids it must not invent land at M3.** The
@@ -65,11 +81,12 @@ from studyforge.address import Address, AddressError
 from studyforge.corpus.placement import PlacementError
 from studyforge.corpus.placement import identity as identity_block
 from studyforge.render import templates
-from studyforge.render.markup import escape, escape_attribute
+from studyforge.render.markup import escape, escape_attribute, inline
 from studyforge.render.page import anchors, navigation
 from studyforge.render.page import mark as mark_region
 from studyforge.render.page import rail as rail_region
 from studyforge.render.page import section as section_module
+from studyforge.render.page.anchors import TITLE_POSITION
 from studyforge.render.page.assets import AUDIO_ATTRIBUTE, Placement
 from studyforge.render.page.errors import PageError
 from studyforge.render.page.narration import SILENT, Narration
@@ -129,14 +146,21 @@ def compose(
     the transport is absent in both cases rather than present and dead.
     """
     title = _title(document)
+    sections = _sections(document)
+    promoted = anchors.title_heading(document)
+    attributes = heading_attributes(document, narration)
     body = JOIN.join(
-        section_module.render(section, placement, narration) for section in _sections(document)
+        section_module.render(
+            section, placement, narration, heads_page=promoted is not None and index == 0
+        )
+        for index, section in enumerate(sections)
     )
     return (
         templates.fill(
             SKELETON,
             title=escape(title),
-            heading=escape(title),
+            heading=heading(document, title),
+            headingattributes=attributes,
             identity=_region(identity(document, placement)),
             stylesheet=escape_attribute(placement.stylesheet()),
             script=escape_attribute(placement.script()),
@@ -147,7 +171,11 @@ def compose(
             body=body,
             pending=_region(pending(document)),
             mark=_region(mark_region.render(document)),
-            player=_region(player(body, narration)),
+            # ⛔ The heading is part of what the gate reads, because the page's
+            # own `<h1>` is a narrated passage when the material supplied it —
+            # and a page whose only spoken line is its title must still be able
+            # to play it.
+            player=_region(player(attributes + body, narration)),
             nav=_region(navigation.between_units(links)),
         )
         + TRAILING_NEWLINE
@@ -181,6 +209,42 @@ def identity(document: dict, placement: Placement) -> str:
         # that did not render, with the leak the thing nobody looked at.
         raise PageError(f"this unit cannot identify itself: {error}") from None
     return identity_block.render(record)
+
+
+def heading(document: dict, title: str) -> str:
+    """Return what this page is headed by: the material's own title, or the unit's.
+
+    ⛔ **`inline` for one and `escape` for the other, and the difference is
+    real.** A heading block's text is material and carries the archive's inline
+    markers, exactly as the same block would have carried them in the body; a
+    unit's title is a name a manifest or an author wrote and has never been
+    inline prose anywhere else on this page.
+    """
+    promoted = anchors.title_heading(document)
+    if promoted is None:
+        return escape(title)
+    return inline(promoted.get("text"))
+
+
+def heading_attributes(document: dict, narration: Narration = SILENT) -> str:
+    """Return the promoted heading's own anchor and clip, or `''` when none was.
+
+    ⭐ **The block keeps the id AND the clip it would have had in the body**, so
+    a bookmark into this page still lands where it always did and the narrator
+    still reads the page's first line — which is what makes this a move rather
+    than a deletion. ⚠️ `narration.js` therefore looks for passages in the whole
+    document rather than inside `#content`, because this one is in the header.
+
+    ⛔ **The position is `0` and is not recomputed anywhere**: it is the block's
+    place in its section, and both the anchor and the clip are addressed by it
+    exactly as `page.blocks` would have addressed them.
+    """
+    if anchors.title_heading(document) is None:
+        return ""
+    section = (document.get("sections") or ())[0]
+    key = section.get("key")
+    anchor = escape_attribute(anchors.block_anchor(key, TITLE_POSITION))
+    return f' id="{anchor}"{narration.attribute(key, (TITLE_POSITION,))}'
 
 
 def meta(document: dict) -> str:

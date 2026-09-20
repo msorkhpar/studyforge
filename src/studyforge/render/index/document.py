@@ -108,8 +108,13 @@ TRAILING_NEWLINE = "\n"
 
 #: The skeleton slots the root index has nothing to put in. ⛔ Named and passed
 #: rather than omitted — see this module's docstring for what each absence is.
+#:
+#: ⚠️ `headingattributes` is one of them: the unit page promotes its material's own
+#: opening heading into the `<h1>` and anchors it there (`W407`), and a page
+#: whose heading is a name rather than a block has no anchor to carry.
 EMPTY_SLOTS = (
     "breadcrumb",
+    "headingattributes",
     "identity",
     "mark",
     "meta",
