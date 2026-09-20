@@ -94,7 +94,7 @@ class Selection:
     read_back_from: str
 
     def document(self) -> dict[str, object]:
-        """The selection as a corpus keeps it: data, and no tag."""
+        """Return the selection as a corpus keeps it: data, and no tag."""
         return {
             "declared": list(self.declared),
             "carried": list(self.carried),
@@ -114,7 +114,7 @@ class Selection:
         }
 
     def render(self) -> str:
-        """The document as the bytes a corpus keeps, newline-terminated."""
+        """Render the document as the bytes a corpus keeps, newline-terminated."""
         return json.dumps(self.document(), indent=2, ensure_ascii=False) + "\n"
 
 
@@ -147,7 +147,7 @@ def select(
 
 
 def _reason(reasons: Mapping[str, object], name: str, block: str) -> str:
-    """The contract's own sentence for a runtime this image does not carry."""
+    """Quote the contract's own sentence for a runtime this image will not carry."""
     why = reasons.get(name)
     if isinstance(why, str) and why.strip():
         return why
@@ -160,7 +160,7 @@ def _reason(reasons: Mapping[str, object], name: str, block: str) -> str:
 
 
 def _image_value(contract: Mapping[str, object], block: str) -> str:
-    """What goes where the image does — a compose interpolation or a run value.
+    """Return what goes where the image does: a compose interpolation or a run value.
 
     ⚠️ **Two spellings, because the two blocks are consumed two ways**: an
     editor is brought up by compose and a runner by a `docker run` line, and
@@ -193,7 +193,7 @@ def _argv(
 
 
 def _string(contract: Mapping[str, object], *path: str) -> str:
-    """A required non-empty string at `path`."""
+    """Return a required non-empty string at `path`."""
     found = require(contract, *path)
     if not isinstance(found, str) or not found:
         raise ContractRefused(

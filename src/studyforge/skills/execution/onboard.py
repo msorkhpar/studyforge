@@ -45,7 +45,6 @@ eats your changes is a tool nobody runs twice.
 
 from __future__ import annotations
 
-import json
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path, PurePosixPath
@@ -125,7 +124,7 @@ class Execution:
 
 
 def source_root(manifest: Manifest) -> str:
-    """The directory an editor binds, derived from `content.include` (ruling 2)."""
+    """Return the directory an editor binds, from `content.include` (ruling 2)."""
     roots = [_root_of(one) for one in manifest.content.include]
     if not roots or not all(roots):
         raise ExecutionRefused(
@@ -233,7 +232,7 @@ def classified(where: str, entries: Sequence[Mapping[str, str]] = NOT_MATERIAL) 
 
 
 def _checked(narration_text: str | None) -> tuple[tuple[str, Mapping[str, object]], ...]:
-    """The narration block, whose rulings are asserted and which is not rendered."""
+    """Return the narration block, whose rulings are asserted and never rendered."""
     if narration_text is None:
         return ()
     document = contract.read(
@@ -249,7 +248,7 @@ def _checked(narration_text: str | None) -> tuple[tuple[str, Mapping[str, object
 
 
 def _primed(root: Path, runtimes: Sequence[str], seeded: Sequence[str]) -> Prime:
-    """The prime, with the seeded set taken from the contract's own prime map."""
+    """Select the prime, with the seeded set from the contract's own prime map."""
     try:
         return prime_for(root, runtimes, seeded=seeded)
     except PrimeRefused as refusal:
@@ -257,12 +256,12 @@ def _primed(root: Path, runtimes: Sequence[str], seeded: Sequence[str]) -> Prime
 
 
 def _from_compose(sources: str) -> str:
-    """`sources` as the compose file at `COMPOSE_FILE` reaches it."""
+    """Return `sources` as the compose file at `COMPOSE_FILE` reaches it."""
     return "/".join([".."] * len(PurePosixPath(DIRECTORY).parts) + [sources])
 
 
 def _root_of(pattern: str) -> str:
-    """The directory prefix of one include glob, up to its first pattern part.
+    """Return one include glob's directory prefix, up to its first pattern part.
 
     ⚠️ A glob with no pattern part names a FILE, so its directory is what is
     taken — a corpus that includes one file by name has still said where its
@@ -277,7 +276,7 @@ def _root_of(pattern: str) -> str:
 
 
 def _common(first: PurePosixPath, second: PurePosixPath) -> PurePosixPath:
-    """The longest directory both paths share."""
+    """Return the longest directory both paths share."""
     shared = []
     for one, other in zip(first.parts, second.parts, strict=False):
         if one != other:
@@ -295,7 +294,7 @@ def _reader(
     narration_text: str | None,
     seeds: object,
 ) -> str:
-    """The document a reader opens first, written from declarations alone."""
+    """Write the document a reader opens first, from declarations alone."""
     volumes = composefile.volumes_for(
         seeds if isinstance(seeds, Mapping) else None, manifest.runtimes
     )

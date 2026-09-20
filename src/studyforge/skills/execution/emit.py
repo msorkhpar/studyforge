@@ -52,7 +52,7 @@ def _emit(value: object, depth: int) -> str:
 
 
 def _after(value: object, depth: int) -> str:
-    """What follows a key or a dash: inline when scalar, nested when not."""
+    """Write what follows a key or a dash: inline when scalar, nested when not."""
     if isinstance(value, Mapping):
         return "\n" + _emit(value, depth + 1) if value else " {}\n"
     if isinstance(value, (list, tuple)):

@@ -124,7 +124,7 @@ def render(
     seeds: Mapping[str, object] | None = None,
     checked: Sequence[tuple[str, Mapping[str, object]]] = (),
 ) -> str:
-    """The whole compose file, as the bytes a corpus keeps.
+    """Return the whole compose file, as the bytes a corpus keeps.
 
     ⭐ `checked` is every other component block whose rulings are asserted and
     whose service is **not** rendered — see the module contract.
@@ -141,9 +141,7 @@ def render(
     document: dict[str, object] = {
         "name": project,
         "services": {
-            "editor": service(
-                editor, name="editor", image=image, sources=sources, volumes=volumes
-            )
+            "editor": service(editor, name="editor", image=image, sources=sources, volumes=volumes)
         },
     }
     named = sorted({str(entry["volume"]) for entry in mounts if entry.get("volume")})
@@ -158,10 +156,8 @@ def render(
     return text
 
 
-def volumes_for(
-    seeds: Mapping[str, object] | None, runtimes: Sequence[str]
-) -> tuple[str, ...]:
-    """The named cache volumes a declared set earns, from the contract's own map.
+def volumes_for(seeds: Mapping[str, object] | None, runtimes: Sequence[str]) -> tuple[str, ...]:
+    """Return the cache volumes a declared set earns, from the contract's own map.
 
     ⭐ **The join is the contract's own**: its prime block maps a runtime to the
     volume that runtime's cache is seeded into, so *"omit it when that runtime
@@ -173,15 +169,13 @@ def volumes_for(
     declared = frozenset(runtimes)
     if not isinstance(seeds, Mapping):
         return ()
-    return tuple(
-        sorted(str(volume) for runtime, volume in seeds.items() if runtime in declared)
-    )
+    return tuple(sorted(str(volume) for runtime, volume in seeds.items() if runtime in declared))
 
 
 def kept(
     block: Mapping[str, object], volumes: Sequence[str] = ()
 ) -> tuple[Mapping[str, object], ...]:
-    """The mounts a rendered file carries: the required ones and the earned ones."""
+    """Return the mounts a rendered file carries: the required and the earned."""
     return tuple(
         entry
         for entry in blocks(block, "mounts")
@@ -238,7 +232,7 @@ def _environment(block: Mapping[str, object]) -> dict[str, object]:
 
 
 def _tmpfs(block: Mapping[str, object]) -> list[str]:
-    """The workspace root, when the contract declares it a tmpfs."""
+    """Return the workspace root, where the contract declares it a tmpfs."""
     if optional(block, "workspace", "kind") != "tmpfs":
         return []
     return [str(require(block, "workspace", "container_path"))]
@@ -257,7 +251,7 @@ def _mounted(entry: Mapping[str, object], sources: str) -> str:
 
 
 def _healthcheck(block: Mapping[str, object]) -> dict[str, object]:
-    """The health check, with every declared interval in compose's own spelling."""
+    """Return the health check, each declared interval in compose's own spelling."""
     declared = optional(block, "healthcheck")
     if not isinstance(declared, Mapping):
         return {}

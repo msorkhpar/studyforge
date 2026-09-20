@@ -27,7 +27,6 @@ from tests.support import repository_root
 from tools.workspace import read as read_workspace
 from tools.workspace.__main__ import DEV_CONTAINER, workspace_root
 
-
 #: An account name this contract never declares as its own. ⚠️ Composed rather
 #: than written, for the reason `contracts.py` states.
 STRANGER = f"/home/{'somebodyelse'}/repo"

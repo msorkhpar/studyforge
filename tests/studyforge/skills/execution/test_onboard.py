@@ -201,9 +201,7 @@ def test_a_contract_that_breaks_a_ruling_refuses_the_whole_generation(tmp_path):
     broken = json.loads(editor_text())
     broken["editor"]["ports"][0]["host_bind"] = "0.0.0.0"
     with pytest.raises(Exception, match="ruling 1"):
-        skill.generate(
-            manifest(), editor_text=json.dumps(broken), root=corpus(tmp_path)
-        )
+        skill.generate(manifest(), editor_text=json.dumps(broken), root=corpus(tmp_path))
 
 
 def test_the_narration_contract_is_checked_and_its_service_is_not_rendered(tmp_path):

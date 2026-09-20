@@ -72,9 +72,10 @@ def _ports(block: Mapping[str, object], name: str) -> list[str]:
     """Ruling 1 — loopback only, never every interface."""
     found = []
     for entry in blocks(block, "ports"):
-        if entry.get("publish_on_all_interfaces") is True or entry.get(
-            "host_bind"
-        ) in EVERY_INTERFACE:
+        if (
+            entry.get("publish_on_all_interfaces") is True
+            or entry.get("host_bind") in EVERY_INTERFACE
+        ):
             found.append(
                 f"{scrub(name)} publishes a port on every interface; §8.1 ruling 1 binds "
                 f"it to loopback, because this is an unencrypted service with a shell"

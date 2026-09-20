@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pytest
 
-from studyforge.skills.execution import composefile, emit, rulings
+from studyforge.skills.execution import composefile, rulings
 from studyforge.skills.execution.contract import ContractRefused
 from tests.studyforge.skills.execution.contracts import (
     HOME,
@@ -177,9 +177,7 @@ def test_every_named_volume_in_a_service_is_declared_at_the_top_level():
         if line.startswith('      - "') and ":/" in line
     }
     declared = {
-        line.strip().removesuffix(": {}")
-        for line in text.splitlines()
-        if line.endswith(": {}")
+        line.strip().removesuffix(": {}") for line in text.splitlines() if line.endswith(": {}")
     }
     assert {one for one in mounted if not one.startswith("..")} == declared
 

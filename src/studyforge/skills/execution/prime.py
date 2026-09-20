@@ -148,7 +148,7 @@ class Prime:
         return tuple(sorted(found))
 
     def document(self) -> dict[str, object]:
-        """The prime as data, for the selection document a corpus keeps."""
+        """Return the prime as data, for the selection document a corpus keeps."""
         return {
             "build_files": list(self.build_files),
             "specimens": [
@@ -158,9 +158,7 @@ class Prime:
         }
 
 
-def prime_for(
-    root: Path, runtimes: Sequence[str], *, seeded: Sequence[str] = ()
-) -> Prime:
+def prime_for(root: Path, runtimes: Sequence[str], *, seeded: Sequence[str] = ()) -> Prime:
     """Select a prime for `runtimes` out of the corpus at `root`, or refuse."""
     if not isinstance(root, Path):
         raise PrimeRefused(f"the corpus root must be a path, got {describe(root)}")
@@ -238,9 +236,7 @@ def _specimens(
         if not suffixes:
             continue
         candidates = [
-            (where, size)
-            for where, size in held
-            if where.endswith(suffixes) and size > 0
+            (where, size) for where, size in held if where.endswith(suffixes) and size > 0
         ]
         source = _smallest(one for one in candidates if not is_a_test(one[0]))
         test = _smallest(one for one in candidates if is_a_test(one[0]))
@@ -254,6 +250,6 @@ def _specimens(
 
 
 def _smallest(candidates) -> str | None:
-    """The smallest candidate, ties broken by path so the answer is one answer."""
+    """Return the smallest candidate, ties broken by path so there is one answer."""
     ordered = sorted(candidates, key=lambda one: (one[1], one[0]))
     return ordered[0][0] if ordered else None

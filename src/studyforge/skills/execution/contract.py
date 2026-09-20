@@ -168,7 +168,7 @@ def container_users(document: Mapping[str, object]) -> tuple[str, ...]:
 
 
 def require(document: Mapping[str, object], *path: str) -> object:
-    """The value at `path`, or a refusal naming the key path that is missing.
+    """Return the value at `path`, or refuse by naming the key path it wanted.
 
     ⭐ **The refusal is a finding against the component's contract** (R19), and
     the only legal answer to it is a key added there — never a value added here.
@@ -184,7 +184,7 @@ def require(document: Mapping[str, object], *path: str) -> object:
 
 
 def optional(document: Mapping[str, object], *path: str, default: object = None) -> object:
-    """The value at `path`, or `default` where any step of it is absent."""
+    """Return the value at `path`, or `default` where any step of it is absent."""
     found: object = document
     for key in path:
         if not isinstance(found, Mapping) or key not in found:
@@ -194,7 +194,7 @@ def optional(document: Mapping[str, object], *path: str, default: object = None)
 
 
 def words(document: Mapping[str, object], *path: str) -> tuple[str, ...]:
-    """A required list of strings at `path`, refused when it is anything else."""
+    """Return a required list of strings at `path`, refusing anything else."""
     found = require(document, *path)
     if not isinstance(found, Sequence) or isinstance(found, str):
         raise ContractRefused(
@@ -210,7 +210,7 @@ def words(document: Mapping[str, object], *path: str) -> tuple[str, ...]:
 
 
 def blocks(document: Mapping[str, object], *path: str) -> tuple[Mapping[str, object], ...]:
-    """A required list of objects at `path`, refused when it is anything else."""
+    """Return a required list of objects at `path`, refusing anything else."""
     found = require(document, *path)
     if not isinstance(found, Sequence) or isinstance(found, str):
         raise ContractRefused(
@@ -245,14 +245,12 @@ def _users(value: object, found: set[str]) -> None:
 
 
 def _homes(document: Mapping[str, object]) -> tuple[str, ...]:
-    """The home path prefixes this contract declares as its own containers'."""
-    return tuple(
-        f"/{root}/{user}" for user in container_users(document) for root in HOME_ROOTS
-    )
+    """Return the home prefixes this contract declares as its own containers'."""
+    return tuple(f"/{root}/{user}" for user in container_users(document) for root in HOME_ROOTS)
 
 
 def _masked(value: object, homes: Sequence[str]) -> object:
-    """A copy of `value` with each declared container home replaced by a placeholder."""
+    """Copy `value`, replacing each declared container home with the mask."""
     if isinstance(value, Mapping):
         return {key: _masked(item, homes) for key, item in value.items()}
     if isinstance(value, Sequence) and not isinstance(value, str):

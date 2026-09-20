@@ -155,7 +155,9 @@ def test_a_root_that_is_not_a_path_is_refused_without_quoting_it(tmp_path):
 def test_the_document_names_every_file_the_prime_carries(tmp_path):
     made = prime.prime_for(corpus(tmp_path), ("java", "maven"), seeded=SEEDED)
     document = made.document()
-    named = set(document["build_files"]) | {
-        one["source"] for one in document["specimens"]
-    } | {one["test"] for one in document["specimens"]}
+    named = (
+        set(document["build_files"])
+        | {one["source"] for one in document["specimens"]}
+        | {one["test"] for one in document["specimens"]}
+    )
     assert named == set(made.copies())
