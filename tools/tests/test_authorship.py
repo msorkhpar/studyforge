@@ -8,6 +8,10 @@ identity is passed PER INVOCATION with `-c` or it is not passed at all.
 ⭐ **The four directions are asserted by PLANTING** (Ruling 123): a SECOND OFFICE on the
 carrier is refused; a REGISTER round under a real identity passes; a coordinator fixup on an
 office's carrier passes; and a second office ALREADY LANDED is not read at all.
+
+⭐ **`W396` adds a fifth and a sixth**: a branch carrying a PLAIN merge commit beside an
+office's own commits is DISCLOSED and never refused, and the same merge taken with the
+per-invocation form says nothing at all.
 """
 
 from __future__ import annotations
@@ -22,6 +26,7 @@ from tests.support import assert_package_contract, git, init_repository, run
 from tools.authorship import (
     Authorship,
     author_is_placeholder,
+    mixed_reading,
     read_authorship,
     render_authorship,
 )
@@ -235,3 +240,55 @@ def test_a_refusal_says_the_tree_was_NEVER_TOUCHED_and_names_the_per_invocation_
     # ⭐ The remedy is the mechanism Ruling 345 prescribes, not "set your git config".
     assert "PER INVOCATION" in lines
     assert "git config" in lines
+
+
+# --- `W396`: a branch whose commits carry two KINDS of identity -------------------------
+
+
+def _merge_release_into_branch(carrier: Path, identity: tuple[str, ...]) -> None:
+    """Diverge the release line, then merge it into `branch` under `identity`."""
+    _commit(carrier, _OFFICE, "release-moved.txt")
+    _git(carrier, _OFFICE, "checkout", "-q", "branch")
+    _git(carrier, identity, "merge", "-q", "--no-ff", "-m", "Merge release", "release")
+    _git(carrier, _OFFICE, "checkout", "-q", "release")
+
+
+def test_a_PLAIN_merge_commit_on_a_carrier_is_DISCLOSED_and_never_REFUSED(carrier):
+    # ⛔ `W396`'s own measurement: the merge commit carries the identity that ran
+    #    `git merge` while every other commit on the branch carries the office's.
+    _merge_release_into_branch(carrier, _MACHINE)
+    read = read_authorship(carrier, "branch")
+    assert read.mixed == 1, "the plant did not take"
+    assert read.offices == 1
+    assert read.crossed == (), "a disclosure must never become a refusal"
+    printed = render_authorship(read)
+    assert "MIXED:" in printed[1], "the disclosure is not beside the population it qualifies"
+    assert "ONE OFFICE AT MOST" in "\n".join(printed), "the verdict changed"
+
+
+def test_the_SAME_merge_taken_with_the_OFFICE_form_says_NOTHING(carrier):
+    # ⭐ The other direction: the remedy makes the reading silent.
+    _merge_release_into_branch(carrier, _OFFICE)
+    read = read_authorship(carrier, "branch")
+    assert read.mixed == 0
+    assert mixed_reading(read) == []
+
+
+def test_a_REGISTER_ROUND_is_not_MIXED_because_no_office_is_on_it(carrier):
+    # ⛔ Every commit one kind is not a mix, and a round branch is the case that
+    #    would fire loudest if this counted a person's line on its own.
+    _git(carrier, _OFFICE, "checkout", "-q", "-b", "chore/round")
+    _commit(carrier, _MACHINE, "round-one.txt")
+    _git(carrier, _OFFICE, "checkout", "-q", "release")
+    read = read_authorship(carrier, "chore/round")
+    assert (read.offices, read.mixed) == (0, 1)
+    assert mixed_reading(read) == []
+
+
+def test_the_disclosure_names_the_PER_INVOCATION_form_and_no_identity():
+    # ⛔ R7: it is a COUNT and a command shape, and it reads no author line.
+    (line,) = mixed_reading(Authorship(population=2, offices=1, mixed=1))
+    assert "MERGE COMMIT" in line
+    assert "user.name=<office>" in line and "user.email=<office>@example.invalid" in line
+    assert "never a" in line, "a disclosure that does not say it is one reads as a refusal"
+    assert "dev9" not in line and "dev8" not in line

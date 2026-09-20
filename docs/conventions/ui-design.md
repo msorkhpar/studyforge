@@ -179,6 +179,78 @@ ask before changing the user's global configuration.
 
 ---
 
+## ⛔ The rejected palettes, as a table an instrument reads
+
+⛔ **§2's list of rejected palettes was right, was written before the work that broke it, and was
+read by NOTHING.** ⚠️ **Measured, `W388/4`:** a repaint's first stage shipped the first half of
+*warm cream + serif display + terracotta* and the user rejected it for exactly that reason. ⭐ **So
+the tells that can be read off a colour are written below as DATA, and `tools/quality/palettes.py`
+reads this table over the stylesheets this framework ships** — a rejected identity that returns is
+a finding at the floor, by name, instead of a paragraph somebody was supposed to remember.
+
+⚠️ **What a green floor here does NOT say.** The check reads COLOUR and nothing else: a serif
+display face, the SaaS card kit, pill tags, an eyebrow label and a "New" badge are §2 tells that no
+hue can see, and they stay the reader's judgement at §6. ⛔ **Green here means *no rejected PALETTE
+is shipped*, never *§2 is met*.**
+
+### How a row is read
+
+⭐ **Every colour is read as three measures**, and every bound below is written in them: **hue** in
+degrees, **chroma** as `max − min` of its channels over 255 in percent, and **light** as
+`(max + min) / 2` over 255 in percent. ⛔ **Chroma and not HSL saturation, deliberately:** a
+near-white paper with a one-step tint reports a saturation near 40% and a chroma near 3%, so a
+bound written in saturation refuses the paper the user accepted.
+
+⭐ **A row's parts are joined by `+`, and every part must hold IN ONE THEME** — light and dark are
+read apart, each over the tokens it defines — with the parts on one role met by that theme's
+colours for it. ⛔ **The conjunction is the whole instrument:** cool slate alone is what the user
+ACCEPTED below, and it is the TRIPLE that was rejected. A row that fired on one part would refuse
+the accepted identity on its first run.
+
+| Role | Read from |
+|---|---|
+| `ground` | `--bg` |
+| `raised` | `--surface`, `--surface-2`, `--panel` |
+| `ink` | `--fg`, `--fg-soft`, `--muted` |
+| `rule` | `--rule`, `--rule-strong` |
+| `accent` | `--accent`, `--sign`, `--focus` |
+| `gradient stop` | ⛔ no token — every colour inside ONE `linear-gradient(` or `radial-gradient(`, its `var()` resolved in that theme; a row's stop parts must meet in the SAME gradient |
+
+| Rejected identity | Every part must be present | Why |
+|---|---|---|
+| Warm cream and terracotta | `ground: hue 20-70, light >= 85, chroma >= 3` + `accent: hue 5-32, chroma >= 25, light 25-65` | §2's first tell, and the one a repaint's first stage shipped |
+| Near-black ground, acid-green accent | `ground: light <= 12` + `accent: hue 75-165, chroma >= 45` | §2's second tell; §3 asks for a real mid-dark with character instead of a tinted near-black |
+| Near-black ground, vermilion accent | `ground: light <= 12` + `accent: hue 0-20, chroma >= 45` | the same tell's other accent |
+| Cool slate with teal-green and amber | `ground: hue 190-250, chroma <= 20` + `accent: hue 150-190, chroma >= 20` + `accent: hue 35-60, chroma >= 30` | the user's own rejection — *"very generic and repetitive between the designs you always generate"*. ⛔ It is the TRIPLE: the slate is accepted below |
+| A saturated brand colour as the page ground | `ground: chroma >= 30` | §2's third tell; a full guide-sign-green ground was rejected outright |
+| A purple-to-blue gradient | `gradient stop: hue 258-300, chroma >= 20` + `gradient stop: hue 200-255, chroma >= 20` | §2's tell, read where a gradient actually is |
+
+### ⭐ What the user ACCEPTED, 2026-09-19
+
+⛔ **The rejected table is half of what a taker needs, and the other half is what the user said YES
+to.** ⚠️ Without it the next repaint re-derives an identity from six refusals.
+
+| Part | What was accepted |
+|---|---|
+| neutrals | a cool slate scale, ground through rule, in both themes |
+| the accent | ONE loud accent, live where it means *next* or *you are here*, and nowhere else |
+| green | ⛔ **none in the identity** — *"I am not a fan of green"* |
+| themes | both, each designed, with the reader able to choose between them and the system |
+| ink | the quieter inks in separate contrast bands — one band for all three is what *"too dim"* named |
+
+⭐ **Two reference pages of the user's OWN were named as the standard**: their documentation
+reference, for the slate scale and the ink bands, and their route planner, for the one loud accent
+and the contrast it holds. ⛔ **Named in words and nothing else** — neither page's path, bytes,
+palette nor screenshot enters this repository, so nothing here can go stale against them and a
+taker who needs one asks the user for it.
+
+⚠️ **The green bound is recorded here and is NOT read by the check above**, deliberately: it is a
+per-token rule over the shipped palette, it belongs to the row that repaints the site (`W388`), and
+a floor finding for a palette that is already being replaced on another branch would redden every
+office's gate for a defect none of them could clear from its own.
+
+---
+
 ## Worked example: the decisions behind the study-route page
 
 For reference when judging a new UI. Each row is a decision and the reason it held.

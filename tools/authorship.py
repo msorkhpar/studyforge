@@ -7,9 +7,11 @@ logged or stored, so a refusal cannot relocate somebody's identity into a build 
 Ruling 345's clause 5 — prove absence with a null check, never by printing the value).
 
 **How you use it.** `read_authorship(root, branch)` returns an `Authorship`;
-`render_authorship(authorship)` is the lines the merge gate prints; and
-`author_is_placeholder(line)` is the predicate that says whether a line is an OFFICE's —
-the ONE function here that ever sees a value. `tools.mergegate` is the only caller.
+`render_authorship(authorship)` is the lines the merge gate prints; `mixed_reading` is the
+one of those lines that answers `W396` — a branch whose commits carry two KINDS of identity,
+disclosed and never refused; and `author_is_placeholder(line)` is the predicate that says
+whether a line is an OFFICE's — the ONE function here that ever sees a value.
+`tools.mergegate` is the only caller.
 
 **Depends on.** `dataclasses`, `pathlib` and `subprocess` — the standard library — `git` on
 the path, and `tools.reserved_addresses` for WHICH addresses identify nobody. ⛔ It imports
@@ -115,6 +117,9 @@ class Authorship:
     offices: int = 0
     crossed: tuple[str, ...] = ()
     unread: str = ""
+    #: ⭐ `W396`: how many introduced commits are NOT an office's. A COUNT, like
+    #: the rest — the line it was counted from is never held here or anywhere.
+    mixed: int = 0
 
 
 def _git(root: Path, *arguments: str) -> tuple[int, str]:
@@ -158,6 +163,7 @@ def read_authorship(root: Path, branch: str) -> Authorship:
     #    no caller of this module is allowed to receive.
     seen: set[str] = set()
     opened_by = ""
+    mixed = 0
     crossed: list[str] = []
     for sha in commits:
         code, line = _git(root, "show", "--no-patch", "--format=%an <%ae>", sha)
@@ -169,13 +175,46 @@ def read_authorship(root: Path, branch: str) -> Authorship:
         # ⭐ A person's line is NEVER refused — the standing ruling permits a real identity
         #    on a local commit, and a register round's own commits are exactly that.
         if not author_is_placeholder(line):
+            # ⭐ `W396`: counted, never refused. A merge commit made by a plain
+            #    `git merge` lands here, and so does a coordinator's fix-up.
+            mixed += 1
             continue
         seen.add(line)
         if not opened_by:
             opened_by = line
         elif line != opened_by:
             crossed.append(sha[:12])
-    return Authorship(population=len(commits), offices=len(seen), crossed=tuple(crossed))
+    return Authorship(
+        population=len(commits), offices=len(seen), crossed=tuple(crossed), mixed=mixed
+    )
+
+
+def mixed_reading(authorship: Authorship) -> list[str]:
+    """Return the ONE line a branch owes when its commits carry two KINDS of identity.
+
+    ⛔ **`W396`, measured by the register on 2026-09-19:** an office merged the
+    release branch into its own with a plain `git merge`, so that MERGE COMMIT
+    carries whatever identity ran it while every other commit on the branch
+    carries the office's placeholder. ⭐ **A merge commit is a commit**, and the
+    office rules bind every one of them to the per-invocation form (Ruling 345).
+
+    ⛔ **A DISCLOSURE and never a refusal, and the reason is in this module's own
+    table:** *an office's carrier with a coordinator fixup on it* is exactly this
+    shape and passes deliberately, so a gate that refused the mix would refuse a
+    legitimate branch — and it would refuse every branch already carrying one,
+    for a defect no office could clear from its own tree. ⚠️ Silent when there is
+    nothing to say: a register round's commits are all one kind, and so are an
+    office's when the office merged as the rules say.
+    """
+    if not authorship.mixed or not authorship.offices:
+        return []
+    return [
+        f"⚠️ MIXED: {authorship.mixed} of {authorship.population} introduced commit(s) are "
+        f"NOT an office's, beside {authorship.offices} that is — a plain `git merge` authors "
+        f"its MERGE COMMIT with whatever identity ran it (`W396`). A disclosure, never a "
+        "refusal: a coordinator's fix-up on a carrier is this same shape. ⭐ The form is "
+        "`git -c user.name=<office> -c user.email=<office>@example.invalid merge …`"
+    ]
 
 
 def render_authorship(authorship: Authorship) -> list[str]:
@@ -188,6 +227,7 @@ def render_authorship(authorship: Authorship) -> list[str]:
         f"authorship: {authorship.population} commit(s) introduced by this merge were read "
         f"for their author line — on the branch, never on the release line"
     ]
+    lines.extend(mixed_reading(authorship))
     if not authorship.crossed:
         lines.append(
             f"⭐ ONE OFFICE AT MOST: {authorship.offices} office identity(ies) among them, so "
