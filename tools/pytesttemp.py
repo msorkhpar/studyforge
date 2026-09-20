@@ -213,6 +213,7 @@ class Sweep:
     dry_run: bool = False
 
     def record(self, candidate: Candidate) -> None:
+        """Tally one judged directory under the verdict it took."""
         self.counts[candidate.verdict] = self.counts.get(candidate.verdict, 0) + 1
 
     def report(self) -> str:
@@ -268,7 +269,7 @@ def sweep(
 
 
 def temp_root() -> Path:
-    """The directory pytest puts its per-account root in, honouring its own override."""
+    """Return the directory pytest puts its per-account root in, honouring its own override."""
     return Path(os.environ.get("PYTEST_DEBUG_TEMPROOT") or tempfile.gettempdir())
 
 
