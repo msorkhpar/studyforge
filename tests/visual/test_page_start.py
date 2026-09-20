@@ -32,8 +32,11 @@ produced it.
 ⚠️ The settling clause is *"a reader crossing between the two page kinds sees no
 jump in where the content starts"*, and it is asserted as a **comparison between
 two real pages of one built site at one viewport** — and, for the half that says
-it is a shape rather than a coincidence of one width, as a comparison of one page
-with **itself** at two widths. ⛔ No layout figure is written down here.
+it is a shape rather than a coincidence of one width, as the same comparison
+repeated at three. ⛔ No layout figure is written down here. ⚠️ **Since `W388`
+stage 4 the shell is CENTRED above a ceiling**, so a clause that read one page
+against ITSELF at two widths would now be asserting that the page never moves —
+which is a different row's claim and one this row's own title never made.
 
 ## ⛔ Asserted the other way, on the shape that shipped
 
@@ -87,7 +90,8 @@ WIDER = (2560, WIDE[1])
 #: ⛔ The control cuts exactly this out of a BUILT tree, so what the clauses are
 #: refuted against is the layout that actually shipped.
 SHIPPED_WITHOUT = (
-    '  body:not(:has(nav[aria-label="Containers"])) {\n    margin-left: 0;\n  }\n\n',
+    '  body:not(:has(nav[aria-label="Containers"])) {\n'
+    "    margin-left: max(0px, (100% - var(--page-max)) / 2);\n  }\n\n",
     "",
 )
 
@@ -351,30 +355,37 @@ def test_they_still_start_in_the_same_place_on_a_much_wider_screen(
     )
 
 
-def test_the_page_with_no_rail_does_not_move_when_the_window_widens(
+def test_the_page_with_no_rail_starts_where_the_page_with_one_starts_at_every_width(
     layout, crossing: Crossing
 ) -> None:
-    """⛔ The same page, at three widths, compared with ITSELF.
+    """⛔ The same comparison as above, at three widths instead of one.
 
-    ⭐ This is the half that says the repair is a shape rather than a coincidence:
-    before this row the index's left edge was a function of the viewport at every
-    width above its own cap, and a reader who widened their window watched the
-    page walk to the right. ⚠️ The narrow reading is in the comparison
-    deliberately — the index sat at the window's edge there already, and the row
-    is that it now does so everywhere.
+    ⭐ This is the half that says the repair is a shape rather than a coincidence
+    of one viewport: before this row the index's left edge was a function of the
+    viewport while a unit page's was not, so a reader who widened their window
+    watched one of the two page kinds walk away from the other.
+
+    ⛔ **`W388` STAGE 4 RESTATED THIS CLAUSE AND THE RESTATEMENT IS STRICTLY
+    STRONGER.** It read *"the page with no rail does not MOVE when the window
+    widens"*, compared with itself — which was a PROXY for the row's real clause
+    and was only ever equivalent to it while the page with a rail was pinned to
+    the window's left edge. ⚠️ The shell is bounded and centred now, on the
+    user's instruction (*"if the display is too big having the menu and content
+    in the middle"*), so above the ceiling BOTH kinds move — together, which is
+    the thing this row is about. ⭐ Compared with the other page kind at each
+    width, the clause says what its own title says and cannot be satisfied by a
+    page that simply never moves.
     """
-    narrow = layout(crossing.railless, NARROW)
-    wide = layout(crossing.railless, WIDE)
-    wider = layout(crossing.railless, WIDER)
-
-    for name, read in (("the wide width", wide), ("the wider width", wider)):
-        assert read["body border box"]["left"] == pytest.approx(
-            narrow["body border box"]["left"], abs=TOUCHING
+    for name, width in (("the narrow width", NARROW), ("the wide width", WIDE), ("wider", WIDER)):
+        railless = layout(crossing.railless, width)
+        unit = layout(crossing.unit, width)
+        assert railless["body border box"]["left"] == pytest.approx(
+            unit["body border box"]["left"], abs=TOUCHING
         ), (
-            f"the page with no rail starts somewhere else at {name}: `body`'s "
-            f"border box left edge reads {read['body border box']['left']} at "
-            f"{read['window inner width']}px against "
-            f"{narrow['body border box']['left']} at {narrow['window inner width']}px"
+            f"the two page kinds start in different places at {name}: `body`'s "
+            f"border box left edge reads {railless['body border box']['left']} with no "
+            f"rail and {unit['body border box']['left']} with one, at "
+            f"{railless['window inner width']}px"
         )
 
 

@@ -56,49 +56,70 @@
   --font-ui: "Andika", Verdana, sans-serif;
   --font-mono: "JetBrains Mono", "DejaVu Sans Mono", monospace;
 
-  /* ⛔ `76ch`, AND SINCE `W388` STAGE 3 THAT NUMBER IS MEASURED RATHER THAN
-     INHERITED — the stage set out to widen it and the measurement said no.
-     ⚠️ Charis's `ch` is its zero, which is wider than an average letter of
-     running prose, so what a cap buys has to be COUNTED on a laid-out line and
-     never reasoned from the token. ⛔ Counted on the fixture unit page, in the
-     PINNED image's browser, at four window widths — the longest line of running
-     prose, in characters:
+  /* ⛔ `80ch`, AND EVERY DIGIT OF IT IS COUNTED — `W388` STAGE 4, the user's
+     fourth reading. ⚠️ Charis's `ch` is its zero, which is wider than an
+     average letter of running prose, so what a cap buys has to be COUNTED on a
+     laid-out line and never reasoned from the token.
+
+     ⛔ TWO INSTRUMENTS, BECAUSE ONE OF THEM SATURATES. Counted on the fixture
+     unit page in the PINNED image's browser — the longest line of running
+     prose, in characters, at the four widths this row is settled at:
 
        cap    1280   1440   1920   2560
-       72ch     84     96     96     96
        76ch     84    100    100    100
-       77ch     84    102    102    102
+       80ch     84    102    105    105
+       82ch     84    102    105    105
+       83ch     84    102    110    110
+       84ch     84    102    111    111
 
-     ⭐ `76ch` is the WIDEST CAP WHOSE LONGEST LAID-OUT LINE STAYS AT OR UNDER
-     100 CHARACTERS — the ceiling `tests/visual/test_reading_room.py` declares,
-     and the long end of a line the eye can still track back from at this 1.65
-     leading. ⚠️ At 1280 the cap does not bite at all: the column is narrower
-     than it, and the line runs to 84 characters.
+     ⚠️ Above `80ch` that one paragraph stops answering: its line breaks fall
+     where they fall and the count plateaus. ⭐ So the cap is settled on the
+     FIRST CORPUS instead — the worst paragraph of each of its 41 unit and
+     section pages, every one of them opened and measured:
 
-     ⛔ THE ENVIRONMENT IS PART OF THE READING. The same four widths on an
-     unpinned host browser lay out 96 at `76ch` and 100 at `78ch` — one step
-     narrower per cap — so a cap chosen on a host reading would ship a 102
-     character line in the image that decides. ⭐ The figures above are the
-     pinned image's, and the band in the visual suite is the bound. ⚠️ So the
-     width the user was missing was never the paragraph's: it was the dead strip
-     right of the aside, which `--page-max` below is about. */
-  --measure: 76ch;
+       cap    76ch   80ch   82ch   83ch   84ch
+       worst   101    106    109    109    111
+
+     ⛔ THE ENVIRONMENT IS PART OF THE READING, and that corpus reading is a
+     HOST one because a corpus is not mounted in the image. ⭐ The same `ch`
+     resolves 813px on the host against 836px in the image at `76ch` — 2.8%
+     wider there — so the image lays about three more characters on a line this
+     long. ⭐ `80ch` therefore puts the first corpus's worst paragraph at about
+     109 in the environment that decides, and `82ch` at about 112. ⛔ 110 is the
+     bound (`tests/visual/test_reading_room.py`'s `LONGEST_LINE`): past it the
+     eye stops finding the start of the next line, and the row's fourth reading
+     is the user asking for MORE width, not less. ⚠️ At 1280 the cap does not
+     bite at all — the column is narrower than it and the line runs to 84. */
+  --measure: 80ch;
   --rail: 17rem;
   /* The column beside the reading surface for a page's secondary block — a
      unit's outline, the index's explanation — where the window has room. */
   --aside: 16rem;
-  /* ⛔ THE CEILING ON THE READING SURFACE — NOT ON THE PAGE, AND THAT MOVE IS
-     `W388` STAGE 3. ⚠️ It shipped at `110rem` (1760px) bounding `body` itself,
-     with the page left aligned: on the user's own ~2000px window everything
-     right of the outline was empty, and on a 2560px one a third of the screen
-     was — *"the paragraph texts are not using the full width"*. ⛔ A BIGGER
-     NUMBER IN THE SAME PLACE ONLY MOVES THAT DEFECT ONE WINDOW ALONG, so the
-     page now spans the window at every width and the bound sits on the thing it
-     was protecting: the surface a table, a figure or a code block fills.
-     ⭐ `180rem` is 2880px — past the widest window this row measures (2560), so
-     the reading column takes all the slack on every one of them, and a display
-     wider than that still cannot stretch one line of code across it. */
-  --page-max: 180rem;
+  /* ⛔ THE SHELL'S CEILING, AND ABOVE IT THE SHELL CENTRES — `W388` STAGE 4.
+     ⚠️ Three shapes have now been read by the user. `110rem` PINNED LEFT left a
+     dead band down the right of a ~2000px window (*"not using the full width"*).
+     `180rem`, effectively unbounded, grew the reading column without limit and
+     was read as *"too wide… maybe if the display is too big having the menu and
+     content in the middle by forcing a max width"*. ⭐ The third shape is this
+     one: `chrome.css` gives the shell `max-width: var(--page-max)` AND a left
+     inset of half whatever the window has past it, so under the ceiling the
+     inset floors at nothing and the page fills the window exactly as before,
+     and above it the shell holds this width with EQUAL margins. ⛔ The value was
+     never what was wrong with the first shape — the PIN was.
+
+     ⛔ WHY 110rem (1760px), FROM BOTH SIDES, MEASURED. The shell holds the rail
+     (17rem), three gutters and the aside (16rem), so the reading surface is the
+     shell less 588px: 1172px here. ⭐ FROM BELOW — the surface is what a code
+     block is scanned in, and the first corpus ships 218 of them: at a 1012px
+     surface (`100rem`) 20.2% need a horizontal scrollbar, at 1172px (`110rem`)
+     8.7%, at 1252px (`115rem`) 4.6%, at 1332px (`120rem`) 3.2%. ⛔ The first
+     160px buys 11.5 points and the next 160px buys 5.5: `110rem` is the knee.
+     ⭐ FROM ABOVE — every pixel past the knee is open room right of a paragraph
+     that is capped at `--measure` (880px). At `110rem` that room is 292px,
+     about the one outline column the reader can see beside it; at `120rem` it
+     is 452px, nearly two. ⚠️ That room growing without limit is what the user
+     read as *"too wide"*, so the ceiling is where it stops growing. */
+  --page-max: 110rem;
   --gutter: 1.25rem;
   --player-height: 3.5rem;
 

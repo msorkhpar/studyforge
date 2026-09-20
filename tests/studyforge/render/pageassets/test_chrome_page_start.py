@@ -227,11 +227,21 @@ def test_the_narrow_shape_still_centres_the_page_it_has_room_to_centre():
 
 
 def test_this_row_mints_no_token_and_states_no_bound_of_its_own():
-    # ⛔ Settling clause 4. ⭐ The rule this row adds declares one property and
-    # its value is `0`, so there is nothing for a token to name and no bound to
-    # state what it was chosen against.
+    # ⛔ Settling clause 4, and it survives `W388` stage 4 intact. ⭐ The rule
+    # this row adds still declares ONE property. ⚠️ Its value is no longer the
+    # constant `0` — the two-column page it has to agree with is centred under a
+    # ceiling now, so the shared inset is half of whatever the window has past
+    # that ceiling — but the ceiling is `palette.css`'s OWN token, READ here and
+    # minted nowhere: a row that painted a `--something` of its own would be a
+    # second place to reason about where a page starts.
     declarations = [each.strip() for each in wide_rule_for(WITHOUT_RAIL).split(";") if each.strip()]
-    assert declarations == ["margin-left: 0"], (
+    assert len(declarations) == 1 and declarations[0].startswith("margin-left:"), (
         f"the one-column page's wide rule declares more than the margin: {declarations}"
     )
-    assert "--" not in wide_rule_for(WITHOUT_RAIL), "this row paints a custom property of its own"
+    assert not re.search(r"--[a-z-]+\s*:", wide_rule_for(WITHOUT_RAIL)), (
+        "this row paints a custom property of its own"
+    )
+    assert set(re.findall(r"var\((--[a-z-]+)\)", wide_rule_for(WITHOUT_RAIL))) <= {"--page-max"}, (
+        "the one-column page reads a token other than the ceiling the "
+        f"two-column page is bounded by: {wide_rule_for(WITHOUT_RAIL)}"
+    )

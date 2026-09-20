@@ -295,40 +295,51 @@ span[data-kind="read-state"] {
    is back in the one column above the content. The block is the page's own
    aside: it is sticky and scrolls itself, as the rail does.
 
-   ⛔ THE PAGE SPANS THE WINDOW (`W388` STAGE 3, the user's third reading:
-   *"Still the paragraph texts are not using the full width for some reason."*).
-   ⚠️ The grid carried `max-width: var(--page-max)` with `margin-left: 0`, so
-   past 1760px the three tracks stopped growing and stayed packed against the
-   left edge — on the user's own window the whole strip right of the outline was
-   empty. ⭐ `max-width: none` releases `body` here: the rail keeps the left
-   edge, the aside keeps the RIGHT edge one gutter in, and the reading column —
-   the `1fr` — takes every pixel of the slack between them. ⛔ The ceiling did
-   not grow, it MOVED: a bigger number on `body` would put the same dead strip
-   on a wider display, so `--page-max` now bounds the reading surface, which is
-   the table, the figure and the code block it was written to protect.
+   ⛔ ONE SHAPE THAT WORKS ON EVERY DISPLAY (`W388` STAGE 4). ⚠️ The user has
+   now read three of them. A shell ceilinged at `110rem` WITH `margin-left: 0`
+   was pinned left and left a dead band down the right of their window —
+   *"the paragraph texts are not using the full width"*. Releasing the ceiling
+   answered that and opened the other failure: the three tracks grew with the
+   screen and the reading column ran away from the prose inside it —
+   *"the width is too wide. Find a common ground for different displays. maybe
+   if the display is too big having the menu and content in the middle by
+   forcing a max width or something."*
 
-   ⚠️ `none` IS WRITTEN OUT AND IS NOT A REDUNDANT DECLARATION — measured: with
-   the line deleted, the NARROW shape's own bound at the top of this file
-   (`calc(var(--measure) + 4 * var(--gutter))`) still applied, and the "spanning"
-   page laid out at that constant on a 3840px window — narrower than the defect
-   this stage set out to cure. A bound is released here, never omitted. */
+   ⭐ SO THE SHELL IS BOUNDED AND CENTRED, WHICH IS ONE SHAPE AND NOT TWO.
+   `max-width: var(--page-max)` with `margin-inline: auto`: below the ceiling
+   the margins resolve to nothing and the page fills the window exactly as the
+   released shape did, and above it the same declaration holds the shell at the
+   ceiling with EQUAL margins either side. ⛔ There is no width at which one
+   side has room the other does not — which is what a dead band IS — and the
+   rail, the reading column and the outline are all inside the shell, so the
+   reader's menu centres with the reading rather than clinging to the glass.
+
+   ⛔ THE CEILING IS BACK ON THE SHELL AND THE BOUND ON `> main` IS GONE, which
+   is a removal rather than an oversight: with the shell held at `--page-max`
+   the surface can never reach it, so a second declaration of the same token
+   would be a ceiling that never bites and a reader would have two places to
+   look. ⭐ The token's argument — why `110rem` and not `100` or `120` — is in
+   `palette.css` beside the declaration, measured from the first corpus's own
+   code blocks.
+
+   ⚠️ THE INSET IS WRITTEN OUT RATHER THAN LEFT TO `auto`, AND `W333` IS WHY.
+   `margin-inline: auto` would centre the shell and say nothing a second rule
+   could agree with — and the page with NO rail is bounded by the measure, not
+   by the ceiling, so centring that one puts it somewhere else entirely and the
+   layout jumps when a reader clicks between the two kinds. ⭐ Both shapes take
+   the SAME left inset instead: half of whatever the window has past the
+   ceiling, and nothing at all below it. ⛔ The two declarations are asserted
+   EQUAL to each other in `test_chrome_page_start.py`, never against a value
+   typed there, so they cannot drift apart. */
 
 @media (min-width: 72rem) {
   body:has(nav[aria-label="Containers"]) {
     display: grid;
     grid-template-columns: var(--rail) minmax(0, 1fr);
     column-gap: var(--gutter);
-    max-width: none;
-    margin-left: 0;
-    padding-left: 0;
-  }
-
-  /* ⛔ The one bound left in the wide shape, and it is on the READING SURFACE.
-     The prose inside it keeps `--measure` (`reading.css`); this is what stops a
-     block that is scanned rather than read — a wide table, a long line of code
-     — running the full width of a display nobody here has. */
-  body:has(nav[aria-label="Containers"]) > main {
     max-width: var(--page-max);
+    margin-left: max(0px, (100% - var(--page-max)) / 2);
+    padding-left: 0;
   }
 
   body:has(nav[aria-label="Containers"]):has(> nav[aria-label="Outline"], > section[aria-label="About this site"]) {
@@ -339,10 +350,12 @@ span[data-kind="read-state"] {
     left: calc(var(--rail) + var(--gutter) / 2 - 1px);
   }
 
-  /* ⛔ The page without a rail starts where the page with one starts (`W333`):
-     flush left, keeping its own gutter. */
+  /* ⛔ The page without a rail starts where the page with one starts (`W333`),
+     keeping its own gutter. ⚠️ Since `W388` stage 4 that place is the shell's
+     left edge rather than the window's, so this is the same expression the
+     shape above takes and the right margin is still left to `auto`. */
   body:not(:has(nav[aria-label="Containers"])) {
-    margin-left: 0;
+    margin-left: max(0px, (100% - var(--page-max)) / 2);
   }
 
   body:has(nav[aria-label="Containers"]) > * {

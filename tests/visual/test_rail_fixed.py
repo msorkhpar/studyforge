@@ -66,9 +66,11 @@ RAIL = 'nav[aria-label="Containers"]'
 #: — the same subpixel allowance `test_rail.TOUCHING` makes.
 TOUCHING = 0.5
 
-#: A second wide viewport, wider than `WIDE` and still narrower than the ceiling
-#: `--page-max` declares. ⭐ Clause 2 is *"a function of the viewport"*, and a
-#: function is shown by two points on it, never by one reading and an argument.
+#: A second wide viewport, wider than `WIDE`. ⭐ Clause 2 is *"a function of the
+#: viewport"*, and a function is shown by two points on it, never by one reading
+#: and an argument. ⚠️ Since `W388` stage 4 this width is ABOVE the ceiling
+#: `--page-max` declares, so the pair reads the function on the stretch where it
+#: still rises — which is the stretch a reader's own screen is on.
 WIDER = (1920, WIDE[1])
 
 #: The wide shape as it stands, and as `W326` merged it — the control rewrites
@@ -80,10 +82,12 @@ SHIPPED = (
         "grid-template-columns: var(--rail) minmax(0, calc(var(--measure) + 2 * var(--gutter)));",
     ),
     (
-        # ⚠️ Since `W388` stage 3 the wide page RELEASES its bound rather than
-        # carrying `--page-max` on `body`, so the text rewritten here reads
-        # `none`; the shape it is rewritten back to is still `W326`'s.
-        "max-width: none;\n    margin-left: 0;\n    padding-left: 0;",
+        # ⚠️ Since `W388` stage 4 the wide page carries `--page-max` on `body`
+        # again and CENTRES under it, so the text rewritten here is that pair;
+        # the shape it is rewritten back to is still `W326`'s.
+        "max-width: var(--page-max);\n"
+        "    margin-left: max(0px, (100% - var(--page-max)) / 2);\n"
+        "    padding-left: 0;",
         "max-width: min(var(--page-max), calc(var(--rail) + var(--measure) + 5 * var(--gutter)));",
     ),
     (
@@ -258,10 +262,17 @@ def test_the_rail_starts_at_the_windows_own_left_edge(geometry, tall: TallCorpus
     """⛔ *"the left panel shou go all the way to the left side"*, read as pixels.
 
     ⚠️ **Flush means the WINDOW's left edge and never the layout's.** Before this
-    row the page was capped and centred, so the rail — the first grid track —
-    started wherever centring had put it, and on a wide screen that was a long
-    way in. ⭐ Both boxes are asserted, because a page flush left with a rail
-    inset inside it is the same defect one element along.
+    row the page was capped and centred at a width no window matched, so the rail
+    — the first grid track — started wherever centring had put it, and on a wide
+    screen that was a long way in. ⭐ Both boxes are asserted, because a page
+    flush left with a rail inset inside it is the same defect one element along.
+
+    ⛔ **Taken at `WIDE`, which is BELOW the ceiling `W388` stage 4 gave the
+    shell, and that is the point rather than a convenience.** The shell centres
+    only where a window has room past the ceiling; at every width a reader's
+    laptop opens, `auto` resolves to nothing and this clause is the page.
+    ⚠️ Where the rail sits once the shell does centre is
+    `test_reading_width.py`'s, and it is the shell's edge, not the window's.
     """
     read = geometry(tall, WIDE)
 
@@ -453,12 +464,12 @@ def test_the_dynamic_column_is_still_bounded_on_a_screen_nobody_has(
     a probe element given `width: var(--page-max)` — rather than written here, so
     a palette that moves it moves this clause with it.
 
-    ⛔ **`W388` stage 3 moved WHICH ELEMENT the ceiling is on, and this clause
-    moved with it.** The bound sat on `body`, which reproduced the row's own
-    defect one display along: the page stopped growing and stayed packed against
-    the left edge with a dead strip to its right. ⭐ So the PAGE spans the window
-    at any width and the READING SURFACE is what the ceiling holds — the element
-    the wide table and the long line of code are actually in.
+    ⛔ **`W388` stage 4 settled WHERE the ceiling is and what happens above it.**
+    Stage 2 held `body` at the ceiling and pinned it left, which put a dead strip
+    down one side; stage 3 released the bound and let the tracks grow without
+    limit. ⭐ The shell carries the ceiling again and CENTRES under it, so the
+    element a wide table and a long line of code are in stops growing, and what
+    the window has past the ceiling is split evenly rather than left on one side.
     """
     open_page.resize(4 * WIDE[0], WIDE[1])
     open_page.open(tall.url, scripts=False)
@@ -476,14 +487,21 @@ def test_the_dynamic_column_is_still_bounded_on_a_screen_nobody_has(
         f"the ceiling of {float(ceiling):.2f}px is wider than the "
         f"{read['window inner width']:.2f}px window, so this reading is vacuous"
     )
-    assert read["main#content border box"]["width"] <= float(ceiling) + TOUCHING, (
-        f"the reading surface is {read['main#content border box']['width']:.2f}px against a "
+    assert read["body border box"]["width"] <= float(ceiling) + TOUCHING, (
+        f"the shell is {read['body border box']['width']:.2f}px against a "
         f"declared ceiling of {float(ceiling):.2f}px, so the bound is not biting"
     )
-    assert read["body border box"]["width"] >= read["window inner width"] - TOUCHING, (
-        f"the page is {read['body border box']['width']:.2f}px in a "
-        f"{read['window inner width']:.2f}px window, so the ceiling is back on the page "
-        "and the dead strip with it"
+    assert read["main#content border box"]["width"] < read["body border box"]["width"], (
+        f"the reading surface is {read['main#content border box']['width']:.2f}px inside a "
+        f"{read['body border box']['width']:.2f}px shell, so the rail and the aside are "
+        "not inside the shell with it"
+    )
+    assert read["body border box"]["left"] == pytest.approx(
+        read["window inner width"] - read["body border box"]["right"], abs=TOUCHING
+    ), (
+        f"the shell has {read['body border box']['left']:.2f}px of room on its left and "
+        f"{read['window inner width'] - read['body border box']['right']:.2f}px on its "
+        "right, so the ceiling is back to pinning the page and the dead strip with it"
     )
 
 

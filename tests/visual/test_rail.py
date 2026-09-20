@@ -279,15 +279,15 @@ def test_the_reading_surface_stays_inside_the_ceiling_the_palette_declares(
     """⛔ `--page-max` is painted for this layout, and this is what it buys.
 
     ⭐ What this asserts is the property the token gives: at a viewport far wider
-    than any reader has, the surface a table and a code block fill is bounded
-    rather than full-bleed, and bounded no wider than the ceiling the palette
-    names.
+    than any reader has, the SHELL — the rail, the reading column and the aside
+    together — stops growing at the ceiling the palette names, so a table or a
+    line of code is never stretched across a display nobody has.
 
-    ⚠️ **The subject is the SURFACE and not the page, since `W388` stage 3.** The
-    bound sat on `body`, and a bounded, left-aligned page is the row's own
-    defect — the user read it on a 2000px window as *"the paragraph texts are
-    not using the full width"*. ⛔ So the page spans the window here and the
-    ceiling is asserted where it now lives.
+    ⚠️ **And it CENTRES in what is left, which is `W388` stage 4.** A shell that
+    stops growing and stays against the left edge is the row's own first defect:
+    the user read it on a 2000px window as *"the paragraph texts are not using
+    the full width"*, because every spare pixel was on one side. ⛔ So both
+    halves are read here — bounded, and equally inset either side.
     """
     open_page.resize(4 * WIDE[0], WIDE[1])
     open_page.open(built_corpus.url(here), scripts=False)
@@ -306,13 +306,18 @@ def test_the_reading_surface_stays_inside_the_ceiling_the_palette_declares(
         f"the ceiling of {float(ceiling):.2f}px is wider than the {4 * WIDE[0]}px window "
         "this reading is taken in, so it says nothing"
     )
-    assert surface["width"] <= float(ceiling) + TOUCHING, (
-        f"the reading surface is {surface['width']:.2f}px against a declared ceiling of "
+    assert page["width"] <= float(ceiling) + TOUCHING, (
+        f"the shell is {page['width']:.2f}px against a declared ceiling of "
         f"{float(ceiling):.2f}px, so nothing bounds it at all"
     )
-    assert page["width"] >= 4 * WIDE[0] - TOUCHING, (
-        f"at {4 * WIDE[0]}px the page is {page['width']:.2f}px wide, so it stops short of "
-        "the window and leaves the dead strip this row exists to remove"
+    assert surface["width"] < page["width"], (
+        f"the reading surface is {surface['width']:.2f}px inside a {page['width']:.2f}px "
+        "shell, so the rail and the aside are not in the shell with it"
+    )
+    assert page["left"] == pytest.approx(4 * WIDE[0] - page["right"], abs=TOUCHING), (
+        f"at {4 * WIDE[0]}px the shell has {page['left']:.2f}px of room on its left and "
+        f"{4 * WIDE[0] - page['right']:.2f}px on its right, so what it does not use is a "
+        "dead band on one side rather than a margin"
     )
 
 

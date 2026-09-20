@@ -74,8 +74,19 @@ BANDS = {"--fg": (10.0, 14.0), "--fg-soft": (6.5, 10.0), "--muted": (4.5, 7.0)}
 #: How long a line of running prose may be, in characters. ⛔ The row asks for a
 #: measure *argued from line length in characters*: below this a wide window is
 #: wasted, above it the eye loses the line it is tracking back to.
+#:
+#: ⚠️ **`LONGEST_LINE` MOVED FROM 100 TO 110 AT `W388` STAGE 4, TOGETHER WITH
+#: THE CAP AND NOT BEHIND IT** — `W388/13` said these two numbers move together
+#: or not at all, and this is the row that moves them. ⭐ The ground is the
+#: user's fourth reading: they asked twice for more width and quoted
+#: `main p, main li { max-width: var(--measure); }` as the cut. ⛔ 110 is not a
+#: loosening to admit a cap somebody liked — it is where tracking back to the
+#: start of the next line fails — and `--measure` was COUNTED against it
+#: afterwards: `80ch` puts the first corpus's worst paragraph at about 109 and
+#: `82ch` at about 112 (the counts are recorded in `palette.css`). ⭐ So the
+#: bound picked the cap, rather than the cap moving the bound.
 SHORTEST_LINE = 75
-LONGEST_LINE = 100
+LONGEST_LINE = 110
 
 #: The region selectors this module reads, spelled as the stylesheets spell them.
 RAIL = 'nav[aria-label="Containers"]'
